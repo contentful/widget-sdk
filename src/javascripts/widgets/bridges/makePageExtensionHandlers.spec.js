@@ -2,7 +2,7 @@ import makePageExtensionHandlers from './makePageExtensionHandlers';
 import * as Navigator from 'states/Navigator';
 
 jest.mock('states/Navigator', () => ({
-  go: jest.fn(x => Promise.resolve(x))
+  go: jest.fn((x) => Promise.resolve(x)),
 }));
 
 describe('makePageExtensionHandlers', () => {
@@ -12,7 +12,7 @@ describe('makePageExtensionHandlers', () => {
     spaceContext = {
       getId: () => 'space-id',
       getEnvironmentId: jest.fn(() => 'master'),
-      isMasterEnvironment: jest.fn(() => true)
+      isMasterEnvironment: jest.fn(() => true),
     };
   });
 
@@ -57,15 +57,15 @@ describe('makePageExtensionHandlers', () => {
 
     expect(Navigator.go).toHaveBeenCalledWith({
       options: {
-        notify: true
+        notify: true,
       },
       params: {
         environmentId: 'master',
         extensionId: 'extension-id',
         path: '',
-        spaceId: 'space-id'
+        spaceId: 'space-id',
       },
-      path: ['spaces', 'detail', 'pageExtensions']
+      path: ['spaces', 'detail', 'pageExtensions'],
     });
   });
 
@@ -76,15 +76,15 @@ describe('makePageExtensionHandlers', () => {
 
     expect(Navigator.go).toHaveBeenCalledWith({
       options: {
-        notify: false
+        notify: false,
       },
       params: {
         environmentId: 'master',
         extensionId: 'extension-id',
         path: '',
-        spaceId: 'space-id'
+        spaceId: 'space-id',
       },
-      path: ['spaces', 'detail', 'pageExtensions']
+      path: ['spaces', 'detail', 'pageExtensions'],
     });
   });
 
@@ -95,15 +95,15 @@ describe('makePageExtensionHandlers', () => {
 
     expect(Navigator.go).toHaveBeenCalledWith({
       options: {
-        notify: true
+        notify: true,
       },
       params: {
         environmentId: 'master',
         extensionId: 'extension-id',
         path: '/settings',
-        spaceId: 'space-id'
+        spaceId: 'space-id',
       },
-      path: ['spaces', 'detail', 'pageExtensions']
+      path: ['spaces', 'detail', 'pageExtensions'],
     });
   });
 
@@ -117,15 +117,15 @@ describe('makePageExtensionHandlers', () => {
 
     expect(Navigator.go).toHaveBeenCalledWith({
       options: {
-        notify: true
+        notify: true,
       },
       params: {
         environmentId: 'testEnv',
         extensionId: 'extension-id-env',
         path: '/settings',
-        spaceId: 'space-id'
+        spaceId: 'space-id',
       },
-      path: ['spaces', 'detail', 'environment', 'pageExtensions']
+      path: ['spaces', 'detail', 'environment', 'pageExtensions'],
     });
   });
 });

@@ -89,11 +89,11 @@ export function RemoveRoleModalConfirm({ isUsed, isShown, onCancel, onConfirm, r
 RemoveRoleModalConfirm.propTypes = {
   isShown: PropTypes.bool.isRequired,
   role: PropTypes.shape({
-    name: PropTypes.string
+    name: PropTypes.string,
   }),
   isUsed: PropTypes.bool.isRequired,
   onCancel: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,
   count: PropTypes.number,
-  roleOptions: PropTypes.array.isRequired
+  roleOptions: PropTypes.array.isRequired,
 };

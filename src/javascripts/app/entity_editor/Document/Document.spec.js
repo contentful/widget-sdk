@@ -13,12 +13,12 @@ const kefirHelpers = jestKefir(Kefir); // https://github.com/kefirjs/jest-kefir
 const { value } = kefirHelpers; // end
 expect.extend(kefirHelpers.extensions);
 
-const newEntry = fields => ({
+const newEntry = (fields) => ({
   sys: {
     type: 'Entry',
     version: 1,
     contentType: {
-      sys: { id: 'ctId' }
+      sys: { id: 'ctId' },
     },
   },
   fields: fields || {
@@ -26,8 +26,8 @@ const newEntry = fields => ({
     fieldB: { 'en-US': 'val-EN', de: 'val-DE' },
     listField: { 'en-US': ['one'] },
     symbolField: { 'en-US': 'symbol value' },
-    textField: { 'en-US': 'text value' }
-  }
+    textField: { 'en-US': 'text value' },
+  },
 });
 const newLegacyClientEntityMock = (entity) => ({ data: entity, setDeleted: noop });
 
@@ -36,12 +36,12 @@ jest.mock('NgRegistry', () => ({
   getModule: () => ({
     create: () => ({
       destroy: () => jest.fn(),
-      leave: () => jest.fn()
-    })
-  })
+      leave: () => jest.fn(),
+    }),
+  }),
 }));
 jest.mock('services/localeStore', () => ({
-  getPrivateLocales: () => [{ internal_code: 'en-US' }, { internal_code: 'de' }]
+  getPrivateLocales: () => [{ internal_code: 'en-US' }, { internal_code: 'de' }],
 }));
 jest.mock('./Reverter', () => ({ create: jest.fn() }));
 jest.mock('access_control/EntityPermissions', () => {
@@ -49,9 +49,9 @@ jest.mock('access_control/EntityPermissions', () => {
     create: () => ({
       can: jest.fn().mockReturnValue(mock.returnValue()),
       canEditFieldLocale: jest.fn().mockReturnValue(mock.returnValue()),
-      test: mock.returnValue()
+      test: mock.returnValue(),
     }),
-    returnValue: jest.fn().mockReturnValue(true)
+    returnValue: jest.fn().mockReturnValue(true),
   };
   return mock;
 });
@@ -60,11 +60,11 @@ function createOtDocument(initialEntity, contentTypeFields) {
   const docLoader = {
     doc: K.createMockProperty(DocLoad.None()),
     destroy: jest.fn(),
-    close: jest.fn()
+    close: jest.fn(),
   };
   const docConnection = {
     getDocLoader: jest.fn().mockReturnValue(docLoader),
-    refreshAuth: jest.fn().mockResolvedValue(undefined)
+    refreshAuth: jest.fn().mockResolvedValue(undefined),
   };
   const user = { sys: { id: 'USER' } };
   const contentType = {
@@ -76,8 +76,8 @@ function createOtDocument(initialEntity, contentTypeFields) {
         { id: 'listField' },
         { id: 'symbolField', type: 'Symbol' },
         { id: 'textField', type: 'Text' },
-      ]
-    }
+      ],
+    },
   };
   const otDocMock = ShareJsDocMock();
   const shareJsDoc = new otDocMock(initialEntity);
@@ -86,7 +86,7 @@ function createOtDocument(initialEntity, contentTypeFields) {
   return {
     document: OtDocument.create(docConnection, entity, contentType, user, 'fake/endpoint'),
     docLoader,
-    shareJsDoc
+    shareJsDoc,
   };
 }
 
@@ -302,11 +302,11 @@ describe('OtDocument', () => {
       expect(doc.sysProperty).toBeProperty();
     });
 
-    it('emits `entity.data.sys` as initial value', function() {
+    it('emits `entity.data.sys` as initial value', function () {
       K.assertCurrentValue(doc.sysProperty, entry.sys);
     });
 
-    it('bumped version after update', function() {
+    it('bumped version after update', function () {
       const newVersionSys = { ...entry.sys, version: entry.sys.version + 1 };
       doc.setValueAt(fieldPath, 'en-US-updated');
       expect(K.getValue(doc.sysProperty)).toMatchObject(newVersionSys);
@@ -348,11 +348,15 @@ describe('OtDocument', () => {
     });
 
     it('throws when `Symbol` type field is given non-string value', async () => {
-      await expect(doc.setValueAt(['fields', 'symbolField', 'en-US'], 123)).rejects.toThrow('Invalid string field value.')
+      await expect(doc.setValueAt(['fields', 'symbolField', 'en-US'], 123)).rejects.toThrow(
+        'Invalid string field value.'
+      );
     });
 
     it('throws when `Text` type field is given non-string value', async () => {
-      await expect(doc.setValueAt(['fields', 'textField', 'en-US'], 123)).rejects.toThrow('Invalid string field value.')
+      await expect(doc.setValueAt(['fields', 'textField', 'en-US'], 123)).rejects.toThrow(
+        'Invalid string field value.'
+      );
     });
 
     it('throws ShareJs forbidden error on field level', async () => {
@@ -362,7 +366,7 @@ describe('OtDocument', () => {
       shareJsDoc.setAt = jest.fn().mockImplementationOnce(() => {
         throw new Error('forbidden');
       });
-      await expect(doc.setValueAt(fieldPath, 'en-US-updated')).rejects.toThrow('forbidden')
+      await expect(doc.setValueAt(fieldPath, 'en-US-updated')).rejects.toThrow('forbidden');
     });
   });
 
@@ -409,17 +413,14 @@ describe('OtDocument', () => {
       const notNormalizedEntry = newEntry({
         field1: { 'en-US': true, fr: true },
         field2: { 'en-US': true },
-        unknownField: true
+        unknownField: true,
       });
-      doc = createOtDocument(notNormalizedEntry,  [
-        { id: 'field1' },
-        { id: 'field2' }
-      ]).document;
+      doc = createOtDocument(notNormalizedEntry, [{ id: 'field1' }, { id: 'field2' }]).document;
 
       const normalizedFieldValues = doc.getValueAt(['fields']);
       expect(normalizedFieldValues).toEqual({
         field1: { 'en-US': true },
-        field2: { 'en-US': true }
+        field2: { 'en-US': true },
       });
     });
   });

@@ -12,7 +12,7 @@ export const Success = makeCtor('PromiseSuccess');
 export const Failure = makeCtor('PromiseFailure');
 
 export function sleep(t) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     setTimeout(resolve, t);
   });
 }
@@ -40,7 +40,10 @@ export function sleep(t) {
  *     }
  */
 export function tryP(promise) {
-  return promise.then(result => Success(result), error => Failure(error));
+  return promise.then(
+    (result) => Success(result),
+    (error) => Failure(error)
+  );
 }
 
 /**
@@ -81,8 +84,8 @@ export function createSlot(onResult) {
     currentId += 1;
     const id = currentId;
     promise.then(
-      value => onResultIfCurrent(id, Success(value)),
-      error => onResultIfCurrent(id, Failure(error))
+      (value) => onResultIfCurrent(id, Success(value)),
+      (error) => onResultIfCurrent(id, Failure(error))
     );
   };
 

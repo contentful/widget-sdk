@@ -62,7 +62,7 @@ const ValidationRow = ({ date: fullDate, onDateUpdate, checkboxLabel, id }) => {
       <UTCTimeZonePicker
         value={timeZone}
         disabled={!isChecked}
-        onChange={value => setTimeZone(value)}
+        onChange={(value) => setTimeZone(value)}
       />
     </div>
   );
@@ -72,14 +72,14 @@ ValidationRow.propTypes = {
   date: PropTypes.string,
   id: PropTypes.string.isRequired,
   onDateUpdate: PropTypes.func.isRequired,
-  checkboxLabel: PropTypes.string.isRequired
+  checkboxLabel: PropTypes.string.isRequired,
 };
 
 const DateRangeValidation = ({
   validation,
   updateValidationSettingsValue,
   updateValidationMessageValue,
-  errorMessages
+  errorMessages,
 }) => {
   const [minDate, setMinDate] = useState(validation.settings.min);
   const [maxDate, setMaxDate] = useState(validation.settings.max);
@@ -125,7 +125,7 @@ DateRangeValidation.propTypes = {
   validation: PropTypes.object.isRequired,
   updateValidationSettingsValue: PropTypes.func.isRequired,
   updateValidationMessageValue: PropTypes.func.isRequired,
-  errorMessages: PropTypes.array.isRequired
+  errorMessages: PropTypes.array.isRequired,
 };
 
 export default DateRangeValidation;

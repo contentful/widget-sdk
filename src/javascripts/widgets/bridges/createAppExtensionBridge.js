@@ -16,7 +16,7 @@ const STAGE_POST_INSTALL = 'postInstall';
 export default function createAppExtensionBridge(dependencies) {
   const { spaceContext, appHookBus } = checkDependencies('AppExtensionBridge', dependencies, [
     'spaceContext',
-    'appHookBus'
+    'appHookBus',
   ]);
 
   let currentInstallationRequestId = null;
@@ -25,7 +25,7 @@ export default function createAppExtensionBridge(dependencies) {
     getData,
     install,
     uninstall: () => {},
-    apply: fn => fn()
+    apply: (fn) => fn(),
   };
 
   function getData() {
@@ -37,12 +37,12 @@ export default function createAppExtensionBridge(dependencies) {
       current: null,
       locales: {
         available: TheLocaleStore.getPrivateLocales(),
-        default: TheLocaleStore.getDefaultLocale()
+        default: TheLocaleStore.getDefaultLocale(),
       },
       entryData: { sys: {}, fields: {} },
       contentTypeData: { sys: {}, fields: [] },
       initialContentTypesData: spaceContext.publishedCTs.getAllBare(),
-      editorInterface: undefined
+      editorInterface: undefined,
     };
   }
 
@@ -52,7 +52,7 @@ export default function createAppExtensionBridge(dependencies) {
     api.registerHandler('navigateToPageExtension', makePageExtensionHandlers(dependencies));
     api.registerHandler('callSpaceMethod', makeExtensionSpaceMethodsHandlers(dependencies));
 
-    api.registerHandler('callAppMethod', methodName => {
+    api.registerHandler('callAppMethod', (methodName) => {
       const installation = appHookBus.getInstallation();
       const isInstalled = isObject(installation);
 
@@ -78,12 +78,12 @@ export default function createAppExtensionBridge(dependencies) {
       api.send('appHook', [
         {
           stage: STAGE_PRE_INSTALL,
-          installationRequestId: currentInstallationRequestId
-        }
+          installationRequestId: currentInstallationRequestId,
+        },
       ]);
     };
 
-    const makePostInstall = err => ({ installationRequestId }) => {
+    const makePostInstall = (err) => ({ installationRequestId }) => {
       if (installationRequestId !== currentInstallationRequestId) {
         // Message coming from a different installation process, ignore.
         return;
@@ -93,8 +93,8 @@ export default function createAppExtensionBridge(dependencies) {
         {
           stage: STAGE_POST_INSTALL,
           installationRequestId: currentInstallationRequestId,
-          err: err || null
-        }
+          err: err || null,
+        },
       ]);
 
       currentInstallationRequestId = null;

@@ -7,7 +7,7 @@ const SPACE_ROLE_FILTER_ADMIN_KEYS = ['sys.spaceMemberships.admin', 'is_admin_of
 
 export const SPACE_ROLE_FILTER_KEYS = [
   'sys.spaceMemberships.roles.name',
-  'sys.spaceMemberships.roles.sys.id'
+  'sys.spaceMemberships.roles.sys.id',
 ].concat(SPACE_ROLE_FILTER_ADMIN_KEYS);
 
 const defaultRoleOptions = (options, spaceId) => {
@@ -25,23 +25,23 @@ const defaultRoleOptions = (options, spaceId) => {
       If not in space context, the API query key is `sys.spaceMemberships.admin`
       and the value is `true`.
      */
-    { label: 'Admin', value: spaceId ? spaceId : 'true' }
+    { label: 'Admin', value: spaceId ? spaceId : 'true' },
   ].concat(options);
 };
 
-export const getRoleOptions = roles => {
+export const getRoleOptions = (roles) => {
   const options = uniqBy(roles, 'name')
     .sort((a, b) => a.name.localeCompare(b.name))
-    .map(role => ({ label: role.name, value: role.name }));
+    .map((role) => ({ label: role.name, value: role.name }));
 
   return defaultRoleOptions(options);
 };
 
 export const getSpaceRoleOptions = (roles, spaceId) => {
   const options = roles
-    .filter(role => role.sys.space.sys.id === spaceId)
+    .filter((role) => role.sys.space.sys.id === spaceId)
     .sort((a, b) => a.name.localeCompare(b.name))
-    .map(role => ({ label: role.name, value: role.sys.id }));
+    .map((role) => ({ label: role.name, value: role.sys.id }));
 
   return defaultRoleOptions(options, spaceId);
 };
@@ -53,7 +53,7 @@ function handleUpdatedSpaceFilter({ allSpaceRoles, filterDefs, updatedFilter }) 
     return { allSpaceRoles, filterDefs, updatedFilter };
   }
 
-  const roleFilterDef = filterDefs.find(f => f.id === 'spaceRole');
+  const roleFilterDef = filterDefs.find((f) => f.id === 'spaceRole');
   const roleFilterKeyIsAdmin = SPACE_ROLE_FILTER_ADMIN_KEYS.includes(roleFilterDef.filter.key);
   const updatedFilterHasValue = updatedFilter.value !== '';
 
@@ -85,8 +85,11 @@ function handleUpdatedSpaceFilter({ allSpaceRoles, filterDefs, updatedFilter }) 
   if (updatedFilterHasValue && !roleFilterKeyIsAdmin) {
     roleFilterDef.filter.key = 'sys.spaceMemberships.roles.sys.id';
 
-    const selectedOption = find(roleFilterDef.options, o => o.value === roleFilterDef.filter.value);
-    const newRoleOption = find(roleFilterOptions, o => o.label === selectedOption.label);
+    const selectedOption = find(
+      roleFilterDef.options,
+      (o) => o.value === roleFilterDef.filter.value
+    );
+    const newRoleOption = find(roleFilterOptions, (o) => o.label === selectedOption.label);
 
     roleFilterDef.filter.value = newRoleOption ? newRoleOption.value : '';
   }
@@ -111,7 +114,7 @@ function handleUpdatedSpaceFilter({ allSpaceRoles, filterDefs, updatedFilter }) 
   if (!updatedFilterHasValue && !roleFilterKeyIsAdmin) {
     roleFilterDef.filter.key = 'sys.spaceMemberships.roles.name';
 
-    const roleFilterRole = allSpaceRoles.find(r => r.sys.id === roleFilterDef.filter.value);
+    const roleFilterRole = allSpaceRoles.find((r) => r.sys.id === roleFilterDef.filter.value);
     roleFilterDef.filter.value = roleFilterRole ? roleFilterRole.name : '';
   }
 
@@ -125,14 +128,14 @@ function handleUpdatedRoleFilter({ allSpaceRoles, filterDefs, updatedFilter }) {
     return { allSpaceRoles, filterDefs, updatedFilter };
   }
 
-  const roleFilterDef = filterDefs.find(f => f.id === 'spaceRole');
-  const spaceFilterDef = filterDefs.find(f => f.id === 'space');
+  const roleFilterDef = filterDefs.find((f) => f.id === 'spaceRole');
+  const spaceFilterDef = filterDefs.find((f) => f.id === 'space');
 
   const spaceFilterDefHasValue = spaceFilterDef.filter.value !== '';
 
   let roleFilterUpdatedToAdmin = false;
 
-  const option = roleFilterDef.options.find(o => o.value === updatedFilter.value);
+  const option = roleFilterDef.options.find((o) => o.value === updatedFilter.value);
 
   if (option.label === 'Admin') {
     roleFilterUpdatedToAdmin = true;
@@ -186,7 +189,7 @@ function handleUpdatedRoleFilter({ allSpaceRoles, filterDefs, updatedFilter }) {
 function update({ filterDefs, updatedFilter }) {
   const roleFilterUpdated = SPACE_ROLE_FILTER_KEYS.includes(updatedFilter.key);
 
-  return filterDefs.map(def => {
+  return filterDefs.map((def) => {
     // spaceRole filter definition has 4 possible keys
     if (roleFilterUpdated && def.id === 'spaceRole') {
       def.filter = updatedFilter;

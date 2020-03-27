@@ -14,6 +14,6 @@ const ScreenHeader = ({ title, subtitle, children }) => {
 ScreenHeader.propTypes = {
   title: PropTypes.node.isRequired,
   subtitle: PropTypes.node.isRequired,
-  children: PropTypes.node
+  children: PropTypes.node,
 };
 export default ScreenHeader;

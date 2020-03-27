@@ -41,17 +41,17 @@ export function enrichTemplate(templateInfo, template) {
 function enrichTEA(template) {
   return {
     ...template,
-    contentTypes: template.contentTypes.map(contentType => {
+    contentTypes: template.contentTypes.map((contentType) => {
       const contentTypeConfig = teaConfig.contentTypes[contentType.sys.id];
       return {
         ...contentType,
         description: contentTypeConfig.description,
-        fields: contentType.fields.map(field => ({
+        fields: contentType.fields.map((field) => ({
           ...field,
-          validations: contentTypeConfig.validations[field.id] || []
-        }))
+          validations: contentTypeConfig.validations[field.id] || [],
+        })),
       };
     }),
-    editorInterfaces: teaConfig.editorInterfaces
+    editorInterfaces: teaConfig.editorInterfaces,
   };
 }

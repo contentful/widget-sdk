@@ -14,13 +14,13 @@ describe('Asset List Controller', () => {
   function createAssets(n) {
     const assets = _.map(new Array(n), () => ({
       isDeleted: _.constant(false),
-      data: { fields: [] }
+      data: { fields: [] },
     }));
     Object.defineProperty(assets, 'total', { value: n });
     return assets;
   }
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     stubs = {
       archived: sinon.stub(),
       track: sinon.stub(),
@@ -33,29 +33,29 @@ describe('Asset List Controller', () => {
       process: sinon.stub(),
       getVersion: sinon.stub(),
       publish: sinon.stub(),
-      apiErrorHandler: sinon.stub()
+      apiErrorHandler: sinon.stub(),
     };
 
     this.system.set('services/logger', {
-      logError: stubs.logError
+      logError: stubs.logError,
     });
 
     this.system.set('app/common/ReloadNotification', {
       default: {
-        apiErrorHandler: stubs.apiErrorHandler
-      }
+        apiErrorHandler: stubs.apiErrorHandler,
+      },
     });
 
     this.system.set('services/Filestack', {
-      pickMultiple: stubs.pickMultiple
+      pickMultiple: stubs.pickMultiple,
     });
 
     this.system.set('utils/ResourceUtils', {
-      isLegacyOrganization: () => false
+      isLegacyOrganization: () => false,
     });
 
     this.system.set('services/localeStore', {
-      default: createLocaleStoreMock()
+      default: createLocaleStoreMock(),
     });
 
     ComponentLibrary = await this.system.import('@contentful/forma-36-react-components');
@@ -227,17 +227,17 @@ describe('Asset List Controller', () => {
   });
 
   describe('Api Errors', () => {
-    beforeEach(function() {
+    beforeEach(function () {
       stubs.getAssets.returns($q.reject({ statusCode: 500 }));
     });
 
-    it('should cause resetAssets to show an error message', function() {
+    it('should cause resetAssets to show an error message', function () {
       scope.searchController.resetAssets();
       scope.$apply();
       sinon.assert.called(stubs.apiErrorHandler);
     });
 
-    it('should cause loadMore to show an error message', function() {
+    it('should cause loadMore to show an error message', function () {
       scope.searchController.loadMore();
       scope.$apply();
       sinon.assert.called(stubs.apiErrorHandler);
@@ -350,7 +350,7 @@ describe('Asset List Controller', () => {
   });
 
   describe('creating multiple assets', () => {
-    beforeEach(function() {
+    beforeEach(function () {
       const files = [{ fileName: 'x.jpg' }, { fileName: 'y.png' }];
       scope.searchController.resetAssets = sinon.stub().resolves();
       spaceContext.space.createAsset = sinon.stub();
@@ -359,7 +359,7 @@ describe('Asset List Controller', () => {
       const entity = {
         process: stubs.process,
         getVersion: stubs.getVersion,
-        publish: stubs.publish
+        publish: stubs.publish,
       };
 
       spaceContext.space.createAsset
@@ -367,11 +367,7 @@ describe('Asset List Controller', () => {
         .returns($q.resolve(entity))
         .onCall(1)
         .returns($q.resolve(entity));
-      stubs.publish
-        .onCall(0)
-        .returns($q.resolve())
-        .onCall(1)
-        .returns($q.resolve());
+      stubs.publish.onCall(0).returns($q.resolve()).onCall(1).returns($q.resolve());
       stubs.process
         .onCall(0)
         .returns($q.resolve())
@@ -396,7 +392,7 @@ describe('Asset List Controller', () => {
   });
 
   describe('#showNoAssetsAdvice', () => {
-    beforeEach(function() {
+    beforeEach(function () {
       scope.context.view = {};
       this.assertShowNoAssetsAdvice = ({ total, term, searching, expected }) => {
         scope.searchController.paginator.setTotal(total);
@@ -406,19 +402,19 @@ describe('Asset List Controller', () => {
       };
     });
 
-    it('is true when there are no entries, no search term and not searching', function() {
+    it('is true when there are no entries, no search term and not searching', function () {
       this.assertShowNoAssetsAdvice({ total: 0, term: null, searching: false, expected: true });
     });
 
-    it('is false when there are entries', function() {
+    it('is false when there are entries', function () {
       this.assertShowNoAssetsAdvice({ total: 1, term: '', searching: false, expected: false });
     });
 
-    it('is false when there is a search term', function() {
+    it('is false when there is a search term', function () {
       this.assertShowNoAssetsAdvice({ total: 0, term: 'foo', searching: false, expected: false });
     });
 
-    it('is false when the view is loading', function() {
+    it('is false when the view is loading', function () {
       this.assertShowNoAssetsAdvice({ total: 0, term: '', searching: true, expected: false });
     });
   });

@@ -46,7 +46,7 @@ export function createUI({ createMountPoint = _createMountPoint } = {}) {
     destroy() {
       mountpoint.destroy();
       sandbox.remove();
-    }
+    },
   });
 }
 
@@ -95,13 +95,13 @@ export function createView(container) {
      */
     assertNotHasElement(...ids) {
       assertNotHasSelector(container, makeTestIdSelector(...ids));
-    }
+    },
   };
 }
 
 function makeTestIdSelector(...ids) {
   return ids
-    .map(id => {
+    .map((id) => {
       if (id.startsWith('.')) {
         return `[data-test-id$="${id}"]`;
       } else {
@@ -164,7 +164,7 @@ function createElement(container, selector) {
     assertHasText: bindEl(assertHasText),
     assertNonExistent() {
       assertNotHasSelector(container, selector);
-    }
+    },
   };
 
   // Bind a function that excepts an element as its first argument to

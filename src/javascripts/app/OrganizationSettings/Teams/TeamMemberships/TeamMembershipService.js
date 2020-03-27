@@ -15,7 +15,7 @@ export default function createTeamMembershipService(state) {
   return {
     getAll,
     create,
-    remove
+    remove,
   };
 
   function getAll() {
@@ -27,7 +27,7 @@ export default function createTeamMembershipService(state) {
       {
         method: 'POST',
         path: ['teams', teamId, 'team_memberships'],
-        data: { organizationMembershipId, admin }
+        data: { organizationMembershipId, admin },
       },
       alphaHeader
     );
@@ -37,7 +37,7 @@ export default function createTeamMembershipService(state) {
     return endpoint(
       {
         method: 'DELETE',
-        path: ['teams', teamId, 'team_memberships', teamMembershipId]
+        path: ['teams', teamId, 'team_memberships', teamMembershipId],
       },
       alphaHeader
     );

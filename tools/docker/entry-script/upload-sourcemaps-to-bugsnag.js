@@ -33,7 +33,7 @@ module.exports = async function uploadSourcemapsToBugsnag({ version }) {
           minifiedUrl: `*/app/${sourceFilename}`,
           minifiedFile: sourcePath,
           sourceMap: sourcemapPath,
-          overwrite: true
+          overwrite: true,
         }).then(() => {
           console.log(`Uploaded ${sourcemapFilename}`);
         })

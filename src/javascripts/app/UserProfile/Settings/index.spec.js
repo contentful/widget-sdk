@@ -4,14 +4,14 @@ import IndexPage from '.';
 import { fetchUserData } from './AccountRepository';
 
 jest.mock('./AccountRepository', () => ({
-  fetchUserData: jest.fn()
+  fetchUserData: jest.fn(),
 }));
 
 describe('IndexPage', () => {
-  const build = custom => {
+  const build = (custom) => {
     const props = Object.assign(
       {
-        title: 'User profile'
+        title: 'User profile',
       },
       custom
     );
@@ -19,14 +19,14 @@ describe('IndexPage', () => {
     return render(<IndexPage {...props} />);
   };
 
-  const createProfile = custom => {
+  const createProfile = (custom) => {
     return Object.assign(
       {
         passwordSet: true,
         userCancellationWarning: {
-          singleOwnerOrganizations: []
+          singleOwnerOrganizations: [],
         },
-        identities: []
+        identities: [],
       },
       custom
     );

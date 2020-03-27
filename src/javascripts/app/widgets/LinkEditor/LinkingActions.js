@@ -11,18 +11,18 @@ import { TYPES } from './Util';
 
 const TYPE_NAMES = {
   [TYPES.ENTRY]: 'entry',
-  [TYPES.ASSET]: 'asset'
+  [TYPES.ASSET]: 'asset',
 };
 
 export const labels = {
-  createAndLink: name => `Create new ${name} and link`,
-  linkExisting: name => `Link existing ${name}`
+  createAndLink: (name) => `Create new ${name} and link`,
+  linkExisting: (name) => `Link existing ${name}`,
 };
 
 export const testIds = {
   createAndLink: 'linkEditor.createAndLink',
   createAndLinkWrapper: 'create-entry-button-menu-trigger',
-  linkExisting: 'linkEditor.linkExisting'
+  linkExisting: 'linkEditor.linkExisting',
 };
 
 const styles = {
@@ -31,9 +31,9 @@ const styles = {
     alignItems: 'baseline',
     marginTop: tokens.spacingS,
     '> *:not(:first-child)': {
-      marginLeft: '20px'
-    }
-  })
+      marginLeft: '20px',
+    },
+  }),
 };
 
 const LinkingActions = ({
@@ -42,7 +42,7 @@ const LinkingActions = ({
   canCreateEntity,
   contentTypes,
   onCreateAndLink,
-  onLinkExisting
+  onLinkExisting,
 }) => {
   const typeName = TYPE_NAMES[type];
   const singleCtOrTypeName = contentTypes.length === 1 ? contentTypes[0].name : typeName;
@@ -54,7 +54,7 @@ const LinkingActions = ({
           text={labels.createAndLink(singleCtOrTypeName)}
           contentTypes={contentTypes}
           hasPlusIcon={true}
-          onSelect={contentType => onCreateAndLink(contentType)}
+          onSelect={(contentType) => onCreateAndLink(contentType)}
         />
       </Visible>
       <Visible if={type === TYPES.ASSET && canCreateEntity}>
@@ -84,13 +84,13 @@ LinkingActions.propTypes = {
   canCreateEntity: PropTypes.bool.isRequired,
   contentTypes: PropTypes.arrayOf(PropTypes.object),
   onCreateAndLink: PropTypes.func,
-  onLinkExisting: PropTypes.func
+  onLinkExisting: PropTypes.func,
 };
 
 LinkingActions.defaultProps = {
   contentTypes: [],
   onCreateAndLink: noop,
-  onLinkExisting: noop
+  onLinkExisting: noop,
 };
 
 export default LinkingActions;

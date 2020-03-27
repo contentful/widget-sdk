@@ -13,7 +13,7 @@ describe('Response Cache', () => {
   const asset = { sys: { id: 'aid', type: 'Asset' } };
   const newEnforcementsAvailable = {
     reasonsDenied: () => ['reason'],
-    deniedEntities: ['Entry']
+    deniedEntities: ['Entry'],
   };
 
   let canMock;

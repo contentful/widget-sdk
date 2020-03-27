@@ -10,7 +10,7 @@ describe('Contentful Client', () => {
     client = newClient({
       host: 'api.contentful.com',
       space: 'spaceid',
-      accessToken: 'access_token'
+      accessToken: 'access_token',
     });
   });
 

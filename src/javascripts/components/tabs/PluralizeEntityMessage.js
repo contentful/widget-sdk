@@ -20,5 +20,5 @@ export default function PluralizeEntityMessage({ entityType, count, restOfTheMsg
 PluralizeEntityMessage.propTypes = {
   entityType: PropTypes.string,
   count: PropTypes.number,
-  restOfTheMsg: PropTypes.string
+  restOfTheMsg: PropTypes.string,
 };

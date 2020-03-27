@@ -7,8 +7,8 @@ import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer';
 
 const styles = {
   installationNote: css({
-    margin: tokens.spacingM
-  })
+    margin: tokens.spacingM,
+  }),
 };
 
 export default class CustomEditorExtensionRenderer extends React.Component {
@@ -18,9 +18,9 @@ export default class CustomEditorExtensionRenderer extends React.Component {
       widgetNamespace: PropTypes.string.isRequired,
       problem: PropTypes.string,
       descriptor: PropTypes.object,
-      parameters: PropTypes.object
+      parameters: PropTypes.object,
     }).isRequired,
-    bridge: PropTypes.object.isRequired
+    bridge: PropTypes.object.isRequired,
   };
 
   render() {

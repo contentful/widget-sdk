@@ -8,7 +8,7 @@ import {
   TableCell,
   TableBody,
   TableRow,
-  Button
+  Button,
 } from '@contentful/forma-36-react-components';
 import getMembershipsOfCurrentTeamToDisplay from 'redux/selectors/teamMemberships/getMembershipsOfCurrentTeamToDisplay';
 import { getCurrentTeam, getTeams, hasReadOnlyPermission } from 'redux/selectors/teams';
@@ -29,7 +29,7 @@ const AddTeamMemberButton = ({ onClick }) => (
 );
 
 AddTeamMemberButton.propTypes = {
-  onClick: PropTypes.func
+  onClick: PropTypes.func,
 };
 
 const isPlaceholder = ({ sys: { id } }) => id === 'placeholder';
@@ -40,7 +40,7 @@ class TeamMemberships extends React.Component {
     onFormDismissed: PropTypes.func.isRequired,
     readOnlyPermission: PropTypes.bool,
     memberships: PropTypes.arrayOf(TeamMembershipPropType),
-    teamName: PropTypes.string
+    teamName: PropTypes.string,
   };
 
   render() {
@@ -77,8 +77,8 @@ class TeamMemberships extends React.Component {
   }
 }
 
-export default connect(state => ({
+export default connect((state) => ({
   memberships: getMembershipsOfCurrentTeamToDisplay(state),
   teamName: get(getTeams(state), [getCurrentTeam(state), 'name'], undefined),
-  readOnlyPermission: hasReadOnlyPermission(state)
+  readOnlyPermission: hasReadOnlyPermission(state),
 }))(TeamMemberships);

@@ -5,14 +5,14 @@ export default base({
   name: 'home',
   url: '/home',
   resolve: {
-    space: spaceResolver
+    space: spaceResolver,
   },
   // todo: use component directly
   template: `<react-component name="app/home/SpaceHomePage" props="{spaceTemplateCreated: spaceTemplateCreated, orgId: orgId, orgOwnerOrAdmin: orgOwnerOrAdmin}"></react-component>`,
   loadingText: 'Loading…',
   controller: [
     '$scope',
-    $scope => {
+    ($scope) => {
       $scope.context.ready = true;
       // This listener is triggered on completion of The Example Space creation
       $scope.$on('spaceTemplateCreated', () => {
@@ -20,6 +20,6 @@ export default base({
         // this triggers re-fetch of data and updates space home view
         $scope.spaceTemplateCreated = true;
       });
-    }
-  ]
+    },
+  ],
 });

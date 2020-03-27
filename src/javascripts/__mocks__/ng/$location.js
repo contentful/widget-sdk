@@ -1,3 +1,3 @@
 export default {
-  search: jest.fn()
+  search: jest.fn(),
 };

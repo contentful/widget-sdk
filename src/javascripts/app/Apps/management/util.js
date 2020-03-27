@@ -5,7 +5,7 @@ import { create as createSpaceEnvRepo } from 'data/CMA/SpaceEnvironmentsRepo';
 export async function getOrgSpacesFor(orgId) {
   const spaces = await getSpaces();
 
-  return spaces.filter(s => s.organization.sys.id === orgId);
+  return spaces.filter((s) => s.organization.sys.id === orgId);
 }
 
 export async function getEnvsFor(spaceId) {

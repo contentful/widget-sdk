@@ -21,18 +21,18 @@ export function createNavigatorApi({ cma }) {
         ...opts,
         entityType: 'Entry',
         id: null,
-        contentTypeId
+        contentTypeId,
       });
     },
     openAsset: (id, opts) => {
       return navigateToContentEntity({ ...opts, entityType: 'Asset', id });
     },
-    openNewAsset: opts => {
+    openNewAsset: (opts) => {
       return navigateToContentEntity({ ...opts, entityType: 'Asset', id: null });
     },
     openPageExtension: () => {
       throw new Error('Not implemented yet');
     },
-    onSlideInNavigation
+    onSlideInNavigation,
   };
 }

@@ -10,7 +10,7 @@ import { css } from 'emotion';
 import {
   Filter as FilterPropType,
   Space as SpacePropType,
-  SpaceRole as SpaceRolePropType
+  SpaceRole as SpaceRolePropType,
 } from 'app/OrganizationSettings/PropTypes';
 import SearchFilter from './SearchFilter';
 
@@ -18,25 +18,25 @@ const styles = {
   header: css({
     display: 'flex',
     justifyContent: 'space-between',
-    color: '#8091a5'
+    color: '#8091a5',
   }),
   sort: css({
     display: 'flex',
     flexGrow: '1',
     marginBottom: '30px',
-    minWidth: '165px'
+    minWidth: '165px',
   }),
   filters: css({
     display: 'flex',
     flexWrap: 'wrap',
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
   }),
   subheader: css({
     color: '#8091a5',
     display: 'flex',
     justifyContent: 'space-between',
-    marginBottom: '10px'
-  })
+    marginBottom: '10px',
+  }),
 };
 
 export class UserListFilters extends React.Component {
@@ -46,23 +46,23 @@ export class UserListFilters extends React.Component {
     spaceRoles: PropTypes.arrayOf(SpaceRolePropType),
     queryTotal: PropTypes.number.isRequired,
     onChange: PropTypes.func.isRequired,
-    onReset: PropTypes.func.isRequired
+    onReset: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
     filters: [],
     spaces: [],
-    spaceRoles: []
+    spaceRoles: [],
   };
 
-  updateFilters = updatedFilter => {
+  updateFilters = (updatedFilter) => {
     const { spaceRoles, filters } = this.props;
     const newFilterDefs = updateDependentFilterDefs(spaceRoles, filters, updatedFilter);
     this.props.onChange(newFilterDefs);
   };
 
   hasActiveFilters(filters) {
-    return filters.some(item => {
+    return filters.some((item) => {
       const value = item.filter.value;
       return !isNil(value) && value !== '';
     });
@@ -81,7 +81,7 @@ export class UserListFilters extends React.Component {
             <SearchFilter key={order.id} {...order} onChange={this.updateFilters} />
           </section>
           <section className={styles.filters}>
-            {Object.values(otherFilters).map(filter => (
+            {Object.values(otherFilters).map((filter) => (
               <SearchFilter key={filter.id} {...filter} onChange={this.updateFilters} />
             ))}
           </section>
@@ -95,10 +95,7 @@ export class UserListFilters extends React.Component {
   }
 }
 
-export default connect(
-  null,
-  dispatch => ({
-    onChange: newFilters => dispatch({ type: 'CHANGE_FILTERS', payload: { newFilters } }),
-    onReset: () => dispatch({ type: 'RESET_FILTERS' })
-  })
-)(UserListFilters);
+export default connect(null, (dispatch) => ({
+  onChange: (newFilters) => dispatch({ type: 'CHANGE_FILTERS', payload: { newFilters } }),
+  onReset: () => dispatch({ type: 'RESET_FILTERS' }),
+}))(UserListFilters);

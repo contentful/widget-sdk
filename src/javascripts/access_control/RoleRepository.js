@@ -5,7 +5,7 @@ const AVAILABLE_PERMISSIONS = {
   ContentDelivery: ['read', 'manage'],
   Settings: ['manage'],
   Environments: ['manage'],
-  EnvironmentAliases: ['manage']
+  EnvironmentAliases: ['manage'],
 };
 
 const PERMISSION_GROUP_NAME_MAP = {
@@ -13,7 +13,7 @@ const PERMISSION_GROUP_NAME_MAP = {
   ContentDelivery: 'contentDelivery',
   Settings: 'settings',
   Environments: 'environments',
-  EnvironmentAliases: 'environmentAliases'
+  EnvironmentAliases: 'environmentAliases',
 };
 
 export function getInstance(space) {
@@ -22,33 +22,28 @@ export function getInstance(space) {
     get,
     create,
     save,
-    remove
+    remove,
   };
 
   function getAll() {
     return getBaseCall()
       .payload({ limit: 100 })
       .get()
-      .then(res => res.items);
+      .then((res) => res.items);
   }
 
   function get(id) {
-    return getBaseCall({ id })
-      .get()
-      .then(handleRole);
+    return getBaseCall({ id }).get().then(handleRole);
   }
 
   function create(role) {
-    return getBaseCall()
-      .payload(map(role))
-      .post()
-      .then(handleRole);
+    return getBaseCall().payload(map(role)).post().then(handleRole);
   }
 
   function save(role) {
     return getBaseCall({
       id: role.sys.id,
-      version: role.sys.version
+      version: role.sys.version,
     })
       .payload(map(role))
       .put()
@@ -58,7 +53,7 @@ export function getInstance(space) {
   function remove(role) {
     return getBaseCall({
       id: role.sys.id,
-      rejectEmpty: false
+      rejectEmpty: false,
     }).delete();
   }
 
@@ -82,8 +77,8 @@ export function getEmpty() {
       ContentDelivery: [],
       Settings: [],
       Environments: [],
-      EnvironmentAliases: []
-    }
+      EnvironmentAliases: [],
+    },
   });
 }
 
@@ -152,5 +147,5 @@ function flattenPermissions(permissions) {
 
 export default {
   getInstance,
-  getEmpty
+  getEmpty,
 };

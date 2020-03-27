@@ -36,7 +36,7 @@ export default function register() {
       // end TODO
 
       $scope.preferences = {
-        showDisabledFields: false
+        showDisabledFields: false,
       };
 
       $scope.appReady = false;
@@ -46,7 +46,7 @@ export default function register() {
         // We do this once
         store.dispatch({
           type: 'LOCATION_CHANGED',
-          payload: { location: pickSerializable(window.location) }
+          payload: { location: pickSerializable(window.location) },
         });
 
         $scope.$watchCollection(
@@ -54,7 +54,7 @@ export default function register() {
             tokenLookup: TokenStore.getTokenLookup(),
             space: spaceContext.space,
             enforcements: EnforcementsService.getEnforcements(spaceContext.getId()),
-            environmentId: spaceContext.getEnvironmentId()
+            environmentId: spaceContext.getEnvironmentId(),
           }),
           spaceAndTokenWatchHandler
         );
@@ -62,16 +62,16 @@ export default function register() {
         // Wait for the app to be ready, via `appReady` from NgRegistry.
         //
         // See prelude.js and AngularInit.js.
-        $scope.$watch(appReady, ready => {
+        $scope.$watch(appReady, (ready) => {
           $scope.appReady = ready;
         });
 
         onValueScope($scope, TokenStore.user$, handleUser);
 
-        $rootScope.$on('$locationChangeSuccess', function() {
+        $rootScope.$on('$locationChangeSuccess', function () {
           store.dispatch({
             type: 'LOCATION_CHANGED',
-            payload: { location: pickSerializable(window.location) }
+            payload: { location: pickSerializable(window.location) },
           });
 
           if (shouldCheckUsageForCurrentLocation()) {
@@ -79,7 +79,7 @@ export default function register() {
               tokenLookup: TokenStore.getTokenLookup(),
               space: spaceContext.space,
               enforcements: EnforcementsService.getEnforcements(spaceContext.getId()),
-              environmentId: spaceContext.getEnvironmentId()
+              environmentId: spaceContext.getEnvironmentId(),
             });
           }
         });
@@ -97,7 +97,7 @@ export default function register() {
           'pathname',
           'port',
           'protocol',
-          'search'
+          'search',
         ]);
       }
 
@@ -105,7 +105,7 @@ export default function register() {
         tokenLookup,
         space,
         enforcements,
-        environmentId
+        environmentId,
       }) {
         if (!tokenLookup) {
           return;
@@ -200,7 +200,7 @@ export default function register() {
           { default: authorization },
           EntityFieldValueSpaceContext,
           { ENVIRONMENT_ALIAS_CHANGED_EVENT },
-          { default: initEnvAliasChangeHandler }
+          { default: initEnvAliasChangeHandler },
         ] = await Promise.all([
           import(/* webpackMode: "eager" */ 'analytics/isAnalyticsAllowed'),
           import(/* webpackMode: "eager" */ 'services/logger'),
@@ -217,7 +217,7 @@ export default function register() {
           import(/* webpackMode: "eager" */ 'services/PubSubService'),
           import(
             /* webpackMode: "eager" */ 'app/SpaceSettings/EnvironmentAliases/NotificationsService'
-          )
+          ),
         ]);
 
         refreshNavState = NavState.makeStateRefresher($state, spaceContext);
@@ -225,6 +225,6 @@ export default function register() {
         $scope.showCreateSpaceDialog = CreateSpace.showDialog;
         $scope.EntityFieldValueSpaceContext = EntityFieldValueSpaceContext;
       }
-    }
+    },
   ]);
 }

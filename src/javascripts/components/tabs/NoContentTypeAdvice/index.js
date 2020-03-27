@@ -1,7 +1,7 @@
 import React from 'react';
 import { Heading, Paragraph, TextLink, Button } from '@contentful/forma-36-react-components';
 import EmptyStateContainer, {
-  defaultSVGStyle
+  defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import ContentTypeIllustration from 'svg/illustrations/connected-forms-illustration.svg';
 import StateLink from 'app/common/StateLink';

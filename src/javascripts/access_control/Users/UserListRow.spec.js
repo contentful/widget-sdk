@@ -18,14 +18,14 @@ describe('User List Row', () => {
   const fakeSpaceRoleOne = fake.SpaceRole('Role 1');
   const fakeSpaceRoleTwo = fake.SpaceRole('Role 2');
   const oneRoleSpaceMembership = fake.SpaceMembership(defaultSpace, defaultUser, false, [
-    fakeSpaceRoleOne
+    fakeSpaceRoleOne,
   ]);
   const twoRoleSpaceMembership = fake.SpaceMembership(defaultSpace, defaultUser, false, [
     fakeSpaceRoleOne,
-    fakeSpaceRoleTwo
+    fakeSpaceRoleTwo,
   ]);
 
-  const build = custom => {
+  const build = (custom) => {
     const props = Object.assign(
       {
         member: defaultSpaceMembership,
@@ -33,7 +33,7 @@ describe('User List Row', () => {
         openRoleChangeDialog: openRoleChangeDialog,
         openRemovalConfirmationDialog: openRemovalConfirmationDialog,
         numberOfTeamMemberships: { 'random id': 4 },
-        adminCount: 1
+        adminCount: 1,
       },
       custom
     );

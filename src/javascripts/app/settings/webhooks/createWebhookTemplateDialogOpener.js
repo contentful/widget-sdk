@@ -6,12 +6,12 @@ import ModalLauncher from 'app/common/ModalLauncher';
 import * as WebhookEditorActions from './WebhookEditorActions';
 import WebhookTemplateDialog from './WebhookTemplateDialog';
 
-const isNonEmptyString = s => typeof s === 'string' && s.length > 0;
+const isNonEmptyString = (s) => typeof s === 'string' && s.length > 0;
 
 export default function createWebhookTemplateDialogOpener(config) {
   const { contentTypes, defaultLocaleCode, domain, hasAwsProxy } = config;
 
-  const validTemplateIds = Templates.map(template => template.id);
+  const validTemplateIds = Templates.map((template) => template.id);
   const templateContentTypes = prepareContentTypesForTemplates(
     contentTypes,
     defaultLocaleCode,
@@ -30,16 +30,16 @@ export default function createWebhookTemplateDialogOpener(config) {
         hasAwsProxy={hasAwsProxy}
         onCreate={(webhooks, templateId) =>
           Promise.all(
-            webhooks.map(webhook => {
+            webhooks.map((webhook) => {
               return WebhookEditorActions.save(webhook, templateId, templateIdReferrer);
             })
-          ).then(webhooks => {
+          ).then((webhooks) => {
             onClose();
             Navigator.go({
               path: ['^.detail'],
               params: {
-                webhookId: get(webhooks, '[0].sys.id')
-              }
+                webhookId: get(webhooks, '[0].sys.id'),
+              },
             });
             return webhooks;
           })
@@ -51,19 +51,19 @@ export default function createWebhookTemplateDialogOpener(config) {
 
 function prepareContentTypesForTemplates(contentTypes, defaultLocaleCode, domain) {
   return contentTypes
-    .filter(ct => isNonEmptyString(ct.displayField))
-    .map(ct => {
-      const displayField = ct.fields.find(f => f.id === ct.displayField);
+    .filter((ct) => isNonEmptyString(ct.displayField))
+    .map((ct) => {
+      const displayField = ct.fields.find((f) => f.id === ct.displayField);
       return {
         id: ct.sys.id,
         name: ct.name,
-        displayFieldId: displayField && displayField.apiName
+        displayFieldId: displayField && displayField.apiName,
       };
     })
-    .filter(ct => isNonEmptyString(ct.displayFieldId))
-    .map(ct => ({
+    .filter((ct) => isNonEmptyString(ct.displayFieldId))
+    .map((ct) => ({
       ...ct,
       titlePointer: `/payload/fields/${ct.displayFieldId}/${defaultLocaleCode}`,
-      appUrlPointers: `https://app.${domain}/spaces/{ /payload/sys/space/sys/id }/entries/{ /payload/sys/id }`
+      appUrlPointers: `https://app.${domain}/spaces/{ /payload/sys/space/sys/id }/entries/{ /payload/sys/id }`,
     }));
 }

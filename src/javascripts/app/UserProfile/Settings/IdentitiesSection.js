@@ -8,7 +8,7 @@ import {
   Tooltip,
   ModalConfirm,
   Paragraph,
-  Notification
+  Notification,
 } from '@contentful/forma-36-react-components';
 import { oauthUrl } from 'Config';
 import GithubIcon from 'svg/github-icon.svg';
@@ -20,11 +20,11 @@ const styles = {
   heading: css({
     fontSize: tokens.fontSizeL,
     fontWeight: tokens.fontWeightMedium,
-    marginTop: tokens.spacingL
+    marginTop: tokens.spacingL,
   }),
   identitiesRow: css({
     display: 'flex',
-    marginTop: tokens.spacingS
+    marginTop: tokens.spacingS,
   }),
   identityItem: css({
     width: '135px',
@@ -34,14 +34,14 @@ const styles = {
     svg: {
       position: 'absolute',
       top: '8px',
-      left: '27px'
-    }
+      left: '27px',
+    },
   }),
   providerName: css({
     fontSize: tokens.fontSizeM,
     position: 'absolute',
     top: '11px',
-    left: '60px'
+    left: '60px',
   }),
   identityInput: css({
     border: 'none',
@@ -50,44 +50,45 @@ const styles = {
     backgroundColor: 'rgba(255, 255, 255, 0)',
     height: '100%',
     width: '100%',
-    paddingLeft: '42px'
+    paddingLeft: '42px',
   }),
   cursorPointer: css({
-    cursor: 'pointer'
+    cursor: 'pointer',
   }),
   github: css({
     border: `1px solid #ADADAD`,
     color: tokens.colorTextDark,
     'input[type="submit"]': {
-      color: tokens.colorTextDark
-    }
+      color: tokens.colorTextDark,
+    },
   }),
   google_oauth2: css({
     border: `1px solid #E5ADA3`,
     color: tokens.colorRedDark,
     'input[type="submit"]': {
-      color: tokens.colorRedDark
-    }
+      color: tokens.colorRedDark,
+    },
   }),
   twitter: css({
     border: `1px solid #A8CFF1`,
     color: tokens.colorBlueDark,
     'input[type="submit"]': {
-      color: tokens.colorBlueDark
-    }
+      color: tokens.colorBlueDark,
+    },
   }),
-  tooltipTargetWrapper: css({ display: 'flex' })
+  tooltipTargetWrapper: css({ display: 'flex' }),
 };
 
 const idpMap = {
   google_oauth2: 'Google',
   github: 'Github',
-  twitter: 'Twitter'
+  twitter: 'Twitter',
 };
 
 const IdentitiesSection = ({ userHasPassword, identities, onRemoveIdentity }) => {
   const availableProviders = Object.keys(idpMap).filter(
-    providerName => !identities.find(({ provider: usedProvider }) => providerName === usedProvider)
+    (providerName) =>
+      !identities.find(({ provider: usedProvider }) => providerName === usedProvider)
   );
 
   return (
@@ -112,7 +113,7 @@ const IdentitiesSection = ({ userHasPassword, identities, onRemoveIdentity }) =>
         <>
           <Heading className={styles.heading}>Available open identities:</Heading>
           <div className={styles.identitiesRow}>
-            {availableProviders.map(provider => {
+            {availableProviders.map((provider) => {
               return <AddIdentityProvider key={provider} provider={provider} />;
             })}
           </div>
@@ -124,7 +125,7 @@ const IdentitiesSection = ({ userHasPassword, identities, onRemoveIdentity }) =>
 IdentitiesSection.propTypes = {
   identities: PropTypes.array,
   onRemoveIdentity: PropTypes.func.isRequired,
-  userHasPassword: PropTypes.bool.isRequired
+  userHasPassword: PropTypes.bool.isRequired,
 };
 
 export default IdentitiesSection;
@@ -134,7 +135,7 @@ function RemoveIdentityProvider({ onRemove, identityId, provider, disallowRemova
 
   const [isModalShown, setModalShown] = useState(false);
 
-  const removeIdentity = async identityId => {
+  const removeIdentity = async (identityId) => {
     // identityIds are, weirdly, numbers, so they must be cast to string before making
     // the API call
     try {
@@ -165,7 +166,7 @@ function RemoveIdentityProvider({ onRemove, identityId, provider, disallowRemova
             targetWrapperClassName={styles.tooltipTargetWrapper}>
             <IconButton
               iconProps={{
-                icon: 'Close'
+                icon: 'Close',
               }}
               label={`Remove "${humanName}"`}
               buttonType="secondary"
@@ -204,7 +205,7 @@ RemoveIdentityProvider.propTypes = {
   identityId: PropTypes.number.isRequired,
   provider: PropTypes.string.isRequired,
   onRemove: PropTypes.func.isRequired,
-  disallowRemoval: PropTypes.bool.isRequired
+  disallowRemoval: PropTypes.bool.isRequired,
 };
 
 function AddIdentityProvider({ provider }) {
@@ -229,7 +230,7 @@ function AddIdentityProvider({ provider }) {
 }
 
 AddIdentityProvider.propTypes = {
-  provider: PropTypes.string.isRequired
+  provider: PropTypes.string.isRequired,
 };
 
 function IdentityIcon({ provider }) {
@@ -246,5 +247,5 @@ function IdentityIcon({ provider }) {
 }
 
 IdentityIcon.propTypes = {
-  provider: PropTypes.oneOf(['github', 'google_oauth2', 'twitter']).isRequired
+  provider: PropTypes.oneOf(['github', 'google_oauth2', 'twitter']).isRequired,
 };

@@ -9,31 +9,31 @@ import { mount } from 'enzyme';
 describe('Navigation', () => {
   let Navigation, goStub;
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     goStub = sinon.spy();
 
     this.system.set('components/shared/auto_create_new_space/CreateModernOnboarding', {
       track: () => {},
       getStoragePrefix: sinon.stub().returns('prefix'),
-      isOnboardingComplete: sinon.stub().returns(false)
+      isOnboardingComplete: sinon.stub().returns(false),
     });
 
     this.system.set('services/TokenStore', {
-      user$: K.createMockProperty({ sys: { id: 1 } })
+      user$: K.createMockProperty({ sys: { id: 1 } }),
     });
 
-    Navigation = (await this.system.import(
-      'components/shared/stack-onboarding/components/Navigation'
-    )).default;
+    Navigation = (
+      await this.system.import('components/shared/stack-onboarding/components/Navigation')
+    ).default;
 
-    await $initialize(this.system, $provide => {
+    await $initialize(this.system, ($provide) => {
       $provide.value('$state', {
-        go: goStub
+        go: goStub,
       });
     });
   });
 
-  afterEach(function() {
+  afterEach(function () {
     Navigation = goStub = null;
   });
 
@@ -46,20 +46,14 @@ describe('Navigation', () => {
 
   it('should call $state.go after clicking on the link', () => {
     const wrapper = mount(<Navigation active={2} />);
-    wrapper
-      .find('.modern-stack-onboarding--navigation-circle__active')
-      .first()
-      .simulate('click');
+    wrapper.find('.modern-stack-onboarding--navigation-circle__active').first().simulate('click');
 
     expect(goStub.calledOnce).toBe(true);
   });
 
   it('should not call $state.go after click on the next step', () => {
     const wrapper = mount(<Navigation active={2} />);
-    wrapper
-      .find('.modern-stack-onboarding--navigation-circle')
-      .last()
-      .simulate('click');
+    wrapper.find('.modern-stack-onboarding--navigation-circle').last().simulate('click');
     expect(goStub.notCalled).toBe(true);
   });
 });

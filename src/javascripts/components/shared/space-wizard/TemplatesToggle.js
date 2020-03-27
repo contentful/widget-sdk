@@ -7,7 +7,7 @@ class TemplatesToggle extends React.Component {
   static propTypes = {
     isShowingTemplates: PropTypes.bool.isRequired,
     onChange: PropTypes.func.isRequired,
-    formAlign: PropTypes.oneOf(['left', 'center'])
+    formAlign: PropTypes.oneOf(['left', 'center']),
   };
 
   render() {
@@ -15,7 +15,7 @@ class TemplatesToggle extends React.Component {
     return (
       <div
         className={classnames('cfnext-form__field create-new-space__form__radios', {
-          'create-space-wizard__centered-block': !formAlign || formAlign === 'center'
+          'create-space-wizard__centered-block': !formAlign || formAlign === 'center',
         })}>
         <div className="cfnext-form-option create-new-space__form__option">
           <input

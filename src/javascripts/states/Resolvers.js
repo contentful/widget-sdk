@@ -11,5 +11,5 @@ export const spaceResolver = [
     deferred.resolve(space);
 
     return deferred.promise;
-  }
+  },
 ];

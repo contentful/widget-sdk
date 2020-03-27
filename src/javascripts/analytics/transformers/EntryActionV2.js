@@ -1,7 +1,7 @@
 import EntityAction from './EntityAction';
 import { get, upperFirst } from 'lodash';
 
-export default function(eventName, eventData) {
+export default function (eventName, eventData) {
   const [downcaseEntity, action] = eventName.split(':');
   const entity = upperFirst(downcaseEntity);
   const fullEventData = { ...eventData, actionData: { entity, action } };
@@ -46,6 +46,6 @@ function getBaseData(eventData) {
   return {
     executing_user_id: eventData.userId,
     organization_id: eventData.organizationId,
-    space_id: eventData.spaceId
+    space_id: eventData.spaceId,
   };
 }

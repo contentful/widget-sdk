@@ -3,7 +3,7 @@ import worf from '@contentful/worf';
 
 jest.mock('@contentful/worf', () => jest.fn());
 jest.mock('access_control/AccessChecker', () => ({
-  setAuthContext: jest.fn()
+  setAuthContext: jest.fn(),
 }));
 
 describe('Authorization service', () => {
@@ -61,7 +61,7 @@ describe('Authorization service', () => {
       expect(authorization.spaceContext).toBeNull();
     });
 
-    it('patches the token with enforcements data', function() {
+    it('patches the token with enforcements data', function () {
       const worfToken = worf.mock.calls[0][0];
 
       expect(worfToken.spaces[0].enforcements).toEqual(enforcements);

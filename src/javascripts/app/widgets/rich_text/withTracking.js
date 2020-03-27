@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import * as logger from 'services/logger';
 import * as Analytics from 'analytics/Analytics';
 
-const getCountOrNull = count => (typeof count === 'number' ? count : null);
+const getCountOrNull = (count) => (typeof count === 'number' ? count : null);
 
 /**
  * HOC for rich text editor to add CF web-app specific actions tracking.
@@ -23,21 +23,21 @@ export default function withTracking(Component) {
     static propTypes = {
       widgetAPI: PropTypes.shape({
         entry: PropTypes.shape({
-          getSys: PropTypes.func.isRequired
+          getSys: PropTypes.func.isRequired,
         }).isRequired,
         field: PropTypes.shape({
           id: PropTypes.string.isRequired,
-          locale: PropTypes.string.isRequired
-        }).isRequired
+          locale: PropTypes.string.isRequired,
+        }).isRequired,
       }).isRequired,
       loadEvents: PropTypes.shape({
-        emit: PropTypes.func.isRequired
+        emit: PropTypes.func.isRequired,
       }),
-      onAction: PropTypes.func
+      onAction: PropTypes.func,
     };
 
     static defaultProps = {
-      onAction: () => {}
+      onAction: () => {},
     };
 
     handleTracking(name, { origin, ...data }) {
@@ -53,8 +53,8 @@ export default function withTracking(Component) {
           data: {
             trackingActionName: actionName,
             originalActionName: name,
-            originalActionData: { origin, ...data }
-          }
+            originalActionData: { origin, ...data },
+          },
         });
       }
     }
@@ -84,7 +84,7 @@ export default function withTracking(Component) {
         characterCountBefore: getCountOrNull(data.characterCountBefore),
         characterCountAfter: getCountOrNull(data.characterCountAfter),
         characterCountSelection: getCountOrNull(data.characterCountSelection),
-        additionalData: data
+        additionalData: data,
       });
     }
 
@@ -119,7 +119,7 @@ const NODES = [
   'UnorderedList',
   'OrderedList',
   'Hr',
-  'Paragraph'
+  'Paragraph',
 ];
 const DIALOGS = [
   'CreateHyperlinkDialog',
@@ -127,7 +127,7 @@ const DIALOGS = [
   'CreateEmbedDialogEmbeddedEntryInline',
   'CreateEmbedDialogEmbeddedEntryBlock',
   'CreateEmbedDialogEmbeddedAssetBlock',
-  'RichTextCommandsPalette'
+  'RichTextCommandsPalette',
 ];
 const DICTIONARY = {
   mark: [...MARKS],
@@ -136,15 +136,15 @@ const DICTIONARY = {
   remove: without(NODES, ...HYPERLINKS, ...EMBEDS, 'Hr', 'Paragraph'),
   edit: [...HYPERLINKS],
   unlink: [
-    'Hyperlinks' // Plural! Removes ALL hyperlinks, so not type specific.
+    'Hyperlinks', // Plural! Removes ALL hyperlinks, so not type specific.
   ],
   open: [...DIALOGS],
-  cancel: [...DIALOGS]
+  cancel: [...DIALOGS],
 };
 const OTHER_ACTIONS = ['paste'];
 const ALLOWED_EVENTS = reduce(
   DICTIONARY,
-  (result, names, category) => [...result, ...names.map(name => category + name)],
+  (result, names, category) => [...result, ...names.map((name) => category + name)],
   OTHER_ACTIONS
 );
 

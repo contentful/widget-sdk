@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import {
   SpaceMembership as SpaceMembershipPropType,
-  User as UserPropType
+  User as UserPropType,
 } from 'app/OrganizationSettings/PropTypes';
 import { joinWithAnd } from 'utils/StringUtils';
 import { getMembershipRoles } from 'access_control/utils';
@@ -12,7 +12,7 @@ import {
   SkeletonContainer,
   SkeletonBodyText,
   Heading,
-  Paragraph
+  Paragraph,
 } from '@contentful/forma-36-react-components';
 
 import moment from 'moment';
@@ -25,7 +25,7 @@ import {
   TableRow,
   CardActions,
   DropdownList,
-  DropdownListItem
+  DropdownListItem,
 } from '@contentful/forma-36-react-components';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 import tokens from '@contentful/forma-36-tokens';
@@ -36,7 +36,7 @@ export default function UserSpaceList({
   memberships = [],
   loading = true,
   onSpaceMembershipRemove,
-  onSpaceMembershipEdit
+  onSpaceMembershipEdit,
 }) {
   if (loading) return <Skeleton />;
   if (!loading && memberships.length === 0) return <EmptyState user={user} />;
@@ -52,7 +52,7 @@ export default function UserSpaceList({
         </TableRow>
       </TableHead>
       <TableBody>
-        {memberships.map(membership => (
+        {memberships.map((membership) => (
           <UserSpaceRow
             key={membership.sys.id}
             membership={membership}
@@ -70,14 +70,14 @@ UserSpaceList.propTypes = {
   memberships: PropTypes.arrayOf(SpaceMembershipPropType),
   onSpaceMembershipRemove: PropTypes.func.isRequired,
   onSpaceMembershipEdit: PropTypes.func.isRequired,
-  loading: PropTypes.bool
+  loading: PropTypes.bool,
 };
 
 function UserSpaceRow({ membership, onRemove, onEdit }) {
   return (
     <TableRow key={membership.sys.id} testId="user-space-list.item">
       <TableCell>{membership.sys.space.name}</TableCell>
-      <TableCell>{joinWithAnd(getMembershipRoles(membership).map(role => role.name))}</TableCell>
+      <TableCell>{joinWithAnd(getMembershipRoles(membership).map((role) => role.name))}</TableCell>
       <TableCell>{getUserName(membership.sys.createdBy)}</TableCell>
       <TableCell>{moment(membership.sys.createdAt).format('MMMM DD, YYYY')}</TableCell>
       <TableCell align="right">
@@ -101,7 +101,7 @@ function UserSpaceRow({ membership, onRemove, onEdit }) {
 UserSpaceRow.propTypes = {
   membership: SpaceMembershipPropType.isRequired,
   onRemove: PropTypes.func.isRequired,
-  onEdit: PropTypes.func.isRequired
+  onEdit: PropTypes.func.isRequired,
 };
 
 function Skeleton() {
@@ -122,8 +122,8 @@ function Skeleton() {
 
 const styles = {
   emptyState: css({
-    marginTop: tokens.spacing4Xl
-  })
+    marginTop: tokens.spacing4Xl,
+  }),
 };
 
 function EmptyState({ user }) {
@@ -136,5 +136,5 @@ function EmptyState({ user }) {
 }
 
 EmptyState.propTypes = {
-  user: UserPropType.isRequired
+  user: UserPropType.isRequired,
 };

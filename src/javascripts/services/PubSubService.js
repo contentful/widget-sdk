@@ -14,7 +14,7 @@ const client = (async () => {
     cluster,
     appKey,
     authEndpoint,
-    accessToken
+    accessToken,
   });
 })();
 
@@ -41,7 +41,7 @@ export async function createPubSubClientForSpace(spaceId) {
     },
     off(...args) {
       return spaceClient.off(...args);
-    }
+    },
   };
 
   return serializableClient;

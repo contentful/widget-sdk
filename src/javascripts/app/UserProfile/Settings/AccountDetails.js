@@ -5,7 +5,7 @@ import {
   IconButton,
   Typography,
   Tooltip,
-  TextLink
+  TextLink,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css, cx } from 'emotion';
@@ -19,47 +19,47 @@ import * as ModalLauncher from 'app/common/ModalLauncher';
 const styles = {
   spaceLeft: css({
     marginLeft: tokens.spacingXs,
-    cursor: 'pointer'
+    cursor: 'pointer',
   }),
   accountImage: css({
     height: '75px',
     width: '75px',
     marginTop: tokens.spacing2Xs,
-    borderRadius: '50%'
+    borderRadius: '50%',
   }),
   flexContainer: css({
     display: 'flex',
-    flexWrap: 'nowrap'
+    flexWrap: 'nowrap',
   }),
   column: css({
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
   }),
   flexGrow1: css({
-    flexGrow: 1
+    flexGrow: 1,
   }),
   typographyContainer: css({
     paddingLeft: tokens.spacingL,
-    width: '620px'
+    width: '620px',
   }),
   paddingTopS: css({
-    paddingTop: tokens.spacingS
+    paddingTop: tokens.spacingS,
   }),
   name: css({
     fontWeight: tokens.fontWeightMedium,
     fontSize: tokens.fontSizeL,
     marginBottom: tokens.spacing2Xs,
-    wordWrap: 'break-word'
+    wordWrap: 'break-word',
   }),
   email: css({
     marginTop: tokens.spacingXs,
     marginBottom: tokens.spacingM,
-    color: tokens.colorTextMid
+    color: tokens.colorTextMid,
   }),
   password: css({
     fontWeight: tokens.fontWeightMedium,
-    fontSize: tokens.fontSizeL
-  })
+    fontSize: tokens.fontSizeL,
+  }),
 };
 
 const openEditModal = async (user, onEdit) => {
@@ -102,8 +102,8 @@ const openChangePasswordModal = async (user, onChangePassword) => {
 
 export default function AccountDetails({ user, onEdit, onChangePassword }) {
   const [identities, setIdentities] = useState(user.identities);
-  const removeIdentity = identityId => {
-    const updatedIdentities = identities.filter(identity => identity.sys.id !== identityId);
+  const removeIdentity = (identityId) => {
+    const updatedIdentities = identities.filter((identity) => identity.sys.id !== identityId);
 
     setIdentities(updatedIdentities);
   };
@@ -178,5 +178,5 @@ export default function AccountDetails({ user, onEdit, onChangePassword }) {
 AccountDetails.propTypes = {
   user: UserPropType.isRequired,
   onEdit: PropTypes.func.isRequired,
-  onChangePassword: PropTypes.func.isRequired
+  onChangePassword: PropTypes.func.isRequired,
 };

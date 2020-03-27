@@ -16,13 +16,13 @@ const ApiKeyFetcher = createFetcherComponent(async ({ apiKeyId, spaceEnvironment
     canEdit,
     shouldDisableCreate,
     environmentsEnabled,
-    { environments: spaceEnvironments, aliases: spaceAliases }
+    { environments: spaceEnvironments, aliases: spaceAliases },
   ] = await Promise.all([
     getApiKeyRepo().get(apiKeyId),
     accessChecker.canModifyApiKeys(),
     accessChecker.shouldDisable('create', 'apiKey'),
     getCurrentVariation(ENVIRONMENTS_FLAG),
-    spaceEnvironmentsRepo.getAll()
+    spaceEnvironmentsRepo.getAll(),
   ]);
   return {
     apiKey,
@@ -30,7 +30,7 @@ const ApiKeyFetcher = createFetcherComponent(async ({ apiKeyId, spaceEnvironment
     canCreate: !shouldDisableCreate,
     environmentsEnabled,
     spaceAliases,
-    spaceEnvironments
+    spaceEnvironments,
   };
 });
 
@@ -67,5 +67,5 @@ KeyEditorRoute.propTypes = {
   registerSaveAction: PropTypes.func.isRequired,
   setDirty: PropTypes.func.isRequired,
   spaceEnvironmentsRepo: PropTypes.object.isRequired,
-  spaceAliasesRepo: PropTypes.object.isRequired
+  spaceAliasesRepo: PropTypes.object.isRequired,
 };

@@ -4,17 +4,17 @@ import tokens from '@contentful/forma-36-tokens';
 export const taskListStyles = {
   list: css({
     border: `1px solid ${tokens.colorElementMid}`,
-    borderBottom: '0'
+    borderBottom: '0',
   }),
   listItem: css({
-    marginBottom: '0'
+    marginBottom: '0',
   }),
   addTaskCta: css({
-    marginTop: tokens.spacingS
+    marginTop: tokens.spacingS,
   }),
   loadingSkeletonContainer: css({
-    margin: '18px 0 10px'
-  })
+    margin: '18px 0 10px',
+  }),
 };
 
 export const taskStyles = {
@@ -27,45 +27,45 @@ export const taskStyles = {
     transition: `background-color ${tokens.transitionDurationShort} ${tokens.transitionEasingDefault}`,
     outline: 'none',
     ':hover': {
-      backgroundColor: tokens.colorElementLight
+      backgroundColor: tokens.colorElementLight,
     },
     ':focus': {
       backgroundColor: tokens.colorElementLight,
       outline: `1px solid ${tokens.colorPrimary}`,
       borderRadius: '2px',
-      boxShadow: tokens.glowPrimary
-    }
+      boxShadow: tokens.glowPrimary,
+    },
   }),
 
   taskLoadingSpinner: css({
-    marginRight: tokens.spacing2Xs
+    marginRight: tokens.spacing2Xs,
   }),
 
   taskLoading: css({
     padding: tokens.spacingS,
     cursor: 'default',
     ':hover': {
-      backgroundColor: tokens.colorWhite
+      backgroundColor: tokens.colorWhite,
     },
     ':focus': {
       backgroundColor: tokens.colorWhite,
       outline: 'none',
       borderRadius: 0,
-      boxShadow: 'none'
-    }
+      boxShadow: 'none',
+    },
   }),
 
   taskHasEditForm: css({
     cursor: 'default',
     ':hover': {
-      backgroundColor: tokens.colorWhite
+      backgroundColor: tokens.colorWhite,
     },
     ':focus': {
       backgroundColor: tokens.colorWhite,
       outline: 'none',
       borderRadius: 0,
-      boxShadow: 'none'
-    }
+      boxShadow: 'none',
+    },
   }),
 
   body: css({
@@ -73,38 +73,38 @@ export const taskStyles = {
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
-    padding: tokens.spacingS
+    padding: tokens.spacingS,
   }),
 
   checkboxWrapper: css({
     padding: tokens.spacingS,
-    paddingRight: 0
+    paddingRight: 0,
   }),
 
   checkboxDisabled: css({
     cursor: 'not-allowed',
-    opacity: 0.5
+    opacity: 0.5,
   }),
 
   avatarWrapper: css({
     display: 'inline-flex',
     padding: tokens.spacingS,
     paddingLeft: 0,
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
   }),
 
   bodyExpanded: css({
     textOverflow: 'clip',
     whiteSpace: 'pre-line',
     wordWrap: 'break-word',
-    overflow: 'hidden'
+    overflow: 'hidden',
   }),
 
   meta: css({
     marginTop: tokens.spacingXs,
     color: tokens.colorTextMid,
     lineHeight: tokens.lineHeightDefault,
-    fontSize: tokens.fontSizeS
+    fontSize: tokens.fontSizeS,
   }),
 
   avatar: css({
@@ -112,7 +112,7 @@ export const taskStyles = {
     width: '18px',
     height: '18px',
     background: tokens.colorElementLight,
-    borderRadius: '100%'
+    borderRadius: '100%',
   }),
 
   actions: css({
@@ -121,32 +121,32 @@ export const taskStyles = {
     width: 0,
     height: '18px',
     overflow: 'hidden',
-    transition: `width ${tokens.transitionDurationShort} ${tokens.transitionEasingDefault}, margin-left ${tokens.transitionDurationShort} ${tokens.transitionEasingDefault}`
+    transition: `width ${tokens.transitionDurationShort} ${tokens.transitionEasingDefault}, margin-left ${tokens.transitionDurationShort} ${tokens.transitionEasingDefault}`,
   }),
 
   actionsVisible: css({
     marginLeft: tokens.spacingXs,
-    width: '18px'
+    width: '18px',
   }),
 
   editForm: css({
     width: '100%',
-    padding: tokens.spacingS
+    padding: tokens.spacingS,
   }),
 
   editActions: css({
-    display: 'flex'
+    display: 'flex',
   }),
 
   editTaskLink: css({
-    marginRight: tokens.spacingS
+    marginRight: tokens.spacingS,
   }),
 
   editSubmit: css({
-    marginRight: tokens.spacingS
+    marginRight: tokens.spacingS,
   }),
 
   tabFocusTrap: css({
-    width: '100%'
-  })
+    width: '100%',
+  }),
 };

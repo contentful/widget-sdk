@@ -28,7 +28,7 @@ export default function register() {
         const unavailableFieldIds = [];
 
         $scope.displayedFields = filter(
-          map(displayedFieldIds, id => {
+          map(displayedFieldIds, (id) => {
             const field = find(fields, { id });
             if (!field) unavailableFieldIds.push(id);
             return field;
@@ -45,8 +45,9 @@ export default function register() {
       };
 
       function cleanDisplayedFieldIds(unavailableFieldIds) {
-        $scope.context.view.displayedFieldIds = reject($scope.context.view.displayedFieldIds, id =>
-          includes(unavailableFieldIds, id)
+        $scope.context.view.displayedFieldIds = reject(
+          $scope.context.view.displayedFieldIds,
+          (id) => includes(unavailableFieldIds, id)
         );
       }
 
@@ -65,12 +66,12 @@ export default function register() {
         $scope.context.view.displayedFieldIds = SystemFields.getDefaultFieldIds();
       };
 
-      $scope.addDisplayField = field => {
+      $scope.addDisplayField = (field) => {
         $scope.context.view.displayedFieldIds.push(field.id);
         $scope.$applyAsync();
       };
 
-      $scope.removeDisplayField = field => {
+      $scope.removeDisplayField = (field) => {
         pull($scope.context.view.displayedFieldIds, field.id);
         $scope.$applyAsync();
       };
@@ -80,11 +81,11 @@ export default function register() {
         $scope.$applyAsync();
       };
 
-      $scope.updateFieldOrder = fields => {
+      $scope.updateFieldOrder = (fields) => {
         $scope.displayedFields = fields;
         $scope.context.view.displayedFieldIds = map($scope.displayedFields, 'id');
         $scope.$applyAsync();
       };
-    }
+    },
   ]);
 }

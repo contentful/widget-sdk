@@ -6,13 +6,13 @@ export const UserViewData = {
   key: PropTypes.string,
   label: PropTypes.string,
   avatarUrl: PropTypes.string,
-  isRemovedFromSpace: PropTypes.bool
+  isRemovedFromSpace: PropTypes.bool,
 };
 
 export const UserSelectorViewData = {
   isLoading: PropTypes.bool,
   availableUsers: PropTypes.arrayOf(PropTypes.shape(UserViewData)),
-  selectedUser: PropTypes.shape(UserViewData)
+  selectedUser: PropTypes.shape(UserViewData),
 };
 
 export function createSpaceUserSelectorViewData(usersFetchingStatus) {
@@ -20,8 +20,8 @@ export function createSpaceUserSelectorViewData(usersFetchingStatus) {
   const usersVD = (data || []).map(createUserViewData);
   return {
     isLoading,
-    availableUsers: sortBy(usersVD, user => user.label.toLowerCase()),
-    selectedUser: null
+    availableUsers: sortBy(usersVD, (user) => user.label.toLowerCase()),
+    selectedUser: null,
   };
 }
 
@@ -30,7 +30,7 @@ export function createUserViewDataFromLinkAndFetcher(userLink, usersFetchingStat
   if (isLoading) {
     return createLoadingUserViewDataFromLink(userLink);
   }
-  const user = users && users.find(user => user.sys.id === userLink.sys.id);
+  const user = users && users.find((user) => user.sys.id === userLink.sys.id);
   return user ? createUserViewData(user) : createMissingUserViewDataFromLink(userLink);
 }
 
@@ -40,7 +40,7 @@ function createUserViewData(user) {
     key: user.sys.id,
     label: getUserLabel(user),
     avatarUrl: user.avatarUrl,
-    isRemovedFromSpace: false
+    isRemovedFromSpace: false,
   };
 }
 
@@ -50,7 +50,7 @@ function createMissingUserViewDataFromLink(userLink) {
     key: userLink.sys.id,
     label: null,
     avatarUrl: null,
-    isRemovedFromSpace: true
+    isRemovedFromSpace: true,
   };
 }
 
@@ -60,7 +60,7 @@ function createLoadingUserViewDataFromLink(userLink) {
     key: userLink.sys.id,
     label: null,
     avatarUrl: null,
-    isRemovedFromSpace: null
+    isRemovedFromSpace: null,
   };
 }
 

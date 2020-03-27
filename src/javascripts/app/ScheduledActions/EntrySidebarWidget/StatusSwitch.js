@@ -8,7 +8,7 @@ import {
   DropdownListItem,
   DropdownList,
   Button,
-  Icon
+  Icon,
 } from '@contentful/forma-36-react-components';
 import CommandPropType from 'app/entity_editor/CommandPropType';
 import RestrictedAction from './RestrictedAction';
@@ -22,43 +22,43 @@ const styles = {
     borderTop: `1px solid ${tokens.colorElementMid}`,
     marginBottom: `-${tokens.spacingS}`,
     '> button': {
-      height: '2.5rem'
-    }
+      height: '2.5rem',
+    },
   }),
   scheduleListItemInnerWrapper: css({
     lineHeight: tokens.spacingM,
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
   }),
   scheduledIcon: css({
-    marginRight: tokens.spacing2Xs
+    marginRight: tokens.spacing2Xs,
   }),
   switchContainer: css({
-    display: 'flex'
+    display: 'flex',
   }),
   switchButton: css({
-    marginLeft: tokens.spacingM
+    marginLeft: tokens.spacingM,
   }),
   publishButton: css({
-    minWidth: '170px'
+    minWidth: '170px',
   }),
   dropdown: css({
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center'
+    alignItems: 'center',
   }),
   dropdownItem: css({
     width: tokens.contentWidthFull,
     '& > *': {
-      textAlign: 'center'
+      textAlign: 'center',
     },
     '& div': {
-      justifyContent: 'center'
-    }
+      justifyContent: 'center',
+    },
   }),
   statusScheduledIcon: css({
-    verticalAlign: 'sub'
-  })
+    verticalAlign: 'sub',
+  }),
 };
 
 const statusSwitchPropsByEntityStatus = {
@@ -66,26 +66,26 @@ const statusSwitchPropsByEntityStatus = {
     tagType: 'negative',
     background: tokens.colorRedBase,
     backgroundHover: tokens.colorRedDark,
-    title: 'Archived'
+    title: 'Archived',
   },
   draft: {
     tagType: 'warning',
     background: tokens.colorOrangeBase,
     backgroundHover: tokens.colorOrangeDark,
-    title: 'Draft'
+    title: 'Draft',
   },
   published: {
     tagType: 'positive',
     background: tokens.colorGreenBase,
     backgroundHover: tokens.colorGreenDark,
-    title: 'Published'
+    title: 'Published',
   },
   changes: {
     tagType: 'primaryAction',
     background: tokens.colorBlueBase,
     backgroundHover: tokens.colorBlueDark,
-    title: 'Changed'
-  }
+    title: 'Changed',
+  },
 };
 
 const primaryActionButtonPropsByEntityStatus = {
@@ -93,20 +93,20 @@ const primaryActionButtonPropsByEntityStatus = {
     tagType: 'negative',
     background: tokens.colorRedBase,
     backgroundHover: tokens.colorRedDark,
-    title: 'Archive'
+    title: 'Archive',
   },
   draft: {
     tagType: 'warning',
     background: tokens.colorOrangeBase,
     backgroundHover: tokens.colorOrangeDark,
-    title: 'Unarchive'
+    title: 'Unarchive',
   },
   published: {
     tagType: 'positive',
     background: tokens.colorGreenBase,
     backgroundHover: tokens.colorGreenDark,
-    title: 'Publish'
-  }
+    title: 'Publish',
+  },
 };
 
 const StatusSwitch = ({
@@ -119,7 +119,7 @@ const StatusSwitch = ({
   isScheduled,
   isScheduledPublishDisabled,
   onScheduledPublishClick,
-  withScheduling
+  withScheduling,
 }) => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   // action.execute does not trigger re-rendering if Cancel is selected in the modal
@@ -137,15 +137,15 @@ const StatusSwitch = ({
   // https://github.com/contentful/user_interface/pull/5572#issuecomment-599437862
   const avilableSecondaryActions =
     status === 'archived'
-      ? secondaryActions.filter(action => action.targetStateId !== 'published')
+      ? secondaryActions.filter((action) => action.targetStateId !== 'published')
       : secondaryActions;
 
   const allActionsRestricted = [primaryAction, ...avilableSecondaryActions]
     // when published, primary action becomes a stub with isAvailable() true,
     // isDisabled() false, isRestricted() false, but also without any way to execute it
     // or change the status, so a stub
-    .filter(action => !!action.targetStateId)
-    .every(action => action.isDisabled() || action.isRestricted());
+    .filter((action) => !!action.targetStateId)
+    .every((action) => action.isDisabled() || action.isRestricted());
 
   const isButtonLocked = !!(publicationBlockedReason || allActionsRestricted);
   const lockReason = publicationBlockedReason || 'You do not have permission to change status';
@@ -158,12 +158,12 @@ const StatusSwitch = ({
     backgroundColor: currentStatusProps.background,
     borderColor: currentStatusProps.background,
     '& span': {
-      color: tokens.colorWhite
+      color: tokens.colorWhite,
     },
     '&:hover': {
       borderColor: currentStatusProps.background,
-      backgroundColor: currentStatusProps.backgroundHover
-    }
+      backgroundColor: currentStatusProps.backgroundHover,
+    },
   });
 
   const primaryActionButton = css({
@@ -172,11 +172,11 @@ const StatusSwitch = ({
     borderColor: primaryActionProps.background,
     '&:hover': {
       borderColor: primaryActionProps.background,
-      backgroundColor: primaryActionProps.backgroundHover
-    }
+      backgroundColor: primaryActionProps.backgroundHover,
+    },
   });
 
-  const renderScheduledPublicationCta = isButtonLocked => {
+  const renderScheduledPublicationCta = (isButtonLocked) => {
     // disabled by the parent component (e.g. error during jobs fetching)
     if (isScheduledPublishDisabled || primaryAction.isRestricted()) {
       return null;
@@ -263,7 +263,7 @@ const StatusSwitch = ({
             )}
             {avilableSecondaryActions &&
               avilableSecondaryActions.map(
-                action =>
+                (action) =>
                   action.isAvailable() && (
                     <DropdownListItem
                       className={styles.dropdownItem}
@@ -306,7 +306,7 @@ StatusSwitch.propTypes = {
   renderScheduledPublicationCta: PropTypes.func,
   isScheduledPublishDisabled: PropTypes.bool,
   onScheduledPublishClick: PropTypes.func,
-  withScheduling: PropTypes.bool.isRequired
+  withScheduling: PropTypes.bool.isRequired,
 };
 
 export default StatusSwitch;

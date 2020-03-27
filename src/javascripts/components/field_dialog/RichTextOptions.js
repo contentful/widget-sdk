@@ -5,7 +5,7 @@ import { ToggleButton, TextLink } from '@contentful/forma-36-react-components';
 import { BLOCKS, MARKS, INLINES } from '@contentful/rich-text-types';
 import ValidationType, {
   VALIDATABLE_NODE_TYPES,
-  VALIDATABLE_MARKS
+  VALIDATABLE_MARKS,
 } from './RichTextValidationType';
 
 const RichTextOptionsSection = ({ children, heading, actions }) => (
@@ -21,16 +21,16 @@ const RichTextOptionsSection = ({ children, heading, actions }) => (
 RichTextOptionsSection.propTypes = {
   children: PropTypes.node.isRequired,
   heading: PropTypes.string.isRequired,
-  actions: PropTypes.node
+  actions: PropTypes.node,
 };
 
 RichTextOptionsSection.defaultProps = {
-  actions: undefined
+  actions: undefined,
 };
 
 const ValidatableTypes = {
   [ValidationType.ENABLED_NODE_TYPES]: VALIDATABLE_NODE_TYPES,
-  [ValidationType.ENABLED_MARKS]: VALIDATABLE_MARKS
+  [ValidationType.ENABLED_MARKS]: VALIDATABLE_MARKS,
 };
 
 /**
@@ -52,105 +52,105 @@ class RichTextOptions extends Component {
      *
      * @param {{enabledMarks?: [], enabledNodeTypes?: []}} enabled marks and node types
      */
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
   };
 
   state = {
     enabledNodeTypes: this.props.enabledNodeTypes,
-    enabledMarks: this.props.enabledMarks
+    enabledMarks: this.props.enabledMarks,
   };
 
   options = {
     headingOptions: Array.from(Array(6).keys()).map((_, index) => ({
       id: BLOCKS[`HEADING_${index + 1}`],
       title: `H${index + 1}`,
-      validationOf: ValidationType.ENABLED_NODE_TYPES
+      validationOf: ValidationType.ENABLED_NODE_TYPES,
     })),
     formattingOptions: [
       {
         icon: 'FormatBoldTrimmed',
         id: MARKS.BOLD,
-        validationOf: ValidationType.ENABLED_MARKS
+        validationOf: ValidationType.ENABLED_MARKS,
       },
       {
         icon: 'FormatItalicTrimmed',
         id: MARKS.ITALIC,
-        validationOf: ValidationType.ENABLED_MARKS
+        validationOf: ValidationType.ENABLED_MARKS,
       },
       {
         icon: 'FormatUnderlinedTrimmed',
         id: MARKS.UNDERLINE,
-        validationOf: ValidationType.ENABLED_MARKS
+        validationOf: ValidationType.ENABLED_MARKS,
       },
       {
         icon: 'CodeTrimmed',
         id: MARKS.CODE,
-        validationOf: ValidationType.ENABLED_MARKS
+        validationOf: ValidationType.ENABLED_MARKS,
       },
       {
         icon: 'ListBulletedTrimmed',
         id: BLOCKS.UL_LIST,
-        validationOf: ValidationType.ENABLED_NODE_TYPES
+        validationOf: ValidationType.ENABLED_NODE_TYPES,
       },
       {
         icon: 'ListNumberedTrimmed',
         id: BLOCKS.OL_LIST,
-        validationOf: ValidationType.ENABLED_NODE_TYPES
+        validationOf: ValidationType.ENABLED_NODE_TYPES,
       },
       {
         icon: 'QuoteTrimmed',
         id: BLOCKS.QUOTE,
-        validationOf: ValidationType.ENABLED_NODE_TYPES
+        validationOf: ValidationType.ENABLED_NODE_TYPES,
       },
       {
         icon: 'HorizontalRuleTrimmed',
         id: BLOCKS.HR,
-        validationOf: ValidationType.ENABLED_NODE_TYPES
-      }
+        validationOf: ValidationType.ENABLED_NODE_TYPES,
+      },
     ],
     linkOptions: [
       {
         icon: 'ExternalLinkTrimmed',
         title: 'Link to URL',
         id: INLINES.HYPERLINK,
-        validationOf: ValidationType.ENABLED_NODE_TYPES
+        validationOf: ValidationType.ENABLED_NODE_TYPES,
       },
       {
         icon: 'EntryTrimmed',
         title: 'Link to entry',
         id: INLINES.ENTRY_HYPERLINK,
-        validationOf: ValidationType.ENABLED_NODE_TYPES
+        validationOf: ValidationType.ENABLED_NODE_TYPES,
       },
       {
         icon: 'AssetTrimmed',
         title: 'Link to asset',
         id: INLINES.ASSET_HYPERLINK,
-        validationOf: ValidationType.ENABLED_NODE_TYPES
-      }
+        validationOf: ValidationType.ENABLED_NODE_TYPES,
+      },
     ],
     entryOptions: [
       {
         icon: 'EmbeddedEntryBlock',
         title: 'Entry',
         id: BLOCKS.EMBEDDED_ENTRY,
-        validationOf: ValidationType.ENABLED_NODE_TYPES
+        validationOf: ValidationType.ENABLED_NODE_TYPES,
       },
       {
         icon: 'EmbeddedEntryInline',
         title: 'Inline entry',
         id: INLINES.EMBEDDED_ENTRY,
-        validationOf: ValidationType.ENABLED_NODE_TYPES
+        validationOf: ValidationType.ENABLED_NODE_TYPES,
       },
       {
         icon: 'AssetTrimmed',
         title: 'Asset',
         id: BLOCKS.EMBEDDED_ASSET,
-        validationOf: ValidationType.ENABLED_NODE_TYPES
-      }
-    ]
+        validationOf: ValidationType.ENABLED_NODE_TYPES,
+      },
+    ],
   };
 
-  toggleOption = option => {
+  toggleOption = (option) => {
     let newState;
     const currentValue = this.state[option.validationOf];
     const isActive = _.includes(currentValue, option.id);
@@ -158,21 +158,23 @@ class RichTextOptions extends Component {
 
     if (isEveryOptionActive) {
       newState = {
-        [option.validationOf]: ValidatableTypes[option.validationOf].filter(id => id !== option.id)
+        [option.validationOf]: ValidatableTypes[option.validationOf].filter(
+          (id) => id !== option.id
+        ),
       };
     } else if (isActive) {
       newState = {
-        [option.validationOf]: currentValue.filter(id => id !== option.id)
+        [option.validationOf]: currentValue.filter((id) => id !== option.id),
       };
     } else {
       newState = {
-        [option.validationOf]: [...currentValue, option.id]
+        [option.validationOf]: [...currentValue, option.id],
       };
     }
 
     // If every option of type is active
     // we set value of enabled options to undefined
-    const isEveryOptionOfTypeActive = ValidatableTypes[option.validationOf].every(type =>
+    const isEveryOptionOfTypeActive = ValidatableTypes[option.validationOf].every((type) =>
       newState[option.validationOf].includes(type)
     );
     if (isEveryOptionOfTypeActive) {
@@ -184,7 +186,7 @@ class RichTextOptions extends Component {
     });
   };
 
-  isOptionActive = option => {
+  isOptionActive = (option) => {
     if (this.state[option.validationOf] === undefined) {
       return true;
     }
@@ -203,12 +205,12 @@ class RichTextOptions extends Component {
     if (this.isEveryOptionActive()) {
       newState = {
         [ValidationType.ENABLED_MARKS]: [],
-        [ValidationType.ENABLED_NODE_TYPES]: []
+        [ValidationType.ENABLED_NODE_TYPES]: [],
       };
     } else {
       newState = {
         [ValidationType.ENABLED_MARKS]: undefined,
-        [ValidationType.ENABLED_NODE_TYPES]: undefined
+        [ValidationType.ENABLED_NODE_TYPES]: undefined,
       };
     }
     this.setState(newState, () => {
@@ -217,7 +219,7 @@ class RichTextOptions extends Component {
   };
 
   renderToggles = (options, className) =>
-    options.map(option => (
+    options.map((option) => (
       <ToggleButton
         className={`rich-text-option-toggle ${className}`}
         testId={`toggle-button-${option.id}`}

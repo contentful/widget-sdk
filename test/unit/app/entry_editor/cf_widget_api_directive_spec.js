@@ -5,18 +5,18 @@ import createLocaleStoreMock from 'test/utils/createLocaleStoreMock';
 import { $initialize, $inject, $apply } from 'test/utils/ng';
 
 describe('cfWidgetApi directive', () => {
-  beforeEach(async function() {
+  beforeEach(async function () {
     this.system.set('services/localeStore', {
-      default: createLocaleStoreMock()
+      default: createLocaleStoreMock(),
     });
 
-    await $initialize(this.system, $provide => {
+    await $initialize(this.system, ($provide) => {
       $provide.constant('spaceContext', {
         cma: {
           getEntry: _.noop,
           getContentType: _.noop,
-          getAsset: _.noop
-        }
+          getAsset: _.noop,
+        },
       });
     });
 
@@ -26,37 +26,37 @@ describe('cfWidgetApi directive', () => {
     this.widget = {
       field: {},
       settings: {
-        helpText: 'wat'
-      }
+        helpText: 'wat',
+      },
     };
     this.entry = {
       data: {
-        sys: {}
-      }
+        sys: {},
+      },
     };
 
-    this.getWidgetApi = function() {
+    this.getWidgetApi = function () {
       _.extend(this.scope, {
         widget: this.widget,
         locale: {},
         fieldLocale: {
           access$: K.createMockProperty({}),
           doc: {
-            sys: K.createMockProperty({})
+            sys: K.createMockProperty({}),
           },
-          errors$: K.createMockProperty()
+          errors$: K.createMockProperty(),
         },
         editorContext: {},
         entityInfo: {
           contentType: {
-            fields: []
-          }
+            fields: [],
+          },
         },
-        state: { registerUnpublishedReferencesWarning: _.noop }
+        state: { registerUnpublishedReferencesWarning: _.noop },
       });
 
       return $controller('WidgetApiController', {
-        $scope: this.scope
+        $scope: this.scope,
       });
     };
 
@@ -65,11 +65,11 @@ describe('cfWidgetApi directive', () => {
 
   describe('#settings', () => {
     describe('helpText', () => {
-      it('should equal what has been set for the widget', function() {
+      it('should equal what has been set for the widget', function () {
         expect(this.widgetApi.settings.helpText).toEqual(this.widget.settings.helpText);
       });
 
-      it('should default to undefined when no help text nor default help text is configured', function() {
+      it('should default to undefined when no help text nor default help text is configured', function () {
         this.widget.settings.helpText = undefined;
 
         const widgetApi = this.getWidgetApi();
@@ -81,14 +81,14 @@ describe('cfWidgetApi directive', () => {
 
   describe('#entry', () => {
     describe('#getSys()', () => {
-      it('returns sys data from entry object', function() {
+      it('returns sys data from entry object', function () {
         this.scope.fieldLocale.doc.sys.set('wat');
         expect(this.widgetApi.entry.getSys()).toEqual('wat');
       });
     });
 
     describe('#onSysChanged()', () => {
-      it('calls callback if "doc.sys" emits changes', function() {
+      it('calls callback if "doc.sys" emits changes', function () {
         const cb = sinon.spy();
         this.widgetApi.entry.onSysChanged(cb);
         cb.reset();
@@ -100,19 +100,19 @@ describe('cfWidgetApi directive', () => {
   });
 
   describe('#space', () => {
-    it('exposes same methods as spaceContext.cma + scheduled actions', function() {
+    it('exposes same methods as spaceContext.cma + scheduled actions', function () {
       const spaceContext = $inject('spaceContext');
-      const getAllKeys = obj => Object.keys(_.toPlainObject(obj));
+      const getAllKeys = (obj) => Object.keys(_.toPlainObject(obj));
       expect(getAllKeys(this.widgetApi.space)).toEqual([
         ...getAllKeys(spaceContext.cma),
         'getAllScheduledActions',
-        'getEntityScheduledActions'
+        'getEntityScheduledActions',
       ]);
     });
   });
 
   describe('#onIsDisabledChanged()', () => {
-    it('is dispatched with initial value', function() {
+    it('is dispatched with initial value', function () {
       const cb = sinon.spy();
       this.scope.fieldLocale.access$.set({ disabled: true });
       this.widgetApi.field.onIsDisabledChanged(cb);
@@ -120,7 +120,7 @@ describe('cfWidgetApi directive', () => {
       sinon.assert.calledWithExactly(cb, true);
     });
 
-    it('is dispatched when value changes', function() {
+    it('is dispatched when value changes', function () {
       const cb = sinon.spy();
       this.scope.fieldLocale.access$.set({ disabled: true });
       this.widgetApi.field.onIsDisabledChanged(cb);
@@ -133,7 +133,7 @@ describe('cfWidgetApi directive', () => {
   });
 
   describe('#onSchemaErrorsChanged()', () => {
-    it('emits errors when "fieldLocale.errors" changes', function() {
+    it('emits errors when "fieldLocale.errors" changes', function () {
       const cb = sinon.spy();
       this.widgetApi.field.onSchemaErrorsChanged(cb);
       $apply();
@@ -147,7 +147,7 @@ describe('cfWidgetApi directive', () => {
   });
 
   describe('#field.setInvalid()', () => {
-    it('delegates to $scope.fieldController with locale code', function() {
+    it('delegates to $scope.fieldController with locale code', function () {
       const setInvalid = sinon.stub();
       this.scope.fieldController = { setInvalid: setInvalid };
       this.scope.locale.code = 'LC';

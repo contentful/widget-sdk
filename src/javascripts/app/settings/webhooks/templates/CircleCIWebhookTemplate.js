@@ -23,13 +23,13 @@ export default {
       name: 'githubOrg',
       type: 'text',
       title: 'GitHub organization or user',
-      description: <p>The GitHub organization or user repository belongs to.</p>
+      description: <p>The GitHub organization or user repository belongs to.</p>,
     },
     {
       name: 'githubRepo',
       type: 'text',
       title: 'GitHub repository',
-      description: <p>The name of the repository you want to build.</p>
+      description: <p>The name of the repository you want to build.</p>,
     },
     {
       name: 'branch',
@@ -40,7 +40,7 @@ export default {
         <p>
           The source code branch, for example <code>master</code>
         </p>
-      )
+      ),
     },
     {
       name: 'token',
@@ -54,8 +54,8 @@ export default {
           </a>
           . This value can’t be revealed once stored.
         </p>
-      )
-    }
+      ),
+    },
   ],
   mapParamsToDefinition: ({ githubOrg, githubRepo, branch, token }, name) => {
     return {
@@ -67,8 +67,8 @@ export default {
         {
           key: 'Authorization',
           value: 'Basic ' + base64safe(token),
-          secret: true
-        }
+          secret: true,
+        },
       ],
       transformation: {
         contentType: 'application/json',
@@ -77,10 +77,10 @@ export default {
             CONTENTFUL_ENTITY_ID: '{ /payload/sys/id }',
             CONTENTFUL_ENTITY_TYPE: '{ /payload/sys/type }',
             CONTENTFUL_SPACE_ID: '{ /payload/sys/space/sys/id }',
-            CONTENTFUL_ENVIRONMENT_ID: '{ /payload/sys/environment/sys/id }'
-          }
-        })
-      }
+            CONTENTFUL_ENVIRONMENT_ID: '{ /payload/sys/environment/sys/id }',
+          },
+        }),
+      },
     };
-  }
+  },
 };

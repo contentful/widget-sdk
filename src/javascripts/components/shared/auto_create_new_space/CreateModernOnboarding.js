@@ -25,7 +25,7 @@ export const getUser = () => getValue(user$);
 export const getStoragePrefix = () => `ctfl:${getUser().sys.id}:modernStackOnboarding`;
 export const getDeploymentProvider = () => store.get(`${getStoragePrefix()}:deploymentProvider`);
 export const isOnboardingComplete = () => store.get(`${getStoragePrefix()}:completed`);
-export const isDevOnboardingSpace = currentSpace => {
+export const isDevOnboardingSpace = (currentSpace) => {
   const currentSpaceId = currentSpace && currentSpace.getSys().id;
   const currentSpaceName = currentSpace && currentSpace.data.name;
   const msDevChoiceSpace = store.get(`${getStoragePrefix()}:developerChoiceSpace`);
@@ -39,7 +39,7 @@ export const isDevOnboardingSpace = currentSpace => {
     (currentSpaceId === msDevChoiceSpace || currentSpaceName === MODERN_STACK_ONBOARDING_SPACE_NAME)
   );
 };
-export const isContentOnboardingSpace = currentSpace => {
+export const isContentOnboardingSpace = (currentSpace) => {
   const currentSpaceId = currentSpace && currentSpace.getSys().id;
   const msContentChoiceSpace = store.get(`${getStoragePrefix()}:contentChoiceSpace`);
 
@@ -70,10 +70,10 @@ export const getPerson = async () => {
     return null;
   }
 };
-export const markSpace = spaceId => {
+export const markSpace = (spaceId) => {
   store.set(getMSOnboardingSpaceKey(), spaceId);
 };
-export const checkSpace = spaceId => store.get(getMSOnboardingSpaceKey()) === spaceId;
+export const checkSpace = (spaceId) => store.get(getMSOnboardingSpaceKey()) === spaceId;
 // used for grouping all related analytics events
 export const getGroupId = () => 'modernStackOnboarding';
 export const createDeliveryToken = () => {
@@ -103,7 +103,7 @@ export const track = (elementId, toState) => {
   const payload = {
     elementId,
     groupId: getGroupId(),
-    fromState: getCurrentStateName()
+    fromState: getCurrentStateName(),
   };
 
   if (toState) {
@@ -138,7 +138,7 @@ export const create = ({ onDefaultChoice, org, user, markOnboarding }) => {
       org,
       markOnboarding,
       markSpace,
-      userId: user.sys.id
+      userId: user.sys.id,
     });
 
     createDeliveryToken();
@@ -152,9 +152,10 @@ export const create = ({ onDefaultChoice, org, user, markOnboarding }) => {
   });
 };
 export const getCredentials = () =>
-  Promise.all([getDeliveryToken(), getManagementToken()]).then(
-    ([deliveryToken, managementToken]) => ({ managementToken, deliveryToken })
-  );
+  Promise.all([
+    getDeliveryToken(),
+    getManagementToken(),
+  ]).then(([deliveryToken, managementToken]) => ({ managementToken, deliveryToken }));
 
 function getPersonalAccessTokenKey() {
   return `${getStoragePrefix()}:personalAccessToken`;
@@ -168,7 +169,7 @@ async function createSpace({ closeModal, org, markOnboarding, markSpace, userId 
   const newSpace = await client.createSpace(
     {
       name: MODERN_STACK_ONBOARDING_SPACE_NAME,
-      defaultLocale: DEFAULT_LOCALE
+      defaultLocale: DEFAULT_LOCALE,
     },
     org.sys.id
   );
@@ -183,7 +184,7 @@ async function createSpace({ closeModal, org, markOnboarding, markSpace, userId 
   await refresh();
   await go({
     path: ['spaces', 'detail', 'onboarding', 'getStarted'],
-    params: { spaceId: newSpaceId }
+    params: { spaceId: newSpaceId },
   });
   // if we need to close modal, we need to do it after redirect
   closeModal && closeModal();

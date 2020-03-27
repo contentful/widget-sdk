@@ -18,17 +18,14 @@ export const track = once(({ stateName }) => {
     const TelemetryWithStateName = {
       record: (name, value) => {
         Telemetry.record(name, value, {
-          stateName: stateName
+          stateName: stateName,
         });
 
         // TODO: use proper keys after switching
         // to analytics
-        const analyticsName = name
-          .split('-')
-          .slice(1)
-          .join('_');
+        const analyticsName = name.split('-').slice(1).join('_');
         Analytics.track(`perf:${analyticsName}`, { value, stateName: stateName });
-      }
+      },
     };
 
     NavigationTiming.track(TelemetryWithStateName);

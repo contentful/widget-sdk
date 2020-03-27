@@ -8,7 +8,7 @@ describe('sniffer/createMigrationMessage', () => {
       createMigrationMessage({
         added: [],
         updated: [],
-        deleted: []
+        deleted: [],
       })
     ).toMatchInlineSnapshot(`"No migration impact 😢"`);
   });
@@ -21,15 +21,15 @@ describe('sniffer/createMigrationMessage', () => {
             path: 'src/path/to-file.js',
             right: {
               js: true,
-              angular: ['$state', '$timeout']
-            }
+              angular: ['$state', '$timeout'],
+            },
           },
           {
             path: 'src/path/to-jade-file.jade',
             right: {
-              jade: true
-            }
-          }
+              jade: true,
+            },
+          },
         ],
         deleted: [],
         updated: [
@@ -38,15 +38,15 @@ describe('sniffer/createMigrationMessage', () => {
             left: {
               js: true,
               angular: ['$state', 'spaceContext'],
-              needsRefactoring: ['ui/Framework']
+              needsRefactoring: ['ui/Framework'],
             },
             right: {
               js: true,
               angular: ['$state', '$timeout'],
-              needsRefactoring: ['hyperscript']
-            }
-          }
-        ]
+              needsRefactoring: ['hyperscript'],
+            },
+          },
+        ],
       })
     ).toMatchInlineSnapshot(`
       "<details><summary>More details</summary>

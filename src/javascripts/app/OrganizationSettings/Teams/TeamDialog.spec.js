@@ -14,7 +14,7 @@ import TeamDialog from './TeamDialog';
 const renderComponent = (actions, props) => {
   const store = createStore(reducer);
   store.dispatch = jest.fn(store.dispatch);
-  actions.forEach(action => store.dispatch(action));
+  actions.forEach((action) => store.dispatch(action));
   const wrapper = mount(
     <Provider store={store}>
       <TeamDialog {...props} />
@@ -25,8 +25,8 @@ const renderComponent = (actions, props) => {
 
 const activeOrgId = 'testOrg';
 
-const getNameField = wrapper => wrapper.find(TextField).filter({ id: 'team_name' });
-const getDescriptionField = wrapper => wrapper.find(TextField).filter({ id: 'team_description' });
+const getNameField = (wrapper) => wrapper.find(TextField).filter({ id: 'team_name' });
+const getDescriptionField = (wrapper) => wrapper.find(TextField).filter({ id: 'team_description' });
 
 describe('TeamDialog', () => {
   let actions;
@@ -40,8 +40,8 @@ describe('TeamDialog', () => {
       actions.push({
         type: 'LOCATION_CHANGED',
         payload: {
-          location: { pathname: ROUTES.organization.build({ orgId: activeOrgId }) }
-        }
+          location: { pathname: ROUTES.organization.build({ orgId: activeOrgId }) },
+        },
       });
     });
 
@@ -70,20 +70,20 @@ describe('TeamDialog', () => {
                   name: 'A Team',
                   sys: {
                     type: 'Team',
-                    id: 'aTeam'
-                  }
+                    id: 'aTeam',
+                  },
                 },
                 {
                   name: 'B Team',
                   sys: {
                     type: 'Team',
-                    id: 'bTeam'
-                  }
-                }
+                    id: 'bTeam',
+                  },
+                },
               ],
-              [TEAM_MEMBERSHIPS]: []
-            }
-          }
+              [TEAM_MEMBERSHIPS]: [],
+            },
+          },
         });
       });
 
@@ -95,20 +95,14 @@ describe('TeamDialog', () => {
 
       it('closing the modal should close the dialog', () => {
         const { wrapper } = renderComponent(actions, props);
-        wrapper
-          .find(Modal.Header)
-          .props()
-          .onClose();
+        wrapper.find(Modal.Header).props().onClose();
 
         expect(props.onClose).toHaveBeenCalled();
       });
 
       it('clicking cancel should close the dialog', () => {
         const { wrapper } = renderComponent(actions, props);
-        wrapper
-          .find(Button)
-          .filter({ testId: 'close-team-dialog-button' })
-          .simulate('click');
+        wrapper.find(Button).filter({ testId: 'close-team-dialog-button' }).simulate('click');
 
         expect(props.onClose).toHaveBeenCalled();
       });
@@ -165,7 +159,7 @@ describe('TeamDialog', () => {
           expect(props.onClose).toHaveBeenCalled();
           expect(store.dispatch).toHaveBeenCalledWith({
             type: 'CREATE_NEW_TEAM',
-            payload: { team: { name: 'C Team', description: 'test desc' } }
+            payload: { team: { name: 'C Team', description: 'test desc' } },
           });
         });
       });
@@ -175,7 +169,7 @@ describe('TeamDialog', () => {
           props.initialTeam = {
             name: 'A Team',
             description: 'a description',
-            sys: { id: 'aTeam' }
+            sys: { id: 'aTeam' },
           };
         });
 
@@ -230,7 +224,7 @@ describe('TeamDialog', () => {
           expect(props.onClose).toHaveBeenCalled();
           expect(store.dispatch).toHaveBeenCalledWith({
             type: 'EDIT_TEAM_CONFIRMED',
-            payload: { id: 'aTeam', changeSet: { name: 'C Team', description: 'test desc 2' } }
+            payload: { id: 'aTeam', changeSet: { name: 'C Team', description: 'test desc 2' } },
           });
         });
 
@@ -248,7 +242,7 @@ describe('TeamDialog', () => {
           expect(props.onClose).toHaveBeenCalled();
           expect(store.dispatch).toHaveBeenCalledWith({
             type: 'EDIT_TEAM_CONFIRMED',
-            payload: { id: 'aTeam', changeSet: { name: 'A Team', description: 'test desc 2' } }
+            payload: { id: 'aTeam', changeSet: { name: 'A Team', description: 'test desc 2' } },
           });
         });
       });

@@ -10,7 +10,7 @@ import {
   TextLink,
   Paragraph,
   Heading,
-  HelpText
+  HelpText,
 } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink';
 import AppPermissions from './AppPermissions';
@@ -21,46 +21,46 @@ import { USAGE_EXCEEDED_MESSAGE } from './isUsageExceeded';
 const styles = {
   root: css({
     display: 'flex',
-    overflow: 'hidden'
+    overflow: 'hidden',
   }),
   mainColumn: css({
-    flexGrow: 1
+    flexGrow: 1,
   }),
   sidebarColumn: css({
     minWidth: '280px',
     width: '280px',
     paddingLeft: tokens.spacingL,
     marginLeft: tokens.spacingL,
-    borderLeft: `1px solid ${tokens.colorElementMid}`
+    borderLeft: `1px solid ${tokens.colorElementMid}`,
   }),
   sidebarSpacing: css({
-    marginBottom: tokens.spacingL
+    marginBottom: tokens.spacingL,
   }),
   sidebarSpacingM: css({
-    marginBottom: tokens.spacingM
+    marginBottom: tokens.spacingM,
   }),
   sidebarSubheading: css({
-    marginBottom: tokens.spacingXs
+    marginBottom: tokens.spacingXs,
   }),
   sidebarLink: css({
-    marginBottom: tokens.spacingXs
+    marginBottom: tokens.spacingXs,
   }),
   icon: css({
     width: '60px',
     height: '60px',
-    marginRight: tokens.spacingM
+    marginRight: tokens.spacingM,
   }),
   iconSmall: css({
     width: '40px',
-    height: '40px'
+    height: '40px',
   }),
   permissions: css({
     display: 'flex',
-    justifyContent: 'center'
+    justifyContent: 'center',
   }),
   modalPermissions: css({
-    whiteSpace: 'pre-line'
-  })
+    whiteSpace: 'pre-line',
+  }),
 };
 
 const AppPropType = PropTypes.shape({
@@ -70,21 +70,21 @@ const AppPropType = PropTypes.shape({
   links: PropTypes.arrayOf(
     PropTypes.shape({
       title: PropTypes.string.isRequired,
-      url: PropTypes.string.isRequired
+      url: PropTypes.string.isRequired,
     }).isRequired
   ).isRequired,
   author: PropTypes.shape({
     name: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired,
-    icon: PropTypes.node.isRequired
+    icon: PropTypes.node.isRequired,
   }).isRequired,
   icon: PropTypes.string.isRequired,
-  categories: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired
+  categories: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
 });
 
 const externalLinkProps = {
   target: '_blank',
-  rel: 'noopener noreferrer'
+  rel: 'noopener noreferrer',
 };
 
 function AppHeader(props) {
@@ -98,7 +98,7 @@ function AppHeader(props) {
           className={css({
             lineHeight: tokens.lineHeightCondensed,
             fontSize: tokens.fontSize2Xl,
-            fontWeight: tokens.fontWeightMedium
+            fontWeight: tokens.fontWeightMedium,
           })}>
           {app.title}
         </Heading>
@@ -114,7 +114,7 @@ function AppHeader(props) {
 }
 
 AppHeader.propTypes = {
-  app: AppPropType.isRequired
+  app: AppPropType.isRequired,
 };
 
 function AppPermissionScreen({ app, onInstall, onCancel, onClose, spaceInformation }) {
@@ -159,9 +159,9 @@ AppPermissionScreen.propTypes = {
     envMeta: PropTypes.shape({
       environmentId: PropTypes.string.isRequired,
       isMasterEnvironment: PropTypes.bool.isRequired,
-      aliasId: PropTypes.string
-    })
-  })
+      aliasId: PropTypes.string,
+    }),
+  }),
 };
 
 function determineOnClick(installed = false, onClick, onClose, setShowPermissions) {
@@ -181,7 +181,7 @@ export function AppDetails(props) {
     setShowPermissions,
     spaceInformation,
     usageExceeded,
-    canManageApps
+    canManageApps,
   } = props;
 
   if (showPermissions) {
@@ -240,7 +240,7 @@ export function AppDetails(props) {
             <Subheading element="h3" className={styles.sidebarSubheading}>
               Links
             </Subheading>
-            {app.links.map(link => (
+            {app.links.map((link) => (
               <div key={link.url} className={styles.sidebarLink}>
                 <TextLink href={`${link.url}`} {...externalLinkProps}>
                   {link.title}
@@ -280,14 +280,14 @@ AppDetails.propTypes = {
     envMeta: PropTypes.shape({
       environmentId: PropTypes.string.isRequired,
       isMasterEnvironment: PropTypes.bool.isRequired,
-      aliasId: PropTypes.string
-    })
+      aliasId: PropTypes.string,
+    }),
   }),
   onClose: PropTypes.func.isRequired,
   showPermissions: PropTypes.bool,
   setShowPermissions: PropTypes.func,
   usageExceeded: PropTypes.bool,
-  canManageApps: PropTypes.bool.isRequired
+  canManageApps: PropTypes.bool.isRequired,
 };
 
 export default function AppDetailsModal(props) {
@@ -325,8 +325,8 @@ AppDetailsModal.propTypes = {
     spaceId: PropTypes.string.isRequired,
     spaceName: PropTypes.string.isRequired,
     envName: PropTypes.string.isRequired,
-    envIsMaster: PropTypes.bool.isRequired
+    envIsMaster: PropTypes.bool.isRequired,
   }),
   usageExceeded: PropTypes.bool,
-  canManageApps: PropTypes.bool.isRequired
+  canManageApps: PropTypes.bool.isRequired,
 };

@@ -21,10 +21,10 @@ const formatLocales = ([first, second, third, ...rest]) => {
   return joinWithAnd(locales);
 };
 
-const sortLocales = locales => sortBy(locales, [l => !l.default, 'internal_code']);
+const sortLocales = (locales) => sortBy(locales, [(l) => !l.default, 'internal_code']);
 
-const formatErroredLocales = erroredLocales => {
-  const locales = sortLocales(erroredLocales).map(l => l.name);
+const formatErroredLocales = (erroredLocales) => {
+  const locales = sortLocales(erroredLocales).map((l) => l.name);
   return formatLocales(locales);
 };
 
@@ -52,7 +52,7 @@ const messages = ({ entityLabel, erroredLocales }) => ({
     'This asset is missing a file for the default locale.',
   [DocumentStatusCode.LOCALE_VALIDATION_ERRORS]: `The following locales have fields with errors: ${formatErroredLocales(
     erroredLocales
-  )}`
+  )}`,
 });
 
 const StatusCodeNotification = ({ status, entityLabel, erroredLocales }) =>
@@ -69,9 +69,9 @@ StatusCodeNotification.propTypes = {
     PropTypes.shape({
       name: PropTypes.string.isRequired,
       default: PropTypes.bool.isRequired,
-      internal_code: PropTypes.string.isRequired
+      internal_code: PropTypes.string.isRequired,
     }).isRequired
-  )
+  ),
 };
 
 export default StatusCodeNotification;

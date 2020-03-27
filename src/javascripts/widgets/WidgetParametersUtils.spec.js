@@ -9,7 +9,7 @@ describe('WidgetParametersUtils', () => {
       const values = { format: 'dateonly' };
       const filtered = Utils.filterDefinitions(definitions, values, {
         namespace: NAMESPACE_BUILTIN,
-        id: 'datePicker'
+        id: 'datePicker',
       });
       expect(filtered).toHaveLength(1);
       expect(filtered[0].id).toBe('format');
@@ -19,7 +19,7 @@ describe('WidgetParametersUtils', () => {
       const values = { format: 'time' };
       const filtered = Utils.filterDefinitions(definitions, values, {
         namespace: NAMESPACE_BUILTIN,
-        id: 'datePicker'
+        id: 'datePicker',
       });
       expect(filtered).toHaveLength(2);
     });
@@ -28,7 +28,7 @@ describe('WidgetParametersUtils', () => {
       const values = { format: 'dateonly' };
       const filtered = Utils.filterDefinitions(definitions, values, {
         namespace: NAMESPACE_EXTENSION,
-        id: 'datePicker'
+        id: 'datePicker',
       });
       expect(filtered).toHaveLength(2);
     });
@@ -37,7 +37,7 @@ describe('WidgetParametersUtils', () => {
       const values = { format: 'dateonly' };
       const filtered = Utils.filterDefinitions(definitions, values, {
         namespace: NAMESPACE_BUILTIN,
-        id: 'test'
+        id: 'test',
       });
       expect(filtered).toHaveLength(2);
     });
@@ -119,7 +119,7 @@ describe('WidgetParametersUtils', () => {
     const definitions = [
       { id: 'x', type: 'Enum', options: ['one', 'two'] },
       { id: 'y', type: 'Enum', options: [{ one: 'Einz' }, { two: 'Zwei' }] },
-      { id: 'z', type: 'Symbol' }
+      { id: 'z', type: 'Symbol' },
     ];
 
     it('converts shorthand options to labelled options', () => {

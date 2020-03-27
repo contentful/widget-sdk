@@ -15,7 +15,7 @@ const SnapshotPresenterRichText = ({ className, value, contentType, entity, fiel
       contentType,
       entry: entity,
       initialContentTypes: spaceContext.publishedCTs.getAllBare(),
-      cma: spaceContext.cma
+      cma: spaceContext.cma,
     });
     setWidgetApi(readOnlyWidgetApi);
   }, [contentType, entity, field, locale, value]);
@@ -35,24 +35,24 @@ SnapshotPresenterRichText.propTypes = {
   field: PropTypes.oneOfType([
     PropTypes.shape({
       type: PropTypes.string,
-      linkType: PropTypes.string
+      linkType: PropTypes.string,
     }),
     PropTypes.shape({
       type: PropTypes.string,
       items: PropTypes.shape({
         type: PropTypes.string,
-        linkType: PropTypes.string
-      })
-    })
+        linkType: PropTypes.string,
+      }),
+    }),
   ]),
   locale: PropTypes.shape({
     code: PropTypes.string,
-    internal_code: PropTypes.string
-  })
+    internal_code: PropTypes.string,
+  }),
 };
 
 SnapshotPresenterRichText.defaultProps = {
-  className: ''
+  className: '',
 };
 
 export default SnapshotPresenterRichText;

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const WebtaskLogo = props => (
+const WebtaskLogo = (props) => (
   <svg width={32} height={32} viewBox="0 0 256 256" {...props}>
     <path fill="#5F3237" d="M256 256H0V0h256z" />
     <path fill="#E56E62" d="M256 256H51.2V51.2H256z" />

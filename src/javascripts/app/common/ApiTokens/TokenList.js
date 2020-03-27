@@ -13,8 +13,8 @@ const styles = {
     position: 'relative',
     minHeight: '6em',
     marginTop: tokens.spacingL,
-    marginBottom: tokens.spacingL
-  })
+    marginBottom: tokens.spacingL,
+  }),
 };
 
 /**
@@ -30,7 +30,7 @@ const TokenList = ({
   currentPage,
   totalPages,
   revoke,
-  selectPage
+  selectPage,
 }) => {
   if (loadingTokensError) {
     return (
@@ -70,7 +70,7 @@ TokenList.propTypes = {
   currentPage: PropTypes.number,
   totalPages: PropTypes.number,
   revoke: PropTypes.func,
-  selectPage: PropTypes.func
+  selectPage: PropTypes.func,
 };
 
 export default TokenList;

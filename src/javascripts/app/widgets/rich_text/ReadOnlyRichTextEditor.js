@@ -8,16 +8,16 @@ import RichTextEditor from './RichTextEditor';
 export default class ReadOnlyRichTextEditor extends React.Component {
   static propTypes = {
     value: PropTypes.object.isRequired,
-    locale: PropTypes.string.isRequired
+    locale: PropTypes.string.isRequired,
   };
 
   render() {
     const { value, locale } = this.props;
     const widgetAPI = buildWidgetApi({
       field: {
-        locale
+        locale,
       },
-      currentUrl: window.location
+      currentUrl: window.location,
     });
     return (
       <WidgetAPIContext.Provider value={{ widgetAPI }}>

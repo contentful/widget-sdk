@@ -10,11 +10,11 @@ import entityFieldTemplate from './cf_entity_field.html';
 
 const styles = {
   lockComponentContainer: css({
-    whiteSpace: 'nowrap'
+    whiteSpace: 'nowrap',
   }),
   lockIcon: css({
-    marginBottom: '-3px'
-  })
+    marginBottom: '-3px',
+  }),
 };
 
 export default function register() {
@@ -49,7 +49,7 @@ export default function register() {
         controllerAs: 'fieldController',
         controller: [
           '$scope',
-          function($scope) {
+          function ($scope) {
             // Records the 'invalid' flag for each locale’s control. Keys are public
             // locale codes.
             const invalidControls = {};
@@ -63,7 +63,7 @@ export default function register() {
               tooltipPlacement: $scope.$first ? 'bottom' : 'top',
               helpText: _.get(widget, ['settings', 'helpText']),
               hasInitialFocus:
-                $scope.editorContext.hasInitialFocus && $scope.$first && widget.isFocusable
+                $scope.editorContext.hasInitialFocus && $scope.$first && widget.isFocusable,
             };
             $scope.data = templateData;
 
@@ -115,12 +115,12 @@ export default function register() {
               setFieldLocales();
             });
 
-            K.onValueScope($scope, $scope.editorContext.focus.field$, focusedField => {
+            K.onValueScope($scope, $scope.editorContext.focus.field$, (focusedField) => {
               templateData.fieldHasFocus = focusedField === field.id;
             });
 
             $scope.methods = {
-              shouldDisplayRtl: isRtlLocale
+              shouldDisplayRtl: isRtlLocale,
             };
 
             function updateErrorStatus() {
@@ -141,9 +141,9 @@ export default function register() {
 
             function updateActiveLocales() {
               const fieldLocalesInternalCodes = getFieldLocales(field).map(
-                locale => locale.internal_code
+                (locale) => locale.internal_code
               );
-              $scope.activeLocales = _.filter($scope.localeData.privateLocales, locale => {
+              $scope.activeLocales = _.filter($scope.localeData.privateLocales, (locale) => {
                 const isFieldLocale = fieldLocalesInternalCodes.includes(locale.internal_code);
                 const isActive = $scope.localeData.isLocaleActive(locale);
                 const hasError = $scope.editorContext.validator.hasFieldLocaleError(
@@ -161,9 +161,9 @@ export default function register() {
                 return [$scope.localeData.defaultLocale];
               }
             }
-          }
-        ]
+          },
+        ],
       };
-    }
+    },
   ]);
 }

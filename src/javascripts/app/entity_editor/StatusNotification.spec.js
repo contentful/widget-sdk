@@ -12,17 +12,17 @@ describe('StatusNotification', () => {
     DocumentStatusCode.ARCHIVED,
     DocumentStatusCode.DELETED,
     DocumentStatusCode.NOT_ALLOWED,
-    DocumentStatusCode.DEFAULT_LOCALE_FILE_ERROR
+    DocumentStatusCode.DEFAULT_LOCALE_FILE_ERROR,
   ];
   const erroredLocales = [
     { name: 'English (United States)', internal_code: 'en-US', default: false },
     { name: 'Spanish (Spain)', internal_code: 'es-ES', default: true },
     { name: 'French (France)', internal_code: 'fr-FR', default: false },
     { name: 'Arabic (Egypt)', internal_code: 'ar-EG', default: false },
-    { name: 'German (Germany)', internal_code: 'de-DE', default: false }
+    { name: 'German (Germany)', internal_code: 'de-DE', default: false },
   ];
   const props = {
-    entityLabel: 'entry'
+    entityLabel: 'entry',
   };
   const render = () => Enzyme.shallow(<StatusNotification {...props} />);
 

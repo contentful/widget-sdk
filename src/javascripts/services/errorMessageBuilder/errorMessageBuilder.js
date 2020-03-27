@@ -7,12 +7,12 @@ import baseErrorMessageBuilder from './baseErrorMessageBuilder';
 const mimetypeGroupNames = getGroupNames();
 
 const messages = {
-  linkMimetypeGroup: function(error) {
-    const labels = _.map(error.mimetypeGroupName, name => '“' + mimetypeGroupNames[name] + '”');
+  linkMimetypeGroup: function (error) {
+    const labels = _.map(error.mimetypeGroupName, (name) => '“' + mimetypeGroupNames[name] + '”');
     return '' + joinAnd(labels) + ' are the only acceptable file types';
   },
 
-  linkContentType: function(error, ctRepo) {
+  linkContentType: function (error, ctRepo) {
     const ct = ctRepo.get(error.contentTypeId);
     if (ct) {
       return 'Linked Entry’s content type must be ' + ct.getName() + '.';
@@ -21,7 +21,7 @@ const messages = {
     }
   },
 
-  dateRange: function(error) {
+  dateRange: function (error) {
     const dateFormat = 'lll';
     const min = error.min && moment(error.min).format(dateFormat);
     const max = error.max && moment(error.max).format(dateFormat);
@@ -35,7 +35,7 @@ const messages = {
     }
   },
 
-  type: function(error) {
+  type: function (error) {
     if (error.details && (error.type === 'Validation' || error.type === 'Text')) {
       return error.details;
     } else if (error.type === 'Symbol') {
@@ -47,12 +47,12 @@ const messages = {
     }
   },
 
-  notResolvable: function(error) {
+  notResolvable: function (error) {
     const type = _.get(error, 'link.linkType') || 'Entity';
     return 'Linked ' + type + ' does not exist';
   },
 
-  unknown: function(error) {
+  unknown: function (error) {
     if (error.path.length === 3 && error.path[0] === 'fields') {
       return 'This field is not localized and should not contain a value.';
     } else if (error.path.length === 2 && error.path[0] === 'fields') {
@@ -60,7 +60,7 @@ const messages = {
     } else {
       return 'Unkown property.';
     }
-  }
+  },
 };
 
 function customMessage(error) {
@@ -110,7 +110,7 @@ function buildAssetError(error) {
 }
 
 function errorMessageBuilder(ctRepo) {
-  return error => buildErrorMessage(error, ctRepo);
+  return (error) => buildErrorMessage(error, ctRepo);
 }
 
 errorMessageBuilder.forContentType = buildContentTypeError;

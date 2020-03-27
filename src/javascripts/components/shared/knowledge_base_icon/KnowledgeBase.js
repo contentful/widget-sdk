@@ -27,7 +27,7 @@ const items = {
   createOAuthApp: 'developers/docs/references/authentication/#creating-an-oauth-20-application',
   // TODO add it once it becomes available
   spaceEnvironments: 'developers/docs',
-  spacesAndOrganizations: 'r/knowledgebase/spaces-and-organizations'
+  spacesAndOrganizations: 'r/knowledgebase/spaces-and-organizations',
 };
 
 function getKnowledgeBaseUrl(name) {
@@ -61,7 +61,7 @@ KnowledgeBase.propTypes = {
   target: PropTypes.oneOf(Object.keys(items)).isRequired,
   text: PropTypes.string,
   inlineText: PropTypes.any,
-  icon: PropTypes.bool
+  icon: PropTypes.bool,
 };
 
 export default KnowledgeBase;

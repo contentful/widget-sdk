@@ -8,7 +8,7 @@ export default class UserInvitationRemovalModal extends React.Component {
     email: PropTypes.string.isRequired,
     isShown: PropTypes.bool.isRequired,
     onConfirm: PropTypes.func.isRequired,
-    onCancel: PropTypes.func.isRequired
+    onCancel: PropTypes.func.isRequired,
   };
 
   render() {

@@ -10,7 +10,7 @@ import {
   Paragraph,
   Typography,
   DropdownList,
-  DropdownListItem
+  DropdownListItem,
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import moment from 'moment';
@@ -28,11 +28,11 @@ import { go } from 'states/Navigator';
 const styles = {
   dotsRow: css({
     textAlign: 'right',
-    verticalAlign: 'middle'
+    verticalAlign: 'middle',
   }),
   tooltip: css({
-    marginLeft: '10px'
-  })
+    marginLeft: '10px',
+  }),
 };
 
 const triggerLeaveModal = async ({ organization, userOrgMembershipId, onLeaveSuccess }) => {
@@ -76,7 +76,7 @@ const triggerLeaveModal = async ({ organization, userOrgMembershipId, onLeaveSuc
 const OrganizationRow = ({ organization, onLeaveSuccess }) => {
   const {
     role: userRole,
-    sys: { id: userOrgMembershipId }
+    sys: { id: userOrgMembershipId },
   } = getOrganizationMembership(organization.sys.id);
 
   const [canUserLeaveOrg, setCanUserLeaveOrg] = useState(true);
@@ -90,7 +90,7 @@ const OrganizationRow = ({ organization, onLeaveSuccess }) => {
   const goToOrgSettings = () => {
     go({
       path: ['account', 'organization_settings'],
-      params: { orgId: organization.sys.id }
+      params: { orgId: organization.sys.id },
     });
   };
 
@@ -118,7 +118,7 @@ const OrganizationRow = ({ organization, onLeaveSuccess }) => {
         <CardActions
           iconButtonProps={{
             buttonType: 'primary',
-            testId: 'organization-row.dropdown-menu.trigger'
+            testId: 'organization-row.dropdown-menu.trigger',
           }}
           data-test-id="organization-row.dropdown-menu">
           <DropdownList>
@@ -152,7 +152,7 @@ const OrganizationRow = ({ organization, onLeaveSuccess }) => {
 
 OrganizationRow.propTypes = {
   organization: OrganizationPropType.isRequired,
-  onLeaveSuccess: PropTypes.func.isRequired
+  onLeaveSuccess: PropTypes.func.isRequired,
 };
 
 export default OrganizationRow;

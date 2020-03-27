@@ -1,28 +1,28 @@
 import { first, last, merge } from 'lodash';
 import { getSchema } from 'analytics/Schemas';
 
-export default function(eventName, data) {
+export default function (eventName, data) {
   const experiment = {
     data: merge(
       {
         action: 'interaction',
         experiment_id: data.experiment.id,
-        variation: data.experiment.variation
+        variation: data.experiment.variation,
       },
       getUserOrgSpace(data)
     ),
-    schema: getSchema('experiment').path
+    schema: getSchema('experiment').path,
   };
 
   return {
     data: merge(
       {
         scope: extractScope(eventName),
-        action: extractAction(eventName)
+        action: extractAction(eventName),
       },
       getUserOrgSpace(data)
     ),
-    contexts: [experiment]
+    contexts: [experiment],
   };
 }
 
@@ -38,6 +38,6 @@ function getUserOrgSpace(data) {
   return {
     organization_id: data.organizationId,
     space_id: data.spaceId,
-    executing_user_id: data.userId
+    executing_user_id: data.userId,
   };
 }

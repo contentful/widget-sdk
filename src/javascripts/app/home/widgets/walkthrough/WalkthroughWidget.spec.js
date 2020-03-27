@@ -3,7 +3,7 @@ import Enzyme from 'enzyme';
 import 'jest-enzyme';
 import WalkthroughWidget from './WalkthroughWidget.js';
 
-const waitToUpdate = async wrapper => {
+const waitToUpdate = async (wrapper) => {
   await Promise.resolve();
   await wrapper.update();
 };
@@ -11,17 +11,17 @@ const waitToUpdate = async wrapper => {
 jest.mock('utils/StatePersistenceApi', () => ({
   fetchUserState: () =>
     Promise.resolve({ started: undefined, dismissed: undefined, sys: { version: 1 } }),
-  updateUserState: (_, { version }) => Promise.resolve({ sys: version + 1 })
+  updateUserState: (_, { version }) => Promise.resolve({ sys: version + 1 }),
 }));
 
 jest.mock('app/home/widgets/walkthrough/utils', () => ({
-  getReactJoyride: () => Promise.resolve('')
+  getReactJoyride: () => Promise.resolve(''),
 }));
 
 describe('WalkthroughWidget', () => {
   const props = {
     spaceName: 'spaceName',
-    setWalkthroughState: () => {}
+    setWalkthroughState: () => {},
   };
 
   const wrapper = Enzyme.mount(<WalkthroughWidget {...props} />);

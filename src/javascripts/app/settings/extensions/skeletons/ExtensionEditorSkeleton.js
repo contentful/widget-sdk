@@ -6,11 +6,11 @@ import {
   SkeletonBodyText,
   SkeletonDisplayText,
   Heading,
-  Workbench
+  Workbench,
 } from '@contentful/forma-36-react-components';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 
-export const ExtensionEditorSkeleton = props => (
+export const ExtensionEditorSkeleton = (props) => (
   <Workbench>
     <Workbench.Header
       onBack={() => {
@@ -46,5 +46,5 @@ export const ExtensionEditorSkeleton = props => (
 ExtensionEditorSkeleton.propTypes = {
   goToList: PropTypes.func.isRequired,
   title: PropTypes.string,
-  actions: PropTypes.node
+  actions: PropTypes.node,
 };

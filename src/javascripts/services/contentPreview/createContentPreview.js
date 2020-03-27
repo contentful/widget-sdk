@@ -38,7 +38,7 @@ export default function createContentPreview({ space, cma }) {
     remove,
     replaceVariablesInUrl,
     getSelected,
-    setSelected
+    setSelected,
   };
 
   /**
@@ -95,13 +95,13 @@ export default function createContentPreview({ space, cma }) {
         .endpoint('preview_environments')
         .payload({ limit: CONTENT_PREVIEW_LIMIT })
         .get()
-        .then(environments => cachePreviewEnvironments(environments.items));
+        .then((environments) => cachePreviewEnvironments(environments.items));
     }
   }
 
   function cachePreviewEnvironments(environments) {
     const cacheVal = {};
-    environments.forEach(environment => {
+    environments.forEach((environment) => {
       cacheVal[environment.sys.id] = environment;
     });
     cache = cacheVal;
@@ -123,7 +123,7 @@ export default function createContentPreview({ space, cma }) {
    * Uses #getAll method to load environment list from server or cache.
    */
   function get(id) {
-    return getAll().then(environments => {
+    return getAll().then((environments) => {
       return environments[id] || Promise.reject('Preview environment could not be found');
     });
   }
@@ -166,17 +166,14 @@ export default function createContentPreview({ space, cma }) {
    */
   function create(env) {
     return getAll()
-      .then(environments => {
+      .then((environments) => {
         const canCreate = Object.keys(environments).length < CONTENT_PREVIEW_LIMIT;
 
         if (!canCreate) {
           return Promise.reject(`Cannot create more than ${CONTENT_PREVIEW_LIMIT} previews.`);
         }
 
-        return space
-          .endpoint('preview_environments')
-          .payload(toExternal(env))
-          .post();
+        return space.endpoint('preview_environments').payload(toExternal(env)).post();
       })
       .then(updateCache);
   }
@@ -258,7 +255,7 @@ export default function createContentPreview({ space, cma }) {
           return acc;
         },
         []
-      )
+      ),
     };
   }
 
@@ -293,7 +290,7 @@ export default function createContentPreview({ space, cma }) {
       cma,
       entry,
       localeCode,
-      url: processedUrl
+      url: processedUrl,
     });
   }
 }

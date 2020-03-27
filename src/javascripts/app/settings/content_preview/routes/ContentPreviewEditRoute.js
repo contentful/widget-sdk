@@ -15,7 +15,7 @@ const ContentTypesFetcher = createFetcherComponent(({ contentPreviewId }) => {
 
   return Promise.all([
     spaceContext.publishedCTs.refreshBare(),
-    getContentPreview().get(contentPreviewId)
+    getContentPreview().get(contentPreviewId),
   ]);
 });
 
@@ -23,7 +23,7 @@ export default class ContentPreviewEditRoute extends Component {
   static propTypes = {
     contentPreviewId: PropTypes.string.isRequired,
     registerSaveAction: PropTypes.func.isRequired,
-    setDirty: PropTypes.func.isRequired
+    setDirty: PropTypes.func.isRequired,
   };
 
   render() {

@@ -39,12 +39,12 @@ describe('SSO Redux actionCreators', () => {
       mockStore.dispatch(actionCreators.retrieveIdp({ orgId: '1234' })).then(() => {
         expect(mockStore.getActions()).toEqual([
           {
-            type: actions.SSO_GET_IDENTITY_PROVIDER_PENDING
+            type: actions.SSO_GET_IDENTITY_PROVIDER_PENDING,
           },
           {
             type: actions.SSO_GET_IDENTITY_PROVIDER_SUCCESS,
-            payload: identityProvider
-          }
+            payload: identityProvider,
+          },
         ]);
       });
     });
@@ -57,13 +57,13 @@ describe('SSO Redux actionCreators', () => {
       mockStore.dispatch(actionCreators.retrieveIdp({ orgId: '1234' })).then(() => {
         expect(mockStore.getActions()).toEqual([
           {
-            type: actions.SSO_GET_IDENTITY_PROVIDER_PENDING
+            type: actions.SSO_GET_IDENTITY_PROVIDER_PENDING,
           },
           {
             type: actions.SSO_GET_IDENTITY_PROVIDER_FAILURE,
             error: true,
-            payload: error
-          }
+            payload: error,
+          },
         ]);
       });
     });
@@ -80,12 +80,12 @@ describe('SSO Redux actionCreators', () => {
         .then(() => {
           expect(mockStore.getActions()).toEqual([
             {
-              type: actions.SSO_CREATE_IDENTITY_PROVIDER_PENDING
+              type: actions.SSO_CREATE_IDENTITY_PROVIDER_PENDING,
             },
             {
               type: actions.SSO_CREATE_IDENTITY_PROVIDER_SUCCESS,
-              payload: identityProvider
-            }
+              payload: identityProvider,
+            },
           ]);
         });
     });
@@ -101,8 +101,8 @@ describe('SSO Redux actionCreators', () => {
             method: expect.any(String),
             path: expect.any(Array),
             data: {
-              ssoName: null
-            }
+              ssoName: null,
+            },
           })
         );
       });
@@ -129,13 +129,13 @@ describe('SSO Redux actionCreators', () => {
         .then(() => {
           expect(mockStore.getActions()).toEqual([
             {
-              type: actions.SSO_CREATE_IDENTITY_PROVIDER_PENDING
+              type: actions.SSO_CREATE_IDENTITY_PROVIDER_PENDING,
             },
             {
               type: actions.SSO_CREATE_IDENTITY_PROVIDER_FAILURE,
               error: true,
-              payload: error
-            }
+              payload: error,
+            },
           ]);
         });
     });
@@ -147,17 +147,17 @@ describe('SSO Redux actionCreators', () => {
         sso: {
           fields: {
             idpSsoTargetUrl: {
-              isPending: true
-            }
-          }
-        }
+              isPending: true,
+            },
+          },
+        },
       });
 
       await mockStore.dispatch(
         actionCreators.updateFieldValue({
           orgId: '1234',
           fieldName: 'idpSsoTargetUrl',
-          value: 'some-value'
+          value: 'some-value',
         })
       );
 
@@ -172,7 +172,7 @@ describe('SSO Redux actionCreators', () => {
         actionCreators.updateFieldValue({
           orgId: '1234',
           fieldName: 'idpSsoTargetUrl',
-          value: idpSsoTargetUrlValue
+          value: idpSsoTargetUrlValue,
         })
       );
 
@@ -182,7 +182,7 @@ describe('SSO Redux actionCreators', () => {
         actionCreators.updateFieldValue({
           orgId: '1234',
           fieldName: 'idpSsoTargetUrl',
-          value: idpSsoTargetUrlValue
+          value: idpSsoTargetUrlValue,
         })
       );
 
@@ -196,7 +196,7 @@ describe('SSO Redux actionCreators', () => {
         actionCreators.updateFieldValue({
           orgId: '1234',
           fieldName: 'idpSsoTargetUrl',
-          value: idpSsoTargetUrlValue
+          value: idpSsoTargetUrlValue,
         })
       );
 
@@ -209,10 +209,10 @@ describe('SSO Redux actionCreators', () => {
         sso: {
           identityProvider: {
             data: {
-              idpSsoTargetUrl: 'https://example.com'
-            }
-          }
-        }
+              idpSsoTargetUrl: 'https://example.com',
+            },
+          },
+        },
       };
 
       mockStore.setState(state);
@@ -224,7 +224,7 @@ describe('SSO Redux actionCreators', () => {
         actionCreators.updateFieldValue({
           orgId: '1234',
           fieldName,
-          value
+          value,
         })
       );
 
@@ -233,7 +233,7 @@ describe('SSO Redux actionCreators', () => {
 
     it('should go through the success flow if the field update was successful on the API', async () => {
       const identityProvider = {
-        ssoName: 'something-1234'
+        ssoName: 'something-1234',
       };
 
       mockEndpoint.mockResolvedValueOnce(identityProvider);
@@ -245,7 +245,7 @@ describe('SSO Redux actionCreators', () => {
         actionCreators.updateFieldValue({
           orgId: '1234',
           fieldName,
-          value
+          value,
         })
       );
 
@@ -254,23 +254,23 @@ describe('SSO Redux actionCreators', () => {
           {
             type: actions.SSO_FIELD_UPDATE_VALUE,
             payload: value,
-            meta: { fieldName }
+            meta: { fieldName },
           },
           {
             type: actions.SSO_FIELD_UPDATE_PENDING,
-            meta: { fieldName }
+            meta: { fieldName },
           },
           {
             type: actions.SSO_FIELD_UPDATE_SUCCESS,
-            meta: { fieldName }
-          }
+            meta: { fieldName },
+          },
         ])
       );
     });
 
     it('should update the identity provider if the field update was successful on the API', async () => {
       const identityProvider = {
-        ssoName: 'something-1234'
+        ssoName: 'something-1234',
       };
 
       mockEndpoint.mockResolvedValueOnce(identityProvider);
@@ -282,7 +282,7 @@ describe('SSO Redux actionCreators', () => {
         actionCreators.updateFieldValue({
           orgId: '1234',
           fieldName,
-          value
+          value,
         })
       );
 
@@ -290,8 +290,8 @@ describe('SSO Redux actionCreators', () => {
         expect.arrayContaining([
           {
             type: actions.SSO_UPDATE_IDENTITY_PROVIDER,
-            payload: identityProvider
-          }
+            payload: identityProvider,
+          },
         ])
       );
     });
@@ -306,7 +306,7 @@ describe('SSO Redux actionCreators', () => {
         actionCreators.updateFieldValue({
           orgId: '1234',
           fieldName,
-          value
+          value,
         })
       );
 
@@ -315,18 +315,18 @@ describe('SSO Redux actionCreators', () => {
           {
             type: actions.SSO_FIELD_UPDATE_VALUE,
             payload: value,
-            meta: { fieldName }
+            meta: { fieldName },
           },
           {
             type: actions.SSO_FIELD_UPDATE_PENDING,
-            meta: { fieldName }
+            meta: { fieldName },
           },
           {
             type: actions.SSO_FIELD_UPDATE_FAILURE,
             error: true,
             payload: expect.any(Error),
-            meta: { fieldName }
-          }
+            meta: { fieldName },
+          },
         ])
       );
     });
@@ -339,10 +339,10 @@ describe('SSO Redux actionCreators', () => {
         sso: {
           fields: {
             ssoName: {
-              value: 'something-1234'
-            }
-          }
-        }
+              value: 'something-1234',
+            },
+          },
+        },
       };
 
       mockStore.setState(state);
@@ -354,7 +354,7 @@ describe('SSO Redux actionCreators', () => {
         actionCreators.validateField({
           orgId: '1234',
           fieldName,
-          value
+          value,
         })
       );
 
@@ -369,7 +369,7 @@ describe('SSO Redux actionCreators', () => {
         actionCreators.validateField({
           orgId: '1234',
           fieldName,
-          value
+          value,
         })
       );
 
@@ -377,12 +377,12 @@ describe('SSO Redux actionCreators', () => {
         {
           type: actions.SSO_FIELD_UPDATE_VALUE,
           payload: value,
-          meta: { fieldName }
+          meta: { fieldName },
         },
         {
           type: actions.SSO_FIELD_VALIDATION_SUCCESS,
-          meta: { fieldName }
-        }
+          meta: { fieldName },
+        },
       ]);
     });
 
@@ -394,7 +394,7 @@ describe('SSO Redux actionCreators', () => {
         actionCreators.validateField({
           orgId: '1234',
           fieldName,
-          value
+          value,
         })
       );
 
@@ -402,14 +402,14 @@ describe('SSO Redux actionCreators', () => {
         {
           type: actions.SSO_FIELD_UPDATE_VALUE,
           payload: value,
-          meta: { fieldName }
+          meta: { fieldName },
         },
         {
           type: actions.SSO_FIELD_VALIDATION_FAILURE,
           error: true,
           payload: expect.any(Error),
-          meta: { fieldName }
-        }
+          meta: { fieldName },
+        },
       ]);
     });
 
@@ -425,7 +425,7 @@ describe('SSO Redux actionCreators', () => {
         actionCreators.validateField({
           orgId: '1234',
           fieldName,
-          value
+          value,
         })
       );
 
@@ -433,14 +433,14 @@ describe('SSO Redux actionCreators', () => {
         {
           type: actions.SSO_FIELD_UPDATE_VALUE,
           payload: value,
-          meta: { fieldName }
+          meta: { fieldName },
         },
         {
           type: actions.SSO_FIELD_VALIDATION_FAILURE,
           error: true,
           payload: expect.any(Error),
-          meta: { fieldName }
-        }
+          meta: { fieldName },
+        },
       ]);
 
       mockStore = createMockStore();
@@ -451,7 +451,7 @@ describe('SSO Redux actionCreators', () => {
         actionCreators.validateField({
           orgId: '1234',
           fieldName,
-          value
+          value,
         })
       );
 
@@ -459,12 +459,12 @@ describe('SSO Redux actionCreators', () => {
         {
           type: actions.SSO_FIELD_UPDATE_VALUE,
           payload: value,
-          meta: { fieldName }
+          meta: { fieldName },
         },
         {
           type: actions.SSO_FIELD_VALIDATION_SUCCESS,
-          meta: { fieldName }
-        }
+          meta: { fieldName },
+        },
       ]);
     });
   });
@@ -504,9 +504,9 @@ describe('SSO Redux actionCreators', () => {
           type: actions.SSO_CONNECTION_TEST_START,
           payload: {
             testWindow: 'window',
-            timer: 12
-          }
-        }
+            timer: 12,
+          },
+        },
       ]);
     });
   });
@@ -516,15 +516,15 @@ describe('SSO Redux actionCreators', () => {
 
     beforeEach(() => {
       mockWindow = {
-        close: jest.fn()
+        close: jest.fn(),
       };
 
       mockStore.setState({
         sso: {
           connectionTest: {
-            testWindow: mockWindow
-          }
-        }
+            testWindow: mockWindow,
+          },
+        },
       });
 
       mockEndpoint.mockResolvedValueOnce({});
@@ -553,10 +553,10 @@ describe('SSO Redux actionCreators', () => {
         sso: {
           connectionTest: {
             testWindow: {
-              closed: false
-            }
-          }
-        }
+              closed: false,
+            },
+          },
+        },
       });
 
       mockStore.dispatch(actionCreators.checkTestWindow({ orgId: 'org_1234' }));
@@ -569,10 +569,10 @@ describe('SSO Redux actionCreators', () => {
         sso: {
           connectionTest: {
             testWindow: {
-              closed: true
-            }
-          }
-        }
+              closed: true,
+            },
+          },
+        },
       });
 
       mockStore.dispatch(actionCreators.checkTestWindow({ orgId: 'org_1234' }));
@@ -601,7 +601,7 @@ describe('SSO Redux actionCreators', () => {
 
       expect(mockStore.getDispatched()[1].thunkName()).toBe('retrieveIdp');
       expect(_.last(mockStore.getDispatched()).actionValue()).toEqual({
-        type: actions.SSO_CONNECTION_TEST_END
+        type: actions.SSO_CONNECTION_TEST_END,
       });
     });
 
@@ -622,12 +622,12 @@ describe('SSO Redux actionCreators', () => {
 
       expect(mockStore.getActions()).toEqual([
         {
-          type: actions.SSO_ENABLE_PENDING
+          type: actions.SSO_ENABLE_PENDING,
         },
         {
           type: actions.SSO_ENABLE_SUCCESS,
-          payload: identityProvider
-        }
+          payload: identityProvider,
+        },
       ]);
     });
 
@@ -662,13 +662,13 @@ describe('SSO Redux actionCreators', () => {
 
       expect(mockStore.getActions()).toEqual([
         {
-          type: actions.SSO_ENABLE_PENDING
+          type: actions.SSO_ENABLE_PENDING,
         },
         {
           type: actions.SSO_ENABLE_FAILURE,
           error: true,
-          payload: error
-        }
+          payload: error,
+        },
       ]);
     });
 

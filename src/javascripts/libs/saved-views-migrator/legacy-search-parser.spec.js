@@ -9,8 +9,8 @@ describe('legacySearchParser', () => {
         offset: 0,
         length: 6,
         end: 6,
-        content: 'Foobar'
-      }
+        content: 'Foobar',
+      },
     ]);
   });
 
@@ -22,7 +22,7 @@ describe('legacySearchParser', () => {
         offset: 0,
         length: 7,
         end: 7,
-        content: 'George'
+        content: 'George',
       },
       {
         type: 'Query',
@@ -30,8 +30,8 @@ describe('legacySearchParser', () => {
         offset: 7,
         length: 8,
         end: 15,
-        content: 'Clooney'
-      }
+        content: 'Clooney',
+      },
     ]);
   });
 
@@ -50,7 +50,7 @@ describe('legacySearchParser', () => {
             offset: 0,
             length: 3,
             end: 3,
-            content: 'foo'
+            content: 'foo',
           },
           operator: {
             type: 'Operator',
@@ -58,7 +58,7 @@ describe('legacySearchParser', () => {
             offset: 3,
             length: 1,
             end: 4,
-            content: ':'
+            content: ':',
           },
           value: {
             type: 'Value',
@@ -66,10 +66,10 @@ describe('legacySearchParser', () => {
             offset: 4,
             length: 3,
             end: 7,
-            content: 'bar'
-          }
-        }
-      }
+            content: 'bar',
+          },
+        },
+      },
     ]);
   });
 
@@ -88,7 +88,7 @@ describe('legacySearchParser', () => {
             offset: 0,
             length: 3,
             end: 3,
-            content: 'foo'
+            content: 'foo',
           },
           operator: {
             type: 'Operator',
@@ -96,7 +96,7 @@ describe('legacySearchParser', () => {
             offset: 3,
             length: 1,
             end: 4,
-            content: ':'
+            content: ':',
           },
           value: {
             type: 'Value',
@@ -104,9 +104,9 @@ describe('legacySearchParser', () => {
             offset: 4,
             length: 4,
             end: 8,
-            content: 'bar'
-          }
-        }
+            content: 'bar',
+          },
+        },
       },
       {
         type: 'Pair',
@@ -121,7 +121,7 @@ describe('legacySearchParser', () => {
             offset: 8,
             length: 5,
             end: 13,
-            content: 'bingo'
+            content: 'bingo',
           },
           operator: {
             type: 'Operator',
@@ -129,7 +129,7 @@ describe('legacySearchParser', () => {
             offset: 13,
             length: 1,
             end: 14,
-            content: ':'
+            content: ':',
           },
           value: {
             type: 'Value',
@@ -137,10 +137,10 @@ describe('legacySearchParser', () => {
             offset: 14,
             length: 5,
             end: 19,
-            content: 'bongo'
-          }
-        }
-      }
+            content: 'bongo',
+          },
+        },
+      },
     ]);
   });
 
@@ -159,7 +159,7 @@ describe('legacySearchParser', () => {
             offset: 0,
             length: 3,
             end: 3,
-            content: 'foo'
+            content: 'foo',
           },
           operator: {
             type: 'Operator',
@@ -167,7 +167,7 @@ describe('legacySearchParser', () => {
             offset: 3,
             length: 1,
             end: 4,
-            content: ':'
+            content: ':',
           },
           value: {
             type: 'Value',
@@ -175,10 +175,10 @@ describe('legacySearchParser', () => {
             offset: 4,
             length: 9,
             end: 13,
-            content: 'Bar Baz'
-          }
-        }
-      }
+            content: 'Bar Baz',
+          },
+        },
+      },
     ]);
   });
 
@@ -197,7 +197,7 @@ describe('legacySearchParser', () => {
             offset: 0,
             length: 3,
             end: 3,
-            content: 'foo'
+            content: 'foo',
           },
           operator: {
             type: 'Operator',
@@ -205,7 +205,7 @@ describe('legacySearchParser', () => {
             offset: 3,
             length: 1,
             end: 4,
-            content: ':'
+            content: ':',
           },
           value: {
             type: 'Value',
@@ -213,9 +213,9 @@ describe('legacySearchParser', () => {
             offset: 4,
             length: 4,
             end: 8,
-            content: 'bar'
-          }
-        }
+            content: 'bar',
+          },
+        },
       },
       {
         type: 'Query',
@@ -223,8 +223,8 @@ describe('legacySearchParser', () => {
         offset: 8,
         length: 3,
         end: 11,
-        content: 'Baz'
-      }
+        content: 'Baz',
+      },
     ]);
   });
 
@@ -236,7 +236,7 @@ describe('legacySearchParser', () => {
         offset: 0,
         length: 5,
         end: 5,
-        content: 'Merp'
+        content: 'Merp',
       },
       {
         type: 'Pair',
@@ -251,7 +251,7 @@ describe('legacySearchParser', () => {
             offset: 5,
             length: 3,
             end: 8,
-            content: 'foo'
+            content: 'foo',
           },
           operator: {
             type: 'Operator',
@@ -259,7 +259,7 @@ describe('legacySearchParser', () => {
             offset: 8,
             length: 1,
             end: 9,
-            content: ':'
+            content: ':',
           },
           value: {
             type: 'Value',
@@ -267,9 +267,9 @@ describe('legacySearchParser', () => {
             offset: 9,
             length: 10,
             end: 19,
-            content: 'Bar Baz'
-          }
-        }
+            content: 'Bar Baz',
+          },
+        },
       },
       {
         type: 'Pair',
@@ -284,7 +284,7 @@ describe('legacySearchParser', () => {
             offset: 19,
             length: 5,
             end: 24,
-            content: 'bingo'
+            content: 'bingo',
           },
           operator: {
             type: 'Operator',
@@ -292,7 +292,7 @@ describe('legacySearchParser', () => {
             offset: 24,
             length: 1,
             end: 25,
-            content: ':'
+            content: ':',
           },
           value: {
             type: 'Value',
@@ -300,9 +300,9 @@ describe('legacySearchParser', () => {
             offset: 25,
             length: 6,
             end: 31,
-            content: 'bongo'
-          }
-        }
+            content: 'bongo',
+          },
+        },
       },
       {
         type: 'Query',
@@ -310,8 +310,8 @@ describe('legacySearchParser', () => {
         offset: 31,
         length: 11,
         end: 42,
-        content: 'Herp Derp'
-      }
+        content: 'Herp Derp',
+      },
     ]);
   });
 });

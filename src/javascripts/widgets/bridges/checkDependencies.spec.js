@@ -18,7 +18,7 @@ describe('checkDependencies', () => {
       checkDependencies('SomeModuleName', { nil: null, undef: undefined, nein: false }, [
         'nil',
         'undef',
-        'nein'
+        'nein',
       ]);
     }).not.toThrow();
   });

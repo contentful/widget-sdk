@@ -8,7 +8,7 @@ import {
   Paragraph,
   TextLink,
   Note,
-  Typography
+  Typography,
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import { billing } from './links';
@@ -24,18 +24,18 @@ const styles = {
     fill: tokens.colorBlueDark,
     paddingRight: '6px',
     position: 'relative',
-    bottom: '-0.125em'
+    bottom: '-0.125em',
   }),
   linkWithIcon: css({
-    marginTop: tokens.spacingXs
+    marginTop: tokens.spacingXs,
   }),
   grandTotal: css({
-    marginBottom: tokens.spacingM
-  })
+    marginBottom: tokens.spacingM,
+  }),
 };
 
 export function hasAnyInaccessibleSpaces(plans) {
-  return plans.some(plan => {
+  return plans.some((plan) => {
     const space = plan.space;
     return space && !space.isAccessible;
   });
@@ -155,7 +155,7 @@ PayingOnDemandOrgCopy.propTypes = NonPayingOrgCopy.propTypes = InaccessibleSpace
   organizationId: PropTypes.string.isRequired,
   isOrgOwner: PropTypes.bool.isRequired,
   isOrgBillable: PropTypes.bool.isRequired,
-  spacePlans: PropTypes.array.isRequired
+  spacePlans: PropTypes.array.isRequired,
 };
 
 export default Sidebar;

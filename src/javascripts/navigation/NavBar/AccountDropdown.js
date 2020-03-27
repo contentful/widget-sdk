@@ -18,7 +18,7 @@ import {
   Dropdown,
   DropdownList,
   DropdownListItem,
-  TabFocusTrap
+  TabFocusTrap,
 } from '@contentful/forma-36-react-components';
 
 const styles = {
@@ -32,36 +32,36 @@ const styles = {
     `,
     '&:hover': {
       backgroundColor: tokens.colorContrastDark,
-      boxShadow: 'inset 1px 0 2px 0 rgba(0,0,0,0.9), inset 2px 0 5px 0 rgba(0,0,0,0.75)'
-    }
+      boxShadow: 'inset 1px 0 2px 0 rgba(0,0,0,0.9), inset 2px 0 5px 0 rgba(0,0,0,0.75)',
+    },
   }),
   dropdownActive: css({
     backgroundColor: tokens.colorContrastDark,
-    boxShadow: 'inset 1px 0 2px 0 rgba(0,0,0,0.9), inset 2px 0 5px 0 rgba(0,0,0,0.75)'
+    boxShadow: 'inset 1px 0 2px 0 rgba(0,0,0,0.9), inset 2px 0 5px 0 rgba(0,0,0,0.75)',
   }),
   dropdownList: css({
-    minWidth: '150px'
+    minWidth: '150px',
   }),
   accountDropdownButton: css({
-    height: '100%'
+    height: '100%',
   }),
   focusTrap: css({
     height: '100%',
     display: 'flex',
     alignItems: 'center',
-    padding: `0 ${tokens.spacingM}`
+    padding: `0 ${tokens.spacingM}`,
   }),
   imageWrapper: css({
-    position: 'relative'
+    position: 'relative',
   }),
   avatar: css({
     display: 'block',
     height: '24px',
     width: '24px',
-    borderRadius: '50%'
+    borderRadius: '50%',
   }),
   dropdownIcon: css({
-    marginLeft: tokens.spacingXs
+    marginLeft: tokens.spacingXs,
   }),
   notificationIcon: css({
     position: 'absolute',
@@ -71,10 +71,10 @@ const styles = {
     width: '12px',
     borderRadius: '50%',
     backgroundColor: tokens.colorWarning,
-    border: `2px solid ${tokens.colorContrastMid}`
+    border: `2px solid ${tokens.colorContrastMid}`,
   }),
   pendingTasksItem: css({
-    display: 'inline-flex'
+    display: 'inline-flex',
   }),
   pendingTaskCount: css({
     marginLeft: tokens.spacing2Xs,
@@ -88,8 +88,8 @@ const styles = {
     color: '#fff',
     lineHeight: '1rem',
     alignSelf: 'center',
-    fontSize: '0.6rem'
-  })
+    fontSize: '0.6rem',
+  }),
 };
 
 const getPendingTasksCount = (tasks, entries) => {
@@ -104,7 +104,7 @@ const getPendingTasksCount = (tasks, entries) => {
       }
       continue;
     }
-    const isEntryAccessible = !!entries.find(e => e.sys.id === entryId);
+    const isEntryAccessible = !!entries.find((e) => e.sys.id === entryId);
     seenEntries.set(entryId, isEntryAccessible);
     if (isEntryAccessible) {
       taskCount++;
@@ -113,7 +113,7 @@ const getPendingTasksCount = (tasks, entries) => {
   return taskCount;
 };
 
-const canDisplayTasksDashboard = async spaceContext =>
+const canDisplayTasksDashboard = async (spaceContext) =>
   spaceContext.space ? getCurrentSpaceFeature(FeatureFlagKey.CONTENT_WORKFLOW_TASKS, false) : false;
 
 // we need to pass this utm parameters in the url
@@ -125,7 +125,7 @@ export default class AccountDropdown extends Component {
     isOpen: false,
     currentUser: {},
     pendingTasksCount: 0,
-    shouldShowPendingTasks: false
+    shouldShowPendingTasks: false,
   };
 
   componentDidMount = async () => {
@@ -134,7 +134,7 @@ export default class AccountDropdown extends Component {
 
     const currentUser = await getUser();
     this.setState({
-      currentUser
+      currentUser,
     });
 
     const shouldShowPendingTasks = await shouldShowPendingTasksPromise;
@@ -149,14 +149,14 @@ export default class AccountDropdown extends Component {
       Analytics.track('account_dropdown:pending_tasks_fetched', {
         numPendingTasks: tasks.length,
         numVisiblePendingTasks: pendingTasksCount,
-        hasInaccessibleTasks: tasks.length > pendingTasksCount
+        hasInaccessibleTasks: tasks.length > pendingTasksCount,
       });
       this.setState({ pendingTasksCount, shouldShowPendingTasks: true });
     }
   };
 
   handleToggle = () => {
-    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
+    this.setState((prevState) => ({ isOpen: !prevState.isOpen }));
   };
 
   handleLogout = () => {
@@ -170,7 +170,7 @@ export default class AccountDropdown extends Component {
     Analytics.track('element:click', {
       elementId: 'contact_sales_dropdown',
       groupId: 'contact_sales',
-      fromState: getCurrentStateName()
+      fromState: getCurrentStateName(),
     });
     Intercom.open();
     this.handleDropdownListItemClick();
@@ -219,7 +219,7 @@ export default class AccountDropdown extends Component {
             {({ getHref, onClick }) => (
               <DropdownListItem
                 testId="nav.account.userProfile"
-                onClick={e => {
+                onClick={(e) => {
                   onClick(e);
                   this.handleDropdownListItemClick();
                 }}
@@ -233,7 +233,7 @@ export default class AccountDropdown extends Component {
               {({ getHref, onClick }) => (
                 <DropdownListItem
                   testId="nav.account.pendingTasks"
-                  onClick={e => {
+                  onClick={(e) => {
                     onClick(e);
                     this.handleDropdownListItemClick();
                   }}

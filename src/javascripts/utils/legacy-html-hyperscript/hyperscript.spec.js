@@ -48,7 +48,7 @@ describe('hyperscript', () => {
     });
 
     it('does not close void elements', () => {
-      ['br', 'hr', 'img', 'input'].forEach(tag => {
+      ['br', 'hr', 'img', 'input'].forEach((tag) => {
         const html = `<${tag} some-attr="test">`;
         expect(h(tag, { someAttr: 'test' })).toBe(html);
       });
@@ -90,7 +90,7 @@ describe('hyperscript', () => {
         h('p', { foo: 'baz' }, ['test']),
         h('span', ['lol']),
         h('br'),
-        h('p', ['test 2'])
+        h('p', ['test 2']),
       ]);
 
       const expected = [
@@ -99,7 +99,7 @@ describe('hyperscript', () => {
         '<span>lol</span>',
         '<br>',
         '<p>test 2</p>',
-        '</div>'
+        '</div>',
       ].join('');
 
       expect(generated).toBe(expected);
@@ -108,7 +108,7 @@ describe('hyperscript', () => {
     it('creates for multiple nested elements', () => {
       const generated = h('div', { foo: 'bar' }, [
         h('.hello', [h('p', ['hello']), h('img', { src: 'wave.png' })]),
-        h('.bye', [h('hr'), h('span', { foo: 'doo' }, ['(c) lol'])])
+        h('.bye', [h('hr'), h('span', { foo: 'doo' }, ['(c) lol'])]),
       ]);
 
       const expected = [
@@ -121,7 +121,7 @@ describe('hyperscript', () => {
         '<hr>',
         '<span foo="doo">(c) lol</span>',
         '</div>',
-        '</div>'
+        '</div>',
       ].join('');
 
       expect(generated).toBe(expected);
@@ -132,7 +132,7 @@ describe('hyperscript', () => {
         color: 'red',
         fontSize: '12px',
         fontFamily: 'Comic Sans',
-        'z-index': 100
+        'z-index': 100,
       };
 
       const inline = 'color: red;font-size: 12px;font-family: Comic Sans;z-index: 100';

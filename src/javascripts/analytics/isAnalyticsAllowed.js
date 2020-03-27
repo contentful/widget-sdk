@@ -9,8 +9,8 @@ import { get } from 'lodash';
  * @return {boolean}
  */
 export default function isAnalyticsAllowed(user) {
-  const organizations = (user.organizationMemberships || []).map(m => m.organization);
-  const organizationDisallows = organizations.some(org => org.disableAnalytics === true);
+  const organizations = (user.organizationMemberships || []).map((m) => m.organization);
+  const organizationDisallows = organizations.some((org) => org.disableAnalytics === true);
   const userDisallows = get(user, ['features', 'logAnalytics']) === false;
 
   const disallowAnalytics = organizationDisallows || userDisallows;

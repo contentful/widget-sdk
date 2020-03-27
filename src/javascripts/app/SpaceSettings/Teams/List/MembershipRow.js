@@ -6,7 +6,7 @@ import {
   TableRow,
   Tooltip,
   ModalConfirm,
-  Paragraph
+  Paragraph,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import pluralize from 'pluralize';
@@ -18,7 +18,7 @@ import SpaceRoleEditor from 'app/OrganizationSettings/SpaceRoleEditor';
 import {
   SpaceMembership as SpaceMembershipPropType,
   SpaceRole as SpaceRolePropType,
-  TeamSpaceMembership as TeamSpaceMembershipPropType
+  TeamSpaceMembership as TeamSpaceMembershipPropType,
 } from 'app/OrganizationSettings/PropTypes';
 import { ADMIN_ROLE } from 'access_control/constants';
 import { href } from 'states/Navigator';
@@ -51,15 +51,15 @@ const MembershipRow = ({
   onUpdateTeamSpaceMembership,
   isPending,
   readOnly,
-  currentUserAdminSpaceMemberships
+  currentUserAdminSpaceMemberships,
 }) => {
   const {
     sys: {
       id: membershipId,
-      team: { name, description, memberCount }
+      team: { name, description, memberCount },
     },
     roles,
-    admin
+    admin,
   } = teamSpaceMembership;
 
   const roleIds = map(admin ? [ADMIN_ROLE] : roles, 'sys.id');
@@ -244,7 +244,7 @@ MembershipRow.propTypes = {
   readOnly: PropTypes.bool.isRequired,
   currentUserAdminSpaceMemberships: PropTypes.arrayOf(
     PropTypes.oneOfType([SpaceMembershipPropType, TeamSpaceMembershipPropType])
-  ).isRequired
+  ).isRequired,
 };
 
 export default MembershipRow;

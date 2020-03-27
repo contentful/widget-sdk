@@ -13,14 +13,14 @@ import {
   createCustomWebhookWithHTTPHeader,
   createCustomWebhookWithContentTypeHeader,
   createCustomWebhookWithContentLengthHeader,
-  createCustomWebhookWithCustomPayload
+  createCustomWebhookWithCustomPayload,
 } from '../../../interactions/webhooks';
 
 describe('Webhook', () => {
   const defaultWebhook = {
     name: 'Webhook',
     method: 'GET',
-    url: 'https://www.contentful.com/'
+    url: 'https://www.contentful.com/',
   };
 
   function fillInDefaultWebhookDetails() {
@@ -36,7 +36,7 @@ describe('Webhook', () => {
       cors: true,
       pactfileWriteMode: 'merge',
       dir: Cypress.env('pactDir'),
-      spec: 2
+      spec: 2,
     })
   );
 
@@ -58,7 +58,7 @@ describe('Webhook', () => {
       const extraInteractions = [
         createDefaultWebhook.willSucceed(),
         getDefaultWebhook.willReturnTheDefaultWebhook(),
-        queryFirst500DefaultWebhookCalls.willReturnNone()
+        queryFirst500DefaultWebhookCalls.willReturnNone(),
       ];
 
       fillInDefaultWebhookDetails();
@@ -73,16 +73,12 @@ describe('Webhook', () => {
       const extraInteractions = [
         createCustomWebhookTriggeringContentTypeEvents.willSucceed(),
         getDefaultWebhook.willReturnACustomWebhookThatTriggersContentTypeEvents(),
-        queryFirst500DefaultWebhookCalls.willReturnNone()
+        queryFirst500DefaultWebhookCalls.willReturnNone(),
       ];
 
       fillInDefaultWebhookDetails();
-      cy.get("[data-test-id='webhook-editor-setting-option']")
-        .eq(1)
-        .click();
-      cy.get("[data-test-id='checkbox-row']")
-        .eq(0)
-        .click();
+      cy.get("[data-test-id='webhook-editor-setting-option']").eq(1).click();
+      cy.get("[data-test-id='checkbox-row']").eq(0).click();
       cy.getByTestId('webhook-save').click();
 
       cy.wait(extraInteractions);
@@ -94,7 +90,7 @@ describe('Webhook', () => {
       const extraInteractions = [
         createCustomWebhookWithFilters.willSucceed(),
         getDefaultWebhook.willReturnACustomWebhookWithFilter(),
-        queryFirst500DefaultWebhookCalls.willReturnNone()
+        queryFirst500DefaultWebhookCalls.willReturnNone(),
       ];
 
       fillInDefaultWebhookDetails();
@@ -111,7 +107,7 @@ describe('Webhook', () => {
       const extraInteractions = [
         createCustomWebhookWithCustomHeader.willSucceed(),
         getDefaultWebhook.willReturnACustomWebhookWithCustomHeader(),
-        queryFirst500DefaultWebhookCalls.willReturnNone()
+        queryFirst500DefaultWebhookCalls.willReturnNone(),
       ];
 
       fillInDefaultWebhookDetails();
@@ -129,7 +125,7 @@ describe('Webhook', () => {
       const extraInteractions = [
         createCustomWebhookWithSecretHeader.willSucceed(),
         getDefaultWebhook.willReturnACustomWebhookWithSecretHeader(),
-        queryFirst500DefaultWebhookCalls.willReturnNone()
+        queryFirst500DefaultWebhookCalls.willReturnNone(),
       ];
 
       fillInDefaultWebhookDetails();
@@ -148,7 +144,7 @@ describe('Webhook', () => {
       const extraInteractions = [
         createCustomWebhookWithHTTPHeader.willSucceed(),
         getDefaultWebhook.willReturnACustomWebhookWithHTTPHeader(),
-        queryFirst500DefaultWebhookCalls.willReturnNone()
+        queryFirst500DefaultWebhookCalls.willReturnNone(),
       ];
 
       fillInDefaultWebhookDetails();
@@ -167,7 +163,7 @@ describe('Webhook', () => {
       const extraInteractions = [
         createCustomWebhookWithContentTypeHeader.willSucceed(),
         getDefaultWebhook.willReturnACustomWebhookWithContentTypeHeader(),
-        queryFirst500DefaultWebhookCalls.willReturnNone()
+        queryFirst500DefaultWebhookCalls.willReturnNone(),
       ];
 
       fillInDefaultWebhookDetails();
@@ -183,7 +179,7 @@ describe('Webhook', () => {
       const extraInteractions = [
         createCustomWebhookWithContentLengthHeader.willSucceed(),
         getDefaultWebhook.willReturnACustomWebhookWithContentLengthHeader(),
-        queryFirst500DefaultWebhookCalls.willReturnNone()
+        queryFirst500DefaultWebhookCalls.willReturnNone(),
       ];
 
       fillInDefaultWebhookDetails();
@@ -199,7 +195,7 @@ describe('Webhook', () => {
       const extraInteractions = [
         createCustomWebhookWithCustomPayload.willSucceed(),
         getDefaultWebhook.willReturnACustomWebhookWithPayload(),
-        queryFirst500DefaultWebhookCalls.willReturnNone()
+        queryFirst500DefaultWebhookCalls.willReturnNone(),
       ];
 
       fillInDefaultWebhookDetails();
@@ -252,16 +248,12 @@ describe('Webhook', () => {
       cy.get('[data-test-id="setting-row"]').should('have.length', 3);
       cy.getByTestId('0-key').should('have.value', 'custom_header');
       cy.getByTestId('0-value').should('have.value', '123');
-      cy.getByTestId('1-key')
-        .should('have.value', 'secret_header')
-        .and('have.attr', 'disabled');
+      cy.getByTestId('1-key').should('have.value', 'secret_header').and('have.attr', 'disabled');
       cy.getByTestId('1-value').should('have.attr', 'readonly');
       cy.get('[data-test-id="1-value"]')
         .invoke('attr', 'placeholder')
         .should('be.eq', 'Value of this header is secret');
-      cy.getByTestId('2-key')
-        .should('have.value', 'Authorization')
-        .and('have.attr', 'disabled');
+      cy.getByTestId('2-key').should('have.value', 'Authorization').and('have.attr', 'disabled');
       cy.getByTestId('2-value').should('have.attr', 'readonly');
       cy.get('[data-test-id="2-value"]')
         .invoke('attr', 'placeholder')
@@ -286,7 +278,7 @@ describe('Webhook', () => {
     it('checks that default webhook is removed successfully', () => {
       const extraInteractions = [
         deleteDefaultWebhook.willSucceed(),
-        queryFirst100WebhooksInDefaultSpace.willFindNone()
+        queryFirst100WebhooksInDefaultSpace.willFindNone(),
       ];
 
       cy.getByTestId('webhook-settings-tab').click();
@@ -302,9 +294,7 @@ describe('Webhook', () => {
     it.skip('checks that error response is handled properly', () => {
       const deleteInteraction = deleteDefaultWebhook.willFailWithAnInternalServerError();
 
-      cy.getByTestId('cf-ui-tab')
-        .first()
-        .click();
+      cy.getByTestId('cf-ui-tab').first().click();
       cy.getByTestId('webhook-remove').click();
       cy.getByTestId('remove-webhook-confirm').click();
 

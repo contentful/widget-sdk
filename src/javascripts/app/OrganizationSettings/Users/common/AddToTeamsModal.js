@@ -19,12 +19,12 @@ const reducer = createImmerReducer({
   VALIDATION_STATUS_CHANGED: (state, action) => {
     state.isInvalid = action.payload;
   },
-  FORM_SUBMITTED: state => {
+  FORM_SUBMITTED: (state) => {
     state.isSubmitted = true;
   },
-  REQUEST_SENT: state => {
+  REQUEST_SENT: (state) => {
     state.inProgress = true;
-  }
+  },
 });
 
 export default function AddToTeamsModal({
@@ -34,15 +34,15 @@ export default function AddToTeamsModal({
   currentTeams,
   isShown,
   onClose,
-  onAddedToTeams
+  onAddedToTeams,
 }) {
   const [{ teams, isSubmitted, inProgress }, dispatch] = useReducer(reducer, {
     teams: [],
     isSubmitted: false,
     isInvalid: false,
-    inProgress: false
+    inProgress: false,
   });
-  const handleChange = useCallback(data => {
+  const handleChange = useCallback((data) => {
     dispatch({ type: 'TEAMS_CHANGED', payload: data });
   }, []);
 
@@ -118,11 +118,11 @@ AddToTeamsModal.propTypes = {
   currentTeams: PropTypes.arrayOf(Space).isRequired,
   isShown: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  onAddedToTeams: PropTypes.func.isRequired
+  onAddedToTeams: PropTypes.func.isRequired,
 };
 
 function buildSuccessMessage(user, teams) {
-  const teamNames = teams.map(team => team.name);
+  const teamNames = teams.map((team) => team.name);
   const userName = getFullNameOrEmail(user);
   return `You've added ${userName} to ${joinAndTruncate(teamNames, 2, 'teams')}.`;
 }
@@ -137,7 +137,7 @@ async function addUserToTeam(orgId, orgMembershipId, teams) {
   const fulfilled = [];
   const rejected = [];
 
-  const promises = teams.map(async team => {
+  const promises = teams.map(async (team) => {
     const endpoint = createOrganizationEndpoint(orgId);
 
     try {

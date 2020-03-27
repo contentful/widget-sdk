@@ -7,7 +7,7 @@ class BillingInfo extends React.Component {
   static propTypes = {
     canSetupBilling: PropTypes.bool.isRequired,
     goToBilling: PropTypes.func.isRequired,
-    action: PropTypes.string.isRequired
+    action: PropTypes.string.isRequired,
   };
 
   render() {

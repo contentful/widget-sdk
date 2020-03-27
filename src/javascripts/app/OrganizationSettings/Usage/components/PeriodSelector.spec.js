@@ -22,29 +22,22 @@ describe('PeriodSelector', () => {
   });
 
   beforeEach(() => {
-    const startDate = moment()
-      .startOf('day')
-      .subtract(12, 'days');
+    const startDate = moment().startOf('day').subtract(12, 'days');
     props = {
       periods: [
         {
           sys: { type: 'UsagePeriod', id: 'period1' },
           startDate: startDate.format(DATE_FORMAT),
-          endDate: null
+          endDate: null,
         },
         {
           sys: { type: 'UsagePeriod', id: 'period1' },
-          startDate: moment(startDate)
-            .subtract(1, 'day')
-            .subtract(1, 'month')
-            .format(DATE_FORMAT),
-          endDate: moment(startDate)
-            .subtract(1, 'day')
-            .format(DATE_FORMAT)
-        }
+          startDate: moment(startDate).subtract(1, 'day').subtract(1, 'month').format(DATE_FORMAT),
+          endDate: moment(startDate).subtract(1, 'day').format(DATE_FORMAT),
+        },
       ],
       selectedPeriodIndex: 0,
-      onChange: jest.fn()
+      onChange: jest.fn(),
     };
     wrapper = shallow(<PeriodSelector {...props} />);
   });

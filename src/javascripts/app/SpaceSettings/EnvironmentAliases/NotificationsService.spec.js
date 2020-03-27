@@ -7,23 +7,23 @@ import ModalLauncher from 'app/common/ModalLauncher';
 import { setWindowLocationProperties } from '__mocks__/global/window';
 
 jest.mock('@contentful/forma-36-react-components', () => ({
-  Notification: { warning: jest.fn(), error: jest.fn() }
+  Notification: { warning: jest.fn(), error: jest.fn() },
 }));
 jest.mock('states/Navigator', () => ({
   reload: jest.fn(),
-  reloadWithEnvironment: jest.fn().mockResolvedValue(null)
+  reloadWithEnvironment: jest.fn().mockResolvedValue(null),
 }));
 jest.mock('access_control/AccessChecker', () => ({
-  can: jest.fn().mockReturnValue(false)
+  can: jest.fn().mockReturnValue(false),
 }));
 jest.mock('app/common/ModalLauncher', () => ({
-  open: jest.fn().mockReturnValue()
+  open: jest.fn().mockReturnValue(),
 }));
 
 const update = {
   newTarget: 'newTarget',
   oldTarget: 'oldTarget',
-  aliasId: 'aliasId'
+  aliasId: 'aliasId',
 };
 
 describe('initEnvAliasChangeHandler', () => {

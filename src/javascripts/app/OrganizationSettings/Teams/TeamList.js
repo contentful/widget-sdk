@@ -10,7 +10,7 @@ import {
   TableBody,
   TableCell,
   Tooltip,
-  Workbench
+  Workbench,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
@@ -25,41 +25,41 @@ import TeamsEmptyState from './TeamsEmptyState';
 
 const styles = {
   section: css({
-    padding: `${tokens.spacingM} ${tokens.spacingXl} ${tokens.spacingXl}`
+    padding: `${tokens.spacingM} ${tokens.spacingXl} ${tokens.spacingXl}`,
   }),
   headerActions: css({
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
   }),
   teamCount: css({
-    marginRight: tokens.spacingS
+    marginRight: tokens.spacingS,
   }),
   table: css({
-    tableLayout: 'fixed'
+    tableLayout: 'fixed',
   }),
   nameColumn: css({
-    width: '30%'
+    width: '30%',
   }),
   descriptionColumn: css({
-    width: '55%'
+    width: '55%',
   }),
   membersColumn: css({
-    width: '15%'
+    width: '15%',
   }),
   actionsColumn: css({
-    width: '21%'
-  })
+    width: '21%',
+  }),
 };
 
 class TeamList extends React.Component {
   static propTypes = {
     teams: PropTypes.arrayOf(TeamPropType).isRequired,
     submitNewTeam: PropTypes.func.isRequired,
-    readOnlyPermission: PropTypes.bool.isRequired
+    readOnlyPermission: PropTypes.bool.isRequired,
   };
 
   state = {
-    showTeamDialog: false
+    showTeamDialog: false,
   };
 
   render() {
@@ -141,11 +141,11 @@ class TeamList extends React.Component {
 }
 
 export default connect(
-  state => ({
+  (state) => ({
     teams: getTeamListWithOptimistic(state),
-    readOnlyPermission: hasReadOnlyPermission(state)
+    readOnlyPermission: hasReadOnlyPermission(state),
   }),
-  dispatch => ({
-    submitNewTeam: team => dispatch({ type: 'CREATE_NEW_TEAM', payload: { team } })
+  (dispatch) => ({
+    submitNewTeam: (team) => dispatch({ type: 'CREATE_NEW_TEAM', payload: { team } }),
   })
 )(TeamList);

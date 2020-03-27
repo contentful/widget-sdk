@@ -15,21 +15,21 @@ const styles = {
   wrapper: css({
     margin: `-${tokens.spacingXl} -${tokens.spacingXl} ${tokens.spacingS} -${tokens.spacingXl}`,
     padding: `${tokens.spacingXl} ${tokens.spacingXl} ${tokens.spacingM}`,
-    background: tokens.colorElementLightest
+    background: tokens.colorElementLightest,
   }),
   alphaSideBarHeading: css({
-    display: 'flex'
+    display: 'flex',
   }),
   headingSmall: css({
-    marginTop: 0
+    marginTop: 0,
   }),
   alphaTag: css({
-    marginLeft: 'auto'
+    marginLeft: 'auto',
   }),
   jobList: css({
     marginBottom: tokens.spacingM,
     maxHeight: '300px',
-    overflowY: 'auto'
+    overflowY: 'auto',
   }),
   divider: css({
     height: 20,
@@ -44,8 +44,8 @@ const styles = {
       position: 'absolute',
       width: '100%',
       height: '1px',
-      background: tokens.colorTextLightest
-    }
+      background: tokens.colorTextLightest,
+    },
   }),
   dividerDate: css({
     left: 0,
@@ -54,13 +54,13 @@ const styles = {
     background: '#f7f9fa',
     position: 'absolute',
     marginLeft: '50%',
-    transform: 'translateX(-50%)'
+    transform: 'translateX(-50%)',
   }),
   jobListSmall: css({
     maxHeight: '160px',
     overflowY: 'auto',
     position: 'relative',
-    marginBottom: '0px'
+    marginBottom: '0px',
   }),
   jobListWrapper: css({
     position: 'relative',
@@ -73,8 +73,8 @@ const styles = {
       width: '100%',
       left: 0,
       bottom: 0,
-      background: `linear-gradient(0deg, rgba(247, 249, 250, 1) 0%, rgba(247, 249, 250, 0) 50%, rgba(247, 249, 250, 0) 100%)`
-    }
+      background: `linear-gradient(0deg, rgba(247, 249, 250, 1) 0%, rgba(247, 249, 250, 0) 50%, rgba(247, 249, 250, 0) 100%)`,
+    },
   }),
   jobListWrapperSmall: css({
     ':before': {
@@ -86,9 +86,9 @@ const styles = {
       width: '100%',
       left: 0,
       bottom: 0,
-      background: `linear-gradient(0deg, rgba(247, 249, 250, 1) 0%, rgba(247, 249, 250, 0) 50%, rgba(247, 249, 250, 0) 100%)`
-    }
-  })
+      background: `linear-gradient(0deg, rgba(247, 249, 250, 1) 0%, rgba(247, 249, 250, 0) 50%, rgba(247, 249, 250, 0) 100%)`,
+    },
+  }),
 };
 
 const Divider = ({ currentJob, nextJob }) => {
@@ -128,14 +128,14 @@ const Divider = ({ currentJob, nextJob }) => {
 Divider.propTypes = {
   currentJob: PropTypes.shape({
     scheduledFor: PropTypes.shape({
-      datetime: PropTypes.string
-    })
+      datetime: PropTypes.string,
+    }),
   }),
   nextJob: PropTypes.shape({
     scheduledFor: PropTypes.shape({
-      datetime: PropTypes.string
-    })
-  })
+      datetime: PropTypes.string,
+    }),
+  }),
 };
 
 const JobsTimeline = ({
@@ -144,7 +144,7 @@ const JobsTimeline = ({
   onCancel,
   isReadOnly,
   showAllScheduleLink,
-  size
+  size,
 }) => {
   const jobsSortedByScheduledFor = _.sortBy(jobs, 'scheduledFor.datetime');
   return (
@@ -192,14 +192,14 @@ JobsTimeline.propTypes = {
   isReadOnly: PropTypes.bool.isRequired,
   showAllScheduleLink: PropTypes.bool,
   size: PropTypes.oneOf(['default', 'small']),
-  hasAlphaTag: PropTypes.bool
+  hasAlphaTag: PropTypes.bool,
 };
 
 JobsTimeline.defaultProps = {
   onCancel: () => {},
   showAllScheduleLink: true,
   size: 'default',
-  hasAlphaTag: false
+  hasAlphaTag: false,
 };
 
 export default JobsTimeline;

@@ -14,7 +14,7 @@ export function create({ space, organization }) {
      */
     canModifyUsers: () => isSuperUser(),
     canModifyRoles,
-    canCreateOrganization
+    canCreateOrganization,
   };
 
   /**

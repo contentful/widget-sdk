@@ -15,10 +15,10 @@ export function iframeStateWrapper(definition = {}) {
   const { title, icon, ...remainingDefinition } = definition;
   const defaults = {
     params: {
-      pathSuffix: ''
+      pathSuffix: '',
     },
     controller: getIframeController(title, icon, AccountView),
-    template: '<react-component component="component" props="props"></react-component>'
+    template: '<react-component component="component" props="props"></react-component>',
   };
 
   return Base(organizationRoute(Object.assign(defaults, remainingDefinition)));
@@ -28,7 +28,7 @@ export function organizationRoute(definition) {
   const defaults = {
     onEnter: [
       '$stateParams',
-      async $stateParams => {
+      async ($stateParams) => {
         const { orgId: organizationId } = $stateParams;
 
         const organization = await TokenStore.getOrganization(organizationId);
@@ -36,8 +36,8 @@ export function organizationRoute(definition) {
         accessChecker.setOrganization(organization);
 
         store.set('lastUsedOrg', organizationId);
-      }
-    ]
+      },
+    ],
   };
 
   return Object.assign(defaults, definition);
@@ -47,7 +47,7 @@ function getIframeController(title = '', icon = '', component) {
   return [
     '$scope',
     '$stateParams',
-    function($scope, $stateParams) {
+    function ($scope, $stateParams) {
       $scope.component = component;
       $scope.props = {
         ...$stateParams,
@@ -61,8 +61,8 @@ function getIframeController(title = '', icon = '', component) {
         onForbidden: () => {
           $scope.context.forbidden = true;
           $scope.$applyAsync();
-        }
+        },
       };
-    }
+    },
   ];
 }

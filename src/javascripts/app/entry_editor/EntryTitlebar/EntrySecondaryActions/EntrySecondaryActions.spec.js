@@ -6,49 +6,49 @@ import EntrySecondaryActions from './EntrySecondaryActions';
 
 jest.mock('states/Navigator');
 jest.mock('access_control/AccessChecker', () => ({
-  canPerformActionOnEntryOfType: jest.fn().mockReturnValue(true)
+  canPerformActionOnEntryOfType: jest.fn().mockReturnValue(true),
 }));
 
 const entry = { data: { sys: { id: 'entryId' } } };
 const entryActions = {
   onAdd: jest.fn().mockReturnValue(Promise.resolve(entry)),
   onDuplicate: jest.fn().mockReturnValue(Promise.resolve(entry)),
-  onShowDisabledFields: jest.fn()
+  onShowDisabledFields: jest.fn(),
 };
 const onDelete = { execute: jest.fn() };
 describe('EntrySecondaryActions', () => {
-  const build = props => {
+  const build = (props) => {
     const resultProps = {
       entityInfo: {
         id: 'entryId',
         contentType: {
-          name: 'ContentType'
-        }
+          name: 'ContentType',
+        },
       },
       entryActions,
       onDelete,
-      ...props
+      ...props,
     };
 
     return [render(<EntrySecondaryActions {...resultProps} />), resultProps];
   };
 
-  it.each([['onAdd', 'cf-ui-button-action-add'], ['onDuplicate', 'cf-ui-button-action-duplicate']])(
-    'Creates an entry for the current content type using %p',
-    async (action, actionTestId) => {
-      const [renderResult] = build();
-      await triggerAction(renderResult, actionTestId);
-      expect(entryActions[action]).toHaveBeenCalled();
-      expect(Navigator.go).toHaveBeenCalledWith({
-        path: '^.detail',
-        params: {
-          entryId: entry.data.sys.id,
-          previousEntries: '',
-          addToContext: false
-        }
-      });
-    }
-  );
+  it.each([
+    ['onAdd', 'cf-ui-button-action-add'],
+    ['onDuplicate', 'cf-ui-button-action-duplicate'],
+  ])('Creates an entry for the current content type using %p', async (action, actionTestId) => {
+    const [renderResult] = build();
+    await triggerAction(renderResult, actionTestId);
+    expect(entryActions[action]).toHaveBeenCalled();
+    expect(Navigator.go).toHaveBeenCalledWith({
+      path: '^.detail',
+      params: {
+        entryId: entry.data.sys.id,
+        previousEntries: '',
+        addToContext: false,
+      },
+    });
+  });
 
   it('deletes the current entry', async () => {
     const [renderResult] = build();

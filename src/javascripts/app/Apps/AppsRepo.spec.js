@@ -22,24 +22,24 @@ describe('AppsRepo', () => {
         sys: {
           type: 'Link',
           linkType: 'AppDefinition',
-          id: NETLIFY_DEFINITION_ID
-        }
-      }
-    }
+          id: NETLIFY_DEFINITION_ID,
+        },
+      },
+    },
   };
 
   const netlifyDefinition = {
     sys: { type: 'AppDefinition', id: NETLIFY_DEFINITION_ID },
     name: 'Netlify',
     locations: ['app', 'entry-sidebar'],
-    src: 'http://localhost:1234'
+    src: 'http://localhost:1234',
   };
 
   const privateDefinition = {
     sys: { type: 'AppDefinition', id: 'app-definition-id' },
     name: 'My app',
     locations: ['app', 'entry-field'],
-    src: 'http://localhost:666'
+    src: 'http://localhost:666',
   };
 
   const loader = {
@@ -48,13 +48,13 @@ describe('AppsRepo', () => {
     }),
     getAllForCurrentOrganization: jest.fn(() => {
       return Promise.resolve([privateDefinition]);
-    })
+    }),
   };
 
   const cma = {
     getAppInstallations: jest.fn(() => {
       return Promise.resolve({ items: [netlifyInstallation] });
-    })
+    }),
   };
 
   describe('getApps', () => {
@@ -68,12 +68,16 @@ describe('AppsRepo', () => {
       const repo = createAppsRepo(cma, loader);
       const result = await repo.getApps();
 
-      expect(mockFetch).toHaveBeenCalledWith(
+      expect(
+        mockFetch
+      ).toHaveBeenCalledWith(
         'https://cdn.contentful.com/spaces/lpjm8d10rkpy/entries?include=0&sys.id[in]=2fPbSMx3baxlwZoCyXC7F1',
         { headers: { Authorization: 'Bearer XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk' } }
       );
 
-      expect(mockFetch).toHaveBeenCalledWith(
+      expect(
+        mockFetch
+      ).toHaveBeenCalledWith(
         'https://cdn.contentful.com/spaces/lpjm8d10rkpy/entries?include=10&content_type=app',
         { headers: { Authorization: 'Bearer XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk' } }
       );
@@ -83,8 +87,8 @@ describe('AppsRepo', () => {
           appDefinition: privateDefinition,
           id: 'private_app-definition-id',
           title: 'My app',
-          isPrivateApp: true
-        }
+          isPrivateApp: true,
+        },
       ]);
     });
 
@@ -92,7 +96,7 @@ describe('AppsRepo', () => {
       const mockFetch = jest.fn(() => {
         return Promise.resolve({
           ok: true,
-          json: () => Promise.resolve({ items: [], includes: { Assets: [] }, sys: {} })
+          json: () => Promise.resolve({ items: [], includes: { Assets: [] }, sys: {} }),
         });
       });
 
@@ -106,13 +110,13 @@ describe('AppsRepo', () => {
           appDefinition: privateDefinition,
           id: 'private_app-definition-id',
           title: 'My app',
-          isPrivateApp: true
-        }
+          isPrivateApp: true,
+        },
       ]);
     });
 
     it('should return an array of apps when the marketplace endpoint returns good data', async () => {
-      const mockFetch = jest.fn(url => {
+      const mockFetch = jest.fn((url) => {
         const jsonResponse = url.endsWith('2fPbSMx3baxlwZoCyXC7F1')
           ? appsListingEntryMock
           : allAppsMock;
@@ -124,12 +128,16 @@ describe('AppsRepo', () => {
       const repo = createAppsRepo(cma, loader);
       const result = await repo.getApps();
 
-      expect(mockFetch).toHaveBeenCalledWith(
+      expect(
+        mockFetch
+      ).toHaveBeenCalledWith(
         'https://cdn.contentful.com/spaces/lpjm8d10rkpy/entries?include=0&sys.id[in]=2fPbSMx3baxlwZoCyXC7F1',
         { headers: { Authorization: 'Bearer XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk' } }
       );
 
-      expect(mockFetch).toHaveBeenCalledWith(
+      expect(
+        mockFetch
+      ).toHaveBeenCalledWith(
         'https://cdn.contentful.com/spaces/lpjm8d10rkpy/entries?include=10&content_type=app',
         { headers: { Authorization: 'Bearer XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk' } }
       );
@@ -140,7 +148,7 @@ describe('AppsRepo', () => {
 
   describe('getApp', () => {
     beforeEach(() => {
-      global.window.fetch = jest.fn(url => {
+      global.window.fetch = jest.fn((url) => {
         const jsonResponse = url.endsWith('2fPbSMx3baxlwZoCyXC7F1')
           ? // listing
             appsListingEntryMock
@@ -149,7 +157,7 @@ describe('AppsRepo', () => {
 
         return Promise.resolve({
           ok: true,
-          json: () => Promise.resolve(jsonResponse)
+          json: () => Promise.resolve(jsonResponse),
         });
       });
     });
@@ -178,7 +186,7 @@ describe('AppsRepo', () => {
 
     it('fails if API call fails', async () => {
       const cma = {
-        getAppInstallations: () => Promise.reject(new Error('api error'))
+        getAppInstallations: () => Promise.reject(new Error('api error')),
       };
 
       const repo = createAppsRepo(cma, loader);

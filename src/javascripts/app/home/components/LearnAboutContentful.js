@@ -11,7 +11,7 @@ const styles = {
   flexContainer: css({ display: 'flex', flexWrap: 'nowrap', justifyContent: 'space-around' }),
   flexChild: css({ maxWidth: '250px', textAlign: 'center' }),
   heading: css({ fontSize: tokens.fontSizeL, marginTop: tokens.spacingXs }),
-  illustration: css({ maxHeight: '130px' })
+  illustration: css({ maxHeight: '130px' }),
 };
 
 const LearnAboutContentful = () => {

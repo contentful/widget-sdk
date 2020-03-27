@@ -10,5 +10,5 @@ export const Error = makeSum({
   // Opening a document fails with 'forbidden'
   OpenForbidden: [],
   // `doc.set(path)` responds with a 'forbidden' error.
-  SetValueForbidden: ['path']
+  SetValueForbidden: ['path'],
 });

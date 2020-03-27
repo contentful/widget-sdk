@@ -5,7 +5,7 @@ import ModalLauncher from 'app/common/ModalLauncher';
 
 // this is a rather aggressive way of making code DRY
 // and should only be used internally
-export default async function(
+export default async function (
   { dispatch, getState },
   next,
   action,

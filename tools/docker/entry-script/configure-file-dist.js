@@ -25,12 +25,12 @@ module.exports = async function configureFileDistribution({ branch, version }) {
     production: 'production',
     staging: 'staging',
     preview: 'preview',
-    development: 'development'
+    development: 'development',
   };
 
   // Maps branch names to environment names
   const BRANCH_ENV_MAP = {
-    master: ENV.production
+    master: ENV.production,
   };
 
   await createFileDist(ENV.development, version, branch);

@@ -4,7 +4,7 @@ const updateLocation = (method, newQuery, newPath) =>
   window.history[method]({}, '', `${newPath}${newQuery}`);
 
 // handles actions that should change browser history
-export default ({ getState }) => next => action => {
+export default ({ getState }) => (next) => (action) => {
   const oldState = getState();
   // update location in redux state
   const result = next(action);

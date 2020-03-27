@@ -15,11 +15,11 @@ const styles = {
   planChevron: css({
     position: 'absolute',
     right: '19px',
-    bottom: '22px'
+    bottom: '22px',
   }),
   helpIcon: css({
-    fill: tokens.colorElementDarkest
-  })
+    fill: tokens.colorElementDarkest,
+  }),
 };
 
 class SpacePlanItem extends React.Component {
@@ -32,7 +32,7 @@ class SpacePlanItem extends React.Component {
     onSelect: PropTypes.func.isRequired,
     isPayingOrg: PropTypes.bool.isRequired,
     isCurrentPlan: PropTypes.bool,
-    isRecommended: PropTypes.bool
+    isRecommended: PropTypes.bool,
   };
 
   render() {
@@ -43,7 +43,7 @@ class SpacePlanItem extends React.Component {
       isRecommended,
       freeSpacesResource,
       isPayingOrg,
-      onSelect
+      onSelect,
     } = this.props;
     const freeSpacesUsage = freeSpacesResource && freeSpacesResource.usage;
     const freeSpacesLimit = freeSpacesResource && freeSpacesResource.limits.maximum;
@@ -60,7 +60,7 @@ class SpacePlanItem extends React.Component {
             'space-plans-list__item--selected': isSelected,
             'space-plans-list__item--disabled': plan.disabled,
             'space-plans-list__item--current': isCurrentPlan,
-            'space-plans-list__item--recommended': isPayingOrg && isRecommended
+            'space-plans-list__item--recommended': isPayingOrg && isRecommended,
           }
         )}
         onClick={() => !plan.disabled && onSelect(plan)}>

@@ -7,7 +7,7 @@ import {
   Paragraph,
   TextField,
   Typography,
-  Notification
+  Notification,
 } from '@contentful/forma-36-react-components';
 import * as tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
@@ -16,19 +16,19 @@ import { createQRCodeDataURI } from './utils';
 
 const styles = {
   qrcode: css({
-    textAlign: 'center'
+    textAlign: 'center',
   }),
   secret: css({
     textAlign: 'center',
-    fontWeight: tokens.fontWeightDemiBold
+    fontWeight: tokens.fontWeightDemiBold,
   }),
   controlsPanel: css({
     marginTop: tokens.spacingM,
-    display: 'flex'
+    display: 'flex',
   }),
   marginRightM: css({
-    marginRight: tokens.spacingM
-  })
+    marginRight: tokens.spacingM,
+  }),
 };
 
 export default function Enable2FAModal({ totp, onCancel, onConfirm, isShown }) {
@@ -88,13 +88,13 @@ export default function Enable2FAModal({ totp, onCancel, onConfirm, isShown }) {
             id="code"
             name="code"
             value={code}
-            onChange={e => setCode(e.target.value)}
+            onChange={(e) => setCode(e.target.value)}
             labelText="Code"
             validationMessage={isCodeInvalid ? 'The code you entered is not correct' : ''}
             textInputProps={{
               type: 'text',
               autoComplete: 'off',
-              maxLength: 6
+              maxLength: 6,
             }}
           />
           <div className={styles.controlsPanel}>
@@ -128,5 +128,5 @@ Enable2FAModal.propTypes = {
   onCancel: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,
   isShown: PropTypes.bool.isRequired,
-  totp: PropTypes.object.isRequired
+  totp: PropTypes.object.isRequired,
 };

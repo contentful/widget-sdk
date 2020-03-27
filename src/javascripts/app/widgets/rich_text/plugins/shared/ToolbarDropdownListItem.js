@@ -8,10 +8,10 @@ export default class ToolbarDropdownListItem extends Component {
     onToggle: PropTypes.func.isRequired,
     title: PropTypes.string.isRequired,
     type: PropTypes.string,
-    children: PropTypes.node
+    children: PropTypes.node,
   };
 
-  handleMouseDown = event => {
+  handleMouseDown = (event) => {
     /*
       We're using the mousedown event rather than onclick because onclick will
       steal the focus.

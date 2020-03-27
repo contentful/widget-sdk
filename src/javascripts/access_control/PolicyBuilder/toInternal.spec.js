@@ -27,7 +27,7 @@ describe('Policy Builder, to internal representation', () => {
     it('adds collections', () => {
       const i = toInternal({});
       [i.entries.allowed, i.entries.denied, i.assets.allowed, i.assets.denied].forEach(
-        collection => {
+        (collection) => {
           expect(Array.isArray(collection)).toBe(true);
           expect(collection).toHaveLength(0);
         }
@@ -45,7 +45,7 @@ describe('Policy Builder, to internal representation', () => {
     it('marks as non-UI-compatible', () => {
       // no constraint
       let internal = toInternal({
-        policies: [{ actions: 'all', effect: 'allow' }]
+        policies: [{ actions: 'all', effect: 'allow' }],
       });
       expect(internal.uiCompatible).toBe(false);
 
@@ -58,11 +58,11 @@ describe('Policy Builder, to internal representation', () => {
             constraint: {
               or: [
                 { equals: [{ doc: 'sys.type' }, 'Entry'] },
-                { equals: [{ doc: 'sys.type' }, 'Asset'] }
-              ]
-            }
-          }
-        ]
+                { equals: [{ doc: 'sys.type' }, 'Asset'] },
+              ],
+            },
+          },
+        ],
       });
       expect(internal.uiCompatible).toBe(false);
 
@@ -73,10 +73,10 @@ describe('Policy Builder, to internal representation', () => {
             actions: 'all',
             effect: 'allow',
             constraint: {
-              equals: [{ doc: 'sys.type' }, 'Entry']
-            }
-          }
-        ]
+              equals: [{ doc: 'sys.type' }, 'Entry'],
+            },
+          },
+        ],
       });
       expect(internal.uiCompatible).toBe(false);
     });
@@ -88,10 +88,10 @@ describe('Policy Builder, to internal representation', () => {
             actions: action,
             effect: 'allow',
             constraint: {
-              and: [{ equals: [{ doc: 'sys.type' }, type] }]
-            }
-          }
-        ]
+              and: [{ equals: [{ doc: 'sys.type' }, type] }],
+            },
+          },
+        ],
       });
 
       const as = internal[collection].allowed;
@@ -119,8 +119,8 @@ describe('Policy Builder, to internal representation', () => {
             actions: 'all',
             effect: 'allow',
             constraint: {
-              and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }]
-            }
+              and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }],
+            },
           },
           {
             actions: 'all',
@@ -128,11 +128,11 @@ describe('Policy Builder, to internal representation', () => {
             constraint: {
               and: [
                 { equals: [{ doc: 'sys.type' }, 'Entry'] },
-                { equals: [{ doc: 'sys.contentType.sys.id' }, 'ctid'] }
-              ]
-            }
-          }
-        ]
+                { equals: [{ doc: 'sys.contentType.sys.id' }, 'ctid'] },
+              ],
+            },
+          },
+        ],
       });
 
       expect(internal.entries.allowed[0].contentType).toBe(PolicyBuilderConfig.ALL_CTS);
@@ -146,24 +146,24 @@ describe('Policy Builder, to internal representation', () => {
             actions: 'all',
             effect: 'allow',
             constraint: {
-              and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }]
-            }
+              and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }],
+            },
           },
           {
             actions: ['create'],
             effect: 'deny',
             constraint: {
-              and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }]
-            }
+              and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }],
+            },
           },
           {
             actions: ['update'],
             effect: 'deny',
             constraint: {
-              and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }]
-            }
-          }
-        ]
+              and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }],
+            },
+          },
+        ],
       });
 
       expect(internal.entries.allowed).toHaveLength(1);
@@ -178,8 +178,8 @@ describe('Policy Builder, to internal representation', () => {
             actions: ['read'],
             effect: 'allow',
             constraint: {
-              and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }]
-            }
+              and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }],
+            },
           },
           {
             actions: ['update'],
@@ -187,11 +187,11 @@ describe('Policy Builder, to internal representation', () => {
             constraint: {
               and: [
                 { equals: [{ doc: 'sys.type' }, 'Entry'] },
-                { equals: [{ doc: 'sys.createdBy.sys.id' }, 'User.current()'] }
-              ]
-            }
-          }
-        ]
+                { equals: [{ doc: 'sys.createdBy.sys.id' }, 'User.current()'] },
+              ],
+            },
+          },
+        ],
       });
 
       expect(internal.entries.allowed).toHaveLength(2);
@@ -208,9 +208,9 @@ describe('Policy Builder, to internal representation', () => {
             constraint: {
               and: [
                 { equals: [{ doc: 'sys.type' }, 'Entry'] },
-                { paths: [{ doc: 'fields.%.en-US' }] }
-              ]
-            }
+                { paths: [{ doc: 'fields.%.en-US' }] },
+              ],
+            },
           },
           {
             actions: ['read'],
@@ -218,25 +218,25 @@ describe('Policy Builder, to internal representation', () => {
             constraint: {
               and: [
                 { equals: [{ doc: 'sys.type' }, 'Entry'] },
-                { paths: [{ doc: 'fields.test.%' }] }
-              ]
-            }
+                { paths: [{ doc: 'fields.test.%' }] },
+              ],
+            },
           },
           {
             actions: ['read'],
             effect: 'allow',
             constraint: {
-              and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }, { paths: [{ doc: 'fields.%.%' }] }]
-            }
+              and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }, { paths: [{ doc: 'fields.%.%' }] }],
+            },
           },
           {
             actions: ['read'],
             effect: 'allow',
             constraint: {
-              and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }]
-            }
-          }
-        ]
+              and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }],
+            },
+          },
+        ],
       });
 
       expect(internal.entries.allowed).toHaveLength(4);
@@ -257,17 +257,17 @@ describe('Policy Builder, to internal representation', () => {
             actions: ['publish', 'unpublish'],
             effect: 'allow',
             constraint: {
-              and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }]
-            }
+              and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }],
+            },
           },
           {
             actions: ['archive', 'unarchive'],
             effect: 'allow',
             constraint: {
-              and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }]
-            }
-          }
-        ]
+              and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }],
+            },
+          },
+        ],
       });
 
       expect(internal.entries.allowed[0].action).toBe('publish');
@@ -279,10 +279,10 @@ describe('Policy Builder, to internal representation', () => {
             actions: ['publish'],
             effect: 'allow',
             constraint: {
-              and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }]
-            }
-          }
-        ]
+              and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }],
+            },
+          },
+        ],
       });
 
       expect(internal.uiCompatible).toBe(false);

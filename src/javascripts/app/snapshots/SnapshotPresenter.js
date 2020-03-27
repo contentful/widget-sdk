@@ -8,11 +8,11 @@ import tokens from '@contentful/forma-36-tokens';
 
 const styles = {
   root: css({
-    fontSize: tokens.fontSizeL
-  })
+    fontSize: tokens.fontSizeL,
+  }),
 };
 
-const isEmpty = v => {
+const isEmpty = (v) => {
   return v === null || v === undefined || v === '' || isEqual(v, []) || isEqual(v, {});
 };
 
@@ -29,7 +29,7 @@ const getFieldType = ({ type, items }) => {
   }
 };
 
-const SnapshotPresenter = props => {
+const SnapshotPresenter = (props) => {
   const { widget, version, locale, editorData } = props;
   const { field } = widget;
 
@@ -66,25 +66,25 @@ SnapshotPresenter.propTypes = {
       PropTypes.shape({
         id: PropTypes.string,
         type: PropTypes.string,
-        linkType: PropTypes.string
+        linkType: PropTypes.string,
       }),
       PropTypes.shape({
         id: PropTypes.string,
         type: PropTypes.string,
         items: PropTypes.shape({
           type: PropTypes.string,
-          linkType: PropTypes.string
-        })
-      })
-    ])
+          linkType: PropTypes.string,
+        }),
+      }),
+    ]),
   }).isRequired,
   locale: PropTypes.shape({
     code: PropTypes.string,
-    internal_code: PropTypes.string
+    internal_code: PropTypes.string,
   }).isRequired,
   snapshot: PropTypes.shape({
-    snapshot: PropTypes.object
-  })
+    snapshot: PropTypes.object,
+  }),
 };
 
 export default SnapshotPresenter;

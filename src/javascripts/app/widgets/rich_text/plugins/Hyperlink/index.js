@@ -16,8 +16,8 @@ const { HYPERLINK, ENTRY_HYPERLINK, ASSET_HYPERLINK } = INLINES;
 const styles = {
   tooltipSeparator: css({
     background: tokens.colorTextMid,
-    margin: tokens.spacingXs
-  })
+    margin: tokens.spacingXs,
+  }),
 };
 
 const ScheduleFetcher = ({ getEntityScheduledActions, entityType, entityId }) => {
@@ -25,10 +25,10 @@ const ScheduleFetcher = ({ getEntityScheduledActions, entityType, entityId }) =>
 
   React.useEffect(() => {
     getEntityScheduledActions(entityType, entityId)
-      .then(data => {
+      .then((data) => {
         setStatus({ type: 'loaded', jobs: data });
       })
-      .catch(e => {
+      .catch((e) => {
         setStatus({ type: 'error', error: e });
       });
   }, [entityId, entityType, getEntityScheduledActions, setStatus]);
@@ -50,7 +50,7 @@ const ScheduleFetcher = ({ getEntityScheduledActions, entityType, entityId }) =>
 ScheduleFetcher.propTypes = {
   getEntityScheduledActions: PropTypes.func.isRequired,
   entityType: PropTypes.string.isRequired,
-  entityId: PropTypes.string.isRequired
+  entityId: PropTypes.string.isRequired,
 };
 
 export const getScheduledJobsTooltip = (entityType, node, widgetAPI) => {
@@ -75,7 +75,7 @@ export const getScheduledJobsTooltip = (entityType, node, widgetAPI) => {
 };
 
 export const HyperlinkPlugin = ({
-  richTextAPI: { widgetAPI, logViewportAction, logShortcutAction }
+  richTextAPI: { widgetAPI, logViewportAction, logShortcutAction },
 }) => ({
   renderNode: (props, _editor, next) => {
     const { node, editor, key } = props;
@@ -83,7 +83,7 @@ export const HyperlinkPlugin = ({
       return (
         <Hyperlink
           {...props}
-          onClick={event => {
+          onClick={(event) => {
             event.preventDefault(); // Don't follow `href`
 
             editor.moveToRangeOfNode(node).focus();
@@ -91,7 +91,7 @@ export const HyperlinkPlugin = ({
               editLink(editor, widgetAPI.dialogs.createHyperlink, logViewportAction);
             }
           }}
-          getTooltipData={entityType => getScheduledJobsTooltip(entityType, node, widgetAPI)}
+          getTooltipData={(entityType) => getScheduledJobsTooltip(entityType, node, widgetAPI)}
           onEntityFetchComplete={() => logViewportAction('linkRendered', { key })}
         />
       );
@@ -117,11 +117,11 @@ export const HyperlinkPlugin = ({
       return () => {
         node
           .getInlines()
-          .forEach(inlineNode => editor.unwrapInlineByKey(inlineNode.key, node.type));
+          .forEach((inlineNode) => editor.unwrapInlineByKey(inlineNode.key, node.type));
       };
     }
     next();
-  }
+  },
 });
 
 function isHyperlink(type) {

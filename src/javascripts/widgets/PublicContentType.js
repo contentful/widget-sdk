@@ -12,14 +12,14 @@ export function fromInternal(data) {
   const result = pick(data, ['sys', 'name', 'description']);
 
   // Find the display field.
-  const displayField = (data.fields || []).find(field => field.id === data.displayField);
+  const displayField = (data.fields || []).find((field) => field.id === data.displayField);
   if (displayField) {
     // Use the `apiName` (public ID) if possible.
     result.displayField = displayField.apiName || displayField.id;
   }
 
   // Copy and rewrite all fields.
-  result.fields = (data.fields || []).map(field => {
+  result.fields = (data.fields || []).map((field) => {
     // Use the `apiName` (public ID) if possible.
     const rewritten = { ...field, id: field.apiName || field.id };
     // Don't expose the `apiName`.

@@ -15,14 +15,14 @@ export function noSnapshots(entryId) {
 export function opened(source) {
   track('snapshot_opened', {
     source: source || 'deepLink',
-    ...basicInfo()
+    ...basicInfo(),
   });
 }
 
 export function closed(discarded) {
   track('snapshot_closed', {
     changesDiscarded: !!discarded,
-    ...basicInfo()
+    ...basicInfo(),
   });
 }
 
@@ -33,7 +33,7 @@ export function restored(pathsToRestore, diffCount, showDiffsOnly) {
     fullRestore: count === diffCount,
     restoredFieldsCount: count,
     showDiffsOnly: !!showDiffsOnly,
-    ...basicInfo()
+    ...basicInfo(),
   });
 }
 
@@ -53,7 +53,7 @@ export function trackableConfirmator(save) {
   const confirmator = createUnsavedChangesDialogOpener(save);
 
   return () =>
-    confirmator().then(result => {
+    confirmator().then((result) => {
       if (result && result.discarded) {
         closed(true);
       }
@@ -70,7 +70,7 @@ function basicInfo() {
     entryId: data.entry.sys.id,
     snapshotId: snapshotSys.id,
     snapshotType: snapshotSys.snapshotType,
-    authorIsUser: userId === snapshotSys.createdBy.sys.id
+    authorIsUser: userId === snapshotSys.createdBy.sys.id,
   };
 }
 

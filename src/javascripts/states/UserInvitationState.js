@@ -17,7 +17,7 @@ export default makeState({
   resolve: {
     invitationData: [
       '$stateParams',
-      async $stateParams => {
+      async ($stateParams) => {
         const { invitationId } = $stateParams;
         const endpoint = createEndpoint();
 
@@ -26,11 +26,11 @@ export default makeState({
         try {
           invitation = await endpoint({
             method: 'GET',
-            path: ['invitations', invitationId]
+            path: ['invitations', invitationId],
           });
         } catch (error) {
           return {
-            error
+            error,
           };
         }
 
@@ -41,7 +41,7 @@ export default makeState({
           const orgOwnerOrAdmin = isOwnerOrAdmin(org);
           go({
             path: ['home'],
-            params: { orgId: orgId, orgOwnerOrAdmin: orgOwnerOrAdmin }
+            params: { orgId: orgId, orgOwnerOrAdmin: orgOwnerOrAdmin },
           }).then(() => {
             Notification.success(`You’ve already accepted this invitation!`);
           });
@@ -50,9 +50,9 @@ export default makeState({
         }
 
         return { invitation };
-      }
+      },
     ],
-    user: [getUser]
+    user: [getUser],
   },
   controller: [
     'invitationData',
@@ -72,6 +72,6 @@ export default makeState({
       } else {
         $scope.props.invitation = invitation;
       }
-    }
-  ]
+    },
+  ],
 });

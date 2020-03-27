@@ -18,7 +18,7 @@ const ContentTypesFetcher = createFetcherComponent(() => {
 export default class ContentPreviewNewRoute extends Component {
   static propTypes = {
     registerSaveAction: PropTypes.func.isRequired,
-    setDirty: PropTypes.func.isRequired
+    setDirty: PropTypes.func.isRequired,
   };
 
   render() {
@@ -38,8 +38,8 @@ export default class ContentPreviewNewRoute extends Component {
                 name: '',
                 description: '',
                 sys: {
-                  version: 0
-                }
+                  version: 0,
+                },
               },
               data
             );

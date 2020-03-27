@@ -17,6 +17,6 @@ export function createSpaceRoleLinks(roleIds = []) {
 
   return {
     admin: isAdmin,
-    roles: isAdmin ? [] : roleIds.map(id => ({ sys: { type: 'Link', linkType: 'Role', id } }))
+    roles: isAdmin ? [] : roleIds.map((id) => ({ sys: { type: 'Link', linkType: 'Role', id } })),
   };
 }

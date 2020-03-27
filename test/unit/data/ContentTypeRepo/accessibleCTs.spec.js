@@ -2,12 +2,12 @@ describe('data/ContentTypeRepo/accessibleCTs', () => {
   let accessibleCTs;
   const accessibleCTsIds = [1, 2, 3];
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     this.system.set('access_control/AccessChecker', {
       canPerformActionOnEntryOfType: (_, id) => accessibleCTsIds.indexOf(id) > -1,
       Action: {
-        READ: 'read'
-      }
+        READ: 'read',
+      },
     });
 
     accessibleCTs = await this.system.import('data/ContentTypeRepo/accessibleCTs');
@@ -20,26 +20,26 @@ describe('data/ContentTypeRepo/accessibleCTs', () => {
       {
         selectedCtId: 5,
         bareCTs: [ctMock({ id: 1 }), ctMock({ id: 2 })],
-        expected: [ctMock({ id: 1 }), ctMock({ id: 2 })]
+        expected: [ctMock({ id: 1 }), ctMock({ id: 2 })],
       },
       {
         selectedCtId: 1,
         bareCTs: [ctMock({ id: 1 }), ctMock({ id: 2 })],
-        expected: [ctMock({ id: 1 }), ctMock({ id: 2 })]
+        expected: [ctMock({ id: 1 }), ctMock({ id: 2 })],
       },
       {
         selectedCtId: 5,
         bareCTs: [ctMock({ id: 5 }), ctMock({ id: 1 }), ctMock({ id: 2 })],
-        expected: [ctMock({ id: 5 }), ctMock({ id: 1 }), ctMock({ id: 2 })]
+        expected: [ctMock({ id: 5 }), ctMock({ id: 1 }), ctMock({ id: 2 })],
       },
       {
         selectedCtId: null,
         bareCTs: [ctMock({ id: 5 }), ctMock({ id: 1 }), ctMock({ id: 2 })],
-        expected: [ctMock({ id: 1 }), ctMock({ id: 2 })]
-      }
+        expected: [ctMock({ id: 1 }), ctMock({ id: 2 })],
+      },
     ];
 
-    testData.forEach(testData => {
+    testData.forEach((testData) => {
       publishedCTs.getAllBare = () => testData.bareCTs;
 
       expect(accessibleCTs(publishedCTs, testData.selectedCtId)).toEqual(testData.expected);
@@ -51,7 +51,7 @@ describe('data/ContentTypeRepo/accessibleCTs', () => {
       sys: { id: ct.id },
       displayField: ct.displayField,
       fields: ct.fields || [],
-      name: ct.name
+      name: ct.name,
     };
   }
 });

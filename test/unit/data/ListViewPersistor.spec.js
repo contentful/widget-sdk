@@ -9,11 +9,11 @@ describe('ListViewPersistor', () => {
 
   const STORE_KEY = 'lastFilterQueryString.entries.SPACE_ID';
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     getQueryStringStub = sinon.stub();
 
     this.system.set('utils/location', {
-      getQueryString: getQueryStringStub
+      getQueryString: getQueryStringStub,
     });
     const ListViewPersistor = (await this.system.import('data/ListViewPersistor')).default;
     store = (await this.system.import('browserStorage')).getStore();
@@ -26,7 +26,7 @@ describe('ListViewPersistor', () => {
     qs = ListViewPersistor({
       spaceId: 'SPACE_ID',
       entityType: 'Entry',
-      $location
+      $location,
     });
   });
 

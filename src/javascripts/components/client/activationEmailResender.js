@@ -23,8 +23,8 @@ export async function resendActivationEmail(email) {
     logger.logError('Failed activation email resend attempt', {
       data: {
         email: email,
-        response: _.pick(error, ['status', 'statusText', 'data'])
-      }
+        response: _.pick(error, ['status', 'statusText', 'data']),
+      },
     });
     new Error('The email could not be sent');
   }

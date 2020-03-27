@@ -20,7 +20,7 @@ describe.skip('CmaDocument specific behavior', () => {
     it('triggers no CMA request for the next 5 sec.', () => {
       throwNotImplementedError();
     });
-  })
+  });
 
   describe('immediately after setValueAt(fieldPath) on a field', () => {
     it('triggers no CMA request for the next 5 sec.', () => {

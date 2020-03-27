@@ -1,4 +1,4 @@
 export const SidebarType = {
   default: 'default',
-  custom: 'custom'
+  custom: 'custom',
 };

@@ -6,7 +6,7 @@ const tagTypeMap = {
   published: 'positive',
   draft: 'warning',
   archived: 'negative',
-  changed: 'primary'
+  changed: 'primary',
 };
 
 export function EntityStatusTag({ className, statusLabel }) {
@@ -19,5 +19,5 @@ export function EntityStatusTag({ className, statusLabel }) {
 
 EntityStatusTag.propTypes = {
   className: PropTypes.string,
-  statusLabel: PropTypes.string.isRequired
+  statusLabel: PropTypes.string.isRequired,
 };

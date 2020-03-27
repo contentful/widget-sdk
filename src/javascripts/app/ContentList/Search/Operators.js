@@ -13,14 +13,14 @@ export const Operator = {
   LT: 'lt',
   LTE: 'lte',
   GT: 'gt',
-  GTE: 'gte'
+  GTE: 'gte',
 };
 
 /**
  * Checks if operator has a valid Operator enum value.
  * @param {string} operator
  */
-export const isValid = operator => values(Operator).indexOf(operator) > -1;
+export const isValid = (operator) => values(Operator).indexOf(operator) > -1;
 
 // TODO: decouple operators from labels
 export const equality = [Operator.EQUALS, 'is'];
@@ -33,7 +33,7 @@ export const ranges = [
   [Operator.LT, 'is less than'],
   [Operator.LTE, 'is less than or equal to'],
   [Operator.GT, 'is greater than'],
-  [Operator.GTE, 'is greater than or equal to']
+  [Operator.GTE, 'is greater than or equal to'],
 ];
 
 export function getOperatorsByType(type) {

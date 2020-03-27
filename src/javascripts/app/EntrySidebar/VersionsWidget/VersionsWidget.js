@@ -13,19 +13,19 @@ const styles = {
   table: {
     width: '100%',
     lineHeight: '1.5',
-    margin: `0 0 ${tokens.spacingM}`
+    margin: `0 0 ${tokens.spacingM}`,
   },
   cell: {
-    padding: `${tokens.spacingXs} 0`
+    padding: `${tokens.spacingXs} 0`,
   },
   dateCell: {
     padding: `${tokens.spacingXs} 0`,
-    width: '100%'
+    width: '100%',
   },
   radio: {
     verticalAlign: 'baseline',
-    marginRight: tokens.spacingXs
-  }
+    marginRight: tokens.spacingXs,
+  },
 };
 
 export const noSnapshotsText =
@@ -33,7 +33,7 @@ export const noSnapshotsText =
 export const compareHelpText =
   'Select a previous version to compare it with the current version of this entry.';
 
-const CompareButton = props => (
+const CompareButton = (props) => (
   <StateLink
     path="spaces.detail.entries.detail.compare.withCurrent"
     params={{ entryId: props.entryId, snapshotId: props.selectedId }}>
@@ -51,7 +51,7 @@ const CompareButton = props => (
 );
 CompareButton.propTypes = {
   entryId: PropTypes.string,
-  selectedId: PropTypes.string
+  selectedId: PropTypes.string,
 };
 
 export default class VersionsWidget extends Component {
@@ -59,15 +59,15 @@ export default class VersionsWidget extends Component {
     versions: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
     entryId: PropTypes.string,
     error: PropTypes.any,
-    isLoaded: PropTypes.bool.isRequired
+    isLoaded: PropTypes.bool.isRequired,
   };
 
   state = {
-    selectedId: null
+    selectedId: null,
   };
 
   renderList(versions) {
-    return versions.map(version => (
+    return versions.map((version) => (
       <tr key={version.sys.id}>
         <td style={styles.cell}>
           <RadioButton
@@ -80,7 +80,7 @@ export default class VersionsWidget extends Component {
             name="selected"
             aria-disabled={version.sys.isCurrent}
             role="option"
-            onChange={e => {
+            onChange={(e) => {
               this.setState({ selectedId: e.currentTarget.value });
             }}
           />

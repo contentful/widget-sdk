@@ -13,20 +13,20 @@ function goToInstallation(spaceId, environmentId, appId, onClose) {
       spaceId,
       environmentId,
       appId: `private_${appId}`,
-      referrer: 'app-management'
+      referrer: 'app-management',
     },
     options: {
-      location: 'replace'
-    }
+      location: 'replace',
+    },
   }).then(() => onClose());
 }
 
 const styles = {
   form: css({
     '> div:first-child': css({
-      marginBottom: tokens.spacingL
-    })
-  })
+      marginBottom: tokens.spacingL,
+    }),
+  }),
 };
 
 export default function AppInstallModal({ isShown, definition, onClose }) {
@@ -85,8 +85,8 @@ export default function AppInstallModal({ isShown, definition, onClose }) {
                 name="spaceSelection"
                 required
                 value={selectedSpace}
-                onChange={e => setSelectedSpace(e.target.value)}>
-                {spaces.map(space => (
+                onChange={(e) => setSelectedSpace(e.target.value)}>
+                {spaces.map((space) => (
                   <Option key={space.sys.id} value={space.sys.id}>
                     {space.name}
                   </Option>
@@ -97,9 +97,9 @@ export default function AppInstallModal({ isShown, definition, onClose }) {
                 id="envSelection"
                 name="envSelection"
                 required
-                onChange={e => setSelectedEnv(e.target.value)}
+                onChange={(e) => setSelectedEnv(e.target.value)}
                 value={selectedEnv}>
-                {spaceEnvs.map(env => (
+                {spaceEnvs.map((env) => (
                   <Option key={env.sys.id} value={env.sys.id}>
                     {env.name}
                   </Option>
@@ -129,5 +129,5 @@ export default function AppInstallModal({ isShown, definition, onClose }) {
 AppInstallModal.propTypes = {
   definition: PropTypes.object,
   onClose: PropTypes.func.isRequired,
-  isShown: PropTypes.bool.isRequired
+  isShown: PropTypes.bool.isRequired,
 };

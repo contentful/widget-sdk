@@ -6,7 +6,7 @@ import ExternalTextLink from 'app/common/ExternalTextLink';
 import {
   getCredentials,
   isOnboardingComplete,
-  getDeploymentProvider
+  getDeploymentProvider,
 } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
 import { getModule } from 'NgRegistry';
 
@@ -18,7 +18,7 @@ class DeploymentStrategies extends React.Component {
     this.state = {
       showOriginalHerokuSteps: !wasDeployedWithHeroku,
       showRedeployHerokuSteps: wasDeployedWithHeroku,
-      active: getDeploymentProvider() || 'netlify'
+      active: getDeploymentProvider() || 'netlify',
     };
   }
 
@@ -30,19 +30,19 @@ class DeploymentStrategies extends React.Component {
 
     this.setState({
       spaceId,
-      deliveryToken
+      deliveryToken,
     });
   }
 
-  selectTab = tabId => {
+  selectTab = (tabId) => {
     this.setState({ active: tabId });
   };
 
-  renderCode = code => {
+  renderCode = (code) => {
     return <Code lineNumbers={false} copy code={code} tooltipPosition="right" />;
   };
 
-  renderList = steps => {
+  renderList = (steps) => {
     const stepsMarkup = steps.map((step, i) => (
       <li key={`step_${i}`} className="modern-stack-onboarding--deployment-list-elem">
         {step}
@@ -65,7 +65,7 @@ class DeploymentStrategies extends React.Component {
       this.renderCode('netlifyctl deploy -b public'),
       <p className="modern-stack-onboarding--deployment-list-text">
         Netlify will ask if you want to create a new website. Select YES to deploy this website.
-      </p>
+      </p>,
     ];
     /* eslint-enable react/jsx-key */
     return (
@@ -99,7 +99,7 @@ class DeploymentStrategies extends React.Component {
       this.renderCode(
         `heroku config:set CONTENTFUL_SPACE_ID=${spaceId} CONTENTFUL_DELIVERY_TOKEN=${deliveryToken}`
       ),
-      this.renderCode('git push heroku master')
+      this.renderCode('git push heroku master'),
     ];
 
     const rebuildSteps = [
@@ -116,7 +116,7 @@ class DeploymentStrategies extends React.Component {
           {' to rebuild automatically.'}
         </div>
       </div>,
-      this.renderCode('git push heroku master')
+      this.renderCode('git push heroku master'),
     ];
 
     const normalTitle = (
@@ -193,13 +193,13 @@ class DeploymentStrategies extends React.Component {
       {
         id: 'netlify',
         title: 'Netlify',
-        content: this.renderNetlifySteps()
+        content: this.renderNetlifySteps(),
       },
       {
         id: 'heroku',
         title: 'Heroku',
-        content: this.renderHerokuSteps(spaceId, deliveryToken)
-      }
+        content: this.renderHerokuSteps(spaceId, deliveryToken),
+      },
     ];
     return <Tabs tabs={tabs} active={active} onSelect={this.selectTab} />;
   }

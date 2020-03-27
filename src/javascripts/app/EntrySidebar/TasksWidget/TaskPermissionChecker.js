@@ -18,7 +18,7 @@ export default function create(currentUser, isSpaceAdmin) {
 
   return {
     canEdit,
-    canUpdateStatus
+    canUpdateStatus,
   };
 
   function canEdit(task) {
@@ -50,6 +50,6 @@ export default function create(currentUser, isSpaceAdmin) {
 export function createProhibitive() {
   return {
     canEdit: () => false,
-    canUpdateStatus: () => false
+    canUpdateStatus: () => false,
   };
 }

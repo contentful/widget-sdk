@@ -17,13 +17,13 @@ const icons = [
   'android',
   'jekyll',
   'gitbook',
-  'brunch'
+  'brunch',
 ];
 
 const GetStarted = () => {
   const logos = (
     <div className={'modern-stack-onboarding--logogrid-grid'}>
-      {icons.map(icon => (
+      {icons.map((icon) => (
         <div key={icon} className={`modern-stack-onboarding--logogrid-elem__${icon}`}>
           <Icon name={icon} />
         </div>
@@ -45,7 +45,7 @@ const GetStarted = () => {
           intercomKey="onboardingStackOverviewCompleted"
           trackingElementId="get_started_screen_completed"
           link="copy">
-          {move => (
+          {(move) => (
             <Button
               onClick={move}
               className="modern-stack-onboarding--next-button"

@@ -13,26 +13,26 @@ import CreateEntryComment from './CreateEntryComment';
 const styles = {
   root: css({
     padding: tokens.spacingS,
-    marginBottom: tokens.spacingS
+    marginBottom: tokens.spacingS,
   }),
   footer: css({
-    marginTop: tokens.spacingM
+    marginTop: tokens.spacingM,
   }),
   thread: css({
-    marginTop: tokens.spacingM
+    marginTop: tokens.spacingM,
   }),
   showCommentsButton: css({
-    margin: `${tokens.spacingM} 0`
+    margin: `${tokens.spacingM} 0`,
   }),
   reply: css({
     borderTop: `1px solid ${tokens.colorElementLight}`,
-    paddingTop: tokens.spacingS
+    paddingTop: tokens.spacingS,
   }),
   replyActions: css({
     borderTop: `1px solid ${tokens.colorElementLight}`,
     paddingTop: tokens.spacingS,
-    marginTop: tokens.spacingS
-  })
+    marginTop: tokens.spacingS,
+  }),
 };
 
 export default function CommentThread({ endpoint, thread, onRemoved, onNewReply }) {
@@ -45,7 +45,7 @@ export default function CommentThread({ endpoint, thread, onRemoved, onNewReply 
     isExpanded && !replies.length && textareaRef.current.focus();
   });
 
-  const handleKeyDown = event => {
+  const handleKeyDown = (event) => {
     const ENTER = 13;
     const SPACE = 32;
 
@@ -75,7 +75,7 @@ export default function CommentThread({ endpoint, thread, onRemoved, onNewReply 
           <div>
             {replies.length ? (
               <div className={styles.thread}>
-                {replies.map(reply => (
+                {replies.map((reply) => (
                   <Comment
                     className={styles.reply}
                     key={reply.sys.id}
@@ -109,5 +109,5 @@ CommentThread.propTypes = {
   endpoint: PropTypes.func.isRequired,
   thread: types.CommentThread.isRequired,
   onRemoved: PropTypes.func.isRequired,
-  onNewReply: PropTypes.func.isRequired
+  onNewReply: PropTypes.func.isRequired,
 };

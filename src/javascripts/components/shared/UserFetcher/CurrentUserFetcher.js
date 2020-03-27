@@ -18,5 +18,5 @@ export default function CurrentUserFetcher(props) {
 }
 
 CurrentUserFetcher.propTypes = {
-  children: PropTypes.func.isRequired
+  children: PropTypes.func.isRequired,
 };

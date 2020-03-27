@@ -5,17 +5,17 @@ import { updateUserData } from './AccountRepository';
 import { Notification } from '@contentful/forma-36-react-components';
 
 jest.mock('./AccountRepository', () => ({
-  updateUserData: jest.fn()
+  updateUserData: jest.fn(),
 }));
 
 describe('ChangePasswordModal', () => {
-  const build = custom => {
+  const build = (custom) => {
     const opts = Object.assign(
       {},
       {
         hasPassword: true,
         onConfirm: () => {},
-        onCancel: () => {}
+        onCancel: () => {},
       },
       custom
     );
@@ -23,8 +23,8 @@ describe('ChangePasswordModal', () => {
     const user = {
       passwordSet: opts.hasPassword,
       sys: {
-        version: 3
-      }
+        version: 3,
+      },
     };
 
     return render(
@@ -37,7 +37,7 @@ describe('ChangePasswordModal', () => {
     );
   };
 
-  const getValidationMessage = ele => {
+  const getValidationMessage = (ele) => {
     try {
       return within(ele).queryByTestId('cf-ui-validation-message').textContent;
     } catch (_) {
@@ -67,7 +67,7 @@ describe('ChangePasswordModal', () => {
     expect(queryByTestId('confirm-change-password')).toHaveAttribute('disabled');
 
     fireEvent.change(queryByTestId('new-password').querySelector('input'), {
-      target: { value: 'a' }
+      target: { value: 'a' },
     });
 
     expect(queryByTestId('confirm-change-password')).not.toHaveAttribute('disabled');
@@ -195,13 +195,13 @@ describe('ChangePasswordModal', () => {
         errors: [
           {
             name: 'insecure',
-            path: 'password'
-          }
-        ]
+            path: 'password',
+          },
+        ],
       },
       sys: {
-        type: 'Error'
-      }
+        type: 'Error',
+      },
     };
 
     updateUserData.mockRejectedValueOnce(err);

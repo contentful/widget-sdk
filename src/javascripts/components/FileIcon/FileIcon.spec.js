@@ -9,7 +9,7 @@ describe('FileIcon', () => {
     const output = shallow(
       <FileIcon
         file={{
-          contentType: 'image/png'
+          contentType: 'image/png',
         }}
       />
     );
@@ -26,7 +26,7 @@ describe('FileIcon', () => {
     const output = shallow(
       <FileIcon
         file={{
-          contentType: 'application/unknown'
+          contentType: 'application/unknown',
         }}
       />
     );
@@ -54,7 +54,7 @@ describe('FileIcon', () => {
     const output = shallow(
       <FileIcon
         file={{
-          contentType: 'image/png'
+          contentType: 'image/png',
         }}
         className="my-example-class"
       />

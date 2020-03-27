@@ -12,11 +12,11 @@ class TeamMembershipRow extends React.Component {
   static propTypes = {
     membership: PropTypes.oneOfType([
       types.TeamSpaceMembership,
-      types.TeamSpaceMembershipPlaceholder
+      types.TeamSpaceMembershipPlaceholder,
     ]).isRequired,
     onEdit: PropTypes.func.isRequired,
     readOnlyPermission: PropTypes.bool.isRequired,
-    removeMembership: PropTypes.func.isRequired
+    removeMembership: PropTypes.func.isRequired,
   };
 
   getRoleNames() {
@@ -28,13 +28,13 @@ class TeamMembershipRow extends React.Component {
     if (!membership.roles || membership.roles.length === 0) {
       return <em>deleted role</em>;
     }
-    return joinWithAnd(membership.roles.map(role => role.name));
+    return joinWithAnd(membership.roles.map((role) => role.name));
   }
 
   render() {
     const { membership, onEdit, removeMembership, readOnlyPermission } = this.props;
     const {
-      sys: { space, createdAt, createdBy, id }
+      sys: { space, createdAt, createdBy, id },
     } = this.props.membership;
     const isPlaceholder = id === 'placeholder';
 
@@ -84,14 +84,14 @@ class TeamMembershipRow extends React.Component {
 }
 
 export default connect(
-  state => ({
-    readOnlyPermission: hasReadOnlyPermission(state)
+  (state) => ({
+    readOnlyPermission: hasReadOnlyPermission(state),
   }),
   (dispatch, { membership }) => ({
     removeMembership: () =>
       dispatch({
         type: 'REMOVE_TEAM_SPACE_MEMBERSHIP',
-        payload: { teamSpaceMembershipId: membership.sys.id }
-      })
+        payload: { teamSpaceMembershipId: membership.sys.id },
+      }),
   })
 )(TeamMembershipRow);

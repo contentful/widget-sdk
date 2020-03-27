@@ -12,7 +12,7 @@ export default function SpacesAutoComplete({
   disabled = false,
   inputWidth = 'large',
   validationMessage,
-  onChange
+  onChange,
 }) {
   const [lastQuery, setLastQuery] = useState('');
 
@@ -24,21 +24,21 @@ export default function SpacesAutoComplete({
 
   const { isLoading, data: spaces } = useAsync(getSpaces);
 
-  const handleChange = item => {
+  const handleChange = (item) => {
     onChange(item);
   };
 
-  const handleQueryChange = query => {
+  const handleQueryChange = (query) => {
     setLastQuery(query);
   };
 
   // Get the updated list of items, filtered by the last query (autocomplete input value)
   const items = useMemo(() => {
-    const valueIds = value.map(space => space.sys.id);
+    const valueIds = value.map((space) => space.sys.id);
 
     if (!spaces) return [];
 
-    return spaces.filter(item => {
+    return spaces.filter((item) => {
       const name = item.name.toLowerCase();
       const isAvailable = !valueIds.includes(item.sys.id);
       const nameMatchesQuery = name.includes((lastQuery || '').toLowerCase());
@@ -60,7 +60,7 @@ export default function SpacesAutoComplete({
       emptyListMessage="There are no spaces to choose from"
       noMatchesMessage="No spaces found"
       dropdownProps={{ isFullWidth: true }}>
-      {options => options.map(option => <span key={option.sys.id}>{option.name}</span>)}
+      {(options) => options.map((option) => <span key={option.sys.id}>{option.name}</span>)}
     </Autocomplete>
   );
 }
@@ -71,5 +71,5 @@ SpacesAutoComplete.propTypes = {
   onChange: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
   inputWidth: PropTypes.oneOf(['small', 'medium', 'large', 'full']),
-  validationMessage: PropTypes.string
+  validationMessage: PropTypes.string,
 };

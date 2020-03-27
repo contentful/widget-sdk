@@ -20,36 +20,39 @@ describe('SlideInNavigator', () => {
     }
 
     testFn('returns state params', { params: { entryId: 'entry-id' } }, [
-      { id: 'entry-id', type: 'Entry' }
+      { id: 'entry-id', type: 'Entry' },
     ]);
 
     testFn(
       'returns ids from query string',
       {
         params: {
-          entryId: 'entry-id-2'
+          entryId: 'entry-id-2',
         },
         search: {
-          previousEntries: 'entry-id'
-        }
+          previousEntries: 'entry-id',
+        },
       },
-      [{ id: 'entry-id', type: 'Entry' }, { id: 'entry-id-2', type: 'Entry' }]
+      [
+        { id: 'entry-id', type: 'Entry' },
+        { id: 'entry-id-2', type: 'Entry' },
+      ]
     );
 
     testFn(
       'ignores empty values',
       {
         params: {
-          entryId: 'entry-id-3'
+          entryId: 'entry-id-3',
         },
         search: {
-          previousEntries: ',,entry-id-1,,,entry-id-2,,'
-        }
+          previousEntries: ',,entry-id-1,,,entry-id-2,,',
+        },
       },
       [
         { id: 'entry-id-1', type: 'Entry' },
         { id: 'entry-id-2', type: 'Entry' },
-        { id: 'entry-id-3', type: 'Entry' }
+        { id: 'entry-id-3', type: 'Entry' },
       ]
     );
 
@@ -57,29 +60,32 @@ describe('SlideInNavigator', () => {
       'contains no duplicate ids',
       {
         params: {
-          entryId: 'entry-id-2'
+          entryId: 'entry-id-2',
         },
         search: {
-          previousEntries: 'entry-id-1,entry-id-2,entry-id-1'
-        }
+          previousEntries: 'entry-id-1,entry-id-2,entry-id-1',
+        },
       },
-      [{ id: 'entry-id-1', type: 'Entry' }, { id: 'entry-id-2', type: 'Entry' }]
+      [
+        { id: 'entry-id-1', type: 'Entry' },
+        { id: 'entry-id-2', type: 'Entry' },
+      ]
     );
 
     testFn(
       'returns asset id from query string',
       {
         params: {
-          assetId: 'asset-id'
+          assetId: 'asset-id',
         },
         search: {
-          previousEntries: 'entry-id,entry-id-2'
-        }
+          previousEntries: 'entry-id,entry-id-2',
+        },
       },
       [
         { id: 'entry-id', type: 'Entry' },
         { id: 'entry-id-2', type: 'Entry' },
-        { id: 'asset-id', type: 'Asset' }
+        { id: 'asset-id', type: 'Asset' },
       ]
     );
 
@@ -88,15 +94,15 @@ describe('SlideInNavigator', () => {
       {
         params: {
           entryId: 'entry-id',
-          bulkEditor: 'field-id:locale-LOCALE:0'
+          bulkEditor: 'field-id:locale-LOCALE:0',
         },
         search: {
-          previousEntries: 'entry-id'
-        }
+          previousEntries: 'entry-id',
+        },
       },
       [
         { id: 'entry-id', type: 'Entry' },
-        { path: ['entry-id', 'field-id', 'locale-LOCALE', 0], type: 'BulkEditor' }
+        { path: ['entry-id', 'field-id', 'locale-LOCALE', 0], type: 'BulkEditor' },
       ]
     );
 
@@ -105,16 +111,16 @@ describe('SlideInNavigator', () => {
       {
         params: {
           entryId: 'entry-id-2',
-          bulkEditor: 'field-id:en-US:3'
+          bulkEditor: 'field-id:en-US:3',
         },
         search: {
-          previousEntries: 'entry-id-1,entry-id-2'
-        }
+          previousEntries: 'entry-id-1,entry-id-2',
+        },
       },
       [
         { id: 'entry-id-1', type: 'Entry' },
         { id: 'entry-id-2', type: 'Entry' },
-        { path: ['entry-id-2', 'field-id', 'en-US', 3], type: 'BulkEditor' }
+        { path: ['entry-id-2', 'field-id', 'en-US', 3], type: 'BulkEditor' },
       ]
     );
 
@@ -122,16 +128,16 @@ describe('SlideInNavigator', () => {
       'slide below, bulk editor and slide on top',
       {
         params: {
-          entryId: 'entry-id-2'
+          entryId: 'entry-id-2',
         },
         search: {
-          previousEntries: 'entry-id-1,entry-id-1:field-id:en-US:-1'
-        }
+          previousEntries: 'entry-id-1,entry-id-1:field-id:en-US:-1',
+        },
       },
       [
         { id: 'entry-id-1', type: 'Entry' },
         { path: ['entry-id-1', 'field-id', 'en-US', -1], type: 'BulkEditor' },
-        { id: 'entry-id-2', type: 'Entry' }
+        { id: 'entry-id-2', type: 'Entry' },
       ]
     );
   });
@@ -147,7 +153,7 @@ describe('SlideInNavigator', () => {
         expect($state.go).toHaveBeenCalledTimes(1);
         expect($state.go).toHaveBeenCalledWith(...expectedStateGoArgs);
 
-        const count = ids => (ids ? ids.split(',').length : 0);
+        const count = (ids) => (ids ? ids.split(',').length : 0);
         const currentSlideLevel = count(search.previousEntries);
         const targetSlideLevel = count(expectedStateGoArgs[1].previousEntries);
         expect(result).toEqual({ currentSlideLevel, targetSlideLevel });
@@ -158,19 +164,19 @@ describe('SlideInNavigator', () => {
       'adds up to 5+ entries in stack',
       {
         params: {
-          entryId: 'entry-id-5'
+          entryId: 'entry-id-5',
         },
         search: {
-          previousEntries: 'entry-id-1,entry-id-2,entry-id-3,entry-id-4'
+          previousEntries: 'entry-id-1,entry-id-2,entry-id-3,entry-id-4',
         },
-        goToEntity: { id: 'asset-id', type: 'Asset' }
+        goToEntity: { id: 'asset-id', type: 'Asset' },
       },
       [
         '^.^.assets.detail',
         {
           assetId: 'asset-id',
-          previousEntries: 'entry-id-1,entry-id-2,entry-id-3,entry-id-4,entry-id-5'
-        }
+          previousEntries: 'entry-id-1,entry-id-2,entry-id-3,entry-id-4,entry-id-5',
+        },
       ]
     );
 
@@ -178,20 +184,20 @@ describe('SlideInNavigator', () => {
       'removes all entries above given one if it is already in the stack',
       {
         params: {
-          entryId: 'entry-id-4'
+          entryId: 'entry-id-4',
         },
         search: {
-          previousEntries: 'entry-id-1,entry-id-2,entry-id-3'
+          previousEntries: 'entry-id-1,entry-id-2,entry-id-3',
         },
-        goToEntity: { id: 'entry-id-2', type: 'Entry' }
+        goToEntity: { id: 'entry-id-2', type: 'Entry' },
       },
       [
         '^.^.entries.detail',
         {
           entryId: 'entry-id-2',
           previousEntries: 'entry-id-1',
-          bulkEditor: null
-        }
+          bulkEditor: null,
+        },
       ]
     );
   });

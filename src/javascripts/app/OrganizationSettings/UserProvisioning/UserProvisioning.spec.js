@@ -5,11 +5,11 @@ import { getVariation } from '__mocks__/LaunchDarkly';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 
 jest.mock('app/settings/api/cma-tokens/TokenResourceManager', () => ({
-  create: jest.fn()
+  create: jest.fn(),
 }));
 
 jest.mock('data/CMA/ProductCatalog', () => ({
-  getOrgFeature: jest.fn().mockResolvedValue(true)
+  getOrgFeature: jest.fn().mockResolvedValue(true),
 }));
 
 const renderComponent = () => {

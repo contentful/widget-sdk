@@ -5,8 +5,8 @@ import { AppDetails } from './AppDetailsModal';
 
 jest.mock('services/TokenStore', () => ({
   getDomains: () => ({
-    images: ''
-  })
+    images: '',
+  }),
 }));
 
 describe('AppDetailsModal', () => {
@@ -18,13 +18,13 @@ describe('AppDetailsModal', () => {
         name: 'Contentful',
         url: 'https://www.contentful.com',
         icon:
-          '//images.ctfassets.net/lpjm8d10rkpy/4DxiiBjixHZVjc69WpJX95/4708b0bdc8e713faf69a667f8266d190/472182'
+          '//images.ctfassets.net/lpjm8d10rkpy/4DxiiBjixHZVjc69WpJX95/4708b0bdc8e713faf69a667f8266d190/472182',
       },
       links: [
         {
           title: 'Documentation',
-          url: 'https://www.contentful.com/developers/docs/extensibility/apps/optimizely/'
-        }
+          url: 'https://www.contentful.com/developers/docs/extensibility/apps/optimizely/',
+        },
       ],
       icon:
         '//images.ctfassets.net/lpjm8d10rkpy/4X7O4Q0pIgQZNcONoQrQlp/9262ad9a935fa92e9cacd9207ae0a401/optimizely-logo.svg',
@@ -35,11 +35,11 @@ describe('AppDetailsModal', () => {
 - item 2
 
 The Optimizely app makes it easier to power experiments with structured content.`,
-      permissions: 'The app has full permission to the space it is installed in.'
+      permissions: 'The app has full permission to the space it is installed in.',
     },
     showPermissions: null,
     onClose: () => {},
-    canManageApps: true
+    canManageApps: true,
   };
 
   it('should match the snapshot', async () => {

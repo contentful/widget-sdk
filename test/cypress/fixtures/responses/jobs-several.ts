@@ -3,69 +3,69 @@ import {
   defaultSpaceId,
   defaultUserId,
   defaultJobId,
-  defaultEnvironmentId
+  defaultEnvironmentId,
 } from '../../util/requests';
 
 export const severalPendingJobsResponse = (limit: number = 40) => ({
   sys: {
-    type: 'Array'
+    type: 'Array',
   },
   limit: limit,
   pages: {},
   items: [
     job({ sys: { id: Matchers.somethingLike(defaultJobId) } }),
     job({ sys: { id: Matchers.somethingLike('jobID2') } }),
-    job({ sys: { id: Matchers.somethingLike('jobID3') } })
-  ]
+    job({ sys: { id: Matchers.somethingLike('jobID3') } }),
+  ],
 });
 
 export const severalCompletedJobsResponse = {
   sys: {
-    type: 'Array'
+    type: 'Array',
   },
   limit: 40,
   pages: {},
   items: [
     job({ sys: { id: Matchers.somethingLike('jobID3'), status: 'succeeded' } }),
-    job({ sys: { id: Matchers.somethingLike('jobID4'), status: 'succeeded' } })
-  ]
+    job({ sys: { id: Matchers.somethingLike('jobID4'), status: 'succeeded' } }),
+  ],
 };
 export const severalFailedJobsResponse = {
   sys: {
-    type: 'Array'
+    type: 'Array',
   },
   limit: 40,
   pages: {},
   items: [
     job({ sys: { id: Matchers.somethingLike('jobID5'), status: 'failed' } }),
-    job({ sys: { id: Matchers.somethingLike('jobID6'), status: 'failed' } })
-  ]
+    job({ sys: { id: Matchers.somethingLike('jobID6'), status: 'failed' } }),
+  ],
 };
 
 export const onePendingJobResponse = {
   sys: {
-    type: 'Array'
+    type: 'Array',
   },
   limit: 100,
   pages: {},
-  items: [job({ sys: { id: Matchers.somethingLike(defaultJobId) } })]
+  items: [job({ sys: { id: Matchers.somethingLike(defaultJobId) } })],
 };
 
 export const oneFailedJobResponse = {
   sys: {
-    type: 'Array'
+    type: 'Array',
   },
   limit: 100,
   pages: {},
-  items: [job({ sys: { id: Matchers.somethingLike(defaultJobId), status: 'failed' } })]
+  items: [job({ sys: { id: Matchers.somethingLike(defaultJobId), status: 'failed' } })],
 };
 
 export const createJobResponse = job({
   sys: {
     id: Matchers.somethingLike('3A13SXSDwO8c46NrjigFYT'),
     space: { sys: { type: 'Link', id: defaultSpaceId } },
-    createdBy: { sys: { type: 'Link', id: defaultUserId } }
-  }
+    createdBy: { sys: { type: 'Link', id: defaultUserId } },
+  },
 });
 
 export function job(jobPayload = { sys: {} }) {
@@ -77,40 +77,40 @@ export function job(jobPayload = { sys: {} }) {
       sys: {
         id: 'userID',
         linkType: 'User',
-        type: 'Link'
-      }
+        type: 'Link',
+      },
     },
     space: {
       sys: {
         id: defaultSpaceId,
         linkType: 'Space',
-        type: 'Link'
-      }
+        type: 'Link',
+      },
     },
     status: 'scheduled',
-    ...jobPayload.sys
+    ...jobPayload.sys,
   };
   const entity = {
     sys: {
       type: 'Link',
       linkType: 'Entry',
-      id: 'testEntryId'
-    }
+      id: 'testEntryId',
+    },
   };
   const environment = {
     sys: {
       type: 'Link',
       linkType: 'Environment',
-      id: defaultEnvironmentId
-    }
+      id: defaultEnvironmentId,
+    },
   };
   return {
     sys,
     entity,
     environment,
     scheduledFor: {
-      datetime: Matchers.iso8601DateTimeWithMillis('2119-09-02T14:00:00.000Z')
+      datetime: Matchers.iso8601DateTimeWithMillis('2119-09-02T14:00:00.000Z'),
     },
-    action: 'publish'
+    action: 'publish',
   };
 }

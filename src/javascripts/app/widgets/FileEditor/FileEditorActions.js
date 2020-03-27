@@ -11,19 +11,19 @@ import {
   Icon,
   Dropdown,
   DropdownList,
-  DropdownListItem
+  DropdownListItem,
 } from '@contentful/forma-36-react-components';
 
 const styles = {
   root: css({
     marginTop: tokens.spacingM,
     'button, a': {
-      marginRight: tokens.spacingM
-    }
+      marginRight: tokens.spacingM,
+    },
   }),
   buttonIcon: css({
-    marginTop: '8px'
-  })
+    marginTop: '8px',
+  }),
 };
 
 function DownloadButton(props) {
@@ -65,7 +65,7 @@ function DeleteButton(props) {
 function RotateButton(props) {
   const [showDropdown, setShow] = useState(false);
 
-  const action = mode => () => {
+  const action = (mode) => () => {
     setShow(false);
     props.onRotate(mode);
   };
@@ -102,7 +102,7 @@ function RotateButton(props) {
 function ResizeButton(props) {
   const [showDropdown, setShow] = useState(false);
 
-  const action = mode => () => {
+  const action = (mode) => () => {
     setShow(false);
     props.onResize(mode);
   };
@@ -138,7 +138,7 @@ function ResizeButton(props) {
 function CropButton(props) {
   const [showDropdown, setShow] = useState(false);
 
-  const action = mode => () => {
+  const action = (mode) => () => {
     setShow(false);
     props.onCrop(mode);
   };
@@ -202,7 +202,7 @@ const FileEditorActionsPropTypes = {
   onRotate: PropTypes.func.isRequired,
   onResize: PropTypes.func.isRequired,
   onCrop: PropTypes.func.isRequired,
-  onDelete: PropTypes.func.isRequired
+  onDelete: PropTypes.func.isRequired,
 };
 
 FileEditorActions.propTypes = FileEditorActionsPropTypes;

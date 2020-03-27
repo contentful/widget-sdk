@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Heading, Paragraph, Typography, Button } from '@contentful/forma-36-react-components';
 import EmptyStateContainer, {
-  defaultSVGStyle
+  defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import * as CreateSpace from 'services/CreateSpace';
 import Illustration from 'svg/illustrations/readonly-space-home-ill.svg';
@@ -33,7 +33,7 @@ const EmptySpaceHomePage = ({ orgId, orgOwnerOrAdmin }) => {
 
 EmptySpaceHomePage.propTypes = {
   orgId: PropTypes.string,
-  orgOwnerOrAdmin: PropTypes.bool
+  orgOwnerOrAdmin: PropTypes.bool,
 };
 
 export default EmptySpaceHomePage;

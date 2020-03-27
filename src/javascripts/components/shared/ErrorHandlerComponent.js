@@ -23,9 +23,9 @@ export default class ErrorHandler extends React.Component {
 }
 
 ErrorHandler.propTypes = {
-  renderOnError: PropTypes.node
+  renderOnError: PropTypes.node,
 };
 
 ErrorHandler.defaultProps = {
-  renderOnError: null
+  renderOnError: null,
 };

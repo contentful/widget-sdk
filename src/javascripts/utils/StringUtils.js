@@ -52,7 +52,7 @@ export function shouldFallbackToEmptyString(str) {
 }
 
 export function cleanPrefix(string) {
-  return string.replace(/^[^a-z]+/, prefix => prefix.toLowerCase().replace(/[0-9]/g, ''));
+  return string.replace(/^[^a-z]+/, (prefix) => prefix.toLowerCase().replace(/[0-9]/g, ''));
 }
 
 export function splitIntoWords(string) {
@@ -240,7 +240,7 @@ export function parseList(phrase = '') {
   const list = phrase
     .split(/\n|,/)
     .map(_.trim)
-    .filter(item => item.length > 0);
+    .filter((item) => item.length > 0);
 
   return _.uniq(list);
 }

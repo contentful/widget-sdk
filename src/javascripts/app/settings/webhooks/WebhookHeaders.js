@@ -6,12 +6,12 @@ import WebhookHttpBasicDialog from './dialogs/WebhookHttpBasicDialog';
 export class WebhookHeaders extends React.Component {
   static propTypes = {
     headers: PropTypes.array,
-    onChange: PropTypes.func.isRequired
+    onChange: PropTypes.func.isRequired,
   };
 
   state = {
     isSecretHeaderModalShown: false,
-    isHTTPBasicModalShown: false
+    isHTTPBasicModalShown: false,
   };
 
   componentDidUpdate() {
@@ -48,7 +48,7 @@ export class WebhookHeaders extends React.Component {
     return (
       <div
         className="cfnext-form__field"
-        ref={el => {
+        ref={(el) => {
           this.el = el;
         }}>
         {headers.map((h, i) => {
@@ -61,7 +61,7 @@ export class WebhookHeaders extends React.Component {
                 placeholder="Key"
                 value={h.key || ''}
                 disabled={h.secret}
-                onChange={e => this.update(i, { key: e.target.value })}
+                onChange={(e) => this.update(i, { key: e.target.value })}
               />
               {!h.secret && (
                 <input
@@ -70,7 +70,7 @@ export class WebhookHeaders extends React.Component {
                   className="cfnext-form__input"
                   placeholder="Value"
                   value={h.value || ''}
-                  onChange={e => this.update(i, { value: e.target.value })}
+                  onChange={(e) => this.update(i, { value: e.target.value })}
                 />
               )}
               {h.secret && (

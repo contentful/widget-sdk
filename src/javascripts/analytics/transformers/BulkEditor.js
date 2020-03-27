@@ -4,7 +4,7 @@
  * @description
  * Exports a function that transforms data for the bulk editor
  */
-export default function(eventName, data) {
+export default function (eventName, data) {
   return {
     data: {
       action: extractAction(eventName),
@@ -19,8 +19,8 @@ export default function(eventName, data) {
       num_edited_entries: data.numEditedEntries,
       num_published_entries: data.numPublishedEntries,
       status: data.status,
-      content_type_id: data.contentTypeId
-    }
+      content_type_id: data.contentTypeId,
+    },
   };
 }
 function extractAction(eventName) {

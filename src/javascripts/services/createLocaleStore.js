@@ -4,7 +4,7 @@ export default function createLocaleStore(getStore) {
   const stores = {
     activeLocales: null,
     focusedLocale: null,
-    isSingleLocaleModeOn: false
+    isSingleLocaleModeOn: false,
   };
 
   let focusedLocale = null;
@@ -12,9 +12,9 @@ export default function createLocaleStore(getStore) {
   let _isSingleLocaleModeOn = false;
 
   let localeRepo = {
-    getAll: function() {
+    getAll: function () {
       throw new Error('Call .init(localeRepo) first');
-    }
+    },
   };
 
   // All locales fetched from the CMA, including delivery-only locales
@@ -48,7 +48,7 @@ export default function createLocaleStore(getStore) {
     setFocusedLocale,
     setSingleLocaleMode,
     isSingleLocaleModeOn,
-    toggleSingleLocaleMode
+    toggleSingleLocaleMode,
   };
 
   function getFocusedLocale() {
@@ -93,9 +93,9 @@ export default function createLocaleStore(getStore) {
    * @returns {Promise<API.Locale[]>}
    */
   function refresh() {
-    return localeRepo.getAll().then(_locales => {
+    return localeRepo.getAll().then((_locales) => {
       locales = _locales;
-      privateLocales = locales.filter(locale => locale.contentManagementApi);
+      privateLocales = locales.filter((locale) => locale.contentManagementApi);
       defaultLocale = find(privateLocales, { default: true }) || privateLocales[0];
 
       const spaceId = defaultLocale.sys.space.sys.id;
@@ -112,7 +112,7 @@ export default function createLocaleStore(getStore) {
     stores.activeLocales = getStore().forKey('activeLocalesForSpace.' + spaceId);
 
     const storedLocaleCodes = stores.activeLocales.get() || activeLocales;
-    const storedLocales = filter(privateLocales, locale =>
+    const storedLocales = filter(privateLocales, (locale) =>
       includes(storedLocaleCodes, locale.code)
     );
     setActiveLocales(storedLocales);

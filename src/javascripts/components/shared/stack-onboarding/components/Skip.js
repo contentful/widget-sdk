@@ -4,7 +4,7 @@ import { getStore } from 'browserStorage';
 import { updateUserInSegment } from 'analytics/Analytics';
 import {
   getStoragePrefix,
-  track
+  track,
 } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
 import { getModule } from 'NgRegistry';
 
@@ -12,10 +12,10 @@ const store = getStore();
 
 export default class StackOnboardingSkip extends React.Component {
   static propTypes = {
-    link: PropTypes.oneOf(['getStarted', 'copy', 'explore', 'deploy'])
+    link: PropTypes.oneOf(['getStarted', 'copy', 'explore', 'deploy']),
   };
 
-  onClick = onboardingStepsComplete => {
+  onClick = (onboardingStepsComplete) => {
     const $state = getModule('$state');
     const $stateParams = getModule('$stateParams');
 
@@ -24,11 +24,11 @@ export default class StackOnboardingSkip extends React.Component {
     } else {
       track(`skip_from_${this.props.link}`);
       updateUserInSegment({
-        onboardingSkipped: true
+        onboardingSkipped: true,
       });
     }
     $state.go('spaces.detail.home', {
-      spaceId: $stateParams.spaceId
+      spaceId: $stateParams.spaceId,
     });
   };
 

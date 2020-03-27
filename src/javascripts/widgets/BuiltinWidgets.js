@@ -7,7 +7,7 @@ import { NAMESPACE_BUILTIN } from './WidgetNamespaces';
 import { getModule } from 'NgRegistry';
 import LinkEditor, {
   SingleLinkEditor,
-  withCfWebApp as linkEditorWithCfWebApp
+  withCfWebApp as linkEditorWithCfWebApp,
 } from 'app/widgets/LinkEditor';
 import EmbedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
 import { default as RichTextEditor } from 'app/widgets/rich_text';
@@ -40,7 +40,7 @@ const HELP_TEXT_PARAMETER = {
   id: 'helpText',
   name: 'Help text',
   type: 'Symbol',
-  description: 'This help text will show up below the field'
+  description: 'This help text will show up below the field',
 };
 
 // Returns a list of all builtin widgets.
@@ -62,7 +62,7 @@ export function create() {
     icon: 'singleline',
     renderFieldEditor: ({ widgetApi }) => (
       <SingleLineEditor field={widgetApi.field} locales={widgetApi.locales} />
-    )
+    ),
   });
 
   registerWidget('multipleLine', {
@@ -71,7 +71,7 @@ export function create() {
     icon: 'multipleline',
     renderFieldEditor: ({ widgetApi }) => (
       <MultipleLineEditor field={widgetApi.field} locales={widgetApi.locales} />
-    )
+    ),
   });
 
   registerWidget('urlEditor', {
@@ -86,14 +86,14 @@ export function create() {
           }}
         </UrlEditor>
       );
-    }
+    },
   });
 
   registerWidget('numberEditor', {
     fieldTypes: ['Integer', 'Number'],
     name: 'Number editor',
     icon: 'number',
-    renderFieldEditor: ({ widgetApi }) => <NumberEditor field={widgetApi.field} />
+    renderFieldEditor: ({ widgetApi }) => <NumberEditor field={widgetApi.field} />,
   });
 
   registerWidget('markdown', {
@@ -104,7 +104,7 @@ export function create() {
       const sdk = Object.assign({}, widgetApi);
 
       const previewComponents = {
-        embedly: ({ url }) => <EmbedlyPreview previewUrl={url} delay={100} />
+        embedly: ({ url }) => <EmbedlyPreview previewUrl={url} delay={100} />,
       };
 
       sdk.dialogs.openExtension = openMarkdownDialog(sdk, previewComponents);
@@ -114,13 +114,13 @@ export function create() {
           sdk={sdk}
           parameters={Object.assign({}, widgetApi.parameters, {
             instance: {
-              canUploadAssets: canUploadMultipleAssets()
-            }
+              canUploadAssets: canUploadMultipleAssets(),
+            },
           })}
           previewComponents={previewComponents}
         />
       );
-    }
+    },
   });
 
   registerWidget('dropdown', {
@@ -130,7 +130,7 @@ export function create() {
     notFocusable: true,
     renderFieldEditor: ({ widgetApi }) => (
       <DropdownEditor field={widgetApi.field} locales={widgetApi.locales} />
-    )
+    ),
   });
 
   registerWidget('radio', {
@@ -140,7 +140,7 @@ export function create() {
     notFocusable: true,
     renderFieldEditor: ({ widgetApi }) => (
       <RadioEditor field={widgetApi.field} locales={widgetApi.locales} />
-    )
+    ),
   });
 
   registerWidget('boolean', {
@@ -156,15 +156,15 @@ export function create() {
         id: 'trueLabel',
         name: 'True condition custom label',
         type: 'Symbol',
-        default: 'Yes'
+        default: 'Yes',
       },
       {
         id: 'falseLabel',
         name: 'False condition custom label',
         type: 'Symbol',
-        default: 'No'
-      }
-    ]
+        default: 'No',
+      },
+    ],
   });
 
   const MAX_NUMBER_OF_STARS = 20;
@@ -183,10 +183,10 @@ export function create() {
         type: 'Enum',
         options: range(1, MAX_NUMBER_OF_STARS + 1).map(String),
         default: '5',
-        required: true
-      }
+        required: true,
+      },
     ],
-    notFocusable: true
+    notFocusable: true,
   });
 
   registerWidget('datePicker', {
@@ -204,10 +204,10 @@ export function create() {
         options: [
           { dateonly: 'Date only' },
           { time: 'Date and time without timezone' },
-          { timeZ: 'Date and time with timezone' }
+          { timeZ: 'Date and time with timezone' },
         ],
         default: 'timeZ',
-        required: true
+        required: true,
       },
       {
         id: 'ampm',
@@ -215,9 +215,9 @@ export function create() {
         type: 'Enum',
         options: [{ '12': 'AM/PM' }, { '24': '24 Hour' }],
         default: '24',
-        required: true
-      }
-    ]
+        required: true,
+      },
+    ],
   });
 
   registerWidget('locationEditor', {
@@ -228,7 +228,7 @@ export function create() {
         field={widgetApi.field}
         parameters={{ instance: { googleMapsKey: Config.services.google.maps_api_key } }}
       />
-    )
+    ),
   });
 
   registerWidget('objectEditor', {
@@ -236,18 +236,18 @@ export function create() {
     name: 'Object',
     renderFieldEditor: ({ widgetApi }) => (
       <JsonEditor field={widgetApi.field} parameters={widgetApi.parameters} />
-    )
+    ),
   });
 
-  const newRichText = spaceContext => ({
+  const newRichText = (spaceContext) => ({
     renderFieldEditor: ({ widgetApi, loadEvents }) => {
       return renderRichTextEditor({ widgetApi, spaceContext, loadEvents });
-    }
+    },
   });
   const legacyRichText = {
     buildTemplate: ({ widgetApi, loadEvents }) => {
       return <RichTextEditor widgetApi={widgetApi} loadEvents={loadEvents} />;
-    }
+    },
   };
 
   registerWidget('richTextEditor', {
@@ -260,14 +260,14 @@ export function create() {
       const spaceId = spaceContext.space.getId();
       const isEnabled = await getVariation(NEW_RICH_TEXT, { organizationId, spaceId });
       return isEnabled ? newRichText(spaceContext) : legacyRichText;
-    }
+    },
   });
 
   registerWidget('tagEditor', {
     fieldTypes: ['Symbols'],
     name: 'Tag',
     icon: 'tags',
-    renderFieldEditor: ({ widgetApi }) => <TagsEditor field={widgetApi.field} />
+    renderFieldEditor: ({ widgetApi }) => <TagsEditor field={widgetApi.field} />,
   });
 
   registerWidget('listInput', {
@@ -280,9 +280,9 @@ export function create() {
     parameters: [
       {
         ...HELP_TEXT_PARAMETER,
-        default: 'Insert comma separated values'
-      }
-    ]
+        default: 'Insert comma separated values',
+      },
+    ],
   });
 
   registerWidget('checkbox', {
@@ -291,7 +291,7 @@ export function create() {
     icon: 'checkbox',
     renderFieldEditor: ({ widgetApi }) => (
       <CheckboxEditor field={widgetApi.field} locales={widgetApi.locales} />
-    )
+    ),
   });
 
   registerWidget('fileEditor', {
@@ -299,7 +299,7 @@ export function create() {
     name: 'File',
     renderFieldEditor: ({ widgetApi }) => {
       return <FileEditor sdk={widgetApi} />;
-    }
+    },
   });
 
   registerWidget('entryLinkEditor', {
@@ -308,7 +308,7 @@ export function create() {
     icon: 'reference',
     buildTemplate: ({ widgetApi, loadEvents }) => (
       <CfSingleLinkEditor type="Entry" style="link" widgetApi={widgetApi} loadEvents={loadEvents} />
-    )
+    ),
   });
 
   registerWidget('entryCardEditor', {
@@ -317,7 +317,7 @@ export function create() {
     icon: 'reference-card',
     buildTemplate: ({ widgetApi, loadEvents }) => (
       <CfSingleLinkEditor type="Entry" style="card" widgetApi={widgetApi} loadEvents={loadEvents} />
-    )
+    ),
   });
 
   // NOTE: We render this as "card" ever since we got rid of the actual "link" appearance
@@ -328,7 +328,7 @@ export function create() {
     icon: 'media-preview',
     buildTemplate: ({ widgetApi, loadEvents }) => (
       <CfSingleLinkEditor type="Asset" style="card" widgetApi={widgetApi} loadEvents={loadEvents} />
-    )
+    ),
   });
 
   const BULK_EDITOR_PARAMETER = {
@@ -336,7 +336,7 @@ export function create() {
     name: 'Use bulk editing',
     description: 'Ideal for entries with only a few fields',
     type: 'Boolean',
-    default: false
+    default: false,
   };
 
   registerWidget('entryLinksEditor', {
@@ -346,7 +346,7 @@ export function create() {
     buildTemplate: ({ widgetApi, loadEvents }) => (
       <CfLinkEditor type="Entry" style="link" widgetApi={widgetApi} loadEvents={loadEvents} />
     ),
-    parameters: [BULK_EDITOR_PARAMETER]
+    parameters: [BULK_EDITOR_PARAMETER],
   });
 
   registerWidget('entryCardsEditor', {
@@ -356,7 +356,7 @@ export function create() {
     buildTemplate: ({ widgetApi, loadEvents }) => (
       <CfLinkEditor type="Entry" style="card" widgetApi={widgetApi} loadEvents={loadEvents} />
     ),
-    parameters: [BULK_EDITOR_PARAMETER]
+    parameters: [BULK_EDITOR_PARAMETER],
   });
 
   registerWidget('assetLinksEditor', {
@@ -365,7 +365,7 @@ export function create() {
     icon: 'media-references',
     buildTemplate: ({ widgetApi, loadEvents }) => (
       <CfLinkEditor type="Asset" style="link" widgetApi={widgetApi} loadEvents={loadEvents} />
-    )
+    ),
   });
 
   registerWidget('assetGalleryEditor', {
@@ -374,7 +374,7 @@ export function create() {
     icon: 'media-previews',
     buildTemplate: ({ widgetApi, loadEvents }) => (
       <CfLinkEditor type="Asset" style="card" widgetApi={widgetApi} loadEvents={loadEvents} />
-    )
+    ),
   });
 
   registerWidget('slugEditor', {
@@ -384,7 +384,7 @@ export function create() {
     isBackground: true,
     renderFieldEditor: ({ widgetApi }) => {
       return <SlugEditor field={widgetApi.field} baseSdk={widgetApi} />;
-    }
+    },
   });
 
   return widgets;

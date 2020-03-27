@@ -14,7 +14,7 @@ class LocalesListPricingTwo extends React.Component {
     localeResource: PropTypes.object.isRequired,
     insideMasterEnv: PropTypes.bool.isRequired,
     subscriptionState: PropTypes.object.isRequired,
-    upgradeSpace: PropTypes.func.isRequired
+    upgradeSpace: PropTypes.func.isRequired,
   };
 
   renderTitle() {

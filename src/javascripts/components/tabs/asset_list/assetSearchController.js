@@ -46,7 +46,7 @@ export default function register() {
       $scope.$watch(
         () => ({
           viewId: getViewItem('id'),
-          search: getViewSearchState()
+          search: getViewSearchState(),
         }),
         () => {
           if (!isViewLoaded()) {
@@ -62,7 +62,7 @@ export default function register() {
         return controller.resetAssets(true);
       }
 
-      this.resetAssets = function(resetPage) {
+      this.resetAssets = function (resetPage) {
         const currPage = this.paginator.getPage();
 
         if (resetPage) {
@@ -74,9 +74,9 @@ export default function register() {
 
         return prepareQuery()
           .then(setIsSearching)
-          .then(query => spaceContext.space.getAssets(query))
+          .then((query) => spaceContext.space.getAssets(query))
           .then(
-            assets => {
+            (assets) => {
               $scope.context.ready = true;
               controller.paginator.setTotal(assets.total);
               Tracking.searchPerformed($scope.context.view, assets.total);
@@ -84,7 +84,7 @@ export default function register() {
               $scope.selection.updateList($scope.assets);
               return assets;
             },
-            err => {
+            (err) => {
               handleAssetsError(err);
               return $q.reject(err);
             }
@@ -114,7 +114,7 @@ export default function register() {
         return _.isObject(err) && 'statusCode' in err && [400, 422].indexOf(err.statusCode) > -1;
       }
 
-      this.loadMore = function() {
+      this.loadMore = function () {
         if (this.paginator.isAtLast()) {
           return $q.resolve();
         }
@@ -123,18 +123,18 @@ export default function register() {
         let queryForDebug;
 
         return prepareQuery()
-          .then(query => {
+          .then((query) => {
             queryForDebug = query;
             return assetLoader.loadPromise(() => spaceContext.space.getAssets(query));
           })
           .then(
-            assets => {
+            (assets) => {
               if (!assets) {
                 logger.logError('Failed to load more assets', {
                   data: {
                     assets: assets,
-                    query: queryForDebug
-                  }
+                    query: queryForDebug,
+                  },
                 });
                 return;
               }
@@ -143,7 +143,7 @@ export default function register() {
               $scope.assets.push(...filterOutDeleted(assets));
               $scope.selection.updateList($scope.assets);
             },
-            err => {
+            (err) => {
               controller.paginator.prev();
               return $q.reject(err);
             }
@@ -152,14 +152,14 @@ export default function register() {
       };
 
       function makeIsSearchingSetter(flag) {
-        return val => {
+        return (val) => {
           $scope.context.isSearching = flag;
           return val;
         };
       }
 
       function filterOutDeleted(assets) {
-        return _.filter(assets, asset => !asset.isDeleted());
+        return _.filter(assets, (asset) => !asset.isDeleted());
       }
 
       function onSearchChange(newSearchState) {
@@ -172,7 +172,7 @@ export default function register() {
         $scope.loadView(newView);
       }
 
-      const isSearching$ = K.fromScopeValue($scope, $scope => $scope.context.isSearching);
+      const isSearching$ = K.fromScopeValue($scope, ($scope) => $scope.context.isSearching);
 
       function initializeSearchUI() {
         const initialSearchState = getViewSearchState();
@@ -189,7 +189,7 @@ export default function register() {
           isSearching$: isSearching$,
           initState: initialSearchState,
           users$: Kefir.fromPromise(spaceContext.users.getAll()),
-          withAssets: withAssets
+          withAssets: withAssets,
         });
       }
 
@@ -200,7 +200,7 @@ export default function register() {
       function getQueryOptions() {
         return _.extend(getViewSearchState(), {
           order: SystemFields.getDefaultOrder(),
-          paginator: controller.paginator
+          paginator: controller.paginator,
         });
       }
 
@@ -216,7 +216,7 @@ export default function register() {
       function getViewSearchState() {
         return {
           searchText: getViewItem('searchText'),
-          searchFilters: getViewItem('searchFilters')
+          searchFilters: getViewItem('searchFilters'),
         };
       }
 
@@ -224,6 +224,6 @@ export default function register() {
         path = _.isString(path) ? path.split('.') : path;
         return _.get($scope, ['context', 'view'].concat(path));
       }
-    }
+    },
   ]);
 }

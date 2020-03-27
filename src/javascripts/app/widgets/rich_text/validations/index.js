@@ -6,7 +6,7 @@ import ValidationType from 'components/field_dialog/RichTextValidationType';
 const getRichTextValidation = (field, validationType) => {
   return _(field.validations)
     .chain()
-    .find(validation => _.has(validation, validationType))
+    .find((validation) => _.has(validation, validationType))
     .get(validationType)
     .value();
 };

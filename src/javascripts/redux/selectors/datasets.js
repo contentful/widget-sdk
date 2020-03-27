@@ -33,10 +33,10 @@ const MAX_AGE = 10 * 1000;
 // will work recursively
 // if used with a state listener (e.g. `connect` from `react-redux`), will update when more data was loaded later
 function resolveLinks(datasets) {
-  return entity =>
+  return (entity) =>
     update(
       'sys',
-      mapValues(potentialLink => {
+      mapValues((potentialLink) => {
         if (get(potentialLink, 'sys.type') === 'Link') {
           const { linkType, id } = potentialLink.sys;
           // checks if link target is loaded
@@ -75,7 +75,7 @@ function resolveLinks(datasets) {
 export const getDatasets = createSelector(
   [getRawDatasets],
   // needs nested value mapping because datasets are nested by orgId and their name
-  datasets => mapValues(mapValues(resolveLinks(datasets)), datasets)
+  (datasets) => mapValues(mapValues(resolveLinks(datasets)), datasets)
 );
 
 /**
@@ -87,14 +87,14 @@ export const getDatasets = createSelector(
  *
  * @returns {obj}
  */
-export const getMeta = state => get(state, ['datasets', 'meta', getOrgId(state)]);
+export const getMeta = (state) => get(state, ['datasets', 'meta', getOrgId(state)]);
 
 // gets all datasets that have to be loaded for the current location
 // given the new route, the loaded datasets and the age of the loaded datasets
 export const getDataSetsToLoad = (state, { now } = { now: Date.now() }) => {
   const requiredDatasets = getRequiredDatasets(state);
   const datasetsMeta = getMeta(state);
-  return requiredDatasets.filter(datatset => {
+  return requiredDatasets.filter((datatset) => {
     const lastFetchedAt = get(datasetsMeta, [datatset, 'fetched']);
     return (
       (!lastFetchedAt || now - lastFetchedAt > MAX_AGE) && !get(datasetsMeta, [datatset, 'pending'])
@@ -111,7 +111,7 @@ export const getDataSetsToLoad = (state, { now } = { now: Date.now() }) => {
  *
  * @returns {boolean}
  **/
-export const isMissingRequiredDatasets = state => {
+export const isMissingRequiredDatasets = (state) => {
   if (!hasAccess(state)) {
     return false;
   }

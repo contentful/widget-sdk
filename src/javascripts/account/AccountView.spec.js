@@ -4,13 +4,13 @@ import { render, fireEvent } from '@testing-library/react';
 import AccountView from './AccountView';
 
 jest.mock('account/UrlSyncHelper', () => ({
-  getGatekeeperUrl: jest.fn().mockReturnValue('account/gatekeeperpage')
+  getGatekeeperUrl: jest.fn().mockReturnValue('account/gatekeeperpage'),
 }));
 
 describe('AccountView', () => {
   const props = {
     title: 'My Account Page',
-    onReady: jest.fn()
+    onReady: jest.fn(),
   };
 
   const build = () => {

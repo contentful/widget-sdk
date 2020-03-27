@@ -3,13 +3,13 @@ import * as utils from './utils';
 import { track } from 'analytics/Analytics';
 
 jest.mock('./validators', () => ({
-  myAwesomeField: str => {
+  myAwesomeField: (str) => {
     if (str === 'secret') {
       return `${str} is valid!`;
     } else {
       return null;
     }
-  }
+  },
 }));
 
 describe('SSO utils', () => {
@@ -32,16 +32,16 @@ describe('SSO utils', () => {
       fields = {
         idpCert: {
           value: 'cert',
-          error: null
+          error: null,
         },
         idpSsoTargetUrl: {
           value: 'url',
-          error: null
-        }
+          error: null,
+        },
       };
 
       connectionTest = {
-        isPending: false
+        isPending: false,
       };
     });
 
@@ -124,21 +124,21 @@ describe('SSO utils', () => {
 
     it('should handle an invalid relay state error', () => {
       expect(utils.formatConnectionTestErrors([relayStateErrMsg])).toEqual([
-        relayStateFormattedErrMsg
+        relayStateFormattedErrMsg,
       ]);
     });
 
     it('should handle one or more missing attributes', () => {
       expect(utils.formatConnectionTestErrors([givenNameErrMsg])).toEqual([
-        'The givenname attribute is missing'
+        'The givenname attribute is missing',
       ]);
 
       expect(utils.formatConnectionTestErrors([surnameErrMsg])).toEqual([
-        'The surname attribute is missing'
+        'The surname attribute is missing',
       ]);
 
       expect(utils.formatConnectionTestErrors([givenNameErrMsg, surnameErrMsg])).toEqual([
-        'The givenname and surname attributes are missing'
+        'The givenname and surname attributes are missing',
       ]);
     });
 
@@ -153,13 +153,13 @@ describe('SSO utils', () => {
           relayStateErrMsg,
           givenNameErrMsg,
           surnameErrMsg,
-          otherErrMsg
+          otherErrMsg,
         ])
       ).toEqual([
         certFormattedErrMsg,
         relayStateFormattedErrMsg,
         'The givenname and surname attributes are missing',
-        otherErrMsg
+        otherErrMsg,
       ]);
     });
   });
@@ -182,7 +182,7 @@ describe('SSO utils', () => {
       expect(track).toHaveBeenCalledTimes(1);
       expect(track).toHaveBeenNthCalledWith(1, 'sso:connection_test_result', {
         result: 'unknown',
-        errors: null
+        errors: null,
       });
     });
 
@@ -192,7 +192,7 @@ describe('SSO utils', () => {
       expect(track).toHaveBeenCalledTimes(1);
       expect(track).toHaveBeenNthCalledWith(1, 'sso:connection_test_result', {
         result: 'success',
-        errors: null
+        errors: null,
       });
     });
 
@@ -202,7 +202,7 @@ describe('SSO utils', () => {
       expect(track).toHaveBeenCalledTimes(1);
       expect(track).toHaveBeenNthCalledWith(1, 'sso:connection_test_result', {
         result: 'unknown',
-        errors: ['Something bad happened']
+        errors: ['Something bad happened'],
       });
     });
   });

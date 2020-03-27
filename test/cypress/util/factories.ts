@@ -17,7 +17,7 @@ const defaultHandlers: DefaultHandlers = {
   enforcementsResponse: getAllEnforcementsForDefaultSpace.willReturnNone,
   publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnNone,
   environmentResponse: queryFirst101EnvironmentsInDefaultSpace.willFindOne,
-  localeResponse: queryFirst100LocalesOfDefaultSpace.willFindOne
+  localeResponse: queryFirst100LocalesOfDefaultSpace.willFindOne,
 };
 
 export function defaultRequestsMock(customHandlers: Partial<DefaultHandlers> = {}): string[] {
@@ -32,6 +32,6 @@ export function defaultRequestsMock(customHandlers: Partial<DefaultHandlers> = {
     handlers.enforcementsResponse(),
     handlers.publicContentTypesResponse(),
     handlers.environmentResponse(),
-    handlers.localeResponse()
+    handlers.localeResponse(),
   ];
 }

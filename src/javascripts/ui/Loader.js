@@ -8,15 +8,15 @@ import { flow } from 'lodash';
 
 const styles = {
   spinner: css({
-    display: 'block'
+    display: 'block',
   }),
   spinnerText: css({
     marginLeft: tokens.spacingS,
-    fontSize: tokens.fontSize2Xl
-  })
+    fontSize: tokens.fontSize2Xl,
+  }),
 };
 
-const Loader = function({ isShown, message, watchStateChange, testId }) {
+const Loader = function ({ isShown, message, watchStateChange, testId }) {
   const [isOpen, setLoaderIsOpen] = useState(isShown);
 
   const loaderMessage = ['undefined', 'null'].includes(message) ? 'Please hold on...' : message;
@@ -34,13 +34,13 @@ const Loader = function({ isShown, message, watchStateChange, testId }) {
         Object.defineProperty(options, 'notify', {
           configurable: true,
           enumerable: true,
-          set: function(value) {
+          set: function (value) {
             (value ? showLoader : hideLoader)();
             notify = value;
           },
-          get: function() {
+          get: function () {
             return notify;
-          }
+          },
         });
         setLoaderIsOpen(notify);
       };
@@ -89,14 +89,14 @@ Loader.propTypes = {
   isShown: PropTypes.bool,
   message: PropTypes.string,
   watchStateChange: PropTypes.bool,
-  testId: PropTypes.string
+  testId: PropTypes.string,
 };
 
 Loader.defaultProps = {
   isShown: false,
   message: 'Please hold on...',
   watchStateChange: false,
-  testId: 'loading-indicator'
+  testId: 'loading-indicator',
 };
 
 export default Loader;

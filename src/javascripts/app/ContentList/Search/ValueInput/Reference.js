@@ -10,7 +10,7 @@ export default function FilterValueReference({
   value,
   inputRef,
   onChange,
-  onKeyDown
+  onKeyDown,
 }) {
   // We do not want to support field type arrays of references yet.
   const ctFieldClone = cloneDeep(ctField);
@@ -19,10 +19,10 @@ export default function FilterValueReference({
   const openSelector = () =>
     entitySelector
       .openFromField(ctFieldClone)
-      .then(entities => entities.map(e => e.sys.id).join(','))
+      .then((entities) => entities.map((e) => e.sys.id).join(','))
       .then(onChange);
 
-  const handleKeyDown = e => {
+  const handleKeyDown = (e) => {
     if (shouldOpenSelector(e)) {
       e.stopPropagation();
       e.preventDefault();
@@ -37,13 +37,13 @@ export default function FilterValueReference({
       data-test-id={testId}
       value={value}
       ref={inputRef}
-      onClick={event => {
+      onClick={(event) => {
         event.stopPropagation();
         event.preventDefault();
         openSelector();
       }}
-      onChange={e => onChange(e.target.value)}
-      onKeyDown={e => handleKeyDown(e)}
+      onChange={(e) => onChange(e.target.value)}
+      onKeyDown={(e) => handleKeyDown(e)}
       tabIndex="0"
       placeholder="Click to select"
       className="input-reset search__input-text search__input-reference"
@@ -56,7 +56,7 @@ FilterValueReference.propTypes = {
   value: PropTypes.any,
   inputRef: PropTypes.any,
   onChange: PropTypes.func,
-  onKeyDown: PropTypes.func
+  onKeyDown: PropTypes.func,
 };
 
 function shouldOpenSelector({ keyCode }) {

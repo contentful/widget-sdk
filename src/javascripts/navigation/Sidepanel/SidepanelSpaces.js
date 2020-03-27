@@ -28,7 +28,7 @@ function OrgSpacesHeader({ canCreateSpaceInCurrOrg, showCreateSpaceModal }) {
 }
 OrgSpacesHeader.propTypes = {
   canCreateSpaceInCurrOrg: PropTypes.bool,
-  showCreateSpaceModal: PropTypes.func.isRequired
+  showCreateSpaceModal: PropTypes.func.isRequired,
 };
 
 function SpaceList(props) {
@@ -39,7 +39,7 @@ function SpaceList(props) {
     goToSpace,
     openedSpaceId,
     setOpenedSpaceId,
-    environmentsEnabled
+    environmentsEnabled,
   } = props;
 
   return (
@@ -97,9 +97,9 @@ SpaceList.propTypes = {
   goToSpace: PropTypes.func,
   openedSpaceId: PropTypes.string,
   setOpenedSpaceId: PropTypes.func,
-  environmentsEnabled: PropTypes.bool
+  environmentsEnabled: PropTypes.bool,
 };
-const getAdminEmptyState = showCreateSpaceModal => (
+const getAdminEmptyState = (showCreateSpaceModal) => (
   <EmptyStateContainer>
     <div className={styles.svgContainer}>
       <EmptyStateAdminIllustration />
@@ -138,7 +138,7 @@ function NoSpacesMsg({ canCreateSpaceInCurrOrg, showCreateSpaceModal }) {
 
 NoSpacesMsg.propTypes = {
   canCreateSpaceInCurrOrg: PropTypes.bool,
-  showCreateSpaceModal: PropTypes.func.isRequired
+  showCreateSpaceModal: PropTypes.func.isRequired,
 };
 
 export default function SidepanelSpaces(props) {
@@ -169,5 +169,5 @@ SidepanelSpaces.propTypes = {
   showCreateSpaceModal: PropTypes.func.isRequired,
   spacesByOrg: PropTypes.object.isRequired,
   currOrg: PropTypes.object.isRequired,
-  goToSpace: PropTypes.func.isRequired
+  goToSpace: PropTypes.func.isRequired,
 };

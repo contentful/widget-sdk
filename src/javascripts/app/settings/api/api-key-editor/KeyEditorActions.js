@@ -7,18 +7,18 @@ import {
   Dropdown,
   DropdownList,
   Typography,
-  Paragraph
+  Paragraph,
 } from '@contentful/forma-36-react-components';
 
 const styles = {
   actionButton: css({
-    marginLeft: tokens.spacingM
+    marginLeft: tokens.spacingM,
   }),
   confirmation: css({
     width: '360px',
     textAlign: 'center',
-    padding: tokens.spacingS
-  })
+    padding: tokens.spacingS,
+  }),
 };
 
 export default function KeyEditorActions(props) {
@@ -102,5 +102,5 @@ KeyEditorActions.propTypes = {
   isDeleteDisabled: PropTypes.bool.isRequired,
   isSaveDisabled: PropTypes.bool.isRequired,
   onRemove: PropTypes.func.isRequired,
-  onSave: PropTypes.func.isRequired
+  onSave: PropTypes.func.isRequired,
 };

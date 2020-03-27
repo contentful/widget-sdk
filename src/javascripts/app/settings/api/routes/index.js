@@ -23,13 +23,13 @@ export default {
   url: '/api',
   abstract: true,
   resolve: {
-    space: spaceResolver
+    space: spaceResolver,
   },
   onEnter: [
     'space',
-    space => {
+    (space) => {
       redirectReadOnlySpace(space);
-    }
+    },
   ],
   children: [
     {
@@ -40,16 +40,16 @@ export default {
         {
           name: 'list',
           url: '',
-          component: props => (
+          component: (props) => (
             <LazyLoadedComponent importer={SettingsImporter} fallback={() => null}>
               {({ ApiKeyListRoute }) => <ApiKeyListRoute {...props} />}
             </LazyLoadedComponent>
-          )
+          ),
         },
         {
           name: 'detail',
           url: '/:apiKeyId',
-          component: props => (
+          component: (props) => (
             <LazyLoadedComponent importer={SettingsImporter} fallback={KeyEditorWorkbench}>
               {({ KeyEditorRoute }) => <KeyEditorRoute {...props} />}
             </LazyLoadedComponent>
@@ -64,39 +64,39 @@ export default {
               apiKeyId: $stateParams.apiKeyId,
               spaceId: spaceContext.getId(),
               isAdmin: !!spaceContext.getData(['spaceMember', 'admin']),
-              registerSaveAction: save => {
+              registerSaveAction: (save) => {
                 $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(save);
                 $scope.$applyAsync();
               },
-              setDirty: value => {
+              setDirty: (value) => {
                 $scope.context.dirty = value;
                 $scope.$applyAsync();
-              }
-            })
-          ]
-        }
-      ]
+              },
+            }),
+          ],
+        },
+      ],
     },
     {
       name: 'cma_tokens',
       url: '/cma_tokens',
-      component: props => (
+      component: (props) => (
         <LazyLoadedComponent importer={SettingsImporter} fallback={KeyEditorWorkbench}>
           {({ CMATokensRoute }) => <CMATokensRoute {...props} />}
         </LazyLoadedComponent>
-      )
+      ),
     },
     {
       // Legacy path
       name: 'cma_keys',
       url: '/cma_keys',
-      redirectTo: 'spaces.detail.api.cma_tokens'
+      redirectTo: 'spaces.detail.api.cma_tokens',
     },
     {
       // Legacy path
       name: 'content_model',
       url: '/content_model',
-      redirectTo: 'spaces.detail.content_types.list'
-    }
-  ]
+      redirectTo: 'spaces.detail.content_types.list',
+    },
+  ],
 };

@@ -7,7 +7,7 @@ const withLongWordsHandled = css({
   overflowX: 'hidden',
   textOverflow: 'ellipsis',
   maxWidth: '40rem',
-  lineHeight: '1.6rem'
+  lineHeight: '1.6rem',
 });
 
 const Placeholder = ({ loading, title, text, button }) => (
@@ -27,11 +27,11 @@ Placeholder.propTypes = {
   loading: PropTypes.bool,
   title: PropTypes.string.isRequired,
   text: PropTypes.string.isRequired,
-  button: PropTypes.element
+  button: PropTypes.element,
 };
 
 Placeholder.defaultProps = {
-  loading: false
+  loading: false,
 };
 
 export default Placeholder;

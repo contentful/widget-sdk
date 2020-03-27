@@ -6,7 +6,7 @@ const URL_STYLE = {
   margin: '10px 0',
   fontFamily: 'SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace',
   fontSize: '.9em',
-  wordWrap: 'break-word'
+  wordWrap: 'break-word',
 };
 
 export default class WebhookRemovalDialog extends React.Component {
@@ -15,7 +15,7 @@ export default class WebhookRemovalDialog extends React.Component {
     webhookUrl: PropTypes.string.isRequired,
     isConfirmLoading: PropTypes.bool.isRequired,
     onConfirm: PropTypes.func.isRequired,
-    onCancel: PropTypes.func.isRequired
+    onCancel: PropTypes.func.isRequired,
   };
 
   render() {

@@ -11,7 +11,7 @@ import {
   getMatchingFilters,
   contentTypeFilter,
   getFiltersFromQueryKey,
-  sanitizeSearchFilters
+  sanitizeSearchFilters,
 } from './Filters';
 
 export default function create({
@@ -21,7 +21,7 @@ export default function create({
   isSearching$,
   initState = {},
   users$,
-  withAssets = false
+  withAssets = false,
 }) {
   try {
     // Removes invalid filters before initializing the state.
@@ -36,7 +36,7 @@ export default function create({
       assign({}, initState, {
         searchFilters: sanitizedFilters,
         contentTypes,
-        withAssets
+        withAssets,
       })
     );
     const store = createStore(defaultState, reduce);
@@ -56,7 +56,7 @@ export default function create({
       }
     );
 
-    const unsubscribeFromSearchStore = K.onValueScope($scope, store.state$, state => {
+    const unsubscribeFromSearchStore = K.onValueScope($scope, store.state$, (state) => {
       $scope.search = renderSearch(mapStateToProps(state, actions));
     });
 
@@ -90,7 +90,7 @@ function mapStateToProps(state, actions) {
       contentTypes,
       searchFilters: filters,
       contentTypeId,
-      withAssets
+      withAssets,
     }),
     suggestions: state.isSuggestionOpen ? suggestions : [],
     focus: state.focus,
@@ -101,6 +101,6 @@ function mapStateToProps(state, actions) {
     searchBoxHasFocus: state.searchBoxHasFocus,
     isSuggestionOpen: state.isSuggestionOpen,
     actions,
-    withAssets
+    withAssets,
   };
 }

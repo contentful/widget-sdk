@@ -12,7 +12,7 @@ import {
   fetchEntries,
   fetchContentTypes,
   fetchAssets,
-  createActionIfAllowed
+  createActionIfAllowed,
 } from '../CommandPaletteService';
 import { removeCommand } from '../Util';
 import CommandPanelMenu from './CommandPanelMenu';
@@ -20,26 +20,26 @@ import { InViewport } from '@contentful/forma-36-react-components';
 
 const DEFAULT_POSITION = {
   top: 0,
-  left: 0
+  left: 0,
 };
 class CommandPalette extends React.PureComponent {
   static propTypes = {
     editor: PropTypes.object,
     onClose: PropTypes.func,
     command: PropTypes.string,
-    richTextAPI: PropTypes.object
+    richTextAPI: PropTypes.object,
   };
 
   state = {
     anchorPosition: DEFAULT_POSITION,
     items: [],
     isLoading: true,
-    panelPosition: 'bottom'
+    panelPosition: 'bottom',
   };
 
   paletteDimensions = {
     height: 300,
-    width: 300
+    width: 300,
   };
 
   componentDidMount = async () => {
@@ -48,7 +48,7 @@ class CommandPalette extends React.PureComponent {
     this.updatePanelPosition();
     this.paletteDimensions = {
       height: this.palette.getBoundingClientRect().height,
-      width: this.palette.getBoundingClientRect().width
+      width: this.palette.getBoundingClientRect().width,
     };
   };
 
@@ -70,10 +70,10 @@ class CommandPalette extends React.PureComponent {
     document.removeEventListener('mousedown', this.handleOutsideClick, true);
   };
 
-  handleOutsideClick = event => {
+  handleOutsideClick = (event) => {
     if (!this.palette.contains(event.target)) {
       this.setState({
-        isClosed: true
+        isClosed: true,
       });
     }
   };
@@ -131,23 +131,23 @@ class CommandPalette extends React.PureComponent {
         case INLINES.EMBEDDED_ENTRY:
           insertInline(this.props.editor, entry.sys.id, false);
           this.props.richTextAPI.logCommandPaletteAction('insert', {
-            nodeType: INLINES.EMBEDDED_ENTRY
+            nodeType: INLINES.EMBEDDED_ENTRY,
           });
           break;
         case BLOCKS.EMBEDDED_ASSET:
           insertBlock(this.props.editor, BLOCKS.EMBEDDED_ASSET, entry, false);
           this.props.richTextAPI.logCommandPaletteAction('insert', {
-            nodeType: BLOCKS.EMBEDDED_ASSET
+            nodeType: BLOCKS.EMBEDDED_ASSET,
           });
           break;
         default:
           insertBlock(this.props.editor, BLOCKS.EMBEDDED_ENTRY, entry, false);
           this.props.richTextAPI.logCommandPaletteAction('insert', {
-            nodeType: BLOCKS.EMBEDDED_ENTRY
+            nodeType: BLOCKS.EMBEDDED_ENTRY,
           });
           break;
       }
-    }
+    },
   });
 
   onCreateAndEmbedEntry = async (contentTypeId, nodeType) => {
@@ -162,7 +162,7 @@ class CommandPalette extends React.PureComponent {
       : insertBlock(this.props.editor, nodeType, entity.data);
 
     this.props.richTextAPI.logCommandPaletteAction('insert', {
-      nodeType
+      nodeType,
     });
 
     this.props.richTextAPI.widgetAPI.navigator.openEntity(entityType, entityId, { slideIn: true });
@@ -185,8 +185,8 @@ class CommandPalette extends React.PureComponent {
       ),
       createActionIfAllowed(field, contentType, INLINES.EMBEDDED_ENTRY, true, () =>
         this.onCreateAndEmbedEntry(contentType.sys.id, INLINES.EMBEDDED_ENTRY)
-      )
-    ].filter(action => action);
+      ),
+    ].filter((action) => action);
 
   createAssetActions = (field, contentType) =>
     [
@@ -197,10 +197,10 @@ class CommandPalette extends React.PureComponent {
       }),
       createActionIfAllowed(field, contentType, BLOCKS.EMBEDDED_ASSET, true, () =>
         this.onCreateAndEmbedEntry(null, BLOCKS.EMBEDDED_ASSET)
-      )
-    ].filter(action => action);
+      ),
+    ].filter((action) => action);
 
-  handleScroll = e => {
+  handleScroll = (e) => {
     if (e.target.nodeName !== 'UL') {
       this.updatePanelPosition();
     }
@@ -223,11 +223,11 @@ class CommandPalette extends React.PureComponent {
         currentCommand: {
           contentType,
           type,
-          command
+          command,
         },
         isUpdating: false,
         isLoading: false,
-        items: allEntries.map(entry =>
+        items: allEntries.map((entry) =>
           this.createCommand(
             entry.displayTitle,
             entry.contentTypeName,
@@ -236,7 +236,7 @@ class CommandPalette extends React.PureComponent {
             entry.description,
             entry.thumbnail
           )
-        )
+        ),
       });
     }
   };
@@ -245,23 +245,23 @@ class CommandPalette extends React.PureComponent {
     const { richTextAPI } = this.props;
     const allContentTypes = await fetchContentTypes(richTextAPI.widgetAPI);
     this.setState({
-      isLoading: false
+      isLoading: false,
     });
 
     this.setState({
       items: [
         ...this.state.items,
         ...allContentTypes
-          .map(contentType => {
+          .map((contentType) => {
             return this.createContentTypeActions(richTextAPI.widgetAPI.field, contentType);
           })
           .reduce((pre, cur) => [...cur, ...pre]),
-        ...this.createAssetActions(richTextAPI.widgetAPI.field)
-      ]
+        ...this.createAssetActions(richTextAPI.widgetAPI.field),
+      ],
     });
   };
 
-  handleKeyboard = e => {
+  handleKeyboard = (e) => {
     if (isHotKey('down', e) || isHotKey('up', e) || isHotKey('enter', e)) {
       e.preventDefault();
       e.stopPropagation();
@@ -269,7 +269,7 @@ class CommandPalette extends React.PureComponent {
 
     if (isHotKey('esc', e) || isHotKey('tab', e)) {
       this.setState({
-        isClosed: true
+        isClosed: true,
       });
     }
   };
@@ -282,7 +282,7 @@ class CommandPalette extends React.PureComponent {
     return ReactDOM.createPortal(
       <div
         tabIndex="1"
-        ref={ref => {
+        ref={(ref) => {
           this.palette = ref;
         }}
         style={{
@@ -290,7 +290,7 @@ class CommandPalette extends React.PureComponent {
           outline: 'none',
           minWidth: 200,
           top: this.state.anchorPosition.top,
-          left: this.state.anchorPosition.left
+          left: this.state.anchorPosition.left,
         }}>
         <InViewport
           onOverflowBottom={() => {
@@ -310,7 +310,7 @@ class CommandPalette extends React.PureComponent {
             isUpdating={this.state.isUpdating}
             onClose={() => {
               this.setState({
-                isClosed: true
+                isClosed: true,
               });
             }}
             breadcrumb={this.state.breadcrumb}
@@ -323,21 +323,18 @@ class CommandPalette extends React.PureComponent {
   }
 
   updatePanelPosition() {
-    const anchorRect = document
-      .getSelection()
-      .getRangeAt(0)
-      .getBoundingClientRect();
+    const anchorRect = document.getSelection().getRangeAt(0).getBoundingClientRect();
 
     const anchorPosition =
       this.state.panelPosition === 'bottom'
         ? {
             top: anchorRect.bottom,
-            left: anchorRect.left
+            left: anchorRect.left,
           }
         : { top: anchorRect.top - this.paletteDimensions.height, left: anchorRect.left };
 
     this.setState({
-      anchorPosition
+      anchorPosition,
     });
   }
 }

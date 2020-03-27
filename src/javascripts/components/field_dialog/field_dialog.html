@@ -35,7 +35,7 @@
         ng-form="fieldValidationsForm"
         ng-controller="FieldDialogValidationsController"
       >
-        <h3 ng-if="nodeValidationsEnabled" style="margin: 0 0 18px">General validations</h3>
+        <h3 ng-if="nodeValidationsEnabled" style="margin: 0 0 18px;">General validations</h3>
         <ul class="validation-settings validation-settings__rich-text" role="listbox">
           <li aria-label="This field is required" role="option" data-validation-type="required">
             <react-component
@@ -53,7 +53,7 @@
           </li>
         </ul>
         <div ng-if="nodeValidationsEnabled" ng-repeat="nodeValidation in nodeValidations">
-          <h3 ng-if="nodeValidationsEnabled" style="margin: 0 0 18px">
+          <h3 ng-if="nodeValidationsEnabled" style="margin: 0 0 18px;">
             {{nodeValidation.description}}
           </h3>
           <ul class="validation-settings validation-settings__rich-text" role="listbox">

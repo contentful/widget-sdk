@@ -19,7 +19,7 @@ export function CreateContentTypeForm(props) {
 
 CreateContentTypeForm.propTypes = {
   onConfirm: PropTypes.func.isRequired,
-  onCancel: PropTypes.func.isRequired
+  onCancel: PropTypes.func.isRequired,
 };
 
 export function CreateContentTypeDialog(props) {
@@ -39,5 +39,5 @@ CreateContentTypeDialog.propTypes = {
   isShown: PropTypes.bool.isRequired,
   onConfirm: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
-  existingContentTypeIds: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired
+  existingContentTypeIds: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
 };

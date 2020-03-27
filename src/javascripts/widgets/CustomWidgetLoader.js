@@ -15,7 +15,7 @@ export function createCustomWidgetLoader(cma, appsRepo) {
     getByKeys,
     getForEditor,
     evict,
-    getUncachedForListing
+    getUncachedForListing,
   };
 
   // Fetcher function used by DataLoader.
@@ -40,18 +40,18 @@ export function createCustomWidgetLoader(cma, appsRepo) {
       // "widget missing" message in the entry editor rather than
       // crashing the whole Web App or disallowing editing.
       fetchExtensions().catch(emptyExtensionsRes),
-      appsRepo.getOnlyInstalledApps().catch(() => [])
+      appsRepo.getOnlyInstalledApps().catch(() => []),
     ]);
 
     return keys.map(([namespace, id]) => {
       if (namespace === NAMESPACE_APP) {
-        const app = apps.find(app => get(app, ['appDefinition', 'sys', 'id']) === id);
+        const app = apps.find((app) => get(app, ['appDefinition', 'sys', 'id']) === id);
 
         return app ? buildAppWidget(app) : null;
       }
 
       if (namespace === NAMESPACE_EXTENSION) {
-        const ext = extensions.find(ext => get(ext, ['sys', 'id']) === id);
+        const ext = extensions.find((ext) => get(ext, ['sys', 'id']) === id);
 
         return ext ? buildExtensionWidget(ext) : null;
       }
@@ -110,7 +110,7 @@ export function createCustomWidgetLoader(cma, appsRepo) {
   async function getUncachedForListing() {
     const appsPromise = appsRepo
       .getOnlyInstalledApps()
-      .then(apps => apps.map(buildAppWidget))
+      .then((apps) => apps.map(buildAppWidget))
       .catch(() => []);
 
     const extensionsPromise = cma

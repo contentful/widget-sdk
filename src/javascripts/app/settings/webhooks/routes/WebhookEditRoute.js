@@ -9,7 +9,7 @@ import StateRedirect from 'app/common/StateRedirect';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { getWebhookRepo } from 'app/settings/webhooks/services/WebhookRepoInstance';
 
-const WebhookFetcher = createFetcherComponent(props => {
+const WebhookFetcher = createFetcherComponent((props) => {
   const { webhookId } = props;
   const webhookRepo = getWebhookRepo();
   return webhookRepo.get(webhookId);
@@ -19,7 +19,7 @@ export class WebhookEditRoute extends React.Component {
   static propTypes = {
     registerSaveAction: PropTypes.func.isRequired,
     setDirty: PropTypes.func.isRequired,
-    webhookId: PropTypes.string.isRequired
+    webhookId: PropTypes.string.isRequired,
   };
 
   render() {

@@ -9,7 +9,7 @@ import {
   Tabs,
   Tab,
   TabPanel,
-  Workbench
+  Workbench,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -26,28 +26,28 @@ import ScheduledActionsEmptyStateMessage from './ScheduledActionsEmptyStateMessa
 import ScheduledActionsSchedule from './ScheduledActionsSchedule';
 
 function normalizeCollection(items) {
-  return _.fromPairs(items.map(i => [i.sys.id, i]));
+  return _.fromPairs(items.map((i) => [i.sys.id, i]));
 }
 
 const styles = {
   alphaTag: css({
     lineHeight: '30px',
     marginTop: '2px',
-    fontSize: '1rem'
+    fontSize: '1rem',
   }),
   workbenchTitle: css({
-    marginRight: '0.5rem'
+    marginRight: '0.5rem',
   }),
   workbenchContent: css({
-    padding: tokens.spacingXl
+    padding: tokens.spacingXl,
   }),
   tabPanel: css({
-    paddingTop: tokens.spacingL
+    paddingTop: tokens.spacingL,
   }),
   loadMoreButtonWrapper: css({
     display: 'flex',
-    justifyContent: 'center'
-  })
+    justifyContent: 'center',
+  }),
 };
 
 const ItemSkeleton = ({ baseTop }) => (
@@ -59,7 +59,7 @@ const ItemSkeleton = ({ baseTop }) => (
 );
 
 ItemSkeleton.propTypes = {
-  baseTop: PropTypes.number
+  baseTop: PropTypes.number,
 };
 
 export const JobsListPageLoading = () => (
@@ -74,7 +74,7 @@ export const JobsListPageLoading = () => (
 export const TabTypes = {
   ScheduledJobs: 'ScheduledJobs',
   CompletedJobs: 'CompletedJobs',
-  ErroredJobs: 'ErroredJobs'
+  ErroredJobs: 'ErroredJobs',
 };
 
 const TabsData = {
@@ -83,40 +83,40 @@ const TabsData = {
     description: 'Entries that are currently scheduled to publish.',
     emptyStateMessage: {
       title: 'Nothing is scheduled at the moment',
-      text: 'Entries that are scheduled to publish will show up here'
+      text: 'Entries that are scheduled to publish will show up here',
     },
     query: {
       'sys.status': 'scheduled',
       order: 'scheduledFor.datetime',
-      limit: 40
-    }
+      limit: 40,
+    },
   },
   [TabTypes.CompletedJobs]: {
     title: 'Completed',
     description: 'Entries that were successfully published',
     emptyStateMessage: {
       title: 'No entries have been successfully published yet',
-      text: 'Successfully published entries will show up here'
+      text: 'Successfully published entries will show up here',
     },
     query: {
       'sys.status': 'succeeded',
       order: '-scheduledFor.datetime',
-      limit: 40
-    }
+      limit: 40,
+    },
   },
   [TabTypes.ErroredJobs]: {
     title: 'Failed',
     description: 'Entries that failed to publish',
     emptyStateMessage: {
       title: 'Nothing here',
-      text: 'Scheduled entries that have failed to publish will show up here.'
+      text: 'Scheduled entries that have failed to publish will show up here.',
     },
     query: {
       'sys.status': 'failed',
       order: '-scheduledFor.datetime',
-      limit: 40
-    }
-  }
+      limit: 40,
+    },
+  },
 };
 
 const JobsListShell = ({ children }) => (
@@ -149,11 +149,11 @@ class JobsListPage extends Component {
         jobs: [],
         entries: {},
         users: {},
-        contentTypes: {}
-      }
+        contentTypes: {},
+      },
     };
     this.state = {
-      ...this.initialState
+      ...this.initialState,
     };
   }
 
@@ -167,22 +167,22 @@ class JobsListPage extends Component {
     }
   }
 
-  fetchJobs = async query => {
+  fetchJobs = async (query) => {
     this.setState({ isLoading: true });
     const { spaceId, environmentId, contentTypes } = this.props;
     const spaceEndpoint = EndpointFactory.createSpaceEndpoint(spaceId, environmentId);
 
     const jobsData = await getJobsData(spaceEndpoint, {
       ...query,
-      'environment.sys.id': environmentId
-    }).catch(error => {
+      'environment.sys.id': environmentId,
+    }).catch((error) => {
       logger.logError('Unexpected error loading scheduled actions', {
         error,
-        message: error.message
+        message: error.message,
       });
       this.setState({
         isError: true,
-        isLoading: false
+        isLoading: false,
       });
     });
 
@@ -201,9 +201,9 @@ class JobsListPage extends Component {
         jobs: newJobs,
         entries: { ...scheduleData.entries, ...normalizeCollection(entries) },
         users: { ...scheduleData.users, ...normalizeCollection(users) },
-        contentTypes: { ...scheduleData.contentTypes, ...normalizeCollection(contentTypes) }
+        contentTypes: { ...scheduleData.contentTypes, ...normalizeCollection(contentTypes) },
       },
-      pageNext: getQueryStringParams(nextQuery).pageNext
+      pageNext: getQueryStringParams(nextQuery).pageNext,
     });
   };
 
@@ -256,7 +256,7 @@ class JobsListPage extends Component {
               onClick={() => {
                 this.fetchJobs({
                   ...TabsData[activeTab].query,
-                  pageNext
+                  pageNext,
                 });
               }}>
               Load more
@@ -278,11 +278,11 @@ class JobsListPage extends Component {
               key={key}
               selected={activeTab === key}
               id={key}
-              onSelect={id => {
+              onSelect={(id) => {
                 if (id !== activeTab) {
                   this.setState({
                     ...this.initialState,
-                    activeTab: id
+                    activeTab: id,
                   });
                 }
               }}>
@@ -303,11 +303,11 @@ JobsListPage.propTypes = {
   environmentId: PropTypes.string.isRequired,
   contentTypes: PropTypes.array.isRequired,
   defaultLocale: PropTypes.object.isRequired,
-  activeTab: PropTypes.oneOf(Object.keys(TabTypes))
+  activeTab: PropTypes.oneOf(Object.keys(TabTypes)),
 };
 
 JobsListPage.defaultProps = {
-  activeTab: TabTypes.ScheduledJobs
+  activeTab: TabTypes.ScheduledJobs,
 };
 
 export default JobsListPage;

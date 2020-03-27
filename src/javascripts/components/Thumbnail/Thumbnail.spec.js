@@ -10,7 +10,7 @@ describe('Thumbnail', () => {
         <Thumbnail
           file={{
             url: '//images.contentful.com/image.png',
-            contentType: 'application/json'
+            contentType: 'application/json',
           }}
         />
       );
@@ -23,12 +23,12 @@ describe('Thumbnail', () => {
       `);
     });
 
-    it('renders icon according to MIME type', function() {
+    it('renders icon according to MIME type', function () {
       const { container } = render(
         <Thumbnail
           file={{
             url: 'url',
-            contentType: 'video/h264'
+            contentType: 'video/h264',
           }}
         />
       );
@@ -45,12 +45,12 @@ describe('Thumbnail', () => {
   describe('file with image preview', () => {
     const imageUrl = 'https://images.contentful.com/path';
 
-    it('with size', function() {
+    it('with size', function () {
       const { container } = render(
         <Thumbnail
           file={{
             url: imageUrl,
-            contentType: 'image/png'
+            contentType: 'image/png',
           }}
           size="300"
         />
@@ -65,12 +65,12 @@ describe('Thumbnail', () => {
       `);
     });
 
-    it('with width and height', function() {
+    it('with width and height', function () {
       const { container } = render(
         <Thumbnail
           file={{
             url: imageUrl,
-            contentType: 'image/png'
+            contentType: 'image/png',
           }}
           width="300"
           height="400"

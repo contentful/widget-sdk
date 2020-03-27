@@ -13,7 +13,7 @@ import { getWidgetTrackingContexts } from 'widgets/WidgetTracking';
 import {
   buildRenderables,
   buildSidebarRenderables,
-  buildEditorRenderable
+  buildEditorRenderable,
 } from 'widgets/WidgetRenderable';
 
 const assetEditorInterface = EditorInterfaceTransformer.fromAPI(
@@ -91,7 +91,7 @@ export function loadAsset(spaceContext, id) {
  * @param {K.Property<string[]>} ids$
  */
 export function makePrefetchEntryLoader(spaceContext, ids$) {
-  const cache = createPrefetchCache(query => {
+  const cache = createPrefetchCache((query) => {
     return spaceContext.space.getEntries(query);
   });
 
@@ -129,7 +129,7 @@ async function loadEditorData(loader, id) {
   const [contentType, apiEditorInterface, hasAdvancedExtensibility] = await Promise.all([
     loader.getContentType(contentTypeId),
     loader.getEditorInterface(contentTypeId),
-    loader.hasAdvancedExtensibility()
+    loader.hasAdvancedExtensibility(),
   ]);
 
   const editorInterface = EditorInterfaceTransformer.fromAPI(contentType.data, apiEditorInterface);
@@ -145,7 +145,7 @@ async function loadEditorData(loader, id) {
 
   const widgets = [
     ...createBuiltinWidgetList(),
-    ...(await getCustomWidgetLoader().getForEditor(editorInterface))
+    ...(await getCustomWidgetLoader().getForEditor(editorInterface)),
   ];
 
   const fieldControls = buildRenderables(controls, widgets);
@@ -159,7 +159,7 @@ async function loadEditorData(loader, id) {
     fieldControls,
     sidebar: sidebarConfig,
     sidebarExtensions,
-    editorExtension
+    editorExtension,
   };
 
   const widgetTrackingContexts = getWidgetTrackingContexts(widgetData);
@@ -171,7 +171,7 @@ async function loadEditorData(loader, id) {
     openDoc,
     editorInterface,
     widgetTrackingContexts,
-    ...widgetData
+    ...widgetData,
   });
 }
 
@@ -181,25 +181,25 @@ async function loadEditorData(loader, id) {
 // `loadEditorData()` function.
 function makeEntryLoader(spaceContext) {
   return {
-    getEntity: id => fetchEntity(spaceContext, 'Entry', id),
+    getEntity: (id) => fetchEntity(spaceContext, 'Entry', id),
     getContentType(contentTypeId) {
       return spaceContext.publishedCTs.fetch(contentTypeId);
     },
     // We memoize the editor interface so that we do not fetch
     // them multiple times in the bulk editor.
-    getEditorInterface: memoize(contentTypeId => {
+    getEditorInterface: memoize((contentTypeId) => {
       return spaceContext.cma.getEditorInterface(contentTypeId);
     }),
     hasAdvancedExtensibility() {
       return AdvancedExtensibilityFeature.isEnabled(spaceContext.organization.sys.id);
     },
-    getOpenDoc: makeDocOpener(spaceContext)
+    getOpenDoc: makeDocOpener(spaceContext),
   };
 }
 
 function makeAssetLoader(spaceContext) {
   return {
-    getEntity: id => fetchEntity(spaceContext, 'Asset', id),
+    getEntity: (id) => fetchEntity(spaceContext, 'Asset', id),
     hasAdvancedExtensibility: () => false,
     getOpenDoc: makeDocOpener(spaceContext),
     // TODO: we return precomputed CT and EI for the Asset Editor.
@@ -207,7 +207,7 @@ function makeAssetLoader(spaceContext) {
     // (/spaces/:sid/environments/:eid/asset_content_type(/editor_interface))
     // we could potentially enable UI Extensions for assets.
     getContentType: () => assetContentType,
-    getEditorInterface: () => assetEditorInterface
+    getEditorInterface: () => assetEditorInterface,
   };
 }
 
@@ -233,7 +233,7 @@ function makeEntityInfo(entity, contentType) {
     // services like the 'Document' controller and the 'cfEntityField'
     // directive. Normalizing means that we set external field IDs from
     // internal ones, etc.
-    contentType: contentType ? cloneDeep(contentType.data) : null
+    contentType: contentType ? cloneDeep(contentType.data) : null,
   });
 }
 
@@ -243,7 +243,7 @@ async function fetchEntity(spaceContext, type, id) {
   const space = spaceContext.space;
   const entity = await caseofEq(type, [
     ['Entry', () => space.getEntry(id)],
-    ['Asset', () => space.getAsset(id)]
+    ['Asset', () => space.getAsset(id)],
   ]);
   sanitizeEntityData(entity.data, TheLocaleStore.getPrivateLocales());
   return entity;
@@ -260,7 +260,7 @@ function sanitizeEntityData(data, locales) {
   if (!isPlainObject(data.fields)) {
     data.fields = {};
   }
-  Object.keys(data.fields).forEach(fieldId => {
+  Object.keys(data.fields).forEach((fieldId) => {
     const fieldValues = data.fields[fieldId];
     if (isPlainObject(fieldValues)) {
       deleteUnusedLocales(fieldValues, locales);
@@ -275,7 +275,7 @@ function sanitizeEntityData(data, locales) {
  * remove those properties from the object that are not valid locales.
  */
 function deleteUnusedLocales(fieldValues, locales) {
-  Object.keys(fieldValues).forEach(internalCode => {
+  Object.keys(fieldValues).forEach((internalCode) => {
     if (!find(locales, { internal_code: internalCode })) {
       delete fieldValues[internalCode];
     }

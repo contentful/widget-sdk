@@ -6,7 +6,7 @@ function getDefaultConfig(ct) {
     contentType: ct.sys.id,
     url: '',
     enabled: false,
-    contentTypeFields: _.map(ct.fields, field => _.pick(field, ['apiName', 'type']))
+    contentTypeFields: _.map(ct.fields, (field) => _.pick(field, ['apiName', 'type'])),
   };
 }
 
@@ -20,7 +20,7 @@ function getDefaultConfig(ct) {
  */
 export function contentPreviewToInternal(external, contentTypes) {
   function getConfigs() {
-    return contentTypes.map(ct => {
+    return contentTypes.map((ct) => {
       const config = _.find(external.configurations, _.matches({ contentType: ct.sys.id })) || {};
       return _.defaults(config, getDefaultConfig(ct));
     });
@@ -31,6 +31,6 @@ export function contentPreviewToInternal(external, contentTypes) {
     description: external.description,
     configs: getConfigs(),
     version: external.sys.version,
-    id: external.sys.id
+    id: external.sys.id,
   };
 }

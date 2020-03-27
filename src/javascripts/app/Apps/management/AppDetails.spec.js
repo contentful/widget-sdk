@@ -15,8 +15,8 @@ util.getOrgSpacesFor = jest.fn(() =>
     {
       name: 'mySpace',
       sys: { id: 'my-space-123' },
-      organization: { sys: { id: 'my-org-123' } }
-    }
+      organization: { sys: { id: 'my-org-123' } },
+    },
   ])
 );
 
@@ -84,7 +84,7 @@ describe('AppDetails', () => {
     // open the confirm modal and fire the confirm function
     const confirmModal2 = ModalLauncher.open.mock.calls[1][0]({
       isShown: true,
-      onClose: jest.fn()
+      onClose: jest.fn(),
     });
     confirmModal2.props.onConfirm();
 
@@ -104,7 +104,7 @@ describe('AppDetails', () => {
 
     const launchDeleteModal = ModalLauncher.open.mock.calls[0][0]({
       isShown: true,
-      onClose: jest.fn()
+      onClose: jest.fn(),
     });
     expect(launchDeleteModal).toMatchSnapshot();
   });
@@ -121,7 +121,7 @@ describe('AppDetails', () => {
 
     const launchInstallModal = ModalLauncher.open.mock.calls[0][0]({
       isShown: true,
-      onClose: jest.fn()
+      onClose: jest.fn(),
     });
 
     expect(launchInstallModal).toMatchSnapshot();

@@ -18,15 +18,18 @@ export function canRemoveComment(comment) {
 // array containing comments and its replies
 export function fromFlatToThreads(comments = []) {
   const sorted = comments.sort(byCreateAt);
-  const parents = sorted.filter(comment => !comment.sys.parent);
-  const threads = parents.map(comment => [comment, ...comments.filter(isReplyToComment(comment))]);
+  const parents = sorted.filter((comment) => !comment.sys.parent);
+  const threads = parents.map((comment) => [
+    comment,
+    ...comments.filter(isReplyToComment(comment)),
+  ]);
 
   // [[comment, reply1, reply2], ...]
   return threads;
 }
 
 export function isReplyToComment(possibleParent) {
-  return possibleChild => {
+  return (possibleChild) => {
     const commentId = get(possibleParent, 'sys.id');
     const parentId = get(possibleChild, 'sys.parent.sys.id');
     return parentId === commentId;

@@ -20,7 +20,7 @@ const ExtensionsForbidden = ({ extensionUrl }) => {
   return <ForbiddenPage data-test-id="extensions.forbidden" message={messages} />;
 };
 ExtensionsForbidden.propTypes = {
-  extensionUrl: PropTypes.string.isRequired
+  extensionUrl: PropTypes.string.isRequired,
 };
 
 export default ExtensionsForbidden;

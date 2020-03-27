@@ -13,11 +13,11 @@ const styles = {
     padding: tokens.spacingL,
     backgroundColor: tokens.colorElementLightest,
     borderRight: `1px solid ${tokens.colorElementDarkest}`,
-    boxShadow: '1px 0 2px 0 rgba(0,0,0,0.09)'
+    boxShadow: '1px 0 2px 0 rgba(0,0,0,0.09)',
   }),
   jobsAlphaTag: css({
-    marginLeft: tokens.spacingXs
-  })
+    marginLeft: tokens.spacingXs,
+  }),
 };
 
 export function ScheduledActionsStateLink({ isMasterEnvironment, children }) {
@@ -27,7 +27,7 @@ export function ScheduledActionsStateLink({ isMasterEnvironment, children }) {
 
 ScheduledActionsStateLink.propTypes = {
   isMasterEnvironment: PropTypes.bool,
-  children: PropTypes.func.isRequired
+  children: PropTypes.func.isRequired,
 };
 
 export default function ScheduledActionsPageLink({ isMasterEnvironment }) {
@@ -51,5 +51,5 @@ export default function ScheduledActionsPageLink({ isMasterEnvironment }) {
 }
 
 ScheduledActionsPageLink.propTypes = {
-  isMasterEnvironment: PropTypes.bool
+  isMasterEnvironment: PropTypes.bool,
 };

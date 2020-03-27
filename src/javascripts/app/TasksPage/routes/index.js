@@ -19,9 +19,9 @@ export default {
           currentUserId: spaceContext.getData('spaceMember.sys.user.sys.id'),
           users: spaceContext.users,
           defaultLocaleCode: TheLocaleStore.getDefaultLocale().code,
-          getContentType: contentTypeId => spaceContext.publishedCTs.get(contentTypeId)
-        })
-      ]
-    }
-  ]
+          getContentType: (contentTypeId) => spaceContext.publishedCTs.get(contentTypeId),
+        }),
+      ],
+    },
+  ],
 };

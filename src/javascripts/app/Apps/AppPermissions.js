@@ -9,79 +9,79 @@ import EnvOrAliasLabel from 'app/common/EnvOrAliasLabel';
 const styles = {
   container: css({
     width: '500px',
-    margin: '0 auto'
+    margin: '0 auto',
   }),
   heading: css({
     textAlign: 'center',
-    marginBottom: '0.125rem'
+    marginBottom: '0.125rem',
   }),
   actions: css({
     marginTop: tokens.spacingL,
     marginBottom: tokens.spacingM,
     'button:first-child': {
-      marginRight: tokens.spacingM
-    }
+      marginRight: tokens.spacingM,
+    },
   }),
   logos: css({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: tokens.spacingM
+    marginBottom: tokens.spacingM,
   }),
   appIcon: css({
     svg: {
       width: '36px',
-      height: '36px'
+      height: '36px',
     },
     marginLeft: '20px',
-    marginRight: tokens.spacingXs
+    marginRight: tokens.spacingXs,
   }),
   arrowIcon: css({
     width: tokens.spacingXl,
     height: tokens.spacingXl,
     marginRight: `-${tokens.spacingS}`,
-    fill: tokens.colorElementMid
+    fill: tokens.colorElementMid,
   }),
   permissions: css({
     marginTop: tokens.spacingL,
     '& div': css({
-      marginBottom: tokens.spacingXs
-    })
+      marginBottom: tokens.spacingXs,
+    }),
   }),
   icon: css({
     width: '40px',
     height: '40px',
-    marginRight: tokens.spacingXs
+    marginRight: tokens.spacingXs,
   }),
   envMeta: css({
     display: 'flex',
     justifyContent: 'center',
     '& div:first-child': css({
-      marginRight: tokens.spacingXs
-    })
+      marginRight: tokens.spacingXs,
+    }),
   }),
   legal: css({
     p: css({
       color: tokens.colorTextLightest,
-      fontSize: tokens.fontSizeS
+      fontSize: tokens.fontSizeS,
     }),
     'p a, a:link': css({
       color: tokens.colorTextLightest,
-      fontSize: tokens.fontSizeS
-    })
+      fontSize: tokens.fontSizeS,
+    }),
   }),
   moreP: css({
     marginTop: tokens.spacing2Xs,
     'p a, a:link': css({
       color: tokens.colorTextLightest,
-      fontSize: tokens.fontSizeS
-    })
-  })
+      fontSize: tokens.fontSizeS,
+    }),
+  }),
 };
 
 const linkProps = {
   target: '_blank',
-  rel: 'noopener noreferrer'
+  rel: 'noopener noreferrer',
 };
 
 export default function AppPermissions(props) {
@@ -174,7 +174,7 @@ export default function AppPermissions(props) {
 }
 
 AppPermissions.defaultProps = {
-  centered: false
+  centered: false,
 };
 
 AppPermissions.propTypes = {
@@ -186,10 +186,10 @@ AppPermissions.propTypes = {
   envMeta: PropTypes.shape({
     environmentId: PropTypes.string.isRequired,
     isMasterEnvironment: PropTypes.bool.isRequired,
-    aliasId: PropTypes.string
+    aliasId: PropTypes.string,
   }),
   legal: PropTypes.shape({
     eula: PropTypes.string.isRequired,
-    privacyPolicy: PropTypes.string.isRequired
-  })
+    privacyPolicy: PropTypes.string.isRequired,
+  }),
 };

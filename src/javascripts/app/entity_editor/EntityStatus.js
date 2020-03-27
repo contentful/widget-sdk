@@ -20,6 +20,6 @@ export function getProps(entity) {
 
   return {
     children: label,
-    tagType: type
+    tagType: type,
   };
 }

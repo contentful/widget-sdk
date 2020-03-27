@@ -15,7 +15,7 @@ module.exports = {
 
             const importName = mockArguments[0].value;
             const virtualOption = mockArguments[2].properties.find(
-              prop => prop.key.name === 'virtual' && prop.value.value === true
+              (prop) => prop.key.name === 'virtual' && prop.value.value === true
             );
 
             if (virtualOption) {
@@ -24,13 +24,13 @@ module.exports = {
               if (resolved) {
                 context.report({
                   node: virtualOption,
-                  message: '`virtual: true` is not allowed for resolvable imports.'
+                  message: '`virtual: true` is not allowed for resolvable imports.',
                 });
               }
             }
           }
         }
-      }
+      },
     };
-  }
+  },
 };

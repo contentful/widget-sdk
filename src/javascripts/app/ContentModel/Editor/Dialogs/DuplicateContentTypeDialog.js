@@ -22,7 +22,7 @@ export function DuplicateContentTypeForm(props) {
 DuplicateContentTypeForm.propTypes = {
   onConfirm: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
-  originalName: PropTypes.string.isRequired
+  originalName: PropTypes.string.isRequired,
 };
 
 export function DuplicateContentTypeDialog(props) {
@@ -44,5 +44,5 @@ DuplicateContentTypeDialog.propTypes = {
   onCancel: PropTypes.func.isRequired,
   originalName: PropTypes.string.isRequired,
   originalDescription: PropTypes.string,
-  existingContentTypeIds: PropTypes.arrayOf(PropTypes.string.isRequired)
+  existingContentTypeIds: PropTypes.arrayOf(PropTypes.string.isRequired),
 };

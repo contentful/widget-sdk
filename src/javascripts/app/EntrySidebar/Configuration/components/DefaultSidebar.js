@@ -24,5 +24,5 @@ export default function DefaultSidebar(props) {
 }
 
 DefaultSidebar.propTypes = {
-  items: PropTypes.array.isRequired
+  items: PropTypes.array.isRequired,
 };

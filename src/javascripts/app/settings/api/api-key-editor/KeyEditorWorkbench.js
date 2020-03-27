@@ -5,7 +5,7 @@ import {
   SkeletonContainer,
   SkeletonDisplayText,
   SkeletonBodyText,
-  Workbench
+  Workbench,
 } from '@contentful/forma-36-react-components';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 import * as Navigator from 'states/Navigator';
@@ -53,5 +53,5 @@ export default function KeyEditorWorkbench(props) {
 
 KeyEditorWorkbench.propTypes = {
   title: PropTypes.string,
-  actions: PropTypes.any
+  actions: PropTypes.any,
 };

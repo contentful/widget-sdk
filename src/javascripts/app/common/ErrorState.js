@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography, Heading, Paragraph } from '@contentful/forma-36-react-components';
 import EmptyStateContainer, {
-  defaultSVGStyle
+  defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import BrokenPencil from 'svg/broken-pencil.svg';
 

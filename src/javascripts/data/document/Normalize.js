@@ -48,8 +48,8 @@ function makeLocaleMap(locales) {
 }
 
 function removeUnknownLocales(data, localeMap) {
-  forEach(data.fields, field => {
-    keys(field).forEach(internalCode => {
+  forEach(data.fields, (field) => {
+    keys(field).forEach((internalCode) => {
       if (!localeMap[internalCode]) {
         delete field[internalCode];
       }
@@ -63,7 +63,7 @@ function removeDeletedFields(snapshot, ctFields) {
     return;
   }
 
-  const ctFieldIds = map(ctFields, field => field.id);
+  const ctFieldIds = map(ctFields, (field) => field.id);
 
   forEach(snapshot.fields, (_fieldValue, fieldId) => {
     if (ctFieldIds.indexOf(fieldId) < 0) {

@@ -27,7 +27,7 @@ const SVGs = {
   'page-ct': svgPageCtEs6,
   'page-entries': svgPageEntriesEs6,
   'page-media': svgPageMediaEs6,
-  'page-settings': svgPageSettingsEs6
+  'page-settings': svgPageSettingsEs6,
 };
 
 export default function register() {
@@ -45,7 +45,7 @@ export default function register() {
    */
   registerDirective('cfIcon', () => ({
     restrict: 'E',
-    link: function(_scope, el, attrs) {
+    link: function (_scope, el, attrs) {
       const mountPoint = createMountPoint(el.get(0));
       const icon = SVGs[attrs.name];
       mountPoint.render(isFunction(icon) ? icon() : icon);
@@ -71,6 +71,6 @@ export default function register() {
       if (!isNaN(setHeight)) {
         iconElem.setAttribute('height', setHeight);
       }
-    }
+    },
   }));
 }

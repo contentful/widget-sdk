@@ -3,7 +3,7 @@ import validateTargetState from './validateTargetState';
 describe('validateTargetState', () => {
   it('accepts empty target states', () => {
     [null, undefined, {}, { EditorInterface: null }, { EditorInterface: [] }].forEach(
-      targetState => {
+      (targetState) => {
         expect(() => validateTargetState(targetState)).not.toThrow();
       }
     );
@@ -15,12 +15,12 @@ describe('validateTargetState', () => {
 
   describe('controls validation', () => {
     it('accepts empty controls', () => {
-      [[], undefined, null].forEach(controls => {
+      [[], undefined, null].forEach((controls) => {
         expect(() => {
           validateTargetState({
             EditorInterface: {
-              someCtId: { controls }
-            }
+              someCtId: { controls },
+            },
           });
         }).not.toThrow();
       });
@@ -31,12 +31,12 @@ describe('validateTargetState', () => {
         validateTargetState({
           EditorInterface: {
             someCtId: {
-              controls: [{ fieldId: 'title' }, { fieldId: 'hello-world' }]
+              controls: [{ fieldId: 'title' }, { fieldId: 'hello-world' }],
             },
             otherCt: {
-              controls: [{ fieldId: 'test' }]
-            }
-          }
+              controls: [{ fieldId: 'test' }],
+            },
+          },
         });
       }).not.toThrow();
     });
@@ -45,13 +45,13 @@ describe('validateTargetState', () => {
       [
         {}, // no field ID
         { fieldId: 123 }, // field ID not a string
-        { fieldId: '' } // field ID is empty
-      ].forEach(control => {
+        { fieldId: '' }, // field ID is empty
+      ].forEach((control) => {
         expect(() => {
           validateTargetState({
             EditorInterface: {
-              someCtId: { controls: [control] }
-            }
+              someCtId: { controls: [control] },
+            },
           });
         }).toThrow();
       });
@@ -60,12 +60,12 @@ describe('validateTargetState', () => {
 
   describe('sidebar validation', () => {
     it('accepts empty sidebar', () => {
-      [undefined, null].forEach(sidebar => {
+      [undefined, null].forEach((sidebar) => {
         expect(() => {
           validateTargetState({
             EditorInterface: {
-              someCtId: { sidebar }
-            }
+              someCtId: { sidebar },
+            },
           });
         }).not.toThrow();
       });
@@ -76,12 +76,12 @@ describe('validateTargetState', () => {
         validateTargetState({
           EditorInterface: {
             someCtId: {
-              sidebar: { position: 1 }
+              sidebar: { position: 1 },
             },
             otherCt: {
-              sidebar: { position: 7 }
-            }
-          }
+              sidebar: { position: 7 },
+            },
+          },
         });
       }).not.toThrow();
     });
@@ -90,8 +90,8 @@ describe('validateTargetState', () => {
       expect(() => {
         validateTargetState({
           EditorInterface: {
-            someCtId: { sidebar: true }
-          }
+            someCtId: { sidebar: true },
+          },
         });
       }).not.toThrow();
     });
@@ -100,13 +100,13 @@ describe('validateTargetState', () => {
       [
         { position: 'TEST' }, // position is not a number
         { position: 1.23 }, // position is not an integer
-        { position: -1 } // position is a negative number
-      ].forEach(sidebar => {
+        { position: -1 }, // position is a negative number
+      ].forEach((sidebar) => {
         expect(() => {
           validateTargetState({
             EditorInterface: {
-              someCtId: { sidebar }
-            }
+              someCtId: { sidebar },
+            },
           });
         }).toThrow();
       });
@@ -115,12 +115,12 @@ describe('validateTargetState', () => {
 
   describe('editor validation', () => {
     it('accepts empty editor', () => {
-      [null, undefined].forEach(editor => {
+      [null, undefined].forEach((editor) => {
         expect(() => {
           validateTargetState({
             EditorInterface: {
-              someCtId: { editor }
-            }
+              someCtId: { editor },
+            },
           });
         }).not.toThrow();
       });
@@ -130,8 +130,8 @@ describe('validateTargetState', () => {
       expect(() => {
         validateTargetState({
           EditorInterface: {
-            someCtId: { editor: true }
-          }
+            someCtId: { editor: true },
+          },
         });
       }).not.toThrow();
     });
@@ -140,8 +140,8 @@ describe('validateTargetState', () => {
       expect(() => {
         validateTargetState({
           EditorInterface: {
-            someCtId: { editor: 'BOOM' }
-          }
+            someCtId: { editor: 'BOOM' },
+          },
         });
       }).toThrow();
     });
@@ -153,19 +153,19 @@ describe('validateTargetState', () => {
         EditorInterface: {
           someCtId: {
             fields: [{ fieldId: 'title' }, { fieldId: 'hello' }],
-            editor: true
+            editor: true,
           },
           otherCt: {
             fields: [{ fieldId: 'author' }],
             sidebar: {
-              position: 3
-            }
+              position: 3,
+            },
           },
           yetAnotherCt: {
             sidebar: true,
-            editor: true
-          }
-        }
+            editor: true,
+          },
+        },
       });
     }).not.toThrow();
   });

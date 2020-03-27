@@ -6,7 +6,7 @@ import makeRequest from 'data/Request';
 
 const defaultHeaders = {
   'X-Contentful-Skip-Transformation': true,
-  'Content-Type': 'application/vnd.contentful.management.v1+json'
+  'Content-Type': 'application/vnd.contentful.management.v1+json',
 };
 
 async function request(req) {
@@ -23,7 +23,7 @@ async function request(req) {
       statusCode: parseInt(e.status, 10),
       status: e.status,
       body: e.data,
-      request: req
+      request: req,
     });
   }
 }
@@ -34,7 +34,7 @@ async function buildRequest(data) {
   const req = {
     method: data.method,
     url: [baseUrl, data.path.replace(/^\/+/, '')].join('/'),
-    headers: _.extend({}, defaultHeaders, data.headers)
+    headers: _.extend({}, defaultHeaders, data.headers),
   };
 
   const payloadProperty = data.method === 'GET' ? 'params' : 'data';
@@ -48,7 +48,7 @@ function createSpace(payload, organizationId) {
     method: 'POST',
     path: '/spaces',
     payload,
-    headers: { 'X-Contentful-Organization': organizationId }
+    headers: { 'X-Contentful-Organization': organizationId },
   });
 }
 
@@ -56,5 +56,5 @@ const legacyClient = new LegacyClient({ request: request });
 
 export default _.extend(legacyClient, {
   request,
-  createSpace
+  createSpace,
 });

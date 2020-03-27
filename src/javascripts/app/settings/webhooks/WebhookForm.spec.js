@@ -44,7 +44,7 @@ describe('WebhookForm', () => {
     fireEvent.change(contentType, { target: { value: 'application/json' } });
 
     expect(onChangeStub).toHaveBeenCalledWith({
-      transformation: { contentType: 'application/json' }
+      transformation: { contentType: 'application/json' },
     });
   });
 });

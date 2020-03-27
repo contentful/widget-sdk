@@ -29,7 +29,7 @@ export default {
           </a>{' '}
           for instructions.
         </p>
-      )
+      ),
     },
     {
       name: 'apiKey',
@@ -46,19 +46,19 @@ export default {
           </a>{' '}
           for instructions. This value can’t be revealed once stored.
         </p>
-      )
+      ),
     },
     {
       name: 'githubOrg',
       type: 'text',
       title: 'GitHub organization or user',
-      description: <p>The Github organization or user repository belongs to.</p>
+      description: <p>The Github organization or user repository belongs to.</p>,
     },
     {
       name: 'githubRepo',
       type: 'text',
       title: 'GitHub repository',
-      description: <p>The name of the repository you want to build.</p>
+      description: <p>The name of the repository you want to build.</p>,
     },
     {
       name: 'branch',
@@ -69,8 +69,8 @@ export default {
         <p>
           The source code branch, for example <code>master</code>
         </p>
-      )
-    }
+      ),
+    },
   ],
   mapParamsToDefinition: ({ appName, apiKey, githubOrg, githubRepo, branch }, name) => {
     return {
@@ -80,16 +80,16 @@ export default {
       filters: [{ equals: [{ doc: 'sys.environment.sys.id' }, 'master'] }],
       headers: [
         { key: 'Accept', value: 'application/vnd.heroku+json; version=3' },
-        { key: 'Authorization', value: 'Bearer ' + apiKey, secret: true }
+        { key: 'Authorization', value: 'Bearer ' + apiKey, secret: true },
       ],
       transformation: {
         contentType: 'application/json',
         body: JSON.stringify({
           source_blob: {
-            url: `https://github.com/${githubOrg}/${githubRepo}/archive/${branch}.tar.gz`
-          }
-        })
-      }
+            url: `https://github.com/${githubOrg}/${githubRepo}/archive/${branch}.tar.gz`,
+          },
+        }),
+      },
     };
-  }
+  },
 };

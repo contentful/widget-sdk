@@ -20,14 +20,14 @@ const SOURCES = [
   'picasa',
   'onedrive',
   'onedriveforbusiness',
-  'clouddrive'
+  'clouddrive',
 ];
 
 function init() {
-  return new Promise(resolve =>
+  return new Promise((resolve) =>
     require.ensure(
       ['filestack-js'],
-      require => {
+      (require) => {
         const filestack = require('filestack-js');
         const { apiKey, policy, signature } = Config.services.filestack;
         resolve(filestack.init(apiKey, { security: { policy, signature } }));
@@ -44,7 +44,7 @@ function pickOptions(options) {
   return Object.assign(
     {
       fromSources: SOURCES,
-      rootId: `__filestack-picker-root-${rootIdCounter}`
+      rootId: `__filestack-picker-root-${rootIdCounter}`,
     },
     options
   );
@@ -54,7 +54,7 @@ function prepareUploadedFile(uploaded) {
   return {
     upload: uploaded.url,
     fileName: uploaded.filename,
-    contentType: uploaded.mimetype
+    contentType: uploaded.mimetype,
   };
 }
 
@@ -78,26 +78,26 @@ export async function makeDropPane({ id, onSuccess }) {
         customText: 'Drag and drop a file to upload…',
         disableClick: true,
         overlay: false,
-        onSuccess: filesUploaded => {
+        onSuccess: (filesUploaded) => {
           const first = filesUploaded[0];
           if (filesUploaded.length === 1 && first) {
             onSuccess(prepareUploadedFile(first));
           }
-        }
-      }
+        },
+      },
     })
     .open();
 }
 
 export function pick() {
-  return new Promise(function(resolve) {
-    return init().then(client => {
+  return new Promise(function (resolve) {
+    return init().then((client) => {
       return client
         .picker(
           pickOptions({
             disableTransformer: true,
             startUploadingWhenMaxFilesReached: true,
-            onUploadDone: ({ filesUploaded }) => resolve(handleOneUploaded({ filesUploaded }))
+            onUploadDone: ({ filesUploaded }) => resolve(handleOneUploaded({ filesUploaded })),
           })
         )
         .open();
@@ -106,8 +106,8 @@ export function pick() {
 }
 
 export async function pickMultiple() {
-  return new Promise(function(resolve, reject) {
-    return init().then(client => {
+  return new Promise(function (resolve, reject) {
+    return init().then((client) => {
       return client
         .picker(
           pickOptions({
@@ -118,7 +118,7 @@ export async function pickMultiple() {
               } else {
                 reject(new Error('Some files failed uploading.'));
               }
-            }
+            },
           })
         )
         .open();
@@ -133,7 +133,7 @@ export async function store(imageUrl) {
 }
 
 export async function cropImage(mode, imageUrl) {
-  return new Promise(function(resolve) {
+  return new Promise(function (resolve) {
     const transformations = { crop: false, circle: false, rotate: false };
     if (typeof mode === 'number') {
       transformations.crop = { aspectRatio: mode };
@@ -143,12 +143,12 @@ export async function cropImage(mode, imageUrl) {
       transformations.crop = true;
     }
 
-    return init().then(client => {
+    return init().then((client) => {
       const picker = client.picker(
         pickOptions({
           transformations,
           onUploadDone: ({ filesUploaded }) => resolve(handleOneUploaded({ filesUploaded })),
-          onCancel: () => resolve(null)
+          onCancel: () => resolve(null),
         })
       );
       picker.crop([imageUrl]);
@@ -161,7 +161,7 @@ export async function rotateOrMirrorImage(mode, imageUrl) {
     '90cw': { rotate: { deg: 90 } },
     '90ccw': { rotate: { deg: 90 * 3 } },
     flip: { flip: true },
-    flop: { flop: true }
+    flop: { flop: true },
   }[mode];
 
   const client = await init();

@@ -14,9 +14,9 @@ const MAX_IN_IDS = 50;
 export function fetchForType(spaceContext, type, ids) {
   let fetch;
   if (type === 'Entry') {
-    fetch = query => spaceContext.cma.getEntries(query);
+    fetch = (query) => spaceContext.cma.getEntries(query);
   } else if (type === 'Asset') {
-    fetch = query => spaceContext.cma.getAssets(query);
+    fetch = (query) => spaceContext.cma.getAssets(query);
   } else {
     throw new Error(`Unknown entity type ${type}.`);
   }
@@ -41,14 +41,14 @@ export function fetchForType(spaceContext, type, ids) {
  * @returns {Promise<API.Entity[]>}
  */
 function getEntities(fetch, ids) {
-  const queries = chunk(uniq(ids), MAX_IN_IDS).map(ids =>
+  const queries = chunk(uniq(ids), MAX_IN_IDS).map((ids) =>
     fetch({
-      'sys.id[in]': ids.join(',')
+      'sys.id[in]': ids.join(','),
     })
-      .then(response => {
+      .then((response) => {
         return response.items;
       })
-      .catch(error => {
+      .catch((error) => {
         if (error.status === 404) {
           return [];
         } else {

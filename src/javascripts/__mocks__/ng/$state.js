@@ -7,5 +7,5 @@ export const href = jest
 
 export default {
   go,
-  href
+  href,
 };

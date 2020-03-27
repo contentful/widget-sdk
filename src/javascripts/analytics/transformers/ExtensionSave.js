@@ -17,7 +17,7 @@ function getExtensionSaveData(_eventName, data) {
       src: data.src,
       installation_params: data.installationParams,
       instance_params: data.instanceParams,
-      field_types: data.fieldTypes
-    }
+      field_types: data.fieldTypes,
+    },
   };
 }

@@ -11,33 +11,33 @@ const styles = {
     textOverflow: 'ellipsis',
     overflow: 'hidden',
     marginRight: tokens.spacingM,
-    padding: `${tokens.spacing2Xs} 0`
+    padding: `${tokens.spacing2Xs} 0`,
   }),
   heading: css({
     fontSize: tokens.fontSizeXl,
     whiteSpace: 'nowrap',
     lineHeight: 1,
     display: 'flex',
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
   }),
   linkedEntitiesBadge: css({
-    marginLeft: tokens.spacing2Xs
+    marginLeft: tokens.spacing2Xs,
   }),
   contentType: css({
     lineHeight: tokens.lineHeightDefault,
     textOverflow: 'ellipsis',
     overflow: 'hidden',
     whiteSpace: 'nowrap',
-    color: tokens.colorTextMid
+    color: tokens.colorTextMid,
   }),
   locale: css({
     color: tokens.colorTextLight,
     fontWeight: tokens.fontWeightNormal,
-    marginLeft: tokens.spacing2Xs
+    marginLeft: tokens.spacing2Xs,
   }),
   knowledgeBase: css({
-    marginLeft: tokens.spacingS
-  })
+    marginLeft: tokens.spacingS,
+  }),
 };
 
 export default function WorkbenchTitle({
@@ -45,7 +45,7 @@ export default function WorkbenchTitle({
   localeName,
   entityInfo,
   contentTypeName,
-  isSingleLocaleModeOn
+  isSingleLocaleModeOn,
 }) {
   return (
     <div className={styles.wrapper}>
@@ -64,8 +64,8 @@ WorkbenchTitle.propTypes = {
   localeName: PropTypes.string,
   entityInfo: PropTypes.shape({
     id: PropTypes.string.isRequired,
-    type: PropTypes.string.isRequired
+    type: PropTypes.string.isRequired,
   }),
   contentTypeName: PropTypes.string,
-  isSingleLocaleModeOn: PropTypes.bool
+  isSingleLocaleModeOn: PropTypes.bool,
 };

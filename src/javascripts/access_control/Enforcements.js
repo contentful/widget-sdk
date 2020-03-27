@@ -18,13 +18,13 @@ const USAGE_METRICS = {
   user: 'Users',
   webhookDefinition: 'Webhook Definitions',
   assetBandwidth: 'Asset Bandwidth',
-  contentDeliveryApiRequest: 'Content Delivery API Requests'
+  contentDeliveryApiRequest: 'Content Delivery API Requests',
 };
 
-const trackAction = action =>
+const trackAction = (action) =>
   Analytics.track('notification:action_performed', {
     action,
-    currentPlan: Analytics.getSessionData('organization.subscriptionPlan.name') || null
+    currentPlan: Analytics.getSessionData('organization.subscriptionPlan.name') || null,
   });
 
 export function determineEnforcement(space, reasons, entityType) {
@@ -41,7 +41,7 @@ export function determineEnforcement(space, reasons, entityType) {
         trackAction('Visit Status Page');
 
         window.location = 'https://www.contentfulstatus.com';
-      }
+      },
     },
     {
       label: 'periodUsageExceeded',
@@ -52,15 +52,15 @@ export function determineEnforcement(space, reasons, entityType) {
           return 'Go to subscription';
         }
       },
-      action: upgradeAction
+      action: upgradeAction,
     },
     {
       label: 'usageExceeded',
-      tooltip: getMetricMessage
+      tooltip: getMetricMessage,
     },
     {
       label: 'accessTokenScope',
-      message: 'An unknown error occurred'
+      message: 'An unknown error occurred',
     },
     {
       label: 'readOnlySpace',
@@ -82,11 +82,11 @@ export function determineEnforcement(space, reasons, entityType) {
         if (OrganizationRoles.isOwnerOrAdmin(organization)) {
           return {
             text: 'Talk to support',
-            href: talkToUsHref
+            href: talkToUsHref,
           };
         }
-      }
-    }
+      },
+    },
   ];
 
   const error = errorsByPriority.find(({ label }) => reasons.indexOf(label) >= 0);
@@ -127,7 +127,7 @@ export function determineEnforcement(space, reasons, entityType) {
 
     go({
       path: ['account', 'organizations', subscriptionState],
-      params: { orgId: organization.sys.id }
+      params: { orgId: organization.sys.id },
     });
   }
 }

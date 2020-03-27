@@ -16,21 +16,21 @@ class SpaceDetails extends React.Component {
     setNewSpaceTemplate: PropTypes.func.isRequired,
     templates: PropTypes.object.isRequired,
     fetchTemplates: PropTypes.func.isRequired,
-    spaceCreation: PropTypes.object.isRequired
+    spaceCreation: PropTypes.object.isRequired,
   };
 
   constructor(props) {
     super(props);
     const state = {
       name: '',
-      template: null
+      template: null,
     };
     this.state = state;
   }
 
   UNSAFE_componentWillReceiveProps = ({ spaceCreation: { error } }) => {
     const {
-      spaceCreation: { error: currentError }
+      spaceCreation: { error: currentError },
     } = this.props;
 
     if (error && error !== currentError) {
@@ -66,7 +66,7 @@ class SpaceDetails extends React.Component {
             name="name"
             required=""
             autoFocus
-            onChange={e => this.setName(e.target.value)}
+            onChange={(e) => this.setName(e.target.value)}
             aria-invalid={showValidationError}
             style={{ width: '400px' }}
           />
@@ -90,7 +90,7 @@ class SpaceDetails extends React.Component {
     );
   }
 
-  setName = name => {
+  setName = (name) => {
     const { setNewSpaceName } = this.props;
     const nameState = { name };
     if (name.trim()) {
@@ -102,7 +102,7 @@ class SpaceDetails extends React.Component {
     this.setState(nameState);
   };
 
-  setTemplate = template => {
+  setTemplate = (template) => {
     const { setNewSpaceTemplate } = this.props;
 
     setNewSpaceTemplate(template);
@@ -120,7 +120,7 @@ class SpaceDetails extends React.Component {
     if (!Object.keys(validation).length) {
       track('entered_details', {
         newSpaceName,
-        newSpaceTemplate
+        newSpaceTemplate,
       });
       onSubmit();
     }

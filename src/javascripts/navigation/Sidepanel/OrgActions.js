@@ -35,5 +35,5 @@ export default function OrgActions({ gotoOrgSettings, showOrgSettingsAsTeams }) 
 
 OrgActions.propTypes = {
   gotoOrgSettings: PropTypes.func.isRequired,
-  showOrgSettingsAsTeams: PropTypes.bool.isRequired
+  showOrgSettingsAsTeams: PropTypes.bool.isRequired,
 };

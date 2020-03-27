@@ -9,7 +9,7 @@ import {
   EntityListItem,
   SkeletonContainer,
   SkeletonImage,
-  SkeletonBodyText
+  SkeletonBodyText,
 } from '@contentful/forma-36-react-components';
 import EntityStateLink from 'app/common/EntityStateLink';
 import useAsync from 'app/common/hooks/useAsync';
@@ -23,18 +23,18 @@ const styles = {
     cursor: 'pointer',
     marginBottom: 0,
     h1: {
-      lineHeight: 'inherit'
-    }
+      lineHeight: 'inherit',
+    },
   }),
   skeleton: css({
-    marginTop: tokens.spacingS
+    marginTop: tokens.spacingS,
   }),
   skeletonListItem: css({
     height: `calc(1rem * (62 / ${tokens.fontBaseDefault}))`,
     borderBottom: `1px solid ${tokens.colorElementMid}`,
     overflow: 'hidden',
-    padding: `0 ${tokens.spacingS}`
-  })
+    padding: `0 ${tokens.spacingS}`,
+  }),
 };
 
 export default function WrappedEntityListItem({
@@ -42,7 +42,7 @@ export default function WrappedEntityListItem({
   internalLocaleCode,
   onClick,
   contentType,
-  renderDropdown
+  renderDropdown,
 }) {
   const getEntityDataFn = useCallback(() => {
     return getEntityData(entity, internalLocaleCode);
@@ -57,7 +57,7 @@ export default function WrappedEntityListItem({
         return (
           <EntityListItem
             className={styles.entryListItem}
-            onClick={e => (onClick ? onClick(e, entity) : onClickGoToEntry(e, entity))}
+            onClick={(e) => (onClick ? onClick(e, entity) : onClickGoToEntry(e, entity))}
             key={entity.sys.id}
             title={entityData.title || 'Untitled'}
             contentType={contentType}
@@ -90,7 +90,7 @@ WrappedEntityListItem.propTypes = {
    * @param {object} props
    * @param {object} props.entity The fetched entity for this list item
    */
-  renderDropdown: PropTypes.func
+  renderDropdown: PropTypes.func,
 };
 
 function EntityListItemSkeleton() {

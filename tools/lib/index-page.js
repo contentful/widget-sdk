@@ -34,11 +34,11 @@ module.exports.render = function render(uiVersion, config, manifest) {
     manifest,
     externalConfig: {
       uiVersion,
-      config
-    }
+      config,
+    },
   });
 
   return minify(compiled, {
-    collapseWhitespace: true
+    collapseWhitespace: true,
   });
 };

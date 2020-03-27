@@ -7,7 +7,7 @@ import {
   TextLink,
   List,
   Typography,
-  ListItem
+  ListItem,
 } from '@contentful/forma-36-react-components';
 
 import { OrganizationMembership as OrganizationMembershipPropType } from 'app/OrganizationSettings/PropTypes';
@@ -16,15 +16,15 @@ import { css } from 'emotion';
 const styles = {
   listStyle: css({
     marginLeft: tokens.spacingL,
-    listStyleType: 'disc'
-  })
+    listStyleType: 'disc',
+  }),
 };
 
 export default class SsoExemptionModal extends React.Component {
   static propTypes = {
     membership: OrganizationMembershipPropType.isRequired,
     onClose: PropTypes.func.isRequired,
-    isShown: PropTypes.bool.isRequired
+    isShown: PropTypes.bool.isRequired,
   };
 
   render() {
@@ -33,10 +33,8 @@ export default class SsoExemptionModal extends React.Component {
     const exemptionReasonsMap = {
       userIsOwner: `The user is an owner of the organization`,
       userIsManuallyExempt: `The user is explicitly marked as exempt from Restricted Mode`,
-      other: `Other`
+      other: `Other`,
     };
-
-  
 
     return (
       <Modal isShown={isShown} onClose={onClose} title="SSO exemption">
@@ -55,12 +53,11 @@ export default class SsoExemptionModal extends React.Component {
             is enabled if they fall into one or more of the following conditions:
           </Paragraph>
           <List>
-            {Object.keys(exemptionReasonsMap)
-              .map(reason => (
-                <ListItem key={reason} className={styles.listStyle}>
-                  {exemptionReasonsMap[reason]}{' '}
-                </ListItem>
-              ))}
+            {Object.keys(exemptionReasonsMap).map((reason) => (
+              <ListItem key={reason} className={styles.listStyle}>
+                {exemptionReasonsMap[reason]}{' '}
+              </ListItem>
+            ))}
           </List>
           <Paragraph>
             <TextLink

@@ -21,7 +21,7 @@ const WebhooksFetcher = createFetcherComponent(() => {
 
   return Promise.all([
     webhookRepo.getAll(),
-    getOrgFeature(spaceContext.organization.sys.id, 'webhook_aws_proxy')
+    getOrgFeature(spaceContext.organization.sys.id, 'webhook_aws_proxy'),
   ]).then(([webhooks, hasAwsProxyFeature]) => {
     const isContentfulUser = (spaceContext.user.email || '').endsWith('@contentful.com');
     const hasAwsProxy = hasAwsProxyFeature || isContentfulUser;
@@ -32,7 +32,7 @@ const WebhooksFetcher = createFetcherComponent(() => {
 export class WebhookListRoute extends React.Component {
   static propTypes = {
     templateId: PropTypes.string,
-    templateIdReferrer: PropTypes.string
+    templateIdReferrer: PropTypes.string,
   };
 
   setupTemplateOpener(hasAwsProxy = false) {
@@ -42,7 +42,7 @@ export class WebhookListRoute extends React.Component {
       contentTypes: spaceContext.publishedCTs.getAllBare(),
       defaultLocaleCode: get(TheLocaleStore.getDefaultLocale(), ['code'], 'en-US'),
       domain: Config.domain,
-      hasAwsProxy
+      hasAwsProxy,
     });
   }
 

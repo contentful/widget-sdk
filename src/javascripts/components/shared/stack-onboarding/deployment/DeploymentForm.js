@@ -7,33 +7,33 @@ import { getStore } from 'browserStorage';
 
 import {
   getStoragePrefix,
-  MODERN_STACK_ONBOARDING_COMPLETE_EVENT
+  MODERN_STACK_ONBOARDING_COMPLETE_EVENT,
 } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
 
 import { getModule } from 'NgRegistry';
 
 const DEPLOYMENT_PROVIDERS = {
   NETLIFY: 'netlify',
-  HEROKU: 'heroku'
+  HEROKU: 'heroku',
 };
 
 const store = getStore();
 
 export default class DeploymentForm extends React.Component {
   static propTypes = {
-    onComplete: PropTypes.func.isRequired
+    onComplete: PropTypes.func.isRequired,
   };
 
   state = {
     url: store.get(`${getStoragePrefix()}:deployedTo`) || '',
-    error: false
+    error: false,
   };
 
-  isValidDeployedUrl = url => {
+  isValidDeployedUrl = (url) => {
     return Object.values(DEPLOYMENT_PROVIDERS).includes(this.getChosenDeploymentProvider(url));
   };
 
-  getChosenDeploymentProvider = url => {
+  getChosenDeploymentProvider = (url) => {
     if (url.includes('netlify.com')) {
       return DEPLOYMENT_PROVIDERS.NETLIFY;
     }
@@ -43,14 +43,14 @@ export default class DeploymentForm extends React.Component {
     }
   };
 
-  markAsInvalidUrl = url => {
+  markAsInvalidUrl = (url) => {
     this.setState({
       url,
-      error: 'Please provide the Netlify or Heroku URL of your deployed application.'
+      error: 'Please provide the Netlify or Heroku URL of your deployed application.',
     });
   };
 
-  onChange = url => {
+  onChange = (url) => {
     if (!this.isValidDeployedUrl(url)) {
       this.markAsInvalidUrl(url);
     } else {
@@ -58,7 +58,7 @@ export default class DeploymentForm extends React.Component {
     }
   };
 
-  onComplete = event => {
+  onComplete = (event) => {
     const $rootScope = getModule('$rootScope');
 
     const { url } = this.state;
@@ -92,7 +92,7 @@ export default class DeploymentForm extends React.Component {
         <div className="modern-stack-onboarding--deployment-form-subtitle">
           We’ll provide guidance to set up webhooks based on the hosting service you’ve selected.
         </div>
-        <Form onSubmit={e => e.preventDefault()}>
+        <Form onSubmit={(e) => e.preventDefault()}>
           <Input
             wrapperClassName="modern-stack-onboarding--deployment-form-input"
             value={url}

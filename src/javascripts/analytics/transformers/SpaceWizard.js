@@ -19,7 +19,7 @@ const SpaceWizardTransformer = addUserOrgSpace((eventName, data) => {
   }
 
   return {
-    data: wizardData
+    data: wizardData,
   };
 });
 
@@ -57,7 +57,7 @@ export function getSpaceWizardData(action, data) {
 
     // The target (new) space name and template id
     target_space_name: data.targetSpaceName || null,
-    target_space_template_id: data.targetSpaceTemplateId
+    target_space_template_id: data.targetSpaceTemplateId,
   };
 }
 
@@ -70,11 +70,11 @@ function validateSpaceWizardData(wizardData) {
   const requiredData = {
     intended_action: {
       type: 'string',
-      enum: ['create', 'change_space_type']
+      enum: ['create', 'change_space_type'],
     },
     current_step: {
       type: ['string', 'null'],
-      maxLength: 32
+      maxLength: 32,
     },
     action: {
       type: 'string',
@@ -87,15 +87,15 @@ function validateSpaceWizardData(wizardData) {
         'space_create',
         'space_type_change',
         'select_plan',
-        'entered_details'
-      ]
-    }
+        'entered_details',
+      ],
+    },
   };
 
   const tests = {
-    string: value => typeof value === 'string',
-    null: value => value === null,
-    boolean: value => typeof value === 'boolean'
+    string: (value) => typeof value === 'string',
+    null: (value) => value === null,
+    boolean: (value) => typeof value === 'boolean',
   };
 
   function test(types, value) {
@@ -128,7 +128,7 @@ function validateSpaceWizardData(wizardData) {
 
     // Validate value against enum if present
     if (property.enum) {
-      if (!property.enum.find(value => value)) {
+      if (!property.enum.find((value) => value)) {
         throw new Error(`Value ${value} for key ${key} not in enum ${property.enum.join(',')}`);
       }
     }

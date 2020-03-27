@@ -8,19 +8,19 @@ import { getSpaceWizardData } from './SpaceWizard';
  * Exports a function that transforms data for the `space:create`
  * event into Snowplow's format
  */
-export default function(_eventName, data) {
+export default function (_eventName, data) {
   const baseData = getBaseData(data);
   const contexts = [
     {
       schema: getSchema('space').path,
-      data: { action: 'create', ...baseData }
-    }
+      data: { action: 'create', ...baseData },
+    },
   ];
 
   if (data.templateName) {
     contexts.push({
       schema: getSchema('space_template').path,
-      data: { name: data.templateName, ...baseData }
+      data: { name: data.templateName, ...baseData },
     });
   }
 
@@ -30,7 +30,7 @@ export default function(_eventName, data) {
   if (data.entityAutomationScope) {
     contexts.push({
       schema: getSchema('entity_automation_scope').path,
-      data: { scope: data.entityAutomationScope.scope, ...baseData }
+      data: { scope: data.entityAutomationScope.scope, ...baseData },
     });
   }
 
@@ -38,13 +38,13 @@ export default function(_eventName, data) {
   if (data.wizardData) {
     contexts.push({
       schema: getSchema('feature_space_wizard').path,
-      data: { ...getSpaceWizardData(data.wizardData, 'space_create'), ...baseData }
+      data: { ...getSpaceWizardData(data.wizardData, 'space_create'), ...baseData },
     });
   }
 
   return {
     data: {},
-    contexts
+    contexts,
   };
 }
 
@@ -52,6 +52,6 @@ function getBaseData(data) {
   return {
     organization_id: data.organizationId,
     space_id: data.spaceId,
-    executing_user_id: data.userId
+    executing_user_id: data.userId,
   };
 }

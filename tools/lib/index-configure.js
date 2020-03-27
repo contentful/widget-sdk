@@ -39,7 +39,7 @@ module.exports = async function configure(revision, configPath, outPath) {
 
   validateConfig(config);
 
-  const manifestResolved = mapValues(manifest, path => URL.resolve(config.assetUrl, path));
+  const manifestResolved = mapValues(manifest, (path) => URL.resolve(config.assetUrl, path));
   const indexPage = renderIndexPage(revision, config, manifestResolved);
   await U.mkdirp(P.dirname(outPath));
   await U.FS.writeFileAsync(outPath, indexPage, 'utf8');

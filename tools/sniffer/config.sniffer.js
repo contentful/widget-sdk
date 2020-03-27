@@ -25,8 +25,8 @@ const uploadResults = async ({ meta, tree, stats }) => {
       meta: meta,
       project: 'user_interface',
       tree: JSON.stringify(tree),
-      stats: JSON.stringify(stats)
-    }
+      stats: JSON.stringify(stats),
+    },
   });
 
   if (response.data && response.data.uploadReactMigration === true) {
@@ -48,8 +48,8 @@ const migrationDiff = async (revisionOne, revisionTwo) => {
     variables: {
       project: 'user_interface',
       revisionOne,
-      revisionTwo
-    }
+      revisionTwo,
+    },
   });
   if (response.data && response.data.migrationDiff) {
     return response.data.migrationDiff;
@@ -63,7 +63,7 @@ module.exports = {
   analyzers: analyzers,
   attributes: attributes,
   exclude: /(node_modules|\.git|\.DS_Store|\.js\.snap)/,
-  onUpload: async data => {
+  onUpload: async (data) => {
     const { meta, stats, tree } = data;
     await uploadResults({ meta, stats, tree });
 
@@ -87,7 +87,7 @@ module.exports = {
         '## React migration',
         markdown,
         createMigrationMessage(diffJson),
-        '[Sniffer](https://contentful-sniffer.netlify.com/pr-log)'
+        '[Sniffer](https://contentful-sniffer.netlify.com/pr-log)',
       ].join('\n\n');
 
       const { requestId, statusCode, message } = await fetch(process.env.COMMENT_LAMBDA_URL, {
@@ -95,13 +95,13 @@ module.exports = {
         body: JSON.stringify({
           issue: Number.parseInt(pr, 10),
           message: postMessage,
-          type: 'migration'
+          type: 'migration',
         }),
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.GITHUB_PAT_REPO_SCOPE_SQUIRELY}`
-        }
-      }).then(res => res.json());
+          Authorization: `Bearer ${process.env.GITHUB_PAT_REPO_SCOPE_SQUIRELY}`,
+        },
+      }).then((res) => res.json());
 
       if (statusCode >= 400) {
         const error = new Error(message);
@@ -116,5 +116,5 @@ module.exports = {
       console.error('Migration comment upload failed ->', err);
       console.log(`Comment won't be posted to PR#${pr}. Continuing anyway.`);
     }
-  }
+  },
 };

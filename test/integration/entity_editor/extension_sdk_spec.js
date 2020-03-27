@@ -13,15 +13,15 @@ import { it } from 'test/utils/dsl';
 // https://github.com/contentful/ui-extensions-sdk/tree/master/test
 
 xdescribe('Extension SDK', () => {
-  beforeEach(async function() {
+  beforeEach(async function () {
     this.openStub = sinon.stub().resolves(null);
 
     this.system.set('services/localeStore', {
-      default: createLocaleStoreMock()
+      default: createLocaleStoreMock(),
     });
 
     this.system.set('search/EntitySelector/entitySelector', {
-      openFromExtension: this.openStub
+      openFromExtension: this.openStub,
     });
 
     await $initialize(this.system);
@@ -34,20 +34,20 @@ xdescribe('Extension SDK', () => {
         spaceMember: {
           sys: {
             user: {
-              sys: {}
-            }
+              sys: {},
+            },
           },
-          roles: []
+          roles: [],
         },
         spaceMembership: {
           sys: {
             user: {
-              sys: {}
-            }
+              sys: {},
+            },
           },
-          roles: []
-        }
-      }
+          roles: [],
+        },
+      },
     };
 
     this.apiClient = {};
@@ -58,16 +58,16 @@ xdescribe('Extension SDK', () => {
     const field = {
       id: 'FID-internal',
       apiName: 'FID',
-      type: 'Text'
+      type: 'Text',
     };
 
     const entry = {
       data: {
         sys: {
-          type: 'Entry'
+          type: 'Entry',
         },
-        fields: {}
-      }
+        fields: {},
+      },
     };
 
     this.doc = createDocument(entry.data);
@@ -79,41 +79,41 @@ xdescribe('Extension SDK', () => {
         descriptor: {
           srcdoc:
             '<!doctype html>' +
-            '<script src="/base/node_modules/contentful-ui-extensions-sdk/dist/cf-extension-api.js"></script>'
+            '<script src="/base/node_modules/contentful-ui-extensions-sdk/dist/cf-extension-api.js"></script>',
         },
         parameters: {
           instance: {},
-          installation: {}
-        }
+          installation: {},
+        },
       },
       editorData: {
         editorInterface: {
           controls: [],
-          sidebar: []
-        }
+          sidebar: [],
+        },
       },
       preferences: {
-        showDisabledFields: false
+        showDisabledFields: false,
       },
       localeData: {},
       entityInfo: {
         contentType: {
           sys: { id: 'ct' },
-          fields: [field]
-        }
+          fields: [field],
+        },
       },
       locale: {
         code: 'de',
-        internal_code: 'de-internal'
+        internal_code: 'de-internal',
       },
       otDoc: this.doc,
       fieldLocale: {
         access$: K.createMockProperty({ disabled: false }),
-        errors$: K.createMockProperty(null)
+        errors$: K.createMockProperty(null),
       },
       fieldController: {
-        setInvalid: sinon.spy()
-      }
+        setInvalid: sinon.spy(),
+      },
     };
 
     this.setup = () => {
@@ -126,13 +126,13 @@ xdescribe('Extension SDK', () => {
           try {
             const w = iframe.contentWindow;
             w.console = window.console;
-            w.contentfulExtension.init(api => {
+            w.contentfulExtension.init((api) => {
               api.nextTick = () => {
                 $apply();
                 // By adding a timeout to the iframe window we assure that the
                 // promise only resolves when the iframe event loops has at
                 // least been run once.
-                return new Promise(resolve => {
+                return new Promise((resolve) => {
                   w.setTimeout(resolve, 1);
                 });
               };
@@ -147,37 +147,37 @@ xdescribe('Extension SDK', () => {
       });
     };
 
-    this.setDocValueAt = function(path, value) {
+    this.setDocValueAt = function (path, value) {
       this.doc.setValueAt(path, value);
       this.doc.changes.emit(path);
     };
   });
 
-  afterEach(function() {
+  afterEach(function () {
     this.container.remove();
   });
 
   describe('#field', () => {
-    beforeEach(function() {
+    beforeEach(function () {
       this.scope.widget.field.validations = ['VALIDATION'];
     });
 
-    it('receives #validations property', async function(api) {
+    it('receives #validations property', async function (api) {
       expect(api.field.validations).toEqual(['VALIDATION']);
     });
 
     describe('#getValue()', () => {
-      beforeEach(function() {
+      beforeEach(function () {
         this.doc.setValueAt(['fields'], {
-          'FID-internal': { 'de-internal': 'INITIAL' }
+          'FID-internal': { 'de-internal': 'INITIAL' },
         });
       });
 
-      it('gets initial value', async function(api) {
+      it('gets initial value', async function (api) {
         expect(api.field.getValue()).toEqual('INITIAL');
       });
 
-      it('gets updated value when document is changed', async function(api) {
+      it('gets updated value when document is changed', async function (api) {
         this.setDocValueAt(['fields', 'FID-internal', 'de-internal'], 'VALUE');
         await api.nextTick();
         expect(api.field.getValue()).toEqual('VALUE');
@@ -185,7 +185,7 @@ xdescribe('Extension SDK', () => {
     });
 
     xdescribe('#onValueChanged()', () => {
-      it('calls callback after when document changes', async function(api) {
+      it('calls callback after when document changes', async function (api) {
         const valueChanged = sinon.stub();
         api.field.onValueChanged(valueChanged);
         valueChanged.reset();
@@ -195,7 +195,7 @@ xdescribe('Extension SDK', () => {
         sinon.assert.calledWithExactly(valueChanged, 'VALUE');
       });
 
-      it('does not call callback after detaching', async function(api) {
+      it('does not call callback after detaching', async function (api) {
         const valueChanged = sinon.stub();
         // We make sure that it is called once in order to prevent
         // errors when the event is not dispatched at all.
@@ -208,7 +208,7 @@ xdescribe('Extension SDK', () => {
         await api.nextTick();
       });
 
-      it('calls callback with most recently dispatched value', async function(api) {
+      it('calls callback with most recently dispatched value', async function (api) {
         const valueChanged = sinon.spy();
         this.setDocValueAt(['fields', 'FID-internal', 'de-internal'], 'VALUE');
         await api.nextTick();
@@ -219,23 +219,23 @@ xdescribe('Extension SDK', () => {
     });
 
     describe('#onIsDisabledChanged', () => {
-      when('initially disabled', function() {
+      when('initially disabled', function () {
         this.scope.fieldLocale.access$.set({ disabled: true });
-      }).it('receives default value', async function(api) {
+      }).it('receives default value', async function (api) {
         const isDisabledChanged = sinon.spy();
         api.field.onIsDisabledChanged(isDisabledChanged);
         sinon.assert.calledWithExactly(isDisabledChanged, true);
       });
 
-      when('initially enabled', function() {
+      when('initially enabled', function () {
         this.scope.fieldLocale.access$.set({ disabled: true });
-      }).it('receives default value', async function(api) {
+      }).it('receives default value', async function (api) {
         const isDisabledChanged = sinon.spy();
         api.field.onIsDisabledChanged(isDisabledChanged);
         sinon.assert.calledWithExactly(isDisabledChanged, true);
       });
 
-      it('calls callback when disable status of field is changed', async function(api) {
+      it('calls callback when disable status of field is changed', async function (api) {
         const isDisabledChanged = sinon.spy();
         api.field.onIsDisabledChanged(isDisabledChanged);
         await api.nextTick();
@@ -248,15 +248,15 @@ xdescribe('Extension SDK', () => {
     });
 
     describe('#onSchemaErrorsChanged()', () => {
-      when('there are initial errors', function() {
+      when('there are initial errors', function () {
         this.scope.fieldLocale.errors$.set(['INITIAL']);
-      }).it('receives the initial errors', async function(api) {
+      }).it('receives the initial errors', async function (api) {
         const cb = sinon.spy();
         api.field.onSchemaErrorsChanged(cb);
         sinon.assert.calledWithExactly(cb, ['INITIAL']);
       });
 
-      it('triggers when errors change', async function(api) {
+      it('triggers when errors change', async function (api) {
         const cb = sinon.spy();
         api.field.onSchemaErrorsChanged(cb);
         await api.nextTick();
@@ -277,7 +277,7 @@ xdescribe('Extension SDK', () => {
     });
 
     describe('#setInvalid', () => {
-      it('proxies call to setInvalid method on scope.fieldController', async function(api) {
+      it('proxies call to setInvalid method on scope.fieldController', async function (api) {
         api.field.setInvalid(true, this.scope.locale.code);
         await api.nextTick();
         sinon.assert.calledWithExactly(
@@ -289,13 +289,13 @@ xdescribe('Extension SDK', () => {
     });
 
     function testValueMethods(method, value) {
-      it(`calls "otDoc.${method}At()" with current field path`, async function(api) {
+      it(`calls "otDoc.${method}At()" with current field path`, async function (api) {
         if (_.isUndefined(value)) {
           await api.field[method]();
           sinon.assert.calledWith(this.scope.otDoc[`${method}At`], [
             'fields',
             'FID-internal',
-            'de-internal'
+            'de-internal',
           ]);
         } else {
           await api.field[method](value);
@@ -307,13 +307,13 @@ xdescribe('Extension SDK', () => {
         }
       });
 
-      it('resolves', async function(api) {
+      it('resolves', async function (api) {
         const success = sinon.stub();
         await api.field[method](value).then(success);
         sinon.assert.called(success);
       });
 
-      it(`rejects when "otDoc.${method}At()" fails`, async function(api) {
+      it(`rejects when "otDoc.${method}At()" fails`, async function (api) {
         this.scope.otDoc[`${method}At`] = sinon.stub().rejects();
         const errored = sinon.stub();
         await api.field[method](value).catch(errored);
@@ -326,17 +326,17 @@ xdescribe('Extension SDK', () => {
     const SYS_0 = { type: 'Entry', version: 0 };
     const SYS_1 = { type: 'Entry', version: 1 };
 
-    beforeEach(function() {
+    beforeEach(function () {
       this.doc.setValueAt(['sys'], SYS_0);
     });
 
     describe('#getSys()', () => {
-      it('returns the initial sys object', async function(api) {
+      it('returns the initial sys object', async function (api) {
         const sys = api.entry.getSys();
         expect(sys).toEqual(SYS_0);
       });
 
-      it('returns updated value when document property changes', async function(api) {
+      it('returns updated value when document property changes', async function (api) {
         expect(api.entry.getSys()).toEqual(SYS_0);
         this.doc.setValueAt(['sys'], SYS_1);
         await api.nextTick();
@@ -345,13 +345,13 @@ xdescribe('Extension SDK', () => {
     });
 
     describe('#onSysChanged()', () => {
-      it('calls listener with initial value', async function(api) {
+      it('calls listener with initial value', async function (api) {
         const listener = sinon.stub();
         api.entry.onSysChanged(listener);
         sinon.assert.calledWith(listener, SYS_0);
       });
 
-      it('calls listener when document property changes', async function(api) {
+      it('calls listener when document property changes', async function (api) {
         const listener = sinon.stub();
         api.entry.onSysChanged(listener);
         listener.reset();
@@ -363,40 +363,40 @@ xdescribe('Extension SDK', () => {
   });
 
   describe('#fields', () => {
-    beforeEach(function() {
+    beforeEach(function () {
       this.scope.entityInfo.contentType.fields = [
         this.scope.widget.field,
         { id: 'f2-internal', apiName: 'f2', localized: true },
-        { id: 'f3-internal', apiName: 'f3', localized: false }
+        { id: 'f3-internal', apiName: 'f3', localized: false },
       ];
 
       this.doc.setValueAt(['fields'], {
         'f2-internal': {
           'en-internal': 'INITIAL en',
-          'de-internal': 'INITIAL de'
-        }
+          'de-internal': 'INITIAL de',
+        },
       });
     });
 
-    it('has #id property', async function(api) {
+    it('has #id property', async function (api) {
       expect(api.entry.fields.f2.id).toEqual('f2');
     });
 
-    it('has #locales property for localized field', async function(api) {
+    it('has #locales property for localized field', async function (api) {
       expect(api.entry.fields.f2.locales).toEqual(['en', 'de']);
     });
 
-    it('has #locales property for non-localized field', async function(api) {
+    it('has #locales property for non-localized field', async function (api) {
       expect(api.entry.fields.f3.locales).toEqual(['en']);
     });
 
     describe('#getValue()', () => {
-      it('returns initial value', async function(api) {
+      it('returns initial value', async function (api) {
         expect(api.entry.fields.f2.getValue()).toEqual('INITIAL en');
         expect(api.entry.fields.f2.getValue('de')).toEqual('INITIAL de');
       });
 
-      it('returns updated value when document changes', async function(api) {
+      it('returns updated value when document changes', async function (api) {
         this.setDocValueAt(['fields', 'f2-internal', 'en'], 'VAL en');
         await api.nextTick();
         expect(api.entry.fields.f2.getValue()).toEqual('VAL en');
@@ -406,10 +406,10 @@ xdescribe('Extension SDK', () => {
         expect(api.entry.fields.f2.getValue('de')).toEqual('VAL de');
       });
 
-      it('returns updated value when entire doc is replaced', async function(api) {
+      it('returns updated value when entire doc is replaced', async function (api) {
         this.setDocValueAt([], {
           sys: { id: 'f2-internal', type: 'Entry' },
-          fields: { 'f2-internal': { 'en-internal': 'VAL' } }
+          fields: { 'f2-internal': { 'en-internal': 'VAL' } },
         });
         await api.nextTick();
         expect(api.entry.fields.f2.getValue()).toEqual('VAL');
@@ -417,7 +417,7 @@ xdescribe('Extension SDK', () => {
     });
 
     describe('#setValue()', () => {
-      it('calls "otDoc.setValueAt()" with current field path', async function(api) {
+      it('calls "otDoc.setValueAt()" with current field path', async function (api) {
         const field = api.entry.fields.f2;
         await field.setValue('VAL');
         sinon.assert.calledWith(
@@ -433,7 +433,7 @@ xdescribe('Extension SDK', () => {
         );
       });
 
-      it('throws if locale is unknown', async function(api) {
+      it('throws if locale is unknown', async function (api) {
         expect(() => {
           api.entry.fields.f2.setValue('VAL', 'unknown');
         }).toThrow();
@@ -443,13 +443,13 @@ xdescribe('Extension SDK', () => {
         }).toThrow();
       });
 
-      it('resolves', async function(api) {
+      it('resolves', async function (api) {
         const success = sinon.stub();
         await api.entry.fields.f2.setValue('VAL').then(success);
         sinon.assert.calledWith(success);
       });
 
-      it('rejects when "otDoc.setValueAt()" fails', async function(api) {
+      it('rejects when "otDoc.setValueAt()" fails', async function (api) {
         this.scope.otDoc.setValueAt = sinon.stub().rejects();
         const errored = sinon.stub();
         await api.entry.fields.f2.setValue('VAL').catch(errored);
@@ -459,28 +459,28 @@ xdescribe('Extension SDK', () => {
   });
 
   describe('#locales', () => {
-    it('provides the default locale code', async function(api) {
+    it('provides the default locale code', async function (api) {
       expect(api.locales.default).toEqual('en');
     });
 
-    it('provides all available locales codes', async function(api) {
+    it('provides all available locales codes', async function (api) {
       expect(api.locales.available).toEqual(['en', 'de']);
     });
   });
 
   // TODO: this does not test `getUsers` and all upload methods.
   describe('#space methods', () => {
-    beforeEach(function() {
+    beforeEach(function () {
       const spaceContext = $inject('spaceContext');
       spaceContext.publishedCTs = {
-        get: sinon.stub()
+        get: sinon.stub(),
       };
       this.args = {
         sys: {
           contentType: {
-            sys: { id: 'foo' }
-          }
-        }
+            sys: { id: 'foo' },
+          },
+        },
       };
       this.methods = [
         'getContentType',
@@ -509,18 +509,15 @@ xdescribe('Extension SDK', () => {
         'archiveEntry',
         'archiveAsset',
         'unarchiveEntry',
-        'unarchiveAsset'
+        'unarchiveAsset',
       ];
     });
 
-    it('delegates to API client and responds with data', async function(api) {
+    it('delegates to API client and responds with data', async function (api) {
       const { args } = this;
       for (const method of this.methods) {
         const data = { sys: { type: 'bar' } };
-        this.apiClient[method] = sinon
-          .stub()
-          .withArgs(args)
-          .resolves(data);
+        this.apiClient[method] = sinon.stub().withArgs(args).resolves(data);
         const response = await api.space[method](args);
         sinon.assert.calledOnce(this.apiClient[method]);
         sinon.assert.calledWithExactly(this.apiClient[method], args);
@@ -528,29 +525,26 @@ xdescribe('Extension SDK', () => {
       }
     });
 
-    it('delegates to API and throws error', async function(api) {
+    it('delegates to API and throws error', async function (api) {
       const { args } = this;
 
       for (const method of this.methods) {
-        this.apiClient[method] = sinon
-          .stub()
-          .withArgs(args)
-          .rejects({
-            code: 'CODE',
-            body: 'BODY'
-          });
-        const error = await api.space[method](args).catch(e => e);
+        this.apiClient[method] = sinon.stub().withArgs(args).rejects({
+          code: 'CODE',
+          body: 'BODY',
+        });
+        const error = await api.space[method](args).catch((e) => e);
         sinon.assert.calledOnce(this.apiClient[method]);
         sinon.assert.calledWithExactly(this.apiClient[method], args);
         expect(error).toEqual({
           code: 'CODE',
           data: 'BODY',
-          message: 'Request failed.'
+          message: 'Request failed.',
         });
       }
     });
 
-    it('has a ApiClient method for each space method', function() {
+    it('has a ApiClient method for each space method', function () {
       const cma = new APIClient({});
       for (const method of this.methods) {
         expect(typeof cma[method]).toBe('function');
@@ -563,36 +557,36 @@ xdescribe('Extension SDK', () => {
       ['selectSingleEntry', 'Entry', false],
       ['selectSingleAsset', 'Asset', false],
       ['selectMultipleEntries', 'Entry', true],
-      ['selectMultipleAssets', 'Asset', true]
+      ['selectMultipleAssets', 'Asset', true],
     ];
 
-    it('delegates to entity selector call', async function(api) {
+    it('delegates to entity selector call', async function (api) {
       for (const [method, entityType, multiple] of methods) {
         const result = await api.dialogs[method]({ test: true });
         expect(result).toBe(null);
         sinon.assert.calledWithMatch(this.openStub, {
           test: true,
           entityType,
-          multiple
+          multiple,
         });
       }
     });
 
-    it('resolves with result of single selection', async function(api) {
+    it('resolves with result of single selection', async function (api) {
       this.openStub.resolves({ result: true });
       for (const [method] of methods.slice(0, 2)) {
         expect(await api.dialogs[method]()).toEqual({ result: true });
       }
     });
 
-    it('resolves with result of multi selection', async function(api) {
+    it('resolves with result of multi selection', async function (api) {
       this.openStub.resolves([{ i: 1 }, { i: 2 }]);
       for (const [method] of methods.slice(2)) {
         expect(await api.dialogs[method]()).toEqual([{ i: 1 }, { i: 2 }]);
       }
     });
 
-    it('rejects if an error occurred', async function(api) {
+    it('rejects if an error occurred', async function (api) {
       this.openStub.rejects(new Error('boom!'));
       for (const [method] of methods) {
         const err = await api.dialogs[method]().catch(_.identity);
@@ -602,7 +596,7 @@ xdescribe('Extension SDK', () => {
   });
 
   describe('#user', () => {
-    beforeEach(function() {
+    beforeEach(function () {
       const spaceContext = $inject('spaceContext');
       spaceContext.space = {
         data: {
@@ -616,8 +610,8 @@ xdescribe('Extension SDK', () => {
                 firstName: 'Dwight',
                 lastName: 'Schrute',
                 email: 'dwight@dundermifflin.com',
-                avatarUrl: 'https://avatar.com/x.jpg'
-              }
+                avatarUrl: 'https://avatar.com/x.jpg',
+              },
             },
             roles: [
               {
@@ -625,9 +619,9 @@ xdescribe('Extension SDK', () => {
                 name: 'Assistant to the regional manager',
                 description: 'Not “Assistant regional manager”',
                 policies: [],
-                permissions: {}
-              }
-            ]
+                permissions: {},
+              },
+            ],
           },
           spaceMember: {
             admin: false,
@@ -638,8 +632,8 @@ xdescribe('Extension SDK', () => {
                 firstName: 'Dwight',
                 lastName: 'Schrute',
                 email: 'dwight@dundermifflin.com',
-                avatarUrl: 'https://avatar.com/x.jpg'
-              }
+                avatarUrl: 'https://avatar.com/x.jpg',
+              },
             },
             roles: [
               {
@@ -647,15 +641,15 @@ xdescribe('Extension SDK', () => {
                 name: 'Assistant to the regional manager',
                 description: 'Not “Assistant regional manager”',
                 policies: [],
-                permissions: {}
-              }
-            ]
-          }
-        }
+                permissions: {},
+              },
+            ],
+          },
+        },
       };
     });
 
-    it('makes user data available', async function(api) {
+    it('makes user data available', async function (api) {
       expect(api.user).toEqual({
         sys: { id: 'b33ts', type: 'User' },
         firstName: 'Dwight',
@@ -668,29 +662,29 @@ xdescribe('Extension SDK', () => {
           roles: [
             {
               name: 'Assistant to the regional manager',
-              description: 'Not “Assistant regional manager”'
-            }
-          ]
-        }
+              description: 'Not “Assistant regional manager”',
+            },
+          ],
+        },
       });
     });
   });
 
   describe('#parameters', () => {
-    it('both installation and instance parmeters default to empty object', async function(api) {
+    it('both installation and instance parmeters default to empty object', async function (api) {
       expect(api.parameters).toEqual({
         installation: {},
-        instance: {}
+        instance: {},
       });
     });
 
-    when('parameter values are provided', function() {
+    when('parameter values are provided', function () {
       this.scope.widget.parameters.instance = { test: true, x: 'y' };
       this.scope.widget.parameters.installation = { flag: true, num: 123 };
-    }).it('exposes them in the API', async function(api) {
+    }).it('exposes them in the API', async function (api) {
       expect(api.parameters).toEqual({
         installation: { flag: true, num: 123 },
-        instance: { test: true, x: 'y' }
+        instance: { test: true, x: 'y' },
       });
     });
   });

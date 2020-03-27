@@ -18,10 +18,10 @@ export const resourceHumanNameMap = {
   record: 'Records',
   api_request: 'API Requests',
   free_space: 'Free Spaces',
-  pending_invitation: 'Pending invitations'
+  pending_invitation: 'Pending invitations',
 };
 
-export const canCreate = resource => !resourceMaximumLimitReached(resource);
+export const canCreate = (resource) => !resourceMaximumLimitReached(resource);
 
 /**
  * Returns an object with entities and their corresponding create status.
@@ -29,9 +29,9 @@ export const canCreate = resource => !resourceMaximumLimitReached(resource);
  *
  * @return {Object}              {entity: true/false}
  */
-export const canCreateResources = resources => {
+export const canCreateResources = (resources) => {
   const allowedToCreate = {};
-  resources.forEach(resource => {
+  resources.forEach((resource) => {
     allowedToCreate[convertToPascalCase(resource.name)] = !resourceMaximumLimitReached(resource);
   });
 
@@ -72,7 +72,7 @@ export function generateMessage(resource) {
 
   return {
     warning,
-    error
+    error,
   };
 }
 
@@ -80,7 +80,7 @@ export function getResourceLimits(resource) {
   if (!resource.parent && !resource.limits) {
     return {
       included: null,
-      maximum: null
+      maximum: null,
     };
   }
 
@@ -125,7 +125,7 @@ export function resourceMaximumLimitReached(resource) {
 function convertToPascalCase(value) {
   return value
     .match(/[a-z]+/gi)
-    .map(function(word) {
+    .map(function (word) {
       return _.upperFirst(word);
     })
     .join('');

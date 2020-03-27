@@ -34,5 +34,5 @@ export {
   RolesListRoute,
   KeyEditorRoute,
   CMATokensRoute,
-  ApiKeyListRoute
+  ApiKeyListRoute,
 };

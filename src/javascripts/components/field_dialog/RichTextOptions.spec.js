@@ -10,7 +10,7 @@ describe('RichTextOptions', () => {
 
   beforeEach(() => {
     props = {
-      onChange: jest.fn()
+      onChange: jest.fn(),
     };
     wrapper = mount(<RichTextOptions {...props} />);
   });
@@ -20,7 +20,7 @@ describe('RichTextOptions', () => {
   });
 
   it('selects all formatting options by default', () => {
-    wrapper.find('[data-test-id="toggle-button-*"]').forEach(opt => {
+    wrapper.find('[data-test-id="toggle-button-*"]').forEach((opt) => {
       expect(opt.prop('isActive')).toBeTruthy();
     });
   });
@@ -29,11 +29,11 @@ describe('RichTextOptions', () => {
     props = {
       ...props,
       enabledNodeTypes: ['ul-list'],
-      enabledMarks: ['code']
+      enabledMarks: ['code'],
     };
     wrapper = mount(<RichTextOptions {...props} />);
 
-    wrapper.find('[data-test-id="toggle-button-*"]').forEach(opt => {
+    wrapper.find('[data-test-id="toggle-button-*"]').forEach((opt) => {
       if (opt.prop('title') === 'ul-list' || opt.prop('title') === 'code') {
         expect(opt.prop('isActive')).toBeTruthy();
       } else {
@@ -43,10 +43,7 @@ describe('RichTextOptions', () => {
   });
 
   it('deselects marks from the default selection', () => {
-    wrapper
-      .find(`[data-test-id="toggle-button-code"]`)
-      .find('button')
-      .simulate('click');
+    wrapper.find(`[data-test-id="toggle-button-code"]`).find('button').simulate('click');
 
     const args = props.onChange.mock.calls[0][0];
 
@@ -55,10 +52,7 @@ describe('RichTextOptions', () => {
   });
 
   it('deselects node types from the default selection', () => {
-    wrapper
-      .find(`[data-test-id="toggle-button-entry-hyperlink"]`)
-      .find('button')
-      .simulate('click');
+    wrapper.find(`[data-test-id="toggle-button-entry-hyperlink"]`).find('button').simulate('click');
     const args = props.onChange.mock.calls[0][0];
 
     expect(args.enabledNodeTypes).not.toContain('entry-hyperlink');
@@ -73,7 +67,7 @@ describe('RichTextOptions', () => {
     wrapper.find(`[data-test-id="toggle-all-link"]`).simulate('click');
     expect(props.onChange).toHaveBeenCalledWith({
       enabledNodeTypes: undefined,
-      enabledMarks: undefined
+      enabledMarks: undefined,
     });
   });
 });

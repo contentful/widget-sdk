@@ -8,19 +8,19 @@ import {
   DropdownList,
   Button,
   Paragraph,
-  TextLink
+  TextLink,
 } from '@contentful/forma-36-react-components';
 
 const styles = {
   revokeDropdown: css({
     padding: tokens.spacingXl,
     width: 350,
-    textAlign: 'center'
+    textAlign: 'center',
   }),
   revokeButton: css({
     margin: tokens.spacingM,
-    marginBottom: 0
-  })
+    marginBottom: 0,
+  }),
 };
 
 const RevokeButton = ({ revoke, token }) => {
@@ -66,7 +66,7 @@ const RevokeButton = ({ revoke, token }) => {
 
 RevokeButton.propTypes = {
   revoke: PropTypes.func.isRequired,
-  token: PropTypes.object.isRequired
+  token: PropTypes.object.isRequired,
 };
 
 export default RevokeButton;

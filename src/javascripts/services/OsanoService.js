@@ -13,7 +13,7 @@ export async function init() {
   const marketingToggles = document.querySelectorAll("input[data-category='MARKETING']");
 
   if (marketingToggles.length > 0) {
-    marketingToggles.forEach(toggle => {
+    marketingToggles.forEach((toggle) => {
       toggle.parentElement.parentElement.style.display = 'none';
     });
   }
@@ -36,7 +36,7 @@ export async function waitForCMInstance(tries = 0) {
 
   // If Osano hasn't loaded yet, try to wait for it to load
   if (!cm) {
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
     return waitForCMInstance(tries + 1);
   }
 }

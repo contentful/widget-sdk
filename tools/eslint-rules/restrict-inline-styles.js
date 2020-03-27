@@ -3,8 +3,8 @@ module.exports = {
     type: 'suggestion',
     docs: {
       description: 'Disallow inline styles in react files',
-      category: 'Best Practices'
-    }
+      category: 'Best Practices',
+    },
   },
   create(context) {
     return {
@@ -19,10 +19,10 @@ module.exports = {
           context.report({
             node,
             message:
-              'Inline styles are disallowed in react components. Please use emotion instead along with @contentful/forma-36-tokens.'
+              'Inline styles are disallowed in react components. Please use emotion instead along with @contentful/forma-36-tokens.',
           });
         }
-      }
+      },
     };
-  }
+  },
 };

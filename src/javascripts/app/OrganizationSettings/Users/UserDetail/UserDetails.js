@@ -28,8 +28,8 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
-    marginBottom: tokens.spacingL
-  })
+    marginBottom: tokens.spacingL,
+  }),
 };
 
 const reducer = createImmerReducer({
@@ -44,13 +44,13 @@ const reducer = createImmerReducer({
   },
   SPACE_MEMBERSHIP_REMOVED: (state, action) => {
     state.spaceMemberships = state.spaceMemberships.filter(
-      membership => membership.sys.space.sys.id !== action.payload.sys.space.sys.id
+      (membership) => membership.sys.space.sys.id !== action.payload.sys.space.sys.id
     );
   },
   SPACE_MEMBERSHIP_UPDATED: (state, action) => {
     const membershipId = action.payload.sys.id;
     const index = state.spaceMemberships.findIndex(
-      membership => membership.sys.id === membershipId
+      (membership) => membership.sys.id === membershipId
     );
     state.spaceMemberships.splice(index, 1, action.payload);
   },
@@ -59,22 +59,22 @@ const reducer = createImmerReducer({
   },
   TEAM_MEMBERSHIP_REMOVED: (state, action) => {
     state.teamMemberships = state.teamMemberships.filter(
-      membership => membership.sys.id !== action.payload.sys.id
+      (membership) => membership.sys.id !== action.payload.sys.id
     );
   },
   ORG_ROLE_CHANGED: (state, action) => {
     state.membership.role = action.payload.role;
     state.membership.sys.version = action.payload.sys.version;
-  }
+  },
 });
 
 const tabs = {
   SPACES: {
-    label: 'Spaces'
+    label: 'Spaces',
   },
   TEAMS: {
-    label: 'Teams'
-  }
+    label: 'Teams',
+  },
 };
 
 export default function UserDetails({
@@ -82,7 +82,7 @@ export default function UserDetails({
   isSelf,
   isOwner,
   orgId,
-  hasTeamsFeature
+  hasTeamsFeature,
 }) {
   const userId = initialMembership.sys.user.sys.id;
 
@@ -92,7 +92,7 @@ export default function UserDetails({
       membership: initialMembership,
       spaceMemberships: [],
       teamMemberships: [],
-      selectedTab: tabs.SPACES
+      selectedTab: tabs.SPACES,
     }
   );
 
@@ -121,24 +121,25 @@ export default function UserDetails({
     updateTeamMemberships();
   }, [updateSpaceMemberships, updateTeamMemberships]);
 
-  const removeFromSpace = spaceMembership => {
+  const removeFromSpace = (spaceMembership) => {
     const repo = createRepoFromSpaceMembership(spaceMembership);
     repo.remove(spaceMembership);
     dispatch({ type: 'SPACE_MEMBERSHIP_REMOVED', payload: spaceMembership });
   };
 
-  const removeFromTeam = async teamMembership => {
+  const removeFromTeam = async (teamMembership) => {
     const endpoint = createOrganizationEndpoint(orgId);
     await removeTeamMembership(endpoint, teamMembership);
     dispatch({ type: 'TEAM_MEMBERSHIP_REMOVED', payload: teamMembership });
   };
 
   const handleSpaceRoleChanged = useCallback(
-    updatedMembership => dispatch({ type: 'SPACE_MEMBERSHIP_UPDATED', payload: updatedMembership }),
+    (updatedMembership) =>
+      dispatch({ type: 'SPACE_MEMBERSHIP_UPDATED', payload: updatedMembership }),
     []
   );
 
-  const editSpaceMembership = spaceMembership => {
+  const editSpaceMembership = (spaceMembership) => {
     ModalLauncher.open(({ isShown, onClose }) => {
       return (
         <EditSpaceMembershipModal
@@ -152,7 +153,7 @@ export default function UserDetails({
   };
 
   const handleAddToSpace = () => {
-    const currentSpaces = spaceMemberships.map(sm => sm.sys.space);
+    const currentSpaces = spaceMemberships.map((sm) => sm.sys.space);
     ModalLauncher.open(({ isShown, onClose }) => {
       return (
         <AddToSpacesModal
@@ -168,7 +169,7 @@ export default function UserDetails({
   };
 
   const handleAddToTeams = () => {
-    const currentTeams = teamMemberships.map(tm => tm.sys.team);
+    const currentTeams = teamMemberships.map((tm) => tm.sys.team);
     ModalLauncher.open(({ isShown, onClose }) => {
       return (
         <AddToTeamsModal
@@ -186,7 +187,7 @@ export default function UserDetails({
 
   const handleBackButtonClicked = () => {
     go({
-      path: ['account', 'organizations', 'users', 'list']
+      path: ['account', 'organizations', 'users', 'list'],
     });
   };
 
@@ -204,12 +205,12 @@ export default function UserDetails({
           isSelf={isSelf}
           isOwner={isOwner}
           orgId={orgId}
-          onRoleChange={membership => dispatch({ type: 'ORG_ROLE_CHANGED', payload: membership })}
+          onRoleChange={(membership) => dispatch({ type: 'ORG_ROLE_CHANGED', payload: membership })}
         />
         <div className={styles.tabs}>
           {hasTeamsFeature && (
             <Tabs>
-              {Object.values(tabs).map(tab => (
+              {Object.values(tabs).map((tab) => (
                 <Tab
                   key={tab.label}
                   id={tab.label}
@@ -260,7 +261,7 @@ UserDetails.propTypes = {
   orgId: PropTypes.string.isRequired,
   isSelf: PropTypes.bool.isRequired,
   isOwner: PropTypes.bool.isRequired,
-  hasTeamsFeature: PropTypes.bool.isRequired
+  hasTeamsFeature: PropTypes.bool.isRequired,
 };
 
 function createRepoFromSpaceMembership(membership) {
@@ -275,7 +276,7 @@ function getAllUserSpaceMemberships(userId, orgId) {
   return fetchAndResolve(
     getSpaceMemberships(endpoint, {
       'sys.user.sys.id': userId,
-      include: includePaths.join()
+      include: includePaths.join(),
     }),
     includePaths
   );
@@ -289,7 +290,7 @@ function getAllUserTeamMemberships(membershipId, orgId, hasTeamsFeature) {
     return fetchAndResolve(
       getAllTeamMemberships(endpoint, {
         include: includePaths,
-        'sys.organizationMembership.sys.id': membershipId
+        'sys.organizationMembership.sys.id': membershipId,
       }),
       includePaths
     );

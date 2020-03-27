@@ -1,5 +1,5 @@
 describe('ResourceUtils', () => {
-  beforeEach(async function() {
+  beforeEach(async function () {
     function createResource(type, limits, usage) {
       const { maximum, included } = limits;
 
@@ -9,12 +9,12 @@ describe('ResourceUtils', () => {
         usage,
         limits: {
           included,
-          maximum
+          maximum,
         },
         sys: {
           id: type,
-          type: 'SpaceResource'
-        }
+          type: 'SpaceResource',
+        },
       };
     }
 
@@ -23,94 +23,94 @@ describe('ResourceUtils', () => {
         notReachedAnyLimit: createResource('entry', { maximum: 10, included: 5 }, 2),
         reachedIncludedLimit: createResource('entry', { maximum: 10, included: 5 }, 7),
         reachedMaxLimit: createResource('entry', { maximum: 10, included: 5 }, 10),
-        overMaxLimit: createResource('entry', { maximum: 10, included: 5 }, 15)
+        overMaxLimit: createResource('entry', { maximum: 10, included: 5 }, 15),
       },
       contentTypes: {
         notReachedAnyLimit: createResource('content_type', { maximum: 20, included: 10 }, 2),
         reachedIncludedLimit: createResource('content_type', { maximum: 20, included: 10 }, 15),
         reachedMaxLimit: createResource('content_type', { maximum: 20, included: 10 }, 20),
-        overMaxLimit: createResource('content_type', { maximum: 20, included: 10 }, 25)
+        overMaxLimit: createResource('content_type', { maximum: 20, included: 10 }, 25),
       },
       assets: {
-        reachedMaxLimit: createResource('asset', { maximum: 10, included: 5 }, 10)
+        reachedMaxLimit: createResource('asset', { maximum: 10, included: 5 }, 10),
       },
       record: {
-        reachedMaxLimit: createResource('record', { maximum: 10, included: 5 }, 10)
+        reachedMaxLimit: createResource('record', { maximum: 10, included: 5 }, 10),
       },
-      apiKeys: createResource('locale', { maximum: null, included: null }, 2)
+      apiKeys: createResource('locale', { maximum: null, included: null }, 2),
     };
 
     this.multipleResources = [
       this.resources.entries.notReachedAnyLimit,
       this.resources.assets.reachedMaxLimit,
       this.resources.contentTypes.notReachedAnyLimit,
-      this.resources.record.reachedMaxLimit
+      this.resources.record.reachedMaxLimit,
     ];
 
     this.storeResources = {
       space_1234: {
         record: {
           isPending: false,
-          resource: createResource('record', { maximum: 10, included: 5 }, 2)
-        }
-      }
+          resource: createResource('record', { maximum: 10, included: 5 }, 2),
+        },
+      },
     };
 
     this.pricingVersions = {
       pricingVersion1: 'pricing_version_1',
-      pricingVersion2: 'pricing_version_2'
+      pricingVersion2: 'pricing_version_2',
     };
 
     this.organization = {
       subscriptionPlan: {
         limits: {
           permanent: {},
-          period: {}
-        }
+          period: {},
+        },
       },
       usage: {
         permanent: {},
-        period: {}
+        period: {},
       },
-      pricingVersion: this.pricingVersions.pricingVersion2
+      pricingVersion: this.pricingVersions.pricingVersion2,
     };
 
     this.ResourceUtils = await this.system.import('utils/ResourceUtils');
   });
 
   describe('#canCreate', () => {
-    it('should return true if the maximum limit is not reached', function() {
+    it('should return true if the maximum limit is not reached', function () {
       expect(this.ResourceUtils.canCreate(this.resources.entries.notReachedAnyLimit)).toBe(true);
       expect(this.ResourceUtils.canCreate(this.resources.entries.reachedIncludedLimit)).toBe(true);
     });
 
-    it('should return false if the maximum limit is reached', function() {
+    it('should return false if the maximum limit is reached', function () {
       expect(this.ResourceUtils.canCreate(this.resources.entries.reachedMaxLimit)).toBe(false);
     });
 
-    it('should return false if you go over the max limit', function() {
+    it('should return false if you go over the max limit', function () {
       expect(this.ResourceUtils.canCreate(this.resources.entries.overMaxLimit)).toBe(false);
     });
 
-    it('should return true if you inquire about a resource without a max limit', function() {
+    it('should return true if you inquire about a resource without a max limit', function () {
       expect(this.ResourceUtils.canCreate(this.resources.apiKeys)).toBe(true);
     });
   });
 
   describe('#canCreateResources', () => {
-    it('should return an object with appropriate entity type and boolean value', function() {
+    it('should return an object with appropriate entity type and boolean value', function () {
       expect(this.ResourceUtils.canCreateResources(this.multipleResources)).toEqual({
         Entry: false,
         ContentType: true,
         Asset: false,
-        Record: false
+        Record: false,
       });
     });
   });
 
   describe('#generateMessage', () => {
-    it('should always return an object with warning and error keys when given a resource', function() {
-      Object.keys(this.resources.entries).forEach(i => {
+    it('should always return an object with warning and error keys when given a resource', function () {
+      Object.keys(this.resources.entries).forEach((i) => {
         const resource = this.resources.entries[i];
         const message = this.ResourceUtils.generateMessage(resource);
 
@@ -123,14 +123,14 @@ describe('ResourceUtils', () => {
       expect(message.error).toBeDefined();
     });
 
-    it('should return no warning or error if you have not reached any limit', function() {
+    it('should return no warning or error if you have not reached any limit', function () {
       const message = this.ResourceUtils.generateMessage(this.resources.entries.notReachedAnyLimit);
 
       expect(message.warning).toBe('');
       expect(message.error).toBe('');
     });
 
-    it('should return a warning about nearing your limit if the included limit is reached', function() {
+    it('should return a warning about nearing your limit if the included limit is reached', function () {
       const message = this.ResourceUtils.generateMessage(
         this.resources.entries.reachedIncludedLimit
       );
@@ -139,21 +139,21 @@ describe('ResourceUtils', () => {
       expect(message.error).toBe('');
     });
 
-    it('should return an error if you reach your maximum limit', function() {
+    it('should return an error if you reach your maximum limit', function () {
       const message = this.ResourceUtils.generateMessage(this.resources.entries.reachedMaxLimit);
 
       expect(message.warning).toBe('');
       expect(message.error).toBe('You have exceeded your Entries usage.');
     });
 
-    it('should return an error if you, somehow, go over your maximum limit', function() {
+    it('should return an error if you, somehow, go over your maximum limit', function () {
       const message = this.ResourceUtils.generateMessage(this.resources.entries.overMaxLimit);
 
       expect(message.warning).toBe('');
       expect(message.error).toBe('You have exceeded your Entries usage.');
     });
 
-    it('should provide a human readable warning or error for a name with spaces', function() {
+    it('should provide a human readable warning or error for a name with spaces', function () {
       let message;
 
       message = this.ResourceUtils.generateMessage(
@@ -171,7 +171,7 @@ describe('ResourceUtils', () => {
   });
 
   describe('#getResourceLimits', () => {
-    it('returns an object with the included and maximum limits given a resource', function() {
+    it('returns an object with the included and maximum limits given a resource', function () {
       const limits = this.ResourceUtils.getResourceLimits(
         this.resources.entries.notReachedAnyLimit
       );
@@ -180,7 +180,7 @@ describe('ResourceUtils', () => {
       expect(limits.maximum).toBeDefined();
     });
 
-    it('returns the included and maximum limits from the resource', function() {
+    it('returns the included and maximum limits from the resource', function () {
       const limits = this.ResourceUtils.getResourceLimits(
         this.resources.entries.reachedIncludedLimit
       );
@@ -189,7 +189,7 @@ describe('ResourceUtils', () => {
       expect(limits.maximum).toBe(10);
     });
 
-    it('returns the parent limits if the child limits are not defined', function() {
+    it('returns the parent limits if the child limits are not defined', function () {
       const resource = {
         name: 'Entries',
         kind: 'permanent',
@@ -201,13 +201,13 @@ describe('ResourceUtils', () => {
           usage: 20,
           limits: {
             included: 500,
-            maximum: 1000
-          }
+            maximum: 1000,
+          },
         },
         sys: {
           id: 'entries',
-          type: 'SpaceResource'
-        }
+          type: 'SpaceResource',
+        },
       };
 
       const limits = this.ResourceUtils.getResourceLimits(resource);
@@ -216,12 +216,12 @@ describe('ResourceUtils', () => {
       expect(limits.maximum).toBe(1000);
     });
 
-    it('returns a limits object even given a resource with a null limits key', function() {
+    it('returns a limits object even given a resource with a null limits key', function () {
       const resource = {
         name: 'Foo Resource',
         kind: 'permanent',
         usage: 7,
-        limits: null
+        limits: null,
       };
 
       const limits = this.ResourceUtils.getResourceLimits(resource);
@@ -231,43 +231,43 @@ describe('ResourceUtils', () => {
   });
 
   describe('#isLegacyOrganization', () => {
-    it('should return true if the organization uses pricing version 1', function() {
+    it('should return true if the organization uses pricing version 1', function () {
       const organization = {
         pricingVersion: 'pricing_version_1',
         sys: {
-          id: 'legacy_org'
-        }
+          id: 'legacy_org',
+        },
       };
 
       expect(this.ResourceUtils.isLegacyOrganization(organization)).toBe(true);
     });
 
-    it('should return false if the organization uses pricing version 2', function() {
+    it('should return false if the organization uses pricing version 2', function () {
       const organization = {
         pricingVersion: 'pricing_version_2',
         sys: {
-          id: 'legacy_org'
-        }
+          id: 'legacy_org',
+        },
       };
 
       expect(this.ResourceUtils.isLegacyOrganization(organization)).toBe(false);
     });
   });
 
-  describe('#getStoreResource', function() {
-    it('should return the store resource object if it exists', function() {
+  describe('#getStoreResource', function () {
+    it('should return the store resource object if it exists', function () {
       expect(
         this.ResourceUtils.getStoreResource(this.storeResources, 'space_1234', 'record')
       ).toEqual(this.storeResources.space_1234.record);
     });
 
-    it('should return null if the resource does not exist for the space', function() {
+    it('should return null if the resource does not exist for the space', function () {
       expect(
         this.ResourceUtils.getStoreResource(this.storeResources, 'space_1234', 'content_type')
       ).toBe(null);
     });
 
-    it('should return null if the space does not have any resources in the store', function() {
+    it('should return null if the space does not have any resources in the store', function () {
       expect(this.ResourceUtils.getStoreResource(this.storeResources, 'space_5678', 'record')).toBe(
         null
       );

@@ -1,11 +1,11 @@
 import { $initialize, $inject } from 'test/utils/ng';
 
 describe('cfNullEmptyInput directive', () => {
-  beforeEach(async function() {
+  beforeEach(async function () {
     await $initialize(this.system);
   });
 
-  it('empty string sets model value to null', function() {
+  it('empty string sets model value to null', function () {
     const $compile = $inject('$compile');
     const scope = $inject('$rootScope').$new();
 

@@ -10,7 +10,7 @@ import {
   getUser,
   getAllRoles,
   getSpaceMemberships,
-  getAllSpaces
+  getAllSpaces,
 } from 'access_control/OrganizationMembershipRepository';
 import { map, flatten } from 'lodash';
 import ResolveLinks from 'data/LinkResolver';
@@ -35,14 +35,14 @@ const InvitationDetailFetcher = createFetcherComponent(async ({ orgId, invitatio
     const [inviter, spaces, roles] = await Promise.all([
       getUser(endpoint, invitation.sys.inviter.sys.id),
       getAllSpaces(endpoint),
-      getAllRoles(endpoint, { 'sys.id[in]': roleIds.join(',') })
+      getAllRoles(endpoint, { 'sys.id[in]': roleIds.join(',') }),
     ]);
 
     invitation.sys.inviter = inviter;
-    invitation.spaceInvitations = invitation.spaceInvitations.map(spaceInv => {
-      spaceInv.roles = roles.filter(role => spaceInv.roleIds.includes(role.sys.id));
+    invitation.spaceInvitations = invitation.spaceInvitations.map((spaceInv) => {
+      spaceInv.roles = roles.filter((role) => spaceInv.roleIds.includes(role.sys.id));
 
-      const space = spaces.find(space => space.sys.id === spaceInv.sys.space.sys.id);
+      const space = spaces.find((space) => space.sys.id === spaceInv.sys.space.sys.id);
 
       if (space) {
         spaceInv.sys.space = space;
@@ -57,8 +57,8 @@ const InvitationDetailFetcher = createFetcherComponent(async ({ orgId, invitatio
       getUser(endpoint, membership.sys.createdBy.sys.id),
       getSpaceMemberships(endpoint, {
         'sys.user.sys.id': membership.sys.user.sys.id,
-        include: includePaths.join(',')
-      }).then(({ items, includes }) => ResolveLinks({ paths: includePaths, items, includes }))
+        include: includePaths.join(','),
+      }).then(({ items, includes }) => ResolveLinks({ paths: includePaths, items, includes })),
     ]);
 
     membership.user = user;
@@ -74,7 +74,7 @@ export default class UserInvitationsListRouter extends React.Component {
   static propTypes = {
     orgId: PropTypes.string.isRequired,
     invitationId: PropTypes.string.isRequired,
-    context: PropTypes.any
+    context: PropTypes.any,
   };
 
   render() {
@@ -100,7 +100,7 @@ export default class UserInvitationsListRouter extends React.Component {
                 email,
                 role,
                 spaceInvitations,
-                sys: { inviter, createdAt, id }
+                sys: { inviter, createdAt, id },
               } = invitation;
               componentProps = {
                 email,
@@ -109,14 +109,14 @@ export default class UserInvitationsListRouter extends React.Component {
                 inviter,
                 invitedAt: createdAt,
                 id,
-                type: 'invitation'
+                type: 'invitation',
               };
             } else if (membership) {
               const {
                 user: { email },
                 role,
                 spaceMemberships,
-                sys: { createdBy, createdAt, id }
+                sys: { createdBy, createdAt, id },
               } = membership;
               componentProps = {
                 email,
@@ -125,7 +125,7 @@ export default class UserInvitationsListRouter extends React.Component {
                 inviter: createdBy,
                 invitedAt: createdAt,
                 id,
-                type: 'organizationMembership'
+                type: 'organizationMembership',
               };
             }
 

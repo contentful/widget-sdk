@@ -6,7 +6,7 @@ class StateRedirect extends React.Component {
   static propTypes = {
     path: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]).isRequired,
     params: PropTypes.object,
-    options: PropTypes.object
+    options: PropTypes.object,
   };
 
   componentDidMount() {

@@ -9,7 +9,7 @@ export function getField(state, fieldName) {
 
   return get(fields, fieldName, {
     name: fieldName,
-    value: null
+    value: null,
   });
 }
 

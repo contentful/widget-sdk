@@ -27,7 +27,7 @@ class SpacePlanSelector extends React.Component {
     selectPlan: PropTypes.func.isRequired,
     spacePlans: PropTypes.object.isRequired,
     resources: PropTypes.object.isRequired,
-    selectedPlan: PropTypes.object
+    selectedPlan: PropTypes.object,
   };
 
   componentDidMount() {
@@ -38,7 +38,7 @@ class SpacePlanSelector extends React.Component {
       space,
       action,
       wizardScope,
-      reposition
+      reposition,
     } = this.props;
     const spaceId = space && space.sys.id;
 
@@ -57,7 +57,7 @@ class SpacePlanSelector extends React.Component {
       wizardScope,
       spacePlans,
       selectedPlan,
-      resources: resourcesMeta
+      resources: resourcesMeta,
     } = this.props;
     const { spaceRatePlans, freeSpacesResource, isPending } = spacePlans;
 
@@ -72,7 +72,7 @@ class SpacePlanSelector extends React.Component {
     const atHighestPlan =
       highestPlan &&
       highestPlan.unavailabilityReasons &&
-      highestPlan.unavailabilityReasons.find(reason => reason.type === 'currentPlan');
+      highestPlan.unavailabilityReasons.find((reason) => reason.type === 'currentPlan');
     const payingOrg = organization.isBillable;
 
     return (
@@ -107,7 +107,7 @@ class SpacePlanSelector extends React.Component {
                   <br />
                 </p>
                 <div className="space-plans-list">
-                  {spaceRatePlans.map(plan => (
+                  {spaceRatePlans.map((plan) => (
                     <SpacePlanItem
                       key={plan.sys.id}
                       plan={plan}
@@ -127,7 +127,7 @@ class SpacePlanSelector extends React.Component {
                   <em>{organization.name}</em>.<br />
                 </p>
                 <div className="space-plans-list">
-                  {spaceRatePlans.map(plan => (
+                  {spaceRatePlans.map((plan) => (
                     <SpacePlanItem
                       key={plan.sys.id}
                       plan={plan}
@@ -156,7 +156,7 @@ class SpacePlanSelector extends React.Component {
   selectPlan = (currentPlan, recommendedPlan) => {
     const { selectPlan, track, onSubmit } = this.props;
 
-    return selectedPlan => {
+    return (selectedPlan) => {
       selectPlan(currentPlan, selectedPlan);
       track('select_plan', { currentPlan, selectedPlan, recommendedPlan });
       onSubmit && onSubmit();
@@ -169,7 +169,7 @@ class SpacePlanSelector extends React.Component {
     go({
       path: ['account', 'organizations', 'subscription_billing'],
       params: { orgId, pathSuffix: '/billing_address' },
-      options: { reload: true }
+      options: { reload: true },
     });
     track('link_click');
     onCancel();
@@ -177,10 +177,10 @@ class SpacePlanSelector extends React.Component {
 }
 
 function getCurrentPlan(spaceRatePlans) {
-  return spaceRatePlans.find(plan => {
+  return spaceRatePlans.find((plan) => {
     return (
       plan.unavailabilityReasons &&
-      plan.unavailabilityReasons.find(reason => reason.type === 'currentPlan')
+      plan.unavailabilityReasons.find((reason) => reason.type === 'currentPlan')
     );
   });
 }

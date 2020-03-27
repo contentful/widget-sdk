@@ -10,7 +10,7 @@ import {
   Notification,
   ModalConfirm,
   Heading,
-  Paragraph
+  Paragraph,
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
@@ -24,8 +24,8 @@ import * as Analytics from 'analytics/Analytics';
 
 const styles = {
   removeButton: css({
-    marginRight: tokens.spacingM
-  })
+    marginRight: tokens.spacingM,
+  }),
 };
 
 export default class ContentPreviewFormPage extends Component {
@@ -44,10 +44,10 @@ export default class ContentPreviewFormPage extends Component {
           enabled: PropTypes.bool.isRequired,
           name: PropTypes.string.isRequired,
           url: PropTypes.string.isRequired,
-          contentTypeFields: PropTypes.arrayOf(PropTypes.object).isRequired
+          contentTypeFields: PropTypes.arrayOf(PropTypes.object).isRequired,
         }).isRequired
-      ).isRequired
-    })
+      ).isRequired,
+    }),
   };
 
   constructor(props) {
@@ -58,11 +58,11 @@ export default class ContentPreviewFormPage extends Component {
         name: '',
         description: '',
         configs: [],
-        ...props.initialValue
+        ...props.initialValue,
       },
       errors: {},
       busy: false,
-      dirty: false
+      dirty: false,
     };
   }
 
@@ -75,24 +75,24 @@ export default class ContentPreviewFormPage extends Component {
     const errors = validate(this.state.preview.name, this.state.preview.configs);
 
     if (errors.length > 0) {
-      this.setState(state => {
+      this.setState((state) => {
         let newState = { ...state };
-        errors.forEach(item => {
+        errors.forEach((item) => {
           if (item.type === 'contentType') {
             newState = {
               ...newState,
               errors: {
                 ...newState.errors,
-                [`config-${item.contentType}`]: item.error
-              }
+                [`config-${item.contentType}`]: item.error,
+              },
             };
           } else if (item.type === 'name') {
             newState = {
               ...newState,
               errors: {
                 ...newState.errors,
-                name: item.error
-              }
+                name: item.error,
+              },
             };
           }
         });
@@ -126,14 +126,14 @@ export default class ContentPreviewFormPage extends Component {
     this.setState({ busy: true });
     return getContentPreview()
       .remove({
-        id: this.state.preview.id
+        id: this.state.preview.id,
       })
       .then(() => {
         Notification.success('Content preview was deleted successfully');
         this.props.setDirty(false);
         Analytics.track('content_preview:deleted', {
           name: this.state.preview.name,
-          sys: { id: this.state.preview.id }
+          sys: { id: this.state.preview.id },
         });
         Navigator.go({ path: '^.list' });
       })
@@ -153,7 +153,7 @@ export default class ContentPreviewFormPage extends Component {
     this.setState({ busy: true });
     const contentPreview = getContentPreview();
     return contentPreview[action](this.state.preview).then(
-      env => {
+      (env) => {
         this.updateField('version', env.sys.version);
 
         Notification.success('Content preview "' + env.name + '" saved successfully');
@@ -165,12 +165,12 @@ export default class ContentPreviewFormPage extends Component {
           Analytics.track('content_preview:created', {
             envName: env.name,
             envId: env.sys.id,
-            isDiscoveryApp: false
+            isDiscoveryApp: false,
           });
         } else {
           Analytics.track('content_preview:updated', {
             envName: env.name,
-            envId: env.sys.id
+            envId: env.sys.id,
           });
         }
 
@@ -179,11 +179,11 @@ export default class ContentPreviewFormPage extends Component {
           Navigator.go({
             path: '^.detail',
             params: { contentPreviewId: env.sys.id },
-            options: { reload: true }
+            options: { reload: true },
           });
         }
       },
-      err => {
+      (err) => {
         this.setState({ busy: false });
         const defaultMessage = 'Could not save Preview Environment';
         const serverMessage = _.first(_.split(_.get(err, 'body.message'), '\n'));
@@ -194,21 +194,21 @@ export default class ContentPreviewFormPage extends Component {
 
   updateConfig = (contentType, field, value) => {
     this.setState(
-      state => {
+      (state) => {
         return {
           dirty: true,
           preview: {
             ...state.preview,
-            configs: state.preview.configs.map(config => {
+            configs: state.preview.configs.map((config) => {
               if (config.contentType !== contentType) {
                 return config;
               }
               return {
                 ...config,
-                [field]: value
+                [field]: value,
               };
-            })
-          }
+            }),
+          },
         };
       },
       () => {
@@ -219,13 +219,13 @@ export default class ContentPreviewFormPage extends Component {
 
   updateField = (field, value) => {
     this.setState(
-      state => ({
+      (state) => ({
         ...state,
         dirty: true,
         preview: {
           ...state.preview,
-          [field]: value
-        }
+          [field]: value,
+        },
       }),
       () => {
         this.props.setDirty(true);
@@ -234,12 +234,12 @@ export default class ContentPreviewFormPage extends Component {
   };
 
   updateError = (field, value) => {
-    this.setState(state => ({
+    this.setState((state) => ({
       ...state,
       errors: {
         ...state.errors,
-        [field]: value
-      }
+        [field]: value,
+      },
     }));
   };
 
@@ -281,7 +281,7 @@ export default class ContentPreviewFormPage extends Component {
             testId="preview-name-field"
             value={this.state.preview.name}
             validationMessage={this.state.errors.name}
-            onChange={e => {
+            onChange={(e) => {
               this.updateField('name', e.target.value);
               this.updateError('name', '');
             }}
@@ -294,7 +294,7 @@ export default class ContentPreviewFormPage extends Component {
             testId="preview-description-field"
             value={this.state.preview.description}
             validationMessage={this.state.errors.description}
-            onChange={e => {
+            onChange={(e) => {
               this.updateField('description', e.target.value);
               this.updateError('description', '');
             }}
@@ -309,7 +309,7 @@ export default class ContentPreviewFormPage extends Component {
             your entries.
           </Paragraph>
           <FieldGroup data-test-id="config-group">
-            {this.state.preview.configs.map(config => {
+            {this.state.preview.configs.map((config) => {
               const placeholder = `Preview URL for content type '${
                 config.name
               }'. E.g. http://www.yourwebsite.com/${slugify(
@@ -323,7 +323,7 @@ export default class ContentPreviewFormPage extends Component {
                     id={`${config.contentType}-checkbox`}
                     name={`${config.contentType}-checkbox`}
                     checked={config.enabled}
-                    onChange={e => {
+                    onChange={(e) => {
                       this.updateConfig(config.contentType, 'enabled', e.target.checked);
                       this.updateError(config.contentType, '');
                     }}
@@ -335,11 +335,11 @@ export default class ContentPreviewFormPage extends Component {
                       testId={`${config.contentType}-value`}
                       labelText=""
                       textInputProps={{
-                        placeholder
+                        placeholder,
                       }}
                       value={config.url}
                       validationMessage={this.state.errors[`config-${config.contentType}`]}
-                      onChange={e => {
+                      onChange={(e) => {
                         this.updateConfig(config.contentType, 'url', e.target.value);
                         this.updateError(`config-${config.contentType}`, '');
                       }}

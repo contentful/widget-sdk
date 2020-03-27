@@ -22,7 +22,7 @@ export function create(auth) {
   function revoke(id) {
     return request({
       method: 'PUT',
-      path: [id, 'revoked']
+      path: [id, 'revoked'],
     });
   }
 
@@ -30,7 +30,7 @@ export function create(auth) {
     return request({
       method: 'GET',
       path: [],
-      query
+      query,
     });
   }
 
@@ -40,8 +40,8 @@ export function create(auth) {
       path: [],
       data: {
         name,
-        scopes: ['content_management_manage']
-      }
+        scopes: ['content_management_manage'],
+      },
     });
   }
 }

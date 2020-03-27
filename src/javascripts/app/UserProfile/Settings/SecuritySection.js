@@ -8,7 +8,7 @@ import {
   TextLink,
   Typography,
   Notification,
-  ModalConfirm
+  ModalConfirm,
 } from '@contentful/forma-36-react-components';
 import { authUrl } from 'Config';
 import $window from 'utils/ngCompat/window';
@@ -25,7 +25,7 @@ const goToResendEmailPage = () => {
   $window.location = authUrl('/confirmation/new/resend');
 };
 
-const openEnable2FAModal = async onEnable2FA => {
+const openEnable2FAModal = async (onEnable2FA) => {
   let totpData;
   const uniqueModalKey = Date.now();
 
@@ -55,7 +55,7 @@ const openEnable2FAModal = async onEnable2FA => {
   onEnable2FA();
 };
 
-const openDisable2FAModal = async onDisable2FA => {
+const openDisable2FAModal = async (onDisable2FA) => {
   const result = await ModalLauncher.open(({ isShown, onClose }) => {
     return (
       <ModalConfirm
@@ -127,7 +127,7 @@ export default function SecuritySection({ user, onAddPassword, onEnable2FA, onDi
     passwordSet,
     confirmed: confirmedEmail,
     mfaEligible: eligible,
-    mfaEnabled: enabled
+    mfaEnabled: enabled,
   } = user;
 
   const reasons = [];
@@ -201,5 +201,5 @@ SecuritySection.propTypes = {
   onAddPassword: PropTypes.func.isRequired,
   onEnable2FA: PropTypes.func.isRequired,
   user: UserPropType.isRequired,
-  onDisable2FA: PropTypes.func.isRequired
+  onDisable2FA: PropTypes.func.isRequired,
 };

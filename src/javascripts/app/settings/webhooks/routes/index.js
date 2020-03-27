@@ -2,7 +2,7 @@ import React from 'react';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
 import {
   WebhooksListLoadingSkeleton,
-  WebhookLoadingSkeleton
+  WebhookLoadingSkeleton,
 } from '../skeletons/WebhookListRouteSkeleton';
 import LazyLoadedComponent from 'app/common/LazyLoadedComponent';
 import { SettingsImporter } from 'app/settings/SettingsImporter';
@@ -13,16 +13,16 @@ const mapInjectedToEditorProps = [
   ($scope, { webhookId }) => {
     return {
       webhookId,
-      registerSaveAction: save => {
+      registerSaveAction: (save) => {
         $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(save);
         $scope.$applyAsync();
       },
-      setDirty: value => {
+      setDirty: (value) => {
         $scope.context.dirty = value;
         $scope.$applyAsync();
-      }
+      },
     };
-  }
+  },
 ];
 
 export default {
@@ -35,9 +35,9 @@ export default {
       url: '',
       params: {
         templateId: null,
-        referrer: null
+        referrer: null,
       },
-      component: props => (
+      component: (props) => (
         <LazyLoadedComponent fallback={WebhooksListLoadingSkeleton} importer={SettingsImporter}>
           {({ WebhookListRoute }) => {
             return <WebhookListRoute {...props} />;
@@ -46,30 +46,30 @@ export default {
       ),
       mapInjectedToProps: [
         '$stateParams',
-        $stateParams => {
+        ($stateParams) => {
           return {
             templateId: $stateParams.templateId || null,
-            templateIdReferrer: $stateParams.referrer || null
+            templateIdReferrer: $stateParams.referrer || null,
           };
-        }
-      ]
+        },
+      ],
     },
     {
       name: 'new',
       url: '/new',
-      component: props => (
+      component: (props) => (
         <LazyLoadedComponent fallback={WebhookLoadingSkeleton} importer={SettingsImporter}>
           {({ WebhookNewRoute }) => {
             return <WebhookNewRoute {...props} />;
           }}
         </LazyLoadedComponent>
       ),
-      mapInjectedToProps: mapInjectedToEditorProps
+      mapInjectedToProps: mapInjectedToEditorProps,
     },
     {
       name: 'detail',
       url: '/:webhookId',
-      component: props => (
+      component: (props) => (
         <LazyLoadedComponent fallback={WebhookLoadingSkeleton} importer={SettingsImporter}>
           {({ WebhookEditRoute }) => {
             return <WebhookEditRoute {...props} />;
@@ -81,7 +81,7 @@ export default {
         {
           name: 'call',
           url: '/call/:callId',
-          component: props => (
+          component: (props) => (
             <LazyLoadedComponent fallback={WebhookLoadingSkeleton} importer={SettingsImporter}>
               {({ WebhookCallRoute }) => {
                 return <WebhookCallRoute {...props} />;
@@ -97,12 +97,12 @@ export default {
                 callId,
                 onGoBack: () => {
                   $state.go('^');
-                }
+                },
               };
-            }
-          ]
-        }
-      ]
-    }
-  ]
+            },
+          ],
+        },
+      ],
+    },
+  ],
 };

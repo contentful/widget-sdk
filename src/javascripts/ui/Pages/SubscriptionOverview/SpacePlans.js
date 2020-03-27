@@ -10,7 +10,7 @@ import {
   TableHead,
   TableRow,
   TableCell,
-  TableBody
+  TableBody,
 } from '@contentful/forma-36-react-components';
 
 import { calculatePlansCost } from 'utils/SubscriptionUtils';
@@ -23,20 +23,20 @@ import SpacePlanRow from './SpacePlanRow';
 
 const styles = {
   total: css({
-    marginBottom: '1.5em'
+    marginBottom: '1.5em',
   }),
   nameCell: css({
-    width: '33%'
+    width: '33%',
   }),
   typeCell: css({
-    width: '20%'
+    width: '20%',
   }),
   createdByCell: css({
-    width: '25%'
+    width: '25%',
   }),
   createdOnCell: css({
-    width: '15%'
-  })
+    width: '15%',
+  }),
 };
 
 function SpacePlans({
@@ -46,7 +46,7 @@ function SpacePlans({
   onCreateSpace,
   onChangeSpace,
   onDeleteSpace,
-  isOrgOwner
+  isOrgOwner,
 }) {
   const numSpaces = spacePlans.length;
   const hasSpacePlans = numSpaces > 0;
@@ -92,7 +92,7 @@ function SpacePlans({
             </TableRow>
           </TableHead>
           <TableBody>
-            {spacePlans.map(plan => {
+            {spacePlans.map((plan) => {
               const isUpgraded = Boolean(plan.space && plan.space.sys.id === upgradedSpace);
               return (
                 <SpacePlanRow
@@ -120,7 +120,7 @@ SpacePlans.propTypes = {
   onChangeSpace: PropTypes.func.isRequired,
   onDeleteSpace: PropTypes.func.isRequired,
   isOrgOwner: PropTypes.bool.isRequired,
-  upgradedSpace: PropTypes.string
+  upgradedSpace: PropTypes.string,
 };
 
 export default SpacePlans;

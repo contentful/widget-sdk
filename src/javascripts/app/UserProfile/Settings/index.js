@@ -23,14 +23,14 @@ const styles = {
   content: css({
     height: '100%',
     '> div': {
-      height: '100%'
-    }
+      height: '100%',
+    },
   }),
   section: css({
     maxWidth: '768px',
     margin: `${tokens.spacingL} auto`,
-    padding: tokens.spacingXl
-  })
+    padding: tokens.spacingXl,
+  }),
 };
 
 export default function IndexPage() {

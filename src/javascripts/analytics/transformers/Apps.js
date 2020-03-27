@@ -8,8 +8,8 @@ export const AppLifecycleEventTransformer = addUserOrgSpace((_, data) => {
       // for its own operation.
       contentful_event_id: data.eventId,
       contentful_app_id: data.appId,
-      app_event_name: data.eventName
-    }
+      app_event_name: data.eventName,
+    },
   };
 });
 
@@ -20,7 +20,7 @@ export const AppUninstallationReasonTransformer = addUserOrgSpace((_, data) => {
       contentful_event_id: data.eventId,
       contentful_app_id: data.appId,
       custom: data.custom,
-      reason: data.reason
-    }
+      reason: data.reason,
+    },
   };
 });

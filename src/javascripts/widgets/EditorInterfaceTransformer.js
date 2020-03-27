@@ -6,16 +6,16 @@ import { create as createBuiltinWidgetList } from './BuiltinWidgets';
 
 const NAMESPACES = [NAMESPACE_BUILTIN, NAMESPACE_EXTENSION, NAMESPACE_APP];
 
-const isNonEmptyString = s => typeof s === 'string' && s.length > 0;
+const isNonEmptyString = (s) => typeof s === 'string' && s.length > 0;
 
 // Given a content type and its existing controls return
 // synced controls as described in code comments below.
 export function syncControls(ct, controls) {
   // Controls are ordered as the content type fields are.
-  return (ct.fields || []).map(field => {
+  return (ct.fields || []).map((field) => {
     // Find an existing control for a field.
     const fieldId = field.apiName || field.id;
-    const existingControl = (controls || []).find(c => c.fieldId === fieldId);
+    const existingControl = (controls || []).find((c) => c.fieldId === fieldId);
 
     // If found, use it. If not, create a default for the field type.
     const control = existingControl ? cloneDeep(existingControl) : makeDefaultControl(ct, field);
@@ -53,7 +53,7 @@ function determineNamespace({ widgetNamespace, widgetId }) {
   const builtinWidgetIds = createBuiltinWidgetList().map(({ id }) => id);
   const deprecatedBuiltinWidgetIds = WIDGET_MIGRATIONS.map(({ from }) => from);
   const allBuiltinWidgetIds = [...builtinWidgetIds, ...deprecatedBuiltinWidgetIds];
-  const isBuiltinWidget = !!allBuiltinWidgetIds.find(id => id === widgetId);
+  const isBuiltinWidget = !!allBuiltinWidgetIds.find((id) => id === widgetId);
 
   return isBuiltinWidget ? NAMESPACE_BUILTIN : NAMESPACE_EXTENSION;
 }
@@ -65,7 +65,7 @@ export function fromAPI(ct, ei) {
     sys: makeSys(ct, ei),
     controls: syncControls(ct, ei.controls),
     sidebar: ei.sidebar,
-    editor: ei.editor
+    editor: ei.editor,
   };
 }
 
@@ -74,9 +74,9 @@ export function fromAPI(ct, ei) {
 export function toAPI(ct, ei) {
   return {
     sys: makeSys(ct, ei),
-    controls: syncControls(ct, ei.controls).map(c => prepareAPIControl(c)),
+    controls: syncControls(ct, ei.controls).map((c) => prepareAPIControl(c)),
     sidebar: ei.sidebar,
-    editor: ei.editor
+    editor: ei.editor,
   };
 }
 
@@ -89,9 +89,9 @@ function makeSys(ct, ei = {}) {
       sys: {
         id: ct.sys.id,
         type: 'Link',
-        linkType: 'ContentType'
-      }
-    }
+        linkType: 'ContentType',
+      },
+    },
   };
 }
 
@@ -106,7 +106,7 @@ function prepareAPIControl({ fieldId, widgetId, widgetNamespace, settings }) {
     fieldId,
     widgetId,
     widgetNamespace,
-    ...(hasSettings ? { settings: cloneDeep(settings) } : {})
+    ...(hasSettings ? { settings: cloneDeep(settings) } : {}),
   };
 }
 
@@ -115,6 +115,6 @@ function makeDefaultControl(ct, field) {
     fieldId: field.apiName || field.id,
     field,
     widgetId: getDefaultWidgetId(field, ct.displayField),
-    widgetNamespace: NAMESPACE_BUILTIN
+    widgetNamespace: NAMESPACE_BUILTIN,
   };
 }

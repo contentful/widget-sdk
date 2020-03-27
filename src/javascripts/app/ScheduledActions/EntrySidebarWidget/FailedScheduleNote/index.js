@@ -8,13 +8,13 @@ import { DateTime } from 'app/ScheduledActions/FormattedDateAndTime';
 const styles = {
   form: css({
     marginTop: tokens.spacingM,
-    marginBottom: tokens.spacingM
-  })
+    marginBottom: tokens.spacingM,
+  }),
 };
 
 export class FailedScheduleNote extends Component {
   static propTypes = {
-    job: PropTypes.object
+    job: PropTypes.object,
   };
 
   render() {

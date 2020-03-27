@@ -12,7 +12,7 @@ import {
   ValidationMessage,
   CheckboxField,
   ModalConfirm,
-  Typography
+  Typography,
 } from '@contentful/forma-36-react-components';
 import pluralize from 'pluralize';
 import { orgRoles } from 'utils/MembershipUtils';
@@ -28,8 +28,8 @@ import AddToTeams from '../common/AddToTeams';
 
 const styles = {
   subheading: css({
-    marginBottom: tokens.spacingS
-  })
+    marginBottom: tokens.spacingS,
+  }),
 };
 
 const initialState = {
@@ -40,7 +40,7 @@ const initialState = {
   spaceMemberships: [],
   teams: [],
   suppressInvitation: true,
-  progress: { successes: [], failures: [] }
+  progress: { successes: [], failures: [] },
 };
 
 const reducer = (state, action) => {
@@ -49,13 +49,13 @@ const reducer = (state, action) => {
       return { ...state, submitted: true };
     case 'EMAILS_CHANGED': {
       const parsed = parseList(action.payload);
-      const invalid = parsed.filter(email => !isValidEmail(email));
+      const invalid = parsed.filter((email) => !isValidEmail(email));
       return {
         ...state,
         submitted: false,
         emailsValue: action.payload,
         emailList: parsed,
-        invalidAddresses: invalid
+        invalidAddresses: invalid,
       };
     }
     case 'SPACE_MEMBERSHIPS_CHANGED':
@@ -84,27 +84,27 @@ export default function NewUser({ orgId, hasSsoEnabled, hasTeamsFeature, isOwner
       spaceMemberships,
       suppressInvitation,
       teams,
-      progress
+      progress,
     },
-    dispatch
+    dispatch,
   ] = useReducer(reducer, initialState);
-  const handleProgressChange = payload => dispatch({ type: 'PROGRESS_CHANGED', payload });
+  const handleProgressChange = (payload) => dispatch({ type: 'PROGRESS_CHANGED', payload });
   const [{ isLoading, error, data }, addToOrg, resetAsyncFn] = useAddToOrg(
     orgId,
     hasSsoEnabled,
     handleProgressChange
   );
 
-  const handleEmailsChange = evt => {
+  const handleEmailsChange = (evt) => {
     const {
-      target: { value }
+      target: { value },
     } = evt;
     dispatch({ type: 'EMAILS_CHANGED', payload: value });
   };
 
-  const handleRoleChange = evt => {
+  const handleRoleChange = (evt) => {
     const {
-      target: { value }
+      target: { value },
     } = evt;
     dispatch({ type: 'ROLE_CHANGED', payload: value });
   };
@@ -113,7 +113,7 @@ export default function NewUser({ orgId, hasSsoEnabled, hasTeamsFeature, isOwner
     dispatch({ type: 'SUBMITTED' });
 
     if (emailList.length === 0 || invalidAddresses.length || !orgRole) return;
-    if (spaceMemberships.length && spaceMemberships.some(membership => !membership.roles.length))
+    if (spaceMemberships.length && spaceMemberships.some((membership) => !membership.roles.length))
       return;
 
     if (!spaceMemberships.length && !teams.length) {
@@ -125,9 +125,9 @@ export default function NewUser({ orgId, hasSsoEnabled, hasTeamsFeature, isOwner
     addToOrg(emailList, orgRole, spaceMemberships, teams, suppressInvitation);
   };
 
-  const handleNotificationsPreferenceChange = evt => {
+  const handleNotificationsPreferenceChange = (evt) => {
     const {
-      target: { checked }
+      target: { checked },
     } = evt;
     dispatch({ type: 'NOTIFICATIONS_PREFERENCE_CHANGED', payload: checked });
   };
@@ -167,18 +167,18 @@ export default function NewUser({ orgId, hasSsoEnabled, hasTeamsFeature, isOwner
   }, [orgRole, submitted]);
 
   const spaceMembershipsError = useMemo(() => {
-    if (submitted && spaceMemberships.some(membership => !membership.roles.length)) {
+    if (submitted && spaceMemberships.some((membership) => !membership.roles.length)) {
       return `Select space roles for the users you're inviting`;
     }
   }, [spaceMemberships, submitted]);
 
-  const availableOrgRoles = isOwner ? orgRoles : orgRoles.filter(role => role.value !== 'owner');
+  const availableOrgRoles = isOwner ? orgRoles : orgRoles.filter((role) => role.value !== 'owner');
 
-  const handleSpaceSelected = useCallback(spaceMemberships => {
+  const handleSpaceSelected = useCallback((spaceMemberships) => {
     dispatch({ type: 'SPACE_MEMBERSHIPS_CHANGED', payload: spaceMemberships });
   }, []);
 
-  const handleTeamSelected = useCallback(teams => {
+  const handleTeamSelected = useCallback((teams) => {
     dispatch({ type: 'TEAMS_CHANGED', payload: teams });
   }, []);
 
@@ -216,7 +216,7 @@ export default function NewUser({ orgId, hasSsoEnabled, hasTeamsFeature, isOwner
               Choose an organization role
             </Subheading>
             <FieldGroup>
-              {availableOrgRoles.map(role => (
+              {availableOrgRoles.map((role) => (
                 <RadioButtonField
                   testId="new-user.role"
                   id={role.value}
@@ -289,7 +289,7 @@ NewUser.propTypes = {
   orgId: PropTypes.string.isRequired,
   hasSsoEnabled: PropTypes.bool,
   hasTeamsFeature: PropTypes.bool,
-  isOwner: PropTypes.bool
+  isOwner: PropTypes.bool,
 };
 
 async function confirmNoSpaces(count) {

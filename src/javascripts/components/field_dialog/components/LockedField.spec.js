@@ -7,7 +7,7 @@ describe('Locked Field', () => {
     testId: 'locked-field',
     labelText: 'Field ID',
     name: 'content-type-field-id',
-    id: 'content-type-field-id'
+    id: 'content-type-field-id',
   };
   it('sets disabled property from props', () => {
     const { getByTestId } = render(

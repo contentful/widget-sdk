@@ -12,57 +12,57 @@ export const FIELD_TYPES = [
     name: 'Symbol',
     hasListVariant: true,
     label: 'Short text',
-    listLabel: 'Short text, list'
+    listLabel: 'Short text, list',
   },
   {
     name: 'Text',
-    label: 'Long text'
+    label: 'Long text',
   },
   {
     name: 'RichText',
     label: 'Rich text',
-    icon: 'longtext'
+    icon: 'longtext',
   },
   {
     name: 'Integer',
-    icon: 'number'
+    icon: 'number',
   },
   {
     name: 'Number',
     label: 'Decimal number',
-    icon: 'decimal'
+    icon: 'decimal',
   },
   {
     name: 'Date',
     label: 'Date & time',
-    icon: 'calendar'
+    icon: 'calendar',
   },
   {
-    name: 'Location'
+    name: 'Location',
   },
   {
     name: 'Asset',
     isLink: true,
     hasListVariant: true,
     label: 'Media',
-    listLabel: 'Media, many files'
+    listLabel: 'Media, many files',
   },
   {
-    name: 'Boolean'
+    name: 'Boolean',
   },
   {
     name: 'Object',
     label: 'JSON object',
-    icon: 'json'
+    icon: 'json',
   },
   {
     name: 'Entry',
     isLink: true,
     hasListVariant: true,
     label: 'Reference',
-    listLabel: 'References, many'
-  }
-].map(fieldType => {
+    listLabel: 'References, many',
+  },
+].map((fieldType) => {
   const label = fieldType.label || fieldType.name;
   const icon = label.replace(/\s/g, '').toLowerCase();
   return { label, icon, ...fieldType };
@@ -74,66 +74,66 @@ export const groups = [
     icon: 'richtext',
     label: 'Rich text',
     description: 'Text formatting with references and media',
-    types: ['RichText']
+    types: ['RichText'],
   },
   {
     name: 'text',
     icon: 'longtext',
     label: 'Text',
     description: 'Titles, names, paragraphs, list of names',
-    types: ['Symbol', 'Text']
+    types: ['Symbol', 'Text'],
   },
   {
     name: 'number',
     label: 'Number',
     description: 'ID, order number, rating, quantity',
-    types: ['Integer', 'Number']
+    types: ['Integer', 'Number'],
   },
   {
     name: 'date-time',
     icon: 'calendar',
     label: 'Date and time',
     description: 'Event date, opening hours',
-    types: ['Date']
+    types: ['Date'],
   },
   {
     name: 'location',
     label: 'Location',
     description: 'Coordinates: latitude and longitude',
-    types: ['Location']
+    types: ['Location'],
   },
   {
     name: 'media',
     label: 'Media',
     description: 'Images, videos, PDFs and other files',
-    types: ['Asset']
+    types: ['Asset'],
   },
   {
     name: 'boolean',
     label: 'Boolean',
     description: 'Yes or no, 1 or 0, true or false',
-    types: ['Boolean']
+    types: ['Boolean'],
   },
   {
     name: 'json',
     label: 'JSON object',
     description: 'Data in JSON format',
-    types: ['Object']
+    types: ['Object'],
   },
   {
     name: 'reference',
     label: 'Reference',
     description: 'For example, a blog post can reference its author(s)',
-    types: ['Entry']
-  }
-].map(group => {
+    types: ['Entry'],
+  },
+].map((group) => {
   const types = group.types.map(getTypeByName);
   const icon = types[0].icon;
   return { icon, ...group, types };
 });
 
 function getTypeByName(name) {
-  const type = FIELD_TYPES.find(field => field.name === name);
+  const type = FIELD_TYPES.find((field) => field.name === name);
 
   if (type) {
     return type;
@@ -178,7 +178,7 @@ function getFieldDescriptor(field) {
   if (type === 'Link') {
     type = linkType;
   }
-  const descriptor = FIELD_TYPES.find(field => field.name === type);
+  const descriptor = FIELD_TYPES.find((field) => field.name === type);
   if (!descriptor) {
     throw new Error(`Unknown field type "${type}"`);
   }

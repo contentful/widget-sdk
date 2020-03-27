@@ -12,18 +12,18 @@ describe('AssetFileSizeValidation', () => {
         message: null,
         settings: {
           min: 7,
-          max: 10
+          max: 10,
         },
         views: [
           { name: 'min-max', label: 'Between' },
           { name: 'min', label: 'At least' },
-          { name: 'max', label: 'Not more than' }
+          { name: 'max', label: 'Not more than' },
         ],
-        currentView: 'min-max'
+        currentView: 'min-max',
       },
       updateValidationSettingsValue: () => {},
       updateValidationCurrentView: () => {},
-      updateValidationMessageValue: () => {}
+      updateValidationMessageValue: () => {},
     };
     const { getByTestId } = render(<AssetFileSizeValidation {...props} />);
     expect(getByTestId('min-size-input').value).toBe('7');
@@ -38,18 +38,18 @@ describe('AssetFileSizeValidation', () => {
         message: null,
         settings: {
           min: 7168,
-          max: 10240
+          max: 10240,
         },
         views: [
           { name: 'min-max', label: 'Between' },
           { name: 'min', label: 'At least' },
-          { name: 'max', label: 'Not more than' }
+          { name: 'max', label: 'Not more than' },
         ],
-        currentView: 'min-max'
+        currentView: 'min-max',
       },
       updateValidationSettingsValue: () => {},
       updateValidationCurrentView: () => {},
-      updateValidationMessageValue: () => {}
+      updateValidationMessageValue: () => {},
     };
     const { getByTestId } = render(<AssetFileSizeValidation {...props} />);
     expect(getByTestId('min-size-input').value).toBe('7');
@@ -64,18 +64,18 @@ describe('AssetFileSizeValidation', () => {
         message: null,
         settings: {
           min: 1048576,
-          max: 3145728
+          max: 3145728,
         },
         views: [
           { name: 'min-max', label: 'Between' },
           { name: 'min', label: 'At least' },
-          { name: 'max', label: 'Not more than' }
+          { name: 'max', label: 'Not more than' },
         ],
-        currentView: 'min-max'
+        currentView: 'min-max',
       },
       updateValidationSettingsValue: () => {},
       updateValidationCurrentView: () => {},
-      updateValidationMessageValue: () => {}
+      updateValidationMessageValue: () => {},
     };
     const { getByTestId } = render(<AssetFileSizeValidation {...props} />);
     expect(getByTestId('min-size-input').value).toBe('1');

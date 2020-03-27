@@ -66,7 +66,7 @@ export function leaveBreadcrumb(name, data) {
 
 function load(user) {
   return LazyLoader.get('bugsnag').then(
-    _bugsnag => {
+    (_bugsnag) => {
       bugsnag = _bugsnag;
       // Do not patch `console.log`. It messes up stack traces
       bugsnag.disableAutoBreadcrumbsConsole();
@@ -88,14 +88,14 @@ function setUserInfo(user, bugsnag) {
     bugsnag.user = {
       id: userId,
       adminLink: getAdminLink(user),
-      organizations: getOrganizations(user)
+      organizations: getOrganizations(user),
     };
   }
 }
 
 function getOrganizations(user) {
   const organizationMemberships = user.organizationMemberships || [];
-  return organizationMemberships.map(membership => membership.organization.sys.id).join(', ');
+  return organizationMemberships.map((membership) => membership.organization.sys.id).join(', ');
 }
 
 function getAdminLink(user) {

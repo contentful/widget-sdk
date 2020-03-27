@@ -1,7 +1,7 @@
 import { queryFirst100UsersInDefaultSpace } from '../../../interactions/users';
 import {
   getAllPublicContentTypesInDefaultSpace,
-  getEditorInterfaceForDefaultContentType
+  getEditorInterfaceForDefaultContentType,
 } from '../../../interactions/content_types';
 import { defaultRequestsMock } from '../../../util/factories';
 import { defaultSpaceId, getEntries, defaultJobId } from '../../../util/requests';
@@ -9,15 +9,15 @@ import {
   getDefaultEntry,
   queryLinksToDefaultEntry,
   getFirst7SnapshotsOfDefaultEntry,
-  createAnEntryInDefaultSpace
+  createAnEntryInDefaultSpace,
 } from '../../../interactions/entries';
 import {
   queryPendingJobsForDefaultSpaceWithoutLimit,
-  queryAllScheduledJobsForDefaultEntry
+  queryAllScheduledJobsForDefaultEntry,
 } from '../../../interactions/jobs';
 import {
   queryForEnvironmentUsageAndAppsInDefaultSpace,
-  queryForTasksAndScheduledPublishingInDefaultSpace
+  queryForTasksAndScheduledPublishingInDefaultSpace,
 } from '../../../interactions/product_catalog_features';
 
 const empty = require('../../../fixtures/responses/empty.json');
@@ -26,11 +26,11 @@ const nonArchivedQuery = {
   limit: '40',
   order: '-sys.updatedAt',
   skip: '0',
-  'sys.archivedAt[exists]': 'false'
+  'sys.archivedAt[exists]': 'false',
 };
 const archivedCountQuery = {
   limit: '0',
-  'sys.archivedAt[exists]': 'true'
+  'sys.archivedAt[exists]': 'true',
 };
 describe('Entries list page', () => {
   beforeEach(() => {
@@ -42,7 +42,7 @@ describe('Entries list page', () => {
       cors: true,
       pactfileWriteMode: 'merge',
       dir: Cypress.env('pactDir'),
-      spec: 2
+      spec: 2,
     });
   });
 
@@ -56,8 +56,8 @@ describe('Entries list page', () => {
         withRequest: getEntries(defaultSpaceId, nonArchivedQuery),
         willRespondWith: {
           status: 200,
-          body: empty
-        }
+          body: empty,
+        },
       }).as('queryNonArchivedEntries');
       // TODO: Move this to interactions/entries
       cy.addInteraction({
@@ -67,8 +67,8 @@ describe('Entries list page', () => {
         withRequest: getEntries(defaultSpaceId, archivedCountQuery),
         willRespondWith: {
           status: 200,
-          body: empty
-        }
+          body: empty,
+        },
       }).as('queryArchivedEntriesCount');
 
       const interactions = [
@@ -78,7 +78,7 @@ describe('Entries list page', () => {
         queryFirst100UsersInDefaultSpace.willFindSeveral(),
         queryPendingJobsForDefaultSpaceWithoutLimit.willFindSeveral(),
         queryForTasksAndScheduledPublishingInDefaultSpace.willFindBothEnabled(),
-        queryForEnvironmentUsageAndAppsInDefaultSpace.willFindSeveral()
+        queryForEnvironmentUsageAndAppsInDefaultSpace.willFindSeveral(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);
@@ -101,8 +101,8 @@ describe('Entries list page', () => {
         withRequest: getEntries(defaultSpaceId, nonArchivedQuery),
         willRespondWith: {
           status: 200,
-          body: empty
-        }
+          body: empty,
+        },
       }).as('queryNonArchivedEntries');
       // TODO: Move this to interactions/entries
       cy.addInteraction({
@@ -112,20 +112,20 @@ describe('Entries list page', () => {
         withRequest: getEntries(defaultSpaceId, archivedCountQuery),
         willRespondWith: {
           status: 200,
-          body: empty
-        }
+          body: empty,
+        },
       }).as('queryArchivedEntriesCount');
 
       const interactions = [
         '@queryNonArchivedEntries',
         '@queryArchivedEntriesCount',
         ...defaultRequestsMock({
-          publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne
+          publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne,
         }),
         queryFirst100UsersInDefaultSpace.willFindSeveral(),
         queryPendingJobsForDefaultSpaceWithoutLimit.willFindSeveral(),
         queryForTasksAndScheduledPublishingInDefaultSpace.willFindBothEnabled(),
-        queryForEnvironmentUsageAndAppsInDefaultSpace.willFindSeveral()
+        queryForEnvironmentUsageAndAppsInDefaultSpace.willFindSeveral(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);
@@ -148,7 +148,7 @@ describe('Entries list page', () => {
         queryLinksToDefaultEntry.willReturnNone(),
         getFirst7SnapshotsOfDefaultEntry.willReturnNone(),
         getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
-        queryAllScheduledJobsForDefaultEntry.willFindOnePendingJob()
+        queryAllScheduledJobsForDefaultEntry.willFindOnePendingJob(),
       ];
 
       cy.getByTestId('create-entry-button-menu-trigger').click();
@@ -170,8 +170,8 @@ describe('Entries list page', () => {
         withRequest: getEntries(defaultSpaceId, nonArchivedQuery),
         willRespondWith: {
           status: 200,
-          body: severalEntriesResponse
-        }
+          body: severalEntriesResponse,
+        },
       }).as('queryNonArchivedEntries');
 
       const interactions = [
@@ -180,7 +180,7 @@ describe('Entries list page', () => {
         queryFirst100UsersInDefaultSpace.willFindSeveral(),
         queryPendingJobsForDefaultSpaceWithoutLimit.willFindSeveral(),
         queryForTasksAndScheduledPublishingInDefaultSpace.willFindBothEnabled(),
-        queryForEnvironmentUsageAndAppsInDefaultSpace.willFindSeveral()
+        queryForEnvironmentUsageAndAppsInDefaultSpace.willFindSeveral(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);
@@ -195,9 +195,7 @@ describe('Entries list page', () => {
 
     it('renders the tooltip for the scheduled the entry', () => {
       cy.getByTestId('schedule-icon').trigger('mouseover');
-      cy.getByTestId(defaultJobId)
-        .should('be.visible')
-        .and('have.attr', 'role', 'tooltip');
+      cy.getByTestId(defaultJobId).should('be.visible').and('have.attr', 'role', 'tooltip');
       cy.getByTestId(defaultJobId)
         .find('p[data-test-id="cf-ui-paragraph"]')
         .should('have.text', '+ 2 more');
@@ -214,7 +212,7 @@ describe('Entries list page', () => {
         cors: true,
         pactfileWriteMode: 'merge',
         dir: Cypress.env('pactDir'),
-        spec: 2
+        spec: 2,
       });
 
       // TODO: Move this to interactions/entries
@@ -225,8 +223,8 @@ describe('Entries list page', () => {
         withRequest: getEntries(defaultSpaceId, nonArchivedQuery),
         willRespondWith: {
           status: 200,
-          body: severalEntriesResponse
-        }
+          body: severalEntriesResponse,
+        },
       }).as('queryNonArchivedEntries');
 
       const interactions = [
@@ -235,7 +233,7 @@ describe('Entries list page', () => {
         queryFirst100UsersInDefaultSpace.willFindSeveral(),
         queryPendingJobsForDefaultSpaceWithoutLimit.willFindSeveral(),
         queryForTasksAndScheduledPublishingInDefaultSpace.willFindBothEnabled(),
-        queryForEnvironmentUsageAndAppsInDefaultSpace.willFindSeveral()
+        queryForEnvironmentUsageAndAppsInDefaultSpace.willFindSeveral(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);

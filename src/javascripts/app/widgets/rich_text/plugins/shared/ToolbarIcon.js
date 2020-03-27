@@ -10,10 +10,10 @@ export default class ToolbarIcon extends Component {
     onToggle: PropTypes.func.isRequired,
     icon: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
-    type: PropTypes.string
+    type: PropTypes.string,
   };
 
-  handleMouseDown = event => {
+  handleMouseDown = (event) => {
     /*
       We're using the mousedown event rather than onclick because onclick will
       steal the focus.

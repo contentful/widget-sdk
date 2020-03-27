@@ -10,7 +10,7 @@ const SnapshotPresenterDefault = ({ value }) => {
 };
 
 SnapshotPresenterDefault.propTypes = {
-  value: PropTypes.object.isRequired
+  value: PropTypes.object.isRequired,
 };
 
 export default SnapshotPresenterDefault;

@@ -11,8 +11,8 @@ export const Comment = PropTypes.shape({
     createdBy: PropTypes.date,
     createdAt: PropTypes.string,
     updatedBy: PropTypes.object,
-    updatedAt: PropTypes.string
-  })
+    updatedAt: PropTypes.string,
+  }),
 });
 
 export const CommentThread = PropTypes.arrayOf(Comment);

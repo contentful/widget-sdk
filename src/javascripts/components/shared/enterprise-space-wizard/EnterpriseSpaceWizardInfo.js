@@ -5,7 +5,7 @@ import { TextLink } from '@contentful/forma-36-react-components';
 
 export default class EnterpriseSpaceWizardInfo extends React.Component {
   state = {
-    showingMore: false
+    showingMore: false,
   };
 
   getToggleLabel() {

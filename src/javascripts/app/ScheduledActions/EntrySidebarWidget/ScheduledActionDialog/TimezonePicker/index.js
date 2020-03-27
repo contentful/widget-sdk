@@ -9,13 +9,13 @@ import { cx } from 'emotion';
 import allTimezones from './Timezones';
 
 export function TimezonePicker({ validationMessage, onSelect, disabled, className }) {
-  const defaultTimezone = allTimezones.find(timezone => timezone.ianaName === moment.tz.guess());
+  const defaultTimezone = allTimezones.find((timezone) => timezone.ianaName === moment.tz.guess());
 
   const [filteredTimezones, setFilteredTimezones] = useState(allTimezones);
   const [userInput, setUserInput] = useState(defaultTimezone);
 
   const handleSelect = useCallback(
-    timezone => {
+    (timezone) => {
       onSelect(timezone.ianaName);
       setFilteredTimezones(allTimezones);
       setUserInput(timezone);
@@ -23,9 +23,9 @@ export function TimezonePicker({ validationMessage, onSelect, disabled, classNam
     [onSelect]
   );
 
-  const handleChange = val => {
+  const handleChange = (val) => {
     const newFilteredTimezones = allTimezones.filter(
-      timezones => timezones.displayValue.toLowerCase().indexOf(val.toLowerCase()) !== -1
+      (timezones) => timezones.displayValue.toLowerCase().indexOf(val.toLowerCase()) !== -1
     );
     setFilteredTimezones(newFilteredTimezones.length > 0 ? newFilteredTimezones : allTimezones);
   };
@@ -43,7 +43,7 @@ export function TimezonePicker({ validationMessage, onSelect, disabled, classNam
           className={styles.dropdown}
           willClearQueryOnClose
           dropdownProps={{
-            isFullWidth: true
+            isFullWidth: true,
           }}
           items={filteredTimezones.slice(0, 100)}
           onChange={handleSelect}
@@ -52,8 +52,8 @@ export function TimezonePicker({ validationMessage, onSelect, disabled, classNam
           validationMessage={validationMessage}
           emptyListMessage="There are no timezones to choose from"
           noMatchesMessage="No timezones found">
-          {options =>
-            options.map(option => <span key={option.ianaName}>{option.displayValue}</span>)
+          {(options) =>
+            options.map((option) => <span key={option.ianaName}>{option.displayValue}</span>)
           }
         </Autocomplete>
       </div>
@@ -70,12 +70,12 @@ TimezonePicker.propTypes = {
   id: PropTypes.string,
   name: PropTypes.string,
   disabled: PropTypes.bool,
-  className: PropTypes.string
+  className: PropTypes.string,
 };
 
 TimezonePicker.defaultProps = {
   onBlur: () => {},
-  onSelect: () => {}
+  onSelect: () => {},
 };
 
 export default TimezonePicker;

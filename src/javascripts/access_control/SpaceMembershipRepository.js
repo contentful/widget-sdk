@@ -16,14 +16,14 @@ export function create(spaceEndpoint) {
     getAll,
     invite,
     changeRoleTo,
-    remove
+    remove,
   };
 
   function invite(email, roleIds) {
     return spaceEndpoint({
       method: 'POST',
       path: ['space_memberships'],
-      data: newMembership(email, roleIds)
+      data: newMembership(email, roleIds),
     });
   }
 
@@ -44,7 +44,7 @@ export function create(spaceEndpoint) {
   function remove(membership) {
     return spaceEndpoint({
       method: 'DELETE',
-      path: ['space_memberships', membership.sys.id.toString()]
+      path: ['space_memberships', membership.sys.id.toString()],
     });
   }
 
@@ -53,7 +53,7 @@ export function create(spaceEndpoint) {
       method: 'PUT',
       path: ['space_memberships', oldMembership.sys.id],
       version: oldMembership.sys.version,
-      data: newMembership
+      data: newMembership,
     });
   }
 }
@@ -61,7 +61,7 @@ export function create(spaceEndpoint) {
 function newMembership(email, roleIds) {
   const membership = {
     email,
-    admin: includes(roleIds, ADMIN_ROLE_ID)
+    admin: includes(roleIds, ADMIN_ROLE_ID),
   };
   if (!membership.admin) {
     membership.roles = getRoleLinks(roleIds);
@@ -80,5 +80,5 @@ function prepareRoleMembership(membership, roleIds) {
 }
 
 function getRoleLinks(roleIds) {
-  return roleIds.map(id => ({ type: 'Link', linkType: 'Role', id }));
+  return roleIds.map((id) => ({ type: 'Link', linkType: 'Role', id }));
 }

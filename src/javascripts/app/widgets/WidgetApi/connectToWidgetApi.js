@@ -31,13 +31,13 @@ export default function connectToWidgetApi(
     displayName = `WithWidgetAPI(${getDisplayName(Component)})`;
 
     static propTypes = {
-      widgetApi: PropTypes.object.isRequired
+      widgetApi: PropTypes.object.isRequired,
     };
 
     state = {
       value: this.props.widgetApi.field.getValue(),
       isDisabled: true,
-      currentUrl: window.location
+      currentUrl: window.location,
     };
 
     UNSAFE_componentWillMount() {
@@ -58,24 +58,24 @@ export default function connectToWidgetApi(
       this.offLocationChanged();
     }
 
-    handleDisabledChanges = isDisabled => {
+    handleDisabledChanges = (isDisabled) => {
       if (this.state.isDisabled !== isDisabled) {
         this.setState({ isDisabled });
       }
     };
 
-    handleIncomingChanges = nextValue => {
+    handleIncomingChanges = (nextValue) => {
       if (this.state.isDisabled || updateValueWhileEnabled) {
         this.setState({
-          value: nextValue
+          value: nextValue,
         });
       }
     };
 
-    handleComponentChanges = nextValue => {
+    handleComponentChanges = (nextValue) => {
       if (updateValueOnComponentChange) {
         this.setState({
-          value: nextValue
+          value: nextValue,
         });
       }
       this.props.widgetApi.field.setValue(nextValue);
@@ -89,7 +89,7 @@ export default function connectToWidgetApi(
         entry,
         field,
         currentUrl,
-        settings
+        settings,
       });
       const { widgetApi: _widgetApi, ...otherProps } = this.props;
       return (

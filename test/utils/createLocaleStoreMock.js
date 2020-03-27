@@ -17,13 +17,13 @@ export default function createLocaleStoreMock() {
    *
    * @param {Array<API.Locale>} locales
    */
-  localeStoreMock.setLocales = locales => {
-    locales = locales.map(locale =>
+  localeStoreMock.setLocales = (locales) => {
+    locales = locales.map((locale) =>
       _.extend(
         {
           sys: { space: { sys: { id: 'SID' } } },
           internal_code: `${locale.code}-internal`,
-          contentManagementApi: true
+          contentManagementApi: true,
         },
         locale
       )
@@ -33,17 +33,20 @@ export default function createLocaleStoreMock() {
 
     localeStoreMock.init({
       // simulate promise so it's synchronous no matter what
-      getAll: () => ({ then: handle => handle(locales) })
+      getAll: () => ({ then: (handle) => handle(locales) }),
     });
 
     localeStoreMock.setActiveLocales(
-      _.reject(locales, locale => {
+      _.reject(locales, (locale) => {
         return 'active' in locale && !locale.active;
       })
     );
   };
 
-  localeStoreMock.setLocales([{ code: 'en', name: 'English' }, { code: 'de', name: 'German' }]);
+  localeStoreMock.setLocales([
+    { code: 'en', name: 'English' },
+    { code: 'de', name: 'German' },
+  ]);
 
   return localeStoreMock;
 }

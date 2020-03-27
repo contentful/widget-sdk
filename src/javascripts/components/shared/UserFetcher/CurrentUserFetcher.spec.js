@@ -5,10 +5,10 @@ import CurrentUserFetcher from './CurrentUserFetcher';
 
 const mockUser = {
   sys: {
-    id: 'user1'
+    id: 'user1',
   },
   firstName: 'Testy',
-  lastName: 'McTesterson'
+  lastName: 'McTesterson',
 };
 jest.mock('ng/spaceContext', () => ({ user: mockUser }));
 
@@ -18,7 +18,7 @@ describe('CurrentUserFetcher', () => {
 
     Enzyme.mount(
       <CurrentUserFetcher>
-        {args => {
+        {(args) => {
           actualArgs = args;
           return null;
         }}

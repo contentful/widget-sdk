@@ -12,24 +12,24 @@ import { go, href } from 'states/Navigator';
 
 const styles = {
   dropdownContainer: css({
-    width: '560px'
+    width: '560px',
   }),
   inputContainer: css({
-    position: 'relative'
+    position: 'relative',
   }),
   spinnerLoading: css({
     position: 'absolute',
     top: '9px',
     right: '9px',
-    zIndex: '20'
-  })
+    zIndex: '20',
+  }),
 };
 
 export default class QuickNavSearch extends React.Component {
   state = {
     items: [],
     query: '',
-    isLoading: false
+    isLoading: false,
   };
 
   inputRef = React.createRef();
@@ -55,7 +55,7 @@ export default class QuickNavSearch extends React.Component {
     }
   };
 
-  onQueryUpdate = async query => {
+  onQueryUpdate = async (query) => {
     this.setState({ isLoading: true, query });
     const items = await getSearchResults(query);
     this.mounted && this.setState({ items, isLoading: false });
@@ -69,7 +69,7 @@ export default class QuickNavSearch extends React.Component {
 
     return (
       <Downshift
-        itemToString={item => get(item, 'title', '')}
+        itemToString={(item) => get(item, 'title', '')}
         onInputValueChange={this.onQueryUpdateThrottled}
         onChange={trackSelectedItem}>
         {({ getInputProps, getItemProps, isOpen, highlightedIndex }) => (
@@ -77,10 +77,10 @@ export default class QuickNavSearch extends React.Component {
             <div className={styles.inputContainer}>
               <TextInput
                 {...getInputProps({
-                  onKeyDown: e => {
+                  onKeyDown: (e) => {
                     const highlightedItem = items[highlightedIndex];
                     this.hotKeyHandler(e, highlightedItem, query);
-                  }
+                  },
                 })}
                 testId="quick-nav-search-input"
                 placeholder="Quick search - search for entries, assets and content types"
@@ -106,5 +106,5 @@ export default class QuickNavSearch extends React.Component {
 }
 
 QuickNavSearch.propTypes = {
-  closeModal: PropTypes.func
+  closeModal: PropTypes.func,
 };

@@ -9,7 +9,7 @@ export const BoldPlugin = ({ richTextAPI }) => {
     type: MARKS.BOLD,
     tagName: 'b',
     hotkey: ['mod+b'],
-    richTextAPI
+    richTextAPI,
   });
 };
 
@@ -22,5 +22,5 @@ class Bold extends Component {
 export default markToggleDecorator({
   type: MARKS.BOLD,
   title: 'Bold',
-  icon: 'FormatBold'
+  icon: 'FormatBold',
 })(Bold);

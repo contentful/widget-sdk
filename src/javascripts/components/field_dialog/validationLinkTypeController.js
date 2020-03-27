@@ -11,11 +11,11 @@ export default function register() {
     '$scope',
     'spaceContext',
     function ValidationLinkTypeController($scope, spaceContext) {
-      K.onValueScope($scope, spaceContext.publishedCTs.items$, cts => {
+      K.onValueScope($scope, spaceContext.publishedCTs.items$, (cts) => {
         $scope.contentTypes = cts.map(decorateContentType);
       });
 
-      $scope.update = contentTypes => {
+      $scope.update = (contentTypes) => {
         $scope.contentTypes = contentTypes;
         $scope.validation.settings = getSelectedIDs(contentTypes);
         $scope.validator.run();
@@ -27,20 +27,17 @@ export default function register() {
         return {
           id: id,
           selected: isSelected(id),
-          name: ct.name || 'Untitled'
+          name: ct.name || 'Untitled',
         };
       }
 
       function getSelectedIDs(contentTypes) {
-        return _(contentTypes)
-          .filter('selected')
-          .map('id')
-          .value();
+        return _(contentTypes).filter('selected').map('id').value();
       }
 
       function isSelected(contentTypeId) {
         return _.includes($scope.validation.settings, contentTypeId);
       }
-    }
+    },
   ]);
 }

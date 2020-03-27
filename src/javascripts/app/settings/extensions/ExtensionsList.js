@@ -14,12 +14,12 @@ import {
   TableHead,
   TableBody,
   TableCell,
-  TableRow
+  TableRow,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import StateLink from 'app/common/StateLink';
 import EmptyStateContainer, {
-  defaultSVGStyle
+  defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import EmptyStateIllustration from 'svg/illustrations/connected-forms-illustration.svg';
 import { websiteUrl } from 'Config';
@@ -35,13 +35,13 @@ const styles = {
   deleteDropdown: css({
     padding: tokens.spacingXl,
     width: 350,
-    textAlign: 'center'
+    textAlign: 'center',
   }),
   deleteDropdownButton: css({
     margin: tokens.spacingM,
-    marginBottom: 0
+    marginBottom: 0,
   }),
-  svgContainer: css({ width: '280px' })
+  svgContainer: css({ width: '280px' }),
 };
 
 async function deleteExtension(id, cma, refresh) {
@@ -104,7 +104,7 @@ function DeleteButton(props) {
 
 DeleteButton.propTypes = {
   extension: PropTypes.object.isRequired,
-  onClick: PropTypes.func.isRequired
+  onClick: PropTypes.func.isRequired,
 };
 
 const EmptyState = () => (
@@ -125,7 +125,7 @@ const EmptyState = () => (
   </EmptyStateContainer>
 );
 
-const ExtensionsTable = props => (
+const ExtensionsTable = (props) => (
   <Table>
     <TableHead>
       <TableRow>
@@ -149,15 +149,15 @@ export class ExtensionsList extends React.Component {
         name: PropTypes.string.isRequired,
         fieldTypes: PropTypes.string.isRequired,
         hosting: PropTypes.string.isRequired,
-        parameterCounts: PropTypes.object.isRequired
+        parameterCounts: PropTypes.object.isRequired,
       })
     ).isRequired,
     cma: PropTypes.shape({
-      deleteExtension: PropTypes.func.isRequired
+      deleteExtension: PropTypes.func.isRequired,
     }).isRequired,
     refresh: PropTypes.func.isRequired,
     extensionUrl: PropTypes.string,
-    extensionUrlReferrer: PropTypes.string
+    extensionUrlReferrer: PropTypes.string,
   };
 
   componentDidMount() {
@@ -173,7 +173,7 @@ export class ExtensionsList extends React.Component {
       return <EmptyState />;
     }
 
-    const body = extensions.map(extension => (
+    const body = extensions.map((extension) => (
       <TableRow key={extension.id}>
         <TableCell>
           <StateLink path="^.detail" params={{ extensionId: extension.id }}>
@@ -182,8 +182,9 @@ export class ExtensionsList extends React.Component {
         </TableCell>
         <TableCell>{extension.hosting}</TableCell>
         <TableCell>{extension.fieldTypes}</TableCell>
-        <TableCell>{`${extension.parameterCounts.instanceDefinitions ||
-          0} definition(s)`}</TableCell>
+        <TableCell>{`${
+          extension.parameterCounts.instanceDefinitions || 0
+        } definition(s)`}</TableCell>
         <TableCell>
           {`${extension.parameterCounts.installationDefinitions || 0} definition(s)`}
           <br />

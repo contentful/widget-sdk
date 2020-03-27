@@ -5,11 +5,11 @@ import { fetchCanLeaveOrg } from './OrganizationUtils';
 import * as fake from 'test/helpers/fakeFactory';
 
 jest.mock('data/EndpointFactory', () => ({
-  createOrganizationEndpoint: jest.fn()
+  createOrganizationEndpoint: jest.fn(),
 }));
 
 jest.mock('services/OrganizationRoles', () => ({
-  isOwner: jest.fn().mockReturnValue(true)
+  isOwner: jest.fn().mockReturnValue(true),
 }));
 
 jest.mock('access_control/OrganizationMembershipRepository', () => ({ getMemberships: jest.fn() }));
@@ -19,7 +19,7 @@ describe('Organization Utils', () => {
   const fakeOrgEnpoint = {};
   const queryForOwners = {
     role: 'owner',
-    limit: 0
+    limit: 0,
   };
 
   createOrganizationEndpoint.mockReturnValue(fakeOrgEnpoint);

@@ -7,7 +7,7 @@ import * as Analytics from 'analytics/Analytics';
 describe('CMATokens/GenerateCMATokenDialog', () => {
   it('should ask user to provide token name when opened', () => {
     const stubs = {
-      onCancel: jest.fn()
+      onCancel: jest.fn(),
     };
 
     render(
@@ -39,7 +39,7 @@ describe('CMATokens/GenerateCMATokenDialog', () => {
     const stubs = {
       onConfirm: jest.fn(),
       createToken: jest.fn().mockRejectedValue(),
-      successHandler: jest.fn()
+      successHandler: jest.fn(),
     };
     render(
       <GenerateCMATokenDialog
@@ -52,7 +52,7 @@ describe('CMATokens/GenerateCMATokenDialog', () => {
     );
 
     fireEvent.change(screen.getByLabelText('Token name', { exact: false }), {
-      target: { value: 'new token' }
+      target: { value: 'new token' },
     });
 
     fireEvent.click(screen.getByText('Generate'));
@@ -81,9 +81,9 @@ describe('CMATokens/GenerateCMATokenDialog', () => {
       onConfirm: jest.fn(),
       createToken: jest.fn().mockResolvedValue({
         sys: { id: 'new-token-id' },
-        token: 'new-token-value'
+        token: 'new-token-value',
       }),
-      successHandler: jest.fn()
+      successHandler: jest.fn(),
     };
     render(
       <GenerateCMATokenDialog
@@ -96,7 +96,7 @@ describe('CMATokens/GenerateCMATokenDialog', () => {
     );
 
     fireEvent.change(screen.getByLabelText('Token name', { exact: false }), {
-      target: { value: 'new token' }
+      target: { value: 'new token' },
     });
 
     fireEvent.click(screen.getByText('Generate'));
@@ -109,7 +109,7 @@ describe('CMATokens/GenerateCMATokenDialog', () => {
     expect(stubs.onConfirm).not.toHaveBeenCalled();
     expect(Analytics.track).toHaveBeenCalledWith('personal_access_token:action', {
       action: 'create',
-      patId: 'new-token-id'
+      patId: 'new-token-id',
     });
 
     expect(

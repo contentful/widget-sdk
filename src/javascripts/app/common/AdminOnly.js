@@ -7,13 +7,13 @@ export class AdminOnly extends React.Component {
   static propTypes = {
     children: PropTypes.any,
     render: PropTypes.func,
-    redirect: PropTypes.string
+    redirect: PropTypes.string,
   };
 
   static displayName = 'AdminOnly';
 
   static defaultProps = {
-    redirect: 'spaces.detail.entries.list'
+    redirect: 'spaces.detail.entries.list',
   };
 
   render() {

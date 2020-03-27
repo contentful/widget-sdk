@@ -7,15 +7,15 @@ import { Note, ModalConfirm, Paragraph, TextInput } from '@contentful/forma-36-r
 
 const styles = {
   appName: css({
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   }),
   button: css({
     marginTop: tokens.spacingXl,
-    marginRight: tokens.spacingM
+    marginRight: tokens.spacingM,
   }),
   spacer: css({
-    marginBottom: tokens.spacingL
-  })
+    marginBottom: tokens.spacingL,
+  }),
 };
 
 function DeleteAppForm({ appName, value, setValue }) {
@@ -44,7 +44,7 @@ function DeleteAppForm({ appName, value, setValue }) {
         inputRef={textInputRef}
         value={value}
         type="text"
-        onInput={e => setValue(e.target.value)}
+        onInput={(e) => setValue(e.target.value)}
       />
 
       <Note>Note that the app can&apos;t be restored once it&apos;s deleted.</Note>
@@ -55,7 +55,7 @@ function DeleteAppForm({ appName, value, setValue }) {
 DeleteAppForm.propTypes = {
   value: PropTypes.string.isRequired,
   setValue: PropTypes.func.isRequired,
-  appName: PropTypes.string.isRequired
+  appName: PropTypes.string.isRequired,
 };
 
 export default function DeleteAppDialog({ onConfirm, appName, isShown, onCancel }) {
@@ -91,5 +91,5 @@ DeleteAppDialog.propTypes = {
   isShown: PropTypes.bool.isRequired,
   onCancel: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,
-  appName: PropTypes.string.isRequired
+  appName: PropTypes.string.isRequired,
 };

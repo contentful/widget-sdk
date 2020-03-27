@@ -18,7 +18,7 @@
 const { buildTestDeps } = require('./tools/webpack-tasks');
 const {
   Server,
-  config: { parseConfig }
+  config: { parseConfig },
 } = require('karma');
 const { resolve } = require('path');
 const { argv } = require('yargs');
@@ -30,7 +30,7 @@ const config = parseConfig(resolve('./karma.conf.js'));
 
 if (singleRun) {
   config.set({
-    singleRun: true
+    singleRun: true,
   });
 
   if (ci) {
@@ -39,15 +39,15 @@ if (singleRun) {
       junitReporter: {
         outputDir: process.env.JUNIT_REPORT_PATH,
         outputFile: process.env.JUNIT_REPORT_NAME,
-        useBrowserName: false
+        useBrowserName: false,
       },
       browsers: ['ChromeHeadlessNoSandbox'],
       customLaunchers: {
         ChromeHeadlessNoSandbox: {
           base: 'ChromeHeadless',
-          flags: ['--no-sandbox']
-        }
-      }
+          flags: ['--no-sandbox'],
+        },
+      },
     });
   }
   runTests();
@@ -56,7 +56,7 @@ if (singleRun) {
 }
 
 function runTests() {
-  const server = new Server(config, exitCode => {
+  const server = new Server(config, (exitCode) => {
     console.log(`Karma has exited with ${exitCode}`);
     process.exit(exitCode);
   });

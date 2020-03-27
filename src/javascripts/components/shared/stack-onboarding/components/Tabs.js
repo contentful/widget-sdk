@@ -8,21 +8,21 @@ class Tabs extends React.Component {
       PropTypes.shape({
         id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         title: PropTypes.node,
-        content: PropTypes.node
+        content: PropTypes.node,
       })
     ),
     onSelect: PropTypes.func,
-    className: PropTypes.string
+    className: PropTypes.string,
   };
 
-  selectTab = tabId => {
+  selectTab = (tabId) => {
     this.props.onSelect(tabId);
   };
 
   renderTabs = () => {
     const { active, tabs, className } = this.props;
 
-    const tabsMarkup = tabs.map(tab => {
+    const tabsMarkup = tabs.map((tab) => {
       const onClick = this.selectTab.bind(this, tab.id);
       return (
         <li key={tab.id} role={'tab'} aria-selected={tab.id === active} onClick={onClick}>
@@ -37,7 +37,7 @@ class Tabs extends React.Component {
   renderContent = () => {
     const { active, tabs } = this.props;
 
-    const activeTab = tabs.find(tab => tab.id === active);
+    const activeTab = tabs.find((tab) => tab.id === active);
 
     return activeTab.content;
   };

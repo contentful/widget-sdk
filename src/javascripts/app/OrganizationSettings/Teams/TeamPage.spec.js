@@ -15,9 +15,9 @@ import TeamDetails from './TeamDetails';
 import TeamsEmptyState from './TeamsEmptyState';
 import { FetcherLoading } from 'app/common/createFetcherComponent';
 
-const renderComponent = actions => {
+const renderComponent = (actions) => {
   const store = createStore(reducer);
-  actions.forEach(action => store.dispatch(action));
+  actions.forEach((action) => store.dispatch(action));
   const wrapper = mount(
     <Provider store={store}>
       <TeamPage />
@@ -37,8 +37,8 @@ describe('TeamPage', () => {
       actions.push({
         type: 'LOCATION_CHANGED',
         payload: {
-          location: { pathname: ROUTES.organization.children.teams.build({ orgId: 'testOrg' }) }
-        }
+          location: { pathname: ROUTES.organization.children.teams.build({ orgId: 'testOrg' }) },
+        },
       });
     });
 
@@ -57,7 +57,7 @@ describe('TeamPage', () => {
       beforeEach(() => {
         actions.push({
           type: 'ACCESS_DENIED',
-          payload: { reason: FEATURE_INACTIVE }
+          payload: { reason: FEATURE_INACTIVE },
         });
       });
 
@@ -77,9 +77,9 @@ describe('TeamPage', () => {
           payload: {
             datasets: {
               [TEAMS]: [],
-              [TEAM_MEMBERSHIPS]: []
-            }
-          }
+              [TEAM_MEMBERSHIPS]: [],
+            },
+          },
         });
       });
 

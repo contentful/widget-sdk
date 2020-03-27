@@ -9,7 +9,7 @@ import { selectEntryAndInsert, hasOnlyInlineEntryInSelection, canInsertInline } 
 export default ToolbarIcon;
 
 export const EmbeddedEntryInlinePlugin = ({
-  richTextAPI: { widgetAPI, logShortcutAction, logViewportAction }
+  richTextAPI: { widgetAPI, logShortcutAction, logViewportAction },
 }) => ({
   renderNode: (props, _editor, next) => {
     const { node, attributes, key } = props;
@@ -41,5 +41,5 @@ export const EmbeddedEntryInlinePlugin = ({
       }
     }
     return next();
-  }
+  },
 });

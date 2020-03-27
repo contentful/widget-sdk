@@ -8,7 +8,7 @@ const SLIDES_BELOW_QS = 'previousEntries';
 
 export const slideInStackEmitter = mitt();
 
-export const onSlideInNavigation = fn => {
+export const onSlideInNavigation = (fn) => {
   const funcWrapper = ({ currentSlideLevel, targetSlideLevel }) => {
     fn({ newSlideLevel: targetSlideLevel, oldSlideLevel: currentSlideLevel });
   };
@@ -38,7 +38,7 @@ export function getSlideInEntities() {
 
   const slidesBelow = deserializeQS();
   const topSlide = slideHelper.newFromStateParams($state.params);
-  return uniqWith([...slidesBelow, topSlide], isEqual).filter(v => !!v);
+  return uniqWith([...slidesBelow, topSlide], isEqual).filter((v) => !!v);
 }
 
 /**
@@ -61,7 +61,7 @@ export function goToSlideInEntity(slide) {
 
   const result = {
     currentSlideLevel: currentSlides.length - 1,
-    targetSlideLevel: firstTargetSlideIndex
+    targetSlideLevel: firstTargetSlideIndex,
   };
 
   slideInStackEmitter.emit('changed', result);
@@ -99,5 +99,5 @@ function deserializeQS() {
   const serializedEntities = get(searchObject, SLIDES_BELOW_QS, '')
     .split(',')
     .filter((v, i, self) => v !== '' && self.indexOf(v) === i);
-  return serializedEntities.map(id => slideHelper.newFromQS(id));
+  return serializedEntities.map((id) => slideHelper.newFromQS(id));
 }

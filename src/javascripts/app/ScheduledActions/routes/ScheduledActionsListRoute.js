@@ -11,7 +11,7 @@ export default class ScheduledActionsListRoute extends Component {
     spaceId: PropTypes.string.isRequired,
     environmentId: PropTypes.string.isRequired,
     contentTypes: PropTypes.array.isRequired,
-    defaultLocale: PropTypes.object
+    defaultLocale: PropTypes.object,
   };
 
   render() {

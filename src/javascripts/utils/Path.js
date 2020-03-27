@@ -58,7 +58,7 @@ export function findCommonPrefix(paths) {
 
 function getCommon(values) {
   const common = values[0];
-  const isCommon = _.every(values.slice(1), value => value === common);
+  const isCommon = _.every(values.slice(1), (value) => value === common);
   return isCommon ? common : null;
 }
 

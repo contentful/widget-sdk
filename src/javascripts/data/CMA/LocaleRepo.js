@@ -11,7 +11,7 @@ export default function create(spaceEndpoint) {
   return {
     getAll,
     save,
-    remove
+    remove,
   };
 
   /**
@@ -64,7 +64,7 @@ export default function create(spaceEndpoint) {
     return spaceEndpoint({
       method: 'DELETE',
       path: ['locales', id],
-      version
+      version,
     }).then(() => {});
   }
 }

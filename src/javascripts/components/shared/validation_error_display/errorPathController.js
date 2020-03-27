@@ -11,10 +11,10 @@ export default function register() {
 
       controller.messages = [];
 
-      $scope.$watch('validationResult.errors', errors => {
+      $scope.$watch('validationResult.errors', (errors) => {
         const pathPattern = $scope.$eval($attrs.cfErrorPath);
 
-        const fieldErrors = _.filter(errors, error => {
+        const fieldErrors = _.filter(errors, (error) => {
           try {
             return matchesPath(pathPattern, error.path);
           } catch (e) {
@@ -24,8 +24,8 @@ export default function register() {
               error: e,
               data: {
                 errorPathPattern: pathPattern,
-                validationErrors: errors
-              }
+                validationErrors: errors,
+              },
             });
           }
         });
@@ -45,6 +45,6 @@ export default function register() {
         }
         return _.isEqual(target, pattern);
       }
-    }
+    },
   ]);
 }

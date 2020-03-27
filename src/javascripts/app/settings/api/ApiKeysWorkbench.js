@@ -31,5 +31,5 @@ export default function ApiKeyWorkbench(props) {
 
 ApiKeyWorkbench.propTypes = {
   sidebar: PropTypes.any,
-  actions: PropTypes.any
+  actions: PropTypes.any,
 };

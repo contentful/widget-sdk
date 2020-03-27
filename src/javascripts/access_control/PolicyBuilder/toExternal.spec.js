@@ -23,7 +23,7 @@ describe('Policy Builder, to external representation', () => {
         contentDelivery: 'all',
         settings: 'all',
         environments: 'all',
-        environmentAliases: 'all'
+        environmentAliases: 'all',
       });
       expect(external.permissions.contentModel).toBe('all');
       expect(external.permissions.contentDelivery).toBe('all');
@@ -37,7 +37,7 @@ describe('Policy Builder, to external representation', () => {
     it('returns parsed policy JSON string', () => {
       const external = toExternal({
         uiCompatible: false,
-        policyString: '{"test": true}'
+        policyString: '{"test": true}',
       });
 
       expect(external.policies.test).toBe(true);
@@ -46,7 +46,7 @@ describe('Policy Builder, to external representation', () => {
     it('returns null for an invalid JSON string', () => {
       const external = toExternal({
         uiCompatible: false,
-        policyString: '{test": false}}'
+        policyString: '{test": false}}',
       });
 
       expect(external.policies).toBeNull();
@@ -55,7 +55,7 @@ describe('Policy Builder, to external representation', () => {
     it('does not parse policyString with uiCompatible flag', () => {
       const external = toExternal({
         uiCompatible: true,
-        policyString: '{"test": true}'
+        policyString: '{"test": true}',
       });
 
       expect(Array.isArray(external.policies)).toBe(true);
@@ -101,7 +101,7 @@ describe('Policy Builder, to external representation', () => {
     it('parses policyString for non-UI-compatible policies', () => {
       const external = toExternal({
         uiCompatible: false,
-        policyString: '{"test":true}'
+        policyString: '{"test":true}',
       });
 
       expect(external.policies.test).toBe(true);
@@ -112,8 +112,8 @@ describe('Policy Builder, to external representation', () => {
         uiCompatible: true,
         entries: {
           allowed: [{ action: 'all' }],
-          denied: [{ action: 'update' }]
-        }
+          denied: [{ action: 'update' }],
+        },
       });
 
       const ps = external.policies;
@@ -135,9 +135,9 @@ describe('Policy Builder, to external representation', () => {
           allowed: [
             { action: 'read' },
             { action: 'read', contentType: PolicyBuilderConfig.ALL_CTS },
-            { action: 'read', contentType: 'ctid' }
-          ]
-        }
+            { action: 'read', contentType: 'ctid' },
+          ],
+        },
       });
 
       const ps = external.policies;
@@ -158,8 +158,11 @@ describe('Policy Builder, to external representation', () => {
       const external = toExternal({
         uiCompatible: true,
         entries: {
-          allowed: [{ action: 'read', scope: 'any' }, { action: 'update', scope: 'user' }]
-        }
+          allowed: [
+            { action: 'read', scope: 'any' },
+            { action: 'update', scope: 'user' },
+          ],
+        },
       });
 
       const p = external.policies[1];
@@ -176,9 +179,9 @@ describe('Policy Builder, to external representation', () => {
         entries: {
           allowed: [
             { action: 'update', field: PolicyBuilderConfig.ALL_FIELDS, locale: 'en-US' },
-            { action: 'update', field: 'test', locale: PolicyBuilderConfig.ALL_LOCALES }
-          ]
-        }
+            { action: 'update', field: 'test', locale: PolicyBuilderConfig.ALL_LOCALES },
+          ],
+        },
       });
 
       const ps = external.policies;
@@ -192,8 +195,8 @@ describe('Policy Builder, to external representation', () => {
       const external = toExternal({
         uiCompatible: true,
         entries: {
-          allowed: [{ action: 'publish' }, { action: 'archive' }]
-        }
+          allowed: [{ action: 'publish' }, { action: 'archive' }],
+        },
       });
 
       const ps = external.policies;

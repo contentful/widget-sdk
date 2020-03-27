@@ -59,8 +59,8 @@ export default function register() {
       // Returns a promise for the content type of the given entry.
       // We cache this by the entry id
       const getContentType = _.memoize(
-        entity => spaceContext.publishedCTs.fetch(entity.sys.contentType.sys.id),
-        entity => entity.sys.id
+        (entity) => spaceContext.publishedCTs.fetch(entity.sys.contentType.sys.id),
+        (entity) => entity.sys.id
       );
 
       Object.assign($scope, MODES, {
@@ -77,7 +77,7 @@ export default function register() {
         getSearchPlaceholder: getSearchPlaceholder,
         supportsAdvancedSearch: _.includes(['Entry', 'Asset'], config.entityType),
         helpers: getEntityHelpers(config),
-        getContentType: getContentType
+        getContentType: getContentType,
       });
 
       if (config.withCreate) {
@@ -86,11 +86,11 @@ export default function register() {
             config.linkedContentTypeIds,
             spaceContext.publishedCTs.getAllBare()
           ),
-          onSelect: entity => {
+          onSelect: (entity) => {
             $scope.onChange([entity]);
           },
           type: config.entityType,
-          suggestedContentTypeId: getSearch().contentTypeId
+          suggestedContentTypeId: getSearch().contentTypeId,
         };
 
         $scope.createEntityInlineProps = { ...$scope.createEntityProps, hasPlusIcon: false };
@@ -117,7 +117,7 @@ export default function register() {
         }
         const isSearching$ = K.fromScopeValue(
           $scope,
-          $scope => $scope.isLoading && !$scope.isLoadingMore
+          ($scope) => $scope.isLoading && !$scope.isLoadingMore
         );
         const accessibleContentTypes = getAccessibleCTs(
           spaceContext.publishedCTs,
@@ -135,7 +135,7 @@ export default function register() {
           isSearching$: isSearching$,
           initState: initialSearchState,
           users$: Kefir.fromPromise(spaceContext.users.getAll()),
-          withAssets: withAssets
+          withAssets: withAssets,
         });
       }
 
@@ -144,7 +144,7 @@ export default function register() {
           linkedContentTypeIds && linkedContentTypeIds.length > 0;
 
         if (acceptsOnlySpecificContentType) {
-          contentTypes = contentTypes.filter(ct => linkedContentTypeIds.indexOf(ct.sys.id) > -1);
+          contentTypes = contentTypes.filter((ct) => linkedContentTypeIds.indexOf(ct.sys.id) > -1);
         }
 
         return contentTypes;
@@ -168,7 +168,7 @@ export default function register() {
         const params = {
           order: getOrder(),
           paginator: $scope.paginator,
-          ...getSearch()
+          ...getSearch(),
         };
 
         if (config.entityType === 'Entry' && singleContentTypeId) {
@@ -177,7 +177,7 @@ export default function register() {
         if (config.entityType === 'Asset') {
           params.searchFilters = [
             ...(params.searchFilters || []),
-            ['fields.file', Operator.EXISTS, true]
+            ['fields.file', Operator.EXISTS, true],
           ];
         }
 
@@ -189,7 +189,7 @@ export default function register() {
         return {
           searchText: view.searchText || '',
           searchFilters: view.searchFilters || [],
-          contentTypeId: view.contentTypeId
+          contentTypeId: view.contentTypeId,
         };
       }
 
@@ -220,7 +220,7 @@ export default function register() {
             $scope.selected.splice(index, 1);
             onChange();
           }
-        }
+        },
       };
 
       // @TODO: Move toggle logic into a service and improve edge cases.
@@ -278,7 +278,7 @@ export default function register() {
         // if new entities were created in the meantime.
         const acc = {
           items: [],
-          itemsById: _.groupBy($scope.items, 'sys.id')
+          itemsById: _.groupBy($scope.items, 'sys.id'),
         };
 
         return res.items.reduce((acc, item) => {
@@ -286,7 +286,7 @@ export default function register() {
           if (id && !acc.itemsById[id] && !isAssetWithoutFile(item)) {
             return {
               items: acc.items.concat(item),
-              itemsById: Object.assign(acc.itemsById, _.set({}, id, item))
+              itemsById: Object.assign(acc.itemsById, _.set({}, id, item)),
             };
           }
           return acc;
@@ -299,7 +299,7 @@ export default function register() {
 
       function resetAndLoad() {
         $scope.isLoading = true;
-        load().then(response => {
+        load().then((response) => {
           $scope.items = [];
           $scope.paginator.setTotal(0);
           $scope.paginator.setPage(0);
@@ -346,6 +346,6 @@ export default function register() {
           !currentSearch.searchFilters.length
         );
       }
-    }
+    },
   ]);
 }

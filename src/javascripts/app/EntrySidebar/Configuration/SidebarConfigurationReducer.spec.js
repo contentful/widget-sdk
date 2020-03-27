@@ -5,7 +5,7 @@ import {
   closeWidgetConfiguration,
   removeItemFromSidebar,
   addItemToSidebar,
-  changeItemPosition
+  changeItemPosition,
 } from './SidebarConfigurationReducer';
 import { SidebarType } from './constants';
 
@@ -13,7 +13,7 @@ describe('EntrySidebar/Configuration/SidebarConfigurationReducer', () => {
   it('should change sidebar type from default to custom', () => {
     const nextState = reducer(
       {
-        sidebarType: SidebarType.default
+        sidebarType: SidebarType.default,
       },
       selectSidebarType(SidebarType.custom)
     );
@@ -22,7 +22,7 @@ describe('EntrySidebar/Configuration/SidebarConfigurationReducer', () => {
   it('should open and close widget configuration', () => {
     let nextState = reducer(
       {
-        configurableWidget: null
+        configurableWidget: null,
       },
       openWidgetConfiguration({ widgetId: '123' })
     );
@@ -36,37 +36,37 @@ describe('EntrySidebar/Configuration/SidebarConfigurationReducer', () => {
       items: [
         { widgetId: '1', widgetNamespace: 'first' },
         { widgetId: '2', widgetNamespace: 'second' },
-        { widgetId: '3', widgetNamespace: 'first', problem: true }
+        { widgetId: '3', widgetNamespace: 'first', problem: true },
       ],
-      availableItems: []
+      availableItems: [],
     };
     let nextState = reducer(
       initialState,
       removeItemFromSidebar({
         widgetId: '1',
-        widgetNamespace: 'first'
+        widgetNamespace: 'first',
       })
     );
 
     expect(nextState).toEqual({
       items: [
         { widgetId: '2', widgetNamespace: 'second' },
-        { widgetId: '3', widgetNamespace: 'first', problem: true }
+        { widgetId: '3', widgetNamespace: 'first', problem: true },
       ],
-      availableItems: [{ widgetId: '1', widgetNamespace: 'first' }]
+      availableItems: [{ widgetId: '1', widgetNamespace: 'first' }],
     });
 
     nextState = reducer(
       nextState,
       removeItemFromSidebar({
         widgetId: '3',
-        widgetNamespace: 'first'
+        widgetNamespace: 'first',
       })
     );
 
     expect(nextState).toEqual({
       items: [{ widgetId: '2', widgetNamespace: 'second' }],
-      availableItems: [{ widgetId: '1', widgetNamespace: 'first' }]
+      availableItems: [{ widgetId: '1', widgetNamespace: 'first' }],
     });
   });
 
@@ -75,28 +75,28 @@ describe('EntrySidebar/Configuration/SidebarConfigurationReducer', () => {
       items: [
         {
           widgetId: '3',
-          widgetNamespace: 'second'
-        }
+          widgetNamespace: 'second',
+        },
       ],
       availableItems: [
         { widgetId: '1', widgetNamespace: 'first' },
-        { widgetId: '2', widgetNamespace: 'second' }
-      ]
+        { widgetId: '2', widgetNamespace: 'second' },
+      ],
     };
     const nextState = reducer(
       initialState,
       addItemToSidebar({
         widgetId: '1',
-        widgetNamespace: 'first'
+        widgetNamespace: 'first',
       })
     );
 
     const expectedState = {
       items: [
         { widgetId: '1', widgetNamespace: 'first' },
-        { widgetId: '3', widgetNamespace: 'second' }
+        { widgetId: '3', widgetNamespace: 'second' },
       ],
-      availableItems: [{ widgetId: '2', widgetNamespace: 'second' }]
+      availableItems: [{ widgetId: '2', widgetNamespace: 'second' }],
     };
 
     expect(nextState).toEqual(expectedState);
@@ -106,7 +106,7 @@ describe('EntrySidebar/Configuration/SidebarConfigurationReducer', () => {
         nextState,
         addItemToSidebar({
           widgetId: 'some-other-item',
-          widgetNamespace: 'third'
+          widgetNamespace: 'third',
         })
       )
     ).toEqual(expectedState);
@@ -117,24 +117,24 @@ describe('EntrySidebar/Configuration/SidebarConfigurationReducer', () => {
       items: [
         { widgetId: '1', widgetNamespace: 'first' },
         { widgetId: '2', widgetNamespace: 'second' },
-        { widgetId: '3', widgetNamespace: 'first' }
-      ]
+        { widgetId: '3', widgetNamespace: 'first' },
+      ],
     };
     let nextState = reducer(initialState, changeItemPosition(0, 2));
     expect(nextState).toEqual({
       items: [
         { widgetId: '2', widgetNamespace: 'second' },
         { widgetId: '3', widgetNamespace: 'first' },
-        { widgetId: '1', widgetNamespace: 'first' }
-      ]
+        { widgetId: '1', widgetNamespace: 'first' },
+      ],
     });
     nextState = reducer(nextState, changeItemPosition(1, 2));
     expect(nextState).toEqual({
       items: [
         { widgetId: '2', widgetNamespace: 'second' },
         { widgetId: '1', widgetNamespace: 'first' },
-        { widgetId: '3', widgetNamespace: 'first' }
-      ]
+        { widgetId: '3', widgetNamespace: 'first' },
+      ],
     });
   });
 });

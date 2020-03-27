@@ -3,7 +3,7 @@ import {
   Notification,
   ModalConfirm,
   Paragraph,
-  Typography
+  Typography,
 } from '@contentful/forma-36-react-components';
 import { without } from 'lodash';
 
@@ -22,7 +22,7 @@ const SpaceMemberships = () => {
   }, []);
 
   const onLeave = useCallback(
-    async space => {
+    async (space) => {
       try {
         const confirmation = await ModalLauncher.open(({ isShown, onClose }) => (
           <ModalConfirm

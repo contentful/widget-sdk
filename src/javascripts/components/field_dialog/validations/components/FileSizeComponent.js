@@ -7,15 +7,15 @@ import styles from '../styles';
 const units = [
   { label: 'Bytes', factor: 1 },
   { label: 'KB', factor: 1024 },
-  { label: 'MB', factor: 1024 * 1024 }
+  { label: 'MB', factor: 1024 * 1024 },
 ];
 
 const unitFactors = map(units, 'factor');
 
 const getDisplayValue = (value, factor) => (isFinite(value) ? value / factor : null);
 
-const getUnitFactor = baseValue => {
-  const factor = findLast(unitFactors, factor => baseValue / factor >= 1);
+const getUnitFactor = (baseValue) => {
+  const factor = findLast(unitFactors, (factor) => baseValue / factor >= 1);
   return factor || unitFactors[0];
 };
 
@@ -27,7 +27,7 @@ const FileSizeComponent = ({ type, value, onUpdate }) => {
   const [factor, setFactor] = useState(() => getUnitFactor(value));
   const [displayValue, setDisplayValue] = useState(() => getDisplayValue(value, factor));
 
-  const normalizeValue = value => (isEmpty(value) ? null : toNumber(value));
+  const normalizeValue = (value) => (isEmpty(value) ? null : toNumber(value));
 
   useEffect(() => {
     const value = getScaledValue(displayValue, factor);
@@ -65,7 +65,7 @@ const FileSizeComponent = ({ type, value, onUpdate }) => {
 FileSizeComponent.propTypes = {
   type: PropTypes.string.isRequired,
   value: PropTypes.number,
-  onUpdate: PropTypes.func.isRequired
+  onUpdate: PropTypes.func.isRequired,
 };
 
 export default FileSizeComponent;

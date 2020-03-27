@@ -39,7 +39,7 @@ export default function buildWidgetApi({ field, entry, currentUrl, settings }) {
        * the existing `.dialog.selectSingleEntry` and `selectSingleAsset` in the
        * ui-extensions-sdk do only allow a very limited set of options.
        */
-      selectEntities: config => entitySelector.open(config),
+      selectEntities: (config) => entitySelector.open(config),
       /**
        * TODO: Add to ui-extensions-sdk when open sourcing the RichText widget.
        *
@@ -47,13 +47,13 @@ export default function buildWidgetApi({ field, entry, currentUrl, settings }) {
        */
       createHyperlink: ({ showTextInput, value }) => {
         return openHyperlinkDialog({ showTextInput, value, widgetAPI });
-      }
+      },
     },
     navigator: {
       openAsset: (...args) => openEntity('Asset', ...args),
       openEntry: (...args) => openEntity('Entry', ...args),
       openEntity,
-      onSlideInNavigation
+      onSlideInNavigation,
     },
 
     /**
@@ -63,10 +63,10 @@ export default function buildWidgetApi({ field, entry, currentUrl, settings }) {
 
     permissions: {
       canAccessEntries,
-      canAccessAssets
+      canAccessAssets,
     },
 
-    settings
+    settings,
 
     // TODO: .locales
     // TODO: .user

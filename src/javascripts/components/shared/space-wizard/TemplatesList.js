@@ -9,7 +9,7 @@ class TemplatesList extends React.Component {
   static propTypes = {
     templates: PropTypes.array,
     selectedTemplate: PropTypes.object,
-    onSelect: PropTypes.func.isRequired
+    onSelect: PropTypes.func.isRequired,
   };
 
   render() {
@@ -22,7 +22,7 @@ class TemplatesList extends React.Component {
     return (
       <div className="create-new-space__templates__inner">
         <div className="create-new-space__templates__nav">
-          {templates.map(template => {
+          {templates.map((template) => {
             const isSelected = get(selectedTemplate, 'sys.id') === get(template, 'sys.id');
             // TODO show template.svgicon
             return (

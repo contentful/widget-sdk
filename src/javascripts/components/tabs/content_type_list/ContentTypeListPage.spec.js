@@ -8,20 +8,20 @@ import { ContentTypesPage as Page } from './ContentTypeListPage';
 import * as spaceContextMocked from 'ng/spaceContext';
 import * as contentTypeFactory from 'test/helpers/contentTypeFactory';
 
-jest.mock('lodash/debounce', () => fn => fn);
+jest.mock('lodash/debounce', () => (fn) => fn);
 
 jest.mock('detect-browser', () => ({
-  detect: jest.fn().mockReturnValue({ name: 'not-ie' })
+  detect: jest.fn().mockReturnValue({ name: 'not-ie' }),
 }));
 
 jest.mock('./ContentTypeList', () => {
-  return props => props.contentTypes.map(item => item.sys.id).join(',');
+  return (props) => props.contentTypes.map((item) => item.sys.id).join(',');
 });
 
 jest.mock('access_control/AccessChecker', () => ({
   shouldHide: jest.fn().mockReturnValue(false),
   shouldDisable: jest.fn().mockReturnValue(false),
-  Action: { CREATE: 'Create' }
+  Action: { CREATE: 'Create' },
 }));
 
 const selectors = {
@@ -30,13 +30,13 @@ const selectors = {
   emptyState: '[data-test-id="empty-state"]',
   noSearchResults: '[data-test-id="no-search-results"]',
   searchBox: '[data-test-id="search-box"]',
-  statusFilter: '[data-test-id="status-filter"]'
+  statusFilter: '[data-test-id="status-filter"]',
 };
 
 const mockContentTypeList = [
   contentTypeFactory.createPublished(),
   contentTypeFactory.createPublished(),
-  contentTypeFactory.createPublished()
+  contentTypeFactory.createPublished(),
 ];
 
 function renderComponent({ props = {}, items = [] }) {
@@ -82,7 +82,7 @@ describe('ContentTypeList Page', () => {
     const searchText = 'initial search text 42';
     const [{ container }] = renderComponent({
       props: { searchText },
-      items: mockContentTypeList
+      items: mockContentTypeList,
     });
 
     await waitForElement(() => {
@@ -95,12 +95,12 @@ describe('ContentTypeList Page', () => {
   describe('Search Box', () => {
     const contentTypes = [
       contentTypeFactory.createPublished({ name: 'aaa' }),
-      contentTypeFactory.createPublished({ name: 'bbb' })
+      contentTypeFactory.createPublished({ name: 'bbb' }),
     ];
 
     it('filters results by search box value', async () => {
       const [{ container }] = renderComponent({
-        items: contentTypes
+        items: contentTypes,
       });
 
       await waitForElement(() => {
@@ -108,7 +108,7 @@ describe('ContentTypeList Page', () => {
       });
 
       fireEvent.change(container.querySelector(selectors.searchBox), {
-        target: { value: 'a' }
+        target: { value: 'a' },
       });
 
       expect(container.querySelector(selectors.contentTypeList).textContent).toMatchInlineSnapshot(
@@ -118,7 +118,7 @@ describe('ContentTypeList Page', () => {
 
     it('renders no results', async () => {
       const [{ container }] = renderComponent({
-        items: contentTypes
+        items: contentTypes,
       });
 
       await waitForElement(() => {
@@ -126,7 +126,7 @@ describe('ContentTypeList Page', () => {
       });
 
       fireEvent.change(container.querySelector(selectors.searchBox), {
-        target: { value: 'x' }
+        target: { value: 'x' },
       });
 
       expect(container.querySelector(selectors.contentTypeList)).not.toBeInTheDocument();
@@ -138,14 +138,14 @@ describe('ContentTypeList Page', () => {
     const contentTypesByStatus = {
       draft: [contentTypeFactory.createDraft(), contentTypeFactory.createDraft()],
       published: [contentTypeFactory.createPublished(), contentTypeFactory.createPublished()],
-      updated: [contentTypeFactory.createUpdated()]
+      updated: [contentTypeFactory.createUpdated()],
     };
 
     const contentTypes = flatten(Object.values(contentTypesByStatus));
 
     it('highlights default status (All) after page load', async () => {
       const [{ container, getByTestId }] = renderComponent({
-        items: contentTypes
+        items: contentTypes,
       });
 
       await waitForElement(() => {
@@ -165,7 +165,7 @@ describe('ContentTypeList Page', () => {
     `('filters list', ({ status, expectedResult }) => {
       it(`by status: ${status || 'All'}`, async () => {
         const [{ container, getByTestId }] = renderComponent({
-          items: contentTypes
+          items: contentTypes,
         });
 
         await waitForElement(() => {
@@ -176,7 +176,7 @@ describe('ContentTypeList Page', () => {
 
         expect(container.querySelector(selectors.contentTypeList)).toBeInTheDocument();
         expect(container.querySelector(selectors.contentTypeList).textContent).toEqual(
-          expectedResult.map(item => item.sys.id).join(',')
+          expectedResult.map((item) => item.sys.id).join(',')
         );
       });
     });

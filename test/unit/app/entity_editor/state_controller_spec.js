@@ -6,47 +6,47 @@ import { $initialize, $inject, $apply } from 'test/utils/ng';
 import { it } from 'test/utils/dsl';
 
 describe('entityEditor/StateController', () => {
-  beforeEach(async function() {
+  beforeEach(async function () {
     this.stubs = {
       goToPreviousSlideOrExit: sinon.stub(),
       showUnpublishedReferencesWarning: sinon.stub().returns(Promise.resolve(true)),
-      modalLauncher: sinon.stub()
+      modalLauncher: sinon.stub(),
     };
 
     this.registerWarningSpy = sinon.stub();
     this.showWarningsStub = sinon.stub().resolves();
 
     this.system.set('navigation/SlideInNavigator', {
-      goToPreviousSlideOrExit: this.stubs.goToPreviousSlideOrExit
+      goToPreviousSlideOrExit: this.stubs.goToPreviousSlideOrExit,
     });
 
     this.system.set('app/common/ModalLauncher', {
       default: {
-        open: this.stubs.modalLauncher
-      }
+        open: this.stubs.modalLauncher,
+      },
     });
 
     this.system.set('app/entity_editor/UnpublishedReferencesWarning', {
-      showUnpublishedReferencesWarning: this.stubs.showUnpublishedReferencesWarning
+      showUnpublishedReferencesWarning: this.stubs.showUnpublishedReferencesWarning,
     });
 
     this.system.set('services/localeStore', {
-      default: createLocaleStoreMock()
+      default: createLocaleStoreMock(),
     });
 
     this.system.set('analytics/Analytics', {
-      track: sinon.stub()
+      track: sinon.stub(),
     });
 
     this.system.set('access_control/AccessChecker', {
-      canPerformActionOnEntity: sinon.stub.returns(true)
+      canPerformActionOnEntity: sinon.stub.returns(true),
     });
 
     this.system.set('app/entity_editor/PublicationWarnings', {
       create: () => ({
         register: this.registerWarningSpy,
-        show: this.showWarningsStub
-      })
+        show: this.showWarningsStub,
+      }),
     });
 
     this.analytics = await this.system.import('analytics/Analytics');
@@ -68,7 +68,7 @@ describe('entityEditor/StateController', () => {
 
     this.notify = sinon.stub();
 
-    this.assertErrorNotification = function(action, error) {
+    this.assertErrorNotification = function (action, error) {
       sinon.assert.calledOnce(this.notify);
       const arg = this.notify.args[0][0];
       expect(arg).toBeInstanceOf(this.Notification.Error);
@@ -76,7 +76,7 @@ describe('entityEditor/StateController', () => {
       expect(arg.response).toBe(error);
     };
 
-    this.assertSuccessNotification = function(action) {
+    this.assertSuccessNotification = function (action) {
       sinon.assert.calledOnce(this.notify);
       const arg = this.notify.args[0][0];
       expect(arg).toBeInstanceOf(this.Notification.Success);
@@ -88,8 +88,8 @@ describe('entityEditor/StateController', () => {
       sys: {
         id: 'EID',
         type: 'Entry',
-        version: 42
-      }
+        version: 42,
+      },
     };
     this.doc = createDocument(this.entity, this.spaceEndpoint);
     this.spaceEndpoint.resolves(this.doc.getData());
@@ -101,23 +101,23 @@ describe('entityEditor/StateController', () => {
       $scope: this.scope,
       notify: this.notify,
       validator: this.validator,
-      otDoc: this.doc
+      otDoc: this.doc,
     });
   });
 
   describe('#delete command execution', () => {
-    beforeEach(function() {
+    beforeEach(function () {
       this.scope.entityInfo = {
         id: 'abc',
-        type: 'Entry'
+        type: 'Entry',
       };
 
       this.spaceContext.cma = {
-        getEntries: sinon.stub().resolves({ items: [] })
+        getEntries: sinon.stub().resolves({ items: [] }),
       };
     });
 
-    it('makes delete request', async function() {
+    it('makes delete request', async function () {
       this.stubs.modalLauncher.resolves({ action: 'delete' });
       await this.controller.delete.execute();
       $apply();
@@ -127,12 +127,12 @@ describe('entityEditor/StateController', () => {
         sinon.match({
           method: 'DELETE',
           path: ['entries', 'EID'],
-          version: 42
+          version: 42,
         })
       );
     });
 
-    it('sends success notification', async function() {
+    it('sends success notification', async function () {
       this.stubs.modalLauncher.resolves({ action: 'delete' });
       await this.controller.delete.execute();
 
@@ -141,7 +141,7 @@ describe('entityEditor/StateController', () => {
       this.assertSuccessNotification('delete');
     });
 
-    it('sends failure notification with API error', async function() {
+    it('sends failure notification with API error', async function () {
       this.stubs.modalLauncher.resolves({ action: 'delete' });
       this.spaceEndpoint.rejects('ERROR');
       await this.controller.delete.execute();
@@ -149,14 +149,14 @@ describe('entityEditor/StateController', () => {
       this.assertErrorNotification('delete', 'ERROR');
     });
 
-    it('navigates to the previous slide-in entity or closes the current state as a fallback', async function() {
+    it('navigates to the previous slide-in entity or closes the current state as a fallback', async function () {
       this.stubs.modalLauncher.resolves({ action: 'delete' });
       await this.controller.delete.execute();
       $apply();
       sinon.assert.calledOnceWith(this.stubs.goToPreviousSlideOrExit, 'delete');
     });
 
-    it('[PUL-273] should allow to execute alternate action instead of the initial one', async function() {
+    it('[PUL-273] should allow to execute alternate action instead of the initial one', async function () {
       this.stubs.modalLauncher.resolves({ action: 'archive' });
       await this.controller.delete.execute();
       $apply();
@@ -166,41 +166,41 @@ describe('entityEditor/StateController', () => {
         sinon.match({
           method: 'PUT',
           path: ['entries', 'EID', 'archived'],
-          version: 42
+          version: 42,
         })
       );
     });
   });
 
   describe('in published state without changes', () => {
-    beforeEach(function() {
+    beforeEach(function () {
       this.doc.setValueAt(['sys'], {
         id: 'EID',
         type: 'Entry',
         version: 42,
-        publishedVersion: 43
+        publishedVersion: 43,
       });
       $apply();
     });
 
-    it('sets current state to "published"', function() {
+    it('sets current state to "published"', function () {
       expect(this.controller.current).toEqual('published');
     });
 
-    it('has no primary action', function() {
+    it('has no primary action', function () {
       expect(this.controller.hidePrimary).toBe(true);
     });
 
-    it('has two secondary actions', function() {
+    it('has two secondary actions', function () {
       expect(this.controller.secondary.length).toEqual(2);
     });
 
     describe('the first secondary action', () => {
-      beforeEach(function() {
+      beforeEach(function () {
         this.action = this.controller.secondary[0];
       });
 
-      it('unpublishes and archives the entity', async function() {
+      it('unpublishes and archives the entity', async function () {
         this.stubs.modalLauncher.resolves({ action: 'archive' });
         await this.action.execute();
         $apply();
@@ -210,7 +210,7 @@ describe('entityEditor/StateController', () => {
           sinon.match({
             method: 'DELETE',
             path: ['entries', 'EID', 'published'],
-            version: 42
+            version: 42,
           })
         );
         sinon.assert.calledWith(
@@ -218,18 +218,18 @@ describe('entityEditor/StateController', () => {
           sinon.match({
             method: 'PUT',
             path: ['entries', 'EID', 'archived'],
-            version: 42
+            version: 42,
           })
         );
       });
     });
 
     describe('the second secondary action', () => {
-      beforeEach(function() {
+      beforeEach(function () {
         this.action = this.controller.secondary[1];
       });
 
-      it('unpublishes the entity', async function() {
+      it('unpublishes the entity', async function () {
         this.stubs.modalLauncher.resolves({ action: 'unpublish' });
         await this.action.execute();
         $apply();
@@ -239,7 +239,7 @@ describe('entityEditor/StateController', () => {
           sinon.match({
             method: 'DELETE',
             path: ['entries', 'EID', 'published'],
-            version: 42
+            version: 42,
           })
         );
       });
@@ -247,12 +247,12 @@ describe('entityEditor/StateController', () => {
   });
 
   describe('in draft state', () => {
-    it('sets current state to "draft"', function() {
+    it('sets current state to "draft"', function () {
       expect(this.controller.current).toEqual('draft');
     });
 
     describe('primary action publish', () => {
-      it('publishes entity', async function() {
+      it('publishes entity', async function () {
         this.stubs.modalLauncher.resolves({ action: 'publish' });
         await this.controller.primary.execute();
 
@@ -266,12 +266,12 @@ describe('entityEditor/StateController', () => {
             method: 'PUT',
             path: ['entries', 'EID', 'published'],
 
-            version: 42
+            version: 42,
           })
         );
       });
 
-      it('notifies on success', async function() {
+      it('notifies on success', async function () {
         this.stubs.modalLauncher.resolves({ action: 'publish' });
         await this.controller.primary.execute();
         await flushPromises();
@@ -280,7 +280,7 @@ describe('entityEditor/StateController', () => {
         this.assertSuccessNotification('publish');
       });
 
-      it('runs the validator', async function() {
+      it('runs the validator', async function () {
         this.stubs.modalLauncher.resolves({ action: 'publish' });
         await this.controller.primary.execute();
 
@@ -291,24 +291,24 @@ describe('entityEditor/StateController', () => {
       });
 
       describe('when the entity is an entry', () => {
-        beforeEach(function() {
+        beforeEach(function () {
           const contentTypeId = 'foo';
           this.scope.entityInfo = {
             type: 'Entry',
-            contentTypeId: contentTypeId
+            contentTypeId: contentTypeId,
           };
           this.spaceContext.publishedCTs = {
             get: sinon
               .stub()
               .withArgs(contentTypeId)
               .returns({
-                data: { name: 'foo' }
-              })
+                data: { name: 'foo' },
+              }),
           };
         });
 
         describe('when we are in the bulk editor', () => {
-          beforeEach(function() {
+          beforeEach(function () {
             this.scope.bulkEditorContext = {};
             this.stubs.modalLauncher.resolves({ action: 'publish' });
           });
@@ -317,7 +317,7 @@ describe('entityEditor/StateController', () => {
         });
 
         describe('when we are in the entry editor', () => {
-          beforeEach(function() {
+          beforeEach(function () {
             delete this.scope.bulkEditorContext;
             this.stubs.modalLauncher.resolves({ action: 'publish' });
           });
@@ -326,7 +326,7 @@ describe('entityEditor/StateController', () => {
         });
 
         function itTracksThePublishEventWithOrigin(eventOrigin) {
-          it('tracks the publish event', async function() {
+          it('tracks the publish event', async function () {
             await this.controller.primary.execute();
             await flushPromises();
             $apply();
@@ -335,25 +335,25 @@ describe('entityEditor/StateController', () => {
               eventOrigin: eventOrigin,
               contentType: { name: 'foo' },
               response: this.entity,
-              widgetTrackingContexts: []
+              widgetTrackingContexts: [],
             });
           });
         }
       });
 
       describe('when the entity is not an entry', () => {
-        beforeEach(function() {
+        beforeEach(function () {
           const contentTypeId = 'foo';
           this.scope.entityInfo = {
             type: 'Asset',
-            contentTypeId: contentTypeId
+            contentTypeId: contentTypeId,
           };
           this.spaceContext.publishedCTs = {
-            get: sinon.stub()
+            get: sinon.stub(),
           };
         });
 
-        it('does not track the publish event', async function() {
+        it('does not track the publish event', async function () {
           this.stubs.modalLauncher.resolves({ action: 'publish' });
           await this.controller.primary.execute();
 
@@ -365,7 +365,7 @@ describe('entityEditor/StateController', () => {
         });
       });
 
-      it('sends notification if validation failed', async function() {
+      it('sends notification if validation failed', async function () {
         this.validator.run.returns(false);
         this.stubs.modalLauncher.resolves({ action: 'publish' });
         await this.controller.primary.execute();
@@ -378,7 +378,7 @@ describe('entityEditor/StateController', () => {
         );
       });
 
-      it('does not publish if validation failed', async function() {
+      it('does not publish if validation failed', async function () {
         this.validator.run.returns(false);
         this.stubs.modalLauncher.resolves({ action: 'publish' });
         await this.controller.primary.execute();
@@ -388,7 +388,7 @@ describe('entityEditor/StateController', () => {
         sinon.assert.notCalled(this.spaceEndpoint);
       });
 
-      it('sends notification on server error', async function() {
+      it('sends notification on server error', async function () {
         this.spaceEndpoint.rejects('ERROR');
         this.stubs.modalLauncher.resolves({ action: 'publish' });
         await this.controller.primary.execute();
@@ -401,15 +401,15 @@ describe('entityEditor/StateController', () => {
     });
 
     describe('secondary action archive', () => {
-      beforeEach(function() {
+      beforeEach(function () {
         this.action = this.controller.secondary[0];
       });
 
-      it('has only one', function() {
+      it('has only one', function () {
         expect(this.controller.secondary.length).toEqual(1);
       });
 
-      it('archives entity', async function() {
+      it('archives entity', async function () {
         this.stubs.modalLauncher.resolves({ action: 'archive' });
         await this.action.execute();
         $apply();
@@ -419,12 +419,12 @@ describe('entityEditor/StateController', () => {
           sinon.match({
             method: 'PUT',
             path: ['entries', 'EID', 'archived'],
-            version: 42
+            version: 42,
           })
         );
       });
 
-      it('notifies on success', async function() {
+      it('notifies on success', async function () {
         this.stubs.modalLauncher.resolves({ action: 'archive' });
         await this.action.execute();
         $apply();
@@ -432,7 +432,7 @@ describe('entityEditor/StateController', () => {
         this.assertSuccessNotification('archive');
       });
 
-      it('notifies on failure', async function() {
+      it('notifies on failure', async function () {
         this.stubs.modalLauncher.resolves({ action: 'archive' });
         this.spaceEndpoint.rejects('ERROR');
         await this.action.execute();
@@ -444,7 +444,7 @@ describe('entityEditor/StateController', () => {
   });
 
   describe('#revertToPrevious command', () => {
-    it('is available iff document has changes and the document is editable', function() {
+    it('is available iff document has changes and the document is editable', function () {
       this.doc.reverter.hasChanges.returns(true);
       this.doc.state.canEdit$.set(true);
       expect(this.controller.revertToPrevious.isAvailable()).toBe(true);
@@ -458,7 +458,7 @@ describe('entityEditor/StateController', () => {
       expect(this.controller.revertToPrevious.isAvailable()).toBe(false);
     });
 
-    it('calls notification for successful execution', function() {
+    it('calls notification for successful execution', function () {
       this.doc.reverter.revert.resolves();
 
       sinon.assert.notCalled(this.doc.reverter.revert);
@@ -470,7 +470,7 @@ describe('entityEditor/StateController', () => {
       this.assertSuccessNotification('revert');
     });
 
-    it('calls notification for failed execution', function() {
+    it('calls notification for failed execution', function () {
       this.doc.reverter.revert.rejects('ERROR');
 
       sinon.assert.notCalled(this.doc.reverter.revert);
@@ -484,7 +484,7 @@ describe('entityEditor/StateController', () => {
   });
 
   describe('publication warnings', () => {
-    it('shows publication warnings before actual action', async function() {
+    it('shows publication warnings before actual action', async function () {
       this.stubs.modalLauncher.resolves({ action: 'publish' });
       $apply();
       await this.controller.primary.execute();

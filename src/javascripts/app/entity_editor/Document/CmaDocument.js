@@ -17,7 +17,7 @@ export function create(initialEntity, spaceEndpoint) {
   // A single source of Truth, properties like sys$ and data$ reflect the state of this variable.
   const entity = cloneDeep(initialEntity);
 
-  const getValueAt = path => _.get(entity, ['data', ...path]);
+  const getValueAt = (path) => _.get(entity, ['data', ...path]);
 
   // todo: should it be done the same way as 'fields' and be streamed from 'entity' object?
   const sysBus = K.createPropertyBus(entity.data.sys);
@@ -34,7 +34,7 @@ export function create(initialEntity, spaceEndpoint) {
   // todo: a throttled CMA request must be finished prior to the Entry status change (e.g. Publish)
   const resourceState = ResourceStateManager.create(
     sys$,
-    newSys => {
+    (newSys) => {
       _.set(entity, ['data', 'sys'], newSys);
       sysBus.set(newSys);
     },
@@ -50,13 +50,13 @@ export function create(initialEntity, spaceEndpoint) {
       method: 'PUT',
       path: [collection, entity.data.sys.id],
       version: entity.data.sys.version,
-      data: entity.data
+      data: entity.data,
     };
 
     // console.log('cmaPutChanges request', body);
 
     return spaceEndpoint(body, {
-      'X-Contentful-Skip-Transformation': 'true'
+      'X-Contentful-Skip-Transformation': 'true',
     });
   };
   // todo: we should filter out "sys" changes, not trigger CMA request
@@ -100,7 +100,7 @@ export function create(initialEntity, spaceEndpoint) {
    * @type {Property<boolean>}
    */
   const canEdit$ = sys$
-    .map(sys => !sys.archivedVersion && !sys.deletedVersion && permissions.can('update'))
+    .map((sys) => !sys.archivedVersion && !sys.deletedVersion && permissions.can('update'))
     .skipDuplicates();
   /**
    * @description
@@ -112,7 +112,7 @@ export function create(initialEntity, spaceEndpoint) {
    *
    * @type {Property<boolean>}
    */
-  const isDirty$ = sys$.map(sys =>
+  const isDirty$ = sys$.map((sys) =>
     sys.publishedVersion ? sys.version > sys.publishedVersion + 1 : true
   );
 
@@ -145,7 +145,7 @@ export function create(initialEntity, spaceEndpoint) {
        *
        * So it also might then contain other errors: document disconnected, open error.
        */
-      error$: K.never()
+      error$: K.never(),
     },
 
     /**
@@ -169,7 +169,7 @@ export function create(initialEntity, spaceEndpoint) {
       changesBus.emit(path);
       return Promise.resolve(entity);
     },
-    removeValueAt: path => {
+    removeValueAt: (path) => {
       _.unset(entity, ['data', ...path]);
       changesBus.emit(path);
       return Promise.resolve();
@@ -211,7 +211,7 @@ export function create(initialEntity, spaceEndpoint) {
       collaboratorsFor: () => K.constant([]),
       focus: _.noop,
       leave: _.noop,
-      destroy: _.noop
+      destroy: _.noop,
     },
 
     /**
@@ -225,7 +225,7 @@ export function create(initialEntity, spaceEndpoint) {
      */
     reverter: {
       hasChanges: _.noop,
-      revert: _.noop
+      revert: _.noop,
     },
 
     /**
@@ -254,7 +254,7 @@ export function create(initialEntity, spaceEndpoint) {
      * @param {string} localeCode
      * @returns {boolean}
      */
-    permissions
+    permissions,
   };
 
   /**
@@ -266,7 +266,7 @@ export function create(initialEntity, spaceEndpoint) {
    */
   document.data$ = K.combinePropertiesObject({
     sys: sys$,
-    fields: valuePropertyAt(document, ['fields'])
+    fields: valuePropertyAt(document, ['fields']),
   });
 
   return document;

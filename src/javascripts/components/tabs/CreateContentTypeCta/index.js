@@ -8,8 +8,8 @@ import * as accessChecker from 'access_control/AccessChecker';
 const styles = {
   button: css({
     marginLeft: 'auto',
-    minWidth: '150px'
-  })
+    minWidth: '150px',
+  }),
 };
 
 export default function CreateContentTypeCta({ size = null, testId }) {
@@ -43,5 +43,5 @@ export default function CreateContentTypeCta({ size = null, testId }) {
 
 CreateContentTypeCta.propTypes = {
   size: PropTypes.oneOf(['large', null]),
-  testId: PropTypes.string
+  testId: PropTypes.string,
 };

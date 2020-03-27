@@ -11,14 +11,14 @@ const styles = {
     alignItems: 'center',
     padding: `${tokens.spacingS} ${tokens.spacingL}`,
     fontSize: tokens.fontSizeM,
-    lineHeight: tokens.lineHeightDefault
+    lineHeight: tokens.lineHeightDefault,
   }),
   statusUnconfirmed: css({
     color: tokens.colorTextLight,
     a: css({
       color: tokens.colorTextLight,
-      textDecoration: 'underline'
-    })
+      textDecoration: 'underline',
+    }),
   }),
   entityLinkImage: css({
     flex: 0,
@@ -26,21 +26,21 @@ const styles = {
     minWidth: '37.5px',
     height: '37.5px',
     border: `1px solid ${tokens.colorElementDark}`,
-    marginRight: tokens.spacingM
+    marginRight: tokens.spacingM,
   }),
   entityTextLink: css({
     width: tokens.contentWidthFull,
     '> *:first-child': {
-      fontSize: tokens.fontSizeM
+      fontSize: tokens.fontSizeM,
     },
     '> *:not(:first-child)': {
-      color: tokens.colorTextLight
-    }
-  })
+      color: tokens.colorTextLight,
+    },
+  }),
 };
 
 const UserLink = ({ user }) => {
-  const unconfirmedUserMessage = condition => {
+  const unconfirmedUserMessage = (condition) => {
     const tooltipMessage = user.activated
       ? 'This user hasn’t confirmed their email address yet. Therefore  we can’t guarantee the identity of the user'
       : 'This user hasn’t accepted the invitation to your organization yet.';
@@ -78,7 +78,7 @@ const UserLink = ({ user }) => {
 };
 
 UserLink.propTypes = {
-  user: User
+  user: User,
 };
 
 export default UserLink;

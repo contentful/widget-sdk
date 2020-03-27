@@ -41,7 +41,7 @@ export const Notification = makeSum({
   // 'response' is an HTTP error response as returned by
   // 'data/spaceEndoint' for example.
   Error: ['action', 'response'],
-  ValidationError: []
+  ValidationError: [],
 });
 
 const publishValidationFailMessage = publishFail(
@@ -62,7 +62,7 @@ const successMessages = {
   publish: makeTemplate('%{title} published successfully'),
   unpublish: makeTemplate('%{title} unpublished successfully'),
   revert: makeTemplate('Discarded changes of %{title} successfully'),
-  duplicate: null
+  duplicate: null,
 };
 
 const errorMessages = {
@@ -72,7 +72,7 @@ const errorMessages = {
   publish: makeTemplate('Error publishing %{title} (%{error})'),
   unpublish: makeTemplate('Error unpublishing %{title} (%{error})'),
   revert: makeTemplate('Error discarding changes of %{title}'),
-  duplicate: makeTemplate('Could not duplicate %{type}')
+  duplicate: makeTemplate('Could not duplicate %{type}'),
 };
 
 export function makeNotify(Type, getTitle) {
@@ -89,8 +89,8 @@ export function makeNotify(Type, getTitle) {
         Notification.ValidationError,
         () => {
           Notifier.error(renderTemplate(publishValidationFailMessage));
-        }
-      ]
+        },
+      ],
     ]);
   };
 
@@ -127,7 +127,7 @@ export function makeNotify(Type, getTitle) {
         {
           Type,
           type,
-          title: getTitle()
+          title: getTitle(),
         },
         env
       )

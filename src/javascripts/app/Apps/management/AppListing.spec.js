@@ -10,8 +10,8 @@ util.getOrgSpacesFor = jest.fn(() =>
     {
       name: 'mySpace',
       sys: { id: 'my-space-123' },
-      organization: { sys: { id: 'my-org-123' } }
-    }
+      organization: { sys: { id: 'my-org-123' } },
+    },
   ])
 );
 

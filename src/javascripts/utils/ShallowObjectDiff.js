@@ -14,10 +14,10 @@ import { assign, keys } from 'lodash';
  * @param {Object} newObj
  * @returns {Object} shallow diff of input objects
  */
-export default function(oldObj = {}, newObj = {}) {
+export default function (oldObj = {}, newObj = {}) {
   const retObj = assign({}, newObj);
 
-  keys(oldObj).forEach(key => {
+  keys(oldObj).forEach((key) => {
     if (oldObj[key] === newObj[key]) {
       delete retObj[key];
     }

@@ -10,8 +10,8 @@ import { createImmerReducer } from 'redux/utils/createImmerReducer';
 const styles = {
   userSelection: css({
     display: 'flex',
-    flexDirection: 'column'
-  })
+    flexDirection: 'column',
+  }),
 };
 
 const reducer = createImmerReducer({
@@ -20,13 +20,13 @@ const reducer = createImmerReducer({
   },
   SEARCH_TERM_CHANGED: (state, action) => {
     state.searchTerm = action.payload;
-  }
+  },
 });
 
 const initialState = {
   options: null,
   selectedUserIds: [],
-  searchTerm: ''
+  searchTerm: '',
 };
 
 export default function UserSelection({
@@ -35,11 +35,11 @@ export default function UserSelection({
   onClose,
   onUserSelected,
   onUserRemoved,
-  onConfirm
+  onConfirm,
 }) {
   const [{ options, searchTerm }, dispatch] = useReducer(reducer, initialState);
 
-  const handleSearchUpdate = e => {
+  const handleSearchUpdate = (e) => {
     const value = e.target.value;
     dispatch({ type: 'SEARCH_TERM_CHANGED', payload: value });
     const newOptions = filterUsers(value, availableUsers);
@@ -63,7 +63,7 @@ export default function UserSelection({
             placeholder: `Search users in your organization`,
             type: 'search',
             disabled: !availableUsers,
-            autoFocus: true
+            autoFocus: true,
           }}
         />
         <AvailableUsers
@@ -99,7 +99,7 @@ UserSelection.propTypes = {
   onUserSelected: PropTypes.func.isRequired,
   onUserRemoved: PropTypes.func.isRequired,
   availableUsers: PropTypes.arrayOf(OrganizationMembershipPropType),
-  selectedUsers: PropTypes.arrayOf(OrganizationMembershipPropType).isRequired
+  selectedUsers: PropTypes.arrayOf(OrganizationMembershipPropType).isRequired,
 };
 
 function filterUsers(searchTerm, list) {
@@ -107,12 +107,12 @@ function filterUsers(searchTerm, list) {
   const sanitize = flow([trim, deburr, lowerCase]);
   const term = sanitize(searchTerm);
 
-  return list.filter(option => {
+  return list.filter((option) => {
     const attributes = [
       get(option, 'sys.user.firstName', '') + get(option, 'sys.user.lastName', ''),
-      get(option, 'sys.user.email')
+      get(option, 'sys.user.email'),
     ];
     // return memberships where the any of the attributes matches the search term
-    return attributes.some(attr => sanitize(attr).includes(term));
+    return attributes.some((attr) => sanitize(attr).includes(term));
   });
 }

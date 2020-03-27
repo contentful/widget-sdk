@@ -11,7 +11,7 @@ const fieldProperties = [
   'linkType',
   'localized',
   'required',
-  'disabled'
+  'disabled',
 ];
 
 export default {
@@ -19,7 +19,7 @@ export default {
   update,
   validate,
   validateInContentType,
-  getDisplayName: getDisplayFieldName
+  getDisplayName: getDisplayFieldName,
 };
 
 function decorate(field, contentType) {
@@ -31,7 +31,7 @@ function decorate(field, contentType) {
     canBeTitle: isTitleType(field.type),
     isRichTextField: field.type === 'RichText',
     canBeLocalized: true,
-    apiName: field.apiName || field.id
+    apiName: field.apiName || field.id,
   });
 }
 
@@ -62,7 +62,7 @@ function validateInContentType(field, contentType) {
   if (!isApiNameUnique(field, contentType)) {
     errors.push({
       name: 'uniqueFieldId',
-      path: ['apiName']
+      path: ['apiName'],
     });
   }
   return errors;

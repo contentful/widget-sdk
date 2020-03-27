@@ -14,12 +14,12 @@ export function create(parentEntryId, links$) {
     addNew,
     changeStatus,
     edited,
-    actions
+    actions,
   };
 
   function open() {
     track('open', {
-      refCount: K.getValue(links$).length
+      refCount: K.getValue(links$).length,
     });
   }
 
@@ -27,21 +27,21 @@ export function create(parentEntryId, links$) {
     track('close', {
       refCount: K.getValue(links$).length,
       numEditedEntries: size(editedEntries),
-      numPublishedEntries: size(publishedEntries)
+      numPublishedEntries: size(publishedEntries),
     });
   }
 
   function addExisting(num) {
     track('add', {
       refCount: K.getValue(links$).length + num,
-      existing: true
+      existing: true,
     });
   }
 
   function addNew() {
     track('add', {
       refCount: K.getValue(links$).length + 1,
-      existing: false
+      existing: false,
     });
   }
 
@@ -53,14 +53,14 @@ export function create(parentEntryId, links$) {
       setExpansion(expanded) {
         const action = expanded ? 'expand' : 'collapse';
         trackAction(action, entryId);
-      }
+      },
     };
   }
 
   function trackAction(action, entryId) {
     track(action, {
       refCount: K.getValue(links$).length + 1,
-      entryId
+      entryId,
     });
   }
 
@@ -70,7 +70,7 @@ export function create(parentEntryId, links$) {
     }
     track('status', {
       entryId: id,
-      status: stateName(state)
+      status: stateName(state),
     });
   }
 
@@ -93,6 +93,6 @@ export const createNoop = () => ({
   actions: () => ({
     unlink: noop,
     navigate: noop,
-    setExpansion: noop
-  })
+    setExpansion: noop,
+  }),
 });

@@ -23,8 +23,8 @@ angular
         focus: Focus.create(),
         entityInfo: {
           id: 'ENTITY ID',
-          type: 'Entry'
-        }
+          type: 'Entry',
+        },
       };
     }
 
@@ -37,10 +37,10 @@ angular
         run: sinon.stub().returns(true),
         hasFieldError: sinon.stub().returns(false),
         hasFieldLocaleError: sinon.stub().returns(false),
-        setApiResponseErrors: sinon.spy(response => {
+        setApiResponseErrors: sinon.spy((response) => {
           errors$.set(_.get(response, ['body', 'details', 'errors']));
         }),
-        validateFieldLocale: sinon.spy()
+        validateFieldLocale: sinon.spy(),
       };
     }
   });

@@ -22,13 +22,13 @@ export default {
       name: 'gitlabOrg',
       type: 'text',
       title: 'GitLab organization or user',
-      description: <p>The GitLab organization or user repository belongs to.</p>
+      description: <p>The GitLab organization or user repository belongs to.</p>,
     },
     {
       name: 'gitlabRepo',
       type: 'text',
       title: 'GitLab repository',
-      description: <p>The name of the repository you want to trigger.</p>
+      description: <p>The name of the repository you want to trigger.</p>,
     },
     {
       name: 'branch',
@@ -39,7 +39,7 @@ export default {
         <p>
           The source code branch, for example <code>master</code>
         </p>
-      )
+      ),
     },
     {
       name: 'token',
@@ -56,8 +56,8 @@ export default {
           </a>
           . This value can’t be revealed once stored.
         </p>
-      )
-    }
+      ),
+    },
   ],
   mapParamsToDefinition: ({ gitlabOrg, gitlabRepo, branch, token }, name) => {
     return {
@@ -74,10 +74,10 @@ export default {
             { key: 'CONTENTFUL_ENTITY_ID', value: '{ /payload/sys/id }' },
             { key: 'CONTENTFUL_ENTITY_TYPE', value: '{ /payload/sys/type }' },
             { key: 'CONTENTFUL_SPACE_ID', value: '{ /payload/sys/space/sys/id }' },
-            { key: 'CONTENTFUL_ENVIRONMENT_ID', value: '{ /payload/sys/environment/sys/id }' }
-          ]
-        })
-      }
+            { key: 'CONTENTFUL_ENVIRONMENT_ID', value: '{ /payload/sys/environment/sys/id }' },
+          ],
+        }),
+      },
     };
-  }
+  },
 };

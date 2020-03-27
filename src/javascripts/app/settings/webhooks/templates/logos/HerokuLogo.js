@@ -1,6 +1,6 @@
 import React from 'react';
 
-const HerokuLogo = props => (
+const HerokuLogo = (props) => (
   <svg viewBox="0 0 48 48" width={32} height={32} {...props}>
     <path
       d="M7 41V7c0-2.21 1.79-4 4-4h26c2.21 0 4 1.785 4 3.992v34.012C41 43.214 39.21 45 37 45H11c-2.21 0-4-1.79-4-4z"

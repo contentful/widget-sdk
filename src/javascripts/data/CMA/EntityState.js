@@ -39,7 +39,7 @@ export const State = {
    * @name data/CMA/EntityState#State.Published
    * @returns {data/CMA/EntityState.State}
    */
-  Published: constant('__PUBLISHED__')
+  Published: constant('__PUBLISHED__'),
 };
 
 /**
@@ -54,7 +54,7 @@ export function stateName(state) {
     [State.Archived(), constant('archived')],
     [State.Draft(), constant('draft')],
     [State.Changed(), constant('changed')],
-    [State.Published(), constant('published')]
+    [State.Published(), constant('published')],
   ]);
 }
 
@@ -114,7 +114,7 @@ export function makeApply(spaceEndpoint) {
       [Action.Unpublish(), State.Draft],
       [Action.Archive(), State.Archived],
       [Action.Unarchive(), State.Draft],
-      [Action.Delete(), State.Deleted]
+      [Action.Delete(), State.Deleted],
     ]);
     return changeTo(targetState, data);
   };
@@ -151,8 +151,8 @@ function makeChangeTo(spaceEndpoint) {
           } else {
             return performActionWithDraftEnsured(Action.Publish(), data);
           }
-        }
-      ]
+        },
+      ],
     ]);
   };
 
@@ -161,11 +161,11 @@ function makeChangeTo(spaceEndpoint) {
       [State.Published(), () => performAction(Action.Unpublish(), data)],
       [State.Changed(), () => performAction(Action.Unpublish(), data)],
       [State.Archived(), () => performAction(Action.Unarchive(), data)],
-      [State.Draft(), () => Promise.resolve(data)]
+      [State.Draft(), () => Promise.resolve(data)],
     ]);
   }
 
   function performActionWithDraftEnsured(action, data) {
-    return toDraft(data).then(data => performAction(action, data));
+    return toDraft(data).then((data) => performAction(action, data));
   }
 }

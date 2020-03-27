@@ -8,8 +8,8 @@ const optedIn = {
   targetEnv: {
     id: 'staging',
     aliases: ['master'],
-    payload: { sys: { createdAt: Date.now() } }
-  }
+    payload: { sys: { createdAt: Date.now() } },
+  },
 };
 
 const getComponent = (props = {}) => {
@@ -20,18 +20,18 @@ const getComponent = (props = {}) => {
         {
           aliases: ['master'],
           id: 'staging',
-          payload: { sys: { createdAt: Date.now() } }
+          payload: { sys: { createdAt: Date.now() } },
         },
         {
           aliases: [],
           id: 'release-1',
-          payload: { sys: { createdAt: Date.now() } }
+          payload: { sys: { createdAt: Date.now() } },
         },
         {
           aliases: [],
           id: 'release-2',
-          payload: { sys: { createdAt: Date.now() } }
-        }
+          payload: { sys: { createdAt: Date.now() } },
+        },
       ]}
       spaceId="123456"
       {...props}></EnvironmentAliases>
@@ -61,9 +61,9 @@ describe('EnvironmentAliases', () => {
         {
           aliases: ['master'],
           id: 'staging',
-          payload: { sys: { createdAt: Date.now() } }
-        }
-      ]
+          payload: { sys: { createdAt: Date.now() } },
+        },
+      ],
     });
     const { getByTestId } = render(component);
     const environmentalias = getByTestId('environmentalias.wrapper');

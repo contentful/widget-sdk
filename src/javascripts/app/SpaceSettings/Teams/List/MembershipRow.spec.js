@@ -9,7 +9,7 @@ import MembershipRow from './MembershipRow';
 let onUpdateTeamSpaceMembership;
 let onRemoveTeamSpaceMembership;
 
-const build = props =>
+const build = (props) =>
   render(
     <Table>
       <TableBody>
@@ -20,9 +20,9 @@ const build = props =>
               sys: {
                 team: {
                   name: 'Team 0',
-                  sys: { id: 'team0' }
-                }
-              }
+                  sys: { id: 'team0' },
+                },
+              },
             },
             teamSpaceMemberships: [],
             spaceMemberships: [],
@@ -34,7 +34,7 @@ const build = props =>
             isPending: false,
             readOnly: false,
             currentUserAdminSpaceMemberships: [],
-            ...props
+            ...props,
           }}
         />
       </TableBody>
@@ -56,16 +56,19 @@ describe('MembershipRow', () => {
   describe('teamSpaceMembership with team details is given', () => {
     const teamSpaceMembership = {
       admin: false,
-      roles: [{ name: 'Role 2', sys: { id: 'role2' } }, { name: 'Role 3', sys: { id: 'role3' } }],
+      roles: [
+        { name: 'Role 2', sys: { id: 'role2' } },
+        { name: 'Role 3', sys: { id: 'role3' } },
+      ],
       sys: {
         id: 'membership1',
         team: {
           name: 'Team 1',
           memberCount: 1,
           description: 'This is Team 1',
-          sys: { id: 'team1' }
-        }
-      }
+          sys: { id: 'team1' },
+        },
+      },
     };
 
     it('should render teamSpaceMembership and team details', async () => {
@@ -98,14 +101,14 @@ describe('MembershipRow', () => {
         { name: 'Role 1', sys: { id: 'role1' } },
         { name: 'Role 2', sys: { id: 'role2' } },
         { name: 'Role 3', sys: { id: 'role3' } },
-        { name: 'Role 4', sys: { id: 'role4' } }
+        { name: 'Role 4', sys: { id: 'role4' } },
       ];
 
       it('should show role editor with all available roles in edit mode', async () => {
         const { findAllByTestId, findByTestId } = build({
           teamSpaceMembership,
           isEditing: true,
-          availableRoles
+          availableRoles,
         });
 
         fireEvent.click(await findByTestId('space-role-editor.button'));
@@ -134,7 +137,7 @@ describe('MembershipRow', () => {
       delete window.location;
 
       window.location = {
-        replace: jest.fn()
+        replace: jest.fn(),
       };
 
       const lastMembership = {
@@ -142,15 +145,15 @@ describe('MembershipRow', () => {
         sys: {
           team: {
             name: 'Team 0',
-            sys: { id: 'team0' }
+            sys: { id: 'team0' },
           },
-          id: 'lastAdminId'
-        }
+          id: 'lastAdminId',
+        },
       };
 
       const { findByTestId, queryByTestId } = build({
         currentUserAdminSpaceMemberships: [lastMembership],
-        teamSpaceMembership: lastMembership
+        teamSpaceMembership: lastMembership,
       });
 
       fireEvent.click(within(queryByTestId('row-menu')).queryByTestId('cf-ui-icon-button'));
@@ -162,7 +165,7 @@ describe('MembershipRow', () => {
       expect(confirmationDialog).toBeInTheDocument();
 
       fireEvent.change(getByTestId(confirmationDialog, 'cf-ui-text-input'), {
-        target: { value: 'I UNDERSTAND' }
+        target: { value: 'I UNDERSTAND' },
       });
       fireEvent.click(await findByTestId('cf-ui-modal-confirm-confirm-button'));
 

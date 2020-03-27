@@ -1,6 +1,6 @@
 import createTaskPermissionChecker, {
   createProhibitive as createProhibitiveTaskPermissionChecker,
-  MissingCurrentUserError
+  MissingCurrentUserError,
 } from './TaskPermissionChecker';
 
 describe('TaskPermissionChecker', () => {
@@ -13,12 +13,12 @@ describe('TaskPermissionChecker', () => {
       sys: {
         type: 'Link',
         linkType: 'User',
-        id: 'user-id'
-      }
+        id: 'user-id',
+      },
     };
 
     task = {
-      sys: {}
+      sys: {},
     };
   });
 
@@ -144,9 +144,9 @@ describe('TaskPermissionChecker', () => {
     beforeEach(() => {
       task = {
         sys: {
-          createdBy: { sys: { id: currentUser.sys.id } }
+          createdBy: { sys: { id: currentUser.sys.id } },
         },
-        assignedTo: { sys: { id: currentUser.sys.id } }
+        assignedTo: { sys: { id: currentUser.sys.id } },
       };
 
       isSpaceAdmin = true;

@@ -5,17 +5,17 @@ import { go } from 'states/Navigator';
 import * as spaceContextMocked from 'ng/spaceContext';
 
 jest.mock('states/Navigator', () => ({
-  go: jest.fn()
+  go: jest.fn(),
 }));
 
 jest.mock('services/OrganizationRoles', () => ({
-  isOwnerOrAdmin: jest.fn()
+  isOwnerOrAdmin: jest.fn(),
 }));
 
 describe('AccountUtils', () => {
   beforeEach(() => {
     spaceContextMocked.getData.mockReturnValue({
-      sys: { id: 'my-org-id' }
+      sys: { id: 'my-org-id' },
     });
     go.mockReset();
   });
@@ -24,7 +24,7 @@ describe('AccountUtils', () => {
     spaceContextMocked.getData.mockReset();
   });
 
-  const setAdmin = isAdmin => {
+  const setAdmin = (isAdmin) => {
     isOwnerOrAdmin.mockReturnValue(isAdmin);
   };
 
@@ -37,8 +37,8 @@ describe('AccountUtils', () => {
       expect(ref).toEqual({
         path: ['account', 'organizations', 'subscription'],
         params: {
-          orgId: 'my-org-id'
-        }
+          orgId: 'my-org-id',
+        },
       });
     });
 
@@ -47,8 +47,8 @@ describe('AccountUtils', () => {
       expect(go).toHaveBeenCalledWith({
         path: ['account', 'organizations', 'subscription'],
         params: {
-          orgId: 'my-org-id'
-        }
+          orgId: 'my-org-id',
+        },
       });
     });
 
@@ -57,8 +57,8 @@ describe('AccountUtils', () => {
       expect(go).toHaveBeenCalledWith({
         path: ['account', 'organizations', 'users.list'],
         params: {
-          orgId: 'my-org-id'
-        }
+          orgId: 'my-org-id',
+        },
       });
     });
   });

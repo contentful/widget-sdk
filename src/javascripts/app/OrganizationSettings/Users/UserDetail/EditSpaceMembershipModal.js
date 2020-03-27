@@ -8,7 +8,7 @@ import {
   Notification,
   FieldGroup,
   SkeletonContainer,
-  SkeletonBodyText
+  SkeletonBodyText,
 } from '@contentful/forma-36-react-components';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { fetchAll } from 'data/CMA/FetchAll';
@@ -23,16 +23,16 @@ import tokens from '@contentful/forma-36-tokens';
 const styles = {
   roles: css({
     marginTop: tokens.spacingS,
-    marginLeft: tokens.spacingL
-  })
+    marginLeft: tokens.spacingL,
+  }),
 };
 
 const reducer = createImmerReducer({
-  ADMIN_SELECTED: state => {
+  ADMIN_SELECTED: (state) => {
     state.selectedRoleIds = [ADMIN_ROLE_ID];
     state.adminSelected = true;
   },
-  OTHER_ROLES_SELECTED: state => {
+  OTHER_ROLES_SELECTED: (state) => {
     state.selectedRoleIds = [];
     state.adminSelected = false;
   },
@@ -42,19 +42,19 @@ const reducer = createImmerReducer({
     if (checked) {
       state.selectedRoleIds.push(role.sys.id);
     } else {
-      state.selectedRoleIds = state.selectedRoleIds.filter(id => id !== role.sys.id);
+      state.selectedRoleIds = state.selectedRoleIds.filter((id) => id !== role.sys.id);
     }
   },
-  SUBMITTED: state => {
+  SUBMITTED: (state) => {
     state.isSubmitted = true;
-  }
+  },
 });
 
 export default function EditSpaceMembershipModal({ membership, isShown, onClose, onChange }) {
   const [{ selectedRoleIds, adminSelected, isSubmitted }, dispatch] = useReducer(reducer, {
     adminSelected: membership.admin,
-    selectedRoleIds: membership.roles.map(role => role.sys.id),
-    isSubmitted: false
+    selectedRoleIds: membership.roles.map((role) => role.sys.id),
+    isSubmitted: false,
   });
   const spaceId = membership.sys.space.sys.id;
   const { data: spaceRoles, isLoading: isLoadingRoles } = useAsync(
@@ -69,7 +69,7 @@ export default function EditSpaceMembershipModal({ membership, isShown, onClose,
       // we use the data from the old membership to replace the links with
       const space = membership.sys.space;
       const createdBy = membership.sys.createdBy;
-      const roles = spaceRoles.filter(role => selectedRoleIds.includes(role.sys.id));
+      const roles = spaceRoles.filter((role) => selectedRoleIds.includes(role.sys.id));
 
       updatedMembership.sys.space = space;
       updatedMembership.sys.createdBy = createdBy;
@@ -100,7 +100,7 @@ export default function EditSpaceMembershipModal({ membership, isShown, onClose,
                 labelText="Admin"
                 helpText="Can manage everything in the space"
                 checked={adminSelected}
-                onChange={e => e.target.checked && dispatch({ type: 'ADMIN_SELECTED' })}
+                onChange={(e) => e.target.checked && dispatch({ type: 'ADMIN_SELECTED' })}
               />
 
               {isLoadingRoles && (
@@ -118,12 +118,12 @@ export default function EditSpaceMembershipModal({ membership, isShown, onClose,
                     id="other"
                     labelText="Other roles"
                     checked={!adminSelected}
-                    onChange={e => e.target.checked && dispatch({ type: 'OTHER_ROLES_SELECTED' })}
+                    onChange={(e) => e.target.checked && dispatch({ type: 'OTHER_ROLES_SELECTED' })}
                   />
 
                   <div className={styles.roles}>
                     <FieldGroup>
-                      {spaceRoles.map(role => (
+                      {spaceRoles.map((role) => (
                         <CheckboxField
                           key={role.sys.id}
                           id={role.sys.id}
@@ -131,10 +131,10 @@ export default function EditSpaceMembershipModal({ membership, isShown, onClose,
                           labelIsLight={true}
                           checked={selectedRoleIds.includes(role.sys.id)}
                           disabled={adminSelected}
-                          onChange={e =>
+                          onChange={(e) =>
                             dispatch({
                               type: 'ROLE_CHANGED',
-                              payload: { checked: e.target.checked, role }
+                              payload: { checked: e.target.checked, role },
                             })
                           }
                         />
@@ -167,7 +167,7 @@ EditSpaceMembershipModal.propTypes = {
   membership: SpaceMembership.isRequired,
   onChange: PropTypes.func.isRequired,
   isShown: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired
+  onClose: PropTypes.func.isRequired,
 };
 
 function fetchSpaceRoles(spaceId) {

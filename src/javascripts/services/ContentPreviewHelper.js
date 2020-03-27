@@ -42,7 +42,7 @@ export async function resolveReferences({ cma, url, entry, localeCode }) {
    * of incoming links to current entry.
    */
   const numberOfIncomingLinksToResolve = Math.max(
-    ...(url.match(PLACEHOLDER_PATTERN) || []).map(m => (m.match(REFERENCES_PATTERN) || []).length)
+    ...(url.match(PLACEHOLDER_PATTERN) || []).map((m) => (m.match(REFERENCES_PATTERN) || []).length)
   );
 
   // This object is what is used in the final interpolation
@@ -54,11 +54,11 @@ export async function resolveReferences({ cma, url, entry, localeCode }) {
 
   // eslint-disable-next-line no-restricted-syntax
   for (let i = 0; i < numberOfIncomingLinksToResolve; i += 1) {
-    let linkedByEntries = entriesWithFetchedIncomingLinks.find(id => id === currentEntry.sys.id);
+    let linkedByEntries = entriesWithFetchedIncomingLinks.find((id) => id === currentEntry.sys.id);
     if (!linkedByEntries) {
       linkedByEntries = await cma.getEntries({
         // get the incoming links for the current entry
-        links_to_entry: currentEntry.sys.id
+        links_to_entry: currentEntry.sys.id,
       });
       entriesWithFetchedIncomingLinks.push(currentEntry.sys.id);
     }
@@ -107,17 +107,17 @@ function createInterpolationDataObject(entry, localeCode) {
     {
       fields: {
         enumerable: true,
-        value: entryFields
+        value: entryFields,
       },
       sys: {
         enumerable: true,
-        value: entry.sys
+        value: entry.sys,
       },
       linkedBy: {
         enumerable: true,
         value: null,
-        writable: true
-      }
+        writable: true,
+      },
     }
   );
 }

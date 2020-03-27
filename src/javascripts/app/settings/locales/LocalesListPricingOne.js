@@ -7,7 +7,7 @@ import {
   Notification,
   Heading,
   Paragraph,
-  Workbench
+  Workbench,
 } from '@contentful/forma-36-react-components';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 import LocalesTable from './LocalesTable';
@@ -22,7 +22,7 @@ const LocalesListPropTypes = {
   insideMasterEnv: PropTypes.bool.isRequired,
   subscriptionState: PropTypes.object,
   subscriptionPlanName: PropTypes.string.isRequired,
-  getComputeLocalesUsageForOrganization: PropTypes.func.isRequired
+  getComputeLocalesUsageForOrganization: PropTypes.func.isRequired,
 };
 
 export const AddLocaleButton = ({ getComputeLocalesUsageForOrganization }) => (
@@ -46,10 +46,10 @@ export const AddLocaleButton = ({ getComputeLocalesUsageForOrganization }) => (
   </StateLink>
 );
 AddLocaleButton.propTypes = {
-  getComputeLocalesUsageForOrganization: PropTypes.func.isRequired
+  getComputeLocalesUsageForOrganization: PropTypes.func.isRequired,
 };
 
-export const LocalesAdvice = props => {
+export const LocalesAdvice = (props) => {
   const {
     localeResource,
     insideMasterEnv,
@@ -57,13 +57,13 @@ export const LocalesAdvice = props => {
     canChangeSpace,
     subscriptionState,
     locales,
-    canCreateMultipleLocales
+    canCreateMultipleLocales,
   } = props;
 
   const status = getLocalesUsageStatus({
     canCreateMultipleLocales,
     locales,
-    localeResource
+    localeResource,
   });
 
   let advice = '';

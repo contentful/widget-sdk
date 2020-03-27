@@ -4,11 +4,11 @@ import { renderToDataURL } from 'qrcode/lib/renderer/canvas';
 import * as utils from './utils';
 
 jest.mock('qrcode', () => ({
-  create: jest.fn()
+  create: jest.fn(),
 }));
 
 jest.mock('qrcode/lib/renderer/canvas', () => ({
-  renderToDataURL: jest.fn()
+  renderToDataURL: jest.fn(),
 }));
 
 describe('UserProfile Settings utils', () => {
@@ -17,8 +17,8 @@ describe('UserProfile Settings utils', () => {
       it('should return a message if no value is given', () => {
         const fields = {
           firstName: {
-            value: ''
-          }
+            value: '',
+          },
         };
 
         expect(utils.getValidationMessageFor(fields, 'firstName')).toEqual(expect.any(String));
@@ -27,8 +27,8 @@ describe('UserProfile Settings utils', () => {
       it('should return a message if value is longer than 100 characters', () => {
         const fields = {
           firstName: {
-            value: padEnd('', 101, 'a')
-          }
+            value: padEnd('', 101, 'a'),
+          },
         };
 
         expect(utils.getValidationMessageFor(fields, 'firstName')).toEqual(expect.any(String));
@@ -39,8 +39,8 @@ describe('UserProfile Settings utils', () => {
       it('should return a message if no value is given', () => {
         const fields = {
           lastName: {
-            value: ''
-          }
+            value: '',
+          },
         };
 
         expect(utils.getValidationMessageFor(fields, 'lastName')).toEqual(expect.any(String));
@@ -49,8 +49,8 @@ describe('UserProfile Settings utils', () => {
       it('should return a message if value is longer than 100 characters', () => {
         const fields = {
           lastName: {
-            value: padEnd('', 101, 'a')
-          }
+            value: padEnd('', 101, 'a'),
+          },
         };
 
         expect(utils.getValidationMessageFor(fields, 'lastName')).toEqual(expect.any(String));
@@ -61,8 +61,8 @@ describe('UserProfile Settings utils', () => {
       it('should return a message if no value is given', () => {
         const fields = {
           email: {
-            value: ''
-          }
+            value: '',
+          },
         };
 
         expect(utils.getValidationMessageFor(fields, 'email')).toEqual(expect.any(String));
@@ -71,8 +71,8 @@ describe('UserProfile Settings utils', () => {
       it('should return a message if value is longer than 254 characters', () => {
         const fields = {
           email: {
-            value: padEnd('', 254, 'a')
-          }
+            value: padEnd('', 254, 'a'),
+          },
         };
 
         expect(utils.getValidationMessageFor(fields, 'email')).toEqual(expect.any(String));
@@ -83,8 +83,8 @@ describe('UserProfile Settings utils', () => {
       it('should return a message if there is no value is given', () => {
         const fields = {
           currentPassword: {
-            value: ''
-          }
+            value: '',
+          },
         };
 
         expect(utils.getValidationMessageFor(fields, 'currentPassword')).toEqual(
@@ -97,8 +97,8 @@ describe('UserProfile Settings utils', () => {
       it('should return a message if the trimmed value is less than 8 characters long', () => {
         const fields = {
           newPassword: {
-            value: '    mypass'
-          }
+            value: '    mypass',
+          },
         };
 
         expect(utils.getValidationMessageFor(fields, 'newPassword')).toEqual(expect.any(String));
@@ -109,8 +109,8 @@ describe('UserProfile Settings utils', () => {
       it('should return a message if the value is less than 8 characters long', () => {
         const fields = {
           newPasswordConfirm: {
-            value: '    mypass'
-          }
+            value: '    mypass',
+          },
         };
 
         expect(utils.getValidationMessageFor(fields, 'newPasswordConfirm')).toEqual(
@@ -121,11 +121,11 @@ describe('UserProfile Settings utils', () => {
       it('should return a message if the value does not equal the value of the newPassword field', () => {
         const fields = {
           newPassword: {
-            value: 'mypassword'
+            value: 'mypassword',
           },
           newPasswordConfirm: {
-            value: 'not-mypassword'
-          }
+            value: 'not-mypassword',
+          },
         };
 
         expect(utils.getValidationMessageFor(fields, 'newPasswordConfirm')).toEqual(

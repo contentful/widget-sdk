@@ -7,9 +7,9 @@ import { last } from 'lodash';
  * Exports a function that transforms data from the Segment based internal analytics
  * format to fit Snowplow's `generic` schema.
  */
-export default function(eventName, data) {
+export default function (eventName, data) {
   return {
-    data: transform(eventName, data)
+    data: transform(eventName, data),
   };
 }
 
@@ -21,7 +21,7 @@ function transform(eventName, data) {
     executing_user_id: data.userId,
     environment_alias_id: 0,
     environment_alias_key: 'master',
-    to_environment_id: 'target-master'
+    to_environment_id: 'target-master',
   };
 }
 

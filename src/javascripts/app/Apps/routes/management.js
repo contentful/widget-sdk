@@ -10,7 +10,7 @@ const definitionsResolver = [
   '$stateParams',
   ({ orgId }) => {
     return getAppDefinitionLoader(orgId).getAllForCurrentOrganization();
-  }
+  },
 ];
 
 const canManageAppsResolver = [
@@ -19,7 +19,7 @@ const canManageAppsResolver = [
     const organization = await TokenStore.getOrganization(orgId);
 
     return isOwnerOrAdmin(organization) || isDeveloper(organization);
-  }
+  },
 ];
 
 const redirectIfCannotManage = [
@@ -30,7 +30,7 @@ const redirectIfCannotManage = [
     if (!canManageApps) {
       $state.go('account.organizations.apps.list', { orgId });
     }
-  }
+  },
 ];
 
 export default {
@@ -43,20 +43,20 @@ export default {
       url: '',
       resolve: {
         definitions: definitionsResolver,
-        canManageApps: canManageAppsResolver
+        canManageApps: canManageAppsResolver,
       },
       mapInjectedToProps: [
         'definitions',
         'canManageApps',
-        (definitions, canManageApps) => ({ definitions, canManageApps })
+        (definitions, canManageApps) => ({ definitions, canManageApps }),
       ],
-      component: AppListing
+      component: AppListing,
     },
     {
       name: 'new_definition',
       url: '/new_definition',
       resolve: {
-        canManageApps: canManageAppsResolver
+        canManageApps: canManageAppsResolver,
       },
       onEnter: redirectIfCannotManage,
       mapInjectedToProps: [
@@ -64,13 +64,13 @@ export default {
         '$stateParams',
         ($state, { orgId }) => {
           return {
-            goToDefinition: definitionId => $state.go('^.definitions', { definitionId }),
+            goToDefinition: (definitionId) => $state.go('^.definitions', { definitionId }),
             goToListView: () => $state.go('^.list'),
-            orgId
+            orgId,
           };
-        }
+        },
       ],
-      component: NewApp
+      component: NewApp,
     },
     {
       name: 'definitions',
@@ -82,15 +82,15 @@ export default {
           '$stateParams',
           'definitions',
           ({ definitionId }, definitions) => {
-            const def = definitions.find(d => d.sys.id === definitionId);
+            const def = definitions.find((d) => d.sys.id === definitionId);
 
             if (def) {
               return def;
             } else {
               throw new Error('Not found');
             }
-          }
-        ]
+          },
+        ],
       },
       onEnter: redirectIfCannotManage,
       mapInjectedToProps: [
@@ -98,10 +98,10 @@ export default {
         'definition',
         ($state, definition) => ({
           goToListView: () => $state.go('^.list'),
-          definition
-        })
+          definition,
+        }),
       ],
-      component: AppDetails
-    }
-  ]
+      component: AppDetails,
+    },
+  ],
 };

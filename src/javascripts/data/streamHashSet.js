@@ -24,7 +24,7 @@ export function create() {
     add: add,
     remove: remove,
     reset: reset,
-    get: get
+    get: get,
   };
 
   function get(id) {
@@ -51,7 +51,7 @@ export function create() {
   }
 
   function addMultiple(items) {
-    items.forEach(item => {
+    items.forEach((item) => {
       const id = item.getId();
       if (byId[id] !== item) {
         byId[id] = item;

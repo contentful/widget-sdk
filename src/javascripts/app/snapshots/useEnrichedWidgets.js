@@ -9,14 +9,14 @@ const useEnrichedWidgets = ({ widgets, getEditorData, snapshot }) => {
     const editorData = getEditorData();
     const entry = get(editorData, 'entity', {});
 
-    const enrichedWidgets = widgets.map(widget => {
+    const enrichedWidgets = widgets.map((widget) => {
       const { field } = widget;
       const locales = getLocalesForField(field);
       const hasMultipleLocales = locales.length > 1;
       return {
         widget,
         hasMultipleLocales,
-        locales: locales.map(locale => {
+        locales: locales.map((locale) => {
           const { internal_code } = locale;
 
           const fieldPath = getFieldPath(field.id, internal_code);
@@ -25,9 +25,9 @@ const useEnrichedWidgets = ({ widgets, getEditorData, snapshot }) => {
           return {
             locale,
             fieldPath: fieldPath.join('.'),
-            isDifferent: !isEqual(currentVersion, snapshotVersion)
+            isDifferent: !isEqual(currentVersion, snapshotVersion),
           };
-        })
+        }),
       };
     });
 

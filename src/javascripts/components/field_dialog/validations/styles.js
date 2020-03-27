@@ -7,58 +7,58 @@ const styles = {
     flexDirection: 'row',
     alignItems: 'center',
     '> div': {
-      marginRight: tokens.spacingS
-    }
+      marginRight: tokens.spacingS,
+    },
   }),
   flexAlignStart: css({
-    alignItems: 'start'
+    alignItems: 'start',
   }),
   textInputNumber: css({
     'input[type=number]': {
-      width: '120px'
-    }
+      width: '120px',
+    },
   }),
   marginTopS: css({
-    marginTop: tokens.spacingS
+    marginTop: tokens.spacingS,
   }),
   union: css({
     lineHeight: '1.5',
-    marginBottom: tokens.spacingXs
+    marginBottom: tokens.spacingXs,
   }),
   pxLabel: css({
     position: 'absolute',
     right: '0',
     marginRight: tokens.spacingS,
     fontWeight: tokens.fontWeightNormal,
-    color: tokens.colorTextLightest
+    color: tokens.colorTextLightest,
   }),
   label: css({
     marginRight: tokens.spacingXs,
     marginLeft: tokens.spacingM,
-    alignSelf: 'center'
+    alignSelf: 'center',
   }),
   flexContainer: css({
     display: 'inline-flex',
-    alignItems: 'center'
+    alignItems: 'center',
   }),
   positionRelative: css({
-    position: 'relative'
+    position: 'relative',
   }),
   inlineListItems: css({
     display: 'inline-box',
     marginRight: tokens.spacingXs,
-    marginBottom: tokens.spacingS
+    marginBottom: tokens.spacingS,
   }),
   checkbox: css({
     minWidth: tokens.spacing4Xl,
-    alignSelf: 'center'
+    alignSelf: 'center',
   }),
   minWidth6rem: css({
-    minWidth: '6rem'
+    minWidth: '6rem',
   }),
   timeZonePicker: css({
-    flexGrow: '1'
-  })
+    flexGrow: '1',
+  }),
 };
 
 export default styles;

@@ -7,7 +7,7 @@ import { TYPES } from './Util';
 
 const contentTypes = [
   { name: 'CT one', sys: { id: 'CT1' } },
-  { name: 'CT two', sys: { id: 'CT2' } }
+  { name: 'CT two', sys: { id: 'CT2' } },
 ];
 
 describe('LinkingActions', () => {
@@ -15,43 +15,43 @@ describe('LinkingActions', () => {
     'for single entry': {
       props: { type: TYPES.ENTRY, isSingle: true, canCreateEntity: true, contentTypes },
       expectedCreateAndLinkLabel: labels.createAndLink('entry'),
-      expectedLinkExistingLabel: labels.linkExisting('entry')
+      expectedLinkExistingLabel: labels.linkExisting('entry'),
     },
     'for single asset': {
       props: { type: TYPES.ASSET, isSingle: true, canCreateEntity: true },
       expectedCreateAndLinkLabel: labels.createAndLink('asset'),
-      expectedLinkExistingLabel: labels.linkExisting('asset')
+      expectedLinkExistingLabel: labels.linkExisting('asset'),
     },
     'for multiple entries': {
       props: { type: TYPES.ENTRY, isSingle: false, canCreateEntity: true, contentTypes },
       expectedCreateAndLinkLabel: labels.createAndLink('entry'),
-      expectedLinkExistingLabel: labels.linkExisting('entries')
+      expectedLinkExistingLabel: labels.linkExisting('entries'),
     },
     'for multiple assets': {
       props: { type: TYPES.ASSET, isSingle: false, canCreateEntity: true },
       expectedCreateAndLinkLabel: labels.createAndLink('asset'),
-      expectedLinkExistingLabel: labels.linkExisting('assets')
+      expectedLinkExistingLabel: labels.linkExisting('assets'),
     },
     'without entry creation': {
       props: { type: TYPES.ENTRY, isSingle: false, canCreateEntity: false, contentTypes },
       expectedCreateAndLinkLabel: false,
-      expectedLinkExistingLabel: labels.linkExisting('entries')
+      expectedLinkExistingLabel: labels.linkExisting('entries'),
     },
     'without asset creation': {
       props: { type: TYPES.ASSET, isSingle: true, canCreateEntity: false },
       expectedCreateAndLinkLabel: false,
-      expectedLinkExistingLabel: labels.linkExisting('asset')
+      expectedLinkExistingLabel: labels.linkExisting('asset'),
     },
     'with only one content type': {
       props: {
         type: TYPES.ENTRY,
         isSingle: false,
         canCreateEntity: true,
-        contentTypes: [contentTypes[0]]
+        contentTypes: [contentTypes[0]],
       },
       expectedCreateAndLinkLabel: labels.createAndLink(contentTypes[0].name),
-      expectedLinkExistingLabel: labels.linkExisting('entries')
-    }
+      expectedLinkExistingLabel: labels.linkExisting('entries'),
+    },
   };
 
   forEach(testCases, (testCase, description) => {

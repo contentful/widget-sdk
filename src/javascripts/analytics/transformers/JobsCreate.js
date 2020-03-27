@@ -19,7 +19,7 @@ function getJobsCreateData(_eventName, data) {
       scheduled_for_timezone: data.scheduled_for_timezone,
       local_timezone: data.local_timezone,
       timezone_offset: data.timezone_offset,
-      entity_id: data.entity_id
-    }
+      entity_id: data.entity_id,
+    },
   };
 }

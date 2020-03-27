@@ -4,16 +4,16 @@ import { render, fireEvent } from '@testing-library/react';
 import WebhookBodyTransformation from './WebhookBodyTransformation';
 
 describe('WebhookBodyTransformation', () => {
-  const renderComponent = body => {
+  const renderComponent = (body) => {
     const onChangeStub = jest.fn();
     const wrapper = render(<WebhookBodyTransformation body={body} onChange={onChangeStub} />);
 
     return [wrapper, onChangeStub];
   };
 
-  const findRadioButtons = element =>
+  const findRadioButtons = (element) =>
     element.querySelectorAll('.webhook-editor__settings-option input[type="radio"]');
-  const findEditor = element => element.querySelector('.react-codemirror2 .CodeMirror-code');
+  const findEditor = (element) => element.querySelector('.react-codemirror2 .CodeMirror-code');
 
   const assertRadioButtons = (wrapper, [e1, e2]) => {
     const radioButtons = findRadioButtons(wrapper);

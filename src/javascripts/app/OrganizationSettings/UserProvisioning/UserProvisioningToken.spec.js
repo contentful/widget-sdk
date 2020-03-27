@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import UserProvisioningToken from './UserProvisioningToken';
 
-const renderComponent = token => {
+const renderComponent = (token) => {
   const component = <UserProvisioningToken personalAccessToken={token} />;
   return render(component);
 };

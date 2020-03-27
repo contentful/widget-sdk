@@ -6,7 +6,7 @@ import {
   SkeletonContainer,
   SkeletonBodyText,
   Heading,
-  Workbench
+  Workbench,
 } from '@contentful/forma-36-react-components';
 import ContentTypeList from './ContentTypeList';
 import NoSearchResultsAdvice from 'components/tabs/NoSearchResultsAdvice';
@@ -22,10 +22,10 @@ import NavigationIcon from 'ui/Components/NavigationIcon';
 export class ContentTypesPage extends React.Component {
   static propTypes = {
     searchText: PropTypes.string,
-    onSearchChange: PropTypes.func
+    onSearchChange: PropTypes.func,
   };
   static defaultProps = {
-    onSearchChange: () => {}
+    onSearchChange: () => {},
   };
 
   constructor(props) {
@@ -34,16 +34,16 @@ export class ContentTypesPage extends React.Component {
       isLoading: true,
       contentTypes: [],
       searchTerm: props.searchText || '',
-      status: undefined
+      status: undefined,
     };
   }
 
   componentDidMount() {
-    service.fetchContentTypes().then(items => {
+    service.fetchContentTypes().then((items) => {
       if (!this.componentIsUnmounted) {
         this.setState({
           contentTypes: items,
-          isLoading: false
+          isLoading: false,
         });
       }
     });
@@ -64,7 +64,7 @@ export class ContentTypesPage extends React.Component {
         {!isLoading && (
           <ContentTypeListFilter
             status={status}
-            onChange={status => {
+            onChange={(status) => {
               this.setState({ status });
             }}
           />
@@ -77,7 +77,7 @@ export class ContentTypesPage extends React.Component {
     const { isLoading, contentTypes, searchTerm, status } = this.state;
     const filteredContentTypes = service.filterContentTypes(contentTypes, {
       searchTerm,
-      status
+      status,
     });
 
     return (
@@ -99,9 +99,9 @@ export class ContentTypesPage extends React.Component {
                 {contentTypes.length > 0 && (
                   <ContentTypeListSearch
                     initialValue={searchTerm}
-                    onChange={value => {
+                    onChange={(value) => {
                       this.setState({
-                        searchTerm: value
+                        searchTerm: value,
                       });
                       this.props.onSearchChange(value);
                     }}
@@ -154,11 +154,11 @@ export class ContentTypesPage extends React.Component {
 }
 
 export default connect(
-  state => ({
-    searchText: getSearchTerm(state)
+  (state) => ({
+    searchText: getSearchTerm(state),
   }),
-  dispatch => ({
-    onSearchChange: newSearchTerm =>
-      dispatch({ type: 'UPDATE_SEARCH_TERM', payload: { newSearchTerm } })
+  (dispatch) => ({
+    onSearchChange: (newSearchTerm) =>
+      dispatch({ type: 'UPDATE_SEARCH_TERM', payload: { newSearchTerm } }),
   })
 )(ContentTypesPage);

@@ -20,5 +20,5 @@ export default function NoMorePlans({ canSetupBilling }) {
 }
 
 NoMorePlans.propTypes = {
-  canSetupBilling: PropTypes.bool.isRequired
+  canSetupBilling: PropTypes.bool.isRequired,
 };

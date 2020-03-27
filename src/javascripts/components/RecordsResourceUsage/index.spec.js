@@ -7,7 +7,7 @@ jest.mock('services/ResourceService', () => {
   const get = jest.fn();
 
   const result = () => ({
-    get
+    get,
   });
 
   result.__get = get;
@@ -19,8 +19,8 @@ describe('RecordsResourceUsage', () => {
   const build = () => {
     const space = {
       sys: {
-        id: 'space_1234'
-      }
+        id: 'space_1234',
+      },
     };
 
     return render(
@@ -33,13 +33,13 @@ describe('RecordsResourceUsage', () => {
     );
   };
 
-  const makeResource = usage => ({
+  const makeResource = (usage) => ({
     name: 'Record',
     usage,
     limits: {
       included: 10,
-      maximum: 10
-    }
+      maximum: 10,
+    },
   });
 
   beforeEach(() => {

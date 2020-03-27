@@ -6,13 +6,13 @@ export default class ForbiddenPage extends React.Component {
   static propTypes = {
     overHeadline: PropTypes.string,
     headline: PropTypes.string,
-    message: PropTypes.any
+    message: PropTypes.any,
   };
 
   static defaultProps = {
     overHeadline: 'Access forbidden (403)',
     headline: 'You don’t have access to this page.',
-    message: 'Contact the administrator of this space to get access.'
+    message: 'Contact the administrator of this space to get access.',
   };
 
   render() {

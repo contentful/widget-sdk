@@ -14,10 +14,10 @@ export default function register() {
    */
   registerDirective('cfSref', () => ({
     restrict: 'A',
-    link: function($scope, _$elem, $attrs) {
-      $scope.$watch($attrs.cfSref, state => {
+    link: function ($scope, _$elem, $attrs) {
+      $scope.$watch($attrs.cfSref, (state) => {
         $attrs.$set('href', Navigator.href(state));
       });
-    }
+    },
   }));
 }

@@ -8,13 +8,13 @@ describe('webhooks/dialogs/WebhookHttpBasicDialog', () => {
   const renderComponent = () => {
     const stubs = {
       onConfirm: jest.fn(),
-      onCancel: jest.fn()
+      onCancel: jest.fn(),
     };
     return [
       render(
         <WebhookHttpBasicDialog isShown onCancel={stubs.onCancel} onConfirm={stubs.onConfirm} />
       ),
-      stubs
+      stubs,
     ];
   };
 
@@ -41,7 +41,7 @@ describe('webhooks/dialogs/WebhookHttpBasicDialog', () => {
 
     expect(stubs.onConfirm).toHaveBeenCalledWith({
       key: 'Authorization',
-      value: 'Basic ' + base64safe([user || '', password || ''].join(':'))
+      value: 'Basic ' + base64safe([user || '', password || ''].join(':')),
     });
   });
 });

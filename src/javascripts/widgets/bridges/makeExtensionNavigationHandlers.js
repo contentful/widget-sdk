@@ -26,7 +26,7 @@ export default function makeExtensionNavigationHandlers(dependencies, handlerOpt
           await SlideInNavigatorWithPromise.goToSlideInEntityWithPromise(entity.sys);
           entity = await getEntity({
             entityType: options.entityType,
-            id: entity.sys.id
+            id: entity.sys.id,
           });
         } else {
           await SlideInNavigator.goToSlideInEntity(entity.sys);

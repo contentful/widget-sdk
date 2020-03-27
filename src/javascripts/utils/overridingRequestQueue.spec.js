@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { createRequestQueue } from './overridingRequestQueue';
 
 describe('overridingRequestQueue', () => {
-  it('handles single request', done => {
+  it('handles single request', (done) => {
     const d = jest.fn().mockResolvedValue();
     const request = createRequestQueue(() => d());
 
@@ -12,14 +12,14 @@ describe('overridingRequestQueue', () => {
     });
   });
 
-  it('checks if is idle', function() {
+  it('checks if is idle', function () {
     const request = createRequestQueue(() => Promise.resolve());
     expect(request.isIdle()).toBe(true);
     request();
     expect(request.isIdle()).toBe(false);
   });
 
-  it('resolves with a result of the last call', done => {
+  it('resolves with a result of the last call', (done) => {
     let calls = 0;
 
     const requestFn = jest.fn().mockImplementation(() => {
@@ -34,14 +34,14 @@ describe('overridingRequestQueue', () => {
     const promise = request();
     request();
 
-    return promise.then(result => {
+    return promise.then((result) => {
       expect(result).toBe(true);
       expect(requestFn).toHaveBeenCalledTimes(2);
       done();
     });
   });
 
-  it('rejects if call ends up with an error', done => {
+  it('rejects if call ends up with an error', (done) => {
     let calls = 0;
 
     const requestFn = jest.fn().mockImplementation(() => {
@@ -65,7 +65,7 @@ describe('overridingRequestQueue', () => {
       () => {
         throw new Error('Should not end up here, rejecting first!');
       },
-      err => {
+      (err) => {
         expect(err).toBe('boom');
         expect(requestFn).toHaveBeenCalledTimes(3);
         done();

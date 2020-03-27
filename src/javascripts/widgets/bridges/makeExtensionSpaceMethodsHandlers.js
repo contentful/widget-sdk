@@ -49,15 +49,15 @@ const ALLOWED_SDK_METHODS = [
   'processAsset',
   'waitUntilAssetProcessed',
 
-  'getUsers'
+  'getUsers',
 ];
 
 export default function makeExtensionSpaceMethodsHandlers(dependencies, handlerOptions = {}) {
   const { spaceContext } = checkDependencies('ExtensionSpaceMethodsHandlers', dependencies, [
-    'spaceContext'
+    'spaceContext',
   ]);
 
-  return async function(methodName, args) {
+  return async function (methodName, args) {
     if (handlerOptions.readOnly === true) {
       // When rendering an extension in the read-only mode we disable
       // any mutating CMA calls. This is used in snapshots right now.
@@ -114,13 +114,13 @@ function prepareUsers(users) {
     total: users.length,
     skip: 0,
     limit: users.length,
-    items: users.map(user => ({
+    items: users.map((user) => ({
       sys: { type: 'User', id: user.sys.id },
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      avatarUrl: user.avatarUrl
-    }))
+      avatarUrl: user.avatarUrl,
+    })),
   };
 }
 
@@ -148,9 +148,9 @@ function trackEntryAction(action, contentTypeId, data) {
     // Stub content type object:
     contentType: {
       sys: { id: contentTypeId, type: 'ContentType' },
-      fields: []
+      fields: [],
     },
-    response: data
+    response: data,
   });
 }
 
@@ -172,11 +172,11 @@ async function createUpload(spaceId, base64Data) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/octet-stream',
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       },
-      body: binary
+      body: binary,
     })
-    .then(resp => resp.json());
+    .then((resp) => resp.json());
 }
 
 // Assets are processed asynchronously, so we have to poll the asset endpoint to wait until they're processed.
@@ -186,6 +186,6 @@ export async function waitUntilAssetProcessed(cmaClient, assetId, locale) {
     return asset;
   }
 
-  await new Promise(resolve => setTimeout(resolve, ASSET_PROCESSING_POLL_MS));
+  await new Promise((resolve) => setTimeout(resolve, ASSET_PROCESSING_POLL_MS));
   return waitUntilAssetProcessed(cmaClient, assetId, locale);
 }

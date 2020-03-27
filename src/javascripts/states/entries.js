@@ -10,7 +10,7 @@ const list = base({
   name: 'list',
   url: '',
   loadingText: 'Loading content…',
-  template: '<div cf-entry-list class="workbench entry-list entity-list"></div>'
+  template: '<div cf-entry-list class="workbench entry-list entity-list"></div>',
 });
 
 const compareWithCurrent = base({
@@ -19,7 +19,7 @@ const compareWithCurrent = base({
   loadingText: 'Loading versions…',
   params: {
     snapshotCount: 0,
-    source: 'deepLink'
+    source: 'deepLink',
   },
   resolve: {
     snapshot: [
@@ -32,13 +32,13 @@ const compareWithCurrent = base({
 
         return spaceContext.cma
           .getEntrySnapshot(entry.getId(), $stateParams.snapshotId)
-          .then(snapshot =>
+          .then((snapshot) =>
             _.extend(snapshot, {
-              snapshot: Entries.externalToInternal(snapshot.snapshot, contentType.data)
+              snapshot: Entries.externalToInternal(snapshot.snapshot, contentType.data),
             })
           );
-      }
-    ]
+      },
+    ],
   },
   template: '<cf-snapshot-comparator class="workbench" />',
   controller: [
@@ -54,7 +54,7 @@ const compareWithCurrent = base({
 
       $scope.widgets = _.filter(
         editorData.fieldControls.form,
-        widget => !_.get(widget, 'field.disabled') || $scope.preferences.showDisabledFields
+        (widget) => !_.get(widget, 'field.disabled') || $scope.preferences.showDisabledFields
       );
       // TODO remove this and use entityInfo instead
       $scope.entry = $scope.entity = entry;
@@ -64,8 +64,8 @@ const compareWithCurrent = base({
 
       trackVersioning.setData(entry.data, snapshot);
       trackVersioning.opened($stateParams.source);
-    }
-  ]
+    },
+  ],
 });
 
 const compare = base({
@@ -77,8 +77,8 @@ const compare = base({
     editorData: [
       '$stateParams',
       'spaceContext',
-      ($stateParams, spaceContext) => loadEditorData(spaceContext, $stateParams.entryId)
-    ]
+      ($stateParams, spaceContext) => loadEditorData(spaceContext, $stateParams.entryId),
+    ],
   },
   controller: [
     '$scope',
@@ -91,7 +91,7 @@ const compare = base({
 
       const entityId = editorData.entity.getId();
 
-      spaceContext.cma.getEntrySnapshots(entityId, { limit: 2 }).then(res => {
+      spaceContext.cma.getEntrySnapshots(entityId, { limit: 2 }).then((res) => {
         const count = _.get(res, 'items.length', 0);
         return count > 0 ? compare(_.first(res.items), count) : back();
       }, back);
@@ -100,7 +100,7 @@ const compare = base({
         return $state.go('.withCurrent', {
           snapshotId: snapshot.sys.id,
           snapshotCount: count,
-          source: 'entryEditor'
+          source: 'entryEditor',
         });
       }
 
@@ -113,17 +113,17 @@ const compare = base({
             message:
               'It seems that this entry doesn’t have any versions yet. As you update it, ' +
               'new versions will be created and you will be able to review and compare them.',
-            cancelLabel: null
+            cancelLabel: null,
           })
           .promise.finally(() => $state.go('^'));
       }
-    }
-  ]
+    },
+  ],
 });
 
 export default {
   withSnapshots: entriesBaseState(true),
-  withoutSnapshots: entriesBaseState(false)
+  withoutSnapshots: entriesBaseState(false),
 };
 
 function entriesBaseState(withSnapshots) {
@@ -131,7 +131,7 @@ function entriesBaseState(withSnapshots) {
     name: 'entries',
     url: '/entries',
     abstract: true,
-    children: [list, detail(withSnapshots)]
+    children: [list, detail(withSnapshots)],
   };
 }
 
@@ -142,6 +142,6 @@ function detail(withSnapshots) {
     children: withSnapshots ? [compare] : [],
     params: { addToContext: true },
     template: entityPageTemplate,
-    controller: ['$scope', '$state', createEntityPageController]
+    controller: ['$scope', '$state', createEntityPageController],
   });
 }

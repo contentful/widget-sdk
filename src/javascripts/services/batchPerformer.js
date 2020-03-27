@@ -17,12 +17,12 @@ export default function register() {
         archive: 'archived',
         unarchive: 'unarchived',
         delete: 'deleted',
-        duplicate: 'duplicated'
+        duplicate: 'duplicated',
       };
 
       const ENTITY_PLURAL_NAMES = {
         Entry: 'Entries',
-        Asset: 'Assets'
+        Asset: 'Assets',
       };
 
       return { create: createBatchPerformer };
@@ -37,7 +37,7 @@ export default function register() {
         );
 
         function run(method) {
-          const actions = _.map(config.getSelected(), entity => performAction(entity, method));
+          const actions = _.map(config.getSelected(), (entity) => performAction(entity, method));
 
           return $q.all(actions).then(function handleResults(results) {
             results = groupBySuccess(results);
@@ -47,7 +47,7 @@ export default function register() {
             }
             Analytics.track('search:bulk_action_performed', {
               entityType: config.entityType,
-              action: method
+              action: method,
             });
             return results;
           });
@@ -92,7 +92,7 @@ export default function register() {
             const entryTitleId = _.get(contentType, 'data.displayField');
             const data = _.omit(entity.data, 'sys');
             return spaceContext.space.createEntry(ctId, {
-              fields: appendDuplicateIndexToEntryTitle(data.fields, entryTitleId)
+              fields: appendDuplicateIndexToEntryTitle(data.fields, entryTitleId),
             });
           } else {
             return $q.reject(new Error('Only entries can be duplicated'));
@@ -133,6 +133,6 @@ export default function register() {
           }
         }
       }
-    }
+    },
   ]);
 }

@@ -9,7 +9,7 @@ import {
   IconButton,
   Subheading,
   HelpText,
-  Workbench
+  Workbench,
 } from '@contentful/forma-36-react-components';
 import { Autocomplete } from '@contentful/forma-36-react-components/dist/alpha';
 import _ from 'lodash';
@@ -32,52 +32,52 @@ import NavigationIcon from 'ui/Components/NavigationIcon';
 
 const styles = {
   workbench: css({
-    display: 'flex'
+    display: 'flex',
   }),
   workbenchContent: css({
     width: '800px',
-    margin: `${tokens.spacing2Xl} auto 80px`
+    margin: `${tokens.spacing2Xl} auto 80px`,
   }),
 
   sectionHeading: css({
     color: tokens.colorTextLight,
     padding: `0 0 ${tokens.spacingM} 0`,
     marginBottom: tokens.spacingL,
-    borderBottom: `1px solid ${tokens.colorElementDark}`
+    borderBottom: `1px solid ${tokens.colorElementDark}`,
   }),
   teamTitle: css({
-    marginBottom: tokens.spacingM
+    marginBottom: tokens.spacingM,
   }),
 
   select: css({
-    width: '100%'
+    width: '100%',
   }),
 
   selectHelp: css({
-    marginTop: tokens.spacingS
+    marginTop: tokens.spacingS,
   }),
 
   teamsAndRolesLists: css({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: tokens.spacing2Xl
+    marginTop: tokens.spacing2Xl,
   }),
 
   teamsContainer: css({
     flexBasis: '60%',
-    marginRight: '100px'
+    marginRight: '100px',
   }),
   teamsList: css({
-    wordBreak: 'break-word'
+    wordBreak: 'break-word',
   }),
 
   submitButton: css({
-    marginTop: tokens.spacing3Xl
+    marginTop: tokens.spacing3Xl,
   }),
 
   rolesContainer: css({
-    flexBasis: '40%'
+    flexBasis: '40%',
   }),
 
   teamInfo: {
@@ -89,41 +89,41 @@ const styles = {
       '&:hover, &.is-focused': {
         backgroundColor: tokens.colorElementLightest,
         '.team-info__close-button': {
-          opacity: 1
-        }
+          opacity: 1,
+        },
       },
       position: 'relative',
-      margin: 0
+      margin: 0,
     }),
     title: css({
-      marginBottom: tokens.spacingS
+      marginBottom: tokens.spacingS,
     }),
     name: css({
       wordBreak: 'break-word',
-      marginRight: tokens.spacingM
+      marginRight: tokens.spacingM,
     }),
     close: css({
       position: 'absolute',
       right: `10px`,
       top: '10px',
-      opacity: 0
-    })
+      opacity: 0,
+    }),
   },
 
   autocompleteTeam: {
     title: css({
-      marginBottom: tokens.spacingXs
+      marginBottom: tokens.spacingXs,
     }),
     name: css({
       wordBreak: 'break-word',
-      marginRight: tokens.spacingM
-    })
-  }
+      marginRight: tokens.spacingM,
+    }),
+  },
 };
 
-const makeLink = id => ({ sys: { id, type: 'Link', linkType: 'Role' } });
+const makeLink = (id) => ({ sys: { id, type: 'Link', linkType: 'Role' } });
 
-const closeTabWarning = evt => {
+const closeTabWarning = (evt) => {
   evt.preventDefault();
   evt.returnValue = '';
 };
@@ -165,23 +165,23 @@ const reducer = createImmerReducer({
   },
   SEARCH: (state, action) => {
     state.searchTerm = action.payload.toLowerCase();
-  }
+  },
 });
 
 const submit = (spaceId, teams, dispatch) => async ({
   selectedTeamIds,
   selectedRoleIds,
-  adminSelected
+  adminSelected,
 }) => {
   const endpoint = createSpaceEndpoint(spaceId);
 
   dispatch({ type: 'SUBMIT', payload: true });
 
   const erredTeams = [];
-  const promises = selectedTeamIds.map(teamId =>
+  const promises = selectedTeamIds.map((teamId) =>
     createTeamSpaceMembership(endpoint, teamId, {
       admin: adminSelected,
-      roles: selectedRoleIds.map(makeLink)
+      roles: selectedRoleIds.map(makeLink),
     }).catch(() => erredTeams.push(teamId))
   );
 
@@ -198,7 +198,7 @@ const submit = (spaceId, teams, dispatch) => async ({
       numErr: erredTeams.length,
       numSuccess: 0,
       numRoles: selectedRoleIds.length,
-      adminSelected
+      adminSelected,
     });
 
     return;
@@ -215,8 +215,8 @@ const submit = (spaceId, teams, dispatch) => async ({
   );
 
   // Show an error notification for any erred teams as well
-  erredTeams.forEach(teamId => {
-    const team = teams.find(team => team.sys.id === teamId);
+  erredTeams.forEach((teamId) => {
+    const team = teams.find((team) => team.sys.id === teamId);
 
     Notification.error(`Could not add ${team.name} to the space.`);
   });
@@ -225,11 +225,11 @@ const submit = (spaceId, teams, dispatch) => async ({
     numErr: erredTeams.length,
     numSuccess: selectedTeamIds.length - erredTeams.length,
     numRoles: selectedRoleIds.length,
-    adminSelected
+    adminSelected,
   });
 
   go({
-    path: ['spaces', 'detail', 'settings', 'teams', 'list']
+    path: ['spaces', 'detail', 'settings', 'teams', 'list'],
   });
 };
 
@@ -240,7 +240,7 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
     selectedRoleIds: [],
     shouldShowControls: false,
     isLoading: false,
-    searchTerm: ''
+    searchTerm: '',
   });
 
   const [, doSubmit] = useAsyncFn(submit(spaceId, teams, dispatch));
@@ -257,7 +257,7 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
     selectedRoleIds,
     shouldShowControls,
     isLoading,
-    searchTerm
+    searchTerm,
   } = state;
 
   const submitButtonDisabled =
@@ -266,12 +266,13 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
     isLoading;
 
   const availableTeams = teams.filter(
-    team => !teamSpaceMemberships.find(tsm => tsm.sys.team.sys.id === team.sys.id)
+    (team) => !teamSpaceMemberships.find((tsm) => tsm.sys.team.sys.id === team.sys.id)
   );
 
   const teamsInAutocomplete = _(availableTeams)
     .filter(
-      team => !selectedTeamIds.includes(team.sys.id) && team.name.toLowerCase().includes(searchTerm)
+      (team) =>
+        !selectedTeamIds.includes(team.sys.id) && team.name.toLowerCase().includes(searchTerm)
     )
     .take(5)
     .value();
@@ -285,11 +286,11 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
           disabled={isLoading}
           className={styles.select}
           width="full"
-          onChange={team => dispatch({ type: 'ADD_TEAM', payload: team.sys.id })}
-          onQueryChange={value => dispatch({ type: 'SEARCH', payload: value })}
+          onChange={(team) => dispatch({ type: 'ADD_TEAM', payload: team.sys.id })}
+          onQueryChange={(value) => dispatch({ type: 'SEARCH', payload: value })}
           items={teamsInAutocomplete}
           dropdownProps={{ isFullWidth: true }}>
-          {items => items.map(team => <AutocompleteTeam key={team.sys.id} team={team} />)}
+          {(items) => items.map((team) => <AutocompleteTeam key={team.sys.id} team={team} />)}
         </Autocomplete>
         <HelpText className={styles.selectHelp}>
           It is possible to add multiple teams. The role assignment will apply to all teams you are
@@ -305,8 +306,8 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
               </SectionHeading>
               <div className={styles.teamsList} data-test-id="teams-list">
                 {selectedTeamIds.length !== 0 &&
-                  selectedTeamIds.map(id => {
-                    const team = teams.find(t => t.sys.id === id);
+                  selectedTeamIds.map((id) => {
+                    const team = teams.find((t) => t.sys.id === id);
 
                     return (
                       <TeamInfo
@@ -329,7 +330,7 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
                   dispatch({ type: 'SELECT_ROLE', payload: { id, isSelected } })
                 }
                 adminSelected={adminSelected}
-                onAdminSelected={isSelected =>
+                onAdminSelected={(isSelected) =>
                   dispatch({ type: 'SELECT_ADMIN', payload: isSelected })
                 }
                 disabled={isLoading}
@@ -370,7 +371,7 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
         icon={<NavigationIcon icon="teams" color="green" size="large" />}
         onBack={() =>
           go({
-            path: ['spaces', 'detail', 'settings', 'teams', 'list']
+            path: ['spaces', 'detail', 'settings', 'teams', 'list'],
           })
         }
       />
@@ -385,7 +386,7 @@ AddTeamsPage.propTypes = {
   teams: PropTypes.array.isRequired,
   roles: PropTypes.array.isRequired,
   spaceId: PropTypes.string.isRequired,
-  teamSpaceMemberships: PropTypes.array.isRequired
+  teamSpaceMemberships: PropTypes.array.isRequired,
 };
 
 function TeamInfo({ team, onCloseClick }) {
@@ -402,7 +403,7 @@ function TeamInfo({ team, onCloseClick }) {
       <div>{_.truncate(team.description, { length: 60 })}</div>
       <IconButton
         iconProps={{
-          icon: 'Close'
+          icon: 'Close',
         }}
         label="Remove team"
         testId="team-in-list.close"
@@ -418,7 +419,7 @@ function TeamInfo({ team, onCloseClick }) {
 
 TeamInfo.propTypes = {
   team: PropTypes.object.isRequired,
-  onCloseClick: PropTypes.func.isRequired
+  onCloseClick: PropTypes.func.isRequired,
 };
 
 // The reason that this is separate is because the Autocomplete uses the DropdownItem internally
@@ -439,5 +440,5 @@ function AutocompleteTeam({ team }) {
 }
 
 AutocompleteTeam.propTypes = {
-  team: PropTypes.object.isRequired
+  team: PropTypes.object.isRequired,
 };

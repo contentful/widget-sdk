@@ -4,12 +4,6 @@ const getLocation = get('location');
 
 export default getLocation;
 
-export const getQuery = flow(
-  getLocation,
-  get('search')
-);
+export const getQuery = flow(getLocation, get('search'));
 
-export const getPath = flow(
-  getLocation,
-  get('pathname')
-);
+export const getPath = flow(getLocation, get('pathname'));

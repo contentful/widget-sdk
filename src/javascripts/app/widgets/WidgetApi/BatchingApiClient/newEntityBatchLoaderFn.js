@@ -10,7 +10,7 @@ import * as logger from 'services/logger';
  * @returns {function(*): Promise<Array<Object|Error>>}
  */
 export default function newEntityBatchLoaderFn({ getResources, newEntityNotFoundError }) {
-  return entityIds => {
+  return (entityIds) => {
     // Filter out IDs >64 chars (and otherwise invalid IDs) as multiple IDs >64
     // chars might result in a weird 504 CMA response before we hit the ~8000
     // character url limit that causes a proper 414 response.
@@ -23,8 +23,8 @@ export default function newEntityBatchLoaderFn({ getResources, newEntityNotFound
     return loading.then(handleSuccess, handleError);
 
     function handleSuccess({ items }) {
-      const entitiesByIds = mapKeys(items, entity => entity.sys.id);
-      return entityIds.map(id => entitiesByIds[id] || newEntityNotFoundError(id));
+      const entitiesByIds = mapKeys(items, (entity) => entity.sys.id);
+      return entityIds.map((id) => entitiesByIds[id] || newEntityNotFoundError(id));
     }
 
     function handleError(error) {
@@ -38,7 +38,7 @@ export default function newEntityBatchLoaderFn({ getResources, newEntityNotFound
       const data = {
         requestedIds: validIds,
         requestedIdsCount: validIds.length,
-        requestedIdsCharacterCount: validIds.join('').length
+        requestedIdsCharacterCount: validIds.join('').length,
       };
       // Though not expected, let's keep an eye on 504s and other potential weird
       // stuff that we don't know about. Ignore -1 as it's about network issues.
@@ -56,7 +56,7 @@ export const WORST_CASE_QUERY_PARAMS = `limit=${MAX_FETCH_LIMIT}&${FETCH_PARAM}=
 
 function buildQueryParamsToFetchIds(ids) {
   const params = {
-    [FETCH_PARAM]: ids.join(',')
+    [FETCH_PARAM]: ids.join(','),
   };
   // If not set and `ids.length > 100`, e.g. 119, then CMA would start pagination
   // and the request would return the first 100 (CMA default) while we would

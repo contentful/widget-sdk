@@ -8,7 +8,7 @@ const {
   getLabels,
   newConfigFromField,
   newConfigFromExtension,
-  calculateIdealListHeight
+  calculateIdealListHeight,
 } = entitySelectorConfig;
 
 /**
@@ -48,12 +48,12 @@ export function open(options) {
     labels,
     listHeight: calculateIdealListHeight(350),
     onChange,
-    onNoEntities
+    onNoEntities,
   };
   const scopeData = {
     entitySelector: entitySelectorProps,
     selected: [],
-    showCustomEmptyMessage: false
+    showCustomEmptyMessage: false,
   };
   const dialog = modalDialog.open({
     attachTo: 'body',
@@ -61,7 +61,7 @@ export function open(options) {
     backgroundClose: true,
     ignoreEsc: false,
     noNewScope: true,
-    scopeData
+    scopeData,
   });
   return dialog.promise;
 
@@ -76,7 +76,7 @@ export function open(options) {
     if (labels.noEntitiesCustomHtml) {
       dialog.scope.showCustomEmptyMessage = true;
       // hacky way to recenter the modal once it's resized
-      setTimeout(_ => dialog._centerOnBackground(), 0);
+      setTimeout((_) => dialog._centerOnBackground(), 0);
     }
   }
 }
@@ -132,5 +132,5 @@ export function openFromExtension(options) {
  */
 export function openFromRolesAndPermissions(entityType) {
   const config = newConfigFromExtension({ entityType, multiple: false });
-  return open(config).then(selected => selected[0]);
+  return open(config).then((selected) => selected[0]);
 }

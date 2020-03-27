@@ -4,7 +4,7 @@ import SaveViewDialogComponent from './SaveViewDialogComponent';
 
 export default function SaveViewDialog({
   allowViewTypeSelection = false,
-  allowRoleAssignment = false
+  allowRoleAssignment = false,
 }) {
   const uniqueModalKey = `save-view` + Date.now();
   return ModalLauncher.open(({ isShown, onClose }) => (

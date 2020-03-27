@@ -6,12 +6,12 @@ export default function createAppsRepo(cma, appDefinitionLoader) {
   return {
     getApp,
     getApps,
-    getOnlyInstalledApps
+    getOnlyInstalledApps,
   };
 
   async function getApp(id) {
     const apps = await getApps();
-    const app = apps.find(app => app.id === id);
+    const app = apps.find((app) => app.id === id);
 
     if (app) {
       return app;
@@ -24,20 +24,20 @@ export default function createAppsRepo(cma, appDefinitionLoader) {
     const installationMap = await getAppDefinitionToInstallationMap();
     const [marketplaceApps, orgDefinitions] = await Promise.all([
       fetchMarketplaceApps(installationMap),
-      appDefinitionLoader.getAllForCurrentOrganization()
+      appDefinitionLoader.getAllForCurrentOrganization(),
     ]);
 
     return [
       ...(await getMarketplaceApps(installationMap, marketplaceApps)),
-      ...getPrivateApps(installationMap, orgDefinitions)
+      ...getPrivateApps(installationMap, orgDefinitions),
     ];
   }
 
   async function getMarketplaceApps(installationMap, marketplaceApps) {
     const definitionIds = marketplaceApps
       // show apps from the marketplace space which are in the public listing or are installed
-      .filter(app => app.isListed || !!installationMap[app.definitionId])
-      .map(app => app.definitionId);
+      .filter((app) => app.isListed || !!installationMap[app.definitionId])
+      .map((app) => app.definitionId);
     const appDefinitionMap = await appDefinitionLoader.getByIds(definitionIds);
 
     return sortBy(
@@ -53,12 +53,12 @@ export default function createAppsRepo(cma, appDefinitionLoader) {
 
         return [...acc, makeMarketplaceAppObject(app, appDefinition, appInstallation)];
       }, []),
-      app => app.title.toLowerCase()
+      (app) => app.title.toLowerCase()
     );
   }
 
   function getPrivateApps(installationMap, orgDefinitions) {
-    return orgDefinitions.map(def => {
+    return orgDefinitions.map((def) => {
       return makePrivateAppObject(def, installationMap[def.sys.id]);
     });
   }
@@ -66,15 +66,15 @@ export default function createAppsRepo(cma, appDefinitionLoader) {
   async function getOnlyInstalledApps() {
     const [installationsResponse, marketplaceApps] = await Promise.all([
       cma.getAppInstallations(),
-      fetchMarketplaceApps()
+      fetchMarketplaceApps(),
     ]);
 
-    return installationsResponse.items.map(appInstallation => {
+    return installationsResponse.items.map((appInstallation) => {
       const definitionId = appInstallation.sys.appDefinition.sys.id;
-      const appDefinition = installationsResponse.includes.AppDefinition.find(def => {
+      const appDefinition = installationsResponse.includes.AppDefinition.find((def) => {
         return def.sys.id === definitionId;
       });
-      const marketplaceApp = marketplaceApps.find(app => {
+      const marketplaceApp = marketplaceApps.find((app) => {
         return app.definitionId === definitionId;
       });
 
@@ -90,7 +90,7 @@ export default function createAppsRepo(cma, appDefinitionLoader) {
     return {
       ...omit(marketplaceApp, ['definitionId']),
       appDefinition,
-      appInstallation
+      appInstallation,
     };
   }
 
@@ -100,7 +100,7 @@ export default function createAppsRepo(cma, appDefinitionLoader) {
       title: appDefinition.name,
       appDefinition,
       appInstallation,
-      isPrivateApp: true
+      isPrivateApp: true,
     };
   }
 
@@ -110,7 +110,7 @@ export default function createAppsRepo(cma, appDefinitionLoader) {
     return items.reduce(
       (acc, installation) => ({
         ...acc,
-        [installation.sys.appDefinition.sys.id]: installation
+        [installation.sys.appDefinition.sys.id]: installation,
       }),
       {}
     );

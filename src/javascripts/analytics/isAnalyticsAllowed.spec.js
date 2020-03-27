@@ -3,7 +3,7 @@ import isAnalyticsAllowed from './isAnalyticsAllowed';
 describe('isAnalyticsAllowed', () => {
   const makeUser = () => ({
     features: { logAnalytics: true },
-    organizationMemberships: [{ organization: { disableAnalytics: false } }]
+    organizationMemberships: [{ organization: { disableAnalytics: false } }],
   });
 
   it('should allow by default', () => {

@@ -7,19 +7,19 @@ import {
   Paragraph,
   TextLink,
   Button,
-  Workbench
+  Workbench,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { salesUrl, apiUrl } from 'Config';
 import EmptyStateContainer, {
-  defaultSVGStyle
+  defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 import DocumentTitle from 'components/shared/DocumentTitle';
 
 const styles = {
   pageWrapper: css({ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0 }),
-  topMargin: css({ marginTop: tokens.spacingL })
+  topMargin: css({ marginTop: tokens.spacingL }),
 };
 
 function SSOUpsellState() {

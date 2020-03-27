@@ -40,7 +40,7 @@ export function create(perPage) {
      * @description
      * Sets total number of collection items.
      */
-    setTotal: function(newTotal) {
+    setTotal: function (newTotal) {
       total = updateValue(newTotal, total);
     },
     /**
@@ -50,7 +50,7 @@ export function create(perPage) {
      * @description
      * Gets total number of collection items
      */
-    getTotal: function() {
+    getTotal: function () {
       return total;
     },
     /**
@@ -59,7 +59,7 @@ export function create(perPage) {
      * @description
      * Sets the current page.
      */
-    setPage: function(newPage) {
+    setPage: function (newPage) {
       page = updateValue(newPage, page);
     },
     /**
@@ -69,7 +69,7 @@ export function create(perPage) {
      * @description
      * Gets the current page.
      */
-    getPage: function() {
+    getPage: function () {
       return page;
     },
     /**
@@ -78,7 +78,7 @@ export function create(perPage) {
      * @description
      * Increases the current page number.
      */
-    next: function() {
+    next: function () {
       page += 1;
     },
     /**
@@ -87,7 +87,7 @@ export function create(perPage) {
      * @description
      * Decreases the current page number.
      */
-    prev: function() {
+    prev: function () {
       page -= 1;
     },
     /**
@@ -97,7 +97,7 @@ export function create(perPage) {
      * @description
      * Gets number of items per page.
      */
-    getPerPage: function() {
+    getPerPage: function () {
       return perPage;
     },
     /**
@@ -108,7 +108,7 @@ export function create(perPage) {
      * Gets "skip" param that should be used
      * to query the current page.
      */
-    getSkipParam: function() {
+    getSkipParam: function () {
       return page * perPage;
     },
     /**
@@ -118,7 +118,7 @@ export function create(perPage) {
      * @description
      * Gets number of pages.
      */
-    getPageCount: function() {
+    getPageCount: function () {
       return Math.ceil(total / perPage);
     },
     /**
@@ -129,7 +129,7 @@ export function create(perPage) {
      * Returns true if the current page
      * is the last one.
      */
-    isAtLast: function() {
+    isAtLast: function () {
       return page >= this.getPageCount() - 1;
     },
 
@@ -143,7 +143,7 @@ export function create(perPage) {
      *
      * Returns fals if the page count is zero.
      */
-    isBeyondLast: function() {
+    isBeyondLast: function () {
       return this.getPageCount() > 0 && page >= this.getPageCount();
     },
     /**
@@ -154,9 +154,9 @@ export function create(perPage) {
      * Returns true if the current page
      * is the first one.
      */
-    isAtFirst: function() {
+    isAtFirst: function () {
       return page === 0;
-    }
+    },
   };
 }
 
@@ -175,5 +175,5 @@ function updateValue(next, current) {
 }
 
 export default {
-  create
+  create,
 };

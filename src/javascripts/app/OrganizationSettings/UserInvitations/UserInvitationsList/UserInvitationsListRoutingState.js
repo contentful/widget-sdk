@@ -6,11 +6,11 @@ import importer from 'app/OrganizationSettings/importer';
 export default organizationRoute({
   name: 'invitations',
   url: '/invitations',
-  component: props => (
+  component: (props) => (
     <LazyLoadedComponent importer={importer}>
       {({ UserInvitationsListRouter }) => {
         return <UserInvitationsListRouter {...props} />;
       }}
     </LazyLoadedComponent>
-  )
+  ),
 });

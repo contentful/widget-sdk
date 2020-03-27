@@ -14,7 +14,7 @@ describe('OrganizationBarChart', () => {
   it('should have zero borders for zero values', () => {
     const data = [0];
     expect(accumulate(data).map(applyBorderStyle)).toEqual([
-      { value: 0, itemStyle: { borderWidth: 0 } }
+      { value: 0, itemStyle: { borderWidth: 0 } },
     ]);
   });
 });

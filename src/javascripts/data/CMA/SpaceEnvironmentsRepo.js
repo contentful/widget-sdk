@@ -33,7 +33,7 @@ export function create(spaceEndpoint) {
     const { items } = await spaceEndpoint({
       method: 'GET',
       path: ['environments'],
-      query: { limit: ENVIRONMENTS_LIMIT }
+      query: { limit: ENVIRONMENTS_LIMIT },
     });
 
     // the response from the api gives a combination of real environments and aliased environments
@@ -50,12 +50,12 @@ export function create(spaceEndpoint) {
         if (env.sys.aliases !== undefined) {
           return {
             ...envsAndAliases,
-            environments: [...envsAndAliases.environments, env]
+            environments: [...envsAndAliases.environments, env],
           };
         }
         return {
           ...envsAndAliases,
-          aliases: [...envsAndAliases.aliases, env]
+          aliases: [...envsAndAliases.aliases, env],
         };
       },
       { aliases: [], environments: [] }
@@ -68,8 +68,8 @@ export function create(spaceEndpoint) {
   function get({ id }) {
     return spaceEndpoint({
       method: 'GET',
-      path: ['environments', id]
-    }).then(response => response, mapUpdateError);
+      path: ['environments', id],
+    }).then((response) => response, mapUpdateError);
   }
 
   /**
@@ -87,10 +87,10 @@ export function create(spaceEndpoint) {
       {
         method: 'PUT',
         path: ['environments', id],
-        data: { name }
+        data: { name },
       },
       {
-        'X-Contentful-Source-Environment': source || 'master'
+        'X-Contentful-Source-Environment': source || 'master',
       }
     ).then(() => {
       return { type: EnvironmentUpdated };
@@ -100,7 +100,7 @@ export function create(spaceEndpoint) {
   function remove(id) {
     return spaceEndpoint({
       method: 'DELETE',
-      path: ['environments', id]
+      path: ['environments', id],
     });
   }
 
@@ -120,7 +120,7 @@ export function create(spaceEndpoint) {
       path: ['environments', env.sys.id],
       version: env.sys.version,
       // Gatekeeper only allows you to send `name` attribute
-      data: pick(env, ['name'])
+      data: pick(env, ['name']),
     }).then(() => {
       return { type: EnvironmentUpdated };
     }, mapUpdateError);

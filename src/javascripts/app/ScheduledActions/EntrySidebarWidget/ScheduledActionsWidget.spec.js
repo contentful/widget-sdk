@@ -6,7 +6,7 @@ import { default as ScheduledActionsWidget } from './ScheduledActionsWidget';
 import {
   getNotCanceledJobsForEntity,
   createJob as createJobService,
-  cancelJob
+  cancelJob,
 } from '../DataManagement/ScheduledActionsService';
 import * as ScheduledActionsAnalytics from 'app/ScheduledActions/Analytics/ScheduledActionsAnalytics';
 
@@ -15,16 +15,16 @@ const commandTemplate = {
   isAvailable: () => true,
   isDisabled: () => false,
   inProgress: () => false,
-  isRestricted: () => false
+  isRestricted: () => false,
 };
 
 jest.mock('../DataManagement/ScheduledActionsService');
 jest.mock('classes/EntityFieldValueSpaceContext', () => ({ entryTitle: () => 'Test' }));
 jest.mock('utils/LaunchDarkly', () => ({
-  getCurrentVariation: jest.fn().mockResolvedValue(false) // Reference Dialog disabled
+  getCurrentVariation: jest.fn().mockResolvedValue(false), // Reference Dialog disabled
 }));
 jest.mock('app/entity_editor/UnpublishedReferencesWarning', () => ({
-  showUnpublishedReferencesWarning: () => Promise.resolve(true)
+  showUnpublishedReferencesWarning: () => Promise.resolve(true),
 }));
 describe('<ScheduledActionsWidget />', () => {
   beforeEach(() => {
@@ -32,7 +32,7 @@ describe('<ScheduledActionsWidget />', () => {
     jest.spyOn(Notification, 'error').mockImplementation(() => {});
   });
 
-  const build = props => {
+  const build = (props) => {
     const resultProps = {
       spaceId: 'spaceId',
       environmentId: 'enviromentId',
@@ -43,25 +43,25 @@ describe('<ScheduledActionsWidget />', () => {
       primary: {
         ...commandTemplate,
         label: 'Publish',
-        targetStateId: 'published'
+        targetStateId: 'published',
       },
       revert: {
         ...commandTemplate,
         label: 'Publish',
-        targetStateId: 'published'
+        targetStateId: 'published',
       },
       secondary: [
         {
           ...commandTemplate,
           label: 'Archive',
-          targetStateId: 'published'
-        }
+          targetStateId: 'published',
+        },
       ],
       entity: createEntry(),
       validator: {
-        run: jest.fn().mockReturnValueOnce(true)
+        run: jest.fn().mockReturnValueOnce(true),
       },
-      ...props
+      ...props,
     };
 
     return [render(<ScheduledActionsWidget {...resultProps} />), resultProps];
@@ -116,9 +116,9 @@ describe('<ScheduledActionsWidget />', () => {
       entity: createEntry(),
       primary: {
         ...commandTemplate,
-        label: 'Publish'
+        label: 'Publish',
       },
-      publicationBlockedReason: 'some reason'
+      publicationBlockedReason: 'some reason',
     });
 
     expect(getNotCanceledJobsForEntity).toHaveBeenCalledWith(
@@ -138,8 +138,8 @@ describe('<ScheduledActionsWidget />', () => {
   it('entry is not published', async () => {
     const failedJob = createFailedJob({
       scheduledFor: {
-        datetime: '2019-06-21T05:01:00.000Z'
-      }
+        datetime: '2019-06-21T05:01:00.000Z',
+      },
     });
     getNotCanceledJobsForEntity.mockResolvedValueOnce([failedJob]);
     const unpublishedEntry = { sys: { id: 'entryId' } };
@@ -154,8 +154,8 @@ describe('<ScheduledActionsWidget />', () => {
   it('entry is published but publication date is before last failed job', async () => {
     const failedJob = createFailedJob({
       scheduledFor: {
-        datetime: '2019-06-21T05:01:00.000Z'
-      }
+        datetime: '2019-06-21T05:01:00.000Z',
+      },
     });
     getNotCanceledJobsForEntity.mockResolvedValueOnce([failedJob]);
     const publishedEntry = { sys: { id: 'entryId', publishedAt: '2019-06-21T05:00:00.000Z' } };
@@ -171,8 +171,8 @@ describe('<ScheduledActionsWidget />', () => {
     const failedJob = createFailedJob({
       action: 'unpublish',
       scheduledFor: {
-        datetime: '2019-06-21T05:01:00.000Z'
-      }
+        datetime: '2019-06-21T05:01:00.000Z',
+      },
     });
     getNotCanceledJobsForEntity.mockResolvedValueOnce([failedJob]);
     const publishedEntry = { sys: { id: 'entryId', publishedAt: '2019-06-21T05:00:00.000Z' } };
@@ -192,7 +192,7 @@ describe('<ScheduledActionsWidget />', () => {
     await wait();
 
     const publishedEntryWithSameDate = createEntry({
-      sys: { publishedAt: '2019-06-21T05:00:00.000Z' }
+      sys: { publishedAt: '2019-06-21T05:00:00.000Z' },
     });
     renderResult.rerender(
       <ScheduledActionsWidget {...props} entity={publishedEntryWithSameDate} />
@@ -304,13 +304,13 @@ function createJob(job = {}) {
   return {
     action: 'publish',
     scheduledFor: {
-      datetime: '2019-06-21T05:01:00.000Z'
+      datetime: '2019-06-21T05:01:00.000Z',
     },
     ...job,
     sys: {
       id: '1',
-      ...job.sys
-    }
+      ...job.sys,
+    },
   };
 }
 
@@ -318,7 +318,7 @@ function createPendingJob(job = {}) {
   return createJob({
     ...job,
     entity: { sys: { id: 'id' } },
-    sys: { ...job.sys, status: 'scheduled' }
+    sys: { ...job.sys, status: 'scheduled' },
   });
 }
 
@@ -335,7 +335,7 @@ function createEntry(entry = {}) {
     ...entry,
     sys: {
       id: defaultEntryId(),
-      ...entry.sys
-    }
+      ...entry.sys,
+    },
   };
 }

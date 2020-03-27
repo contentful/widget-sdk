@@ -33,7 +33,7 @@ export async function openAlert(options) {
 
 export async function openConfirm(options) {
   validateOptions(options, {
-    additionalStringOptions: ['cancelLabel']
+    additionalStringOptions: ['cancelLabel'],
   });
 
   return ModalLauncher.open(({ isShown, onClose }) => (
@@ -52,7 +52,7 @@ export async function openConfirm(options) {
 
 export async function openPrompt(options) {
   validateOptions(options, {
-    additionalStringOptions: ['cancelLabel', 'defaultValue']
+    additionalStringOptions: ['cancelLabel', 'defaultValue'],
   });
 
   return ModalLauncher.open(({ isShown, onClose }) => {
@@ -68,7 +68,7 @@ export async function openPrompt(options) {
         confirmLabel={options.confirmLabel}
         cancelLabel={options.cancelLabel}>
         <p>{options.message}</p>
-        <TextInput value={value} onChange={e => (value = e.target.value)} />
+        <TextInput value={value} onChange={(e) => (value = e.target.value)} />
       </ModalConfirm>
     );
   });
@@ -84,7 +84,7 @@ function validateOptions(options, config = {}) {
   }
 
   // Required options.
-  ['title', 'message'].forEach(key => {
+  ['title', 'message'].forEach((key) => {
     if (!(key in options)) {
       throw new Error(`"${key}" is required.`);
     }
@@ -95,14 +95,14 @@ function validateOptions(options, config = {}) {
     : [];
 
   // If present, these options must be strings.
-  ['title', 'message', 'confirmLabel', 'intent'].concat(additionalStringOptions).forEach(key => {
+  ['title', 'message', 'confirmLabel', 'intent'].concat(additionalStringOptions).forEach((key) => {
     if (key in options && typeof options[key] !== 'string') {
       throw new Error(`"${key}" must be a string.`);
     }
   });
 
   // If present, these options must be booleans.
-  ['shouldCloseOnEscapePress', 'shouldCloseOnOverlayClick'].forEach(key => {
+  ['shouldCloseOnEscapePress', 'shouldCloseOnOverlayClick'].forEach((key) => {
     if (key in options && typeof options[key] !== 'boolean') {
       throw new Error(`"${key}" must be a boolean.`);
     }

@@ -5,7 +5,7 @@ export default class GreetingWidget extends React.Component {
   static propTypes = {
     spaceName: PropTypes.string.isRequired,
     orgName: PropTypes.string.isRequired,
-    walkthroughStarted: PropTypes.bool
+    walkthroughStarted: PropTypes.bool,
   };
   render() {
     const { spaceName, orgName, walkthroughStarted } = this.props;

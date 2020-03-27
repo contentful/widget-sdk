@@ -23,10 +23,10 @@ export default function register() {
       '$scope',
       '$attrs',
       ($scope, $attrs) => {
-        $scope.$watch($attrs.cfErrorMessages, messages => {
+        $scope.$watch($attrs.cfErrorMessages, (messages) => {
           $scope.errors = { messages: messages };
         });
-      }
-    ]
+      },
+    ],
   }));
 }

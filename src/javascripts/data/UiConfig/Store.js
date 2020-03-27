@@ -52,12 +52,12 @@ export default function create(space, spaceEndpoint$q, publishedCTs, viewMigrato
     addToDefault,
     entries: {
       shared: forScope(SHARED_VIEWS, ENTRY_VIEWS_KEY, getEntryViewsDefaults, membership.admin),
-      private: forScope(PRIVATE_VIEWS, ENTRY_VIEWS_KEY, getPrivateViewsDefaults, true)
+      private: forScope(PRIVATE_VIEWS, ENTRY_VIEWS_KEY, getPrivateViewsDefaults, true),
     },
     assets: {
       shared: forScope(SHARED_VIEWS, ASSET_VIEWS_KEY, Defaults.getAssetViews, membership.admin),
-      private: forScope(PRIVATE_VIEWS, ASSET_VIEWS_KEY, getPrivateViewsDefaults, true)
-    }
+      private: forScope(PRIVATE_VIEWS, ASSET_VIEWS_KEY, getPrivateViewsDefaults, true),
+    },
   });
 
   // TODO: optimization - lazy loading
@@ -77,7 +77,11 @@ export default function create(space, spaceEndpoint$q, publishedCTs, viewMigrato
    */
   function forScope(type, key, getDefaults, canEdit) {
     const get = () => (state[type][key] === undefined ? getDefaults() : state[type][key]);
-    const set = val => save(type, update(state[type], key, () => val)).then(get);
+    const set = (val) =>
+      save(
+        type,
+        update(state[type], key, () => val)
+      ).then(get);
 
     return { get, set, canEdit };
   }
@@ -95,12 +99,12 @@ export default function create(space, spaceEndpoint$q, publishedCTs, viewMigrato
     return spaceEndpoint(
       {
         method: 'GET',
-        path: getEndpointPath(type)
+        path: getEndpointPath(type),
       },
       getEndpointHeaders(type)
     ).then(
-      remoteData => setUiConfigOrMigrate(type, remoteData),
-      error => {
+      (remoteData) => setUiConfigOrMigrate(type, remoteData),
+      (error) => {
         const statusCode = getPath(error, 'statusCode');
         if (statusCode === 404) {
           return setUiConfig(type, {});
@@ -145,14 +149,14 @@ export default function create(space, spaceEndpoint$q, publishedCTs, viewMigrato
         method: 'PUT',
         path: getEndpointPath(type),
         version: getPath(data, ['sys', 'version']),
-        data
+        data,
       },
       getEndpointHeaders(type)
     ).then(
-      remoteData => {
+      (remoteData) => {
         return setUiConfigOrMigrate(type, remoteData);
       },
-      error => {
+      (error) => {
         const reject = () => Promise.reject(error);
         logger.logServerWarn(`Could not save ${getEntityName(type)}`, { error });
         return load(type).then(reject, reject);
@@ -189,7 +193,7 @@ export default function create(space, spaceEndpoint$q, publishedCTs, viewMigrato
    * editor. It expects content type data object, not @contentful/client entity.
    */
   function addOrEditCt(ct) {
-    const { folder, folderIndex, folderExists } = findFolder(f => f.title === 'Content Type');
+    const { folder, folderIndex, folderExists } = findFolder((f) => f.title === 'Content Type');
     const canEdit = membership.admin;
 
     if (folderExists && canEdit) {
@@ -206,7 +210,7 @@ export default function create(space, spaceEndpoint$q, publishedCTs, viewMigrato
   }
 
   function addToDefault(view) {
-    const { folderIndex, folderExists } = findFolder(f => f.id === 'default');
+    const { folderIndex, folderExists } = findFolder((f) => f.id === 'default');
     const canEdit = membership.admin;
 
     if (folderExists && canEdit) {
@@ -225,7 +229,7 @@ export default function create(space, spaceEndpoint$q, publishedCTs, viewMigrato
   }
 
   function findCtViewIndex({ views }, ct) {
-    const index = findIndex(views, view => {
+    const index = findIndex(views, (view) => {
       // There are folders containing `null`/`undefined`
       return view && view.contentTypeId === ct.sys.id;
     });
@@ -242,7 +246,7 @@ export default function create(space, spaceEndpoint$q, publishedCTs, viewMigrato
 
   function createViewInFolder(folderIndex, view) {
     const path = [ENTRY_VIEWS_KEY, folderIndex, 'views'];
-    const updated = update(state[SHARED_VIEWS], path, views => concat(views, [view]));
+    const updated = update(state[SHARED_VIEWS], path, (views) => concat(views, [view]));
 
     return save(SHARED_VIEWS, updated);
   }

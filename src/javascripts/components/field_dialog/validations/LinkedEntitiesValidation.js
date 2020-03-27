@@ -5,7 +5,7 @@ import {
   ListItem,
   CheckboxField,
   ValidationMessage,
-  TextField
+  TextField,
 } from '@contentful/forma-36-react-components';
 import styles from './styles';
 import { toString } from 'lodash';
@@ -15,15 +15,15 @@ const LinkedEntitiesValidation = ({
   validation,
   update,
   updateValidationMessageValue,
-  errorMessages
+  errorMessages,
 }) => {
   const [entitiesTypes, setEntitiesTypes] = useState(types);
   const [message, setMessage] = useState(validation.message);
   const [checkboxTouched, setCheckboxTouched] = useState(false);
 
-  const onCheckboxChange = updatedCheckboxItem => {
+  const onCheckboxChange = (updatedCheckboxItem) => {
     setCheckboxTouched(true);
-    const updatedEntitiesTypes = entitiesTypes.map(item => {
+    const updatedEntitiesTypes = entitiesTypes.map((item) => {
       if (
         (item.id && updatedCheckboxItem.id && item.id === updatedCheckboxItem.id) ||
         (item.name && updatedCheckboxItem.name && item.name === updatedCheckboxItem.name)
@@ -78,7 +78,7 @@ LinkedEntitiesValidation.propTypes = {
   validation: PropTypes.object.isRequired,
   errorMessages: PropTypes.array.isRequired,
   update: PropTypes.func.isRequired,
-  updateValidationMessageValue: PropTypes.func.isRequired
+  updateValidationMessageValue: PropTypes.func.isRequired,
 };
 
 export default LinkedEntitiesValidation;

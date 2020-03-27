@@ -1,14 +1,10 @@
-import {
-  defaultHeader,
-  defaultSpaceId,
-  defaultUserId
-} from '../util/requests';
+import { defaultHeader, defaultSpaceId, defaultUserId } from '../util/requests';
 import { Query, RequestOptions } from '@pact-foundation/pact-web';
 
 const users = require('../fixtures/responses/users.json');
 
 enum States {
-  SINGLE = 'users/single'
+  SINGLE = 'users/single',
 }
 
 function querySpaceUsersRequest(query: Query): RequestOptions {
@@ -16,7 +12,7 @@ function querySpaceUsersRequest(query: Query): RequestOptions {
     method: 'GET',
     path: `/spaces/${defaultSpaceId}/users`,
     headers: defaultHeader,
-    query
+    query,
   };
 }
 
@@ -28,17 +24,17 @@ export const queryFirst100UsersInDefaultSpace = {
       uponReceiving: `a query for the first 100 users in space "${defaultSpaceId}"`,
       withRequest: querySpaceUsersRequest({
         limit: '100',
-        skip: '0'
+        skip: '0',
       }),
       willRespondWith: {
         status: 200,
-        body: users
-      }
+        body: users,
+      },
     }).as('queryFirst100UsersInDefaultSpace');
-    
+
     return '@queryFirst100UsersInDefaultSpace';
-  }
-}
+  },
+};
 
 export const queryForDefaultUserDetails = {
   willFindTheUserDetails() {
@@ -49,14 +45,14 @@ export const queryForDefaultUserDetails = {
       uponReceiving: `a query for the details of user "${defaultUserId}" in space "${defaultSpaceId}"`,
       withRequest: querySpaceUsersRequest({
         limit: '1000', // TODO: Why ask for 1000 if we want only one?
-        'sys.id[in]': defaultUserId
+        'sys.id[in]': defaultUserId,
       }),
       willRespondWith: {
         status: 200,
-        body: users // TODO: this looks like a bug, there are two users here!
-      }
+        body: users, // TODO: this looks like a bug, there are two users here!
+      },
     }).as('queryForDefaultUserDetails');
 
-    return '@queryForDefaultUserDetails'
-  }
-}
+    return '@queryForDefaultUserDetails';
+  },
+};

@@ -3,7 +3,7 @@ import * as AppOperations from './AppOperations';
 import {
   NAMESPACE_BUILTIN,
   NAMESPACE_BUILTIN_SIDEBAR,
-  NAMESPACE_APP
+  NAMESPACE_APP,
 } from 'widgets/WidgetNamespaces';
 
 jest.mock('i13n/Telemetry', () => ({ count: () => {} }));
@@ -17,11 +17,11 @@ const status = {
     sys: {
       type: 'AppInstallation',
       appDefinition: {
-        sys: { type: 'Link', linkType: 'AppDefinition', id: APP_ID }
-      }
-    }
+        sys: { type: 'Link', linkType: 'AppDefinition', id: APP_ID },
+      },
+    },
   },
-  isMarketplaceInstallation: false
+  isMarketplaceInstallation: false,
 };
 
 describe('AppOperations', () => {
@@ -30,15 +30,20 @@ describe('AppOperations', () => {
       expect.assertions(1);
 
       try {
-        await AppOperations.installOrUpdate({}, () => {}, () => {}, {
-          targetState: {
-            EditorInterface: {
-              CT1: {
-                sidebar: { position: 'BOOM' }
-              }
-            }
+        await AppOperations.installOrUpdate(
+          {},
+          () => {},
+          () => {},
+          {
+            targetState: {
+              EditorInterface: {
+                CT1: {
+                  sidebar: { position: 'BOOM' },
+                },
+              },
+            },
           }
-        });
+        );
       } catch (err) {
         expect(err.message).toMatch(/Invalid target sidebar/);
       }
@@ -49,16 +54,16 @@ describe('AppOperations', () => {
         updateAppInstallation: jest.fn((_, parameters) => {
           return Promise.resolve({
             sys: status.appInstallation.sys,
-            parameters
+            parameters,
           });
         }),
-        getEditorInterfaces: jest.fn(() => Promise.resolve({ items: [] }))
+        getEditorInterfaces: jest.fn(() => Promise.resolve({ items: [] })),
       };
       const evictWidget = jest.fn();
       const checkAppStatus = jest.fn(() => Promise.resolve(status));
 
       await AppOperations.installOrUpdate(cma, evictWidget, checkAppStatus, {
-        parameters: { test: true }
+        parameters: { test: true },
       });
 
       expect(cma.updateAppInstallation).toBeCalledTimes(1);
@@ -66,13 +71,13 @@ describe('AppOperations', () => {
       expect(evictWidget).toBeCalledTimes(1);
       expect(evictWidget).toBeCalledWith({
         sys: status.appInstallation.sys,
-        parameters: { test: true }
+        parameters: { test: true },
       });
     });
 
     it('fails if AppInstallation cannot be updated', async () => {
       const cma = {
-        updateAppInstallation: jest.fn(() => Promise.reject('unprocessable'))
+        updateAppInstallation: jest.fn(() => Promise.reject('unprocessable')),
       };
       const evictWidget = jest.fn();
       const checkAppStatus = jest.fn(() => Promise.resolve(status));
@@ -97,13 +102,13 @@ describe('AppOperations', () => {
               {
                 sys: { contentType: { sys: { id: 'CT1' } } },
                 controls: [
-                  { fieldId: 'xxx', widgetNamespace: NAMESPACE_BUILTIN, widgetId: 'markdown' }
-                ]
-              }
-            ]
+                  { fieldId: 'xxx', widgetNamespace: NAMESPACE_BUILTIN, widgetId: 'markdown' },
+                ],
+              },
+            ],
           });
         }),
-        updateEditorInterface: jest.fn(ext => Promise.resolve(ext))
+        updateEditorInterface: jest.fn((ext) => Promise.resolve(ext)),
       };
       const evictWidget = jest.fn();
       const checkAppStatus = jest.fn(() => Promise.resolve(status));
@@ -112,10 +117,10 @@ describe('AppOperations', () => {
         targetState: {
           EditorInterface: {
             CT1: {
-              controls: [{ fieldId: 'xxx' }]
-            }
-          }
-        }
+              controls: [{ fieldId: 'xxx' }],
+            },
+          },
+        },
       });
 
       expect(cma.updateAppInstallation).toBeCalledTimes(1);
@@ -124,7 +129,7 @@ describe('AppOperations', () => {
 
       expect(cma.updateEditorInterface).toBeCalledWith({
         sys: { contentType: { sys: { id: 'CT1' } } },
-        controls: [{ fieldId: 'xxx', widgetNamespace: NAMESPACE_APP, widgetId: 'some-app' }]
+        controls: [{ fieldId: 'xxx', widgetNamespace: NAMESPACE_APP, widgetId: 'some-app' }],
       });
 
       expect(evictWidget).toBeCalledTimes(1);
@@ -143,22 +148,22 @@ describe('AppOperations', () => {
                 controls: [
                   { fieldId: 'title', widgetNamespace: NAMESPACE_BUILTIN, widgetId: APP_ID },
                   { fieldId: 'content', widgetNamespace: NAMESPACE_BUILTIN, widgetId: 'markdown' },
-                  { fieldId: 'author', widgetNamespace: NAMESPACE_APP, widgetId: APP_ID }
+                  { fieldId: 'author', widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
                 ],
                 sidebar: [
                   { widgetNamespace: NAMESPACE_BUILTIN_SIDEBAR, widgetId: 'publication-widget' },
-                  { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID }
+                  { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
                 ],
                 editor: {
                   widgetNamespace: NAMESPACE_APP,
-                  widgetId: APP_ID
-                }
-              }
-            ]
+                  widgetId: APP_ID,
+                },
+              },
+            ],
           })
         ),
-        updateEditorInterface: jest.fn(ei => Promise.resolve(ei)),
-        deleteAppInstallation: jest.fn(() => Promise.resolve())
+        updateEditorInterface: jest.fn((ei) => Promise.resolve(ei)),
+        deleteAppInstallation: jest.fn(() => Promise.resolve()),
       };
       const evictWidget = jest.fn();
       const checkAppStatus = jest.fn(() => Promise.resolve(status));
@@ -173,9 +178,9 @@ describe('AppOperations', () => {
         controls: [
           { fieldId: 'title', widgetNamespace: NAMESPACE_BUILTIN, widgetId: APP_ID },
           { fieldId: 'content', widgetNamespace: NAMESPACE_BUILTIN, widgetId: 'markdown' },
-          { fieldId: 'author' }
+          { fieldId: 'author' },
         ],
-        sidebar: [{ widgetNamespace: NAMESPACE_BUILTIN_SIDEBAR, widgetId: 'publication-widget' }]
+        sidebar: [{ widgetNamespace: NAMESPACE_BUILTIN_SIDEBAR, widgetId: 'publication-widget' }],
       });
 
       expect(evictWidget).toBeCalledTimes(1);
@@ -185,7 +190,7 @@ describe('AppOperations', () => {
     it('deletes the installation', async () => {
       const cma = {
         getEditorInterfaces: jest.fn(() => Promise.resolve({ items: [] })),
-        deleteAppInstallation: jest.fn(() => Promise.resolve())
+        deleteAppInstallation: jest.fn(() => Promise.resolve()),
       };
       const evictWidget = jest.fn();
       const checkAppStatus = jest.fn(() => Promise.resolve(status));
@@ -202,7 +207,7 @@ describe('AppOperations', () => {
     it('fails if an installation cannot be deleted', async () => {
       const cma = {
         getEditorInterfaces: jest.fn(() => Promise.resolve({ items: [] })),
-        deleteAppInstallation: jest.fn(() => Promise.reject('unauthorized'))
+        deleteAppInstallation: jest.fn(() => Promise.reject('unauthorized')),
       };
       const evictWidget = jest.fn();
       const checkAppStatus = jest.fn(() => Promise.resolve(status));

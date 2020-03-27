@@ -2,7 +2,7 @@ import {
   CONSTRAINT_NAMES,
   CONSTRAINT_TYPES,
   transformFiltersToList,
-  transformListToFilters
+  transformListToFilters,
 } from './WebhookFiltersState';
 
 describe('WebhookFiltersState', () => {
@@ -13,7 +13,7 @@ describe('WebhookFiltersState', () => {
       { in: [{ doc: 'sys.environment.sys.id' }, ['master', 'staging']] },
       { not: { in: [{ doc: 'sys.environment.sys.id' }, ['master', 'staging']] } },
       { regexp: [{ doc: 'sys.contentType.sys.id' }, { pattern: 'foobar' }] },
-      { not: { regexp: [{ doc: 'sys.contentType.sys.id' }, { pattern: 'foobar' }] } }
+      { not: { regexp: [{ doc: 'sys.contentType.sys.id' }, { pattern: 'foobar' }] } },
     ]);
 
     expect(CONSTRAINT_TYPES[transformed[0].constraint].name).toBe(CONSTRAINT_NAMES.EQUALS);
@@ -54,7 +54,7 @@ describe('WebhookFiltersState', () => {
       { constraint: 2, path: 'sys.contentType.sys.id', value: '1  , , 2 , 3, 4,5' },
       { constraint: 3, path: 'sys.contentType.sys.id', value: '1  , , 2 , 3, 4,5,' },
       { constraint: 4, path: 'sys.environment.sys.id', value: 'foobar' },
-      { constraint: 5, path: 'sys.environment.sys.id', value: 'foobar' }
+      { constraint: 5, path: 'sys.environment.sys.id', value: 'foobar' },
     ]);
 
     expect(transformed[0].equals[0].doc).toBe('sys.id');

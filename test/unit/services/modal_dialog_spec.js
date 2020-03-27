@@ -7,7 +7,7 @@ import { it } from 'test/utils/dsl';
 describe('Modal dialog service', () => {
   let modalDialog, scope;
   let successStub, errorStub;
-  beforeEach(async function() {
+  beforeEach(async function () {
     await $initialize(this.system);
 
     scope = $inject('$rootScope').$new();
@@ -27,7 +27,7 @@ describe('Modal dialog service', () => {
       dialog = modalDialog.open({
         scope: scope,
         message: 'dialog message',
-        title: 'TITLE'
+        title: 'TITLE',
       });
       dialog.promise.then(successStub).catch(errorStub);
 
@@ -131,7 +131,7 @@ describe('Modal dialog service', () => {
       it('confirms with values', () => {
         let result;
         dialog.confirm('foo');
-        dialog.promise.then(value => {
+        dialog.promise.then((value) => {
           result = value;
         });
         scope.$apply();
@@ -141,7 +141,7 @@ describe('Modal dialog service', () => {
       it('cancels with values', () => {
         let result;
         dialog.cancel('bar');
-        dialog.promise.catch(value => {
+        dialog.promise.catch((value) => {
           result = value;
         });
         scope.$apply();
@@ -158,7 +158,7 @@ describe('Modal dialog service', () => {
         expect($('.modal-background').length).toBe(1);
       });
 
-      it('calls the success stub', function() {
+      it('calls the success stub', function () {
         dialog.cancel().promise.finally(() => {
           sinon.assert.called(errorStub);
         });
@@ -177,7 +177,7 @@ describe('Modal dialog service', () => {
       _.times(2, () => {
         modalDialog
           .open({
-            message: 'test'
+            message: 'test',
           })
           .promise.then(() => {})
           .catch(errorStub);
@@ -196,7 +196,7 @@ describe('Modal dialog service', () => {
       modalDialog
         .open({
           message: 'yo',
-          persistOnNavigation: true
+          persistOnNavigation: true,
         })
         .promise.then(() => {})
         .catch(errorStub);

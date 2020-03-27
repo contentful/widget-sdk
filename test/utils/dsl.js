@@ -17,14 +17,14 @@ function createCoroutineTestFactory(testFactory) {
       return testFactory(desc);
     }
 
-    return testFactory(desc, function(done) {
+    return testFactory(desc, function (done) {
       before = before || _.noop;
       const setup = this.setup || (() => Promise.resolve());
       return Promise.resolve(before.call(this))
         .then(() => {
           return setup.call(this);
         })
-        .then(params => {
+        .then((params) => {
           const result = runner.call(this, params);
 
           // allow async/await/returning promise

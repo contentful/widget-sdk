@@ -27,5 +27,5 @@ export default function ScheduledActionsFeatureFlag({ children }) {
 }
 
 ScheduledActionsFeatureFlag.propTypes = {
-  children: PropTypes.func.isRequired
+  children: PropTypes.func.isRequired,
 };

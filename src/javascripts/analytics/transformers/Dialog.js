@@ -15,7 +15,7 @@ function getDialogData(_eventName, data) {
     data: {
       name: data.name,
       purpose: data.purpose,
-      action: data.action
-    }
+      action: data.action,
+    },
   };
 }

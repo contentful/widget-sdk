@@ -12,12 +12,12 @@ export default function register() {
    */
   registerFactory('entityEditor/Document/PresenceHub', [
     '$interval',
-    function($interval) {
+    function ($interval) {
       const FOCUS_THROTTLE = 10e3;
       const PING_TIMEOUT = 60e3;
 
       return {
-        create: createPresenceHub
+        create: createPresenceHub,
       };
 
       /**
@@ -41,7 +41,7 @@ export default function register() {
 
         let ownFocusedPath = null;
 
-        const shoutFieldFocus = _.throttle(path => {
+        const shoutFieldFocus = _.throttle((path) => {
           shout(['focus', ownUserId, path]);
         }, FOCUS_THROTTLE);
 
@@ -52,7 +52,7 @@ export default function register() {
         const fieldCollaboratorsBus = K.createPropertyBus({});
         const collaboratorsBus = K.createPropertyBus([]);
 
-        docEvents.onValue(event => {
+        docEvents.onValue((event) => {
           if (event.name === 'shout') {
             receiveShout(event.data);
           } else if (event.name === 'open') {
@@ -75,7 +75,7 @@ export default function register() {
           collaboratorsFor: collaboratorsFor,
 
           leave: leave,
-          destroy: destroy
+          destroy: destroy,
         };
 
         /**
@@ -103,7 +103,7 @@ export default function register() {
          */
         function collaboratorsFor(fieldId, localeCode) {
           const path = ['fields', fieldId, localeCode].join('.');
-          return fieldCollaboratorsBus.property.map(fields => fields[path]);
+          return fieldCollaboratorsBus.property.map((fields) => fields[path]);
         }
 
         /**
@@ -136,7 +136,7 @@ export default function register() {
         }
 
         function removeTimedOutUsers() {
-          presence = _.omitBy(presence, userPresence => {
+          presence = _.omitBy(presence, (userPresence) => {
             const timeSinceLastShout = new Date() - userPresence.shoutedAt;
             return timeSinceLastShout > PING_TIMEOUT;
           });
@@ -181,10 +181,7 @@ export default function register() {
       }
 
       function presenceUsers(presence) {
-        return _(presence)
-          .keys()
-          .map(toUserLink)
-          .value();
+        return _(presence).keys().map(toUserLink).value();
       }
 
       function groupPresenceByField(presence) {
@@ -204,6 +201,6 @@ export default function register() {
       function toUserLink(id) {
         return { sys: { type: 'Link', linkType: 'User', id: id } };
       }
-    }
+    },
   ]);
 }

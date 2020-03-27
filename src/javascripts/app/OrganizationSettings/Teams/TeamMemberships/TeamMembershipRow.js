@@ -14,13 +14,13 @@ class TeamMembershipRow extends React.Component {
     membership: TeamMembershipPropType.isRequired,
 
     readOnlyPermission: PropTypes.bool.isRequired,
-    removeMembership: PropTypes.func.isRequired
+    removeMembership: PropTypes.func.isRequired,
   };
 
   render() {
     const { removeMembership, readOnlyPermission } = this.props;
     const {
-      sys: { organizationMembership, user, createdAt, createdBy }
+      sys: { organizationMembership, user, createdAt, createdBy },
     } = this.props.membership;
 
     return (
@@ -34,7 +34,7 @@ class TeamMembershipRow extends React.Component {
               testId="user-text-link"
               path="account.organizations.users.detail"
               params={{
-                userId: organizationMembership.sys.id
+                userId: organizationMembership.sys.id,
               }}>
               <UserCard testId="user-card" user={user} />
             </StateLink>
@@ -66,11 +66,14 @@ class TeamMembershipRow extends React.Component {
 }
 
 export default connect(
-  state => ({
-    readOnlyPermission: hasReadOnlyPermission(state)
+  (state) => ({
+    readOnlyPermission: hasReadOnlyPermission(state),
   }),
   (dispatch, { membership }) => ({
     removeMembership: () =>
-      dispatch({ type: 'REMOVE_TEAM_MEMBERSHIP', payload: { teamMembershipId: membership.sys.id } })
+      dispatch({
+        type: 'REMOVE_TEAM_MEMBERSHIP',
+        payload: { teamMembershipId: membership.sys.id },
+      }),
   })
 )(TeamMembershipRow);

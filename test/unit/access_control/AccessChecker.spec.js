@@ -40,19 +40,19 @@ describe('Access Checker', () => {
       newEnforcement: {
         reasonsDenied: () => [
           'usageExceeded',
-          `You do not have permissions to create on Asset, please contact your administrator for more information.`
+          `You do not have permissions to create on Asset, please contact your administrator for more information.`,
         ],
-        enforcements: []
-      }
+        enforcements: [],
+      },
     };
 
     const organizationCanStub = sinon.stub().returns('YES WE CAN');
 
     ac.setAuthContext({
       authContext: makeAuthContext({
-        orgid: organizationCanStub
+        orgid: organizationCanStub,
       }),
-      spaceAuthContext
+      spaceAuthContext,
     });
   }
 
@@ -60,7 +60,7 @@ describe('Access Checker', () => {
     enforcements = OrganizationRoles = ac = getResStub = reasonsDeniedStub = isPermissionDeniedStub = broadcastStub = mockSpaceEndpoint = feature = resetEnforcements = null;
   });
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     this.stubs = {
       logError: sinon.stub(),
       canAccessEntries: sinon.stub().returns(false),
@@ -69,7 +69,7 @@ describe('Access Checker', () => {
       canUpdateAssets: sinon.stub(),
       canUpdateOwnAssets: sinon.stub(),
       organizations$: K.createMockProperty(),
-      user$: K.createMockProperty()
+      user$: K.createMockProperty(),
     };
 
     broadcastStub = sinon.stub();
@@ -78,35 +78,35 @@ describe('Access Checker', () => {
 
     this.system.set('data/EndpointFactory', {
       createOrganizationEndpoint: () => mockOrgEndpoint,
-      createSpaceEndpoint: () => mockSpaceEndpoint
+      createSpaceEndpoint: () => mockSpaceEndpoint,
     });
     this.system.set('utils/LaunchDarkly', {
-      getCurrentVariation: sinon.stub().resolves(false)
+      getCurrentVariation: sinon.stub().resolves(false),
     });
     this.system.set('services/LegacyFeatureService', {
       default: () => {
         return {
           get: () => {
             return Promise.resolve(_.get(feature, 'enabled', false));
-          }
+          },
         };
-      }
+      },
     });
     this.system.set('services/logger', {
-      logError: this.stubs.logError
+      logError: this.stubs.logError,
     });
     this.system.set('access_control/AccessChecker/utils/resetEnforcements', {
-      default: resetEnforcements
+      default: resetEnforcements,
     });
     this.system.set('access_control/AccessChecker/utils/broadcastEnforcement', {
-      default: broadcastStub
+      default: broadcastStub,
     });
     this.system.set('access_control/Enforcements', {
-      determineEnforcement: sinon.stub().returns(undefined)
+      determineEnforcement: sinon.stub().returns(undefined),
     });
     this.system.set('access_control/AccessChecker/ResponseCache', {
       getResponse: getResStub,
-      reset: () => {}
+      reset: () => {},
     });
     this.system.set('access_control/AccessChecker/PolicyChecker', {
       canAccessEntries: this.stubs.canAccessEntries,
@@ -115,11 +115,11 @@ describe('Access Checker', () => {
       canUpdateEntriesOfType: this.stubs.canUpdateEntriesOfType,
       canUpdateOwnEntries: sinon.stub(),
       canUpdateAssets: this.stubs.canUpdateAssets,
-      canUpdateOwnAssets: this.stubs.canUpdateOwnAssets
+      canUpdateOwnAssets: this.stubs.canUpdateOwnAssets,
     });
     this.system.set('services/TokenStore', {
       organizations$: this.stubs.organizations$,
-      user$: this.stubs.user$
+      user$: this.stubs.user$,
     });
 
     enforcements = await this.system.import('access_control/Enforcements');
@@ -133,7 +133,7 @@ describe('Access Checker', () => {
     mockSpaceAuthContext = {
       reasonsDenied: reasonsDeniedStub,
       isPermissionDenied: isPermissionDeniedStub,
-      newEnforcement: {}
+      newEnforcement: {},
     };
     mockOrgEndpoint = sinon.stub();
     mockSpaceEndpoint = sinon.stub();
@@ -142,8 +142,8 @@ describe('Access Checker', () => {
       enabled: true,
       sys: {
         type: 'SpaceFeature',
-        id: 'customRoles'
-      }
+        id: 'customRoles',
+      },
     };
 
     ac = await this.system.import('access_control/AccessChecker');
@@ -153,13 +153,13 @@ describe('Access Checker', () => {
     changeSpace = function changeSpace({ hasFeature, isSpaceAdmin, userRoleName }) {
       ac.setSpace({
         sys: {
-          id: '1234'
+          id: '1234',
         },
         organization: {
           sys: { id: 'orgid' },
-          subscriptionPlan: { limits: { features: { customRoles: hasFeature } } }
+          subscriptionPlan: { limits: { features: { customRoles: hasFeature } } },
         },
-        spaceMember: { admin: isSpaceAdmin, roles: [{ name: userRoleName }] }
+        spaceMember: { admin: isSpaceAdmin, roles: [{ name: userRoleName }] },
       });
 
       feature.enabled = hasFeature;
@@ -284,12 +284,15 @@ describe('Access Checker', () => {
           expect(ac.getSectionVisibility()[key]).toBe(val);
         }
 
-        [['read', 'entry'], ['read', 'asset'], ['read', 'apiKey'], ['update', 'settings']].forEach(
-          ([action, entityType]) => {
-            test(action, entityType, true);
-            test(action, entityType, false);
-          }
-        );
+        [
+          ['read', 'entry'],
+          ['read', 'asset'],
+          ['read', 'apiKey'],
+          ['update', 'settings'],
+        ].forEach(([action, entityType]) => {
+          test(action, entityType, true);
+          test(action, entityType, false);
+        });
       });
 
       it('should return false for apiKey if settings is not readable (permission denied)', () => {
@@ -324,7 +327,7 @@ describe('Access Checker', () => {
         expect(ac.getSectionVisibility().environments).toBe(true);
       });
 
-      it('shows entries/assets section when it has "hide" flag, but policy checker grants access', function() {
+      it('shows entries/assets section when it has "hide" flag, but policy checker grants access', function () {
         function test(key, val) {
           expect(ac.getSectionVisibility()[key]).toBe(val);
         }
@@ -440,26 +443,26 @@ describe('Access Checker', () => {
     describe('#canUpdateEntry', () => {
       const entry = { data: { sys: { contentType: { sys: { id: 'ctid' } } } } };
 
-      it('returns true if "can" returns true', function() {
+      it('returns true if "can" returns true', function () {
         getResStub.withArgs('update', entry.data).returns(true);
         expect(ac.canUpdateEntry(entry)).toBe(true);
       });
 
-      it('returns false if "can" returns false and there are no allow policies', function() {
+      it('returns false if "can" returns false and there are no allow policies', function () {
         getResStub.withArgs('update', entry.data).returns(false);
         this.stubs.canUpdateEntriesOfType.returns(false);
         expect(ac.canUpdateEntry(entry)).toBe(false);
         sinon.assert.calledOnce(this.stubs.canUpdateEntriesOfType.withArgs('ctid'));
       });
 
-      it('returns true if "can" returns false but there are allow policies', function() {
+      it('returns true if "can" returns false but there are allow policies', function () {
         getResStub.withArgs('update', entry.data).returns(false);
         this.stubs.canUpdateEntriesOfType.returns(true);
         expect(ac.canUpdateEntry(entry)).toBe(true);
         sinon.assert.calledOnce(this.stubs.canUpdateEntriesOfType.withArgs('ctid'));
       });
 
-      it('returns false if permission is explicitly denied', function() {
+      it('returns false if permission is explicitly denied', function () {
         isPermissionDeniedStub.returns(true);
         getResStub.withArgs('update', entry.data).returns(true);
         this.stubs.canUpdateEntriesOfType.returns(true);
@@ -468,7 +471,7 @@ describe('Access Checker', () => {
       });
     });
 
-    describe('#canUpdateAsset', function() {
+    describe('#canUpdateAsset', function () {
       const asset = { data: {} };
 
       it('returns true if "can" returns true', () => {
@@ -476,21 +479,21 @@ describe('Access Checker', () => {
         expect(ac.canUpdateAsset(asset)).toBe(true);
       });
 
-      it('returns false if "can" returns false and there are no allow policies', function() {
+      it('returns false if "can" returns false and there are no allow policies', function () {
         getResStub.withArgs('update', asset.data).returns(false);
         this.stubs.canUpdateAssets.returns(false);
         expect(ac.canUpdateAsset(asset)).toBe(false);
         sinon.assert.calledOnce(this.stubs.canUpdateAssets);
       });
 
-      it('returns true if "can" returns false but there are allow policies', function() {
+      it('returns true if "can" returns false but there are allow policies', function () {
         getResStub.withArgs('update', asset.data).returns(false);
         this.stubs.canUpdateAssets.returns(true);
         expect(ac.canUpdateAsset(asset)).toBe(true);
         sinon.assert.calledOnce(this.stubs.canUpdateAssets);
       });
 
-      it('returns false if permission is explicitly denied', function() {
+      it('returns false if permission is explicitly denied', function () {
         isPermissionDeniedStub.returns(true);
         getResStub.withArgs('update', asset.data).returns(true);
         this.stubs.canUpdateEntriesOfType.returns(true);
@@ -499,8 +502,8 @@ describe('Access Checker', () => {
       });
     });
 
-    describe('#canUploadMultipleAssets', function() {
-      it('returns false if assets cannot be created', function() {
+    describe('#canUploadMultipleAssets', function () {
+      it('returns false if assets cannot be created', function () {
         getResStub.withArgs('create', 'Asset').returns(false);
         getResStub.withArgs('update', 'Asset').returns(false);
         this.stubs.canUpdateAssets.returns(false);
@@ -509,7 +512,7 @@ describe('Access Checker', () => {
         expect(ac.canUploadMultipleAssets()).toBe(false);
       });
 
-      it('returns false if assets cannot be updated', function() {
+      it('returns false if assets cannot be updated', function () {
         getResStub.withArgs('create', 'Asset').returns(true);
         getResStub.withArgs('update', 'Asset').returns(false);
         this.stubs.canUpdateAssets.returns(false);
@@ -518,7 +521,7 @@ describe('Access Checker', () => {
         expect(ac.canUploadMultipleAssets()).toBe(false);
       });
 
-      it('returns true if assets can be created and updated', function() {
+      it('returns true if assets can be created and updated', function () {
         getResStub.withArgs('create', 'Asset').returns(true);
         getResStub.withArgs('update', 'Asset').returns(true);
         this.stubs.canUpdateAssets.returns(false);
@@ -527,7 +530,7 @@ describe('Access Checker', () => {
         expect(ac.canUploadMultipleAssets()).toBe(true);
       });
 
-      it('returns true if assets can be created and updated with policy', function() {
+      it('returns true if assets can be created and updated with policy', function () {
         getResStub.withArgs('create', 'Asset').returns(true);
         getResStub.withArgs('update', 'Asset').returns(false);
         this.stubs.canUpdateAssets.returns(true);
@@ -536,7 +539,7 @@ describe('Access Checker', () => {
         expect(ac.canUploadMultipleAssets()).toBe(true);
       });
 
-      it('returns true if assets can be created and own assets can be updated', function() {
+      it('returns true if assets can be created and own assets can be updated', function () {
         getResStub.withArgs('create', 'Asset').returns(true);
         getResStub.withArgs('update', 'Asset').returns(false);
         this.stubs.canUpdateAssets.returns(false);
@@ -566,7 +569,7 @@ describe('Access Checker', () => {
         expect(await ac.canModifyRoles()).toBe(true);
       });
 
-      it('should handle a null or undefined feature', async function() {
+      it('should handle a null or undefined feature', async function () {
         OrganizationRoles.setUser({ organizationMemberships: [] });
         changeSpace({ hasFeature: false, isSpaceAdmin: true }); // User is space admin
 
@@ -584,8 +587,8 @@ describe('Access Checker', () => {
           organizationMemberships: [
             { organization: { sys: { id: 'org1id' } }, role: 'admin' },
             { organization: { sys: { id: 'org2id' } }, role: 'member' },
-            { organization: { sys: { id: 'org3id' } }, role: 'owner' }
-          ]
+            { organization: { sys: { id: 'org3id' } }, role: 'owner' },
+          ],
         };
 
         OrganizationRoles.setUser(user);
@@ -614,7 +617,7 @@ describe('Access Checker', () => {
         const organizationCanStub = sinon.stub().returns('YES WE CAN');
         changeAuthContext(
           makeAuthContext({
-            orgid: organizationCanStub
+            orgid: organizationCanStub,
           })
         );
 
@@ -622,10 +625,10 @@ describe('Access Checker', () => {
         sinon.assert.calledOnce(organizationCanStub.withArgs('create', 'Space'));
       });
 
-      it('returns false and logs if organization authContext throws', function() {
+      it('returns false and logs if organization authContext throws', function () {
         changeAuthContext(
           makeAuthContext({
-            orgid: sinon.stub().throws()
+            orgid: sinon.stub().throws(),
           })
         );
 
@@ -636,7 +639,7 @@ describe('Access Checker', () => {
     });
 
     describe('#canCreateSpaceInAnyOrganization', () => {
-      beforeEach(function() {
+      beforeEach(function () {
         this.stubs.organizations$.set([{ sys: { id: 'org1' } }, { sys: { id: 'org2' } }]);
       });
 
@@ -644,7 +647,7 @@ describe('Access Checker', () => {
         changeAuthContext(
           makeAuthContext({
             org1: sinon.stub().returns(false),
-            org2: sinon.stub().returns(true)
+            org2: sinon.stub().returns(true),
           })
         );
 
@@ -655,7 +658,7 @@ describe('Access Checker', () => {
         changeAuthContext(
           makeAuthContext({
             org1: sinon.stub().returns(false),
-            org2: sinon.stub().returns(false)
+            org2: sinon.stub().returns(false),
           })
         );
 
@@ -666,14 +669,14 @@ describe('Access Checker', () => {
     describe('#canCreateSpace', () => {
       let organizationCanStub, canStub;
 
-      beforeEach(function() {
+      beforeEach(function () {
         organizationCanStub = sinon.stub().returns(false);
         canStub = sinon.stub().returns(false);
         this.stubs.organizations$.set([{ sys: { id: 'org1' } }]);
         changeAuthContext(
           makeAuthContext(
             {
-              org1: organizationCanStub
+              org1: organizationCanStub,
             },
             canStub
           )
@@ -744,7 +747,7 @@ describe('Access Checker', () => {
       });
 
       it('sets "forbidden" flag on provided context if response is 404/3', () => {
-        [200, 404, 403].forEach(status => {
+        [200, 404, 403].forEach((status) => {
           const context = {};
           const cb1 = ac.wasForbidden(context);
           cb1({ statusCode: status });
@@ -756,7 +759,7 @@ describe('Access Checker', () => {
         const ctx = {};
         const cb1 = ac.wasForbidden(ctx);
 
-        return cb1({ statusCode: 404 }).then(ctx2 => {
+        return cb1({ statusCode: 404 }).then((ctx2) => {
           expect(ctx === ctx2).toBe(true);
           expect(ctx2.forbidden).toBe(true);
         });
@@ -766,7 +769,7 @@ describe('Access Checker', () => {
         const cb = ac.wasForbidden({});
         const res = { statusCode: 400 };
 
-        return cb(res).then(_.noop, res2 => {
+        return cb(res).then(_.noop, (res2) => {
           expect(res === res2);
         });
       });
@@ -787,6 +790,6 @@ function makeAuthContext(orgs, can = sinon.stub()) {
     hasOrganization(id) {
       return id in orgs;
     },
-    can
+    can,
   };
 }

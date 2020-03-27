@@ -4,32 +4,31 @@ import { $initialize, $apply, $wait } from 'test/utils/ng';
 import { it } from 'test/utils/dsl';
 
 describe('AutoCreateNewSpace', () => {
-  beforeEach(async function() {
+  beforeEach(async function () {
     this.tokenStore = {
       user$: K.createMockProperty(null),
       spacesByOrganization$: K.createMockProperty(null),
-      organizations$: K.createMockProperty([])
+      organizations$: K.createMockProperty([]),
     };
     this.createSampleSpace = sinon.stub().resolves();
     this.store = {
       set: sinon.stub(),
       get: sinon.stub(),
-      forKey: sinon.stub()
+      forKey: sinon.stub(),
     };
 
     this.system.set('services/TokenStore', this.tokenStore);
     this.system.set('components/shared/auto_create_new_space/CreateSampleSpace', {
-      default: this.createSampleSpace
+      default: this.createSampleSpace,
     });
     this.system.set('browserStorage', {
-      getStore: sinon.stub().returns(this.store)
+      getStore: sinon.stub().returns(this.store),
     });
     this.system.set('utils/LaunchDarkly', {
-      getCurrentVariation: sinon.stub().returns(false)
+      getCurrentVariation: sinon.stub().returns(false),
     });
 
-    const init = (await this.system.import('components/shared/auto_create_new_space'))
-      .init;
+    const init = (await this.system.import('components/shared/auto_create_new_space')).init;
 
     await $initialize(this.system);
 
@@ -39,23 +38,23 @@ describe('AutoCreateNewSpace', () => {
         {
           role: 'owner',
           organization: {
-            sys: { id: 'orgId1' }
-          }
+            sys: { id: 'orgId1' },
+          },
         },
         {
           role: 'admin',
           organization: {
-            sys: { id: 'orgId2' }
-          }
-        }
-      ]
+            sys: { id: 'orgId2' },
+          },
+        },
+      ],
     };
     this.user = user;
     this.spacesByOrg = {};
     const org = {
       sys: {
-        createdBy: user
-      }
+        createdBy: user,
+      },
     };
 
     this.init = () => {
@@ -71,27 +70,27 @@ describe('AutoCreateNewSpace', () => {
   });
 
   describe('#init', () => {
-    it('should be a noop when user is falsy', function() {
+    it('should be a noop when user is falsy', function () {
       this.tokenStore.organizations$.set([{ sys: { id: 'org' } }]);
       this.tokenStore.spacesByOrganization$.set({
-        org: ['space']
+        org: ['space'],
       });
       this.tokenStore.user$.set(null);
       this.init();
       sinon.assert.notCalled(this.createSampleSpace);
     });
 
-    it('should be a noop when spacesByOrg is falsy', function() {
+    it('should be a noop when spacesByOrg is falsy', function () {
       this.tokenStore.user$.set({});
       this.tokenStore.spacesByOrganization$.set(null);
       this.init();
       sinon.assert.notCalled(this.createSampleSpace);
     });
 
-    it('should be a noop and not fail when user has no org', function() {
+    it('should be a noop and not fail when user has no org', function () {
       this.tokenStore.organizations$.set([]);
       this.tokenStore.spacesByOrganization$.set({
-        org: ['space']
+        org: ['space'],
       });
       this.tokenStore.user$.set({ sys: { id: 'user' } });
       this.init();
@@ -101,22 +100,22 @@ describe('AutoCreateNewSpace', () => {
     describe('qualifyUser', () => {
       // specs
       [
-        [ctx => ctx.store.get.returns(true), 'space was already auto created for the user'],
+        [(ctx) => ctx.store.get.returns(true), 'space was already auto created for the user'],
         [
-          ctx => ctx.tokenStore.spacesByOrganization$.set({ orgId: ['spaceId'] }),
-          'the user has an org with spaces'
+          (ctx) => ctx.tokenStore.spacesByOrganization$.set({ orgId: ['spaceId'] }),
+          'the user has an org with spaces',
         ],
         [
-          ctx => {
+          (ctx) => {
             ctx.user.organizationMemberships[0].role = 'potato';
             ctx.tokenStore.user$.set(ctx.user);
           },
-          'the user does not own any orgs'
-        ]
+          'the user does not own any orgs',
+        ],
       ].forEach(testQualification);
 
       function testQualification([fn, msg]) {
-        it(`should be a noop if ${msg}`, async function() {
+        it(`should be a noop if ${msg}`, async function () {
           fn(this);
           this.init();
           await $wait();
@@ -125,7 +124,7 @@ describe('AutoCreateNewSpace', () => {
       }
     });
 
-    it('should create a sample space when the user is qualified', async function() {
+    it('should create a sample space when the user is qualified', async function () {
       this.tokenStore.spacesByOrganization$.set(this.spacesByOrg);
       this.tokenStore.user$.set(this.user);
       this.store.get.returns(false);
@@ -140,10 +139,10 @@ describe('AutoCreateNewSpace', () => {
       );
     });
 
-    it('should only call create sample space function once even if invoked multiple times', async function() {
+    it('should only call create sample space function once even if invoked multiple times', async function () {
       // to prevent this.createSampleSpace from resolving before
       // the next user$ and spacesByOrganization$ values are emitted
-      const delayedPromise = new Promise(resolve => setTimeout(resolve, 5000));
+      const delayedPromise = new Promise((resolve) => setTimeout(resolve, 5000));
 
       this.createSampleSpace.resolves(delayedPromise);
       this.init();

@@ -23,7 +23,7 @@ export default class Sidepanel extends React.Component {
   static propTypes = {
     sidePanelIsShown: PropTypes.bool,
     closeOrgsDropdown: PropTypes.func,
-    closeSidePanel: PropTypes.func
+    closeSidePanel: PropTypes.func,
   };
 
   constructor(props) {
@@ -35,7 +35,7 @@ export default class Sidepanel extends React.Component {
       orgs: [],
       spacesByOrg: {},
       openedSpaceId: null,
-      environmentsEnabled: false
+      environmentsEnabled: false,
     };
   }
 
@@ -50,7 +50,7 @@ export default class Sidepanel extends React.Component {
       K.getValue(TokenStore.organizations$),
       K.getValue(TokenStore.spacesByOrganization$),
       K.getValue(navState$),
-      LD.getCurrentVariation(ENVIRONMENTS_FLAG)
+      LD.getCurrentVariation(ENVIRONMENTS_FLAG),
     ]);
 
     const currentSpaceId = get(navState, ['space', 'sys', 'id']);
@@ -63,7 +63,7 @@ export default class Sidepanel extends React.Component {
         spacesByOrg: spacesByOrg || {},
         currentSpaceId,
         currentEnvId,
-        environmentsEnabled
+        environmentsEnabled,
       },
       () => {
         this.setCurrOrg(org);
@@ -71,9 +71,9 @@ export default class Sidepanel extends React.Component {
     );
   }
 
-  setCurrOrg = org => {
+  setCurrOrg = (org) => {
     const updates = {
-      initialized: true
+      initialized: true,
     };
 
     const orgId = get(org, ['sys', 'id']);
@@ -104,7 +104,7 @@ export default class Sidepanel extends React.Component {
 
     Navigator.go({
       path: orgSettingsPath,
-      params: { orgId }
+      params: { orgId },
     });
   };
 
@@ -117,10 +117,10 @@ export default class Sidepanel extends React.Component {
       path,
       params: {
         spaceId,
-        environmentId: envId
+        environmentId: envId,
       },
-      options: { reload: true }
-    }).catch(err => {
+      options: { reload: true },
+    }).catch((err) => {
       // Collapse environment list if navigation failed
       // e.g. when environment was deleted
       this.setState({ openedSpaceId: null });
@@ -131,7 +131,7 @@ export default class Sidepanel extends React.Component {
   createNewOrg = () => {
     this.props.closeSidePanel();
     Navigator.go({
-      path: ['account', 'new_organization']
+      path: ['account', 'new_organization'],
     });
   };
 
@@ -140,7 +140,7 @@ export default class Sidepanel extends React.Component {
     CreateSpace.showDialog(this.state.currOrg.sys.id);
   };
 
-  setOpenedSpaceId = spaceId => {
+  setOpenedSpaceId = (spaceId) => {
     this.setState({ openedSpaceId: spaceId });
   };
 

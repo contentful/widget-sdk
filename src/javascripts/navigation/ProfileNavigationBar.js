@@ -9,19 +9,19 @@ export default function ProfileNavigationBar() {
       navIcon: 'token',
       sref: 'account.profile.cma_tokens',
       srefOptions: {
-        inherit: false
+        inherit: false,
       },
-      dataViewType: 'profile-tokens'
+      dataViewType: 'profile-tokens',
     },
     {
       title: 'OAuth tokens',
       navIcon: 'token',
       sref: 'account.profile.access_grants',
       srefOptions: {
-        inherit: false
+        inherit: false,
       },
-      dataViewType: 'profile-tokens'
-    }
+      dataViewType: 'profile-tokens',
+    },
   ];
 
   return (
@@ -37,46 +37,46 @@ export default function ProfileNavigationBar() {
               navIcon: 'user-profile',
               sref: 'account.profile.user',
               srefOptions: {
-                inherit: false
+                inherit: false,
               },
-              dataViewType: 'profile-settings'
+              dataViewType: 'profile-settings',
             },
             {
               title: 'Spaces',
               navIcon: 'spaces',
               sref: 'account.profile.space_memberships',
               srefOptions: {
-                inherit: false
+                inherit: false,
               },
-              dataViewType: 'profile-spaces'
+              dataViewType: 'profile-spaces',
             },
             {
               title: 'Organizations',
               navIcon: 'organizations',
               sref: 'account.profile.organization_memberships',
               srefOptions: {
-                inherit: false
+                inherit: false,
               },
-              dataViewType: 'profile-organizations'
+              dataViewType: 'profile-organizations',
             },
             {
               title: 'Tokens',
               navIcon: 'token',
               srefOptions: {
-                inherit: false
+                inherit: false,
               },
               dataViewType: 'profile-tokens',
-              children: accessTokensDropdownItems
+              children: accessTokensDropdownItems,
             },
             {
               title: 'OAuth applications',
               navIcon: 'oauth',
               sref: 'account.profile.applications',
               srefOptions: {
-                inherit: false
+                inherit: false,
               },
-              dataViewType: 'profile-applications'
-            }
+              dataViewType: 'profile-applications',
+            },
           ]}
         />
       </div>

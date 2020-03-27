@@ -9,7 +9,7 @@ export const CodePlugin = ({ richTextAPI }) => {
     type: MARKS.CODE,
     tagName: 'code',
     hotkey: ['mod+/'],
-    richTextAPI
+    richTextAPI,
   });
 };
 
@@ -22,5 +22,5 @@ class Code extends Component {
 export default markToggleDecorator({
   type: MARKS.CODE,
   title: 'Code',
-  icon: 'Code'
+  icon: 'Code',
 })(Code);

@@ -7,7 +7,7 @@ export default class Fullscreen extends React.Component {
   static propTypes = {
     children: PropTypes.node,
     close: PropTypes.node,
-    gradient: PropTypes.bool
+    gradient: PropTypes.bool,
   };
 
   render() {
@@ -15,7 +15,7 @@ export default class Fullscreen extends React.Component {
 
     const containerClass = classnames({
       'fullscreen--container': !gradient,
-      'fullscreen--container-with-gradient': gradient
+      'fullscreen--container-with-gradient': gradient,
     });
 
     return (

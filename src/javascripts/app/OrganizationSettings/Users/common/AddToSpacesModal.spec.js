@@ -16,13 +16,13 @@ const user = fake.User();
 
 jest.mock('access_control/OrganizationMembershipRepository', () => ({
   getAllSpaces: jest.fn(async () => mockSpaces),
-  getAllRoles: jest.fn(async () => mockRoles)
+  getAllRoles: jest.fn(async () => mockRoles),
 }));
 
 jest.mock('access_control/SpaceMembershipRepository', () => ({
   create: () => ({
-    invite: jest.fn(async () => mockSpaceMembership)
-  })
+    invite: jest.fn(async () => mockSpaceMembership),
+  }),
 }));
 
 const onCloseCb = jest.fn();
@@ -35,7 +35,7 @@ describe('AddToSpacesModal', () => {
     fireEvent.focus(input);
     await screen.findAllByTestId('autocomplete.dropdown-list-item');
 
-    mockSpaces.forEach(space => {
+    mockSpaces.forEach((space) => {
       const option = screen.getByText(space.name);
       expect(option).toBeVisible();
     });
@@ -58,7 +58,7 @@ describe('AddToSpacesModal', () => {
     await build();
     const membershipPlans = [
       { spaceName: fooSpace.name, roleNames: [editorRole.name] },
-      { spaceName: barSpace.name, roleNames: [authorRole.name] }
+      { spaceName: barSpace.name, roleNames: [authorRole.name] },
     ];
     await setupMemberships(membershipPlans);
     // wait for notification to pop up
@@ -101,7 +101,7 @@ async function setupMemberships(membershipPlans = [{ spaceName: '', roleNames: [
     membershipPlans.map(async ({ roleNames }, index) => {
       const membershipListItem = screen.getAllByTestId('add-to-spaces.list.item')[index];
       await Promise.all(
-        roleNames.map(async roleName => {
+        roleNames.map(async (roleName) => {
           const rolesDropdownTrigger = within(membershipListItem).getByTestId(
             'space-role-editor.button'
           );

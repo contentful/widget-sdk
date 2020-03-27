@@ -8,19 +8,15 @@ export default function createWebhookRepo(space) {
     return getBaseCall()
       .payload({ limit: 100 })
       .get()
-      .then(res => res.items.map(stringifyBodyTransformation));
+      .then((res) => res.items.map(stringifyBodyTransformation));
   }
 
   function get(id) {
-    return getBaseCall(id)
-      .get()
-      .then(stringifyBodyTransformation);
+    return getBaseCall(id).get().then(stringifyBodyTransformation);
   }
 
   function getCall(webhookId, callId) {
-    return getLogsBaseCall(webhookId)
-      .paths(['calls', callId])
-      .get();
+    return getLogsBaseCall(webhookId).paths(['calls', callId]).get();
   }
 
   function getCalls(webhookId) {
@@ -28,13 +24,11 @@ export default function createWebhookRepo(space) {
       .paths(['calls'])
       .payload({ limit: 500 })
       .get()
-      .then(res => res.items);
+      .then((res) => res.items);
   }
 
   function getHealth(webhookId) {
-    return getLogsBaseCall(webhookId)
-      .paths(['health'])
-      .get();
+    return getLogsBaseCall(webhookId).paths(['health']).get();
   }
 
   function save(webhook) {
@@ -46,13 +40,9 @@ export default function createWebhookRepo(space) {
     const id = getAtPath(webhook, ['sys', 'id']);
 
     if (id) {
-      return getBaseCall(id, webhook.sys.version)
-        .payload(webhook)
-        .put();
+      return getBaseCall(id, webhook.sys.version).payload(webhook).put();
     } else {
-      return getBaseCall()
-        .payload(webhook)
-        .post();
+      return getBaseCall().payload(webhook).post();
     }
   }
 

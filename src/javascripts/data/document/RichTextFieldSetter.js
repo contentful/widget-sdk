@@ -21,7 +21,7 @@ export const is = (fieldId, contentType) => {
     return false;
   }
   const fields = contentType.data ? contentType.data.fields : contentType.fields;
-  const field = fields.find(f => f.id === fieldId);
+  const field = fields.find((f) => f.id === fieldId);
   return field && field.type === 'RichText';
 };
 
@@ -76,9 +76,9 @@ export const setAt = (doc, fieldPath, nextFieldValue) => {
 };
 
 function setValue(doc, fieldPath, fieldValue, nextFieldValue) {
-  const ops = jsondiff(fieldValue, nextFieldValue).map(op => ({
+  const ops = jsondiff(fieldValue, nextFieldValue).map((op) => ({
     ...op,
-    p: [...fieldPath, ...op.p]
+    p: [...fieldPath, ...op.p],
   }));
 
   // The initial implementation of the Rich Text contained a bug that

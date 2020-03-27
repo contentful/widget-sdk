@@ -10,11 +10,11 @@ const styles = {
   chevronIcon: css({
     float: 'right',
     marginLeft: tokens.spacingXs,
-    marginRight: -tokens.spacing2Xs
+    marginRight: -tokens.spacing2Xs,
   }),
   spinnerMargin: css({
-    marginRight: tokens.spacingXs
-  })
+    marginRight: tokens.spacingXs,
+  }),
 };
 
 const CreateEntryLinkButton = ({
@@ -24,9 +24,9 @@ const CreateEntryLinkButton = ({
   testId,
   hasPlusIcon,
   suggestedContentTypeId,
-  disabled
+  disabled,
 }) => {
-  const suggestedContentType = contentTypes.find(ct => ct.sys.id === suggestedContentTypeId);
+  const suggestedContentType = contentTypes.find((ct) => ct.sys.id === suggestedContentTypeId);
   const buttonText =
     text ||
     `Add ${get(
@@ -43,7 +43,7 @@ const CreateEntryLinkButton = ({
       testId={testId}
       dropdownSettings={{
         isAutoalignmentEnabled: true,
-        position: 'bottom-right'
+        position: 'bottom-right',
       }}>
       {({ openMenu, isSelecting }) => (
         <>
@@ -77,12 +77,12 @@ CreateEntryLinkButton.propTypes = {
   disabled: PropTypes.bool,
   hasPlusIcon: PropTypes.bool,
   text: PropTypes.string,
-  testId: PropTypes.string
+  testId: PropTypes.string,
 };
 
 CreateEntryLinkButton.defaultProps = {
   hasPlusIcon: false,
-  disabled: false
+  disabled: false,
 };
 
 export default CreateEntryLinkButton;

@@ -64,8 +64,8 @@ export async function showDialog({ organizationId, space, action, scope, onSubmi
         scope,
         space,
         organization,
-        onSubmit
-      }
+        onSubmit,
+      },
     });
   }
 }

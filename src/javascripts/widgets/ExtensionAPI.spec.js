@@ -2,10 +2,10 @@ import ExtensionAPI from './ExtensionAPI';
 import { LOCATION_ENTRY_FIELD } from './WidgetLocations';
 
 describe('ExtensionAPI', () => {
-  const createAPI = extraConfig => {
+  const createAPI = (extraConfig) => {
     const config = {
       descriptor: {
-        id: 'my-extension-id'
+        id: 'my-extension-id',
       },
       spaceId: 'my-space-id',
       environmentId: 'master',
@@ -19,13 +19,13 @@ describe('ExtensionAPI', () => {
       editorInterface: {},
       spaceMember: {
         sys: { user: { sys: {}, firstName: 'Jakub' } },
-        roles: []
+        roles: [],
       },
       parameters: {
         instance: { test: true },
-        installation: { hello: 'world' }
+        installation: { hello: 'world' },
       },
-      ...extraConfig
+      ...extraConfig,
     };
 
     return new ExtensionAPI(config);
@@ -39,12 +39,12 @@ describe('ExtensionAPI', () => {
             apiName: 'FID-public',
             id: 'FID-internal',
             type: 'FIELD-TYPE',
-            validations: 'VALIDATIONS'
+            validations: 'VALIDATIONS',
           },
           locale: {
             code: 'LOCALE',
-            internal_code: 'LOCALE-internal'
-          }
+            internal_code: 'LOCALE-internal',
+          },
         },
         locales: {
           available: [
@@ -53,25 +53,25 @@ describe('ExtensionAPI', () => {
               internal_code: 'LOCALE-internal',
               name: 'lang1',
               default: true,
-              optional: false
+              optional: false,
             },
             {
               code: 'L2',
               internal_code: 'L2-internal',
               name: 'lang2',
               fallbackCode: 'LOCALE',
-              optional: true
-            }
+              optional: true,
+            },
           ],
-          default: { code: 'LOCALE', internal_code: 'LOCALE-internal', default: true }
+          default: { code: 'LOCALE', internal_code: 'LOCALE-internal', default: true },
         },
         entryData: {
           sys: { id: 'test' },
           fields: {
             'FID-internal': {
-              'LOCALE-internal': 'VALUE'
-            }
-          }
+              'LOCALE-internal': 'VALUE',
+            },
+          },
         },
         contentTypeData: {
           fields: [
@@ -80,14 +80,14 @@ describe('ExtensionAPI', () => {
               apiName: 'FID-public',
               localized: false,
               type: 'Symbol',
-              validations: 'VALIDATIONS1'
+              validations: 'VALIDATIONS1',
             },
             {
               id: 'FID-internal2',
               apiName: 'FID-public2',
               localized: true,
               type: 'Boolean',
-              required: true
+              required: true,
             },
             {
               id: 'FID-api-name-missing',
@@ -96,12 +96,12 @@ describe('ExtensionAPI', () => {
               items: {
                 type: 'Link',
                 linkType: 'Entry',
-                validations: [{ linkContentType: 'testct' }]
+                validations: [{ linkContentType: 'testct' }],
               },
-              required: false
-            }
-          ]
-        }
+              required: false,
+            },
+          ],
+        },
       });
 
       api.connect();
@@ -116,7 +116,7 @@ describe('ExtensionAPI', () => {
             value: 'VALUE',
             type: 'FIELD-TYPE',
             validations: 'VALIDATIONS',
-            required: false
+            required: false,
           },
           fieldInfo: [
             {
@@ -126,7 +126,7 @@ describe('ExtensionAPI', () => {
               values: { LOCALE: 'VALUE' },
               type: 'Symbol',
               validations: 'VALIDATIONS1',
-              required: false
+              required: false,
             },
             {
               id: 'FID-public2',
@@ -134,7 +134,7 @@ describe('ExtensionAPI', () => {
               localized: true,
               values: {},
               type: 'Boolean',
-              required: true
+              required: true,
             },
             {
               id: 'FID-api-name-missing',
@@ -145,30 +145,30 @@ describe('ExtensionAPI', () => {
               items: {
                 type: 'Link',
                 linkType: 'Entry',
-                validations: [{ linkContentType: 'testct' }]
+                validations: [{ linkContentType: 'testct' }],
               },
-              required: false
-            }
+              required: false,
+            },
           ],
           locales: {
             available: ['LOCALE', 'L2'],
             default: 'LOCALE',
             names: {
               LOCALE: 'lang1',
-              L2: 'lang2'
+              L2: 'lang2',
             },
             fallbacks: {
               LOCALE: undefined,
-              L2: 'LOCALE'
+              L2: 'LOCALE',
             },
             optional: {
               LOCALE: false,
-              L2: true
+              L2: true,
             },
             direction: {
               LOCALE: 'ltr',
-              L2: 'ltr'
-            }
+              L2: 'ltr',
+            },
           },
           parameters: expect.any(Object),
           entry: { sys: { id: 'test' } },
@@ -183,12 +183,12 @@ describe('ExtensionAPI', () => {
                 items: {
                   type: 'Link',
                   linkType: 'Entry',
-                  validations: [{ linkContentType: 'testct' }]
+                  validations: [{ linkContentType: 'testct' }],
                 },
-                required: false
-              }
-            ]
-          }
+                required: false,
+              },
+            ],
+          },
         })
       );
     });
@@ -213,11 +213,11 @@ describe('ExtensionAPI', () => {
       const api = createAPI({
         locales: {
           available: [{ code: 'LC-public', internal_code: 'LC-internal', default: true }],
-          default: { code: 'LC-public', internal_code: 'LC-internal', default: true }
+          default: { code: 'LC-public', internal_code: 'LC-internal', default: true },
         },
         contentTypeData: {
-          fields: [{ id: 'FID-internal', apiName: 'FID-public' }]
-        }
+          fields: [{ id: 'FID-internal', apiName: 'FID-public' }],
+        },
       });
 
       const handlerStub = jest.fn(() => 'RESULT');
@@ -254,15 +254,15 @@ describe('ExtensionAPI', () => {
       const api = createAPI({
         locales: {
           available: [{ code: 'LC-public', internal_code: 'LC-internal', default: true }],
-          default: { code: 'LC-public', internal_code: 'LC-internal', default: true }
+          default: { code: 'LC-public', internal_code: 'LC-internal', default: true },
         },
         contentTypeData: {
-          fields: [{ id: 'FID-internal', apiName: 'FID-public' }]
-        }
+          fields: [{ id: 'FID-internal', apiName: 'FID-public' }],
+        },
       });
 
       api.update(['fields', 'FID-internal', 'LC-internal'], {
-        fields: { 'FID-internal': { 'LC-internal': 'VALUE' } }
+        fields: { 'FID-internal': { 'LC-internal': 'VALUE' } },
       });
 
       expect(api.channel.send).toBeCalledTimes(1);

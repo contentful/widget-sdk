@@ -43,7 +43,7 @@ export default async function create($scope, editorData, preferences) {
   $scope.otDoc = editorData.openDoc(K.scopeLifeline($scope));
   initDocErrorHandler($scope, $scope.otDoc.state.error$);
 
-  K.onValueScope($scope, statusProperty($scope.otDoc), status => {
+  K.onValueScope($scope, statusProperty($scope.otDoc), (status) => {
     $scope.statusNotificationProps = { status, entityLabel: 'asset' };
   });
 
@@ -61,20 +61,20 @@ export default async function create($scope, editorData, preferences) {
     entity: editorData.entity,
     notify,
     validator: editorContext.validator,
-    otDoc: $scope.otDoc
+    otDoc: $scope.otDoc,
   });
 
-  K.onValueScope($scope, valuePropertyAt($scope.otDoc, []), data => {
+  K.onValueScope($scope, valuePropertyAt($scope.otDoc, []), (data) => {
     const title = EntityFieldValueSpaceContext.assetTitle({
       getContentTypeId: () => {},
-      data
+      data,
     });
     $scope.context.title = title;
     $scope.title = truncate(title, 50);
     editorContext.validator.run();
   });
 
-  K.onValueScope($scope, $scope.otDoc.state.isDirty$, isDirty => {
+  K.onValueScope($scope, $scope.otDoc.state.isDirty$, (isDirty) => {
     $scope.context.dirty = isDirty;
   });
 
@@ -88,18 +88,18 @@ export default async function create($scope, editorData, preferences) {
 
   $scope.entrySidebarProps = createEntrySidebarProps({
     $scope,
-    emitter: $scope.emitter
+    emitter: $scope.emitter,
   });
 
   setLocaleData($scope, {
     entityLabel: 'asset',
     shouldHideLocaleErrors: defaultLocaleIsFocused,
-    emitter: $scope.emitter
+    emitter: $scope.emitter,
   });
 
   $controller('FormWidgetsController', {
     $scope,
-    controls: editorData.fieldControls.form
+    controls: editorData.fieldControls.form,
   });
 
   setupNoShareJsCmaFakeRequestsExperiment({ $scope, spaceContext, entityInfo });

@@ -4,14 +4,14 @@ const list = {
   name: 'list',
   url: '',
   params: {
-    jumpToRole: null
+    jumpToRole: null,
   },
-  component: UserList
+  component: UserList,
 };
 
 export default {
   name: 'users',
   url: '/users',
   abstract: true,
-  children: [list]
+  children: [list],
 };

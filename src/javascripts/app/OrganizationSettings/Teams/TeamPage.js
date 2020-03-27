@@ -24,11 +24,11 @@ class TeamPage extends React.Component {
     isLoading: PropTypes.bool.isRequired,
     hasAccess: PropTypes.bool.isRequired,
     organization: OrganizationPropType,
-    deniedReason: PropTypes.string
+    deniedReason: PropTypes.string,
   };
 
   state = {
-    spaceMembershipsEnabled: false
+    spaceMembershipsEnabled: false,
   };
 
   async componentDidMount() {
@@ -71,7 +71,7 @@ class TeamPage extends React.Component {
   }
 }
 
-export default connect(state => {
+export default connect((state) => {
   const path = getPath(state);
   return {
     showList: ROUTES.organization.children.teams.test(path) !== null,
@@ -79,6 +79,6 @@ export default connect(state => {
     isLoading: isMissingRequiredDatasets(state),
     hasAccess: hasAccess(state),
     deniedReason: getReasonDenied(state),
-    organization: getOrganization(state)
+    organization: getOrganization(state),
   };
 })(TeamPage);

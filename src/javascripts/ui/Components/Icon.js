@@ -196,7 +196,7 @@ const SVGs = {
   'field-location': FieldLocation,
   'field-reference': FieldReference,
   'field-richtext': FieldRichText,
-  'field-richtext-small': FieldRichTextSmall
+  'field-richtext-small': FieldRichTextSmall,
 };
 
 class Icon extends React.Component {
@@ -207,17 +207,15 @@ class Icon extends React.Component {
     style: PropTypes.object,
     name: PropTypes.string.isRequired,
     scale: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    height: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   };
 
   static defaultProps = {
-    scale: '1.0'
+    scale: '1.0',
   };
 
   componentDidMount() {
-    const iconElem = $(this.container)
-      .children()
-      .get(0);
+    const iconElem = $(this.container).children().get(0);
     if (!iconElem) {
       return;
     }
@@ -260,7 +258,7 @@ class Icon extends React.Component {
         data-icon-name={name}
         className={cn('icon-component', className)}
         style={style}
-        ref={node => {
+        ref={(node) => {
           this.container = node;
         }}>
         {IconComponent && <IconComponent />}

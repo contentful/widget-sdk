@@ -7,18 +7,18 @@ import {
   Paragraph,
   Button,
   Workbench,
-  TextLink
+  TextLink,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 import { helpCenterUrl, salesUrl } from 'Config';
 import EmptyStateContainer, {
-  defaultSVGStyle
+  defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 
 const styles = {
   pageWrapper: css({ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0 }),
-  topMargin: css({ marginTop: tokens.spacingL })
+  topMargin: css({ marginTop: tokens.spacingL }),
 };
 
 function UserProvisioningUpsellState() {

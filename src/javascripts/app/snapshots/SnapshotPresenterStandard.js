@@ -11,11 +11,11 @@ const SnapshotPresenterStandard = ({ value, className }) => {
 
 SnapshotPresenterStandard.propTypes = {
   className: PropTypes.string,
-  value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired
+  value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
 };
 
 SnapshotPresenterStandard.defaultProps = {
-  className: ''
+  className: '',
 };
 
 export default SnapshotPresenterStandard;

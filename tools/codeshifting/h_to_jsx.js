@@ -1,16 +1,15 @@
 const { flow, includes, cond, constant, stubTrue, camelCase, identity } = require('lodash');
 const { get, eq } = require('lodash/fp');
 
-const mapArgumentKey = cond([[eq('xlink:href'), constant('xlinkHref')], [stubTrue, camelCase]]);
+const mapArgumentKey = cond([
+  [eq('xlink:href'), constant('xlinkHref')],
+  [stubTrue, camelCase],
+]);
 
-const hasType = check =>
-  flow(
-    get('type'),
-    eq(check)
-  );
+const hasType = (check) => flow(get('type'), eq(check));
 
 function replaceHCall(j) {
-  return node => {
+  return (node) => {
     let attributes = [];
     if (node.type === 'Literal') {
       return j.jsxText(node.value);
@@ -26,14 +25,7 @@ function replaceHCall(j) {
             cond([
               [hasType('ObjectExpression'), j.jsxExpressionContainer],
               [hasType('Literal'), identity],
-              [
-                hasType('Identifier'),
-                flow(
-                  get('name'),
-                  j.identifier,
-                  j.jsxExpressionContainer
-                )
-              ]
+              [hasType('Identifier'), flow(get('name'), j.identifier, j.jsxExpressionContainer)],
             ])(value)
           )
       );
@@ -49,12 +41,7 @@ function replaceHCall(j) {
       attributes.push(
         j.jsxAttribute(
           j.jsxIdentifier('className'),
-          j.literal(
-            hArgument
-              .split('.')
-              .slice(1)
-              .join(' ')
-          )
+          j.literal(hArgument.split('.').slice(1).join(' '))
         )
       );
     }
@@ -74,7 +61,7 @@ function replaceHCall(j) {
   };
 }
 
-module.exports = function(fileInfo, { jscodeshift: j }) {
+module.exports = function (fileInfo, { jscodeshift: j }) {
   const ast = j(fileInfo.source);
   const functionWrapper =
     ast.find(j.ArrowFunctionExpression).length === 1 || ast.find(j.FunctionExpression).length === 1;

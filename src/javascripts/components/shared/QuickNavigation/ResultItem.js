@@ -12,21 +12,21 @@ import StateLink from 'app/common/StateLink';
 const styles = {
   item: css({ padding: 0, margin: 0 }),
   highlightedItem: css({
-    backgroundColor: tokens.colorElementLight
+    backgroundColor: tokens.colorElementLight,
   }),
   entityLink: css({
     color: tokens.colorTextDark,
     display: 'flex',
     flexWrap: 'nowrap',
     alignItems: 'center',
-    padding: '10px 10px 10px 0'
+    padding: '10px 10px 10px 0',
   }),
   entityLinkLabel: css({
     color: tokens.colorTextDark,
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
-    maxWidth: '80%'
+    maxWidth: '80%',
   }),
   contentTypeLabel: css({
     margin: '10px',
@@ -35,27 +35,27 @@ const styles = {
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
-    minWidth: '20px'
+    minWidth: '20px',
   }),
   seeMoreLabel: css({ color: tokens.colorBlueDark }),
   seeMoreItem: css({
     boxSizing: 'border-box',
-    borderBottom: `1px solid ${tokens.colorTextLightest}`
+    borderBottom: `1px solid ${tokens.colorTextLightest}`,
   }),
   entityStatusTag: css({
-    marginLeft: 'auto'
+    marginLeft: 'auto',
   }),
   searchLinkItem: css({
     backgroundColor: tokens.colorElementLightest,
     textAlign: 'center',
-    borderBottom: `3px solid ${tokens.colorElementLight}`
+    borderBottom: `3px solid ${tokens.colorElementLight}`,
   }),
   highlightedSearchItem: css({
     backgroundColor: tokens.colorElementLight,
     textAlign: 'center',
     borderBottom: `3px solid ${tokens.colorElementMid}`,
-    '> a': { color: tokens.colorTextDark }
-  })
+    '> a': { color: tokens.colorTextDark },
+  }),
 };
 
 const EntityListItem = ({ item, index, highlightedIndex, closeModal, getItemProps }) => (
@@ -64,7 +64,7 @@ const EntityListItem = ({ item, index, highlightedIndex, closeModal, getItemProp
     {...getItemProps({
       key: item.sys.id,
       item,
-      className: highlightedIndex === index ? cx(styles.highlightedItem, styles.item) : styles.item
+      className: highlightedIndex === index ? cx(styles.highlightedItem, styles.item) : styles.item,
     })}>
     <StateLink
       path={item.link.path}
@@ -99,7 +99,7 @@ const SearchLinkListItem = ({ item, getItemProps, highlightedIndex, index, close
         className:
           highlightedIndex === index
             ? cx(styles.highlightedItem, styles.item, styles.seeMoreItem)
-            : cx(styles.item, styles.seeMoreItem)
+            : cx(styles.item, styles.seeMoreItem),
       })}>
       <StateLink
         path={item.link.path}
@@ -149,7 +149,7 @@ ResultItem.propTypes = {
   highlightedIndex: PropTypes.number,
   closeModal: PropTypes.func,
   getItemProps: PropTypes.func,
-  query: PropTypes.string
+  query: PropTypes.string,
 };
 
 EntityListItem.propTypes = SearchLinkListItem.propTypes = ResultItem.propTypes;

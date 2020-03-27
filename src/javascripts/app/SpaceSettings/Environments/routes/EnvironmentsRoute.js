@@ -23,7 +23,7 @@ import {
   Button,
   SkeletonContainer,
   SkeletonBodyText,
-  Workbench
+  Workbench,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -42,7 +42,7 @@ import { ENVIRONMENT_CREATION_COMPLETE_EVENT } from 'services/PubSubService';
 export default function EnvironmentsRoute(props) {
   const [
     state,
-    { FetchPermissions, FetchEnvironments, RefetchEnvironments, ...actions }
+    { FetchPermissions, FetchEnvironments, RefetchEnvironments, ...actions },
   ] = useEnvironmentsRouteState(props);
 
   const { aliasesEnabled, canManageAliases, hasOptedInEnv, pubsubClient } = state;
@@ -86,7 +86,7 @@ export default function EnvironmentsRoute(props) {
                 fontSize: tokens.fontSizeS,
                 textTransform: 'uppercase',
                 marginBottom: tokens.spacingM,
-                color: tokens.colorTextMid
+                color: tokens.colorTextMid,
               })}
               element="h2">
               Environments
@@ -113,7 +113,7 @@ EnvironmentsRoute.propTypes = {
   currentEnvironmentId: PropTypes.string.isRequired,
   canUpgradeSpace: PropTypes.bool.isRequired,
   isLegacyOrganization: PropTypes.bool.isRequired,
-  pubsubClient: PropTypes.object.isRequired
+  pubsubClient: PropTypes.object.isRequired,
 };
 
 const environmentListStyles = {
@@ -121,9 +121,9 @@ const environmentListStyles = {
     position: 'relative',
     minHeight: '6em',
     '& > div': {
-      zIndex: 1
-    }
-  })
+      zIndex: 1,
+    },
+  }),
 };
 /**
  * Renders
@@ -133,9 +133,9 @@ const environmentListStyles = {
  * - A warning message if loading the items failed
  */
 function EnvironmentList({ isLoading, loadingError, items, OpenDeleteDialog }) {
-  const environments = items.map(env =>
+  const environments = items.map((env) =>
     assign(env, {
-      Delete: () => OpenDeleteDialog(env)
+      Delete: () => OpenDeleteDialog(env),
     })
   );
 
@@ -171,28 +171,28 @@ EnvironmentList.propTypes = {
   isLoading: PropTypes.bool,
   loadingError: PropTypes.any,
   items: PropTypes.array,
-  OpenDeleteDialog: PropTypes.func
+  OpenDeleteDialog: PropTypes.func,
 };
 
 const IN_PROGRESS_TOOLTIP = [
   'This environment is currently being created, it will take a couple ',
-  'of minutes. You can leave this page as it’s happening in the background.'
+  'of minutes. You can leave this page as it’s happening in the background.',
 ].join('');
 
 const FAILED_TOOLTIP = [
   'Something went wrong with the creation this environment. Try to ',
-  'delete it and create it again, if that doesn’t work contact support.'
+  'delete it and create it again, if that doesn’t work contact support.',
 ].join('');
 
 const environmentTableStyles = {
   tableRow: css({
     '& > td': {
-      verticalAlign: 'middle'
-    }
+      verticalAlign: 'middle',
+    },
   }),
   firstCell: css({
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
   }),
   aliasedTo: css({
     fontStyle: 'italic',
@@ -202,19 +202,19 @@ const environmentTableStyles = {
     alignItems: 'center',
     '& > svg': {
       margin: `0 ${tokens.spacingXs}`,
-      fill: tokens.colorGreenLight
-    }
+      fill: tokens.colorGreenLight,
+    },
   }),
   createdAtCell: css({
     whiteSpace: 'nowrap',
-    '&:first-letter': { textTransform: 'capitalize' }
+    '&:first-letter': { textTransform: 'capitalize' },
   }),
   actionCell: css({
     textAlign: 'right',
     '& button': {
-      whiteSpace: 'nowrap'
-    }
-  })
+      whiteSpace: 'nowrap',
+    },
+  }),
 };
 
 function EnvironmentTable({ environments }) {
@@ -235,7 +235,7 @@ function EnvironmentTable({ environments }) {
       <TableBody>
         {environments
           .sort((envA, envB) => envB.isMaster - envA.isMaster)
-          .map(environment => {
+          .map((environment) => {
             return (
               <TableRow
                 key={environment.id}
@@ -266,7 +266,7 @@ function EnvironmentTable({ environments }) {
                             In progress {QuestionMarkWithTooltip({ tooltip: IN_PROGRESS_TOOLTIP })}
                           </Tag>
                         );
-                      }
+                      },
                     ],
                     [
                       'failed',
@@ -276,8 +276,8 @@ function EnvironmentTable({ environments }) {
                             Failed to create {QuestionMarkWithTooltip({ tooltip: FAILED_TOOLTIP })}
                           </Tag>
                         );
-                      }
-                    ]
+                      },
+                    ],
                   ])}
                 </TableCell>
                 <TableCell className={environmentTableStyles.actionCell}>
@@ -292,7 +292,7 @@ function EnvironmentTable({ environments }) {
 }
 
 EnvironmentTable.propTypes = {
-  environments: PropTypes.array
+  environments: PropTypes.array,
 };
 
 function QuestionMarkWithTooltip({ tooltip }) {
@@ -303,7 +303,7 @@ function QuestionMarkWithTooltip({ tooltip }) {
   );
 }
 QuestionMarkWithTooltip.propTypes = {
-  tooltip: PropTypes.string.isRequired
+  tooltip: PropTypes.string.isRequired,
 };
 
 function DeleteButton({ environment }) {
@@ -344,24 +344,24 @@ function DeleteButton({ environment }) {
 }
 
 DeleteButton.propTypes = {
-  environment: PropTypes.object.isRequired
+  environment: PropTypes.object.isRequired,
 };
 
 const sidebarStyles = {
   subHeaderFirst: css({
     fontSize: tokens.fontSizeM,
     paddingBottom: tokens.spacingXs,
-    color: tokens.colorTextDark
+    color: tokens.colorTextDark,
   }),
   subHeader: css({
     fontSize: tokens.fontSizeM,
     paddingTop: tokens.spacingL,
     paddingBottom: tokens.spacingXs,
-    color: tokens.colorTextDark
+    color: tokens.colorTextDark,
   }),
   paragraph: css({
-    marginBottom: tokens.spacingM
-  })
+    marginBottom: tokens.spacingM,
+  }),
 };
 
 const envDocSidebarUtmParams =
@@ -369,7 +369,7 @@ const envDocSidebarUtmParams =
 
 const docLinks = {
   domainModelConcepts: `${Config.developerDocsUrl}/concepts/domain-model/${envDocSidebarUtmParams}`,
-  envAliasesConcepts: `${Config.developerDocsUrl}/concepts/environment-aliases/${envDocSidebarUtmParams}`
+  envAliasesConcepts: `${Config.developerDocsUrl}/concepts/environment-aliases/${envDocSidebarUtmParams}`,
 };
 
 function Sidebar({
@@ -381,7 +381,7 @@ function Sidebar({
   OpenUpgradeSpaceDialog,
   aliasesEnabled,
   canManageAliases,
-  hasOptedInEnv
+  hasOptedInEnv,
 }) {
   // Master is not included in the api, display +1 usage and limit
   const usage = resource.usage + 1;
@@ -469,7 +469,7 @@ Sidebar.propTypes = {
   OpenCreateDialog: PropTypes.func.isRequired,
   OpenUpgradeSpaceDialog: PropTypes.func.isRequired,
   canManageAliases: PropTypes.bool.isRequired,
-  hasOptedInEnv: PropTypes.bool.isRequired
+  hasOptedInEnv: PropTypes.bool.isRequired,
 };
 
 function UsageTooltip({ resource }) {
@@ -491,10 +491,10 @@ function UsageTooltip({ resource }) {
       content={tooltipContent}
       place="bottom"
       targetWrapperClassName={css({
-        marginLeft: tokens.spacingXs
+        marginLeft: tokens.spacingXs,
       })}
       className={css({
-        color: tokens.colorElementDarkest
+        color: tokens.colorElementDarkest,
       })}>
       <span data-test-id="environments-usage-tooltip">
         <Icon name="question-mark" />
@@ -504,7 +504,7 @@ function UsageTooltip({ resource }) {
 }
 
 UsageTooltip.propTypes = {
-  resource: PropTypes.object.isRequired
+  resource: PropTypes.object.isRequired,
 };
 
 function UpgradeButton({ OpenUpgradeSpaceDialog }) {
@@ -516,5 +516,5 @@ function UpgradeButton({ OpenUpgradeSpaceDialog }) {
 }
 
 UpgradeButton.propTypes = {
-  OpenUpgradeSpaceDialog: PropTypes.func.isRequired
+  OpenUpgradeSpaceDialog: PropTypes.func.isRequired,
 };

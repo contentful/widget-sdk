@@ -22,12 +22,12 @@ export default function register() {
     controllerAs: 'errors',
     require: 'cfErrorPath',
 
-    link: function(scope, elem, attrs) {
-      scope.$watch('errors.hasErrors', hasErrors => {
+    link: function (scope, elem, attrs) {
+      scope.$watch('errors.hasErrors', (hasErrors) => {
         if (!attrs['ngHide'] && !attrs['ngShow']) {
           elem.toggle(hasErrors);
         }
       });
-    }
+    },
   }));
 }

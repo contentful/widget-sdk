@@ -17,7 +17,7 @@ const InvitationListFetcher = createFetcherComponent(async ({ orgId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
 
   const hasPendingMembershipsEnabled = await getVariation(PENDING_ORG_MEMBERSHIPS, {
-    organizationId: orgId
+    organizationId: orgId,
   });
 
   if (hasPendingMembershipsEnabled) {
@@ -28,14 +28,16 @@ const InvitationListFetcher = createFetcherComponent(async ({ orgId }) => {
   }
 
   return Promise.all([
-    getMemberships(endpoint, { limit: 0, [membershipExistsParam]: true }).then(({ total }) => total)
+    getMemberships(endpoint, { limit: 0, [membershipExistsParam]: true }).then(
+      ({ total }) => total
+    ),
   ]);
 });
 
 export default class UserInvitationsListRouter extends React.Component {
   static propTypes = {
     orgId: PropTypes.string.isRequired,
-    context: PropTypes.any
+    context: PropTypes.any,
   };
 
   render() {

@@ -25,7 +25,7 @@ function getUserInfo() {
   const spaceContext = getModule('spaceContext');
   return {
     userId: spaceContext.user.sys.id,
-    orgId: spaceContext.organization.sys.id
+    orgId: spaceContext.organization.sys.id,
   };
 }
 

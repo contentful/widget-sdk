@@ -6,13 +6,13 @@ jest.mock('Authentication', () => ({ getToken: () => '<TOKEN>' }));
 jest.mock('NgRegistry', () => ({ getModule: jest.fn() }));
 jest.mock('services/localeStore', () => ({
   getPrivateLocales: () => [{ code: 'pl' }, { code: 'en' }],
-  getDefaultLocale: () => ({ code: 'pl' })
+  getDefaultLocale: () => ({ code: 'pl' }),
 }));
 
 describe('createSnaphotExtensionBridge', () => {
   const stubs = {
     updateEntry: jest.fn(),
-    getEntry: jest.fn(() => Promise.resolve('Entry data'))
+    getEntry: jest.fn(() => Promise.resolve('Entry data')),
   };
 
   getModule.mockImplementation(() => ({
@@ -21,8 +21,8 @@ describe('createSnaphotExtensionBridge', () => {
     cma: stubs,
     space: { data: { spaceMember: 'MEMBER ', spaceMembership: 'MEMBERSHIP ' } },
     publishedCTs: {
-      getAllBare: () => [{ id: 'first-content-type' }, { id: 'second-content-type' }]
-    }
+      getAllBare: () => [{ id: 'first-content-type' }, { id: 'second-content-type' }],
+    },
   }));
 
   const makeBridge = () => {
@@ -34,9 +34,9 @@ describe('createSnaphotExtensionBridge', () => {
         contentType: 'CONTENT TYPE',
         editorInterface: {
           controls: [],
-          sidebar: []
-        }
-      }
+          sidebar: [],
+        },
+      },
     });
 
     return [bridge, stubs];
@@ -58,8 +58,8 @@ describe('createSnaphotExtensionBridge', () => {
         spaceMember: 'MEMBER ',
         editorInterface: {
           controls: [],
-          sidebar: []
-        }
+          sidebar: [],
+        },
       });
     });
   });

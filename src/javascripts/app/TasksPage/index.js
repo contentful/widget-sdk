@@ -14,11 +14,11 @@ import {
   Note,
   SkeletonContainer,
   SkeletonBodyText,
-  Workbench
+  Workbench,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import EmptyStateContainer, {
-  defaultSVGStyle
+  defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import FolderIllustration from 'svg/folder-illustration.svg';
 import RelativeDateTime from 'components/shared/RelativeDateTime';
@@ -28,17 +28,17 @@ import StateLink from 'app/common/StateLink';
 
 const styles = {
   workbenchContent: css({
-    padding: tokens.spacingXl
+    padding: tokens.spacingXl,
   }),
   note: css({
-    marginBottom: tokens.spacingXl
+    marginBottom: tokens.spacingXl,
   }),
   taskColumn: css({
-    width: '420px'
+    width: '420px',
   }),
   entryColumn: css({
-    width: '420px'
-  })
+    width: '420px',
+  }),
 };
 
 export default class TasksPage extends Component {
@@ -48,19 +48,19 @@ export default class TasksPage extends Component {
     environmentId: PropTypes.string.isRequired,
     users: PropTypes.object.isRequired,
     getContentType: PropTypes.func.isRequired,
-    defaultLocaleCode: PropTypes.string.isRequired
+    defaultLocaleCode: PropTypes.string.isRequired,
   };
 
   state = {
     tasks: [],
-    isLoading: true
+    isLoading: true,
   };
 
   componentDidMount = async () => {
     const { spaceId, environmentId, currentUserId } = this.props;
     const [[tasks, entries], spaceUsers] = await Promise.all([
       getOpenAssignedTasksAndEntries(spaceId, environmentId, currentUserId),
-      this.props.users.getAll()
+      this.props.users.getAll(),
     ]);
     const entryTitles = this.getEntryTitles(entries);
     const taskState = tasks.reduce((tasks, task) => {
@@ -74,18 +74,18 @@ export default class TasksPage extends Component {
       }
       const newTask = {
         body: task.body,
-        createdBy: spaceUsers.find(user => user.sys.id === task.sys.createdBy.sys.id),
+        createdBy: spaceUsers.find((user) => user.sys.id === task.sys.createdBy.sys.id),
         createdAt: task.sys.createdAt,
         enviromentId: task.sys.environment.sys.id,
         entryId: task.sys.parentEntity.sys.id,
-        entryTitle: entryTitles[task.sys.parentEntity.sys.id]
+        entryTitle: entryTitles[task.sys.parentEntity.sys.id],
       };
       return [...tasks, newTask];
     }, []);
     this.setState({ tasks: taskState, isLoading: false });
   };
 
-  getEntryTitles = entries => {
+  getEntryTitles = (entries) => {
     const entryTitles = {};
     const contentTypes = {};
     for (const entry of entries) {
@@ -110,7 +110,7 @@ export default class TasksPage extends Component {
       entry: { ...entry, fields },
       contentType: contentType.data,
       defaultInternalLocaleCode: this.props.defaultLocaleCode,
-      defaultTitle: 'Untilted'
+      defaultTitle: 'Untilted',
     });
   };
 

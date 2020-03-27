@@ -8,11 +8,11 @@ const headers = getAlphaHeader(USAGE_INSIGHTS);
  * @param  {OrganizationEndpoint} endpoint
  * @return {Promise}
  */
-export const getPeriods = endpoint =>
+export const getPeriods = (endpoint) =>
   endpoint(
     {
       method: 'GET',
-      path: ['usage_periods']
+      path: ['usage_periods'],
     },
     headers
   );
@@ -33,8 +33,8 @@ export const getOrgUsage = (endpoint, { startDate, endDate }) =>
     query: {
       'metric[in]': 'cpa,cda,cma,gql',
       'dateRange.startAt': startDate,
-      'dateRange.endAt': endDate
-    }
+      'dateRange.endAt': endDate,
+    },
   });
 
 /**
@@ -56,29 +56,29 @@ export const getApiUsage = (endpoint, { apiType, startDate, endDate, limit }) =>
       'metric[in]': apiType,
       'dateRange.startAt': startDate,
       'dateRange.endAt': endDate,
-      limit
-    }
+      limit,
+    },
   });
 
-export const extractValues = api => ({
+export const extractValues = (api) => ({
   ...api,
-  usage: Object.values(api.usagePerDay)
+  usage: Object.values(api.usagePerDay),
 });
 
-export const transformApi = apis =>
+export const transformApi = (apis) =>
   apis.reduce(
     (acc, { type, api }) => ({
       ...acc,
-      [type]: { ...api, items: api.items.map(extractValues) }
+      [type]: { ...api, items: api.items.map(extractValues) },
     }),
     {}
   );
 
-export const transformOrg = org => {
+export const transformOrg = (org) => {
   const newOrg = org.items.reduce(
     (acc, api) => ({
       ...acc,
-      [api.metric]: Object.values(api.usagePerDay)
+      [api.metric]: Object.values(api.usagePerDay),
     }),
     {}
   );
@@ -93,7 +93,7 @@ export const mapResponseToState = ({
   cpa,
   gql,
   assetBandwidthData = 0,
-  newIndex = 0
+  newIndex = 0,
 }) => ({
   isLoading: false,
   periodicUsage: {
@@ -102,9 +102,9 @@ export const mapResponseToState = ({
       { type: 'cma', api: cma },
       { type: 'cda', api: cda },
       { type: 'cpa', api: cpa },
-      { type: 'gql', api: gql }
-    ])
+      { type: 'gql', api: gql },
+    ]),
   },
   selectedPeriodIndex: newIndex,
-  assetBandwidthData
+  assetBandwidthData,
 });

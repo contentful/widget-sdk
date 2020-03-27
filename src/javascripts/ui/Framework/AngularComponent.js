@@ -20,7 +20,7 @@ export default class AngularComponent extends React.Component {
   static propTypes = {
     template: PropTypes.string,
     tag: PropTypes.string,
-    scope: PropTypes.object
+    scope: PropTypes.object,
   };
   componentDidMount() {
     const $rootScope = getModule('$rootScope');
@@ -41,9 +41,9 @@ export default class AngularComponent extends React.Component {
     // never re-render component – Angular takes care of it
     return false;
   }
-  enrichScope = scope => {
+  enrichScope = (scope) => {
     if (scope) {
-      Object.keys(scope).forEach(key => {
+      Object.keys(scope).forEach((key) => {
         const value = scope[key];
         this.scope[key] = value;
       });
@@ -59,7 +59,7 @@ export default class AngularComponent extends React.Component {
   render() {
     return (
       <div
-        ref={c => {
+        ref={(c) => {
           this.container = c;
         }}
         dangerouslySetInnerHTML={{ __html: this.createHTML() }}

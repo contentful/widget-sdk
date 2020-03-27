@@ -5,12 +5,12 @@ import WebhookFilters from './WebhookFilters';
 import { transformFiltersToList, transformListToFilters } from './WebhookFiltersState';
 
 describe('WebhookFilters', () => {
-  const renderComponent = filters => {
+  const renderComponent = (filters) => {
     const onChangeStub = jest.fn();
     const wrapper = render(
       <WebhookFilters
         filters={transformFiltersToList(filters)}
-        onChange={list => onChangeStub(transformListToFilters(list))}
+        onChange={(list) => onChangeStub(transformListToFilters(list))}
       />
     );
 
@@ -42,7 +42,7 @@ describe('WebhookFilters', () => {
   it('lists existing filters', () => {
     const [{ getAllByTestId }] = renderComponent([
       { in: [{ doc: 'sys.environment.sys.id' }, ['master', 'staging']] },
-      { not: { regexp: [{ doc: 'sys.contentType.sys.id' }, { pattern: 'foobar' }] } }
+      { not: { regexp: [{ doc: 'sys.contentType.sys.id' }, { pattern: 'foobar' }] } },
     ]);
     const filterRows = getAllByTestId('filter-setting-row');
     expect(filterRows).toHaveLength(2);
@@ -53,7 +53,7 @@ describe('WebhookFilters', () => {
   it('deletes a filter', () => {
     const filters = [
       { in: [{ doc: 'sys.environment.sys.id' }, ['master', 'staging']] },
-      { not: { regexp: [{ doc: 'sys.contentType.sys.id' }, { pattern: 'foobar' }] } }
+      { not: { regexp: [{ doc: 'sys.contentType.sys.id' }, { pattern: 'foobar' }] } },
     ];
 
     const [{ getAllByTestId }, onChangeStub] = renderComponent(filters);
@@ -68,7 +68,7 @@ describe('WebhookFilters', () => {
   it('adds a new filter', () => {
     const filters = [
       { in: [{ doc: 'sys.environment.sys.id' }, ['master', 'staging']] },
-      { not: { regexp: [{ doc: 'sys.contentType.sys.id' }, { pattern: 'foobar' }] } }
+      { not: { regexp: [{ doc: 'sys.contentType.sys.id' }, { pattern: 'foobar' }] } },
     ];
 
     const [{ getAllByTestId, getByTestId }, onChangeStub] = renderComponent(filters);
@@ -80,7 +80,7 @@ describe('WebhookFilters', () => {
 
     expect(onChangeStub).toHaveBeenCalledWith([
       ...filters,
-      { equals: [{ doc: 'sys.environment.sys.id' }, ''] }
+      { equals: [{ doc: 'sys.environment.sys.id' }, ''] },
     ]);
   });
 });

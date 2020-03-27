@@ -16,7 +16,7 @@
  * [wiki-validations]: https://contentful.atlassian.net/wiki/display/PROD/Validations
  */
 
-const sizeMessage = details => {
+const sizeMessage = (details) => {
   if (details === 'Expected max >= min') {
     return 'Minimum value has to be smaller than maximum value';
   } else {
@@ -27,7 +27,7 @@ const sizeMessage = details => {
 const messages = {
   size: sizeMessage,
 
-  range: function(details) {
+  range: function (details) {
     if (details === 'Expected max >= min') {
       return 'Minimum value has to be smaller than maximum value';
     } else {
@@ -35,7 +35,7 @@ const messages = {
     }
   },
 
-  regexp: function(details) {
+  regexp: function (details) {
     if (details === 'Invalid regular expression') {
       return 'Please provide a valid regular expression with valid flags';
     } else {
@@ -43,20 +43,20 @@ const messages = {
     }
   },
 
-  dateRange: function() {
+  dateRange: function () {
     return 'Please specify a date range by setting earliest date, latest date or both';
   },
 
-  linkMimetypeGroup: function() {
+  linkMimetypeGroup: function () {
     return 'Please check at least one file type';
   },
 
-  linkContentType: function() {
+  linkContentType: function () {
     return 'Please check at least one content type';
   },
 
   assetFileSize: sizeMessage,
-  assetImageDimensions: sizeMessage
+  assetImageDimensions: sizeMessage,
 };
 
 export function getErrorMessage(validationType, error) {

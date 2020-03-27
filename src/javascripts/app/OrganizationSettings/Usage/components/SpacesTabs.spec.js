@@ -6,7 +6,7 @@ import { track } from 'analytics/Analytics';
 import SpacesTabs from './SpacesTabs';
 
 jest.mock('echarts', () => ({
-  init: jest.fn()
+  init: jest.fn(),
 }));
 
 const defaultProps = {
@@ -22,22 +22,22 @@ const defaultProps = {
             sys: {
               space: {
                 sys: {
-                  id: 'cmaSpace'
-                }
-              }
-            }
+                  id: 'cmaSpace',
+                },
+              },
+            },
           },
           {
             usage: [48, 56],
             sys: {
               space: {
                 sys: {
-                  id: 'Deleted space'
-                }
-              }
-            }
-          }
-        ]
+                  id: 'Deleted space',
+                },
+              },
+            },
+          },
+        ],
       },
       cda: {
         items: [
@@ -46,23 +46,23 @@ const defaultProps = {
             sys: {
               space: {
                 sys: {
-                  id: 'cdaSpace'
-                }
-              }
-            }
-          }
-        ]
-      }
-    }
+                  id: 'cdaSpace',
+                },
+              },
+            },
+          },
+        ],
+      },
+    },
   },
   isPoC: {
     cmaSpace: true,
-    cdaSpace: false
-  }
+    cdaSpace: false,
+  },
 };
 
 describe('SpacesTabs', () => {
-  const build = props => {
+  const build = (props) => {
     return render(<SpacesTabs {...props} />);
   };
 
@@ -150,11 +150,11 @@ describe('SpacesTabs', () => {
       periodicUsage: {
         apis: {
           cma: { items: [] },
-          cda: { items: [] }
+          cda: { items: [] },
         },
-        org: { usage: [] }
+        org: { usage: [] },
       },
-      isPoC: {}
+      isPoC: {},
     };
 
     it('renders an empty table', () => {

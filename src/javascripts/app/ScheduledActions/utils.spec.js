@@ -7,19 +7,19 @@ const DATE_NOW = new Date();
 
 const newJob = ({ entityType = ENTITY_TYPE, entityId = ENTITY_ID, date = DATE_NOW }) => ({
   sys: {
-    id: 'job1'
+    id: 'job1',
   },
   action: 'publish',
   scheduledFor: {
-    datetime: date.toISOString()
+    datetime: date.toISOString(),
   },
   entity: {
     sys: {
       type: 'Link',
       linkType: entityType,
-      id: entityId
-    }
-  }
+      id: entityId,
+    },
+  },
 });
 
 const JOBS = {
@@ -27,7 +27,7 @@ const JOBS = {
   now: newJob({ date: new Date() }),
   future: newJob({ date: new Date(Date.now() + 1000) }),
   otherEntity: newJob({ entityId: 'another-entity-id' }),
-  otherEntityWithAnotherType: newJob({ entityType: 'Asset' })
+  otherEntityWithAnotherType: newJob({ entityType: 'Asset' }),
 };
 
 describe('filterRelevantJobsForEntity()', () => {

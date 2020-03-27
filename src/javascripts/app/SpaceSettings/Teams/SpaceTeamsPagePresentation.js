@@ -8,14 +8,14 @@ import {
   TableHead,
   Button,
   Tooltip,
-  Workbench
+  Workbench,
 } from '@contentful/forma-36-react-components';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 
 import {
   SpaceMembership as SpaceMembershipPropType,
   SpaceRole as SpaceRolePropType,
-  TeamSpaceMembership as TeamSpaceMembershipPropType
+  TeamSpaceMembership as TeamSpaceMembershipPropType,
 } from 'app/OrganizationSettings/PropTypes';
 import { go } from 'states/Navigator';
 
@@ -26,7 +26,7 @@ import EmptyStatePlaceholder from './EmptyStatePlaceholder';
 
 const goToAddTeams = () =>
   go({
-    path: ['spaces', 'detail', 'settings', 'teams', 'add']
+    path: ['spaces', 'detail', 'settings', 'teams', 'add'],
   });
 
 const SpaceTeamsPagePresentation = ({
@@ -39,7 +39,7 @@ const SpaceTeamsPagePresentation = ({
   onRemoveTeamSpaceMembership,
   readOnly,
   currentUserAdminSpaceMemberships,
-  spaceMemberships
+  spaceMemberships,
 }) => {
   const [editingRow, setEditingRow] = useState(null);
 
@@ -90,16 +90,16 @@ const SpaceTeamsPagePresentation = ({
             <TableBody>
               {isLoading && <LoadingPlaceholder />}
               {!isLoading &&
-                teamSpaceMemberships.map(teamSpaceMembership => {
+                teamSpaceMemberships.map((teamSpaceMembership) => {
                   const {
-                    sys: { id: membershipId }
+                    sys: { id: membershipId },
                   } = teamSpaceMembership;
                   return (
                     <MembershipRow
                       key={membershipId}
                       {...{
                         readOnly,
-                        setEditing: edit => setEditingRow(edit ? membershipId : null),
+                        setEditing: (edit) => setEditingRow(edit ? membershipId : null),
                         isEditing: editingRow === membershipId,
                         teamSpaceMembership,
                         teamSpaceMemberships,
@@ -108,7 +108,7 @@ const SpaceTeamsPagePresentation = ({
                         onUpdateTeamSpaceMembership,
                         onRemoveTeamSpaceMembership,
                         isPending,
-                        currentUserAdminSpaceMemberships
+                        currentUserAdminSpaceMemberships,
                       }}
                     />
                   );
@@ -133,7 +133,7 @@ SpaceTeamsPagePresentation.propTypes = {
   readOnly: PropTypes.bool.isRequired,
   currentUserAdminSpaceMemberships: PropTypes.arrayOf(
     PropTypes.oneOfType([SpaceMembershipPropType, TeamSpaceMembershipPropType])
-  ).isRequired
+  ).isRequired,
 };
 
 export default SpaceTeamsPagePresentation;

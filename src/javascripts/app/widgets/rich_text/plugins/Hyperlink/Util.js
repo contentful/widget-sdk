@@ -22,7 +22,7 @@ export function mayEditLink(value) {
  * @returns {boolean}
  */
 export function hasHyperlink(value) {
-  return HYPERLINK_TYPES.some(type => haveInlines({ value }, type));
+  return HYPERLINK_TYPES.some((type) => haveInlines({ value }, type));
 }
 
 /**
@@ -32,7 +32,7 @@ export function hasHyperlink(value) {
  * @returns {boolean}
  */
 export function hasOnlyHyperlinkInlines(value) {
-  return value.inlines.every(inline => HYPERLINK_TYPES.includes(inline.type));
+  return value.inlines.every((inline) => HYPERLINK_TYPES.includes(inline.type));
 }
 
 /**
@@ -59,7 +59,7 @@ async function insertLink(change, createHyperlinkDialog, logAction) {
   try {
     const { text, type: linkType, uri, target } = await createHyperlinkDialog({
       showTextInput,
-      value: { text: change.value.fragment.text || '' }
+      value: { text: change.value.fragment.text || '' },
     });
     if (showTextInput) {
       if (change.isVoid(change.value.blocks.last())) {
@@ -79,7 +79,7 @@ async function insertLink(change, createHyperlinkDialog, logAction) {
 }
 
 function removeLinks(change, logAction) {
-  HYPERLINK_TYPES.forEach(type => change.unwrapInline(type));
+  HYPERLINK_TYPES.forEach((type) => change.unwrapInline(type));
   change.focus();
   logAction('unlinkHyperlinks');
 }
@@ -103,7 +103,7 @@ export async function editLink(change, createHyperlinkDialog, logAction) {
   try {
     const { type: linkType, uri, target } = await createHyperlinkDialog({
       showTextInput: false,
-      value: oldTarget ? { target: oldTarget } : { uri: oldUri }
+      value: oldTarget ? { target: oldTarget } : { uri: oldUri },
     });
     const nodeType = linkTypeToNodeType(linkType);
     const data = target ? { target } : { uri };
@@ -119,7 +119,7 @@ export async function editLink(change, createHyperlinkDialog, logAction) {
 function wrapLink(change, linkType, data) {
   change.wrapInline({
     type: linkTypeToNodeType(linkType),
-    data
+    data,
   });
   change.moveToEnd();
 }

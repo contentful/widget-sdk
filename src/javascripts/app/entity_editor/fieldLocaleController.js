@@ -74,13 +74,13 @@ export default function register() {
        *
        * @type {Property<Error[]?>}
        */
-      controller.errors$ = editorContext.validator.errors$.map(errors => {
+      controller.errors$ = editorContext.validator.errors$.map((errors) => {
         errors = filterLocaleErrors(errors);
 
         // TODO instead of initiating a request that mutates the error
         // object we should have a dedicated error component that takes
         // care of this.
-        errors.forEach(error => {
+        errors.forEach((error) => {
           if (error.name === 'unique') {
             decorateUniquenessError(error);
           }
@@ -97,14 +97,14 @@ export default function register() {
        *
        * @type {Array<Error>?}
        */
-      K.onValueScope($scope, controller.errors$, errors => {
+      K.onValueScope($scope, controller.errors$, (errors) => {
         controller.errors = errors;
       });
 
       // Only retuns errors that apply to this field locale
       // TODO move this to entry validator
       function filterLocaleErrors(errors) {
-        return errors.filter(error => {
+        return errors.filter((error) => {
           const path = error.path;
 
           if (!path) {
@@ -131,9 +131,9 @@ export default function register() {
 
         // asynchronously add conflicting entry title to the error objects
         // so that we can display the list in the UI
-        spaceContext.space.getEntries(query).then(entries => {
-          entries.forEach(entry => {
-            const conflict = find(conflicts, c => c.sys.id === entry.data.sys.id);
+        spaceContext.space.getEntries(query).then((entries) => {
+          entries.forEach((entry) => {
+            const conflict = find(conflicts, (c) => c.sys.id === entry.data.sys.id);
 
             conflict.data = conflict.data || {};
             conflict.data.entryTitle = EntityFieldValueSpaceContext.entryTitle(entry);
@@ -152,7 +152,7 @@ export default function register() {
        * @description
        * A list of users that are also editing this field locale.
        */
-      K.onValueScope($scope, controller.doc.collaborators, collaborators => {
+      K.onValueScope($scope, controller.doc.collaborators, (collaborators) => {
         controller.collaborators = collaborators;
       });
 
@@ -185,7 +185,7 @@ export default function register() {
        *
        * @param {boolean} active
        */
-      controller.setActive = isActive => {
+      controller.setActive = (isActive) => {
         controller.doc.notifyFocus();
         if (isActive && !controller.access.disabled) {
           editorContext.focus.set(field.id);
@@ -241,13 +241,13 @@ export default function register() {
           }
         ).toProperty();
 
-      K.onValueScope($scope, controller.access$, access => {
+      K.onValueScope($scope, controller.access$, (access) => {
         controller.access = access;
       });
 
       function isCollaborativeEditingDisabledForFieldType(fieldType) {
         return fieldType === 'RichText';
       }
-    }
+    },
   ]);
 }

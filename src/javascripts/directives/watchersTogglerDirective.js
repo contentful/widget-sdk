@@ -12,17 +12,17 @@ export default function register() {
 
       scope: {
         toggler: '&watchersToggler',
-        refreshSuspensionOn: '=refreshHideOn'
+        refreshSuspensionOn: '=refreshHideOn',
       },
 
-      link: function($scope, _element, _attrs) {
+      link: function ($scope, _element, _attrs) {
         const watchers = {
-          suspended: false
+          suspended: false,
         };
 
         $scope.$watch(
           () => $scope.toggler(),
-          newToggler => {
+          (newToggler) => {
             if (typeof newToggler === 'boolean') {
               if (newToggler) {
                 suspendFromRoot();
@@ -79,7 +79,7 @@ export default function register() {
           iterateChildren($scope, resumeScopeWatchers);
         }
 
-        const mockScopeWatch = scopeId => (
+        const mockScopeWatch = (scopeId) => (
           watchExp,
           listener,
           objectEquality,
@@ -90,7 +90,7 @@ export default function register() {
             last: undefined,
             get: $parse(watchExp),
             exp: prettyPrintExpression || watchExp,
-            eq: !!objectEquality
+            eq: !!objectEquality,
           });
         };
 
@@ -125,7 +125,7 @@ export default function register() {
             iterateSiblings(scope, operationOnScope);
           }
         }
-      }
-    })
+      },
+    }),
   ]);
 }

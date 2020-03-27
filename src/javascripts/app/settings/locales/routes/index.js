@@ -18,7 +18,7 @@ export default {
     {
       name: 'list',
       url: '',
-      component: props => (
+      component: (props) => (
         <LazyLoadedComponent fallback={LocalesListSkeleton} importer={SettingsImporter}>
           {({ LocalesListRoute }) => <LocalesListRoute {...props} />}
         </LazyLoadedComponent>
@@ -26,7 +26,7 @@ export default {
       resolve: {
         localeResource: [
           '$stateParams',
-          async $stateParams => {
+          async ($stateParams) => {
             /*
               The locales page already fetches the resource as part of its initial requests. We should remove
               this functionality from here and just keep it in the actual view.
@@ -36,8 +36,8 @@ export default {
             const resources = createResourceService(spaceId);
 
             return resources.get('locale');
-          }
-        ]
+          },
+        ],
       },
       mapInjectedToProps: [
         'spaceContext',
@@ -49,7 +49,7 @@ export default {
               space: spaceContext.space.data,
               action: 'change',
               scope: 'space',
-              onSubmit
+              onSubmit,
             });
           },
           getComputeLocalesUsageForOrganization: () => {
@@ -62,14 +62,14 @@ export default {
             } else {
               return null;
             }
-          }
-        })
-      ]
+          },
+        }),
+      ],
     },
     {
       name: 'new',
       url: '_new',
-      component: props => (
+      component: (props) => (
         <LazyLoadedComponent fallback={LocalesFormSkeleton} importer={SettingsImporter}>
           {({ LocalesNewRoute }) => <LocalesNewRoute {...props} />}
         </LazyLoadedComponent>
@@ -78,24 +78,24 @@ export default {
         '$scope',
         '$state',
         ($scope, $state) => ({
-          registerSaveAction: save => {
+          registerSaveAction: (save) => {
             $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(save);
             $scope.$applyAsync();
           },
-          setDirty: value => {
+          setDirty: (value) => {
             $scope.context.dirty = value;
             $scope.$applyAsync();
           },
           goToList: () => {
             $state.go('^.list');
-          }
-        })
-      ]
+          },
+        }),
+      ],
     },
     {
       name: 'detail',
       url: '/:localeId',
-      component: props => (
+      component: (props) => (
         <LazyLoadedComponent fallback={LocalesFormSkeleton} importer={SettingsImporter}>
           {({ LocalesEditRoute }) => <LocalesEditRoute {...props} />}
         </LazyLoadedComponent>
@@ -106,19 +106,19 @@ export default {
         '$state',
         ($scope, $stateParams, $state) => ({
           localeId: $stateParams.localeId,
-          registerSaveAction: save => {
+          registerSaveAction: (save) => {
             $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(save);
             $scope.$applyAsync();
           },
-          setDirty: value => {
+          setDirty: (value) => {
             $scope.context.dirty = value;
             $scope.$applyAsync();
           },
           goToList: () => {
             $state.go('^.list');
-          }
-        })
-      ]
-    }
-  ]
+          },
+        }),
+      ],
+    },
+  ],
 };

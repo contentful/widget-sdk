@@ -29,5 +29,5 @@ export default function ReachedRolesLimitNote(props) {
 ReachedRolesLimitNote.propTypes = {
   isLegacyOrganization: PropTypes.bool.isRequired,
   canUpgradeOrganization: PropTypes.bool.isRequired,
-  limit: PropTypes.number.isRequired
+  limit: PropTypes.number.isRequired,
 };

@@ -5,7 +5,7 @@ import {
   ListItem,
   TextLink,
   Paragraph,
-  Typography
+  Typography,
 } from '@contentful/forma-36-react-components';
 import WebhookSidebarDocumentation from './WebhookSidebarDocumentation';
 

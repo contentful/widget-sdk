@@ -16,14 +16,14 @@ import bulkEditorTemplate from './bulk_editor.html';
 export default function register() {
   registerDirective('cfBulkEditor', [
     'spaceContext',
-    spaceContext => {
+    (spaceContext) => {
       return {
         scope: {
-          referenceContext: '='
+          referenceContext: '=',
         },
         restrict: 'E',
         template: bulkEditorTemplate,
-        link
+        link,
       };
 
       function link($scope) {
@@ -46,31 +46,31 @@ export default function register() {
 
         // Property<string>
         // List of IDs for the linked entries
-        const ids$ = referenceContext.links$.map(links => {
+        const ids$ = referenceContext.links$.map((links) => {
           links = Array.isArray(links) ? links : [links];
           return links.map(_.property('sys.id')).filter(_.isString);
         });
 
         // Each of these contexts is passed to a cfBulkEntityEditor
         // directive.
-        const entityContexts$ = ids$.map(ids =>
-          List.makeKeyed(ids, _.identity).map(item =>
+        const entityContexts$ = ids$.map((ids) =>
+          List.makeKeyed(ids, _.identity).map((item) =>
             deepFreeze({
               id: item.value,
               remove: _.partial(removeByKey, item.key),
-              key: item.key
+              key: item.key,
             })
           )
         );
 
-        K.onValueScope($scope, entityContexts$, ctxs => {
+        K.onValueScope($scope, entityContexts$, (ctxs) => {
           $scope.entityContexts = ctxs;
           templateData.linkCount = ctxs.length;
         });
 
         // The initial count helps us figure out when to remove the global
         // loader.
-        K.onValueScope($scope, entityContexts$.take(1), ctxs => {
+        K.onValueScope($scope, entityContexts$.take(1), (ctxs) => {
           initialLoadCount = ctxs.length;
         });
 
@@ -79,7 +79,7 @@ export default function register() {
         $scope.editorContext = {
           editorSettings: referenceContext.editorSettings,
           scrollTarget$: scrollTargetBus.stream,
-          initializedEditor: function() {
+          initializedEditor: function () {
             initialLoadCount--;
             if (initialLoadCount < 1) {
               templateData.loaded = true;
@@ -88,7 +88,7 @@ export default function register() {
           },
           track,
           trackLoadEvent,
-          loadEditorData
+          loadEditorData,
         };
 
         $scope.actions = makeActions(
@@ -98,13 +98,13 @@ export default function register() {
           track
         );
 
-        $scope.newCloseWithReason = reason => () => {
+        $scope.newCloseWithReason = (reason) => () => {
           referenceContext.close(reason);
         };
 
         function addLinks(links) {
           nextFocusIndex = -1;
-          return Promise.all(links.map(link => referenceContext.add(link)));
+          return Promise.all(links.map((link) => referenceContext.add(link)));
         }
 
         function removeByKey(key) {
@@ -135,30 +135,30 @@ export default function register() {
         // TODO necessary for entitySelector change it
         const extendedField = _.extend({}, field, {
           itemLinkType: _.get(field, ['items', 'linkType']),
-          itemValidations: _.get(field, ['items', 'validations'], [])
+          itemValidations: _.get(field, ['items', 'validations'], []),
         });
         const allowedCTs = getAllowedCTs(extendedField);
-        const accessibleCTs = allowedCTs.map(ct => ({
+        const accessibleCTs = allowedCTs.map((ct) => ({
           id: ct.sys.id,
-          name: ct.name
+          name: ct.name,
         }));
 
         return {
           allowedCTs: allowedCTs, // For new "Add entry" button behind feature flag.
           accessibleCTs: accessibleCTs, // For legacy "Add entry" button.
           addNewEntry: addNewEntry,
-          addExistingEntries: addExistingEntries
+          addExistingEntries: addExistingEntries,
         };
 
         function addNewEntry(ctOrCtId) {
           const contentType = _.isObject(ctOrCtId)
             ? ctOrCtId
             : spaceContext.publishedCTs.get(ctOrCtId);
-          return spaceContext.cma.createEntry(contentType.getId(), {}).then(entry => {
+          return spaceContext.cma.createEntry(contentType.getId(), {}).then((entry) => {
             Analytics.track('entry:create', {
               eventOrigin: 'bulk-editor',
               contentType: contentType.data,
-              response: entry.data
+              response: entry.data,
             });
             track.addNew();
             return addLinks([linkEntity(entry)]);
@@ -167,7 +167,7 @@ export default function register() {
 
         function addExistingEntries() {
           const currentSize = K.getValue(links$).length;
-          entitySelector.openFromField(extendedField, currentSize).then(entities => {
+          entitySelector.openFromField(extendedField, currentSize).then((entities) => {
             track.addExisting(entities.length);
             addLinks(entities.map(linkEntity));
           });
@@ -185,23 +185,23 @@ export default function register() {
 
         const contentTypeValidation = _.find(
           itemValidations,
-          validation => !!validation.linkContentType
+          (validation) => !!validation.linkContentType
         );
 
         const validCtIds = contentTypeValidation
           ? contentTypeValidation.linkContentType
           : getAllContentTypeIds();
 
-        const validCTs = _.uniq(validCtIds).map(ctId => spaceContext.publishedCTs.get(ctId));
+        const validCTs = _.uniq(validCtIds).map((ctId) => spaceContext.publishedCTs.get(ctId));
 
         return _.filter(
           validCTs,
-          ct => ct && accessChecker.canPerformActionOnEntryOfType('create', ct.getId())
-        ).map(ct => ct.data);
+          (ct) => ct && accessChecker.canPerformActionOnEntryOfType('create', ct.getId())
+        ).map((ct) => ct.data);
       }
 
       function getAllContentTypeIds() {
-        return spaceContext.publishedCTs.getAllBare().map(ct => ct.sys.id);
+        return spaceContext.publishedCTs.getAllBare().map((ct) => ct.sys.id);
       }
 
       function linkEntity(entity) {
@@ -209,10 +209,10 @@ export default function register() {
           sys: {
             id: entity.sys.id,
             linkType: entity.sys.type,
-            type: 'Link'
-          }
+            type: 'Link',
+          },
         };
       }
-    }
+    },
   ]);
 }

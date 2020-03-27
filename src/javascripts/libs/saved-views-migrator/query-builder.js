@@ -3,11 +3,11 @@ const { queryOperator } = require('./helpers');
 const parse = require('./legacy-search-parser');
 const converters = require('./converters');
 
-const apiNameOrId = field => field.apiName || field.id;
+const apiNameOrId = (field) => field.apiName || field.id;
 
 module.exports = {
   cmaQueryBuilderForField,
-  parseTextQuery
+  parseTextQuery,
 };
 
 function parseTokens(textQuery) {
@@ -29,10 +29,10 @@ function parseTextQuery(textQuery) {
 // Returns a list of [key, operator, value] pairs from tokens
 function getFilters(tokens) {
   return tokens
-    .filter(token => {
+    .filter((token) => {
       return token.type === 'Pair' && token.content.value.length > 0;
     })
-    .map(pair => {
+    .map((pair) => {
       return [pair.content.key.content, pair.content.operator.content, pair.content.value.content];
     });
 }
@@ -40,8 +40,8 @@ function getFilters(tokens) {
 // Takes all tokens that are queries and joins them with spaces
 function getQueryText(tokens) {
   return tokens
-    .filter(token => token.type === 'Query' && token.content.length > 0)
-    .map(token => token.content)
+    .filter((token) => token.type === 'Query' && token.content.length > 0)
+    .map((token) => token.content)
     .join(' ');
 }
 
@@ -50,7 +50,7 @@ function cmaQueryBuilderForField(key, contentType) {
   if (convertFn) {
     return {
       context: {},
-      build: convertFn
+      build: convertFn,
     };
   }
 
@@ -58,13 +58,13 @@ function cmaQueryBuilderForField(key, contentType) {
   if (field) {
     return {
       context: field,
-      build: (op, val) => makeFieldQuery(field, op, val)
+      build: (op, val) => makeFieldQuery(field, op, val),
     };
   }
 
   return {
     context: {},
-    build: () => ({})
+    build: () => ({}),
   };
 }
 
@@ -96,7 +96,7 @@ function makeFieldQuery(field, operator, value) {
 
 function findField(key, contentType) {
   const fields = contentType.fields || [];
-  const matchingId = fields.find(field => apiNameOrId(field) === key);
-  const matchingName = fields.find(field => field.name.toLowerCase() === key.toLowerCase());
+  const matchingId = fields.find((field) => apiNameOrId(field) === key);
+  const matchingName = fields.find((field) => field.name.toLowerCase() === key.toLowerCase());
   return matchingId || matchingName;
 }

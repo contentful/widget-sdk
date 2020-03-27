@@ -3,31 +3,31 @@ import { render, fireEvent } from '@testing-library/react';
 import StatusWidget from './StatusWidget';
 
 jest.mock('utils/LaunchDarkly', () => ({
-  getCurrentVariation: jest.fn().mockResolvedValue(false) // Reference Dialog disabled
+  getCurrentVariation: jest.fn().mockResolvedValue(false), // Reference Dialog disabled
 }));
 
-const createCommand = props => ({
+const createCommand = (props) => ({
   isDisabled: () => false,
   isAvailable: () => true,
   inProgress: () => false,
   isRestricted: () => false,
   execute: () => {},
-  ...props
+  ...props,
 });
 
 const selectors = {
-  stateText: renderResult => renderResult.getByTestId('entity-state'),
-  dateText: renderResult => renderResult.container.querySelector('.entity-sidebar__last-saved'),
-  publishBtn: renderResult => renderResult.getByTestId('change-state-published'),
-  secondaryArchiveBtn: renderResult => renderResult.getByTestId('change-state-archived'),
-  secondaryDropdownTrigger: renderResult => renderResult.getByTestId('change-state-menu-trigger'),
-  revertButton: renderResult => renderResult.getByTestId('discard-changed-button'),
-  secondaryUnpublishBtn: renderResult => renderResult.getByTestId('change-state-draft'),
-  actionRestrictionNote: renderResult => renderResult.getByTestId('action-restriction-note')
+  stateText: (renderResult) => renderResult.getByTestId('entity-state'),
+  dateText: (renderResult) => renderResult.container.querySelector('.entity-sidebar__last-saved'),
+  publishBtn: (renderResult) => renderResult.getByTestId('change-state-published'),
+  secondaryArchiveBtn: (renderResult) => renderResult.getByTestId('change-state-archived'),
+  secondaryDropdownTrigger: (renderResult) => renderResult.getByTestId('change-state-menu-trigger'),
+  revertButton: (renderResult) => renderResult.getByTestId('discard-changed-button'),
+  secondaryUnpublishBtn: (renderResult) => renderResult.getByTestId('change-state-draft'),
+  actionRestrictionNote: (renderResult) => renderResult.getByTestId('action-restriction-note'),
 };
 
 describe('<StatusWidget />', () => {
-  const renderWidget = props => {
+  const renderWidget = (props) => {
     const renderResult = render(
       <StatusWidget
         entity={{}}
@@ -45,7 +45,7 @@ describe('<StatusWidget />', () => {
 
   it('shows proper buttons for "Draft" status', () => {
     const stubs = {
-      onPublishClick: jest.fn()
+      onPublishClick: jest.fn(),
     };
     const { renderResult } = renderWidget({
       status: 'draft',
@@ -54,15 +54,15 @@ describe('<StatusWidget />', () => {
         isRestricted: () => false,
         label: 'Publish',
         targetStateId: 'published',
-        execute: stubs.onPublishClick
+        execute: stubs.onPublishClick,
       }),
       secondary: [
         createCommand({
           isRestricted: () => false,
           label: 'Archive',
-          targetStateId: 'archived'
-        })
-      ]
+          targetStateId: 'archived',
+        }),
+      ],
     });
 
     expect(selectors.stateText(renderResult).textContent).toBe('Draft');
@@ -88,7 +88,7 @@ describe('<StatusWidget />', () => {
 
   it('shows proper buttons for "Pending" status', () => {
     const stubs = {
-      onPublishClick: jest.fn()
+      onPublishClick: jest.fn(),
     };
     const { renderResult } = renderWidget({
       status: 'changes',
@@ -97,18 +97,18 @@ describe('<StatusWidget />', () => {
         isRestricted: () => false,
         label: 'Publish changes',
         targetStateId: 'published',
-        execute: stubs.onPublishClick
+        execute: stubs.onPublishClick,
       }),
       secondary: [
         createCommand({
           label: 'Archive',
-          targetStateId: 'archived'
+          targetStateId: 'archived',
         }),
         createCommand({
           label: 'Unpublish',
-          targetStateId: 'draft'
-        })
-      ]
+          targetStateId: 'draft',
+        }),
+      ],
     });
 
     expect(selectors.stateText(renderResult).textContent).toBe('Changed');
@@ -138,29 +138,29 @@ describe('<StatusWidget />', () => {
 
   it('shows proper buttons for "Published" status', () => {
     const stubs = {
-      revertOnClick: jest.fn()
+      revertOnClick: jest.fn(),
     };
     const { renderResult } = renderWidget({
       status: 'published',
       updatedAt: '2018-01-14T15:15:49.230Z',
       primary: createCommand({
         isAvailable: () => false,
-        isRestricted: () => false
+        isRestricted: () => false,
       }),
       revert: createCommand({
         isAvailable: () => true,
-        execute: stubs.revertOnClick
+        execute: stubs.revertOnClick,
       }),
       secondary: [
         createCommand({
           label: 'Archive',
-          targetStateId: 'archived'
+          targetStateId: 'archived',
         }),
         createCommand({
           label: 'Unpublish',
-          targetStateId: 'draft'
-        })
-      ]
+          targetStateId: 'draft',
+        }),
+      ],
     });
 
     expect(selectors.stateText(renderResult).textContent).toBe('Published');
@@ -192,7 +192,7 @@ describe('<StatusWidget />', () => {
 
   it('shows the action restrtiction note for publish action', () => {
     const stubs = {
-      onPublishClick: jest.fn()
+      onPublishClick: jest.fn(),
     };
     const { renderResult } = renderWidget({
       status: 'draft',
@@ -202,14 +202,14 @@ describe('<StatusWidget />', () => {
         isDisabled: () => true,
         label: 'Publish',
         targetStateId: 'published',
-        execute: stubs.onPublishClick
+        execute: stubs.onPublishClick,
       }),
       secondary: [
         createCommand({
           label: 'Archive',
-          targetStateId: 'archived'
-        })
-      ]
+          targetStateId: 'archived',
+        }),
+      ],
     });
 
     expect(selectors.publishBtn(renderResult)).toBeInTheDocument();
@@ -222,7 +222,7 @@ describe('<StatusWidget />', () => {
 
   it('shows the action restrtiction note if publishingBlocked tasks', () => {
     const stubs = {
-      onPublishClick: jest.fn()
+      onPublishClick: jest.fn(),
     };
     const { renderResult } = renderWidget({
       status: 'draft',
@@ -231,15 +231,15 @@ describe('<StatusWidget />', () => {
         isDisabled: () => true,
         label: 'Publish',
         targetStateId: 'published',
-        execute: stubs.onPublishClick
+        execute: stubs.onPublishClick,
       }),
       secondary: [
         createCommand({
           label: 'Archive',
-          targetStateId: 'archived'
-        })
+          targetStateId: 'archived',
+        }),
       ],
-      publicationBlockedReason: 'The publication has been blocked'
+      publicationBlockedReason: 'The publication has been blocked',
     });
 
     expect(selectors.publishBtn(renderResult)).toBeInTheDocument();

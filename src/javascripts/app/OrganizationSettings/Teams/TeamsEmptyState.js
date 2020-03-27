@@ -7,23 +7,23 @@ import tokens from '@contentful/forma-36-tokens';
 import TeamDialog from './TeamDialog';
 import { supportUrl } from 'Config';
 import EmptyStateContainer, {
-  defaultSVGStyle
+  defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 
 const styles = {
   pageWrapper: css({ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0 }),
-  topMargin: css({ marginTop: tokens.spacingL })
+  topMargin: css({ marginTop: tokens.spacingL }),
 };
 
 export default class TeamsEmptyState extends React.Component {
   static propTypes = {
     isLegacy: PropTypes.bool,
     isEmpty: PropTypes.bool,
-    isAdmin: PropTypes.bool
+    isAdmin: PropTypes.bool,
   };
 
   state = {
-    showingDialog: false
+    showingDialog: false,
   };
 
   toggleDialog() {

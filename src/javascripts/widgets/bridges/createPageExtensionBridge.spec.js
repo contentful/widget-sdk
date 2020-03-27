@@ -5,18 +5,18 @@ jest.mock('Authentication', () => ({ getToken: () => '<TOKEN>' }));
 
 jest.mock('services/localeStore', () => ({
   getPrivateLocales: () => [{ code: 'pl' }, { code: 'en' }],
-  getDefaultLocale: () => ({ code: 'pl' })
+  getDefaultLocale: () => ({ code: 'pl' }),
 }));
 
 jest.mock('states/Navigator', () => ({
-  go: jest.fn()
+  go: jest.fn(),
 }));
 
 describe('createPageExtensionBridge', () => {
   const makeBridge = () => {
     const stubs = {
       updateEntry: jest.fn(),
-      getEntry: jest.fn(() => Promise.resolve('Entry data'))
+      getEntry: jest.fn(() => Promise.resolve('Entry data')),
     };
     const bridge = createPageExtensionBridge(
       {
@@ -27,11 +27,11 @@ describe('createPageExtensionBridge', () => {
           cma: { updateEntry: stubs.updateEntry, getEntry: stubs.getEntry },
           space: { data: { spaceMember: 'MEMBER ', spaceMembership: 'MEMBERSHIP ' } },
           publishedCTs: {
-            getAllBare: () => [{ id: 'first-content-type' }, { id: 'second-content-type' }]
-          }
+            getAllBare: () => [{ id: 'first-content-type' }, { id: 'second-content-type' }],
+          },
         },
         entitySelector: {},
-        entityCreator: {}
+        entityCreator: {},
       },
       'test-id'
     );
@@ -61,7 +61,7 @@ describe('createPageExtensionBridge', () => {
         contentTypeData: { sys: {}, fields: [] },
         initialContentTypesData: [{ id: 'first-content-type' }, { id: 'second-content-type' }],
         editorInterface: undefined,
-        spaceMember: 'MEMBER '
+        spaceMember: 'MEMBER ',
       });
     });
   });
@@ -71,12 +71,12 @@ describe('createPageExtensionBridge', () => {
       const api = { registerHandler: jest.fn() };
       bridge.install(api);
 
-      expect(api.registerHandler.mock.calls.map(item => item[0]).sort()).toEqual([
+      expect(api.registerHandler.mock.calls.map((item) => item[0]).sort()).toEqual([
         'callSpaceMethod',
         'navigateToContentEntity',
         'navigateToPageExtension',
         'notify',
-        'openDialog'
+        'openDialog',
       ]);
     });
 

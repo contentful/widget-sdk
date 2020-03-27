@@ -4,12 +4,12 @@ import _ from 'lodash';
 describe('logger service', () => {
   let step = 0;
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     this.bugsnag = {
       enable: sinon.stub(),
       disable: sinon.stub(),
       notify: sinon.stub(),
-      notifyException: sinon.stub()
+      notifyException: sinon.stub(),
     };
 
     this.system.set('analytics/Bugsnag', this.bugsnag);
@@ -17,17 +17,17 @@ describe('logger service', () => {
     this.logger = await this.system.import('services/logger');
   });
 
-  it('enables', function() {
+  it('enables', function () {
     this.logger.enable('USER');
     sinon.assert.calledWithExactly(this.bugsnag.enable, 'USER');
   });
 
-  it('disables', function() {
+  it('disables', function () {
     this.logger.disable();
     sinon.assert.called(this.bugsnag.disable);
   });
 
-  it('logs exceptions', function() {
+  it('logs exceptions', function () {
     const exception = new Error();
     this.logger.logException(exception, { meta: 'Data' });
     sinon.assert.calledWith(
@@ -39,7 +39,7 @@ describe('logger service', () => {
     );
   });
 
-  it('logs errors', function() {
+  it('logs errors', function () {
     this.logger.logError('test', { meta: 'Data' });
     sinon.assert.calledWith(
       this.bugsnag.notify,
@@ -50,7 +50,7 @@ describe('logger service', () => {
     );
   });
 
-  it('does not log errors with empty messages', function() {
+  it('does not log errors with empty messages', function () {
     this.logger.logError();
 
     sinon.assert.notCalled(this.bugsnag.notify);
@@ -64,7 +64,7 @@ describe('logger service', () => {
     sinon.assert.notCalled(this.bugsnag.notify);
   });
 
-  it('handles messages that are of type Error as well as String', function() {
+  it('handles messages that are of type Error as well as String', function () {
     const err = new Error('Oops something went wrong');
     const errMsg = 'Wowzers this is messed up';
 
@@ -87,7 +87,7 @@ describe('logger service', () => {
     );
   });
 
-  it('logs warnings', function() {
+  it('logs warnings', function () {
     this.logger.logWarn('test', { meta: 'Data' });
     sinon.assert.calledWith(
       this.bugsnag.notify,
@@ -98,7 +98,7 @@ describe('logger service', () => {
     );
   });
 
-  it('logs sharejs errors', function() {
+  it('logs sharejs errors', function () {
     this.logger.logSharejsError('test', { meta: 'Data' });
     sinon.assert.calledWith(
       this.bugsnag.notify,
@@ -109,7 +109,7 @@ describe('logger service', () => {
     );
   });
 
-  it('logs sharejs warnings', function() {
+  it('logs sharejs warnings', function () {
     this.logger.logSharejsWarn('test', { meta: 'Data' });
     sinon.assert.calledWith(
       this.bugsnag.notify,
@@ -121,7 +121,7 @@ describe('logger service', () => {
   });
 
   describe('when receiving error with status code 0', () => {
-    it('logs errors as cors warnings', function() {
+    it('logs errors as cors warnings', function () {
       this.logger.logServerError('test', { meta: 'Data', error: { statusCode: 0 } });
       sinon.assert.calledWith(
         this.bugsnag.notify,
@@ -129,12 +129,12 @@ describe('logger service', () => {
         'test',
         sinon.match({
           meta: 'Data',
-          error: { statusCode: 0 }
+          error: { statusCode: 0 },
         }),
         'warning'
       );
     });
-    it('logs warnings as cors warnings', function() {
+    it('logs warnings as cors warnings', function () {
       this.logger.logServerWarn('test', { meta: 'Data', error: { statusCode: 0 } });
       sinon.assert.calledWith(
         this.bugsnag.notify,
@@ -142,7 +142,7 @@ describe('logger service', () => {
         'test',
         sinon.match({
           meta: 'Data',
-          error: { statusCode: 0 }
+          error: { statusCode: 0 },
         }),
         'warning'
       );
@@ -150,19 +150,19 @@ describe('logger service', () => {
   });
 
   describe('message processing', () => {
-    beforeEach(function() {
+    beforeEach(function () {
       this.logger.enable({
         firstName: 'Hans',
         lastName: 'Wurst',
         sys: { id: 'h4nswur5t' },
         organizationMemberships: [
           { organization: { name: 'Conglom-O' } },
-          { organization: { name: 'ACME' } }
-        ]
+          { organization: { name: 'ACME' } },
+        ],
       });
     });
 
-    it('derives the grouping hash from the message if none provided', function() {
+    it('derives the grouping hash from the message if none provided', function () {
       this.logger.logError('error');
       sinon.assert.calledWith(
         this.bugsnag.notify,
@@ -174,7 +174,7 @@ describe('logger service', () => {
     });
 
     describe('augmenting metadata', () => {
-      it('preparses the data property', function() {
+      it('preparses the data property', function () {
         const data = { foo: { bar: {} } };
         data.foo.bar.baz = data;
         this.logger.logError('error', { data: data });
@@ -186,76 +186,76 @@ describe('logger service', () => {
 
   const SOME_OBJECT = uniqueObject();
   const SERVER_ERROR = uniqueObject({
-    sys: { type: 'Error' }
+    sys: { type: 'Error' },
   });
   const SERVER_ERROR_WITH_DETAILS = uniqueObject({
     sys: SERVER_ERROR.sys,
-    details: uniqueObject()
+    details: uniqueObject(),
   });
   const SERVER_ERROR_WITH_DETAILS_REPLACED = _.extend({}, SERVER_ERROR_WITH_DETAILS, {
-    details: '[@ERROR_DETAILS tab]'
+    details: '[@ERROR_DETAILS tab]',
   });
   const SERVER_REQUEST = uniqueObject({
     headers: uniqueObject({
-      Authorization: 'bearer TOKEN'
-    })
+      Authorization: 'bearer TOKEN',
+    }),
   });
   const SERVER_REQUEST_WITH_TOKEN_REPLACED = _.cloneDeep(SERVER_REQUEST);
   SERVER_REQUEST_WITH_TOKEN_REPLACED.headers.Authorization = '[SECRET]';
   const RESPONSE = uniqueObject({
     body: SERVER_ERROR_WITH_DETAILS,
-    request: SERVER_REQUEST
+    request: SERVER_REQUEST,
   });
   const TRANSFORMED_RESPONSE = _.extend({}, RESPONSE, {
     body: SERVER_ERROR_WITH_DETAILS_REPLACED,
-    request: SERVER_REQUEST_WITH_TOKEN_REPLACED
+    request: SERVER_REQUEST_WITH_TOKEN_REPLACED,
   });
 
   const BASE_META_DATA = {
     groupingHash: jasmine.any(String),
-    params: jasmine.any(Object)
+    params: jasmine.any(Object),
   };
 
   const SERVER_LOGGING_CASES = {
     'response with error in “body” and additional data for some “FOO” tab': {
       data: {
         error: RESPONSE,
-        foo: SOME_OBJECT
+        foo: SOME_OBJECT,
       },
       expected: {
         serverResponse: TRANSFORMED_RESPONSE,
         errorDetails: SERVER_ERROR_WITH_DETAILS.details,
-        foo: SOME_OBJECT
-      }
+        foo: SOME_OBJECT,
+      },
     },
     'response with error in “data”': {
       data: {
-        error: renameKey(RESPONSE, 'body', 'data')
+        error: renameKey(RESPONSE, 'body', 'data'),
       },
       expected: {
         serverResponse: renameKey(TRANSFORMED_RESPONSE, 'body', 'data'),
-        errorDetails: SERVER_ERROR_WITH_DETAILS.details
-      }
+        errorDetails: SERVER_ERROR_WITH_DETAILS.details,
+      },
     },
     'actual server error only (not wrapped in response) without error details': {
       data: {
         error: SERVER_ERROR,
-        foo: SOME_OBJECT
+        foo: SOME_OBJECT,
       },
       expected: {
         error: SERVER_ERROR,
-        foo: SOME_OBJECT
-      }
+        foo: SOME_OBJECT,
+      },
     },
     'actual server error only (not wrapped in response) with error details': {
       data: {
-        error: SERVER_ERROR_WITH_DETAILS
+        error: SERVER_ERROR_WITH_DETAILS,
       },
       expected: {
         error: SERVER_ERROR_WITH_DETAILS_REPLACED,
-        errorDetails: SERVER_ERROR_WITH_DETAILS.details
-      }
-    }
+        errorDetails: SERVER_ERROR_WITH_DETAILS.details,
+      },
+    },
   };
 
   _.each(SERVER_LOGGING_CASES, (testCase, descriptionMsg) => {
@@ -275,13 +275,13 @@ describe('logger service', () => {
   function testServerErrorLogging(fnName, severity, testCase) {
     const severityLC = severity.toLowerCase();
 
-    beforeEach(function() {
+    beforeEach(function () {
       const metaData = testCase.data;
       this.logger[fnName]('LOG_MSG', metaData);
       this.transformedData = this.bugsnag.notify.firstCall.args[2];
     });
 
-    it('logs a server ' + severityLC, function() {
+    it('logs a server ' + severityLC, function () {
       const loggingType = 'Logged Server ' + severity;
       sinon.assert.calledOnce(this.bugsnag.notify);
       sinon.assert.calledWithExactly(
@@ -297,18 +297,18 @@ describe('logger service', () => {
       const tabName = name.replace(/([A-Z])/g, ' $1').toUpperCase();
 
       describe('“' + tabName + '” tab on Bugsnag', () => {
-        it('will be present', function() {
+        it('will be present', function () {
           expect(this.transformedData[name]).toEqual(jasmine.any(Object));
         });
 
-        it('has transformed data as expected', function() {
+        it('has transformed data as expected', function () {
           const tabData = this.transformedData[name];
           expect(tabData).toEqual(value);
         });
       });
     });
 
-    it('transforms all metaData as expected', function() {
+    it('transforms all metaData as expected', function () {
       const expectedMetaData = jasmine.objectContaining(
         _.extend({}, BASE_META_DATA, testCase.expected)
       );

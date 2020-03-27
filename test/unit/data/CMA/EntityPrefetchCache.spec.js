@@ -4,19 +4,19 @@ import { $initialize, $inject } from 'test/utils/ng';
 import { it } from 'test/utils/dsl';
 
 describe('data/CMA/EntityPrefetchCache', () => {
-  beforeEach(async function() {
+  beforeEach(async function () {
     const { default: createCache } = await this.system.import('data/CMA/EntityPrefetchCache');
 
     await $initialize(this.system);
 
     const $q = $inject('$q');
 
-    this.queryEntities = sinon.spy(query => {
+    this.queryEntities = sinon.spy((query) => {
       const ids = query['sys.id[in]'].split(',');
       return $q.resolve(
-        ids.map(id => {
+        ids.map((id) => {
           return {
-            data: { sys: { id: id } }
+            data: { sys: { id: id } },
           };
         })
       );
@@ -25,7 +25,7 @@ describe('data/CMA/EntityPrefetchCache', () => {
     this.cache = createCache(this.queryEntities);
   });
 
-  it('prefetches entities', async function() {
+  it('prefetches entities', async function () {
     this.cache.set(['A', 'B']);
     sinon.assert.calledOnce(this.queryEntities);
 
@@ -37,7 +37,7 @@ describe('data/CMA/EntityPrefetchCache', () => {
     sinon.assert.calledOnce(this.queryEntities);
   });
 
-  it('only loads ids not already in cache', async function() {
+  it('only loads ids not already in cache', async function () {
     this.cache.set(['A', 'B']);
     this.queryEntities.reset();
     this.cache.set(['B', 'X', 'Y']);
@@ -51,7 +51,7 @@ describe('data/CMA/EntityPrefetchCache', () => {
     sinon.assert.calledOnce(this.queryEntities);
   });
 
-  it('removes ids not required anymore', async function() {
+  it('removes ids not required anymore', async function () {
     this.cache.set(['A', 'B']);
     this.cache.set(['B']);
 
@@ -61,8 +61,8 @@ describe('data/CMA/EntityPrefetchCache', () => {
     sinon.assert.calledOnce(this.queryEntities);
   });
 
-  it('chunks up IDs', function() {
-    const ids = _.range(101).map(i => `id${i}`);
+  it('chunks up IDs', function () {
+    const ids = _.range(101).map((i) => `id${i}`);
     this.cache.set(ids);
     sinon.assert.callCount(this.queryEntities, 3);
   });

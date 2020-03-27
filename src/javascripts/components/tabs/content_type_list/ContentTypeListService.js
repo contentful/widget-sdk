@@ -6,17 +6,13 @@ export async function fetchContentTypes() {
   const { items } = await spaceContext.endpoint({
     method: 'GET',
     path: ['content_types'],
-    query: { order: 'name', limit: 1000 }
+    query: { order: 'name', limit: 1000 },
   });
 
   return items;
 }
 
-const normalizeName = s =>
-  (s || '')
-    .trim()
-    .toLowerCase()
-    .replace(/ +/g, ' ');
+const normalizeName = (s) => (s || '').trim().toLowerCase().replace(/ +/g, ' ');
 
 function matchesSearchTerm(ct, searchTerm) {
   if (searchTerm !== '') {
@@ -49,6 +45,6 @@ export function isPublishedAndUpdated(ct) {
 
 export function filterContentTypes(contentTypes, { searchTerm, status }) {
   return contentTypes
-    .filter(ct => matchesSearchTerm(ct, searchTerm))
-    .filter(ct => isOnSelectedList(ct, status));
+    .filter((ct) => matchesSearchTerm(ct, searchTerm))
+    .filter((ct) => isOnSelectedList(ct, status));
 }

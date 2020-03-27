@@ -8,7 +8,7 @@ class GithubInstaller extends React.Component {
     extensionUrl: PropTypes.string,
     isShown: PropTypes.bool.isRequired,
     onConfirm: PropTypes.func.isRequired,
-    onCancel: PropTypes.func.isRequired
+    onCancel: PropTypes.func.isRequired,
   };
 
   static getInitialState() {
@@ -29,18 +29,18 @@ class GithubInstaller extends React.Component {
     }
   }
 
-  checkUrl = url => {
+  checkUrl = (url) => {
     this.setState(() => ({ url, valid: Fetcher.isValidSource(url), err: null }));
   };
 
-  install = url => {
-    this.setState(state => ({ ...state, fetching: true }));
+  install = (url) => {
+    this.setState((state) => ({ ...state, fetching: true }));
     Fetcher.fetchExtension(url).then(
-      extension => {
+      (extension) => {
         this.setState({ fetching: false });
         return this.props.onConfirm({ extension, url });
       },
-      err => this.setState(state => ({ ...state, fetching: false, err }))
+      (err) => this.setState((state) => ({ ...state, fetching: false, err }))
     );
   };
 
@@ -89,7 +89,7 @@ class GithubInstaller extends React.Component {
           labelText="GitHub URL"
           type="text"
           value={url || ''}
-          onChange={e => this.checkUrl(e.target.value)}
+          onChange={(e) => this.checkUrl(e.target.value)}
           validationMessage={this.getValidationMessage()}
         />
       </ModalConfirm>

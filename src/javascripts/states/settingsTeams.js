@@ -4,18 +4,18 @@ import AddTeamsRouter from 'app/SpaceSettings/Teams/AddTeams/AddTeamsRouter';
 const list = {
   name: 'list',
   url: '',
-  component: SpaceTeamsPage
+  component: SpaceTeamsPage,
 };
 
 const add = {
   name: 'add',
   url: '/add',
-  component: AddTeamsRouter
+  component: AddTeamsRouter,
 };
 
 export default {
   name: 'teams',
   url: '/teams',
   abstract: true,
-  children: [list, add]
+  children: [list, add],
 };

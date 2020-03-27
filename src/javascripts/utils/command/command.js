@@ -27,7 +27,7 @@ function Command(run, opts) {
   opts = _.defaults(opts || {}, {
     available: _.constant(true),
     disabled: _.constant(false),
-    restricted: _.constant(false)
+    restricted: _.constant(false),
   });
 
   this.isAvailable = opts.available;
@@ -41,7 +41,7 @@ function Command(run, opts) {
  * @name Command#execute
  * @returns {Promise<void>}
  */
-Command.prototype.execute = function() {
+Command.prototype.execute = function () {
   // TODO Reject if disabled
 
   if (this._inProgress) {
@@ -69,14 +69,14 @@ Command.prototype.execute = function() {
  * @returns {boolean}
  */
 
-Command.prototype.inProgress = function() {
+Command.prototype.inProgress = function () {
   return !!this._inProgress;
 };
 
-Command.prototype.isDisabled = function() {
+Command.prototype.isDisabled = function () {
   return !!(this._isDisabled() || this._inProgress || !this.isAvailable());
 };
 
-Command.prototype.isRestricted = function() {
+Command.prototype.isRestricted = function () {
   return this._isRestricted();
 };

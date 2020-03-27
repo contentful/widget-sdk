@@ -23,7 +23,7 @@ function getCurrentOrg(user) {
         user.organizationMemberships &&
         find(
           user.organizationMemberships,
-          membership => membership.organization.sys.id === lastUsedOrg
+          (membership) => membership.organization.sys.id === lastUsedOrg
         )
       );
     }
@@ -35,28 +35,28 @@ export default makeState({
   url: '/',
   params: {
     orgId: null,
-    orgOwnerOrAdmin: null
+    orgOwnerOrAdmin: null,
   },
   navComponent: EmptyNavigationBar,
   loadingText: 'Loading…',
   resolve: {
-    space: function() {
+    space: function () {
       function getLastUsedSpace(spaces) {
         const spaceId = store.get('lastUsedSpace');
-        return spaceId && find(spaces, space => space.sys.id === spaceId);
+        return spaceId && find(spaces, (space) => space.sys.id === spaceId);
       }
 
       function getLastUsedOrgSpace(spaces) {
         const orgId = store.get('lastUsedOrg');
-        return orgId && find(spaces, space => space.organization.sys.id === orgId);
+        return orgId && find(spaces, (space) => space.organization.sys.id === orgId);
       }
 
-      return getSpaces().then(spaces => {
+      return getSpaces().then((spaces) => {
         if (spaces.length) {
           return getLastUsedSpace(spaces) || getLastUsedOrgSpace(spaces) || spaces[0];
         }
       });
-    }
+    },
   },
   // todo: use component directly
   template: `<react-component name="app/home/SpaceHomePage" props="{spaceTemplateCreated: spaceTemplateCreated, orgId: orgId, orgOwnerOrAdmin: orgOwnerOrAdmin}"></react-component>`,
@@ -73,7 +73,7 @@ export default makeState({
         // If a space is found during resolving, send the user to that space
         go({
           path: ['spaces', 'detail'],
-          params: { spaceId: space.sys.id }
+          params: { spaceId: space.sys.id },
         });
       } else {
         const user = getValue(user$) || {};
@@ -98,6 +98,6 @@ export default makeState({
           $scope.spaceTemplateCreated = true;
         });
       }
-    }
-  ]
+    },
+  ],
 });

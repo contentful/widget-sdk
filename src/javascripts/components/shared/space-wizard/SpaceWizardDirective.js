@@ -11,16 +11,16 @@ export default function register() {
     ($state, $rootScope) => {
       const { reset: resetActionCreator } = actionCreators;
       return {
-        link: function($scope) {
+        link: function ($scope) {
           $scope.props = {
             action: $scope.action,
             space: $scope.space,
             wizardScope: $scope.scope,
             organization: $scope.organization,
-            onCancel: function() {
+            onCancel: function () {
               $scope.dialog.cancel();
             },
-            onConfirm: function(productRatePlanId) {
+            onConfirm: function (productRatePlanId) {
               if ($scope.onSubmit) {
                 $scope.onSubmit(productRatePlanId).then(() => {
                   $scope.dialog.confirm();
@@ -29,28 +29,28 @@ export default function register() {
                 $scope.dialog.confirm();
               }
             },
-            onSpaceCreated: async function(newSpace, template) {
+            onSpaceCreated: async function (newSpace, template) {
               await $state.go('spaces.detail', { spaceId: newSpace.sys.id });
 
               const spaceCreateEventData = template
                 ? {
                     templateName: template.name,
-                    entityAutomationScope: { scope: 'space_template' }
+                    entityAutomationScope: { scope: 'space_template' },
                   }
                 : { templateName: 'Blank' };
 
               Analytics.track('space:create', spaceCreateEventData);
             },
-            onTemplateCreated: function() {
+            onTemplateCreated: function () {
               // Picked up by the learn page which then refreshes itself
               $rootScope.$broadcast('spaceTemplateCreated');
             },
-            onDimensionsChange: function() {
+            onDimensionsChange: function () {
               $scope.dialog.reposition();
-            }
+            },
           };
 
-          $scope.onScopeDestroy = function({ unmountComponent }) {
+          $scope.onScopeDestroy = function ({ unmountComponent }) {
             unmountComponent();
 
             ReduxStore.dispatch(resetActionCreator());
@@ -61,8 +61,8 @@ export default function register() {
       props="props"
       on-scope-destroy="onScopeDestroy"
       watch-depth="reference"
-    ></react-component>`
+    ></react-component>`,
       };
-    }
+    },
   ]);
 }

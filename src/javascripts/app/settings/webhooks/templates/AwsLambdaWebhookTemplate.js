@@ -23,13 +23,13 @@ export default {
         <p>
           The AWS region of your function. For example: <code>eu-west-1</code>.
         </p>
-      )
+      ),
     },
     {
       name: 'functionName',
       type: 'text',
       title: 'Function name',
-      description: <p>The name of a function you want to invoke.</p>
+      description: <p>The name of a function you want to invoke.</p>,
     },
     {
       name: 'accessKeyId',
@@ -40,7 +40,7 @@ export default {
           Use a keypair with minimal access. The only required policy action is{' '}
           <code>lambda:InvokeFunction</code>.
         </p>
-      )
+      ),
     },
     {
       name: 'secretAccessKey',
@@ -50,8 +50,8 @@ export default {
         <p>
           Secret Access Key of the keypair used above. This value can’t be revealed once stored.
         </p>
-      )
-    }
+      ),
+    },
   ],
   mapParamsToDefinition: ({ region, functionName, accessKeyId, secretAccessKey }, name) => {
     return {
@@ -62,17 +62,17 @@ export default {
       headers: [
         {
           key: 'X-Contentful-AWS-Proxy-Key-Id',
-          value: accessKeyId
+          value: accessKeyId,
         },
         {
           key: 'X-Contentful-AWS-Proxy-Secret',
           value: secretAccessKey,
-          secret: true
-        }
+          secret: true,
+        },
       ],
       transformation: {
-        contentType: 'application/json'
-      }
+        contentType: 'application/json',
+      },
     };
-  }
+  },
 };

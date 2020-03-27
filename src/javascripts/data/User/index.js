@@ -32,8 +32,8 @@ export function getOrgRole(user, orgId) {
     orgMemberships,
     ({
       organization: {
-        sys: { id }
-      }
+        sys: { id },
+      },
     }) => orgId === id
   );
   const role = org && org.role;
@@ -75,7 +75,7 @@ export function getUserCreationDateUnixTimestamp(user) {
  * @returns {boolean}
  */
 export function hasAnOrgWithSpaces(spacesByOrg) {
-  return !!find(spacesByOrg, spaces => !!spaces.length);
+  return !!find(spacesByOrg, (spaces) => !!spaces.length);
 }
 
 /**
@@ -100,7 +100,7 @@ export function ownsAtleastOneOrg(user) {
 export function getOwnedOrgs(user) {
   const orgMemberships = user.organizationMemberships || [];
   // filter out orgs user owns
-  return orgMemberships.filter(org => org.role === 'owner');
+  return orgMemberships.filter((org) => org.role === 'owner');
 }
 
 /**
@@ -114,7 +114,7 @@ export function getOwnedOrgs(user) {
 export function getFirstOwnedOrgWithoutSpaces(user, spacesByOrg) {
   const ownedOrgs = getOwnedOrgs(user);
   // return the first org that has no spaces
-  const orgMembership = find(ownedOrgs, ownedOrg => {
+  const orgMembership = find(ownedOrgs, (ownedOrg) => {
     const spacesForOrg = spacesByOrg[ownedOrg.organization.sys.id];
 
     return !spacesForOrg || spacesForOrg.length === 0;
@@ -182,7 +182,10 @@ function getCurrentOrgSpaceBus() {
   const currOrgSpaceUpdater = updateCurrOrgSpace(currOrgSpaceBus);
 
   // emit when orgs stream emits
-  onValue(organizations$.filter(orgs => orgs && orgs.length), currOrgSpaceUpdater);
+  onValue(
+    organizations$.filter((orgs) => orgs && orgs.length),
+    currOrgSpaceUpdater
+  );
   // emit when ever state changes (for e.g., space was changed)
   $rootScope.$on('$stateChangeSuccess', currOrgSpaceUpdater);
 
@@ -192,7 +195,7 @@ function getCurrentOrgSpaceBus() {
 function updateCurrOrgSpace(bus) {
   const $stateParams = getModule('$stateParams');
 
-  return _ => {
+  return (_) => {
     const orgId = $stateParams.orgId;
     const orgs = getValue(organizations$);
     const org = getCurrOrg(orgs, orgId);
@@ -224,5 +227,5 @@ function getCurrSpace() {
 }
 
 function getOrgById(orgs, orgId) {
-  return orgId && find(orgs, org => org.sys.id === orgId);
+  return orgId && find(orgs, (org) => org.sys.id === orgId);
 }

@@ -20,14 +20,14 @@ import { track } from 'analytics/Analytics';
 const styles = {
   tabPanel: css({
     paddingTop: tokens.spacing2Xl,
-    paddingBottom: tokens.spacing2Xl
+    paddingBottom: tokens.spacing2Xl,
   }),
   heading: css({
     color: '#6A7889',
     fontWeight: tokens.fontWeightNormal,
     paddingBottom: tokens.spacingXl,
-    paddingTop: tokens.spacing2Xl
-  })
+    paddingTop: tokens.spacing2Xl,
+  }),
 };
 
 const OrganizationUsagePage = ({
@@ -37,7 +37,7 @@ const OrganizationUsagePage = ({
   apiRequestIncludedLimit,
   assetBandwidthData,
   onTabSelect,
-  isPoC
+  isPoC,
 }) => {
   const orgUsage = periodicUsage.org.usage;
   const totalUsage = sum(orgUsage);
@@ -46,7 +46,7 @@ const OrganizationUsagePage = ({
   const [selected, setSelected] = useState('apiRequest');
   const [currentAssetBandwidthData, setCurrentBandwidthData] = useState();
 
-  const handleSelected = id => {
+  const handleSelected = (id) => {
     track('usage:org_tab_selected', { old: selected, new: id });
     setSelected(id);
     onTabSelect(id);
@@ -56,7 +56,7 @@ const OrganizationUsagePage = ({
     const data = {
       usage: get(assetBandwidthData, ['usage']),
       limit: get(assetBandwidthData, ['limits', 'included']),
-      uom: get(assetBandwidthData, ['unitOfMeasure'])
+      uom: get(assetBandwidthData, ['unitOfMeasure']),
     };
     setCurrentBandwidthData(data);
     // eslint-disable-next-line
@@ -125,11 +125,11 @@ OrganizationUsagePage.propTypes = {
     usage: PropTypes.number,
     unitOfMeasure: PropTypes.string,
     limits: PropTypes.shape({
-      included: PropTypes.number
-    })
+      included: PropTypes.number,
+    }),
   }),
   isPoC: PropTypes.objectOf(PropTypes.bool).isRequired,
-  onTabSelect: PropTypes.func
+  onTabSelect: PropTypes.func,
 };
 
 export default OrganizationUsagePage;

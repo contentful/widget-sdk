@@ -8,7 +8,7 @@ import { TextLink, Pill } from '@contentful/forma-36-react-components';
 import { track } from 'analytics/Analytics';
 
 jest.mock('app/common/ModalLauncher', () => ({
-  open: jest.fn()
+  open: jest.fn(),
 }));
 
 describe('EntrySidebar/TranslationWidgetPills', () => {
@@ -16,18 +16,18 @@ describe('EntrySidebar/TranslationWidgetPills', () => {
     { code: 'en', default: true },
     { code: 'de', default: false },
     { code: 'es', default: false },
-    { code: 'ru', default: false }
+    { code: 'ru', default: false },
   ];
 
   const props = {
     emitter: {
-      emit: jest.fn()
+      emit: jest.fn(),
     },
     localeData: {
       activeLocales: locales,
       privateLocales: locales,
-      isLocaleActive: ({ code }) => ['es-AR', 'ru'].includes(code)
-    }
+      isLocaleActive: ({ code }) => ['es-AR', 'ru'].includes(code),
+    },
   };
 
   const render = () => Enzyme.shallow(<TranslationWidgetPills {...props} />);
@@ -42,11 +42,7 @@ describe('EntrySidebar/TranslationWidgetPills', () => {
 
   describe('on locale deactivation', () => {
     beforeEach(() => {
-      render()
-        .find('.entity-sidebar__translation-pill')
-        .at(1)
-        .find(Pill)
-        .prop('onClose')();
+      render().find('.entity-sidebar__translation-pill').at(1).find(Pill).prop('onClose')();
     });
 
     it('emits the DEACTIVATED_LOCALE event with the locale', () => {
@@ -60,33 +56,31 @@ describe('EntrySidebar/TranslationWidgetPills', () => {
       expect(track).toHaveBeenCalledWith('translation_sidebar:deselect_active_locale', {
         currentMode: 'multiple',
         previousActiveLocaleCount: 4,
-        currentActiveLocaleCount: 3
+        currentActiveLocaleCount: 3,
       });
     });
   });
 
   describe('on change', () => {
     beforeEach(async () => {
-      await render()
-        .find(TextLink)
-        .prop('onClick')();
+      await render().find(TextLink).prop('onClick')();
       const [[callback]] = ModalLauncherMocked.open.mock.calls;
       const localeSelectDialog = callback({});
       const {
-        props: { onUpdate }
+        props: { onUpdate },
       } = localeSelectDialog;
       onUpdate([
         { code: 'en-US', active: false },
         { code: 'es-AR', active: true },
         { code: 'ru', active: true },
-        { code: 'de-DE', active: false }
+        { code: 'de-DE', active: false },
       ]);
     });
 
     it('emits the SET_ACTIVE_LOCALES event with the new active locales', () => {
       expect(props.emitter.emit).toHaveBeenCalledWith(SidebarEventTypes.SET_ACTIVE_LOCALES, [
         { code: 'es-AR', active: true },
-        { code: 'ru', active: true }
+        { code: 'ru', active: true },
       ]);
     });
 
@@ -94,7 +88,7 @@ describe('EntrySidebar/TranslationWidgetPills', () => {
       expect(track).toHaveBeenCalledWith('translation_sidebar:update_active_locales', {
         currentMode: 'multiple',
         previousActiveLocaleCount: 4,
-        currentActiveLocaleCount: 2
+        currentActiveLocaleCount: 2,
       });
     });
   });

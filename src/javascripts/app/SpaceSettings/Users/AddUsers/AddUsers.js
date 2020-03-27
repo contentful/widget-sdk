@@ -19,14 +19,14 @@ import { isTaken } from 'utils/ServerErrorUtils';
 const steps = {
   USERS: 1,
   ROLES: 2,
-  ERROR: 3
+  ERROR: 3,
 };
 
 const initialState = {
   selectedUsers: [],
   selectedRoles: {},
   rejected: [],
-  currentStep: steps.USERS
+  currentStep: steps.USERS,
 };
 
 const reducer = createImmerReducer({
@@ -34,7 +34,9 @@ const reducer = createImmerReducer({
     state.selectedUsers.push(action.payload);
   },
   USER_REMOVED: (state, action) => {
-    state.selectedUsers = state.selectedUsers.filter(user => user.sys.id !== action.payload.sys.id);
+    state.selectedUsers = state.selectedUsers.filter(
+      (user) => user.sys.id !== action.payload.sys.id
+    );
   },
   STEP_CHANGED: (state, action) => {
     state.currentStep = action.payload;
@@ -47,11 +49,11 @@ const reducer = createImmerReducer({
     state.rejected = action.payload;
     state.currentStep = steps.ERROR;
   },
-  RETRY: state => {
+  RETRY: (state) => {
     state.selectedUsers = state.rejected;
     state.rejected = [];
     state.currentStep = steps.ROLES;
-  }
+  },
 });
 
 export default function AddUsers({ unavailableUserIds, orgId, isShown, onClose }) {
@@ -89,8 +91,8 @@ export default function AddUsers({ unavailableUserIds, orgId, isShown, onClose }
             <UserSelection
               selectedUsers={selectedUsers}
               availableUsers={availableUsers}
-              onUserSelected={user => dispatch({ type: 'USER_ADDED', payload: user })}
-              onUserRemoved={user => dispatch({ type: 'USER_REMOVED', payload: user })}
+              onUserSelected={(user) => dispatch({ type: 'USER_ADDED', payload: user })}
+              onUserRemoved={(user) => dispatch({ type: 'USER_REMOVED', payload: user })}
               onConfirm={() => dispatch({ type: 'STEP_CHANGED', payload: steps.ROLES })}
               onClose={onClose}
             />
@@ -125,7 +127,7 @@ AddUsers.propTypes = {
   onClose: PropTypes.func.isRequired,
   isShown: PropTypes.bool.isRequired,
   orgId: PropTypes.string.isRequired,
-  unavailableUserIds: PropTypes.arrayOf(PropTypes.string).isRequired
+  unavailableUserIds: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 function useFetchAvailableOrgMemberships(orgId, unavailableUserIds) {
@@ -135,13 +137,13 @@ function useFetchAvailableOrgMemberships(orgId, unavailableUserIds) {
     const includePaths = ['sys.user'];
     const promise = getAllMembershipsWithQuery(orgEndpoint, {
       order: ['sys.user.firstName', 'sys.user.email'],
-      include: includePaths
+      include: includePaths,
     });
 
     const allOrgMemberships = await fetchAndResolve(promise, includePaths);
     // get all memberships where the user is not already a member of the space
     return allOrgMemberships.filter(
-      membership => !unavailableUserIds.includes(membership.sys.user.sys.id)
+      (membership) => !unavailableUserIds.includes(membership.sys.user.sys.id)
     );
   }, [orgId, unavailableUserIds]);
 
@@ -162,7 +164,7 @@ async function inviteUsers(selectedUsers, selectedRoles) {
   const fulfilled = [];
   const rejected = [];
 
-  const promises = selectedUsers.map(async orgMembership => {
+  const promises = selectedUsers.map(async (orgMembership) => {
     const email = orgMembership.sys.user.email;
     const roleIds = selectedRoles[orgMembership.sys.id];
     try {
@@ -177,7 +179,7 @@ async function inviteUsers(selectedUsers, selectedRoles) {
 
   track('teams_in_space:users_added', {
     numErr: rejected.length,
-    numSuccess: fulfilled.length
+    numSuccess: fulfilled.length,
   });
 
   // get all unexpected rejections (not rejected because user is already member of the space)

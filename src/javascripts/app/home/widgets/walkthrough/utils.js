@@ -5,10 +5,10 @@
  * @return {Promise<ReactComponent>}
  */
 export const getReactJoyride = () =>
-  new Promise(res => {
+  new Promise((res) => {
     require.ensure(
       ['react-joyride'],
-      require => res(require('react-joyride').default),
+      (require) => res(require('react-joyride').default),
       'react-joyride'
     );
   });

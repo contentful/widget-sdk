@@ -19,10 +19,10 @@ export function create(spaceEndpoint) {
     return spaceEndpoint({
       method: 'GET',
       path: ['environment_aliases'],
-      query: { limit: ALIASES_LIMIT }
+      query: { limit: ALIASES_LIMIT },
     })
-      .then(response => response.items)
-      .catch(error => {
+      .then((response) => response.items)
+      .catch((error) => {
         if (error.code === 'FeatureNotEnabled') {
           return [];
         }
@@ -36,8 +36,8 @@ export function create(spaceEndpoint) {
   function get({ id }) {
     return spaceEndpoint({
       method: 'GET',
-      path: ['environment_aliases', id]
-    }).catch(error => {
+      path: ['environment_aliases', id],
+    }).catch((error) => {
       if (error.code === 'FeatureNotEnabled') {
         return null;
       }
@@ -58,13 +58,13 @@ export function create(spaceEndpoint) {
             sys: {
               id: aliasedEnvironment,
               type: 'Link',
-              linkType: 'Environment'
-            }
-          }
-        }
+              linkType: 'Environment',
+            },
+          },
+        },
       },
       {
-        'X-Contentful-Version': version
+        'X-Contentful-Version': version,
       }
     );
   }
@@ -76,8 +76,8 @@ export function create(spaceEndpoint) {
       method: 'PUT',
       path: ['optin', 'environment-aliases'],
       data: {
-        newEnvironmentId
-      }
+        newEnvironmentId,
+      },
     });
   }
 }

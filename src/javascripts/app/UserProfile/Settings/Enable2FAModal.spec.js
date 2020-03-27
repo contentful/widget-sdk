@@ -6,31 +6,31 @@ import { enableTotp } from './AccountRepository';
 import { createQRCodeDataURI } from './utils';
 
 jest.mock('./utils', () => ({
-  createQRCodeDataURI: jest.fn()
+  createQRCodeDataURI: jest.fn(),
 }));
 
 jest.mock('./AccountRepository', () => ({
-  enableTotp: jest.fn()
+  enableTotp: jest.fn(),
 }));
 
 describe('Enable2FAModal', () => {
-  const makeTotp = custom => {
+  const makeTotp = (custom) => {
     return Object.assign(
       {
         secret: 'SECRET_ABCD',
         enabled: false,
-        provisioningUri: 'optauth://totp/Contentful:test@example.com?secret=SECRET_ABCD'
+        provisioningUri: 'optauth://totp/Contentful:test@example.com?secret=SECRET_ABCD',
       },
       custom
     );
   };
 
-  const build = custom => {
+  const build = (custom) => {
     const props = Object.assign(
       {
         totp: makeTotp(),
         onConfirm: () => {},
-        onCancel: () => {}
+        onCancel: () => {},
       },
       custom
     );

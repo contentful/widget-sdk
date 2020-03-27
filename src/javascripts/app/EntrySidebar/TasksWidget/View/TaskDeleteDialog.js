@@ -7,7 +7,7 @@ export default class TaskDeleteDialog extends Component {
   static propTypes = {
     isShown: PropTypes.bool.isRequired,
     onConfirm: PropTypes.func.isRequired,
-    onCancel: PropTypes.func.isRequired
+    onCancel: PropTypes.func.isRequired,
   };
 
   render() {

@@ -8,7 +8,7 @@ import {
   onDialogOpen as trackDialogOpen,
   onDialogConfirm as trackDialogConfirm,
   onIncomingLinkClick as trackIncomingLinkClick,
-  Origin as IncomingLinksOrigin
+  Origin as IncomingLinksOrigin,
 } from 'analytics/events/IncomingLinks';
 
 import Loader from './Loader';
@@ -24,10 +24,10 @@ class StateChangeConfirmation extends React.Component {
     action: PropTypes.oneOf([Action.Unpublish(), Action.Delete(), Action.Archive()]).isRequired,
     entityInfo: PropTypes.shape({
       id: PropTypes.string,
-      type: PropTypes.oneOf([EntityType.ASSET, EntityType.ENTRY])
+      type: PropTypes.oneOf([EntityType.ASSET, EntityType.ENTRY]),
     }),
     dialogSessionId: PropTypes.string.isRequired,
-    isShown: PropTypes.bool
+    isShown: PropTypes.bool,
   };
 
   handleClick = ({ linkEntityId, incomingLinksCount }) => {
@@ -39,11 +39,11 @@ class StateChangeConfirmation extends React.Component {
       entityType: this.props.entityInfo.type,
       incomingLinksCount,
       dialogAction,
-      dialogSessionId
+      dialogSessionId,
     });
   };
 
-  handleConfirm = incomingLinksCount => {
+  handleConfirm = (incomingLinksCount) => {
     const { action, dialogSessionId, entityInfo, onConfirm } = this.props;
     onConfirm();
     trackDialogConfirm({
@@ -51,22 +51,22 @@ class StateChangeConfirmation extends React.Component {
       entityType: entityInfo.type,
       dialogAction: action,
       dialogSessionId,
-      incomingLinksCount
+      incomingLinksCount,
     });
   };
 
-  handleDialogOpen = incomingLinksCount => {
+  handleDialogOpen = (incomingLinksCount) => {
     const { action, dialogSessionId, entityInfo } = this.props;
     trackDialogOpen({
       entityId: entityInfo.id,
       entityType: entityInfo.type,
       dialogAction: action,
       dialogSessionId,
-      incomingLinksCount
+      incomingLinksCount,
     });
   };
 
-  handleDialogArchive = incomingLinksCount => {
+  handleDialogArchive = (incomingLinksCount) => {
     const { dialogSessionId, entityInfo, onArchive } = this.props;
     onArchive();
     trackDialogConfirm({
@@ -74,7 +74,7 @@ class StateChangeConfirmation extends React.Component {
       entityType: entityInfo.type,
       dialogAction: Action.Archive(),
       dialogSessionId,
-      incomingLinksCount
+      incomingLinksCount,
     });
   };
 
@@ -89,7 +89,7 @@ class StateChangeConfirmation extends React.Component {
           const { title, body, confirm, secondary } = getMessages({
             action,
             entityInfo,
-            links
+            links,
           });
 
           return (

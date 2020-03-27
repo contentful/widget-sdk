@@ -18,7 +18,7 @@ import { h } from 'utils/legacy-html-hyperscript';
 export default function makeBase(stateDefinition) {
   const wrapped = {
     ...stateDefinition,
-    template: wrapTemplate(stateDefinition)
+    template: wrapTemplate(stateDefinition),
   };
 
   delete wrapped.loadingText;
@@ -40,33 +40,33 @@ function wrapTemplate(stateDefinition) {
     h(
       'div',
       {
-        ngShow: 'context.ready && !context.forbidden'
+        ngShow: 'context.ready && !context.forbidden',
       },
       [
         h('react-component', {
           name: 'ui/Loader',
-          props: `{watchStateChange: true, message: '${stateDefinition.loadingText}'}`
+          props: `{watchStateChange: true, message: '${stateDefinition.loadingText}'}`,
         }),
-        ...template
+        ...template,
       ]
     ),
     h('react-component', {
       ngIf: '!context.ready && !context.forbidden',
       name: 'ui/Loader',
-      props: `{isShown: true, message: '${stateDefinition.loadingText}'}`
+      props: `{isShown: true, message: '${stateDefinition.loadingText}'}`,
     }),
     h(
       'div.workbench.workbench-forbidden.x--center',
       {
-        ngShow: 'context.forbidden'
+        ngShow: 'context.forbidden',
       },
       [
         h('div.workbench-forbidden__over-headline', ['Access forbidden (403)']),
         h('div.workbench-forbidden__headline', [`You don’t have access to this page.`]),
         h('div.workbench-forbidden__message', [
-          `Contact the administrator of this space to get access.`
-        ])
+          `Contact the administrator of this space to get access.`,
+        ]),
       ]
-    )
+    ),
   ].join('');
 }

@@ -9,13 +9,13 @@ import {
   DropdownList,
   DropdownListItem,
   IconButton,
-  Notification
+  Notification,
 } from '@contentful/forma-36-react-components';
 
 const styles = {
   dropdown: css({
-    display: 'flex'
-  })
+    display: 'flex',
+  }),
 };
 
 export default function EntrySecondaryActions({ entityInfo, entryActions, onDelete }) {
@@ -26,28 +26,28 @@ export default function EntrySecondaryActions({ entityInfo, entryActions, onDele
     return accessChecker.canPerformActionOnEntryOfType('create', entityInfo.contentTypeId);
   };
 
-  const goToCreatedEntry = entry => {
+  const goToCreatedEntry = (entry) => {
     Navigator.go({
       path: '^.detail',
       params: {
         entryId: entry.data.sys.id,
         previousEntries: '',
-        addToContext: false
-      }
+        addToContext: false,
+      },
     });
   };
 
   const handleDuplicate = () => {
     return entryActions
       .onDuplicate()
-      .then(entry => {
+      .then((entry) => {
         goToCreatedEntry(entry);
         setOpen(false);
       })
-      .catch(error => {
+      .catch((error) => {
         logger.logError(`Duplicating entry failed`, {
           error,
-          message: error.message
+          message: error.message,
         });
         Notification.error('Entry duplication failed');
       });
@@ -56,14 +56,14 @@ export default function EntrySecondaryActions({ entityInfo, entryActions, onDele
   const handleAdd = () => {
     entryActions
       .onAdd()
-      .then(entry => {
+      .then((entry) => {
         goToCreatedEntry(entry);
         setOpen(false);
       })
-      .catch(error => {
+      .catch((error) => {
         logger.logError(`Adding entry failed`, {
           error,
-          message: error.message
+          message: error.message,
         });
         Notification.error('Entry creation failed');
       });
@@ -130,16 +130,16 @@ EntrySecondaryActions.propTypes = {
     onAdd: PropTypes.func,
     onDuplicate: PropTypes.func,
     onShowDisabledFields: PropTypes.func,
-    getContentType: PropTypes.func
+    getContentType: PropTypes.func,
   }),
   onDelete: PropTypes.shape({
-    execute: PropTypes.func
+    execute: PropTypes.func,
   }),
   entityInfo: PropTypes.shape({
     id: PropTypes.string,
     contentTypeId: PropTypes.string,
     contentType: PropTypes.shape({
-      name: PropTypes.string
-    })
-  })
+      name: PropTypes.string,
+    }),
+  }),
 };

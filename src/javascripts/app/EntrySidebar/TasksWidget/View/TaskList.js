@@ -9,7 +9,7 @@ import {
   TextLink,
   ValidationMessage,
   SkeletonContainer,
-  SkeletonBodyText
+  SkeletonBodyText,
 } from '@contentful/forma-36-react-components';
 import { taskListStyles as styles } from './styles';
 import { trackTaskCreated, trackTaskResolved } from '../analytics';
@@ -17,7 +17,7 @@ import { trackTaskCreated, trackTaskResolved } from '../analytics';
 export default class TasksWidget extends React.PureComponent {
   static propTypes = {
     viewData: PropTypes.shape(TaskListViewData),
-    tasksInteractor: PropTypes.shape(TasksInteractor)
+    tasksInteractor: PropTypes.shape(TasksInteractor),
   };
 
   renderLoadingState() {
@@ -79,7 +79,7 @@ export default class TasksWidget extends React.PureComponent {
             </Visible>
             <Visible if={tasks.length}>
               <ol className={styles.list}>
-                {tasks.map(taskViewData => this.renderTask(taskViewData))}
+                {tasks.map((taskViewData) => this.renderTask(taskViewData))}
               </ol>
             </Visible>
             {errorMessage && (

@@ -2,7 +2,7 @@ import getOrgId from './getOrgId';
 import getOrganizationsList from './getOrganizationsList';
 import { find, get } from 'lodash';
 
-export default state => {
+export default (state) => {
   const orgId = getOrgId(state);
 
   if (!orgId) {
@@ -15,5 +15,5 @@ export default state => {
     return null;
   }
 
-  return find(organizations, org => get(org, ['sys', 'id']) === orgId);
+  return find(organizations, (org) => get(org, ['sys', 'id']) === orgId);
 };

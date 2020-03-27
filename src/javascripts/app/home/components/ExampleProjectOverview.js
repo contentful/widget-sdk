@@ -7,7 +7,7 @@ import {
   Paragraph,
   Button,
   TextLink,
-  Spinner
+  Spinner,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { getModule } from 'NgRegistry';
@@ -25,17 +25,17 @@ const styles = {
     width: '447px',
     height: '307px',
     backgroundSize: '447px 307px',
-    marginRight: tokens.spacingXl
+    marginRight: tokens.spacingXl,
   }),
   spinner: css({ marginLeft: tokens.spacingS }),
-  previewDescription: css({ marginTop: tokens.spacingS })
+  previewDescription: css({ marginTop: tokens.spacingS }),
 };
 const ExampleProjectOverview = ({ cdaToken, cpaToken }) => {
   const spaceContext = getModule('spaceContext');
   const [isLoading, setLoading] = useState(false);
 
-  const findCourse = courses => {
-    const course = courses.find(lesson => {
+  const findCourse = (courses) => {
+    const course = courses.find((lesson) => {
       const matchSlug = lesson.fields.slug['en-US'] === 'hello-contentful';
       const matchTitle = lesson.fields.title['en-US'] === 'Hello Contentful';
       return matchSlug || matchTitle;
@@ -57,7 +57,7 @@ const ExampleProjectOverview = ({ cdaToken, cpaToken }) => {
 
     // get all lesson entries
     const courses = await spaceContext.cma.getEntries({
-      content_type: 'course'
+      content_type: 'course',
     });
 
     // find a lesson where we want edit
@@ -67,12 +67,12 @@ const ExampleProjectOverview = ({ cdaToken, cpaToken }) => {
       go({
         path: ['spaces', 'detail', 'entries', 'detail'],
         params: {
-          entryId: helloCourse.sys.id
-        }
+          entryId: helloCourse.sys.id,
+        },
       });
     } else {
       go({
-        path: ['spaces', 'detail', 'entries', 'list']
+        path: ['spaces', 'detail', 'entries', 'list'],
       });
     }
 
@@ -96,7 +96,7 @@ const ExampleProjectOverview = ({ cdaToken, cpaToken }) => {
       editorial_features: 'enabled',
       // we want to have faster feedback for the user after his changes
       // CPA reacts to changes in ~5 seconds, CDA in more than 10
-      api: 'cpa'
+      api: 'cpa',
     };
     const queryString = qs.stringify(queryParams);
 
@@ -147,7 +147,7 @@ const ExampleProjectOverview = ({ cdaToken, cpaToken }) => {
 
 ExampleProjectOverview.propTypes = {
   cdaToken: PropTypes.string.isRequired,
-  cpaToken: PropTypes.string.isRequired
+  cpaToken: PropTypes.string.isRequired,
 };
 
 export default ExampleProjectOverview;

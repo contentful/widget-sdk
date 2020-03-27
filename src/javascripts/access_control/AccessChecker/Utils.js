@@ -18,7 +18,7 @@ import _ from 'lodash';
 export function wasForbidden(context) {
   const $q = getModule('$q');
 
-  return res => {
+  return (res) => {
     if ([403, 404].includes(parseInt(get(res, 'statusCode'), 10))) {
       context.forbidden = true;
       // Using $q instead of native promises because it should update context

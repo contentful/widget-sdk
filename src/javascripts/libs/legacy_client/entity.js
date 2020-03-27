@@ -17,15 +17,15 @@ function Entity(data, persistenceContext) {
 }
 
 Entity.prototype = {
-  getSys: function() {
+  getSys: function () {
     return this.data && this.data.sys;
   },
 
-  getId: function() {
+  getId: function () {
     return this.getSys() && this.data.sys.id;
   },
 
-  getName: function() {
+  getName: function () {
     return this.getId();
   },
 
@@ -38,33 +38,33 @@ Entity.prototype = {
    *
    * TODO find a more descriptive name
    */
-  getIdentity: function() {
+  getIdentity: function () {
     const id = this.getId();
     const type = this.getType();
     if (id && type) return '' + type + '.' + id;
   },
 
-  getType: function() {
+  getType: function () {
     return this.getSys() && this.data.sys.type;
   },
 
-  getCreatedAt: function() {
+  getCreatedAt: function () {
     return this.getSys() && dateStringToIso(this.data.sys.createdAt);
   },
 
-  getCreatedBy: function() {
+  getCreatedBy: function () {
     return this.getSys() && this.data.sys.createdBy;
   },
 
-  getUpdatedAt: function() {
+  getUpdatedAt: function () {
     return this.getSys() && dateStringToIso(this.data.sys.updatedAt);
   },
 
-  getUpdatedBy: function() {
+  getUpdatedBy: function () {
     return this.getSys() && this.data.sys.updatedBy;
   },
 
-  getVersion: function() {
+  getVersion: function () {
     if (this.isDeleted()) {
       return this.deletedAtVersion;
     } else {
@@ -72,38 +72,38 @@ Entity.prototype = {
     }
   },
 
-  setVersion: function(version) {
+  setVersion: function (version) {
     if (this.getSys()) {
       this.data.sys.version = version;
     }
   },
 
-  setUpdatedAt: function(date) {
+  setUpdatedAt: function (date) {
     if (this.getSys()) {
       this.data.sys.updatedAt = date;
     }
   },
 
-  update: function(data) {
+  update: function (data) {
     this.data = data;
     return this;
   },
 
-  isDeleted: function() {
+  isDeleted: function () {
     return !!this.deletedAtVersion || !this.data;
   },
 
-  canDelete: function() {
+  canDelete: function () {
     return !this.isDeleted();
   },
 
-  setDeleted: function() {
+  setDeleted: function () {
     if (!this.isDeleted()) {
       this.markDeletedAtVersion();
     }
   },
 
-  markDeletedAtVersion: function() {
+  markDeletedAtVersion: function () {
     if (this.getSys() && _.isNumber(this.data.sys.version)) {
       this.deletedAtVersion = this.data.sys.version;
     } else {
@@ -111,7 +111,7 @@ Entity.prototype = {
     }
   },
 
-  save: function(headers) {
+  save: function (headers) {
     headers = headers || {};
 
     let endpoint, method;
@@ -131,23 +131,23 @@ Entity.prototype = {
       .headers(headers)
       .payload(this.data)
       .send(method)
-      .then(function(response) {
+      .then(function (response) {
         self.update(response);
         return self.persistenceContext.store(self);
       });
   },
 
-  delete: function() {
+  delete: function () {
     const self = this;
     return this.endpoint()
       .delete()
-      .then(function() {
+      .then(function () {
         self.setDeleted();
         return self.persistenceContext.store(self);
       });
   },
 
-  endpoint: function(...args) {
+  endpoint: function (...args) {
     const pc = this.persistenceContext;
     const id = this.getId();
     if (id) {
@@ -155,7 +155,7 @@ Entity.prototype = {
     } else {
       return new Request().throw(new Error('Cannot determine endpoint: Entity does not have id.'));
     }
-  }
+  },
 };
 
 mixinChildResourceMethods(Entity.prototype);

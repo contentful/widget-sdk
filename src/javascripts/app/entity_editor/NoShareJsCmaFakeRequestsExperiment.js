@@ -6,7 +6,7 @@ import { localFieldChanges } from './Document';
 
 const PATH = {
   Entry: 'entries',
-  Asset: 'assets'
+  Asset: 'assets',
 };
 
 /**
@@ -20,7 +20,7 @@ const PATH = {
 export default async function create({ $scope, spaceContext, entityInfo }) {
   const variation = await getVariation(ENTITY_EDITOR_CMA_EXPERIMENT, {
     organizationId: spaceContext.getData('organization.sys.id'),
-    spaceId: spaceContext.space.getId()
+    spaceId: spaceContext.space.getId(),
   });
   const isEnabled = variation !== undefined && variation > -1;
   if (isEnabled) {
@@ -34,12 +34,13 @@ export default async function create({ $scope, spaceContext, entityInfo }) {
       path: [PATH[entityInfo.type], entityInfo.id, 'edit.php'],
       query: {
         user: spaceContext.user.sys.id,
-        throttle: throttleMs
-      }
+        throttle: throttleMs,
+      },
     });
 
-    const throttledRelevantChanges$ = localFieldChanges($scope.otDoc)
-      .throttle(throttleMs, { leading: false });
+    const throttledRelevantChanges$ = localFieldChanges($scope.otDoc).throttle(throttleMs, {
+      leading: false,
+    });
 
     K.onValueScope($scope, throttledRelevantChanges$, () => {
       spaceContext.endpoint(createRequest()).then(noop, noop);

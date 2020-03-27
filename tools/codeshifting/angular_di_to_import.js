@@ -11,10 +11,10 @@ const regUtils = [
   'registerService',
   'registerConstant',
   'registerProvider',
-  'registerValue'
+  'registerValue',
 ];
 
-module.exports = function(fileInfo, { jscodeshift: j }) {
+module.exports = function (fileInfo, { jscodeshift: j }) {
   const absPath = path.resolve(fileInfo.path);
   const modulesPath = `${absPath.split('/src/javascripts')[0]}/src/javascripts`;
 
@@ -22,9 +22,9 @@ module.exports = function(fileInfo, { jscodeshift: j }) {
 
   const imports = {};
 
-  ast.find(j.CallExpression).map(node => {
+  ast.find(j.CallExpression).map((node) => {
     const {
-      value: { callee }
+      value: { callee },
     } = node;
 
     let result = null;
@@ -41,7 +41,7 @@ module.exports = function(fileInfo, { jscodeshift: j }) {
           imports[foundDep] = [];
         }
 
-        importDefs.forEach(def => imports[foundDep].push(def));
+        importDefs.forEach((def) => imports[foundDep].push(def));
       });
 
       return result.node;
@@ -52,20 +52,20 @@ module.exports = function(fileInfo, { jscodeshift: j }) {
 
   // Remove getModule import if it isn't used
   const usesGetModule =
-    ast.find(j.CallExpression).filter(node => {
+    ast.find(j.CallExpression).filter((node) => {
       return node.value.callee.name === 'getModule';
     }).length > 0;
 
   if (!usesGetModule) {
     // Remove reference to getModule import if it exists
-    ast.find(j.ImportDeclaration).forEach(node => {
+    ast.find(j.ImportDeclaration).forEach((node) => {
       const {
-        value: { source, specifiers }
+        value: { source, specifiers },
       } = node;
 
       if (source.value === 'NgRegistry') {
         const getModuleSpecifier = specifiers.find(
-          specifier => specifier.imported.name === 'getModule'
+          (specifier) => specifier.imported.name === 'getModule'
         );
 
         if (getModuleSpecifier) {
@@ -79,10 +79,7 @@ module.exports = function(fileInfo, { jscodeshift: j }) {
     });
   }
 
-  const lastImport = ast
-    .find(j.ImportDeclaration)
-    .paths()
-    .slice(-1)[0];
+  const lastImport = ast.find(j.ImportDeclaration).paths().slice(-1)[0];
 
   Object.entries(imports).forEach(([imp, rawValues]) => {
     // const pos = i + j + 1;
@@ -145,7 +142,7 @@ module.exports = function(fileInfo, { jscodeshift: j }) {
 
 function handleDi(modulesPath, node) {
   const {
-    value: { arguments: args }
+    value: { arguments: args },
   } = node;
 
   const paramsToRemove = [];
@@ -189,7 +186,7 @@ function handleDi(modulesPath, node) {
 
 function handleGetModule(modulesPath, node) {
   const {
-    value: { arguments: args }
+    value: { arguments: args },
   } = node;
 
   let imp = null;
@@ -215,29 +212,29 @@ function generateImportDefinition(param) {
     return [
       {
         type: 'all',
-        value: param.name
-      }
+        value: param.name,
+      },
     ];
   } else if (param.type === 'ObjectPattern') {
     if (param.properties.length === 1 && param.properties[0].key.name === 'default') {
       return [
         {
           type: 'direct',
-          value: param.properties[0].value.name
-        }
+          value: param.properties[0].value.name,
+        },
       ];
     } else {
-      return param.properties.map(prop => {
+      return param.properties.map((prop) => {
         if (prop.key.name === prop.value.name) {
           return {
             type: 'property',
-            value: prop.key.name
+            value: prop.key.name,
           };
         } else {
           return {
             type: 'property',
             value: prop.key.name,
-            castValue: prop.value.name
+            castValue: prop.value.name,
           };
         }
       });

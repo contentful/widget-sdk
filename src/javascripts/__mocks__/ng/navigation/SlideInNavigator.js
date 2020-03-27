@@ -3,5 +3,5 @@ export const goToPreviousSlideOrExit = jest.fn();
 
 export default {
   goToSlideInEntity,
-  goToPreviousSlideOrExit
+  goToPreviousSlideOrExit,
 };

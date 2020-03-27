@@ -5,7 +5,7 @@ import { Editor } from 'slate';
 
 import Toolbar from '..';
 import ValidationType, {
-  VALIDATABLE_NODE_TYPES
+  VALIDATABLE_NODE_TYPES,
 } from 'components/field_dialog/RichTextValidationType';
 import { BLOCKS, INLINES } from '@contentful/rich-text-types';
 
@@ -21,18 +21,18 @@ const fakeProps = () => ({
     logShortcutAction: jest.fn(),
     logViewportAction: jest.fn(),
     widgetAPI: {
-      field: {}
-    }
+      field: {},
+    },
   },
   permissions: {
-    canAccessAssets: true
-  }
+    canAccessAssets: true,
+  },
 });
 
 const dropDownEmbedNodeTypes = [
   BLOCKS.EMBEDDED_ASSET,
   BLOCKS.EMBEDDED_ENTRY,
-  INLINES.EMBEDDED_ENTRY
+  INLINES.EMBEDDED_ENTRY,
 ];
 
 describe('Toolbar', () => {
@@ -62,7 +62,7 @@ describe('Toolbar', () => {
     const props = fakeProps();
     props.richTextAPI.widgetAPI.field.validations = [
       { [ValidationType.ENABLED_NODE_TYPES]: [] },
-      { [ValidationType.ENABLED_MARKS]: [] }
+      { [ValidationType.ENABLED_MARKS]: [] },
     ];
 
     const toolbar = Enzyme.mount(<Toolbar {...props} />);
@@ -98,9 +98,10 @@ describe('Toolbar', () => {
     props.richTextAPI.widgetAPI.field.validations = [
       {
         [ValidationType.ENABLED_NODE_TYPES]: VALIDATABLE_NODE_TYPES.filter(
-          nodeType => ![BLOCKS.OL_LIST, BLOCKS.UL_LIST, BLOCKS.QUOTE, BLOCKS.HR].includes(nodeType)
-        )
-      }
+          (nodeType) =>
+            ![BLOCKS.OL_LIST, BLOCKS.UL_LIST, BLOCKS.QUOTE, BLOCKS.HR].includes(nodeType)
+        ),
+      },
     ];
     const toolbar = Enzyme.mount(<Toolbar {...props} />);
     expect(toolbar.find('[data-test-id="list-divider"]')).toHaveLength(0);
@@ -111,12 +112,12 @@ describe('Toolbar', () => {
     props.richTextAPI.widgetAPI.field.validations = [
       {
         [ValidationType.ENABLED_NODE_TYPES]: VALIDATABLE_NODE_TYPES.filter(
-          nodeType =>
+          (nodeType) =>
             ![INLINES.ASSET_HYPERLINK, INLINES.HYPERLINK, INLINES.ENTRY_HYPERLINK].includes(
               nodeType
             )
-        )
-      }
+        ),
+      },
     ];
     const toolbar = Enzyme.mount(<Toolbar {...props} />);
     expect(toolbar.find('[data-test-id="hyperlink-divider"]')).toHaveLength(0);
@@ -127,9 +128,9 @@ describe('Toolbar', () => {
     props.richTextAPI.widgetAPI.field.validations = [
       {
         [ValidationType.ENABLED_NODE_TYPES]: VALIDATABLE_NODE_TYPES.filter(
-          nodeType => !dropDownEmbedNodeTypes.includes(nodeType)
-        )
-      }
+          (nodeType) => !dropDownEmbedNodeTypes.includes(nodeType)
+        ),
+      },
     ];
     const toolbar = Enzyme.mount(<Toolbar {...props} />);
     expect(toolbar.find('[data-test-id="toolbar-entry-dropdown-toggle"]')).toHaveLength(0);
@@ -141,16 +142,16 @@ describe('Toolbar', () => {
       props.richTextAPI.widgetAPI.field.validations = [
         {
           [ValidationType.ENABLED_NODE_TYPES]: VALIDATABLE_NODE_TYPES.filter(
-            nodeType => nodeType !== embedNodeType
-          )
-        }
+            (nodeType) => nodeType !== embedNodeType
+          ),
+        },
       ];
       const toolbar = Enzyme.mount(<Toolbar {...props} />);
       toolbar.find('button[data-test-id="toolbar-entry-dropdown-toggle"]').simulate('mouseDown');
       expect(toolbar.find(`[data-test-id="toolbar-toggle-${embedNodeType}"]`)).toHaveLength(0);
       dropDownEmbedNodeTypes
-        .filter(nodeType => nodeType !== embedNodeType)
-        .forEach(nodeType => {
+        .filter((nodeType) => nodeType !== embedNodeType)
+        .forEach((nodeType) => {
           expect(toolbar.find(`[data-test-id="toolbar-toggle-${nodeType}"]`)).toHaveLength(1);
         });
     }
@@ -160,7 +161,7 @@ describe('Toolbar', () => {
     const props = fakeProps();
     props.permissions.canAccessAssets = false;
     props.richTextAPI.widgetAPI.field.validations = [
-      { [ValidationType.ENABLED_NODE_TYPES]: VALIDATABLE_NODE_TYPES }
+      { [ValidationType.ENABLED_NODE_TYPES]: VALIDATABLE_NODE_TYPES },
     ];
     const toolbar = Enzyme.mount(<Toolbar {...props} />);
     toolbar.find('button[data-test-id="toolbar-entry-dropdown-toggle"]').simulate('mouseDown');
@@ -168,8 +169,8 @@ describe('Toolbar', () => {
       0
     );
     dropDownEmbedNodeTypes
-      .filter(nodeType => nodeType !== BLOCKS.EMBEDDED_ASSET)
-      .forEach(nodeType => {
+      .filter((nodeType) => nodeType !== BLOCKS.EMBEDDED_ASSET)
+      .forEach((nodeType) => {
         expect(toolbar.find(`[data-test-id="toolbar-toggle-${nodeType}"]`)).toHaveLength(1);
       });
   });

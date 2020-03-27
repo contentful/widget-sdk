@@ -5,10 +5,10 @@ export default function register() {
   registerDirective('cfSelection', () => ({
     restrict: 'A',
 
-    link: function(scope, el, attrs) {
+    link: function (scope, el, attrs) {
       scope.$watch(
         () => _.every(getEntities(), scope.selection.isSelected),
-        isSelected => {
+        (isSelected) => {
           el.prop('checked', isSelected);
         }
       );
@@ -24,6 +24,6 @@ export default function register() {
           return [];
         }
       }
-    }
+    },
   }));
 }

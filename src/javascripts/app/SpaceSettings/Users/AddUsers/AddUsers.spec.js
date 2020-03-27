@@ -7,7 +7,7 @@ import {
   screen,
   waitForElementToBeRemoved,
   waitForElement,
-  within
+  within,
 } from '@testing-library/react';
 import * as spaceContextMocked from 'ng/spaceContext';
 import { ADMIN_ROLE_ID } from 'access_control/constants';
@@ -19,23 +19,23 @@ const onCloseFn = jest.fn();
 const grant = fakeFactory.User({
   firstName: 'Grant',
   lastName: 'Sauer',
-  email: 'grant@example.com'
+  email: 'grant@example.com',
 });
 const victoria = fakeFactory.User({
   firstName: 'Victoria',
   lastName: 'Beleuta',
-  email: 'victoria@example.com'
+  email: 'victoria@example.com',
 });
 const patrycja = fakeFactory.User({
   firstName: 'Patrycja',
   lastName: 'Radaczyńska',
-  email: 'patrycja@example.com'
+  email: 'patrycja@example.com',
 });
 
 const mockOrgMemberships = [
   fakeFactory.OrganizationMembership('member', 'active', grant),
   fakeFactory.OrganizationMembership('member', 'active', victoria),
-  fakeFactory.OrganizationMembership('member', 'active', patrycja)
+  fakeFactory.OrganizationMembership('member', 'active', patrycja),
 ];
 
 const editorRole = fakeFactory.Role('Editor');
@@ -43,12 +43,12 @@ const authorRole = fakeFactory.Role('Author');
 const mockSpaceRoles = [editorRole, authorRole];
 
 jest.mock('access_control/OrganizationMembershipRepository', () => ({
-  getAllMembershipsWithQuery: jest.fn(async () => ({ items: mockOrgMemberships }))
+  getAllMembershipsWithQuery: jest.fn(async () => ({ items: mockOrgMemberships })),
 }));
 jest.mock('access_control/RoleRepository', () => ({
   getInstance: () => ({
-    getAll: jest.fn(async () => mockSpaceRoles)
-  })
+    getAll: jest.fn(async () => mockSpaceRoles),
+  }),
 }));
 
 describe('AddUsers', () => {
@@ -218,7 +218,7 @@ describe('AddUsers', () => {
       expect(spaceContextMocked.memberships.invite).toHaveBeenCalledTimes(2);
       expect(spaceContextMocked.memberships.invite.mock.calls).toEqual([
         [patrycja.email, [editorRole.sys.id]],
-        [victoria.email, [ADMIN_ROLE_ID]]
+        [victoria.email, [ADMIN_ROLE_ID]],
       ]);
 
       await waitForElement(() => screen.getByText('Invitations successfully sent.'));

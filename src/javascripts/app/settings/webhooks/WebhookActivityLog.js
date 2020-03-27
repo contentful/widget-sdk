@@ -7,7 +7,7 @@ import {
   TableBody,
   TableHead,
   TableRow,
-  TableCell
+  TableCell,
 } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink';
 import WebhookCallStatus from './WebhookCallStatus';
@@ -18,7 +18,7 @@ const PER_PAGE = 30;
 class WebhookActivityLog extends React.Component {
   static propTypes = {
     webhookId: PropTypes.string,
-    registerLogRefreshAction: PropTypes.func.isRequired
+    registerLogRefreshAction: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -41,13 +41,11 @@ class WebhookActivityLog extends React.Component {
 
     this.setState({ loading: true });
 
-    return new Promise(resolve => {
-      webhookRepo.logs
-        .getCalls(webhookId)
-        .then(
-          calls => this.setState({ page: 0, loading: false, calls }, () => resolve()),
-          () => this.setState({ page: 0, loading: false, calls: [] }, () => resolve())
-        );
+    return new Promise((resolve) => {
+      webhookRepo.logs.getCalls(webhookId).then(
+        (calls) => this.setState({ page: 0, loading: false, calls }, () => resolve()),
+        () => this.setState({ page: 0, loading: false, calls: [] }, () => resolve())
+      );
     });
   }
 
@@ -80,12 +78,12 @@ class WebhookActivityLog extends React.Component {
             )}
             {!loading &&
               pageCalls.length > 0 &&
-              pageCalls.map(call => {
+              pageCalls.map((call) => {
                 return (
                   <StateLink
                     path="^.detail.call"
                     params={{
-                      callId: call.sys.id
+                      callId: call.sys.id,
                     }}
                     key={call.sys.id}>
                     {({ onClick }) => (
@@ -116,20 +114,20 @@ class WebhookActivityLog extends React.Component {
           <a
             href=""
             className="webhook-calls__paginator-item"
-            onClick={event => {
+            onClick={(event) => {
               event.preventDefault();
-              this.setState(s => ({ page: s.page - 1 }));
+              this.setState((s) => ({ page: s.page - 1 }));
             }}>
             «
           </a>
         )}
 
-        {pages.map(cur => (
+        {pages.map((cur) => (
           <a
             key={cur}
             href=""
             className={`webhook-calls__paginator-item${page === cur ? ' x--active' : ''}`}
-            onClick={event => {
+            onClick={(event) => {
               event.preventDefault();
               this.setState({ page: cur });
             }}>
@@ -141,9 +139,9 @@ class WebhookActivityLog extends React.Component {
           <a
             href=""
             className="webhook-calls__paginator-item"
-            onClick={event => {
+            onClick={(event) => {
               event.preventDefault();
-              this.setState(s => ({ page: s.page + 1 }));
+              this.setState((s) => ({ page: s.page + 1 }));
             }}>
             »
           </a>

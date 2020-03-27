@@ -1,16 +1,16 @@
 import _ from 'lodash';
 
 describe('Generic transformer', () => {
-  beforeEach(async function() {
+  beforeEach(async function () {
     this.transformer = (await this.system.import('analytics/transformers/Generic')).default;
     this.baseObj = {
       userId: 'user-1',
       organizationId: 'org',
-      spaceId: 's1'
+      spaceId: 's1',
     };
   });
 
-  it('transforms data without payload', function() {
+  it('transforms data without payload', function () {
     const transformed = this.transformer('homepage:action!', this.baseObj);
     expect(transformed.data).toEqual({
       scope: 'homepage',
@@ -18,12 +18,12 @@ describe('Generic transformer', () => {
       executing_user_id: 'user-1',
       organization_id: 'org',
       space_id: 's1',
-      payload: {}
+      payload: {},
     });
     expect(transformed.context).toBeUndefined();
   });
 
-  it('transforms data with payload', function() {
+  it('transforms data with payload', function () {
     const additionalFields = { foo: true, bar: 123 };
     const transformed = this.transformer(
       'homepage:action!',
@@ -37,8 +37,8 @@ describe('Generic transformer', () => {
       space_id: 's1',
       payload: {
         foo: true,
-        bar: 123
-      }
+        bar: 123,
+      },
     });
   });
 });

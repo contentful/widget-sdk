@@ -2,7 +2,7 @@ import { getToken } from './Authentication';
 import { apiUrl, microBackendsUrl, gitRevision } from 'Config';
 
 const HAS_PROTO_RE = /^https?:\/\//;
-const trimTrailingSlashes = s => (s || '').replace(/\/+$/, '');
+const trimTrailingSlashes = (s) => (s || '').replace(/\/+$/, '');
 
 export default function createMicroBackendsClient({ backendName, withAuth, baseUrl }) {
   const base = trimTrailingSlashes(baseUrl || '');
@@ -33,7 +33,7 @@ export default function createMicroBackendsClient({ backendName, withAuth, baseU
     if (token) {
       Object.assign(opts.headers, {
         'X-Contentful-Api': trimTrailingSlashes(prepareApiUrl()),
-        'X-Contentful-Token': token
+        'X-Contentful-Token': token,
       });
     }
 

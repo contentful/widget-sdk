@@ -14,7 +14,7 @@ function getJobsCancelData(_eventName, data) {
     schema: getSchema('jobs_cancel').path,
     data: {
       job_id: data.job_id,
-      action: data.action
-    }
+      action: data.action,
+    },
   };
 }

@@ -8,7 +8,7 @@ const setStep = jest.fn();
 
 jest.mock('moment', () => ({
   __esModule: true,
-  default: () => ({ fromNow: () => 'a few seconds ago', format: () => 'formatted' })
+  default: () => ({ fromNow: () => 'a few seconds ago', format: () => 'formatted' }),
 }));
 
 const getComponent = (props = {}) => {

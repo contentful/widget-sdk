@@ -8,11 +8,11 @@ import { getSectionVisibility } from 'access_control/AccessChecker';
 export class WebhookNewRoute extends React.Component {
   static propTypes = {
     registerSaveAction: PropTypes.func.isRequired,
-    setDirty: PropTypes.func.isRequired
+    setDirty: PropTypes.func.isRequired,
   };
 
   state = {
-    webhook: { headers: [], topics: ['*.*'] }
+    webhook: { headers: [], topics: ['*.*'] },
   };
 
   render() {

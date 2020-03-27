@@ -3,7 +3,7 @@ import * as utils from './utils';
 import * as spaceContextMocked from 'ng/spaceContext';
 
 jest.mock('services/TokenStore', () => ({
-  getUserSync: jest.fn()
+  getUserSync: jest.fn(),
 }));
 
 const mockComment = {
@@ -11,16 +11,16 @@ const mockComment = {
   sys: {
     id: 'xyz',
     createdBy: {
-      sys: { id: 'abc' }
-    }
-  }
+      sys: { id: 'abc' },
+    },
+  },
 };
 
 describe('Comments utils', () => {
-  const setAdmin = isAdmin => {
+  const setAdmin = (isAdmin) => {
     spaceContextMocked.getData.mockReturnValue(isAdmin);
   };
-  const setIsAuthor = isAuthor => {
+  const setIsAuthor = (isAuthor) => {
     const id = isAuthor ? mockComment.sys.createdBy.sys.id : 'notthesameid';
     getUserSync.mockReturnValue({ sys: { id } });
   };

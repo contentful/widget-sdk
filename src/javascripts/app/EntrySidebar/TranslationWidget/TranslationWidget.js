@@ -12,7 +12,7 @@ import { track } from 'analytics/Analytics';
 
 const Tab = {
   MULTI: 'multiple',
-  SINGLE: 'single'
+  SINGLE: 'single',
 };
 
 const selectStyles = css({
@@ -21,30 +21,30 @@ const selectStyles = css({
     textAlignLast: 'right',
     border: '0',
     padding: `0 ${tokens.spacingL} 0 0`,
-    height: tokens.spacingL
+    height: tokens.spacingL,
   },
   '& select:focus': {
     border: 0,
-    boxShadow: 'none'
+    boxShadow: 'none',
   },
   '& svg': {
-    right: 0
-  }
+    right: 0,
+  },
 });
 
 export default class TranslationSidebarWidget extends Component {
   static propTypes = {
     localeData: PropTypes.shape({
-      isSingleLocaleModeOn: PropTypes.bool.isRequired
+      isSingleLocaleModeOn: PropTypes.bool.isRequired,
     }).isRequired,
     emitter: PropTypes.shape({
-      emit: PropTypes.func.isRequired
-    }).isRequired
+      emit: PropTypes.func.isRequired,
+    }).isRequired,
   };
 
-  onSelectChange = event => {
+  onSelectChange = (event) => {
     const {
-      target: { value }
+      target: { value },
     } = event;
     this.props.emitter.emit(SidebarEventTypes.SET_SINGLE_LOCALE_MODE, value === Tab.SINGLE);
     track('translation_sidebar:toggle_widget_mode', { currentMode: value });

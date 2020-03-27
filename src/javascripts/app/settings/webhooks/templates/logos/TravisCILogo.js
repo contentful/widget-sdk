@@ -1,6 +1,6 @@
 import React from 'react';
 
-const TravisLogo = props => (
+const TravisLogo = (props) => (
   <svg viewBox="0 0 48 48" width={32} height={32} {...props}>
     <path d="M6 25s4.207 2 18 2 18-2 18-2v-4H6z" fill="#afb42b" />
     <path

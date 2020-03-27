@@ -10,7 +10,7 @@ const SnapshotStatus = ({ isCurrent, snapshotType }) => {
 
 SnapshotStatus.propTypes = {
   isCurrent: PropTypes.bool,
-  snapshotType: PropTypes.string
+  snapshotType: PropTypes.string,
 };
 
 export default SnapshotStatus;

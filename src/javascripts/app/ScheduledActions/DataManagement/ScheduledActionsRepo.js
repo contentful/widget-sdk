@@ -19,7 +19,7 @@ const batchedScheduleActionsLoader = _.memoize((spaceId, environmentId) => {
   return ScheduledActionsService.getJobs(spaceEndpoint, {
     order: 'scheduledFor.datetime',
     'sys.status': 'scheduled',
-    'environment.sys.id': environmentId
+    'environment.sys.id': environmentId,
   });
 });
 
@@ -32,7 +32,7 @@ export async function getPendingScheduledActions() {
 
   const isEnabled = await getScheduledActionsFeatureVariation({
     organizationId,
-    spaceId
+    spaceId,
   });
 
   if (!isEnabled) {
@@ -53,11 +53,11 @@ export default {
       jobs = await getPendingScheduledActions();
     } catch (err) {
       logger.logError('Failed to fetch pending jobs for entry editor', {
-        err
+        err,
       });
       jobs = [];
     }
     const relevantJobs = filterRelevantJobsForEntity(jobs, entityType, entityId);
     return sortJobsByRelevance(relevantJobs);
-  }
+  },
 };

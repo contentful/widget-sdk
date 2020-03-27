@@ -5,7 +5,7 @@ import ContentTypePageActions from './ContentTypePageActions';
 import {
   FieldsSection,
   ContentTypeIdSection,
-  DocumentationSection
+  DocumentationSection,
 } from './Sidebar/ContentModelSidebar';
 import EntryEditorAppearanceSection from './Sidebar/EntryEditorAppearanceSection';
 import PropTypes from 'prop-types';
@@ -22,7 +22,7 @@ export default function ContentTypesPage(props) {
   const [sidebarConfiguration, updateSidebarConfiguration] = useState(props.sidebarConfiguration);
 
   const onUpdateConfiguration = useCallback(
-    configuration => {
+    (configuration) => {
       updateSidebarConfiguration(configuration);
       props.actions.updateSidebarConfiguration(configuration);
     },
@@ -137,11 +137,11 @@ ContentTypesPage.propTypes = {
     updateOrder: PropTypes.func.isRequired,
     updateSidebarConfiguration: PropTypes.func.isRequired,
     updateEditorConfiguration: PropTypes.func.isRequired,
-    loadPreview: PropTypes.func.isRequired
+    loadPreview: PropTypes.func.isRequired,
   }).isRequired,
   hasAdvancedExtensibility: PropTypes.bool.isRequired,
   sidebarConfiguration: PropTypes.array,
   editorConfiguration: PropTypes.object,
   // TODO: rename to "widgets". Make sure it "isRequired".
-  extensions: PropTypes.array
+  extensions: PropTypes.array,
 };

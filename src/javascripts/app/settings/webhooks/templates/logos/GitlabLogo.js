@@ -1,6 +1,6 @@
 import React from 'react';
 
-const GitlabLogo = props => (
+const GitlabLogo = (props) => (
   <svg width={32} height={32} viewBox="0 0 500 500" {...props}>
     <g fill="none" fillRule="evenodd">
       <path

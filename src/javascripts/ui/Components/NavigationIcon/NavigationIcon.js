@@ -45,18 +45,18 @@ const SVGs = {
   media: media,
   settings: settings,
   apis: apis,
-  billing: billing
+  billing: billing,
 };
 
 const colorsConfig = {
   white: tokens.colorWhite,
-  green: tokens.colorGreenBase
+  green: tokens.colorGreenBase,
 };
 
 const sizesConfig = {
   small: '18px',
   medium: '24px',
-  large: '32px'
+  large: '32px',
 };
 
 const styles = {
@@ -64,8 +64,8 @@ const styles = {
     svg: css({
       width: '100%',
       height: '100%',
-      display: 'block'
-    })
+      display: 'block',
+    }),
   },
   flexShrink: 0,
   sizes: {
@@ -75,7 +75,7 @@ const styles = {
       maxWidth: sizesConfig.small,
       maxHeight: sizesConfig.small,
       minWidth: sizesConfig.small,
-      minHeight: sizesConfig.small
+      minHeight: sizesConfig.small,
     }),
     medium: css({
       width: sizesConfig.medium,
@@ -83,7 +83,7 @@ const styles = {
       maxWidth: sizesConfig.medium,
       maxHeight: sizesConfig.medium,
       minWidth: sizesConfig.medium,
-      minHeight: sizesConfig.medium
+      minHeight: sizesConfig.medium,
     }),
     large: css({
       width: sizesConfig.large,
@@ -91,16 +91,16 @@ const styles = {
       maxWidth: sizesConfig.large,
       maxHeight: sizesConfig.large,
       minWidth: sizesConfig.large,
-      minHeight: sizesConfig.large
-    })
-  }
+      minHeight: sizesConfig.large,
+    }),
+  },
 };
 
 const NavigationIcon = ({ className, size, icon, style, color, inNavigation }) => {
   const IconComponent = SVGs[icon];
 
   const iconSvgStyle = css({
-    fill: colorsConfig[color]
+    fill: colorsConfig[color],
   });
 
   if (!IconComponent) {
@@ -113,7 +113,7 @@ const NavigationIcon = ({ className, size, icon, style, color, inNavigation }) =
       data-test-id="product-icon"
       data-icon-name={inNavigation ? `nav-${icon}` : `headline-${icon}`} // temporary, CSS for navigation will be refactored
       className={cx('icon-component', className, styles.flexShrink, styles.pocIcon.svg, {
-        [`${styles.sizes[size]}`]: size
+        [`${styles.sizes[size]}`]: size,
       })}
       style={style}>
       {IconComponent && <IconComponent className={iconSvgStyle} />}
@@ -127,7 +127,7 @@ NavigationIcon.propTypes = {
   color: PropTypes.oneOf(Object.keys(colorsConfig)).isRequired,
   className: PropTypes.string,
   style: PropTypes.object,
-  inNavigation: PropTypes.bool // this is just temporary, will be removed as soon as navigation styles will be refactored
+  inNavigation: PropTypes.bool, // this is just temporary, will be removed as soon as navigation styles will be refactored
 };
 
 export default NavigationIcon;

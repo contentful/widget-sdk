@@ -9,7 +9,7 @@ export default class SidepanelContainer extends React.Component {
 
     this.state = {
       sidePanelIsShown: false,
-      orgDropdownIsShown: false
+      orgDropdownIsShown: false,
     };
   }
 
@@ -21,11 +21,11 @@ export default class SidepanelContainer extends React.Component {
     window.removeEventListener('keyup', this.handleEsc);
   }
 
-  setOrgDropdownIsShown = value => {
+  setOrgDropdownIsShown = (value) => {
     this.setState({ orgDropdownIsShown: value });
   };
 
-  setSidePanelIsShown = value => {
+  setSidePanelIsShown = (value) => {
     this.setState({ sidePanelIsShown: value });
   };
 
@@ -37,7 +37,7 @@ export default class SidepanelContainer extends React.Component {
     }
   };
 
-  handleEsc = ev => {
+  handleEsc = (ev) => {
     if (ev.keyCode === keycodes.ESC) {
       this.closeDropdownOrPanel();
     }
@@ -56,7 +56,7 @@ export default class SidepanelContainer extends React.Component {
           <Sidepanel
             sidePanelIsShown={this.state.sidePanelIsShown}
             orgDropdownIsShown={this.state.orgDropdownIsShown}
-            openOrgsDropdown={event => {
+            openOrgsDropdown={(event) => {
               if (this.state.orgDropdownIsShown === false) {
                 this.setOrgDropdownIsShown(true);
                 // Don't bubble click event to container that would close the dropdown

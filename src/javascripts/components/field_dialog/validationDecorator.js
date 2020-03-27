@@ -27,8 +27,8 @@ const validationSettings = {
   assetFileSize: { min: null, max: null },
   assetImageDimensions: {
     width: { min: null, max: null },
-    height: { min: null, max: null }
-  }
+    height: { min: null, max: null },
+  },
 };
 
 const validationLabels = {
@@ -36,7 +36,7 @@ const validationLabels = {
     Text: 'Limit character count',
     Symbol: 'Limit character count',
     Object: 'Limit number of properties',
-    RichText: 'Limit character count'
+    RichText: 'Limit character count',
   },
   range: 'Accept only specified number range',
   dateRange: 'Accept only specified date range',
@@ -47,7 +47,7 @@ const validationLabels = {
   linkContentType: 'Accept only specified entry type',
   linkMimetypeGroup: 'Accept only specified file types',
   assetFileSize: 'Accept only specified file size',
-  assetImageDimensions: 'Accept only specified image dimensions'
+  assetImageDimensions: 'Accept only specified image dimensions',
 };
 
 const validationHelpText = {
@@ -55,7 +55,7 @@ const validationHelpText = {
     Text: 'Specify a minimum and/or maximum allowed number of characters',
     Symbol: 'Specify a minimum and/or maximum allowed number of characters',
     Object: 'Specify a minimum and/or maximum allowed number of properties',
-    RichText: 'Specify a minimum and/or maximum allowed number of characters'
+    RichText: 'Specify a minimum and/or maximum allowed number of characters',
   },
   range: 'Specify a minimum and/or maximum allowed number for this field',
   dateRange: 'Specify an early and/or latest allowed date for this field',
@@ -69,7 +69,7 @@ const validationHelpText = {
   linkContentType: 'Make this field only accept entries from specified content type(s)',
   linkMimetypeGroup: 'Make this field only accept specified file types',
   assetFileSize: 'Specify a minimum and/or maximum allowed file size',
-  assetImageDimensions: 'Specify a minimum and/or maximum allowed image dimension'
+  assetImageDimensions: 'Specify a minimum and/or maximum allowed image dimension',
 };
 
 // Defines the rich text node validations that appear below the general
@@ -77,34 +77,34 @@ const validationHelpText = {
 const validatedNodeTypes = {
   [INLINES.ENTRY_HYPERLINK]: {
     description: 'Link to entry',
-    validations: ['linkContentType', 'size']
+    validations: ['linkContentType', 'size'],
   },
   [BLOCKS.EMBEDDED_ENTRY]: {
     description: 'Embedded block entry',
-    validations: ['linkContentType', 'size']
+    validations: ['linkContentType', 'size'],
   },
   [BLOCKS.EMBEDDED_ASSET]: {
     description: 'Embedded asset',
-    validations: ['size']
+    validations: ['size'],
   },
   [INLINES.ASSET_HYPERLINK]: {
     description: 'Link to asset',
-    validations: ['size']
+    validations: ['size'],
   },
   [INLINES.EMBEDDED_ENTRY]: {
     description: 'Embedded inline entry',
-    validations: ['linkContentType', 'size']
-  }
+    validations: ['linkContentType', 'size'],
+  },
 };
 
 const nodeValidationLabels = {
   size: 'Limit number of entries',
-  linkContentType: 'Accept only specified entry type'
+  linkContentType: 'Accept only specified entry type',
 };
 
 const nodeValidationHelpText = {
   size: 'Specify a minimum and/or maximum allowed number of entries',
-  linkContentType: 'Make this link type only accept entries from specified content type(s)'
+  linkContentType: 'Make this link type only accept entries from specified content type(s)',
 };
 
 const validationsOrder = [
@@ -117,7 +117,7 @@ const validationsOrder = [
   'linkContentType',
   'linkMimeType',
   'assetFileSize',
-  'in'
+  'in',
 ];
 
 const richTextOptionsLabels = {
@@ -140,7 +140,7 @@ const richTextOptionsLabels = {
   [INLINES.EMBEDDED_ENTRY]: 'inline entry',
   [INLINES.HYPERLINK]: 'link to Url',
   [INLINES.ENTRY_HYPERLINK]: 'link to entry',
-  [INLINES.ASSET_HYPERLINK]: 'link to asset'
+  [INLINES.ASSET_HYPERLINK]: 'link to asset',
 };
 
 const schema = createSchema({ type: 'Validation' });
@@ -153,7 +153,7 @@ export default {
   validate,
   validateAll,
   updateField,
-  addEnabledRichTextOptions
+  addEnabledRichTextOptions,
 };
 
 /**
@@ -163,20 +163,20 @@ export default {
  * @returns {DecoratedValidation[]}
  */
 function decorateFieldValidations(field) {
-  const validationTypes = _.filter(validationTypesForField(field), t => t in validationSettings);
+  const validationTypes = _.filter(validationTypesForField(field), (t) => t in validationSettings);
 
   let fieldValidations = _.map(validationTypes, validationDecorator(field));
 
   if (field.items) {
     const itemValidations = _.chain(decorateFieldValidations(field.items))
       .reject({ type: 'unique' })
-      .map(validation => ({ ...validation, onItems: true }))
+      .map((validation) => ({ ...validation, onItems: true }))
       .value();
 
     fieldValidations = [...itemValidations, ...fieldValidations];
   }
 
-  return _.sortBy(fieldValidations, validation => validationsOrder.indexOf(validation.type));
+  return _.sortBy(fieldValidations, (validation) => validationsOrder.indexOf(validation.type));
 }
 
 /**
@@ -191,14 +191,14 @@ function decorateNodeValidations(nodeTypesWithValidations) {
   for (const [nodeType, { description, validations }] of _.entries(validatedNodeTypes)) {
     const node = {
       type: nodeType,
-      validations: nodeTypesWithValidations[nodeType] || []
+      validations: nodeTypesWithValidations[nodeType] || [],
     };
 
     const nodeValidations = _.map(validations, nodeValidationDecorator(node));
 
     decoratedNodeValidations.push({
       description,
-      validations: _.sortBy(nodeValidations, ({ type }) => validationsOrder.indexOf(type))
+      validations: _.sortBy(nodeValidations, ({ type }) => validationsOrder.indexOf(type)),
     });
   }
 
@@ -235,7 +235,7 @@ function validationDecorator(field) {
       message: message,
       settings: _.cloneDeep(settings),
       views: views,
-      currentView: currentView
+      currentView: currentView,
     };
   };
 }
@@ -271,7 +271,7 @@ function nodeValidationDecorator(node) {
       settings: _.cloneDeep(settings),
       views,
       currentView,
-      nodeType: node.type
+      nodeType: node.type,
     };
   };
 }
@@ -285,7 +285,7 @@ function nodeValidationDecorator(node) {
 function extractFieldValidations(decorated) {
   const enabled = _.filter(
     decorated,
-    validation => validation.enabled && validation.type !== 'nodes'
+    (validation) => validation.enabled && validation.type !== 'nodes'
   );
 
   return _.map(enabled, extractOne);
@@ -303,8 +303,8 @@ function getExtractedNodesValidation(decorated) {
       .flatMap('validations')
       .filter('enabled')
       .groupBy('nodeType')
-      .mapValues(values => _.map(values, extractOne))
-      .value()
+      .mapValues((values) => _.map(values, extractOne))
+      .value(),
   };
 }
 
@@ -327,10 +327,10 @@ function validate(validation) {
   const { enabled, type } = validation;
   const errors = enabled ? schema.errors(extractOne(validation)) : [];
 
-  return _.map(errors, error => ({
+  return _.map(errors, (error) => ({
     ...error,
     path: [],
-    message: getErrorMessage(type, error)
+    message: getErrorMessage(type, error),
   }));
 }
 
@@ -352,7 +352,7 @@ function updateField(field, validations, nodeValidations) {
   if (nodeValidations) {
     field.validations = [
       ...extractFieldValidations(baseValidations),
-      getExtractedNodesValidation(nodeValidations)
+      getExtractedNodesValidation(nodeValidations),
     ];
   } else {
     field.validations = extractFieldValidations(baseValidations);
@@ -367,25 +367,25 @@ function addEnabledRichTextOptions(field, options) {
   const { enabledNodeTypes, enabledMarks } = options;
 
   const validationsCopy = field.validations.filter(
-    validation => !(validation.enabledMarks || validation.enabledNodeTypes)
+    (validation) => !(validation.enabledMarks || validation.enabledNodeTypes)
   );
 
   if (enabledMarks) {
     validationsCopy.push({
       enabledMarks: enabledMarks,
-      message: makeMessage('marks', enabledMarks)
+      message: makeMessage('marks', enabledMarks),
     });
   }
   if (enabledNodeTypes) {
     validationsCopy.push({
       enabledNodeTypes: enabledNodeTypes,
-      message: makeMessage('nodes', enabledNodeTypes)
+      message: makeMessage('nodes', enabledNodeTypes),
     });
   }
   field.validations = validationsCopy;
 
   function makeMessage(kindPlural, enabledTypes) {
-    const list = joinWithAnd(enabledTypes.map(name => richTextOptionsLabels[name]));
+    const list = joinWithAnd(enabledTypes.map((name) => richTextOptionsLabels[name]));
     return list.length > 0
       ? `Only ${list} ${kindPlural} are allowed`
       : `${capitalize(kindPlural)} are not allowed`;
@@ -400,9 +400,9 @@ function validateAll(decoratedFieldValidations, decoratedNodeValidations) {
     decoratedValidations,
     (allErrors, validation, index) => {
       const errors = validate(validation);
-      const errorsWithIndex = errors.map(error => ({
+      const errorsWithIndex = errors.map((error) => ({
         ...error,
-        path: [index, error.path]
+        path: [index, error.path],
       }));
       return [...allErrors, ...errorsWithIndex];
     },
@@ -415,11 +415,11 @@ function validateAll(decoratedFieldValidations, decoratedNodeValidations) {
  * `type` from a list of `validations`.
  */
 function findValidationByType(validations, name) {
-  return _.find(validations, validation => validationName(validation) === name);
+  return _.find(validations, (validation) => validationName(validation) === name);
 }
 
 function findNodeValidationByType(nodeValidations, name) {
-  return _.find(nodeValidations, nodeValidation => nodeValidationName(nodeValidation) === name);
+  return _.find(nodeValidations, (nodeValidation) => nodeValidationName(nodeValidation) === name);
 }
 
 function getValidationLabel(field, type) {

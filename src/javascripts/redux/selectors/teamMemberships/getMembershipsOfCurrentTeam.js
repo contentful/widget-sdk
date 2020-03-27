@@ -11,7 +11,7 @@ import getMembershipsByTeam from './getMembershipsByTeam';
  *
  * @return {Array}
  */
-export default state => {
+export default (state) => {
   // get memberships of currently active team (e.g. containg in url)
   const currentTeamId = getCurrentTeam(state);
   return getMembershipsByTeam(state)[currentTeamId];

@@ -7,7 +7,7 @@ class CommandPalette extends React.PureComponent {
   static propTypes = {
     editor: PropTypes.object,
     richTextAPI: PropTypes.object,
-    onClose: PropTypes.func
+    onClose: PropTypes.func,
   };
 
   constructor(props) {
@@ -16,7 +16,7 @@ class CommandPalette extends React.PureComponent {
     const { field } = this.props.richTextAPI.widgetAPI;
 
     this.state = {
-      embedsEnabled: isEmbeddingEnabled(field)
+      embedsEnabled: isEmbeddingEnabled(field),
     };
   }
 

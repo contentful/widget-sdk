@@ -11,7 +11,7 @@ const Step = ({ id, title, value, link, trackingElementId, active }) => {
   const linkMarkup =
     id < active ? (
       <WithLink trackingElementId={trackingElementId} link={link}>
-        {move => (
+        {(move) => (
           <div className={classNames} onClick={move}>
             {value}
           </div>
@@ -36,7 +36,7 @@ Step.propTypes = {
   value: PropTypes.number.isRequired,
   link: PropTypes.string,
   trackingElementId: PropTypes.string.isRequired,
-  active: PropTypes.oneOf([1, 2, 3, 4])
+  active: PropTypes.oneOf([1, 2, 3, 4]),
 };
 
 const Navigation = ({ active }) => {
@@ -78,7 +78,7 @@ const Navigation = ({ active }) => {
 };
 
 Navigation.propTypes = {
-  active: PropTypes.oneOf([1, 2, 3])
+  active: PropTypes.oneOf([1, 2, 3]),
 };
 
 export default Navigation;

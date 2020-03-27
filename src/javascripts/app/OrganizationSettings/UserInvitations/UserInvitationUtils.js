@@ -2,7 +2,7 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import {
   getAllMembershipsWithQuery,
   getInvitations,
-  getMemberships
+  getMemberships,
 } from 'access_control/OrganizationMembershipRepository';
 import { fetchAll } from 'data/CMA/FetchAll';
 import ResolveLinks from 'data/LinkResolver';
@@ -17,10 +17,10 @@ export async function getInvitedUsers(orgId) {
     fetchAll(endpoint, ['invitations'], 100, { 'status[eq]': 'pending' }),
     getAllMembershipsWithQuery(endpoint, {
       include: includePaths,
-      [membershipExistsParam]: false
+      [membershipExistsParam]: false,
     }).then(({ items, includes }) => {
       return ResolveLinks({ paths: includePaths, items, includes });
-    })
+    }),
   ]);
 
   return invitations
@@ -29,7 +29,7 @@ export async function getInvitedUsers(orgId) {
       createdAt,
       email,
       role,
-      type: 'invitation'
+      type: 'invitation',
     }))
     .concat(
       pendingMemberships.map(({ role, sys: { id, createdAt, user: { email } } }) => ({
@@ -37,7 +37,7 @@ export async function getInvitedUsers(orgId) {
         createdAt,
         email,
         role,
-        type: 'organizationMembership'
+        type: 'organizationMembership',
       }))
     );
 }
@@ -49,7 +49,7 @@ export async function getInvitedUsersCount(orgId) {
     getInvitations(endpoint, { 'status[eq]': 'pending', limit: 0 }).then(({ total }) => total),
     getMemberships(endpoint, { [membershipExistsParam]: false, limit: 0 }).then(
       ({ total }) => total
-    )
+    ),
   ]);
 
   return invitationCount + pendingOrgMembershipCount;

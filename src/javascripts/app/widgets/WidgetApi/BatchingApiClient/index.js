@@ -12,13 +12,13 @@ const instances = new WeakMap();
  * @param {Data.APIClient} cma
  * @returns {Object} With same interface as `cma`.
  */
-export const getBatchingApiClient = cma => {
+export const getBatchingApiClient = (cma) => {
   const existingInstance = instances.get(cma);
   if (existingInstance) {
     return existingInstance;
   }
   const { spaceId, envId } = cma;
-  const newResourceContext = type => ({ type, spaceId, envId });
+  const newResourceContext = (type) => ({ type, spaceId, envId });
   // Allow to call all - not just overwritten - functions directly, out of context:
   const cmaFunctions = mapValues(toPlainObject(cma), (_fn, name) => (...args) =>
     cma[name](...args)
@@ -27,19 +27,19 @@ export const getBatchingApiClient = cma => {
     ...cmaFunctions,
 
     getContentType: newBatchEntityFetcher({
-      getResources: query => cma.getContentTypes(query),
-      resourceContext: newResourceContext('ContentType')
+      getResources: (query) => cma.getContentTypes(query),
+      resourceContext: newResourceContext('ContentType'),
     }),
 
     getAsset: newBatchEntityFetcher({
-      getResources: query => cma.getAssets(query),
-      resourceContext: newResourceContext('Asset')
+      getResources: (query) => cma.getAssets(query),
+      resourceContext: newResourceContext('Asset'),
     }),
 
     getEntry: newBatchEntityFetcher({
-      getResources: query => cma.getEntries(query),
-      resourceContext: newResourceContext('Entry')
-    })
+      getResources: (query) => cma.getEntries(query),
+      resourceContext: newResourceContext('Entry'),
+    }),
   };
   instances.set(cma, instance);
   instances.set(instance, instance);

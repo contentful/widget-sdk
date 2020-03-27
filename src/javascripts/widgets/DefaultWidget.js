@@ -17,7 +17,7 @@ export const DEFAULTS = {
   Symbols: 'tagEditor',
   Entries: 'entryLinksEditor',
   Assets: 'assetLinksEditor',
-  File: 'fileEditor'
+  File: 'fileEditor',
 };
 
 /*
@@ -30,7 +30,7 @@ export const DEFAULTS = {
 export default function getDefaultWidgetId(field, displayFieldId) {
   const fieldType = toInternalFieldType(field);
 
-  const hasInValidation = (field.validations || []).find(v => 'in' in v);
+  const hasInValidation = (field.validations || []).find((v) => 'in' in v);
 
   if (hasInValidation && DROPDOWN_TYPES.includes(fieldType)) {
     return 'dropdown';

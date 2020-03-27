@@ -8,11 +8,11 @@ import { css } from 'emotion';
 const styles = {
   spinner: css({
     marginTop: `-${tokens.spacingS}`,
-    marginRight: tokens.spacingM
+    marginRight: tokens.spacingM,
   }),
   loadingText: css({
-    fontSize: tokens.fontSize2Xl
-  })
+    fontSize: tokens.fontSize2Xl,
+  }),
 };
 
 export default function LoadingState({ loadingText }) {
@@ -27,5 +27,5 @@ export default function LoadingState({ loadingText }) {
 }
 
 LoadingState.propTypes = {
-  loadingText: PropTypes.string
+  loadingText: PropTypes.string,
 };

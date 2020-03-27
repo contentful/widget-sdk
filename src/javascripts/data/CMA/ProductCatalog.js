@@ -30,23 +30,25 @@ const COMMON_FOR_ORG = ['custom_sidebar', 'teams', 'self_configure_sso', 'scim']
 // be used when Product Catalog is not available or returns
 // a malformed response.
 
-const getLoaderForEndpoint = endpoint => {
-  return new DataLoader(async featureIds => {
+const getLoaderForEndpoint = (endpoint) => {
+  return new DataLoader(async (featureIds) => {
     // API quirk:
     // We're using QS array, not `sys.featureId[in]=comma,separated,ids`.
     const qs = featureIds
-      .map(featureId => `${encodeURIComponent('sys.featureId[]')}=${encodeURIComponent(featureId)}`)
+      .map(
+        (featureId) => `${encodeURIComponent('sys.featureId[]')}=${encodeURIComponent(featureId)}`
+      )
       .join('&');
 
     const { items } = await endpoint({
       method: 'GET',
-      path: `/product_catalog_features?${qs}`
+      path: `/product_catalog_features?${qs}`,
     });
 
     // We need to make sure flags for features are returned
     // in exactly the same order as requested.
-    return featureIds.map(featureId => {
-      const feature = (items || []).find(item => {
+    return featureIds.map((featureId) => {
+      const feature = (items || []).find((item) => {
         // API quirk:
         // It's `sys.feature_id`, not `sys.featureId`.
         return get(item, ['sys', 'feature_id']) === featureId;
@@ -57,11 +59,11 @@ const getLoaderForEndpoint = endpoint => {
   });
 };
 
-const getLoaderForOrg = memoize(orgId => {
+const getLoaderForOrg = memoize((orgId) => {
   return getLoaderForEndpoint(createOrganizationEndpoint(orgId));
 });
 
-const getLoaderForSpace = memoize(spaceId => {
+const getLoaderForSpace = memoize((spaceId) => {
   return getLoaderForEndpoint(createSpaceEndpoint(spaceId));
 });
 
@@ -69,7 +71,7 @@ const load = async (loader, featureId, defaultValue = false, common = []) => {
   const featureIds = uniq([featureId, ...common]);
 
   try {
-    const [enabled] = await Promise.all(featureIds.map(id => loader.load(id)));
+    const [enabled] = await Promise.all(featureIds.map((id) => loader.load(id)));
     return typeof enabled === 'boolean' ? enabled : defaultValue;
   } catch (err) {
     return defaultValue;

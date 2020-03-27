@@ -6,7 +6,7 @@ const actionTypes = {
   initialize: 'initialize',
   selectSpace: 'select-space',
   selectEnvironment: 'select-env',
-  updateEnvsList: 'update-envs-list'
+  updateEnvsList: 'update-envs-list',
 };
 
 const reducer = createImmerReducer({
@@ -17,7 +17,7 @@ const reducer = createImmerReducer({
     state.environmentId = 'master';
 
     const orgs = {};
-    spaces.forEach(space => {
+    spaces.forEach((space) => {
       const orgId = space.organization.sys.id;
       const orgName = space.organization.name;
       if (orgs[orgId]) {
@@ -26,11 +26,11 @@ const reducer = createImmerReducer({
         orgs[orgId] = {
           id: orgId,
           name: orgName,
-          spaces: [space]
+          spaces: [space],
         };
       }
     });
-    state.organizations = Object.keys(orgs).map(key => orgs[key]);
+    state.organizations = Object.keys(orgs).map((key) => orgs[key]);
     state.environments = envs;
   },
   [actionTypes.selectEnvironment]: (state, action) => {
@@ -43,7 +43,7 @@ const reducer = createImmerReducer({
   [actionTypes.updateEnvsList]: (state, action) => {
     const { envs } = action.payload;
     state.environments = envs;
-  }
+  },
 });
 
 export function useComponentState() {
@@ -53,7 +53,7 @@ export function useComponentState() {
     environments: [],
     error: null,
     spaceId: '',
-    environmentId: 'master'
+    environmentId: 'master',
   });
 
   const fetchInitialData = useCallback(async () => {
@@ -62,13 +62,13 @@ export function useComponentState() {
     dispatch({ type: actionTypes.initialize, payload: { space, spaces, envs } });
   }, [dispatch]);
 
-  const selectSpace = useCallback(async id => {
+  const selectSpace = useCallback(async (id) => {
     dispatch({ type: actionTypes.selectSpace, payload: { spaceId: id } });
     const envs = await getAllEnviroments(id);
     dispatch({ type: actionTypes.updateEnvsList, payload: { envs } });
   }, []);
 
-  const selectEnvironment = useCallback(id => {
+  const selectEnvironment = useCallback((id) => {
     dispatch({ type: actionTypes.selectEnvironment, payload: { environmentId: id } });
   }, []);
 
@@ -76,6 +76,6 @@ export function useComponentState() {
     state,
     fetchInitialData,
     selectSpace,
-    selectEnvironment
+    selectEnvironment,
   };
 }

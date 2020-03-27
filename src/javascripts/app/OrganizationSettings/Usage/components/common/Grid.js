@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
-const handleColumnsRows = val => {
+const handleColumnsRows = (val) => {
   let result = '';
   if (typeof val === 'number') {
     for (let i = 0; i < val; i++) {
@@ -13,7 +13,7 @@ const handleColumnsRows = val => {
   return val;
 };
 
-export const Grid = props => {
+export const Grid = (props) => {
   const {
     rows = 'auto',
     columns = 'auto',
@@ -33,8 +33,8 @@ export const Grid = props => {
       gridTemplateRows: handleColumnsRows(rows),
       gridGap: `${columnGap} ${rowGap}`,
       justifyContent,
-      alignContent
-    })
+      alignContent,
+    }),
   };
 
   return (
@@ -51,10 +51,10 @@ Grid.propTypes = {
   columnGap: PropTypes.string,
   rowGap: PropTypes.string,
   justifyContent: PropTypes.string,
-  alignContent: PropTypes.string
+  alignContent: PropTypes.string,
 };
 
-export const GridItem = props => {
+export const GridItem = (props) => {
   const { children, columnStart, columnEnd, rowStart, rowEnd, area, order, ...rest } = props;
 
   const styles = {
@@ -64,8 +64,8 @@ export const GridItem = props => {
       gridRowStart: rowStart,
       gridRowEnd: rowEnd,
       gridArea: area,
-      order
-    })
+      order,
+    }),
   };
 
   return (
@@ -81,5 +81,5 @@ GridItem.propTypes = {
   rowStart: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   rowEnd: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   area: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-  order: PropTypes.number
+  order: PropTypes.number,
 };

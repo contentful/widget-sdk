@@ -20,7 +20,7 @@ import {
   Workbench,
   SkeletonContainer,
   SkeletonBodyText,
-  SkeletonImage
+  SkeletonImage,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import StateLink from 'app/common/StateLink';
@@ -38,7 +38,7 @@ import { getFilters, getSearchTerm } from 'redux/selectors/filters';
 import getOrgId from 'redux/selectors/getOrgId';
 import {
   getInvitedUsersCount,
-  membershipExistsParam
+  membershipExistsParam,
 } from 'app/OrganizationSettings/UserInvitations/UserInvitationUtils';
 
 import { getLastActivityDate, get2FAStatus } from '../UserUtils';
@@ -46,38 +46,38 @@ import { generateFilterDefinitions } from './FilterDefinitions';
 import {
   Filter as FilterPropType,
   Space as SpacePropType,
-  Team as TeamPropType
+  Team as TeamPropType,
 } from 'app/OrganizationSettings/PropTypes';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 
 const styles = {
   filters: css({
-    padding: '1em 2em 2em'
+    padding: '1em 2em 2em',
   }),
   search: css({
     maxWidth: '1100px',
     marginLeft: 'auto',
-    paddingLeft: tokens.spacingL
+    paddingLeft: tokens.spacingL,
   }),
   ctaWrapper: css({
     paddingLeft: tokens.spacingM,
     marginLeft: 'auto',
-    display: 'flex'
+    display: 'flex',
   }),
   numberOrgMemberships: css({
-    marginRight: tokens.spacingXs
+    marginRight: tokens.spacingXs,
   }),
   actionsWrapper: css({
     width: '100%',
-    display: 'flex'
+    display: 'flex',
   }),
   membershipLink: css({
     textDecoration: 'none',
     ':link': {
-      textDecoration: 'none'
-    }
+      textDecoration: 'none',
+    },
   }),
-  list: css({ position: 'relative' })
+  list: css({ position: 'relative' }),
 };
 
 class UsersList extends React.Component {
@@ -92,7 +92,7 @@ class UsersList extends React.Component {
     updateSearchTerm: PropTypes.func.isRequired,
     hasSsoEnabled: PropTypes.bool,
     hasTeamsFeature: PropTypes.bool,
-    hasPendingOrgMembershipsEnabled: PropTypes.bool
+    hasPendingOrgMembershipsEnabled: PropTypes.bool,
   };
 
   state = {
@@ -101,9 +101,9 @@ class UsersList extends React.Component {
     usersList: [],
     pagination: {
       skip: 0,
-      limit: 10
+      limit: 10,
     },
-    numberOrgMemberships: 0
+    numberOrgMemberships: 0,
   };
 
   endpoint = createOrganizationEndpoint(this.props.orgId);
@@ -142,21 +142,21 @@ class UsersList extends React.Component {
     const count = await getInvitedUsersCount(orgId);
 
     this.setState({
-      invitedUsersCount: count
+      invitedUsersCount: count,
     });
   };
 
   fetch = async (updateCount = false) => {
     const { filters, searchTerm, orgId, hasPendingOrgMembershipsEnabled } = this.props;
     const { pagination } = this.state;
-    const filterQuery = formatQuery(filters.map(item => item.filter));
+    const filterQuery = formatQuery(filters.map((item) => item.filter));
     const includePaths = ['sys.user'];
     const query = {
       ...filterQuery,
       query: searchTerm,
       include: includePaths,
       skip: pagination.skip,
-      limit: pagination.limit
+      limit: pagination.limit,
     };
 
     // in the legacy invitation flow we filter out users without name.
@@ -171,13 +171,13 @@ class UsersList extends React.Component {
     const newState = {
       usersList: resolved,
       queryTotal: total,
-      loading: false
+      loading: false,
     };
 
     if (updateCount) {
       const endpoint = createOrganizationEndpoint(orgId);
       newState.numberOrgMemberships = await getMemberships(endpoint, {
-        [membershipExistsParam]: true
+        [membershipExistsParam]: true,
       }).then(({ total }) => total);
     }
 
@@ -187,7 +187,7 @@ class UsersList extends React.Component {
   getLinkToInvitation() {
     return {
       path: ['account', 'organizations', 'users', 'new'],
-      params: { orgId: this.props.orgId }
+      params: { orgId: this.props.orgId },
     };
   }
 
@@ -199,19 +199,19 @@ class UsersList extends React.Component {
     return {
       path: 'account.organizations.users.detail',
       params: {
-        userId: user.sys.id
-      }
+        userId: user.sys.id,
+      },
     };
   }
 
   getLinkToInvitationsList() {
     return {
       path: 'account.organizations.users.invitations',
-      params: { orgId: this.props.orgId }
+      params: { orgId: this.props.orgId },
     };
   }
 
-  handleMembershipRemove = membership => async () => {
+  handleMembershipRemove = (membership) => async () => {
     const { usersList, pagination } = this.state;
     const user = membership.sys.user;
     const message = user.firstName
@@ -234,8 +234,8 @@ class UsersList extends React.Component {
         this.setState({
           pagination: {
             ...pagination,
-            skip: pagination.skip - pagination.limit
-          }
+            skip: pagination.skip - pagination.limit,
+          },
         });
       }
       await this.fetch(true);
@@ -248,13 +248,13 @@ class UsersList extends React.Component {
     this.setState({ pagination: { ...this.state.pagination, skip, limit } }, () => this.fetch());
   };
 
-  search = e => {
+  search = (e) => {
     const newSearchTerm = e.target.value;
 
     this.debouncedSearch(newSearchTerm);
   };
 
-  debouncedSearch = debounce(newSearchTerm => {
+  debouncedSearch = debounce((newSearchTerm) => {
     const { updateSearchTerm } = this.props;
 
     updateSearchTerm(newSearchTerm);
@@ -267,7 +267,7 @@ class UsersList extends React.Component {
       pagination,
       loading,
       invitedUsersCount,
-      numberOrgMemberships
+      numberOrgMemberships,
     } = this.state;
     const { searchTerm, spaces, spaceRoles, filters, hasPendingOrgMembershipsEnabled } = this.props;
 
@@ -321,7 +321,7 @@ class UsersList extends React.Component {
                 <Table
                   data-test-id="organization-membership-list"
                   className={classnames('organization-membership-list', {
-                    'organization-membership-list--loading': loading
+                    'organization-membership-list--loading': loading,
                   })}>
                   <TableHead>
                     <TableRow>
@@ -340,7 +340,7 @@ class UsersList extends React.Component {
                     {usersList.length === 0 ? (
                       <LoadingState numberOfRows={pagination.limit} />
                     ) : (
-                      usersList.map(membership => (
+                      usersList.map((membership) => (
                         <TableRow
                           key={membership.sys.id}
                           className="membership-list__item"
@@ -413,11 +413,11 @@ function SkeletonCell({ clipId, width }) {
 
 SkeletonCell.propTypes = {
   clipId: PropTypes.string.isRequired,
-  width: PropTypes.string
+  width: PropTypes.string,
 };
 
 function LoadingState({ numberOfRows }) {
-  return times(numberOfRows, idx => (
+  return times(numberOfRows, (idx) => (
     <TableRow key={idx}>
       <TableCell width="300">
         <SkeletonContainer svgHeight={42} clipId="user-avatar">
@@ -434,7 +434,7 @@ function LoadingState({ numberOfRows }) {
 }
 
 LoadingState.propTypes = {
-  numberOfRows: PropTypes.number.isRequired
+  numberOfRows: PropTypes.number.isRequired,
 };
 
 export default connect(
@@ -450,17 +450,17 @@ export default connect(
       hasSsoEnabled,
       hasPendingOrgMembershipsEnabled,
       hasTeamsFeature,
-      filterValues
+      filterValues,
     });
 
     return {
       filters: filterDefinitions,
       searchTerm: getSearchTerm(state),
-      orgId: getOrgId(state)
+      orgId: getOrgId(state),
     };
   },
-  dispatch => ({
-    updateSearchTerm: newSearchTerm =>
-      dispatch({ type: 'UPDATE_SEARCH_TERM', payload: { newSearchTerm } })
+  (dispatch) => ({
+    updateSearchTerm: (newSearchTerm) =>
+      dispatch({ type: 'UPDATE_SEARCH_TERM', payload: { newSearchTerm } }),
   })
 )(UsersList);

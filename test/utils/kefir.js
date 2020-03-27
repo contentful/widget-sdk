@@ -9,7 +9,7 @@ export * from 'utils/kefir';
  */
 export function extractValues(stream) {
   const values = [];
-  stream.onValue(x => values.unshift(x));
+  stream.onValue((x) => values.unshift(x));
   return values;
 }
 
@@ -31,7 +31,7 @@ export function createMockStream() {
 export function assertCurrentValue(prop, expected) {
   let called = false;
   let actual;
-  const off = Kefir.onValue(prop, value => {
+  const off = Kefir.onValue(prop, (value) => {
     actual = value;
     called = true;
   });
@@ -43,7 +43,7 @@ export function assertCurrentValue(prop, expected) {
 export function assertMatchCurrentValue(prop, matcher) {
   let called = false;
   let actual;
-  const off = Kefir.onValue(prop, value => {
+  const off = Kefir.onValue(prop, (value) => {
     actual = value;
     called = true;
   });

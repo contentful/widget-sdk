@@ -4,8 +4,8 @@ import { orgRoles } from 'utils/MembershipUtils';
 export const Organization = PropTypes.shape({
   name: PropTypes.string.isRequired,
   sys: PropTypes.shape({
-    id: PropTypes.string.isRequired
-  })
+    id: PropTypes.string.isRequired,
+  }),
 });
 
 export const User = PropTypes.shape({
@@ -16,8 +16,8 @@ export const User = PropTypes.shape({
   activated: PropTypes.bool,
   email: PropTypes.string.isRequired,
   sys: PropTypes.shape({
-    id: PropTypes.string.isRequired
-  })
+    id: PropTypes.string.isRequired,
+  }),
 });
 
 export const SpaceRole = PropTypes.shape({
@@ -26,23 +26,23 @@ export const SpaceRole = PropTypes.shape({
   permissions: PropTypes.object,
   policies: PropTypes.array,
   sys: PropTypes.shape({
-    id: PropTypes.string.isRequired
-  }).isRequired
+    id: PropTypes.string.isRequired,
+  }).isRequired,
 });
 
 export const Link = PropTypes.shape({
   sys: PropTypes.shape({
     id: PropTypes.string.isRequired,
     linkType: PropTypes.string.isRequired,
-    type: PropTypes.oneOf(['Link'])
-  }).isRequired
+    type: PropTypes.oneOf(['Link']),
+  }).isRequired,
 });
 
 export const Space = PropTypes.shape({
   name: PropTypes.string.isRequired,
   sys: PropTypes.shape({
-    id: PropTypes.string.isRequired
-  }).isRequired
+    id: PropTypes.string.isRequired,
+  }).isRequired,
 });
 
 export const SpaceMembership = PropTypes.shape({
@@ -50,28 +50,28 @@ export const SpaceMembership = PropTypes.shape({
   roles: PropTypes.arrayOf(PropTypes.oneOfType([SpaceRole, Link])).isRequired,
   sys: PropTypes.shape({
     id: PropTypes.string.isRequired,
-    space: PropTypes.oneOfType([Space, Link]).isRequired
-  }).isRequired
+    space: PropTypes.oneOfType([Space, Link]).isRequired,
+  }).isRequired,
 });
 
 export const OrganizationMembershipSSO = PropTypes.shape({
   isExemptFromRestrictedMode: PropTypes.bool.isRequired,
   lastSignInAt: PropTypes.string,
-  exemptionReasons: PropTypes.arrayOf(PropTypes.string)
+  exemptionReasons: PropTypes.arrayOf(PropTypes.string),
 });
 
 export const OrganizationMembership = PropTypes.shape({
-  role: PropTypes.oneOf(orgRoles.map(role => role.value)).isRequired,
+  role: PropTypes.oneOf(orgRoles.map((role) => role.value)).isRequired,
   sys: PropTypes.shape({
     id: PropTypes.string.isRequired,
     user: PropTypes.oneOfType([User, Link]),
-    sso: OrganizationMembershipSSO
-  }).isRequired
+    sso: OrganizationMembershipSSO,
+  }).isRequired,
 });
 
 export const FilterOption = PropTypes.shape({
   label: PropTypes.string.isRequired,
-  value: PropTypes.any
+  value: PropTypes.any,
 });
 
 export const Filter = PropTypes.shape({
@@ -79,9 +79,9 @@ export const Filter = PropTypes.shape({
   filter: PropTypes.shape({
     key: PropTypes.string.isRequired,
     operator: PropTypes.function,
-    value: PropTypes.any
+    value: PropTypes.any,
   }).isRequired,
-  options: PropTypes.arrayOf(FilterOption)
+  options: PropTypes.arrayOf(FilterOption),
 });
 
 export const Team = PropTypes.shape({
@@ -89,15 +89,15 @@ export const Team = PropTypes.shape({
   memberCount: PropTypes.number,
   description: PropTypes.string,
   sys: PropTypes.shape({
-    id: PropTypes.string.isRequired
-  }).isRequired
+    id: PropTypes.string.isRequired,
+  }).isRequired,
 });
 
 export const TeamMembership = PropTypes.shape({
   sys: PropTypes.shape({
     id: PropTypes.string.isRequired,
-    user: PropTypes.shape({ id: PropTypes.string })
-  }).isRequired
+    user: PropTypes.shape({ id: PropTypes.string }),
+  }).isRequired,
 });
 
 export const TeamSpaceMembership = PropTypes.shape({
@@ -105,8 +105,8 @@ export const TeamSpaceMembership = PropTypes.shape({
   roles: PropTypes.arrayOf(PropTypes.oneOfType([SpaceRole, Link])),
   sys: PropTypes.shape({
     space: PropTypes.oneOfType([Space, Link]),
-    team: PropTypes.oneOfType([Team, Link])
-  }).isRequired
+    team: PropTypes.oneOfType([Team, Link]),
+  }).isRequired,
 });
 
 export const SpaceMember = PropTypes.shape({
@@ -117,12 +117,12 @@ export const SpaceMember = PropTypes.shape({
   ),
   sys: PropTypes.shape({
     id: PropTypes.string.isRequired,
-    space: PropTypes.oneOfType([Space, Link]).isRequired
-  }).isRequired
+    space: PropTypes.oneOfType([Space, Link]).isRequired,
+  }).isRequired,
 });
 
 export const TeamSpaceMembershipPlaceholder = PropTypes.shape({
   sys: PropTypes.shape({
-    id: PropTypes.oneOf(['placeholder']).isRequired
-  }).isRequired
+    id: PropTypes.oneOf(['placeholder']).isRequired,
+  }).isRequired,
 });

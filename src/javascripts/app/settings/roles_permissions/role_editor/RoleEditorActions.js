@@ -48,5 +48,5 @@ RoleEditorActions.propTypes = {
   internal: PropTypes.any,
   onDelete: PropTypes.func,
   onDuplicate: PropTypes.func,
-  onSave: PropTypes.func
+  onSave: PropTypes.func,
 };

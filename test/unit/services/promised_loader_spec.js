@@ -5,16 +5,16 @@ import { $initialize, $inject } from 'test/utils/ng';
 describe('Promised loader service', () => {
   let loader, stubs, $rootScope, $q;
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     stubs = {
       method: sinon.stub(),
       success: sinon.stub(),
       error: sinon.stub(),
       success2: sinon.stub(),
-      error2: sinon.stub()
+      error2: sinon.stub(),
     };
 
-    await $initialize(this.system, $provide => {
+    await $initialize(this.system, ($provide) => {
       $provide.constant('lodash/debounce', _.debounce);
     });
 
@@ -85,14 +85,10 @@ describe('Promised loader service', () => {
   });
 
   describe('attempt to load more than once simultaneously', () => {
-    beforeEach(function() {
+    beforeEach(function () {
       this.first = $q.defer();
       this.second = $q.defer();
-      stubs.method
-        .onCall(0)
-        .returns(this.first.promise)
-        .onCall(1)
-        .returns(this.second.promise);
+      stubs.method.onCall(0).returns(this.first.promise).onCall(1).returns(this.second.promise);
       loader.loadPromise(stubs.method).then(stubs.success, stubs.error);
       loader._loadPromise.invokeDelayed();
       loader.loadPromise(stubs.method).then(stubs.success2, stubs.error2);
@@ -124,8 +120,8 @@ describe('Promised loader service', () => {
 
 describe('PromisedLoader service', () => {
   let a, b;
-  beforeEach(async function() {
-    await $initialize(this.system, $provide => {
+  beforeEach(async function () {
+    await $initialize(this.system, ($provide) => {
       $provide.constant('lodash/debounce', _.debounce);
     });
 

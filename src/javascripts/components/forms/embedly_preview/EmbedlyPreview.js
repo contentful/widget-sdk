@@ -36,7 +36,7 @@ function PreviewRenderer(props) {
 
 PreviewRenderer.propTypes = {
   url: PropTypes.string.isRequired,
-  onLoad: PropTypes.func.isRequired
+  onLoad: PropTypes.func.isRequired,
 };
 
 export default function EmbedlyPreview(props) {
@@ -61,9 +61,9 @@ export default function EmbedlyPreview(props) {
 EmbedlyPreview.propTypes = {
   previewUrl: PropTypes.string,
   onLoad: PropTypes.func,
-  delay: PropTypes.number
+  delay: PropTypes.number,
 };
 EmbedlyPreview.defaultProps = {
   delay: 500,
-  onLoad: () => {}
+  onLoad: () => {},
 };

@@ -3,7 +3,7 @@ import { haveAnyInlines, haveEveryInlineOfType, haveInlines } from '../shared/Ut
 import { newConfigFromExtension } from 'search/EntitySelector/Config';
 import { newEntitySelectorConfigFromRichTextField } from '@contentful/field-editor-rich-text';
 
-const createInlineNode = id => ({
+const createInlineNode = (id) => ({
   type: INLINES.EMBEDDED_ENTRY,
   object: 'inline',
   data: {
@@ -11,10 +11,10 @@ const createInlineNode = id => ({
       sys: {
         id,
         type: 'Link',
-        linkType: 'Entry'
-      }
-    }
-  }
+        linkType: 'Entry',
+      },
+    },
+  },
 });
 
 export const insertInline = (editor, entryId, focusNextLine = true) => {
@@ -27,7 +27,7 @@ export const insertInline = (editor, entryId, focusNextLine = true) => {
   focusNextLine ? editor.moveToStartOfNextText().focus() : null;
 };
 
-export const hasOnlyInlineEntryInSelection = editor => {
+export const hasOnlyInlineEntryInSelection = (editor) => {
   const inlines = editor.value.inlines;
   const selection = editor.value.selection;
   if (inlines.size === 1 && selection.start.key === selection.end.key) {
@@ -65,6 +65,6 @@ export const selectEntryAndInsert = async (widgetAPI, editor, logAction) => {
   }
 };
 
-export const canInsertInline = editor => {
+export const canInsertInline = (editor) => {
   return !haveAnyInlines(editor) || haveEveryInlineOfType(editor, INLINES.EMBEDDED_ENTRY);
 };

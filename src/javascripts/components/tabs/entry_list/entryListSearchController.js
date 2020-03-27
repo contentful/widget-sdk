@@ -33,7 +33,7 @@ export default function register() {
       ScheduledActionsService.getJobs(spaceEndpoint, {
         order: 'scheduledFor.datetime',
         'sys.status': 'scheduled',
-        'environment.sys.id': spaceContext.space.environment.sys.id
+        'environment.sys.id': spaceContext.space.environment.sys.id,
       }).then(({ items = [] }) => ($scope.jobs = items));
 
       // HACK: This makes sure that component bridge renders
@@ -57,7 +57,7 @@ export default function register() {
       let page = 0;
       $scope.$watch(
         () => $scope.paginator.getPage(),
-        newPage => {
+        (newPage) => {
           if (page !== newPage && initialized) {
             page = newPage;
             updateEntries();
@@ -70,7 +70,7 @@ export default function register() {
       $scope.$watch(
         () => ({
           viewId: getViewItem('id'),
-          search: getViewSearchState()
+          search: getViewSearchState(),
         }),
         () => {
           if (!isViewLoaded()) {
@@ -88,7 +88,7 @@ export default function register() {
           entriesLength: $scope.entries && $scope.entries.length,
           page: $scope.paginator.getPage(),
           orderDirection: getViewItem('order.direction'),
-          orderFieldId: getViewItem('order.fieldId')
+          orderFieldId: getViewItem('order.fieldId'),
         }),
         refreshEntityCaches,
         true
@@ -106,7 +106,7 @@ export default function register() {
       // When the user deletes an entry it is removed from the entries
       // list. If that list becomes empty we want to go to the previous
       // page.
-      $scope.$watch('entries.length', entriesLength => {
+      $scope.$watch('entries.length', (entriesLength) => {
         const currPage = $scope.paginator.getPage();
         if (!entriesLength && !$scope.context.loading && $scope.paginator.getPage() > 0) {
           $scope.paginator.setPage(currPage - 1);
@@ -137,7 +137,7 @@ export default function register() {
         let query;
         return prepareQuery()
           .then(
-            _query => {
+            (_query) => {
               query = _query;
               let result;
               if (chunkSize === null || query.limit === undefined) {
@@ -145,28 +145,28 @@ export default function register() {
               } else {
                 const skipsForChunks = _.range(query.skip, query.skip + query.limit, chunkSize);
                 return Promise.all(
-                  skipsForChunks.map(skip =>
+                  skipsForChunks.map((skip) =>
                     spaceContext.space.getEntries({ ...query, skip, limit: chunkSize })
                   )
-                ).then(results => {
+                ).then((results) => {
                   result = [].concat(...results);
                   result.total = results[0].total;
                   return result;
                 });
               }
             },
-            err => {
+            (err) => {
               handleEntriesError(err);
               return $q.reject(err);
             }
           )
           .then(
-            result => {
+            (result) => {
               $scope.context.isSearching = false;
               Tracking.searchPerformed($scope.context.view, result.total);
               return result;
             },
-            err => {
+            (err) => {
               // check if we can and should try request again in multiple chunks
               // to recover from the response being too big for the API to handle
               if (
@@ -193,10 +193,10 @@ export default function register() {
         $scope.loadView(newView);
       }
 
-      const isSearching$ = K.fromScopeValue($scope, $scope => $scope.context.isSearching);
+      const isSearching$ = K.fromScopeValue($scope, ($scope) => $scope.context.isSearching);
 
       function initializeSearchUI() {
-        K.onValueScope($scope, accessChecker.isInitialized$, isInitialized => {
+        K.onValueScope($scope, accessChecker.isInitialized$, (isInitialized) => {
           if (!isInitialized) {
             return;
           }
@@ -217,7 +217,7 @@ export default function register() {
             onSearchChange: onSearchChange,
             isSearching$: isSearching$,
             initState: initialSearchState,
-            users$: Kefir.fromPromise(spaceContext.users.getAll())
+            users$: Kefir.fromPromise(spaceContext.users.getAll()),
           });
         });
       }
@@ -225,7 +225,7 @@ export default function register() {
       function setupEntriesHandler(promise) {
         return promise
           .then(handleEntriesResponse, accessChecker.wasForbidden($scope.context))
-          .catch(err => {
+          .catch((err) => {
             if (_.isObject(err) && 'statusCode' in err && err.statusCode === -1) {
               // entries update failed due to some network issue
               $scope.context.isSearching = true;
@@ -249,7 +249,7 @@ export default function register() {
             const lastPage = $scope.paginator.getPageCount() - 1;
             $scope.setPage(lastPage);
           }
-          $scope.entries = entries.filter(entry => !entry.isDeleted());
+          $scope.entries = entries.filter((entry) => !entry.isDeleted());
         }
         refreshEntityCaches();
         $scope.selection.updateList($scope.entries);
@@ -317,7 +317,7 @@ export default function register() {
       function getQueryOptions() {
         return _.extend(getViewSearchState(), {
           order: getViewItem('order'),
-          paginator: $scope.paginator
+          paginator: $scope.paginator,
         });
       }
 
@@ -334,7 +334,7 @@ export default function register() {
         return {
           searchText: getViewItem('searchText'),
           searchFilters: getViewItem('searchFilters'),
-          contentTypeId: getViewItem('contentTypeId')
+          contentTypeId: getViewItem('contentTypeId'),
         };
       }
 
@@ -347,6 +347,6 @@ export default function register() {
         path = _.isString(path) ? path.split('.') : path;
         return _.set($scope, ['context', 'view'].concat(path), value);
       }
-    }
+    },
   ]);
 }

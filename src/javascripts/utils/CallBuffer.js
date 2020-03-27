@@ -26,7 +26,7 @@ export function create() {
   return {
     call,
     resolve,
-    disable
+    disable,
   };
 
   /**
@@ -55,7 +55,7 @@ export function create() {
     if (state === OPEN) {
       state = RESOLVED;
       service = _service;
-      calls.forEach(fn => {
+      calls.forEach((fn) => {
         fn(service);
       });
       calls = [];

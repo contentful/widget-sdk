@@ -22,7 +22,7 @@ export default function register() {
    */
   registerDirective('cfFieldErrorFor', () => ({
     scope: {
-      fieldName: '@cfFieldErrorFor'
+      fieldName: '@cfFieldErrorFor',
     },
 
     require: '^form',
@@ -30,12 +30,12 @@ export default function register() {
     controllerAs: 'errors',
     controller: 'FieldErrorController',
 
-    link: function(scope, elem, _attrs, form) {
+    link: function (scope, elem, _attrs, form) {
       scope.errors.link(form, scope.fieldName);
-      scope.$watch('errors.exist && !errors.hide', hasErrors => {
+      scope.$watch('errors.exist && !errors.hide', (hasErrors) => {
         elem.toggleClass('ng-hide', !hasErrors);
       });
-    }
+    },
   }));
 
   /**
@@ -86,10 +86,10 @@ export default function register() {
         if (unwatchErrors) unwatchErrors();
         if (unwatchHide) unwatchHide();
 
-        unwatchErrors = $scope.$watchCollection(ngModelError, errors => {
+        unwatchErrors = $scope.$watchCollection(ngModelError, (errors) => {
           const errorDetails = (form[ctrlName] || {}).errorDetails || {};
 
-          controller.messages = _.map(_.keys(errors), error => {
+          controller.messages = _.map(_.keys(errors), (error) => {
             const details = errorDetails[error] || {};
             return details.message || fieldErrorMessage(error, details);
           });
@@ -99,7 +99,7 @@ export default function register() {
 
         unwatchHide = $scope.$watch(
           () => form[ctrlName] && form[ctrlName].hideErrors,
-          hideErrors => {
+          (hideErrors) => {
             controller.hide = hideErrors;
           }
         );
@@ -108,7 +108,7 @@ export default function register() {
           return form[ctrlName] && form[ctrlName].$error;
         }
       };
-    }
+    },
   ]);
 
   /**
@@ -120,12 +120,12 @@ export default function register() {
    * @description
    * Build messages for `ngModel` validation errors.
    */
-  registerProvider('fieldErrorMessage', function() {
+  registerProvider('fieldErrorMessage', function () {
     const messages = {
-      required: 'Please provide a value.'
+      required: 'Please provide a value.',
     };
 
-    const templates = _.mapValues(messages, message => _.template(message));
+    const templates = _.mapValues(messages, (message) => _.template(message));
 
     function build(key, details) {
       if (key in templates) {
@@ -136,7 +136,7 @@ export default function register() {
     }
 
     return {
-      $get: () => build
+      $get: () => build,
     };
   });
 }

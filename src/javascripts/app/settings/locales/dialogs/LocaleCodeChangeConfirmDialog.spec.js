@@ -4,7 +4,7 @@ import { render, fireEvent } from '@testing-library/react';
 import LocaleCodeChangeConfirmDialog from './LocaleCodeChangeConfirmDialog';
 
 describe('locales/components/LocaleCodeChangeConfirmDialog', () => {
-  const renderComponent = props =>
+  const renderComponent = (props) =>
     render(
       <LocaleCodeChangeConfirmDialog
         isShown
@@ -12,11 +12,11 @@ describe('locales/components/LocaleCodeChangeConfirmDialog', () => {
         onCancel={() => {}}
         locale={{
           name: 'German',
-          code: 'de'
+          code: 'de',
         }}
         previousLocale={{
           name: 'Russian',
-          code: 'ru'
+          code: 'ru',
         }}
         {...props}
       />
@@ -29,10 +29,10 @@ describe('locales/components/LocaleCodeChangeConfirmDialog', () => {
 
   it('it is possible to invoke cancel by clicking on two buttons', () => {
     const stubs = {
-      onCancel: jest.fn()
+      onCancel: jest.fn(),
     };
     const { getByTestId } = renderComponent({
-      onCancel: stubs.onCancel
+      onCancel: stubs.onCancel,
     });
 
     fireEvent.click(getByTestId('change-locale-cancel'));
@@ -42,11 +42,11 @@ describe('locales/components/LocaleCodeChangeConfirmDialog', () => {
   it('confirm button should be enabled when user types locale code in input', () => {
     const stubs = {
       onConfirm: jest.fn(),
-      onCancel: jest.fn()
+      onCancel: jest.fn(),
     };
 
     const { getByTestId } = renderComponent({
-      ...stubs
+      ...stubs,
     });
 
     const repeatLocaleInput = getByTestId('repeat-locale-input');

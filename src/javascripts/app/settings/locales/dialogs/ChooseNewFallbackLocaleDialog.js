@@ -4,7 +4,7 @@ import { Select, Option, ModalConfirm } from '@contentful/forma-36-react-compone
 
 const LocaleType = PropTypes.shape({
   code: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired
+  name: PropTypes.string.isRequired,
 });
 
 export default class ChooseNewFallbackLocaleDialog extends React.Component {
@@ -14,11 +14,11 @@ export default class ChooseNewFallbackLocaleDialog extends React.Component {
     availableLocales: PropTypes.arrayOf(LocaleType.isRequired).isRequired,
     dependantLocales: PropTypes.arrayOf(LocaleType.isRequired).isRequired,
     onCancel: PropTypes.func.isRequired,
-    onConfirm: PropTypes.func.isRequired
+    onConfirm: PropTypes.func.isRequired,
   };
 
   state = {
-    newFallbackCode: ''
+    newFallbackCode: '',
   };
 
   componentDidUpdate(nextProps) {
@@ -31,17 +31,17 @@ export default class ChooseNewFallbackLocaleDialog extends React.Component {
     this.props.onConfirm(this.state.newFallbackCode);
   };
 
-  prepareDependantLocaleNames = dependantLocales => {
+  prepareDependantLocaleNames = (dependantLocales) => {
     if (dependantLocales.length > 4) {
       const rest = ` and ${dependantLocales.length - 3} other locales`;
       return (
         dependantLocales
           .slice(0, 3)
-          .map(item => item.name)
+          .map((item) => item.name)
           .join(', ') + rest
       );
     } else {
-      return dependantLocales.map(item => item.name).join(', ');
+      return dependantLocales.map((item) => item.name).join(', ');
     }
   };
 
@@ -68,11 +68,11 @@ export default class ChooseNewFallbackLocaleDialog extends React.Component {
           name="newFallbackLocale"
           value={this.state.newFallbackCode}
           testId="choose-fallback-locale-select"
-          onChange={e => {
+          onChange={(e) => {
             this.setState({ newFallbackCode: e.target.value });
           }}>
           <Option value="">None (no fallback)</Option>
-          {availableLocales.map(locale => (
+          {availableLocales.map((locale) => (
             <Option key={locale.code} value={locale.code}>
               {locale.name}
             </Option>

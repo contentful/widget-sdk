@@ -5,9 +5,9 @@ import { it } from 'test/utils/dsl';
 describe('data/userCache', () => {
   let userCache, fetchAll;
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     this.system.set('data/CMA/FetchAll', {
-      fetchAll: (fetchAll = sinon.stub().resolves())
+      fetchAll: (fetchAll = sinon.stub().resolves()),
     });
 
     const { default: createCache } = await this.system.import('data/userCache');
@@ -38,7 +38,7 @@ describe('data/userCache', () => {
       expect(users).toEqual(userResponse);
     });
 
-    it('it caches resulst', function() {
+    it('it caches resulst', function () {
       const userResponse = [makeUser('0'), makeUser('1')];
       fetchAll.resolves(userResponse);
       const handleUsers = sinon.stub();
@@ -69,7 +69,7 @@ describe('data/userCache', () => {
       const userResponse = [makeUser('0'), makeUser('1')];
       fetchAll.resolves(userResponse);
       const users = await userCache.getAll();
-      userCache.get('0').then(user => {
+      userCache.get('0').then((user) => {
         expect(user).toBe(users[0]);
         sinon.assert.calledOnce(fetchAll);
       });

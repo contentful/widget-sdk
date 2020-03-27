@@ -3,8 +3,8 @@ module.exports = {
     type: 'suggestion',
     docs: {
       description: 'Disallow forma css classes in react files',
-      category: 'Best Practices'
-    }
+      category: 'Best Practices',
+    },
   },
   create(context) {
     return {
@@ -18,10 +18,10 @@ module.exports = {
           context.report({
             node,
             message:
-              'Classes for forma css are disallowed in react components. Please use emotion with @contentful/forma-36-tokens.'
+              'Classes for forma css are disallowed in react components. Please use emotion with @contentful/forma-36-tokens.',
           });
         }
-      }
+      },
     };
-  }
+  },
 };

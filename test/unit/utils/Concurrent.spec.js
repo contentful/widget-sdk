@@ -5,7 +5,7 @@ import { it } from 'test/utils/dsl';
 describe('utils/Concurrent', () => {
   let C;
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     C = await this.system.import('utils/Concurrent');
 
     await $initialize(this.system);
@@ -18,7 +18,7 @@ describe('utils/Concurrent', () => {
   });
 
   describe('.createSlot()', () => {
-    it('only resolves current promise', async function() {
+    it('only resolves current promise', async function () {
       const onResult = sinon.spy();
       const put = C.createSlot(onResult);
 
@@ -33,7 +33,7 @@ describe('utils/Concurrent', () => {
       sinon.assert.calledOnceWith(onResult, C.Success('VAL B'));
     });
 
-    it('only rejects current promise', async function() {
+    it('only rejects current promise', async function () {
       const onResult = sinon.spy();
       const put = C.createSlot(onResult);
 
@@ -51,10 +51,10 @@ describe('utils/Concurrent', () => {
   });
 
   describe('.createExclusiveTask()', () => {
-    it('does not run multiple tasks concurrently', async function() {
+    it('does not run multiple tasks concurrently', async function () {
       let callCount = 0;
       const taskDone = C.createMVar();
-      const task = C.createExclusiveTask(async function() {
+      const task = C.createExclusiveTask(async function () {
         callCount++;
         await taskDone.read();
       });
@@ -75,10 +75,10 @@ describe('utils/Concurrent', () => {
       expect(callCount).toBe(2);
     });
 
-    it('resets the task on errors', async function() {
+    it('resets the task on errors', async function () {
       let callCount = 0;
       const taskDone = C.createMVar();
-      const task = C.createExclusiveTask(async function() {
+      const task = C.createExclusiveTask(async function () {
         callCount++;
         await taskDone.read();
         throw new Error();
@@ -99,9 +99,9 @@ describe('utils/Concurrent', () => {
       expect(callCount).toBe(2);
     });
 
-    it('returns the functions results', async function() {
+    it('returns the functions results', async function () {
       const taskDone = C.createMVar();
-      const task = C.createExclusiveTask(async function() {
+      const task = C.createExclusiveTask(async function () {
         return await taskDone.read();
       });
 

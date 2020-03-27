@@ -3,7 +3,7 @@
 const path = require('path');
 
 module.exports = (resolve, rootDir, srcRoots, coverageDirectory) => {
-  const toRelRootDir = f => '<rootDir>/' + path.relative(rootDir || '', f);
+  const toRelRootDir = (f) => '<rootDir>/' + path.relative(rootDir || '', f);
   const config = {
     setupFilesAfterEnv: [resolve('tools/testing/setup-tests.js')],
     testMatch: ['**/?(*.)(spec|test).{js,jsx}'],
@@ -17,20 +17,20 @@ module.exports = (resolve, rootDir, srcRoots, coverageDirectory) => {
     testURL: 'http://localhost',
     transform: {
       '^.+\\.(js|jsx)$': resolve('tools/testing/babel-transform.js'),
-      '^(?!.*\\.(js|jsx|mjs|css|json)$)': resolve('tools/testing/file-transform.js')
+      '^(?!.*\\.(js|jsx|mjs|css|json)$)': resolve('tools/testing/file-transform.js'),
     },
     transformIgnorePatterns: [
       '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs)$',
-      '^.+\\.module\\.(css|sass|scss)$'
+      '^.+\\.module\\.(css|sass|scss)$',
     ],
     moduleNameMapper: {
-      '^.+\\.module\\.(css|sass|scss|styl|svg)$': 'identity-obj-proxy'
+      '^.+\\.module\\.(css|sass|scss|styl|svg)$': 'identity-obj-proxy',
       // '^.+\\.module\\.svg$': '<rootDir>/__mocks__/svgrMock.js'
     },
     moduleFileExtensions: ['web.js', 'js', 'json', 'web.jsx', 'jsx', 'node', 'mjs'],
     coverageReporters: ['lcov', 'clover'],
     snapshotSerializers: ['jest-emotion'],
-    reporters: ['default', 'jest-junit']
+    reporters: ['default', 'jest-junit'],
   };
   if (rootDir) {
     config.rootDir = rootDir;

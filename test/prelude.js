@@ -31,7 +31,7 @@
    * Note that it will fail with generic error rather than a failed test case
    * due to asynchronous event handling.
    */
-  window.addEventListener('unhandledrejection', ev => {
+  window.addEventListener('unhandledrejection', (ev) => {
     // Without this check there will be an error in async tests using `Promise.reject()`
     if (ev.reason) {
       window.__karma__.error(`Unhandled rejection: ${ev.reason.stack}`);
@@ -46,7 +46,7 @@
       const prefixes = ['/base/src', '/base/test'];
       const ignoredExtensions = ['.json', '.html'];
 
-      if (!prefixes.find(prefix => filename.startsWith(prefix))) {
+      if (!prefixes.find((prefix) => filename.startsWith(prefix))) {
         continue;
       }
 
@@ -59,7 +59,7 @@
       }
 
       // Add these to the SystemJS map, so that they can be imported as they would be in Webpack
-      if (ignoredExtensions.find(ext => filename.endsWith(ext))) {
+      if (ignoredExtensions.find((ext) => filename.endsWith(ext))) {
         updateSystemMap(recordName, `${window.location.origin}${filename}`);
         continue;
       }
@@ -74,14 +74,11 @@
        */
       const ignoredFiles = ['test/system-config.js', 'test/prelude.js'];
 
-      if (ignoredFiles.find(name => recordName === name)) {
+      if (ignoredFiles.find((name) => recordName === name)) {
         continue;
       }
 
-      const recordNameWithoutExt = recordName
-        .split('.')
-        .slice(0, -1)
-        .join('.');
+      const recordNameWithoutExt = recordName.split('.').slice(0, -1).join('.');
       const ext = recordName.split('.').slice(-1)[0];
 
       const normalizedRecordName = SystemJS.normalizeSync(recordNameWithoutExt);
@@ -96,7 +93,7 @@
         fetchPromises.push(
           window
             .fetch(filename)
-            .then(resp => resp.text())
+            .then((resp) => resp.text())
             .then(eval)
             .then(() => {
               registerFileWithExtAlias(recordNameWithoutExt, ext);
@@ -112,12 +109,12 @@
 
     try {
       // This needs to be registered early because prelude depends on it (and it not being in `this.system`);
-      SystemJS.register('Config', [], _export => {
+      SystemJS.register('Config', [], (_export) => {
         _export({
-          authUrl: x => `//be.test.com${ensureLeadingSlash(x)}`,
-          apiUrl: x => `//api.test.com${ensureLeadingSlash(x)}`,
-          websiteUrl: x => `//www.test.com${ensureLeadingSlash(x)}`,
-          accountUrl: x => `//be.test.com/account${ensureLeadingSlash(x)}`,
+          authUrl: (x) => `//be.test.com${ensureLeadingSlash(x)}`,
+          apiUrl: (x) => `//api.test.com${ensureLeadingSlash(x)}`,
+          websiteUrl: (x) => `//www.test.com${ensureLeadingSlash(x)}`,
+          accountUrl: (x) => `//be.test.com/account${ensureLeadingSlash(x)}`,
           domain: 'test.com',
           env: 'unittest',
           launchDarkly: { envId: 'launch-darkly-test-id' },
@@ -128,20 +125,20 @@
             google: {},
             contentful: {},
             embedly: {},
-            getstream_io: {}
+            getstream_io: {},
           },
-          readInjectedConfig: () => ({ config: {} })
+          readInjectedConfig: () => ({ config: {} }),
         });
 
         return {
           setters: [],
-          execute: function() {}
+          execute: function () {},
         };
       });
 
       const origInject = window.inject;
 
-      window.inject = function(...args) {
+      window.inject = function (...args) {
         // debugger;
 
         origInject(...args);
@@ -171,7 +168,7 @@
       await SystemJS.import('test/helpers/mocks/widget_api');
 
       await SystemJS.import('prelude');
-      await Promise.all(testModules.map(name => SystemJS.import(name)));
+      await Promise.all(testModules.map((name) => SystemJS.import(name)));
 
       start(...args);
     } catch (e) {
@@ -212,20 +209,20 @@
   }
 
   function registerLibrary(name, dep) {
-    window.SystemJS.register(name, [], export_ => {
+    window.SystemJS.register(name, [], (export_) => {
       const exports = dep;
       export_(Object.assign({ default: exports }, exports));
       return {
         setters: [],
-        execute: function() {}
+        execute: function () {},
       };
     });
   }
 
   // Register an alias for a given `moduleId`
   function registerAlias(moduleId, alias) {
-    SystemJS.register(alias, [moduleId], $export => ({
-      setters: [$export]
+    SystemJS.register(alias, [moduleId], ($export) => ({
+      setters: [$export],
     }));
   }
 

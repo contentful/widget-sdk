@@ -7,11 +7,11 @@ import tokens from '@contentful/forma-36-tokens';
 
 const styles = {
   container: css({
-    marginTop: tokens.spacingXl
-  })
+    marginTop: tokens.spacingXl,
+  }),
 };
 
-const getDescription = localeName => `
+const getDescription = (localeName) => `
   There are no localized fields to translate for ${localeName}. You can
   switch to a different locale using "Translation" in your sidebar.
 `;
@@ -29,7 +29,7 @@ const NoLocalizedFieldsAdvice = ({ localeName }) => (
 );
 
 NoLocalizedFieldsAdvice.propTypes = {
-  localeName: PropTypes.string.isRequired
+  localeName: PropTypes.string.isRequired,
 };
 
 export default NoLocalizedFieldsAdvice;

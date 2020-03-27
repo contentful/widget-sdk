@@ -29,13 +29,13 @@ export default function register() {
    */
   registerDirective('cfUiTab', () => ({
     controllerAs: 'tabController',
-    controller: 'UiTabController'
+    controller: 'UiTabController',
   }));
 
   registerDirective('uiTab', () => ({
     scope: true,
 
-    link: function(scope, element, attrs) {
+    link: function (scope, element, attrs) {
       const tabName = attrs.uiTab;
       const tab = scope.tabController.registerControl(tabName);
 
@@ -46,26 +46,26 @@ export default function register() {
         scope.$apply(tab.activate);
       });
 
-      scope.$watch('tab.active', isActive => {
+      scope.$watch('tab.active', (isActive) => {
         attrs.$set('ariaSelected', isActive);
       });
-    }
+    },
   }));
 
   registerDirective('uiTabpanel', () => ({
     scope: true,
 
-    link: function(scope, element, attrs) {
+    link: function (scope, element, attrs) {
       const tabName = attrs.uiTabpanel;
       const tabController = scope.tabController;
       const tab = tabController.registerPanel(tabName, element);
       attrs.$set('role', 'tabpanel');
       scope.tab = tab;
 
-      scope.$watch('tab.active', isActive => {
+      scope.$watch('tab.active', (isActive) => {
         attrs.$set('ariaHidden', !isActive);
       });
-    }
+    },
   }));
 
   registerController('UiTabController', function UiTabController() {
@@ -79,7 +79,7 @@ export default function register() {
     const tabs = {};
     let activeTab = null;
 
-    this.registerControl = function(name, element) {
+    this.registerControl = function (name, element) {
       const tab = this.get(name);
       tab.control = element;
 
@@ -89,13 +89,13 @@ export default function register() {
       return tab;
     };
 
-    this.registerPanel = function(name, element) {
+    this.registerPanel = function (name, element) {
       const tab = this.get(name);
       tab.panel = element;
       return tab;
     };
 
-    this.get = function(name) {
+    this.get = function (name) {
       if (!_.isString(name)) {
         throw new TypeError('Tab name must be a string');
       }
@@ -110,7 +110,7 @@ export default function register() {
 
     this.getActiveTabName = () => activeTab && activeTab.name;
 
-    this.activate = function(name) {
+    this.activate = function (name) {
       if (activeTab) {
         activeTab.active = false;
       }

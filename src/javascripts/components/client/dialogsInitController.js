@@ -22,7 +22,7 @@ export default function register() {
 
         $rootScope.$watch(
           () => spaceContext.getId(),
-          spaceId => {
+          (spaceId) => {
             if (spaceId) {
               // Reset notification related to the previous space.
               $rootScope.$broadcast('persistentNotification', null);
@@ -30,6 +30,6 @@ export default function register() {
           }
         );
       }
-    }
+    },
   ]);
 }

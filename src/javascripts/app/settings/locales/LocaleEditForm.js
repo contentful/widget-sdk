@@ -11,18 +11,18 @@ import {
   Option,
   Note,
   CheckboxField,
-  Workbench
+  Workbench,
 } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink';
 import { create as createLocaleList } from './utils/LocaleList';
 
 const styles = {
   actionButton: css({
-    marginLeft: tokens.spacingM
+    marginLeft: tokens.spacingM,
   }),
   note: css({
-    marginTop: tokens.spacingM
-  })
+    marginTop: tokens.spacingM,
+  }),
 };
 
 export default class LocaleEditForm extends Component {
@@ -36,7 +36,7 @@ export default class LocaleEditForm extends Component {
       default: PropTypes.bool,
       optional: PropTypes.bool.isRequired,
       contentDeliveryApi: PropTypes.bool.isRequired,
-      contentManagementApi: PropTypes.bool.isRequired
+      contentManagementApi: PropTypes.bool.isRequired,
     }).isRequired,
     spaceLocales: PropTypes.arrayOf(PropTypes.object).isRequired,
     setDirty: PropTypes.func.isRequired,
@@ -45,7 +45,7 @@ export default class LocaleEditForm extends Component {
     onSave: PropTypes.func.isRequired,
     isSaving: PropTypes.bool.isRequired,
     goToList: PropTypes.func.isRequired,
-    registerSaveAction: PropTypes.func.isRequired
+    registerSaveAction: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -56,12 +56,12 @@ export default class LocaleEditForm extends Component {
       dirty: false,
       locales: this.localeList.prepareLocaleList(props.initialLocale),
       fallbackLocales: this.localeList.prepareFallbackList(props.initialLocale.code || ''),
-      hasDependantLocales: this.localeList.hasDependantLocales(props.initialLocale.code || '')
+      hasDependantLocales: this.localeList.hasDependantLocales(props.initialLocale.code || ''),
     };
   }
 
   getLocaleName(locales, code) {
-    const locale = locales.find(locale => locale.code === code);
+    const locale = locales.find((locale) => locale.code === code);
     return locale ? locale.name : '';
   }
 
@@ -80,17 +80,17 @@ export default class LocaleEditForm extends Component {
     this.props.setDirty(this.state.dirty);
   }
 
-  updateLocaleCode = value => {
+  updateLocaleCode = (value) => {
     this.setState(
-      state => ({
+      (state) => ({
         ...state,
         locale: {
           ...state.locale,
           code: value,
-          name: this.getLocaleName(state.locales, value)
+          name: this.getLocaleName(state.locales, value),
         },
         fallbackLocales: this.localeList.prepareFallbackList(value),
-        dirty: true
+        dirty: true,
       }),
       () => {
         this.props.setDirty(true);
@@ -100,13 +100,13 @@ export default class LocaleEditForm extends Component {
 
   updateLocaleState = (field, value) => {
     this.setState(
-      state => ({
+      (state) => ({
         ...state,
         locale: {
           ...state.locale,
-          [field]: value
+          [field]: value,
         },
-        dirty: true
+        dirty: true,
       }),
       () => {
         this.props.setDirty(true);
@@ -172,9 +172,9 @@ export default class LocaleEditForm extends Component {
               width="large"
               testId="locale-code-select"
               value={this.state.locale.code || ''}
-              onChange={e => this.updateLocaleCode(e.target.value)}>
+              onChange={(e) => this.updateLocaleCode(e.target.value)}>
               <Option value="">Select a locale</Option>
-              {orderBy(this.state.locales, ['name'], ['asc']).map(locale => (
+              {orderBy(this.state.locales, ['name'], ['asc']).map((locale) => (
                 <Option key={locale.code} value={locale.code}>
                   {locale.label}
                 </Option>
@@ -190,9 +190,9 @@ export default class LocaleEditForm extends Component {
                 <Select
                   testId="locale-fallback-code-select"
                   value={this.state.locale.fallbackCode || ''}
-                  onChange={e => this.updateLocaleState('fallbackCode', e.target.value || null)}>
+                  onChange={(e) => this.updateLocaleState('fallbackCode', e.target.value || null)}>
                   <Option value="">None (no fallback)</Option>
-                  {this.state.fallbackLocales.map(locale => (
+                  {this.state.fallbackLocales.map((locale) => (
                     <Option key={locale.code} value={locale.code}>
                       {locale.label}
                     </Option>
@@ -214,7 +214,7 @@ export default class LocaleEditForm extends Component {
               name="contentDeliveryApi"
               disabled={this.state.locale.default || this.state.hasDependantLocales}
               checked={this.state.locale.contentDeliveryApi}
-              onChange={e => this.updateLocaleState('contentDeliveryApi', e.target.checked)}
+              onChange={(e) => this.updateLocaleState('contentDeliveryApi', e.target.checked)}
               labelText="Enable this locale in response"
               helpText={`Includes locale in the Delivery API response. ${
                 this.state.hasDependantLocales
@@ -227,7 +227,7 @@ export default class LocaleEditForm extends Component {
               name="contentManagementApi"
               disabled={this.state.locale.default}
               checked={this.state.locale.contentManagementApi}
-              onChange={e => this.updateLocaleState('contentManagementApi', e.target.checked)}
+              onChange={(e) => this.updateLocaleState('contentManagementApi', e.target.checked)}
               labelText="Enable editing for this locale"
               helpText="Displays locale to editors and enables it in Management API."
             />
@@ -236,7 +236,7 @@ export default class LocaleEditForm extends Component {
               name="optional"
               disabled={this.state.locale.default}
               checked={this.state.locale.optional}
-              onChange={e => this.updateLocaleState('optional', e.target.checked)}
+              onChange={(e) => this.updateLocaleState('optional', e.target.checked)}
               labelText="Allow empty fields for this locale"
               helpText="Entries with required fields can still be published if locale is empty."
             />

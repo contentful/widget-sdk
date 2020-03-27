@@ -9,7 +9,7 @@ import {
   Dropdown,
   DropdownList,
   DropdownListItem,
-  Icon as FormaIcon
+  Icon as FormaIcon,
 } from '@contentful/forma-36-react-components';
 import Icon from 'ui/Components/Icon';
 import * as fieldFactory from 'services/fieldFactory';
@@ -18,7 +18,7 @@ import tokens from '@contentful/forma-36-tokens';
 
 const styles = {
   dropContainer: css({
-    margin: `${tokens.spacingM} 0 ${tokens.spacingM} 0`
+    margin: `${tokens.spacingM} 0 ${tokens.spacingM} 0`,
   }),
   fieldDraggable: css({
     cursor: 'grab',
@@ -26,9 +26,9 @@ const styles = {
     margin: `0 0 ${tokens.spacingM} 0`,
     outline: 'none',
     '&:focus': {
-      boxShadow: tokens.glowPrimary
-    }
-  })
+      boxShadow: tokens.glowPrimary,
+    },
+  }),
 };
 
 function isTitleType(fieldType) {
@@ -39,7 +39,7 @@ const FieldType = PropTypes.shape({
   id: PropTypes.string.isRequired,
   disabled: PropTypes.bool,
   omitted: PropTypes.bool,
-  deleted: PropTypes.bool
+  deleted: PropTypes.bool,
 });
 
 class FieldItem extends Component {
@@ -52,11 +52,11 @@ class FieldItem extends Component {
     onToggleDisabled: PropTypes.func.isRequired,
     onToggleOmitted: PropTypes.func.isRequired,
     onDelete: PropTypes.func.isRequired,
-    onUndelete: PropTypes.func.isRequired
+    onUndelete: PropTypes.func.isRequired,
   };
 
   state = {
-    isDropdownOpened: false
+    isDropdownOpened: false,
   };
 
   getFieldName(field) {
@@ -81,7 +81,7 @@ class FieldItem extends Component {
       onToggleDisabled,
       onToggleOmitted,
       onDelete,
-      onUndelete
+      onUndelete,
     } = this.props;
     const iconId = fieldFactory.getIconId(field) + '-small';
     const fieldTypeLabel = fieldFactory.getLabel(field);
@@ -91,7 +91,7 @@ class FieldItem extends Component {
       <div
         className={cn('ct-field', {
           'x--disabled': field.disabled,
-          'x--omitted': field.omitted
+          'x--omitted': field.omitted,
         })}>
         {canEdit && (
           <div className="ct-field__drag-handle">
@@ -132,7 +132,7 @@ class FieldItem extends Component {
                   className="ct-field__actions btn-inline"
                   aria-label="Actions"
                   onClick={() => {
-                    this.setState(state => ({ isDropdownOpened: !state.isDropdownOpened }));
+                    this.setState((state) => ({ isDropdownOpened: !state.isDropdownOpened }));
                   }}>
                   •••
                 </button>
@@ -243,12 +243,12 @@ export default class FieldsList extends Component {
       toggleFieldProperty: PropTypes.func.isRequired,
       deleteField: PropTypes.func.isRequired,
       undeleteField: PropTypes.func.isRequired,
-      updateOrder: PropTypes.func.isRequired
-    }).isRequired
+      updateOrder: PropTypes.func.isRequired,
+    }).isRequired,
   };
 
   state = {
-    optimisticFields: null
+    optimisticFields: null,
   };
 
   componentDidUpdate(prevProps) {

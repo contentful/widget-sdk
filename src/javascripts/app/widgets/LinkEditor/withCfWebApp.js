@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {
   canPerformActionOnEntryOfType,
   canCreateAsset,
-  Action
+  Action,
 } from 'access_control/AccessChecker';
 import { noop, find, get } from 'lodash';
 import { newConfigFromField } from 'search/EntitySelector/Config';
@@ -27,20 +27,20 @@ export default function withCfWebApp(LinkEditor) {
       type: BaseLinkEditor.propTypes.type,
       widgetAPI: PropTypes.object.isRequired,
       loadEvents: PropTypes.shape({
-        emit: PropTypes.func.isRequired
+        emit: PropTypes.func.isRequired,
       }).isRequired,
-      onChange: PropTypes.func
+      onChange: PropTypes.func,
     };
 
     static defaultProps = {
-      onChange: noop
+      onChange: noop,
     };
 
     state = { contentTypes: [] };
 
     componentDidMount() {
       const spaceContext = getModule('spaceContext');
-      const fetchContentTypes = allContentTypes => {
+      const fetchContentTypes = (allContentTypes) => {
         const contentTypes = getAccessibleCts(allContentTypes, this.props.widgetAPI.field);
         this.setState({ contentTypes });
       };
@@ -74,14 +74,14 @@ export default function withCfWebApp(LinkEditor) {
 
           trackOpenSlideInInsteadOfBulk({
             parentEntryId: entryId,
-            refCount
+            refCount,
           });
         }
       }
       slideInLinkedEntityAndTrack(slide, action, useBulkEditor);
     }
 
-    handleChange = links => {
+    handleChange = (links) => {
       const value = links && links.length === 0 ? undefined : links;
       this.props.onChange(value);
     };
@@ -91,8 +91,8 @@ export default function withCfWebApp(LinkEditor) {
       const { contentTypes } = this.state;
       const actions = {
         selectEntities: () => selectEntities(widgetAPI),
-        createEntity: async ctId => {
-          const contentType = contentTypes.find(ct => ct.sys.id === ctId);
+        createEntity: async (ctId) => {
+          const contentType = contentTypes.find((ct) => ct.sys.id === ctId);
           const entity = await createEntityOfType(type, contentType);
           if (entity) {
             this.handleOpenLink(entity, -1, SLIDE_IN_ACTIONS.OPEN_CREATE);
@@ -104,7 +104,7 @@ export default function withCfWebApp(LinkEditor) {
           if (entity.sys.type === 'Entry') {
             track('reference_editor_action:edit', { ctId: getCtId(entity) });
           }
-        }
+        },
       };
       const props = {
         ...this.props,
@@ -117,9 +117,10 @@ export default function withCfWebApp(LinkEditor) {
             trackLinksChanged('reference_editor_action:link', entities);
           }
         },
-        onUnlinkEntities: entities => trackLinksChanged('reference_editor_action:delete', entities),
+        onUnlinkEntities: (entities) =>
+          trackLinksChanged('reference_editor_action:delete', entities),
         onLinkFetchComplete: this.handleLinkRendered,
-        onChange: this.handleChange
+        onChange: this.handleChange,
       };
       return <LinkEditor {...props} />;
     }
@@ -143,7 +144,7 @@ function selectEntities(widgetAPI) {
 async function createEntityOfType(type, contentType = null) {
   const entityCreatorsByType = {
     Entry: entityCreator.newEntry,
-    Asset: entityCreator.newAsset
+    Asset: entityCreator.newAsset,
   };
 
   const ctId = contentType && contentType.sys.id;
@@ -158,7 +159,7 @@ async function createEntityOfType(type, contentType = null) {
     track('entry:create', {
       eventOrigin: 'reference-editor',
       contentType: contentType,
-      response: get(legacyClientEntity, 'data')
+      response: get(legacyClientEntity, 'data'),
     });
     track('reference_editor_action:create', { ctId });
   }
@@ -172,7 +173,7 @@ function slideInLinkedEntityAndTrack(slide, action) {
 }
 
 function trackLinksChanged(event, entities) {
-  entities.forEach(entity => {
+  entities.forEach((entity) => {
     if (entity.sys.type === 'Entry') {
       // TODO: We should track a count instead of being so wasteful with events.
       track(event, { ctId: getCtId(entity) });
@@ -182,7 +183,8 @@ function trackLinksChanged(event, entities) {
 
 function getAccessibleCts(allContentTypes, field) {
   return allContentTypes.filter(
-    ct => canPerformActionOnEntryOfType(Action.CREATE, ct.sys.id) && canLinkToContentType(field, ct)
+    (ct) =>
+      canPerformActionOnEntryOfType(Action.CREATE, ct.sys.id) && canLinkToContentType(field, ct)
   );
 }
 

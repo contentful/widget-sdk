@@ -10,7 +10,7 @@ import {
   Spinner,
   SectionHeading,
   Icon,
-  IconButton
+  IconButton,
 } from '@contentful/forma-36-react-components';
 import _ from 'lodash';
 
@@ -23,7 +23,7 @@ const styles = {
     borderRadius: '3px',
     fontFamily: tokens.fontStackPrimary,
     width: '500px',
-    overflowY: 'auto'
+    overflowY: 'auto',
   }),
   commandPanelList: css({
     display: 'block',
@@ -31,7 +31,7 @@ const styles = {
     margin: 0,
     padding: 0,
     height: '200px',
-    overflowY: 'auto'
+    overflowY: 'auto',
   }),
   item: css({
     fontSize: tokens.fontSizeM,
@@ -39,7 +39,7 @@ const styles = {
     padding: `${tokens.spacingS} ${tokens.spacingXs}`,
     borderBottom: `1px solid ${tokens.colorElementMid}`,
     margin: 0,
-    color: tokens.colorTextDark
+    color: tokens.colorTextDark,
   }),
   divider: css({
     fontWeight: tokens.fontWeightDemiBold,
@@ -50,18 +50,18 @@ const styles = {
     borderBottom: `1px solid ${tokens.colorElementDark}`,
     margin: 0,
     lineHeight: tokens.lineHeightDefault,
-    color: tokens.colorTextDark
+    color: tokens.colorTextDark,
   }),
   icon: css({
-    marginRight: 10
+    marginRight: 10,
   }),
   isSelected: css({
-    background: tokens.colorElementLight
+    background: tokens.colorElementLight,
   }),
   skeletonContainer: css({
     padding: tokens.spacingM,
     height: 200,
-    margin: 0
+    margin: 0,
   }),
   button: css({
     textAlign: 'left',
@@ -70,33 +70,33 @@ const styles = {
     textOverflow: 'ellipsis',
     width: '100%',
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
   }),
   navBar: css({
     display: 'flex',
     bottom: 0,
     background: tokens.colorElementLightest,
     padding: `${tokens.spacingS} ${tokens.spacingXs}`,
-    width: '100%'
+    width: '100%',
   }),
   loader: css({
-    marginLeft: 'auto'
+    marginLeft: 'auto',
   }),
   thumbnail: css({
-    marginRight: 15
+    marginRight: 15,
   }),
   instruction: css({
     marginRight: 15,
-    color: tokens.colorTextLight
+    color: tokens.colorTextLight,
   }),
   closeButton: css({
-    marginLeft: 'auto'
-  })
+    marginLeft: 'auto',
+  }),
 };
 
 const itemPropType = PropTypes.shape({
   label: PropTypes.string,
-  callback: PropTypes.func
+  callback: PropTypes.func,
 });
 
 class CommandPanelItem extends React.Component {
@@ -104,7 +104,7 @@ class CommandPanelItem extends React.Component {
     isSelected: PropTypes.bool,
     index: PropTypes.number,
     classNames: PropTypes.string,
-    item: itemPropType
+    item: itemPropType,
   };
   listItemRef = null;
 
@@ -112,7 +112,7 @@ class CommandPanelItem extends React.Component {
     if (this.props.isSelected) {
       this.listItemRef.scrollIntoView({
         block: 'nearest',
-        inline: 'start'
+        inline: 'start',
       });
     }
   }
@@ -124,7 +124,7 @@ class CommandPanelItem extends React.Component {
       <li
         key={index}
         className={classNames}
-        ref={ref => {
+        ref={(ref) => {
           this.listItemRef = ref;
         }}>
         <button type="button" className={styles.button} onClick={item.callback && item.callback}>
@@ -150,7 +150,7 @@ export class CommandPanel extends React.Component {
     isUpdating: PropTypes.bool,
     breadcrumb: PropTypes.string,
     richTextAPI: PropTypes.object,
-    onClose: PropTypes.func
+    onClose: PropTypes.func,
   };
   static defaultProps = {
     className: undefined,
@@ -158,19 +158,19 @@ export class CommandPanel extends React.Component {
     items: [],
     testId: 'cf-ui-command-panel',
     isLoading: true,
-    isUpdating: false
+    isUpdating: false,
   };
 
   state = {
     selectedKey: 0,
-    items: []
+    items: [],
   };
 
   static getDerivedStateFromProps(props, state) {
     const itemsHasUpdated = props.items !== state.originalItems;
     const searchStringHasUpdated = props.searchString !== state.originalSearchString;
 
-    const items = props.items.filter(item =>
+    const items = props.items.filter((item) =>
       item.label.toLowerCase().includes(props.searchString ? props.searchString.toLowerCase() : '')
     );
 
@@ -178,7 +178,7 @@ export class CommandPanel extends React.Component {
       originalItems: props.items,
       originalSearchString: props.searchString,
       items,
-      selectedKey: itemsHasUpdated || searchStringHasUpdated ? 0 : state.selectedKey
+      selectedKey: itemsHasUpdated || searchStringHasUpdated ? 0 : state.selectedKey,
     };
   }
 
@@ -192,18 +192,18 @@ export class CommandPanel extends React.Component {
     document.removeEventListener('keydown', this.handleKeyboard, true);
   }
 
-  handleKeyboard = e => {
+  handleKeyboard = (e) => {
     if (isHotKey('up', e)) {
       if (this.state.selectedKey === 0) return;
-      this.setState(state => ({
-        selectedKey: state.selectedKey - 1
+      this.setState((state) => ({
+        selectedKey: state.selectedKey - 1,
       }));
     }
 
     if (isHotKey('down', e)) {
       if (this.state.selectedKey === this.state.items.length - 1) return;
-      this.setState(state => ({
-        selectedKey: state.selectedKey + 1
+      this.setState((state) => ({
+        selectedKey: state.selectedKey + 1,
       }));
     }
 
@@ -214,7 +214,10 @@ export class CommandPanel extends React.Component {
   };
 
   renderGroups() {
-    const groups = _.uniqBy(this.state.items.map(item => item.group), value => value);
+    const groups = _.uniqBy(
+      this.state.items.map((item) => item.group),
+      (value) => value
+    );
 
     if (!groups.length) {
       return <li className={styles.item}>No results</li>;
@@ -236,13 +239,13 @@ export class CommandPanel extends React.Component {
 
   renderItems(groupName) {
     return this.state.items
-      .filter(item => item.group === groupName)
-      .map(item => {
+      .filter((item) => item.group === groupName)
+      .map((item) => {
         const index = this.state.items.indexOf(item);
         const isSelected = index === this.state.selectedKey;
 
         const classNames = cn(styles.item, {
-          [styles.isSelected]: isSelected
+          [styles.isSelected]: isSelected,
         });
 
         return (

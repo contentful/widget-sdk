@@ -9,7 +9,7 @@ export default class SSOEnabled extends React.Component {
   static propTypes = {
     restrictedModeEnabled: PropTypes.bool.isRequired,
     ssoName: PropTypes.string.isRequired,
-    organization: OrganizationPropType.isRequired
+    organization: OrganizationPropType.isRequired,
   };
 
   trackSupportClick = () => {
@@ -21,8 +21,8 @@ export default class SSOEnabled extends React.Component {
       restrictedModeEnabled,
       ssoName,
       organization: {
-        sys: { id: orgId }
-      }
+        sys: { id: orgId },
+      },
     } = this.props;
 
     return (
@@ -68,7 +68,7 @@ export default class SSOEnabled extends React.Component {
               value={ssoName}
               textInputProps={{
                 withCopyButton: true,
-                disabled: true
+                disabled: true,
               }}
             />
           </div>
@@ -81,7 +81,7 @@ export default class SSOEnabled extends React.Component {
               value={`https:${authUrl(`/sso/${orgId}/login`)}`}
               textInputProps={{
                 withCopyButton: true,
-                disabled: true
+                disabled: true,
               }}
             />
           </div>

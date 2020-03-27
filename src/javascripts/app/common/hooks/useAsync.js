@@ -29,7 +29,7 @@ export const dataFetchReducer = (_, action) => {
  */
 export const useAsyncFn = (fn, isLoading = false) => {
   const [state, dispatch] = useReducer(dataFetchReducer, {
-    isLoading
+    isLoading,
   });
   const isMounted = useRefMounted();
   const runAsync = useCallback(

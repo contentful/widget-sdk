@@ -1,3 +1,3 @@
 export default {
-  QUICK_NAV: 'q'
+  QUICK_NAV: 'q',
 };

@@ -6,7 +6,7 @@ import {
   Icon,
   Card,
   EmptyState,
-  SkeletonBodyText
+  SkeletonBodyText,
 } from '@contentful/forma-36-react-components';
 import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
@@ -17,7 +17,7 @@ const styles = {
   list: css({
     margin: `${tokens.spacingM} 0 0`,
     height: 300,
-    overflow: 'auto'
+    overflow: 'auto',
   }),
   availableUser: css({
     display: 'flex',
@@ -26,22 +26,22 @@ const styles = {
     padding: `${tokens.spacingS} ${tokens.spacingM}`,
     cursor: 'pointer',
     '&:hover': {
-      backgroundColor: tokens.colorElementLightest
-    }
+      backgroundColor: tokens.colorElementLightest,
+    },
   }),
   selectedUser: css({
     backgroundColor: tokens.colorElementLight,
-    '&:hover': { backgroundColor: tokens.colorElementLight }
-  })
+    '&:hover': { backgroundColor: tokens.colorElementLight },
+  }),
 };
 
 export default function AvailableUsers({
   orgMemberships,
   selectedUsers = [],
   onUserSelected,
-  onUserRemoved
+  onUserRemoved,
 }) {
-  const isSelected = orgMembership => {
+  const isSelected = (orgMembership) => {
     return selectedUsers.includes(orgMembership);
   };
 
@@ -60,17 +60,17 @@ export default function AvailableUsers({
         <EmptyState
           headingProps={{ text: 'No users found' }}
           descriptionProps={{
-            text: 'Notice that you can only add users who are already members of this organization'
+            text: 'Notice that you can only add users who are already members of this organization',
           }}
         />
       )}
       {orgMemberships &&
-        orgMemberships.map(orgMembership => (
+        orgMemberships.map((orgMembership) => (
           <UserOption
             key={orgMembership.sys.id}
             orgMembership={orgMembership}
             selected={isSelected(orgMembership)}
-            onChange={selected => handleChange(orgMembership, selected)}
+            onChange={(selected) => handleChange(orgMembership, selected)}
           />
         ))}
     </Card>
@@ -80,7 +80,7 @@ AvailableUsers.propTypes = {
   orgMemberships: PropTypes.arrayOf(OrganizationMembershipPropType),
   selectedUsers: PropTypes.arrayOf(OrganizationMembershipPropType).isRequired,
   onUserSelected: PropTypes.func.isRequired,
-  onUserRemoved: PropTypes.func.isRequired
+  onUserRemoved: PropTypes.func.isRequired,
 };
 
 function UserOption({ orgMembership, selected, onChange }) {
@@ -100,7 +100,7 @@ function UserOption({ orgMembership, selected, onChange }) {
 UserOption.propTypes = {
   orgMembership: OrganizationMembershipPropType.isRequired,
   selected: PropTypes.bool.isRequired,
-  onChange: PropTypes.func.isRequired
+  onChange: PropTypes.func.isRequired,
 };
 
 export function AvailableUsersSkeleton() {

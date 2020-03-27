@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 import {
   SkeletonContainer,
   SkeletonBodyText,
-  Workbench
+  Workbench,
 } from '@contentful/forma-36-react-components';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 import ExtensionsSidebar from '../ExtensionsSidebar';
 
-export const ExtensionListSkeleton = props => (
+export const ExtensionListSkeleton = (props) => (
   <Workbench>
     <Workbench.Header
       title={props.title || 'Extensions'}
@@ -36,5 +36,5 @@ export const ExtensionListSkeleton = props => (
 
 ExtensionListSkeleton.propTypes = {
   title: PropTypes.string,
-  actions: PropTypes.node
+  actions: PropTypes.node,
 };

@@ -18,7 +18,7 @@ const usages = _(usagesByFile)
   .values()
   .flatten()
   .uniq()
-  .remove(i => !i.startsWith('@contentful/forma-36'))
+  .remove((i) => !i.startsWith('@contentful/forma-36'))
   .valueOf();
 
 console.log(usages.map(topLevelImportString).join('\n'));
@@ -28,7 +28,7 @@ console.log(usages.map(allowedModulesString).join(',\n'));
 function recursiveRead(p) {
   const usages = {};
 
-  fs.readdirSync(p).forEach(name => {
+  fs.readdirSync(p).forEach((name) => {
     const resolved = path.resolve(p, name);
     const isJsFile = resolved.endsWith('.js');
     const isJadeFile = resolved.endsWith('.jade');
@@ -157,7 +157,7 @@ function processJsFile(filename) {
           }
         }
       }
-    }
+    },
   });
 
   return names;
@@ -190,7 +190,7 @@ function findReactComponentsInJadeNode(nodes, filename) {
       }
     } else if (node.name === 'react-component') {
       // If the tag is react-component, handle it directly here
-      const name = node.attrs.find(attr => attr.name === 'name').val.replace(/['"]/g, '');
+      const name = node.attrs.find((attr) => attr.name === 'name').val.replace(/['"]/g, '');
 
       if (!name) {
         console.log(`Warning: ${filename} has a react-component usage without a name.`);
@@ -201,7 +201,7 @@ function findReactComponentsInJadeNode(nodes, filename) {
     }
   }
 
-  return _.remove(_.flatten(names), val => val);
+  return _.remove(_.flatten(names), (val) => val);
 }
 
 function getNameFromString(str, filename) {

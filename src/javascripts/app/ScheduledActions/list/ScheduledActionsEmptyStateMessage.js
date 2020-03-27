@@ -8,22 +8,22 @@ import { css } from 'emotion';
 const styles = {
   container: css({
     textAlign: 'center',
-    padding: tokens.spacingM
+    padding: tokens.spacingM,
   }),
   heading: css({
-    marginBottom: tokens.spacingS
+    marginBottom: tokens.spacingS,
   }),
   illustration: css({
     marginBottom: tokens.spacingM,
     marginTop: tokens.spacingM,
-    width: '400px'
-  })
+    width: '400px',
+  }),
 };
 
 export default class ScheduledActionsStateMessage extends Component {
   static propTypes = {
     title: PropTypes.string,
-    text: PropTypes.string
+    text: PropTypes.string,
   };
 
   render() {

@@ -14,11 +14,11 @@ const renderComponent = (
   actions,
   props = {
     showingForm: false,
-    onFormDismissed: () => {}
+    onFormDismissed: () => {},
   }
 ) => {
   const store = createStore(reducer);
-  actions.forEach(action => store.dispatch(action));
+  actions.forEach((action) => store.dispatch(action));
   const wrapper = mount(
     <Provider store={store}>
       <TeamMemberships {...props} />
@@ -44,10 +44,10 @@ describe('TeamMemberships', () => {
           location: {
             pathname: ROUTES.organization.children.teams.children.team.build({
               orgId: activeOrgId,
-              teamId: activeTeamId
-            })
-          }
-        }
+              teamId: activeTeamId,
+            }),
+          },
+        },
       });
     });
 
@@ -61,14 +61,14 @@ describe('TeamMemberships', () => {
               [TEAMS]: [
                 {
                   sys: {
-                    id: 'aTeam'
-                  }
+                    id: 'aTeam',
+                  },
                 },
                 {
                   sys: {
-                    id: 'bTeam'
-                  }
-                }
+                    id: 'bTeam',
+                  },
+                },
               ],
               [USERS]: [
                 {
@@ -76,29 +76,29 @@ describe('TeamMemberships', () => {
                   lastName: 'Lastname 2',
                   avatarUrl: 'doesntMatter.com/blah',
                   email: 'userB2@test.com',
-                  sys: { id: 'testUserB2' }
+                  sys: { id: 'testUserB2' },
                 },
                 {
                   firstName: 'B User',
                   lastName: 'Lastname 1',
                   avatarUrl: 'doesntMatter.com/blah',
                   email: 'B1@test.com',
-                  sys: { id: 'testUserB1' }
+                  sys: { id: 'testUserB1' },
                 },
                 {
                   firstName: 'A User',
                   lastName: 'LastName 100',
                   avatarUrl: 'doesntMatter.com/blah',
                   email: 'userA@test.com',
-                  sys: { id: 'testUserA' }
+                  sys: { id: 'testUserA' },
                 },
                 {
                   firstName: 'User not in team',
                   lastName: 'LastName',
                   avatarUrl: 'doesntMatter.com/blah',
                   email: 'userX@test.com',
-                  sys: { id: 'testUserX' }
-                }
+                  sys: { id: 'testUserX' },
+                },
               ],
               [TEAM_MEMBERSHIPS]: [
                 {
@@ -109,17 +109,17 @@ describe('TeamMemberships', () => {
                       sys: {
                         type: 'Link',
                         linkType: USERS,
-                        id: 'testUserB2'
-                      }
+                        id: 'testUserB2',
+                      },
                     },
                     team: {
                       sys: {
                         type: 'Link',
                         linkType: TEAMS,
-                        id: activeTeamId
-                      }
-                    }
-                  }
+                        id: activeTeamId,
+                      },
+                    },
+                  },
                 },
                 {
                   admin: false,
@@ -129,17 +129,17 @@ describe('TeamMemberships', () => {
                       sys: {
                         type: 'Link',
                         linkType: USERS,
-                        id: 'testUserB1'
-                      }
+                        id: 'testUserB1',
+                      },
                     },
                     team: {
                       sys: {
                         type: 'Link',
                         linkType: TEAMS,
-                        id: activeTeamId
-                      }
-                    }
-                  }
+                        id: activeTeamId,
+                      },
+                    },
+                  },
                 },
                 {
                   admin: false,
@@ -149,21 +149,21 @@ describe('TeamMemberships', () => {
                       sys: {
                         type: 'Link',
                         linkType: USERS,
-                        id: 'testUserA'
-                      }
+                        id: 'testUserA',
+                      },
                     },
                     team: {
                       sys: {
                         type: 'Link',
                         linkType: TEAMS,
-                        id: activeTeamId
-                      }
-                    }
-                  }
-                }
-              ]
-            }
-          }
+                        id: activeTeamId,
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          },
         });
       });
 
@@ -195,7 +195,7 @@ describe('TeamMemberships', () => {
           beforeEach(() => {
             actions.push({
               type: 'ADD_TO_DATASET',
-              payload: { dataset: TEAM_MEMBERSHIPS, item: { sys: { id: 'newMembership1' } } }
+              payload: { dataset: TEAM_MEMBERSHIPS, item: { sys: { id: 'newMembership1' } } },
             });
           });
 
@@ -209,7 +209,7 @@ describe('TeamMemberships', () => {
             beforeEach(() => {
               actions.push({
                 type: 'ADD_TO_DATASET',
-                payload: { dataset: TEAM_MEMBERSHIPS, item: { sys: { id: 'newMembership2' } } }
+                payload: { dataset: TEAM_MEMBERSHIPS, item: { sys: { id: 'newMembership2' } } },
               });
             });
 
@@ -224,7 +224,7 @@ describe('TeamMemberships', () => {
             beforeEach(() => {
               actions.push({
                 type: 'SUBMIT_NEW_TEAM_MEMBERSHIP_FAILED',
-                meta: { orgMembership: 'newMembership2' }
+                meta: { orgMembership: 'newMembership2' },
               });
             });
 

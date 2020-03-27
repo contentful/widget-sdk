@@ -13,11 +13,11 @@ const styles = {
     display: 'block',
     backgroundColor: tokens.colorElementLightest,
     border: `1px solid ${tokens.colorElementMid}`,
-    padding: tokens.spacingXl
+    padding: tokens.spacingXl,
   }),
   saveButton: css({
-    marginRight: tokens.spacingM
-  })
+    marginRight: tokens.spacingM,
+  }),
 };
 
 function WidgetParametersConfiguration({ widget, dispatch }) {
@@ -68,7 +68,7 @@ function WidgetParametersConfiguration({ widget, dispatch }) {
 
 WidgetParametersConfiguration.propTypes = {
   widget: PropTypes.object.isRequired,
-  dispatch: PropTypes.func.isRequired
+  dispatch: PropTypes.func.isRequired,
 };
 
 export default WidgetParametersConfiguration;

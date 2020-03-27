@@ -4,15 +4,15 @@ import * as EnforcementsService from './EnforcementsService';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 
 jest.mock('services/TokenStore', () => ({
-  getSpace: jest.fn()
+  getSpace: jest.fn(),
 }));
 
-describe('Enforcements Service', function() {
+describe('Enforcements Service', function () {
   let fetchEnforcementsMock;
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     const tokenSpace = {
-      enforcements: []
+      enforcements: [],
     };
 
     fetchEnforcementsMock = jest.fn();
@@ -21,16 +21,16 @@ describe('Enforcements Service', function() {
     getSpace.mockResolvedValueOnce(tokenSpace);
   });
 
-  describe('getEnforcements', function() {
-    it('should return null if given no space id', function() {
+  describe('getEnforcements', function () {
+    it('should return null if given no space id', function () {
       expect(EnforcementsService.getEnforcements()).toBeNull();
     });
 
-    it('should return null if given a space id for which no enforcements exist', function() {
+    it('should return null if given a space id for which no enforcements exist', function () {
       expect(EnforcementsService.getEnforcements('BAD_SPACE_ID')).toBeNull();
     });
 
-    it('fetches enforcements for a given space id when requested', async function() {
+    it('fetches enforcements for a given space id when requested', async function () {
       const enforcements = [{}];
       fetchEnforcementsMock.mockResolvedValueOnce({ items: enforcements });
       await EnforcementsService.refresh('SPACE_ID');
@@ -40,7 +40,7 @@ describe('Enforcements Service', function() {
       expect(EnforcementsService.getEnforcements('SPACE_ID_2')).toBeNull();
     });
 
-    it('returns the same enforcements object if it has not been changed remotely', async function() {
+    it('returns the same enforcements object if it has not been changed remotely', async function () {
       const enforcements = [{ sys: { id: 'E_1' } }];
 
       fetchEnforcementsMock.mockResolvedValueOnce({ items: enforcements });
@@ -55,7 +55,7 @@ describe('Enforcements Service', function() {
       expect(second).toStrictEqual(first);
     });
 
-    it('returns new enforcements if they were changed remotely', async function() {
+    it('returns new enforcements if they were changed remotely', async function () {
       const enforcements = [{ sys: { id: 'E_1' } }];
       fetchEnforcementsMock.mockResolvedValueOnce({ items: enforcements });
       await EnforcementsService.refresh('SPACE_ID');
@@ -71,15 +71,15 @@ describe('Enforcements Service', function() {
     });
   });
 
-  describe('periodically refreshes enforcements', function() {
-    const wait = () => new Promise(resolve => setTimeout(resolve));
+  describe('periodically refreshes enforcements', function () {
+    const wait = () => new Promise((resolve) => setTimeout(resolve));
 
-    beforeEach(function() {
+    beforeEach(function () {
       window.setInterval = jest.fn().mockReturnValue(1);
       window.clearInterval = jest.fn();
     });
 
-    it('should set a timer to refresh every 30 seconds', async function() {
+    it('should set a timer to refresh every 30 seconds', async function () {
       const deinit = EnforcementsService.init('SPACE_ID');
 
       expect(window.setInterval).toBeCalledTimes(1);
@@ -119,7 +119,7 @@ describe('Enforcements Service', function() {
       expect(fetchEnforcementsMock).toBeCalledTimes(1);
     });
 
-    it('should remove any enforcements when deinitialized', async function() {
+    it('should remove any enforcements when deinitialized', async function () {
       const enforcements = [{ sys: { id: 'E_1' } }];
       fetchEnforcementsMock.mockResolvedValueOnce({ items: enforcements });
 

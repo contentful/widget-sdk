@@ -8,7 +8,7 @@ import FolderIllustration from 'svg/folder-illustration.svg';
 import PenIllustration from 'svg/illustrations/pen-illustration.svg';
 import CoffeeCupIllustration from 'svg/coffee-cup-illustration.svg';
 import EmptyStateContainer, {
-  defaultSVGStyle
+  defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import NoContentTypeAdvice from 'components/tabs/NoContentTypeAdvice';
 
@@ -53,7 +53,7 @@ EmptyEntries.propTypes = {
   onCreate: PropTypes.func.isRequired,
   contentTypes: PropTypes.array,
   suggestedContentTypeId: PropTypes.string,
-  userIsAdmin: PropTypes.bool
+  userIsAdmin: PropTypes.bool,
 };
 
 const EditorEmptyContentTypes = () => (

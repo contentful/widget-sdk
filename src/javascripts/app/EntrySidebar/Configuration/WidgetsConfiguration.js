@@ -7,7 +7,7 @@ import {
   removeItemFromSidebar,
   changeItemPosition,
   addItemToSidebar,
-  openWidgetConfiguration
+  openWidgetConfiguration,
 } from './SidebarConfigurationReducer';
 import { SidebarType } from './constants';
 import {
@@ -15,7 +15,7 @@ import {
   Paragraph,
   FieldGroup,
   RadioButtonField,
-  Note
+  Note,
 } from '@contentful/forma-36-react-components';
 import FeedbackButton from 'app/common/FeedbackButton';
 import DefaultSidebar from './components/DefaultSidebar';
@@ -24,12 +24,12 @@ import AvailableWidgets from './components/AvailableWidgets';
 
 const styles = {
   options: css({
-    display: 'flex'
+    display: 'flex',
   }),
   container: css({
     display: 'flex',
     marginTop: tokens.spacingL,
-    marginBottom: tokens.spacingM
+    marginBottom: tokens.spacingM,
   }),
   mainColumn: css({
     minWidth: '384px',
@@ -38,7 +38,7 @@ const styles = {
     backgroundColor: tokens.colorWhite,
     minHeight: '500px',
     padding: `${tokens.spacingM} ${tokens.spacingL} ${tokens.spacingL}`,
-    boxShadow: tokens.boxShadowDefault
+    boxShadow: tokens.boxShadowDefault,
   }),
   additionalColumn: css({
     minWidth: '384px',
@@ -47,20 +47,20 @@ const styles = {
     borderLeft: 'none',
     minHeight: '500px',
     padding: `${tokens.spacingM} ${tokens.spacingL}`,
-    boxShadow: tokens.boxShadowDefault
+    boxShadow: tokens.boxShadowDefault,
   }),
   heading: css({
-    marginBottom: tokens.spacingS
+    marginBottom: tokens.spacingS,
   }),
   description: css({
-    marginBottom: tokens.spacingL
+    marginBottom: tokens.spacingL,
   }),
   radioButtonField: css({
-    marginLeft: tokens.spacing3Xl
+    marginLeft: tokens.spacing3Xl,
   }),
   note: css({
-    marginBottom: tokens.spacingXl
-  })
+    marginBottom: tokens.spacingXl,
+  }),
 };
 
 export default function WidgetsConfiguration({ state, dispatch, defaultAvailableItems }) {
@@ -110,13 +110,13 @@ export default function WidgetsConfiguration({ state, dispatch, defaultAvailable
             <div className={styles.mainColumn} data-test-id="custom-sidebar-column">
               <CustomSidebar
                 items={state.items}
-                onRemoveItem={widget => {
+                onRemoveItem={(widget) => {
                   dispatch(removeItemFromSidebar(widget));
                 }}
                 onChangePosition={(sourceIndex, destinationIndex) => {
                   dispatch(changeItemPosition(sourceIndex, destinationIndex));
                 }}
-                onConfigureItem={widget => {
+                onConfigureItem={(widget) => {
                   dispatch(openWidgetConfiguration(widget));
                 }}
               />
@@ -124,7 +124,7 @@ export default function WidgetsConfiguration({ state, dispatch, defaultAvailable
             <div className={styles.additionalColumn} data-test-id="available-sidebar-items">
               <AvailableWidgets
                 items={state.availableItems}
-                onAddItem={item => {
+                onAddItem={(item) => {
                   dispatch(addItemToSidebar(item));
                 }}
               />
@@ -147,5 +147,5 @@ export default function WidgetsConfiguration({ state, dispatch, defaultAvailable
 WidgetsConfiguration.propTypes = {
   state: PropTypes.object.isRequired,
   dispatch: PropTypes.func.isRequired,
-  defaultAvailableItems: PropTypes.array.isRequired
+  defaultAvailableItems: PropTypes.array.isRequired,
 };

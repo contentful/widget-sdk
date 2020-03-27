@@ -15,7 +15,7 @@ import {
   Button,
   ModalConfirm,
   Tooltip,
-  Icon
+  Icon,
 } from '@contentful/forma-36-react-components';
 import { authUrl, appUrl } from 'Config';
 import ModalLauncher from 'app/common/ModalLauncher';
@@ -39,17 +39,17 @@ export class IDPSetupForm extends React.Component {
     connectionTest: PropTypes.object,
     connectionTestStart: PropTypes.func.isRequired,
     connectionTestCancel: PropTypes.func.isRequired,
-    enable: PropTypes.func.isRequired
+    enable: PropTypes.func.isRequired,
   };
 
-  debouncedUpdateValue = _.debounce(async function(fieldName, value) {
+  debouncedUpdateValue = _.debounce(async function (fieldName, value) {
     const { organization, updateFieldValue } = this.props;
 
     updateFieldValue({ fieldName, value, orgId: organization.sys.id });
   }, 500);
 
   updateField = (fieldName, immediately) => {
-    return e => {
+    return (e) => {
       const { validateField } = this.props;
 
       const value = e.target.value;
@@ -66,9 +66,9 @@ export class IDPSetupForm extends React.Component {
   testConnection = () => {
     const {
       organization: {
-        sys: { id: orgId }
+        sys: { id: orgId },
       },
-      connectionTestStart
+      connectionTestStart,
     } = this.props;
 
     connectionTestStart({ orgId });
@@ -77,9 +77,9 @@ export class IDPSetupForm extends React.Component {
   cancelConnectionTest = () => {
     const {
       organization: {
-        sys: { id: orgId }
+        sys: { id: orgId },
       },
-      connectionTestCancel
+      connectionTestCancel,
     } = this.props;
 
     connectionTestCancel({ orgId });
@@ -89,8 +89,8 @@ export class IDPSetupForm extends React.Component {
     const {
       enable,
       organization: {
-        sys: { id: orgId }
-      }
+        sys: { id: orgId },
+      },
     } = this.props;
     const confirmation = await ModalLauncher.open(({ isShown, onClose }) => (
       <ModalConfirm
@@ -129,8 +129,8 @@ export class IDPSetupForm extends React.Component {
       identityProvider,
       organization: {
         name: orgName,
-        sys: { id: orgId }
-      }
+        sys: { id: orgId },
+      },
     } = this.props;
 
     const allowConnectionTest = connectionTestingAllowed(fields, connectionTest);
@@ -143,7 +143,7 @@ export class IDPSetupForm extends React.Component {
       connectionTest.result !== TEST_RESULTS.success &&
       connectionTest.result !== TEST_RESULTS.failure;
 
-    const idpNameSelectValue = _.findKey(SSO_PROVIDERS_MAP, names =>
+    const idpNameSelectValue = _.findKey(SSO_PROVIDERS_MAP, (names) =>
       names.includes(fields.idpName.value)
     );
 
@@ -167,7 +167,7 @@ export class IDPSetupForm extends React.Component {
             textInputProps={{
               withCopyButton: true,
               disabled: true,
-              width: 'large'
+              width: 'large',
             }}
             value={appUrl}
           />
@@ -179,7 +179,7 @@ export class IDPSetupForm extends React.Component {
             helpText="Sometimes called the Single Sign-On URL"
             textInputProps={{
               withCopyButton: true,
-              disabled: true
+              disabled: true,
             }}
             value={`https:${authUrl(`/sso/${orgId}/consume`)}`}
           />
@@ -205,7 +205,7 @@ export class IDPSetupForm extends React.Component {
               labelText="First name"
               textInputProps={{
                 withCopyButton: true,
-                disabled: true
+                disabled: true,
               }}
               value="givenname"
             />
@@ -216,7 +216,7 @@ export class IDPSetupForm extends React.Component {
               labelText="Last name"
               textInputProps={{
                 withCopyButton: true,
-                disabled: true
+                disabled: true,
               }}
               value="surname"
             />
@@ -227,7 +227,7 @@ export class IDPSetupForm extends React.Component {
               labelText="Email"
               textInputProps={{
                 withCopyButton: true,
-                disabled: true
+                disabled: true,
               }}
               value="email"
             />
@@ -256,7 +256,7 @@ export class IDPSetupForm extends React.Component {
               value={idpNameSelectValue}
               onChange={this.updateField('idpName', true)}>
               <Option value="">Select provider</Option>
-              {Object.keys(SSO_PROVIDERS_MAP).map(name => {
+              {Object.keys(SSO_PROVIDERS_MAP).map((name) => {
                 return (
                   <Option key={name} value={name}>
                     {name}
@@ -295,7 +295,7 @@ export class IDPSetupForm extends React.Component {
                 name="idpCert"
                 className="f36-margin-right--m"
                 textInputProps={{
-                  rows: 8
+                  rows: 8,
                 }}
                 value={fields.idpCert.value}
                 onChange={this.updateField('idpCert')}
@@ -367,7 +367,7 @@ export class IDPSetupForm extends React.Component {
                 labelText="Error log"
                 className="f36-margin-top--xl"
                 textInputProps={{
-                  rows: 5
+                  rows: 5,
                 }}
                 testId="errors"
                 value={formatConnectionTestErrors(connectionTest.errors).join('\n')}
@@ -382,7 +382,10 @@ export class IDPSetupForm extends React.Component {
           </Heading>
           <HelpText className="f36-margin-bottom--l">
             Users will have to type the SSO name if they log in via{' '}
-            <TextLink href="https://be.contentful.com/login/sso">Contentful&apos;s SSO login</TextLink>.
+            <TextLink href="https://be.contentful.com/login/sso">
+              Contentful&apos;s SSO login
+            </TextLink>
+            .
           </HelpText>
 
           <div className="sso-setup__field-container">
@@ -395,7 +398,7 @@ export class IDPSetupForm extends React.Component {
                 helpText="Letters, numbers, periods, hyphens, and underscores are allowed."
                 textInputProps={{
                   width: 'large',
-                  placeholder: `E.g. ${_.kebabCase(orgName)}-sso`
+                  placeholder: `E.g. ${_.kebabCase(orgName)}-sso`,
                 }}
                 className="f36-margin-right--m"
                 value={fields.ssoName.value}
@@ -447,16 +450,16 @@ export class IDPSetupForm extends React.Component {
 }
 
 export default connect(
-  state => ({
+  (state) => ({
     fields: ssoSelectors.getFields(state),
     identityProvider: ssoSelectors.getIdentityProvider(state),
-    connectionTest: ssoSelectors.getConnectionTest(state)
+    connectionTest: ssoSelectors.getConnectionTest(state),
   }),
   {
     validateField: ssoActionCreators.validateField,
     updateFieldValue: ssoActionCreators.updateFieldValue,
     connectionTestStart: ssoActionCreators.connectionTestStart,
     connectionTestCancel: ssoActionCreators.connectionTestCancel,
-    enable: ssoActionCreators.enable
+    enable: ssoActionCreators.enable,
   }
 )(IDPSetupForm);

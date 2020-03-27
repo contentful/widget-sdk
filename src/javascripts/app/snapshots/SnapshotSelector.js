@@ -11,7 +11,7 @@ import {
   TextLink,
   Spinner,
   Paragraph,
-  Icon
+  Icon,
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
@@ -27,20 +27,20 @@ const styles = {
     fontWeight: tokens.fontWeightDemiBold,
     fontSize: tokens.fontSizeL,
     '&:hover': {
-      color: tokens.colorTextLightest
+      color: tokens.colorTextLightest,
     },
     '&:hover svg': {
-      fill: `${tokens.colorTextLightest} !important`
+      fill: `${tokens.colorTextLightest} !important`,
     },
     '& svg': {
-      fill: tokens.colorTextDark
-    }
+      fill: tokens.colorTextDark,
+    },
   }),
   activeRow: css({
-    backgroundColor: tokens.colorIceMid
+    backgroundColor: tokens.colorIceMid,
   }),
   clickableRow: css({
-    cursor: 'pointer'
+    cursor: 'pointer',
   }),
   headerRow: css({
     '& > th': {
@@ -48,56 +48,56 @@ const styles = {
       position: 'relative',
       cursor: 'pointer',
       '&:hover': {
-        backgroundColor: tokens.colorElementLight
+        backgroundColor: tokens.colorElementLight,
       },
       '& > svg': {
         position: 'absolute',
         transform: 'translateY(-50%)',
-        top: '50%'
-      }
-    }
+        top: '50%',
+      },
+    },
   }),
   statusRow: css({
     '& > td': {
-      textAlign: 'center'
-    }
+      textAlign: 'center',
+    },
   }),
   placeholder: css({
-    color: tokens.colorTextMid
+    color: tokens.colorTextMid,
   }),
   dropdownContainer: css({
     padding: tokens.spacingL,
     minWidth: '600px',
-    maxWidth: '700px'
+    maxWidth: '700px',
   }),
   table: css({
     border: 'none',
     '& tr': {
       display: 'table',
       tableLayout: 'fixed',
-      width: '100%'
-    }
+      width: '100%',
+    },
   }),
   tableBody: css({
     display: 'block',
     maxHeight: '45vh',
-    overflowY: 'scroll'
-  })
+    overflowY: 'scroll',
+  }),
 };
 
 const SnapshotSelector = ({ snapshot: activeSnapshot, goToSnapshot, editorData }) => {
   const [isOpen, setOpen] = useState(false);
   const [{ isLoading, snapshots }, { initSnapshots, loadMore, setSnapshots }] = useSnapshots({
-    editorData
+    editorData,
   });
 
   const [sort, sortBy] = useSortableColumns({
     setSnapshots,
-    snapshots
+    snapshots,
   });
 
   const onScroll = useInfiniteScroll({
-    onScrolledToBottom: loadMore
+    onScrolledToBottom: loadMore,
   });
 
   return (
@@ -151,7 +151,7 @@ const SnapshotSelector = ({ snapshot: activeSnapshot, goToSnapshot, editorData }
           className={styles.tableBody}
           onScroll={onScroll}
           testId="snapshot-selector-tablebody">
-          {snapshots.map(snapshot => {
+          {snapshots.map((snapshot) => {
             const { sys } = snapshot;
             const isActive = activeSnapshot.sys.id === sys.id;
             return (
@@ -198,7 +198,7 @@ const SnapshotSelector = ({ snapshot: activeSnapshot, goToSnapshot, editorData }
 SnapshotSelector.propTypes = {
   snapshot: PropTypes.object.isRequired,
   goToSnapshot: PropTypes.func.isRequired,
-  editorData: PropTypes.object.isRequired
+  editorData: PropTypes.object.isRequired,
 };
 
 export default SnapshotSelector;

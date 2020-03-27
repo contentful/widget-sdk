@@ -45,7 +45,7 @@ let isDisabled = false;
 
 // Ugly but it's super tricky to simulate environment.
 // Better ideas needed.
-export const __testOnlySetEnv = _env => {
+export const __testOnlySetEnv = (_env) => {
   env = _env;
 };
 
@@ -55,7 +55,7 @@ export const __testOnlySetEnv = _env => {
  * @description
  * Starts event tracking
  */
-export const enable = _.once(user => {
+export const enable = _.once((user) => {
   if (isDisabled) {
     return;
   }
@@ -110,7 +110,7 @@ export function getSessionData(path, defaultValue) {
 export function track(event, data) {
   if (!eventExists(event)) {
     track('tracking:invalid_event', {
-      event
+      event,
     });
 
     return;
@@ -132,7 +132,7 @@ export function track(event, data) {
       error,
       message: error.message,
       event,
-      data
+      data,
     });
   }
 }
@@ -153,13 +153,13 @@ function logEventPayloadSize(event, safePayload) {
         // any of the payload fields has methods on the first level
         const hasMethods = Object.entries(safePayload || {})
           .flatMap(([_, v]) => Object.values(v || {}))
-          .some(v => _.isFunction(v));
+          .some((v) => _.isFunction(v));
 
         if (size > 5000 || hasMethods) {
           logger.logWarn('Potentially bloated tracking event payload', {
             event,
             size,
-            hasMethods
+            hasMethods,
           });
         }
       } catch (error) {
@@ -202,7 +202,7 @@ function identify(extension) {
 
   // We need to remove the list of organization memberships as this array gets
   // flattened when it is passed to Intercom and creates a lot of noise
-  const user = _.omitBy(rawUserData, val => _.isArray(val) || _.isObject(val));
+  const user = _.omitBy(rawUserData, (val) => _.isArray(val) || _.isObject(val));
 
   const userId = getSessionData('user.sys.id');
 
@@ -261,7 +261,7 @@ export function trackStateChange(state, params, from, fromParams) {
     state: state.name,
     params,
     fromState: from ? from.name : null,
-    fromStateParams: fromParams || null
+    fromStateParams: fromParams || null,
   }));
 
   sendSessionDataToConsole();
@@ -275,9 +275,9 @@ function getBasicPayload() {
       userId: getSessionData('user.sys.id', VALUE_UNKNOWN),
       spaceId: getSessionData('space.sys.id', VALUE_UNKNOWN),
       organizationId: getSessionData('organization.sys.id', VALUE_UNKNOWN),
-      currentState: getSessionData('navigation.state', VALUE_UNKNOWN)
+      currentState: getSessionData('navigation.state', VALUE_UNKNOWN),
     },
-    val => val !== VALUE_UNKNOWN
+    (val) => val !== VALUE_UNKNOWN
   );
 }
 

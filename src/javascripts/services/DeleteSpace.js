@@ -6,7 +6,7 @@ import {
   Paragraph,
   Typography,
   TextInput,
-  Button
+  Button,
 } from '@contentful/forma-36-react-components';
 import * as TokenStore from 'services/TokenStore';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
@@ -67,7 +67,7 @@ export const DeleteSpaceModal = ({ isShown, onClose, spaceName }) => {
 DeleteSpaceModal.propTypes = {
   isShown: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  spaceName: PropTypes.string.isRequired
+  spaceName: PropTypes.string.isRequired,
 };
 
 export async function openDeleteSpaceDialog({ space, plan, onSuccess }) {

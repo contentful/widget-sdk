@@ -12,7 +12,7 @@ export default function broadcastEnforcement(enforcement) {
       actionMessage: enforcement.actionMessage,
       action: enforcement.action,
       icon: enforcement.icon,
-      link: enforcement.link
+      link: enforcement.link,
     });
   }
 }

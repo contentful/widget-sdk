@@ -14,7 +14,7 @@ export function externalToInternal(entryData, contentTypeData) {
 function transformRepresentation(entryData, transformPath) {
   const result = { sys: _.cloneDeep(entryData.sys) };
 
-  getAllPathsOf(entryData.fields).forEach(path => {
+  getAllPathsOf(entryData.fields).forEach((path) => {
     const value = _.cloneDeep(_.get(entryData, path));
     _.set(result, transformPath(path), value);
   });

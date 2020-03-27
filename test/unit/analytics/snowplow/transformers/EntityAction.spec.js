@@ -1,20 +1,20 @@
 describe('analytics/snowplow/transformers/EntityAction', () => {
-  beforeEach(async function() {
+  beforeEach(async function () {
     this.transform = (await this.system.import('analytics/transformers/EntityAction')).default;
   });
 
-  it('transforms `content_type_create`', function() {
+  it('transforms `content_type_create`', function () {
     const eventData = {
       actionData: {
         entity: 'ContentType',
-        action: 'create'
+        action: 'create',
       },
       response: {
-        sys: { id: 'ct1', version: 2 }
+        sys: { id: 'ct1', version: 2 },
       },
       userId: 'u1',
       spaceId: 's1',
-      organizationId: 'o1'
+      organizationId: 'o1',
     };
 
     const transformed = this.transform('e1', eventData);
@@ -28,13 +28,13 @@ describe('analytics/snowplow/transformers/EntityAction', () => {
           organization_id: 'o1',
           space_id: 's1',
           version: 2,
-          content_type_id: 'ct1'
-        }
-      }
+          content_type_id: 'ct1',
+        },
+      },
     ]);
   });
 
-  it('adds additional fields for `entry_create`', function() {
+  it('adds additional fields for `entry_create`', function () {
     const eventData = {
       actionData: { entity: 'Entry', action: 'create' },
       response: {
@@ -42,12 +42,12 @@ describe('analytics/snowplow/transformers/EntityAction', () => {
           id: 'e1',
           version: 3,
           revision: 0,
-          contentType: { sys: { id: 'ct2' } }
-        }
+          contentType: { sys: { id: 'ct2' } },
+        },
       },
       userId: 'u1',
       spaceId: 's1',
-      organizationId: 'o1'
+      organizationId: 'o1',
     };
     const transformed = this.transform('e1', eventData);
     expect(transformed.contexts[0].data.revision).toBe(0);

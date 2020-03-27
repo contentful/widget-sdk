@@ -14,8 +14,8 @@ SnapshotPresenterBoolean.propTypes = {
   value: PropTypes.bool.isRequired,
   settings: PropTypes.shape({
     trueLabel: PropTypes.string,
-    falseLabel: PropTypes.string
-  })
+    falseLabel: PropTypes.string,
+  }),
 };
 
 export default SnapshotPresenterBoolean;

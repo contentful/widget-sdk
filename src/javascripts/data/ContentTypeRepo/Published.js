@@ -36,8 +36,11 @@ export function create(space) {
    * - the items in the array will be deeply frozen to prevent mutation
    * - the items are sorted by CT name
    */
-  const items$ = store.items$.map(cts =>
-    sortBy(cts.map(ct => deepFreeze(cloneDeep(ct.data))), ct => ct.name && ct.name.toLowerCase())
+  const items$ = store.items$.map((cts) =>
+    sortBy(
+      cts.map((ct) => deepFreeze(cloneDeep(ct.data))),
+      (ct) => ct.name && ct.name.toLowerCase()
+    )
   );
 
   // requesting[id] holds a promise for the content type if we are
@@ -52,7 +55,7 @@ export function create(space) {
     unpublish,
     refresh,
     refreshBare,
-    getAllBare: () => K.getValue(items$)
+    getAllBare: () => K.getValue(items$),
   };
 
   /**
@@ -123,7 +126,7 @@ export function create(space) {
    * @returns {Promise<Client.ContentType>}
    */
   function publish(contentType) {
-    return contentType.publish().then(published => {
+    return contentType.publish().then((published) => {
       store.add(published);
       return published;
     });
@@ -154,7 +157,7 @@ export function create(space) {
    * @returns {Promise<API.ContentType[]>}
    */
   function refreshBare() {
-    return refresh().then(cts => cts.map(ct => deepFreeze(cloneDeep(ct.data))));
+    return refresh().then((cts) => cts.map((ct) => deepFreeze(cloneDeep(ct.data))));
   }
 
   /**
@@ -171,7 +174,7 @@ export function create(space) {
   // TODO we should throttle this function so that multiple
   // subsequent calls to `fetch()` do not trigger multiple requests.
   function refresh() {
-    return space.getPublishedContentTypes({ limit: 1000 }).then(contentTypes => {
+    return space.getPublishedContentTypes({ limit: 1000 }).then((contentTypes) => {
       contentTypes = removeDeleted(contentTypes);
       store.reset(contentTypes);
       return contentTypes;
@@ -180,7 +183,7 @@ export function create(space) {
 }
 
 function removeDeleted(contentTypes) {
-  return contentTypes.filter(ct => !ct.isDeleted());
+  return contentTypes.filter((ct) => !ct.isDeleted());
 }
 
 function handleReloadError(err) {

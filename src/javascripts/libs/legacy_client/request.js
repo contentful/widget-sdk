@@ -40,52 +40,52 @@ Request.prototype.post = _.partial(Request.prototype.send, 'POST');
 Request.prototype.put = _.partial(Request.prototype.send, 'PUT');
 Request.prototype.delete = _.partial(Request.prototype.send, 'DELETE');
 
-Request.prototype.throw = function(error) {
+Request.prototype.throw = function (error) {
   return this._clone({ error: error });
 };
 
-Request.prototype.rejectEmpty = function() {
+Request.prototype.rejectEmpty = function () {
   return this._clone({ responseHandler: rejectEmpty });
 };
 
-Request.prototype.payload = function(payload) {
+Request.prototype.payload = function (payload) {
   return this._clone({ payload: payload });
 };
 
-Request.prototype.headers = function(headers) {
+Request.prototype.headers = function (headers) {
   headers = _.extend({}, this._params.headers, headers);
   return this._clone({ headers: headers });
 };
 
-Request.prototype.deleteHeader = function(name) {
+Request.prototype.deleteHeader = function (name) {
   const headers = _.omit(this._params.headers, name);
   const putHeaders = _.omit(this._params.putHeaders, name);
   return this._clone({
     headers: headers,
-    putHeaders: putHeaders
+    putHeaders: putHeaders,
   });
 };
 
-Request.prototype.putHeaders = function(headers) {
+Request.prototype.putHeaders = function (headers) {
   headers = _.extend({}, this._params.putHeaders, headers);
   return this._clone({ putHeaders: headers });
 };
 
-Request.prototype.path = function(...args) {
+Request.prototype.path = function (...args) {
   return this.paths(args);
 };
 
-Request.prototype.paths = function(add) {
+Request.prototype.paths = function (add) {
   const components = [this._params.path].concat(_.toArray(add));
   const newPath = joinPath(components);
   return this._clone({ path: newPath });
 };
 
-Request.prototype.getPath = function() {
+Request.prototype.getPath = function () {
   return this._params.endpoint || '';
 };
 
-Request.prototype._clone = function(params) {
+Request.prototype._clone = function (params) {
   params = _.extend({}, this._params, params);
   return new Request(this.adapter, params);
 };

@@ -34,8 +34,8 @@ function initSnowplow() {
     cookieDomain: domain,
     stateStorageStrategy: 'cookie',
     contexts: {
-      gaCookies: true
-    }
+      gaCookies: true,
+    },
   });
 
   // Ping every 30 seconds
@@ -109,9 +109,9 @@ export function buildUnstructEventData(eventName, data) {
       'trackUnstructEvent',
       {
         schema: schema.path,
-        data: data.data
+        data: data.data,
       },
-      data.contexts
+      data.contexts,
     ];
   }
 }

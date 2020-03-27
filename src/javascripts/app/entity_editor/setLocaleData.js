@@ -21,7 +21,7 @@ export function setLocaleData($scope, { isBulkEditor = false } = {}) {
     isSingleLocaleModeOn: isBulkEditor ? false : TheLocaleStore.isSingleLocaleModeOn(),
     activeLocales: TheLocaleStore.getActiveLocales(),
     isLocaleActive: TheLocaleStore.isLocaleActive,
-    errors: {}
+    errors: {},
   });
 }
 
@@ -38,7 +38,7 @@ function maybeResetFocusedLocale() {
 }
 
 function handleSidebarEvents($scope, entityLabel, shouldHideLocaleErrors, emitter) {
-  emitter.on(SidebarEventTypes.SET_SINGLE_LOCALE_MODE, isOn => {
+  emitter.on(SidebarEventTypes.SET_SINGLE_LOCALE_MODE, (isOn) => {
     if (!isOn) {
       resetStatusNotificationProps($scope, entityLabel);
     }
@@ -49,7 +49,7 @@ function handleSidebarEvents($scope, entityLabel, shouldHideLocaleErrors, emitte
     });
   });
 
-  emitter.on(SidebarEventTypes.UPDATED_FOCUSED_LOCALE, locale => {
+  emitter.on(SidebarEventTypes.UPDATED_FOCUSED_LOCALE, (locale) => {
     TheLocaleStore.setFocusedLocale(locale);
     $scope.localeData.focusedLocale = locale;
     $scope.$applyAsync(() => {
@@ -60,7 +60,7 @@ function handleSidebarEvents($scope, entityLabel, shouldHideLocaleErrors, emitte
     });
   });
 
-  emitter.on(SidebarEventTypes.DEACTIVATED_LOCALE, locale => {
+  emitter.on(SidebarEventTypes.DEACTIVATED_LOCALE, (locale) => {
     if (isEmpty($scope.localeData.errors) || shouldHideLocaleErrors()) {
       resetStatusNotificationProps($scope, entityLabel);
     }
@@ -69,7 +69,7 @@ function handleSidebarEvents($scope, entityLabel, shouldHideLocaleErrors, emitte
     $scope.$applyAsync();
   });
 
-  emitter.on(SidebarEventTypes.SET_ACTIVE_LOCALES, locales => {
+  emitter.on(SidebarEventTypes.SET_ACTIVE_LOCALES, (locales) => {
     if (isEmpty($scope.localeData.errors) || shouldHideLocaleErrors()) {
       resetStatusNotificationProps($scope, entityLabel);
     }
@@ -80,7 +80,7 @@ function handleSidebarEvents($scope, entityLabel, shouldHideLocaleErrors, emitte
 }
 
 function handleTopNavErrors($scope, entityLabel, shouldHideLocaleErrors) {
-  K.onValueScope($scope, $scope.editorContext.validator.errors$, errors => {
+  K.onValueScope($scope, $scope.editorContext.validator.errors$, (errors) => {
     if (!$scope.localeData.isSingleLocaleModeOn) {
       // We only want to display the top-nav notification about locale errors
       // if we are in the single focused locale mode.
@@ -93,12 +93,12 @@ function handleTopNavErrors($scope, entityLabel, shouldHideLocaleErrors) {
     // always refer to a missing file error.
     $scope.localeData.errors = groupBy(
       errors,
-      error => error.path[2] || $scope.localeData.defaultLocale.internal_code
+      (error) => error.path[2] || $scope.localeData.defaultLocale.internal_code
     );
 
     if (errors.length && !shouldHideLocaleErrors()) {
       const { errors, privateLocales: locales } = $scope.localeData;
-      const erroredLocales = keys(errors).map(ic => locales.find(l => l.internal_code === ic));
+      const erroredLocales = keys(errors).map((ic) => locales.find((l) => l.internal_code === ic));
       const status =
         entityLabel === 'entry'
           ? DocumentStatusCode.LOCALE_VALIDATION_ERRORS
@@ -107,7 +107,7 @@ function handleTopNavErrors($scope, entityLabel, shouldHideLocaleErrors) {
     }
   });
 
-  K.onValueScope($scope, statusProperty($scope.otDoc), status => {
+  K.onValueScope($scope, statusProperty($scope.otDoc), (status) => {
     if (
       status === DocumentStatusCode.OK &&
       !isEmpty($scope.localeData.errors) &&
@@ -122,6 +122,6 @@ function handleTopNavErrors($scope, entityLabel, shouldHideLocaleErrors) {
 function resetStatusNotificationProps($scope, entityLabel) {
   $scope.statusNotificationProps = {
     status: 'ok',
-    entityLabel
+    entityLabel,
   };
 }

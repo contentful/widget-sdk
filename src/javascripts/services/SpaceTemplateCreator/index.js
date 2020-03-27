@@ -4,7 +4,7 @@ import qs from 'qs';
 import {
   TEA_MAIN_CONTENT_PREVIEW,
   TEA_CONTENT_PREVIEWS,
-  DISCOVERY_APP_BASE_URL
+  DISCOVERY_APP_BASE_URL,
 } from './contentPreviewConfig';
 import { enrichTemplate } from './enrichTemplate';
 import * as Config from 'Config';
@@ -40,7 +40,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
   const creationErrors = [];
   const handledItems = {};
   return {
-    create
+    create,
   };
 
   /*
@@ -71,12 +71,12 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
     // 3. editor interfaces (appearance - e.g. slug editor or url editor)
     const template = enrichTemplate(templateInfo, rawTemplate);
 
-    const startCreatingContent = async function() {
+    const startCreatingContent = async function () {
       const filteredLocales = template.space.locales.filter(
-        locale => locale.code !== selectedLocaleCode
+        (locale) => locale.code !== selectedLocaleCode
       );
       const localesPromise = Promise.all(
-        filteredLocales.map(locale => {
+        filteredLocales.map((locale) => {
           // we create the default locale automatically, so we mark all other locales as non-default
           const saveLocalePromise = spaceContext.localeRepo.save({ ...locale, default: false });
           // we ingore errors. there might be different reasons why it is happening
@@ -95,9 +95,9 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
 
       if (template.editorInterfaces) {
         const editorInterfacesPromise = Promise.all(
-          template.editorInterfaces.map(editorInterface => {
+          template.editorInterfaces.map((editorInterface) => {
             // function to validate matching content type and editor interface
-            const validateCT = contentType => {
+            const validateCT = (contentType) => {
               const editorInterfaceId = _.get(editorInterface, 'sys.contentType.sys.id');
               const contentTypeId = _.get(contentType, 'data.sys.id');
 
@@ -136,7 +136,9 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
       const createdLocales = await localesPromise;
       // some locales might fail during creation, we need to filter them out
       const successfullyCreatedLocales = createdLocales.filter(Boolean);
-      const successfullyCreatedLocaleCodes = successfullyCreatedLocales.map(locale => locale.code);
+      const successfullyCreatedLocaleCodes = successfullyCreatedLocales.map(
+        (locale) => locale.code
+      );
       // we need to combine default locale and all successfully created
       const contentLocales = [selectedLocaleCode, ...successfullyCreatedLocaleCodes];
 
@@ -148,7 +150,9 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
           .then(TheLocaleStore.refresh)
           .then(() => {
             // it expects array of objects, so we have to wrap codes in object
-            TheLocaleStore.setActiveLocales(contentLocales.map(code => ({ internal_code: code })));
+            TheLocaleStore.setActiveLocales(
+              contentLocales.map((code) => ({ internal_code: code }))
+            );
           });
       }
 
@@ -172,7 +176,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
           JSON.stringify(
             {
               errors: creationErrors,
-              template: templateName
+              template: templateName,
             },
             null,
             2
@@ -194,7 +198,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
     if (!(itemKey in handledItems)) {
       handledItems[itemKey] = {
         performedActions: [],
-        response
+        response,
       };
     }
     if (!_.includes(handledItems[itemKey].performedActions, actionData.action)) {
@@ -216,14 +220,14 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
   }
 
   function makeItemSuccessHandler(item, actionData) {
-    return response => {
+    return (response) => {
       handleItem(item, actionData, response);
       itemHandlers.onItemSuccess(
         generateItemId(item, actionData),
         {
           item,
           actionData,
-          response
+          response,
         },
         templateName
       );
@@ -232,7 +236,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
   }
 
   function makeItemErrorHandler(item, actionData) {
-    return error => {
+    return (error) => {
       creationErrors.push(
         `error ${getErrorMessage(error)} during ${actionData.action} on entityType: ${
           actionData.entity
@@ -241,7 +245,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
       itemHandlers.onItemError(generateItemId(item, actionData), {
         item,
         actionData,
-        error
+        error,
       });
       // not rejecting the promise (see comment on create method)
       return null;
@@ -255,7 +259,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
       success: makeItemSuccessHandler(item, data),
       error: makeItemErrorHandler(item, data),
       itemWasHandled: itemIsHandled(item, data),
-      response: getHandledItemResponse(item, data)
+      response: getHandledItemResponse(item, data),
     };
   }
 
@@ -285,17 +289,14 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
 
   function publishContentTypes(contentTypes) {
     return Promise.all(
-      contentTypes.map(contentType => {
+      contentTypes.map((contentType) => {
         if (contentType) {
           const handlers = makeHandlers(contentType, 'publish', 'ContentType');
           if (handlers.itemWasHandled) {
             return Promise.resolve();
           }
           const version = _.get(contentType, 'data.sys.version');
-          return contentType
-            .publish(version)
-            .then(handlers.success)
-            .catch(handlers.error);
+          return contentType.publish(version).then(handlers.success).catch(handlers.error);
         }
       })
     );
@@ -306,24 +307,19 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
     if (handlers.itemWasHandled) {
       return Promise.resolve();
     }
-    return spaceContext.space
-      .createAsset(asset)
-      .then(handlers.success)
-      .catch(handlers.error);
+    return spaceContext.space.createAsset(asset).then(handlers.success).catch(handlers.error);
   }
 
   function processAssets(assets) {
     return Promise.all(
-      assets.map(asset => {
+      assets.map((asset) => {
         if (asset) {
           const handlers = makeHandlers(asset, 'process', 'Asset');
           if (handlers.itemWasHandled) {
             return Promise.resolve();
           }
           const version = _.get(asset, 'data.sys.version');
-          return processAsset(asset, version)
-            .then(handlers.success)
-            .catch(handlers.error);
+          return processAsset(asset, version).then(handlers.success).catch(handlers.error);
         }
       })
     );
@@ -345,12 +341,12 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
       // need to wait for assets to process in order
       // to publish them in the next step.
       spaceContext.docConnection.open(asset).then(
-        info => {
+        (info) => {
           destroyDoc = info.destroy;
-          info.doc.on('remoteop', ops => remoteOpHandler(ops, { resolve, processingTimeout }));
+          info.doc.on('remoteop', (ops) => remoteOpHandler(ops, { resolve, processingTimeout }));
           asset.process(version, selectedLocaleCode);
         },
-        err => {
+        (err) => {
           clearTimeout(processingTimeout);
           reject(err);
         }
@@ -376,7 +372,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
 
   function publishAssets(assets) {
     return Promise.all(
-      assets.map(asset => {
+      assets.map((asset) => {
         if (asset) {
           const handlers = makeHandlers(asset, 'publish', 'Asset');
           if (handlers.itemWasHandled) {
@@ -409,16 +405,13 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
     // we wait until the first item is published (using Promise.race)
     // since it is the last operation before we resolve this promise
     // so other items publishing time won't be different
-    const promises = entries.filter(Boolean).map(entry => {
+    const promises = entries.filter(Boolean).map((entry) => {
       const handlers = makeHandlers(entry, 'publish', 'Entry');
       if (handlers.itemWasHandled) {
         return Promise.resolve();
       }
       const version = _.get(entry, 'data.sys.version');
-      return entry
-        .publish(version)
-        .then(handlers.success)
-        .catch(handlers.error);
+      return entry.publish(version).then(handlers.success).catch(handlers.error);
     });
 
     // if an array is empty, Promise.race() will never resolve
@@ -432,7 +425,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
     }
     return getApiKeyRepo()
       .create(apiKey.name, apiKey.description)
-      .then(res => handlers.success({ data: res })) // `handlers` expect Client-style "data" objects
+      .then((res) => handlers.success({ data: res })) // `handlers` expect Client-style "data" objects
       .catch(handlers.error);
   }
 
@@ -455,12 +448,12 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
       lessonCopy: lessonContentConfig,
       lessonImage: lessonContentConfig,
       lessonCodeSnippets: lessonContentConfig,
-      layoutHighlightedCourse: mainPageConfig
+      layoutHighlightedCourse: mainPageConfig,
     };
 
     const [keys, contentPreviews] = await Promise.all([
       getApiKeyRepo().getAll(),
-      getContentPreview().getAll()
+      getContentPreview().getAll(),
     ]);
 
     // Create default content preview if there is none existing, and an API key is present
@@ -473,7 +466,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
 
       const {
         accessToken: cdaToken,
-        preview_api_key: { accessToken: cpaToken }
+        preview_api_key: { accessToken: cpaToken },
       } = resolvedKey;
 
       // we want to wait until the main content preview is created
@@ -481,7 +474,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
 
       // we set up all other content previews
       await Promise.all(
-        TEA_CONTENT_PREVIEWS.map(params => createContentPreview(params, { cdaToken, cpaToken }))
+        TEA_CONTENT_PREVIEWS.map((params) => createContentPreview(params, { cdaToken, cpaToken }))
       );
     }
 
@@ -493,7 +486,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
         name,
         description,
         configs: contentTypes
-          .map(ct => {
+          .map((ct) => {
             const fn = createConfigFns[ct.sys.id];
             const url = Config.env === 'production' ? baseUrl.prod : baseUrl.staging;
             // We need 'isMobile' flag because mobile TEA link has the different format
@@ -501,16 +494,16 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
             return fn && fn({ ct, baseUrl: url, spaceId, cdaToken, cpaToken, isMobile });
           })
           // remove all content types without a preview
-          .filter(Boolean)
+          .filter(Boolean),
       };
 
       return getContentPreview()
         .create(contentPreviewConfig)
-        .then(createdContentPreview => {
+        .then((createdContentPreview) => {
           Analytics.track('content_preview:created', {
             name: createdContentPreview.name,
             id: createdContentPreview.sys.id,
-            isDiscoveryApp: false
+            isDiscoveryApp: false,
           });
         });
     }
@@ -534,7 +527,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
               '&delivery_access_token=' +
               token,
             enabled: true,
-            example: true
+            example: true,
           };
         }
 
@@ -546,15 +539,15 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
             name: 'Discovery App',
             description:
               "To help you get started, we've added our own Discovery App to preview content.",
-            configs: contentTypes.map(ct => createConfig(ct, accessToken))
+            configs: contentTypes.map((ct) => createConfig(ct, accessToken)),
           };
           return getContentPreview()
             .create(contentPreviewConfig)
-            .then(createdContentPreview => {
+            .then((createdContentPreview) => {
               Analytics.track('content_preview:created', {
                 name: createdContentPreview.name,
                 id: createdContentPreview.sys.id,
-                isDiscoveryApp: true
+                isDiscoveryApp: true,
               });
             });
         }
@@ -608,7 +601,7 @@ function makeTEAConfig(params, url = '') {
     contentType: params.ct.sys.id,
     url: makeTEAUrl(params, url),
     enabled: true,
-    example: true
+    example: true,
   };
 }
 
@@ -626,7 +619,7 @@ function makeTEAUrl(params, url = '') {
     editorial_features: 'enabled',
     // we want to have faster feedback for the user after his changes
     // CPA reacts to changes in ~5 seconds, CDA in more than 10
-    api: 'cpa'
+    api: 'cpa',
   };
   const queryString = qs.stringify(queryParams);
 
@@ -651,9 +644,9 @@ function getItemId(item) {
  * @returns {object} - assets/entries with content only in needed locales
  */
 function useSelectedLocales(entities, localeCodes, defaultLocaleCode) {
-  return entities.map(entity =>
+  return entities.map((entity) =>
     Object.assign(entity, {
-      fields: _.mapValues(entity.fields, field => {
+      fields: _.mapValues(entity.fields, (field) => {
         const fieldValuesForAllLocales = Object.values(field);
         return localeCodes.reduce((newEntityFields, localeCode) => {
           // content can actually contain more locales, than our default
@@ -671,13 +664,13 @@ function useSelectedLocales(entities, localeCodes, defaultLocaleCode) {
           // we don't want to set additional locales, if they have no values
           if (hasValue || isDefaultLocale) {
             return Object.assign({}, newEntityFields, {
-              [localeCode]: value
+              [localeCode]: value,
             });
           } else {
             return newEntityFields;
           }
         }, {});
-      })
+      }),
     })
   );
 }

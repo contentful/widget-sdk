@@ -5,7 +5,7 @@ const empty = require('../../../fixtures/responses/empty.json');
 
 const teamHeaders = {
   ...defaultHeader,
-  'x-contentful-enable-alpha-feature': 'teams-api'
+  'x-contentful-enable-alpha-feature': 'teams-api',
 };
 
 const membership1 = {
@@ -18,17 +18,17 @@ const membership1 = {
       sys: {
         type: 'Link',
         linkType: 'Team',
-        id: 'team1'
-      }
-    }
-  }
+        id: 'team1',
+      },
+    },
+  },
 };
 const role1 = {
   name: 'Role 1',
-  sys: { id: 'role1' }
+  sys: { id: 'role1' },
 };
 const linkRole1 = {
-  sys: { type: 'Link', linkType: 'Role', id: 'role1' }
+  sys: { type: 'Link', linkType: 'Role', id: 'role1' },
 };
 
 const loadPageWithServerState = (stateName, responseBody, message) => {
@@ -50,12 +50,12 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
       method: 'GET',
       path: `/spaces/${defaultSpaceId}/team_space_memberships`,
       query: { include: 'roles,sys.team', limit: '100', skip: '0' },
-      headers: teamHeaders
+      headers: teamHeaders,
     },
     willRespondWith: {
       status: 200,
-      body: responseBody
-    }
+      body: responseBody,
+    },
   }).as(getMembershipsInteraction);
   cy.addInteraction({
     provider: 'teams',
@@ -65,12 +65,12 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
       method: 'GET',
       path: `/spaces/${defaultSpaceId}/space_memberships`,
       query: { limit: '100', skip: '0' },
-      headers: defaultHeader
+      headers: defaultHeader,
     },
     willRespondWith: {
       status: 200,
-      body: empty
-    }
+      body: empty,
+    },
   }).as(getSpaceMembershipsInteraction);
   // TODO: Move this to interactions/teams
   cy.addInteraction({
@@ -81,12 +81,12 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
       method: 'GET',
       path: `/organizations/${defaultOrgId}/teams`,
       query: { limit: '100', skip: '0' },
-      headers: teamHeaders
+      headers: teamHeaders,
     },
     willRespondWith: {
       status: 200,
-      body: empty
-    }
+      body: empty,
+    },
   }).as(getTeamsInteraction);
   // TODO: Move this to interactions/teams
   cy.addInteraction({
@@ -97,7 +97,7 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
       method: 'GET',
       path: `/spaces/${defaultSpaceId}/roles`,
       query: { limit: '100', skip: '0' },
-      headers: defaultHeader
+      headers: defaultHeader,
     },
     willRespondWith: {
       status: 200,
@@ -106,25 +106,23 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
           role1,
           {
             name: 'Role 2',
-            sys: { id: 'role2' }
+            sys: { id: 'role2' },
           },
           {
             name: 'Role 3',
-            sys: { id: 'role3' }
+            sys: { id: 'role3' },
           },
           {
             name: 'Role 4',
-            sys: { id: 'role4' }
-          }
-          ,
+            sys: { id: 'role4' },
+          },
           {
             name: 'Role 5',
-            sys: { id: 'role5' }
-          }
-
-        ]
-      }
-    }
+            sys: { id: 'role5' },
+          },
+        ],
+      },
+    },
   }).as(getRolesInteraction);
 
   const interactions = [
@@ -132,7 +130,7 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
     `@${getMembershipsInteraction}`,
     `@${getTeamsInteraction}`,
     `@${getRolesInteraction}`,
-    `@${getSpaceMembershipsInteraction}`
+    `@${getSpaceMembershipsInteraction}`,
   ];
 
   cy.visit(`/spaces/${defaultSpaceId}/settings/teams`);
@@ -148,7 +146,7 @@ describe('Teams in space page', () => {
       cors: true,
       pactfileWriteMode: 'merge',
       dir: Cypress.env('pactDir'),
-      spec: 2
+      spec: 2,
     });
   });
 
@@ -169,43 +167,43 @@ describe('Teams in space page', () => {
         {
           total: 3,
           sys: {
-            type: 'Array'
+            type: 'Array',
           },
           includes: {
             Team: [
               {
                 name: 'Team 1',
                 memberCount: 2,
-                sys: { id: 'team1' }
+                sys: { id: 'team1' },
               },
               {
                 name: 'Team 2',
                 memberCount: 0,
-                sys: { id: 'team2' }
+                sys: { id: 'team2' },
               },
               {
                 name: 'Team 3',
                 memberCount: 1,
-                sys: { id: 'team3' }
-              }
+                sys: { id: 'team3' },
+              },
             ],
             Role: [
               role1,
               {
                 name: 'Role 2',
-                sys: { id: 'role2' }
+                sys: { id: 'role2' },
               },
               {
                 name: 'Role 3',
-                sys: { id: 'role3' }
-              }
-            ]
+                sys: { id: 'role3' },
+              },
+            ],
           },
           items: [
             membership1,
             {
               admin: false,
-              roles: [ linkRole1 ],
+              roles: [linkRole1],
               sys: {
                 type: 'TeamSpaceMembership',
                 id: 'TSM2',
@@ -213,30 +211,28 @@ describe('Teams in space page', () => {
                   sys: {
                     type: 'Link',
                     linkType: 'Team',
-                    id: 'team2'
-                  }
-                }
-              }
+                    id: 'team2',
+                  },
+                },
+              },
             },
             {
               admin: false,
               roles: [
                 {
-                  sys:
-                    {
-                      type: 'Link',
-                      linkType: 'Role',
-                      id: 'role2'
-                    }
+                  sys: {
+                    type: 'Link',
+                    linkType: 'Role',
+                    id: 'role2',
+                  },
                 },
                 {
-                  sys:
-                    {
-                      type: 'Link',
-                      linkType: 'Role',
-                      id: 'role3'
-                    }
-                }
+                  sys: {
+                    type: 'Link',
+                    linkType: 'Role',
+                    id: 'role3',
+                  },
+                },
               ],
               sys: {
                 type: 'TeamSpaceMembership',
@@ -246,12 +242,12 @@ describe('Teams in space page', () => {
                   sys: {
                     type: 'Link',
                     linkType: 'Team',
-                    id: 'team3'
-                  }
-                }
-              }
-            }
-          ]
+                    id: 'team3',
+                  },
+                },
+              },
+            },
+          ],
         },
         'request for 3 team memberships'
       );
@@ -261,24 +257,22 @@ describe('Teams in space page', () => {
       cy.getByTestId('membership-table').should('be.visible');
 
       cy.getAllByTestId('membership-row').should('have.length', 3);
-      cy.getAllByTestId('membership-row').then(
-        (rows) => {
-          cy.wrap(rows[0]).should('be.visible');
-          cy.wrap(rows[0]).contains('td', '2 members').should('be.visible');
-          cy.wrap(rows[0]).contains('td', 'Team 1').should('be.visible');
-          cy.wrap(rows[0]).contains('td', 'Admin').should('be.visible');
+      cy.getAllByTestId('membership-row').then((rows) => {
+        cy.wrap(rows[0]).should('be.visible');
+        cy.wrap(rows[0]).contains('td', '2 members').should('be.visible');
+        cy.wrap(rows[0]).contains('td', 'Team 1').should('be.visible');
+        cy.wrap(rows[0]).contains('td', 'Admin').should('be.visible');
 
-          cy.wrap(rows[1]).should('be.visible');
-          cy.wrap(rows[1]).contains('td', '0 members').should('be.visible');
-          cy.wrap(rows[1]).contains('td', 'Team 2').should('be.visible');
-          cy.wrap(rows[1]).contains('td', 'Role 1').should('be.visible');
+        cy.wrap(rows[1]).should('be.visible');
+        cy.wrap(rows[1]).contains('td', '0 members').should('be.visible');
+        cy.wrap(rows[1]).contains('td', 'Team 2').should('be.visible');
+        cy.wrap(rows[1]).contains('td', 'Role 1').should('be.visible');
 
-          cy.wrap(rows[2]).should('be.visible');
-          cy.wrap(rows[2]).contains('td', '1 member').should('be.visible');
-          cy.wrap(rows[2]).contains('td', 'Team 3').should('be.visible');
-          cy.wrap(rows[2]).contains('td', 'Role 2 and Role 3').should('be.visible');
-        }
-      );
+        cy.wrap(rows[2]).should('be.visible');
+        cy.wrap(rows[2]).contains('td', '1 member').should('be.visible');
+        cy.wrap(rows[2]).contains('td', 'Team 3').should('be.visible');
+        cy.wrap(rows[2]).contains('td', 'Role 2 and Role 3').should('be.visible');
+      });
     });
 
     context('changing role of Team 1', () => {
@@ -295,24 +289,28 @@ describe('Teams in space page', () => {
             headers: {
               ...teamHeaders,
               'CONTENT-TYPE': 'application/vnd.contentful.management.v1+json',
-              'x-contentful-team': 'team1'
+              'x-contentful-team': 'team1',
             },
             body: {
               admin: false,
-              roles: [ linkRole1 ]
-            }
+              roles: [linkRole1],
+            },
           },
           willRespondWith: {
             status: 200,
-            body: { ...membership1, sys: { version: 1, ...membership1.sys }, admin: false, roles: [linkRole1] }
-          }
+            body: {
+              ...membership1,
+              sys: { version: 1, ...membership1.sys },
+              admin: false,
+              roles: [linkRole1],
+            },
+          },
         }).as(editmembershipInteraction);
 
         cy.getByTestId('row-menu').first().click();
         cy.getByTestId('change-role').click();
         cy.getByTestId('space-role-editor.button').click();
-        cy.getAllByTestId('space-role-editor.role-option')
-          .first().click();
+        cy.getAllByTestId('space-role-editor.role-option').first().click();
         cy.getByTestId('confirm-change-role').click();
 
         cy.wait(`@${editmembershipInteraction}`);
@@ -335,11 +333,11 @@ describe('Teams in space page', () => {
           withRequest: {
             method: 'DELETE',
             path: `/spaces/${defaultSpaceId}/team_space_memberships/TSM1`,
-            headers: teamHeaders
+            headers: teamHeaders,
           },
           willRespondWith: {
-            status: 204
-          }
+            status: 204,
+          },
         }).as(removeTeamInteraction);
 
         cy.getByTestId('row-menu').first().click();

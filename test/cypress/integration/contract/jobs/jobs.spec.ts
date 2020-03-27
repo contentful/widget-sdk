@@ -4,12 +4,12 @@ import { getAllPublicContentTypesInDefaultSpace } from '../../../interactions/co
 import {
   queryPendingJobsForDefaultSpace,
   queryCompletedJobsForDefaultSpace,
-  queryFailedJobsForDefaultSpace
+  queryFailedJobsForDefaultSpace,
 } from '../../../interactions/jobs';
 import {
   severalPendingJobsResponse,
   severalCompletedJobsResponse,
-  severalFailedJobsResponse
+  severalFailedJobsResponse,
 } from '../../../fixtures/responses/jobs-several';
 import { queryForDefaultEntryWithoutEnvironment } from '../../../interactions/entries';
 import { queryForDefaultUserDetails } from '../../../interactions/users';
@@ -24,7 +24,7 @@ describe('Jobs page', () => {
       cors: true,
       pactfileWriteMode: 'merge',
       dir: Cypress.env('pactDir'),
-      spec: 2
+      spec: 2,
     })
   );
 
@@ -87,22 +87,22 @@ describe('Jobs page', () => {
         cors: true,
         pactfileWriteMode: 'merge',
         dir: Cypress.env('pactDir'),
-        spec: 2
+        spec: 2,
       });
       const productCatalogInteraction = queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled();
       const interactions = defaultRequestsMock({
-        publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne
+        publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne,
       });
       const slowInteractions = [
         queryPendingJobsForDefaultSpace.willFindSeveral(),
         queryForDefaultEntryWithoutEnvironment.willFindIt(),
-        queryForDefaultUserDetails.willFindTheUserDetails()
+        queryForDefaultUserDetails.willFindTheUserDetails(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/jobs`);
       cy.wait(interactions);
       cy.wait(slowInteractions, {
-        timeout: 10000
+        timeout: 10000,
       });
       cy.wait(productCatalogInteraction);
     });
@@ -155,13 +155,9 @@ describe('Jobs page', () => {
   });
 });
 function selectCompletedTab() {
-  cy.getAllByTestId('cf-ui-tab')
-    .eq(1)
-    .click();
+  cy.getAllByTestId('cf-ui-tab').eq(1).click();
 }
 
 function selectFailedTab() {
-  cy.getAllByTestId('cf-ui-tab')
-    .eq(2)
-    .click();
+  cy.getAllByTestId('cf-ui-tab').eq(2).click();
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SlackLogo = props => (
+const SlackLogo = (props) => (
   <svg width={32} height={32} {...props}>
     <g fill="none">
       <path

@@ -4,7 +4,7 @@ import { render, fireEvent } from '@testing-library/react';
 import WebhookBasicAuth from './WebhookBasicAuth';
 
 describe('WebhookBasicAuth', () => {
-  const renderComponent = user => {
+  const renderComponent = (user) => {
     const onChangeStub = jest.fn();
     const wrapper = render(<WebhookBasicAuth httpBasicUsername={user} onChange={onChangeStub} />);
 
@@ -27,7 +27,7 @@ describe('WebhookBasicAuth', () => {
     fireEvent.click(getByText('Remove stored credentials'));
     expect(onChangeStub).toHaveBeenCalledWith({
       httpBasicPassword: null,
-      httpBasicUsername: null
+      httpBasicUsername: null,
     });
     expect(onChangeStub).toHaveBeenCalledTimes(1);
   });

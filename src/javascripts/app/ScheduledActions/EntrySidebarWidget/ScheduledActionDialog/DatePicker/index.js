@@ -17,18 +17,18 @@ export class DatePicker extends Component {
     helpText: PropTypes.string,
     labelText: PropTypes.string.isRequired,
     id: PropTypes.string,
-    name: PropTypes.string
+    name: PropTypes.string,
   };
 
   static defaultProps = {
     onChange: () => {},
     onBlur: () => {},
     name: 'cf-ui-datepicker',
-    id: 'cf-ui-datepicker'
+    id: 'cf-ui-datepicker',
   };
 
   state = {
-    validationError: null
+    validationError: null,
   };
   componentDidMount() {
     this.pikaday = new Pikaday({
@@ -37,9 +37,9 @@ export class DatePicker extends Component {
       maxDate: this.props.maxDate,
       yearRange: 5,
       theme: cn(styles.datePicker, 'hide-carret'),
-      onSelect: value => {
+      onSelect: (value) => {
         this.props.onChange(value);
-      }
+      },
     });
   }
 
@@ -55,7 +55,7 @@ export class DatePicker extends Component {
     }
   };
 
-  handleBlur = e => {
+  handleBlur = (e) => {
     this.props.onBlur();
     if (!this.pikaday.el.contains(e.relatedTarget)) {
       this.pikaday.hide();
@@ -74,11 +74,11 @@ export class DatePicker extends Component {
           textInputProps={{
             testId: 'date-input',
             readOnly: true,
-            inputRef: ref => {
+            inputRef: (ref) => {
               if (ref) {
                 this.datePickerNode = ref;
               }
-            }
+            },
           }}
           value={moment(this.props.value).format('ddd, DD MMM YYYY')}
           validationMessage={this.state.validationError}

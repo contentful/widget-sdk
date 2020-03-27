@@ -30,12 +30,12 @@ const Tooltip = ({ isLastStep, index, step, primaryProps, tooltipProps, closePro
           label="Close tour step tooltip"
           iconProps={{ icon: 'Close' }}
           buttonType="white"
-          onClick={e => {
+          onClick={(e) => {
             closeProps.onClick(e);
             track('element:click', {
               elementId: `close_walkthrough_step_${snakeCase(step.title)}`,
               groupId: trackingGroupId,
-              fromState: currentStateName
+              fromState: currentStateName,
             });
           }}
           testId="close-walkthrough-tooltip-button"
@@ -48,12 +48,12 @@ const Tooltip = ({ isLastStep, index, step, primaryProps, tooltipProps, closePro
           aria-label={primaryButtonLabel}
           isFullWidth
           buttonType="positive"
-          onClick={e => {
+          onClick={(e) => {
             primaryProps.onClick(e);
             track('element:click', {
               elementId: `finish_walkthrough_step_${snakeCase(step.title)}`,
               groupId: trackingGroupId,
-              fromState: currentStateName
+              fromState: currentStateName,
             });
           }}
           testId="next-step-walkthrough-tooltip-button">
@@ -70,7 +70,7 @@ Tooltip.propTypes = {
   step: PropTypes.any,
   primaryProps: PropTypes.any,
   tooltipProps: PropTypes.any,
-  closeProps: PropTypes.any
+  closeProps: PropTypes.any,
 };
 
 export default Tooltip;

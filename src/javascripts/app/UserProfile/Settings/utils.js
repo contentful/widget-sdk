@@ -2,13 +2,13 @@ import { create as createQrCode } from 'qrcode';
 import { renderToDataURL } from 'qrcode/lib/renderer/canvas';
 
 const validations = {
-  presence: value => (value.trim() ? true : false),
+  presence: (value) => (value.trim() ? true : false),
   minLength: (length, value) => (value && value.trim().length >= length ? true : false),
-  maxLength: (length, value) => (value && value.trim().length < length ? true : false)
+  maxLength: (length, value) => (value && value.trim().length < length ? true : false),
 };
 
 const validators = {
-  firstName: field => {
+  firstName: (field) => {
     const { value } = field;
 
     if (!validations.presence(value)) {
@@ -19,7 +19,7 @@ const validators = {
       return 'First name must be less than 100 characters';
     }
   },
-  lastName: field => {
+  lastName: (field) => {
     const { value } = field;
     if (!validations.presence(value)) {
       return 'Last name is required';
@@ -29,7 +29,7 @@ const validators = {
       return 'Last name must be less than 100 characters';
     }
   },
-  email: field => {
+  email: (field) => {
     const { value } = field;
 
     if (!validations.presence(value)) {
@@ -40,14 +40,14 @@ const validators = {
       return 'Email must be less than 254 characters';
     }
   },
-  currentPassword: field => {
+  currentPassword: (field) => {
     const { value } = field;
 
     if (!validations.presence(value)) {
       return 'Current password is required';
     }
   },
-  newPassword: field => {
+  newPassword: (field) => {
     const { value } = field;
 
     if (!validations.minLength(8, value)) {
@@ -64,7 +64,7 @@ const validators = {
     if (value !== fields.newPassword.value) {
       return 'New password and its confirmation do not match';
     }
-  }
+  },
 };
 
 export function getValidationMessageFor(fields, fieldName) {

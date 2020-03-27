@@ -8,7 +8,7 @@ export async function getOpenAssignedTasksAndEntries(spaceId, envId, userId) {
   const spaceContext = getModule('spaceContext');
   const { items: tasks } = await getOpenAssignedTasks(spaceId, envId, userId);
   const { items: entries } = await spaceContext.cma.getEntries({
-    'sys.id[in]': tasks.map(task => task.sys.parentEntity.sys.id).join(',')
+    'sys.id[in]': tasks.map((task) => task.sys.parentEntity.sys.id).join(','),
   });
   return [tasks, entries];
 }
@@ -19,7 +19,7 @@ async function getOpenAssignedTasks(spaceId, envId, userId) {
     {
       method: 'GET',
       path: ['tasks'],
-      query: { 'assignedTo.sys.id': userId }
+      query: { 'assignedTo.sys.id': userId },
     },
     alphaHeader
   );

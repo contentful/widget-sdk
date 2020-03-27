@@ -7,19 +7,19 @@ import { track } from 'analytics/Analytics';
 import AddTeamsPage from './AddTeamsPage';
 
 jest.mock('states/Navigator', () => ({
-  go: jest.fn().mockResolvedValue(true)
+  go: jest.fn().mockResolvedValue(true),
 }));
 
 jest.mock('access_control/TeamRepository', () => ({
-  createTeamSpaceMembership: jest.fn()
+  createTeamSpaceMembership: jest.fn(),
 }));
 
 jest.mock('data/EndpointFactory', () => ({
-  createSpaceEndpoint: jest.fn()
+  createSpaceEndpoint: jest.fn(),
 }));
 
 jest.mock('analytics/Analytics', () => ({
-  track: jest.fn()
+  track: jest.fn(),
 }));
 
 // scrollIntoView is not available in JSDOM
@@ -41,36 +41,36 @@ const teams = [
   {
     name: 'Test team',
     sys: {
-      id: 'team_1234'
-    }
+      id: 'team_1234',
+    },
   },
   {
     name: 'Awesome other team',
     sys: {
-      id: 'team_5678'
-    }
+      id: 'team_5678',
+    },
   },
   {
     name: 'Third team',
     sys: {
-      id: 'team_0987'
-    }
-  }
+      id: 'team_0987',
+    },
+  },
 ];
 
 const roles = [
   {
     name: 'Author',
     sys: {
-      id: 'role_1234'
-    }
+      id: 'role_1234',
+    },
   },
   {
     name: 'Awesome custom role',
     sys: {
-      id: 'role_5678'
-    }
-  }
+      id: 'role_5678',
+    },
+  },
 ];
 
 const searchAndSelectTeam = (teamName, { queryByTestId }) => {
@@ -293,7 +293,7 @@ describe('AddTeamsPage', () => {
       numErr: 0,
       numSuccess: 2,
       numRoles: 0,
-      adminSelected: true
+      adminSelected: true,
     });
   });
 
@@ -314,7 +314,7 @@ describe('AddTeamsPage', () => {
       numErr: 1,
       numSuccess: 1,
       numRoles: 0,
-      adminSelected: true
+      adminSelected: true,
     });
   });
 
@@ -334,7 +334,7 @@ describe('AddTeamsPage', () => {
       numErr: 2,
       numSuccess: 0,
       numRoles: 0,
-      adminSelected: true
+      adminSelected: true,
     });
   });
 });

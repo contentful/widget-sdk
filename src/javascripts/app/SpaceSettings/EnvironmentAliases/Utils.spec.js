@@ -2,22 +2,22 @@ import {
   handleOptIn,
   handleChangeEnvironment,
   isAContentSpecificPage,
-  isAnEnvironmentAwarePage
+  isAnEnvironmentAwarePage,
 } from './Utils';
 import { setWindowLocationProperties } from '__mocks__/global/window';
 
 jest.mock('data/EndpointFactory', () => ({
   createSpaceEndpoint: jest
     .fn()
-    .mockReturnValue(jest.fn().mockImplementation((...res) => Promise.resolve(res)))
+    .mockReturnValue(jest.fn().mockImplementation((...res) => Promise.resolve(res))),
 }));
 
 jest.mock('data/CMA/SpaceAliasesRepo', () => ({
   create: jest.fn().mockReturnValue({
     get: jest.fn().mockReturnValue({ sys: { id: 'alias', version: 1 } }),
     update: jest.fn().mockImplementation((...res) => res),
-    optIn: jest.fn().mockImplementation((...res) => res)
-  })
+    optIn: jest.fn().mockImplementation((...res) => res),
+  }),
 }));
 
 describe('Utils', () => {

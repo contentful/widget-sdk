@@ -14,13 +14,13 @@ const ENTERPRISE_V1_CONTRACT_TERMS = '\\((quarterly|monthly|annual)\\)';
 const ENTERPRISE_V1_PLAN_NAMES = [
   new RegExp('enterprise', 'i'),
   new RegExp(`scale\\s${ENTERPRISE_V1_CONTRACT_TERMS}`, 'i'),
-  new RegExp(`business\\s${ENTERPRISE_V1_CONTRACT_TERMS}`, 'i')
+  new RegExp(`business\\s${ENTERPRISE_V1_CONTRACT_TERMS}`, 'i'),
 ];
 
 export default function isLegacyEnterprise(organization) {
   if (organization && organization.pricingVersion === PRICING_V1) {
     const subscriptionPlanName = get(organization, PLAN_NAME_PATH);
-    return ENTERPRISE_V1_PLAN_NAMES.some(regexp => regexp.test(subscriptionPlanName));
+    return ENTERPRISE_V1_PLAN_NAMES.some((regexp) => regexp.test(subscriptionPlanName));
   } else {
     return false;
   }

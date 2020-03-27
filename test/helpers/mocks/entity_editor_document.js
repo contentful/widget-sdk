@@ -16,7 +16,7 @@ import { create as createResourceState } from 'data/document/ResourceStateManage
 
 angular.module('contentful/mocks').factory('mocks/entityEditor/Document', [
   '$q',
-  $q => {
+  ($q) => {
     return {
       create(initialData, spaceEndpoint) {
         let currentData;
@@ -24,22 +24,22 @@ angular.module('contentful/mocks').factory('mocks/entityEditor/Document', [
           initialData || {
             sys: {
               type: 'Entry',
-              id: 'EID'
-            }
+              id: 'EID',
+            },
           }
         );
-        data$.onValue(data => {
+        data$.onValue((data) => {
           currentData = data;
         });
 
         const reverter = {
           hasChanges: sinon.stub(),
-          revert: sinon.stub().resolves()
+          revert: sinon.stub().resolves(),
         };
 
         const permissions = {
           can: sinon.stub().returns(true),
-          canEditFieldLocale: sinon.stub().returns(true)
+          canEditFieldLocale: sinon.stub().returns(true),
         };
 
         const sysProperty = valuePropertyAt(['sys']);
@@ -64,7 +64,7 @@ angular.module('contentful/mocks').factory('mocks/entityEditor/Document', [
             canEdit$: K.createMockProperty(true),
             isConnected$: K.createMockProperty(true),
             loaded$: K.createMockProperty(true),
-            error$: K.createMockProperty(null)
+            error$: K.createMockProperty(null),
           },
 
           getData: sinon.spy(getData),
@@ -73,7 +73,7 @@ angular.module('contentful/mocks').factory('mocks/entityEditor/Document', [
           getValueAt: sinon.spy(getValueAt),
 
           setValueAt: sinon.spy(setValueAt),
-          removeValueAt: sinon.spy(path => setValueAt(path, undefined)),
+          removeValueAt: sinon.spy((path) => setValueAt(path, undefined)),
           insertValueAt: sinon.spy(insertValueAt),
           pushValueAt: sinon.spy(pushValueAt),
 
@@ -84,12 +84,12 @@ angular.module('contentful/mocks').factory('mocks/entityEditor/Document', [
           presence: {
             collaborators: K.createMockProperty([]),
             collaboratorsFor: sinon.stub().returns(K.createMockProperty([])),
-            focus: sinon.spy()
+            focus: sinon.spy(),
           },
 
           reverter: reverter,
           permissions: permissions,
-          resourceState: resourceState
+          resourceState: resourceState,
         };
 
         function setSys(sys) {
@@ -105,7 +105,7 @@ angular.module('contentful/mocks').factory('mocks/entityEditor/Document', [
         }
 
         function valuePropertyAt(path) {
-          return data$.map(data => _.cloneDeep(getAtPath(data, path)));
+          return data$.map((data) => _.cloneDeep(getAtPath(data, path)));
         }
 
         function getAtPath(obj, path) {
@@ -144,7 +144,7 @@ angular.module('contentful/mocks').factory('mocks/entityEditor/Document', [
           changesStream.emit(path);
           return $q.resolve(value);
         }
-      }
+      },
     };
-  }
+  },
 ]);

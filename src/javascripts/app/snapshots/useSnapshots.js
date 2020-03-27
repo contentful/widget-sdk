@@ -14,21 +14,21 @@ const useSnapshots = ({ editorData }) => {
   const load = async () => {
     setLoading(true);
     const spaceContext = getModule('spaceContext');
-    const getUnique = items => {
+    const getUnique = (items) => {
       return items
         .slice(0, paginator.getPerPage())
-        .filter(snapshot => snapshots.every(({ sys }) => sys.id !== snapshot.sys.id));
+        .filter((snapshot) => snapshots.every(({ sys }) => sys.id !== snapshot.sys.id));
     };
     const entry = get(editorData, 'entity', {});
     const query = {
       skip: paginator.getSkipParam(),
-      limit: paginator.getPerPage() + 1
+      limit: paginator.getPerPage() + 1,
     };
     // TODO: Instead of duck punching snapshot entities and keeping the whole
     //  thing in memory, we should reduce it to a view friendly data structure
     //  with only relevant data to build the list.
     const { items } = await spaceContext.cma.getEntrySnapshots(editorData.entityInfo.id, query);
-    paginator.setTotal(total => total + items.length);
+    paginator.setTotal((total) => total + items.length);
 
     const uniqueSnapshots = getUnique(items);
 
@@ -55,7 +55,10 @@ const useSnapshots = ({ editorData }) => {
     }
   };
 
-  return [{ snapshots, isLoading }, { loadMore, setSnapshots, initSnapshots }];
+  return [
+    { snapshots, isLoading },
+    { loadMore, setSnapshots, initSnapshots },
+  ];
 };
 
 export default useSnapshots;

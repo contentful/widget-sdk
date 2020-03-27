@@ -7,7 +7,7 @@ import {
   TextLink,
   Heading,
   Paragraph,
-  Workbench
+  Workbench,
 } from '@contentful/forma-36-react-components';
 import { ACCESS_TOOLS } from 'featureFlags';
 import { getVariation } from 'LaunchDarkly';
@@ -33,24 +33,24 @@ import NavigationIcon from 'ui/Components/NavigationIcon';
 const styles = {
   heading: css({
     marginBottom: tokens.spacingM,
-    marginTop: tokens.spacing2Xl
+    marginTop: tokens.spacing2Xl,
   }),
   setupParagraph: css({
-    marginBottom: tokens.spacing2Xl
-  })
+    marginBottom: tokens.spacing2Xl,
+  }),
 };
 export class SSOSetup extends React.Component {
   static propTypes = {
     organization: OrganizationPropType,
     identityProvider: IdentityProviderStatePropType,
     retrieveIdp: PropTypes.func.isRequired,
-    createIdp: PropTypes.func.isRequired
+    createIdp: PropTypes.func.isRequired,
   };
 
   state = {
     isAllowed: false,
     showUpsellState: false,
-    isLoading: true
+    isLoading: true,
   };
 
   componentDidMount() {
@@ -76,7 +76,7 @@ export class SSOSetup extends React.Component {
 
     const featureEnabled = await getOrgFeature(organization.sys.id, 'self_configure_sso');
     const accessToolsEnabled = await getVariation(ACCESS_TOOLS, {
-      organizationId: organization.sys.id
+      organizationId: organization.sys.id,
     });
     const hasPerms = isOwnerOrAdmin(organization);
 
@@ -84,14 +84,14 @@ export class SSOSetup extends React.Component {
       this.setState({
         isAllowed: false,
         showUpsellState: accessToolsEnabled,
-        isLoading: false
+        isLoading: false,
       });
 
       return;
     }
 
     this.setState({
-      isAllowed: true
+      isAllowed: true,
     });
 
     this.retrieve();
@@ -109,7 +109,7 @@ export class SSOSetup extends React.Component {
     // we could run into an ambiguous pending state.
     retrieveIdp({ orgId: organization.sys.id }).then(() => {
       this.setState({
-        isLoading: false
+        isLoading: false,
       });
     });
   };
@@ -205,14 +205,14 @@ export class SSOSetup extends React.Component {
 }
 
 export default connect(
-  state => {
+  (state) => {
     return {
       organization: getOrganizationSelector(state),
-      identityProvider: ssoSelectors.getIdentityProvider(state)
+      identityProvider: ssoSelectors.getIdentityProvider(state),
     };
   },
   {
     retrieveIdp: ssoActionCreators.retrieveIdp,
-    createIdp: ssoActionCreators.createIdp
+    createIdp: ssoActionCreators.createIdp,
   }
 )(SSOSetup);

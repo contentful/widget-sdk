@@ -15,7 +15,7 @@ const getComponent = (props = {}) => {
 };
 
 describe('StaticDropdown', () => {
-  const build = props => render(getComponent(props));
+  const build = (props) => render(getComponent(props));
 
   it('displays with offset', () => {
     const { getByTestId } = build({ isVisible: true });

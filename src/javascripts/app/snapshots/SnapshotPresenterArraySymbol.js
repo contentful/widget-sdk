@@ -9,9 +9,9 @@ const styles = {
     '& li': {
       fontSize: tokens.fontSizeL,
       marginLeft: tokens.spacingL,
-      listStyleType: 'disc'
-    }
-  })
+      listStyleType: 'disc',
+    },
+  }),
 };
 
 const SnapshotPresenterArraySymbol = ({ value, className }) => {
@@ -28,11 +28,11 @@ const SnapshotPresenterArraySymbol = ({ value, className }) => {
 
 SnapshotPresenterArraySymbol.propTypes = {
   className: PropTypes.string,
-  value: PropTypes.arrayOf(PropTypes.string).isRequired
+  value: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 SnapshotPresenterArraySymbol.defaultProps = {
-  className: ''
+  className: '',
 };
 
 export default SnapshotPresenterArraySymbol;

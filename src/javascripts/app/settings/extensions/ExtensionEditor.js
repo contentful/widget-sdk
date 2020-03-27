@@ -16,8 +16,8 @@ import { ExtensionEditorSkeleton } from './skeletons/ExtensionEditorSkeleton';
 
 const styles = {
   actionButton: css({
-    marginRight: tokens.spacingM
-  })
+    marginRight: tokens.spacingM,
+  }),
 };
 
 class ExtensionEditor extends React.Component {
@@ -27,12 +27,12 @@ class ExtensionEditor extends React.Component {
     registerSaveAction: PropTypes.func.isRequired,
     goToList: PropTypes.func.isRequired,
     cma: PropTypes.shape({
-      updateExtension: PropTypes.func.isRequired
-    }).isRequired
+      updateExtension: PropTypes.func.isRequired,
+    }).isRequired,
   };
 
   // TODO: use `getDerivedStateFromProps`
-  entityToFreshState = entity => {
+  entityToFreshState = (entity) => {
     const initial = cloneDeep(entity);
     initial.extension.fieldTypes = (initial.extension.fieldTypes || []).map(toInternalFieldType);
     initial.parameters = WidgetParametersUtils.applyDefaultValues(
@@ -48,7 +48,7 @@ class ExtensionEditor extends React.Component {
       initial,
       selfHosted: typeof initial.extension.src === 'string',
       entity: cloneDeep(initial),
-      saving: false
+      saving: false,
     };
   };
 
@@ -84,7 +84,7 @@ class ExtensionEditor extends React.Component {
     const entity = this.prepareForSave(this.state.entity);
     return this.props.cma
       .updateExtension(entity)
-      .then(newEntity => {
+      .then((newEntity) => {
         this.setState(
           () => this.entityToFreshState(newEntity),
           () => {
@@ -95,7 +95,7 @@ class ExtensionEditor extends React.Component {
               name: extension.name,
               version: sys.version,
               fieldTypes: extension.fieldTypes,
-              ...getExtensionParameterIds(extension)
+              ...getExtensionParameterIds(extension),
             });
 
             Notification.success('Your extension was updated successfully.');
@@ -108,7 +108,7 @@ class ExtensionEditor extends React.Component {
         Notification.error(
           [
             'There was an error while saving your extension.',
-            'See validation errors for more details.'
+            'See validation errors for more details.',
           ].join(' ')
         );
         this.setState({ saving: false });
@@ -121,14 +121,14 @@ class ExtensionEditor extends React.Component {
         <ExtensionForm
           entity={this.state.entity}
           selfHosted={this.state.selfHosted}
-          updateEntity={entity => this.setState({ entity })}
-          setSelfHosted={selfHosted => this.setState({ selfHosted })}
+          updateEntity={(entity) => this.setState({ entity })}
+          setSelfHosted={(selfHosted) => this.setState({ selfHosted })}
         />
       </div>
     );
   };
 
-  renderActions = dirty => {
+  renderActions = (dirty) => {
     return (
       <React.Fragment>
         <StateLink path="^.list">

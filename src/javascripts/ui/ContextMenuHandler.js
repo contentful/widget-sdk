@@ -122,12 +122,12 @@ function repositionMenu($menu) {
       top: '',
       bottom: '',
       left: '',
-      right: ''
+      right: '',
     })
     // todo: delete jquery-ui once we migrate away from this directive
     .position(
       assign(getPositioning(position), {
-        of: $trigger
+        of: $trigger,
       })
     );
 
@@ -143,23 +143,23 @@ function getPositioning(position) {
   return {
     top: {
       my: 'center bottom',
-      at: 'center top-13'
+      at: 'center top-13',
     },
     'top-right': {
       my: 'left-20 bottom',
-      at: 'left top-13'
+      at: 'left top-13',
     },
     bottom: {
       my: 'center top',
-      at: 'center bottom+13'
+      at: 'center bottom+13',
     },
     'bottom-4': {
       my: 'center top',
-      at: 'center bottom+8'
+      at: 'center bottom+8',
     },
     'bottom-right': {
       my: 'right top',
-      at: 'right bottom+13'
+      at: 'right bottom+13',
     },
     /** Why 'fit' for `collsion`? On zoom levels above and below 100% (but not at all levels) the
         user account dropdown was being positioned outside the app window
@@ -167,20 +167,20 @@ function getPositioning(position) {
     'bottom-right-fit': {
       my: 'right top',
       at: 'right bottom+13',
-      collision: 'fit'
+      collision: 'fit',
     },
     'bottom-left': {
       my: 'left top',
-      at: 'left bottom+13'
+      at: 'left bottom+13',
     },
     // For context menu without arrow (should become the new standard in the future).
     'bottom-left-0': {
       my: 'left top',
-      at: 'left bottom'
+      at: 'left bottom',
     },
     left: {
       my: 'right top-10',
-      at: 'left top'
-    }
+      at: 'left top',
+    },
   }[position];
 }

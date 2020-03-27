@@ -12,18 +12,18 @@ describe('ExtensionIFrameChannel', () => {
     const stubs = {
       postMessage: jest.fn(),
       addEventListener: addEventListenerStub,
-      removeEventListener: jest.fn()
+      removeEventListener: jest.fn(),
     };
 
     const iframe = { contentWindow: { postMessage: stubs.postMessage } };
     const win = {
       addEventListener: stubs.addEventListener,
-      removeEventListener: stubs.removeEventListener
+      removeEventListener: stubs.removeEventListener,
     };
 
     const channel = new ExtensionIFrameChannel(iframe, win);
 
-    const receiveMessage = data => {
+    const receiveMessage = (data) => {
       if (!data.source) {
         data.source = channel.id;
       }
@@ -39,12 +39,12 @@ describe('ExtensionIFrameChannel', () => {
   };
 
   describe('#connect()', () => {
-    const makeExpectedConnectMessage = channel => [
+    const makeExpectedConnectMessage = (channel) => [
       {
         method: 'connect',
-        params: [{ id: channel.id }, []]
+        params: [{ id: channel.id }, []],
       },
-      '*'
+      '*',
     ];
 
     it('sends connect message with ID', () => {
@@ -89,13 +89,13 @@ describe('ExtensionIFrameChannel', () => {
 
       const queued = [
         { method: 'METHOD1', params: ['PARAM1'] },
-        { method: 'METHOD2', params: ['PARAM2'] }
+        { method: 'METHOD2', params: ['PARAM2'] },
       ];
 
       expect(stubs.postMessage).toBeCalledWith(
         {
           method: 'connect',
-          params: [{ id: channel.id }, queued]
+          params: [{ id: channel.id }, queued],
         },
         '*'
       );
@@ -143,7 +143,7 @@ describe('ExtensionIFrameChannel', () => {
       expect(stubs.postMessage).toBeCalledWith({ id: 'CALL ID', result: 'RESULT' }, '*');
     });
 
-    it('sends result when handler promise is resolved', done => {
+    it('sends result when handler promise is resolved', (done) => {
       const [channel, stubs, receiveMessage] = makeChannel();
 
       const handler = jest.fn().mockResolvedValue('RESULT');
@@ -171,13 +171,13 @@ describe('ExtensionIFrameChannel', () => {
       expect(stubs.postMessage).not.toBeCalled();
     });
 
-    it('sends error when handler promise is rejected', done => {
+    it('sends error when handler promise is rejected', (done) => {
       const [channel, stubs, receiveMessage] = makeChannel();
 
       const handler = jest.fn().mockRejectedValue({
         code: 'ECODE',
         message: 'EMESSAGE',
-        data: 'EDATA'
+        data: 'EDATA',
       });
 
       channel.handlers['MY_METHOD'] = handler;
@@ -188,7 +188,7 @@ describe('ExtensionIFrameChannel', () => {
         expect(stubs.postMessage).toBeCalledWith(
           {
             id: 'CALL ID',
-            error: { code: 'ECODE', message: 'EMESSAGE', data: 'EDATA' }
+            error: { code: 'ECODE', message: 'EMESSAGE', data: 'EDATA' },
           },
           '*'
         );

@@ -7,15 +7,15 @@ const ENTRY = {
       type: 'Entry',
       version: 1,
       contentType: {
-        sys: { id: 'ctId' }
-      }
+        sys: { id: 'ctId' },
+      },
     },
     fields: {
       fieldA: { 'en-US': 'en' },
       fieldB: { 'en-US': 'val-EN', de: 'val-DE' },
-      unknownField: {}
-    }
-  }
+      unknownField: {},
+    },
+  },
 };
 
 describe.skip('entity_editor/Document helpers', () => {

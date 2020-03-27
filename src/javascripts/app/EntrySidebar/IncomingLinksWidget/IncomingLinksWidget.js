@@ -3,16 +3,14 @@ import PropTypes from 'prop-types';
 
 import IncomingLinksList from 'app/entity_editor/Components/IncomingLinksList';
 import IncomingLinksListError from 'app/entity_editor/Components/IncomingLinksList/Error';
-import FetchLinksToEntity, {
-  RequestState
-} from 'app/entity_editor/Components/FetchLinksToEntity';
+import FetchLinksToEntity, { RequestState } from 'app/entity_editor/Components/FetchLinksToEntity';
 import { EntityType, getNumberOfLinks } from 'app/entity_editor/Components/constants';
 import messages from './messages';
 import EntrySidebarWidget from '../EntrySidebarWidget';
 
 import {
   onIncomingLinkClick as trackIncomingLinkClick,
-  Origin as IncomingLinksOrigin
+  Origin as IncomingLinksOrigin,
 } from 'analytics/events/IncomingLinks';
 
 function getMessages({ entityInfo, links }) {
@@ -24,8 +22,8 @@ export default class SidebarIncomingLinks extends React.Component {
   static propTypes = {
     entityInfo: PropTypes.shape({
       id: PropTypes.string,
-      type: PropTypes.oneOf([EntityType.ASSET, EntityType.ENTRY])
-    })
+      type: PropTypes.oneOf([EntityType.ASSET, EntityType.ENTRY]),
+    }),
   };
 
   handleClick = ({ linkEntityId, incomingLinksCount }) => {
@@ -34,7 +32,7 @@ export default class SidebarIncomingLinks extends React.Component {
       origin: IncomingLinksOrigin.SIDEBAR,
       entityId: this.props.entityInfo.id,
       entityType: this.props.entityInfo.type,
-      incomingLinksCount
+      incomingLinksCount,
     });
   };
 

@@ -12,7 +12,7 @@ export default class EntityBlockEmbed extends React.Component {
     isReadOnly: PropTypes.bool.isRequired,
     onRemove: PropTypes.func,
     onOpenEntity: PropTypes.func,
-    onEntityFetchComplete: PropTypes.func
+    onEntityFetchComplete: PropTypes.func,
   };
 
   render() {
@@ -24,7 +24,7 @@ export default class EntityBlockEmbed extends React.Component {
       isReadOnly,
       onRemove,
       onOpenEntity,
-      onEntityFetchComplete
+      onEntityFetchComplete,
     } = this.props;
     return (
       <FetchedEntityCard

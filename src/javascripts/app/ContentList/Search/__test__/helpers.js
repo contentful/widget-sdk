@@ -10,7 +10,7 @@ export const brand = {
       required: true,
       validations: [],
       disabled: false,
-      omitted: false
+      omitted: false,
     },
     {
       id: 'q7dedNda69jBv3hW',
@@ -22,7 +22,7 @@ export const brand = {
       validations: [],
       disabled: false,
       omitted: false,
-      linkType: 'Asset'
+      linkType: 'Asset',
     },
     {
       id: 'hx3BIlAyjazjkz3k',
@@ -33,7 +33,7 @@ export const brand = {
       required: false,
       validations: [],
       disabled: false,
-      omitted: false
+      omitted: false,
     },
     {
       id: 'DjQpjEgwJIwjW0wB',
@@ -47,12 +47,12 @@ export const brand = {
           regexp: {
             pattern:
               '\\b((?:[a-z][\\w-]+:(?:\\/{1,3}|[a-z0-9%])|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}\\/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:\'".,<>?«»“”‘’]))',
-            flags: 'i'
-          }
-        }
+            flags: 'i',
+          },
+        },
       ],
       disabled: false,
-      omitted: false
+      omitted: false,
     },
     {
       id: 'Gdv9NafBC7Y4zC2M',
@@ -63,7 +63,7 @@ export const brand = {
       required: false,
       validations: [],
       disabled: false,
-      omitted: false
+      omitted: false,
     },
     {
       id: 'XP8Cnq5kGFMGdZnn',
@@ -76,12 +76,12 @@ export const brand = {
         {
           regexp: {
             pattern: '^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$',
-            flags: 'i'
-          }
-        }
+            flags: 'i',
+          },
+        },
       ],
       disabled: false,
-      omitted: false
+      omitted: false,
     },
     {
       id: 'Kdf6I8QDWVvKHXvi',
@@ -93,7 +93,7 @@ export const brand = {
       validations: [],
       disabled: false,
       omitted: false,
-      items: { type: 'Symbol', validations: [] }
+      items: { type: 'Symbol', validations: [] },
     },
     {
       id: 'symbol1',
@@ -104,11 +104,11 @@ export const brand = {
       required: false,
       validations: [
         {
-          in: ['blah']
-        }
+          in: ['blah'],
+        },
       ],
       disabled: false,
-      omitted: false
+      omitted: false,
     },
     {
       id: 'symbol2',
@@ -119,12 +119,12 @@ export const brand = {
       required: false,
       validations: [
         {
-          in: ['blah', 'xxx']
-        }
+          in: ['blah', 'xxx'],
+        },
       ],
       disabled: false,
-      omitted: false
-    }
+      omitted: false,
+    },
   ],
   sys: {
     space: { sys: { type: 'Link', linkType: 'Space', id: 'vu21149elxz0' } },
@@ -132,10 +132,10 @@ export const brand = {
     type: 'ContentType',
     createdAt: '2017-10-02T14:42:27.622Z',
     updatedAt: '2017-10-02T14:42:27.622Z',
-    revision: 1
+    revision: 1,
   },
   displayField: 'Xv1N07BWAN4AV6a0',
-  description: null
+  description: null,
 };
 
 export const contentTypes = [
@@ -152,7 +152,7 @@ export const contentTypes = [
         required: true,
         validations: [],
         disabled: false,
-        omitted: false
+        omitted: false,
       },
       {
         id: 'YoDVkgPLav8j2lxe',
@@ -163,7 +163,7 @@ export const contentTypes = [
         required: false,
         validations: [],
         disabled: false,
-        omitted: false
+        omitted: false,
       },
       {
         id: 'h9h35iwlfZ37pypH',
@@ -174,7 +174,7 @@ export const contentTypes = [
         required: false,
         validations: [],
         disabled: false,
-        omitted: false
+        omitted: false,
       },
       {
         id: 'YBfvVmBiMXojmOxJ',
@@ -185,7 +185,7 @@ export const contentTypes = [
         required: false,
         validations: [],
         disabled: false,
-        omitted: false
+        omitted: false,
       },
       {
         id: 'i6AO36v6QWmoMBhJ',
@@ -197,7 +197,7 @@ export const contentTypes = [
         validations: [],
         disabled: false,
         omitted: false,
-        items: { type: 'Link', validations: [], linkType: 'Asset' }
+        items: { type: 'Link', validations: [], linkType: 'Asset' },
       },
       {
         id: 'AyccV8QAbHXGMl8q',
@@ -209,7 +209,7 @@ export const contentTypes = [
         validations: [],
         disabled: false,
         omitted: false,
-        items: { type: 'Symbol', validations: [] }
+        items: { type: 'Symbol', validations: [] },
       },
       {
         id: 'pqEIHYg8Z8BigiXn',
@@ -224,8 +224,8 @@ export const contentTypes = [
         items: {
           type: 'Link',
           validations: [{ linkContentType: ['6XwpTaSiiI2Ak2Ww0oi6qa'] }],
-          linkType: 'Entry'
-        }
+          linkType: 'Entry',
+        },
       },
       {
         id: 'MwJNvWBy68pHGMKB',
@@ -236,7 +236,7 @@ export const contentTypes = [
         required: false,
         validations: [],
         disabled: false,
-        omitted: false
+        omitted: false,
       },
       {
         id: 'BwDj6OJm1L11Ponh',
@@ -248,7 +248,7 @@ export const contentTypes = [
         validations: [{ linkContentType: ['sFzTZbSuM8coEwygeUYes'] }],
         disabled: false,
         omitted: false,
-        linkType: 'Entry'
+        linkType: 'Entry',
       },
       {
         id: 'BjaWGW0bhdGzh53J',
@@ -259,7 +259,7 @@ export const contentTypes = [
         required: false,
         validations: [],
         disabled: false,
-        omitted: false
+        omitted: false,
       },
       {
         id: 'NxPdzDlK7fbpkMbb',
@@ -270,7 +270,7 @@ export const contentTypes = [
         required: false,
         validations: [],
         disabled: false,
-        omitted: false
+        omitted: false,
       },
       {
         id: 'XB7W4OnWMnNjN3MK',
@@ -284,12 +284,12 @@ export const contentTypes = [
             regexp: {
               pattern:
                 '\\b((?:[a-z][\\w-]+:(?:\\/{1,3}|[a-z0-9%])|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}\\/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:\'".,<>?«»“”‘’]))',
-              flags: 'i'
-            }
-          }
+              flags: 'i',
+            },
+          },
         ],
         disabled: false,
-        omitted: false
+        omitted: false,
       },
       {
         id: 'LipWIjzMnA2y0nxo',
@@ -304,12 +304,12 @@ export const contentTypes = [
               after: null,
               before: null,
               min: '2017-10-14',
-              max: '2017-10-17'
-            }
-          }
+              max: '2017-10-17',
+            },
+          },
         ],
         disabled: false,
-        omitted: false
+        omitted: false,
       },
       {
         id: 'IlFE6gGqjBc1KpAO',
@@ -320,7 +320,7 @@ export const contentTypes = [
         required: false,
         validations: [],
         disabled: false,
-        omitted: false
+        omitted: false,
       },
       {
         id: 'pQGOc1MOV0CyEDxz',
@@ -331,8 +331,8 @@ export const contentTypes = [
         required: false,
         validations: [],
         disabled: false,
-        omitted: false
-      }
+        omitted: false,
+      },
     ],
     sys: {
       space: { sys: { type: 'Link', linkType: 'Space', id: 'vu21149elxz0' } },
@@ -340,9 +340,9 @@ export const contentTypes = [
       type: 'ContentType',
       createdAt: '2017-10-02T14:42:27.614Z',
       updatedAt: '2017-11-17T08:40:21.062Z',
-      revision: 12
+      revision: 12,
     },
     displayField: 'cHEJOi10pQAl2kxc',
-    description: null
-  }
+    description: null,
+  },
 ];

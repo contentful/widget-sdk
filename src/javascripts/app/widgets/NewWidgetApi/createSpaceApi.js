@@ -19,12 +19,12 @@ export function createSpaceApi({ cma, initialContentTypes }) {
     getContentType,
     getContentTypes,
     createEntry,
-    createAsset
+    createAsset,
   } = cma;
 
   return {
     getCachedContentTypes: () => {
-      return initialContentTypes.map(contentType => PublicContentType.fromInternal(contentType));
+      return initialContentTypes.map((contentType) => PublicContentType.fromInternal(contentType));
     },
     getEntries,
     getAsset,
@@ -45,6 +45,6 @@ export function createSpaceApi({ cma, initialContentTypes }) {
     },
     getAllScheduledActions: () => {
       return ScheduledActionsRepo.getAllScheduledActions();
-    }
+    },
   };
 }

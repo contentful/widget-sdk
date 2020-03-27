@@ -11,7 +11,7 @@ import { createReadOnlyFieldApi, createInternalFieldApi } from './createFieldApi
  * @return {EntryAPI}
  */
 export function createReadOnlyEntryApi({ contentType, locale, entry }) {
-  const fields = contentType.fields.map(field => {
+  const fields = contentType.fields.map((field) => {
     const getValue = () => get(entry, ['fields', field.id, locale.internal_code]);
     return createReadOnlyFieldApi({ field, locale, getValue });
   });
@@ -19,7 +19,7 @@ export function createReadOnlyEntryApi({ contentType, locale, entry }) {
   return {
     getSys: () => {},
     onSysChanged: noop,
-    fields: reduceFields(fields)
+    fields: reduceFields(fields),
   };
 }
 
@@ -30,7 +30,7 @@ export function createReadOnlyEntryApi({ contentType, locale, entry }) {
  * @return {EntryAPI}
  */
 export function createEntryApi({ contentType, locale, otDoc }) {
-  const fields = contentType.fields.map(field => {
+  const fields = contentType.fields.map((field) => {
     return createInternalFieldApi({ field, locale, otDoc });
   });
 
@@ -38,10 +38,10 @@ export function createEntryApi({ contentType, locale, otDoc }) {
     getSys: () => {
       return K.getValue(otDoc.sysProperty);
     },
-    onSysChanged: cb => {
+    onSysChanged: (cb) => {
       return K.onValue(otDoc.sysProperty, cb);
     },
-    fields: reduceFields(fields)
+    fields: reduceFields(fields),
   };
 }
 
@@ -49,7 +49,7 @@ function reduceFields(fields) {
   return fields.reduce((acc, field) => {
     return {
       ...acc,
-      [field.id]: field
+      [field.id]: field,
     };
   }, {});
 }

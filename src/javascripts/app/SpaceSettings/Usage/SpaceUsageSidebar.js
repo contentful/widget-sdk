@@ -8,10 +8,10 @@ import { resourceMaximumLimitReached, resourceHumanNameMap } from 'utils/Resourc
 import { Note } from '@contentful/forma-36-react-components';
 
 // Return a list with the names of the resources that reached the limit
-const getLimitsReachedResources = resources => {
+const getLimitsReachedResources = (resources) => {
   return Object.values(resources)
     .filter(resourceMaximumLimitReached)
-    .map(resource => resourceHumanNameMap[resource.sys.id]);
+    .map((resource) => resourceHumanNameMap[resource.sys.id]);
 };
 
 const SpaceUsageSidebar = ({ spaceResources, environmentResources, environmentId }) => {
@@ -49,12 +49,12 @@ const SpaceUsageSidebar = ({ spaceResources, environmentResources, environmentId
 SpaceUsageSidebar.propTypes = {
   spaceResources: PropTypes.object,
   environmentResources: PropTypes.object,
-  environmentId: PropTypes.string
+  environmentId: PropTypes.string,
 };
 
 SpaceUsageSidebar.defaultProps = {
   spaceResources: {},
-  environmentResources: {}
+  environmentResources: {},
 };
 
 export default SpaceUsageSidebar;
@@ -105,5 +105,5 @@ function LimitsReachedMessage({ spaceResources, environmentResources, environmen
 LimitsReachedMessage.propTypes = {
   environmentResources: PropTypes.array,
   spaceResources: PropTypes.array,
-  environmentId: PropTypes.string
+  environmentId: PropTypes.string,
 };

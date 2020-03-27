@@ -7,7 +7,7 @@ import {
   Table,
   TableRow,
   TableBody,
-  TableCell
+  TableCell,
 } from '@contentful/forma-36-react-components';
 import { OrganizationMembership as OrganizationMembershipPropType } from 'app/OrganizationSettings/PropTypes';
 import { getFullNameOrEmail } from 'app/OrganizationSettings/Users/UserUtils';
@@ -16,8 +16,8 @@ import tokens from '@contentful/forma-36-tokens';
 
 const styles = {
   note: css({
-    marginBottom: tokens.spacingS
-  })
+    marginBottom: tokens.spacingS,
+  }),
 };
 
 export default function AddUsersError({ rejected, onRetry, onClose }) {
@@ -30,7 +30,7 @@ export default function AddUsersError({ rejected, onRetry, onClose }) {
 
         <Table>
           <TableBody>
-            {rejected.map(orgMembership => (
+            {rejected.map((orgMembership) => (
               <TableRow key={orgMembership.sys.id}>
                 <TableCell>{getFullNameOrEmail(orgMembership.sys.user)}</TableCell>
               </TableRow>
@@ -60,5 +60,5 @@ export default function AddUsersError({ rejected, onRetry, onClose }) {
 AddUsersError.propTypes = {
   rejected: PropTypes.arrayOf(OrganizationMembershipPropType.isRequired),
   onRetry: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired
+  onClose: PropTypes.func.isRequired,
 };

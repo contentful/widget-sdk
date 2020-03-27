@@ -4,17 +4,17 @@ import * as K from '../../../../../test/utils/kefir';
 const initialStatus = {
   isLoading: true,
   data: null,
-  error: null
+  error: null,
 };
 const loadedEmptyStatus = {
   isLoading: false,
   data: [],
-  error: null
+  error: null,
 };
-const createErrorStatus = error => ({
+const createErrorStatus = (error) => ({
   isLoading: false,
   data: null,
-  error
+  error,
 });
 
 describe('onStoreFetchingStatusChange(store, onChange)', () => {
@@ -41,7 +41,7 @@ describe('onStoreFetchingStatusChange(store, onChange)', () => {
     const items = [{ a: 1 }, { b: 2 }, { c: 3 }];
     const initialStatus = {
       ...loadedEmptyStatus,
-      data: items
+      data: items,
     };
 
     beforeEach(() => {
@@ -69,7 +69,7 @@ describe('onStoreFetchingStatusChange(store, onChange)', () => {
       expect(onChange).toBeCalledTimes(1);
       expect(onChange).toBeCalledWith({
         ...initialStatus,
-        error
+        error,
       });
     });
   });
@@ -98,7 +98,7 @@ describe('onStoreFetchingStatusChange(store, onChange)', () => {
       expect(onChange).toBeCalledWith({
         ...initialStatus,
         data: items,
-        error: null
+        error: null,
       });
     });
   });

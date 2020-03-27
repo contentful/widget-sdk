@@ -12,7 +12,7 @@ export default class EnterpriseSpaceWizardPlan extends React.Component {
     limit: PropTypes.number.isRequired,
     isDisabled: PropTypes.bool.isRequired,
     reachedLimit: PropTypes.bool.isRequired,
-    name: PropTypes.string.isRequired
+    name: PropTypes.string.isRequired,
   };
 
   render() {

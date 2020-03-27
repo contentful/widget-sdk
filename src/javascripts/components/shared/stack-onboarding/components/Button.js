@@ -6,7 +6,7 @@ class Button extends React.Component {
     children: PropTypes.node,
     className: PropTypes.string,
     isLoading: PropTypes.bool,
-    disabled: PropTypes.bool
+    disabled: PropTypes.bool,
   };
 
   render() {

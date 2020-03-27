@@ -28,7 +28,7 @@ const AuthorEditorSpaceHome = ({ spaceName, orgName }) => {
 
 AuthorEditorSpaceHome.propTypes = {
   spaceName: PropTypes.string,
-  orgName: PropTypes.string
+  orgName: PropTypes.string,
 };
 
 export default AuthorEditorSpaceHome;

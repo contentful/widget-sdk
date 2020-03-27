@@ -37,7 +37,7 @@ export default class DeployScreen extends React.Component {
           intercomKey="onboardingDeployCompleted"
           trackingElementId={'deploy_screen_completed:no_provider'}
           link="spaceHome">
-          {move => (
+          {(move) => (
             <DeploymentForm
               onComplete={(event, provider) => move(event, `deploy_screen_completed:${provider}`)}
             />

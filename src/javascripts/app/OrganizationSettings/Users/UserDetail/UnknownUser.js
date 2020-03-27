@@ -5,7 +5,7 @@ import { Tooltip, Tag, Icon } from '@contentful/forma-36-react-components';
 
 export default class UnknownUser extends React.Component {
   static propTypes = {
-    id: PropTypes.string.isRequired
+    id: PropTypes.string.isRequired,
   };
   render() {
     return (

@@ -8,8 +8,8 @@ describe('AccountRepository', () => {
 
       expect(mockEndpoint).toHaveBeenCalledWith({
         method: 'GET',
-        query: { profile: '' }
-      })
+        query: { profile: '' },
+      });
     });
   });
 
@@ -19,18 +19,18 @@ describe('AccountRepository', () => {
         version: 3,
         data: {
           firstName: 'John',
-          lastName: 'Smith'
-        }
+          lastName: 'Smith',
+        },
       });
 
       expect(mockEndpoint).toHaveBeenCalledWith({
         method: 'PUT',
         data: {
           firstName: 'John',
-          lastName: 'Smith'
+          lastName: 'Smith',
         },
-        version: 3
-      })
+        version: 3,
+      });
     });
   });
 
@@ -40,24 +40,24 @@ describe('AccountRepository', () => {
 
       expect(mockEndpoint).toHaveBeenCalledWith({
         method: 'DELETE',
-        path: ['identities', 5678]
-      })
+        path: ['identities', 5678],
+      });
     });
   });
 
   describe('deleteUserAccount', () => {
     it('should call the endpoint with POST with user_cancellations path and data', async () => {
       await AccountRepository.deleteUserAccount({
-        foo: 'bar'
+        foo: 'bar',
       });
 
       expect(mockEndpoint).toHaveBeenCalledWith({
         method: 'POST',
         path: ['user_cancellations'],
         data: {
-          foo: 'bar'
-        }
-      })
+          foo: 'bar',
+        },
+      });
     });
   });
 });

@@ -27,30 +27,24 @@ import { getModule } from 'NgRegistry';
  * @returns {array}
  */
 export function fetchAll(endpoint, path, batchLimit, params, headers) {
-  return makeRequests(endpoint, path, batchLimit, params, headers).then(responses => {
-    const resources = _(responses)
-      .map('items')
-      .flatten()
-      .value();
-    return _.uniqBy(resources, r => r.sys.id);
+  return makeRequests(endpoint, path, batchLimit, params, headers).then((responses) => {
+    const resources = _(responses).map('items').flatten().value();
+    return _.uniqBy(resources, (r) => r.sys.id);
   });
 }
 
 // TODO: Move all `fetchAll` uses in UI to `fetchAllWithIncludes` and remove `fetchAll`
 export function fetchAllWithIncludes(endpoint, path, batchLimit, params, headers) {
-  return makeRequests(endpoint, path, batchLimit, params, headers).then(responses => {
+  return makeRequests(endpoint, path, batchLimit, params, headers).then((responses) => {
     const result = {
       total: 0,
       items: [],
-      includes: {}
+      includes: {},
     };
 
-    result.items = _(responses)
-      .map('items')
-      .flatten()
-      .value();
+    result.items = _(responses).map('items').flatten().value();
 
-    responses.forEach(response => {
+    responses.forEach((response) => {
       result.total += response.items.length;
 
       if (response.includes) {
@@ -74,7 +68,7 @@ function makeRequests(endpoint, path, batchLimit, params, headers) {
 
   requestPromises.push(request);
 
-  return request.then(response => {
+  return request.then((response) => {
     const total = response.total;
     let skip = batchLimit;
 
@@ -93,7 +87,7 @@ function makeRequest(endpoint, path, query, headers) {
     {
       method: 'GET',
       path,
-      query
+      query,
     },
     headers
   );

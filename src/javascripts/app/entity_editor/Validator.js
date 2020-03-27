@@ -85,7 +85,7 @@ export function createBase(buildMessage, schema, doc) {
     validateFieldLocale,
     hasFieldError,
     hasFieldLocaleError,
-    setApiResponseErrors
+    setApiResponseErrors,
   };
 
   /**
@@ -98,7 +98,7 @@ export function createBase(buildMessage, schema, doc) {
    * @return {boolean}
    */
   function hasFieldError(fieldId) {
-    return K.getValue(errors$).some(error => Path.isPrefix(['fields', fieldId], error.path));
+    return K.getValue(errors$).some((error) => Path.isPrefix(['fields', fieldId], error.path));
   }
 
   /**
@@ -113,7 +113,7 @@ export function createBase(buildMessage, schema, doc) {
    * @return {boolean}
    */
   function hasFieldLocaleError(fieldId, localeCode) {
-    return K.getValue(errors$).some(error =>
+    return K.getValue(errors$).some((error) =>
       Path.isPrefix(['fields', fieldId, localeCode], error.path)
     );
   }
@@ -175,10 +175,10 @@ export function createBase(buildMessage, schema, doc) {
    */
   function validateFieldLocale(fieldId, localeCode) {
     const errors = validate();
-    const fieldErrors = errors.filter(error =>
+    const fieldErrors = errors.filter((error) =>
       Path.isPrefix(['fields', fieldId, localeCode], error.path)
     );
-    const otherErrors = K.getValue(errors$).filter(error => {
+    const otherErrors = K.getValue(errors$).filter((error) => {
       return (
         !Path.isPrefix(['fields', fieldId, localeCode], error.path) &&
         !isEqual(['fields', fieldId], error.path)
@@ -206,12 +206,12 @@ export function createBase(buildMessage, schema, doc) {
    */
   function processErrors(errors) {
     return errors
-      .filter(error => error && error.path)
+      .filter((error) => error && error.path)
       .map((
         error // TODO we should freeze this but duplicate errors modify this.
       ) =>
         assign({}, error, {
-          message: buildMessage(error)
+          message: buildMessage(error),
         })
       );
   }

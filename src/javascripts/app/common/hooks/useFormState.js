@@ -7,7 +7,7 @@ export default function useFormState(initialState = {}) {
     (field, value) => {
       setFormState({
         ...formState,
-        [field]: value
+        [field]: value,
       });
     },
     [formState]

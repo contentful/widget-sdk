@@ -29,16 +29,16 @@ export default function register() {
         $scope,
         entityType: 'Asset',
         getBlankView,
-        resetList: () => searchController.resetAssets(true)
+        resetList: () => searchController.resetAssets(true),
       });
 
       $scope.savedViewsState = 'loading';
       spaceContext.uiConfig.then(
-        api => {
+        (api) => {
           $scope.savedViewsSidebar = createSavedViewsSidebar({
             entityFolders: api.assets,
-            loadView: view => $scope.loadView(view),
-            getCurrentView: () => _.cloneDeep(_.get($scope, ['context', 'view'], {}))
+            loadView: (view) => $scope.loadView(view),
+            getCurrentView: () => _.cloneDeep(_.get($scope, ['context', 'view'], {})),
           });
           $scope.savedViewsState = 'ready';
         },
@@ -60,14 +60,14 @@ export default function register() {
       $scope.isLegacyOrganization = ResourceUtils.isLegacyOrganization(spaceContext.organization);
       $scope.isMasterEnvironment = spaceContext.isMasterEnvironment();
 
-      const trackEnforcedButtonClick = err => {
+      const trackEnforcedButtonClick = (err) => {
         // If we get reason(s), that means an enforcement is present
         const reason = _.get(err, 'body.details.reasons', null);
 
         Analytics.track('entity_button:click', {
           entityType: 'asset',
           enforced: Boolean(reason),
-          reason
+          reason,
         });
       };
 
@@ -75,11 +75,11 @@ export default function register() {
         Analytics.track('asset_list:add_asset_single');
         entityCreator
           .newAsset()
-          .then(asset => {
+          .then((asset) => {
             // X.list -> X.detail
             $state.go('^.detail', { assetId: asset.getId() });
           })
-          .catch(err => {
+          .catch((err) => {
             trackEnforcedButtonClick(err);
 
             // Throw err so the UI can also display it
@@ -91,10 +91,10 @@ export default function register() {
         $scope.paginatorProps = {
           page: $scope.paginator.getPage(),
           pageCount: $scope.paginator.getPageCount(),
-          select: page => {
+          select: (page) => {
             $scope.paginator.setPage(page);
             $scope.$applyAsync();
-          }
+          },
         };
       };
       resetPaginatorProps();
@@ -107,7 +107,7 @@ export default function register() {
           space: spaceContext.space.data,
           environmentId: spaceContext.getEnvironmentId(),
           isMasterEnvironment: spaceContext.isMasterEnvironment(),
-          currentTotal: $scope.paginator.getTotal()
+          currentTotal: $scope.paginator.getTotal(),
         };
       });
 
@@ -125,7 +125,7 @@ export default function register() {
           return {
             page: searchController.paginator.getPage(),
             pageLength: searchController.paginator.getPerPage(),
-            spaceId: spaceContext.getId()
+            spaceId: spaceContext.getId(),
           };
         },
         (pageParameters, old) => {
@@ -160,10 +160,10 @@ export default function register() {
 
       $scope.getAssetFile = getAssetFile;
 
-      $scope.$watch('showNoAssetsAdvice()', show => {
+      $scope.$watch('showNoAssetsAdvice()', (show) => {
         if (show) {
           $scope.hasArchivedAssets = false;
-          return hasArchivedAssets(spaceContext.space).then(hasArchived => {
+          return hasArchivedAssets(spaceContext.space).then((hasArchived) => {
             $scope.hasArchivedAssets = hasArchived;
           });
         }
@@ -173,9 +173,9 @@ export default function register() {
         return space
           .getAssets({
             limit: 1,
-            'sys.archivedAt[exists]': true
+            'sys.archivedAt[exists]': true,
           })
-          .then(response => response && response.total > 0);
+          .then((response) => response && response.total > 0);
       }
 
       $scope.createMultipleAssets = () => {
@@ -211,6 +211,6 @@ export default function register() {
       function getAssetFile(asset) {
         return EntityFieldValueSpaceContext.getFieldValue(asset, 'file');
       }
-    }
+    },
   ]);
 }

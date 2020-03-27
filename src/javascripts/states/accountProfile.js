@@ -10,52 +10,52 @@ import UserCMATokens from 'app/UserCMATokens/UserCMATokens';
 const user = {
   name: 'user',
   url: '/user',
-  component: Settings
+  component: Settings,
 };
 
 const spaceMemberships = {
   name: 'space_memberships',
   url: '/space_memberships',
-  component: SpaceMemberships
+  component: SpaceMemberships,
 };
 
 const organizationMemberships = {
   name: 'organization_memberships',
   url: '/organization_memberships',
-  component: OrganizationMembershipsRoute
+  component: OrganizationMembershipsRoute,
 };
 
 const cmaTokens = {
   name: 'cma_tokens',
   url: '/cma_tokens',
-  component: UserCMATokens
+  component: UserCMATokens,
 };
 
 const accessGrants = userBase({
   name: 'access_grants',
   title: 'OAuth tokens',
   icon: 'token',
-  url: '/access_grants{pathSuffix:PathSuffix}'
+  url: '/access_grants{pathSuffix:PathSuffix}',
 });
 
 const applications = userBase({
   name: 'applications',
   title: 'OAuth applications',
   icon: 'oauth',
-  url: '/developers/applications{pathSuffix:PathSuffix}'
+  url: '/developers/applications{pathSuffix:PathSuffix}',
 });
 
 const userCancellation = userBase({
   name: 'user_cancellation',
   title: 'User cancellation',
-  url: '/user_cancellation{pathSuffix:PathSuffix}'
+  url: '/user_cancellation{pathSuffix:PathSuffix}',
 });
 
 function userBase(definition) {
   return iframeStateWrapper({
     loadingText: 'Loading your account…',
     onEnter: [noop],
-    ...definition
+    ...definition,
   });
 }
 
@@ -71,6 +71,6 @@ export default base({
     spaceMemberships,
     organizationMemberships,
     accessGrants,
-    applications
-  ]
+    applications,
+  ],
 });

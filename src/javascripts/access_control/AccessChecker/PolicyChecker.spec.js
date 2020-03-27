@@ -9,26 +9,26 @@ describe('Policy Access Checker', () => {
         {
           effect: 'allow',
           actions: 'all',
-          constraint: { and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }] }
-        }
-      ]
+          constraint: { and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }] },
+        },
+      ],
     },
     allowReadEntry: {
       policies: [
         {
           effect: 'allow',
           actions: ['read'],
-          constraint: { and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }] }
-        }
-      ]
+          constraint: { and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }] },
+        },
+      ],
     },
-    allowReadAndEditOfEntry: function(ctId) {
+    allowReadAndEditOfEntry: function (ctId) {
       return {
         policies: [
           {
             effect: 'allow',
             actions: ['read'],
-            constraint: { and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }] }
+            constraint: { and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }] },
           },
           {
             effect: 'allow',
@@ -36,14 +36,14 @@ describe('Policy Access Checker', () => {
             constraint: {
               and: [
                 { equals: [{ doc: 'sys.type' }, 'Entry'] },
-                { equals: [{ doc: 'sys.contentType.sys.id' }, ctId] }
-              ]
-            }
-          }
-        ]
+                { equals: [{ doc: 'sys.contentType.sys.id' }, ctId] },
+              ],
+            },
+          },
+        ],
       };
     },
-    denyEditOfEntry: function(ctId) {
+    denyEditOfEntry: function (ctId) {
       return {
         policies: [
           {
@@ -52,11 +52,11 @@ describe('Policy Access Checker', () => {
             constraint: {
               and: [
                 { equals: [{ doc: 'sys.type' }, 'Entry'] },
-                { equals: [{ doc: 'sys.contentType.sys.id' }, ctId] }
-              ]
-            }
-          }
-        ]
+                { equals: [{ doc: 'sys.contentType.sys.id' }, ctId] },
+              ],
+            },
+          },
+        ],
       };
     },
     allowAllAsset: {
@@ -64,52 +64,52 @@ describe('Policy Access Checker', () => {
         {
           effect: 'allow',
           actions: 'all',
-          constraint: { and: [{ equals: [{ doc: 'sys.type' }, 'Asset'] }] }
-        }
-      ]
+          constraint: { and: [{ equals: [{ doc: 'sys.type' }, 'Asset'] }] },
+        },
+      ],
     },
     allowReadAsset: {
       policies: [
         {
           effect: 'allow',
           actions: ['read'],
-          constraint: { and: [{ equals: [{ doc: 'sys.type' }, 'Asset'] }] }
-        }
-      ]
+          constraint: { and: [{ equals: [{ doc: 'sys.type' }, 'Asset'] }] },
+        },
+      ],
     },
     allowReadAndEditAsset: {
       policies: [
         {
           effect: 'allow',
           actions: ['read'],
-          constraint: { and: [{ equals: [{ doc: 'sys.type' }, 'Asset'] }] }
+          constraint: { and: [{ equals: [{ doc: 'sys.type' }, 'Asset'] }] },
         },
         {
           effect: 'allow',
           actions: ['update'],
-          constraint: { and: [{ equals: [{ doc: 'sys.type' }, 'Asset'] }] }
-        }
-      ]
+          constraint: { and: [{ equals: [{ doc: 'sys.type' }, 'Asset'] }] },
+        },
+      ],
     },
     denyEditAsset: {
       policies: [
         {
           effect: 'deny',
           actions: ['update'],
-          constraint: { and: [{ equals: [{ doc: 'sys.type' }, 'Asset'] }] }
-        }
-      ]
-    }
+          constraint: { and: [{ equals: [{ doc: 'sys.type' }, 'Asset'] }] },
+        },
+      ],
+    },
   };
 
   function setRole(role, isAdmin) {
     pac.setMembership(
       {
         admin: isAdmin,
-        roles: [role]
+        roles: [role],
       },
       {
-        environment: { sys: { isMaster: true } }
+        environment: { sys: { isMaster: true } },
       }
     );
   }
@@ -359,11 +359,11 @@ describe('Policy Access Checker', () => {
               and: [
                 { equals: [{ doc: 'sys.type' }, 'Entry'] },
                 { paths: [{ doc: path }] },
-                { equals: [{ doc: 'sys.contentType.sys.id' }, 'ctid'] }
-              ]
-            }
-          }
-        ]
+                { equals: [{ doc: 'sys.contentType.sys.id' }, 'ctid'] },
+              ],
+            },
+          },
+        ],
       };
     }
 
@@ -376,11 +376,11 @@ describe('Policy Access Checker', () => {
             constraint: {
               and: [
                 { equals: [{ doc: 'sys.type' }, 'Entry'] },
-                { equals: [{ doc: 'sys.id' }, entityId] }
-              ]
-            }
-          }
-        ]
+                { equals: [{ doc: 'sys.id' }, entityId] },
+              ],
+            },
+          },
+        ],
       };
     }
 
@@ -391,8 +391,8 @@ describe('Policy Access Checker', () => {
             effect: 'allow',
             actions: ['all'],
             constraint: {
-              and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }]
-            }
+              and: [{ equals: [{ doc: 'sys.type' }, 'Entry'] }],
+            },
           },
           {
             effect: 'deny',
@@ -400,11 +400,11 @@ describe('Policy Access Checker', () => {
             constraint: {
               and: [
                 { equals: [{ doc: 'sys.type' }, 'Entry'] },
-                { equals: [{ doc: 'sys.id' }, entityId] }
-              ]
-            }
-          }
-        ]
+                { equals: [{ doc: 'sys.id' }, entityId] },
+              ],
+            },
+          },
+        ],
       };
     }
 
@@ -415,10 +415,10 @@ describe('Policy Access Checker', () => {
             effect: effect || 'allow',
             actions: ['update'],
             constraint: {
-              and: [{ equals: [{ doc: 'sys.type' }, 'Asset'] }, { paths: [{ doc: path }] }]
-            }
-          }
-        ]
+              and: [{ equals: [{ doc: 'sys.type' }, 'Asset'] }, { paths: [{ doc: path }] }],
+            },
+          },
+        ],
       };
     }
 
@@ -536,7 +536,7 @@ describe('Policy Access Checker', () => {
 
       pac.setMembership({
         admin: false,
-        roles: [roles.allowReadEntry, roles.allowReadAndEditOfEntry('ctid')]
+        roles: [roles.allowReadEntry, roles.allowReadAndEditOfEntry('ctid')],
       });
       expect(pac.canEditFieldLocale('ctid', {}, {})).toBe(true);
     });
@@ -550,7 +550,7 @@ describe('Policy Access Checker', () => {
 
       pac.setMembership({
         admin: false,
-        roles: [roles.allowReadEntry, roles.allowReadAndEditOfEntry('ctid')]
+        roles: [roles.allowReadEntry, roles.allowReadAndEditOfEntry('ctid')],
       });
       expect(pac.canEditFieldLocale('ctid', {}, {})).toBe(true);
     });

@@ -30,7 +30,7 @@ describe('app/ContentList/Search/View', () => {
       suggestions: [],
       hasLoaded: true,
       actions: actions,
-      ...props
+      ...props,
     };
 
     const wrapper = Enzyme.mount(<View {...defaultProps} />);
@@ -41,7 +41,7 @@ describe('app/ContentList/Search/View', () => {
   describe('without initial data', () => {
     it('renders loader', () => {
       const { wrapper } = render({
-        hasLoaded: false
+        hasLoaded: false,
       });
       expect(wrapper.find('[data-test-id="loader"]')).toBeDefined();
     });

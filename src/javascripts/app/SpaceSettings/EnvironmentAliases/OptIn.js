@@ -12,7 +12,7 @@ import {
   Notification,
   Paragraph,
   ValidationMessage,
-  TextInput
+  TextInput,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import EnvironmentIcon from 'svg/environment.svg';
@@ -36,8 +36,8 @@ const aliasOptInStyles = {
       alignItems: 'center',
       width: '100%',
       display: 'flex',
-      justifyContent: 'center'
-    }
+      justifyContent: 'center',
+    },
   }),
   backDrop: css({
     position: 'absolute',
@@ -46,17 +46,17 @@ const aliasOptInStyles = {
     right: 0,
     bottom: 0,
     backgroundColor: 'rgba(12, 20, 28, 0.5)',
-    zIndex: 5
+    zIndex: 5,
   }),
   paragraph: css({
     marginBottom: tokens.spacingM,
     '& > code': {
-      display: 'inline-block'
-    }
+      display: 'inline-block',
+    },
   }),
   renameDropdownWithError: css({
-    top: `${tokens.spacing3Xl} !important`
-  })
+    top: `${tokens.spacing3Xl} !important`,
+  }),
 };
 
 export default function OptIn({ step, setStep, spaceId, testId }) {
@@ -234,9 +234,9 @@ OptIn.propTypes = {
   testId: PropTypes.string,
   step: PropTypes.number.isRequired,
   spaceId: PropTypes.string.isRequired,
-  setStep: PropTypes.func.isRequired
+  setStep: PropTypes.func.isRequired,
 };
 
 OptIn.defaultProps = {
-  testId: 'optin.wrapper'
+  testId: 'optin.wrapper',
 };

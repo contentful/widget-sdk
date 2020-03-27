@@ -18,16 +18,16 @@ import { it } from 'test/utils/dsl';
  *
  * TODO Use DOM helpers
  */
-xdescribe('entity editor field integration', function() {
-  beforeEach(async function() {
+xdescribe('entity editor field integration', function () {
+  beforeEach(async function () {
     this.system.set('services/localeStore', {
-      default: createLocaleStoreMock()
+      default: createLocaleStoreMock(),
     });
 
     this.system.set('classes/EntityFieldValueSpaceContext', {
-      entryTitle: entry => {
+      entryTitle: (entry) => {
         return `TITLE ${entry.data.sys.id}`;
-      }
+      },
     });
 
     await $initialize(this.system);
@@ -40,9 +40,9 @@ xdescribe('entity editor field integration', function() {
       field: {
         id: 'FID',
         localized: true,
-        name: 'FIELD NAME'
+        name: 'FIELD NAME',
       },
-      settings: {}
+      settings: {},
     };
 
     const $q = $inject('$q');
@@ -52,11 +52,11 @@ xdescribe('entity editor field integration', function() {
       getEntries(query) {
         const ids = query['sys.id[in]'].split(',');
         return $q.resolve(
-          ids.map(id => {
+          ids.map((id) => {
             return { data: { sys: { id: id, type: 'Entry' } } };
           })
         );
-      }
+      },
     };
 
     spaceContext.user = { sys: { id: 'user-id-from-space-context' } };
@@ -67,7 +67,7 @@ xdescribe('entity editor field integration', function() {
 
     const locales = [
       { code: 'def', internal_code: 'def-internal', name: 'Default' },
-      { code: 'en', internal_code: 'en-internal', name: 'English' }
+      { code: 'en', internal_code: 'en-internal', name: 'English' },
     ];
 
     this.localeData = {
@@ -77,19 +77,19 @@ xdescribe('entity editor field integration', function() {
       defaultLocale: { code: 'def', internal_code: 'def-internal' },
       focusedLocale: { code: 'en', internal_code: 'en-internal' },
       isLocaleActive: ({ code }) => {
-        return this.localeData.activeLocales.map(l => l.code).includes(code);
+        return this.localeData.activeLocales.map((l) => l.code).includes(code);
       },
-      isSingleLocaleModeOn: false
+      isSingleLocaleModeOn: false,
     };
 
-    this.compile = function() {
+    this.compile = function () {
       this.otDoc = this.otDoc || this.createDocument();
       const el = $compile('<cf-entity-field>', {
         widget: this.widget,
         editorContext,
         otDoc: this.otDoc,
         localeData: this.localeData,
-        entry: {}
+        entry: {},
       });
       el.fieldController = el.scope().fieldController;
       el.field = el.find('[data-test-id="entity-field-controls"]');
@@ -97,8 +97,8 @@ xdescribe('entity editor field integration', function() {
     };
   });
 
-  describe('labels', function() {
-    it('shows field name for single-locale', function() {
+  describe('labels', function () {
+    it('shows field name for single-locale', function () {
       this.localeData.privateLocales = [{ code: 'en', internal_code: 'en-internal' }];
       const el = this.compile();
       const label = el.find('[data-test-id="field-locale-label"]');
@@ -106,7 +106,7 @@ xdescribe('entity editor field integration', function() {
       expect(label.text()).toEqual('FIELD NAME');
     });
 
-    it('shows "required" if field is required', function() {
+    it('shows "required" if field is required', function () {
       this.widget.field.required = true;
       const el = this.compile();
       const labels = el.find('[data-test-id="field-locale-label"]');
@@ -116,9 +116,9 @@ xdescribe('entity editor field integration', function() {
       });
     });
 
-    it('does not show "required" if a locale is optional', function() {
+    it('does not show "required" if a locale is optional', function () {
       this.localeData.privateLocales = [
-        { code: 'en', internal_code: 'en-internal', name: 'English', optional: true }
+        { code: 'en', internal_code: 'en-internal', name: 'English', optional: true },
       ];
       this.widget.field.required = true;
       const el = this.compile();
@@ -126,7 +126,7 @@ xdescribe('entity editor field integration', function() {
       expect(labels.eq(0).text()).not.toMatch('(required)');
     });
 
-    it('shows locale name for multiple locales', function() {
+    it('shows locale name for multiple locales', function () {
       this.widget.field.required = true;
       const el = this.compile();
       const labelElems = el.find('[data-test-id="field-locale-label"]');
@@ -139,8 +139,8 @@ xdescribe('entity editor field integration', function() {
     });
   });
 
-  describe('editing permissions', function() {
-    it('shows message if user does not have editing permissions', function() {
+  describe('editing permissions', function () {
+    it('shows message if user does not have editing permissions', function () {
       this.otDoc = this.createDocument();
       this.otDoc.permissions.canEditFieldLocale = (_field, locale) => locale === 'en';
 
@@ -152,15 +152,15 @@ xdescribe('entity editor field integration', function() {
     function findPermissionInfo(parent, locale) {
       return parent
         .find('[data-locale]')
-        .filter(function() {
+        .filter(function () {
           return $(this).data('locale') === locale;
         })
         .find('[data-test-id="field-locale-permissions"]');
     }
   });
 
-  describe('hint', function() {
-    it('shows custom widget settings help text', function() {
+  describe('hint', function () {
+    it('shows custom widget settings help text', function () {
       this.widget.settings.helpText = 'HELP TEXT';
       const hint = this.compile().find('[data-test-id=field-hint]');
       expect(hint.length).toBe(1);
@@ -168,18 +168,18 @@ xdescribe('entity editor field integration', function() {
     });
   });
 
-  describe('visible locales', function() {
-    describe('when the multi-locale mode is on', function() {
-      beforeEach(function() {
+  describe('visible locales', function () {
+    describe('when the multi-locale mode is on', function () {
+      beforeEach(function () {
         this.localeData.isSingleLocaleModeOn = false;
       });
 
-      describe('and the field is not localized', function() {
-        it('only shows the default locale', function() {
+      describe('and the field is not localized', function () {
+        it('only shows the default locale', function () {
           this.localeData.privateLocales = [
             { code: 'en', internal_code: 'en-internal' },
             { code: 'de', internal_code: 'de-internal' },
-            { code: 'fr', internal_code: 'fr-internal' }
+            { code: 'fr', internal_code: 'fr-internal' },
           ];
           this.localeData.defaultLocale = { code: 'en', internal_code: 'en-internal' };
           this.widget.field.localized = false;
@@ -188,22 +188,22 @@ xdescribe('entity editor field integration', function() {
         });
       });
 
-      it('responds to changing the active locales', function() {
+      it('responds to changing the active locales', function () {
         this.localeData.privateLocales = [
           { code: 'en', internal_code: 'en-internal' },
           { code: 'de', internal_code: 'de-internal' },
-          { code: 'fr', internal_code: 'fr-internal' }
+          { code: 'fr', internal_code: 'fr-internal' },
         ];
         this.localeData.activeLocales = [
           { code: 'en', internal_code: 'en-internal' },
           { code: 'de', internal_code: 'de-internal' },
-          { code: 'fr', internal_code: 'fr-internal' }
+          { code: 'fr', internal_code: 'fr-internal' },
         ];
         const el = this.compile();
         expectShownLocales(el, ['en', 'de', 'fr']);
         this.localeData.activeLocales = [
           { code: 'en', internal_code: 'en-internal' },
-          { code: 'de', internal_code: 'de-internal' }
+          { code: 'de', internal_code: 'de-internal' },
         ];
         $apply();
         expectShownLocales(el, ['en', 'de']);
@@ -211,7 +211,7 @@ xdescribe('entity editor field integration', function() {
 
       it('adds locales with error on field with localization enabled', testShowsErrorLocales);
 
-      it('adds locales with error on field without localization', function() {
+      it('adds locales with error on field without localization', function () {
         this.widget.field.localized = false;
         testShowsErrorLocales.call(this);
       });
@@ -221,7 +221,7 @@ xdescribe('entity editor field integration', function() {
         this.localeData.privateLocales = [
           { code: 'en', internal_code: 'en-internal' },
           { code: 'de', internal_code: 'de-internal' },
-          { code: 'fr', internal_code: 'fr-internal' }
+          { code: 'fr', internal_code: 'fr-internal' },
         ];
         this.localeData.defaultLocale = { code: 'en', internal_code: 'en-internal' };
 
@@ -237,45 +237,45 @@ xdescribe('entity editor field integration', function() {
       }
 
       // TODO: Why is the `default: true` ignored here?
-      xit('shows default locale as the first one', function() {
+      xit('shows default locale as the first one', function () {
         this.localeData.privateLocales = [{ code: 'en-2', default: true }, { code: 'en-1' }];
         const el = this.compile();
         expectShownLocalesDisplayOrder(el, ['en-2', 'en-1']);
       });
     });
 
-    describe('when the single-locale mode is on', function() {
-      beforeEach(function() {
+    describe('when the single-locale mode is on', function () {
+      beforeEach(function () {
         this.localeData.isSingleLocaleModeOn = true;
         this.localeData.privateLocales = [
           { code: 'en', internal_code: 'en-internal' },
           { code: 'de', internal_code: 'de-internal' },
-          { code: 'fr', internal_code: 'fr-internal' }
+          { code: 'fr', internal_code: 'fr-internal' },
         ];
         this.localeData.defaultLocale = { code: 'en', internal_code: 'en-internal' };
       });
 
-      describe('and the field is localized', function() {
-        beforeEach(function() {
+      describe('and the field is localized', function () {
+        beforeEach(function () {
           this.widget.field.localized = true;
         });
 
-        describe('and the default locale is focused', function() {
-          beforeEach(function() {
+        describe('and the default locale is focused', function () {
+          beforeEach(function () {
             this.localeData.focusedLocale = { code: 'en', internal_code: 'en-internal' };
           });
 
-          it('shows the locale', function() {
+          it('shows the locale', function () {
             expectShownLocales(this.compile(), ['en']);
           });
         });
 
-        describe('and the non-default locale is focused', function() {
-          beforeEach(function() {
+        describe('and the non-default locale is focused', function () {
+          beforeEach(function () {
             this.localeData.focusedLocale = { code: 'de', internal_code: 'de-internal' };
           });
 
-          it('shows the locale', function() {
+          it('shows the locale', function () {
             expectShownLocales(this.compile(), ['de']);
           });
         });
@@ -299,16 +299,16 @@ xdescribe('entity editor field integration', function() {
     }
   });
 
-  describe('errors', function() {
-    describe('when the multi-locale mode is on', function() {
-      it('shows field locale errors', function() {
+  describe('errors', function () {
+    describe('when the multi-locale mode is on', function () {
+      it('shows field locale errors', function () {
         const el = this.compile();
         expect(hasErrorStatus(el)).toBe(false);
 
         this.validator.errors$.set([
           { path: ['fields', 'FID', 'def-internal'], name: 'def-error' },
           { path: ['fields', 'FID', 'en-internal'], name: 'en-error-1' },
-          { path: ['fields', 'FID', 'en-internal'], name: 'en-error-2' }
+          { path: ['fields', 'FID', 'en-internal'], name: 'en-error-2' },
         ]);
         $apply();
 
@@ -320,7 +320,7 @@ xdescribe('entity editor field integration', function() {
         expect(hasErrorStatus(enLocale, 'entry.schema.en-error-2')).toBe(true);
       });
 
-      it('sets field’s invalid state if there are schema errors', function() {
+      it('sets field’s invalid state if there are schema errors', function () {
         const el = this.compile();
         assertInvalidState(el.field, false);
 
@@ -336,7 +336,7 @@ xdescribe('entity editor field integration', function() {
         assertInvalidState(el.field, false);
       });
 
-      it('sets field’s invalid state if a field control is invalid', function() {
+      it('sets field’s invalid state if a field control is invalid', function () {
         const el = this.compile();
         assertInvalidState(el.field, false);
 
@@ -354,7 +354,7 @@ xdescribe('entity editor field integration', function() {
         assertInvalidState(el.field, false);
       });
 
-      it('shows link for duplicate errors', function() {
+      it('shows link for duplicate errors', function () {
         const view = DOM.createView(this.compile().get(0));
 
         this.validator.errors$.set([
@@ -362,38 +362,38 @@ xdescribe('entity editor field integration', function() {
             path: ['fields', 'FID', 'def-internal'],
             name: 'unique',
             conflicting: [{ sys: { id: 'DUPLICATE' } }],
-            message: ''
-          }
+            message: '',
+          },
         ]);
         $apply();
         view.find('uniqueness-conflicts-list').assertHasText('TITLE DUPLICATE');
       });
     });
 
-    describe('when the single-locale mode is on', function() {
-      beforeEach(function() {
+    describe('when the single-locale mode is on', function () {
+      beforeEach(function () {
         this.localeData.isSingleLocaleModeOn = true;
         this.localeData.defaultLocale = { code: 'en', internal_code: 'en-internal' };
         this.localeData.focusedLocale = { code: 'en', internal_code: 'en-internal' };
       });
 
-      describe('and the field locale has errors', function() {
-        beforeEach(function() {
+      describe('and the field locale has errors', function () {
+        beforeEach(function () {
           this.validator.hasFieldLocaleError.withArgs('FID', 'en-internal').returns(true);
         });
 
-        it('checks whether the focused field locale has error', function() {
+        it('checks whether the focused field locale has error', function () {
           const el = this.compile();
           assertInvalidState(el.field, true);
         });
       });
 
-      describe('and the field locale does not have errors', function() {
-        beforeEach(function() {
+      describe('and the field locale does not have errors', function () {
+        beforeEach(function () {
           this.validator.hasFieldLocaleError.withArgs('FID', 'en-internal').returns(false);
         });
 
-        it('checks whether the focused field locale has error', function() {
+        it('checks whether the focused field locale has error', function () {
           const el = this.compile();
           assertInvalidState(el.field, false);
         });
@@ -401,8 +401,8 @@ xdescribe('entity editor field integration', function() {
     });
   });
 
-  describe('focus', function() {
-    it('is set when widget activates this field', function() {
+  describe('focus', function () {
+    it('is set when widget activates this field', function () {
       const el = this.compile();
 
       this.focus.set('FID');
@@ -410,7 +410,7 @@ xdescribe('entity editor field integration', function() {
       assertAriaFlag(el.field, 'current', true);
     });
 
-    it('is unset when other field activates', function() {
+    it('is unset when other field activates', function () {
       const el = this.compile();
 
       this.focus.set('FID');
@@ -422,7 +422,7 @@ xdescribe('entity editor field integration', function() {
       assertAriaFlag(el.field, 'current', false);
     });
 
-    it('is unset when widget deactivates this field', function() {
+    it('is unset when widget deactivates this field', function () {
       const el = this.compile();
 
       this.focus.set('FID');

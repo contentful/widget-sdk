@@ -17,7 +17,7 @@ describe('CommentsPanelContainer', () => {
   const params = {
     endpoint: () => {},
     entryId: 'my-entry',
-    environmentId: 'my-env'
+    environmentId: 'my-env',
   };
   const render = () => {
     emitter = mitt();

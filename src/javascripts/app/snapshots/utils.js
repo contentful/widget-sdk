@@ -5,7 +5,7 @@ export const CURRENT = 'current';
 
 export const getFieldPath = (fieldId, internalCode) => ['fields', fieldId, internalCode];
 
-export const getLocalesForField = field => {
+export const getLocalesForField = (field) => {
   const fieldLocales = field.localized
     ? TheLocaleStore.getPrivateLocales()
     : [TheLocaleStore.getDefaultLocale()];

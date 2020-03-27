@@ -15,7 +15,7 @@ export const REMOVE_TOKEN = 'REMOVE_TOKEN';
 export const ADD_TOKEN = 'ADD_TOKEN';
 
 export const reducer = createImmerReducer({
-  [FETCH_START]: state => {
+  [FETCH_START]: (state) => {
     state.loadingTokens = true;
   },
   [FETCH_SUCCESS]: (state, { total, items, page }) => {
@@ -26,14 +26,14 @@ export const reducer = createImmerReducer({
     }
     state.currentPage = page;
 
-    state.tokens = items.map(token => ({
+    state.tokens = items.map((token) => ({
       id: token.sys.id,
-      name: token.name
+      name: token.name,
     }));
     state.loadingTokens = false;
     state.totalPages = totalPages;
   },
-  [FETCH_FAILURE]: state => {
+  [FETCH_FAILURE]: (state) => {
     state.loadingTokens = false;
     state.loadingTokensError = true;
   },
@@ -41,31 +41,31 @@ export const reducer = createImmerReducer({
     state.currentPage = page;
   },
   [REMOVE_TOKEN]: (state, { id }) => {
-    state.tokens = state.tokens.filter(token => token.id !== id);
+    state.tokens = state.tokens.filter((token) => token.id !== id);
   },
   [ADD_TOKEN]: (state, { item }) => {
     state.tokens.push({
       id: item.sys.id,
-      name: item.name
+      name: item.name,
     });
-  }
+  },
 });
 
-export const useTokensState = tokenResourceManager => {
+export const useTokensState = (tokenResourceManager) => {
   const [state, dispatch] = useReducer(reducer, {
     loadingTokensError: false,
     loadingTokens: true,
     tokens: [],
     currentPage: 0,
-    totalPages: 0
+    totalPages: 0,
   });
 
-  const fetchTokens = async page => {
+  const fetchTokens = async (page) => {
     dispatch({ type: FETCH_START, page });
     try {
       const { total, items } = await tokenResourceManager.fetch({
         skip: page * PER_PAGE,
-        limit: PER_PAGE
+        limit: PER_PAGE,
       });
       dispatch({ type: FETCH_SUCCESS, total, items, page });
     } catch (e) {
@@ -73,7 +73,7 @@ export const useTokensState = tokenResourceManager => {
     }
   };
 
-  const Revoke = async token => {
+  const Revoke = async (token) => {
     const id = token.id;
     try {
       await tokenResourceManager.revoke(id);
@@ -90,12 +90,12 @@ export const useTokensState = tokenResourceManager => {
   };
 
   const OpenCreateDialog = () => {
-    openGenerateTokenDialog(tokenResourceManager.create, item => {
+    openGenerateTokenDialog(tokenResourceManager.create, (item) => {
       dispatch({ type: ADD_TOKEN, item: item });
     });
   };
 
-  const SelectPage = async page => {
+  const SelectPage = async (page) => {
     dispatch({ type: SELECT_PAGE, page });
   };
 
@@ -109,7 +109,7 @@ export const useTokensState = tokenResourceManager => {
     {
       Revoke,
       OpenCreateDialog,
-      SelectPage
-    }
+      SelectPage,
+    },
   ];
 };

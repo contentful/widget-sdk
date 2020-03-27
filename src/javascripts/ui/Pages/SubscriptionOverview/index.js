@@ -20,19 +20,19 @@ import useAsync from 'app/common/hooks/useAsync';
 import { FetcherLoading } from 'app/common/createFetcherComponent';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 
-const getBasePlan = plans => plans.items.find(({ planType }) => planType === 'base');
+const getBasePlan = (plans) => plans.items.find(({ planType }) => planType === 'base');
 const getSpacePlans = (plans, accessibleSpaces) =>
   plans.items
     .filter(({ planType }) => ['space', 'free_space'].includes(planType))
     .sort((plan1, plan2) => {
-      const [name1, name2] = [plan1, plan2].map(plan => get(plan, 'space.name', ''));
+      const [name1, name2] = [plan1, plan2].map((plan) => get(plan, 'space.name', ''));
       return name1.localeCompare(name2);
     })
     // Set space.isAccessible to check if current user can go to space details.
-    .map(plan => {
+    .map((plan) => {
       if (plan.space) {
         plan.space.isAccessible = !!accessibleSpaces.find(
-          space => space.sys.id === plan.space.sys.id
+          (space) => space.sys.id === plan.space.sys.id
         );
       }
       // plan price is undefined for a free space
@@ -51,7 +51,7 @@ async function fetchNumMemberships(organizationId) {
   return membershipsResource.usage;
 }
 
-const fetch = organizationId => async () => {
+const fetch = (organizationId) => async () => {
   const organization = await getOrganization(organizationId);
 
   if (!isOwnerOrAdmin(organization)) {
@@ -63,7 +63,7 @@ const fetch = organizationId => async () => {
   const [plans, productRatePlans, numMemberships] = await Promise.all([
     getPlansWithSpaces(endpoint),
     getRatePlans(endpoint),
-    fetchNumMemberships(organizationId)
+    fetchNumMemberships(organizationId),
   ]);
 
   if (!plans || !productRatePlans) {
@@ -79,7 +79,7 @@ const fetch = organizationId => async () => {
   const grandTotal = calculateTotalPrice({
     allPlans: plans.items,
     basePlan,
-    numMemberships
+    numMemberships,
   });
 
   return { basePlan, spacePlans, grandTotal, usersMeta, organization, productRatePlans };
@@ -105,5 +105,5 @@ export default function SubscriptionPageRouter({ orgId: organizationId }) {
 }
 
 SubscriptionPageRouter.propTypes = {
-  orgId: PropTypes.string.isRequired
+  orgId: PropTypes.string.isRequired,
 };

@@ -2,17 +2,17 @@ const _ = require('lodash');
 
 const all = () => true;
 
-const js = node => node.extension === '.js';
+const js = (node) => node.extension === '.js';
 
-const jade = node => node.extension === '.html';
+const jade = (node) => node.extension === '.html';
 
-const test = node => js(node) && node.path.indexOf('spec.js') !== -1;
+const test = (node) => js(node) && node.path.indexOf('spec.js') !== -1;
 
-const jest = node => test(node) && node.path.indexOf('src/javascripts') !== -1;
+const jest = (node) => test(node) && node.path.indexOf('src/javascripts') !== -1;
 
-const karma = node => test(node) && node.path.indexOf('src/javascripts') === -1;
+const karma = (node) => test(node) && node.path.indexOf('src/javascripts') === -1;
 
-const angular = node => {
+const angular = (node) => {
   const modules = node.modules;
   if (!js(node)) {
     return false;
@@ -52,13 +52,13 @@ const angular = node => {
     'cf-context-menu-trigger',
     'cf-context-menu',
     'ui-command',
-    'ui-command-state'
+    'ui-command-state',
   ];
   const intersection = _.intersectionWith(modules, attributes, _.isEqual);
   return intersection.length > 0 ? intersection : false;
 };
 
-const hyperscript = node => {
+const hyperscript = (node) => {
   const modules = node.modules;
   if (!js(node)) {
     return false;
@@ -69,13 +69,13 @@ const hyperscript = node => {
   const attributes = [
     'utils/hyperscript',
     'utils/legacy-html-hyperscript',
-    'utils/legacy-html-hyperscript/index'
+    'utils/legacy-html-hyperscript/index',
   ];
   const intersection = _.intersectionWith(modules, attributes, _.isEqual);
   return intersection.length > 0 ? intersection : false;
 };
 
-const react = node => {
+const react = (node) => {
   const modules = node.modules;
   if (!js(node)) {
     return false;
@@ -94,7 +94,7 @@ const react = node => {
     'react-animate-height',
     'redux/store',
     'slate-react',
-    '<react-component>'
+    '<react-component>',
   ];
   const intersection = _.intersectionWith(modules, attributes, _.isEqual);
   if (intersection.length > 0) {
@@ -108,7 +108,7 @@ const react = node => {
   return false;
 };
 
-const needsRefactoring = node => {
+const needsRefactoring = (node) => {
   const modules = node.modules;
 
   if (test(node)) {
@@ -126,7 +126,7 @@ const needsRefactoring = node => {
     'cf-component-bridge',
     'utils/command/command',
     'enzyme',
-    'sinon'
+    'sinon',
   ];
   let intersection = _.intersectionWith(modules, attributes, _.isEqual);
 
@@ -156,5 +156,5 @@ module.exports = {
   angular: angular,
   hyperscript: hyperscript,
   react: react,
-  needsRefactoring: needsRefactoring
+  needsRefactoring: needsRefactoring,
 };

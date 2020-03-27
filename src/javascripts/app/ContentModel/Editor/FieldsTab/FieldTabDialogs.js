@@ -32,7 +32,7 @@ DisallowDialog.propTypes = {
   isShown: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   field: PropTypes.object.isRequired,
-  action: PropTypes.string.isRequired
+  action: PropTypes.string.isRequired,
 };
 
 export const OmitDialog = ({ isShown, onClose }) => {
@@ -60,7 +60,7 @@ export const OmitDialog = ({ isShown, onClose }) => {
 
 OmitDialog.propTypes = {
   isShown: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired
+  onClose: PropTypes.func.isRequired,
 };
 
 export const SaveDialog = ({ isShown, onClose }) => {
@@ -86,7 +86,7 @@ export const SaveDialog = ({ isShown, onClose }) => {
 
 SaveDialog.propTypes = {
   isShown: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired
+  onClose: PropTypes.func.isRequired,
 };
 
 export const openDisallowDialog = ({ field, action }) =>

@@ -28,7 +28,7 @@ export default function register() {
        *
        * @param {string} name of state to transition to
        */
-      this.set = newState => {
+      this.set = (newState) => {
         state = newState;
       };
 
@@ -47,7 +47,7 @@ export default function register() {
        *
        * @param {string} name of state to verify
        */
-      this.is = expectedState => state === expectedState;
-    }
+      this.is = (expectedState) => state === expectedState;
+    },
   ]);
 }

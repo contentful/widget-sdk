@@ -13,11 +13,11 @@ const renderComponent = (
   actions,
   props = {
     showingForm: false,
-    onFormDismissed: () => {}
+    onFormDismissed: () => {},
   }
 ) => {
   const store = createStore(reducer);
-  actions.forEach(action => store.dispatch(action));
+  actions.forEach((action) => store.dispatch(action));
   const wrapper = mount(
     <Provider store={store}>
       <TeamSpaceMemberships {...props} />
@@ -43,10 +43,10 @@ describe('TeamSpaceMemberships', () => {
           location: {
             pathname: ROUTES.organization.children.teams.children.team.build({
               orgId: activeOrgId,
-              teamId: activeTeamId
-            })
-          }
-        }
+              teamId: activeTeamId,
+            }),
+          },
+        },
       });
     });
 
@@ -61,15 +61,15 @@ describe('TeamSpaceMemberships', () => {
                 {
                   name: 'Team 1',
                   sys: {
-                    id: 'team1'
-                  }
+                    id: 'team1',
+                  },
                 },
                 {
                   name: 'Different Team',
                   sys: {
-                    id: 'differentTeam'
-                  }
-                }
+                    id: 'differentTeam',
+                  },
+                },
               ],
               [TEAM_SPACE_MEMBERSHIPS]: [
                 {
@@ -81,17 +81,17 @@ describe('TeamSpaceMemberships', () => {
                       sys: {
                         type: 'Link',
                         linkType: ORG_SPACES,
-                        id: 'testSpaceB2'
-                      }
+                        id: 'testSpaceB2',
+                      },
                     },
                     team: {
                       sys: {
                         type: 'Link',
                         linkType: TEAMS,
-                        id: activeTeamId
-                      }
-                    }
-                  }
+                        id: activeTeamId,
+                      },
+                    },
+                  },
                 },
                 {
                   admin: true,
@@ -102,17 +102,17 @@ describe('TeamSpaceMemberships', () => {
                       sys: {
                         type: 'Link',
                         linkType: ORG_SPACES,
-                        id: 'testSpaceB1'
-                      }
+                        id: 'testSpaceB1',
+                      },
                     },
                     team: {
                       sys: {
                         type: 'Link',
                         linkType: TEAMS,
-                        id: activeTeamId
-                      }
-                    }
-                  }
+                        id: activeTeamId,
+                      },
+                    },
+                  },
                 },
                 {
                   admin: true,
@@ -123,41 +123,41 @@ describe('TeamSpaceMemberships', () => {
                       sys: {
                         type: 'Link',
                         linkType: ORG_SPACES,
-                        id: 'testSpaceA'
-                      }
+                        id: 'testSpaceA',
+                      },
                     },
                     team: {
                       sys: {
                         type: 'Link',
                         linkType: TEAMS,
-                        id: 'differentTeam'
-                      }
-                    }
-                  }
-                }
+                        id: 'differentTeam',
+                      },
+                    },
+                  },
+                },
               ],
               [ORG_SPACES]: [
                 {
                   name: 'Test Space B2',
                   sys: {
-                    id: 'testSpaceB2'
-                  }
+                    id: 'testSpaceB2',
+                  },
                 },
                 {
                   name: 'Test Space B1',
                   sys: {
-                    id: 'testSpaceB1'
-                  }
+                    id: 'testSpaceB1',
+                  },
                 },
                 {
                   name: 'Test Space A',
                   sys: {
-                    id: 'testSpaceA'
-                  }
-                }
-              ]
-            }
-          }
+                    id: 'testSpaceA',
+                  },
+                },
+              ],
+            },
+          },
         });
       });
 

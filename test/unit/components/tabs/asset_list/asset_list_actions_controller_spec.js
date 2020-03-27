@@ -10,7 +10,7 @@ describe('Asset List Actions Controller', () => {
     action1 = action2 = action3 = action4 = null;
   });
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     stubs = {
       track: sinon.stub(),
       success: sinon.stub(),
@@ -24,22 +24,22 @@ describe('Asset List Actions Controller', () => {
       action3: sinon.stub(),
       action4: sinon.stub(),
       timeout: sinon.stub(),
-      canPerformActionOnEntity: sinon.stub()
+      canPerformActionOnEntity: sinon.stub(),
     };
 
     this.system.set('analytics/Analytics', {
-      track: stubs.track
+      track: stubs.track,
     });
 
     this.system.set('access_control/AccessChecker', {
-      canPerformActionOnEntity: stubs.canPerformActionOnEntity
+      canPerformActionOnEntity: stubs.canPerformActionOnEntity,
     });
 
     ComponentLibrary = await this.system.import('@contentful/forma-36-react-components');
     ComponentLibrary.Notification.error = stubs.error;
     ComponentLibrary.Notification.success = stubs.success;
 
-    await $initialize(this.system, $provide => {
+    await $initialize(this.system, ($provide) => {
       $provide.value('$timeout', stubs.timeout);
     });
 
@@ -57,7 +57,7 @@ describe('Asset List Actions Controller', () => {
     scope.selection = {
       size: stubs.size,
       getSelected: stubs.getSelected.returns([]),
-      clear: stubs.clear
+      clear: stubs.clear,
     };
 
     const spaceContext = $inject('mocks/spaceContext').init();
@@ -81,7 +81,7 @@ describe('Asset List Actions Controller', () => {
           makeEntity(action, stubs.action1),
           makeEntity(action, stubs.action2),
           makeEntity(action, stubs.action3),
-          makeEntity(action, stubs.action4)
+          makeEntity(action, stubs.action4),
         ];
         action1.resolve(entities[0]);
         action2.reject(new Error('boom'));
@@ -156,7 +156,7 @@ describe('Asset List Actions Controller', () => {
       stubs.canPerformActionOnEntity.returns(true);
       stubs.getSelected.returns([
         makeEntity(canMethodName, stubs.action1),
-        makeEntity(canMethodName, stubs.action2)
+        makeEntity(canMethodName, stubs.action2),
       ]);
 
       expect(scope[methodName]()).toBeTruthy();
@@ -168,7 +168,7 @@ describe('Asset List Actions Controller', () => {
       stubs.canPerformActionOnEntity.returns(false);
       stubs.getSelected.returns([
         makeEntity(canMethodName, stubs.action1),
-        makeEntity(canMethodName, stubs.action2)
+        makeEntity(canMethodName, stubs.action2),
       ]);
 
       expect(scope[methodName]()).toBeFalsy();
@@ -180,7 +180,7 @@ describe('Asset List Actions Controller', () => {
       stubs.canPerformActionOnEntity.returns(true);
       stubs.getSelected.returns([
         makeEntity(canMethodName, stubs.action1),
-        makeEntity(canMethodName, stubs.action2)
+        makeEntity(canMethodName, stubs.action2),
       ]);
 
       expect(scope[methodName]()).toBeFalsy();
@@ -197,7 +197,7 @@ describe('Asset List Actions Controller', () => {
     stubs.action2.returns(false);
     stubs.getSelected.returns([
       makeEntity('isPublished', stubs.action1),
-      makeEntity('isPublished', stubs.action2)
+      makeEntity('isPublished', stubs.action2),
     ]);
 
     expect(scope.publishButtonName()).toBe('Publish');
@@ -208,7 +208,7 @@ describe('Asset List Actions Controller', () => {
     stubs.action2.returns(true);
     stubs.getSelected.returns([
       makeEntity('isPublished', stubs.action1),
-      makeEntity('isPublished', stubs.action2)
+      makeEntity('isPublished', stubs.action2),
     ]);
 
     expect(scope.publishButtonName()).toBe('Republish');
@@ -219,7 +219,7 @@ describe('Asset List Actions Controller', () => {
     stubs.action2.returns(false);
     stubs.getSelected.returns([
       makeEntity('isPublished', stubs.action1),
-      makeEntity('isPublished', stubs.action2)
+      makeEntity('isPublished', stubs.action2),
     ]);
 
     expect(scope.publishButtonName()).toBe('(Re)publish');

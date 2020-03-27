@@ -3,9 +3,9 @@ import sinon from 'sinon';
 import { $initialize, $inject, $apply } from 'test/utils/ng';
 
 describe('cfValidateForm directive', () => {
-  beforeEach(async function() {
-    await $initialize(this.system, $provide => {
-      $provide.constant('$timeout', fn => {
+  beforeEach(async function () {
+    await $initialize(this.system, ($provide) => {
+      $provide.constant('$timeout', (fn) => {
         fn();
       });
     });
@@ -27,19 +27,19 @@ describe('cfValidateForm directive', () => {
     sinon.spy(this.validator, 'run');
   });
 
-  it('validates on input ngModel:update', function() {
+  it('validates on input ngModel:update', function () {
     this.scope.$emit('ngModel:update');
     $apply();
     sinon.assert.calledOnce(this.validator.run);
     sinon.assert.calledWith(this.validator.run, 'a.b', true);
   });
 
-  it('exposes path errors on form', function() {
+  it('exposes path errors on form', function () {
     this.scope.schema.errors.returns([
       { name: '1', path: ['a'] },
       { name: '2', path: ['a', 'b'] },
       { name: '3', path: ['a', 'b', 'c'] },
-      { name: '4', path: ['a', 'b', 'c'] }
+      { name: '4', path: ['a', 'b', 'c'] },
     ]);
     this.validator.run();
     $apply();
@@ -47,7 +47,7 @@ describe('cfValidateForm directive', () => {
     expect(errorNames).toEqual(['2', '3', '4']);
   });
 
-  it('sets form validity', function() {
+  it('sets form validity', function () {
     expect(this.form.$valid).toBe(true);
 
     this.scope.schema.errors.returns([{ name: '1', path: ['a', 'b'] }]);

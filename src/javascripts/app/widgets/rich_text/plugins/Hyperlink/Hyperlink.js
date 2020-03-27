@@ -16,7 +16,7 @@ const { HYPERLINK, ENTRY_HYPERLINK, ASSET_HYPERLINK } = INLINES;
 const ICON_MAP = {
   [HYPERLINK]: 'ExternalLink',
   [ENTRY_HYPERLINK]: 'Entry',
-  [ASSET_HYPERLINK]: 'Asset'
+  [ASSET_HYPERLINK]: 'Asset',
 };
 
 const styles = {
@@ -24,12 +24,12 @@ const styles = {
     color: tokens.colorTextLightest,
     marginRight: tokens.spacingXs,
     '&:after': {
-      content: '""'
-    }
+      content: '""',
+    },
   }),
   richTextEntityTooltipContentTitle: css({
-    marginRight: tokens.spacingXs
-  })
+    marginRight: tokens.spacingXs,
+  }),
 };
 
 export default class Hyperlink extends React.Component {
@@ -41,7 +41,7 @@ export default class Hyperlink extends React.Component {
     createHyperlinkDialog: PropTypes.func,
     onClick: PropTypes.func,
     onEntityFetchComplete: PropTypes.func,
-    getTooltipData: PropTypes.func
+    getTooltipData: PropTypes.func,
   };
 
   render() {
@@ -117,7 +117,7 @@ export default class Hyperlink extends React.Component {
             render={({ requestStatus, entityTitle, entityStatus, contentTypeName = 'Asset' }) => {
               if (requestStatus === RequestStatus.Pending) {
                 return this.renderLink({
-                  tooltip: `Loading ${target.sys.linkType.toLowerCase()}...`
+                  tooltip: `Loading ${target.sys.linkType.toLowerCase()}...`,
                 });
               }
 

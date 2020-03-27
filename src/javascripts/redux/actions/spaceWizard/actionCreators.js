@@ -6,7 +6,7 @@ import {
   getSpaceRatePlans,
   getSubscriptionPlans,
   calculateTotalPrice,
-  changeSpace as changeSpaceApiCall
+  changeSpace as changeSpaceApiCall,
 } from 'account/pricing/PricingDataProvider';
 import createApiKeyRepo from 'app/settings/api/services/ApiKeyRepo';
 import * as TokenStore from 'services/TokenStore';
@@ -24,17 +24,17 @@ import * as actions from './actions';
 const DEFAULT_LOCALE = 'en-US';
 
 export function reset() {
-  return dispatch => dispatch(actions.spaceWizardReset());
+  return (dispatch) => dispatch(actions.spaceWizardReset());
 }
 
 export function setPartnershipFields(fields) {
-  return dispatch => {
+  return (dispatch) => {
     dispatch(actions.spacePartnershipFields(fields));
   };
 }
 
 export function sendPartnershipEmail({ spaceId, fields }) {
-  return async dispatch => {
+  return async (dispatch) => {
     dispatch(actions.spacePartnershipEmailPending(true));
 
     const endpoint = createSpaceEndpoint(spaceId);
@@ -42,12 +42,12 @@ export function sendPartnershipEmail({ spaceId, fields }) {
       await endpoint({
         method: 'POST',
         path: ['partner_projects'],
-        data: fields
+        data: fields,
       });
     } catch (e) {
       logger.logError(`Could not send partnership data to API`, {
         error: e,
-        fields
+        fields,
       });
 
       dispatch(actions.spacePartnershipEmailFailure(e));
@@ -58,7 +58,7 @@ export function sendPartnershipEmail({ spaceId, fields }) {
 }
 
 export function fetchSpacePlans({ organization, spaceId }) {
-  return async dispatch => {
+  return async (dispatch) => {
     const resources = createResourceService(organization.sys.id, 'organization');
     const endpoint = createOrganizationEndpoint(organization.sys.id);
 
@@ -70,7 +70,7 @@ export function fetchSpacePlans({ organization, spaceId }) {
     try {
       [rawSpaceRatePlans, freeSpacesResource] = await Promise.all([
         getSpaceRatePlans(endpoint, spaceId),
-        resources.get('free_space')
+        resources.get('free_space'),
       ]);
     } catch (e) {
       dispatch(actions.spacePlansFailure(e));
@@ -79,7 +79,7 @@ export function fetchSpacePlans({ organization, spaceId }) {
       return;
     }
 
-    const spaceRatePlans = rawSpaceRatePlans.map(plan => {
+    const spaceRatePlans = rawSpaceRatePlans.map((plan) => {
       const isFree = plan.productPlanType === 'free_space';
       const includedResources = getIncludedResources(plan.productRatePlanCharges);
       let disabled = false;
@@ -101,7 +101,7 @@ export function fetchSpacePlans({ organization, spaceId }) {
 }
 
 export function fetchTemplates() {
-  return async dispatch => {
+  return async (dispatch) => {
     dispatch(actions.spaceTemplatesPending(true));
 
     let templatesList;
@@ -132,16 +132,16 @@ export function createSpace({
   partnershipMeta,
   onSpaceCreated,
   onTemplateCreated,
-  onConfirm
+  onConfirm,
 }) {
   const spaceContext = getModule('spaceContext');
 
-  return async dispatch => {
+  return async (dispatch) => {
     const { name, template } = newSpaceMeta;
     const spaceData = {
       defaultLocale: 'en-US',
       name,
-      productRatePlanId: get(selectedPlan, 'sys.id')
+      productRatePlanId: get(selectedPlan, 'sys.id'),
     };
 
     let newSpace;
@@ -180,7 +180,7 @@ export function createSpace({
     dispatch(
       track('space_create', {
         action: 'create',
-        spaceId: newSpace.sys.id
+        spaceId: newSpace.sys.id,
       })
     );
     dispatch(actions.spaceCreationSuccess());
@@ -209,7 +209,7 @@ export function createSpace({
 }
 
 export function changeSpace({ space, selectedPlan, onConfirm }) {
-  return async dispatch => {
+  return async (dispatch) => {
     dispatch(actions.spaceChangePending(true));
 
     const spaceId = space.sys.id;
@@ -226,7 +226,7 @@ export function changeSpace({ space, selectedPlan, onConfirm }) {
 
     dispatch(
       track('space_type_change', {
-        action: 'change'
+        action: 'change',
       })
     );
 
@@ -236,7 +236,7 @@ export function changeSpace({ space, selectedPlan, onConfirm }) {
 }
 
 export function fetchSubscriptionPrice({ organization }) {
-  return async dispatch => {
+  return async (dispatch) => {
     const orgId = organization.sys.id;
     const endpoint = createOrganizationEndpoint(orgId);
     let plans;
@@ -260,7 +260,7 @@ export function fetchSubscriptionPrice({ organization }) {
 }
 
 export function track(eventName, data) {
-  return dispatch => {
+  return (dispatch) => {
     const trackingData = createTrackingData(data);
 
     Analytics.track(`space_wizard:${eventName}`, trackingData);
@@ -270,19 +270,19 @@ export function track(eventName, data) {
 }
 
 export function navigate(stepId) {
-  return dispatch => dispatch(actions.spaceWizardNavigate(stepId));
+  return (dispatch) => dispatch(actions.spaceWizardNavigate(stepId));
 }
 
 export function setNewSpaceName(name) {
-  return dispatch => dispatch(actions.newSpaceName(name));
+  return (dispatch) => dispatch(actions.newSpaceName(name));
 }
 
 export function setNewSpaceTemplate(template) {
-  return dispatch => dispatch(actions.newSpaceTemplate(template));
+  return (dispatch) => dispatch(actions.newSpaceTemplate(template));
 }
 
 export function selectPlan(currentPlan, selectedPlan) {
-  return dispatch => {
+  return (dispatch) => {
     const { productType, productPlanType } = selectedPlan;
     const isPartnerSpace = productType === 'partner' && productPlanType === 'space';
 
@@ -318,7 +318,7 @@ async function tryCreateTemplate(templateCreator, templateData, retried) {
     await Promise.all([
       // we suppress errors, since `contentCreated` will handle them
       spaceSetup.catch(noop),
-      contentCreated
+      contentCreated,
     ]);
   } catch (err) {
     if (!retried) {

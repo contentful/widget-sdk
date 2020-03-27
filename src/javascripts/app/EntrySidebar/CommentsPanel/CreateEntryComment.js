@@ -9,16 +9,16 @@ import { useCommentCreator } from './hooks';
 
 const styles = {
   validationMessage: css({
-    marginTop: tokens.spacingS
+    marginTop: tokens.spacingS,
   }),
   replyActions: css({
-    marginTop: tokens.spacingS
+    marginTop: tokens.spacingS,
   }),
   textField: css({
     textarea: {
-      resize: 'none'
-    }
-  })
+      resize: 'none',
+    },
+  }),
 };
 
 export default function CreateEntryComment({
@@ -27,7 +27,7 @@ export default function CreateEntryComment({
   parentCommentId,
   onNewComment,
   textareaRef,
-  onBlur
+  onBlur,
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isSubmitted, setIsSubmited] = useState(false);
@@ -46,9 +46,9 @@ export default function CreateEntryComment({
     createComment(body);
   };
 
-  const handleChange = evt => {
+  const handleChange = (evt) => {
     const {
-      target: { value }
+      target: { value },
     } = evt;
     setBody(value);
     if (value) {
@@ -63,7 +63,7 @@ export default function CreateEntryComment({
     setIsExpanded(false);
   };
 
-  const handleKeyPress = evt => {
+  const handleKeyPress = (evt) => {
     if (evt.keyCode === keycodes.ENTER && evt.metaKey) {
       handleSubmit();
     }
@@ -119,7 +119,7 @@ export default function CreateEntryComment({
           <Button
             size="small"
             buttonType="muted"
-            onClick={event => handleCancel(event)}
+            onClick={(event) => handleCancel(event)}
             testId="comments.form.cancel">
             Cancel
           </Button>
@@ -135,5 +135,5 @@ CreateEntryComment.propTypes = {
   onNewComment: PropTypes.func.isRequired,
   parentCommentId: PropTypes.string,
   textareaRef: PropTypes.any,
-  onBlur: PropTypes.func
+  onBlur: PropTypes.func,
 };

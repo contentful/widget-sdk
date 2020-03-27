@@ -14,7 +14,7 @@ import {
   getTeamsSpaceMembershipsOfSpace,
   updateTeamSpaceMembership,
   deleteTeamSpaceMembership,
-  getAllTeams
+  getAllTeams,
 } from 'access_control/TeamRepository';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import { ADMIN_ROLE_ID } from 'access_control/constants';
@@ -30,7 +30,7 @@ const initialState = {
   isPending: false,
   teamSpaceMemberships: [],
   teams: [],
-  availableRoles: []
+  availableRoles: [],
 };
 
 const reducer = (state, { type, payload }) => {
@@ -43,13 +43,13 @@ const reducer = (state, { type, payload }) => {
         (
           {
             sys: {
-              team: { name: nameA }
-            }
+              team: { name: nameA },
+            },
           },
           {
             sys: {
-              team: { name: nameB }
-            }
+              team: { name: nameB },
+            },
           }
         ) => nameA.localeCompare(nameB)
       );
@@ -59,7 +59,7 @@ const reducer = (state, { type, payload }) => {
         teams,
         teamSpaceMemberships: sortedTeamSpaceMemberships,
         spaceMemberships,
-        error: false
+        error: false,
       };
     }
     case 'OPERATION_PENDING': {
@@ -71,13 +71,13 @@ const reducer = (state, { type, payload }) => {
       const [updatedMembershipWithRoles] = resolveLinks({
         paths: ['roles'],
         includes: { Role: availableRoles },
-        items: [updatedMembership]
+        items: [updatedMembership],
       });
       const index = findIndex(teamSpaceMemberships, { sys: { id: updatedMembership.sys.id } });
       const oldMembership = teamSpaceMemberships[index];
       const updatedMembershipResolvedLinks = {
         ...updatedMembershipWithRoles,
-        sys: { ...updatedMembershipWithRoles.sys, team: oldMembership.sys.team }
+        sys: { ...updatedMembershipWithRoles.sys, team: oldMembership.sys.team },
       };
 
       const updatedTeamSpaceMemberships = clone(teamSpaceMemberships);
@@ -90,7 +90,7 @@ const reducer = (state, { type, payload }) => {
       return {
         ...state,
         teamSpaceMemberships: teamSpaceMemberships.filter(({ sys: { id } }) => id !== membershipId),
-        isPending: false
+        isPending: false,
       };
     }
     default:
@@ -106,16 +106,16 @@ const fetch = (spaceId, organizationId, dispatch) => async () => {
     teamSpaceMemberships,
     spaceMemberships,
     { items: availableRoles },
-    teams
+    teams,
   ] = await Promise.all([
     getTeamsSpaceMembershipsOfSpace(spaceEndpoint),
     SpaceMembershipRepository.create(spaceEndpoint).getAll(),
     fetchAllWithIncludes(spaceEndpoint, ['roles'], 100),
-    getAllTeams(orgEndpoint)
+    getAllTeams(orgEndpoint),
   ]);
   dispatch({
     type: 'INITIAL_FETCH_SUCCESS',
-    payload: { teamSpaceMemberships, availableRoles, teams, spaceMemberships }
+    payload: { teamSpaceMemberships, availableRoles, teams, spaceMemberships },
   });
 };
 
@@ -131,8 +131,8 @@ const useFetching = (spaceId, organizationId) => {
       const newRoles = availableRoles.filter(({ sys: { id } }) => selectedRoleIds.includes(id));
       const {
         sys: {
-          team: { name: teamName }
-        }
+          team: { name: teamName },
+        },
       } = membership;
 
       try {
@@ -141,7 +141,7 @@ const useFetching = (spaceId, organizationId) => {
           membership,
           selectedRoleIds[0] === ADMIN_ROLE_ID,
           newRoles.map(({ sys: { id } }) => ({
-            sys: { id, type: 'Link', linkType: 'Role' }
+            sys: { id, type: 'Link', linkType: 'Role' },
           }))
         );
         dispatch({ type: 'UPDATE_SUCCESS', payload: { updatedMembership } });
@@ -156,13 +156,13 @@ const useFetching = (spaceId, organizationId) => {
   );
 
   const onRemoveTeamSpaceMembership = useCallback(
-    async membership => {
+    async (membership) => {
       dispatch({ type: 'OPERATION_PENDING' });
       const {
         sys: {
           id: membershipId,
-          team: { name: teamName }
-        }
+          team: { name: teamName },
+        },
       } = membership;
 
       try {
@@ -195,10 +195,10 @@ const SpaceTeamsPage = ({ spaceId }) => {
     {
       state: { teamSpaceMemberships, spaceMemberships, teams, availableRoles, isPending },
       error,
-      isLoading
+      isLoading,
     },
     onUpdateTeamSpaceMembership,
-    onRemoveTeamSpaceMembership
+    onRemoveTeamSpaceMembership,
   ] = useFetching(spaceId, organizationId);
 
   if (!getSectionVisibility().teams) {
@@ -208,7 +208,7 @@ const SpaceTeamsPage = ({ spaceId }) => {
   const [{ relatedMemberships: currentUserSpaceMemberships }] = resolveLinks({
     paths: ['relatedMemberships'],
     includes: { TeamSpaceMembership: teamSpaceMemberships },
-    items: [spaceMember]
+    items: [spaceMember],
   });
 
   const currentUserAdminSpaceMemberships = filter(currentUserSpaceMemberships, { admin: true });
@@ -235,7 +235,7 @@ const SpaceTeamsPage = ({ spaceId }) => {
           isPending,
           onUpdateTeamSpaceMembership,
           onRemoveTeamSpaceMembership,
-          currentUserAdminSpaceMemberships
+          currentUserAdminSpaceMemberships,
         }}
       />
     </>
@@ -243,7 +243,7 @@ const SpaceTeamsPage = ({ spaceId }) => {
 };
 
 SpaceTeamsPage.propTypes = {
-  spaceId: PropTypes.string
+  spaceId: PropTypes.string,
 };
 
 export default SpaceTeamsPage;

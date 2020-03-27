@@ -3,10 +3,10 @@ import initSidebarTogglesProps from 'app/entity_editor/entityEditorSidebarToggle
 describe('entityEditorSidebarToggles', () => {
   let props;
   const $scope = {
-    $digest: () => {}
+    $digest: () => {},
   };
   const $rootScope = {
-    $broadcast: jest.fn()
+    $broadcast: jest.fn(),
   };
 
   beforeEach(() => {

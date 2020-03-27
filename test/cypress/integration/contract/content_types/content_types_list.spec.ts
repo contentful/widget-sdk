@@ -1,10 +1,8 @@
 import { defaultRequestsMock } from '../../../util/factories';
-import {
-  defaultSpaceId
-} from '../../../util/requests';
+import { defaultSpaceId } from '../../../util/requests';
 import {
   getAllContentTypesInDefaultSpace,
-  getFirst1000ContentTypesInDefaultSpaceOrderedByName
+  getFirst1000ContentTypesInDefaultSpaceOrderedByName,
 } from '../../../interactions/content_types';
 const severalContentTypes = require('../../../fixtures/responses/content-types-several.json');
 
@@ -17,7 +15,7 @@ describe('Content types list page', () => {
     beforeEach(() => {
       const interactions = [
         ...defaultRequestsMock(),
-        getFirst1000ContentTypesInDefaultSpaceOrderedByName.willReturnNone()
+        getFirst1000ContentTypesInDefaultSpaceOrderedByName.willReturnNone(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/content_types`);
@@ -26,9 +24,7 @@ describe('Content types list page', () => {
     });
 
     it('Renders the page with no content types', () => {
-      cy.getByTestId('create-content-type-empty-state')
-        .should('be.visible')
-        .should('be.enabled');
+      cy.getByTestId('create-content-type-empty-state').should('be.visible').should('be.enabled');
     });
 
     it('Shows no content type advice', () => {
@@ -36,9 +32,7 @@ describe('Content types list page', () => {
     });
 
     it('redirects correctly by "Add content type" button', () => {
-      const interactions = [
-        getAllContentTypesInDefaultSpace.willReturnNone()
-      ];
+      const interactions = [getAllContentTypesInDefaultSpace.willReturnNone()];
 
       cy.getByTestId('create-content-type-empty-state').click();
 
@@ -52,7 +46,7 @@ describe('Content types list page', () => {
     beforeEach(() => {
       const interactions = [
         ...defaultRequestsMock(),
-        getFirst1000ContentTypesInDefaultSpaceOrderedByName.willReturnSeveral()
+        getFirst1000ContentTypesInDefaultSpaceOrderedByName.willReturnSeveral(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/content_types`);

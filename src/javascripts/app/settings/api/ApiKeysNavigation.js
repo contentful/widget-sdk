@@ -11,8 +11,8 @@ const styles = {
     marginBottom: tokens.spacingL,
     paddingLeft: tokens.spacingL,
     zIndex: 1,
-    background: 'white'
-  })
+    background: 'white',
+  }),
 };
 
 export default function ApiKeysNavigation(props) {
@@ -44,5 +44,5 @@ export default function ApiKeysNavigation(props) {
 }
 
 ApiKeysNavigation.propTypes = {
-  currentTab: PropTypes.oneOf(['cda-tokens', 'cma-tokens']).isRequired
+  currentTab: PropTypes.oneOf(['cda-tokens', 'cma-tokens']).isRequired,
 };

@@ -8,9 +8,9 @@ const mockKeyData = [
     name: 'My Api Key',
     description: 'This is some description',
     sys: {
-      id: '51h8tYBHHbMmt9btNNC5kR'
-    }
-  }
+      id: '51h8tYBHHbMmt9btNNC5kR',
+    },
+  },
 ];
 
 describe('ApiKeyList', () => {

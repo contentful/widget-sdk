@@ -13,7 +13,7 @@ import TeamMembershipForm from './TeamMembershipForm';
 const renderComponent = (actions, onClose = noop) => {
   const store = createStore(reducer);
   store.dispatch = jest.fn(store.dispatch);
-  actions.forEach(action => store.dispatch(action));
+  actions.forEach((action) => store.dispatch(action));
   const wrapper = mount(
     <Provider store={store}>
       <Table>
@@ -43,10 +43,10 @@ describe('TeamMembershipForm', () => {
           location: {
             pathname: ROUTES.organization.children.teams.children.team.build({
               orgId: activeOrgId,
-              teamId: activeTeamId
-            })
-          }
-        }
+              teamId: activeTeamId,
+            }),
+          },
+        },
       });
     });
 
@@ -60,14 +60,14 @@ describe('TeamMembershipForm', () => {
               [TEAMS]: [
                 {
                   sys: {
-                    id: 'aTeam'
-                  }
+                    id: 'aTeam',
+                  },
                 },
                 {
                   sys: {
-                    id: 'bTeam'
-                  }
-                }
+                    id: 'bTeam',
+                  },
+                },
               ],
               [USERS]: [
                 {
@@ -75,43 +75,43 @@ describe('TeamMembershipForm', () => {
                   lastName: 'Lastname 2',
                   avatarUrl: 'doesntMatter.com/blah',
                   email: 'userB2@test.com',
-                  sys: { id: 'testUserB2' }
+                  sys: { id: 'testUserB2' },
                 },
                 {
                   firstName: 'B User',
                   lastName: 'Lastname 1',
                   avatarUrl: 'doesntMatter.com/blah',
                   email: 'B1@test.com',
-                  sys: { id: 'testUserB1' }
+                  sys: { id: 'testUserB1' },
                 },
                 {
                   firstName: 'A User',
                   lastName: 'LastName',
                   avatarUrl: 'doesntMatter.com/blah',
                   email: 'userA@test.com',
-                  sys: { id: 'testUserA' }
+                  sys: { id: 'testUserA' },
                 },
                 {
                   firstName: 'User already in team',
                   lastName: 'LastName',
                   avatarUrl: 'doesntMatter.com/blah',
                   email: 'userX@test.com',
-                  sys: { id: 'testUserX' }
+                  sys: { id: 'testUserX' },
                 },
                 {
                   firstName: null,
                   lastName: null,
                   avatarUrl: 'doesntMatter.com/blah',
                   email: 'userWithoutName@test.com',
-                  sys: { id: 'testUserW' }
+                  sys: { id: 'testUserW' },
                 },
                 {
                   firstName: null,
                   lastName: null,
                   avatarUrl: 'doesntMatter.com/blah',
                   email: 'testSortingWithoutName@test.com',
-                  sys: { id: 'testUserS' }
-                }
+                  sys: { id: 'testUserS' },
+                },
               ],
               [ORG_MEMBERSHIPS]: [
                 {
@@ -122,10 +122,10 @@ describe('TeamMembershipForm', () => {
                       sys: {
                         type: 'Link',
                         linkType: USERS,
-                        id: 'testUserB2'
-                      }
-                    }
-                  }
+                        id: 'testUserB2',
+                      },
+                    },
+                  },
                 },
                 {
                   role: 'member',
@@ -135,10 +135,10 @@ describe('TeamMembershipForm', () => {
                       sys: {
                         type: 'Link',
                         linkType: USERS,
-                        id: 'testUserB1'
-                      }
-                    }
-                  }
+                        id: 'testUserB1',
+                      },
+                    },
+                  },
                 },
                 {
                   role: 'member',
@@ -148,10 +148,10 @@ describe('TeamMembershipForm', () => {
                       sys: {
                         type: 'Link',
                         linkType: USERS,
-                        id: 'testUserA'
-                      }
-                    }
-                  }
+                        id: 'testUserA',
+                      },
+                    },
+                  },
                 },
                 {
                   role: 'member',
@@ -161,10 +161,10 @@ describe('TeamMembershipForm', () => {
                       sys: {
                         type: 'Link',
                         linkType: USERS,
-                        id: 'testUserX'
-                      }
-                    }
-                  }
+                        id: 'testUserX',
+                      },
+                    },
+                  },
                 },
                 {
                   role: 'member',
@@ -174,10 +174,10 @@ describe('TeamMembershipForm', () => {
                       sys: {
                         type: 'Link',
                         linkType: USERS,
-                        id: 'testUserW'
-                      }
-                    }
-                  }
+                        id: 'testUserW',
+                      },
+                    },
+                  },
                 },
                 {
                   role: 'member',
@@ -187,11 +187,11 @@ describe('TeamMembershipForm', () => {
                       sys: {
                         type: 'Link',
                         linkType: USERS,
-                        id: 'testUserS'
-                      }
-                    }
-                  }
-                }
+                        id: 'testUserS',
+                      },
+                    },
+                  },
+                },
               ],
               [TEAM_MEMBERSHIPS]: [
                 {
@@ -201,28 +201,28 @@ describe('TeamMembershipForm', () => {
                       sys: {
                         type: 'Link',
                         linkType: USERS,
-                        id: 'testUserX'
-                      }
+                        id: 'testUserX',
+                      },
                     },
                     organizationMembership: {
                       sys: {
                         type: 'Link',
                         linkType: ORG_MEMBERSHIPS,
-                        id: 'orgMembershipX'
-                      }
+                        id: 'orgMembershipX',
+                      },
                     },
                     team: {
                       sys: {
                         type: 'Link',
                         linkType: TEAMS,
-                        id: activeTeamId
-                      }
-                    }
-                  }
-                }
-              ]
-            }
-          }
+                        id: activeTeamId,
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          },
         });
       });
 
@@ -243,22 +243,17 @@ describe('TeamMembershipForm', () => {
         const onClose = jest.fn(noop);
         const { wrapper } = renderComponent(actions, onClose);
 
-        wrapper
-          .find(Button)
-          .filter({ testId: 'cancel-button' })
-          .simulate('click');
+        wrapper.find(Button).filter({ testId: 'cancel-button' }).simulate('click');
         expect(onClose).toHaveBeenCalled();
       });
 
       it('add member button should be disabled', () => {
         const { wrapper } = renderComponent(actions);
 
-        expect(
-          wrapper
-            .find(Button)
-            .filter({ testId: 'add-member-button' })
-            .props()
-        ).toHaveProperty('disabled', true);
+        expect(wrapper.find(Button).filter({ testId: 'add-member-button' }).props()).toHaveProperty(
+          'disabled',
+          true
+        );
       });
 
       it('after membership was selected, button should be active and working', () => {
@@ -276,7 +271,7 @@ describe('TeamMembershipForm', () => {
         button.simulate('click');
         expect(store.dispatch).toHaveBeenCalledWith({
           type: 'SUBMIT_NEW_TEAM_MEMBERSHIP',
-          payload: { orgMembership: 'orgMembershipB1' }
+          payload: { orgMembership: 'orgMembershipB1' },
         });
         expect(onClose).toHaveBeenCalled();
       });

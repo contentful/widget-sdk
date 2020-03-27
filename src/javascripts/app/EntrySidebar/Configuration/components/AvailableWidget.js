@@ -6,7 +6,7 @@ import { IconButton, Paragraph, Tag } from '@contentful/forma-36-react-component
 import {
   NAMESPACE_SIDEBAR_BUILTIN,
   NAMESPACE_EXTENSION,
-  NAMESPACE_APP
+  NAMESPACE_APP,
 } from 'widgets/WidgetNamespaces';
 
 const styles = {
@@ -15,10 +15,10 @@ const styles = {
     border: `1px solid ${tokens.colorElementMid}`,
     height: `65px`,
     display: 'flex',
-    padding: `${tokens.spacingXs} ${tokens.spacingM}`
+    padding: `${tokens.spacingXs} ${tokens.spacingM}`,
   }),
   notFirstItem: css({
-    borderTop: 'none'
+    borderTop: 'none',
   }),
   widgetHeader: css({
     display: 'flex',
@@ -27,21 +27,21 @@ const styles = {
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
-    maxWidth: '280px'
+    maxWidth: '280px',
   }),
   widgetName: css({
-    flex: '1 1 auto'
+    flex: '1 1 auto',
   }),
   info: css({
     flexGrow: 1,
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'center'
+    justifyContent: 'center',
   }),
   actions: css({
     display: 'flex',
-    alignItems: 'center'
-  })
+    alignItems: 'center',
+  }),
 };
 
 export default function AvailableWidget({
@@ -49,14 +49,14 @@ export default function AvailableWidget({
   onClick,
   widgetNamespace,
   index,
-  availabilityStatus
+  availabilityStatus,
 }) {
   const renderAvailabilityStatus = () => <Tag>{availabilityStatus}</Tag>;
 
   return (
     <div
       className={cx(styles.item, {
-        [styles.notFirstItem]: index !== 0
+        [styles.notFirstItem]: index !== 0,
       })}
       data-test-id="available-widget">
       <div className={styles.info}>
@@ -88,5 +88,5 @@ AvailableWidget.propTypes = {
   widgetNamespace: PropTypes.string.isRequired,
   onClick: PropTypes.func.isRequired,
   index: PropTypes.number.isRequired,
-  availabilityStatus: PropTypes.oneOf(['alpha', 'beta'])
+  availabilityStatus: PropTypes.oneOf(['alpha', 'beta']),
 };

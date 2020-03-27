@@ -2,7 +2,7 @@ import { keyBy } from 'lodash';
 import { getDatasets } from './datasets';
 import { ORG_MEMBERSHIPS } from 'redux/datasets';
 
-export default state => {
+export default (state) => {
   const datasets = getDatasets(state);
   const orgMemberships = datasets[ORG_MEMBERSHIPS];
 

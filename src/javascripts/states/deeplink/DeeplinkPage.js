@@ -11,18 +11,18 @@ import {
   Paragraph,
   Typography,
   Spinner,
-  Workbench
+  Workbench,
 } from '@contentful/forma-36-react-components';
 import { resolveLink } from './resolver';
 
 const styles = {
   messageContainer: css({
     marginTop: '40%',
-    textAlign: 'center'
+    textAlign: 'center',
   }),
   spinner: css({
-    marginBottom: tokens.spacingS
-  })
+    marginBottom: tokens.spacingS,
+  }),
 };
 
 function DeeplinkRedirectingMessage() {
@@ -48,14 +48,14 @@ function DeeplinkPageMessage(props) {
 DeeplinkPageMessage.propTypes = {
   testId: PropTypes.string,
   title: PropTypes.string.isRequired,
-  subtitle: PropTypes.any
+  subtitle: PropTypes.any,
 };
 
 const PageStatuses = {
   redirecting: 'redirecting',
   onboardingError: 'onboarding_error',
   notExistError: 'not_exist_error',
-  selectSpaceEnv: 'select_space_env'
+  selectSpaceEnv: 'select_space_env',
 };
 
 export function useDeeplinkPage({ searchParams }) {
@@ -76,7 +76,7 @@ export function useDeeplinkPage({ searchParams }) {
       setRedirect({
         path: result.path.join('.'),
         params: result.params,
-        options: { location: 'replace' }
+        options: { location: 'replace' },
       });
     }
   }, [searchParams]);
@@ -92,8 +92,8 @@ export function useDeeplinkPage({ searchParams }) {
         params: {
           ...redirect.params,
           spaceId,
-          environmentId
-        }
+          environmentId,
+        },
       });
       setStatus(PageStatuses.redirecting);
     },
@@ -109,13 +109,13 @@ export function useDeeplinkPage({ searchParams }) {
     redirect,
     abort,
     updateRedirectLink,
-    deeplinkOptions
+    deeplinkOptions,
   };
 }
 
 export default function DeeplinkPage(props) {
   const { status, redirect, deeplinkOptions, updateRedirectLink, abort } = useDeeplinkPage({
-    searchParams: props.searchParams
+    searchParams: props.searchParams,
   });
 
   return (
@@ -166,5 +166,5 @@ export default function DeeplinkPage(props) {
 DeeplinkPage.propTypes = {
   href: PropTypes.string.isRequired,
   searchParams: PropTypes.object.isRequired,
-  marketplaceApps: PropTypes.object.isRequired
+  marketplaceApps: PropTypes.object.isRequired,
 };

@@ -26,7 +26,7 @@ function FilterOperator({ op, operators = [], onChange }) {
           value: op,
           inputRef: () => {},
           onKeyDown: () => {},
-          onChange
+          onChange,
         }}
       />
     </div>
@@ -34,13 +34,13 @@ function FilterOperator({ op, operators = [], onChange }) {
 }
 
 function FilterValue({ valueInput, value, isFocused, onChange, onRemove }) {
-  const inputRef = el => {
+  const inputRef = (el) => {
     if (isFocused && el) {
       window.requestAnimationFrame(() => el.focus());
     }
   };
 
-  const handleKeyDown = e => {
+  const handleKeyDown = (e) => {
     const { target } = e;
     const hasSelection = target.selectionStart !== 0 || target.selectionEnd !== 0;
     e.stopPropagation();
@@ -85,7 +85,7 @@ function FilterValue({ valueInput, value, isFocused, onChange, onRemove }) {
         />
       );
     },
-    [ValueInput.Select]: options => {
+    [ValueInput.Select]: (options) => {
       return (
         <FilterSelect
           testId={valueTestId}
@@ -97,7 +97,7 @@ function FilterValue({ valueInput, value, isFocused, onChange, onRemove }) {
         />
       );
     },
-    [ValueInput.Reference]: ctField => {
+    [ValueInput.Reference]: (ctField) => {
       return (
         <FilterValueReference
           testId={valueTestId}
@@ -108,7 +108,7 @@ function FilterValue({ valueInput, value, isFocused, onChange, onRemove }) {
           onKeyDown={handleKeyDown}
         />
       );
-    }
+    },
   });
 
   return input || null;
@@ -119,7 +119,7 @@ function FilterValueAssetSize(props) {
     <TextValueInput
       {...props}
       value={props.value}
-      onChange={nextValue => props.onChange(nextValue)}
+      onChange={(nextValue) => props.onChange(nextValue)}
     />
   );
 }
@@ -144,24 +144,24 @@ export default function FilterPill({
   onChange,
   onOperatorChange = () => {},
   onRemove = () => {},
-  onRemoveAttempt = () => {}
+  onRemoveAttempt = () => {},
 }) {
   return (
     <div
       className={classNames('search__filter-pill', {
-        [className]: className
+        [className]: className,
       })}
       data-test-id={testId}
-      ref={el => {
+      ref={(el) => {
         if (isFocused && el) {
           window.requestAnimationFrame(() => el.focus());
         }
       }}
       tabIndex="0"
-      onClick={e => {
+      onClick={(e) => {
         e.stopPropagation();
       }}
-      onKeyDown={e => {
+      onKeyDown={(e) => {
         if (Keys.backspace(e)) {
           if (isRemovable) {
             onRemove();
@@ -174,13 +174,13 @@ export default function FilterPill({
       <FilterOperator
         operators={filter.operators}
         op={op}
-        onChange={operator => onOperatorChange(operator)}
+        onChange={(operator) => onOperatorChange(operator)}
       />
       <FilterValue
         valueInput={filter.valueInput}
         value={value}
         isFocused={isValueFocused}
-        onChange={value => onChange(value)}
+        onChange={(value) => onChange(value)}
         onRemove={() => {
           if (isRemovable) {
             onRemoveAttempt();

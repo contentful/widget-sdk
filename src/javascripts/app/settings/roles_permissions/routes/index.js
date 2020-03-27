@@ -13,39 +13,39 @@ import { SettingsImporter } from 'app/settings/SettingsImporter';
 const list = {
   name: 'list',
   url: '',
-  component: props => (
+  component: (props) => (
     <LazyLoadedComponent importer={SettingsImporter} fallback={RolesWorkbenchSkeleton}>
       {({ RolesListRoute }) => <RolesListRoute {...props} />}
     </LazyLoadedComponent>
   ),
   mapInjectedToProps: [
     'spaceContext',
-    spaceContext => {
+    (spaceContext) => {
       return {
         spaceId: spaceContext.getId(),
         isLegacyOrganization: ResourceUtils.isLegacyOrganization(spaceContext.organization),
-        canUpgradeOrganization: isOwnerOrAdmin(spaceContext.organization)
+        canUpgradeOrganization: isOwnerOrAdmin(spaceContext.organization),
       };
-    }
-  ]
+    },
+  ],
 };
 
 const newRole = {
   name: 'new',
   url: '/new',
   params: {
-    baseRoleId: null
+    baseRoleId: null,
   },
   resolve: {
-    roleRepo: ['spaceContext', spaceContext => RoleRepository.getInstance(spaceContext.space)],
+    roleRepo: ['spaceContext', (spaceContext) => RoleRepository.getInstance(spaceContext.space)],
     baseRole: [
       'roleRepo',
       '$stateParams',
       (roleRepo, $stateParams) =>
-        $stateParams.baseRoleId ? roleRepo.get($stateParams.baseRoleId) : null
-    ]
+        $stateParams.baseRoleId ? roleRepo.get($stateParams.baseRoleId) : null,
+    ],
   },
-  component: props => (
+  component: (props) => (
     <LazyLoadedComponent importer={SettingsImporter} fallback={RolesWorkbenchSkeleton}>
       {({ RoleEditorRoute }) => <RoleEditorRoute {...props} />}
     </LazyLoadedComponent>
@@ -66,17 +66,17 @@ const newRole = {
           await spaceContext.publishedCTs.refresh();
           return spaceContext.publishedCTs.getAllBare();
         },
-        registerSaveAction: save => {
+        registerSaveAction: (save) => {
           $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(save);
           $scope.$applyAsync();
         },
-        setDirty: value => {
+        setDirty: (value) => {
           $scope.context.dirty = value;
           $scope.$applyAsync();
-        }
+        },
       };
-    }
-  ]
+    },
+  ],
 };
 
 const detail = {
@@ -87,10 +87,10 @@ const detail = {
       'spaceContext',
       '$stateParams',
       (spaceContext, $stateParams) =>
-        RoleRepository.getInstance(spaceContext.space).get($stateParams.roleId)
-    ]
+        RoleRepository.getInstance(spaceContext.space).get($stateParams.roleId),
+    ],
   },
-  component: props => (
+  component: (props) => (
     <LazyLoadedComponent importer={SettingsImporter} fallback={RolesWorkbenchSkeleton}>
       {({ RoleEditorRoute }) => <RoleEditorRoute {...props} />}
     </LazyLoadedComponent>
@@ -109,13 +109,13 @@ const detail = {
         getEntities: async () => {
           const result = {
             Entry: {},
-            Asset: {}
+            Asset: {},
           };
 
           // Trap and ignore errors -
           // perhaps the entities do not exist or can't be accessed but the rule should still be displayed
           await Promise.all([
-            ...PolicyBuilder.findEntryIds(role.policies).map(async entityId => {
+            ...PolicyBuilder.findEntryIds(role.policies).map(async (entityId) => {
               try {
                 const entry = await loadEntry(spaceContext, entityId);
                 result.Entry[entityId] = entry;
@@ -123,14 +123,14 @@ const detail = {
                 logger.logWarn(`Could not find entry ${entityId}`);
               }
             }),
-            ...PolicyBuilder.findAssetIds(role.policies).map(async entityId => {
+            ...PolicyBuilder.findAssetIds(role.policies).map(async (entityId) => {
               try {
                 const asset = await loadAsset(spaceContext, entityId);
                 result.Asset[entityId] = asset;
               } catch (_) {
                 logger.logWarn(`Could not find asset ${entityId}`);
               }
-            })
+            }),
           ]);
 
           return result;
@@ -139,22 +139,22 @@ const detail = {
           await spaceContext.publishedCTs.refresh();
           return spaceContext.publishedCTs.getAllBare();
         },
-        registerSaveAction: save => {
+        registerSaveAction: (save) => {
           $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(save);
           $scope.$applyAsync();
         },
-        setDirty: value => {
+        setDirty: (value) => {
           $scope.context.dirty = value;
           $scope.$applyAsync();
-        }
+        },
       };
-    }
-  ]
+    },
+  ],
 };
 
 export default {
   name: 'roles',
   url: '/roles',
   abstract: true,
-  children: [newRole, detail, list]
+  children: [newRole, detail, list],
 };

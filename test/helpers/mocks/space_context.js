@@ -31,7 +31,7 @@ angular.module('contentful/mocks').factory('mocks/spaceContext', [
   'mocks/entityEditor/Document',
   (spaceContext, cfStub, { create: createDocument }) => {
     return {
-      init: init
+      init: init,
     };
 
     function init() {
@@ -45,9 +45,9 @@ angular.module('contentful/mocks').factory('mocks/spaceContext', [
       spaceContextMock.space = stubAll(space);
 
       spaceContextMock.docPool = {
-        get: function(entity, _contentType) {
+        get: function (entity, _contentType) {
           return createDocument(entity.data);
-        }
+        },
       };
 
       spaceContextMock.memberships = createMembershipsMock();
@@ -58,10 +58,10 @@ angular.module('contentful/mocks').factory('mocks/spaceContext', [
       spaceContextMock.cma = new APIClient(spaceContextMock.endpoint);
       spaceContextMock.organization = {
         subscriptionPlan: {
-          limits: {}
+          limits: {},
         },
         usage: {},
-        sys: {}
+        sys: {},
       };
       spaceContextMock.uiConfig = createUiConfigMock();
 
@@ -75,7 +75,7 @@ angular.module('contentful/mocks').factory('mocks/spaceContext', [
         inviteAdmin: sinon.stub().resolves(),
         changeRoleTo: sinon.stub().resolves(),
         changeRoleToAdmin: sinon.stub().resolves(),
-        remove: sinon.stub().resolves()
+        remove: sinon.stub().resolves(),
       };
     }
 
@@ -87,15 +87,15 @@ angular.module('contentful/mocks').factory('mocks/spaceContext', [
 
       return Promise.resolve({
         entries: { shared: scopedApi, private: scopedApi },
-        assets: { shared: scopedApi, private: scopedApi }
+        assets: { shared: scopedApi, private: scopedApi },
       });
     }
 
     function createUsersMock() {
       return {
         getAll: sinon.stub().resolves([]),
-        get: sinon.stub().resolves()
+        get: sinon.stub().resolves(),
       };
     }
-  }
+  },
 ]);

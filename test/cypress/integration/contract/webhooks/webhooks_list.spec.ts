@@ -2,7 +2,7 @@ import { defaultRequestsMock } from '../../../util/factories';
 import { defaultSpaceId } from '../../../util/requests';
 import {
   queryFirst100WebhooksInDefaultSpace,
-  getAllCallsForDefaultWebhook
+  getAllCallsForDefaultWebhook,
 } from '../../../interactions/webhooks';
 
 describe('Webhooks', () => {
@@ -13,7 +13,7 @@ describe('Webhooks', () => {
       cors: true,
       pactfileWriteMode: 'merge',
       dir: Cypress.env('pactDir'),
-      spec: 2
+      spec: 2,
     })
   );
 
@@ -58,7 +58,7 @@ describe('Webhooks', () => {
     beforeEach(() => {
       const slowInteractions = [
         queryFirst100WebhooksInDefaultSpace.willFindOne(),
-        getAllCallsForDefaultWebhook.willReturnNone()
+        getAllCallsForDefaultWebhook.willReturnNone(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/settings/webhooks`);

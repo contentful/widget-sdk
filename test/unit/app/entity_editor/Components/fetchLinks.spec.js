@@ -4,45 +4,45 @@ import { EntityType } from 'app/entity_editor/Components/constants';
 import { it } from 'test/utils/dsl';
 
 describe('fetchLinks', () => {
-  beforeEach(async function() {
+  beforeEach(async function () {
     this.spaceContext = {
       cma: {
-        getEntries: sinon.stub()
+        getEntries: sinon.stub(),
       },
       publishedCTs: {
-        get: sinon.stub().returns({ data: { name: 'CT' } })
-      }
+        get: sinon.stub().returns({ data: { name: 'CT' } }),
+      },
     };
 
     this.entityHelper = {
-      entityTitle: sinon.stub()
+      entityTitle: sinon.stub(),
     };
 
     this.navigator = {
       makeEntityRef: sinon.stub(),
-      href: sinon.stub()
+      href: sinon.stub(),
     };
 
     const EntityHelpers = {
-      newForLocale: () => this.entityHelper
+      newForLocale: () => this.entityHelper,
     };
     const TheLocaleStore = {
       getDefaultLocale: () => ({
-        code: ''
-      })
+        code: '',
+      }),
     };
 
     const getModuleStub = sinon.stub();
     getModuleStub.withArgs('spaceContext').returns(this.spaceContext);
 
     this.system.set('NgRegistry', {
-      getModule: getModuleStub
+      getModule: getModuleStub,
     });
 
     this.system.set('app/entity_editor/entityHelpers', EntityHelpers);
 
     this.system.set('services/localeStore', {
-      default: TheLocaleStore
+      default: TheLocaleStore,
     });
 
     this.system.set('states/Navigator', this.navigator);
@@ -55,7 +55,7 @@ describe('fetchLinks', () => {
   });
 
   function itCallsApiAndProcessEntity(type) {
-    return async function() {
+    return async function () {
       const id = 'entity-id';
       const items = [
         { sys: { id: 'entity-id-0', contentType: { sys: { id: 'ctId' } } } },
@@ -64,21 +64,21 @@ describe('fetchLinks', () => {
           sys: {
             id: 'entity-id-2',
             contentType: { sys: { id: 'ctId' } },
-            environment: { sys: { id: 'dev' } }
-          }
+            environment: { sys: { id: 'dev' } },
+          },
         },
         {
           sys: {
             id: 'entity-id-3',
             contentType: { sys: { id: 'ctId' } },
-            environment: { sys: { id: 'master' } }
-          }
-        }
+            environment: { sys: { id: 'master' } },
+          },
+        },
       ];
 
       this.spaceContext.cma.getEntries
         .withArgs({
-          [type === EntityType.ASSET ? 'links_to_asset' : 'links_to_entry']: id
+          [type === EntityType.ASSET ? 'links_to_asset' : 'links_to_entry']: id,
         })
         .returns(Promise.resolve({ items }));
 
@@ -96,26 +96,26 @@ describe('fetchLinks', () => {
           id: 'entity-id-0',
           contentTypeName: 'CT',
           title: 'title-0',
-          url: 'href-0'
+          url: 'href-0',
         },
         {
           id: 'entity-id-1',
           contentTypeName: 'CT',
           title: 'title-1',
-          url: 'href-1'
+          url: 'href-1',
         },
         {
           id: 'entity-id-2',
           contentTypeName: 'CT',
           title: 'title-2',
-          url: 'href-2'
+          url: 'href-2',
         },
         {
           id: 'entity-id-3',
           contentTypeName: 'CT',
           title: 'title-3',
-          url: 'href-3'
-        }
+          url: 'href-3',
+        },
       ]);
     };
   }
@@ -123,7 +123,7 @@ describe('fetchLinks', () => {
   it('calls api with given id for asset', itCallsApiAndProcessEntity(EntityType.ASSET));
   it('calls api with given id for entry', itCallsApiAndProcessEntity(EntityType.ENTRY));
 
-  it('throws if entity type neither Entry nor Asset', async function() {
+  it('throws if entity type neither Entry nor Asset', async function () {
     const id = 'entity-id';
     const type = 'ENTITY';
 

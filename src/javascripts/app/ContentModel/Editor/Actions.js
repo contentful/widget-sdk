@@ -44,7 +44,7 @@ export default function create($scope, contentTypeIds) {
    * @type {Command}
    */
   controller.delete = createCommand(startDeleteFlow, {
-    available: function() {
+    available: function () {
       const deletableState =
         !$scope.context.isNew &&
         ($scope.contentType.canUnpublish() || !$scope.contentType.isPublished());
@@ -53,16 +53,16 @@ export default function create($scope, contentTypeIds) {
         accessChecker.shouldHide('unpublish', 'contentType');
       return deletableState && !denied;
     },
-    disabled: function() {
+    disabled: function () {
       return (
         accessChecker.shouldDisable('delete', 'contentType') ||
         accessChecker.shouldDisable('unpublish', 'contentType')
       );
-    }
+    },
   });
 
   function startDeleteFlow() {
-    return checkRemovable().then(status => {
+    return checkRemovable().then((status) => {
       if (status.isRemovable) {
         return confirmRemoval(status.isPublished);
       } else {
@@ -82,14 +82,14 @@ export default function create($scope, contentTypeIds) {
     return spaceContext.space
       .getEntries({
         content_type: $scope.contentType.getId(),
-        limit: 0
+        limit: 0,
       })
       .then(
-        res => {
+        (res) => {
           const count = res.total;
           return createStatusObject(canRead && count < 1, count);
         },
-        res => {
+        (res) => {
           if (res.statusCode === 404 && !canRead) {
             return createStatusObject(false);
           } else {
@@ -102,7 +102,7 @@ export default function create($scope, contentTypeIds) {
       return {
         isPublished,
         isRemovable,
-        entryCount
+        entryCount,
       };
     }
   }
@@ -149,7 +149,7 @@ export default function create($scope, contentTypeIds) {
     Analytics.track('entity_button:click', {
       entityType: 'contentType',
       enforced: Boolean(reason),
-      reason
+      reason,
     });
 
     return $q.reject(err);
@@ -160,7 +160,7 @@ export default function create($scope, contentTypeIds) {
       () => {
         $scope.publishedContentType = null;
       },
-      err => {
+      (err) => {
         logger.logServerWarn('Error deactivating Content Type', { error: err });
         return $q.reject(err);
       }
@@ -184,9 +184,9 @@ export default function create($scope, contentTypeIds) {
       // X.detail.fields -> X.list
       $state.go('^.^.list'),
     {
-      available: function() {
+      available: function () {
         return $scope.context.isNew;
-      }
+      },
     }
   );
 
@@ -196,7 +196,7 @@ export default function create($scope, contentTypeIds) {
    * @type {Command}
    */
   controller.save = createCommand(() => save(true), {
-    disabled: function() {
+    disabled: function () {
       const dirty =
         $scope.context.dirty ||
         $scope.contentType.hasUnpublishedChanges() ||
@@ -207,7 +207,7 @@ export default function create($scope, contentTypeIds) {
         accessChecker.shouldDisable('publish', 'contentType');
 
       return !dirty || !valid || denied;
-    }
+    },
   });
 
   // This is called by the state manager in case the user leaves the
@@ -232,8 +232,8 @@ export default function create($scope, contentTypeIds) {
     return (
       $scope.contentType
         .save()
-        .then(contentType => spaceContext.publishedCTs.publish(contentType))
-        .then(published => {
+        .then((contentType) => spaceContext.publishedCTs.publish(contentType))
+        .then((published) => {
           $scope.publishedContentType = cloneDeep(published);
 
           // When a Content Type is published the CMA automatically
@@ -241,7 +241,7 @@ export default function create($scope, contentTypeIds) {
           // the sys of a local entity so we can override it.
           return spaceContext.cma.getEditorInterface(published.data.sys.id);
         })
-        .then(remoteEditorInterface => {
+        .then((remoteEditorInterface) => {
           const localEditorInterface = cloneDeep($scope.editorInterface);
           localEditorInterface.sys = remoteEditorInterface.sys;
 
@@ -249,7 +249,7 @@ export default function create($scope, contentTypeIds) {
             EditorInterfaceTransformer.toAPI($scope.publishedContentType.data, localEditorInterface)
           );
         })
-        .then(editorInterface => {
+        .then((editorInterface) => {
           $scope.editorInterface = EditorInterfaceTransformer.fromAPI(
             $scope.publishedContentType.data,
             editorInterface
@@ -263,7 +263,7 @@ export default function create($scope, contentTypeIds) {
           getContentPreview().clearCache();
           return spaceContext.uiConfig;
         })
-        .then(uiConfig => {
+        .then((uiConfig) => {
           // Try to update UIConfig but proceed if it failed.
           return uiConfig.addOrEditCt($scope.contentType.data).catch(() => {});
         })
@@ -287,7 +287,7 @@ export default function create($scope, contentTypeIds) {
   function goToDetails(contentType) {
     // X.detail.fields -> X.detail.fields with altered contentTypeId param
     return $state.go('^.^.detail.fields', {
-      contentTypeId: contentType.getId()
+      contentTypeId: contentType.getId(),
     });
   }
 
@@ -298,7 +298,7 @@ export default function create($scope, contentTypeIds) {
 
   function allFieldsInactive(contentType) {
     const fields = contentType.data.fields || [];
-    return fields.every(field => field.disabled || field.omitted);
+    return fields.every((field) => field.disabled || field.omitted);
   }
 
   /**
@@ -323,7 +323,7 @@ export default function create($scope, contentTypeIds) {
       notify.duplicateSuccess();
     },
     {
-      disabled: function() {
+      disabled: function () {
         const isNew = $scope.context.isNew;
         const isDenied =
           accessChecker.shouldDisable('update', 'contentType') ||
@@ -332,7 +332,7 @@ export default function create($scope, contentTypeIds) {
         const isPublished = $scope.contentType.isPublished();
 
         return isNew || isDenied || isDirty || !isPublished;
-      }
+      },
     }
   );
 
@@ -343,7 +343,7 @@ export default function create($scope, contentTypeIds) {
       name: name,
       description: description || '',
       fields: cloneDeep(data.fields),
-      displayField: data.displayField
+      displayField: data.displayField,
     });
 
     const editorInterfaceDuplicate = {
@@ -352,21 +352,21 @@ export default function create($scope, contentTypeIds) {
         id: 'default',
         type: 'EditorInterface',
         version: 1,
-        contentType: { sys: { id: contentTypeId } }
-      }
+        contentType: { sys: { id: contentTypeId } },
+      },
     };
 
     return duplicate
       .save()
-      .then(contentType => spaceContext.publishedCTs.publish(contentType))
-      .then(published => {
+      .then((contentType) => spaceContext.publishedCTs.publish(contentType))
+      .then((published) => {
         return spaceContext.cma.updateEditorInterface(
           EditorInterfaceTransformer.toAPI(published.data, editorInterfaceDuplicate)
         );
       })
       .then(
         () => duplicate,
-        err => {
+        (err) => {
           notify.duplicateError();
           return $q.reject(err);
         }

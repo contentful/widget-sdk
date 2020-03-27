@@ -8,21 +8,21 @@ import { shallow } from 'enzyme';
 describe('IframeHighlightHOC', () => {
   let IframeHighlightHOC, goStub;
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     goStub = sinon.spy();
 
-    IframeHighlightHOC = (await this.system.import(
-      'components/shared/stack-onboarding/explore/IframeHighlightHOC'
-    )).default;
+    IframeHighlightHOC = (
+      await this.system.import('components/shared/stack-onboarding/explore/IframeHighlightHOC')
+    ).default;
 
-    await $initialize(this.system, $provide => {
+    await $initialize(this.system, ($provide) => {
       $provide.value('$state', {
-        go: goStub
+        go: goStub,
       });
     });
   });
 
-  afterEach(function() {
+  afterEach(function () {
     IframeHighlightHOC = null;
   });
 
@@ -38,8 +38,8 @@ describe('IframeHighlightHOC', () => {
     const Elem = IframeHighlightHOC(() => <div />);
     const iframe = {
       contentWindow: {
-        postMessage: sinon.spy()
-      }
+        postMessage: sinon.spy(),
+      },
     };
     const wrapper = shallow(<Elem iframe={iframe} />);
 
@@ -54,8 +54,8 @@ describe('IframeHighlightHOC', () => {
     const Elem = IframeHighlightHOC(() => <div />);
     const iframe = {
       contentWindow: {
-        postMessage: () => {}
-      }
+        postMessage: () => {},
+      },
     };
     const wrapper = shallow(<Elem iframe={iframe} />);
 

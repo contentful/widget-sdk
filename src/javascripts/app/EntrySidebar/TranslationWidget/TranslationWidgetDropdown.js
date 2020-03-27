@@ -6,12 +6,12 @@ import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes';
 import { truncate } from 'utils/StringUtils';
 import { track } from 'analytics/Analytics';
 
-const sortLocales = locales => orderBy(locales, ['default', 'name'], ['desc', 'asc']);
+const sortLocales = (locales) => orderBy(locales, ['default', 'name'], ['desc', 'asc']);
 
 export default class TranslationDropdownWidget extends Component {
   static propTypes = {
     emitter: PropTypes.shape({
-      emit: PropTypes.func.isRequired
+      emit: PropTypes.func.isRequired,
     }).isRequired,
     localeData: PropTypes.shape({
       privateLocales: PropTypes.arrayOf(
@@ -19,17 +19,17 @@ export default class TranslationDropdownWidget extends Component {
           name: PropTypes.string.isRequired,
           code: PropTypes.string.isRequired,
           internal_code: PropTypes.string.isRequired,
-          default: PropTypes.bool.isRequired
+          default: PropTypes.bool.isRequired,
         }).isRequired
       ).isRequired,
       errors: PropTypes.object.isRequired,
       focusedLocale: PropTypes.shape({
-        internal_code: PropTypes.string.isRequired
-      }).isRequired
-    }).isRequired
+        internal_code: PropTypes.string.isRequired,
+      }).isRequired,
+    }).isRequired,
   };
 
-  numErrors = code => {
+  numErrors = (code) => {
     if (!this.props.localeData.errors[code]) {
       return 0;
     }
@@ -46,9 +46,9 @@ export default class TranslationDropdownWidget extends Component {
     }
   };
 
-  handleChange = event => {
+  handleChange = (event) => {
     const focusedLocaleCode = event.target.value;
-    const newLocale = this.props.localeData.privateLocales.find(locale => {
+    const newLocale = this.props.localeData.privateLocales.find((locale) => {
       return locale.internal_code === focusedLocaleCode;
     });
     this.props.emitter.emit(SidebarEventTypes.UPDATED_FOCUSED_LOCALE, newLocale);
@@ -58,12 +58,12 @@ export default class TranslationDropdownWidget extends Component {
   render() {
     const {
       privateLocales,
-      focusedLocale: { internal_code: focusedLocaleCode }
+      focusedLocale: { internal_code: focusedLocaleCode },
     } = this.props.localeData;
     return (
       <div>
         <Select id="optionSelect" onChange={this.handleChange} value={focusedLocaleCode}>
-          {sortLocales(privateLocales).map(locale => (
+          {sortLocales(privateLocales).map((locale) => (
             <Option key={locale.internal_code} value={locale.internal_code}>
               {this.localeName(locale)}
             </Option>

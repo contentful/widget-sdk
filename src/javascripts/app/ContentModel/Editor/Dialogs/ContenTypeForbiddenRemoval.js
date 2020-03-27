@@ -6,14 +6,14 @@ import {
   Note,
   TextLink,
   Paragraph,
-  Typography
+  Typography,
 } from '@contentful/forma-36-react-components';
 
 export default function ContentTypeForbiddenRemoval({
   isShown,
   onClose,
   entriesCount,
-  contentTypeName
+  contentTypeName,
 }) {
   const [explanationShown, setExplanationShown] = useState(false);
 
@@ -58,5 +58,5 @@ ContentTypeForbiddenRemoval.propTypes = {
   entriesCount: PropTypes.number.isRequired,
   contentTypeName: PropTypes.string.isRequired,
   isShown: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired
+  onClose: PropTypes.func.isRequired,
 };

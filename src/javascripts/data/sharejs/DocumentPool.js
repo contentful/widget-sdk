@@ -60,7 +60,7 @@ export function create(docConnection, spaceEndpoint) {
    * last reference in use.
    */
   function unref(doc) {
-    const result = find(instances, item => {
+    const result = find(instances, (item) => {
       return item.doc === doc;
     });
 
@@ -79,7 +79,7 @@ export function create(docConnection, spaceEndpoint) {
    * Destroys all the instances in the pool.
    */
   function destroy() {
-    Object.keys(instances).forEach(key => {
+    Object.keys(instances).forEach((key) => {
       const instance = instances[key];
       instance.doc.destroy();
       delete instances[key];

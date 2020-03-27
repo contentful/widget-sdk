@@ -27,7 +27,7 @@ export default class Date extends React.Component {
     value: PropTypes.string,
     onChange: PropTypes.func.isRequired,
     onKeyDown: PropTypes.func.isRequired,
-    inputRef: PropTypes.func.isRequired
+    inputRef: PropTypes.func.isRequired,
   };
 
   inputRef = null;
@@ -39,18 +39,13 @@ export default class Date extends React.Component {
       const datePicker = createPikaday({
         field: this.inputRef,
         container: this.inputRef.parentElement,
-        yearRange: [
-          1900,
-          moment()
-            .add(10, 'years')
-            .year()
-        ],
+        yearRange: [1900, moment().add(10, 'years').year()],
         // don't change this function to arrow function
         // this.getMoment is function of DatePicker object
-        onSelect: function() {
+        onSelect: function () {
           onChange(this.getMoment().format(DATE_FORMAT));
         },
-        onOpen: function() {
+        onOpen: function () {
           // HACK: we prevent all the butons from getting kb focused (with tab)
           // otherwise the widget will collapses.
           for (const el of datePicker.el.querySelectorAll('button')) {
@@ -58,7 +53,7 @@ export default class Date extends React.Component {
           }
         },
         firstDay: 1,
-        theme: 'search__datepicker'
+        theme: 'search__datepicker',
       });
 
       this.datePicker = datePicker;
@@ -79,7 +74,7 @@ export default class Date extends React.Component {
     return (
       <div style={{ position: 'relative', display: 'flex', width: getWidth(formattedDate) }}>
         <input
-          ref={el => {
+          ref={(el) => {
             this.inputRef = el;
             inputRef(el);
           }}
@@ -90,7 +85,7 @@ export default class Date extends React.Component {
           tabIndex="0"
           style={{
             width: getWidth(formattedDate),
-            paddingLeft: '10px'
+            paddingLeft: '10px',
           }}
           readOnly
         />

@@ -4,7 +4,7 @@ import { render, fireEvent } from '@testing-library/react';
 import LocaleRemovalConfirmDialog from './LocaleRemovalConfirmDialog';
 
 describe('locales/components/LocaleRemovalConfirmDialog', () => {
-  const renderComponent = props =>
+  const renderComponent = (props) =>
     render(
       <LocaleRemovalConfirmDialog
         isShown
@@ -12,7 +12,7 @@ describe('locales/components/LocaleRemovalConfirmDialog', () => {
         onCancel={() => {}}
         locale={{
           name: 'English',
-          code: 'uk'
+          code: 'uk',
         }}
         {...props}
       />
@@ -25,10 +25,10 @@ describe('locales/components/LocaleRemovalConfirmDialog', () => {
 
   it('it is possible to invoke cancel by clicking on two buttons', () => {
     const stubs = {
-      onCancel: jest.fn()
+      onCancel: jest.fn(),
     };
     const { getByTestId } = renderComponent({
-      onCancel: stubs.onCancel
+      onCancel: stubs.onCancel,
     });
 
     fireEvent.click(getByTestId('delete-locale-cancel'));
@@ -39,11 +39,11 @@ describe('locales/components/LocaleRemovalConfirmDialog', () => {
   it('confirm button should be enabled when user types locale code in input', () => {
     const stubs = {
       onConfirm: jest.fn(),
-      onCancel: jest.fn()
+      onCancel: jest.fn(),
     };
 
     const { getByTestId } = renderComponent({
-      ...stubs
+      ...stubs,
     });
 
     const deleteButton = getByTestId('delete-locale-confirm');

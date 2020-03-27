@@ -7,7 +7,7 @@ const user = {
   firstName: 'User',
   lastName: 'Test',
   email: 'user.test@contentful.com',
-  avatarUrl: '/testAvatar'
+  avatarUrl: '/testAvatar',
 };
 
 describe('UserCard', () => {
@@ -36,7 +36,7 @@ describe('UserCard', () => {
   it('first name not defined, INVITED tag displayed only', () => {
     const user = {
       email: 'user.test@contentful.com',
-      avatarUrl: '/testAvatar'
+      avatarUrl: '/testAvatar',
     };
     const { getByTestId } = render(<UserCard user={user} />);
     const userNameAndStatus = getByTestId('user-card.name');

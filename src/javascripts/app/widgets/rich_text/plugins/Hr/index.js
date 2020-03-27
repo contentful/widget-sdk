@@ -16,7 +16,7 @@ export const HrPlugin = () => {
         );
       }
       return next();
-    }
+    },
   };
 };
 
@@ -33,7 +33,7 @@ export default blockSelectDecorator({
   applyChange: (editor, type) => {
     const hr = {
       type,
-      object: 'block'
+      object: 'block',
     };
 
     if (editor.value.blocks.size === 0 || haveTextInSomeBlocks(editor)) {
@@ -43,5 +43,5 @@ export default blockSelectDecorator({
     }
 
     editor.insertBlock(BLOCKS.PARAGRAPH).focus();
-  }
+  },
 })(Hr);

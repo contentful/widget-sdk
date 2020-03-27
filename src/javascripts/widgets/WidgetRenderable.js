@@ -28,10 +28,10 @@ function buildOneRenderable(control, widgets) {
     fieldId: control.fieldId,
     widgetId: control.widgetId,
     widgetNamespace: control.widgetNamespace,
-    field: cloneDeep(control.field)
+    field: cloneDeep(control.field),
   };
 
-  const descriptor = widgets.find(w => {
+  const descriptor = widgets.find((w) => {
     return w.namespace === control.widgetNamespace && w.id === control.widgetId;
   });
 
@@ -53,7 +53,7 @@ function buildOneRenderable(control, widgets) {
       applyDefaultValues(
         get(descriptor, ['installationParameters', 'definitions'], []),
         get(descriptor, ['installationParameters', 'values'], {})
-      ) || {}
+      ) || {},
   };
 
   return deepFreeze(
@@ -65,7 +65,7 @@ function buildOneRenderable(control, widgets) {
       renderWhen: descriptor.renderWhen,
       isFocusable: !descriptor.notFocusable,
       isBackground: descriptor.isBackground,
-      sidebar: !!descriptor.sidebar
+      sidebar: !!descriptor.sidebar,
     })
   );
 }
@@ -73,10 +73,10 @@ function buildOneRenderable(control, widgets) {
 function convertToRenderable(item, widgets) {
   const renderable = {
     widgetId: item.widgetId,
-    widgetNamespace: item.widgetNamespace
+    widgetNamespace: item.widgetNamespace,
   };
 
-  const descriptor = widgets.find(w => {
+  const descriptor = widgets.find((w) => {
     return w.namespace === item.widgetNamespace && w.id === item.widgetId;
   });
 
@@ -96,16 +96,16 @@ function convertToRenderable(item, widgets) {
           applyDefaultValues(
             get(descriptor, ['installationParameters', 'definitions'], []),
             get(descriptor, ['installationParameters', 'values'], {})
-          ) || {}
-      }
+          ) || {},
+      },
     })
   );
 }
 
 export function buildSidebarRenderables(sidebar, widgets) {
   return sidebar
-    .filter(item => CUSTOM_NAMESPACES.includes(item.widgetNamespace))
-    .map(item => convertToRenderable(item, widgets));
+    .filter((item) => CUSTOM_NAMESPACES.includes(item.widgetNamespace))
+    .map((item) => convertToRenderable(item, widgets));
 }
 
 export function buildEditorRenderable(editor, widgets) {

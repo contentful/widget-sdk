@@ -7,17 +7,17 @@ import ScheduledActionAction from '../ScheduledActionAction';
 const AnalyticsEventName = {
   Dialog: 'global:dialog',
   CancelJob: 'jobs:cancel',
-  CreateJob: 'jobs:create'
+  CreateJob: 'jobs:create',
 };
 
 const IntercomEventName = {
   AlphaEligible: 'scheduled-publishing-alpha-eligible',
-  CreateJob: 'scheduled-publishing-create-job'
+  CreateJob: 'scheduled-publishing-create-job',
 };
 
 const AnalyticsAction = {
   EntryPublish: 'Entry.publish',
-  EntryUnpublish: 'Entry.unpublish'
+  EntryUnpublish: 'Entry.unpublish',
 };
 
 /** Will become obsolete once we change action format in the api */
@@ -36,7 +36,7 @@ export function createDialogOpen() {
   const payload = {
     purpose: 'job.create',
     name: AnalyticsEventName.CreateJob,
-    action: 'open'
+    action: 'open',
   };
 
   return Analytics.track(AnalyticsEventName.Dialog, payload);
@@ -45,7 +45,7 @@ export function createDialogOpen() {
 export function createDialogClose() {
   const payload = {
     name: AnalyticsEventName.CreateJob,
-    action: 'close'
+    action: 'close',
   };
 
   return Analytics.track(AnalyticsEventName.Dialog, payload);
@@ -59,7 +59,7 @@ export function createJob(job, scheduledForTimezone) {
     entity_id: job.entity.sys.id,
     scheduled_for_timezone: scheduledForTimezone,
     local_timezone: moment.tz.guess(),
-    timezone_offset: new Date().getTimezoneOffset()
+    timezone_offset: new Date().getTimezoneOffset(),
   };
 
   Intercom.trackEvent(IntercomEventName.CreateJob);
@@ -69,7 +69,7 @@ export function createJob(job, scheduledForTimezone) {
 export function cancelJob(job) {
   const payload = {
     action: convertActionToAnalyticsFormat(job.action),
-    job_id: job.sys.id
+    job_id: job.sys.id,
   };
   return Analytics.track(AnalyticsEventName.CancelJob, payload);
 }

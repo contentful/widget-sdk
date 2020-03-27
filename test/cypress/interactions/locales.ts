@@ -3,7 +3,7 @@ import { defaultHeader, defaultSpaceId } from '../util/requests';
 const locales = require('../fixtures/responses/locales.json');
 
 enum States {
-  ONLY_ENGLISH = 'locales/only-english'
+  ONLY_ENGLISH = 'locales/only-english',
 }
 
 export const queryFirst100LocalesOfDefaultSpace = {
@@ -18,15 +18,15 @@ export const queryFirst100LocalesOfDefaultSpace = {
         headers: defaultHeader,
         query: {
           limit: '100',
-          skip: '0'
-        }
+          skip: '0',
+        },
       },
       willRespondWith: {
         status: 200,
-        body: locales
-      }
+        body: locales,
+      },
     }).as('queryFirst100LocalesOfDefaultSpace');
 
-    return '@queryFirst100LocalesOfDefaultSpace'
-  }
-}
+    return '@queryFirst100LocalesOfDefaultSpace';
+  },
+};

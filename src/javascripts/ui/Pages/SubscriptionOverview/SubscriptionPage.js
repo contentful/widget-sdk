@@ -19,19 +19,19 @@ import NavigationIcon from 'ui/Components/NavigationIcon';
 const styles = {
   content: css({
     // TODO: $rhythm for emotion?
-    padding: '1.28rem 2rem 0'
+    padding: '1.28rem 2rem 0',
   }),
   sidebar: css({
-    position: 'relative'
+    position: 'relative',
   }),
   header: css({
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
     gridGap: '45px',
     '& > div': {
-      margin: '1em 0 3em'
-    }
-  })
+      margin: '1em 0 3em',
+    },
+  }),
 };
 
 const getNotificationMessage = (space, currentSpacePlan, newSpacePlan) => {
@@ -68,10 +68,10 @@ export default function SubscriptionPage({ organizationId, data }) {
         space,
         plan,
         onSuccess: () => {
-          const newSpacePlans = _.reject(spacePlans, sp => sp.space.sys.id === space.sys.id);
+          const newSpacePlans = _.reject(spacePlans, (sp) => sp.space.sys.id === space.sys.id);
 
           setSpacePlans(newSpacePlans);
-        }
+        },
       });
     };
   };
@@ -83,16 +83,16 @@ export default function SubscriptionPage({ organizationId, data }) {
         scope: 'organization',
         space,
         action,
-        onSubmit: async productRatePlanId => {
+        onSubmit: async (productRatePlanId) => {
           // Update current spacePlan for this space with new data
           const productRatePlan = data.productRatePlans.find(
-            prp => prp.sys.id === productRatePlanId
+            (prp) => prp.sys.id === productRatePlanId
           );
           const currentSpacePlan = _.cloneDeep(
-            spacePlans.find(sp => sp.space.sys.id === space.sys.id)
+            spacePlans.find((sp) => sp.space.sys.id === space.sys.id)
           );
 
-          const newSpacePlans = spacePlans.map(spacePlan => {
+          const newSpacePlans = spacePlans.map((spacePlan) => {
             if (spacePlan.space.sys.id !== space.sys.id) {
               return spacePlan;
             }
@@ -103,13 +103,13 @@ export default function SubscriptionPage({ organizationId, data }) {
             return spacePlan;
           });
 
-          const newSpacePlan = spacePlans.find(sp => sp.space.sys.id === space.sys.id);
+          const newSpacePlan = spacePlans.find((sp) => sp.space.sys.id === space.sys.id);
 
           setSpacePlans(newSpacePlans);
           setChangedSpace(space.sys.id);
 
           Notification.success(getNotificationMessage(space, currentSpacePlan, newSpacePlan));
-        }
+        },
       });
     };
   };
@@ -159,6 +159,6 @@ SubscriptionPage.propTypes = {
     grandTotal: PropTypes.number,
     usersMeta: PropTypes.object,
     organization: PropTypes.object,
-    productRatePlans: PropTypes.array
-  }).isRequired
+    productRatePlans: PropTypes.array,
+  }).isRequired,
 };

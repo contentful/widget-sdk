@@ -9,25 +9,25 @@ const styles = {
   input: css({
     width: '100%',
     maxWidth: '985px', // To match content list search width
-    marginRight: tokens.spacingM
-  })
+    marginRight: tokens.spacingM,
+  }),
 };
 
 export default class ContentTypeListSearch extends React.Component {
   static propTypes = {
     initialValue: PropTypes.string,
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
   };
   state = {
-    value: this.props.initialValue
+    value: this.props.initialValue,
   };
-  debouncedOnChangeCallback = debounce(value => {
+  debouncedOnChangeCallback = debounce((value) => {
     this.props.onChange(value);
   }, 200);
-  handleChange = e => {
+  handleChange = (e) => {
     const value = e.target.value;
     this.setState({
-      value
+      value,
     });
     this.debouncedOnChangeCallback(value);
   };

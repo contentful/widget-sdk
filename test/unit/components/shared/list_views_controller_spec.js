@@ -7,12 +7,12 @@ describe('ListViewsController', () => {
     $scope = resetList = null;
   });
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     this.system.set('data/ListViewPersistor', {
       default: () => ({
         read: () => ({ from_qs: 'test' }),
-        save: () => {}
-      })
+        save: () => {},
+      }),
     });
 
     await $initialize(this.system);
@@ -24,7 +24,7 @@ describe('ListViewsController', () => {
       $scope,
       entityType: 'Entry',
       getBlankView: () => ({ id: 'blankView' }),
-      resetList
+      resetList,
     });
 
     $scope.$apply();

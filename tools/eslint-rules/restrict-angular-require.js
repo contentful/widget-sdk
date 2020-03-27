@@ -3,15 +3,15 @@ const registrationFuncs = [
   'registerController',
   'registerFilter',
   'registerService',
-  'registerFactory'
+  'registerFactory',
 ];
 
 module.exports = {
   meta: {
     messages: {
       doNotUseRequire:
-        'Do not use `require` when registering an Angular component via the utility methods. Use explicit dependency injection instead'
-    }
+        'Do not use `require` when registering an Angular component via the utility methods. Use explicit dependency injection instead',
+    },
   },
   create(context) {
     return {
@@ -21,18 +21,18 @@ module.exports = {
 
           if (definition && definition.type === 'ArrayExpression') {
             const elements = definition.elements;
-            const requireDependency = elements.find(e => e.value === 'require');
+            const requireDependency = elements.find((e) => e.value === 'require');
 
             if (requireDependency) {
               context.report({
                 node: requireDependency,
-                messageId: 'doNotUseRequire'
+                messageId: 'doNotUseRequire',
               });
               return;
             }
           }
         }
-      }
+      },
     };
-  }
+  },
 };

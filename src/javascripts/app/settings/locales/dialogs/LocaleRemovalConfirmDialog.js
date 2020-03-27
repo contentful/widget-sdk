@@ -7,11 +7,11 @@ export default class LocaleRemovalConfirmDialog extends React.Component {
     isShown: PropTypes.bool.isRequired,
     locale: PropTypes.object.isRequired,
     onCancel: PropTypes.func.isRequired,
-    onConfirm: PropTypes.func.isRequired
+    onConfirm: PropTypes.func.isRequired,
   };
 
   state = {
-    typedLocaleCode: ''
+    typedLocaleCode: '',
   };
 
   componentDidUpdate(nextProps) {
@@ -48,7 +48,7 @@ export default class LocaleRemovalConfirmDialog extends React.Component {
           width="medium"
           testId="repeat-locale-input"
           value={this.state.typedLocaleCode}
-          onChange={e => {
+          onChange={(e) => {
             this.setState({ typedLocaleCode: e.target.value });
           }}
         />

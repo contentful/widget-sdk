@@ -5,7 +5,7 @@ import {
   describeResource,
   describeGetResource,
   describeCreateResource,
-  describeContentEntity
+  describeContentEntity,
 } from './space_resource';
 
 export default function describeAsset() {
@@ -17,20 +17,20 @@ export default function describeAsset() {
   describeArchivable(asset, setupEntity);
 
   function setupEntity() {
-    beforeEach(async function() {
+    beforeEach(async function () {
       this.request.respond({ sys: { type: 'Asset' } });
       this.entity = await this.space.createAsset();
     });
   }
 
-  describeResource(asset, function() {
-    it('#process()', async function() {
+  describeResource(asset, function () {
+    it('#process()', async function () {
       this.request.respond(null);
       await this.asset.process('myversion', 'mylocale');
       sinon.assert.calledWith(this.request, {
         method: 'PUT',
         url: '/spaces/42/assets/43/files/mylocale/process',
-        headers: { 'X-Contentful-Version': 'myversion' }
+        headers: { 'X-Contentful-Version': 'myversion' },
       });
     });
   });

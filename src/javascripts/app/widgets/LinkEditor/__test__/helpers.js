@@ -7,8 +7,8 @@ export function newLink(id = null, type = TYPES.ENTRY) {
     sys: {
       id: id || `UNIQUE_${type.toUpperCase()}_ID_${++linkCount}`,
       type: 'Link',
-      linkType: type
-    }
+      linkType: type,
+    },
   };
 }
 

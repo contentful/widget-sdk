@@ -68,7 +68,7 @@ describe('WidgetParametersForm', () => {
   it('renders multiple inputs', () => {
     const [wrapper] = mount([
       { id: 'str', type: 'Symbol', name: 'String param' },
-      { id: 'bool', type: 'Boolean', name: 'Bool param' }
+      { id: 'bool', type: 'Boolean', name: 'Bool param' },
     ]);
     expect(wrapper.find('input')).toHaveLength(3); // 1 for Symbol input + 2 for Boolean checkboxes
   });
@@ -76,27 +76,17 @@ describe('WidgetParametersForm', () => {
   it('renders information about parameter being required', () => {
     const [wrapper] = mount([
       { id: 'str', type: 'Symbol', name: 'String param' },
-      { id: 'bool', type: 'Boolean', name: 'Bool param', required: true }
+      { id: 'bool', type: 'Boolean', name: 'Bool param', required: true },
     ]);
     const labels = wrapper.find('label');
-    expect(
-      labels
-        .at(0)
-        .text()
-        .includes('(required)')
-    ).toBe(false);
-    expect(
-      labels
-        .at(1)
-        .text()
-        .includes('(required)')
-    ).toBe(true);
+    expect(labels.at(0).text().includes('(required)')).toBe(false);
+    expect(labels.at(1).text().includes('(required)')).toBe(true);
   });
 
   it('renders information about required parameter being missing', () => {
     const definitions = [
       { id: 'str', type: 'Symbol', name: 'String param' },
-      { id: 'bool', type: 'Boolean', name: 'Bool param', required: true }
+      { id: 'bool', type: 'Boolean', name: 'Bool param', required: true },
     ];
     const [wrapper] = mount(definitions, { str: 'test' }, { bool: true });
     expect(wrapper.find('.cfnext-form__field-error')).toHaveLength(1);
@@ -108,7 +98,7 @@ describe('WidgetParametersForm', () => {
       { id: 'str', type: 'Symbol', name: 'String param' },
       { id: 'enum', type: 'Enum', name: 'Enum param', options: [{ one: '1', two: '2' }] },
       { id: 'num', type: 'Number', name: 'Number param' },
-      { id: 'bool', type: 'Boolean', name: 'Bool param' }
+      { id: 'bool', type: 'Boolean', name: 'Bool param' },
     ];
     const values = { str: 'test', enum: 'two', num: 123, bool: true };
     const [wrapper] = mount(definitions, values);

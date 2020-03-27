@@ -8,7 +8,7 @@ describe('SearchFilter', () => {
     { label: 'Any', value: '' },
     { label: 'Papaya', value: 'papaya' },
     { label: 'Banana', value: 'banana' },
-    { label: 'Kiwi', value: 'kiwi' }
+    { label: 'Kiwi', value: 'kiwi' },
   ];
 
   const onChangeCb = jest.fn();
@@ -20,8 +20,8 @@ describe('SearchFilter', () => {
     filter: {
       key: 'fruit',
       value: 'papaya',
-      operator: null
-    }
+      operator: null,
+    },
   };
   const build = (props = initialProps) => {
     return render(<SearchFilter {...props} />);
@@ -59,7 +59,7 @@ describe('SearchFilter', () => {
       id: 'fruit',
       key: 'fruit',
       operator: null,
-      value: 'kiwi'
+      value: 'kiwi',
     });
   });
 });

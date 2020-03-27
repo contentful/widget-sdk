@@ -4,7 +4,7 @@ import {
   defaultEntry,
   defaultSpaceId,
   defaultEnvironmentId,
-  defaultAssetId
+  defaultAssetId,
 } from '../util/requests';
 
 const empty = require('../fixtures/responses/empty.json');
@@ -15,7 +15,7 @@ enum States {
   SEVERAL = 'entries/several',
   NO_LINKS_TO_DEFAULT_ENTRY = 'entries/no-links-to-default-entry',
   NO_LINKS_TO_DEFAULT_ASSET = 'entries/no-links-to-default-asset',
-  NO_SNAPSHOTS_FOR_DEFAULT_ENTRY = 'entries/no-snapshots-for-default-entry'
+  NO_SNAPSHOTS_FOR_DEFAULT_ENTRY = 'entries/no-snapshots-for-default-entry',
 }
 
 export const getDefaultEntry = {
@@ -27,16 +27,16 @@ export const getDefaultEntry = {
       withRequest: {
         method: 'GET',
         path: `/spaces/${defaultSpaceId}/entries/${defaultEntryId}`,
-        headers: defaultHeader
+        headers: defaultHeader,
       },
       willRespondWith: {
         status: 200,
-        body: defaultEntry
-      }
+        body: defaultEntry,
+      },
     }).as('getDefaultEntry');
 
     return '@getDefaultEntry';
-  }
+  },
 };
 
 export const queryLinksToDefaultEntry = {
@@ -50,17 +50,17 @@ export const queryLinksToDefaultEntry = {
         path: `/spaces/${defaultSpaceId}/entries`,
         headers: defaultHeader,
         query: {
-          links_to_entry: `${defaultEntryId}`
-        }
+          links_to_entry: `${defaultEntryId}`,
+        },
       },
       willRespondWith: {
         status: 200,
-        body: empty
-      }
+        body: empty,
+      },
     }).as('queryLinksToDefaultEntry');
 
     return '@queryLinksToDefaultEntry';
-  }
+  },
 };
 
 export const queryLinksToDefaultAsset = {
@@ -74,17 +74,17 @@ export const queryLinksToDefaultAsset = {
         path: `/spaces/${defaultSpaceId}/entries`,
         headers: defaultHeader,
         query: {
-          links_to_asset: `${defaultAssetId}`
-        }
+          links_to_asset: `${defaultAssetId}`,
+        },
       },
       willRespondWith: {
         status: 200,
-        body: empty
-      }
+        body: empty,
+      },
     }).as('queryLinksToDefaultAsset');
 
     return '@queryLinksToDefaultAsset';
-  }
+  },
 };
 
 export const getFirst7SnapshotsOfDefaultEntry = {
@@ -98,17 +98,17 @@ export const getFirst7SnapshotsOfDefaultEntry = {
         path: `/spaces/${defaultSpaceId}/entries/${defaultEntryId}/snapshots`,
         headers: defaultHeader,
         query: {
-          limit: '7'
-        }
+          limit: '7',
+        },
       },
       willRespondWith: {
         status: 200,
-        body: empty
-      }
+        body: empty,
+      },
     }).as('getFirst7SnapshotsOfDefaultEntry');
 
     return '@getFirst7SnapshotsOfDefaultEntry';
-  }
+  },
 };
 
 export const queryForDefaultEntryInsideEnvironment = {
@@ -123,17 +123,17 @@ export const queryForDefaultEntryInsideEnvironment = {
         path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/entries`,
         headers: defaultHeader,
         query: {
-          'sys.id[in]': defaultEntryId // TODO: Is this the correct query?
-        }
+          'sys.id[in]': defaultEntryId, // TODO: Is this the correct query?
+        },
       },
       willRespondWith: {
         status: 200,
-        body: severalEntriesResponseBody // TODO: This looks wrong (the response contains three entries)
-      }
+        body: severalEntriesResponseBody, // TODO: This looks wrong (the response contains three entries)
+      },
     }).as('queryForDefaultEntryInsideEnvironment');
 
     return '@queryForDefaultEntryInsideEnvironment';
-  }
+  },
 };
 
 export const queryForDefaultEntryWithoutEnvironment = {
@@ -148,17 +148,17 @@ export const queryForDefaultEntryWithoutEnvironment = {
         path: `/spaces/${defaultSpaceId}/entries`,
         headers: defaultHeader,
         query: {
-          'sys.id[in]': defaultEntryId // TODO: Is this the correct query?
-        }
+          'sys.id[in]': defaultEntryId, // TODO: Is this the correct query?
+        },
       },
       willRespondWith: {
         status: 200,
-        body: severalEntriesResponseBody // TODO: This looks wrong (the response contains three entries)
-      }
+        body: severalEntriesResponseBody, // TODO: This looks wrong (the response contains three entries)
+      },
     }).as('queryForDefaultEntryWithoutEnvironment');
 
     return '@queryForDefaultEntryWithoutEnvironment';
-  }
+  },
 };
 
 export const createAnEntryInDefaultSpace = {
@@ -170,16 +170,16 @@ export const createAnEntryInDefaultSpace = {
       withRequest: {
         method: 'POST',
         path: `/spaces/${defaultSpaceId}/entries`,
-        headers: defaultHeader
+        headers: defaultHeader,
       },
       willRespondWith: {
         status: 201,
-        body: defaultEntry
-      }
+        body: defaultEntry,
+      },
     }).as('createAnEntryInDefaultSpace');
 
     return '@createAnEntryInDefaultSpace';
-  }
+  },
 };
 
 export const validateAnEntryValidResponse = {
@@ -191,13 +191,13 @@ export const validateAnEntryValidResponse = {
       withRequest: {
         method: 'PUT',
         path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/entries/${defaultEntryId}/published`,
-        headers: defaultHeader
+        headers: defaultHeader,
       },
       willRespondWith: {
-        status: 200
-      }
+        status: 200,
+      },
     }).as('createAnEntryInDefaultSpace');
 
     return '@createAnEntryInDefaultSpace';
-  }
+  },
 };

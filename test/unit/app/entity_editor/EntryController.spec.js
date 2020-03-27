@@ -4,7 +4,7 @@ import sinon from 'sinon';
 import createLocaleStoreMock from 'test/utils/createLocaleStoreMock';
 import { $initialize, $inject, $apply, $removeControllers } from 'test/utils/ng';
 
-describe('Entry Editor Controller', function() {
+describe('Entry Editor Controller', function () {
   this.user = { firstName: 'John', lastName: 'Doe', sys: { id: '123' } };
   const userBus = K.createPropertyBus(null);
 
@@ -17,16 +17,16 @@ describe('Entry Editor Controller', function() {
     getDefaultEntryFields: () => ({
       [entryTitleId]: {
         'en-US': 'Hey, Sunshine!',
-        de: 'Hallo, Sonnenlicht!'
+        de: 'Hallo, Sonnenlicht!',
       },
       [notEntryTitleId]: {
         'en-US': 'this is a text in english',
-        de: 'das ist ein text in Deutsch'
-      }
-    })
+        de: 'das ist ein text in Deutsch',
+      },
+    }),
   };
 
-  const configureForTest = async function() {
+  const configureForTest = async function () {
     const createEntryController = (await this.system.import('app/entity_editor/EntryController'))
       .default;
 
@@ -35,7 +35,7 @@ describe('Entry Editor Controller', function() {
     await $removeControllers(this.system, [
       'entityEditor/StateController',
       'entityEditor/StatusNotificationsController',
-      'FormWidgetsController'
+      'FormWidgetsController',
     ]);
 
     const createDocument = $inject('mocks/entityEditor/Document').create;
@@ -43,29 +43,29 @@ describe('Entry Editor Controller', function() {
     const mockEditorData = {
       entity: {
         data: {},
-        getSys: () => ({})
+        getSys: () => ({}),
       },
       entityInfo: {
         id: 'testEntryId',
         contentType: {
-          fields: {}
-        }
+          fields: {},
+        },
       },
       contentType: {
         data: {
           fields: [
             { id: entryTitleId, apiName: 'title', name: 'title', type: 'Symbol' },
-            { id: notEntryTitleId, apiName: 'secret', name: 'secret', type: 'Symbol' }
+            { id: notEntryTitleId, apiName: 'secret', name: 'secret', type: 'Symbol' },
           ],
-          displayField: entryTitleId
-        }
+          displayField: entryTitleId,
+        },
       },
       fieldControls: {},
       openDoc: () =>
         createDocument({
           sys: { type: 'Entry' },
-          fields: stubs.getDefaultEntryFields()
-        })
+          fields: stubs.getDefaultEntryFields(),
+        }),
     };
 
     const mockPreferences = {};
@@ -92,67 +92,65 @@ describe('Entry Editor Controller', function() {
     $apply();
   };
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     this.system.set('app/EntrySidebar/EntitySidebarBridge', {
       default: () => {
         return {};
-      }
+      },
     });
 
     this.system.set('app/entity_editor/setLocaleData', {
       default: () => {
         return {};
-      }
+      },
     });
 
     this.system.set('app/entity_editor/LoadEventTracker', {
-      bootstrapEntryEditorLoadEvents: () => {
-      }
+      bootstrapEntryEditorLoadEvents: () => {},
     });
 
     this.system.set('app/entity_editor/Tracking', {
-      default: sinon.stub()
+      default: sinon.stub(),
     });
 
     this.system.set('app/entity_editor/Validator', {
-      createForEntry: sinon.stub()
+      createForEntry: sinon.stub(),
     });
 
     this.system.set('services/localeStore', {
-      default: createLocaleStoreMock()
+      default: createLocaleStoreMock(),
     });
 
     this.system.set('services/TokenStore', {
-      user$: userBus.property
+      user$: userBus.property,
     });
 
     this.system.set('app/entry_editor/formWidgetsController', {
-      default: () => {
-      }
+      default: () => {},
     });
 
     this.system.set('classes/EntityFieldValueSpaceContext', {
-      entryTitle: entry => _.get(entry, 'data.fields.title')
+      entryTitle: (entry) => _.get(entry, 'data.fields.title'),
     });
 
     this.system.set('analytics/Analytics', {
-      track: _.noop
+      track: _.noop,
     });
 
     this.sandbox = sinon.createSandbox();
   });
 
-  afterEach(async function() {
+  afterEach(async function () {
     this.sandbox.restore();
   });
 
-  it('exposes the current user', async function() {
+  it('exposes the current user', async function () {
     await configureForTest.call(this);
     expect(this.scope.user).toBe(this.user);
   });
 
   describe('when the entry title changes', () => {
-    it('updates the tab title', async function() {
+    it('updates the tab title', async function () {
       await configureForTest.call(this);
       this.scope.otDoc.setValueAt(['fields', 'title'], 'foo');
       $apply();
@@ -164,7 +162,7 @@ describe('Entry Editor Controller', function() {
   });
 
   describe('scope.context.dirty', () => {
-    it('changes according to doc state', async function() {
+    it('changes according to doc state', async function () {
       await configureForTest.call(this);
       this.scope.otDoc.state.isDirty$.set(true);
       $apply();
@@ -177,7 +175,7 @@ describe('Entry Editor Controller', function() {
   });
 
   describe('scope.entryActions.onDuplicate', () => {
-    it('should make the entity title (displayName) unique per each duplicate', async function() {
+    it('should make the entity title (displayName) unique per each duplicate', async function () {
       await configureForTest.call(this);
       const entry = await this.scope.entryActions.onDuplicate();
       for (const [locale, localizedValue] of Object.entries(entry.fields[entryTitleId])) {
@@ -189,16 +187,16 @@ describe('Entry Editor Controller', function() {
       }
     });
 
-    it('should increment the copy index for the entry title (displayName) after each next duplicate', async function() {
+    it('should increment the copy index for the entry title (displayName) after each next duplicate', async function () {
       this.sandbox.stub(stubs, 'getDefaultEntryFields').returns({
         [entryTitleId]: {
           'en-US': 'Hey, Sunshine! (1)',
-          de: 'Hallo, Sonnenlicht! (1)'
+          de: 'Hallo, Sonnenlicht! (1)',
         },
         [notEntryTitleId]: {
           'en-US': 'this is a text in english',
-          de: 'das ist ein text in Deutsch'
-        }
+          de: 'das ist ein text in Deutsch',
+        },
       });
 
       await configureForTest.call(this);
@@ -215,13 +213,13 @@ describe('Entry Editor Controller', function() {
       }
     });
 
-    it('should not break down in case the entry title is not defined', async function() {
+    it('should not break down in case the entry title is not defined', async function () {
       this.sandbox.stub(stubs, 'getDefaultEntryFields').returns({
         [entryTitleId]: null,
         [notEntryTitleId]: {
           'en-US': 'this is a text in english',
-          de: 'das ist ein text in Deutsch'
-        }
+          de: 'das ist ein text in Deutsch',
+        },
       });
 
       await configureForTest.call(this);
@@ -229,7 +227,7 @@ describe('Entry Editor Controller', function() {
       const entryFields = stubs.getDefaultEntryFields();
 
       expect(
-        async function() {
+        async function () {
           const entry = await this.scope.entryActions.onDuplicate();
           expect(entry.fields[entryTitleId]).toBe(null);
 
@@ -240,16 +238,16 @@ describe('Entry Editor Controller', function() {
       ).not.toThrow();
     });
 
-    it('should not break down in case one of the entry title\'s localized values is not defined', async function() {
+    it("should not break down in case one of the entry title's localized values is not defined", async function () {
       this.sandbox.stub(stubs, 'getDefaultEntryFields').returns({
         [entryTitleId]: {
           'en-US': 'Hey, Sunshine!',
-          de: null
+          de: null,
         },
         [notEntryTitleId]: {
           'en-US': 'this is a text in english',
-          de: 'das ist ein text in Deutsch'
-        }
+          de: 'das ist ein text in Deutsch',
+        },
       });
 
       await configureForTest.call(this);
@@ -257,7 +255,7 @@ describe('Entry Editor Controller', function() {
       const entryFields = stubs.getDefaultEntryFields();
 
       expect(
-        async function() {
+        async function () {
           const entry = await this.scope.entryActions.onDuplicate();
 
           for (const [locale, localizedValue] of Object.entries(entry.fields[entryTitleId])) {
@@ -276,16 +274,16 @@ describe('Entry Editor Controller', function() {
       ).not.toThrow();
     });
 
-    it('should not increment a negative index after the duplication', async function() {
+    it('should not increment a negative index after the duplication', async function () {
       this.sandbox.stub(stubs, 'getDefaultEntryFields').returns({
         [entryTitleId]: {
           'en-US': 'Hey, Sunshine! (-1)',
-          de: 'Hallo, Sonnenlicht! (-1)'
+          de: 'Hallo, Sonnenlicht! (-1)',
         },
         [notEntryTitleId]: {
           'en-US': 'this is a text in english',
-          de: 'das ist ein text in Deutsch'
-        }
+          de: 'das ist ein text in Deutsch',
+        },
       });
 
       await configureForTest.call(this);
@@ -293,7 +291,7 @@ describe('Entry Editor Controller', function() {
       const entryFields = stubs.getDefaultEntryFields();
 
       expect(
-        async function() {
+        async function () {
           const entry = await this.scope.entryActions.onDuplicate();
 
           for (const [locale, localizedValue] of Object.entries(entry.fields[entryTitleId])) {
@@ -307,16 +305,16 @@ describe('Entry Editor Controller', function() {
       ).not.toThrow();
     });
 
-    it('should not increment a zero index after the duplication', async function() {
+    it('should not increment a zero index after the duplication', async function () {
       this.sandbox.stub(stubs, 'getDefaultEntryFields').returns({
         [entryTitleId]: {
           'en-US': 'Hey, Sunshine! (0)',
-          de: 'Hallo, Sonnenlicht! (0)'
+          de: 'Hallo, Sonnenlicht! (0)',
         },
         [notEntryTitleId]: {
           'en-US': 'this is a text in english',
-          de: 'das ist ein text in Deutsch'
-        }
+          de: 'das ist ein text in Deutsch',
+        },
       });
 
       await configureForTest.call(this);
@@ -324,7 +322,7 @@ describe('Entry Editor Controller', function() {
       const entryFields = stubs.getDefaultEntryFields();
 
       expect(
-        async function() {
+        async function () {
           const entry = await this.scope.entryActions.onDuplicate();
 
           for (const [locale, localizedValue] of Object.entries(entry.fields[entryTitleId])) {
@@ -338,16 +336,16 @@ describe('Entry Editor Controller', function() {
       ).not.toThrow();
     });
 
-    it('should increment multi-digit indexes after the duplication', async function() {
+    it('should increment multi-digit indexes after the duplication', async function () {
       this.sandbox.stub(stubs, 'getDefaultEntryFields').returns({
         [entryTitleId]: {
           'en-US': 'Hey, Sunshine! (10)',
-          de: 'Hallo, Sonnenlicht! (10)'
+          de: 'Hallo, Sonnenlicht! (10)',
         },
         [notEntryTitleId]: {
           'en-US': 'this is a text in english',
-          de: 'das ist ein text in Deutsch'
-        }
+          de: 'das ist ein text in Deutsch',
+        },
       });
 
       await configureForTest.call(this);
@@ -355,7 +353,7 @@ describe('Entry Editor Controller', function() {
       const entryFields = stubs.getDefaultEntryFields();
 
       expect(
-        async function() {
+        async function () {
           const entry = await this.scope.entryActions.onDuplicate();
 
           for (const [locale, localizedValue] of Object.entries(entry.fields[entryTitleId])) {

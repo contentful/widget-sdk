@@ -1,7 +1,7 @@
 import * as CallBuffer from './CallBuffer';
 
 describe('utils/CallBuffer', () => {
-  it('should record and playback calls', function() {
+  it('should record and playback calls', function () {
     const buffer = CallBuffer.create();
     const results = [];
     buffer.call(() => {
@@ -18,7 +18,7 @@ describe('utils/CallBuffer', () => {
     expect(results).toEqual([1, 2, 3]);
   });
 
-  it('should immediately execute calls after being resolved', function() {
+  it('should immediately execute calls after being resolved', function () {
     const buffer = CallBuffer.create();
     const results = [];
     buffer.resolve();
@@ -34,7 +34,7 @@ describe('utils/CallBuffer', () => {
     expect(results).toEqual([1, 2, 3]);
   });
 
-  it('should not resolve if it has been disabled', function() {
+  it('should not resolve if it has been disabled', function () {
     const buffer = CallBuffer.create();
     const results = [];
     buffer.disable();
@@ -50,14 +50,14 @@ describe('utils/CallBuffer', () => {
     expect(results).toEqual([]);
   });
 
-  it('provides a service passed to #resolve when executing fn', function() {
+  it('provides a service passed to #resolve when executing fn', function () {
     const buffer = CallBuffer.create();
     const service = { counter: 1 };
     buffer.resolve(service);
-    buffer.call(service => {
+    buffer.call((service) => {
       service.counter += 1;
     });
-    buffer.call(service => {
+    buffer.call((service) => {
       service.counter += 3;
     });
     expect(service.counter).toBe(5);

@@ -11,18 +11,13 @@ const UTCTimeZonePicker = ({ disabled, onChange, value }) => {
       <Select
         aria-label="Select UTC timezone"
         id="timezone-input"
-        value={
-          value ||
-          moment()
-            .tz(moment.tz.guess())
-            .format('Z')
-        }
+        value={value || moment().tz(moment.tz.guess()).format('Z')}
         width="medium"
         isDisabled={disabled}
-        onChange={e => {
+        onChange={(e) => {
           onChange(e.currentTarget.value);
         }}>
-        {zoneOffsets.map(offset => (
+        {zoneOffsets.map((offset) => (
           <Option key={offset} value={offset}>
             UTC{offset}
           </Option>
@@ -35,7 +30,7 @@ const UTCTimeZonePicker = ({ disabled, onChange, value }) => {
 UTCTimeZonePicker.propTypes = {
   disabled: PropTypes.bool.isRequired,
   onChange: PropTypes.func.isRequired,
-  value: PropTypes.string
+  value: PropTypes.string,
 };
 
 export default UTCTimeZonePicker;

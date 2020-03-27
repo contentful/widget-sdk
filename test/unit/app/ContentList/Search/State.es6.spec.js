@@ -19,7 +19,7 @@ describe('app/ContentList/Search/State', () => {
         required: true,
         validations: [],
         disabled: false,
-        omitted: false
+        omitted: false,
       },
       {
         id: 'q7dedNda69jBv3hW',
@@ -31,7 +31,7 @@ describe('app/ContentList/Search/State', () => {
         validations: [],
         disabled: false,
         omitted: false,
-        linkType: 'Asset'
+        linkType: 'Asset',
       },
       {
         id: 'hx3BIlAyjazjkz3k',
@@ -42,7 +42,7 @@ describe('app/ContentList/Search/State', () => {
         required: false,
         validations: [],
         disabled: false,
-        omitted: false
+        omitted: false,
       },
       {
         id: 'DjQpjEgwJIwjW0wB',
@@ -56,12 +56,12 @@ describe('app/ContentList/Search/State', () => {
             regexp: {
               pattern:
                 '\\b((?:[a-z][\\w-]+:(?:\\/{1,3}|[a-z0-9%])|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}\\/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:\'".,<>?«»“”‘’]))',
-              flags: 'i'
-            }
-          }
+              flags: 'i',
+            },
+          },
         ],
         disabled: false,
-        omitted: false
+        omitted: false,
       },
       {
         id: 'Gdv9NafBC7Y4zC2M',
@@ -72,7 +72,7 @@ describe('app/ContentList/Search/State', () => {
         required: false,
         validations: [],
         disabled: false,
-        omitted: false
+        omitted: false,
       },
       {
         id: 'XP8Cnq5kGFMGdZnn',
@@ -85,12 +85,12 @@ describe('app/ContentList/Search/State', () => {
           {
             regexp: {
               pattern: '^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$',
-              flags: 'i'
-            }
-          }
+              flags: 'i',
+            },
+          },
         ],
         disabled: false,
-        omitted: false
+        omitted: false,
       },
       {
         id: 'Kdf6I8QDWVvKHXvi',
@@ -102,7 +102,7 @@ describe('app/ContentList/Search/State', () => {
         validations: [],
         disabled: false,
         omitted: false,
-        items: { type: 'Symbol', validations: [] }
+        items: { type: 'Symbol', validations: [] },
       },
       {
         id: 'symbol1',
@@ -113,11 +113,11 @@ describe('app/ContentList/Search/State', () => {
         required: false,
         validations: [
           {
-            in: ['blah']
-          }
+            in: ['blah'],
+          },
         ],
         disabled: false,
-        omitted: false
+        omitted: false,
       },
       {
         id: 'symbol2',
@@ -128,12 +128,12 @@ describe('app/ContentList/Search/State', () => {
         required: false,
         validations: [
           {
-            in: ['blah', 'xxx']
-          }
+            in: ['blah', 'xxx'],
+          },
         ],
         disabled: false,
-        omitted: false
-      }
+        omitted: false,
+      },
     ],
     sys: {
       space: { sys: { type: 'Link', linkType: 'Space', id: 'vu21149elxz0' } },
@@ -141,10 +141,10 @@ describe('app/ContentList/Search/State', () => {
       type: 'ContentType',
       createdAt: '2017-10-02T14:42:27.622Z',
       updatedAt: '2017-10-02T14:42:27.622Z',
-      revision: 1
+      revision: 1,
     },
     displayField: 'Xv1N07BWAN4AV6a0',
-    description: null
+    description: null,
   };
 
   const contentTypes = [
@@ -161,7 +161,7 @@ describe('app/ContentList/Search/State', () => {
           required: true,
           validations: [],
           disabled: false,
-          omitted: false
+          omitted: false,
         },
         {
           id: 'YoDVkgPLav8j2lxe',
@@ -172,7 +172,7 @@ describe('app/ContentList/Search/State', () => {
           required: false,
           validations: [],
           disabled: false,
-          omitted: false
+          omitted: false,
         },
         {
           id: 'h9h35iwlfZ37pypH',
@@ -183,7 +183,7 @@ describe('app/ContentList/Search/State', () => {
           required: false,
           validations: [],
           disabled: false,
-          omitted: false
+          omitted: false,
         },
         {
           id: 'YBfvVmBiMXojmOxJ',
@@ -194,7 +194,7 @@ describe('app/ContentList/Search/State', () => {
           required: false,
           validations: [],
           disabled: false,
-          omitted: false
+          omitted: false,
         },
         {
           id: 'i6AO36v6QWmoMBhJ',
@@ -206,7 +206,7 @@ describe('app/ContentList/Search/State', () => {
           validations: [],
           disabled: false,
           omitted: false,
-          items: { type: 'Link', validations: [], linkType: 'Asset' }
+          items: { type: 'Link', validations: [], linkType: 'Asset' },
         },
         {
           id: 'AyccV8QAbHXGMl8q',
@@ -218,7 +218,7 @@ describe('app/ContentList/Search/State', () => {
           validations: [],
           disabled: false,
           omitted: false,
-          items: { type: 'Symbol', validations: [] }
+          items: { type: 'Symbol', validations: [] },
         },
         {
           id: 'pqEIHYg8Z8BigiXn',
@@ -233,8 +233,8 @@ describe('app/ContentList/Search/State', () => {
           items: {
             type: 'Link',
             validations: [{ linkContentType: ['6XwpTaSiiI2Ak2Ww0oi6qa'] }],
-            linkType: 'Entry'
-          }
+            linkType: 'Entry',
+          },
         },
         {
           id: 'MwJNvWBy68pHGMKB',
@@ -245,7 +245,7 @@ describe('app/ContentList/Search/State', () => {
           required: false,
           validations: [],
           disabled: false,
-          omitted: false
+          omitted: false,
         },
         {
           id: 'BwDj6OJm1L11Ponh',
@@ -257,7 +257,7 @@ describe('app/ContentList/Search/State', () => {
           validations: [{ linkContentType: ['sFzTZbSuM8coEwygeUYes'] }],
           disabled: false,
           omitted: false,
-          linkType: 'Entry'
+          linkType: 'Entry',
         },
         {
           id: 'BjaWGW0bhdGzh53J',
@@ -268,7 +268,7 @@ describe('app/ContentList/Search/State', () => {
           required: false,
           validations: [],
           disabled: false,
-          omitted: false
+          omitted: false,
         },
         {
           id: 'NxPdzDlK7fbpkMbb',
@@ -279,7 +279,7 @@ describe('app/ContentList/Search/State', () => {
           required: false,
           validations: [],
           disabled: false,
-          omitted: false
+          omitted: false,
         },
         {
           id: 'XB7W4OnWMnNjN3MK',
@@ -293,12 +293,12 @@ describe('app/ContentList/Search/State', () => {
               regexp: {
                 pattern:
                   '\\b((?:[a-z][\\w-]+:(?:\\/{1,3}|[a-z0-9%])|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}\\/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:\'".,<>?«»“”‘’]))',
-                flags: 'i'
-              }
-            }
+                flags: 'i',
+              },
+            },
           ],
           disabled: false,
-          omitted: false
+          omitted: false,
         },
         {
           id: 'LipWIjzMnA2y0nxo',
@@ -313,12 +313,12 @@ describe('app/ContentList/Search/State', () => {
                 after: null,
                 before: null,
                 min: '2017-10-14',
-                max: '2017-10-17'
-              }
-            }
+                max: '2017-10-17',
+              },
+            },
           ],
           disabled: false,
-          omitted: false
+          omitted: false,
         },
         {
           id: 'IlFE6gGqjBc1KpAO',
@@ -329,7 +329,7 @@ describe('app/ContentList/Search/State', () => {
           required: false,
           validations: [],
           disabled: false,
-          omitted: false
+          omitted: false,
         },
         {
           id: 'pQGOc1MOV0CyEDxz',
@@ -340,8 +340,8 @@ describe('app/ContentList/Search/State', () => {
           required: false,
           validations: [],
           disabled: false,
-          omitted: false
-        }
+          omitted: false,
+        },
       ],
       sys: {
         space: { sys: { type: 'Link', linkType: 'Space', id: 'vu21149elxz0' } },
@@ -349,11 +349,11 @@ describe('app/ContentList/Search/State', () => {
         type: 'ContentType',
         createdAt: '2017-10-02T14:42:27.614Z',
         updatedAt: '2017-11-17T08:40:21.062Z',
-        revision: 12
+        revision: 12,
       },
       displayField: 'cHEJOi10pQAl2kxc',
-      description: null
-    }
+      description: null,
+    },
   ];
 
   beforeEach(() => {
@@ -362,7 +362,7 @@ describe('app/ContentList/Search/State', () => {
       searchFilters: [],
       searchText: '',
       contentTypes: contentTypes,
-      withAssets: false
+      withAssets: false,
     });
 
     const reduce = State.makeReducer(_.noop, _.noop);
@@ -384,7 +384,7 @@ describe('app/ContentList/Search/State', () => {
       actions.ShowSuggestions();
       K.assertCurrentValue(store.state$, {
         ...getInitialState(contentTypes),
-        isSuggestionOpen: true
+        isSuggestionOpen: true,
       });
     });
   });
@@ -399,16 +399,16 @@ describe('app/ContentList/Search/State', () => {
       const payload = {
         queryKey: filter.queryKey,
         contentType: {
-          id: contentTypeId
+          id: contentTypeId,
         },
-        operators: filter.operators
+        operators: filter.operators,
       };
 
       const expected = {
         ...getInitialState(contentTypes),
         contentTypeId: contentTypeId,
         filters: [buildFilter(filter)],
-        focus: getFocusForValue(0)
+        focus: getFocusForValue(0),
       };
 
       performAction(payload, expected);
@@ -441,16 +441,16 @@ describe('app/ContentList/Search/State', () => {
       const payload = {
         queryKey: filter.queryKey,
         contentType: {
-          id: contentTypeId
+          id: contentTypeId,
         },
-        operators: filter.operators
+        operators: filter.operators,
       };
 
       const expected = {
         ...getInitialState(contentTypes),
         contentTypeId: contentTypeId,
         filters: [buildFilter(filter)],
-        focus: getFocusForValue(0)
+        focus: getFocusForValue(0),
       };
 
       performAction(payload, expected);
@@ -472,9 +472,9 @@ function getInitialState(contentTypes) {
       index: null,
       isValueFocused: false,
       isQueryInputFocused: false,
-      suggestionsFocusIndex: null
+      suggestionsFocusIndex: null,
     },
-    withAssets: false
+    withAssets: false,
   };
 }
 
@@ -483,7 +483,7 @@ function getFocusForValue(index) {
     index,
     isValueFocused: true,
     isQueryInputFocused: false,
-    suggestionsFocusIndex: null
+    suggestionsFocusIndex: null,
   };
 }
 

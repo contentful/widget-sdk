@@ -10,7 +10,7 @@ import { getContentPreview } from 'services/contentPreview';
 
 const getEmptyContentPreview = () => ({
   compiledUrl: '',
-  name: ''
+  name: '',
 });
 
 export class SidebarContentPreviewContainer extends Component {
@@ -20,15 +20,15 @@ export class SidebarContentPreviewContainer extends Component {
     dataForTracking: PropTypes.shape({
       locales: PropTypes.arrayOf(PropTypes.object).isRequired,
       fromState: PropTypes.string,
-      entryId: PropTypes.string
-    }).isRequired
+      entryId: PropTypes.string,
+    }).isRequired,
   };
 
   state = {
     isInitialized: false,
     isPreviewSetup: false,
     selectedContentPreview: getEmptyContentPreview(),
-    contentPreviews: []
+    contentPreviews: [],
   };
 
   componentDidMount = async () => {
@@ -37,21 +37,21 @@ export class SidebarContentPreviewContainer extends Component {
     // TODO: refactor to use just API objects
     const contentPreviews = await getContentPreview()
       .getForContentType(this.props.contentType.sys.id)
-      .then(previews => previews || []);
+      .then((previews) => previews || []);
     const selectedContentPreview = this.getSelectedContentPreview(contentPreviews);
 
     this.setState({
       isInitialized: true,
       isPreviewSetup: contentPreviews.length > 0,
       contentPreviews,
-      selectedContentPreview
+      selectedContentPreview,
     });
   };
 
-  getSelectedContentPreview = contentPreviews => {
+  getSelectedContentPreview = (contentPreviews) => {
     const selectedContentPreviewId = getContentPreview().getSelected();
     return (
-      contentPreviews.find(preview => preview.envId === selectedContentPreviewId) ||
+      contentPreviews.find((preview) => preview.envId === selectedContentPreviewId) ||
       contentPreviews[0] ||
       getEmptyContentPreview()
     );
@@ -67,7 +67,7 @@ export class SidebarContentPreviewContainer extends Component {
 
     return {
       ...selectedContentPreview,
-      compiledUrl
+      compiledUrl,
     };
   };
 
@@ -84,7 +84,7 @@ export class SidebarContentPreviewContainer extends Component {
     const contentTypeId = selectedContentPreview.contentType;
     const contentTypeName = get(contentType, 'name', '<UNPUBLISHED CONTENT TYPE>');
     const toState = previewUrl.compiledUrl.replace(/\?.*$/, '');
-    const richTextFields = contentType.fields.filter(field => field.type === 'RichText');
+    const richTextFields = contentType.fields.filter((field) => field.type === 'RichText');
 
     const eventOptions = {};
     if (richTextFields.length) {
@@ -94,7 +94,7 @@ export class SidebarContentPreviewContainer extends Component {
         fields: richTextFields,
         locales: dataForTracking.locales,
         contentTypeId,
-        entryId: dataForTracking.entryId
+        entryId: dataForTracking.entryId,
       };
     }
 
@@ -107,13 +107,13 @@ export class SidebarContentPreviewContainer extends Component {
         previewName: selectedContentPreview.name,
         previewId: selectedContentPreview.envId,
         contentTypeName,
-        contentTypeId
+        contentTypeId,
       },
-      ...eventOptions
+      ...eventOptions,
     });
   };
 
-  onChangeContentPreview = preview => {
+  onChangeContentPreview = (preview) => {
     getContentPreview().setSelected(preview);
     this.setState({ selectedContentPreview: preview });
   };

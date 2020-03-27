@@ -26,7 +26,7 @@ const ExploreScreen = () => {
         intercomKey="onboardingExploreCompleted"
         trackingElementId="explore_screen_completed"
         link="deploy">
-        {move => (
+        {(move) => (
           <Button
             onClick={move}
             className="modern-stack-onboarding--next-button"

@@ -3,13 +3,13 @@ import tokens from '@contentful/forma-36-tokens';
 
 const styles = {
   timePicker: css({
-    display: 'block'
+    display: 'block',
   }),
   selectedTime: css({
-    background: tokens.colorElementLightest
+    background: tokens.colorElementLightest,
   }),
   dropdown: css({
-    width: '100%'
+    width: '100%',
   }),
   dropdownContainer: css({
     zIndex: 1001,
@@ -18,22 +18,22 @@ const styles = {
       width: '100%',
       button: {
         width: '100%',
-        textAlign: 'center'
-      }
-    }
+        textAlign: 'center',
+      },
+    },
   }),
   inputWrapper: css({
     display: 'flex',
     marginBottom: tokens.spacingXs,
     'div:not(:last-child)': {
-      marginRight: tokens.spacingXs
-    }
+      marginRight: tokens.spacingXs,
+    },
   }),
   daytimeSelect: css({
     flexBasis: '100%',
     '> select': {
-      paddingRight: '2rem'
-    }
+      paddingRight: '2rem',
+    },
   }),
   timeInput: css({
     width: '100%',
@@ -52,14 +52,14 @@ const styles = {
     MozAppearance: 'textfield',
     '&::-webkit-inner-spin-button, &::-webkit-outer-spin-button': {
       WebkitAppearance: 'none',
-      margin: 0
+      margin: 0,
     },
     '&:focus': {
       outline: 'none',
       border: `1px solid ${tokens.colorPrimary}`,
-      boxShadow: tokens.glowPrimary
-    }
-  })
+      boxShadow: tokens.glowPrimary,
+    },
+  }),
 };
 
 export default styles;

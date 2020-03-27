@@ -6,7 +6,7 @@ import {
   Modal,
   FormLabel,
   Notification,
-  Note
+  Note,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -21,8 +21,8 @@ import { createImmerReducer } from 'redux/utils/createImmerReducer';
 
 const styles = {
   errorMessage: css({
-    marginBottom: tokens.spacingM
-  })
+    marginBottom: tokens.spacingM,
+  }),
 };
 
 const reducer = createImmerReducer({
@@ -33,12 +33,12 @@ const reducer = createImmerReducer({
   VALIDATION_STATUS_CHANGED: (state, action) => {
     state.isInvalid = action.payload;
   },
-  FORM_SUBMITTED: state => {
+  FORM_SUBMITTED: (state) => {
     state.isSubmitted = true;
   },
-  REQUEST_SENT: state => {
+  REQUEST_SENT: (state) => {
     state.inProgress = true;
-  }
+  },
 });
 
 export default function AddToSpacesModal({
@@ -47,20 +47,20 @@ export default function AddToSpacesModal({
   currentSpaces,
   isShown,
   onClose,
-  onAddedToSpaces
+  onAddedToSpaces,
 }) {
   const [{ spaceMemberships, isSubmitted, isInvalid, inProgress }, dispatch] = useReducer(reducer, {
     spaceMemberships: [],
     isSubmitted: false,
     isInvalid: false,
-    inProgress: false
+    inProgress: false,
   });
-  const handleChange = useCallback(data => {
+  const handleChange = useCallback((data) => {
     dispatch({ type: 'SPACE_MEMBERSHIPS_CHANGED', payload: data });
   }, []);
 
   const handleSubmit = async () => {
-    const isMissingRoles = spaceMemberships.some(membership => membership.roles.length === 0);
+    const isMissingRoles = spaceMemberships.some((membership) => membership.roles.length === 0);
     dispatch({ type: 'FORM_SUBMITTED' });
     dispatch({ type: 'VALIDATION_MESSAGE_CHANGED', payload: isMissingRoles });
 
@@ -139,11 +139,11 @@ AddToSpacesModal.propTypes = {
   currentSpaces: PropTypes.arrayOf(Space).isRequired,
   isShown: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  onAddedToSpaces: PropTypes.func.isRequired
+  onAddedToSpaces: PropTypes.func.isRequired,
 };
 
 function buildSuccessMessage(user, spaces) {
-  const spaceNames = spaces.map(space => space.name);
+  const spaceNames = spaces.map((space) => space.name);
   const userName = getFullNameOrEmail(user);
   return `You've added ${userName} to ${joinAndTruncate(spaceNames, 2, 'spaces')}.`;
 }

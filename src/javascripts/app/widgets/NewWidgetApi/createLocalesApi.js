@@ -3,7 +3,7 @@ import { isRtlLocale } from 'utils/locales';
 
 export function getLocalesObject({ availableLocales, defaultLocale }) {
   return {
-    available: availableLocales.map(locale => locale.code),
+    available: availableLocales.map((locale) => locale.code),
     default: defaultLocale.code,
     fallbacks: availableLocales.reduce((acc, locale) => {
       return { ...acc, [locale.code]: locale.fallbackCode || undefined };
@@ -16,7 +16,7 @@ export function getLocalesObject({ availableLocales, defaultLocale }) {
     }, {}),
     direction: availableLocales.reduce((acc, locale) => {
       return { ...acc, [locale.code]: isRtlLocale(locale.code) ? 'rtl' : 'ltr' };
-    }, {})
+    }, {}),
   };
 }
 
@@ -31,6 +31,6 @@ export function getLocalesObject({ availableLocales, defaultLocale }) {
 export function createLocalesApi() {
   return getLocalesObject({
     availableLocales: TheLocaleStore.getPrivateLocales(),
-    defaultLocale: TheLocaleStore.getDefaultLocale()
+    defaultLocale: TheLocaleStore.getDefaultLocale(),
   });
 }

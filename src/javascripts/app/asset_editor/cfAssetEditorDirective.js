@@ -10,15 +10,15 @@ export default function register() {
 
       scope: {
         editorData: '<',
-        preferences: '<'
+        preferences: '<',
       },
 
       template: assetEditorTemplate,
 
       controller: [
         '$scope',
-        $scope => createEditorController($scope, $scope.editorData, $scope.preferences)
-      ]
-    })
+        ($scope) => createEditorController($scope, $scope.editorData, $scope.preferences),
+      ],
+    }),
   ]);
 }

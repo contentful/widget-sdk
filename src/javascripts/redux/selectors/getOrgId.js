@@ -4,7 +4,7 @@ import ROUTES from '../routes';
 import getSpacesByOrgId from './getSpacesByOrgId';
 
 // get's the id of the current org, set via url param or indirectly via space id in url and token
-export default state => {
+export default (state) => {
   const path = getPath(state);
   // location was not added to redux state yet
   if (!path) {

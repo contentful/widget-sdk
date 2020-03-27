@@ -7,25 +7,25 @@ import DeployScreen from 'components/shared/stack-onboarding/screens/DeployScree
 const getStarted = {
   name: 'getStarted',
   url: '/get-started',
-  component: GetStartedScreen
+  component: GetStartedScreen,
 };
 
 const copyRepo = {
   name: 'copy',
   url: '/copy',
-  component: CopyScreen
+  component: CopyScreen,
 };
 
 const explore = {
   name: 'explore',
   url: '/explore',
-  component: ExploreScreen
+  component: ExploreScreen,
 };
 
 const deploy = {
   name: 'deploy',
   url: '/deploy',
-  component: DeployScreen
+  component: DeployScreen,
 };
 
 export default {
@@ -35,7 +35,7 @@ export default {
   onEnter: [
     '$state',
     'spaceContext',
-    function($state, spaceContext) {
+    function ($state, spaceContext) {
       const spaceId = spaceContext.space && spaceContext.space.getId();
 
       // The onboarding steps are accessible only when
@@ -43,7 +43,7 @@ export default {
       if (!checkSpace(spaceId)) {
         $state.go('spaces.detail.home', { spaceId });
       }
-    }
+    },
   ],
-  children: [getStarted, copyRepo, explore, deploy]
+  children: [getStarted, copyRepo, explore, deploy],
 };

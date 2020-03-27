@@ -56,7 +56,7 @@ export const ResourceUsage = ({ resource, description, abbreviateLimit }) => {
 ResourceUsage.propTypes = {
   resource: PropTypes.object.isRequired,
   description: PropTypes.string,
-  abbreviateLimit: PropTypes.bool
+  abbreviateLimit: PropTypes.bool,
 };
 
 export const ResourceUsageHighlight = ({ resource, showMaximumLimit }) => {
@@ -74,9 +74,9 @@ export const ResourceUsageHighlight = ({ resource, showMaximumLimit }) => {
 
 ResourceUsageHighlight.propTypes = {
   resource: PropTypes.object.isRequired,
-  showMaximumLimit: PropTypes.bool
+  showMaximumLimit: PropTypes.bool,
 };
 
 ResourceUsageHighlight.defaultProps = {
-  showMaximumLimit: false
+  showMaximumLimit: false,
 };

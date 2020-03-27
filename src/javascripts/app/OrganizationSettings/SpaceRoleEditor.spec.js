@@ -11,20 +11,20 @@ describe('SpaceRoleEditor', () => {
   const roleOptions = [
     {
       name: 'Police officer',
-      sys: { id: 'police' }
+      sys: { id: 'police' },
     },
     {
       name: 'Thief',
-      sys: { id: 'thief' }
-    }
+      sys: { id: 'thief' },
+    },
   ];
 
-  const render = props => {
+  const render = (props) => {
     changeCb = jest.fn();
     const defaultProps = {
       options: roleOptions,
       value: [],
-      onChange: changeCb
+      onChange: changeCb,
     };
 
     return mount(<SpaceRoleEditor {...Object.assign(defaultProps, props)} />);

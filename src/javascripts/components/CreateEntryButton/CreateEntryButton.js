@@ -7,8 +7,8 @@ import { CreateEntryMenuTrigger } from '@contentful/field-editor-reference';
 
 const styles = {
   createEntryButton: css({
-    verticalAlign: 'top'
-  })
+    verticalAlign: 'top',
+  }),
 };
 
 const CreateEntryButton = ({
@@ -17,9 +17,9 @@ const CreateEntryButton = ({
   text,
   testId,
   suggestedContentTypeId,
-  disabled
+  disabled,
 }) => {
-  const suggestedContentType = contentTypes.find(ct => ct.sys.id === suggestedContentTypeId);
+  const suggestedContentType = contentTypes.find((ct) => ct.sys.id === suggestedContentTypeId);
   const buttonText =
     text ||
     `Add ${get(
@@ -35,7 +35,7 @@ const CreateEntryButton = ({
       testId={testId}
       dropdownSettings={{
         isAutoalignmentEnabled: true,
-        position: 'bottom-left'
+        position: 'bottom-left',
       }}>
       {({ openMenu }) => (
         <Button
@@ -59,11 +59,11 @@ CreateEntryButton.propTypes = {
   onSelect: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
   text: PropTypes.string,
-  testId: PropTypes.string
+  testId: PropTypes.string,
 };
 
 CreateEntryButton.defaultProps = {
-  disabled: false
+  disabled: false,
 };
 
 export default CreateEntryButton;

@@ -6,13 +6,13 @@ import {
   Dropdown,
   DropdownList,
   DropdownListItem,
-  TextLink
+  TextLink,
 } from '@contentful/forma-36-react-components';
 
 const styles = {
   dropdownContainer: css({
-    width: '150px'
-  })
+    width: '150px',
+  }),
 };
 
 export default function ContentTypePageActions(props) {
@@ -98,5 +98,5 @@ ContentTypePageActions.propTypes = {
   save: PropTypes.object.isRequired,
   delete: PropTypes.object.isRequired,
   cancel: PropTypes.object.isRequired,
-  duplicate: PropTypes.object.isRequired
+  duplicate: PropTypes.object.isRequired,
 };

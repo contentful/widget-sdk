@@ -16,7 +16,7 @@ export function FileEditorUploader(props) {
       dropPaneRef.current.id = id;
       Filestack.makeDropPane({
         id,
-        onSuccess
+        onSuccess,
       });
     }
   }, [disabled]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -49,5 +49,5 @@ export function FileEditorUploader(props) {
 
 FileEditorUploader.propTypes = {
   onSuccess: PropTypes.func.isRequired,
-  disabled: PropTypes.bool.isRequired
+  disabled: PropTypes.bool.isRequired,
 };

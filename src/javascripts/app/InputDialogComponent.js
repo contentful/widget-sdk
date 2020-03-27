@@ -4,7 +4,7 @@ import {
   ModalConfirm,
   TextInput,
   Paragraph,
-  Typography
+  Typography,
 } from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';
 
@@ -14,7 +14,7 @@ export function openInputDialog(params, initialValue = '') {
       isShown={isShown}
       params={params}
       initialValue={initialValue}
-      onConfirm={value => {
+      onConfirm={(value) => {
         const trimmedValue = String(value).trim();
         if (trimmedValue) {
           onClose(trimmedValue);
@@ -58,7 +58,7 @@ export default function InputDialog(props) {
         ref={inputRef}
         maxLength={props.params.maxLength ? props.params.maxLength : 255}
         value={value}
-        onChange={e => setValue(e.target.value)}
+        onChange={(e) => setValue(e.target.value)}
       />
     </ModalConfirm>
   );
@@ -72,10 +72,10 @@ InputDialog.propTypes = {
     cancelLabel: PropTypes.string,
     intent: PropTypes.string,
     maxLength: PropTypes.number,
-    isValid: PropTypes.func.isRequired
+    isValid: PropTypes.func.isRequired,
   }).isRequired,
   isShown: PropTypes.bool.isRequired,
   onCancel: PropTypes.func.isRequired,
   initialValue: PropTypes.string.isRequired,
-  onConfirm: PropTypes.func.isRequired
+  onConfirm: PropTypes.func.isRequired,
 };

@@ -7,15 +7,15 @@ export default function withSingleLink(LinkEditor) {
   return class extends React.Component {
     static propTypes = {
       value: CfPropTypes.Link,
-      onChange: PropTypes.func
+      onChange: PropTypes.func,
     };
 
     static defaultProps = {
       onChange: noop,
-      single: false
+      single: false,
     };
 
-    handleChange = links => {
+    handleChange = (links) => {
       this.props.onChange(links[0] || undefined);
     };
 

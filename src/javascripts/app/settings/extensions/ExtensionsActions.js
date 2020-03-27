@@ -5,7 +5,7 @@ import {
   Button,
   DropdownList,
   DropdownListItem,
-  Notification
+  Notification,
 } from '@contentful/forma-36-react-components';
 import GitHubInstallerModal from './dialogs/GitHubInstallerModal';
 import { toInternalFieldType } from 'widgets/FieldTypes';
@@ -23,7 +23,7 @@ function install({ extension, type, url }) {
 
   return spaceContext.cma
     .createExtension({ extension })
-    .then(res => {
+    .then((res) => {
       const extensionId = res.sys.id;
       getCustomWidgetLoader().evict([NAMESPACE_EXTENSION, extensionId]);
 
@@ -39,11 +39,11 @@ function install({ extension, type, url }) {
           name: extension.name,
           src: extension.src,
           fieldTypes: toInternalFieldType(extension.fieldTypes),
-          ...getExtensionParameterIds(extension)
+          ...getExtensionParameterIds(extension),
         });
       }
     })
-    .catch(err => handleInstallError(err));
+    .catch((err) => handleInstallError(err));
 }
 
 function handleInstallError(err) {
@@ -62,10 +62,10 @@ export const openGitHubInstaller = async (extensionUrl = null, extensionUrlRefer
     <GitHubInstallerModal
       isShown={isShown}
       extensionUrl={extensionUrl || ''}
-      onConfirm={data => {
+      onConfirm={(data) => {
         onClose({ data });
       }}
-      onCancel={err => {
+      onCancel={(err) => {
         onClose({ err: err instanceof Error ? err : { cancelled: true } });
       }}
     />
@@ -91,15 +91,15 @@ export function createExtension() {
           'window.contentfulExtension.init(function(api) {',
           '  console.log(api.field.getValue());',
           '});',
-          '</script>'
-        ].join('\n') + '\n'
-    }
+          '</script>',
+        ].join('\n') + '\n',
+    },
   });
 }
 
 export default class ExtensionsActions extends React.Component {
   state = {
-    isOpen: false
+    isOpen: false,
   };
 
   close = () => {
@@ -107,8 +107,8 @@ export default class ExtensionsActions extends React.Component {
   };
 
   toggle = () => {
-    this.setState(state => ({
-      isOpen: !state.isOpen
+    this.setState((state) => ({
+      isOpen: !state.isOpen,
     }));
   };
 

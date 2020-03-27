@@ -22,13 +22,13 @@ export async function getTemplatesList() {
   }
 
   const templates = await client.entries({
-    content_type: contentfulConfig.spaceTemplateEntryContentTypeId
+    content_type: contentfulConfig.spaceTemplateEntryContentTypeId,
   });
 
   // each template has a order field that determines its place
   // in the list when shown in the space creation wizard.
   // Here we sort by it.
-  const orderedTemplates = _.sortBy(templates, template =>
+  const orderedTemplates = _.sortBy(templates, (template) =>
     _.isFinite(template.fields.order) ? template.fields.order : 99
   );
 
@@ -51,7 +51,7 @@ function getSpaceClient(templateInfo) {
   spaceClients[spaceId] = newContentfulClient({
     host: contentfulConfig.cdaApiUrl,
     space: spaceId,
-    accessToken: templateInfo.spaceApiKey
+    accessToken: templateInfo.spaceApiKey,
   });
   return spaceClients[spaceId];
 }
@@ -62,13 +62,13 @@ export function getClientParams({
   accessToken,
   previewAccessToken,
   cdaApiUrl,
-  previewApiUrl
+  previewApiUrl,
 }) {
   const isProduction = env === 'production';
   const params = {
     space,
     accessToken: isProduction ? accessToken : previewAccessToken,
-    host: isProduction ? cdaApiUrl : previewApiUrl
+    host: isProduction ? cdaApiUrl : previewApiUrl,
   };
   return params;
 }
@@ -82,7 +82,7 @@ function getSpaceContents(spaceClient) {
     spaceClient.assets({ locale: '*' }),
     // we need to fetch space for list of locales
     // so we can copy content in all corresponding locales
-    spaceClient.space()
+    spaceClient.space(),
   ]).then(([contentTypes, entries, assets, space]) => ({ contentTypes, entries, assets, space }));
 }
 
@@ -91,32 +91,32 @@ function parseSpaceContents(contents) {
     contentTypes: parseContentTypes(contents.contentTypes),
     entries: sortEntries(parseEntries(contents.entries)),
     assets: parseAssets(contents.assets),
-    space: contents.space
+    space: contents.space,
   };
 }
 
 function parseContentTypes(contentTypes) {
-  return _.map(contentTypes, contentType => ({
+  return _.map(contentTypes, (contentType) => ({
     name: contentType.name,
     displayField: contentType.displayField,
     sys: { id: _.get(contentType, 'sys.id') },
-    fields: contentType.fields
+    fields: contentType.fields,
   }));
 }
 
 function sortEntries(entries) {
   const linkedEntries = getLinkedEntries(entries);
 
-  linkedEntries.sort(entry => {
+  linkedEntries.sort((entry) => {
     const hli = hasLinkedIndexesInFront(entry);
     return hli ? -1 : 1;
   });
 
-  return linkedEntries.map(linkInfo => entries[linkInfo.index]);
+  return linkedEntries.map((linkInfo) => entries[linkInfo.index]);
 
   function hasLinkedIndexesInFront(item) {
     if (hasLinkedIndexes(item)) {
-      return item.linkIndexes.some(index => index > item.index);
+      return item.linkIndexes.some((index) => index > item.index);
     }
   }
 
@@ -126,50 +126,50 @@ function sortEntries(entries) {
 }
 
 function getLinkedEntries(entries) {
-  return entries.map(entry => {
+  return entries.map((entry) => {
     const entryIndex = entries.indexOf(entry);
-    const rawLinks = Object.keys(entry.fields).map(fieldId => {
+    const rawLinks = Object.keys(entry.fields).map((fieldId) => {
       const rawField = entry.fields[fieldId];
       const field = _.values(rawField)[0];
       if (isEntryLink(field)) {
         return getFieldEntriesIndex(field, entries);
       } else if (isEntityArray(field) && isEntryLink(field[0])) {
-        return field.map(item => getFieldEntriesIndex(item, entries));
+        return field.map((item) => getFieldEntriesIndex(item, entries));
       }
     });
 
-    const links = _.flatten(rawLinks).filter(index => index >= 0);
+    const links = _.flatten(rawLinks).filter((index) => index >= 0);
 
     return {
       index: entryIndex,
-      linkIndexes: links
+      linkIndexes: links,
     };
   });
 }
 
 function getFieldEntriesIndex(field, entries) {
   const id = _.get(field, 'sys.id');
-  return entries.findIndex(entry => entry.sys.id === id);
+  return entries.findIndex((entry) => entry.sys.id === id);
 }
 
 function parseEntries(entries) {
-  return entries.map(entry => ({
+  return entries.map((entry) => ({
     sys: {
       id: _.get(entry, 'sys.id'),
       contentType: {
         sys: {
-          id: _.get(entry, 'sys.contentType.sys.id')
-        }
-      }
+          id: _.get(entry, 'sys.contentType.sys.id'),
+        },
+      },
     },
 
-    fields: parseEntryFields(entry.fields)
+    fields: parseEntryFields(entry.fields),
   }));
 }
 
 function parseEntryFields(fields) {
-  return _.mapValues(fields, field =>
-    _.mapValues(field, localizedField => {
+  return _.mapValues(fields, (field) =>
+    _.mapValues(field, (localizedField) => {
       if (isEntryLink(localizedField)) {
         return parseEntryLink(localizedField);
       }
@@ -198,8 +198,8 @@ function parseEntryLink(field) {
     sys: {
       id: _.get(field, 'sys.id'),
       type: 'Link',
-      linkType: _.get(field, 'sys.type')
-    }
+      linkType: _.get(field, 'sys.type'),
+    },
   };
 }
 
@@ -208,27 +208,27 @@ function parseAssetLink(field) {
     sys: {
       id: _.get(field, 'sys.id'),
       type: 'Link',
-      linkType: _.get(field, 'sys.type')
-    }
+      linkType: _.get(field, 'sys.type'),
+    },
   };
 }
 
 function parseAssets(assets) {
-  return assets.map(asset => ({
+  return assets.map((asset) => ({
     sys: { id: _.get(asset, 'sys.id') },
-    fields: parseAssetFields(asset.fields)
+    fields: parseAssetFields(asset.fields),
   }));
 }
 
 function parseAssetFields(fields) {
   return _.mapValues(fields, (field, fieldName) =>
-    _.mapValues(field, localizedField => {
+    _.mapValues(field, (localizedField) => {
       try {
         if (fieldName === 'file') {
           return {
             fileName: localizedField.fileName,
             contentType: localizedField.contentType,
-            upload: 'http:' + localizedField.url
+            upload: 'http:' + localizedField.url,
           };
         }
       } catch (exp) {
@@ -237,8 +237,8 @@ function parseAssetFields(fields) {
             exp,
             localizedField,
             field,
-            fieldName
-          }
+            fieldName,
+          },
         });
       }
       return localizedField;
@@ -248,9 +248,9 @@ function parseAssetFields(fields) {
 
 function createApiKeyObjects(templateInfo) {
   return function appendApiKeyObjects(contents) {
-    contents.apiKeys = (templateInfo.templateDeliveryApiKeys || []).map(apiKey => ({
+    contents.apiKeys = (templateInfo.templateDeliveryApiKeys || []).map((apiKey) => ({
       name: apiKey.fields.name,
-      description: apiKey.fields.description
+      description: apiKey.fields.description,
     }));
     return contents;
   };

@@ -10,7 +10,7 @@ export default async function fetchUnpublishedReferences({
   entry,
   contentTypes,
   spaceId,
-  environmentId
+  environmentId,
 }) {
   const contentType = getContentType(contentTypes, entry);
   const fieldIdLocaleRefMap = getAllRefs(entry, contentType);
@@ -27,26 +27,26 @@ export default async function fetchUnpublishedReferences({
     fieldIdLocaleRefMap,
     entries: unpublishedEntries,
     assets: unpublishedAssets,
-    contentType
+    contentType,
   });
 
   return fieldIdLocaleUnbpubRefMap;
 }
 
 function getUnpublished(entries) {
-  return entries.filter(entity => !entity.sys.publishedVersion);
+  return entries.filter((entity) => !entity.sys.publishedVersion);
 }
 
 function getContentType(contentTypes, entry) {
-  return contentTypes.find(ct => ct.sys.id === entry.sys.contentType.sys.id);
+  return contentTypes.find((ct) => ct.sys.id === entry.sys.contentType.sys.id);
 }
 
 function extractRefsOfType(fieldIdLocaleRefMap, entityType) {
   return _(fieldIdLocaleRefMap)
     .chain()
     .values()
-    .flatMap(fieldLocale => Object.values(fieldLocale))
-    .flatMap(localizedRefs => localizedRefs[entityType])
+    .flatMap((fieldLocale) => Object.values(fieldLocale))
+    .flatMap((localizedRefs) => localizedRefs[entityType])
     .value();
 }
 
@@ -62,8 +62,8 @@ function mapUnpublishedRefs({ fieldIdLocaleRefMap, entries, assets, contentType 
     .toPairs()
     .reduce((acc, [fieldId, localeFieldValues]) => {
       _.forEach(localeFieldValues, ({ Entry, Asset }, localeId) => {
-        const fieldUnpublishedEntries = entries.filter(e => Entry.includes(e.sys.id));
-        const fieldUnpublishedAssets = assets.filter(a => Asset.includes(a.sys.id));
+        const fieldUnpublishedEntries = entries.filter((e) => Entry.includes(e.sys.id));
+        const fieldUnpublishedAssets = assets.filter((a) => Asset.includes(a.sys.id));
 
         const fieldUnpublishedRefs = [...fieldUnpublishedEntries, ...fieldUnpublishedAssets];
 
@@ -76,10 +76,10 @@ function mapUnpublishedRefs({ fieldIdLocaleRefMap, entries, assets, contentType 
     .map(([fieldId, fieldLocale, references]) => {
       return {
         field: {
-          name: contentType.fields.find(f => f.id === fieldId).name,
-          internalLocaleCode: fieldLocale
+          name: contentType.fields.find((f) => f.id === fieldId).name,
+          internalLocaleCode: fieldLocale,
         },
-        references
+        references,
       };
     })
     .value();
@@ -91,19 +91,19 @@ function getAllRefs(entry, contentType) {
     const entryField = entry.fields[fieldInfo.id]; // {en-US, cn:ZH}
 
     if (fieldInfo.type === 'RichText') {
-      acc[fieldInfo.id] = _.mapValues(entryField, fieldValue =>
+      acc[fieldInfo.id] = _.mapValues(entryField, (fieldValue) =>
         getLinkedEntityIdsFromRichText(fieldValue)
       );
       return acc;
     }
     if (fieldInfo.type === 'Link') {
-      acc[fieldInfo.id] = _.mapValues(entryField, fieldValue =>
+      acc[fieldInfo.id] = _.mapValues(entryField, (fieldValue) =>
         getLinkedEntityIdsFromLinks(fieldValue)
       );
       return acc;
     }
     if (fieldInfo.type === 'Array' && fieldInfo.items.type === 'Link') {
-      acc[fieldInfo.id] = _.mapValues(entryField, fieldValue =>
+      acc[fieldInfo.id] = _.mapValues(entryField, (fieldValue) =>
         getLinkedEntityIdsFromLinks(fieldValue)
       );
       return acc;
@@ -114,8 +114,8 @@ function getAllRefs(entry, contentType) {
 
 function getLinkedEntityIdsFromRichText(fieldValue) {
   const referenceMap = getRichTextEntityLinks(fieldValue);
-  const entryIds = referenceMap.Entry.map(e => e.id);
-  const assetIds = referenceMap.Asset.map(e => e.id);
+  const entryIds = referenceMap.Entry.map((e) => e.id);
+  const assetIds = referenceMap.Asset.map((e) => e.id);
   return { Entry: entryIds, Asset: assetIds };
 }
 
@@ -123,7 +123,7 @@ function getLinkedEntityIdsFromLinks(fieldValue) {
   const links = Array.isArray(fieldValue) ? fieldValue : [fieldValue].filter(Boolean);
   const entryIds = [];
   const assetIds = [];
-  links.forEach(link => {
+  links.forEach((link) => {
     const { id, linkType } = link.sys;
     if (linkType === 'Entry' && !entryIds.includes(id)) {
       entryIds.push(id);

@@ -33,5 +33,5 @@ export default function WebhookBasicAuth({ httpBasicUsername, onChange }) {
 
 WebhookBasicAuth.propTypes = {
   httpBasicUsername: PropTypes.string,
-  onChange: PropTypes.func.isRequired
+  onChange: PropTypes.func.isRequired,
 };

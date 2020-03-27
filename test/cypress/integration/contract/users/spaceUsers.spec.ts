@@ -6,7 +6,7 @@ const empty = require('../../../fixtures/responses/empty.json');
 const twoMembersBody = {
   total: 2,
   sys: {
-    type: 'Array'
+    type: 'Array',
   },
   items: [
     {
@@ -17,9 +17,9 @@ const twoMembersBody = {
           sys: {
             type: 'Link',
             linkType: 'SpaceMembership',
-            id: 'space_membership_1'
-          }
-        }
+            id: 'space_membership_1',
+          },
+        },
       ],
       sys: {
         type: 'SpaceMember',
@@ -27,16 +27,16 @@ const twoMembersBody = {
         space: {
           type: 'Link',
           linkType: 'Space',
-          id: defaultSpaceId
+          id: defaultSpaceId,
         },
         user: {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: 'user1'
-          }
-        }
-      }
+            id: 'user1',
+          },
+        },
+      },
     },
     {
       admin: false,
@@ -45,32 +45,32 @@ const twoMembersBody = {
           sys: {
             type: 'Link',
             linkType: 'Role',
-            id: 'role1'
-          }
+            id: 'role1',
+          },
         },
         {
           sys: {
             type: 'Link',
             linkType: 'Role',
-            id: 'role2'
-          }
-        }
+            id: 'role2',
+          },
+        },
       ],
       relatedMemberships: [
         {
           sys: {
             type: 'Link',
             linkType: 'SpaceMembership',
-            id: 'space_membership_2'
-          }
+            id: 'space_membership_2',
+          },
         },
         {
           sys: {
             type: 'Link',
             linkType: 'TeamSpaceMembership',
-            id: 'team_space_membership_1'
-          }
-        }
+            id: 'team_space_membership_1',
+          },
+        },
       ],
       sys: {
         type: 'SpaceMember',
@@ -78,18 +78,18 @@ const twoMembersBody = {
         space: {
           type: 'Link',
           linkType: 'Space',
-          id: defaultSpaceId
+          id: defaultSpaceId,
         },
         user: {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: 'user2'
-          }
-        }
-      }
-    }
-  ]
+            id: 'user2',
+          },
+        },
+      },
+    },
+  ],
 };
 
 const spaceUsers = [
@@ -97,29 +97,29 @@ const spaceUsers = [
     email: 'user1@mail.com',
     firstName: 'One',
     lastName: 'Eins',
-    sys: { id: 'user1' }
+    sys: { id: 'user1' },
   },
   {
     email: 'user2@mail.com',
     firstName: 'Two',
     lastName: 'Zwei',
-    sys: { id: 'user2' }
-  }
+    sys: { id: 'user2' },
+  },
 ];
 
 const roles = [
   {
     name: 'Role 1',
     sys: {
-      id: 'role1'
-    }
+      id: 'role1',
+    },
   },
   {
     name: 'Role 2',
     sys: {
-      id: 'role2'
-    }
-  }
+      id: 'role2',
+    },
+  },
 ];
 
 const spaceMemberships = [
@@ -127,16 +127,16 @@ const spaceMemberships = [
     sys: {
       id: 'space_membership_1',
       type: 'SpaceMembership',
-      version: 0
-    }
+      version: 0,
+    },
   },
   {
     sys: {
       id: 'space_membership_2',
       type: 'SpaceMembership',
-      version: 0
-    }
-  }
+      version: 0,
+    },
+  },
 ];
 
 const loadPageWithUserState = ({ stateName, responseBody, message }) => {
@@ -157,12 +157,12 @@ const loadPageWithUserState = ({ stateName, responseBody, message }) => {
       method: 'GET',
       path: `/spaces/${defaultSpaceId}/space_members`,
       query: { limit: '100', skip: '0' },
-      headers: defaultHeader
+      headers: defaultHeader,
     },
     willRespondWith: {
       status: 200,
-      body: responseBody
-    }
+      body: responseBody,
+    },
   }).as(getSpaceMembersInteraction);
   cy.addInteraction({
     provider: 'users',
@@ -172,18 +172,18 @@ const loadPageWithUserState = ({ stateName, responseBody, message }) => {
       method: 'GET',
       path: `/spaces/${defaultSpaceId}/space_memberships`,
       query: { limit: '100', skip: '0' },
-      headers: defaultHeader
+      headers: defaultHeader,
     },
     willRespondWith: {
       status: 200,
       body: {
         total: 2,
         sys: {
-          type: 'Array'
+          type: 'Array',
         },
-        items: spaceMemberships
-      }
-    }
+        items: spaceMemberships,
+      },
+    },
   }).as(getSpaceMembershipsInteraction);
   cy.addInteraction({
     provider: 'roles',
@@ -193,18 +193,18 @@ const loadPageWithUserState = ({ stateName, responseBody, message }) => {
       method: 'GET',
       path: `/spaces/${defaultSpaceId}/roles`,
       query: { limit: '100' },
-      headers: defaultHeader
+      headers: defaultHeader,
     },
     willRespondWith: {
       status: 200,
       body: {
         total: 2,
         sys: {
-          type: 'Array'
+          type: 'Array',
         },
-        items: roles
-      }
-    }
+        items: roles,
+      },
+    },
   }).as(getRolesInteraction);
   cy.addInteraction({
     provider: 'users',
@@ -214,18 +214,18 @@ const loadPageWithUserState = ({ stateName, responseBody, message }) => {
       method: 'GET',
       path: `/spaces/${defaultSpaceId}/users`,
       query: { limit: '100', skip: '0' },
-      headers: defaultHeader
+      headers: defaultHeader,
     },
     willRespondWith: {
       status: 200,
       body: {
         total: spaceUsers.length,
         sys: {
-          type: 'Array'
+          type: 'Array',
         },
-        items: spaceUsers
-      }
-    }
+        items: spaceUsers,
+      },
+    },
   }).as(getSpaceUsersInteraction);
 
   const interactions = [
@@ -233,7 +233,7 @@ const loadPageWithUserState = ({ stateName, responseBody, message }) => {
     `@${getSpaceMembersInteraction}`,
     `@${getSpaceMembershipsInteraction}`,
     `@${getRolesInteraction}`,
-    `@${getSpaceUsersInteraction}`
+    `@${getSpaceUsersInteraction}`,
   ];
 
   cy.visit(`/spaces/${defaultSpaceId}/settings/users`);
@@ -249,7 +249,7 @@ describe('Users in space page', () => {
       cors: true,
       pactfileWriteMode: 'merge',
       dir: Cypress.env('pactDir'),
-      spec: 2
+      spec: 2,
     });
   });
 
@@ -258,7 +258,7 @@ describe('Users in space page', () => {
       loadPageWithUserState({
         stateName: 'empty',
         message: 'request for members in space',
-        responseBody: empty
+        responseBody: empty,
       });
     });
 
@@ -273,7 +273,7 @@ describe('Users in space page', () => {
       loadPageWithUserState({
         stateName: '2_members',
         message: 'request for members in space',
-        responseBody: twoMembersBody
+        responseBody: twoMembersBody,
       });
     });
 
@@ -292,7 +292,7 @@ describe('Users in space page', () => {
       const roleLink = {
         type: 'Link',
         linkType: 'Role',
-        id: roles[0].sys.id
+        id: roles[0].sys.id,
       };
       cy.addInteraction({
         provider: 'users',
@@ -304,8 +304,8 @@ describe('Users in space page', () => {
           headers: defaultHeader,
           body: {
             admin: false,
-            roles: [roleLink]
-          }
+            roles: [roleLink],
+          },
         },
         willRespondWith: {
           status: 200,
@@ -314,10 +314,10 @@ describe('Users in space page', () => {
             roles: [roleLink],
             sys: {
               id: roleLink.id,
-              version: 1
-            }
-          }
-        }
+              version: 1,
+            },
+          },
+        },
       }).as(putRoleUpdate);
 
       cy.getByTestId('cf-ui-modal-confirm-confirm-button').click();
@@ -338,11 +338,11 @@ describe('Users in space page', () => {
         withRequest: {
           method: 'DELETE',
           path: `/spaces/${defaultSpaceId}/space_memberships/${spaceMemberships[0].sys.id}`,
-          headers: defaultHeader
+          headers: defaultHeader,
         },
         willRespondWith: {
-          status: 204
-        }
+          status: 204,
+        },
       }).as(deleteMembership);
 
       cy.getByTestId('cf-ui-modal-confirm-confirm-button').click();

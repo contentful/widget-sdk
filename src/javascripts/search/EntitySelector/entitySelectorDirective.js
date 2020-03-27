@@ -16,13 +16,13 @@ export default function register() {
       labels: '=',
       listHeight: '=',
       onChange: '=',
-      onNoEntities: '='
+      onNoEntities: '=',
     },
     controller: [
       '$scope',
-      _$scope => {
+      (_$scope) => {
         // TODO: Move `entity_selector_controller.js` code in here.
-      }
-    ]
+      },
+    ],
   }));
 }

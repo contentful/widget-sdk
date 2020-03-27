@@ -42,7 +42,7 @@ export function calcUsersMeta({ basePlan, numMemberships }) {
   const tiers = getUsersTiers(basePlan);
 
   // Should only be one free tier
-  const freeTier = tiers.find(tier => tier.price === 0);
+  const freeTier = tiers.find((tier) => tier.price === 0);
   const freeTierUsers = freeTier.endingUnit - freeTier.startingUnit;
   const numFree = numMemberships > freeTierUsers ? freeTierUsers : numMemberships;
   const numPaid = numMemberships > freeTierUsers ? numMemberships - freeTierUsers : 0;
@@ -87,13 +87,13 @@ export function calculatePlansCost({ plans }) {
 }
 
 function getBasePlan(allPlans) {
-  return allPlans.find(plan => plan.planType === 'base');
+  return allPlans.find((plan) => plan.planType === 'base');
 }
 
 function getUsersTiers(basePlan) {
   // shortform of Base rate plan charges
   const baseRPCs = basePlan.ratePlanCharges;
-  const usersRPC = baseRPCs.find(rpc => rpc.name === 'Users');
+  const usersRPC = baseRPCs.find((rpc) => rpc.name === 'Users');
   const tiers = usersRPC.tiers;
 
   return tiers;

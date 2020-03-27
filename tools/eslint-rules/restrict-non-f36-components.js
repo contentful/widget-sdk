@@ -14,7 +14,7 @@ const blacklist = {
   h3: '<Heading />, <SubHeading />, <SectionHeading /> or <DisplayText />',
   h4: '<Heading />, <SubHeading />, <SectionHeading /> or <DisplayText />',
   h5: '<Heading />, <SubHeading />, <SectionHeading /> or <DisplayText />',
-  h6: '<Heading />, <SubHeading />, <SectionHeading /> or <DisplayText />'
+  h6: '<Heading />, <SubHeading />, <SectionHeading /> or <DisplayText />',
 };
 
 module.exports = {
@@ -22,18 +22,18 @@ module.exports = {
     type: 'suggestion',
     docs: {
       description: 'Disallow non Forma 36 components',
-      category: 'Best Practices'
+      category: 'Best Practices',
     },
     messages: {
-      useForma36: "Please consider using the corresponding Forma 36 '{{ name }}' component."
-    }
+      useForma36: "Please consider using the corresponding Forma 36 '{{ name }}' component.",
+    },
   },
   create(context) {
     return {
       JSXOpeningElement(node) {
         const nodeName = node.name && node.name.name;
         const typeAttributes = node.attributes
-          .filter(att => att && att.name && att.name.name === 'type')
+          .filter((att) => att && att.name && att.name.name === 'type')
           .reduce((_, prev) => prev, undefined);
         const typeValue = typeAttributes ? `_${typeAttributes.value.value}` : '';
         const blackListKey = `${nodeName}${typeValue}`;
@@ -43,11 +43,11 @@ module.exports = {
             node,
             messageId: 'useForma36',
             data: {
-              name: blacklist[blackListKey]
-            }
+              name: blacklist[blackListKey],
+            },
           });
         }
-      }
+      },
     };
-  }
+  },
 };

@@ -13,7 +13,7 @@ function WebhookListSidebar({ openTemplateDialog }) {
 }
 
 WebhookListSidebar.propTypes = {
-  openTemplateDialog: PropTypes.func.isRequired
+  openTemplateDialog: PropTypes.func.isRequired,
 };
 
 export default WebhookListSidebar;

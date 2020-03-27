@@ -11,5 +11,5 @@ export function FileEditorPreview(props) {
 }
 
 FileEditorPreview.propTypes = {
-  file: PropTypes.object.isRequired
+  file: PropTypes.object.isRequired,
 };

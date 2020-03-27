@@ -23,7 +23,7 @@ const ExtensionForm = ({ entity, selfHosted, updateEntity, setSelfHosted }) => {
           type="text"
           value={entity.extension.name || ''}
           maxLength="255"
-          onChange={e => {
+          onChange={(e) => {
             const value = e.target.value || '';
             updateExtensionProp('name', value.length > 0 ? value : undefined);
           }}
@@ -34,7 +34,7 @@ const ExtensionForm = ({ entity, selfHosted, updateEntity, setSelfHosted }) => {
       <div className="cfnext-form__field">
         <Label text="Field types" />
         <div className="extension-form__field-types">
-          {EXTENSION_FIELD_TYPES.map(type => {
+          {EXTENSION_FIELD_TYPES.map((type) => {
             return (
               <label key={type}>
                 <input
@@ -43,7 +43,7 @@ const ExtensionForm = ({ entity, selfHosted, updateEntity, setSelfHosted }) => {
                   onChange={() => {
                     const cur = entity.extension.fieldTypes;
                     const next = cur.includes(type)
-                      ? cur.filter(t => t !== type)
+                      ? cur.filter((t) => t !== type)
                       : cur.concat([type]);
                     updateExtensionProp('fieldTypes', next);
                   }}
@@ -91,7 +91,7 @@ const ExtensionForm = ({ entity, selfHosted, updateEntity, setSelfHosted }) => {
             className="cfnext-form__input--full-size"
             type="text"
             value={entity.extension.src || ''}
-            onChange={e => updateExtensionProp('src', e.target.value)}
+            onChange={(e) => updateExtensionProp('src', e.target.value)}
           />
           {invalidUrl && (
             <p className="cfnext-form__field-error">
@@ -128,7 +128,7 @@ const ExtensionForm = ({ entity, selfHosted, updateEntity, setSelfHosted }) => {
           <Editor
             height="700px"
             value={entity.extension.srcdoc}
-            onChange={value => updateExtensionProp('srcdoc', value)}
+            onChange={(value) => updateExtensionProp('srcdoc', value)}
             options={{ mode: 'htmlmixed', lineNumbers: true, tabSize: 2 }}
           />
         </div>
@@ -136,7 +136,7 @@ const ExtensionForm = ({ entity, selfHosted, updateEntity, setSelfHosted }) => {
 
       <ExtensionParameters
         entity={entity}
-        onChange={values => updateEntity({ ...entity, parameters: values })}
+        onChange={(values) => updateEntity({ ...entity, parameters: values })}
       />
     </React.Fragment>
   );
@@ -146,7 +146,7 @@ ExtensionForm.propTypes = {
   entity: PropTypes.object.isRequired,
   selfHosted: PropTypes.bool.isRequired,
   updateEntity: PropTypes.func.isRequired,
-  setSelfHosted: PropTypes.func.isRequired
+  setSelfHosted: PropTypes.func.isRequired,
 };
 
 export default ExtensionForm;

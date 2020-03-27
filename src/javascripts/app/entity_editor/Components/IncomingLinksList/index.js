@@ -5,7 +5,7 @@ import {
   Paragraph,
   List,
   ListItem,
-  Typography
+  Typography,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
@@ -15,11 +15,11 @@ import { Origin as IncomingLinksOrigin } from 'analytics/events/IncomingLinks';
 const styles = {
   incomingLinksList: css({
     maxHeight: '143px',
-    overflowYy: 'auto'
+    overflowYy: 'auto',
   }),
   incomingLinksItem: css({
     marginLeft: tokens.spacingL,
-    listStyleType: 'disc'
+    listStyleType: 'disc',
   }),
   incomingLinksLink: css({
     display: 'inline-block',
@@ -27,8 +27,8 @@ const styles = {
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
-    verticalAlign: 'top'
-  })
+    verticalAlign: 'top',
+  }),
 };
 
 class IncomingLinksList extends React.Component {
@@ -37,13 +37,13 @@ class IncomingLinksList extends React.Component {
       PropTypes.shape({
         id: PropTypes.string.isRequired,
         title: PropTypes.string,
-        url: PropTypes.string.isRequired
+        url: PropTypes.string.isRequired,
       }).isRequired
     ).isRequired,
     message: PropTypes.string.isRequired,
     origin: PropTypes.oneOf([IncomingLinksOrigin.DIALOG, IncomingLinksOrigin.SIDEBAR]).isRequired,
     onComponentMount: PropTypes.func,
-    onClick: PropTypes.func
+    onClick: PropTypes.func,
   };
 
   componentDidMount() {
@@ -52,11 +52,11 @@ class IncomingLinksList extends React.Component {
     }
   }
 
-  handleClick = linkEntityId => {
+  handleClick = (linkEntityId) => {
     if (this.props.onClick) {
       this.props.onClick({
         linkEntityId,
-        incomingLinksCount: this.props.links.length
+        incomingLinksCount: this.props.links.length,
       });
     }
   };

@@ -83,5 +83,5 @@ export default function RoleEditorSidebar(props) {
 
 RoleEditorSidebar.propTypes = {
   hasCustomRolesFeature: PropTypes.bool,
-  isLegacy: PropTypes.bool
+  isLegacy: PropTypes.bool,
 };

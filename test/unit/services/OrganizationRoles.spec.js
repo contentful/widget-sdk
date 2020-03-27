@@ -5,13 +5,13 @@ describe('OrganizationRoles', () => {
 
   function makeUser(organizations) {
     return {
-      organizationMemberships: _.map(organizations, org => ({
-        organization: org
-      }))
+      organizationMemberships: _.map(organizations, (org) => ({
+        organization: org,
+      })),
     };
   }
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     OrganizationRoles = await this.system.import('services/OrganizationRoles');
 
     ORG_1 = { sys: { id: 'org1' }, name: '1st ORG' };

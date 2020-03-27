@@ -12,7 +12,7 @@ import TeamListRow from './TeamListRow';
 
 const renderComponent = (actions, team) => {
   const store = createStore(reducer);
-  actions.forEach(action => store.dispatch(action));
+  actions.forEach((action) => store.dispatch(action));
   // this is only needed when we want to test for actions that are handled in middleware
   store.dispatch = jest.fn(store.dispatch);
   return render(
@@ -38,8 +38,8 @@ describe('TeamListRow', () => {
       actions.push({
         type: 'LOCATION_CHANGED',
         payload: {
-          location: { pathname: ROUTES.organization.build({ orgId: activeOrgId }) }
-        }
+          location: { pathname: ROUTES.organization.build({ orgId: activeOrgId }) },
+        },
       });
     });
 
@@ -50,24 +50,24 @@ describe('TeamListRow', () => {
           description: 'A description',
           sys: {
             type: 'Team',
-            id: 'aTeam'
-          }
+            id: 'aTeam',
+          },
         },
         {
           name: 'B Team',
           sys: {
             type: 'Team',
-            id: 'bTeam'
-          }
+            id: 'bTeam',
+          },
         },
         {
           name: 'C Team',
           description: 'Editors and writers in our west east office.',
           sys: {
             type: 'Team',
-            id: 'cTeam'
-          }
-        }
+            id: 'cTeam',
+          },
+        },
       ];
       beforeEach(() => {
         actions.push({
@@ -85,10 +85,10 @@ describe('TeamListRow', () => {
                       sys: {
                         type: 'Link',
                         linkType: 'Team',
-                        id: 'aTeam'
-                      }
-                    }
-                  }
+                        id: 'aTeam',
+                      },
+                    },
+                  },
                 },
                 {
                   sys: {
@@ -98,10 +98,10 @@ describe('TeamListRow', () => {
                       sys: {
                         type: 'Link',
                         linkType: 'Team',
-                        id: 'aTeam'
-                      }
-                    }
-                  }
+                        id: 'aTeam',
+                      },
+                    },
+                  },
                 },
                 {
                   sys: {
@@ -111,10 +111,10 @@ describe('TeamListRow', () => {
                       sys: {
                         type: 'Link',
                         linkType: 'Team',
-                        id: 'aTeam'
-                      }
-                    }
-                  }
+                        id: 'aTeam',
+                      },
+                    },
+                  },
                 },
                 {
                   sys: {
@@ -124,14 +124,14 @@ describe('TeamListRow', () => {
                       sys: {
                         type: 'Link',
                         linkType: 'Team',
-                        id: 'cTeam'
-                      }
-                    }
-                  }
-                }
-              ]
-            }
-          }
+                        id: 'cTeam',
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          },
         });
       });
 
@@ -165,21 +165,21 @@ describe('TeamListRow', () => {
                     role: 'admin',
                     organization: {
                       sys: {
-                        id: activeOrgId
-                      }
-                    }
+                        id: activeOrgId,
+                      },
+                    },
                   },
                   {
                     role: 'member',
                     organization: {
                       sys: {
-                        id: 'otherOrg'
-                      }
-                    }
-                  }
-                ]
-              }
-            }
+                        id: 'otherOrg',
+                      },
+                    },
+                  },
+                ],
+              },
+            },
           });
         });
 

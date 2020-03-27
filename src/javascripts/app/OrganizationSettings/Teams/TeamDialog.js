@@ -13,11 +13,11 @@ import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes';
 const styles = {
   form: css({
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
   }),
   modalContent: css({
-    marginBottom: tokens.spacingL
-  })
+    marginBottom: tokens.spacingL,
+  }),
 };
 
 class TeamDialog extends React.Component {
@@ -28,7 +28,7 @@ class TeamDialog extends React.Component {
 
     allTeams: PropTypes.objectOf(TeamPropType),
     onCreateConfirm: PropTypes.func,
-    onEditConfirm: PropTypes.func
+    onEditConfirm: PropTypes.func,
   };
 
   state = {};
@@ -37,7 +37,7 @@ class TeamDialog extends React.Component {
     validationMessage: null,
     name: get(initialTeam, 'name', ''),
     description: get(initialTeam, 'description', ''),
-    isEditing: Boolean(initialTeam)
+    isEditing: Boolean(initialTeam),
   });
 
   constructor(props) {
@@ -54,7 +54,7 @@ class TeamDialog extends React.Component {
     }
   }
 
-  onConfirm = e => {
+  onConfirm = (e) => {
     e.preventDefault();
     const { onEditConfirm, onCreateConfirm, onClose, initialTeam } = this.props;
     const { isEditing } = this.state;
@@ -88,7 +88,7 @@ class TeamDialog extends React.Component {
     if (
       some(
         allTeams,
-        otherTeam =>
+        (otherTeam) =>
           otherTeam.name === name.trim() && get(initialTeam, 'sys.id') !== otherTeam.sys.id
       )
     ) {
@@ -97,7 +97,7 @@ class TeamDialog extends React.Component {
     return null;
   }
 
-  handleChange = field => evt => {
+  handleChange = (field) => (evt) => {
     this.setState({ [field]: evt.target.value, validationMessage: '' });
   };
 
@@ -128,7 +128,7 @@ class TeamDialog extends React.Component {
                 textInputProps={{
                   placeholder: 'The Mighty Ducks',
                   maxLength: 120,
-                  autoFocus: true
+                  autoFocus: true,
                 }}
                 validationMessage={validationMessage}
                 onChange={this.handleChange('name')}
@@ -143,7 +143,7 @@ class TeamDialog extends React.Component {
                 textInputProps={{
                   placeholder: `A crew of misfit kids from Minnesota that stick together against all odds to turn their ragtag youth hockey team into regional champions.`,
                   maxLength: 800,
-                  rows: 4
+                  rows: 4,
                 }}
                 onChange={this.handleChange('description')}
               />
@@ -168,12 +168,12 @@ class TeamDialog extends React.Component {
 }
 
 export default connect(
-  state => ({
-    allTeams: getTeams(state)
+  (state) => ({
+    allTeams: getTeams(state),
   }),
-  dispatch => ({
-    onCreateConfirm: team => dispatch({ type: 'CREATE_NEW_TEAM', payload: { team } }),
+  (dispatch) => ({
+    onCreateConfirm: (team) => dispatch({ type: 'CREATE_NEW_TEAM', payload: { team } }),
     onEditConfirm: (id, changeSet) =>
-      dispatch({ type: 'EDIT_TEAM_CONFIRMED', payload: { id, changeSet } })
+      dispatch({ type: 'EDIT_TEAM_CONFIRMED', payload: { id, changeSet } }),
   })
 )(TeamDialog);

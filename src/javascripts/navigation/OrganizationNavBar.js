@@ -18,19 +18,19 @@ function getItems(params, { orgId }) {
       sref: 'account.organizations.access-tools.sso',
       srefParams: { orgId },
       srefOptions: {
-        inherit: false
+        inherit: false,
       },
-      dataViewType: 'organization-sso'
+      dataViewType: 'organization-sso',
     },
     {
       title: 'User provisioning',
       sref: 'account.organizations.access-tools.user-provisioning',
       srefParams: { orgId },
       srefOptions: {
-        inherit: false
+        inherit: false,
       },
-      dataViewType: 'organization-user-provisioning'
-    }
+      dataViewType: 'organization-user-provisioning',
+    },
   ];
 
   return [
@@ -40,11 +40,11 @@ function getItems(params, { orgId }) {
       sref: 'account.organizations.edit',
       srefParams: { orgId },
       srefOptions: {
-        inherit: false
+        inherit: false,
       },
       rootSref: 'account.organizations.edit',
       navIcon: 'org-info',
-      dataViewType: 'organization-information'
+      dataViewType: 'organization-information',
     },
     {
       if: params.pricingVersion == 'pricing_version_1' && params.isOwnerOrAdmin,
@@ -52,11 +52,11 @@ function getItems(params, { orgId }) {
       sref: 'account.organizations.subscription',
       srefParams: { orgId },
       srefOptions: {
-        inherit: false
+        inherit: false,
       },
       rootSref: 'account.organizations.subscription',
       navIcon: 'subscription',
-      dataViewType: 'subscription'
+      dataViewType: 'subscription',
     },
     {
       if: params.pricingVersion == 'pricing_version_2' && params.isOwnerOrAdmin,
@@ -65,10 +65,10 @@ function getItems(params, { orgId }) {
       srefParams: { orgId },
       rootSref: 'account.organizations.subscription_new',
       srefOptions: {
-        inherit: false
+        inherit: false,
       },
       navIcon: 'subscription',
-      dataViewType: 'subscription-new'
+      dataViewType: 'subscription-new',
     },
 
     {
@@ -78,10 +78,10 @@ function getItems(params, { orgId }) {
       srefParams: { orgId },
       rootSref: 'account.organizations.billing',
       srefOptions: {
-        inherit: false
+        inherit: false,
       },
       navIcon: 'billing',
-      dataViewType: 'billing'
+      dataViewType: 'billing',
     },
     {
       if: params.pricingVersion == 'pricing_version_2' && params.isOwnerOrAdmin,
@@ -90,10 +90,10 @@ function getItems(params, { orgId }) {
       srefParams: { orgId },
       rootSref: 'account.organizations.usage',
       srefOptions: {
-        inherit: false
+        inherit: false,
       },
       navIcon: 'usage',
-      dataViewType: 'platform-usage'
+      dataViewType: 'platform-usage',
     },
     {
       if: params.isOwnerOrAdmin,
@@ -102,10 +102,10 @@ function getItems(params, { orgId }) {
       srefParams: { orgId },
       rootSref: 'account.organizations.users',
       srefOptions: {
-        inherit: false
+        inherit: false,
       },
       navIcon: 'users',
-      dataViewType: 'organization-users'
+      dataViewType: 'organization-users',
     },
     {
       title: 'Teams',
@@ -113,10 +113,10 @@ function getItems(params, { orgId }) {
       srefParams: { orgId },
       rootSref: 'account.organizations.teams',
       srefOptions: {
-        inherit: false
+        inherit: false,
       },
       navIcon: 'teams',
-      dataViewType: 'organization-teams'
+      dataViewType: 'organization-teams',
     },
     {
       if: params.hasAdvancedExtensibility,
@@ -125,11 +125,11 @@ function getItems(params, { orgId }) {
       srefParams: { orgId },
       rootSref: 'account.organizations.apps',
       srefOptions: {
-        inherit: false
+        inherit: false,
       },
       navIcon: 'apps',
       icon: 'nav-apps',
-      dataViewType: 'organization-apps'
+      dataViewType: 'organization-apps',
     },
     {
       if: shouldDisplayAccessTools,
@@ -138,7 +138,7 @@ function getItems(params, { orgId }) {
       rootSref: 'account.organizations.access-tools',
       navIcon: 'sso',
       dataViewType: 'organization-access-tools',
-      children: accessToolsDropdownItems
+      children: accessToolsDropdownItems,
     },
     {
       if: !params.accessToolsFeatureEnabled && params.ssoEnabled && params.isOwnerOrAdmin,
@@ -147,10 +147,10 @@ function getItems(params, { orgId }) {
       srefParams: { orgId },
       rootSref: 'account.organizations.sso',
       srefOptions: {
-        inherit: false
+        inherit: false,
       },
       navIcon: 'sso',
-      dataViewType: 'organization-sso'
+      dataViewType: 'organization-sso',
     },
     {
       if: params.pricingVersion == 'pricing_version_1' && params.isOwnerOrAdmin,
@@ -159,10 +159,10 @@ function getItems(params, { orgId }) {
       srefParams: { orgId },
       rootSref: 'account.organizations.spaces',
       srefOptions: {
-        inherit: false
+        inherit: false,
       },
       navIcon: 'spaces',
-      dataViewType: 'organization-spaces'
+      dataViewType: 'organization-spaces',
     },
     {
       if: params.hasOffsiteBackup && params.isOwnerOrAdmin,
@@ -171,23 +171,23 @@ function getItems(params, { orgId }) {
       srefParams: { orgId },
       rootSref: 'account.organizations.offsitebackup',
       srefOptions: {
-        inherit: false
+        inherit: false,
       },
-      dataViewType: 'offsite-backup'
-    }
-  ].filter(item => item.if !== false);
+      dataViewType: 'offsite-backup',
+    },
+  ].filter((item) => item.if !== false);
 }
 
 export default class OrganizationNavigationBar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      items: []
+      items: [],
     };
   }
 
   static propTypes = {
-    navVersion: PropTypes.number
+    navVersion: PropTypes.number,
   };
 
   async componentDidMount() {
@@ -209,16 +209,16 @@ export default class OrganizationNavigationBar extends React.Component {
       accessToolsFeatureEnabled,
       organization,
       hasOffsiteBackup,
-      hasAdvancedExtensibility
+      hasAdvancedExtensibility,
     ] = await Promise.all([
       getOrgFeature(orgId, 'self_configure_sso'),
       getOrgFeature(orgId, 'scim'),
       getVariation(ACCESS_TOOLS, {
-        organizationId: orgId
+        organizationId: orgId,
       }),
       TokenStore.getOrganization(orgId),
       FeatureService.get('offsiteBackup'),
-      AdvancedExtensibilityFeature.isEnabled()
+      AdvancedExtensibilityFeature.isEnabled(),
     ]);
 
     const params = {
@@ -230,7 +230,7 @@ export default class OrganizationNavigationBar extends React.Component {
       hasAdvancedExtensibility,
       hasOffsiteBackup,
       hasBillingTab: organization.isBillable && isOwner(organization),
-      hasSettingsTab: isOwner(organization)
+      hasSettingsTab: isOwner(organization),
     };
 
     this.setState({ items: getItems(params, { orgId }) });
@@ -254,6 +254,6 @@ export default class OrganizationNavigationBar extends React.Component {
 
 OrganizationNavigationBar.propTypes = {
   stateParams: PropTypes.shape({
-    orgId: PropTypes.string.isRequired
-  }).isRequired
+    orgId: PropTypes.string.isRequired,
+  }).isRequired,
 };

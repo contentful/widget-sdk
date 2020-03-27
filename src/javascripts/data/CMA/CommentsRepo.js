@@ -6,7 +6,7 @@ const path = (entryId, commentId) => [
   'entries',
   entryId,
   'comments',
-  ...(commentId ? [commentId] : [])
+  ...(commentId ? [commentId] : []),
 ];
 
 /**
@@ -25,12 +25,12 @@ export async function create(endpoint, entryId, { body, parentCommentId = null }
       method: 'POST',
       path: path(entryId),
       data: {
-        body
-      }
+        body,
+      },
     },
     {
       ...alphaHeader,
-      ...(parentCommentId && { 'x-contentful-parent-id': parentCommentId })
+      ...(parentCommentId && { 'x-contentful-parent-id': parentCommentId }),
     }
   );
 }
@@ -46,14 +46,14 @@ export async function getAllForEntry(endpoint, entryId) {
   const result = await endpoint(
     {
       method: 'GET',
-      path: path(entryId)
+      path: path(entryId),
     },
     alphaHeader
   );
   // TODO: Remove filter once we removed tasks from `/comments` endpoint.
   return {
     ...result,
-    items: result.items.filter(item => !item.assignedTo)
+    items: result.items.filter((item) => !item.assignedTo),
   };
 }
 
@@ -68,11 +68,11 @@ export async function remove(endpoint, entryId, comment) {
   return endpoint(
     {
       method: 'DELETE',
-      path: path(entryId, comment.sys.id)
+      path: path(entryId, comment.sys.id),
     },
     {
       ...alphaHeader,
-      'X-Contentful-Version': comment.sys.version
+      'X-Contentful-Version': comment.sys.version,
     }
   );
 }
@@ -91,12 +91,12 @@ export async function update(endpoint, entryId, comment) {
       method: 'PUT',
       path: path(entryId, comment.sys.id),
       data: {
-        body: comment.body
-      }
+        body: comment.body,
+      },
     },
     {
       ...alphaHeader,
-      'X-Contentful-Version': comment.sys.version
+      'X-Contentful-Version': comment.sys.version,
     }
   );
 }

@@ -14,7 +14,7 @@ import {
   Tooltip,
   SkeletonContainer,
   SkeletonBodyText,
-  Spinner
+  Spinner,
 } from '@contentful/forma-36-react-components';
 import Visible from 'components/shared/Visible';
 import { cx } from 'emotion';
@@ -34,13 +34,13 @@ export default class Task extends React.Component {
     onCancel: PropTypes.func,
     onSave: PropTypes.func,
     onDeleteTask: PropTypes.func,
-    onStatusChange: PropTypes.func
+    onStatusChange: PropTypes.func,
   };
 
   state = {
     isExpanded: false,
     pendingChanges: {},
-    isUpdating: false
+    isUpdating: false,
   };
 
   componentDidUpdate(prevProps) {
@@ -58,17 +58,17 @@ export default class Task extends React.Component {
     }
   }
 
-  handleTaskKeyDown = event => {
+  handleTaskKeyDown = (event) => {
     if (isHotKey('enter', event)) {
       this.handleTaskExpand();
     }
   };
 
   handleTaskExpand = () => {
-    this.setState(prevState => ({ isExpanded: !prevState.isExpanded }));
+    this.setState((prevState) => ({ isExpanded: !prevState.isExpanded }));
   };
 
-  handleEditClick = event => {
+  handleEditClick = (event) => {
     event.stopPropagation();
     this.props.onEdit();
   };
@@ -81,7 +81,7 @@ export default class Task extends React.Component {
     const { pendingChanges } = this.state;
     return {
       ...this.getOriginalValue(),
-      ...pendingChanges
+      ...pendingChanges,
     };
   }
 
@@ -90,7 +90,7 @@ export default class Task extends React.Component {
     return {
       body: viewData.body,
       assigneeKey: viewData.assignee && viewData.assignee.key,
-      isDone: viewData.isDone
+      isDone: viewData.isDone,
     };
   }
 
@@ -103,11 +103,11 @@ export default class Task extends React.Component {
     return this.hasChanges() && !!body && !!assigneeKey && !this.state.isUpdating;
   }
 
-  handleBodyUpdate = event => {
+  handleBodyUpdate = (event) => {
     this.addChange({ body: event.target.value.trim() });
   };
 
-  handleAssigneeUpdate = event => {
+  handleAssigneeUpdate = (event) => {
     this.addChange({ assigneeKey: event.target.value });
   };
 
@@ -117,7 +117,7 @@ export default class Task extends React.Component {
     this.setState({ isUpdating: false });
   };
 
-  handleCancelEdit = event => {
+  handleCancelEdit = (event) => {
     event.stopPropagation();
     this.props.onCancel();
   };
@@ -126,12 +126,12 @@ export default class Task extends React.Component {
     this.setState({ isUpdating: true });
     const newViewData = {
       ...this.getChangedValue(),
-      isDone: !this.props.viewData.isDone
+      isDone: !this.props.viewData.isDone,
     };
     this.props.onStatusChange(newViewData, () => this.setState({ isUpdating: false }));
   };
 
-  handleDeleteClick = async event => {
+  handleDeleteClick = async (event) => {
     event.stopPropagation();
     return ModalLauncher.open(({ isShown, onClose }) => (
       <TaskDeleteDialog
@@ -170,7 +170,7 @@ export default class Task extends React.Component {
               Edit task
             </DropdownListItem>
           )}
-          <DropdownListItem testId="delete-task" onClick={event => this.handleDeleteClick(event)}>
+          <DropdownListItem testId="delete-task" onClick={(event) => this.handleDeleteClick(event)}>
             Delete task
           </DropdownListItem>
         </DropdownList>
@@ -189,7 +189,7 @@ export default class Task extends React.Component {
         type="checkbox"
         data-test-id="status-checkbox"
         checked={isDone}
-        onChange={event => this.handleStatusChange(event)}
+        onChange={(event) => this.handleStatusChange(event)}
         disabled={!canUpdateStatus}
         className={canUpdateStatus ? '' : styles.checkboxDisabled}
       />
@@ -256,7 +256,7 @@ export default class Task extends React.Component {
     const characterLimit = 512;
 
     return (
-      <Form spacing="condensed" onClick={e => e.stopPropagation()} className={styles.editForm}>
+      <Form spacing="condensed" onClick={(e) => e.stopPropagation()} className={styles.editForm}>
         <TextField
           name="body"
           id="body"

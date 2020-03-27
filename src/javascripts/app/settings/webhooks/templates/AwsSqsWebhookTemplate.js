@@ -31,7 +31,7 @@ export default {
           </a>
           .
         </p>
-      )
+      ),
     },
     {
       name: 'region',
@@ -41,13 +41,13 @@ export default {
         <p>
           The AWS region of your queue. For example: <code>eu-west-1</code>.
         </p>
-      )
+      ),
     },
     {
       name: 'queue',
       type: 'text',
       title: 'Queue',
-      description: <p>The name of a queue you want to send your messages to.</p>
+      description: <p>The name of a queue you want to send your messages to.</p>,
     },
     {
       name: 'accessKeyId',
@@ -58,7 +58,7 @@ export default {
           Use a keypair with minimal access. The only required policy action is{' '}
           <code>sqs:SendMessage</code>
         </p>
-      )
+      ),
     },
     {
       name: 'secretAccessKey',
@@ -68,8 +68,8 @@ export default {
         <p>
           Secret Access Key of the keypair used above. This value can’t be revealed once stored.
         </p>
-      )
-    }
+      ),
+    },
   ],
   mapParamsToDefinition: ({ accountId, region, queue, accessKeyId, secretAccessKey }, name) => {
     return {
@@ -80,21 +80,21 @@ export default {
       headers: [
         {
           key: 'X-Contentful-AWS-Proxy-Key-Id',
-          value: accessKeyId
+          value: accessKeyId,
         },
         {
           key: 'X-Contentful-AWS-Proxy-Secret',
           value: secretAccessKey,
-          secret: true
-        }
+          secret: true,
+        },
       ],
       transformation: {
         contentType: 'application/x-www-form-urlencoded',
         body: JSON.stringify({
           Action: 'SendMessage',
-          MessageBody: `{ /topic },{ /payload/sys/id },{ /user/sys/id }`
-        })
-      }
+          MessageBody: `{ /topic },{ /payload/sys/id },{ /user/sys/id }`,
+        }),
+      },
     };
-  }
+  },
 };

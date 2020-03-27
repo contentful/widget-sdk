@@ -11,7 +11,7 @@ Entry.prototype = Object.create(Entity.prototype);
 mixinPublishable(Entry.prototype);
 mixinArchivable(Entry.prototype);
 
-Entry.prototype.getContentTypeId = function() {
+Entry.prototype.getContentTypeId = function () {
   return this.data && this.data.sys.contentType.sys.id;
 };
 
@@ -20,11 +20,11 @@ Entry.factoryMethods = {
   getEntry: factoryMethods.getById,
   getEntries: factoryMethods.getByQuery,
   newEntry: factoryMethods.new,
-  createEntry: function(contentTypeId, data) {
+  createEntry: function (contentTypeId, data) {
     return this.newEntry(data).save({
-      'X-Contentful-Content-Type': contentTypeId
+      'X-Contentful-Content-Type': contentTypeId,
     });
-  }
+  },
 };
 
 export default Entry;

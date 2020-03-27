@@ -14,7 +14,7 @@
     </div>
   </header>
   <div class="workbench-main">
-    <div class="workbench-main__content" ng-show="!data.loaded" style="padding-top: 0">
+    <div class="workbench-main__content" ng-show="!data.loaded" style="padding-top: 0;">
       <react-component
         ng-if="entityContexts.length > 0"
         name="ui/Loader"
@@ -24,10 +24,10 @@
         <div class="empty-state__description">There are no entries linked yet.</div>
       </div>
     </div>
-    <div class="workbench-main__content" ng-show="data.loaded" style="padding-top: 0">
+    <div class="workbench-main__content" ng-show="data.loaded" style="padding-top: 0;">
       <!-- Safari and Edge need a relative container for dropdowns to work: -->
       <div
-        style="position: relative"
+        style="position: relative;"
         ng-repeat="ctx in entityContexts track by ctx.key"
         data-entity-id="{{ctx.id}}"
       >

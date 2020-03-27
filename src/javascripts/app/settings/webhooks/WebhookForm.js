@@ -24,13 +24,13 @@ const CONTENT_TYPES = [
   'application/json',
   'application/json; charset=utf-8',
   FORM_URLENCODED_CONTENT_TYPE,
-  `${FORM_URLENCODED_CONTENT_TYPE}; charset=utf-8`
+  `${FORM_URLENCODED_CONTENT_TYPE}; charset=utf-8`,
 ];
 
 export default class WebhookForm extends React.Component {
   static propTypes = {
     webhook: PropTypes.object.isRequired,
-    onChange: PropTypes.func.isRequired
+    onChange: PropTypes.func.isRequired,
   };
 
   hasEnvironmentAliases() {
@@ -62,7 +62,7 @@ export default class WebhookForm extends React.Component {
               className="cfnext-form__input"
               id="webhook-name"
               value={webhook.name || ''}
-              onChange={e => this.props.onChange({ name: e.target.value })}
+              onChange={(e) => this.props.onChange({ name: e.target.value })}
             />
           </div>
           <div className="cfnext-form__field">
@@ -75,10 +75,10 @@ export default class WebhookForm extends React.Component {
                 className="cfnext-select-box"
                 id="webhook-method"
                 value={get(webhook, ['transformation', 'method'], METHODS[0])}
-                onChange={e =>
+                onChange={(e) =>
                   this.props.onChange(this.updatedTransformation({ method: e.target.value }))
                 }>
-                {METHODS.map(m => (
+                {METHODS.map((m) => (
                   <option key={m} value={m}>
                     {m}
                   </option>
@@ -89,7 +89,7 @@ export default class WebhookForm extends React.Component {
                 className="cfnext-form__input"
                 id="webhook-url"
                 value={webhook.url || ''}
-                onChange={e => this.props.onChange({ url: e.target.value })}
+                onChange={(e) => this.props.onChange({ url: e.target.value })}
               />
             </div>
           </div>
@@ -99,16 +99,16 @@ export default class WebhookForm extends React.Component {
           <WebhookSegmentation
             webhook={webhook}
             values={values}
-            onChange={map => this.props.onChange({ topics: transformMapToTopics(map) })}
+            onChange={(map) => this.props.onChange({ topics: transformMapToTopics(map) })}
           />
           <WebhookFilters
             filters={transformFiltersToList(webhook.filters)}
-            onChange={list => this.props.onChange({ filters: transformListToFilters(list) })}
+            onChange={(list) => this.props.onChange({ filters: transformListToFilters(list) })}
           />
           {this.hasEnvironmentAliases() && !isWildcarded && (
             <WebhookOtherEventsSection
               values={values}
-              onChange={map => this.props.onChange({ topics: transformMapToTopics(map) })}
+              onChange={(map) => this.props.onChange({ topics: transformMapToTopics(map) })}
             />
           )}
         </FormSection>
@@ -116,11 +116,11 @@ export default class WebhookForm extends React.Component {
         <FormSection title="Headers" collapsible={true}>
           <WebhookHeaders
             headers={webhook.headers}
-            onChange={headers => this.props.onChange({ headers })}
+            onChange={(headers) => this.props.onChange({ headers })}
           />
           <WebhookBasicAuth
             httpBasicUsername={webhook.httpBasicUsername}
-            onChange={credentials => this.props.onChange(credentials)}
+            onChange={(credentials) => this.props.onChange(credentials)}
           />
           <div className="cfnext-form__field">
             <label htmlFor="webhook-content-type">Content type</label>
@@ -129,10 +129,10 @@ export default class WebhookForm extends React.Component {
               className="cfnext-select-box"
               id="webhook-content-type"
               value={contentType}
-              onChange={e =>
+              onChange={(e) =>
                 this.props.onChange(this.updatedTransformation({ contentType: e.target.value }))
               }>
-              {CONTENT_TYPES.map(ct => (
+              {CONTENT_TYPES.map((ct) => (
                 <option key={ct} value={ct}>
                   {ct}
                 </option>
@@ -157,7 +157,7 @@ export default class WebhookForm extends React.Component {
                 id="webhook-content-length"
                 type="checkbox"
                 checked={includeContentLength}
-                onChange={e =>
+                onChange={(e) =>
                   this.props.onChange(
                     this.updatedTransformation({ includeContentLength: e.target.checked })
                   )
@@ -175,7 +175,7 @@ export default class WebhookForm extends React.Component {
         <FormSection title="Payload" collapsible={true}>
           <WebhookBodyTransformation
             body={get(webhook, ['transformation', 'body'])}
-            onChange={body => this.props.onChange(this.updatedTransformation({ body }))}
+            onChange={(body) => this.props.onChange(this.updatedTransformation({ body }))}
           />
         </FormSection>
       </div>

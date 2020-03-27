@@ -9,7 +9,7 @@ import {
   AppLinkHeader,
   ExtensionLinkHeader,
   isExtensionLink,
-  isAppLink
+  isAppLink,
 } from './ExtensibilityDeeplinks';
 import { Heading, Form, SelectField, Option, Button } from '@contentful/forma-36-react-components';
 import { useComponentState } from './DeeplinkSelectSpaceEnvState';
@@ -19,31 +19,31 @@ const styles = {
     marginTop: tokens.spacing3Xl,
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center'
+    alignItems: 'center',
   }),
   card: css({
     width: '500px',
     border: `1px solid ${tokens.colorElementMid}`,
-    boxShadow: tokens.boxShadowDefault
+    boxShadow: tokens.boxShadowDefault,
   }),
   form: css({
     paddingLeft: tokens.spacingL,
-    paddingRight: tokens.spacingL
+    paddingRight: tokens.spacingL,
   }),
   title: css({
     textAlign: 'center',
     marginTop: tokens.spacingL,
-    marginBottom: tokens.spacingL
+    marginBottom: tokens.spacingL,
   }),
   buttonsPanel: css({
     display: 'inline',
-    marginTop: tokens.spacingL
+    marginTop: tokens.spacingL,
   }),
   button: css({
     marginLeft: tokens.spacingS,
     marginRight: tokens.spacingS,
-    width: 120
-  })
+    width: 120,
+  }),
 };
 
 function getCardTitle({ selectEnvironment, link, id }) {
@@ -57,7 +57,7 @@ function getCardTitle({ selectEnvironment, link, id }) {
 }
 
 function isUrlSafe(url) {
-  return ['http://', 'https://'].some(proto => url.trim().startsWith(proto));
+  return ['http://', 'https://'].some((proto) => url.trim().startsWith(proto));
 }
 
 export default function DeeplinkSelectSpaceEnv(props) {
@@ -78,7 +78,7 @@ export default function DeeplinkSelectSpaceEnv(props) {
           {getCardTitle({
             selectEnvironment: props.selectEnvironment,
             link,
-            id: id || url
+            id: id || url,
           })}
         </Heading>
         <Form className={styles.form}>
@@ -86,21 +86,21 @@ export default function DeeplinkSelectSpaceEnv(props) {
             <SelectField
               selectProps={{
                 isDisabled: state.loading,
-                testId: 'deeplink-select-space'
+                testId: 'deeplink-select-space',
               }}
               labelText="Space"
               required
               id="space"
               name="space"
               value={state.spaceId}
-              onChange={e => {
+              onChange={(e) => {
                 selectSpace(e.target.value);
               }}>
               <Option value="">Select space</Option>
               {state.organizations.map(({ id, name, spaces }) => {
                 return (
                   <optgroup key={id} label={name}>
-                    {spaces.map(space => (
+                    {spaces.map((space) => (
                       <Option key={space.sys.id} value={space.sys.id}>
                         {space.name}
                       </Option>
@@ -114,18 +114,18 @@ export default function DeeplinkSelectSpaceEnv(props) {
             <SelectField
               selectProps={{
                 isDisabled: state.loading,
-                testId: 'deeplink-select-environment'
+                testId: 'deeplink-select-environment',
               }}
               labelText="Environment"
               required
               id="environment"
               name="environment"
               value={state.environmentId}
-              onChange={e => {
+              onChange={(e) => {
                 selectEnvironment(e.target.value);
               }}>
               <Option value="">Select environment</Option>
-              {state.environments.map(env => (
+              {state.environments.map((env) => (
                 <Option key={env.sys.id} value={env.sys.id}>
                   {env.name}
                 </Option>
@@ -151,7 +151,7 @@ export default function DeeplinkSelectSpaceEnv(props) {
           onClick={() => {
             props.onContinue({
               spaceId: state.spaceId,
-              environmentId: state.environmentId
+              environmentId: state.environmentId,
             });
           }}>
           Continue
@@ -168,5 +168,5 @@ DeeplinkSelectSpaceEnv.propTypes = {
   onContinue: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
   selectSpace: PropTypes.bool.isRequired,
-  selectEnvironment: PropTypes.bool
+  selectEnvironment: PropTypes.bool,
 };

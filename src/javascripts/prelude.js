@@ -8,8 +8,8 @@ import '@contentful/sharejs/lib/types/json-api';
 window.sharejs = {
   types: {
     text,
-    json
-  }
+    json,
+  },
 };
 
 import '@babel/polyfill';
@@ -57,33 +57,33 @@ angular
   .module(`contentful/app-config`, [AngularInit, 'ngAnimate', 'ngSanitize', 'ui.router'])
   .config([
     '$locationProvider',
-    $locationProvider => {
+    ($locationProvider) => {
       $locationProvider.html5Mode({
         enabled: true,
         requireBase: false,
-        rewriteLinks: false
+        rewriteLinks: false,
       });
 
       // This is not actually used but prevents gobbling of fragments in
       // the URL, like the authentication token passed by gatekeeper.
       $locationProvider.hashPrefix('!!!');
-    }
+    },
   ])
   .config([
     '$compileProvider',
-    $compileProvider => {
+    ($compileProvider) => {
       $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|contentful):/);
-    }
+    },
   ])
   .config([
     '$animateProvider',
-    $animateProvider => {
+    ($animateProvider) => {
       $animateProvider.classNameFilter(/animate/);
-    }
+    },
   ])
   .config([
     '$urlMatcherFactoryProvider',
-    $urlMatcherFactoryProvider => {
+    ($urlMatcherFactoryProvider) => {
       /*
        * We need to define a dumb type PathSuffix here and use that to
        * represent path suffixes for the Space Settings and Account
@@ -91,25 +91,25 @@ angular
        * URL parameters and does nasty things like escaping slashes.
        */
       $urlMatcherFactoryProvider.type('PathSuffix', {
-        encode: function(val) {
+        encode: function (val) {
           return val !== null ? val.toString() : val;
         },
-        decode: function(val) {
+        decode: function (val) {
           return val !== null ? val.toString() : val;
         },
-        is: function(val) {
+        is: function (val) {
           return this.pattern.test(val);
         },
-        pattern: /.*/
+        pattern: /.*/,
       });
 
       // Avoid being obsessive about matching states to trailing slashes
       $urlMatcherFactoryProvider.strictMode(false);
-    }
+    },
   ])
   .config([
     '$provide',
-    $provide => {
+    ($provide) => {
       // Decorates $q instances with the `callback` method
       $provide.decorator('$q', [
         '$delegate',
@@ -124,7 +124,7 @@ angular
           //
           $q.callbackWithApply = () => {
             const deferred = $q.defer();
-            const callbackFunction = function(err) {
+            const callbackFunction = function (err) {
               const args = _.tail(arguments);
               $rootScope.$apply(() => {
                 if (err) {
@@ -140,7 +140,7 @@ angular
 
           $q.callback = () => {
             const deferred = $q.defer();
-            const callbackFunction = function(err) {
+            const callbackFunction = function (err) {
               const args = _.tail(arguments);
               if (err) {
                 deferred.reject(err);
@@ -163,7 +163,7 @@ angular
            *   function (err) {})
            * )
            */
-          $q.denodeify = fn =>
+          $q.denodeify = (fn) =>
             $q((resolve, reject) => {
               try {
                 fn(handler);
@@ -181,13 +181,13 @@ angular
             });
 
           return $q;
-        }
+        },
       ]);
-    }
+    },
   ])
   .config([
     '$httpProvider',
-    $httpProvider => {
+    ($httpProvider) => {
       // IE11 caches AJAX requests by default :facepalm: if we don’t set
       // these headers.
       // See: http://viralpatel.net/blogs/ajax-cache-problem-in-ie/
@@ -212,33 +212,33 @@ angular
       }
 
       $httpProvider.defaults.headers.common['X-Contentful-User-Agent'] = headerParts.join('; ');
-    }
+    },
   ])
   .config([
     '$stateProvider',
-    $stateProvider => {
-      $stateProvider.decorator('parent', function(internalStateObj, parentFn) {
+    ($stateProvider) => {
+      $stateProvider.decorator('parent', function (internalStateObj, parentFn) {
         // This fn is called by StateBuilder each time a state is registered
         // The first arg is the internal state. Capture it and add an accessor to public state object.
-        internalStateObj.self.$$state = function() {
+        internalStateObj.self.$$state = function () {
           return internalStateObj;
         };
 
         // pass through to default .parent() function
         return parentFn(internalStateObj);
       });
-    }
+    },
   ]);
 
 angular
   .module(`contentful/app`, [`contentful/app-config`])
   .config([
     '$compileProvider',
-    $compileProvider => {
+    ($compileProvider) => {
       if (env !== 'development') {
         $compileProvider.debugInfoEnabled(false);
       }
-    }
+    },
   ])
 
   .run([
@@ -319,16 +319,16 @@ angular
           nextDay: '[Tomorrow], LT',
           lastWeek: 'ddd, LT',
           nextWeek: '[Next] ddd, LT',
-          sameElse: 'll'
-        }
+          sameElse: 'll',
+        },
       });
 
       // Listen to postMessage events and check if they are coming from
       // GK iframes. If so, handle messages accordingly
       const {
-        config: { authUrl }
+        config: { authUrl },
       } = Config.readInjectedConfig();
-      const cb = evt => {
+      const cb = (evt) => {
         if (evt.origin.includes(authUrl)) {
           handleGKMessage(evt.data);
         }
@@ -339,7 +339,7 @@ angular
       // to route to it
       let matchFound = false;
 
-      $state.get().forEach(state => {
+      $state.get().forEach((state) => {
         if (!state.$$state || state.abstract) {
           return;
         }
@@ -354,12 +354,12 @@ angular
           go({
             path: state.name.split('.'),
             params: match,
-            options: { location: false }
+            options: { location: false },
           });
         }
       });
 
       // Finally, mark the app as loaded
       angular.module('contentful/app').loaded = true;
-    }
+    },
   ]);

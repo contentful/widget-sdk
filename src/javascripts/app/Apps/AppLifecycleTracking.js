@@ -73,21 +73,21 @@ function track(eventName, appId) {
   Analytics.track('apps:lifecycle_event', {
     eventId,
     appId,
-    eventName
+    eventName,
   });
 
   return eventId;
 }
 
 function trackUninstallationReasons(eventId, appId, reasons) {
-  (reasons || []).forEach(reason => {
+  (reasons || []).forEach((reason) => {
     const custom = typeof reason !== 'string';
 
     Analytics.track('apps:uninstallation_reason', {
       eventId,
       appId,
       custom,
-      reason: custom ? get(reason, ['custom'], 'unknown') : reason
+      reason: custom ? get(reason, ['custom'], 'unknown') : reason,
     });
   });
 }

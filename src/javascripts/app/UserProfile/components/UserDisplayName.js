@@ -34,16 +34,16 @@ export function UserDisplayName(props) {
 
 const userShape = PropTypes.shape({
   sys: PropTypes.shape({
-    id: PropTypes.string.isRequired
+    id: PropTypes.string.isRequired,
   }).isRequired,
   firstName: PropTypes.string.isRequired,
-  lastName: PropTypes.string
+  lastName: PropTypes.string,
 });
 
 UserDisplayName.propTypes = {
   user: userShape.isRequired,
   currentUser: userShape,
-  className: PropTypes.string
+  className: PropTypes.string,
 };
 
 /**
@@ -69,7 +69,7 @@ export default function ConnectedUserDisplayName(props) {
 
   return (
     <CurrentUserFetcher>
-      {currentUser =>
+      {(currentUser) =>
         user ? (
           <UserDisplayName user={user} currentUser={currentUser} className={className} />
         ) : (
@@ -106,5 +106,5 @@ ConnectedUserDisplayName.propTypes = {
   },
   userId: PropTypes.number,
   user: userShape,
-  className: PropTypes.string
+  className: PropTypes.string,
 };

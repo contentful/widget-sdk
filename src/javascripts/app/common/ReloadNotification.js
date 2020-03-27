@@ -35,7 +35,7 @@ ReloadNotificationDialog.propTypes = {
   onReload: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
   message: PropTypes.string.isRequired,
-  children: PropTypes.node
+  children: PropTypes.node,
 };
 
 const ApiErrorMessage = () => (
@@ -86,35 +86,35 @@ function isApiError(error) {
 }
 
 export default {
-  triggerImmediateReload: function() {
+  triggerImmediateReload: function () {
     reloadWithCacheBuster();
   },
 
-  trigger: function(message, title) {
+  trigger: function (message, title) {
     trigger({ message: message, title: title });
   },
 
-  gatekeeperErrorHandler: function(err) {
+  gatekeeperErrorHandler: function (err) {
     if (isApiError(err)) {
       trigger({
         title: 'Error connecting to authentication server',
         message: 'There was an error trying to retrieve login information.',
-        children: <ApiErrorMessage />
+        children: <ApiErrorMessage />,
       });
     }
     return Promise.reject(...arguments);
   },
-  apiErrorHandler: function(err) {
+  apiErrorHandler: function (err) {
     if (isApiError(err)) {
       trigger({
         title: 'Error connecting to backend',
         message: 'There was a problem connecting to the Content Management API.',
-        children: <ApiErrorMessage />
+        children: <ApiErrorMessage />,
       });
     }
     return Promise.reject(...arguments);
   },
-  basicErrorHandler: function() {
+  basicErrorHandler: function () {
     trigger();
-  }
+  },
 };

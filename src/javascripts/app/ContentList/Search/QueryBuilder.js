@@ -19,7 +19,7 @@ import * as logger from 'services/logger';
 
 export function buildQuery({
   search: { contentTypeId = null, searchFilters = [], searchText = '' },
-  contentType
+  contentType,
 }) {
   // Condition is true for special "assetContentType".
   // TODO: Use the "assetContentType" to build (some) of the asset fields.
@@ -53,7 +53,7 @@ function applyGenericValue(query, [queryKey, operator, value]) {
       logger.logError(`invalid operator “${operator}” for search query`, {
         queryKey,
         operator,
-        value
+        value,
       });
     }
     // Ignore missing values, we get them all the time when user adds a filter but
@@ -62,7 +62,7 @@ function applyGenericValue(query, [queryKey, operator, value]) {
   }
   operator = operator.length > 0 ? `[${operator}]` : '';
   return assign(query, {
-    [queryKey + operator]: value
+    [queryKey + operator]: value,
   });
 }
 
@@ -110,23 +110,23 @@ function applyStatus(query, status) {
   if (status === 'published') {
     return assign(query, {
       'sys.publishedAt[exists]': 'true',
-      'sys.archivedAt[exists]': 'false'
+      'sys.archivedAt[exists]': 'false',
     });
   } else if (status === 'draft') {
     return assign(query, {
       'sys.publishedAt[exists]': 'false',
       'sys.archivedAt[exists]': 'false',
-      changed: 'true'
+      changed: 'true',
     });
   } else if (status === 'changed') {
     return assign(query, {
       'sys.publishedAt[exists]': 'true',
       'sys.archivedAt[exists]': 'false',
-      changed: 'true'
+      changed: 'true',
     });
   } else if (status === 'archived') {
     return assign(query, {
-      'sys.archivedAt[exists]': 'true'
+      'sys.archivedAt[exists]': 'true',
     });
   } else if (status === '' || status === null || status === undefined) {
     return query;

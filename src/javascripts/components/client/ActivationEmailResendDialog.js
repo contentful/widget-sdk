@@ -7,7 +7,7 @@ import {
   Paragraph,
   Button,
   Note,
-  ModalConfirm
+  ModalConfirm,
 } from '@contentful/forma-36-react-components';
 
 export function openActivationEmailResendDialog({ doResendEmail }) {
@@ -110,5 +110,5 @@ ActivationEmailResendDialog.propTypes = {
   isShown: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   onSuccess: PropTypes.func.isRequired,
-  doResendEmail: PropTypes.func.isRequired
+  doResendEmail: PropTypes.func.isRequired,
 };

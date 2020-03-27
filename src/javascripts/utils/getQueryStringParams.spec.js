@@ -6,7 +6,7 @@ describe('getQueryStringParams', () => {
     const queryParams = getQueryStringParams(testString);
     expect(queryParams).toMatchObject({
       name: 'test',
-      value: '2'
+      value: '2',
     });
   });
 
@@ -15,7 +15,7 @@ describe('getQueryStringParams', () => {
     const queryParams = getQueryStringParams(testString);
     expect(queryParams).toMatchObject({
       name: 'test',
-      value: '2'
+      value: '2',
     });
   });
 

@@ -14,7 +14,7 @@ import {
   CardActions,
   DropdownList,
   DropdownListItem,
-  Tooltip
+  Tooltip,
 } from '@contentful/forma-36-react-components';
 
 const styles = {
@@ -22,23 +22,23 @@ const styles = {
     display: 'flex',
     marginTop: tokens.spacingL,
     paddingLeft: '67px',
-    paddingRight: tokens.spacingXl
+    paddingRight: tokens.spacingXl,
   }),
   userName: css({
     display: 'block',
-    margin: `${tokens.spacing2Xs} 0`
+    margin: `${tokens.spacing2Xs} 0`,
   }),
   notConfirmed: css({
     fontSize: tokens.fontSizeM,
-    color: tokens.colorTextLightest
+    color: tokens.colorTextLightest,
   }),
   userAvatar: css({
-    marginRight: tokens.spacingM
+    marginRight: tokens.spacingM,
   }),
   userMenu: css({
     marginLeft: 'auto',
-    height: 'fit-content'
-  })
+    height: 'fit-content',
+  }),
 };
 
 const UserListRow = ({
@@ -46,14 +46,14 @@ const UserListRow = ({
   openRoleChangeDialog,
   openRemovalConfirmationDialog,
   numberOfTeamMemberships,
-  canModifyUsers
+  canModifyUsers,
 }) => {
   const {
     sys: {
       id,
-      user: { avatarUrl, activated }
+      user: { avatarUrl, activated },
     },
-    roles
+    roles,
   } = member;
 
   const displayName = getUserName(member.sys.user);
@@ -110,7 +110,7 @@ UserListRow.propTypes = {
   canModifyUsers: PropTypes.bool.isRequired,
   openRoleChangeDialog: PropTypes.func.isRequired,
   numberOfTeamMemberships: PropTypes.objectOf(PropTypes.number).isRequired,
-  openRemovalConfirmationDialog: PropTypes.func.isRequired
+  openRemovalConfirmationDialog: PropTypes.func.isRequired,
 };
 
 export default UserListRow;

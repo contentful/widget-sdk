@@ -14,15 +14,15 @@ const feedbackModalStyles = {
       width: '100%',
       height: '100%',
       fill: 'transparent',
-      stroke: tokens.colorTextLightest
+      stroke: tokens.colorTextLightest,
     },
     '& > button': {
       position: 'absolute',
       transform: 'translate(-50%, -60%)',
       left: '50%',
-      top: '50%'
-    }
-  })
+      top: '50%',
+    },
+  }),
 };
 
 export default function Feedback() {

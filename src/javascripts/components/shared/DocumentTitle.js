@@ -20,7 +20,7 @@ export default function DocumentTitle({ title }) {
   const docTitle = buildDocumentTitle({
     spaceName,
     environmentId,
-    titleSegments: titleSegments
+    titleSegments: titleSegments,
   });
 
   return (
@@ -35,7 +35,7 @@ DocumentTitle.propTypes = {
    * can be a plain string ('Home', 'Content') or
    * an array of string for scoped titles (['New Locale', 'Locales'])
    */
-  title: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]).isRequired
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]).isRequired,
 };
 
 function buildDocumentTitle({ titleSegments, spaceName, environmentId }) {

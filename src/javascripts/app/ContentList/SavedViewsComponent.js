@@ -28,7 +28,7 @@ const DeleteView = makeCtor('DeleteView');
 
 const folderStatesStore = getStore().forKey('folderStates');
 
-export default function({ scopedFolders, loadView, getCurrentView, roleAssignment, tracking }) {
+export default function ({ scopedFolders, loadView, getCurrentView, roleAssignment, tracking }) {
   const reduce = makeReducer({
     [LoadView](state, view) {
       loadView(view);
@@ -36,7 +36,7 @@ export default function({ scopedFolders, loadView, getCurrentView, roleAssignmen
       return assign(state, { currentView: view });
     },
     [ToggleOpened](state, folder) {
-      const updated = update(state.folderStates, [folder.id], value => {
+      const updated = update(state.folderStates, [folder.id], (value) => {
         return value === 'closed' ? null : 'closed';
       });
       folderStatesStore.set(updated);
@@ -58,7 +58,7 @@ export default function({ scopedFolders, loadView, getCurrentView, roleAssignmen
     [UpdateFolder](state, folder) {
       return saveFolders(
         state,
-        map(state.folders, cur => {
+        map(state.folders, (cur) => {
           return cur.id === folder.id ? folder : cur;
         })
       );
@@ -66,7 +66,7 @@ export default function({ scopedFolders, loadView, getCurrentView, roleAssignmen
     [DeleteFolder](state, folder) {
       return saveFolders(
         state,
-        filter(state.folders, cur => {
+        filter(state.folders, (cur) => {
           return cur.id !== folder.id;
         })
       );
@@ -74,7 +74,7 @@ export default function({ scopedFolders, loadView, getCurrentView, roleAssignmen
     [SaveCurrentView](state, { title, roles }) {
       const view = assign(getCurrentView(), { id: random.id(), title, roles });
       const folder = findDefaultFolder(state.folders);
-      const updated = updateFolderViews(state.folders, folder, views => {
+      const updated = updateFolderViews(state.folders, folder, (views) => {
         return concat(views, [view]);
       });
 
@@ -83,15 +83,15 @@ export default function({ scopedFolders, loadView, getCurrentView, roleAssignmen
 
       return assign(state, {
         folders: saveUiConfig(updated),
-        currentView: view
+        currentView: view,
       });
     },
     [UpdateView](state, view) {
       const folder = findContainingFolder(state.folders, view);
       return saveFolders(
         state,
-        updateFolderViews(state.folders, folder, views => {
-          return map(views, cur => (cur.id === view.id ? view : cur));
+        updateFolderViews(state.folders, folder, (views) => {
+          return map(views, (cur) => (cur.id === view.id ? view : cur));
         })
       );
     },
@@ -99,11 +99,11 @@ export default function({ scopedFolders, loadView, getCurrentView, roleAssignmen
       const folder = findContainingFolder(state.folders, view);
       return saveFolders(
         state,
-        updateFolderViews(state.folders, folder, views => {
-          return filter(views, cur => cur.id !== view.id);
+        updateFolderViews(state.folders, folder, (views) => {
+          return filter(views, (cur) => cur.id !== view.id);
         })
       );
-    }
+    },
   });
 
   const store = createStore(
@@ -112,9 +112,9 @@ export default function({ scopedFolders, loadView, getCurrentView, roleAssignmen
       folders: prepareFolders(scopedFolders.get()),
       canEdit: scopedFolders.canEdit,
       folderStates: folderStatesStore.get() || {},
-      dnd: createDnD(scopedFolders.get, folders => store.dispatch(AlterFolders, folders)),
+      dnd: createDnD(scopedFolders.get, (folders) => store.dispatch(AlterFolders, folders)),
       roleAssignment,
-      tracking
+      tracking,
     },
     reduce
   );
@@ -162,7 +162,7 @@ export default function({ scopedFolders, loadView, getCurrentView, roleAssignmen
     DeleteFolder,
     SaveCurrentView,
     UpdateView,
-    DeleteView
+    DeleteView,
   };
 
   return {
@@ -171,7 +171,7 @@ export default function({ scopedFolders, loadView, getCurrentView, roleAssignmen
       return <ViewMenu state={state} actions={actions} />;
     },
     store,
-    actions
+    actions,
   };
 }
 
@@ -180,9 +180,9 @@ function prepareFolders(folders) {
 }
 
 function ensureValidViews(folders) {
-  return map(folders, folder => {
-    return update(folder, ['views'], views => {
-      return filter(views || [], view => isPlainObject(view));
+  return map(folders, (folder) => {
+    return update(folder, ['views'], (views) => {
+      return filter(views || [], (view) => isPlainObject(view));
     });
   });
 }
@@ -201,10 +201,10 @@ function findDefaultFolder(folders) {
 }
 
 function findContainingFolder(folders, view) {
-  return find(folders, folder => find(folder.views, { id: view.id }));
+  return find(folders, (folder) => find(folder.views, { id: view.id }));
 }
 
 function updateFolderViews(folders, folder, fn) {
   folder = update(folder, ['views'], fn);
-  return map(folders, cur => (cur.id === folder.id ? folder : cur));
+  return map(folders, (cur) => (cur.id === folder.id ? folder : cur));
 }

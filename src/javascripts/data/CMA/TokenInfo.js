@@ -19,12 +19,12 @@ export default function makeFetchWithAuth(auth) {
     method: 'GET',
     url: apiUrl('token'),
     headers: {
-      'Content-Type': 'application/vnd.contentful.management.v1+json'
-    }
+      'Content-Type': 'application/vnd.contentful.management.v1+json',
+    },
   };
   return () =>
     fetch(request).then(
-      response => {
+      (response) => {
         const data = response.data;
         if (data) {
           // Locales are always fetched from the `/locales` endpoint.
@@ -38,7 +38,7 @@ export default function makeFetchWithAuth(auth) {
           throw newError();
         }
       },
-      error => {
+      (error) => {
         // true if the request was rejected in preflight. Auth token is invalid
         const isPreflightError = error.status === -1;
 

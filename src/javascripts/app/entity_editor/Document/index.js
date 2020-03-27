@@ -15,7 +15,7 @@ export { create as createCmaDoc } from './CmaDocument';
  */
 export function valuePropertyAt(document, path) {
   return document.changes
-    .filter(changePath => PathUtils.isAffecting(changePath, path))
+    .filter((changePath) => PathUtils.isAffecting(changePath, path))
     .toProperty(() => undefined)
     .map(() => document.getValueAt(path));
 }
@@ -28,8 +28,8 @@ export function valuePropertyAt(document, path) {
  */
 export function localFieldChanges(document) {
   return document.changes
-    .filter(path => path.length >= 3 && path[0] === 'fields')
-    .map(path => [path[1], path[2]]);
+    .filter((path) => path.length >= 3 && path[0] === 'fields')
+    .map((path) => [path[1], path[2]]);
 }
 
 /**

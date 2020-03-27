@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 class CommandMark extends React.PureComponent {
   static propTypes = {
     editor: PropTypes.object,
-    attributes: PropTypes.object
+    attributes: PropTypes.object,
   };
 
   render() {

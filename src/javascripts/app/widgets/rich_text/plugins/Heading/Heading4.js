@@ -16,5 +16,5 @@ class Heading4 extends Component {
 
 export default blockSelectDecorator({
   type: BLOCKS.HEADING_4,
-  title: blockTitles[BLOCKS.HEADING_4]
+  title: blockTitles[BLOCKS.HEADING_4],
 })(Heading4);

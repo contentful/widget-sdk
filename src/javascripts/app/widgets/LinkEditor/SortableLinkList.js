@@ -19,13 +19,13 @@ export function linksToListItems(links, renderLinkFn) {
   const linkKeys = getLinkKeys(links);
   return links.map((link, index) => ({
     key: linkKeys[index],
-    value: renderLinkFn(link, index)
+    value: renderLinkFn(link, index),
   }));
 }
 
 function getLinkKeys(links) {
   const countPerId = {};
-  return links.map(link => {
+  return links.map((link) => {
     const { id } = link.sys;
     countPerId[id] = (countPerId[id] || 0) + 1;
     return `${id}:${countPerId[id] - 1}`;

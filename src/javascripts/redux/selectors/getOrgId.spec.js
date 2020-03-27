@@ -12,9 +12,9 @@ describe('getOrgId', () => {
         type: 'LOCATION_CHANGED',
         payload: {
           location: {
-            pathname: routes.organization.children.teams.build({ orgId: testOrgId })
-          }
-        }
+            pathname: routes.organization.children.teams.build({ orgId: testOrgId }),
+          },
+        },
       });
     });
 
@@ -30,9 +30,9 @@ describe('getOrgId', () => {
         type: 'LOCATION_CHANGED',
         payload: {
           location: {
-            pathname: routes.space.build({ spaceId: testSpace })
-          }
-        }
+            pathname: routes.space.build({ spaceId: testSpace }),
+          },
+        },
       });
     });
 
@@ -48,9 +48,9 @@ describe('getOrgId', () => {
           payload: {
             spaces: {
               [testOrgId]: [{ sys: { id: testSpace } }, { sys: { id: 'notTheTestSpace' } }],
-              otherOrgId: [{ sys: { id: 'otherSpaceId' } }]
-            }
-          }
+              otherOrgId: [{ sys: { id: 'otherSpaceId' } }],
+            },
+          },
         });
       });
 

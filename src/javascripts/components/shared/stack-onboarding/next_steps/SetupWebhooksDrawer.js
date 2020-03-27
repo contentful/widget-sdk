@@ -12,11 +12,11 @@ const styles = {
     width: '266px',
     height: '201px',
     backgroundSize: '266px 201px',
-    marginRight: tokens.spacingXl
-  })
+    marginRight: tokens.spacingXl,
+  }),
 };
 
-const SetupWebhooksDrawer = props => {
+const SetupWebhooksDrawer = (props) => {
   const { deploymentProvider } = props;
   const url = `https://www.contentful.com/developers/docs/tutorials/general/automate-site-builds-with-webhooks/#${deploymentProvider}`;
 
@@ -76,7 +76,7 @@ const HerokuPrerequisite = () => {
 };
 
 SetupWebhooksDrawer.propTypes = {
-  deploymentProvider: PropTypes.string.isRequired
+  deploymentProvider: PropTypes.string.isRequired,
 };
 
 export default SetupWebhooksDrawer;

@@ -19,7 +19,7 @@ export function isValidImage(fileContentType) {
     'image/pjpeg',
     'image/x-jps',
     'image/png',
-    'image/svg+xml'
+    'image/svg+xml',
   ];
 
   return validMimeTypes.indexOf(fileContentType) > -1;

@@ -19,12 +19,12 @@ export default {
           {
             spaceContext,
             Navigator,
-            SlideInNavigator
+            SlideInNavigator,
           },
           extensionId
         ),
-        path: path.startsWith('/') ? path : '/' + path
+        path: path.startsWith('/') ? path : '/' + path,
       };
-    }
-  ]
+    },
+  ],
 };

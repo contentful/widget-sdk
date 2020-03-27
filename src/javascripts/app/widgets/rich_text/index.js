@@ -10,7 +10,7 @@ export default function ConnectedRichText(props) {
     //  while in enabled state if there are any updates by other
     //  users or via API. Currently this would break list related
     //  unit tests so we had to look into this.
-    updateValueWhileEnabled: false
+    updateValueWhileEnabled: false,
   });
 
   return <Component {...props} />;

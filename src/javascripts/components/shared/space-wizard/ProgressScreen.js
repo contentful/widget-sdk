@@ -12,32 +12,32 @@ const infoItems = [
     Icon: ContentTypeIcon,
     title: 'Content model',
     description:
-      'The content model is comprised of content types, they work like a stencil which defines the structure of entries. We’re creating a few different content types for you to see how it works.'
+      'The content model is comprised of content types, they work like a stencil which defines the structure of entries. We’re creating a few different content types for you to see how it works.',
   },
   {
     Icon: ContentIcon,
     title: 'Content',
     description:
-      'Your content is made up of entries. The space will include a couple of entries based on the content types mentioned above.'
+      'Your content is made up of entries. The space will include a couple of entries based on the content types mentioned above.',
   },
   {
     Icon: MediaIcon,
     title: 'Media',
     description:
-      'Your media consists of assets, which are external files, from images or videos to documents. Your entries will have a few assets to complement them.'
+      'Your media consists of assets, which are external files, from images or videos to documents. Your entries will have a few assets to complement them.',
   },
   {
     Icon: APIsIcon,
     title: 'API keys',
     description:
-      'An API key is the token that you’ll use to retrieve your content. We created a few API keys so that you can get started fetching your content right away.'
-  }
+      'An API key is the token that you’ll use to retrieve your content. We created a few API keys so that you can get started fetching your content right away.',
+  },
 ];
 
 class ProgressScreen extends React.Component {
   static propTypes = {
     done: PropTypes.bool.isRequired,
-    onConfirm: PropTypes.func.isRequired
+    onConfirm: PropTypes.func.isRequired,
   };
 
   render() {

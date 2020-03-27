@@ -17,18 +17,18 @@ export const ListPlugin = () => {
         return commonNode('li')(props);
       }
       return next();
-    }
+    },
   };
 };
 
 export const UnorderedList = listToggleDecorator({
   type: BLOCKS.UL_LIST,
   title: 'UL',
-  icon: 'ListBulleted'
-})(props => <ToolbarIcon {...props} />);
+  icon: 'ListBulleted',
+})((props) => <ToolbarIcon {...props} />);
 
 export const OrderedList = listToggleDecorator({
   type: BLOCKS.OL_LIST,
   title: 'OL',
-  icon: 'ListNumbered'
-})(props => <ToolbarIcon {...props} />);
+  icon: 'ListNumbered',
+})((props) => <ToolbarIcon {...props} />);

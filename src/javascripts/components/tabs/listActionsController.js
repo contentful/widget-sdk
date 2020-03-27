@@ -15,7 +15,7 @@ export default function register() {
         entityType: entityType,
         getSelected: $scope.selection.getSelected,
         onComplete: $scope.selection.clear,
-        onDelete: removeFromList
+        onDelete: removeFromList,
       });
 
       this.duplicate = performer.duplicate;
@@ -45,7 +45,7 @@ export default function register() {
             selected.length > 0 &&
             _.every(
               selected,
-              entity =>
+              (entity) =>
                 accessChecker.canPerformActionOnEntity(action, entity) && entity[predicate]()
             )
           );
@@ -56,7 +56,7 @@ export default function register() {
         const wasRemoved = removeFromCollection(entity);
 
         if (wasRemoved && $scope.paginator) {
-          $scope.paginator.setTotal(total => (total > 0 ? total - 1 : 0));
+          $scope.paginator.setTotal((total) => (total > 0 ? total - 1 : 0));
         }
       }
 
@@ -87,6 +87,6 @@ export default function register() {
           return '(Re)publish';
         }
       }
-    }
+    },
   ]);
 }

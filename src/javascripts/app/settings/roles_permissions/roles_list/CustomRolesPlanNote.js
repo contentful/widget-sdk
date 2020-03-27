@@ -54,5 +54,5 @@ export default function CustomRolesPlanNote(props) {
 }
 
 CustomRolesPlanNote.propTypes = {
-  isLegacyOrganization: PropTypes.bool.isRequired
+  isLegacyOrganization: PropTypes.bool.isRequired,
 };

@@ -7,8 +7,8 @@ import tokens from '@contentful/forma-36-tokens';
 const styles = {
   actionRestrictionNote: css({
     color: tokens.colorTextLight,
-    marginTop: tokens.spacingXs
-  })
+    marginTop: tokens.spacingXs,
+  }),
 };
 
 export default function ActionRestrictedNote({ actionName, reason }) {
@@ -22,5 +22,5 @@ export default function ActionRestrictedNote({ actionName, reason }) {
 
 ActionRestrictedNote.propTypes = {
   actionName: PropTypes.string,
-  reason: PropTypes.string
+  reason: PropTypes.string,
 };

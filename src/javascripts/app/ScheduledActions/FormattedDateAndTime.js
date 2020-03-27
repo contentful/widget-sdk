@@ -7,11 +7,7 @@ import moment from 'moment';
  * @param {boolean=} short Render only Today/Tomorrow/Yesterday if valid. Defaults to false
  */
 export function formatDate(date, short) {
-  switch (
-    moment()
-      .startOf('day')
-      .diff(moment(date).startOf('day'), 'days')
-  ) {
+  switch (moment().startOf('day').diff(moment(date).startOf('day'), 'days')) {
     case 0:
       return short ? 'Today' : `Today, ${moment(date).format('DD MMM YYYY')}`;
     case -1:
@@ -32,10 +28,7 @@ export function formatDate(date, short) {
  * @param {Date|string} date A valid constructor argument for moment()
  */
 export function formatTime(date) {
-  return moment
-    .utc(date)
-    .local()
-    .format('h:mm A');
+  return moment.utc(date).local().format('h:mm A');
 }
 
 export function formatDateAndTime(date, short) {
@@ -64,5 +57,5 @@ DateTime.propTypes = {
    * If true renders only Today, Tomorrow etc for the date portion if within the relative time range. Defaults to false
    */
   short: PropTypes.bool,
-  className: PropTypes.string
+  className: PropTypes.string,
 };

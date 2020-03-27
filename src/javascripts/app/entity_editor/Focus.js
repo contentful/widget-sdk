@@ -23,7 +23,7 @@ export function create() {
      * @name entityEditor/Focus#set
      * @param {string} id
      */
-    set: function(id) {
+    set: function (id) {
       focusedField = id;
       focusedFieldBus.set(id);
     },
@@ -33,10 +33,10 @@ export function create() {
      * @name entityEditor/Focus#unset
      * @param {string} id
      */
-    unset: function(id) {
+    unset: function (id) {
       if (focusedField === id) {
         focusedFieldBus.set(null);
       }
-    }
+    },
   };
 }

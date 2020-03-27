@@ -8,7 +8,7 @@ import * as advancedExtensibilityFeature from 'app/settings/extensions/services/
 import {
   SkeletonContainer,
   SkeletonDisplayText,
-  SkeletonBodyText
+  SkeletonBodyText,
 } from '@contentful/forma-36-react-components';
 import Placeholder from 'app/common/Placeholder';
 import BinocularsIllustration from 'svg/illustrations/binoculars-illustration.svg';
@@ -19,7 +19,7 @@ const PageExtensionFetcher = createFetcherComponent(async ({ extensionId, orgId 
   const key = [NAMESPACE_EXTENSION, extensionId];
   const [isEnabled, widgets] = await Promise.all([
     advancedExtensibilityFeature.isEnabled(orgId),
-    getCustomWidgetLoader().getByKeys([key])
+    getCustomWidgetLoader().getByKeys([key]),
   ]);
 
   if (!isEnabled) {
@@ -37,7 +37,7 @@ const PageExtensionFetcher = createFetcherComponent(async ({ extensionId, orgId 
 const styles = {
   loading: css({ padding: tokens.spacingXl }),
   errorMessage: css({ paddingTop: tokens.spacingL }),
-  binocularsImage: css({ margin: 'auto', width: '30vw' })
+  binocularsImage: css({ margin: 'auto', width: '30vw' }),
 };
 
 function ErrorMessage() {
@@ -83,5 +83,5 @@ PageExtensionRoute.propTypes = {
   extensionId: PropTypes.string.isRequired,
   orgId: PropTypes.string.isRequired,
   path: PropTypes.string.isRequired,
-  bridge: PropTypes.object.isRequired
+  bridge: PropTypes.object.isRequired,
 };

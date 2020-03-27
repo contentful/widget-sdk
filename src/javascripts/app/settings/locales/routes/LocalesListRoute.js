@@ -32,14 +32,14 @@ const LocalesFetcher = createFetcherComponent(() => {
     OrganizationRoles.isOwnerOrAdmin(spaceContext.organization),
     spaceContext.isMasterEnvironment(),
     getSpaceFeature(spaceContext.getId(), ENVIRONMENT_USAGE_ENFORCEMENT),
-    _.get(spaceContext.organization, ['subscriptionPlan', 'name'])
+    _.get(spaceContext.organization, ['subscriptionPlan', 'name']),
   ]);
 });
 
 class LocalesListRoute extends React.Component {
   static propTypes = {
     showUpgradeSpaceDialog: PropTypes.func.isRequired,
-    getComputeLocalesUsageForOrganization: PropTypes.func.isRequired
+    getComputeLocalesUsageForOrganization: PropTypes.func.isRequired,
   };
 
   render() {
@@ -66,7 +66,7 @@ class LocalesListRoute extends React.Component {
               isOwnerOrAdmin,
               insideMasterEnv,
               allowedToEnforceLimits,
-              subscriptionPlanName
+              subscriptionPlanName,
             ] = data;
             if (isLegacy) {
               return (
@@ -94,7 +94,7 @@ class LocalesListRoute extends React.Component {
                 insideMasterEnv={insideMasterEnv}
                 upgradeSpace={() =>
                   this.props.showUpgradeSpaceDialog({
-                    onSubmit: () => fetch()
+                    onSubmit: () => fetch(),
                   })
                 }
               />

@@ -27,7 +27,7 @@ const OnboardingModal = ({ onContentChoice, onDevChoice }) => {
 
 OnboardingModal.propTypes = {
   onContentChoice: PropTypes.func.isRequired,
-  onDevChoice: PropTypes.func.isRequired
+  onDevChoice: PropTypes.func.isRequired,
 };
 
 export default OnboardingModal;

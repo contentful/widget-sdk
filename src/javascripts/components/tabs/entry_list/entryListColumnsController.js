@@ -8,13 +8,13 @@ export default function register() {
     function EntryListColumnsController($scope) {
       const SORTABLE_TYPES = ['Boolean', 'Date', 'Integer', 'Number', 'Symbol', 'Location'];
 
-      $scope.fieldIsSortable = field => {
+      $scope.fieldIsSortable = (field) => {
         return _.includes(SORTABLE_TYPES, field.type) && field.id !== 'author';
       };
 
-      $scope.isOrderField = field => $scope.context.view.order.fieldId === field.id;
+      $scope.isOrderField = (field) => $scope.context.view.order.fieldId === field.id;
 
-      $scope.orderColumnBy = field => {
+      $scope.orderColumnBy = (field) => {
         if (!$scope.isOrderField(field)) {
           setOrderField(field);
         }
@@ -26,7 +26,7 @@ export default function register() {
 
       $scope.$watch(
         'context.view.displayedFieldIds',
-        displayedFieldIds => {
+        (displayedFieldIds) => {
           if (
             displayedFieldIds &&
             displayedFieldIds.length &&
@@ -39,7 +39,7 @@ export default function register() {
         true
       );
 
-      $scope.orderDescription = view => {
+      $scope.orderDescription = (view) => {
         const field = _.find($scope.displayedFields, { id: view.order.fieldId });
         const direction = view.order.direction;
         return '' + direction + ' by ' + field.name;
@@ -54,6 +54,6 @@ export default function register() {
       function switchOrderDirection(direction) {
         return direction === 'ascending' ? 'descending' : 'ascending';
       }
-    }
+    },
   ]);
 }

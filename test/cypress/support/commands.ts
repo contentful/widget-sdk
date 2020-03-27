@@ -28,13 +28,13 @@ export function setAuthTokenToLocalStorage() {
 }
 
 /**
-  * Custom command to disable the cookie consent manager (Osano)
-  *
-  * @returns {void}
-  */
- export function disableConsentManager() {
-   window.localStorage.setItem('__disable_consentmanager', 'true');
- }
+ * Custom command to disable the cookie consent manager (Osano)
+ *
+ * @returns {void}
+ */
+export function disableConsentManager() {
+  window.localStorage.setItem('__disable_consentmanager', 'true');
+}
 
 /**
  * Enable app feature flag
@@ -52,7 +52,7 @@ export function enableFeatureFlags(flags: Array<string>): void {
 
 export function disableFeatureFlags(flags: Array<string>): void {
   const enabled = JSON.parse(window.localStorage.getItem('ui_enable_flags') || '[]');
-  let sorted = enabled.filter(function(el) {
+  let sorted = enabled.filter(function (el) {
     return !flags.includes(el);
   });
   window.localStorage.setItem('ui_enable_flags', JSON.stringify(sorted));
@@ -72,7 +72,7 @@ Cypress.Commands.add('disableFeatureFlags', disableFeatureFlags);
 Cypress.Commands.add('verifyNotification', verifyNotification);
 
 Cypress.Commands.overwrite('visit', (visit, url) => {
-  cy.readFile('test/cypress/support/unfetch.js').then(polyfill => {
+  cy.readFile('test/cypress/support/unfetch.js').then((polyfill) => {
     return visit(url, {
       onBeforeLoad(win: Window) {
         // Cypress cannot capture fetch requests.
@@ -82,7 +82,7 @@ Cypress.Commands.overwrite('visit', (visit, url) => {
         // can be captured.
         delete win.fetch;
         win.eval(polyfill);
-      }
+      },
     });
   });
 });

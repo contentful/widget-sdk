@@ -9,7 +9,7 @@ const RemoveOwnAdminMembershipConfirmation = ({
   isShown,
   onConfirm,
   teamName,
-  isLastAdminMembership
+  isLastAdminMembership,
 }) => {
   const [userConfirmationInput, setUserConfirmationInput] = useState('');
 
@@ -65,7 +65,7 @@ RemoveOwnAdminMembershipConfirmation.propTypes = {
   onConfirm: PropTypes.func.isRequired,
   isShown: PropTypes.bool.isRequired,
   teamName: PropTypes.string.isRequired,
-  isLastAdminMembership: PropTypes.bool.isRequired
+  isLastAdminMembership: PropTypes.bool.isRequired,
 };
 
 export default RemoveOwnAdminMembershipConfirmation;

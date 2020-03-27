@@ -14,9 +14,9 @@ jest.mock('search/EntitySelector/Config', () => ({
     input: '',
     info: '',
     empty: '',
-    searchPlaceholder: ''
+    searchPlaceholder: '',
   }),
-  calculateIdealListHeight: () => 200
+  calculateIdealListHeight: () => 200,
 }));
 
 describe('HyperlinkDialog', () => {
@@ -28,10 +28,10 @@ describe('HyperlinkDialog', () => {
     linkTypeSelect: 'select[data-test-id="link-type-select"]',
     linkTypeSelectOptions: 'select[data-test-id="link-type-select"] option',
     entitySelector: '[data-test-id="entity-selector-container"]',
-    fetchedEntityCard: '[data-test-id="cf-ui-reference-card"]'
+    fetchedEntityCard: '[data-test-id="cf-ui-reference-card"]',
   };
 
-  it('allows the user to add a hyperlink to a URL', async function() {
+  it('allows the user to add a hyperlink to a URL', async function () {
     const mockOnConfirm = jest.fn();
 
     const wrapper = mount(<HyperlinkDialogForm onConfirm={mockOnConfirm} onCancel={() => {}} />);
@@ -52,21 +52,21 @@ describe('HyperlinkDialog', () => {
     expect(mockOnConfirm).toHaveBeenCalledWith({
       type: 'uri',
       text: 'My text link',
-      uri: 'https://www.contentful.com'
+      uri: 'https://www.contentful.com',
     });
   });
 
-  it('allows the user to edit an existing hyperlink to a URL', async function() {
+  it('allows the user to edit an existing hyperlink to a URL', async function () {
     const mockOnConfirm = jest.fn();
 
     const wrapper = mount(
       <HyperlinkDialogForm
-        onConfirm={e => mockOnConfirm(e)}
+        onConfirm={(e) => mockOnConfirm(e)}
         onCancel={() => {}}
         value={{
           text: 'My text link',
           uri: 'https://www.contentful.com',
-          type: 'uri'
+          type: 'uri',
         }}
       />
     );
@@ -87,11 +87,11 @@ describe('HyperlinkDialog', () => {
     expect(mockOnConfirm).toHaveBeenCalledWith({
       type: 'uri',
       text: 'My updated text link',
-      uri: 'https://app.contentful.com'
+      uri: 'https://app.contentful.com',
     });
   });
 
-  it('allows the user to cancel editing an existing hyperlink to a URL', async function() {
+  it('allows the user to cancel editing an existing hyperlink to a URL', async function () {
     const mockOnCancel = jest.fn();
 
     const wrapper = mount(
@@ -101,7 +101,7 @@ describe('HyperlinkDialog', () => {
         value={{
           text: 'My text link',
           uri: 'https://www.contentful.com',
-          type: 'uri'
+          type: 'uri',
         }}
       />
     );
@@ -116,10 +116,10 @@ describe('HyperlinkDialog', () => {
     expect(mockOnCancel).toHaveBeenCalled();
   });
 
-  it('renders a "link type" field if passed multiple entity configs', async function() {
+  it('renders a "link type" field if passed multiple entity configs', async function () {
     const entitySelectorConfigs = {
       Entry: {},
-      Asset: {}
+      Asset: {},
     };
 
     const wrapper = mount(
@@ -130,7 +130,7 @@ describe('HyperlinkDialog', () => {
         value={{
           text: 'My text link',
           uri: 'https://www.contentful.com',
-          type: 'uri'
+          type: 'uri',
         }}
       />
     );
@@ -139,13 +139,13 @@ describe('HyperlinkDialog', () => {
     expect(
       wrapper
         .find(selectors.linkTypeSelectOptions)
-        .map(element => element.text())
+        .map((element) => element.text())
         .sort()
     ).toEqual(['Asset', 'Entry', 'URL'].sort());
     expect(wrapper.find(selectors.linkTypeSelectOptions)).toHaveLength(3);
   });
 
-  it('does not render a "link type" field if not passed entity configs', async function() {
+  it('does not render a "link type" field if not passed entity configs', async function () {
     const wrapper = mount(
       <HyperlinkDialogForm
         onConfirm={() => {}}
@@ -153,7 +153,7 @@ describe('HyperlinkDialog', () => {
         value={{
           text: 'My text link',
           uri: 'https://www.contentful.com',
-          type: 'uri'
+          type: 'uri',
         }}
       />
     );
@@ -162,11 +162,11 @@ describe('HyperlinkDialog', () => {
     expect(wrapper.find(selectors.linkTypeSelectOptions)).toHaveLength(0);
   });
 
-  it('does not render "url" option in link type field if not passed url in entity configs', async function() {
+  it('does not render "url" option in link type field if not passed url in entity configs', async function () {
     const allowedHyperlinkTypes = ['Asset', 'Entry'];
     const entitySelectorConfigs = {
       Entry: {},
-      Asset: {}
+      Asset: {},
     };
 
     const wrapper = mount(
@@ -183,16 +183,16 @@ describe('HyperlinkDialog', () => {
     expect(
       wrapper
         .find(selectors.linkTypeSelectOptions)
-        .map(element => element.text())
+        .map((element) => element.text())
         .sort()
     ).toEqual(['Asset', 'Entry'].sort());
   });
 
-  it('renders entity selector by default if link type is not URL', async function() {
+  it('renders entity selector by default if link type is not URL', async function () {
     const allowedHyperlinkTypes = ['Asset', 'Entry'];
     const entitySelectorConfigs = {
       Entry: {},
-      Asset: {}
+      Asset: {},
     };
 
     const wrapper = mount(

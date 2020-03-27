@@ -131,8 +131,8 @@ function generateNewUsageCheckEnforcements(allowedToCreate) {
         additionalPolicies: [],
         deniedPermissions: {
           deniedPerms: {},
-          reason: 'usageExceeded'
-        }
+          reason: 'usageExceeded',
+        },
       };
       enforcement['deniedPermissions']['deniedPerms'][entity] = ['create'];
 
@@ -141,7 +141,7 @@ function generateNewUsageCheckEnforcements(allowedToCreate) {
       reasonsDenied = (action, entityType) => {
         return [
           'usageExceeded',
-          `You do not have permissions to ${action} on ${entityType}, please contact your administrator for more information.`
+          `You do not have permissions to ${action} on ${entityType}, please contact your administrator for more information.`,
         ];
       };
     }
@@ -154,7 +154,7 @@ async function fetchEnforcements(spaceId) {
   const endpoint = createSpaceEndpoint(spaceId);
   const raw = await endpoint({
     method: 'GET',
-    path: ['enforcements']
+    path: ['enforcements'],
   });
 
   return raw.items;

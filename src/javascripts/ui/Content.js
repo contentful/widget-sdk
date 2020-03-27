@@ -26,12 +26,12 @@ export function DocsLink({ text, target }) {
   return KnowledgeBase({
     target,
     text,
-    inlineText: 'true'
+    inlineText: 'true',
   });
 }
 DocsLink.propTypes = {
   text: PropTypes.string,
-  target: PropTypes.string
+  target: PropTypes.string,
 };
 
 /**
@@ -67,11 +67,11 @@ export function LinkOpen({ children, url, modifier }) {
 LinkOpen.propTypes = {
   children: PropTypes.node,
   url: PropTypes.string.isRequired,
-  modifier: PropTypes.string
+  modifier: PropTypes.string,
 };
 
 LinkOpen.defaultProps = {
-  modifier: ''
+  modifier: '',
 };
 
 /**
@@ -92,7 +92,7 @@ export function CodeFragment({ children, style }) {
         padding: '0 5px',
         overflow: 'hidden',
         textOverflow: 'ellipsis',
-        ...style
+        ...style,
       }}>
       {children}
     </span>
@@ -100,5 +100,5 @@ export function CodeFragment({ children, style }) {
 }
 CodeFragment.propTypes = {
   children: PropTypes.node,
-  style: PropTypes.object
+  style: PropTypes.object,
 };

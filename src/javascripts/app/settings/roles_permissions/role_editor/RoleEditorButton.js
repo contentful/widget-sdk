@@ -5,7 +5,7 @@ import {
   Dropdown,
   DropdownList,
   DropdownListItem,
-  Button
+  Button,
 } from '@contentful/forma-36-react-components';
 
 export default class RoleEditorButton extends React.Component {
@@ -15,15 +15,15 @@ export default class RoleEditorButton extends React.Component {
     onDelete: PropTypes.func,
     disabled: PropTypes.bool.isRequired,
     loading: PropTypes.bool.isRequired,
-    showDropdown: PropTypes.bool
+    showDropdown: PropTypes.bool,
   };
 
   state = {
     isOpen: false,
-    showDropdown: false
+    showDropdown: false,
   };
 
-  closeAnd = onClick => event => {
+  closeAnd = (onClick) => (event) => {
     onClick(event);
     this.setState({ isOpen: false });
   };

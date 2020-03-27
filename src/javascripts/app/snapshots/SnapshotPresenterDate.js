@@ -19,10 +19,7 @@ const SnapshotPresenterDate = ({ settings, value }) => {
     dateString += `, ${time}`;
   } else {
     const [hour, minute] = time.split(':');
-    const longDate = moment()
-      .hour(hour)
-      .minute(minute)
-      .format('LT');
+    const longDate = moment().hour(hour).minute(minute).format('LT');
     dateString += `, ${longDate}`;
   }
 
@@ -36,13 +33,13 @@ const SnapshotPresenterDate = ({ settings, value }) => {
 SnapshotPresenterDate.propTypes = {
   settings: PropTypes.shape({
     format: PropTypes.string,
-    ampm: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+    ampm: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   }).isRequired,
-  value: PropTypes.string.isRequired
+  value: PropTypes.string.isRequired,
 };
 
 SnapshotPresenterDate.defaultProps = {
-  settings: {}
+  settings: {},
 };
 
 export default SnapshotPresenterDate;

@@ -6,40 +6,40 @@ import { mapValues, toArray } from 'lodash';
 import PublicationWidget from './PublicationWidget';
 
 describe('app/EntrySidebar/PublicationWidget', () => {
-  const createCommand = props => ({
+  const createCommand = (props) => ({
     isDisabled: () => false,
     isAvailable: () => true,
     isRestricted: () => false,
     inProgress: () => false,
     execute: jest.fn(),
-    ...props
+    ...props,
   });
 
   const commandTemplates = {
     unavailable: {
       label: 'Unavailable command',
       targetStateId: 'unavailable-command',
-      isAvailable: () => false
+      isAvailable: () => false,
     },
     enabled: {
       label: 'Enabled command',
-      targetStateId: 'enabled-command'
+      targetStateId: 'enabled-command',
     },
     disabled: {
       label: 'Disabled command',
       targetStateId: 'disabled-command',
-      isDisabled: () => true
+      isDisabled: () => true,
     },
     restricted: {
       label: 'Restricted command',
       targetStateId: 'restricted-command',
       isDisabled: () => true,
-      isRestricted: () => true
+      isRestricted: () => true,
     },
     publish: {
       label: 'Publish',
-      targetStateId: 'published'
-    }
+      targetStateId: 'published',
+    },
   };
 
   const createCommands = () => mapValues(commandTemplates, createCommand);
@@ -50,11 +50,11 @@ describe('app/EntrySidebar/PublicationWidget', () => {
     revertButton: 'discard-changed-button',
     primaryActionRestrictionNote: 'action-restriction-note',
     secondaryActionsDropdown: 'change-state-menu-trigger',
-    restrictedActionIcon: 'action-restriction-icon'
+    restrictedActionIcon: 'action-restriction-icon',
   };
 
-  const select = mapValues(TEST_IDS, testId => elem => elem.queryByTestId(testId));
-  select.primaryActionButton = elem => {
+  const select = mapValues(TEST_IDS, (testId) => (elem) => elem.queryByTestId(testId));
+  select.primaryActionButton = (elem) => {
     // TODO: Use test-id once we do not need dynamic test id on this button for e2e tests.
     return elem.container.querySelector('.primary-publish-button');
   };
@@ -65,13 +65,13 @@ describe('app/EntrySidebar/PublicationWidget', () => {
     status: 'draft',
     updatedAt: '2042-01-01T00:00:01.000Z',
     primary: createCommand({ label: 'Foo', targetStateId: 'foo' }),
-    secondary: []
+    secondary: [],
   };
 
   function render(props) {
     const allProps = {
       ...DEFAULT_TEST_PROPS,
-      ...props
+      ...props,
     };
     const wrapper = renderReact(<PublicationWidget isSaving={false} {...allProps} />);
     return { wrapper, props: allProps };
@@ -79,18 +79,18 @@ describe('app/EntrySidebar/PublicationWidget', () => {
 
   it('shows last changed date', () => {
     const { wrapper } = render({
-      updatedAt: '1985-05-25T12:34:56.000Z'
+      updatedAt: '1985-05-25T12:34:56.000Z',
     });
     expect(select.dateText(wrapper)).toHaveTextContent('Last saved 05/25/1985');
   });
 
   describe('with "draft" status', () => {
     const props = {
-      status: 'draft'
+      status: 'draft',
     };
 
     itRendersStatus(props, {
-      expectedText: 'Draft'
+      expectedText: 'Draft',
     });
     itCanRenderRevert(props);
     itRendersPrimaryActions(props);
@@ -99,11 +99,11 @@ describe('app/EntrySidebar/PublicationWidget', () => {
 
   describe('with "changes" status', () => {
     const props = {
-      status: 'changes'
+      status: 'changes',
     };
 
     itRendersStatus(props, {
-      expectedText: 'Changed'
+      expectedText: 'Changed',
     });
     itCanRenderRevert(props);
     itRendersPrimaryActions(props);
@@ -112,11 +112,11 @@ describe('app/EntrySidebar/PublicationWidget', () => {
 
   describe('with "archived" status', () => {
     const props = {
-      status: 'archived'
+      status: 'archived',
     };
 
     itRendersStatus(props, {
-      expectedText: 'Archived'
+      expectedText: 'Archived',
     });
     itCanRenderRevert(props);
     itRendersPrimaryActions(props);
@@ -125,11 +125,11 @@ describe('app/EntrySidebar/PublicationWidget', () => {
 
   describe('with "published" status', () => {
     const props = {
-      status: 'published'
+      status: 'published',
     };
 
     itRendersStatus(props, {
-      expectedText: 'Published'
+      expectedText: 'Published',
     });
     itCanRenderRevert(props);
     itCanRenderSecondaryActions(props);
@@ -140,7 +140,7 @@ describe('app/EntrySidebar/PublicationWidget', () => {
     it('hides primary action button', () => {
       const { wrapper } = render({
         ...props,
-        primary: createCommand()
+        primary: createCommand(),
       });
 
       expect(select.primaryActionButton(wrapper)).not.toBeInTheDocument();
@@ -150,7 +150,7 @@ describe('app/EntrySidebar/PublicationWidget', () => {
   describe('with custom `publicationBlockedReason`', () => {
     const props = {
       status: 'changed',
-      publicationBlockedReason: 'YOU SHALL NOT PASS!'
+      publicationBlockedReason: 'YOU SHALL NOT PASS!',
     };
 
     it('does not render warning if primary action is not publish', () => {
@@ -162,7 +162,7 @@ describe('app/EntrySidebar/PublicationWidget', () => {
 
     itRendersPrimaryAction({ ...props }, 'publish', {
       expectClickable: false,
-      restrictedText: 'YOU SHALL NOT PASS!'
+      restrictedText: 'YOU SHALL NOT PASS!',
     });
   });
 
@@ -183,11 +183,11 @@ describe('app/EntrySidebar/PublicationWidget', () => {
     it('renders revert action if "revert" prop is defined', () => {
       const revertCommand = createCommand({
         label: 'Reeeeevert!!!', // This is ignored as shown in the label assertion.
-        isAvailable: () => true
+        isAvailable: () => true,
       });
       const { wrapper } = render({
         ...props,
-        revert: revertCommand
+        revert: revertCommand,
       });
       const revertButtonElem = select.revertButton(wrapper);
       expect(revertButtonElem).toBeInTheDocument();
@@ -203,7 +203,7 @@ describe('app/EntrySidebar/PublicationWidget', () => {
     itRendersPrimaryAction(props, 'disabled', { expectClickable: false });
     itRendersPrimaryAction(props, 'restricted', {
       expectClickable: false,
-      restrictedText: 'You do not have permission to restricted command'
+      restrictedText: 'You do not have permission to restricted command',
     });
   }
 
@@ -216,7 +216,7 @@ describe('app/EntrySidebar/PublicationWidget', () => {
         if (!command) throw new Error(`No command for key ${commandKey}`);
         wrapper = render({
           ...props,
-          primary: command
+          primary: command,
         }).wrapper;
       });
 
@@ -224,7 +224,7 @@ describe('app/EntrySidebar/PublicationWidget', () => {
         expectPrimaryButton(wrapper, {
           text: command.label,
           isDisabled: !expectClickable,
-          restriction: restrictedText
+          restriction: restrictedText,
         });
       });
 
@@ -242,20 +242,20 @@ describe('app/EntrySidebar/PublicationWidget', () => {
       let wrapper, commands, elems;
 
       const selectCommandElems = () =>
-        mapValues(commands, command => select.actionByCommand(wrapper, command));
+        mapValues(commands, (command) => select.actionByCommand(wrapper, command));
 
       beforeEach(() => {
         commands = createCommands();
         wrapper = render({
           ...props,
-          secondary: toArray(commands)
+          secondary: toArray(commands),
         }).wrapper;
         elems = selectCommandElems();
       });
 
       it('are hidden within dropdown', () => {
         expect.assertions(5);
-        toArray(elems).forEach(elem => expect(elem).not.toBeInTheDocument());
+        toArray(elems).forEach((elem) => expect(elem).not.toBeInTheDocument());
       });
 
       describe('when opening the secondary actions dropdown', () => {

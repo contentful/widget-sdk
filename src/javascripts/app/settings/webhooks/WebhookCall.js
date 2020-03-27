@@ -6,7 +6,7 @@ import { get } from 'lodash';
 
 import WebhookCallStatus from './WebhookCallStatus';
 
-const parseJsonSafe = s => {
+const parseJsonSafe = (s) => {
   try {
     return JSON.parse(s);
   } catch (e) {
@@ -18,7 +18,7 @@ export class WebhookCall extends React.Component {
   static propTypes = {
     webhook: PropTypes.object.isRequired,
     call: PropTypes.object.isRequired,
-    onGoBack: PropTypes.func.isRequired
+    onGoBack: PropTypes.func.isRequired,
   };
 
   render() {

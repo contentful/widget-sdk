@@ -27,12 +27,8 @@ describe('FormSection', () => {
   it('hides/shows children when clicking on a toggle', () => {
     const wrapper = mount('test', true);
 
-    const toggle = () =>
-      wrapper
-        .find('button')
-        .first()
-        .simulate('click');
-    const assertVisible = isVisible =>
+    const toggle = () => wrapper.find('button').first().simulate('click');
+    const assertVisible = (isVisible) =>
       expect(wrapper.find('#test')).toHaveLength(isVisible ? 1 : 0);
 
     assertVisible(true);

@@ -5,7 +5,7 @@ import { cancelUser } from 'Authentication';
 import * as ModalLauncher from 'app/common/ModalLauncher';
 import DeleteUserModal from './DeleteUserModal';
 
-const openDeleteUserModal = async singleOwnerOrganizations => {
+const openDeleteUserModal = async (singleOwnerOrganizations) => {
   const result = await ModalLauncher.open(({ isShown, onClose }) => {
     return (
       <DeleteUserModal
@@ -39,5 +39,5 @@ export default function DangerZoneSection({ singleOwnerOrganizations }) {
 }
 
 DangerZoneSection.propTypes = {
-  singleOwnerOrganizations: PropTypes.array.isRequired
+  singleOwnerOrganizations: PropTypes.array.isRequired,
 };

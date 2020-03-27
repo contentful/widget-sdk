@@ -27,7 +27,7 @@ function patchStringAt(doc, path, oldValue, newValue) {
    * - patch.insert[1] is the string to be inserted
    *   at the start position
    */
-  const ops = patches.map(patch => {
+  const ops = patches.map((patch) => {
     if (patch.delete) {
       return deleteOp(path, oldValue, patch);
     } else if (patch.insert) {
@@ -36,7 +36,7 @@ function patchStringAt(doc, path, oldValue, newValue) {
   });
 
   // When patching - do it atomically
-  return new Promise(resolve => doc.submitOp(_.filter(ops), resolve));
+  return new Promise((resolve) => doc.submitOp(_.filter(ops), resolve));
 }
 
 function deleteOp(path, value, patch) {
@@ -45,14 +45,14 @@ function deleteOp(path, value, patch) {
 
   return {
     p: path.concat(pos),
-    sd: value.slice(pos, pos + len)
+    sd: value.slice(pos, pos + len),
   };
 }
 
 function insertOp(path, patch) {
   return {
     p: path.concat(patch.insert[0]),
-    si: patch.insert[1]
+    si: patch.insert[1],
   };
 }
 
@@ -75,7 +75,7 @@ export function setAt(doc, path, newValue) {
 }
 
 export function isStringField(fieldId, contentType) {
-  const field = _.find(_.get(contentType, 'data.fields', []), field => field.id === fieldId);
+  const field = _.find(_.get(contentType, 'data.fields', []), (field) => field.id === fieldId);
 
   return _.includes(STRING_FIELD_TYPES, field && field.type);
 }

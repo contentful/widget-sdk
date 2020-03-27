@@ -33,94 +33,94 @@ describe('BulkAssetsCreator.tryToPublishProcessingAssets()', () => {
 
   runTest('last processed first', () => [
     [newAssetProcessedAfter(1), PUBLISHABLE],
-    [newAssetProcessedAfter(6), PUBLISHABLE]
+    [newAssetProcessedAfter(6), PUBLISHABLE],
   ]);
 
   runTest('all processed at six seconds', () => [
     [newAssetProcessedAfter(6), PUBLISHABLE],
-    [newAssetProcessedAfter(6), PUBLISHABLE]
+    [newAssetProcessedAfter(6), PUBLISHABLE],
   ]);
 
   runTest('last unpublishable', () => [
     [newAssetProcessedAfter(6), PUBLISHABLE],
-    [newAssetProcessedAfter(42), UNPUBLISHABLE]
+    [newAssetProcessedAfter(42), UNPUBLISHABLE],
   ]);
 
   runTest('all processed in two seconds or less', () => [
     [newAssetProcessedAfter(2), PUBLISHABLE],
     [newAssetProcessedAfter(1), PUBLISHABLE],
-    [newAssetProcessedAfter(0.5), PUBLISHABLE]
+    [newAssetProcessedAfter(0.5), PUBLISHABLE],
   ]);
 
   runTest('all processed with more than one second inbetween (last first)', () => [
     [newAssetProcessedAfter(6), PUBLISHABLE],
     [newAssetProcessedAfter(5), PUBLISHABLE],
     [newAssetProcessedAfter(3), PUBLISHABLE],
-    [newAssetProcessedAfter(1), PUBLISHABLE]
+    [newAssetProcessedAfter(1), PUBLISHABLE],
   ]);
 
   runTest('all processed with more than one second inbetween (last middle)', () => [
     [newAssetProcessedAfter(4), PUBLISHABLE],
     [newAssetProcessedAfter(2), PUBLISHABLE],
     [newAssetProcessedAfter(6), PUBLISHABLE],
-    [newAssetProcessedAfter(4), PUBLISHABLE]
+    [newAssetProcessedAfter(4), PUBLISHABLE],
   ]);
 
   runTest('all processed with more than one second inbetween (last last)', () => [
     [newAssetProcessedAfter(1), PUBLISHABLE],
     [newAssetProcessedAfter(3), PUBLISHABLE],
-    [newAssetProcessedAfter(5), PUBLISHABLE]
+    [newAssetProcessedAfter(5), PUBLISHABLE],
   ]);
 
   runTest('all processed in more than six seconds', () => [
     [newAssetProcessedAfter(6.5), UNPUBLISHABLE],
     [newAssetProcessedAfter(8.5), UNPUBLISHABLE],
-    [newAssetProcessedAfter(42), UNPUBLISHABLE]
+    [newAssetProcessedAfter(42), UNPUBLISHABLE],
   ]);
 
   runTest('all processed within six seconds', () => [
     [newAssetProcessedAfter(0.5), PUBLISHABLE],
     [newAssetProcessedAfter(1), PUBLISHABLE],
-    [newAssetProcessedAfter(6), PUBLISHABLE]
+    [newAssetProcessedAfter(6), PUBLISHABLE],
   ]);
 
   runTest('one not processable within six seconds (first)', () => [
     [newAssetProcessedAfter(0.5), PUBLISHABLE],
     [newAssetProcessedAfter(3), PUBLISHABLE],
-    [newAssetProcessedAfter(16), UNPUBLISHABLE]
+    [newAssetProcessedAfter(16), UNPUBLISHABLE],
   ]);
 
   runTest('one not processable within six seconds (middle)', () => [
     [newAssetProcessedAfter(6), PUBLISHABLE],
     [newAssetProcessedAfter(18), UNPUBLISHABLE],
-    [newAssetProcessedAfter(1), PUBLISHABLE]
+    [newAssetProcessedAfter(1), PUBLISHABLE],
   ]);
 
   runTest('one not processable within six seconds (last)', () => [
     [newAssetProcessedAfter(4), PUBLISHABLE],
     [newAssetProcessedAfter(6), PUBLISHABLE],
-    [newAssetProcessedAfter(18), UNPUBLISHABLE]
+    [newAssetProcessedAfter(18), UNPUBLISHABLE],
   ]);
 
   runTest('unprocessable asset', () => [[newUnprocessableAsset(), UNPUBLISHABLE]]);
 
   runTest('unprocessable asset is last', () => [
     [newAssetProcessedAfter(4), PUBLISHABLE],
-    [newUnprocessableAsset(), UNPUBLISHABLE]
+    [newUnprocessableAsset(), UNPUBLISHABLE],
   ]);
 
   runTest('unprocessable asset is first', () => [
     [newUnprocessableAsset(), UNPUBLISHABLE],
-    [newAssetProcessedAfter(6), PUBLISHABLE]
+    [newAssetProcessedAfter(6), PUBLISHABLE],
   ]);
 
   runTest('multiple unprocessable assets', () => [
     [newUnprocessableAsset(), UNPUBLISHABLE],
-    [newUnprocessableAsset(), UNPUBLISHABLE]
+    [newUnprocessableAsset(), UNPUBLISHABLE],
   ]);
 
   function runTest(msg, buildAssetsAndExpectations) {
-    it(msg, function(done) {
+    it(msg, function (done) {
       const assets = [];
       const expectedPublishedAssets = [];
       const expectedUnpublishableAssets = [];
@@ -172,7 +172,7 @@ describe('BulkAssetsCreator.tryToPublishProcessingAssets()', () => {
     return {
       __id: lastId++, // ID for sorting and more meaningful diffs on test failure.
       publish: jest.fn().mockRejectedValue(VERSION_MISMATCH_ERROR),
-      setVersion: jest.fn()
+      setVersion: jest.fn(),
     };
   }
 });

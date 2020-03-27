@@ -21,7 +21,7 @@ describe('access selectors', () => {
       beforeEach(() => {
         deniedState = reducer(initialState, {
           type: 'ACCESS_DENIED',
-          payload: { reason: 'open_bills' }
+          payload: { reason: 'open_bills' },
         });
       });
 
@@ -38,7 +38,7 @@ describe('access selectors', () => {
         beforeEach(() => {
           newLocationState = reducer(deniedState, {
             type: 'LOCATION_CHANGED',
-            payload: { location: 'doesnt matter' }
+            payload: { location: 'doesnt matter' },
           });
         });
 

@@ -18,7 +18,7 @@ describe('app/settings/locales/LocalesTable', () => {
       contentManagementApi: true,
       contentDeliveryApi: true,
       optional: false,
-      fallbackCode: null
+      fallbackCode: null,
     },
     {
       sys: { id: 2 },
@@ -28,7 +28,7 @@ describe('app/settings/locales/LocalesTable', () => {
       contentManagementApi: false,
       contentDeliveryApi: false,
       optional: true,
-      fallbackCode: 'en-US'
+      fallbackCode: 'en-US',
     },
     {
       sys: { id: 3 },
@@ -36,7 +36,7 @@ describe('app/settings/locales/LocalesTable', () => {
       code: 'pl-PL',
       default: false,
       contentManagementApi: true,
-      contentDeliveryApi: false
+      contentDeliveryApi: false,
     },
     {
       sys: { id: 4 },
@@ -44,8 +44,8 @@ describe('app/settings/locales/LocalesTable', () => {
       code: 'tg-TG',
       default: false,
       contentManagementApi: false,
-      contentDeliveryApi: true
-    }
+      contentDeliveryApi: true,
+    },
   ];
 
   const renderComponent = () => {

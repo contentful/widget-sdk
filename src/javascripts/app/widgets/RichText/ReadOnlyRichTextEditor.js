@@ -8,7 +8,7 @@ import customRenderers from './customRenderers';
 export default class ReadOnlyRichTextEditor extends React.Component {
   static propTypes = {
     value: PropTypes.object.isRequired,
-    widgetApi: PropTypes.object.isRequired
+    widgetApi: PropTypes.object.isRequired,
   };
 
   render() {

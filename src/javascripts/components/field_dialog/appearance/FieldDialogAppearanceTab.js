@@ -11,10 +11,10 @@ import tokens from '@contentful/forma-36-tokens';
 
 const styles = {
   container: css({
-    position: 'relative'
+    position: 'relative',
   }),
   note: css({
-    marginBottom: tokens.spacingL
+    marginBottom: tokens.spacingL,
   }),
   overlay: css({
     position: 'absolute',
@@ -24,8 +24,8 @@ const styles = {
     right: 0,
     bottom: 0,
     backgroundColor: tokens.colorWhite,
-    opacity: 0.6
-  })
+    opacity: 0.6,
+  }),
 };
 
 export default class FieldDialogAppearanceTab extends React.Component {
@@ -34,19 +34,19 @@ export default class FieldDialogAppearanceTab extends React.Component {
     availableWidgets: PropTypes.array.isRequired,
     defaultWidget: PropTypes.shape({
       namespace: PropTypes.string.isRequired,
-      id: PropTypes.string.isRequired
+      id: PropTypes.string.isRequired,
     }).isRequired,
     widgetSettings: PropTypes.shape({
       namespace: PropTypes.string.isRequired,
       id: PropTypes.string.isRequired,
-      params: PropTypes.object
+      params: PropTypes.object,
     }).isRequired,
     onSelect: PropTypes.func.isRequired,
     onParametersUpdate: PropTypes.func.isRequired,
-    hasCustomEditor: PropTypes.bool
+    hasCustomEditor: PropTypes.bool,
   };
 
-  getFormProps = selectedWidget => {
+  getFormProps = (selectedWidget) => {
     let definitions = selectedWidget.parameters;
     const params = this.props.widgetSettings.params;
 
@@ -61,9 +61,9 @@ export default class FieldDialogAppearanceTab extends React.Component {
       updateValue: (id, value) => {
         this.props.onParametersUpdate({
           ...values,
-          [id]: value
+          [id]: value,
         });
-      }
+      },
     };
   };
 
@@ -73,10 +73,10 @@ export default class FieldDialogAppearanceTab extends React.Component {
       widgetSettings,
       defaultWidget,
       isAdmin,
-      hasCustomEditor
+      hasCustomEditor,
     } = this.props;
     const widgetsCount = availableWidgets.length;
-    const selectedWidget = availableWidgets.find(widget => {
+    const selectedWidget = availableWidgets.find((widget) => {
       return widget.namespace === widgetSettings.namespace && widget.id === widgetSettings.id;
     });
 
@@ -106,7 +106,7 @@ export default class FieldDialogAppearanceTab extends React.Component {
               />
               <div
                 className={classNames('modal-dialog__slice', {
-                  'field-dialog__widget-options': availableWidgets.length > 1
+                  'field-dialog__widget-options': availableWidgets.length > 1,
                 })}>
                 {selectedWidget && <WidgetParametersForm {...this.getFormProps(selectedWidget)} />}
               </div>

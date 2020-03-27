@@ -27,13 +27,13 @@ export default {
         <p>
           The AWS region of your queue. For example: <code>eu-west-1</code>.
         </p>
-      )
+      ),
     },
     {
       name: 'bucket',
       type: 'text',
       title: 'Bucket',
-      description: <p>The name of a bucket you want to store your entries.</p>
+      description: <p>The name of a bucket you want to store your entries.</p>,
     },
     {
       name: 'accessKeyId',
@@ -44,7 +44,7 @@ export default {
           Use a keypair with minimal access. The only required policy action is{' '}
           <code>s3:PutObject</code>
         </p>
-      )
+      ),
     },
     {
       name: 'secretAccessKey',
@@ -54,8 +54,8 @@ export default {
         <p>
           Secret Access Key of the keypair used above. This value can’t be revealed once stored.
         </p>
-      )
-    }
+      ),
+    },
   ],
   mapParamsToDefinition: ({ region, bucket, accessKeyId, secretAccessKey }, name) => {
     return {
@@ -66,13 +66,13 @@ export default {
       headers: [
         {
           key: 'X-Contentful-AWS-Proxy-Key-Id',
-          value: accessKeyId
+          value: accessKeyId,
         },
         {
           key: 'X-Contentful-AWS-Proxy-Secret',
           value: secretAccessKey,
-          secret: true
-        }
+          secret: true,
+        },
       ],
       transformation: {
         method: 'PUT',
@@ -80,9 +80,9 @@ export default {
         body: JSON.stringify({
           topic: '{ /topic }',
           user: '{ /user }',
-          entity: '{ /payload }'
-        })
-      }
+          entity: '{ /payload }',
+        }),
+      },
     };
-  }
+  },
 };

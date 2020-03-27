@@ -13,7 +13,7 @@ const TooltipContent = ({ illustration, copy }) => {
 
 TooltipContent.propTypes = {
   illustration: PropTypes.any,
-  copy: PropTypes.string.isRequired
+  copy: PropTypes.string.isRequired,
 };
 
 export default TooltipContent;

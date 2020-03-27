@@ -4,7 +4,7 @@ import {
   Button,
   Dropdown,
   DropdownList,
-  DropdownListItem
+  DropdownListItem,
 } from '@contentful/forma-36-react-components';
 
 class AddAssetButton extends React.Component {
@@ -13,11 +13,11 @@ class AddAssetButton extends React.Component {
     createMultipleAssets: PropTypes.func.isRequired,
     newAsset: PropTypes.func.isRequired,
     testId: PropTypes.string.isRequired,
-    disabled: PropTypes.bool
+    disabled: PropTypes.bool,
   };
   state = { isDropdownOpen: false };
 
-  setOpen = isDropdownOpen => this.setState({ isDropdownOpen });
+  setOpen = (isDropdownOpen) => this.setState({ isDropdownOpen });
   addAssetButton = (
     <Button
       onClick={() => this.setOpen(!this.state.isDropdownOpen)}

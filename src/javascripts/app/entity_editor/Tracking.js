@@ -7,12 +7,12 @@ import { getModule } from 'NgRegistry';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 
 export default function install(entityInfo, document, lifeline$) {
-  K.onValueWhile(lifeline$, document.resourceState.stateChange$, data => {
+  K.onValueWhile(lifeline$, document.resourceState.stateChange$, (data) => {
     track('entry_editor:state_changed', {
       fromState: stateName(data.from),
       toState: stateName(data.to),
       entityType: entityInfo.type,
-      entityId: entityInfo.id
+      entityId: entityInfo.id,
     });
   });
 }
@@ -22,7 +22,7 @@ export async function trackEntryView({
   entityInfo,
   editorType,
   currentSlideLevel,
-  locale
+  locale,
 }) {
   const refCts = await getReferencesContentTypes(editorData, locale);
 
@@ -32,27 +32,27 @@ export async function trackEntryView({
     ctName: entityInfo.contentType.name,
     referencesCTMetadata: [
       ...uniqBy(
-        refCts.map(ct => ({
+        refCts.map((ct) => ({
           id: ct.data.sys.id,
-          name: ct.data.name
+          name: ct.data.name,
         })),
         'id'
-      )
+      ),
     ],
     currentSlideLevel,
     editorType,
-    widgetTrackingContexts: editorData.widgetTrackingContexts
+    widgetTrackingContexts: editorData.widgetTrackingContexts,
   });
 }
 
 const isEntryReferenceField = ({ field }) =>
   field.type === 'Array' && field.items.type === 'Link' && field.items.linkType === 'Entry';
 
-const getFieldId = ctrl => ctrl.field.id;
+const getFieldId = (ctrl) => ctrl.field.id;
 const getReferenceEntitiesIds = (id, locale, editorData) => {
   const localeField = editorData.entity.data.fields[id][locale];
   // A field value might not be provided in all expected locales.
-  return localeField ? localeField.map(entity => entity.sys.id) : [];
+  return localeField ? localeField.map((entity) => entity.sys.id) : [];
 };
 
 async function getReferencesContentTypes(editorData, locale) {
@@ -63,13 +63,13 @@ async function getReferencesContentTypes(editorData, locale) {
     .filter(isEntryReferenceField)
     .map(getFieldId);
   const refEntitiesIds = referenceFieldsIds
-    .filter(id => editorData.entity.data.fields[id] !== undefined)
-    .map(id => getReferenceEntitiesIds(id, locale, editorData));
+    .filter((id) => editorData.entity.data.fields[id] !== undefined)
+    .map((id) => getReferenceEntitiesIds(id, locale, editorData));
   const refEntities = await Promise.all(
-    flatten(refEntitiesIds).map(id => batchingApiClient.getEntry(id).catch(_error => null))
+    flatten(refEntitiesIds).map((id) => batchingApiClient.getEntry(id).catch((_error) => null))
   );
   const refCts = refEntities
     .filter(Boolean)
-    .map(entity => spaceContext.publishedCTs.get(get(entity, 'sys.contentType.sys.id')));
+    .map((entity) => spaceContext.publishedCTs.get(get(entity, 'sys.contentType.sys.id')));
   return refCts;
 }

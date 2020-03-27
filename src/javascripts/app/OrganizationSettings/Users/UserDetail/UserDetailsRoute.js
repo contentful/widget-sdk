@@ -30,7 +30,7 @@ const UserDetailsFetcher = createFetcherComponent(async ({ orgId, userId }) => {
   const [organization, user, hasTeamsFeature] = await Promise.all([
     getOrganization(orgId),
     getUser(endpoint, orgMembership.sys.user.sys.id),
-    getOrgFeature(orgId, 'teams', false)
+    getOrgFeature(orgId, 'teams', false),
   ]);
 
   const createdBy = await getCreatedBy(endpoint, orgMembership);
@@ -43,7 +43,7 @@ const UserDetailsFetcher = createFetcherComponent(async ({ orgId, userId }) => {
     initialMembership,
     isSelf,
     isOwner: currentUserIsOwner,
-    hasTeamsFeature
+    hasTeamsFeature,
   };
 });
 
@@ -51,7 +51,7 @@ export default class UserDetailRoute extends React.Component {
   static propTypes = {
     orgId: PropTypes.string.isRequired,
     userId: PropTypes.string.isRequired,
-    context: PropTypes.any
+    context: PropTypes.any,
   };
 
   render() {

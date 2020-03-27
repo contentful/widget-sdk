@@ -9,14 +9,14 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
     height: '100%',
-    width: '100%'
+    width: '100%',
   }),
   column: css({ display: 'flex', flexDirection: 'column', alignItems: 'center' }),
   element: css({
     maxWidth: '32rem',
     marginBottom: tokens.spacingM,
-    textAlign: 'center'
-  })
+    textAlign: 'center',
+  }),
 };
 const EmptyStateContainer = ({
   children,

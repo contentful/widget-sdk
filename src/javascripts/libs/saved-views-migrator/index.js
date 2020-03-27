@@ -8,8 +8,8 @@ const ASSET_CONTENT_TYPE = {
   fields: [
     { id: 'title', type: 'Symbol' },
     { id: 'description', type: 'Text' },
-    { id: 'file', type: 'File' }
-  ]
+    { id: 'file', type: 'File' },
+  ],
 };
 
 module.exports = { create };
@@ -19,7 +19,7 @@ function create(contentTypeMap) {
   return {
     migrateUIConfigViews,
     migrateViewsFolder,
-    migrateView
+    migrateView,
   };
 
   function migrateUIConfigViews(uiConfig) {
@@ -27,13 +27,13 @@ function create(contentTypeMap) {
     const { entryListViews, assetListViews } = uiConfig;
 
     if (Array.isArray(entryListViews)) {
-      migratedUIConfig.entryListViews = entryListViews.map(folder => {
+      migratedUIConfig.entryListViews = entryListViews.map((folder) => {
         return this.migrateViewsFolder(folder);
       });
     }
 
     if (Array.isArray(assetListViews)) {
-      migratedUIConfig.assetListViews = assetListViews.map(folder => {
+      migratedUIConfig.assetListViews = assetListViews.map((folder) => {
         return this.migrateViewsFolder(folder, true);
       });
     }
@@ -44,7 +44,7 @@ function create(contentTypeMap) {
   function migrateViewsFolder(folder, isAssetsFolder = false) {
     return {
       ...folder,
-      views: (folder.views || []).map(view => this.migrateView(view, isAssetsFolder))
+      views: (folder.views || []).map((view) => this.migrateView(view, isAssetsFolder)),
     };
   }
 
@@ -92,6 +92,6 @@ function create(contentTypeMap) {
 function updateViewWithSearch(view, search) {
   return {
     ...omit(view, ['searchTerm']),
-    ...pick(search, ['searchText', 'searchFilters'])
+    ...pick(search, ['searchText', 'searchFilters']),
   };
 }

@@ -14,7 +14,7 @@ const styles = {
     height: '100%',
     flexGrow: 1,
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
   }),
   'view-menu': css({
     display: 'flex',
@@ -25,13 +25,13 @@ const styles = {
       backgroundColor: tokens.colorElementLightest,
       opacity: '0.6',
       filter: 'alpha(opacity=60)',
-      border: '1px dashed #d3dce0'
-    }
+      border: '1px dashed #d3dce0',
+    },
   }),
   'view-menu__folders': css({
     flex: '1 0 200px',
     overflowY: 'auto',
-    paddingTop: '10px'
+    paddingTop: '10px',
   }),
   'view-menu__actions': css({
     borderTop: '1px solid rgb(211, 220, 224)',
@@ -45,19 +45,19 @@ const styles = {
       marginBottom: '10px',
       i: {
         display: 'inline-block',
-        marginRight: '5px'
-      }
-    }
+        marginRight: '5px',
+      },
+    },
   }),
   'view-menu__empty': css({
     display: 'flex',
     flexDirection: 'column',
-    height: '100%'
+    height: '100%',
   }),
   'view-menu__empty-message': css({
     display: 'flex',
     flexDirection: 'column',
-    height: '100%'
+    height: '100%',
   }),
   'view-menu__empty-cta': css({
     flex: '1',
@@ -65,15 +65,15 @@ const styles = {
     button: {
       position: 'absolute',
       bottom: '5px',
-      paddingLeft: '1.5rem'
-    }
-  })
+      paddingLeft: '1.5rem',
+    },
+  }),
 };
 
 const Folders = ({ state, actions }) => {
   return (
     <div ref={state.dnd.forFolders}>
-      {state.folders.map(folder => {
+      {state.folders.map((folder) => {
         return <ViewFolder key={folder.id} folder={folder} state={state} actions={actions} />;
       })}
     </div>
@@ -81,7 +81,7 @@ const Folders = ({ state, actions }) => {
 };
 Folders.propTypes = {
   state: PropTypes.object.isRequired,
-  actions: PropTypes.object.isRequired
+  actions: PropTypes.object.isRequired,
 };
 
 const Empty = ({ state, actions }) => {
@@ -121,7 +121,7 @@ const Empty = ({ state, actions }) => {
 
 Empty.propTypes = {
   state: PropTypes.object.isRequired,
-  actions: PropTypes.object.isRequired
+  actions: PropTypes.object.isRequired,
 };
 
 export default function ViewMenu({ state, actions }) {
@@ -134,10 +134,10 @@ export default function ViewMenu({ state, actions }) {
       message: 'Please provide a name for your new folder:',
       maxLength: 32,
       intent: 'positive',
-      isValid: value => {
+      isValid: (value) => {
         const trimmed = (value || '').trim();
         return trimmed.length > 0 && trimmed.length <= 32;
-      }
+      },
     });
     if (title) {
       actions.CreateFolder(title);
@@ -176,5 +176,5 @@ export default function ViewMenu({ state, actions }) {
 
 ViewMenu.propTypes = {
   state: PropTypes.object.isRequired,
-  actions: PropTypes.object.isRequired
+  actions: PropTypes.object.isRequired,
 };

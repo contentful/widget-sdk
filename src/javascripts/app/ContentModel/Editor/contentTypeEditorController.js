@@ -22,8 +22,8 @@ export default function register() {
       template: '<react-component component="component" props="componentProps" />',
       restrict: 'A',
       controller: 'ContentTypeEditorController',
-      controllerAs: 'ctEditorController'
-    })
+      controllerAs: 'ctEditorController',
+    }),
   ]);
 
   /**
@@ -55,7 +55,7 @@ export default function register() {
       if ($scope.context.isNew) {
         const openCreateDialog = async () => {
           openCreateContentTypeDialog($scope.contentTypeIds).then(
-            result => {
+            (result) => {
               if (result) {
                 $scope.contentType.data.name = result.name;
                 $scope.contentType.data.description = result.description;
@@ -81,7 +81,7 @@ export default function register() {
        * @param {string} id
        * @returns {API.ContentType.Field}
        */
-      controller.getPublishedField = id => {
+      controller.getPublishedField = (id) => {
         const publishedFields = _.get($scope.publishedContentType, 'data.fields', []);
         return _.cloneDeep(_.find(publishedFields, { id: id }));
       };
@@ -91,7 +91,7 @@ export default function register() {
        * @name ContentTypeEditorController#removeField
        * @param {string} id
        */
-      controller.removeField = id => {
+      controller.removeField = (id) => {
         const fields = $scope.contentType.data.fields;
         _.remove(fields, { id: id });
         syncEditorInterface();
@@ -99,11 +99,11 @@ export default function register() {
 
       controller.updateField = (id, update) => {
         const fields = $scope.contentType.data.fields;
-        const updatedFields = fields.map(field => {
+        const updatedFields = fields.map((field) => {
           if (field.id === id) {
             return {
               ...field,
-              ...update
+              ...update,
             };
           }
           return field;
@@ -111,21 +111,21 @@ export default function register() {
         $scope.contentType.data.fields = updatedFields;
       };
 
-      controller.openFieldDialog = field => {
+      controller.openFieldDialog = (field) => {
         const fieldId = field.apiName || field.id;
-        const control = ($scope.editorInterface.controls || []).find(control => {
+        const control = ($scope.editorInterface.controls || []).find((control) => {
           return control.fieldId === fieldId;
         });
 
         return openFieldDialog($scope, field, control).then(setDirty);
       };
 
-      const setFieldAsTitle = field => {
+      const setFieldAsTitle = (field) => {
         $scope.contentType.data.displayField = field.id;
         setDirty();
       };
 
-      const updateOrder = fields => {
+      const updateOrder = (fields) => {
         $scope.contentType.data.fields = fields;
         setDirty();
       };
@@ -137,7 +137,7 @@ export default function register() {
           openDisallowDialog({ field, action: 'disable' });
         } else {
           controller.updateField(field.id, {
-            [property]: toggled
+            [property]: toggled,
           });
           setDirty();
         }
@@ -156,7 +156,7 @@ export default function register() {
           controller.removeField(field.id);
         } else if (isOmittedInApiAndUi) {
           controller.updateField(field.id, {
-            deleted: true
+            deleted: true,
           });
           setDirty();
         } else if (isOmittedInUiOnly) {
@@ -170,9 +170,9 @@ export default function register() {
         }
       };
 
-      const undeleteField = field => {
+      const undeleteField = (field) => {
         controller.updateField(field.id, {
-          deleted: false
+          deleted: false,
         });
         setDirty();
       };
@@ -184,7 +184,7 @@ export default function register() {
 
       const showMetadataDialog = createCommand(
         () => {
-          openEditContentTypeDialog($scope.contentType).then(result => {
+          openEditContentTypeDialog($scope.contentType).then((result) => {
             if (result) {
               const { name, description } = result;
               $scope.contentType.data.name = name;
@@ -194,12 +194,12 @@ export default function register() {
           });
         },
         {
-          disabled: function() {
+          disabled: function () {
             return (
               accessChecker.shouldDisable('update', 'contentType') ||
               accessChecker.shouldDisable('publish', 'contentType')
             );
-          }
+          },
         }
       );
 
@@ -208,21 +208,21 @@ export default function register() {
           modalDialog
             .open({
               template: addFieldDialogTemplate,
-              scope: $scope
+              scope: $scope,
             })
             .promise.then(addField);
         },
         {
-          disabled: function() {
+          disabled: function () {
             return (
               accessChecker.shouldDisable('update', 'contentType') ||
               accessChecker.shouldDisable('publish', 'contentType')
             );
-          }
+          },
         }
       );
 
-      const updateSidebarConfiguration = updatedSidebar => {
+      const updateSidebarConfiguration = (updatedSidebar) => {
         if (!_.isEqual($scope.editorInterface.sidebar, updatedSidebar)) {
           $scope.editorInterface.sidebar = updatedSidebar;
           $scope.$applyAsync();
@@ -230,7 +230,7 @@ export default function register() {
         }
       };
 
-      const updateEditorConfiguration = updatedEditor => {
+      const updateEditorConfiguration = (updatedEditor) => {
         if (!_.isEqual($scope.editorInterface.editor, updatedEditor)) {
           $scope.editorInterface.editor = updatedEditor;
           $scope.$applyAsync();
@@ -257,7 +257,7 @@ export default function register() {
           fieldType: field.type,
           fieldItemType: _.get(field, 'items.type') || null,
           fieldLocalized: field.localized,
-          fieldRequired: field.required
+          fieldRequired: field.required,
         });
       }
 
@@ -271,7 +271,7 @@ export default function register() {
         );
       }
 
-      const loadPreview = isNew => {
+      const loadPreview = (isNew) => {
         if (isNew) {
           return getContentTypePreview.fromData($scope.contentType.data);
         } else {
@@ -288,20 +288,20 @@ export default function register() {
         return 'fields';
       }
 
-      $scope.$watch('contentType.data', data => {
+      $scope.$watch('contentType.data', (data) => {
         $scope.componentProps = {
           ...$scope.componentProps,
-          contentTypeData: data
+          contentTypeData: data,
         };
         $scope.$applyAsync();
       });
 
       $scope.$watch(
         () => $scope.context.dirty,
-        isDirty => {
+        (isDirty) => {
           $scope.componentProps = {
             ...$scope.componentProps,
-            isDirty
+            isDirty,
           };
           $scope.$applyAsync();
         }
@@ -312,7 +312,7 @@ export default function register() {
         () => {
           $scope.componentProps = {
             ...$scope.componentProps,
-            currentTab: getCurrentTab($state)
+            currentTab: getCurrentTab($state),
           };
           $scope.$applyAsync();
         }
@@ -320,10 +320,10 @@ export default function register() {
 
       $scope.$watch(
         () => $scope.contentType.getName(),
-        name => {
+        (name) => {
           $scope.componentProps = {
             ...$scope.componentProps,
-            contentTypeName: name
+            contentTypeName: name,
           };
           $scope.$applyAsync();
         }
@@ -353,12 +353,12 @@ export default function register() {
           toggleFieldProperty,
           updateSidebarConfiguration,
           updateEditorConfiguration,
-          loadPreview
+          loadPreview,
         },
         contentTypeName: $scope.contentType.getName(),
         contentTypeData: $scope.contentType.data,
-        hasAdvancedExtensibility: $scope.hasAdvancedExtensibility
+        hasAdvancedExtensibility: $scope.hasAdvancedExtensibility,
       };
-    }
+    },
   ]);
 }

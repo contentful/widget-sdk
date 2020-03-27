@@ -10,7 +10,7 @@ export default addUserOrgSpace((event, data) => {
     data: extend(
       eventHasEntityType(event) ? {} : { entity_type: getEntityType(data) },
       omit(data, PROPS_TO_OMIT)
-    )
+    ),
   };
 });
 

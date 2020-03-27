@@ -29,7 +29,7 @@ const MILLION = THOUSAND * THOUSAND;
 const BILLION = THOUSAND * MILLION;
 
 export function shorten(number) {
-  const format = divisor => formatFloat(number / divisor);
+  const format = (divisor) => formatFloat(number / divisor);
 
   if (number < THOUSAND) {
     return number;
@@ -57,10 +57,10 @@ export function shortenStorageUnit(value, uom) {
 
   const units = ['PB', 'TB', 'GB', 'MB', 'KB', 'B'];
 
-  const getBigger = unit => units[units.indexOf(unit) - 1];
-  const getSmaller = unit => units[units.indexOf(unit) + 1];
-  const isBiggestUnit = unit => units.indexOf(unit) === 0;
-  const isSmallestUnit = unit => units.indexOf(unit) === units.length - 1;
+  const getBigger = (unit) => units[units.indexOf(unit) - 1];
+  const getSmaller = (unit) => units[units.indexOf(unit) + 1];
+  const isBiggestUnit = (unit) => units.indexOf(unit) === 0;
+  const isSmallestUnit = (unit) => units.indexOf(unit) === units.length - 1;
 
   const reduce = (number, unit) => {
     if (number < 0.99 && !isSmallestUnit(unit)) {

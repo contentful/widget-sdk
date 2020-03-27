@@ -12,7 +12,7 @@ const styles = {
   closeButton: css({ marginLeft: tokens.spacingM }),
   note: css({ marginBottom: tokens.spacingL }),
   testInput: css({ marginBottom: tokens.spacingL }),
-  doneButton: css({ marginTop: tokens.spacingL })
+  doneButton: css({ marginTop: tokens.spacingL }),
 };
 
 export function openGenerateTokenDialog(createToken, successHandler) {
@@ -51,7 +51,7 @@ export function InputState(props) {
         id="tokenName"
         name="tokenName"
         value={props.tokenName}
-        onChange={e => {
+        onChange={(e) => {
           props.setTokenName((e.target.value || '').trim());
         }}
       />
@@ -71,7 +71,7 @@ export function InputState(props) {
 InputState.propTypes = {
   tokenName: PropTypes.string,
   setTokenName: PropTypes.func.isRequired,
-  onGenerateClick: PropTypes.func.isRequired
+  onGenerateClick: PropTypes.func.isRequired,
 };
 
 export function FailureState(props) {
@@ -95,7 +95,7 @@ export function FailureState(props) {
 
 FailureState.propTypes = {
   onRetryClick: PropTypes.func.isRequired,
-  onCloseClick: PropTypes.func.isRequired
+  onCloseClick: PropTypes.func.isRequired,
 };
 
 export function SuccessStatus(props) {
@@ -126,7 +126,7 @@ export function SuccessStatus(props) {
 SuccessStatus.propTypes = {
   tokenName: PropTypes.string.isRequired,
   tokenValue: PropTypes.string.isRequired,
-  onDoneClick: PropTypes.func.isRequired
+  onDoneClick: PropTypes.func.isRequired,
 };
 
 export default function GenerateCMATokenDialog(props) {
@@ -136,7 +136,7 @@ export default function GenerateCMATokenDialog(props) {
 
   const onGenerateClick = useCallback(() => {
     props.createToken(tokenName).then(
-      data => {
+      (data) => {
         track('personal_access_token:action', { action: 'create', patId: data.sys.id });
         setTokenValue(data.token);
         setStatus('success');
@@ -144,7 +144,7 @@ export default function GenerateCMATokenDialog(props) {
           props.successHandler({
             sys: data.sys,
             name: data.name,
-            token: data.token
+            token: data.token,
           });
         }
       },
@@ -189,7 +189,7 @@ const GenerateCMATokenDialogPropTypes = {
   onConfirm: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
   createToken: PropTypes.func.isRequired,
-  successHandler: PropTypes.func.isRequired
+  successHandler: PropTypes.func.isRequired,
 };
 
 GenerateCMATokenDialog.propTypes = GenerateCMATokenDialogPropTypes;

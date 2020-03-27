@@ -2,7 +2,7 @@ const path = (entryId, taskId) => ['entries', entryId, 'tasks', ...(taskId ? [ta
 
 export const TaskStatus = {
   ACTIVE: 'active',
-  RESOLVED: 'resolved'
+  RESOLVED: 'resolved',
 };
 
 /**
@@ -13,12 +13,10 @@ export const TaskStatus = {
  * @returns {Promise<API.Task>}
  */
 export const getAllForEntry = async (endpoint, entryId) => {
-  const result = await endpoint(
-    {
-      method: 'GET',
-      path: path(entryId)
-    }
-  );
+  const result = await endpoint({
+    method: 'GET',
+    path: path(entryId),
+  });
   return result.items;
 };
 
@@ -30,13 +28,12 @@ export const getAllForEntry = async (endpoint, entryId) => {
  * @param {Object} data Task data without `sys`
  * @returns {Promise<API.Task>}
  */
-export const create = async (endpoint, entryId, task) => endpoint(
-  {
+export const create = async (endpoint, entryId, task) =>
+  endpoint({
     method: 'POST',
     path: path(entryId),
-    data: task
-  }
-);
+    data: task,
+  });
 
 /**
  * Deletes a task.
@@ -45,13 +42,14 @@ export const create = async (endpoint, entryId, task) => endpoint(
  * @param {String} entryId
  * @param {API.Task} task
  */
-export const remove = async (endpoint, entryId, task) => endpoint(
-  {
-    method: 'DELETE',
-    path: path(entryId, task.sys.id)
-  },
-  { 'X-Contentful-Version': task.sys.version }
-);
+export const remove = async (endpoint, entryId, task) =>
+  endpoint(
+    {
+      method: 'DELETE',
+      path: path(entryId, task.sys.id),
+    },
+    { 'X-Contentful-Version': task.sys.version }
+  );
 
 /**
  * Updates a task.
@@ -67,7 +65,7 @@ export async function update(endpoint, entryId, task) {
     {
       method: 'PUT',
       path: path(entryId, sys.id),
-      data: taskDetails
+      data: taskDetails,
     },
     { 'X-Contentful-Version': sys.version }
   );

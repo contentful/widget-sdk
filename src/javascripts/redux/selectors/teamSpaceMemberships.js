@@ -12,14 +12,11 @@ import getOptimistic from './getOptimistic';
  *
  * @return {Object}
  */
-export const getTeamSpaceMemberships = flow(
-  getDatasets,
-  get(TEAM_SPACE_MEMBERSHIPS)
-);
+export const getTeamSpaceMemberships = flow(getDatasets, get(TEAM_SPACE_MEMBERSHIPS));
 
-const getSpaceName = membership => get('sys.space.name', membership) || '';
+const getSpaceName = (membership) => get('sys.space.name', membership) || '';
 
-const sortBySpaceName = memberships =>
+const sortBySpaceName = (memberships) =>
   memberships.sort((a, b) => getSpaceName(a).localeCompare(getSpaceName(b)));
 
 /**
@@ -51,7 +48,7 @@ export const getSpaceMembershipsByTeam = flow(
  *
  * @return {Array}
  */
-export const getTeamSpaceMembershipsOfCurrentTeamToDisplay = state => {
+export const getTeamSpaceMembershipsOfCurrentTeamToDisplay = (state) => {
   const currentTeamId = getCurrentTeam(state);
   return flow(
     getSpaceMembershipsByTeam,

@@ -8,7 +8,7 @@ import * as AssetUrlService from 'services/AssetUrlService';
 
 export default function register() {
   registerFilter('dateTime', function dateTime() {
-    return unixTime => {
+    return (unixTime) => {
       if (unixTime) {
         return new Date(unixTime).toLocaleString('de-DE');
       } else {
@@ -24,15 +24,15 @@ export default function register() {
     return _.isArray;
   });
   registerFilter('fileSize', function fileSizeFilter() {
-    return fileSizeInByte => fileSize(fileSizeInByte).human('si');
+    return (fileSizeInByte) => fileSize(fileSizeInByte).human('si');
   });
 
   registerFilter('fileType', function fileTypeFilter() {
-    return file => {
+    return (file) => {
       if (file) {
         return mimetype.getGroupName({
           type: file.contentType,
-          fallbackFileName: file.fileName
+          fallbackFileName: file.fileName,
         });
       }
 
@@ -41,11 +41,11 @@ export default function register() {
   });
 
   registerFilter('assetUrl', function assetUrlFilter() {
-    return assetOrUrl => AssetUrlService.transformHostname(assetOrUrl);
+    return (assetOrUrl) => AssetUrlService.transformHostname(assetOrUrl);
   });
 
   registerFilter('fileExtension', function fileExtensionFilter() {
-    return file => {
+    return (file) => {
       if (file) {
         const ext = mimetype.getExtension(file.fileName);
         return ext ? ext.slice(1) : '';
@@ -55,7 +55,7 @@ export default function register() {
   });
 
   registerFilter('decimalMarks', function decimalMarksFilter() {
-    return str => {
+    return (str) => {
       str = str ? str + '' : '';
       let markedStr = '';
       let i = str.length;
@@ -67,7 +67,7 @@ export default function register() {
   });
 
   registerFilter('displayedFieldName', function displayedFieldNameFilter() {
-    return field =>
+    return (field) =>
       _.isEmpty(field.name)
         ? _.isEmpty(field.id)
           ? 'Untitled field'
@@ -76,7 +76,7 @@ export default function register() {
   });
 
   registerFilter('isDisplayableAsTitle', function isDisplayableAsTitleFilter() {
-    return field => field.type === 'Symbol' || field.type === 'Text';
+    return (field) => field.type === 'Symbol' || field.type === 'Text';
   });
 
   registerFilter('truncate', function truncateFilter() {

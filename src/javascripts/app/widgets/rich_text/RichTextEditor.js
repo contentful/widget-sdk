@@ -20,14 +20,14 @@ import { BLOCKS, EMPTY_DOCUMENT } from '@contentful/rich-text-types';
 
 import Toolbar from './Toolbar';
 
-const createSlateValue = contentfulDocument => {
+const createSlateValue = (contentfulDocument) => {
   const document = toSlatejsDocument({
     document: contentfulDocument,
-    schema
+    schema,
   });
   const value = Value.fromJSON({
     document,
-    schema
+    schema,
   });
   // Normalize document instead of doing this in the Editor instance as this would
   // trigger unwanted operations that would result in an unwated version bump.
@@ -45,11 +45,11 @@ export default class RichTextEditor extends React.Component {
     widgetAPI: PropTypes.shape({
       field: PropTypes.shape({
         id: PropTypes.string.isRequired,
-        locale: PropTypes.string.isRequired
+        locale: PropTypes.string.isRequired,
       }).isRequired,
       permissions: PropTypes.shape({
-        canAccessAssets: PropTypes.bool.isRequired
-      }).isRequired
+        canAccessAssets: PropTypes.bool.isRequired,
+      }).isRequired,
     }).isRequired,
     value: PropTypes.object.isRequired,
     isDisabled: PropTypes.bool,
@@ -57,7 +57,7 @@ export default class RichTextEditor extends React.Component {
     onAction: PropTypes.func,
     isToolbarHidden: PropTypes.bool,
     actionsDisabled: PropTypes.bool,
-    scope: PropTypes.object
+    scope: PropTypes.object,
   };
 
   static defaultProps = {
@@ -65,7 +65,7 @@ export default class RichTextEditor extends React.Component {
     onChange: noop,
     onAction: noop,
     isToolbarHidden: false,
-    actionsDisabled: false
+    actionsDisabled: false,
   };
 
   state = {
@@ -74,7 +74,7 @@ export default class RichTextEditor extends React.Component {
     value:
       this.props.value && this.props.value.nodeType === BLOCKS.DOCUMENT
         ? createSlateValue(this.props.value)
-        : emptySlateValue
+        : emptySlateValue,
   };
 
   editor = React.createRef();
@@ -82,15 +82,15 @@ export default class RichTextEditor extends React.Component {
   slatePlugins = buildPlugins(
     createRichTextAPI({
       widgetAPI: this.props.widgetAPI,
-      onAction: this.props.onAction
+      onAction: this.props.onAction,
     })
   );
 
-  onChange = editor => {
+  onChange = (editor) => {
     const { value, operations } = editor;
     this.setState({
       value,
-      lastOperations: operations.filter(isRelevantOperation)
+      lastOperations: operations.filter(isRelevantOperation),
     });
   };
 
@@ -106,7 +106,7 @@ export default class RichTextEditor extends React.Component {
   callOnChange = debounce(() => {
     const doc = toContentfulDocument({
       document: this.state.value.document.toJSON(),
-      schema
+      schema,
     });
     this.props.onChange(doc);
   }, 500);
@@ -119,7 +119,7 @@ export default class RichTextEditor extends React.Component {
       this.setState({ lastOperations: List() }, () => this.callOnChange());
     } else if (isIncomingChange()) {
       this.setState({
-        value: createSlateValue(this.props.value)
+        value: createSlateValue(this.props.value),
       });
     }
   }
@@ -138,7 +138,7 @@ export default class RichTextEditor extends React.Component {
   render() {
     const classNames = cn('rich-text', {
       'rich-text--enabled': !this.props.isDisabled,
-      'rich-text--hidden-toolbar': this.props.isToolbarHidden
+      'rich-text--hidden-toolbar': this.props.isToolbarHidden,
     });
 
     return (
@@ -152,7 +152,7 @@ export default class RichTextEditor extends React.Component {
               permissions={this.props.widgetAPI.permissions}
               richTextAPI={createRichTextAPI({
                 widgetAPI: this.props.widgetAPI,
-                onAction: this.props.onAction
+                onAction: this.props.onAction,
               })}
             />
           </StickyToolbarWrapper>
@@ -169,7 +169,7 @@ export default class RichTextEditor extends React.Component {
           className="rich-text__editor"
           actionsDisabled={this.props.actionsDisabled}
           options={{
-            normalize: false // No initial normalizaiton as we pass a normalized document.
+            normalize: false, // No initial normalizaiton as we pass a normalized document.
           }}
         />
       </div>

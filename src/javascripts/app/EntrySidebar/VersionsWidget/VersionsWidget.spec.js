@@ -29,23 +29,23 @@ describe('EntrySidebar/VersionsWidget', () => {
           id: '1',
           createdAt: '2019-01-10T13:21:40.467Z',
           snapshotType: 'published',
-          isCurrent: true
-        }
+          isCurrent: true,
+        },
       },
       {
         sys: {
           id: '2',
           createdAt: '2019-01-10T13:16:40.467Z',
           snapshotType: 'published',
-          isCurrent: false
-        }
-      }
+          isCurrent: false,
+        },
+      },
     ];
 
     it('renders correct message if there are some versions', () => {
       const { wrapper } = render(
         {
-          versions
+          versions,
         },
         Enzyme.mount
       );
@@ -55,7 +55,7 @@ describe('EntrySidebar/VersionsWidget', () => {
 
     it('should render list of versions', () => {
       const { wrapper } = render({
-        versions
+        versions,
       });
 
       expect(wrapper.find('table tr')).toHaveLength(2);
@@ -68,7 +68,7 @@ describe('EntrySidebar/VersionsWidget', () => {
       const { wrapper } = render(
         {
           versions,
-          entryId: 'sjk17sh18ska'
+          entryId: 'sjk17sh18ska',
         },
         Enzyme.mount
       );
@@ -80,7 +80,7 @@ describe('EntrySidebar/VersionsWidget', () => {
         'spaces.detail.entries.detail.compare.withCurrent',
         {
           entryId: 'sjk17sh18ska',
-          snapshotId: '2'
+          snapshotId: '2',
         },
         undefined
       );

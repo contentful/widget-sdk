@@ -5,6 +5,6 @@ export default function register() {
   registerDirective('cfAssetList', () => ({
     template: assetListDirective,
     restrict: 'A',
-    controller: 'AssetListController'
+    controller: 'AssetListController',
   }));
 }

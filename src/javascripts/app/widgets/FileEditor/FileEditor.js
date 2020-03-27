@@ -11,7 +11,7 @@ import { FileEditorUploader } from './FileEditorUploader';
 import * as ImageOperations from './ImageOperations';
 
 function promiseTimeout(ms) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     setTimeout(() => {
       resolve();
     }, ms);
@@ -89,7 +89,7 @@ export default function FileEditor(props) {
         updateFile({
           upload: uploadUrl,
           fileName: file.fileName,
-          contentType: file.contentType
+          contentType: file.contentType,
         });
       }
     } catch (err) {
@@ -130,13 +130,13 @@ export default function FileEditor(props) {
         onToggleMeta={() => {
           setShowMetaData(!showMetaData);
         }}
-        onRotate={mode => {
+        onRotate={(mode) => {
           performImageOperation(ImageOperations.rotateOrMirror, mode);
         }}
-        onResize={mode => {
+        onResize={(mode) => {
           performImageOperation(ImageOperations.resize, mode);
         }}
-        onCrop={async mode => {
+        onCrop={async (mode) => {
           setBusy(true);
           try {
             const updatedFile = await ImageOperations.crop(mode, file);
@@ -162,11 +162,11 @@ FileEditor.propTypes = {
   file: PropTypes.shape({
     url: PropTypes.string.isRequired,
     fileName: PropTypes.string,
-    contentType: PropTypes.string
+    contentType: PropTypes.string,
   }),
   setValue: PropTypes.func.isRequired,
   processAsset: PropTypes.func.isRequired,
   disabled: PropTypes.bool.isRequired,
   archived: PropTypes.bool,
-  maybeSetTitle: PropTypes.func.isRequired
+  maybeSetTitle: PropTypes.func.isRequired,
 };

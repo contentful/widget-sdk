@@ -8,7 +8,7 @@ import {
   Paragraph,
   Note,
   Button,
-  Typography
+  Typography,
 } from '@contentful/forma-36-react-components';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 
@@ -25,23 +25,23 @@ import StateLink from 'app/common/StateLink';
 const styles = {
   content: css({
     margin: '0 auto',
-    marginTop: tokens.spacing2Xl
+    marginTop: tokens.spacing2Xl,
   }),
   subheading: css({
     marginBottom: tokens.spacingXs,
-    fontWeight: tokens.fontWeightMedium
+    fontWeight: tokens.fontWeightMedium,
   }),
   input: css({
     marginTop: tokens.spacingL,
-    marginBottom: tokens.spacingL
+    marginBottom: tokens.spacingL,
   }),
   paragraph: css({
     marginTop: tokens.spacingM,
-    marginBottom: tokens.spacingL
+    marginBottom: tokens.spacingL,
   }),
   cta: css({
-    marginRight: tokens.spacingM
-  })
+    marginRight: tokens.spacingM,
+  }),
 };
 
 export default function UserProvisioningConfiguration({ orgId }) {
@@ -54,7 +54,7 @@ export default function UserProvisioningConfiguration({ orgId }) {
       <GenerateCMATokenDialog
         key={Date.now()}
         createToken={tokenResourceManager.create}
-        successHandler={token => {
+        successHandler={(token) => {
           setPersonalAccessToken(token);
           onClose(true);
         }}
@@ -92,7 +92,7 @@ export default function UserProvisioningConfiguration({ orgId }) {
             textInputProps={{
               withCopyButton: true,
               disabled: true,
-              width: 'large'
+              width: 'large',
             }}
             value={`https:${SCIM_BASE}`}
           />
@@ -128,5 +128,5 @@ export default function UserProvisioningConfiguration({ orgId }) {
 }
 
 UserProvisioningConfiguration.propTypes = {
-  orgId: PropTypes.string.isRequired
+  orgId: PropTypes.string.isRequired,
 };

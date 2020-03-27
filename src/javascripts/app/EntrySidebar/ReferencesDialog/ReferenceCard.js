@@ -13,7 +13,7 @@ const styles = {
     display: 'flex',
     padding: `${tokens.spacing2Xs} ${tokens.spacingXs}`,
     alignItems: 'center',
-    position: 'relative'
+    position: 'relative',
   }),
   listItem: css({
     margin: '0',
@@ -29,7 +29,7 @@ const styles = {
       borderLeft: `1px solid ${tokens.colorElementMid}`,
       height: '1em',
       borderBottom: `1px solid ${tokens.colorElementMid}`,
-      width: '20px'
+      width: '20px',
     },
     '&:after': {
       position: 'absolute',
@@ -39,17 +39,17 @@ const styles = {
       display: 'block',
       borderLeft: `1px solid ${tokens.colorElementMid}`,
       height: '9999px',
-      zIndex: '-1'
-    }
+      zIndex: '-1',
+    },
   }),
   status: css({
-    marginLeft: 'auto'
+    marginLeft: 'auto',
   }),
   assetIcon: css({
-    marginRight: tokens.spacing2Xs
+    marginRight: tokens.spacing2Xs,
   }),
   circularIconWrapper: css({
-    display: 'flex'
+    display: 'flex',
   }),
   text: css({
     maxWidth: '100%',
@@ -58,8 +58,8 @@ const styles = {
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
     display: 'flex',
-    alignItems: 'center'
-  })
+    alignItems: 'center',
+  }),
 };
 
 const ReferenceCard = ({ entity, onClick, isMoreCard, isUnresolved, isCircular }) => {
@@ -148,8 +148,8 @@ const ReferenceCard = ({ entity, onClick, isMoreCard, isUnresolved, isCircular }
 export const ReferencePropType = PropTypes.shape({
   sys: PropTypes.shape({
     id: PropTypes.string.isRequired,
-    type: PropTypes.string.isRequired
-  })
+    type: PropTypes.string.isRequired,
+  }),
 });
 
 ReferenceCard.propTypes = {
@@ -157,11 +157,11 @@ ReferenceCard.propTypes = {
   onClick: PropTypes.func,
   isMoreCard: PropTypes.bool,
   isUnresolved: PropTypes.bool,
-  isCircular: PropTypes.bool
+  isCircular: PropTypes.bool,
 };
 
 ReferenceCard.defaultProps = {
-  onClick: noop
+  onClick: noop,
 };
 
 export default ReferenceCard;

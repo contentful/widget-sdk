@@ -7,7 +7,7 @@ describe('utils/TaggedValues', () => {
   });
 
   it('transforms constructor arguments', () => {
-    const A = makeCtor(x => x + 1);
+    const A = makeCtor((x) => x + 1);
     expect(A(2).value).toBe(3);
   });
 
@@ -18,8 +18,8 @@ describe('utils/TaggedValues', () => {
 
     const go = makeMatcher({
       [A]: (_value, ...extra) => extra,
-      [B]: value => value,
-      _: (value, ...extra) => [value, ...extra]
+      [B]: (value) => value,
+      _: (value, ...extra) => [value, ...extra],
     });
 
     expect(go(A(), 'X', 'Y')).toEqual(['X', 'Y']);

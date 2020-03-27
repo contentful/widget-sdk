@@ -12,13 +12,13 @@ const Form = ({ className, children, onSubmit }) => {
 
 Form.defaultProps = {
   className: '',
-  onSubmit: noop
+  onSubmit: noop,
 };
 
 Form.propTypes = {
   className: PropTypes.string,
   children: PropTypes.node,
-  onSubmit: PropTypes.func
+  onSubmit: PropTypes.func,
 };
 
 export default Form;

@@ -23,7 +23,7 @@ function Label({ hasTooptip, children, ...rest }) {
 }
 
 Label.propTypes = {
-  hasTooptip: PropTypes.bool.isRequired
+  hasTooptip: PropTypes.bool.isRequired,
 };
 
 function getNavigationProps(item) {
@@ -32,8 +32,8 @@ function getNavigationProps(item) {
     params: item.srefParams || {},
     options: {
       inherit: true,
-      ...(item.srefOptions || {})
-    }
+      ...(item.srefOptions || {}),
+    },
   };
 }
 
@@ -53,7 +53,7 @@ export default function NavigationItem(props) {
       key={item.title}
       className="app-top-bar__action nav-bar__list-item"
       {...{
-        'data-ui-tour-step': item.dataViewType ? `nav-item-${item.dataViewType}` : undefined
+        'data-ui-tour-step': item.dataViewType ? `nav-item-${item.dataViewType}` : undefined,
       }}>
       <a
         data-view-type={item.dataViewType}
@@ -62,23 +62,23 @@ export default function NavigationItem(props) {
           'is-disabled': item.disabled,
           'is-active': item.disabled
             ? false
-            : Navigator.includes({ path: item.rootSref || item.sref })
+            : Navigator.includes({ path: item.rootSref || item.sref }),
         })}
         role="button"
-        onClick={e => {
+        onClick={(e) => {
           if (e.ctrlKey || e.metaKey) {
             return;
           }
           e.preventDefault();
           onClick();
         }}
-        onKeyDown={e => {
+        onKeyDown={(e) => {
           if (e.keyCode === keycodes.ENTER) {
             onClick();
           }
         }}
         {...{
-          tabIndex: item.disabled ? undefined : '0'
+          tabIndex: item.disabled ? undefined : '0',
         }}>
         <Label hasTooptip={Boolean(item.tooltip)} content={item.tooltip} placement="bottom">
           {item.navIcon ? (
@@ -106,6 +106,6 @@ NavigationItem.propTypes = {
     srefOptions: PropTypes.object,
     dataViewType: PropTypes.string,
     disabled: PropTypes.boolean,
-    tooltip: PropTypes.string
-  }).isRequired
+    tooltip: PropTypes.string,
+  }).isRequired,
 };

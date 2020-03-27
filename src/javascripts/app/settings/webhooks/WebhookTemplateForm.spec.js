@@ -13,30 +13,30 @@ const TEMPLATE = {
     {
       name: 'url',
       type: 'text',
-      title: 'URL'
+      title: 'URL',
     },
     {
       name: 'pass',
       type: 'password',
-      title: 'Password'
+      title: 'Password',
     },
     {
       name: 'contentTypeId',
       type: 'content-type-selector',
-      title: 'Content type'
-    }
-  ]
+      title: 'Content type',
+    },
+  ],
 };
 
 const VALID_FORM_VALUES = {
   url: 'http://x',
   pass: 'secret',
-  contentTypeId: 'x'
+  contentTypeId: 'x',
 };
 
 const TEMPLATE_CONTENT_TYPES = [
   { id: 'x', name: 'X', titlePointer: '/payload/fields/x/en-US' },
-  { id: 'y', name: 'Y', titlePointer: '/payload/fields/y/en-US' }
+  { id: 'y', name: 'Y', titlePointer: '/payload/fields/y/en-US' },
 ];
 
 describe('WebhookTemplateForm', () => {
@@ -45,19 +45,19 @@ describe('WebhookTemplateForm', () => {
   });
 
   const selectors = {
-    textField: container => getByTestId(container, 'webhook-template-field--url'),
-    passwordField: container => getByTestId(container, 'webhook-template-field--pass'),
-    contentTypeSelect: container =>
+    textField: (container) => getByTestId(container, 'webhook-template-field--url'),
+    passwordField: (container) => getByTestId(container, 'webhook-template-field--pass'),
+    contentTypeSelect: (container) =>
       getByTestId(container, 'webhook-template-field--content-type-selector'),
-    createButton: container => getByTestId(container, 'webhook-template-field--create-button'),
-    cancelButton: container => getByTestId(container, 'webhook-template-field--cancel-button')
+    createButton: (container) => getByTestId(container, 'webhook-template-field--create-button'),
+    cancelButton: (container) => getByTestId(container, 'webhook-template-field--cancel-button'),
   };
 
   const mount = () => {
     const stubs = {
       onClose: jest.fn(),
       map: jest.fn(),
-      onCreate: jest.fn().mockResolvedValue({})
+      onCreate: jest.fn().mockResolvedValue({}),
     };
     const template = { ...cloneDeep(TEMPLATE), mapParamsToDefinition: stubs.map };
 
@@ -112,13 +112,13 @@ describe('WebhookTemplateForm', () => {
     const [container, stubs] = mount();
 
     await fireEvent.change(selectors.textField(container), {
-      target: { value: VALID_FORM_VALUES.url }
+      target: { value: VALID_FORM_VALUES.url },
     });
     await fireEvent.change(selectors.passwordField(container), {
-      target: { value: VALID_FORM_VALUES.pass }
+      target: { value: VALID_FORM_VALUES.pass },
     });
     await fireEvent.change(selectors.contentTypeSelect(container), {
-      target: { value: VALID_FORM_VALUES.contentTypeId }
+      target: { value: VALID_FORM_VALUES.contentTypeId },
     });
 
     const createButton = selectors.createButton(container);

@@ -21,5 +21,5 @@ export default combineReducers({
   datasets,
   optimistic,
   deleted,
-  access
+  access,
 });

@@ -5,7 +5,7 @@ import IdentitiesSection from './IdentitiesSection';
 import { deleteUserIdentityData } from './AccountRepository';
 
 jest.mock('./AccountRepository', () => ({
-  deleteUserIdentityData: jest.fn()
+  deleteUserIdentityData: jest.fn(),
 }));
 
 describe('IdentitiesSection', () => {

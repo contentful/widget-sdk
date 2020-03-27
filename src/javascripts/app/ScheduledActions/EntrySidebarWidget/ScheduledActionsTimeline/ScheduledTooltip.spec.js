@@ -24,11 +24,11 @@ describe('ScheduleTooltip', () => {
     const job = {
       action: ScheduledActionActions.Publish,
       scheduledFor: {
-        datetime: new Date(Date.now() * 2).toISOString()
+        datetime: new Date(Date.now() * 2).toISOString(),
       },
       sys: {
-        id: 'job1'
-      }
+        id: 'job1',
+      },
     };
 
     const wrapper = shallow(
@@ -48,49 +48,49 @@ describe('ScheduleTooltip', () => {
       {
         action: ScheduledActionActions.Publish,
         scheduledFor: {
-          datetime: new Date(Date.now() * 2).toISOString()
+          datetime: new Date(Date.now() * 2).toISOString(),
         },
         entity: {
           sys: {
-            id: targetEntryId
-          }
+            id: targetEntryId,
+          },
         },
         sys: {
-          id: 'job1'
-        }
+          id: 'job1',
+        },
       },
       {
         action: ScheduledActionActions.Unpublish,
         scheduledFor: {
-          datetime: new Date(Date.now() * 0.5).toISOString()
+          datetime: new Date(Date.now() * 0.5).toISOString(),
         },
         entity: {
           sys: {
-            id: 'bla-bla'
-          }
+            id: 'bla-bla',
+          },
         },
         sys: {
-          id: 'job2'
-        }
+          id: 'job2',
+        },
       },
       {
         action: ScheduledActionActions.Unpublish,
         scheduledFor: {
-          datetime: new Date(Date.now() * 0.2).toISOString()
+          datetime: new Date(Date.now() * 0.2).toISOString(),
         },
         entity: {
           sys: {
-            id: targetEntryId
-          }
+            id: targetEntryId,
+          },
         },
         sys: {
-          id: 'job2'
-        }
-      }
+          id: 'job2',
+        },
+      },
     ];
 
     const wrapper = mount(
-      <ScheduleTooltip jobs={jobs} filter={job => job.entity.sys.id === targetEntryId}>
+      <ScheduleTooltip jobs={jobs} filter={(job) => job.entity.sys.id === targetEntryId}>
         <Icon icon="Clock" />
       </ScheduleTooltip>
     );
@@ -108,16 +108,16 @@ describe('ScheduleTooltip', () => {
     const job = {
       action: ScheduledActionActions.Publish,
       scheduledFor: {
-        datetime: new Date(Date.now() * 2).toISOString()
+        datetime: new Date(Date.now() * 2).toISOString(),
       },
       entity: {
         sys: {
-          id: 'entryId'
-        }
+          id: 'entryId',
+        },
       },
       sys: {
-        id: 'job1'
-      }
+        id: 'job1',
+      },
     };
 
     const filter = jest.fn();
@@ -150,11 +150,11 @@ describe('ScheduleTooltipContent', () => {
     const job = {
       action: ScheduledActionActions.Publish,
       scheduledFor: {
-        datetime: new Date(Date.now() * 2).toISOString()
+        datetime: new Date(Date.now() * 2).toISOString(),
       },
       sys: {
-        id: 'job1'
-      }
+        id: 'job1',
+      },
     };
 
     const jobsCount = 3;
@@ -162,29 +162,19 @@ describe('ScheduleTooltipContent', () => {
     const wrapper = shallow(<ScheduleTooltipContent job={job} jobsCount={jobsCount} />);
     expect(wrapper.html()).not.toBeNull();
     expect(formatDateAndTimeSpy).toHaveBeenCalledWith(job.scheduledFor.datetime);
-    expect(
-      wrapper
-        .find('Tag')
-        .dive()
-        .text()
-    ).toBe(job.action.toUpperCase());
-    expect(
-      wrapper
-        .find('Paragraph')
-        .render()
-        .text()
-    ).toBe(`+ ${jobsCount - 1} more`);
+    expect(wrapper.find('Tag').dive().text()).toBe(job.action.toUpperCase());
+    expect(wrapper.find('Paragraph').render().text()).toBe(`+ ${jobsCount - 1} more`);
   });
 
   it('should display the information about the schedule for the entry [one job]', () => {
     const job = {
       action: ScheduledActionActions.Publish,
       scheduledFor: {
-        datetime: new Date(Date.now() * 2).toISOString()
+        datetime: new Date(Date.now() * 2).toISOString(),
       },
       sys: {
-        id: 'job1'
-      }
+        id: 'job1',
+      },
     };
 
     const jobsCount = 1;
@@ -192,12 +182,7 @@ describe('ScheduleTooltipContent', () => {
     const wrapper = shallow(<ScheduleTooltipContent job={job} jobsCount={jobsCount} />);
     expect(wrapper.html()).not.toBeNull();
     expect(formatDateAndTimeSpy).toHaveBeenCalledWith(job.scheduledFor.datetime);
-    expect(
-      wrapper
-        .find('Tag')
-        .dive()
-        .text()
-    ).toBe(job.action.toUpperCase());
+    expect(wrapper.find('Tag').dive().text()).toBe(job.action.toUpperCase());
     expect(wrapper.exists('Paragraph')).toBe(false);
   });
 });

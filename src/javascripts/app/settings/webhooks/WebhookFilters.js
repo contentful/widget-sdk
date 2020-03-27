@@ -6,7 +6,7 @@ import { CONSTRAINT_TYPES, CONSTRAINT_NAMES, PATH_VALUES, PATHS } from './Webhoo
 const PATH_TITLES = {
   [PATH_VALUES.ENVIRONMENT]: 'Environment ID',
   [PATH_VALUES.CONTENT_TYPE]: 'Content Type ID',
-  [PATH_VALUES.ENTITY]: 'Entity ID'
+  [PATH_VALUES.ENTITY]: 'Entity ID',
 };
 
 const NO_FILTERS_MSG =
@@ -17,7 +17,7 @@ const HAS_FILTERS_MSG =
 export default class WebhookFilters extends React.Component {
   static propTypes = {
     onChange: PropTypes.func.isRequired,
-    filters: PropTypes.array.isRequired
+    filters: PropTypes.array.isRequired,
   };
 
   componentDidUpdate() {
@@ -66,11 +66,11 @@ export default class WebhookFilters extends React.Component {
     return (
       <div key={index} data-test-id="filter-setting-row" className="webhook-editor__settings-row">
         <select
-          onChange={e => this.updateByIndex(index, { path: e.target.value })}
+          onChange={(e) => this.updateByIndex(index, { path: e.target.value })}
           className="cfnext-select-box"
           data-test-id="filter-entity-type"
           value={filter.path}>
-          {PATHS.map(p => (
+          {PATHS.map((p) => (
             <option key={p} value={p}>
               {PATH_TITLES[p]} ({p})
             </option>
@@ -78,7 +78,7 @@ export default class WebhookFilters extends React.Component {
         </select>
 
         <select
-          onChange={e => this.updateByIndex(index, { constraint: e.target.value })}
+          onChange={(e) => this.updateByIndex(index, { constraint: e.target.value })}
           className="cfnext-select-box"
           data-test-id="filter-operation"
           value={filter.constraint}>
@@ -86,7 +86,7 @@ export default class WebhookFilters extends React.Component {
         </select>
 
         <input
-          onChange={e => this.updateByIndex(index, { value: e.target.value })}
+          onChange={(e) => this.updateByIndex(index, { value: e.target.value })}
           placeholder={this.getPlaceholder(filter.constraint)}
           className="cfnext-form__input"
           type="text"
@@ -110,7 +110,7 @@ export default class WebhookFilters extends React.Component {
     return (
       <div
         className="cfnext-form__field"
-        ref={el => {
+        ref={(el) => {
           this.el = el;
         }}>
         <label>Filters</label>

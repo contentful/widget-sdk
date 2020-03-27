@@ -28,8 +28,8 @@ export default {
         endpoint,
         getSpaceData: () => space.data,
         getAliasesIds,
-        goToSpaceDetail: () => $state.go('spaces.detail')
+        goToSpaceDetail: () => $state.go('spaces.detail'),
       };
-    }
-  ]
+    },
+  ],
 };

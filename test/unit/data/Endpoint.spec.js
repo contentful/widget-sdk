@@ -11,10 +11,10 @@ describe('data/Endpoint', () => {
     Accept: 'application/json, text/plain, */*',
     'If-Modified-Since': '0',
     'Cache-Control': 'no-cache',
-    'X-Contentful-User-Agent': 'app contentful.web-app; platform browser; env development'
+    'X-Contentful-User-Agent': 'app contentful.web-app; platform browser; env development',
   };
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     /*
       Because the default headers are set in prelude.js,
       it's not possible to mock them using a normal approach.
@@ -28,13 +28,13 @@ describe('data/Endpoint', () => {
     await $initialize(this.system);
 
     const auth = {
-      getToken: sinon.stub().resolves('TOKEN')
+      getToken: sinon.stub().resolves('TOKEN'),
     };
 
     this.$http = $inject('$httpBackend');
     this.$timeout = $inject('$timeout');
 
-    this.makeRequest = function(...args) {
+    this.makeRequest = function (...args) {
       const request = this.Endpoint.create(baseUrl, auth);
       const response = request(...args);
       $inject('$timeout').flush();
@@ -42,59 +42,42 @@ describe('data/Endpoint', () => {
     };
   });
 
-  afterEach(function() {
+  afterEach(function () {
     this.$http.verifyNoOutstandingExpectation();
     this.$http.verifyNoOutstandingRequest();
     this.Endpoint = null;
   });
 
-  it('sends GET request relative to resource', function() {
+  it('sends GET request relative to resource', function () {
     const url = `${baseUrl}/foo/bar`;
     const headers = assign(defaultHeaders, {
-      Authorization: 'Bearer TOKEN'
+      Authorization: 'Bearer TOKEN',
     });
 
     this.$http.expectGET(url, headers).respond();
     this.makeRequest({
       method: 'GET',
-      path: ['foo', 'bar']
+      path: ['foo', 'bar'],
     });
     this.$http.flush();
   });
 
-  it('resolves the promise with response data', function() {
+  it('resolves the promise with response data', function () {
     const responseHandler = sinon.stub();
     this.$http.expectGET(`${baseUrl}/foo/bar`).respond('DATA');
     this.makeRequest({
       method: 'GET',
-      path: ['foo', 'bar']
+      path: ['foo', 'bar'],
     }).then(responseHandler);
     this.$http.flush();
     sinon.assert.calledWithExactly(responseHandler, 'DATA');
   });
 
-  it('sends POST request without version header', function() {
-    const url = `${baseUrl}/foo/bar`;
-    const headers = assign(defaultHeaders, {
-      'Content-Type': 'application/vnd.contentful.management.v1+json',
-      Authorization: 'Bearer TOKEN'
-    });
-    const data = { foo: 42 };
-    this.$http.expectPOST(url, JSON.stringify(data), headers).respond();
-    this.makeRequest({
-      method: 'POST',
-      path: ['foo', 'bar'],
-      data: data
-    });
-    this.$http.flush();
-  });
-
-  it('sends POST request with version header', function() {
+  it('sends POST request without version header', function () {
     const url = `${baseUrl}/foo/bar`;
     const headers = assign(defaultHeaders, {
       'Content-Type': 'application/vnd.contentful.management.v1+json',
       Authorization: 'Bearer TOKEN',
-      'X-Contentful-Version': 3
     });
     const data = { foo: 42 };
     this.$http.expectPOST(url, JSON.stringify(data), headers).respond();
@@ -102,17 +85,34 @@ describe('data/Endpoint', () => {
       method: 'POST',
       path: ['foo', 'bar'],
       data: data,
-      version: 3
+    });
+    this.$http.flush();
+  });
+
+  it('sends POST request with version header', function () {
+    const url = `${baseUrl}/foo/bar`;
+    const headers = assign(defaultHeaders, {
+      'Content-Type': 'application/vnd.contentful.management.v1+json',
+      Authorization: 'Bearer TOKEN',
+      'X-Contentful-Version': 3,
+    });
+    const data = { foo: 42 };
+    this.$http.expectPOST(url, JSON.stringify(data), headers).respond();
+    this.makeRequest({
+      method: 'POST',
+      path: ['foo', 'bar'],
+      data: data,
+      version: 3,
     });
     this.$http.flush();
   });
 
   describe('error response', () => {
-    it('is an error object', async function() {
+    it('is an error object', async function () {
       this.$http.whenGET(/./).respond(500);
       const req = this.makeRequest({
         method: 'GET',
-        path: ['foo']
+        path: ['foo'],
       });
       this.$http.flush();
       let error;
@@ -127,11 +127,11 @@ describe('data/Endpoint', () => {
       expect(error.message).toEqual('API request failed');
     });
 
-    it('has "request" object', async function() {
+    it('has "request" object', async function () {
       this.$http.whenGET(/./).respond(500);
       const req = this.makeRequest({
         method: 'GET',
-        path: ['foo']
+        path: ['foo'],
       });
       this.$http.flush();
 
@@ -147,11 +147,11 @@ describe('data/Endpoint', () => {
       expect(error.request.url).toBe(`${baseUrl}/foo`);
     });
 
-    it('has "response" properties', async function() {
+    it('has "response" properties', async function () {
       this.$http.whenGET(/./).respond(455, 'ERRORS');
       const req = this.makeRequest({
         method: 'GET',
-        path: ['foo']
+        path: ['foo'],
       });
       this.$http.flush();
       let error;
@@ -171,7 +171,7 @@ describe('data/Endpoint', () => {
   describeCreateEndpoint('createOrganizationEndpoint', 'organizations');
 
   describe('.createSpaceEndpoint()', () => {
-    xit('is aware of environment', function() {
+    xit('is aware of environment', function () {
       const test = (envId, expected) => {
         const auth = { getToken: sinon.stub().resolves('TOKEN') };
         this.$http.expectGET(expected).respond();
@@ -188,27 +188,27 @@ describe('data/Endpoint', () => {
 
   function describeCreateEndpoint(methodName, endpointUrl) {
     describe(`.${methodName}()`, () => {
-      beforeEach(function() {
+      beforeEach(function () {
         this.auth = {
-          getToken: sinon.stub().resolves('TOKEN')
+          getToken: sinon.stub().resolves('TOKEN'),
         };
         this.headers = assign(defaultHeaders, {
           Authorization: 'Bearer TOKEN',
-          Accept: 'application/json, text/plain, */*'
+          Accept: 'application/json, text/plain, */*',
         });
-        this.expectGetRequest = function(baseUrl, resourceId, path, expectedUrl) {
+        this.expectGetRequest = function (baseUrl, resourceId, path, expectedUrl) {
           this.$http.expectGET(expectedUrl, this.headers).respond();
           const spaceEndpoint = this.Endpoint[methodName](baseUrl, resourceId, this.auth);
           spaceEndpoint({
             method: 'GET',
-            path: path
+            path: path,
           });
           this.$timeout.flush();
           this.$http.flush();
         };
       });
 
-      it(`sends request relative to ${endpointUrl} resource`, function() {
+      it(`sends request relative to ${endpointUrl} resource`, function () {
         this.expectGetRequest(
           '//test.io',
           'ID',
@@ -217,7 +217,7 @@ describe('data/Endpoint', () => {
         );
       });
 
-      it("doesn't add extra slashes to url", function() {
+      it("doesn't add extra slashes to url", function () {
         this.expectGetRequest(
           '//test.io/',
           'ID',

@@ -15,7 +15,7 @@ const openUpgradeModal = (space, onSubmit) =>
     space,
     action: 'change',
     scope: 'space',
-    onSubmit
+    onSubmit,
   });
 
 const fetchRecordsResource = (spaceId, environmentId) => {
@@ -28,7 +28,7 @@ export default function RecordsResourceUsage({
   space,
   environmentId,
   isMasterEnvironment,
-  currentTotal
+  currentTotal,
 }) {
   const [resource, setResource] = useState(null);
   const spaceId = space.sys.id;
@@ -63,7 +63,7 @@ export default function RecordsResourceUsage({
       data-test-id="container"
       className={classnames('resource-usage', {
         'resource-usage--warn': usage / limit >= warnThreshold && usage / limit < errorThreshold,
-        'resource-usage--danger': usage / limit >= errorThreshold
+        'resource-usage--danger': usage / limit >= errorThreshold,
       })}>
       {atLimit && <span>You’ve reached the limit of {limit} entries and assets. </span>}
       {!atLimit && (
@@ -82,7 +82,7 @@ RecordsResourceUsage.propTypes = {
   space: PropTypes.object.isRequired,
   environmentId: PropTypes.string.isRequired,
   isMasterEnvironment: PropTypes.bool.isRequired,
-  currentTotal: PropTypes.number.isRequired
+  currentTotal: PropTypes.number.isRequired,
 };
 
 export { RecordsResourceUsage };

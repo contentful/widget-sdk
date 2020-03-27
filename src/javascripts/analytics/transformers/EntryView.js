@@ -7,12 +7,14 @@ export default addUserOrgSpace((_, data) => ({
     content_type_id: data.ctId,
     content_type_name: data.ctName,
     slide_in_level: data.currentSlideLevel,
-    editor_type: data.editorType
+    editor_type: data.editorType,
   },
   contexts: [
-    ...data.referencesCTMetadata.map(refMetadata => getReferenceContext(refMetadata, data.entryId)),
-    ...data.widgetTrackingContexts
-  ]
+    ...data.referencesCTMetadata.map((refMetadata) =>
+      getReferenceContext(refMetadata, data.entryId)
+    ),
+    ...data.widgetTrackingContexts,
+  ],
 }));
 
 function getReferenceContext(refMetadata, parentEntryId) {
@@ -21,7 +23,7 @@ function getReferenceContext(refMetadata, parentEntryId) {
     data: {
       content_type_id: refMetadata.id,
       content_type_name: refMetadata.name,
-      parent_entry_id: parentEntryId
-    }
+      parent_entry_id: parentEntryId,
+    },
   };
 }

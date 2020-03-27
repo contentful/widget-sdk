@@ -36,7 +36,7 @@ export default function ShareJsDocMock() {
     this.pendingOp = false;
   }
 
-  OtDoc.prototype.setAt = function(path, value, cb) {
+  OtDoc.prototype.setAt = function (path, value, cb) {
     assertParentContainer(this.snapshot, path);
     if (path.length === 0) {
       this.snapshot = value;
@@ -51,8 +51,8 @@ export default function ShareJsDocMock() {
   };
 
   // Supports only "si" and "sd".
-  OtDoc.prototype.submitOp = function(ops, cb) {
-    ops.forEach(op => {
+  OtDoc.prototype.submitOp = function (ops, cb) {
+    ops.forEach((op) => {
       const path = op.p.slice(0, op.p.length - 1);
       const pos = _.last(op.p);
       const val = this.getAt(path) || '';
@@ -65,30 +65,33 @@ export default function ShareJsDocMock() {
     });
 
     this.version++;
-    this.emit('change', ops.map(op => op.p));
+    this.emit(
+      'change',
+      ops.map((op) => op.p)
+    );
     if (cb) {
       cb();
     }
   };
 
-  OtDoc.prototype.getAt = function(path) {
+  OtDoc.prototype.getAt = function (path) {
     assertParentContainer(this.snapshot, path);
     return getAtPath(this.snapshot, path);
   };
 
-  OtDoc.prototype.at = function(path) {
+  OtDoc.prototype.at = function (path) {
     return new SubDoc(this, path);
   };
 
-  OtDoc.prototype.get = function() {
+  OtDoc.prototype.get = function () {
     return this.getAt([]);
   };
 
-  OtDoc.prototype.set = function(val, cb) {
+  OtDoc.prototype.set = function (val, cb) {
     this.setAt([], val, cb);
   };
 
-  OtDoc.prototype.remove = function(cb) {
+  OtDoc.prototype.remove = function (cb) {
     const containerPath = this.path.slice(0, -1);
     const index = this.path.slice(-1)[0];
     const container = getAtPath(this.snapshot, containerPath);
@@ -98,18 +101,18 @@ export default function ShareJsDocMock() {
     }
   };
 
-  OtDoc.prototype.removeAt = function(path, cb) {
+  OtDoc.prototype.removeAt = function (path, cb) {
     this.setAt(path, undefined, cb);
   };
 
-  OtDoc.prototype.insert = function(index, value, cb) {
+  OtDoc.prototype.insert = function (index, value, cb) {
     const valAsArray = this.get().split('');
     valAsArray.splice(index, 0, value);
     const newValue = valAsArray.join('');
     this.set(newValue, cb);
   };
 
-  OtDoc.prototype.insertAt = function(path, pos, value, cb) {
+  OtDoc.prototype.insertAt = function (path, pos, value, cb) {
     try {
       const list = this.getAt(path);
       list.splice(pos, 0, value);
@@ -120,15 +123,14 @@ export default function ShareJsDocMock() {
     }
   };
 
-  OtDoc.prototype.del = function(index, length, cb) {
+  OtDoc.prototype.del = function (index, length, cb) {
     const valAsArray = this.get().split('');
     valAsArray.splice(index, length);
     const newValue = valAsArray.join('');
     this.set(newValue, cb);
   };
 
-  OtDoc.prototype.emit = () => {
-  };
+  OtDoc.prototype.emit = () => {};
 
   class SubDoc {
     constructor(root, path) {

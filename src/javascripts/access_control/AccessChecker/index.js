@@ -33,7 +33,7 @@ export const Action = {
   UNPUBLISH: 'unpublish',
   ARCHIVE: 'archive',
   UNARCHIVE: 'unarchive',
-  MANAGE: 'manage'
+  MANAGE: 'manage',
 };
 
 const ACTIONS_FOR_ENTITIES = {
@@ -43,7 +43,7 @@ const ACTIONS_FOR_ENTITIES = {
     Action.UPDATE,
     Action.DELETE,
     Action.PUBLISH,
-    Action.UNPUBLISH
+    Action.UNPUBLISH,
   ],
   entry: [
     Action.CREATE,
@@ -53,7 +53,7 @@ const ACTIONS_FOR_ENTITIES = {
     Action.PUBLISH,
     Action.UNPUBLISH,
     Action.ARCHIVE,
-    Action.UNARCHIVE
+    Action.UNARCHIVE,
   ],
   asset: [
     Action.CREATE,
@@ -63,10 +63,10 @@ const ACTIONS_FOR_ENTITIES = {
     Action.PUBLISH,
     Action.UNPUBLISH,
     Action.ARCHIVE,
-    Action.UNARCHIVE
+    Action.UNARCHIVE,
   ],
   apiKey: [Action.CREATE, Action.READ],
-  settings: [Action.UPDATE, Action.READ]
+  settings: [Action.UPDATE, Action.READ],
 };
 
 const isInitializedBus = K.createPropertyBus(false);
@@ -193,7 +193,7 @@ export function setSpace(newSpace) {
     space: newSpace,
     organization: get(newSpace, 'organization'),
     authContext,
-    spaceAuthContext
+    spaceAuthContext,
   });
 }
 
@@ -202,7 +202,7 @@ export function setOrganization(newOrganization) {
     space: null,
     organization: newOrganization,
     authContext,
-    spaceAuthContext
+    spaceAuthContext,
   });
 }
 
@@ -218,18 +218,14 @@ function setContext(context) {
   collectResponses();
   collectSectionVisibility();
 
-  const hasReasonsDenied = value => value.reasons && value.reasons.length;
-  const denied = chain(responses)
-    .values()
-    .flatMap(values)
-    .filter(hasReasonsDenied)
-    .value();
+  const hasReasonsDenied = (value) => value.reasons && value.reasons.length;
+  const denied = chain(responses).values().flatMap(values).filter(hasReasonsDenied).value();
 
   resetEnforcements();
 
   if (denied.length) {
     // show the yellow notification bar if space has reached a limit
-    denied.forEach(value => broadcastEnforcement(value.enforcement));
+    denied.forEach((value) => broadcastEnforcement(value.enforcement));
   }
 
   // Access checker is initialized when at least an auth context is set.
@@ -255,11 +251,11 @@ export function canPerformActionOnEntryOfType(action, ctId) {
         type: 'Entry',
         contentType: {
           sys: {
-            id: ctId
-          }
-        }
-      }
-    }
+            id: ctId,
+          },
+        },
+      },
+    },
   };
 
   return canPerformActionOnEntity(action, entity);
@@ -418,7 +414,7 @@ export function canCreateSpace() {
  */
 export function canCreateSpaceInAnyOrganization() {
   const orgs = K.getValue(TokenStore.organizations$);
-  return some(orgs, org => canCreateSpaceInOrganization(org.sys.id));
+  return some(orgs, (org) => canCreateSpaceInOrganization(org.sys.id));
 }
 
 /**
@@ -445,10 +441,10 @@ export function canAccessSpaceEnvironments(space) {
   return (
     get(space, 'spaceMember.admin') ||
     (isArray(spaceMemberRoles) &&
-      spaceMemberRoles.some(role => {
+      spaceMemberRoles.some((role) => {
         const environmentsPermissions = get(role, ['permissions', 'Environments']);
         return isArray(environmentsPermissions)
-          ? environmentsPermissions.find(permission => permission === Action.READ)
+          ? environmentsPermissions.find((permission) => permission === Action.READ)
           : environmentsPermissions === 'all';
       }))
   );
@@ -460,7 +456,7 @@ function collectResponses() {
   forEach(ACTIONS_FOR_ENTITIES, (actions, entity) => {
     const entityCapitalized = capitalizeFirst(entity);
 
-    actions.forEach(action =>
+    actions.forEach((action) =>
       set(replacement, [action, entity], getPermissions(action, entityCapitalized))
     );
   });
@@ -468,7 +464,7 @@ function collectResponses() {
   responses = replacement;
 }
 
-const canModifySpaceSettings = space =>
+const canModifySpaceSettings = (space) =>
   get(space, 'spaceMember.admin') ||
   !!find(get(space, 'spaceMember.roles', []), { permissions: { Settings: 'all' } });
 
@@ -490,7 +486,7 @@ function collectSectionVisibility() {
     usage: !shouldHide(Action.UPDATE, 'settings'),
     previews: !shouldHide(Action.UPDATE, 'settings'),
     webhooks: !shouldHide(Action.UPDATE, 'settings'),
-    spaceHome: get(space, 'spaceMember.admin') || isAuthorOrEditor(get(space, 'spaceMember.roles'))
+    spaceHome: get(space, 'spaceMember.admin') || isAuthorOrEditor(get(space, 'spaceMember.roles')),
   };
 }
 
@@ -585,6 +581,6 @@ function wrapGKMethod(name) {
 
 export function isAuthorOrEditor(roles) {
   return Boolean(
-    roles && roles.findIndex(role => role.name === 'Author' || role.name === 'Editor') >= 0
+    roles && roles.findIndex((role) => role.name === 'Author' || role.name === 'Editor') >= 0
   );
 }

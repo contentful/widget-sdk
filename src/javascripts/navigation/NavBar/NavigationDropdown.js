@@ -9,7 +9,7 @@ import {
   Dropdown,
   DropdownList,
   DropdownListItem,
-  Tooltip
+  Tooltip,
 } from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';
 import * as Navigator from 'states/Navigator';
@@ -19,22 +19,22 @@ import NavigationIcon from 'ui/Components/NavigationIcon';
 
 const styles = {
   dropdown: css({
-    paddingLeft: '0 !important'
+    paddingLeft: '0 !important',
   }),
   triangleArrow: css({
-    margin: '2px 0 0 12px'
+    margin: '2px 0 0 12px',
   }),
   dropdownList: css({
-    minWidth: 250
+    minWidth: 250,
   }),
   question: css({
     marginLeft: '10px',
     color: tokens.colorElementMid,
-    cursor: 'pointer'
+    cursor: 'pointer',
   }),
   separator: css({
-    marginTop: tokens.spacingM
-  })
+    marginTop: tokens.spacingM,
+  }),
 };
 
 function getNavigationProps(item) {
@@ -43,8 +43,8 @@ function getNavigationProps(item) {
     params: item.srefParams || {},
     options: {
       inherit: true,
-      ...(item.srefOptions || {})
-    }
+      ...(item.srefOptions || {}),
+    },
   };
 }
 
@@ -71,13 +71,13 @@ export default function NavigationDropdown(props) {
         toggleElement={
           <a
             className={cn('nav-bar__link', 'app-top-bar__menu-trigger', {
-              'is-active': Navigator.includes({ path: item.rootSref || item.sref })
+              'is-active': Navigator.includes({ path: item.rootSref || item.sref }),
             })}
             role="button"
             tabIndex="0"
             data-view-type={item.dataViewType}
             onClick={onOpen}
-            onKeyDown={e => {
+            onKeyDown={(e) => {
               if (e.keyCode === keycodes.ENTER) {
                 onOpen();
               }
@@ -117,7 +117,7 @@ export default function NavigationDropdown(props) {
                 key={subitem.title}
                 href={Navigator.href(getNavigationProps(subitem))}
                 isActive={Navigator.includes({ path: subitem.rootSref || subitem.sref })}
-                onClick={e => {
+                onClick={(e) => {
                   if (e.ctrlKey || e.metaKey) {
                     return;
                   }
@@ -156,8 +156,8 @@ NavigationDropdown.propTypes = {
         title: PropTypes.string,
         label: PropTypes.string,
         dataViewType: PropTypes.string,
-        reload: PropTypes.boolean
+        reload: PropTypes.boolean,
       })
-    ).isRequired
-  }).isRequired
+    ).isRequired,
+  }).isRequired,
 };

@@ -8,7 +8,7 @@ import {
   TableBody,
   Button,
   TextLink,
-  Workbench
+  Workbench,
 } from '@contentful/forma-36-react-components';
 import moment from 'moment';
 
@@ -32,7 +32,7 @@ const SpaceMembershipsPresentation = ({ spaces, onLeave }) => (
           </TableRow>
         </TableHead>
         <TableBody>
-          {(spaces || []).map(space => {
+          {(spaces || []).map((space) => {
             return (
               <TableRow key={space.sys.id} testId="membership-row">
                 <TableCell testId="space-cell">
@@ -67,7 +67,7 @@ const SpaceMembershipsPresentation = ({ spaces, onLeave }) => (
 
 SpaceMembershipsPresentation.propTypes = {
   onLeave: PropTypes.func.isRequired,
-  spaces: PropTypes.arrayOf(SpacePropType)
+  spaces: PropTypes.arrayOf(SpacePropType),
 };
 
 export default SpaceMembershipsPresentation;

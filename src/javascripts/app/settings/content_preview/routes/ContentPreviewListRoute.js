@@ -12,7 +12,7 @@ import { getContentPreview } from 'services/contentPreview';
 const ContentPreviewsFetcher = createFetcherComponent(() => {
   return getContentPreview()
     .getAll()
-    .then(previews => values(previews));
+    .then((previews) => values(previews));
 });
 
 export default class ContentPreviewListRoute extends Component {

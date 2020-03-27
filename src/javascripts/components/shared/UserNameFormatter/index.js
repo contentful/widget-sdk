@@ -14,7 +14,7 @@ import { connect } from 'react-redux';
 export class UserNameFormatter extends Component {
   static propTypes = {
     user: PropTypes.object,
-    currentUser: PropTypes.object
+    currentUser: PropTypes.object,
   };
   render() {
     const { currentUser, user } = this.props;
@@ -28,9 +28,9 @@ export class UserNameFormatter extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    currentUser: state.token.user
+    currentUser: state.token.user,
   };
 };
 

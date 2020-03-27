@@ -10,10 +10,8 @@ export default function getContentTypePreview(contentType) {
     .then(orderPreviewKeys);
 }
 
-getContentTypePreview.fromData = data => {
-  return Promise.resolve(data)
-    .then(orderPreviewKeys)
-    .then(omitApiName);
+getContentTypePreview.fromData = (data) => {
+  return Promise.resolve(data).then(orderPreviewKeys).then(omitApiName);
 };
 
 // We rely on the fact the keys are displayed in the order they
@@ -30,6 +28,6 @@ function orderPreviewKeys(data) {
 }
 
 function omitApiName(data) {
-  data.fields = _.map(data.fields, field => _.omit(field, 'apiName'));
+  data.fields = _.map(data.fields, (field) => _.omit(field, 'apiName'));
   return data;
 }

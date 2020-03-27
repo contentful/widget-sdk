@@ -41,7 +41,7 @@ const reducer = createImmerReducer({
   },
   SET_BUSY: (state, action) => {
     state.busy = action.payload.value;
-  }
+  },
 });
 
 export default function ContentTypeForm(props) {
@@ -50,25 +50,25 @@ export default function ContentTypeForm(props) {
     contentTypeId: '',
     description: props.originalDescription || '',
     touched: false,
-    busy: false
+    busy: false,
   });
 
-  const onChangeHandler = field => e => {
+  const onChangeHandler = (field) => (e) => {
     dispatch({
       type: 'SET_VALUE',
       payload: {
         field,
-        value: e.target.value
-      }
+        value: e.target.value,
+      },
     });
   };
 
-  const setBusy = value => {
+  const setBusy = (value) => {
     dispatch({
       type: 'SET_BUSY',
       payload: {
-        value
-      }
+        value,
+      },
     });
   };
 
@@ -78,7 +78,7 @@ export default function ContentTypeForm(props) {
       await props.onConfirm({
         name: state.name,
         contentTypeId: state.contentTypeId,
-        description: state.description
+        description: state.description,
       });
     } catch (e) {
       setBusy(false);
@@ -86,7 +86,7 @@ export default function ContentTypeForm(props) {
   };
 
   const validationErrors = validate(state, props.existingContentTypeIds);
-  const hasAnyValidationErrors = Object.values(validationErrors).some(item => Boolean(item));
+  const hasAnyValidationErrors = Object.values(validationErrors).some((item) => Boolean(item));
 
   const isConfirmEnabled = state.name && state.contentTypeId && hasAnyValidationErrors === false;
 
@@ -106,7 +106,7 @@ export default function ContentTypeForm(props) {
             countCharacters
             textInputProps={{
               maxLength: 64,
-              placeholder: props.namePlaceholder
+              placeholder: props.namePlaceholder,
             }}
           />
           <TextField
@@ -120,7 +120,7 @@ export default function ContentTypeForm(props) {
             onChange={onChangeHandler('contentTypeId')}
             countCharacters
             textInputProps={{
-              maxLength: 64
+              maxLength: 64,
             }}
           />
           <TextField
@@ -131,7 +131,7 @@ export default function ContentTypeForm(props) {
             textarea
             countCharacters
             textInputProps={{
-              maxLength: 500
+              maxLength: 500,
             }}
             validationMessage={state.touched ? validationErrors.description : ''}
             onChange={onChangeHandler('description')}
@@ -168,5 +168,5 @@ ContentTypeForm.propTypes = {
   existingContentTypeIds: PropTypes.arrayOf(PropTypes.string.isRequired),
   confirmLabel: PropTypes.string.isRequired,
   cancelLabel: PropTypes.string.isRequired,
-  namePlaceholder: PropTypes.string.isRequired
+  namePlaceholder: PropTypes.string.isRequired,
 };

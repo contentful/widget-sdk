@@ -7,5 +7,5 @@ export default {
   ARCHIVED: 'archived',
   DELETED: 'deleted',
   EDIT_CONFLICT: 'edit-conflict',
-  OK: 'ok'
+  OK: 'ok',
 };

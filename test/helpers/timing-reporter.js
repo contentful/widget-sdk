@@ -12,41 +12,41 @@ function createTimingReporter() {
       {
         id: 'root',
         description: 'Entire Suite',
-        children: []
-      }
+        children: [],
+      },
     ],
-    getCurrentSuite: function() {
+    getCurrentSuite: function () {
       return _.last(this.suites);
     },
-    jasmineStarted: function() {
+    jasmineStarted: function () {
       this.getCurrentSuite().start = performance.now();
     },
-    jasmineDone: function() {
+    jasmineDone: function () {
       this.lastSuite.stop = performance.now();
       this.lastSuite.length = this.lastSuite.stop - this.lastSuite.start;
       sortChildren(this.lastSuite);
       printThing(this.lastSuite);
     },
-    suiteStarted: function(result) {
+    suiteStarted: function (result) {
       result.start = performance.now();
       result.children = [];
       this.getCurrentSuite().children.push(result);
       this.suites.push(result);
     },
-    suiteDone: function(result) {
+    suiteDone: function (result) {
       result.stop = performance.now();
       result.length = result.stop - result.start;
       this.lastSuite = this.suites.pop();
     },
-    specStarted: function(result) {
+    specStarted: function (result) {
       const suite = this.getCurrentSuite();
       result.start = performance.now();
       suite.children.push(result);
     },
-    specDone: function(result) {
+    specDone: function (result) {
       result.stop = performance.now();
       result.length = result.stop - result.start;
-    }
+    },
   };
 
   function printThing(thing) {
@@ -62,8 +62,8 @@ function createTimingReporter() {
 
   function sortChildren(thing) {
     if (thing.children) {
-      thing.children = _.sortBy(thing.children, child => -child.length);
-      _.each(thing.children, child => {
+      thing.children = _.sortBy(thing.children, (child) => -child.length);
+      _.each(thing.children, (child) => {
         sortChildren(child);
       });
     }

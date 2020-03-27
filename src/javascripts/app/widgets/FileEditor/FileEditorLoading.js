@@ -11,9 +11,9 @@ export function FileEditorLoading(props) {
 }
 
 FileEditorLoading.propTypes = {
-  message: PropTypes.string.isRequired
+  message: PropTypes.string.isRequired,
 };
 
 FileEditorLoading.defaultProps = {
-  message: 'Loading...'
+  message: 'Loading...',
 };

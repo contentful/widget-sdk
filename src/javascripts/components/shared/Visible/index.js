@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
  * Can be used in case if expressions like `{true && expression}` or `{false && expression}`
  * create to much noise that harms readabillity.
  */
-const Visible = props => {
+const Visible = (props) => {
   if (props.if) {
     return props.children;
   }
@@ -13,7 +13,7 @@ const Visible = props => {
 };
 
 Visible.propTypes = {
-  if: PropTypes.any
+  if: PropTypes.any,
 };
 
 export default Visible;

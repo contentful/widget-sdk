@@ -4,5 +4,5 @@ export const PolicyBuilderConfig = {
   ALL_CTS: '__cf_internal_all_cts__',
   NO_CTS: '__cf_internal_no_cts__',
   PATH_WILDCARD: '%',
-  PATH_SEPARATOR: '.'
+  PATH_SEPARATOR: '.',
 };

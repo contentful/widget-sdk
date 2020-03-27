@@ -10,7 +10,7 @@ const styles = {
     alignContent: 'flex-start',
     flexWrap: 'wrap',
     padding: '20px',
-    alignItems: 'stretch'
+    alignItems: 'stretch',
   }),
   row: css({
     display: 'flex',
@@ -18,9 +18,9 @@ const styles = {
     flexWrap: 'nowrap',
     width: '100%',
     marginTop: tokens.spacingXl,
-    '&>div:nth-of-type(n+2)': { marginLeft: tokens.spacingL }
+    '&>div:nth-of-type(n+2)': { marginLeft: tokens.spacingL },
   }),
-  col: css({ flex: 1, maxWidth: '100%' })
+  col: css({ flex: 1, maxWidth: '100%' }),
 };
 
 export default class WidgetContainer extends React.Component {

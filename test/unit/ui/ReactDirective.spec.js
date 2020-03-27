@@ -5,9 +5,9 @@ import React from 'react';
 import { $initialize, $inject, $compile, $apply } from 'test/utils/ng';
 
 describe('ReactDirective', () => {
-  beforeEach(async function() {
+  beforeEach(async function () {
     this.component = {
-      default: null
+      default: null,
     };
 
     this.system.set('ui/Components/Icon', this.component);
@@ -22,12 +22,12 @@ describe('ReactDirective', () => {
 
       return {
         $el,
-        scope: $el.scope()
+        scope: $el.scope(),
       };
     };
   });
 
-  it('renders react component inside angular template', function() {
+  it('renders react component inside angular template', function () {
     const template = `
       <div>
         <react-component name="ui/Components/Icon"></react-component>
@@ -43,7 +43,7 @@ describe('ReactDirective', () => {
     expect($el.find('.test-class').text()).toBe('hello!');
   });
 
-  it('should throw if react component name is incorrect', function() {
+  it('should throw if react component name is incorrect', function () {
     const template = `
       <div>
         <react-component name="react/non-existent-component"></react-component>
@@ -55,7 +55,7 @@ describe('ReactDirective', () => {
     );
   });
 
-  it('should pass props to react component', function() {
+  it('should pass props to react component', function () {
     const template = `
       <div>
         <react-component name="ui/Components/Icon" props="props"></react-component>
@@ -70,16 +70,16 @@ describe('ReactDirective', () => {
       template,
       scopeProperties: {
         props: {
-          value: 'value from scope'
-        }
+          value: 'value from scope',
+        },
       },
-      component
+      component,
     });
 
     expect($el.find('.test-class').text()).toBe('value from scope');
   });
 
-  it('should update react component if props changed', function() {
+  it('should update react component if props changed', function () {
     const template = `
       <div>
         <react-component name="ui/Components/Icon" props="props"></react-component>
@@ -94,10 +94,10 @@ describe('ReactDirective', () => {
       template,
       scopeProperties: {
         props: {
-          value: 'value from scope'
-        }
+          value: 'value from scope',
+        },
       },
-      component
+      component,
     });
 
     scope.props.value = 'updated value from scope';
@@ -106,7 +106,7 @@ describe('ReactDirective', () => {
     expect($el.find('.test-class').text()).toBe('updated value from scope');
   });
 
-  it('should be able to pass functions as props to react component', function() {
+  it('should be able to pass functions as props to react component', function () {
     const template = `
       <div>
         <react-component name="ui/Components/Icon" props="props"></react-component>
@@ -121,16 +121,16 @@ describe('ReactDirective', () => {
       template,
       scopeProperties: {
         props: {
-          fn: () => 'value from function'
-        }
+          fn: () => 'value from function',
+        },
       },
-      component
+      component,
     });
 
     expect($el.find('.test-class').text()).toBe('value from function');
   });
 
-  it('should update react component if props property replaced using reference watch', function() {
+  it('should update react component if props property replaced using reference watch', function () {
     const template = `
     <div>
       <react-component name="ui/Components/Icon" props="props" watch-depth="reference"></react-component>
@@ -145,10 +145,10 @@ describe('ReactDirective', () => {
       template,
       scopeProperties: {
         props: {
-          value: 'initial value'
-        }
+          value: 'initial value',
+        },
       },
-      component
+      component,
     });
 
     scope.props = { value: 'updated value from scope' };
@@ -157,7 +157,7 @@ describe('ReactDirective', () => {
     expect($el.find('.test-class').text()).toBe('updated value from scope');
   });
 
-  it('should NOT update react component if props property updated using reference watch', function() {
+  it('should NOT update react component if props property updated using reference watch', function () {
     const template = `
     <div>
       <react-component name="ui/Components/Icon" props="props" watch-depth="reference"></react-component>
@@ -172,10 +172,10 @@ describe('ReactDirective', () => {
       template,
       scopeProperties: {
         props: {
-          value: 'initial value'
-        }
+          value: 'initial value',
+        },
       },
-      component
+      component,
     });
 
     scope.props.value = 'updated value from scope';

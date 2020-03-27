@@ -13,18 +13,18 @@ export default {
     {
       name: 'list',
       url: '',
-      component: props => (
+      component: (props) => (
         <LazyLoadedComponent fallback={ContentPreviewListSkeleton} importer={SettingsImporter}>
           {({ ContentPreviewListRoute }) => {
             return <ContentPreviewListRoute {...props} />;
           }}
         </LazyLoadedComponent>
-      )
+      ),
     },
     {
       name: 'new',
       url: '/new',
-      component: props => (
+      component: (props) => (
         <LazyLoadedComponent fallback={ContentPreviewFormSkeleton} importer={SettingsImporter}>
           {({ ContentPreviewNewRoute }) => {
             return <ContentPreviewNewRoute {...props} />;
@@ -33,24 +33,24 @@ export default {
       ),
       mapInjectedToProps: [
         '$scope',
-        $scope => {
+        ($scope) => {
           return {
-            registerSaveAction: save => {
+            registerSaveAction: (save) => {
               $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(save);
               $scope.$applyAsync();
             },
-            setDirty: value => {
+            setDirty: (value) => {
               $scope.context.dirty = value;
               $scope.$applyAsync();
-            }
+            },
           };
-        }
-      ]
+        },
+      ],
     },
     {
       name: 'detail',
       url: '/:contentPreviewId',
-      component: props => (
+      component: (props) => (
         <LazyLoadedComponent fallback={ContentPreviewFormSkeleton} importer={SettingsImporter}>
           {({ ContentPreviewEditRoute }) => {
             return <ContentPreviewEditRoute {...props} />;
@@ -63,17 +63,17 @@ export default {
         ($scope, { contentPreviewId }) => {
           return {
             contentPreviewId,
-            registerSaveAction: save => {
+            registerSaveAction: (save) => {
               $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(save);
               $scope.$applyAsync();
             },
-            setDirty: value => {
+            setDirty: (value) => {
               $scope.context.dirty = value;
               $scope.$applyAsync();
-            }
+            },
           };
-        }
-      ]
-    }
-  ]
+        },
+      ],
+    },
+  ],
 };

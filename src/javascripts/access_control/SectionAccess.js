@@ -11,7 +11,7 @@ const SECTION_ACCESS_ORDER = [
   ['contentType', '.content_types.list'],
   ['asset', '.assets.list'],
   ['apiKey', '.api.keys.list'],
-  ['settings', '.settings.users.list']
+  ['settings', '.settings.users.list'],
 ];
 
 /**
@@ -22,7 +22,7 @@ export function getFirstAccessibleSref() {
   const spaceContext = getModule('spaceContext');
 
   const visibility = accessChecker.getSectionVisibility();
-  const section = SECTION_ACCESS_ORDER.find(section => visibility[section[0]]);
+  const section = SECTION_ACCESS_ORDER.find((section) => visibility[section[0]]);
 
   const firstAccessible = Array.isArray(section) ? section[1] : null;
   const userIsAdmin = spaceContext.getData('spaceMember.admin', false);

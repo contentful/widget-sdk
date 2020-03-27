@@ -31,7 +31,7 @@ export default function register() {
         scope: true,
         require: '?^cfWidgetApi',
         restrict: 'E',
-        link: function(scope, element, _attrs, widgetApi) {
+        link: function (scope, element, _attrs, widgetApi) {
           const {
             widget,
             locale,
@@ -44,13 +44,13 @@ export default function register() {
               renderFieldEditor,
               descriptor,
               renderWhen,
-              parameters
-            }
+              parameters,
+            },
           } = scope;
 
           const {
             createLinksRenderedEvent,
-            createWidgetLinkRenderEventsHandler
+            createWidgetLinkRenderEventsHandler,
           } = LoadEventTracker;
 
           let trackLinksRendered = noop;
@@ -62,12 +62,12 @@ export default function register() {
               locale,
               loadEvents,
               editorData,
-              trackLinksRendered
+              trackLinksRendered,
             });
           }
 
           if (renderWhen) {
-            renderWhen().then(config => {
+            renderWhen().then((config) => {
               renderEditorialComponent(config);
             });
           } else {
@@ -87,7 +87,7 @@ export default function register() {
                   bridge={createExtensionBridge({
                     $rootScope,
                     $scope: scope,
-                    spaceContext
+                    spaceContext,
                   })}
                 />
               );
@@ -98,7 +98,7 @@ export default function register() {
               handleWidgetLinkRenderEvents();
               const jsxTemplate = buildTemplate({
                 widgetApi,
-                loadEvents: loadEvents || newNoopLoadEvents()
+                loadEvents: loadEvents || newNoopLoadEvents(),
               });
               renderJsxTemplate(
                 <WidgetAPIContext.Provider value={{ widgetApi }}>
@@ -108,13 +108,13 @@ export default function register() {
             } else if (widgetNamespace === NAMESPACE_BUILTIN && renderFieldEditor) {
               const widgetApi = createNewWidgetApi({
                 $scope: scope,
-                spaceContext
+                spaceContext,
               });
               renderJsxTemplate(
                 renderFieldEditor({
                   $scope: scope,
                   loadEvents: loadEvents || newNoopLoadEvents(),
-                  widgetApi
+                  widgetApi,
                 })
               );
               handleWidgetLinkRenderEvents();
@@ -144,14 +144,14 @@ export default function register() {
               });
             });
           }
-        }
+        },
       };
-    }
+    },
   ]);
 }
 
 function newNoopLoadEvents() {
   return {
-    emit: () => {}
+    emit: () => {},
   };
 }

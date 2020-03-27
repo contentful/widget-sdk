@@ -5,32 +5,32 @@ const spaceMock = {
     usage: {
       permanent: {
         entry: 0,
-        user: 0
+        user: 0,
       },
       period: {
         assetBandwidth: 0,
-        contentDeliveryApiRequest: 0
-      }
+        contentDeliveryApiRequest: 0,
+      },
     },
     subscription: {
-      additional_usage_allowed: false
+      additional_usage_allowed: false,
     },
     subscriptionPlan: {
       limits: {
         permanent: {
           entry: 5,
-          user: 5
+          user: 5,
         },
         period: {
           assetBandwidth: 5,
-          contentDeliveryApiRequest: 5
-        }
-      }
-    }
+          contentDeliveryApiRequest: 5,
+        },
+      },
+    },
   },
   sys: {
-    id: 'space_1234'
-  }
+    id: 'space_1234',
+  },
 };
 
 describe('access_control/Enforcements', () => {
@@ -54,7 +54,7 @@ describe('access_control/Enforcements', () => {
     describe('When there are multiple reasons, including systemMaintenance', () => {
       const enforcement = determineEnforcement(spaceMock, [
         'systemMaintenance',
-        'subscriptionUnsettled'
+        'subscriptionUnsettled',
       ]);
 
       it('returns an error', () => {

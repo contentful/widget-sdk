@@ -6,8 +6,8 @@ import { DocsLink } from 'ui/Content';
 
 const styles = {
   pageSection: css({
-    marginBottom: tokens.spacing2Xl
-  })
+    marginBottom: tokens.spacing2Xl,
+  }),
 };
 
 const CMATokensOauthSection = () => (

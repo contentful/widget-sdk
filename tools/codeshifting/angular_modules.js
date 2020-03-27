@@ -1,12 +1,12 @@
 const { capitalize, last, uniq, negate } = require('lodash');
 const { endsWith } = require('lodash/fp');
 
-module.exports = function(fileInfo, { jscodeshift: j }) {
+module.exports = function (fileInfo, { jscodeshift: j }) {
   const ast = j(fileInfo.source);
 
   const registerHelpersNeeded = [];
   const importsNeeded = [];
-  const isImportable = path =>
+  const isImportable = (path) =>
     [
       'lodash',
       '@contentful/forma-36-react-components',
@@ -68,9 +68,9 @@ module.exports = function(fileInfo, { jscodeshift: j }) {
       'json-stringify-safe',
       'sum-types',
       'sum-types/caseof-eq',
-      'detect-browser'
+      'detect-browser',
     ].includes(path) || endsWith('.es6', path);
-  const toBoundName = path => last(path.replace('.es6', '').split('/'));
+  const toBoundName = (path) => last(path.replace('.es6', '').split('/'));
 
   let hasAngularDefinitions = false;
 
@@ -86,27 +86,27 @@ module.exports = function(fileInfo, { jscodeshift: j }) {
               type: 'MemberExpression',
               object: {
                 type: 'Identifier',
-                name: 'angular'
+                name: 'angular',
               },
               property: {
                 type: 'Identifier',
-                name: 'module'
-              }
+                name: 'module',
+              },
             },
-            arguments: [{ value: 'contentful' }]
-          }
-        }
-      }
+            arguments: [{ value: 'contentful' }],
+          },
+        },
+      },
     })
-    .replaceWith(path => {
+    .replaceWith((path) => {
       hasAngularDefinitions = true;
       const {
         expression: {
           callee: {
-            property: { name: type }
+            property: { name: type },
           },
-          arguments: [{ value: name }, definition]
-        }
+          arguments: [{ value: name }, definition],
+        },
       } = path.node;
       const registerHelper = `register${capitalize(type)}`;
       registerHelpersNeeded.push(registerHelper);
@@ -115,20 +115,24 @@ module.exports = function(fileInfo, { jscodeshift: j }) {
         const functionDef = last(definition.elements);
         j(functionDef.body)
           .find(j.CallExpression, { callee: { name: 'require' } })
-          .replaceWith(({ node: { arguments: [{ value: path }] } }) => {
-            const boundName = toBoundName(path);
-            requiredModules.push(path);
-            return j.identifier(boundName);
-          });
+          .replaceWith(
+            ({
+              node: {
+                arguments: [{ value: path }],
+              },
+            }) => {
+              const boundName = toBoundName(path);
+              requiredModules.push(path);
+              return j.identifier(boundName);
+            }
+          );
         functionDef.params = uniq(requiredModules)
           .filter(negate(isImportable))
           .map(toBoundName)
           .map(j.identifier);
         definition.elements = [
-          ...uniq(requiredModules)
-            .filter(negate(isImportable))
-            .map(j.literal),
-          functionDef
+          ...uniq(requiredModules).filter(negate(isImportable)).map(j.literal),
+          functionDef,
         ];
         importsNeeded.push(...uniq(requiredModules).filter(isImportable));
       }
@@ -146,14 +150,14 @@ module.exports = function(fileInfo, { jscodeshift: j }) {
     .node.program.body.unshift(
       `import { ${uniq(registerHelpersNeeded).join(', ')} } from 'NgRegistry.es6';`
     );
-  uniq(importsNeeded).forEach(path =>
+  uniq(importsNeeded).forEach((path) =>
     ast.get().node.program.body.unshift(`import * as ${toBoundName(path)} from '${path}';`)
   );
 
   ast.find(j.Property).forEach(({ node }) => {
     const {
       key: { name: key },
-      value: { name: value }
+      value: { name: value },
     } = node;
     if (key === value) {
       node.shorthand = true;
@@ -168,10 +172,10 @@ module.exports = function(fileInfo, { jscodeshift: j }) {
           declarations: [
             {
               id: { name: id },
-              init: { name: init }
-            }
-          ]
-        }
+              init: { name: init },
+            },
+          ],
+        },
       }) => id === init
     )
     .remove();

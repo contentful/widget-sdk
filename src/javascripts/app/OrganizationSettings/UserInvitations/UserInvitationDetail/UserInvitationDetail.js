@@ -14,18 +14,18 @@ import {
   Tooltip,
   Subheading,
   Paragraph,
-  Workbench
+  Workbench,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import {
   User as UserPropType,
-  SpaceMembership as SpaceMembershipPropType
+  SpaceMembership as SpaceMembershipPropType,
 } from 'app/OrganizationSettings/PropTypes';
 import { getRoleDescription } from 'utils/MembershipUtils';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import {
   removeInvitation,
-  removeMembership
+  removeMembership,
 } from 'access_control/OrganizationMembershipRepository';
 import { go } from 'states/Navigator';
 import UserInvitationRemovalModal from '../UserInvitationRemovalModal';
@@ -37,8 +37,8 @@ const styles = {
   spaceMembershipHeader: css({
     display: 'flex',
     alignItems: 'baseline',
-    justifyContent: 'space-between'
-  })
+    justifyContent: 'space-between',
+  }),
 };
 
 export default class UserInvitationDetail extends React.Component {
@@ -50,7 +50,7 @@ export default class UserInvitationDetail extends React.Component {
     invitedAt: PropTypes.string.isRequired,
     spaceInvitations: PropTypes.arrayOf(SpaceMembershipPropType),
     type: PropTypes.string.isRequired,
-    id: PropTypes.string.isRequired
+    id: PropTypes.string.isRequired,
   };
 
   revokeInvitation = async () => {
@@ -85,7 +85,7 @@ export default class UserInvitationDetail extends React.Component {
     Notification.success(`Invitation for ${email} successfully revoked`);
 
     go({
-      path: ['account', 'organizations', 'users', 'invitations']
+      path: ['account', 'organizations', 'users', 'invitations'],
     });
   };
 
@@ -97,7 +97,7 @@ export default class UserInvitationDetail extends React.Component {
         <Workbench.Header
           onBack={() => {
             go({
-              path: ['account', 'organizations', 'users', 'list']
+              path: ['account', 'organizations', 'users', 'list'],
             });
           }}
           title="Invitation details"
@@ -150,13 +150,13 @@ export default class UserInvitationDetail extends React.Component {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {spaceInvitations.map(invitation => {
+                      {spaceInvitations.map((invitation) => {
                         return (
                           <TableRow key={invitation.sys.id}>
                             <TableCell>{invitation.sys.space.name}</TableCell>
                             <TableCell>
                               {getMembershipRoles(invitation)
-                                .map(role => role.name)
+                                .map((role) => role.name)
                                 .join(', ')}
                             </TableCell>
                           </TableRow>

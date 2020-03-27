@@ -12,7 +12,7 @@ import {
   USERS,
   ORG_MEMBERSHIPS,
   ORG_SPACES,
-  TEAM_SPACE_MEMBERSHIPS
+  TEAM_SPACE_MEMBERSHIPS,
 } from 'redux/datasets';
 import ROUTES from 'redux/routes';
 import Placeholder from 'app/common/Placeholder';
@@ -26,7 +26,7 @@ import TeamSpaceMemberships from './TeamSpaceMemberships/TeamSpaceMemberships';
 const renderComponent = (actions, props = { spaceMembershipsEnabled: true }) => {
   const store = createStore(reducer);
   store.dispatch = jest.fn(store.dispatch);
-  actions.forEach(action => store.dispatch(action));
+  actions.forEach((action) => store.dispatch(action));
   const wrapper = mount(
     <Provider store={store}>
       <TeamDetails {...props} />
@@ -63,10 +63,10 @@ describe('TeamDetails', () => {
                     sys: {
                       type: 'Link',
                       linkType: 'User',
-                      id: 'testUser1'
-                    }
-                  }
-                }
+                      id: 'testUser1',
+                    },
+                  },
+                },
               },
               {
                 name: 'B Team',
@@ -78,27 +78,27 @@ describe('TeamDetails', () => {
                     sys: {
                       type: 'Link',
                       linkType: 'User',
-                      id: 'testUser2'
-                    }
-                  }
-                }
-              }
+                      id: 'testUser2',
+                    },
+                  },
+                },
+              },
             ],
             [USERS]: [
               {
                 firstName: 'User 1',
                 lastName: 'LastName1',
-                sys: { id: 'testUser1' }
+                sys: { id: 'testUser1' },
               },
               {
                 firstName: 'User 2',
                 lastName: 'Lastname2',
-                sys: { id: 'testUser2' }
-              }
+                sys: { id: 'testUser2' },
+              },
             ],
-            [TEAM_MEMBERSHIPS]: []
-          }
-        }
+            [TEAM_MEMBERSHIPS]: [],
+          },
+        },
       });
     });
 
@@ -111,10 +111,10 @@ describe('TeamDetails', () => {
             location: {
               pathname: ROUTES.organization.children.teams.children.team.build({
                 orgId: activeOrgId,
-                teamId: 'cTeam'
-              })
-            }
-          }
+                teamId: 'cTeam',
+              }),
+            },
+          },
         });
       });
 
@@ -139,10 +139,10 @@ describe('TeamDetails', () => {
             location: {
               pathname: ROUTES.organization.children.teams.children.team.build({
                 orgId: activeOrgId,
-                teamId: activeTeamId
-              })
-            }
-          }
+                teamId: activeTeamId,
+              }),
+            },
+          },
         });
       });
 
@@ -177,21 +177,21 @@ describe('TeamDetails', () => {
                     role: 'member',
                     organization: {
                       sys: {
-                        id: activeOrgId
-                      }
-                    }
+                        id: activeOrgId,
+                      },
+                    },
                   },
                   {
                     role: 'owner',
                     organization: {
                       sys: {
-                        id: 'otherOrg'
-                      }
-                    }
-                  }
-                ]
-              }
-            }
+                        id: 'otherOrg',
+                      },
+                    },
+                  },
+                ],
+              },
+            },
           });
         });
 
@@ -212,16 +212,10 @@ describe('TeamDetails', () => {
           // ensures all buttons are wrapped in a tooltip
           expect(wrapper.find(Button)).toHaveLength(tooltips.find(Button).length);
           expect(
-            tooltips
-              .find(Button)
-              .filter({ testId: 'delete-team-button' })
-              .props()
+            tooltips.find(Button).filter({ testId: 'delete-team-button' }).props()
           ).toHaveProperty('disabled', true);
           expect(
-            tooltips
-              .find(Button)
-              .filter({ testId: 'edit-team-button' })
-              .props()
+            tooltips.find(Button).filter({ testId: 'edit-team-button' }).props()
           ).toHaveProperty('disabled', true);
         });
 
@@ -243,30 +237,30 @@ describe('TeamDetails', () => {
                     role: 'admin',
                     organization: {
                       sys: {
-                        id: activeOrgId
-                      }
-                    }
+                        id: activeOrgId,
+                      },
+                    },
                   },
                   {
                     role: 'member',
                     organization: {
                       sys: {
-                        id: 'otherOrg'
-                      }
-                    }
-                  }
-                ]
-              }
-            }
+                        id: 'otherOrg',
+                      },
+                    },
+                  },
+                ],
+              },
+            },
           });
           actions.push({
             type: 'DATASET_LOADING',
             meta: { fetched: 100 },
             payload: {
               datasets: {
-                [ORG_MEMBERSHIPS]: []
-              }
-            }
+                [ORG_MEMBERSHIPS]: [],
+              },
+            },
           });
         });
 
@@ -284,7 +278,7 @@ describe('TeamDetails', () => {
           deleteButton.simulate('click');
           expect(store.dispatch).toHaveBeenCalledWith({
             type: 'REMOVE_TEAM',
-            payload: { teamId: 'aTeam' }
+            payload: { teamId: 'aTeam' },
           });
         });
 
@@ -302,11 +296,7 @@ describe('TeamDetails', () => {
         describe('team members tab is active and no team members', () => {
           const getWrapperWithTeamMemberTabActive = () => {
             const wrapper = renderComponent(actions).wrapper;
-            wrapper
-              .find(Tab)
-              .filter({ testId: 'tab-teamMembers' })
-              .props()
-              .onSelect();
+            wrapper.find(Tab).filter({ testId: 'tab-teamMembers' }).props().onSelect();
             // unfortunately necessary: https://airbnb.io/enzyme/docs/api/ShallowWrapper/update.html
             wrapper.update();
             return wrapper;
@@ -327,14 +317,11 @@ describe('TeamDetails', () => {
 
           describe('after clicking button', () => {
             let wrapperAfterClick;
-            const getForm = wrapper => wrapper.find(TeamMembershipForm);
+            const getForm = (wrapper) => wrapper.find(TeamMembershipForm);
 
             beforeEach(() => {
               wrapperAfterClick = getWrapperWithTeamMemberTabActive();
-              wrapperAfterClick
-                .find(Button)
-                .filter({ testId: 'add-button' })
-                .simulate('click');
+              wrapperAfterClick.find(Button).filter({ testId: 'add-button' }).simulate('click');
             });
 
             it('should show add member form', () => {
@@ -367,18 +354,18 @@ describe('TeamDetails', () => {
                             sys: {
                               type: 'Link',
                               linkType: USERS,
-                              id: 'testUserB2'
-                            }
+                              id: 'testUserB2',
+                            },
                           },
                           team: {
                             sys: {
                               type: 'Link',
                               linkType: TEAMS,
-                              id: activeTeamId
-                            }
-                          }
-                        }
-                      }
+                              id: activeTeamId,
+                            },
+                          },
+                        },
+                      },
                     ],
                     [USERS]: [
                       {
@@ -386,11 +373,11 @@ describe('TeamDetails', () => {
                         lastName: 'Lastname 2',
                         avatarUrl: 'doesntMatter.com/blah',
                         email: 'userB2@test.com',
-                        sys: { id: 'testUserB2' }
-                      }
-                    ]
-                  }
-                }
+                        sys: { id: 'testUserB2' },
+                      },
+                    ],
+                  },
+                },
               })
             );
 
@@ -422,11 +409,11 @@ describe('TeamDetails', () => {
                       lastName: 'Lastname 2',
                       avatarUrl: 'doesntMatter.com/blah',
                       email: 'userB2@test.com',
-                      sys: { id: 'testUserB2' }
-                    }
-                  ]
-                }
-              }
+                      sys: { id: 'testUserB2' },
+                    },
+                  ],
+                },
+              },
             });
           });
 
@@ -454,18 +441,18 @@ describe('TeamDetails', () => {
                           sys: {
                             type: 'Link',
                             linkType: USERS,
-                            id: 'testUserB2'
-                          }
+                            id: 'testUserB2',
+                          },
                         },
                         team: {
                           sys: {
                             type: 'Link',
                             linkType: TEAMS,
-                            id: activeTeamId
-                          }
-                        }
-                      }
-                    }
+                            id: activeTeamId,
+                          },
+                        },
+                      },
+                    },
                   ],
                   [USERS]: [
                     {
@@ -473,11 +460,11 @@ describe('TeamDetails', () => {
                       lastName: 'Lastname 2',
                       avatarUrl: 'doesntMatter.com/blah',
                       email: 'userB2@test.com',
-                      sys: { id: 'testUserB2' }
-                    }
-                  ]
-                }
-              }
+                      sys: { id: 'testUserB2' },
+                    },
+                  ],
+                },
+              },
             });
           });
 
@@ -486,12 +473,10 @@ describe('TeamDetails', () => {
 
             const tooltip = wrapper.find(Tooltip).filter({ testId: 'no-members-left-tooltip' });
             expect(tooltip).toHaveLength(1);
-            expect(
-              tooltip
-                .find(Button)
-                .filter({ testId: 'add-button' })
-                .props()
-            ).toHaveProperty('disabled', true);
+            expect(tooltip.find(Button).filter({ testId: 'add-button' }).props()).toHaveProperty(
+              'disabled',
+              true
+            );
           });
         });
 
@@ -499,11 +484,7 @@ describe('TeamDetails', () => {
           const getWrapperWithSpaceMembershipTabActive = () => {
             const wrapper = renderComponent(actions).wrapper;
 
-            wrapper
-              .find(Tab)
-              .filter({ testId: 'tab-spaceMemberships' })
-              .props()
-              .onSelect();
+            wrapper.find(Tab).filter({ testId: 'tab-spaceMemberships' }).props().onSelect();
             // unfortunately necessary: https://airbnb.io/enzyme/docs/api/ShallowWrapper/update.html
             wrapper.update();
             return wrapper;
@@ -544,29 +525,29 @@ describe('TeamDetails', () => {
                             sys: {
                               type: 'Link',
                               linkType: ORG_SPACES,
-                              id: 'testSpaceB2'
-                            }
+                              id: 'testSpaceB2',
+                            },
                           },
                           team: {
                             sys: {
                               type: 'Link',
                               linkType: TEAMS,
-                              id: activeTeamId
-                            }
-                          }
-                        }
-                      }
+                              id: activeTeamId,
+                            },
+                          },
+                        },
+                      },
                     ],
                     [ORG_SPACES]: [
                       {
                         name: 'Test Space B2',
                         sys: {
-                          id: 'testSpaceB2'
-                        }
-                      }
-                    ]
-                  }
-                }
+                          id: 'testSpaceB2',
+                        },
+                      },
+                    ],
+                  },
+                },
               })
             );
 
@@ -587,14 +568,11 @@ describe('TeamDetails', () => {
 
           describe('after clicking button', () => {
             let wrapperAfterClick;
-            const getForm = wrapper => wrapper.find(TeamSpaceMembershipForm);
+            const getForm = (wrapper) => wrapper.find(TeamSpaceMembershipForm);
 
             beforeEach(() => {
               wrapperAfterClick = getWrapperWithSpaceMembershipTabActive();
-              wrapperAfterClick
-                .find(Button)
-                .filter({ testId: 'add-button' })
-                .simulate('click');
+              wrapperAfterClick.find(Button).filter({ testId: 'add-button' }).simulate('click');
             });
 
             it('should show add member form', () => {
@@ -623,10 +601,10 @@ describe('TeamDetails', () => {
           location: {
             pathname: ROUTES.organization.children.teams.children.team.build({
               orgId: activeOrgId,
-              teamId: 'bTeam'
-            })
-          }
-        }
+              teamId: 'bTeam',
+            }),
+          },
+        },
       });
     });
 

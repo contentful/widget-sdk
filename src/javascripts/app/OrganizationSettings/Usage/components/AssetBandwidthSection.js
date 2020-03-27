@@ -7,7 +7,7 @@ import {
   Note,
   Typography,
   Heading,
-  Paragraph
+  Paragraph,
 } from '@contentful/forma-36-react-components';
 import * as tokens from '@contentful/forma-36-tokens';
 
@@ -16,30 +16,30 @@ import { shortenStorageUnit } from 'utils/NumberUtils';
 const styles = {
   heading: css({
     color: '#536171',
-    fontWeight: tokens.fontWeightNormal
+    fontWeight: tokens.fontWeightNormal,
   }),
   usageNumber: css({
     color: '#253545',
     fontSize: tokens.fontSize3Xl,
-    fontWeight: tokens.fontWeightMedium
+    fontWeight: tokens.fontWeightMedium,
   }),
   limit: css({
-    fontSize: tokens.fontSizeM
+    fontSize: tokens.fontSizeM,
   }),
   includedLimit: css({
-    color: '#6A7889'
+    color: '#6A7889',
   }),
   overage: css({
-    color: tokens.colorOrangeMid
+    color: tokens.colorOrangeMid,
   }),
   learnMoreLink: css({
-    marginLeft: tokens.spacingS
+    marginLeft: tokens.spacingS,
   }),
   note: css({
     width: '40%',
     marginTop: tokens.spacingS,
-    color: '#27457A'
-  })
+    color: '#27457A',
+  }),
 };
 
 const AssetBandwidthSection = ({ limit, usage, uom }) => {
@@ -80,7 +80,7 @@ const AssetBandwidthSection = ({ limit, usage, uom }) => {
 AssetBandwidthSection.propTypes = {
   limit: PropTypes.number.isRequired,
   usage: PropTypes.number.isRequired,
-  uom: PropTypes.string.isRequired
+  uom: PropTypes.string.isRequired,
 };
 
 export default AssetBandwidthSection;

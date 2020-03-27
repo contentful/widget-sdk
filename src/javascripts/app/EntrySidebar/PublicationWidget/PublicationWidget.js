@@ -9,7 +9,7 @@ import {
   DropdownListItem,
   Icon,
   Paragraph,
-  TextLink
+  TextLink,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
@@ -23,8 +23,8 @@ import StatusSwitch from 'app/ScheduledActions/EntrySidebarWidget/StatusSwitch';
 const styles = {
   actionRestrictionNote: css({
     color: tokens.colorTextLight,
-    marginTop: tokens.spacingXs
-  })
+    marginTop: tokens.spacingXs,
+  }),
 };
 
 const ActionRestrictedNote = ({ actionName, reason }) => (
@@ -36,7 +36,7 @@ const ActionRestrictedNote = ({ actionName, reason }) => (
 
 ActionRestrictedNote.propTypes = {
   actionName: PropTypes.string,
-  reason: PropTypes.string
+  reason: PropTypes.string,
 };
 
 const RestrictedAction = ({ actionName }) => (
@@ -52,7 +52,7 @@ const RestrictedAction = ({ actionName }) => (
 );
 
 RestrictedAction.propTypes = {
-  actionName: PropTypes.string.isRequired
+  actionName: PropTypes.string.isRequired,
 };
 
 export default class PublicationWidget extends React.PureComponent {
@@ -69,15 +69,15 @@ export default class PublicationWidget extends React.PureComponent {
     environmentId: PropTypes.string,
     userId: PropTypes.string,
     entityId: PropTypes.string,
-    isStatusSwitch: PropTypes.bool
+    isStatusSwitch: PropTypes.bool,
   };
 
   static defaultProps = {
-    isStatusSwitch: false
+    isStatusSwitch: false,
   };
 
   state = {
-    isOpenDropdown: false
+    isOpenDropdown: false,
   };
 
   render() {
@@ -90,9 +90,9 @@ export default class PublicationWidget extends React.PureComponent {
       updatedAt,
       revert,
       publicationBlockedReason,
-      isStatusSwitch
+      isStatusSwitch,
     } = this.props;
-    const secondaryActionsDisabled = every(secondary || [], action => action.isDisabled());
+    const secondaryActionsDisabled = every(secondary || [], (action) => action.isDisabled());
     const isPrimaryPublishBlocked =
       primary && primary.targetStateId === 'published' && !!publicationBlockedReason;
 
@@ -147,7 +147,7 @@ export default class PublicationWidget extends React.PureComponent {
                   buttonType="positive"
                   indicateDropdown
                   onClick={() => {
-                    this.setState(state => ({ isOpenDropdown: !state.isOpenDropdown }));
+                    this.setState((state) => ({ isOpenDropdown: !state.isOpenDropdown }));
                   }}>
                   {status === 'published' ? 'Change status' : ''}
                 </Button>
@@ -156,7 +156,7 @@ export default class PublicationWidget extends React.PureComponent {
                 <DropdownListItem isTitle>Change status to</DropdownListItem>
                 {secondary &&
                   secondary.map(
-                    action =>
+                    (action) =>
                       action.isAvailable() && (
                         <DropdownListItem
                           key={action.label}
@@ -188,7 +188,7 @@ export default class PublicationWidget extends React.PureComponent {
             <div className="entity-sidebar__save-status">
               <i
                 className={classNames('entity-sidebar__saving-spinner', {
-                  'x--active': isSaving
+                  'x--active': isSaving,
                 })}
               />
               <span className="entity-sidebar__last-saved" data-test-id="last-saved">

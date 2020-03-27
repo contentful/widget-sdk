@@ -15,30 +15,28 @@ function calculateHealth({ calls }) {
 
     return {
       percentage,
-      status: percentage > THRESHOLD.SUCCESS ? STATUS.SUCCESS : status
+      status: percentage > THRESHOLD.SUCCESS ? STATUS.SUCCESS : status,
     };
   }
 }
 
 export class WebhookHealth extends React.Component {
   static propTypes = {
-    webhookId: PropTypes.string.isRequired
+    webhookId: PropTypes.string.isRequired,
   };
 
   state = {
-    status: STATUS.LOADING
+    status: STATUS.LOADING,
   };
 
   componentDidMount() {
     const { webhookId } = this.props;
     const webhookRepo = getWebhookRepo();
 
-    webhookRepo.logs
-      .getHealth(webhookId)
-      .then(
-        data => this.setState(calculateHealth(data) || { status: STATUS.NODATA }),
-        () => this.setState({ status: STATUS.NODATA })
-      );
+    webhookRepo.logs.getHealth(webhookId).then(
+      (data) => this.setState(calculateHealth(data) || { status: STATUS.NODATA }),
+      () => this.setState({ status: STATUS.NODATA })
+    );
   }
 
   render() {

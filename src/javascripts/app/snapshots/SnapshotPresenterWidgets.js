@@ -17,8 +17,8 @@ import SnapshotPresenterStandard from './SnapshotPresenterStandard';
 
 const styles = {
   rtl: css({
-    direction: 'rtl'
-  })
+    direction: 'rtl',
+  }),
 };
 
 const SnapshotPresenterWidgets = ({
@@ -28,7 +28,7 @@ const SnapshotPresenterWidgets = ({
   locale,
   type,
   value,
-  widget
+  widget,
 }) => {
   const { field, widgetNamespace, descriptor, parameters, settings } = widget;
 
@@ -85,7 +85,7 @@ const SnapshotPresenterWidgets = ({
 
 SnapshotPresenterWidgets.propTypes = {
   editorData: PropTypes.shape({
-    contentType: PropTypes.object
+    contentType: PropTypes.object,
   }).isRequired,
   entity: PropTypes.object.isRequired,
   linkType: PropTypes.string,
@@ -95,43 +95,43 @@ SnapshotPresenterWidgets.propTypes = {
     field: PropTypes.oneOfType([
       PropTypes.shape({
         type: PropTypes.string,
-        linkType: PropTypes.string
+        linkType: PropTypes.string,
       }),
       PropTypes.shape({
         type: PropTypes.string,
         items: PropTypes.shape({
           type: PropTypes.string,
-          linkType: PropTypes.string
-        })
-      })
+          linkType: PropTypes.string,
+        }),
+      }),
     ]),
     widgetNamespace: PropTypes.string,
     descriptor: PropTypes.shape({
       id: PropTypes.string,
       appDefinitionId: PropTypes.string,
       src: PropTypes.string,
-      srcdoc: PropTypes.string
+      srcdoc: PropTypes.string,
     }),
     parameters: PropTypes.shape({
       instance: PropTypes.object.isRequired,
       installation: PropTypes.object.isRequired,
-      invocation: PropTypes.object
+      invocation: PropTypes.object,
     }),
     settings: PropTypes.oneOfType([
       PropTypes.shape({
         trueLabel: PropTypes.string,
-        falseLabel: PropTypes.string
+        falseLabel: PropTypes.string,
       }),
       PropTypes.shape({
         format: PropTypes.string,
-        ampm: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
-      })
-    ])
+        ampm: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+      }),
+    ]),
   }).isRequired,
   locale: PropTypes.shape({
     code: PropTypes.string,
-    internal_code: PropTypes.string
-  }).isRequired
+    internal_code: PropTypes.string,
+  }).isRequired,
 };
 
 export default SnapshotPresenterWidgets;

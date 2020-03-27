@@ -19,7 +19,7 @@ const RolesFetcher = createFetcherComponent(async ({ spaceId }) => {
 
   const roleCounts = listHandler.getRoleCounts();
 
-  const roles = sortBy(data.roles, 'name').map(role => {
+  const roles = sortBy(data.roles, 'name').map((role) => {
     role.count = roleCounts[role.sys.id] || 0;
     return role;
   });
@@ -29,7 +29,7 @@ const RolesFetcher = createFetcherComponent(async ({ spaceId }) => {
     rolesResource,
     roles,
     roleCounts,
-    listHandler
+    listHandler,
   };
 });
 
@@ -62,5 +62,5 @@ export default function RolesListRoute(props) {
 RolesListRoute.propTypes = {
   spaceId: PropTypes.string.isRequired,
   isLegacyOrganization: PropTypes.bool.isRequired,
-  canUpgradeOrganization: PropTypes.bool.isRequired
+  canUpgradeOrganization: PropTypes.bool.isRequired,
 };

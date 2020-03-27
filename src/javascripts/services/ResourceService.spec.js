@@ -2,14 +2,14 @@ import createResourceService from './ResourceService';
 import {
   createSpaceEndpoint,
   createOrganizationEndpoint,
-  mockEndpoint
+  mockEndpoint,
 } from 'data/EndpointFactory';
 import { canCreate, canCreateResources, generateMessage } from 'utils/ResourceUtils';
 
 jest.mock('utils/ResourceUtils', () => ({
   canCreate: jest.fn(),
   canCreateResources: jest.fn(),
-  generateMessage: jest.fn()
+  generateMessage: jest.fn(),
 }));
 
 describe('ResourceService', () => {
@@ -60,10 +60,10 @@ describe('ResourceService', () => {
           1,
           {
             method: 'GET',
-            path: ['resources', 'special_resource']
+            path: ['resources', 'special_resource'],
           },
           {
-            'x-contentful-enable-alpha-feature': 'subscriptions-api'
+            'x-contentful-enable-alpha-feature': 'subscriptions-api',
           }
         );
       });
@@ -74,7 +74,7 @@ describe('ResourceService', () => {
         expect(mockEndpoint).toHaveBeenNthCalledWith(
           1,
           expect.objectContaining({
-            path: ['resources', 'special_resource']
+            path: ['resources', 'special_resource'],
           }),
           expect.anything()
         );
@@ -86,7 +86,7 @@ describe('ResourceService', () => {
         expect(mockEndpoint).toHaveBeenNthCalledWith(
           1,
           expect.objectContaining({
-            path: ['environments', 'env_1234', 'resources', 'special_resource']
+            path: ['environments', 'env_1234', 'resources', 'special_resource'],
           }),
           expect.anything()
         );
@@ -105,10 +105,10 @@ describe('ResourceService', () => {
           1,
           {
             method: 'GET',
-            path: ['resources']
+            path: ['resources'],
           },
           {
-            'x-contentful-enable-alpha-feature': 'subscriptions-api'
+            'x-contentful-enable-alpha-feature': 'subscriptions-api',
           }
         );
       });
@@ -120,10 +120,10 @@ describe('ResourceService', () => {
           1,
           {
             method: 'GET',
-            path: ['environments', 'env_1234', 'resources']
+            path: ['environments', 'env_1234', 'resources'],
           },
           {
-            'x-contentful-enable-alpha-feature': 'subscriptions-api'
+            'x-contentful-enable-alpha-feature': 'subscriptions-api',
           }
         );
       });
@@ -139,7 +139,7 @@ describe('ResourceService', () => {
           1,
           {
             method: 'GET',
-            path: ['resources', 'super_special_resource']
+            path: ['resources', 'super_special_resource'],
           },
           expect.anything()
         );
@@ -161,7 +161,7 @@ describe('ResourceService', () => {
           1,
           {
             method: 'GET',
-            path: ['environments', 'env_1234', 'resources']
+            path: ['environments', 'env_1234', 'resources'],
           },
           expect.anything()
         );
@@ -181,7 +181,7 @@ describe('ResourceService', () => {
           1,
           {
             method: 'GET',
-            path: ['resources', 'a_resource']
+            path: ['resources', 'a_resource'],
           },
           expect.anything()
         );
@@ -196,8 +196,8 @@ describe('ResourceService', () => {
           items: [
             { sys: { id: 'resource_a' } },
             { sys: { id: 'resource_b' } },
-            { sys: { id: 'resource_c' } }
-          ]
+            { sys: { id: 'resource_c' } },
+          ],
         });
 
         generateMessage.mockReturnValue('a message');
@@ -208,7 +208,7 @@ describe('ResourceService', () => {
           1,
           {
             method: 'GET',
-            path: ['resources']
+            path: ['resources'],
           },
           expect.anything()
         );
@@ -216,7 +216,7 @@ describe('ResourceService', () => {
         expect(result).toEqual({
           resourceA: 'a message',
           resourceB: 'a message',
-          resourceC: 'a message'
+          resourceC: 'a message',
         });
       });
     });

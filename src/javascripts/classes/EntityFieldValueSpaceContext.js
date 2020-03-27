@@ -43,13 +43,13 @@ export function entryTitle(entry, localeCode, modelValue) {
       contentType: contentType.data,
       internalLocaleCode: localeCode,
       defaultInternalLocaleCode,
-      defaultTitle
+      defaultTitle,
     });
   } catch (error) {
     // TODO: Don't use try catch. Instead, handle undefined/unexpected values.
     logger.logWarn('Failed to determine entry title', {
       error: error,
-      entrySys: _.get(entry, 'data.sys')
+      entrySys: _.get(entry, 'data.sys'),
     });
   }
 
@@ -99,13 +99,13 @@ export function assetTitle(asset, localeCode, modelValue) {
       asset: asset.data,
       defaultTitle,
       internalLocaleCode: localeCode,
-      defaultInternalLocaleCode
+      defaultInternalLocaleCode,
     });
   } catch (error) {
     // TODO: Don't use try catch. Instead, handle undefined/unexpected values.
     logger.logWarn('Failed to determine asset title', {
       error: error,
-      assetSys: _.get(asset, 'data.sys')
+      assetSys: _.get(asset, 'data.sys'),
     });
   }
 
@@ -124,13 +124,13 @@ export function entryImage(entry, localeCode) {
 
   const link = getValueForMatchedField(entry, localeCode, {
     type: 'Link',
-    linkType: 'Asset'
+    linkType: 'Asset',
   });
 
   const assetId = _.get(link, 'sys.id');
   if (link && assetId) {
     return spaceContext.space.getAsset(assetId).then(
-      asset => {
+      (asset) => {
         const file = getFieldValue(asset, 'file', localeCode);
         const isImage = _.get(file, 'details.image');
         return isImage ? file : null;
@@ -159,10 +159,10 @@ export function entityDescription(entity, localeCode) {
   if (!contentType) {
     return undefined;
   }
-  const isTextField = field => ['Symbol', 'Text'].includes(field.type);
-  const isDisplayField = field => field.id === contentType.data.displayField;
-  const isMaybeSlugField = field => /\bslug\b/.test(field.name);
-  const isDescriptionField = field =>
+  const isTextField = (field) => ['Symbol', 'Text'].includes(field.type);
+  const isDisplayField = (field) => field.id === contentType.data.displayField;
+  const isMaybeSlugField = (field) => /\bslug\b/.test(field.name);
+  const isDescriptionField = (field) =>
     isTextField(field) && !isDisplayField(field) && !isMaybeSlugField(field);
 
   const descriptionField = contentType.data.fields.find(isDescriptionField);
@@ -193,7 +193,7 @@ export function getFieldValue(entity, internalFieldId, internalLocaleCode) {
     entity: _.get(entity, 'data'),
     internalFieldId,
     internalLocaleCode,
-    defaultInternalLocaleCode
+    defaultInternalLocaleCode,
   });
 }
 

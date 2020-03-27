@@ -10,7 +10,7 @@ import {
   extend,
   omit,
   find,
-  cloneDeep
+  cloneDeep,
 } from 'lodash';
 import PropTypes from 'prop-types';
 import {
@@ -21,7 +21,7 @@ import {
   Heading,
   CheckboxField,
   Paragraph,
-  Note
+  Note,
 } from '@contentful/forma-36-react-components';
 import { RolesWorkbenchSkeleton } from '../skeletons/RolesWorkbenchSkeleton';
 import { css } from 'emotion';
@@ -45,7 +45,7 @@ import * as EntityFieldValueHelpers from 'classes/EntityFieldValueHelpers';
 
 const PermissionPropType = PropTypes.shape({
   manage: PropTypes.bool,
-  read: PropTypes.bool
+  read: PropTypes.bool,
 });
 
 const autofixPolicies = (internal, contentTypes) => {
@@ -65,7 +65,7 @@ class RoleEditor extends React.Component {
       description: PropTypes.string,
       permissions: PropTypes.objectOf(PermissionPropType),
       policies: PropTypes.array,
-      sys: PropTypes.shape()
+      sys: PropTypes.shape(),
     }).isRequired,
     entities: PropTypes.object.isRequired,
     baseRole: PropTypes.shape(),
@@ -77,7 +77,7 @@ class RoleEditor extends React.Component {
     roleRepo: PropTypes.object.isRequired,
     canModifyRoles: PropTypes.bool.isRequired,
     hasCustomRolesFeature: PropTypes.bool.isRequired,
-    hasEnvironmentAliasesEnabled: PropTypes.bool.isRequired
+    hasEnvironmentAliasesEnabled: PropTypes.bool.isRequired,
   };
 
   constructor(props) {
@@ -103,11 +103,11 @@ class RoleEditor extends React.Component {
     this.state = {
       entityCache: {
         Entry: {},
-        Asset: {}
+        Asset: {},
       },
       saving: false,
       dirty: isDuplicate,
-      internal
+      internal,
     };
   }
 
@@ -116,14 +116,14 @@ class RoleEditor extends React.Component {
     this.props.registerSaveAction(this.save);
   }
 
-  setDirty = dirty => {
+  setDirty = (dirty) => {
     this.setState({ dirty });
     this.props.setDirty(dirty);
   };
 
-  searchEntities = entityType => {
+  searchEntities = (entityType) => {
     const { entityCache } = this.state;
-    return entitySelector.openFromRolesAndPermissions(entityType).then(entity => {
+    return entitySelector.openFromRolesAndPermissions(entityType).then((entity) => {
       if (entity) {
         entityCache[entityType][entity.sys.id] = entity;
         this.setState({ entityCache });
@@ -149,17 +149,17 @@ class RoleEditor extends React.Component {
       if (entityType === 'Entry') {
         return EntityFieldValueHelpers.getEntryTitle({
           entry: data,
-          contentType: contentTypes.find(type => type.sys.id === contentTypeId),
+          contentType: contentTypes.find((type) => type.sys.id === contentTypeId),
           internalLocaleCode: defaultLocale,
           defaultInternalLocaleCode: defaultLocale,
-          defaultTitle: 'Untitled'
+          defaultTitle: 'Untitled',
         });
       } else {
         return EntityFieldValueHelpers.getAssetTitle({
           asset: data,
           internalLocaleCode: defaultLocale,
           defaultInternalLocaleCode: defaultLocale,
-          defaultTitle: 'Untitled'
+          defaultTitle: 'Untitled',
         });
       }
     } catch (err) {
@@ -173,11 +173,11 @@ class RoleEditor extends React.Component {
 
     const listHandler = RoleListHandler.create();
     listHandler.reset().then(() => {
-      createRoleRemover(listHandler, role).then(removed => {
+      createRoleRemover(listHandler, role).then((removed) => {
         if (removed) {
           this.setDirty(false);
           Navigator.go({
-            path: '^.list'
+            path: '^.list',
           });
         }
       });
@@ -190,7 +190,7 @@ class RoleEditor extends React.Component {
     if (get(role, 'sys.id')) {
       Navigator.go({
         path: '^.new',
-        params: { baseRoleId: role.sys.id }
+        params: { baseRoleId: role.sys.id },
       });
     }
   };
@@ -212,7 +212,7 @@ class RoleEditor extends React.Component {
       .finally(() => this.setState({ saving: false }));
   };
 
-  handleSaveSuccess = autofix => role => {
+  handleSaveSuccess = (autofix) => (role) => {
     const { isNew } = this.props;
     if (autofix) {
       Notification.success('One or more rules referencing deleted data where removed');
@@ -231,7 +231,7 @@ class RoleEditor extends React.Component {
     }
   };
 
-  handleSaveError = response => {
+  handleSaveError = (response) => {
     const errors = get(response, 'body.details.errors', []);
 
     if (includes(['403', '404'], get(response, 'statusCode'))) {
@@ -259,12 +259,12 @@ class RoleEditor extends React.Component {
     return Promise.reject();
   };
 
-  updateInternal = updater => {
+  updateInternal = (updater) => {
     const newInternal = updater(this.state.internal);
     this.setState(
       {
         internal: newInternal,
-        external: PolicyBuilder.toExternal(newInternal)
+        external: PolicyBuilder.toExternal(newInternal),
       },
       () => {
         this.setDirty(true);
@@ -273,15 +273,15 @@ class RoleEditor extends React.Component {
   };
 
   resetPolicies = () =>
-    this.updateInternal(internal =>
+    this.updateInternal((internal) =>
       extend(internal, {
         entries: { allowed: [], denied: [] },
         assets: { allowed: [], denied: [] },
-        uiCompatible: true
+        uiCompatible: true,
       })
     );
 
-  updateRuleAttribute = entities => (rulesKey, id) => attribute => ({ target: { value } }) => {
+  updateRuleAttribute = (entities) => (rulesKey, id) => (attribute) => ({ target: { value } }) => {
     const DEFAULT_FIELD = PolicyBuilder.PolicyBuilderConfig.ALL_FIELDS;
     const DEFAULT_LOCALE = PolicyBuilder.PolicyBuilderConfig.ALL_LOCALES;
 
@@ -306,54 +306,45 @@ class RoleEditor extends React.Component {
       case 'contentType':
         updatedRule = {
           ...updatedRule,
-          field: updatedRule.action === 'update' ? DEFAULT_FIELD : null
+          field: updatedRule.action === 'update' ? DEFAULT_FIELD : null,
         };
         break;
     }
     this.updateInternal(set([entities, rulesKey, index], updatedRule));
   };
 
-  addRule = (entity, entities) => rulesKey => () => {
+  addRule = (entity, entities) => (rulesKey) => () => {
     const getDefaultRule = PolicyBuilder.DefaultRule.getDefaultRuleGetterFor(entity);
     this.updateInternal(update([entities, rulesKey], (rules = []) => [...rules, getDefaultRule()]));
   };
 
-  removeRule = entities => (rulesKey, id) => () => {
+  removeRule = (entities) => (rulesKey, id) => () => {
     this.updateInternal(update([entities, rulesKey], remove({ id })));
   };
 
-  updateRoleFromTextInput = property => ({ target: { value } }) => {
+  updateRoleFromTextInput = (property) => ({ target: { value } }) => {
     this.updateInternal(set([property].join('.'), value));
   };
 
-  updateRoleFromCheckbox = property => ({ target: { checked } }) => {
+  updateRoleFromCheckbox = (property) => ({ target: { checked } }) => {
     let update = set(property, checked);
     if (property === 'contentDelivery.manage' && checked === true) {
-      update = flow(
-        update,
-        set('contentDelivery.read', true)
-      );
+      update = flow(update, set('contentDelivery.read', true));
     }
 
     if (property === 'environments.manage' && checked === false) {
-      update = flow(
-        update,
-        set('environmentAliases.manage', false)
-      );
+      update = flow(update, set('environmentAliases.manage', false));
     }
 
     this.updateInternal(update);
   };
 
   updateLocale = ({ target: { value: newLocale } }) => {
-    const mapPolicies = map(policy =>
+    const mapPolicies = map((policy) =>
       policy.action === 'update' ? set('locale', newLocale, policy) : policy
     );
     this.updateInternal(
-      flow(
-        update('entries.allowed', mapPolicies),
-        update('assets.allowed', mapPolicies)
-      )
+      flow(update('entries.allowed', mapPolicies), update('assets.allowed', mapPolicies))
     );
   };
 
@@ -367,7 +358,7 @@ class RoleEditor extends React.Component {
       autofixed,
       canModifyRoles,
       hasCustomRolesFeature,
-      hasEnvironmentAliasesEnabled
+      hasEnvironmentAliasesEnabled,
     } = this.props;
 
     const { saving, internal, isLegacy, dirty } = this.state;

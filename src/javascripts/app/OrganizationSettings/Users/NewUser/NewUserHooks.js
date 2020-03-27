@@ -15,7 +15,7 @@ export function useAddToOrg(orgId, hasSsoEnabled, onProgress = () => {}) {
   const fn = async (emails, role, spaceMemberships = [], teams = [], suppressInvitation) => {
     const orgEndpoint = createOrganizationEndpoint(orgId);
     const shouldUseNewInvitation = await getVariation(PENDING_ORG_MEMBERSHIPS, {
-      organizationId: orgId
+      organizationId: orgId,
     });
 
     // use the new invitation flow using pending org memberships
@@ -98,7 +98,7 @@ async function addToSpaces(email, spaceMemberships) {
 }
 
 async function addToTeams(endpoint, orgMembershipId, teams) {
-  const requests = teams.map(async team => {
+  const requests = teams.map(async (team) => {
     try {
       await createTeamMembership(endpoint, orgMembershipId, team.sys.id);
     } catch {
@@ -124,18 +124,18 @@ async function inviteToOrg(endpoint, email, role, spaceMemberships, teams) {
     role,
     email,
     spaceInvitations: convertSpaceMemberships(spaceMemberships),
-    teamInvitations: teams.map(team => ({ teamId: team.sys.id }))
+    teamInvitations: teams.map((team) => ({ teamId: team.sys.id })),
   });
 }
 
 function convertSpaceMemberships(spaceMemberships) {
   return spaceMemberships.map(({ space, roles }) => {
-    const hasAdminRole = roles.some(role => role === ADMIN_ROLE_ID);
+    const hasAdminRole = roles.some((role) => role === ADMIN_ROLE_ID);
 
     return {
       spaceId: space.sys.id,
       admin: hasAdminRole,
-      roleIds: hasAdminRole ? [] : roles
+      roleIds: hasAdminRole ? [] : roles,
     };
   });
 }
@@ -153,7 +153,7 @@ async function createInvitationWithPendingMembership(
     endpoint,
     {
       role,
-      email
+      email,
     },
     true
   );
@@ -169,7 +169,7 @@ async function createInvitationWithPendingMembership(
 async function sendInvitations(fn, onProgress, endpoint, emails, ...fnArgs) {
   const successes = [];
   const failures = [];
-  const requests = emails.map(async email => {
+  const requests = emails.map(async (email) => {
     try {
       await fn(endpoint, email, ...fnArgs);
       successes.push(email);

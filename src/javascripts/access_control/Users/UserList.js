@@ -28,13 +28,13 @@ const fetch = (orgId, endpoint, space, setData) => async () => {
     createMembershipRepo(endpoint).getAll(),
     RoleRepository.getInstance(space).getAll(),
     getAllUsers(endpoint),
-    getOrgFeature(orgId, 'teams', false)
+    getOrgFeature(orgId, 'teams', false),
   ]);
 
   const resolvedMembers = resolveLinks({
     paths: ['roles', 'relatedMemberships', 'sys.user'],
     includes: { Role: roles, SpaceMembership: spaceMemberships, User: spaceUsers },
-    items: members
+    items: members,
   });
 
   setData({ resolvedMembers, roles, spaceUsers, hasTeamsFeature });
@@ -74,16 +74,16 @@ const UserList = ({ jumpToRole }) => {
 
   const usersByRole = useMemo(() => {
     let userGroups = _(sortedMembers)
-      .map(member => member.roles.map(({ name }) => ({ name, member })))
+      .map((member) => member.roles.map(({ name }) => ({ name, member })))
       .flatten()
       .groupBy('name')
-      .mapValues(roles => map(roles, 'member'))
+      .mapValues((roles) => map(roles, 'member'))
       .value();
     const admins = filter(sortedMembers, 'admin');
     if (admins.length > 0) {
       userGroups = {
         Administrator: admins,
-        ...userGroups
+        ...userGroups,
       };
     }
     return userGroups;
@@ -132,13 +132,13 @@ const UserList = ({ jumpToRole }) => {
   );
 
   function decorateWithRefetch(command) {
-    return function(...args) {
+    return function (...args) {
       return command(...args).then(boundFetch);
     };
   }
 
   function openSpaceInvitationDialog() {
-    const unavailableUserIds = spaceUsers.map(user => user.sys.id);
+    const unavailableUserIds = spaceUsers.map((user) => user.sys.id);
     ModalLauncher.open(({ isShown, onClose }) => (
       <AddUsers
         isShown={isShown}
@@ -150,7 +150,7 @@ const UserList = ({ jumpToRole }) => {
   }
 };
 UserList.propTypes = {
-  jumpToRole: PropTypes.string
+  jumpToRole: PropTypes.string,
 };
 
 export default UserList;

@@ -66,7 +66,7 @@ function setFlat(container, key, value) {
     }
 
     return assign(container, {
-      [key]: value
+      [key]: value,
     });
   }
 }

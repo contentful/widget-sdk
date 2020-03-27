@@ -47,7 +47,7 @@ Usage: ... configure-file-dist --branch BRANCH --version VERSION
     .demand(1, 'No command given')
 
     .command('test', TEST_DESC)
-    .command('configure-file-dist', TRAVIS_DESC, function(yargs) {
+    .command('configure-file-dist', TRAVIS_DESC, function (yargs) {
       return yargs
         .strict()
         .usage(`Usage: ... configure-file-dist [options]\n\n${TRAVIS_DESC}`)
@@ -57,18 +57,18 @@ Usage: ... configure-file-dist --branch BRANCH --version VERSION
             alias: 'b',
             description: 'Branch name',
             requiresArgs: true,
-            required: true
+            required: true,
           },
           version: {
             type: 'string',
             alias: 'v',
             description: 'Set the version identifier',
             requiresArg: true,
-            required: true
-          }
+            required: true,
+          },
         });
     })
-    .command('upload-sourcemaps-to-bugsnag', SOURCEMAPS_DESC, yargs => {
+    .command('upload-sourcemaps-to-bugsnag', SOURCEMAPS_DESC, (yargs) => {
       return yargs
         .strict()
         .usage(`Usage: ... upload-sourcemaps-to-bugsnag [options]\n\n${SOURCEMAPS_DESC}`)
@@ -78,13 +78,13 @@ Usage: ... configure-file-dist --branch BRANCH --version VERSION
             alias: 'v',
             description: 'Set the version identifier',
             requiresArg: true,
-            required: true
-          }
+            required: true,
+          },
         });
     }).argv;
 
   return {
     command: args._.shift(),
-    options: args
+    options: args,
   };
 }

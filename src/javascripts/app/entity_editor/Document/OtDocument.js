@@ -61,7 +61,7 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
   const docSetters = DocSetters.create({
     getDoc: () => currentDoc,
     getValueAt,
-    contentType
+    contentType,
   });
   docSetters.error$.onValue(({ error, path }) => {
     if (error === 'forbidden') {
@@ -96,9 +96,9 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
    *
    * @type {Property<string[]>}
    */
-  const changes = docEventsBus.stream.flatten(event => {
+  const changes = docEventsBus.stream.flatten((event) => {
     if (event.name === 'change') {
-      const paths = (event.data || []).map(error => error.p);
+      const paths = (event.data || []).map((error) => error.p);
       return [PathUtils.findCommonPrefix(paths)];
     } else if (event.name === 'open') {
       // Emit the path of length zero
@@ -117,13 +117,13 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
   // change stream. Subsequent handlers will access the snapshot on
   // we need to make sure that we present them with the normalized
   // version.
-  changes.onValue(changePath => {
+  changes.onValue((changePath) => {
     if (PathUtils.isPrefix(changePath, ['fields']) && currentDoc) {
       const locales = TheLocaleStore.getPrivateLocales();
       Normalizer.normalize(
         {
           getValueAt,
-          setValueAt: docSetters.setValueAt
+          setValueAt: docSetters.setValueAt,
         },
         currentDoc.snapshot,
         contentType,
@@ -169,11 +169,11 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
   const sysProperty = sysBus.property;
 
   let currentSys;
-  K.onValue(sysProperty, sys => {
+  K.onValue(sysProperty, (sys) => {
     currentSys = sys;
   });
 
-  docEventsBus.stream.onValue(event => {
+  docEventsBus.stream.onValue((event) => {
     const previousVersion = currentSys.version;
     const version = event.doc.version + (event.doc.compressed || 0);
 
@@ -185,8 +185,8 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
         data: {
           cmaEntityVersion: initialEntitySys.version,
           shareJsDocVersion: event.doc.version,
-          shareJsDocCompressed: !!event.doc.compressed
-        }
+          shareJsDocCompressed: !!event.doc.compressed,
+        },
       });
     }
 
@@ -201,7 +201,7 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
       // There is no focus on reference field or the boolean's "clear" button
       // so we have to dispatcha a fake "blur" event to the changes bus.
       const fieldId = path[1];
-      const field = contentType.data.fields.find(field => field.id === fieldId);
+      const field = contentType.data.fields.find((field) => field.id === fieldId);
       const isReferenceField = get(field, 'items.type') === 'Link' || get(field, 'type') === 'Link';
       const isBooleanField = get(field, 'type') === 'Boolean';
       if (isReferenceField || isBooleanField) {
@@ -245,7 +245,7 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
 
   // Holds true if the user is allowed to edit the entity
   const isEditable$ = sysProperty
-    .map(sys => {
+    .map((sys) => {
       return !sys.archivedVersion && !sys.deletedVersion && permissions.can('update');
     })
     .skipDuplicates();
@@ -264,14 +264,17 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
    *
    * @type {Property<boolean>}
    */
-  const isDirty$ = sysProperty.map(sys => {
+  const isDirty$ = sysProperty.map((sys) => {
     return sys.publishedVersion ? sys.version > sys.publishedVersion + 1 : true;
   });
 
   // Property<ShareJS.Document?>
   const doc$ = docLoader.doc
-    .map(doc => {
-      return caseof(doc, [[DocLoad.Doc, d => d.doc], [null, () => null]]);
+    .map((doc) => {
+      return caseof(doc, [
+        [DocLoad.Doc, (d) => d.doc],
+        [null, () => null],
+      ]);
     })
     .skipDuplicates();
 
@@ -289,12 +292,18 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
    * - If the document is unloaded later this is true
    */
   const pending$ = docLoader.doc
-    .map(d => {
-      return caseof(d, [[DocLoad.Pending, () => true], [null, () => false]]);
+    .map((d) => {
+      return caseof(d, [
+        [DocLoad.Pending, () => true],
+        [null, () => false],
+      ]);
     })
     .skipDuplicates();
 
-  const loaded$ = K.holdWhen(pending$.map(x => !x), x => x);
+  const loaded$ = K.holdWhen(
+    pending$.map((x) => !x),
+    (x) => x
+  );
 
   const offDoc = K.onValue(doc$, setDoc);
   cleanupTasks.push(offDoc);
@@ -302,15 +311,18 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
   // Property<string?>
   // Is `null` if there is no error and the error code otherwise.
   // Known error codes are 'forbidden' and 'disconnected'.
-  const docLoadError$ = docLoader.doc.map(doc => {
-    return caseof(doc, [[DocLoad.Error, e => e.error], [null, () => null]]);
+  const docLoadError$ = docLoader.doc.map((doc) => {
+    return caseof(doc, [
+      [DocLoad.Error, (e) => e.error],
+      [null, () => null],
+    ]);
   });
 
-  docLoadError$.onValue(error => {
+  docLoadError$.onValue((error) => {
     const errors = {
       forbidden: DocError.OpenForbidden(),
       disconnected: DocError.Disconnected(),
-      [DocumentStatusCode.INTERNAL_SERVER_ERROR]: DocumentStatusCode.INTERNAL_SERVER_ERROR
+      [DocumentStatusCode.INTERNAL_SERVER_ERROR]: DocumentStatusCode.INTERNAL_SERVER_ERROR,
     };
     errorBus.set(errors[error] || null);
   });
@@ -318,7 +330,7 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
   const presence = PresenceHub.create(user.sys.id, docEventsBus.stream, shout);
   cleanupTasks.push(presence.destroy);
 
-  const version$ = sysProperty.map(sys => sys.version);
+  const version$ = sysProperty.map((sys) => sys.version);
   const reverter = Reverter.create(getValueAt([]), version$, setFields);
 
   /**
@@ -328,7 +340,7 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
    * @description
    * Is true if the document is connected
    */
-  const isConnected$ = doc$.map(doc => !!doc).skipDuplicates();
+  const isConnected$ = doc$.map((doc) => !!doc).skipDuplicates();
 
   /**
    * @ngdoc property
@@ -379,7 +391,7 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
 
       loaded$,
 
-      error$: errorBus.property
+      error$: errorBus.property,
     },
 
     getValueAt,
@@ -436,7 +448,7 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
      */
     permissions,
 
-    resourceState
+    resourceState,
   };
 
   /**
@@ -451,14 +463,14 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
    */
   document.data$ = K.combinePropertiesObject({
     sys: sysProperty,
-    fields: valuePropertyAt(document, ['fields'])
+    fields: valuePropertyAt(document, ['fields']),
   });
 
   // Sync the data to the entity instance.
   // The entity instance is unique for the ID. Other views will share
   // the same instance and not necessarily load the data. This is why
   // we need to make sure that we keep it updated.
-  document.data$.onValue(data => {
+  document.data$.onValue((data) => {
     entity.data = data;
     if (data.sys.deletedVersion) {
       entity.setDeleted();
@@ -476,13 +488,13 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
   function getData() {
     const data = {
       fields: getValueAt(['fields']),
-      sys: cloneDeep(currentSys)
+      sys: cloneDeep(currentSys),
     };
     return deepFreeze(data);
   }
 
   function destroy() {
-    cleanupTasks.forEach(task => task());
+    cleanupTasks.forEach((task) => task());
   }
 
   function shout(args) {
@@ -521,7 +533,7 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
 
   function plugDocEvents(doc) {
     doc._originalEmit = doc.emit;
-    doc.emit = function(name, data) {
+    doc.emit = function (name, data) {
       this._originalEmit(...arguments);
       docEventsBus.emit({ doc, name, data });
     };

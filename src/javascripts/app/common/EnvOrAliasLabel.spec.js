@@ -20,7 +20,7 @@ const getComponent = (props = {}) => {
 };
 
 describe('EnvOrAliasLabel', () => {
-  const build = props => render(getComponent(props));
+  const build = (props) => render(getComponent(props));
 
   describe('colors', () => {
     it('displays the unselected icon', () => {

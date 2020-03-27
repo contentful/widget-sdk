@@ -36,7 +36,7 @@ describe('linksToListItems(links, renderLinkFn)', () => {
       const items = linksToListItems([newLink()], () => element);
       expect(items[0]).toEqual(
         expect.objectContaining({
-          value: element
+          value: element,
         })
       );
     });
@@ -56,7 +56,7 @@ describe('linksToListItems(links, renderLinkFn)', () => {
 });
 
 function testIdsToKeys(links, expectedKeys) {
-  const expectedItems = expectedKeys.map(key => ({ key }));
+  const expectedItems = expectedKeys.map((key) => ({ key }));
   const items = linksToListItems(links, noop);
   expect(items).toEqual(expectedItems);
 }

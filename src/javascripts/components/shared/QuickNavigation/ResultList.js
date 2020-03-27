@@ -10,13 +10,13 @@ import { MIN_QUERY_LENGTH } from './utils';
 const styles = {
   noResults: css({
     padding: '5px',
-    textAlign: 'center'
+    textAlign: 'center',
   }),
   dropdown: css({
     backgroundColor: tokens.colorWhite,
     width: '560px',
     borderBottomLeftRadius: '2px',
-    borderBottomRightRadius: '2px'
+    borderBottomRightRadius: '2px',
   }),
   helpSection: css({
     display: 'flex',
@@ -27,12 +27,12 @@ const styles = {
     borderBottomRightRadius: '2px',
     color: tokens.colorTextMid,
     fontSize: tokens.fontSizeS,
-    padding: '10px 5px'
+    padding: '10px 5px',
   }),
   resultListContainer: css({
     maxHeight: '400px',
-    overflow: 'auto'
-  })
+    overflow: 'auto',
+  }),
 };
 
 export function ResultList({
@@ -41,7 +41,7 @@ export function ResultList({
   closeModal,
   getItemProps,
   query,
-  isLoading
+  isLoading,
 }) {
   if (items.length) {
     return (
@@ -88,5 +88,5 @@ ResultList.propTypes = {
   closeModal: PropTypes.func,
   getItemProps: PropTypes.func,
   query: PropTypes.string,
-  isLoading: PropTypes.bool
+  isLoading: PropTypes.bool,
 };

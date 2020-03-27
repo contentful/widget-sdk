@@ -20,23 +20,20 @@ export function create() {
     reset,
     getMemberships: () => memberships,
     getRoleCounts: () => roleCounts,
-    getRoleOptions: () => roleOptions
+    getRoleOptions: () => roleOptions,
   };
 
   async function reset() {
     const { endpoint, space } = spaceContext;
     const [_memberships, roles] = await Promise.all([
       createSpaceMembersRepo(endpoint).getAll(),
-      getRoleRepoInstance(space).getAll()
+      getRoleRepoInstance(space).getAll(),
     ]);
 
     memberships = _memberships;
     roleCounts = {
       admin: filter(memberships, 'admin').length,
-      ..._(memberships)
-        .flatMap('roles')
-        .countBy('sys.id')
-        .value()
+      ..._(memberships).flatMap('roles').countBy('sys.id').value(),
     };
 
     roleOptions = [ADMIN_OPT].concat(roles.map(({ name, sys: { id } }) => ({ id, name })));

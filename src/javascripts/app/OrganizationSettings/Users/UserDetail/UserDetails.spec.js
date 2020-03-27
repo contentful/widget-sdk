@@ -5,7 +5,7 @@ import {
   wait,
   fireEvent,
   within,
-  waitForElementToBeRemoved
+  waitForElementToBeRemoved,
 } from '@testing-library/react';
 import UserDetails from './UserDetails';
 
@@ -32,27 +32,27 @@ const mockSpaces = [pizzaSpace, fake.Space('Burger Space'), fake.Space('Ramen Sp
 const teamHejo = fake.Team('Hejo');
 const mockTeams = [teamHejo, fake.Team('Moi'), fake.Team('Ahoy')];
 
-const mockSpaceMemberships = mockSpaces.map(space =>
+const mockSpaceMemberships = mockSpaces.map((space) =>
   fake.SpaceMembership(fake.Link('Space', space.sys.id), membershipUser)
 );
 
-const mockTeamMemberships = mockTeams.map(team =>
+const mockTeamMemberships = mockTeams.map((team) =>
   fake.TeamMembership(fake.Link('Team', team.sys.id), mockOrgMembership, membershipUser)
 );
 
 jest.mock('access_control/OrganizationMembershipRepository', () => ({
   getSpaceMemberships: jest.fn(async () => ({
     includes: { Space: mockSpaces },
-    items: mockSpaceMemberships
-  }))
+    items: mockSpaceMemberships,
+  })),
 }));
 
 jest.mock('access_control/TeamRepository', () => ({
   getAllTeamMemberships: jest.fn(async () => ({
     includes: { Team: mockTeams },
-    items: mockTeamMemberships
+    items: mockTeamMemberships,
   })),
-  removeTeamMembership: jest.fn(() => Promise.resolve())
+  removeTeamMembership: jest.fn(() => Promise.resolve()),
 }));
 
 describe('User Details', () => {

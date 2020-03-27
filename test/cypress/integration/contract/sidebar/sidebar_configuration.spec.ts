@@ -6,7 +6,7 @@ import {
   getEditorInterfaceForDefaultContentType,
   saveDefaultContentTypeWithCustomSidebar,
   publishDefaultContentType,
-  saveDefaultContentTypeEditorInterface
+  saveDefaultContentTypeEditorInterface,
 } from '../../../interactions/content_types';
 import { defaultContentTypeId, defaultSpaceId } from '../../../util/requests';
 
@@ -19,7 +19,7 @@ describe('Sidebar configuration', () => {
       getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
       getAllContentTypesInDefaultSpace.willReturnOne(),
       getDefaultContentType.willReturnIt(),
-      getPublishedVersionOfDefaultContentType.willReturnIt()
+      getPublishedVersionOfDefaultContentType.willReturnIt(),
     ];
 
     cy.visit(
@@ -32,9 +32,7 @@ describe('Sidebar configuration', () => {
   describe('Saving the content type with configured custom sidebar', () => {
     beforeEach(() => {
       cy.resetAllFakeServers();
-      cy.getByTestId('custom-sidebar-option')
-        .find('input')
-        .click();
+      cy.getByTestId('custom-sidebar-option').find('input').click();
     });
 
     it('checks that content type with a custom sidebar has been successfully saved', () => {
@@ -42,12 +40,10 @@ describe('Sidebar configuration', () => {
         saveDefaultContentTypeWithCustomSidebar.willSucceed(),
         publishDefaultContentType.willSucceed(),
         getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
-        saveDefaultContentTypeEditorInterface.willSucceed()
+        saveDefaultContentTypeEditorInterface.willSucceed(),
       ];
 
-      cy.getAllByTestId('cf-ui-icon-button')
-        .first()
-        .click();
+      cy.getAllByTestId('cf-ui-icon-button').first().click();
 
       cy.getByTestId('save-content-type').click();
 

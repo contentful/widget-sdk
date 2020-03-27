@@ -16,7 +16,7 @@ import { invert, transform } from 'lodash';
 export default function createIDMap(fields, privateLocales) {
   return {
     field: createFieldMap(fields),
-    locale: createLocaleMap(privateLocales)
+    locale: createLocaleMap(privateLocales),
   };
 }
 
@@ -33,7 +33,7 @@ function createLocaleMap(privateLocales) {
     return { ...toPublic, [locale.internal_code]: locale.code };
   }, {});
 
-  const valuesToPublic = localized => {
+  const valuesToPublic = (localized) => {
     return transform(
       localized,
       (transformed, value, internalLocale) => {
@@ -46,6 +46,6 @@ function createLocaleMap(privateLocales) {
   return {
     toPublic,
     toInternal: invert(toPublic),
-    valuesToPublic
+    valuesToPublic,
   };
 }

@@ -10,59 +10,62 @@ import * as SlideInNavigatorWithPromise from 'navigation/SlideInNavigator/withPr
 function createMockProperty(initial) {
   const bus = createBus();
   const property = bus.stream.toProperty(() => initial);
-  property.set = val => bus.emit(val);
+  property.set = (val) => bus.emit(val);
 
   return property;
 }
 
 jest.mock('Authentication', () => ({
-  getToken: () => '<TOKEN>'
+  getToken: () => '<TOKEN>',
 }));
 
 jest.mock('services/localeStore', () => ({
-  getPrivateLocales: () => [{ code: 'pl', name: 'Polski' }, { code: 'en', name: 'English' }],
-  getDefaultLocale: () => ({ code: 'pl', name: 'Polski', default: true })
+  getPrivateLocales: () => [
+    { code: 'pl', name: 'Polski' },
+    { code: 'en', name: 'English' },
+  ],
+  getDefaultLocale: () => ({ code: 'pl', name: 'Polski', default: true }),
 }));
 
 jest.mock('../ExtensionDialogs', () => ({
   openAlert: jest.fn(() => Promise.resolve('ALERT RESULT')),
   openConfirm: jest.fn(() => Promise.resolve('CONFIRM RESULT')),
-  openPrompt: jest.fn(() => Promise.resolve('PROMPT RESULT'))
+  openPrompt: jest.fn(() => Promise.resolve('PROMPT RESULT')),
 }));
 
 jest.mock('@contentful/forma-36-react-components', () => ({
-  Notification: { success: jest.fn() }
+  Notification: { success: jest.fn() },
 }));
 
 jest.mock('data/Endpoint', () => ({
   createOrganizationEndpoint: () => () => {},
-  createAppDefinitionsEndpoint: () => () => {}
+  createAppDefinitionsEndpoint: () => () => {},
 }));
 
 jest.mock('browserStorage', () => ({
-  getStore: jest.fn()
+  getStore: jest.fn(),
 }));
 
 jest.mock('components/app_container/entityCreator', () => ({
-  newEntry: jest.fn(() => ({ sys: { type: 'Entry', id: 'some-entry-id' } }))
+  newEntry: jest.fn(() => ({ sys: { type: 'Entry', id: 'some-entry-id' } })),
 }));
 
 jest.mock('states/Navigator', () => ({
   go: jest.fn(() => Promise.resolve()),
-  makeEntityRef: jest.fn(() => 'ENTITY REF')
+  makeEntityRef: jest.fn(() => 'ENTITY REF'),
 }));
 
 jest.mock('navigation/SlideInNavigator', () => ({
   goToSlideInEntity: jest.fn(),
-  onSlideInNavigation: jest.fn()
+  onSlideInNavigation: jest.fn(),
 }));
 
 jest.mock('navigation/SlideInNavigator/withPromise', () => ({
-  goToSlideInEntityWithPromise: jest.fn()
+  goToSlideInEntityWithPromise: jest.fn(),
 }));
 
 jest.mock('search/EntitySelector/entitySelector', () => ({
-  openFromExtension: jest.fn(() => Promise.resolve('DIALOG RESULT'))
+  openFromExtension: jest.fn(() => Promise.resolve('DIALOG RESULT')),
 }));
 
 describe('createExtensionBridge', () => {
@@ -73,13 +76,13 @@ describe('createExtensionBridge', () => {
       changes: createMockProperty([]),
       access: createMockProperty({ disabled: false }),
       errors: createMockProperty([]),
-      setValueAt: jest.fn(val => Promise.resolve(val)),
+      setValueAt: jest.fn((val) => Promise.resolve(val)),
       removeValueAt: jest.fn(() => Promise.resolve(undefined)),
       updateEntry: jest.fn(() => Promise.resolve('Entry updated')),
       setInvalid: jest.fn(),
       setActive: jest.fn(),
       getEntry: jest.fn(),
-      $watch: jest.fn()
+      $watch: jest.fn(),
     };
 
     const bridge = createExtensionBridge({
@@ -93,23 +96,23 @@ describe('createExtensionBridge', () => {
           changes: stubs.changes,
           getValueAt: () => ({ sys: {}, fields: {} }),
           setValueAt: stubs.setValueAt,
-          removeValueAt: stubs.removeValueAt
+          removeValueAt: stubs.removeValueAt,
         },
         fieldController: { setInvalid: stubs.setInvalid },
         fieldLocale: {
           access$: stubs.access,
           errors$: stubs.errors,
-          setActive: stubs.setActive
+          setActive: stubs.setActive,
         },
         editorData: {
           editorInterface: {
             controls: [],
-            sidebar: []
-          }
+            sidebar: [],
+          },
         },
         widget: { field: 'FIELD' },
         locale: { code: 'pl' },
-        entityInfo: { contentType: 'CONTENT TYPE' }
+        entityInfo: { contentType: 'CONTENT TYPE' },
       },
       spaceContext: {
         getId: () => 'sid',
@@ -118,9 +121,9 @@ describe('createExtensionBridge', () => {
         cma: { updateEntry: stubs.updateEntry, getEntry: stubs.getEntry },
         space: { data: { spaceMember: 'MEMBER ', spaceMembership: 'MEMBERSHIP ' } },
         publishedCTs: {
-          getAllBare: () => [{ id: 'first-content-type' }, { id: 'second-content-type' }]
-        }
-      }
+          getAllBare: () => [{ id: 'first-content-type' }, { id: 'second-content-type' }],
+        },
+      },
     });
 
     return [bridge, stubs];
@@ -131,7 +134,7 @@ describe('createExtensionBridge', () => {
     registerPathHandler: jest.fn(),
     send: jest.fn(),
     update: jest.fn(),
-    destroy: jest.fn()
+    destroy: jest.fn(),
   });
 
   beforeEach(() => {
@@ -152,14 +155,17 @@ describe('createExtensionBridge', () => {
         current: { field: 'FIELD', locale: { code: 'pl' } },
         entryData: { fields: {}, sys: {} },
         locales: {
-          available: [{ code: 'pl', name: 'Polski' }, { code: 'en', name: 'English' }],
-          default: { code: 'pl', name: 'Polski', default: true }
+          available: [
+            { code: 'pl', name: 'Polski' },
+            { code: 'en', name: 'English' },
+          ],
+          default: { code: 'pl', name: 'Polski', default: true },
         },
         spaceMember: 'MEMBER ',
         editorInterface: {
           controls: [],
-          sidebar: []
-        }
+          sidebar: [],
+        },
       });
     });
   });
@@ -251,7 +257,7 @@ describe('createExtensionBridge', () => {
         expect(err).toMatchObject({
           message: 'Could not update entry field',
           code: 'ENTRY UPDATE FAILED',
-          data: { shareJSCode: 'SJScode' }
+          data: { shareJSCode: 'SJScode' },
         });
       }
     });
@@ -284,7 +290,7 @@ describe('createExtensionBridge', () => {
       const scenarios = [
         ['alert', 'openAlert'],
         ['confirm', 'openConfirm'],
-        ['prompt', 'openPrompt']
+        ['prompt', 'openPrompt'],
       ].map(async ([type, openMethod]) => {
         const result = await openDialog(type, { opts: true });
         const dialogs = jest.requireMock('../ExtensionDialogs');
@@ -336,8 +342,8 @@ describe('createExtensionBridge', () => {
         type: 'Entry',
         id: 'xyz',
         space: { sys: { id: 'sid' } },
-        environment: { sys: { id: 'eid' } }
-      }
+        environment: { sys: { id: 'eid' } },
+      },
     };
 
     stubs.getEntry.mockResolvedValue(returnedEntry);
@@ -356,7 +362,7 @@ describe('createExtensionBridge', () => {
     const openResultOnClose = await navigate({
       id: 'xyz',
       entityType: 'Entry',
-      slideIn: { waitForClose: true }
+      slideIn: { waitForClose: true },
     });
     expect(openResultOnClose).toEqual({ navigated: true, entity: returnedEntry });
     expect(stubs.getEntry).toHaveBeenCalledWith('xyz');

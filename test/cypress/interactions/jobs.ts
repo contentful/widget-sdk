@@ -3,7 +3,7 @@ import {
   defaultEntryId,
   defaultJobId,
   defaultHeader,
-  defaultEnvironmentId
+  defaultEnvironmentId,
 } from '../util/requests';
 import { Query, RequestOptions } from '@pact-foundation/pact-web';
 
@@ -15,36 +15,36 @@ import {
   onePendingJobResponse,
   createJobResponse,
   severalFailedJobsResponse,
-  severalCompletedJobsResponse
+  severalCompletedJobsResponse,
 } from '../fixtures/responses/jobs-several';
 import { createJobRequest } from '../fixtures/requests/jobs';
 const pendingJobsQuery = {
   'environment.sys.id': 'master',
   limit: '40',
   order: 'scheduledFor.datetime',
-  'sys.status': 'scheduled'
+  'sys.status': 'scheduled',
 };
 const pendingJobsQueryWithoutLimit = {
   'environment.sys.id': 'master',
   order: 'scheduledFor.datetime',
-  'sys.status': 'scheduled'
+  'sys.status': 'scheduled',
 };
 const completedJobsQuery = {
   'environment.sys.id': 'master',
   limit: '40',
   order: '-scheduledFor.datetime',
-  'sys.status': 'succeeded'
+  'sys.status': 'succeeded',
 };
 const failedJobsQuery = {
   'environment.sys.id': 'master',
   limit: '40',
   order: '-scheduledFor.datetime',
-  'sys.status': 'failed'
+  'sys.status': 'failed',
 };
 const entryIdQuery = {
   'entity.sys.id': defaultEntryId,
   'environment.sys.id': 'master',
-  order: '-scheduledFor.datetime'
+  order: '-scheduledFor.datetime',
 };
 
 enum States {
@@ -53,7 +53,7 @@ enum States {
   SEVERAL_JOBS_FOR_DEFAULT_SPACE = 'jobs/several-jobs-for-default-space',
   JOB_EXECUTION_FAILED = 'jobs/job-execution-failed',
   MAX_PENDING_JOBS = 'jobs/max-pending-jobs',
-  INTERNAL_SERVER_ERROR = 'jobs/internal-server-error'
+  INTERNAL_SERVER_ERROR = 'jobs/internal-server-error',
 }
 
 function queryJobsForDefaultSpaceRequest(query: Query): RequestOptions {
@@ -61,9 +61,9 @@ function queryJobsForDefaultSpaceRequest(query: Query): RequestOptions {
     method: 'GET',
     path: `/spaces/${defaultSpaceId}/scheduled_actions`,
     headers: {
-      ...defaultHeader
+      ...defaultHeader,
     },
-    query
+    query,
   };
 }
 
@@ -76,8 +76,8 @@ export const queryPendingJobsForDefaultSpaceWithoutLimit = {
       withRequest: queryJobsForDefaultSpaceRequest(pendingJobsQueryWithoutLimit),
       willRespondWith: {
         status: 200,
-        body: empty
-      }
+        body: empty,
+      },
     }).as('queryPendingJobsForDefaultSpace');
 
     return '@queryPendingJobsForDefaultSpace';
@@ -90,12 +90,12 @@ export const queryPendingJobsForDefaultSpaceWithoutLimit = {
       withRequest: queryJobsForDefaultSpaceRequest(pendingJobsQueryWithoutLimit),
       willRespondWith: {
         status: 200,
-        body: severalPendingJobsResponse(100) // Limit to 100
-      }
+        body: severalPendingJobsResponse(100), // Limit to 100
+      },
     }).as('queryPendingJobsForDefaultSpace');
 
     return '@queryPendingJobsForDefaultSpace';
-  }
+  },
 };
 
 export const queryPendingJobsForDefaultSpace = {
@@ -107,8 +107,8 @@ export const queryPendingJobsForDefaultSpace = {
       withRequest: queryJobsForDefaultSpaceRequest(pendingJobsQuery),
       willRespondWith: {
         status: 200,
-        body: empty
-      }
+        body: empty,
+      },
     }).as('queryPendingJobsForDefaultSpace');
 
     return '@queryPendingJobsForDefaultSpace';
@@ -121,8 +121,8 @@ export const queryPendingJobsForDefaultSpace = {
       withRequest: queryJobsForDefaultSpaceRequest(pendingJobsQuery),
       willRespondWith: {
         status: 200,
-        body: severalPendingJobsResponse()
-      }
+        body: severalPendingJobsResponse(),
+      },
     }).as('queryPendingJobsForDefaultSpace');
 
     return '@queryPendingJobsForDefaultSpace';
@@ -135,12 +135,12 @@ export const queryPendingJobsForDefaultSpace = {
       withRequest: queryJobsForDefaultSpaceRequest(pendingJobsQuery),
       willRespondWith: {
         status: 500,
-        body: serverErrorResponse
-      }
+        body: serverErrorResponse,
+      },
     }).as('queryPendingJobsForDefaultSpace');
 
     return '@queryPendingJobsForDefaultSpace';
-  }
+  },
 };
 
 export const queryCompletedJobsForDefaultSpace = {
@@ -152,8 +152,8 @@ export const queryCompletedJobsForDefaultSpace = {
       withRequest: queryJobsForDefaultSpaceRequest(completedJobsQuery),
       willRespondWith: {
         status: 200,
-        body: empty
-      }
+        body: empty,
+      },
     }).as('queryCompletedJobsForDefaultSpace');
 
     return '@queryCompletedJobsForDefaultSpace';
@@ -166,8 +166,8 @@ export const queryCompletedJobsForDefaultSpace = {
       withRequest: queryJobsForDefaultSpaceRequest(completedJobsQuery),
       willRespondWith: {
         status: 200,
-        body: severalCompletedJobsResponse
-      }
+        body: severalCompletedJobsResponse,
+      },
     }).as('queryCompletedJobsForDefaultSpace');
 
     return '@queryCompletedJobsForDefaultSpace';
@@ -180,12 +180,12 @@ export const queryCompletedJobsForDefaultSpace = {
       withRequest: queryJobsForDefaultSpaceRequest(completedJobsQuery),
       willRespondWith: {
         status: 500,
-        body: serverErrorResponse
-      }
+        body: serverErrorResponse,
+      },
     }).as('queryCompletedJobsForDefaultSpace');
 
     return '@queryCompletedJobsForDefaultSpace';
-  }
+  },
 };
 
 export const queryFailedJobsForDefaultSpace = {
@@ -197,8 +197,8 @@ export const queryFailedJobsForDefaultSpace = {
       withRequest: queryJobsForDefaultSpaceRequest(failedJobsQuery),
       willRespondWith: {
         status: 200,
-        body: empty
-      }
+        body: empty,
+      },
     }).as('queryFailedJobsForDefaultSpace');
 
     return '@queryFailedJobsForDefaultSpace';
@@ -211,8 +211,8 @@ export const queryFailedJobsForDefaultSpace = {
       withRequest: queryJobsForDefaultSpaceRequest(failedJobsQuery),
       willRespondWith: {
         status: 200,
-        body: severalFailedJobsResponse
-      }
+        body: severalFailedJobsResponse,
+      },
     }).as('queryFailedJobsForDefaultSpace');
 
     return '@queryFailedJobsForDefaultSpace';
@@ -225,12 +225,12 @@ export const queryFailedJobsForDefaultSpace = {
       withRequest: queryJobsForDefaultSpaceRequest(failedJobsQuery),
       willRespondWith: {
         status: 500,
-        body: serverErrorResponse
-      }
+        body: serverErrorResponse,
+      },
     }).as('queryFailedJobsForDefaultSpace');
 
     return '@queryFailedJobsForDefaultSpace';
-  }
+  },
 };
 
 export const queryAllScheduledJobsForDefaultEntry = {
@@ -242,8 +242,8 @@ export const queryAllScheduledJobsForDefaultEntry = {
       withRequest: queryJobsForDefaultSpaceRequest(entryIdQuery),
       willRespondWith: {
         status: 200,
-        body: empty
-      }
+        body: empty,
+      },
     }).as('queryAllScheduledJobsForDefaultEntry');
 
     return '@queryAllScheduledJobsForDefaultEntry';
@@ -256,8 +256,8 @@ export const queryAllScheduledJobsForDefaultEntry = {
       withRequest: queryJobsForDefaultSpaceRequest(entryIdQuery),
       willRespondWith: {
         status: 200,
-        body: onePendingJobResponse
-      }
+        body: onePendingJobResponse,
+      },
     }).as('queryAllScheduledJobsForDefaultEntry');
 
     return '@queryAllScheduledJobsForDefaultEntry';
@@ -270,8 +270,8 @@ export const queryAllScheduledJobsForDefaultEntry = {
       withRequest: queryJobsForDefaultSpaceRequest(entryIdQuery),
       willRespondWith: {
         status: 200,
-        body: oneFailedJobResponse
-      }
+        body: oneFailedJobResponse,
+      },
     }).as('queryAllScheduledJobsForDefaultEntry');
 
     return '@queryAllScheduledJobsForDefaultEntry';
@@ -284,12 +284,12 @@ export const queryAllScheduledJobsForDefaultEntry = {
       withRequest: queryJobsForDefaultSpaceRequest(entryIdQuery),
       willRespondWith: {
         status: 500,
-        body: serverErrorResponse
-      }
+        body: serverErrorResponse,
+      },
     }).as('queryAllScheduledJobsForDefaultEntry');
 
     return '@queryAllScheduledJobsForDefaultEntry';
-  }
+  },
 };
 
 export const cancelDefaultJobInDefaultSpace = {
@@ -302,19 +302,19 @@ export const cancelDefaultJobInDefaultSpace = {
         method: 'DELETE',
         path: `/spaces/${defaultSpaceId}/scheduled_actions/${defaultJobId}`,
         headers: {
-          ...defaultHeader
+          ...defaultHeader,
         },
         query: {
-          'environment.sys.id': defaultEnvironmentId
-        }
+          'environment.sys.id': defaultEnvironmentId,
+        },
       },
       willRespondWith: {
-        status: 200
-      }
+        status: 200,
+      },
     }).as('cancelDefaultJobInDefaultSpace');
 
     return '@cancelDefaultJobInDefaultSpace';
-  }
+  },
 };
 
 export const createScheduledPublicationForDefaultSpace = {
@@ -329,17 +329,17 @@ export const createScheduledPublicationForDefaultSpace = {
         headers: {
           ...defaultHeader,
           'Content-Type': 'application/vnd.contentful.management.v1+json',
-          'x-contentful-enable-alpha-feature': 'scheduled-jobs'
+          'x-contentful-enable-alpha-feature': 'scheduled-jobs',
         },
         query: {
-          'environment.sys.id': defaultEnvironmentId
+          'environment.sys.id': defaultEnvironmentId,
         },
-        body: createJobRequest
+        body: createJobRequest,
       },
       willRespondWith: {
         status: 201,
-        body: createJobResponse
-      }
+        body: createJobResponse,
+      },
     }).as('createScheduledPublicationForDefaultSpace');
 
     return '@createScheduledPublicationForDefaultSpace';
@@ -355,18 +355,18 @@ export const createScheduledPublicationForDefaultSpace = {
         headers: {
           ...defaultHeader,
           'Content-Type': 'application/vnd.contentful.management.v1+json',
-          'x-contentful-enable-alpha-feature': 'scheduled-jobs'
+          'x-contentful-enable-alpha-feature': 'scheduled-jobs',
         },
         query: {
-          'environment.sys.id': defaultEnvironmentId
+          'environment.sys.id': defaultEnvironmentId,
         },
-        body: createJobRequest
+        body: createJobRequest,
       },
       willRespondWith: {
-        status: 400
-      }
+        status: 400,
+      },
     }).as('createScheduledPublicationForDefaultSpace');
 
     return '@createScheduledPublicationForDefaultSpace';
-  }
+  },
 };

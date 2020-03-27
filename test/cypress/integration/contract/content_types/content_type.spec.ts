@@ -4,7 +4,7 @@ import {
   getEditorInterfaceForDefaultContentType,
   getAllContentTypesInDefaultSpace,
   getDefaultContentType,
-  getPublishedVersionOfDefaultContentType
+  getPublishedVersionOfDefaultContentType,
 } from '../../../interactions/content_types';
 import { defaultContentTypeId } from '../../../util/requests';
 
@@ -20,7 +20,7 @@ describe('Content type page', () => {
         getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
         getAllContentTypesInDefaultSpace.willReturnOne(),
         getDefaultContentType.willReturnIt(),
-        getPublishedVersionOfDefaultContentType.willReturnIt()
+        getPublishedVersionOfDefaultContentType.willReturnIt(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}`);

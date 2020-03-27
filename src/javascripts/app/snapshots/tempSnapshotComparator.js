@@ -20,7 +20,7 @@ export default function register() {
       ></react-component>
     `,
     restrict: 'E',
-    controller: 'SnapshotComparatorController'
+    controller: 'SnapshotComparatorController',
   }));
 
   registerController('SnapshotComparatorController', [
@@ -30,25 +30,25 @@ export default function register() {
       // Temporary: Adding helper functions - before separating angular and react on route level in next step
       $scope.getEditorData = () => $scope.editorData;
 
-      $scope.registerSaveAction = save => {
+      $scope.registerSaveAction = (save) => {
         $scope.context.requestLeaveConfirmation = save;
         $scope.$applyAsync();
       };
-      $scope.setDirty = value => {
+      $scope.setDirty = (value) => {
         $scope.context.dirty = value;
         $scope.$applyAsync();
       };
 
-      $scope.redirect = reload => {
+      $scope.redirect = (reload) => {
         if (reload) return $state.go('^.^', {}, { reload: true });
         return $state.go('^.^');
       };
-      $scope.goToSnapshot = snapshotId => {
+      $scope.goToSnapshot = (snapshotId) => {
         $scope.context.ready = false;
         $state.go('.', { snapshotId, source: 'compareView' });
       };
 
       $scope.context.ready = true;
-    }
+    },
   ]);
 }

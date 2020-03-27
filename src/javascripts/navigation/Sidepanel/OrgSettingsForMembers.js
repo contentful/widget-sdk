@@ -7,14 +7,14 @@ import * as TeamsFeature from 'app/OrganizationSettings/Teams/TeamsFeature';
 
 const styles = {
   spinner: css({
-    margin: '10px 20px'
-  })
+    margin: '10px 20px',
+  }),
 };
 
 export default class OrgSettingsForMembers extends React.Component {
   static propTypes = {
     gotoOrgSettings: PropTypes.func,
-    currOrg: PropTypes.object
+    currOrg: PropTypes.object,
   };
 
   state = { isLoading: true };
@@ -22,7 +22,7 @@ export default class OrgSettingsForMembers extends React.Component {
   async componentDidMount() {
     this.setState({
       isLoading: false,
-      shouldSeeTeams: await TeamsFeature.isEnabled(this.props.currOrg)
+      shouldSeeTeams: await TeamsFeature.isEnabled(this.props.currOrg),
     });
   }
 

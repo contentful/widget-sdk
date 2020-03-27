@@ -20,19 +20,19 @@ const styles = {
     height: '201px',
     backgroundSize: '266px 201px',
     marginRight: tokens.spacingXl,
-    marginTop: tokens.spacingXl
-  })
+    marginTop: tokens.spacingXl,
+  }),
 };
 
-const ModifyContentDrawer = props => {
+const ModifyContentDrawer = (props) => {
   const { managementToken, entry, spaceId } = props;
 
   const { firstName, lastName } = getUser();
   const updatedFields = {
     ...entry.fields,
     name: {
-      'en-US': `${firstName} ${lastName}`
-    }
+      'en-US': `${firstName} ${lastName}`,
+    },
   };
 
   const domain = env === 'production' ? 'contentful' : 'flinkly';
@@ -51,13 +51,13 @@ const ModifyContentDrawer = props => {
 
   // replace single quotes with double because windows doesn't seem to like
   // single quotes very much and errors when you paste and run the snippets in cmd
-  const curlSnippets = [modifyContentCurlSnippet, publishContentCurlSnippet].map(snippet =>
+  const curlSnippets = [modifyContentCurlSnippet, publishContentCurlSnippet].map((snippet) =>
     snippet.replace(/"/g, '\\"').replace(/'/g, '"')
   );
 
   const personEntry = {
     path: ['spaces', 'detail', 'entries', 'detail'],
-    params: { spaceId, entryId: entry.sys.id }
+    params: { spaceId, entryId: entry.sys.id },
   };
 
   const onCopy = () => {
@@ -84,7 +84,7 @@ const ModifyContentDrawer = props => {
           copy
           code={curlSnippets}
           tooltipPosition="right"
-          onCopy={_ => onCopy('copy_curl_snippets')}
+          onCopy={(_) => onCopy('copy_curl_snippets')}
           style="margin-top: 0"
         />
         <br />
@@ -108,7 +108,7 @@ const ModifyContentDrawer = props => {
 ModifyContentDrawer.propTypes = {
   managementToken: PropTypes.string.isRequired,
   entry: PropTypes.object.isRequired,
-  spaceId: PropTypes.string.isRequired
+  spaceId: PropTypes.string.isRequired,
 };
 
 export default ModifyContentDrawer;

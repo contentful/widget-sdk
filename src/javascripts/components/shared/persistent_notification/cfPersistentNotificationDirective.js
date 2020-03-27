@@ -10,7 +10,7 @@ export default function register() {
       return {
         restrict: 'E',
         template: persistentNotificationTemplate,
-        link
+        link,
       };
 
       function link(scope) {
@@ -77,12 +77,12 @@ export default function register() {
         }
 
         async function logConcurrentNotifications(notifications) {
-          notifications = notifications.map(params => params || '*RESET NOTIFICATION*');
+          notifications = notifications.map((params) => params || '*RESET NOTIFICATION*');
           (await import('services/logger')).logWarn('Concurrent persistent notifications', {
-            notifications: notifications
+            notifications: notifications,
           });
         }
       }
-    }
+    },
   ]);
 }

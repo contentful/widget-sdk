@@ -3,9 +3,7 @@ import moment from 'moment';
 const ZONE_RX = /(Z|[+-]\d{2}[:+]?\d{2})$/;
 
 function startOfToday(format) {
-  return moment()
-    .set({ hours: 0, minutes: 0 })
-    .format(format);
+  return moment().set({ hours: 0, minutes: 0 }).format(format);
 }
 
 /**
@@ -27,12 +25,12 @@ export function userInputFromDatetime(datetimeString, use12hClock) {
       date: datetime,
       time: datetime.format(timeFormat),
       ampm: datetime.format('A'),
-      utcOffset: datetime.format('Z')
+      utcOffset: datetime.format('Z'),
     };
   } else {
     return {
       ampm: startOfToday('A'),
-      utcOffset: startOfToday('Z')
+      utcOffset: startOfToday('Z'),
     };
   }
 }
