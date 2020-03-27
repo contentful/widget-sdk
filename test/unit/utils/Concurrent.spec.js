@@ -1,15 +1,12 @@
-import { range } from 'lodash';
 import sinon from 'sinon';
 import { $initialize, $inject, $apply } from 'test/utils/ng';
 import { it } from 'test/utils/dsl';
 
 describe('utils/Concurrent', () => {
   let C;
-  let C$q;
 
   beforeEach(async function() {
     C = await this.system.import('utils/Concurrent');
-    C$q = await this.system.import('utils/ConcurrentQ');
 
     await $initialize(this.system);
 
@@ -18,7 +15,6 @@ describe('utils/Concurrent', () => {
 
   afterEach(() => {
     C = undefined;
-    C$q = undefined;
   });
 
   describe('.createSlot()', () => {
@@ -51,47 +47,6 @@ describe('utils/Concurrent', () => {
 
       sinon.assert.calledOnce(onResult);
       sinon.assert.calledOnceWith(onResult, C.Failure('ERR B'));
-    });
-  });
-
-  describe('.createQueue()', () => {
-    it('works', async function() {
-      const calls = [];
-      const q = C$q.createQueue();
-
-      // We create a list of runner functions together with the
-      // 'deferred' objects they resolve with
-      const [a, b, c] = range(4).map(i => {
-        const deferred = this.$q.defer();
-        return {
-          deferred: deferred,
-          run: () => {
-            calls.push(String.fromCharCode(i + 97));
-            return deferred.promise;
-          }
-        };
-      });
-
-      const waitA = q.push(a.run);
-      const waitB = q.push(b.run);
-      expect(calls).toEqual(['a']);
-
-      a.deferred.resolve('resultA');
-      const resultA = await waitA;
-      expect(resultA).toBe('resultA');
-
-      expect(calls).toEqual(['a', 'b']);
-      const waitC = q.push(c.run);
-      expect(calls).toEqual(['a', 'b']);
-
-      b.deferred.resolve('resultB');
-      const resultB = await waitB;
-      expect(resultB).toBe('resultB');
-
-      expect(calls).toEqual(['a', 'b', 'c']);
-      c.deferred.resolve('resultC');
-      const resultC = await waitC;
-      expect(resultC).toBe('resultC');
     });
   });
 
