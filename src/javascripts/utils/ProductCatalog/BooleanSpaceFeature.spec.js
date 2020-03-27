@@ -2,7 +2,7 @@ import React from 'react';
 import Enzyme from 'enzyme';
 import 'jest-enzyme';
 import BooleanSpaceFeature from './BooleanSpaceFeature';
-import flushPromises from 'testHelpers/flushPromises';
+import flushPromises from 'test/helpers/flushPromises';
 import * as spaceContextMocked from 'ng/spaceContext';
 import ProductCatalog from 'data/CMA/ProductCatalog';
 

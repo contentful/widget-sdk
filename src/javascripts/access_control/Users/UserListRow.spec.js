@@ -2,8 +2,8 @@ import React from 'react';
 import { render, screen, wait, fireEvent, within } from '@testing-library/react';
 import UserListRow from './UserListRow';
 
-import * as fake from 'testHelpers/fakeFactory';
-import * as FORMA_CONSTANTS from 'testHelpers/Forma36Constants';
+import * as fake from 'test/helpers/fakeFactory';
+import * as FORMA_CONSTANTS from 'test/helpers/Forma36Constants';
 
 describe('User List Row', () => {
   const openRoleChangeDialog = jest.fn();

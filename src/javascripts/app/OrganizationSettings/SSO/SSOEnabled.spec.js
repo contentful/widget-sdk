@@ -3,7 +3,7 @@ import Enzyme from 'enzyme';
 import 'jest-enzyme';
 import SSOEnabled from './SSOEnabled';
 import { track } from 'analytics/Analytics';
-import * as fake from 'testHelpers/fakeFactory';
+import * as fake from 'test/helpers/fakeFactory';
 
 describe('SSOEnabled', () => {
   const organization = fake.Organization();

@@ -3,7 +3,7 @@ import { render, fireEvent, within, wait, screen } from '@testing-library/react'
 
 import '@testing-library/jest-dom/extend-expect';
 import AddToSpacesModal from './AddToSpacesModal';
-import * as fake from 'testHelpers/fakeFactory';
+import * as fake from 'test/helpers/fakeFactory';
 
 const fooSpace = fake.Space('Foo');
 const barSpace = fake.Space('Bar');

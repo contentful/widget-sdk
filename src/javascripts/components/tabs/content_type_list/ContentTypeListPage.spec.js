@@ -6,7 +6,7 @@ import { flatten, concat } from 'lodash';
 import { ContentTypesPage as Page } from './ContentTypeListPage';
 
 import * as spaceContextMocked from 'ng/spaceContext';
-import * as contentTypeFactory from 'testHelpers/contentTypeFactory';
+import * as contentTypeFactory from 'test/helpers/contentTypeFactory';
 
 jest.mock('lodash/debounce', () => fn => fn);
 

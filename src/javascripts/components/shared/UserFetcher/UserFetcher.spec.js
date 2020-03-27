@@ -5,7 +5,7 @@ import UserFetcher from '.';
 
 import * as spaceContextMock from 'ng/spaceContext';
 
-import flushPromises from 'testHelpers/flushPromises';
+import flushPromises from 'test/helpers/flushPromises';
 
 describe('UserFetcher', () => {
   const user = {};

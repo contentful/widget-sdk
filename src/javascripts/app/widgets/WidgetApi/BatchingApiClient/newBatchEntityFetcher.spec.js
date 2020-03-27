@@ -1,6 +1,6 @@
 import newBatchEntityFetcher from './newBatchEntityFetcher';
 
-import flushPromises from 'testHelpers/flushPromises';
+import flushPromises from 'test/helpers/flushPromises';
 
 jest.mock('Config', () => ({ apiUrl: v => `https://api.some-domain.com/${v}` }));
 jest.mock('detect-browser', () => ({

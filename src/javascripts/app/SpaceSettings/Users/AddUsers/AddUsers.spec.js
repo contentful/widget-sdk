@@ -1,6 +1,6 @@
 import React from 'react';
 import AddUsers from './AddUsers';
-import * as fakeFactory from 'testHelpers/fakeFactory';
+import * as fakeFactory from 'test/helpers/fakeFactory';
 import userEvent from '@testing-library/user-event';
 import {
   render,

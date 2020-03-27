@@ -3,7 +3,7 @@ import { render, screen, wait } from '@testing-library/react';
 
 import OrganizationsRoute from './OrganizationsRoute';
 import { getOrganizations } from 'services/TokenStore';
-import * as fake from 'testHelpers/fakeFactory';
+import * as fake from 'test/helpers/fakeFactory';
 
 // Has the title and the New Organization button in this title div.
 const TITLE = 'OrganizationsNew Organization';

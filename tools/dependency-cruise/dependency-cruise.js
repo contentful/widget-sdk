@@ -17,7 +17,8 @@ module.exports = {
             might typically want to exclude these from reachability rules.
             The same goes for typescript definition files:
            */
-        pathNot: '__mocks__|saved-views-migrator|\\.spec\\.(js|ts)$|\\.d\\.ts$',
+        pathNot:
+          '__mocks__|__test__|saved-views-migrator|test\\/helpers|\\.spec\\.(js|ts)$|\\.d\\.ts$',
 
         /*
             for each file matching path and pathNot, check if it's reachable from the
@@ -49,9 +50,11 @@ module.exports = {
       to: {
         couldNotResolve: true,
         /*
-          Ignore imports like 'ng/spaceContext', 'ng/$state'
+          Ignore:
+          * imports like 'ng/spaceContext', 'ng/$state'
+          * saved-views-migrator
         */
-        pathNot: 'ng\\/'
+        pathNot: 'ng\\/|saved-views-migrator'
       }
     },
     // {

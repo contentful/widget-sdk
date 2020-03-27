@@ -2,7 +2,7 @@ import { getMemberships } from 'access_control/OrganizationMembershipRepository'
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { isOwner as isOrgOwner } from 'services/OrganizationRoles';
 import { fetchCanLeaveOrg } from './OrganizationUtils';
-import * as fake from 'testHelpers/fakeFactory';
+import * as fake from 'test/helpers/fakeFactory';
 
 jest.mock('data/EndpointFactory', () => ({
   createOrganizationEndpoint: jest.fn()
