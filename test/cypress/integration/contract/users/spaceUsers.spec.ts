@@ -1,5 +1,5 @@
 import { defaultRequestsMock } from '../../../util/factories';
-import { defaultHeader, defaultSpaceId, defaultOrgId } from '../../../util/requests';
+import { defaultHeader, defaultSpaceId } from '../../../util/requests';
 
 const empty = require('../../../fixtures/responses/empty.json');
 
@@ -92,9 +92,6 @@ const twoMembersBody = {
   ]
 };
 
-const getOrgUsersInteraction = 'query_org_users';
-const postSpaceMembership = 'post_space_membership';
-
 const spaceUsers = [
   {
     email: 'user1@mail.com',
@@ -109,13 +106,6 @@ const spaceUsers = [
     sys: { id: 'user2' }
   }
 ];
-
-const user3 = {
-  email: 'user3@mail.com',
-  firstName: 'Three',
-  lastName: 'Drei',
-  sys: { id: 'user3' }
-};
 
 const roles = [
   {
@@ -147,11 +137,6 @@ const spaceMemberships = [
       version: 0
     }
   }
-];
-
-const orgUsers = [
-  ...spaceUsers,
-  user3
 ];
 
 const loadPageWithUserState = ({ stateName, responseBody, message }) => {
@@ -280,70 +265,6 @@ describe('Users in space page', () => {
     it('should render sidebar, but no user items', () => {
       cy.queryByTestId('cf-ui-workbench-sidebar-right').should('exist');
       cy.queryByTestId('user-list.item').should('not.exist');
-    });
-
-    it('should make post request when adding user to space', () => {
-      cy.addInteraction({
-        provider: 'users',
-        state: '3_users',
-        uponReceiving: 'request for users in org',
-        withRequest: {
-          method: 'GET',
-          path: `/organizations/${defaultOrgId}/users`,
-          query: { limit: '100', order: '-sys.updatedAt', skip: '0', 'sys.archivedAt[exists]': 'false' },
-          headers: defaultHeader
-        },
-        willRespondWith: {
-          status: 200,
-          body: {
-            total: orgUsers.length,
-            sys: {
-              type: 'Array'
-            },
-            items: orgUsers
-          }
-        }
-      }).as(getOrgUsersInteraction);
-      cy.addInteraction({
-        provider: 'users',
-        state: 'default',
-        uponReceiving: 'adding space membership',
-        withRequest: {
-          method: 'POST',
-          path: `/spaces/${defaultSpaceId}/space_memberships`,
-          headers: defaultHeader,
-          body: {
-            admin: false,
-            email: user3.email,
-            roles: [
-              {
-                type: 'Link',
-                linkType: 'Role',
-                id: 'role1'
-              }
-            ]
-          }
-        },
-        willRespondWith: {
-          status: 201,
-          body: {
-            admin: true,
-            roles: [],
-            sys: {
-              id: 'space_membership_3'
-            },
-            user: user3
-          }
-        }
-      }).as(postSpaceMembership);
-
-      cy.getByTestId('add-users-to-space').click();
-      cy.wait(`@${getOrgUsersInteraction}`);
-      cy.getByTestId('entity-selector-item').first().click();
-      cy.getByTestId('entity-selector-confirm').click();
-      cy.getByTestId('user-role-select').first().select('role1');
-      cy.getByTestId('user-space-invitation-confirm').click();
-      cy.wait(`@${postSpaceMembership}`);
     });
   });
 

@@ -19,6 +19,8 @@ import { VIEW_BY_NAME, VIEW_BY_ROLE } from './constants';
 
 import { FetcherLoading } from 'app/common/createFetcherComponent';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
+import ModalLauncher from 'app/common/ModalLauncher';
+import AddUsers from 'app/SpaceSettings/Users/AddUsers/AddUsers';
 
 const fetch = (orgId, endpoint, space, setData) => async () => {
   const [members, spaceMemberships, roles, spaceUsers, hasTeamsFeature] = await Promise.all([
@@ -42,7 +44,6 @@ const UserList = ({ jumpToRole }) => {
   const { endpoint, space, organization } = getModule('spaceContext');
 
   const [selectedView, setSelectedView] = useState(jumpToRole ? VIEW_BY_ROLE : VIEW_BY_NAME);
-  const [isInvitingUsersToSpace, setIsInvitingUsersToSpace] = useState(false);
   const [data, setData] = useState(null);
   const boundFetch = fetch(organization.sys.id, endpoint, space, setData);
   const { isLoading, error } = useAsync(useCallback(boundFetch, []));
@@ -110,17 +111,16 @@ const UserList = ({ jumpToRole }) => {
   const spaceUsersCount = sortedMembers.length;
 
   const actions = UserListActions.create(roles, spaceUsers);
-
   return (
     <UserListPresentation
       userGroups={userGroups}
       numberOfTeamMemberships={numberOfTeamMemberships}
       selectedView={selectedView}
       orgId={organization.sys.id}
+      spaceId={space.getId()}
       jumpToRole={jumpToRole}
       canModifyUsers={canModifyUsers()}
       isOwnerOrAdmin={isOwnerOrAdmin(organization)}
-      isInvitingUsersToSpace={isInvitingUsersToSpace}
       hasTeamsFeature={hasTeamsFeature}
       spaceUsersCount={spaceUsersCount}
       openSpaceInvitationDialog={openSpaceInvitationDialog}
@@ -138,11 +138,15 @@ const UserList = ({ jumpToRole }) => {
   }
 
   function openSpaceInvitationDialog() {
-    setIsInvitingUsersToSpace(true);
-
-    decorateWithRefetch(actions.openSpaceInvitationDialog(boundFetch))().finally(() => {
-      setIsInvitingUsersToSpace(false);
-    });
+    const unavailableUserIds = spaceUsers.map(user => user.sys.id);
+    ModalLauncher.open(({ isShown, onClose }) => (
+      <AddUsers
+        isShown={isShown}
+        onClose={onClose}
+        orgId={organization.sys.id}
+        unavailableUserIds={unavailableUserIds}
+      />
+    ));
   }
 };
 UserList.propTypes = {

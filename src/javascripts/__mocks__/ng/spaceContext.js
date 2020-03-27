@@ -52,3 +52,7 @@ export const space = {
   getId: jest.fn(),
   endpoint: jest.fn()
 };
+
+export const memberships = {
+  invite: jest.fn().mockResolvedValue({})
+};

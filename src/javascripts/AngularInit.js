@@ -27,7 +27,6 @@ export const angularInitRun = [
     componentsSharedPersistentNotificationCfPersistentNotificationDirectiveEs6();
 
     const modules = await Promise.all([
-      import(/* webpackMode: "eager" */ 'access_control/UserSpaceInvitationController'),
       import(/* webpackMode: "eager" */ 'analytics/analyticsConsoleDirective'),
       import(/* webpackMode: "eager" */ 'app/ContentModel/Editor/addFieldDialogController'),
       import(/* webpackMode: "eager" */ 'services/modalDialogService'),

@@ -63,7 +63,6 @@ const scrollToRole = roleGroupEl => {
 const UserListPresentation = ({
   canModifyUsers,
   openSpaceInvitationDialog,
-  isInvitingUsersToSpace,
   orgId,
   isOwnerOrAdmin,
   hasTeamsFeature,
@@ -95,8 +94,7 @@ const UserListPresentation = ({
             <Button
               buttonType="primary"
               testId="add-users-to-space"
-              disabled={!canModifyUsers || isInvitingUsersToSpace}
-              loading={isInvitingUsersToSpace}
+              disabled={!canModifyUsers}
               onClick={openSpaceInvitationDialog}>
               Add users
             </Button>
@@ -163,7 +161,6 @@ UserListPresentation.propTypes = {
   jumpToRole: PropTypes.string,
   canModifyUsers: PropTypes.bool.isRequired,
   isOwnerOrAdmin: PropTypes.bool.isRequired,
-  isInvitingUsersToSpace: PropTypes.bool,
   hasTeamsFeature: PropTypes.bool,
   spaceUsersCount: PropTypes.number.isRequired,
   openSpaceInvitationDialog: PropTypes.func.isRequired,
