@@ -10,6 +10,7 @@
     "npm": "6.4.1"
   },
   "dependencies": {
+    "@babel/polyfill": "^7.8.3",
     "@contentful/asn1js": "^2.1.0",
     "@contentful/contentful-slatejs-adapter": "^14.1.0",
     "@contentful/field-editor-boolean": "0.5.0",
@@ -133,7 +134,6 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.8.3",
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
     "@babel/plugin-transform-modules-systemjs": "^7.8.3",
-    "@babel/polyfill": "^7.8.3",
     "@babel/preset-env": "^7.8.4",
     "@babel/preset-react": "^7.8.3",
     "@babel/register": "^7.8.3",
