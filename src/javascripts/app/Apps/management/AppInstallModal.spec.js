@@ -3,7 +3,7 @@ import { render, wait, cleanup, fireEvent } from '@testing-library/react';
 import AppInstallModal from './AppInstallModal';
 import * as util from './util';
 import * as Navigator from 'states/Navigator';
-import mockDefinitions from './mockData/mockDefinitions.json';
+import mockDefinitions from './__mocks__/mockDefinitions.json';
 
 jest.mock('./util');
 

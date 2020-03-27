@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, wait } from '@testing-library/react';
 import AppsListPage from './AppsListPage';
-import repoAppsMock from './mockData/repoAppsMock.json';
+import repoAppsMock from './__mocks__/repoAppsMock.json';
 
 jest.mock('app/common/MarkdownRenderer', () => () => null);
 

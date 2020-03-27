@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, wait, cleanup, fireEvent } from '@testing-library/react';
 import AppDetails from './AppDetails';
-import mockDefinitions from './mockData/mockDefinitions.json';
+import mockDefinitions from './__mocks__/mockDefinitions.json';
 import * as ManagementApiClient from './ManagementApiClient';
 import * as util from './util';
 import * as ModalLauncher from 'app/common/ModalLauncher';

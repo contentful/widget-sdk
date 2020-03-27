@@ -1,6 +1,6 @@
 import createAppsRepo from './AppsRepo';
-import appsListingEntryMock from './mockData/appsListingEntryMock.json';
-import allAppsMock from './mockData/appEntriesMock.json';
+import appsListingEntryMock from './__mocks__/appsListingEntryMock.json';
+import allAppsMock from './__mocks__/appEntriesMock.json';
 
 const NETLIFY_DEFINITION_ID = '1VchawWvbIClHuMIyxwR5m';
 
