@@ -10,7 +10,7 @@ describe('AutoCreateNewSpace', () => {
       spacesByOrganization$: K.createMockProperty(null),
       organizations$: K.createMockProperty([]),
     };
-    this.createSampleSpace = sinon.stub().resolves();
+    this.createModernStackOnboarding = sinon.stub().resolves();
     this.store = {
       set: sinon.stub(),
       get: sinon.stub(),
@@ -18,14 +18,11 @@ describe('AutoCreateNewSpace', () => {
     };
 
     this.system.set('services/TokenStore', this.tokenStore);
-    this.system.set('components/shared/auto_create_new_space/CreateSampleSpace', {
-      default: this.createSampleSpace,
+    this.system.set('components/shared/auto_create_new_space/CreateModernOnboarding', {
+      create: this.createModernStackOnboarding,
     });
     this.system.set('core/services/BrowserStorage', {
       getBrowserStorage: sinon.stub().returns(this.store),
-    });
-    this.system.set('utils/LaunchDarkly', {
-      getCurrentVariation: sinon.stub().returns(false),
     });
 
     const init = (await this.system.import('components/shared/auto_create_new_space')).init;
@@ -51,7 +48,7 @@ describe('AutoCreateNewSpace', () => {
     };
     this.user = user;
     this.spacesByOrg = {};
-    const org = {
+    this.org = {
       sys: {
         createdBy: user,
       },
@@ -64,7 +61,7 @@ describe('AutoCreateNewSpace', () => {
 
     // set data to qualify user
     this.tokenStore.spacesByOrganization$.set(this.spacesByOrg);
-    this.tokenStore.organizations$.set([org]);
+    this.tokenStore.organizations$.set([this.org]);
     this.tokenStore.user$.set(this.user);
     this.store.get.returns(false);
   });
@@ -77,14 +74,14 @@ describe('AutoCreateNewSpace', () => {
       });
       this.tokenStore.user$.set(null);
       this.init();
-      sinon.assert.notCalled(this.createSampleSpace);
+      sinon.assert.notCalled(this.createModernStackOnboarding);
     });
 
     it('should be a noop when spacesByOrg is falsy', function () {
       this.tokenStore.user$.set({});
       this.tokenStore.spacesByOrganization$.set(null);
       this.init();
-      sinon.assert.notCalled(this.createSampleSpace);
+      sinon.assert.notCalled(this.createModernStackOnboarding);
     });
 
     it('should be a noop and not fail when user has no org', function () {
@@ -94,7 +91,7 @@ describe('AutoCreateNewSpace', () => {
       });
       this.tokenStore.user$.set({ sys: { id: 'user' } });
       this.init();
-      sinon.assert.notCalled(this.createSampleSpace);
+      sinon.assert.notCalled(this.createModernStackOnboarding);
     });
 
     describe('qualifyUser', () => {
@@ -119,7 +116,7 @@ describe('AutoCreateNewSpace', () => {
           fn(this);
           this.init();
           await $wait();
-          sinon.assert.notCalled(this.createSampleSpace);
+          sinon.assert.notCalled(this.createModernStackOnboarding);
         });
       }
     });
@@ -130,27 +127,29 @@ describe('AutoCreateNewSpace', () => {
       this.store.get.returns(false);
       this.init();
       await $wait();
-      sinon.assert.calledOnce(this.createSampleSpace);
-      sinon.assert.calledWithExactly(
-        this.createSampleSpace,
-        this.user.organizationMemberships[0].organization,
-        'the example app',
-        undefined
-      );
+      sinon.assert.calledOnce(this.createModernStackOnboarding);
+      sinon.assert.calledWithExactly(this.createModernStackOnboarding, {
+        markOnboarding: sinon.match.func,
+        onDefaultChoice: sinon.match.func,
+        org: {
+          sys: { id: 'orgId1' },
+        },
+        user: this.user,
+      });
     });
 
     it('should only call create sample space function once even if invoked multiple times', async function () {
-      // to prevent this.createSampleSpace from resolving before
+      // to prevent this.createModernStackOnboarding from resolving before
       // the next user$ and spacesByOrganization$ values are emitted
       const delayedPromise = new Promise((resolve) => setTimeout(resolve, 5000));
 
-      this.createSampleSpace.resolves(delayedPromise);
+      this.createModernStackOnboarding.resolves(delayedPromise);
       this.init();
       await $wait();
       this.user.sys = { id: '123', createdAt: new Date(2017, 8, 24).toISOString() };
       this.tokenStore.user$.set(this.user);
       $apply();
-      sinon.assert.calledOnce(this.createSampleSpace);
+      sinon.assert.calledOnce(this.createModernStackOnboarding);
     });
   });
 });

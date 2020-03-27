@@ -5,10 +5,8 @@ import tokens from '@contentful/forma-36-tokens';
 
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { getSpaceAutoCreatedKey } from 'components/shared/auto_create_new_space/getSpaceAutoCreatedKey';
-import { getCurrentVariation } from 'utils/LaunchDarkly';
 import {
   MODERN_STACK_ONBOARDING_COMPLETE_EVENT,
-  MODERN_STACK_ONBOARDING_FEATURE_FLAG,
   isDevOnboardingSpace,
   isOnboardingComplete,
   getUser,
@@ -54,11 +52,8 @@ const styles = {
 };
 
 export default class Relaunch extends React.Component {
-  state = { flag: false };
-  async componentDidMount() {
+  componentDidMount() {
     const $rootScope = getModule('$rootScope');
-
-    const flag = await getCurrentVariation(MODERN_STACK_ONBOARDING_FEATURE_FLAG);
 
     // since this component is rendered when the onboarding begins, we need to ask it to update
     // once the onboarding is complete.
@@ -74,8 +69,6 @@ export default class Relaunch extends React.Component {
     this.unsubscribeFromSpaceContext = $rootScope.$on('spaceContextUpdated', () =>
       this.forceUpdate()
     );
-
-    this.setState({ flag });
   }
   componentWillUnmount() {
     this.unsubscribeFromOnboarding && this.unsubscribeFromOnboarding();
@@ -85,13 +78,9 @@ export default class Relaunch extends React.Component {
     const spaceContext = getModule('spaceContext');
     const spaceAutoCreationFailed = store.get(getSpaceAutoCreatedKey(getUser(), 'failure'));
     const currentSpace = spaceContext.space;
-    const { flag } = this.state;
 
     const showRelaunch =
-      flag &&
-      !spaceAutoCreationFailed &&
-      isDevOnboardingSpace(currentSpace) &&
-      isOnboardingComplete();
+      !spaceAutoCreationFailed && isDevOnboardingSpace(currentSpace) && isOnboardingComplete();
 
     if (showRelaunch) {
       return (

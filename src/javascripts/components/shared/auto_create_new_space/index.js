@@ -1,9 +1,7 @@
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { combine, getValue } from 'core/utils/kefir';
-import { getCurrentVariation } from 'utils/LaunchDarkly';
 import { user$, spacesByOrganization$ as spacesByOrg$ } from 'services/TokenStore';
 import createSampleSpace from './CreateSampleSpace';
-import seeThinkDoFeatureModalTemplate from './SeeThinkDoTemplate';
 import { organizations$ } from 'services/TokenStore';
 import { getModule } from 'core/NgRegistry';
 import { getSpaceAutoCreatedKey } from './getSpaceAutoCreatedKey';
@@ -37,62 +35,39 @@ export function init() {
     .onValue(async ([user, spacesByOrg]) => {
       const org = getFirstOwnedOrgWithoutSpaces(user, spacesByOrg);
 
+      create({
+        markOnboarding,
+        onDefaultChoice: async () => {
+          const newSpace = await defaultChoice();
+
+          store.set(
+            `ctfl:${user.sys.id}:modernStackOnboarding:contentChoiceSpace`,
+            newSpace.sys.id
+          );
+        },
+        org,
+        user,
+      });
+
       creatingSampleSpace = true;
 
-      let modernStackVariation = false;
-      try {
-        modernStackVariation = await getCurrentVariation(
-          'feature-dl-05-2018-modern-stack-onboarding'
-        );
-      } catch (e) {
-        // pass
-      }
-
-      if (modernStackVariation) {
-        create({
-          markOnboarding,
-          onDefaultChoice: async () => {
-            const newSpace = await defaultChoice();
-
-            store.set(
-              `ctfl:${user.sys.id}:modernStackOnboarding:contentChoiceSpace`,
-              newSpace.sys.id
-            );
-          },
-          org,
-          user,
-        });
-        return;
-      } else {
-        defaultChoice();
-      }
-
       async function defaultChoice() {
-        let variation = false;
-        let newSpace;
+        // we swallow all errors, so auto creation modal will always have green mark
+        const newSpace = await createSampleSpace(org).then(
+          (createdSpace) => {
+            store.set(getSpaceAutoCreatedKey(user, 'success'), true);
 
-        try {
-          variation = await getCurrentVariation('feature-ps-11-2017-project-status');
-        } finally {
-          // if getCurrentVariation throws, auto create the usual way
-          const template = variation ? seeThinkDoFeatureModalTemplate : undefined;
+            return createdSpace;
+          },
+          () => {
+            // serialize the fact that auto space creation failed to localStorage
+            // to power any behaviour to work around the failure
+            store.set(getSpaceAutoCreatedKey(user, 'failure'), true);
+          }
+        );
 
-          // we swallow all errors, so auto creation modal will always have green mark
-          newSpace = await createSampleSpace(org, 'the example app', template).then(
-            (newSpace) => {
-              store.set(getSpaceAutoCreatedKey(user, 'success'), true);
+        creatingSampleSpace = false;
 
-              return newSpace;
-            },
-            () => {
-              // serialize the fact that auto space creation failed to localStorage
-              // to power any behaviour to work around the failure
-              store.set(getSpaceAutoCreatedKey(user, 'failure'), true);
-            }
-          );
-
-          creatingSampleSpace = false;
-        }
         return newSpace;
       }
 
