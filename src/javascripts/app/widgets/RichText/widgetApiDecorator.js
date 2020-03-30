@@ -15,12 +15,11 @@ import {
  *  ui-extensions-sdk in this or a similar way.
  *
  * @param {Object} widgetAPI
- * @param {Object} spaceContext
  * @returns {Object}
  */
-export default function (widgetAPI, spaceContext) {
+export default function (widgetAPI) {
   const { asset: canAccessAssets } = getSectionVisibility();
-  const contentTypes = spaceContext ? spaceContext.publishedCTs.getAllBare() : [];
+  const contentTypes = widgetAPI.space.getCachedContentTypes();
 
   const rtWidgetAPI = {
     ...widgetAPI,
