@@ -1,7 +1,11 @@
 import _ from 'lodash';
 import * as EntityResolver from './EntityResolver';
+import { getModule } from 'NgRegistry';
 
 import * as spaceContextMocked from 'ng/spaceContext';
+
+jest.mock('NgRegistry', () => ({ getModule: jest.fn() }));
+getModule.mockReturnValue(spaceContextMocked);
 
 describe('EntityResolver', () => {
   it('fetches each ID', async function () {
@@ -9,7 +13,7 @@ describe('EntityResolver', () => {
     const entities = [];
     spaceContextMocked.cma.getEntries.mockResolvedValueOnce({ items: entities });
 
-    const results = await EntityResolver.fetchForType(spaceContextMocked, 'Entry', ids);
+    const results = await EntityResolver.fetchForType('Entry', ids);
 
     expect(spaceContextMocked.cma.getEntries).toHaveBeenCalledWith({
       'sys.id[in]': ids.join(','),
@@ -21,7 +25,7 @@ describe('EntityResolver', () => {
   it('splits queries for more than 50 ids', async function () {
     const ids = _.range(51);
 
-    await EntityResolver.fetchForType(spaceContextMocked, 'Entry', ids);
+    await EntityResolver.fetchForType('Entry', ids);
 
     expect(spaceContextMocked.cma.getEntries).toHaveBeenCalledTimes(2);
     expect(spaceContextMocked.cma.getEntries).toHaveBeenCalledWith({
@@ -36,7 +40,7 @@ describe('EntityResolver', () => {
     spaceContextMocked.cma.getEntries.mockRejectedValueOnce({ status: 404 });
     const ids = ['a', 'b', 'c'];
 
-    const results = await EntityResolver.fetchForType(spaceContextMocked, 'Entry', ids);
+    const results = await EntityResolver.fetchForType('Entry', ids);
 
     expect(results).toEqual([]);
   });

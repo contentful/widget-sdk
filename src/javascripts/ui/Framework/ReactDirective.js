@@ -68,7 +68,6 @@ import * as AssetLink from 'app/widgets/link/AssetLink';
 import * as EntryLink from 'app/widgets/link/EntryLink';
 import * as ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer';
 import * as DateRangeValidation from 'components/field_dialog/validations/DateRangeValidation';
-import * as SnapshotComparator from 'app/snapshots/SnapshotComparator';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container, store) {
@@ -325,7 +324,6 @@ function getModule(name) {
     'app/widgets/link/EntryLink': EntryLink,
     'widgets/ExtensionIFrameRenderer': ExtensionIFrameRenderer,
     'components/field_dialog/validations/DateRangeValidation': DateRangeValidation,
-    'app/snapshots/SnapshotComparator': SnapshotComparator,
   };
 
   return get(allowedModules, name, null);

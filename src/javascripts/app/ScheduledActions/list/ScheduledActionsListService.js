@@ -2,11 +2,9 @@ import { uniq } from 'lodash';
 import * as JobsService from '../DataManagement/ScheduledActionsService';
 import _ from 'lodash';
 import * as EntityResolver from 'data/CMA/EntityResolver';
-import { getModule } from 'NgRegistry';
 
 function getEntriesWithIds(ids) {
-  const spaceContext = getModule('spaceContext');
-  return EntityResolver.fetchForType(spaceContext, 'Entry', ids);
+  return EntityResolver.fetchForType('Entry', ids);
 }
 
 function getUsers(endpoint, ids) {

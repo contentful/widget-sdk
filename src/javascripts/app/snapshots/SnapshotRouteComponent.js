@@ -13,7 +13,6 @@ import {
   Notification,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { getModule } from 'NgRegistry';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 import * as Permissions from 'access_control/EntityPermissions';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
@@ -24,8 +23,6 @@ import SnapshotPresenter from './SnapshotPresenter';
 import useSelectedVersions from './useSelectedVersions';
 import useEnrichedWidgets from './useEnrichedWidgets';
 import { CURRENT, SNAPSHOT } from './utils';
-
-export const getFieldPath = (fieldId, internalCode) => ['fields', fieldId, internalCode];
 
 const commonCellStyles = {
   maxWidth: '50%',
@@ -160,13 +157,14 @@ const SnapshotComparator = ({
   setDirty,
   registerSaveAction,
   redirect: stateRedirect,
+  onUpdateEntry,
   ...props
 }) => {
   const [showOnlyDifferences, setShowOnlyDifferences] = useState(false);
   const [{ enrichedWidgets, diffCount }] = useEnrichedWidgets({ widgets, getEditorData, snapshot });
   const [
     { selectedVersions, pathsToRestore },
-    { setSelectedVersionForField, setSelectAllSnapshots }
+    { setSelectedVersionForField, setSelectAllSnapshots },
   ] = useSelectedVersions({ enrichedWidgets });
 
   const pathsToRestoreExist = pathsToRestore.length > 0;
@@ -205,10 +203,9 @@ const SnapshotComparator = ({
   };
 
   const onSave = async (redirect) => {
-    const spaceContext = getModule('spaceContext');
     try {
       const restoredResult = prepareRestoredEntry();
-      const entry = await spaceContext.cma.updateEntry(restoredResult);
+      const entry = await onUpdateEntry(restoredResult);
       trackVersioning.registerRestoredVersion(entry);
       trackVersioning.restored(pathsToRestore, diffCount, showOnlyDifferences);
       setDirty(false);
@@ -223,7 +220,7 @@ const SnapshotComparator = ({
 
   const hasDiff = diffCount > 0;
   return (
-    <Fragment>
+    <Workbench>
       <Workbench.Header
         title={title}
         onBack={onClose}
@@ -259,7 +256,7 @@ const SnapshotComparator = ({
             {hasDiff && (
               <TextLink
                 testId="snapshots-comparator-button-restore-all"
-                onClick={() => setSelectAllSnapshots()}>
+                onClick={setSelectAllSnapshots}>
                 Select all fields from this version
               </TextLink>
             )}
@@ -364,7 +361,7 @@ const SnapshotComparator = ({
           );
         })}
       </Workbench.Content>
-    </Fragment>
+    </Workbench>
   );
 };
 
@@ -374,6 +371,7 @@ SnapshotComparator.propTypes = {
   setDirty: PropTypes.func.isRequired,
   goToSnapshot: PropTypes.func.isRequired,
   redirect: PropTypes.func.isRequired,
+  onUpdateEntry: PropTypes.func.isRequired,
   snapshot: PropTypes.shape({
     snapshot: PropTypes.object,
   }),
@@ -399,3 +397,4 @@ SnapshotComparator.propTypes = {
 };
 
 export default SnapshotComparator;
+export { SnapshotComparator };

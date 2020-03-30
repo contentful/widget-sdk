@@ -25,7 +25,7 @@ const SnapshotPresenterLink = ({ locale, value, linkType }) => {
     const links = Array.isArray(value) ? value : [value];
     const ids = links.map(({ sys }) => sys.id);
 
-    EntityResolver.fetchForType(spaceContext, linkType, ids).then((results) => {
+    EntityResolver.fetchForType(linkType, ids).then((results) => {
       const mapped = results.reduce(
         (red, entity) => ({
           ...red,
@@ -36,7 +36,7 @@ const SnapshotPresenterLink = ({ locale, value, linkType }) => {
       const mappedResults = ids.map((id) => mapped[id]);
       setModels(mappedResults);
     });
-  }, [linkType, spaceContext, value]);
+  }, [linkType, value]);
 
   const helper = EntityHelpers.newForLocale(locale.code);
   const getContentType = memoize(
