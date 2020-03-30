@@ -3,12 +3,12 @@ import { goToSlideInEntity, slideInStackEmitter } from './index';
 export async function goToSlideInEntityWithPromise(slide) {
   return new Promise((resolve) => {
     let result = {
-      targetSlideLevel: -1,
-      currentSlideLevel: -1,
+      newSlideLevel: -1,
+      oldSlideLevel: -1,
     };
 
     const onGoBack = (newState) => {
-      if (newState.targetSlideLevel === result.currentSlideLevel) {
+      if (newState.newSlideLevel === result.oldSlideLevel) {
         slideInStackEmitter.off('changed', onGoBack);
         resolve(result);
       }
