@@ -86,7 +86,8 @@
 }
 
 .osano-cm-info-dialog .osano-cm-button,
-.osano-cm-accept-all {
+.osano-cm-accept-all,
+.osano-cm-accept {
   border-color: #0baa75;
   background-image: linear-gradient(to top, #0eb87f, #14d997);
   background-size: 100% 200%;
@@ -96,7 +97,9 @@
 .osano-cm-info-dialog .osano-cm-button:hover,
 .osano-cm-info-dialog .osano-cm-button:focus,
 .osano-cm-accept-all:hover,
-.osano-cm-accept-all:focus {
+.osano-cm-accept-all:focus,
+.osano-cm-button.osano-cm-accept:hover,
+.osano-cm-button.osano-cm-accept:focus {
   background-image: linear-gradient(to top, #0eb87f, #14d997);
   background-color: #0eb87f;
   background-size: 100% 200%;
