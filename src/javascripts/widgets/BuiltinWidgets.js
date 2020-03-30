@@ -28,9 +28,14 @@ import { LocationEditor } from '@contentful/field-editor-location';
 import { DateEditor } from '@contentful/field-editor-date';
 import { MarkdownEditor, openMarkdownDialog } from '@contentful/field-editor-markdown';
 import FileEditor from 'app/widgets/FileEditor';
+import {
+  EntryReferenceEditorWithTracking,
+  AssetReferenceEditorWithTracking,
+} from 'app/widgets/ReferenceEditor';
+import { getEntityLink } from 'app/common/EntityStateLink';
 import { SlugEditor } from '@contentful/field-editor-slug';
-import { canUploadMultipleAssets } from 'access_control/AccessChecker';
-import { NEW_RICH_TEXT } from 'featureFlags';
+import { canUploadMultipleAssets, canCreateAsset } from 'access_control/AccessChecker';
+import { NEW_RICH_TEXT, NEW_SINGLE_REFERENCE_FIELD } from 'featureFlags';
 import { getVariation } from 'LaunchDarkly';
 
 const CfLinkEditor = linkEditorWithCfWebApp(LinkEditor);
@@ -306,18 +311,86 @@ export function create() {
     fieldTypes: ['Entry'],
     name: 'Entry link',
     icon: 'reference',
-    buildTemplate: ({ widgetApi, loadEvents }) => (
-      <CfSingleLinkEditor type="Entry" style="link" widgetApi={widgetApi} loadEvents={loadEvents} />
-    ),
+    renderWhen: async () => {
+      const spaceContext = getModule('spaceContext');
+      const organizationId = spaceContext.getData('organization.sys.id');
+      const spaceId = spaceContext.space.getId();
+      const isEnabled = await getVariation(NEW_SINGLE_REFERENCE_FIELD, { organizationId, spaceId });
+
+      if (isEnabled) {
+        return {
+          renderFieldEditor: ({ widgetApi, loadEvents }) => {
+            return (
+              <EntryReferenceEditorWithTracking
+                viewType="link"
+                sdk={widgetApi}
+                loadEvents={loadEvents}
+                getEntryUrl={(entryId) => getEntityLink({ id: entryId, type: 'Entry' }).href}
+                parameters={{
+                  instance: {
+                    canCreateEntry: true,
+                  },
+                }}
+              />
+            );
+          },
+        };
+      }
+
+      return {
+        buildTemplate: ({ widgetApi, loadEvents }) => (
+          <CfSingleLinkEditor
+            type="Entry"
+            style="link"
+            widgetApi={widgetApi}
+            loadEvents={loadEvents}
+          />
+        ),
+      };
+    },
   });
 
   registerWidget('entryCardEditor', {
     fieldTypes: ['Entry'],
     name: 'Entry card',
     icon: 'reference-card',
-    buildTemplate: ({ widgetApi, loadEvents }) => (
-      <CfSingleLinkEditor type="Entry" style="card" widgetApi={widgetApi} loadEvents={loadEvents} />
-    ),
+    renderWhen: async () => {
+      const spaceContext = getModule('spaceContext');
+      const organizationId = spaceContext.getData('organization.sys.id');
+      const spaceId = spaceContext.space.getId();
+      const isEnabled = await getVariation(NEW_SINGLE_REFERENCE_FIELD, { organizationId, spaceId });
+
+      if (isEnabled) {
+        return {
+          renderFieldEditor: ({ widgetApi, loadEvents }) => {
+            return (
+              <EntryReferenceEditorWithTracking
+                viewType="card"
+                sdk={widgetApi}
+                loadEvents={loadEvents}
+                getEntryUrl={(entryId) => getEntityLink({ id: entryId, type: 'Entry' }).href}
+                parameters={{
+                  instance: {
+                    canCreateEntry: true,
+                  },
+                }}
+              />
+            );
+          },
+        };
+      }
+
+      return {
+        buildTemplate: ({ widgetApi, loadEvents }) => (
+          <CfSingleLinkEditor
+            type="Entry"
+            style="card"
+            widgetApi={widgetApi}
+            loadEvents={loadEvents}
+          />
+        ),
+      };
+    },
   });
 
   // NOTE: We render this as "card" ever since we got rid of the actual "link" appearance
@@ -326,9 +399,43 @@ export function create() {
     fieldTypes: ['Asset'],
     name: 'Asset card',
     icon: 'media-preview',
-    buildTemplate: ({ widgetApi, loadEvents }) => (
-      <CfSingleLinkEditor type="Asset" style="card" widgetApi={widgetApi} loadEvents={loadEvents} />
-    ),
+    renderWhen: async () => {
+      const spaceContext = getModule('spaceContext');
+      const organizationId = spaceContext.getData('organization.sys.id');
+      const spaceId = spaceContext.space.getId();
+      const isEnabled = await getVariation(NEW_SINGLE_REFERENCE_FIELD, { organizationId, spaceId });
+
+      if (isEnabled) {
+        return {
+          renderFieldEditor: ({ widgetApi, loadEvents }) => {
+            return (
+              <AssetReferenceEditorWithTracking
+                viewType="card"
+                sdk={widgetApi}
+                loadEvents={loadEvents}
+                getAssetUrl={(assetId) => getEntityLink({ id: assetId, type: 'Asset' }).href}
+                parameters={{
+                  instance: {
+                    canCreateAsset: canCreateAsset(),
+                  },
+                }}
+              />
+            );
+          },
+        };
+      }
+
+      return {
+        buildTemplate: ({ widgetApi, loadEvents }) => (
+          <CfSingleLinkEditor
+            type="Asset"
+            style="card"
+            widgetApi={widgetApi}
+            loadEvents={loadEvents}
+          />
+        ),
+      };
+    },
   });
 
   const BULK_EDITOR_PARAMETER = {

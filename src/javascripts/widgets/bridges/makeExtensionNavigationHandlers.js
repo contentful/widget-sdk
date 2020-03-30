@@ -17,45 +17,26 @@ export default function makeExtensionNavigationHandlers(dependencies, handlerOpt
       throw new Error('Cannot open the slide-in editor from the current location.');
     }
 
-    let entity = await makeEntity(options);
-
-    try {
-      const slideIn = options.slideIn || false;
-      if (slideIn) {
-        if (get(slideIn, ['waitForClose'], false) === true) {
-          await SlideInNavigatorWithPromise.goToSlideInEntityWithPromise(entity.sys);
-          entity = await getEntity({
-            entityType: options.entityType,
-            id: entity.sys.id,
-          });
-        } else {
-          await SlideInNavigator.goToSlideInEntity(entity.sys);
-        }
-      } else {
-        await Navigator.go(Navigator.makeEntityRef(entity));
-      }
-    } catch (err) {
-      throw new Error('Failed to navigate to the entity.');
-    }
-
-    return { navigated: true, entity };
-  };
-
-  async function makeEntity(options) {
+    // open existing entity
     if (typeof options.id === 'string') {
-      try {
-        return await getEntity(options);
-      } catch (err) {
-        throw new Error(`Failed to fetch an entity with the following ID: ${options.id}`);
-      }
-    } else {
-      try {
-        return await createEntity(options);
-      } catch (err) {
-        throw new Error('Failed to create an entity.');
-      }
+      return openExistingEntity(options);
     }
-  }
+
+    let entity;
+    try {
+      entity = await createEntity(options);
+    } catch (e) {
+      throw new Error('Failed to create an entity.');
+    }
+
+    return openExistingEntity(
+      {
+        ...options,
+        id: entity.sys.id,
+      },
+      entity
+    );
+  };
 
   async function createEntity(options) {
     // Important note:
@@ -78,5 +59,34 @@ export default function makeExtensionNavigationHandlers(dependencies, handlerOpt
     } else {
       return cma.getEntry(options.id);
     }
+  }
+
+  async function openExistingEntity({ id, entityType, slideIn = false }, entity) {
+    try {
+      if (slideIn) {
+        if (get(slideIn, ['waitForClose'], false) === true) {
+          await SlideInNavigatorWithPromise.goToSlideInEntityWithPromise({
+            id,
+            type: entityType,
+          });
+        } else {
+          await SlideInNavigator.goToSlideInEntity({
+            id,
+            type: entityType,
+          });
+        }
+        entity = await getEntity({
+          entityType,
+          id,
+        });
+      } else {
+        entity = await getEntity({ id, entityType });
+        await Navigator.go(Navigator.makeEntityRef(entity));
+      }
+    } catch (err) {
+      throw new Error('Failed to navigate to the entity.');
+    }
+
+    return { navigated: true, entity };
   }
 }

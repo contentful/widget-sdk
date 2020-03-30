@@ -1,4 +1,4 @@
-import { findIndex, get, isEqual, uniqWith } from 'lodash';
+import { get, isEqual, uniqWith } from 'lodash';
 import { track } from 'analytics/Analytics';
 import slideHelper from './slideHelper';
 import { getModule } from 'NgRegistry';
@@ -54,7 +54,9 @@ export function goToSlideInEntity(slide) {
   const currentSlides = getSlideInEntities();
   const slides = [...currentSlides, slide];
   // If `slide` is open already, go back to that level instead of adding one more.
-  const firstTargetSlideIndex = findIndex(slides, slide);
+  const firstTargetSlideIndex = slides.findIndex(
+    (item) => item.id === slide.id && item.type === item.type
+  );
   const reducedSlides = slides.slice(0, firstTargetSlideIndex);
   const slidesBelowQS = reducedSlides.map(slideHelper.toString).join(',');
   $state.go(...slideHelper.toStateGoArgs(slide, { [SLIDES_BELOW_QS]: slidesBelowQS }));

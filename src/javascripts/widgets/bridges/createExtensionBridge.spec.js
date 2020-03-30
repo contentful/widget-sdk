@@ -47,7 +47,7 @@ jest.mock('browserStorage', () => ({
 }));
 
 jest.mock('components/app_container/entityCreator', () => ({
-  newEntry: jest.fn(() => ({ sys: { type: 'Entry', id: 'some-entry-id' } })),
+  newEntry: jest.fn().mockResolvedValue({ data: { sys: { type: 'Entry', id: 'some-entry-id' } } }),
 }));
 
 jest.mock('states/Navigator', () => ({
@@ -118,7 +118,10 @@ describe('createExtensionBridge', () => {
         getId: () => 'sid',
         getEnvironmentId: () => 'eid',
         isMasterEnvironment: () => false,
-        cma: { updateEntry: stubs.updateEntry, getEntry: stubs.getEntry },
+        cma: {
+          updateEntry: stubs.updateEntry,
+          getEntry: stubs.getEntry,
+        },
         space: { data: { spaceMember: 'MEMBER ', spaceMembership: 'MEMBERSHIP ' } },
         publishedCTs: {
           getAllBare: () => [{ id: 'first-content-type' }, { id: 'second-content-type' }],
@@ -135,11 +138,6 @@ describe('createExtensionBridge', () => {
     send: jest.fn(),
     update: jest.fn(),
     destroy: jest.fn(),
-  });
-
-  beforeEach(() => {
-    entitySelector.openFromExtension.mockClear();
-    entityCreator.newEntry.mockClear();
   });
 
   describe('#getData()', () => {
@@ -357,7 +355,10 @@ describe('createExtensionBridge', () => {
     expect(openResult).toEqual({ navigated: true, entity: returnedEntry });
     expect(stubs.getEntry).toHaveBeenCalledWith('xyz');
     expect(SlideInNavigator.goToSlideInEntity).toBeCalledTimes(1);
-    expect(SlideInNavigator.goToSlideInEntity).toBeCalledWith(returnedEntry.sys);
+    expect(SlideInNavigator.goToSlideInEntity).toBeCalledWith({
+      id: returnedEntry.sys.id,
+      type: returnedEntry.sys.type,
+    });
 
     const openResultOnClose = await navigate({
       id: 'xyz',
@@ -367,12 +368,16 @@ describe('createExtensionBridge', () => {
     expect(openResultOnClose).toEqual({ navigated: true, entity: returnedEntry });
     expect(stubs.getEntry).toHaveBeenCalledWith('xyz');
     expect(SlideInNavigatorWithPromise.goToSlideInEntityWithPromise).toBeCalledTimes(1);
-    expect(SlideInNavigatorWithPromise.goToSlideInEntityWithPromise).toBeCalledWith(
-      returnedEntry.sys
-    );
+    expect(SlideInNavigatorWithPromise.goToSlideInEntityWithPromise).toBeCalledWith({
+      id: returnedEntry.sys.id,
+      type: returnedEntry.sys.type,
+    });
 
     const createResult = await navigate({ entityType: 'Entry', contentTypeId: 'ctid' });
-    expect(createResult).toEqual({ navigated: true });
+    expect(createResult).toEqual({
+      navigated: true,
+      entity: expect.any(Object),
+    });
     expect(entityCreator.newEntry).toBeCalledTimes(1);
     expect(entityCreator.newEntry).toBeCalledWith('ctid');
     expect(Navigator.go).toBeCalledWith('ENTITY REF');
