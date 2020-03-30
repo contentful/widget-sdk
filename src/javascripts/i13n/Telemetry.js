@@ -1,5 +1,4 @@
 import createMicroBackendsClient from 'MicroBackendsClient';
-import { gitRevision as uiVersion } from 'Config';
 
 // How often measurements should be sent using `send`.
 //
@@ -16,24 +15,9 @@ const INTERVAL = 120 * 1000;
 // and only then setup the long-running interval.
 const INITIAL_DELAY = 10 * 1000;
 
-const makeMeasurement = (name, value, tags, { initializedAt }) => {
-  if (tags) {
-    tags.uiVersion = uiVersion;
-  } else {
-    tags = { uiVersion };
-  }
-
-  // The "post initialization window" is the 15 window in which the request occurred,
-  // starting from 1.
-  //
-  // That means, if the request occurred at 1:30, its `postInitializationWindow` would be 1,
-  // and if at 17:45, its window would be 2.
-  //
-  // Doing `|| 1` at the end guarantees that this will always be at minimum 1 (never 0).
-  const postInitializationWindow = Math.ceil((Date.now() - initializedAt) / (15 * 60 * 1000)) || 1;
-
-  tags.postInitializationWindow = postInitializationWindow;
-
+const makeMeasurement = (name, value, tags = {}) => {
+  // IMPORTANT: We used to have `tags.uiVersion` and `tags.postInitializationWindow` but Librato
+  // performance gets worse with each unique new tag value, which is why we had to remove these tags.
   return { name, value, tags };
 };
 
@@ -52,7 +36,7 @@ export function count(name, tags) {
 // `name` is a string metric name and `tags` is an optional
 // object of tags `{ 'tag-name': 'tag-value' }`.
 export function record(name, value, tags) {
-  const measurement = makeMeasurement(name, value, tags, state);
+  const measurement = makeMeasurement(name, value, tags);
 
   withState((state) => {
     state.measurements = [...state.measurements, measurement];
@@ -72,7 +56,7 @@ export function countImmediate(name, tags) {
 }
 
 export function recordImmediate(name, value, tags) {
-  const measurement = makeMeasurement(name, value, tags, state);
+  const measurement = makeMeasurement(name, value, tags);
 
   withState((state) => {
     const body = JSON.stringify([measurement]);
