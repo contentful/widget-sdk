@@ -65,7 +65,7 @@ export default ({ $scope, emitter }) => {
 
   const initializePublication = once(() => {
     const notifyUpdate = (update) => {
-      const entity = $scope.editorData.entity.data;
+      const entity = K.getValue($scope.otDoc.data$);
       emitter.emit(SidebarEventTypes.UPDATED_PUBLICATION_WIDGET, {
         ...update,
         entity: entity && { ...entity }, // `undefined` after entity deletion.
