@@ -116,10 +116,6 @@ const getPendingTasksCount = (tasks, entries) => {
 const canDisplayTasksDashboard = async (spaceContext) =>
   spaceContext.space ? getCurrentSpaceFeature(FeatureFlagKey.CONTENT_WORKFLOW_TASKS, false) : false;
 
-// we need to pass this utm parameters in the url
-// to make sure that analytics know that the traffic in those pages are coming from the user_interface
-const utmParams = '?utm_source=webapp&utm_medium=profile-menu&utm_campaign=in-app-help';
-
 export default class AccountDropdown extends Component {
   state = {
     isOpen: false,
@@ -248,22 +244,6 @@ export default class AccountDropdown extends Component {
         </DropdownList>
 
         <DropdownList border="bottom">
-          <DropdownListItem
-            testId="nav.account.help"
-            href={`${Config.helpCenterUrl}${utmParams}`}
-            target="_blank"
-            onClick={this.handleDropdownListItemClick}>
-            Help center
-          </DropdownListItem>
-
-          <DropdownListItem
-            testId="nav.account.docs"
-            href={`${Config.developerDocsUrl}/${utmParams}`}
-            target="_blank"
-            onClick={this.handleDropdownListItemClick}>
-            Developer docs
-          </DropdownListItem>
-
           {Intercom.isEnabled && (
             <DropdownListItem testId="nav.account.intercom" onClick={this.handleLiveChat}>
               Talk to us

@@ -125,6 +125,13 @@ export const helpCenterUrl = websiteUrl('help');
 export const developerDocsUrl = websiteUrl('developers/docs');
 
 /**
+ * URL which allows the user to get to the Changelog in the website.
+ *
+ * In production this is `//www.contentful.com/developers/changelog`.
+ */
+export const developersChangelogUrl = websiteUrl('developers/changelog');
+
+/**
  * Environment - e.g. production, staging, development, unittest
  */
 export const env = settings.environment;

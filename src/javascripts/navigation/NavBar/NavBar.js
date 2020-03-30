@@ -7,6 +7,7 @@ import QuickNavigation from 'components/shared/QuickNavigation/QuickNav';
 import OnboardingRelaunch from 'navigation/modernStackOnboardingRelaunch';
 import NavigationItem from './NavigationItem';
 import NavigationDropdown from './NavigationDropdown';
+import KnowledgeMenu from './KnowledgeMenu/KnowledgeMenu';
 
 class NavigationList extends React.Component {
   render() {
@@ -42,6 +43,7 @@ export default class NavBar extends React.Component {
                   </div>
                 )}
                 {this.props.showQuickNavigation && <QuickNavigation />}
+                <KnowledgeMenu />
               </div>
             </nav>
             <AccountDropdown />
