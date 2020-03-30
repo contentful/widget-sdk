@@ -3,18 +3,32 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { getCurrentVariation } from 'utils/LaunchDarkly';
 import { ALL_REFERENCES_DIALOG } from 'featureFlags';
-import { Modal, Button, Icon, Note, Subheading } from '@contentful/forma-36-react-components';
+import {
+  Modal,
+  Button,
+  Icon,
+  Note,
+  Subheading,
+  Notification
+} from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import ErrorHandler from 'components/shared/ErrorHandlerComponent.js';
 import { goToSlideInEntity } from 'navigation/SlideInNavigator';
 import ReferencesTree from './ReferencesTree';
-import FeedbackForm from './FeedbackForm';
-import { getReferencesForEntryId, getDefaultLocale } from './referencesDialogService';
+import ValidationNote from './ValidationNote';
+import {
+  getReferencesForEntryId,
+  getDefaultLocale,
+  validateEntities
+} from './referencesDialogService';
 
 const styles = {
   dialogButton: css({
     display: 'flex',
     alignItems: 'center',
+  }),
+  validationButton: css({
+    marginTop: tokens.spacingXs
   }),
   modalContent: css({
     overflowY: 'hidden',
@@ -43,8 +57,8 @@ const styles = {
     marginTop: tokens.spacingM,
   }),
   tooComplexNote: css({
-    marginBottom: tokens.spacingM,
-  }),
+    marginBottom: tokens.spacingM
+  })
 };
 
 const ReferencesDialog = ({ entity }) => {
@@ -53,6 +67,9 @@ const ReferencesDialog = ({ entity }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [defaultLocale, setDefaultLocale] = useState('');
   const [references, setReferences] = useState([]);
+  const [selectedEntities, setSelectedEntites] = useState([]);
+  const [validations, setValidations] = useState(null);
+  const [isValidating, setIsValidating] = useState(false);
   const [isTooComplex, setIsTooComplex] = useState(false);
 
   const maxLevel = 5;
@@ -89,9 +106,38 @@ const ReferencesDialog = ({ entity }) => {
     setIsLoading(false);
   };
 
-  const handleReferenceCardClick = (entity) => {
-    goToSlideInEntity({ type: entity.sys.type, id: entity.sys.id });
+  const closeModal = () => {
     setIsOpen(false);
+    setReferences([]);
+    setValidations(null);
+    setIsTooComplex(false);
+  };
+
+  const handleReferenceCardClick = entity => {
+    goToSlideInEntity({ type: entity.sys.type, id: entity.sys.id });
+    closeModal();
+  };
+
+  const handleValidation = () => {
+    setIsValidating(true);
+
+    const entitiesToValidate = selectedEntities.map(entity => ({
+      sys: {
+        id: entity.sys.id,
+        linkType: entity.sys.type,
+        type: 'Link'
+      }
+    }));
+
+    validateEntities({ entities: entitiesToValidate, action: 'publish' })
+      .then(validationResponse => {
+        setIsValidating(false);
+        setValidations(validationResponse);
+      })
+      .catch(_error => {
+        setIsValidating(false);
+        Notification.error('References validation failed');
+      });
   };
 
   return (
@@ -111,6 +157,7 @@ const ReferencesDialog = ({ entity }) => {
               setIsLoading(true);
               fetchReferencesAndOpenModal();
             }}
+            data-test-id="referencesBtn"
             buttonType="muted">
             <span className={styles.dialogButton}>
               <Icon icon="Filter" className={styles.icon} color="secondary" />
@@ -122,7 +169,7 @@ const ReferencesDialog = ({ entity }) => {
             shouldCloseOnEscapePress
             shouldCloseOnOverlayClick
             title="All references"
-            onClose={() => setIsOpen(false)}>
+            onClose={closeModal}>
             {({ title, onClose }) => (
               <>
                 <Modal.Header title={title} onClose={onClose} />
@@ -132,17 +179,30 @@ const ReferencesDialog = ({ entity }) => {
                       At the moment we are unable to handle the reference complexity for this entry
                     </Note>
                   ) : (
-                    <ReferencesTree
-                      root={references[0]}
-                      defaultLocale={defaultLocale}
-                      setIsDialogOpen={onClose}
-                      maxLevel={maxLevel}
-                      onReferenceCardClick={handleReferenceCardClick}
-                    />
+                    references.length && (
+                      <ReferencesTree
+                        root={references[0]}
+                        key={validations}
+                        defaultLocale={defaultLocale}
+                        validations={validations}
+                        onSelectEntities={entities => setSelectedEntites(entities)}
+                        setIsDialogOpen={onClose}
+                        maxLevel={maxLevel}
+                        onReferenceCardClick={handleReferenceCardClick}
+                      />
+                    )
                   )}
                 </Modal.Content>
                 <Modal.Controls>
-                  <FeedbackForm onClose={onClose} />
+                  <ValidationNote validations={validations} />
+                  <Button
+                    className={styles.validationButton}
+                    buttonType="positive"
+                    data-test-id="validateReferencesBtn"
+                    onClick={handleValidation}
+                    loading={isValidating}>
+                    Validate all
+                  </Button>
                 </Modal.Controls>
               </>
             )}

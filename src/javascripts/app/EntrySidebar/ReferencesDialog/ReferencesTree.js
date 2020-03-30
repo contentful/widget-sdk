@@ -58,12 +58,26 @@ class ReferencesTree extends React.Component {
     this.setState({ entryTitle });
   }
 
+  findValidationErrorForEntity = entityId => {
+    const { validations } = this.props;
+    if (!validations) {
+      return null;
+    }
+
+    if (!validations.errored) {
+      return null;
+    }
+    const errored = validations.errored.find(errored => errored.sys.id === entityId);
+    return errored ? errored.error.message : null;
+  };
+
   renderReferenceCards = () => {
-    const { root } = this.props;
+    const { root, onSelectEntities } = this.props;
 
     let isMoreCardRendered = false;
     let depth = 0;
     let circularReferenceCount = 0;
+    const selectedEntities = [];
     const entitiesPerLevel = [];
     const visitedEntities = { 0: [root.sys.id] };
 
@@ -104,6 +118,7 @@ class ReferencesTree extends React.Component {
             entity={entity}
             onClick={onReferenceCardClick}
             isCircular={isCircular}
+            validationError={this.findValidationErrorForEntity(entity.sys.id)}
           />
           {/* recursevly get all cards for the entitiy fields */}
           {nextLevelCards}
@@ -123,6 +138,8 @@ class ReferencesTree extends React.Component {
       entitiesPerLevel[levelIndex] = entitiesPerLevel[levelIndex]
         ? entitiesPerLevel[levelIndex] + 1
         : 1;
+
+      selectedEntities.push(entity);
 
       if (!fields || level > failsaveLevel) {
         return null;
@@ -225,6 +242,8 @@ class ReferencesTree extends React.Component {
     const parentIndexInTree = 0;
     const referenceCards = renderLayer(root, level, parentIndexInTree);
 
+    onSelectEntities(selectedEntities);
+
     track(trackingEvents.dialogOpen, {
       entity_id: root.sys.id,
       references_depth: depth,
@@ -246,7 +265,10 @@ class ReferencesTree extends React.Component {
           <>
             <Paragraph className={styles.description}>Click an entry to edit or publish</Paragraph>
             <List className={styles.parentList}>
-              <ReferenceCard entity={root} />
+              <ReferenceCard
+                entity={root}
+                validationError={this.findValidationErrorForEntity(root.sys.id)}
+              />
               {referencesTree}
             </List>
           </>
@@ -265,11 +287,27 @@ ReferencesTree.propTypes = {
   // TODO: right now default locale has incorrect value
   defaultLocale: PropTypes.string,
   maxLevel: PropTypes.number,
+  validations: PropTypes.shape({
+    errored: PropTypes.arrayOf(
+      PropTypes.shape({
+        sys: PropTypes.shape({
+          type: PropTypes.string,
+          linkType: PropTypes.string,
+          id: PropTypes.string
+        }),
+        error: PropTypes.shape({
+          message: PropTypes.string
+        })
+      })
+    )
+  }), //TODO: define shape
   onReferenceCardClick: PropTypes.func.isRequired,
+  onSelectEntities: PropTypes.func
 };
 
 ReferencesTree.defaultProps = {
   maxLevel: 5,
+  onSelectEntities: () => {}
 };
 
 export default ReferencesTree;

@@ -9,10 +9,17 @@ import {
 
 const empty = require('../fixtures/responses/empty.json');
 const severalEntriesResponseBody = require('../fixtures/responses/entries-several.json');
+import {
+  severalEntryReferencesResponse,
+  validateEntryReferencesSeveralRequest
+} from '../fixtures/responses/entry-several-references'
 
 enum States {
   NONE = 'entries/none',
   SEVERAL = 'entries/several',
+  NO_ERRORS = 'releases/no-errors',
+  ERRORS = 'release/errors',
+  SEVERAL_REFERENCES_FOR_ENTRY = 'entries/several-references',
   NO_LINKS_TO_DEFAULT_ENTRY = 'entries/no-links-to-default-entry',
   NO_LINKS_TO_DEFAULT_ASSET = 'entries/no-links-to-default-asset',
   NO_SNAPSHOTS_FOR_DEFAULT_ENTRY = 'entries/no-snapshots-for-default-entry',
@@ -200,4 +207,110 @@ export const validateAnEntryValidResponse = {
 
     return '@createAnEntryInDefaultSpace';
   },
+};
+
+export const getEntryReferences = {
+  willReturnSeveral() {
+    cy.addInteraction({
+      provider: 'entries',
+      state: States.SEVERAL_REFERENCES_FOR_ENTRY,
+      uponReceiving: `get references for entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
+      withRequest: {
+        method: 'GET',
+        path: `/spaces/${defaultSpaceId}/entries/${defaultEntryId}/references`,
+        headers: defaultHeader,
+      },
+      willRespondWith: {
+        status: 200,
+        body: severalEntryReferencesResponse
+      }
+    }).as('getEntryReferences');
+
+    return '@getEntryReferences';
+  }
+}
+
+export const validateEntryReferencesResponse = {
+  willReturnNoErrors() {
+    cy.addInteraction({
+      provider: 'releases',
+      state: States.NO_ERRORS,
+      uponReceiving: `validate references for entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
+      withRequest: {
+        method: 'POST',
+        path: `/spaces/${defaultSpaceId}/releases/immediate/validations`,
+        headers: {
+          ...defaultHeader,
+          'x-contentful-enable-alpha-feature': 'immediate-release'
+        },
+        body: validateEntryReferencesSeveralRequest
+      },
+      willRespondWith: {
+        status: 200,
+        body: {
+          sys: {
+            id: 'immediate',
+            type: 'ReleaseValidation'
+          },
+          errored: []
+        }
+      }
+    }).as('validateEntryReferencesResponse');
+
+    return '@validateEntryReferencesResponse';
+  },
+
+  willReturnErrors() {
+    cy.addInteraction({
+      provider: 'releases',
+      state: States.ERRORS,
+      uponReceiving: `validate references for entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
+      withRequest: {
+        method: 'POST',
+        path: `/spaces/${defaultSpaceId}/releases/immediate/validations`,
+        headers: {
+          ...defaultHeader,
+          'x-contentful-enable-alpha-feature': 'immediate-release'
+        },
+        body: validateEntryReferencesSeveralRequest
+      },
+      willRespondWith: {
+        status: 200,
+        body: {
+          sys: {
+            id: 'immediate',
+            type: 'ReleaseValidation'
+          },
+          errored: [{
+            sys: {
+              type: 'Link',
+              linkType: 'Entry',
+              id: defaultEntryId
+             },
+             error: {
+               sys: {
+                 type: 'Error',
+                 id: 'InvalidEntry'
+               },
+               message: 'Validation error',
+               details: {
+               errors: [
+                 {
+                   name: 'required',
+                   path: [
+                     'fields',
+                     'requiredText'
+                   ],
+                  details: 'The property "requiredText" is required here'
+                 }
+               ]
+              }
+            }
+          }]
+        }
+      }
+    }).as('validateEntryReferencesResponse');
+
+    return '@validateEntryReferencesResponse';
+  }
 };

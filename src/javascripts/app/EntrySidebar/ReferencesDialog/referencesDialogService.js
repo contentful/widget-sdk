@@ -29,4 +29,11 @@ function getUserInfo() {
   };
 }
 
-export { getReferencesForEntryId, getDefaultLocale, getEntityTitle, getUserInfo };
+async function validateEntities({ entities, action }) {
+  const spaceContext = getModule('spaceContext');
+  const apiClient = new APIClient(spaceContext.endpoint);
+  const res = await apiClient.validateRelease(action, entities);
+  return res;
+}
+
+export { getReferencesForEntryId, getDefaultLocale, getEntityTitle, getUserInfo, validateEntities };

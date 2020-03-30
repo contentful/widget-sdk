@@ -15,6 +15,7 @@ import {
   depthLimit,
   unresolvedReferences,
   noReferences,
+  simpleReferencesValidationErrorResponse
 } from './__fixtures__';
 
 import ReferencesTree from './ReferencesTree';
@@ -223,5 +224,24 @@ describe('ReferencesTree component', () => {
     expect(queryAllByTestId('cf-ui-card')).toHaveLength(0);
 
     await wait();
+  });
+
+  it('should render entries with validations errors', async () => {
+    const onSelectEntities = jest.fn();
+    const onReferenceCardClick = jest.fn();
+    const response = resolveResponse(simpleReferences);
+    const root = response[0];
+    const { queryAllByTestId } = render(
+      <ReferencesTree
+        root={root}
+        defaultLocale="en-US"
+        maxLevel={5}
+        onReferenceCardClick={onReferenceCardClick}
+        validations={simpleReferencesValidationErrorResponse}
+        onSelectEntities={onSelectEntities}
+      />
+    );
+    expect(queryAllByTestId('validation-error')).toHaveLength(2);
+    expect(onSelectEntities).toHaveBeenCalledTimes(1);
   });
 });

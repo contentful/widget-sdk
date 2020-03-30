@@ -9,6 +9,8 @@ export enum FeatureFlag {
   TEAMS_SPACE_MEMBERSHIP = 'feature-bv-01-2019-team-space-memberships',
   QUICK_NAVIGATION = 'feature-ht-04-2019-quick-navigation',
   DEFAULT = ENVIRONMENTS,
-  ACCESS_TOOLS = 'feature-ogg-02-2020-access-tools',
   COOKIE_CONSENT_MANAGEMENT = 'feature-ahoy-03-2020-cookie-consent-mgmt',
+  TWO_FA = 'feature-ogg-10-2019-2fa',
+  ACCESS_TOOLS = 'feature-ogg-02-2020-access-tools',
+  RELEASES = 'feature-pulitzer-02-2020-all-reference-dialog'
 }

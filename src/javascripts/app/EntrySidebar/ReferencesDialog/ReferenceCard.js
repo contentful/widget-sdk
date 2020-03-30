@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'emotion';
+import { css, cx } from 'emotion';
 import { noop } from 'lodash';
-import { Card, Paragraph, Icon, ListItem } from '@contentful/forma-36-react-components';
+import { Card, Paragraph, Icon, ListItem, Tooltip } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { EntityStatusTag } from 'components/shared/EntityStatusTag';
 import * as EntityState from 'data/CMA/EntityState';
@@ -14,6 +14,15 @@ const styles = {
     padding: `${tokens.spacing2Xs} ${tokens.spacingXs}`,
     alignItems: 'center',
     position: 'relative',
+  }),
+  erroredListItem: css({
+    '& > div': {
+      borderColor: tokens.colorRedBase
+    }
+  }),
+  validationTooltip: css({
+    display: 'flex',
+    marginRight: tokens.spacingXs
   }),
   listItem: css({
     margin: '0',
@@ -62,7 +71,14 @@ const styles = {
   }),
 };
 
-const ReferenceCard = ({ entity, onClick, isMoreCard, isUnresolved, isCircular }) => {
+const ReferenceCard = ({
+  entity,
+  onClick,
+  isMoreCard,
+  isUnresolved,
+  isCircular,
+  validationError
+}) => {
   const [title, setTitle] = useState('Untitled');
 
   useEffect(() => {
@@ -121,8 +137,15 @@ const ReferenceCard = ({ entity, onClick, isMoreCard, isUnresolved, isCircular }
   }
 
   return (
-    <ListItem className={styles.listItem}>
+    <ListItem className={cx(styles.listItem, validationError && styles.erroredListItem)}>
       <Card className={styles.card} onClick={() => onClick(entity)}>
+        {validationError && (
+          <span data-test-id="validation-error">
+            <Tooltip content={validationError} targetWrapperClassName={styles.validationTooltip}>
+              <Icon icon="ErrorCircle" color="negative" />
+            </Tooltip>
+          </span>
+        )}
         {entity.sys.type === 'Asset' && (
           <Icon icon={entity.sys.type} color="muted" className={styles.assetIcon} />
         )}
@@ -158,6 +181,7 @@ ReferenceCard.propTypes = {
   isMoreCard: PropTypes.bool,
   isUnresolved: PropTypes.bool,
   isCircular: PropTypes.bool,
+  validationError: PropTypes.string
 };
 
 ReferenceCard.defaultProps = {

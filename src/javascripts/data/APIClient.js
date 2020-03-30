@@ -1,5 +1,10 @@
 import { get } from 'lodash';
-import { ENTRY_VALIDATION, ENTRY_REFERENCES_ENDPOINT, getAlphaHeader } from 'alphaHeaders.js';
+import {
+  ENTRY_VALIDATION,
+  ENTRY_REFERENCES_ENDPOINT,
+  IMMEDIATE_RELEASE,
+  getAlphaHeader
+} from 'alphaHeaders.js';
 
 const entryValidationAlphaHeader = getAlphaHeader(ENTRY_VALIDATION);
 
@@ -241,6 +246,22 @@ APIClient.prototype.validateEntry = function (data, version) {
       'x-contentful-validate-only': 'true',
       'x-contentful-skip-transformation': 'true',
       ...entryValidationAlphaHeader,
+    }
+  );
+};
+
+APIClient.prototype.validateRelease = function (action, entities, type = 'immediate') {
+  return this._request(
+    {
+      method: 'POST',
+      path: ['releases', type, 'validations'],
+      data: {
+        action,
+        entities
+      }
+    },
+    {
+      ...getAlphaHeader(IMMEDIATE_RELEASE)
     }
   );
 };

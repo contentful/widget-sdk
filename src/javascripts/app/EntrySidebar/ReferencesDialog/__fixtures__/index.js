@@ -2459,3 +2459,158 @@ export const noReferences = {
     Asset: [],
   },
 };
+
+export const simpleReferencesValidationErrorResponse = {
+  sys: {
+    type: 'ReleaseValidation',
+    id: 'immediate'
+  },
+  errored: [
+    {
+      sys: {
+        type: 'Link',
+        linkType: 'Entry',
+        id: '3ADrOROW1jot5jExFOjt4i'
+      },
+      error: {
+        sys: {
+          type: 'Error',
+          id: 'InvalidEntry'
+        },
+        message: 'Validation error message',
+        details: {
+          errors: [
+            {
+              name: 'required',
+              path: ['fields', 'requiredText'],
+              details: 'The property "requiredText" is required here'
+            }
+          ]
+        }
+      }
+    },
+    {
+      sys: {
+        type: 'Link',
+        linkType: 'Asset',
+        id: '1RuPXX12mNeIzKQIcuOWQW'
+      },
+      error: {
+        sys: {
+          type: 'Error',
+          id: 'InvalidEntry'
+        },
+        message: 'Validation error message',
+        details: {
+          errors: [
+            {
+              name: 'required',
+              path: ['fields', 'requiredText'],
+              details: 'The property "requiredText" is required here'
+            }
+          ]
+        }
+      }
+    }
+  ]
+};
+
+export const simpleReferencesValidationSuccessResponse = {
+  sys: {
+    type: 'ReleaseValidation',
+    id: 'immediate'
+  },
+  errored: []
+};
+
+export const entity = {
+  sys: {
+    space: {
+      sys: {
+        type: 'Link',
+        linkType: 'Space',
+        id: 'uxn1u7m0txgd'
+      }
+    },
+    id: '4zaYBA8hYIxwRHsKfyJOVN',
+    type: 'Entry',
+    createdAt: '2019-12-16T12:22:36.218Z',
+    updatedAt: '2020-03-04T16:36:17.263Z',
+    environment: {
+      sys: {
+        id: 'master',
+        type: 'Link',
+        linkType: 'Environment'
+      }
+    },
+    publishedVersion: 3,
+    publishedAt: '2019-12-16T14:00:10.531Z',
+    firstPublishedAt: '2019-12-16T14:00:10.531Z',
+    createdBy: {
+      sys: {
+        type: 'Link',
+        linkType: 'User',
+        id: '1ISXbiKugJkNkSrTE3jn25'
+      }
+    },
+    updatedBy: {
+      sys: {
+        type: 'Link',
+        linkType: 'User',
+        id: '1ISXbiKugJkNkSrTE3jn25'
+      }
+    },
+    publishedCounter: 1,
+    version: 26,
+    publishedBy: {
+      sys: {
+        type: 'Link',
+        linkType: 'User',
+        id: '1ISXbiKugJkNkSrTE3jn25'
+      }
+    },
+    contentType: {
+      sys: {
+        type: 'Link',
+        linkType: 'ContentType',
+        id: 'user'
+      }
+    }
+  },
+  fields: {
+    name: {
+      de: 'test',
+      'en-US': 'Root'
+    },
+    entryRef1: {
+      'en-US': {
+        sys: {
+          type: 'Link',
+          linkType: 'Entry',
+          id: '3ADrOROW1jot5jExFOjt4i'
+        }
+      }
+    },
+    entryRef2: {
+      'en-US': {
+        sys: {
+          type: 'Link',
+          linkType: 'Entry',
+          id: 'iFsN9FnCxUVNrXnUbGeJu'
+        }
+      }
+    },
+    assetRef: {
+      'en-US': {
+        sys: {
+          type: 'Link',
+          linkType: 'Asset',
+          id: '1RuPXX12mNeIzKQIcuOWQW'
+        }
+      }
+    },
+    tags: {
+      'en-US': ['Test 1', 'Test 2', 'Test 3', 'Test 4', 'Test 5']
+    }
+  }
+};

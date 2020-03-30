@@ -12,6 +12,7 @@ export const ENTRY_VALIDATION = 'entry-validation'; // Sep 17, 2019
 export const TASKS_DASHBOARD = 'tasks-dashboard'; // Oct 23, 2019
 export const MFA_API = 'mfa-api'; // Oct 23, 2019
 export const ENTRY_REFERENCES_ENDPOINT = 'query-references';
+export const IMMEDIATE_RELEASE = 'immediate-release';
 
 // Get an object with the alpha feature header with one or more features
 export const getAlphaHeader = (...features) => ({
