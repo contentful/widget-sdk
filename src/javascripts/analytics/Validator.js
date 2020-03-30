@@ -146,6 +146,7 @@ export const validEvents = {
   telemetry: ['measurement'],
   app_management: ['created', 'deleted', 'updated'],
   tracking: ['invalid_event'],
+  sharejs: ['cma_entity_version_mismatch'],
 };
 
 export const validateEvent = (eventName) => {

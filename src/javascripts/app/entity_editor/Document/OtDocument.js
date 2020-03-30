@@ -1,4 +1,4 @@
-import { get, cloneDeep, isEqual } from 'lodash';
+import { get, cloneDeep, isEqual, memoize } from 'lodash';
 import * as K from 'utils/kefir';
 import { deepFreeze } from 'utils/Freeze';
 import * as PathUtils from 'utils/Path';
@@ -12,7 +12,7 @@ import DocumentStatusCode from 'data/document/statusCode';
 import { DocLoad } from 'data/sharejs/Connection';
 import * as Reverter from './Reverter';
 import { getModule } from 'NgRegistry';
-import * as logger from 'services/logger';
+import { track } from 'analytics/Analytics';
 import TheLocaleStore from 'services/localeStore';
 import * as ShareJS from 'data/sharejs/utils';
 import { valuePropertyAt } from 'app/entity_editor/Document';
@@ -174,22 +174,12 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
   });
 
   docEventsBus.stream.onValue((event) => {
-    const previousVersion = currentSys.version;
-    const version = event.doc.version + (event.doc.compressed || 0);
-
     // ShareJS has some documents that are out of sync with the index held in the CMA.
     // We want to log these to be able to repair them.
-    // Ignoring compressed documents to see if this even happens at all on uncompressed docs.
-    if (!event.doc.compressed && version < initialEntitySys.version) {
-      logger.logWarn('Inconsistent ShareJS document version on uncompressed document', {
-        data: {
-          cmaEntityVersion: initialEntitySys.version,
-          shareJsDocVersion: event.doc.version,
-          shareJsDocCompressed: !!event.doc.compressed,
-        },
-      });
-    }
+    maybeTrackEntityVersionMismatch(initialEntitySys, event.doc);
 
+    const version = getRealDocVersion(event.doc);
+    const previousVersion = currentSys.version;
     const nextSys = cloneDeep(event.doc.snapshot.sys);
 
     // Sharejs emits "change" event if the change is remote (it also emits "remoteop" with it)
@@ -548,4 +538,28 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
   function getVersion() {
     return K.getValue(sysProperty).version;
   }
+}
+
+// Ensure we only ever track one event for the same CMA entity version per web-app instance.
+const getGlobalEntityVersionMismatchKey = (entitySys) => `${entitySys.type}:${entitySys.id}:${entitySys.version}`;
+const trackEntityVersionMismatch  = memoize((entitySys, doc) => {
+  track('sharejs:cma_entity_version_mismatch', {
+    cmaEntityVersion: entitySys.version,
+    shareJsDocVersion: doc.version,
+    shareJsDocCompressedVersion: doc.compressed === undefined ? null : doc.compressed,
+    entityId: entitySys.id,
+    entityType: entitySys.type,
+  });
+}, getGlobalEntityVersionMismatchKey);
+
+function maybeTrackEntityVersionMismatch (entitySys, doc) {
+  if (getRealDocVersion(doc) < entitySys.version) {
+    trackEntityVersionMismatch(entitySys, doc);
+  }
+}
+
+function getRealDocVersion (doc) {
+  // `compressed` seems to be -1 on new entities (while at the same time the `doc.version` seems
+  // to be the CMA entity's `sys.version + 1`), can be 0 and is a higher number on a compressed doc.
+  return doc.version + (doc.compressed || 0);
 }

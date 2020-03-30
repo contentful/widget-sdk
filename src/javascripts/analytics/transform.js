@@ -189,6 +189,8 @@ registerGenericEvent('teams_in_space:users_to_teams_page_navigation');
 
 registerGenericEvent('account_dropdown:pending_tasks_fetched');
 
+registerGenericEvent('sharejs:cma_entity_version_mismatch');
+
 registerEvent('personal_access_token:action', 'personal_access_token', (_, data) => {
   return {
     data: {
