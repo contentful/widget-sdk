@@ -192,7 +192,7 @@ export function getSpaceNavigationItems({
       rootSref: makeRef('settings', isMasterEnvironment),
       navIcon: 'settings',
       icon: 'nav-settings',
-      title: useSpaceEnviroment ? 'Settings' : 'Space settings',
+      title: 'Settings',
       children: useSpaceEnviroment ? envSettingsDropdown : spaceSettingsDropdown,
     },
   ].filter((item) => item.if !== false);
