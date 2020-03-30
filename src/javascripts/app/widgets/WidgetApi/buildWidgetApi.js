@@ -1,4 +1,3 @@
-import openHyperlinkDialog from 'app/widgets/WidgetApi/dialogs/openHyperlinkDialog';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 import { getModule } from 'NgRegistry';
 import { goToSlideInEntity, onSlideInNavigation } from 'navigation/SlideInNavigator';
@@ -40,14 +39,6 @@ export default function buildWidgetApi({ field, entry, currentUrl, settings }) {
        * ui-extensions-sdk do only allow a very limited set of options.
        */
       selectEntities: (config) => entitySelector.open(config),
-      /**
-       * TODO: Add to ui-extensions-sdk when open sourcing the RichText widget.
-       *
-       * @see ./createHyperlinkDialog
-       */
-      createHyperlink: ({ showTextInput, value }) => {
-        return openHyperlinkDialog({ showTextInput, value, widgetAPI });
-      },
     },
     navigator: {
       openAsset: (...args) => openEntity('Asset', ...args),

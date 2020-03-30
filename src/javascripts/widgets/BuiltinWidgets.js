@@ -247,7 +247,8 @@ export function create() {
     fieldTypes: ['RichText'],
     name: 'RichText',
     icon: 'wysiwig',
-    renderFieldEditor: ({ widgetApi, loadEvents }) => renderRichTextEditor({ widgetApi, loadEvents }),
+    renderFieldEditor: ({ widgetApi, loadEvents }) =>
+      renderRichTextEditor({ widgetApi, loadEvents }),
   });
 
   registerWidget('tagEditor', {
