@@ -48,6 +48,8 @@ import * as searchEntitySelectorCreateEntityIndexEs6 from 'search/EntitySelector
 import * as componentsSharedEnterpriseSpaceWizardEnterpriseSpaceWizardEs6 from 'components/shared/enterprise-space-wizard/EnterpriseSpaceWizard';
 import * as navigationModernStackOnboardingRelaunchEs6 from 'navigation/modernStackOnboardingRelaunch';
 import * as appEntityEditorBulkEditorTitleEs6 from 'app/entity_editor/bulk_editor/BulkEditorTitle';
+import * as appEntityEditorBulkEntityEditorActionsDropdownEs6 from 'app/entity_editor/bulk_editor/BulkEntityEditorActionsDropdown';
+import * as appEntityEditorBulkEntityEditorStatusDropdownEs6 from 'app/entity_editor/bulk_editor/BulkEntityEditorStatusDropdown';
 import * as embedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
 import * as FieldDialogSettingsComponent from 'components/field_dialog/components/FieldDialogSettingsComponent';
 import * as ThumbnailComponent from 'components/Thumbnail/Thumbnail';
@@ -303,6 +305,8 @@ function getModule(name) {
     'components/shared/enterprise-space-wizard/EnterpriseSpaceWizard': componentsSharedEnterpriseSpaceWizardEnterpriseSpaceWizardEs6,
     'navigation/modernStackOnboardingRelaunch': navigationModernStackOnboardingRelaunchEs6,
     'app/entity_editor/bulk_editor/BulkEditorTitle': appEntityEditorBulkEditorTitleEs6,
+    'app/entity_editor/bulk_editor/BulkEntityEditorActionsDropdown': appEntityEditorBulkEntityEditorActionsDropdownEs6,
+    'app/entity_editor/bulk_editor/BulkEntityEditorStatusDropdown': appEntityEditorBulkEntityEditorStatusDropdownEs6,
     'components/forms/embedly_preview/EmbedlyPreview': embedlyPreview,
     'components/field_dialog/components/FieldDialogSettingsComponent': FieldDialogSettingsComponent,
     'components/Thumbnail/Thumbnail': ThumbnailComponent,
