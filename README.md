@@ -44,6 +44,12 @@ staging, and production APIs. To do so, first the following conditions must be t
 - You must have [NVM][nvm] installed
 - You must have an account on our staging environment `app.flinkly.com`.
 
+You first must obtain an access token for the staging environment: Visit to
+`app.flinkly.com`, log in, and go to “APIs” → “Content management tokens”.
+Create a new token and copy its value. You’ll need it later
+
+If you don't have an account, use `bootstrap` as "Coupon Code" to setup a new account.
+
 Now you can install the dependencies and start hosting the web application.
 
 ```js
