@@ -1,6 +1,14 @@
 import { useEffect, useState } from 'react';
-import { getLocalesForField, getFieldPath } from './utils';
+import { getFieldPath } from './utils';
 import { get, isEqual } from 'lodash';
+import TheLocaleStore from 'services/localeStore';
+
+const getLocalesForField = field => {
+  const fieldLocales = field.localized
+    ? TheLocaleStore.getPrivateLocales()
+    : [TheLocaleStore.getDefaultLocale()];
+  return fieldLocales.filter(TheLocaleStore.isLocaleActive);
+};
 
 const useEnrichedWidgets = ({ widgets, getEditorData, snapshot }) => {
   const [state, setState] = useState({ enrichedWidgets: [], diffCount: 0 });

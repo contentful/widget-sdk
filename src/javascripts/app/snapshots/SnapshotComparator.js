@@ -25,6 +25,8 @@ import useSelectedVersions from './useSelectedVersions';
 import useEnrichedWidgets from './useEnrichedWidgets';
 import { CURRENT, SNAPSHOT } from './utils';
 
+export const getFieldPath = (fieldId, internalCode) => ['fields', fieldId, internalCode];
+
 const commonCellStyles = {
   maxWidth: '50%',
   display: 'flex',
@@ -161,11 +163,11 @@ const SnapshotComparator = ({
   ...props
 }) => {
   const [showOnlyDifferences, setShowOnlyDifferences] = useState(false);
+  const [{ enrichedWidgets, diffCount }] = useEnrichedWidgets({ widgets, getEditorData, snapshot });
   const [
     { selectedVersions, pathsToRestore },
-    { setSelectedVersionForField, setSelectAllSnapshots },
-  ] = useSelectedVersions({ widgets });
-  const [{ enrichedWidgets, diffCount }] = useEnrichedWidgets({ widgets, getEditorData, snapshot });
+    { setSelectedVersionForField, setSelectAllSnapshots }
+  ] = useSelectedVersions({ enrichedWidgets });
 
   const pathsToRestoreExist = pathsToRestore.length > 0;
   useEffect(() => {
@@ -257,7 +259,7 @@ const SnapshotComparator = ({
             {hasDiff && (
               <TextLink
                 testId="snapshots-comparator-button-restore-all"
-                onClick={() => setSelectAllSnapshots(enrichedWidgets)}>
+                onClick={() => setSelectAllSnapshots()}>
                 Select all fields from this version
               </TextLink>
             )}

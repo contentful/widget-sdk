@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { SNAPSHOT, CURRENT, getLocalesForField, getFieldPath } from './utils';
+import { SNAPSHOT, CURRENT, getFieldPath } from './utils';
 
 const getPathsToRestore = (selected) => {
   return Object.entries(selected)
@@ -7,11 +7,11 @@ const getPathsToRestore = (selected) => {
     .map(([path]) => path.split('.'));
 };
 
-const initSelected = (widgets) => {
-  return widgets.reduce(
-    (red, { field }) => ({
+const initSelected = enrichedWidgets => {
+  return enrichedWidgets.reduce(
+    (red, { widget: { field }, locales }) => ({
       ...red,
-      ...getLocalesForField(field).reduce((loc, { internal_code }) => {
+      ...locales.reduce((loc, { locale: { internal_code } }) => {
         const fieldPath = getFieldPath(field.id, internal_code).join('.');
         return { ...loc, [fieldPath]: CURRENT };
       }, {}),
@@ -35,14 +35,14 @@ const getAllAvailableSnapshotFields = (enrichedWidgets) =>
     {}
   );
 
-const useSelectedVersions = ({ widgets }) => {
-  const [selectedVersions, setSelectedVersions] = useState(initSelected(widgets));
+const useSelectedVersions = ({ enrichedWidgets }) => {
+  const [selectedVersions, setSelectedVersions] = useState(initSelected(enrichedWidgets));
 
   const setSelectedVersionForField = (path, version) => {
     setSelectedVersions((selected) => ({ ...selected, [path]: version }));
   };
 
-  const setSelectAllSnapshots = (enrichedWidgets) => {
+  const setSelectAllSnapshots = () => {
     setSelectedVersions(getAllAvailableSnapshotFields(enrichedWidgets));
   };
 
