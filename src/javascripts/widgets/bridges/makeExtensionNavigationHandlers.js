@@ -62,15 +62,16 @@ export default function makeExtensionNavigationHandlers(dependencies, handlerOpt
   }
 
   async function openExistingEntity({ id, entityType, slideIn = false }, entity) {
+    let slide = undefined;
     try {
       if (slideIn) {
         if (get(slideIn, ['waitForClose'], false) === true) {
-          await SlideInNavigatorWithPromise.goToSlideInEntityWithPromise({
+          slide = await SlideInNavigatorWithPromise.goToSlideInEntityWithPromise({
             id,
             type: entityType,
           });
         } else {
-          await SlideInNavigator.goToSlideInEntity({
+          slide = SlideInNavigator.goToSlideInEntity({
             id,
             type: entityType,
           });
@@ -87,6 +88,6 @@ export default function makeExtensionNavigationHandlers(dependencies, handlerOpt
       throw new Error('Failed to navigate to the entity.');
     }
 
-    return { navigated: true, entity };
+    return { navigated: true, entity, slide };
   }
 }
