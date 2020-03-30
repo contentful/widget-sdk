@@ -34,7 +34,10 @@ const queryEntries = async (query) => {
   const entityHelpers = EntityHelpers.newForLocale(defaultLocaleCode);
 
   if (!getSectionVisibility().entry) {
-    return [];
+    return {
+      results: [],
+      total: 0
+    };
   }
 
   const { items, total } = await spaceContext.cma.getEntries({
@@ -67,7 +70,10 @@ const queryAssets = async (query) => {
   const entityHelpers = EntityHelpers.newForLocale(defaultLocaleCode);
 
   if (!getSectionVisibility().asset) {
-    return [];
+    return {
+      results: [],
+      total: 0
+    };
   }
 
   const { items, total } = await spaceContext.cma.getAssets({
@@ -96,7 +102,10 @@ const queryContentTypes = (query) => {
   const spaceContext = getModule('spaceContext');
 
   if (!getSectionVisibility().contentType) {
-    return [];
+    return {
+      results: [],
+      total: 0
+    };
   }
 
   const lowerCaseQuery = query.toLowerCase();
