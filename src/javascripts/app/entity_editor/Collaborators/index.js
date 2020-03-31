@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { cx, css } from 'emotion';
-import { Tooltip } from '@contentful/forma-36-react-components';
+import { Tooltip, List, ListItem } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
 import { FetcherLoading } from 'app/common/createFetcherComponent';
@@ -48,16 +48,16 @@ class Collaborators extends Component {
   };
   render() {
     return (
-      <ul className={cx(styles.collaborators, this.props.className)}>
+      <List className={cx(styles.collaborators, this.props.className)}>
         {this.props.users.map(({ sys: { id } }) => {
           return (
-            <li key={id} className={styles.collaboratorsItem}>
+            <ListItem key={id} className={styles.collaboratorsItem}>
               <UserFetcher userId={id}>
                 {({ isLoading, isError, data: user }) => {
                   if (isLoading) {
                     return <FetcherLoading />;
                   }
-                  if (isError) {
+                  if (isError || !user) {
                     return null;
                   }
                   return (
@@ -75,10 +75,10 @@ class Collaborators extends Component {
                   );
                 }}
               </UserFetcher>
-            </li>
+            </ListItem>
           );
         })}
-      </ul>
+      </List>
     );
   }
 }
