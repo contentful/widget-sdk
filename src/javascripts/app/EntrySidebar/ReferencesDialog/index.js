@@ -25,7 +25,7 @@ import {
 const styles = {
   dialogButton: css({
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'center'
   }),
   validationButton: css({
     marginTop: tokens.spacingXs
@@ -44,17 +44,17 @@ const styles = {
       marginBottom: '-10px',
       position: 'absolute',
       bottom: '0px',
-      left: '0px',
-    },
+      left: '0px'
+    }
   }),
   icon: css({
-    marginRight: tokens.spacing2Xs,
+    marginRight: tokens.spacing2Xs
   }),
   buttonWrapper: css({
-    margin: `${tokens.spacingM} 0`,
+    margin: `${tokens.spacingM} 0`
   }),
   maxLevelWarning: css({
-    marginTop: tokens.spacingM,
+    marginTop: tokens.spacingM
   }),
   tooComplexNote: css({
     marginBottom: tokens.spacingM
@@ -142,7 +142,7 @@ const ReferencesDialog = ({ entity }) => {
 
   return (
     <>
-      <Subheading className="entity-sidebar__heading">References tree</Subheading>
+      <Subheading className="entity-sidebar__heading">Validate references</Subheading>
       <ErrorHandler
         renderOnError={
           <Note noteType="negative">
@@ -161,14 +161,14 @@ const ReferencesDialog = ({ entity }) => {
             buttonType="muted">
             <span className={styles.dialogButton}>
               <Icon icon="Filter" className={styles.icon} color="secondary" />
-              Show all references
+              View all references
             </span>
           </Button>
           <Modal
             isShown={isOpen}
             shouldCloseOnEscapePress
             shouldCloseOnOverlayClick
-            title="All references"
+            title="Validate References"
             onClose={closeModal}>
             {({ title, onClose }) => (
               <>
@@ -214,7 +214,7 @@ const ReferencesDialog = ({ entity }) => {
 };
 
 ReferencesDialog.propTypes = {
-  entity: PropTypes.object.isRequired,
+  entity: PropTypes.object.isRequired
 };
 
 export default ReferencesDialog;

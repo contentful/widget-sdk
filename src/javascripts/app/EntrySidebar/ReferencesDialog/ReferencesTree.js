@@ -10,10 +10,10 @@ import { track } from 'analytics/Analytics';
 
 const styles = {
   description: css({
-    marginBottom: tokens.spacingM,
+    marginBottom: tokens.spacingM
   }),
   list: css({
-    marginLeft: 20,
+    marginLeft: 20
   }),
   listItem: css({
     position: 'relative',
@@ -24,25 +24,25 @@ const styles = {
       bottom: '0',
       width: '20px',
       height: '20px',
-      background: 'white',
-    },
+      background: 'white'
+    }
   }),
   parentList: css({
     paddingBottom: tokens.spacingM,
     overflowY: 'scroll',
     '& > li': {
       '&:first-child:before, &:first-child:after': {
-        display: 'none',
-      },
-    },
+        display: 'none'
+      }
+    }
   }),
   noReferencesNote: css({
-    marginBottom: tokens.spacingM,
-  }),
+    marginBottom: tokens.spacingM
+  })
 };
 
 const trackingEvents = {
-  dialogOpen: 'entry_references:dialog_open',
+  dialogOpen: 'entry_references:dialog_open'
 };
 
 // If there is a circular reference that is not handled this will keep us from endless.
@@ -108,7 +108,7 @@ class ReferencesTree extends React.Component {
       // eslint-disable-next-line
       const nextLevelCards = renderLayer(entity, level + 1, entityIndexInTree);
       const isCircular =
-        visitedEntities[entityIndexInTree].filter((entityId) => entityId === entity.sys.id).length >
+        visitedEntities[entityIndexInTree].filter(entityId => entityId === entity.sys.id).length >
         1;
 
       return (
@@ -160,10 +160,7 @@ class ReferencesTree extends React.Component {
         (allCards, [_, fieldValue], fieldIndex) => {
           const localizedFieldValue = fieldValue[defaultLocale];
           // if field is an array of entities
-          if (
-            Array.isArray(localizedFieldValue) &&
-            localizedFieldValue.every((value) => value.sys)
-          ) {
+          if (Array.isArray(localizedFieldValue) && localizedFieldValue.every(value => value.sys)) {
             return allCards.concat(
               localizedFieldValue.map((entity, index) => {
                 const nextEntityIndexInTree = `${entityIndexInTree}.${fieldIndex}.${index}`;
@@ -186,7 +183,7 @@ class ReferencesTree extends React.Component {
                     'embedded-asset-block',
                     'embedded-entry-block',
                     'embedded-entry-inline',
-                    'entry-hyperlink',
+                    'entry-hyperlink'
                   ].includes(entity.nodeType)
                 ) {
                   const entityPayload = entity.data.target;
@@ -195,7 +192,7 @@ class ReferencesTree extends React.Component {
                   return [
                     ...acc,
                     ...entityContentToReferenceCards(entity, nextEntityIndexInTree),
-                    toReferenceCard(entityPayload, level, nextEntityIndexInTree),
+                    toReferenceCard(entityPayload, level, nextEntityIndexInTree)
                   ];
                 } else {
                   const nextEntityIndexInTree = `${parentIndex}.${fieldIndex}.${index}`;
@@ -217,7 +214,7 @@ class ReferencesTree extends React.Component {
 
             return [
               ...allCards,
-              toReferenceCard(localizedFieldValue, level, nextEntityIndexInTree),
+              toReferenceCard(localizedFieldValue, level, nextEntityIndexInTree)
             ];
           }
           // otherwise, skip
@@ -248,7 +245,7 @@ class ReferencesTree extends React.Component {
       entity_id: root.sys.id,
       references_depth: depth,
       references_per_level: entitiesPerLevel,
-      circular_references_count: circularReferenceCount,
+      circular_references_count: circularReferenceCount
     });
 
     return referenceCards;
@@ -263,7 +260,10 @@ class ReferencesTree extends React.Component {
       <>
         {referencesTree ? (
           <>
-            <Paragraph className={styles.description}>Click an entry to edit or publish</Paragraph>
+            <Paragraph className={styles.description}>
+              Here is a list of all references for this entry. Run a validation check against all
+              references. Click a reference to edit and publish.
+            </Paragraph>
             <List className={styles.parentList}>
               <ReferenceCard
                 entity={root}
