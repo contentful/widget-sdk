@@ -12,7 +12,7 @@ import testDocumentBasic, { newContentType, newEntry } from './Document.spec';
 const kefirHelpers = jestKefir(Kefir); // https://github.com/kefirjs/jest-kefir
 expect.extend(kefirHelpers.extensions);
 
-const newLegacyClientEntityMock = entity => ({ data: entity, setDeleted: noop });
+const newLegacyClientEntityMock = (entity) => ({ data: entity, setDeleted: noop });
 
 // Mock Angular getModule for PresenceHub in OtDocument
 jest.mock('NgRegistry', () => ({
@@ -74,7 +74,7 @@ describe('OtDocument', () => {
   });
 
   describe('sysProperty', () => {
-    it('bumps version after update', function() {
+    it('bumps version after update', function () {
       const newVersionSys = { ...entry.sys, version: entry.sys.version + 1 };
       doc.setValueAt(fieldPath, 'en-US-updated');
       expect(K.getValue(doc.sysProperty)).toMatchObject(newVersionSys);

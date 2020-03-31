@@ -36,7 +36,7 @@ export function create(
   initialEntity: { data: Entity; setDeleted: { (): void } },
   contentType: any,
   spaceEndpoint: { (body: any, headers: any): Entity },
-  saveThrottleMs: number = THROTTLE_TIME,
+  saveThrottleMs: number = THROTTLE_TIME
 ): Document {
   // A single source of Truth, properties like sys$ and data$ reflect the state of this variable.
   const entity: Entity = cloneDeep(initialEntity.data);
@@ -50,7 +50,7 @@ export function create(
   const sys$ = sysBus.property;
 
   let lastSavedEntity;
-  const setLastSavedEntity = entity => (lastSavedEntity = cloneDeep(entity));
+  const setLastSavedEntity = (entity) => (lastSavedEntity = cloneDeep(entity));
   setLastSavedEntity(entity);
 
   // We assume that the permissions only depend on the immutable data like the ID the content type ID and the creator.
@@ -58,7 +58,7 @@ export function create(
   // todo: its "inProgress$" prop can be used in "doc.isSaving$" indicator
   const resourceState = ResourceStateManager.create(
     sys$,
-    newSys => {
+    (newSys) => {
       set(entity, ['sys'], newSys);
       sysBus.set(newSys);
     },
@@ -66,7 +66,7 @@ export function create(
     () => cloneDeep(getValueAt([])),
     spaceEndpoint,
     // preApplyFn - triggered and awaited before applying the state change
-    persistEntity, // TODO: part of the status change ticket
+    persistEntity // TODO: part of the status change ticket
   );
 
   function normalize() {
@@ -112,7 +112,7 @@ export function create(
   // Entities from the server might include removed locales or deleted fields which the UI can't handle.
   // So document getters work with locally normalized entity, that is created initially and on every update in this handler.
   // Make sure that this handler is the first for the changes stream.
-  changesBus.stream.onValue(path => {
+  changesBus.stream.onValue((path) => {
     if (PathUtils.isPrefix(['fields'], path)) {
       normalize();
     }
@@ -122,8 +122,8 @@ export function create(
    * Collect all changes in last N seconds and make a PUT request to CMA with the updated entity data.
    */
   changesBus.stream
-    .filter(path => PathUtils.isPrefix(['fields'], path))
-    .merge(isSavingBus.property.filter(isSaving => !isSaving))
+    .filter((path) => PathUtils.isPrefix(['fields'], path))
+    .merge(isSavingBus.property.filter((isSaving) => !isSaving))
     .bufferWhileBy(isSavingBus.property)
     .throttle(saveThrottleMs, { leading: false })
     .onValue(() => persistEntity());
@@ -181,7 +181,7 @@ export function create(
    * account. For this see the `FieldLocaleController`.
    */
   const canEdit$: Property<boolean, any> = sys$
-    .map(sys => !sys.archivedVersion && !sys.deletedVersion && permissions.can('update'))
+    .map((sys) => !sys.archivedVersion && !sys.deletedVersion && permissions.can('update'))
     .skipDuplicates();
   /**
    * @description
@@ -191,8 +191,8 @@ export function create(
    * Note that an entry is in the same state as its published version
    * if and only if its version is on more than the published version.
    */
-  const isDirty$: Property<boolean, any> = sys$.map(sys =>
-    sys.publishedVersion ? sys.version > sys.publishedVersion + 1 : true,
+  const isDirty$: Property<boolean, any> = sys$.map((sys) =>
+    sys.publishedVersion ? sys.version > sys.publishedVersion + 1 : true
   );
 
   const data$ = K.combinePropertiesObject({
@@ -204,7 +204,7 @@ export function create(
   // The entity instance is unique for the ID. Other views will share
   // the same instance and not necessarily load the data. This is why
   // we need to make sure that we keep it updated.
-  data$.onValue(data => {
+  data$.onValue((data) => {
     initialEntity.data = data;
     if (data.sys.deletedVersion) {
       initialEntity.setDeleted();
@@ -309,7 +309,7 @@ export function create(
       // Try to persist all unsaved changes before destroying the document.
       // TODO: it's hacky to save it on destroy
       persistEntity({ updateEmitters: false });
-      cleanupTasks.forEach(task => task());
+      cleanupTasks.forEach((task) => task());
     },
 
     resourceState,

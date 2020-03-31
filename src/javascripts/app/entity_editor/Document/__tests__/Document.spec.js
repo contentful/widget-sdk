@@ -9,24 +9,24 @@ const { value } = kefirHelpers;
 expect.extend(kefirHelpers.extensions);
 
 jest.mock('services/localeStore', () => ({
-  getPrivateLocales: () => [{ internal_code: 'en-US' }, { internal_code: 'de' }]
+  getPrivateLocales: () => [{ internal_code: 'en-US' }, { internal_code: 'de' }],
 }));
 
-export const newEntry = fields => ({
+export const newEntry = (fields) => ({
   sys: {
     type: 'Entry',
     version: 1,
     contentType: {
-      sys: { id: 'ctId' }
-    }
+      sys: { id: 'ctId' },
+    },
   },
   fields: fields || {
     fieldA: { 'en-US': 'en' },
     fieldB: { 'en-US': 'val-EN', de: 'val-DE' },
     listField: { 'en-US': ['one'] },
     symbolField: { 'en-US': 'symbol value' },
-    textField: { 'en-US': 'text value' }
-  }
+    textField: { 'en-US': 'text value' },
+  },
 });
 
 export const newContentType = (sys, fields) => ({
@@ -38,17 +38,16 @@ export const newContentType = (sys, fields) => ({
       { id: 'unsetField' },
       { id: 'listField', type: 'Array', items: { type: 'Symbol' } },
       { id: 'symbolField', type: 'Symbol' },
-      { id: 'textField', type: 'Text' }
-    ]
-  }
+      { id: 'textField', type: 'Text' },
+    ],
+  },
 });
 
 describe('empty test', () => {
-  it('passes', () => {
-  });
+  it('passes', () => {});
 });
 
-export default createDocument => {
+export default (createDocument) => {
   describe('Document', () => {
     const fieldPath = ['fields', 'fieldA', 'en-US'];
     const anotherFieldPath = ['fields', 'fieldB', 'en-US'];
@@ -189,7 +188,7 @@ export default createDocument => {
         expect(doc.sysProperty).toBeProperty();
       });
 
-      it('emits `entity.data.sys` as initial value', function() {
+      it('emits `entity.data.sys` as initial value', function () {
         K.assertCurrentValue(doc.sysProperty, entry.sys);
       });
     });
@@ -292,17 +291,17 @@ export default createDocument => {
         const notNormalizedEntry = newEntry({
           field1: { 'en-US': true, fr: true },
           field2: { 'en-US': true, de: true },
-          unknownField: true
+          unknownField: true,
         });
         doc = createDocument(notNormalizedEntry, [
           { id: 'field1' },
-          { id: 'field2', localised: false } // disabled localization
+          { id: 'field2', localised: false }, // disabled localization
         ]).document;
 
         const normalizedFieldValues = doc.getValueAt(['fields']);
         expect(normalizedFieldValues).toEqual({
           field1: { 'en-US': true },
-          field2: { 'en-US': true, de: true } // doc should keep even disabled locales
+          field2: { 'en-US': true, de: true }, // doc should keep even disabled locales
         });
       });
     });

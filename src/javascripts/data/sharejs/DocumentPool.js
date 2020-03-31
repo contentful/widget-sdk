@@ -1,19 +1,22 @@
-import { createOtDoc } from 'app/entity_editor/Document';
+import { createOtDoc, createCmaDoc } from 'app/entity_editor/Document';
 import { find, includes, isString, get as getAtPath } from 'lodash';
+import { SHAREJS_REMOVAL } from 'featureFlags';
+import { getVariation } from 'LaunchDarkly';
 
 /**
  * @ngdoc service
  * @name data/sharejs/DocumentPool
  * @description
- * A singleton store for Document instances.
+ * Creates a store for Document instances.
  * Given an entity it always returns the same
  * instance. Obtained references are counted
  * and when the last is disposed, an instance
  * is destroyed.
  */
 
-export function create(docConnection, spaceEndpoint) {
+export async function create(docConnection, spaceEndpoint, organizationId, spaceId) {
   const instances = {};
+  const isCMADocumentEnabled = await getVariation(SHAREJS_REMOVAL, { organizationId, spaceId });
 
   return { get, destroy };
 
@@ -37,7 +40,11 @@ export function create(docConnection, spaceEndpoint) {
       doc = instance.doc;
       instance.count += 1;
     } else {
-      doc = createOtDoc(docConnection, entity, contentType, user, spaceEndpoint);
+      if (isCMADocumentEnabled && isCMADocumentEnabled[entity.data.sys.type]) {
+        doc = createCmaDoc(entity, spaceEndpoint);
+      } else {
+        doc = createOtDoc(docConnection, entity, contentType, user, spaceEndpoint);
+      }
       instances[key] = { key, doc, count: 1 };
     }
 
@@ -73,7 +80,7 @@ export function create(docConnection, spaceEndpoint) {
     }
   }
 
-  /**
+  /*A singleton*
    * @method DocumentPool#destroy
    * @description
    * Destroys all the instances in the pool.

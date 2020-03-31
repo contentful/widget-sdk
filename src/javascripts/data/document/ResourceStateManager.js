@@ -41,7 +41,7 @@ export function create(sys$, setSys, getData, spaceEndpoint, preApplyFn = null) 
 
   const state$ = sys$.map(getState).skipDuplicates();
   let currentState;
-  state$.onValue(state => {
+  state$.onValue((state) => {
     currentState = state;
   });
 

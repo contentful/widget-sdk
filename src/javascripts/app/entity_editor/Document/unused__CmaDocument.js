@@ -39,14 +39,14 @@ export function create(initialEntity, contentType, spaceEndpoint, saveThrottleMs
   const cleanupTasks = [];
   const sys$ = sysBus.property;
   let lastSavedEntity;
-  const setLastSavedEntity = entity => (lastSavedEntity = cloneDeep(entity));
+  const setLastSavedEntity = (entity) => (lastSavedEntity = cloneDeep(entity));
   setLastSavedEntity(entity);
   // We assume that the permissions only depend on the immutable data like the ID the content type ID and the creator.
   const permissions = Permissions.create(entity.sys);
   // todo: its "inProgress$" prop can be used in "doc.isSaving$" indicator
   const resourceState = ResourceStateManager.create(
     sys$,
-    newSys => {
+    (newSys) => {
       set(entity, ['sys'], newSys);
       sysBus.set(newSys);
     },
@@ -54,7 +54,7 @@ export function create(initialEntity, contentType, spaceEndpoint, saveThrottleMs
     () => cloneDeep(getValueAt([])),
     spaceEndpoint,
     // preApplyFn - triggered and awaited before applying the state change
-    persistEntity,
+    persistEntity
   );
 
   function normalize() {
@@ -98,7 +98,7 @@ export function create(initialEntity, contentType, spaceEndpoint, saveThrottleMs
   // Entities from the server might include removed locales or deleted fields which the UI can't handle.
   // So document getters work with locally normalized entity, that is created initially and on every update in this handler.
   // Make sure that this handler is the first for the changes stream.
-  changesBus.stream.onValue(path => {
+  changesBus.stream.onValue((path) => {
     if (PathUtils.isPrefix(['fields'], path)) {
       normalize();
     }
@@ -107,8 +107,8 @@ export function create(initialEntity, contentType, spaceEndpoint, saveThrottleMs
    * Collect all changes in last N seconds and make a PUT request to CMA with the updated entity data.
    */
   changesBus.stream
-    .filter(path => PathUtils.isPrefix(['fields'], path))
-    .merge(isSavingBus.property.filter(isSaving => !isSaving))
+    .filter((path) => PathUtils.isPrefix(['fields'], path))
+    .merge(isSavingBus.property.filter((isSaving) => !isSaving))
     .bufferWhileBy(isSavingBus.property)
     .throttle(saveThrottleMs, { leading: false })
     .onValue(() => persistEntity());
@@ -164,7 +164,7 @@ export function create(initialEntity, contentType, spaceEndpoint, saveThrottleMs
    * account. For this see the `FieldLocaleController`.
    */
   const canEdit$ = sys$
-    .map(sys => !sys.archivedVersion && !sys.deletedVersion && permissions.can('update'))
+    .map((sys) => !sys.archivedVersion && !sys.deletedVersion && permissions.can('update'))
     .skipDuplicates();
   /**
    * @description
@@ -174,8 +174,8 @@ export function create(initialEntity, contentType, spaceEndpoint, saveThrottleMs
    * Note that an entry is in the same state as its published version
    * if and only if its version is on more than the published version.
    */
-  const isDirty$ = sys$.map(sys =>
-    sys.publishedVersion ? sys.version > sys.publishedVersion + 1 : true,
+  const isDirty$ = sys$.map((sys) =>
+    sys.publishedVersion ? sys.version > sys.publishedVersion + 1 : true
   );
   const data$ = K.combinePropertiesObject({
     sys: sys$,
@@ -185,7 +185,7 @@ export function create(initialEntity, contentType, spaceEndpoint, saveThrottleMs
   // The entity instance is unique for the ID. Other views will share
   // the same instance and not necessarily load the data. This is why
   // we need to make sure that we keep it updated.
-  data$.onValue(data => {
+  data$.onValue((data) => {
     initialEntity.data = data;
     if (data.sys.deletedVersion) {
       initialEntity.setDeleted();
@@ -280,7 +280,7 @@ export function create(initialEntity, contentType, spaceEndpoint, saveThrottleMs
       // Try to persist all unsaved changes before destroying the document.
       // TODO: it's hacky to save it on destroy
       persistEntity({ updateEmitters: false });
-      cleanupTasks.forEach(task => task());
+      cleanupTasks.forEach((task) => task());
     },
     resourceState,
     /**

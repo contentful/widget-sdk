@@ -90,9 +90,11 @@ export function getCurrentVariation(flagName) {
       // LD could not find a flag with given name, log error and return undefined
       logger.logError(`Invalid flag ${flagName}`);
       return UNINIT_VAL;
-    } else {
+    }
+    if (typeof variation === 'string') {
       return JSON.parse(variation);
     }
+    return variation;
   });
 }
 

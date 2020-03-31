@@ -20,7 +20,7 @@ jest.mock('access_control/EntityPermissions', () => {
   return mock;
 });
 const mockSpaceEndpoint = () =>
-  jest.fn().mockImplementation(body => {
+  jest.fn().mockImplementation((body) => {
     const entry = cloneDeep(body.data);
     set(entry, 'sys.version', entry.sys.version + 1);
     return entry;
@@ -28,7 +28,7 @@ const mockSpaceEndpoint = () =>
 let spaceEndpoint;
 
 // It must be used together with jest.useRealTimers() to skip a current tick.
-const wait = () => new Promise(resolve => setTimeout(resolve, 0));
+const wait = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 function createCmaDocument(initialEntity, contentTypeFields, throttleMs) {
   const contentType = newContentType(initialEntity.sys.contentType.sys, contentTypeFields);
@@ -37,7 +37,7 @@ function createCmaDocument(initialEntity, contentTypeFields, throttleMs) {
       { data: initialEntity, setDeleted: jest.fn() },
       contentType,
       spaceEndpoint,
-      throttleMs,
+      throttleMs
     ),
   };
 }
@@ -116,9 +116,9 @@ describe('CmaDocument', () => {
     it('collects changes made during saving and sends them only after 5s since last CMA request', async () => {
       jest.useFakeTimers();
       let cmaResolve;
-      spaceEndpoint.mockImplementation(async body => {
+      spaceEndpoint.mockImplementation(async (body) => {
         const entry = cloneDeep(body.data);
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
           set(entry, 'sys.version', entry.sys.version + 1);
           cmaResolve = () => resolve(entry);
         });
@@ -131,7 +131,7 @@ describe('CmaDocument', () => {
       await doc.setValueAt(['fields', 'fieldB', 'en-US'], 'value set during saving');
       cmaResolve();
       jest.useRealTimers(); // switch back to real timers to let persistEntity to finish in the current tick
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
       K.assertCurrentValue(doc.state.isSaving$, false);
       // Ensure the value was not overwritten by the response entity.
       expect(doc.getValueAt(['fields', 'fieldB', 'en-US'])).toBe('value set during saving');
@@ -156,9 +156,9 @@ describe('CmaDocument', () => {
       doc = createCmaDocument(entry, undefined, 100).document;
       jest.useFakeTimers();
       let cmaResolve;
-      spaceEndpoint.mockImplementation(async body => {
+      spaceEndpoint.mockImplementation(async (body) => {
         const entry = cloneDeep(body.data);
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
           set(entry, 'sys.version', entry.sys.version + 1);
           cmaResolve = () => resolve(entry);
         });
@@ -178,10 +178,12 @@ describe('CmaDocument', () => {
       jest.useRealTimers();
       await wait();
 
-      await new Promise(resolve => setTimeout(() => {
-        expect(spaceEndpoint).toBeCalledTimes(2);
-        resolve();
-      }, 200));
+      await new Promise((resolve) =>
+        setTimeout(() => {
+          expect(spaceEndpoint).toBeCalledTimes(2);
+          resolve();
+        }, 200)
+      );
     });
   });
 
@@ -193,9 +195,9 @@ describe('CmaDocument', () => {
         jest.useFakeTimers();
       });
       it('is [true, false] when entity is persisted', async () => {
-        spaceEndpoint.mockImplementation(async body => {
+        spaceEndpoint.mockImplementation(async (body) => {
           const entry = cloneDeep(body.data);
-          return new Promise(resolve => {
+          return new Promise((resolve) => {
             set(entry, 'sys.version', entry.sys.version + 1);
             cmaResolve = () => resolve(entry);
           });
@@ -212,7 +214,7 @@ describe('CmaDocument', () => {
         K.assertCurrentValue(doc.state.isSaving$, false);
       });
       it('is [true, false] when entity persisting failed', async () => {
-        spaceEndpoint.mockImplementation(async body => {
+        spaceEndpoint.mockImplementation(async (body) => {
           const entry = cloneDeep(body.data);
           return new Promise((_, reject) => {
             set(entry, 'sys.version', entry.sys.version + 1);
@@ -239,7 +241,8 @@ describe('CmaDocument', () => {
       };
       // For some reason "catch" inside the throttled CMA function runs AFTER the "expect" below,
       // so have to skip few event-loop ticks first.
-      const waitForTimers = () => new Promise(resolve => setTimeout(resolve, 0) && jest.runAllTimers());
+      const waitForTimers = () =>
+        new Promise((resolve) => setTimeout(resolve, 0) && jest.runAllTimers());
 
       beforeEach(() => {
         jest.useFakeTimers();

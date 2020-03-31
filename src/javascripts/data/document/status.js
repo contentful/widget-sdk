@@ -31,7 +31,10 @@ export function create(sys$, docError$, canUpdate) {
     if (docError instanceof DocError.VersionMismatch) {
       return DocumentStatusCode.EDIT_CONFLICT;
     }
-    if (docError instanceof DocError.ShareJsInternalServerError || docError === 'internal-server-error') {
+    if (
+      docError instanceof DocError.ShareJsInternalServerError ||
+      docError === 'internal-server-error'
+    ) {
       logger.logSharejsError('Internal server error', { error: { error: docError } });
       return DocumentStatusCode.INTERNAL_SERVER_ERROR;
     }

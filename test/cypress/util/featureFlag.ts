@@ -13,4 +13,5 @@ export enum FeatureFlag {
   TWO_FA = 'feature-ogg-10-2019-2fa',
   ACCESS_TOOLS = 'feature-ogg-02-2020-access-tools',
   RELEASES = 'feature-pulitzer-02-2020-all-reference-dialog',
+  SHAREJS_REMOVAL = 'feature-pen-04-2020-sharejs-removal-multi'
 }

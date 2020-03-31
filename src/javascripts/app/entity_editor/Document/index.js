@@ -25,6 +25,6 @@ export function statusProperty(document) {
   return Status.create(
     document.sysProperty,
     document.state.error$,
-    accessChecker.canUpdateEntity({ data: document.getValueAt([]) }),
+    accessChecker.canUpdateEntity({ data: document.getValueAt([]) })
   );
 }
