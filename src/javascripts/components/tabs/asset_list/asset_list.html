@@ -122,29 +122,11 @@
             ng-show="showUnarchive()"
             aria-label="unarchive"
             >Unarchive</span
+          ><react-component
+            name="components/tabs/asset_list/DeleteButton"
+            props="{ shouldShow: showDelete(), count: selection.size(), deleteSelected: deleteSelected }"
+          ></react-component
           ><span
-            class="text-link--destructive"
-            type="button"
-            ng-show="showDelete()"
-            cf-context-menu-trigger
-            data-test-id="delete-asset"
-            aria-label="delete"
-            >Delete</span
-          >
-          <div class="delete-confirm" cf-context-menu="bottom">
-            <p>
-              You are about to permanently delete
-              <react-component
-                name="components/tabs/PluralizeEntityMessage"
-                props="{entityType: 'asset', count: selection.size()}"
-              ></react-component>
-            </p>
-            <button class="btn-caution" type="button" ng-click="deleteSelected()">
-              Permanently delete
-            </button>
-            <button class="btn-secondary-action" type="button">Cancel</button>
-          </div>
-          <span
             class="text-link--constructive"
             type="submit"
             ng-click="publishSelected()"

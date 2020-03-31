@@ -35,6 +35,7 @@ import * as componentsFieldDialogAppearanceFieldDialogAppearanceTabEs6 from 'com
 import * as componentsFieldDialogRichTextOptionsEs6 from 'components/field_dialog/RichTextOptions';
 import * as componentsSharedSpaceWizardWizardEs6 from 'components/shared/space-wizard/Wizard';
 import * as componentsTabsAssetListAddAssetButtonEs6 from 'components/tabs/asset_list/AddAssetButton';
+import * as componentsTabsAssetListDeleteAssetButtonEs6 from 'components/tabs/asset_list/DeleteButton';
 import * as componentsTabsPluralizeEntityMessageEs6 from 'components/tabs/PluralizeEntityMessage';
 import * as componentsRecordsResourceUsageIndexEs6 from 'components/RecordsResourceUsage';
 import * as componentsSharedUserNameFormatterFetchAndFormatUserNameEs6 from 'components/shared/UserNameFormatter/FetchAndFormatUserName';
@@ -291,6 +292,7 @@ function getModule(name) {
     'components/field_dialog/RichTextOptions': componentsFieldDialogRichTextOptionsEs6,
     'components/shared/space-wizard/Wizard': componentsSharedSpaceWizardWizardEs6,
     'components/tabs/asset_list/AddAssetButton': componentsTabsAssetListAddAssetButtonEs6,
+    'components/tabs/asset_list/DeleteButton': componentsTabsAssetListDeleteAssetButtonEs6,
     'components/tabs/PluralizeEntityMessage': componentsTabsPluralizeEntityMessageEs6,
     'components/RecordsResourceUsage': componentsRecordsResourceUsageIndexEs6,
     'components/shared/UserNameFormatter/FetchAndFormatUserName': componentsSharedUserNameFormatterFetchAndFormatUserNameEs6,
