@@ -1331,9 +1331,6 @@ pre,
     content: '^';
     top: 2px;
   }
-  [cf-context-menu] {
-    display: none;
-  }
   .context-menu {
     z-index: 200;
     min-width: 19ex;

@@ -49,8 +49,6 @@ const angular = (node) => {
     'modalDialog',
     'logger',
     'spaceContext',
-    'cf-context-menu-trigger',
-    'cf-context-menu',
     'ui-command',
     'ui-command-state',
   ];
