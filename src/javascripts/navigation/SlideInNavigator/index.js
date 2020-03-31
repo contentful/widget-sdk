@@ -9,8 +9,8 @@ const SLIDES_BELOW_QS = 'previousEntries';
 export const slideInStackEmitter = mitt();
 
 export const onSlideInNavigation = (fn) => {
-  const funcWrapper = ({ currentSlideLevel, targetSlideLevel }) => {
-    fn({ newSlideLevel: targetSlideLevel, oldSlideLevel: currentSlideLevel });
+  const funcWrapper = ({ newSlideLevel, oldSlideLevel }) => {
+    fn({ newSlideLevel, oldSlideLevel });
   };
   slideInStackEmitter.on('changed', funcWrapper);
   return () => {
@@ -46,7 +46,7 @@ export function getSlideInEntities() {
  * in the given entity being shown in the stack of slided-in entities.
  *
  * @param {Slide} slide New top slide.
- * @returns {currentSlideLevel: number, targetSlideLevel: number}
+ * @returns {newSlideLevel: number, oldSlideLevel: number}
  */
 export function goToSlideInEntity(slide) {
   const $state = getModule('$state');
@@ -62,8 +62,8 @@ export function goToSlideInEntity(slide) {
   $state.go(...slideHelper.toStateGoArgs(slide, { [SLIDES_BELOW_QS]: slidesBelowQS }));
 
   const result = {
-    currentSlideLevel: currentSlides.length - 1,
-    targetSlideLevel: firstTargetSlideIndex,
+    newSlideLevel: firstTargetSlideIndex,
+    oldSlideLevel: currentSlides.length - 1,
   };
 
   slideInStackEmitter.emit('changed', result);
@@ -86,7 +86,7 @@ export function goToPreviousSlideOrExit(eventLabel, onExit) {
   if (numEntities > 1) {
     const previousEntity = slideInEntities[numEntities - 2];
     const eventData = goToSlideInEntity(previousEntity);
-    if (eventData.currentSlideLevel > 0) {
+    if (eventData.oldSlideLevel > 0) {
       track(`slide_in_editor:${eventLabel}`, eventData);
     }
   } else {

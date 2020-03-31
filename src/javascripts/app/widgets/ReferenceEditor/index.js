@@ -32,12 +32,18 @@ export function AssetReferenceEditorWithTracking(props) {
             break;
           case 'create_and_link':
             safeNonBlockingTrack('reference_editor_action:create');
+            if (action.slide) {
+              safeNonBlockingTrack('slide_in_editor:open_create', action.slide);
+            }
             break;
           case 'delete':
             safeNonBlockingTrack('reference_editor_action:delete');
             break;
           case 'edit':
             safeNonBlockingTrack('reference_editor_action:edit');
+            if (action.slide) {
+              safeNonBlockingTrack('slide_in_editor:open', action.slide);
+            }
             break;
           case 'rendered':
             loadEvents.emit({ actionName: 'linksRendered' });
@@ -72,6 +78,9 @@ export function EntryReferenceEditorWithTracking(props) {
               contentType: props.sdk.contentType,
               response: action.entityData,
             });
+            if (action.slide) {
+              safeNonBlockingTrack('slide_in_editor:open_create', action.slide);
+            }
             break;
           case 'delete':
             safeNonBlockingTrack('reference_editor_action:delete', {
@@ -80,6 +89,9 @@ export function EntryReferenceEditorWithTracking(props) {
             break;
           case 'edit':
             safeNonBlockingTrack('reference_editor_action:edit', { ctId: action.contentTypeId });
+            if (action.slide) {
+              safeNonBlockingTrack('slide_in_editor:open', action.slide);
+            }
             break;
           case 'rendered':
             loadEvents.emit({ actionName: 'linksRendered' });

@@ -9,8 +9,8 @@ import { addUserOrgSpace } from './Decorators';
 export default addUserOrgSpace((eventName, data) => ({
   data: {
     action: extractAction(eventName),
-    current_slide_level: data.currentSlideLevel,
-    target_slide_level: data.targetSlideLevel,
+    current_slide_level: data.oldSlideLevel,
+    target_slide_level: data.newSlideLevel,
     peek_hover_time_ms: data.peekHoverTimeMs || 0,
     editor_type: data.editorType,
   },

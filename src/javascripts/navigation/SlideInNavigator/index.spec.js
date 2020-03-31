@@ -154,9 +154,9 @@ describe('SlideInNavigator', () => {
         expect($state.go).toHaveBeenCalledWith(...expectedStateGoArgs);
 
         const count = (ids) => (ids ? ids.split(',').length : 0);
-        const currentSlideLevel = count(search.previousEntries);
-        const targetSlideLevel = count(expectedStateGoArgs[1].previousEntries);
-        expect(result).toEqual({ currentSlideLevel, targetSlideLevel });
+        const oldSlideLevel = count(search.previousEntries);
+        const newSlideLevel = count(expectedStateGoArgs[1].previousEntries);
+        expect(result).toEqual({ oldSlideLevel, newSlideLevel });
       });
     }
 
