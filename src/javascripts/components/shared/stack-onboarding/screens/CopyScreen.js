@@ -4,7 +4,7 @@ import Navigation from 'components/shared/stack-onboarding/components/Navigation
 import WithLink from 'components/shared/stack-onboarding/components/WithLink';
 import ScreenHeader from 'components/shared/stack-onboarding/screens/Header';
 
-import { getCredentials } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
+import { getCredentials } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import { getModule } from 'NgRegistry';
 
 import FullScreen from 'components/shared/stack-onboarding/components/FullScreen';

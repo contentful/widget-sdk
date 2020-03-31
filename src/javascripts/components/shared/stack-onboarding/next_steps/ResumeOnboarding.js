@@ -12,7 +12,7 @@ import {
 import { getModule } from 'NgRegistry';
 import { trackClickCTA } from 'app/home/tracking';
 import { getStore } from 'browserStorage';
-import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
+import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 
 const store = getStore();
 

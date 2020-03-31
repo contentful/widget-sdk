@@ -1,7 +1,7 @@
 import { getSpaceInfo, getOrg, checkOrgAccess, getOnboardingSpaceId } from './utils';
 import * as accessChecker from 'access_control/AccessChecker';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
-import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
+import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import { getStore } from 'browserStorage';
 import { getModule } from 'NgRegistry';
 import { getOrganizationSpaces } from 'services/TokenStore';

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {
   track,
   getStoragePrefix,
-} from 'components/shared/auto_create_new_space/CreateModernOnboarding';
+} from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import { getStore } from 'browserStorage';
 import { updateUserInSegment } from 'analytics/Analytics';
 import { getModule } from 'NgRegistry';

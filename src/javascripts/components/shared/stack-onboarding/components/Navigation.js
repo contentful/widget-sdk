@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import WithLink from 'components/shared/stack-onboarding/components/WithLink';
-import { isOnboardingComplete } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
+import { isOnboardingComplete } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 
 const Step = ({ id, title, value, link, trackingElementId, active }) => {
   const classNames = `

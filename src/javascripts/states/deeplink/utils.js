@@ -7,7 +7,7 @@ import { create as createSpaceEnvRepo } from 'data/CMA/SpaceEnvironmentsRepo';
 import {
   MODERN_STACK_ONBOARDING_SPACE_NAME,
   getStoragePrefix,
-} from 'components/shared/auto_create_new_space/CreateModernOnboarding';
+} from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import { getSpaceAutoCreatedKey } from 'components/shared/auto_create_new_space/getSpaceAutoCreatedKey';
 import { fetchMarketplaceApps } from 'app/Apps/MarketplaceClient';
 

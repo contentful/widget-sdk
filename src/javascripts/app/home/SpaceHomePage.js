@@ -14,7 +14,7 @@ import {
   getCredentials,
   isDevOnboardingSpace,
   isContentOnboardingSpace,
-} from 'components/shared/auto_create_new_space/CreateModernOnboarding';
+} from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import { getModule } from 'NgRegistry';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 import * as K from 'utils/kefir';

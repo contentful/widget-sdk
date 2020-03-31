@@ -31,7 +31,7 @@ jest.mock('ng/spaceContext', () => ({
 
 jest.mock('browserStorage', () => ({ getStore: jest.fn() }));
 
-jest.mock('components/shared/auto_create_new_space/CreateModernOnboarding', () => ({
+jest.mock('components/shared/auto_create_new_space/CreateModernOnboardingUtils', () => ({
   getStoragePrefix: jest.fn(),
 }));
 

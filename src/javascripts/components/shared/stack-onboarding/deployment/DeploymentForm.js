@@ -8,7 +8,7 @@ import { getStore } from 'browserStorage';
 import {
   getStoragePrefix,
   MODERN_STACK_ONBOARDING_COMPLETE_EVENT,
-} from 'components/shared/auto_create_new_space/CreateModernOnboarding';
+} from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 
 import { getModule } from 'NgRegistry';
 

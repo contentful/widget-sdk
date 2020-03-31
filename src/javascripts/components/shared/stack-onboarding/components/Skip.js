@@ -5,7 +5,7 @@ import { updateUserInSegment } from 'analytics/Analytics';
 import {
   getStoragePrefix,
   track,
-} from 'components/shared/auto_create_new_space/CreateModernOnboarding';
+} from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import { getModule } from 'NgRegistry';
 
 const store = getStore();

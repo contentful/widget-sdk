@@ -12,7 +12,7 @@ describe('Navigation', () => {
   beforeEach(async function () {
     goStub = sinon.spy();
 
-    this.system.set('components/shared/auto_create_new_space/CreateModernOnboarding', {
+    this.system.set('components/shared/auto_create_new_space/CreateModernOnboardingUtils', {
       track: () => {},
       getStoragePrefix: sinon.stub().returns('prefix'),
       isOnboardingComplete: sinon.stub().returns(false),

@@ -1,4 +1,4 @@
-import { checkSpace } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
+import { checkSpace } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import GetStartedScreen from 'components/shared/stack-onboarding/screens/GetStartedScreen';
 import CopyScreen from 'components/shared/stack-onboarding/screens/CopyScreen';
 import ExploreScreen from 'components/shared/stack-onboarding/screens/ExploreScreen';

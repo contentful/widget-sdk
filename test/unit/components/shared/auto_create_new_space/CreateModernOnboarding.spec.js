@@ -25,8 +25,8 @@ describe('CreateModernOnboarding service', function () {
       create: () => ({ create: this.createCMAKey }),
     });
 
-    this.CreateModernOnboarding = await this.system.import(
-      'components/shared/auto_create_new_space/CreateModernOnboarding'
+    this.CreateModernOnboardingUtils = await this.system.import(
+      'components/shared/auto_create_new_space/CreateModernOnboardingUtils'
     );
 
     await $initialize(this.system);
@@ -34,13 +34,13 @@ describe('CreateModernOnboarding service', function () {
 
   describe('getUser', function () {
     it('should return given user', function () {
-      expect(this.CreateModernOnboarding.getUser()).toEqual(K.getValue(this.user$));
+      expect(this.CreateModernOnboardingUtils.getUser()).toEqual(K.getValue(this.user$));
     });
   });
 
   describe('getStoragePrefix', function () {
     it('should return the localStorage prefix used by modern stack onboarding', function () {
-      expect(this.CreateModernOnboarding.getStoragePrefix()).toEqual(
+      expect(this.CreateModernOnboardingUtils.getStoragePrefix()).toEqual(
         `ctfl:someUser:modernStackOnboarding`
       );
     });
@@ -50,7 +50,7 @@ describe('CreateModernOnboarding service', function () {
     it('should return a first key from the list', async function () {
       const key = { accessToken: 'some' };
       this.apiKeyRepo.getAll.returns(Promise.resolve([key]));
-      const deliveryToken = await this.CreateModernOnboarding.getDeliveryToken();
+      const deliveryToken = await this.CreateModernOnboardingUtils.getDeliveryToken();
 
       expect(deliveryToken).toBe(key.accessToken);
     });
@@ -59,7 +59,7 @@ describe('CreateModernOnboarding service', function () {
       const key = { accessToken: 'newly created key' };
       this.apiKeyRepo.getAll.returns(Promise.resolve([]));
       this.apiKeyRepo.create.returns(Promise.resolve(key));
-      const deliveryToken = await this.CreateModernOnboarding.getDeliveryToken();
+      const deliveryToken = await this.CreateModernOnboardingUtils.getDeliveryToken();
 
       expect(deliveryToken).toBe(key.accessToken);
     });
@@ -67,14 +67,14 @@ describe('CreateModernOnboarding service', function () {
 
   describe('getManagementToken', function () {
     it('should create a new token if does not exist yet', async function () {
-      expect(await this.CreateModernOnboarding.getManagementToken()).toBe('token');
+      expect(await this.CreateModernOnboardingUtils.getManagementToken()).toBe('token');
     });
 
     it('should get a created token', async function () {
       const cmaKey = { token: 'newly created CMA token' };
       this.createCMAKey.returns(Promise.resolve(cmaKey));
-      await this.CreateModernOnboarding.createManagementToken();
-      const receivedToken = await this.CreateModernOnboarding.getManagementToken();
+      await this.CreateModernOnboardingUtils.createManagementToken();
+      const receivedToken = await this.CreateModernOnboardingUtils.getManagementToken();
 
       expect(receivedToken).toBe(cmaKey.token);
     });

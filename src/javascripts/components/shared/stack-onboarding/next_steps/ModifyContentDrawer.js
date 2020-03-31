@@ -4,7 +4,7 @@ import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { Paragraph, Typography } from '@contentful/forma-36-react-components';
 import { href } from 'states/Navigator';
-import { getUser } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
+import { getUser } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import { trackClickCTA } from 'app/home/tracking';
 
 import Code from 'components/shared/stack-onboarding/components/Code';

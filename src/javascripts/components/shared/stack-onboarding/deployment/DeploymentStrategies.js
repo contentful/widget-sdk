@@ -7,7 +7,7 @@ import {
   getCredentials,
   isOnboardingComplete,
   getDeploymentProvider,
-} from 'components/shared/auto_create_new_space/CreateModernOnboarding';
+} from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import { getModule } from 'NgRegistry';
 
 class DeploymentStrategies extends React.Component {

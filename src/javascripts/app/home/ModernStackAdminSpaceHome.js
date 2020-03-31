@@ -11,7 +11,7 @@ import UpgradePricing from './UpgradePricing';
 import LearnAboutContentful from './components/LearnAboutContentful';
 import ModernStackOverview from 'components/shared/stack-onboarding/next_steps/ModernStackOverview';
 import { getStore } from 'browserStorage';
-import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
+import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 
 const store = getStore();
 

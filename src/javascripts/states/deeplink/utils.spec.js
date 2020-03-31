@@ -22,7 +22,7 @@ jest.mock('services/TokenStore', () => {
   };
 });
 
-jest.mock('components/shared/auto_create_new_space/CreateModernOnboarding', () => ({
+jest.mock('components/shared/auto_create_new_space/CreateModernOnboardingUtils', () => ({
   getStoragePrefix: jest.fn().mockReturnValue('prefix'),
   MODERN_STACK_ONBOARDING_SPACE_NAME: 'modern stack name',
 }));
