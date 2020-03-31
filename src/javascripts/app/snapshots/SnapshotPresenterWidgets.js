@@ -45,9 +45,7 @@ const SnapshotPresenterWidgets = ({
     );
   }
 
-  const { contentType } = editorData;
   const rtlClassName = isRtlLocale(locale.code) ? styles.rtl : '';
-
   switch (type) {
     case 'Array<Symbol>':
       return <SnapshotPresenterArraySymbol className={rtlClassName} value={value} />;
@@ -64,7 +62,7 @@ const SnapshotPresenterWidgets = ({
         <SnapshotPresenterRichText
           className={rtlClassName}
           value={value}
-          contentType={contentType.data}
+          contentType={editorData.contentType.data}
           entity={entity}
           field={field}
           locale={locale}

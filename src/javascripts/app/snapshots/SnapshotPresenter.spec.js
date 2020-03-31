@@ -24,12 +24,12 @@ const snapshot = {
 
 const getProps = (args = {}) => {
   const props = {
-    editorData: { entity: { data: entry } },
+    editorData: {},
+    entity: entry,
     locale: {
       code: 'en-US',
       internal_code: 'en-US',
     },
-    snapshot: { snapshot },
     widget: {
       settings: {},
       field: {
@@ -38,7 +38,6 @@ const getProps = (args = {}) => {
         type: 'Symbol',
       },
     },
-    version: 'current',
     ...args,
   };
   return props;
@@ -53,7 +52,7 @@ describe('SnapshotPresenter', () => {
   });
 
   it('should render snapshot text symbol with correct value', () => {
-    const { getByTestId } = render(<SnapshotPresenter {...getProps({ version: 'snapshot' })} />);
+    const { getByTestId } = render(<SnapshotPresenter {...getProps({ entity: snapshot })} />);
     const presenter = getByTestId('snapshot-presenter-standard');
     expect(presenter).toBeInTheDocument();
     expect(presenter.innerHTML).toBe(snapshot.fields.fieldId['en-US']);
@@ -74,14 +73,7 @@ describe('SnapshotPresenter', () => {
       },
     };
     it(`should render empty if value is ${type}`, () => {
-      const { getByTestId } = render(
-        <SnapshotPresenter
-          {...getProps({
-            version: 'snapshot',
-            snapshot: { snapshot: empty },
-          })}
-        />
-      );
+      const { getByTestId } = render(<SnapshotPresenter {...getProps({ entity: empty })} />);
       const presenter = getByTestId('snapshot-presenter');
       expect(presenter).toBeInTheDocument();
       expect(presenter).toBeEmpty();
@@ -112,14 +104,10 @@ describe('SnapshotPresenter', () => {
         <SnapshotPresenter
           {...getProps({
             widget,
-            editorData: {
-              entity: {
-                data: {
-                  fields: {
-                    fieldId: {
-                      'en-US': value,
-                    },
-                  },
+            entity: {
+              fields: {
+                fieldId: {
+                  'en-US': value,
                 },
               },
             },

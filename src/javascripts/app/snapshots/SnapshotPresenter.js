@@ -5,6 +5,7 @@ import { css } from 'emotion';
 
 import SnapshotPresenterWidgets from './SnapshotPresenterWidgets';
 import tokens from '@contentful/forma-36-tokens';
+import { getFieldPath } from './utils';
 
 const styles = {
   root: css({
@@ -29,16 +30,12 @@ const getFieldType = ({ type, items }) => {
   }
 };
 
-const SnapshotPresenter = (props) => {
-  const { widget, version, locale, editorData } = props;
+const SnapshotPresenter = ({ widget, locale, editorData, entity }) => {
   const { field } = widget;
 
   const type = getFieldType(field);
   const linkType = get(field, 'linkType', get(field, 'items.linkType'));
-  const entry = get(editorData, 'entity.data', {});
-  const snapshot = get(props, 'snapshot.snapshot', {});
-  const entity = version === 'current' ? entry : snapshot;
-  const value = get(entity, ['fields', field.id, locale.internal_code]);
+  const value = get(entity, getFieldPath(field.id, locale.internal_code));
 
   const hasValue = !isEmpty(value);
   return (
@@ -60,7 +57,7 @@ const SnapshotPresenter = (props) => {
 
 SnapshotPresenter.propTypes = {
   editorData: PropTypes.object.isRequired,
-  version: PropTypes.oneOf(['snapshot', 'current']).isRequired,
+  entity: PropTypes.object.isRequired,
   widget: PropTypes.shape({
     field: PropTypes.oneOfType([
       PropTypes.shape({
@@ -82,9 +79,6 @@ SnapshotPresenter.propTypes = {
     code: PropTypes.string,
     internal_code: PropTypes.string,
   }).isRequired,
-  snapshot: PropTypes.shape({
-    snapshot: PropTypes.object,
-  }),
 };
 
 export default SnapshotPresenter;

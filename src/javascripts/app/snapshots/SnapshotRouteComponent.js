@@ -6,8 +6,6 @@ import {
   Workbench,
   Button,
   TextLink,
-  RadioButton,
-  Icon,
   CheckboxField,
   FieldGroup,
   Notification,
@@ -20,27 +18,10 @@ import * as trackVersioning from 'analytics/events/versioning';
 import * as Entries from 'data/entries';
 import SnapshotSelector from './SnapshotSelector';
 import SnapshotPresenter from './SnapshotPresenter';
+import SnapshotWidgetCell from './SnapshotWidgetCell';
 import useSelectedVersions from './useSelectedVersions';
 import useEnrichedWidgets from './useEnrichedWidgets';
 import { CURRENT, SNAPSHOT } from './utils';
-
-const commonCellStyles = {
-  maxWidth: '50%',
-  display: 'flex',
-  flex: '1 0',
-  '&:first-child': {
-    borderRight: '1px solid #dbdbdb',
-  },
-};
-
-const commonOverlayStyles = {
-  zIndex: 150,
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-};
 
 const styles = {
   workbenchContent: css({
@@ -54,7 +35,12 @@ const styles = {
     backgroundColor: tokens.colorElementLightest,
   }),
   headerCell: css({
-    ...commonCellStyles,
+    maxWidth: '50%',
+    display: 'flex',
+    flex: '1 0',
+    '&:first-child': {
+      borderRight: '1px solid #dbdbdb',
+    },
     padding: `${tokens.spacingL} ${tokens.spacing3Xl}`,
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -67,29 +53,6 @@ const styles = {
       },
     },
   }),
-  cell: css({
-    ...commonCellStyles,
-    position: 'relative',
-    borderBottom: '1px solid #eee',
-  }),
-  selected: css({
-    '& > span': {
-      display: 'inline-block !important',
-    },
-    zIndex: 151,
-    border: ` 1px solid ${tokens.colorBlueMid}`,
-    backgroundColor: 'rgba(91,159,239,0.05)',
-    top: '-1px',
-    left: '-1px',
-    right: '-1px',
-    bottom: '-1px',
-  }),
-  cellPresenter: css({
-    flexGrow: 1,
-    padding: tokens.spacing3Xl,
-    paddingLeft: 0,
-    maxWidth: `calc(100% - ${tokens.spacing3Xl})`,
-  }),
   version: css({
     color: tokens.colorTextDark,
     fontSize: tokens.fontSizeL,
@@ -98,47 +61,6 @@ const styles = {
   }),
   fieldLocale: css({
     display: 'flex',
-  }),
-  fieldTitle: css({
-    display: 'flex',
-    color: tokens.colorTextLight,
-    marginBottom: '0.642857142857143em',
-    justifyContent: 'space-between',
-  }),
-  overlayDifferent: css({
-    ...commonOverlayStyles,
-    cursor: 'pointer',
-    textAlign: 'center',
-    '& > span': {
-      display: 'none',
-      padding: `${tokens.spacing2Xs} ${tokens.spacingXs}`,
-      fontSize: tokens.spacingS,
-      fontWeight: tokens.fontWeightNormal,
-      letterSpacing: '1px',
-      textTransform: 'uppercase',
-      background: tokens.colorBlueMid,
-      color: tokens.colorWhite,
-    },
-  }),
-  overlayIdentical: css({
-    ...commonOverlayStyles,
-    background: 'rgba(255,255,255,0.75)',
-  }),
-  noPermissionInfo: css({
-    marginLeft: 'auto',
-    whiteSpace: 'nowrap',
-    '& > i': {
-      display: 'icon-block',
-      marginRight: tokens.spacingXs,
-      fill: tokens.colorTextLight,
-    },
-  }),
-  radio: css({
-    minWidth: tokens.spacing3Xl,
-    maxWidth: tokens.spacing3Xl,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
   }),
 };
 
@@ -174,6 +96,8 @@ const SnapshotComparator = ({
 
   const editorData = getEditorData();
   const entry = get(editorData, 'entity', {});
+  const dataSys = get(entry, ['data', 'sys'], {});
+  const permissions = Permissions.create(dataSys);
 
   const title = EntityFieldValueSpaceContext.entryTitle(entry);
 
@@ -282,78 +206,52 @@ const SnapshotComparator = ({
             <div data-field-api-name={field.apiName} key={field.id}>
               {locales.map(({ fieldPath, isDifferent, locale }) => {
                 if (showOnlyDifferences && !isDifferent) return null;
-                const { code, name } = locale;
-                const dataSys = get(entry, ['data', 'sys'], {});
-                const canEdit = Permissions.create(dataSys).canEditFieldLocale(field.apiName, code);
+
+                const canEdit = permissions.canEditFieldLocale(field.apiName, locale.code);
                 const isDisabled = field.disabled || !canEdit;
                 const canRestore = isDifferent && !isDisabled;
 
-                const onSelect = (version) => {
+                const onSelect = (version) => () => {
                   if (canRestore && isDifferent) {
                     setSelectedVersionForField(fieldPath, version);
                   }
                 };
-                const selectedFieldVersion = selectedVersions[fieldPath] || CURRENT;
 
+                let fieldName = field.name;
+                if (hasMultipleLocales) {
+                  fieldName = `${fieldName} - ${locale.name}`;
+                }
+                const selectedFieldVersion = selectedVersions[fieldPath] || CURRENT;
                 return (
                   <div className={styles.fieldLocale} key={fieldPath}>
-                    {[SNAPSHOT, CURRENT].map((version) => {
-                      const isSelected = selectedFieldVersion === version;
-                      return (
-                        <div
-                          className={styles.cell}
-                          key={version}
-                          data-test-id={`snapshots-comparator-${version}`}>
-                          <div className={styles.radio}>
-                            <RadioButton
-                              checked={isSelected}
-                              labelText={`Select ${version} version of field`}
-                            />
-                          </div>
-                          <div className={styles.cellPresenter}>
-                            <div
-                              className={styles.fieldTitle}
-                              data-test-id={`snapshots-comparator-${version}-field-title`}>
-                              <div>
-                                {field.name}
-                                {hasMultipleLocales && <span>{` - ${name}`}</span>}
-                              </div>
-                              {isDisabled && (
-                                <div className={styles.noPermissionInfo}>
-                                  <Icon icon="Lock" />
-                                  This field is disabled
-                                </div>
-                              )}
-                            </div>
-                            <SnapshotPresenter
-                              version={version}
-                              snapshot={snapshot}
-                              locale={locale}
-                              widget={widget}
-                              editorData={editorData}
-                            />
-                            {canRestore ? (
-                              <div
-                                data-test-id={`snapshots-comparator-${version}-selector-${
-                                  isSelected ? 'selected' : 'unselected'
-                                }`}
-                                className={
-                                  isSelected
-                                    ? `${styles.overlayDifferent} ${styles.selected}`
-                                    : styles.overlayDifferent
-                                }
-                                onClick={() => onSelect(version)}>
-                                {version === SNAPSHOT && (
-                                  <span>Field will be restored to this version</span>
-                                )}
-                              </div>
-                            ) : (
-                              <div className={styles.overlayIdentical} />
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
+                    <SnapshotWidgetCell
+                      version={SNAPSHOT}
+                      isSelected={selectedFieldVersion === SNAPSHOT}
+                      onSelect={onSelect(SNAPSHOT)}
+                      canRestore={canRestore}
+                      fieldName={fieldName}
+                      isDisabled={isDisabled}>
+                      <SnapshotPresenter
+                        entity={get(snapshot, 'snapshot', {})}
+                        editorData={editorData}
+                        locale={locale}
+                        widget={widget}
+                      />
+                    </SnapshotWidgetCell>
+                    <SnapshotWidgetCell
+                      version={CURRENT}
+                      isSelected={selectedFieldVersion === CURRENT}
+                      onSelect={onSelect(CURRENT)}
+                      canRestore={canRestore}
+                      fieldName={fieldName}
+                      isDisabled={isDisabled}>
+                      <SnapshotPresenter
+                        entity={get(entry, 'data', {})}
+                        editorData={editorData}
+                        locale={locale}
+                        widget={widget}
+                      />
+                    </SnapshotWidgetCell>
                   </div>
                 );
               })}
