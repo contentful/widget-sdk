@@ -7,9 +7,28 @@ const localStorage = getStore();
 let cm = null;
 
 export async function init() {
-  cm = (await LazyLoader.get('osano')).cm;
+  const Osano = await LazyLoader.get('osano');
 
-  // hide Marketing toggles
+  // Get the original options and teardown the injected script
+  // generated Cosnent Manager instance
+  const options = Osano.cm.options;
+  Osano.cm.teardown();
+
+  // Override `whenReady` so that we can set the cookie key, which isn't
+  // able to be set using the options object
+  let readyCb;
+  Osano.ConsentManager.prototype.whenReady = (cb) => {
+    readyCb = cb;
+  };
+
+  // Create a new ConsentManager instance
+  cm = new Osano.ConsentManager(options);
+
+  // Rename the cookie/local storage key to not clash with marketing website
+  cm.storage.key = 'cf_webapp_cookieconsent';
+  readyCb();
+
+  // Hide the "Marketing" toggles
   const marketingToggles = document.querySelectorAll("input[data-category='MARKETING']");
 
   if (marketingToggles.length > 0) {
@@ -17,9 +36,6 @@ export async function init() {
       toggle.parentElement.parentElement.style.display = 'none';
     });
   }
-
-  // Rename the cookie/local storage key to not clash with marketing website
-  cm.storage.key = 'cf_webapp_cookieconsent';
 
   // This allows us to programmatically disable the consent manager during testing
   if (localStorage.has('__disable_consentmanager')) {
