@@ -1,5 +1,6 @@
 import React from 'react';
 import get from 'lodash/get';
+import noop from 'lodash/noop';
 import PropTypes from 'prop-types';
 import { track } from 'analytics/Analytics';
 import { AssetReferenceEditor, EntryReferenceEditor } from '@contentful/field-editor-reference';
@@ -11,7 +12,8 @@ function getCtId(entry) {
 }
 
 const safeNonBlockingTrack = (...args) => {
-  window.requestIdleCallback(() => {
+  const queueFn = window.requestIdleCallback || window.requestAnimationFrame || noop;
+  queueFn(() => {
     try {
       track(...args);
     } catch (e) {
