@@ -37,7 +37,7 @@ import {
 import StateLink from 'app/common/StateLink';
 import AppInstallModal from './AppInstallModal';
 
-const styles = {
+export const styles = {
   headerActions: css({
     display: 'flex',
     justifyContent: 'space-between',

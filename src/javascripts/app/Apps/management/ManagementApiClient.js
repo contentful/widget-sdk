@@ -51,11 +51,30 @@ export function deleteDef(definition) {
   });
 }
 
-export async function getCreatorNameOf(definition) {
+export async function getCreatorNameOf(entry) {
   const { firstName, lastName } = await getUser(
-    createOrgEndpointByDef(definition),
-    definition.sys.createdBy.sys.id
+    createOrgEndpointByDef(entry),
+    entry.sys.createdBy.sys.id
   );
 
   return [firstName, lastName].join(' ');
+}
+
+export function addKey({ orgId, definitionId, jwk }) {
+  const orgEndpoint = createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
+
+  return orgEndpoint({
+    method: 'POST',
+    data: { jwk },
+    path: ['app_definitions', definitionId, 'keys'],
+  });
+}
+
+export function revokeKey({ orgId, definitionId, fingerprint }) {
+  const orgEndpoint = createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
+
+  return orgEndpoint({
+    method: 'DELETE',
+    path: ['app_definitions', definitionId, 'keys', fingerprint],
+  });
 }

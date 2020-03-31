@@ -91,14 +91,22 @@ export default {
             }
           },
         ],
+        keys: [
+          '$stateParams',
+          async ({ orgId, definitionId }) => {
+            return getAppDefinitionLoader(orgId).getKeysForAppDefinition(definitionId);
+          },
+        ],
       },
       onEnter: redirectIfCannotManage,
       mapInjectedToProps: [
         '$state',
         'definition',
-        ($state, definition) => ({
+        'keys',
+        ($state, definition, keys) => ({
           goToListView: () => $state.go('^.list'),
           definition,
+          keys,
         }),
       ],
       component: AppDetails,

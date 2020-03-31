@@ -5,6 +5,7 @@ export default function createAppDefinitionLoader(appDefinitionsEndpoint, orgEnd
     getById,
     getByIds,
     getAllForCurrentOrganization,
+    getKeysForAppDefinition,
   };
 
   async function getById(id) {
@@ -77,6 +78,15 @@ export default function createAppDefinitionLoader(appDefinitionsEndpoint, orgEnd
     const { items } = await orgEndpoint({
       method: 'GET',
       path: ['app_definitions'],
+    });
+
+    return items;
+  }
+
+  async function getKeysForAppDefinition(appDefinitionId) {
+    const { items } = await orgEndpoint({
+      method: 'GET',
+      path: ['app_definitions', appDefinitionId, 'keys'],
     });
 
     return items;

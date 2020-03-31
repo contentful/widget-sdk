@@ -9,6 +9,9 @@ import {
   Paragraph,
   CopyButton,
   Workbench,
+  Tabs,
+  Tab,
+  TabPanel,
 } from '@contentful/forma-36-react-components';
 import { css, keyframes } from 'emotion';
 import Icon from 'ui/Components/Icon';
@@ -18,6 +21,7 @@ import * as ModalLauncher from 'app/common/ModalLauncher';
 import AppInstallModal from './AppInstallModal';
 import DeleteAppModal from './DeleteAppDialog';
 import SaveConfirmModal from './SaveConfirmModal';
+import KeyListing from './keys/KeyListing';
 import { track } from 'analytics/Analytics';
 import DocumentTitle from 'components/shared/DocumentTitle';
 
@@ -29,6 +33,11 @@ const fadeIn = keyframes({
     opacity: '1',
   },
 });
+
+const tabs = {
+  GENERAL: 'GENERAL',
+  KEY_PAIRS: 'KEY_PAIRS',
+};
 
 const styles = {
   title: css({
@@ -61,7 +70,6 @@ const styles = {
   }),
   info: css({
     padding: `${tokens.spacingL} 0`,
-    borderBottom: `1px solid ${tokens.colorElementLight}`,
     '& p:first-child': css({
       marginBottom: tokens.spacing2Xs,
     }),
@@ -70,14 +78,15 @@ const styles = {
       marginRight: tokens.spacing2Xs,
     }),
   }),
-  appEditor: css({
+  tabPanel: css({
     padding: `${tokens.spacingL} 0`,
+    marginBottom: tokens.spacing4Xl,
   }),
   formActions: css({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: tokens.spacing4Xl,
+    marginTop: tokens.spacingL,
   }),
   creator: css({
     animation: `${fadeIn} .2s ease`,
@@ -115,6 +124,7 @@ export default class AppDetails extends React.Component {
       name: props.definition.name,
       definition: props.definition,
       creator: '',
+      selectedTab: tabs.GENERAL,
     };
   }
 
@@ -196,7 +206,9 @@ export default class AppDetails extends React.Component {
   };
 
   render() {
-    const { name, definition, busy } = this.state;
+    const { name, definition, busy, selectedTab } = this.state;
+    const { keys } = this.props;
+    const onTabSelect = (id) => this.setState({ selectedTab: id });
 
     return (
       <Workbench>
@@ -231,28 +243,48 @@ export default class AppDetails extends React.Component {
               {this.state.creator && <span className={styles.creator}>{this.state.creator}</span>}
             </Paragraph>
           </div>
-          <div className={styles.appEditor}>
-            <AppEditor
-              definition={definition}
-              onChange={(definition) => this.setState({ definition })}
-            />
-          </div>
-          <div className={styles.formActions}>
-            <Button
-              loading={busy}
-              disabled={busy}
-              onClick={this.openSaveConfirmModal}
-              testId="app-save">
-              Update app
-            </Button>
-            <TextLink
-              linkType="negative"
-              disabled={busy}
-              onClick={this.openDeleteModal}
-              testId="app-delete">
-              Delete {name}
-            </TextLink>
-          </div>
+          <Tabs>
+            <Tab id={tabs.GENERAL} selected={selectedTab === tabs.GENERAL} onSelect={onTabSelect}>
+              General
+            </Tab>
+            <Tab
+              id={tabs.KEY_PAIRS}
+              selected={selectedTab === tabs.KEY_PAIRS}
+              onSelect={onTabSelect}>
+              Key pairs
+            </Tab>
+          </Tabs>
+          {selectedTab === tabs.GENERAL && (
+            <TabPanel id={tabs.GENERAL} className={styles.tabPanel}>
+              <div>
+                <AppEditor
+                  definition={definition}
+                  onChange={(definition) => this.setState({ definition })}
+                />
+              </div>
+              <div className={styles.formActions}>
+                <Button
+                  loading={busy}
+                  disabled={busy}
+                  onClick={this.openSaveConfirmModal}
+                  testId="app-save">
+                  Update app
+                </Button>
+                <TextLink
+                  linkType="negative"
+                  disabled={busy}
+                  onClick={this.openDeleteModal}
+                  testId="app-delete">
+                  Delete {name}
+                </TextLink>
+              </div>
+            </TabPanel>
+          )}
+          {selectedTab === tabs.KEY_PAIRS && (
+            <TabPanel id={tabs.KEY_PAIRS} className={styles.tabPanel}>
+              <KeyListing definition={definition} keys={keys} />
+            </TabPanel>
+          )}
         </Workbench.Content>
       </Workbench>
     );
@@ -262,4 +294,5 @@ export default class AppDetails extends React.Component {
 AppDetails.propTypes = {
   definition: PropTypes.object.isRequired,
   goToListView: PropTypes.func.isRequired,
+  keys: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
