@@ -123,7 +123,9 @@ export async function init() {
 
   // Rename the cookie/local storage key to not clash with marketing website
   cm.storage.key = 'cf_webapp_cookieconsent';
-  readyCb();
+
+  // Only call the readyCb exists
+  readyCb && readyCb();
 
   // Hide the "Marketing" toggles
   const marketingToggles = document.querySelectorAll("input[data-category='MARKETING']");
@@ -133,9 +135,6 @@ export async function init() {
       toggle.parentElement.parentElement.style.display = 'none';
     });
   }
-
-  // Rename the cookie/local storage key to not clash with marketing website
-  cm.storage.key = 'cf_webapp_cookieconsent';
 
   cm.on('osano-cm-initialized', handleConsentChanged);
   cm.on('osano-cm-consent-changed', handleConsentChanged);
