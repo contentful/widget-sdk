@@ -1,4 +1,4 @@
-import * as modalDialogMocked from 'ng/modalDialog';
+import ModalLauncherMocked from 'app/common/ModalLauncher';
 
 import { showDialog } from './CreateSpace';
 import { canCreateSpaceInOrganization } from 'access_control/AccessChecker';
@@ -23,6 +23,9 @@ const mockRatePlans = {
   },
 };
 
+jest.mock('app/common/ModalLauncher', () => ({
+  open: jest.fn(),
+}));
 jest.mock('services/TokenStore', () => ({
   getOrganization: jest.fn(async () => mockV1Org),
 }));
@@ -51,19 +54,19 @@ jest.mock('ng/modalDialog', () => ({
 // TODO: we'll be able to write much better tests if we migrate to Forma36 modals
 describe('CreateSpace', () => {
   beforeEach(() => {
-    modalDialogMocked.open.mockClear();
+    ModalLauncherMocked.open.mockClear();
   });
 
   describe('#showDialog', () => {
     it('opens old dialog with v1 org id', async function () {
       await showDialog('v1');
-      expect(modalDialogMocked.open).toHaveBeenCalledTimes(1);
+      expect(ModalLauncherMocked.open).toHaveBeenCalledTimes(1);
     });
 
     it('opens wizard with v2 org id', async function () {
       await showDialog('v2');
       getOrganization.mockResolvedValueOnce(mockV2Org);
-      expect(modalDialogMocked.open).toHaveBeenCalledTimes(1);
+      expect(ModalLauncherMocked.open).toHaveBeenCalledTimes(1);
     });
 
     it('throws if no org id is passed', async function () {
@@ -87,7 +90,7 @@ describe('CreateSpace', () => {
       isEnterprisePlan.mockReturnValueOnce(true);
       await showDialog('v2');
       getOrganization.mockResolvedValueOnce(mockV2Org);
-      expect(modalDialogMocked.open).toHaveBeenCalledTimes(1);
+      expect(ModalLauncherMocked.open).toHaveBeenCalledTimes(1);
     });
   });
 });

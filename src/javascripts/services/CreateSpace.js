@@ -14,6 +14,7 @@ import {
   isHighDemandEnterprisePlan,
 } from 'account/pricing/PricingDataProvider';
 import { getModule } from 'NgRegistry';
+import LegacyNewSpaceModal from './CreateSpace/LegacyNewSpaceModal';
 
 function Loading() {
   const spinnerStyle = {
@@ -41,6 +42,7 @@ function Loading() {
  */
 export async function showDialog(organizationId) {
   const modalDialog = getModule('modalDialog');
+  const spaceContext = getModule('spaceContext');
 
   if (!organizationId) {
     throw new Error('organizationId not supplied for space creation');
@@ -60,12 +62,15 @@ export async function showDialog(organizationId) {
   }
 
   if (isLegacyOrganization(organization)) {
-    modalDialog.open({
-      title: 'Space templates',
-      template: '<cf-create-new-space class="modal-background"></cf-create-new-space>',
-      backgroundClose: false,
-      persistOnNavigation: true,
-      scopeData: { organization },
+    ModalLauncher.open(({ isShown, onClose }) => {
+      return (
+        <LegacyNewSpaceModal
+          isShown={isShown}
+          onClose={onClose}
+          organization={organization}
+          spaceContext={spaceContext}
+        />
+      );
     });
   } else {
     let closeLoadingModal;

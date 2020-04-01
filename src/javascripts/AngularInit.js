@@ -52,9 +52,6 @@ export const angularInitRun = [
       import(/* webpackMode: "eager" */ 'components/field_dialog/validationAssetTypesController'),
       import(/* webpackMode: "eager" */ 'components/field_dialog/validationLinkTypeController'),
       import(/* webpackMode: "eager" */ 'components/shared/cfSelectionDirective'),
-      import(
-        /* webpackMode: "eager" */ 'components/shared/create_new_space/createNewSpaceDirective'
-      ),
       import(/* webpackMode: "eager" */ 'components/shared/endlessContainerDirective'),
       import(/* webpackMode: "eager" */ 'components/shared/listViewsController'),
       import(/* webpackMode: "eager" */ 'components/shared/space-wizard/SpaceWizardDirective'),
