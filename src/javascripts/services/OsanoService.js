@@ -27,13 +27,15 @@ let prevConsentOptions = null;
 export const __reset = () => {
   cm = null;
   prevConsentOptions = null;
-}
+};
 
 // Debounce handleConsentChanged in case the script initializes and the user consents within
 // two seconds
 //
 // Exported for testing
-export const handleConsentChanged = debounce(function debouncedHandleConsentChanged(newConsentOptions) {
+export const handleConsentChanged = debounce(function debouncedHandleConsentChanged(
+  newConsentOptions
+) {
   // Initialization happens in ClientController, and only happens after the user is available to us, so we
   // can safely synchronously get the user.
   const user = getUserSync();
@@ -46,7 +48,10 @@ export const handleConsentChanged = debounce(function debouncedHandleConsentChan
 
     let changed = false;
 
-    if (prevAnalyticsAllowed !== analyticsAllowed || prevPersonalizationAllowed !== personalizationAllowed) {
+    if (
+      prevAnalyticsAllowed !== analyticsAllowed ||
+      prevPersonalizationAllowed !== personalizationAllowed
+    ) {
       changed = true;
     }
 
@@ -62,7 +67,7 @@ export const handleConsentChanged = debounce(function debouncedHandleConsentChan
 
   prevConsentOptions = {
     analyticsAllowed,
-    personalizationAllowed
+    personalizationAllowed,
   };
 
   const segmentLoadOptions = {
@@ -85,7 +90,8 @@ export const handleConsentChanged = debounce(function debouncedHandleConsentChan
   if (personalizationAllowed) {
     Intercom.enable();
   }
-}, 2000);
+},
+2000);
 
 export async function init() {
   if (cm) {
@@ -97,7 +103,13 @@ export async function init() {
   // Get the original options and teardown the injected script
   // generated Cosnent Manager instance
   const options = Osano.cm.options;
-  Osano.cm.teardown();
+
+  try {
+    Osano.cm.teardown();
+  } catch {
+    // We don't care if teardown fails. It is likely to have failed if we call
+    // `teardown` before everything is attached, which is okay in this case.
+  }
 
   // Override `whenReady` so that we can set the cookie key, which isn't
   // able to be set using the options object
