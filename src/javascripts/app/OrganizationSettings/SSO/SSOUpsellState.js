@@ -10,7 +10,7 @@ import {
   Workbench,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { salesUrl, apiUrl } from 'Config';
+import { salesUrl, websiteUrl } from 'Config';
 import EmptyStateContainer, {
   defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
@@ -42,7 +42,7 @@ function SSOUpsellState() {
                 <Paragraph>
                   You can authorize users within your organization in Contentful directly from your
                   identity provider. We support SAML 2.0 for user authorization.{' '}
-                  <TextLink href={`https:${apiUrl('faq/sso/')}`} target="_blank">
+                  <TextLink href={`https:${websiteUrl('faq/sso/')}`} target="_blank">
                     Read our FAQs for more information.
                   </TextLink>
                 </Paragraph>
