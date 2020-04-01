@@ -16,10 +16,6 @@ jest.mock('./utils', () => ({
   formatConnectionTestErrors: jest.fn().mockReturnValue([]),
 }));
 
-jest.mock('Config', () => ({
-  authUrl: (path) => `https://be.joistio.com${path}`,
-}));
-
 describe('IDPSetupForm', () => {
   let identityProvider;
   let globalMocks;

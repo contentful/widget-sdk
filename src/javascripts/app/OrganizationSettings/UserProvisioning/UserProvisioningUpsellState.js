@@ -15,6 +15,13 @@ import { helpCenterUrl, salesUrl } from 'Config';
 import EmptyStateContainer, {
   defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+
+const withInAppHelpUtmParams = buildUrlWithUtmParams({
+  source: 'webapp',
+  medium: 'user-provisioning-setup',
+  campaign: 'in-app-help',
+});
 
 const styles = {
   pageWrapper: css({ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0 }),
@@ -39,7 +46,10 @@ function UserProvisioningUpsellState() {
               <Paragraph>
                 You can manage users and teams within your organization in Contentful directly from
                 your identity provider. We support SCIM 2.0 for user provisioning.{' '}
-                <TextLink testId="faq-url" href={`${helpCenterUrl}/scim-faq`} target="_blank">
+                <TextLink
+                  testId="faq-url"
+                  href={withInAppHelpUtmParams(`${helpCenterUrl}/scim-faq/`)}
+                  target="_blank">
                   Read our FAQs for more information.
                 </TextLink>
               </Paragraph>

@@ -4,6 +4,13 @@ import { Organization as OrganizationPropType } from 'app/OrganizationSettings/P
 import { Heading, Paragraph, TextLink, TextField } from '@contentful/forma-36-react-components';
 import { authUrl } from 'Config';
 import { track } from 'analytics/Analytics';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+
+const withInAppHelpUtmParams = buildUrlWithUtmParams({
+  source: 'webapp',
+  medium: 'sso-enabled',
+  campaign: 'in-app-help',
+});
 
 export default class SSOEnabled extends React.Component {
   static propTypes = {
@@ -35,7 +42,7 @@ export default class SSOEnabled extends React.Component {
               <TextLink
                 onClick={this.trackSupportClick}
                 testId="restricted-support-link"
-                href="https://www.contentful.com/support/">
+                href={withInAppHelpUtmParams('https://www.contentful.com/support/')}>
                 talk to support
               </TextLink>
               .
@@ -44,14 +51,17 @@ export default class SSOEnabled extends React.Component {
           {!restrictedModeEnabled && (
             <Fragment>
               To turn on{' '}
-              <TextLink href="https://www.contentful.com/faq/sso/#how-does-sso-restricted-mode-work">
+              <TextLink
+                href={withInAppHelpUtmParams(
+                  'https://www.contentful.com/faq/sso/#how-does-sso-restricted-mode-work'
+                )}>
                 Restricted mode
               </TextLink>
               , requiring users to sign in using SSO,{' '}
               <TextLink
                 onClick={this.trackSupportClick}
                 testId="unrestricted-support-link"
-                href="https://www.contentful.com/support/">
+                href={withInAppHelpUtmParams('https://www.contentful.com/support/')}>
                 talk to support
               </TextLink>
               .
@@ -78,7 +88,7 @@ export default class SSOEnabled extends React.Component {
               id="login-url"
               name="login-url"
               testId="login-url"
-              value={`https:${authUrl(`/sso/${orgId}/login`)}`}
+              value={authUrl(`/sso/${orgId}/login`)}
               textInputProps={{
                 withCopyButton: true,
                 disabled: true,

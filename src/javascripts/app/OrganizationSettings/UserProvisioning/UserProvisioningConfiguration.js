@@ -21,6 +21,13 @@ import * as Auth from 'Authentication';
 import * as TokenResourceManager from 'app/settings/api/cma-tokens/TokenResourceManager';
 import UserProvisioningToken from './UserProvisioningToken';
 import StateLink from 'app/common/StateLink';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+
+const withInAppHelpUtmParams = buildUrlWithUtmParams({
+  source: 'webapp',
+  medium: 'user-provisioning-configuration',
+  campaign: 'in-app-help',
+});
 
 const styles = {
   content: css({
@@ -80,7 +87,7 @@ export default function UserProvisioningConfiguration({ orgId }) {
           <Heading>Set up user provisioning with SCIM 2.0</Heading>
           <Paragraph className={styles.paragraph}>
             Set up user provisioning for your organization in Contentful in a few steps.{' '}
-            <TextLink href={`${helpCenterUrl}/scim-faq`} target="_blank">
+            <TextLink href={withInAppHelpUtmParams(`${helpCenterUrl}/scim-faq`)} target="_blank">
               Check out the FAQs.
             </TextLink>
           </Paragraph>

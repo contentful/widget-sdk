@@ -6,6 +6,7 @@ import Keys from './Keys';
 import PropTypes from 'prop-types';
 import { truncate } from 'utils/StringUtils';
 import InfoIcon from 'svg/info.svg';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 
 // Suggestions
 // -----------
@@ -83,6 +84,12 @@ SuggestionsBox.propTypes = {
   onKeyUp: PropTypes.func,
 };
 
+const withInAppHelpUtmParams = buildUrlWithUtmParams({
+  source: 'webapp',
+  medium: 'search-help-banner',
+  campaign: 'in-app-help',
+});
+
 const SearchHelpBanner = () => (
   <div
     style={{
@@ -103,7 +110,7 @@ const SearchHelpBanner = () => (
       Get more out of search. Here’s{' '}
       <a
         style={{ textDecoration: 'underline' }}
-        href="https://www.contentful.com/r/knowledgebase/content-search/"
+        href={withInAppHelpUtmParams('https://www.contentful.com/help/content-search/')}
         target="_blank"
         rel="noopener noreferrer">
         how search works

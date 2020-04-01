@@ -29,6 +29,13 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import SSOUpsellState from './SSOUpsellState';
 import NavigationIcon from 'ui/Components/NavigationIcon';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+
+const withInAppHelpUtmParams = buildUrlWithUtmParams({
+  source: 'webapp',
+  medium: 'sso-setup',
+  campaign: 'in-app-help',
+});
 
 const styles = {
   heading: css({
@@ -165,14 +172,14 @@ export class SSOSetup extends React.Component {
                   </Heading>
                   <Paragraph className={styles.setupParagraph}>
                     Set up SSO for your organization in Contentful in a few steps.&nbsp;&nbsp;
-                    <TextLink href="https://www.contentful.com/faq/sso/">
+                    <TextLink href={withInAppHelpUtmParams('https://www.contentful.com/faq/sso/')}>
                       Check out the FAQs
                     </TextLink>
                     &nbsp;&nbsp;
                     <TextLink
                       onClick={this.trackSupportClick}
                       testId="support-link"
-                      href="https://www.contentful.com/support/">
+                      href={withInAppHelpUtmParams('https://www.contentful.com/support/')}>
                       Talk to support
                     </TextLink>
                   </Paragraph>

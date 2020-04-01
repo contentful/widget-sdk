@@ -139,7 +139,7 @@ exports[`AppsListPage should match snapshot for loading state 1`] = `
               <a
                 class="Button__Button___1ZfFj a11y__focus-border--default___60AXp emotion-4 Button__Button--primary___JImeO"
                 data-test-id="cf-ui-button"
-                href="https://www.contentful.com/app-framework/"
+                href="https://www.contentful.com/app-framework/?utm_source=webapp&utm_medium=apps-cta-button&utm_campaign=in-app-help"
                 rel="noopener noreferrer"
                 target="_blank"
                 type="button"
@@ -533,7 +533,7 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
               <a
                 class="Button__Button___1ZfFj a11y__focus-border--default___60AXp emotion-4 Button__Button--primary___JImeO"
                 data-test-id="cf-ui-button"
-                href="https://www.contentful.com/developers/docs/extensibility/app-framework/"
+                href="https://www.contentful.com/developers/docs/extensibility/app-framework/?utm_source=webapp&utm_medium=apps-cta-button&utm_campaign=in-app-help"
                 rel="noopener noreferrer"
                 target="_blank"
                 type="button"
@@ -1070,7 +1070,7 @@ exports[`AppsListPage should match snapshot of apps loaded with limited access 1
               <a
                 class="Button__Button___1ZfFj a11y__focus-border--default___60AXp emotion-4 Button__Button--primary___JImeO"
                 data-test-id="cf-ui-button"
-                href="https://www.contentful.com/app-framework/"
+                href="https://www.contentful.com/app-framework/?utm_source=webapp&utm_medium=apps-cta-button&utm_campaign=in-app-help"
                 rel="noopener noreferrer"
                 target="_blank"
                 type="button"

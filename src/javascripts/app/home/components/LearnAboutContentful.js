@@ -6,6 +6,7 @@ import CommunityIll from 'svg/illustrations/community-space-home-Ill.svg';
 import CaseStudyIll from 'svg/illustrations/case-study-space-home-ill.svg';
 import { Subheading, Paragraph, TextLink, Typography } from '@contentful/forma-36-react-components';
 import { trackClickCTA } from '../tracking';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 
 const styles = {
   flexContainer: css({ display: 'flex', flexWrap: 'nowrap', justifyContent: 'space-around' }),
@@ -13,6 +14,12 @@ const styles = {
   heading: css({ fontSize: tokens.fontSizeL, marginTop: tokens.spacingXs }),
   illustration: css({ maxHeight: '130px' }),
 };
+
+const withInAppHelpUtmParams = buildUrlWithUtmParams({
+  source: 'webapp',
+  medium: 'learn-about-contentful',
+  campaign: 'in-app-help',
+});
 
 const LearnAboutContentful = () => {
   return (
@@ -24,7 +31,7 @@ const LearnAboutContentful = () => {
           <Paragraph>Learn about customer projects running on Contentful.</Paragraph>
           <TextLink
             onClick={() => trackClickCTA('case_studies_link')}
-            href="https://www.contentful.com/customers/"
+            href={withInAppHelpUtmParams('https://www.contentful.com/customers/')}
             target="_blank">
             View case studies
           </TextLink>
@@ -37,7 +44,7 @@ const LearnAboutContentful = () => {
           <Paragraph>Get step-by-step guides and learn about Contentful concepts.</Paragraph>
           <TextLink
             onClick={() => trackClickCTA('documentation_link')}
-            href="https://www.contentful.com/developers/docs/"
+            href={withInAppHelpUtmParams('https://www.contentful.com/developers/docs/')}
             target="_blank">
             View documentation
           </TextLink>
@@ -50,7 +57,7 @@ const LearnAboutContentful = () => {
           <Paragraph>Ask questions and learn from others in our Slack group and forums. </Paragraph>
           <TextLink
             onClick={() => trackClickCTA('community_link')}
-            href="https://www.contentful.com/developers/"
+            href={withInAppHelpUtmParams('https://www.contentful.com/developers/')}
             target="_blank">
             Join Contentful community
           </TextLink>

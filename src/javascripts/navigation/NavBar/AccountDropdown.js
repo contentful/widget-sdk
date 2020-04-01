@@ -20,6 +20,13 @@ import {
   DropdownListItem,
   TabFocusTrap,
 } from '@contentful/forma-36-react-components';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+
+const withInAppHelpUtmParams = buildUrlWithUtmParams({
+  source: 'webapp',
+  medium: 'account-menu',
+  campaign: 'in-app-help',
+});
 
 const styles = {
   dropdown: css({
@@ -251,7 +258,7 @@ export default class AccountDropdown extends Component {
 
           <DropdownListItem
             testId="nav.account.support"
-            href={Config.supportUrl}
+            href={withInAppHelpUtmParams(Config.supportUrl)}
             target="_blank"
             onClick={this.handleDropdownListItemClick}
             rel="noopener noreferrer">

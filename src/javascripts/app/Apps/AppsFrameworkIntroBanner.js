@@ -6,6 +6,7 @@ import tokens from '@contentful/forma-36-tokens';
 import ConnectWithAppIllustration from 'svg/illustrations/connected-shapes.svg';
 import { track } from 'analytics/Analytics';
 import { getCurrentStateName } from 'states/Navigator';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 
 const styles = {
   svgContainerExtension: css({ width: '171px', marginTop: '-20px' }),
@@ -31,6 +32,12 @@ const styles = {
   }),
 };
 
+const withInAppHelpUtmParams = buildUrlWithUtmParams({
+  source: 'webapp',
+  medium: 'apps-cta-button',
+  campaign: 'in-app-help',
+});
+
 const AppsFrameworkIntroBanner = ({ canManageApps }) => {
   const ctaLink = canManageApps
     ? 'https://www.contentful.com/developers/docs/extensibility/app-framework/'
@@ -55,7 +62,7 @@ const AppsFrameworkIntroBanner = ({ canManageApps }) => {
           }
           target="_blank"
           rel="noopener noreferrer"
-          href={ctaLink}>
+          href={withInAppHelpUtmParams(ctaLink)}>
           Learn more about Contentful apps
         </Button>
       </div>

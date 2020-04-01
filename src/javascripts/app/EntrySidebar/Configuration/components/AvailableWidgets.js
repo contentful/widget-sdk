@@ -4,6 +4,7 @@ import { Subheading, Paragraph, TextLink } from '@contentful/forma-36-react-comp
 import AvailableWidget from './AvailableWidget';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 
 const styles = {
   availableItemsTitle: css({
@@ -19,6 +20,12 @@ const styles = {
     marginBottom: tokens.spacingS,
   }),
 };
+
+const withInAppHelpUtmParams = buildUrlWithUtmParams({
+  source: 'webapp',
+  medium: 'use-customer-sidebar-available-items',
+  campaign: 'in-app-help',
+});
 
 export default function AvailableItems(props) {
   const { items } = props;
@@ -47,7 +54,7 @@ export default function AvailableItems(props) {
           </Paragraph>
           <TextLink
             icon="ExternalLink"
-            href="https://www.contentful.com/developers/marketplace"
+            href="https://www.contentful.com/marketplace/"
             target="_blank">
             Add a new UI Extension
           </TextLink>
@@ -56,7 +63,9 @@ export default function AvailableItems(props) {
       <Paragraph>
         Learn more about{' '}
         <TextLink
-          href="https://www.contentful.com/developers/docs/extensibility/ui-extensions/"
+          href={withInAppHelpUtmParams(
+            'https://www.contentful.com/developers/docs/extensibility/ui-extensions/'
+          )}
           target="_blank">
           UI Extensions
         </TextLink>

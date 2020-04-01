@@ -1,6 +1,13 @@
 import React from 'react';
 import { List, ListItem, TextLink } from '@contentful/forma-36-react-components';
 import WorkbenchSidebarItem from 'app/common/WorkbenchSidebarItem';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+
+const withInAppHelpUtmParams = buildUrlWithUtmParams({
+  source: 'webapp',
+  medium: 'webhooks-sidebar',
+  campaign: 'in-app-help',
+});
 
 export default function WehhookSidebarDocumentation() {
   return (
@@ -8,7 +15,9 @@ export default function WehhookSidebarDocumentation() {
       <List>
         <ListItem>
           <TextLink
-            href="https://www.contentful.com/developers/docs/concepts/webhooks/"
+            href={withInAppHelpUtmParams(
+              'https://www.contentful.com/developers/docs/concepts/webhooks/'
+            )}
             target="_blank"
             rel="noopener noreferrer">
             Intro to webhooks
@@ -16,7 +25,9 @@ export default function WehhookSidebarDocumentation() {
         </ListItem>
         <ListItem>
           <TextLink
-            href="https://www.contentful.com/developers/docs/references/content-management-api/#/reference/webhooks"
+            href={withInAppHelpUtmParams(
+              'https://www.contentful.com/developers/docs/references/content-management-api/#/reference/webhooks'
+            )}
             target="_blank"
             rel="noopener noreferrer">
             Webhook management API reference

@@ -8,6 +8,13 @@ import isLegacyEnterprise from 'data/isLegacyEnterprise';
 import { UPGRADE_PRICING_FLAG } from 'featureFlags';
 import { getModule } from 'NgRegistry';
 import { trackClickCTA } from './tracking';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+
+const withInAppHelpUtmParams = buildUrlWithUtmParams({
+  source: 'webapp',
+  medium: 'upgrade-pricing',
+  campaign: 'in-app-help',
+});
 
 export default class UpgradePricing extends React.Component {
   state = {};
@@ -65,7 +72,9 @@ export default class UpgradePricing extends React.Component {
           <p className="upgrade-space--text">
             We made it easier to update and manage content models with our new{' '}
             <a
-              href={websiteUrl('/developers/docs/concepts/multiple-environments/')}
+              href={withInAppHelpUtmParams(
+                websiteUrl('/developers/docs/concepts/multiple-environments/')
+              )}
               rel="noopener noreferrer"
               target="_blank">
               Space environments feature
@@ -75,8 +84,10 @@ export default class UpgradePricing extends React.Component {
             <br />
             To learn more, read about our{' '}
             <a
-              href={websiteUrl(
-                '/pricing/?faq_category=payments&faq=what-type-of-spaces-can-i-have#payments'
+              href={withInAppHelpUtmParams(
+                websiteUrl(
+                  '/pricing/?faq_category=payments&faq=what-type-of-spaces-can-i-have#payments'
+                )
               )}
               rel="noopener noreferrer"
               target="_blank">
@@ -87,7 +98,7 @@ export default class UpgradePricing extends React.Component {
           <a
             className="btn-secondary-action"
             onClick={this.onUpgradeClick}
-            href={websiteUrl('/support/?upgrade-pricing=true')}
+            href={withInAppHelpUtmParams(websiteUrl('/support/?upgrade-pricing=true'))}
             rel="noopener noreferrer"
             target="_blank">
             Submit a request

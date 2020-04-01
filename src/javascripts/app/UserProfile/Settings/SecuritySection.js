@@ -20,10 +20,17 @@ import { getUserTotp, deleteUserTotp } from './AccountRepository';
 import ChangePasswordModal from './ChangePasswordModal';
 import Enable2FAModal from './Enable2FAModal';
 import { User as UserPropType } from './propTypes';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 
 const goToResendEmailPage = () => {
   $window.location = authUrl('/confirmation/new/resend');
 };
+
+const withInAppHelpUtmParams = buildUrlWithUtmParams({
+  source: 'webapp',
+  medium: 'user-profile-security',
+  campaign: 'in-app-help',
+});
 
 const openEnable2FAModal = async (onEnable2FA) => {
   let totpData;
@@ -113,7 +120,9 @@ const openAddPasswordModal = async (user, onAddPassword) => {
 };
 
 const TwoFactorAuthenticationFaqLink = () => (
-  <TextLink href={websiteUrl('faq/two-factor-authentication/')} target="_blank">
+  <TextLink
+    href={withInAppHelpUtmParams(websiteUrl('faq/two-factor-authentication/'))}
+    target="_blank">
     Learn more about 2FA
   </TextLink>
 );

@@ -245,7 +245,7 @@ Object {
                 <a
                   class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
                   data-test-id="cf-ui-text-link"
-                  href="https://www.contentful.com/developers/docs/extensibility/apps/building-apps/"
+                  href="https://www.contentful.com/developers/docs/extensibility/app-framework/tutorial/?utm_source=webapp&utm_medium=new-app&utm_campaign=in-app-help"
                   rel="noopener noreferrer"
                   target="_blank"
                 >
@@ -364,7 +364,7 @@ Object {
                       <a
                         class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
                         data-test-id="cf-ui-text-link"
-                        href="https://contentful.com/developers/docs/references/content-management-api/#/reference/app-definitions"
+                        href="https://www.contentful.com/developers/docs/references/content-management-api/?utm_source=webapp&utm_medium=new-app&utm_campaign=in-app-help#/reference/app-definitions"
                         rel="noopener noreferrer"
                         target="_blank"
                       >
@@ -1403,7 +1403,7 @@ Object {
               <a
                 class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
                 data-test-id="cf-ui-text-link"
-                href="https://www.contentful.com/developers/docs/extensibility/apps/building-apps/"
+                href="https://www.contentful.com/developers/docs/extensibility/app-framework/tutorial/?utm_source=webapp&utm_medium=new-app&utm_campaign=in-app-help"
                 rel="noopener noreferrer"
                 target="_blank"
               >
@@ -1522,7 +1522,7 @@ Object {
                     <a
                       class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
                       data-test-id="cf-ui-text-link"
-                      href="https://contentful.com/developers/docs/references/content-management-api/#/reference/app-definitions"
+                      href="https://www.contentful.com/developers/docs/references/content-management-api/?utm_source=webapp&utm_medium=new-app&utm_campaign=in-app-help#/reference/app-definitions"
                       rel="noopener noreferrer"
                       target="_blank"
                     >

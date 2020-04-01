@@ -18,6 +18,13 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 
 import { MARKETPLACE_ORG_ID } from '../config';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+
+const withInAppHelpUtmParams = buildUrlWithUtmParams({
+  source: 'webapp',
+  medium: 'new-app',
+  campaign: 'in-app-help',
+});
 
 const styles = {
   helpParagraph: css({
@@ -216,7 +223,9 @@ export default function AppEditor({ definition, onChange }) {
           <Paragraph className={styles.helpParagraph}>
             Specify where the app can be rendered. Check out the{' '}
             <TextLink
-              href="https://contentful.com/developers/docs/references/content-management-api/#/reference/app-definitions"
+              href={withInAppHelpUtmParams(
+                'https://www.contentful.com/developers/docs/references/content-management-api/#/reference/app-definitions'
+              )}
               target="_blank"
               rel="noopener noreferrer">
               documentation

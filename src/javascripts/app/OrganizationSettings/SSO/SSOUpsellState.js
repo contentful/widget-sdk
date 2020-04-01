@@ -16,6 +16,13 @@ import EmptyStateContainer, {
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 import DocumentTitle from 'components/shared/DocumentTitle';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+
+const withInAppHelpUtmParams = buildUrlWithUtmParams({
+  source: 'webapp',
+  medium: 'sso-setup',
+  campaign: 'in-app-help',
+});
 
 const styles = {
   pageWrapper: css({ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0 }),
@@ -42,7 +49,7 @@ function SSOUpsellState() {
                 <Paragraph>
                   You can authorize users within your organization in Contentful directly from your
                   identity provider. We support SAML 2.0 for user authorization.{' '}
-                  <TextLink href={`https:${websiteUrl('faq/sso/')}`} target="_blank">
+                  <TextLink href={withInAppHelpUtmParams(websiteUrl('faq/sso/'))} target="_blank">
                     Read our FAQs for more information.
                   </TextLink>
                 </Paragraph>

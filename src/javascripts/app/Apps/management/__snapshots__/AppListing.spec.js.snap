@@ -662,7 +662,7 @@ Object {
                 <a
                   class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
                   data-test-id="cf-ui-text-link"
-                  href="https://www.contentful.com/developers/docs/extensibility/apps/building-apps/"
+                  href="https://www.contentful.com/developers/docs/extensibility/app-framework/tutorial/?utm_source=webapp&utm_medium=app-listing&utm_campaign=in-app-help"
                 >
                   <span
                     class="TabFocusTrap__TabFocusTrap___39Vty"
@@ -672,11 +672,12 @@ Object {
                   </span>
                 </a>
                  
-                or check out our 
+                or check out our
+                 
                 <a
                   class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
                   data-test-id="cf-ui-text-link"
-                  href="https://contentful.com/marketplace"
+                  href="https://contentful.com/marketplace?utm_source=webapp&utm_medium=app-listing&utm_campaign=in-app-help"
                 >
                   <span
                     class="TabFocusTrap__TabFocusTrap___39Vty"
@@ -1354,7 +1355,7 @@ Object {
               <a
                 class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
                 data-test-id="cf-ui-text-link"
-                href="https://www.contentful.com/developers/docs/extensibility/apps/building-apps/"
+                href="https://www.contentful.com/developers/docs/extensibility/app-framework/tutorial/?utm_source=webapp&utm_medium=app-listing&utm_campaign=in-app-help"
               >
                 <span
                   class="TabFocusTrap__TabFocusTrap___39Vty"
@@ -1364,11 +1365,12 @@ Object {
                 </span>
               </a>
                
-              or check out our 
+              or check out our
+               
               <a
                 class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
                 data-test-id="cf-ui-text-link"
-                href="https://contentful.com/marketplace"
+                href="https://contentful.com/marketplace?utm_source=webapp&utm_medium=app-listing&utm_campaign=in-app-help"
               >
                 <span
                   class="TabFocusTrap__TabFocusTrap___39Vty"
@@ -1508,7 +1510,7 @@ Object {
                 <a
                   class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
                   data-test-id="cf-ui-text-link"
-                  href="https://www.contentful.com/developers/docs/extensibility/apps/building-apps/"
+                  href="https://www.contentful.com/developers/docs/extensibility/app-framework/tutorial/?utm_source=webapp&utm_medium=app-listing&utm_campaign=in-app-help"
                 >
                   <span
                     class="TabFocusTrap__TabFocusTrap___39Vty"
@@ -1518,11 +1520,12 @@ Object {
                   </span>
                 </a>
                  
-                or check out our 
+                or check out our
+                 
                 <a
                   class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
                   data-test-id="cf-ui-text-link"
-                  href="https://contentful.com/marketplace"
+                  href="https://contentful.com/marketplace?utm_source=webapp&utm_medium=app-listing&utm_campaign=in-app-help"
                 >
                   <span
                     class="TabFocusTrap__TabFocusTrap___39Vty"
@@ -1583,7 +1586,7 @@ Object {
                 <a
                   class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
                   data-test-id="cf-ui-text-link"
-                  href="https://www.contentful.com/r/knowledgebase/spaces-and-organizations/#belonging-to-an-organization"
+                  href="https://www.contentful.com/help/spaces-and-organizations/?utm_source=webapp&utm_medium=app-listing&utm_campaign=in-app-help#belonging-to-an-organization"
                   rel="noopener noreferrer"
                   target="_blank"
                 >
@@ -1668,7 +1671,7 @@ Object {
               <a
                 class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
                 data-test-id="cf-ui-text-link"
-                href="https://www.contentful.com/developers/docs/extensibility/apps/building-apps/"
+                href="https://www.contentful.com/developers/docs/extensibility/app-framework/tutorial/?utm_source=webapp&utm_medium=app-listing&utm_campaign=in-app-help"
               >
                 <span
                   class="TabFocusTrap__TabFocusTrap___39Vty"
@@ -1678,11 +1681,12 @@ Object {
                 </span>
               </a>
                
-              or check out our 
+              or check out our
+               
               <a
                 class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
                 data-test-id="cf-ui-text-link"
-                href="https://contentful.com/marketplace"
+                href="https://contentful.com/marketplace?utm_source=webapp&utm_medium=app-listing&utm_campaign=in-app-help"
               >
                 <span
                   class="TabFocusTrap__TabFocusTrap___39Vty"
@@ -1743,7 +1747,7 @@ Object {
               <a
                 class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
                 data-test-id="cf-ui-text-link"
-                href="https://www.contentful.com/r/knowledgebase/spaces-and-organizations/#belonging-to-an-organization"
+                href="https://www.contentful.com/help/spaces-and-organizations/?utm_source=webapp&utm_medium=app-listing&utm_campaign=in-app-help#belonging-to-an-organization"
                 rel="noopener noreferrer"
                 target="_blank"
               >
@@ -1885,7 +1889,7 @@ Object {
                 <a
                   class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
                   data-test-id="cf-ui-text-link"
-                  href="https://www.contentful.com/developers/docs/extensibility/apps/building-apps/"
+                  href="https://www.contentful.com/developers/docs/extensibility/app-framework/tutorial/?utm_source=webapp&utm_medium=app-listing&utm_campaign=in-app-help"
                 >
                   <span
                     class="TabFocusTrap__TabFocusTrap___39Vty"
@@ -1895,11 +1899,12 @@ Object {
                   </span>
                 </a>
                  
-                or check out our 
+                or check out our
+                 
                 <a
                   class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
                   data-test-id="cf-ui-text-link"
-                  href="https://contentful.com/marketplace"
+                  href="https://contentful.com/marketplace?utm_source=webapp&utm_medium=app-listing&utm_campaign=in-app-help"
                 >
                   <span
                     class="TabFocusTrap__TabFocusTrap___39Vty"
@@ -1998,7 +2003,7 @@ Object {
               <a
                 class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
                 data-test-id="cf-ui-text-link"
-                href="https://www.contentful.com/developers/docs/extensibility/apps/building-apps/"
+                href="https://www.contentful.com/developers/docs/extensibility/app-framework/tutorial/?utm_source=webapp&utm_medium=app-listing&utm_campaign=in-app-help"
               >
                 <span
                   class="TabFocusTrap__TabFocusTrap___39Vty"
@@ -2008,11 +2013,12 @@ Object {
                 </span>
               </a>
                
-              or check out our 
+              or check out our
+               
               <a
                 class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
                 data-test-id="cf-ui-text-link"
-                href="https://contentful.com/marketplace"
+                href="https://contentful.com/marketplace?utm_source=webapp&utm_medium=app-listing&utm_campaign=in-app-help"
               >
                 <span
                   class="TabFocusTrap__TabFocusTrap___39Vty"

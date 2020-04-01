@@ -14,6 +14,13 @@ import * as ManagementApiClient from './ManagementApiClient';
 import { track } from 'analytics/Analytics';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import NavigationIcon from 'ui/Components/NavigationIcon';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+
+const withInAppHelpUtmParams = buildUrlWithUtmParams({
+  source: 'webapp',
+  medium: 'new-app',
+  campaign: 'in-app-help',
+});
 
 const styles = {
   spacerM: css({
@@ -28,7 +35,7 @@ const styles = {
 };
 
 const BUILDING_APPS_URL =
-  'https://www.contentful.com/developers/docs/extensibility/apps/building-apps/';
+  'https://www.contentful.com/developers/docs/extensibility/app-framework/tutorial/';
 
 export default class NewApp extends React.Component {
   constructor(props) {
@@ -76,7 +83,10 @@ export default class NewApp extends React.Component {
           </Paragraph>
           <Paragraph className={styles.spacerXl}>
             Learn more about{' '}
-            <TextLink href={BUILDING_APPS_URL} target="_blank" rel="noopener noreferrer">
+            <TextLink
+              href={withInAppHelpUtmParams(BUILDING_APPS_URL)}
+              target="_blank"
+              rel="noopener noreferrer">
               building Contentful apps
             </TextLink>{' '}
             to get started.

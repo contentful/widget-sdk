@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { websiteUrl } from 'Config';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 
 const items = {
   sales: 'contact/sales/',
@@ -11,28 +12,34 @@ const items = {
   hibernation: 'developers/docs/', // @todo needs proper article
   entry: 'developers/docs/concepts/data-model/',
   asset: 'developers/docs/concepts/data-model/',
-  api_key: 'developers/docs/references/authentication/#the-delivery-api-and-preview-api',
+  api_key: 'developers/docs/references/authentication/#the-delivery-and-preview-api',
   predefined_value: 'faq/basics/#how-can-i-use-predefined-values',
   locale: 'developers/docs/concepts/locales/',
   space_template: 'developers/docs/', // @todo needs proper article
   id_change: 'developers/docs/', // @todo needs proper article,
-  roles: 'r/knowledgebase/roles-and-permissions/',
+  roles: 'developers/docs/concepts/roles-permissions/',
   field_lifecycle: 'faq/basics/#what-is-the-lifecycle-of-a-field',
   content_apis: 'developers/docs/concepts/apis/',
-  delivery_api: 'developers/docs/references/content-delivery-api',
-  management_api: 'developers/docs/references/content-management-api',
-  cma_key: 'developers/docs/references/authentication/#the-management-api',
-  content_preview: 'r/knowledgebase/setup-content-preview/',
-  contentModellingBasics: 'r/knowledgebase/content-modelling-basics/',
+  delivery_api: 'developers/docs/references/content-delivery-api/',
+  management_api: 'developers/docs/references/content-management-api/',
+  cma_key: 'developers/docs/references/authentication/#the-management-api/',
+  content_preview: 'help/setup-content-preview/',
+  contentModellingBasics: 'help/content-modelling-basics/',
   createOAuthApp: 'developers/docs/references/authentication/#creating-an-oauth-20-application',
   // TODO add it once it becomes available
-  spaceEnvironments: 'developers/docs',
-  spacesAndOrganizations: 'r/knowledgebase/spaces-and-organizations',
+  spaceEnvironments: 'developers/docs/',
+  spacesAndOrganizations: 'help/spaces-and-organizations/',
 };
 
 function getKnowledgeBaseUrl(name) {
+  const withInAppHelpUtmParams = buildUrlWithUtmParams({
+    source: 'webapp',
+    medium: `knowledge-base-${name}`,
+    campaign: 'in-app-help',
+  });
+
   if (items[name]) {
-    return websiteUrl(items[name]);
+    return withInAppHelpUtmParams(websiteUrl(items[name]));
   }
 
   throw new Error('Incorrect Knowledge Base item "' + name + '".');

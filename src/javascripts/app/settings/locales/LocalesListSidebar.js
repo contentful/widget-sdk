@@ -9,11 +9,13 @@ import { Typography, Paragraph } from '@contentful/forma-36-react-components';
 import WorkbenchSidebarItem from 'app/common/WorkbenchSidebarItem';
 import ExternalTextLink from 'app/common/ExternalTextLink';
 import { developerDocsUrl } from 'Config';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 
-// TODO: Maybe create a utm parameters generator to append to the URL because this will be used more often
-const localeDocUrlParameters =
-  '?utm_source=webapp&utm_medium=locales-sidebar&utm_campaign=in-app-help';
-const conceptLocalesDocsUrl = `${developerDocsUrl}/concepts/locales/${localeDocUrlParameters}`;
+const withInAppHelpUtmParams = buildUrlWithUtmParams({
+  source: 'webapp',
+  medium: 'locales-sidebar',
+  campaign: 'in-app-help',
+});
 
 const documentationsSectionStyles = {
   paragraph: css({
@@ -28,7 +30,9 @@ const DocumentationsSection = () => (
     </Paragraph>
     <Paragraph className={documentationsSectionStyles.paragraph}>
       See our{' '}
-      <ExternalTextLink testId="locales-documentation-link" href={conceptLocalesDocsUrl}>
+      <ExternalTextLink
+        testId="locales-documentation-link"
+        href={withInAppHelpUtmParams(`${developerDocsUrl}/concepts/locales/`)}>
         developer documentation
       </ExternalTextLink>{' '}
       for details.

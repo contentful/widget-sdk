@@ -4,8 +4,15 @@ import { Controlled as CodeMirror } from 'react-codemirror2';
 import { get } from 'lodash';
 import WidgetParametersForm from 'widgets/WidgetParametersForm';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 
 const DEFAULT_CM_HEIGHT = '400px';
+
+const withInAppHelpUtmParams = buildUrlWithUtmParams({
+  source: 'webapp',
+  medium: 'add-new-extension',
+  campaign: 'in-app-help',
+});
 
 const Label = ({ text, info }) => {
   return (
@@ -55,7 +62,9 @@ const ExtensionParameters = ({ entity, onChange }) => {
         <p>
           You can set parameter definitions using the{' '}
           <a
-            href="https://www.contentful.com/developers/docs/references/content-management-api/#/reference/ui-extensions/configuration-parameters"
+            href={withInAppHelpUtmParams(
+              'https://www.contentful.com/developers/docs/references/content-management-api/#/reference/ui-extensions/configuration-parameters'
+            )}
             target="_blank"
             rel="noopener noreferrer">
             Content Management API

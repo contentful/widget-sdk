@@ -17,7 +17,7 @@ import {
   Tooltip,
   Icon,
 } from '@contentful/forma-36-react-components';
-import { authUrl, appUrl } from 'Config';
+import { authUrl, appUrl, websiteUrl } from 'Config';
 import ModalLauncher from 'app/common/ModalLauncher';
 import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes';
 import { IdentityProviderPropType, FieldsStatePropType } from './PropTypes';
@@ -26,8 +26,14 @@ import { SSO_PROVIDERS_MAP, TEST_RESULTS } from './constants';
 import * as ssoActionCreators from 'redux/actions/sso/actionCreators';
 import * as ssoSelectors from 'redux/selectors/sso';
 import { track } from 'analytics/Analytics';
-
 import { connect } from 'react-redux';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+
+const withInAppHelpUtmParams = buildUrlWithUtmParams({
+  source: 'webapp',
+  medium: 'idp-setup-form',
+  campaign: 'in-app-help',
+});
 
 export class IDPSetupForm extends React.Component {
   static propTypes = {
@@ -181,7 +187,7 @@ export class IDPSetupForm extends React.Component {
               withCopyButton: true,
               disabled: true,
             }}
-            value={`https:${authUrl(`/sso/${orgId}/consume`)}`}
+            value={authUrl(`/sso/${orgId}/consume`)}
           />
 
           <Subheading className="f36-margin-bottom--xs">Contentful logo</Subheading>
@@ -234,7 +240,10 @@ export class IDPSetupForm extends React.Component {
           </div>
           <Note className="f36-margin-top--l">
             Read the documentation on{' '}
-            <TextLink href="https://www.contentful.com/faq/sso/#what-identity-providers-idp-does-contentful-support">
+            <TextLink
+              href={withInAppHelpUtmParams(
+                websiteUrl('faq/sso/#what-identity-providers-idp-does-contentful-support')
+              )}>
               mapping user attributes
             </TextLink>
             .
@@ -416,14 +425,17 @@ export class IDPSetupForm extends React.Component {
 
           <Note className="f36-margin-top--3xl">
             To enable SSO in{' '}
-            <TextLink href="https://www.contentful.com/faq/sso/#how-does-sso-restricted-mode-work">
+            <TextLink
+              href={withInAppHelpUtmParams(
+                'https://www.contentful.com/faq/sso/#how-does-sso-restricted-mode-work'
+              )}>
               Restricted mode
             </TextLink>
             , requiring users to sign in using SSO,{' '}
             <TextLink
               onClick={this.trackSupportClick}
               testId="support-link"
-              href="https://www.contentful.com/support/">
+              href={withInAppHelpUtmParams('https://www.contentful.com/support/')}>
               reach out to support
             </TextLink>
             .

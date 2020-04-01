@@ -36,6 +36,13 @@ import {
 
 import StateLink from 'app/common/StateLink';
 import AppInstallModal from './AppInstallModal';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+
+const withInAppHelpUtmParams = buildUrlWithUtmParams({
+  source: 'webapp',
+  medium: 'app-listing',
+  campaign: 'in-app-help',
+});
 
 export const styles = {
   headerActions: css({
@@ -158,10 +165,17 @@ export default function AppListing({ definitions, canManageApps }) {
   const learnMoreParagraph = (
     <Paragraph>
       Learn more about{' '}
-      <TextLink href="https://www.contentful.com/developers/docs/extensibility/apps/building-apps/">
+      <TextLink
+        href={withInAppHelpUtmParams(
+          'https://www.contentful.com/developers/docs/extensibility/app-framework/tutorial/'
+        )}>
         building Contentful apps
       </TextLink>{' '}
-      or check out our <TextLink href="https://contentful.com/marketplace">Marketplace</TextLink>.
+      or check out our{' '}
+      <TextLink href={withInAppHelpUtmParams('https://contentful.com/marketplace')}>
+        Marketplace
+      </TextLink>
+      .
     </Paragraph>
   );
 
@@ -193,7 +207,9 @@ export default function AppListing({ definitions, canManageApps }) {
             To start building apps for this organization, ask your admin to upgrade your account to
             the{' '}
             <TextLink
-              href="https://www.contentful.com/r/knowledgebase/spaces-and-organizations/#belonging-to-an-organization"
+              href={withInAppHelpUtmParams(
+                'https://www.contentful.com/help/spaces-and-organizations/#belonging-to-an-organization'
+              )}
               target="_blank"
               rel="noopener noreferrer">
               developer role

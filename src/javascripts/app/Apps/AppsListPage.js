@@ -31,6 +31,7 @@ import AppListItem from './AppListItem';
 import AppDetailsModal from './AppDetailsModal';
 import * as AppLifecycleTracking from './AppLifecycleTracking';
 import { isUsageExceeded } from './isUsageExceeded';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 
 const styles = {
   pricingInfo: css({
@@ -64,6 +65,12 @@ const externalLinkProps = {
   rel: 'noopener noreferrer',
 };
 
+const withInAppHelpUtmParams = buildUrlWithUtmParams({
+  source: 'webapp',
+  medium: 'pricing-info',
+  campaign: 'in-app-help',
+});
+
 const openDetailModal = ({ spaceInformation, usageExceeded, canManageApps }) => (app) => {
   AppLifecycleTracking.detailsOpened(app.id);
 
@@ -89,13 +96,17 @@ const PricingInfo = () => (
     testId="apps-pricing-info">
     <Paragraph>
       To access this feature, you need to move to the latest version of Spaces. Submit a{' '}
-      <TextLink href={websiteUrl('/support/?upgrade-pricing=true')} {...externalLinkProps}>
+      <TextLink
+        href={withInAppHelpUtmParams(websiteUrl('/support/?upgrade-pricing=true'))}
+        {...externalLinkProps}>
         support request
       </TextLink>{' '}
       to get started, or learn more about our{' '}
       <TextLink
-        href={websiteUrl(
-          '/pricing/?faq_category=payments-subscriptions&faq=what-type-of-spaces-can-i-have'
+        href={withInAppHelpUtmParams(
+          websiteUrl(
+            '/pricing/?faq_category=payments-subscriptions&faq=what-type-of-spaces-can-i-have'
+          )
         )}
         {...externalLinkProps}>
         Space types and pricing

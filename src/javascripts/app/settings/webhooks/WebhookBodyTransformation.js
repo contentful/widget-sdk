@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import { throttle } from 'lodash';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 
 const TRANSFORMATION_EXAMPLE = {
   entityId: '{ /payload/sys/id }',
@@ -24,6 +25,12 @@ const refreshCodeMirror = throttle((editor) => {
     editor.refresh();
   }
 }, 300);
+
+const withInAppHelpUtmParams = buildUrlWithUtmParams({
+  source: 'webapp',
+  medium: 'webhook-editor',
+  campaign: 'in-app-help',
+});
 
 export default class WebhookBodyTransformation extends React.Component {
   static propTypes = {
@@ -55,7 +62,9 @@ export default class WebhookBodyTransformation extends React.Component {
           You can customize the webhook payload to match the format expected by the service your
           webhook calls.{' '}
           <a
-            href="https://www.contentful.com/developers/docs/concepts/webhooks/"
+            href={withInAppHelpUtmParams(
+              'https://www.contentful.com/developers/docs/concepts/webhooks/'
+            )}
             target="_blank"
             rel="noopener noreferrer">
             View documentation
