@@ -39,7 +39,12 @@ describe('Client Controller', () => {
       track: sinon.stub(),
       intercomDisable: sinon.stub(),
       pubsubClient: { on: this.pubSubOn, off: this.pubSubOn },
+      initOsano: sinon.stub(),
     };
+
+    this.system.set('services/OsanoService', {
+      init: this.stubs.initOsano,
+    });
 
     this.system.set('analytics/Analytics', {
       enable: this.stubs.enable,
@@ -223,19 +228,10 @@ describe('Client Controller', () => {
         };
       });
 
-      it('sets analytics user data and enables tracking', function () {
+      it('enables logging and initializes the Osano service', function () {
         this.prepare();
-        sinon.assert.calledWithExactly(this.stubs.enable, user);
+        sinon.assert.called(this.stubs.initOsano);
         sinon.assert.calledWithExactly(this.logger.enable, user);
-      });
-
-      it('should not set or enable anything when analytics are disallowed', function () {
-        this.isAnalyticsAllowed.returns(false);
-        this.prepare();
-        sinon.assert.notCalled(this.stubs.enable);
-        sinon.assert.called(this.stubs.disable);
-        sinon.assert.called(this.stubs.intercomDisable);
-        sinon.assert.called(this.logger.disable);
       });
     });
   });

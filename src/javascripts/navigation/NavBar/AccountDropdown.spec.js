@@ -41,7 +41,6 @@ describe('AccountDropdown', () => {
   beforeEach(() => {
     getOpenAssignedTasksAndEntries.mockResolvedValue([[], []]);
     Analytics.track.mockClear();
-    Analytics.disable.mockClear();
     Authentication.logout.mockClear();
     getUser.mockClear();
     wrapper = render(<AccountDropdown />);
@@ -69,7 +68,6 @@ describe('AccountDropdown', () => {
     await wait();
 
     expect(Analytics.track).toHaveBeenCalledWith('global:logout_clicked');
-    expect(Analytics.disable).toHaveBeenCalledTimes(1);
     expect(Authentication.logout).toHaveBeenCalled();
   });
 });

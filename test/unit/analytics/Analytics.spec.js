@@ -48,29 +48,6 @@ describe('Analytics', () => {
     });
   });
 
-  describe('#disable()', () => {
-    it('disables Segment and Snowplow', function () {
-      this.analytics.disable();
-      sinon.assert.called(this.segment.disable);
-      sinon.assert.called(this.Snowplow.disable);
-    });
-
-    it('blocks next calls to #enable', function () {
-      this.analytics.disable();
-      this.analytics.enable({ userData: true });
-      sinon.assert.notCalled(this.segment.enable);
-      sinon.assert.notCalled(this.Snowplow.enable);
-      expect(this.analytics.getSessionData('user')).toBeUndefined();
-    });
-
-    it('cleans up session data', function () {
-      this.analytics.enable({ test: true });
-      expect(this.analytics.getSessionData('user.test')).toBe(true);
-      this.analytics.disable();
-      expect(this.analytics.getSessionData('user')).toBeUndefined();
-    });
-  });
-
   describe('#trackContextChange', function () {
     it('should set the space in the session if given', function () {
       const space = { sys: { id: 'space_1234' } };
@@ -130,28 +107,53 @@ describe('Analytics', () => {
     });
   });
 
-  describe('tracking events', () => {
+  describe('tracking events', function () {
+    beforeEach(function () {
+      this.analytics.enable(this.userData);
+    });
+
     it('calls analytics services if event is valid', function () {
       this.analytics.track('Event', { data: 'foobar' });
-      sinon.assert.calledWith(this.segment.track, 'Event', { data: 'foobar' });
-      sinon.assert.calledWith(this.Snowplow.track, 'Event', { data: 'foobar' });
+      sinon.assert.calledWith(this.segment.track, 'Event', {
+        data: 'foobar',
+        userId: this.userData.sys.id,
+      });
+      sinon.assert.calledWith(this.Snowplow.track, 'Event', {
+        data: 'foobar',
+        userId: this.userData.sys.id,
+      });
     });
 
     it('sends `tracking:invalid_event` event is given an invalid event and does not track the original event', function () {
-      this.transform.eventExists.onFirstCall().returns(false).onSecondCall().returns(true);
+      this.transform.eventExists
+        .onFirstCall()
+        .returns(true)
+        .onSecondCall()
+        .returns(false)
+        .onThirdCall()
+        .returns(true);
 
       this.analytics.track('Event', { data: 'foobar' });
 
       sinon.assert.calledWith(this.segment.track, 'tracking:invalid_event');
       sinon.assert.calledWith(this.Snowplow.track, 'tracking:invalid_event');
 
-      sinon.assert.neverCalledWith(this.segment.track, 'Event', { data: 'foobar' });
-      sinon.assert.neverCalledWith(this.Snowplow.track, 'Event', { data: 'foobar' });
+      sinon.assert.neverCalledWith(this.segment.track, 'Event', {
+        data: 'foobar',
+        userId: this.userData.sys.id,
+      });
+      sinon.assert.neverCalledWith(this.Snowplow.track, 'Event', {
+        data: 'foobar',
+        userId: this.userData.sys.id,
+      });
     });
 
     it('should transform the event when tracking', function () {
       this.analytics.track('EventName', { data: 'some data' });
-      sinon.assert.calledWith(this.transform.transformEvent, 'EventName', { data: 'some data' });
+      sinon.assert.calledWith(this.transform.transformEvent, 'EventName', {
+        data: 'some data',
+        userId: this.userData.sys.id,
+      });
     });
   });
 
