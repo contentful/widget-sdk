@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import StateLink from 'app/common/StateLink';
+import { css, cx } from 'emotion';
 import { Button, Tooltip, RadioButton } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import RelativeDateTime from 'components/shared/RelativeDateTime';
@@ -10,22 +11,22 @@ import EntrySidebarWidget from '../EntrySidebarWidget';
 import FetchAndFormatUserName from 'components/shared/UserNameFormatter/FetchAndFormatUserName';
 
 const styles = {
-  table: {
+  table: css({
     width: '100%',
     lineHeight: '1.5',
     margin: `0 0 ${tokens.spacingM}`,
-  },
-  cell: {
+  }),
+  cell: css({
     padding: `${tokens.spacingXs} 0`,
-  },
-  dateCell: {
+  }),
+  dateCell: css({
     padding: `${tokens.spacingXs} 0`,
     width: '100%',
-  },
-  radio: {
+  }),
+  radio: css({
     verticalAlign: 'baseline',
     marginRight: tokens.spacingXs,
-  },
+  }),
 };
 
 export const noSnapshotsText =
@@ -69,12 +70,12 @@ export default class VersionsWidget extends Component {
   renderList(versions) {
     return versions.map((version) => (
       <tr key={version.sys.id}>
-        <td style={styles.cell}>
+        <td className={styles.cell}>
           <RadioButton
             labelText="Select version"
             type="radio"
             id={`selected-${version.sys.id}`}
-            style={styles.radio}
+            className={styles.radio}
             disabled={version.sys.isCurrent}
             value={version.sys.id}
             name="selected"
@@ -85,7 +86,7 @@ export default class VersionsWidget extends Component {
             }}
           />
         </td>
-        <td style={styles.dateCell}>
+        <td className={styles.dateCell}>
           <Tooltip
             content={
               version.sys.createdBy && (
@@ -97,7 +98,7 @@ export default class VersionsWidget extends Component {
             <RelativeDateTime value={version.sys.createdAt} className="radio-editor__label" />
           </Tooltip>
         </td>
-        <td style={styles.cell}>
+        <td className={styles.cell}>
           <Tooltip
             content={
               version.sys.createdBy && (
@@ -127,7 +128,7 @@ export default class VersionsWidget extends Component {
           )}
           {isLoaded && versions.length > 0 && (
             <React.Fragment>
-              <table className="entity-sidebar__help-text" role="listbox" style={styles.table}>
+              <table className={cx('entity-sidebar__help-text', styles.table)} role="listbox">
                 <tbody>{this.renderList(versions)}</tbody>
               </table>
               <CompareButton selectedId={this.state.selectedId} entryId={this.props.entryId} />
