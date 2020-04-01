@@ -220,6 +220,19 @@ describe('OsanoService', () => {
       expect(cm.storage.key).toBe('cf_webapp_cookieconsent');
     });
 
+    it('should gracefully handle teardown failures', async () => {
+      const { cm } = await get();
+      cm.teardown.mockImplementationOnce(() => {
+        throw new Error('Teardown failure');
+      });
+
+      expect(cm.storage.key).toBe('osano_consentmanager');
+
+      await service.init();
+
+      expect(cm.storage.key).toBe('cf_webapp_cookieconsent');
+    });
+
     it('should setup listeners for various events', async () => {
       const { cm } = await get();
 
