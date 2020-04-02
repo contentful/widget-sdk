@@ -97,52 +97,11 @@
           </thead>
         </table>
       </div>
-      <div class="table__bulk-actions" ng-hide="selection.isEmpty()">
-        <div class="workbench-actions" ng-controller="AssetListActionsController">
-          <div class="workbench-actions__label">
-            <react-component
-              name="components/tabs/PluralizeEntityMessage"
-              props="{entityType: 'asset', count: selection.size(), restOfTheMsg: 'selected:'}"
-            ></react-component>
-          </div>
-          <span
-            ng-show="!showArchive() &amp;&amp; !showUnarchive() &amp;&amp; !showDelete() &amp;&amp; !showPublish() &amp;&amp; !showUnpublish()"
-            >No actions possible</span
-          ><span
-            class="text-link--neutral-emphasis-mid"
-            type="button"
-            ng-click="archiveSelected()"
-            ng-show="showArchive()"
-            aria-label="archive"
-            >Archive</span
-          ><span
-            class="text-link--neutral-emphasis-mid"
-            type="button"
-            ng-click="unarchiveSelected()"
-            ng-show="showUnarchive()"
-            aria-label="unarchive"
-            >Unarchive</span
-          ><react-component
-            name="components/tabs/asset_list/DeleteButton"
-            props="{ shouldShow: showDelete(), count: selection.size(), deleteSelected: deleteSelected }"
-          ></react-component
-          ><span
-            class="text-link--constructive"
-            type="submit"
-            ng-click="publishSelected()"
-            ng-show="showPublish()"
-            aria-label="publish"
-            >{{publishButtonName()}}</span
-          ><span
-            class="text-link--neutral-emphasis-mid"
-            type="button"
-            ng-click="unpublishSelected()"
-            ng-show="showUnpublish()"
-            aria-label="unpublish"
-            >Unpublish</span
-          >
-        </div>
-      </div>
+      <react-component
+        name="components/tabs/BulkActionsRowAdapter"
+        class="asset_list-temporary-bulkactions"
+        props="{ entityType: 'Asset', selection, selectionChanged, updateEntities: updateAssets }"
+      ></react-component>
       <div class="table__body" data-test-id="assets-table">
         <table>
           <tbody>

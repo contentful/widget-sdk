@@ -301,9 +301,7 @@ describe('Batch performer service', () => {
     describeBatchBehavior('unpublish');
     describeBatchBehavior('archive');
     describeBatchBehavior('unarchive');
-    describeBatchBehavior('delete', () => {
-      itCallsDeleteListener();
-    });
+    describeBatchBehavior('delete');
   }
 
   function describeBatchBehavior(action, extraTests) {
@@ -370,17 +368,6 @@ describe('Batch performer service', () => {
       this.performer[action]();
       $apply();
       sinon.assert.calledOnce(entity.setDeleted);
-      sinon.assert.calledOnce(this.onDelete.withArgs(entity));
-    });
-  }
-
-  function itCallsDeleteListener() {
-    it('fires delete listener for successful calls', function () {
-      return this.performer.delete().then(() => {
-        sinon.assert.calledOnce(this.onDelete.withArgs(this.entities[0]));
-        sinon.assert.calledOnce(this.onDelete.withArgs(this.entities[1]));
-        sinon.assert.calledOnce(this.onDelete.withArgs(this.entities[2]));
-      });
     });
   }
 });

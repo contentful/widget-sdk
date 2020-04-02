@@ -211,6 +211,13 @@ export default function register() {
       function getAssetFile(asset) {
         return EntityFieldValueSpaceContext.getFieldValue(asset, 'file');
       }
+
+      // TODO: Remove temporary functions when asset table is migrated
+      $scope.selectionChanged = 0;
+      $scope.$watchCollection('selection.getSelectedById()', () => {
+        $scope.selectionChanged++;
+      });
+      $scope.updateAssets = () => searchController.resetAssets();
     },
   ]);
 }

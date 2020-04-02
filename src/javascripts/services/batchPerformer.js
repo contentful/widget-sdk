@@ -8,9 +8,8 @@ import { appendDuplicateIndexToEntryTitle } from '../app/entity_editor/entityHel
 
 export default function register() {
   registerFactory('batchPerformer', [
-    '$q',
     'spaceContext',
-    function batchPerformer($q, spaceContext) {
+    function batchPerformer(spaceContext) {
       const ACTION_NAMES = {
         publish: 'published',
         unpublish: 'unpublished',
@@ -39,7 +38,7 @@ export default function register() {
         function run(method) {
           const actions = _.map(config.getSelected(), (entity) => performAction(entity, method));
 
-          return $q.all(actions).then(function handleResults(results) {
+          return Promise.all(actions).then(function handleResults(results) {
             results = groupBySuccess(results);
             notifyBatchResult(method, results);
             if (_.isFunction(config.onComplete)) {
@@ -67,7 +66,6 @@ export default function register() {
         function handleEntityError(entity, err) {
           if (err && err.statusCode === 404) {
             entity.setDeleted();
-            config.onDelete(entity);
             return handleSuccess(entity);
           } else {
             return { err: err };
@@ -95,15 +93,12 @@ export default function register() {
               fields: appendDuplicateIndexToEntryTitle(data.fields, entryTitleId),
             });
           } else {
-            return $q.reject(new Error('Only entries can be duplicated'));
+            return Promise.reject(new Error('Only entries can be duplicated'));
           }
         }
 
         function callDelete(entity) {
-          return entity.delete().then(() => {
-            config.onDelete(entity);
-            return entity;
-          });
+          return entity.delete();
         }
 
         function groupBySuccess(results) {

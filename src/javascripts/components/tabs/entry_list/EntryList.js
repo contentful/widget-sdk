@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import pluralize from 'pluralize';
 
 import cn from 'classnames';
 import { range } from 'lodash';
@@ -14,12 +13,8 @@ import {
   TableBody,
   Checkbox,
   IconButton,
-  TextLink,
-  ModalConfirm,
-  Paragraph,
   SkeletonContainer,
   SkeletonBodyText,
-  Spinner,
 } from '@contentful/forma-36-react-components';
 
 import tokens from '@contentful/forma-36-tokens';
@@ -40,6 +35,8 @@ const isEdgeBrowser = isEdge();
 import { css } from 'emotion';
 
 import * as EntityState from 'data/CMA/EntityState';
+import BulkActionsRowAdapter from '../BulkActionsRowAdapter';
+import { onEntryEvent } from './eventTracker';
 
 const styles = {
   flexCenter: css({
@@ -128,12 +125,6 @@ const styles = {
   visibilityHidden: css({
     visibility: 'hidden',
   }),
-  /*
-    We have to override inline styles set by TableHead.offsetTop
-  */
-  bulkActionsRow: css({
-    top: '22px !important',
-  }),
   statusTableHeader: css({
     zIndex: tokens.zIndexDefault,
   }),
@@ -196,186 +187,6 @@ SortableTableCell.propTypes = {
   onClick: PropTypes.func.isRequired,
 };
 
-function DeleteEntryConfirm({ itemsCount, onCancel, onConfirm, onSecondary }) {
-  return (
-    <ModalConfirm
-      title={`Permanently delete ${pluralize('entry', itemsCount, true)}?`}
-      isShown={true}
-      intent="negative"
-      secondaryIntent="muted"
-      confirmLabel="Permanently delete"
-      secondaryLabel="Archive instead"
-      cancelLabel="Cancel"
-      confirmTestId="delete-entry-confirm"
-      secondaryTestId="delete-entry-secondary"
-      cancelTestId="delete-entry-cancel"
-      onCancel={onCancel}
-      onConfirm={onConfirm}
-      onSecondary={onSecondary}>
-      <Paragraph>
-        Once you delete an entry, it’s gone for good and cannot be retrieved. We suggest archiving
-        if you need to retrieve it later.
-      </Paragraph>
-    </ModalConfirm>
-  );
-}
-
-DeleteEntryConfirm.propTypes = {
-  itemsCount: PropTypes.number.isRequired,
-  onCancel: PropTypes.func.isRequired,
-  onConfirm: PropTypes.func.isRequired,
-  onSecondary: PropTypes.func.isRequired,
-};
-
-export class BulkActionsRow extends React.Component {
-  state = { pendingMessage: undefined, isConfirmVisible: false };
-
-  static propTypes = {
-    colSpan: PropTypes.number.isRequired,
-    actions: PropTypes.object.isRequired,
-    selection: PropTypes.object.isRequired,
-    onActionComplete: PropTypes.func.isRequired,
-  };
-
-  getPendingMessage = (pendingAction) => {
-    const { selection } = this.props;
-    return `${pendingAction} ${pluralize('entry', selection.size(), true)}`;
-  };
-
-  setConfirmVisibility = (isConfirmVisible) => this.setState({ isConfirmVisible });
-
-  fireAction = async (actionName) => {
-    const { actions, onActionComplete } = this.props;
-    let pendingMessage;
-    let action;
-
-    switch (actionName) {
-      case 'duplicate':
-        pendingMessage = this.getPendingMessage('Duplicating');
-        action = actions.duplicateSelected;
-        break;
-      case 'delete':
-        pendingMessage = this.getPendingMessage('Deleting');
-        action = actions.deleteSelected;
-        break;
-      case 'archive':
-        pendingMessage = this.getPendingMessage('Archiving');
-        action = actions.archiveSelected;
-        break;
-      case 'unarchive':
-        pendingMessage = this.getPendingMessage('Unarchiving');
-        action = actions.unarchiveSelected;
-        break;
-      case 'unpublish':
-        pendingMessage = this.getPendingMessage('Unpublishing');
-        action = actions.unpublishSelected;
-        break;
-      case 'publish':
-        pendingMessage = this.getPendingMessage('Publishing');
-        action = actions.publishSelected;
-        break;
-      default:
-        return;
-    }
-    this.setState({ pendingMessage });
-    await action();
-    this.setState({ pendingMessage: undefined });
-    onActionComplete();
-  };
-
-  render() {
-    const { isConfirmVisible, pendingMessage } = this.state;
-    const { colSpan, actions, selection } = this.props;
-    return (
-      <TableRow testId="bulk-actions">
-        {pendingMessage && (
-          <TableCell colSpan={colSpan} className={styles.bulkActionsRow}>
-            {pendingMessage} <Spinner />
-          </TableCell>
-        )}
-        {!pendingMessage && (
-          <TableCell colSpan={colSpan} className={styles.bulkActionsRow}>
-            <span className={styles.marginRightS} data-test-id="label">
-              {pluralize('entry', selection.size(), true)} selected:
-            </span>
-            {actions.showDuplicate && actions.showDuplicate() && (
-              <TextLink
-                className={styles.marginRightS}
-                linkType="secondary"
-                testId="duplicate"
-                onClick={() => this.fireAction('duplicate')}>
-                Duplicate
-              </TextLink>
-            )}
-
-            {actions.showDelete && actions.showDelete() && (
-              <React.Fragment>
-                <TextLink
-                  className={styles.marginRightS}
-                  linkType="negative"
-                  onClick={() => this.setConfirmVisibility(true)}
-                  testId="delete">
-                  Delete
-                </TextLink>
-                {isConfirmVisible && (
-                  <DeleteEntryConfirm
-                    itemsCount={selection.size()}
-                    onConfirm={() => {
-                      this.fireAction('delete');
-                      this.setConfirmVisibility(false);
-                    }}
-                    onSecondary={() => {
-                      this.fireAction('archive');
-                      this.setConfirmVisibility(false);
-                    }}
-                    onCancel={() => this.setConfirmVisibility(false)}
-                  />
-                )}
-              </React.Fragment>
-            )}
-            {actions.showArchive && actions.showArchive() && (
-              <TextLink
-                className={styles.marginRightS}
-                linkType="secondary"
-                testId="archive"
-                onClick={() => this.fireAction('archive')}>
-                Archive
-              </TextLink>
-            )}
-            {actions.showUnarchive && actions.showUnarchive() && (
-              <TextLink
-                className={styles.marginRightS}
-                linkType="secondary"
-                testId="unarchive"
-                onClick={() => this.fireAction('unarchive')}>
-                Unarchive
-              </TextLink>
-            )}
-            {actions.showUnpublish && actions.showUnpublish() && (
-              <TextLink
-                className={styles.marginRightS}
-                linkType="secondary"
-                testId="unpublish"
-                onClick={() => this.fireAction('unpublish')}>
-                Unpublish
-              </TextLink>
-            )}
-            {actions.showPublish && actions.showPublish() && (
-              <TextLink
-                className={styles.marginRightS}
-                linkType="positive"
-                testId="publish"
-                onClick={() => this.fireAction('publish')}>
-                {actions.publishButtonName()}
-              </TextLink>
-            )}
-          </TableCell>
-        )}
-      </TableRow>
-    );
-  }
-}
-
 const StatusCell = ({ href, jobs, entry }) => {
   const filter = (job) => job.entity.sys.id === entry.data.sys.id;
   const hasJobForEntry = jobs.find((job) => job.entity.sys.id === entry.data.sys.id);
@@ -428,13 +239,11 @@ export default function EntryList({
   updateFieldOrder,
   selection,
   entries = [],
-  actions,
   entryCache,
   assetCache,
+  updateEntries,
   jobs = [],
 }) {
-  const [hasSelectedAll, setHasSelectedAll] = React.useState(false);
-
   const hasContentTypeSelected = !!context.view.contentTypeId;
 
   // can be undefined
@@ -442,14 +251,14 @@ export default function EntryList({
 
   const isContentTypeVisible = !hasContentTypeSelected && !context.view.contentTypeHidden;
 
+  const allSelected = entries.length === selection.size();
   const selectAll = (
     <Checkbox
       id="select-all"
       name="select-all"
       className={cn(styles.marginRightS, styles.marginBottomXXS)}
-      checked={hasSelectedAll}
+      checked={allSelected}
       onChange={(e) => {
-        setHasSelectedAll(!hasSelectedAll);
         selection.toggleList(entries, e);
       }}
     />
@@ -523,14 +332,14 @@ export default function EntryList({
             </span>
           </TableCell>
         </TableRow>
-        {!selection.isEmpty() && (
-          <BulkActionsRow
-            colSpan={columnLength}
-            actions={actions}
-            selection={selection}
-            onActionComplete={() => setHasSelectedAll(false)}
-          />
-        )}
+        <BulkActionsRowAdapter
+          allowDuplicate
+          colSpan={columnLength}
+          entityType="Entry"
+          selection={selection}
+          updateEntities={updateEntries}
+          onActionComplete={onEntryEvent}
+        />
       </TableHead>
       <TableBody>
         {(context.isSearching || entries.length === 0) &&
@@ -654,7 +463,7 @@ EntryList.propTypes = {
   updateFieldOrder: PropTypes.func.isRequired,
   selection: PropTypes.object,
   entries: PropTypes.array,
-  actions: PropTypes.object,
+  updateEntries: PropTypes.func.isRequired,
   entryCache: PropTypes.object,
   assetCache: PropTypes.object,
   jobs: PropTypes.array,

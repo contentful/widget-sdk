@@ -122,21 +122,7 @@ export default function register() {
           updateFieldOrder: $scope.updateFieldOrder,
           selection: $scope.selection,
           entries: $scope.entries,
-          actions: {
-            showDuplicate: $scope.showDuplicate,
-            duplicateSelected: $scope.duplicateSelected,
-            showDelete: $scope.showDelete,
-            deleteSelected: $scope.deleteSelected,
-            archiveSelected: $scope.archiveSelected,
-            showArchive: $scope.showArchive,
-            unarchiveSelected: $scope.unarchiveSelected,
-            showUnarchive: $scope.showUnarchive,
-            unpublishSelected: $scope.unpublishSelected,
-            showUnpublish: $scope.showUnpublish,
-            publishSelected: $scope.publishSelected,
-            showPublish: $scope.showPublish,
-            publishButtonName: $scope.publishButtonName,
-          },
+          updateEntries: () => $scope.updateEntries(),
           entryCache: $scope.entryCache,
           assetCache: $scope.assetCache,
           jobs: $scope.jobs,
@@ -332,8 +318,6 @@ export default function register() {
         path = _.isString(path) ? path.split('.') : path;
         return _.get($scope, ['context', 'view'].concat(path));
       }
-
-      $controller('EntryListActionsController', { $scope });
     },
   ]);
 }

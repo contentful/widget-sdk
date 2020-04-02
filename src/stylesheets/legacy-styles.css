@@ -2138,6 +2138,16 @@ pre,
   a.text-link--neutral-emphasis-low:disabled {
     color: rgba(128,145,165,0.4);
   }
+  /* TODO: Remove when asset list is migrated  */
+  .asset_list-temporary-bulkactions {
+    display: table;
+  }
+  .asset_list-temporary-bulkactions td {
+    position: sticky;
+    color: #8091a5;
+    background-color: #f7f9fa;
+    padding: .625rem 1.25rem;
+  }
   .asset-editor .widget-file-editor {
     margin-bottom: 10px;
   }

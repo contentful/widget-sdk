@@ -22,6 +22,9 @@ export function createSelection() {
 
       return values(selectedById);
     },
+    getSelectedById: function () {
+      return selectedById;
+    },
   };
 
   function add(entity) {
