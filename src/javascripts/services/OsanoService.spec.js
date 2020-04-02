@@ -239,7 +239,6 @@ describe('OsanoService', () => {
       await service.init();
 
       expect(cm.on).toHaveBeenCalledWith('osano-cm-initialized', expect.any(Function));
-      expect(cm.on).toHaveBeenCalledWith('osano-cm-consent-changed', expect.any(Function));
       expect(cm.on).toHaveBeenCalledWith('osano-cm-consent-saved', expect.any(Function));
     });
 
