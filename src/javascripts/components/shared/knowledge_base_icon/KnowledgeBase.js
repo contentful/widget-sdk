@@ -10,8 +10,8 @@ const items = {
   content_type: 'faq/terminology/#what-is-a-content-type',
   space_creation: 'faq/terminology/#what-is-the-difference-between-a-content-type-and-a-space',
   hibernation: 'developers/docs/', // @todo needs proper article
-  entry: 'developers/docs/concepts/data-model/',
-  asset: 'developers/docs/concepts/data-model/',
+  entry: 'help/content-tab/',
+  asset: 'help/media-tab/',
   api_key: 'developers/docs/references/authentication/#the-delivery-and-preview-api',
   predefined_value: 'faq/basics/#how-can-i-use-predefined-values',
   locale: 'developers/docs/concepts/locales/',
