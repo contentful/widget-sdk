@@ -36,6 +36,13 @@ export const __reset = () => {
 export const handleConsentChanged = debounce(function debouncedHandleConsentChanged(
   newConsentOptions
 ) {
+  if (!newConsentOptions) {
+    // This listener is setup to be called on Osano initialization and consent change. If the
+    // user has not consented before, `newConsentOptions` will be undefined on initialization,
+    // and so we don't do anything in this handler.
+    return;
+  }
+
   // Initialization happens in ClientController, and only happens after the user is available to us, so we
   // can safely synchronously get the user.
   const user = getUserSync();
@@ -124,6 +131,7 @@ export async function init() {
   // Rename the cookie/local storage key to not clash with marketing website
   cm.storage.key = 'cf_webapp_cookieconsent';
 
+  // Setup listeners before readyCb, so that we get the `osano-cm-initialized` event.
   cm.on('osano-cm-initialized', handleConsentChanged);
   cm.on('osano-cm-consent-saved', handleConsentChanged);
 
