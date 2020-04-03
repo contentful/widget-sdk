@@ -230,7 +230,7 @@ describe('Tasks entry editor sidebar', () => {
   describe('creating a new task', () => {
     const newTaskData: NewTask = {
       body: 'Great new task!',
-      assigneeId: 'userID',
+      assigneeId: '1AMbGlddLG0ISEoa1I423p',
     };
 
     let interactions: string[];
