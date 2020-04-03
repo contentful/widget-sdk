@@ -41,7 +41,7 @@ const mockTeamMemberships = mockTeams.map((team) =>
 );
 
 jest.mock('access_control/OrganizationMembershipRepository', () => ({
-  getSpaceMemberships: jest.fn(async () => ({
+  getAllSpaceMemberships: jest.fn(async () => ({
     includes: { Space: mockSpaces },
     items: mockSpaceMemberships,
   })),

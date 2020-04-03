@@ -9,7 +9,7 @@ import { create as createSpaceMembershipRepo } from 'access_control/SpaceMembers
 import { createSpaceEndpoint, createOrganizationEndpoint } from 'data/EndpointFactory';
 import { useAsyncFn } from 'app/common/hooks/useAsync';
 import { fetchAndResolve } from 'data/LinkResolver';
-import { getSpaceMemberships } from 'access_control/OrganizationMembershipRepository';
+import { getAllSpaceMemberships } from 'access_control/OrganizationMembershipRepository';
 import { getAllTeamMemberships, removeTeamMembership } from 'access_control/TeamRepository';
 import { go } from 'states/Navigator';
 import UserCard from '../UserCard';
@@ -274,7 +274,7 @@ function getAllUserSpaceMemberships(userId, orgId) {
   const endpoint = createOrganizationEndpoint(orgId);
   const includePaths = ['roles', 'sys.space', 'sys.createdBy'];
   return fetchAndResolve(
-    getSpaceMemberships(endpoint, {
+    getAllSpaceMemberships(endpoint, {
       'sys.user.sys.id': userId,
       include: includePaths.join(),
     }),

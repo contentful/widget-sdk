@@ -210,3 +210,13 @@ export function getSpaceMemberships(endpoint, query) {
     USER_MANAGEMENT_ALPHA_HEADER
   );
 }
+
+export function getAllSpaceMemberships(endpoint, query) {
+  return fetchAllWithIncludes(
+    endpoint,
+    ['space_memberships'],
+    BATCH_LIMIT,
+    query,
+    USER_MANAGEMENT_ALPHA_HEADER
+  );
+}
