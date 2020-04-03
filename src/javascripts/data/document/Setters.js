@@ -1,7 +1,7 @@
 import * as K from 'utils/kefir';
-import * as RichTextFieldSetter from 'data/document/RichTextFieldSetter';
+import * as StringFieldSetter from './StringFieldSetter';
+import * as RichTextFieldSetter from './RichTextFieldSetter';
 import * as ShareJS from 'data/sharejs/utils';
-import * as StringField from 'app/entity_editor/Document/stringField';
 
 /**
  * Create an object that exposes all methods for changing values in a
@@ -61,8 +61,8 @@ export function create({
   }
 
   function setValueAtRaw(doc, path, value) {
-    if (path.length === 3 && StringField.isStringField(path[1], contentType)) {
-      return StringField.setAt(doc, path, value);
+    if (path.length === 3 && StringFieldSetter.isStringField(path[1], contentType)) {
+      return StringFieldSetter.setAt(doc, path, value);
     } else if (RichTextFieldSetter.is(path[1], contentType)) {
       return RichTextFieldSetter.setAt(doc, path, value);
     } else {
