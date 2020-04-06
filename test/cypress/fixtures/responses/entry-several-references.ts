@@ -35,7 +35,7 @@ export const severalEntryReferencesResponse = {
   includes: {
     Entry: [
       entry({ sys: { id: Matchers.somethingLike('EntryId_01') }, fields: {} }),
-      entry({ sys: { id: Matchers.somethingLike('EntryId_02') }, fields: {} })  
+      entry({ sys: { id: Matchers.somethingLike('EntryId_02') }, fields: {} })
     ]
   }
 };
@@ -84,7 +84,7 @@ export function entry(entryPayload = { sys: {}, fields: {} }) {
     version: 1,
     createdBy: {
       sys: {
-        id: 'userID',
+        id: '1AMbGlddLG0ISEoa1I423p',
         linkType: 'User',
         type: 'Link'
       }
