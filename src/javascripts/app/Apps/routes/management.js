@@ -74,7 +74,7 @@ export default {
     },
     {
       name: 'definitions',
-      url: '/definitions/:definitionId',
+      url: '/definitions/:definitionId/:tab',
       resolve: {
         definitions: definitionsResolver,
         canManageApps: canManageAppsResolver,
@@ -91,22 +91,18 @@ export default {
             }
           },
         ],
-        keys: [
-          '$stateParams',
-          async ({ orgId, definitionId }) => {
-            return getAppDefinitionLoader(orgId).getKeysForAppDefinition(definitionId);
-          },
-        ],
       },
       onEnter: redirectIfCannotManage,
       mapInjectedToProps: [
         '$state',
+        '$stateParams',
         'definition',
-        'keys',
-        ($state, definition, keys) => ({
+        ($state, $stateParams, definition) => ({
           goToListView: () => $state.go('^.list'),
+          goToTab: (tab) =>
+            $state.go('^.definitions', { ...$stateParams, tab }, { location: 'replace' }),
+          tab: $stateParams.tab,
           definition,
-          keys,
         }),
       ],
       component: AppDetails,

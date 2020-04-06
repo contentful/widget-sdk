@@ -34,7 +34,13 @@ describe('AppDetails', () => {
   it('should show the details of an app with the provided definition', async () => {
     const definition = mockDefinitions[0];
     const wrapper = render(
-      <AppDetails definition={definition} keys={[]} goToListView={() => {}} />
+      <AppDetails
+        definition={definition}
+        keys={[]}
+        goToListView={() => {}}
+        tab=""
+        goToTab={() => {}}
+      />
     );
     await wait();
 
@@ -46,7 +52,13 @@ describe('AppDetails', () => {
   it('should show the public toggle for the APPS_PUBLIC_ORG', async () => {
     const definition = mockDefinitions[1];
     const wrapper = render(
-      <AppDetails definition={definition} keys={[]} goToListView={() => {}} />
+      <AppDetails
+        definition={definition}
+        keys={[]}
+        goToListView={() => {}}
+        tab=""
+        goToTab={() => {}}
+      />
     );
     await wait();
 
@@ -56,7 +68,13 @@ describe('AppDetails', () => {
   it('should update and save the definition', async () => {
     const definition = mockDefinitions[1];
     const { getByTestId, getAllByTestId } = render(
-      <AppDetails definition={definition} keys={[]} goToListView={() => {}} />
+      <AppDetails
+        definition={definition}
+        keys={[]}
+        goToListView={() => {}}
+        tab=""
+        goToTab={() => {}}
+      />
     );
 
     const saveButton = getByTestId('app-save');
@@ -99,7 +117,13 @@ describe('AppDetails', () => {
   it('should pop the app delete definition modal', async () => {
     const definition = mockDefinitions[1];
     const wrapper = render(
-      <AppDetails definition={definition} keys={[]} goToListView={() => {}} />
+      <AppDetails
+        definition={definition}
+        keys={[]}
+        goToListView={() => {}}
+        tab=""
+        goToTab={() => {}}
+      />
     );
 
     const deleteButton = wrapper.getByTestId('app-delete');
@@ -118,7 +142,13 @@ describe('AppDetails', () => {
   it('should pop the app installation modal', async () => {
     const definition = mockDefinitions[1];
     const wrapper = render(
-      <AppDetails definition={definition} keys={[]} goToListView={() => {}} />
+      <AppDetails
+        definition={definition}
+        keys={[]}
+        goToListView={() => {}}
+        tab=""
+        goToTab={() => {}}
+      />
     );
 
     const installButton = wrapper.getByTestId('app-install');

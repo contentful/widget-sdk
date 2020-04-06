@@ -15,9 +15,12 @@ import {
   TextLink,
   Button,
   Notification,
+  SkeletonContainer,
+  SkeletonBodyText,
 } from '@contentful/forma-36-react-components';
 
 import * as ManagementApiClient from '../ManagementApiClient';
+import { getAppDefinitionLoader } from 'app/Apps/AppDefinitionLoaderInstance';
 import AddKeyModal from './AddKeyDialog';
 import RevokeKeyModal from './RevokeKeyDialog';
 import * as util from '../util';
@@ -28,7 +31,9 @@ const styles = {
     marginBottom: tokens.spacingL,
   }),
   fingerprint: css({
+    display: 'block',
     fontFamily: tokens.fontStackMonospace,
+    fontSize: tokens.fontsizeS,
   }),
   lightText: css({
     color: tokens.colorTextLight,
@@ -44,19 +49,18 @@ const getFormattedKey = async (key) => {
   return {
     fingerprint,
     fingerprintLines,
-    createdAt: moment(key.sys.createdAt).format('HH:mm:ss'),
+    createdAt: moment(key.sys.createdAt).format('MMMM DD, YYYY'),
     lastUsedAt: key.sys.lastUsedAt
-      ? 'Last used ' +
-        moment().calendar(null, {
-          sameDay: '[today]',
-          lastDay: '[yesterday]',
-          lastWeek: '[last week]',
-          sameWeek: 'dddd',
-          sameElse: 'DD/MM/YYYY',
-        })
+      ? 'Last used ' + util.formatPastDate(key.sys.lastUsedAt)
       : 'Never used',
     createdBy: await ManagementApiClient.getCreatorNameOf(key),
   };
+};
+
+const fetchKeys = async (orgId, definitionId) => {
+  const keys = await getAppDefinitionLoader(orgId).getKeysForAppDefinition(definitionId);
+
+  return Promise.all(keys.map(getFormattedKey));
 };
 
 const openAddKeyModal = (orgId, definitionId, setNewKey) => {
@@ -71,11 +75,12 @@ const openAddKeyModal = (orgId, definitionId, setNewKey) => {
             const formattedKey = await getFormattedKey(key);
 
             setNewKey(formattedKey);
+            onClose();
           } catch {
-            Notification.error('Failed to create the public key. Please make sure that your public key is valid.');
+            Notification.error(
+              'Failed to create the public key. Please make sure that your public key is valid.'
+            );
           }
-
-          onClose();
         }}
       />
     );
@@ -92,52 +97,117 @@ const openRevokeKeyModal = (orgId, definitionId, fingerprint, onConfirm) => {
           try {
             await ManagementApiClient.revokeKey({ orgId, definitionId, fingerprint });
             onConfirm();
+            onClose();
           } catch {
             Notification.error('Failed to revoke the public key.');
           }
-
-          onClose();
         }}
       />
     );
   });
 };
 
-export default function KeyListing({ definition, keys }) {
+const TableWrapper = ({ children }) => {
+  return (
+    <Table>
+      <TableHead>
+        <TableRow>
+          <TableCell>Public key fingerprint</TableCell>
+          <TableCell>Added at</TableCell>
+          <TableCell>Added by</TableCell>
+          <TableCell></TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>{children}</TableBody>
+    </Table>
+  );
+};
+
+const SkeletonRow = () => {
+  return (
+    <TableRow>
+      <TableCell>
+        <div>
+          <SkeletonContainer svgWidth="420" svgHeight="40">
+            <SkeletonBodyText />
+          </SkeletonContainer>
+        </div>
+      </TableCell>
+      <TableCell>
+        <div>
+          <SkeletonContainer width="420" svgHeight="40">
+            <SkeletonBodyText />
+          </SkeletonContainer>
+        </div>
+      </TableCell>
+      <TableCell>
+        <div>
+          <SkeletonContainer svgHeight="40">
+            <SkeletonBodyText numberOfLines={1} />
+          </SkeletonContainer>
+        </div>
+      </TableCell>
+      <TableCell>
+        <div>
+          <SkeletonContainer svgWidth="50" svgHeight="40">
+            <SkeletonBodyText numberOfLines={1} />
+          </SkeletonContainer>
+        </div>
+      </TableCell>
+    </TableRow>
+  );
+};
+
+export default function KeyListing({ definition }) {
   const definitionId = definition.sys.id;
   const orgId = definition.sys.organization.sys.id;
 
-  const [formattedKeys, setKeys] = useState([]);
+  const [isLoadingKeys, setIsLoadingKeys] = useState(true);
+  const [formattedKeys, setKeys] = useState(null);
+  const hasKeys = formattedKeys && !!formattedKeys.length;
 
   useEffect(() => {
-    Promise.all((keys || []).map(getFormattedKey)).then(setKeys);
-  }, [keys]);
-
-  const hasKeys = !!formattedKeys.length;
+    (async () => {
+      setIsLoadingKeys(true);
+      setKeys(await fetchKeys(orgId, definitionId));
+      setIsLoadingKeys(false);
+    })();
+  }, [orgId, definitionId]);
 
   return (
     <>
       <Paragraph className={styles.spacer}>
-        You need a key pair to sign access token requests. We do not store private keys.{' '}
+        Your app needs a key pair to sign access token requests. We do not store private keys.
       </Paragraph>
 
-      {hasKeys && (
-        <Table className={styles.spacer}>
-          <TableHead>
-            <TableRow>
-              <TableCell>Public key fingerprint</TableCell>
-              <TableCell>Added at</TableCell>
-              <TableCell>Added By</TableCell>
-              <TableCell></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
+      <div>
+        <Button
+          className={styles.spacer}
+          disabled={formattedKeys && formattedKeys.length >= MAX_KEYS_ALLOWED}
+          onClick={() =>
+            openAddKeyModal(orgId, definitionId, (newFormattedKey) =>
+              setKeys([...formattedKeys, newFormattedKey])
+            )
+          }
+          testId="app-add-public-key">
+          Add public key
+        </Button>
+      </div>
+
+      {isLoadingKeys ? (
+        <TableWrapper>
+          <SkeletonRow />
+          <SkeletonRow />
+        </TableWrapper>
+      ) : (
+        hasKeys && (
+          <TableWrapper>
             {formattedKeys.map((key) => {
               return (
                 <TableRow key={key.fingerprint}>
                   <TableCell>
                     <div>
-                      <span className={styles.fingerprint}>{key.fingerprintLines[0]} </span>
+                      <span className={styles.fingerprint}>{key.fingerprintLines[0]}</span>
                       <span className={styles.fingerprint}>{key.fingerprintLines[1]}</span>
                     </div>
                   </TableCell>
@@ -158,33 +228,19 @@ export default function KeyListing({ definition, keys }) {
                         )
                       }
                       linkType="negative">
-                      Remove
+                      Revoke
                     </TextLink>
                   </TableCell>
                 </TableRow>
               );
             })}
-          </TableBody>
-        </Table>
+          </TableWrapper>
+        )
       )}
-
-      <div>
-        <Button
-          disabled={formattedKeys.length >= MAX_KEYS_ALLOWED}
-          onClick={() =>
-            openAddKeyModal(orgId, definitionId, (newFormattedKey) =>
-              setKeys([...formattedKeys, newFormattedKey])
-            )
-          }
-          testId="app-add-public-key">
-          Add public key
-        </Button>
-      </div>
     </>
   );
 }
 
 KeyListing.propTypes = {
-  keys: PropTypes.arrayOf(PropTypes.object).isRequired,
   definition: PropTypes.object.isRequired,
 };

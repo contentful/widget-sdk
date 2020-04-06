@@ -4,7 +4,13 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import * as urlSafeBase64 from 'urlsafe-base64';
 
-import { ModalConfirm, Paragraph, Textarea, TextLink } from '@contentful/forma-36-react-components';
+import {
+  ModalConfirm,
+  Paragraph,
+  Textarea,
+  TextLink,
+  Notification,
+} from '@contentful/forma-36-react-components';
 import * as util from '../util';
 
 const KEY_GEN_GUIDE_URL =
@@ -25,6 +31,7 @@ const styles = {
     '& textarea': css({
       whiteSpace: 'pre',
       fontFamily: tokens.fontStackMonospace,
+      height: '215px',
     }),
   }),
 };
@@ -41,7 +48,7 @@ function AddKeyForm({ value, setValue }) {
   return (
     <>
       <Paragraph className={styles.spacer}>
-        Paste your public key into the field below. We require a key size of 4096 bit.{' '}
+        Paste your public key into the field below. We require a key size of 4096 bit.
         <TextLink target="_blank" rel="noreferrer noopener" href={KEY_GEN_GUIDE_URL}>
           Learn how to generate a key pair
         </TextLink>
@@ -51,7 +58,7 @@ function AddKeyForm({ value, setValue }) {
         className={styles.textarea}
         textareaRef={textareaRef}
         value={value}
-        placeholder="-----BEGIN RSA PUBLIC KEY-----"
+        placeholder="-----BEGIN PUBLIC KEY-----"
         onInput={(e) => setValue(e.target.value)}
       />
     </>
@@ -70,9 +77,18 @@ export default function AddKeyDialog({ onConfirm, isShown, onCancel }) {
   const onConfirmHandler = useCallback(async () => {
     setLoading(true);
 
-    const base64Der = util.keyPemTobase64Der(value);
-    const fingerprint = await util.getSha256FromBase64(base64Der);
-    const base64Fingerprint = urlSafeBase64.encode(window.btoa(fingerprint));
+    let base64Der;
+    let base64Fingerprint;
+
+    try {
+      base64Der = util.keyPemTobase64Der(value);
+      const fingerprint = await util.getSha256FromBase64(base64Der);
+      base64Fingerprint = urlSafeBase64.encode(window.btoa(fingerprint));
+    } catch {
+      Notification.error("This doesn't appear to be avalid public key.");
+      setLoading(false);
+      return;
+    }
 
     const jwk = {
       alg: 'RS256',

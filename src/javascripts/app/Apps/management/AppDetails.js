@@ -13,7 +13,7 @@ import {
   Tab,
   TabPanel,
 } from '@contentful/forma-36-react-components';
-import { css, keyframes } from 'emotion';
+import { css } from 'emotion';
 import Icon from 'ui/Components/Icon';
 import AppEditor from './AppEditor';
 import * as ManagementApiClient from './ManagementApiClient';
@@ -25,18 +25,9 @@ import KeyListing from './keys/KeyListing';
 import { track } from 'analytics/Analytics';
 import DocumentTitle from 'components/shared/DocumentTitle';
 
-const fadeIn = keyframes({
-  from: {
-    opacity: '0',
-  },
-  to: {
-    opacity: '1',
-  },
-});
-
-const tabs = {
-  GENERAL: 'GENERAL',
-  KEY_PAIRS: 'KEY_PAIRS',
+const TabPaths = {
+  GENERAL: '',
+  KEY_PAIRS: 'key-pairs',
 };
 
 const styles = {
@@ -51,6 +42,10 @@ const styles = {
     '& div:last-child h1': css({
       marginBottom: tokens.spacingXs,
     }),
+  }),
+  workbenchContent: css({
+    maxWidth: '820px',
+    margin: 'auto',
   }),
   copyButton: css({
     button: css({
@@ -88,8 +83,11 @@ const styles = {
     alignItems: 'center',
     marginTop: tokens.spacingL,
   }),
+  creatorMissing: css({
+    opacity: 0,
+  }),
   creator: css({
-    animation: `${fadeIn} .2s ease`,
+    transition: 'opacity .2s ease',
   }),
 };
 
@@ -115,6 +113,8 @@ function formatDate(date) {
   });
 }
 
+const userNameCache = {};
+
 export default class AppDetails extends React.Component {
   constructor(props) {
     super(props);
@@ -123,15 +123,20 @@ export default class AppDetails extends React.Component {
       busy: false,
       name: props.definition.name,
       definition: props.definition,
-      creator: '',
-      selectedTab: tabs.GENERAL,
+      selectedTab: props.tab,
+      creator: userNameCache[props.definition.sys.id] || '',
     };
   }
 
   async componentDidMount() {
     const { definition } = this.props;
 
-    const creator = await ManagementApiClient.getCreatorNameOf(definition);
+    let creator = userNameCache[definition.sys.id];
+
+    if (!creator) {
+      creator = await ManagementApiClient.getCreatorNameOf(definition);
+      userNameCache[definition.sys.id] = creator;
+    }
 
     this.setState({ creator });
   }
@@ -205,10 +210,13 @@ export default class AppDetails extends React.Component {
     ));
   };
 
+  onTabSelect = (tab) => {
+    this.setState({ selectedTab: tab });
+    this.props.goToTab(tab);
+  };
+
   render() {
     const { name, definition, busy, selectedTab } = this.state;
-    const { keys } = this.props;
-    const onTabSelect = (id) => this.setState({ selectedTab: id });
 
     return (
       <Workbench>
@@ -221,70 +229,77 @@ export default class AppDetails extends React.Component {
             </Button>
           }
           onBack={this.props.goToListView}></Workbench.Header>
-        <Workbench.Content type="text">
-          <div className={styles.title}>
-            <div>
-              <Icon name="page-apps" scale="1.6" />
-            </div>
-            <div>
-              <Heading>{name}</Heading>
-              <div className={sysIdStyle}>
-                <Paragraph>{definition.sys.id}</Paragraph>
-                <CopyButton className={styles.copyButton} copyValue={definition.sys.id} />
-              </div>
-            </div>
-          </div>
-          <div className={styles.info}>
-            <Paragraph title={new Date(definition.sys.createdAt)}>
-              <b>Created</b> {formatDate(definition.sys.createdAt)}
-            </Paragraph>
-            <Paragraph>
-              <b>Created by</b>{' '}
-              {this.state.creator && <span className={styles.creator}>{this.state.creator}</span>}
-            </Paragraph>
-          </div>
-          <Tabs>
-            <Tab id={tabs.GENERAL} selected={selectedTab === tabs.GENERAL} onSelect={onTabSelect}>
-              General
-            </Tab>
-            <Tab
-              id={tabs.KEY_PAIRS}
-              selected={selectedTab === tabs.KEY_PAIRS}
-              onSelect={onTabSelect}>
-              Key pairs
-            </Tab>
-          </Tabs>
-          {selectedTab === tabs.GENERAL && (
-            <TabPanel id={tabs.GENERAL} className={styles.tabPanel}>
+        <Workbench.Content>
+          <div className={styles.workbenchContent}>
+            <div className={styles.title}>
               <div>
-                <AppEditor
-                  definition={definition}
-                  onChange={(definition) => this.setState({ definition })}
-                />
+                <Icon name="page-apps" scale="1.6" />
               </div>
-              <div className={styles.formActions}>
-                <Button
-                  loading={busy}
-                  disabled={busy}
-                  onClick={this.openSaveConfirmModal}
-                  testId="app-save">
-                  Update app
-                </Button>
-                <TextLink
-                  linkType="negative"
-                  disabled={busy}
-                  onClick={this.openDeleteModal}
-                  testId="app-delete">
-                  Delete {name}
-                </TextLink>
+              <div>
+                <Heading>{name}</Heading>
+                <div className={sysIdStyle}>
+                  <Paragraph>{definition.sys.id}</Paragraph>
+                  <CopyButton className={styles.copyButton} copyValue={definition.sys.id} />
+                </div>
               </div>
-            </TabPanel>
-          )}
-          {selectedTab === tabs.KEY_PAIRS && (
-            <TabPanel id={tabs.KEY_PAIRS} className={styles.tabPanel}>
-              <KeyListing definition={definition} keys={keys} />
-            </TabPanel>
-          )}
+            </div>
+            <div className={styles.info}>
+              <Paragraph title={new Date(definition.sys.createdAt)}>
+                <b>Created</b> {formatDate(definition.sys.createdAt)}
+              </Paragraph>
+              <Paragraph>
+                <b>Created by</b>{' '}
+                <span className={this.state.creator ? styles.creator : styles.creatorMissing}>
+                  {this.state.creator}
+                </span>
+              </Paragraph>
+            </div>
+            <Tabs>
+              <Tab
+                id={TabPaths.GENERAL}
+                selected={selectedTab === TabPaths.GENERAL}
+                onSelect={this.onTabSelect}>
+                General
+              </Tab>
+              <Tab
+                id={TabPaths.KEY_PAIRS}
+                selected={selectedTab === TabPaths.KEY_PAIRS}
+                onSelect={this.onTabSelect}>
+                Key pairs
+              </Tab>
+            </Tabs>
+            {selectedTab === TabPaths.GENERAL && (
+              <TabPanel id={TabPaths.GENERAL} className={styles.tabPanel}>
+                <div>
+                  <AppEditor
+                    definition={definition}
+                    onChange={(definition) => this.setState({ definition })}
+                  />
+                </div>
+                <div className={styles.formActions}>
+                  <Button
+                    loading={busy}
+                    disabled={busy}
+                    onClick={this.openSaveConfirmModal}
+                    testId="app-save">
+                    Update app
+                  </Button>
+                  <TextLink
+                    linkType="negative"
+                    disabled={busy}
+                    onClick={this.openDeleteModal}
+                    testId="app-delete">
+                    Delete {name}
+                  </TextLink>
+                </div>
+              </TabPanel>
+            )}
+            {selectedTab === TabPaths.KEY_PAIRS && (
+              <TabPanel id={TabPaths.KEY_PAIRS} className={styles.tabPanel}>
+                <KeyListing definition={definition} />
+              </TabPanel>
+            )}
+          </div>
         </Workbench.Content>
       </Workbench>
     );
@@ -294,5 +309,6 @@ export default class AppDetails extends React.Component {
 AppDetails.propTypes = {
   definition: PropTypes.object.isRequired,
   goToListView: PropTypes.func.isRequired,
-  keys: PropTypes.arrayOf(PropTypes.object).isRequired,
+  goToTab: PropTypes.func.isRequired,
+  tab: PropTypes.string.isRequired,
 };

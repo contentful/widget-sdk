@@ -57,7 +57,7 @@ export async function getCreatorNameOf(entry) {
     entry.sys.createdBy.sys.id
   );
 
-  return [firstName, lastName].join(' ');
+  return `${firstName} ${lastName}`;
 }
 
 export function addKey({ orgId, definitionId, jwk }) {
