@@ -10,9 +10,8 @@ import TheLocaleStore from 'services/localeStore';
 
 export default function register() {
   /**
-   * @deprecated Use and extend the new `app/widgets/WidgetApi/buildWidgetApi.js` instead.
+   * @deprecated  Use and extend the new `app/widgets/NewWidgetApi/createNewWidgetApi.js` instead.
    *
-   * @description
    * @scope.requires {object} entity
    * @scope.requires {object} locale
    * @scope.requires {object} otSubDoc

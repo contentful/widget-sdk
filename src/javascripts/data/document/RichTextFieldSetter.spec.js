@@ -42,22 +42,23 @@ describe('RichTextFieldSetter', () => {
   });
 
   describe('#setAt()', () => {
-    it('initializes new documents with the default "empty document" value', async () => {
+    it('sets values on empty `undefined` documents directly (no ops)', async () => {
       const doc = {
-        submitOp: jest.fn().mockImplementationOnce((_ops, cb) => cb()),
+        submitOp: jest.fn(),
       };
       const fieldPath = ['fields', 'id', 'locale'];
-      const nextValue = {};
+      const nextValue = document(block(BLOCKS.PARAGRAPH, {}, text('hello ')));
       mocks.ShareJS.peek.mockReturnValueOnce(undefined);
 
       await RichTextFieldSetter.setAt(doc, fieldPath, nextValue);
 
-      expect(mocks.ShareJS.setDeep).toBeCalledWith(doc, fieldPath, EMPTY_DOCUMENT);
+      expect(mocks.ShareJS.setDeep).toBeCalledWith(doc, fieldPath, nextValue);
+      expect(doc.submitOp).toBeCalledTimes(0);
     });
 
-    it('resets empty documents to `undefined`', async () => {
+    it('resets empty documents directly to `undefined` (no ops)', async () => {
       const doc = {
-        submitOp: jest.fn().mockImplementationOnce((_ops, cb) => cb()),
+        submitOp: jest.fn(),
       };
       mocks.ShareJS.peek.mockReturnValueOnce(EMPTY_DOCUMENT);
 
@@ -67,8 +68,7 @@ describe('RichTextFieldSetter', () => {
       await RichTextFieldSetter.setAt(doc, fieldPath, nextValue);
 
       expect(mocks.ShareJS.setDeep).toBeCalledWith(doc, fieldPath, undefined);
-      expect(doc.submitOp).toBeCalledTimes(1);
-      expect(doc.submitOp).toBeCalledWith([], expect.any(Function));
+      expect(doc.submitOp).toBeCalledTimes(0);
     });
 
     it('sends changes as OT operations', async function () {

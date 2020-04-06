@@ -5,15 +5,15 @@ import * as ShareJS from 'data/sharejs/utils';
 
 import * as logger from 'services/logger';
 
+const FIELD_LOCALE_PATH_LENGTH = ['fields', 'fieldId', 'localeId'].length;
+
 /**
  * @description
- *  Verifies if the field matching `fieldId` is
- * a structured text field in the given content type.
+ * Returns `true` if the field matching `fieldId` is a rich text field in the given
+ * content type.
  *
- * @name RichTextField#is
  * @param {string} fieldId
  * @param {object} contentType
- *
  * @returns {boolean}
  */
 export const is = (fieldId, contentType) => {
@@ -27,58 +27,60 @@ export const is = (fieldId, contentType) => {
 
 /**
  * @description
- * Sets the structured text value of a field at `fieldPath` in a given `doc`
- * and sends it to ShareJS.
- * If the field has no value, it initializes it with an empty
- * document.
+ * Sets the structured text value of a field at `path` in a given `doc` and sends it
+ * to ShareJS.
  *
  * @param {otDoc} doc
- * @param {array} fieldPath
- * @param {object} nextFieldValue
+ * @param {array} path
+ * @param {object} newValue
  */
-export const setAt = (doc, fieldPath, nextFieldValue) => {
-  const fieldValue = ShareJS.peek(doc, fieldPath);
-  if (deepEqual(nextFieldValue, EMPTY_DOCUMENT)) {
-    /**
-     * When the editor state displays an empty document, we need to reset the
-     * ShareJS field value to `undefined` because:
-     *
-     * 1) This ensures the field will be published as blank/absent, rather than
-     *    as empty doc markup. This is consistent with our treatment of text
-     *    fields (see [1] below), which are always reset to `undefined` rather
-     *    than `''` (empty string).
-     * 2) This triggers the 'required' validation. An empty rich text document
-     *    would otherwise bypass the validation, but this is unintuitive from
-     *    a practitioner standpoint.
-     *
-     * We pass both the `fieldValue` and `nextFieldValue` as undefined to keep
-     * ShareJS from raising a type error. This litters the console output.
-     *
-     * [1] https://github.com/contentful/user_interface/blob/master/src/javascripts/app/entity_editor/document/stringField.js#L28-L33
-     */
-    return ShareJS.setDeep(doc, fieldPath, undefined).then(() =>
-      setValue(doc, fieldPath, undefined, undefined)
-    );
+export function setAt(doc, path, newValue) {
+  const oldValue = ShareJS.peek(doc, path);
+
+  if (path.length === FIELD_LOCALE_PATH_LENGTH && deepEqual(newValue, EMPTY_DOCUMENT)) {
+    // NOTE: This is legacy Rich Text editor behavior. The `field-editors` version
+    // of Rich Text takes care of this logic an never sends `EMPTY_DOCUMENT`,
+    // instead it sends `undefined` directly.
+    // This allows the RT editor to avoid unexpected `widgetApi.field.onValuChange(cb)`
+    // unanticipated behavior where `cb` would be called with `undefined`
+    // rather than `EMPTY_DOCUMENT`.
+    //
+    // When the editor state displays an empty document, we need to reset the
+    // ShareJS field value to `undefined` as this is generally considered the "empty"
+    // field state by the CMA. This ensures that the "required" validation is
+    // triggered and is consistent with Text/Symbol type fields where '' is considered
+    // as `undefined` (see `./StringFieldSetter.js`)
+    if (oldValue === undefined) {
+      return Promise.resolve(oldValue);
+    } else {
+      return ShareJS.setDeep(doc, path, undefined);
+    }
   }
 
-  if (fieldValue === undefined) {
-    /**
-     * We need to initialize or re-initialize the editor state from the initial
-     * `undefined` value to an empty document in order for the the subsequent
-     * `setValue` invocation to work.
-     */
-    return ShareJS.setDeep(doc, fieldPath, EMPTY_DOCUMENT).then(() =>
-      setValue(doc, fieldPath, EMPTY_DOCUMENT, nextFieldValue)
-    );
+  if (oldValue === undefined) {
+    // Set initial value after empty document state. No point in calling
+    // `setValueViaOps` as this would just result in an op doing the same.
+    return ShareJS.setDeep(doc, path, newValue);
   }
 
-  return setValue(doc, fieldPath, fieldValue, nextFieldValue);
-};
+  return setValueViaOps(doc, path, oldValue, newValue);
+}
 
-function setValue(doc, fieldPath, fieldValue, nextFieldValue) {
-  const ops = jsondiff(fieldValue, nextFieldValue).map((op) => ({
+/**
+ * Calculates the minimum required (as per our algorithm) OT operations to set
+ * the document to the new `nextFieldValue` and applies them to the document
+ * (doc.submitOp) without simply overwriting the document completely (doc.setDeep).
+ * This allows to e.g. only touch the paragraph the user has been writing in. So in
+ * theory, if another user is editing another paragraph at the same time, both users
+ * changes will sustain.
+ * If two users would be editing the same paragraph, this would most likely create a
+ * mess, which is why we have implemented the field locking on Rich Text fields to
+ * ensure only one user is editing the document at the same time.
+ */
+function setValueViaOps(doc, path, oldValue, newValue) {
+  const ops = jsondiff(oldValue, newValue).map((op) => ({
     ...op,
-    p: [...fieldPath, ...op.p],
+    p: [...path, ...op.p],
   }));
 
   // The initial implementation of the Rich Text contained a bug that
@@ -96,7 +98,7 @@ function setValue(doc, fieldPath, fieldValue, nextFieldValue) {
 
   if (hasMissingDataFields) {
     logger.logWarn('Amending RichText document');
-    return ShareJS.setDeep(doc, fieldPath, nextFieldValue);
+    return ShareJS.setDeep(doc, path, newValue);
   }
 
   return new Promise((resolve, reject) => {

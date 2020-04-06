@@ -1,4 +1,4 @@
-import openHyperlinkDialog from 'app/widgets/WidgetApi/dialogs/openHyperlinkDialog';
+import openHyperlinkDialog from './dialogs/openHyperlinkDialog';
 import {
   getSectionVisibility,
   canCreateAsset,
@@ -15,22 +15,19 @@ import {
  *  ui-extensions-sdk in this or a similar way.
  *
  * @param {Object} widgetAPI
- * @param {Object} spaceContext
  * @returns {Object}
  */
-export default function (widgetAPI, spaceContext) {
+export default function (widgetAPI) {
   const { asset: canAccessAssets } = getSectionVisibility();
-  const contentTypes = spaceContext ? spaceContext.publishedCTs.getAllBare() : [];
+  const contentTypes = widgetAPI.space.getCachedContentTypes();
 
   const rtWidgetAPI = {
     ...widgetAPI,
     // TODO: Get rid of this ugly hack we're using for checking whether or not we need
     //  to update fetched entity card info.
-    currentUrl: window.location,
     permissions: {
       canAccessAssets,
       canCreateAssets: canCreateAsset(),
-
       canCreateEntryOfContentType: contentTypes.reduce(
         (acc, contentType) => ({
           ...acc,
@@ -42,9 +39,7 @@ export default function (widgetAPI, spaceContext) {
     dialogs: {
       ...widgetAPI.dialogs,
       createHyperlink: ({ showTextInput, value }) => {
-        // Important to pass `rtWidgetAPI` as `FetchedEntityCard` depends on
-        // `jobs` and `currentUrl`.
-        return openHyperlinkDialog({ showTextInput, value, widgetAPI: rtWidgetAPI });
+        return openHyperlinkDialog({ showTextInput, value, widgetAPI });
       },
     },
   };

@@ -2,7 +2,7 @@ import React from 'react';
 import { mount } from 'enzyme';
 import 'jest-enzyme';
 
-import { HyperlinkDialogForm } from 'app/widgets/WidgetApi/dialogs/HyperlinkDialog';
+import { HyperlinkDialogForm } from './HyperlinkDialog';
 
 jest.mock('ui/Framework/AngularComponent', () => () => null);
 jest.mock('NgRegistry', () => ({ getModule: jest.fn().mockImplementation(() => null) }));

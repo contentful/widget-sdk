@@ -1,19 +1,19 @@
 import _ from 'lodash';
 import * as ShareJS from 'data/sharejs/utils';
-import * as StringField from './stringField';
+import * as StringField from './StringFieldSetter';
 
 jest.mock('data/sharejs/utils', () => ({
   setDeep: jest.fn().mockResolvedValue(),
   peek: jest.fn().mockReturnValue(undefined),
 }));
 
-describe('entity_editor/Document/stringField', () => {
+describe('StringFieldSetter', () => {
   beforeEach(() => {
     ShareJS.peek.mockClear();
     ShareJS.setDeep.mockClear();
   });
 
-  describe('#isStringField', () => {
+  describe('isStringField', () => {
     function ctWithFields(fields) {
       return { data: { fields } };
     }
@@ -52,7 +52,7 @@ describe('entity_editor/Document/stringField', () => {
     });
   });
 
-  describe('#setAt', () => {
+  describe('setAt', () => {
     const path = ['some', 'path'];
 
     describe('setting invalid values', () => {

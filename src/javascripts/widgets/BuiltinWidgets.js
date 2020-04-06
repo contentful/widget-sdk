@@ -10,7 +10,6 @@ import LinkEditor, {
   withCfWebApp as linkEditorWithCfWebApp,
 } from 'app/widgets/LinkEditor';
 import EmbedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
-import { default as RichTextEditor } from 'app/widgets/rich_text';
 import { renderRichTextEditor } from 'app/widgets/RichText';
 import { TagsEditor } from '@contentful/field-editor-tags';
 import { SingleLineEditor } from '@contentful/field-editor-single-line';
@@ -35,7 +34,7 @@ import {
 import { getEntityLink } from 'app/common/EntityStateLink';
 import { SlugEditor } from '@contentful/field-editor-slug';
 import { canUploadMultipleAssets, canCreateAsset } from 'access_control/AccessChecker';
-import { NEW_RICH_TEXT, NEW_SINGLE_REFERENCE_FIELD } from 'featureFlags';
+import { NEW_SINGLE_REFERENCE_FIELD } from 'featureFlags';
 import { getVariation } from 'LaunchDarkly';
 
 const CfLinkEditor = linkEditorWithCfWebApp(LinkEditor);
@@ -244,28 +243,12 @@ export function create() {
     ),
   });
 
-  const newRichText = (spaceContext) => ({
-    renderFieldEditor: ({ widgetApi, loadEvents }) => {
-      return renderRichTextEditor({ widgetApi, spaceContext, loadEvents });
-    },
-  });
-  const legacyRichText = {
-    buildTemplate: ({ widgetApi, loadEvents }) => {
-      return <RichTextEditor widgetApi={widgetApi} loadEvents={loadEvents} />;
-    },
-  };
-
   registerWidget('richTextEditor', {
     fieldTypes: ['RichText'],
     name: 'RichText',
     icon: 'wysiwig',
-    renderWhen: async () => {
-      const spaceContext = getModule('spaceContext');
-      const organizationId = spaceContext.getData('organization.sys.id');
-      const spaceId = spaceContext.space.getId();
-      const isEnabled = await getVariation(NEW_RICH_TEXT, { organizationId, spaceId });
-      return isEnabled ? newRichText(spaceContext) : legacyRichText;
-    },
+    renderFieldEditor: ({ widgetApi, loadEvents }) =>
+      renderRichTextEditor({ widgetApi, loadEvents }),
   });
 
   registerWidget('tagEditor', {

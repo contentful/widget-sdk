@@ -1,7 +1,7 @@
 import React from 'react';
 import { INLINES } from '@contentful/rich-text-types';
-import HyperlinkDialog, { LINK_TYPES } from 'app/widgets/WidgetApi/dialogs/HyperlinkDialog';
-import WidgetAPIContext from '../WidgetApiContext';
+import HyperlinkDialog, { LINK_TYPES } from './HyperlinkDialog';
+import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext';
 import ModalLauncher from 'app/common/ModalLauncher';
 import { newConfigFromExtension } from 'search/EntitySelector/Config';
 import { newEntitySelectorConfigFromRichTextField } from '@contentful/field-editor-rich-text';
@@ -43,6 +43,8 @@ export default async function ({ value = {}, showTextInput, widgetAPI }) {
 
   return new Promise((resolve, reject) => {
     ModalLauncher.open(({ isShown, onClose }) => (
+      // TODO: Avoid using `WidgetAPIContext`, currently only necessary for rendering
+      //  entity cards.
       <WidgetAPIContext.Provider value={{ widgetAPI }}>
         <HyperlinkDialog
           {...props}
