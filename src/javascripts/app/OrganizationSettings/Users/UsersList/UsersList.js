@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { startCase, debounce, times } from 'lodash';
 import { css } from 'emotion';
 import { isEqual } from 'lodash/fp';
-import pluralize from 'pluralize';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import {
@@ -36,11 +35,6 @@ import RemoveOrgMemberDialog from '../RemoveUserDialog';
 import Placeholder from 'app/common/Placeholder';
 import { getFilters, getSearchTerm } from 'redux/selectors/filters';
 import getOrgId from 'redux/selectors/getOrgId';
-import {
-  getInvitedUsersCount,
-  membershipExistsParam,
-} from 'app/OrganizationSettings/UserInvitations/UserInvitationUtils';
-
 import { getLastActivityDate, get2FAStatus } from '../UserUtils';
 import { generateFilterDefinitions } from './FilterDefinitions';
 import {
@@ -63,9 +57,6 @@ const styles = {
     paddingLeft: tokens.spacingM,
     marginLeft: 'auto',
     display: 'flex',
-  }),
-  numberOrgMemberships: css({
-    marginRight: tokens.spacingXs,
   }),
   actionsWrapper: css({
     width: '100%',
@@ -92,7 +83,6 @@ class UsersList extends React.Component {
     updateSearchTerm: PropTypes.func.isRequired,
     hasSsoEnabled: PropTypes.bool,
     hasTeamsFeature: PropTypes.bool,
-    hasPendingOrgMembershipsEnabled: PropTypes.bool,
   };
 
   state = {
@@ -103,7 +93,6 @@ class UsersList extends React.Component {
       skip: 0,
       limit: 10,
     },
-    numberOrgMemberships: 0,
   };
 
   endpoint = createOrganizationEndpoint(this.props.orgId);
@@ -124,30 +113,13 @@ class UsersList extends React.Component {
   }
 
   loadInitialData = async () => {
-    const { hasPendingOrgMembershipsEnabled } = this.props;
-
     this.setState({ loading: true });
-
-    if (!hasPendingOrgMembershipsEnabled) {
-      await this.loadInvitationsCount();
-    }
-
-    await this.fetch(true);
-
+    await this.fetch();
     this.setState({ loading: false });
   };
 
-  loadInvitationsCount = async () => {
-    const { orgId } = this.props;
-    const count = await getInvitedUsersCount(orgId);
-
-    this.setState({
-      invitedUsersCount: count,
-    });
-  };
-
-  fetch = async (updateCount = false) => {
-    const { filters, searchTerm, orgId, hasPendingOrgMembershipsEnabled } = this.props;
+  fetch = async () => {
+    const { filters, searchTerm } = this.props;
     const { pagination } = this.state;
     const filterQuery = formatQuery(filters.map((item) => item.filter));
     const includePaths = ['sys.user'];
@@ -158,10 +130,6 @@ class UsersList extends React.Component {
       skip: pagination.skip,
       limit: pagination.limit,
     };
-
-    // in the legacy invitation flow we filter out users without name.
-    // this won't be needed once pending org memberships are fully rolled out
-    if (!hasPendingOrgMembershipsEnabled) query[membershipExistsParam] = true;
 
     this.setState({ loading: true });
 
@@ -174,13 +142,6 @@ class UsersList extends React.Component {
       loading: false,
     };
 
-    if (updateCount) {
-      const endpoint = createOrganizationEndpoint(orgId);
-      newState.numberOrgMemberships = await getMemberships(endpoint, {
-        [membershipExistsParam]: true,
-      }).then(({ total }) => total);
-    }
-
     this.setState(newState);
   };
 
@@ -191,10 +152,6 @@ class UsersList extends React.Component {
     };
   }
 
-  // TODO: temporarily using the membership id instead of the user id
-  // as a route param.
-  // This should be changed after `include` is implemented in the backend
-  // so that we can get the linked membership from the user endpoint response
   getLinkToUser(user) {
     return {
       path: 'account.organizations.users.detail',
@@ -238,7 +195,7 @@ class UsersList extends React.Component {
           },
         });
       }
-      await this.fetch(true);
+      await this.fetch();
     } catch (e) {
       Notification.error(e.data.message);
     }
@@ -261,15 +218,8 @@ class UsersList extends React.Component {
   }, 500);
 
   render() {
-    const {
-      queryTotal,
-      usersList,
-      pagination,
-      loading,
-      invitedUsersCount,
-      numberOrgMemberships,
-    } = this.state;
-    const { searchTerm, spaces, spaceRoles, filters, hasPendingOrgMembershipsEnabled } = this.props;
+    const { queryTotal, usersList, pagination, loading } = this.state;
+    const { searchTerm, spaces, spaceRoles, filters } = this.props;
 
     return (
       <Workbench testId="organization-users-page">
@@ -287,20 +237,6 @@ class UsersList extends React.Component {
                 value={searchTerm}
               />
               <div className={styles.ctaWrapper}>
-                {!hasPendingOrgMembershipsEnabled && (
-                  <div className={styles.numberOrgMemberships}>
-                    <div>{`${pluralize(
-                      'users',
-                      numberOrgMemberships,
-                      true
-                    )} in your organization`}</div>
-                    {invitedUsersCount != null && invitedUsersCount > 0 && (
-                      <StateLink component={TextLink} {...this.getLinkToInvitationsList()}>
-                        {invitedUsersCount} invited users
-                      </StateLink>
-                    )}
-                  </div>
-                )}
                 <StateLink component={Button} {...this.getLinkToInvitation()}>
                   Invite users
                 </StateLink>
@@ -438,17 +374,13 @@ LoadingState.propTypes = {
 };
 
 export default connect(
-  (
-    state,
-    { spaceRoles, spaces, teams, hasSsoEnabled, hasTeamsFeature, hasPendingOrgMembershipsEnabled }
-  ) => {
+  (state, { spaceRoles, spaces, teams, hasSsoEnabled, hasTeamsFeature }) => {
     const filterValues = getFilters(state);
     const filterDefinitions = generateFilterDefinitions({
       spaceRoles,
       spaces,
       teams,
       hasSsoEnabled,
-      hasPendingOrgMembershipsEnabled,
       hasTeamsFeature,
       filterValues,
     });

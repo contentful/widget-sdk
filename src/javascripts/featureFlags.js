@@ -7,8 +7,6 @@ export const ENTRY_COMMENTS = 'feature-04-2019-entry-comments';
 export const TEAMS_IN_SPACES = 'feature-bv-04-2019-teams-iteration-2';
 export const ENTITY_EDITOR_CMA_EXPERIMENT =
   'feature-pen-07-2019-fake-cma-calls-experiment-to-replace-sharejs';
-export const PENDING_ORG_MEMBERSHIPS = 'feature-bv-09-2019-new-invitation-flow-new-entity';
-export const NEW_INVITATION_FORM = 'feature-bv-05-2019-new-invitation-flow';
 export const ACCESS_TOOLS = 'feature-ogg-02-2020-access-tools';
 export const COOKIE_CONSENT_MANAGEMENT = 'feature-ahoy-03-2020-cookie-consent-mgmt';
 

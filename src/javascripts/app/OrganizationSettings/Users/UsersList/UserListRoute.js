@@ -10,8 +10,6 @@ import { getAllTeams } from 'access_control/TeamRepository';
 import { getOrganization } from 'services/TokenStore';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import { getVariation } from 'LaunchDarkly';
-import { PENDING_ORG_MEMBERSHIPS } from 'featureFlags';
 
 const UserListFetcher = createFetcherComponent(({ orgId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
@@ -28,7 +26,6 @@ const UserListFetcher = createFetcherComponent(({ orgId }) => {
     safeGetTeams(),
     getOrganization(orgId),
     getOrgFeature(orgId, 'teams', false),
-    getVariation(PENDING_ORG_MEMBERSHIPS, { organizationId: orgId }),
   ];
 
   return Promise.all(promises);

@@ -1,146 +1,65 @@
 import React from 'react';
 import NewUser from './NewUser';
-import {
-  render,
-  fireEvent,
-  within,
-  waitForElement,
-  act,
-  wait,
-  screen,
-} from '@testing-library/react';
-
-import {
-  getAllSpaces,
-  getAllRoles,
-  invite,
-  createOrgMembership,
-} from 'access_control/OrganizationMembershipRepository';
+import { render, fireEvent, within, wait, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import * as fakeFactory from 'test/helpers/fakeFactory';
+import { invite } from 'access_control/OrganizationMembershipRepository';
 import ModalLauncher from 'app/common/ModalLauncher';
-import { getVariation } from 'LaunchDarkly';
 import { create as createSpaceMembershipRepo } from 'access_control/SpaceMembershipRepository';
-import {
-  createTeamMembership,
-  getAllTeams,
-  getAllTeamsSpaceMemberships,
-} from 'access_control/TeamRepository';
-import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
+import { createTeamMembership } from 'access_control/TeamRepository';
+import { createSpaceEndpoint } from 'data/EndpointFactory';
 
-const mockOrgMembership = { sys: { id: 'neworgmembership' } };
-const mockOrgEndpoint = jest.fn().mockName('org endpoint');
-const mockSpaceEndpoint = jest.fn().mockName('space endpoint');
-const mockInviteToSpaceFn = jest.fn();
+const mockFooSpace = fakeFactory.Space('Foo');
+const mockBarSpace = fakeFactory.Space('Bar');
+const mockEditorRole = fakeFactory.Role('Editor', mockFooSpace);
+const mockAuthorRole = fakeFactory.Role('Author', mockBarSpace);
+const mockTeamA = fakeFactory.Team('Team A');
+const mockTeamB = fakeFactory.Team('Team B');
+const mockTeamSpaceMemberships = [
+  fakeFactory.TeamSpaceMembership(mockTeamA, mockFooSpace, [mockEditorRole], false),
+  fakeFactory.TeamSpaceMembership(mockTeamB, mockBarSpace, [], true),
+];
+const mockInvitation = fakeFactory.Invitation();
+
 const mockOnReady = jest.fn();
-
-let mockRoles, mockSpaces, mockTeams, mockTeamSpaceMemberships;
+const mockOrgEndpoint = jest.fn();
+const mockSpaceEndpoint = jest.fn();
+const mockInviteToSpaceFn = jest.fn(() => Promise.resolve());
 
 jest.mock('data/EndpointFactory', () => ({
-  createOrganizationEndpoint: jest.fn().mockName('create org endpoint'),
-  createSpaceEndpoint: jest.fn(),
+  createOrganizationEndpoint: jest.fn(() => mockOrgEndpoint),
+  createSpaceEndpoint: jest.fn(() => mockSpaceEndpoint),
 }));
 
 jest.mock('access_control/OrganizationMembershipRepository', () => ({
-  getAllRoles: jest.fn(),
-  getAllSpaces: jest.fn(),
-  invite: jest.fn().mockResolvedValue({}),
-  createOrgMembership: jest.fn(),
+  getAllRoles: jest.fn(async () => [mockEditorRole, mockAuthorRole]),
+  getAllSpaces: jest.fn(async () => [mockFooSpace, mockBarSpace]),
+  invite: jest.fn(async () => mockInvitation),
 }));
 
 jest.mock('access_control/SpaceMembershipRepository', () => ({
-  create: jest.fn(),
+  create: jest.fn(() => ({
+    invite: mockInviteToSpaceFn,
+  })),
 }));
 
 jest.mock('access_control/TeamRepository', () => ({
-  createTeamMembership: jest.fn(),
-  getAllTeams: jest.fn(),
-  getAllTeamsSpaceMemberships: jest.fn(),
+  createTeamMembership: jest.fn(() => Promise.resolve()),
+  getAllTeams: jest.fn(async () => [mockTeamA, mockTeamB]),
+  getAllTeamsSpaceMemberships: jest.fn(async () => mockTeamSpaceMemberships),
 }));
 
 describe('NewUser', () => {
-  beforeEach(() => {
-    mockRoles = [
-      {
-        name: 'Editor',
-        sys: {
-          id: 'editorid',
-          space: { sys: { id: '123' } },
-        },
-      },
-      {
-        name: 'Author',
-        sys: {
-          id: 'authorid',
-          space: { sys: { id: '456' } },
-        },
-      },
-    ];
-    mockSpaces = [
-      {
-        name: 'Foo',
-        sys: { id: '123' },
-      },
-      {
-        name: 'Bar',
-        sys: { id: '456' },
-      },
-    ];
-    mockTeams = [
-      {
-        name: 'Super team',
-        sys: { id: 'superteam' },
-      },
-      {
-        name: 'The people',
-        sys: { id: 'thepeople' },
-      },
-    ];
-    mockTeamSpaceMemberships = [
-      {
-        admin: false,
-        roles: [mockRoles[0]],
-        sys: {
-          space: mockSpaces[0],
-          team: mockTeams[0],
-        },
-      },
-    ];
-
-    createTeamMembership.mockResolvedValue({});
-    getAllTeams.mockResolvedValue(mockTeams);
-    getAllTeamsSpaceMemberships.mockResolvedValue(mockTeamSpaceMemberships);
-
-    mockInviteToSpaceFn.mockResolvedValue({});
-    createOrganizationEndpoint.mockReturnValue(mockOrgEndpoint);
-    createSpaceEndpoint.mockReturnValue(mockSpaceEndpoint);
-    createSpaceMembershipRepo.mockReturnValue({
-      invite: mockInviteToSpaceFn,
-    });
-    getVariation.mockResolvedValue(false);
-  });
-
-  afterEach(() => {
-    mockOnReady.mockReset();
-    createOrgMembership.mockReset();
-    mockInviteToSpaceFn.mockReset();
-    createSpaceEndpoint.mockReset();
-    createSpaceMembershipRepo.mockReset();
-    createTeamMembership.mockReset();
-    getAllTeams.mockReset();
-    getAllTeamsSpaceMemberships.mockReset();
-    invite.mockReset();
-    getVariation.mockReset();
-  });
-
   it('does not show the owner role as an option to non owners', async () => {
-    build(false, false);
-    expect(screen.queryByLabelText('Owner')).toBeNull();
+    build(false);
     await wait();
+    expect(screen.queryByLabelText('Owner')).toBeNull();
   });
 
   it('shows the owner role as an option to org owners', async () => {
-    build(false, true);
-    expect(screen.getByLabelText('Owner')).toBeVisible();
+    build(true);
     await wait();
+    expect(screen.getByLabelText('Owner')).toBeVisible();
   });
 
   describe('validation fails', () => {
@@ -150,16 +69,14 @@ describe('NewUser', () => {
       const { emailsValidationMessage } = await submitForm();
       expect(emailsValidationMessage).toBeVisible();
       expect(invite).not.toHaveBeenCalled();
-      await wait();
     });
 
     it('validates email addresses', async () => {
       build();
       await wait();
-      const { emailsValidationMessage } = await submitForm('invalid@');
+      const { emailsValidationMessage } = await submitForm(['invalid@']);
       expect(emailsValidationMessage).toBeVisible();
       expect(invite).not.toHaveBeenCalled();
-      await wait();
     });
 
     it('validates the maximum number of email addresses', async () => {
@@ -170,13 +87,12 @@ describe('NewUser', () => {
       const { emailsValidationMessage } = await submitForm(emails);
       expect(emailsValidationMessage).toBeVisible();
       expect(invite).not.toHaveBeenCalled();
-      await wait();
     });
 
     it('validates that an org role was selected', async () => {
       build();
       await wait();
-      const { orgRoleValidationMessage } = await submitForm('john.doe@contentful.com', '');
+      const { orgRoleValidationMessage } = await submitForm(['john.doe@contentful.com'], '');
       expect(orgRoleValidationMessage).toBeVisible();
       expect(invite).not.toHaveBeenCalled();
       await wait();
@@ -186,7 +102,7 @@ describe('NewUser', () => {
       build();
       await wait();
       const { spaceMembershipsValidationMessage } = await submitForm(
-        'expect@topass.com',
+        ['expect@topass.com'],
         'Member',
         [{ spaceName: 'Foo', roleNames: [] }]
       );
@@ -202,14 +118,12 @@ describe('NewUser', () => {
       build();
       await wait();
       await submitForm(['john.doe@enterprise.com'], 'Owner', [
-        { spaceName: 'Foo', roleNames: ['Editor'] },
+        { spaceName: mockFooSpace.name, roleNames: [mockEditorRole.name] },
       ]);
       await wait(() => screen.getByTestId('new-user.done'));
       expect(invite).toHaveBeenCalledWith(mockOrgEndpoint, {
         role: 'owner',
         email: 'john.doe@enterprise.com',
-        spaceInvitations: [{ spaceId: '123', admin: false, roleIds: ['editorid'] }],
-        teamInvitations: [],
       });
       await wait();
     });
@@ -222,8 +136,12 @@ describe('NewUser', () => {
         emailsValidationMessage,
         orgRoleValidationMessage,
         spaceMembershipsValidationMessage,
-      } = await submitForm(emails, 'Member', [{ spaceName: 'Foo', roleNames: ['Editor'] }]);
-      await wait(() => screen.getByTestId('new-user.done'));
+      } = await submitForm(emails, 'Member', [
+        { spaceName: mockBarSpace.name, roleNames: [mockAuthorRole.name] },
+      ]);
+
+      await screen.findByTestId('new-user.done');
+
       expect([
         emailsValidationMessage,
         orgRoleValidationMessage,
@@ -243,84 +161,53 @@ describe('NewUser', () => {
     });
 
     describe('adding to spaces', () => {
-      it('creates invitations with space memberships', async () => {
-        build();
-        await wait();
-        await submitForm('expect@topass.com', 'Member', [
-          { spaceName: 'Foo', roleNames: ['Editor'] },
-        ]);
-        await wait(() => screen.getByTestId('new-user.done'));
-        expect(createOrganizationEndpoint).toHaveBeenCalledWith('myorg');
-        expect(invite).toHaveBeenCalledWith(mockOrgEndpoint, {
-          role: 'member',
-          email: 'expect@topass.com',
-          spaceInvitations: [
-            {
-              admin: false,
-              roleIds: ['editorid'],
-              spaceId: '123',
-            },
-          ],
-          teamInvitations: [],
-        });
-        expect(createSpaceMembershipRepo).not.toHaveBeenCalled();
-        expect(mockInviteToSpaceFn).not.toHaveBeenCalled();
-        await wait();
-      });
-
       it('creates space memberships', async () => {
         build(true);
         await wait();
         const spaceMemberships = [
-          { spaceName: mockSpaces[0].name, roleNames: [mockRoles[0].name] },
-          { spaceName: mockSpaces[1].name, roleNames: [mockRoles[1].name] },
+          { spaceName: mockFooSpace.name, roleNames: [mockEditorRole.name] },
+          { spaceName: mockBarSpace.name, roleNames: [mockAuthorRole.name] },
         ];
-        await submitForm('expect@topass.com', 'Member', spaceMemberships);
+        await submitForm(['expect@topass.com'], 'Member', spaceMemberships);
         await wait(() => screen.getByTestId('new-user.done'));
-        expect(invite).not.toHaveBeenCalled();
+        expect(invite).toHaveBeenCalled();
         expect(createSpaceMembershipRepo).toHaveBeenCalledWith(mockSpaceEndpoint);
-        expect(createSpaceEndpoint).toHaveBeenNthCalledWith(1, mockSpaces[0].sys.id);
-        expect(createSpaceEndpoint).toHaveBeenNthCalledWith(2, mockSpaces[1].sys.id);
-        expect(mockInviteToSpaceFn).toHaveBeenNthCalledWith(1, 'expect@topass.com', ['editorid']);
-        expect(mockInviteToSpaceFn).toHaveBeenNthCalledWith(2, 'expect@topass.com', ['authorid']);
+        expect(createSpaceEndpoint).toHaveBeenNthCalledWith(1, mockFooSpace.sys.id);
+        expect(createSpaceEndpoint).toHaveBeenNthCalledWith(2, mockBarSpace.sys.id);
+        expect(mockInviteToSpaceFn).toHaveBeenNthCalledWith(1, 'expect@topass.com', [
+          mockEditorRole.sys.id,
+        ]);
+        expect(mockInviteToSpaceFn).toHaveBeenNthCalledWith(2, 'expect@topass.com', [
+          mockAuthorRole.sys.id,
+        ]);
         await wait();
       });
     });
 
     describe('adding to teams', () => {
-      it('should invite to teams in orgs with sso', async () => {
-        build(true, false, true);
+      it('should invite to teams', async () => {
+        build(false, true);
         await wait();
-        await submitForm(['john.doe@enterprise.com'], 'Member', [], ['Super team', 'The people']);
-        await wait(() => screen.getByTestId('new-user.done'));
+        await submitForm(
+          ['john.doe@enterprise.com'],
+          'Member',
+          [],
+          [mockTeamA.name, mockTeamB.name]
+        );
+        await screen.findByTestId('new-user.done');
         expect(createTeamMembership).toHaveBeenCalledTimes(2);
         expect(createTeamMembership).toHaveBeenNthCalledWith(
           1,
           mockOrgEndpoint,
-          mockOrgMembership.sys.id,
-          'superteam'
+          mockInvitation.sys.organizationMembership.sys.id,
+          mockTeamA.sys.id
         );
         expect(createTeamMembership).toHaveBeenNthCalledWith(
           2,
           mockOrgEndpoint,
-          mockOrgMembership.sys.id,
-          'thepeople'
+          mockInvitation.sys.organizationMembership.sys.id,
+          mockTeamB.sys.id
         );
-        await wait();
-      });
-
-      it('should invite to teams in orgs without sso', async () => {
-        build(false, false, true);
-        await wait();
-        await submitForm(['john.doe@enterprise.com'], 'Member', [], ['Super team', 'The people']);
-        await wait(() => screen.getByTestId('new-user.done'));
-        expect(createTeamMembership).not.toHaveBeenCalled();
-        expect(invite).toHaveBeenCalledWith(mockOrgEndpoint, {
-          email: 'john.doe@enterprise.com',
-          role: 'member',
-          spaceInvitations: [],
-          teamInvitations: [{ teamId: 'superteam' }, { teamId: 'thepeople' }],
-        });
         await wait();
       });
     });
@@ -337,7 +224,7 @@ describe('NewUser', () => {
         await wait();
 
         await submitForm(['john.doe@enterprise.com'], 'Owner');
-        await wait(() => screen.getByTestId('new-user.done'));
+        await screen.findByTestId('new-user.done');
         const successState = screen.getByTestId('new-user.done.success');
         expect(successState).toBeVisible();
         expect(invite).toHaveBeenCalledTimes(1);
@@ -378,7 +265,7 @@ describe('NewUser', () => {
       it('shows messages for mixed results', async () => {
         invite
           .mockRejectedValueOnce(unprocessableError)
-          .mockResolvedValueOnce({})
+          .mockResolvedValueOnce(mockInvitation)
           .mockRejectedValueOnce(forbiddenError);
 
         build();
@@ -388,7 +275,7 @@ describe('NewUser', () => {
           ['john.doe@enterprise.com', 'jane.doe@enterprise.com', 'jack.doe@enterprise.com'],
           'Owner'
         );
-        await wait(() => screen.getByTestId('new-user.done'));
+        await screen.findByTestId('new-user.done');
         const successState = screen.getByTestId('new-user.done.success');
         const planLimitErrorMessage = screen.getByTestId('new-user.done.failed.planLimitHit');
         const alreadyInErrorMessage = screen.getByTestId('new-user.done.failed.alreadyIn');
@@ -401,38 +288,30 @@ describe('NewUser', () => {
   });
 });
 
-async function build(hasSsoEnabled = false, isOwner = true, hasTeamsFeature = false) {
-  getAllRoles.mockReturnValue(mockRoles);
-  getAllSpaces.mockReturnValue(mockSpaces);
-  getAllTeams.mockReturnValue(mockTeams);
-  createOrgMembership.mockReturnValue(mockOrgMembership);
+async function build(isOwner = true, hasTeamsFeature = false) {
   render(
     <NewUser
       orgId="myorg"
       onReady={mockOnReady}
-      hasSsoEnabled={hasSsoEnabled}
       isOwner={isOwner}
       hasTeamsFeature={hasTeamsFeature}
     />
   );
 }
 
-async function submitForm(emails = '', role = '', spaceMemberships = [], teams = []) {
+async function submitForm(emails = [], role = '', spaceMemberships = [], teams = []) {
   const button = screen.getByTestId('new-user.submit');
-  const textarea = screen.getByTestId('new-user.emails');
+  const emailsField = screen.getByTestId('new-user.emails');
+  const textarea = within(emailsField).getByTestId('cf-ui-textarea');
 
   // fill in the emails field
-  act(() => {
-    fireEvent.change(textarea.querySelector('textarea'), { target: { value: emails } });
-  });
+  fireEvent.change(textarea, { target: { value: emails.join(', ') } });
 
   // select org role
   if (role) {
     // role should be capitalized: Owner, Member, Admin
     const roleInput = screen.getByLabelText(role);
-    act(() => {
-      fireEvent.click(roleInput);
-    });
+    userEvent.click(roleInput);
   }
 
   // add spaces and space roles
@@ -445,13 +324,10 @@ async function submitForm(emails = '', role = '', spaceMemberships = [], teams =
     await addTeams(teams);
   }
 
-  // submit the form
-  act(() => {
-    fireEvent.click(button);
-  });
+  userEvent.click(button);
 
   // grab errors that might have showed up
-  const emailsValidationMessage = within(textarea).queryByTestId('cf-ui-validation-message');
+  const emailsValidationMessage = within(emailsField).queryByTestId('cf-ui-validation-message');
   const orgRoleValidationMessage = screen.queryByTestId('new-user.org-role.error');
   const spaceMembershipsValidationMessage = screen.queryByTestId(
     'new-user.space-memberships.error'
@@ -470,18 +346,14 @@ async function addSpaceMemberships(spaceMemberships) {
   const spacesSection = screen.getByTestId('add-to-spaces');
   const spacesAutocomplete = within(spacesSection).getByTestId('autocomplete.input');
 
-  // focus on the autocomplete input to display dropdown with options
-  fireEvent.focus(spacesAutocomplete);
-  // wait for the spaces to be lodaded
-  await waitForElement(() => screen.getAllByTestId('autocomplete.dropdown-list-item'));
-
-  spaceMemberships.forEach(({ spaceName }) => {
-    const space = screen.getByText(spaceName);
-    // select the space by name
-    fireEvent.click(space);
-    // focus again to select the next space
+  for await (const { spaceName } of spaceMemberships) {
+    // focus on the autocomplete input to display dropdown with options
     fireEvent.focus(spacesAutocomplete);
-  });
+    // wait for the spaces to be lodaded
+    const space = await screen.findByText(spaceName);
+    // select the space by name
+    userEvent.click(space);
+  }
 
   spaceMemberships.forEach(({ roleNames }, index) => {
     // get the space membership form by index
@@ -489,9 +361,9 @@ async function addSpaceMemberships(spaceMemberships) {
     // for each role, click on the checkbox referenced by a label with the correct role name
     roleNames.forEach(async (roleName) => {
       const roleEditorButton = within(spaceMembershipForm).getByTestId('space-role-editor.button');
-      fireEvent.click(roleEditorButton);
+      userEvent.click(roleEditorButton);
       const roleOption = screen.getByLabelText(roleName);
-      fireEvent.click(roleOption);
+      userEvent.click(roleOption);
     });
   });
 }
@@ -500,19 +372,16 @@ async function addTeams(teams) {
   const teamsSection = screen.getByTestId('new-user.teams');
   const teamsAutocomplete = within(teamsSection).getByTestId('autocomplete.input');
 
-  // focus on the autocomplete input to display dropdown with options
-  fireEvent.focus(teamsAutocomplete);
-  // wait for the spaces to be lodaded
-  await waitForElement(() => screen.getAllByTestId('autocomplete.dropdown-list-item'));
-  teams.forEach((teamName) => {
-    const team = screen.getByText(teamName);
-    // select the team by name
-    fireEvent.click(team);
-    // focus again to select the next team
+  for await (const teamName of teams) {
+    // focus on the autocomplete input to display dropdown with options
     fireEvent.focus(teamsAutocomplete);
-  });
+    // wait for the spaces to be lodaded
+    const team = await screen.findByText(teamName);
+    // select the team by name
+    userEvent.click(team);
+  }
 }
 
 function generateAddresses(number) {
-  return Array.from(new Array(number), (_, index) => `foo+${index}@bar.com`);
+  return new Array(number).fill().map((_, index) => `foo+${index}@bar.com`);
 }

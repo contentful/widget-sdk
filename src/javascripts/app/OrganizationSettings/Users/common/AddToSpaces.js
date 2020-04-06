@@ -78,7 +78,7 @@ export default function AddToSpaces({
   const [{ spaceMemberships }, dispatch] = useReducer(reducer, { spaceMemberships: [] });
   const [allRoles, setAllRoles] = useState([]);
 
-  const getRoles = useCallback(() => {
+  const getRoles = useCallback(async () => {
     const endpoint = createOrganizationEndpoint(orgId);
     return getAllRoles(endpoint);
   }, [orgId]);

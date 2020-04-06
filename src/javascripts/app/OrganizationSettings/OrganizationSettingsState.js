@@ -5,8 +5,6 @@ import subscriptionState from './Subscription/SubscriptionState';
 import usageState from './Usage/UsageState';
 import teamsState from './Teams/TeamsState';
 import { inviteUsersState, userDetailState, usersListState } from './Users/UsersState';
-import userInvitationsState from './UserInvitations/UserInvitationsList/UserInvitationsListRoutingState';
-import userInvitationDetailState from './UserInvitations/UserInvitationDetail/UserInvitationDetailRoutingState';
 import accessToolsState from './AccessToolsState';
 import ssoRoutingState from './SSO/SSOSetupRoutingState';
 import gatekeeperStates from './OrganizationSettingsGatekeeperStates';
@@ -24,13 +22,7 @@ const usersAndInvitationsState = base({
   params: {
     orgId: '',
   },
-  children: [
-    inviteUsersState,
-    userDetailState,
-    usersListState,
-    userInvitationsState,
-    userInvitationDetailState,
-  ],
+  children: [inviteUsersState, userDetailState, usersListState],
 });
 
 // Psuedo route to handle which path a user should be redirected to when they click on "Go to Organization" in the account profile page.

@@ -10,7 +10,6 @@ import {
   RadioButtonField,
   Form,
   ValidationMessage,
-  CheckboxField,
   ModalConfirm,
   Typography,
 } from '@contentful/forma-36-react-components';
@@ -39,7 +38,6 @@ const initialState = {
   invalidAddresses: [],
   spaceMemberships: [],
   teams: [],
-  suppressInvitation: true,
   progress: { successes: [], failures: [] },
 };
 
@@ -64,8 +62,6 @@ const reducer = (state, action) => {
       return { ...state, teams: action.payload, submitted: false };
     case 'ROLE_CHANGED':
       return { ...state, orgRole: action.payload, submitted: false };
-    case 'NOTIFICATIONS_PREFERENCE_CHANGED':
-      return { ...state, suppressInvitation: !action.payload };
     case 'PROGRESS_CHANGED':
       return { ...state, progress: action.payload };
     case 'RESET':
@@ -73,7 +69,7 @@ const reducer = (state, action) => {
   }
 };
 
-export default function NewUser({ orgId, hasSsoEnabled, hasTeamsFeature, isOwner }) {
+export default function NewUser({ orgId, hasTeamsFeature, isOwner }) {
   const [
     {
       submitted,
@@ -82,7 +78,6 @@ export default function NewUser({ orgId, hasSsoEnabled, hasTeamsFeature, isOwner
       invalidAddresses,
       orgRole,
       spaceMemberships,
-      suppressInvitation,
       teams,
       progress,
     },
@@ -91,7 +86,6 @@ export default function NewUser({ orgId, hasSsoEnabled, hasTeamsFeature, isOwner
   const handleProgressChange = (payload) => dispatch({ type: 'PROGRESS_CHANGED', payload });
   const [{ isLoading, error, data }, addToOrg, resetAsyncFn] = useAddToOrg(
     orgId,
-    hasSsoEnabled,
     handleProgressChange
   );
 
@@ -122,14 +116,7 @@ export default function NewUser({ orgId, hasSsoEnabled, hasTeamsFeature, isOwner
       if (!confirmed) return;
     }
 
-    addToOrg(emailList, orgRole, spaceMemberships, teams, suppressInvitation);
-  };
-
-  const handleNotificationsPreferenceChange = (evt) => {
-    const {
-      target: { checked },
-    } = evt;
-    dispatch({ type: 'NOTIFICATIONS_PREFERENCE_CHANGED', payload: checked });
+    addToOrg(emailList, orgRole, spaceMemberships, teams);
   };
 
   const reset = () => {
@@ -261,16 +248,6 @@ export default function NewUser({ orgId, hasSsoEnabled, hasTeamsFeature, isOwner
               <AddToTeams orgId={orgId} onChange={handleTeamSelected} inputWidth="large" />
             </fieldset>
           )}
-          {hasSsoEnabled && (
-            <CheckboxField
-              id="sendNotifications"
-              checked={!suppressInvitation}
-              onChange={handleNotificationsPreferenceChange}
-              testId="new-user.notifications-checkbox"
-              labelText="Send email notifications"
-              helpText="Leave this unchecked if you want to inform your users yourself"
-            />
-          )}
 
           <Button
             buttonType="positive"
@@ -287,7 +264,6 @@ export default function NewUser({ orgId, hasSsoEnabled, hasTeamsFeature, isOwner
 
 NewUser.propTypes = {
   orgId: PropTypes.string.isRequired,
-  hasSsoEnabled: PropTypes.bool,
   hasTeamsFeature: PropTypes.bool,
   isOwner: PropTypes.bool,
 };

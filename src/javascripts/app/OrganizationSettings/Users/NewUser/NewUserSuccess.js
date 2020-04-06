@@ -62,7 +62,7 @@ export default function NewUserSuccess({ failures = [], successes = [], onRestar
           )} been invited to your organization.`}
 
           <StateLink
-            path="account.organizations.users.invitations"
+            path="account.organizations.users.list"
             params={{ orgId }}
             component={TextLink}
             linkType="positive"

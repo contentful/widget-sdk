@@ -12,6 +12,7 @@ const types = {
   SPACE_MEMBERSHIP: 'SpaceMembership',
   ORGANIZATION_MEMBERSHIP: 'OrganizationMembership',
   TEAM_MEMBERSHIP: 'TeamMembership',
+  TEAM_SPACE_MEMBERSHIP: 'TeamSpaceMembership',
 };
 
 export function sys(options = {}) {
@@ -140,6 +141,32 @@ export function TeamMembership(
       team,
       organizationMembership,
       user,
+    },
+  };
+}
+
+export function TeamSpaceMembership(
+  team = Link(types.TEAM),
+  space = Link(types.SPACE),
+  roles = [],
+  admin = true
+) {
+  return {
+    roles,
+    admin,
+    sys: {
+      ...sys({ type: types.TEAM_SPACE_MEMBERSHIP }),
+      team,
+      space,
+    },
+  };
+}
+
+export function Invitation(organizationMembership = Link(types.ORGANIZATION_MEMBERSHIP)) {
+  return {
+    sys: {
+      ...sys({ type: 'Invitation' }),
+      organizationMembership,
     },
   };
 }

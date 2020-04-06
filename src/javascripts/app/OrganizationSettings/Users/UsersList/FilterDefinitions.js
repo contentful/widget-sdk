@@ -99,7 +99,6 @@ export function generateFilterDefinitions({
   spaces = [],
   teams = [],
   hasSsoEnabled,
-  hasPendingOrgMembershipsEnabled,
   hasTeamsFeature,
   filterValues = {},
 }) {
@@ -188,10 +187,8 @@ export function generateFilterDefinitions({
     ],
   };
 
-  const definitions = [order, orgRole, space, spaceRole];
+  const definitions = [order, status, orgRole, space, spaceRole];
   if (hasSsoEnabled) definitions.push(sso);
-  // To be removed after pending memberships reach general availability
-  if (hasPendingOrgMembershipsEnabled) definitions.unshift(status);
   if (hasTeamsFeature) definitions.push(team);
 
   return definitions;
