@@ -120,18 +120,20 @@ describe('Modal dialog service', () => {
       });
 
       it('properly removes the global event listeners', () => {
-        $(window).trigger('keyup');
+        const event = document.createEvent('Event');
+        event.initEvent('keyup');
+        document.dispatchEvent(event);
         sinon.assert.called(dialog.scope.$apply);
         dialog.destroy();
         dialog.scope = { $apply: sinon.stub(), $destroy: sinon.stub() };
-        $(window).trigger('keyup');
+        document.dispatchEvent(event);
         sinon.assert.notCalled(dialog.scope.$apply);
       });
 
       it('confirms with values', () => {
         let result;
         dialog.confirm('foo');
-        dialog.promise.then((value) => {
+        dialog.promise.then(value => {
           result = value;
         });
         scope.$apply();
@@ -141,7 +143,7 @@ describe('Modal dialog service', () => {
       it('cancels with values', () => {
         let result;
         dialog.cancel('bar');
-        dialog.promise.catch((value) => {
+        dialog.promise.catch(value => {
           result = value;
         });
         scope.$apply();

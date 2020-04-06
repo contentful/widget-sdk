@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import $ from 'jquery';
 import cn from 'classnames';
 
 import HomeWelcomeIcon from 'svg/home-welcome.svg';
@@ -215,7 +214,7 @@ class Icon extends React.Component {
   };
 
   componentDidMount() {
-    const iconElem = $(this.container).children().get(0);
+    const iconElem = this.container.childNodes[0];
     if (!iconElem) {
       return;
     }

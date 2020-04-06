@@ -66,13 +66,13 @@ export default function register() {
           localeData: '<',
         },
         template: bulkEntityEditorTemplate,
-        link: function($scope, $el) {
+        link: function ($scope, $el) {
           $scope.$el = $el;
           $scope.el = $el.get(0);
         },
         controller: [
           '$scope',
-          $scope => {
+          ($scope) => {
             const entityContext = $scope.entityContext;
             const bulkEditorContext = $scope.bulkEditorContext;
 
@@ -101,20 +101,17 @@ export default function register() {
               }),
             });
 
-            K.onValueScope($scope, bulkEditorContext.scrollTarget$, key => {
+            K.onValueScope($scope, bulkEditorContext.scrollTarget$, (key) => {
               if (key === entityContext.key) {
                 $timeout(() => {
-                  $scope.$el
-                    .find('input')
-                    .eq(0)
-                    .focus();
+                  $scope.$el.find('input').eq(0)[0].focus();
                   $scope.el.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 });
               }
             });
 
             const editorDataPromise$ = K.promiseProperty(
-              bulkEditorContext.loadEditorData(entityContext.id).then(editorData => {
+              bulkEditorContext.loadEditorData(entityContext.id).then((editorData) => {
                 const doc = editorData.openDoc(K.scopeLifeline($scope));
                 // We wait for the document to be opened until we setup the
                 // editor
@@ -127,29 +124,35 @@ export default function register() {
             // Property<boolean>
             // True if the entry data is still loading. False when the data was loaded
             // or the loading failed.
-            const loadingEditorData$ = editorDataPromise$.map(p =>
-              caseof(p, [[K.PromiseStatus.Pending, _.constant(true)], [null, _.constant(false)]])
+            const loadingEditorData$ = editorDataPromise$.map((p) =>
+              caseof(p, [
+                [K.PromiseStatus.Pending, _.constant(true)],
+                [null, _.constant(false)],
+              ])
             );
 
             // Stream<void>
             // Emits exactly one event when the entry data has been loaded or the
             // loading has failed
-            const loaded$ = loadingEditorData$.filter(loading => loading === false);
+            const loaded$ = loadingEditorData$.filter((loading) => loading === false);
 
             K.onValueScope($scope, loaded$, bulkEditorContext.initializedEditor);
 
-            K.onValueScope($scope, loadingEditorData$, loading => {
+            K.onValueScope($scope, loadingEditorData$, (loading) => {
               $scope.loading = loading;
             });
 
             // Property<object?>
             // Holds the editor data if it has been loaded successfully. Holds 'null'
             // otherwise
-            const editorData$ = editorDataPromise$.map(p =>
-              caseof(p, [[K.PromiseStatus.Resolved, p => p.value], [null, _.constant(null)]])
+            const editorData$ = editorDataPromise$.map((p) =>
+              caseof(p, [
+                [K.PromiseStatus.Resolved, (p) => p.value],
+                [null, _.constant(null)],
+              ])
             );
 
-            K.onValueScope($scope, editorData$, editorData => {
+            K.onValueScope($scope, editorData$, (editorData) => {
               if (editorData) {
                 setupEditor(editorData);
 
@@ -191,17 +194,17 @@ export default function register() {
 
             const trackAction = $scope.bulkEditorContext.track.actions(entityContext.id);
 
-            $scope.openInEntryEditor = function() {
+            $scope.openInEntryEditor = function () {
               trackAction.openInEntryEditor();
             };
 
-            $scope.unlink = function() {
+            $scope.unlink = function () {
               trackAction.unlink();
               entityContext.remove();
             };
 
             $scope.actions = {
-              toggleExpansion: function() {
+              toggleExpansion: function () {
                 data.expanded = !data.expanded;
                 trackAction.setExpansion(data.expanded);
               },
@@ -244,7 +247,7 @@ export default function register() {
 
       const { track } = $scope.bulkEditorContext;
 
-      K.onValueScope($scope, $scope.otDoc.resourceState.stateChange$, data => {
+      K.onValueScope($scope, $scope.otDoc.resourceState.stateChange$, (data) => {
         track.changeStatus($scope.entityInfo.id, data.to);
       });
 
@@ -254,11 +257,11 @@ export default function register() {
 
       this.focus = Focus.create();
 
-      K.onValueScope($scope, $scope.otDoc.state.isSaving$, isSaving => {
+      K.onValueScope($scope, $scope.otDoc.state.isSaving$, (isSaving) => {
         $scope.data.isSaving = isSaving;
       });
 
-      K.onValueScope($scope, valuePropertyAt($scope.otDoc, []), data => {
+      K.onValueScope($scope, valuePropertyAt($scope.otDoc, []), (data) => {
         const title = EntityFieldValueSpaceContext.entryTitle({
           getContentTypeId: _.constant($scope.entityInfo.contentTypeId),
           data: data,
