@@ -5,7 +5,7 @@ import * as ResourceStateManager from 'data/document/ResourceStateManager';
 import { deepFreeze } from 'utils/Freeze';
 import * as Permissions from 'access_control/EntityPermissions';
 import { Notification } from '@contentful/forma-36-react-components';
-import { valuePropertyAt } from 'app/entity_editor/Document';
+import { valuePropertyAt } from './documentHelpers';
 
 /**
  * TODO Instead of passing an entity instance provided by the client library we should only pass the entity data.

@@ -17,8 +17,9 @@ module.exports = {
             might typically want to exclude these from reachability rules.
             The same goes for typescript definition files:
            */
+        // todo: delete .ts once we enable TS
         pathNot:
-          '__mocks__|__test__|__fixtures__|saved-views-migrator|test\\/helpers|\\.spec\\.(js|ts)$|\\.d\\.ts$',
+          '\\.ts|__mocks__|__test__|__fixtures__|saved-views-migrator|test\\/helpers|\\.spec\\.(js|ts)$|\\.d\\.ts$',
 
         /*
             for each file matching path and pathNot, check if it's reachable from the
@@ -35,7 +36,8 @@ module.exports = {
       severity: 'warn',
       from: {
         orphan: true,
-        pathNot: '__mocks__|\\.d\\.ts$',
+        // todo: delete .ts once we enable TS
+        pathNot: '\\.ts|__mocks__|\\.d\\.ts$',
       },
       to: {},
     },
