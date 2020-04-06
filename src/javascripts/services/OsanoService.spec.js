@@ -101,6 +101,7 @@ describe('OsanoService', () => {
       expect(Analytics.enable).toHaveBeenCalledWith(expect.any(Object), {
         integrations: {
           all: false,
+          FullStory: true,
           'Segment.io': true,
           'Google Analytics': true,
           Intercom: true,
@@ -118,6 +119,7 @@ describe('OsanoService', () => {
       expect(Analytics.enable).toHaveBeenCalledWith(expect.any(Object), {
         integrations: {
           all: false,
+          FullStory: true,
           'Segment.io': true,
           'Google Analytics': true,
           Intercom: false,
@@ -147,6 +149,7 @@ describe('OsanoService', () => {
       expect(Segment.enable).toHaveBeenCalledWith({
         integrations: {
           all: false,
+          FullStory: false,
           'Segment.io': false,
           'Google Analytics': false,
           Intercom: true,

@@ -83,6 +83,7 @@ export const handleConsentChanged = debounce(function debouncedHandleConsentChan
   const segmentLoadOptions = {
     integrations: {
       all: false,
+      FullStory: analyticsAllowed, // TODO: Follow up if this is the correct category
       'Segment.io': analyticsAllowed,
       'Google Analytics': analyticsAllowed,
       Intercom: personalizationAllowed,
