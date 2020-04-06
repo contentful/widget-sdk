@@ -53,6 +53,7 @@ const getFormattedKey = async (key) => {
     lastUsedAt: key.sys.lastUsedAt
       ? 'Last used ' + util.formatPastDate(key.sys.lastUsedAt)
       : 'Never used',
+    // TODO: batch getting creators
     createdBy: await ManagementApiClient.getCreatorNameOf(key),
   };
 };

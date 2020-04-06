@@ -85,7 +85,7 @@ export default function AddKeyDialog({ onConfirm, isShown, onCancel }) {
       const fingerprint = await util.getSha256FromBase64(base64Der);
       base64Fingerprint = urlSafeBase64.encode(window.btoa(fingerprint));
     } catch {
-      Notification.error("This doesn't appear to be avalid public key.");
+      Notification.error("This doesn't appear to be a valid public key.");
       setLoading(false);
       return;
     }
