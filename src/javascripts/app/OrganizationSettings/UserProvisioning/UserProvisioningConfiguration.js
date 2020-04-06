@@ -101,7 +101,7 @@ export default function UserProvisioningConfiguration({ orgId }) {
               disabled: true,
               width: 'large',
             }}
-            value={`https:${SCIM_BASE}`}
+            value={SCIM_BASE}
           />
           <div className={styles.subheading}>Personal access token</div>
           <Note noteType="primary">
