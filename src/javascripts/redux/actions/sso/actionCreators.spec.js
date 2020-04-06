@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import * as actionCreators from './actionCreators';
 import * as actions from './actions';
-import createMockStore from 'redux/utils/createMockStore';
+import createReduxMockStore from 'test/helpers/createReduxMockStore';
 import { mockEndpoint } from 'data/EndpointFactory';
 import { Notification } from '@contentful/forma-36-react-components';
 import { track } from 'analytics/Analytics';
@@ -14,7 +14,7 @@ describe('SSO Redux actionCreators', () => {
   let trackTestResultSpy;
 
   beforeEach(() => {
-    mockStore = createMockStore();
+    mockStore = createReduxMockStore();
     mockEndpoint.mockReset();
 
     notificationSuccessSpy = jest.spyOn(Notification, 'success');
@@ -417,7 +417,7 @@ describe('SSO Redux actionCreators', () => {
       const fieldName = 'idpSsoTargetUrl';
       let value;
 
-      mockStore = createMockStore();
+      mockStore = createReduxMockStore();
 
       value = 'http://example.com';
 
@@ -443,7 +443,7 @@ describe('SSO Redux actionCreators', () => {
         },
       ]);
 
-      mockStore = createMockStore();
+      mockStore = createReduxMockStore();
 
       value = 'https://example.com';
 
