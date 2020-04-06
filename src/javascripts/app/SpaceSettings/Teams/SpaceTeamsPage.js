@@ -8,7 +8,7 @@ import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import UnknownErrorMessage from 'components/shared/UnknownErrorMessage';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
-import useAsync from 'app/common/hooks/useAsync';
+import { useAsync } from 'app/common/hooks';
 import resolveLinks from 'data/LinkResolver';
 import {
   getTeamsSpaceMembershipsOfSpace,

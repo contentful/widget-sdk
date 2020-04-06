@@ -253,7 +253,7 @@ const formReducer = createImmerReducer({
  *     fieldsValidator: (fields) => { ... }
  *  })
  */
-export default function useForm(initialValues) {
+export function useForm(initialValues) {
   const [state, dispatch] = useReducer(formReducer, initialValues, initializeFn);
 
   // This effect handles if the form has been submitted

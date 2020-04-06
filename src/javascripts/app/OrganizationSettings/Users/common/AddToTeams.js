@@ -9,7 +9,7 @@ import { SectionHeading } from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';
 import TeamsAutocomplete from 'app/common/TeamsAutocomplete';
 import TeamSelection from './TeamSelection';
-import useAsync from 'app/common/hooks/useAsync';
+import { useAsync } from 'app/common/hooks';
 
 const styles = {
   count: css({

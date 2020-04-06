@@ -1,5 +1,5 @@
 import { useReducer, useEffect, useCallback } from 'react';
-import useRefMounted from './useRefMounted';
+import { useRefMounted } from './useRefMounted';
 
 const ASYNC_INIT = 'ASYNC_INIT';
 const ASYNC_SUCCESS = 'ASYNC_SUCCESS';
@@ -54,7 +54,7 @@ export const useAsyncFn = (fn, isLoading = false) => {
  * and a new state on every of the async operation
  * @param {function(): Promise} fn
  */
-export default function useAsync(fn) {
+export function useAsync(fn) {
   const [state, runAsync] = useAsyncFn(fn, true);
 
   useEffect(() => {

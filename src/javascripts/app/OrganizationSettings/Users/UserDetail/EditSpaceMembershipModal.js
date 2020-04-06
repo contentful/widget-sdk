@@ -14,7 +14,7 @@ import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { fetchAll } from 'data/CMA/FetchAll';
 import { createImmerReducer } from 'redux/utils/createImmerReducer';
 import { ADMIN_ROLE_ID } from 'access_control/constants';
-import useAsync from 'app/common/hooks/useAsync';
+import { useAsync } from 'app/common/hooks';
 import { SpaceMembership } from 'app/OrganizationSettings/PropTypes';
 import { create } from 'access_control/SpaceMembershipRepository';
 import { css } from 'emotion';

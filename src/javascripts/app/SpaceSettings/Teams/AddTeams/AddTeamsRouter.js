@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import useAsync from 'app/common/hooks/useAsync';
+import { useAsync } from 'app/common/hooks';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import UnknownErrorMessage from 'components/shared/UnknownErrorMessage';
 import DocumentTitle from 'components/shared/DocumentTitle';

@@ -2,7 +2,7 @@ import React, { useReducer, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { reducer } from './SidebarConfigurationReducer';
-import useAsync from 'app/common/hooks/useAsync';
+import { useAsync } from 'app/common/hooks';
 import {
   convertInternalStateToConfiguration,
   convertConfigurationToInternalState,
