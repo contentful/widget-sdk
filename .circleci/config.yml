@@ -2,42 +2,59 @@ version: 2.1
 
 orbs:
   cypress: cypress-io/cypress@1.7.0
-  deploy-assets:
+  copy-assets:
     orbs:
-      aws-s3: circleci/aws-s3@1.0.4
+      aws-s3: circleci/aws-s3@1.0.15
     jobs:
       to-s3:
         description: 'Build the image containing awscli and deploy assets to S3 using it'
-        parameters:
-          access_key_id:
-            type: string
-          secret_access_key:
-            type: string
-          region:
-            type: string
-          path:
-            type: string
-          bucket:
-            type: string
         docker:
-          - image: circleci/python:2.7
+          - image: cimg/python:3.6
         steps:
           - attach_workspace:
               at: ~/workspace
           - checkout
           - run:
-              name: Export AWS environment variables
+              name: Export preview AWS environment variables
               command: |
-                echo 'export AWS_ACCESS_KEY_ID=<<parameters.access_key_id>>' >> $BASH_ENV
-                echo 'export AWS_SECRET_ACCESS_KEY=<<parameters.secret_access_key>>' >> $BASH_ENV
-                echo 'export AWS_REGION=<<parameters.region>>' >> $BASH_ENV
+                echo 'export AWS_ACCESS_KEY_ID=${AWS_S3_PREVIEW_ACCESS_KEY_ID}' >> $BASH_ENV
+                echo 'export AWS_SECRET_ACCESS_KEY=${AWS_S3_PREVIEW_SECRET_ACCESS_KEY}' >> $BASH_ENV
+                echo 'export AWS_REGION="eu-west-1"' >> $BASH_ENV
           - aws-s3/copy:
-              from: <<parameters.path>>/app
-              to: s3://<<parameters.bucket>>/app
+              from: ~/workspace/output/files/preview/app
+              to: s3://cf-preview-static-cdnorigin/app
               arguments: --acl public-read --recursive --cache-control "immutable,public,max-age=86400"
           - aws-s3/copy:
-              from: <<parameters.path>>/archive
-              to: s3://<<parameters.bucket>>/archive
+              from: ~/workspace/output/files/preview/archive
+              to: s3://cf-preview-static-cdnorigin/archive
+              arguments: --acl public-read --recursive --cache-control "no-cache"
+          - run:
+              name: Export staging AWS environment variables
+              command: |
+                echo 'export AWS_ACCESS_KEY_ID=${AWS_S3_STAGING_ACCESS_KEY_ID}' >> $BASH_ENV
+                echo 'export AWS_SECRET_ACCESS_KEY=${AWS_S3_STAGING_SECRET_ACCESS_KEY}' >> $BASH_ENV
+                echo 'export AWS_REGION="eu-west-1"' >> $BASH_ENV
+          - aws-s3/copy:
+              from: ~/workspace/output/files/staging/app
+              to: s3://cf-staging-static-cdnorigin/app
+              arguments: --acl public-read --recursive --cache-control "immutable,public,max-age=86400"
+          - aws-s3/copy:
+              from: ~/workspace/output/files/staging/archive
+              to: s3://cf-staging-static-cdnorigin/archive
+              arguments: --acl public-read --recursive --cache-control "no-cache"
+          - run:
+              name: Export staging AWS environment variables
+              command: |
+                echo 'export AWS_ACCESS_KEY_ID=${AWS_S3_PRODUCTION_ACCESS_KEY_ID}' >> $BASH_ENV
+                echo 'export AWS_SECRET_ACCESS_KEY=${AWS_S3_PRODUCTION_SECRET_ACCESS_KEY}' >> $BASH_ENV
+                echo 'export AWS_REGION="eu-west-1"' >> $BASH_ENV
+          - aws-s3/copy:
+              from: ~/workspace/output/files/production/app
+              to: s3://static.cdnorigin.contentful.com/app
+              arguments: --acl public-read --recursive --cache-control "immutable,public,max-age=86400"
+          - aws-s3/copy:
+              from: ~/workspace/output/files/production/archive
+              to: s3://static.cdnorigin.contentful.com/archive
               arguments: --acl public-read --recursive --cache-control "no-cache"
 
   post-comment:
@@ -280,6 +297,7 @@ jobs:
             ~/bin/estivador docker-ecr-login
             ~/bin/estivador put-image
             ~/bin/estivador promote-image
+
       - persist_to_workspace:
           root: .
           paths:
@@ -528,34 +546,11 @@ workflows:
           path: '~/workspace/output/files/production/app'
           requires:
             - build-and-push-image
-      - deploy-assets/to-s3:
-          name: deploy-assets-to-preview
-          access_key_id: '${AWS_S3_PREVIEW_ACCESS_KEY_ID}'
-          secret_access_key: '${AWS_S3_PREVIEW_SECRET_ACCESS_KEY}'
-          region: 'eu-west-1'
-          path: '~/workspace/output/files/preview'
-          bucket: 'cf-preview-static-cdnorigin'
-          requires:
-            - build-and-push-image
-      - deploy-assets/to-s3:
-          name: deploy-assets-to-staging
-          access_key_id: '${AWS_S3_STAGING_ACCESS_KEY_ID}'
-          secret_access_key: '${AWS_S3_STAGING_SECRET_ACCESS_KEY}'
-          region: 'us-east-1'
-          path: '~/workspace/output/files/staging'
-          bucket: 'cf-staging-static-cdnorigin'
+      - copy-assets/to-s3:
+          name: copy-assets-to-s3
           post-steps:
             - post-comment/deployment:
                 env: 'flinkly'
-          requires:
-            - build-and-push-image
-      - deploy-assets/to-s3:
-          name: deploy-assets-to-prod
-          access_key_id: '${AWS_S3_PRODUCTION_ACCESS_KEY_ID}'
-          secret_access_key: '${AWS_S3_PRODUCTION_SECRET_ACCESS_KEY}'
-          region: 'us-east-1'
-          path: '~/workspace/output/files/production'
-          bucket: 'static.cdnorigin.contentful.com'
           requires:
             - build-and-push-image
       - ui-extensions-sdk/run:
@@ -565,13 +560,13 @@ workflows:
           browser: 'MicrosoftEdge'
           selenium: '3.14.0'
           requires:
-            - deploy-assets-to-staging
+            - copy-assets-to-s3
           <<: *run_only_on_master_branch
       - saucelabs/run:
           name: run-win10-firefox-tests
           browser: 'firefox'
           requires:
-            - deploy-assets-to-staging
+            - copy-assets-to-s3
           <<: *run_only_on_master_branch
       # # Temporary turned off due to problems with SauceLabs
       # - saucelabs/run:
@@ -579,7 +574,7 @@ workflows:
       #     platform: 'macOS 10.13'
       #     browser: 'safari'
       #     requires:
-      #       - deploy-assets-to-staging
+      #       - copy-assets-to-s3
       #     <<: *run_only_on_master_branch
 
 notify:
