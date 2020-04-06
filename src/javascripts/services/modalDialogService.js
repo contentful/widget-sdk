@@ -2,7 +2,7 @@ import { registerFactory } from 'NgRegistry';
 import _ from 'lodash';
 import debounce from 'lodash/debounce';
 import defer from 'lodash/defer';
-import angular from 'angular';
+import $ from 'jquery';
 import { h } from 'utils/legacy-html-hyperscript';
 import keycodes from 'utils/keycodes';
 import * as logger from 'services/logger';
@@ -103,7 +103,7 @@ export default function register() {
             this.params.message = this.params.messageTemplate;
           }
 
-          this.domElement = angular.element(this.params.template);
+          this.domElement = $(this.params.template);
 
           scope.dialog = _.extend(this, this.params);
 
@@ -111,7 +111,7 @@ export default function register() {
           // on page load
           defer(
             _.bind(function () {
-              angular.element(document.querySelector(this.params.attachTo)).append(this.domElement);
+              this.domElement.appendTo(this.params.attachTo);
               $compile(this.domElement)(scope);
 
               this.domElement.on('click', _.bind(this._closeOnBackground, this));
@@ -123,14 +123,13 @@ export default function register() {
               this._centerOnBackground();
               if (!this.params.disableAutoFocus) {
                 if (this.domElement.find('input').length > 0) {
-                  this.domElement.find('input').eq(0)[0].focus();
+                  this.domElement.find('input').eq(0).focus();
                 } else {
-                  const focusedElement = document.querySelector(':focus');
-                  focusedElement ? focusedElement.blur() : null;
+                  $(':focus').blur();
                 }
               }
 
-              document.addEventListener('keyup', this._handleKeys);
+              $(window).on('keyup', this._handleKeys);
 
               this.domElement.addClass('is-visible');
             }, this)
@@ -139,12 +138,9 @@ export default function register() {
 
         reposition: function () {
           if (this.domElement) {
-            const elem = this.domElement.children()[0].matches('.modal-dialog')
-              ? this.domElement.children()[0]
-              : this.domElement.children()[0].querySelector('.modal-dialog');
-
-            const topOffset = Math.max((window.innerHeight - elem.offsetHeight) / 2, 0);
-            elem.style.top = topOffset + 'px';
+            const elem = this.domElement.find('.modal-dialog').first();
+            const topOffset = Math.max((window.innerHeight - elem.height()) / 2, 0);
+            elem.css({ top: topOffset + 'px' });
           }
         },
 
@@ -155,7 +151,7 @@ export default function register() {
           let destroyed = false;
 
           reposition();
-          window.addEventListener('resize', debouncedReposition);
+          $(window).on('resize', debouncedReposition);
 
           const repositionOff = $rootScope.$on('centerOn:reposition', () => {
             if (!destroyed) {
@@ -165,14 +161,14 @@ export default function register() {
 
           elem.on('$destroy', () => {
             destroyed = true;
-            window.removeEventListener('resize', debouncedReposition);
+            $(window).off('resize', debouncedReposition);
             repositionOff();
           });
         },
 
         _closeOnBackground: function (ev) {
-          const target = ev.target;
-          if (target.classList.contains('modal-background') && this.params.backgroundClose) {
+          const target = $(ev.target);
+          if (target.hasClass('modal-background') && this.params.backgroundClose) {
             this.cancel();
           }
         },
@@ -218,7 +214,7 @@ export default function register() {
           this._isDestroyed = true;
 
           const self = this;
-          document.removeEventListener('keyup', this._handleKeys);
+          $(window).off('keyup', this._handleKeys);
           function destroyModal() {
             if (self.domElement) {
               self.scope.$destroy();

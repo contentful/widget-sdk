@@ -28,7 +28,7 @@ export default function register() {
         if (scope.$eval(attrs.cfFocusOtInput) || _.isEmpty(attrs.cfFocusOtInput)) {
           K.onValueScope(scope, scope.otDoc.state.loaded$, (loaded) => {
             if (loaded) {
-              const input = elem.find('input').eq(0)[0];
+              const input = elem.find('input').eq(0);
               defer(() => {
                 input.focus();
               });
