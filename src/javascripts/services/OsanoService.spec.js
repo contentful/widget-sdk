@@ -4,6 +4,7 @@ import isAnalyticsAllowed from 'analytics/isAnalyticsAllowed';
 import * as Analytics from 'analytics/Analytics';
 import * as Intercom from 'services/intercom';
 import * as Segment from 'analytics/segment';
+import { getStore } from 'browserStorage';
 
 import { Notification } from '@contentful/forma-36-react-components';
 
@@ -18,6 +19,7 @@ jest.mock('utils/LazyLoader', () => {
       teardown: jest.fn(),
       storage: {
         key: 'osano_consentmanager',
+        setConsent: jest.fn(),
       },
       options: {},
     },
@@ -44,6 +46,17 @@ jest.mock('utils/LazyLoader', () => {
 
   return {
     get: jest.fn().mockResolvedValue(mockedCm),
+  };
+});
+
+jest.mock('browserStorage', () => {
+  const store = {
+    get: jest.fn(),
+    has: jest.fn(),
+  };
+
+  return {
+    getStore: jest.fn().mockReturnValue(store),
   };
 });
 
@@ -88,6 +101,7 @@ describe('OsanoService', () => {
       expect(Analytics.enable).toHaveBeenCalledWith(expect.any(Object), {
         integrations: {
           all: false,
+          FullStory: true,
           'Segment.io': true,
           'Google Analytics': true,
           Intercom: true,
@@ -105,6 +119,7 @@ describe('OsanoService', () => {
       expect(Analytics.enable).toHaveBeenCalledWith(expect.any(Object), {
         integrations: {
           all: false,
+          FullStory: true,
           'Segment.io': true,
           'Google Analytics': true,
           Intercom: false,
@@ -134,6 +149,7 @@ describe('OsanoService', () => {
       expect(Segment.enable).toHaveBeenCalledWith({
         integrations: {
           all: false,
+          FullStory: false,
           'Segment.io': false,
           'Google Analytics': false,
           Intercom: true,
@@ -242,6 +258,17 @@ describe('OsanoService', () => {
       expect(cm.on).toHaveBeenCalledWith('osano-cm-consent-saved', expect.any(Function));
     });
 
+    it('should call storage.setConsent if there is an item in localStorage', async () => {
+      const store = getStore();
+      store.get.mockReturnValue({ hello: 'world' });
+
+      const { cm } = await get();
+
+      await service.init();
+
+      expect(cm.storage.setConsent).toHaveBeenCalledWith({ hello: 'world' });
+    });
+
     it('should override whenReady and call the readyCb during initialization', async () => {
       const { cm } = await get();
 
@@ -252,7 +279,8 @@ describe('OsanoService', () => {
     });
 
     it('should call teardown if __disable_consentmanager is in localStorage', async () => {
-      global.localStorage.setItem('__disable_consentmanager', 'true');
+      const store = getStore();
+      store.has.mockReturnValue(true);
 
       const { cm } = await get();
 
@@ -260,8 +288,6 @@ describe('OsanoService', () => {
 
       // Torn down initially, and then due to __disable_consentmanager
       expect(cm.teardown).toHaveBeenCalledTimes(2);
-
-      global.localStorage.removeItem('__disable_consentmanager');
     });
   });
 

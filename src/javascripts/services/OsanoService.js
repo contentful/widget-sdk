@@ -17,6 +17,9 @@ import { getStore } from 'browserStorage';
 
 const localStorage = getStore();
 
+// The cookie and localStorage key name
+const STORAGE_KEY = 'cf_webapp_cookieconsent';
+
 // The Osano "Consent Manager" object
 let cm = null;
 
@@ -80,6 +83,7 @@ export const handleConsentChanged = debounce(function debouncedHandleConsentChan
   const segmentLoadOptions = {
     integrations: {
       all: false,
+      FullStory: analyticsAllowed, // TODO: Follow up if this is the correct category
       'Segment.io': analyticsAllowed,
       'Google Analytics': analyticsAllowed,
       Intercom: personalizationAllowed,
@@ -129,11 +133,19 @@ export async function init() {
   cm = new Osano.ConsentManager(options);
 
   // Rename the cookie/local storage key to not clash with marketing website
-  cm.storage.key = 'cf_webapp_cookieconsent';
+  cm.storage.key = STORAGE_KEY;
 
   // Setup listeners before readyCb, so that we get the `osano-cm-initialized` event.
   cm.on('osano-cm-initialized', handleConsentChanged);
   cm.on('osano-cm-consent-saved', handleConsentChanged);
+
+  // Since we override `storage.key` above after instantiating `cm`, we also
+  // set the existing options to the values in localStorage.
+  const existingOpts = localStorage.get(STORAGE_KEY);
+
+  if (existingOpts) {
+    cm.storage.setConsent(existingOpts);
+  }
 
   // Only call the readyCb exists
   readyCb && readyCb();
