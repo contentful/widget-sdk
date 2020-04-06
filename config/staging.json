@@ -1,8 +1,8 @@
 {
   "environment": "staging",
-  "authUrl": "//be.flinkly.com",
-  "apiUrl": "//api.flinkly.com",
-  "uploadApiUrl": "//upload.flinkly.com",
+  "authUrl": "https://be.flinkly.com",
+  "apiUrl": "https://api.flinkly.com",
+  "uploadApiUrl": "https://upload.flinkly.com",
   "otUrl": [
     "https://ot.flinkly.com",
     "https://ot1.flinkly.com",
@@ -10,8 +10,8 @@
     "https://ot3.flinkly.com",
     "https://ot4.flinkly.com"
   ],
-  "assetUrl": "//static.flinkly.com",
-  "marketingUrl": "//www.flinkly.com",
+  "assetUrl": "https://static.flinkly.com",
+  "marketingUrl": "https://www.flinkly.com",
   "main_domain": "flinkly.com",
   "toolsServiceUrl": "https://tools.flinkly.com",
   "microBackendsUrl": "https://staging.ctffns.net",

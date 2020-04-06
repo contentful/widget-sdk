@@ -13,7 +13,7 @@
     "https://ot7.quirely.com",
     "https://ot8.quirely.com"
   ],
-  "assetUrl": "//localhost:3001",
+  "assetUrl": "http://localhost:3001",
   "marketingUrl": "https://www.quirely.com",
   "main_domain": "quirely.com",
   "toolsServiceUrl": "https://tools.flinkly.com",
