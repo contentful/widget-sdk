@@ -23,13 +23,20 @@ export async function fetchMarketplaceApps() {
     return marketplaceAppsCache;
   }
 
+  const isPreview = MARKETPLACE_SPACE_TOKEN !== MARKETPLACE_SPACE_CDN_TOKEN;
   const [listingResponse, marketplaceAppsResponse] = await Promise.all([
-    tryPreviewRequest(MARKETPLACE_LISTING_QUERY),
-    tryPreviewRequest(MARKETPLACE_APPS_QUERY),
+    tryPreviewRequest(MARKETPLACE_LISTING_QUERY, isPreview),
+    tryPreviewRequest(MARKETPLACE_APPS_QUERY, isPreview),
   ]);
-  const allApps = resolveResponse(marketplaceAppsResponse);
+  const responsesAreOk = listingResponse.ok && marketplaceAppsResponse.ok;
+
+  if (isPreview && responsesAreOk) {
+    Notifier.success('You are temporarily viewing the apps listing in preview mode.');
+  }
+
+  const allApps = resolveResponse(marketplaceAppsResponse.data);
   const listedAppIds = new Set(
-    get(listingResponse, ['items', '0', 'fields', 'apps'], []).map((app) => app.sys.id)
+    get(listingResponse.data, ['items', '0', 'fields', 'apps'], []).map((app) => app.sys.id)
   );
 
   marketplaceAppsCache = allApps
@@ -39,26 +46,28 @@ export async function fetchMarketplaceApps() {
   return marketplaceAppsCache;
 }
 
-async function tryPreviewRequest(query) {
-  const isTryingToFetchMarketplacePreview = MARKETPLACE_SPACE_TOKEN !== MARKETPLACE_SPACE_CDN_TOKEN;
+function fetchWithAuth(resource, authBearer) {
+  return window.fetch(resource, { headers: { Authorization: `Bearer ${authBearer}` } });
+}
 
-  let res = await window.fetch(MARKETPLACE_SPACE_BASE_URL + query, {
-    headers: { Authorization: `Bearer ${MARKETPLACE_SPACE_TOKEN}` },
-  });
+async function tryPreviewRequest(query, preview = false) {
+  // If the user was trying to fetch the marketplace listing
+  // from the Preview API with an invalid token, fall back to CDN API.
+  const previewResponse = await fetchWithAuth(
+    MARKETPLACE_SPACE_BASE_URL + query,
+    MARKETPLACE_SPACE_TOKEN
+  );
+  const actualResponse =
+    !previewResponse.ok && preview
+      ? await fetchWithAuth(
+          MARKETPLACE_SPACE_CDN_BASE_URL + MARKETPLACE_LISTING_QUERY,
+          MARKETPLACE_SPACE_CDN_TOKEN
+        )
+      : previewResponse;
+  const ok = actualResponse.ok;
+  const data = ok ? await actualResponse.json() : {};
 
-  if (isTryingToFetchMarketplacePreview) {
-    if (res.ok) {
-      Notifier.success('You are temporarily viewing the apps listing in preview mode.');
-    } else {
-      // If the user was trying to fetch the marketplace listing
-      // from the Preview API with an invalid token, fall back to CDN API.
-      res = await window.fetch(MARKETPLACE_SPACE_CDN_BASE_URL + MARKETPLACE_LISTING_QUERY, {
-        headers: { Authorization: `Bearer ${MARKETPLACE_SPACE_CDN_TOKEN}` },
-      });
-    }
-  }
-
-  return res.ok ? res.json() : {};
+  return { ok, data };
 }
 
 function createAppObject(entry, isListed) {
