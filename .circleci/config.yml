@@ -215,6 +215,7 @@ jobs:
     environment:
       DOCKER_IMAGE: contentful/user_interface
       DOCKER_REGISTRY: 806120774687.dkr.ecr.us-east-1.amazonaws.com
+      LOG: 'yesplease'
     steps:
       - setup_remote_docker
       - checkout
@@ -248,6 +249,16 @@ jobs:
           name: Install Sniffer CLI tools
           command: npm install --no-save --no-shrinkwrap @contentful/project-sniffer-cli @contentful/sniffer-build-tracker
       - run:
+          name: Deploy micro-backends
+          command: |
+            export MICRO_BACKENDS_VERSION="$(cat package-lock.json | jq \'.dependencies["@contentful/micro-backends"].version\' --raw-output)"
+            export AWS_REGION="$MICRO_BACKENDS_AWS_REGION"
+            export AWS_ACCESS_KEY_ID="$MICRO_BACKENDS_AWS_ACCESS_KEY_ID"
+            export AWS_SECRET_ACCESS_KEY="$MICRO_BACKENDS_AWS_SECRET_ACCESS_KEY"
+
+            echo "Using @contentful/micro-backends@$MICRO_BACKENDS_VERSION"
+            npx "@contentful/micro-backends@$MICRO_BACKENDS_VERSION" "micro-backends" "rev-$CIRCLE_SHA1"
+      - run:
           name: Run project sniffer and upload stats
           command: |
             export PR_NUMBER=$(echo $CIRCLE_PULL_REQUEST | cut -d '/'  -f7)
@@ -267,28 +278,6 @@ jobs:
           root: .
           paths:
             - output
-
-  deploy-micro-backends:
-    docker:
-      - image: circleci/node:8.10
-    environment:
-      LOG: 'yesplease'
-    steps:
-      - checkout
-      - run:
-          name: Setup environment
-          command: |
-            echo $'export MICRO_BACKENDS_VERSION="$(cat package-lock.json | jq \'.dependencies["@contentful/micro-backends"].version\' --raw-output)"' >> $BASH_ENV
-            echo 'export AWS_REGION="$MICRO_BACKENDS_AWS_REGION"' >> $BASH_ENV
-            echo 'export AWS_ACCESS_KEY_ID="$MICRO_BACKENDS_AWS_ACCESS_KEY_ID"' >> $BASH_ENV
-            echo 'export AWS_SECRET_ACCESS_KEY="$MICRO_BACKENDS_AWS_SECRET_ACCESS_KEY"' >> $BASH_ENV
-            echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
-      - run:
-          name: Deploy micro-backends
-          command: |
-            echo "Using @contentful/micro-backends@$MICRO_BACKENDS_VERSION"
-            npx "@contentful/micro-backends@$MICRO_BACKENDS_VERSION" "micro-backends" "rev-$CIRCLE_SHA1"
-
   lint:
     docker:
       - image: circleci/node:10.15.3
@@ -462,7 +451,6 @@ workflows:
       - run-e2e-tests:
           requires:
             - build-with-statistics
-      - deploy-micro-backends
       - cypress/run:
           name: run-contract-tests
           executor: cypress-base-10
