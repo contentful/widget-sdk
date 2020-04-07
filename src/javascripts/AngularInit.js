@@ -77,7 +77,6 @@ export const angularInitRun = [
       import(/* webpackMode: "eager" */ 'components/tabs/entry_list/entryListController'),
       import(/* webpackMode: "eager" */ 'components/tabs/entry_list/entryListDirective'),
       import(/* webpackMode: "eager" */ 'components/tabs/entry_list/entryListSearchController'),
-      import(/* webpackMode: "eager" */ 'services/batchPerformer'),
       import(/* webpackMode: "eager" */ 'directives/bindHtmlCompileDirective'),
       import(/* webpackMode: "eager" */ 'directives/cfFocusOtInputDirective'),
       import(/* webpackMode: "eager" */ 'directives/cfSchemaDirectives'),

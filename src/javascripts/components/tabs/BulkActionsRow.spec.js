@@ -1,46 +1,68 @@
 import React from 'react';
 import { render, wait } from '@testing-library/react';
+import { upperFirst } from 'lodash';
 import BulkActionsRow from './BulkActionsRow';
+import * as batchPerformer from 'services/batchPerformer';
+import * as accessChecker from 'access_control/AccessChecker';
+
+jest.mock('access_control/AccessChecker', () => ({
+  canPerformActionOnEntity: jest.fn().mockReturnValue(true),
+  shouldHide: jest.fn().mockReturnValue(false),
+  shouldDisable: jest.fn().mockReturnValue(false),
+}));
+jest.mock('services/batchPerformer', () => ({
+  createBatchPerformer: jest.fn(),
+}));
+const performer = {
+  archive: jest.fn().mockResolvedValue('success'),
+  unarchive: jest.fn().mockResolvedValue('success'),
+  delete: jest.fn().mockResolvedValue('success'),
+  publish: jest.fn().mockResolvedValue('success'),
+  unpublish: jest.fn().mockResolvedValue('success'),
+  duplicate: jest.fn().mockResolvedValue('success'),
+};
+batchPerformer.createBatchPerformer.mockReturnValue(performer);
+
+const simpleActions = ['duplicate', 'publish', 'unpublish', 'archive', 'unarchive'];
 
 const generateEntities = (count, isPublished = true) => {
+  const returnTrue = jest.fn().mockReturnValue(true);
   return Array.from(new Array(count), () => ({
     isPublished: jest.fn().mockReturnValue(isPublished),
+    ...simpleActions.reduce(
+      (acc, action) => ({
+        ...acc,
+        [`can${upperFirst(action)}`]: returnTrue,
+      }),
+      { canDelete: returnTrue }
+    ),
   }));
 };
 
 const renderComponent = (props = {}) => {
-  const actions = {
-    showDuplicate: jest.fn().mockReturnValue(true),
-    duplicateSelected: jest.fn().mockResolvedValue('success'),
-    showArchive: jest.fn().mockReturnValue(true),
-    archiveSelected: jest.fn().mockResolvedValue('success'),
-    showUnarchive: jest.fn().mockReturnValue(true),
-    unarchiveSelected: jest.fn().mockResolvedValue('success'),
-    showDelete: jest.fn().mockReturnValue(true),
-    deleteSelected: jest.fn().mockResolvedValue('success'),
-    showPublish: jest.fn().mockReturnValue(true),
-    publishSelected: jest.fn().mockResolvedValue('success'),
-    showUnpublish: jest.fn().mockReturnValue(true),
-    unpublishSelected: jest.fn().mockResolvedValue('success'),
-    ...props.actions,
-  };
   const onActionComplete = jest.fn();
   const entityType = props.entityType || 'entry';
   const selectedEntities = props.selectedEntities || [];
+  const updateEntities = jest.fn().mockResolvedValue('updated');
   const result = render(
     <BulkActionsRow
       colSpan={1}
-      actions={actions}
       entityType={entityType}
       onActionComplete={onActionComplete}
+      updateEntities={updateEntities}
       selectedEntities={selectedEntities}
     />
   );
 
-  return { actions, onActionComplete, ...result };
+  return { updateEntities, onActionComplete, ...result };
 };
 
 describe('BulkActionsRow', () => {
+  beforeEach(() => {
+    accessChecker.canPerformActionOnEntity.mockReturnValue(true);
+    accessChecker.shouldDisable.mockReturnValue(false);
+    accessChecker.shouldHide.mockReturnValue(false);
+  });
   it('should hide the component when nothing is selected', () => {
     const { container } = renderComponent();
     expect(container).toBeEmpty();
@@ -85,13 +107,12 @@ describe('BulkActionsRow', () => {
     });
 
     it('should show some action links', () => {
+      accessChecker.canPerformActionOnEntity.mockImplementation((action) => {
+        return !['duplicate', 'unarchive', 'delete'].includes(action);
+      });
+      accessChecker.shouldHide.mockReturnValue(true);
       const { getByTestId, queryByTestId } = renderComponent({
         selectedEntities: generateEntities(1, false),
-        actions: {
-          showDuplicate: jest.fn().mockReturnValue(false),
-          showUnarchive: jest.fn().mockReturnValue(false),
-          showDelete: jest.fn().mockReturnValue(false),
-        },
       });
       expect(queryByTestId('duplicate')).not.toBeInTheDocument();
       expect(getByTestId('archive')).toBeInTheDocument();
@@ -102,16 +123,10 @@ describe('BulkActionsRow', () => {
     });
 
     it('should hide all action links and show info message', () => {
+      accessChecker.canPerformActionOnEntity.mockReturnValue(false);
       const { getByTestId, queryByTestId } = renderComponent({
         selectedEntities: generateEntities(1, false),
-        actions: {
-          showDuplicate: jest.fn().mockReturnValue(false),
-          showArchive: jest.fn().mockReturnValue(false),
-          showUnarchive: jest.fn().mockReturnValue(false),
-          showDelete: jest.fn().mockReturnValue(false),
-          showPublish: jest.fn().mockReturnValue(false),
-          showUnpublish: jest.fn().mockReturnValue(false),
-        },
+        entityType: 'asset',
       });
       expect(queryByTestId('duplicate')).not.toBeInTheDocument();
       expect(queryByTestId('archive')).not.toBeInTheDocument();
@@ -147,57 +162,59 @@ describe('BulkActionsRow', () => {
   });
 
   describe('use action links', () => {
-    const simpleActions = ['duplicate', 'publish', 'unpublish', 'archive', 'unarchive'];
     simpleActions.forEach((action) => {
       it(`should be able to click on ${action}`, async () => {
-        const { getByTestId, actions, onActionComplete } = renderComponent({
+        const { getByTestId, onActionComplete } = renderComponent({
           selectedEntities: generateEntities(1, false),
         });
         const link = getByTestId(action);
         link.click();
         await wait();
-        expect(actions[`${action}Selected`]).toHaveBeenCalledTimes(1);
+        expect(performer[action]).toHaveBeenCalledTimes(1);
         expect(onActionComplete).toHaveBeenCalledWith(action, 'success');
       });
     });
 
     it(`should be able to click delete after delete confirmation`, async () => {
-      const { getByTestId, actions, onActionComplete } = renderComponent({
+      const { updateEntities, getByTestId, onActionComplete } = renderComponent({
         selectedEntities: generateEntities(1, false),
       });
       const link = getByTestId('delete');
       link.click();
-      expect(actions.deleteSelected).not.toHaveBeenCalled();
+      expect(performer.delete).not.toHaveBeenCalled();
       getByTestId('delete-entry-confirm').click();
       await wait();
-      expect(actions.deleteSelected).toHaveBeenCalledTimes(1);
+      expect(performer.delete).toHaveBeenCalledTimes(1);
+      expect(updateEntities).toHaveBeenCalledTimes(1);
       expect(onActionComplete).toHaveBeenCalledWith('delete', 'success');
     });
 
     it(`should be able to click archive after delete confirmation`, async () => {
-      const { getByTestId, actions, onActionComplete } = renderComponent({
+      const { updateEntities, getByTestId, onActionComplete } = renderComponent({
         selectedEntities: generateEntities(1, false),
       });
       const link = getByTestId('delete');
       link.click();
-      expect(actions.deleteSelected).not.toHaveBeenCalled();
+      expect(performer.delete).not.toHaveBeenCalled();
       getByTestId('delete-entry-secondary').click();
       await wait();
-      expect(actions.deleteSelected).not.toHaveBeenCalled();
-      expect(actions.archiveSelected).toHaveBeenCalledTimes(1);
+      expect(performer.delete).not.toHaveBeenCalled();
+      expect(performer.archive).toHaveBeenCalledTimes(1);
+      expect(updateEntities).not.toHaveBeenCalled();
       expect(onActionComplete).toHaveBeenCalledWith('archive', 'success');
     });
 
     it(`should be able to cancel on delete confirmation`, async () => {
-      const { getByTestId, actions, onActionComplete } = renderComponent({
+      const { updateEntities, getByTestId, onActionComplete } = renderComponent({
         selectedEntities: generateEntities(1, false),
       });
       const link = getByTestId('delete');
       link.click();
-      expect(actions.deleteSelected).not.toHaveBeenCalled();
+      expect(performer.delete).not.toHaveBeenCalled();
       getByTestId('delete-entry-cancel').click();
-      expect(actions.deleteSelected).not.toHaveBeenCalled();
-      expect(actions.archiveSelected).not.toHaveBeenCalled();
+      expect(performer.delete).not.toHaveBeenCalled();
+      expect(performer.archive).not.toHaveBeenCalled();
+      expect(updateEntities).not.toHaveBeenCalled();
       expect(onActionComplete).not.toHaveBeenCalled();
     });
   });

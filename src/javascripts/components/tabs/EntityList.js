@@ -23,8 +23,8 @@ import SecretiveLink from 'components/shared/SecretiveLink';
 import ScheduleTooltip from 'app/ScheduledActions/EntrySidebarWidget/ScheduledActionsTimeline/ScheduleTooltip';
 import * as EntityState from 'data/CMA/EntityState';
 import StateLink from 'app/common/StateLink';
-import BulkActionsRowAdapter from './BulkActionsRowAdapter';
 import useSelectedEntities from './useSelectedEntities';
+import BulkActionsRow from './BulkActionsRow';
 
 const noWrapEllipsis = {
   overflow: 'hidden',
@@ -296,13 +296,15 @@ const EntityList = ({
             </span>
           </TableCell>
         </TableRow>
-        <BulkActionsRowAdapter
+        <BulkActionsRow
           colSpan={columnLength}
           entityType={entityType}
           selectedEntities={selected}
-          clearSelected={clearSelected}
           updateEntities={updateEntities}
-          onActionComplete={onBulkActionComplete}
+          onActionComplete={(...args) => {
+            clearSelected();
+            onBulkActionComplete(...args);
+          }}
         />
       </TableHead>
       <TableBody>

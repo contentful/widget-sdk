@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
@@ -7,6 +7,7 @@ import BulkActionLink from './BulkActionLink';
 import PluralizeEntityMessage from './PluralizeEntityMessage';
 import BulkActionDeleteConfirm from './BulkActionDeleteConfirm';
 import { noop } from 'lodash';
+import useBulkActions from './useBulkActions';
 
 const styles = {
   /*
@@ -33,56 +34,62 @@ const getPublishLabel = (selectedEntities) => {
   return '(Re)publish';
 };
 
-class BulkActionsRow extends Component {
-  state = {
-    pendingMessage: undefined,
-  };
+const BulkActionsRow = ({
+  colSpan,
+  selectedEntities,
+  entityType,
+  onActionComplete,
+  updateEntities,
+}) => {
+  const [pendingMessage, setPendingMessage] = useState(undefined);
+  const [{ actions }] = useBulkActions({
+    entityType,
+    entities: selectedEntities,
+    updateEntities,
+  });
 
-  fireAction = async (actionLabel) => {
-    const { actions, onActionComplete } = this.props;
-    let pendingMessage;
+  const fireAction = async (actionLabel) => {
+    let message;
     let action;
     let actionName = actionLabel;
     switch (actionLabel) {
       case 'duplicate':
-        pendingMessage = 'Duplicating';
+        message = 'Duplicating';
         action = actions.duplicateSelected;
         break;
       case 'delete':
-        pendingMessage = 'Deleting';
+        message = 'Deleting';
         action = actions.deleteSelected;
         break;
       case 'archive':
-        pendingMessage = 'Archiving';
+        message = 'Archiving';
         action = actions.archiveSelected;
         break;
       case 'unarchive':
-        pendingMessage = 'Unarchiving';
+        message = 'Unarchiving';
         action = actions.unarchiveSelected;
         break;
       case 'unpublish':
-        pendingMessage = 'Unpublishing';
+        message = 'Unpublishing';
         action = actions.unpublishSelected;
         break;
       case 'publish':
       case 'republish':
       case '(re)publish':
         actionName = 'publish';
-        pendingMessage = 'Publishing';
+        message = 'Publishing';
         action = actions.publishSelected;
         break;
       default:
         return;
     }
-    this.setState({ pendingMessage });
+    setPendingMessage(message);
     const result = await action();
     await onActionComplete(actionName, result);
-    this.setState({ pendingMessage: undefined });
+    setPendingMessage(undefined);
   };
 
-  renderActions = () => {
-    const { actions, selectedEntities, entityType } = this.props;
-
+  const renderActions = () => {
     const showDuplicate = actions.showDuplicate && actions.showDuplicate();
     const showDelete = actions.showDelete && actions.showDelete();
     const showArchive = actions.showArchive && actions.showArchive();
@@ -105,103 +112,77 @@ class BulkActionsRow extends Component {
         <BulkActionLink
           label="Duplicate"
           linkType="secondary"
-          onClick={this.fireAction}
+          onClick={fireAction}
           visible={actions.showDuplicate && actions.showDuplicate()}
         />
         <BulkActionDeleteConfirm
           itemsCount={selectedEntities.length}
-          fireAction={this.fireAction}
+          fireAction={fireAction}
           entityType={entityType}
           visible={actions.showDelete && actions.showDelete()}
         />
         <BulkActionLink
           label="Archive"
           linkType="secondary"
-          onClick={this.fireAction}
+          onClick={fireAction}
           visible={actions.showArchive && actions.showArchive()}
         />
         <BulkActionLink
           label="Unarchive"
           linkType="secondary"
-          onClick={this.fireAction}
+          onClick={fireAction}
           visible={actions.showUnarchive && actions.showUnarchive()}
         />
         <BulkActionLink
           label="Unpublish"
           linkType="secondary"
-          onClick={this.fireAction}
+          onClick={fireAction}
           visible={actions.showUnpublish && actions.showUnpublish()}
         />
         <BulkActionLink
           label={getPublishLabel(selectedEntities)}
           linkType="positive"
-          onClick={this.fireAction}
+          onClick={fireAction}
           visible={actions.showPublish && actions.showPublish()}
         />
       </Fragment>
     );
   };
 
-  render() {
-    const { colSpan, selectedEntities, entityType } = this.props;
-    const { pendingMessage } = this.state;
-    const selectedCount = selectedEntities.length;
+  const selectedCount = selectedEntities.length;
 
-    if (selectedCount <= 0) return null;
-    return (
-      <TableRow testId="bulk-actions">
-        <TableCell colSpan={colSpan} className={styles.bulkActionsRow}>
-          {pendingMessage ? (
-            <Fragment>
-              {pendingMessage}{' '}
-              <PluralizeEntityMessage entityType={entityType} count={selectedCount} />
-              <Spinner />
-            </Fragment>
-          ) : (
-            <Fragment>
-              <PluralizeEntityMessage
-                testId="label"
-                entityType={entityType}
-                restOfTheMsg="selected:"
-                count={selectedCount}
-              />
-              {this.renderActions()}
-            </Fragment>
-          )}
-        </TableCell>
-      </TableRow>
-    );
-  }
-}
-
-const requiredConditional = (showFunc) => (props, propName, componentName) => {
-  const propValue = props[propName];
-  if (props[showFunc] && (propValue === undefined || typeof propValue !== 'function')) {
-    return new Error(
-      `If the prop \`${showFunc}\` is set, the prop \`${propName}\` (of type \`function\`) is marked as required in \`${componentName}\`, but its value is \`${propValue}\`.`
-    );
-  }
+  if (selectedCount <= 0) return null;
+  return (
+    <TableRow testId="bulk-actions">
+      <TableCell colSpan={colSpan} className={styles.bulkActionsRow}>
+        {pendingMessage ? (
+          <Fragment>
+            {pendingMessage}{' '}
+            <PluralizeEntityMessage entityType={entityType} count={selectedCount} />
+            <Spinner />
+          </Fragment>
+        ) : (
+          <Fragment>
+            <PluralizeEntityMessage
+              testId="label"
+              entityType={entityType}
+              restOfTheMsg="selected:"
+              count={selectedCount}
+            />
+            {renderActions()}
+          </Fragment>
+        )}
+      </TableCell>
+    </TableRow>
+  );
 };
 
 BulkActionsRow.propTypes = {
   colSpan: PropTypes.number.isRequired,
+  updateEntities: PropTypes.func.isRequired,
   selectedEntities: PropTypes.arrayOf(PropTypes.object).isRequired,
   onActionComplete: PropTypes.func.isRequired,
   entityType: PropTypes.oneOf(['entry', 'asset']).isRequired,
-  actions: PropTypes.shape({
-    showDuplicate: PropTypes.func,
-    duplicateSelected: requiredConditional('showDuplicate'),
-    showArchive: PropTypes.func,
-    archiveSelected: requiredConditional('showArchive'),
-    showUnarchive: PropTypes.func,
-    unarchiveSelected: requiredConditional('showUnarchive'),
-    showDelete: PropTypes.func,
-    deleteSelected: requiredConditional('showDelete'),
-    showPublish: PropTypes.func,
-    publishSelected: requiredConditional('showPublish'),
-    showUnpublish: PropTypes.func,
-    unpublishSelected: requiredConditional('showUnpublish'),
-  }).isRequired,
 };
 
 BulkActionsRow.defaultProps = {
