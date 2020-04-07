@@ -14,7 +14,8 @@ PACKAGELIST=(
 	@typeform/embed@0.6.1
 	cycle@1.0.3
 	filestack-loader@3.0.4
-	node-jsx@0.13.3)
+	node-jsx@0.13.3
+	jest-dom@4.0.0)
 
 PKG_OUTPUT=$(echo ${PACKAGELIST[@]}| sed 's/ /;/g')
 
