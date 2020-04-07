@@ -2,7 +2,7 @@ module.exports = {
   forbidden: [
     {
       name: 'no-unreachable-from-root',
-      severity: 'warn',
+      severity: 'error',
       comment: `This module is unreachable from an entry point and it's likely not used (anymore?).
         Either use it or remove it. If it's logical this module is not reachable,
       add an exception for it in your dependency-cruiser configuration.`,
@@ -17,8 +17,9 @@ module.exports = {
             might typically want to exclude these from reachability rules.
             The same goes for typescript definition files:
            */
+        // todo: delete .ts once we enable TS
         pathNot:
-          '__mocks__|__test__|__fixtures__|saved-views-migrator|test\\/helpers|\\.spec\\.(js|ts)$|\\.d\\.ts$',
+          '\\.ts|__mocks__|__test__|__fixtures__|saved-views-migrator|test\\/helpers|\\.spec\\.(js|ts)$|\\.d\\.ts$',
 
         /*
             for each file matching path and pathNot, check if it's reachable from the
@@ -32,10 +33,11 @@ module.exports = {
       comment: `This is an orphan module - it's likely not used (anymore?).
         Either use it or remove it. If it's logical this module is an orphan (i.e. it's a config file),
         add an exception for it in your dependency-cruiser configuration.`,
-      severity: 'warn',
+      severity: 'error',
       from: {
         orphan: true,
-        pathNot: '__mocks__|\\.d\\.ts$',
+        // todo: delete .ts once we enable TS
+        pathNot: '\\.ts|__mocks__|\\.d\\.ts$',
       },
       to: {},
     },
@@ -77,7 +79,7 @@ module.exports = {
         'This module depends on a spec (test) file. The sole responsibility of a spec file is to test code. ' +
         "If there's something in a spec that's of use to other modules, it doesn't have that single " +
         'responsibility anymore. Factor it out into (e.g.) a separate utility/ helper or a mock.',
-      severity: 'warn',
+      severity: 'error',
       from: {},
       to: {
         path: '\\.spec\\.(js|ts\\.md)$',
@@ -86,7 +88,7 @@ module.exports = {
 
     {
       name: 'not-to-dev-dep',
-      severity: 'warn',
+      severity: 'error',
       comment: `This module depends on an npm package from the 'devDependencies' section of your
         package.json. It looks like something that ships to production, though. To prevent problems
         with npm packages that aren't there on production declare it (only!) in the 'dependencies'
@@ -106,7 +108,7 @@ module.exports = {
         'This dependency is part of a circular relationship. You might want to revise ' +
         'your solution (i.e. use dependency inversion, make sure the modules have a ' +
         'single responsibility) ',
-      severity: 'warn',
+      severity: 'error',
       from: {},
       to: {
         circular: true,

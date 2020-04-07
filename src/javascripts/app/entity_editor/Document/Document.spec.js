@@ -4,7 +4,7 @@ import * as K from '../../../../../test/utils/kefir';
 import * as Kefir from 'utils/kefir';
 import * as OtDocument from './OtDocument';
 import { DocLoad } from 'data/sharejs/Connection';
-import ShareJsDocMock from './ShareJsDocMock';
+import ShareJsDocMock from './__mocks__/ShareJsDocMock';
 import { Error as DocError } from '../../../data/document/Error';
 import statusCode from '../../../data/document/statusCode';
 import * as Permissions from 'access_control/EntityPermissions';

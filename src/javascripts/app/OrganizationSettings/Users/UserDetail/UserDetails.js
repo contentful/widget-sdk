@@ -7,7 +7,7 @@ import { css } from 'emotion';
 import { createImmerReducer } from 'redux/utils/createImmerReducer';
 import { create as createSpaceMembershipRepo } from 'access_control/SpaceMembershipRepository';
 import { createSpaceEndpoint, createOrganizationEndpoint } from 'data/EndpointFactory';
-import { useAsyncFn } from 'app/common/hooks/useAsync';
+import { useAsyncFn } from 'app/common/hooks';
 import { fetchAndResolve } from 'data/LinkResolver';
 import { getAllSpaceMemberships } from 'access_control/OrganizationMembershipRepository';
 import { getAllTeamMemberships, removeTeamMembership } from 'access_control/TeamRepository';

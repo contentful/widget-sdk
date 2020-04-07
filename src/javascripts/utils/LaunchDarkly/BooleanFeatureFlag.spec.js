@@ -1,7 +1,7 @@
 import React from 'react';
 import Enzyme from 'enzyme';
 import 'jest-enzyme';
-import BooleanFeatureFlag from './BooleanFeatureFlag';
+import { BooleanFeatureFlag } from './BooleanFeatureFlag';
 import flushPromises from 'test/helpers/flushPromises';
 import * as spaceContextMocked from 'ng/spaceContext';
 

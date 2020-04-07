@@ -15,7 +15,7 @@ import { getModule } from 'NgRegistry';
 import { track } from 'analytics/Analytics';
 import TheLocaleStore from 'services/localeStore';
 import * as ShareJS from 'data/sharejs/utils';
-import { valuePropertyAt } from 'app/entity_editor/Document';
+import { valuePropertyAt } from './documentHelpers';
 
 /**
  * @returns {EntityDocument}
@@ -541,8 +541,9 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
 }
 
 // Ensure we only ever track one event for the same CMA entity version per web-app instance.
-const getGlobalEntityVersionMismatchKey = (entitySys) => `${entitySys.type}:${entitySys.id}:${entitySys.version}`;
-const trackEntityVersionMismatch  = memoize((entitySys, doc) => {
+const getGlobalEntityVersionMismatchKey = (entitySys) =>
+  `${entitySys.type}:${entitySys.id}:${entitySys.version}`;
+const trackEntityVersionMismatch = memoize((entitySys, doc) => {
   track('sharejs:cma_entity_version_mismatch', {
     cmaEntityVersion: entitySys.version,
     shareJsDocVersion: doc.version,
@@ -552,13 +553,13 @@ const trackEntityVersionMismatch  = memoize((entitySys, doc) => {
   });
 }, getGlobalEntityVersionMismatchKey);
 
-function maybeTrackEntityVersionMismatch (entitySys, doc) {
+function maybeTrackEntityVersionMismatch(entitySys, doc) {
   if (getRealDocVersion(doc) < entitySys.version) {
     trackEntityVersionMismatch(entitySys, doc);
   }
 }
 
-function getRealDocVersion (doc) {
+function getRealDocVersion(doc) {
   // `compressed` seems to be -1 on new entities (while at the same time the `doc.version` seems
   // to be the CMA entity's `sys.version + 1`), can be 0 and is a higher number on a compressed doc.
   return doc.version + (doc.compressed || 0);

@@ -8,7 +8,7 @@ import createSpaceMembersRepo from 'data/CMA/SpaceMembersRepo';
 import RoleRepository from 'access_control/RoleRepository';
 import { getAllUsers } from 'access_control/OrganizationMembershipRepository';
 import resolveLinks from 'data/LinkResolver';
-import useAsync from 'app/common/hooks/useAsync';
+import { useAsync } from 'app/common/hooks';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getModule } from 'NgRegistry';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';

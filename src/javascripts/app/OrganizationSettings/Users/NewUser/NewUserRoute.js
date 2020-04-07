@@ -7,7 +7,7 @@ import { Workbench } from '@contentful/forma-36-react-components';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 import ErrorState from 'app/common/ErrorState';
 import LoadingState from 'app/common/LoadingState';
-import useAsync from 'app/common/hooks/useAsync';
+import { useAsync } from 'app/common/hooks';
 
 import { getOrganization } from 'services/TokenStore';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';

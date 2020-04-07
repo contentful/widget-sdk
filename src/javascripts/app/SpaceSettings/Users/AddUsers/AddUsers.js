@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getAllMembershipsWithQuery } from 'access_control/OrganizationMembershipRepository';
 import { fetchAndResolve } from 'data/LinkResolver';
-import useAsync from 'app/common/hooks/useAsync';
+import { useAsync } from 'app/common/hooks';
 
 import UserSelection from './UserSelection';
 import { Modal, Notification } from '@contentful/forma-36-react-components';

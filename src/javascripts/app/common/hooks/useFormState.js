@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 
-export default function useFormState(initialState = {}) {
+export function useFormState(initialState = {}) {
   const [formState, setFormState] = useState(initialState);
 
   const updateField = useCallback(

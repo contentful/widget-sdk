@@ -4,7 +4,7 @@ import { Space } from 'app/OrganizationSettings/PropTypes';
 import { Autocomplete } from '@contentful/forma-36-react-components/dist/alpha';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getAllTeams } from 'access_control/TeamRepository';
-import useAsync from 'app/common/hooks/useAsync';
+import { useAsync } from 'app/common/hooks';
 
 export default function TeamsAutocomplete({
   value,

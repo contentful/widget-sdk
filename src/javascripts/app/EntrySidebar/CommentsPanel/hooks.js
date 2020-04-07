@@ -5,7 +5,7 @@ import { getSpace, getUserSync } from 'services/TokenStore';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getUsers } from 'access_control/OrganizationMembershipRepository';
 import { getAllForEntry, create } from 'data/CMA/CommentsRepo';
-import useAsync, { useAsyncFn } from 'app/common/hooks/useAsync';
+import { useAsync, useAsyncFn } from 'app/common/hooks';
 import { trackCommentCreated } from './analytics';
 
 /**

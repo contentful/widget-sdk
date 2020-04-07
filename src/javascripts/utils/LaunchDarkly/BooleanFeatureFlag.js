@@ -12,7 +12,7 @@ import { getVariation } from 'LaunchDarkly';
  * @class FeatureFlag
  * @extends {React.Component}
  */
-export default class BooleanFeatureFlag extends React.Component {
+export class BooleanFeatureFlag extends React.Component {
   static propTypes = {
     featureFlagKey: PropTypes.string.isRequired,
     children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]).isRequired,
