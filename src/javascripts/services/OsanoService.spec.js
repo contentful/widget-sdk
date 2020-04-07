@@ -72,6 +72,7 @@ jest.mock('services/intercom', () => ({
 
 jest.mock('analytics/segment', () => ({
   enable: jest.fn(),
+  getIntegrations: jest.fn().mockResolvedValue([]),
 }));
 
 jest.spyOn(Notification, 'warning').mockImplementation(() => {});
@@ -87,16 +88,10 @@ describe('OsanoService', () => {
       ESSENTIAL: 'ACCEPT',
     });
 
-    const callHandleConsentChanged = (opts) => {
-      service.handleConsentChanged(opts);
-
-      service.handleConsentChanged.flush();
-    };
-
-    it('should enable analytics with all Segment integrations and Intercom if analytics and personalization is allowed', () => {
+    it('should enable analytics with all Segment integrations and Intercom if analytics and personalization is allowed', async () => {
       const opts = generateConsentOptions();
 
-      callHandleConsentChanged(opts);
+      await service.handleConsentChanged(opts);
 
       expect(Analytics.enable).toHaveBeenCalledWith(expect.any(Object), {
         integrations: {
@@ -111,10 +106,29 @@ describe('OsanoService', () => {
       expect(Intercom.enable).toHaveBeenCalledTimes(1);
     });
 
-    it('should enable analytics with only analytics Segment integrations if analytics but not personalization is allowed', () => {
+    it('should disable any additional integrations from Segment', async () => {
+      Segment.getIntegrations.mockResolvedValueOnce(['My Awesome Integration']);
+
+      const opts = generateConsentOptions();
+
+      await service.handleConsentChanged(opts);
+
+      expect(Analytics.enable).toHaveBeenCalledWith(expect.any(Object), {
+        integrations: {
+          all: false,
+          'My Awesome Integration': false,
+          FullStory: true,
+          'Segment.io': true,
+          'Google Analytics': true,
+          Intercom: true,
+        },
+      });
+    });
+
+    it('should enable analytics with only analytics Segment integrations if analytics but not personalization is allowed', async () => {
       const opts = generateConsentOptions(true, false);
 
-      callHandleConsentChanged(opts);
+      await service.handleConsentChanged(opts);
 
       expect(Analytics.enable).toHaveBeenCalledWith(expect.any(Object), {
         integrations: {
@@ -129,20 +143,20 @@ describe('OsanoService', () => {
       expect(Intercom.enable).not.toHaveBeenCalled();
     });
 
-    it('should respect isAnalyticsAllowed', () => {
+    it('should respect isAnalyticsAllowed', async () => {
       isAnalyticsAllowed.mockReturnValue(false);
 
       const opts = generateConsentOptions(true, false);
 
-      callHandleConsentChanged(opts);
+      await service.handleConsentChanged(opts);
 
       expect(Analytics.enable).not.toHaveBeenCalled();
     });
 
-    it('should only enable Intercom (along with Segment) if analytics is denied but personalization is allowed', () => {
+    it('should only enable Intercom (along with Segment) if analytics is denied but personalization is allowed', async () => {
       const opts = generateConsentOptions(false, true);
 
-      callHandleConsentChanged(opts);
+      await service.handleConsentChanged(opts);
 
       expect(Analytics.enable).not.toHaveBeenCalled();
 
@@ -158,41 +172,41 @@ describe('OsanoService', () => {
       expect(Intercom.enable).toHaveBeenCalledTimes(1);
     });
 
-    it('should not enable analytics or Intercom is neither is allowed', () => {
+    it('should not enable analytics or Intercom is neither is allowed', async () => {
       const opts = generateConsentOptions(false, false);
 
-      callHandleConsentChanged(opts);
+      await service.handleConsentChanged(opts);
 
       expect(Analytics.enable).not.toHaveBeenCalled();
       expect(Segment.enable).not.toHaveBeenCalled();
       expect(Intercom.enable).not.toHaveBeenCalled();
     });
 
-    it('should not attempt to do anything if previous preferences were saved', () => {
+    it('should not attempt to do anything if previous preferences were saved', async () => {
       const opts = generateConsentOptions(false, false);
 
-      callHandleConsentChanged(opts);
+      await service.handleConsentChanged(opts);
 
       const newOpts = generateConsentOptions();
 
-      callHandleConsentChanged(newOpts);
+      await service.handleConsentChanged(newOpts);
 
       expect(Analytics.enable).not.toHaveBeenCalled();
       expect(Segment.enable).not.toHaveBeenCalled();
       expect(Intercom.enable).not.toHaveBeenCalled();
     });
 
-    it('should warn the user to reload if they change their consent options', () => {
+    it('should warn the user to reload if they change their consent options', async () => {
       const opts = generateConsentOptions();
 
-      callHandleConsentChanged(opts);
-      callHandleConsentChanged(opts);
+      await service.handleConsentChanged(opts);
+      await service.handleConsentChanged(opts);
 
       expect(Notification.warning).not.toHaveBeenCalled();
 
       const newOpts = generateConsentOptions(false, false);
 
-      callHandleConsentChanged(newOpts);
+      await service.handleConsentChanged(newOpts);
 
       expect(Notification.warning).toHaveBeenCalledTimes(1);
     });
