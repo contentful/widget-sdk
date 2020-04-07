@@ -36,7 +36,7 @@ function removeCircularRefs(obj) {
  * again.
  */
 
-const ANALYTICS_ENVS = ['dev-on-production', 'production', 'staging', 'preview'];
+const ANALYTICS_ENVS = ['production', 'staging', 'preview'];
 const VALUE_UNKNOWN = {};
 
 let env = Config.env;

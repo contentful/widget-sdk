@@ -100,6 +100,7 @@ describe('OsanoService', () => {
           'Segment.io': true,
           'Google Analytics': true,
           Intercom: true,
+          Wootric: true,
         },
       });
 
@@ -121,6 +122,7 @@ describe('OsanoService', () => {
           'Segment.io': true,
           'Google Analytics': true,
           Intercom: true,
+          Wootric: true,
         },
       });
     });
@@ -137,6 +139,7 @@ describe('OsanoService', () => {
           'Segment.io': true,
           'Google Analytics': true,
           Intercom: false,
+          Wootric: false,
         },
       });
 
@@ -167,6 +170,7 @@ describe('OsanoService', () => {
           'Segment.io': false,
           'Google Analytics': false,
           Intercom: true,
+          Wootric: true,
         },
       });
       expect(Intercom.enable).toHaveBeenCalledTimes(1);

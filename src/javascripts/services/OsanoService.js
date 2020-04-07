@@ -197,6 +197,7 @@ async function generateSegmentLoadOptions(analyticsAllowed, personalizationAllow
     'Segment.io': analyticsAllowed,
     'Google Analytics': analyticsAllowed,
     Intercom: personalizationAllowed,
+    Wootric: personalizationAllowed,
   });
 
   return {
