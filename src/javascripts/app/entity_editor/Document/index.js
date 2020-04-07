@@ -4,7 +4,7 @@ import * as accessChecker from 'access_control/AccessChecker';
 export { valuePropertyAt, localFieldChanges } from './documentHelpers';
 
 export { create as createOtDoc } from './OtDocument';
-export { create as createCmaDoc } from './CmaDocument';
+export { create as createCmaDoc } from './unused__CmaDocument';
 
 /**
  * Current status of the document
@@ -18,13 +18,13 @@ export { create as createCmaDoc } from './CmaDocument';
  *
  * This property is used by entry_editor/StatusNotification component.
  *
- * @param {EntityDocument} document
- * @returns {kefir.Property<string>}
+ * @param {Document} document
+ * @returns {Kefir.Property<string>}
  */
 export function statusProperty(document) {
   return Status.create(
     document.sysProperty,
     document.state.error$,
-    accessChecker.canUpdateEntity({ data: document.getValueAt([]) })
+    accessChecker.canUpdateEntity({ data: document.getValueAt([]) }),
   );
 }

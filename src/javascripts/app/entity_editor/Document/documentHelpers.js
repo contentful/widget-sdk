@@ -4,9 +4,9 @@ import * as PathUtils from 'utils/Path';
  * Returns a property that always has the current value at the given
  * path of the document.
  *
- * @param {EntityDocument} document
+ * @param {Document} document
  * @param {string[]} path
- * @returns {kefir.Property<any>}
+ * @returns {Kefir.Property<any, any>}
  */
 export function valuePropertyAt(document, path) {
   return document.changes
@@ -18,8 +18,8 @@ export function valuePropertyAt(document, path) {
 /**
  * A stream of `[fieldName, locale]` pairs for locally changed fields.
  *
- * @param {EntityDocument} document
- * @returns {Stream<[string, string]>}
+ * @param {Document} document
+ * @returns {Kefir.Stream<[string, string]>}
  */
 export function localFieldChanges(document) {
   return document.changes

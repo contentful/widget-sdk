@@ -1,5 +1,6 @@
-import { createCmaDoc, valuePropertyAt, localFieldChanges } from './index';
-import * as K from '../../../../../test/utils/kefir';
+import { valuePropertyAt, localFieldChanges } from '../documentHelpers';
+import { createCmaDoc } from '../index';
+import * as K from '../../../../../../test/utils/kefir';
 
 const ENTRY = {
   data: {
@@ -7,24 +8,29 @@ const ENTRY = {
       type: 'Entry',
       version: 1,
       contentType: {
-        sys: { id: 'ctId' },
-      },
+        sys: { id: 'ctId' }
+      }
     },
     fields: {
       fieldA: { 'en-US': 'en' },
       fieldB: { 'en-US': 'val-EN', de: 'val-DE' },
-      unknownField: {},
-    },
+      unknownField: {}
+    }
   },
+  setDeleted: () => {}
 };
 
-describe.skip('entity_editor/Document helpers', () => {
+jest.mock('services/localeStore', () => ({
+  getPrivateLocales: () => [{ internal_code: 'en-US' }]
+}));
+
+describe('entity_editor/Document helpers', () => {
   /**
-   * @type {EntityDocument}
+   * @type {Document}
    */
   let doc;
   beforeEach(() => {
-    doc = createCmaDoc(ENTRY, 'fake/endpoint');
+    doc = createCmaDoc(ENTRY, { sys: {}, fields: [{ id: 'fieldA' }, { id: 'fieldB' }] }, () => {});
   });
 
   describe('valuePropertyAt', () => {

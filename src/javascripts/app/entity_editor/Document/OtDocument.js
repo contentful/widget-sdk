@@ -18,11 +18,9 @@ import * as ShareJS from 'data/sharejs/utils';
 import { valuePropertyAt } from './documentHelpers';
 
 /**
- * @returns {EntityDocument}
+ * @returns {Document}
  * @description
  * Used to edit an entry or asset through ShareJS
- *
- * TODO Instead of passing an entity instance provided by the client library we should only pass the entity data.
  */
 export function create(docConnection, initialEntity, contentType, user, spaceEndpoint) {
   const entity = cloneDeep(initialEntity);
@@ -69,7 +67,7 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
         errorBus.set(DocError.SetValueForbidden(path));
       });
     } else if (error === DocumentStatusCode.INTERNAL_SERVER_ERROR) {
-      errorBus.set(DocumentStatusCode.INTERNAL_SERVER_ERROR);
+      errorBus.set(DocError.ShareJsInternalServerError(error));
     }
   });
   cleanupTasks.push(docSetters.destroy);
@@ -96,9 +94,9 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
    *
    * @type {Property<string[]>}
    */
-  const changes = docEventsBus.stream.flatten((event) => {
+  const changes = docEventsBus.stream.flatten(event => {
     if (event.name === 'change') {
-      const paths = (event.data || []).map((error) => error.p);
+      const paths = (event.data || []).map(error => error.p);
       return [PathUtils.findCommonPrefix(paths)];
     } else if (event.name === 'open') {
       // Emit the path of length zero
@@ -117,7 +115,7 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
   // change stream. Subsequent handlers will access the snapshot on
   // we need to make sure that we present them with the normalized
   // version.
-  changes.onValue((changePath) => {
+  changes.onValue(changePath => {
     if (PathUtils.isPrefix(changePath, ['fields']) && currentDoc) {
       const locales = TheLocaleStore.getPrivateLocales();
       Normalizer.normalize(
@@ -127,7 +125,7 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
         },
         currentDoc.snapshot,
         contentType,
-        locales
+        locales,
       );
     }
   });
@@ -169,11 +167,11 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
   const sysProperty = sysBus.property;
 
   let currentSys;
-  K.onValue(sysProperty, (sys) => {
+  K.onValue(sysProperty, sys => {
     currentSys = sys;
   });
 
-  docEventsBus.stream.onValue((event) => {
+  docEventsBus.stream.onValue(event => {
     // ShareJS has some documents that are out of sync with the index held in the CMA.
     // We want to log these to be able to repair them.
     maybeTrackEntityVersionMismatch(initialEntitySys, event.doc);
@@ -191,7 +189,7 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
       // There is no focus on reference field or the boolean's "clear" button
       // so we have to dispatcha a fake "blur" event to the changes bus.
       const fieldId = path[1];
-      const field = contentType.data.fields.find((field) => field.id === fieldId);
+      const field = contentType.data.fields.find(field => field.id === fieldId);
       const isReferenceField = get(field, 'items.type') === 'Link' || get(field, 'type') === 'Link';
       const isBooleanField = get(field, 'type') === 'Boolean';
       if (isReferenceField || isBooleanField) {
@@ -235,7 +233,7 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
 
   // Holds true if the user is allowed to edit the entity
   const isEditable$ = sysProperty
-    .map((sys) => {
+    .map(sys => {
       return !sys.archivedVersion && !sys.deletedVersion && permissions.can('update');
     })
     .skipDuplicates();
@@ -254,17 +252,14 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
    *
    * @type {Property<boolean>}
    */
-  const isDirty$ = sysProperty.map((sys) => {
+  const isDirty$ = sysProperty.map(sys => {
     return sys.publishedVersion ? sys.version > sys.publishedVersion + 1 : true;
   });
 
   // Property<ShareJS.Document?>
   const doc$ = docLoader.doc
-    .map((doc) => {
-      return caseof(doc, [
-        [DocLoad.Doc, (d) => d.doc],
-        [null, () => null],
-      ]);
+    .map(doc => {
+      return caseof(doc, [[DocLoad.Doc, d => d.doc], [null, () => null]]);
     })
     .skipDuplicates();
 
@@ -282,18 +277,12 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
    * - If the document is unloaded later this is true
    */
   const pending$ = docLoader.doc
-    .map((d) => {
-      return caseof(d, [
-        [DocLoad.Pending, () => true],
-        [null, () => false],
-      ]);
+    .map(d => {
+      return caseof(d, [[DocLoad.Pending, () => true], [null, () => false]]);
     })
     .skipDuplicates();
 
-  const loaded$ = K.holdWhen(
-    pending$.map((x) => !x),
-    (x) => x
-  );
+  const loaded$ = K.holdWhen(pending$.map(x => !x), x => x);
 
   const offDoc = K.onValue(doc$, setDoc);
   cleanupTasks.push(offDoc);
@@ -301,18 +290,15 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
   // Property<string?>
   // Is `null` if there is no error and the error code otherwise.
   // Known error codes are 'forbidden' and 'disconnected'.
-  const docLoadError$ = docLoader.doc.map((doc) => {
-    return caseof(doc, [
-      [DocLoad.Error, (e) => e.error],
-      [null, () => null],
-    ]);
+  const docLoadError$ = docLoader.doc.map(doc => {
+    return caseof(doc, [[DocLoad.Error, e => e.error], [null, () => null]]);
   });
 
-  docLoadError$.onValue((error) => {
+  docLoadError$.onValue(error => {
     const errors = {
       forbidden: DocError.OpenForbidden(),
       disconnected: DocError.Disconnected(),
-      [DocumentStatusCode.INTERNAL_SERVER_ERROR]: DocumentStatusCode.INTERNAL_SERVER_ERROR,
+      'internal-server-error': DocError.ShareJsInternalServerError(),
     };
     errorBus.set(errors[error] || null);
   });
@@ -320,7 +306,7 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
   const presence = PresenceHub.create(user.sys.id, docEventsBus.stream, shout);
   cleanupTasks.push(presence.destroy);
 
-  const version$ = sysProperty.map((sys) => sys.version);
+  const version$ = sysProperty.map(sys => sys.version);
   const reverter = Reverter.create(getValueAt([]), version$, setFields);
 
   /**
@@ -330,7 +316,7 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
    * @description
    * Is true if the document is connected
    */
-  const isConnected$ = doc$.map((doc) => !!doc).skipDuplicates();
+  const isConnected$ = doc$.map(doc => !!doc).skipDuplicates();
 
   /**
    * @ngdoc property
@@ -349,7 +335,7 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
    */
   const canEdit$ = K.combineProperties(
     [isEditable$, isConnected$],
-    (isEditable, isConnected) => isEditable && isConnected
+    (isEditable, isConnected) => isEditable && isConnected,
   );
 
   cleanupTasks.push(() => {
@@ -362,7 +348,6 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
     sysBus.set,
     getData,
     spaceEndpoint,
-    docLocalChangesBus
   );
 
   const document = {
@@ -460,13 +445,13 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
   // The entity instance is unique for the ID. Other views will share
   // the same instance and not necessarily load the data. This is why
   // we need to make sure that we keep it updated.
-  document.data$.onValue((data) => {
-    entity.data = data;
+  document.data$.onValue(data => {
+    initialEntity.data = data;
     if (data.sys.deletedVersion) {
-      entity.setDeleted();
+      initialEntity.setDeleted();
       // We need to remove the `data` property. Otherwise `entity.isDeleted()`
       // will return `false`.
-      delete entity.data;
+      delete initialEntity.data;
     }
   });
 
@@ -484,7 +469,7 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
   }
 
   function destroy() {
-    cleanupTasks.forEach((task) => task());
+    cleanupTasks.forEach(task => task());
   }
 
   function shout(args) {
@@ -523,7 +508,7 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
 
   function plugDocEvents(doc) {
     doc._originalEmit = doc.emit;
-    doc.emit = function (name, data) {
+    doc.emit = function(name, data) {
       this._originalEmit(...arguments);
       docEventsBus.emit({ doc, name, data });
     };
@@ -541,7 +526,7 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
 }
 
 // Ensure we only ever track one event for the same CMA entity version per web-app instance.
-const getGlobalEntityVersionMismatchKey = (entitySys) =>
+const getGlobalEntityVersionMismatchKey = entitySys =>
   `${entitySys.type}:${entitySys.id}:${entitySys.version}`;
 const trackEntityVersionMismatch = memoize((entitySys, doc) => {
   track('sharejs:cma_entity_version_mismatch', {

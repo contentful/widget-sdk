@@ -4,8 +4,6 @@ import * as K from 'utils/kefir';
 export { Action, State };
 
 /**
- * @ngdoc service
- * @name data/document/ResourceStateManager
  * @description
  * Exports a factory that creates the resource manager for an entity
  * editor document.
@@ -31,13 +29,19 @@ export { Action, State };
  *
  * - `inProgress$` is a boolean property that is true whenever a state
  *   change is in progress.
+ *
+ * @param {Kefir.Property<EntitySys>} sys$
+ * @param {{(sys: EntitySys): void}} setSys Updates the entity sys property
+ * @param {{(): Entity}} getData Returns most actual entity data
+ * @param {{(body, headers): Entity}} spaceEndpoint Endpoint request maker
+ * @param {{(): Promise<void>} | null} preApplyFn Optional async function that must be invoked before the status change API request
  */
-export function create(sys$, setSys, getData, spaceEndpoint, docStateChangeBus) {
+export function create(sys$, setSys, getData, spaceEndpoint, preApplyFn = null) {
   const applyAction = makeApply(spaceEndpoint);
 
   const state$ = sys$.map(getState).skipDuplicates();
   let currentState;
-  state$.onValue((state) => {
+  state$.onValue(state => {
     currentState = state;
   });
 
@@ -56,6 +60,9 @@ export function create(sys$, setSys, getData, spaceEndpoint, docStateChangeBus) 
 
     let data;
     try {
+      if (preApplyFn) {
+        await preApplyFn();
+      }
       data = await applyAction(action, getData());
     } catch (error) {
       inProgressBus.set(false);
@@ -72,35 +79,12 @@ export function create(sys$, setSys, getData, spaceEndpoint, docStateChangeBus) 
 
   function update(newSys, previousState) {
     const nextState = getState(newSys);
-    const statesMap = {
-      [State.Archived()]: 'archived',
-      [State.Published()]: 'published',
-    };
-
     setSys(newSys);
-
     if (previousState !== nextState) {
       stateChangeBus.emit({
         from: previousState,
         to: nextState,
       });
-    }
-
-    // todo: this is not used anymore (was used in SidebarBridge) and should be removed
-    if (docStateChangeBus) {
-      // Document#docEventsBus doesn't emit changes of the document
-      // status so we have to listen to those here.
-      if (statesMap[nextState]) {
-        docStateChangeBus.set({ name: statesMap[nextState], p: ['sys'] });
-      } else if (previousState === State.Archived()) {
-        docStateChangeBus.set({ name: 'unarchived', p: ['sys'] });
-      } else if (
-        previousState === State.Published() ||
-        // When an entry is published, changed and then unpublished, it goes to Draft state.
-        (previousState === State.Changed() && nextState === State.Draft())
-      ) {
-        docStateChangeBus.set({ name: 'unpublished', p: ['sys'] });
-      }
     }
   }
 }

@@ -1,7 +1,7 @@
 import * as K from 'utils/kefir';
 import DocumentStatusCode from 'data/document/statusCode';
 import * as logger from 'services/logger';
-import { Error } from './Error';
+import { Error as DocError } from './Error';
 
 /**
  * @description
@@ -23,17 +23,22 @@ import { Error } from './Error';
  */
 export function create(sys$, docError$, canUpdate) {
   return K.combineProperties([sys$, docError$], (sys, docError) => {
-    if (docError === DocumentStatusCode.INTERNAL_SERVER_ERROR) {
+    // CmaDocument specific errors.
+    if (docError instanceof DocError.CmaInternalServerError) {
+      logger.logServerError('CMADocument error', { error: { error: docError } });
+      return DocumentStatusCode.INTERNAL_SERVER_ERROR;
+    }
+    if (docError instanceof DocError.VersionMismatch) {
+      return DocumentStatusCode.EDIT_CONFLICT;
+    }
+    if (docError instanceof DocError.ShareJsInternalServerError || docError === 'internal-server-error') {
       logger.logSharejsError('Internal server error', { error: { error: docError } });
       return DocumentStatusCode.INTERNAL_SERVER_ERROR;
     }
-    if (!canUpdate) {
-      return K.constant(DocumentStatusCode.NOT_ALLOWED);
-    }
-    if (docError instanceof Error.OpenForbidden) {
+    if (!canUpdate || docError instanceof DocError.OpenForbidden) {
       return DocumentStatusCode.NOT_ALLOWED;
     }
-    if (docError instanceof Error.Disconnected) {
+    if (docError instanceof DocError.Disconnected) {
       return DocumentStatusCode.CONNECTION_ERROR;
     }
     if (docError) {

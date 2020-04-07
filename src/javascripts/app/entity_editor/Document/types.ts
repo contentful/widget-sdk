@@ -1,23 +1,42 @@
-import { Property, Stream } from 'kefir';
+import { Emitter, Property, Stream } from 'kefir';
 import { State } from 'data/CMA/EntityState';
 
-interface EntitySys {
+export interface EntitySys {
   type: 'Entry' | 'Asset';
   version: number;
+  publishedVersion?: number;
+  archivedVersion?: number;
+  deletedVersion?: number;
   contentType: {
     sys: { id: string };
   };
 }
 
-interface Entity {
+export interface Entity {
   sys: EntitySys;
-  data: any;
+  fields: {
+    [fieldName: string]: { [locale: string]: any };
+  };
+}
+
+interface KefirBus<V> {
+  end: Emitter<V, any>['end'];
+  error: Emitter<V, any>['error'];
+}
+
+export interface StreamBus<V> extends KefirBus<V> {
+  stream: Stream<V, any>;
+  emit: Emitter<V, any>['emit'];
+}
+
+export interface PropertyBus<V> extends KefirBus<V> {
+  property: Property<V, any>;
+  set: Emitter<V, any>['emit'];
 }
 
 type Path = string[];
 
-// eslint-disable-next-line no-unused-vars
-interface EntityDocument {
+export interface Document {
   sysProperty: Property<EntitySys, any>;
   data$: Property<Entity, any>;
   state: {
@@ -38,7 +57,9 @@ interface EntityDocument {
 
   pushValueAt(path: Path, value: any): Promise<Entity>;
 
-  removeValueAt(path: Path): Promise<undefined>;
+  insertValueAt(path: Path, i: number, value: any): Promise<Entity>;
+
+  removeValueAt(path: Path): Promise<void>;
 
   destroy(): void;
 
@@ -51,7 +72,19 @@ interface EntityDocument {
     inProgress$: Property<boolean, any>;
   };
   permissions: {
+    /**
+     * Returns true if the given action can be taken on the document.
+     *
+     * Supported actions are 'update', 'delete', 'publish',
+     * 'unpublish', 'archive', 'unarchive'.
+     */
     can(action: string): boolean;
+    /**
+     * Returns true if the field locale can be edited.
+     * Accepts public IDs as parameters.
+     *
+     * This method is used by the 'FieldLocaleController'.
+     */
     canEditFieldLocale(fieldId: string, localeCode: string): boolean;
   };
   presence: {

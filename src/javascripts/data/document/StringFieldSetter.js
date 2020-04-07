@@ -4,7 +4,7 @@ import * as ShareJS from 'data/sharejs/utils';
 
 const STRING_FIELD_TYPES = ['Symbol', 'Text'];
 
-function isValidStringFieldValue(newValue) {
+export function isValidStringFieldValue(newValue) {
   return _.isNil(newValue) || _.isString(newValue);
 }
 

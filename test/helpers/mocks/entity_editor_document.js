@@ -43,15 +43,13 @@ angular.module('contentful/mocks').factory('mocks/entityEditor/Document', [
         };
 
         const sysProperty = valuePropertyAt(['sys']);
-        const docLocalChangesBus = K.createMockProperty();
         const changesStream = K.createMockStream();
 
         const resourceState = createResourceState(
           sysProperty,
           setSys,
           getData,
-          spaceEndpoint,
-          docLocalChangesBus
+          spaceEndpoint
         );
 
         return {

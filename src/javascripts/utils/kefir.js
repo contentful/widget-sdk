@@ -35,7 +35,7 @@ export const PromiseStatus = makeSum({
  * If the scope parameter is given the stream ends when the scope is
  * destroyed.
  *
- * @param {Scope?} scope
+ * @param {Scope=} scope
  * @returns {utils/kefir.Bus}
  */
 export function createStreamBus(scope) {
@@ -96,7 +96,7 @@ export { createStreamBus as createBus };
  * destroyed.
  *
  * @param {any} initialValue
- * @param {Scope?} scope
+ * @param {Scope=} scope
  * @returns {utils/kefir.PropertyBus}
  */
 export function createPropertyBus(initialValue, scope) {
