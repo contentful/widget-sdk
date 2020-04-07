@@ -194,6 +194,7 @@ class TeamDetails extends React.Component {
 
   getAddButton() {
     const { readOnlyPermission, noOrgMembersLeft } = this.props;
+    const { selectedTab } = this.state;
 
     if (readOnlyPermission) {
       return (
@@ -201,12 +202,12 @@ class TeamDetails extends React.Component {
           testId="read-only-tooltip"
           place="left"
           content="You don't have permission to change this team">
-          <AddButton disabled label={this.state.selectedTab.actionLabel} />
+          <AddButton disabled label={selectedTab.actionLabel} />
         </Tooltip>
       );
     }
 
-    if (noOrgMembersLeft) {
+    if (selectedTab === this.tabs.teamMembers && noOrgMembersLeft) {
       return (
         <Tooltip
           testId="no-members-left-tooltip"
