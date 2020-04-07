@@ -2,7 +2,7 @@ import { forEach } from 'lodash';
 import React from 'react';
 import Enzyme from 'enzyme';
 import 'jest-enzyme';
-import { newLink } from './__test__/helpers.js';
+import { newLink } from './__tests__/helpers.js';
 
 import LinkEditor from './LinkEditor';
 import LinkingActions from './LinkingActions';
