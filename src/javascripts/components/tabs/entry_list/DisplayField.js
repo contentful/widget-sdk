@@ -186,7 +186,9 @@ export default function DisplayField({ entity, field, entryCache, assetCache }) 
     case 'ContentType': {
       const contentTypeId = entity.getContentTypeId();
       const contentType = EntityFieldValueSpaceContext.getContentTypeById(contentTypeId);
-      result = <span className={styles.textOverflow}>{contentType.getName()}</span>;
+      if (contentType) {
+        result = <span className={styles.textOverflow}>{contentType.getName()}</span>;
+      }
       break;
     }
     case 'author':

@@ -55,8 +55,8 @@ describe('Assets List Page', () => {
     });
     it('renders table with items on assets list page', () => {
       cy.getByTestId('add-asset-menu-trigger').should('be.enabled');
-      cy.getByTestId('assets-table').should('be.visible');
-      cy.getAllByTestId('asset-table-row').should('have.length', severalAssetsBody.total);
+      cy.getByTestId('asset-list').should('be.visible');
+      cy.getAllByTestId('asset-row').should('have.length', severalAssetsBody.total);
     });
   });
 });
