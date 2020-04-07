@@ -118,7 +118,6 @@ describe('Entry List Controller', () => {
     const $controller = $inject('$controller');
 
     $controller('EntryListController', { $scope: scope });
-    scope.selection.updateList = sinon.stub();
   });
 
   describe('#loadView()', () => {
@@ -241,12 +240,6 @@ describe('Entry List Controller', () => {
       scope.$apply();
       expect(scope.entries.length).toBe(29);
       expect(scope.entries.indexOf(entries[0])).toBe(-1);
-    });
-
-    it('updates selected items with retrieved list', () => {
-      scope.updateEntries();
-      scope.$apply();
-      sinon.assert.called(scope.selection.updateList.withArgs(scope.entries));
     });
 
     describe('creates a query object', () => {
@@ -460,31 +453,6 @@ describe('Entry List Controller', () => {
       entriesResponse.resolve({ total: 0 });
       $apply();
       expect(scope.hasArchivedEntries).toBe(false);
-    });
-  });
-
-  describe('Truncating title', function () {
-    it('should not change string shorter then 130 simbols', function () {
-      $apply();
-      const title = 'Title';
-      this.stubs.entryTitle.returns(title);
-      expect(scope.entryTitle(title)).toBe(title);
-    });
-    it('should not change string with 130 simbols', function () {
-      $apply();
-      const title =
-        'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penat';
-      this.stubs.entryTitle.returns(title);
-      expect(scope.entryTitle(title)).toBe(title);
-    });
-    it('should cut string longer then 130 simbols', function () {
-      $apply();
-      const title =
-        'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta.';
-      const truncatedTitle =
-        'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa qu…';
-      this.stubs.entryTitle.returns(title);
-      expect(scope.entryTitle(title)).toBe(truncatedTitle);
     });
   });
 });

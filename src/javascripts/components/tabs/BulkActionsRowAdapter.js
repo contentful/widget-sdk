@@ -6,11 +6,12 @@ import * as accessChecker from 'access_control/AccessChecker';
 import BulkActionsRow from './BulkActionsRow';
 import { noop } from 'lodash';
 
-const isActionVisible = (selection, action, predicate) => {
-  const selectedEntities = selection.getSelected();
-  if (selectedEntities.length <= 0) return false;
-  return selectedEntities.every(
-    (entity) => accessChecker.canPerformActionOnEntity(action, entity) && entity[predicate]()
+const isActionVisible = (selectedEntities, action, predicate) => {
+  return (
+    selectedEntities.length > 0 &&
+    selectedEntities.every(
+      (entity) => accessChecker.canPerformActionOnEntity(action, entity) && entity[predicate]()
+    )
   );
 };
 
@@ -20,19 +21,17 @@ const isActionVisible = (selection, action, predicate) => {
  */
 const BulkActionsRowAdapter = ({
   entityType,
-  selection,
+  selectedEntities,
   updateEntities,
-  allowDuplicate,
+  clearSelected,
   onActionComplete,
   ...props
 }) => {
   const batchPerformer = getModule('batchPerformer');
   const performer = batchPerformer.create({
     entityType,
-    getSelected: selection.getSelected,
+    getSelected: () => selectedEntities,
   });
-
-  const lowerEntityType = entityType.toLowerCase();
 
   const handleAction = (func, withUpdate) => async () => {
     const result = await func();
@@ -41,23 +40,24 @@ const BulkActionsRowAdapter = ({
   };
 
   const actions = {
-    showArchive: () => isActionVisible(selection, 'archive', 'canArchive'),
+    showArchive: () => isActionVisible(selectedEntities, 'archive', 'canArchive'),
     archiveSelected: handleAction(performer.archive),
-    showUnarchive: () => isActionVisible(selection, 'unarchive', 'canUnarchive'),
+    showUnarchive: () => isActionVisible(selectedEntities, 'unarchive', 'canUnarchive'),
     unarchiveSelected: handleAction(performer.unarchive),
-    showDelete: () => isActionVisible(selection, 'delete', 'canDelete'),
+    showDelete: () => isActionVisible(selectedEntities, 'delete', 'canDelete'),
     deleteSelected: handleAction(performer.delete, true),
-    showPublish: () => isActionVisible(selection, 'publish', 'canPublish'),
+    showPublish: () => isActionVisible(selectedEntities, 'publish', 'canPublish'),
     publishSelected: handleAction(performer.publish),
-    showUnpublish: () => isActionVisible(selection, 'unpublish', 'canUnpublish'),
+    showUnpublish: () => isActionVisible(selectedEntities, 'unpublish', 'canUnpublish'),
     unpublishSelected: handleAction(performer.unpublish),
   };
 
+  const allowDuplicate = entityType === 'entry';
   if (allowDuplicate) {
     actions.showDuplicate = () =>
-      selection.getSelected().length > 0 &&
-      !accessChecker.shouldHide('create', lowerEntityType) &&
-      !accessChecker.shouldDisable('create', lowerEntityType);
+      selectedEntities.length > 0 &&
+      !accessChecker.shouldHide('create', entityType) &&
+      !accessChecker.shouldDisable('create', entityType);
     actions.duplicateSelected = handleAction(performer.duplicate, true);
   }
 
@@ -65,26 +65,28 @@ const BulkActionsRowAdapter = ({
     <BulkActionsRow
       {...props}
       onActionComplete={(actionName, result) => {
-        selection.clear();
+        clearSelected();
         onActionComplete(actionName, result);
       }}
       actions={actions}
-      selectedEntities={selection.getSelected()}
-      entityType={lowerEntityType}
+      selectedEntities={selectedEntities}
+      entityType={entityType}
     />
   );
 };
 
 BulkActionsRowAdapter.propTypes = {
   onActionComplete: PropTypes.func.isRequired,
-  entityType: PropTypes.oneOf(['Asset', 'Entry']).isRequired,
-  selection: PropTypes.object.isRequired,
+  entityType: PropTypes.oneOf(['asset', 'entry']).isRequired,
+  selectedEntities: PropTypes.arrayOf(PropTypes.object).isRequired,
+  clearSelected: PropTypes.func.isRequired,
   updateEntities: PropTypes.func.isRequired,
   allowDuplicate: PropTypes.bool,
 };
 
 BulkActionsRowAdapter.defaultProps = {
   onActionComplete: noop,
+  selectedEntities: [],
 };
 
 export default BulkActionsRowAdapter;

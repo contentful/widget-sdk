@@ -224,45 +224,4 @@ describe('EntitySelectorController', () => {
       });
     });
   });
-
-  describe('selection', () => {
-    beforeEach(function () {
-      this.fetch.resolves({ items: [E1, E2, E3] });
-    });
-
-    it('closes dialog with single entity', function () {
-      this.createController({ multiple: false });
-      const onChange = sinon.spy();
-      this.scope.onChange = onChange;
-      this.scope.toggleSelection(E1);
-      sinon.assert.calledOnce(onChange.withArgs([E1]));
-    });
-
-    it('selects multiple entities', function () {
-      this.createController({ multiple: true });
-      this.scope.toggleSelection(E1);
-      this.scope.toggleSelection(E3);
-      expectSelected(this.scope, [E1, E3]);
-    });
-
-    it('deselects if entity is already selected', function () {
-      this.createController({ multiple: true });
-      this.scope.toggleSelection(E1);
-      expectSelected(this.scope, [E1]);
-      this.scope.toggleSelection(E1);
-      expectSelected(this.scope, []);
-    });
-
-    function expectSelected(scope, selected) {
-      expect(scope.selected).toEqual(selected);
-      const selectedIds = selected.reduce(
-        (obj, val) => ({
-          ...obj,
-          [val.sys.id]: true,
-        }),
-        {}
-      );
-      expect(scope.selectedIds).toEqual(selectedIds);
-    }
-  });
 });

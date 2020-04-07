@@ -252,7 +252,6 @@ export default function register() {
           $scope.entries = entries.filter((entry) => !entry.isDeleted());
         }
         refreshEntityCaches();
-        $scope.selection.updateList($scope.entries);
         $scope.context.ready = true;
         $scope.context.loading = false;
       }

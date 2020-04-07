@@ -14,6 +14,7 @@ const styles = {
   */
   bulkActionsRow: css({
     top: '22px !important',
+    zIndex: tokens.zIndexDefault,
     '> *': { marginRight: tokens.spacingS },
   }),
 };

@@ -27,6 +27,7 @@ export default function register() {
       return { create: createBatchPerformer };
 
       function createBatchPerformer(config) {
+        const entityType = _.upperFirst(config.entityType);
         return _.transform(
           _.keys(ACTION_NAMES),
           (acc, action) => {
@@ -45,7 +46,7 @@ export default function register() {
               config.onComplete();
             }
             Analytics.track('search:bulk_action_performed', {
-              entityType: config.entityType,
+              entityType,
               action: method,
             });
             return results;
@@ -114,7 +115,7 @@ export default function register() {
 
         function notifyBatchResult(method, results) {
           const actionName = ACTION_NAMES[method];
-          const entityName = ENTITY_PLURAL_NAMES[config.entityType];
+          const entityName = ENTITY_PLURAL_NAMES[entityType];
 
           if (results.succeeded.length > 0) {
             Notification.success(

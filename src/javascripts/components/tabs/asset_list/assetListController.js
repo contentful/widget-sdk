@@ -3,7 +3,6 @@ import _ from 'lodash';
 import debounce from 'lodash/debounce';
 import delay from 'lodash/delay';
 import { Notification } from '@contentful/forma-36-react-components';
-import { createSelection } from 'classes/Selection';
 import * as entityStatus from 'app/entity_editor/EntityStatus';
 import * as ResourceUtils from 'utils/ResourceUtils';
 import { getBlankAssetView as getBlankView } from 'data/UiConfig/Blanks';
@@ -53,7 +52,6 @@ export default function register() {
       $scope.shouldDisable = accessChecker.shouldDisable;
       $scope.canUploadMultipleAssets = accessChecker.canUploadMultipleAssets;
       $scope.searchController = searchController;
-      $scope.selection = createSelection();
       $scope.getAssetDimensions = getAssetDimensions;
       $scope.paginator = searchController.paginator;
 
@@ -212,12 +210,8 @@ export default function register() {
         return EntityFieldValueSpaceContext.getFieldValue(asset, 'file');
       }
 
-      // TODO: Remove temporary functions when asset table is migrated
-      $scope.selectionChanged = 0;
-      $scope.$watchCollection('selection.getSelectedById()', () => {
-        $scope.selectionChanged++;
-      });
       $scope.updateAssets = () => searchController.resetAssets();
+      $scope.getAssets = () => $scope.assets;
     },
   ]);
 }

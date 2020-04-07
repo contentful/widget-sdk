@@ -7,12 +7,21 @@ import * as logger from 'services/logger';
 /**
  * @param {string} contentTypeId
  * @return {Object}
+ * Get a content type object by id
+ */
+export function getContentTypeById(contentTypeId) {
+  const spaceContext = getModule('spaceContext');
+  return spaceContext.publishedCTs.get(contentTypeId);
+}
+
+/**
+ * @param {string} contentTypeId
+ * @return {Object}
  * @description
  * Returns the display field for a given content type id
  */
 export function displayFieldForType(contentTypeId) {
-  const spaceContext = getModule('spaceContext');
-  const ct = spaceContext.publishedCTs.get(contentTypeId);
+  const ct = getContentTypeById(contentTypeId);
   return ct && _.find(ct.data.fields, { id: ct.data.displayField });
 }
 
@@ -29,13 +38,11 @@ export function displayFieldForType(contentTypeId) {
  * UI string indicating that is returned, which is 'Untitled'.
  */
 export function entryTitle(entry, localeCode, modelValue) {
-  const spaceContext = getModule('spaceContext');
-
   const defaultTitle = modelValue ? null : 'Untitled';
   let title = defaultTitle;
   try {
     const contentTypeId = entry.getContentTypeId();
-    const contentType = spaceContext.publishedCTs.get(contentTypeId);
+    const contentType = getContentTypeById(contentTypeId);
     const defaultInternalLocaleCode = getDefaultInternalLocaleCode();
 
     title = EntityFieldValueHelpers.getEntryTitle({
@@ -153,9 +160,8 @@ export function entryImage(entry, localeCode) {
  * @return {string?}
  */
 export function entityDescription(entity, localeCode) {
-  const spaceContext = getModule('spaceContext');
   const contentTypeId = entity.getContentTypeId();
-  const contentType = spaceContext.publishedCTs.get(contentTypeId);
+  const contentType = getContentTypeById(contentTypeId);
   if (!contentType) {
     return undefined;
   }
@@ -214,10 +220,8 @@ export function getFieldValue(entity, internalFieldId, internalLocaleCode) {
  * @returns {any}
  */
 function getValueForMatchedField(entity, localeCode, fieldDefinition) {
-  const spaceContext = getModule('spaceContext');
-
   const contentTypeId = entity.getContentTypeId();
-  const contentType = spaceContext.publishedCTs.get(contentTypeId);
+  const contentType = getContentTypeById(contentTypeId);
   if (!contentType) {
     return;
   }

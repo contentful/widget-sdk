@@ -68,7 +68,7 @@ import * as AssetLink from 'app/widgets/link/AssetLink';
 import * as EntryLink from 'app/widgets/link/EntryLink';
 import * as ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer';
 import * as DateRangeValidation from 'components/field_dialog/validations/DateRangeValidation';
-import * as BulkActionsRowAdapter from 'components/tabs/BulkActionsRowAdapter';
+import * as AssetList from 'components/tabs/asset_list/AssetList';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container, store) {
@@ -325,7 +325,7 @@ function getModule(name) {
     'app/widgets/link/EntryLink': EntryLink,
     'widgets/ExtensionIFrameRenderer': ExtensionIFrameRenderer,
     'components/field_dialog/validations/DateRangeValidation': DateRangeValidation,
-    'components/tabs/BulkActionsRowAdapter': BulkActionsRowAdapter,
+    'components/tabs/asset_list/AssetList': AssetList,
   };
 
   return get(allowedModules, name, null);

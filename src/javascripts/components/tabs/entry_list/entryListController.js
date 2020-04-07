@@ -1,9 +1,7 @@
 import { registerController } from 'NgRegistry';
 import _ from 'lodash';
 import * as K from 'utils/kefir';
-import { truncate } from 'utils/StringUtils';
 import Paginator from 'classes/Paginator';
-import { createSelection } from 'classes/Selection';
 import * as entityStatus from 'app/entity_editor/EntityStatus';
 import { getBlankEntryView as getBlankView } from 'data/UiConfig/Blanks';
 import * as ResourceUtils from 'utils/ResourceUtils';
@@ -76,21 +74,6 @@ export default function register() {
 
       $scope.paginator = Paginator.create();
 
-      // TODO: kill selection and move it to the table state.
-      const wrapWithScopeApply = (fn) => (...args) => {
-        const result = fn(...args);
-        $scope.$applyAsync();
-        return result;
-      };
-
-      const selection = createSelection();
-      $scope.selection = {
-        ...selection,
-        toggle: wrapWithScopeApply(selection.toggle),
-        toggleList: wrapWithScopeApply(selection.toggleList),
-        clear: wrapWithScopeApply(selection.clear),
-      };
-
       $scope.shouldHide = accessChecker.shouldHide;
       $scope.shouldDisable = accessChecker.shouldDisable;
 
@@ -108,8 +91,6 @@ export default function register() {
       const resetSearchResults = _.debounce(() => {
         $scope.entryProps = {
           context: $scope.context,
-          entryTitleFormatter: $scope.entryTitle,
-          contentTypeNameFormatter: $scope.contentTypeName,
           displayedFields: $scope.displayedFields,
           displayFieldForFilteredContentType: $scope.displayFieldForFilteredContentType,
           fieldIsSortable: $scope.fieldIsSortable,
@@ -120,7 +101,6 @@ export default function register() {
           addDisplayField: $scope.addDisplayField,
           toggleContentType: $scope.toggleContentType,
           updateFieldOrder: $scope.updateFieldOrder,
-          selection: $scope.selection,
           entries: $scope.entries,
           updateEntries: () => $scope.updateEntries(),
           entryCache: $scope.entryCache,
@@ -172,9 +152,6 @@ export default function register() {
         resetSearchResults();
       });
 
-      $scope.$watchCollection('selection.getSelected()', () => {
-        resetSearchResults();
-      });
       resetSearchResults();
 
       $scope.$watch('paginator.getTotal()', resetUsageProps);
@@ -286,23 +263,6 @@ export default function register() {
           });
         }
       });
-
-      // TODO This function is called repeatedly from the template.
-      // Unfortunately, 'publishedCTs.get' has the side effect of
-      // fetching the CT if it was not found. This results in problems
-      // when we switch the space but this directive is still active. We
-      // request a content type from the _new_ space which does not
-      // exist.
-      // The solution is to separate `entryTitle()` and similar
-      // functions from the space context.
-      $scope.entryTitle = (entry) => {
-        let entryTitle = EntityFieldValueSpaceContext.entryTitle(entry);
-        const length = 130;
-        if (entryTitle.length > length) {
-          entryTitle = truncate(entryTitle, length);
-        }
-        return entryTitle;
-      };
 
       // TODO this code is duplicated in the asset list controller
       function hasArchivedEntries(space) {

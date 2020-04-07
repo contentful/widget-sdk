@@ -81,7 +81,6 @@ export default function register() {
               controller.paginator.setTotal(assets.total);
               Tracking.searchPerformed($scope.context.view, assets.total);
               $scope.assets = filterOutDeleted(assets);
-              $scope.selection.updateList($scope.assets);
               return assets;
             },
             (err) => {
@@ -141,7 +140,6 @@ export default function register() {
               controller.paginator.setTotal(assets.total);
               assets = _.difference(assets, $scope.assets);
               $scope.assets.push(...filterOutDeleted(assets));
-              $scope.selection.updateList($scope.assets);
             },
             (err) => {
               controller.paginator.prev();

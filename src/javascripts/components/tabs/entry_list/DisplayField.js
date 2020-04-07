@@ -10,6 +10,7 @@ import UserNameFormatter from 'components/shared/UserNameFormatter/FetchAndForma
 import Thumbnail from 'components/Thumbnail/Thumbnail';
 
 import { css } from 'emotion';
+import { truncate } from 'utils/StringUtils';
 
 const styles = {
   textOverflow: css({
@@ -163,44 +164,61 @@ AbsoluteDateFieldValue.propTypes = {
   value: PropTypes.string.isRequired,
 };
 
-export default function DisplayField({ entry, field, entryCache, assetCache }) {
+export default function DisplayField({ entity, field, entryCache, assetCache }) {
   let result;
   switch (displayType(field)) {
     case 'updatedAt':
-      result = entry.getUpdatedAt() && <RelativeDateFieldValue value={entry.getUpdatedAt()} />;
+      result = entity.getUpdatedAt() && <RelativeDateFieldValue value={entity.getUpdatedAt()} />;
       break;
     case 'createdAt':
-      result = entry.getCreatedAt() && <RelativeDateFieldValue value={entry.getCreatedAt()} />;
+      result = entity.getCreatedAt() && <RelativeDateFieldValue value={entity.getCreatedAt()} />;
       break;
     case 'publishedAt':
-      result = entry.getPublishedAt() && <RelativeDateFieldValue value={entry.getPublishedAt()} />;
+      result = entity.getPublishedAt() && (
+        <RelativeDateFieldValue value={entity.getPublishedAt()} />
+      );
       break;
     case 'Date': {
-      const value = dataForField(entry, field);
+      const value = dataForField(entity, field);
       result = value && <AbsoluteDateFieldValue value={value} />;
       break;
     }
+    case 'ContentType': {
+      const contentTypeId = entity.getContentTypeId();
+      const contentType = EntityFieldValueSpaceContext.getContentTypeById(contentTypeId);
+      result = <span className={styles.textOverflow}>{contentType.getName()}</span>;
+      break;
+    }
     case 'author':
-      result = <UserNameFormatter userId={entry.getUpdatedBy().sys.id} />;
+      result = <UserNameFormatter userId={entity.getUpdatedBy().sys.id} />;
       break;
     case 'Boolean':
-      result = <span>{displayBool(dataForField(entry, field))}</span>;
+      result = <span>{displayBool(dataForField(entity, field))}</span>;
       break;
     case 'Location':
-      result = <span>{displayLocation(dataForField(entry, field))}</span>;
+      result = <span>{displayLocation(dataForField(entity, field))}</span>;
       break;
     case 'Entry':
       result = (
         <span className={cn('linked-entries', styles.textOverflow)}>
-          {dataForLinkedEntry(entry, field, entryCache)}
+          {dataForLinkedEntry(entity, field, entryCache)}
         </span>
       );
       break;
+    case 'EntryTitle': {
+      let title = EntityFieldValueSpaceContext.entryTitle(entity);
+      const length = 130;
+      if (title.length > length) {
+        title = truncate(title, length);
+      }
+      result = <span>{title}</span>;
+      break;
+    }
     case 'Asset':
       result = (
         <div className="file-preview linked-assets">
           <Thumbnail
-            file={dataForLinkedAsset(entry, field, assetCache)}
+            file={dataForLinkedAsset(entity, field, assetCache)}
             size="30"
             fit="thumb"
             focus="faces"
@@ -212,24 +230,24 @@ export default function DisplayField({ entry, field, entryCache, assetCache }) {
       result = (
         <ul
           className={cn(styles.textOverflow, {
-            'linked-entries': isEntryArray(entry, field),
-            'linked-assets': isAssetArray(entry, field),
+            'linked-entries': isEntryArray(entity, field),
+            'linked-assets': isAssetArray(entity, field),
           })}>
-          {!isEntryArray(entry, field) && !isAssetArray(entry, field) ? (
+          {!isEntryArray(entity, field) && !isAssetArray(entity, field) ? (
             <li>
               <span className={styles.textOverflow}>
-                {JSON.stringify(dataForField(entry, field))}
+                {JSON.stringify(dataForField(entity, field))}
               </span>
             </li>
           ) : (
-            dataForArray(entry, field, entryCache, assetCache).map((entity, index) => {
-              if (isEntryArray(entry, field)) {
+            dataForArray(entity, field, entryCache, assetCache).map((entity, index) => {
+              if (isEntryArray(entity, field)) {
                 return (
                   <li key={index}>
                     <span className={styles.textOverflow}>{entity}</span>
                   </li>
                 );
-              } else if (isAssetArray(entry, field)) {
+              } else if (isAssetArray(entity, field)) {
                 return (
                   <li key={index}>
                     <div className="file-preview">
@@ -245,7 +263,7 @@ export default function DisplayField({ entry, field, entryCache, assetCache }) {
       break;
 
     default:
-      result = <span className={styles.textOverflow}>{toString(entry, field)}</span>;
+      result = <span className={styles.textOverflow}>{toString(entity, field)}</span>;
       break;
   }
 

@@ -82,7 +82,6 @@ describe('Asset List Controller', () => {
 
     const $controller = $inject('$controller');
     $controller('AssetListController', { $scope: scope });
-    scope.selection.updateList = sinon.stub();
   });
 
   describe('on search change', () => {
@@ -194,12 +193,6 @@ describe('Asset List Controller', () => {
       scope.$apply();
       expect(scope.assets.length).toBe(29);
       expect(scope.assets.indexOf(assets[0])).toBe(-1);
-    });
-
-    it('updates selected items with retrieved list', () => {
-      scope.searchController.resetAssets();
-      scope.$apply();
-      sinon.assert.called(scope.selection.updateList.withArgs(assets));
     });
 
     describe('creates a query object', () => {

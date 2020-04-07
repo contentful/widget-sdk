@@ -14,7 +14,7 @@ const BulkActionLink = ({ label, visible, onClick, ...props }) => {
 
 BulkActionLink.propTypes = {
   onClick: PropTypes.func.isRequired,
-  visible: PropTypes.bool.isRequired,
+  visible: PropTypes.bool,
   label: PropTypes.string.isRequired,
 };
 
