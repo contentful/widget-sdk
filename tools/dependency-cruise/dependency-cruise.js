@@ -19,7 +19,7 @@ module.exports = {
            */
         // todo: delete .ts once we enable TS
         pathNot:
-          '\\.ts|__mocks__|__test__|__fixtures__|saved-views-migrator|test\\/helpers|\\.spec\\.(js|ts)$|\\.d\\.ts$',
+          'unused__|\\.ts|__mocks__|__tests__|__fixtures__|saved-views-migrator|test\\/helpers|\\.spec\\.(js|ts)$|\\.d\\.ts$',
 
         /*
             for each file matching path and pathNot, check if it's reachable from the
@@ -80,7 +80,9 @@ module.exports = {
         "If there's something in a spec that's of use to other modules, it doesn't have that single " +
         'responsibility anymore. Factor it out into (e.g.) a separate utility/ helper or a mock.',
       severity: 'error',
-      from: {},
+      from: {
+        pathNot: '\\.spec\\.(js|ts)$',
+      },
       to: {
         path: '\\.spec\\.(js|ts\\.md)$',
       },
@@ -96,7 +98,7 @@ module.exports = {
         from.pathNot re of the not-to-dev-dep rule in the dependency-cruiser configuration`,
       from: {
         path: '^(src)',
-        pathNot: '\\.spec\\.(js|ts\\.md)$',
+        pathNot: '__tests__|\\.spec\\.(js|ts\\.md)$',
       },
       to: {
         dependencyTypes: ['npm-dev'],
