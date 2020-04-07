@@ -2,6 +2,7 @@ import _ from 'lodash';
 import * as CallBuffer from 'utils/CallBuffer';
 import * as LazyLoader from 'utils/LazyLoader';
 import * as logger from 'services/logger';
+import * as Config from 'Config';
 import window from 'utils/ngCompat/window';
 
 /**
@@ -134,6 +135,24 @@ function sendOnboardingDeploymentEvent(event, data) {
   }
 }
 
+async function getIntegrations() {
+  const integrationsUrl = `https://cdn.segment.com/v1/projects/${Config.services.segment_io}/integrations`;
+
+  let resp;
+
+  try {
+    resp = await (await window.fetch(integrationsUrl)).json();
+  } catch (error) {
+    logger.logWarn('Segment integrations call failed', {
+      error,
+    });
+
+    return [];
+  }
+
+  return resp.map((item) => item.creationName);
+}
+
 export default {
   enable: _.once(enable),
   /**
@@ -160,4 +179,5 @@ export default {
    * Sets current user traits.
    */
   identify: bufferedCall('identify'),
+  getIntegrations,
 };

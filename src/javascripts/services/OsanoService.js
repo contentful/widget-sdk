@@ -5,7 +5,7 @@
   This is now the only place where analytics and Intercom are enabled.
  */
 
-import { debounce } from 'lodash';
+import { fromPairs } from 'lodash';
 import * as LazyLoader from 'utils/LazyLoader';
 import { getUserSync } from 'services/TokenStore';
 import isAnalyticsAllowed from 'analytics/isAnalyticsAllowed';
@@ -36,7 +36,7 @@ export const __reset = () => {
 // two seconds
 //
 // Exported for testing
-export const handleConsentChanged = debounce(function debouncedHandleConsentChanged(
+export const handleConsentChanged = async function debouncedHandleConsentChanged(
   newConsentOptions
 ) {
   if (!newConsentOptions) {
@@ -80,15 +80,10 @@ export const handleConsentChanged = debounce(function debouncedHandleConsentChan
     personalizationAllowed,
   };
 
-  const segmentLoadOptions = {
-    integrations: {
-      all: false,
-      FullStory: analyticsAllowed, // TODO: Follow up if this is the correct category
-      'Segment.io': analyticsAllowed,
-      'Google Analytics': analyticsAllowed,
-      Intercom: personalizationAllowed,
-    },
-  };
+  const segmentLoadOptions = await generateSegmentLoadOptions(
+    analyticsAllowed,
+    personalizationAllowed
+  );
 
   if (analyticsAllowed) {
     Analytics.enable(user, segmentLoadOptions);
@@ -101,8 +96,7 @@ export const handleConsentChanged = debounce(function debouncedHandleConsentChan
   if (personalizationAllowed) {
     Intercom.enable();
   }
-},
-2000);
+};
 
 export async function init() {
   if (cm) {
@@ -182,4 +176,31 @@ export async function waitForCMInstance(tries = 0) {
 export function openConsentManagementPanel() {
   // Opens Osano's cookie management side bar
   cm.emit('osano-cm-dom-info-dialog-open');
+}
+
+async function generateSegmentLoadOptions(analyticsAllowed, personalizationAllowed) {
+  const allIntegrations = await segment.getIntegrations();
+
+  // Map the integrations so that they are now pairs of [integrationName, false]
+  // and turn those pairs into an object that looks like:
+  //
+  // {
+  //   integrationName: false
+  // }
+
+  const mappedIntegrations = fromPairs(allIntegrations.map((item) => [item, false]));
+
+  // Take all integrations and only enable the ones that the user has explicitly opted into
+  const integrationOption = Object.assign({}, mappedIntegrations, {
+    all: false,
+    FullStory: analyticsAllowed,
+    'Segment.io': analyticsAllowed,
+    'Google Analytics': analyticsAllowed,
+    Intercom: personalizationAllowed,
+    Wootric: personalizationAllowed,
+  });
+
+  return {
+    integrations: integrationOption,
+  };
 }
