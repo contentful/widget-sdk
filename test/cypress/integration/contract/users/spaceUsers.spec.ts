@@ -36,6 +36,15 @@ const twoMembersBody = {
             id: 'user1',
           },
         },
+        relatedMemberships: [
+          {
+            sys: {
+              type: 'Link',
+              linkType: 'SpaceMembership',
+              id: 'space_membership_1',
+            },
+          },
+        ],
       },
     },
     {
@@ -87,6 +96,22 @@ const twoMembersBody = {
             id: 'user2',
           },
         },
+        relatedMemberships: [
+          {
+            sys: {
+              type: 'Link',
+              linkType: 'SpaceMembership',
+              id: 'space_membership_2',
+            },
+          },
+          {
+            sys: {
+              type: 'Link',
+              linkType: 'TeamSpaceMembership',
+              id: 'team_space_membership_1',
+            },
+          },
+        ],
       },
     },
   ],

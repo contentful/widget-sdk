@@ -1,22 +1,16 @@
-import { TEAMS_API, getAlphaHeader } from 'alphaHeaders.js';
 import { fetchAll, fetchAllWithIncludes } from './FetchAll';
-
-const alphaHeader = getAlphaHeader(TEAMS_API);
 
 export default function create(endpoint) {
   return {
     get() {
-      return endpoint(
-        {
-          method: 'GET',
-          path: ['space_members'],
-        },
-        alphaHeader
-      );
+      return endpoint({
+        method: 'GET',
+        path: ['space_members'],
+      });
     },
 
     getAll() {
-      return fetchAll(endpoint, ['space_members'], 100, {}, alphaHeader);
+      return fetchAll(endpoint, ['space_members'], 100, {});
     },
   };
 }
@@ -34,15 +28,11 @@ export default function create(endpoint) {
  * {
  *    admin: boolean,
  *    roles: [SpaceRoleLink],
- *    relatedMemberships: [SpaceMembershipLink|TeamSpaceMembershipLinks]
+ *    sys: {
+ *      relatedMemberships: [SpaceMembershipLink|TeamSpaceMembershipLinks]
+ *    }
  * }
  */
 export function getAllUserSpaceMembersInOrg(endpoint, userId, query) {
-  return fetchAllWithIncludes(
-    endpoint,
-    ['users', userId, 'space_members'],
-    100,
-    query,
-    alphaHeader
-  );
+  return fetchAllWithIncludes(endpoint, ['users', userId, 'space_members'], 100, query);
 }

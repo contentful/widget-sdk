@@ -32,7 +32,7 @@ const fetch = (orgId, endpoint, space, setData) => async () => {
   ]);
 
   const resolvedMembers = resolveLinks({
-    paths: ['roles', 'relatedMemberships', 'sys.user'],
+    paths: ['roles', 'sys.relatedMemberships', 'sys.user'],
     includes: { Role: roles, SpaceMembership: spaceMemberships, User: spaceUsers },
     items: members,
   });
@@ -102,7 +102,7 @@ const UserList = ({ jumpToRole }) => {
   const numberOfTeamMemberships = _(sortedMembers)
     .keyBy('sys.id')
     .mapValues(
-      ({ relatedMemberships }) =>
+      ({ sys: { relatedMemberships } }) =>
         relatedMemberships.filter(({ sys: { linkType } }) => linkType === 'TeamSpaceMembership')
           .length
     )

@@ -9,6 +9,7 @@ const types = {
   ORGANIZATION: 'Organization',
   ROLE: 'Role',
   TEAM: 'Team',
+  SPACE_MEMBER: 'SpaceMember',
   SPACE_MEMBERSHIP: 'SpaceMembership',
   ORGANIZATION_MEMBERSHIP: 'OrganizationMembership',
   TEAM_MEMBERSHIP: 'TeamMembership',
@@ -110,6 +111,27 @@ export function SpaceMembership(
       user: user,
       space: space,
       createdBy: Link(types.USER),
+    },
+  };
+}
+
+export function SpaceMember(
+  space = Link(types.SPACE),
+  user = Link(types.USER),
+  admin = true,
+  roles = []
+) {
+  const spaceMembershipLink = Link(types.SPACE_MEMBERSHIP);
+  return {
+    admin: admin,
+    roles: roles,
+
+    sys: {
+      ...sys({ type: types.SPACE_MEMBER }),
+      user: user,
+      space: space,
+      createdBy: Link(types.USER),
+      relatedMemberships: [spaceMembershipLink],
     },
   };
 }

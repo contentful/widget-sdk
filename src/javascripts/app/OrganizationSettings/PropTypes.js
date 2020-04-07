@@ -112,12 +112,12 @@ export const TeamSpaceMembership = PropTypes.shape({
 export const SpaceMember = PropTypes.shape({
   admin: PropTypes.bool.isRequired,
   roles: PropTypes.arrayOf(PropTypes.oneOfType([SpaceRole, Link])).isRequired,
-  relatedMemberships: PropTypes.arrayOf(
-    PropTypes.oneOfType([SpaceMembership, TeamSpaceMembership, Link])
-  ),
   sys: PropTypes.shape({
     id: PropTypes.string.isRequired,
     space: PropTypes.oneOfType([Space, Link]).isRequired,
+    relatedMemberships: PropTypes.arrayOf(
+      PropTypes.oneOfType([SpaceMembership, TeamSpaceMembership, Link])
+    ).isRequired,
   }).isRequired,
 });
 

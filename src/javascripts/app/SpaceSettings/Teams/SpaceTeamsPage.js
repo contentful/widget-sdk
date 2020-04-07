@@ -205,8 +205,12 @@ const SpaceTeamsPage = ({ spaceId }) => {
     return <ForbiddenPage />;
   }
 
-  const [{ relatedMemberships: currentUserSpaceMemberships }] = resolveLinks({
-    paths: ['relatedMemberships'],
+  const [
+    {
+      sys: { relatedMemberships: currentUserSpaceMemberships },
+    },
+  ] = resolveLinks({
+    paths: ['sys.relatedMemberships'],
     includes: { TeamSpaceMembership: teamSpaceMemberships },
     items: [spaceMember],
   });

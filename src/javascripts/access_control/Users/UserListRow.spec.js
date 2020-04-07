@@ -12,15 +12,15 @@ describe('User List Row', () => {
   const defaultUser = fake.User();
   const nonActivedUser = fake.User({ activated: false });
   const defaultSpace = fake.Link('Space');
-  const defaultSpaceMembership = fake.SpaceMembership(defaultSpace, defaultUser);
-  const nonActivedUserSpaceMembership = fake.SpaceMembership(defaultSpace, nonActivedUser);
+  const defaultSpaceMembership = fake.SpaceMember(defaultSpace, defaultUser);
+  const nonActivedUserSpaceMembership = fake.SpaceMember(defaultSpace, nonActivedUser);
 
   const fakeSpaceRoleOne = fake.SpaceRole('Role 1');
   const fakeSpaceRoleTwo = fake.SpaceRole('Role 2');
-  const oneRoleSpaceMembership = fake.SpaceMembership(defaultSpace, defaultUser, false, [
+  const oneRoleSpaceMembership = fake.SpaceMember(defaultSpace, defaultUser, false, [
     fakeSpaceRoleOne,
   ]);
-  const twoRoleSpaceMembership = fake.SpaceMembership(defaultSpace, defaultUser, false, [
+  const twoRoleSpaceMembership = fake.SpaceMember(defaultSpace, defaultUser, false, [
     fakeSpaceRoleOne,
     fakeSpaceRoleTwo,
   ]);

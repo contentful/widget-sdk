@@ -1,6 +1,6 @@
 import React from 'react';
 import { Notification } from '@contentful/forma-36-react-components';
-import { filter, map, isEmpty } from 'lodash';
+import { find, map, isEmpty } from 'lodash';
 
 import ReloadNotification from 'app/common/ReloadNotification';
 import { getModule } from 'NgRegistry';
@@ -51,9 +51,9 @@ export function create(availableRoles) {
         const spaceContext = getModule('spaceContext');
         const currentUserId = spaceContext.getData('spaceMember.sys.user.sys.id');
         const isCurrentUser = currentUserId === member.sys.user.sys.id;
-        const spaceMembership = filter(member.relatedMemberships, {
+        const spaceMembership = find(member.sys.relatedMemberships, {
           sys: { type: 'SpaceMembership' },
-        })[0];
+        });
         return spaceContext.memberships
           .remove(spaceMembership)
           .then(() => {
@@ -75,9 +75,8 @@ export function create(availableRoles) {
    */
   async function openRoleChangeDialog(member, adminCount) {
     const {
-      sys: { user },
+      sys: { user, relatedMemberships },
       roles,
-      relatedMemberships,
     } = member;
 
     const uniqueModalKey = Date.now();
