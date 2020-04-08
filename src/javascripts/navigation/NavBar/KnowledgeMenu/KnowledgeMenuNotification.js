@@ -15,8 +15,8 @@ const styles = {
     width: '12px',
     borderRadius: '50%',
     backgroundColor: tokens.colorWarning,
-    border: `2px solid ${tokens.colorContrastMid}`
-  })
+    border: `2px solid ${tokens.colorContrastMid}`,
+  }),
 };
 
 function KnowledgeMenuNotification(props) {
@@ -43,7 +43,7 @@ function KnowledgeMenuNotification(props) {
 }
 
 KnowledgeMenuNotification.propTypes = {
-  isMenuOpen: PropTypes.bool.isRequired
+  isMenuOpen: PropTypes.bool.isRequired,
 };
 
 export default KnowledgeMenuNotification;

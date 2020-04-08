@@ -55,12 +55,12 @@ export default class SpaceNavigationBar extends React.Component {
       environmentsEnabled,
       teamsInSpacesFF,
       hasOrgTeamFeature,
-      contentTagsEnabled
+      contentTagsEnabled,
     ] = await Promise.all([
       getVariation(ENVIRONMENTS_FLAG, { organizationId, spaceId }),
       getVariation(TEAMS_IN_SPACES, { organizationId, spaceId }),
       getOrgFeature(organizationId, 'teams'),
-      getCurrentSpaceFeature(PC_CONTENT_TAGS)
+      getCurrentSpaceFeature(PC_CONTENT_TAGS),
     ]);
 
     const canManageEnvironments = accessChecker.can('manage', 'Environments');
@@ -88,7 +88,7 @@ export default class SpaceNavigationBar extends React.Component {
       teamsInSpacesFF,
       useSpaceEnviroment: canManageEnvironments && environmentsEnabled,
       isMasterEnvironment,
-      contentTagsEnabled
+      contentTagsEnabled,
     });
 
     this.setState({ items });

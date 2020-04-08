@@ -7,7 +7,7 @@ const getPathsToRestore = (selected) => {
     .map(([path]) => path.split('.'));
 };
 
-const initSelected = enrichedWidgets => {
+const initSelected = (enrichedWidgets) => {
   return enrichedWidgets.reduce(
     (red, { widget: { field }, locales }) => ({
       ...red,

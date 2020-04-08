@@ -9,7 +9,7 @@ import {
   Icon,
   Note,
   Subheading,
-  Notification
+  Notification,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import ErrorHandler from 'components/shared/ErrorHandlerComponent.js';
@@ -19,16 +19,16 @@ import ValidationNote from './ValidationNote';
 import {
   getReferencesForEntryId,
   getDefaultLocale,
-  validateEntities
+  validateEntities,
 } from './referencesDialogService';
 
 const styles = {
   dialogButton: css({
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
   }),
   validationButton: css({
-    marginTop: tokens.spacingXs
+    marginTop: tokens.spacingXs,
   }),
   modalContent: css({
     overflowY: 'hidden',
@@ -44,21 +44,21 @@ const styles = {
       marginBottom: '-10px',
       position: 'absolute',
       bottom: '0px',
-      left: '0px'
-    }
+      left: '0px',
+    },
   }),
   icon: css({
-    marginRight: tokens.spacing2Xs
+    marginRight: tokens.spacing2Xs,
   }),
   buttonWrapper: css({
-    margin: `${tokens.spacingM} 0`
+    margin: `${tokens.spacingM} 0`,
   }),
   maxLevelWarning: css({
-    marginTop: tokens.spacingM
+    marginTop: tokens.spacingM,
   }),
   tooComplexNote: css({
-    marginBottom: tokens.spacingM
-  })
+    marginBottom: tokens.spacingM,
+  }),
 };
 
 const ReferencesDialog = ({ entity }) => {
@@ -113,7 +113,7 @@ const ReferencesDialog = ({ entity }) => {
     setIsTooComplex(false);
   };
 
-  const handleReferenceCardClick = entity => {
+  const handleReferenceCardClick = (entity) => {
     goToSlideInEntity({ type: entity.sys.type, id: entity.sys.id });
     closeModal();
   };
@@ -121,20 +121,20 @@ const ReferencesDialog = ({ entity }) => {
   const handleValidation = () => {
     setIsValidating(true);
 
-    const entitiesToValidate = selectedEntities.map(entity => ({
+    const entitiesToValidate = selectedEntities.map((entity) => ({
       sys: {
         id: entity.sys.id,
         linkType: entity.sys.type,
-        type: 'Link'
-      }
+        type: 'Link',
+      },
     }));
 
     validateEntities({ entities: entitiesToValidate, action: 'publish' })
-      .then(validationResponse => {
+      .then((validationResponse) => {
         setIsValidating(false);
         setValidations(validationResponse);
       })
-      .catch(_error => {
+      .catch((_error) => {
         setIsValidating(false);
         Notification.error('References validation failed');
       });
@@ -185,7 +185,7 @@ const ReferencesDialog = ({ entity }) => {
                         key={validations}
                         defaultLocale={defaultLocale}
                         validations={validations}
-                        onSelectEntities={entities => setSelectedEntites(entities)}
+                        onSelectEntities={(entities) => setSelectedEntites(entities)}
                         setIsDialogOpen={onClose}
                         maxLevel={maxLevel}
                         onReferenceCardClick={handleReferenceCardClick}
@@ -214,7 +214,7 @@ const ReferencesDialog = ({ entity }) => {
 };
 
 ReferencesDialog.propTypes = {
-  entity: PropTypes.object.isRequired
+  entity: PropTypes.object.isRequired,
 };
 
 export default ReferencesDialog;

@@ -3,41 +3,44 @@ import {
   defaultContentType,
   defaultEntryId,
   defaultSpaceId,
-  defaultEnvironmentId
+  defaultEnvironmentId,
 } from '../../util/requests';
 
 export const severalEntryReferencesResponse = {
   sys: {
-    type: 'Array'
+    type: 'Array',
   },
   items: [
-    entry({ sys: { id: Matchers.somethingLike(defaultEntryId) }, fields: {
-      entryRef1: {
-        'en-US': {
-          sys: {
-            type: 'Link',
-            linkType: 'Entry',
-            id: 'EntryId_01'
-          }
-        }
+    entry({
+      sys: { id: Matchers.somethingLike(defaultEntryId) },
+      fields: {
+        entryRef1: {
+          'en-US': {
+            sys: {
+              type: 'Link',
+              linkType: 'Entry',
+              id: 'EntryId_01',
+            },
+          },
+        },
+        entryRef2: {
+          'en-US': {
+            sys: {
+              type: 'Link',
+              linkType: 'Entry',
+              id: 'EntryId_02',
+            },
+          },
+        },
       },
-      entryRef2: {
-        'en-US': {
-          sys: {
-            type: 'Link',
-            linkType: 'Entry',
-            id: 'EntryId_02'
-          }
-        }
-      }
-    } })
+    }),
   ],
   includes: {
     Entry: [
       entry({ sys: { id: Matchers.somethingLike('EntryId_01') }, fields: {} }),
-      entry({ sys: { id: Matchers.somethingLike('EntryId_02') }, fields: {} })
-    ]
-  }
+      entry({ sys: { id: Matchers.somethingLike('EntryId_02') }, fields: {} }),
+    ],
+  },
 };
 
 export const validateEntryReferencesSeveralRequest = {
@@ -47,24 +50,24 @@ export const validateEntryReferencesSeveralRequest = {
       sys: {
         id: defaultEntryId,
         linkType: 'Entry',
-        type: 'Link'
-      }
+        type: 'Link',
+      },
     },
     {
       sys: {
         id: 'EntryId_01',
         linkType: 'Entry',
-        type: 'Link'
-      }
+        type: 'Link',
+      },
     },
     {
       sys: {
         id: 'EntryId_02',
         linkType: 'Entry',
-        type: 'Link'
-      }
-    }
-  ]
+        type: 'Link',
+      },
+    },
+  ],
 };
 
 export function entry(entryPayload = { sys: {}, fields: {} }) {
@@ -72,8 +75,8 @@ export function entry(entryPayload = { sys: {}, fields: {} }) {
     sys: {
       type: 'Link',
       linkType: 'Environment',
-      id: defaultEnvironmentId
-    }
+      id: defaultEnvironmentId,
+    },
   };
 
   const sys = {
@@ -86,30 +89,30 @@ export function entry(entryPayload = { sys: {}, fields: {} }) {
       sys: {
         id: '1AMbGlddLG0ISEoa1I423p',
         linkType: 'User',
-        type: 'Link'
-      }
+        type: 'Link',
+      },
     },
     space: {
       sys: {
         id: defaultSpaceId,
         linkType: 'Space',
-        type: 'Link'
-      }
+        type: 'Link',
+      },
     },
     environment,
     contentType: defaultContentType,
-    ...entryPayload.sys
+    ...entryPayload.sys,
   };
 
   const fields = {
     fieldID: {
-      "en-US": '1'
+      'en-US': '1',
     },
-    ...entryPayload.fields
+    ...entryPayload.fields,
   };
 
   return {
     sys,
-    fields
+    fields,
   };
 }

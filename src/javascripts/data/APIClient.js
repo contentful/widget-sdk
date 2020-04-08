@@ -3,7 +3,7 @@ import {
   ENTRY_VALIDATION,
   ENTRY_REFERENCES_ENDPOINT,
   IMMEDIATE_RELEASE,
-  getAlphaHeader
+  getAlphaHeader,
 } from 'alphaHeaders.js';
 
 const entryValidationAlphaHeader = getAlphaHeader(ENTRY_VALIDATION);
@@ -257,11 +257,11 @@ APIClient.prototype.validateRelease = function (action, entities, type = 'immedi
       path: ['releases', type, 'validations'],
       data: {
         action,
-        entities
-      }
+        entities,
+      },
     },
     {
-      ...getAlphaHeader(IMMEDIATE_RELEASE)
+      ...getAlphaHeader(IMMEDIATE_RELEASE),
     }
   );
 };

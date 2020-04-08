@@ -10,7 +10,7 @@ import {
   validateEntities,
   getDefaultLocale,
   getReferencesForEntryId,
-  getEntityTitle
+  getEntityTitle,
 } from './referencesDialogService';
 
 import { getCurrentVariation } from 'utils/LaunchDarkly';
@@ -19,21 +19,21 @@ import {
   entity,
   simpleReferencesValidationErrorResponse,
   simpleReferencesValidationSuccessResponse,
-  simpleReferences
+  simpleReferences,
 } from './__fixtures__';
 
-jest.mock('./referencesDialogService', function() {
+jest.mock('./referencesDialogService', function () {
   return {
     getDefaultLocale: jest.fn(),
     getReferencesForEntryId: jest.fn(),
     validateEntities: jest.fn(),
-    getEntityTitle: jest.fn()
+    getEntityTitle: jest.fn(),
   };
 });
 
-jest.mock('utils/LaunchDarkly', function() {
+jest.mock('utils/LaunchDarkly', function () {
   return {
-    getCurrentVariation: jest.fn()
+    getCurrentVariation: jest.fn(),
   };
 });
 

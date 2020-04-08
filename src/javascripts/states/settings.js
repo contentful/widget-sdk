@@ -31,5 +31,5 @@ export default SpaceSettingsBase({
     extensionsSettingsState,
     webhooksSettingsState,
     tagsSettingsState,
-  ]
+  ],
 });

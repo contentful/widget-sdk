@@ -9,7 +9,7 @@ const API_KEY = '85be5437fb63d71aec4a8f99eff1022d-6b60e603-8a27e1dd';
 const TARGET_MAILS = {
   extensibility: 'team-extensibility+apps@contentful.com',
   devWorkflows: 'prd-dev-workflows+aliases-feedback@contentful.com',
-  cxPulitzerReleases: 'team-pulitzer+feedback-releases@contentful.com'
+  cxPulitzerReleases: 'team-pulitzer+feedback-releases@contentful.com',
 };
 
 const getMailText = ({ feedback, userId, orgId }) => `
@@ -40,7 +40,7 @@ module.exports = {
       from: `feedback@${DOMAIN}`,
       to: TARGET_MAILS[req.body.target],
       subject: `[Feedback] ${req.body.about || 'Unknown feature'}`,
-      text: getMailText(req.body)
+      text: getMailText(req.body),
     };
 
     const res = await dependencies.fetch(url, {
@@ -48,10 +48,10 @@ module.exports = {
       body: querystring.stringify(params),
       headers: {
         Authorization: `Basic ${basicAuth}`,
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
     });
 
     return { statusCode: res.ok ? 200 : 500 };
-  }
+  },
 };

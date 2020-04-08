@@ -9,7 +9,7 @@ import {
   TextLink,
   Icon,
   Tag,
-  Spinner
+  Spinner,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -17,18 +17,18 @@ const styles = {
   icon: css({
     float: 'right',
     marginLeft: tokens.spacingXs,
-    marginRight: -tokens.spacing2Xs
+    marginRight: -tokens.spacing2Xs,
   }),
   dropdownSpacing: css({
-    marginRight: tokens.spacingM
-  })
+    marginRight: tokens.spacingM,
+  }),
 };
 
 const stateColours = {
   published: 'positive',
   draft: 'warning',
   changes: 'primary',
-  archived: 'negative'
+  archived: 'negative',
 };
 
 const BulkEntityEditorStatusDropdown = ({ stateLabel, state, inProgress, allActions }) => {
@@ -58,7 +58,7 @@ const BulkEntityEditorStatusDropdown = ({ stateLabel, state, inProgress, allActi
         </TextLink>
       }>
       <DropdownList testId="bulk-entity-editor-status-dropdown-menu">
-        {allActions.map(command => (
+        {allActions.map((command) => (
           <DropdownListItem
             testId={`bulk-entity-editor-${command.label.toLowerCase()}-button`}
             onClick={() => {
@@ -82,9 +82,9 @@ BulkEntityEditorStatusDropdown.propTypes = {
   allActions: PropTypes.arrayOf(
     PropTypes.shape({
       execute: PropTypes.func.isRequired,
-      label: PropTypes.string.isRequired
+      label: PropTypes.string.isRequired,
     })
-  ).isRequired
+  ).isRequired,
 };
 
 export default BulkEntityEditorStatusDropdown;

@@ -13,7 +13,7 @@ export function getSpaceNavigationItems({
   teamsInSpacesFF,
   useSpaceEnviroment,
   isMasterEnvironment,
-  contentTagsEnabled
+  contentTagsEnabled,
 }) {
   const dropdownItems = {
     locales: {
@@ -35,7 +35,7 @@ export function getSpaceNavigationItems({
       sref: makeRef('settings.tags', isMasterEnvironment),
       //rootSref: makeRef('settings.tags', isMasterEnvironment),
       dataViewType: 'spaces-settings-tags',
-      title: 'Tags'
+      title: 'Tags',
     },
     settings: {
       if: canNavigateTo('settings'),

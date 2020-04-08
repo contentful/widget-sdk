@@ -70,7 +70,7 @@ Cypress.Commands.add('disableFeatureFlags', disableFeatureFlags);
 Cypress.Commands.add('verifyNotification', verifyNotification);
 
 Cypress.Commands.overwrite('visit', (visit, url) => {
-  cy.readFile('test/cypress/support/unfetch.js').then({timeout: 20000}, (polyfill) => {
+  cy.readFile('test/cypress/support/unfetch.js').then({ timeout: 20000 }, (polyfill) => {
     return visit(url, {
       onBeforeLoad(win: Window) {
         // Cypress cannot capture fetch requests.

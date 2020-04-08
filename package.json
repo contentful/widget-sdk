@@ -241,7 +241,7 @@
     "node-fetch": "^2.6.0",
     "node-jsx": "^0.13.3",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
-    "prettier": "^2.0.2",
+    "prettier": "2.0.4",
     "rework": "^1.0.1",
     "rework-plugin-url": "^1.1.0",
     "rimraf": "^3.0.0",
@@ -284,6 +284,7 @@
     "bundle-analyzer": "node --max_old_space_size=6144 ./node_modules/webpack/bin/webpack.js --config ./tools/webpack.analyzer.config.js",
     "prettier:debug": "prettier --config .prettierrc --no-editorconfig --debug-check ./src/javascripts ./tools ./bin ./micro-backends ./test",
     "prettier": "prettier --config .prettierrc --no-editorconfig --write ./src/javascripts ./tools ./bin ./micro-backends ./test",
+    "prettier:check": "prettier --config .prettierrc --no-editorconfig --check ./src/javascripts ./tools ./bin ./micro-backends ./test",
     "postshrinkwrap": "if [ \"`uname`\" = \"Darwin\" ]; then sed -i '' 's/http:\\/\\//https:\\/\\//g' package-lock.json; else sed -i 's/http:\\/\\//https:\\/\\//g' package-lock.json; fi",
     "cruise": "depcruise --validate ./tools/dependency-cruise/dependency-cruise.js src/javascripts"
   },

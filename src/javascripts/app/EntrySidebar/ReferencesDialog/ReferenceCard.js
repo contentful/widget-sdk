@@ -17,12 +17,12 @@ const styles = {
   }),
   erroredListItem: css({
     '& > div': {
-      borderColor: tokens.colorRedBase
-    }
+      borderColor: tokens.colorRedBase,
+    },
   }),
   validationTooltip: css({
     display: 'flex',
-    marginRight: tokens.spacingXs
+    marginRight: tokens.spacingXs,
   }),
   listItem: css({
     margin: '0',
@@ -77,7 +77,7 @@ const ReferenceCard = ({
   isMoreCard,
   isUnresolved,
   isCircular,
-  validationError
+  validationError,
 }) => {
   const [title, setTitle] = useState('Untitled');
 
@@ -181,7 +181,7 @@ ReferenceCard.propTypes = {
   isMoreCard: PropTypes.bool,
   isUnresolved: PropTypes.bool,
   isCircular: PropTypes.bool,
-  validationError: PropTypes.string
+  validationError: PropTypes.string,
 };
 
 ReferenceCard.defaultProps = {

@@ -6,7 +6,7 @@ import {
   DropdownListItem,
   Dropdown,
   TextLink,
-  Icon
+  Icon,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
@@ -15,11 +15,11 @@ const styles = {
   chevronIcon: css({
     float: 'right',
     marginLeft: tokens.spacingXs,
-    marginRight: -tokens.spacing2Xs
+    marginRight: -tokens.spacing2Xs,
   }),
   dropdownSpacing: css({
-    marginRight: tokens.spacingM
-  })
+    marginRight: tokens.spacingM,
+  }),
 };
 
 const BulkEntityEditorActionsDropdown = ({ openInEntryEditor, stateRef, unlink }) => {
@@ -53,7 +53,7 @@ const BulkEntityEditorActionsDropdown = ({ openInEntryEditor, stateRef, unlink }
 BulkEntityEditorActionsDropdown.propTypes = {
   openInEntryEditor: PropTypes.func.isRequired,
   unlink: PropTypes.func.isRequired,
-  stateRef: PropTypes.object.isRequired
+  stateRef: PropTypes.object.isRequired,
 };
 
 export default BulkEntityEditorActionsDropdown;

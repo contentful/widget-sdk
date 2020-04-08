@@ -164,7 +164,7 @@ export function invite(endpoint, { role, email }) {
       method: 'POST',
       data: {
         role,
-        email
+        email,
       },
       path: ['invitations'],
     },

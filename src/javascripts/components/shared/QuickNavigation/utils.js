@@ -36,7 +36,7 @@ const queryEntries = async (query) => {
   if (!getSectionVisibility().entry) {
     return {
       results: [],
-      total: 0
+      total: 0,
     };
   }
 
@@ -72,7 +72,7 @@ const queryAssets = async (query) => {
   if (!getSectionVisibility().asset) {
     return {
       results: [],
-      total: 0
+      total: 0,
     };
   }
 
@@ -104,7 +104,7 @@ const queryContentTypes = (query) => {
   if (!getSectionVisibility().contentType) {
     return {
       results: [],
-      total: 0
+      total: 0,
     };
   }
 

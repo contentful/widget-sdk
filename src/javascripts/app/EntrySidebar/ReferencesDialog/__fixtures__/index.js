@@ -2463,19 +2463,19 @@ export const noReferences = {
 export const simpleReferencesValidationErrorResponse = {
   sys: {
     type: 'ReleaseValidation',
-    id: 'immediate'
+    id: 'immediate',
   },
   errored: [
     {
       sys: {
         type: 'Link',
         linkType: 'Entry',
-        id: '3ADrOROW1jot5jExFOjt4i'
+        id: '3ADrOROW1jot5jExFOjt4i',
       },
       error: {
         sys: {
           type: 'Error',
-          id: 'InvalidEntry'
+          id: 'InvalidEntry',
         },
         message: 'Validation error message',
         details: {
@@ -2483,22 +2483,22 @@ export const simpleReferencesValidationErrorResponse = {
             {
               name: 'required',
               path: ['fields', 'requiredText'],
-              details: 'The property "requiredText" is required here'
-            }
-          ]
-        }
-      }
+              details: 'The property "requiredText" is required here',
+            },
+          ],
+        },
+      },
     },
     {
       sys: {
         type: 'Link',
         linkType: 'Asset',
-        id: '1RuPXX12mNeIzKQIcuOWQW'
+        id: '1RuPXX12mNeIzKQIcuOWQW',
       },
       error: {
         sys: {
           type: 'Error',
-          id: 'InvalidEntry'
+          id: 'InvalidEntry',
         },
         message: 'Validation error message',
         details: {
@@ -2506,21 +2506,21 @@ export const simpleReferencesValidationErrorResponse = {
             {
               name: 'required',
               path: ['fields', 'requiredText'],
-              details: 'The property "requiredText" is required here'
-            }
-          ]
-        }
-      }
-    }
-  ]
+              details: 'The property "requiredText" is required here',
+            },
+          ],
+        },
+      },
+    },
+  ],
 };
 
 export const simpleReferencesValidationSuccessResponse = {
   sys: {
     type: 'ReleaseValidation',
-    id: 'immediate'
+    id: 'immediate',
   },
-  errored: []
+  errored: [],
 };
 
 export const entity = {
@@ -2529,8 +2529,8 @@ export const entity = {
       sys: {
         type: 'Link',
         linkType: 'Space',
-        id: 'uxn1u7m0txgd'
-      }
+        id: 'uxn1u7m0txgd',
+      },
     },
     id: '4zaYBA8hYIxwRHsKfyJOVN',
     type: 'Entry',
@@ -2540,8 +2540,8 @@ export const entity = {
       sys: {
         id: 'master',
         type: 'Link',
-        linkType: 'Environment'
-      }
+        linkType: 'Environment',
+      },
     },
     publishedVersion: 3,
     publishedAt: '2019-12-16T14:00:10.531Z',
@@ -2550,15 +2550,15 @@ export const entity = {
       sys: {
         type: 'Link',
         linkType: 'User',
-        id: '1ISXbiKugJkNkSrTE3jn25'
-      }
+        id: '1ISXbiKugJkNkSrTE3jn25',
+      },
     },
     updatedBy: {
       sys: {
         type: 'Link',
         linkType: 'User',
-        id: '1ISXbiKugJkNkSrTE3jn25'
-      }
+        id: '1ISXbiKugJkNkSrTE3jn25',
+      },
     },
     publishedCounter: 1,
     version: 26,
@@ -2566,51 +2566,51 @@ export const entity = {
       sys: {
         type: 'Link',
         linkType: 'User',
-        id: '1ISXbiKugJkNkSrTE3jn25'
-      }
+        id: '1ISXbiKugJkNkSrTE3jn25',
+      },
     },
     contentType: {
       sys: {
         type: 'Link',
         linkType: 'ContentType',
-        id: 'user'
-      }
-    }
+        id: 'user',
+      },
+    },
   },
   fields: {
     name: {
       de: 'test',
-      'en-US': 'Root'
+      'en-US': 'Root',
     },
     entryRef1: {
       'en-US': {
         sys: {
           type: 'Link',
           linkType: 'Entry',
-          id: '3ADrOROW1jot5jExFOjt4i'
-        }
-      }
+          id: '3ADrOROW1jot5jExFOjt4i',
+        },
+      },
     },
     entryRef2: {
       'en-US': {
         sys: {
           type: 'Link',
           linkType: 'Entry',
-          id: 'iFsN9FnCxUVNrXnUbGeJu'
-        }
-      }
+          id: 'iFsN9FnCxUVNrXnUbGeJu',
+        },
+      },
     },
     assetRef: {
       'en-US': {
         sys: {
           type: 'Link',
           linkType: 'Asset',
-          id: '1RuPXX12mNeIzKQIcuOWQW'
-        }
-      }
+          id: '1RuPXX12mNeIzKQIcuOWQW',
+        },
+      },
     },
     tags: {
-      'en-US': ['Test 1', 'Test 2', 'Test 3', 'Test 4', 'Test 5']
-    }
-  }
+      'en-US': ['Test 1', 'Test 2', 'Test 3', 'Test 4', 'Test 5'],
+    },
+  },
 };

@@ -7,7 +7,7 @@ describe('BulkEntityEditorStatusDropdown', () => {
     inProgress: false,
     state: 'published',
     stateLabel: 'published',
-    allActions: []
+    allActions: [],
   };
   const build = (localProps = {}) => {
     return render(<BulkEntityEditorStatusDropdown {...{ ...props, ...localProps }} />);
@@ -18,7 +18,7 @@ describe('BulkEntityEditorStatusDropdown', () => {
       { state: 'published', stateLabel: 'published' },
       { state: 'draft', stateLabel: 'draft' },
       { state: 'changes', stateLabel: 'changed' },
-      { state: 'archived', stateLabel: 'archived' }
+      { state: 'archived', stateLabel: 'archived' },
     ];
     states.map(({ state, stateLabel }) => {
       it(`renders the correct label and style for ${state}`, () => {
@@ -61,7 +61,7 @@ describe('BulkEntityEditorStatusDropdown', () => {
       it('executes the associated action', () => {
         const allActions = [
           { execute: jest.fn(), label: 'action-label' },
-          { execute: jest.fn(), label: 'another-label' }
+          { execute: jest.fn(), label: 'another-label' },
         ];
 
         const localProps = { allActions };

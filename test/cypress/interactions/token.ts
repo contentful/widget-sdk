@@ -15,7 +15,8 @@ export const getTokenForUser = {
         path: '/token',
         headers: {
           Accept: 'application/json, text/plain, */*',
-          Authorization: "Bearer CFAKE-140669ab83d2054794726a0372c87449841a876376f4de9369d856b098eda921"
+          Authorization:
+            'Bearer CFAKE-140669ab83d2054794726a0372c87449841a876376f4de9369d856b098eda921',
         },
       },
       willRespondWith: {

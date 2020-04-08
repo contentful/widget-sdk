@@ -2,7 +2,7 @@ import { renderHook, act } from '@testing-library/react-hooks';
 import useSelectedVersions from './useSelectedVersions';
 
 jest.mock('detect-browser', () => ({
-  detect: jest.fn().mockReturnValue({ name: 'chrome' })
+  detect: jest.fn().mockReturnValue({ name: 'chrome' }),
 }));
 
 const enrichedWidgets = [
@@ -10,55 +10,55 @@ const enrichedWidgets = [
     widget: {
       field: {
         id: 'fieldId1',
-        localized: true
-      }
+        localized: true,
+      },
     },
     hasMultipleLocales: true,
     locales: [
       {
         locale: {
-          internal_code: 'en-US'
+          internal_code: 'en-US',
         },
         fieldPath: 'fields.fieldId1.en-US',
-        isDifferent: true
+        isDifferent: true,
       },
       {
         locale: {
-          internal_code: 'de'
+          internal_code: 'de',
         },
         fieldPath: 'fields.fieldId1.de',
-        isDifferent: false
-      }
-    ]
+        isDifferent: false,
+      },
+    ],
   },
   {
     widget: {
       field: {
         id: 'fieldId2',
-        localized: true
-      }
+        localized: true,
+      },
     },
     hasMultipleLocales: true,
     locales: [
       {
         locale: {
-          internal_code: 'en-US'
+          internal_code: 'en-US',
         },
         fieldPath: 'fields.fieldId2.en-US',
-        isDifferent: false
+        isDifferent: false,
       },
       {
         locale: {
-          internal_code: 'de'
+          internal_code: 'de',
         },
         fieldPath: 'fields.fieldId2.de',
-        isDifferent: true
-      }
-    ]
-  }
+        isDifferent: true,
+      },
+    ],
+  },
 ];
 
-const initHook = enrichedWidgets => {
+const initHook = (enrichedWidgets) => {
   return renderHook(() => useSelectedVersions({ enrichedWidgets }));
 };
 
@@ -72,7 +72,7 @@ describe('useSelectedVersions', () => {
       'fields.fieldId1.en-US': 'current',
       'fields.fieldId1.de': 'current',
       'fields.fieldId2.en-US': 'current',
-      'fields.fieldId2.de': 'current'
+      'fields.fieldId2.de': 'current',
     });
     expect(pathsToRestore).toEqual([]);
   });
@@ -90,7 +90,7 @@ describe('useSelectedVersions', () => {
       'fields.fieldId1.en-US': 'snapshot',
       'fields.fieldId1.de': 'current',
       'fields.fieldId2.en-US': 'current',
-      'fields.fieldId2.de': 'current'
+      'fields.fieldId2.de': 'current',
     });
     expect(pathsToRestore).toEqual([['fields', 'fieldId1', 'en-US']]);
   });
@@ -108,8 +108,11 @@ describe('useSelectedVersions', () => {
       'fields.fieldId1.en-US': 'snapshot',
       'fields.fieldId1.de': 'current',
       'fields.fieldId2.en-US': 'current',
-      'fields.fieldId2.de': 'snapshot'
+      'fields.fieldId2.de': 'snapshot',
     });
-    expect(pathsToRestore).toEqual([['fields', 'fieldId1', 'en-US'], ['fields', 'fieldId2', 'de']]);
+    expect(pathsToRestore).toEqual([
+      ['fields', 'fieldId1', 'en-US'],
+      ['fields', 'fieldId2', 'de'],
+    ]);
   });
 });

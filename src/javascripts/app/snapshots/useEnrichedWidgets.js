@@ -3,7 +3,7 @@ import { getFieldPath } from './utils';
 import { get, isEqual } from 'lodash';
 import TheLocaleStore from 'services/localeStore';
 
-const getLocalesForField = field => {
+const getLocalesForField = (field) => {
   const fieldLocales = field.localized
     ? TheLocaleStore.getPrivateLocales()
     : [TheLocaleStore.getDefaultLocale()];

@@ -11,7 +11,7 @@ module.exports = {
       return {
         statusCode: 404,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ meassage: 'Not found.' })
+        body: JSON.stringify({ meassage: 'Not found.' }),
       };
     }
 
@@ -22,14 +22,14 @@ module.exports = {
       return {
         statusCode: 422,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: 'No measurements provided.' })
+        body: JSON.stringify({ message: 'No measurements provided.' }),
       };
     }
 
     return {
       statusCode: 204,
       body: '',
-      measurements: measurements.map(m => ({ ...m, name: `webapp.${m.name}` }))
+      measurements: measurements.map((m) => ({ ...m, name: `webapp.${m.name}` })),
     };
-  }
+  },
 };

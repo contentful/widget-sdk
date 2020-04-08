@@ -3,7 +3,7 @@ import {
   Icon,
   Dropdown,
   DropdownList,
-  DropdownListItem
+  DropdownListItem,
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import * as Config from 'Config';
@@ -13,8 +13,8 @@ const styles = {
   button: css({
     position: 'relative',
     padding: '0 20px',
-    height: '100%'
-  })
+    height: '100%',
+  }),
 };
 
 // we need to pass this utm parameters in the url
@@ -25,7 +25,7 @@ function KnowledgeMenu() {
   const [isOpen, setIsOpen] = useState(false);
 
   function handleDropdownToggle() {
-    setIsOpen(currValue => !currValue);
+    setIsOpen((currValue) => !currValue);
   }
 
   return (

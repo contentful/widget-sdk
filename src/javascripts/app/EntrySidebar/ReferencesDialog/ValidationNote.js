@@ -6,8 +6,8 @@ import tokens from '@contentful/forma-36-tokens';
 
 const styles = {
   validationNote: css({
-    margin: `${tokens.spacingM} 0`
-  })
+    margin: `${tokens.spacingM} 0`,
+  }),
 };
 
 const ValidationNote = ({ validations }) => {
@@ -32,8 +32,8 @@ const ValidationNote = ({ validations }) => {
 
 ValidationNote.propTypes = {
   validations: PropTypes.shape({
-    errored: PropTypes.array
-  })
+    errored: PropTypes.array,
+  }),
 };
 
 export default ValidationNote;

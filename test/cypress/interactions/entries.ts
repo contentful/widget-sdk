@@ -11,8 +11,8 @@ const empty = require('../fixtures/responses/empty.json');
 const severalEntriesResponseBody = require('../fixtures/responses/entries-several.json');
 import {
   severalEntryReferencesResponse,
-  validateEntryReferencesSeveralRequest
-} from '../fixtures/responses/entry-several-references'
+  validateEntryReferencesSeveralRequest,
+} from '../fixtures/responses/entry-several-references';
 
 enum States {
   NONE = 'entries/none',
@@ -222,13 +222,13 @@ export const getEntryReferences = {
       },
       willRespondWith: {
         status: 200,
-        body: severalEntryReferencesResponse
-      }
+        body: severalEntryReferencesResponse,
+      },
     }).as('getEntryReferences');
 
     return '@getEntryReferences';
-  }
-}
+  },
+};
 
 export const validateEntryReferencesResponse = {
   willReturnNoErrors() {
@@ -241,20 +241,20 @@ export const validateEntryReferencesResponse = {
         path: `/spaces/${defaultSpaceId}/releases/immediate/validations`,
         headers: {
           ...defaultHeader,
-          'x-contentful-enable-alpha-feature': 'immediate-release'
+          'x-contentful-enable-alpha-feature': 'immediate-release',
         },
-        body: validateEntryReferencesSeveralRequest
+        body: validateEntryReferencesSeveralRequest,
       },
       willRespondWith: {
         status: 200,
         body: {
           sys: {
             id: 'immediate',
-            type: 'ReleaseValidation'
+            type: 'ReleaseValidation',
           },
-          errored: []
-        }
-      }
+          errored: [],
+        },
+      },
     }).as('validateEntryReferencesResponse');
 
     return '@validateEntryReferencesResponse';
@@ -270,47 +270,46 @@ export const validateEntryReferencesResponse = {
         path: `/spaces/${defaultSpaceId}/releases/immediate/validations`,
         headers: {
           ...defaultHeader,
-          'x-contentful-enable-alpha-feature': 'immediate-release'
+          'x-contentful-enable-alpha-feature': 'immediate-release',
         },
-        body: validateEntryReferencesSeveralRequest
+        body: validateEntryReferencesSeveralRequest,
       },
       willRespondWith: {
         status: 200,
         body: {
           sys: {
             id: 'immediate',
-            type: 'ReleaseValidation'
+            type: 'ReleaseValidation',
           },
-          errored: [{
-            sys: {
-              type: 'Link',
-              linkType: 'Entry',
-              id: defaultEntryId
-             },
-             error: {
-               sys: {
-                 type: 'Error',
-                 id: 'InvalidEntry'
-               },
-               message: 'Validation error',
-               details: {
-               errors: [
-                 {
-                   name: 'required',
-                   path: [
-                     'fields',
-                     'requiredText'
-                   ],
-                  details: 'The property "requiredText" is required here'
-                 }
-               ]
-              }
-            }
-          }]
-        }
-      }
+          errored: [
+            {
+              sys: {
+                type: 'Link',
+                linkType: 'Entry',
+                id: defaultEntryId,
+              },
+              error: {
+                sys: {
+                  type: 'Error',
+                  id: 'InvalidEntry',
+                },
+                message: 'Validation error',
+                details: {
+                  errors: [
+                    {
+                      name: 'required',
+                      path: ['fields', 'requiredText'],
+                      details: 'The property "requiredText" is required here',
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        },
+      },
     }).as('validateEntryReferencesResponse');
 
     return '@validateEntryReferencesResponse';
-  }
+  },
 };

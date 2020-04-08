@@ -10,13 +10,13 @@ const stateRef = Navigator.makeEntityRef({
     environment: {
       sys: {
         id: 'anotherFakeId',
-        isMasterEnvironment: true
-      }
+        isMasterEnvironment: true,
+      },
     },
     space: {
-      sys: { id: 'anotherAnotherFakeId' }
-    }
-  }
+      sys: { id: 'anotherAnotherFakeId' },
+    },
+  },
 });
 const props = { unlink: jest.fn(), openInEntryEditor: jest.fn(), stateRef };
 const build = (localProps = {}) => {

@@ -15,7 +15,7 @@ import {
   depthLimit,
   unresolvedReferences,
   noReferences,
-  simpleReferencesValidationErrorResponse
+  simpleReferencesValidationErrorResponse,
 } from './__fixtures__';
 
 import ReferencesTree from './ReferencesTree';
