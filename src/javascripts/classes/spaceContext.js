@@ -172,7 +172,6 @@ export default function register() {
 
           self.memberships = MembershipRepo.create(self.endpoint);
           self.members = createSpaceMembersRepo(self.endpoint);
-          self.docPool = DocumentPool.create(self.docConnection, self.endpoint);
           self.user = K.getValue(TokenStore.user$);
 
           // This happens here, rather than in `prelude.js`, since it's scoped to a space
@@ -196,6 +195,14 @@ export default function register() {
             }),
             (async () => {
               self.pubsubClient = await createPubSubClientForSpace(spaceId);
+            })(),
+            (async () => {
+              self.docPool = await DocumentPool.create(
+                self.docConnection,
+                self.endpoint,
+                self.organization.sys.id,
+                spaceId
+              );
             })(),
           ]).then(() => {
             Telemetry.record('space_context_http_time', Date.now() - start);

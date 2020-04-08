@@ -49,6 +49,7 @@ beforeEach(() => {
 
   // set default feature flags enabled on LaunchDarkly
   cy.enableFeatureFlags([FeatureFlag.DEFAULT]);
+  cy.disableFeatureFlags([FeatureFlag.SHAREJS_REMOVAL]);
 });
 afterEach(() => {
   cy.verifyAllFakeServerInteractions();

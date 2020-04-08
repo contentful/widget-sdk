@@ -281,17 +281,21 @@ async function createFlagsPromise(user, organizationId, spaceId) {
       return undefined;
     }
 
-    // Should never happen, but if the variation data could not be parsed
-    // log the error and return undefined
-    try {
-      return JSON.parse(variation);
-    } catch (e) {
-      logger.logError(`Invalid variation JSON for ${flagName}`, {
-        groupingHash: 'InvalidLDVariationJSON',
-        data: { variation },
-      });
+    if (typeof variation === 'string') {
+      try {
+        return JSON.parse(variation);
+      } catch (e) {
+        // Should never happen, but if the variation data could not be parsed
+        // log the error and return undefined
+        logger.logError(`Invalid variation JSON for ${flagName}`, {
+          groupingHash: 'InvalidLDVariationJSON',
+          data: { variation },
+        });
 
-      return undefined;
+        return undefined;
+      }
     }
+
+    return variation;
   };
 }

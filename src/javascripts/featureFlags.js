@@ -18,6 +18,9 @@ export const SCHEDULED_PUBLISHING = 'scheduled_publishing';
 export const NEW_SINGLE_REFERENCE_FIELD = 'feature-ext-03-2020-open-source-single-reference';
 export const PC_CONTENT_TAGS = 'content_tags';
 
-// Pulitzer Releases Flags
+// Team Pulitzer Releases Flags
 export const ALL_REFERENCES_DIALOG = 'feature-pulitzer-02-2020-all-reference-dialog';
 export const NEW_STATUS_SWITCH = 'feature-pulitzer-03-2020-new-status-switch';
+
+// Team Penguin Release Flags
+export const SHAREJS_REMOVAL = 'feature-pen-04-2020-sharejs-removal-multi';

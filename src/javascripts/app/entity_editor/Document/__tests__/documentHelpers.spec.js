@@ -8,20 +8,20 @@ const ENTRY = {
       type: 'Entry',
       version: 1,
       contentType: {
-        sys: { id: 'ctId' }
-      }
+        sys: { id: 'ctId' },
+      },
     },
     fields: {
       fieldA: { 'en-US': 'en' },
       fieldB: { 'en-US': 'val-EN', de: 'val-DE' },
-      unknownField: {}
-    }
+      unknownField: {},
+    },
   },
-  setDeleted: () => {}
+  setDeleted: () => {},
 };
 
 jest.mock('services/localeStore', () => ({
-  getPrivateLocales: () => [{ internal_code: 'en-US' }]
+  getPrivateLocales: () => [{ internal_code: 'en-US' }],
 }));
 
 describe('entity_editor/Document helpers', () => {

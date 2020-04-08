@@ -51,11 +51,9 @@ export function enableFeatureFlags(flags: Array<string>): void {
 }
 
 export function disableFeatureFlags(flags: Array<string>): void {
-  const enabled = JSON.parse(window.localStorage.getItem('ui_enable_flags') || '[]');
-  let sorted = enabled.filter(function (el) {
-    return !flags.includes(el);
-  });
-  window.localStorage.setItem('ui_enable_flags', JSON.stringify(sorted));
+  const enabled = JSON.parse(window.localStorage.getItem('ui_disable_flags') || '[]');
+  const merged = Cypress._.union(enabled, flags);
+  window.localStorage.setItem('ui_disable_flags', JSON.stringify(merged));
 }
 
 export function verifyNotification(type: 'success' | 'error', message: string) {
