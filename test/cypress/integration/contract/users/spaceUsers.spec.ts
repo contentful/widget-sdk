@@ -12,15 +12,6 @@ const twoMembersBody = {
     {
       admin: true,
       roles: [],
-      relatedMemberships: [
-        {
-          sys: {
-            type: 'Link',
-            linkType: 'SpaceMembership',
-            id: 'space_membership_1',
-          },
-        },
-      ],
       sys: {
         type: 'SpaceMember',
         id: 'space_member_1',
@@ -62,22 +53,6 @@ const twoMembersBody = {
             type: 'Link',
             linkType: 'Role',
             id: 'role2',
-          },
-        },
-      ],
-      relatedMemberships: [
-        {
-          sys: {
-            type: 'Link',
-            linkType: 'SpaceMembership',
-            id: 'space_membership_2',
-          },
-        },
-        {
-          sys: {
-            type: 'Link',
-            linkType: 'TeamSpaceMembership',
-            id: 'team_space_membership_1',
           },
         },
       ],
