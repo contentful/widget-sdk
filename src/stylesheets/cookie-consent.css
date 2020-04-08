@@ -1,19 +1,39 @@
-.osano-cm-window {
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
+:root {
+  --font-stack-primary: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
     Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
+  --color-element-lightest: #f7f9fa;
+  --color-element-light: #e5ebed;
+  --color-element-mid: #d3dce0;
+  --color-element-dark: #c3cfd5;
+  --color-text-mid: #536171;
+  --color-green-base: #0eb87f;
+  --color-green-dark: #0baa75;
+  --color-positive-gradient: linear-gradient(to top, #0eb87f, #14d997);
+  --font-size-s: 0.75rem;
+  --font-size-m: 0.875rem;
+  --line-height-default: 1.5;
+  --spacing-xs: 0.5rem;
+  --spacing-m: 1rem;
+  --spacing-xl: 2rem;
+}
+
+.osano-cm-window {
+  font-family: var(--font-stack-primary);
 }
 
 .osano-cm-dialog {
   align-items: start;
   box-shadow: none;
-  border: calc(1rem * (1 / 16)) solid #d3dce0;
+  border-top: solid;
+  border-top-width: 1px;
+  border-top-color: var(--color-element-mid);
 }
 
 .osano-cm-dialog__content {
   flex: 1;
   margin: 0;
-  font-size: 0.875rem;
-  line-height: 1.5rem;
+  font-size: var(--font-size-m);
+  line-height: var(--line-height-default);
 }
 
 .osano-cm-dialog__content a:link {
@@ -21,7 +41,7 @@
 }
 
 .osano-cm-dialog-list {
-  margin-top: 0.5rem;
+  margin-top: var(--spacing-xs);
 }
 
 .osano-cm-dialog-list__item {
@@ -33,7 +53,7 @@
 }
 
 .osano-cm-label {
-  font-size: 0.875rem;
+  font-size: var(--font-size-m);
   font-weight: bold;
 }
 
@@ -54,44 +74,39 @@
   flex: initial;
   justify-content: initial;
   width: initial;
-  margin-left: 1rem;
+  margin-left: var(--spacing-m);
 }
 
 .osano-cm-button {
   font-weight: normal;
-  font-size: 0.875rem;
+  font-size: var(--font-size-m);
   padding: 0 calc(1rem * (14 / 16) + 1rem * (4 / 16));
   height: calc(1rem * (40 / 16));
   border-radius: calc(1rem * (2 / 16));
-  border: calc(1rem * (1 / 16)) solid #3072be;
+  border: calc(1rem * (1 / 16)) solid var(--color-element-dark);
   min-width: initial;
   box-shadow: none;
   margin: 0;
   -webkit-transition: background 0.2s ease-in-out, opacity 0.2s ease-in-out,
     border-color 0.2s ease-in-out;
   transition: background 0.2s ease-in-out, opacity 0.2s ease-in-out, border-color 0.2s ease-in-out;
-}
-
-.osano-cm-button {
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
-    Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
-  border-color: #c3cfd5;
-  background-color: #e5ebed;
-  color: #536171;
+  font-family: var(--font-stack-primary);
+  background-color: var(--color-element-light);
+  color: var(--color-text-mid);
 }
 
 .osano-cm-button:hover,
 .osano-cm-button:focus {
-  background-color: #d3dce0;
+  background-color: var(--color-element-mid);
 }
 
 .osano-cm-info-dialog .osano-cm-button,
 .osano-cm-accept-all,
 .osano-cm-accept {
-  border-color: #0baa75;
-  background-image: linear-gradient(to top, #0eb87f, #14d997);
+  border-color: var(--color-green-dark);
+  background-image: var(--color-positive-gradient);
   background-size: 100% 200%;
-  color: #f7f9fa;
+  color: var(--color-element-lightest);
 }
 
 .osano-cm-info-dialog .osano-cm-button:hover,
@@ -100,24 +115,24 @@
 .osano-cm-accept-all:focus,
 .osano-cm-button.osano-cm-accept:hover,
 .osano-cm-button.osano-cm-accept:focus {
-  background-image: linear-gradient(to top, #0eb87f, #14d997);
-  background-color: #0eb87f;
+  background-image: var(--color-positive-gradient);
+  background-color: var(--color-green-base);
   background-size: 100% 200%;
   background-position: 0 100%;
 }
 
 .osano-cm-button:last-child {
-  margin-left: 1rem;
+  margin-left: var(--spacing-m);
 }
 
 .osano-cm-info-dialog {
   box-shadow: none;
-  background-color: #f7f9fa;
+  background-color: var(--color-element-lightest);
   padding: 1.25rem;
   max-width: 350px;
-  font-size: 0.875rem;
-  line-height: 1.5;
-  color: #536171;
+  font-size: var(--font-size-m);
+  line-height: var(--line-height-default);
+  color: var(--color-text-mid);
 }
 
 .osano-cm-info-dialog-close {
@@ -127,50 +142,93 @@
 .osano-cm-info-dialog__header {
   margin: 0;
   padding: 0;
-  border-bottom: 1px solid #c3ced5;
+  border-bottom: 1px solid var(--color-element-mid);
 }
 
 .osano-cm-info-dialog .osano-cm-label,
 .osano-cm-info-dialog__header-title {
   padding: 0;
-  margin-bottom: 0.5rem;
-  font-size: 0.875rem;
+  margin-bottom: var(--spacing-xs);
+  font-size: var(--font-size-m);
   font-weight: bold;
-  color: #536171;
+  color: var(--color-text-mid);
 }
 
 .osano-cm-info-dialog .osano-cm-label {
   margin-bottom: 0;
-  margin-left: 0.5rem;
+  margin-left: var(--spacing-xs);
 }
 
 .osano-cm-description,
 .osano-cm-info-dialog__header-description {
-  font-size: 0.875rem;
+  font-size: var(--font-size-m);
   font-weight: normal;
-  line-height: 1.5;
-  color: #536171;
-  margin: 0 0 1rem;
+  line-height: var(--line-height-default);
+  color: var(--color-text-mid);
+  margin: 0 0 var(--spacing-m);
 }
 
 .osano-cm-info-list {
-  margin: 1rem 0 2rem;
+  margin: var(--spacing-m) 0 var(--spacing-xl);
   padding: 0;
 }
 
-details.osano-cm-disclosure {
-  display: none;
+details.osano-cm-disclosure[open],
+details.osano-cm-disclosure:not([open]),
+details.osano-cm-disclosure.osano-cm-disclosure--collapse {
+  padding: 0;
+  width: 100%;
+  margin: 0;
+  border: 0;
+}
+
+summary.osano-cm-disclosure__toggle {
+  font-size: var(--font-size-s);
+  color: var(--color-text-mid);
+  font-weight: bold;
+  margin-bottom: var(--spacing-m);
+}
+
+.osano-cm-disclosure__list {
+  width: 100%;
+  margin: 0 0 0;
+  padding: var(--spacing-xs) var(--spacing-m);
+  font-size: var(--font-size-s);
+}
+
+.osano-cm-script-disclosure,
+.osano-cm-cookie-disclosure {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.osano-cm-disclosure__list .osano-cm-disclosure__list-item {
+  border-top: 1px solid var(--color-element-lightest);
+  margin: var(--spacing-xs) 0 0;
+  padding: var(--spacing-xs) 0 0;
+}
+
+.osano-cm-disclosure__list .osano-cm-disclosure__list-item:first-child {
+  border-top: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.osano-cm-cookie-disclosure__title,
+.osano-cm-cookie-disclosure__description {
+  font-size: var(--font-size-s);
 }
 
 .osano-cm-info-dialog .osano-cm-toggle {
   flex-direction: row;
   justify-content: flex-start;
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--spacing-xs);
 }
 
 .osano-cm-info-list__item {
-  margin: 1rem 0 0;
-  border-bottom: 1px solid #c3cfd5;
+  margin: var(--spacing-m) 0 0;
+  border-bottom: 1px solid var(--color-element-dark);
 }
 
 .osano-cm-info-list__item:last-child {
