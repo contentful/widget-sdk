@@ -16,6 +16,7 @@ export const ENVIRONMENT_ALIASING = 'environment_aliasing';
 export const CONTENT_WORKFLOW_TASKS = 'tasks';
 export const SCHEDULED_PUBLISHING = 'scheduled_publishing';
 export const NEW_SINGLE_REFERENCE_FIELD = 'feature-ext-03-2020-open-source-single-reference';
+export const PC_CONTENT_TAGS = 'content_tags';
 
 // Pulitzer Releases Flags
 export const ALL_REFERENCES_DIALOG = 'feature-pulitzer-02-2020-all-reference-dialog';

@@ -31,6 +31,21 @@
         }
       },
       "enabled": true
+    },
+    {
+      "sys": {
+        "type": "Feature",
+        "id": "fuuami4adicz-content_tags",
+        "feature_id": "content_tags",
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "fuuami4adicz"
+          }
+        }
+      },
+      "enabled": true
     }
   ]
 }

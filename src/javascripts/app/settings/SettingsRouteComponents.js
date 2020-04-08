@@ -17,6 +17,8 @@ import ApiKeyListRoute from './api/routes/ApiKeyListRoute';
 import CMATokensRoute from './api/routes/CMATokensRoute';
 import KeyEditorRoute from './api/routes/KeyEditorRoute';
 
+import TagsRoute from './content_tags/routes/TagsRoute';
+
 export {
   ContentPreviewListRoute,
   ContentPreviewNewRoute,
@@ -35,4 +37,5 @@ export {
   KeyEditorRoute,
   CMATokensRoute,
   ApiKeyListRoute,
+  TagsRoute,
 };

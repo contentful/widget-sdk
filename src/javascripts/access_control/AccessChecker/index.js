@@ -479,6 +479,7 @@ function collectSectionVisibility() {
     locales: canModifySpaceSettings(space),
     // don't use worf here, as it allows things that result in 403
     extensions: get(space, 'spaceMember.admin'),
+    tags: get(space, 'spaceMember.admin') || canModifySpaceSettings(space),
     users: !shouldHide(Action.UPDATE, 'settings'),
     teams: canModifySpaceSettings(space),
     roles: !shouldHide(Action.UPDATE, 'settings'),

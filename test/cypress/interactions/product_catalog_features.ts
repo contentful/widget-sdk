@@ -67,7 +67,7 @@ export const queryForTasksAndAppsInDefaultSpace = {
       state: States.SPACE_WITH_SEVERAL_FEATURES,
       uponReceiving: `a query for the "tasks" and "basic_apps" features for space "${defaultSpaceId}"`,
       withRequest: productCatalogFeaturesForDefaultSpaceRequest(
-        'sys.featureId[]=tasks&sys.featureId[]=basic_apps'
+        'sys.featureId[]=tasks&sys.featureId[]=basic_apps&sys.featureId[]=content_tags'
       ),
       willRespondWith: {
         status: 200,
@@ -86,7 +86,7 @@ export const queryForTasksAndScheduledPublishingInDefaultSpace = {
       state: States.SPACE_WITH_SEVERAL_FEATURES,
       uponReceiving: `a query for the "tasks" and "scheduled_publishing" features for space "${defaultSpaceId}"`,
       withRequest: productCatalogFeaturesForDefaultSpaceRequest(
-        'sys.featureId[]=tasks&sys.featureId[]=scheduled_publishing'
+        'sys.featureId[]=tasks&sys.featureId[]=content_tags&sys.featureId[]=scheduled_publishing'
       ),
       willRespondWith: {
         status: 200,
@@ -105,7 +105,7 @@ export const queryForScheduledPublishingInDefaultSpace = {
       state: States.SPACE_WITH_SEVERAL_FEATURES,
       uponReceiving: `a query for "scheduled_publishing" feature for space "${defaultSpaceId}"`,
       withRequest: productCatalogFeaturesForDefaultSpaceRequest(
-        'sys.featureId[]=tasks&sys.featureId[]=basic_apps&sys.featureId[]=scheduled_publishing'
+        'sys.featureId[]=tasks&sys.featureId[]=basic_apps&sys.featureId[]=content_tags&sys.featureId[]=scheduled_publishing'
       ),
       willRespondWith: {
         status: 200,
@@ -159,7 +159,7 @@ export const queryForEnvironmentUsageAndAppsInDefaultSpace = {
     cy.addInteraction({
       provider: PROVIDER,
       state: States.SPACE_WITH_SEVERAL_FEATURES,
-      uponReceiving: `a query for the "environment_usage" and "basic_apps" features for space "${defaultSpaceId}"`,
+      uponReceiving: `a query for the "environment_usage_enforcements" and "basic_apps" features for space "${defaultSpaceId}"`,
       withRequest: productCatalogFeaturesForDefaultSpaceRequest(
         'sys.featureId[]=environment_usage_enforcements&sys.featureId[]=basic_apps'
       ),
