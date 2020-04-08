@@ -200,43 +200,49 @@ export default function KeyListing({ definition }) {
           <SkeletonRow />
           <SkeletonRow />
         </TableWrapper>
+      ) : hasKeys ? (
+        <TableWrapper>
+          {formattedKeys.map((key) => {
+            return (
+              <TableRow key={key.fingerprint}>
+                <TableCell>
+                  <div>
+                    <span className={styles.fingerprint}>{key.fingerprintLines[0]}</span>
+                    <span className={styles.fingerprint}>{key.fingerprintLines[1]}</span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div>
+                    <div>{key.createdAt}</div>
+                    <div className={styles.lightText}>{key.lastUsedAt}</div>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div>{key.createdBy}</div>
+                </TableCell>
+                <TableCell align="right">
+                  <TextLink
+                    onClick={() =>
+                      openRevokeKeyModal(orgId, definitionId, key.fingerprint, () =>
+                        setKeys(formattedKeys.filter((k) => k.fingerprint !== key.fingerprint))
+                      )
+                    }
+                    linkType="negative">
+                    Revoke
+                  </TextLink>
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableWrapper>
       ) : (
-        hasKeys && (
-          <TableWrapper>
-            {formattedKeys.map((key) => {
-              return (
-                <TableRow key={key.fingerprint}>
-                  <TableCell>
-                    <div>
-                      <span className={styles.fingerprint}>{key.fingerprintLines[0]}</span>
-                      <span className={styles.fingerprint}>{key.fingerprintLines[1]}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <div>{key.createdAt}</div>
-                      <div className={styles.lightText}>{key.lastUsedAt}</div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div>{key.createdBy}</div>
-                  </TableCell>
-                  <TableCell align="right">
-                    <TextLink
-                      onClick={() =>
-                        openRevokeKeyModal(orgId, definitionId, key.fingerprint, () =>
-                          setKeys(formattedKeys.filter((k) => k.fingerprint !== key.fingerprint))
-                        )
-                      }
-                      linkType="negative">
-                      Revoke
-                    </TextLink>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableWrapper>
-        )
+        <TableWrapper>
+          <TableRow>
+            <TableCell>
+              <Paragraph>Your app currently has no key pairs associated with it.</Paragraph>
+            </TableCell>
+          </TableRow>
+        </TableWrapper>
       )}
     </>
   );

@@ -48,7 +48,7 @@ function AddKeyForm({ value, setValue }) {
   return (
     <>
       <Paragraph className={styles.spacer}>
-        Paste your public key into the field below. We require a key size of 4096 bit.
+        Paste your public key into the field below. We require a key size of 4096 bit.{' '}
         <TextLink target="_blank" rel="noreferrer noopener" href={KEY_GEN_GUIDE_URL}>
           Learn how to generate a key pair
         </TextLink>
