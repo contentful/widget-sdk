@@ -6,7 +6,6 @@ import { Notification } from '@contentful/forma-36-react-components';
 import * as entityStatus from 'app/entity_editor/EntityStatus';
 import * as ResourceUtils from 'utils/ResourceUtils';
 import { getBlankAssetView as getBlankView } from 'data/UiConfig/Blanks';
-import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 
 import TheLocaleStore from 'services/localeStore';
 import createSavedViewsSidebar from 'app/ContentList/SavedViewsSidebar';
@@ -52,7 +51,6 @@ export default function register() {
       $scope.shouldDisable = accessChecker.shouldDisable;
       $scope.canUploadMultipleAssets = accessChecker.canUploadMultipleAssets;
       $scope.searchController = searchController;
-      $scope.getAssetDimensions = getAssetDimensions;
       $scope.paginator = searchController.paginator;
 
       $scope.isLegacyOrganization = ResourceUtils.isLegacyOrganization(spaceContext.organization);
@@ -156,8 +154,6 @@ export default function register() {
         return !hasAssets && !hasQuery && !$scope.context.isSearching;
       };
 
-      $scope.getAssetFile = getAssetFile;
-
       $scope.$watch('showNoAssetsAdvice()', (show) => {
         if (show) {
           $scope.hasArchivedAssets = false;
@@ -192,23 +188,6 @@ export default function register() {
           }, 5000);
         });
       };
-
-      function getAssetDimensions(asset) {
-        const file = getAssetFile(asset);
-        const width = _.get(file, 'details.image.width', false);
-        const height = _.get(file, 'details.image.height', false);
-
-        if (width && height) {
-          return width + ' &times; ' + height + '&thinsp;px';
-        } else {
-          return '&ndash;'; // default to dash
-        }
-      }
-
-      // Get the default asset file for the default locale
-      function getAssetFile(asset) {
-        return EntityFieldValueSpaceContext.getFieldValue(asset, 'file');
-      }
 
       $scope.updateAssets = () => searchController.resetAssets();
       $scope.getAssets = () => $scope.assets;

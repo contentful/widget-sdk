@@ -2,7 +2,7 @@ import React from 'react';
 import { render, wait } from '@testing-library/react';
 import { upperFirst } from 'lodash';
 import BulkActionsRow from './BulkActionsRow';
-import * as batchPerformer from 'services/batchPerformer';
+import * as batchPerformer from './batchPerformer';
 import * as accessChecker from 'access_control/AccessChecker';
 
 jest.mock('access_control/AccessChecker', () => ({
@@ -10,7 +10,7 @@ jest.mock('access_control/AccessChecker', () => ({
   shouldHide: jest.fn().mockReturnValue(false),
   shouldDisable: jest.fn().mockReturnValue(false),
 }));
-jest.mock('services/batchPerformer', () => ({
+jest.mock('./batchPerformer', () => ({
   createBatchPerformer: jest.fn(),
 }));
 const performer = {

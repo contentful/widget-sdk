@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { createBatchPerformer } from 'services/batchPerformer';
+import { createBatchPerformer } from './batchPerformer';
 import * as analytics from 'analytics/Analytics';
 import { getModule } from 'NgRegistry';
 

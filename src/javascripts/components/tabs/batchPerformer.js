@@ -4,7 +4,7 @@ import { Notification } from '@contentful/forma-36-react-components';
 
 import * as Analytics from 'analytics/Analytics';
 
-import { appendDuplicateIndexToEntryTitle } from '../app/entity_editor/entityHelpers';
+import { appendDuplicateIndexToEntryTitle } from 'app/entity_editor/entityHelpers';
 
 const ACTION_NAMES = {
   publish: 'published',

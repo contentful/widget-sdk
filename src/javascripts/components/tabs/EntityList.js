@@ -308,7 +308,7 @@ const EntityList = ({
         />
       </TableHead>
       <TableBody>
-        {(isLoading || entities.length === 0) &&
+        {isLoading &&
           range(0, entities.length || 10).map((_, i) => {
             return (
               <TableRow key={i}>

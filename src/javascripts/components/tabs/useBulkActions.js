@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { createBatchPerformer } from 'services/batchPerformer';
+import { createBatchPerformer } from './batchPerformer';
 import * as accessChecker from 'access_control/AccessChecker';
 
 const isActionVisible = (entities, action, predicate) => {
