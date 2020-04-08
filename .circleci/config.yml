@@ -2,42 +2,59 @@ version: 2.1
 
 orbs:
   cypress: cypress-io/cypress@1.7.0
-  deploy-assets:
+  copy-assets:
     orbs:
-      aws-s3: circleci/aws-s3@1.0.4
+      aws-s3: circleci/aws-s3@1.0.15
     jobs:
       to-s3:
         description: 'Build the image containing awscli and deploy assets to S3 using it'
-        parameters:
-          access_key_id:
-            type: string
-          secret_access_key:
-            type: string
-          region:
-            type: string
-          path:
-            type: string
-          bucket:
-            type: string
         docker:
-          - image: circleci/python:2.7
+          - image: cimg/python:3.6
         steps:
           - attach_workspace:
               at: ~/workspace
           - checkout
           - run:
-              name: Export AWS environment variables
+              name: Export preview AWS environment variables
               command: |
-                echo 'export AWS_ACCESS_KEY_ID=<<parameters.access_key_id>>' >> $BASH_ENV
-                echo 'export AWS_SECRET_ACCESS_KEY=<<parameters.secret_access_key>>' >> $BASH_ENV
-                echo 'export AWS_REGION=<<parameters.region>>' >> $BASH_ENV
+                echo 'export AWS_ACCESS_KEY_ID=${AWS_S3_PREVIEW_ACCESS_KEY_ID}' >> $BASH_ENV
+                echo 'export AWS_SECRET_ACCESS_KEY=${AWS_S3_PREVIEW_SECRET_ACCESS_KEY}' >> $BASH_ENV
+                echo 'export AWS_REGION="eu-west-1"' >> $BASH_ENV
           - aws-s3/copy:
-              from: <<parameters.path>>/app
-              to: s3://<<parameters.bucket>>/app
+              from: ~/workspace/output/files/preview/app
+              to: s3://cf-preview-static-cdnorigin/app
               arguments: --acl public-read --recursive --cache-control "immutable,public,max-age=86400"
           - aws-s3/copy:
-              from: <<parameters.path>>/archive
-              to: s3://<<parameters.bucket>>/archive
+              from: ~/workspace/output/files/preview/archive
+              to: s3://cf-preview-static-cdnorigin/archive
+              arguments: --acl public-read --recursive --cache-control "no-cache"
+          - run:
+              name: Export staging AWS environment variables
+              command: |
+                echo 'export AWS_ACCESS_KEY_ID=${AWS_S3_STAGING_ACCESS_KEY_ID}' >> $BASH_ENV
+                echo 'export AWS_SECRET_ACCESS_KEY=${AWS_S3_STAGING_SECRET_ACCESS_KEY}' >> $BASH_ENV
+                echo 'export AWS_REGION="eu-west-1"' >> $BASH_ENV
+          - aws-s3/copy:
+              from: ~/workspace/output/files/staging/app
+              to: s3://cf-staging-static-cdnorigin/app
+              arguments: --acl public-read --recursive --cache-control "immutable,public,max-age=86400"
+          - aws-s3/copy:
+              from: ~/workspace/output/files/staging/archive
+              to: s3://cf-staging-static-cdnorigin/archive
+              arguments: --acl public-read --recursive --cache-control "no-cache"
+          - run:
+              name: Export staging AWS environment variables
+              command: |
+                echo 'export AWS_ACCESS_KEY_ID=${AWS_S3_PRODUCTION_ACCESS_KEY_ID}' >> $BASH_ENV
+                echo 'export AWS_SECRET_ACCESS_KEY=${AWS_S3_PRODUCTION_SECRET_ACCESS_KEY}' >> $BASH_ENV
+                echo 'export AWS_REGION="eu-west-1"' >> $BASH_ENV
+          - aws-s3/copy:
+              from: ~/workspace/output/files/production/app
+              to: s3://static.cdnorigin.contentful.com/app
+              arguments: --acl public-read --recursive --cache-control "immutable,public,max-age=86400"
+          - aws-s3/copy:
+              from: ~/workspace/output/files/production/archive
+              to: s3://static.cdnorigin.contentful.com/archive
               arguments: --acl public-read --recursive --cache-control "no-cache"
 
   post-comment:
@@ -58,40 +75,6 @@ orbs:
                 --data-binary "{\"issue\": ${PR_NUMBER:-\"\"}, \"branch\": \"${CIRCLE_BRANCH}\", \"commitSha\": \"${CIRCLE_SHA1}\", \"env\": \"<<parameters.env>>\"}" \
                 -H 'content-type: application/json' \
                 $LAMBDA_URL?token=$GITHUB_PAT_REPO_SCOPE_SQUIRELY || echo "Comment won't be posted to ${PR_NUMBER:-$CIRCLE_BRANCH}. Continuing anyway."
-
-  build-tracker:
-    jobs:
-      upload-build:
-        description: 'Upload build artifacts stats to https://user-interface-build-tracker.herokuapp.com and post comment to PR'
-        parameters:
-          path:
-            type: string
-        docker:
-          - image: circleci/node:10.15.3
-        environment:
-          CYPRESS_INSTALL_BINARY: 0
-        steps:
-          - attach_workspace:
-              at: ~/workspace
-          - checkout
-          - run:
-              name: Provide npm token to install private packages
-              command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-          - run: npm ci
-          - run:
-              name: Install build-tracker CLI
-              command: npm install --no-save --no-shrinkwrap @contentful/sniffer-build-tracker
-          - run:
-              name: Upload build to user_interface build tracker server and post comment
-              command: |
-                export PR_NUMBER=$(echo $CIRCLE_PULL_REQUEST | cut -d '/'  -f7)
-                export COMMENT_LAMBDA_URL='https://tooling-lambdas.ctfl.now.sh/user_interface/githubComments'
-                export PATH_TO_BUILT_ASSETS=<<parameters.path>>
-                export SNIFFER_UPLOAD_URL='https://user-interface-sniffer.herokuapp.com'
-
-                npx sniffer-build-tracker version
-                npx sniffer-build-tracker -vv stat-artifacts -c tools/sniffer-build-tracker.config.js
-                npx sniffer-build-tracker upload-build -c tools/sniffer-build-tracker.config.js
 
   estivador:
     commands:
@@ -226,41 +209,22 @@ executors:
       UI_CONFIG: localhost
 
 jobs:
-  upload-repo-stats-to-sniffer:
+  build-with-statistics:
     docker:
       - image: circleci/node:10.15.3
     environment:
-      SNIFFER_UPLOAD_URL: 'https://user-interface-sniffer.herokuapp.com/'
-      COMMENT_LAMBDA_URL: 'https://tooling-lambdas.ctfl.now.sh/user_interface/githubComments'
-      CYPRESS_INSTALL_BINARY: 0
-    steps:
-      - checkout
-      - run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-      - run: echo 'export SSH_KEY="$(openssl rsa -in ~/.ssh/id_rsa)"' >> $BASH_ENV
-      - run: npm ci
-      - run:
-          name: Install project-sniffer CLI
-          command: npm install --no-save --no-shrinkwrap @contentful/project-sniffer-cli
-      - run:
-          name: Run project sniffer and upload stats
-          command: |
-            export PR_NUMBER=$(echo $CIRCLE_PULL_REQUEST | cut -d '/'  -f7)
-            npx project-sniffer . --config tools/sniffer
-
-  build-and-push-image:
-    machine:
-      docker_layer_caching: true
-    environment:
       DOCKER_IMAGE: contentful/user_interface
       DOCKER_REGISTRY: 806120774687.dkr.ecr.us-east-1.amazonaws.com
+      LOG: 'yesplease'
     steps:
+      - setup_remote_docker
       - checkout
-      - compose/install
       - estivador/install
       - run:
           name: Setup environment variables
           command: |
             echo 'export SSH_KEY="$(openssl rsa -in ~/.ssh/id_rsa)"' >> $BASH_ENV
+            echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
       - run:
           name: Build production image
           command: |
@@ -280,32 +244,40 @@ jobs:
             ~/bin/estivador docker-ecr-login
             ~/bin/estivador put-image
             ~/bin/estivador promote-image
+      - run: npm ci
+      - run:
+          name: Install Sniffer CLI tools
+          command: npm install --no-save --no-shrinkwrap @contentful/project-sniffer-cli @contentful/sniffer-build-tracker
+      - run:
+          name: Deploy micro-backends
+          command: |
+            export MICRO_BACKENDS_VERSION="$(cat package-lock.json | jq \'.dependencies["@contentful/micro-backends"].version\' --raw-output)"
+            export AWS_REGION="$MICRO_BACKENDS_AWS_REGION"
+            export AWS_ACCESS_KEY_ID="$MICRO_BACKENDS_AWS_ACCESS_KEY_ID"
+            export AWS_SECRET_ACCESS_KEY="$MICRO_BACKENDS_AWS_SECRET_ACCESS_KEY"
+
+            echo "Using @contentful/micro-backends@$MICRO_BACKENDS_VERSION"
+            npx "@contentful/micro-backends@$MICRO_BACKENDS_VERSION" "micro-backends" "rev-$CIRCLE_SHA1"
+      - run:
+          name: Run project sniffer and upload stats
+          command: |
+            export PR_NUMBER=$(echo $CIRCLE_PULL_REQUEST | cut -d '/'  -f7)
+            npx project-sniffer . --config tools/sniffer
+      - run:
+          name: Upload build to user_interface build tracker server and post comment
+          command: |
+            export PR_NUMBER=$(echo $CIRCLE_PULL_REQUEST | cut -d '/'  -f7)
+            export COMMENT_LAMBDA_URL='https://tooling-lambdas.ctfl.now.sh/user_interface/githubComments'
+            export PATH_TO_BUILT_ASSETS='../output/files/production/app' # Path is relative to the config file
+            export SNIFFER_UPLOAD_URL='https://user-interface-sniffer.herokuapp.com'
+
+            npx sniffer-build-tracker version
+            npx sniffer-build-tracker -vv stat-artifacts -c tools/sniffer-build-tracker.config.js
+            npx sniffer-build-tracker upload-build -c tools/sniffer-build-tracker.config.js
       - persist_to_workspace:
           root: .
           paths:
             - output
-
-  deploy-micro-backends:
-    docker:
-      - image: circleci/node:8.10
-    environment:
-      LOG: 'yesplease'
-    steps:
-      - checkout
-      - run:
-          name: Setup environment
-          command: |
-            echo $'export MICRO_BACKENDS_VERSION="$(cat package-lock.json | jq \'.dependencies["@contentful/micro-backends"].version\' --raw-output)"' >> $BASH_ENV
-            echo 'export AWS_REGION="$MICRO_BACKENDS_AWS_REGION"' >> $BASH_ENV
-            echo 'export AWS_ACCESS_KEY_ID="$MICRO_BACKENDS_AWS_ACCESS_KEY_ID"' >> $BASH_ENV
-            echo 'export AWS_SECRET_ACCESS_KEY="$MICRO_BACKENDS_AWS_SECRET_ACCESS_KEY"' >> $BASH_ENV
-            echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
-      - run:
-          name: Deploy micro-backends
-          command: |
-            echo "Using @contentful/micro-backends@$MICRO_BACKENDS_VERSION"
-            npx "@contentful/micro-backends@$MICRO_BACKENDS_VERSION" "micro-backends" "rev-$CIRCLE_SHA1"
-
   lint:
     docker:
       - image: circleci/node:10.15.3
@@ -317,43 +289,21 @@ jobs:
       - run: echo 'export SSH_KEY="$(openssl rsa -in ~/.ssh/id_rsa)"' >> $BASH_ENV
       - run: npm ci
       - run: tools/bin/validate-config.js config/*.json
+      - run:
+          name: Check OSS licenses
+          command: |
+            npm install --no-save --no-shrinkwrap license-checker
+            bin/oss-license-check
       - run: npm run hint
       - run: npm run prettier:check
       - run: npm run cruise
 
-  oss-license-check:
-    docker:
-      - image: circleci/node:10.15.3
-    steps:
-      - checkout
-      - run: npm install --no-save --no-shrinkwrap license-checker
-      - run: bin/oss-license-check
-
-  run-jest-tests:
-    docker:
-      - image: circleci/node:10.15.3
-    environment:
-      CI: true
-      CYPRESS_INSTALL_BINARY: 0
-    steps:
-      - checkout
-      - run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-      - run: echo 'export SSH_KEY="$(openssl rsa -in ~/.ssh/id_rsa)"' >> $BASH_ENV
-      - run: npm ci
-      - run:
-          name: Run Jest tests
-          command: NODE_ENV=production npm run jest:coverage # cant set NODE_ENV in environment above since jest is a dev dep
-          environment:
-            JEST_JUNIT_OUTPUT: 'reports/jest/jest-test-results.xml'
-      - run: npm run codecov
-      - store_test_results:
-          path: reports
-
-  run-karma-tests:
+  run-unit-tests:
     docker:
       - image: circleci/node:10.15.3-browsers
     environment:
       CYPRESS_INSTALL_BINARY: 0
+      CI: true
     steps:
       - checkout
       - run:
@@ -361,13 +311,17 @@ jobs:
           command: |
             echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
             echo 'export SSH_KEY="$(openssl rsa -in ~/.ssh/id_rsa)"' >> $BASH_ENV
-      - run:
-          name: Split tests into specs for the run
-          command: |
-            TESTFILES=$(circleci tests glob "test/{unit,integration}/**/*.js" | circleci tests split --split-by=timings --timings-type=filename)
-            echo "export TESTFILES=\"$TESTFILES\"" >> $BASH_ENV
-      - run: echo $TESTFILES
       - run: npm ci
+
+      # Jest tests
+      - run:
+          name: Run Jest tests
+          command: NODE_ENV=production npm run jest:coverage # cant set NODE_ENV in environment above since jest is a dev dep
+          environment:
+            JEST_JUNIT_OUTPUT: 'reports/jest/jest-test-results.xml'
+      - run: npm run codecov
+
+      # Karma tests
       - run:
           name: Build test artifacts
           command: NODE_ENV=test node --max_old_space_size=3072 ./tools/bin/build-test.js
@@ -375,7 +329,7 @@ jobs:
           name: Run Karma tests
           command: |
             mkdir -p ./reports/karma
-            npm run test:once -- $TESTFILES
+            npm run test:once
           environment:
             JUNIT_REPORT_PATH: ./reports/karma
             JUNIT_REPORT_NAME: karma-test-results.xml
@@ -475,17 +429,14 @@ jobs:
 workflows:
   build:
     jobs:
-      - upload-repo-stats-to-sniffer:
-          name: Upload user_interface stats to sniffer 2.0
-      - build-and-push-image
       - lint
-      - oss-license-check
-      - run-jest-tests
-      - run-karma-tests
+      - build-with-statistics:
+          requires:
+            - lint
+      - run-unit-tests
       - run-e2e-tests:
           requires:
-            - build-and-push-image
-      - deploy-micro-backends
+            - build-with-statistics
       - cypress/run:
           name: run-contract-tests
           executor: cypress-base-10
@@ -523,41 +474,13 @@ workflows:
           wait-on: 'http-get://localhost:3001/app/app.js'
           command: npx cypress run --spec "test/cypress/integration/ui/**/*"
           store_artifacts: true
-      - build-tracker/upload-build:
-          name: upload-prod-build-to-build-tracker
-          path: '~/workspace/output/files/production/app'
-          requires:
-            - build-and-push-image
-      - deploy-assets/to-s3:
-          name: deploy-assets-to-preview
-          access_key_id: '${AWS_S3_PREVIEW_ACCESS_KEY_ID}'
-          secret_access_key: '${AWS_S3_PREVIEW_SECRET_ACCESS_KEY}'
-          region: 'eu-west-1'
-          path: '~/workspace/output/files/preview'
-          bucket: 'cf-preview-static-cdnorigin'
-          requires:
-            - build-and-push-image
-      - deploy-assets/to-s3:
-          name: deploy-assets-to-staging
-          access_key_id: '${AWS_S3_STAGING_ACCESS_KEY_ID}'
-          secret_access_key: '${AWS_S3_STAGING_SECRET_ACCESS_KEY}'
-          region: 'us-east-1'
-          path: '~/workspace/output/files/staging'
-          bucket: 'cf-staging-static-cdnorigin'
+      - copy-assets/to-s3:
+          name: copy-assets-to-s3
           post-steps:
             - post-comment/deployment:
                 env: 'flinkly'
           requires:
-            - build-and-push-image
-      - deploy-assets/to-s3:
-          name: deploy-assets-to-prod
-          access_key_id: '${AWS_S3_PRODUCTION_ACCESS_KEY_ID}'
-          secret_access_key: '${AWS_S3_PRODUCTION_SECRET_ACCESS_KEY}'
-          region: 'us-east-1'
-          path: '~/workspace/output/files/production'
-          bucket: 'static.cdnorigin.contentful.com'
-          requires:
-            - build-and-push-image
+            - build-with-statistics
       - ui-extensions-sdk/run:
           name: run-ui-extensions-integration
       - saucelabs/run:
@@ -565,13 +488,13 @@ workflows:
           browser: 'MicrosoftEdge'
           selenium: '3.14.0'
           requires:
-            - deploy-assets-to-staging
+            - copy-assets-to-s3
           <<: *run_only_on_master_branch
       - saucelabs/run:
           name: run-win10-firefox-tests
           browser: 'firefox'
           requires:
-            - deploy-assets-to-staging
+            - copy-assets-to-s3
           <<: *run_only_on_master_branch
       # # Temporary turned off due to problems with SauceLabs
       # - saucelabs/run:
@@ -579,7 +502,7 @@ workflows:
       #     platform: 'macOS 10.13'
       #     browser: 'safari'
       #     requires:
-      #       - deploy-assets-to-staging
+      #       - copy-assets-to-s3
       #     <<: *run_only_on_master_branch
 
 notify:
