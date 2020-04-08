@@ -32,11 +32,12 @@ const ERROR_MESSAGES = {
 // - `apply` takes a function to be executed in the Angular
 //   context (using `$rootScope.$apply`).
 export default function createExtensionBridge(dependencies, location = LOCATION_ENTRY_FIELD) {
-  const { $rootScope, $scope, spaceContext } = checkDependencies('ExtensionBridge', dependencies, [
-    '$rootScope',
-    '$scope',
-    'spaceContext',
-  ]);
+  console.log(dependencies);
+  const { $rootScope, $scope, spaceContext, $controller } = checkDependencies(
+    'ExtensionBridge',
+    dependencies,
+    ['$rootScope', '$scope', 'spaceContext', '$controller']
+  );
 
   let unsubscribeFunctions = [];
 
@@ -163,8 +164,38 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
       api.send('localeSettingsChanged', [getLocaleSettings()]);
     });
 
+    Object.values($scope.fields)
+      .reduce((acc, field) => {
+        const widget = $scope.widgets.find((w) => w.fieldId === field.id);
+        const fieldLocales = field.locales.map((localeCode) => {
+          const locale = TheLocaleStore.getPrivateLocales().find((l) => l.code == localeCode);
+
+          const fieldLocaleScope = $scope.$new(false);
+          fieldLocaleScope.widget = widget;
+          fieldLocaleScope.locale = locale;
+
+          return {
+            fieldId: field.id,
+            localeCode,
+            fieldLocale: $controller('FieldLocaleController', {
+              $scope: fieldLocaleScope,
+            }),
+          };
+        });
+
+        return acc.concat(fieldLocales);
+      }, [])
+      .forEach(({ fieldId, localeCode, fieldLocale }) => {
+        K.onValueScope($scope, fieldLocale.access$, (access) => {
+          console.log(fieldId, localeCode, 'disabled=', !!access.disabled);
+
+          api.send('isDisabledChangedForFieldLocale', [fieldId, localeCode, !!access.disabled]);
+        });
+      });
+
     // Available for field-level extensions only:
     if (isFieldLevelExtension) {
+      // TODO: update sdk to use isDisabledChangedForFieldLocale and remove this
       K.onValueScope($scope, $scope.fieldLocale.access$, (access) => {
         api.send('isDisabledChanged', [!!access.disabled]);
       });

@@ -225,6 +225,7 @@ export default ({ $scope, emitter }) => {
         $rootScope,
         $scope: fieldLocaleScope,
         spaceContext,
+        $controller
       },
       WidgetLocations.LOCATION_ENTRY_FIELD_SIDEBAR
     );
@@ -237,6 +238,7 @@ export default ({ $scope, emitter }) => {
       $rootScope,
       $scope,
       spaceContext,
+      $controller
     },
     WidgetLocations.LOCATION_ENTRY_SIDEBAR
   );

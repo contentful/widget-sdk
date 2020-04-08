@@ -250,6 +250,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
         spaceContext,
         Navigator,
         SlideInNavigator,
+        $controller
       },
       WidgetLocations.LOCATION_ENTRY_EDITOR
     ),

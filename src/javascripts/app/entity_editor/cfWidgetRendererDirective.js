@@ -26,7 +26,8 @@ export default function register() {
   registerDirective('cfWidgetRenderer', [
     '$rootScope',
     'spaceContext',
-    ($rootScope, spaceContext) => {
+    '$controller',
+    ($rootScope, spaceContext, $controller) => {
       return {
         scope: true,
         require: '?^cfWidgetApi',
@@ -88,6 +89,7 @@ export default function register() {
                     $rootScope,
                     $scope: scope,
                     spaceContext,
+                    $controller,
                   })}
                 />
               );
