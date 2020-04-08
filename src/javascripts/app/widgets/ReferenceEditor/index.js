@@ -3,9 +3,7 @@ import get from 'lodash/get';
 import noop from 'lodash/noop';
 import PropTypes from 'prop-types';
 import { track } from 'analytics/Analytics';
-import { AssetReferenceEditor, EntryReferenceEditor } from '@contentful/field-editor-reference';
-
-export { AssetReferenceEditor };
+import { SingleMediaEditor, SingleEntryReferenceEditor } from '@contentful/field-editor-reference';
 
 function getCtId(entry) {
   return get(entry, 'sys.contentType.sys.id');
@@ -22,10 +20,10 @@ const safeNonBlockingTrack = (...args) => {
   });
 };
 
-export function AssetReferenceEditorWithTracking(props) {
+export function SingleMediaEditorWithTracking(props) {
   const { loadEvents, ...rest } = props;
   return (
-    <AssetReferenceEditor
+    <SingleMediaEditor
       {...rest}
       onAction={(action) => {
         switch (action.type) {
@@ -58,11 +56,11 @@ export function AssetReferenceEditorWithTracking(props) {
   );
 }
 
-export function EntryReferenceEditorWithTracking(props) {
+export function SingleEntryReferenceEditorWithTracking(props) {
   const { loadEvents, ...rest } = props;
 
   return (
-    <EntryReferenceEditor
+    <SingleEntryReferenceEditor
       {...rest}
       onAction={(action) => {
         switch (action.type) {
@@ -113,5 +111,5 @@ const EditorWithTrackingProps = {
   }).isRequired,
 };
 
-AssetReferenceEditorWithTracking.propTypes = EditorWithTrackingProps;
-EntryReferenceEditorWithTracking.propTypes = EditorWithTrackingProps;
+SingleMediaEditorWithTracking.propTypes = EditorWithTrackingProps;
+SingleEntryReferenceEditorWithTracking.propTypes = EditorWithTrackingProps;

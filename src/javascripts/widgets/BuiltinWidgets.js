@@ -28,8 +28,8 @@ import { DateEditor } from '@contentful/field-editor-date';
 import { MarkdownEditor, openMarkdownDialog } from '@contentful/field-editor-markdown';
 import FileEditor from 'app/widgets/FileEditor';
 import {
-  EntryReferenceEditorWithTracking,
-  AssetReferenceEditorWithTracking,
+  SingleEntryReferenceEditorWithTracking,
+  SingleMediaEditorWithTracking,
 } from 'app/widgets/ReferenceEditor';
 import { getEntityLink } from 'app/common/EntityStateLink';
 import { SlugEditor } from '@contentful/field-editor-slug';
@@ -304,14 +304,14 @@ export function create() {
         return {
           renderFieldEditor: ({ widgetApi, loadEvents }) => {
             return (
-              <EntryReferenceEditorWithTracking
+              <SingleEntryReferenceEditorWithTracking
                 viewType="link"
                 sdk={widgetApi}
                 loadEvents={loadEvents}
-                getEntryUrl={(entryId) => getEntityLink({ id: entryId, type: 'Entry' }).href}
+                getEntityUrl={(entryId) => getEntityLink({ id: entryId, type: 'Entry' }).href}
                 parameters={{
                   instance: {
-                    canCreateEntry: true,
+                    canCreateEntity: true,
                   },
                 }}
               />
@@ -347,14 +347,14 @@ export function create() {
         return {
           renderFieldEditor: ({ widgetApi, loadEvents }) => {
             return (
-              <EntryReferenceEditorWithTracking
+              <SingleEntryReferenceEditorWithTracking
                 viewType="card"
                 sdk={widgetApi}
                 loadEvents={loadEvents}
-                getEntryUrl={(entryId) => getEntityLink({ id: entryId, type: 'Entry' }).href}
+                getEntityUrl={(entryId) => getEntityLink({ id: entryId, type: 'Entry' }).href}
                 parameters={{
                   instance: {
-                    canCreateEntry: true,
+                    canCreateEntity: true,
                   },
                 }}
               />
@@ -392,14 +392,14 @@ export function create() {
         return {
           renderFieldEditor: ({ widgetApi, loadEvents }) => {
             return (
-              <AssetReferenceEditorWithTracking
+              <SingleMediaEditorWithTracking
                 viewType="card"
                 sdk={widgetApi}
                 loadEvents={loadEvents}
-                getAssetUrl={(assetId) => getEntityLink({ id: assetId, type: 'Asset' }).href}
+                getEntityUrl={(assetId) => getEntityLink({ id: assetId, type: 'Asset' }).href}
                 parameters={{
                   instance: {
-                    canCreateAsset: canCreateAsset(),
+                    canCreateEntity: canCreateAsset(),
                   },
                 }}
               />
