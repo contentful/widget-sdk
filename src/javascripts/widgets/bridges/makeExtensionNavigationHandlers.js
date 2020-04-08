@@ -3,6 +3,7 @@ import { find } from 'lodash';
 import * as entityCreator from 'components/app_container/entityCreator';
 import * as Navigator from 'states/Navigator';
 import get from 'lodash/get';
+import localeStore from 'services/localeStore';
 import * as SlideInNavigatorWithPromise from 'navigation/SlideInNavigator/withPromise';
 import * as SlideInNavigator from 'navigation/SlideInNavigator';
 
@@ -18,7 +19,7 @@ export function makeExtensionBulkNavigationHandlers() {
       throw new Error(`Can't open bulk editor when there is another bulk editor open`);
     }
 
-    const path = [entryId, fieldId, locale, index];
+    const path = [entryId, fieldId, localeStore.toInternalCode(locale), index];
 
     const slide = SlideInNavigator.goToSlideInEntity({
       type: 'BulkEditor',
