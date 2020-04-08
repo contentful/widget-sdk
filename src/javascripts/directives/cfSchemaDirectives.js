@@ -1,6 +1,46 @@
-import { registerDirective, registerFactory } from 'NgRegistry';
+import { registerDirective } from 'NgRegistry';
 import validation from '@contentful/validation';
 import errorMessageBuilder from 'services/errorMessageBuilder/errorMessageBuilder';
+
+function SchemaController(messageBuilder, schema) {
+  this.messageBuilder = messageBuilder;
+  this.context = {};
+  this.setSchema(schema);
+}
+
+/**
+ * @ngdoc method
+ * @name SchemaController#setSchema
+ * @param {Schema} schema
+ */
+SchemaController.prototype.setSchema = function (schema) {
+  this.schema = schema;
+};
+
+/**
+ * @ngdoc method
+ * @name SchemaController#setContext
+ * @param {Schema} schema
+ */
+SchemaController.prototype.setContext = function (context) {
+  this.context = context;
+};
+
+/**
+ * @ngdoc method
+ * @name SchemaController#errors
+ * @param data
+ * @returns {Array<Error>}
+ */
+SchemaController.prototype.errors = function (data) {
+  if (this.schema) {
+    return this.schema.errors(data, this.context);
+  }
+};
+
+SchemaController.prototype.buildMessage = function (error, data) {
+  return this.messageBuilder(error, data);
+};
 
 export default function register() {
   /**
@@ -12,8 +52,7 @@ export default function register() {
    * @property {SchemaController} $scope.schema
    */
   registerDirective('cfContentTypeSchema', [
-    'SchemaController',
-    (SchemaController) => ({
+    () => ({
       restrict: 'A',
       scope: true,
       controller: [
@@ -25,56 +64,4 @@ export default function register() {
       ],
     }),
   ]);
-
-  /**
-   * @ngdoc type
-   * @name SchemaController
-   *
-   * @description
-   * The Schema Controller validates data against a schema creates
-   * error messages.
-   */
-  registerFactory('SchemaController', function () {
-    function SchemaController(messageBuilder, schema) {
-      this.messageBuilder = messageBuilder;
-      this.context = {};
-      this.setSchema(schema);
-    }
-
-    /**
-     * @ngdoc method
-     * @name SchemaController#setSchema
-     * @param {Schema} schema
-     */
-    SchemaController.prototype.setSchema = function (schema) {
-      this.schema = schema;
-    };
-
-    /**
-     * @ngdoc method
-     * @name SchemaController#setContext
-     * @param {Schema} schema
-     */
-    SchemaController.prototype.setContext = function (context) {
-      this.context = context;
-    };
-
-    /**
-     * @ngdoc method
-     * @name SchemaController#errors
-     * @param data
-     * @returns {Array<Error>}
-     */
-    SchemaController.prototype.errors = function (data) {
-      if (this.schema) {
-        return this.schema.errors(data, this.context);
-      }
-    };
-
-    SchemaController.prototype.buildMessage = function (error, data) {
-      return this.messageBuilder(error, data);
-    };
-
-    return SchemaController;
-  });
 }
