@@ -1,11 +1,35 @@
 import checkDependencies from './checkDependencies';
+import { find } from 'lodash';
 import * as entityCreator from 'components/app_container/entityCreator';
 import * as Navigator from 'states/Navigator';
 import get from 'lodash/get';
 import * as SlideInNavigatorWithPromise from 'navigation/SlideInNavigator/withPromise';
 import * as SlideInNavigator from 'navigation/SlideInNavigator';
 
-export default function makeExtensionNavigationHandlers(dependencies, handlerOptions = {}) {
+function isAnotherBulkEditorOpen() {
+  return !!find(SlideInNavigator.getSlideInEntities(), { type: 'BulkEditor' });
+}
+
+export function makeExtensionBulkNavigationHandlers() {
+  return async function navigate(options) {
+    const { entryId, fieldId, locale, index } = options;
+
+    if (isAnotherBulkEditorOpen()) {
+      throw new Error(`Can't open bulk editor when there is another bulk editor open`);
+    }
+
+    const path = [entryId, fieldId, locale, index];
+
+    const slide = SlideInNavigator.goToSlideInEntity({
+      type: 'BulkEditor',
+      path,
+    });
+
+    return { navigated: true, slide };
+  };
+}
+
+export function makeExtensionNavigationHandlers(dependencies, handlerOptions = {}) {
   const { cma } = checkDependencies('ExtensionNavigationHandlers', dependencies, ['cma']);
 
   return async function navigate(options) {

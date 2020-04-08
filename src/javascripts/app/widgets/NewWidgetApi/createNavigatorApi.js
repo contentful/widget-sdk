@@ -1,4 +1,7 @@
-import makeExtensionNavigationHandlers from 'widgets/bridges/makeExtensionNavigationHandlers';
+import {
+  makeExtensionNavigationHandlers,
+  makeExtensionBulkNavigationHandlers,
+} from 'widgets/bridges/makeExtensionNavigationHandlers';
 import { onSlideInNavigation } from 'navigation/SlideInNavigator/index';
 
 /**
@@ -11,6 +14,7 @@ import { onSlideInNavigation } from 'navigation/SlideInNavigator/index';
  */
 export function createNavigatorApi({ cma }) {
   const navigateToContentEntity = makeExtensionNavigationHandlers({ cma });
+  const navigateToBulkEditor = makeExtensionBulkNavigationHandlers();
 
   return {
     openEntry: (id, opts) => {
@@ -32,6 +36,9 @@ export function createNavigatorApi({ cma }) {
     },
     openPageExtension: () => {
       throw new Error('Not implemented yet');
+    },
+    openBulkEditor: (entryId, { fieldId, locale, index }) => {
+      return navigateToBulkEditor({ entryId, fieldId, locale, index });
     },
     onSlideInNavigation,
   };

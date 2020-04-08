@@ -6,7 +6,10 @@ import { onSlideInNavigation } from 'navigation/SlideInNavigator/index';
 
 import makeExtensionDialogsHandler from './makeExtensionDialogsHandlers';
 import makeExtensionSpaceMethodsHandlers from './makeExtensionSpaceMethodsHandlers';
-import makeExtensionNavigationHandlers from './makeExtensionNavigationHandlers';
+import {
+  makeExtensionNavigationHandlers,
+  makeExtensionBulkNavigationHandlers,
+} from './makeExtensionNavigationHandlers';
 import makeExtensionNotificationHandlers from './makeExtensionNotificationHandlers';
 import makePageExtensionHandlers from './makePageExtensionHandlers';
 import checkDependencies from './checkDependencies';
@@ -140,6 +143,7 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
       'navigateToContentEntity',
       makeExtensionNavigationHandlers(dependencies.spaceContext)
     );
+    api.registerHandler('navigateToBulkEditor', makeExtensionBulkNavigationHandlers());
     api.registerHandler('notify', makeExtensionNotificationHandlers(dependencies));
     api.registerHandler('navigateToPageExtension', makePageExtensionHandlers(dependencies));
 

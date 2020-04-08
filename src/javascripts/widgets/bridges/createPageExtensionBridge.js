@@ -1,5 +1,5 @@
 import makeExtensionSpaceMethodsHandlers from './makeExtensionSpaceMethodsHandlers';
-import makeExtensionNavigationHandlers from './makeExtensionNavigationHandlers';
+import { makeExtensionNavigationHandlers } from './makeExtensionNavigationHandlers';
 import makeExtensionNotificationHandlers from './makeExtensionNotificationHandlers';
 import makePageExtensionHandlers from './makePageExtensionHandlers';
 import makeExtensionDialogsHandler from './makeExtensionDialogsHandlers';
