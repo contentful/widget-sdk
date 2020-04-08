@@ -298,31 +298,12 @@ jobs:
       - run: npm run prettier:check
       - run: npm run cruise
 
-  run-jest-tests:
-    docker:
-      - image: circleci/node:10.15.3
-    environment:
-      CI: true
-      CYPRESS_INSTALL_BINARY: 0
-    steps:
-      - checkout
-      - run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-      - run: echo 'export SSH_KEY="$(openssl rsa -in ~/.ssh/id_rsa)"' >> $BASH_ENV
-      - run: npm ci
-      - run:
-          name: Run Jest tests
-          command: NODE_ENV=production npm run jest:coverage # cant set NODE_ENV in environment above since jest is a dev dep
-          environment:
-            JEST_JUNIT_OUTPUT: 'reports/jest/jest-test-results.xml'
-      - run: npm run codecov
-      - store_test_results:
-          path: reports
-
-  run-karma-tests:
+  run-unit-tests:
     docker:
       - image: circleci/node:10.15.3-browsers
     environment:
       CYPRESS_INSTALL_BINARY: 0
+      CI: true
     steps:
       - checkout
       - run:
@@ -330,13 +311,17 @@ jobs:
           command: |
             echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
             echo 'export SSH_KEY="$(openssl rsa -in ~/.ssh/id_rsa)"' >> $BASH_ENV
-      - run:
-          name: Split tests into specs for the run
-          command: |
-            TESTFILES=$(circleci tests glob "test/{unit,integration}/**/*.js" | circleci tests split --split-by=timings --timings-type=filename)
-            echo "export TESTFILES=\"$TESTFILES\"" >> $BASH_ENV
-      - run: echo $TESTFILES
       - run: npm ci
+
+      # Jest tests
+      - run:
+          name: Run Jest tests
+          command: NODE_ENV=production npm run jest:coverage # cant set NODE_ENV in environment above since jest is a dev dep
+          environment:
+            JEST_JUNIT_OUTPUT: 'reports/jest/jest-test-results.xml'
+      - run: npm run codecov
+
+      # Karma tests
       - run:
           name: Build test artifacts
           command: NODE_ENV=test node --max_old_space_size=3072 ./tools/bin/build-test.js
@@ -344,7 +329,7 @@ jobs:
           name: Run Karma tests
           command: |
             mkdir -p ./reports/karma
-            npm run test:once -- $TESTFILES
+            npm run test:once
           environment:
             JUNIT_REPORT_PATH: ./reports/karma
             JUNIT_REPORT_NAME: karma-test-results.xml
@@ -444,10 +429,11 @@ jobs:
 workflows:
   build:
     jobs:
-      - build-with-statistics
       - lint
-      - run-jest-tests
-      - run-karma-tests
+      - build-with-statistics:
+          requires:
+            - lint
+      - run-unit-tests
       - run-e2e-tests:
           requires:
             - build-with-statistics
