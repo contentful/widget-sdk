@@ -114,7 +114,7 @@ describe('DocumentPool', () => {
 
       get('id', 'Entry', cmaDocumentPool);
       expect(createCmaDoc).toBeCalledTimes(1);
-      expect(createCmaDoc).toBeCalledWith(entry, spaceEndpoint);
+      expect(createCmaDoc).toBeCalledWith(entry, ct, spaceEndpoint);
 
       get('id', 'Asset', cmaDocumentPool);
       expect(createOtDoc).toBeCalledTimes(1);

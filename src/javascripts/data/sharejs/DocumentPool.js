@@ -41,7 +41,7 @@ export async function create(docConnection, spaceEndpoint, organizationId, space
       instance.count += 1;
     } else {
       if (isCMADocumentEnabled && isCMADocumentEnabled[entity.data.sys.type]) {
-        doc = createCmaDoc(entity, spaceEndpoint);
+        doc = createCmaDoc(entity, contentType, spaceEndpoint);
       } else {
         doc = createOtDoc(docConnection, entity, contentType, user, spaceEndpoint);
       }
