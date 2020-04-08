@@ -111,6 +111,8 @@ const formReducer = createImmerReducer({
       field.error = '';
       field.errorType = null;
     }
+
+    state.form.invalid = isFormInvalid(state);
   },
   SET_FIELD_SUBMISSION_ERROR: (state, { payload: { fieldName, message } }) => {
     state.fields[fieldName].error = message;
