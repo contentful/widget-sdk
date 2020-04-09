@@ -216,6 +216,9 @@ jobs:
       DOCKER_IMAGE: contentful/user_interface
       DOCKER_REGISTRY: 806120774687.dkr.ecr.us-east-1.amazonaws.com
       LOG: 'yesplease'
+      CYPRESS_INSTALL_BINARY: 0
+      COMMENT_LAMBDA_URL: https://tooling-lambdas.ctfl.now.sh/user_interface/githubComments
+      SNIFFER_UPLOAD_URL: https://user-interface-sniffer.herokuapp.com
     steps:
       - setup_remote_docker
       - checkout
@@ -267,10 +270,7 @@ jobs:
           name: Upload build to user_interface build tracker server and post comment
           command: |
             export PR_NUMBER=$(echo $CIRCLE_PULL_REQUEST | cut -d '/'  -f7)
-            export COMMENT_LAMBDA_URL='https://tooling-lambdas.ctfl.now.sh/user_interface/githubComments'
             export PATH_TO_BUILT_ASSETS='../output/files/production/app' # Path is relative to the config file
-            export SNIFFER_UPLOAD_URL='https://user-interface-sniffer.herokuapp.com'
-
             npx sniffer-build-tracker version
             npx sniffer-build-tracker -vv stat-artifacts -c tools/sniffer-build-tracker.config.js
             npx sniffer-build-tracker upload-build -c tools/sniffer-build-tracker.config.js
