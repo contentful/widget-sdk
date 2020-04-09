@@ -85,35 +85,43 @@ describe('createExtensionBridge', () => {
       $watch: jest.fn(),
     };
 
+    const fieldLocale = {
+      id: 'FIELD_ID',
+      access$: stubs.access,
+      errors$: stubs.errors,
+      setActive: stubs.setActive,
+      locales: ['pl'],
+    };
+    const $scope = {
+      $on: () => {},
+      $applyAsync: () => {},
+      $watch: stubs.$watch,
+      $new: () => ({}),
+      otDoc: {
+        sysProperty: stubs.sysProperty,
+        changes: stubs.changes,
+        getValueAt: () => ({ sys: {}, fields: {} }),
+        setValueAt: stubs.setValueAt,
+        removeValueAt: stubs.removeValueAt,
+      },
+      fieldController: { setInvalid: stubs.setInvalid },
+      fields: [fieldLocale],
+      fieldLocale,
+      editorData: {
+        editorInterface: {
+          controls: [],
+          sidebar: [],
+        },
+      },
+      widget: { field: 'FIELD', fieldId: 'FIELD_ID' },
+      widgets: [{ fieldId: 'FIELD_ID' }],
+      locale: { code: 'pl' },
+      entityInfo: { contentType: 'CONTENT TYPE' },
+    };
+
     const bridge = createExtensionBridge({
       $rootScope: { $apply: stubs.apply },
-      $scope: {
-        $on: () => {},
-        $applyAsync: () => {},
-        $watch: stubs.$watch,
-        otDoc: {
-          sysProperty: stubs.sysProperty,
-          changes: stubs.changes,
-          getValueAt: () => ({ sys: {}, fields: {} }),
-          setValueAt: stubs.setValueAt,
-          removeValueAt: stubs.removeValueAt,
-        },
-        fieldController: { setInvalid: stubs.setInvalid },
-        fieldLocale: {
-          access$: stubs.access,
-          errors$: stubs.errors,
-          setActive: stubs.setActive,
-        },
-        editorData: {
-          editorInterface: {
-            controls: [],
-            sidebar: [],
-          },
-        },
-        widget: { field: 'FIELD' },
-        locale: { code: 'pl' },
-        entityInfo: { contentType: 'CONTENT TYPE' },
-      },
+      $scope,
       spaceContext: {
         getId: () => 'sid',
         getEnvironmentId: () => 'eid',
@@ -127,6 +135,9 @@ describe('createExtensionBridge', () => {
           getAllBare: () => [{ id: 'first-content-type' }, { id: 'second-content-type' }],
         },
       },
+      $controller: (_name, _$scope) => ({
+        access$: createMockProperty({ disconnected: false, disabled: false }),
+      }),
     });
 
     return [bridge, stubs];
@@ -188,6 +199,7 @@ describe('createExtensionBridge', () => {
 
       // initial values
       expect(api.send).toBeCalledWith('isDisabledChanged', [false]);
+      expect(api.send).toBeCalledWith('isDisabledChangedForFieldLocale', ['FIELD_ID', 'pl', false]);
       expect(api.send).toBeCalledWith('sysChanged', [{ id: 'test', initial: true }]);
       expect(api.send).toBeCalledWith('schemaErrorsChanged', [[]]);
 

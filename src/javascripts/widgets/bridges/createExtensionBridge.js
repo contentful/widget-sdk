@@ -32,7 +32,6 @@ const ERROR_MESSAGES = {
 // - `apply` takes a function to be executed in the Angular
 //   context (using `$rootScope.$apply`).
 export default function createExtensionBridge(dependencies, location = LOCATION_ENTRY_FIELD) {
-  console.log(dependencies);
   const { $rootScope, $scope, spaceContext, $controller } = checkDependencies(
     'ExtensionBridge',
     dependencies,
@@ -187,8 +186,6 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
       }, [])
       .forEach(({ fieldId, localeCode, fieldLocale }) => {
         K.onValueScope($scope, fieldLocale.access$, (access) => {
-          console.log(fieldId, localeCode, 'disabled=', !!access.disabled);
-
           api.send('isDisabledChangedForFieldLocale', [fieldId, localeCode, !!access.disabled]);
         });
       });
