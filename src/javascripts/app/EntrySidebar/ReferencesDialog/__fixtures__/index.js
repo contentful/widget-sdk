@@ -2615,6 +2615,71 @@ export const entity = {
   },
 };
 
+export const entityWithNoRefs = {
+  sys: {
+    space: {
+      sys: {
+        type: 'Link',
+        linkType: 'Space',
+        id: 'uxn1u7m0txgd',
+      },
+    },
+    id: '4zaYBA8hYIxwRHsKfyJOVN',
+    type: 'Entry',
+    createdAt: '2019-12-16T12:22:36.218Z',
+    updatedAt: '2020-03-04T16:36:17.263Z',
+    environment: {
+      sys: {
+        id: 'master',
+        type: 'Link',
+        linkType: 'Environment',
+      },
+    },
+    publishedVersion: 3,
+    publishedAt: '2019-12-16T14:00:10.531Z',
+    firstPublishedAt: '2019-12-16T14:00:10.531Z',
+    createdBy: {
+      sys: {
+        type: 'Link',
+        linkType: 'User',
+        id: '1ISXbiKugJkNkSrTE3jn25',
+      },
+    },
+    updatedBy: {
+      sys: {
+        type: 'Link',
+        linkType: 'User',
+        id: '1ISXbiKugJkNkSrTE3jn25',
+      },
+    },
+    publishedCounter: 1,
+    version: 26,
+    publishedBy: {
+      sys: {
+        type: 'Link',
+        linkType: 'User',
+        id: '1ISXbiKugJkNkSrTE3jn25',
+      },
+    },
+    contentType: {
+      sys: {
+        type: 'Link',
+        linkType: 'ContentType',
+        id: 'user',
+      },
+    },
+  },
+  fields: {
+    name: {
+      de: 'test',
+      'en-US': 'Root',
+    },
+    tags: {
+      'en-US': ['Test 1', 'Test 2', 'Test 3', 'Test 4', 'Test 5'],
+    },
+  },
+};
+
 export const simpleReferencesPublicationSuccessResponse = {
   sys: {
     id: 'immediate',

@@ -100,6 +100,28 @@ const ReferencesDialog = ({ entity }) => {
 
   const maxLevel = 5;
 
+  const hasLinks = (obj) => {
+    let linksFound = false;
+    Object.keys(obj).forEach((key) => {
+      if (
+        (key === 'type' && obj[key] === 'Link') ||
+        (key === 'nodeType' && 'embedded-entry-block') ||
+        (key === 'nodeType' && 'embedded-asset-block') ||
+        (key === 'nodeType' && 'embedded-entry-inline') ||
+        (key === 'nodeType' && 'entry-hyperlink')
+      ) {
+        linksFound = true;
+      } else if (typeof obj[key] === 'object' && !linksFound) {
+        linksFound = hasLinks(obj[key]);
+      } else if (Array.isArray(obj[key]) && !linksFound) {
+        obj[key].forEach((value) => {
+          linksFound = hasLinks(value);
+        });
+      }
+    });
+    return linksFound;
+  };
+
   useEffect(() => {
     async function getFeatureFlagVariation() {
       const isFeatureEnabled = await getCurrentVariation(ALL_REFERENCES_DIALOG);
@@ -212,6 +234,9 @@ const ReferencesDialog = ({ entity }) => {
       });
   };
 
+  if (!hasLinks(entity.fields)) {
+    return null;
+  }
   return (
     <>
       <Subheading className="entity-sidebar__heading">References</Subheading>

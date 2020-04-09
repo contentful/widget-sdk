@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { get, memoize } from 'lodash';
 import { css } from 'emotion';
-import { Paragraph, List, ListItem, Note } from '@contentful/forma-36-react-components';
+import { Paragraph, List, ListItem } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import ReferenceCard from './ReferenceCard';
 import { track } from 'analytics/Analytics';
@@ -34,9 +34,6 @@ const styles = {
         display: 'none',
       },
     },
-  }),
-  noReferencesNote: css({
-    marginBottom: tokens.spacingM,
   }),
 };
 
@@ -255,25 +252,17 @@ class ReferencesTree extends React.Component {
 
     return (
       <>
-        {referencesTree ? (
-          <>
-            <Paragraph className={styles.description}>
-              Here is a list of all references for this entry. Publish them all together, or
-              validate them to check readiness.
-            </Paragraph>
-            <List className={styles.parentList}>
-              <ReferenceCard
-                entity={root}
-                validationError={this.findValidationErrorForEntity(root.sys.id)}
-              />
-              {referencesTree}
-            </List>
-          </>
-        ) : (
-          <Note noteType="positive" className={styles.noReferencesNote}>
-            This entry has no references
-          </Note>
-        )}
+        <Paragraph className={styles.description}>
+          Here is a list of all references for this entry. Publish them all together, or validate
+          them to check readiness.
+        </Paragraph>
+        <List className={styles.parentList}>
+          <ReferenceCard
+            entity={root}
+            validationError={this.findValidationErrorForEntity(root.sys.id)}
+          />
+          {referencesTree}
+        </List>
       </>
     );
   }

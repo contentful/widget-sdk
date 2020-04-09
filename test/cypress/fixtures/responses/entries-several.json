@@ -153,6 +153,17 @@
       "fields": {
         "fieldID": {
           "en-US": "one"
+        },
+        "arrayOfRefs": {
+          "en-US": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "testEntryId3"
+              }
+            }
+          ]
         }
       }
     }

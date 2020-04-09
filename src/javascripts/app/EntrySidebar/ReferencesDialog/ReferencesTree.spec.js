@@ -14,7 +14,6 @@ import {
   circularReferences,
   depthLimit,
   unresolvedReferences,
-  noReferences,
   simpleReferencesValidationErrorResponse,
 } from './__fixtures__';
 
@@ -203,25 +202,6 @@ describe('ReferencesTree component', () => {
     expect(getAllByTestId('cf-ui-card')).toHaveLength(4);
     expect(getAllByText('Entry is missing or inaccessible')).toHaveLength(2);
     expect(getAllByText('Asset is missing or inaccessible')).toHaveLength(1);
-
-    await wait();
-  });
-
-  it('should render a message saying that there are no references', async () => {
-    const onCardClick = jest.fn();
-    const response = resolveResponse(noReferences);
-    const root = response[0];
-    const { getByText, queryAllByTestId } = render(
-      <ReferencesTree
-        root={root}
-        defaultLocale="en-US"
-        maxLevel={5}
-        onReferenceCardClick={onCardClick}
-      />
-    );
-
-    expect(getByText('This entry has no references')).toBeInTheDocument();
-    expect(queryAllByTestId('cf-ui-card')).toHaveLength(0);
 
     await wait();
   });

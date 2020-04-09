@@ -18,6 +18,7 @@ import { getCurrentVariation } from 'utils/LaunchDarkly';
 
 import {
   entity,
+  entityWithNoRefs,
   simpleReferencesValidationErrorResponse,
   simpleReferencesValidationSuccessResponse,
   simpleReferencesPublicationSuccessResponse,
@@ -55,6 +56,13 @@ describe('ReferencesTree component', () => {
     getReferencesForEntryId.mockResolvedValue(cfResolveResponse(simpleReferences));
     getCurrentVariation.mockResolvedValue(true);
     getEntityTitle.mockResolvedValue('Title');
+  });
+
+  it('should not render the references button if there are no references', async () => {
+    validateEntities.mockResolvedValue(simpleReferencesValidationErrorResponse);
+    const renderResult = render(<ReferencesTreeDialog entity={entityWithNoRefs} />);
+    await wait();
+    expect(renderResult).not.toBeNull();
   });
 
   it('should render the error toast with valiation error', async () => {
