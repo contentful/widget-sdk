@@ -68,7 +68,7 @@ function CreateTagModal({ isShown, onClose }) {
     resetCreateTag,
     createTagData,
     createTagError,
-  } = useCreateTag(id, name);
+  } = useCreateTag();
 
   const resetForm = useCallback(() => {
     resetCreateTag();
@@ -139,6 +139,7 @@ function CreateTagModal({ isShown, onClose }) {
           value={name}
           validationMessage={errors.name || null}
           textInputProps={{
+            autoFocus: true,
             maxLength: 64,
             type: 'text',
             autoComplete: 'off',

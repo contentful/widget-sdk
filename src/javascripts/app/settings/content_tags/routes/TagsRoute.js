@@ -2,13 +2,12 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import TagsWorkbenchSkeleton from '../skeletons/TagsWorkbenchSkeleton';
 import React, { useCallback } from 'react';
 import TagsList from '../components/TagsList';
-import { Button, EmptyState } from '@contentful/forma-36-react-components';
+import { EmptyState } from '@contentful/forma-36-react-components';
 import ReadTagsProvider, { ReadTags } from '../providers/ReadTagsProvider';
 import Pagination from 'app/common/Pagination';
 import { useTagsFeatureEnabled } from '../hooks/useTagsFeatureEnabled';
 import PropTypes from 'prop-types';
 import StateRedirect from 'app/common/StateRedirect';
-import TagsWorkbenchActions from '../skeletons/TagsWorkbenchActions';
 import TagsRepoProvider from '../providers/TagsRepoProvider';
 
 /**
@@ -17,7 +16,7 @@ import TagsRepoProvider from '../providers/TagsRepoProvider';
 function TagsRoute({ redirectUrl }) {
   const { tagsEnabled, isTagsEnabledLoading } = useTagsFeatureEnabled();
 
-  const renderError = useCallback((error, reloadAll) => {
+  const renderError = useCallback(() => {
     return (
       <EmptyState
         headingProps={{
@@ -25,11 +24,10 @@ function TagsRoute({ redirectUrl }) {
           text: 'Error loading tags',
         }}
         descriptionProps={{
-          text: JSON.stringify(error),
+          text: 'please try reloading page',
           elementType: 'p',
-        }}>
-        <Button onClick={() => reloadAll()}>retry</Button>
-      </EmptyState>
+        }}
+      />
     );
   }, []);
   if (isTagsEnabledLoading) {
@@ -43,9 +41,23 @@ function TagsRoute({ redirectUrl }) {
       <ReadTagsProvider>
         <DocumentTitle title="Content Tags" />
         <ReadTags.Consumer>
-          {({ data, error, isLoading, reloadAll, skip, setSkip, limit, setLimit, total }) => {
+          {({
+            data,
+            error,
+            isLoading,
+            reloadAll,
+            skip,
+            setSkip,
+            limit,
+            setLimit,
+            total,
+            hasTags,
+          }) => {
             return (
-              <TagsWorkbenchSkeleton actions={<TagsWorkbenchActions />} isLoading={isLoading}>
+              <TagsWorkbenchSkeleton
+                isLoading={isLoading}
+                hasTags={hasTags}
+                hasData={data && data.length > 0}>
                 {error ? (
                   renderError(error, reloadAll)
                 ) : (

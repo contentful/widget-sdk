@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import useTagsRepo from '../hooks/useTagsRepo';
 import { useAsyncFn } from 'app/common/hooks/useAsync';
 import useStateWithDebounce from 'app/common/hooks/useStateWithDebounce';
@@ -16,6 +16,7 @@ const ReadTags = React.createContext({
   search: null,
   setSearch: null,
   debouncedSearch: null,
+  hasTags: false,
 });
 
 function ReadTagsProvider({ children }) {
@@ -23,7 +24,6 @@ function ReadTagsProvider({ children }) {
   const [skip, setSkip] = React.useState(0);
   const [limit, setLimit] = React.useState(25);
   const [cachedData, setCachedData] = React.useState([]);
-  const [currentData, setCurrentData] = React.useState([]);
 
   const {
     value: search,
@@ -31,15 +31,16 @@ function ReadTagsProvider({ children }) {
     debouncedValue: debouncedSearch,
   } = useStateWithDebounce('');
 
-  const loadAll = useCallback(async () => {
-    return tagsRepo.readTags(0, 1000);
-  }, [tagsRepo]);
-
-  const [{ isLoading, error, data }, reloadAll] = useAsyncFn(loadAll, true);
+  const [{ isLoading, error, data }, fetchAll] = useAsyncFn(
+    useCallback(async () => tagsRepo.readTags(0, 1000), [tagsRepo]),
+    true
+  );
 
   useEffect(() => {
-    reloadAll();
-  }, [reloadAll]);
+    if (typeof tagsRepo.readTags === 'function') {
+      fetchAll();
+    }
+  }, [fetchAll, tagsRepo]);
 
   useEffect(() => {
     if (data) {
@@ -47,30 +48,32 @@ function ReadTagsProvider({ children }) {
     }
   }, [data, setCachedData]);
 
-  useEffect(() => {
-    setCurrentData(
-      cachedData.slice(skip, Math.min(skip + limit, cachedData.length)).filter((entry) => {
-        const match = debouncedSearch.toLowerCase();
-        return (
-          entry.name.toLowerCase().includes(match) || entry.sys.id.toLowerCase().includes(match)
-        );
-      })
-    );
-  }, [skip, limit, debouncedSearch, cachedData]);
-
   const reset = useCallback(async () => {
     if (skip === 0) {
-      await reloadAll();
+      await fetchAll();
     } else {
       setSkip(0);
     }
-  }, [skip, setSkip, reloadAll]);
+  }, [skip, setSkip, fetchAll]);
+
+  const dataSize = Math.min(skip + limit, cachedData.length);
+
+  const currentData = useMemo(() => {
+    return cachedData.slice(skip, dataSize).filter((entry) => {
+      const match = debouncedSearch.toLowerCase();
+      return entry.name.toLowerCase().includes(match) || entry.sys.id.toLowerCase().includes(match);
+    });
+  }, [cachedData, skip, dataSize, debouncedSearch]);
 
   const total = cachedData
     ? debouncedSearch && debouncedSearch.length > 0
       ? currentData.length
       : cachedData.length
     : 0;
+
+  if (error) {
+    console.error(error);
+  }
 
   return (
     <ReadTags.Provider
@@ -87,6 +90,7 @@ function ReadTagsProvider({ children }) {
         setSearch,
         debouncedSearch,
         total,
+        hasTags: cachedData.length > 0,
       }}>
       {children}
     </ReadTags.Provider>

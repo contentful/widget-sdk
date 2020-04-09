@@ -142,6 +142,7 @@ function UpdateTagModal({ isShown, onClose, tag }) {
           value={name}
           validationMessage={errors.name || null}
           textInputProps={{
+            autoFocus: true,
             maxLength: 64,
             type: 'text',
             autoComplete: 'off',

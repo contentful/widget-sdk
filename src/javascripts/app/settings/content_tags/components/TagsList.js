@@ -22,7 +22,7 @@ const isEdgeBrowser = isEdge();
 
 const styles = {
   wideCell: css({
-    minWidth: '20%',
+    width: '30%',
   }),
 };
 

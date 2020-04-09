@@ -1,11 +1,10 @@
 import * as React from 'react';
+import { useCallback } from 'react';
 import { Button, TextInput } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import useReadTags from '../hooks/useReadTags';
-import useCreateTagModal from '../components/CreateTagModal';
-import { useCallback } from 'react';
-import useF36Modal from '../hooks/useF36Modal';
+import PropTypes from 'prop-types';
 
 const styles = {
   search: css({
@@ -24,15 +23,8 @@ const styles = {
   }),
 };
 
-function TagsWorkbenchActions() {
+function TagsWorkbenchActions({ hasData, onCreate }) {
   const { search, setSearch, setSkip } = useReadTags();
-  const { modalComponent: createTagComponent, showModal: setTagComponentActive } = useF36Modal(
-    useCreateTagModal
-  );
-
-  const onCreate = useCallback(() => {
-    setTagComponentActive();
-  }, [setTagComponentActive]);
 
   const onSearch = useCallback(
     (event) => {
@@ -44,22 +36,30 @@ function TagsWorkbenchActions() {
 
   return (
     <div className={styles.actionsWrapper}>
-      {createTagComponent}
-      <TextInput
-        className={styles.search}
-        autoFocus
-        type="search"
-        placeholder="Search for tags"
-        onChange={onSearch}
-        value={search}
-      />
-      <div className={styles.ctaWrapper}>
-        <Button onClick={onCreate} buttonType="primary" testId="tags.add">
-          Create Tag
-        </Button>
-      </div>
+      {hasData && (
+        <>
+          <TextInput
+            className={styles.search}
+            autoFocus
+            type="search"
+            placeholder="Search for tags"
+            onChange={onSearch}
+            value={search}
+          />
+          <div className={styles.ctaWrapper}>
+            <Button onClick={onCreate} buttonType="primary" testId="tags.add">
+              Create Tag
+            </Button>
+          </div>
+        </>
+      )}
     </div>
   );
 }
+
+TagsWorkbenchActions.propTypes = {
+  hasData: PropTypes.bool,
+  onCreate: PropTypes.func,
+};
 
 export default TagsWorkbenchActions;
