@@ -10,7 +10,7 @@ import { assetContentType } from 'libs/legacy_client/client';
 import * as SystemFields from 'data/SystemFields';
 import * as logger from 'services/logger';
 import * as ListQuery from 'search/listQuery';
-
+import { PromisedLoader } from './services/PromisedLoader';
 import createSearchInput from 'app/ContentList/Search';
 import * as Tracking from 'analytics/events/SearchAndViews';
 
@@ -19,8 +19,7 @@ export default function register() {
     '$scope',
     '$q',
     'spaceContext',
-    'PromisedLoader',
-    function AssetSearchController($scope, $q, spaceContext, PromisedLoader) {
+    function AssetSearchController($scope, $q, spaceContext) {
       const controller = this;
       const assetLoader = new PromisedLoader();
 

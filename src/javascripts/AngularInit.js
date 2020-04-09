@@ -67,7 +67,6 @@ export const angularInitRun = [
       import(/* webpackMode: "eager" */ 'components/shared/viewStateController'),
       import(/* webpackMode: "eager" */ 'components/tabs/asset_list/assetListController'),
       import(/* webpackMode: "eager" */ 'components/tabs/asset_list/assetListDirective'),
-      import(/* webpackMode: "eager" */ 'services/promisedLoader'),
       import(/* webpackMode: "eager" */ 'components/tabs/asset_list/assetSearchController'),
       import(/* webpackMode: "eager" */ 'components/tabs/entry_list/displayFieldsController'),
       import(/* webpackMode: "eager" */ 'components/tabs/entry_list/entryListColumnsController'),

@@ -14,11 +14,14 @@ describe('Promised loader service', () => {
       error2: sinon.stub(),
     };
 
+    const PromisedLoader = (
+      await this.system.import('components/tabs/asset_list/services/PromisedLoader')
+    ).PromisedLoader;
+
     await $initialize(this.system, ($provide) => {
       $provide.constant('lodash/debounce', _.debounce);
     });
 
-    const PromisedLoader = $inject('PromisedLoader');
     const delayedInvocationStub = $inject('delayedInvocationStub');
     $rootScope = $inject('$rootScope');
     $q = $inject('$q');
@@ -121,11 +124,14 @@ describe('Promised loader service', () => {
 describe('PromisedLoader service', () => {
   let a, b;
   beforeEach(async function () {
+    const PromisedLoader = (
+      await this.system.import('components/tabs/asset_list/services/PromisedLoader')
+    ).PromisedLoader;
+
     await $initialize(this.system, ($provide) => {
       $provide.constant('lodash/debounce', _.debounce);
     });
 
-    const PromisedLoader = $inject('PromisedLoader');
     a = new PromisedLoader();
     b = new PromisedLoader();
   });
