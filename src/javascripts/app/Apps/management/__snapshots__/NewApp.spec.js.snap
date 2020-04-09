@@ -1024,7 +1024,7 @@ Object {
               >
                 <div
                   aria-live="polite"
-                  class="NotificationItem__NotificationItem___22iZo NotificationItem__NotificationItem--success___1CO7O"
+                  class="NotificationItem__NotificationItem___22iZo"
                   data-intent="success"
                   data-test-id="cf-ui-notification"
                   role="alert"
@@ -1036,7 +1036,7 @@ Object {
                   </div>
                   <div
                     aria-hidden="true"
-                    class="NotificationItem__NotificationItem__icon___3gdKj"
+                    class="NotificationItem__NotificationItem__icon___3gdKj NotificationItem__NotificationItem__icon--success___jzA45"
                   >
                     <svg
                       class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--white___3GVPJ"
@@ -1056,42 +1056,53 @@ Object {
                     </svg>
                   </div>
                   <div
-                    class="NotificationItem__NotificationItem__text___1-1Up"
+                    class="NotificationItem__NotificationItem__content___2z-pT"
                   >
-                    App created successfully.
-                  </div>
-                  <button
-                    class="IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1 NotificationItem__NotificationItem__dismiss___1Z6Df IconButton__IconButton--white___3GUQP"
-                    data-test-id="cf-ui-notification-close"
-                    type="button"
-                  >
-                    <span
-                      class="TabFocusTrap__TabFocusTrap___39Vty IconButton__IconButton__inner___3fnmT"
-                      tabindex="-1"
+                    <div
+                      class="NotificationItem__NotificationItem__text___1-1Up"
                     >
-                      <svg
-                        class="Icon__Icon___38Epv Icon__Icon--small___1yGZK undefined IconButton__IconButton__icon___3yZQN"
-                        data-test-id="cf-ui-icon"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        width="24"
-                        xmlns="http://www.w3.org/2000/svg"
+                      <div
+                        class="NotificationItem__NotificationItem__title___126c1"
                       >
-                        <path
-                          d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
-                        />
-                        <path
-                          d="M0 0h24v24H0z"
-                          fill="none"
-                        />
-                      </svg>
+                        App created successfully.
+                      </div>
+                      <div
+                        class="NotificationItem__NotificationItem__body___11cuA"
+                      />
+                    </div>
+                    <button
+                      class="IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1 NotificationItem__NotificationItem__dismiss___1Z6Df IconButton__IconButton--secondary___3Gc3d"
+                      data-test-id="cf-ui-notification-close"
+                      type="button"
+                    >
                       <span
-                        class="IconButton__IconButton__label___1kp5y helpers__sr-only___3Kv3z"
+                        class="TabFocusTrap__TabFocusTrap___39Vty IconButton__IconButton__inner___3fnmT"
+                        tabindex="-1"
                       >
-                        Dismiss
+                        <svg
+                          class="Icon__Icon___38Epv Icon__Icon--small___1yGZK undefined IconButton__IconButton__icon___3yZQN"
+                          data-test-id="cf-ui-icon"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          width="24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                          />
+                          <path
+                            d="M0 0h24v24H0z"
+                            fill="none"
+                          />
+                        </svg>
+                        <span
+                          class="IconButton__IconButton__label___1kp5y helpers__sr-only___3Kv3z"
+                        >
+                          Dismiss
+                        </span>
                       </span>
-                    </span>
-                  </button>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1109,7 +1120,7 @@ Object {
               >
                 <div
                   aria-live="assertive"
-                  class="NotificationItem__NotificationItem___22iZo NotificationItem__NotificationItem--error___19wsc"
+                  class="NotificationItem__NotificationItem___22iZo"
                   data-intent="error"
                   data-test-id="cf-ui-notification"
                   role="alert"
@@ -1121,7 +1132,7 @@ Object {
                   </div>
                   <div
                     aria-hidden="true"
-                    class="NotificationItem__NotificationItem__icon___3gdKj"
+                    class="NotificationItem__NotificationItem__icon___3gdKj NotificationItem__NotificationItem__icon--error___nAbZQ"
                   >
                     <svg
                       class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--white___3GVPJ"
@@ -1136,47 +1147,58 @@ Object {
                         fill="none"
                       />
                       <path
-                        d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"
+                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
                       />
                     </svg>
                   </div>
                   <div
-                    class="NotificationItem__NotificationItem__text___1-1Up"
+                    class="NotificationItem__NotificationItem__content___2z-pT"
                   >
-                    Validation failed. Please check that you have provided an app Name, valid Source URL and/or Entry field types.
-                  </div>
-                  <button
-                    class="IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1 NotificationItem__NotificationItem__dismiss___1Z6Df IconButton__IconButton--white___3GUQP"
-                    data-test-id="cf-ui-notification-close"
-                    type="button"
-                  >
-                    <span
-                      class="TabFocusTrap__TabFocusTrap___39Vty IconButton__IconButton__inner___3fnmT"
-                      tabindex="-1"
+                    <div
+                      class="NotificationItem__NotificationItem__text___1-1Up"
                     >
-                      <svg
-                        class="Icon__Icon___38Epv Icon__Icon--small___1yGZK undefined IconButton__IconButton__icon___3yZQN"
-                        data-test-id="cf-ui-icon"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        width="24"
-                        xmlns="http://www.w3.org/2000/svg"
+                      <div
+                        class="NotificationItem__NotificationItem__title___126c1"
                       >
-                        <path
-                          d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
-                        />
-                        <path
-                          d="M0 0h24v24H0z"
-                          fill="none"
-                        />
-                      </svg>
+                        Validation failed. Please check that you have provided an app Name, valid Source URL and/or Entry field types.
+                      </div>
+                      <div
+                        class="NotificationItem__NotificationItem__body___11cuA"
+                      />
+                    </div>
+                    <button
+                      class="IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1 NotificationItem__NotificationItem__dismiss___1Z6Df IconButton__IconButton--secondary___3Gc3d"
+                      data-test-id="cf-ui-notification-close"
+                      type="button"
+                    >
                       <span
-                        class="IconButton__IconButton__label___1kp5y helpers__sr-only___3Kv3z"
+                        class="TabFocusTrap__TabFocusTrap___39Vty IconButton__IconButton__inner___3fnmT"
+                        tabindex="-1"
                       >
-                        Dismiss
+                        <svg
+                          class="Icon__Icon___38Epv Icon__Icon--small___1yGZK undefined IconButton__IconButton__icon___3yZQN"
+                          data-test-id="cf-ui-icon"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          width="24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                          />
+                          <path
+                            d="M0 0h24v24H0z"
+                            fill="none"
+                          />
+                        </svg>
+                        <span
+                          class="IconButton__IconButton__label___1kp5y helpers__sr-only___3Kv3z"
+                        >
+                          Dismiss
+                        </span>
                       </span>
-                    </span>
-                  </button>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

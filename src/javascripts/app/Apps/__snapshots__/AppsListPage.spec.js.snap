@@ -182,16 +182,16 @@ exports[`AppsListPage should match snapshot for loading state 1`] = `
                   Loading apps list...
                 </title>
                 <rect
-                  clip-path="url(#cf-ui-skeleton-clip-id)"
+                  clip-path="url(#cf-ui-skeleton-clip-0)"
                   height="100%"
-                  style="fill: url(#cf-ui-skeleton-clip-gradient);"
+                  style="fill: url(#cf-ui-skeleton-clip-gradient-1);"
                   width="100%"
                   x="0"
                   y="0"
                 />
                 <defs>
                   <clippath
-                    id="cf-ui-skeleton-clip-id"
+                    id="cf-ui-skeleton-clip-0"
                   >
                     <rect
                       height="21"
@@ -272,7 +272,7 @@ exports[`AppsListPage should match snapshot for loading state 1`] = `
                     />
                   </clippath>
                   <lineargradient
-                    id="cf-ui-skeleton-clip-gradient"
+                    id="cf-ui-skeleton-clip-gradient-1"
                   >
                     <stop
                       offset="0%"
