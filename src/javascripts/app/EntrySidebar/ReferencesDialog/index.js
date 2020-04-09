@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
+import { isEqual, uniqWith } from 'lodash';
 import { getCurrentVariation } from 'utils/LaunchDarkly';
 import { ALL_REFERENCES_DIALOG } from 'featureFlags';
 import {
@@ -11,15 +12,20 @@ import {
   Subheading,
   Notification,
 } from '@contentful/forma-36-react-components';
+import { track } from 'analytics/Analytics';
 import tokens from '@contentful/forma-36-tokens';
 import ErrorHandler from 'components/shared/ErrorHandlerComponent.js';
+import { create } from 'access_control/EntityPermissions';
 import { goToSlideInEntity } from 'navigation/SlideInNavigator';
 import ReferencesTree from './ReferencesTree';
 import ValidationNote from './ValidationNote';
+import PublicationNote from './PublicationNote';
 import {
   getReferencesForEntryId,
+  getEntityTitle,
   getDefaultLocale,
   validateEntities,
+  publishEntities,
 } from './referencesDialogService';
 
 const styles = {
@@ -61,6 +67,23 @@ const styles = {
   }),
 };
 
+const trackingEvents = {
+  publish: 'entry_references:publish',
+  validate: 'entry_references:validate',
+};
+
+const mapEntities = (entities) =>
+  uniqWith(
+    entities.map((entity) => ({
+      sys: {
+        id: entity.sys.id,
+        linkType: entity.sys.type,
+        type: 'Link',
+      },
+    })),
+    isEqual
+  );
+
 const ReferencesDialog = ({ entity }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isEnabled, setIsEnabled] = useState(false);
@@ -70,7 +93,10 @@ const ReferencesDialog = ({ entity }) => {
   const [selectedEntities, setSelectedEntites] = useState([]);
   const [validations, setValidations] = useState(null);
   const [isValidating, setIsValidating] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
   const [isTooComplex, setIsTooComplex] = useState(false);
+  const [published, setPublished] = useState(null);
+  const [entityTitle, setEntityTitle] = useState(null);
 
   const maxLevel = 5;
 
@@ -94,10 +120,17 @@ const ReferencesDialog = ({ entity }) => {
     return null;
   }
 
+  const fetchReferences = () =>
+    getReferencesForEntryId(entity.sys.id).then((fetchedRefs) => {
+      setReferences(fetchedRefs);
+      return fetchedRefs;
+    });
+
   const fetchReferencesAndOpenModal = async () => {
     try {
-      const fetchedRefs = await getReferencesForEntryId(entity.sys.id);
-      setReferences(fetchedRefs);
+      const fetchedRefs = await fetchReferences();
+      const entryTitle = await getEntityTitle(fetchedRefs[0]);
+      setEntityTitle(entryTitle);
     } catch {
       setIsTooComplex(true);
     }
@@ -110,6 +143,7 @@ const ReferencesDialog = ({ entity }) => {
     setIsOpen(false);
     setReferences([]);
     setValidations(null);
+    setPublished(null);
     setIsTooComplex(false);
   };
 
@@ -120,14 +154,14 @@ const ReferencesDialog = ({ entity }) => {
 
   const handleValidation = () => {
     setIsValidating(true);
+    setPublished(null);
 
-    const entitiesToValidate = selectedEntities.map((entity) => ({
-      sys: {
-        id: entity.sys.id,
-        linkType: entity.sys.type,
-        type: 'Link',
-      },
-    }));
+    track(trackingEvents.validate, {
+      entity_id: entity.sys.id,
+      references_count: selectedEntities.length,
+    });
+
+    const entitiesToValidate = mapEntities(selectedEntities);
 
     validateEntities({ entities: entitiesToValidate, action: 'publish' })
       .then((validationResponse) => {
@@ -140,9 +174,47 @@ const ReferencesDialog = ({ entity }) => {
       });
   };
 
+  const handlePublication = () => {
+    setIsPublishing(true);
+    setPublished(null);
+
+    track(trackingEvents.publish, {
+      entity_id: entity.sys.id,
+      references_count: selectedEntities.length,
+    });
+
+    const entitiesToValidate = mapEntities(selectedEntities);
+
+    publishEntities({ entities: entitiesToValidate, action: 'publish' })
+      .then(() => {
+        setIsPublishing(false);
+        fetchReferences().then(() => {
+          setPublished({ succeed: true });
+        });
+      })
+      .catch((error) => {
+        setIsPublishing(false);
+        /**
+         * Separate validation resonse from failure response
+         */
+        if (error.statusCode && error.statusCode === 422) {
+          const errored = error.data.details.errors;
+          /**
+           * Permisson errors have a different shape without sys
+           */
+          if (errored.length && errored[0].sys) {
+            setValidations({ errored });
+          }
+        } else {
+          setPublished({ succeed: false });
+        }
+        Notification.error('References publication failed');
+      });
+  };
+
   return (
     <>
-      <Subheading className="entity-sidebar__heading">Validate references</Subheading>
+      <Subheading className="entity-sidebar__heading">References</Subheading>
       <ErrorHandler
         renderOnError={
           <Note noteType="negative">
@@ -168,7 +240,7 @@ const ReferencesDialog = ({ entity }) => {
             isShown={isOpen}
             shouldCloseOnEscapePress
             shouldCloseOnOverlayClick
-            title="Validate References"
+            title="All References"
             onClose={closeModal}>
             {({ title, onClose }) => (
               <>
@@ -182,7 +254,7 @@ const ReferencesDialog = ({ entity }) => {
                     references.length && (
                       <ReferencesTree
                         root={references[0]}
-                        key={validations}
+                        key={JSON.stringify({ validations, references })}
                         defaultLocale={defaultLocale}
                         validations={validations}
                         onSelectEntities={(entities) => setSelectedEntites(entities)}
@@ -193,17 +265,32 @@ const ReferencesDialog = ({ entity }) => {
                     )
                   )}
                 </Modal.Content>
-                <Modal.Controls>
-                  <ValidationNote validations={validations} />
-                  <Button
-                    className={styles.validationButton}
-                    buttonType="positive"
-                    data-test-id="validateReferencesBtn"
-                    onClick={handleValidation}
-                    loading={isValidating}>
-                    Validate all
-                  </Button>
-                </Modal.Controls>
+                {references.length && create(references[0].sys).can('publish') && (
+                  <Modal.Controls>
+                    <ValidationNote validations={validations} />
+                    <PublicationNote
+                      publications={published}
+                      entityTitle={entityTitle}
+                      referencesCount={selectedEntities.length - 1}
+                    />
+                    <Button
+                      className={styles.validationButton}
+                      buttonType="positive"
+                      data-test-id="publishReferencesBtn"
+                      onClick={handlePublication}
+                      loading={isPublishing}>
+                      Publish all
+                    </Button>
+                    <Button
+                      className={styles.validationButton}
+                      buttonType="muted"
+                      data-test-id="validateReferencesBtn"
+                      onClick={handleValidation}
+                      loading={isValidating}>
+                      Validate all
+                    </Button>
+                  </Modal.Controls>
+                )}
               </>
             )}
           </Modal>

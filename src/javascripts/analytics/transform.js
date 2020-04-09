@@ -246,6 +246,8 @@ registerGenericEvent('app_management:updated');
 
 registerGenericEvent('tracking:invalid_event');
 registerGenericEvent('entry_references:dialog_open');
+registerGenericEvent('entry_references:publish');
+registerGenericEvent('entry_references:validate');
 
 /**
  * Registers an event to be tracked by snowplow.

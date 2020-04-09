@@ -96,7 +96,7 @@ export const validEvents = {
   ],
   content_type: ['create'],
   entry: ['create', 'publish'],
-  entry_references: ['dialog_open'],
+  entry_references: ['dialog_open', 'publish', 'validate'],
   asset: ['create'],
   api_key: ['create', 'clipboard_copy', 'boilerplate'],
   invite_user: ['learn', 'create_space'],

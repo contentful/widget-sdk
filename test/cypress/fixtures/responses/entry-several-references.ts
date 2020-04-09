@@ -70,6 +70,57 @@ export const validateEntryReferencesSeveralRequest = {
   ],
 };
 
+export const validateEntryReferencesSeveralErrorsResponse = {
+  sys: {
+    id: 'immediate',
+    type: 'ReleaseValidation',
+  },
+  errored: [
+    {
+      sys: {
+        type: 'Link',
+        linkType: 'Entry',
+        id: defaultEntryId,
+      },
+      error: {
+        sys: {
+          type: 'Error',
+          id: 'InvalidEntry',
+        },
+        message: 'Validation error',
+        details: {
+          errors: [
+            {
+              name: 'required',
+              path: ['fields', 'requiredText'],
+              details: 'The property "requiredText" is required here',
+            },
+          ],
+        },
+      },
+    },
+  ],
+};
+
+export const publishEntryReferencesSeveralSuccessResponse = {
+  sys: {
+    type: 'Release',
+    id: 'immediate',
+  },
+  entities: validateEntryReferencesSeveralRequest,
+};
+
+export const publishEntryReferencesSeveralRequest = validateEntryReferencesSeveralRequest;
+export const publishEntryReferencesSeveralErrorsResponse = {
+  sys: {
+    id: 'immediate',
+    type: 'Release',
+  },
+  details: {
+    errors: validateEntryReferencesSeveralErrorsResponse.errored,
+  },
+};
+
 export function entry(entryPayload = { sys: {}, fields: {} }) {
   const environment = {
     sys: {

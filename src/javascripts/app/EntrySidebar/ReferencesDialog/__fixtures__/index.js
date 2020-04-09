@@ -2614,3 +2614,93 @@ export const entity = {
     },
   },
 };
+
+export const simpleReferencesPublicationSuccessResponse = {
+  sys: {
+    id: 'immediate',
+    type: 'Release',
+  },
+  entities: {
+    action: 'publish',
+    entities: [
+      {
+        sys: {
+          id: 'EntryId_00',
+          linkType: 'Entry',
+          type: 'Link',
+        },
+      },
+      {
+        sys: {
+          id: 'EntryId_01',
+          linkType: 'Entry',
+          type: 'Link',
+        },
+      },
+      {
+        sys: {
+          id: 'EntryId_02',
+          linkType: 'Entry',
+          type: 'Link',
+        },
+      },
+    ],
+  },
+};
+
+export const simpleReferencesPublicationInvalidErrorResponse = {
+  sys: {
+    type: 'ReleaseValidation',
+    id: 'immediate',
+  },
+  details: {
+    errors: [
+      {
+        sys: {
+          type: 'Link',
+          linkType: 'Entry',
+          id: '3ADrOROW1jot5jExFOjt4i',
+        },
+        error: {
+          sys: {
+            type: 'Error',
+            id: 'InvalidEntry',
+          },
+          message: 'Validation error message',
+          details: {
+            errors: [
+              {
+                name: 'required',
+                path: ['fields', 'requiredText'],
+                details: 'The property "requiredText" is required here',
+              },
+            ],
+          },
+        },
+      },
+      {
+        sys: {
+          type: 'Link',
+          linkType: 'Asset',
+          id: '1RuPXX12mNeIzKQIcuOWQW',
+        },
+        error: {
+          sys: {
+            type: 'Error',
+            id: 'InvalidEntry',
+          },
+          message: 'Validation error message',
+          details: {
+            errors: [
+              {
+                name: 'required',
+                path: ['fields', 'requiredText'],
+                details: 'The property "requiredText" is required here',
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+};

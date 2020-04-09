@@ -8,6 +8,7 @@ import ReferencesTreeDialog from './index';
 
 import {
   validateEntities,
+  publishEntities,
   getDefaultLocale,
   getReferencesForEntryId,
   getEntityTitle,
@@ -19,14 +20,23 @@ import {
   entity,
   simpleReferencesValidationErrorResponse,
   simpleReferencesValidationSuccessResponse,
+  simpleReferencesPublicationSuccessResponse,
+  simpleReferencesPublicationInvalidErrorResponse,
   simpleReferences,
 } from './__fixtures__';
+
+jest.mock('access_control/EntityPermissions', () => ({
+  create: () => ({
+    can: jest.fn().mockReturnValue(true),
+  }),
+}));
 
 jest.mock('./referencesDialogService', function () {
   return {
     getDefaultLocale: jest.fn(),
     getReferencesForEntryId: jest.fn(),
     validateEntities: jest.fn(),
+    publishEntities: jest.fn(),
     getEntityTitle: jest.fn(),
   };
 });
@@ -62,7 +72,7 @@ describe('ReferencesTree component', () => {
     expect(queryAllByTestId('cf-ui-note-validation-failed')).toHaveLength(1);
   });
 
-  it('should render the toast success toast without valiation error', async () => {
+  it('should render the success toast without valiation error', async () => {
     validateEntities.mockResolvedValue(simpleReferencesValidationSuccessResponse);
     const { queryAllByTestId, getByTestId } = render(<ReferencesTreeDialog entity={entity} />);
 
@@ -75,5 +85,56 @@ describe('ReferencesTree component', () => {
     await wait();
 
     expect(queryAllByTestId('cf-ui-note-validation-success')).toHaveLength(1);
+  });
+
+  it('should render the success toast after publication', async () => {
+    publishEntities.mockResolvedValue(simpleReferencesPublicationSuccessResponse);
+
+    const { queryAllByTestId, getByTestId } = render(<ReferencesTreeDialog entity={entity} />);
+
+    await wait();
+
+    fireEvent.click(getByTestId('referencesBtn'));
+    await wait();
+
+    fireEvent.click(getByTestId('publishReferencesBtn'));
+    await wait();
+
+    expect(queryAllByTestId('cf-ui-note-publication-success')).toHaveLength(1);
+  });
+
+  it('should render the failed toast after failed publication', async () => {
+    publishEntities.mockRejectedValue({ statusCode: 400 });
+
+    const { queryAllByTestId, getByTestId } = render(<ReferencesTreeDialog entity={entity} />);
+
+    await wait();
+
+    fireEvent.click(getByTestId('referencesBtn'));
+    await wait();
+
+    fireEvent.click(getByTestId('publishReferencesBtn'));
+    await wait();
+
+    expect(queryAllByTestId('cf-ui-note-publication-failed')).toHaveLength(1);
+  });
+
+  it('should render the validation toast after pubshing invalid state', async () => {
+    publishEntities.mockRejectedValue({
+      statusCode: 422,
+      data: simpleReferencesPublicationInvalidErrorResponse,
+    });
+
+    const { queryAllByTestId, getByTestId } = render(<ReferencesTreeDialog entity={entity} />);
+
+    await wait();
+
+    fireEvent.click(getByTestId('referencesBtn'));
+    await wait();
+
+    fireEvent.click(getByTestId('publishReferencesBtn'));
+    await wait();
+
+    expect(queryAllByTestId('cf-ui-note-validation-failed')).toHaveLength(1);
   });
 });

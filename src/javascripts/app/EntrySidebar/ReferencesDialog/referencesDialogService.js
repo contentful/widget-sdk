@@ -29,11 +29,23 @@ function getUserInfo() {
   };
 }
 
-async function validateEntities({ entities, action }) {
+function validateEntities({ entities, action }) {
   const spaceContext = getModule('spaceContext');
   const apiClient = new APIClient(spaceContext.endpoint);
-  const res = await apiClient.validateRelease(action, entities);
-  return res;
+  return apiClient.validateRelease(action, entities);
 }
 
-export { getReferencesForEntryId, getDefaultLocale, getEntityTitle, getUserInfo, validateEntities };
+function publishEntities({ entities, action }) {
+  const spaceContext = getModule('spaceContext');
+  const apiClient = new APIClient(spaceContext.endpoint);
+  return apiClient.executeRelease(action, entities);
+}
+
+export {
+  getReferencesForEntryId,
+  getDefaultLocale,
+  getEntityTitle,
+  getUserInfo,
+  validateEntities,
+  publishEntities,
+};

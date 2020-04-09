@@ -12,12 +12,17 @@ const severalEntriesResponseBody = require('../fixtures/responses/entries-severa
 import {
   severalEntryReferencesResponse,
   validateEntryReferencesSeveralRequest,
+  publishEntryReferencesSeveralRequest,
+  validateEntryReferencesSeveralErrorsResponse,
+  publishEntryReferencesSeveralErrorsResponse,
+  publishEntryReferencesSeveralSuccessResponse,
 } from '../fixtures/responses/entry-several-references';
 
 enum States {
   NONE = 'entries/none',
   SEVERAL = 'entries/several',
   NO_ERRORS = 'releases/no-errors',
+  VALIDATION_ERRORS = 'release/validation-errors',
   ERRORS = 'release/errors',
   SEVERAL_REFERENCES_FOR_ENTRY = 'entries/several-references',
   NO_LINKS_TO_DEFAULT_ENTRY = 'entries/no-links-to-default-entry',
@@ -263,7 +268,7 @@ export const validateEntryReferencesResponse = {
   willReturnErrors() {
     cy.addInteraction({
       provider: 'releases',
-      state: States.ERRORS,
+      state: States.VALIDATION_ERRORS,
       uponReceiving: `validate references for entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
       withRequest: {
         method: 'POST',
@@ -276,6 +281,77 @@ export const validateEntryReferencesResponse = {
       },
       willRespondWith: {
         status: 200,
+        body: validateEntryReferencesSeveralErrorsResponse,
+      },
+    }).as('validateEntryReferencesResponse');
+
+    return '@validateEntryReferencesResponse';
+  },
+};
+
+export const publishEntryReferencesResponse = {
+  willReturnNoErrors() {
+    cy.addInteraction({
+      provider: 'releases',
+      state: States.NO_ERRORS,
+      uponReceiving: `publish references for entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
+      withRequest: {
+        method: 'POST',
+        path: `/spaces/${defaultSpaceId}/releases/immediate/execute`,
+        headers: {
+          ...defaultHeader,
+          'x-contentful-enable-alpha-feature': 'immediate-release',
+        },
+        body: publishEntryReferencesSeveralRequest,
+      },
+      willRespondWith: {
+        status: 200,
+        body: publishEntryReferencesSeveralSuccessResponse,
+      },
+    }).as('publishEntryReferencesResponse');
+
+    return '@publishEntryReferencesResponse';
+  },
+
+  willReturnErrors() {
+    cy.addInteraction({
+      provider: 'releases',
+      state: States.VALIDATION_ERRORS,
+      uponReceiving: `fail publishing references for entry "${defaultEntryId}" in space "${defaultSpaceId}" with validation error`,
+      withRequest: {
+        method: 'POST',
+        path: `/spaces/${defaultSpaceId}/releases/immediate/execute`,
+        headers: {
+          ...defaultHeader,
+          'x-contentful-enable-alpha-feature': 'immediate-release',
+        },
+        body: publishEntryReferencesSeveralRequest,
+      },
+      willRespondWith: {
+        status: 422,
+        body: publishEntryReferencesSeveralErrorsResponse,
+      },
+    }).as('publishEntryReferencesResponse');
+
+    return '@publishEntryReferencesResponse';
+  },
+
+  willFail() {
+    cy.addInteraction({
+      provider: 'releases',
+      state: States.ERRORS,
+      uponReceiving: `fail publishing references for entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
+      withRequest: {
+        method: 'POST',
+        path: `/spaces/${defaultSpaceId}/releases/immediate/execute`,
+        headers: {
+          ...defaultHeader,
+          'x-contentful-enable-alpha-feature': 'immediate-release',
+        },
+        body: null,
+      },
+      willRespondWith: {
+        status: 400,
         body: {
           sys: {
             id: 'immediate',

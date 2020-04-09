@@ -5,7 +5,6 @@ import { css } from 'emotion';
 import { Paragraph, List, ListItem, Note } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import ReferenceCard from './ReferenceCard';
-import { getEntityTitle } from './referencesDialogService';
 import { track } from 'analytics/Analytics';
 
 const styles = {
@@ -51,11 +50,6 @@ class ReferencesTree extends React.Component {
   constructor(props) {
     super(props);
     this.memoizedRenderReferenceCards = memoize(this.renderReferenceCards);
-  }
-
-  async componentDidMount() {
-    const entryTitle = await getEntityTitle(this.props.root);
-    this.setState({ entryTitle });
   }
 
   findValidationErrorForEntity = (entityId) => {
@@ -264,8 +258,8 @@ class ReferencesTree extends React.Component {
         {referencesTree ? (
           <>
             <Paragraph className={styles.description}>
-              Here is a list of all references for this entry. Run a validation check against all
-              references. Click a reference to edit and publish.
+              Here is a list of all references for this entry. Publish them all together, or
+              validate them to check readiness.
             </Paragraph>
             <List className={styles.parentList}>
               <ReferenceCard

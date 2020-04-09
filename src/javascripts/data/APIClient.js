@@ -266,6 +266,22 @@ APIClient.prototype.validateRelease = function (action, entities, type = 'immedi
   );
 };
 
+APIClient.prototype.executeRelease = function (action, entities, id = 'immediate') {
+  return this._request(
+    {
+      method: 'POST',
+      path: ['releases', id, 'execute'],
+      data: {
+        action,
+        entities,
+      },
+    },
+    {
+      ...getAlphaHeader(IMMEDIATE_RELEASE),
+    }
+  );
+};
+
 APIClient.prototype.publishContentType = function (data, version) {
   return this._setResourceFlag('content_types', data, 'published', version);
 };

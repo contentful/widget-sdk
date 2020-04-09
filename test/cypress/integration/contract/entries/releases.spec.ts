@@ -7,6 +7,7 @@ import {
 import {
   getDefaultEntry,
   validateEntryReferencesResponse,
+  publishEntryReferencesResponse,
   queryLinksToDefaultEntry,
   getFirst7SnapshotsOfDefaultEntry,
   getEntryReferences,
@@ -57,6 +58,53 @@ describe('Immediate release', () => {
       cy.wait(validateEntryTreeInteraction);
 
       cy.getByTestId('cf-ui-note-validation-failed').should('be.visible');
+    });
+  });
+
+  describe('Publication', () => {
+    beforeEach(() => {
+      cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
+      cy.wait(interactions, { timeout: 20000 });
+      cy.resetAllFakeServers();
+    });
+
+    it('publishes release successfully', () => {
+      const getEntryReferencesInteraction = getEntryReferences.willReturnSeveral();
+      const publishEntryTreeInteraction = publishEntryReferencesResponse.willReturnNoErrors();
+
+      cy.getByTestId('referencesBtn').click();
+      cy.wait(getEntryReferencesInteraction);
+
+      cy.getByTestId('publishReferencesBtn').click();
+      cy.wait(publishEntryTreeInteraction);
+
+      cy.getByTestId('cf-ui-note-publication-success').should('be.visible');
+    });
+
+    it('publishes release returns validation errors', () => {
+      const getEntryReferencesInteraction = getEntryReferences.willReturnSeveral();
+      const publishEntryTreeInteraction = publishEntryReferencesResponse.willReturnErrors();
+
+      cy.getByTestId('referencesBtn').click();
+      cy.wait(getEntryReferencesInteraction);
+
+      cy.getByTestId('publishReferencesBtn').click();
+      cy.wait(publishEntryTreeInteraction);
+
+      cy.getByTestId('cf-ui-note-validation-failed').should('be.visible');
+    });
+
+    it('publishes release fails', () => {
+      const getEntryReferencesInteraction = getEntryReferences.willReturnSeveral();
+      const publishEntryTreeInteraction = publishEntryReferencesResponse.willFail();
+
+      cy.getByTestId('referencesBtn').click();
+      cy.wait(getEntryReferencesInteraction);
+
+      cy.getByTestId('publishReferencesBtn').click();
+      cy.wait(publishEntryTreeInteraction);
+
+      cy.getByTestId('cf-ui-note-publication-failed').should('be.visible');
     });
   });
 });
