@@ -14,15 +14,13 @@ expect.extend(kefirHelpers.extensions);
 
 const newLegacyClientEntityMock = (entity) => ({ data: entity, setDeleted: noop });
 
-// Mock Angular getModule for PresenceHub in OtDocument
-jest.mock('NgRegistry', () => ({
-  getModule: () => ({
-    create: () => ({
-      destroy: () => jest.fn(),
-      leave: () => jest.fn(),
-    }),
+jest.mock('./PresenceHub', () => ({
+  createPresenceHub: () => ({
+    destroy: () => jest.fn(),
+    leave: () => jest.fn(),
   }),
 }));
+
 jest.mock('services/localeStore', () => ({
   getPrivateLocales: () => [{ internal_code: 'en-US' }, { internal_code: 'de' }],
 }));

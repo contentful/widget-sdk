@@ -2,7 +2,7 @@ import * as K from 'test/utils/kefir';
 import sinon from 'sinon';
 import { $initialize, $inject, $apply } from 'test/utils/ng';
 
-describe('entityEditor/Document/PresenceHub', () => {
+describe('app/entity_editor/Document/PresenceHub', () => {
   function extractUserIds(userStream) {
     return K.extractValues(
       userStream.map((users = []) => {
@@ -23,8 +23,10 @@ describe('entityEditor/Document/PresenceHub', () => {
       $apply();
     };
 
-    const PresenceHub = $inject('entityEditor/Document/PresenceHub');
-    this.presence = PresenceHub.create('ownUser', docEvents, this.shout);
+    const createPresenceHub = (await this.system.import('app/entity_editor/Document/PresenceHub'))
+      .createPresenceHub;
+
+    this.presence = createPresenceHub('ownUser', docEvents, this.shout);
   });
 
   describe('#collaborators', () => {

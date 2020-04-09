@@ -11,11 +11,11 @@ import * as DocSetters from 'data/document/Setters';
 import DocumentStatusCode from 'data/document/statusCode';
 import { DocLoad } from 'data/sharejs/Connection';
 import * as Reverter from './Reverter';
-import { getModule } from 'NgRegistry';
 import { track } from 'analytics/Analytics';
 import TheLocaleStore from 'services/localeStore';
 import * as ShareJS from 'data/sharejs/utils';
 import { valuePropertyAt } from './documentHelpers';
+import * as PresenceHub from './PresenceHub';
 
 /**
  * @returns {Document}
@@ -24,7 +24,6 @@ import { valuePropertyAt } from './documentHelpers';
  */
 export function create(docConnection, initialEntity, contentType, user, spaceEndpoint) {
   const entity = cloneDeep(initialEntity);
-  const PresenceHub = getModule('entityEditor/Document/PresenceHub');
 
   let currentDoc;
   const cleanupTasks = [];
@@ -315,7 +314,7 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
     errorBus.set(errors[error] || null);
   });
 
-  const presence = PresenceHub.create(user.sys.id, docEventsBus.stream, shout);
+  const presence = PresenceHub.createPresenceHub(user.sys.id, docEventsBus.stream, shout);
   cleanupTasks.push(presence.destroy);
 
   const version$ = sysProperty.map((sys) => sys.version);

@@ -41,7 +41,6 @@ export const angularInitRun = [
       import(/* webpackMode: "eager" */ 'app/entity_editor/cfEntityFieldDirective'),
       import(/* webpackMode: "eager" */ 'app/entity_editor/cfWidgetRendererDirective'),
       import(/* webpackMode: "eager" */ 'app/entity_editor/fieldLocaleController'),
-      import(/* webpackMode: "eager" */ 'app/entity_editor/presenceHub'),
       import(/* webpackMode: "eager" */ 'app/entity_editor/stateController'),
       import(/* webpackMode: "eager" */ 'app/entry_editor/cfEntryEditorDirective'),
       import(/* webpackMode: "eager" */ 'app/entry_editor/cfWidgetApiDirective'),
