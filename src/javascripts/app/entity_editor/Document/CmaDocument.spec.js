@@ -1,10 +1,14 @@
 import { cloneDeep, set } from 'lodash';
-import * as CmaDocument from '../unused__CmaDocument';
+import * as CmaDocument from './CmaDocument';
 import testDocumentBasic, { newEntry, newContentType } from './Document.spec';
-import * as K from '../../../../../../test/utils/kefir';
-import { Error as DocError } from '../../../../data/document/Error';
-import { THROTTLE_TIME } from '../unused__CmaDocument';
+import * as K from '../../../../../test/utils/kefir';
+import { Error as DocError } from '../../../data/document/Error';
+import { THROTTLE_TIME } from './CmaDocument';
+import { track } from 'analytics/Analytics';
 
+jest.mock('analytics/Analytics', () => ({
+  track: jest.fn(),
+}));
 jest.mock('services/localeStore', () => ({
   getPrivateLocales: () => [{ internal_code: 'en-US' }, { internal_code: 'de' }],
 }));
@@ -19,6 +23,10 @@ jest.mock('access_control/EntityPermissions', () => {
   };
   return mock;
 });
+
+const now = Date.now();
+global.Date.now = jest.fn(() => now);
+
 const mockSpaceEndpoint = () =>
   jest.fn().mockImplementation((body) => {
     const entry = cloneDeep(body.data);
@@ -27,8 +35,16 @@ const mockSpaceEndpoint = () =>
   });
 let spaceEndpoint;
 
+const newError = (code, msg) => {
+  const error = new Error(msg);
+  error.code = code;
+  return error;
+};
 // It must be used together with jest.useRealTimers() to skip a current tick.
 const wait = () => new Promise((resolve) => setTimeout(resolve, 0));
+// For some reason "catch" inside the throttled CMA function runs AFTER the "expect" below,
+// so have to skip few event-loop ticks first.
+const waitForTimers = () => new Promise((resolve) => setTimeout(resolve, 0) && jest.runAllTimers());
 
 function createCmaDocument(initialEntity, contentTypeFields, throttleMs) {
   const contentType = newContentType(initialEntity.sys.contentType.sys, contentTypeFields);
@@ -234,16 +250,6 @@ describe('CmaDocument', () => {
       });
     });
     describe('error$', () => {
-      const newError = (code, msg) => {
-        const error = new Error(msg);
-        error.code = code;
-        return error;
-      };
-      // For some reason "catch" inside the throttled CMA function runs AFTER the "expect" below,
-      // so have to skip few event-loop ticks first.
-      const waitForTimers = () =>
-        new Promise((resolve) => setTimeout(resolve, 0) && jest.runAllTimers());
-
       beforeEach(() => {
         jest.useFakeTimers();
       });
@@ -257,6 +263,7 @@ describe('CmaDocument', () => {
         await waitForTimers();
         K.assertCurrentValue(doc.state.error$, DocError.VersionMismatch());
       });
+
       it('emits OpenForbidden on AccessDenied error code', async () => {
         spaceEndpoint.mockImplementationOnce(() => {
           throw newError('AccessDenied', 'API request failed');
@@ -353,6 +360,58 @@ describe('CmaDocument', () => {
       expect(fields).not.toMatchObject({
         unknownField: true,
       });
+    });
+  });
+
+  describe('edit conflict tracking', () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    it('happens on VersionMismatch error', async () => {
+      const remoteEntity = set(cloneDeep(entry), fieldPath, 'en-US-remote-updated');
+      spaceEndpoint
+        .mockImplementationOnce(() => {
+          throw newError('VersionMismatch', 'API request failed');
+        })
+        .mockImplementationOnce(() => remoteEntity);
+
+      await doc.setValueAt(fieldPath, 'en-US-updated');
+      jest.runAllTimers();
+      await waitForTimers();
+
+      expect(track).toBeCalledTimes(1);
+      const [id, body] = track.mock.calls[0];
+      expect(id).toBe('entity_editor:edit_conflict');
+      expect(body).toEqual({
+        entityId: entry.sys.id,
+        entityType: entry.sys.type,
+        localChangesFieldPaths: ['fieldA:en-US'],
+        remoteChangesSinceLocalEntityFieldPaths: ['fieldA:en-US'],
+        localEntityVersion: entry.sys.version,
+        remoteEntityVersion: entry.sys.version,
+        localEntityUpdatedAtTstamp: entry.sys.updatedAt,
+        remoteEntityUpdatedAtTstamp: entry.sys.updatedAt,
+        remoteEntityUpdatedByUserId: entry.sys.updatedBy.sys.id,
+        localEntityLastFetchedAtTstamp: new Date(now).toISOString(),
+        isConflictAutoResolvable: false,
+        autoConflictResolutionVersion: 1,
+      });
+    });
+
+    it('happens when the remote entity was deleted', async () => {
+      spaceEndpoint
+        .mockImplementationOnce(() => {
+          throw newError('BadRequest', '');
+        })
+        .mockImplementationOnce(() => {
+          throw newError('NotFound', 'The resource could not be found.');
+        });
+      await doc.setValueAt(fieldPath, 'en-US-updated');
+      jest.runAllTimers();
+      await waitForTimers();
+
+      expect(track).not.toBeCalled();
     });
   });
 });

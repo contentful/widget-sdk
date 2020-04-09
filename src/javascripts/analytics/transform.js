@@ -19,6 +19,7 @@ import InviteUserExperiment from './transformers/InviteUserExperiment';
 import SearchAndViews from './transformers/SearchAndViews';
 import ElementClickTransform from './transformers/ElementClick';
 import EntryViewTransform from './transformers/EntryView';
+import EntityEditorConflictTransform from './transformers/EntityEditorConflict';
 import ReferenceEditorTransform from './transformers/ReferenceEditor';
 import ExtensionSaveTransform from './transformers/ExtensionSave';
 import ExtensionInstallTransform from './transformers/ExtensionInstall';
@@ -209,6 +210,12 @@ registerEvent('search:view_loaded', 'view_load', SearchAndViews);
 registerEvent('search:search_terms_migrated', 'ui_config_migrate', SearchAndViews);
 
 registerEvent('entry_editor:view', 'entry_view', EntryViewTransform);
+
+registerEvent(
+  'entity_editor:edit_conflict',
+  'entity_editor_edit_conflict',
+  EntityEditorConflictTransform
+);
 
 registerEvent(
   'reference_editor_action:create',

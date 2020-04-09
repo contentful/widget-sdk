@@ -51,6 +51,7 @@ export const validEvents = {
     'preview_opened',
     'view',
   ],
+  entity_editor: ['edit_conflict'],
   versioning: [
     'no_snapshots',
     'snapshot_opened',

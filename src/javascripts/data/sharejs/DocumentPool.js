@@ -1,5 +1,5 @@
 import { createOtDoc, createCmaDoc } from 'app/entity_editor/Document';
-import { find, includes, isString, get as getAtPath } from 'lodash';
+import { isObject, find, includes, isString, get as getAtPath } from 'lodash';
 import { SHAREJS_REMOVAL } from 'featureFlags';
 import { getVariation } from 'LaunchDarkly';
 
@@ -40,7 +40,11 @@ export async function create(docConnection, spaceEndpoint, organizationId, space
       doc = instance.doc;
       instance.count += 1;
     } else {
-      if (isCMADocumentEnabled && isCMADocumentEnabled[entity.data.sys.type]) {
+      // This flag is an object, but check for `true` to use with `?ui_enable_flags=`
+      if (
+        isCMADocumentEnabled === true ||
+        (isObject(isCMADocumentEnabled) && isCMADocumentEnabled[entity.data.sys.type])
+      ) {
         doc = createCmaDoc(entity, contentType, spaceEndpoint);
       } else {
         doc = createOtDoc(docConnection, entity, contentType, user, spaceEndpoint);

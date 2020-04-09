@@ -1,6 +1,6 @@
 import { cloneDeep, set } from 'lodash';
 import jestKefir from 'jest-kefir';
-import * as K from '../../../../../../test/utils/kefir';
+import * as K from '../../../../../test/utils/kefir';
 import * as Kefir from 'utils/kefir';
 import * as Permissions from 'access_control/EntityPermissions';
 
@@ -18,6 +18,9 @@ export const newEntry = (fields) => ({
     version: 1,
     contentType: {
       sys: { id: 'ctId' },
+    },
+    updatedBy: {
+      sys: { id: 'userId' },
     },
   },
   fields: fields || {

@@ -11,23 +11,10 @@ import { Error as DocError } from 'data/document/Error';
 // eslint-disable-next-line import/no-unresolved
 import { Document, Entity, EntitySys, PropertyBus, StreamBus } from './types';
 import * as StringField from 'data/document/StringFieldSetter';
+import { cmaPutChanges } from './api';
+import { trackEditConflict } from './analytics';
 
 export const THROTTLE_TIME = 5000;
-
-// TODO: Inject an EntityRepo instance instead.
-async function cmaPutChanges(spaceEndpoint, entity) {
-  const collection = 'entries'; //entity.data.sys.type;
-  const body = {
-    method: 'PUT',
-    path: [collection, entity.sys.id],
-    version: entity.sys.version,
-    data: entity,
-  };
-
-  return spaceEndpoint(body, {
-    'X-Contentful-Skip-Transformation': 'true',
-  });
-}
 
 /**
  * Used to edit an entry or asset through the CMA.
@@ -50,7 +37,11 @@ export function create(
   const sys$ = sysBus.property;
 
   let lastSavedEntity;
-  const setLastSavedEntity = (entity) => (lastSavedEntity = cloneDeep(entity));
+  let lastSavedEntityFetchedAt: Date;
+  const setLastSavedEntity = (entity) => {
+    lastSavedEntity = cloneDeep(entity);
+    lastSavedEntityFetchedAt = new Date(Date.now());
+  };
   setLastSavedEntity(entity);
 
   // We assume that the permissions only depend on the immutable data like the ID the content type ID and the creator.
@@ -138,6 +129,11 @@ export function create(
     if (isEqual(entity.fields, lastSavedEntity.fields) || K.getValue(isSavingBus.property)) {
       return;
     }
+    // If there was an error, unless it's not a connection error, stop any further attempts of saving.
+    const lastError = K.getValue(errorBus.property);
+    if (lastError && !(lastError instanceof DocError.Disconnected)) {
+      return;
+    }
     if (!options.updateEmitters) {
       try {
         await cmaPutChanges(spaceEndpoint, entity);
@@ -152,6 +148,14 @@ export function create(
       const newEntry = await cmaPutChanges(spaceEndpoint, entity);
       setLastSavedEntity(newEntry);
     } catch (e) {
+      if (e.code === 'VersionMismatch' || e.code === 'BadRequest') {
+        trackEditConflict({
+          spaceEndpoint,
+          localEntity: lastSavedEntity,
+          localEntityFetchedAt: lastSavedEntityFetchedAt,
+          changedLocalEntity: entity,
+        });
+      }
       const errors = {
         VersionMismatch: DocError.VersionMismatch(),
         AccessDenied: DocError.OpenForbidden(),

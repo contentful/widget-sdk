@@ -1,11 +1,11 @@
 import { noop } from 'lodash';
 import jestKefir from 'jest-kefir';
-import * as K from '../../../../../../test/utils/kefir';
+import * as K from '../../../../../test/utils/kefir';
 import * as Kefir from 'utils/kefir';
-import * as OtDocument from '../OtDocument';
+import * as OtDocument from './OtDocument';
 import { DocLoad } from 'data/sharejs/Connection';
-import ShareJsDocMock from '../__mocks__/ShareJsDocMock';
-import { Error as DocError } from '../../../../data/document/Error';
+import ShareJsDocMock from './__mocks__/ShareJsDocMock';
+import { Error as DocError } from '../../../data/document/Error';
 
 import testDocumentBasic, { newContentType, newEntry } from './Document.spec';
 

@@ -1,6 +1,6 @@
-import { valuePropertyAt, localFieldChanges } from '../documentHelpers';
-import { createCmaDoc } from '../index';
-import * as K from '../../../../../../test/utils/kefir';
+import { valuePropertyAt, localFieldChanges } from './documentHelpers';
+import { createCmaDoc } from './index';
+import * as K from '../../../../../test/utils/kefir';
 
 const ENTRY = {
   data: {

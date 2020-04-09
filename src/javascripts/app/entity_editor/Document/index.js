@@ -4,7 +4,7 @@ import * as accessChecker from 'access_control/AccessChecker';
 export { valuePropertyAt, localFieldChanges } from './documentHelpers';
 
 export { create as createOtDoc } from './OtDocument';
-export { create as createCmaDoc } from './unused__CmaDocument';
+export { create as createCmaDoc } from './CmaDocument';
 
 /**
  * Current status of the document

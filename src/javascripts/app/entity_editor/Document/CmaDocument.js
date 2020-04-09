@@ -8,23 +8,9 @@ import TheLocaleStore from 'services/localeStore';
 import * as PathUtils from 'utils/Path';
 import { Error as DocError } from 'data/document/Error';
 import * as StringField from 'data/document/StringFieldSetter';
-
+import { cmaPutChanges } from './api';
+import { trackEditConflict } from './analytics';
 export const THROTTLE_TIME = 5000;
-
-// TODO: Inject an EntityRepo instance instead.
-async function cmaPutChanges(spaceEndpoint, entity) {
-  const collection = 'entries'; //entity.data.sys.type;
-  const body = {
-    method: 'PUT',
-    path: [collection, entity.sys.id],
-    version: entity.sys.version,
-    data: entity,
-  };
-  return spaceEndpoint(body, {
-    'X-Contentful-Skip-Transformation': 'true',
-  });
-}
-
 /**
  * Used to edit an entry or asset through the CMA.
  */
@@ -39,7 +25,11 @@ export function create(initialEntity, contentType, spaceEndpoint, saveThrottleMs
   const cleanupTasks = [];
   const sys$ = sysBus.property;
   let lastSavedEntity;
-  const setLastSavedEntity = (entity) => (lastSavedEntity = cloneDeep(entity));
+  let lastSavedEntityFetchedAt;
+  const setLastSavedEntity = (entity) => {
+    lastSavedEntity = cloneDeep(entity);
+    lastSavedEntityFetchedAt = new Date(Date.now());
+  };
   setLastSavedEntity(entity);
   // We assume that the permissions only depend on the immutable data like the ID the content type ID and the creator.
   const permissions = Permissions.create(entity.sys);
@@ -54,14 +44,12 @@ export function create(initialEntity, contentType, spaceEndpoint, saveThrottleMs
     () => cloneDeep(getValueAt([])),
     spaceEndpoint,
     // preApplyFn - triggered and awaited before applying the state change
-    persistEntity
+    persistEntity // TODO: part of the status change ticket
   );
-
   function normalize() {
     const locales = TheLocaleStore.getPrivateLocales();
     Normalizer.normalize({ getValueAt, setValueAt }, entity, contentType, locales);
   }
-
   /**
    * Returns a constant value of the given path in the document.
    * Also used for valuePropertyAt().
@@ -70,7 +58,6 @@ export function create(initialEntity, contentType, spaceEndpoint, saveThrottleMs
     // Use normalized entity to get the data.
     return path.length === 0 ? entity : get(entity, path);
   }
-
   // TODO: Do we wait for the request to be made and THEN resolve or immediately?
   //  This is of importance in `widgetApi.field.setValue()` which needs to throw
   //  In case of insufficient rights to update a field (important for Slug editor).
@@ -94,7 +81,6 @@ export function create(initialEntity, contentType, spaceEndpoint, saveThrottleMs
     changesBus.emit(path);
     return entity;
   }
-
   // Entities from the server might include removed locales or deleted fields which the UI can't handle.
   // So document getters work with locally normalized entity, that is created initially and on every update in this handler.
   // Make sure that this handler is the first for the changes stream.
@@ -112,7 +98,6 @@ export function create(initialEntity, contentType, spaceEndpoint, saveThrottleMs
     .bufferWhileBy(isSavingBus.property)
     .throttle(saveThrottleMs, { leading: false })
     .onValue(() => persistEntity());
-
   /**
    * @param options.updateEmitters Is used to save an entity on destroy without updating
    *  the document that is already destroyed once CMA response is received
@@ -121,6 +106,11 @@ export function create(initialEntity, contentType, spaceEndpoint, saveThrottleMs
     // Do nothing if no unsaved changes - entity could be persisted
     // before the throttled handler triggered, e.g. on status change.
     if (isEqual(entity.fields, lastSavedEntity.fields) || K.getValue(isSavingBus.property)) {
+      return;
+    }
+    // If there was an error, unless it's not a connection error, stop any further attempts of saving.
+    const lastError = K.getValue(errorBus.property);
+    if (lastError && !(lastError instanceof DocError.Disconnected)) {
       return;
     }
     if (!options.updateEmitters) {
@@ -136,6 +126,14 @@ export function create(initialEntity, contentType, spaceEndpoint, saveThrottleMs
       const newEntry = await cmaPutChanges(spaceEndpoint, entity);
       setLastSavedEntity(newEntry);
     } catch (e) {
+      if (e.code === 'VersionMismatch' || e.code === 'BadRequest') {
+        trackEditConflict({
+          spaceEndpoint,
+          localEntity: lastSavedEntity,
+          localEntityFetchedAt: lastSavedEntityFetchedAt,
+          changedLocalEntity: entity,
+        });
+      }
       const errors = {
         VersionMismatch: DocError.VersionMismatch(),
         AccessDenied: DocError.OpenForbidden(),
@@ -153,7 +151,6 @@ export function create(initialEntity, contentType, spaceEndpoint, saveThrottleMs
     errorBus.set(null);
     isSavingBus.set(false);
   }
-
   /**
    * @description
    * Property that is `true` if all of the following are true
