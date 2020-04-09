@@ -454,26 +454,12 @@ workflows:
           start: npm start
           wait-on: 'http-get://localhost:3001/app/app.js'
           command: |
-            TESTFILES=$(circleci tests glob "test/cypress/integration/contract/**/*.ts" | circleci tests split --split-by=timings --timings-type=filename | tr '\n' ',')
+            TESTFILES=$(circleci tests glob "test/cypress/integration/**/*.ts" | circleci tests split --split-by=timings --timings-type=filename | tr '\n' ',')
             npx cypress run --spec "${TESTFILES}" --env PACT_DIR="./pacts/${CIRCLE_NODE_INDEX}"
           store_artifacts: true
       - publish-pact-contracts:
           requires:
             - run-contract-tests
-      - cypress/run:
-          name: run-ui-integration-tests
-          executor: cypress-base-10
-          no-workspace: true
-          pre-steps:
-            - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc'
-            - run: npm install -g wait-on
-          post-steps:
-            - store_test_results:
-                path: cypress/reports
-          start: npm start
-          wait-on: 'http-get://localhost:3001/app/app.js'
-          command: npx cypress run --spec "test/cypress/integration/ui/**/*"
-          store_artifacts: true
       - copy-assets/to-s3:
           name: copy-assets-to-s3
           post-steps:
