@@ -1,9 +1,9 @@
 import * as K from 'test/utils/kefir';
 import _ from 'lodash';
 import sinon from 'sinon';
-import { $initialize, $inject } from 'test/utils/ng';
+import { $initialize } from 'test/utils/ng';
 
-describe('activationEmailResendController', () => {
+describe('components/client/activationEmailResendController', () => {
   let moment;
   let openActivationDialogStub, openConfirmationDialogStub;
 
@@ -32,6 +32,11 @@ describe('activationEmailResendController', () => {
     });
 
     const { getStore } = await this.system.import('browserStorage');
+
+    const { initActivationEmailResend } = await this.system.import(
+      'components/client/activationEmailResendController'
+    );
+
     moment = (await this.system.import('moment')).default;
 
     await $initialize(this.system);
@@ -51,9 +56,9 @@ describe('activationEmailResendController', () => {
 
     openActivationDialogStub.resolves(true);
 
-    const controller = $inject('activationEmailResendController');
     this.store = getStore().forKey('lastActivationEmailResendReminderTimestamp');
-    controller.init();
+
+    initActivationEmailResend();
   });
 
   describe('with user already activated', () => {

@@ -1,35 +1,24 @@
-import { registerFactory } from 'NgRegistry';
+import { getModule } from 'NgRegistry';
+import { initActivationEmailResend } from './activationEmailResendController';
 
-export default function register() {
-  /**
-   * @ngdoc service
-   * @name dialogsInitController
-   *
-   * @description
-   * Takes care of initialization of modal dialog related global, lifelong services.
-   * Controlls how certain global dialogs play together to prevent them interfering
-   * with eachother.
-   */
-  registerFactory('dialogsInitController', [
-    '$rootScope',
-    'spaceContext',
-    'activationEmailResendController',
-    function dialogsInitController($rootScope, spaceContext, activationEmailResendController) {
-      return { init };
+/**
+ * Takes care of initialization of modal dialog related global, lifelong services.
+ * Controlls how certain global dialogs play together to prevent them interfering
+ * with eachother.
+ */
+export function initDialogsController() {
+  const spaceContext = getModule('spaceContext');
+  const $rootScope = getModule('$rootScope');
 
-      function init() {
-        activationEmailResendController.init();
+  initActivationEmailResend();
 
-        $rootScope.$watch(
-          () => spaceContext.getId(),
-          (spaceId) => {
-            if (spaceId) {
-              // Reset notification related to the previous space.
-              $rootScope.$broadcast('persistentNotification', null);
-            }
-          }
-        );
+  $rootScope.$watch(
+    () => spaceContext.getId(),
+    (spaceId) => {
+      if (spaceId) {
+        // Reset notification related to the previous space.
+        $rootScope.$broadcast('persistentNotification', null);
       }
-    },
-  ]);
+    }
+  );
 }

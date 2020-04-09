@@ -279,7 +279,10 @@ angular
         /* webpackMode: "eager" */ 'app/RolesForWalkMe'
       );
 
-      const { init: initDialogs } = $injector.get('dialogsInitController');
+      const { initDialogsController } = await import(
+        /* webpackMode: "eager" */ 'components/client/dialogsInitController'
+      );
+
       const { setup: setupStateChangeHandlers } = $injector.get('navigation/stateChangeHandlers');
 
       if (Config.env === 'development') {
@@ -297,7 +300,7 @@ angular
       initExtentionActivationTracking();
       initRolesForWalkMe();
 
-      initDialogs();
+      initDialogsController();
       setupStateChangeHandlers();
 
       // Start telemetry and expose it as a global.
