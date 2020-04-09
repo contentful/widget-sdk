@@ -91,7 +91,6 @@ const react = (node) => {
     'react-router-dom',
     'react-animate-height',
     'redux/store',
-    'slate-react',
     '<react-component>',
   ];
   const intersection = _.intersectionWith(modules, attributes, _.isEqual);
