@@ -228,6 +228,15 @@ jobs:
           command: |
             echo 'export SSH_KEY="$(openssl rsa -in ~/.ssh/id_rsa)"' >> $BASH_ENV
             echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+      - run: npm ci
+      - run:
+          name: Install Sniffer CLI tools
+          command: npm install --no-save --no-shrinkwrap @contentful/project-sniffer-cli @contentful/sniffer-build-tracker
+      - run:
+          name: Run project sniffer and upload stats
+          command: |
+            export PR_NUMBER=$(echo $CIRCLE_PULL_REQUEST | cut -d '/'  -f7)
+            npx project-sniffer . --config tools/sniffer
       - run:
           name: Build production image
           command: |
@@ -247,10 +256,14 @@ jobs:
             ~/bin/estivador docker-ecr-login
             ~/bin/estivador put-image
             ~/bin/estivador promote-image
-      - run: npm ci
       - run:
-          name: Install Sniffer CLI tools
-          command: npm install --no-save --no-shrinkwrap @contentful/project-sniffer-cli @contentful/sniffer-build-tracker
+          name: Upload build to user_interface build tracker server and post comment
+          command: |
+            export PR_NUMBER=$(echo $CIRCLE_PULL_REQUEST | cut -d '/'  -f7)
+            export PATH_TO_BUILT_ASSETS='../output/files/production/app' # Path is relative to the config file
+            npx sniffer-build-tracker version
+            npx sniffer-build-tracker -vv stat-artifacts -c tools/sniffer-build-tracker.config.js
+            npx sniffer-build-tracker upload-build -c tools/sniffer-build-tracker.config.js
       - run:
           name: Deploy micro-backends
           command: |
@@ -261,19 +274,6 @@ jobs:
 
             echo "Using @contentful/micro-backends@$MICRO_BACKENDS_VERSION"
             npx "@contentful/micro-backends@$MICRO_BACKENDS_VERSION" "micro-backends" "rev-$CIRCLE_SHA1"
-      - run:
-          name: Run project sniffer and upload stats
-          command: |
-            export PR_NUMBER=$(echo $CIRCLE_PULL_REQUEST | cut -d '/'  -f7)
-            npx project-sniffer . --config tools/sniffer
-      - run:
-          name: Upload build to user_interface build tracker server and post comment
-          command: |
-            export PR_NUMBER=$(echo $CIRCLE_PULL_REQUEST | cut -d '/'  -f7)
-            export PATH_TO_BUILT_ASSETS='../output/files/production/app' # Path is relative to the config file
-            npx sniffer-build-tracker version
-            npx sniffer-build-tracker -vv stat-artifacts -c tools/sniffer-build-tracker.config.js
-            npx sniffer-build-tracker upload-build -c tools/sniffer-build-tracker.config.js
       - persist_to_workspace:
           root: .
           paths:
