@@ -19,7 +19,7 @@ export default function createTeamMembershipService(state) {
   };
 
   function getAll() {
-    return fetchAll(endpoint, ['team_memberships'], BATCH_LIMIT, {}, alphaHeader);
+    return fetchAll(endpoint, ['team_memberships'], BATCH_LIMIT, {});
   }
 
   function create(organizationMembershipId, admin = false) {

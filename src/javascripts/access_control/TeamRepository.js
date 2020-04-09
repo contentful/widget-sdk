@@ -40,7 +40,7 @@ export async function getTeamsSpaceMembershipsOfSpace(spaceEndpoint) {
 }
 
 export async function getAllTeamMemberships(orgEndpoint, params = {}) {
-  return fetchAllWithIncludes(orgEndpoint, ['team_memberships'], BATCH_LIMIT, params, alphaHeader);
+  return fetchAllWithIncludes(orgEndpoint, ['team_memberships'], BATCH_LIMIT, params);
 }
 
 export function removeTeamMembership(orgEndpoint, membership) {
