@@ -44,13 +44,10 @@ export async function getAllTeamMemberships(orgEndpoint, params = {}) {
 }
 
 export function removeTeamMembership(orgEndpoint, membership) {
-  return orgEndpoint(
-    {
-      method: 'DELETE',
-      path: ['teams', membership.sys.team.sys.id, 'team_memberships', membership.sys.id],
-    },
-    alphaHeader
-  );
+  return orgEndpoint({
+    method: 'DELETE',
+    path: ['teams', membership.sys.team.sys.id, 'team_memberships', membership.sys.id],
+  });
 }
 
 export async function updateTeamSpaceMembership(spaceEndpoint, membership, admin, roles) {
@@ -99,12 +96,9 @@ export async function createTeamSpaceMembership(spaceEndpoint, teamId, { admin, 
 }
 
 export function createTeamMembership(endpoint, organizationMembershipId, teamId) {
-  return endpoint(
-    {
-      method: 'POST',
-      path: ['teams', teamId, 'team_memberships'],
-      data: { organizationMembershipId, admin: false },
-    },
-    alphaHeader
-  );
+  return endpoint({
+    method: 'POST',
+    path: ['teams', teamId, 'team_memberships'],
+    data: { organizationMembershipId, admin: false },
+  });
 }
