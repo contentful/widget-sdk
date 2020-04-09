@@ -83,7 +83,7 @@
   padding: 0 calc(1rem * (14 / 16) + 1rem * (4 / 16));
   height: calc(1rem * (40 / 16));
   border-radius: calc(1rem * (2 / 16));
-  border: calc(1rem * (1 / 16)) solid var(--color-element-dark);
+  border: none;
   min-width: initial;
   box-shadow: none;
   margin: 0;
@@ -91,7 +91,7 @@
     border-color 0.2s ease-in-out;
   transition: background 0.2s ease-in-out, opacity 0.2s ease-in-out, border-color 0.2s ease-in-out;
   font-family: var(--font-stack-primary);
-  background-color: var(--color-element-light);
+  background-color: transparent;
   color: var(--color-text-mid);
 }
 
@@ -103,7 +103,7 @@
 .osano-cm-info-dialog .osano-cm-button,
 .osano-cm-accept-all,
 .osano-cm-accept {
-  border-color: var(--color-green-dark);
+  border: calc(1rem * (1 / 16)) solid var(--color-green-dark);
   background-image: var(--color-positive-gradient);
   background-size: 100% 200%;
   color: var(--color-element-lightest);
