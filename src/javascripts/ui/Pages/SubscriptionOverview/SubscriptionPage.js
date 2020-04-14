@@ -68,7 +68,9 @@ export default function SubscriptionPage({ organizationId, data }) {
         space,
         plan,
         onSuccess: () => {
-          const newSpacePlans = _.reject(spacePlans, (sp) => sp.space.sys.id === space.sys.id);
+          const newSpacePlans = spacePlans.filter((plan) => {
+            return plan.space && plan.space.sys.id !== space.sys.id;
+          });
 
           setSpacePlans(newSpacePlans);
         },
