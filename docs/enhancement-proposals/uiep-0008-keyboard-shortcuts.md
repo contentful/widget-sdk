@@ -2,7 +2,7 @@
 > title: Document Keyboard Shortcut Guidelines in Forma 36
 > champions: Mike Mitchell (@m10l)
 > endDate: July 15, 2019
-> status: Open
+> status: Approved
 
 # [UIEP-0008] Document Keyboard Shortcut Guidelines in Forma 36
 
