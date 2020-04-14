@@ -148,7 +148,7 @@ export function create(
       const newEntry = await cmaPutChanges(spaceEndpoint, entity);
       setLastSavedEntity(newEntry);
     } catch (e) {
-      if (e.code === 'VersionMismatch' || e.code === 'BadRequest') {
+      if (e.code === 'VersionMismatch') {
         trackEditConflict({
           spaceEndpoint,
           localEntity: lastSavedEntity,

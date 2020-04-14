@@ -21,16 +21,22 @@ export async function trackEditConflict({
     remoteEntity = await cmaGetEntity(spaceEndpoint, sys.type, sys.id);
   } catch (e) {
     if (e.code === 'NotFound') {
-      // TODO: track with affordable analytics
+      // TODO: Track deleted entity conflict with affordable analytics. move to separate function
+      //  To avoid accidentally tracking `BadRequest` errors as a conflict.
       return;
     } else {
       // @ts-ignore
-      logger.logError('Could not fetch remote entity for CmaDocument edit conflict tracking');
+      logger.logError('Could not fetch remote entity for CmaDocument edit conflict tracking', e);
       return;
     }
   }
-  const data = conflictEntitiesToTrackingData();
-  Analytics.track('entity_editor:edit_conflict', data);
+
+  // Do not track if there's no conflict. E.g. if we call this function due to a `BadRequest`
+  // error to accommodate for possible entity deletion kind of conflict.
+  if (localEntity.sys.version !== remoteEntity.sys.version) {
+    const data = conflictEntitiesToTrackingData();
+    Analytics.track('entity_editor:edit_conflict', data);
+  }
 
   function conflictEntitiesToTrackingData() {
     return {

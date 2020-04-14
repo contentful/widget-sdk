@@ -369,7 +369,9 @@ describe('CmaDocument', () => {
     });
 
     it('happens on VersionMismatch error', async () => {
-      const remoteEntity = set(cloneDeep(entry), fieldPath, 'en-US-remote-updated');
+      const remoteEntity = cloneDeep(entry);
+      set(remoteEntity, fieldPath, 'en-US-remote-updated');
+      set(remoteEntity, 'sys.version', remoteEntity.sys.version + 1);
       spaceEndpoint
         .mockImplementationOnce(() => {
           throw newError('VersionMismatch', 'API request failed');
@@ -386,10 +388,10 @@ describe('CmaDocument', () => {
       expect(body).toEqual({
         entityId: entry.sys.id,
         entityType: entry.sys.type,
-        localChangesFieldPaths: ['fieldA:en-US'],
-        remoteChangesSinceLocalEntityFieldPaths: ['fieldA:en-US'],
+        localChangesFieldPaths: [fieldPath.slice(1).join(':')],
+        remoteChangesSinceLocalEntityFieldPaths: [fieldPath.slice(1).join(':')],
         localEntityVersion: entry.sys.version,
-        remoteEntityVersion: entry.sys.version,
+        remoteEntityVersion: remoteEntity.sys.version,
         localEntityUpdatedAtTstamp: entry.sys.updatedAt,
         remoteEntityUpdatedAtTstamp: entry.sys.updatedAt,
         remoteEntityUpdatedByUserId: entry.sys.updatedBy.sys.id,
@@ -399,7 +401,7 @@ describe('CmaDocument', () => {
       });
     });
 
-    it('happens when the remote entity was deleted', async () => {
+    it('does not happen when the remote entity was deleted', async () => {
       spaceEndpoint
         .mockImplementationOnce(() => {
           throw newError('BadRequest', '');
