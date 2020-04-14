@@ -184,6 +184,7 @@ export default function register() {
                     spaceContext,
                     Navigator,
                     SlideInNavigator,
+                    $controller,
                   },
                   WidgetLocations.LOCATION_ENTRY_EDITOR
                 ),

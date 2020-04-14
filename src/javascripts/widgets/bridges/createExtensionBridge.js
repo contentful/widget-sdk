@@ -32,11 +32,11 @@ const ERROR_MESSAGES = {
 // - `apply` takes a function to be executed in the Angular
 //   context (using `$rootScope.$apply`).
 export default function createExtensionBridge(dependencies, location = LOCATION_ENTRY_FIELD) {
-  const { $rootScope, $scope, spaceContext } = checkDependencies('ExtensionBridge', dependencies, [
-    '$rootScope',
-    '$scope',
-    'spaceContext',
-  ]);
+  const { $rootScope, $scope, spaceContext, $controller } = checkDependencies(
+    'ExtensionBridge',
+    dependencies,
+    ['$rootScope', '$scope', 'spaceContext', '$controller']
+  );
 
   let unsubscribeFunctions = [];
 
@@ -162,6 +162,44 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
     $scope.$watch('localeData.focusedLocale', () => {
       api.send('localeSettingsChanged', [getLocaleSettings()]);
     });
+
+    Object.values($scope.fields)
+      .reduce((acc, field) => {
+        const widget = $scope.widgets.find((w) => w.fieldId === field.id);
+
+        if (!widget) {
+          return acc;
+        }
+
+        const fieldLocales = field.locales
+          .map((localeCode) => {
+            const locale = TheLocaleStore.getPrivateLocales().find((l) => l.code == localeCode);
+
+            if (!locale) {
+              return;
+            }
+
+            const fieldLocaleScope = $scope.$new(false);
+            fieldLocaleScope.widget = widget;
+            fieldLocaleScope.locale = locale;
+
+            return {
+              fieldId: field.id,
+              localeCode,
+              fieldLocale: $controller('FieldLocaleController', {
+                $scope: fieldLocaleScope,
+              }),
+            };
+          })
+          .filter(Boolean);
+
+        return acc.concat(fieldLocales);
+      }, [])
+      .forEach(({ fieldId, localeCode, fieldLocale }) => {
+        K.onValueScope($scope, fieldLocale.access$, (access) => {
+          api.send('isDisabledChangedForFieldLocale', [fieldId, localeCode, !!access.disabled]);
+        });
+      });
 
     // Available for field-level extensions only:
     if (isFieldLevelExtension) {
