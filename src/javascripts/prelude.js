@@ -283,7 +283,9 @@ angular
         /* webpackMode: "eager" */ 'components/client/dialogsInitController'
       );
 
-      const { setup: setupStateChangeHandlers } = $injector.get('navigation/stateChangeHandlers');
+      const { setupStateChangeHandlers } = await import(
+        /* webpackMode: "eager" */ 'navigation/stateChangeHandlers'
+      );
 
       if (Config.env === 'development') {
         Error.stackTraceLimit = 100;

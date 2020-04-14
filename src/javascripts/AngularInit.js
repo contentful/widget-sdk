@@ -82,7 +82,6 @@ export const angularInitRun = [
       import(/* webpackMode: "eager" */ 'forms/errors'),
       import(/* webpackMode: "eager" */ 'forms/validation'),
       import(/* webpackMode: "eager" */ 'forms'),
-      import(/* webpackMode: "eager" */ 'navigation/stateChangeHandlers'),
       import(/* webpackMode: "eager" */ 'search/EntitySelector/entitySelectorController'),
       import(/* webpackMode: "eager" */ 'search/EntitySelector/entitySelectorDirective'),
       import(/* webpackMode: "eager" */ 'services/exceptionHandler'),

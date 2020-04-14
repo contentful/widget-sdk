@@ -17,8 +17,11 @@ describe('navigator', () => {
         $urlRouterProvider.deferIntercept(true);
       });
 
-      const stateChangeHandlers = $inject('navigation/stateChangeHandlers');
-      stateChangeHandlers.setup();
+      const { setupStateChangeHandlers } = await this.system.import(
+        'navigation/stateChangeHandlers'
+      );
+
+      setupStateChangeHandlers();
 
       const $state = $inject('$state');
       this.$state = $state;

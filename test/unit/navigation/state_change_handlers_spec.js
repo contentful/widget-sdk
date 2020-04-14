@@ -35,6 +35,8 @@ describe('navigation/stateChangeHandlers', () => {
     this.NavStates = NavState.NavStates;
     this.navState$ = NavState.navState$;
 
+    const { setupStateChangeHandlers } = await this.system.import('navigation/stateChangeHandlers');
+
     await $initialize(this.system, ($provide) => {
       $provide.value('$state', this.state);
       $provide.constant('spaceContext', this.spaceContext);
@@ -43,8 +45,7 @@ describe('navigation/stateChangeHandlers', () => {
 
     $rootScope = $inject('$rootScope');
 
-    const stateChangeHandlers = $inject('navigation/stateChangeHandlers');
-    stateChangeHandlers.setup();
+    setupStateChangeHandlers();
   });
 
   describe('state change', () => {
