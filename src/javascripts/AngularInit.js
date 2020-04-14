@@ -28,7 +28,6 @@ export const angularInitRun = [
 
     const modules = await Promise.all([
       import(/* webpackMode: "eager" */ 'analytics/analyticsConsoleDirective'),
-      import(/* webpackMode: "eager" */ 'app/ContentModel/Editor/addFieldDialogController'),
       import(/* webpackMode: "eager" */ 'services/modalDialogService'),
       import(/* webpackMode: "eager" */ 'utils/command/commandDirective'),
       import(/* webpackMode: "eager" */ 'components/field_dialog/fieldDialog'),

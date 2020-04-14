@@ -1,4 +1,4 @@
-import { registerFactory, registerController } from 'NgRegistry';
+import { registerController } from 'NgRegistry';
 import { extend, find, cloneDeep, get, isEmpty, map, intersection } from 'lodash';
 import { joinAndTruncate } from 'utils/StringUtils';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils';
@@ -13,41 +13,9 @@ import fieldErrorMessageBuilder from 'services/errorMessageBuilder/fieldErrorMes
 import TheLocaleStore from 'services/localeStore';
 import { create as createBuiltinWidgetList } from 'widgets/BuiltinWidgets';
 
-import fieldDialogTemplate from './field_dialog.html';
-
 // TODO: This dialog should be completely rewritten!
 
 export default function register() {
-  /**
-   * @ngdoc service
-   * @name openFieldDialog
-   *
-   * @description
-   * Opens a the editing dialog for the given field and returns a promise
-   * that resolves when the field is updated.
-   *
-   * @param {Scope}                    $scope
-   * @param {Client.ContentType}       $scope.contentType
-   * @param {Client.ContentType.Field} field
-   * @param {API.Widget}               widget
-   * @return {Promise<void>}
-   */
-  registerFactory('openFieldDialog', [
-    'modalDialog',
-    function openFieldDialog(modalDialog) {
-      return function openFieldDialog($scope, field, widget) {
-        const scope = extend($scope.$new(), {
-          field: field,
-          widget: widget,
-        });
-        return modalDialog.open({
-          scope: scope,
-          template: fieldDialogTemplate,
-        }).promise;
-      };
-    },
-  ]);
-
   /**
    * @ngdoc type
    * @name FieldDialogController

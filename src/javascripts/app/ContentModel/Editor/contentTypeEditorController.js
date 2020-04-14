@@ -1,8 +1,9 @@
+import React from 'react';
 import { registerController, registerDirective } from 'NgRegistry';
 import _ from 'lodash';
 import validation from '@contentful/validation';
 import * as Analytics from 'analytics/Analytics';
-
+import { openFieldDialog } from 'components/field_dialog/openFieldDialog';
 import { syncControls } from 'widgets/EditorInterfaceTransformer';
 import { openDisallowDialog, openOmitDialog, openSaveDialog } from './FieldsTab/FieldTabDialogs';
 import { openCreateContentTypeDialog, openEditContentTypeDialog } from './Dialogs';
@@ -14,7 +15,8 @@ import createActions from 'app/ContentModel/Editor/Actions';
 import * as accessChecker from 'access_control/AccessChecker';
 import ContentTypesPage from 'app/ContentModel/Editor/ContentTypesPage';
 
-import addFieldDialogTemplate from 'app/ContentModel/Editor/add_field_dialog.html';
+import { AddFieldDialogModal } from './Dialogs/AddField';
+import ModalLauncher from 'app/common/ModalLauncher';
 
 export default function register() {
   registerDirective('cfContentTypeEditor', [
@@ -34,9 +36,7 @@ export default function register() {
   registerController('ContentTypeEditorController', [
     '$scope',
     '$state',
-    'modalDialog',
-    'openFieldDialog',
-    function ContentTypeEditorController($scope, $state, modalDialog, openFieldDialog) {
+    function ContentTypeEditorController($scope, $state) {
       const controller = this;
 
       $scope.context.dirty = false;
@@ -205,12 +205,19 @@ export default function register() {
 
       const showNewFieldDialog = createCommand(
         () => {
-          modalDialog
-            .open({
-              template: addFieldDialogTemplate,
-              scope: $scope,
-            })
-            .promise.then(addField);
+          const existingApiNames = $scope.contentType.data.fields.map(({ apiName }) => apiName);
+          ModalLauncher.open(({ isShown, onClose }) => (
+            <AddFieldDialogModal
+              isShown={isShown}
+              onClose={onClose}
+              onConfirm={addField}
+              onConfirmAndConfigure={(field) => {
+                addField(field);
+                $scope.ctEditorController.openFieldDialog(field);
+              }}
+              existingApiNames={existingApiNames}
+            />
+          ));
         },
         {
           disabled: function () {
