@@ -20,6 +20,7 @@ import * as uiComponentsIconEs6 from 'ui/Components/Icon';
 import * as componentsSharedDocumentTitleEs6 from 'components/shared/DocumentTitle';
 import * as componentsSharedWorkbenchTitleEs6 from 'components/shared/WorkbenchTitle';
 import * as appEntityEditorComponentsBackNavIndexEs6 from 'app/entity_editor/Components/BackNav';
+import * as appEntityEditorEntrySecondaryActions from 'app/entry_editor/EntryTitlebar/EntrySecondaryActions/EntrySecondaryActions';
 import * as appEntityEditorStatusNotificationEs6 from 'app/entity_editor/StatusNotification';
 import * as appEntrySidebarEntrySidebarEs6 from 'app/EntrySidebar/EntrySidebar';
 import * as appEntityEditorCollaboratorsIndexEs6 from 'app/entity_editor/Collaborators';
@@ -68,7 +69,6 @@ import * as EntryLink from 'app/widgets/link/EntryLink';
 import * as ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer';
 import * as DateRangeValidation from 'components/field_dialog/validations/DateRangeValidation';
 import * as AssetList from 'components/tabs/asset_list/AssetList';
-import * as EntryEditorWorkbench from 'app/entry_editor/EntryEditorWorkbench';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container, store) {
@@ -277,6 +277,7 @@ function getModule(name) {
     'components/shared/DocumentTitle': componentsSharedDocumentTitleEs6,
     'components/shared/WorkbenchTitle': componentsSharedWorkbenchTitleEs6,
     'app/entity_editor/Components/BackNav': appEntityEditorComponentsBackNavIndexEs6,
+    'app/entity_editor/EntryTitlebar/EntrySecondaryActions': appEntityEditorEntrySecondaryActions,
     'app/entity_editor/StatusNotification': appEntityEditorStatusNotificationEs6,
     'app/EntrySidebar/EntrySidebar': appEntrySidebarEntrySidebarEs6,
     'app/entity_editor/Collaborators': appEntityEditorCollaboratorsIndexEs6,
@@ -325,7 +326,6 @@ function getModule(name) {
     'widgets/ExtensionIFrameRenderer': ExtensionIFrameRenderer,
     'components/field_dialog/validations/DateRangeValidation': DateRangeValidation,
     'components/tabs/asset_list/AssetList': AssetList,
-    'app/entry_editor/EntryEditorWorkbench': EntryEditorWorkbench,
   };
 
   return get(allowedModules, name, null);

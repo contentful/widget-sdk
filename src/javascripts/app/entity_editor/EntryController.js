@@ -86,7 +86,6 @@ export default async function create($scope, editorData, preferences, trackLoadE
    * @type {EntityDocument}
    */
   const doc = editorData.openDoc(K.scopeLifeline($scope));
-
   // TODO rename the scope property
   /**
    * @type {EntityDocument}
