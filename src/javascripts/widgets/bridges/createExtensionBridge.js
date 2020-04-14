@@ -166,21 +166,27 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
     Object.values($scope.fields)
       .reduce((acc, field) => {
         const widget = $scope.widgets.find((w) => w.fieldId === field.id);
-        const fieldLocales = field.locales.map((localeCode) => {
-          const locale = TheLocaleStore.getPrivateLocales().find((l) => l.code == localeCode);
 
-          const fieldLocaleScope = $scope.$new(false);
-          fieldLocaleScope.widget = widget;
-          fieldLocaleScope.locale = locale;
+        if (!widget) {
+          return acc;
+        }
 
-          return {
-            fieldId: field.id,
-            localeCode,
-            fieldLocale: $controller('FieldLocaleController', {
-              $scope: fieldLocaleScope,
-            }),
-          };
-        });
+        const fieldLocales = field.locales
+          .map((localeCode) => {
+            const locale = TheLocaleStore.getPrivateLocales().find((l) => l.code == localeCode);
+            const fieldLocaleScope = $scope.$new(false);
+            fieldLocaleScope.widget = widget;
+            fieldLocaleScope.locale = locale;
+
+            return {
+              fieldId: field.id,
+              localeCode,
+              fieldLocale: $controller('FieldLocaleController', {
+                $scope: fieldLocaleScope,
+              }),
+            };
+          })
+          .filter(Boolean);
 
         return acc.concat(fieldLocales);
       }, [])
@@ -192,7 +198,6 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
 
     // Available for field-level extensions only:
     if (isFieldLevelExtension) {
-      // TODO: update sdk to use isDisabledChangedForFieldLocale and remove this
       K.onValueScope($scope, $scope.fieldLocale.access$, (access) => {
         api.send('isDisabledChanged', [!!access.disabled]);
       });
