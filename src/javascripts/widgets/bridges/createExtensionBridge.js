@@ -174,6 +174,11 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
         const fieldLocales = field.locales
           .map((localeCode) => {
             const locale = TheLocaleStore.getPrivateLocales().find((l) => l.code == localeCode);
+
+            if (!locale) {
+              return;
+            }
+
             const fieldLocaleScope = $scope.$new(false);
             fieldLocaleScope.widget = widget;
             fieldLocaleScope.locale = locale;
