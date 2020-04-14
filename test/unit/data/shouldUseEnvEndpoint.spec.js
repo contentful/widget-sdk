@@ -10,6 +10,7 @@ describe('shouldUseEnvEndpoint', () => {
       ['content_types', 'ctid', 'published'],
       'entries',
       ['assets', 'aid'],
+      ['releases', 'aid', 'validate'],
       'ui_config',
       ['ui_config', '/me'],
       'extensions',

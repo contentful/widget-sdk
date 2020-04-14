@@ -222,7 +222,7 @@ export const getEntryReferences = {
       uponReceiving: `get references for entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
       withRequest: {
         method: 'GET',
-        path: `/spaces/${defaultSpaceId}/entries/${defaultEntryId}/references`,
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/entries/${defaultEntryId}/references`,
         headers: defaultHeader,
       },
       willRespondWith: {
@@ -243,7 +243,7 @@ export const validateEntryReferencesResponse = {
       uponReceiving: `validate references for entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
       withRequest: {
         method: 'POST',
-        path: `/spaces/${defaultSpaceId}/releases/immediate/validations`,
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases/immediate/validations`,
         headers: {
           ...defaultHeader,
           'x-contentful-enable-alpha-feature': 'immediate-release',
@@ -272,7 +272,7 @@ export const validateEntryReferencesResponse = {
       uponReceiving: `validate references for entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
       withRequest: {
         method: 'POST',
-        path: `/spaces/${defaultSpaceId}/releases/immediate/validations`,
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases/immediate/validations`,
         headers: {
           ...defaultHeader,
           'x-contentful-enable-alpha-feature': 'immediate-release',
@@ -297,7 +297,7 @@ export const publishEntryReferencesResponse = {
       uponReceiving: `publish references for entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
       withRequest: {
         method: 'POST',
-        path: `/spaces/${defaultSpaceId}/releases/immediate/execute`,
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases/immediate/execute`,
         headers: {
           ...defaultHeader,
           'x-contentful-enable-alpha-feature': 'immediate-release',
@@ -320,7 +320,7 @@ export const publishEntryReferencesResponse = {
       uponReceiving: `fail publishing references for entry "${defaultEntryId}" in space "${defaultSpaceId}" with validation error`,
       withRequest: {
         method: 'POST',
-        path: `/spaces/${defaultSpaceId}/releases/immediate/execute`,
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases/immediate/execute`,
         headers: {
           ...defaultHeader,
           'x-contentful-enable-alpha-feature': 'immediate-release',
@@ -343,7 +343,7 @@ export const publishEntryReferencesResponse = {
       uponReceiving: `fail publishing references for entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
       withRequest: {
         method: 'POST',
-        path: `/spaces/${defaultSpaceId}/releases/immediate/execute`,
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases/immediate/execute`,
         headers: {
           ...defaultHeader,
           'x-contentful-enable-alpha-feature': 'immediate-release',

@@ -1,12 +1,20 @@
 import cfResolveResponse from 'contentful-resolve-response';
 import { getModule } from 'NgRegistry';
 import { newForLocale } from 'app/entity_editor/entityHelpers.js';
+import * as EndpointFactory from 'data/EndpointFactory';
 import APIClient from 'data/APIClient.js';
 import TheLocaleStore from 'services/localeStore';
 
-async function getReferencesForEntryId(entryId) {
+function createEndpoint() {
   const spaceContext = getModule('spaceContext');
-  const apiClient = new APIClient(spaceContext.endpoint);
+  return EndpointFactory.createSpaceEndpoint(
+    spaceContext.space.data.sys.id,
+    spaceContext.space.environment.sys.id
+  );
+}
+
+async function getReferencesForEntryId(entryId) {
+  const apiClient = new APIClient(createEndpoint());
   const res = await apiClient.getEntryReferences(entryId);
   return cfResolveResponse(res);
 }
@@ -30,14 +38,12 @@ function getUserInfo() {
 }
 
 function validateEntities({ entities, action }) {
-  const spaceContext = getModule('spaceContext');
-  const apiClient = new APIClient(spaceContext.endpoint);
+  const apiClient = new APIClient(createEndpoint());
   return apiClient.validateRelease(action, entities);
 }
 
 function publishEntities({ entities, action }) {
-  const spaceContext = getModule('spaceContext');
-  const apiClient = new APIClient(spaceContext.endpoint);
+  const apiClient = new APIClient(createEndpoint());
   return apiClient.executeRelease(action, entities);
 }
 
