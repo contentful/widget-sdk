@@ -1,6 +1,39 @@
 module.exports = {
   forbidden: [
     {
+      name: 'independent-core',
+      severity: 'error',
+      comment: `Core modules should not depend on modules outside of the core`,
+      from: {
+        path: 'src/javascripts/core',
+      },
+      to: {
+        pathNot: 'src/javascripts/core|node_modules',
+      },
+    },
+    {
+      name: 'features-only-public-api',
+      comment: `Features can use other features only through their public API:
+      import {} from 'features/other-feature';`,
+      severity: 'error',
+      from: { path: '^src/javascripts/features/([^/]+)/.+' },
+      to: {
+        path: '^src/javascripts/features/([^/]+)/.+',
+        pathNot: '^src/javascripts/features/$1/.+|^src/javascripts/features/([^/]+)/index',
+      },
+    },
+    {
+      name: 'no-dependent-features',
+      comment: `Ideally we should avoid dependecies between features.
+      Please, reconsider this dependency if possible.`,
+      severity: 'warn',
+      from: { path: '^src/javascripts/features/([^/]+)/.+' },
+      to: {
+        path: '^src/javascripts/features/([^/]+)/.+',
+        pathNot: '^src/javascripts/features/$1/.+',
+      },
+    },
+    {
       name: 'no-unreachable-from-root',
       severity: 'error',
       comment: `This module is unreachable from an entry point and it's likely not used (anymore?).
@@ -59,20 +92,6 @@ module.exports = {
         pathNot: 'ng\\/|saved-views-migrator',
       },
     },
-    // {
-    //   name: 'not-to-test',
-    //   comment:
-    //     "This module depends on code within a folder that should only contain tests. As tests don't " +
-    //     "implement functionality this is odd. Either you're writing a test outside the test folder " +
-    //     "or there's something in the test folder that isn't a test.",
-    //   severity: 'warn',
-    //   from: {
-    //     pathNot: '^(test|spec)'
-    //   },
-    //   to: {
-    //     path: '^(test|spec)'
-    //   }
-    // },
     {
       name: 'not-to-spec',
       comment:

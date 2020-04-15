@@ -278,7 +278,7 @@
     "prettier": "prettier --config .prettierrc --no-editorconfig --write ./src/javascripts ./tools ./bin ./micro-backends ./test",
     "prettier:check": "prettier --config .prettierrc --no-editorconfig --check ./src/javascripts ./tools ./bin ./micro-backends ./test",
     "postshrinkwrap": "if [ \"`uname`\" = \"Darwin\" ]; then sed -i '' 's/http:\\/\\//https:\\/\\//g' package-lock.json; else sed -i 's/http:\\/\\//https:\\/\\//g' package-lock.json; fi",
-    "cruise": "depcruise --validate ./tools/dependency-cruise/dependency-cruise.js src/javascripts"
+    "cruise": "depcruise --output-type err-long --validate ./tools/dependency-cruise/dependency-cruise.js src/javascripts"
   },
   "lint-staged": {
     "*.js": [

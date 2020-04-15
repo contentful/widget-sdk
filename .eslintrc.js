@@ -6,17 +6,17 @@ module.exports = {
   extends: ['eslint:recommended', 'plugin:react/recommended', 'prettier', 'prettier/react'],
   settings: {
     react: {
-      version: '16.8.0'
+      version: '16.8.0',
     },
     'import/resolver': {
       webpack: {
-        config: 'tools/webpack.config.js'
-      }
-    }
+        config: 'tools/webpack.config.js',
+      },
+    },
   },
   parserOptions: {
     ecmaVersion: 2017,
-    sourceType: 'module'
+    sourceType: 'module',
   },
   plugins: ['react-hooks', 'rulesdir', 'import'],
   env: {
@@ -26,11 +26,11 @@ module.exports = {
     */
     browser: false,
     node: true,
-    es6: true
+    es6: true,
   },
   globals: {
     window: true,
-    document: true
+    document: true,
   },
   parser: 'babel-eslint',
   rules: {
@@ -55,8 +55,8 @@ module.exports = {
       'error',
       {
         functions: false,
-        classes: false
-      }
+        classes: false,
+      },
     ],
     'no-unused-vars': [
       'error',
@@ -64,8 +64,8 @@ module.exports = {
         vars: 'all',
         varsIgnorePattern: '^_',
         args: 'all',
-        argsIgnorePattern: '^_'
-      }
+        argsIgnorePattern: '^_',
+      },
     ],
     'eol-last': 'warn',
     'require-yield': 'off',
@@ -77,29 +77,38 @@ module.exports = {
       'MetaProperty',
       'SequenceExpression',
       'TaggedTemplateExpression',
-      'WithStatement'
+      'WithStatement',
     ],
     'no-var': 'error',
-    'prefer-const': 'error'
+    'prefer-const': 'error',
     // todo: enable once we get rid of .es6
     // 'no-plusplus': ['warn', { allowForLoopAfterthoughts: true }],
     // 'object-shorthand': ['warn', 'properties']
   },
   overrides: [
     {
+      files: ['src/javascripts/core/**/*.js', 'src/javascripts/features/**/*.js'],
+      rules: {
+        'import/order': ['error', { groups: [['builtin', 'external', 'internal']] }],
+        'import/no-default-export': 'error',
+        'rulesdir/restrict-multiple-react-component-exports': 'error',
+        'rulesdir/allow-only-import-export-in-index': 'error',
+      },
+    },
+    {
       files: ['test/**'],
       rules: {
         'import/no-unresolved': 'off',
         'rulesdir/restrict-inline-styles': 'off',
         'rulesdir/relative-imports': 'off',
-        'rulesdir/enforce-getModule-call-inside-fn': 'off'
-      }
+        'rulesdir/enforce-getModule-call-inside-fn': 'off',
+      },
     },
     {
       files: [
         'src/**/*.spec.js',
         'src/**/__test__/**/*.js',
-        'src/javascripts/**/__mocks__/**/*.js'
+        'src/javascripts/**/__mocks__/**/*.js',
       ],
       plugins: ['jest', 'rulesdir'],
       rules: {
@@ -118,11 +127,11 @@ module.exports = {
         'jest/prefer-to-be-undefined': 'warn',
         'rulesdir/restrict-sinon': 'error',
         'rulesdir/restrict-virtual-true': 'error',
-        'react/prop-types': 'off'
+        'react/prop-types': 'off',
       },
       parserOptions: {
         ecmaVersion: 2017,
-        sourceType: 'module'
+        sourceType: 'module',
       },
       globals: {
         describe: true,
@@ -134,15 +143,15 @@ module.exports = {
         beforeEach: true,
         afterEach: true,
         beforeAll: true,
-        afterAll: true
-      }
+        afterAll: true,
+      },
     },
     {
       files: ['src/javascripts/svg/**/*.js'],
       plugins: ['rulesdir'],
       rules: {
-        'rulesdir/restrict-inline-styles': 'off'
-      }
-    }
-  ]
+        'rulesdir/restrict-inline-styles': 'off',
+      },
+    },
+  ],
 };
