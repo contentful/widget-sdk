@@ -93,7 +93,7 @@ export const groups = [
     name: 'date-time',
     icon: 'calendar',
     label: 'Date and time',
-    description: 'Event date, opening hours',
+    description: 'Event dates',
     types: ['Date'],
   },
   {
