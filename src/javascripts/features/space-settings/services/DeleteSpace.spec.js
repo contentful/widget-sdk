@@ -29,8 +29,16 @@ jest.mock('account/pricing/PricingDataProvider', () => ({
   isFreeSpacePlan: jest.fn(),
 }));
 
-jest.spyOn(Notification, 'success').mockImplementation(() => {});
-jest.spyOn(Notification, 'error').mockImplementation(() => {});
+jest.useFakeTimers();
+
+const cleanupNotifications = () => {
+  if (!global.setTimeout.mock) {
+    throw new Error('Call `jest.useFakeTimers()` in the spec file');
+  }
+
+  Notification.closeAll();
+  jest.runOnlyPendingTimers();
+};
 
 describe('DeleteSpace service', () => {
   const space = { name: 'DeepSpace', sys: { id: '_id' } };
@@ -92,6 +100,8 @@ describe('DeleteSpace service', () => {
   });
 
   describe('DeleteSpaceModal Component', () => {
+    afterEach(cleanupNotifications);
+
     const build = (otherProps) => {
       const props = Object.assign(
         {
@@ -145,7 +155,7 @@ describe('DeleteSpace service', () => {
       const onCloseMock = jest.fn();
       build({ onClose: onCloseMock });
 
-      const { getByTestId } = screen;
+      const { getByTestId, findByTestId } = screen;
 
       const spaceNameField = getByTestId('space-name-confirmation-field');
       const deleteSpaceButton = getByTestId('delete-space-confirm-button');
@@ -158,8 +168,9 @@ describe('DeleteSpace service', () => {
 
       expect(client.deleteSpace).toBeCalled();
       expect(TokenStore.refresh).toBeCalled();
-      expect(Notification.success).toBeCalled();
       expect(onCloseMock).toHaveBeenCalledWith(true);
+
+      expect(await findByTestId('cf-ui-notification')).toHaveAttribute('data-intent', 'success');
     });
 
     it('should trigger an error if deleting the space fails', async () => {
@@ -180,8 +191,9 @@ describe('DeleteSpace service', () => {
 
       expect(client.deleteSpace).toBeCalled();
       expect(TokenStore.refresh).not.toBeCalled();
-      expect(Notification.error).toBeCalled();
       expect(onCloseMock).not.toBeCalled();
+
+      expect(getByTestId('cf-ui-notification')).toHaveAttribute('data-intent', 'error');
     });
   });
 });
