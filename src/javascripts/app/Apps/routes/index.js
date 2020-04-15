@@ -1,8 +1,10 @@
 import { get } from 'lodash';
 import AppsListPage from '../AppsListPage';
 import AppPage from '../AppPage';
+import AppPageLocation from '../AppPageLocation';
 import { makeAppHookBus } from '../AppHookBus';
 import createAppExtensionBridge from 'widgets/bridges/createAppExtensionBridge';
+import createPageExtensionBridge from 'widgets/bridges/createPageExtensionBridge';
 import * as Navigator from 'states/Navigator';
 import * as SlideInNavigator from 'navigation/SlideInNavigator/index';
 import { getAppsRepo } from '../AppsRepoInstance';
@@ -147,6 +149,49 @@ export default {
 
               getCustomWidgetLoader().evict([NAMESPACE_APP, widgetId]);
             },
+          };
+        },
+      ],
+    },
+    {
+      name: 'page',
+      url: '/app_installations/:appId{path:PathSuffix}',
+      component: AppPageLocation,
+      resolve: {
+        app: ['$stateParams', 'spaceContext', ({ appId }) => getAppsRepo().getApp(appId)],
+      },
+      onEnter: [
+        'app',
+        (app) => {
+          const noPageLocationDefined = !app.appDefinition.locations.find(
+            (l) => l.location === 'page'
+          );
+
+          if (noPageLocationDefined) {
+            throw new Error('This app has not defined a page location!');
+          }
+        },
+      ],
+      mapInjectedToProps: [
+        '$stateParams',
+        'spaceContext',
+        'app',
+        ({ path = '' }, spaceContext, app) => {
+          const bridge = createPageExtensionBridge(
+            {
+              spaceContext,
+              Navigator,
+              SlideInNavigator,
+              appDefinition: app.appDefinition,
+            },
+            app.id
+          );
+
+          return {
+            path: path.startsWith('/') ? path : `/${path}`,
+            app,
+            bridge,
+            cma: spaceContext.cma,
           };
         },
       ],
