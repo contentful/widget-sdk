@@ -30,7 +30,7 @@ export function create(baseUrl, auth, spaceId, environmentId) {
    * `connection.state` may be
    * - 'connecting': The connection is being established
    * - 'handshaking': The connection has been established, but we don't have the auth ID yet
-   * - 'ok': We have connected and recieved our client ID. Ready for data.
+   * - 'ok': We have connected and received our client ID. Ready for data.
    * - 'disconnected': The connection is closed, but it will not reconnect automatically.
    * - 'stopped': The connection is closed, and will not reconnect.
    * (From ShareJS client docs)
