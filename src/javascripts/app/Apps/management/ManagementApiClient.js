@@ -78,3 +78,21 @@ export function revokeKey({ orgId, definitionId, fingerprint }) {
     path: ['app_definitions', definitionId, 'keys', fingerprint],
   });
 }
+
+export function updateAppEvents(orgId, definitionId, { targetUrl, topics }) {
+  const orgEndpoint = createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
+  return orgEndpoint({
+    method: 'PUT',
+    data: { targetUrl, topics },
+    path: ['app_definitions', definitionId, 'event_subscription'],
+  });
+}
+
+export function deleteAppEvents(orgId, definitionId) {
+  const orgEndpoint = createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
+
+  return orgEndpoint({
+    method: 'DELETE',
+    path: ['app_definitions', definitionId, 'event_subscription'],
+  });
+}

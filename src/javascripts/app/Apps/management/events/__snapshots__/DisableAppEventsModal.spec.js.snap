@@ -1,0 +1,214 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Disable App Events Modal should render the modal 1`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": .emotion-0 {
+  margin-bottom: 1.5rem;
+}
+
+<body
+    class="Modal__body--open"
+  >
+    <div>
+      <div />
+    </div>
+    <div
+      class="Modal__Modal__portal___1AjJC"
+    >
+      <div
+        class="Modal__Modal__overlay___3gPyC Modal__Modal__overlay--centered___2kDOU Modal__Modal__overlay--after-open___sRqhJ"
+      >
+        <div
+          class="Modal__Modal__wrap___BjfRz Modal__Modal__wrap--after-open___1XDbx"
+          role="dialog"
+          style="top: 0px;"
+          tabindex="-1"
+        >
+          <div
+            class="Modal__Modal___2S_pS"
+            data-test-id="cf-ui-modal"
+            style="width: 520px;"
+          >
+            <div
+              class="ModalHeader__ModalHeader___1yD1S"
+              data-test-id="modal-title"
+            >
+              <h1
+                class="ModalHeader__ModalHeader__title___3IuOy"
+              >
+                Algolia
+              </h1>
+              <button
+                class="IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1 IconButton__IconButton--muted___22_IZ"
+                data-test-id="cf-ui-icon-button"
+                type="button"
+              >
+                <span
+                  class="TabFocusTrap__TabFocusTrap___39Vty IconButton__IconButton__inner___3fnmT"
+                  tabindex="-1"
+                >
+                  <svg
+                    class="Icon__Icon___38Epv Icon__Icon--small___1yGZK undefined IconButton__IconButton__icon___3yZQN"
+                    data-test-id="cf-ui-icon"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                    />
+                    <path
+                      d="M0 0h24v24H0z"
+                      fill="none"
+                    />
+                  </svg>
+                  <span
+                    class="IconButton__IconButton__label___1kp5y helpers__sr-only___3Kv3z"
+                  >
+                    Close
+                  </span>
+                </span>
+              </button>
+            </div>
+            <div
+              class="ModalContent__ModalContent___2mf3h"
+              data-test-id="cf-ui-modal-content"
+            >
+              <p
+                class="Paragraph__Paragraph___2aO-9 emotion-0"
+                data-test-id="cf-ui-paragraph"
+              >
+                Disabling events will affect ALL existing app installations. Your app will cease to receive events. Are you sure?
+                 
+              </p>
+              <div
+                class="Note__Note___2eSKN Note__Note--primary___-8-7D"
+                data-test-id="cf-ui-note"
+              >
+                <div
+                  class="Note__Note__icon___20RqC"
+                >
+                  <svg
+                    class="Icon__Icon___38Epv Icon__Icon--small___1yGZK undefined"
+                    data-test-id="cf-ui-icon"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    width="18"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M0 0h24v24H0z"
+                      fill="none"
+                    />
+                    <path
+                      d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <div>
+                    This will remove the current event configuration
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="ModalControls__ModalControls___2bTQx"
+              data-test-id="cf-ui-modal-controls"
+            >
+              <button
+                class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--negative___22jwE"
+                data-test-id="disable-app-events"
+                type="button"
+              >
+                <span
+                  class="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
+                  tabindex="-1"
+                >
+                  <span
+                    class="Button__Button__label___3tcOj"
+                  >
+                    Disable
+                  </span>
+                </span>
+              </button>
+              <button
+                class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--muted___2Wair"
+                data-test-id="cancel-action"
+                type="button"
+              >
+                <span
+                  class="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
+                  tabindex="-1"
+                >
+                  <span
+                    class="Button__Button__label___3tcOj"
+                  >
+                    Cancel
+                  </span>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    <div />
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;

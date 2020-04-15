@@ -15,6 +15,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import Icon from 'ui/Components/Icon';
+import { getVariation } from 'LaunchDarkly';
 import AppEditor from './AppEditor';
 import * as ManagementApiClient from './ManagementApiClient';
 import * as ModalLauncher from 'app/common/ModalLauncher';
@@ -22,12 +23,15 @@ import AppInstallModal from './AppInstallModal';
 import DeleteAppModal from './DeleteAppDialog';
 import SaveConfirmModal from './SaveConfirmModal';
 import KeyListing from './keys/KeyListing';
+import AppEvents from './events';
 import { track } from 'analytics/Analytics';
 import DocumentTitle from 'components/shared/DocumentTitle';
+import { APP_MANAGEMENT_VIEWS } from 'featureFlags';
 
 const TabPaths = {
   GENERAL: '',
   KEY_PAIRS: 'key-pairs',
+  EVENTS: 'events',
 };
 
 const styles = {
@@ -121,6 +125,7 @@ export default class AppDetails extends React.Component {
 
     this.state = {
       busy: false,
+      appManagementViewsEnabled: false,
       name: props.definition.name,
       definition: props.definition,
       selectedTab: props.tab,
@@ -133,12 +138,16 @@ export default class AppDetails extends React.Component {
 
     let creator = userNameCache[definition.sys.id];
 
+    const appManagementViewsEnabled = await getVariation(APP_MANAGEMENT_VIEWS, {
+      organizationId: definition.sys.organization.sys.id,
+    });
+
     if (!creator) {
       creator = await ManagementApiClient.getCreatorNameOf(definition);
       userNameCache[definition.sys.id] = creator;
     }
 
-    this.setState({ creator });
+    this.setState({ creator, appManagementViewsEnabled });
   }
 
   save = async () => {
@@ -216,7 +225,7 @@ export default class AppDetails extends React.Component {
   };
 
   render() {
-    const { name, definition, busy, selectedTab } = this.state;
+    const { name, definition, busy, selectedTab, appManagementViewsEnabled } = this.state;
 
     return (
       <Workbench>
@@ -261,12 +270,22 @@ export default class AppDetails extends React.Component {
                 onSelect={this.onTabSelect}>
                 General
               </Tab>
-              <Tab
-                id={TabPaths.KEY_PAIRS}
-                selected={selectedTab === TabPaths.KEY_PAIRS}
-                onSelect={this.onTabSelect}>
-                Key pairs
-              </Tab>
+              {appManagementViewsEnabled ? (
+                <>
+                  <Tab
+                    id={TabPaths.KEY_PAIRS}
+                    selected={selectedTab === TabPaths.KEY_PAIRS}
+                    onSelect={this.onTabSelect}>
+                    Key pairs
+                  </Tab>
+                  <Tab
+                    id={TabPaths.EVENTS}
+                    selected={selectedTab === TabPaths.EVENTS}
+                    onSelect={this.onTabSelect}>
+                    Events
+                  </Tab>
+                </>
+              ) : null}
             </Tabs>
             {selectedTab === TabPaths.GENERAL && (
               <TabPanel id={TabPaths.GENERAL} className={styles.tabPanel}>
@@ -297,6 +316,11 @@ export default class AppDetails extends React.Component {
             {selectedTab === TabPaths.KEY_PAIRS && (
               <TabPanel id={TabPaths.KEY_PAIRS} className={styles.tabPanel}>
                 <KeyListing definition={definition} />
+              </TabPanel>
+            )}
+            {selectedTab === TabPaths.EVENTS && (
+              <TabPanel id={TabPaths.EVENTS} className={styles.tabPanel}>
+                <AppEvents definition={definition} />
               </TabPanel>
             )}
           </div>

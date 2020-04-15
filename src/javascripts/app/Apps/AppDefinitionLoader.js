@@ -6,6 +6,7 @@ export default function createAppDefinitionLoader(appDefinitionsEndpoint, orgEnd
     getByIds,
     getAllForCurrentOrganization,
     getKeysForAppDefinition,
+    getAppEvents,
   };
 
   async function getById(id) {
@@ -90,5 +91,12 @@ export default function createAppDefinitionLoader(appDefinitionsEndpoint, orgEnd
     });
 
     return items;
+  }
+
+  async function getAppEvents(appDefinitionId) {
+    return await orgEndpoint({
+      method: 'GET',
+      path: ['app_definitions', appDefinitionId, 'event_subscription'],
+    });
   }
 }

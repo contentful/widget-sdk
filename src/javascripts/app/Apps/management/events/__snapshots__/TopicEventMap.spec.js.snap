@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Entity Types and Actions should have these Type Labels for App Events 1`] = `
+Object {
+  "AppInstallation": "App Installation",
+  "Asset": "Asset",
+  "ContentType": "Content type",
+  "Entry": "Entry",
+}
+`;
+
+exports[`Entity Types and Actions should have these actions 1`] = `
+Array [
+  "create",
+  "save",
+  "archive",
+  "unarchive",
+  "publish",
+  "unpublish",
+  "delete",
+]
+`;
+
+exports[`Entity Types and Actions should have these disabled actions for the entity types 1`] = `
+Object {
+  "AppInstallation": Array [
+    "create",
+    "save",
+    "archive",
+    "unarchive",
+    "publish",
+    "unpublish",
+    "delete",
+  ],
+  "Asset": Array [
+    "auto_save",
+  ],
+  "ContentType": Array [
+    "archive",
+    "unarchive",
+    "auto_save",
+  ],
+  "Entry": Array [
+    "auto_save",
+  ],
+}
+`;
+
+exports[`Entity Types and Actions should these entity types for app event 1`] = `
+Array [
+  "ContentType",
+  "Entry",
+  "Asset",
+]
+`;

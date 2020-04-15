@@ -9,6 +9,7 @@ export const ENTITY_EDITOR_CMA_EXPERIMENT =
   'feature-pen-07-2019-fake-cma-calls-experiment-to-replace-sharejs';
 export const ACCESS_TOOLS = 'feature-ogg-02-2020-access-tools';
 export const COOKIE_CONSENT_MANAGEMENT = 'feature-ahoy-03-2020-cookie-consent-mgmt';
+export const APP_MANAGEMENT_VIEWS = 'feature-ext-04-2020-app-backends';
 
 // Gatekeeper Product Catalog Flags
 export const ENVIRONMENT_USAGE_ENFORCEMENT = 'environment_usage_enforcements';
