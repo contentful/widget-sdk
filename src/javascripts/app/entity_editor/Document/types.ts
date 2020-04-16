@@ -43,6 +43,11 @@ export interface Document {
   sysProperty: Property<EntitySys, any>;
   data$: Property<Entity, any>;
   state: {
+    /**
+     * True while the Document is persisting pending field changes.
+     * Does not emit when persisting status updates (see `resourceState.inProgress$`
+     * for this purpose instead)
+     */
     isSaving$: Property<boolean, any>;
     isConnected$: Property<boolean, any>;
     isDirty$: Property<boolean, any>;

@@ -1,5 +1,6 @@
 import { cloneDeep, set } from 'lodash';
 import * as CmaDocument from './CmaDocument';
+import { Action } from 'data/document/ResourceStateManager';
 import testDocumentBasic, { newEntry, newContentType } from './Document.spec';
 import * as K from '../../../../../test/utils/kefir';
 import { Error as DocError } from '../../../data/document/Error';
@@ -92,7 +93,7 @@ describe('CmaDocument', () => {
       expect(spaceEndpoint).not.toHaveBeenCalled();
     });
 
-    it('keeps the old sysProperty version after update', () => {
+    it('keeps the old sysProperty version after local update', () => {
       expect(K.getValue(doc.sysProperty).version).toEqual(entry.sys.version);
     });
   });
@@ -108,7 +109,7 @@ describe('CmaDocument', () => {
       expect(spaceEndpoint).toBeCalledTimes(1);
     });
 
-    it('bumps sysProperty version after update', () => {
+    it('bumps sysProperty version after remote update', () => {
       expect(K.getValue(doc.sysProperty).version).toEqual(entry.sys.version + 1);
     });
   });
@@ -129,7 +130,7 @@ describe('CmaDocument', () => {
       });
     });
 
-    it('collects changes made during saving and sends them only after 5s since last CMA request', async () => {
+    it('collects changes made during saving and sends them only 5s after last CMA request', async () => {
       jest.useFakeTimers();
       let cmaResolve;
       spaceEndpoint.mockImplementation(async (body) => {
@@ -146,7 +147,7 @@ describe('CmaDocument', () => {
       K.assertCurrentValue(doc.state.isSaving$, true);
       await doc.setValueAt(['fields', 'fieldB', 'en-US'], 'value set during saving');
       cmaResolve();
-      jest.useRealTimers(); // switch back to real timers to let persistEntity to finish in the current tick
+      jest.useRealTimers(); // Switch back to real timers to let saveEntity() finish in the current tick.
       await new Promise((resolve) => setTimeout(resolve, 0));
       K.assertCurrentValue(doc.state.isSaving$, false);
       // Ensure the value was not overwritten by the response entity.
@@ -168,7 +169,7 @@ describe('CmaDocument', () => {
   });
 
   describe('CMA call taking longer than 5s', () => {
-    it('does not persist pending changes until request succeeds', async () => {
+    it('saves new pending changes only after first request succeeds', async () => {
       doc = createCmaDocument(entry, undefined, 100).document;
       jest.useFakeTimers();
       let cmaResolve;
@@ -203,6 +204,79 @@ describe('CmaDocument', () => {
     });
   });
 
+  describe('state update', () => {
+    it('persists pending changes first and immediately', async () => {
+      spaceEndpoint
+        .mockImplementationOnce((body) => {
+          entry = cloneDeep(body.data);
+          entry.sys.version++;
+          return entry;
+        })
+        .mockImplementationOnce((body) => {
+          expect(body).toEqual({
+            method: 'PUT',
+            path: ['entries', 'published'],
+            version: entry.sys.version,
+          });
+          entry = cloneDeep(entry);
+          entry.sys.publishedVersion = entry.sys.version;
+          entry.sys.version++;
+          return entry;
+        });
+      jest.useFakeTimers();
+
+      await doc.setValueAt(fieldPath, 'updated value');
+      expect(spaceEndpoint).not.toHaveBeenCalled();
+
+      await doc.resourceState.apply(Action.Publish());
+      expect(spaceEndpoint).toBeCalledTimes(2);
+
+      jest.runAllTimers();
+      await waitForTimers();
+      expect(spaceEndpoint).toBeCalledTimes(2);
+    });
+
+    it('persists changes made during state update 5s afterwards', async () => {
+      let resolveStateUpdate;
+      spaceEndpoint
+        .mockImplementationOnce((body) => {
+          expect(body).toEqual({
+            method: 'PUT',
+            path: ['entries', 'published'],
+            version: entry.sys.version,
+          });
+          entry = cloneDeep(entry);
+          return new Promise((resolve) => {
+            entry.sys.publishedVersion = entry.sys.version;
+            entry.sys.version++;
+            resolveStateUpdate = () => {
+              resolve(entry);
+            };
+          });
+        })
+        .mockImplementationOnce((body) => {
+          entry = cloneDeep(body.data);
+          entry.sys.version++;
+          return entry;
+        });
+
+      jest.useRealTimers();
+      const resourceStateUpdatePromise = doc.resourceState.apply(Action.Publish());
+      await wait();
+      jest.useFakeTimers();
+      expect(spaceEndpoint).toBeCalledTimes(1);
+
+      await doc.setValueAt(fieldPath, 'updated value');
+
+      jest.runAllTimers();
+      expect(spaceEndpoint).toBeCalledTimes(1); // saveEntity() not called yet.
+
+      resolveStateUpdate();
+      await resourceStateUpdatePromise;
+      expect(spaceEndpoint).toBeCalledTimes(2); // saveEntity() called now.
+    });
+  });
+
   describe('state', () => {
     describe('isSaving$', () => {
       let cmaResolve;
@@ -210,6 +284,7 @@ describe('CmaDocument', () => {
       beforeEach(() => {
         jest.useFakeTimers();
       });
+
       it('is [true, false] when entity is persisted', async () => {
         spaceEndpoint.mockImplementation(async (body) => {
           const entry = cloneDeep(body.data);
@@ -223,12 +298,13 @@ describe('CmaDocument', () => {
         await doc.setValueAt(fieldPath, 'en-US-updated');
         jest.runAllTimers();
         K.assertCurrentValue(doc.state.isSaving$, true);
-        // Run remaining part of persistEntity in current tick.
+        // Run remaining part of saveEntity() in current tick.
         jest.useRealTimers();
         cmaResolve();
         await wait();
         K.assertCurrentValue(doc.state.isSaving$, false);
       });
+
       it('is [true, false] when entity persisting failed', async () => {
         spaceEndpoint.mockImplementation(async (body) => {
           const entry = cloneDeep(body.data);
@@ -242,13 +318,14 @@ describe('CmaDocument', () => {
         await doc.setValueAt(fieldPath, 'en-US-updated');
         jest.runAllTimers();
         K.assertCurrentValue(doc.state.isSaving$, true);
-        // Run remaining part of persistEntity in current tick.
+        // Run remaining part of saveEntity() in current tick.
         jest.useRealTimers();
         cmaResolve();
         await wait();
         K.assertCurrentValue(doc.state.isSaving$, false);
       });
     });
+
     describe('error$', () => {
       beforeEach(() => {
         jest.useFakeTimers();
@@ -273,6 +350,7 @@ describe('CmaDocument', () => {
         await waitForTimers();
         K.assertCurrentValue(doc.state.error$, DocError.OpenForbidden());
       });
+
       it('emits CmaInternalServerError(originalError) on ServerError error code', async () => {
         const error = newError('ServerError', 'API request failed');
         spaceEndpoint.mockImplementationOnce(() => {
@@ -283,6 +361,7 @@ describe('CmaDocument', () => {
         await waitForTimers();
         K.assertCurrentValue(doc.state.error$, DocError.CmaInternalServerError(error));
       });
+
       it('emits CmaInternalServerError(originalError) on any other error code', async () => {
         const error = newError('SomeRandomError', 'API request failed');
         spaceEndpoint.mockImplementationOnce(() => {
@@ -317,6 +396,7 @@ describe('CmaDocument', () => {
         field2: { 'en-US': true, de: true },
       });
     });
+
     it('removes unknown fields and locales from getValueAt', () => {
       expect(doc.getValueAt(['fields'])).toEqual({
         field1: { 'en-US': true },

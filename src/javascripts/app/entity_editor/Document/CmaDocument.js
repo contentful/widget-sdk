@@ -10,6 +10,7 @@ import { Error as DocError } from 'data/document/Error';
 import * as StringField from 'data/document/StringFieldSetter';
 import { cmaPutChanges } from './api';
 import { trackEditConflict } from './analytics';
+import { createNoopPresenceHub } from './PresenceHub';
 export const THROTTLE_TIME = 5000;
 /**
  * Used to edit an entry or asset through the CMA.
@@ -21,6 +22,11 @@ export function create(initialEntity, contentType, spaceEndpoint, saveThrottleMs
   const sysBus = K.createPropertyBus(entity.sys);
   const changesBus = K.createStreamBus();
   const isSavingBus = K.createPropertyBus(false);
+  const isSaving$ = isSavingBus.property.skipDuplicates();
+  const afterSave$ = isSaving$
+    .changes()
+    .filter((isSaving) => !isSaving)
+    .map((_) => undefined);
   const errorBus = K.createPropertyBus(null);
   const cleanupTasks = [];
   const sys$ = sysBus.property;
@@ -33,7 +39,6 @@ export function create(initialEntity, contentType, spaceEndpoint, saveThrottleMs
   setLastSavedEntity(entity);
   // We assume that the permissions only depend on the immutable data like the ID the content type ID and the creator.
   const permissions = Permissions.create(entity.sys);
-  // todo: its "inProgress$" prop can be used in "doc.isSaving$" indicator
   const resourceState = ResourceStateManager.create(
     sys$,
     (newSys) => {
@@ -43,9 +48,12 @@ export function create(initialEntity, contentType, spaceEndpoint, saveThrottleMs
     // "entity" local state is used, because sys$, data$ are only a reflection of the current state.
     () => cloneDeep(getValueAt([])),
     spaceEndpoint,
-    // preApplyFn - triggered and awaited before applying the state change
-    persistEntity // TODO: part of the status change ticket
+    saveEntity // preApplyFn - triggered and awaited before applying the state change
   );
+  const afterStatusUpdate$ = resourceState.inProgress$
+    .changes()
+    .filter((isSaving) => !isSaving)
+    .map((_) => undefined);
   function normalize() {
     const locales = TheLocaleStore.getPrivateLocales();
     Normalizer.normalize({ getValueAt, setValueAt }, entity, contentType, locales);
@@ -62,7 +70,6 @@ export function create(initialEntity, contentType, spaceEndpoint, saveThrottleMs
   //  This is of importance in `widgetApi.field.setValue()` which needs to throw
   //  In case of insufficient rights to update a field (important for Slug editor).
   async function setValueAt(path, value) {
-    // String field.
     if (path.length === 3 && StringField.isStringField(path[1], contentType)) {
       if (!StringField.isValidStringFieldValue(value)) {
         throw new Error('Invalid string field value.');
@@ -75,7 +82,7 @@ export function create(initialEntity, contentType, spaceEndpoint, saveThrottleMs
       }
     }
     // NOTE: We do not re-implement empty value `RichTextFieldSetter` behavior for now
-    //  as we can rely on the RT editor to be responsible for givinug us `undefined` as
+    //  as we can rely on the RT editor to be responsible for giving us `undefined` as
     //  an empty value.
     set(entity, path, value);
     changesBus.emit(path);
@@ -89,26 +96,53 @@ export function create(initialEntity, contentType, spaceEndpoint, saveThrottleMs
       normalize();
     }
   });
-  /**
-   * Collect all changes in last N seconds and make a PUT request to CMA with the updated entity data.
-   */
+  // Persist changes if there were any in last N seconds. Also update if there were
+  // any changes during the last update.
   changesBus.stream
     .filter((path) => PathUtils.isPrefix(['fields'], path))
-    .merge(isSavingBus.property.filter((isSaving) => !isSaving))
-    .bufferWhileBy(isSavingBus.property)
+    .merge(afterSave$)
+    .bufferWhileBy(isSaving$)
+    .merge(afterStatusUpdate$)
     .throttle(saveThrottleMs, { leading: false })
-    .onValue(() => persistEntity());
+    .onValue(async (values) => {
+      let _a;
+      // Do nothing if there was no field change since last updating the entity.
+      // Values being `null` doesn't make any sense but happens for some reason
+      // in some cases, apparently because of throttle().
+      // In case of a status update (values === `undefined`) we try to save just
+      // to be on the save side, in case there's been edits while updating.
+      if (
+        values === null ||
+        (((_a = values) === null || _a === void 0 ? void 0 : _a.length) === 1 &&
+          values[0] === undefined)
+      ) {
+        return;
+      }
+      saveEntityAfterAnyStatusUpdate();
+    });
+  async function saveEntityAfterAnyStatusUpdate(...args) {
+    if (K.getValue(resourceState.inProgress$)) {
+      await afterStatusUpdate$.changes().take(1).toPromise();
+      return saveEntityAfterAnyStatusUpdate(...args);
+    }
+    return saveEntity(...args);
+  }
   /**
    * @param options.updateEmitters Is used to save an entity on destroy without updating
    *  the document that is already destroyed once CMA response is received
    */
-  async function persistEntity(options = { updateEmitters: true }) {
+  async function saveEntity(options = { updateEmitters: true }) {
+    // Wait for current ongoing update, then do the next one.
+    if (K.getValue(isSaving$)) {
+      await afterSave$.changes().take(1).toPromise();
+      return saveEntity(options);
+    }
     // Do nothing if no unsaved changes - entity could be persisted
     // before the throttled handler triggered, e.g. on status change.
-    if (isEqual(entity.fields, lastSavedEntity.fields) || K.getValue(isSavingBus.property)) {
+    if (isEqual(entity.fields, lastSavedEntity.fields)) {
       return;
     }
-    // If there was an error, unless it's not a connection error, stop any further attempts of saving.
+    // Re-try saving after connection errors but no further attempt to save otherwise.
     const lastError = K.getValue(errorBus.property);
     if (lastError && !(lastError instanceof DocError.Disconnected)) {
       return;
@@ -117,13 +151,15 @@ export function create(initialEntity, contentType, spaceEndpoint, saveThrottleMs
       try {
         await cmaPutChanges(spaceEndpoint, entity);
       } catch (e) {
-        // TODO: Think about analytics for this case.
+        // TODO: Use affordable analytics to track how often this happens.
       }
       return;
     }
     isSavingBus.set(true);
+    // Clone as `entity` could get mutated while waiting for CMA request.
+    const changedLocalEntity = cloneDeep(entity);
     try {
-      const newEntry = await cmaPutChanges(spaceEndpoint, entity);
+      const newEntry = await cmaPutChanges(spaceEndpoint, changedLocalEntity);
       setLastSavedEntity(newEntry);
     } catch (e) {
       if (e.code === 'VersionMismatch') {
@@ -131,7 +167,7 @@ export function create(initialEntity, contentType, spaceEndpoint, saveThrottleMs
           spaceEndpoint,
           localEntity: lastSavedEntity,
           localEntityFetchedAt: lastSavedEntityFetchedAt,
-          changedLocalEntity: entity,
+          changedLocalEntity,
         });
       }
       const errors = {
@@ -205,13 +241,13 @@ export function create(initialEntity, contentType, spaceEndpoint, saveThrottleMs
     data$,
     state: {
       // Used by Entry/Asset editor controller
-      isSaving$: isSavingBus.property,
+      isSaving$,
       // Used by 'cfFocusOtInput' directive and 'FieldLocaleController'
       isConnected$: K.constant(true),
       // Used by Entry/Asset editor controller
       isDirty$,
       canEdit$,
-      // todo: might set False when no internet connection
+      // TODO: might set False when no internet connection
       loaded$: K.constant(true),
       /**
        * This error is used by:
@@ -274,22 +310,15 @@ export function create(initialEntity, contentType, spaceEndpoint, saveThrottleMs
       return;
     },
     destroy: () => {
-      // Try to persist all unsaved changes before destroying the document.
-      // TODO: it's hacky to save it on destroy
-      persistEntity({ updateEmitters: false });
+      // TODO: It's a bit hacky to persist on destroy. This should be the
+      //  responsibility of any controller using `CmaDocument` instead.
+      saveEntityAfterAnyStatusUpdate({ updateEmitters: false });
       cleanupTasks.forEach((task) => task());
     },
     resourceState,
-    /**
-     * Not implementing Presence for CmaDocument for now.
-     */
-    presence: {
-      collaborators: K.constant([]),
-      collaboratorsFor: () => K.constant([]),
-      focus: noop,
-      leave: noop,
-      destroy: noop,
-    },
+    // Presence did rely on ShareJS. We could re-implement it using e.g. pub-sub
+    // but it's out of scope for now.
+    presence: createNoopPresenceHub(),
     permissions,
     // @ts-ignore
     reverter: {

@@ -46,10 +46,6 @@ export const newContentType = (sys, fields) => ({
   },
 });
 
-describe('empty test', () => {
-  it('passes', () => {});
-});
-
 export default (createDocument) => {
   describe('Document', () => {
     const fieldPath = ['fields', 'fieldA', 'en-US'];
@@ -289,6 +285,17 @@ export default (createDocument) => {
       });
     });
 
+    describe('resourceState', () => {
+      it('is a ResourceState object', () => {
+        expect(doc.resourceState).toEqual({
+          apply: expect.any(Function),
+          stateChange$: expect.any(Kefir.Stream),
+          state$: expect.any(Kefir.Property),
+          inProgress$: expect.any(Kefir.Property),
+        });
+      });
+    });
+
     describe('snapshot normalization', () => {
       it('removes unknown fields and locales on document load', () => {
         const notNormalizedEntry = newEntry({
@@ -310,3 +317,5 @@ export default (createDocument) => {
     });
   });
 };
+
+test.skip('skip', () => {});
