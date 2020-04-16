@@ -19,7 +19,8 @@ export default function register() {
     '$scope',
     '$q',
     'spaceContext',
-    function AssetSearchController($scope, $q, spaceContext) {
+    'viewPersistor',
+    function AssetSearchController($scope, $q, spaceContext, viewPersistor) {
       const controller = this;
       const assetLoader = new PromisedLoader();
 
@@ -42,11 +43,10 @@ export default function register() {
 
       // TODO: Get rid of duplicate code in entry_list_search_controller.js
 
+      const isSearching$ = K.fromScopeValue($scope, ($scope) => $scope.context.isSearching);
+
       $scope.$watch(
-        () => ({
-          viewId: getViewItem('id'),
-          search: getViewSearchState(),
-        }),
+        () => getViewSearchState(),
         () => {
           if (!isViewLoaded()) {
             return;
@@ -57,7 +57,6 @@ export default function register() {
       );
 
       function resetAssets() {
-        initializeSearchUI();
         return controller.resetAssets(true);
       }
 
@@ -78,7 +77,7 @@ export default function register() {
             (assets) => {
               $scope.context.ready = true;
               controller.paginator.setTotal(assets.total);
-              Tracking.searchPerformed($scope.context.view, assets.total);
+              Tracking.searchPerformed(viewPersistor.read(), assets.total);
               $scope.assets = filterOutDeleted(assets);
               return assets;
             },
@@ -91,6 +90,8 @@ export default function register() {
           .catch(ReloadNotification.apiErrorHandler);
       };
 
+      initializeSearchUI();
+
       function handleAssetsError(err) {
         const isInvalidQuery = isInvalidQueryError(err);
         $scope.context.loading = false;
@@ -101,7 +102,7 @@ export default function register() {
         if (isInvalidQuery) {
           if (lastUISearchState === null) {
             // invalid search query, let's reset the view...
-            $scope.loadView({});
+            viewPersistor.save({});
           }
           // ...and let it request assets again after notifing a user
           Notification.error('We detected an invalid search query. Please try again.');
@@ -164,12 +165,10 @@ export default function register() {
         delete nextState.contentTypeId; // Assets don't have a content type.
         lastUISearchState = nextState;
 
-        const oldView = _.cloneDeep($scope.context.view);
+        const oldView = viewPersistor.read();
         const newView = _.extend(oldView, nextState);
-        $scope.loadView(newView);
+        viewPersistor.save(newView);
       }
-
-      const isSearching$ = K.fromScopeValue($scope, ($scope) => $scope.context.isSearching);
 
       function initializeSearchUI() {
         const initialSearchState = getViewSearchState();
@@ -202,7 +201,7 @@ export default function register() {
       }
 
       function isViewLoaded() {
-        return !!_.get($scope, ['context', 'view']);
+        return !!viewPersistor.read();
       }
 
       function hasQuery() {
@@ -211,15 +210,7 @@ export default function register() {
       }
 
       function getViewSearchState() {
-        return {
-          searchText: getViewItem('searchText'),
-          searchFilters: getViewItem('searchFilters'),
-        };
-      }
-
-      function getViewItem(path) {
-        path = _.isString(path) ? path.split('.') : path;
-        return _.get($scope, ['context', 'view'].concat(path));
+        return viewPersistor.readKeys(['searchText', 'searchFilters']);
       }
     },
   ]);

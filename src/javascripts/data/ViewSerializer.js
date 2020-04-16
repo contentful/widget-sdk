@@ -1,5 +1,5 @@
 import flatten from 'flat';
-import { omitBy } from 'lodash';
+import { omitBy, uniq } from 'lodash';
 
 /**
  * Takes a `View` object and returns a flattened representation of it that can be
@@ -21,6 +21,25 @@ export function serialize(view) {
     }
     delete serializedView.searchFilters;
   }
+  if (serializedView.displayedFieldIds) {
+    serializedView.displayedFieldIds = Array.isArray(serializedView.displayedFieldIds)
+      ? serializedView.displayedFieldIds
+      : [serializedView.displayedFieldIds];
+    serializedView.displayedFieldIds = uniq(serializedView.displayedFieldIds);
+  }
+
+  // migrate legacy contentTypeHidden field
+  if (serializedView.contentTypeHidden !== undefined) {
+    if (serializedView.contentTypeHidden) {
+      serializedView.displayedFieldIds = serializedView.displayedFieldIds.filter(
+        (id) => id !== 'contentType'
+      );
+    } else {
+      serializedView.displayedFieldIds = ['contentType', ...serializedView.displayedFieldIds];
+    }
+    delete serializedView.contentTypeHidden;
+  }
+
   return flatten(serializedView, { safe: true });
 }
 
@@ -47,6 +66,22 @@ export function unserialize(serializedView) {
   } else if (!view.searchTerm) {
     view.searchFilters = [];
   }
+  if (view.displayedFieldIds) {
+    view.displayedFieldIds = Array.isArray(view.displayedFieldIds)
+      ? view.displayedFieldIds
+      : [view.displayedFieldIds];
+  }
+
+  // migrate legacy contentTypeHidden field
+  if (view.contentTypeHidden !== undefined) {
+    const contentTypeHidden = view.contentTypeHidden.toString() !== 'false';
+    view.displayedFieldIds = view.displayedFieldIds.filter((id) => id !== 'contentType');
+    if (!contentTypeHidden) {
+      view.displayedFieldIds = ['contentType', ...view.displayedFieldIds];
+    }
+    delete view.contentTypeHidden;
+  }
+
   return view;
 }
 

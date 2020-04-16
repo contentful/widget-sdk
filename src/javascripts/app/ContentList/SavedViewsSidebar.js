@@ -6,6 +6,7 @@ import { assign } from 'utils/Collections';
 import { Tabs, Tab, TabPanel } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { forScopedViews as trackingForScopedViews } from 'analytics/events/SearchAndViews';
+import createViewPersistor from 'data/ListViewPersistor';
 
 import { createStore, makeReducer, combineStoreComponents } from 'ui/Framework/Store';
 
@@ -32,9 +33,13 @@ const styles = {
   }),
 };
 
-export default function ({ entityFolders, loadView, getCurrentView, roleAssignment }) {
+export default function ({ entityType, entityFolders, roleAssignment }) {
   const sharedViewsTracking = trackingForScopedViews(VIEWS_SHARED);
   const privateViewsTracking = trackingForScopedViews(VIEWS_PRIVATE);
+
+  const viewPersistor = createViewPersistor({ entityType });
+  const loadView = viewPersistor.save;
+  const getCurrentView = viewPersistor.read;
 
   const sharedViews = initSavedViewsComponent({
     scopedFolders: entityFolders.shared,

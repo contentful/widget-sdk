@@ -31,7 +31,7 @@
   <div class="workbench-header__actions" ng-if="!showNoEntriesAdvice()">
     <react-component
       name="components/CreateEntryButton/CreateEntryButton"
-      props="{contentTypes: accessibleCts, suggestedContentTypeId: context.view.contentTypeId, onSelect: newEntry}"
+      props="{contentTypes: accessibleCts, suggestedContentTypeId, onSelect: newEntry}"
     ></react-component>
   </div>
 </header>
@@ -94,6 +94,6 @@
 <div class="workbench-main x--content" ng-show="showNoEntriesAdvice()">
   <react-component
     name="components/tabs/entry_list/EmptyStates"
-    props="{hasContentType: hasContentType, contentTypes: accessibleCts, suggestedContentTypeId: context.view.contentTypeId, onCreate: newEntry}"
+    props="{hasContentType: hasContentType, contentTypes: accessibleCts, suggestedContentTypeId, onCreate: newEntry}"
   ></react-component>
 </div>

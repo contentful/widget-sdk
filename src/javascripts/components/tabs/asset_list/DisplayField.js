@@ -8,8 +8,12 @@ import UserNameFormatter from 'components/shared/UserNameFormatter/FetchAndForma
 import Thumbnail from 'components/Thumbnail/Thumbnail';
 
 import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 
 const styles = {
+  margin: css({
+    marginRight: tokens.spacingXs,
+  }),
   textOverflow: css({
     overflow: 'hidden',
     textOverflow: 'ellipsis',
@@ -88,7 +92,7 @@ export default function DisplayField({ entity, field }) {
     case 'fileType':
       result = (
         <Fragment>
-          <span>{getAssetFileType(entity)}</span>
+          <span className={styles.margin}>{getAssetFileType(entity)}</span>
           <span>{getAssetFileExtension(entity)}</span>
         </Fragment>
       );

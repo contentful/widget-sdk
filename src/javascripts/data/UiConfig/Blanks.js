@@ -9,7 +9,6 @@ export function getBlankEntryView() {
     searchText: '',
     searchFilters: [],
     contentTypeId: null,
-    contentTypeHidden: false,
     order: SystemFields.getDefaultOrder(),
     displayedFieldIds: SystemFields.getDefaultFieldIds(),
   };

@@ -49,7 +49,6 @@ export const angularInitRun = [
       import(/* webpackMode: "eager" */ 'components/field_dialog/validationLinkTypeController'),
       import(/* webpackMode: "eager" */ 'components/shared/cfSelectionDirective'),
       import(/* webpackMode: "eager" */ 'components/shared/endlessContainerDirective'),
-      import(/* webpackMode: "eager" */ 'components/shared/listViewsController'),
       import(/* webpackMode: "eager" */ 'components/shared/space-wizard/SpaceWizardDirective'),
       import(
         /* webpackMode: "eager" */ 'components/shared/validation_error_display/cfErrorListDirective'
@@ -67,8 +66,6 @@ export const angularInitRun = [
       import(/* webpackMode: "eager" */ 'components/tabs/asset_list/assetListController'),
       import(/* webpackMode: "eager" */ 'components/tabs/asset_list/assetListDirective'),
       import(/* webpackMode: "eager" */ 'components/tabs/asset_list/assetSearchController'),
-      import(/* webpackMode: "eager" */ 'components/tabs/entry_list/displayFieldsController'),
-      import(/* webpackMode: "eager" */ 'components/tabs/entry_list/entryListColumnsController'),
       import(/* webpackMode: "eager" */ 'components/tabs/entry_list/entryListController'),
       import(/* webpackMode: "eager" */ 'components/tabs/entry_list/entryListDirective'),
       import(/* webpackMode: "eager" */ 'components/tabs/entry_list/entryListSearchController'),

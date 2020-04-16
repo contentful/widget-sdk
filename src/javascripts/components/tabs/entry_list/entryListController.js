@@ -3,7 +3,6 @@ import _ from 'lodash';
 import * as K from 'utils/kefir';
 import Paginator from 'classes/Paginator';
 import * as entityStatus from 'app/entity_editor/EntityStatus';
-import { getBlankEntryView as getBlankView } from 'data/UiConfig/Blanks';
 import * as ResourceUtils from 'utils/ResourceUtils';
 import EntityListCache from 'classes/entityListCache';
 import createSavedViewsSidebar from 'app/ContentList/SavedViewsSidebar';
@@ -11,6 +10,7 @@ import * as Analytics from 'analytics/Analytics';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as entityCreator from 'components/app_container/entityCreator';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
+import createViewPersistor from 'data/ListViewPersistor';
 
 export default function register() {
   /**
@@ -23,15 +23,13 @@ export default function register() {
     '$controller',
     'spaceContext',
     function EntryListController($scope, $state, $controller, spaceContext) {
-      const searchController = $controller('EntryListSearchController', { $scope: $scope });
-      $controller('DisplayedFieldsController', { $scope: $scope });
-      $controller('EntryListColumnsController', { $scope: $scope });
+      const entityType = 'entry';
+      $scope.paginator = Paginator.create();
 
-      $controller('ListViewsController', {
-        $scope,
-        entityType: 'Entry',
-        getBlankView,
-        resetList: _.noop,
+      const viewPersistor = createViewPersistor({ entityType });
+      const searchController = $controller('EntryListSearchController', {
+        $scope: $scope,
+        viewPersistor,
       });
 
       $scope.entryCache = new EntityListCache({
@@ -51,8 +49,7 @@ export default function register() {
         (api) => {
           $scope.savedViewsSidebar = createSavedViewsSidebar({
             entityFolders: api.entries,
-            loadView: (view) => $scope.loadView(view),
-            getCurrentView: () => _.cloneDeep(_.get($scope, ['context', 'view'], {})),
+            entityType,
             // a view can be assigned to roles only in the Entry List
             roleAssignment: {
               membership: spaceContext.space.data.spaceMember,
@@ -72,8 +69,6 @@ export default function register() {
 
       $scope.entityStatus = entityStatus;
 
-      $scope.paginator = Paginator.create();
-
       $scope.shouldHide = accessChecker.shouldHide;
       $scope.shouldDisable = accessChecker.shouldDisable;
 
@@ -90,23 +85,15 @@ export default function register() {
 
       const resetSearchResults = _.debounce(() => {
         $scope.entryProps = {
-          context: $scope.context,
-          displayedFields: $scope.displayedFields,
+          isSearching: $scope.context.isSearching,
           displayFieldForFilteredContentType: $scope.displayFieldForFilteredContentType,
-          fieldIsSortable: $scope.fieldIsSortable,
-          isOrderField: $scope.isOrderField,
-          orderColumnBy: $scope.orderColumnBy,
-          hiddenFields: $scope.hiddenFields,
-          removeDisplayField: $scope.removeDisplayField,
-          addDisplayField: $scope.addDisplayField,
-          toggleContentType: $scope.toggleContentType,
-          updateFieldOrder: $scope.updateFieldOrder,
           entries: $scope.entries,
           updateEntries: () => $scope.updateEntries(),
           entryCache: $scope.entryCache,
           assetCache: $scope.assetCache,
           jobs: $scope.jobs,
         };
+        $scope.suggestedContentTypeId = getCurrentContentTypeId();
         $scope.paginatorProps = {
           page: $scope.paginator.getPage(),
           pageCount: $scope.paginator.getPageCount(),
@@ -134,11 +121,7 @@ export default function register() {
 
       $scope.$watchGroup(
         [
-          'context.view.order.fieldId',
-          'context.view.order.direction',
           'context.isSearching',
-          'context.view.displayedFieldIds',
-          'orderColumnBy',
           'paginator.getPage()',
           'paginator.getTotal()',
           'entryCache.inProgress',
@@ -206,7 +189,7 @@ export default function register() {
         EntityFieldValueSpaceContext.displayFieldForType(getCurrentContentTypeId());
 
       function getCurrentContentTypeId() {
-        return getViewItem('contentTypeId');
+        return viewPersistor.readKey('contentTypeId');
       }
 
       $scope.hasPage = () => !!($scope.entries && $scope.entries.length && !$scope.isEmpty);
@@ -272,11 +255,6 @@ export default function register() {
             'sys.archivedAt[exists]': true,
           })
           .then((response) => response && response.total > 0);
-      }
-
-      function getViewItem(path) {
-        path = _.isString(path) ? path.split('.') : path;
-        return _.get($scope, ['context', 'view'].concat(path));
       }
     },
   ]);

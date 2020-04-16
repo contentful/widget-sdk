@@ -1,47 +1,47 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { onEntryEvent } from './eventTracker';
 
 import EntityList from '../EntityList';
 import ViewCustomizer from './ViewCustomizer';
 import DisplayField from './DisplayField';
+import createViewPersistor from 'data/ListViewPersistor';
+import { useDisplayFields } from './useDisplayFields';
+import { useOrderedColumns } from './useOrderedColumns';
 
 export default function EntryList({
-  context,
-  displayedFields = [],
+  isSearching,
   displayFieldForFilteredContentType,
-  fieldIsSortable,
-  isOrderField,
-  orderColumnBy,
-  hiddenFields,
-  removeDisplayField,
-  addDisplayField,
-  toggleContentType,
-  updateFieldOrder,
   entries = [],
   entryCache,
   assetCache,
   updateEntries,
   jobs = [],
 }) {
-  const hasContentTypeSelected = !!context.view.contentTypeId;
+  const entityType = 'entry';
+  const viewPersistor = useMemo(() => createViewPersistor({ entityType }), [entityType]);
+  const [{ displayedFields, hiddenFields }, displayFieldsActions] = useDisplayFields({
+    viewPersistor,
+    updateEntities: updateEntries,
+  });
+  const [{ fieldIsSortable, isOrderField, orderColumnBy }] = useOrderedColumns({
+    viewPersistor,
+    updateEntities: updateEntries,
+  });
+  const { contentTypeId, order = {} } = viewPersistor.readKeys(['contentTypeId', 'order']);
+
+  const hasContentTypeSelected = !!contentTypeId;
 
   // can be undefined
-  const displayFieldName = displayFieldForFilteredContentType();
-
-  const isContentTypeVisible = !hasContentTypeSelected && !context.view.contentTypeHidden;
-
+  const displayFieldName = displayFieldForFilteredContentType() || {};
   const nameField = {
+    ...displayFieldName,
     id: 'name',
     name: 'Name',
-    isSortable: hasContentTypeSelected && displayFieldName && fieldIsSortable(displayFieldName),
+    isSortable: hasContentTypeSelected && fieldIsSortable(displayFieldName),
     isActiveSort: displayFieldName && isOrderField(displayFieldName),
-    onClick: () => {
-      if (displayFieldName && fieldIsSortable(displayFieldName)) {
-        orderColumnBy(displayFieldName);
-      }
-    },
-    direction: context.view.order.direction,
+    onClick: () => orderColumnBy(displayFieldName),
+    direction: order.direction,
     colSpan: 3,
     type: 'EntryTitle',
   };
@@ -52,66 +52,42 @@ export default function EntryList({
       ...field,
       isSortable: fieldIsSortable(field),
       isActiveSort: isOrderField(field),
-      onClick: () => fieldIsSortable(field) && orderColumnBy(field),
-      direction: context.view.order.direction,
+      onClick: () => orderColumnBy(field),
+      direction: order.direction,
       colSpan: 2,
     })),
   ];
-
-  const contentTypeField = {
-    id: 'contentType',
-    isSortable: false,
-    name: 'Content Type',
-    type: 'ContentType',
-    colSpan: 2,
-  };
-  if (isContentTypeVisible) {
-    enrichedDisplayedFields.splice(1, 0, contentTypeField);
-  } else {
-    hiddenFields.push(contentTypeField);
-  }
 
   return (
     <EntityList
       displayedFields={enrichedDisplayedFields}
       entities={entries}
-      entityType="entry"
+      entityType={entityType}
       jobs={jobs}
       onBulkActionComplete={onEntryEvent}
       updateEntities={updateEntries}
       statusColSpan={2}
-      isLoading={context.isSearching}
+      isLoading={isSearching}
       renderDisplayField={(props) => (
         <DisplayField entryCache={entryCache} assetCache={assetCache} {...props} />
       )}
-      renderViewCustomizer={(props = {}) => (
-        <ViewCustomizer
-          displayedFields={enrichedDisplayedFields}
-          hiddenFields={hiddenFields}
-          removeDisplayField={removeDisplayField}
-          addDisplayField={addDisplayField}
-          toggleContentType={toggleContentType}
-          isContentTypeHidden={!context.view.contentTypeId && context.view.contentTypeHidden}
-          updateFieldOrder={updateFieldOrder}
-          {...props}
-        />
-      )}
+      renderViewCustomizer={(props = {}) => {
+        return (
+          <ViewCustomizer
+            displayedFields={displayedFields}
+            hiddenFields={hiddenFields}
+            {...displayFieldsActions}
+            {...props}
+          />
+        );
+      }}
     />
   );
 }
 
 EntryList.propTypes = {
-  context: PropTypes.object.isRequired,
-  displayedFields: PropTypes.array.isRequired,
+  isSearching: PropTypes.bool,
   displayFieldForFilteredContentType: PropTypes.func.isRequired,
-  fieldIsSortable: PropTypes.func.isRequired,
-  isOrderField: PropTypes.func.isRequired,
-  orderColumnBy: PropTypes.func.isRequired,
-  hiddenFields: PropTypes.array,
-  removeDisplayField: PropTypes.func.isRequired,
-  addDisplayField: PropTypes.func.isRequired,
-  toggleContentType: PropTypes.func.isRequired,
-  updateFieldOrder: PropTypes.func.isRequired,
   entries: PropTypes.array,
   updateEntries: PropTypes.func.isRequired,
   entryCache: PropTypes.object,

@@ -9,20 +9,6 @@ let ListQueryOriginal;
 describe('Entry List Controller', () => {
   let scope, spaceContext;
 
-  const VIEW = {
-    id: 'VIEW_ID',
-    title: 'Derp',
-    searchText: 'search input',
-    searchFilters: [],
-    contentTypeId: 'ctid',
-    contentTypeHidden: false,
-    displayedFieldIds: ['createdAt', 'updatedAt'],
-    order: {
-      fieldId: 'createdAt',
-      direction: 'descending',
-    },
-  };
-
   function createEntries(n) {
     const entries = _.map(new Array(n), () => ({
       isDeleted: _.constant(false),
@@ -120,49 +106,9 @@ describe('Entry List Controller', () => {
     $controller('EntryListController', { $scope: scope });
   });
 
-  describe('#loadView()', () => {
-    beforeEach(function () {
-      scope.loadView(VIEW);
-    });
-
-    it('sets the view', () => {
-      expect(scope.context.view).toEqual(VIEW);
-      expect(scope.context.view).not.toBe(VIEW);
-    });
-
-    it('resets entries', function () {
-      scope.$apply();
-      sinon.assert.calledOnce(this.stubs.getQuery);
-    });
-
-    describe('with `order.fieldId` value not in `displayedFieldIds`', () => {
-      const VIEW_WITH_WRONG_ORDER = Object.assign({}, VIEW, {
-        displayedFieldIds: ['createdAt', 'updatedAt'],
-        order: {
-          fieldId: 'publishedAt', // Not in `displayedFieldIds`
-          direction: 'descending',
-        },
-      });
-
-      it('changes `order.fieldId`', () => {
-        scope.loadView(VIEW_WITH_WRONG_ORDER);
-        scope.$apply();
-        const expected = Object.assign({}, VIEW_WITH_WRONG_ORDER, {
-          order: {
-            fieldId: 'createdAt',
-          },
-        });
-        expect(scope.context.view).toEqual(expected);
-      });
-    });
-  });
-
   describe('on search change', () => {
     it('page is set to the first one', () => {
-      scope.context.view = {};
       scope.paginator.setPage(1);
-      scope.$apply();
-      scope.context.view.searchText = 'thing';
       scope.$apply();
       expect(scope.paginator.getPage()).toBe(0);
     });
@@ -170,33 +116,10 @@ describe('Entry List Controller', () => {
 
   describe('page parameters change', () => {
     describe('triggers query on change', () => {
-      beforeEach(() => {
-        scope.context.view = {};
-        scope.$apply();
-      });
-
       it('page', function () {
         scope.paginator.setPage(1);
         scope.$apply();
-        sinon.assert.calledTwice(this.stubs.getQuery);
-      });
-
-      it('`searchText`', function () {
-        scope.context.view.searchText = 'thing';
-        scope.$apply();
-        sinon.assert.calledTwice(this.stubs.getQuery);
-      });
-
-      it('`searchFilters`', function () {
-        scope.context.view.searchFilters = ['__status', '', 'published'];
-        scope.$apply();
-        sinon.assert.calledTwice(this.stubs.getQuery);
-      });
-
-      it('`contentTypeId`', function () {
-        scope.context.view = { contentTypeId: 'something' };
-        scope.$apply();
-        sinon.assert.calledTwice(this.stubs.getQuery);
+        sinon.assert.called(this.stubs.getQuery);
       });
     });
   });
@@ -205,7 +128,6 @@ describe('Entry List Controller', () => {
     let entries;
 
     beforeEach(() => {
-      scope.context.view = {};
       entries = createEntries(30);
       scope.$apply();
       spaceContext.space.getEntries.resolve(entries);
@@ -255,30 +177,6 @@ describe('Entry List Controller', () => {
         expect(spaceContext.space.getEntries.args[0][0].order).toEqual('-sys.updatedAt');
       });
 
-      describe('with a user defined order', () => {
-        beforeEach(() => {
-          scope.context.view.contentTypeId = 'CT';
-          spaceContext.publishedCTs.fetch.withArgs('CT').resolves({
-            getId: _.constant('CT'),
-            data: {
-              fields: [{ id: 'ORDER_FIELD' }],
-            },
-          });
-        });
-
-        it('when the field exists', () => {
-          scope.context.view.order = { fieldId: 'ORDER_FIELD', direction: 'descending' };
-          scope.$apply();
-          expect(spaceContext.space.getEntries.args[0][0].order).toEqual('-fields.ORDER_FIELD');
-        });
-
-        it('when the field does not exist', () => {
-          scope.context.view.order = { fieldId: 'deletedFieldId', direction: 'descending' };
-          scope.$apply();
-          expect(spaceContext.space.getEntries.args[0][0].order).toEqual('-sys.updatedAt');
-        });
-      });
-
       it('with a defined limit', () => {
         scope.updateEntries();
         scope.$apply();
@@ -297,7 +195,6 @@ describe('Entry List Controller', () => {
 
   describe('#showNoEntriesAdvice()', () => {
     beforeEach(() => {
-      scope.context.view = {};
       scope.context.loading = false;
     });
 
@@ -307,37 +204,11 @@ describe('Entry List Controller', () => {
       scope.entries = [];
       expect(scope.showNoEntriesAdvice()).toBe(true);
     });
-
-    it('is false when there is a search term', () => {
-      // @todo dirty hack: need to satisfy other watch
-      // search controller should be tested separately (and removed here)
-      scope.context.view.order = { fieldId: 'updatedAt' };
-      scope.context.view.displayedFieldIds = ['updatedAt'];
-
-      scope.entries = null;
-      scope.context.view.searchTerm = 'foo';
-      scope.$apply();
-      expect(scope.showNoEntriesAdvice()).toBe(false);
-    });
-
-    it('is false when there is a content type filter', () => {
-      scope.entries = null;
-      scope.context.view.contentTypeId = 'foo';
-      expect(scope.showNoEntriesAdvice()).toBe(false);
-    });
-
-    it('is false when the view is loading', () => {
-      scope.entries = [{}];
-      scope.context.view.searchTerm = 'foo';
-      scope.context.loading = true;
-      expect(scope.showNoEntriesAdvice()).toBe(false);
-    });
   });
 
   describe('Api Errors', () => {
     it('shows error notification on 500 err', function () {
       spaceContext.space.getEntries.rejects({ statusCode: 500 });
-      scope.context.view = {};
       scope.updateEntries();
       scope.$apply();
       expect(
@@ -349,7 +220,6 @@ describe('Entry List Controller', () => {
 
     it('shows error notification on 400 err', function () {
       spaceContext.space.getEntries.rejects({ statusCode: 400 });
-      scope.context.view = {};
       scope.updateEntries();
       scope.$apply();
       expect(
@@ -357,61 +227,6 @@ describe('Entry List Controller', () => {
           'We detected an invalid search query. Please try again.'
         )
       ).toBe(true);
-    });
-
-    it('shows error notification on invalid content type', function () {
-      this.stubs.getQuery.callsFake((...args) => {
-        return ListQueryOriginal.getForEntries(...args);
-      });
-      const defaultQuery = {
-        order: '-sys.updatedAt',
-        limit: 40,
-        skip: 0,
-        'sys.archivedAt[exists]': 'false',
-      };
-      spaceContext.space.getEntries.onCall(0).rejects({
-        statusCode: 400,
-        body: {
-          details: {
-            errors: [
-              {
-                name: 'unknownContentType',
-                value: 'DOESNOTEXIST',
-              },
-            ],
-          },
-        },
-      });
-
-      spaceContext.space.getEntries.onCall(1).resolves({
-        statusCode: 200,
-      });
-
-      scope.context.view = {
-        contentTypeId: 'x',
-        anyOtherField: 1,
-      };
-      scope.updateEntries();
-      scope.$apply();
-      expect(
-        this.ComponentLibrary.Notification.error.calledWith(
-          `Provided Content Type "x" does not exist. The content type filter has been reset to "Any"`
-        )
-      ).toBe(true);
-
-      expect(scope.context.view).toEqual({
-        contentTypeId: undefined,
-        anyOtherField: 1,
-      });
-
-      expect(
-        spaceContext.space.getEntries.calledWith({
-          ...defaultQuery,
-          content_type: 'x',
-        })
-      ).toBe(true);
-
-      expect(spaceContext.space.getEntries.calledWith(defaultQuery)).toBe(true);
     });
   });
 

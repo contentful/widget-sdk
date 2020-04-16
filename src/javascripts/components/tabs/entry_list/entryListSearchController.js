@@ -19,7 +19,8 @@ export default function register() {
     '$scope',
     '$q',
     'spaceContext',
-    function EntryListSearchController($scope, $q, spaceContext) {
+    'viewPersistor',
+    function EntryListSearchController($scope, $q, spaceContext, viewPersistor) {
       let initialized = false;
       let lastUISearchState = null;
 
@@ -49,6 +50,8 @@ export default function register() {
 
       const updateEntries = createRequestQueue(requestEntries, setupEntriesHandler);
 
+      const isSearching$ = K.fromScopeValue($scope, ($scope) => $scope.context.isSearching);
+
       this.hasQuery = hasQuery;
 
       // We store the page in a local variable.
@@ -68,10 +71,7 @@ export default function register() {
       // TODO: Get rid of duplicate code in asset_search_controller.js
 
       $scope.$watch(
-        () => ({
-          viewId: getViewItem('id'),
-          search: getViewSearchState(),
-        }),
+        () => getViewSearchState(),
         () => {
           if (!isViewLoaded()) {
             return;
@@ -82,14 +82,21 @@ export default function register() {
       );
 
       $scope.$watch(
-        () => ({
-          contentTypeId: getViewItem('contentTypeId'),
-          displayedFieldIds: getViewItem('displayedFieldIds'),
-          entriesLength: $scope.entries && $scope.entries.length,
-          page: $scope.paginator.getPage(),
-          orderDirection: getViewItem('order.direction'),
-          orderFieldId: getViewItem('order.fieldId'),
-        }),
+        () => {
+          const { order = {}, contentTypeId, displayedFieldIds } = viewPersistor.readKeys([
+            'contentTypeId',
+            'displayedFieldIds',
+            'order',
+          ]);
+          return {
+            contentTypeId,
+            displayedFieldIds,
+            entriesLength: $scope.entries && $scope.entries.length,
+            page: $scope.paginator.getPage(),
+            orderDirection: order.direction,
+            orderFieldId: order.fieldId,
+          };
+        },
         refreshEntityCaches,
         true
       );
@@ -116,9 +123,11 @@ export default function register() {
       function resetEntries() {
         $scope.paginator.setPage(0);
         page = 0;
-        initializeSearchUI();
         return updateEntries();
       }
+
+      resetEntries();
+      initializeSearchUI();
 
       /**
        * This function tries to recover from a response that is to big for the API to handle.
@@ -163,7 +172,7 @@ export default function register() {
           .then(
             (result) => {
               $scope.context.isSearching = false;
-              Tracking.searchPerformed($scope.context.view, result.total);
+              Tracking.searchPerformed(viewPersistor.read(), result.total);
               return result;
             },
             (err) => {
@@ -188,12 +197,10 @@ export default function register() {
 
       function onSearchChange(newSearchState) {
         lastUISearchState = newSearchState;
-        const oldView = _.cloneDeep($scope.context.view);
+        const oldView = viewPersistor.read();
         const newView = _.extend(oldView, newSearchState);
-        $scope.loadView(newView);
+        viewPersistor.save(newView);
       }
-
-      const isSearching$ = K.fromScopeValue($scope, ($scope) => $scope.context.isSearching);
 
       function initializeSearchUI() {
         K.onValueScope($scope, accessChecker.isInitialized$, (isInitialized) => {
@@ -266,16 +273,17 @@ export default function register() {
         if (isInvalidQuery) {
           if (lastUISearchState === null) {
             // invalid search query, let's reset the view...
-            $scope.loadView({});
+            viewPersistor.save({});
           }
 
           if (isUnkownContentTypeError(err)) {
-            Notification.error(
-              `Provided Content Type "${getViewItem(
-                'contentTypeId'
-              )}" does not exist. The content type filter has been reset to "Any"`
-            );
-            setViewItem('contentTypeId', undefined);
+            const contentTypeId = viewPersistor.readKey('contentTypeId');
+            if (contentTypeId) {
+              Notification.error(
+                `Provided Content Type "${contentTypeId}" does not exist. The content type filter has been reset to "Any"`
+              );
+            }
+            viewPersistor.saveKey('contentTypeId', null);
             requestEntries();
           } else {
             Notification.error('We detected an invalid search query. Please try again.');
@@ -300,8 +308,8 @@ export default function register() {
       }
 
       function refreshEntityCaches() {
-        if (getViewItem('contentTypeId')) {
-          const fieldIds = getViewItem('displayedFieldIds');
+        if (viewPersistor.readKey('contentTypeId')) {
+          const fieldIds = viewPersistor.readKey('displayedFieldIds');
           $scope.entryCache.setDisplayedFieldIds(fieldIds);
           $scope.entryCache.resolveLinkedEntities($scope.entries);
           $scope.assetCache.setDisplayedFieldIds(fieldIds);
@@ -310,12 +318,12 @@ export default function register() {
       }
 
       function isViewLoaded() {
-        return !!_.get($scope, ['context', 'view']);
+        return !_.isEmpty(viewPersistor.read());
       }
 
       function getQueryOptions() {
         return _.extend(getViewSearchState(), {
-          order: getViewItem('order'),
+          order: viewPersistor.readKey('order'),
           paginator: $scope.paginator,
         });
       }
@@ -330,21 +338,7 @@ export default function register() {
       }
 
       function getViewSearchState() {
-        return {
-          searchText: getViewItem('searchText'),
-          searchFilters: getViewItem('searchFilters'),
-          contentTypeId: getViewItem('contentTypeId'),
-        };
-      }
-
-      function getViewItem(path) {
-        path = _.isString(path) ? path.split('.') : path;
-        return _.get($scope, ['context', 'view'].concat(path));
-      }
-
-      function setViewItem(path, value) {
-        path = _.isString(path) ? path.split('.') : path;
-        return _.set($scope, ['context', 'view'].concat(path), value);
+        return viewPersistor.readKeys(['searchText', 'searchFilters', 'contentTypeId', 'id']);
       }
     },
   ]);

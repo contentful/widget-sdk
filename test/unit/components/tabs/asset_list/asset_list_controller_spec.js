@@ -86,25 +86,12 @@ describe('Asset List Controller', () => {
 
   describe('on search change', () => {
     beforeEach(() => {
-      scope.context.view = {};
       scope.$digest();
     });
 
     describe('if search is not defined', () => {
       it('list is not defined', () => {
         expect(scope.context.list).toBeUndefined();
-      });
-    });
-
-    describe('if search is set', () => {
-      beforeEach(() => {
-        scope.context.view.searchText = 'thing';
-        scope.context.view.searchFilters = [];
-        scope.$digest();
-      });
-
-      it('page is set to the first one', () => {
-        expect(scope.searchController.paginator.getPage()).toBe(0);
       });
     });
   });
@@ -116,17 +103,6 @@ describe('Asset List Controller', () => {
 
     afterEach(() => {
       stubs.reset.restore();
-    });
-
-    it('search', () => {
-      scope.context.view = {};
-      scope.searchController.paginator.setPage(0);
-      scope.$digest();
-      stubs.reset.restore();
-      stubs.reset = sinon.stub(scope.searchController, 'resetAssets');
-      scope.context.view.searchText = 'thing';
-      scope.$digest();
-      sinon.assert.calledOnce(stubs.reset);
     });
 
     it('page', () => {
@@ -386,25 +362,19 @@ describe('Asset List Controller', () => {
 
   describe('#showNoAssetsAdvice', () => {
     beforeEach(function () {
-      scope.context.view = {};
-      this.assertShowNoAssetsAdvice = ({ total, term, searching, expected }) => {
+      this.assertShowNoAssetsAdvice = ({ total, searching, expected }) => {
         scope.searchController.paginator.setTotal(total);
-        scope.context.view.searchText = term;
         scope.context.isSearching = searching;
         expect(scope.showNoAssetsAdvice()).toBe(expected);
       };
     });
 
-    it('is true when there are no entries, no search term and not searching', function () {
+    it('is true when there are no entries and is not searching', function () {
       this.assertShowNoAssetsAdvice({ total: 0, term: null, searching: false, expected: true });
     });
 
     it('is false when there are entries', function () {
       this.assertShowNoAssetsAdvice({ total: 1, term: '', searching: false, expected: false });
-    });
-
-    it('is false when there is a search term', function () {
-      this.assertShowNoAssetsAdvice({ total: 0, term: 'foo', searching: false, expected: false });
     });
 
     it('is false when the view is loading', function () {

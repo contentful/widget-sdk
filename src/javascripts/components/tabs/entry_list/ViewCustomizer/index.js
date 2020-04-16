@@ -62,9 +62,7 @@ export default class ViewCustomizer extends React.Component {
     hiddenFields: PropTypes.array,
     addDisplayField: PropTypes.func.isRequired,
     removeDisplayField: PropTypes.func.isRequired,
-    toggleContentType: PropTypes.func.isRequired,
     updateFieldOrder: PropTypes.func.isRequired,
-    isContentTypeHidden: PropTypes.bool,
   };
   static defaultProps = {
     displayedFields: [],
@@ -90,7 +88,7 @@ export default class ViewCustomizer extends React.Component {
 
   render() {
     const fields = this.state.optimisticFields || this.props.displayedFields;
-    const hasHiddenFields = this.props.hiddenFields.length > 0 || this.props.isContentTypeHidden;
+    const hasHiddenFields = this.props.hiddenFields.length > 0;
     return (
       <Dropdown
         className={styles.root}
@@ -113,11 +111,6 @@ export default class ViewCustomizer extends React.Component {
         <DropdownList maxHeight={'50vh'}>
           <DropdownListItem isTitle>Displayed Columns</DropdownListItem>
           <DropdownListItem isDisabled>Name</DropdownListItem>
-          {!this.props.isContentTypeHidden && (
-            <DropdownListItem onClick={() => this.props.toggleContentType()}>
-              Content Type
-            </DropdownListItem>
-          )}
           <SortableContainer
             useDragHandle
             axis="y"
@@ -138,11 +131,6 @@ export default class ViewCustomizer extends React.Component {
           {hasHiddenFields && (
             <React.Fragment>
               <DropdownListItem isTitle>Available columns</DropdownListItem>
-              {this.props.isContentTypeHidden && (
-                <DropdownListItem onClick={() => this.props.toggleContentType()}>
-                  Content Type
-                </DropdownListItem>
-              )}
               {this.props.hiddenFields.map(
                 (fieldInfo) =>
                   fieldInfo.type !== 'Object' &&

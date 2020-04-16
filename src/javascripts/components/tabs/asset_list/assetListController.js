@@ -5,7 +5,6 @@ import delay from 'lodash/delay';
 import { Notification } from '@contentful/forma-36-react-components';
 import * as entityStatus from 'app/entity_editor/EntityStatus';
 import * as ResourceUtils from 'utils/ResourceUtils';
-import { getBlankAssetView as getBlankView } from 'data/UiConfig/Blanks';
 
 import TheLocaleStore from 'services/localeStore';
 import createSavedViewsSidebar from 'app/ContentList/SavedViewsSidebar';
@@ -13,6 +12,7 @@ import * as accessChecker from 'access_control/AccessChecker';
 import * as BulkAssetsCreator from 'services/BulkAssetsCreator';
 import * as Analytics from 'analytics/Analytics';
 import * as entityCreator from 'components/app_container/entityCreator';
+import createViewPersistor from 'data/ListViewPersistor';
 
 export default function register() {
   registerController('AssetListController', [
@@ -21,13 +21,12 @@ export default function register() {
     '$state',
     'spaceContext',
     function AssetListController($scope, $controller, $state, spaceContext) {
-      const searchController = $controller('AssetSearchController', { $scope: $scope });
+      const entityType = 'asset';
+      const viewPersistor = createViewPersistor({ entityType });
 
-      $controller('ListViewsController', {
+      const searchController = $controller('AssetSearchController', {
         $scope,
-        entityType: 'Asset',
-        getBlankView,
-        resetList: () => searchController.resetAssets(true),
+        viewPersistor,
       });
 
       $scope.savedViewsState = 'loading';
@@ -35,8 +34,7 @@ export default function register() {
         (api) => {
           $scope.savedViewsSidebar = createSavedViewsSidebar({
             entityFolders: api.assets,
-            loadView: (view) => $scope.loadView(view),
-            getCurrentView: () => _.cloneDeep(_.get($scope, ['context', 'view'], {})),
+            entityType,
           });
           $scope.savedViewsState = 'ready';
         },
@@ -153,24 +151,6 @@ export default function register() {
 
         return !hasAssets && !hasQuery && !$scope.context.isSearching;
       };
-
-      $scope.$watch('showNoAssetsAdvice()', (show) => {
-        if (show) {
-          $scope.hasArchivedAssets = false;
-          return hasArchivedAssets(spaceContext.space).then((hasArchived) => {
-            $scope.hasArchivedAssets = hasArchived;
-          });
-        }
-      });
-
-      function hasArchivedAssets(space) {
-        return space
-          .getAssets({
-            limit: 1,
-            'sys.archivedAt[exists]': true,
-          })
-          .then((response) => response && response.total > 0);
-      }
 
       $scope.createMultipleAssets = () => {
         Analytics.track('asset_list:add_asset_multiple');

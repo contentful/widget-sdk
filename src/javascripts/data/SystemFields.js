@@ -1,5 +1,12 @@
 import { cloneDeep } from 'lodash';
 
+const contentType = {
+  id: 'contentType',
+  name: 'Content Type',
+  type: 'ContentType',
+  canPersist: true,
+};
+
 const createdAt = {
   id: 'createdAt',
   name: 'Created',
@@ -27,9 +34,9 @@ const author = {
   type: 'Symbol',
 };
 
-const list = [createdAt, updatedAt, publishedAt, author];
-const defaultFields = [updatedAt, author];
-const fallbackFields = [publishedAt, createdAt, updatedAt];
+const list = [contentType, createdAt, updatedAt, publishedAt, author];
+const defaultFields = [contentType, updatedAt, author];
+const fallbackFields = [contentType, publishedAt, createdAt, updatedAt];
 
 const defaultOrder = {
   fieldId: updatedAt.id,

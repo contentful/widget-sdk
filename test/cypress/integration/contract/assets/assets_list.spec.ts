@@ -4,7 +4,6 @@ import { defaultSpaceId } from '../../../util/requests';
 import {
   queryAllNonArchivedAssetsInTheDefaultSpace,
   severalAssetsBody,
-  queryAllArchivedAssetsInTheDefaultSpace,
 } from '../../../interactions/assets';
 
 describe('Assets List Page', () => {
@@ -27,10 +26,7 @@ describe('Assets List Page', () => {
   });
   context('no assets in the space', () => {
     beforeEach(() => {
-      interactions.push(
-        queryAllNonArchivedAssetsInTheDefaultSpace.willFindNone(),
-        queryAllArchivedAssetsInTheDefaultSpace.willFindNone()
-      );
+      interactions.push(queryAllNonArchivedAssetsInTheDefaultSpace.willFindNone());
 
       cy.visit(`/spaces/${defaultSpaceId}/assets`);
 
