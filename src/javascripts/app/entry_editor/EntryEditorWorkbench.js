@@ -139,7 +139,7 @@ EntryEditorWorkbench.propTypes = {
   }),
   customExtensionProps: PropTypes.object,
   statusNotificationProps: PropTypes.object,
-  widgets: PropTypes.object,
+  widgets: PropTypes.array,
   getOtDoc: PropTypes.func,
   shouldDisplayNoLocalizedFieldsAdvice: PropTypes.bool,
   noLocalizedFieldsAdviceProps: PropTypes.object,
@@ -151,7 +151,7 @@ EntryEditorWorkbench.propTypes = {
   fields: PropTypes.object,
   getEditorData: PropTypes.func,
   state: PropTypes.shape({
-    delete: PropTypes.func,
+    delete: PropTypes.object,
   }),
   entryActions: PropTypes.object,
   entityInfo: PropTypes.shape({
