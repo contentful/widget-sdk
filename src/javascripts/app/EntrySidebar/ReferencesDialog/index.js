@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import { isEqual, uniqWith } from 'lodash';
+import { isEqual, uniqWith, uniqueId } from 'lodash';
 import { getCurrentVariation } from 'utils/LaunchDarkly';
 import { ALL_REFERENCES_DIALOG } from 'featureFlags';
 import {
@@ -97,6 +97,7 @@ const ReferencesDialog = ({ entity }) => {
   const [isTooComplex, setIsTooComplex] = useState(false);
   const [published, setPublished] = useState(null);
   const [entityTitle, setEntityTitle] = useState(null);
+  const [referenceTreeKey, setReferenceTreeKey] = useState(uniqueId('id_'));
 
   const maxLevel = 5;
 
@@ -189,6 +190,7 @@ const ReferencesDialog = ({ entity }) => {
       .then((validationResponse) => {
         setIsValidating(false);
         setValidations(validationResponse);
+        setReferenceTreeKey(uniqueId('id_'));
       })
       .catch((_error) => {
         setIsValidating(false);
@@ -212,6 +214,7 @@ const ReferencesDialog = ({ entity }) => {
         setIsPublishing(false);
         fetchReferences().then(() => {
           setPublished({ succeed: true });
+          setReferenceTreeKey(uniqueId('id_'));
         });
       })
       .catch((error) => {
@@ -279,7 +282,7 @@ const ReferencesDialog = ({ entity }) => {
                     references.length && (
                       <ReferencesTree
                         root={references[0]}
-                        key={JSON.stringify({ validations, references })}
+                        key={referenceTreeKey}
                         defaultLocale={defaultLocale}
                         validations={validations}
                         onSelectEntities={(entities) => setSelectedEntites(entities)}
