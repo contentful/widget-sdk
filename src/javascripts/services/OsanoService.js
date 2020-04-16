@@ -196,6 +196,8 @@ async function generateSegmentLoadOptions(analyticsAllowed, personalizationAllow
     FullStory: analyticsAllowed,
     'Segment.io': analyticsAllowed,
     'Google Analytics': analyticsAllowed,
+    'Amazon Kinesis Firehose': analyticsAllowed,
+    'Amazon S3': analyticsAllowed,
     Intercom: personalizationAllowed,
     Wootric: personalizationAllowed,
   });
