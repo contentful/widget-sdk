@@ -2,7 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import DocumentStatusCode from 'data/document/statusCode';
 import { sortBy } from 'lodash';
+import { cx } from 'emotion';
 import { joinWithAnd } from 'utils/StringUtils';
+import { Paragraph } from '@contentful/forma-36-react-components';
 
 /**
  * This component renders an alert depending on the document status.
@@ -55,10 +57,10 @@ const messages = ({ entityLabel, erroredLocales }) => ({
   )}`,
 });
 
-const StatusCodeNotification = ({ status, entityLabel, erroredLocales }) =>
+const StatusCodeNotification = ({ status, entityLabel, erroredLocales, className }) =>
   status && status !== 'ok' && entityLabel ? (
-    <div className="entity-editor__notification">
-      <p>{messages({ entityLabel, erroredLocales })[status]}</p>
+    <div className={cx('entity-editor__notification', className)}>
+      <Paragraph>{messages({ entityLabel, erroredLocales })[status]}</Paragraph>
     </div>
   ) : null;
 
@@ -72,6 +74,7 @@ StatusCodeNotification.propTypes = {
       internal_code: PropTypes.string.isRequired,
     }).isRequired
   ),
+  className: PropTypes.string,
 };
 
 export default StatusCodeNotification;

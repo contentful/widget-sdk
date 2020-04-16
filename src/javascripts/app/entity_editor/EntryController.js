@@ -86,6 +86,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
    * @type {EntityDocument}
    */
   const doc = editorData.openDoc(K.scopeLifeline($scope));
+
   // TODO rename the scope property
   /**
    * @type {EntityDocument}
@@ -255,6 +256,9 @@ export default async function create($scope, editorData, preferences, trackLoadE
       WidgetLocations.LOCATION_ENTRY_EDITOR
     ),
   };
+
+  $scope.getOtDoc = () => $scope.otDoc;
+  $scope.getEditorData = () => $scope.editorData;
 }
 
 function initComments($scope, endpoint, entityId) {

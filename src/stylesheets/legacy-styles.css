@@ -7947,6 +7947,7 @@ pre,
     float: right;
   }
   .entity-editor__field-locale {
+    position: relative;
     margin-top: 28px;
   }
   .entity-editor__field-locale:first-child {

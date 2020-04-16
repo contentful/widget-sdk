@@ -57,7 +57,7 @@ const sizesConfig = {
   small: '18px',
   medium: '24px',
   large: '32px',
-  xlarge: '56px',
+  xlarge: '48px',
 };
 
 const styles = {
@@ -95,12 +95,12 @@ const styles = {
       minHeight: sizesConfig.large,
     }),
     xlarge: css({
-      width: sizesConfig.large,
-      height: sizesConfig.large,
-      maxWidth: sizesConfig.large,
-      maxHeight: sizesConfig.large,
-      minWidth: sizesConfig.large,
-      minHeight: sizesConfig.large,
+      width: sizesConfig.xlarge,
+      height: sizesConfig.xlarge,
+      maxWidth: sizesConfig.xlarge,
+      maxHeight: sizesConfig.xlarge,
+      minWidth: sizesConfig.xlarge,
+      minHeight: sizesConfig.xlarge,
     }),
   },
 };

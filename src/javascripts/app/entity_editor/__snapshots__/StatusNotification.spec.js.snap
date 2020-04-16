@@ -4,9 +4,12 @@ exports[`StatusNotification DocumentStatusCode.LOCALE_VALIDATION_ERRORS when the
 <div
   className="entity-editor__notification"
 >
-  <p>
+  <Paragraph
+    element="p"
+    testId="cf-ui-paragraph"
+  >
     The following locales have fields with errors: English (United States)
-  </p>
+  </Paragraph>
 </div>
 `;
 
@@ -14,9 +17,12 @@ exports[`StatusNotification DocumentStatusCode.LOCALE_VALIDATION_ERRORS when the
 <div
   className="entity-editor__notification"
 >
-  <p>
+  <Paragraph
+    element="p"
+    testId="cf-ui-paragraph"
+  >
     The following locales have fields with errors: Spanish (Spain) and English (United States)
-  </p>
+  </Paragraph>
 </div>
 `;
 
@@ -24,9 +30,12 @@ exports[`StatusNotification DocumentStatusCode.LOCALE_VALIDATION_ERRORS when the
 <div
   className="entity-editor__notification"
 >
-  <p>
+  <Paragraph
+    element="p"
+    testId="cf-ui-paragraph"
+  >
     The following locales have fields with errors: Spanish (Spain), English (United States), and French (France)
-  </p>
+  </Paragraph>
 </div>
 `;
 
@@ -34,9 +43,12 @@ exports[`StatusNotification DocumentStatusCode.LOCALE_VALIDATION_ERRORS when the
 <div
   className="entity-editor__notification"
 >
-  <p>
+  <Paragraph
+    element="p"
+    testId="cf-ui-paragraph"
+  >
     The following locales have fields with errors: Spanish (Spain), Arabic (Egypt), English (United States), and 1 other
-  </p>
+  </Paragraph>
 </div>
 `;
 
@@ -44,9 +56,12 @@ exports[`StatusNotification DocumentStatusCode.LOCALE_VALIDATION_ERRORS when the
 <div
   className="entity-editor__notification"
 >
-  <p>
+  <Paragraph
+    element="p"
+    testId="cf-ui-paragraph"
+  >
     The following locales have fields with errors: Spanish (Spain), Arabic (Egypt), German (Germany), and 2 others
-  </p>
+  </Paragraph>
 </div>
 `;
 
@@ -54,9 +69,12 @@ exports[`StatusNotification archived when the entity label is "asset" matches sn
 <div
   className="entity-editor__notification"
 >
-  <p>
+  <Paragraph
+    element="p"
+    testId="cf-ui-paragraph"
+  >
     This entry is archived and cannot be modified. Please unarchive it to make any changes.
-  </p>
+  </Paragraph>
 </div>
 `;
 
@@ -64,9 +82,12 @@ exports[`StatusNotification archived when the entity label is "entry" matches sn
 <div
   className="entity-editor__notification"
 >
-  <p>
+  <Paragraph
+    element="p"
+    testId="cf-ui-paragraph"
+  >
     This entry is archived and cannot be modified. Please unarchive it to make any changes.
-  </p>
+  </Paragraph>
 </div>
 `;
 
@@ -74,9 +95,12 @@ exports[`StatusNotification default-locale-file-error when the entity label is "
 <div
   className="entity-editor__notification"
 >
-  <p>
+  <Paragraph
+    element="p"
+    testId="cf-ui-paragraph"
+  >
     This asset is missing a file for the default locale.
-  </p>
+  </Paragraph>
 </div>
 `;
 
@@ -84,9 +108,12 @@ exports[`StatusNotification default-locale-file-error when the entity label is "
 <div
   className="entity-editor__notification"
 >
-  <p>
+  <Paragraph
+    element="p"
+    testId="cf-ui-paragraph"
+  >
     This asset is missing a file for the default locale.
-  </p>
+  </Paragraph>
 </div>
 `;
 
@@ -94,9 +121,12 @@ exports[`StatusNotification deleted when the entity label is "asset" matches sna
 <div
   className="entity-editor__notification"
 >
-  <p>
+  <Paragraph
+    element="p"
+    testId="cf-ui-paragraph"
+  >
     This entry has been deleted and cannot be modified anymore.
-  </p>
+  </Paragraph>
 </div>
 `;
 
@@ -104,9 +134,12 @@ exports[`StatusNotification deleted when the entity label is "entry" matches sna
 <div
   className="entity-editor__notification"
 >
-  <p>
+  <Paragraph
+    element="p"
+    testId="cf-ui-paragraph"
+  >
     This entry has been deleted and cannot be modified anymore.
-  </p>
+  </Paragraph>
 </div>
 `;
 
@@ -114,9 +147,12 @@ exports[`StatusNotification editing-not-allowed when the entity label is "asset"
 <div
   className="entity-editor__notification"
 >
-  <p>
+  <Paragraph
+    element="p"
+    testId="cf-ui-paragraph"
+  >
     You have read-only access to this entry. If you need to edit it please contact your administrator.
-  </p>
+  </Paragraph>
 </div>
 `;
 
@@ -124,9 +160,12 @@ exports[`StatusNotification editing-not-allowed when the entity label is "entry"
 <div
   className="entity-editor__notification"
 >
-  <p>
+  <Paragraph
+    element="p"
+    testId="cf-ui-paragraph"
+  >
     You have read-only access to this entry. If you need to edit it please contact your administrator.
-  </p>
+  </Paragraph>
 </div>
 `;
 
@@ -134,9 +173,12 @@ exports[`StatusNotification internal-server-error when the entity label is "asse
 <div
   className="entity-editor__notification"
 >
-  <p>
+  <Paragraph
+    element="p"
+    testId="cf-ui-paragraph"
+  >
     Due to a server error, we could not process this entry. The fields are temporarily locked so that you won’t lose any important changes.
-  </p>
+  </Paragraph>
 </div>
 `;
 
@@ -144,9 +186,12 @@ exports[`StatusNotification internal-server-error when the entity label is "entr
 <div
   className="entity-editor__notification"
 >
-  <p>
+  <Paragraph
+    element="p"
+    testId="cf-ui-paragraph"
+  >
     Due to a server error, we could not process this entry. The fields are temporarily locked so that you won’t lose any important changes.
-  </p>
+  </Paragraph>
 </div>
 `;
 
@@ -154,9 +199,12 @@ exports[`StatusNotification ot-connection-error when the entity label is "asset"
 <div
   className="entity-editor__notification"
 >
-  <p>
+  <Paragraph
+    element="p"
+    testId="cf-ui-paragraph"
+  >
     It appears that you aren’t connected to internet at the moment. The fields are temporarily locked so that you won’t lose any important changes.
-  </p>
+  </Paragraph>
 </div>
 `;
 
@@ -164,8 +212,11 @@ exports[`StatusNotification ot-connection-error when the entity label is "entry"
 <div
   className="entity-editor__notification"
 >
-  <p>
+  <Paragraph
+    element="p"
+    testId="cf-ui-paragraph"
+  >
     It appears that you aren’t connected to internet at the moment. The fields are temporarily locked so that you won’t lose any important changes.
-  </p>
+  </Paragraph>
 </div>
 `;

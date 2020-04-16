@@ -4,6 +4,7 @@ import { css } from 'emotion';
 import * as Navigator from 'states/Navigator';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as logger from 'services/logger';
+import tokens from '@contentful/forma-36-tokens';
 import {
   Dropdown,
   DropdownList,
@@ -15,6 +16,7 @@ import {
 const styles = {
   dropdown: css({
     display: 'flex',
+    marginLeft: tokens.spacingM,
   }),
 };
 

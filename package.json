@@ -18,7 +18,7 @@
     "@contentful/field-editor-dropdown": "0.7.1",
     "@contentful/field-editor-json": "0.4.1",
     "@contentful/field-editor-list": "0.8.1",
-    "@contentful/field-editor-location": "0.5.1",
+    "@contentful/field-editor-location": "0.5.2",
     "@contentful/field-editor-markdown": "0.5.3",
     "@contentful/field-editor-multiple-line": "0.6.1",
     "@contentful/field-editor-number": "0.6.1",
