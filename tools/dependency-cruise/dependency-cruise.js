@@ -16,7 +16,7 @@ module.exports = {
       comment: `Features can use other features only through their public API:
       import {} from 'features/other-feature';`,
       severity: 'error',
-      from: { path: '^src/javascripts/features/([^/]+)/.+' },
+      from: { path: '^src/javascripts/features/([^/]+)/.+|^src/javascripts' },
       to: {
         path: '^src/javascripts/features/([^/]+)/.+',
         pathNot: '^src/javascripts/features/$1/.+|^src/javascripts/features/([^/]+)/index',

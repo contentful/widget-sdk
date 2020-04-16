@@ -1,15 +1,14 @@
 import React from 'react';
 import { get } from 'lodash';
 import { getModule } from 'NgRegistry';
-import SpaceSettings from './SpaceSettings';
-import { Notification } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification';
 import DocumentTitle from 'components/shared/DocumentTitle';
-
 import * as EndpointFactory from 'data/EndpointFactory';
 import * as PricingDataProvider from 'account/pricing/PricingDataProvider';
-import * as DeleteSpace from 'services/DeleteSpace';
 import * as TokenStore from 'services/TokenStore';
+import { Notification } from '@contentful/forma-36-react-components';
+import { SpaceSettingsConnected } from '../components/SpaceSettings';
+import { openDeleteSpaceDialog } from '../services/DeleteSpace';
 
 export class SpaceSettingsRoute extends React.Component {
   getSpacePlan = async () => {
@@ -63,7 +62,7 @@ export class SpaceSettingsRoute extends React.Component {
     const spaceContext = getModule('spaceContext');
 
     this.getSpacePlan().then((plan) => {
-      DeleteSpace.openDeleteSpaceDialog({
+      openDeleteSpaceDialog({
         space: spaceContext.space.data,
         plan,
         onSuccess: () => $state.go('home'),
@@ -77,7 +76,7 @@ export class SpaceSettingsRoute extends React.Component {
     return (
       <React.Fragment>
         <DocumentTitle title="Settings" />
-        <SpaceSettings
+        <SpaceSettingsConnected
           save={this.save}
           onRemoveClick={this.openRemovalDialog}
           spaceName={spaceContext.space.data.name}
@@ -87,5 +86,3 @@ export class SpaceSettingsRoute extends React.Component {
     );
   }
 }
-
-export default SpaceSettingsRoute;

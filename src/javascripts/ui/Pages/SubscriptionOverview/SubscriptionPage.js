@@ -7,7 +7,7 @@ import { Notification, Workbench } from '@contentful/forma-36-react-components';
 
 import { showDialog as showCreateSpaceModal } from 'services/CreateSpace';
 import { showDialog as showChangeSpaceModal } from 'services/ChangeSpaceService';
-import { openDeleteSpaceDialog } from 'services/DeleteSpace';
+import { openDeleteSpaceDialog } from 'features/space-settings';
 import { isOwner } from 'services/OrganizationRoles';
 
 import BasePlan from './BasePlan';

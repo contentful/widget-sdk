@@ -8,7 +8,7 @@ import contentPreviewSettingsState from 'app/settings/content_preview/routes';
 import rolesPermissionsSettingsState from 'app/settings/roles_permissions/routes';
 import usersSettingsState from './settingsUsers';
 import teamsSettingsState from './settingsTeams';
-import SpaceSettingsRoute from 'app/settings/space/SpaceSettingsRoute';
+import { SpaceSettingsRoute } from 'features/space-settings';
 import tagsSettingsState from 'app/settings/content_tags/routes';
 
 export default SpaceSettingsBase({

@@ -7,7 +7,7 @@ import { Provider } from 'react-redux';
 import reducer from 'redux/reducer';
 import routes from 'redux/routes';
 
-import SpaceSettings from './SpaceSettings';
+import { SpaceSettingsConnected } from './SpaceSettings';
 
 const activeOrgId = 'testOrgId';
 describe('SpaceSettings', () => {
@@ -45,7 +45,7 @@ describe('SpaceSettings', () => {
   const renderComponent = (props) => {
     return render(
       <Provider store={store}>
-        <SpaceSettings
+        <SpaceSettingsConnected
           spaceName="test-name"
           spaceId="test-id"
           onRemoveClick={noop}

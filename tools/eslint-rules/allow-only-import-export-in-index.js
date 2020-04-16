@@ -8,7 +8,7 @@ module.exports = {
   create(context) {
     const path = context.getFilename();
     if (!path.endsWith('index.js')) {
-      return;
+      return {};
     }
 
     return {

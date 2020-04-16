@@ -14,15 +14,6 @@ const styles = {
 };
 
 class SpaceSettings extends React.Component {
-  static propTypes = {
-    onRemoveClick: PropTypes.func.isRequired,
-    save: PropTypes.func.isRequired,
-    spaceName: PropTypes.string.isRequired,
-    spaceId: PropTypes.string.isRequired,
-
-    showDeleteButton: PropTypes.bool.isRequired,
-  };
-
   state = {
     isSaving: false,
     initialSpaceName: this.props.spaceName,
@@ -105,6 +96,14 @@ class SpaceSettings extends React.Component {
   }
 }
 
-export default connect((state) => ({
+SpaceSettings.propTypes = {
+  onRemoveClick: PropTypes.func.isRequired,
+  save: PropTypes.func.isRequired,
+  spaceName: PropTypes.string.isRequired,
+  spaceId: PropTypes.string.isRequired,
+  showDeleteButton: PropTypes.bool.isRequired,
+};
+
+export const SpaceSettingsConnected = connect((state) => ({
   showDeleteButton: ['owner', 'admin'].includes(getOrgRole(state)),
 }))(SpaceSettings);

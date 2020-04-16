@@ -89,7 +89,6 @@ module.exports = {
     {
       files: ['src/javascripts/core/**/*.js', 'src/javascripts/features/**/*.js'],
       rules: {
-        'import/order': ['error', { groups: [['builtin', 'external', 'internal']] }],
         'import/no-default-export': 'error',
         'rulesdir/restrict-multiple-react-component-exports': 'error',
         'rulesdir/allow-only-import-export-in-index': 'error',
