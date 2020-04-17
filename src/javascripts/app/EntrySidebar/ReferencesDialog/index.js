@@ -125,8 +125,12 @@ const ReferencesDialog = ({ entity }) => {
 
   useEffect(() => {
     async function getFeatureFlagVariation() {
-      const isFeatureEnabled = await getCurrentVariation(ALL_REFERENCES_DIALOG);
-      setIsEnabled(isFeatureEnabled);
+      let isFeatureEnabled = false;
+      try {
+        isFeatureEnabled = await getCurrentVariation(ALL_REFERENCES_DIALOG);
+      } finally {
+        setIsEnabled(isFeatureEnabled);
+      }
     }
     getFeatureFlagVariation();
 
