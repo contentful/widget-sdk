@@ -12,7 +12,7 @@ const BATCH_LIMIT = 100;
  * @param {endpoint} endpoint organization endpoint
  */
 export async function getAllTeams(endpoint) {
-  return (await fetchAllWithIncludes(endpoint, ['teams'], BATCH_LIMIT, {}, alphaHeader)).items;
+  return (await fetchAllWithIncludes(endpoint, ['teams'], BATCH_LIMIT, {})).items;
 }
 
 export async function getAllTeamsSpaceMemberships(orgEndpoint) {

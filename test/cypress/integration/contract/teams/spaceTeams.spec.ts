@@ -81,7 +81,7 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
       method: 'GET',
       path: `/organizations/${defaultOrgId}/teams`,
       query: { limit: '100', skip: '0' },
-      headers: teamHeaders,
+      headers: defaultHeader,
     },
     willRespondWith: {
       status: 200,
