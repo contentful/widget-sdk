@@ -50,6 +50,9 @@ const ALLOWED_SDK_METHODS = [
   'waitUntilAssetProcessed',
 
   'getUsers',
+
+  'getAllScheduledActions',
+  'getEntityScheduledActions',
 ];
 
 export default function makeExtensionSpaceMethodsHandlers(dependencies, handlerOptions = {}) {
