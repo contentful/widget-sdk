@@ -1,6 +1,5 @@
 import * as Dialogs from './ExtensionDialogs';
-
-jest.mock('app/common/ModalLauncher', () => ({ open: jest.fn() }));
+import { ModalLauncher } from 'core/components/ModalLauncher';
 
 describe('ExtensionDialogs', () => {
   describe('options validation', () => {
@@ -56,25 +55,22 @@ describe('ExtensionDialogs', () => {
 
   describe('opening dialogs and return values', () => {
     it('alert always resolves to true', async () => {
-      const { open } = jest.requireMock('app/common/ModalLauncher');
-      open.mockResolvedValue('blah blah blah');
+      ModalLauncher.open.mockResolvedValue('blah blah blah');
 
       const result = await Dialogs.openAlert({ title: 'test', message: 'hello' });
-      expect(open).toBeCalledTimes(1);
+      expect(ModalLauncher.open).toBeCalledTimes(1);
       expect(result).toBe(true);
     });
 
     it('confirm and prompt resolve to the modal close value', async () => {
-      const { open } = jest.requireMock('app/common/ModalLauncher');
-
-      open.mockResolvedValue('CONFIRM OPEN RETURN VALUE');
+      ModalLauncher.open.mockResolvedValue('CONFIRM OPEN RETURN VALUE');
       const confirmResult = await Dialogs.openConfirm({ title: 'test', message: 'hello' });
-      expect(open).toBeCalledTimes(1);
+      expect(ModalLauncher.open).toBeCalledTimes(1);
       expect(confirmResult).toBe('CONFIRM OPEN RETURN VALUE');
 
-      open.mockReturnValue('PROMPT OPEN RETURN VALUE');
+      ModalLauncher.open.mockReturnValue('PROMPT OPEN RETURN VALUE');
       const promptResult = await Dialogs.openPrompt({ title: 'test', message: 'hello' });
-      expect(open).toBeCalledTimes(2);
+      expect(ModalLauncher.open).toBeCalledTimes(2);
       expect(promptResult).toBe('PROMPT OPEN RETURN VALUE');
     });
   });

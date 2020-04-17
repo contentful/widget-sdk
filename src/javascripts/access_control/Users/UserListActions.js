@@ -4,7 +4,7 @@ import { find, map, isEmpty } from 'lodash';
 
 import ReloadNotification from 'app/common/ReloadNotification';
 import { getModule } from 'core/NgRegistry';
-import ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import * as TokenStore from 'services/TokenStore';
 import { go } from 'states/Navigator';
 

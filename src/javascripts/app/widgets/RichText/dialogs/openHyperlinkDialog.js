@@ -2,7 +2,7 @@ import React from 'react';
 import { INLINES } from '@contentful/rich-text-types';
 import HyperlinkDialog, { LINK_TYPES } from './HyperlinkDialog';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext';
-import ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import { newConfigFromExtension } from 'search/EntitySelector/Config';
 import { newEntitySelectorConfigFromRichTextField } from '@contentful/field-editor-rich-text';
 import { isNodeTypeEnabled } from '@contentful/field-editor-rich-text';

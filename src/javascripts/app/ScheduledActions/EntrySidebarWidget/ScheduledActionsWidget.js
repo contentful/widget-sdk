@@ -22,7 +22,7 @@ import ScheduledActionDialog from './ScheduledActionDialog';
 
 import * as EndpointFactory from 'data/EndpointFactory';
 
-import { useAsyncFn, usePrevious } from 'app/common/hooks';
+import { useAsyncFn, usePrevious } from 'core/hooks';
 
 import * as logger from 'services/logger';
 

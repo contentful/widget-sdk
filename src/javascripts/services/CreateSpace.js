@@ -6,7 +6,7 @@ import { isLegacyOrganization } from 'utils/ResourceUtils';
 import createResourceService from 'services/ResourceService';
 import { canCreateSpaceInOrganization } from 'access_control/AccessChecker';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import {
   getSpaceRatePlans,
   isEnterprisePlan,

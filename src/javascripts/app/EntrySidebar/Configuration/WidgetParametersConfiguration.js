@@ -6,7 +6,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { closeWidgetConfiguration, updateWidgetSettings } from './SidebarConfigurationReducer';
 import WidgetParametersForm from 'widgets/WidgetParametersForm';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils';
-import { useFormState } from 'app/common/hooks';
+import { useFormState } from 'core/hooks';
 
 const styles = {
   container: css({

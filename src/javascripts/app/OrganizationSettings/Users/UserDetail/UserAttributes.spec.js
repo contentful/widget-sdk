@@ -7,7 +7,7 @@ import {
   updateMembership,
   removeMembership,
 } from 'access_control/OrganizationMembershipRepository';
-import ModalLauncher from '__mocks__/app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import { Notification } from '@contentful/forma-36-react-components';
 import { go } from 'states/Navigator';
 

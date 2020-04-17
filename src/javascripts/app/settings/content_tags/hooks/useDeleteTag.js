@@ -1,5 +1,5 @@
 import useTagsRepo from './useTagsRepo';
-import { useAsyncFn } from 'app/common/hooks/useAsync';
+import { useAsyncFn } from 'core/hooks';
 import { useCallback } from 'react';
 
 function useDeleteTag() {

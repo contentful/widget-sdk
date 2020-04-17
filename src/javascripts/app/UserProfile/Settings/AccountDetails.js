@@ -14,7 +14,7 @@ import { User as UserPropType } from './propTypes';
 import IdentitiesSection from './IdentitiesSection';
 import UserEditModal from './UserEditModal';
 import ChangePasswordModal from './ChangePasswordModal';
-import * as ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 
 const styles = {
   spaceLeft: css({

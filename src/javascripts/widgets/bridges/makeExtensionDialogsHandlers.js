@@ -2,7 +2,7 @@
 import React from 'react';
 import isNumber from 'lodash/isNumber';
 import { Modal } from '@contentful/forma-36-react-components';
-import ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import ExtensionIFrameRenderer from '../ExtensionIFrameRenderer';
 import * as Dialogs from '../ExtensionDialogs';
 import { applyDefaultValues } from '../WidgetParametersUtils';

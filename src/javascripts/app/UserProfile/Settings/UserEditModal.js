@@ -11,7 +11,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import _ from 'lodash';
 import tokens from '@contentful/forma-36-tokens';
-import { createImmerReducer } from 'redux/utils/createImmerReducer';
+import { createImmerReducer } from 'core/utils/createImmerReducer';
 import { updateUserData } from './AccountRepository';
 import { User as UserPropType } from './propTypes';
 import { getValidationMessageFor } from './utils';

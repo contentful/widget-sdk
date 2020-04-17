@@ -1,5 +1,5 @@
 import { useCallback, useReducer } from 'react';
-import { createImmerReducer } from 'redux/utils/createImmerReducer';
+import { createImmerReducer } from 'core/utils/createImmerReducer';
 import { getSpaceInfo, getAllEnviroments } from '../utils';
 
 const actionTypes = {

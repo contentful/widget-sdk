@@ -13,8 +13,8 @@ import {
 import { authUrl } from 'Config';
 import $window from 'utils/ngCompat/window';
 import { joinWithAnd } from 'utils/StringUtils';
-import * as ModalLauncher from 'app/common/ModalLauncher';
-import { useAsyncFn } from 'app/common/hooks';
+import { ModalLauncher } from 'core/components/ModalLauncher';
+import { useAsyncFn } from 'core/hooks';
 import { websiteUrl } from 'Config';
 import { getUserTotp, deleteUserTotp } from './AccountRepository';
 import ChangePasswordModal from './ChangePasswordModal';

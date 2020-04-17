@@ -1,5 +1,5 @@
 import React from 'react';
-import ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import { DuplicateContentTypeDialog } from './DuplicateContentTypeDialog';
 import { CreateContentTypeDialog } from './CreateContentTypeDialog';
 import EditContentTypeDialog from './EditContentTypeDialog';

@@ -1,4 +1,4 @@
-import ModalLauncherMocked from 'app/common/ModalLauncher';
+import { ModalLauncher as ModalLauncherMocked } from 'core/components/ModalLauncher';
 
 import { showDialog } from './CreateSpace';
 import { canCreateSpaceInOrganization } from 'access_control/AccessChecker';
@@ -23,9 +23,6 @@ const mockRatePlans = {
   },
 };
 
-jest.mock('app/common/ModalLauncher', () => ({
-  open: jest.fn(),
-}));
 jest.mock('services/TokenStore', () => ({
   getOrganization: jest.fn(async () => mockV1Org),
 }));

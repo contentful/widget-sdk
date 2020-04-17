@@ -5,7 +5,7 @@ import tokens from '@contentful/forma-36-tokens';
 import WidgetParametersForm from 'widgets/WidgetParametersForm';
 import { Modal, Button } from '@contentful/forma-36-react-components';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils';
-import { useFormState } from 'app/common/hooks';
+import { useFormState } from 'core/hooks';
 
 const styles = {
   saveButton: css({

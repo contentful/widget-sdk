@@ -13,7 +13,7 @@ import {
 import defaultLocalesList from 'libs/locales_list.json';
 import TemplatesList from 'components/shared/space-wizard/TemplatesList';
 import { requestSpaceCreation } from './utils';
-import { useAsync } from 'app/common/hooks';
+import { useAsync } from 'core/hooks';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';

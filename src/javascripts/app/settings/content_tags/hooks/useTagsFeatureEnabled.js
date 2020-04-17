@@ -1,5 +1,5 @@
 import { PC_CONTENT_TAGS } from 'featureFlags';
-import useCurrentSpaceFeature from 'app/common/hooks/useCurrentSpaceFeature';
+import useCurrentSpaceFeature from './useCurrentSpaceFeature';
 
 function useTagsFeatureEnabled() {
   const {

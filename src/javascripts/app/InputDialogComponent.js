@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import {
   ModalConfirm,
   TextInput,

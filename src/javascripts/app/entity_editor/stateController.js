@@ -7,7 +7,7 @@ import { State, Action } from 'data/CMA/EntityState';
 import { Notification } from 'app/entity_editor/Notifications';
 
 import * as trackVersioning from 'analytics/events/versioning';
-import ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import * as random from 'utils/Random';
 
 import StateChangeConfirmationDialog from 'app/entity_editor/Components/StateChangeConfirmationDialog';

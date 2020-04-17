@@ -15,7 +15,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { inRange } from 'lodash';
 import { getModule } from 'core/NgRegistry';
 import LockedField from './LockedField';
-import * as ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import { joinAndTruncate } from 'utils/StringUtils';
 import RichTextOptions from 'components/field_dialog/RichTextOptions';
 

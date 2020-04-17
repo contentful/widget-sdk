@@ -10,7 +10,7 @@ import { without } from 'lodash';
 import * as TokenStore from 'services/TokenStore';
 import * as SpaceMembershipRepository from 'access_control/SpaceMembershipRepository';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
-import ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import { FetcherLoading } from 'app/common/createFetcherComponent';
 
 import SpaceMembershipsPresentation from './SpaceMembershipsPresentation';

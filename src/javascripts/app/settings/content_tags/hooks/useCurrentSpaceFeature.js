@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { getCurrentSpaceFeature } from 'data/CMA/ProductCatalog';
-import { useAsync } from './useAsync';
+import { useAsync } from 'core/hooks';
 
 /*
  * React hook to retrieve a Product Catalog feature flag for current space.

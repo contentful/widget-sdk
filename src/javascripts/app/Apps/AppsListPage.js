@@ -22,7 +22,7 @@ import {
 import NavigationIcon from 'ui/Components/NavigationIcon';
 
 import DocumentTitle from 'components/shared/DocumentTitle';
-import ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import FeedbackButton from 'app/common/FeedbackButton';
 
 import { websiteUrl } from 'Config';

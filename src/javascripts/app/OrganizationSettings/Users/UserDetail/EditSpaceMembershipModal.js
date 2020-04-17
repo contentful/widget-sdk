@@ -12,9 +12,9 @@ import {
 } from '@contentful/forma-36-react-components';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { fetchAll } from 'data/CMA/FetchAll';
-import { createImmerReducer } from 'redux/utils/createImmerReducer';
+import { createImmerReducer } from 'core/utils/createImmerReducer';
 import { ADMIN_ROLE_ID } from 'access_control/constants';
-import { useAsync } from 'app/common/hooks';
+import { useAsync } from 'core/hooks';
 import { SpaceMembership } from 'app/OrganizationSettings/PropTypes';
 import { create } from 'access_control/SpaceMembershipRepository';
 import { css } from 'emotion';

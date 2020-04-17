@@ -4,11 +4,10 @@ import AppDetails from './AppDetails';
 import mockDefinitions from './__mocks__/mockDefinitions.json';
 import * as ManagementApiClient from './ManagementApiClient';
 import * as util from './util';
-import * as ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 jest.mock('access_control/OrganizationMembershipRepository');
 jest.mock('./ManagementApiClient');
 jest.mock('./util');
-jest.mock('app/common/ModalLauncher');
 
 util.getOrgSpacesFor = jest.fn(() =>
   Promise.resolve([

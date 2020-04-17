@@ -5,7 +5,7 @@ import { Modal, TextField, Button } from '@contentful/forma-36-react-components'
 import { css } from 'emotion';
 import { flow, trim, deburr, lowerCase, get } from 'lodash';
 import AvailableUsers from './AvailableUsers';
-import { createImmerReducer } from 'redux/utils/createImmerReducer';
+import { createImmerReducer } from 'core/utils/createImmerReducer';
 
 const styles = {
   userSelection: css({

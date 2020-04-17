@@ -6,7 +6,7 @@ import { Icon, Modal, Tooltip } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { trackOpenButtonClick, trackClose, trackOpenShortcut } from './analytics';
-import ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 
 const styles = {
   searchButton: css({

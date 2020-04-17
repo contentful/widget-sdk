@@ -8,7 +8,7 @@ import createSpaceMembersRepo from 'data/CMA/SpaceMembersRepo';
 import RoleRepository from 'access_control/RoleRepository';
 import { getAllUsers } from 'access_control/OrganizationMembershipRepository';
 import resolveLinks from 'data/LinkResolver';
-import { useAsync } from 'app/common/hooks';
+import { useAsync } from 'core/hooks';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getModule } from 'core/NgRegistry';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
@@ -19,7 +19,7 @@ import { VIEW_BY_NAME, VIEW_BY_ROLE } from './constants';
 
 import { FetcherLoading } from 'app/common/createFetcherComponent';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
-import ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import AddUsers from 'app/SpaceSettings/Users/AddUsers/AddUsers';
 
 const fetch = (orgId, endpoint, space, setData) => async () => {

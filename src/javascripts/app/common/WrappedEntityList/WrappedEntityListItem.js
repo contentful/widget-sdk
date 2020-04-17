@@ -12,7 +12,7 @@ import {
   SkeletonBodyText,
 } from '@contentful/forma-36-react-components';
 import EntityStateLink from 'app/common/EntityStateLink';
-import { useAsync } from 'app/common/hooks';
+import { useAsync } from 'core/hooks';
 
 import * as AssetUrlService from 'services/AssetUrlService';
 

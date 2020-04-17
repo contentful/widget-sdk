@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import useTagsRepo from './useTagsRepo';
-import { useAsyncFn } from 'app/common/hooks/useAsync';
+import { useAsyncFn } from 'core/hooks';
 
 function useUpdateTag() {
   const tagsRepo = useTagsRepo();

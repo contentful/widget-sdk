@@ -18,7 +18,7 @@ import Icon from 'ui/Components/Icon';
 import { getVariation } from 'LaunchDarkly';
 import AppEditor from './AppEditor';
 import * as ManagementApiClient from './ManagementApiClient';
-import * as ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import AppInstallModal from './AppInstallModal';
 import DeleteAppModal from './DeleteAppDialog';
 import SaveConfirmModal from './SaveConfirmModal';

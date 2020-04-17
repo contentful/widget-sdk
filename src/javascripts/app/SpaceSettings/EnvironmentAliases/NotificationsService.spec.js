@@ -3,7 +3,7 @@ import initEnvAliasChangeHandler from './NotificationsService';
 import { Notification } from '@contentful/forma-36-react-components';
 import * as Navigator from 'states/Navigator';
 import * as accessChecker from 'access_control/AccessChecker';
-import ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import { setWindowLocationProperties } from '__mocks__/global/window';
 
 jest.mock('@contentful/forma-36-react-components', () => ({
@@ -15,9 +15,6 @@ jest.mock('states/Navigator', () => ({
 }));
 jest.mock('access_control/AccessChecker', () => ({
   can: jest.fn().mockReturnValue(false),
-}));
-jest.mock('app/common/ModalLauncher', () => ({
-  open: jest.fn().mockReturnValue(),
 }));
 
 const update = {

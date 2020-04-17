@@ -18,7 +18,7 @@ import {
   Icon,
 } from '@contentful/forma-36-react-components';
 import { authUrl, appUrl, websiteUrl } from 'Config';
-import ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes';
 import { IdentityProviderPropType, FieldsStatePropType } from './PropTypes';
 import { connectionTestingAllowed, formatConnectionTestErrors } from './utils';

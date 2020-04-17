@@ -10,7 +10,7 @@ import {
   Note,
 } from '@contentful/forma-36-react-components';
 import { spacingL } from '@contentful/forma-36-tokens';
-import ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import * as StateNavigator from 'states/Navigator';
 import { css } from 'emotion';
 

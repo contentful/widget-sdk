@@ -16,7 +16,7 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 
 import SubscriptionPage from './SubscriptionPage';
 
-import { useAsync } from 'app/common/hooks';
+import { useAsync } from 'core/hooks';
 import { FetcherLoading } from 'app/common/createFetcherComponent';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 

@@ -1,12 +1,11 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { openDeleteSpaceDialog, DeleteSpaceModal } from './DeleteSpace';
-import * as ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import * as TokenStore from 'services/TokenStore';
 import { Notification } from '@contentful/forma-36-react-components';
 
 jest.mock('services/TokenStore');
-jest.mock('app/common/ModalLauncher');
 
 describe('DeleteSpace service', () => {
   describe('openDeleteSpaceDialog', () => {

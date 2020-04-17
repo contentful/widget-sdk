@@ -15,7 +15,7 @@ import NavigationIcon from 'ui/Components/NavigationIcon';
 import { css } from 'emotion';
 import { helpCenterUrl, apiUrl } from 'Config';
 import tokens from '@contentful/forma-36-tokens';
-import ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import GenerateCMATokenDialog from 'app/common/ApiTokens/GenerateCMATokenDialog';
 import * as Auth from 'Authentication';
 import * as TokenResourceManager from 'app/settings/api/cma-tokens/TokenResourceManager';

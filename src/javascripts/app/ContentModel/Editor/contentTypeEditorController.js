@@ -16,7 +16,7 @@ import * as accessChecker from 'access_control/AccessChecker';
 import ContentTypesPage from 'app/ContentModel/Editor/ContentTypesPage';
 
 import { AddFieldDialogModal } from './Dialogs/AddField';
-import ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 
 export default function register() {
   registerDirective('cfContentTypeEditor', [

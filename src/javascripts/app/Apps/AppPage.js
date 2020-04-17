@@ -22,7 +22,7 @@ import { installOrUpdate, uninstall } from './AppOperations';
 import { APP_EVENTS_IN, APP_EVENTS_OUT } from './AppHookBus';
 import UnknownErrorMessage from 'components/shared/UnknownErrorMessage';
 import UninstallModal from './UninstallModal';
-import ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import * as AppLifecycleTracking from './AppLifecycleTracking';
 import { isUsageExceededErrorResponse, USAGE_EXCEEDED_MESSAGE } from './isUsageExceeded';
 

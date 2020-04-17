@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes';
-import ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import LocaleSelectDialog from './LocaleSelectDialog';
 import { Pill, TextLink } from '@contentful/forma-36-react-components';
 import { track } from 'analytics/Analytics';

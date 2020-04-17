@@ -7,7 +7,7 @@ import {
   Typography,
 } from '@contentful/forma-36-react-components';
 import * as logger from 'services/logger';
-import { useAsync } from 'app/common/hooks';
+import { useAsync } from 'core/hooks';
 import { waitForCMInstance, openConsentManagementPanel } from 'services/OsanoService';
 
 export default function MangeCookieConsentSection() {

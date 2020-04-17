@@ -3,13 +3,9 @@ import Enzyme from 'enzyme';
 import 'jest-enzyme';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes';
 import TranslationWidgetPills from './TranslationWidgetPills';
-import ModalLauncherMocked from 'app/common/ModalLauncher';
+import { ModalLauncher as ModalLauncherMocked } from 'core/components/ModalLauncher';
 import { TextLink, Pill } from '@contentful/forma-36-react-components';
 import { track } from 'analytics/Analytics';
-
-jest.mock('app/common/ModalLauncher', () => ({
-  open: jest.fn(),
-}));
 
 describe('EntrySidebar/TranslationWidgetPills', () => {
   const locales = [

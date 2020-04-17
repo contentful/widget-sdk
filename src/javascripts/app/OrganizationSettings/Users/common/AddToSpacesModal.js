@@ -17,7 +17,7 @@ import AddToSpaces from './AddToSpaces';
 import { create } from 'access_control/SpaceMembershipRepository';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { css } from 'emotion';
-import { createImmerReducer } from 'redux/utils/createImmerReducer';
+import { createImmerReducer } from 'core/utils/createImmerReducer';
 
 const styles = {
   errorMessage: css({

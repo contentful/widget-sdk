@@ -19,7 +19,7 @@ import { getModule } from 'core/NgRegistry';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 import * as K from 'utils/kefir';
 import * as accessChecker from 'access_control/AccessChecker';
-import { useAsync } from 'app/common/hooks';
+import { useAsync } from 'core/hooks';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import * as logger from 'services/logger';
 import { getApiKeyRepo } from 'app/settings/api/services/ApiKeyRepoInstance';

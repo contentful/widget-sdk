@@ -13,7 +13,7 @@ import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { openModal as openCommittedSpaceWarningDialog } from 'components/shared/space-wizard/CommittedSpaceWarningModal';
 import APIClient from 'data/APIClient';
 import { isEnterprisePlan, isFreeSpacePlan } from 'account/pricing/PricingDataProvider';
-import * as ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 
 export const DeleteSpaceModal = ({ isShown, onClose, spaceName }) => {
   const [spaceNameConfirmation, setSpaceNameConfirmation] = useState('');

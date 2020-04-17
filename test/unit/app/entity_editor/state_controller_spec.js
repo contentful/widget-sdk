@@ -20,8 +20,8 @@ describe('entityEditor/StateController', () => {
       goToPreviousSlideOrExit: this.stubs.goToPreviousSlideOrExit,
     });
 
-    this.system.set('app/common/ModalLauncher', {
-      default: {
+    this.system.set('core/components/ModalLauncher', {
+      ModalLauncher: {
         open: this.stubs.modalLauncher,
       },
     });

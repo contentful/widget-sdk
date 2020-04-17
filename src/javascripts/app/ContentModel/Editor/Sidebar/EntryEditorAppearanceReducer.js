@@ -1,4 +1,4 @@
-import { createImmerReducer } from 'redux/utils/createImmerReducer';
+import { createImmerReducer } from 'core/utils/createImmerReducer';
 
 /* Actions */
 const SELECT_ACTIVE_OPTION = 'editor/SELECT_ACTIVE_OPTION';

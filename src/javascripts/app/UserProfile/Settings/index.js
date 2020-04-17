@@ -3,7 +3,7 @@ import { Card, Workbench } from '@contentful/forma-36-react-components';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
-import { useAsync } from 'app/common/hooks';
+import { useAsync } from 'core/hooks';
 
 import { fetchUserData } from './AccountRepository';
 import AccountDetails from './AccountDetails';

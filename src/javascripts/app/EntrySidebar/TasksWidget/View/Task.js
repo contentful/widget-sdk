@@ -22,7 +22,7 @@ import moment from 'moment';
 import isHotKey from 'is-hotkey';
 import { isEqual } from 'lodash';
 import TaskDeleteDialog from './TaskDeleteDialog';
-import ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import { TaskViewData } from '../ViewData/TaskViewData';
 import { taskStyles as styles } from './styles';
 

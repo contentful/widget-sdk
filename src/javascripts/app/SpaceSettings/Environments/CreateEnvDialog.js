@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { Modal } from '@contentful/forma-36-react-components';
-import ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import * as Config from 'Config';
 import PropTypes from 'prop-types';
 import { LinkOpen } from 'ui/Content';

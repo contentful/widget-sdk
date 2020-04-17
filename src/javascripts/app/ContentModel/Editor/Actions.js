@@ -2,7 +2,7 @@ import React from 'react';
 import { getModule } from 'core/NgRegistry';
 import { cloneDeep, map, get } from 'lodash';
 import { ModalConfirm, Paragraph } from '@contentful/forma-36-react-components';
-import ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import ReloadNotification from 'app/common/ReloadNotification';
 import * as notify from './Notifications';
 import * as Analytics from 'analytics/Analytics';

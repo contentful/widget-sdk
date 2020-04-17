@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import UserProvisioningConfiguration from './UserProvisioningConfiguration';
-import ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 
 jest.mock('app/settings/api/cma-tokens/TokenResourceManager', () => ({
   create: jest.fn(),

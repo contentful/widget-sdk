@@ -3,7 +3,7 @@ import { get as getAtPath } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import { ModalConfirm } from '@contentful/forma-36-react-components';
 import { assign, filter } from 'utils/Collections';
 import { openRoleSelector } from './RoleSelector';

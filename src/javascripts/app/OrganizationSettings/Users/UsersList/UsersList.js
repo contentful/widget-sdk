@@ -30,7 +30,7 @@ import UserCard from '../UserCard';
 import Pagination from 'app/common/Pagination';
 import { getMemberships, removeMembership } from 'access_control/OrganizationMembershipRepository';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import RemoveOrgMemberDialog from '../RemoveUserDialog';
 import Placeholder from 'app/common/Placeholder';
 import { getFilters, getSearchTerm } from 'redux/selectors/filters';

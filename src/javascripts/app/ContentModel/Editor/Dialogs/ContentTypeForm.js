@@ -1,6 +1,6 @@
 import React, { useReducer, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { createImmerReducer } from 'redux/utils/createImmerReducer';
+import { createImmerReducer } from 'core/utils/createImmerReducer';
 import { Modal, Button, TextField, Form } from '@contentful/forma-36-react-components';
 import * as stringUtils from 'utils/StringUtils';
 import { isValidResourceId } from 'data/utils';

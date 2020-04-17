@@ -3,7 +3,7 @@ import { render, fireEvent, wait } from '@testing-library/react';
 import { Notification } from '@contentful/forma-36-react-components';
 import SecuritySection from './SecuritySection';
 import $window from 'utils/ngCompat/window';
-import * as ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import { getUserTotp } from './AccountRepository';
 
 jest.mock('utils/ngCompat/window', () => {

@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { useAsync } from 'app/common/hooks';
+import { useAsync } from 'core/hooks';
 import {
   Workbench,
   Table,

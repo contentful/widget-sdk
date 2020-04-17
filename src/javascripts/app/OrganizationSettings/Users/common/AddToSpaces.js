@@ -10,8 +10,8 @@ import PropTypes from 'prop-types';
 import SpacesAutoComplete from 'app/common/SpacesAutocomplete';
 import SpaceRoleEditor from 'app/OrganizationSettings/SpaceRoleEditor';
 import AutocompleteSelection from 'app/common/AutocompleteSelection';
-import { useAsync } from 'app/common/hooks';
-import { createImmerReducer } from 'redux/utils/createImmerReducer';
+import { useAsync } from 'core/hooks';
+import { createImmerReducer } from 'core/utils/createImmerReducer';
 import { Space as SpacePropType } from 'app/OrganizationSettings/PropTypes';
 
 const styles = {

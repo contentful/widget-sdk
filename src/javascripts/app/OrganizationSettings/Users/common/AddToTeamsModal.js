@@ -9,7 +9,7 @@ import AddToTeams from './AddToTeams';
 
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { createTeamMembership } from 'access_control/TeamRepository';
-import { createImmerReducer } from 'redux/utils/createImmerReducer';
+import { createImmerReducer } from 'core/utils/createImmerReducer';
 
 const reducer = createImmerReducer({
   TEAMS_CHANGED: (state, action) => {

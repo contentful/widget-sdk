@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import { useReducer, useEffect } from 'react';
-import { createImmerReducer } from 'redux/utils/createImmerReducer';
+import { createImmerReducer } from 'core/utils/createImmerReducer';
 
 export const FORM_ERROR = '__FORM_ERROR__';
 

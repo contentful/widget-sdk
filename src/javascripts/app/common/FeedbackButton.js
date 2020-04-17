@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Notification, TextLink } from '@contentful/forma-36-react-components';
-import ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import FeedbackDialog from './FeedbackDialog';
 import createMicroBackendsClient from 'MicroBackendsClient';
 import { getModule } from 'core/NgRegistry';

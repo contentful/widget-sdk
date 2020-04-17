@@ -10,7 +10,7 @@ import {
   Workbench,
 } from '@contentful/forma-36-react-components';
 import NavigationIcon from 'ui/Components/NavigationIcon';
-import useScrollToTop from 'app/common/hooks/useScrollToTop';
+import { useScrollToTop } from '../hooks/useScrollToTop';
 import EmptyContentTags from 'svg/illustrations/empty-content-tags.svg';
 import BinocularsIllustration from 'svg/illustrations/binoculars-illustration.svg';
 import EmptyStateContainer, {

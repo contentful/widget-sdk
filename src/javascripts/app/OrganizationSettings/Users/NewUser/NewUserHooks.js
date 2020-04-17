@@ -1,4 +1,4 @@
-import { useAsyncFn } from 'app/common/hooks';
+import { useAsyncFn } from 'core/hooks';
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
 import { invite } from 'access_control/OrganizationMembershipRepository';
 import { create as createSpaceMembershipRepo } from 'access_control/SpaceMembershipRepository';

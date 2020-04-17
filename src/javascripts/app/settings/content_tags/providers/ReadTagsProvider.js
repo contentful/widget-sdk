@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import useTagsRepo from '../hooks/useTagsRepo';
-import { useAsyncFn } from 'app/common/hooks/useAsync';
-import useStateWithDebounce from 'app/common/hooks/useStateWithDebounce';
+import { useStateWithDebounce, useAsyncFn } from 'core/hooks';
 
 const ReadTags = React.createContext({
   data: [],

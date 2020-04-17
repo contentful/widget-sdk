@@ -11,7 +11,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import AppsPrivateFrameworkIllustration from 'svg/illustrations/apps-private-framework.svg';
 import tokens from '@contentful/forma-36-tokens';
-import * as ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 

@@ -16,7 +16,7 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { ContentPreviewFormSkeleton } from './skeletons/ContentPreviewFormSkeleton';
 import validate from './ContentPreviewFormValidation';
-import ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import { slugify } from '@contentful/field-editor-slug';
 import { getContentPreview } from 'services/contentPreview';
 import * as Navigator from 'states/Navigator';

@@ -10,7 +10,7 @@ import {
 import UserDetails from './UserDetails';
 
 import * as fake from 'test/helpers/fakeFactory';
-import ModalLauncher from '__mocks__/app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import { removeTeamMembership } from 'access_control/TeamRepository';
 
 const membershipUser = fake.User({ firstName: 'John', lastName: 'Doe' });

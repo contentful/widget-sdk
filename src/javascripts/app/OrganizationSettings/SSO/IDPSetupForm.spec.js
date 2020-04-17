@@ -3,7 +3,7 @@ import Enzyme from 'enzyme';
 import 'jest-enzyme';
 import { IDPSetupForm } from './IDPSetupForm';
 import { TEST_RESULTS } from './constants';
-import ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import { track } from 'analytics/Analytics';
 
 import { connectionTestingAllowed, formatConnectionTestErrors } from './utils';

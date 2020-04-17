@@ -6,9 +6,9 @@ import * as fieldFactory from 'services/fieldFactory';
 import * as random from 'utils/Random';
 import { inRange, includes } from 'lodash';
 import { css } from 'emotion';
-import { useForm } from 'app/common/hooks/useForm';
+import { useForm } from 'core/hooks';
 import { toIdentifier } from 'utils/StringUtils';
-import { createImmerReducer } from 'redux/utils/createImmerReducer';
+import { createImmerReducer } from 'core/utils/createImmerReducer';
 
 import { AddFieldContext } from './AddFieldContext';
 import { FieldGroupTypeSelector } from './FieldGroupTypeSelector';

@@ -1,4 +1,4 @@
-import { createImmerReducer } from 'redux/utils/createImmerReducer';
+import { createImmerReducer } from 'core/utils/createImmerReducer';
 
 /* Actions */
 const SELECT_SIDEBAR_TYPE = 'sidebar/SELECT_SIDEBAR_TYPE';

@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom';
  * @param {object=} opts
  * @param {string} opts.modalId optional idempotency key to reuse a modal root
  */
-export function open(componentRenderer, opts = {}) {
+function open(componentRenderer, opts = {}) {
   // Allow components to specify they wish to re-use the modal container
   const rootElId = `modals-root${opts.modalId || Date.now()}`;
   let rootDom = null;
@@ -49,6 +49,6 @@ export function open(componentRenderer, opts = {}) {
   });
 }
 
-export default {
+export const ModalLauncher = {
   open,
 };

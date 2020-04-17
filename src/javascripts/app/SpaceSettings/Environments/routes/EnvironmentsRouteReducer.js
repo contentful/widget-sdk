@@ -1,5 +1,5 @@
 import { useReducer } from 'react';
-import { createImmerReducer } from 'redux/utils/createImmerReducer';
+import { createImmerReducer } from 'core/utils/createImmerReducer';
 import createResourceService from 'services/ResourceService';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as LD from 'utils/LaunchDarkly';

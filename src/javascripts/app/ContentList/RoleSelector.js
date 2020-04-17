@@ -2,9 +2,9 @@ import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { css, cx } from 'emotion';
 
-import { createImmerReducer } from 'redux/utils/createImmerReducer';
+import { createImmerReducer } from 'core/utils/createImmerReducer';
 import React, { useReducer, useEffect } from 'react';
-import ModalLauncher from 'app/common/ModalLauncher';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import tokens from '@contentful/forma-36-tokens';
 import {
   Notification,

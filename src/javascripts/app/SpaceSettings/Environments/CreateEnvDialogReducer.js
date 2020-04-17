@@ -1,5 +1,5 @@
 import { useReducer } from 'react';
-import { createImmerReducer } from 'redux/utils/createImmerReducer';
+import { createImmerReducer } from 'core/utils/createImmerReducer';
 import { mapValues, get } from 'lodash';
 import { isValidResourceId } from 'data/utils';
 import * as Environment from 'data/CMA/SpaceEnvironmentsRepo';
