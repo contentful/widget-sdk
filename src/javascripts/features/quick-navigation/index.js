@@ -1,0 +1,1 @@
+export { QuickNavigation } from './QuickNav';

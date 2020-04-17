@@ -1,13 +1,13 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 
-import QuickNav from './QuickNav';
+import { QuickNavigation } from './QuickNav';
 import { ModalLauncher } from 'core/components/ModalLauncher';
 
 let wrapper;
 
 beforeEach(() => {
-  wrapper = render(<QuickNav />);
+  wrapper = render(<QuickNavigation />);
   ModalLauncher.open = jest.fn();
 });
 

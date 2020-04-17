@@ -3,7 +3,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import AccountDropdown from './AccountDropdown';
-import QuickNavigation from 'components/shared/QuickNavigation/QuickNav';
+import { QuickNavigation } from 'features/quick-navigation';
 import OnboardingRelaunch from 'navigation/modernStackOnboardingRelaunch';
 import NavigationItem from './NavigationItem';
 import NavigationDropdown from './NavigationDropdown';

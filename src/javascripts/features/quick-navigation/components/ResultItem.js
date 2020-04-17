@@ -4,10 +4,10 @@ import { startCase } from 'lodash';
 import { css, cx } from 'emotion';
 import { Tag, Icon } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import ResultItemIcon from './ResultItemIcon';
 import { stateName, getState } from 'data/CMA/EntityState';
-import { EntityStatusTag } from '../EntityStatusTag';
+import { EntityStatusTag } from 'components/shared/EntityStatusTag';
 import StateLink from 'app/common/StateLink';
+import { ResultItemIcon } from './ResultItemIcon';
 
 const styles = {
   item: css({ padding: 0, margin: 0 }),

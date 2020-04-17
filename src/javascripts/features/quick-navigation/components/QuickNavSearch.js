@@ -6,8 +6,8 @@ import { throttle, get } from 'lodash';
 import Downshift from 'downshift';
 import { TextInput, Spinner } from '@contentful/forma-36-react-components';
 import { ResultList } from './ResultList';
-import { getSearchResults } from './utils';
-import { trackSelectedItem } from './analytics';
+import { getSearchResults } from '../utils';
+import { trackSelectedItem } from '../analytics';
 import { go, href } from 'states/Navigator';
 
 const styles = {
@@ -25,7 +25,7 @@ const styles = {
   }),
 };
 
-export default class QuickNavSearch extends React.Component {
+export class QuickNavSearch extends React.Component {
   state = {
     items: [],
     query: '',

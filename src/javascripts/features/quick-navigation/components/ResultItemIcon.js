@@ -21,7 +21,7 @@ const iconComponentsMap = {
   assets: MediaIcon,
 };
 
-const ResultItemIcon = ({ type }) => {
+export const ResultItemIcon = ({ type }) => {
   const Icon = iconComponentsMap[type];
   return Icon ? (
     <span className={iconStyles}>
@@ -29,8 +29,6 @@ const ResultItemIcon = ({ type }) => {
     </span>
   ) : null;
 };
-
-export default ResultItemIcon;
 
 ResultItemIcon.propTypes = {
   type: PropTypes.string.isRequired,

@@ -1,12 +1,15 @@
 import React from 'react';
 import { GlobalHotKeys } from 'react-hotkeys';
-import keyMap from 'key-map';
-import QuickNavSearch from './QuickNavSearch';
 import { Icon, Modal, Tooltip } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { trackOpenButtonClick, trackClose, trackOpenShortcut } from './analytics';
 import { ModalLauncher } from 'core/components/ModalLauncher';
+import { trackOpenButtonClick, trackClose, trackOpenShortcut } from './analytics';
+import { QuickNavSearch } from './components/QuickNavSearch';
+
+const keyMap = {
+  QUICK_NAV: 'q',
+};
 
 const styles = {
   searchButton: css({
@@ -31,7 +34,7 @@ const styles = {
   }),
 };
 
-export default class QuickNav extends React.Component {
+export class QuickNavigation extends React.Component {
   textInput = React.createRef();
 
   onRequestClose = () => {

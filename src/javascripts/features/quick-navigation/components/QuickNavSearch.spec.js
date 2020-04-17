@@ -1,7 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
-
-import QuickNavSearch from './QuickNavSearch';
+import { QuickNavSearch } from './QuickNavSearch';
 import spaceContext from 'ng/spaceContext';
 
 jest.mock('services/localeStore', () => ({

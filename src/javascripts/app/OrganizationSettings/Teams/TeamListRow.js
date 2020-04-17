@@ -19,9 +19,13 @@ import ROUTES from 'redux/routes';
 import getOrgId from 'redux/selectors/getOrgId';
 import getMemberCountsByTeam from 'redux/selectors/teamMemberships/getMemberCountsByTeam';
 import { hasReadOnlyPermission } from 'redux/selectors/teams';
-import ellipsisStyle from 'ellipsisStyle';
-
 import TeamDialog from './TeamDialog';
+
+const ellipsisStyle = {
+  overflowX: 'hidden',
+  textOverflow: 'ellipsis',
+  lineHeight: '1.2em',
+};
 
 const styles = {
   name: css({

@@ -24,7 +24,6 @@ import getOrgMemberships from 'redux/selectors/getOrgMemberships';
 import getMembershipsOfCurrentTeamToDisplay from 'redux/selectors/teamMemberships/getMembershipsOfCurrentTeamToDisplay';
 import getOrgId from 'redux/selectors/getOrgId';
 import Placeholder from 'app/common/Placeholder';
-import ellipsisStyle from 'ellipsisStyle';
 import TeamsEmptyStateImage from 'svg/illustrations/add-user-illustration.svg';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 import ROUTES from 'redux/routes';
@@ -32,6 +31,12 @@ import ROUTES from 'redux/routes';
 import TeamMemberships from './TeamMemberships/TeamMemberships';
 import TeamSpaceMemberships from './TeamSpaceMemberships/TeamSpaceMemberships';
 import TeamDialog from './TeamDialog';
+
+const ellipsisStyle = {
+  overflowX: 'hidden',
+  textOverflow: 'ellipsis',
+  lineHeight: '1.2em',
+};
 
 const AddButton = ({ label, onClick, disabled, className }) => (
   <Button
