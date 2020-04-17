@@ -16,7 +16,7 @@ import { getTemplatesList, getTemplate } from 'services/SpaceTemplateLoader';
 import { canCreate } from 'utils/ResourceUtils';
 import { createTrackingData } from 'components/shared/space-wizard/WizardUtils';
 import { getIncludedResources } from 'components/shared/space-wizard/WizardUtils';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import * as logger from 'services/logger';
 
 import * as actions from './actions';

@@ -1,4 +1,4 @@
-import { registerFilter } from 'NgRegistry';
+import { registerFilter } from 'core/NgRegistry';
 import _ from 'lodash';
 import fileSize from 'file-size';
 import mimetype from '@contentful/mimetype';

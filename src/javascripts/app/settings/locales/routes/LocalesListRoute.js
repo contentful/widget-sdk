@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import { LocalesListSkeleton } from '../skeletons/LocalesListSkeleton';
 import LocalesListPricingOne from '../LocalesListPricingOne';
 import LocalesListPricingTwo from '../LocalesListPricingTwo';

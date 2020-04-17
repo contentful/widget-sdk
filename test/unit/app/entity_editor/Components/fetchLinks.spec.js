@@ -35,7 +35,7 @@ describe('fetchLinks', () => {
     const getModuleStub = sinon.stub();
     getModuleStub.withArgs('spaceContext').returns(this.spaceContext);
 
-    this.system.set('NgRegistry', {
+    this.system.set('core/NgRegistry', {
       getModule: getModuleStub,
     });
 

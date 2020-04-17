@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import SidebarContentPreview from './SidebarContentPreview';
 import * as Analytics from 'analytics/Analytics';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import TheLocaleStore from 'services/localeStore';
 import * as Entries from 'data/entries';
 import { getContentPreview } from 'services/contentPreview';

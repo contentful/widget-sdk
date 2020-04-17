@@ -9,7 +9,7 @@ import { filter, concat } from 'utils/Collections';
 import InfoIcon from 'svg/info.svg';
 import { CheckboxField, SectionHeading } from '@contentful/forma-36-react-components';
 import EnvOrAliasLabel from 'app/common/EnvOrAliasLabel';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 const styles = {
   aliasSpacer: css({ marginBottom: tokens.spacingL }),

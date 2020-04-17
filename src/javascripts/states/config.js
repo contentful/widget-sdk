@@ -1,4 +1,4 @@
-import { registerProvider } from 'NgRegistry';
+import { registerProvider } from 'core/NgRegistry';
 import { difference } from 'lodash';
 
 // This is a wrapper for Angular UI Router.

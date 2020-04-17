@@ -4,7 +4,7 @@ import { user$ } from 'services/TokenStore';
 import { create as createToken } from 'app/settings/api/cma-tokens/TokenResourceManager';
 import * as auth from 'Authentication';
 import { getValue } from 'utils/kefir';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import * as Entries from 'data/entries';
 import { getApiKeyRepo } from 'app/settings/api/services/ApiKeyRepoInstance';
 import * as Analytics from 'analytics/Analytics';

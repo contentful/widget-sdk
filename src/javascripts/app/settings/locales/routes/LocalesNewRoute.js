@@ -5,7 +5,7 @@ import createFetcherComponent from 'app/common/createFetcherComponent';
 import { LocalesFormSkeleton } from '../skeletons/LocalesFormSkeleton';
 import StateRedirect from 'app/common/StateRedirect';
 import LocaleNotifications from '../utils/LocaleNotifications';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import DocumentTitle from 'components/shared/DocumentTitle';

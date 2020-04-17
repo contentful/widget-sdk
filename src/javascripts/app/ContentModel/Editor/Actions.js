@@ -1,5 +1,5 @@
 import React from 'react';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import { cloneDeep, map, get } from 'lodash';
 import { ModalConfirm, Paragraph } from '@contentful/forma-36-react-components';
 import ModalLauncher from 'app/common/ModalLauncher';

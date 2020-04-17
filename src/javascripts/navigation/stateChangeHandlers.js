@@ -1,4 +1,4 @@
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import _ from 'lodash';
 import * as logger from 'services/logger';
 import * as AppPerformanceMetrics from 'i13n/AppPerformance';

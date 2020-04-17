@@ -1,4 +1,4 @@
-import { registerDirective, registerController, registerProvider } from 'NgRegistry';
+import { registerDirective, registerController, registerProvider } from 'core/NgRegistry';
 import _ from 'lodash';
 
 export default function register() {

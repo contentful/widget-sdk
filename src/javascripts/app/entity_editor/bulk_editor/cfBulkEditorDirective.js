@@ -1,4 +1,4 @@
-import { registerDirective } from 'NgRegistry';
+import { registerDirective } from 'core/NgRegistry';
 import _ from 'lodash';
 import * as K from 'utils/kefir';
 import { deepFreeze } from 'utils/Freeze';

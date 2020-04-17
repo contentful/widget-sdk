@@ -1,4 +1,4 @@
-import { registerDirective } from 'NgRegistry';
+import { registerDirective } from 'core/NgRegistry';
 import * as Navigator from 'states/Navigator';
 
 export default function register() {

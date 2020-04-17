@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Heading, Paragraph } from '@contentful/forma-36-react-components';
 import { can, Action } from 'access_control/AccessChecker';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import CreateEntryButton from 'components/CreateEntryButton/CreateEntryButton';
 import FolderIllustration from 'svg/folder-illustration.svg';
 import PenIllustration from 'svg/illustrations/pen-illustration.svg';

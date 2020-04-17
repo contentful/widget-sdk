@@ -4,7 +4,7 @@ import { getStore } from 'browserStorage';
 import { omit } from 'lodash';
 import { serialize, unserialize } from 'data/ViewSerializer';
 import { getQueryString } from 'utils/location';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import { getBlankAssetView, getBlankEntryView } from './UiConfig/Blanks';
 
 const getLegacyStoreKey = (entityKey, spaceId) => {

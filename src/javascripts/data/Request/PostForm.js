@@ -1,6 +1,6 @@
 import qs from 'qs';
 import { assign } from 'lodash';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 /**
  * @description

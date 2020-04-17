@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 /**
  * @ngdoc service

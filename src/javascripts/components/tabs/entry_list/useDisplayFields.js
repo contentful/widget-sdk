@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { sortBy } from 'lodash';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import * as SystemFields from 'data/SystemFields';
 
 const getAvailableFields = (contentTypeId) => {

@@ -1,4 +1,4 @@
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 import createFetcherComponent from 'app/common/createFetcherComponent';
 

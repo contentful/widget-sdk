@@ -4,7 +4,7 @@ import { createMVar, createExclusiveTask } from 'utils/Concurrent';
 import { getStore } from 'browserStorage';
 import * as Config from 'Config';
 import postForm from 'data/Request/PostForm';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import $window from 'utils/ngCompat/window';
 
 /**

@@ -1,4 +1,4 @@
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import _ from 'lodash';
 import { assetContentType } from 'libs/legacy_client/client';
 import * as SystemFields from 'data/SystemFields';

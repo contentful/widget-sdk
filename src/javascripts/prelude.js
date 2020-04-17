@@ -32,7 +32,7 @@ import moment from 'moment';
 import _ from 'lodash';
 import qs from 'qs';
 
-import { awaitInitReady } from 'NgRegistry';
+import { awaitInitReady } from 'core/NgRegistry';
 
 const injectedConfig = readInjectedConfig();
 const env = injectedConfig.config.environment;

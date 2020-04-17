@@ -1,4 +1,4 @@
-import { registerDirective } from 'NgRegistry';
+import { registerDirective } from 'core/NgRegistry';
 
 import createEditorController from 'app/entity_editor/EntryController';
 import entryEditorTemplate from './entry_editor.html';

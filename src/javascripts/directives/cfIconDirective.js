@@ -1,4 +1,4 @@
-import { registerDirective } from 'NgRegistry';
+import { registerDirective } from 'core/NgRegistry';
 import createMountPoint from 'ui/Framework/DOMRenderer';
 import { isFunction } from 'lodash';
 

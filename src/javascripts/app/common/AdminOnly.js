@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import StateRedirect from './StateRedirect';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 export class AdminOnly extends React.Component {
   static propTypes = {

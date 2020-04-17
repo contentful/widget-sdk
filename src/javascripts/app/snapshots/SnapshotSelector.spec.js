@@ -2,9 +2,9 @@ import React from 'react';
 import { render, fireEvent, waitForElement } from '@testing-library/react';
 import SnapshotSelector from './SnapshotSelector';
 import moment from 'moment';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
-jest.mock('NgRegistry', () => ({ getModule: jest.fn() }));
+jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
 
 const makeFakeSnapshot = (_, i) => {
   return {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import * as TagsRepo from 'data/CMA/TagsRepo';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import PropTypes from 'prop-types';
 
 export const TagsRepoContext = React.createContext({

@@ -1,4 +1,4 @@
-import { registerController, appReady } from 'NgRegistry';
+import { registerController, appReady } from 'core/NgRegistry';
 import { onValueScope } from 'utils/kefir';
 import { pick, isObject } from 'lodash';
 

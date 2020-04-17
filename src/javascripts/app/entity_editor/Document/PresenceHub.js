@@ -1,4 +1,4 @@
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import _ from 'lodash';
 import * as K from 'utils/kefir';
 

@@ -1,4 +1,4 @@
-import { registerDirective } from 'NgRegistry';
+import { registerDirective } from 'core/NgRegistry';
 import createMountPoint from 'ui/Framework/DOMRenderer';
 import * as K from 'utils/kefir';
 import { bindActions } from 'ui/Framework/Store';

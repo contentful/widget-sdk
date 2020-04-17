@@ -15,7 +15,7 @@ import {
   isDevOnboardingSpace,
   isContentOnboardingSpace,
 } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 import * as K from 'utils/kefir';
 import * as accessChecker from 'access_control/AccessChecker';

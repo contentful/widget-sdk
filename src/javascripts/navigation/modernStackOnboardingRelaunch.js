@@ -12,7 +12,7 @@ import {
   getUser,
 } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import Icon from 'ui/Components/Icon';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 const store = getStore();
 

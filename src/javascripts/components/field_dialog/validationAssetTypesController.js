@@ -1,4 +1,4 @@
-import { registerController } from 'NgRegistry';
+import { registerController } from 'core/NgRegistry';
 import _ from 'lodash';
 import mimetype from '@contentful/mimetype';
 

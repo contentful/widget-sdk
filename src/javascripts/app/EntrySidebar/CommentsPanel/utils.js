@@ -1,6 +1,6 @@
 import { getUserSync } from 'services/TokenStore';
 import { get } from 'lodash';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 export function isCommentAuthor(comment) {
   const authorId = get(comment, 'sys.createdBy.sys.id');

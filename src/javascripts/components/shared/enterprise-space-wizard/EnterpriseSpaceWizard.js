@@ -18,7 +18,7 @@ import EnterpriseSpaceWizardPlan from './EnterpriseSpaceWizardPlan';
 import EnterpriseSpaceWizardInfo from './EnterpriseSpaceWizardInfo';
 
 import { TextField } from '@contentful/forma-36-react-components';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 class EnterpriseSpaceWizard extends React.Component {
   static propTypes = {

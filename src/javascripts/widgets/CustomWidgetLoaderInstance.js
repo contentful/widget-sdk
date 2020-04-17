@@ -1,4 +1,4 @@
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import { get, set } from 'lodash';
 import { createCustomWidgetLoader } from './CustomWidgetLoader';
 import { getAppsRepo } from 'app/Apps/AppsRepoInstance';

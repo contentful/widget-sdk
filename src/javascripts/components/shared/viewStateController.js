@@ -1,4 +1,4 @@
-import { registerController } from 'NgRegistry';
+import { registerController } from 'core/NgRegistry';
 
 export default function register() {
   registerController('ViewStateController', [

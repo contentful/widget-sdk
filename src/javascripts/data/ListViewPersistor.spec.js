@@ -1,9 +1,9 @@
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import { getQueryString } from 'utils/location';
 import createViewPersistor, { reset } from 'data/ListViewPersistor';
 import { getStore } from 'browserStorage';
 
-jest.mock('NgRegistry', () => ({ getModule: jest.fn() }));
+jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
 jest.mock('utils/location', () => ({ getQueryString: jest.fn() }));
 
 const moduleMocks = {

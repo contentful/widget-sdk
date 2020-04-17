@@ -4,7 +4,7 @@ import AnimateHeight from 'react-animate-height';
 import FolderIcon from 'svg/folder.svg';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import EnvOrAliasLabel from 'app/common/EnvOrAliasLabel';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';

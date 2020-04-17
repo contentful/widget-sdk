@@ -5,7 +5,7 @@ import WithLink from 'components/shared/stack-onboarding/components/WithLink';
 import ScreenHeader from 'components/shared/stack-onboarding/screens/Header';
 
 import { getCredentials } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 import FullScreen from 'components/shared/stack-onboarding/components/FullScreen';
 import Skip from 'components/shared/stack-onboarding/components/Skip';

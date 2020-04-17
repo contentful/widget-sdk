@@ -13,7 +13,7 @@ import ReloadNotification from 'app/common/ReloadNotification';
 import * as OrganizationRoles from 'services/OrganizationRoles';
 import { deepFreezeClone, deepFreeze } from 'utils/Freeze';
 import { isEqual, groupBy, map, get, find, cloneDeep } from 'lodash';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import window from 'utils/ngCompat/window';
 
 // Refresh token info every 5 minutes

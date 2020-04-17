@@ -1,4 +1,4 @@
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 /**
  * TODO move from access checker or get rid of it entirely

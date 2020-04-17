@@ -1,4 +1,4 @@
-import { registerController } from 'NgRegistry';
+import { registerController } from 'core/NgRegistry';
 import _ from 'lodash';
 import * as K from 'utils/kefir';
 import * as Kefir from 'kefir';

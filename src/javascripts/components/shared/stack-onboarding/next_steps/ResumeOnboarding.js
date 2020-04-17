@@ -9,7 +9,7 @@ import {
   Card,
   Typography,
 } from '@contentful/forma-36-react-components';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import { trackClickCTA } from 'app/home/tracking';
 import { getStore } from 'browserStorage';
 import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';

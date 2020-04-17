@@ -4,7 +4,7 @@ import { range } from 'lodash';
 import React from 'react';
 import * as Config from 'Config';
 import { NAMESPACE_BUILTIN } from './WidgetNamespaces';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import LinkEditor, {
   SingleLinkEditor,
   withCfWebApp as linkEditorWithCfWebApp,

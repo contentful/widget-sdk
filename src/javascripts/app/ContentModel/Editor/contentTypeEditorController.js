@@ -1,5 +1,5 @@
 import React from 'react';
-import { registerController, registerDirective } from 'NgRegistry';
+import { registerController, registerDirective } from 'core/NgRegistry';
 import _ from 'lodash';
 import validation from '@contentful/validation';
 import * as Analytics from 'analytics/Analytics';

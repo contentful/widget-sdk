@@ -1,4 +1,4 @@
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import { drop } from 'lodash';
 import debounce from 'lodash/debounce';
 

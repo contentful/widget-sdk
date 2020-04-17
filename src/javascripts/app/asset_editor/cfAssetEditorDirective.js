@@ -1,4 +1,4 @@
-import { registerDirective } from 'NgRegistry';
+import { registerDirective } from 'core/NgRegistry';
 
 import createEditorController from 'app/entity_editor/AssetController';
 import assetEditorTemplate from './asset_editor.html';

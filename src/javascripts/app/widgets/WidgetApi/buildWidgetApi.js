@@ -1,5 +1,5 @@
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import { goToSlideInEntity, onSlideInNavigation } from 'navigation/SlideInNavigator';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import * as entitySelector from 'search/EntitySelector/entitySelector';

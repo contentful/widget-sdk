@@ -2,7 +2,7 @@ import wrapWithRetry from 'data/Request/Retry';
 import wrapWithAuth from 'data/Request/Auth';
 import { getEndpoint, getCurrentState } from 'data/Request/Utils';
 import * as Telemetry from 'i13n/Telemetry';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 /**
  * @description

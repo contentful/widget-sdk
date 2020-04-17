@@ -1,4 +1,4 @@
-import { registerDirective } from 'NgRegistry';
+import { registerDirective } from 'core/NgRegistry';
 import mimetype from '@contentful/mimetype';
 import validationViews from 'services/validationViews';
 import validationSettingsTemplate from './cf_validation_settings.html';

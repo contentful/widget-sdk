@@ -8,7 +8,7 @@ import {
 } from './contentPreviewConfig';
 import { enrichTemplate } from './enrichTemplate';
 import * as Config from 'Config';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import TheLocaleStore from 'services/localeStore';
 import { getContentPreview } from 'services/contentPreview';
 import { getApiKeyRepo } from 'app/settings/api/services/ApiKeyRepoInstance';

@@ -4,7 +4,7 @@ import ModalLauncher from 'app/common/ModalLauncher';
 import Dialog from './Dialog';
 import fetchUnpublishedReferences from './FetchUnpublishedReferences';
 
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 export const showUnpublishedReferencesWarning = async ({
   entity,

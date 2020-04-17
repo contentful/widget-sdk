@@ -5,7 +5,7 @@ import { user$, spacesByOrganization$ as spacesByOrg$ } from 'services/TokenStor
 import createSampleSpace from './CreateSampleSpace';
 import seeThinkDoFeatureModalTemplate from './SeeThinkDoTemplate';
 import { organizations$ } from 'services/TokenStore';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import { getSpaceAutoCreatedKey } from './getSpaceAutoCreatedKey';
 
 import {

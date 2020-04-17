@@ -1,4 +1,4 @@
-import { registerDirective } from 'NgRegistry';
+import { registerDirective } from 'core/NgRegistry';
 
 export default function register() {
   registerDirective('cfAppContainer', () => ({

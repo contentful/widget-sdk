@@ -1,4 +1,4 @@
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import PropTypes from 'prop-types';
 
 const getCurrentUser = () => {

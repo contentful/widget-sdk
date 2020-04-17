@@ -1,4 +1,4 @@
-import { registerDirective, registerController, getModule } from 'NgRegistry';
+import { registerDirective, registerController, getModule } from 'core/NgRegistry';
 import _ from 'lodash';
 import * as K from 'utils/kefir';
 import { caseof } from 'sum-types';

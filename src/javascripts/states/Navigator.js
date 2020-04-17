@@ -21,7 +21,7 @@
  * Angular UI router does) we treat them as one value.
  */
 import { get, isArray } from 'lodash';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 const ENTITY_PLURALS = {
   Entry: 'entries',

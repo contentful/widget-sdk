@@ -1,5 +1,5 @@
 import qs from 'qs';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import { includes, get, orderBy, compact } from 'lodash';
 import TheLocaleStore from 'services/localeStore';

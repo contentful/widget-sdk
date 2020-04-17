@@ -1,5 +1,5 @@
 import { transform, flatten, chunk, uniq } from 'lodash';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 // The maximum number of IDs to query for in one request.
 //

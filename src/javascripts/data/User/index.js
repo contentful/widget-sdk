@@ -3,7 +3,7 @@ import { isEqual, find, get } from 'lodash';
 import { organizations$, user$, spacesByOrganization$ } from 'services/TokenStore';
 
 import { combine, onValue, getValue, createPropertyBus } from 'utils/kefir';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 /**
  * @description

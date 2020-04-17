@@ -308,7 +308,7 @@ import * as kMock from 'test/helpers/mocks/kefir';
 beforeEach(function() {
   module('contentful/test');
 
-  const { registerConstant } = this.$inject('NgRegistry.es6');
+  const { registerConstant } = this.$inject('core/NgRegistry');
   registerConstant('utils/kefir.es6', kMock);
 });
 ~~~
@@ -317,12 +317,12 @@ beforeEach(function() {
 If you need to stub just a specific property while keeping the rest of the dependency intact,
 you will need to first determine the kind of module you're mocking, e.g. a factory, directive,
 or controller, import the original module, mock the specific property, and rewrite the module
-using the registration function from `NgRegistry.es6`.
+using the registration function from `core/NgRegistry`.
 
 ~~~js
 module('contentful/test');
 
-const { registerFactory } = this.$inject('NgRegistry.es6');
+const { registerFactory } = this.$inject('core/NgRegistry');
 const originalMyFactory = this.$inject('myFactory');
 originalMyFactory.property = {};
 registerFactory('myFactory', () => originalMyFactory);
@@ -333,7 +333,7 @@ You can register a constant using the `registerConstant` helper to do the above 
 ~~~js
 module('contentful/test');
 
-const { registerConstant } = this.$inject('NgRegistry.es6');
+const { registerConstant } = this.$inject('core/NgRegistry');
 const randomUtils = this.$inject('utils/random.es6');
 randomUtils.property = {};
 registerConstant('utils/randomUtils.es6', randomUtils);
@@ -413,7 +413,7 @@ getModuleStub
     // ...
   })
 
-system.set('NgRegistry.es6', {
+system.set('core/NgRegistry', {
   getModule: getModuleStub
 });
 
@@ -436,7 +436,7 @@ getModuleStub
   .withArgs('myFactory')
   .returns(myFactory)
 
-system.set('NgRegistry.es6', {
+system.set('core/NgRegistry', {
   getModule: getModuleStub
 });
 

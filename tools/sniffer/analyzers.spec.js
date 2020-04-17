@@ -11,7 +11,7 @@ describe('analyze', () => {
     const modules = analyze(
       node,
       `
-        import { getModule, getModules, registerController, registerValue } from 'NgRegistry';
+        import { getModule, getModules, registerController, registerValue } from 'core/NgRegistry';
         const $state = getModule('$state');
         const $timeout = getModule('$timeout');
         const SpaceMembershipRepository = getModule('access_control/SpaceMembershipRepository');
@@ -33,7 +33,7 @@ describe('analyze', () => {
     );
 
     expect(modules).toEqual([
-      'NgRegistry',
+      'core/NgRegistry',
       '$state',
       'angular.getModule',
       '$timeout',

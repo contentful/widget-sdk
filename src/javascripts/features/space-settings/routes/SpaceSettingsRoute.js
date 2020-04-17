@@ -1,6 +1,6 @@
 import React from 'react';
 import { get } from 'lodash';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import ReloadNotification from 'app/common/ReloadNotification';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import * as EndpointFactory from 'data/EndpointFactory';

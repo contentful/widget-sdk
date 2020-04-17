@@ -8,7 +8,7 @@ import {
   isOnboardingComplete,
   getDeploymentProvider,
 } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 class DeploymentStrategies extends React.Component {
   constructor(props) {

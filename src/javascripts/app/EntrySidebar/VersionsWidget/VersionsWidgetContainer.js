@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import SidebarEventTypes from '../SidebarEventTypes';
 import SidebarWidgetTypes from '../SidebarWidgetTypes';
 import VersionsWidget from './VersionsWidget';

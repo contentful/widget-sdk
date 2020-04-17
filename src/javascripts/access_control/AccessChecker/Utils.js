@@ -1,7 +1,7 @@
 import * as TokenStore from 'services/TokenStore';
 import * as K from 'utils/kefir';
 import { get, isString } from 'lodash';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 import _ from 'lodash';
 

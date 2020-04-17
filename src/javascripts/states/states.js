@@ -7,7 +7,7 @@ import { getMarketplaceApps } from 'states/deeplink/utils';
 import userInvitationState from 'states/UserInvitationState';
 import { getQueryString, getLocationHref } from 'utils/location';
 
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 /**
  * @description deeplink route to point users to certain sections,

@@ -10,7 +10,7 @@ import {
   Spinner,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import { go } from 'states/Navigator';
 import { env } from 'Config';
 import qs from 'qs';

@@ -1,10 +1,10 @@
 import _ from 'lodash';
 import * as EntityResolver from './EntityResolver';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 import * as spaceContextMocked from 'ng/spaceContext';
 
-jest.mock('NgRegistry', () => ({ getModule: jest.fn() }));
+jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
 getModule.mockReturnValue(spaceContextMocked);
 
 describe('EntityResolver', () => {

@@ -10,7 +10,7 @@ import LocaleNotifications from '../utils/LocaleNotifications';
 import LocaleRemovalConfirmDialog from '../dialogs/LocaleRemovalConfirmDialog';
 import ChooseNewFallbackLocaleDialog from '../dialogs/ChooseNewFallbackLocaleDialog';
 import LocaleCodeChangeConfirmation from '../dialogs/LocaleCodeChangeConfirmDialog';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import DocumentTitle from 'components/shared/DocumentTitle';

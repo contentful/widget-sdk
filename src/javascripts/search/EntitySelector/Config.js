@@ -1,6 +1,6 @@
 import { clone, find, isObject, isString, pick } from 'lodash';
 import mimetype from '@contentful/mimetype';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import TheLocaleStore from 'services/localeStore';
 import * as ListQuery from 'search/listQuery';
 

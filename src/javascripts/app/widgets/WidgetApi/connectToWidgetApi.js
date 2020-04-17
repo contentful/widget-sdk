@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import buildWidgetApi from 'app/widgets/WidgetApi/buildWidgetApi';
 import WidgetAPIContext from './WidgetApiContext';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 /**
  * Takes a component with a `value`, `isDisabled` and `onChange` props

@@ -1,7 +1,7 @@
 import { get, isEqual, uniqWith } from 'lodash';
 import { track } from 'analytics/Analytics';
 import slideHelper from './slideHelper';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import mitt from 'mitt';
 
 const SLIDES_BELOW_QS = 'previousEntries';

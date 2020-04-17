@@ -376,7 +376,7 @@ We have to get rid of injection and use `jest.mock` to mock all imports of Angul
 Let's say that some React component imports `$state` Angular service.
 
 ```js
-import { getModule } from 'NgRegistry.es6';
+import { getModule } from 'core/NgRegistry';
 const $state = getModule('$state');
 
 export default class TestedComponent extends React.Component {}

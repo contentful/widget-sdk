@@ -1,10 +1,10 @@
 import _ from 'lodash';
 import { createBatchPerformer } from './batchPerformer';
 import * as analytics from 'analytics/Analytics';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 jest.mock('analytics/Analytics');
-jest.mock('NgRegistry', () => ({ getModule: jest.fn() }));
+jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
 
 analytics.track = jest.fn();
 

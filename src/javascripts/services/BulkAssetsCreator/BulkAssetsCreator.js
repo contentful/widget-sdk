@@ -2,7 +2,7 @@ import { identity, isString } from 'lodash';
 import * as Filestack from 'services/Filestack';
 import { Notification } from '@contentful/forma-36-react-components';
 import * as stringUtils from 'utils/StringUtils';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import * as logger from 'services/logger';
 import delay from 'delay';
 

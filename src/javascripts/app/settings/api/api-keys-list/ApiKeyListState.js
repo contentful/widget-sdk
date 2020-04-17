@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import ReloadNotification from 'app/common/ReloadNotification';
 import createResourceService from 'services/ResourceService';
 import * as ResourceUtils from 'utils/ResourceUtils';

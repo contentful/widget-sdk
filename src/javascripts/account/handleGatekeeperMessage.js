@@ -8,7 +8,7 @@ import {
   Paragraph,
   Typography,
 } from '@contentful/forma-36-react-components';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import * as Authentication from 'Authentication';
 import * as TokenStore from 'services/TokenStore';
 import * as Analytics from 'analytics/Analytics';

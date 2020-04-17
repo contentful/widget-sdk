@@ -10,7 +10,7 @@ import { getCurrentStateName } from 'states/Navigator';
 import { getOpenAssignedTasksAndEntries } from 'app/TasksPage/helpers';
 import { getCurrentSpaceFeature } from 'data/CMA/ProductCatalog';
 import * as FeatureFlagKey from 'featureFlags';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import StateLink from 'app/common/StateLink';
 
 import {

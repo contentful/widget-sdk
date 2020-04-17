@@ -1,4 +1,4 @@
-import { registerFactory } from 'NgRegistry';
+import { registerFactory } from 'core/NgRegistry';
 import _ from 'lodash';
 import { create as createViewMigrator } from 'saved-views-migrator';
 import * as K from 'utils/kefir';

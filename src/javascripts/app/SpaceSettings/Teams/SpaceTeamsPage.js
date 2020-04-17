@@ -21,7 +21,7 @@ import { ADMIN_ROLE_ID } from 'access_control/constants';
 import * as SpaceMembershipRepository from 'access_control/SpaceMembershipRepository';
 import DocumentTitle from 'components/shared/DocumentTitle';
 
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 import styles from './styles';
 import SpaceTeamsPagePresentation from './SpaceTeamsPagePresentation';

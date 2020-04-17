@@ -140,7 +140,7 @@ module.exports = function (fileInfo, { jscodeshift: j }) {
   ast
     .get()
     .node.program.body.unshift(
-      `import { ${uniq(registerHelpersNeeded).join(', ')} } from 'NgRegistry.es6';`
+      `import { ${uniq(registerHelpersNeeded).join(', ')} } from 'core/NgRegistry';`
     );
   uniq(importsNeeded).forEach((path) =>
     ast.get().node.program.body.unshift(`import * as ${toBoundName(path)} from '${path}';`)

@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import { getEndpoint, getCurrentState } from './Utils';
 import * as Telemetry from 'i13n/Telemetry';
 

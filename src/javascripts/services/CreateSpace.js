@@ -13,7 +13,7 @@ import {
   getBasePlan,
   isHighDemandEnterprisePlan,
 } from 'account/pricing/PricingDataProvider';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import LegacyNewSpaceModal from './CreateSpace/LegacyNewSpaceModal';
 
 function Loading() {

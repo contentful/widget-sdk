@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import StateLink from './StateLink';
 import { href } from 'states/Navigator';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 export function getEntityLink({ id, type }) {
   const spaceContext = getModule('spaceContext');

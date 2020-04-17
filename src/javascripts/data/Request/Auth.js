@@ -1,5 +1,5 @@
 import { assign, clone } from 'lodash';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 const UNAUTHORIZED = 401;
 

@@ -9,7 +9,7 @@ import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFa
 import { getAllTeams, getTeamsSpaceMembershipsOfSpace } from 'access_control/TeamRepository';
 import { getInstance as createRoleRepo } from 'access_control/RoleRepository';
 import { getSectionVisibility } from 'access_control/AccessChecker';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import { FetcherLoading } from 'app/common/createFetcherComponent';
 
 import AddTeamsPage from './AddTeamsPage';

@@ -1,4 +1,4 @@
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import { get, set } from 'lodash';
 import createAppsRepo from 'app/Apps/AppsRepo';
 import { getAppDefinitionLoader } from 'app/Apps/AppDefinitionLoaderInstance';

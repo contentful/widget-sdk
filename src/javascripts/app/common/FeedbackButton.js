@@ -4,7 +4,7 @@ import { Notification, TextLink } from '@contentful/forma-36-react-components';
 import ModalLauncher from 'app/common/ModalLauncher';
 import FeedbackDialog from './FeedbackDialog';
 import createMicroBackendsClient from 'MicroBackendsClient';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 export default class FeedbackButton extends Component {
   static propTypes = {

@@ -8,7 +8,7 @@ import { createWebhookTemplateDialogOpener } from '../createWebhookTemplateDialo
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import StateRedirect from 'app/common/StateRedirect';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import * as Config from 'Config';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import DocumentTitle from 'components/shared/DocumentTitle';

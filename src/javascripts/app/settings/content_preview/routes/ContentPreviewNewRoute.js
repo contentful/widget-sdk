@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import PropTypes from 'prop-types';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import AdminOnly from 'app/common/AdminOnly';

@@ -13,7 +13,7 @@ import getExtensionParameterIds from './getExtensionParameterIds';
 import * as Analytics from 'analytics/Analytics';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 const SDK_URL = 'https://unpkg.com/contentful-ui-extensions-sdk@3';
 

@@ -1,4 +1,4 @@
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 export async function fetchContentTypes() {
   const spaceContext = getModule('spaceContext');

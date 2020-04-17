@@ -1,4 +1,4 @@
-import { registerDirective } from 'NgRegistry';
+import { registerDirective } from 'core/NgRegistry';
 import entitySelectorTemplate from './entity_selector.html';
 
 export default function register() {

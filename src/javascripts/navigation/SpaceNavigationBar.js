@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import * as accessChecker from 'access_control/AccessChecker';
 import { getCurrentSpaceFeature, getOrgFeature } from 'data/CMA/ProductCatalog';
 import { PC_CONTENT_TAGS, ENVIRONMENTS_FLAG, TEAMS_IN_SPACES } from 'featureFlags';

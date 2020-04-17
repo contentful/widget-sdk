@@ -1,4 +1,4 @@
-import { registerController } from 'NgRegistry';
+import { registerController } from 'core/NgRegistry';
 import { find, isEqual, property } from 'lodash';
 import * as K from 'utils/kefir';
 import * as Navigator from 'states/Navigator';

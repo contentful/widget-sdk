@@ -1,4 +1,4 @@
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import React from 'react';
 import pluralize from 'pluralize';
 import PropTypes from 'prop-types';

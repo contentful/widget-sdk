@@ -3,7 +3,7 @@ import * as accessChecker from 'access_control/AccessChecker';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import { getStore } from 'browserStorage';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import { getOrganizationSpaces } from 'services/TokenStore';
 import * as logger from 'services/logger';
 import { getApiKeyRepo } from 'app/settings/api/services/ApiKeyRepoInstance';

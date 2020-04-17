@@ -10,7 +10,7 @@ import UserSelection from './UserSelection';
 import { Modal, Notification } from '@contentful/forma-36-react-components';
 import { createImmerReducer } from 'redux/utils/createImmerReducer';
 import RoleSelection from './RoleSelection';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import RoleRepository from 'access_control/RoleRepository';
 import { track } from 'analytics/Analytics';
 import AddUsersError from './AddUsersError';

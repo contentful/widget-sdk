@@ -4,7 +4,7 @@ import ShareJS from '@contentful/sharejs/lib/client';
 import { caseof, caseofEq } from 'sum-types';
 import * as K from 'utils/kefir';
 import * as DocLoader from 'data/sharejs/DocLoader';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 export const DocLoad = DocLoader.DocLoad;
 

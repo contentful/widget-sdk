@@ -1,4 +1,4 @@
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import { go } from 'states/Navigator';
 
 export default function jumpToRole(roleName) {

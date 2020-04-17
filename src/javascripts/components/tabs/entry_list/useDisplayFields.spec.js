@@ -1,9 +1,9 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 import { useDisplayFields } from './useDisplayFields';
 import createViewPersistor from 'data/ListViewPersistor';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
-jest.mock('NgRegistry', () => ({ getModule: jest.fn() }));
+jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
 getModule.mockReturnValue({
   getId: jest.fn().mockReturnValue('spaceId'),
   getEnvironmentId: jest.fn().mockReturnValue('envId'),

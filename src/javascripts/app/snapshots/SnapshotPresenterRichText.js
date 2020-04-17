@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { ReadOnlyRichTextEditor } from 'app/widgets/RichText';
 import { createNewReadOnlyWidgetApi } from 'app/widgets/NewWidgetApi/createNewWidgetApi';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 const SnapshotPresenterRichText = ({ className, value, contentType, entity, field, locale }) => {
   const [widgetApi, setWidgetApi] = useState(null);

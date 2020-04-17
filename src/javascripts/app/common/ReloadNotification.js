@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import { isObject } from 'lodash';
 import { Modal, Button } from '@contentful/forma-36-react-components';
 import ModalLauncher from 'app/common/ModalLauncher';

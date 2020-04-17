@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 import FormSection from 'components/forms/FormSection';
 import { WebhookSegmentation } from './WebhookSegmentation';

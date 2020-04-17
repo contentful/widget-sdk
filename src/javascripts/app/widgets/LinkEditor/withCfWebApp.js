@@ -8,7 +8,7 @@ import {
 import { noop, find, get } from 'lodash';
 import { newConfigFromField } from 'search/EntitySelector/Config';
 import * as slideInNavigator from 'navigation/SlideInNavigator';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import connectToWidgetApi from 'app/widgets/WidgetApi/connectToWidgetApi';
 import * as entityCreator from 'components/app_container/entityCreator';
 import { track } from 'analytics/Analytics';

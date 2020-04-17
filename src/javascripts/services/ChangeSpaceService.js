@@ -3,7 +3,7 @@ import { openModal as openCommittedSpaceWarningDialog } from 'components/shared/
 import { openModal as openPOCSpaceWarningDialog } from 'components/shared/space-wizard/POCSpaceWarningModal';
 import { getSingleSpacePlan, isPOCSpacePlan } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 /**
  * Displays the space creation dialog. The dialog type will depend on the

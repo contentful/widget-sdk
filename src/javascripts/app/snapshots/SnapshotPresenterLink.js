@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { memoize } from 'lodash';
 import { css } from 'emotion';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import { Card } from '@contentful/forma-36-react-components';
 
 import * as EntityResolver from 'data/CMA/EntityResolver';

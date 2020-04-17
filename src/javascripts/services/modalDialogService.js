@@ -1,4 +1,4 @@
-import { registerFactory } from 'NgRegistry';
+import { registerFactory } from 'core/NgRegistry';
 import _ from 'lodash';
 import debounce from 'lodash/debounce';
 import defer from 'lodash/defer';

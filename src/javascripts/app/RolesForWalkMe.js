@@ -1,4 +1,4 @@
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import { WALK_FOR_ME as WALK_FOR_ME_FLAG } from 'featureFlags';
 import _ from 'lodash';
 import * as LazyLoader from 'utils/LazyLoader';

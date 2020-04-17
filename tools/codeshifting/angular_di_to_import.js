@@ -63,7 +63,7 @@ module.exports = function (fileInfo, { jscodeshift: j }) {
         value: { source, specifiers },
       } = node;
 
-      if (source.value === 'NgRegistry') {
+      if (source.value === 'core/NgRegistry') {
         const getModuleSpecifier = specifiers.find(
           (specifier) => specifier.imported.name === 'getModule'
         );

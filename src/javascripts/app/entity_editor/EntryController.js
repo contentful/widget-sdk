@@ -15,7 +15,7 @@ import { bootstrapEntryEditorLoadEvents } from 'app/entity_editor/LoadEventTrack
 import setLocaleData from 'app/entity_editor/setLocaleData';
 import { valuePropertyAt } from 'app/entity_editor/Document';
 
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge';
 import * as logger from 'services/logger';
 import { getVariation } from 'LaunchDarkly';

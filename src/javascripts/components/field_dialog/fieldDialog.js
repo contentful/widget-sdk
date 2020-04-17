@@ -1,4 +1,4 @@
-import { registerController } from 'NgRegistry';
+import { registerController } from 'core/NgRegistry';
 import { extend, find, cloneDeep, get, isEmpty, map, intersection } from 'lodash';
 import { joinAndTruncate } from 'utils/StringUtils';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils';

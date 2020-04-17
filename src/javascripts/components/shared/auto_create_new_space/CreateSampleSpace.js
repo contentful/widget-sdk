@@ -7,7 +7,7 @@ import { find, noop } from 'lodash';
 import { getTemplate, getTemplatesList } from 'services/SpaceTemplateLoader';
 import autoCreateSpaceTemplate from './Template';
 import * as TokenStore from 'services/TokenStore';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import client from 'services/client';
 import * as logger from 'services/logger';
 

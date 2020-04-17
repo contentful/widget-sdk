@@ -1,4 +1,4 @@
-import { registerDirective } from 'NgRegistry';
+import { registerDirective } from 'core/NgRegistry';
 
 import * as actionCreators from 'redux/actions/spaceWizard/actionCreators';
 import * as Analytics from 'analytics/Analytics';

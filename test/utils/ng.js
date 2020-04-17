@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { awaitInitReady } from 'NgRegistry';
+import { awaitInitReady } from 'core/NgRegistry';
 
 function raw$inject(serviceName) {
   let ngModule;
@@ -130,7 +130,7 @@ export const $initialize = async function (system, mock = () => {}) {
 };
 
 export const $removeControllers = async function (system, names) {
-  const { registerController } = await system.import('NgRegistry');
+  const { registerController } = await system.import('core/NgRegistry');
 
   for (const name of names) {
     registerController(name, function () {});
@@ -138,7 +138,7 @@ export const $removeControllers = async function (system, names) {
 };
 
 export const $removeDirectives = async function (system, names) {
-  const { registerFactory } = await system.import('NgRegistry');
+  const { registerFactory } = await system.import('core/NgRegistry');
 
   for (const name of names) {
     registerFactory(`${name}Directive`, () => []);

@@ -1,8 +1,8 @@
 import createViewPersistor from 'data/ListViewPersistor';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import { useOrderedColumns as orderedColumns } from './useOrderedColumns';
 
-jest.mock('NgRegistry', () => ({ getModule: jest.fn() }));
+jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
 getModule.mockReturnValue({
   getId: jest.fn().mockReturnValue('spaceId'),
   getEnvironmentId: jest.fn().mockReturnValue('envId'),

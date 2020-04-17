@@ -1,4 +1,4 @@
-import { registerFactory } from 'NgRegistry';
+import { registerFactory } from 'core/NgRegistry';
 import _ from 'lodash';
 import ReloadNotification from 'app/common/ReloadNotification';
 import * as logger from 'services/logger';

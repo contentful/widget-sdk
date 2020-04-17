@@ -1,4 +1,4 @@
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import fieldDialogTemplate from './field_dialog.html';
 import { extend } from 'lodash';
 

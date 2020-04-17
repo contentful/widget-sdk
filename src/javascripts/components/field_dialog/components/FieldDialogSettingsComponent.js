@@ -13,7 +13,7 @@ import {
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { inRange } from 'lodash';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import LockedField from './LockedField';
 import * as ModalLauncher from 'app/common/ModalLauncher';
 import { joinAndTruncate } from 'utils/StringUtils';

@@ -4,7 +4,7 @@ import { createOtDoc, createCmaDoc } from 'app/entity_editor/Document';
 import { create as createPool } from 'data/sharejs/DocumentPool';
 
 // Mock Angular getModule for PresenceHub in OtDocument
-jest.mock('NgRegistry', () => ({
+jest.mock('core/NgRegistry', () => ({
   getModule: () => ({
     create: () => ({
       destroy: () => jest.fn(),

@@ -1,7 +1,7 @@
 import { makeEntityRef, href } from 'states/Navigator';
 import { EntityType } from '../constants';
 import TheLocaleStore from 'services/localeStore';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import * as EntityHelpers from 'app/entity_editor/entityHelpers';
 import { onFetchLinks } from 'analytics/events/IncomingLinks';
 

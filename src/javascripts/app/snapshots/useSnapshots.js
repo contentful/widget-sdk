@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { get } from 'lodash';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import Paginator from 'classes/Paginator';
 import * as snapshotDecorator from 'app/snapshots/helpers/SnapshotDecorator';
 

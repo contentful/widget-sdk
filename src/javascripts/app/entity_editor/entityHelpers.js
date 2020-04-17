@@ -1,4 +1,4 @@
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import _ from 'lodash';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 import * as logger from 'services/logger';

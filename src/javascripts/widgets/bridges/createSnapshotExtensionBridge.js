@@ -2,7 +2,7 @@ import makeExtensionSpaceMethodsHandlers from './makeExtensionSpaceMethodsHandle
 import checkDependencies from './checkDependencies';
 import { LOCATION_ENTRY_FIELD } from '../WidgetLocations';
 import TheLocaleStore from 'services/localeStore';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 // This is a UI Extension bridge to be used in the version
 // comparison view. It provides static initial data,

@@ -5,7 +5,7 @@ import 'jest-enzyme';
 import { HyperlinkDialogForm } from './HyperlinkDialog';
 
 jest.mock('ui/Framework/AngularComponent', () => () => null);
-jest.mock('NgRegistry', () => ({ getModule: jest.fn().mockImplementation(() => null) }));
+jest.mock('core/NgRegistry', () => ({ getModule: jest.fn().mockImplementation(() => null) }));
 jest.mock('directives/thumbnailHelpers', () => ({}));
 
 jest.mock('search/EntitySelector/Config', () => ({

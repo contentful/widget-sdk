@@ -3,7 +3,7 @@ import { Spinner } from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import { flow } from 'lodash';
 
 const styles = {

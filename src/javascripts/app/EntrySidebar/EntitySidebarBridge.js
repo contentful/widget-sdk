@@ -1,6 +1,6 @@
 import { once } from 'lodash';
 import * as K from 'utils/kefir';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import { getCurrentStateName } from 'states/Navigator';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes';
 import SidebarWidgetTypes from 'app/EntrySidebar/SidebarWidgetTypes';

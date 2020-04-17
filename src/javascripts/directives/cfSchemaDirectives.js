@@ -1,4 +1,4 @@
-import { registerDirective } from 'NgRegistry';
+import { registerDirective } from 'core/NgRegistry';
 import validation from '@contentful/validation';
 import errorMessageBuilder from 'services/errorMessageBuilder/errorMessageBuilder';
 

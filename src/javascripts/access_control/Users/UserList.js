@@ -10,7 +10,7 @@ import { getAllUsers } from 'access_control/OrganizationMembershipRepository';
 import resolveLinks from 'data/LinkResolver';
 import { useAsync } from 'app/common/hooks';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 
 import * as UserListActions from './UserListActions';

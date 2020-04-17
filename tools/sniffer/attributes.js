@@ -44,7 +44,7 @@ const angular = (node) => {
     '$timeout',
     '$q',
     '$exceptionHandler',
-    'NgRegistry',
+    'core/NgRegistry',
     '$interval',
     'modalDialog',
     'logger',

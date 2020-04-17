@@ -2,7 +2,7 @@ import { cloneDeep, get, sortBy } from 'lodash';
 import { Notification } from '@contentful/forma-36-react-components';
 import { deepFreeze } from 'utils/Freeze';
 import * as K from 'utils/kefir';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import * as logger from 'services/logger';
 import * as Store from 'data/streamHashSet';
 

@@ -1,5 +1,5 @@
 import { createSpaceEndpoint } from 'data/EndpointFactory';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import { TASKS_DASHBOARD, getAlphaHeader } from 'alphaHeaders.js';
 
 const alphaHeader = getAlphaHeader(TASKS_DASHBOARD);

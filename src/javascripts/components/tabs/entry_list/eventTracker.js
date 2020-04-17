@@ -1,4 +1,4 @@
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import { track } from 'analytics/Analytics';
 import { logError } from 'services/logger';
 

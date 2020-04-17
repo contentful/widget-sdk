@@ -1,9 +1,9 @@
 import createSnapshotExtensionBridge from './createSnapshotExtensionBridge';
 import { LOCATION_ENTRY_FIELD } from '../WidgetLocations';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 jest.mock('Authentication', () => ({ getToken: () => '<TOKEN>' }));
-jest.mock('NgRegistry', () => ({ getModule: jest.fn() }));
+jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
 jest.mock('services/localeStore', () => ({
   getPrivateLocales: () => [{ code: 'pl' }, { code: 'en' }],
   getDefaultLocale: () => ({ code: 'pl' }),

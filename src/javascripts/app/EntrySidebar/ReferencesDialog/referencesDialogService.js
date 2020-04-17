@@ -1,5 +1,5 @@
 import cfResolveResponse from 'contentful-resolve-response';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import { newForLocale } from 'app/entity_editor/entityHelpers.js';
 import * as EndpointFactory from 'data/EndpointFactory';
 import APIClient from 'data/APIClient.js';

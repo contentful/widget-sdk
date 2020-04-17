@@ -1,5 +1,5 @@
 import { chunk, uniq, flatten } from 'lodash';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 const MAX_IN_IDS = 50;
 

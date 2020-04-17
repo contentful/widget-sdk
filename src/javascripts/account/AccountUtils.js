@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import * as Navigator from 'states/Navigator';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 
 const getPageRouteRef = (page = '') => {

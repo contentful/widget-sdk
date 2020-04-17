@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Code from 'components/shared/stack-onboarding/components/Code';
 import { getDeliveryToken } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import IframeHighlightHOC from 'components/shared/stack-onboarding/explore/IframeHighlightHOC';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 class CodeSnippets extends React.Component {
   static propTypes = {

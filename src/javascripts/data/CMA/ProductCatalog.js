@@ -1,6 +1,6 @@
 import DataLoader from 'dataloader';
 import { memoize, get, uniq, isUndefined } from 'lodash';
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 
 import { createOrganizationEndpoint, createSpaceEndpoint } from '../EndpointFactory';
 

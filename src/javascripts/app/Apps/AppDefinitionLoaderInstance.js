@@ -1,4 +1,4 @@
-import { getModule } from 'NgRegistry';
+import { getModule } from 'core/NgRegistry';
 import * as Auth from 'Authentication';
 import * as Config from 'Config';
 import createAppDefinitionLoader from 'app/Apps/AppDefinitionLoader';
