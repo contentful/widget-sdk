@@ -28,10 +28,13 @@ jest.mock('access_control/EntityPermissions', () => {
 const now = Date.now();
 global.Date.now = jest.fn(() => now);
 
+const realSetTimeout = global.setTimeout; // unaffected by jest.useFakeTimers()
+const wait = () => new Promise((resolve) => realSetTimeout(resolve, 0));
+
 const mockSpaceEndpoint = () =>
   jest.fn().mockImplementation((body) => {
     const entry = cloneDeep(body.data);
-    set(entry, 'sys.version', entry.sys.version + 1);
+    entry.sys.version++;
     return entry;
   });
 let spaceEndpoint;
@@ -41,11 +44,6 @@ const newError = (code, msg) => {
   error.code = code;
   return error;
 };
-// It must be used together with jest.useRealTimers() to skip a current tick.
-const wait = () => new Promise((resolve) => setTimeout(resolve, 0));
-// For some reason "catch" inside the throttled CMA function runs AFTER the "expect" below,
-// so have to skip few event-loop ticks first.
-const waitForTimers = () => new Promise((resolve) => setTimeout(resolve, 0) && jest.runAllTimers());
 
 function createCmaDocument(initialEntity, contentTypeFields, throttleMs) {
   const contentType = newContentType(initialEntity.sys.contentType.sys, contentTypeFields);
@@ -69,6 +67,7 @@ describe('CmaDocument', () => {
   let entry;
 
   beforeEach(() => {
+    jest.useFakeTimers();
     entry = newEntry();
     spaceEndpoint = mockSpaceEndpoint();
     doc = createCmaDocument(entry).document;
@@ -76,7 +75,6 @@ describe('CmaDocument', () => {
 
   describe('initially', () => {
     it('triggers no CMA request for the next 5 sec.', () => {
-      jest.useFakeTimers();
       jest.runAllTimers();
       expect(spaceEndpoint).not.toHaveBeenCalled();
     });
@@ -84,7 +82,6 @@ describe('CmaDocument', () => {
 
   describe('immediately after setValueAt(fieldPath) on a field', () => {
     beforeEach(() => {
-      jest.useFakeTimers();
       doc.setValueAt(fieldPath, 'en-US-updated');
       jest.advanceTimersByTime(CmaDocument.THROTTLE_TIME - 1);
     });
@@ -100,7 +97,6 @@ describe('CmaDocument', () => {
 
   describe('5 sec. after setValueAt(fieldPath) on a field', () => {
     beforeEach(() => {
-      jest.useFakeTimers();
       doc.setValueAt(fieldPath, 'en-US-updated');
       jest.runAllTimers();
     });
@@ -116,7 +112,6 @@ describe('CmaDocument', () => {
 
   describe('multiple setValueAt() calls within 5s', () => {
     it('sends one CMA request', async () => {
-      jest.useFakeTimers();
       await doc.setValueAt(['fields', 'fieldA', 'en-US'], 'en-US-updated');
       await doc.setValueAt(['fields', 'fieldB', 'en-US'], 'another updated');
       expect(spaceEndpoint).not.toHaveBeenCalled();
@@ -131,12 +126,11 @@ describe('CmaDocument', () => {
     });
 
     it('collects changes made during saving and sends them only 5s after last CMA request', async () => {
-      jest.useFakeTimers();
       let cmaResolve;
       spaceEndpoint.mockImplementation(async (body) => {
         const entry = cloneDeep(body.data);
         return new Promise((resolve) => {
-          set(entry, 'sys.version', entry.sys.version + 1);
+          entry.sys.version++;
           cmaResolve = () => resolve(entry);
         });
       });
@@ -147,18 +141,17 @@ describe('CmaDocument', () => {
       K.assertCurrentValue(doc.state.isSaving$, true);
       await doc.setValueAt(['fields', 'fieldB', 'en-US'], 'value set during saving');
       cmaResolve();
-      jest.useRealTimers(); // Switch back to real timers to let saveEntity() finish in the current tick.
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      await wait();
       K.assertCurrentValue(doc.state.isSaving$, false);
       // Ensure the value was not overwritten by the response entity.
       expect(doc.getValueAt(['fields', 'fieldB', 'en-US'])).toBe('value set during saving');
 
-      jest.useFakeTimers();
       // Start a new CMA request with fake timer.
       await doc.setValueAt(fieldPath, doc.getValueAt(fieldPath));
       jest.advanceTimersByTime(THROTTLE_TIME - 100);
       expect(spaceEndpoint).toBeCalledTimes(1);
-      jest.advanceTimersByTime(200);
+
+      jest.advanceTimersByTime(100);
       expect(spaceEndpoint).toBeCalledTimes(2);
       const [body] = spaceEndpoint.mock.calls[1]; // take second call
       expect(body.data.fields).toMatchObject({
@@ -170,37 +163,30 @@ describe('CmaDocument', () => {
 
   describe('CMA call taking longer than 5s', () => {
     it('saves new pending changes only after first request succeeds', async () => {
-      doc = createCmaDocument(entry, undefined, 100).document;
-      jest.useFakeTimers();
+      doc = createCmaDocument(entry, undefined).document;
       let cmaResolve;
       spaceEndpoint.mockImplementation(async (body) => {
         const entry = cloneDeep(body.data);
         return new Promise((resolve) => {
-          set(entry, 'sys.version', entry.sys.version + 1);
+          entry.sys.version++;
           cmaResolve = () => resolve(entry);
         });
       });
 
       doc.setValueAt(['fields', 'fieldA', 'en-US'], 'en-US-updated');
 
-      jest.advanceTimersByTime(100);
+      jest.advanceTimersByTime(THROTTLE_TIME);
       expect(spaceEndpoint).toBeCalledTimes(1);
 
       doc.setValueAt(['fields', 'fieldB', 'en-US'], 'en-US-updated');
 
-      jest.advanceTimersByTime(100);
+      jest.advanceTimersByTime(THROTTLE_TIME + 100);
+      cmaResolve();
+      await wait();
       expect(spaceEndpoint).toBeCalledTimes(1);
 
-      cmaResolve();
-      jest.useRealTimers();
-      await wait();
-
-      await new Promise((resolve) =>
-        setTimeout(() => {
-          expect(spaceEndpoint).toBeCalledTimes(2);
-          resolve();
-        }, 200)
-      );
+      jest.advanceTimersByTime(THROTTLE_TIME);
+      expect(spaceEndpoint).toBeCalledTimes(2);
     });
   });
 
@@ -223,7 +209,6 @@ describe('CmaDocument', () => {
           entry.sys.version++;
           return entry;
         });
-      jest.useFakeTimers();
 
       await doc.setValueAt(fieldPath, 'updated value');
       expect(spaceEndpoint).not.toHaveBeenCalled();
@@ -232,7 +217,7 @@ describe('CmaDocument', () => {
       expect(spaceEndpoint).toBeCalledTimes(2);
 
       jest.runAllTimers();
-      await waitForTimers();
+      await wait();
       expect(spaceEndpoint).toBeCalledTimes(2);
     });
 
@@ -260,15 +245,14 @@ describe('CmaDocument', () => {
           return entry;
         });
 
-      jest.useRealTimers();
       const resourceStateUpdatePromise = doc.resourceState.apply(Action.Publish());
       await wait();
-      jest.useFakeTimers();
       expect(spaceEndpoint).toBeCalledTimes(1);
 
       await doc.setValueAt(fieldPath, 'updated value');
 
-      jest.runAllTimers();
+      jest.advanceTimersByTime(THROTTLE_TIME + 100);
+      await wait();
       expect(spaceEndpoint).toBeCalledTimes(1); // saveEntity() not called yet.
 
       resolveStateUpdate();
@@ -281,15 +265,11 @@ describe('CmaDocument', () => {
     describe('isSaving$', () => {
       let cmaResolve;
 
-      beforeEach(() => {
-        jest.useFakeTimers();
-      });
-
       it('is [true, false] when entity is persisted', async () => {
         spaceEndpoint.mockImplementation(async (body) => {
           const entry = cloneDeep(body.data);
           return new Promise((resolve) => {
-            set(entry, 'sys.version', entry.sys.version + 1);
+            entry.sys.version++;
             cmaResolve = () => resolve(entry);
           });
         });
@@ -298,8 +278,6 @@ describe('CmaDocument', () => {
         await doc.setValueAt(fieldPath, 'en-US-updated');
         jest.runAllTimers();
         K.assertCurrentValue(doc.state.isSaving$, true);
-        // Run remaining part of saveEntity() in current tick.
-        jest.useRealTimers();
         cmaResolve();
         await wait();
         K.assertCurrentValue(doc.state.isSaving$, false);
@@ -309,7 +287,7 @@ describe('CmaDocument', () => {
         spaceEndpoint.mockImplementation(async (body) => {
           const entry = cloneDeep(body.data);
           return new Promise((_, reject) => {
-            set(entry, 'sys.version', entry.sys.version + 1);
+            entry.sys.version++;
             cmaResolve = () => reject({ code: 'ServerError' });
           });
         });
@@ -318,8 +296,6 @@ describe('CmaDocument', () => {
         await doc.setValueAt(fieldPath, 'en-US-updated');
         jest.runAllTimers();
         K.assertCurrentValue(doc.state.isSaving$, true);
-        // Run remaining part of saveEntity() in current tick.
-        jest.useRealTimers();
         cmaResolve();
         await wait();
         K.assertCurrentValue(doc.state.isSaving$, false);
@@ -327,17 +303,13 @@ describe('CmaDocument', () => {
     });
 
     describe('error$', () => {
-      beforeEach(() => {
-        jest.useFakeTimers();
-      });
-
       it('emits VersionMismatch on VersionMismatch error code', async () => {
         spaceEndpoint.mockImplementationOnce(() => {
           throw newError('VersionMismatch', 'API request failed');
         });
         await doc.setValueAt(fieldPath, 'en-US-updated');
         jest.runAllTimers();
-        await waitForTimers();
+        await wait();
         K.assertCurrentValue(doc.state.error$, DocError.VersionMismatch());
       });
 
@@ -347,7 +319,7 @@ describe('CmaDocument', () => {
         });
         await doc.setValueAt(fieldPath, 'en-US-updated');
         jest.runAllTimers();
-        await waitForTimers();
+        await wait();
         K.assertCurrentValue(doc.state.error$, DocError.OpenForbidden());
       });
 
@@ -358,7 +330,7 @@ describe('CmaDocument', () => {
         });
         await doc.setValueAt(fieldPath, 'en-US-updated');
         jest.runAllTimers();
-        await waitForTimers();
+        await wait();
         K.assertCurrentValue(doc.state.error$, DocError.CmaInternalServerError(error));
       });
 
@@ -369,7 +341,7 @@ describe('CmaDocument', () => {
         });
         await doc.setValueAt(fieldPath, 'en-US-updated');
         jest.runAllTimers();
-        await waitForTimers();
+        await wait();
         K.assertCurrentValue(doc.state.error$, DocError.CmaInternalServerError(error));
       });
 
@@ -407,9 +379,6 @@ describe('CmaDocument', () => {
     // LocaleStore contains all environment-enabled locales, regardless on CT field-level enabled locales.
     // So the CMA request must only contain locales that are in the LocaleStore, and no unknown locales.
     it('persists all environment-enabled locales in CMA request', () => {
-      jest.useFakeTimers();
-
-      // Trigger CMA request timer.
       doc.setValueAt(['fields', 'field1', 'de'], 'new-DE');
       jest.runAllTimers();
 
@@ -429,9 +398,6 @@ describe('CmaDocument', () => {
     // first place and a `PUT` request with a non-existing field (not known to the CT)
     // would simply fail.
     it('does not persist unknown fields in CMA request', () => {
-      jest.useFakeTimers();
-
-      // Trigger CMA request timer.
       doc.setValueAt(['fields', 'field1', 'en-US'], 'new value');
       jest.runAllTimers();
 
@@ -444,14 +410,11 @@ describe('CmaDocument', () => {
   });
 
   describe('edit conflict tracking', () => {
-    beforeEach(() => {
-      jest.useFakeTimers();
-    });
-
     it('happens on VersionMismatch error', async () => {
       const remoteEntity = cloneDeep(entry);
       set(remoteEntity, fieldPath, 'en-US-remote-updated');
-      set(remoteEntity, 'sys.version', remoteEntity.sys.version + 1);
+      remoteEntity.sys.version++;
+
       spaceEndpoint
         .mockImplementationOnce(() => {
           throw newError('VersionMismatch', 'API request failed');
@@ -460,7 +423,7 @@ describe('CmaDocument', () => {
 
       await doc.setValueAt(fieldPath, 'en-US-updated');
       jest.runAllTimers();
-      await waitForTimers();
+      await wait();
 
       expect(track).toBeCalledTimes(1);
       const [id, body] = track.mock.calls[0];
@@ -491,7 +454,7 @@ describe('CmaDocument', () => {
         });
       await doc.setValueAt(fieldPath, 'en-US-updated');
       jest.runAllTimers();
-      await waitForTimers();
+      await wait();
 
       expect(track).not.toBeCalled();
     });
