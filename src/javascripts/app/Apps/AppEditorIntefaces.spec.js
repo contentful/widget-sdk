@@ -22,7 +22,6 @@ const installation = {
   },
 };
 
-jest.mock('i13n/Telemetry', () => ({ count: () => {} }));
 jest.mock('data/CMA/ProductCatalog', () => ({ getCurrentSpaceFeature: () => true }));
 
 describe('AppEditorInterfaces', () => {

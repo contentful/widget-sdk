@@ -3,7 +3,6 @@ import { findIndex, get as getPath, extend, omit, pick } from 'lodash';
 import { update, concat } from 'utils/Collections';
 import { deepFreeze } from 'utils/Freeze';
 import * as logger from 'services/logger';
-import * as Telemetry from 'i13n/Telemetry';
 import { USER_UI_CONFIG, getAlphaHeader } from 'alphaHeaders.js';
 
 const SHARED_VIEWS = 'shared';
@@ -118,11 +117,9 @@ export default function create(space, spaceEndpoint$q, publishedCTs, viewMigrato
 
   function setUiConfigOrMigrate(type, data) {
     if (isUIConfigDataMigrated(data)) {
-      Telemetry.count('uiconfig.migrated-fetched');
       const uiConfig = normalizeMigratedUIConfigData(data);
       return setUiConfig(type, uiConfig);
     } else {
-      Telemetry.count('uiconfig.not-migrated-fetched');
       const migratedUIConfig = viewMigrator.migrateUIConfigViews(data);
       return setUiConfig(type, migratedUIConfig);
     }

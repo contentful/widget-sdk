@@ -6,7 +6,6 @@ import {
   NAMESPACE_APP,
 } from 'widgets/WidgetNamespaces';
 
-jest.mock('i13n/Telemetry', () => ({ count: () => {} }));
 jest.mock('data/CMA/ProductCatalog', () => ({ getCurrentSpaceFeature: () => true }));
 
 const APP_ID = 'some-app';

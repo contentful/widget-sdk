@@ -1,7 +1,6 @@
 import { get, isObject, identity, pick, isEqual, cloneDeep } from 'lodash';
 
 import * as SidebarDefaults from 'app/EntrySidebar/Configuration/defaults';
-import * as Telemetry from 'i13n/Telemetry';
 
 import { isUnsignedInteger } from './validateTargetState';
 
@@ -11,10 +10,7 @@ import { NAMESPACE_APP } from 'widgets/WidgetNamespaces';
 // the result promise to reject. They are simply omitted.
 async function promiseAllSafe(promises) {
   const guardedPromises = promises.map((p) => {
-    return p.then(identity, () => {
-      Telemetry.count('apps.ignored-editor-interface-failure');
-      return null;
-    });
+    return p.then(identity, () => null);
   });
 
   const results = await Promise.all(guardedPromises);
