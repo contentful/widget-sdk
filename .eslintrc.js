@@ -8,6 +8,7 @@ module.exports = {
     react: {
       version: '16.8.0',
     },
+    'import/ignore': ['node_modules'],
     'import/resolver': {
       webpack: {
         config: 'tools/webpack.config.js',
@@ -90,6 +91,7 @@ module.exports = {
       files: ['src/javascripts/core/**/*.js', 'src/javascripts/features/**/*.js'],
       rules: {
         'import/no-default-export': 'error',
+        'import/named': 'error',
         'rulesdir/restrict-multiple-react-component-exports': 'error',
         'rulesdir/allow-only-import-export-in-index': 'error',
       },

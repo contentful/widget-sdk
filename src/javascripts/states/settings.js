@@ -3,7 +3,7 @@ import localesSettingsState from 'app/settings/locales/routes';
 import environmentsSettingsState from 'app/SpaceSettings/Environments/routes';
 import spaceUsageState from 'app/SpaceSettings/Usage/SpaceUsageState';
 import extensionsSettingsState from 'app/settings/extensions/routes';
-import webhooksSettingsState from 'app/settings/webhooks/routes';
+import { webhooksRouteState } from './settingsWebhooks';
 import contentPreviewSettingsState from 'app/settings/content_preview/routes';
 import rolesPermissionsSettingsState from 'app/settings/roles_permissions/routes';
 import usersSettingsState from './settingsUsers';
@@ -29,7 +29,7 @@ export default SpaceSettingsBase({
     environmentsSettingsState,
     spaceUsageState,
     extensionsSettingsState,
-    webhooksSettingsState,
+    webhooksRouteState,
     tagsSettingsState,
   ],
 });

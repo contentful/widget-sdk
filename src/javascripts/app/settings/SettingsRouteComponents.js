@@ -1,8 +1,11 @@
-import WebhookListRoute from './webhooks/routes/WebhookListRoute';
-import WebhookNewRoute from './webhooks/routes/WebhookNewRoute';
-import WebhookEditRoute from './webhooks/routes/WebhookEditRoute';
-import WebhookCallRoute from './webhooks/routes/WebhookCallRoute';
+import {
+  WebhookListRoute,
+  WebhookNewRoute,
+  WebhookEditRoute,
+  WebhookCallRoute,
+} from 'features/webhooks';
 import LocalesEditRoute from './locales/routes/LocalesEditRoute';
+
 import LocalesNewRoute from './locales/routes/LocalesNewRoute';
 import LocalesListRoute from './locales/routes/LocalesListRoute';
 import ContentPreviewListRoute from './content_preview/routes/ContentPreviewListRoute';

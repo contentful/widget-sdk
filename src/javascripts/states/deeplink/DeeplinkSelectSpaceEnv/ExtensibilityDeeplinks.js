@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
 import { Icon, Paragraph } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
-import WebhookTemplates from 'app/settings/webhooks/templates';
+import { WebhookTemplates } from 'features/webhooks';
 import SVGIcon from 'ui/Components/Icon';
 
 const styles = {
