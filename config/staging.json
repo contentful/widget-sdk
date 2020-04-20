@@ -36,7 +36,7 @@
   "embedly": {
     "api_key": "5aba1269adbf42919bd1dd3308b84652"
   },
-  "segment_io": "2z8un4c6u4",
+  "segment_io": "EO7PJSICfj229KFM6WqrybihY2EDIfrS",
   "snowplow": {
     "collector_endpoint": "com-contentful.mini.snplow.net:443",
     "app_id": "userInterfaceStaging",

@@ -94,7 +94,7 @@ function integrations() {
     fonts_dot_com: strictObject({
       project_id: { type: 'string', format: 'uuid' },
     }),
-    segment_io: alnumExact(10),
+    segment_io: alnumExact('10,32'),
     snowplow: strictObject({
       collector_endpoint: { type: 'string' },
       app_id: { type: 'string' },
