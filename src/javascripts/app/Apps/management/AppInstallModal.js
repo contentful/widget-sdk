@@ -12,7 +12,7 @@ function goToInstallation(spaceId, environmentId, appId, onClose) {
     params: {
       spaceId,
       environmentId,
-      appId: `private_${appId}`,
+      appId,
       referrer: 'app-management',
     },
     options: {

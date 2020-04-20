@@ -113,7 +113,7 @@ See build status in real-time, track progress and view recent changes all from w
       },
     },
     "appInstallation": undefined,
-    "id": "private_app-definition-id",
+    "id": "app-definition-id",
     "isPrivateApp": true,
     "title": "My app",
   },

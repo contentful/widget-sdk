@@ -89,7 +89,11 @@ export default function makeExtensionDialogsHandlers(dependencies) {
       // to the bridge so it doesn't circularly imports
       // this module. You can open dialogs from dialogs
       // (INCEPTION HORN).
-      const bridge = createDialogExtensionBridge(dependencies, openDialog, onClose);
+      const bridge = createDialogExtensionBridge(
+        { ...dependencies, currentWidgetId: options.id, currentWidgetNamespace: namespace },
+        openDialog,
+        onClose
+      );
 
       const onCloseHandler = () => onClose();
 
@@ -108,6 +112,7 @@ export default function makeExtensionDialogsHandlers(dependencies) {
           {() => (
             <>
               {options.title && <Modal.Header title={options.title} onClose={onCloseHandler} />}
+              {/* eslint-disable-next-line rulesdir/restrict-inline-styles */}
               <div style={{ minHeight: options.minHeight || 'auto' }}>
                 <ExtensionIFrameRenderer
                   bridge={bridge}

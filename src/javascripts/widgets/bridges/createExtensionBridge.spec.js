@@ -6,6 +6,7 @@ import * as entitySelector from 'search/EntitySelector/entitySelector';
 import * as Navigator from 'states/Navigator';
 import * as SlideInNavigator from 'navigation/SlideInNavigator';
 import * as SlideInNavigatorWithPromise from 'navigation/SlideInNavigator/withPromise';
+import * as WidgetLocations from 'widgets/WidgetLocations';
 
 function createMockProperty(initial) {
   const bus = createBus();
@@ -138,6 +139,9 @@ describe('createExtensionBridge', () => {
       $controller: (_name, _$scope) => ({
         access$: createMockProperty({ disconnected: false, disabled: false }),
       }),
+      currentWidgetId: 'test-id',
+      currentWidgetNamespace: 'extension',
+      location: WidgetLocations.LOCATION_ENTRY_FIELD,
     });
 
     return [bridge, stubs];
@@ -441,16 +445,29 @@ describe('createExtensionBridge', () => {
     expect(result).toEqual({ navigated: true });
   });
 
+  it('registers navigateToPage', async () => {
+    const [bridge] = makeBridge();
+    const api = makeStubbedApi();
+    bridge.install(api);
+
+    const registerCall = api.registerHandler.mock.calls[6];
+    expect(registerCall[0]).toBe('navigateToPage');
+    const navigateToPage = registerCall[1];
+
+    const result = await navigateToPage({ id: 'app-id', path: '/something' });
+    expect(result).toEqual({ navigated: true, path: '/something' });
+  });
+
   it('registers invalid and active handlers', () => {
     const [bridge, stubs] = makeBridge();
     const api = makeStubbedApi();
     bridge.install(api);
 
     const registerCalls = api.registerHandler.mock.calls;
-    expect(registerCalls[6][0]).toBe('setInvalid');
-    const setInvalid = registerCalls[6][1];
-    expect(registerCalls[7][0]).toBe('setActive');
-    const setActive = registerCalls[7][1];
+    expect(registerCalls[7][0]).toBe('setInvalid');
+    const setInvalid = registerCalls[7][1];
+    expect(registerCalls[8][0]).toBe('setActive');
+    const setActive = registerCalls[8][1];
 
     setInvalid(true, 'de-DE');
     expect(stubs.setInvalid).toBeCalledWith('de-DE', true);

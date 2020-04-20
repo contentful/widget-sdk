@@ -20,11 +20,11 @@ export default class CustomEditorExtensionRenderer extends React.Component {
       descriptor: PropTypes.object,
       parameters: PropTypes.object,
     }).isRequired,
-    bridge: PropTypes.object.isRequired,
+    createBridge: PropTypes.func.isRequired,
   };
 
   render() {
-    const { bridge, extension } = this.props;
+    const { createBridge, extension } = this.props;
     const { descriptor, parameters } = extension;
 
     if (extension.problem) {
@@ -38,7 +38,7 @@ export default class CustomEditorExtensionRenderer extends React.Component {
 
     return (
       <ExtensionIFrameRenderer
-        bridge={bridge}
+        bridge={createBridge(extension.widgetId, extension.widgetNamespace)}
         descriptor={descriptor}
         parameters={parameters}
         isFullSize

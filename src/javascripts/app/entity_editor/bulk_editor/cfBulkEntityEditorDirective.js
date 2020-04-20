@@ -177,17 +177,18 @@ export default function register() {
               $scope.otDoc = editorData.doc;
               $scope.customExtensionProps = {
                 extension: editorData.editorExtension,
-                bridge: createExtensionBridge(
-                  {
+                createBridge: (currentWidgetId, currentWidgetNamespace) =>
+                  createExtensionBridge({
                     $rootScope,
                     $scope,
                     spaceContext,
                     Navigator,
                     SlideInNavigator,
                     $controller,
-                  },
-                  WidgetLocations.LOCATION_ENTRY_EDITOR
-                ),
+                    currentWidgetId,
+                    currentWidgetNamespace,
+                    location: WidgetLocations.LOCATION_ENTRY_EDITOR,
+                  }),
               };
               $controller('InlineEditingController/editor', { $scope });
               data.hasEditor = true;

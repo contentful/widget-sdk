@@ -9,6 +9,8 @@ import TheLocaleStore from 'services/localeStore';
 export default function createDialogExtensionBridge(dependencies, openDialog, onClose) {
   const { spaceContext } = checkDependencies('DialogExtensionBridge', dependencies, [
     'spaceContext',
+    'currentWidgetId',
+    'currentWidgetNamespace',
   ]);
 
   return {
@@ -42,6 +44,7 @@ export default function createDialogExtensionBridge(dependencies, openDialog, on
     api.registerHandler('callSpaceMethod', makeExtensionSpaceMethodsHandlers(dependencies));
     api.registerHandler('notify', makeExtensionNotificationHandlers(dependencies));
     api.registerHandler('navigateToPageExtension', makePageExtensionHandlers(dependencies));
+    api.registerHandler('navigateToPage', makePageExtensionHandlers(dependencies));
 
     api.registerHandler(
       'navigateToContentEntity',

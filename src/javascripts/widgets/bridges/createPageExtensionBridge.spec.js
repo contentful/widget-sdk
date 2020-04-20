@@ -32,6 +32,8 @@ describe('createPageExtensionBridge', () => {
         },
         entitySelector: {},
         entityCreator: {},
+        currentWidgetId: 'id',
+        currentWidgetNamespace: 'app',
       },
       'test-id'
     );
@@ -74,6 +76,7 @@ describe('createPageExtensionBridge', () => {
       expect(api.registerHandler.mock.calls.map((item) => item[0]).sort()).toEqual([
         'callSpaceMethod',
         'navigateToContentEntity',
+        'navigateToPage',
         'navigateToPageExtension',
         'notify',
         'openDialog',

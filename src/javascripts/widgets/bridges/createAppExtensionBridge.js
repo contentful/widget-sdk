@@ -17,6 +17,8 @@ export default function createAppExtensionBridge(dependencies) {
   const { spaceContext, appHookBus } = checkDependencies('AppExtensionBridge', dependencies, [
     'spaceContext',
     'appHookBus',
+    'currentWidgetId',
+    'currentWidgetNamespace',
   ]);
 
   let currentInstallationRequestId = null;
@@ -49,8 +51,8 @@ export default function createAppExtensionBridge(dependencies) {
   function install(api) {
     api.registerHandler('openDialog', makeExtensionDialogsHandler(dependencies));
     api.registerHandler('notify', makeExtensionNotificationHandlers(dependencies));
-    api.registerHandler('navigateToPageExtension', makePageExtensionHandlers(dependencies));
     api.registerHandler('callSpaceMethod', makeExtensionSpaceMethodsHandlers(dependencies));
+    api.registerHandler('navigateToPage', makePageExtensionHandlers(dependencies));
 
     api.registerHandler('callAppMethod', (methodName) => {
       const installation = appHookBus.getInstallation();

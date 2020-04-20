@@ -7,6 +7,7 @@ import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION, NAMESPACE_APP } from 'widgets/W
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext';
 import WidgetRenderWarning from 'widgets/WidgetRenderWarning';
 import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer';
+import * as WidgetLocations from 'widgets/WidgetLocations';
 
 import createNewWidgetApi from 'app/widgets/NewWidgetApi/createNewWidgetApi';
 import * as LoadEventTracker from 'app/entity_editor/LoadEventTracker';
@@ -41,6 +42,7 @@ export default function register() {
             widget: {
               problem,
               widgetNamespace,
+              widgetId,
               buildTemplate,
               renderFieldEditor,
               descriptor,
@@ -90,6 +92,9 @@ export default function register() {
                     $scope: scope,
                     spaceContext,
                     $controller,
+                    currentWidgetId: widgetId,
+                    currentWidgetNamespace: widgetNamespace,
+                    location: WidgetLocations.LOCATION_ENTRY_FIELD,
                   })}
                 />
               );

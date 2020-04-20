@@ -85,7 +85,7 @@ describe('AppsRepo', () => {
       expect(result).toEqual([
         {
           appDefinition: privateDefinition,
-          id: 'private_app-definition-id',
+          id: 'app-definition-id',
           title: 'My app',
           isPrivateApp: true,
         },
@@ -108,7 +108,7 @@ describe('AppsRepo', () => {
       expect(result).toEqual([
         {
           appDefinition: privateDefinition,
-          id: 'private_app-definition-id',
+          id: 'app-definition-id',
           title: 'My app',
           isPrivateApp: true,
         },
@@ -165,7 +165,7 @@ describe('AppsRepo', () => {
     it('returns an app if present', async () => {
       const repo = createAppsRepo(cma, loader);
 
-      const app1 = await repo.getApp('private_app-definition-id');
+      const app1 = await repo.getApp('app-definition-id');
       expect(app1.appDefinition).toEqual(privateDefinition);
 
       const app2 = await repo.getApp('netlify');

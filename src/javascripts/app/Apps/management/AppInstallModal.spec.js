@@ -53,7 +53,7 @@ describe('AppInstallModal', () => {
     expect(Navigator.go).toHaveBeenCalledWith({
       options: { location: 'replace' },
       params: {
-        appId: 'private_3AjEyjWz5tRouW4cVOF9la',
+        appId: '3AjEyjWz5tRouW4cVOF9la',
         environmentId: 'my-env-123',
         referrer: 'app-management',
         spaceId: 'my-space-123',
@@ -80,7 +80,7 @@ describe('AppInstallModal', () => {
     expect(Navigator.go).toHaveBeenCalledWith({
       options: { location: 'replace' },
       params: {
-        appId: 'private_3AjEyjWz5tRouW4cVOF9la',
+        appId: '3AjEyjWz5tRouW4cVOF9la',
         environmentId: 'my-other-env-123',
         referrer: 'app-management',
         spaceId: 'my-other-space-123',

@@ -220,35 +220,36 @@ export default ({ $scope, emitter }) => {
       $scope: fieldLocaleScope,
     });
 
-    const bridge = createExtensionBridge(
-      {
-        $rootScope,
-        $scope: fieldLocaleScope,
-        spaceContext,
-        $controller,
-      },
-      WidgetLocations.LOCATION_ENTRY_FIELD_SIDEBAR
-    );
+    const bridge = createExtensionBridge({
+      $rootScope,
+      $scope: fieldLocaleScope,
+      spaceContext,
+      $controller,
+      currentWidgetId: widget.id,
+      currentWidgetNamespace: widget.namespace,
+      location: WidgetLocations.LOCATION_ENTRY_FIELD_SIDEBAR,
+    });
 
     return { bridge, widget };
   });
 
-  const sidebarExtensionsBridge = createExtensionBridge(
-    {
+  const buildSidebarExtensionsBridge = (currentWidgetId, currentWidgetNamespace) =>
+    createExtensionBridge({
       $rootScope,
       $scope,
       spaceContext,
       $controller,
-    },
-    WidgetLocations.LOCATION_ENTRY_SIDEBAR
-  );
+      currentWidgetId,
+      currentWidgetNamespace,
+      location: WidgetLocations.LOCATION_ENTRY_SIDEBAR,
+    });
 
   return {
     legacySidebarExtensions: legacyExtensions,
     localeData: $scope.localeData,
     sidebar: $scope.editorData.sidebar,
     sidebarExtensions: $scope.editorData.sidebarExtensions,
-    sidebarExtensionsBridge,
+    buildSidebarExtensionsBridge,
     isEntry,
     isMasterEnvironment,
     emitter,

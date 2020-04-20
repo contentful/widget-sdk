@@ -136,6 +136,8 @@ export default {
             Navigator,
             SlideInNavigator,
             appDefinition: app.appDefinition,
+            currentWidgetId: app.appDefinition.sys.id,
+            currentWidgetNamespace: NAMESPACE_APP,
           });
 
           return {
@@ -177,15 +179,14 @@ export default {
         'spaceContext',
         'app',
         ({ path = '' }, spaceContext, app) => {
-          const bridge = createPageExtensionBridge(
-            {
-              spaceContext,
-              Navigator,
-              SlideInNavigator,
-              appDefinition: app.appDefinition,
-            },
-            app.id
-          );
+          const bridge = createPageExtensionBridge({
+            spaceContext,
+            Navigator,
+            SlideInNavigator,
+            appDefinition: app.appDefinition,
+            currentWidgetId: app.id,
+            currentWidgetNamespace: NAMESPACE_APP,
+          });
 
           return {
             path: path.startsWith('/') ? path : `/${path}`,

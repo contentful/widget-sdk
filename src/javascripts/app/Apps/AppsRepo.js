@@ -96,7 +96,7 @@ export default function createAppsRepo(cma, appDefinitionLoader) {
 
   function makePrivateAppObject(appDefinition, appInstallation) {
     return {
-      id: `private_${appDefinition.sys.id}`,
+      id: appDefinition.sys.id,
       title: appDefinition.name,
       appDefinition,
       appInstallation,

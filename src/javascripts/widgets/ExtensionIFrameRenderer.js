@@ -32,6 +32,7 @@ export default class ExtensionIFrameRenderer extends React.Component {
     }).isRequired,
     descriptor: PropTypes.shape({
       id: PropTypes.string,
+      namespace: PropTypes.string,
       appDefinitionId: PropTypes.string,
       src: PropTypes.string,
       srcdoc: PropTypes.string,

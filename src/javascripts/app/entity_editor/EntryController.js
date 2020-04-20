@@ -244,17 +244,18 @@ export default async function create($scope, editorData, preferences, trackLoadE
 
   $scope.customExtensionProps = {
     extension: editorData.editorExtension,
-    bridge: createExtensionBridge(
-      {
+    createBridge: (currentWidgetId, currentWidgetNamespace) =>
+      createExtensionBridge({
         $rootScope,
         $scope,
         spaceContext,
         Navigator,
         SlideInNavigator,
         $controller,
-      },
-      WidgetLocations.LOCATION_ENTRY_EDITOR
-    ),
+        currentWidgetId,
+        currentWidgetNamespace,
+        location: WidgetLocations.LOCATION_ENTRY_EDITOR,
+      }),
   };
 
   $scope.getOtDoc = () => $scope.otDoc;

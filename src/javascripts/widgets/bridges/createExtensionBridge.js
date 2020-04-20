@@ -31,12 +31,22 @@ const ERROR_MESSAGES = {
 //   handlers and notifies it about changes.
 // - `apply` takes a function to be executed in the Angular
 //   context (using `$rootScope.$apply`).
-export default function createExtensionBridge(dependencies, location = LOCATION_ENTRY_FIELD) {
-  const { $rootScope, $scope, spaceContext, $controller } = checkDependencies(
-    'ExtensionBridge',
-    dependencies,
-    ['$rootScope', '$scope', 'spaceContext', '$controller']
-  );
+export default function createExtensionBridge(dependencies) {
+  const {
+    $rootScope,
+    $scope,
+    spaceContext,
+    $controller,
+    location,
+  } = checkDependencies('ExtensionBridge', dependencies, [
+    '$rootScope',
+    '$scope',
+    'spaceContext',
+    '$controller',
+    'currentWidgetId',
+    'currentWidgetNamespace',
+    'location',
+  ]);
 
   let unsubscribeFunctions = [];
 
@@ -146,6 +156,7 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
     api.registerHandler('navigateToBulkEditor', makeExtensionBulkNavigationHandlers());
     api.registerHandler('notify', makeExtensionNotificationHandlers(dependencies));
     api.registerHandler('navigateToPageExtension', makePageExtensionHandlers(dependencies));
+    api.registerHandler('navigateToPage', makePageExtensionHandlers(dependencies));
 
     $scope.$watch('preferences.showDisabledFields', () => {
       api.send('showDisabledFieldsChanged', [$scope.preferences.showDisabledFields]);

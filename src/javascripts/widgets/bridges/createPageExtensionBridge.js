@@ -7,8 +7,12 @@ import checkDependencies from './checkDependencies';
 import { LOCATION_PAGE } from '../WidgetLocations';
 import TheLocaleStore from 'services/localeStore';
 
-export default function createPageExtensionBridge(dependencies, currentExtensionId) {
-  const { spaceContext } = checkDependencies('PageExtensionBridge', dependencies, ['spaceContext']);
+export default function createPageExtensionBridge(dependencies) {
+  const { spaceContext } = checkDependencies('PageExtensionBridge', dependencies, [
+    'spaceContext',
+    'currentWidgetId',
+    'currentWidgetNamespace',
+  ]);
 
   return {
     getData,
@@ -45,9 +49,8 @@ export default function createPageExtensionBridge(dependencies, currentExtension
       makeExtensionNavigationHandlers(dependencies.spaceContext, { disableSlideIn: true })
     );
 
-    api.registerHandler(
-      'navigateToPageExtension',
-      makePageExtensionHandlers(dependencies, currentExtensionId, true)
-    );
+    api.registerHandler('navigateToPageExtension', makePageExtensionHandlers(dependencies, true));
+
+    api.registerHandler('navigateToPage', makePageExtensionHandlers(dependencies, true));
   }
 }

@@ -92,7 +92,7 @@ export default class EntrySidebar extends Component {
           problem: PropTypes.string,
         })
       ),
-      sidebarExtensionsBridge: PropTypes.object.isRequired,
+      buildSidebarExtensionsBridge: PropTypes.func.isRequired,
       legacySidebarExtensions: PropTypes.arrayOf(
         PropTypes.shape({
           bridge: PropTypes.object.isRequired,
@@ -158,9 +158,12 @@ export default class EntrySidebar extends Component {
   }
 
   renderBuiltinWidget = (sidebarItem) => {
-    const { emitter, localeData, sidebarExtensionsBridge: bridge } = this.props.entrySidebarProps;
+    const { emitter, localeData, buildSidebarExtensionsBridge } = this.props.entrySidebarProps;
     const { widgetId, widgetNamespace } = sidebarItem;
-    const defaultProps = { emitter, bridge };
+    const defaultProps = {
+      emitter,
+      bridge: buildSidebarExtensionsBridge(widgetId, widgetNamespace),
+    };
 
     if (
       widgetId === SidebarWidgetTypes.VERSIONS &&
@@ -202,7 +205,10 @@ export default class EntrySidebar extends Component {
         title={item.descriptor.name}
         key={`${item.widgetNamespace},${item.widgetId}`}>
         <ExtensionIFrameRenderer
-          bridge={this.props.entrySidebarProps.sidebarExtensionsBridge}
+          bridge={this.props.entrySidebarProps.buildSidebarExtensionsBridge(
+            item.widgetId,
+            item.widgetNamespace
+          )}
           descriptor={item.descriptor}
           parameters={item.parameters}
         />
