@@ -13,7 +13,7 @@ import { get, isObject, transform, map, forEach, keys } from 'lodash';
  * document snapshot. This means they are not saved and this might
  * lead to unintended behavior.
  *
- * @param {Document} otDoc
+ * @param {any} otDoc
  * @param {object} snapshot
  * @param {Client.ContentType?} contentType
  * @param {API.Locale[]} locales

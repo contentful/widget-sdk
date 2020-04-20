@@ -27,6 +27,13 @@ module.exports.createBabelOptions = function createBabelOptions(options = {}) {
       babelrc: false,
       presets: [
         [
+          require.resolve('@babel/preset-typescript'),
+          {
+            allExtensions: true,
+            isTSX: true,
+          },
+        ],
+        [
           require.resolve('@babel/preset-env'),
           {
             loose: false,

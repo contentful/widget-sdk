@@ -7,10 +7,9 @@ module.exports = {
   },
   create(context) {
     const path = context.getFilename();
-    if (!path.endsWith('index.js')) {
+    if (!path.endsWith('index.js') && !path.endsWith('index.ts')) {
       return {};
     }
-
     return {
       Program: (node) => {
         node.body.forEach((childNode) => {

@@ -18,7 +18,9 @@
     "strictNullChecks": true,
     "skipLibCheck": true,
     "sourceMap": true,
-    "pretty": true
+    "pretty": true,
+    "esModuleInterop": true,
+    "jsx": "react"
   },
   "compileOnSave": false,
   "include": ["./**/*.ts", "../node_modules/@contentful/cypress-pact"]

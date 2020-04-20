@@ -50,9 +50,8 @@ module.exports = {
             might typically want to exclude these from reachability rules.
             The same goes for typescript definition files:
            */
-        // todo: delete .ts once we enable TS
         pathNot:
-          'unused__|\\.ts|__mocks__|__tests__|__fixtures__|saved-views-migrator|test\\/helpers|\\.spec\\.(js|ts)$|\\.d\\.ts$',
+          'unused__|__mocks__|__tests__|__fixtures__|saved-views-migrator|test\\/helpers|\\.spec\\.(js|ts|tsx)$|\\.d\\.ts$',
 
         /*
             for each file matching path and pathNot, check if it's reachable from the
@@ -69,8 +68,7 @@ module.exports = {
       severity: 'error',
       from: {
         orphan: true,
-        // todo: delete .ts once we enable TS
-        pathNot: '\\.ts|__mocks__|\\.d\\.ts$',
+        pathNot: '__mocks__|\\.d\\.ts$',
       },
       to: {},
     },
@@ -100,10 +98,10 @@ module.exports = {
         'responsibility anymore. Factor it out into (e.g.) a separate utility/ helper or a mock.',
       severity: 'error',
       from: {
-        pathNot: '\\.spec\\.(js|ts)$',
+        pathNot: '\\.spec\\.(js|ts|tsx)$',
       },
       to: {
-        path: '\\.spec\\.(js|ts\\.md)$',
+        path: '\\.spec\\.(js|ts|tsx)$',
       },
     },
 
@@ -117,7 +115,7 @@ module.exports = {
         from.pathNot re of the not-to-dev-dep rule in the dependency-cruiser configuration`,
       from: {
         path: '^(src)',
-        pathNot: '__tests__|\\.spec\\.(js|ts\\.md)$',
+        pathNot: '__tests__|\\.spec\\.(js|ts|tsx)$',
       },
       to: {
         dependencyTypes: ['npm-dev'],
@@ -178,6 +176,7 @@ module.exports = {
     },
   ],
   options: {
+    tsPreCompilationDeps: true,
     /* conditions specifying which files not to follow further when encountered:
        - path: a regular expression to match
        - dependencyTypes: see https://github.com/sverweij/dependency-cruiser/blob/master/doc/rules-reference.md#dependencytypes

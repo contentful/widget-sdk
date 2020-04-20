@@ -7,7 +7,7 @@ const findComponentLibrary = require('./analyzers/findComponentLibrary');
 const findGetModule = require('./analyzers/findGetModule');
 
 module.exports = function (node, src) {
-  if (node.extension === '.js') {
+  if (['.js', '.ts', '.tsx'].includes(node.extension)) {
     const ast = parser.parse(src, {
       sourceType: 'module',
       plugins: [
@@ -18,6 +18,7 @@ module.exports = function (node, src) {
         'exportDefaultFrom',
         'exportNamespaceFrom',
         'objectRestSpread',
+        'typescript',
       ],
     });
 

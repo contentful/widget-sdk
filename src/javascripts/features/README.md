@@ -44,6 +44,7 @@ import { someModule } from 'features/my-feature';
 
 Features can use any technologies inside if they not intended to be used outside of the feature:
 
+- Typescript or Javascript. It allows adopting Typescript gradually, feature by feature.
 - Different state management solutions if needed. For example, requirements in `entry-editor` feature can be really different from `org-management` views
 - Isolated proof of concepts and alpha versions
 

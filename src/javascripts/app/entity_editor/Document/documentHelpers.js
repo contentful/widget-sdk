@@ -4,7 +4,7 @@ import * as PathUtils from 'utils/Path';
  * Returns a property that always has the current value at the given
  * path of the document.
  *
- * @param {Document} document
+ * @param {any} document
  * @param {string[]} path
  * @returns {Kefir.Property<any, any>}
  */

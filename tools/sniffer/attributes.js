@@ -2,15 +2,19 @@ const _ = require('lodash');
 
 const all = () => true;
 
-const js = (node) => node.extension === '.js';
+const js = (node) =>
+  node.extension === '.js' || node.extension === '.ts' || node.extension === '.tsx';
 
 const jade = (node) => node.extension === '.html';
 
-const test = (node) => js(node) && node.path.indexOf('spec.js') !== -1;
+const test = (node) => js(node) && node.path.indexOf('spec.') !== -1;
 
 const jest = (node) => test(node) && node.path.indexOf('src/javascripts') !== -1;
 
-const karma = (node) => test(node) && node.path.indexOf('src/javascripts') === -1;
+const karma = (node) =>
+  test(node) &&
+  node.path.indexOf('src/javascripts') === -1 &&
+  node.path.indexOf('test/cypress') === -1;
 
 const angular = (node) => {
   const modules = node.modules;

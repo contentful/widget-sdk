@@ -21,7 +21,6 @@ function Paginator({ select = _.noop, page = 0, pageCount = 0 }) {
   if (pageCount < 2) {
     return null;
   }
-
   const atLast = page >= pageCount - 1;
   const atFirst = page <= 0;
   const pages = getLabels(getRange(pageCount, page + 1));
@@ -33,7 +32,7 @@ function Paginator({ select = _.noop, page = 0, pageCount = 0 }) {
   return (
     <div className="search-results-paginator" data-test-id="paginator">
       <span
-        aria-disabled={String(atFirst)}
+        aria-disabled={atFirst ? 'true' : 'false'}
         data-test-id="paginator.prev"
         className="search-results-paginator__prev"
         onClick={() => !atFirst && select(page - 1)}>
@@ -56,7 +55,7 @@ function Paginator({ select = _.noop, page = 0, pageCount = 0 }) {
                 }`}
                 data-test-id={`paginator.select.${value}`}
                 onClick={() => select(value)}
-                aria-selected={String(value === page)}>
+                aria-selected={value === page ? 'true' : 'false'}>
                 {value + 1}
               </span>
             );
@@ -64,7 +63,7 @@ function Paginator({ select = _.noop, page = 0, pageCount = 0 }) {
         })}
       </div>
       <span
-        aria-disabled={String(atLast)}
+        aria-disabled={atLast ? 'true' : 'false'}
         data-test-id="paginator.next"
         className="search-results-paginator__next"
         onClick={() => !atLast && select(page + 1)}>

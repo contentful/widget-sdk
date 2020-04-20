@@ -1,5 +1,4 @@
 import { Emitter, Property, Stream } from 'kefir';
-import { State } from 'data/CMA/EntityState';
 
 export interface EntitySys {
   type: 'Entry' | 'Asset';
@@ -74,9 +73,9 @@ export interface Document {
   resourceState: {
     apply(): Promise<Entity>;
     // @ts-ignore
-    stateChange$: Stream<{ from: State; to: State }, any>;
+    stateChange$: Stream<{ from: any; to: any }, any>;
     // @ts-ignore
-    state$: Property<State, any>;
+    state$: Property<any, any>;
     inProgress$: Property<boolean, any>;
   };
   permissions: {

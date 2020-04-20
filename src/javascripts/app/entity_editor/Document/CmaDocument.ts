@@ -8,7 +8,6 @@ import * as Normalizer from 'data/document/Normalize';
 import TheLocaleStore from 'services/localeStore';
 import * as PathUtils from 'utils/Path';
 import { Error as DocError } from 'data/document/Error';
-// eslint-disable-next-line import/no-unresolved
 import { Document, Entity, EntitySys, PropertyBus, StreamBus } from './types';
 import * as StringField from 'data/document/StringFieldSetter';
 import { cmaPutChanges } from './api';
@@ -234,6 +233,7 @@ export function create(
 
   const data$ = K.combinePropertiesObject({
     sys: sys$,
+    // @ts-ignore
     fields: valuePropertyAt({ changes: changesBus.stream, getValueAt }, ['fields']),
   });
 

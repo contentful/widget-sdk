@@ -1,13 +1,14 @@
 {
   "compilerOptions": {
-    "incremental": true,
-    "module": "ES6",
-    "moduleResolution": "Node",
     "baseUrl": "./src/javascripts",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "noEmit": true,
     "allowJs": true,
     "jsx": "react",
-    "lib": ["es2017"],
-    "target": "ES2017"
+    "lib": ["dom", "es2015"]
   },
-  "include": ["./src/javascripts/**/*"]
+  "include": ["./src/javascripts/**/*"],
+  "exclude": ["**/node_modules"]
 }

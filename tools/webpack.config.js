@@ -71,6 +71,7 @@ module.exports = () => {
     mode: isProd ? 'production' : 'development',
     resolve: {
       modules: ['node_modules', 'src/javascripts'],
+      extensions: ['.js', '.ts', '.tsx'],
       alias: {
         'saved-views-migrator': path.join(
           projectRoot,
@@ -86,7 +87,7 @@ module.exports = () => {
       rules: [
         {
           // All JS files
-          test: /\.js$/,
+          test: /\.(js|ts)x?$/,
           use: [
             {
               loader: 'babel-loader',
