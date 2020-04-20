@@ -51,6 +51,7 @@ export default class SidepanelContainer extends React.Component {
             className={`nav-sidepanel__bg ${
               this.state.sidePanelIsShown ? 'nav-sidepanel__bg--is-visible' : ''
             }`}
+            data-test-id="close-sidepanel-bg"
             onClick={this.closeDropdownOrPanel}
           />
           <Sidepanel

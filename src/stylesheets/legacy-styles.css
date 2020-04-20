@@ -9600,6 +9600,7 @@ pre,
     -ms-filter: none;
     -webkit-filter: none;
             filter: none;
+    cursor: pointer;
   }
   .nav-sidepanel {
     position: absolute;
@@ -9939,27 +9940,6 @@ pre,
   }
   .nav-sidepanel__org-actions-goto-settings--is-active {
     background-color: #d3dce0;
-  }
-  .nav-sidepanel__close-btn {
-    position: absolute;
-    left: 375px;
-    top: 27px;
-    font-size: 1.7em;
-    color: #fff;
-    cursor: pointer;
-  }
-  .nav-sidepanel__close-btn svg {
-    display: block;
-    -webkit-transition: opacity 0.1s ease-in-out;
-    transition: opacity 0.1s ease-in-out;
-  }
-  .nav-sidepanel__close-btn svg g {
-    fill: #fff;
-  }
-  .nav-sidepanel__close-btn:hover svg {
-    opacity: 0.9;
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=90)";
-    filter: alpha(opacity=90);
   }
   .space-home-page-contact-us__container {
     display: -webkit-box;

@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import CloseIcon from 'svg/close.svg';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import SidepanelOrgs from './SidepanelOrgs';
 import SidepanelSpaces from './SidepanelSpaces';
@@ -145,7 +144,7 @@ export default class Sidepanel extends React.Component {
   };
 
   render() {
-    const { sidePanelIsShown, closeOrgsDropdown, closeSidePanel } = this.props;
+    const { sidePanelIsShown, closeOrgsDropdown } = this.props;
 
     return (
       <div
@@ -182,12 +181,6 @@ export default class Sidepanel extends React.Component {
         {!this.state.currOrg && this.state.initialized && (
           <SidepanelNoOrgs createNewOrg={this.createNewOrg} />
         )}
-        <div
-          className="nav-sidepanel__close-btn"
-          onClick={closeSidePanel}
-          data-test-id="sidepanel-close-btn">
-          <CloseIcon />
-        </div>
       </div>
     );
   }
