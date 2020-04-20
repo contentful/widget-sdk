@@ -231,8 +231,12 @@ export default function register() {
             ) {
               return OCCUPIED;
             } else if (isConnected) {
+              // CmaDocument is always "connected" by design (unless internet down)
+              // so we need to be more granular than in case of `OtDocument`.
               return status === DocumentStatusCode.INTERNAL_SERVER_ERROR ||
-                status === DocumentStatusCode.EDIT_CONFLICT
+                status === DocumentStatusCode.EDIT_CONFLICT ||
+                status === DocumentStatusCode.ARCHIVED ||
+                status === DocumentStatusCode.DELETED
                 ? DISCONNECTED
                 : EDITABLE;
             } else {
