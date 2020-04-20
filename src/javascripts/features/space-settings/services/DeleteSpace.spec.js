@@ -7,6 +7,7 @@ import { openModal as openCommitedSpaceWarningModal } from 'components/shared/sp
 import * as TokenStore from 'services/TokenStore';
 import { Notification } from '@contentful/forma-36-react-components';
 import APIClient from 'data/APIClient';
+import ReloadNotification from 'app/common/ReloadNotification';
 
 jest.mock('services/TokenStore');
 
@@ -29,11 +30,17 @@ jest.mock('account/pricing/PricingDataProvider', () => ({
   isFreeSpacePlan: jest.fn(),
 }));
 
+jest.mock('app/common/ReloadNotification', () => ({
+  trigger: jest.fn(),
+}));
+
 jest.useFakeTimers();
 
 const cleanupNotifications = () => {
   if (!global.setTimeout.mock) {
-    throw new Error('Call `jest.useFakeTimers()` in the spec file');
+    throw new Error(
+      'Call `jest.useFakeTimers()` in the spec file before calling `cleanupNotifications`'
+    );
   }
 
   Notification.closeAll();
@@ -61,11 +68,6 @@ describe('DeleteSpace service', () => {
     beforeEach(() => {
       ModalLauncher.open.mockResolvedValue(true);
       TokenStore.refresh.mockReturnValue({});
-    });
-
-    afterEach(() => {
-      ModalLauncher.open.mockClear();
-      TokenStore.refresh.mockClear();
     });
 
     it('should call onSuccess if ModalLauncher.open resolves true', async () => {
@@ -115,7 +117,7 @@ describe('DeleteSpace service', () => {
       return render(<DeleteSpaceModal {...props} />);
     };
 
-    it('should enable confirmation button after entering correct space name', async () => {
+    it('should enable confirmation button after entering correct space name', () => {
       build();
 
       const { getByTestId } = screen;
@@ -124,30 +126,29 @@ describe('DeleteSpace service', () => {
       const deleteSpaceButton = getByTestId('delete-space-confirm-button');
       expect(spaceNameField.value).toBe('');
       expect(deleteSpaceButton.disabled).toBe(true);
-      await fireEvent.change(spaceNameField, { target: { value: space.name } });
-      expect(spaceNameField.value).toBe(space.name);
+      fireEvent.change(spaceNameField, { target: { value: space.name } });
       expect(deleteSpaceButton.disabled).toBe(false);
     });
 
-    it('should call onClose with false after delete cancellation', async () => {
+    it('should call onClose with false after delete cancellation', () => {
       const onCloseMock = jest.fn();
       build({ onClose: onCloseMock });
 
       const { getByTestId } = screen;
 
       const cancelDeleteButton = getByTestId('delete-space-cancel-button');
-      await fireEvent.click(cancelDeleteButton);
+      fireEvent.click(cancelDeleteButton);
       expect(onCloseMock).toBeCalledWith(false);
     });
 
-    it('should call onClose with false after closing the modal', async () => {
+    it('should call onClose with false after closing the modal', () => {
       const onCloseMock = jest.fn();
       build({ onClose: onCloseMock });
 
       const { getByTestId } = screen;
 
       const closeDialogButton = getByTestId('cf-ui-icon-button');
-      await fireEvent.click(closeDialogButton);
+      fireEvent.click(closeDialogButton);
       expect(onCloseMock).toBeCalledWith(false);
     });
 
@@ -159,14 +160,14 @@ describe('DeleteSpace service', () => {
 
       const spaceNameField = getByTestId('space-name-confirmation-field');
       const deleteSpaceButton = getByTestId('delete-space-confirm-button');
-      await fireEvent.change(spaceNameField, { target: { value: space.name } });
+      fireEvent.change(spaceNameField, { target: { value: space.name } });
       await fireEvent.click(deleteSpaceButton);
 
       await wait();
 
       const client = new APIClient();
 
-      expect(client.deleteSpace).toBeCalled();
+      expect(client.deleteSpace).toBeCalledTimes(1);
       expect(TokenStore.refresh).toBeCalled();
       expect(onCloseMock).toHaveBeenCalledWith(true);
 
@@ -184,16 +185,36 @@ describe('DeleteSpace service', () => {
 
       const spaceNameField = getByTestId('space-name-confirmation-field');
       const deleteSpaceButton = getByTestId('delete-space-confirm-button');
-      await fireEvent.change(spaceNameField, { target: { value: space.name } });
-      await fireEvent.click(deleteSpaceButton);
+      fireEvent.change(spaceNameField, { target: { value: space.name } });
+      fireEvent.click(deleteSpaceButton);
 
       await wait();
 
-      expect(client.deleteSpace).toBeCalled();
+      expect(client.deleteSpace).toBeCalledTimes(1);
       expect(TokenStore.refresh).not.toBeCalled();
       expect(onCloseMock).not.toBeCalled();
 
       expect(getByTestId('cf-ui-notification')).toHaveAttribute('data-intent', 'error');
+    });
+
+    it('should close and trigger the ReloadNotification is the TokenStore fails to refresh', async () => {
+      TokenStore.refresh.mockRejectedValueOnce();
+
+      const onCloseMock = jest.fn();
+      build({ onClose: onCloseMock });
+
+      const { getByTestId } = screen;
+
+      const spaceNameField = getByTestId('space-name-confirmation-field');
+      const deleteSpaceButton = getByTestId('delete-space-confirm-button');
+      fireEvent.change(spaceNameField, { target: { value: space.name } });
+      fireEvent.click(deleteSpaceButton);
+
+      await wait();
+
+      expect(TokenStore.refresh).toBeCalled();
+      expect(onCloseMock).toBeCalledWith(false);
+      expect(ReloadNotification.trigger).toBeCalledTimes(1);
     });
   });
 });

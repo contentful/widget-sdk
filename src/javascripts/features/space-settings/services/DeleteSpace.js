@@ -15,6 +15,7 @@ import APIClient from 'data/APIClient';
 import { isEnterprisePlan, isFreeSpacePlan } from 'account/pricing/PricingDataProvider';
 import { ModalLauncher } from 'core/components/ModalLauncher';
 import { Space as SpacePropType } from 'app/OrganizationSettings/PropTypes';
+import ReloadNotification from 'app/common/ReloadNotification';
 
 export const DeleteSpaceModal = ({ isShown, onClose, space }) => {
   const [spaceNameConfirmation, setSpaceNameConfirmation] = useState('');
@@ -28,6 +29,17 @@ export const DeleteSpaceModal = ({ isShown, onClose, space }) => {
     } catch {
       Notification.error(`Failed to delete ${space.name}. Try again.`);
       setDeleting(false);
+
+      return;
+    }
+
+    try {
+      await TokenStore.refresh();
+    } catch {
+      // Close the current modal and instruct the user to reload. TokenStore.refresh shouldn't fail, but if it does,
+      // there's not much we can do about it in the current session.
+      onClose(false);
+      ReloadNotification.trigger();
 
       return;
     }
@@ -49,7 +61,7 @@ export const DeleteSpaceModal = ({ isShown, onClose, space }) => {
           <Modal.Content>
             <Typography>
               <Paragraph>
-                You are about to remove space <b>{space.name}</b>.
+                You are about to remove the space <b>{space.name}</b>.
               </Paragraph>
               <Paragraph>
                 All space contents and the space itself will be removed. This operation cannot be
@@ -112,5 +124,5 @@ function remove(space) {
   const endpoint = createSpaceEndpoint(space.sys.id);
   const client = new APIClient(endpoint);
 
-  return client.deleteSpace().then(TokenStore.refresh);
+  return client.deleteSpace();
 }
