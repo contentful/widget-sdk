@@ -4,10 +4,11 @@ import { values } from 'lodash';
 import * as AccessChecker from 'access_control/AccessChecker';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import StateRedirect from 'app/common/StateRedirect';
-import ContentPreviewListPage from '../ContentPreviewListPage';
-import { ContentPreviewListSkeleton } from '../skeletons/ContentPreviewListSkeleton';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import { getContentPreview } from 'services/contentPreview';
+
+import { ContentPreviewListPage } from '../ContentPreviewListPage';
+import { ContentPreviewListSkeleton } from '../skeletons/ContentPreviewListSkeleton';
+import { getContentPreview } from '../services/getContentPreview';
 
 const ContentPreviewsFetcher = createFetcherComponent(() => {
   return getContentPreview()
@@ -15,7 +16,7 @@ const ContentPreviewsFetcher = createFetcherComponent(() => {
     .then((previews) => values(previews));
 });
 
-export default class ContentPreviewListRoute extends Component {
+export class ContentPreviewListRoute extends Component {
   render() {
     const isForbidden = !AccessChecker.getSectionVisibility().settings;
     if (isForbidden) {

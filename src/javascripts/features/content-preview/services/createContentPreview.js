@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { resolveReferences } from 'services/ContentPreviewHelper';
+import { resolveReferences } from './ContentPreviewHelper';
 import { getStore } from 'browserStorage';
 
 export const ENTRY_ID_PATTERN = /\{\s*entry_id\s*\}/g;
@@ -24,7 +24,7 @@ const CONTENT_PREVIEW_LIMIT = 100;
  * entities only, also for rendering views.
  * TODO: add methods for subscribing to the currently selected content preview.
  */
-export default function createContentPreview({ space, cma }) {
+export function createContentPreview({ space, cma }) {
   let cache;
   const store = getStore();
 

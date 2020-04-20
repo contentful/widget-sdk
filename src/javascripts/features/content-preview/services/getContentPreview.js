@@ -1,5 +1,5 @@
 import { getModule } from 'core/NgRegistry';
-import createContentPreview from './createContentPreview';
+import { createContentPreview } from './createContentPreview';
 
 let contentPreviewInstance = null;
 

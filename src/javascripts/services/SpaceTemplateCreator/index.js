@@ -10,7 +10,7 @@ import { enrichTemplate } from './enrichTemplate';
 import * as Config from 'Config';
 import { getModule } from 'core/NgRegistry';
 import TheLocaleStore from 'services/localeStore';
-import { getContentPreview } from 'services/contentPreview';
+import { getContentPreview } from 'features/content-preview';
 import { getApiKeyRepo } from 'app/settings/api/services/ApiKeyRepoInstance';
 
 const ASSET_PROCESSING_TIMEOUT = 60000;

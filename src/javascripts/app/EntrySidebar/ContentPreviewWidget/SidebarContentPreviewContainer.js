@@ -6,7 +6,7 @@ import * as Analytics from 'analytics/Analytics';
 import { getModule } from 'core/NgRegistry';
 import TheLocaleStore from 'services/localeStore';
 import * as Entries from 'data/entries';
-import { getContentPreview } from 'services/contentPreview';
+import { getContentPreview } from 'features/content-preview';
 
 const getEmptyContentPreview = () => ({
   compiledUrl: '',

@@ -4,7 +4,7 @@ import environmentsSettingsState from 'app/SpaceSettings/Environments/routes';
 import spaceUsageState from 'app/SpaceSettings/Usage/SpaceUsageState';
 import extensionsSettingsState from 'app/settings/extensions/routes';
 import { webhooksRouteState } from './settingsWebhooks';
-import contentPreviewSettingsState from 'app/settings/content_preview/routes';
+import { contentPreviewState } from './settingsContentPreview';
 import rolesPermissionsSettingsState from 'app/settings/roles_permissions/routes';
 import usersSettingsState from './settingsUsers';
 import teamsSettingsState from './settingsTeams';
@@ -25,7 +25,7 @@ export default SpaceSettingsBase({
     usersSettingsState,
     teamsSettingsState,
     rolesPermissionsSettingsState,
-    contentPreviewSettingsState,
+    contentPreviewState,
     environmentsSettingsState,
     spaceUsageState,
     extensionsSettingsState,

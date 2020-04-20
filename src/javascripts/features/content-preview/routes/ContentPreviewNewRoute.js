@@ -1,27 +1,23 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { getModule } from 'core/NgRegistry';
+import PropTypes from 'prop-types';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import AdminOnly from 'app/common/AdminOnly';
 import StateRedirect from 'app/common/StateRedirect';
-import { ContentPreviewFormSkeleton } from '../skeletons/ContentPreviewFormSkeleton';
-import ContentPreviewFormPage from '../ContentPreviewFormPage';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import { getContentPreview } from 'services/contentPreview';
-import { contentPreviewToInternal } from 'services/contentPreview/contentPreviewToInternal';
 
-const ContentTypesFetcher = createFetcherComponent(({ contentPreviewId }) => {
+import { ContentPreviewFormPage } from '../ContentPreviewFormPage';
+import { ContentPreviewFormSkeleton } from '../skeletons/ContentPreviewFormSkeleton';
+import { contentPreviewToInternal } from '../services/contentPreviewToInternal';
+
+const ContentTypesFetcher = createFetcherComponent(() => {
   const spaceContext = getModule('spaceContext');
 
-  return Promise.all([
-    spaceContext.publishedCTs.refreshBare(),
-    getContentPreview().get(contentPreviewId),
-  ]);
+  return spaceContext.publishedCTs.refreshBare();
 });
 
-export default class ContentPreviewEditRoute extends Component {
+export class ContentPreviewNewRoute extends Component {
   static propTypes = {
-    contentPreviewId: PropTypes.string.isRequired,
     registerSaveAction: PropTypes.func.isRequired,
     setDirty: PropTypes.func.isRequired,
   };
@@ -29,7 +25,7 @@ export default class ContentPreviewEditRoute extends Component {
   render() {
     return (
       <AdminOnly>
-        <ContentTypesFetcher contentPreviewId={this.props.contentPreviewId}>
+        <ContentTypesFetcher>
           {({ isLoading, isError, data }) => {
             if (isLoading) {
               return <ContentPreviewFormSkeleton />;
@@ -37,13 +33,23 @@ export default class ContentPreviewEditRoute extends Component {
             if (isError) {
               return <StateRedirect path="^.list" />;
             }
-            const [contentTypes, preview] = data;
-            const initialValue = contentPreviewToInternal(preview, contentTypes);
+
+            const initialValue = contentPreviewToInternal(
+              {
+                name: '',
+                description: '',
+                sys: {
+                  version: 0,
+                },
+              },
+              data
+            );
+
             return (
               <React.Fragment>
-                <DocumentTitle title={[initialValue.name, 'Content Preview']} />
+                <DocumentTitle title={['New Preview', 'Content Preview']} />
                 <ContentPreviewFormPage
-                  isNew={false}
+                  isNew
                   initialValue={initialValue}
                   registerSaveAction={this.props.registerSaveAction}
                   setDirty={this.props.setDirty}

@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
-import ContentPreviewFormPage from './ContentPreviewFormPage';
+import { ContentPreviewFormPage } from './ContentPreviewFormPage';
 import Enzyme from 'enzyme';
 import 'jest-enzyme';
 import { Notification } from '@contentful/forma-36-react-components';
@@ -14,7 +14,7 @@ const mockContentPreview = {
   remove: jest.fn(),
 };
 
-jest.mock('services/contentPreview', () => ({
+jest.mock('./services/getContentPreview', () => ({
   getContentPreview: () => mockContentPreview,
 }));
 

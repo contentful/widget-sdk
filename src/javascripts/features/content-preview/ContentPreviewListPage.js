@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 import { Workbench } from '@contentful/forma-36-react-components';
 import { WhatIsContentPreview } from './ContentPreviewSidebar';
-import CreatePreviewButton from './CreatePreviewButton';
-import ContentPreviewList from './ContentPreviewList';
+import { CreatePreviewButton } from './CreatePreviewButton';
+import { ContentPreviewList } from './ContentPreviewList';
 
-export default class ContentPreviewListPage extends Component {
+export class ContentPreviewListPage extends Component {
   static propTypes = {
     contentPreviews: PropTypes.arrayOf(
       PropTypes.shape({

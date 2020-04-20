@@ -1,11 +1,11 @@
-import React from 'react';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
-import { ContentPreviewListSkeleton } from '../skeletons/ContentPreviewListSkeleton';
-import { ContentPreviewFormSkeleton } from '../skeletons/ContentPreviewFormSkeleton';
-import LazyLoadedComponent from 'app/common/LazyLoadedComponent';
-import { SettingsImporter } from 'app/settings/SettingsImporter';
+import {
+  ContentPreviewListRoute,
+  ContentPreviewNewRoute,
+  ContentPreviewEditRoute,
+} from 'features/content-preview';
 
-export default {
+export const contentPreviewState = {
   name: 'content_preview',
   url: '/content_preview',
   abstract: true,
@@ -13,24 +13,12 @@ export default {
     {
       name: 'list',
       url: '',
-      component: (props) => (
-        <LazyLoadedComponent fallback={ContentPreviewListSkeleton} importer={SettingsImporter}>
-          {({ ContentPreviewListRoute }) => {
-            return <ContentPreviewListRoute {...props} />;
-          }}
-        </LazyLoadedComponent>
-      ),
+      component: ContentPreviewListRoute,
     },
     {
       name: 'new',
       url: '/new',
-      component: (props) => (
-        <LazyLoadedComponent fallback={ContentPreviewFormSkeleton} importer={SettingsImporter}>
-          {({ ContentPreviewNewRoute }) => {
-            return <ContentPreviewNewRoute {...props} />;
-          }}
-        </LazyLoadedComponent>
-      ),
+      component: ContentPreviewNewRoute,
       mapInjectedToProps: [
         '$scope',
         ($scope) => {
@@ -50,13 +38,7 @@ export default {
     {
       name: 'detail',
       url: '/:contentPreviewId',
-      component: (props) => (
-        <LazyLoadedComponent fallback={ContentPreviewFormSkeleton} importer={SettingsImporter}>
-          {({ ContentPreviewEditRoute }) => {
-            return <ContentPreviewEditRoute {...props} />;
-          }}
-        </LazyLoadedComponent>
-      ),
+      component: ContentPreviewEditRoute,
       mapInjectedToProps: [
         '$scope',
         '$stateParams',

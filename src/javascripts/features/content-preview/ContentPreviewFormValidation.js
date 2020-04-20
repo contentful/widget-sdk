@@ -1,8 +1,5 @@
 import _ from 'lodash';
-import {
-  VALID_URL_PATTERN,
-  ENTRY_FIELD_PATTERN,
-} from 'services/contentPreview/createContentPreview';
+import { VALID_URL_PATTERN, ENTRY_FIELD_PATTERN } from './services/createContentPreview';
 
 function getWarnings(config) {
   const warnings = [];
@@ -34,7 +31,7 @@ function validateConfig(config) {
   }
 }
 
-export default function validate(name, config) {
+export function validate(name, config) {
   const errors = [];
 
   if (!name) {

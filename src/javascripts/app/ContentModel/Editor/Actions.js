@@ -13,7 +13,7 @@ import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer'
 import ContentTypeForbiddenRemoval from './Dialogs/ContenTypeForbiddenRemoval';
 import DeleteContentTypeDialog from './Dialogs/DeleteContentTypeDialog';
 import { openDuplicateContentTypeDialog } from './Dialogs';
-import { getContentPreview } from 'services/contentPreview';
+import { getContentPreview } from 'features/content-preview';
 import { createCommand } from 'utils/command/command';
 
 /**

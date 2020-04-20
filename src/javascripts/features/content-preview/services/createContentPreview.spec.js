@@ -1,41 +1,42 @@
-import sinon from 'sinon';
 import { times, merge, cloneDeep } from 'lodash';
-import createContentPreview from 'services/contentPreview/createContentPreview';
-import { contentPreviewToInternal } from 'services/contentPreview/contentPreviewToInternal';
+import { createContentPreview } from './createContentPreview';
+import { contentPreviewToInternal } from './contentPreviewToInternal';
 import { getStore } from 'browserStorage';
-import { it } from 'test/utils/dsl';
-import { $waitFor, $initialize } from 'test/utils/ng';
 
-describe('contentPreview', () => {
-  beforeEach(async function () {
-    this.space = {
+describe('features/content-preview/createContentPreview', () => {
+  function initialize() {
+    const space = {
       data: {
         sys: { id: 'space01' },
       },
-      endpoint: sinon.spy(function () {
-        return this;
+      endpoint: jest.fn().mockImplementation(() => {
+        return space;
       }),
-      payload: sinon.spy(function () {
-        return this;
+      payload: jest.fn().mockImplementation(() => {
+        return space;
       }),
-      headers: sinon.spy(function () {
-        return this;
+      headers: jest.fn().mockImplementation(() => {
+        return space;
       }),
-      post: sinon.stub().resolves(makeEnv('foo')),
-      get: sinon.stub().resolves({ items: [makeEnv('foo'), makeEnv('foo2')] }),
-      put: sinon.stub(),
-      delete: sinon.stub(),
+      post: jest.fn().mockResolvedValue(makeEnv('foo')),
+      get: jest.fn().mockResolvedValue({ items: [makeEnv('foo'), makeEnv('foo2')] }),
+      put: jest.fn(),
+      delete: jest.fn(),
     };
 
-    this.getEntriesStub = sinon.stub().resolves();
+    const stubs = {
+      getEntries: jest.fn().mockResolvedValue(),
+    };
 
-    this.contentPreview = createContentPreview({
-      space: this.space,
-      cma: { getEntries: this.getEntriesStub },
-    });
-
-    await $initialize(this.system);
-  });
+    return {
+      stubs,
+      space,
+      contentPreview: createContentPreview({
+        space,
+        cma: { getEntries: stubs.getEntries },
+      }),
+    };
+  }
 
   function makeEnv(id) {
     return {
@@ -105,33 +106,31 @@ describe('contentPreview', () => {
 
   describe('#getAll', () => {
     it('resolves preview environments', async function () {
-      const environments = await this.contentPreview.getAll();
+      const { contentPreview } = initialize();
+      const environments = await contentPreview.getAll();
       expect(environments.foo).toEqual(makeEnv('foo'));
       expect(environments.foo2).toEqual(makeEnv('foo2'));
     });
 
-    it('fetches all content preview environments', function () {
-      this.contentPreview.getAll();
-      const payload = this.space.payload.args[0][0];
-      expect(payload.limit).toBe(100);
-    });
-
     it('only calls GET endpoint once', async function () {
-      await this.contentPreview.getAll();
-      await this.contentPreview.getAll();
-      sinon.assert.calledOnce(this.space.get);
+      const { contentPreview, space } = initialize();
+      await contentPreview.getAll();
+      await contentPreview.getAll();
+      expect(space.get).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('#get', () => {
     it('resolves preview environment', async function () {
-      const env = await this.contentPreview.get('foo');
+      const { contentPreview } = initialize();
+      const env = await contentPreview.get('foo');
       expect(env).toEqual(makeEnv('foo'));
     });
 
     it('rejects promise if the requested environment does not exist', async function () {
+      const { contentPreview } = initialize();
       try {
-        await this.contentPreview.get('bar');
+        await contentPreview.get('bar');
 
         // should not end up here
         expect(true).toBe(false);
@@ -143,40 +142,48 @@ describe('contentPreview', () => {
 
   describe('#getForContentType', () => {
     it('returns all of the preview environments for the provided content type', async function () {
-      const envs = await this.contentPreview.getForContentType('ct-1');
-      expect(envs.length).toBe(2);
+      const { contentPreview } = initialize();
+      const envs = await contentPreview.getForContentType('ct-1');
+      expect(envs).toHaveLength(2);
     });
   });
 
   describe('#create', () => {
-    beforeEach(async function () {
+    async function prepare() {
+      const { contentPreview, ...rest } = initialize();
       const internal = contentPreviewToInternal(makeEnv('foo'), [makeCt('ct-1')]);
-      this.env = await $waitFor(this.contentPreview.create(internal));
+      const env = await contentPreview.create(internal);
+      return {
+        ...rest,
+        contentPreview,
+        env,
+      };
+    }
+
+    it('returns environment object', async function () {
+      const { env } = await prepare();
+      expect(env).toEqual(makeEnv('foo'));
     });
 
-    it('returns environment object', function () {
-      expect(this.env).toEqual(makeEnv('foo'));
-    });
+    it('calls POST method', async function () {
+      const { space } = await prepare();
+      expect(space.post).toHaveBeenCalledTimes(1);
 
-    it('calls POST method', function () {
-      sinon.assert.calledOnce(this.space.post);
-    });
-
-    it('sends environment in payload', function () {
-      const payload = this.space.payload.args[1][0];
+      const payload = space.payload.mock.calls[1][0];
       expect(payload.name).toBe('PE - foo');
-      expect(payload.configurations.length).toBe(1);
+      expect(payload.configurations).toHaveLength(1);
     });
 
     it('fails when limit is reached', async function () {
+      const { space, contentPreview } = await prepare();
       // Start with no previews
-      this.space.get.resolves({ items: [] });
-      this.contentPreview.clearCache();
+      space.get.mockResolvedValue({ items: [] });
+      contentPreview.clearCache();
 
       const create = (idx) => {
         const internal = contentPreviewToInternal(makeEnv('foo' + idx), [makeCt('ct-1')]);
-        this.space.post.resolves(makeEnv('foo' + idx));
-        return this.contentPreview.create(internal);
+        space.post.mockResolvedValue(makeEnv('foo' + idx));
+        return contentPreview.create(internal);
       };
 
       // Create 100 preview environments (indexes are 0...99)
@@ -198,103 +205,129 @@ describe('contentPreview', () => {
   });
 
   describe('#update', () => {
-    beforeEach(async function () {
-      this.space.put.resolves(makeEnv('foo'));
+    async function prepare() {
+      const { contentPreview, space, ...rest } = initialize();
+      space.put.mockResolvedValue(makeEnv('foo'));
 
-      const env = await $waitFor(
-        this.contentPreview.create(contentPreviewToInternal(makeEnv('bar'), [makeCt('ct-1')]))
+      let env = await contentPreview.create(
+        contentPreviewToInternal(makeEnv('bar'), [makeCt('ct-1')])
       );
 
-      this.id = env.sys.id;
+      const id = env.sys.id;
 
       const payload = contentPreviewToInternal(makeEnv('foo'), [makeCt('ct-1'), makeCt('ct-2')]);
 
-      await $waitFor(this.contentPreview.update(merge(payload, { version: 0 })));
+      await contentPreview.update(merge(payload, { version: 0 }));
 
-      this.env = await $waitFor(this.contentPreview.update(merge(payload, { version: 1 })));
+      env = await contentPreview.update(merge(payload, { version: 1 }));
+      return {
+        ...rest,
+        space,
+        id,
+        contentPreview,
+        env,
+      };
+    }
+
+    it('returns environment object', async function () {
+      const { env } = await prepare();
+      expect(env).toEqual(makeEnv('foo'));
     });
 
-    it('returns environment object', function () {
-      expect(this.env).toEqual(makeEnv('foo'));
+    it('calls correct endpoint', async function () {
+      const { space, id } = await prepare();
+      expect(space.endpoint).toHaveBeenCalledWith('preview_environments', id);
     });
 
-    it('calls correct endpoint', function () {
-      sinon.assert.calledWith(this.space.endpoint, 'preview_environments', this.id);
+    it('calls PUT method', async function () {
+      const { space } = await prepare();
+      expect(space.put).toHaveBeenCalledTimes(2);
     });
 
-    it('calls PUT method', function () {
-      sinon.assert.calledTwice(this.space.put);
-    });
-
-    it('sends environment in payload', function () {
-      const payload = this.space.payload.args[2][0];
+    it('sends environment in payload', async function () {
+      const { space } = await prepare();
+      const payload = space.payload.mock.calls[2][0];
       expect(payload.name).toBe('PE - foo');
-      expect(payload.configurations.length).toBe(2);
+      expect(payload.configurations).toHaveLength(2);
     });
 
-    it('sends correct version number in header', function () {
+    it('sends correct version number in header', async function () {
+      const { space } = await prepare();
       const headers = { 'X-Contentful-Version': 1 };
-      sinon.assert.calledWith(this.space.headers, headers);
+      expect(space.headers).toHaveBeenCalledWith(headers);
     });
   });
 
   describe('#remove', () => {
-    beforeEach(async function () {
-      this.space.delete.resolves();
+    async function prepare() {
+      const { space, contentPreview, ...rest } = initialize();
+      space.delete.mockResolvedValue();
 
       const internal = contentPreviewToInternal(makeEnv('foo'), [makeCt('ct-1')]);
-      const env = await $waitFor(this.contentPreview.create(internal));
-      this.id = env.sys.id;
+      const env = await contentPreview.create(internal);
+      const id = env.sys.id;
 
-      await $waitFor(this.contentPreview.remove(internal));
+      await contentPreview.remove(internal);
+      return {
+        ...rest,
+        contentPreview,
+        space,
+        id,
+      };
+    }
+
+    it('calls correct endpoint', async function () {
+      const { space, id } = await prepare();
+      expect(space.endpoint).toHaveBeenCalledWith('preview_environments', id);
     });
 
-    it('calls correct endpoint', function () {
-      sinon.assert.calledWith(this.space.endpoint, 'preview_environments', this.id);
-    });
-
-    it('calls DELETE method', function () {
-      sinon.assert.calledOnce(this.space.delete);
+    it('calls DELETE method', async function () {
+      const { space } = await prepare();
+      expect(space.delete).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('#replaceVariablesInUrl', () => {
     it('replaces variables in URL with the legacy content preview token', async function () {
-      this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
+      const { contentPreview } = initialize();
+      const compiledUrl = await contentPreview.replaceVariablesInUrl(
         makeEnv('foo').configurations[0].url,
         makeEntry('entry-1').data,
         'en'
       );
-      expect(this.compiledUrl).toBe('https://www.test.com/entry-1/Title/my-slug');
+      expect(compiledUrl).toBe('https://www.test.com/entry-1/Title/my-slug');
     });
 
     it('replaces variables in URL with the new content preview token', async function () {
-      this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
+      const { contentPreview } = initialize();
+      const compiledUrl = await contentPreview.replaceVariablesInUrl(
         'https://www.test.com/{entry.sys.id}/{entry.fields.title}/{entry.fields.slug}',
         makeEntry('entry-1').data,
         'en'
       );
-      expect(this.compiledUrl).toBe('https://www.test.com/entry-1/Title/my-slug');
+      expect(compiledUrl).toBe('https://www.test.com/entry-1/Title/my-slug');
     });
 
     it('replaces undefined fileds with "_NOT_FOUND"', async function () {
-      this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
+      const { contentPreview } = initialize();
+      const compiledUrl = await contentPreview.replaceVariablesInUrl(
         'https://www.test.com/{entry.sys.id}/{entry.fields.random_field}/{entry.fields.slug}',
         makeEntry('entry-1').data,
         'en'
       );
-      expect(this.compiledUrl).toBe(
+      expect(compiledUrl).toBe(
         'https://www.test.com/entry-1/fields.random_field_ NOT_FOUND/my-slug'
       );
     });
 
     it('does not replace invalid field tokens', async function () {
-      this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
+      const { contentPreview } = initialize();
+      const compiledUrl = await contentPreview.replaceVariablesInUrl(
         makeEnv('foo').configurations[1].url,
         makeEntry('entry-1').data,
         'en'
       );
-      expect(this.compiledUrl).toBe('https://www.test.com/{entry_field.invalid}');
+      expect(compiledUrl).toBe('https://www.test.com/{entry_field.invalid}');
     });
 
     /**
@@ -302,44 +335,39 @@ describe('contentPreview', () => {
      * in case value is just an empty string, but exists.
      */
     it('does replace with empty value', async function () {
-      this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
+      const { contentPreview } = initialize();
+      const compiledUrl = await contentPreview.replaceVariablesInUrl(
         'http://test-domain.com/{entry_id}/{entry_field.empty}',
         makeEntry('entry-1').data,
         'en'
       );
-      expect(this.compiledUrl).toBe('http://test-domain.com/entry-1/');
+      expect(compiledUrl).toBe('http://test-domain.com/entry-1/');
     });
 
     it('does replace with undefined value', async function () {
-      this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
+      const { contentPreview } = initialize();
+      const compiledUrl = await contentPreview.replaceVariablesInUrl(
         'http://test-domain.com/{entry_id}/{entry_field.undefined}',
         makeEntry('entry-1').data,
         'en'
       );
-      expect(this.compiledUrl).toBe('http://test-domain.com/entry-1/');
-    });
-
-    it('does not replace invalid field tokens', async function () {
-      this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
-        makeEnv('foo').configurations[1].url,
-        makeEntry('entry-1').data,
-        'en'
-      );
-      expect(this.compiledUrl).toBe('https://www.test.com/{entry_field.invalid}');
+      expect(compiledUrl).toBe('http://test-domain.com/entry-1/');
     });
 
     it('calls for entries with linked current entry', async function () {
-      await this.contentPreview.replaceVariablesInUrl(
+      const { contentPreview, stubs } = initialize();
+      await contentPreview.replaceVariablesInUrl(
         makeEnv('foo').configurations[2].url,
         makeEntry('entry-3').data,
         'en'
       );
 
-      expect(this.getEntriesStub.calledWith({ links_to_entry: 'entry-3' })).toBe(true);
+      expect(stubs.getEntries).toHaveBeenCalledWith({ links_to_entry: 'entry-3' });
     });
 
     it('replaces referenced value in URL', async function () {
-      this.getEntriesStub.resolves({
+      const { contentPreview, stubs } = initialize();
+      stubs.getEntries.mockResolvedValue({
         items: [
           {
             sys: { id: 'some' },
@@ -347,17 +375,18 @@ describe('contentPreview', () => {
         ],
       });
 
-      this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
+      const compiledUrl = await contentPreview.replaceVariablesInUrl(
         makeEnv('foo').configurations[2].url,
         makeEntry('entry-3').data,
         'en'
       );
 
-      expect(this.compiledUrl).toBe('https://www.test.com/some');
+      expect(compiledUrl).toBe('https://www.test.com/some');
     });
 
     it('replaces referenced value in URL with fields path', async function () {
-      this.getEntriesStub.resolves({
+      const { contentPreview, stubs } = initialize();
+      stubs.getEntries.mockResolvedValue({
         items: [
           {
             sys: { id: 'some' },
@@ -366,74 +395,70 @@ describe('contentPreview', () => {
         ],
       });
 
-      this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
+      const compiledUrl = await contentPreview.replaceVariablesInUrl(
         makeEnv('foo').configurations[3].url,
         makeEntry('entry-4').data,
         'en'
       );
 
-      expect(this.compiledUrl).toBe('https://www.test.com/new-value');
+      expect(compiledUrl).toBe('https://www.test.com/new-value');
     });
 
     it('replaces several referenced values in URL', async function () {
-      this.getEntriesStub
-        .withArgs({
-          links_to_entry: 'entry-5',
-        })
-        .returns(
-          Promise.resolve({
+      const { contentPreview, stubs } = initialize();
+      stubs.getEntries.mockImplementation(({ links_to_entry }) => {
+        if (links_to_entry === 'entry-5') {
+          return Promise.resolve({
             items: [
               {
                 sys: { id: 'second_reference_id' },
                 fields: { slug: { en: 'second_reference_value' } },
               },
             ],
-          })
-        );
-
-      this.getEntriesStub
-        .withArgs({
-          links_to_entry: 'second_reference_id',
-        })
-        .returns(
-          Promise.resolve({
+          });
+        }
+        if (links_to_entry == 'second_reference_id') {
+          return Promise.resolve({
             items: [
               {
                 sys: { id: 'first_reference_id' },
                 fields: { name: { en: 'first_reference_value' } },
               },
             ],
-          })
-        );
+          });
+        }
+      });
 
-      this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
+      const compiledUrl = await contentPreview.replaceVariablesInUrl(
         makeEnv('foo').configurations[4].url,
         makeEntry('entry-5').data,
         'en'
       );
 
-      expect(this.compiledUrl).toBe(
+      expect(compiledUrl).toBe(
         'https://www.test.com/first_reference_value/some/second_reference_value'
       );
     });
 
     it('returns baseURL in case some reference does not exist', async function () {
-      this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
+      const { contentPreview } = initialize();
+      const compiledUrl = await contentPreview.replaceVariablesInUrl(
         makeEnv('foo').configurations[2].url,
         makeEntry('entry-3').data,
         'en'
       );
 
-      expect(this.compiledUrl).toBe('https://www.test.com/');
+      expect(compiledUrl).toBe('https://www.test.com/');
     });
 
     it('inserts an env_id into the url', async function () {
-      this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
+      const { contentPreview } = initialize();
+      const compiledUrl = await contentPreview.replaceVariablesInUrl(
         'http://test-domain.com/{env_id}/test',
         makeEntry('entry-1').data,
         'en'
       );
-      expect(this.compiledUrl).toBe('http://test-domain.com/master/test');
+      expect(compiledUrl).toBe('http://test-domain.com/master/test');
     });
   });
 
@@ -448,29 +473,32 @@ describe('contentPreview', () => {
     afterEach(clean);
 
     it('returns stored environment id', function () {
+      const { contentPreview } = initialize();
       getStore().set('selectedPreviewEnvsForSpace.space01', 'someenv');
-      expect(this.contentPreview.getSelected()).toBe('someenv');
+      expect(contentPreview.getSelected()).toBe('someenv');
     });
 
     it('returns null if not stored yet', function () {
+      const { space, stubs } = initialize();
       const contentPreview = createContentPreview({
         space: {
-          ...cloneDeep(this.space),
+          ...cloneDeep(space),
           // use a different space
           data: { sys: { id: 'space02' } },
         },
-        cma: { getEntries: this.getEntriesStub },
+        cma: { getEntries: stubs.getEntries },
       });
 
-      expect(contentPreview.getSelected()).toBe(null);
+      expect(contentPreview.getSelected()).toBeNull();
     });
   });
 
   describe('#setSelected', () => {
     it('updates store value', function () {
-      this.contentPreview.setSelected({ envId: 'newenv' });
+      const { contentPreview } = initialize();
+      contentPreview.setSelected({ envId: 'newenv' });
 
-      expect(this.contentPreview.getSelected()).toBe('newenv');
+      expect(contentPreview.getSelected()).toBe('newenv');
     });
   });
 });

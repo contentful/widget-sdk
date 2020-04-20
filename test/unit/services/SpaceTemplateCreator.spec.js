@@ -38,7 +38,7 @@ describe('Space Template creation service', () => {
       },
     });
 
-    this.system.set('services/contentPreview', {
+    this.system.set('features/content-preview', {
       getContentPreview: () => ({
         getAll: stubs.getContentPreview,
         create: stubs.createContentPreview,

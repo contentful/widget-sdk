@@ -4,13 +4,11 @@ import {
   WebhookEditRoute,
   WebhookCallRoute,
 } from 'features/webhooks';
+
 import LocalesEditRoute from './locales/routes/LocalesEditRoute';
 
 import LocalesNewRoute from './locales/routes/LocalesNewRoute';
 import LocalesListRoute from './locales/routes/LocalesListRoute';
-import ContentPreviewListRoute from './content_preview/routes/ContentPreviewListRoute';
-import ContentPreviewNewRoute from './content_preview/routes/ContentPreviewNewRoute';
-import ContentPreviewEditRoute from './content_preview/routes/ContentPreviewEditRoute';
 import ExtensionsListRoute from './extensions/routes/ExtensionsListRoute';
 import ExtensionEditorRoute from './extensions/routes/ExtensionEditorRoute';
 import RoleEditorRoute from './roles_permissions/routes/RoleEditorRoute';
@@ -23,9 +21,6 @@ import KeyEditorRoute from './api/routes/KeyEditorRoute';
 import TagsRoute from './content_tags/routes/TagsRoute';
 
 export {
-  ContentPreviewListRoute,
-  ContentPreviewNewRoute,
-  ContentPreviewEditRoute,
   WebhookListRoute,
   WebhookNewRoute,
   WebhookEditRoute,

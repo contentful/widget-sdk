@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink';
 
-export default function CreatePreviewButton() {
+export function CreatePreviewButton() {
   return (
     <StateLink path="^.new">
       {({ onClick }) => (

@@ -11,7 +11,7 @@ const mockContentPreview = {
   getSelected: jest.fn(),
 };
 
-jest.mock('services/contentPreview', () => ({
+jest.mock('features/content-preview', () => ({
   getContentPreview: () => mockContentPreview,
 }));
 

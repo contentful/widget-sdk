@@ -15,10 +15,10 @@ import {
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { ContentPreviewFormSkeleton } from './skeletons/ContentPreviewFormSkeleton';
-import validate from './ContentPreviewFormValidation';
+import { validate } from './ContentPreviewFormValidation';
 import { ModalLauncher } from 'core/components/ModalLauncher';
 import { slugify } from '@contentful/field-editor-slug';
-import { getContentPreview } from 'services/contentPreview';
+import { getContentPreview } from './services/getContentPreview';
 import * as Navigator from 'states/Navigator';
 import * as Analytics from 'analytics/Analytics';
 
@@ -28,7 +28,7 @@ const styles = {
   }),
 };
 
-export default class ContentPreviewFormPage extends Component {
+export class ContentPreviewFormPage extends Component {
   static propTypes = {
     isNew: PropTypes.bool.isRequired,
     registerSaveAction: PropTypes.func.isRequired,

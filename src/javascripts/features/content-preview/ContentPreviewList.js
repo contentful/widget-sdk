@@ -26,7 +26,7 @@ const styles = {
   }),
 };
 
-export default class ContentPreviewList extends Component {
+export class ContentPreviewList extends Component {
   static propTypes = {
     contentPreviews: PropTypes.arrayOf(
       PropTypes.shape({
