@@ -3,11 +3,6 @@ import { defaultHeader, defaultSpaceId, defaultOrgId } from '../../../util/reque
 
 const empty = require('../../../fixtures/responses/empty.json');
 
-const teamHeaders = {
-  ...defaultHeader,
-  'x-contentful-enable-alpha-feature': 'teams-api',
-};
-
 const membership1 = {
   admin: true,
   roles: [],
@@ -50,7 +45,7 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
       method: 'GET',
       path: `/spaces/${defaultSpaceId}/team_space_memberships`,
       query: { include: 'roles,sys.team', limit: '100', skip: '0' },
-      headers: teamHeaders,
+      headers: defaultHeader,
     },
     willRespondWith: {
       status: 200,
@@ -287,7 +282,7 @@ describe('Teams in space page', () => {
             method: 'PUT',
             path: `/spaces/${defaultSpaceId}/team_space_memberships/TSM1`,
             headers: {
-              ...teamHeaders,
+              ...defaultHeader,
               'CONTENT-TYPE': 'application/vnd.contentful.management.v1+json',
               'x-contentful-team': 'team1',
             },
@@ -333,7 +328,7 @@ describe('Teams in space page', () => {
           withRequest: {
             method: 'DELETE',
             path: `/spaces/${defaultSpaceId}/team_space_memberships/TSM1`,
-            headers: teamHeaders,
+            headers: defaultHeader,
           },
           willRespondWith: {
             status: 204,

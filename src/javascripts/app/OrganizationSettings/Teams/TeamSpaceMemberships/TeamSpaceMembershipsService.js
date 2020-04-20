@@ -1,16 +1,13 @@
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
 import { fetchAllWithIncludes } from 'data/CMA/FetchAll';
 import getOrgId from 'redux/selectors/getOrgId';
-import { TEAMS_API, getAlphaHeader } from 'alphaHeaders.js';
 
 const BATCH_LIMIT = 100;
-const HEADERS = getAlphaHeader(TEAMS_API);
 
 export default function createTeamMembershipsService(state) {
   const orgId = getOrgId(state);
   const endpoint = createOrganizationEndpoint(orgId);
   const getTeamHeaders = (teamId) => ({
-    ...HEADERS,
     'x-contentful-team': teamId,
   });
 
@@ -23,17 +20,14 @@ export default function createTeamMembershipsService(state) {
   };
 
   function get(id) {
-    return endpoint(
-      {
-        method: 'GET',
-        path: ['team_space_memberships', id],
-      },
-      HEADERS
-    );
+    return endpoint({
+      method: 'GET',
+      path: ['team_space_memberships', id],
+    });
   }
 
   function getAll(query = {}) {
-    return fetchAllWithIncludes(endpoint, ['team_space_memberships'], BATCH_LIMIT, query, HEADERS);
+    return fetchAllWithIncludes(endpoint, ['team_space_memberships'], BATCH_LIMIT, query);
   }
 
   /**
@@ -76,12 +70,9 @@ export default function createTeamMembershipsService(state) {
 
   function remove(teamSpaceMembershipId, teamSpaceMembership) {
     const spaceEndpoint = createSpaceEndpoint(teamSpaceMembership.sys.space.sys.id);
-    return spaceEndpoint(
-      {
-        method: 'DELETE',
-        path: ['team_space_memberships', teamSpaceMembershipId],
-      },
-      HEADERS
-    );
+    return spaceEndpoint({
+      method: 'DELETE',
+      path: ['team_space_memberships', teamSpaceMembershipId],
+    });
   }
 }
