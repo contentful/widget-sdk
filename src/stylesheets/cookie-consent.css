@@ -235,7 +235,10 @@ summary.osano-cm-disclosure__toggle {
   border: 0;
 }
 
-.osano-cm-powered-by,
+a.osano-cm-powered-by__link {
+  color: var(--color-text-mid);
+}
+
 button.osano-cm-widget {
   display: none;
 }
