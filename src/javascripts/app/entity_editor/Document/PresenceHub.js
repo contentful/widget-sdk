@@ -6,6 +6,22 @@ const FOCUS_THROTTLE = 10e3;
 const PING_TIMEOUT = 60e3;
 
 /**
+ * Returns a "fake" presence hub that is not connected to anything, returning zero
+ * collaborators at any time.
+ * @returns {PresenceHub}
+ */
+export function createNoopPresenceHub() {
+  return {
+    collaborators: K.constant([]),
+    collaboratorsFor: () => K.constant([]),
+    focus: _.noop,
+    leave: _.noop,
+    destroy: _.noop,
+  };
+}
+
+/**
+ * Creates a PresenceHub for OtDocument using ShareJS.
  * @param {string} ownUserId
  * @param {Stream<Doc.Event> docEvents
  *   Stream of events emitted on the ShareJS document. See

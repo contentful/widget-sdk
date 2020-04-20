@@ -34,7 +34,7 @@ export { Action, State };
  * @param {{(sys: EntitySys): void}} setSys Updates the entity sys property
  * @param {{(): Entity}} getData Returns most actual entity data
  * @param {{(body, headers): Entity}} spaceEndpoint Endpoint request maker
- * @param {{(): Promise<void>} | null} preApplyFn Optional async function that must be invoked before the status change API request
+ * @param {{(): Promise<void>} | null} preApplyFn Optional async function that will be invoked before the status change API request
  */
 export function create(sys$, setSys, getData, spaceEndpoint, preApplyFn = null) {
   const applyAction = makeApply(spaceEndpoint);

@@ -4,32 +4,31 @@ import { SHAREJS_REMOVAL } from 'featureFlags';
 import { getVariation } from 'LaunchDarkly';
 
 /**
- * @ngdoc service
- * @name data/sharejs/DocumentPool
- * @description
- * Creates a store for Document instances.
- * Given an entity it always returns the same
- * instance. Obtained references are counted
- * and when the last is disposed, an instance
- * is destroyed.
+ * Creates a store for Document instances. Given an entity it always returns the
+ * same instance. Obtained references are counted and when the last is disposed, an
+ * instance is destroyed.
+ *
+ * @param {data/sharejs/Connection} docConnection
+ * @param {data/Endpoint} spaceEndpoint
+ * @param {string} organizationId
+ * @param {string} spaceId
+ * @returns {DocumentPool}
  */
-
 export async function create(docConnection, spaceEndpoint, organizationId, spaceId) {
   const instances = {};
-  const isCMADocumentEnabled = await getVariation(SHAREJS_REMOVAL, { organizationId, spaceId });
+  const isCmaDocumentEnabled = await getVariation(SHAREJS_REMOVAL, { organizationId, spaceId });
 
   return { get, destroy };
 
   /**
+   * Gets a doc for an entity.
+   *
    * @method DocumentPool#get
    * @param {API.Entity} entity
    * @param {API.ContentType} contentType
    * @param {API.User} user
-   * @param {K.Poperty<void>} lifeline$
-   *   Unreference the document when this property ends
-   * @returns Document
-   * @description
-   * Gets a doc for an entity.
+   * @param {K.Poperty<void>} lifeline$ Deference the document when this property ends.
+   * @returns {Document}
    */
   function get(entity, contentType, user, lifeline$) {
     const key = prepareKey(getAtPath(entity, 'data.sys', {}));
@@ -42,8 +41,8 @@ export async function create(docConnection, spaceEndpoint, organizationId, space
     } else {
       // This flag is an object, but check for `true` to use with `?ui_enable_flags=`
       if (
-        isCMADocumentEnabled === true ||
-        (isObject(isCMADocumentEnabled) && isCMADocumentEnabled[entity.data.sys.type])
+        isCmaDocumentEnabled === true ||
+        (isObject(isCmaDocumentEnabled) && isCmaDocumentEnabled[entity.data.sys.type])
       ) {
         doc = createCmaDoc(entity, contentType, spaceEndpoint);
       } else {
@@ -66,8 +65,7 @@ export async function create(docConnection, spaceEndpoint, organizationId, space
   }
 
   /**
-   * Marks reference to a doc as not used any
-   * longer. Destroys an instance if it was the
+   * Marks reference to a doc as not used any longer. Destroys an instance if it was the
    * last reference in use.
    */
   function unref(doc) {
@@ -84,9 +82,7 @@ export async function create(docConnection, spaceEndpoint, organizationId, space
     }
   }
 
-  /*A singleton*
-   * @method DocumentPool#destroy
-   * @description
+  /**
    * Destroys all the instances in the pool.
    */
   function destroy() {
