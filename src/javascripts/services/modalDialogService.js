@@ -6,7 +6,7 @@ import $ from 'jquery';
 import { h } from 'utils/legacy-html-hyperscript';
 import keycodes from 'utils/keycodes';
 import * as logger from 'services/logger';
-import window from 'utils/ngCompat/window';
+import { window } from 'core/services/window';
 import modalDialogTemplate from './modal_dialog.html';
 
 export default function register() {

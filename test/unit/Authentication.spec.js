@@ -26,7 +26,8 @@ describe('Authentication', function () {
       url: sinon.stub(),
     };
 
-    this.system.set('utils/ngCompat/window', { default: this.window });
+    this.system.set('core/services/window', { window: this.window });
+
     const { getStore } = await this.system.import('browserStorage');
     this.Auth = await this.system.import('Authentication');
 

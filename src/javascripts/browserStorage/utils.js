@@ -1,5 +1,5 @@
 import * as K from 'utils/kefir';
-import window from 'utils/ngCompat/window';
+import { window } from 'core/services/window';
 import { partial, isString } from 'lodash';
 
 /*

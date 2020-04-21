@@ -12,7 +12,6 @@ import tokens from '@contentful/forma-36-tokens';
 import pluralize from 'pluralize';
 import { cx, css } from 'emotion';
 import { truncate, map, intersection, isEmpty, filter, some } from 'lodash';
-
 import { joinWithAnd } from 'utils/StringUtils';
 import SpaceRoleEditor from 'app/OrganizationSettings/SpaceRoleEditor';
 import {

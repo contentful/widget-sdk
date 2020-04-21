@@ -3,7 +3,7 @@ import * as CallBuffer from 'utils/CallBuffer';
 import * as LazyLoader from 'utils/LazyLoader';
 import * as logger from 'services/logger';
 import * as Config from 'Config';
-import window from 'utils/ngCompat/window';
+import { window } from 'core/services/window';
 
 /**
  * All calls (`track`, `page`, `identify`)

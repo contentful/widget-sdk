@@ -1,7 +1,6 @@
 /* eslint-disable camelcase */
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import buildWidgetApi from 'app/widgets/WidgetApi/buildWidgetApi';
 import WidgetAPIContext from './WidgetApiContext';
 import { getModule } from 'core/NgRegistry';

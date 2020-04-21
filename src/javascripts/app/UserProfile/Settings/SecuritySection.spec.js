@@ -2,18 +2,20 @@ import React from 'react';
 import { render, fireEvent, wait } from '@testing-library/react';
 import { Notification } from '@contentful/forma-36-react-components';
 import SecuritySection from './SecuritySection';
-import $window from 'utils/ngCompat/window';
+import { window } from 'core/services/window';
 import { ModalLauncher } from 'core/components/ModalLauncher';
 import { getUserTotp } from './AccountRepository';
 
-jest.mock('utils/ngCompat/window', () => {
+jest.mock('core/services/window', () => {
   const locationMock = jest.fn();
 
   return {
-    set location(path) {
-      return locationMock(path);
+    window: {
+      set location(path) {
+        return locationMock(path);
+      },
+      __locationMock: locationMock,
     },
-    __locationMock: locationMock,
   };
 });
 
@@ -73,7 +75,7 @@ describe('SecuritySection', () => {
 
       fireEvent.click(queryByTestId('resend-email-cta'));
 
-      expect($window.__locationMock).toHaveBeenCalled();
+      expect(window.__locationMock).toHaveBeenCalled();
     });
 
     it('should show a CTA to add a password if user has no password set but has confirmed email', () => {

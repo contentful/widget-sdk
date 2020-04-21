@@ -23,8 +23,8 @@ describe('Gatekeeper Message Handler', () => {
     this.Notification.success = sinon.stub();
     this.Notification.error = sinon.stub();
 
-    await this.system.set('utils/ngCompat/window', {
-      default: this.stubs.window,
+    await this.system.set('core/services/window', {
+      window: this.stubs.window,
     });
 
     await this.system.set('services/CreateSpace', {

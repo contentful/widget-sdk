@@ -4,7 +4,7 @@ import { getStore } from 'browserStorage';
 import { uniq, without, omit } from 'lodash';
 import { addNotification } from 'debug/DevNotifications';
 import Cookies from 'js-cookie';
-import window from 'utils/ngCompat/window';
+import { window } from 'core/services/window';
 import * as locationUtils from 'utils/location';
 
 const ENABLE_FLAGS_KEY = 'ui_enable_flags';

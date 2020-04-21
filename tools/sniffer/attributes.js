@@ -123,7 +123,6 @@ const needsRefactoring = (node) => {
     'jquery',
     'ui/Framework/CfComponentBridgeDirective',
     'ui/Framework/Store',
-    'utils/ngCompat/window',
     'cf-component-bridge',
     'utils/command/command',
     'enzyme',

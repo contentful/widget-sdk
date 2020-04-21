@@ -4,7 +4,13 @@ import { Notification } from '@contentful/forma-36-react-components';
 import * as Navigator from 'states/Navigator';
 import * as accessChecker from 'access_control/AccessChecker';
 import { ModalLauncher } from 'core/components/ModalLauncher';
-import { setWindowLocationProperties } from '__mocks__/global/window';
+import { window } from 'core/services/window';
+
+jest.mock('core/services/window', () => ({
+  window: {
+    location: {},
+  },
+}));
 
 jest.mock('@contentful/forma-36-react-components', () => ({
   Notification: { warning: jest.fn(), error: jest.fn() },
@@ -32,7 +38,7 @@ describe('initEnvAliasChangeHandler', () => {
   });
 
   it('triggers a notification and reload if changes not related', () => {
-    setWindowLocationProperties({ pathname: '/spaces/content_types' });
+    window.location.pathname = '/spaces/content_types';
     const environmentAliasChangedHandler = initEnvAliasChangeHandler('environmentId');
     environmentAliasChangedHandler(update);
     expect(Notification.warning).toHaveBeenCalledWith(
@@ -42,7 +48,7 @@ describe('initEnvAliasChangeHandler', () => {
   });
 
   it('triggers a notification and reload if not a content specific / environment aware page', () => {
-    setWindowLocationProperties({ pathname: '/spaces/detail' });
+    window.location.pathname = '/spaces/detail';
     const environmentAliasChangedHandler = initEnvAliasChangeHandler('newTarget');
     environmentAliasChangedHandler(update);
     expect(Notification.warning).toHaveBeenCalledWith(
@@ -52,14 +58,14 @@ describe('initEnvAliasChangeHandler', () => {
   });
 
   it('triggers a modal if cannot manage environments', async () => {
-    setWindowLocationProperties({ pathname: '/spaces/content_types' });
+    window.location.pathname = '/spaces/content_types';
     const environmentAliasChangedHandler = initEnvAliasChangeHandler('newTarget');
     environmentAliasChangedHandler(update);
     await expect(ModalLauncher.open).toHaveBeenCalled();
   });
 
   it('triggers a modal if can manage environments', async () => {
-    setWindowLocationProperties({ pathname: '/spaces/content_types' });
+    window.location.pathname = '/spaces/content_types';
     accessChecker.can.mockReturnValue(true);
     const environmentAliasChangedHandler = initEnvAliasChangeHandler('newTarget');
     environmentAliasChangedHandler(update);
@@ -67,7 +73,7 @@ describe('initEnvAliasChangeHandler', () => {
   });
 
   it('triggers a modal if can manage environments and missing entity', async () => {
-    setWindowLocationProperties({ pathname: '/spaces/content_types' });
+    window.location.pathname = '/spaces/content_types';
     accessChecker.can.mockReturnValue(true);
     Navigator.reloadWithEnvironment.mockReturnValue('error');
     const environmentAliasChangedHandler = initEnvAliasChangeHandler('newTarget');
@@ -76,7 +82,7 @@ describe('initEnvAliasChangeHandler', () => {
   });
 
   it('triggers a notification and opens the choice modal', async () => {
-    setWindowLocationProperties({ pathname: '/spaces/content_types' });
+    window.location.pathname = '/spaces/content_types';
     accessChecker.can.mockReturnValue(true);
     const environmentAliasChangedHandler = initEnvAliasChangeHandler('oldTarget');
     environmentAliasChangedHandler(update);

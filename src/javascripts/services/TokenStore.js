@@ -14,7 +14,7 @@ import * as OrganizationRoles from 'services/OrganizationRoles';
 import { deepFreezeClone, deepFreeze } from 'utils/Freeze';
 import { isEqual, groupBy, map, get, find, cloneDeep } from 'lodash';
 import { getModule } from 'core/NgRegistry';
-import window from 'utils/ngCompat/window';
+import { window } from 'core/services/window';
 
 // Refresh token info every 5 minutes
 const TOKEN_INFO_REFRESH_INTERVAL = 5 * 60 * 1000;

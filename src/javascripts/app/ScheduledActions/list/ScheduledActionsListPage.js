@@ -12,7 +12,6 @@ import {
   Workbench,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-
 import Icon from 'ui/Components/Icon';
 import UnknownErrorMessage from 'components/shared/UnknownErrorMessage';
 import DocumentTitle from 'components/shared/DocumentTitle';

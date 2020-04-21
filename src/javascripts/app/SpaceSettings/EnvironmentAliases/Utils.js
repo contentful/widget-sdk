@@ -1,4 +1,5 @@
 import { createSpaceEndpoint } from 'data/EndpointFactory';
+import { window } from 'core/services/window';
 import * as SpaceAliasesRepo from 'data/CMA/SpaceAliasesRepo';
 
 export const STEPS = {

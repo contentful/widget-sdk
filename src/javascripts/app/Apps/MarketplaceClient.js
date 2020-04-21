@@ -1,6 +1,7 @@
 import { Notification as Notifier } from '@contentful/forma-36-react-components';
 import { get, omit, identity } from 'lodash';
 import resolveResponse from 'contentful-resolve-response';
+import { window } from 'core/services/window';
 import qs from 'qs';
 
 const MARKETPLACE_SPACE_CDN_TOKEN = 'XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk';

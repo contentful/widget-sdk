@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { DropdownList, DropdownListItem } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
-
 import { get } from 'lodash';
 import { shortenStorageUnit } from 'utils/NumberUtils';
 

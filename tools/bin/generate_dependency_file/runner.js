@@ -74,6 +74,8 @@ async function generate() {
   const uniqDeps = _.uniq(_.flatten(depNames));
 
   const stringifiedDeps = `
+window.global = window;
+
 window.jQuery = window.$ = require('jquery');
 
 window.libs = [

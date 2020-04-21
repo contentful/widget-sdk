@@ -4,7 +4,13 @@ import {
   isAContentSpecificPage,
   isAnEnvironmentAwarePage,
 } from './Utils';
-import { setWindowLocationProperties } from '__mocks__/global/window';
+import { window } from 'core/services/window';
+
+jest.mock('core/services/window', () => ({
+  window: {
+    location: {},
+  },
+}));
 
 jest.mock('data/EndpointFactory', () => ({
   createSpaceEndpoint: jest
@@ -36,25 +42,25 @@ describe('Utils', () => {
   });
 
   it('should check that a page is environment aware', () => {
-    setWindowLocationProperties({ pathname: '/spaces/extensions' });
+    window.location.pathname = '/spaces/extensions';
     const res = isAnEnvironmentAwarePage();
     expect(res).toBe(true);
   });
 
   it('should check that a page is not environment aware', () => {
-    setWindowLocationProperties({ pathname: '/spaces/content_types' });
+    window.location.pathname = '/spaces/content_types';
     const res = isAnEnvironmentAwarePage();
     expect(res).toBe(false);
   });
 
   it('should check that a page is content specific', () => {
-    setWindowLocationProperties({ pathname: '/spaces/content_types' });
+    window.location.pathname = '/spaces/content_types';
     const res = isAContentSpecificPage();
     expect(res).toBe(true);
   });
 
   it('should check that a page is not content specific', () => {
-    setWindowLocationProperties({ pathname: '/spaces/extensions' });
+    window.location.pathname = '/spaces/extensions';
     const res = isAContentSpecificPage();
     expect(res).toBe(false);
   });

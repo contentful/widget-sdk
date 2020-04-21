@@ -10,8 +10,8 @@ describe('Snowplow service', () => {
     this.system.set('utils/LazyLoader', this.LazyLoader);
     this.system.set('analytics/transform', this.Events);
 
-    this.system.set('utils/ngCompat/window', {
-      default: this.window,
+    this.system.set('core/services/window', {
+      window: this.window,
     });
 
     this.Snowplow = await this.system.import('analytics/snowplow');

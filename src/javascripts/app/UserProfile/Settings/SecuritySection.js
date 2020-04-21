@@ -11,7 +11,7 @@ import {
   ModalConfirm,
 } from '@contentful/forma-36-react-components';
 import { authUrl } from 'Config';
-import $window from 'utils/ngCompat/window';
+import { window } from 'core/services/window';
 import { joinWithAnd } from 'utils/StringUtils';
 import { ModalLauncher } from 'core/components/ModalLauncher';
 import { useAsyncFn } from 'core/hooks';
@@ -23,7 +23,7 @@ import { User as UserPropType } from './propTypes';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 
 const goToResendEmailPage = () => {
-  $window.location = authUrl('/confirmation/new/resend');
+  window.location = authUrl('/confirmation/new/resend');
 };
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({

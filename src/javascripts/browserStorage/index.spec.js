@@ -1,21 +1,23 @@
-import $window from 'utils/ngCompat/window';
+import { window } from 'core/services/window';
 import * as storeUtils from './utils';
 import { getStore } from './index';
 import ClientStorageWrapper from './ClientStorageWrapper';
 import ClientStorage from './ClientStorage';
 
-jest.mock('utils/ngCompat/window', () => ({
-  addEventListener: jest.fn(),
-  removeEventListener: jest.fn(),
-  localStorage: {
-    setItem: jest.fn(),
-    getItem: jest.fn(),
-    removeItem: jest.fn(),
-  },
-  sessionStorage: {
-    setItem: jest.fn(),
-    getItem: jest.fn(),
-    removeItem: jest.fn(),
+jest.mock('core/services/window', () => ({
+  window: {
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    localStorage: {
+      setItem: jest.fn(),
+      getItem: jest.fn(),
+      removeItem: jest.fn(),
+    },
+    sessionStorage: {
+      setItem: jest.fn(),
+      getItem: jest.fn(),
+      removeItem: jest.fn(),
+    },
   },
 }));
 
@@ -40,14 +42,14 @@ describe('TheStore', () => {
   });
 
   afterEach(() => {
-    $window.addEventListener.mockReset();
-    $window.removeEventListener.mockReset();
-    $window.localStorage.setItem.mockReset();
-    $window.localStorage.getItem.mockReset();
-    $window.localStorage.removeItem.mockReset();
-    $window.sessionStorage.setItem.mockReset();
-    $window.sessionStorage.getItem.mockReset();
-    $window.sessionStorage.removeItem.mockReset();
+    window.addEventListener.mockReset();
+    window.removeEventListener.mockReset();
+    window.localStorage.setItem.mockReset();
+    window.localStorage.getItem.mockReset();
+    window.localStorage.removeItem.mockReset();
+    window.sessionStorage.setItem.mockReset();
+    window.sessionStorage.getItem.mockReset();
+    window.sessionStorage.removeItem.mockReset();
   });
 
   describe('#getStore', () => {
@@ -55,7 +57,7 @@ describe('TheStore', () => {
       const local = getStore();
 
       local.set('localKey', 'localValue');
-      expect($window.localStorage.setItem).toHaveBeenCalledTimes(1);
+      expect(window.localStorage.setItem).toHaveBeenCalledTimes(1);
     });
 
     it('should return the storage based on given argument', function () {
@@ -64,11 +66,11 @@ describe('TheStore', () => {
 
       // Test localStorage
       local.set('localKey', 'localValue');
-      expect($window.localStorage.setItem).toHaveBeenCalledTimes(1);
+      expect(window.localStorage.setItem).toHaveBeenCalledTimes(1);
 
       // Test sessionStorage
       session.set('sessionKey', 'sessionValue');
-      expect($window.sessionStorage.setItem).toHaveBeenCalledTimes(1);
+      expect(window.sessionStorage.setItem).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -139,7 +141,7 @@ describe('TheStore', () => {
       it('emits value on `storage` window event after setting in localstorage', function () {
         storeUtils.set(storage, 'mykey', 'initial');
 
-        $window.addEventListener.mockImplementation((messageType, cb) => {
+        window.addEventListener.mockImplementation((messageType, cb) => {
           if (messageType === 'storage') {
             return cb({
               key: 'mykey',
@@ -187,22 +189,22 @@ describe('TheStore', () => {
 
     it('proxies its methods directly to the wrapper', function () {
       ClientStorageLocal.set();
-      expect($window.localStorage.setItem).toHaveBeenCalledTimes(1);
+      expect(window.localStorage.setItem).toHaveBeenCalledTimes(1);
 
       ClientStorageLocal.get();
-      expect($window.localStorage.getItem).toHaveBeenCalledTimes(1);
+      expect(window.localStorage.getItem).toHaveBeenCalledTimes(1);
 
       ClientStorageLocal.remove();
-      expect($window.localStorage.removeItem).toHaveBeenCalledTimes(1);
+      expect(window.localStorage.removeItem).toHaveBeenCalledTimes(1);
 
       ClientStorageSession.set();
-      expect($window.sessionStorage.setItem).toHaveBeenCalledTimes(1);
+      expect(window.sessionStorage.setItem).toHaveBeenCalledTimes(1);
 
       ClientStorageSession.get();
-      expect($window.sessionStorage.getItem).toHaveBeenCalledTimes(1);
+      expect(window.sessionStorage.getItem).toHaveBeenCalledTimes(1);
 
       ClientStorageSession.remove();
-      expect($window.sessionStorage.removeItem).toHaveBeenCalledTimes(1);
+      expect(window.sessionStorage.removeItem).toHaveBeenCalledTimes(1);
     });
   });
 });

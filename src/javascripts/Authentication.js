@@ -5,7 +5,7 @@ import { getStore } from 'browserStorage';
 import * as Config from 'Config';
 import postForm from 'data/Request/PostForm';
 import { getModule } from 'core/NgRegistry';
-import $window from 'utils/ngCompat/window';
+import { window } from 'core/services/window';
 
 /**
  * @name Authentication
@@ -208,7 +208,7 @@ function updateToken(value) {
 }
 
 function setLocation(url) {
-  $window.location = url;
+  window.location = url;
 }
 
 /**

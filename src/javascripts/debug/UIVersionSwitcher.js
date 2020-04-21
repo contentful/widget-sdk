@@ -9,7 +9,7 @@ import React from 'react';
 import { TextLink, Button } from '@contentful/forma-36-react-components';
 import { addNotification } from 'debug/DevNotifications';
 import * as locationUtils from 'utils/location';
-import window from 'utils/ngCompat/window';
+import { window } from 'core/services/window';
 import { css } from 'emotion';
 
 /**
