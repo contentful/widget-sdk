@@ -5,7 +5,7 @@ import * as TokenStore from 'services/TokenStore';
 jest.mock('browserStorage', () => ({ getStore: jest.fn() }));
 
 jest.mock('services/TokenStore', () => {
-  const Kefir = require('utils/kefir');
+  const Kefir = require('core/utils/kefir');
 
   function createMockKefirProperty(initial) {
     const { property, end, set, error } = Kefir.createPropertyBus(initial);

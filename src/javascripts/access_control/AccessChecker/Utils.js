@@ -1,5 +1,5 @@
 import * as TokenStore from 'services/TokenStore';
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import { get, isString } from 'lodash';
 import { getModule } from 'core/NgRegistry';
 

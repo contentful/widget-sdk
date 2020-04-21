@@ -1,6 +1,6 @@
 import * as OrganizationRoles from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import { get } from 'lodash';
 import createLegacyFeatureService from 'services/LegacyFeatureService';
 

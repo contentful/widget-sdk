@@ -1,6 +1,6 @@
 import { registerDirective } from 'core/NgRegistry';
 import _ from 'lodash';
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import { deepFreeze } from 'utils/Freeze';
 import * as List from 'utils/List';
 

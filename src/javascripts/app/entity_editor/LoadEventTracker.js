@@ -1,4 +1,4 @@
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import { track } from 'analytics/Analytics';
 import { isEqual, keys, once, sum, sumBy, values, findIndex } from 'lodash';
 import { getRichTextEntityLinks } from '@contentful/rich-text-links';

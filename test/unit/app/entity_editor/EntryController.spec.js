@@ -1,4 +1,4 @@
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import _ from 'lodash';
 import sinon from 'sinon';
 import createLocaleStoreMock from 'test/utils/createLocaleStoreMock';

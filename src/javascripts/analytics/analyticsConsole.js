@@ -1,6 +1,6 @@
 import { getModule } from 'core/NgRegistry';
 import _ from 'lodash';
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import moment from 'moment';
 import { validateEvent } from 'analytics/Validator';
 import * as logger from 'services/logger';

@@ -1,5 +1,5 @@
 import { noop, get } from 'lodash';
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import { createReadOnlyFieldApi, createInternalFieldApi } from './createFieldApi';
 /**
  * @typedef { import("contentful-ui-extensions-sdk").EntryAPI } EntryAPI

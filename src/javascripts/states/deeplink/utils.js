@@ -1,7 +1,7 @@
 import { getSpaces, getOrganizations, getOrganization, user$ } from 'services/TokenStore';
 import { getStore } from 'browserStorage';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
-import { getValue, onValue } from 'utils/kefir';
+import { getValue, onValue } from 'core/utils/kefir';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { create as createSpaceEnvRepo } from 'data/CMA/SpaceEnvironmentsRepo';
 import {

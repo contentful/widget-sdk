@@ -1,5 +1,5 @@
 import { registerController } from 'core/NgRegistry';
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 
 export default function register() {
   /**

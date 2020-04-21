@@ -1,5 +1,5 @@
 import mitt from 'mitt';
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import { truncate } from 'utils/StringUtils';
 import { user$ } from 'services/TokenStore';
 import * as Validator from './Validator';

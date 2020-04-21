@@ -1,5 +1,5 @@
 import { get, set, cloneDeep, noop, unset, isEqual } from 'lodash';
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import * as ResourceStateManager from 'data/document/ResourceStateManager';
 import * as Permissions from 'access_control/EntityPermissions';
 import { valuePropertyAt } from './documentHelpers';

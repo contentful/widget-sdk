@@ -17,7 +17,7 @@ import {
 } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import { getModule } from 'core/NgRegistry';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import * as accessChecker from 'access_control/AccessChecker';
 import { useAsync } from 'core/hooks';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';

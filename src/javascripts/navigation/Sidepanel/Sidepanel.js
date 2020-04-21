@@ -9,7 +9,7 @@ import * as Navigator from 'states/Navigator';
 import * as OrgRoles from 'services/OrganizationRoles';
 import * as CreateSpace from 'services/CreateSpace';
 import { get } from 'lodash';
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import * as TokenStore from 'services/TokenStore';
 import * as accessChecker from 'access_control/AccessChecker/index';
 import * as logger from 'services/logger';

@@ -1,7 +1,7 @@
 import { user$, organizations$, spacesByOrganization$ } from '../services/TokenStore';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
-import { onValue } from 'utils/kefir';
+import { onValue } from 'core/utils/kefir';
 import fclone from 'fclone';
 
 import middlewares from './middlewares';

@@ -1,6 +1,6 @@
 import { registerDirective, registerController, getModule } from 'core/NgRegistry';
 import _ from 'lodash';
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import { caseof } from 'sum-types';
 import * as Navigator from 'states/Navigator';
 import * as SlideInNavigator from 'navigation/SlideInNavigator';

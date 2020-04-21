@@ -1,6 +1,6 @@
 import { getModule } from 'core/NgRegistry';
 import _ from 'lodash';
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 
 const FOCUS_THROTTLE = 10e3;
 const PING_TIMEOUT = 60e3;

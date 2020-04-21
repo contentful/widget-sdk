@@ -10,7 +10,7 @@ import { openRoleSelector } from './RoleSelector';
 import { openInputDialog } from 'app/InputDialogComponent';
 import * as accessChecker from 'access_control/AccessChecker';
 import { htmlEncode } from 'utils/encoder';
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 
 export default function ViewFolder({ folder, state, actions }) {
   const { canEdit, roleAssignment, tracking } = state;

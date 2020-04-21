@@ -1,5 +1,5 @@
 import createExtensionBridge from './createExtensionBridge';
-import { createBus } from 'utils/kefir';
+import { createBus } from 'core/utils/kefir';
 import { LOCATION_ENTRY_FIELD } from '../WidgetLocations';
 import * as entityCreator from 'components/app_container/entityCreator';
 import * as entitySelector from 'search/EntitySelector/entitySelector';

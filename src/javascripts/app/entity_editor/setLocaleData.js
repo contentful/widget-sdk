@@ -1,4 +1,4 @@
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import { groupBy, isEmpty, keys } from 'lodash';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes';
 import DocumentStatusCode from 'data/document/statusCode';

@@ -1,7 +1,7 @@
 import { get, flatten, uniqBy } from 'lodash';
 import { track } from 'analytics/Analytics';
 import { stateName } from 'data/CMA/EntityState';
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import { getModule } from 'core/NgRegistry';
 
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';

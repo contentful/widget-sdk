@@ -1,8 +1,8 @@
 import { identity, set } from 'lodash';
-import { onValueWhile, onValueScope } from 'utils/kefir';
+import { onValueWhile, onValueScope } from 'core/utils/kefir';
 import { createFieldApi } from './createFieldApi';
 
-jest.mock('utils/kefir', () => ({
+jest.mock('core/utils/kefir', () => ({
   onValueWhile: jest.fn().mockImplementation((_lifeline, stream, onChange) => {
     return onChange(stream);
   }),

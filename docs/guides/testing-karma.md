@@ -56,7 +56,7 @@ from test files as long all their dependencies are either ES6 modules. For examp
 
 import * as KM from 'test/helpers/mocks/kefir';
 // from src/javscripts/utils.kefir.es6.js
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 ~~~
 
 If you don't use an Angular context in your tests, it's not possible to import

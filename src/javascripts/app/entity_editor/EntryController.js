@@ -1,4 +1,4 @@
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import { truncate } from 'utils/StringUtils';
 import { constant, keys } from 'lodash';
 import mitt from 'mitt';

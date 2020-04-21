@@ -14,7 +14,7 @@
  */
 
 import { isEmpty, assign, get as getAtPath, isEqual } from 'lodash';
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import * as Path from 'utils/Path';
 import * as Schema from '@contentful/validation';
 import errorMessageBuilder from 'services/errorMessageBuilder/errorMessageBuilder';

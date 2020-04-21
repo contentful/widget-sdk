@@ -1,5 +1,5 @@
 import { noop } from 'lodash';
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import { getVariation } from 'LaunchDarkly';
 import { ENTITY_EDITOR_CMA_EXPERIMENT } from 'featureFlags';
 import { localFieldChanges } from './Document';

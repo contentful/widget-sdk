@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import TheLocaleStore from 'services/localeStore';
 import { valuePropertyAt } from './Document';
 

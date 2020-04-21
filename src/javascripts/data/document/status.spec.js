@@ -1,7 +1,7 @@
 import { Error as DocError } from './Error';
 import DocumentStatusCode from './statusCode';
 import { create } from './status';
-import * as Kefir from 'utils/kefir';
+import * as Kefir from 'core/utils/kefir';
 import * as K from '../../../../test/utils/kefir';
 
 jest.mock('services/logger', () => ({

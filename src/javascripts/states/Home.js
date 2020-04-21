@@ -3,7 +3,7 @@ import makeState from 'states/Base';
 import { getStore } from 'browserStorage';
 import { go } from 'states/Navigator';
 import { getSpaces, user$ } from 'services/TokenStore';
-import { getValue } from 'utils/kefir';
+import { getValue } from 'core/utils/kefir';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
 const store = getStore();
 

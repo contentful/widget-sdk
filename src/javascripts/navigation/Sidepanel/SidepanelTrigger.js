@@ -8,7 +8,7 @@ import * as accessChecker from 'access_control/AccessChecker';
 import * as TokenStore from 'services/TokenStore';
 
 import Logo from 'svg/logo-label.svg';
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import Hamburger from 'svg/hamburger.svg';
 import { navState$, NavStates } from 'navigation/NavState';
 

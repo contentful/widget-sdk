@@ -1,4 +1,4 @@
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import * as PathUtils from 'utils/Path';
 import get from 'lodash/get';
 import TheLocaleStore from 'services/localeStore';

@@ -1,7 +1,7 @@
 import { registerDirective } from 'core/NgRegistry';
 import _ from 'lodash';
 import defer from 'lodash/defer';
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 
 export default function register() {
   /**

@@ -1,4 +1,4 @@
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import * as StringFieldSetter from './StringFieldSetter';
 import * as RichTextFieldSetter from './RichTextFieldSetter';
 import * as ShareJS from 'data/sharejs/utils';

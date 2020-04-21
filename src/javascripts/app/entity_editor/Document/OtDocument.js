@@ -1,5 +1,5 @@
 import { get, cloneDeep, isEqual, memoize } from 'lodash';
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import { deepFreeze } from 'utils/Freeze';
 import * as PathUtils from 'utils/Path';
 import { caseof } from 'sum-types';

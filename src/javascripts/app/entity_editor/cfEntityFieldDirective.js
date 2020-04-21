@@ -2,7 +2,7 @@ import React from 'react';
 import { Icon, Tooltip } from '@contentful/forma-36-react-components';
 import { registerDirective } from 'core/NgRegistry';
 import _ from 'lodash';
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import { css } from 'emotion';
 
 import * as localesUtils from 'utils/locales';

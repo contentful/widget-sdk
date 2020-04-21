@@ -1,7 +1,7 @@
 import { registerFactory } from 'core/NgRegistry';
 import _ from 'lodash';
 import { create as createViewMigrator } from 'saved-views-migrator';
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import { deepFreeze, deepFreezeClone } from 'utils/Freeze';
 import { purgeContentPreviewCache } from 'features/content-preview';
 import { purgeApiKeyRepoCache } from 'app/settings/api/services/ApiKeyRepoInstance';

@@ -1,4 +1,4 @@
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import DocumentStatusCode from 'data/document/statusCode';
 import * as logger from 'services/logger';
 import { Error as DocError } from './Error';

@@ -1,7 +1,7 @@
 import { track } from 'analytics/Analytics';
 import * as Telemetry from 'i13n/Telemetry';
 import { noop, cloneDeep, find, mapValues } from 'lodash';
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import { deepFreeze } from 'utils/Freeze';
 import { getModule } from 'core/NgRegistry';
 import { createLoadEventTracker } from 'app/entity_editor/LoadEventTracker';

@@ -1,6 +1,6 @@
 import { makeSum } from 'sum-types';
 import { startsWith } from 'lodash';
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import { getOrganization } from 'services/TokenStore';
 import { getStore } from 'browserStorage';
 const store = getStore();

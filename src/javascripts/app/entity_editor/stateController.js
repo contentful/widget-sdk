@@ -1,7 +1,7 @@
 import { registerController } from 'core/NgRegistry';
 import React from 'react';
 import _ from 'lodash';
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import { caseofEq as caseof, otherwise } from 'sum-types';
 import { State, Action } from 'data/CMA/EntityState';
 import { Notification } from 'app/entity_editor/Notifications';

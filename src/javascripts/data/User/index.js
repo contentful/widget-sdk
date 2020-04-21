@@ -2,7 +2,7 @@ import moment from 'moment';
 import { isEqual, find, get } from 'lodash';
 import { organizations$, user$, spacesByOrganization$ } from 'services/TokenStore';
 
-import { combine, onValue, getValue, createPropertyBus } from 'utils/kefir';
+import { combine, onValue, getValue, createPropertyBus } from 'core/utils/kefir';
 import { getModule } from 'core/NgRegistry';
 
 /**

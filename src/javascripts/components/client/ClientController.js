@@ -1,5 +1,5 @@
 import { registerController, appReady } from 'core/NgRegistry';
-import { onValueScope } from 'utils/kefir';
+import { onValueScope } from 'core/utils/kefir';
 import { pick, isObject } from 'lodash';
 
 // Do not add imports here, or else it may affect Karma tests. You need to import

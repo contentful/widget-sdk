@@ -1,5 +1,5 @@
 import { mapValues, memoize } from 'lodash';
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import { makeMatcher } from 'utils/TaggedValues';
 
 /**

@@ -1,7 +1,7 @@
 import { registerController } from 'core/NgRegistry';
 import _ from 'lodash';
 import * as Kefir from 'kefir';
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import { Operator } from 'app/ContentList/Search/Operators';
 import Paginator from 'classes/Paginator';
 import * as EntityHelpers from 'app/entity_editor/entityHelpers';

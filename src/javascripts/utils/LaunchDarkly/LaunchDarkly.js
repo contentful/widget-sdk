@@ -2,7 +2,7 @@ import * as LDClient from 'ldclient-js';
 
 import { launchDarkly as config } from 'Config';
 import { assign, get, isNull, omitBy } from 'lodash';
-import { onValueScope, createPropertyBus } from 'utils/kefir';
+import { onValueScope, createPropertyBus } from 'core/utils/kefir';
 import getChangesObject from 'utils/ShallowObjectDiff';
 import { isFlagOverridden, getFlagOverride } from 'debug/EnforceFlags';
 import { createMVar } from 'utils/Concurrent';

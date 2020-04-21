@@ -1,7 +1,7 @@
 import { cloneDeep, set } from 'lodash';
 import jestKefir from 'jest-kefir';
 import * as K from '../../../../../test/utils/kefir';
-import * as Kefir from 'utils/kefir';
+import * as Kefir from 'core/utils/kefir';
 import * as Permissions from 'access_control/EntityPermissions';
 
 const kefirHelpers = jestKefir(Kefir);

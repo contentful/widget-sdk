@@ -2,7 +2,7 @@ import { constant } from 'lodash';
 import angular from 'angular';
 import ShareJS from '@contentful/sharejs/lib/client';
 import { caseof, caseofEq } from 'sum-types';
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import * as DocLoader from 'data/sharejs/DocLoader';
 import { getModule } from 'core/NgRegistry';
 

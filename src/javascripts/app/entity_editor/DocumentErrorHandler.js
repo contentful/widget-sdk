@@ -1,4 +1,4 @@
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import { caseof } from 'sum-types';
 import ReloadNotification from 'app/common/ReloadNotification';
 import { Error } from 'data/document/Error';

@@ -1,6 +1,6 @@
 import { registerController } from 'core/NgRegistry';
 import _ from 'lodash';
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import * as Kefir from 'kefir';
 import React from 'react';
 import Paginator from 'classes/Paginator';

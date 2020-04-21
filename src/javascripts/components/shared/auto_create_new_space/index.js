@@ -1,5 +1,5 @@
 import { getStore } from 'browserStorage';
-import { combine, getValue } from 'utils/kefir';
+import { combine, getValue } from 'core/utils/kefir';
 import { getCurrentVariation } from 'utils/LaunchDarkly';
 import { user$, spacesByOrganization$ as spacesByOrg$ } from 'services/TokenStore';
 import createSampleSpace from './CreateSampleSpace';

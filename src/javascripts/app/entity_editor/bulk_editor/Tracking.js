@@ -1,6 +1,6 @@
 import { partial, size, noop } from 'lodash';
 import * as Analytics from 'analytics/Analytics';
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import { stateName, State } from 'data/CMA/EntityState';
 
 export function create(parentEntryId, links$) {

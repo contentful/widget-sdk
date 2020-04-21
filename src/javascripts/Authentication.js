@@ -1,5 +1,5 @@
 import { get } from 'lodash';
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import { createMVar, createExclusiveTask } from 'utils/Concurrent';
 import { getStore } from 'browserStorage';
 import * as Config from 'Config';

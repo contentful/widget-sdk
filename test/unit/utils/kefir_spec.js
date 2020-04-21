@@ -1,9 +1,9 @@
 import sinon from 'sinon';
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import * as KMock from 'test/utils/kefir';
 import { $initialize, $inject, $apply } from 'test/utils/ng';
 
-describe('utils/kefir', () => {
+describe('core/utils/kefir', () => {
   beforeEach(async function () {
     await $initialize(this.system);
     this.scope = $inject('$rootScope').$new();

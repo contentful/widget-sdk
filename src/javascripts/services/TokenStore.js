@@ -5,7 +5,7 @@
  * @description
  * This service is responsible for exposing data included in the user's token
  */
-import * as K from 'utils/kefir';
+import * as K from 'core/utils/kefir';
 import { createMVar } from 'utils/Concurrent';
 import * as auth from 'Authentication';
 import makeFetchWithAuth from 'data/CMA/TokenInfo';
