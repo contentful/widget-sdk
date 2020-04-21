@@ -228,32 +228,34 @@ export default function DisplayField({ entity, field, entryCache, assetCache }) 
         </div>
       );
       break;
-    case 'Array':
+    case 'Array': {
+      const isEntries = isEntryArray(entity, field);
+      const isAssets = isAssetArray(entity, field);
       result = (
         <ul
           className={cn(styles.textOverflow, {
-            'linked-entries': isEntryArray(entity, field),
-            'linked-assets': isAssetArray(entity, field),
+            'linked-entries': isEntries,
+            'linked-assets': isAssets,
           })}>
-          {!isEntryArray(entity, field) && !isAssetArray(entity, field) ? (
+          {!isEntries && !isAssets ? (
             <li>
               <span className={styles.textOverflow}>
                 {JSON.stringify(dataForField(entity, field))}
               </span>
             </li>
           ) : (
-            dataForArray(entity, field, entryCache, assetCache).map((entity, index) => {
-              if (isEntryArray(entity, field)) {
+            dataForArray(entity, field, entryCache, assetCache).map((item, index) => {
+              if (isEntries) {
                 return (
                   <li key={index}>
-                    <span className={styles.textOverflow}>{entity}</span>
+                    <span className={styles.textOverflow}>{item}</span>
                   </li>
                 );
-              } else if (isAssetArray(entity, field)) {
+              } else if (isAssets && typeof item !== 'string') {
                 return (
                   <li key={index}>
                     <div className="file-preview">
-                      <Thumbnail file={entity} size="30" fit="thumb" focus="faces" />
+                      <Thumbnail file={item} size="30" fit="thumb" focus="faces" />
                     </div>
                   </li>
                 );
@@ -263,7 +265,7 @@ export default function DisplayField({ entity, field, entryCache, assetCache }) 
         </ul>
       );
       break;
-
+    }
     default:
       result = <span className={styles.textOverflow}>{toString(entity, field)}</span>;
       break;
