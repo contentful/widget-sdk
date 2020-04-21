@@ -1,10 +1,9 @@
 import { fetchAll, fetchAllWithIncludes } from 'data/CMA/FetchAll';
 import { uniq, identity, chunk, flatten } from 'lodash';
-import { ORG_USER_MANAGEMENT_API, PENDING_ORG_MEMBERSHIP, getAlphaHeader } from 'alphaHeaders.js';
+import { PENDING_ORG_MEMBERSHIP, getAlphaHeader } from 'alphaHeaders.js';
 
 const BATCH_LIMIT = 100;
 const USER_IDS_BATCH_LIMIT = 44;
-const USER_MANAGEMENT_ALPHA_HEADER = getAlphaHeader(ORG_USER_MANAGEMENT_API);
 const INVITATION_ALPHA_HEADER = getAlphaHeader(PENDING_ORG_MEMBERSHIP);
 
 /**
@@ -12,54 +11,33 @@ const INVITATION_ALPHA_HEADER = getAlphaHeader(PENDING_ORG_MEMBERSHIP);
  * @param {endpoint} endpoint organization endpoint
  */
 export function getAllMemberships(endpoint, params) {
-  return fetchAll(
-    endpoint,
-    ['organization_memberships'],
-    BATCH_LIMIT,
-    params,
-    USER_MANAGEMENT_ALPHA_HEADER
-  );
+  return fetchAll(endpoint, ['organization_memberships'], BATCH_LIMIT, params);
 }
 
 export function getAllMembershipsWithQuery(endpoint, query) {
-  return fetchAllWithIncludes(
-    endpoint,
-    ['organization_memberships'],
-    BATCH_LIMIT,
-    query,
-    USER_MANAGEMENT_ALPHA_HEADER
-  );
+  return fetchAllWithIncludes(endpoint, ['organization_memberships'], BATCH_LIMIT, query);
 }
 
 export function getMemberships(endpoint, query) {
-  return endpoint(
-    {
-      method: 'GET',
-      path: ['organization_memberships'],
-      query,
-    },
-    USER_MANAGEMENT_ALPHA_HEADER
-  );
+  return endpoint({
+    method: 'GET',
+    path: ['organization_memberships'],
+    query,
+  });
 }
 
 export function getMembership(endpoint, membershipId) {
-  return endpoint(
-    {
-      method: 'GET',
-      path: ['organization_memberships', membershipId],
-    },
-    USER_MANAGEMENT_ALPHA_HEADER
-  );
+  return endpoint({
+    method: 'GET',
+    path: ['organization_memberships', membershipId],
+  });
 }
 
 export function removeMembership(endpoint, membershipId) {
-  return endpoint(
-    {
-      method: 'DELETE',
-      path: ['organization_memberships', membershipId],
-    },
-    USER_MANAGEMENT_ALPHA_HEADER
-  );
+  return endpoint({
+    method: 'DELETE',
+    path: ['organization_memberships', membershipId],
+  });
 }
 
 // TODO: This should be in its own repository, because this deals with invitations and
@@ -85,13 +63,10 @@ export function getUsers(endpoint, query) {
 }
 
 export function getUser(endpoint, userId) {
-  return endpoint(
-    {
-      method: 'GET',
-      path: ['users', userId],
-    },
-    USER_MANAGEMENT_ALPHA_HEADER
-  );
+  return endpoint({
+    method: 'GET',
+    path: ['users', userId],
+  });
 }
 
 export function getAllUsers(endpoint, params) {
@@ -185,36 +160,24 @@ export function createOrgMembership(endpoint, { role, email, suppressInvitation 
 }
 
 export function updateMembership(endpoint, { id, role, version }) {
-  return endpoint(
-    {
-      method: 'PUT',
-      data: {
-        role,
-      },
-      version,
-      path: ['organization_memberships', id],
+  return endpoint({
+    method: 'PUT',
+    data: {
+      role,
     },
-    USER_MANAGEMENT_ALPHA_HEADER
-  );
+    version,
+    path: ['organization_memberships', id],
+  });
 }
 
 export function getSpaceMemberships(endpoint, query) {
-  return endpoint(
-    {
-      method: 'GET',
-      query,
-      path: ['space_memberships'],
-    },
-    USER_MANAGEMENT_ALPHA_HEADER
-  );
+  return endpoint({
+    method: 'GET',
+    query,
+    path: ['space_memberships'],
+  });
 }
 
 export function getAllSpaceMemberships(endpoint, query) {
-  return fetchAllWithIncludes(
-    endpoint,
-    ['space_memberships'],
-    BATCH_LIMIT,
-    query,
-    USER_MANAGEMENT_ALPHA_HEADER
-  );
+  return fetchAllWithIncludes(endpoint, ['space_memberships'], BATCH_LIMIT, query);
 }

@@ -1,7 +1,6 @@
 export const USER_UI_CONFIG = 'user_ui_config'; // Nov 10, 2017
 export const SUBSCRIPTIONS_API = 'subscriptions-api'; // Dec 14, 2017
 export const USAGE_INSIGHTS = 'usage-insights'; // Sep 11, 2018
-export const ORG_USER_MANAGEMENT_API = 'organization-user-management-api'; // Sep 12, 2018
 export const TEAMS_API = 'teams-api'; // Dec 05, 2018
 export const STATE_PERSISTENCE = 'state-persistence'; // Feb 05, 2019
 export const COMMENTS_API = 'comments-api'; // Apr 30, 2019
