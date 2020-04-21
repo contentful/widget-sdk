@@ -17,6 +17,7 @@ export const ENVIRONMENT_ALIASING = 'environment_aliasing';
 export const CONTENT_WORKFLOW_TASKS = 'tasks';
 export const SCHEDULED_PUBLISHING = 'scheduled_publishing';
 export const NEW_SINGLE_REFERENCE_FIELD = 'feature-ext-03-2020-open-source-single-reference';
+export const NEW_MULTIPLE_REFERENCE_FIELD = 'feature-ext-04-2020-open-source-multiple-reference';
 export const PC_CONTENT_TAGS = 'content_tags';
 
 // Team Pulitzer Releases Flags

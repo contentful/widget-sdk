@@ -33,6 +33,7 @@ const styles = {
 
 const EntryEditorWorkbench = ({
   localeData,
+  loadEvents,
   title,
   fields,
   entityInfo,
@@ -108,6 +109,7 @@ const EntryEditorWorkbench = ({
                   editorContext,
                   localeData,
                   fields,
+                  loadEvents,
                   editorData: getEditorData(),
                   otDoc,
                   entityInfo,
@@ -157,6 +159,7 @@ EntryEditorWorkbench.propTypes = {
   entityInfo: PropTypes.shape({
     id: PropTypes.string,
   }),
+  loadEvents: PropTypes.func,
 };
 
 export default EntryEditorWorkbench;

@@ -43,7 +43,9 @@ export function createReadOnlyFieldApi({ field, locale, getValue = noop }) {
     type: field.type,
     required: !!field.required,
     validations: field.validations || [],
-    items: field.items || [],
+    items: field.items || {
+      validations: [],
+    },
     getValue,
     setValue: noop,
     removeValue: noop,

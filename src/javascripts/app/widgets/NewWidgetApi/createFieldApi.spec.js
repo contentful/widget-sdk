@@ -47,29 +47,31 @@ describe('widgets/NewWidgetApi/createFieldApi', () => {
 
   it('should return FieldAPI compatible object', () => {
     expect(createFieldApi({ $scope: createScopeMock() })).toMatchInlineSnapshot(`
-                  Object {
-                    "getValue": [Function],
-                    "id": "title",
-                    "items": Array [],
-                    "locale": "en-US",
-                    "onIsDisabledChanged": [Function],
-                    "onSchemaErrorsChanged": [Function],
-                    "onValueChanged": [Function],
-                    "removeValue": [Function],
-                    "required": false,
-                    "setInvalid": [Function],
-                    "setValue": [Function],
-                    "type": "Symbol",
-                    "validations": Array [
-                      Object {
-                        "size": Object {
-                          "max": 123,
-                          "min": 0,
-                        },
-                      },
-                    ],
-                  }
-            `);
+      Object {
+        "getValue": [Function],
+        "id": "title",
+        "items": Object {
+          "validations": Array [],
+        },
+        "locale": "en-US",
+        "onIsDisabledChanged": [Function],
+        "onSchemaErrorsChanged": [Function],
+        "onValueChanged": [Function],
+        "removeValue": [Function],
+        "required": false,
+        "setInvalid": [Function],
+        "setValue": [Function],
+        "type": "Symbol",
+        "validations": Array [
+          Object {
+            "size": Object {
+              "max": 123,
+              "min": 0,
+            },
+          },
+        ],
+      }
+    `);
   });
 
   describe('#getValue', () => {

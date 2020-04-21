@@ -23,18 +23,24 @@ export default function (widgetAPI) {
 
   const rtWidgetAPI = {
     ...widgetAPI,
-    // TODO: Get rid of this ugly hack we're using for checking whether or not we need
-    //  to update fetched entity card info.
-    permissions: {
-      canAccessAssets,
-      canCreateAssets: canCreateAsset(),
-      canCreateEntryOfContentType: contentTypes.reduce(
-        (acc, contentType) => ({
-          ...acc,
-          [contentType.sys.id]: canPerformActionOnEntryOfType(Action.CREATE, contentType),
-        }),
-        {}
-      ),
+    parameters: {
+      ...widgetAPI.parameters,
+      instance: {
+        ...widgetAPI.parameters.instance,
+        permissions: {
+          canAccessAssets,
+          canCreateAssets: canCreateAsset(),
+          // TODO: Get rid of this ugly hack we're using for checking whether or not we need
+          //  to update fetched entity card info.
+          canCreateEntryOfContentType: (contentTypeId) => {
+            const contentType = contentTypes.find((ct) => ct.sys.id === contentTypeId);
+            if (!contentType) {
+              return false;
+            }
+            return canPerformActionOnEntryOfType(Action.CREATE, contentType);
+          },
+        },
+      },
     },
     dialogs: {
       ...widgetAPI.dialogs,
