@@ -4,9 +4,11 @@ import stringifySafe from 'json-stringify-safe';
 import { prepareUserData } from 'analytics/UserData';
 import _ from 'lodash';
 import segment from 'analytics/segment';
-import { transformEvent, eventExists } from 'analytics/transform';
+import { eventExists, transformEvent } from 'analytics/transform';
 import * as logger from 'services/logger';
 import * as analyticsConsole from 'analytics/analyticsConsole';
+import * as random from '../utils/Random';
+import { clearSequenceContext, initSequenceContext } from './sequenceContext';
 
 function removeCircularRefs(obj) {
   return JSON.parse(stringifySafe(obj));
@@ -94,16 +96,14 @@ export function getSessionData(path, defaultValue) {
  * Sends tracking event (with optionally provided data) to Segment and Snowplow
  * if it is on the valid events list.
  */
+
 export function track(event, data) {
   if (!isEnabled) {
     return;
   }
 
   if (!eventExists(event)) {
-    track('tracking:invalid_event', {
-      event,
-    });
-
+    track('tracking:invalid_event', { event });
     return;
   }
 
@@ -217,6 +217,7 @@ function identify(extension) {
  * `null` must be explicitly passed to unset the current
  * space/org contexts.
  */
+
 export function trackContextChange(space, organization) {
   if (space) {
     session.space = removeCircularRefs(space);
@@ -260,6 +261,13 @@ export function trackStateChange(state, params, from, fromParams) {
   }));
 
   sendSessionDataToConsole();
+
+  if (state.name === 'spaces.detail.entries.list') {
+    initSequenceContext({ sequence_key: random.id() });
+  } else {
+    clearSequenceContext();
+  }
+
   track('global:state_changed', data);
   segment.page(state.name, params);
 }

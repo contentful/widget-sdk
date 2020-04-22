@@ -1,9 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import * as Navigator from 'states/Navigator';
+import { track } from 'analytics/Analytics';
 
-const StateLink = ({ path, params, options, children, onClick, component, ...rest }) => {
+const StateLink = ({
+  path,
+  params,
+  options,
+  children,
+  onClick,
+  component,
+  trackingEvent,
+  trackParams,
+  ...rest
+}) => {
+  const trackClick = () => {
+    if (trackingEvent && trackParams) {
+      track(trackingEvent, trackParams);
+    }
+  };
+
   const onClickHandler = (e) => {
+    trackClick();
+
     if (!e) {
       Navigator.go({ path, params, options });
       return;
@@ -44,6 +63,8 @@ StateLink.propTypes = {
   children: PropTypes.any,
   onClick: PropTypes.func,
   component: PropTypes.any,
+  trackingEvent: PropTypes.string,
+  trackParams: PropTypes.object,
 };
 
 export default StateLink;

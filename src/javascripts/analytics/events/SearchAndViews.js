@@ -1,11 +1,17 @@
 import { extend } from 'lodash';
 import { track as analyticsTrack } from 'analytics/Analytics';
+import { addToSequenceContext } from '../sequenceContext';
 
 const PREFIX = 'search:';
 const track = (e, data) => analyticsTrack(PREFIX + e, data);
 const isStoredView = (v) => v && v.id;
 
 export function searchPerformed(view, resultCount = 0) {
+  addToSequenceContext({
+    result_count: resultCount,
+    search_filters: view.searchFilters && view.searchFilters.map((filter) => filter[0]),
+    search_query: view.searchText,
+  });
   track('search_performed', extend(query(view), { result_count: resultCount }));
 }
 
@@ -71,9 +77,10 @@ function details({ title, roles }) {
   };
 }
 
-function query({ searchText = null, contentTypeId = null }) {
+function query({ searchText = null, contentTypeId = null, searchFilters = [] }) {
   return {
     content_type_id: contentTypeId,
     search_query: searchText, // We keep this for compatibility with schemas for now.
+    search_filters: searchFilters.map((filter) => filter[0]),
   };
 }

@@ -320,12 +320,17 @@ const EntityList = ({
               </TableRow>
             );
           })}
-        {entities.map((entity) => {
+        {entities.map((entity, index) => {
           const entityId = entity.getId();
           const type = entity.getType().toLowerCase();
           const entityIsSelected = isSelected(entity);
           return (
-            <StateLink path="^.detail" params={{ [`${type}Id`]: entityId }} key={entityId}>
+            <StateLink
+              path="^.detail"
+              params={{ [`${type}Id`]: entityId }}
+              trackingEvent={entityType === 'entry' ? 'search:entry_clicked' : null}
+              trackParams={{ index }}
+              key={entityId}>
               {({ onClick, getHref }) => {
                 const href = getHref();
                 return (

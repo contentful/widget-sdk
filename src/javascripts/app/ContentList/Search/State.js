@@ -11,6 +11,8 @@ import {
   buildFilterFieldByQueryKey,
 } from './Filters';
 
+import { track } from 'analytics/Analytics';
+
 const CONTENT_TYPE_ALL = '';
 
 const defaultFocus = {
@@ -152,6 +154,7 @@ export function makeReducer(dispatch, submitSearch) {
     [SetFilterOperator]: setFilterOperator,
     [SetFilterValueInput]: setFilterValueInput,
     [UnsetTyping](state) {
+      track('search:query_changed', { search_query: state.input });
       state = set(state, ['isTyping'], false);
       state = triggerSearch(state);
       return state;
@@ -265,6 +268,7 @@ export function makeReducer(dispatch, submitSearch) {
 
     return set(state, ['focus', 'isValueFocused'], true);
   }
+
   function setFocusOnLast(state) {
     const lastIndex = state.filters.length - 1;
     return setFocusOnPill(state, lastIndex);

@@ -37,6 +37,7 @@ import DialogTransformer from './transformers/Dialog';
 import JobsCreateTransformer from './transformers/JobsCreate';
 import JobsCancelTransformer from './transformers/JobsCancel';
 import EnvironmentAliases from './transformers/EnvironmentAliases';
+import { withSequenceContext } from './sequenceContext';
 
 /**
  * @ngdoc module
@@ -202,12 +203,20 @@ registerEvent('personal_access_token:action', 'personal_access_token', (_, data)
   };
 });
 
-registerEvent('search:search_performed', 'search_perform', SearchAndViews);
+const SearchAndViewsWithSequence = (event, data) =>
+  SearchAndViews(event, withSequenceContext(data));
+
+registerEvent('search:search_performed', 'search_perform', SearchAndViewsWithSequence);
 registerEvent('search:view_created', 'view_create', SearchAndViews);
 registerEvent('search:view_edited', 'view_edit', SearchAndViews);
 registerEvent('search:view_deleted', 'view_delete', SearchAndViews);
-registerEvent('search:view_loaded', 'view_load', SearchAndViews);
+registerEvent('search:view_loaded', 'view_load', SearchAndViewsWithSequence);
 registerEvent('search:search_terms_migrated', 'ui_config_migrate', SearchAndViews);
+
+registerEvent('search:entry_clicked', 'ui_click', SearchAndViewsWithSequence);
+registerEvent('search:filter_added', 'ui_click', SearchAndViewsWithSequence);
+registerEvent('search:filter_removed', 'ui_click', SearchAndViewsWithSequence);
+registerEvent('search:query_changed', 'ui_click', SearchAndViewsWithSequence);
 
 registerEvent('entry_editor:view', 'entry_view', EntryViewTransform);
 

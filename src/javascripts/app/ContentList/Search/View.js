@@ -15,6 +15,10 @@ import FilterPill from './FilterPill';
 import SuggestionsBox from './SuggestionsBox';
 import QueryInput from './Components/QueryInput';
 
+import { track as analyticsTrack } from 'analytics/Analytics';
+
+const track = (e, data) => analyticsTrack('search:' + e, data);
+
 function PillsList({
   filters,
   defaultFocus,
@@ -34,9 +38,15 @@ function PillsList({
           testId: filter.queryKey,
           isFocused: defaultFocus.index === index && !defaultFocus.isValueFocused,
           isValueFocused: defaultFocus.index === index && defaultFocus.isValueFocused,
-          onChange: (value) => onChange({ index, value }),
+          onChange: (value) => {
+            track('filter_added', { filter: filter.name });
+            onChange({ index, value });
+          },
           onOperatorChange: (value) => onOperatorChange({ index, value }),
-          onRemove: () => onRemove({ index }),
+          onRemove: () => {
+            track('filter_removed', { filter: filter.name });
+            onRemove({ index });
+          },
           onRemoveAttempt: () => onRemoveAttempt({ index }),
         }}
       />
