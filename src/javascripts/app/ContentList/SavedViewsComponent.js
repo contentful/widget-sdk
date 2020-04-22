@@ -10,7 +10,7 @@ import { makeBlankFolder } from 'data/UiConfig/Blanks';
 
 import { openRoleSelector } from './RoleSelector';
 
-import { getStore } from 'browserStorage';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { Notification } from '@contentful/forma-36-react-components';
 import * as random from 'utils/Random';
 
@@ -26,7 +26,7 @@ const SaveCurrentView = makeCtor('SaveCurrentView');
 const UpdateView = makeCtor('UpdateView');
 const DeleteView = makeCtor('DeleteView');
 
-const folderStatesStore = getStore().forKey('folderStates');
+const folderStatesStore = getBrowserStorage().forKey('folderStates');
 
 export default function ({ scopedFolders, loadView, getCurrentView, roleAssignment, tracking }) {
   const reduce = makeReducer({

@@ -23,7 +23,7 @@ describe('activationEmailResender', () => {
         data: 'user%5Bemail%5D=user%40example.com',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         method: 'POST',
-        url: 'https://be.contentful.comconfirmation',
+        url: 'https://be.contentful.com/confirmation',
       });
     });
   });

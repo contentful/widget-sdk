@@ -4,11 +4,11 @@ import {
   track,
   getStoragePrefix,
 } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
-import { getStore } from 'browserStorage';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { updateUserInSegment } from 'analytics/Analytics';
 import { getModule } from 'core/NgRegistry';
 
-const store = getStore();
+const store = getBrowserStorage();
 
 export default class WithLink extends React.Component {
   static propTypes = {

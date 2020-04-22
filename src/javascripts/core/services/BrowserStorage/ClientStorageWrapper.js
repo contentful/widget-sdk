@@ -1,6 +1,6 @@
 import { window } from 'core/services/window';
 
-export default function createClientStorageWrapper(storageType) {
+export function createClientStorageWrapper(storageType) {
   const wrapper = {};
   const methods = ['setItem', 'getItem', 'removeItem'];
   let storage;

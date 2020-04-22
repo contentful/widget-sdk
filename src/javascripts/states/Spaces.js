@@ -1,4 +1,4 @@
-import { getStore } from 'browserStorage';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { getFirstAccessibleSref } from 'access_control/SectionAccess';
 import * as Analytics from 'analytics/Analytics';
 import * as accessChecker from 'access_control/AccessChecker';
@@ -23,7 +23,7 @@ import createSpaceAdviceTemplate from 'components/app_container/cf_create_space_
 import SpaceHibernationAdvice from 'components/app_container/SpaceHibernationAdvice';
 import noSectionAvailableTemplate from 'components/app_container/cf_no_section_available.html';
 
-const store = getStore();
+const store = getBrowserStorage();
 
 const newSpace = {
   name: 'new',

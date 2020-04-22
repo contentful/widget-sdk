@@ -4,7 +4,7 @@ import isAnalyticsAllowed from 'analytics/isAnalyticsAllowed';
 import * as Analytics from 'analytics/Analytics';
 import * as Intercom from 'services/intercom';
 import * as Segment from 'analytics/segment';
-import { getStore } from 'browserStorage';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { Notification } from '@contentful/forma-36-react-components';
 import { updateUserData } from 'app/UserProfile/Settings/AccountRepository';
 import { getUserSync } from 'services/TokenStore';
@@ -55,7 +55,7 @@ jest.mock('utils/LazyLoader', () => {
   };
 });
 
-jest.mock('browserStorage', () => {
+jest.mock('core/services/BrowserStorage', () => {
   const store = {
     get: jest.fn(),
     set: jest.fn(),
@@ -63,7 +63,7 @@ jest.mock('browserStorage', () => {
   };
 
   return {
-    getStore: jest.fn().mockReturnValue(store),
+    getBrowserStorage: jest.fn().mockReturnValue(store),
   };
 });
 
@@ -274,7 +274,7 @@ describe('OsanoService', () => {
     it('does not save any consent if the user has not consented yet', async () => {
       const { cm } = await get();
       cm.storage.getExpDate.mockReturnValue(0);
-      const store = getStore();
+      const store = getBrowserStorage();
 
       await service.init();
 
@@ -396,7 +396,7 @@ describe('OsanoService', () => {
     });
 
     it('should call storage.setConsent if there is an item in localStorage', async () => {
-      const store = getStore();
+      const store = getBrowserStorage();
       store.get.mockReturnValue({ hello: 'world' });
 
       const { cm } = await get();
@@ -416,7 +416,7 @@ describe('OsanoService', () => {
     });
 
     it('should call teardown if __disable_consentmanager is in localStorage', async () => {
-      const store = getStore();
+      const store = getBrowserStorage();
       store.has.mockReturnValue(true);
 
       const { cm } = await get();

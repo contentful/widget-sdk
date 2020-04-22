@@ -1,4 +1,4 @@
-import { getStore } from 'browserStorage';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { user$ } from 'services/TokenStore';
 
 import { create as createToken } from 'app/settings/api/cma-tokens/TokenResourceManager';
@@ -10,7 +10,7 @@ import { getApiKeyRepo } from 'app/settings/api/services/ApiKeyRepoInstance';
 import * as Analytics from 'analytics/Analytics';
 import { getCurrentStateName } from 'states/Navigator';
 
-const store = getStore();
+const store = getBrowserStorage();
 
 export const MODERN_STACK_ONBOARDING_SPACE_NAME = 'Gatsby Starter for Contentful';
 export const MODERN_STACK_ONBOARDING_FEATURE_FLAG = 'feature-dl-05-2018-modern-stack-onboarding';

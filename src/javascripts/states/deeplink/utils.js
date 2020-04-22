@@ -1,5 +1,5 @@
 import { getSpaces, getOrganizations, getOrganization, user$ } from 'services/TokenStore';
-import { getStore } from 'browserStorage';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getValue, onValue } from 'core/utils/kefir';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
@@ -31,7 +31,7 @@ function getUser() {
 }
 
 export async function getOnboardingSpaceId() {
-  const store = getStore();
+  const store = getBrowserStorage();
 
   const [user, spaces] = await Promise.all([getUser(), getSpaces()]);
   const prefix = getStoragePrefix();
@@ -67,7 +67,7 @@ export async function getOnboardingSpaceId() {
  * first available space is used
  */
 export async function getSpaceInfo() {
-  const store = getStore();
+  const store = getBrowserStorage();
 
   const lastUsedId = store.get('lastUsedSpace');
   const spaces = await getSpaces();
@@ -102,7 +102,7 @@ export async function getMarketplaceApps() {
  * or organization of the first space
  */
 export async function getOrg() {
-  const store = getStore();
+  const store = getBrowserStorage();
 
   const lastUsedOrgId = store.get('lastUsedOrg');
   const orgs = await getOrganizations();

@@ -1,5 +1,5 @@
 import * as logger from 'services/logger';
-import { getStore } from 'browserStorage';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { getSpaceInfo, checkOrgAccess, getOrg, getOnboardingSpaceId } from './utils';
 import spaceContextMock from 'ng/spaceContext';
 import * as AccessCheckerMocked from 'access_control/AccessChecker';
@@ -29,7 +29,9 @@ jest.mock('ng/spaceContext', () => ({
   resetWithSpace: jest.fn(),
 }));
 
-jest.mock('browserStorage', () => ({ getStore: jest.fn() }));
+jest.mock('core/services/BrowserStorage', () => ({
+  getBrowserStorage: jest.fn(),
+}));
 
 jest.mock('components/shared/auto_create_new_space/CreateModernOnboardingUtils', () => ({
   getStoragePrefix: jest.fn(),
@@ -69,7 +71,7 @@ async function testModernStackOnboardingDeeplinks(link, expected) {
     sys: { id: 'test' },
   };
 
-  getStore.mockImplementation(() => ({
+  getBrowserStorage.mockImplementation(() => ({
     get: jest.fn(),
     set: jest.fn(),
   }));

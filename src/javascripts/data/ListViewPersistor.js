@@ -1,6 +1,6 @@
 import qs from 'qs';
 import { set, get } from 'lodash';
-import { getStore } from 'browserStorage';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { omit } from 'lodash';
 import { serialize, unserialize } from 'data/ViewSerializer';
 import { getQueryString } from 'utils/location';
@@ -29,7 +29,7 @@ const getEntityKey = (entityType) => {
 
 const pickLegacyValue = (entityKey, spaceId) => {
   const legacyStoreKey = getLegacyStoreKey(entityKey, spaceId);
-  const legacyStore = getStore().forKey(legacyStoreKey);
+  const legacyStore = getBrowserStorage().forKey(legacyStoreKey);
   const result = legacyStore.get();
   legacyStore.remove();
   return result;
@@ -51,7 +51,7 @@ export default function create({ entityType }) {
   const environmentId = spaceContext.getEnvironmentId();
   const entityKey = getEntityKey(entityType);
   const storeKey = getStoreKey(entityKey, environmentId, spaceId);
-  const store = getStore().forKey(storeKey);
+  const store = getBrowserStorage().forKey(storeKey);
   const defaults = entityKey === 'assets' ? getBlankAssetView() : getBlankEntryView();
 
   const legacyValue = pickLegacyValue(entityKey, spaceId);

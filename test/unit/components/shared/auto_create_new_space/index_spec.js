@@ -21,8 +21,8 @@ describe('AutoCreateNewSpace', () => {
     this.system.set('components/shared/auto_create_new_space/CreateSampleSpace', {
       default: this.createSampleSpace,
     });
-    this.system.set('browserStorage', {
-      getStore: sinon.stub().returns(this.store),
+    this.system.set('core/services/BrowserStorage', {
+      getBrowserStorage: sinon.stub().returns(this.store),
     });
     this.system.set('utils/LaunchDarkly', {
       getCurrentVariation: sinon.stub().returns(false),

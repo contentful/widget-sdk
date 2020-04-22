@@ -1,5 +1,5 @@
 import qs from 'qs';
-import { getStore } from 'browserStorage';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { sample } from 'lodash';
 
 const injected = readInjectedConfig();
@@ -45,7 +45,7 @@ export const MOCK_APIS = {
  * then this returns a Stoplight url.
  */
 export function apiUrl(path) {
-  const mockApiId = getStore().get('use_mock_api');
+  const mockApiId = getBrowserStorage().get('use_mock_api');
   const mockApiInfo = MOCK_APIS[mockApiId];
   const baseUrl = mockApiInfo ? mockApiInfo.url : settings.apiUrl;
   return baseUrl + ensureLeadingSlash(path);

@@ -11,10 +11,10 @@ import {
 } from '@contentful/forma-36-react-components';
 import { getModule } from 'core/NgRegistry';
 import { trackClickCTA } from 'app/home/tracking';
-import { getStore } from 'browserStorage';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 
-const store = getStore();
+const store = getBrowserStorage();
 
 const styles = {
   section: css({ padding: tokens.spacingXl, display: 'flex' }),

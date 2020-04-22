@@ -1,7 +1,7 @@
 import { times, merge, cloneDeep } from 'lodash';
 import { createContentPreview } from './createContentPreview';
 import { contentPreviewToInternal } from './contentPreviewToInternal';
-import { getStore } from 'browserStorage';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 
 describe('features/content-preview/createContentPreview', () => {
   function initialize() {
@@ -464,7 +464,7 @@ describe('features/content-preview/createContentPreview', () => {
 
   describe('#getSelected', () => {
     function clean() {
-      const store = getStore();
+      const store = getBrowserStorage();
       store.remove('selectedPreviewEnvsForSpace.space01');
       store.remove('selectedPreviewEnvsForSpace.space02');
     }
@@ -474,7 +474,7 @@ describe('features/content-preview/createContentPreview', () => {
 
     it('returns stored environment id', function () {
       const { contentPreview } = initialize();
-      getStore().set('selectedPreviewEnvsForSpace.space01', 'someenv');
+      getBrowserStorage().set('selectedPreviewEnvsForSpace.space01', 'someenv');
       expect(contentPreview.getSelected()).toBe('someenv');
     });
 

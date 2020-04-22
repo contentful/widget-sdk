@@ -1,7 +1,7 @@
 import { get } from 'lodash';
 import * as K from 'core/utils/kefir';
 import { createMVar, createExclusiveTask } from 'utils/Concurrent';
-import { getStore } from 'browserStorage';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 import * as Config from 'Config';
 import postForm from 'data/Request/PostForm';
 import { getModule } from 'core/NgRegistry';
@@ -39,9 +39,9 @@ const LOGOUT_KEY = 'loggedOut';
  */
 const tokenMVar = createMVar();
 
-const store = getStore();
-const sessionStore = getStore('session');
-const localStore = getStore('local');
+const store = getBrowserStorage();
+const sessionStore = getBrowserStorage('session');
+const localStore = getBrowserStorage('local');
 
 const afterLoginPathStore = store.forKey('redirect_after_login');
 

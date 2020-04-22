@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { resolveReferences } from './ContentPreviewHelper';
-import { getStore } from 'browserStorage';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 
 export const ENTRY_ID_PATTERN = /\{\s*entry_id\s*\}/g;
 export const ENTRY_ENV_PATTERN = /\{\s*env_id\s*\}/g;
@@ -26,7 +26,7 @@ const CONTENT_PREVIEW_LIMIT = 100;
  */
 export function createContentPreview({ space, cma }) {
   let cache;
-  const store = getStore();
+  const store = getBrowserStorage();
 
   return {
     getAll,

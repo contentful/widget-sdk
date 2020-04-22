@@ -1,12 +1,12 @@
 import * as TokenStore from 'services/TokenStore';
 import * as accessChecker from 'access_control/AccessChecker';
-import { getStore } from 'browserStorage';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 
 import AccountView from 'account/AccountView';
 
 import Base from './Base';
 
-const store = getStore();
+const store = getBrowserStorage();
 
 /**
  * Define a state for an old GK iframe view

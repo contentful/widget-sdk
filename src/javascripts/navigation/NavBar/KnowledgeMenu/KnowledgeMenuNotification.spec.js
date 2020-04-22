@@ -1,9 +1,9 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import KnowledgeMenuNotification from './KnowledgeMenuNotification';
-import { getStore } from 'browserStorage';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 
-const localStorage = getStore('local');
+const localStorage = getBrowserStorage('local');
 
 describe('<KnowledgeMenuNotification />', () => {
   afterEach(() => {

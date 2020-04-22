@@ -1,6 +1,6 @@
 /* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
-import { getStore } from 'browserStorage';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { uniq, without, omit } from 'lodash';
 import { addNotification } from 'debug/DevNotifications';
 import Cookies from 'js-cookie';
@@ -10,8 +10,8 @@ import * as locationUtils from 'utils/location';
 const ENABLE_FLAGS_KEY = 'ui_enable_flags';
 const DISABLE_FLAGS_KEY = 'ui_disable_flags';
 
-const storeForEnable = getStore().forKey(ENABLE_FLAGS_KEY);
-const storeForDisable = getStore().forKey(DISABLE_FLAGS_KEY);
+const storeForEnable = getBrowserStorage().forKey(ENABLE_FLAGS_KEY);
+const storeForDisable = getBrowserStorage().forKey(DISABLE_FLAGS_KEY);
 
 /**
  * Stores enabled ui flags from url in local storage, and shows

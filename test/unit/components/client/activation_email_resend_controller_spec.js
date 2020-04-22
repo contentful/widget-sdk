@@ -31,7 +31,7 @@ describe('components/client/activationEmailResendController', () => {
       resendActivationEmail: sinon.stub().resolves(),
     });
 
-    const { getStore } = await this.system.import('browserStorage');
+    const { getBrowserStorage } = await this.system.import('core/services/BrowserStorage');
 
     const { initActivationEmailResend } = await this.system.import(
       'components/client/activationEmailResendController'
@@ -56,7 +56,7 @@ describe('components/client/activationEmailResendController', () => {
 
     openActivationDialogStub.resolves(true);
 
-    this.store = getStore().forKey('lastActivationEmailResendReminderTimestamp');
+    this.store = getBrowserStorage().forKey('lastActivationEmailResendReminderTimestamp');
 
     initActivationEmailResend();
   });

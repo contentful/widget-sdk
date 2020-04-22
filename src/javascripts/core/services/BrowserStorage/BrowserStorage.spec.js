@@ -1,8 +1,8 @@
 import { window } from 'core/services/window';
 import * as storeUtils from './utils';
-import { getStore } from './index';
-import ClientStorageWrapper from './ClientStorageWrapper';
-import ClientStorage from './ClientStorage';
+import { getBrowserStorage } from './BrowserStorage';
+import { createClientStorageWrapper } from './ClientStorageWrapper';
+import { createClientStorage } from './ClientStorage';
 
 jest.mock('core/services/window', () => ({
   window: {
@@ -54,15 +54,15 @@ describe('TheStore', () => {
 
   describe('#getStore', () => {
     it('should return the default local storage if called with no arguments', function () {
-      const local = getStore();
+      const local = getBrowserStorage();
 
       local.set('localKey', 'localValue');
       expect(window.localStorage.setItem).toHaveBeenCalledTimes(1);
     });
 
     it('should return the storage based on given argument', function () {
-      const local = getStore('local');
-      const session = getStore('session');
+      const local = getBrowserStorage('local');
+      const session = getBrowserStorage('session');
 
       // Test localStorage
       local.set('localKey', 'localValue');
@@ -165,8 +165,8 @@ describe('TheStore', () => {
     let LocalStorageWrapper;
 
     beforeEach(function () {
-      SessionStorageWrapper = ClientStorageWrapper('session');
-      LocalStorageWrapper = ClientStorageWrapper('local');
+      SessionStorageWrapper = createClientStorageWrapper('session');
+      LocalStorageWrapper = createClientStorageWrapper('local');
     });
 
     it('exposes a simplified Local/Session Storage API', function () {
@@ -183,8 +183,8 @@ describe('TheStore', () => {
     let ClientStorageSession;
 
     beforeEach(function () {
-      ClientStorageLocal = ClientStorage('local');
-      ClientStorageSession = ClientStorage('session');
+      ClientStorageLocal = createClientStorage('local');
+      ClientStorageSession = createClientStorage('session');
     });
 
     it('proxies its methods directly to the wrapper', function () {

@@ -1,9 +1,9 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { getStore } from 'browserStorage';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 import KnowledgeMenu from './KnowledgeMenu';
 
-const localStorage = getStore('local');
+const localStorage = getBrowserStorage('local');
 
 describe('<KnowledgeMenu />', () => {
   afterEach(() => {

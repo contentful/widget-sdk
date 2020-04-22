@@ -3,11 +3,11 @@
  * By default it uses localStorage.
  */
 
-import ClientStorage from './ClientStorage';
+import { createClientStorage } from './ClientStorage';
 import { forStorage } from './utils';
 
-const LocalStorage = ClientStorage('local');
-const SessionStorage = ClientStorage('session');
+const LocalStorage = createClientStorage('local');
+const SessionStorage = createClientStorage('session');
 
 /**
  * Allows for retrieving a store explicitly, used in cases
@@ -16,7 +16,7 @@ const SessionStorage = ClientStorage('session');
  * @param  {String} storageType The storage type. Valid choices are local and session
  * @return {StorageStore}
  */
-export function getStore(storageType) {
+export function getBrowserStorage(storageType) {
   const validStorageTypes = {
     local: LocalStorage,
     session: SessionStorage,

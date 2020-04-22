@@ -1,0 +1,1 @@
+export { getBrowserStorage } from './BrowserStorage';

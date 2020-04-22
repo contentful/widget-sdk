@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Button from 'components/shared/stack-onboarding/components/Button';
 import Input from 'components/shared/stack-onboarding/components/Input';
 import Form from 'components/shared/stack-onboarding/components/Form';
-import { getStore } from 'browserStorage';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 
 import {
   getStoragePrefix,
@@ -17,7 +17,7 @@ const DEPLOYMENT_PROVIDERS = {
   HEROKU: 'heroku',
 };
 
-const store = getStore();
+const store = getBrowserStorage();
 
 export default class DeploymentForm extends React.Component {
   static propTypes = {

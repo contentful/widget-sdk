@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import ModifyContentDrawer from 'components/shared/stack-onboarding/next_steps/ModifyContentDrawer';
 import SetupWebhooksDrawer from 'components/shared/stack-onboarding/next_steps/SetupWebhooksDrawer';
 import AccordionComponent from 'app/home/components/AccordionComponent';
-import { getStore } from 'browserStorage';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 
-const store = getStore();
+const store = getBrowserStorage();
 
 const DevChoiceAccordion = ({ managementToken, entry, spaceId }) => {
   const prefix = getStoragePrefix();

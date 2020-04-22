@@ -1,11 +1,11 @@
 import { find } from 'lodash';
 import makeState from 'states/Base';
-import { getStore } from 'browserStorage';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { go } from 'states/Navigator';
 import { getSpaces, user$ } from 'services/TokenStore';
 import { getValue } from 'core/utils/kefir';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
-const store = getStore();
+const store = getBrowserStorage();
 
 /**
  * If any space exists, the user is redirected to the last accessed space (as

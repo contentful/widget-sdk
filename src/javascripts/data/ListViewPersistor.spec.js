@@ -1,7 +1,7 @@
 import { getModule } from 'core/NgRegistry';
 import { getQueryString } from 'utils/location';
 import createViewPersistor, { reset } from 'data/ListViewPersistor';
-import { getStore } from 'browserStorage';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 
 jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
 jest.mock('utils/location', () => ({ getQueryString: jest.fn() }));
@@ -34,16 +34,16 @@ describe('ListViewPersistor', () => {
 
   beforeEach(async () => {
     getQueryString.mockReturnValue({});
-    store = getStore().forKey(STORE_KEY);
+    store = getBrowserStorage().forKey(STORE_KEY);
     initViewPersistor();
   });
 
   describe('migrate legacy', () => {
     it('migrates a legacy storage key', () => {
-      getStore().forKey(LEGACY_STORE_KEY).set({ legacy: true });
+      getBrowserStorage().forKey(LEGACY_STORE_KEY).set({ legacy: true });
       initViewPersistor();
-      expect(getStore().forKey(LEGACY_STORE_KEY).get()).toBeNull();
-      expect(getStore().forKey(STORE_KEY).get().legacy).toBe(true);
+      expect(getBrowserStorage().forKey(LEGACY_STORE_KEY).get()).toBeNull();
+      expect(getBrowserStorage().forKey(STORE_KEY).get().legacy).toBe(true);
     });
 
     it('migrates contentTypeHidden true legacy querystring', () => {

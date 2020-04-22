@@ -43,8 +43,8 @@ jest.mock('data/Endpoint', () => ({
   createAppDefinitionsEndpoint: () => () => {},
 }));
 
-jest.mock('browserStorage', () => ({
-  getStore: jest.fn(),
+jest.mock('core/services/BrowserStorage', () => ({
+  getBrowserStorage: jest.fn(),
 }));
 
 jest.mock('components/app_container/entityCreator', () => ({

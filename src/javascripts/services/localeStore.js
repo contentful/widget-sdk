@@ -1,5 +1,5 @@
 import createLocaleStore from './createLocaleStore';
-import { getStore } from 'browserStorage';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 
 /**
  * @description
@@ -12,4 +12,4 @@ import { getStore } from 'browserStorage';
  * TODO attach it to `spaceContext` instead of being global
  * TODO figure out the balance between store and repo
  */
-export default createLocaleStore(getStore);
+export default createLocaleStore(getBrowserStorage);

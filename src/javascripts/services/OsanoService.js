@@ -12,13 +12,13 @@ import * as Analytics from 'analytics/Analytics';
 import segment from 'analytics/segment';
 import * as Intercom from 'services/intercom';
 import { Notification } from '@contentful/forma-36-react-components';
-import { getStore } from 'browserStorage';
 import { getUserSync } from 'services/TokenStore';
 import { updateUserData } from 'app/UserProfile/Settings/AccountRepository';
 import * as logger from 'services/logger';
 import { debounce } from 'lodash';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 
-const localStorage = getStore();
+const localStorage = getBrowserStorage();
 
 // The cookie and localStorage key name
 const STORAGE_KEY = 'cf_webapp_cookieconsent';

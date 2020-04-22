@@ -1,4 +1,4 @@
-import { getStore } from 'browserStorage';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { combine, getValue } from 'core/utils/kefir';
 import { getCurrentVariation } from 'utils/LaunchDarkly';
 import { user$, spacesByOrganization$ as spacesByOrg$ } from 'services/TokenStore';
@@ -18,7 +18,7 @@ import {
 
 import { create } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
 
-const store = getStore();
+const store = getBrowserStorage();
 
 /**
  * @description

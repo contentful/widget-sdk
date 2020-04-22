@@ -2,7 +2,7 @@ import { getSpaceInfo, getOrg, checkOrgAccess, getOnboardingSpaceId } from './ut
 import * as accessChecker from 'access_control/AccessChecker';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
-import { getStore } from 'browserStorage';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { getModule } from 'core/NgRegistry';
 import { getOrganizationSpaces } from 'services/TokenStore';
 import * as logger from 'services/logger';
@@ -135,7 +135,7 @@ function makeSpaceScopedPathResolver({ spaceScopedPath }) {
 
 function createOnboardingScreenResolver(screen) {
   return async function () {
-    const store = getStore();
+    const store = getBrowserStorage();
 
     const spaceId = await getOnboardingSpaceId();
 

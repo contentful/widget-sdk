@@ -10,8 +10,8 @@ jest.mock('services/localeStore', () => ({
   toInternalCode: () => 'en-US',
 }));
 
-jest.mock('browserStorage', () => ({
-  getStore: jest.fn(),
+jest.mock('core/services/BrowserStorage', () => ({
+  getBrowserStorage: jest.fn(),
 }));
 
 jest.mock('states/Navigator', () => ({

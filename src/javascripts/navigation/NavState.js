@@ -2,8 +2,8 @@ import { makeSum } from 'sum-types';
 import { startsWith } from 'lodash';
 import * as K from 'core/utils/kefir';
 import { getOrganization } from 'services/TokenStore';
-import { getStore } from 'browserStorage';
-const store = getStore();
+import { getBrowserStorage } from 'core/services/BrowserStorage';
+const store = getBrowserStorage();
 
 /**
  * Possible app states for navigation (as shown in sidepanel)

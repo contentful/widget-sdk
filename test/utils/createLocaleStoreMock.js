@@ -1,10 +1,10 @@
 'use strict';
 import _ from 'lodash';
 import createLocaleStore from 'services/createLocaleStore';
-import { getStore } from 'browserStorage';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 
 export default function createLocaleStoreMock() {
-  const localeStoreMock = createLocaleStore(getStore);
+  const localeStoreMock = createLocaleStore(getBrowserStorage);
 
   /**
    * @ngdoc method

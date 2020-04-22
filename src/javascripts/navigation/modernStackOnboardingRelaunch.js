@@ -1,7 +1,7 @@
 import React from 'react';
 import WithLink from 'components/shared/stack-onboarding/components/WithLink';
 
-import { getStore } from 'browserStorage';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { getSpaceAutoCreatedKey } from 'components/shared/auto_create_new_space/getSpaceAutoCreatedKey';
 import { getCurrentVariation } from 'utils/LaunchDarkly';
 import {
@@ -14,7 +14,7 @@ import {
 import Icon from 'ui/Components/Icon';
 import { getModule } from 'core/NgRegistry';
 
-const store = getStore();
+const store = getBrowserStorage();
 
 export default class Relaunch extends React.Component {
   state = { flag: false };

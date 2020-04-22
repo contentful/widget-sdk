@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Note, TextLink } from '@contentful/forma-36-react-components';
-import { getStore } from 'browserStorage';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 
-const sessionStore = getStore('session');
+const sessionStore = getBrowserStorage('session');
 const FLAG_KEY = 'extensions-development-mode';
 
 export default function ExtensionDevelopmentMode() {

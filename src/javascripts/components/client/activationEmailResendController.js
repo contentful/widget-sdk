@@ -7,12 +7,12 @@ import {
 } from './ActivationEmailResendDialog';
 import { resendActivationEmail } from './activationEmailResender';
 
-import { getStore } from 'browserStorage';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 import * as TokenStore from 'services/TokenStore';
 
 const HOUR_IN_MS = 1000 * 60 * 60;
 const HOURS_BEFORE_REOPEN_DIALOG = 24;
-const store = getStore().forKey('lastActivationEmailResendReminderTimestamp');
+const store = getBrowserStorage().forKey('lastActivationEmailResendReminderTimestamp');
 
 export function initActivationEmailResend() {
   storeDialogLastShownTimestamp(); // Wait 24h before showing the dialog.

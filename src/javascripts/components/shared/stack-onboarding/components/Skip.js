@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getStore } from 'browserStorage';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { updateUserInSegment } from 'analytics/Analytics';
 import {
   getStoragePrefix,
@@ -8,7 +8,7 @@ import {
 } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import { getModule } from 'core/NgRegistry';
 
-const store = getStore();
+const store = getBrowserStorage();
 
 export default class StackOnboardingSkip extends React.Component {
   static propTypes = {

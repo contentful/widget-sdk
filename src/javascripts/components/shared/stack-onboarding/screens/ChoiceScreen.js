@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import FullScreen from 'components/shared/stack-onboarding/components/FullScreen';
 import Button from '../components/Button';
-import { getStore } from 'browserStorage';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import { updateUserInSegment } from 'analytics/Analytics';
 
-const store = getStore();
+const store = getBrowserStorage();
 
 export default class ChoiceScreen extends React.Component {
   static propTypes = {
