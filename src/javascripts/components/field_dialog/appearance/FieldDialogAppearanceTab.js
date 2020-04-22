@@ -16,16 +16,6 @@ const styles = {
   note: css({
     marginBottom: tokens.spacingL,
   }),
-  overlay: css({
-    position: 'absolute',
-    zIndex: 2,
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: tokens.colorWhite,
-    opacity: 0.6,
-  }),
 };
 
 export default class FieldDialogAppearanceTab extends React.Component {
@@ -84,12 +74,11 @@ export default class FieldDialogAppearanceTab extends React.Component {
       <div>
         {hasCustomEditor && (
           <Note noteType="primary" className={styles.note}>
-            These settings are overwritten by custom content type extension. To change this, use the
-            default editor.
+            You are using a custom entry editor for this content type. Therefore, these settings
+            might not affect how fields are displayed in the editor.
           </Note>
         )}
         <div className={styles.container}>
-          {hasCustomEditor && <div className={styles.overlay} />}
           {widgetsCount === 0 && (
             <Note noteType="primary" className={styles.note}>
               No widgets for this field, please contact support.
