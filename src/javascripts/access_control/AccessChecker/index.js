@@ -344,16 +344,6 @@ export function canUpdateEntity(entity) {
 }
 
 /**
- * @name accessChecker#canCreateEntry
- * @returns {boolean}
- * @description
- * Returns true if the user can create entries.
- */
-export function canCreateEntry() {
-  return canPerformActionOnType(Action.CREATE, 'entry');
-}
-
-/**
  * @name accessChecker#canCreateAsset
  * @returns {boolean}
  * @description

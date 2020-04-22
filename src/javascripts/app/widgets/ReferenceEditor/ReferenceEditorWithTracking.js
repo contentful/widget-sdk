@@ -1,6 +1,5 @@
 import React from 'react';
 import { get } from 'lodash';
-import { canCreateEntry } from 'access_control/AccessChecker';
 import { getEntityLink } from 'app/common/EntityStateLink';
 import {
   SingleEntryReferenceEditor,
@@ -69,7 +68,7 @@ export function SingleEntryReferenceEditorWithTracking(props) {
       getEntityUrl={(entryId) => getEntityLink({ id: entryId, type: 'Entry' }).href}
       parameters={{
         instance: {
-          canCreateEntity: canCreateEntry(),
+          canCreateEntity: true,
           canLinkEntity: true,
         },
       }}
@@ -90,7 +89,7 @@ export function MultipleEntryReferenceEditorWithTracking(props) {
       getEntityUrl={(entryId) => getEntityLink({ id: entryId, type: 'Entry' }).href}
       parameters={{
         instance: {
-          canCreateEntity: canCreateEntry(),
+          canCreateEntity: true,
           canLinkEntity: true,
           bulkEditing: get(sdk, 'parameters.instance.bulkEditing', false),
         },
