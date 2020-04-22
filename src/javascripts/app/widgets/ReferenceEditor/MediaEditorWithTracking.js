@@ -49,6 +49,7 @@ export function SingleMediaEditorWithTracking(props) {
       parameters={{
         instance: {
           canCreateEntity: canCreateAsset(),
+          canLinkEntity: true,
         },
       }}
       onAction={onAction}
@@ -67,6 +68,7 @@ export function MultipleMediaEditorWithTracking(props) {
       parameters={{
         instance: {
           canCreateEntity: canCreateAsset(),
+          canLinkEntity: true,
         },
       }}
       onAction={onAction}

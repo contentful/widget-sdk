@@ -70,6 +70,7 @@ export function SingleEntryReferenceEditorWithTracking(props) {
       parameters={{
         instance: {
           canCreateEntity: canCreateEntry(),
+          canLinkEntity: true,
         },
       }}
       onAction={onAction}
@@ -90,6 +91,7 @@ export function MultipleEntryReferenceEditorWithTracking(props) {
       parameters={{
         instance: {
           canCreateEntity: canCreateEntry(),
+          canLinkEntity: true,
           bulkEditing: get(sdk, 'parameters.instance.bulkEditing', false),
         },
       }}
