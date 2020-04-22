@@ -45,20 +45,24 @@ export const initialState = ({
   searchText = '',
   contentTypes,
   withAssets,
+  searchBoxHasFocus = false,
+  isSuggestionOpen = false,
+  isSearching = false,
+  focus = defaultFocus,
 }) => ({
   contentTypeId: contentTypeId || CONTENT_TYPE_ALL,
   filters: searchFilters,
   input: searchText,
-  searchBoxHasFocus: false,
-  isSuggestionOpen: false,
-  focus: defaultFocus,
+  searchBoxHasFocus,
+  isSuggestionOpen,
+  focus,
   withAssets,
 
   // FIXME: the following fields should have a separate reducer
   contentTypes,
   users: [],
   // FIXME: Should be moved closer to the reducer responsible for the search.
-  isSearching: false,
+  isSearching,
 });
 
 // Emitted when the value of the search input changes. Holds the new

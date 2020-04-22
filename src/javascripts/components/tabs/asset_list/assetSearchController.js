@@ -52,6 +52,7 @@ export default function register() {
             return;
           }
           resetAssets();
+          initializeSearchUI();
         },
         true
       );

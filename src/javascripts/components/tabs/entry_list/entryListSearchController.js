@@ -77,6 +77,7 @@ export default function register() {
             return;
           }
           resetEntries();
+          initializeSearchUI();
         },
         true
       );

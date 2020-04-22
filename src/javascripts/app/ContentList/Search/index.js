@@ -14,6 +14,8 @@ import {
   sanitizeSearchFilters,
 } from './Filters';
 
+let store;
+
 export default function create({
   $scope,
   contentTypes = [],
@@ -32,14 +34,15 @@ export default function create({
       withAssets
     );
     const reduce = makeReducer(dispatch, onSearchChange);
+    const previousState = store ? K.getValue(store.state$) : {};
     const defaultState = initialState(
-      assign({}, initState, {
+      assign({}, previousState, initState, {
         searchFilters: sanitizedFilters,
         contentTypes,
         withAssets,
       })
     );
-    const store = createStore(defaultState, reduce);
+    store = createStore(defaultState, reduce);
     const actions = bindActions(store, Actions);
 
     // unsubscribe from stream if rerender happens
