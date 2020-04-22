@@ -5,8 +5,10 @@ import * as Analytics from 'analytics/Analytics';
 import * as Intercom from 'services/intercom';
 import * as Segment from 'analytics/segment';
 import { getStore } from 'browserStorage';
-
 import { Notification } from '@contentful/forma-36-react-components';
+import { updateUserData } from 'app/UserProfile/Settings/AccountRepository';
+import { getUserSync } from 'services/TokenStore';
+import { wait } from '@testing-library/react';
 
 jest.mock('utils/LazyLoader', () => {
   const mockedCm = {
@@ -20,6 +22,10 @@ jest.mock('utils/LazyLoader', () => {
       storage: {
         key: 'osano_consentmanager',
         setConsent: jest.fn(),
+        getConsent: jest.fn(),
+        getExpDate: jest.fn().mockReturnValue('test_exp_date'),
+        getUUID: jest.fn().mockReturnValue('test_uuid'),
+        saveConsent: jest.fn(),
       },
       options: {},
     },
@@ -52,6 +58,7 @@ jest.mock('utils/LazyLoader', () => {
 jest.mock('browserStorage', () => {
   const store = {
     get: jest.fn(),
+    set: jest.fn(),
     has: jest.fn(),
   };
 
@@ -61,10 +68,22 @@ jest.mock('browserStorage', () => {
 });
 
 jest.mock('services/TokenStore', () => ({
-  getUserSync: jest.fn().mockReturnValue({}),
+  getUserSync: jest.fn().mockReturnValue({
+    cookieConsentData: JSON.stringify({
+      consent: {
+        testKey: 'value',
+      },
+      uuid: 'user_uuid',
+      expirationDate: 987654321,
+    }),
+    sys: { version: 123 },
+  }),
 }));
 
 jest.mock('analytics/isAnalyticsAllowed', () => jest.fn().mockReturnValue(true));
+jest.mock('app/UserProfile/Settings/AccountRepository', () => ({
+  updateUserData: jest.fn().mockResolvedValue(true),
+}));
 
 jest.mock('services/intercom', () => ({
   enable: jest.fn(),
@@ -79,19 +98,37 @@ jest.spyOn(Notification, 'warning').mockImplementation(() => {});
 
 describe('OsanoService', () => {
   beforeEach(service.__reset);
+  const callHandleInitialize = () => {
+    service.handleInitialize();
+  };
 
-  describe('handleConsentChanged', () => {
-    const generateConsentOptions = (analyticsAllowed = true, personalizationAllowed = true) => ({
-      ANALYTICS: analyticsAllowed ? 'ACCEPT' : 'DENY',
-      PERSONALIZATION: personalizationAllowed ? 'ACCEPT' : 'DENY',
-      MARKETING: 'DENY',
-      ESSENTIAL: 'ACCEPT',
-    });
+  const callHandleConsentChanged = () => {
+    service.handleConsentChanged();
 
+    service.handleConsentChanged.flush();
+  };
+
+  const generateConsentOptions = (analyticsAllowed = true, personalizationAllowed = true) => ({
+    ANALYTICS: analyticsAllowed ? 'ACCEPT' : 'DENY',
+    PERSONALIZATION: personalizationAllowed ? 'ACCEPT' : 'DENY',
+    MARKETING: 'DENY',
+    ESSENTIAL: 'ACCEPT',
+  });
+
+  const setupService = async (opts = generateConsentOptions()) => {
+    const { cm } = await get();
+    cm.storage.getConsent.mockReturnValue(opts);
+    await service.init();
+    return cm;
+  };
+
+  describe('handleInitialize', () => {
     it('should enable analytics with all Segment integrations and Intercom if analytics and personalization is allowed', async () => {
-      const opts = generateConsentOptions();
+      await setupService();
 
-      await service.handleConsentChanged(opts);
+      callHandleInitialize();
+      // Need to wait for handleInitialize to finish.
+      await wait();
 
       expect(Analytics.enable).toHaveBeenCalledWith(expect.any(Object), {
         integrations: {
@@ -111,10 +148,10 @@ describe('OsanoService', () => {
 
     it('should disable any additional integrations from Segment', async () => {
       Segment.getIntegrations.mockResolvedValueOnce(['My Awesome Integration']);
+      await setupService();
 
-      const opts = generateConsentOptions();
-
-      await service.handleConsentChanged(opts);
+      callHandleInitialize();
+      await wait();
 
       expect(Analytics.enable).toHaveBeenCalledWith(expect.any(Object), {
         integrations: {
@@ -132,9 +169,10 @@ describe('OsanoService', () => {
     });
 
     it('should enable analytics with only analytics Segment integrations if analytics but not personalization is allowed', async () => {
-      const opts = generateConsentOptions(true, false);
+      await setupService(generateConsentOptions(true, false));
 
-      await service.handleConsentChanged(opts);
+      callHandleInitialize();
+      await wait();
 
       expect(Analytics.enable).toHaveBeenCalledWith(expect.any(Object), {
         integrations: {
@@ -153,19 +191,21 @@ describe('OsanoService', () => {
     });
 
     it('should respect isAnalyticsAllowed', async () => {
+      await setupService(generateConsentOptions(true, false));
+
       isAnalyticsAllowed.mockReturnValue(false);
 
-      const opts = generateConsentOptions(true, false);
-
-      await service.handleConsentChanged(opts);
+      callHandleInitialize();
+      await wait();
 
       expect(Analytics.enable).not.toHaveBeenCalled();
     });
 
     it('should only enable Intercom (along with Segment) if analytics is denied but personalization is allowed', async () => {
-      const opts = generateConsentOptions(false, true);
+      await setupService(generateConsentOptions(false, true));
 
-      await service.handleConsentChanged(opts);
+      callHandleInitialize();
+      await wait();
 
       expect(Analytics.enable).not.toHaveBeenCalled();
 
@@ -185,42 +225,113 @@ describe('OsanoService', () => {
     });
 
     it('should not enable analytics or Intercom is neither is allowed', async () => {
-      const opts = generateConsentOptions(false, false);
+      await setupService(generateConsentOptions(false, false));
 
-      await service.handleConsentChanged(opts);
-
-      expect(Analytics.enable).not.toHaveBeenCalled();
-      expect(Segment.enable).not.toHaveBeenCalled();
-      expect(Intercom.enable).not.toHaveBeenCalled();
-    });
-
-    it('should not attempt to do anything if previous preferences were saved', async () => {
-      const opts = generateConsentOptions(false, false);
-
-      await service.handleConsentChanged(opts);
-
-      const newOpts = generateConsentOptions();
-
-      await service.handleConsentChanged(newOpts);
+      callHandleInitialize();
+      await wait();
 
       expect(Analytics.enable).not.toHaveBeenCalled();
       expect(Segment.enable).not.toHaveBeenCalled();
       expect(Intercom.enable).not.toHaveBeenCalled();
     });
 
+    it('should set local consent from Gatekeeper consent if present', async () => {
+      const { cm } = await get();
+
+      await service.init();
+      callHandleInitialize();
+
+      expect(cm.storage.setConsent).toBeCalledWith({
+        testKey: 'value',
+      });
+      expect(cm.storage.uuid).toEqual('user_uuid');
+      expect(cm.storage.saveConsent).toHaveBeenLastCalledWith(987654321);
+    });
+
+    it('should save local consent to Gatekeeper if there is local consent but no Gatekeeper consent', async () => {
+      getUserSync.mockReturnValueOnce({ sys: { version: 456 } });
+      const { cm } = await get();
+      const localConsent = generateConsentOptions();
+      cm.storage.getConsent.mockReturnValue(localConsent);
+
+      await service.init();
+
+      callHandleInitialize();
+      await wait();
+
+      expect(updateUserData).toHaveBeenCalledWith({
+        data: {
+          cookieConsentData: JSON.stringify({
+            consent: localConsent,
+            uuid: 'test_uuid',
+            expirationDate: 'test_exp_date',
+          }),
+        },
+        version: 456,
+      });
+    });
+
+    it('does not save any consent if the user has not consented yet', async () => {
+      const { cm } = await get();
+      cm.storage.getExpDate.mockReturnValue(0);
+      const store = getStore();
+
+      await service.init();
+
+      callHandleInitialize();
+      await wait();
+
+      expect(store.set).toHaveBeenCalledTimes(0);
+      expect(updateUserData).toHaveBeenCalledTimes(0);
+    });
+  });
+
+  describe('handleConsentChanged', () => {
     it('should warn the user to reload if they change their consent options', async () => {
-      const opts = generateConsentOptions();
+      const cm = await setupService();
 
-      await service.handleConsentChanged(opts);
-      await service.handleConsentChanged(opts);
+      callHandleInitialize();
+      await wait();
+
+      callHandleInitialize();
+      await wait();
 
       expect(Notification.warning).not.toHaveBeenCalled();
 
       const newOpts = generateConsentOptions(false, false);
+      cm.storage.getConsent.mockReturnValue(newOpts);
 
-      await service.handleConsentChanged(newOpts);
+      callHandleConsentChanged();
+      await wait();
 
+      expect(updateUserData).toHaveBeenCalledTimes(1);
       expect(Notification.warning).toHaveBeenCalledTimes(1);
+    });
+
+    it('it should intialize consent if it has not been done yet', async () => {
+      const { cm } = await get();
+      cm.storage.getExpDate.mockReturnValue(0);
+      cm.storage.getConsent.mockReturnValue(generateConsentOptions());
+      getUserSync.mockReturnValue({ sys: { version: 123 } });
+      isAnalyticsAllowed.mockReturnValue(true);
+
+      await service.init();
+
+      callHandleInitialize();
+      await wait();
+
+      expect(Analytics.enable).not.toHaveBeenCalled();
+      expect(Intercom.enable).not.toHaveBeenCalled();
+
+      cm.storage.getExpDate.mockReset().mockReturnValue(12);
+      callHandleConsentChanged();
+      // Ned to wait for HandleConsentChanged to finish.
+      await wait();
+
+      expect(Analytics.enable).toHaveBeenCalled();
+
+      expect(Intercom.enable).toHaveBeenCalledTimes(1);
+      cm.storage.getExpDate.mockReset().mockReturnValue(0);
     });
   });
 

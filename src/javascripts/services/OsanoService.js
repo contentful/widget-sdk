@@ -7,13 +7,16 @@
 
 import { fromPairs } from 'lodash';
 import * as LazyLoader from 'utils/LazyLoader';
-import { getUserSync } from 'services/TokenStore';
 import isAnalyticsAllowed from 'analytics/isAnalyticsAllowed';
 import * as Analytics from 'analytics/Analytics';
 import segment from 'analytics/segment';
 import * as Intercom from 'services/intercom';
 import { Notification } from '@contentful/forma-36-react-components';
 import { getStore } from 'browserStorage';
+import { getUserSync } from 'services/TokenStore';
+import { updateUserData } from 'app/UserProfile/Settings/AccountRepository';
+import * as logger from 'services/logger';
+import { debounce } from 'lodash';
 
 const localStorage = getStore();
 
@@ -23,62 +26,28 @@ const STORAGE_KEY = 'cf_webapp_cookieconsent';
 // The Osano "Consent Manager" object
 let cm = null;
 
-// Previously saved consent options
-let prevConsentOptions = null;
+// To tell if consent has been initalized yet or not
+let initialized = false;
 
 // Function to handle resetting `cm` in testing
 export const __reset = () => {
   cm = null;
-  prevConsentOptions = null;
+  initialized = false;
 };
 
-// Debounce handleConsentChanged in case the script initializes and the user consents within
-// two seconds
-//
-// Exported for testing
-export const handleConsentChanged = async function debouncedHandleConsentChanged(
-  newConsentOptions
-) {
-  if (!newConsentOptions) {
-    // This listener is setup to be called on Osano initialization and consent change. If the
-    // user has not consented before, `newConsentOptions` will be undefined on initialization,
-    // and so we don't do anything in this handler.
-    return;
-  }
-
+export async function handleInitialize() {
   // Initialization happens in ClientController, and only happens after the user is available to us, so we
   // can safely synchronously get the user.
   const user = getUserSync();
-  const analyticsAllowed = isAnalyticsAllowed(user) && newConsentOptions.ANALYTICS === 'ACCEPT';
-  const personalizationAllowed = newConsentOptions.PERSONALIZATION === 'ACCEPT';
-
-  if (prevConsentOptions) {
-    const prevAnalyticsAllowed = prevConsentOptions.analyticsAllowed;
-    const prevPersonalizationAllowed = prevConsentOptions.personalizationAllowed;
-
-    let changed = false;
-
-    if (
-      prevAnalyticsAllowed !== analyticsAllowed ||
-      prevPersonalizationAllowed !== personalizationAllowed
-    ) {
-      changed = true;
-    }
-
-    if (changed) {
-      // If the consent options changed, we need to reload because we can't unload existing scripts like GA, Intercom.
-      Notification.warning('Reload the app to apply your new preferences.');
-    }
-
-    // Regardless if a notification is shown, we do not want to run any of the logic below, since it
-    // will break things (for example, Segment cannot be initialized twice).
+  // If consent has already been initialized, return. Or if user hasn't consented yet, return wait for that, then initialize consent.
+  if (initialized || !hasUserConsented(user)) {
     return;
   }
 
-  prevConsentOptions = {
-    analyticsAllowed,
-    personalizationAllowed,
-  };
+  const localConsent = cm.storage.getConsent();
+
+  const analyticsAllowed = isAnalyticsAllowed(user) && localConsent.ANALYTICS === 'ACCEPT';
+  const personalizationAllowed = localConsent.PERSONALIZATION === 'ACCEPT';
 
   const segmentLoadOptions = await generateSegmentLoadOptions(
     analyticsAllowed,
@@ -96,7 +65,23 @@ export const handleConsentChanged = async function debouncedHandleConsentChanged
   if (personalizationAllowed) {
     Intercom.enable();
   }
-};
+
+  initialized = true;
+}
+
+// Exported for testing
+export const handleConsentChanged = debounce(async function debouncedHandleConsentChanged() {
+  const user = getUserSync();
+
+  await updateGKConsent(user);
+
+  if (initialized) {
+    // If the consent options changed, we need to reload because we can't unload existing scripts like GA, Intercom.
+    Notification.warning('Reload the app to apply your new preferences.');
+  }
+
+  handleInitialize();
+}, 500);
 
 export async function init() {
   if (cm) {
@@ -129,10 +114,6 @@ export async function init() {
   // Rename the cookie/local storage key to not clash with marketing website
   cm.storage.key = STORAGE_KEY;
 
-  // Setup listeners before readyCb, so that we get the `osano-cm-initialized` event.
-  cm.on('osano-cm-initialized', handleConsentChanged);
-  cm.on('osano-cm-consent-saved', handleConsentChanged);
-
   // Since we override `storage.key` above after instantiating `cm`, we also
   // set the existing options to the values in localStorage.
   const existingOpts = localStorage.get(STORAGE_KEY);
@@ -140,6 +121,13 @@ export async function init() {
   if (existingOpts) {
     cm.storage.setConsent(existingOpts);
   }
+
+  // Do before calling readyCb and setting the event listeners below.
+  await setupLocalConsent(getUserSync());
+
+  // Setup listeners before readyCb, so that we get the `osano-cm-initialized` event.
+  cm.on('osano-cm-initialized', handleInitialize);
+  cm.on('osano-cm-consent-saved', handleConsentChanged);
 
   // Only call the readyCb exists
   readyCb && readyCb();
@@ -159,6 +147,60 @@ export async function init() {
   }
 
   return cm;
+}
+
+function setupLocalConsent(user) {
+  if (user.cookieConsentData) {
+    // The consent has been saved previously, set it locally.
+    updateLocalConsent(user);
+  } else if (isConsentSavedLocally()) {
+    // Looks like the user consented previously but it's not in GK yet, update GK
+    updateGKConsent(user);
+  } else {
+    // No consent is present yet, we don't need to do anything
+  }
+}
+
+export async function updateGKConsent(user) {
+  const data = {
+    cookieConsentData: JSON.stringify({
+      consent: cm.storage.getConsent(),
+      uuid: cm.storage.getUUID(),
+      expirationDate: cm.storage.getExpDate(),
+    }),
+  };
+
+  try {
+    await updateUserData({
+      version: user.sys.version,
+      data,
+    });
+  } catch (e) {
+    logger.logError(e);
+  }
+}
+
+// Save consent to local Osano ConsentManager instance
+function updateLocalConsent(user) {
+  const { consent, uuid, expirationDate } = JSON.parse(user.cookieConsentData);
+  const expirationDateInt = parseInt(expirationDate);
+
+  cm.storage.setConsent(consent);
+  cm.storage.uuid = uuid;
+  cm.storage.saveConsent(expirationDateInt);
+}
+
+function hasUserConsented(user) {
+  return isConsentSavedInGK(user) || isConsentSavedLocally();
+}
+
+function isConsentSavedInGK(user) {
+  return user.cookieConsentData != null;
+}
+
+function isConsentSavedLocally() {
+  // If cm.storage.getExpDate() === 0, then there is no consent yet saved for this user and we should check if we have saved consent data in GK
+  return cm.storage.getExpDate() !== 0;
 }
 
 export async function waitForCMInstance(tries = 0) {
