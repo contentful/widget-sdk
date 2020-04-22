@@ -64,9 +64,8 @@ describe('MembershipRow', () => {
         id: 'membership1',
         team: {
           name: 'Team 1',
-          memberCount: 1,
           description: 'This is Team 1',
-          sys: { id: 'team1' },
+          sys: { id: 'team1', memberCount: 1 },
         },
       },
     };

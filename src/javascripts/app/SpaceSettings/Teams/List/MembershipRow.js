@@ -55,7 +55,11 @@ const MembershipRow = ({
   const {
     sys: {
       id: membershipId,
-      team: { name, description, memberCount },
+      team: {
+        name,
+        description,
+        sys: { memberCount },
+      },
     },
     roles,
     admin,

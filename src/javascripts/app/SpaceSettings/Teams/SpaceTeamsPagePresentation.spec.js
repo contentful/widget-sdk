@@ -48,9 +48,9 @@ describe('SpaceTeamsPage', () => {
               sys: {
                 type: 'Team',
                 id: 'team1',
+                memberCount: 1,
               },
               description: 'This is the first test team',
-              memberCount: 1,
               name: 'TestTeam1',
             },
           },
@@ -114,9 +114,9 @@ describe('SpaceTeamsPage', () => {
               sys: {
                 type: 'Team',
                 id: 'team1',
+                memberCount: 1,
               },
               description: 'This is the first test team',
-              memberCount: 1,
               name: 'TestTeam1',
             },
           },
@@ -146,9 +146,9 @@ describe('SpaceTeamsPage', () => {
               sys: {
                 type: 'Team',
                 id: 'team2',
+                memberCount: 99,
               },
               description: 'This is the second test team',
-              memberCount: 99,
               name: 'TestTeam2',
             },
           },

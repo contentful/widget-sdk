@@ -397,7 +397,7 @@ function TeamInfo({ team, onCloseClick }) {
       data-test-id="team-in-list">
       <div className={styles.teamInfo.title}>
         <strong className={styles.teamInfo.name}>{_.truncate(team.name, { length: 25 })}</strong>{' '}
-        {pluralize('member', team.memberCount, true)}
+        {pluralize('member', team.sys.memberCount, true)}
       </div>
       <div>{_.truncate(team.description, { length: 60 })}</div>
       <IconButton
@@ -431,7 +431,7 @@ function AutocompleteTeam({ team }) {
         <strong className={styles.autocompleteTeam.name}>
           {_.truncate(team.name, { length: 25 })}
         </strong>{' '}
-        {pluralize('member', team.memberCount, true)}
+        {pluralize('member', team.sys.memberCount, true)}
       </div>
       <div>{_.truncate(team.description, { length: 90 })}</div>
     </div>

@@ -168,18 +168,15 @@ describe('Teams in space page', () => {
             Team: [
               {
                 name: 'Team 1',
-                memberCount: 2,
-                sys: { id: 'team1' },
+                sys: { id: 'team1', memberCount: 2 },
               },
               {
                 name: 'Team 2',
-                memberCount: 0,
-                sys: { id: 'team2' },
+                sys: { id: 'team2', memberCount: 0 },
               },
               {
                 name: 'Team 3',
-                memberCount: 1,
-                sys: { id: 'team3' },
+                sys: { id: 'team3', memberCount: 1 },
               },
             ],
             Role: [

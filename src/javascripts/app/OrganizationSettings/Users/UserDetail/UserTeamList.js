@@ -94,7 +94,7 @@ function UserTeamRow({ membership, onRemove }) {
       <TableCell>
         <div className={styles.ellipsis}>{membership.sys.team.description}</div>
       </TableCell>
-      <TableCell>{membership.sys.team.memberCount}</TableCell>
+      <TableCell>{membership.sys.team.sys.memberCount}</TableCell>
       <TableCell>{moment(membership.sys.createdAt).format('MMMM DD, YYYY')}</TableCell>
       <TableCell align="right">
         <CardActions
