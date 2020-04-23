@@ -54,7 +54,7 @@ export default function RoleEditorSidebar(props) {
             These custom roles can define granular permissions on entries, content types, and
             fields. To learn more about what’s possible check out{' '}
             <KnowledgeBase target="roles" text="this guide " /> or{' '}
-            <ContactUsButton buttonType="link">
+            <ContactUsButton isLink>
               <span>get in touch</span>
             </ContactUsButton>{' '}
             with our Enterprise team.
@@ -73,7 +73,7 @@ export default function RoleEditorSidebar(props) {
               To learn more about what&apos;s possible, check out{' '}
               <KnowledgeBase target="roles" text="our guide to Roles and Permissions " />.
             </Paragraph>
-            <ContactUsButton buttonType="link" />
+            <ContactUsButton isLink />
           </Typography>
         )}
       </WorkbenchSidebarItem>

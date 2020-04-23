@@ -108,6 +108,7 @@ function NonEnterpriseCopy() {
       <Heading className="entity-sidebar__heading">Help</Heading>
       <Paragraph>
         <ContactUsButton
+          isLink
           className={styles.linkWithIcon}
           testId="subscription-page.sidebar.contact-link"
         />
@@ -125,6 +126,7 @@ function EnterpriseCopy() {
       </Paragraph>
       <Paragraph>
         <ContactUsButton
+          isLink
           className={styles.linkWithIcon}
           testId="subscription-page.sidebar.contact-link"
         />

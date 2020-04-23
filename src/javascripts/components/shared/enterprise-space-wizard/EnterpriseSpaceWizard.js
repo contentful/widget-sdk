@@ -200,9 +200,7 @@ class EnterpriseSpaceWizard extends React.Component {
                   <p className="note-box--info">{`You can't create proof of concept spaces because they're not a part of your enterprise deal with Contentful.
                   Get in touch with us if you want to create new spaces.`}</p>
                 )}
-                <ContactUsButton buttonType="button" noIcon>
-                  Talk to us
-                </ContactUsButton>
+                <ContactUsButton noIcon>Talk to us</ContactUsButton>
               </React.Fragment>
             )}
           </Dialog.Body>
