@@ -79,7 +79,9 @@ const EntryEditorWorkbench = ({
             </>
           }
         />
-        <Workbench.Content className={styles.mainContent}>
+        <Workbench.Content
+          type={editorData.editorExtension ? 'full' : 'default'}
+          className={styles.mainContent}>
           <StatusNotification {...statusNotificationProps} className={styles.statusNotification} />
           {editorData.editorExtension && (
             <CustomEditorExtensionRenderer {...customExtensionProps} />
