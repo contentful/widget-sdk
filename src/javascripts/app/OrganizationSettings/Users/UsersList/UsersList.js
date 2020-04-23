@@ -69,6 +69,12 @@ const styles = {
     },
   }),
   list: css({ position: 'relative' }),
+  col15: css({
+    width: '15%',
+  }),
+  colActions: css({
+    width: '200px',
+  }),
 };
 
 class UsersList extends React.Component {
@@ -259,17 +265,24 @@ class UsersList extends React.Component {
                   className={classnames('organization-membership-list', {
                     'organization-membership-list--loading': loading,
                   })}>
+                  <colgroup>
+                    <col />
+                    <col className={styles.col15} />
+                    <col className={styles.col15} />
+                    <col className={styles.col15} />
+                    <col className={styles.colActions} />
+                  </colgroup>
                   <TableHead>
                     <TableRow>
-                      <TableCell width="300">User</TableCell>
-                      <TableCell width="200">Organization role</TableCell>
+                      <TableCell>User</TableCell>
+                      <TableCell>Organization role</TableCell>
                       <TableCell>Last active</TableCell>
                       <TableCell>
                         <Tooltip content="2FA status will not be present for users who are ineligible or haven’t enabled it.">
                           2FA status
                         </Tooltip>
                       </TableCell>
-                      <TableCell></TableCell>
+                      <TableCell />
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -337,33 +350,28 @@ class UsersList extends React.Component {
   }
 }
 
-function SkeletonCell({ clipId, width }) {
+function SkeletonCell() {
   return (
-    <TableCell width={width}>
-      <SkeletonContainer svgHeight={42} clipId={clipId}>
+    <TableCell>
+      <SkeletonContainer svgHeight={42}>
         <SkeletonBodyText numberOfLines={2} />
       </SkeletonContainer>
     </TableCell>
   );
 }
 
-SkeletonCell.propTypes = {
-  clipId: PropTypes.string.isRequired,
-  width: PropTypes.string,
-};
-
 function LoadingState({ numberOfRows }) {
   return times(numberOfRows, (idx) => (
     <TableRow key={idx}>
-      <TableCell width="300">
-        <SkeletonContainer svgHeight={42} clipId="user-avatar">
+      <TableCell>
+        <SkeletonContainer svgHeight={42}>
           <SkeletonImage width={32} height={32} radiusX="100%" radiusY="100%" />
           <SkeletonBodyText numberOfLines={2} offsetLeft={52} />
         </SkeletonContainer>
       </TableCell>
-      <SkeletonCell width="200" clipId="role" />
-      <SkeletonCell clipId="last-active" />
-      <SkeletonCell clipId="2fa-status" />
+      <SkeletonCell />
+      <SkeletonCell />
+      <SkeletonCell />
       <TableCell />
     </TableRow>
   ));
