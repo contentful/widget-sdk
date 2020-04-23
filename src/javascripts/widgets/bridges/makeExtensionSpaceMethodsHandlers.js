@@ -53,6 +53,12 @@ const ALLOWED_SDK_METHODS = [
 
   'getAllScheduledActions',
   'getEntityScheduledActions',
+
+  // Alpha methods
+  'getEntryReferences',
+  'validateEntry',
+  'validateRelease',
+  'executeRelease',
 ];
 
 export default function makeExtensionSpaceMethodsHandlers(dependencies, handlerOptions = {}) {

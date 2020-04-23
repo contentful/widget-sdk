@@ -3,6 +3,7 @@ import * as PathUtils from 'utils/Path';
 import get from 'lodash/get';
 import TheLocaleStore from 'services/localeStore';
 import { onSlideInNavigation } from 'navigation/SlideInNavigator/index';
+import * as Analytics from 'analytics/Analytics';
 
 import makeExtensionDialogsHandler from './makeExtensionDialogsHandlers';
 import makeExtensionSpaceMethodsHandlers from './makeExtensionSpaceMethodsHandlers';
@@ -230,5 +231,7 @@ export default function createExtensionBridge(dependencies) {
         $scope.fieldLocale.setActive(isActive);
       });
     }
+
+    api.registerHandler('__internal__track', Analytics.track);
   }
 }
