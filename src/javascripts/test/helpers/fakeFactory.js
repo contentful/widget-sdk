@@ -41,23 +41,24 @@ export function Link(linkType = '', id) {
   };
 }
 
-export function Space(name = '') {
-  const uniqueSpaceId = uniqueId('SpaceId');
-
+export function Space(options = {}) {
   return {
-    name: name || uniqueSpaceId,
+    name: uniqueId(types.SPACE),
+    organization: Organization(),
+    spaceMembership: SpaceMembership(),
     sys: sys({
       type: types.SPACE,
-      id: uniqueSpaceId,
+      id: uniqueId(types.SPACE),
       createdAt: DEFAULT_CREATED_AT_TIME_ISO,
       createdBy: User(),
     }),
+    ...options,
   };
 }
 
 export function Organization(options = {}) {
   return {
-    name: uniqueId('Organization'),
+    name: uniqueId(types.ORGANIZATION),
     sys: sys({
       type: types.ORGANIZATION,
       id: uniqueId(types.ORGANIZATION),

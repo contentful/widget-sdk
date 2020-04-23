@@ -57,7 +57,7 @@ describe('Space Plan Row', () => {
     it('should display the name of the plan', async () => {
       await build();
       expect(screen.getByTestId('subscription-page.spaces-list.space-name')).toHaveTextContent(
-        mockPlan.space.sys.id
+        mockPlan.space.name
       );
     });
 

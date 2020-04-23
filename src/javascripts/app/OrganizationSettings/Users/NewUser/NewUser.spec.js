@@ -9,8 +9,8 @@ import { create as createSpaceMembershipRepo } from 'access_control/SpaceMembers
 import { createTeamMembership } from 'access_control/TeamRepository';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 
-const mockFooSpace = fakeFactory.Space('Foo');
-const mockBarSpace = fakeFactory.Space('Bar');
+const mockFooSpace = fakeFactory.Space();
+const mockBarSpace = fakeFactory.Space();
 const mockEditorRole = fakeFactory.Role('Editor', mockFooSpace);
 const mockAuthorRole = fakeFactory.Role('Author', mockBarSpace);
 const mockTeamA = fakeFactory.Team('Team A');
@@ -104,7 +104,7 @@ describe('NewUser', () => {
       const { spaceMembershipsValidationMessage } = await submitForm(
         ['expect@topass.com'],
         'Member',
-        [{ spaceName: 'Foo', roleNames: [] }]
+        [{ spaceName: mockFooSpace.name, roleNames: [] }]
       );
 
       expect(invite).not.toHaveBeenCalled();

@@ -26,8 +26,8 @@ pendingMembership.sys.createdBy = createdByUser;
 pendingMembership.sys.createdAt = new Date(2019, 11, 1).toISOString();
 pendingMembership.sys.lastActiveAt = null;
 
-const pizzaSpace = fake.Space('Pizza Space');
-const mockSpaces = [pizzaSpace, fake.Space('Burger Space'), fake.Space('Ramen Space')];
+const pizzaSpace = fake.Space();
+const mockSpaces = [pizzaSpace, fake.Space(), fake.Space()];
 
 const teamHejo = fake.Team('Hejo');
 const mockTeams = [teamHejo, fake.Team('Moi'), fake.Team('Ahoy')];
@@ -115,7 +115,7 @@ describe('User Details', () => {
 
     it('should resolve the space name', () => {
       const items = screen.getAllByTestId('user-space-list.item')[0];
-      const cell = within(items).queryByText('Pizza Space');
+      const cell = within(items).queryByText(pizzaSpace.name);
       expect(cell).toBeVisible();
     });
 

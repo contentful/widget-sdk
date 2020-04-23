@@ -17,10 +17,10 @@ jest.mock('services/TokenStore', () => ({
 
 jest.mock('./OrganizationRow', () => () => <tr data-test-id="organization-row"></tr>);
 
-const build = async (options = { withoutWaiting: true }) => {
+const build = async (options = { withoutWaiting: false }) => {
   const renderedComponent = render(<OrganizationsRoute />);
 
-  if (options.withoutWaiting) {
+  if (!options.withoutWaiting) {
     await wait();
   }
 
