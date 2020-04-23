@@ -5,7 +5,7 @@ import * as FeatureFlagKey from 'featureFlags';
 import TasksWidgetContainer from './TasksWidgetContainer';
 
 import { trackIsTasksAlphaEligible } from './analytics';
-import ProductCatalog from 'data/CMA/ProductCatalog';
+import * as ProductCatalog from 'data/CMA/ProductCatalog';
 
 jest.mock('data/CMA/ProductCatalog', () => ({ getCurrentSpaceFeature: jest.fn() }));
 jest.mock('./analytics');

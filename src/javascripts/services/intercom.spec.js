@@ -1,5 +1,5 @@
 import * as Intercom from './intercom';
-import loader from 'utils/LazyLoader';
+import * as loader from 'utils/LazyLoader';
 
 jest.mock('utils/LazyLoader', () => ({ getFromGlobal: jest.fn() }));
 

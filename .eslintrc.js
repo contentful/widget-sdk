@@ -36,6 +36,7 @@ module.exports = {
   parser: 'babel-eslint',
   rules: {
     'import/no-unresolved': 'error',
+    'import/default': 'error',
     'rulesdir/relative-imports': 'error',
     'rulesdir/restrict-angular-require': 'error',
     'rulesdir/restrict-forma-css-in-react-components': 'warn',
