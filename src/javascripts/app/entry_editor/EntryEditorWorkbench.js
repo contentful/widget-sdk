@@ -42,6 +42,7 @@ const EntryEditorWorkbench = ({
   statusNotificationProps,
   getEditorData,
   customExtensionProps,
+  preferences,
   widgets,
   editorContext,
   getOtDoc,
@@ -112,6 +113,7 @@ const EntryEditorWorkbench = ({
                   loadEvents,
                   editorData: getEditorData(),
                   otDoc,
+                  preferences,
                   entityInfo,
                 }}
               />
@@ -139,6 +141,7 @@ EntryEditorWorkbench.propTypes = {
     }),
     isSingleLocaleModeOn: PropTypes.bool,
   }),
+  preferences: PropTypes.object,
   customExtensionProps: PropTypes.object,
   statusNotificationProps: PropTypes.object,
   widgets: PropTypes.array,
