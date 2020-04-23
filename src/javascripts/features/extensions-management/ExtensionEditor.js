@@ -8,7 +8,7 @@ import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils';
 import { getExtensionParameterIds } from './getExtensionParameterIds';
 import StateLink from 'app/common/StateLink';
 import { toInternalFieldType, toApiFieldType } from 'widgets/FieldTypes';
-import ExtensionForm from './ExtensionForm';
+import { ExtensionForm } from './ExtensionForm';
 import * as Analytics from 'analytics/Analytics';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';

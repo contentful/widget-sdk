@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ExtensionEditor from '../ExtensionEditor';
+import { ExtensionEditor } from '../ExtensionEditor';
 import { ExtensionEditorSkeleton } from '../skeletons/ExtensionEditorSkeleton';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import StateRedirect from 'app/common/StateRedirect';
