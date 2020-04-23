@@ -25,7 +25,7 @@ export default function ContactUsButton(props) {
   };
 
   if (!noIcon) {
-    props.icon = 'ChatBubble';
+    buttonComponentProps.icon = 'ChatBubble';
   }
 
   return (
