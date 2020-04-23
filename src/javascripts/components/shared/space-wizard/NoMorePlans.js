@@ -11,7 +11,7 @@ export default function NoMorePlans({ canSetupBilling }) {
         {canSetupBilling && (
           <span>
             {' '}
-            <ContactUsButton noIcon /> if you need higher limits.
+            <ContactUsButton noIcon isLink /> if you need higher limits.
           </span>
         )}
       </p>

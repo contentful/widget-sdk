@@ -40,7 +40,7 @@ const SpaceUsageSidebar = ({ spaceResources, environmentResources, environmentId
         Don't hesitate to talk to our customer success team.`}
       </p>
       <p>
-        <ContactUsButton />
+        <ContactUsButton isLink />
       </p>
     </div>
   );

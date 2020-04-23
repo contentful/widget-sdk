@@ -97,7 +97,10 @@ const DeleteUserModal = ({ singleOwnerOrganizations, onConfirm, onCancel, isShow
         )}
         <Paragraph>
           If there is anything we can help you with, please{' '}
-          <ContactUsButton noIcon>get in touch with us</ContactUsButton>.
+          <ContactUsButton noIcon isLink>
+            get in touch with us
+          </ContactUsButton>
+          .
         </Paragraph>
         <FormLabel htmlFor="reasons">Why are you deleting your account?</FormLabel>
         <FieldGroup id="reasons">
