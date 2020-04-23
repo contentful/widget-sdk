@@ -2,8 +2,6 @@
 import React from 'react';
 import { RichTextEditor } from '@contentful/field-editor-rich-text';
 import richTextWidgetApiDecorator from './widgetApiDecorator';
-import customRenderers from './customRenderers';
-import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext';
 import withTracking from './withTracking';
 
 const RichTextEditorWithTracking = withTracking(RichTextEditor);
@@ -20,15 +18,10 @@ export default function renderRichTextEditor({ widgetApi, loadEvents }) {
   // the ui-extensions-sdk.
   const richTextWidgetAPI = richTextWidgetApiDecorator(widgetApi);
   return (
-    // TODO: Avoid using `WidgetAPIContext`, currently only necessary for rendering
-    //  entity cards.
-    <WidgetAPIContext.Provider value={{ widgetAPI: richTextWidgetAPI }}>
-      <RichTextEditorWithTracking
-        widgetAPI={richTextWidgetAPI}
-        parameters={widgetApi.parameters}
-        customRenderers={customRenderers}
-        loadEvents={loadEvents} // specific to withTracking
-      />
-    </WidgetAPIContext.Provider>
+    <RichTextEditorWithTracking
+      sdk={richTextWidgetAPI}
+      parameters={widgetApi.parameters}
+      loadEvents={loadEvents} // specific to withTracking
+    />
   );
 }

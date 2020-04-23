@@ -16,7 +16,7 @@ describe('withTracking() returned hoc', () => {
       loadEvents: {
         emit: () => {},
       },
-      widgetAPI: {
+      sdk: {
         field: {
           id: 'FIELD_ID,',
           locale: 'FIELD_LOCALE',

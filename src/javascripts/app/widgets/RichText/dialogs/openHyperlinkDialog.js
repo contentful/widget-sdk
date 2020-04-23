@@ -27,8 +27,8 @@ const nodeToHyperlinkType = {
  *  Will be overwritten accordingly if `url` or `target` are set.
  * @returns {Promise<{uri: string?, target: object?, text: string?}>}
  */
-export default async function ({ value = {}, showTextInput, widgetAPI }) {
-  const entitySelectorConfigs = newConfigsForField(widgetAPI.field);
+export default async function ({ value = {}, showTextInput, sdk }) {
+  const entitySelectorConfigs = newConfigsForField(sdk.field);
   const isNew = !(value.uri || value.target);
   const props = {
     labels: {
@@ -38,14 +38,14 @@ export default async function ({ value = {}, showTextInput, widgetAPI }) {
     value,
     hideText: !showTextInput,
     entitySelectorConfigs,
-    allowedHyperlinkTypes: getAllowedHyperlinkTypes(widgetAPI.field),
+    allowedHyperlinkTypes: getAllowedHyperlinkTypes(sdk.field),
   };
 
   return new Promise((resolve, reject) => {
     ModalLauncher.open(({ isShown, onClose }) => (
       // TODO: Avoid using `WidgetAPIContext`, currently only necessary for rendering
       //  entity cards.
-      <WidgetAPIContext.Provider value={{ widgetAPI }}>
+      <WidgetAPIContext.Provider value={{ widgetAPI: sdk }}>
         <HyperlinkDialog
           {...props}
           isShown={isShown}

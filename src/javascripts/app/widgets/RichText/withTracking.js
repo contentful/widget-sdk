@@ -21,7 +21,7 @@ const getCountOrNull = (count) => (typeof count === 'number' ? count : null);
 export default function withTracking(Component) {
   return class extends React.Component {
     static propTypes = {
-      widgetAPI: PropTypes.shape({
+      sdk: PropTypes.shape({
         entry: PropTypes.shape({
           getSys: PropTypes.func.isRequired,
         }).isRequired,
@@ -60,17 +60,17 @@ export default function withTracking(Component) {
     }
 
     trackEntryEditorAction(actionName, data) {
-      const { widgetAPI, loadEvents } = this.props;
-      const { field } = widgetAPI;
+      const { sdk, loadEvents } = this.props;
+      const { field } = sdk;
       loadEvents.emit({ actionName, field, ...data });
     }
 
     trackRichTextEditorAction(actionName, origin, data) {
-      const { widgetAPI } = this.props;
-      const entrySys = widgetAPI.entry.getSys();
+      const { sdk } = this.props;
+      const entrySys = sdk.entry.getSys();
       const entryId = entrySys.id;
       const ctId = entrySys.contentType.sys.id;
-      const { locale, id: fieldId } = widgetAPI.field;
+      const { locale, id: fieldId } = sdk.field;
 
       Analytics.track('text_editor:action', {
         editorName: 'RichText',

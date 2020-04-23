@@ -1,9 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext';
 import { ConnectedRichTextEditor } from '@contentful/field-editor-rich-text';
 import richTextWidgetApiDecorator from './widgetApiDecorator';
-import customRenderers from './customRenderers';
 
 export default class ReadOnlyRichTextEditor extends React.Component {
   static propTypes = {
@@ -15,17 +13,14 @@ export default class ReadOnlyRichTextEditor extends React.Component {
     const { value, widgetApi } = this.props;
     const richTextWidgetAPI = richTextWidgetApiDecorator(widgetApi, null);
     return (
-      <WidgetAPIContext.Provider value={{ widgetAPI: richTextWidgetAPI }}>
-        <ConnectedRichTextEditor
-          value={value}
-          widgetAPI={richTextWidgetAPI}
-          customRenderers={customRenderers}
-          isToolbarHidden
-          actionsDisabled
-          readOnly
-          isDisabled
-        />
-      </WidgetAPIContext.Provider>
+      <ConnectedRichTextEditor
+        value={value}
+        sdk={richTextWidgetAPI}
+        isToolbarHidden
+        actionsDisabled
+        readOnly
+        isDisabled
+      />
     );
   }
 }

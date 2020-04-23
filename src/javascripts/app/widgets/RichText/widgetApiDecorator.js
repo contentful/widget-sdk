@@ -1,4 +1,5 @@
 import openHyperlinkDialog from './dialogs/openHyperlinkDialog';
+import { getEntityLink } from 'app/common/EntityStateLink';
 import {
   getSectionVisibility,
   canCreateAsset,
@@ -14,19 +15,21 @@ import {
  * TODO: Make these additions available in the standard widgetAPI and the
  *  ui-extensions-sdk in this or a similar way.
  *
- * @param {Object} widgetAPI
+ * @param {Object} sdk
  * @returns {Object}
  */
-export default function (widgetAPI) {
+export default function (sdk) {
   const { asset: canAccessAssets } = getSectionVisibility();
-  const contentTypes = widgetAPI.space.getCachedContentTypes();
+  const contentTypes = sdk.space.getCachedContentTypes();
 
   const rtWidgetAPI = {
-    ...widgetAPI,
+    ...sdk,
     parameters: {
-      ...widgetAPI.parameters,
+      ...sdk.parameters,
       instance: {
-        ...widgetAPI.parameters.instance,
+        ...sdk.parameters.instance,
+        getEntryUrl: (entryId) => getEntityLink({ id: entryId, type: 'Entry' }).href,
+        getAssetUrl: (assetId) => getEntityLink({ id: assetId, type: 'Asset' }).href,
         permissions: {
           canAccessAssets,
           canCreateAssets: canCreateAsset(),
@@ -43,9 +46,9 @@ export default function (widgetAPI) {
       },
     },
     dialogs: {
-      ...widgetAPI.dialogs,
+      ...sdk.dialogs,
       createHyperlink: ({ showTextInput, value }) => {
-        return openHyperlinkDialog({ showTextInput, value, widgetAPI });
+        return openHyperlinkDialog({ showTextInput, value, sdk });
       },
     },
   };
