@@ -6,7 +6,7 @@ import {
   Workbench,
 } from '@contentful/forma-36-react-components';
 import NavigationIcon from 'ui/Components/NavigationIcon';
-import ExtensionsSidebar from '../ExtensionsSidebar';
+import { ExtensionsSidebar } from '../ExtensionsSidebar';
 
 export const ExtensionListSkeleton = (props) => (
   <Workbench>

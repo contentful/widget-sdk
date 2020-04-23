@@ -2,10 +2,10 @@ import React from 'react';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
 import LazyLoadedComponent from 'app/common/LazyLoadedComponent';
 import { SettingsImporter } from 'app/settings/SettingsImporter';
-import { ExtensionEditorSkeleton } from '../skeletons/ExtensionEditorSkeleton';
-import { ExtensionListSkeleton } from '../skeletons/ExtensionListSkeleton';
+import { ExtensionEditorSkeleton } from 'features/extensions-management';
+import { ExtensionListSkeleton } from 'features/extensions-management';
 
-export default {
+export const extensionsSettingsState = {
   name: 'extensions',
   url: '/extensions',
   abstract: true,

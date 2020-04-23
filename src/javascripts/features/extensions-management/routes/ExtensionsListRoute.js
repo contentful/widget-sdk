@@ -4,8 +4,8 @@ import { get } from 'lodash';
 
 import StateRedirect from 'app/common/StateRedirect';
 import createFetcherComponent from 'app/common/createFetcherComponent';
-import ExtensionsForbiddenPage from '../ExtensionsForbiddenPage';
-import ExtensionsList from '../ExtensionsList';
+import { ExtensionsForbiddenPage } from '../ExtensionsForbiddenPage';
+import { ExtensionsList } from '../ExtensionsList';
 import { ExtensionListSkeleton } from '../skeletons/ExtensionListSkeleton';
 import { toInternalFieldType } from 'widgets/FieldTypes';
 import { getSectionVisibility } from 'access_control/AccessChecker';
@@ -35,7 +35,7 @@ const ExtensionsFetcher = createFetcherComponent(async ({ cma }) => {
   return extensions.map(prepareExtension);
 });
 
-class ExtensionsListRoute extends React.Component {
+export class ExtensionsListRoute extends React.Component {
   static propTypes = {
     extensionUrl: PropTypes.string,
     extensionUrlReferrer: PropTypes.string,
@@ -78,5 +78,3 @@ class ExtensionsListRoute extends React.Component {
     );
   }
 }
-
-export default ExtensionsListRoute;

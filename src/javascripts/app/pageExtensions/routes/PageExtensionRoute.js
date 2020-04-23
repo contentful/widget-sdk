@@ -4,7 +4,7 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import PageExtension from '../PageExtension';
-import * as advancedExtensibilityFeature from 'app/settings/extensions/services/AdvancedExtensibilityFeature';
+import { AdvancedExtensibilityFeature } from 'features/extensions-management';
 import {
   SkeletonContainer,
   SkeletonDisplayText,
@@ -18,7 +18,7 @@ import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
 const PageExtensionFetcher = createFetcherComponent(async ({ extensionId, orgId }) => {
   const key = [NAMESPACE_EXTENSION, extensionId];
   const [isEnabled, widgets] = await Promise.all([
-    advancedExtensibilityFeature.isEnabled(orgId),
+    AdvancedExtensibilityFeature.isEnabled(orgId),
     getCustomWidgetLoader().getByKeys([key]),
   ]);
 

@@ -5,7 +5,7 @@ import { get, cloneDeep, isEqual, omit } from 'lodash';
 import { Notification, Button } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils';
-import getExtensionParameterIds from './getExtensionParameterIds';
+import { getExtensionParameterIds } from './getExtensionParameterIds';
 import StateLink from 'app/common/StateLink';
 import { toInternalFieldType, toApiFieldType } from 'widgets/FieldTypes';
 import ExtensionForm from './ExtensionForm';
@@ -20,7 +20,7 @@ const styles = {
   }),
 };
 
-class ExtensionEditor extends React.Component {
+export class ExtensionEditor extends React.Component {
   static propTypes = {
     entity: PropTypes.object.isRequired,
     setDirty: PropTypes.func.isRequired,
@@ -161,5 +161,3 @@ class ExtensionEditor extends React.Component {
     );
   }
 }
-
-export default ExtensionEditor;

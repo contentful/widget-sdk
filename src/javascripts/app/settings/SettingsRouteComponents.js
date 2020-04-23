@@ -9,8 +9,8 @@ import LocalesEditRoute from './locales/routes/LocalesEditRoute';
 
 import LocalesNewRoute from './locales/routes/LocalesNewRoute';
 import LocalesListRoute from './locales/routes/LocalesListRoute';
-import ExtensionsListRoute from './extensions/routes/ExtensionsListRoute';
-import ExtensionEditorRoute from './extensions/routes/ExtensionEditorRoute';
+import ExtensionsListRoute from 'features/extensions-management';
+import ExtensionEditorRoute from 'features/extensions-management';
 import RoleEditorRoute from './roles_permissions/routes/RoleEditorRoute';
 import RolesListRoute from './roles_permissions/routes/RolesListRoute';
 

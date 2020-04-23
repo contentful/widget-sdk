@@ -28,7 +28,7 @@ import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
 import { ExtensionListSkeleton } from './skeletons/ExtensionListSkeleton';
 
 import { DocsLink } from './ExtensionsSidebar';
-import ExtensionsActions from './ExtensionsActions';
+import { ExtensionsActions } from './ExtensionsActions';
 import { openGitHubInstaller } from './ExtensionsActions';
 
 const styles = {
@@ -229,5 +229,3 @@ export class ExtensionsList extends React.Component {
     );
   }
 }
-
-export default ExtensionsList;

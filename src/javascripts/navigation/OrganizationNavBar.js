@@ -8,7 +8,7 @@ import { getOrgFeature } from '../data/CMA/ProductCatalog';
 import SidepanelContainer from './Sidepanel/SidepanelContainer';
 import createLegacyFeatureService from 'services/LegacyFeatureService';
 import { getVariation } from 'LaunchDarkly';
-import * as AdvancedExtensibilityFeature from 'app/settings/extensions/services/AdvancedExtensibilityFeature';
+import { AdvancedExtensibilityFeature } from 'features/extensions-management';
 
 function getItems(params, { orgId }) {
   const shouldDisplayAccessTools = params.accessToolsFeatureEnabled && params.isOwnerOrAdmin;

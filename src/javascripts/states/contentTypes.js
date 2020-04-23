@@ -1,5 +1,5 @@
 import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer';
-import * as AdvancedExtensibilityFeature from 'app/settings/extensions/services/AdvancedExtensibilityFeature';
+import { AdvancedExtensibilityFeature } from 'features/extensions-management';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import ContentTypeListPage from 'components/tabs/content_type_list/ContentTypeListPage';
 

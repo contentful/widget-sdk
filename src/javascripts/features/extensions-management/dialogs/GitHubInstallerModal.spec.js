@@ -2,7 +2,7 @@ import React from 'react';
 import Enzyme from 'enzyme';
 import 'jest-enzyme';
 import * as Fetcher from './ExtensionFetcher';
-import GitHubInstallerModal from './GitHubInstallerModal';
+import { GitHubInstallerModal } from './GitHubInstallerModal';
 
 const VALID_URL = 'https://github.com/jelz/sample/blob/master/extension.json';
 const ERR_SELECTOR = '[data-test-id="cf-ui-validation-message"]';
@@ -35,7 +35,7 @@ describe('GitHubInstallerModal', () => {
     expect(wrapper.find(ERR_SELECTOR).text()).toBe('Please provide a valid GitHub URL');
   });
 
-  it('accepts valid Github URLs', () => {
+  it('accepts valid GitHub URLs', () => {
     expect.assertions(8);
     [VALID_URL, 'https://raw.githubusercontent.com/jelz/sample/master/extension.json'].forEach(
       (value) => {

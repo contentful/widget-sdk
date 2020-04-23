@@ -28,7 +28,7 @@ DocsLink.propTypes = {
   title: PropTypes.string.isRequired,
 };
 
-const Sidebar = () => {
+export const ExtensionsSidebar = () => {
   return (
     <WorkbenchSidebarItem title="Documentation">
       <Typography>
@@ -66,5 +66,3 @@ const Sidebar = () => {
     </WorkbenchSidebarItem>
   );
 };
-
-export default Sidebar;

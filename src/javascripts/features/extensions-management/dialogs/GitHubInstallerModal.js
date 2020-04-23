@@ -1,9 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ModalConfirm, TextField } from '@contentful/forma-36-react-components';
+import {
+  ModalConfirm,
+  TextField,
+  Paragraph,
+  TextLink,
+} from '@contentful/forma-36-react-components';
 import * as Fetcher from './ExtensionFetcher';
 
-class GithubInstaller extends React.Component {
+export class GitHubInstallerModal extends React.Component {
   static propTypes = {
     extensionUrl: PropTypes.string,
     isShown: PropTypes.bool.isRequired,
@@ -15,11 +20,11 @@ class GithubInstaller extends React.Component {
     return { url: null, valid: false, fetching: false, err: null };
   }
 
-  state = GithubInstaller.getInitialState();
+  state = GitHubInstallerModal.getInitialState();
 
   componentDidUpdate(prevProps) {
     if (prevProps.isShown !== this.props.isShown) {
-      this.setState(GithubInstaller.getInitialState());
+      this.setState(GitHubInstallerModal.getInitialState());
     }
   }
 
@@ -72,17 +77,17 @@ class GithubInstaller extends React.Component {
         onCancel={onCancel}
         isConfirmDisabled={disabled}
         isConfirmLoading={fetching}>
-        <p>
+        <Paragraph>
           Paste a public GitHub link to an <code>extension.json</code> descriptor file.{' '}
           <strong>Important:</strong> use only sources that you trust. You can check the{' '}
-          <a
+          <TextLink
             href="https://github.com/contentful/extensions/tree/master/samples"
             target="_blank"
             rel="noopener noreferrer">
             <code>contentful/extensions</code>
-          </a>{' '}
+          </TextLink>{' '}
           repository.
-        </p>
+        </Paragraph>
         <TextField
           id="github-repo"
           name="github-repo"
@@ -96,5 +101,3 @@ class GithubInstaller extends React.Component {
     );
   }
 }
-
-export default GithubInstaller;

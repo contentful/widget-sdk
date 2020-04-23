@@ -2,7 +2,7 @@ import React from 'react';
 import Enzyme from 'enzyme';
 import 'jest-enzyme';
 
-import Form from './ExtensionForm';
+import { ExtensionForm } from './ExtensionForm';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 
 const ERR_SELECTOR = '.cfnext-form__field-error';
@@ -12,7 +12,7 @@ describe('ExtensionForm', () => {
     const updateEntityStub = jest.fn();
     const setSelfHostedStub = jest.fn();
     const wrapper = Enzyme.mount(
-      <Form
+      <ExtensionForm
         entity={entity}
         updateEntity={updateEntityStub}
         selfHosted={selfHosted}

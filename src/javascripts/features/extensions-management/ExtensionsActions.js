@@ -7,9 +7,9 @@ import {
   DropdownListItem,
   Notification,
 } from '@contentful/forma-36-react-components';
-import GitHubInstallerModal from './dialogs/GitHubInstallerModal';
+import { GitHubInstallerModal } from './dialogs/GitHubInstallerModal';
 import { toInternalFieldType } from 'widgets/FieldTypes';
-import getExtensionParameterIds from './getExtensionParameterIds';
+import { getExtensionParameterIds } from './getExtensionParameterIds';
 import * as Analytics from 'analytics/Analytics';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
@@ -97,7 +97,7 @@ export function createExtension() {
   });
 }
 
-export default class ExtensionsActions extends React.Component {
+export class ExtensionsActions extends React.Component {
   state = {
     isOpen: false,
   };

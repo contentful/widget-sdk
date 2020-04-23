@@ -1,10 +1,10 @@
 import React from 'react';
 import Enzyme from 'enzyme';
 import 'jest-enzyme';
-import ExtensionsList from './ExtensionsList';
+import { ExtensionsList } from './ExtensionsList';
 import * as $stateMocked from 'ng/$state';
 
-describe('app/settings/extensions/Extensions', () => {
+describe('features/extensions-management/Extensions', () => {
   beforeEach(() => {
     $stateMocked.go.mockClear();
   });

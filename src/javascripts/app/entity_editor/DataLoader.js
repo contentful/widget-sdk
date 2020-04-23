@@ -3,7 +3,7 @@ import { caseof as caseofEq } from 'sum-types/caseof-eq';
 import { deepFreeze } from 'utils/Freeze';
 import createPrefetchCache from 'data/CMA/EntityPrefetchCache';
 import { assetContentType } from 'libs/legacy_client/client';
-import * as AdvancedExtensibilityFeature from 'app/settings/extensions/services/AdvancedExtensibilityFeature';
+import { AdvancedExtensibilityFeature } from 'features/extensions-management';
 import TheLocaleStore from 'services/localeStore';
 
 import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer';

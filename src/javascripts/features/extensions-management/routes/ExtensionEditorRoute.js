@@ -54,5 +54,3 @@ export class ExtensionEditorRoute extends React.Component {
     );
   }
 }
-
-export default ExtensionEditorRoute;

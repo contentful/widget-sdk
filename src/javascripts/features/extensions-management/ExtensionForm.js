@@ -6,7 +6,7 @@ import { Label, Editor, ExtensionParameters } from './ExtensionFormLeaves';
 
 const EXTENSION_URL_RE = /(^https:\/\/)|(^http:\/\/localhost(:[0-9]+)?(\/|$))/;
 
-const ExtensionForm = ({ entity, selfHosted, updateEntity, setSelfHosted }) => {
+export const ExtensionForm = ({ entity, selfHosted, updateEntity, setSelfHosted }) => {
   const noName = (entity.extension.name || '').length < 1;
   const invalidUrl = !EXTENSION_URL_RE.test(entity.extension.src || '');
 
@@ -148,5 +148,3 @@ ExtensionForm.propTypes = {
   updateEntity: PropTypes.func.isRequired,
   setSelfHosted: PropTypes.func.isRequired,
 };
-
-export default ExtensionForm;
