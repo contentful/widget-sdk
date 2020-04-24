@@ -150,7 +150,7 @@ orbs:
               TERM: xterm
         environment:
           CYPRESS_baseUrl: http://localhost:3001
-          TEST_LOCAL_SDK: false
+          TEST_LOCAL_SDK: true
           UI_CONFIG: dev-on-production
         working_directory: /home/circleci/components/ui-extensions-sdk
         steps:
