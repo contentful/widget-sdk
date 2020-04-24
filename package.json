@@ -171,7 +171,6 @@
     "caniuse-lite": "^1.0.30001025",
     "canonical-path": "0.0.2",
     "chalk": "^2.4.2",
-    "chokidar": "^1.4.3",
     "codecov": "^3.6.5",
     "commitizen": "^4.0.3",
     "contentful-ui-extensions-sdk": "3.12.0",
