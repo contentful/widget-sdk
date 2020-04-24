@@ -115,6 +115,7 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
   // we need to make sure that we present them with the normalized
   // version.
   changes.onValue((changePath) => {
+    // isPrefix is always false, because arguments are in the different order.
     if (PathUtils.isPrefix(changePath, ['fields']) && currentDoc) {
       const locales = TheLocaleStore.getPrivateLocales();
       Normalizer.normalize(

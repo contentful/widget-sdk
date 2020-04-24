@@ -1,4 +1,4 @@
-import { get, isObject, transform, map, forEach, keys } from 'lodash';
+import { get, isObject, transform, map, forEach, keys, isEmpty } from 'lodash';
 
 /**
  * Normalize an entry or asset document by removing unused fields.
@@ -8,6 +8,7 @@ import { get, isObject, transform, map, forEach, keys } from 'lodash';
  * - Remove field objects if the field is not in the content type
  *   anymore. (Only applies if `contentType` parameter is given.
  * - Make sure that every field object is actually an object.
+ * - Remove fields with empty `{}` values - as CMA returns.
  *
  * Note that the first two transformation are performed on the raw
  * document snapshot. This means they are not saved and this might
@@ -24,6 +25,7 @@ export function normalize(otDoc, snapshot, contentType, locales) {
   forceFieldObject(otDoc);
   removeDeletedFields(snapshot, ctFields);
   removeUnknownLocales(snapshot, localeMap);
+  removeEmptyFields(snapshot);
 }
 
 function forceFieldObject(otDoc) {
@@ -67,6 +69,19 @@ function removeDeletedFields(snapshot, ctFields) {
 
   forEach(snapshot.fields, (_fieldValue, fieldId) => {
     if (ctFieldIds.indexOf(fieldId) < 0) {
+      delete snapshot.fields[fieldId];
+    }
+  });
+}
+
+function removeEmptyFields(snapshot) {
+  forEach(snapshot.fields, (value, fieldId) => {
+    keys(value).forEach((locale) => {
+      if (value[locale] === undefined) {
+        delete snapshot.fields[fieldId][locale];
+      }
+    });
+    if (isEmpty(snapshot.fields[fieldId])) {
       delete snapshot.fields[fieldId];
     }
   });
