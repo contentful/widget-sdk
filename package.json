@@ -203,7 +203,6 @@
     "html-minifier": "^4.0.0",
     "htmlparser2": "^4.0.0",
     "husky": "^2.7.0",
-    "jade": "^1.11.0",
     "jasmine-core": "2.99.1",
     "jest": "25.1.0",
     "jest-dom": "^4.0.0",
