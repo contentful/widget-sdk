@@ -1,4 +1,3 @@
-import openHyperlinkDialog from './dialogs/openHyperlinkDialog';
 import { getEntityLink } from 'app/common/EntityStateLink';
 import {
   getSectionVisibility,
@@ -7,22 +6,17 @@ import {
   Action,
 } from 'access_control/AccessChecker';
 
+import { openRichTextDialog } from '@contentful/field-editor-rich-text';
+
 /**
- * Takes a standard widgetAPI and returns a copy of it, decorated with
- * non-standard functions that are required to make the RichTextEditor
- * field editor extension work with it.
- *
- * TODO: Make these additions available in the standard widgetAPI and the
- *  ui-extensions-sdk in this or a similar way.
- *
  * @param {Object} sdk
  * @returns {Object}
  */
-export default function (sdk) {
+export function rtSdkDecorator(sdk) {
   const { asset: canAccessAssets } = getSectionVisibility();
   const contentTypes = sdk.space.getCachedContentTypes();
 
-  const rtWidgetAPI = {
+  const rtSdk = {
     ...sdk,
     parameters: {
       ...sdk.parameters,
@@ -45,12 +39,9 @@ export default function (sdk) {
         },
       },
     },
-    dialogs: {
-      ...sdk.dialogs,
-      createHyperlink: ({ showTextInput, value }) => {
-        return openHyperlinkDialog({ showTextInput, value, sdk });
-      },
-    },
   };
-  return rtWidgetAPI;
+
+  rtSdk.dialogs.openExtension = openRichTextDialog(sdk);
+
+  return rtSdk;
 }

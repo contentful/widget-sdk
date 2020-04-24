@@ -249,7 +249,7 @@ export function create() {
     name: 'RichText',
     icon: 'wysiwig',
     renderFieldEditor: ({ widgetApi, loadEvents }) =>
-      renderRichTextEditor({ widgetApi, loadEvents }),
+      renderRichTextEditor({ sdk: widgetApi, loadEvents }),
   });
 
   registerWidget('tagEditor', {
