@@ -7,7 +7,6 @@ const _ = require('lodash');
 const { default: generate } = require('@babel/generator');
 const { createBabelOptions } = require('../app-babel-options');
 const { parseDOM } = require('htmlparser2');
-const jade = require('jade');
 
 const sourceDir = path.resolve(__dirname, '..', '..', 'src', 'javascripts');
 
@@ -31,7 +30,6 @@ function recursiveRead(p) {
   fs.readdirSync(p).forEach((name) => {
     const resolved = path.resolve(p, name);
     const isJsFile = resolved.endsWith('.js');
-    const isJadeFile = resolved.endsWith('.jade');
     const isSpecFile = isJsFile && resolved.endsWith('.spec.js');
 
     // Ignore .spec.js files
@@ -43,9 +41,6 @@ function recursiveRead(p) {
 
     if (stats.isFile() && isJsFile) {
       const names = processJsFile(resolved);
-      usages[resolved] = names;
-    } else if (stats.isFile() && isJadeFile) {
-      const names = processJadeFile(resolved);
       usages[resolved] = names;
     } else if (stats.isDirectory()) {
       const dirUsages = recursiveRead(resolved);
@@ -161,47 +156,6 @@ function processJsFile(filename) {
   });
 
   return names;
-}
-
-function processJadeFile(filename) {
-  // Look for the tag `react-component`, then look for the `name` attribute.
-  const raw = fs.readFileSync(filename).toString();
-  const { nodes } = new jade.Parser(raw, filename).parse();
-  const names = findReactComponentsInJadeNode(nodes, filename);
-
-  return names;
-}
-
-function findReactComponentsInJadeNode(nodes, filename) {
-  const names = [];
-
-  for (const node of nodes) {
-    // Look at all children of this tag
-    if (node.block) {
-      names.push(findReactComponentsInJadeNode(node.block.nodes, filename));
-    }
-
-    if (node.val) {
-      // The jade parser sometimes thinks a tag is text. Try to parse the text as HTML
-      const name = getNameFromString(node.val, filename);
-
-      if (name) {
-        names.push(name);
-      }
-    } else if (node.name === 'react-component') {
-      // If the tag is react-component, handle it directly here
-      const name = node.attrs.find((attr) => attr.name === 'name').val.replace(/['"]/g, '');
-
-      if (!name) {
-        console.log(`Warning: ${filename} has a react-component usage without a name.`);
-        continue;
-      }
-
-      names.push(name);
-    }
-  }
-
-  return _.remove(_.flatten(names), (val) => val);
 }
 
 function getNameFromString(str, filename) {
