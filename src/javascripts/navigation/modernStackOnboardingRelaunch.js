@@ -1,5 +1,7 @@
 import React from 'react';
 import WithLink from 'components/shared/stack-onboarding/components/WithLink';
+import { cx, css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { getSpaceAutoCreatedKey } from 'components/shared/auto_create_new_space/getSpaceAutoCreatedKey';
@@ -15,6 +17,41 @@ import Icon from 'ui/Components/Icon';
 import { getModule } from 'core/NgRegistry';
 
 const store = getBrowserStorage();
+const styles = {
+  modernStackOnboardingRelaunchWrapper: css({
+    display: 'flex',
+    justifyContent: 'center',
+    height: '100%',
+    padding: '0 40px',
+    color: tokens.colorWhite,
+  }),
+  navBarLink: css({
+    display: 'flex',
+    alignItems: 'center',
+    height: '100%',
+    borderTop: 'solid 3px transparent',
+    transition: 'color 0.1s ease-in-out',
+    position: 'relative',
+    cursor: 'pointer',
+    '&:hover': {
+      color: tokens.colorBlueMid,
+      svg: {
+        g: css({
+          stroke: tokens.colorBlueMid,
+        }),
+      },
+    },
+  }),
+  navBarListLabel: css({
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    borderBottom: '3px solid transparent',
+    '&:hover': {
+      borderBottomColor: tokens.colorBlueMid,
+    },
+  }),
+};
 
 export default class Relaunch extends React.Component {
   state = { flag: false };
@@ -60,9 +97,12 @@ export default class Relaunch extends React.Component {
       return (
         <WithLink link="copy" trackingElementId="onboarding_relaunched">
           {(move) => (
-            <div className="modern-stack-onboarding--relaunch-wrapper nav-bar__link" onClick={move}>
+            <div
+              className={cx(styles.modernStackOnboardingRelaunchWrapper, styles.navBarLink)}
+              onClick={move}
+              data-test-id="modern-stack-onboarding-relaunch-wrapper">
               <Icon name="relaunch-onboarding" className="modern-stack-onboarding--relaunch-icon" />
-              <span className="nav-bar__list-label">Relaunch onboarding</span>
+              <span className={styles.navBarListLabel}>Relaunch onboarding</span>
             </div>
           )}
         </WithLink>

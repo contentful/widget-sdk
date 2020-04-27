@@ -24,6 +24,11 @@ const styles = {
   }),
   triangleArrow: css({
     margin: '2px 0 0 12px',
+    border: `4px solid ${tokens.colorWhite}`,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderBottomColor: 'transparent',
+    transition: 'border-top-color 0.1s ease-in-out',
   }),
   dropdownList: css({
     minWidth: 250,
@@ -35,6 +40,76 @@ const styles = {
   }),
   separator: css({
     marginTop: tokens.spacingM,
+  }),
+  appTopBarAction: css({
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    height: '100%',
+
+    '&:first-child': css({
+      paddingLeft: tokens.spacingM,
+    }),
+    '&:last-child': css({
+      paddingRight: tokens.spacingM,
+    }),
+    a: css({
+      color: tokens.colorWhite,
+      padding: `0 ${tokens.spacingM}`,
+    }),
+  }),
+  navBarListItem: css({
+    margin: 0,
+    '.icon-component': css({
+      marginRight: tokens.spacingS,
+
+      svg: css({
+        transition: 'all 0.1s ease-in-out',
+      }),
+    }),
+  }),
+  navBarLink: css({
+    display: 'flex',
+    alignItems: 'center',
+    height: '100%',
+    borderTop: 'solid 3px transparent',
+    transition: 'color 0.1s ease-in-out',
+    position: 'relative',
+    cursor: 'pointer',
+    color: tokens.colorWhite,
+    padding: `0 ${tokens.spacingM}`,
+
+    '&:hover, &.is-active': css({
+      transition: 'all 0.1s ease-in-out',
+      color: tokens.colorBlueMid,
+
+      svg: css({
+        fill: tokens.colorBlueMid,
+      }),
+
+      '.border-color': css({
+        borderTopColor: tokens.colorBlueMid,
+      }),
+    }),
+
+    '&.is-disabled, &.is-disabled:hover': css({
+      color: tokens.colorTextLight,
+      cursor: 'not-allowed',
+
+      '.border-color': css({
+        borderTopColor: tokens.colorTextLight,
+      }),
+    }),
+  }),
+  navBarListLabel: css({
+    display: 'flex',
+    height: '100%',
+    alignItems: 'center',
+    borderBottom: '3px solid transparent',
+
+    div: css({
+      marginRight: '10px',
+    }),
   }),
 };
 
@@ -66,7 +141,7 @@ export default function NavigationDropdown({
   };
 
   return (
-    <li className="app-top-bar__action nav-bar__list-item">
+    <li className={cn(styles.appTopBarAction, styles.navBarListItem)}>
       <Dropdown
         isOpen={isOpen}
         onClose={onClose}
@@ -75,7 +150,7 @@ export default function NavigationDropdown({
         position="bottom-left"
         toggleElement={
           <a
-            className={cn('nav-bar__link', 'app-top-bar__menu-trigger', {
+            className={cn(styles.navBarLink, styles.appTopBarMenuTrigger, {
               'is-active':
                 !disableHighlight && Navigator.includes({ path: item.rootSref || item.sref }),
             })}
@@ -88,7 +163,7 @@ export default function NavigationDropdown({
                 onOpen();
               }
             }}>
-            <span className="nav-bar__list-label">
+            <span className={styles.navBarListLabel}>
               {item.navIcon ? (
                 <NavigationIcon icon={item.navIcon} size="medium" color="white" inNavigation />
               ) : (
@@ -97,7 +172,7 @@ export default function NavigationDropdown({
               {item.title}
               {item.tagLabel && <NavigationItemTag label={item.tagLabel} />}
             </span>
-            <span className={cn('triangle-down', styles.triangleArrow)} />
+            <span className={cn(styles.triangleArrow, 'border-color')} />
           </a>
         }>
         <DropdownList className={styles.dropdownList} testId="navbar-dropdown-menu">

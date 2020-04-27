@@ -1,6 +1,8 @@
 /* eslint-disable rulesdir/restrict-non-f36-components */
 
 import React from 'react';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 import cn from 'classnames';
 import PropTypes from 'prop-types';
 import { Tooltip } from '@contentful/forma-36-react-components';
@@ -11,15 +13,81 @@ import NavigationIcon from 'ui/Components/NavigationIcon';
 
 import keycodes from 'utils/keycodes';
 
+const styles = {
+  appTopBarAction: css({
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    height: '100%',
+
+    '&:first-child': css({
+      paddingLeft: tokens.spacingM,
+    }),
+    '&:last-child': css({
+      paddingRight: tokens.spacingM,
+    }),
+    a: css({
+      color: '#fff',
+      padding: `0 ${tokens.spacingM}`,
+    }),
+  }),
+  navBarListItem: css({
+    margin: 0,
+    '.icon-component': css({
+      marginRight: tokens.spacingS,
+
+      svg: css({
+        transition: 'all 0.1s ease-in-out',
+      }),
+    }),
+  }),
+  navBarLink: css({
+    color: tokens.colorWhite,
+    padding: `0 ${tokens.spacingM}`,
+    display: 'flex',
+    alignItems: 'center',
+    height: '100%',
+    borderTop: '3px solid transparent',
+    transition: 'color .1s ease-in-out',
+    position: 'relative',
+    cursor: 'pointer',
+
+    '&:hover, &.is-active': css({
+      color: tokens.colorBlueMid,
+
+      svg: css({
+        fill: tokens.colorBlueMid,
+      }),
+
+      '.border-bottom--active': css({
+        borderBottomColor: tokens.colorBlueMid,
+      }),
+    }),
+
+    '&.is-disabled, &.is-disabled:hover': css({
+      color: tokens.colorTextLight,
+      cursor: 'not-allowed',
+    }),
+  }),
+  navBarListLabel: css({
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    borderBottom: '3px solid transparent',
+  }),
+};
+
 function Label({ hasTooptip, children, ...rest }) {
   if (hasTooptip) {
     return (
-      <Tooltip {...rest} targetWrapperClassName="nav-bar__list-label">
+      <Tooltip
+        {...rest}
+        targetWrapperClassName={cn(styles.navBarListLabel, 'border-bottom--active')}>
         {children}
       </Tooltip>
     );
   }
-  return <span className="nav-bar__list-label">{children}</span>;
+  return <span className={cn(styles.navBarListLabel, 'border-bottom--active')}>{children}</span>;
 }
 
 Label.propTypes = {
@@ -48,21 +116,20 @@ export default function NavigationItem(props) {
     Navigator.go(getNavigationProps(item));
   };
 
+  const isActive = Navigator.includes({ path: item.rootSref || item.sref });
   return (
     <li
       key={item.title}
-      className="app-top-bar__action nav-bar__list-item"
+      className={cn(styles.appTopBarAction, styles.navBarListItem)}
       {...{
         'data-ui-tour-step': item.dataViewType ? `nav-item-${item.dataViewType}` : undefined,
       }}>
       <a
         data-view-type={item.dataViewType}
         href={Navigator.href(getNavigationProps(item))}
-        className={cn('nav-bar__link', {
+        className={cn(styles.navBarLink, {
           'is-disabled': item.disabled,
-          'is-active': item.disabled
-            ? false
-            : Navigator.includes({ path: item.rootSref || item.sref }),
+          'is-active': item.disabled ? false : isActive,
         })}
         role="button"
         onClick={(e) => {
