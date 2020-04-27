@@ -2,11 +2,18 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { css, cx } from 'emotion';
 import { noop } from 'lodash';
-import { Card, Paragraph, Icon, ListItem, Tooltip } from '@contentful/forma-36-react-components';
+import {
+  Card,
+  Paragraph,
+  Icon,
+  ListItem,
+  Tooltip,
+  Checkbox,
+} from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { EntityStatusTag } from 'components/shared/EntityStatusTag';
 import * as EntityState from 'data/CMA/EntityState';
-import { getEntityTitle } from './referencesDialogService';
+import { getEntityTitle } from './referencesService';
 
 const styles = {
   card: css({
@@ -53,6 +60,7 @@ const styles = {
   }),
   status: css({
     marginLeft: 'auto',
+    alignSelf: 'center',
   }),
   assetIcon: css({
     marginRight: tokens.spacing2Xs,
@@ -69,6 +77,12 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
   }),
+  contentWrapper: css({
+    cursor: 'pointer',
+    display: 'flex',
+    width: '95%',
+    alignItems: 'center',
+  }),
 };
 
 const ReferenceCard = ({
@@ -78,8 +92,11 @@ const ReferenceCard = ({
   isUnresolved,
   isCircular,
   validationError,
+  isReferenceSelected,
+  onReferenceCheckboxClick,
 }) => {
   const [title, setTitle] = useState('Untitled');
+  const [isSelected, setSelected] = useState(isReferenceSelected);
 
   useEffect(() => {
     async function getTitle() {
@@ -138,31 +155,46 @@ const ReferenceCard = ({
 
   return (
     <ListItem className={cx(styles.listItem, validationError && styles.erroredListItem)}>
-      <Card className={styles.card} onClick={() => onClick(entity)}>
-        {validationError && (
-          <span data-test-id="validation-error">
-            <Tooltip content={validationError} targetWrapperClassName={styles.validationTooltip}>
-              <Icon icon="ErrorCircle" color="negative" />
-            </Tooltip>
-          </span>
-        )}
-        {entity.sys.type === 'Asset' && (
-          <Icon icon={entity.sys.type} color="muted" className={styles.assetIcon} />
-        )}
-        {isCircular && (
-          <span
-            title="This entry has already been referenced in one of the parent entries"
-            className={styles.circularIconWrapper}>
-            <Icon testId="circular-icon" icon="Cycle" color="muted" className={styles.assetIcon} />
-          </span>
-        )}
-        <Paragraph className={styles.text} title={title}>
-          {title}
-        </Paragraph>
-        <EntityStatusTag
-          statusLabel={EntityState.stateName(EntityState.getState(entity.sys))}
-          className={styles.status}
+      <Card className={styles.card}>
+        <Checkbox
+          labelText={isSelected ? 'Deselect entity' : 'Select entity'}
+          onChange={() => {
+            setSelected(!isSelected);
+            onReferenceCheckboxClick(!isSelected, entity);
+          }}
+          checked={isSelected}
         />
+        <div className={styles.contentWrapper} onClick={() => onClick(entity)}>
+          {validationError && (
+            <span data-test-id="validation-error">
+              <Tooltip content={validationError} targetWrapperClassName={styles.validationTooltip}>
+                <Icon icon="ErrorCircle" color="negative" />
+              </Tooltip>
+            </span>
+          )}
+          {entity.sys.type === 'Asset' && (
+            <Icon icon={entity.sys.type} color="muted" className={styles.assetIcon} />
+          )}
+          {isCircular && (
+            <span
+              title="This entry has already been referenced in one of the parent entries"
+              className={styles.circularIconWrapper}>
+              <Icon
+                testId="circular-icon"
+                icon="Cycle"
+                color="muted"
+                className={styles.assetIcon}
+              />
+            </span>
+          )}
+          <Paragraph className={styles.text} title={title}>
+            {title}
+          </Paragraph>
+          <EntityStatusTag
+            statusLabel={EntityState.stateName(EntityState.getState(entity.sys))}
+            className={styles.status}
+          />
+        </div>
       </Card>
     </ListItem>
   );
@@ -177,15 +209,18 @@ export const ReferencePropType = PropTypes.shape({
 
 ReferenceCard.propTypes = {
   entity: ReferencePropType,
+  isReferenceSelected: PropTypes.bool,
   onClick: PropTypes.func,
   isMoreCard: PropTypes.bool,
   isUnresolved: PropTypes.bool,
   isCircular: PropTypes.bool,
   validationError: PropTypes.string,
+  onReferenceCheckboxClick: PropTypes.func,
 };
 
 ReferenceCard.defaultProps = {
   onClick: noop,
+  onReferenceCheckboxClick: noop,
 };
 
 export default ReferenceCard;

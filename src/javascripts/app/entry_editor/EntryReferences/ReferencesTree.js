@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { get, memoize } from 'lodash';
 import { css } from 'emotion';
-import { Paragraph, List, ListItem } from '@contentful/forma-36-react-components';
+import { List, ListItem } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import ReferenceCard from './ReferenceCard';
 import { track } from 'analytics/Analytics';
@@ -49,6 +49,10 @@ class ReferencesTree extends React.Component {
     this.memoizedRenderReferenceCards = memoize(this.renderReferenceCards);
   }
 
+  state = {
+    selectedEntities: [],
+  };
+
   findValidationErrorForEntity = (entityId) => {
     const { validations } = this.props;
     if (!validations) {
@@ -62,18 +66,35 @@ class ReferencesTree extends React.Component {
     return errored ? errored.error.message : null;
   };
 
+  handleSelect = (selected, selectedEntity) => {
+    this.setState(
+      {
+        selectedEntities: selected
+          ? [...this.state.selectedEntities, selectedEntity]
+          : this.state.selectedEntities.filter((entity) => entity.sys.id !== selectedEntity.sys.id),
+      },
+      () => {
+        this.props.onSelectEntities(this.state.selectedEntities);
+      }
+    );
+  };
+
   renderReferenceCards = () => {
-    const { root, onSelectEntities } = this.props;
+    const { root, onSelectEntities, allReferencesSelected, setIsTreeMaxDepthReached } = this.props;
 
     let isMoreCardRendered = false;
     let depth = 0;
     let circularReferenceCount = 0;
-    const selectedEntities = [];
     const entitiesPerLevel = [];
     const visitedEntities = { 0: [root.sys.id] };
+    const initialSelectedEntities = [];
 
     const toReferenceCard = (entity, level, entityIndexInTree) => {
       const { maxLevel, onReferenceCardClick } = this.props;
+
+      if (level === maxLevel) {
+        setIsTreeMaxDepthReached(true);
+      }
       /**
        * if level > than maxLevel we still want to
        * know the max depth of the client's reference
@@ -110,6 +131,8 @@ class ReferencesTree extends React.Component {
             onClick={onReferenceCardClick}
             isCircular={isCircular}
             validationError={this.findValidationErrorForEntity(entity.sys.id)}
+            isReferenceSelected={allReferencesSelected}
+            onReferenceCheckboxClick={(checked, entity) => this.handleSelect(checked, entity)}
           />
           {/* recursevly get all cards for the entitiy fields */}
           {nextLevelCards}
@@ -130,7 +153,9 @@ class ReferencesTree extends React.Component {
         ? entitiesPerLevel[levelIndex] + 1
         : 1;
 
-      selectedEntities.push(entity);
+      if (allReferencesSelected) {
+        initialSelectedEntities.push(entity);
+      }
 
       if (!fields || level > failsaveLevel) {
         return null;
@@ -222,7 +247,6 @@ class ReferencesTree extends React.Component {
       }
 
       return (
-        // All lists must be nested in list items
         <ListItem className={styles.listItem}>
           <List className={styles.list}>{nextLevelReferenceCards}</List>
         </ListItem>
@@ -233,7 +257,10 @@ class ReferencesTree extends React.Component {
     const parentIndexInTree = 0;
     const referenceCards = renderLayer(root, level, parentIndexInTree);
 
-    onSelectEntities(selectedEntities);
+    this.setState({
+      selectedEntities: initialSelectedEntities,
+    });
+    onSelectEntities(initialSelectedEntities);
 
     track(trackingEvents.dialogOpen, {
       entity_id: root.sys.id,
@@ -246,24 +273,20 @@ class ReferencesTree extends React.Component {
   };
 
   render() {
-    const { root } = this.props;
+    const { root, allReferencesSelected } = this.props;
 
     const referencesTree = this.memoizedRenderReferenceCards();
 
     return (
-      <>
-        <Paragraph className={styles.description}>
-          Here is a list of all references for this entry. Publish them all together, or validate
-          them to check readiness.
-        </Paragraph>
-        <List className={styles.parentList}>
-          <ReferenceCard
-            entity={root}
-            validationError={this.findValidationErrorForEntity(root.sys.id)}
-          />
-          {referencesTree}
-        </List>
-      </>
+      <List className={styles.parentList} testId="referenceTreeList">
+        <ReferenceCard
+          entity={root}
+          isReferenceSelected={allReferencesSelected}
+          onReferenceCheckboxClick={(checked, entity) => this.handleSelect(checked, entity)}
+          validationError={this.findValidationErrorForEntity(root.sys.id)}
+        />
+        {referencesTree}
+      </List>
     );
   }
 }
@@ -273,6 +296,7 @@ ReferencesTree.propTypes = {
   // TODO: right now default locale has incorrect value
   defaultLocale: PropTypes.string,
   maxLevel: PropTypes.number,
+  allReferencesSelected: PropTypes.bool,
   validations: PropTypes.shape({
     errored: PropTypes.arrayOf(
       PropTypes.shape({
@@ -286,14 +310,16 @@ ReferencesTree.propTypes = {
         }),
       })
     ),
-  }), //TODO: define shape
+  }),
   onReferenceCardClick: PropTypes.func.isRequired,
   onSelectEntities: PropTypes.func,
+  setIsTreeMaxDepthReached: PropTypes.func,
 };
 
 ReferencesTree.defaultProps = {
   maxLevel: 5,
   onSelectEntities: () => {},
+  setIsTreeMaxDepthReached: () => {},
 };
 
 export default ReferencesTree;

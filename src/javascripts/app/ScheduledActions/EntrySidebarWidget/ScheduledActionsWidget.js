@@ -6,7 +6,6 @@ import { css } from 'emotion';
 import ErrorHandler from 'components/shared/ErrorHandlerComponent';
 import CommandPropType from 'app/entity_editor/CommandPropType';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
-import ReferencesDialog from 'app/EntrySidebar/ReferencesDialog';
 
 import {
   SkeletonContainer,
@@ -113,7 +112,6 @@ export default function ScheduledActionsWidget({
 }) {
   const [jobs, setJobs] = useState([]);
   const [isDialogShown, setIsDialogShown] = useState(false);
-  const [isReferenceDialogOpen, setReferencesDialogOpen] = useState(false);
   const [isCreatingJob, setIsCreatingJob] = useState(false);
   const publishedAt = getPublishedAt(entity);
   const entryTitle = EntityFieldValueSpaceContext.entryTitle({
@@ -236,11 +234,6 @@ export default function ScheduledActionsWidget({
         isScheduledPublishDisabled={Boolean(error)}
         isDisabled={isLoading}
         publicationBlockedReason={publicationBlockedReason}
-      />
-      <ReferencesDialog
-        entity={entity}
-        isOpen={isReferenceDialogOpen}
-        onClose={() => setReferencesDialogOpen(false)}
       />
       {isLoading && (
         <SkeletonContainer

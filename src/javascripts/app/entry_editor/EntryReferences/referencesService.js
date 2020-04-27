@@ -16,7 +16,10 @@ function createEndpoint() {
 async function getReferencesForEntryId(entryId) {
   const apiClient = new APIClient(createEndpoint());
   const res = await apiClient.getEntryReferences(entryId);
-  return cfResolveResponse(res);
+  return {
+    resolved: cfResolveResponse(res),
+    response: res,
+  };
 }
 
 function getDefaultLocale() {

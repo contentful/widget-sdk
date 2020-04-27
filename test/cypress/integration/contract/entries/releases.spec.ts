@@ -38,26 +38,34 @@ describe('Immediate release', () => {
       const getEntryReferencesInteraction = getEntryReferences.willReturnSeveral();
       const validateEntryTreeInteraction = validateEntryReferencesResponse.willReturnNoErrors();
 
-      cy.getByTestId('referencesBtn').click();
+      cy.getByTestId('test-id-entryReferences').click();
       cy.wait(getEntryReferencesInteraction);
 
+      cy.getByTestId('referencesActionDropdown').click();
       cy.getByTestId('validateReferencesBtn').click();
       cy.wait(validateEntryTreeInteraction);
 
-      cy.getByTestId('cf-ui-note-validation-success').should('be.visible');
+      cy.getByTestId('cf-ui-notification')
+        .click({ timeout: 5000 }) // official cypress workaround for animation
+        .should('be.visible')
+        .should('contain', 'All references passed validation');
     });
 
     it('validates release with errors', () => {
       const getEntryReferencesInteraction = getEntryReferences.willReturnSeveral();
       const validateEntryTreeInteraction = validateEntryReferencesResponse.willReturnErrors();
 
-      cy.getByTestId('referencesBtn').click();
+      cy.getByTestId('test-id-entryReferences').click();
       cy.wait(getEntryReferencesInteraction);
 
+      cy.getByTestId('referencesActionDropdown').click();
       cy.getByTestId('validateReferencesBtn').click();
       cy.wait(validateEntryTreeInteraction);
 
-      cy.getByTestId('cf-ui-note-validation-failed').should('be.visible');
+      cy.getByTestId('cf-ui-notification')
+        .click({ timeout: 5000 })
+        .should('be.visible')
+        .should('contain', 'Some references did not pass validation');
     });
   });
 
@@ -72,39 +80,52 @@ describe('Immediate release', () => {
       const getEntryReferencesInteraction = getEntryReferences.willReturnSeveral();
       const publishEntryTreeInteraction = publishEntryReferencesResponse.willReturnNoErrors();
 
-      cy.getByTestId('referencesBtn').click();
+      cy.getByTestId('test-id-entryReferences').click();
       cy.wait(getEntryReferencesInteraction);
 
+      cy.getByTestId('referencesActionDropdown').click();
       cy.getByTestId('publishReferencesBtn').click();
       cy.wait(publishEntryTreeInteraction);
+      cy.wait(getEntryReferencesInteraction);
 
-      cy.getByTestId('cf-ui-note-publication-success').should('be.visible');
+      cy.getByTestId('cf-ui-notification')
+        .click({ timeout: 5000 })
+        .should('be.visible')
+        .should('contain', 'Untitled and 2 references were published successfully');
     });
 
     it('publishes release returns validation errors', () => {
       const getEntryReferencesInteraction = getEntryReferences.willReturnSeveral();
       const publishEntryTreeInteraction = publishEntryReferencesResponse.willReturnErrors();
 
-      cy.getByTestId('referencesBtn').click();
+      cy.getByTestId('test-id-entryReferences').click();
       cy.wait(getEntryReferencesInteraction);
 
+      cy.getByTestId('referencesActionDropdown').click();
       cy.getByTestId('publishReferencesBtn').click();
       cy.wait(publishEntryTreeInteraction);
 
-      cy.getByTestId('cf-ui-note-validation-failed').should('be.visible');
+      cy.getByTestId('cf-ui-notification')
+        .click({ timeout: 5000 })
+        .should('be.visible')
+        .should('contain', 'Some references did not pass validation');
     });
 
     it('publishes release fails', () => {
       const getEntryReferencesInteraction = getEntryReferences.willReturnSeveral();
       const publishEntryTreeInteraction = publishEntryReferencesResponse.willFail();
 
-      cy.getByTestId('referencesBtn').click();
+      cy.getByTestId('test-id-entryReferences').click();
       cy.wait(getEntryReferencesInteraction);
 
+      cy.getByTestId('referencesActionDropdown').click();
       cy.getByTestId('publishReferencesBtn').click();
       cy.wait(publishEntryTreeInteraction);
 
-      cy.getByTestId('cf-ui-note-publication-failed').should('be.visible');
+      cy.getByTestId('cf-ui-notification')
+        .click({ timeout: 5000 })
+        .should('be.visible')
+        .should('contain', 'We were unable to publish Untitled and 2 references');
     });
   });
 });
