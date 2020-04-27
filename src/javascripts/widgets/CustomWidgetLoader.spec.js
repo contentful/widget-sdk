@@ -5,12 +5,13 @@ import {
   NAMESPACE_SIDEBAR_BUILTIN,
   NAMESPACE_APP,
 } from './WidgetNamespaces';
-import { LOCATION_ENTRY_FIELD } from './WidgetLocations';
+import { LOCATION_ENTRY_FIELD, LOCATION_PAGE } from './WidgetLocations';
 
+const appDefinitionId = 'some-app';
 const app = {
   appDefinition: {
     sys: {
-      id: 'some-app',
+      id: appDefinitionId,
       type: 'AppDefinition',
     },
     name: 'I am app',
@@ -19,6 +20,13 @@ const app = {
       {
         location: LOCATION_ENTRY_FIELD,
         fieldTypes: [{ type: 'Symbol' }],
+      },
+      {
+        location: LOCATION_PAGE,
+        navigationItem: {
+          name: 'I am app',
+          path: '/',
+        },
       },
     ],
     public: true,
@@ -50,7 +58,11 @@ const expectedAppWidget = {
   namespace: NAMESPACE_APP,
   src: 'https://someapp.com',
   fieldTypes: ['Symbol'],
-  locations: [LOCATION_ENTRY_FIELD],
+  navigationItem: {
+    name: 'I am app',
+    path: '/',
+  },
+  locations: [LOCATION_ENTRY_FIELD, LOCATION_PAGE],
   appId: 'someappid',
   appIconUrl: '//images.ctfassets.net/myappicon.svg',
   name: 'Some app',
@@ -318,6 +330,23 @@ describe('CustomWidgetLoader', () => {
       expect(cma.getExtensionsForListing).toBeCalledTimes(1);
       expect(appsRepo.getOnlyInstalledApps).toBeCalledTimes(1);
       expect(widgets).toEqual([]);
+    });
+  });
+
+  describe('#getOnlyInstalledApps', () => {
+    it('fills cache for individual apps', async () => {
+      const cma = { getExtensionsForListing: jest.fn(() => Promise.resolve({ items: [] })) };
+      const appsRepo = { getOnlyInstalledApps: jest.fn(() => Promise.resolve([app])) };
+
+      const loader = createCustomWidgetLoader(cma, appsRepo);
+
+      const apps = await loader.getOnlyInstalledApps();
+      expect(appsRepo.getOnlyInstalledApps).toHaveBeenCalledTimes(1);
+      expect(apps).toEqual([expectedAppWidget]);
+
+      appsRepo.getOnlyInstalledApps.mockClear();
+      await loader.getByKeys([[NAMESPACE_APP, appDefinitionId]]);
+      expect(appsRepo.getOnlyInstalledApps).not.toHaveBeenCalled();
     });
   });
 });

@@ -1,60 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'emotion';
-import tokens from '@contentful/forma-36-tokens';
 import { TextLink, Heading, Tag } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink';
-import DefaultIcon from 'ui/Components/Icon';
-
-const styles = {
-  item: css({
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: `${tokens.spacingM} 0`,
-    borderBottom: `1px solid ${tokens.colorElementLight}`,
-    '&:last-child': {
-      borderBottom: 'none',
-      paddingBottom: '0',
-    },
-  }),
-  title: css({
-    flexGrow: 1,
-    display: 'block',
-  }),
-  tagLine: css({
-    fontSize: tokens.fontSizeS,
-    color: tokens.colorElementDarkest,
-  }),
-  titleText: css({
-    fontSize: tokens.fontSizeL,
-    fontWeight: '500',
-  }),
-  actions: css({
-    display: 'block',
-    button: {
-      marginLeft: tokens.spacingM,
-    },
-  }),
-  icon: css({
-    borderRadius: '5px',
-    backgroundColor: '#fff',
-    boxShadow: '0 2px 3px 0 rgba(0,0,0,0.08)',
-    padding: '2px',
-    marginRight: tokens.spacingS,
-    width: '35px',
-    height: '35px',
-  }),
-  appLink: css({
-    display: 'flex',
-    alignItems: 'center',
-    cursor: 'pointer',
-  }),
-  tag: css({
-    marginTop: '3px',
-    marginLeft: tokens.spacingXs,
-  }),
-};
+import styles from './styles';
+import { AppIcon } from './AppIcon';
 
 export default class AppListItem extends Component {
   static propTypes = {
@@ -94,11 +43,7 @@ export default class AppListItem extends Component {
                   onClick={this.determineOnClick(onClick, openDetailsFunc, canManageApps)}
                   className={styles.appLink}
                   data-test-id="app-details">
-                  {app.icon ? (
-                    <img src={app.icon} className={styles.icon} />
-                  ) : (
-                    <DefaultIcon name="page-apps" className={styles.icon} />
-                  )}
+                  <AppIcon icon={app.icon} />
                   <div>
                     {app.title}
                     {app.tagLine && <div className={styles.tagLine}>{app.tagLine}</div>}

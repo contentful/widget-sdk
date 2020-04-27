@@ -11,11 +11,15 @@ import {
   Switch,
   Note,
   TextLink,
+  Tag,
+  Card,
 } from '@contentful/forma-36-react-components';
 import * as WidgetLocations from 'widgets/WidgetLocations';
 import { toInternalFieldType, toApiFieldType } from 'widgets/FieldTypes';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
+import NavigationIcon from 'ui/Components/NavigationIcon';
+import UIIcon from 'ui/Components/Icon';
 
 import { MARKETPLACE_ORG_ID } from '../config';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
@@ -30,9 +34,10 @@ const styles = {
   helpParagraph: css({
     color: tokens.colorTextLight,
   }),
-  input: css({
-    marginBottom: tokens.spacingL,
-  }),
+  input: (margin = true) =>
+    css({
+      marginBottom: margin ? tokens.spacingL : 0,
+    }),
   toggleContainer: css({
     marginBottom: tokens.spacingXs,
   }),
@@ -67,12 +72,13 @@ const styles = {
       color: tokens.colorTextMid,
     }),
   }),
-  fieldTypesOpen: css({
-    opacity: '1',
-    height: '215px',
-    padding: tokens.spacingS,
-    overflow: 'hidden',
-  }),
+  fieldTypesOpen: (hasPadding = true) =>
+    css({
+      opacity: '1',
+      height: hasPadding ? '215px' : '341px',
+      padding: hasPadding ? tokens.spacingS : '0',
+      overflow: 'hidden',
+    }),
   fieldTypeChecks: css({
     display: 'grid',
     gridTemplateColumns: '1fr 1fr 1fr',
@@ -98,11 +104,74 @@ const styles = {
       fontWeight: tokens.fontWeightMedium,
       marginRight: tokens.spacingXs,
       cursor: 'pointer',
+      color: tokens.colorTextDark,
     }),
     '& span': css({
       color: tokens.colorElementDarkest,
       fontFamily: tokens.fontStackMonospace,
     }),
+  }),
+  pageSwitch: css({
+    padding: tokens.spacingM,
+    borderBottom: `1px solid ${tokens.colorElementLight}`,
+    '& label': css({
+      margin: 0,
+    }),
+    p: css({
+      marginBottom: tokens.spacingS,
+    }),
+  }),
+  pageLocation: (enabled = false) =>
+    css({
+      display: 'flex',
+      flexDirection: 'row',
+      '& > div': css({
+        padding: tokens.spacingM,
+        borderRight: `1px solid ${tokens.colorElementLight}`,
+        flex: '50%',
+        '&:last-child': css({
+          border: 'none',
+          padding: tokens.spacingXl,
+        }),
+      }),
+
+      opacity: enabled ? 1 : '0.3',
+      pointerEvents: enabled ? '' : 'none',
+    }),
+  pageLocationNav: css({
+    display: 'flex',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    height: '100%',
+    cursor: 'default',
+  }),
+  nav: css({
+    color: tokens.colorWhite,
+    backgroundColor: tokens.colorContrastLight,
+    padding: tokens.spacingS,
+    borderRadius: '4px 4px 0 0',
+    height: '70px',
+    display: 'flex',
+    alignItems: 'center',
+    '& span': css({
+      marginLeft: tokens.spacingXs,
+    }),
+    '& > svg': css({
+      margin: `2px 0 0 12px`,
+    }),
+  }),
+  navItem: css({
+    display: 'flex',
+    alignItems: 'center',
+    borderRadius: '0 0 2px 2px',
+    color: tokens.colorTextMid,
+    '& svg': css({
+      marginRight: tokens.spacingXs,
+    }),
+    '& span': css({}),
+  }),
+  tag: css({
+    marginBottom: tokens.spacingXs,
   }),
 };
 
@@ -112,6 +181,7 @@ const LOCATION_ORDER = [
   ['Entry sidebar', WidgetLocations.LOCATION_ENTRY_SIDEBAR],
   ['Entry editor', WidgetLocations.LOCATION_ENTRY_EDITOR],
   ['Dialog', WidgetLocations.LOCATION_DIALOG],
+  ['Page', WidgetLocations.LOCATION_PAGE],
 ];
 
 const FIELD_TYPES_ORDER = [
@@ -194,11 +264,49 @@ export default function AppEditor({ definition, onChange }) {
     onChange(updated);
   };
 
+  const getNavigationItemValue = (field) => {
+    const pageLocation = getLocation(WidgetLocations.LOCATION_PAGE);
+
+    if (!pageLocation || !pageLocation.navigationItem) {
+      return '';
+    }
+
+    return pageLocation.navigationItem[field];
+  };
+
+  const togglePageLocationData = () => {
+    const updated = cloneDeep(definition);
+    const pageLocation = updated.locations[getLocationIndex(WidgetLocations.LOCATION_PAGE)];
+
+    if (pageLocation.navigationItem) {
+      delete pageLocation.navigationItem;
+    } else {
+      pageLocation.navigationItem = { path: '/', name: definition.name };
+    }
+
+    onChange(updated);
+  };
+
+  const updatePageLocation = ({ field, value }) => {
+    const updated = cloneDeep(definition);
+    const pageLocation = updated.locations[getLocationIndex(WidgetLocations.LOCATION_PAGE)];
+
+    if (field === 'path' && !value.startsWith('/')) {
+      value = `/${value}`;
+    }
+
+    pageLocation.navigationItem[field] = value.trim();
+
+    onChange(updated);
+  };
+
+  const hasPageLocationNavigation = !!getLocation(WidgetLocations.LOCATION_PAGE)?.navigationItem;
+
   return (
     <>
       <div>
         <TextField
-          className={styles.input}
+          className={styles.input()}
           required
           name="app-name"
           id="app-name"
@@ -208,7 +316,7 @@ export default function AppEditor({ definition, onChange }) {
           onChange={(e) => onChange({ ...definition, name: e.target.value })}
         />
         <TextField
-          className={styles.input}
+          className={styles.input()}
           required
           name="app-src"
           id="app-src"
@@ -258,14 +366,15 @@ export default function AppEditor({ definition, onChange }) {
                     <span>({locationValue})</span>
                   </div>
                 </div>
-                {locationValue === WidgetLocations.LOCATION_ENTRY_FIELD && (
+                {(locationValue === WidgetLocations.LOCATION_ENTRY_FIELD ||
+                  locationValue === WidgetLocations.LOCATION_PAGE) && (
                   <Icon icon="ListBulleted" color="secondary" />
                 )}
               </ToggleButton>
               {locationValue === WidgetLocations.LOCATION_ENTRY_FIELD && (
                 <div
                   className={[styles.fieldTypes]
-                    .concat(hasLocation(locationValue) ? styles.fieldTypesOpen : [])
+                    .concat(hasLocation(locationValue) ? styles.fieldTypesOpen() : [])
                     .join(' ')}>
                   <Paragraph>Select the field types the app can be rendered in.</Paragraph>
                   <div className={styles.fieldTypeChecks}>
@@ -281,6 +390,76 @@ export default function AppEditor({ definition, onChange }) {
                         />
                       );
                     })}
+                  </div>
+                </div>
+              )}
+              {locationValue === WidgetLocations.LOCATION_PAGE && (
+                <div
+                  className={[styles.fieldTypes]
+                    .concat(hasLocation(locationValue) ? styles.fieldTypesOpen(false) : [])
+                    .join(' ')}>
+                  <div className={styles.pageSwitch}>
+                    <Paragraph>
+                      Optionally, you can show a link to the page location of your app in the main
+                      navigation. <TextLink>Learn more</TextLink>.
+                    </Paragraph>
+                    <Switch
+                      id="page-switch"
+                      isChecked={hasPageLocationNavigation}
+                      labelText="Show app in main navigation"
+                      onToggle={togglePageLocationData}
+                    />
+                  </div>
+                  <div className={styles.pageLocation(hasPageLocationNavigation)}>
+                    <div>
+                      <TextField
+                        className={styles.input()}
+                        required
+                        textInputProps={{
+                          maxLength: 40,
+                        }}
+                        name="page-link-name"
+                        id="page-link-name"
+                        labelText="Link name"
+                        testId="page-link-name"
+                        value={getNavigationItemValue('name')}
+                        helpText="Maximum 40 characters."
+                        onChange={(e) =>
+                          updatePageLocation({ field: 'name', value: e.target.value })
+                        }
+                      />
+                      <TextField
+                        className={[styles.input(false), styles.linkPath].join(' ')}
+                        required
+                        textInputProps={{
+                          maxLength: 512,
+                        }}
+                        name="page-link-path"
+                        id="page-link-path"
+                        labelText="Link path"
+                        testId="page-link-path"
+                        helpText="Maximum 512 characters."
+                        value={getNavigationItemValue('path')}
+                        onChange={(e) =>
+                          updatePageLocation({ field: 'path', value: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div>
+                      <div className={styles.pageLocationNav}>
+                        <Tag tagType="muted" className={styles.tag}>
+                          Preview
+                        </Tag>
+                        <div className={styles.nav}>
+                          <NavigationIcon icon="apps" size="medium" mono color="white" />{' '}
+                          <span>Apps</span> <Icon icon="ArrowDown" color="white" />
+                        </div>
+                        <Card className={styles.navItem}>
+                          <UIIcon name="page-apps" scale="0.65" />{' '}
+                          <span>{getNavigationItemValue('name') || definition.name}</span>
+                        </Card>
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}

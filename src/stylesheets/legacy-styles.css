@@ -3461,7 +3461,7 @@ pre,
     border-bottom-color: transparent;
   }
   .app-top-bar__menu-trigger.is-active {
-    padding: 0 20px;
+    padding: 0 16px;
   }
 
   .note-box {
@@ -5222,10 +5222,10 @@ pre,
             justify-content: center;
     height: 100%;
   }
-  .app-top-bar__action:first-child {
+  li.app-top-bar__action:first-child {
     padding-left: 16px;
   }
-  .app-top-bar__action:last-child {
+  li.app-top-bar__action:last-child {
     padding-right: 16px;
   }
   .app-top-bar__action > a > cf-icon {

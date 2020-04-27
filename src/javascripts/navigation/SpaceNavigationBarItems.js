@@ -1,3 +1,5 @@
+import renderAppsNavigationItem from 'app/Apps/AppsNavigationItem';
+
 const makeRef = (ref, isMaster) => {
   if (isMaster) {
     return `spaces.detail.${ref}`;
@@ -14,6 +16,7 @@ export function getSpaceNavigationItems({
   useSpaceEnviroment,
   isMasterEnvironment,
   contentTagsEnabled,
+  canManageSpace,
 }) {
   const dropdownItems = {
     locales: {
@@ -191,9 +194,9 @@ export function getSpaceNavigationItems({
       if: canNavigateTo('apps'),
       dataViewType: 'apps',
       navIcon: 'apps',
-      sref: makeRef('apps.list', isMasterEnvironment),
       rootSref: makeRef('apps', isMasterEnvironment),
       title: 'Apps',
+      render: (item) => renderAppsNavigationItem(item, { isMasterEnvironment, canManageSpace }),
     },
     {
       if: useSpaceEnviroment ? envSettingsDropdown.length > 0 : spaceSettingsDropdown.length > 0,

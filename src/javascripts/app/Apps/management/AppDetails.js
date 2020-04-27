@@ -85,7 +85,7 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: tokens.spacingL,
+    marginTop: tokens.spacingXl,
   }),
   creatorMissing: css({
     opacity: 0,
@@ -162,7 +162,7 @@ export default class AppDetails extends React.Component {
       });
     } catch (err) {
       Notification.error(
-        'Validation failed. Please check that you have provided an app Name, valid Source URL and/or Entry field types.'
+        'Validation failed. Please check that you have provided an app Name, valid Source URL, Entry field types and/or page location information.'
       );
     }
 
@@ -298,10 +298,11 @@ export default class AppDetails extends React.Component {
                 <div className={styles.formActions}>
                   <Button
                     loading={busy}
+                    buttonType="positive"
                     disabled={busy}
                     onClick={this.openSaveConfirmModal}
                     testId="app-save">
-                    Update app
+                    Save
                   </Button>
                   <TextLink
                     linkType="negative"

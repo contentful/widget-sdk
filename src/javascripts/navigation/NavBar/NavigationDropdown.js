@@ -16,6 +16,7 @@ import * as Navigator from 'states/Navigator';
 import NavigationItemTag from './NavigationItemTag';
 import Icon from 'ui/Components/Icon';
 import NavigationIcon from 'ui/Components/NavigationIcon';
+import { noop } from 'lodash';
 
 const styles = {
   dropdown: css({
@@ -48,12 +49,16 @@ function getNavigationProps(item) {
   };
 }
 
-export default function NavigationDropdown(props) {
-  const { item } = props;
+export default function NavigationDropdown({
+  item,
+  onOpen: onDropdownOpen = noop,
+  disableHighlight = false,
+}) {
   const [isOpen, setIsOpen] = useState(false);
 
   const onOpen = () => {
     setIsOpen(true);
+    onDropdownOpen();
   };
 
   const onClose = () => {
@@ -71,7 +76,8 @@ export default function NavigationDropdown(props) {
         toggleElement={
           <a
             className={cn('nav-bar__link', 'app-top-bar__menu-trigger', {
-              'is-active': Navigator.includes({ path: item.rootSref || item.sref }),
+              'is-active':
+                !disableHighlight && Navigator.includes({ path: item.rootSref || item.sref }),
             })}
             role="button"
             tabIndex="0"
@@ -100,9 +106,9 @@ export default function NavigationDropdown(props) {
               return (
                 <DropdownListItem
                   key={subitem.label}
-                  isTitle
+                  isTitle={subitem.isTitle !== false}
                   className={index !== 0 ? styles.separator : ''}>
-                  {subitem.label}
+                  {subitem.render ? subitem.render(subitem) : subitem.label}
                   {subitem.tooltip && (
                     <Tooltip place="bottom" content={subitem.tooltip} className={styles.tooltip}>
                       <i className={cn('fa', 'fa-question-circle', styles.question)}></i>
@@ -111,21 +117,26 @@ export default function NavigationDropdown(props) {
                 </DropdownListItem>
               );
             }
+            const navigationProps = getNavigationProps(subitem);
+
             return (
               <DropdownListItem
                 data-view-type={subitem.dataViewType}
                 key={subitem.title}
-                href={Navigator.href(getNavigationProps(subitem))}
-                isActive={Navigator.includes({ path: subitem.rootSref || subitem.sref })}
+                href={Navigator.href(navigationProps)}
+                isActive={
+                  !disableHighlight &&
+                  Navigator.includes({ path: subitem.rootSref || subitem.sref })
+                }
                 onClick={(e) => {
                   if (e.ctrlKey || e.metaKey) {
                     return;
                   }
                   e.preventDefault();
-                  Navigator.go(getNavigationProps(subitem));
+                  Navigator.go(navigationProps);
                   onClose();
                 }}>
-                {subitem.title}
+                {subitem.render ? subitem.render(subitem) : subitem.title}
               </DropdownListItem>
             );
           })}
@@ -136,6 +147,7 @@ export default function NavigationDropdown(props) {
 }
 
 NavigationDropdown.propTypes = {
+  onOpen: PropTypes.func,
   item: PropTypes.shape({
     title: PropTypes.string.isRequired,
     icon: PropTypes.string,
@@ -150,6 +162,7 @@ NavigationDropdown.propTypes = {
     children: PropTypes.arrayOf(
       PropTypes.shape({
         separator: PropTypes.boolean,
+        isTitle: PropTypes.boolean,
         tooltip: PropTypes.string,
         rootSref: PropTypes.string,
         sref: PropTypes.string,
@@ -157,7 +170,9 @@ NavigationDropdown.propTypes = {
         label: PropTypes.string,
         dataViewType: PropTypes.string,
         reload: PropTypes.boolean,
+        render: PropTypes.func,
       })
     ).isRequired,
   }).isRequired,
+  disableHighlight: PropTypes.bool,
 };

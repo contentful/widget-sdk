@@ -1,7 +1,7 @@
 import { get, isPlainObject } from 'lodash';
 
 import { NAMESPACE_EXTENSION, NAMESPACE_APP } from './WidgetNamespaces';
-import { LOCATION_ENTRY_FIELD } from './WidgetLocations';
+import { LOCATION_ENTRY_FIELD, LOCATION_PAGE } from './WidgetLocations';
 import { toInternalFieldType } from './FieldTypes';
 
 export function buildExtensionWidget({ sys, extension, parameters }) {
@@ -28,16 +28,20 @@ export function buildExtensionWidget({ sys, extension, parameters }) {
   };
 }
 
-function getAppFieldTypes(appDefinition) {
-  const entryFieldLocation = (appDefinition.locations || []).find((l) => {
-    return isPlainObject(l) && l.location === LOCATION_ENTRY_FIELD;
-  });
+function getAppLocationData({ locations = [] }, desiredLocation) {
+  return locations.filter(isPlainObject).find(({ location }) => location === desiredLocation);
+}
 
-  if (entryFieldLocation) {
-    return (entryFieldLocation.fieldTypes || []).map(toInternalFieldType);
-  } else {
-    return [];
-  }
+function getAppFieldTypes(appDefinition) {
+  const { fieldTypes = [] } = getAppLocationData(appDefinition, LOCATION_ENTRY_FIELD) || {};
+
+  return fieldTypes.map(toInternalFieldType);
+}
+
+function getAppNavigationItem(appDefinition) {
+  const { navigationItem } = getAppLocationData(appDefinition, LOCATION_PAGE) || {};
+
+  return navigationItem;
 }
 
 export function buildAppWidget({ id, title, icon, appDefinition, appInstallation }) {
@@ -48,6 +52,7 @@ export function buildAppWidget({ id, title, icon, appDefinition, appInstallation
     namespace: NAMESPACE_APP,
     name: title,
     fieldTypes: getAppFieldTypes(appDefinition),
+    navigationItem: getAppNavigationItem(appDefinition),
     locations: (appDefinition.locations || []).map((l) => l.location),
     appId: id,
     appIconUrl: icon,

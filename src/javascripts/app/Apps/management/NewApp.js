@@ -101,6 +101,7 @@ export default class NewApp extends React.Component {
             className={styles.createButton}
             loading={busy}
             disabled={busy}
+            buttonType="positive"
             onClick={this.save}
             testId="app-create">
             Create app

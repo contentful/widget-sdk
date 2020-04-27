@@ -408,10 +408,10 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
 
 .emotion-7 {
   border-radius: 5px;
-  background-color: #fff;
-  box-shadow: 0 2px 3px 0 rgba(0,0,0,0.08);
-  padding: 2px;
   margin-right: 0.75rem;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  padding: 2px;
   width: 35px;
   height: 35px;
 }
@@ -945,10 +945,10 @@ exports[`AppsListPage should match snapshot of apps loaded with limited access 1
 
 .emotion-7 {
   border-radius: 5px;
-  background-color: #fff;
-  box-shadow: 0 2px 3px 0 rgba(0,0,0,0.08);
-  padding: 2px;
   margin-right: 0.75rem;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  padding: 2px;
   width: 35px;
   height: 35px;
 }

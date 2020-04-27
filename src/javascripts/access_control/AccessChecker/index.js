@@ -450,6 +450,17 @@ export function canAccessSpaceEnvironments(space) {
   );
 }
 
+export function canModifySpaceSettings() {
+  if (!space) {
+    return false;
+  }
+
+  return (
+    get(space, 'spaceMember.admin') ||
+    !!find(get(space, 'spaceMember.roles', []), { permissions: { Settings: 'all' } })
+  );
+}
+
 function collectResponses() {
   const replacement = {};
 
@@ -464,10 +475,6 @@ function collectResponses() {
   responses = replacement;
 }
 
-const canModifySpaceSettings = (space) =>
-  get(space, 'spaceMember.admin') ||
-  !!find(get(space, 'spaceMember.roles', []), { permissions: { Settings: 'all' } });
-
 function collectSectionVisibility() {
   sectionVisibility = {
     contentType: can(Action.MANAGE, 'ContentType') || !shouldHide(Action.READ, 'apiKey'),
@@ -476,12 +483,12 @@ function collectSectionVisibility() {
     apiKey: isAllowed(Action.READ, 'settings') && !shouldHide(Action.READ, 'apiKey'),
     settings: !shouldHide(Action.UPDATE, 'settings'),
     // don't use worf here, as it allows things that result in 403
-    locales: canModifySpaceSettings(space),
+    locales: canModifySpaceSettings(),
     // don't use worf here, as it allows things that result in 403
     extensions: get(space, 'spaceMember.admin'),
-    tags: get(space, 'spaceMember.admin') || canModifySpaceSettings(space),
+    tags: canModifySpaceSettings(),
     users: !shouldHide(Action.UPDATE, 'settings'),
-    teams: canModifySpaceSettings(space),
+    teams: canModifySpaceSettings(),
     roles: !shouldHide(Action.UPDATE, 'settings'),
     environments: isAllowed(Action.READ, 'settings') && can(Action.MANAGE, 'Environments'),
     usage: !shouldHide(Action.UPDATE, 'settings'),

@@ -66,6 +66,7 @@ export default class SpaceNavigationBar extends React.Component {
     const canManageEnvironments = accessChecker.can('manage', 'Environments');
     const isMasterEnvironment = spaceContext.isMasterEnvironment();
     const usageEnabled = organization.pricingVersion === 'pricing_version_2';
+    const canManageSpace = accessChecker.canModifySpaceSettings();
 
     function canNavigateTo(section) {
       const isSpaceSettingsSection = SPACE_SETTINGS_SECTIONS.includes(section);
@@ -89,6 +90,7 @@ export default class SpaceNavigationBar extends React.Component {
       useSpaceEnviroment: canManageEnvironments && environmentsEnabled,
       isMasterEnvironment,
       contentTagsEnabled,
+      canManageSpace,
     });
 
     this.setState({ items });

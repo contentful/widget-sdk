@@ -16,6 +16,7 @@ export function createCustomWidgetLoader(cma, appsRepo) {
     getForEditor,
     evict,
     getUncachedForListing,
+    getOnlyInstalledApps,
   };
 
   // Fetcher function used by DataLoader.
@@ -121,5 +122,15 @@ export function createCustomWidgetLoader(cma, appsRepo) {
     const [appWidgets, extensionWidgets] = await Promise.all([appsPromise, extensionsPromise]);
 
     return appWidgets.concat(extensionWidgets);
+  }
+
+  async function getOnlyInstalledApps() {
+    const apps = await appsRepo.getOnlyInstalledApps();
+    const appWidgets = apps.map(buildAppWidget);
+
+    // Add fetched apps to the cache
+    appWidgets.forEach((w) => loader.prime([NAMESPACE_APP, w.id], w));
+
+    return appWidgets;
   }
 }

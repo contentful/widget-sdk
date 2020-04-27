@@ -14,7 +14,9 @@ class NavigationList extends React.Component {
     return (
       <ul className="nav-bar__list">
         {this.props.items.map((item) => {
-          if (item.children) {
+          if (item.render) {
+            return item.render(item);
+          } else if (item.children) {
             return <NavigationDropdown key={item.title} item={item} />;
           }
           return <NavigationItem key={item.title} item={item} />;
