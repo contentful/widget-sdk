@@ -15,8 +15,7 @@ import {
   sanitizeSearchFilters,
 } from './Filters';
 
-let store;
-
+let uiState = {};
 export default function create({
   $scope,
   contentTypes = [],
@@ -35,21 +34,14 @@ export default function create({
       withAssets
     );
     const reduce = makeReducer(dispatch, onSearchChange);
-    const previousState = store ? K.getValue(store.state$) : {};
-    const sanitizedPreviousState = pick(previousState, [
-      'searchBoxHasFocus',
-      'isSuggestionOpen',
-      'focus',
-    ]);
-
     const defaultState = initialState(
-      assign({}, sanitizedPreviousState, initState, {
+      assign({}, uiState, initState, {
         searchFilters: sanitizedFilters,
         contentTypes,
         withAssets,
       })
     );
-    store = createStore(defaultState, reduce);
+    const store = createStore(defaultState, reduce);
     const actions = bindActions(store, Actions);
 
     // unsubscribe from stream if rerender happens
@@ -67,6 +59,8 @@ export default function create({
     );
 
     const unsubscribeFromSearchStore = K.onValueScope($scope, store.state$, (state) => {
+      // TODO remove workaround when search ui state is refactored to local
+      uiState = pick(state, ['searchBoxHasFocus', 'isSuggestionOpen', 'focus']);
       $scope.search = renderSearch(mapStateToProps(state, actions));
     });
 
