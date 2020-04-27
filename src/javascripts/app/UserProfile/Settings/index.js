@@ -16,8 +16,6 @@ import LoadingState from 'app/common/LoadingState';
 import { getOrganizations } from 'services/TokenStore';
 import { OrgMembershipsSection } from './OrgMembershipsSection';
 import NavigationIcon from 'ui/Components/NavigationIcon';
-import { COOKIE_CONSENT_MANAGEMENT } from 'featureFlags';
-import { getVariation } from 'LaunchDarkly';
 
 const styles = {
   content: css({
@@ -36,18 +34,15 @@ const styles = {
 export default function IndexPage() {
   const [user, setUser] = useState({});
   const [hasOrgMemberships, setHasOrgMemberships] = useState(false);
-  const [isCookieConsentEnabled, setIsCookieConsentEnabled] = useState(false);
 
   const { isLoading, error } = useAsync(
     useCallback(async () => {
       const user = await fetchUserData();
       const orgs = await getOrganizations();
-      const isCookieConsentEnabled = await getVariation(COOKIE_CONSENT_MANAGEMENT);
       // We fetch the user here and set it above so that children
       // components can update the user without needing to fetch
       setUser(user);
       setHasOrgMemberships(orgs.length > 0);
-      setIsCookieConsentEnabled(isCookieConsentEnabled);
     }, [])
   );
 
@@ -88,11 +83,9 @@ export default function IndexPage() {
                   />
                 </Card>
               )}
-              {isCookieConsentEnabled && (
-                <Card testId="privacy-section-card" className={styles.section}>
-                  <ManageCookieConsentSection />
-                </Card>
-              )}
+              <Card testId="privacy-section-card" className={styles.section}>
+                <ManageCookieConsentSection />
+              </Card>
               {!user.ssoLoginOnly && (
                 <Card testId="danger-zone-section-card" className={styles.section}>
                   <DangerZoneSection singleOwnerOrganizations={warning.singleOwnerOrganizations} />
