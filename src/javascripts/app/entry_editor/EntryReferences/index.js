@@ -135,8 +135,8 @@ const ReferencesTab = ({ entity }) => {
       const { resolved: fetchedRefs, response } = await getReferencesForEntryId(entity.sys.id);
       setReferences(fetchedRefs);
       setLinksCounter({
-        assets: get(response, 'includes.Asset.length'),
-        entries: get(response, 'includes.Entry.length'),
+        assets: get(response, 'includes.Asset.length') || 0,
+        entries: get(response, 'includes.Entry.length') || 0,
       });
       return fetchedRefs;
     }
@@ -290,7 +290,7 @@ const ReferencesTab = ({ entity }) => {
                 {pluralize(linksCounter.entries + linksCounter.assets, 'reference')} (
                 {linksCounter.entries} {pluralize(linksCounter.entries, 'entry')}
                 {' and '}
-                {linksCounter.assets} media)
+                {linksCounter.assets} {pluralize(linksCounter.assets, 'asset')})
               </Paragraph>
             </>
           )}

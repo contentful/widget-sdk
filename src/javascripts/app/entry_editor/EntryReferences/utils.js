@@ -4,6 +4,7 @@ export const pluralize = (amount, word) => {
     reference: 'references',
     entry: 'entries',
     asset: 'assets',
+    is: 'are',
   };
 
   return amount === 1 ? word : plural[word];
@@ -74,8 +75,11 @@ export const createCountMessage = ({ selectedEntities, root }) => {
     return `This entry and ${referencesAmount - 1} ${pluralize(
       referencesAmount - 1,
       'reference'
-    )} are selected.`;
+    )} ${pluralize(referencesAmount - 1, 'is')} selected.`;
   }
 
-  return `${referencesAmount} ${pluralize(referencesAmount, 'reference')} are selected.`;
+  return `${referencesAmount} ${pluralize(referencesAmount, 'reference')} ${pluralize(
+    referencesAmount,
+    'is'
+  )} selected.`;
 };

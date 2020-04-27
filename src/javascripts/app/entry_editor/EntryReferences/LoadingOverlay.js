@@ -32,12 +32,16 @@ const renderReferenceAmount = (referencesAmount) =>
   referencesAmount ? `${referencesAmount} ${pluralize(referencesAmount, 'reference')}` : null;
 
 const LoadingOverlay = ({ actionName, entityTitle, referencesAmount }) => {
+  const references = [entityTitle, renderReferenceAmount(referencesAmount)]
+    .filter((str) => str)
+    .join(' and ');
+
   return (
     <div className={styles.overlay}>
       <div>
         <Subheading element="p" className={styles.description}>
-          <Spinner className={styles.spinner} /> {actionName} {entityTitle && `${entityTitle} and `}
-          {renderReferenceAmount(referencesAmount)}
+          <Spinner className={styles.spinner} />
+          {actionName} {references}
         </Subheading>
       </div>
     </div>
