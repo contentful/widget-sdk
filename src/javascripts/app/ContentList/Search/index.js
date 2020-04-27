@@ -3,6 +3,7 @@ import * as Kefir from 'kefir';
 import * as K from 'core/utils/kefir';
 import { createStore, bindActions } from 'ui/Framework/Store';
 import * as logger from 'services/logger';
+import { pick } from 'lodash';
 
 import renderSearch from './View';
 
@@ -35,8 +36,14 @@ export default function create({
     );
     const reduce = makeReducer(dispatch, onSearchChange);
     const previousState = store ? K.getValue(store.state$) : {};
+    const sanitizedPreviousState = pick(previousState, [
+      'searchBoxHasFocus',
+      'isSuggestionOpen',
+      'focus',
+    ]);
+
     const defaultState = initialState(
-      assign({}, previousState, initState, {
+      assign({}, sanitizedPreviousState, initState, {
         searchFilters: sanitizedFilters,
         contentTypes,
         withAssets,
