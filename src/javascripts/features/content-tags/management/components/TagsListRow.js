@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import RelativeDateTime from 'components/shared/RelativeDateTime';
-import tagPropType from '../tagPropType';
+import { TagPropType } from 'features/content-tags/core/TagPropType';
 
 const styles = {
   delete: css({
@@ -114,7 +114,7 @@ function TagsListRow(tag) {
 TagsListRow.propTypes = {
   onDelete: PropTypes.func,
   onEdit: PropTypes.func,
-  ...tagPropType,
+  ...TagPropType,
 };
 
-export default TagsListRow;
+export { TagsListRow };

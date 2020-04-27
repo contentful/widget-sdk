@@ -8,15 +8,15 @@ import {
   TableRow,
 } from '@contentful/forma-36-react-components';
 import React, { useCallback, useMemo } from 'react';
-import TagsListRow from './TagsListRow';
 import PropTypes from 'prop-types';
 import { isEdge } from 'utils/browser';
 import classnames from 'classnames';
 import { css } from 'emotion';
-import UpdateTagModal from './UpdateTagModal';
-import useF36Modal from '../hooks/useF36Modal';
-import DeleteTagModal from './DeleteTagModal';
-import tagPropType from '../tagPropType';
+import { TagsListRow } from 'features/content-tags/management/components/TagsListRow';
+import { UpdateTagModal } from 'features/content-tags/management/components/UpdateTagModal';
+import { DeleteTagModal } from 'features/content-tags/management/components/DeleteTagModal';
+import { useF36Modal } from 'features/content-tags/core/hooks';
+import { TagPropType } from 'features/content-tags/core/TagPropType';
 
 const isEdgeBrowser = isEdge();
 
@@ -85,8 +85,8 @@ function TagsList({ tags, isLoading }) {
 }
 
 TagsList.propTypes = {
-  tags: PropTypes.arrayOf(PropTypes.shape(tagPropType)),
+  tags: PropTypes.arrayOf(PropTypes.shape(TagPropType)),
   isLoading: PropTypes.bool,
 };
 
-export default TagsList;
+export { TagsList };

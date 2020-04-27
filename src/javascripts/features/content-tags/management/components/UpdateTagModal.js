@@ -12,10 +12,9 @@ import {
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import useReadTags from '../hooks/useReadTags';
-import useUpdateTag from '../hooks/useUpdateTag';
 import { formatNumber } from './DeleteTagModal';
-import tagPropType from '../tagPropType';
+import { TagPropType } from 'features/content-tags/core/TagPropType';
+import { useReadTags, useUpdateTag } from 'features/content-tags/core/hooks';
 
 const FORM_RESET = 'FORM_RESET';
 const FORM_NAME_CHANGED = 'FORM_NAME_CHANGED';
@@ -196,7 +195,7 @@ function UpdateTagModal({ isShown, onClose, tag }) {
 UpdateTagModal.propTypes = {
   isShown: PropTypes.bool,
   onClose: PropTypes.func,
-  tag: PropTypes.shape(tagPropType),
+  tag: PropTypes.shape(TagPropType),
 };
 
-export default UpdateTagModal;
+export { UpdateTagModal };

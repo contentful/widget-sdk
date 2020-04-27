@@ -1,14 +1,15 @@
 import DocumentTitle from 'components/shared/DocumentTitle';
-import TagsWorkbenchSkeleton from '../skeletons/TagsWorkbenchSkeleton';
 import React, { useCallback } from 'react';
-import TagsList from '../components/TagsList';
 import { EmptyState } from '@contentful/forma-36-react-components';
-import ReadTagsProvider, { ReadTags } from '../providers/ReadTagsProvider';
 import Pagination from 'app/common/Pagination';
-import { useTagsFeatureEnabled } from '../hooks/useTagsFeatureEnabled';
 import PropTypes from 'prop-types';
 import StateRedirect from 'app/common/StateRedirect';
-import TagsRepoProvider from '../providers/TagsRepoProvider';
+import { ReadTagsContext } from 'features/content-tags/core/state/ReadTagsContext';
+import { ReadTagsProvider } from 'features/content-tags/core/state/ReadTagsProvider';
+import { useTagsFeatureEnabled } from 'features/content-tags/core/hooks/useTagsFeatureEnabled';
+import { TagsWorkbenchSkeleton } from 'features/content-tags/management/skeletons/TagsWorkbenchSkeleton';
+import { TagsRepoProvider } from 'features/content-tags/core/state/TagsRepoProvider';
+import { TagsList } from 'features/content-tags/management/components/TagsList';
 
 /**
  * @return {null}
@@ -40,7 +41,7 @@ function TagsRoute({ redirectUrl }) {
     <TagsRepoProvider>
       <ReadTagsProvider>
         <DocumentTitle title="Content Tags" />
-        <ReadTags.Consumer>
+        <ReadTagsContext.Consumer>
           {({
             data,
             error,
@@ -78,7 +79,7 @@ function TagsRoute({ redirectUrl }) {
               </TagsWorkbenchSkeleton>
             );
           }}
-        </ReadTags.Consumer>
+        </ReadTagsContext.Consumer>
       </ReadTagsProvider>
     </TagsRepoProvider>
   );
@@ -88,4 +89,10 @@ TagsRoute.propTypes = {
   redirectUrl: PropTypes.string,
 };
 
-export default TagsRoute;
+const tagsState = {
+  name: 'tags',
+  url: '/tags',
+  component: (props) => <TagsRoute {...props} redirectUrl={'spaces.detail'} />,
+};
+
+export { TagsRoute, tagsState };

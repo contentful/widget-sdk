@@ -25,4 +25,4 @@ function useF36Modal(F36ModalComponent, initialProps = {}) {
   return { modalComponent, showModal };
 }
 
-export default useF36Modal;
+export { useF36Modal };

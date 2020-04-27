@@ -1,5 +1,5 @@
 import { PC_CONTENT_TAGS } from 'featureFlags';
-import useCurrentSpaceFeature from './useCurrentSpaceFeature';
+import { useCurrentSpaceFeature } from 'features/content-tags/core/hooks/useCurrentSpaceFeature';
 
 function useTagsFeatureEnabled() {
   const {
@@ -9,4 +9,4 @@ function useTagsFeatureEnabled() {
   return { tagsEnabled, isTagsEnabledLoading };
 }
 
-export { useTagsFeatureEnabled, useCurrentSpaceFeature };
+export { useTagsFeatureEnabled };

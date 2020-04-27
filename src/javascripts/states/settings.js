@@ -9,7 +9,7 @@ import rolesPermissionsSettingsState from 'app/settings/roles_permissions/routes
 import usersSettingsState from './settingsUsers';
 import teamsSettingsState from './settingsTeams';
 import { SpaceSettingsRoute } from 'features/space-settings';
-import tagsSettingsState from 'app/settings/content_tags/routes';
+import { tagsState } from 'features/content-tags';
 
 export default SpaceSettingsBase({
   name: 'settings',
@@ -30,6 +30,6 @@ export default SpaceSettingsBase({
     spaceUsageState,
     extensionsSettingsState,
     webhooksRouteState,
-    tagsSettingsState,
+    tagsState,
   ],
 });

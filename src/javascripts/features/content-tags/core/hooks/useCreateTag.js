@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import useTagsRepo from './useTagsRepo';
+import { useTagsRepo } from 'features/content-tags/core/hooks/useTagsRepo';
 import { useAsyncFn } from 'core/hooks';
 
 function useCreateTag() {
@@ -27,4 +27,4 @@ function useCreateTag() {
   };
 }
 
-export default useCreateTag;
+export { useCreateTag };

@@ -1,4 +1,4 @@
-import useTagsRepo from './useTagsRepo';
+import { useTagsRepo } from 'features/content-tags/core/hooks/useTagsRepo';
 import { useAsyncFn } from 'core/hooks';
 import { useCallback } from 'react';
 
@@ -26,4 +26,4 @@ function useDeleteTag() {
   };
 }
 
-export default useDeleteTag;
+export { useDeleteTag };

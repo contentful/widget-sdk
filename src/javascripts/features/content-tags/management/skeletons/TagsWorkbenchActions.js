@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { Button, TextInput } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import useReadTags from '../hooks/useReadTags';
+import { useReadTags } from 'features/content-tags/core/hooks';
 import PropTypes from 'prop-types';
 
 const styles = {
@@ -62,4 +62,4 @@ TagsWorkbenchActions.propTypes = {
   onCreate: PropTypes.func,
 };
 
-export default TagsWorkbenchActions;
+export { TagsWorkbenchActions };

@@ -1,22 +1,7 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import useTagsRepo from '../hooks/useTagsRepo';
-import { useStateWithDebounce, useAsyncFn } from 'core/hooks';
-
-const ReadTags = React.createContext({
-  data: [],
-  isLoading: false,
-  error: null,
-  reset: null,
-  skip: 0,
-  total: 0,
-  limit: 0,
-  setSkip: null,
-  setLimit: null,
-  search: null,
-  setSearch: null,
-  debouncedSearch: null,
-  hasTags: false,
-});
+import { ReadTagsContext } from 'features/content-tags/core/state/ReadTagsContext';
+import { useTagsRepo } from 'features/content-tags/core/hooks';
+import { useAsyncFn, useStateWithDebounce } from 'core/hooks';
 
 function ReadTagsProvider({ children }) {
   const tagsRepo = useTagsRepo();
@@ -75,7 +60,7 @@ function ReadTagsProvider({ children }) {
   }
 
   return (
-    <ReadTags.Provider
+    <ReadTagsContext.Provider
       value={{
         data: currentData,
         isLoading,
@@ -92,9 +77,8 @@ function ReadTagsProvider({ children }) {
         hasTags: cachedData.length > 0,
       }}>
       {children}
-    </ReadTags.Provider>
+    </ReadTagsContext.Provider>
   );
 }
 
-export default ReadTagsProvider;
-export { ReadTags };
+export { ReadTagsProvider };

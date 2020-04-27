@@ -10,9 +10,8 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { isValidResourceId } from 'data/utils';
-import useCreateTag from '../hooks/useCreateTag';
-import useReadTags from '../hooks/useReadTags';
 import * as stringUtils from 'utils/StringUtils';
+import { useCreateTag, useReadTags } from 'features/content-tags/core/hooks';
 
 const styles = {
   controlsPanel: css({ display: 'flex' }),
@@ -201,4 +200,4 @@ CreateTagModal.propTypes = {
   onClose: PropTypes.func,
 };
 
-export default CreateTagModal;
+export { CreateTagModal };

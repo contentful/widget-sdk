@@ -16,4 +16,4 @@ function useCurrentSpaceFeature(featureId, defaultValue) {
   return { spaceFeatureEnabled: data, isSpaceFeatureLoading: isLoading };
 }
 
-export default useCurrentSpaceFeature;
+export { useCurrentSpaceFeature };

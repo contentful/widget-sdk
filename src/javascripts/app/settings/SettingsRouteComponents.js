@@ -18,7 +18,7 @@ import ApiKeyListRoute from './api/routes/ApiKeyListRoute';
 import CMATokensRoute from './api/routes/CMATokensRoute';
 import KeyEditorRoute from './api/routes/KeyEditorRoute';
 
-import TagsRoute from './content_tags/routes/TagsRoute';
+import { TagsRoute } from 'features/content-tags';
 
 export {
   WebhookListRoute,

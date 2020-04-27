@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 
-const tagPropType = {
+const TagPropType = {
   name: PropTypes.string.isRequired,
   sys: PropTypes.shape({
     type: PropTypes.string.isRequired,
@@ -13,4 +13,4 @@ const tagPropType = {
   updatedAt: PropTypes.string,
 };
 
-export default tagPropType;
+export { TagPropType };

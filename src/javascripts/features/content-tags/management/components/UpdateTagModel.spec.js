@@ -1,14 +1,14 @@
 import React from 'react';
 import { act, fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import ReadTagsProvider from '../providers/ReadTagsProvider';
+import { ReadTagsProvider } from 'features/content-tags/core/state/ReadTagsProvider';
 import { Notification } from '@contentful/forma-36-react-components';
-import { TagsRepoContext } from '../providers/TagsRepoProvider';
+import { TagsRepoContext } from 'features/content-tags/core/state/TagsRepoContext';
+import { UpdateTagModal } from 'features/content-tags/management/components/UpdateTagModal';
 /*
  * We should add '@testing-library/dom' to get 'waitFor'
  * instead of using transitive (hidden) dependency 'dom-testing-library'
  */
-import UpdateTagModal from './UpdateTagModal';
 
 describe('A UpdateTagModal', () => {
   beforeEach(() => {

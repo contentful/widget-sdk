@@ -10,21 +10,20 @@ import {
   Workbench,
 } from '@contentful/forma-36-react-components';
 import NavigationIcon from 'ui/Components/NavigationIcon';
-import { useScrollToTop } from '../hooks/useScrollToTop';
 import EmptyContentTags from 'svg/illustrations/empty-content-tags.svg';
 import BinocularsIllustration from 'svg/illustrations/binoculars-illustration.svg';
 import EmptyStateContainer, {
   defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
-import TagsWorkbenchActions from './TagsWorkbenchActions';
-import useF36Modal from '../hooks/useF36Modal';
-import useCreateTagModal from '../components/CreateTagModal';
+import { useScrollToTop, useF36Modal } from 'features/content-tags/core/hooks';
+import { TagsWorkbenchActions } from './TagsWorkbenchActions';
+import { CreateTagModal } from 'features/content-tags/management/components/CreateTagModal';
 
 function TagsWorkbenchSkeleton(props) {
   const scrollToTop = useScrollToTop('.tags-workbench-content');
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const { modalComponent: createTagComponent, showModal: showCreateTagModal } = useF36Modal(
-    useCreateTagModal
+    CreateTagModal
   );
 
   const onCreate = useCallback(() => {
@@ -126,4 +125,4 @@ TagsWorkbenchSkeleton.propTypes = {
   hasData: PropTypes.bool,
 };
 
-export default TagsWorkbenchSkeleton;
+export { TagsWorkbenchSkeleton };

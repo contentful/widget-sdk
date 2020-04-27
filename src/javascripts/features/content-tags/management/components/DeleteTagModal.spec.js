@@ -1,9 +1,9 @@
 import React from 'react';
-import DeleteTagModal from './DeleteTagModal';
+import { DeleteTagModal } from './DeleteTagModal';
 import { render, act, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import ReadTagsProvider from '../providers/ReadTagsProvider';
-import { TagsRepoContext } from '../providers/TagsRepoProvider';
+import { ReadTagsProvider } from 'features/content-tags/core/state/ReadTagsProvider';
+import { TagsRepoContext } from 'features/content-tags/core/state/TagsRepoContext';
 
 describe('DeleteTagModal', () => {
   it('has disabled button state by default', async () => {

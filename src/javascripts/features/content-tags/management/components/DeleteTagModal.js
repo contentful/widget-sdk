@@ -1,4 +1,3 @@
-import useReadTags from '../hooks/useReadTags';
 import React, { useCallback, useEffect, useReducer } from 'react';
 import {
   Button,
@@ -13,8 +12,8 @@ import {
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';
-import useDeleteTag from '../hooks/useDeleteTag';
-import tagPropType from '../tagPropType';
+import { TagPropType } from 'features/content-tags/core/TagPropType';
+import { useDeleteTag, useReadTags } from 'features/content-tags/core/hooks';
 
 const styles = {
   controlsPanel: css({ display: 'flex', marginTop: tokens.spacingL }),
@@ -139,9 +138,9 @@ function DeleteTagModal({ tag, isShown, onClose }) {
 }
 
 DeleteTagModal.propTypes = {
-  tag: PropTypes.shape(tagPropType),
+  tag: PropTypes.shape(TagPropType),
   isShown: PropTypes.bool,
   onClose: PropTypes.func,
 };
 
-export default DeleteTagModal;
+export { DeleteTagModal };
