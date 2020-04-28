@@ -10,9 +10,9 @@ import {
   Workbench,
 } from '@contentful/forma-36-react-components';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
-import LocalesTable from './LocalesTable';
+import { LocalesTable } from './LocalesTable';
 import StateLink from 'app/common/StateLink';
-import LocalesUsageStatus, { getLocalesUsageStatus } from './utils/LocalesUsageStatus';
+import { LocalesUsageStatus, getLocalesUsageStatus } from './utils/LocalesUsageStatus';
 
 const LocalesListPropTypes = {
   locales: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -168,7 +168,7 @@ export const LocalesAdvice = (props) => {
 
 LocalesAdvice.propTypes = LocalesListPropTypes;
 
-class LocalesListPricingOne extends React.Component {
+export class LocalesListPricingOne extends React.Component {
   static propTypes = LocalesListPropTypes;
 
   render() {
@@ -200,5 +200,3 @@ class LocalesListPricingOne extends React.Component {
     );
   }
 }
-
-export default LocalesListPricingOne;

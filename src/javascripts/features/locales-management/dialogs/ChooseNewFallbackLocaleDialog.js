@@ -7,7 +7,7 @@ const LocaleType = PropTypes.shape({
   name: PropTypes.string.isRequired,
 });
 
-export default class ChooseNewFallbackLocaleDialog extends React.Component {
+export class ChooseNewFallbackLocaleDialog extends React.Component {
   static propTypes = {
     isShown: PropTypes.bool.isRequired,
     locale: LocaleType.isRequired,

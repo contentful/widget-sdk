@@ -25,7 +25,7 @@ const styles = {
   }),
 };
 
-export default class LocaleEditForm extends Component {
+export class LocaleEditForm extends Component {
   static propTypes = {
     initialLocale: PropTypes.shape({
       // not-created locales don't have sys

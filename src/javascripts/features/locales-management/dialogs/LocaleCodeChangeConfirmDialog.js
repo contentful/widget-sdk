@@ -7,7 +7,7 @@ const LocaleType = PropTypes.shape({
   name: PropTypes.string.isRequired,
 });
 
-export default class LocaleCodeChangeConfirmDialog extends React.Component {
+export class LocaleCodeChangeConfirmDialog extends React.Component {
   static propTypes = {
     isShown: PropTypes.bool.isRequired,
     previousLocale: LocaleType.isRequired,

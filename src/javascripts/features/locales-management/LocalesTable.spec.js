@@ -2,9 +2,9 @@ import React from 'react';
 
 import { render, fireEvent } from '@testing-library/react';
 import * as $stateMocked from 'ng/$state';
-import LocalesTable from './LocalesTable';
+import { LocalesTable } from './LocalesTable';
 
-describe('app/settings/locales/LocalesTable', () => {
+describe('features/locales-management/LocalesTable', () => {
   beforeEach(() => {
     $stateMocked.go.mockClear();
   });

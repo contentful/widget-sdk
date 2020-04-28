@@ -40,7 +40,7 @@ const DocumentationsSection = () => (
   </WorkbenchSidebarItem>
 );
 
-export default class LocalesListSidebar extends React.Component {
+export class LocalesListSidebar extends React.Component {
   static propTypes = {
     localeResource: PropTypes.object.isRequired,
     allowedToEnforceLimits: PropTypes.bool.isRequired,

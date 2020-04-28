@@ -24,28 +24,28 @@ const ERROR_CHECKS = [
   },
 ];
 
-function deleteSuccess() {
+export function deleteSuccess() {
   Notification.success('Locale deleted successfully');
 }
 
-function saveSuccess() {
+export function saveSuccess() {
   Notification.success('Locale saved successfully');
 }
 
-function notRenameable() {
+export function notRenameable() {
   Notification.error(NOT_RENAMEABLE_MESSAGE);
 }
 
-function codeChangeError() {
+export function codeChangeError() {
   Notification.error('New fallback code could not be saved');
 }
 
-function deleteError(err) {
+export function deleteError(err) {
   Notification.error('Locale could not be deleted: ' + err.body.message);
   logger.logServerWarn('Locale could not be deleted', { error: err });
 }
 
-function saveError(err) {
+export function saveError(err) {
   const message = getErrorMessage(err);
   if (message) {
     Notification.error('Locale could not be saved: ' + message);
@@ -67,12 +67,3 @@ function checkUnprocessableEntityErrorName(name, err) {
 
   return status === 422 && !!errors.find((error) => error.name === name);
 }
-
-export default {
-  deleteSuccess,
-  saveSuccess,
-  notRenameable,
-  codeChangeError,
-  deleteError,
-  saveError,
-};

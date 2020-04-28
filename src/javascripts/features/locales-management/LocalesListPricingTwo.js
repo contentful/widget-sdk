@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 import { Heading, Workbench } from '@contentful/forma-36-react-components';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
-import LocalesListSidebar from './LocalesListSidebar';
-import LocalesTable from './LocalesTable';
+import { LocalesListSidebar } from './LocalesListSidebar';
+import { LocalesTable } from './LocalesTable';
 
-class LocalesListPricingTwo extends React.Component {
+export class LocalesListPricingTwo extends React.Component {
   static propTypes = {
     locales: PropTypes.arrayOf(PropTypes.object).isRequired,
     allowedToEnforceLimits: PropTypes.bool.isRequired,
@@ -52,5 +52,3 @@ class LocalesListPricingTwo extends React.Component {
     );
   }
 }
-
-export default LocalesListPricingTwo;

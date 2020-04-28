@@ -1,9 +1,9 @@
 import React from 'react';
 
 import { render, fireEvent } from '@testing-library/react';
-import ChooseNewFallbackLocaleDialog from './ChooseNewFallbackLocaleDialog';
+import { ChooseNewFallbackLocaleDialog } from './ChooseNewFallbackLocaleDialog';
 
-describe('locales/components/ChooseNewFallbackLocaleDialog', () => {
+describe('features/locales-management/ChooseNewFallbackLocaleDialog', () => {
   const renderComponent = (props) =>
     render(
       <ChooseNewFallbackLocaleDialog

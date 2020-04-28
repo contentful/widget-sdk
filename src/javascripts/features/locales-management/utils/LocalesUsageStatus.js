@@ -1,6 +1,6 @@
 import { getResourceLimits } from 'utils/ResourceUtils';
 
-const LocalesUsageStatus = {
+export const LocalesUsageStatus = {
   NO_MULTIPLE_LOCALES: 'NO_MULTIPLE_LOCALES',
   ONE_LOCALE_USED: 'ONE_LOCALE_USED',
   MORE_THAN_ONE_LOCALE_USED: 'MORE_THAN_ONE_LOCALE_USED',
@@ -24,5 +24,3 @@ export function getLocalesUsageStatus({ canCreateMultipleLocales, locales, local
     return LocalesUsageStatus.UNKNOWN;
   }
 }
-
-export default LocalesUsageStatus;

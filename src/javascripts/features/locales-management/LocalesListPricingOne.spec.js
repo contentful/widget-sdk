@@ -5,7 +5,7 @@ import * as $stateMocked from 'ng/$state';
 import { Notification } from '@contentful/forma-36-react-components';
 import { AddLocaleButton, LocalesAdvice } from './LocalesListPricingOne';
 
-describe('app/settings/locales/LocalesListPricingOne', () => {
+describe('features/locales-management/LocalesListPricingOne', () => {
   describe('AddLocaleButton', () => {
     it('if getComputeLocalesUsageForOrganization returns positive value than notification should be shown', () => {
       const notificationSpy = jest.spyOn(Notification, 'error').mockImplementation(() => {});

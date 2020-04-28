@@ -5,10 +5,6 @@ import {
   WebhookCallRoute,
 } from 'features/webhooks';
 
-import LocalesEditRoute from './locales/routes/LocalesEditRoute';
-
-import LocalesNewRoute from './locales/routes/LocalesNewRoute';
-import LocalesListRoute from './locales/routes/LocalesListRoute';
 import { ExtensionsListRoute } from 'features/extensions-management';
 import { ExtensionEditorRoute } from 'features/extensions-management';
 import RoleEditorRoute from './roles_permissions/routes/RoleEditorRoute';
@@ -25,9 +21,6 @@ export {
   WebhookNewRoute,
   WebhookEditRoute,
   WebhookCallRoute,
-  LocalesEditRoute,
-  LocalesNewRoute,
-  LocalesListRoute,
   ExtensionsListRoute,
   ExtensionEditorRoute,
   RoleEditorRoute,

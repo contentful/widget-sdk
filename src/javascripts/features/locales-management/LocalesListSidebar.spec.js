@@ -1,10 +1,10 @@
 import React from 'react';
 
 import { render, fireEvent } from '@testing-library/react';
-import LocalesListSidebar from './LocalesListSidebar';
+import { LocalesListSidebar } from './LocalesListSidebar';
 import * as $stateMocked from 'ng/$state';
 
-describe('settings/locales/LocalesListSidebar', () => {
+describe('features/locales-management/LocalesListSidebar', () => {
   const renderComponent = (props) => {
     const stubs = {
       upgradeSpace: jest.fn(),

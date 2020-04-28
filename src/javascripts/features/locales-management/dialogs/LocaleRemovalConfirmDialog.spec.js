@@ -1,22 +1,18 @@
 import React from 'react';
 
 import { render, fireEvent } from '@testing-library/react';
-import LocaleCodeChangeConfirmDialog from './LocaleCodeChangeConfirmDialog';
+import { LocaleRemovalConfirmDialog } from './LocaleRemovalConfirmDialog';
 
-describe('locales/components/LocaleCodeChangeConfirmDialog', () => {
+describe('features/locales-management/LocaleRemovalConfirmDialog', () => {
   const renderComponent = (props) =>
     render(
-      <LocaleCodeChangeConfirmDialog
+      <LocaleRemovalConfirmDialog
         isShown
         onConfirm={() => {}}
         onCancel={() => {}}
         locale={{
-          name: 'German',
-          code: 'de',
-        }}
-        previousLocale={{
-          name: 'Russian',
-          code: 'ru',
+          name: 'English',
+          code: 'uk',
         }}
         {...props}
       />
@@ -24,7 +20,7 @@ describe('locales/components/LocaleCodeChangeConfirmDialog', () => {
 
   it('confirm button should be disabled by default', () => {
     const { getByTestId } = renderComponent();
-    expect(getByTestId('change-locale-confirm')).toBeDisabled();
+    expect(getByTestId('delete-locale-confirm')).toBeDisabled();
   });
 
   it('it is possible to invoke cancel by clicking on two buttons', () => {
@@ -35,7 +31,8 @@ describe('locales/components/LocaleCodeChangeConfirmDialog', () => {
       onCancel: stubs.onCancel,
     });
 
-    fireEvent.click(getByTestId('change-locale-cancel'));
+    fireEvent.click(getByTestId('delete-locale-cancel'));
+
     expect(stubs.onCancel).toHaveBeenCalledTimes(1);
   });
 
@@ -49,20 +46,19 @@ describe('locales/components/LocaleCodeChangeConfirmDialog', () => {
       ...stubs,
     });
 
+    const deleteButton = getByTestId('delete-locale-confirm');
     const repeatLocaleInput = getByTestId('repeat-locale-input');
-    const confirmChangeLocale = getByTestId('change-locale-confirm');
 
-    fireEvent.change(repeatLocaleInput, { target: { value: 'ru' } });
+    fireEvent.change(repeatLocaleInput, { target: { value: 'uk' } });
 
-    expect(confirmChangeLocale).not.toBeDisabled();
-
-    fireEvent.click(confirmChangeLocale);
+    expect(deleteButton).not.toBeDisabled();
+    fireEvent.click(deleteButton);
 
     fireEvent.change(repeatLocaleInput, { target: { value: 'something' } });
 
-    expect(confirmChangeLocale).toBeDisabled();
+    expect(deleteButton).toBeDisabled();
 
-    fireEvent.click(confirmChangeLocale);
+    fireEvent.click(deleteButton);
 
     expect(stubs.onConfirm).toHaveBeenCalledTimes(1);
   });

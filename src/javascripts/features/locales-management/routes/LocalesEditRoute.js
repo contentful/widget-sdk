@@ -3,13 +3,13 @@ import { cloneDeep } from 'lodash';
 import PropTypes from 'prop-types';
 import { ModalLauncher } from 'core/components/ModalLauncher';
 import { LocalesFormSkeleton } from '../skeletons/LocalesFormSkeleton';
-import LocaleEditForm from '../LocaleEditForm';
+import { LocaleEditForm } from '../LocaleEditForm';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import StateRedirect from 'app/common/StateRedirect';
-import LocaleNotifications from '../utils/LocaleNotifications';
-import LocaleRemovalConfirmDialog from '../dialogs/LocaleRemovalConfirmDialog';
-import ChooseNewFallbackLocaleDialog from '../dialogs/ChooseNewFallbackLocaleDialog';
-import LocaleCodeChangeConfirmation from '../dialogs/LocaleCodeChangeConfirmDialog';
+import * as LocaleNotifications from '../utils/LocaleNotifications';
+import { LocaleRemovalConfirmDialog } from '../dialogs/LocaleRemovalConfirmDialog';
+import { ChooseNewFallbackLocaleDialog } from '../dialogs/ChooseNewFallbackLocaleDialog';
+import { LocaleCodeChangeConfirmDialog } from '../dialogs/LocaleCodeChangeConfirmDialog';
 import { getModule } from 'core/NgRegistry';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
@@ -89,7 +89,7 @@ class EditLocaleForm extends Component {
 
   openLocaleCodeChangeConfirmation = (locale, previousLocale) => {
     return ModalLauncher.open(({ isShown, onClose }) => (
-      <LocaleCodeChangeConfirmation
+      <LocaleCodeChangeConfirmDialog
         isShown={isShown}
         locale={locale}
         previousLocale={previousLocale}
@@ -182,7 +182,7 @@ class EditLocaleForm extends Component {
   }
 }
 
-export default class LocalesEditRoute extends React.Component {
+export class LocalesEditRoute extends React.Component {
   save = async function (locale) {
     const spaceContext = getModule('spaceContext');
 

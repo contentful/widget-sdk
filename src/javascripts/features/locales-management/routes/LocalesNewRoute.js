@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import LocaleEditForm from '../LocaleEditForm';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import { LocalesFormSkeleton } from '../skeletons/LocalesFormSkeleton';
 import StateRedirect from 'app/common/StateRedirect';
-import LocaleNotifications from '../utils/LocaleNotifications';
+import * as LocaleNotifications from '../utils/LocaleNotifications';
+import { LocaleEditForm } from '../LocaleEditForm';
 import { getModule } from 'core/NgRegistry';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
@@ -87,7 +87,7 @@ class NewLocaleForm extends Component {
   }
 }
 
-export default class LocalesNewRoute extends React.Component {
+export class LocalesNewRoute extends React.Component {
   save = async function (locale) {
     const spaceContext = getModule('spaceContext');
 

@@ -22,7 +22,7 @@ function groupLocaleNamesByCode(locales) {
   );
 }
 
-export default class LocalesTable extends React.Component {
+export class LocalesTable extends React.Component {
   static propTypes = {
     locales: PropTypes.arrayOf(PropTypes.object).isRequired,
   };

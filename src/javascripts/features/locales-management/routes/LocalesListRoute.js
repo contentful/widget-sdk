@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { getModule } from 'core/NgRegistry';
 import { LocalesListSkeleton } from '../skeletons/LocalesListSkeleton';
-import LocalesListPricingOne from '../LocalesListPricingOne';
-import LocalesListPricingTwo from '../LocalesListPricingTwo';
+import { LocalesListPricingOne } from '../LocalesListPricingOne';
+import { LocalesListPricingTwo } from '../LocalesListPricingTwo';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import StateRedirect from 'app/common/StateRedirect';
@@ -36,7 +36,7 @@ const LocalesFetcher = createFetcherComponent(() => {
   ]);
 });
 
-class LocalesListRoute extends React.Component {
+export class LocalesListRoute extends React.Component {
   static propTypes = {
     showUpgradeSpaceDialog: PropTypes.func.isRequired,
     getComputeLocalesUsageForOrganization: PropTypes.func.isRequired,
@@ -105,5 +105,3 @@ class LocalesListRoute extends React.Component {
     );
   }
 }
-
-export default LocalesListRoute;

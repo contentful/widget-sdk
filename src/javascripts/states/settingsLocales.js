@@ -1,16 +1,11 @@
-import React from 'react';
 import _ from 'lodash';
 import * as ChangeSpaceService from 'services/ChangeSpaceService';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
-import { LocalesListSkeleton } from '../skeletons/LocalesListSkeleton';
-import { LocalesFormSkeleton } from '../skeletons/LocalesFormSkeleton';
 import createResourceService from 'services/ResourceService';
 import { generateMessage } from 'utils/ResourceUtils';
-import { SettingsImporter } from 'app/settings/SettingsImporter';
+import { LocalesListRoute, LocalesNewRoute, LocalesEditRoute } from 'features/locales-management';
 
-import LazyLoadedComponent from 'app/common/LazyLoadedComponent';
-
-export default {
+export const localesSettingsState = {
   name: 'locales',
   url: '/locales',
   abstract: true,
@@ -18,11 +13,7 @@ export default {
     {
       name: 'list',
       url: '',
-      component: (props) => (
-        <LazyLoadedComponent fallback={LocalesListSkeleton} importer={SettingsImporter}>
-          {({ LocalesListRoute }) => <LocalesListRoute {...props} />}
-        </LazyLoadedComponent>
-      ),
+      component: LocalesListRoute,
       resolve: {
         localeResource: [
           '$stateParams',
@@ -69,11 +60,7 @@ export default {
     {
       name: 'new',
       url: '_new',
-      component: (props) => (
-        <LazyLoadedComponent fallback={LocalesFormSkeleton} importer={SettingsImporter}>
-          {({ LocalesNewRoute }) => <LocalesNewRoute {...props} />}
-        </LazyLoadedComponent>
-      ),
+      component: LocalesNewRoute,
       mapInjectedToProps: [
         '$scope',
         '$state',
@@ -95,11 +82,7 @@ export default {
     {
       name: 'detail',
       url: '/:localeId',
-      component: (props) => (
-        <LazyLoadedComponent fallback={LocalesFormSkeleton} importer={SettingsImporter}>
-          {({ LocalesEditRoute }) => <LocalesEditRoute {...props} />}
-        </LazyLoadedComponent>
-      ),
+      component: LocalesEditRoute,
       mapInjectedToProps: [
         '$scope',
         '$stateParams',

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { TextInput, ModalConfirm } from '@contentful/forma-36-react-components';
 
-export default class LocaleRemovalConfirmDialog extends React.Component {
+export class LocaleRemovalConfirmDialog extends React.Component {
   static propTypes = {
     isShown: PropTypes.bool.isRequired,
     locale: PropTypes.object.isRequired,

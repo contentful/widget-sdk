@@ -1,18 +1,22 @@
 import React from 'react';
 
 import { render, fireEvent } from '@testing-library/react';
-import LocaleRemovalConfirmDialog from './LocaleRemovalConfirmDialog';
+import { LocaleCodeChangeConfirmDialog } from './LocaleCodeChangeConfirmDialog';
 
-describe('locales/components/LocaleRemovalConfirmDialog', () => {
+describe('features/locales-management/LocaleCodeChangeConfirmDialog', () => {
   const renderComponent = (props) =>
     render(
-      <LocaleRemovalConfirmDialog
+      <LocaleCodeChangeConfirmDialog
         isShown
         onConfirm={() => {}}
         onCancel={() => {}}
         locale={{
-          name: 'English',
-          code: 'uk',
+          name: 'German',
+          code: 'de',
+        }}
+        previousLocale={{
+          name: 'Russian',
+          code: 'ru',
         }}
         {...props}
       />
@@ -20,7 +24,7 @@ describe('locales/components/LocaleRemovalConfirmDialog', () => {
 
   it('confirm button should be disabled by default', () => {
     const { getByTestId } = renderComponent();
-    expect(getByTestId('delete-locale-confirm')).toBeDisabled();
+    expect(getByTestId('change-locale-confirm')).toBeDisabled();
   });
 
   it('it is possible to invoke cancel by clicking on two buttons', () => {
@@ -31,8 +35,7 @@ describe('locales/components/LocaleRemovalConfirmDialog', () => {
       onCancel: stubs.onCancel,
     });
 
-    fireEvent.click(getByTestId('delete-locale-cancel'));
-
+    fireEvent.click(getByTestId('change-locale-cancel'));
     expect(stubs.onCancel).toHaveBeenCalledTimes(1);
   });
 
@@ -46,19 +49,20 @@ describe('locales/components/LocaleRemovalConfirmDialog', () => {
       ...stubs,
     });
 
-    const deleteButton = getByTestId('delete-locale-confirm');
     const repeatLocaleInput = getByTestId('repeat-locale-input');
+    const confirmChangeLocale = getByTestId('change-locale-confirm');
 
-    fireEvent.change(repeatLocaleInput, { target: { value: 'uk' } });
+    fireEvent.change(repeatLocaleInput, { target: { value: 'ru' } });
 
-    expect(deleteButton).not.toBeDisabled();
-    fireEvent.click(deleteButton);
+    expect(confirmChangeLocale).not.toBeDisabled();
+
+    fireEvent.click(confirmChangeLocale);
 
     fireEvent.change(repeatLocaleInput, { target: { value: 'something' } });
 
-    expect(deleteButton).toBeDisabled();
+    expect(confirmChangeLocale).toBeDisabled();
 
-    fireEvent.click(deleteButton);
+    fireEvent.click(confirmChangeLocale);
 
     expect(stubs.onConfirm).toHaveBeenCalledTimes(1);
   });
