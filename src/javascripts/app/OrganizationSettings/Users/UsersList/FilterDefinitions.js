@@ -15,7 +15,7 @@ import {
 const idMap = {
   sort: ['order'],
   orgRole: ['role'],
-  status: ['status'],
+  status: ['sys.status'],
   space: ['sys.spaceMemberships.sys.space.sys.id'],
   ssoLogin: ['sys.sso.lastSignInAt'],
   spaceRole: SPACE_ROLE_FILTER_KEYS,
@@ -34,7 +34,7 @@ const defaultFiltersById = {
     value: '',
   },
   status: {
-    key: 'status',
+    key: 'sys.status',
     value: '',
   },
   ssoLogin: {

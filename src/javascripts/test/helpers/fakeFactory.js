@@ -144,9 +144,9 @@ export function OrganizationMembership(
 ) {
   return {
     role,
-    status,
     sys: {
       ...sys({ type: types.ORGANIZATION_MEMBERSHIP }),
+      status: status,
       user: user,
       createdBy: Link(types.USER),
     },
