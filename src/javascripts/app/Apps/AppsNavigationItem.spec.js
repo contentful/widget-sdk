@@ -3,7 +3,6 @@ import {
   EXPLORE_APPS_TITLE,
   LOADING_TITLE,
   MANAGE_APPS_TITLE,
-  PromotionChild,
 } from './AppsNavigationItem';
 
 describe('AppsNavigationItem', () => {
@@ -37,15 +36,15 @@ describe('AppsNavigationItem', () => {
     });
 
     it('adds promotion child if no apps installed', () => {
-      const [, , promotion] = buildChildren([], {});
+      const [, , promotion] = buildChildren([], { canManageSpace: true });
 
-      expect(promotion).toEqual(PromotionChild);
+      expect(promotion.label).toEqual('apps-promotion');
     });
 
     it('adds promotion child if no apps with navigation item installed', () => {
-      const [, , promotion] = buildChildren([appWithoutNavItem], {});
+      const [, , promotion] = buildChildren([appWithoutNavItem], { canManageSpace: true });
 
-      expect(promotion).toEqual(PromotionChild);
+      expect(promotion.label).toEqual('apps-promotion');
     });
 
     it('adds child per app that has a navigation item', () => {

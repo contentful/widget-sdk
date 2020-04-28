@@ -8,6 +8,7 @@ import {
   SkeletonImage,
   SkeletonText,
   Tag,
+  TextLink,
 } from '@contentful/forma-36-react-components';
 import styles from './styles';
 import PropTypes from 'prop-types';
@@ -66,12 +67,12 @@ export const SplitterChild = {
   render: () => <hr className={styles.splitter} />,
 };
 
-export const PromotionChild = {
+export const PromotionChild = (canManageSpace) => ({
   separator: true,
   isTitle: false,
   label: 'apps-promotion',
-  render: () => <AppPromotion />,
-};
+  render: () => <AppPromotion canManageSpace={canManageSpace} />,
+});
 
 const buildTopChildren = (context) => {
   const linkToAppsChild = context.canManageSpace
@@ -86,7 +87,7 @@ const buildAppsChildren = (apps, context) => {
 
   return appsWithNav.length > 0
     ? appsWithNav.map((a) => buildAppChild(a, context))
-    : [PromotionChild];
+    : [PromotionChild(context.canManageSpace)];
 };
 
 export const buildChildren = (apps, context) => {
@@ -96,7 +97,7 @@ export const buildChildren = (apps, context) => {
   return [...fixedChildren, ...volatileChildren];
 };
 
-const AppPromotion = () => {
+const AppPromotion = ({ canManageSpace }) => {
   return (
     <div className={styles.promotion}>
       <Tag className={styles.promotionTag}>new</Tag>
@@ -104,9 +105,20 @@ const AppPromotion = () => {
       <br />
       the web app. After installation, they
       <br />
-      will show up here.
+      will show up here.{' '}
+      {!!canManageSpace && (
+        <TextLink
+          href="https://www.contentful.com/developers/docs/extensibility/app-framework/locations/#page"
+          target="_blank">
+          Learn more
+        </TextLink>
+      )}
     </div>
   );
+};
+
+AppPromotion.propTypes = {
+  canManageSpace: PropTypes.bool.isRequired,
 };
 
 const AppNavigationLink = ({ icon, title }) => {
