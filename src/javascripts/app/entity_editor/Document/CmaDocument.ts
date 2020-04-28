@@ -1,4 +1,4 @@
-import { get, set, cloneDeep, noop, unset, isEqual } from 'lodash';
+import { get, set, cloneDeep, noop, unset, isEqual, some, intersectionBy } from 'lodash';
 import * as K from 'core/utils/kefir';
 import * as ResourceStateManager from 'data/document/ResourceStateManager';
 import * as Permissions from 'access_control/EntityPermissions';
@@ -10,9 +10,10 @@ import * as PathUtils from 'utils/Path';
 import { Error as DocError } from 'data/document/Error';
 import { Document, Entity, EntitySys, PropertyBus, StreamBus } from './types';
 import * as StringField from 'data/document/StringFieldSetter';
-import { cmaPutChanges } from './api';
 import { trackEditConflict } from './analytics';
 import { createNoopPresenceHub } from './PresenceHub';
+import { EntityRepo, SpaceEndpoint } from 'data/CMA/EntityRepo';
+import changedEntityFieldPaths from './changedEntityFieldPaths';
 
 export const THROTTLE_TIME = 5000;
 
@@ -22,7 +23,8 @@ export const THROTTLE_TIME = 5000;
 export function create(
   initialEntity: { data: Entity; setDeleted: { (): void } },
   contentType: any,
-  spaceEndpoint: { (body: any, headers: any): Entity },
+  spaceEndpoint: SpaceEndpoint,
+  entityRepo: EntityRepo,
   saveThrottleMs: number = THROTTLE_TIME
 ): Document {
   // A single source of Truth, properties like sys$ and data$ reflect the state of this variable.
@@ -97,13 +99,68 @@ export function create(
       }
     }
     // NOTE: We do not re-implement empty value `RichTextFieldSetter` behavior for now
-    //  as we can rely on the RT editor to be responsible for giving us `undefined` as
+    //  as we can rely on the RT editor to be respons ible for giving us `undefined` as
     //  an empty value.
 
     set(entity, path, value);
 
     changesBus.emit(path);
+
+    // `FileEditor` will trigger processing of the file right after `setValueAt` resolves.
+    // TODO: We should keep `setValueAt` consistently synchronous, instead of having an exception
+    //   for this behavior. This would mean handling this case in the FileEditor by listening
+    //   to sys updates while resolving immediately in this case as in all the other cases.
+    if (
+      entity.sys.type === 'Asset' &&
+      PathUtils.isPrefix(['fields', 'file'], path) &&
+      value.upload
+    ) {
+      await saveEntityAfterAnyStatusUpdate();
+    }
+
     return entity;
+  }
+
+  if (entity.sys.type === 'Asset') {
+    const unsubscribe = entityRepo.onAssetFileProcessed(entity.sys.id, async () => {
+      // what if two users upload a new asset at the same time?
+      // should only compare a specific locale + also when emiting change (only when we need to merge fields?)
+      const remoteEntity = await entityRepo.get(entity.sys.type, entity.sys.id);
+      const localChangedFieldPaths = changedEntityFieldPaths(lastSavedEntity.fields, entity.fields);
+      const remoteChangedFieldPaths = changedEntityFieldPaths(
+        lastSavedEntity.fields,
+        remoteEntity.fields
+      );
+
+      const hasConflictingPendingChanges =
+        intersectionBy(localChangedFieldPaths, remoteChangedFieldPaths, (path) => path.join(':'))
+          .length > 0;
+
+      if (hasConflictingPendingChanges) {
+        trackVersionMismatch(entity, remoteEntity);
+        errorBus.set(DocError.VersionMismatch());
+        return;
+      }
+
+      const hasRemoteVersionConflict = some(remoteChangedFieldPaths, ([path]) => path !== 'file');
+
+      if (hasRemoteVersionConflict) {
+        if (localChangedFieldPaths.length > 0) {
+          trackVersionMismatch(entity, remoteEntity);
+        }
+        errorBus.set(DocError.VersionMismatch());
+        return;
+      }
+
+      const changedRemoteFilePaths = remoteChangedFieldPaths
+        .filter(([path]) => path === 'file')
+        .map((path) => setValueAt(['fields', ...path], get(remoteEntity, ['fields', ...path])));
+      await Promise.all([...changedRemoteFilePaths, setValueAt(['sys'], remoteEntity.sys)]);
+      setLastSavedEntity(entity);
+      sysBus.set(remoteEntity.sys);
+      normalize();
+    });
+    cleanupTasks.push(unsubscribe);
   }
 
   // Entities from the server might include removed locales or deleted fields which the UI can't handle.
@@ -165,7 +222,7 @@ export function create(
     }
     if (!options.updateEmitters) {
       try {
-        await cmaPutChanges(spaceEndpoint, entity);
+        await entityRepo.update(entity);
       } catch (e) {
         // TODO: Use affordable analytics to track how often this happens.
       }
@@ -176,16 +233,11 @@ export function create(
     // Clone as `entity` could get mutated while waiting for CMA request.
     const changedLocalEntity: Entity = cloneDeep(entity);
     try {
-      const newEntry = await cmaPutChanges(spaceEndpoint, changedLocalEntity);
+      const newEntry = await entityRepo.update(changedLocalEntity);
       setLastSavedEntity(newEntry);
     } catch (e) {
       if (e.code === 'VersionMismatch') {
-        trackEditConflict({
-          spaceEndpoint,
-          localEntity: lastSavedEntity,
-          localEntityFetchedAt: lastSavedEntityFetchedAt,
-          changedLocalEntity,
-        });
+        trackVersionMismatch(changedLocalEntity);
       }
       const errors = {
         VersionMismatch: DocError.VersionMismatch(),
@@ -204,6 +256,16 @@ export function create(
     normalize();
     errorBus.set(null);
     isSavingBus.set(false);
+  }
+
+  function trackVersionMismatch(entity: Entity, remoteEntity?: Entity): void {
+    trackEditConflict({
+      entityRepo,
+      localEntity: lastSavedEntity,
+      localEntityFetchedAt: lastSavedEntityFetchedAt,
+      changedLocalEntity: cloneDeep(entity),
+      remoteEntity,
+    });
   }
 
   /**
@@ -287,7 +349,7 @@ export function create(
     },
 
     /**
-     * A stream of document paths (each wrapped in an array) affected by a local change:
+     * A stream of document paths (each wrapped in an array) affected by a local or remote change:
      * Internally:
      * - Used to Normalizer.normalize the document
      * - Used by valuePropertyAt to get the latest field value property

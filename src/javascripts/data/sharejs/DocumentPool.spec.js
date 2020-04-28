@@ -17,6 +17,11 @@ jest.mock('LaunchDarkly', () => ({
   getVariation: jest.fn(),
 }));
 
+const mockEntityRepo = { entityRepo: true };
+jest.mock('data/CMA/EntityRepo', () => ({
+  create: jest.fn(() => mockEntityRepo),
+}));
+
 let mockDoc1;
 let mockDoc2;
 
@@ -114,7 +119,7 @@ describe('DocumentPool', () => {
 
       get('id', 'Entry', cmaDocumentPool);
       expect(createCmaDoc).toBeCalledTimes(1);
-      expect(createCmaDoc).toBeCalledWith(entry, ct, spaceEndpoint);
+      expect(createCmaDoc).toBeCalledWith(entry, ct, spaceEndpoint, mockEntityRepo);
 
       get('id', 'Asset', cmaDocumentPool);
       expect(createOtDoc).toBeCalledTimes(1);

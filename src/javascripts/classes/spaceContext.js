@@ -195,11 +195,10 @@ export default function register() {
             }),
             (async () => {
               self.pubsubClient = await createPubSubClientForSpace(spaceId);
-            })(),
-            (async () => {
               self.docPool = await DocumentPool.create(
                 self.docConnection,
                 self.endpoint,
+                self.pubsubClient,
                 self.organization.sys.id,
                 spaceId
               );

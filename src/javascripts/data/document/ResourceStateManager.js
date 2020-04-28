@@ -37,6 +37,7 @@ export { Action, State };
  * @param {{(): Promise<void>} | null} preApplyFn Optional async function that will be invoked before the status change API request
  */
 export function create(sys$, setSys, getData, spaceEndpoint, preApplyFn = null) {
+  // TODO: abstract this in EntityRepo so that we're not passing spaceEndpoint here
   const applyAction = makeApply(spaceEndpoint);
 
   const state$ = sys$.map(getState).skipDuplicates();

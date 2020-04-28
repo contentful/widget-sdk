@@ -160,7 +160,7 @@ export default function FileEditor(props) {
 
 FileEditor.propTypes = {
   file: PropTypes.shape({
-    url: PropTypes.string.isRequired,
+    url: PropTypes.string,
     fileName: PropTypes.string,
     contentType: PropTypes.string,
   }),

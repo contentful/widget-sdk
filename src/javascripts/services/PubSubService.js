@@ -4,6 +4,7 @@ import { getToken } from 'Authentication';
 
 export const ENVIRONMENT_ALIAS_CHANGED_EVENT = 'environment-alias-changed';
 export const ENVIRONMENT_CREATION_COMPLETE_EVENT = 'environment-creation-complete';
+export const ASSET_PROCESSING_FINISHED_EVENT = 'asset-processing-finished';
 
 // make sure the client is initialized only once
 const client = (async () => {

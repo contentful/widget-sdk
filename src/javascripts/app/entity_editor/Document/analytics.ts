@@ -1,24 +1,26 @@
 import { Entity } from './types';
 import * as Analytics from 'analytics/Analytics';
 import changedEntityFieldPaths from './changedEntityFieldPaths';
-import { cmaGetEntity } from './api';
+import { EntityRepo } from 'data/CMA/EntityRepo';
 import * as logger from 'services/logger';
 
 export async function trackEditConflict({
-  spaceEndpoint,
+  entityRepo,
   localEntity,
   localEntityFetchedAt,
   changedLocalEntity,
+  ...options
 }: {
-  spaceEndpoint: { (body: any, headers: any): Entity };
+  entityRepo: EntityRepo;
   localEntity: Entity;
   localEntityFetchedAt: Date;
   changedLocalEntity: Entity;
+  remoteEntity?: Entity;
 }) {
   let remoteEntity: Entity | null;
   try {
-    const { sys } = localEntity;
-    remoteEntity = await cmaGetEntity(spaceEndpoint, sys.type, sys.id);
+    remoteEntity =
+      options.remoteEntity || (await entityRepo.get(localEntity.sys.type, localEntity.sys.id));
   } catch (e) {
     if (e.code === 'NotFound') {
       // TODO: Track deleted entity conflict with affordable analytics. move to separate function

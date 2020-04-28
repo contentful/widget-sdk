@@ -32,6 +32,20 @@ export const newEntry = (fields) => ({
   },
 });
 
+export const newAsset = (fields) => ({
+  sys: {
+    type: 'Asset',
+    version: 1,
+    updatedBy: {
+      sys: { id: 'userId' },
+    },
+  },
+  fields: fields || {
+    title: { 'en-US': 'foo' },
+    file: { 'en-US': { url: 'https://example.com/foo.jpg' } },
+  },
+});
+
 export const newContentType = (sys, fields) => ({
   data: {
     sys,

@@ -172,7 +172,7 @@ NavigationItem.propTypes = {
     srefParams: PropTypes.object,
     srefOptions: PropTypes.object,
     dataViewType: PropTypes.string,
-    disabled: PropTypes.boolean,
+    disabled: PropTypes.bool,
     tooltip: PropTypes.string,
   }).isRequired,
 };

@@ -1,7 +1,7 @@
 import { cloneDeep, set } from 'lodash';
 import * as CmaDocument from './CmaDocument';
 import { Action } from 'data/document/ResourceStateManager';
-import testDocumentBasic, { newEntry, newContentType } from './Document.spec';
+import testDocumentBasic, { newEntry, newAsset, newContentType } from './Document.spec';
 import * as K from '../../../../../test/utils/kefir';
 import { Error as DocError } from '../../../data/document/Error';
 import { THROTTLE_TIME } from './CmaDocument';
@@ -31,13 +31,19 @@ global.Date.now = jest.fn(() => now);
 const realSetTimeout = global.setTimeout; // unaffected by jest.useFakeTimers()
 const wait = () => new Promise((resolve) => realSetTimeout(resolve, 0));
 
-const mockSpaceEndpoint = () =>
-  jest.fn().mockImplementation((body) => {
-    const entry = cloneDeep(body.data);
-    entry.sys.version++;
-    return entry;
-  });
+const mockSpaceEndpoint = () => jest.fn();
 let spaceEndpoint;
+
+const mockEntityRepo = () => ({
+  update: jest.fn().mockImplementation((entity) => {
+    const entry = cloneDeep(entity);
+    entry.sys.version++;
+    return Promise.resolve(entry);
+  }),
+  get: jest.fn(),
+  onAssetFileProcessed: jest.fn(),
+});
+let entityRepo;
 
 const newError = (code, msg) => {
   const error = new Error(msg);
@@ -46,12 +52,15 @@ const newError = (code, msg) => {
 };
 
 function createCmaDocument(initialEntity, contentTypeFields, throttleMs) {
-  const contentType = newContentType(initialEntity.sys.contentType.sys, contentTypeFields);
+  const contentType =
+    initialEntity.sys.type === 'Entry' &&
+    newContentType(initialEntity.sys.contentType.sys, contentTypeFields);
   return {
     document: CmaDocument.create(
       { data: initialEntity, setDeleted: jest.fn() },
       contentType,
       spaceEndpoint,
+      entityRepo,
       throttleMs
     ),
   };
@@ -69,6 +78,7 @@ describe('CmaDocument', () => {
   beforeEach(() => {
     jest.useFakeTimers();
     entry = newEntry();
+    entityRepo = mockEntityRepo();
     spaceEndpoint = mockSpaceEndpoint();
     doc = createCmaDocument(entry).document;
   });
@@ -76,18 +86,18 @@ describe('CmaDocument', () => {
   describe('initially', () => {
     it('triggers no CMA request for the next 5 sec.', () => {
       jest.runAllTimers();
-      expect(spaceEndpoint).not.toHaveBeenCalled();
+      expect(entityRepo.update).not.toHaveBeenCalled();
     });
   });
 
   describe('immediately after setValueAt(fieldPath) on a field', () => {
-    beforeEach(() => {
-      doc.setValueAt(fieldPath, 'en-US-updated');
+    beforeEach(async () => {
+      await doc.setValueAt(fieldPath, 'en-US-updated');
       jest.advanceTimersByTime(CmaDocument.THROTTLE_TIME - 1);
     });
 
     it('triggers no CMA request for the next 5 sec.', () => {
-      expect(spaceEndpoint).not.toHaveBeenCalled();
+      expect(entityRepo.update).not.toHaveBeenCalled();
     });
 
     it('keeps the old sysProperty version after local update', () => {
@@ -96,13 +106,13 @@ describe('CmaDocument', () => {
   });
 
   describe('5 sec. after setValueAt(fieldPath) on a field', () => {
-    beforeEach(() => {
-      doc.setValueAt(fieldPath, 'en-US-updated');
+    beforeEach(async () => {
+      await doc.setValueAt(fieldPath, 'en-US-updated');
       jest.runAllTimers();
     });
 
     it('triggers CMA request', () => {
-      expect(spaceEndpoint).toBeCalledTimes(1);
+      expect(entityRepo.update).toBeCalledTimes(1);
     });
 
     it('bumps sysProperty version after remote update', () => {
@@ -114,12 +124,12 @@ describe('CmaDocument', () => {
     it('sends one CMA request', async () => {
       await doc.setValueAt(['fields', 'fieldA', 'en-US'], 'en-US-updated');
       await doc.setValueAt(['fields', 'fieldB', 'en-US'], 'another updated');
-      expect(spaceEndpoint).not.toHaveBeenCalled();
+      expect(entityRepo.update).not.toHaveBeenCalled();
 
       jest.runAllTimers();
-      expect(spaceEndpoint).toBeCalledTimes(1);
-      const [body] = spaceEndpoint.mock.calls[0];
-      expect(body.data.fields).toMatchObject({
+      expect(entityRepo.update).toBeCalledTimes(1);
+      const [entity] = entityRepo.update.mock.calls[0];
+      expect(entity.fields).toMatchObject({
         fieldA: { 'en-US': 'en-US-updated' },
         fieldB: { 'en-US': 'another updated' },
       });
@@ -127,8 +137,8 @@ describe('CmaDocument', () => {
 
     it('collects changes made during saving and sends them only 5s after last CMA request', async () => {
       let cmaResolve;
-      spaceEndpoint.mockImplementation(async (body) => {
-        const entry = cloneDeep(body.data);
+      entityRepo.update.mockImplementation((entity) => {
+        const entry = cloneDeep(entity);
         return new Promise((resolve) => {
           entry.sys.version++;
           cmaResolve = () => resolve(entry);
@@ -149,12 +159,12 @@ describe('CmaDocument', () => {
       // Start a new CMA request with fake timer.
       await doc.setValueAt(fieldPath, doc.getValueAt(fieldPath));
       jest.advanceTimersByTime(THROTTLE_TIME - 100);
-      expect(spaceEndpoint).toBeCalledTimes(1);
+      expect(entityRepo.update).toBeCalledTimes(1);
 
       jest.advanceTimersByTime(100);
-      expect(spaceEndpoint).toBeCalledTimes(2);
-      const [body] = spaceEndpoint.mock.calls[1]; // take second call
-      expect(body.data.fields).toMatchObject({
+      expect(entityRepo.update).toBeCalledTimes(2);
+      const [entity] = entityRepo.update.mock.calls[1]; // take second call
+      expect(entity.fields).toMatchObject({
         fieldA: { 'en-US': 'en-US-updated' },
         fieldB: { 'en-US': 'value set during saving' },
       });
@@ -165,85 +175,82 @@ describe('CmaDocument', () => {
     it('saves new pending changes only after first request succeeds', async () => {
       doc = createCmaDocument(entry, undefined).document;
       let cmaResolve;
-      spaceEndpoint.mockImplementation(async (body) => {
-        const entry = cloneDeep(body.data);
+      entityRepo.update.mockImplementation((entity) => {
+        const entry = cloneDeep(entity);
         return new Promise((resolve) => {
           entry.sys.version++;
           cmaResolve = () => resolve(entry);
         });
       });
 
-      doc.setValueAt(['fields', 'fieldA', 'en-US'], 'en-US-updated');
+      await doc.setValueAt(['fields', 'fieldA', 'en-US'], 'en-US-updated');
 
       jest.advanceTimersByTime(THROTTLE_TIME);
-      expect(spaceEndpoint).toBeCalledTimes(1);
+      expect(entityRepo.update).toBeCalledTimes(1);
 
-      doc.setValueAt(['fields', 'fieldB', 'en-US'], 'en-US-updated');
+      await doc.setValueAt(['fields', 'fieldB', 'en-US'], 'en-US-updated');
 
       jest.advanceTimersByTime(THROTTLE_TIME + 100);
       cmaResolve();
       await wait();
-      expect(spaceEndpoint).toBeCalledTimes(1);
-
-      jest.advanceTimersByTime(THROTTLE_TIME);
-      expect(spaceEndpoint).toBeCalledTimes(2);
+      expect(entityRepo.update).toBeCalledTimes(1);
     });
   });
 
   describe('state update', () => {
     it('persists pending changes first and immediately', async () => {
-      spaceEndpoint
-        .mockImplementationOnce((body) => {
-          entry = cloneDeep(body.data);
-          entry.sys.version++;
-          return entry;
-        })
-        .mockImplementationOnce((body) => {
-          expect(body).toEqual({
-            method: 'PUT',
-            path: ['entries', 'published'],
-            version: entry.sys.version,
-          });
-          entry = cloneDeep(entry);
-          entry.sys.publishedVersion = entry.sys.version;
-          entry.sys.version++;
-          return entry;
+      entityRepo.update.mockImplementationOnce((entity) => {
+        entry = cloneDeep(entity);
+        entry.sys.version++;
+        return Promise.resolve(entry);
+      });
+      spaceEndpoint.mockImplementationOnce((body) => {
+        expect(body).toEqual({
+          method: 'PUT',
+          path: ['entries', 'published'],
+          version: entry.sys.version,
         });
+
+        entry = cloneDeep(entry);
+        entry.sys.publishedVersion = entry.sys.version;
+        entry.sys.version++;
+        return entry;
+      });
 
       await doc.setValueAt(fieldPath, 'updated value');
       expect(spaceEndpoint).not.toHaveBeenCalled();
 
       await doc.resourceState.apply(Action.Publish());
-      expect(spaceEndpoint).toBeCalledTimes(2);
+      expect(entityRepo.update).toBeCalledTimes(1);
+      expect(spaceEndpoint).toBeCalledTimes(1);
 
       jest.runAllTimers();
       await wait();
-      expect(spaceEndpoint).toBeCalledTimes(2);
+      expect(spaceEndpoint).toBeCalledTimes(1);
     });
 
     it('persists changes made during state update 5s afterwards', async () => {
       let resolveStateUpdate;
-      spaceEndpoint
-        .mockImplementationOnce((body) => {
-          expect(body).toEqual({
-            method: 'PUT',
-            path: ['entries', 'published'],
-            version: entry.sys.version,
-          });
-          entry = cloneDeep(entry);
-          return new Promise((resolve) => {
-            entry.sys.publishedVersion = entry.sys.version;
-            entry.sys.version++;
-            resolveStateUpdate = () => {
-              resolve(entry);
-            };
-          });
-        })
-        .mockImplementationOnce((body) => {
-          entry = cloneDeep(body.data);
-          entry.sys.version++;
-          return entry;
+      entityRepo.update.mockImplementationOnce((entity) => {
+        entry = cloneDeep(entity);
+        entry.sys.version++;
+        return Promise.resolve(entry);
+      });
+      spaceEndpoint.mockImplementationOnce((body) => {
+        expect(body).toEqual({
+          method: 'PUT',
+          path: ['entries', 'published'],
+          version: entry.sys.version,
         });
+        entry = cloneDeep(entry);
+        return new Promise((resolve) => {
+          entry.sys.publishedVersion = entry.sys.version;
+          entry.sys.version++;
+          resolveStateUpdate = () => {
+            resolve(entry);
+          };
+        });
+      });
 
       const resourceStateUpdatePromise = doc.resourceState.apply(Action.Publish());
       await wait();
@@ -253,11 +260,11 @@ describe('CmaDocument', () => {
 
       jest.advanceTimersByTime(THROTTLE_TIME + 100);
       await wait();
-      expect(spaceEndpoint).toBeCalledTimes(1); // saveEntity() not called yet.
+      expect(entityRepo.update).not.toHaveBeenCalled();
 
       resolveStateUpdate();
       await resourceStateUpdatePromise;
-      expect(spaceEndpoint).toBeCalledTimes(2); // saveEntity() called now.
+      expect(entityRepo.update).toBeCalledTimes(1);
     });
   });
 
@@ -266,8 +273,8 @@ describe('CmaDocument', () => {
       let cmaResolve;
 
       it('is [true, false] when entity is persisted', async () => {
-        spaceEndpoint.mockImplementation(async (body) => {
-          const entry = cloneDeep(body.data);
+        entityRepo.update.mockImplementation((entity) => {
+          const entry = cloneDeep(entity);
           return new Promise((resolve) => {
             entry.sys.version++;
             cmaResolve = () => resolve(entry);
@@ -284,8 +291,8 @@ describe('CmaDocument', () => {
       });
 
       it('is [true, false] when entity persisting failed', async () => {
-        spaceEndpoint.mockImplementation(async (body) => {
-          const entry = cloneDeep(body.data);
+        entityRepo.update.mockImplementation((entity) => {
+          const entry = cloneDeep(entity);
           return new Promise((_, reject) => {
             entry.sys.version++;
             cmaResolve = () => reject({ code: 'ServerError' });
@@ -304,9 +311,11 @@ describe('CmaDocument', () => {
 
     describe('error$', () => {
       it('emits VersionMismatch on VersionMismatch error code', async () => {
-        spaceEndpoint.mockImplementationOnce(() => {
+        const remoteEntity = cloneDeep(entry);
+        entityRepo.update.mockImplementationOnce(() => {
           throw newError('VersionMismatch', 'API request failed');
         });
+        entityRepo.get.mockImplementationOnce(() => Promise.resolve(remoteEntity));
         await doc.setValueAt(fieldPath, 'en-US-updated');
         jest.runAllTimers();
         await wait();
@@ -314,7 +323,7 @@ describe('CmaDocument', () => {
       });
 
       it('emits OpenForbidden on AccessDenied error code', async () => {
-        spaceEndpoint.mockImplementationOnce(() => {
+        entityRepo.update.mockImplementationOnce(() => {
           throw newError('AccessDenied', 'API request failed');
         });
         await doc.setValueAt(fieldPath, 'en-US-updated');
@@ -325,7 +334,7 @@ describe('CmaDocument', () => {
 
       it('emits CmaInternalServerError(originalError) on ServerError error code', async () => {
         const error = newError('ServerError', 'API request failed');
-        spaceEndpoint.mockImplementationOnce(() => {
+        entityRepo.update.mockImplementationOnce(() => {
           throw error;
         });
         await doc.setValueAt(fieldPath, 'en-US-updated');
@@ -336,7 +345,7 @@ describe('CmaDocument', () => {
 
       it('emits CmaInternalServerError(originalError) on any other error code', async () => {
         const error = newError('SomeRandomError', 'API request failed');
-        spaceEndpoint.mockImplementationOnce(() => {
+        entityRepo.update.mockImplementationOnce(() => {
           throw error;
         });
         await doc.setValueAt(fieldPath, 'en-US-updated');
@@ -378,12 +387,12 @@ describe('CmaDocument', () => {
 
     // LocaleStore contains all environment-enabled locales, regardless on CT field-level enabled locales.
     // So the CMA request must only contain locales that are in the LocaleStore, and no unknown locales.
-    it('persists all environment-enabled locales in CMA request', () => {
-      doc.setValueAt(['fields', 'field1', 'de'], 'new-DE');
+    it('persists all environment-enabled locales in CMA request', async () => {
+      await doc.setValueAt(['fields', 'field1', 'de'], 'new-DE');
       jest.runAllTimers();
 
-      const [body] = spaceEndpoint.mock.calls[0];
-      const { fields } = body.data;
+      const [entity] = entityRepo.update.mock.calls[0];
+      const { fields } = entity;
       expect(fields).toEqual({
         field1: { 'en-US': true, de: 'new-DE' }, // 'fr' is removed
         field2: { 'en-US': true, de: true }, // field with disabled localization still must keep all known locales
@@ -397,12 +406,12 @@ describe('CmaDocument', () => {
     // In case of unknown fields we do not care as they should not ever existing in the
     // first place and a `PUT` request with a non-existing field (not known to the CT)
     // would simply fail.
-    it('does not persist unknown fields in CMA request', () => {
-      doc.setValueAt(['fields', 'field1', 'en-US'], 'new value');
+    it('does not persist unknown fields in CMA request', async () => {
+      await doc.setValueAt(['fields', 'field1', 'en-US'], 'new value');
       jest.runAllTimers();
 
-      const [body] = spaceEndpoint.mock.calls[0];
-      const { fields } = body.data;
+      const [entity] = entityRepo.update.mock.calls[0];
+      const { fields } = entity;
       expect(fields).not.toMatchObject({
         unknownField: true,
       });
@@ -414,12 +423,10 @@ describe('CmaDocument', () => {
       const remoteEntity = cloneDeep(entry);
       set(remoteEntity, fieldPath, 'en-US-remote-updated');
       remoteEntity.sys.version++;
-
-      spaceEndpoint
-        .mockImplementationOnce(() => {
-          throw newError('VersionMismatch', 'API request failed');
-        })
-        .mockImplementationOnce(() => remoteEntity);
+      entityRepo.update.mockImplementationOnce(() => {
+        throw newError('VersionMismatch', 'API request failed');
+      });
+      entityRepo.get.mockImplementationOnce(() => Promise.resolve(remoteEntity));
 
       await doc.setValueAt(fieldPath, 'en-US-updated');
       jest.runAllTimers();
@@ -445,18 +452,108 @@ describe('CmaDocument', () => {
     });
 
     it('does not happen when the remote entity was deleted', async () => {
-      spaceEndpoint
-        .mockImplementationOnce(() => {
-          throw newError('BadRequest', '');
-        })
-        .mockImplementationOnce(() => {
-          throw newError('NotFound', 'The resource could not be found.');
-        });
+      entityRepo.update.mockImplementationOnce(() => {
+        throw newError('BadRequest', '');
+      });
+      entityRepo.get.mockImplementationOnce(() => {
+        throw newError('NotFound', 'The resource could not be found.');
+      });
       await doc.setValueAt(fieldPath, 'en-US-updated');
       jest.runAllTimers();
       await wait();
 
       expect(track).not.toBeCalled();
+    });
+  });
+
+  describe('asset update', () => {
+    let asset;
+    let handler;
+
+    beforeEach(() => {
+      asset = newAsset();
+
+      entityRepo.onAssetFileProcessed.mockImplementation((_assetId, callback) => {
+        handler = callback;
+      });
+
+      ({ document: doc } = createCmaDocument(asset, [{ id: 'title' }, { id: 'file' }]));
+    });
+
+    it('should update file from a successfully processed asset', async () => {
+      entityRepo.get.mockImplementation(() =>
+        Promise.resolve({
+          ...asset,
+          fields: {
+            ...asset.fields,
+            file: {
+              ...asset.fields.file,
+              'en-US': { url: 'https://example.com/bar.jpg' },
+            },
+          },
+        })
+      );
+      await handler();
+      expect(doc.getValueAt(['fields'])).toMatchObject({
+        title: { 'en-US': 'foo' },
+        file: { 'en-US': { url: 'https://example.com/bar.jpg' } },
+      });
+    });
+
+    it('should not overwrite files outside the changed locale-specific file', async () => {
+      entityRepo.get.mockImplementation(() =>
+        Promise.resolve({
+          ...asset,
+          fields: {
+            ...asset.fields,
+            file: {
+              ...asset.fields.file,
+              de: { url: 'https://example.com/bar.jpg' },
+            },
+          },
+        })
+      );
+      await handler();
+      expect(doc.getValueAt(['fields'])).toMatchObject({
+        title: { 'en-US': 'foo' },
+        file: {
+          'en-US': { url: 'https://example.com/foo.jpg' },
+          de: { url: 'https://example.com/bar.jpg' },
+        },
+      });
+    });
+
+    it('should show VersionMismatch when has local pending changes', async () => {
+      entityRepo.get.mockImplementation(() =>
+        Promise.resolve({
+          ...asset,
+          fields: {
+            ...asset.fields,
+            file: {
+              ...asset.fields.file,
+              'en-US': { url: 'https://example.com/bar.jpg' },
+            },
+          },
+        })
+      );
+      await doc.setValueAt(['fields', 'file', 'en-US'], 'bar');
+      await handler();
+      K.assertCurrentValue(doc.state.error$, DocError.VersionMismatch());
+    });
+
+    it('should show VersionMismatch when last saved entity is different than remote updated', async () => {
+      entityRepo.get.mockImplementation(() =>
+        Promise.resolve({
+          ...asset,
+          fields: {
+            ...asset.fields,
+            title: { 'en-US': 'bar' },
+          },
+        })
+      );
+      await handler();
+      K.assertCurrentValue(doc.state.error$, DocError.VersionMismatch());
+      expect(K.getValue(doc.sysProperty).version).toEqual(asset.sys.version);
     });
   });
 });

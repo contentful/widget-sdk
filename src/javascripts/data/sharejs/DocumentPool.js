@@ -2,6 +2,7 @@ import { createOtDoc, createCmaDoc } from 'app/entity_editor/Document';
 import { isObject, find, includes, isString, get as getAtPath } from 'lodash';
 import { SHAREJS_REMOVAL } from 'featureFlags';
 import { getVariation } from 'LaunchDarkly';
+import { create as createEntityRepo } from 'data/CMA/EntityRepo';
 
 /**
  * Creates a store for Document instances. Given an entity it always returns the
@@ -14,7 +15,8 @@ import { getVariation } from 'LaunchDarkly';
  * @param {string} spaceId
  * @returns {DocumentPool}
  */
-export async function create(docConnection, spaceEndpoint, organizationId, spaceId) {
+
+export async function create(docConnection, spaceEndpoint, pubSubClient, organizationId, spaceId) {
   const instances = {};
   const isCmaDocumentEnabled = await getVariation(SHAREJS_REMOVAL, { organizationId, spaceId });
 
@@ -44,10 +46,14 @@ export async function create(docConnection, spaceEndpoint, organizationId, space
         isCmaDocumentEnabled === true ||
         (isObject(isCmaDocumentEnabled) && isCmaDocumentEnabled[entity.data.sys.type])
       ) {
-        doc = createCmaDoc(entity, contentType, spaceEndpoint);
+        const entityRepo = createEntityRepo(spaceEndpoint, pubSubClient, {
+          skipTransformation: true,
+        });
+        doc = createCmaDoc(entity, contentType, spaceEndpoint, entityRepo);
       } else {
         doc = createOtDoc(docConnection, entity, contentType, user, spaceEndpoint);
       }
+
       instances[key] = { key, doc, count: 1 };
     }
 

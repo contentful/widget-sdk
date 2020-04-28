@@ -233,18 +233,18 @@ NavigationDropdown.propTypes = {
     srefParams: PropTypes.object,
     srefOptions: PropTypes.object,
     dataViewType: PropTypes.string,
-    disabled: PropTypes.boolean,
+    disabled: PropTypes.bool,
     children: PropTypes.arrayOf(
       PropTypes.shape({
-        separator: PropTypes.boolean,
-        isTitle: PropTypes.boolean,
+        separator: PropTypes.bool,
+        isTitle: PropTypes.bool,
         tooltip: PropTypes.string,
         rootSref: PropTypes.string,
         sref: PropTypes.string,
         title: PropTypes.string,
         label: PropTypes.string,
         dataViewType: PropTypes.string,
-        reload: PropTypes.boolean,
+        reload: PropTypes.bool,
         render: PropTypes.func,
       })
     ).isRequired,
