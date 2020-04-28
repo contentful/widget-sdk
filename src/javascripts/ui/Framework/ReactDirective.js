@@ -10,12 +10,8 @@ import * as Forma36Components from '@contentful/forma-36-react-components';
 
 import store from 'redux/store';
 
-import * as accessControlAddUsersToSpaceNoteEs6 from 'access_control/AddUsersToSpaceNote';
-import * as accessControlNoUsersToAddNoteEs6 from 'access_control/NoUsersToAddNote';
 import * as componentsSharedKnowledgeBaseIconKnowledgeBaseEs6 from 'components/shared/knowledge_base_icon/KnowledgeBase';
-import * as uiComponentsContactUsButtonEs6 from 'ui/Components/ContactUsButton';
 import * as uiComponentsNavigationIcon from 'ui/Components/NavigationIcon';
-import * as appContentListSaveViewDialogComponentEs6 from 'app/ContentList/SaveViewDialogComponent';
 import * as uiComponentsIconEs6 from 'ui/Components/Icon';
 import * as componentsSharedDocumentTitleEs6 from 'components/shared/DocumentTitle';
 import * as componentsSharedWorkbenchTitleEs6 from 'components/shared/WorkbenchTitle';
@@ -24,19 +20,13 @@ import * as appEntityEditorStatusNotificationEs6 from 'app/entity_editor/StatusN
 import * as appEntrySidebarEntrySidebarEs6 from 'app/EntrySidebar/EntrySidebar';
 import * as appEntityEditorCollaboratorsIndexEs6 from 'app/entity_editor/Collaborators';
 import * as appEntryEditorCustomEditorExtensionRendererEs6 from 'app/entry_editor/CustomEditorExtensionRenderer';
-import * as componentsTabsNoLocalizedFieldsAdviceIndexEs6 from 'components/tabs/NoLocalizedFieldsAdvice';
 import * as appHomeSpaceHomePageEs6 from 'app/home/SpaceHomePage';
-import * as appSettingsLocalesRoutesLocalesEditRouteEs6 from 'app/settings/locales/routes/LocalesEditRoute';
-import * as appWidgetsRichTextReadOnlyRichTextEditorEs6 from 'app/widgets/RichText/ReadOnlyRichTextEditor';
-import * as componentsSharedRelativeDateTimeIndexEs6 from 'components/shared/RelativeDateTime';
 import * as componentsFieldDialogValidationValuesEs6 from 'components/field_dialog/ValidationValues';
 import * as componentsFieldDialogAppearanceFieldDialogAppearanceTabEs6 from 'components/field_dialog/appearance/FieldDialogAppearanceTab';
-import * as componentsFieldDialogRichTextOptionsEs6 from 'components/field_dialog/RichTextOptions';
 import * as componentsSharedSpaceWizardWizardEs6 from 'components/shared/space-wizard/Wizard';
 import * as componentsTabsAssetListAddAssetButtonEs6 from 'components/tabs/asset_list/AddAssetButton';
 import * as componentsTabsPluralizeEntityMessageEs6 from 'components/tabs/PluralizeEntityMessage';
 import * as componentsRecordsResourceUsageIndexEs6 from 'components/RecordsResourceUsage';
-import * as componentsSharedUserNameFormatterFetchAndFormatUserNameEs6 from 'components/shared/UserNameFormatter/FetchAndFormatUserName';
 import * as uiComponentsPaginatorEs6 from 'ui/Components/Paginator';
 import * as componentsTabsNoSearchResultsAdviceEs6 from 'components/tabs/NoSearchResultsAdvice';
 import * as componentsTabsAssetListAssetsEmptyStateEs6 from 'components/tabs/asset_list/AssetsEmptyState';
@@ -45,15 +35,11 @@ import * as componentsTabsEntryListEntryListEs6 from 'components/tabs/entry_list
 import * as componentsTabsEntryListEmptyStatesIndexEs6 from 'components/tabs/entry_list/EmptyStates';
 import * as searchEntitySelectorCreateEntityIndexEs6 from 'search/EntitySelector/CreateEntity';
 import * as componentsSharedEnterpriseSpaceWizardEnterpriseSpaceWizardEs6 from 'components/shared/enterprise-space-wizard/EnterpriseSpaceWizard';
-import * as navigationModernStackOnboardingRelaunchEs6 from 'navigation/modernStackOnboardingRelaunch';
 import * as appEntityEditorBulkEditorTitleEs6 from 'app/entity_editor/bulk_editor/BulkEditorTitle';
 import * as appEntityEditorBulkEntityEditorActionsDropdownEs6 from 'app/entity_editor/bulk_editor/BulkEntityEditorActionsDropdown';
 import * as appEntityEditorBulkEntityEditorStatusDropdownEs6 from 'app/entity_editor/bulk_editor/BulkEntityEditorStatusDropdown';
-import * as embedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
 import * as FieldDialogSettingsComponent from 'components/field_dialog/components/FieldDialogSettingsComponent';
-import * as ThumbnailComponent from 'components/Thumbnail/Thumbnail';
 import * as SizeValidation from 'components/field_dialog/validations/SizeValidation';
-import * as LinkedEntitiesBadge from 'app/entity_editor/Components/FetchLinksToEntity/LinkedEntitiesBadge';
 import * as LinkedEntitiesValidation from 'components/field_dialog/validations/LinkedEntitiesValidation';
 import * as CreateEntryButton from 'components/CreateEntryButton/CreateEntryButton';
 import * as CreateEntryLinkButton from 'components/CreateEntryButton/CreateEntryLinkButton';
@@ -65,7 +51,6 @@ import * as UserLink from 'app/widgets/link/UserLink';
 import * as ProhibitRegExpValidation from 'components/field_dialog/validations/ProhibitRegExpValidation';
 import * as AssetLink from 'app/widgets/link/AssetLink';
 import * as EntryLink from 'app/widgets/link/EntryLink';
-import * as ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer';
 import * as DateRangeValidation from 'components/field_dialog/validations/DateRangeValidation';
 import * as AssetList from 'components/tabs/asset_list/AssetList';
 import * as EntryEditorWorkbench from 'app/entry_editor/EntryEditorWorkbench';
@@ -267,12 +252,8 @@ export default function register() {
 
 function getModule(name) {
   const allowedModules = {
-    'access_control/AddUsersToSpaceNote': accessControlAddUsersToSpaceNoteEs6,
-    'access_control/NoUsersToAddNote': accessControlNoUsersToAddNoteEs6,
     'components/shared/knowledge_base_icon/KnowledgeBase': componentsSharedKnowledgeBaseIconKnowledgeBaseEs6,
-    'ui/Components/ContactUsButton': uiComponentsContactUsButtonEs6,
     'ui/Components/NavigationIcon': uiComponentsNavigationIcon,
-    'app/ContentList/SaveViewDialogComponent': appContentListSaveViewDialogComponentEs6,
     'ui/Components/Icon': uiComponentsIconEs6,
     'components/shared/DocumentTitle': componentsSharedDocumentTitleEs6,
     'components/shared/WorkbenchTitle': componentsSharedWorkbenchTitleEs6,
@@ -281,19 +262,13 @@ function getModule(name) {
     'app/EntrySidebar/EntrySidebar': appEntrySidebarEntrySidebarEs6,
     'app/entity_editor/Collaborators': appEntityEditorCollaboratorsIndexEs6,
     'app/entry_editor/CustomEditorExtensionRenderer': appEntryEditorCustomEditorExtensionRendererEs6,
-    'components/tabs/NoLocalizedFieldsAdvice': componentsTabsNoLocalizedFieldsAdviceIndexEs6,
     'app/home/SpaceHomePage': appHomeSpaceHomePageEs6,
-    'app/settings/locales/routes/LocalesEditRoute': appSettingsLocalesRoutesLocalesEditRouteEs6,
-    'app/widgets/RichText/ReadOnlyRichTextEditor': appWidgetsRichTextReadOnlyRichTextEditorEs6,
-    'components/shared/RelativeDateTime': componentsSharedRelativeDateTimeIndexEs6,
     'components/field_dialog/ValidationValues': componentsFieldDialogValidationValuesEs6,
     'components/field_dialog/appearance/FieldDialogAppearanceTab': componentsFieldDialogAppearanceFieldDialogAppearanceTabEs6,
-    'components/field_dialog/RichTextOptions': componentsFieldDialogRichTextOptionsEs6,
     'components/shared/space-wizard/Wizard': componentsSharedSpaceWizardWizardEs6,
     'components/tabs/asset_list/AddAssetButton': componentsTabsAssetListAddAssetButtonEs6,
     'components/tabs/PluralizeEntityMessage': componentsTabsPluralizeEntityMessageEs6,
     'components/RecordsResourceUsage': componentsRecordsResourceUsageIndexEs6,
-    'components/shared/UserNameFormatter/FetchAndFormatUserName': componentsSharedUserNameFormatterFetchAndFormatUserNameEs6,
     'ui/Components/Paginator': uiComponentsPaginatorEs6,
     'components/tabs/NoSearchResultsAdvice': componentsTabsNoSearchResultsAdviceEs6,
     'components/tabs/asset_list/AssetsEmptyState': componentsTabsAssetListAssetsEmptyStateEs6,
@@ -302,15 +277,11 @@ function getModule(name) {
     'components/tabs/entry_list/EmptyStates': componentsTabsEntryListEmptyStatesIndexEs6,
     'search/EntitySelector/CreateEntity': searchEntitySelectorCreateEntityIndexEs6,
     'components/shared/enterprise-space-wizard/EnterpriseSpaceWizard': componentsSharedEnterpriseSpaceWizardEnterpriseSpaceWizardEs6,
-    'navigation/modernStackOnboardingRelaunch': navigationModernStackOnboardingRelaunchEs6,
     'app/entity_editor/bulk_editor/BulkEditorTitle': appEntityEditorBulkEditorTitleEs6,
     'app/entity_editor/bulk_editor/BulkEntityEditorActionsDropdown': appEntityEditorBulkEntityEditorActionsDropdownEs6,
     'app/entity_editor/bulk_editor/BulkEntityEditorStatusDropdown': appEntityEditorBulkEntityEditorStatusDropdownEs6,
-    'components/forms/embedly_preview/EmbedlyPreview': embedlyPreview,
     'components/field_dialog/components/FieldDialogSettingsComponent': FieldDialogSettingsComponent,
-    'components/Thumbnail/Thumbnail': ThumbnailComponent,
     'components/field_dialog/validations/SizeValidation': SizeValidation,
-    'app/entity_editor/Components/FetchLinksToEntity/LinkedEntitiesBadge': LinkedEntitiesBadge,
     'components/field_dialog/validations/LinkedEntitiesValidation': LinkedEntitiesValidation,
     'components/CreateEntryButton/CreateEntryButton': CreateEntryButton,
     'components/CreateEntryButton/CreateEntryLinkButton': CreateEntryLinkButton,
@@ -322,7 +293,6 @@ function getModule(name) {
     'components/field_dialog/validations/ProhibitRegExpValidation': ProhibitRegExpValidation,
     'app/widgets/link/AssetLink': AssetLink,
     'app/widgets/link/EntryLink': EntryLink,
-    'widgets/ExtensionIFrameRenderer': ExtensionIFrameRenderer,
     'components/field_dialog/validations/DateRangeValidation': DateRangeValidation,
     'components/tabs/asset_list/AssetList': AssetList,
     'app/entry_editor/EntryEditorWorkbench': EntryEditorWorkbench,
