@@ -160,7 +160,7 @@ exports[`AppsListPage should match snapshot for loading state 1`] = `
               class="emotion-5"
             >
               <connected-shapes.svg
-                classname="css-1z01nmi-svgContainerExtension"
+                classname="css-k6epmy-svgContainerExtension"
               />
             </div>
           </div>
@@ -554,7 +554,7 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
               class="emotion-5"
             >
               <connected-shapes.svg
-                classname="css-1z01nmi-svgContainerExtension"
+                classname="css-k6epmy-svgContainerExtension"
               />
             </div>
           </div>
@@ -1091,7 +1091,7 @@ exports[`AppsListPage should match snapshot of apps loaded with limited access 1
               class="emotion-5"
             >
               <connected-shapes.svg
-                classname="css-1z01nmi-svgContainerExtension"
+                classname="css-k6epmy-svgContainerExtension"
               />
             </div>
           </div>
