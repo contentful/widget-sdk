@@ -401,7 +401,13 @@ export default function AppEditor({ definition, onChange }) {
                   <div className={styles.pageSwitch}>
                     <Paragraph>
                       Optionally, you can show a link to the page location of your app in the main
-                      navigation. <TextLink>Learn more</TextLink>.
+                      navigation.{' '}
+                      <TextLink
+                        href="https://www.contentful.com/developers/docs/references/content-management-api/#page-location"
+                        target="_blank">
+                        Learn more
+                      </TextLink>
+                      .
                     </Paragraph>
                     <Switch
                       id="page-switch"
