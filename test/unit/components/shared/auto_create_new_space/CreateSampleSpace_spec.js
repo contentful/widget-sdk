@@ -6,10 +6,7 @@ describe('CreateSampleSpace service', () => {
   beforeEach(async function () {
     this.templates = [
       {
-        fields: { name: 'product catalogue' },
-      },
-      {
-        fields: { name: 'custom template' },
+        fields: { name: 'the example app' },
       },
     ];
 
@@ -89,19 +86,18 @@ describe('CreateSampleSpace service', () => {
     };
     this.assertRejection = async function (fn, errorMsg) {
       fn(new Error(errorMsg));
-      const error = await this.createSampleSpace(this.getOrg(), 'product catalogue').catch(
-        (e) => e
-      );
+      const error = await this.createSampleSpace(this.getOrg()).catch((e) => e);
       expect(error.message).toBe(errorMsg);
     };
   });
 
   describe('default export', () => {
-    it('should throw when org is falsy', function () {
+    it('should throw when org is not passed', function () {
       expect((_) => this.createSampleSpace()).toThrow(new Error('Required param org not provided'));
     });
-    it('should create a new space and load the chosen template', async function () {
-      await this.createSampleSpace(this.getOrg(), 'custom template');
+
+    it('should create a new space', async function () {
+      await this.createSampleSpace(this.getOrg());
 
       const modalScope = this.modalDialog.open.args[0][0].scope;
 
@@ -125,19 +121,14 @@ describe('CreateSampleSpace service', () => {
       sinon.assert.calledOnce(this.getCreator);
       sinon.assert.calledWithExactly(
         this.spaceTemplateLoader.getTemplate,
-        this.templates[1].fields
+        this.templates[0].fields
       );
       sinon.assert.calledWithExactly(this.templateLoader.create, this.template);
       sinon.assert.calledOnce(this.spaceContext.publishedCTs.refresh);
       sinon.assert.calledWithExactly(this.$rootScope.$broadcast, 'spaceTemplateCreated');
       expect(modalScope.isCreatingSpace).toBe(false);
     });
-    it('should reject if the template does not exist', async function () {
-      const error = await this.createSampleSpace(this.getOrg(), 'non existing template').catch(
-        (e) => e
-      );
-      expect(error.message).toBe('Template named non existing template not found');
-    });
+
     it('should reject if space creation fails', async function () {
       await this.assertRejection(
         (err) => this.client.createSpace.rejects(err),
@@ -165,9 +156,7 @@ describe('CreateSampleSpace service', () => {
         spaceSetup: Promise.reject(new Error('something wrong happened')),
       });
 
-      const error = await this.createSampleSpace(this.getOrg(), 'product catalogue').catch(
-        (e) => e
-      );
+      const error = await this.createSampleSpace(this.getOrg()).catch((e) => e);
       expect(error.message).toBe('Error during creation');
     });
     it('should reject if refresh of published CTs fails', async function () {

@@ -13,7 +13,6 @@ import { getCurrentStateName } from 'states/Navigator';
 const store = getBrowserStorage();
 
 export const MODERN_STACK_ONBOARDING_SPACE_NAME = 'Gatsby Starter for Contentful';
-export const MODERN_STACK_ONBOARDING_FEATURE_FLAG = 'feature-dl-05-2018-modern-stack-onboarding';
 export const MODERN_STACK_ONBOARDING_COMPLETE_EVENT = 'onboardingComplete';
 export const getUser = () => getValue(user$);
 export const getStoragePrefix = () => `ctfl:${getUser().sys.id}:modernStackOnboarding`;

@@ -1,6 +1,5 @@
-import { getCurrentStateName } from 'states/Navigator';
 import { getCreator } from 'services/SpaceTemplateCreator';
-import { track, updateUserInSegment } from 'analytics/Analytics';
+import { track } from 'analytics/Analytics';
 import { go as gotoState } from 'states/Navigator';
 import { entityActionSuccess } from 'analytics/events/SpaceCreation';
 import { find, noop } from 'lodash';
@@ -19,14 +18,15 @@ const DEFAULT_LOCALE = 'en-US';
  * given org.
  *
  * @param {object} org
- * @param {string} templateName
  * @param {Function} modalTemplate - template used by the modal dialog service
  *
  * @returns Promise<undefined>
  */
-export default function (org, templateName, modalTemplate = autoCreateSpaceTemplate) {
+export default function (org) {
   const $rootScope = getModule('$rootScope');
   const spaceContext = getModule('spaceContext');
+
+  const TEMPLATE = 'the example app';
 
   /*
    * throws an error synchronously to differentiate it from
@@ -38,42 +38,17 @@ export default function (org, templateName, modalTemplate = autoCreateSpaceTempl
     throw new Error('Required param org not provided');
   }
 
-  if (!templateName) {
-    throw new Error('Required param templateName not provided');
-  }
-
   // to measure how long it took to fail
   const startingMoment = Date.now();
 
   const scope = $rootScope.$new();
 
   const create = async function () {
-    let dialog = null;
-
-    // TODO: Remove after feature-ps-11-2017-project-status
-    // is turned off. It only exists to track clicks and
-    // enable us to have two independent "screens" inside
-    // the modal
-    if (modalTemplate !== autoCreateSpaceTemplate) {
-      scope.onProjectStatusSelect = (elementId) => {
-        track('element:click', {
-          elementId,
-          groupId: 'project_status',
-          fromState: getCurrentStateName(),
-        });
-        updateUserInSegment({
-          projectStatus: elementId,
-        });
-        // this is used to goto the next screen _in_ the modal itself
-        scope.chosenProjectStatus = elementId;
-        // hacky way to recenter the modal once it's resized
-        setTimeout((_) => dialog._centerOnBackground(), 0);
-      };
-    }
-
     scope.isCreatingSpace = true;
-    dialog = openDialog(scope, templateName, modalTemplate);
-    const template = await loadTemplate(templateName);
+
+    openDialog(scope);
+
+    const template = await loadTemplate(TEMPLATE);
     let newSpace;
 
     try {
@@ -90,7 +65,7 @@ export default function (org, templateName, modalTemplate = autoCreateSpaceTempl
       logger.logException(e, {
         data: {
           // which template we were trying to create
-          template: templateName,
+          template: TEMPLATE,
           // how long did it take to end up here
           runningTime: Date.now() - startingMoment,
         },
@@ -194,12 +169,12 @@ async function loadTemplate(name) {
   }
 }
 
-function openDialog(scope, templateName, modalTemplate) {
+function openDialog(scope) {
   const modalDialog = getModule('modalDialog');
 
   return modalDialog.open({
     title: 'Space auto creation',
-    template: modalTemplate(templateName.toLowerCase()),
+    template: autoCreateSpaceTemplate(),
     backgroundClose: false,
     persistOnNavigation: true,
     ignoreEsc: true,
