@@ -3,8 +3,10 @@ import { render, fireEvent } from '@testing-library/react';
 import UserProvisioningConfiguration from './UserProvisioningConfiguration';
 import { ModalLauncher } from 'core/components/ModalLauncher';
 
-jest.mock('app/settings/api/cma-tokens/TokenResourceManager', () => ({
-  create: jest.fn(),
+jest.mock('features/api-keys-management', () => ({
+  TokenResourceManager: {
+    createToken: jest.fn(),
+  },
 }));
 
 const renderComponent = () => {

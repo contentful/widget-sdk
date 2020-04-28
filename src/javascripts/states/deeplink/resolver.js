@@ -6,7 +6,7 @@ import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { getModule } from 'core/NgRegistry';
 import { getOrganizationSpaces } from 'services/TokenStore';
 import * as logger from 'services/logger';
-import { getApiKeyRepo } from 'app/settings/api/services/ApiKeyRepoInstance';
+import { getApiKeyRepo } from 'features/api-keys-management';
 
 const ONBOARDING_ERROR = 'modern onboarding space id does not exist';
 

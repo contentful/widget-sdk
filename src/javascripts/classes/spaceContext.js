@@ -4,7 +4,7 @@ import { create as createViewMigrator } from 'saved-views-migrator';
 import * as K from 'core/utils/kefir';
 import { deepFreeze, deepFreezeClone } from 'utils/Freeze';
 import { purgeContentPreviewCache } from 'features/content-preview';
-import { purgeApiKeyRepoCache } from 'app/settings/api/services/ApiKeyRepoInstance';
+import { purgeApiKeyRepoCache } from 'features/api-keys-management';
 
 const MASTER_ENVIRONMENT_ID = 'master';
 

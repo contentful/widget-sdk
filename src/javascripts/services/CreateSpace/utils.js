@@ -4,7 +4,7 @@ import * as TokenStore from 'services/TokenStore';
 import _ from 'lodash';
 import * as Analytics from 'analytics/Analytics';
 import * as Navigator from 'states/Navigator';
-import { getApiKeyRepo } from 'app/settings/api/services/ApiKeyRepoInstance';
+import { getApiKeyRepo } from 'features/api-keys-management';
 import { getTemplate } from 'services/SpaceTemplateLoader';
 import * as spaceTemplateCreator from 'services/SpaceTemplateCreator';
 import * as spaceTemplateEvents from 'analytics/events/SpaceCreation';

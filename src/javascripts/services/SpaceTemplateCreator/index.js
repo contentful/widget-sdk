@@ -11,7 +11,7 @@ import * as Config from 'Config';
 import { getModule } from 'core/NgRegistry';
 import TheLocaleStore from 'services/localeStore';
 import { getContentPreview } from 'features/content-preview';
-import { getApiKeyRepo } from 'app/settings/api/services/ApiKeyRepoInstance';
+import { getApiKeyRepo } from 'features/api-keys-management';
 
 const ASSET_PROCESSING_TIMEOUT = 60000;
 

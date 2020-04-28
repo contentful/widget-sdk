@@ -92,12 +92,9 @@ describe('Space Wizard action creators', function () {
       calculateTotalPrice: this.stubs.calculateTotalPrice,
     });
 
-    this.system.set('app/settings/api/services/ApiKeyRepo', {
-      default: () => {
-        return {
-          create: this.stubs.ApiKeyRepo_create,
-        };
-      },
+    this.system.set('features/api-keys-management', {
+      createApiKeyRepo: () => ({ create: this.stubs.ApiKeyRepo_create }),
+      purgeApiKeyRepoCache: () => {},
     });
 
     this.system.set('services/SpaceTemplateLoader', {

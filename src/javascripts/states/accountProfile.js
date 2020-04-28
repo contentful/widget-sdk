@@ -5,7 +5,7 @@ import ProfileNavigationBar from 'navigation/ProfileNavigationBar';
 import Settings from 'app/UserProfile/Settings';
 import SpaceMemberships from 'app/UserSettings/SpaceMemberships';
 import OrganizationMembershipsRoute from 'app/UserSettings/OrganizationsRoute';
-import UserCMATokens from 'app/UserCMATokens/UserCMATokens';
+import { UserCMATokensRoute } from 'features/api-keys-management';
 
 const user = {
   name: 'user',
@@ -28,7 +28,7 @@ const organizationMemberships = {
 const cmaTokens = {
   name: 'cma_tokens',
   url: '/cma_tokens',
-  component: UserCMATokens,
+  component: UserCMATokensRoute,
 };
 
 const accessGrants = userBase({

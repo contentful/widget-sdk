@@ -4,8 +4,10 @@ import UserProvisioning from './UserProvisioning';
 import { getVariation } from '__mocks__/LaunchDarkly';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 
-jest.mock('app/settings/api/cma-tokens/TokenResourceManager', () => ({
-  create: jest.fn(),
+jest.mock('features/api-keys-management', () => ({
+  TokenResourceManager: {
+    createToken: jest.fn(),
+  },
 }));
 
 jest.mock('data/CMA/ProductCatalog', () => ({

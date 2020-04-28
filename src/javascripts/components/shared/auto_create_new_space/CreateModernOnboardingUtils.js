@@ -1,12 +1,11 @@
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { user$ } from 'services/TokenStore';
 
-import { create as createToken } from 'app/settings/api/cma-tokens/TokenResourceManager';
+import { TokenResourceManager, getApiKeyRepo } from 'features/api-keys-management';
 import * as auth from 'Authentication';
 import { getValue } from 'core/utils/kefir';
 import { getModule } from 'core/NgRegistry';
 import * as Entries from 'data/entries';
-import { getApiKeyRepo } from 'app/settings/api/services/ApiKeyRepoInstance';
 import * as Analytics from 'analytics/Analytics';
 import { getCurrentStateName } from 'states/Navigator';
 
@@ -88,7 +87,9 @@ export const createDeliveryToken = () => {
 };
 
 export const createManagementToken = async () => {
-  const data = await createToken(auth).create('Gatsby Starter for Contentful import token');
+  const data = await TokenResourceManager.createToken(auth).create(
+    'Gatsby Starter for Contentful import token'
+  );
   const token = data.token;
 
   store.set(getPersonalAccessTokenKey(), token);

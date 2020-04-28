@@ -16,13 +16,12 @@ describe('CreateModernOnboarding service', function () {
       user$: this.user$,
     });
 
-    this.system.set('app/settings/api/services/ApiKeyRepoInstance', {
+    this.system.set('features/api-keys-management', {
       getApiKeyRepo: () => this.apiKeyRepo,
       purgeApiKeyRepoCache: () => {},
-    });
-
-    this.system.set('app/settings/api/cma-tokens/TokenResourceManager', {
-      create: () => ({ create: this.createCMAKey }),
+      TokenResourceManager: {
+        createToken: () => ({ create: this.createCMAKey }),
+      },
     });
 
     this.CreateModernOnboardingUtils = await this.system.import(

@@ -16,9 +16,8 @@ import { css } from 'emotion';
 import { helpCenterUrl, apiUrl } from 'Config';
 import tokens from '@contentful/forma-36-tokens';
 import { ModalLauncher } from 'core/components/ModalLauncher';
-import GenerateCMATokenDialog from 'app/common/ApiTokens/GenerateCMATokenDialog';
+import { GenerateCMATokenDialog, TokenResourceManager } from 'features/api-keys-management';
 import * as Auth from 'Authentication';
-import * as TokenResourceManager from 'app/settings/api/cma-tokens/TokenResourceManager';
 import UserProvisioningToken from './UserProvisioningToken';
 import StateLink from 'app/common/StateLink';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
@@ -54,7 +53,7 @@ const styles = {
 export default function UserProvisioningConfiguration({ orgId }) {
   const SCIM_BASE = apiUrl(`scim/v2/organizations/${orgId}`);
   const [personalAccessToken, setPersonalAccessToken] = useState(null);
-  const tokenResourceManager = TokenResourceManager.create(Auth);
+  const tokenResourceManager = TokenResourceManager.createToken(Auth);
 
   const openGenerateDialog = () => {
     return ModalLauncher.open(({ isShown, onClose }) => (

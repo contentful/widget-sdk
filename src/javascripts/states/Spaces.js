@@ -8,7 +8,7 @@ import * as TokenStore from 'services/TokenStore';
 
 import contentTypes from './contentTypes';
 import apps from 'app/Apps/routes';
-import api from 'app/settings/api/routes';
+import { apiKeysState } from './settingsApiKeys';
 import entries from './entries';
 import assets from './assets';
 import home from './spaceHome';
@@ -81,7 +81,7 @@ const spaceEnvironment = {
     contentTypes,
     entries.withoutSnapshots,
     assets,
-    api,
+    apiKeysState,
     apps,
     // Some of the settings states are not children of environments
     // conceptually. However, we want to prevent users going to space
@@ -136,7 +136,7 @@ const spaceDetail = {
     contentTypes,
     entries.withSnapshots,
     assets,
-    api,
+    apiKeysState,
     settings,
     home,
     spaceEnvironment,

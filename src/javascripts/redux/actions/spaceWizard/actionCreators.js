@@ -8,7 +8,7 @@ import {
   calculateTotalPrice,
   changeSpace as changeSpaceApiCall,
 } from 'account/pricing/PricingDataProvider';
-import createApiKeyRepo from 'app/settings/api/services/ApiKeyRepo';
+import { createApiKeyRepo } from 'features/api-keys-management';
 import * as TokenStore from 'services/TokenStore';
 import * as Analytics from 'analytics/Analytics';
 import { getCreator as getTemplateCreator } from 'services/SpaceTemplateCreator';

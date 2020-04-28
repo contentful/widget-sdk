@@ -21,7 +21,7 @@ jest.mock('./utils', () => ({
   checkOrgAccess: jest.fn(),
 }));
 
-jest.mock('app/settings/api/services/ApiKeyRepoInstance', () => ({
+jest.mock('features/api-keys-management', () => ({
   getApiKeyRepo: () => mockApiKeyRepo,
 }));
 
