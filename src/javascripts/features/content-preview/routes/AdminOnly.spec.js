@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { render } from '@testing-library/react';
-import AdminOnly from './AdminOnly';
+import { AdminOnly } from './AdminOnly';
 
 import * as spaceContextMocked from 'ng/spaceContext';
 import * as $stateMocked from 'ng/$state';

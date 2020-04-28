@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import * as Navigator from 'states/Navigator';
 import { getModule } from 'core/NgRegistry';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 
@@ -19,31 +18,10 @@ const getPageRouteRef = (page = '') => {
   };
 };
 
-const goToPage = (page = '') => {
-  const ref = getPageRouteRef(page);
-  return ref && Navigator.go(ref);
-};
-
 /**
  * Returns the state object for the current space's org account/subscription
  * view if the user has permission to access it otherwise returns null.
  */
 export function getSubscriptionState() {
   return getPageRouteRef('subscription');
-}
-
-/**
- * shorthand to navigate to the current
- * organization's subscription page.
- */
-export function goToSubscription() {
-  return goToPage('subscription');
-}
-
-/**
- * shorthand to navigate to the current
- * organization's users (memberships) page.
- */
-export function goToUsers() {
-  return goToPage('users.list');
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import StateRedirect from './StateRedirect';
+import StateRedirect from 'app/common/StateRedirect';
 import { getModule } from 'core/NgRegistry';
 
 export class AdminOnly extends React.Component {
@@ -29,5 +29,3 @@ export class AdminOnly extends React.Component {
     return <StateRedirect path={this.props.redirect} />;
   }
 }
-
-export default AdminOnly;

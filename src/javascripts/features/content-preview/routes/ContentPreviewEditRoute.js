@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { getModule } from 'core/NgRegistry';
 import createFetcherComponent from 'app/common/createFetcherComponent';
-import AdminOnly from 'app/common/AdminOnly';
+import { AdminOnly } from './AdminOnly';
 import StateRedirect from 'app/common/StateRedirect';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { ContentPreviewFormSkeleton } from '../skeletons/ContentPreviewFormSkeleton';

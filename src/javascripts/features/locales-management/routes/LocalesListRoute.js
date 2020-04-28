@@ -12,7 +12,7 @@ import createLegacyFeatureService from 'services/LegacyFeatureService';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import { getSubscriptionState } from 'account/AccountUtils';
+import { getSubscriptionState } from './utils/getSubscriptionState';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { ENVIRONMENT_USAGE_ENFORCEMENT } from 'featureFlags';
 

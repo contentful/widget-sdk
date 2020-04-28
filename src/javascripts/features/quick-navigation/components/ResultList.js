@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { HelpText } from '@contentful/forma-36-react-components';
-import { getCtrlKey } from 'services/userAgent';
+import { getCtrlKey } from '../services/userAgent';
 import { ResultItem } from './ResultItem';
 import { MIN_QUERY_LENGTH } from '../utils';
 
