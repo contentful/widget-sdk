@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
-import * as RoleListHandler from 'access_control/RoleListHandler';
+import * as RoleListHandler from '../components/RoleListHandler';
 import {
   TableRow,
   TableCell,
@@ -13,7 +13,7 @@ import {
   DropdownList,
   DropdownListItem,
 } from '@contentful/forma-36-react-components';
-import jumpToRoleMembers from 'access_control/Users/jumpToRole';
+import { jumpToRole } from '../utils/jumpToRole';
 import { go } from 'states/Navigator';
 
 const styles = {
@@ -29,7 +29,7 @@ const styles = {
 };
 
 function jumpToAdminRoleMembers() {
-  jumpToRoleMembers(RoleListHandler.ADMIN_ROLE_NAME);
+  jumpToRole(RoleListHandler.ADMIN_ROLE_NAME);
 }
 
 function RoleActions(props) {
@@ -104,6 +104,7 @@ AdministratorRoleListItem.propTypes = {
   hasCustomRolesFeature: PropTypes.bool.isRequired,
 };
 
+// eslint-disable-next-line rulesdir/restrict-multiple-react-component-exports
 export function RoleListItem(props) {
   const openRole = () => {
     go({
@@ -133,7 +134,7 @@ export function RoleListItem(props) {
       <TableCell>
         <TextLink
           onClick={() => {
-            jumpToRoleMembers(props.role.name);
+            jumpToRole(props.role.name);
           }}>
           {props.role.count} {props.role.count !== 1 ? 'members' : 'member'}
         </TextLink>

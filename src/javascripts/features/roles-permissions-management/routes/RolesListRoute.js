@@ -6,8 +6,8 @@ import { RolesWorkbenchSkeleton } from '../skeletons/RolesWorkbenchSkeleton';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import createResourceService from 'services/ResourceService';
 import * as accessChecker from 'access_control/AccessChecker';
-import * as RoleListHandler from 'access_control/RoleListHandler';
-import RolesList from '../roles_list/RolesList';
+import * as RoleListHandler from '../components/RoleListHandler';
+import { RolesList } from '../roles_list/RolesList';
 import DocumentTitle from 'components/shared/DocumentTitle';
 
 const RolesFetcher = createFetcherComponent(async ({ spaceId }) => {
@@ -33,7 +33,7 @@ const RolesFetcher = createFetcherComponent(async ({ spaceId }) => {
   };
 });
 
-export default function RolesListRoute(props) {
+export function RolesListRoute(props) {
   return (
     <>
       <DocumentTitle title="Roles" />

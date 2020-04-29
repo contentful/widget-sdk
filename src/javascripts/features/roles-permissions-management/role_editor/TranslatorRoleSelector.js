@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
-import getLocales from 'access_control/getLocales';
+import { getLocales } from '../utils/getLocales';
 
-export default class TranslatorRoleSelector extends React.Component {
+export class TranslatorRoleSelector extends React.Component {
   static propTypes = {
     policies: PropTypes.shape().isRequired,
     hasFeatureEnabled: PropTypes.bool,

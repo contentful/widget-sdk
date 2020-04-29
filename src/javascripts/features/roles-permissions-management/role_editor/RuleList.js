@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { Note, TextLink } from '@contentful/forma-36-react-components';
-import Rule from './Rule';
+import { Rule } from './Rule';
 
 const styles = {
   note: css({
@@ -19,7 +19,7 @@ const RulesPropType = PropTypes.arrayOf(
   PropTypes.shape({ id: PropTypes.string, name: PropTypes.string })
 );
 
-export default class RuleList extends React.Component {
+export class RuleList extends React.Component {
   static propTypes = {
     rules: PropTypes.shape({
       allowed: RulesPropType.isRequired,

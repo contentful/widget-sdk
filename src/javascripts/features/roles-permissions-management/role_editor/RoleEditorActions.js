@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, Paragraph } from '@contentful/forma-36-react-components';
-import RoleEditorButton from './RoleEditorButton';
+import { RoleEditorButton } from './RoleEditorButton';
 
-export default function RoleEditorActions(props) {
+export function RoleEditorActions(props) {
   const { dirty, saving, internal, canModifyRoles, showTranslator } = props;
 
   if (props.hasCustomRolesFeature) {

@@ -9,7 +9,7 @@ import { Notification } from '@contentful/forma-36-react-components';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as ResourceUtils from 'utils/ResourceUtils';
-import RoleEditor from '../role_editor/RoleEditor';
+import { RoleEditor } from '../role_editor/RoleEditor';
 import DocumentTitle from 'components/shared/DocumentTitle';
 
 const RoleEditorFetcher = createFetcherComponent(
@@ -59,7 +59,7 @@ const RoleEditorFetcher = createFetcherComponent(
   }
 );
 
-export default function RoleEditorRoute(props) {
+export function RoleEditorRoute(props) {
   return (
     <>
       <DocumentTitle title="Roles" />

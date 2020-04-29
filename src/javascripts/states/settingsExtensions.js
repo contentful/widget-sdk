@@ -1,9 +1,5 @@
-import React from 'react';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
-import LazyLoadedComponent from 'app/common/LazyLoadedComponent';
-import { SettingsImporter } from 'app/settings/SettingsImporter';
-import { ExtensionEditorSkeleton } from 'features/extensions-management';
-import { ExtensionListSkeleton } from 'features/extensions-management';
+import { ExtensionsListRoute, ExtensionEditorRoute } from 'features/extensions-management';
 
 export const extensionsSettingsState = {
   name: 'extensions',
@@ -18,11 +14,7 @@ export const extensionsSettingsState = {
         extensionUrl: null,
         referrer: null,
       },
-      component: (props) => (
-        <LazyLoadedComponent importer={SettingsImporter} fallback={ExtensionListSkeleton}>
-          {({ ExtensionsListRoute }) => <ExtensionsListRoute {...props} />}
-        </LazyLoadedComponent>
-      ),
+      component: ExtensionsListRoute,
       mapInjectedToProps: [
         '$stateParams',
         'spaceContext',
@@ -38,11 +30,7 @@ export const extensionsSettingsState = {
     {
       name: 'detail',
       url: '/:extensionId',
-      component: (props) => (
-        <LazyLoadedComponent importer={SettingsImporter} fallback={ExtensionEditorSkeleton}>
-          {({ ExtensionEditorRoute }) => <ExtensionEditorRoute {...props} />}
-        </LazyLoadedComponent>
-      ),
+      component: ExtensionEditorRoute,
       mapInjectedToProps: [
         '$scope',
         '$stateParams',

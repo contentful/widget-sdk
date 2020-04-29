@@ -1,4 +1,3 @@
-import React from 'react';
 import RoleRepository from 'access_control/RoleRepository';
 import * as ResourceUtils from 'utils/ResourceUtils';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
@@ -6,18 +5,12 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { loadEntry, loadAsset } from 'app/entity_editor/DataLoader';
 import * as PolicyBuilder from 'access_control/PolicyBuilder';
 import * as logger from 'services/logger';
-import { RolesWorkbenchSkeleton } from '../skeletons/RolesWorkbenchSkeleton';
-import LazyLoadedComponent from 'app/common/LazyLoadedComponent';
-import { SettingsImporter } from 'app/settings/SettingsImporter';
+import { RoleEditorRoute, RolesListRoute } from 'features/roles-permissions-management';
 
 const list = {
   name: 'list',
   url: '',
-  component: (props) => (
-    <LazyLoadedComponent importer={SettingsImporter} fallback={RolesWorkbenchSkeleton}>
-      {({ RolesListRoute }) => <RolesListRoute {...props} />}
-    </LazyLoadedComponent>
-  ),
+  component: RolesListRoute,
   mapInjectedToProps: [
     'spaceContext',
     (spaceContext) => {
@@ -45,11 +38,7 @@ const newRole = {
         $stateParams.baseRoleId ? roleRepo.get($stateParams.baseRoleId) : null,
     ],
   },
-  component: (props) => (
-    <LazyLoadedComponent importer={SettingsImporter} fallback={RolesWorkbenchSkeleton}>
-      {({ RoleEditorRoute }) => <RoleEditorRoute {...props} />}
-    </LazyLoadedComponent>
-  ),
+  component: RoleEditorRoute,
   mapInjectedToProps: [
     '$scope',
     'spaceContext',
@@ -90,11 +79,7 @@ const detail = {
         RoleRepository.getInstance(spaceContext.space).get($stateParams.roleId),
     ],
   },
-  component: (props) => (
-    <LazyLoadedComponent importer={SettingsImporter} fallback={RolesWorkbenchSkeleton}>
-      {({ RoleEditorRoute }) => <RoleEditorRoute {...props} />}
-    </LazyLoadedComponent>
-  ),
+  component: RoleEditorRoute,
   mapInjectedToProps: [
     '$scope',
     'spaceContext',
@@ -152,7 +137,7 @@ const detail = {
   ],
 };
 
-export default {
+export const rolesPermissionsSettingsState = {
   name: 'roles',
   url: '/roles',
   abstract: true,

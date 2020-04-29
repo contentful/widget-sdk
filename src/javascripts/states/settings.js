@@ -4,7 +4,7 @@ import spaceUsageState from 'app/SpaceSettings/Usage/SpaceUsageState';
 import { extensionsSettingsState } from './settingsExtensions';
 import { webhooksRouteState } from './settingsWebhooks';
 import { contentPreviewState } from './settingsContentPreview';
-import rolesPermissionsSettingsState from 'app/settings/roles_permissions/routes';
+import { rolesPermissionsSettingsState } from './settingsRolesPermissions';
 import { localesSettingsState } from './settingsLocales';
 import usersSettingsState from './settingsUsers';
 import teamsSettingsState from './settingsTeams';

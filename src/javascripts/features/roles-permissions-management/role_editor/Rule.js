@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import { css } from 'emotion';
-import getLocales from 'access_control/getLocales';
+import { getLocales } from '../utils/getLocales';
 import tokens from '@contentful/forma-36-tokens';
 import { Select, Option, Button } from '@contentful/forma-36-react-components';
 import { PolicyBuilderConfig } from 'access_control/PolicyBuilder';
@@ -38,7 +38,7 @@ const styles = {
   }),
 };
 
-class Rule extends React.Component {
+export class Rule extends React.Component {
   static propTypes = {
     isDisabled: PropTypes.bool,
     rule: PropTypes.shape({
@@ -219,5 +219,3 @@ class Rule extends React.Component {
     );
   }
 }
-
-export default Rule;

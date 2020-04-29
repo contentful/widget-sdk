@@ -5,7 +5,7 @@ import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 import ContactUsButton from 'ui/Components/ContactUsButton';
 import WorkbenchSidebarItem from 'app/common/WorkbenchSidebarItem';
 
-export default function RoleEditorSidebar(props) {
+export function RoleEditorSidebar(props) {
   const { hasCustomRolesFeature, isLegacy } = props;
 
   if (hasCustomRolesFeature) {

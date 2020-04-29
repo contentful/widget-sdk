@@ -5,7 +5,7 @@ import { css } from 'emotion';
 
 import tokens from '@contentful/forma-36-tokens';
 
-export default function ReachedRolesLimitNote(props) {
+export function ReachedRolesLimitNote(props) {
   return (
     <Note noteType="warning" className={css({ marginBottom: tokens.spacingL })}>
       <Paragraph>

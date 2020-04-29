@@ -6,7 +6,7 @@ import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 
 import tokens from '@contentful/forma-36-tokens';
 
-export default function CustomRolesPlanNote(props) {
+export function CustomRolesPlanNote(props) {
   return (
     <Note
       noteType="primary"

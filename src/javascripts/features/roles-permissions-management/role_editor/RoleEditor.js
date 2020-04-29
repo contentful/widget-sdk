@@ -27,18 +27,18 @@ import { RolesWorkbenchSkeleton } from '../skeletons/RolesWorkbenchSkeleton';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import FormSection from 'components/forms/FormSection';
-import RuleList from './RuleList';
-import TranslatorRoleSelector from './TranslatorRoleSelector';
-import getLocales from 'access_control/getLocales';
+import { RuleList } from './RuleList';
+import { TranslatorRoleSelector } from './TranslatorRoleSelector';
+import { getLocales } from '../utils/getLocales';
 import * as PolicyBuilder from 'access_control/PolicyBuilder';
 import * as logger from 'services/logger';
 import TheLocaleStore from 'services/localeStore';
 import * as Navigator from 'states/Navigator';
 
-import * as RoleListHandler from 'access_control/RoleListHandler';
-import RoleEditorSidebar from './RoleEditorSidebar';
-import RoleEditorActions from './RoleEditorActions';
-import { createRoleRemover } from 'access_control/RoleRemover';
+import * as RoleListHandler from '../components/RoleListHandler';
+import { RoleEditorSidebar } from './RoleEditorSidebar';
+import { RoleEditorActions } from './RoleEditorActions';
+import { createRoleRemover } from '../components/RoleRemover';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import * as entitySelector from 'search/EntitySelector/entitySelector';
 import * as EntityFieldValueHelpers from 'classes/EntityFieldValueHelpers';
@@ -58,7 +58,7 @@ const autofixPolicies = (internal, contentTypes) => {
   return null;
 };
 
-class RoleEditor extends React.Component {
+export class RoleEditor extends React.Component {
   static propTypes = {
     role: PropTypes.shape({
       name: PropTypes.string,
@@ -582,5 +582,3 @@ class RoleEditor extends React.Component {
     );
   }
 }
-
-export default RoleEditor;

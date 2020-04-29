@@ -6,7 +6,7 @@ import { Notification, ModalConfirm, Paragraph } from '@contentful/forma-36-reac
 import { ModalLauncher } from 'core/components/ModalLauncher';
 import ReloadNotification from 'app/common/ReloadNotification';
 import { getInstance } from 'access_control/RoleRepository';
-import jumpToRole from 'access_control/Users/jumpToRole';
+import { jumpToRole } from '../utils/jumpToRole';
 
 export function createRoleRemover(listHandler, role) {
   const spaceContext = getModule('spaceContext');

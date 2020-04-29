@@ -15,9 +15,9 @@ import { RolesWorkbenchSkeleton } from '../skeletons/RolesWorkbenchSkeleton';
 import { RoleListItem, AdministratorRoleListItem } from './RoleListItem';
 import { go } from 'states/Navigator';
 import * as ResourceUtils from 'utils/ResourceUtils';
-import ReachedRolesLimitNote from './ReachedRolesLimitNote';
-import CustomRolesPlanNote from './CustomRolesPlanNote';
-import { createRoleRemover } from 'access_control/RoleRemover';
+import { ReachedRolesLimitNote } from './ReachedRolesLimitNote';
+import { CustomRolesPlanNote } from './CustomRolesPlanNote';
+import { createRoleRemover } from '../components/RoleRemover';
 
 const styles = {
   actions: css({
@@ -62,7 +62,7 @@ RoleListActions.propTypes = {
   isLegacyOrganization: PropTypes.bool.isRequired,
 };
 
-export default function RolesList(props) {
+export function RolesList(props) {
   const hasReachedLimit = !ResourceUtils.canCreate(props.rolesResource);
   const limit = ResourceUtils.getResourceLimits(props.rolesResource).maximum;
 

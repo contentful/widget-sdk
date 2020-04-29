@@ -8,7 +8,7 @@ import {
   Button,
 } from '@contentful/forma-36-react-components';
 
-export default class RoleEditorButton extends React.Component {
+export class RoleEditorButton extends React.Component {
   static propTypes = {
     onSave: PropTypes.func.isRequired,
     onDuplicate: PropTypes.func.isRequired,
