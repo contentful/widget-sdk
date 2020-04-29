@@ -212,7 +212,7 @@
     "jest-junit": "^10.0.0",
     "jest-kefir": "^2.2.0",
     "karma": "^5.0.2",
-    "karma-babel-preprocessor": "7.0.0",
+    "karma-babel-preprocessor": "8.0.1",
     "karma-chrome-launcher": "2.2.0",
     "karma-cli": "2.0.0",
     "karma-jasmine": "1.1.2",
