@@ -19,6 +19,13 @@
     "type": "ContentType",
     "createdAt": "2019-04-08T09:12:00.101Z",
     "updatedAt": "2019-04-08T09:12:00.101Z",
+    "publishedBy": {
+      "sys": {
+        "linkType": "User",
+        "type": "Link",
+        "id": "1AMbGlddLG0ISEoa1I423p"
+      }
+    },
     "environment": { "sys": { "id": "master", "type": "Link", "linkType": "Environment" } },
     "revision": 1
   },

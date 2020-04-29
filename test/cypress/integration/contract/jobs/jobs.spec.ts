@@ -12,7 +12,7 @@ import {
   severalFailedJobsResponse,
 } from '../../../fixtures/responses/jobs-several';
 import { queryForDefaultEntryWithoutEnvironment } from '../../../interactions/entries';
-import { queryForDefaultUserDetails } from '../../../interactions/users';
+import { queryForDefaultUserDetails, queryForUsers } from '../../../interactions/users';
 import { FeatureFlag } from '../../../util/featureFlag';
 import { queryForScheduledPublishingInDefaultSpace } from '../../../interactions/product_catalog_features';
 
@@ -20,7 +20,7 @@ describe('Jobs page', () => {
   before(() =>
     cy.startFakeServers({
       consumer: 'user_interface',
-      providers: ['jobs', 'product_catalog_features'],
+      providers: ['jobs', 'product_catalog_features', 'users'],
       cors: true,
       pactfileWriteMode: 'merge',
       dir: Cypress.env('pactDir'),
@@ -123,8 +123,10 @@ describe('Jobs page', () => {
     });
     it('renders list of failed jobs', () => {
       const failedJobsInteraction = queryFailedJobsForDefaultSpace.willFindSeveral();
+      const userData = queryForUsers.willFindTheUserDetails();
       selectFailedTab();
       cy.wait(failedJobsInteraction);
+      cy.wait(userData);
       cy.getAllByTestId('scheduled-job').should(
         'have.length',
         severalFailedJobsResponse.items.length

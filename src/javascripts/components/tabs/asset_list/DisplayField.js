@@ -4,7 +4,7 @@ import mimetype from '@contentful/mimetype';
 
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 import RelativeDateTime from 'components/shared/RelativeDateTime';
-import UserNameFormatter from 'components/shared/UserNameFormatter/FetchAndFormatUserName';
+import { ActionPerformerName } from 'move-to-core/components/ActionPerformerName';
 import Thumbnail from 'components/Thumbnail/Thumbnail';
 
 import { css } from 'emotion';
@@ -109,7 +109,7 @@ export default function DisplayField({ entity, field }) {
     case 'updatedBy': {
       result = (
         <span className={styles.textOverflow}>
-          <UserNameFormatter userId={entity.getUpdatedBy().sys.id} />
+          <ActionPerformerName link={entity.getUpdatedBy()} />
         </span>
       );
       break;

@@ -17,10 +17,10 @@ import {
 } from '@contentful/forma-36-react-components';
 import { EntityStatusTag } from 'components/shared/EntityStatusTag';
 import { getEntryTitle } from 'classes/EntityFieldValueHelpers';
+import { ActionPerformerName } from 'move-to-core/components/ActionPerformerName';
 
 import SecretiveLink from 'components/shared/SecretiveLink';
 import EntityStateLink from 'app/common/EntityStateLink';
-import UserDisplayName from 'app/UserProfile/components/UserDisplayName';
 
 const styles = {
   jobRow: css({
@@ -148,7 +148,7 @@ function ScheduledActionWithExsitingEntryRow({
           </TableCell>
           <TableCell>{contentType.name}</TableCell>
           <TableCell>
-            <UserDisplayName user={user} />
+            <ActionPerformerName link={user} />
           </TableCell>
           <TableCell>
             {showStatusTransition ? <StatusTransition entry={entry} /> : <StatusTag job={job} />}
@@ -177,7 +177,7 @@ function ScheduledActionWithMissingEntryRow({ job, user }) {
       <TableCell>Entry missing or inaccessible</TableCell>
       <TableCell />
       <TableCell>
-        <UserDisplayName user={user} />
+        <ActionPerformerName link={user} />
       </TableCell>
       <TableCell />
     </TableRow>
@@ -204,7 +204,6 @@ export default class ScheduledActionsTable extends Component {
     const {
       jobs,
       description,
-      usersData,
       entriesData,
       contentTypesData,
       showStatusTransition,
@@ -225,7 +224,7 @@ export default class ScheduledActionsTable extends Component {
           </TableHead>
           <TableBody>
             {jobs.map((job) => {
-              const user = usersData[job.sys.createdBy.sys.id];
+              const user = job.sys.createdBy;
 
               const entry = entriesData[job.entity.sys.id];
 

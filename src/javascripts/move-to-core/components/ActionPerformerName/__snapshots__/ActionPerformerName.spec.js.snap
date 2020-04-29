@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ActionPerformerName should render a formatted variant of the name 1`] = `
+<span
+  data-test-id="action-performer-name"
+>
+  Published by me
+</span>
+`;
+
+exports[`ActionPerformerName should render the basic variant with required props after loading 1`] = `
+<span
+  data-test-id="action-performer-name"
+>
+  Me
+</span>
+`;
+
+exports[`ActionPerformerName should render the loading component initially 1`] = `
+<div>
+  <div
+    data-test-id="loading-variant"
+  >
+    Loading...
+  </div>
+</div>
+`;

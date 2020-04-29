@@ -14,7 +14,7 @@ import {
   Tag,
 } from '@contentful/forma-36-react-components';
 
-import FetchAndFormatUserName from 'components/shared/UserNameFormatter/FetchAndFormatUserName';
+import { ActionPerformerName } from 'move-to-core/components/ActionPerformerName';
 import RelativeDateTime from 'components/shared/RelativeDateTime';
 import { isPublishedAndUpdated, isPublished } from '../ContentTypeListService';
 
@@ -112,9 +112,7 @@ class ContentTypeList extends Component {
                         ) : null}
                       </TableCell>
                       <TableCell className="x--small-cell" data-test-id="cell-created-by">
-                        <FetchAndFormatUserName
-                          userId={get(contentType, ['sys', 'publishedBy', 'sys', 'id'], '')}
-                        />
+                        <ActionPerformerName link={get(contentType, ['sys', 'publishedBy'], {})} />
                       </TableCell>
                       <TableCell className="x--small-cell" data-test-id="cell-status">
                         <Tag tagType={statusType(contentType)}>{statusLabel(contentType)}</Tag>

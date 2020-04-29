@@ -6,7 +6,7 @@ import moment from 'moment';
 
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 import RelativeDateTime from 'components/shared/RelativeDateTime';
-import UserNameFormatter from 'components/shared/UserNameFormatter/FetchAndFormatUserName';
+import { ActionPerformerName } from 'move-to-core/components/ActionPerformerName';
 import Thumbnail from 'components/Thumbnail/Thumbnail';
 
 import { css } from 'emotion';
@@ -192,7 +192,7 @@ export default function DisplayField({ entity, field, entryCache, assetCache }) 
       break;
     }
     case 'author':
-      result = <UserNameFormatter userId={entity.getUpdatedBy().sys.id} />;
+      result = <ActionPerformerName link={entity.getUpdatedBy()} />;
       break;
     case 'Boolean':
       result = <span>{displayBool(dataForField(entity, field))}</span>;

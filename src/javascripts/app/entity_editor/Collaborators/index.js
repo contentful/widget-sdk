@@ -5,8 +5,7 @@ import { Tooltip, List, ListItem } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
 import { FetcherLoading } from 'app/common/createFetcherComponent';
-import UserFetcher from 'components/shared/UserFetcher';
-import UserNameFormatter from 'components/shared/UserNameFormatter';
+import { ActionPerformer } from 'move-to-core/components/ActionPerformer';
 
 const styles = {
   collaborators: css({
@@ -46,22 +45,20 @@ class Collaborators extends Component {
     users: [],
     shape: 'circle',
   };
+
   render() {
     return (
       <List className={cx(styles.collaborators, this.props.className)}>
-        {this.props.users.map(({ sys: { id } }) => {
+        {this.props.users.map((user) => {
           return (
-            <ListItem key={id} className={styles.collaboratorsItem}>
-              <UserFetcher userId={id}>
-                {({ isLoading, isError, data: user }) => {
-                  if (isLoading) {
-                    return <FetcherLoading />;
-                  }
-                  if (isError || !user) {
+            <ListItem key={user.sys.id} className={styles.collaboratorsItem}>
+              <ActionPerformer loadingComponent={<FetcherLoading />} link={user}>
+                {({ actionPerformer, formattedName }) => {
+                  if (!actionPerformer) {
                     return null;
                   }
                   return (
-                    <Tooltip content={<UserNameFormatter user={user} />}>
+                    <Tooltip place="top" content={formattedName}>
                       <img
                         className={cx(
                           styles.collaboratorsAvatar,
@@ -69,12 +66,12 @@ class Collaborators extends Component {
                             ? styles.collaboratorsAvatarCircle
                             : styles.collaboratorsAvatarRect
                         )}
-                        src={user.avatarUrl}
+                        src={actionPerformer.avatarUrl}
                       />
                     </Tooltip>
                   );
                 }}
-              </UserFetcher>
+              </ActionPerformer>
             </ListItem>
           );
         })}

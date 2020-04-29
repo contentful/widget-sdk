@@ -17,9 +17,8 @@ import {
 import { scheduleStyles as styles } from './styles';
 import CancellationModal from './CancellationModal';
 import { DateTime } from 'app/ScheduledActions/FormattedDateAndTime';
+import { ActionPerformerName } from 'move-to-core/components/ActionPerformerName';
 import ScheduledActionAction from 'app/ScheduledActions/ScheduledActionAction';
-import UserFetcher from 'components/shared/UserFetcher';
-import UserDisplayName from 'app/UserProfile/components/UserDisplayName';
 
 const tagTypeForAction = {
   [ScheduledActionAction.Publish]: 'positive',
@@ -34,29 +33,21 @@ export function ScheduledByDropdownList({ job, border }) {
   }
 
   return (
-    <UserFetcher userId={userId}>
-      {({ isLoading, isError, data: user }) => {
-        if (isError) {
-          return null;
-        }
-
-        return (
-          <DropdownList border={border}>
-            <DropdownListItem className={styles.scheduleDropdownScheduledBy} testId="scheduled-by">
-              {isLoading ? (
-                <SkeletonContainer>
-                  <SkeletonDisplayText numberOfLines={1} />
-                </SkeletonContainer>
-              ) : (
-                <span>
-                  Scheduled by <UserDisplayName user={user} />
-                </span>
-              )}
-            </DropdownListItem>
-          </DropdownList>
-        );
-      }}
-    </UserFetcher>
+    <DropdownList border={border}>
+      <DropdownListItem className={styles.scheduleDropdownScheduledBy} testId="scheduled-by">
+        <span>
+          <ActionPerformerName
+            link={_.get(job, 'sys.createdBy')}
+            formatName={(name) => `Scheduled by ${name === 'Me' ? name.toLowerCase() : name}`}
+            loadingComponent={
+              <SkeletonContainer>
+                <SkeletonDisplayText numberOfLines={1} />
+              </SkeletonContainer>
+            }
+          />
+        </span>
+      </DropdownListItem>
+    </DropdownList>
   );
 }
 

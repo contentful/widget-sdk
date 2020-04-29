@@ -5,6 +5,7 @@ const users = require('../fixtures/responses/users.json');
 
 enum States {
   SINGLE = 'users/single',
+  MULTIPLE = 'users/multiple',
 }
 
 function querySpaceUsersRequest(query: Query): RequestOptions {
@@ -54,5 +55,25 @@ export const queryForDefaultUserDetails = {
     }).as('queryForDefaultUserDetails');
 
     return '@queryForDefaultUserDetails';
+  },
+};
+
+export const queryForUsers = {
+  willFindTheUserDetails() {
+    cy.addInteraction({
+      provider: 'users',
+      state: States.MULTIPLE,
+      uponReceiving: `a query for the details of users in space "${defaultSpaceId}"`,
+      withRequest: querySpaceUsersRequest({
+        limit: '100',
+        skip: '0',
+      }),
+      willRespondWith: {
+        status: 200,
+        body: users,
+      },
+    }).as('queryForUsers');
+
+    return '@queryForUsers';
   },
 };

@@ -8,7 +8,7 @@ import tokens from '@contentful/forma-36-tokens';
 import RelativeDateTime from 'components/shared/RelativeDateTime';
 import SnapshotStatus from 'app/snapshots/helpers/SnapshotStatus';
 import EntrySidebarWidget from '../EntrySidebarWidget';
-import FetchAndFormatUserName from 'components/shared/UserNameFormatter/FetchAndFormatUserName';
+import { ActionPerformerName } from 'move-to-core/components/ActionPerformerName';
 
 const styles = {
   table: css({
@@ -91,7 +91,11 @@ export default class VersionsWidget extends Component {
             content={
               version.sys.createdBy && (
                 <React.Fragment>
-                  Edited by <FetchAndFormatUserName userId={version.sys.createdBy.sys.id} />
+                  Edited by{' '}
+                  <ActionPerformerName
+                    link={version.sys.createdBy}
+                    formatName={(name) => `${name === 'Me' ? name.toLowerCase() : name}`}
+                  />
                 </React.Fragment>
               )
             }>
@@ -103,7 +107,11 @@ export default class VersionsWidget extends Component {
             content={
               version.sys.createdBy && (
                 <React.Fragment>
-                  Edited by <FetchAndFormatUserName userId={version.sys.createdBy.sys.id} />
+                  Edited by{' '}
+                  <ActionPerformerName
+                    link={version.sys.createdBy}
+                    formatName={(name) => `${name === 'Me' ? name.toLowerCase() : name}`}
+                  />
                 </React.Fragment>
               )
             }>

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import RelativeDateTime from 'components/shared/RelativeDateTime';
-import FetchAndFormatUserName from 'components/shared/UserNameFormatter/FetchAndFormatUserName';
+import { ActionPerformerName } from 'move-to-core/components/ActionPerformerName';
 
 export default class EntryInfoPanel extends Component {
   static propTypes = {
@@ -65,7 +65,7 @@ export default class EntryInfoPanel extends Component {
                 <td>
                   {sys.createdBy && (
                     <span>
-                      <FetchAndFormatUserName userId={sys.createdBy.sys.id} />
+                      <ActionPerformerName link={sys.createdBy} />
                     </span>
                   )}
                 </td>
@@ -82,7 +82,7 @@ export default class EntryInfoPanel extends Component {
                     <th>Updated by</th>
                     <td>
                       <span>
-                        <FetchAndFormatUserName userId={sys.updatedBy.sys.id} />
+                        <ActionPerformerName link={sys.updatedBy} />
                       </span>
                     </td>
                   </tr>
@@ -115,7 +115,7 @@ export default class EntryInfoPanel extends Component {
                   <th>Published by</th>
                   <td>
                     <span>
-                      <FetchAndFormatUserName userId={sys.publishedBy.sys.id} />
+                      <ActionPerformerName link={sys.publishedBy} />
                     </span>
                   </td>
                 </tr>

@@ -241,7 +241,6 @@ class JobsListPage extends Component {
             description={TabsData[activeTab].description}
             jobs={scheduleData.jobs}
             entriesData={scheduleData.entries}
-            usersData={scheduleData.users}
             contentTypesData={scheduleData.contentTypes}
             defaultLocale={defaultLocale}
           />
