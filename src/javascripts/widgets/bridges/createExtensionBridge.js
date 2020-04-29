@@ -13,6 +13,7 @@ import {
 } from './makeExtensionNavigationHandlers';
 import makeExtensionNotificationHandlers from './makeExtensionNotificationHandlers';
 import makePageExtensionHandlers from './makePageExtensionHandlers';
+import makeExtensionAccessHandlers from './makeExtensionAccessHandlers';
 import checkDependencies from './checkDependencies';
 import { makeShareJSError, makePermissionError } from 'app/widgets/NewWidgetApi/createFieldApi';
 import { LOCATION_ENTRY_FIELD, LOCATION_ENTRY_FIELD_SIDEBAR } from '../WidgetLocations';
@@ -158,6 +159,7 @@ export default function createExtensionBridge(dependencies) {
     api.registerHandler('notify', makeExtensionNotificationHandlers(dependencies));
     api.registerHandler('navigateToPageExtension', makePageExtensionHandlers(dependencies));
     api.registerHandler('navigateToPage', makePageExtensionHandlers(dependencies));
+    api.registerHandler('checkAccess', makeExtensionAccessHandlers());
 
     $scope.$watch('preferences.showDisabledFields', () => {
       api.send('showDisabledFieldsChanged', [$scope.preferences.showDisabledFields]);

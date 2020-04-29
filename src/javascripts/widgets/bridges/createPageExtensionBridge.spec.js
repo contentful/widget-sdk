@@ -75,6 +75,7 @@ describe('createPageExtensionBridge', () => {
 
       expect(api.registerHandler.mock.calls.map((item) => item[0]).sort()).toEqual([
         'callSpaceMethod',
+        'checkAccess',
         'navigateToContentEntity',
         'navigateToPage',
         'navigateToPageExtension',

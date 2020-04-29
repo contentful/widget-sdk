@@ -3,6 +3,7 @@ import { makeExtensionNavigationHandlers } from './makeExtensionNavigationHandle
 import makeExtensionNotificationHandlers from './makeExtensionNotificationHandlers';
 import makePageExtensionHandlers from './makePageExtensionHandlers';
 import makeExtensionDialogsHandler from './makeExtensionDialogsHandlers';
+import makeExtensionAccessHandlers from './makeExtensionAccessHandlers';
 import checkDependencies from './checkDependencies';
 import { LOCATION_PAGE } from '../WidgetLocations';
 import TheLocaleStore from 'services/localeStore';
@@ -50,7 +51,7 @@ export default function createPageExtensionBridge(dependencies) {
     );
 
     api.registerHandler('navigateToPageExtension', makePageExtensionHandlers(dependencies, true));
-
     api.registerHandler('navigateToPage', makePageExtensionHandlers(dependencies, true));
+    api.registerHandler('checkAccess', makeExtensionAccessHandlers());
   }
 }

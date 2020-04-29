@@ -2,6 +2,7 @@ import makeExtensionSpaceMethodsHandlers from './makeExtensionSpaceMethodsHandle
 import { makeExtensionNavigationHandlers } from './makeExtensionNavigationHandlers';
 import makeExtensionNotificationHandlers from './makeExtensionNotificationHandlers';
 import makePageExtensionHandlers from './makePageExtensionHandlers';
+import makeExtensionAccessHandlers from './makeExtensionAccessHandlers';
 import checkDependencies from './checkDependencies';
 import { LOCATION_DIALOG } from '../WidgetLocations';
 import TheLocaleStore from 'services/localeStore';
@@ -45,6 +46,7 @@ export default function createDialogExtensionBridge(dependencies, openDialog, on
     api.registerHandler('notify', makeExtensionNotificationHandlers(dependencies));
     api.registerHandler('navigateToPageExtension', makePageExtensionHandlers(dependencies));
     api.registerHandler('navigateToPage', makePageExtensionHandlers(dependencies));
+    api.registerHandler('checkAccess', makeExtensionAccessHandlers());
 
     api.registerHandler(
       'navigateToContentEntity',
