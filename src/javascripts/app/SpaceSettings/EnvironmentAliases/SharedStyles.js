@@ -1,27 +1,20 @@
 import { css } from 'emotion';
-import {
-  spacingXs,
-  spacingS,
-  spacingM,
-  colorElementLightest,
-  colorWhite,
-  colorGreenLight,
-} from '@contentful/forma-36-tokens';
+import tokens from '@contentful/forma-36-tokens';
 
 export const aliasStyles = {
   header: css({
     display: 'flex',
     justifyContent: 'space-between',
-    padding: `0 ${spacingXs} 0.875rem ${spacingXs}`,
+    padding: `0 ${tokens.spacingXs} 0.875rem ${tokens.spacingXs}`,
   }),
   card: css({
-    margin: `${spacingM} 0`,
-    backgroundColor: colorElementLightest,
+    margin: `${tokens.spacingM} 0`,
+    backgroundColor: tokens.colorElementLightest,
     zIndex: 10,
     position: 'relative',
   }),
   body: css({
-    backgroundColor: colorWhite,
+    backgroundColor: tokens.colorWhite,
   }),
   row: css({
     '&:hover': {
@@ -35,7 +28,7 @@ export const aliasStyles = {
     display: 'flex',
     alignItems: 'center',
     '& > span': {
-      marginRight: spacingXs,
+      marginRight: tokens.spacingXs,
     },
   }),
   dropdownList: css({
@@ -46,7 +39,7 @@ export const aliasStyles = {
   }),
   icon: css({
     display: 'block',
-    marginRight: spacingS,
-    fill: colorGreenLight,
+    marginRight: tokens.spacingS,
+    fill: tokens.colorGreenLight,
   }),
 };

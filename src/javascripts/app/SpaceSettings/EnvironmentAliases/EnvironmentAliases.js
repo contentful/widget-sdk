@@ -128,7 +128,7 @@ const aliasesStyles = {
     flexDirection: 'column',
   }),
   illustration: css({
-    flexShrink: '0',
+    flexShrink: '4',
     marginLeft: tokens.spacingM,
   }),
   buttonBar: css({
@@ -233,7 +233,7 @@ export default function EnvironmentAliases(props) {
             </ExternalTextLink>
           </span>
         </div>
-        <AliasesIllustration className={aliasesStyles.illustration}></AliasesIllustration>
+        <AliasesIllustration className={aliasesStyles.illustration} />
       </Card>
     );
   }
