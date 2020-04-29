@@ -5,7 +5,7 @@ import { createNewReadOnlyWidgetApi } from 'app/widgets/NewWidgetApi/createNewWi
 import { getModule } from 'core/NgRegistry';
 
 const SnapshotPresenterRichText = ({ className, value, contentType, entity, field, locale }) => {
-  const [widgetApi, setWidgetApi] = useState(null);
+  const [sdk, setSdk] = useState(null);
   useEffect(() => {
     const spaceContext = getModule('spaceContext');
     const readOnlyWidgetApi = createNewReadOnlyWidgetApi({
@@ -17,12 +17,12 @@ const SnapshotPresenterRichText = ({ className, value, contentType, entity, fiel
       initialContentTypes: spaceContext.publishedCTs.getAllBare(),
       cma: spaceContext.cma,
     });
-    setWidgetApi(readOnlyWidgetApi);
+    setSdk(readOnlyWidgetApi);
   }, [contentType, entity, field, locale, value]);
 
   return (
     <div className={className} data-test-id="snapshot-presenter-richtext">
-      {widgetApi && <ReadOnlyRichTextEditor value={value} widgetApi={widgetApi} />}
+      {sdk && <ReadOnlyRichTextEditor value={value} sdk={sdk} />}
     </div>
   );
 };
