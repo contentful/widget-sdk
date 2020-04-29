@@ -13,6 +13,8 @@ import {
 } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import Icon from 'ui/Components/Icon';
 import { getModule } from 'core/NgRegistry';
+import { NEW_NAVIGATION_STYLES } from 'featureFlags';
+import { getVariation } from 'LaunchDarkly';
 
 const store = getBrowserStorage();
 const styles = {
@@ -51,10 +53,34 @@ const styles = {
   }),
 };
 
+const navNewHoverStyles = {
+  navBarLink: css({
+    display: 'flex',
+    alignItems: 'center',
+    height: '100%',
+    transition: 'color 0.1s ease-in-out',
+    position: 'relative',
+    cursor: 'pointer',
+    '&:hover': css({
+      backgroundColor: tokens.colorContrastDark,
+    }),
+    '&.is-active': css({
+      backgroundColor: tokens.colorContrastMid,
+    }),
+  }),
+  navBarListLabel: css({
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+  }),
+};
+
 export default class Relaunch extends React.Component {
-  componentDidMount() {
+  state = { isNewNavigationEnabled: false };
+  async componentDidMount() {
     const $rootScope = getModule('$rootScope');
 
+    const isNewNavigationEnabled = await getVariation(NEW_NAVIGATION_STYLES);
     // since this component is rendered when the onboarding begins, we need to ask it to update
     // once the onboarding is complete.
     // this component is rendered when the onboarding begins since it's jammed into the dom
@@ -69,6 +95,8 @@ export default class Relaunch extends React.Component {
     this.unsubscribeFromSpaceContext = $rootScope.$on('spaceContextUpdated', () =>
       this.forceUpdate()
     );
+
+    this.setState({ isNewNavigationEnabled });
   }
   componentWillUnmount() {
     this.unsubscribeFromOnboarding && this.unsubscribeFromOnboarding();
@@ -79,6 +107,7 @@ export default class Relaunch extends React.Component {
     const spaceAutoCreationFailed = store.get(getSpaceAutoCreatedKey(getUser(), 'failure'));
     const currentSpace = spaceContext.space;
 
+    const { isNewNavigationEnabled } = this.state;
     const showRelaunch =
       !spaceAutoCreationFailed && isDevOnboardingSpace(currentSpace) && isOnboardingComplete();
 
@@ -87,11 +116,21 @@ export default class Relaunch extends React.Component {
         <WithLink link="copy" trackingElementId="onboarding_relaunched">
           {(move) => (
             <div
-              className={cx(styles.modernStackOnboardingRelaunchWrapper, styles.navBarLink)}
+              className={cx(
+                styles.modernStackOnboardingRelaunchWrapper,
+                isNewNavigationEnabled ? navNewHoverStyles.navBarLink : styles.navBarLink
+              )}
               onClick={move}
               data-test-id="modern-stack-onboarding-relaunch-wrapper">
               <Icon name="relaunch-onboarding" className="modern-stack-onboarding--relaunch-icon" />
-              <span className={styles.navBarListLabel}>Relaunch onboarding</span>
+              <span
+                className={
+                  isNewNavigationEnabled
+                    ? navNewHoverStyles.navBarListLabel
+                    : styles.navBarListLabel
+                }>
+                Relaunch onboarding
+              </span>
             </div>
           )}
         </WithLink>

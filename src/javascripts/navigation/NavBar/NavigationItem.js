@@ -1,6 +1,6 @@
 /* eslint-disable rulesdir/restrict-non-f36-components */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import cn from 'classnames';
@@ -10,8 +10,10 @@ import * as Navigator from 'states/Navigator';
 import NavigationItemTag from './NavigationItemTag';
 import Icon from 'ui/Components/Icon';
 import NavigationIcon from 'ui/Components/NavigationIcon';
+import { getVariation } from 'LaunchDarkly';
 
 import keycodes from 'utils/keycodes';
+import { NEW_NAVIGATION_STYLES } from 'featureFlags';
 
 const styles = {
   appTopBarAction: css({
@@ -77,6 +79,31 @@ const styles = {
   }),
 };
 
+const stylesNew = {
+  navBarLink: css({
+    color: tokens.colorWhite,
+    padding: `0 ${tokens.spacingM}`,
+    display: 'flex',
+    alignItems: 'center',
+    height: '100%',
+    transition: 'color .1s ease-in-out',
+    position: 'relative',
+    cursor: 'pointer',
+
+    '&:hover': css({
+      backgroundColor: tokens.colorContrastDark,
+    }),
+    '&.is-active': css({
+      backgroundColor: tokens.colorContrastMid,
+    }),
+
+    '&.is-disabled, &.is-disabled:hover': css({
+      color: tokens.colorTextLight,
+      cursor: 'not-allowed',
+    }),
+  }),
+};
+
 function Label({ hasTooptip, children, ...rest }) {
   if (hasTooptip) {
     return (
@@ -107,6 +134,15 @@ function getNavigationProps(item) {
 
 export default function NavigationItem(props) {
   const { item } = props;
+  const [isNewNavigationEnabled, setIsNewNavigationEnabled] = useState(false);
+
+  useEffect(() => {
+    async function getFeatureFlagVariation() {
+      const isFeatureEnabled = await getVariation(NEW_NAVIGATION_STYLES);
+      setIsNewNavigationEnabled(isFeatureEnabled);
+    }
+    getFeatureFlagVariation();
+  }, [setIsNewNavigationEnabled]);
 
   const onClick = () => {
     if (item.disabled) {
@@ -115,7 +151,6 @@ export default function NavigationItem(props) {
 
     Navigator.go(getNavigationProps(item));
   };
-
   const isActive = Navigator.includes({ path: item.rootSref || item.sref });
   return (
     <li
@@ -127,7 +162,7 @@ export default function NavigationItem(props) {
       <a
         data-view-type={item.dataViewType}
         href={Navigator.href(getNavigationProps(item))}
-        className={cn(styles.navBarLink, {
+        className={cn(isNewNavigationEnabled ? stylesNew.navBarLink : styles.navBarLink, {
           'is-disabled': item.disabled,
           'is-active': item.disabled ? false : isActive,
         })}
@@ -147,7 +182,11 @@ export default function NavigationItem(props) {
         {...{
           tabIndex: item.disabled ? undefined : '0',
         }}>
-        <Label hasTooptip={Boolean(item.tooltip)} content={item.tooltip} placement="bottom">
+        <Label
+          hasTooptip={Boolean(item.tooltip)}
+          content={item.tooltip}
+          placement="bottom"
+          isNewNavigationEnabled={isNewNavigationEnabled}>
           {item.navIcon ? (
             <NavigationIcon icon={item.navIcon} size="medium" mono color="white" inNavigation />
           ) : (

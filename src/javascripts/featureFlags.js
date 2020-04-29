@@ -25,3 +25,6 @@ export const NEW_STATUS_SWITCH = 'feature-pulitzer-03-2020-new-status-switch';
 
 // Team Penguin Release Flags
 export const SHAREJS_REMOVAL = 'feature-pen-04-2020-sharejs-removal-multi';
+
+// Team Hejo Release Flags
+export const NEW_NAVIGATION_STYLES = 'new-navigation-styles';

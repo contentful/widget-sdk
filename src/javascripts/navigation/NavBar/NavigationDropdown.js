@@ -1,6 +1,6 @@
 /* eslint-disable rulesdir/restrict-non-f36-components */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import cn from 'classnames';
 import keycodes from 'utils/keycodes';
 import { css } from 'emotion';
@@ -17,6 +17,8 @@ import NavigationItemTag from './NavigationItemTag';
 import Icon from 'ui/Components/Icon';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 import { noop } from 'lodash';
+import { NEW_NAVIGATION_STYLES } from 'featureFlags';
+import { getVariation } from 'LaunchDarkly';
 
 const styles = {
   dropdown: css({
@@ -113,6 +115,52 @@ const styles = {
   }),
 };
 
+const navNewHoverStyles = {
+  navBarListItem: css({
+    margin: 0,
+    '.icon-component': css({
+      marginRight: tokens.spacingS,
+
+      svg: css({
+        transition: 'all 0.1s ease-in-out',
+      }),
+    }),
+  }),
+  navBarLink: css({
+    color: tokens.colorWhite,
+    padding: `0 ${tokens.spacingM}`,
+    display: 'flex',
+    alignItems: 'center',
+    height: '100%',
+    transition: 'color .1s ease-in-out',
+    position: 'relative',
+    cursor: 'pointer',
+
+    '&:hover': css({
+      backgroundColor: tokens.colorContrastDark,
+    }),
+    '&.is-active': css({
+      backgroundColor: tokens.colorContrastMid,
+    }),
+
+    '&.is-disabled, &.is-disabled:hover': css({
+      color: tokens.colorTextLight,
+      cursor: 'not-allowed',
+    }),
+  }),
+  navBarListLabel: css({
+    display: 'flex',
+    height: '100%',
+    alignItems: 'center',
+    borderBottom: '3px solid transparent',
+    color: tokens.colorWhite,
+
+    div: css({
+      marginRight: '10px',
+    }),
+  }),
+};
+
 function getNavigationProps(item) {
   return {
     path: item.sref,
@@ -130,6 +178,15 @@ export default function NavigationDropdown({
   disableHighlight = false,
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isNewNavigationEnabled, setIsNewNavigationEnabled] = useState(false);
+
+  useEffect(() => {
+    async function getFeatureFlagVariation() {
+      const isFeatureEnabled = await getVariation(NEW_NAVIGATION_STYLES);
+      setIsNewNavigationEnabled(isFeatureEnabled);
+    }
+    getFeatureFlagVariation();
+  }, [setIsNewNavigationEnabled]);
 
   const onOpen = () => {
     setIsOpen(true);
@@ -150,10 +207,14 @@ export default function NavigationDropdown({
         position="bottom-left"
         toggleElement={
           <a
-            className={cn(styles.navBarLink, styles.appTopBarMenuTrigger, {
-              'is-active':
-                !disableHighlight && Navigator.includes({ path: item.rootSref || item.sref }),
-            })}
+            className={cn(
+              isNewNavigationEnabled ? navNewHoverStyles.navBarLink : styles.navBarLink,
+              styles.appTopBarMenuTrigger,
+              {
+                'is-active':
+                  !disableHighlight && Navigator.includes({ path: item.rootSref || item.sref }),
+              }
+            )}
             role="button"
             tabIndex="0"
             data-view-type={item.dataViewType}
@@ -163,7 +224,10 @@ export default function NavigationDropdown({
                 onOpen();
               }
             }}>
-            <span className={styles.navBarListLabel}>
+            <span
+              className={
+                isNewNavigationEnabled ? navNewHoverStyles.navBarListLabel : styles.navBarListLabel
+              }>
               {item.navIcon ? (
                 <NavigationIcon icon={item.navIcon} size="medium" color="white" inNavigation />
               ) : (
