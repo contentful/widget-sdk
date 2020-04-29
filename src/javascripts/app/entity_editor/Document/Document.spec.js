@@ -332,4 +332,6 @@ export default (createDocument) => {
   });
 };
 
-test.skip('skip', () => {});
+it('mock', () => {
+  expect(1).toEqual(1);
+});

@@ -17,6 +17,12 @@ const DISPLAY_PAGES = 3 + NO_OF_NEIGHBORS * 2;
  * `select` argument.
  */
 
+type PaginatorProps = {
+  select?: Function;
+  page?: number;
+  pageCount?: number;
+};
+
 function Paginator({ select = _.noop, page = 0, pageCount = 0 }) {
   if (pageCount < 2) {
     return null;
@@ -74,7 +80,7 @@ function Paginator({ select = _.noop, page = 0, pageCount = 0 }) {
 }
 
 // TODO This is to complicated. Rewrite it
-function getRange(pageCount, activePage) {
+function getRange(pageCount: number, activePage: number): number[] {
   if (pageCount <= DISPLAY_PAGES) {
     return _.range(1, pageCount + 1);
   } else {
@@ -97,7 +103,7 @@ function getRange(pageCount, activePage) {
   }
 }
 
-function getLabels(list) {
+function getLabels(list: number[]): number[] {
   list = list.map((i) => i - 1);
 
   if (list.length === DISPLAY_PAGES) {
@@ -111,11 +117,5 @@ function getLabels(list) {
 
   return list;
 }
-
-Paginator.propTypes = {
-  select: PropTypes.func,
-  page: PropTypes.number,
-  pageCount: PropTypes.number,
-};
 
 export default Paginator;

@@ -72,8 +72,10 @@ export interface Document {
 
   resourceState: {
     apply(): Promise<Entity>;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
     stateChange$: Stream<{ from: any; to: any }, any>;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
     state$: Property<any, any>;
     inProgress$: Property<boolean, any>;

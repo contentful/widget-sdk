@@ -71,6 +71,7 @@ describe('Schedule Publication', () => {
 
       cy.wait(validateAnEntryInteraction);
       cy.wait(scheduledPubinteraction);
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(500); // extra wait for notification animation 500ms
       cy.getAllByTestId('cf-ui-notification')
         // .should('be.visible') // This is hidden by the modal

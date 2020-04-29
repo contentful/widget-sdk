@@ -295,6 +295,7 @@ export function create(
 
   const data$ = K.combinePropertiesObject({
     sys: sys$,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
     fields: valuePropertyAt({ changes: changesBus.stream, getValueAt }, ['fields']),
   });
@@ -416,6 +417,7 @@ export function create(
     // but it's out of scope for now.
     presence: createNoopPresenceHub(),
     permissions,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
     reverter: {
       hasChanges: noop,

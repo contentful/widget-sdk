@@ -27,7 +27,6 @@ export async function trackEditConflict({
       //  To avoid accidentally tracking `BadRequest` errors as a conflict.
       return;
     } else {
-      // @ts-ignore
       logger.logError('Could not fetch remote entity for CmaDocument edit conflict tracking', e);
       return;
     }

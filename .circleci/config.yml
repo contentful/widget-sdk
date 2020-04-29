@@ -295,7 +295,7 @@ jobs:
             npm install --no-save --no-shrinkwrap license-checker
             bin/oss-license-check
       - run: npm run check-types
-      - run: npm run hint
+      - run: npm run lint
       - run: npm run prettier:check
       - run: npm run cruise
 

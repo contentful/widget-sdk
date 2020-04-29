@@ -4,7 +4,10 @@ import { uniqBy, flatten, keys, get, isEqual } from 'lodash';
  * Takes two entities' `entity.fields` and returns all paths that are
  * different i.e. changed, added or deleted.
  */
-export default function changedEntityFieldPaths(fields1: Object, fields2: Object) {
+export default function changedEntityFieldPaths(
+  fields1: Record<string, any>,
+  fields2: Record<string, any>
+) {
   const paths = uniqBy([...getAllPaths(fields1), ...getAllPaths(fields2)], (path) =>
     path.join(':')
   );
