@@ -25,37 +25,32 @@ AssetListAdapter.propTypes = {
 export default AssetListAdapter;
 
 function AssetList({ context, assets = [], updateAssets }) {
-  const defaultColSpan = 4;
   const displayedFields = [
     {
       id: 'file',
       name: 'Preview',
-      colSpan: 2,
+      colWidth: '8%',
     },
     {
       id: 'title',
       name: 'Name',
-      colSpan: 6,
+      colWidth: '20%',
     },
     {
       id: 'dimensions',
       name: 'Dimensions',
-      colSpan: defaultColSpan,
     },
     {
       id: 'fileType',
       name: 'Type',
-      colSpan: defaultColSpan,
     },
     {
       id: 'updatedAt',
       name: 'Updated',
-      colSpan: defaultColSpan,
     },
     {
       id: 'updatedBy',
       name: 'By',
-      colSpan: defaultColSpan,
     },
   ];
 
@@ -67,7 +62,6 @@ function AssetList({ context, assets = [], updateAssets }) {
       entityType="asset"
       isLoading={context.isSearching}
       renderDisplayField={(props) => <DisplayField {...props} />}
-      statusColSpan={defaultColSpan}
       updateEntities={updateAssets}
     />
   );

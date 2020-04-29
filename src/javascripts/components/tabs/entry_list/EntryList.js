@@ -42,7 +42,6 @@ export default function EntryList({
     isActiveSort: displayFieldName && isOrderField(displayFieldName),
     onClick: () => orderColumnBy(displayFieldName),
     direction: order.direction,
-    colSpan: 3,
     type: 'EntryTitle',
   };
 
@@ -54,7 +53,7 @@ export default function EntryList({
       isActiveSort: isOrderField(field),
       onClick: () => orderColumnBy(field),
       direction: order.direction,
-      colSpan: 2,
+      colWidth: '17%',
     })),
   ];
 
@@ -66,7 +65,6 @@ export default function EntryList({
       jobs={jobs}
       onBulkActionComplete={onEntryEvent}
       updateEntities={updateEntries}
-      statusColSpan={2}
       isLoading={isSearching}
       renderDisplayField={(props) => (
         <DisplayField entryCache={entryCache} assetCache={assetCache} {...props} />
