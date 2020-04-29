@@ -128,16 +128,14 @@ const SortablePills = sortableContainer(({ children }) => (
   <div className={styles.container}>{children}</div>
 ));
 
-const SortablePill = sortableElement(({ value, index, onRemoveItem }) => (
+const SortablePill = sortableElement(({ value, onRemoveItem }) => (
   <Pill
     tabIndex={0}
     className={styles.pill}
     testId="validation-item"
     status="primary"
     label={value}
-    onClose={() => {
-      onRemoveItem(index);
-    }}
+    onClose={onRemoveItem}
     onDrag={noop}
   />
 ));
@@ -217,7 +215,7 @@ export default function ValidationValues(props) {
                 value={value}
                 index={index}
                 key={value + index}
-                onRemoveItem={onRemoveItem}
+                onRemoveItem={() => onRemoveItem(index)}
               />
             );
           })}
