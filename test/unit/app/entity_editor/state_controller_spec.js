@@ -40,6 +40,9 @@ describe('entityEditor/StateController', () => {
 
     this.system.set('access_control/AccessChecker', {
       canPerformActionOnEntity: sinon.stub.returns(true),
+      Action: {
+        READ: 'read',
+      },
     });
 
     this.system.set('app/entity_editor/PublicationWarnings', {

@@ -11,6 +11,9 @@ describe('data/document/ResourceStateManager', () => {
   beforeEach(async function () {
     this.system.set('access_control/AccessChecker', {
       canUpdateEntity: sinon.stub().returns(true),
+      Action: {
+        READ: 'read',
+      },
     });
 
     const { Action, State } = await this.system.import('data/document/ResourceStateManager');
