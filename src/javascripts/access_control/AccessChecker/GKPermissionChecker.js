@@ -2,7 +2,10 @@ import * as OrganizationRoles from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
 import * as K from 'core/utils/kefir';
 import { get } from 'lodash';
-import createLegacyFeatureService from 'services/LegacyFeatureService';
+import { getSpaceFeature } from 'data/CMA/ProductCatalog';
+
+const CUSTOM_ROLES_FEATURE_KEY = 'custom_roles';
+const DEFAULT_FEATURE_STATUS = false;
 
 export function create({ space, organization }) {
   return {
@@ -44,8 +47,9 @@ export function create({ space, organization }) {
     if (!isSuperUser() || !space) {
       return Promise.resolve(false);
     } else {
-      const FeatureService = createLegacyFeatureService(space.sys.id);
-      return FeatureService.get('customRoles');
+      return (
+        getSpaceFeature(space.sys.id, CUSTOM_ROLES_FEATURE_KEY, DEFAULT_FEATURE_STATUS) ?? false
+      );
     }
   }
 }

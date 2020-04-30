@@ -15,7 +15,8 @@ describe('Access Checker', () => {
     mockOrgEndpoint,
     mockSpaceEndpoint,
     isPermissionDeniedStub,
-    feature;
+    feature,
+    getSpaceFeature;
 
   function init() {
     ac.setAuthContext({ authContext: {}, spaceAuthContext: mockSpaceAuthContext });
@@ -75,10 +76,14 @@ describe('Access Checker', () => {
     broadcastStub = sinon.stub();
     resetEnforcements = sinon.stub();
     getResStub = sinon.stub().returns(false);
+    getSpaceFeature = sinon.stub();
 
     this.system.set('data/EndpointFactory', {
       createOrganizationEndpoint: () => mockOrgEndpoint,
       createSpaceEndpoint: () => mockSpaceEndpoint,
+    });
+    this.system.set('data/CMA/ProductCatalog', {
+      getSpaceFeature: getSpaceFeature,
     });
     this.system.set('utils/LaunchDarkly', {
       getCurrentVariation: sinon.stub().resolves(false),
@@ -562,10 +567,13 @@ describe('Access Checker', () => {
       it('returns true when has feature and is admin of space, false otherwise', async () => {
         OrganizationRoles.setUser({ organizationMemberships: [] });
         changeSpace({ hasFeature: false, isSpaceAdmin: true });
+        getSpaceFeature.returns(false);
         expect(await ac.canModifyRoles()).toBe(false);
         changeSpace({ hasFeature: true, isSpaceAdmin: false });
+        getSpaceFeature.returns(true);
         expect(await ac.canModifyRoles()).toBe(false);
         changeSpace({ hasFeature: true, isSpaceAdmin: true });
+        getSpaceFeature.returns(true);
         expect(await ac.canModifyRoles()).toBe(true);
       });
 
@@ -573,12 +581,10 @@ describe('Access Checker', () => {
         OrganizationRoles.setUser({ organizationMemberships: [] });
         changeSpace({ hasFeature: false, isSpaceAdmin: true }); // User is space admin
 
-        // Set the feature to null
-        feature = null;
+        getSpaceFeature.returns(null);
         expect(await ac.canModifyRoles()).toBe(false);
 
-        // Set the feature to undefined
-        feature = undefined;
+        getSpaceFeature.returns(undefined);
         expect(await ac.canModifyRoles()).toBe(false);
       });
 
