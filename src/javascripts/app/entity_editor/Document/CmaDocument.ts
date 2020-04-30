@@ -39,8 +39,8 @@ export function create(
     .changes()
     .filter((isSaving) => !isSaving)
     .map((_) => undefined);
-  const errorBus: PropertyBus<Error> = K.createPropertyBus(null);
-  const cleanupTasks = [];
+  const errorBus: PropertyBus<Error | null> = K.createPropertyBus(null);
+  const cleanupTasks: Function[] = [];
   const sys$ = sysBus.property;
 
   let lastSavedEntity: Entity;
@@ -180,7 +180,9 @@ export function create(
     .bufferWhileBy(isSaving$)
     .merge(afterStatusUpdate$)
     .throttle(saveThrottleMs, { leading: false })
-    .onValue(async (values: Array<string | undefined> | undefined | null) => {
+    .onValue(async (value) => {
+      const values = value as Array<string | undefined> | undefined | null;
+
       // Do nothing if there was no field change since last updating the entity.
       // Values being `null` doesn't make any sense but happens for some reason
       // in some cases, apparently because of throttle().
@@ -295,8 +297,6 @@ export function create(
 
   const data$ = K.combinePropertiesObject({
     sys: sys$,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-    // @ts-ignore
     fields: valuePropertyAt({ changes: changesBus.stream, getValueAt }, ['fields']),
   });
 

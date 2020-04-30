@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 // Number of pages to display in the paginator on either side of the
@@ -23,7 +22,7 @@ type PaginatorProps = {
   pageCount?: number;
 };
 
-function Paginator({ select = _.noop, page = 0, pageCount = 0 }) {
+function Paginator({ select = _.noop, page = 0, pageCount = 0 }: PaginatorProps) {
   if (pageCount < 2) {
     return null;
   }
@@ -46,7 +45,7 @@ function Paginator({ select = _.noop, page = 0, pageCount = 0 }) {
       </span>
       <div data-test-id="paginator.pages">
         {pages.map((value, idx) => {
-          if (value === null) {
+          if (value === -1) {
             return (
               <span key={idx} className="search-results-paginator__page x--dots">
                 …
@@ -104,18 +103,18 @@ function getRange(pageCount: number, activePage: number): number[] {
 }
 
 function getLabels(list: number[]): number[] {
-  list = list.map((i) => i - 1);
+  const newList = list.map((i) => i - 1);
 
-  if (list.length === DISPLAY_PAGES) {
-    if (list[DISPLAY_PAGES - 1] - list[DISPLAY_PAGES - 2] !== 1) {
-      list.splice(DISPLAY_PAGES - 1, 0, null);
+  if (newList.length === DISPLAY_PAGES) {
+    if (newList[DISPLAY_PAGES - 1] - newList[DISPLAY_PAGES - 2] !== 1) {
+      newList.splice(DISPLAY_PAGES - 1, 0, -1);
     }
-    if (list[1] - list[0] !== 1) {
-      list.splice(1, 0, null);
+    if (newList[1] - newList[0] !== 1) {
+      newList.splice(1, 0, -1);
     }
   }
 
-  return list;
+  return newList;
 }
 
 export default Paginator;

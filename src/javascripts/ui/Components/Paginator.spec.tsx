@@ -4,7 +4,7 @@ import 'jest-enzyme';
 import Paginator from './Paginator';
 
 describe('ui/Components/Paginator', () => {
-  const shallow = ({ page, pageCount }) => {
+  const shallow = ({ page, pageCount }: { pageCount?: number; page?: number }) => {
     const onSelectStub = jest.fn();
     const wrapper = Enzyme.shallow(
       <Paginator select={onSelectStub} page={page} pageCount={pageCount} />
@@ -75,7 +75,7 @@ describe('ui/Components/Paginator', () => {
   });
 
   it('shows neighboring pages', function () {
-    function assertPageLabels(wrapper, labels) {
+    function assertPageLabels(wrapper: Enzyme.ShallowWrapper, labels: Array<number | string>) {
       expect(wrapper.find({ 'data-test-id': 'paginator.pages' })).toHaveText(labels.join(''));
     }
 

@@ -7,7 +7,18 @@
     "noEmit": true,
     "allowJs": true,
     "jsx": "react",
-    "lib": ["dom", "es2015"]
+    "lib": ["dom", "es2015"],
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "alwaysStrict": true,
+    "noImplicitThis": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+
+    // enable the following when we ready
+    "noImplicitAny": false
   },
   "include": ["./src/javascripts/**/*"],
   "exclude": ["**/node_modules"]
