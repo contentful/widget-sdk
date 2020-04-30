@@ -30,9 +30,7 @@ export default function register() {
             if (loaded) {
               const input = elem.find('input').eq(0);
               defer(() => {
-                if (input.length > 0) {
-                  input.focus();
-                }
+                input.focus();
               });
             }
           });

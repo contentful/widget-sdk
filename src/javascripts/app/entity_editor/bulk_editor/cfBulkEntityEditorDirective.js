@@ -104,10 +104,7 @@ export default function register() {
             K.onValueScope($scope, bulkEditorContext.scrollTarget$, (key) => {
               if (key === entityContext.key) {
                 $timeout(() => {
-                  const input = $scope.$el.find('input').eq(0);
-                  if (input.length > 0) {
-                    input[0].focus();
-                  }
+                  $scope.$el.find('input').eq(0).focus();
                   $scope.el.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 });
               }
