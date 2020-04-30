@@ -3,6 +3,7 @@ import makeExtensionSpaceMethodsHandlers from './makeExtensionSpaceMethodsHandle
 import makeExtensionNotificationHandlers from './makeExtensionNotificationHandlers';
 import makePageExtensionHandlers from './makePageExtensionHandlers';
 import makeExtensionDialogsHandler from './makeExtensionDialogsHandlers';
+import makeExtensionAccessHandlers from './makeExtensionAccessHandlers';
 import checkDependencies from './checkDependencies';
 import { LOCATION_APP_CONFIG } from '../WidgetLocations';
 import * as Random from 'utils/Random';
@@ -53,6 +54,7 @@ export default function createAppExtensionBridge(dependencies) {
     api.registerHandler('notify', makeExtensionNotificationHandlers(dependencies));
     api.registerHandler('callSpaceMethod', makeExtensionSpaceMethodsHandlers(dependencies));
     api.registerHandler('navigateToPage', makePageExtensionHandlers(dependencies));
+    api.registerHandler('checkAccess', makeExtensionAccessHandlers());
 
     api.registerHandler('callAppMethod', (methodName) => {
       const installation = appHookBus.getInstallation();

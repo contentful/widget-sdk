@@ -7,7 +7,7 @@ import { it } from 'test/utils/dsl';
 describe('spaceContext', () => {
   beforeEach(async function () {
     this.organization = { sys: { id: 'ORG_ID' } };
-    this.AccessChecker = { setSpace: sinon.stub() };
+    this.AccessChecker = { setSpace: sinon.stub(), Action: { READ: 'read' } };
     this.ProductCatalog = { getSpaceFeature: sinon.stub().resolves(false) };
     this.mockSpaceEndpoint = createMockSpaceEndpoint();
     this.initEnforcements = sinon.stub().returns(function () {});

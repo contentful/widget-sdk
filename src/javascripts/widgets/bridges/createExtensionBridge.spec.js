@@ -7,6 +7,7 @@ import * as Navigator from 'states/Navigator';
 import * as SlideInNavigator from 'navigation/SlideInNavigator';
 import * as SlideInNavigatorWithPromise from 'navigation/SlideInNavigator/withPromise';
 import * as WidgetLocations from 'widgets/WidgetLocations';
+import * as AccessChecker from 'access_control/AccessChecker';
 
 function createMockProperty(initial) {
   const bus = createBus();
@@ -67,6 +68,13 @@ jest.mock('navigation/SlideInNavigator/withPromise', () => ({
 
 jest.mock('search/EntitySelector/entitySelector', () => ({
   openFromExtension: jest.fn(() => Promise.resolve('DIALOG RESULT')),
+}));
+
+jest.mock('access_control/AccessChecker', () => ({
+  can: jest.fn(),
+  Action: {
+    CREATE: 'create',
+  },
 }));
 
 describe('createExtensionBridge', () => {
@@ -458,16 +466,29 @@ describe('createExtensionBridge', () => {
     expect(result).toEqual({ navigated: true, path: '/something' });
   });
 
+  it('registers access handlers', () => {
+    const [bridge] = makeBridge();
+    const api = makeStubbedApi();
+    bridge.install(api);
+
+    const registerCalls = api.registerHandler.mock.calls;
+    expect(registerCalls[7][0]).toBe('checkAccess');
+    const checkAcces = registerCalls[7][1];
+
+    checkAcces('create', 'Entry');
+    expect(AccessChecker.can).toHaveBeenCalledWith('create', 'Entry');
+  });
+
   it('registers invalid and active handlers', () => {
     const [bridge, stubs] = makeBridge();
     const api = makeStubbedApi();
     bridge.install(api);
 
     const registerCalls = api.registerHandler.mock.calls;
-    expect(registerCalls[7][0]).toBe('setInvalid');
-    const setInvalid = registerCalls[7][1];
-    expect(registerCalls[8][0]).toBe('setActive');
-    const setActive = registerCalls[8][1];
+    expect(registerCalls[8][0]).toBe('setInvalid');
+    const setInvalid = registerCalls[8][1];
+    expect(registerCalls[9][0]).toBe('setActive');
+    const setActive = registerCalls[9][1];
 
     setInvalid(true, 'de-DE');
     expect(stubs.setInvalid).toBeCalledWith('de-DE', true);

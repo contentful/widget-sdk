@@ -1,4 +1,5 @@
 import makeExtensionSpaceMethodsHandlers from './makeExtensionSpaceMethodsHandlers';
+import makeExtensionAccessHandlers from './makeExtensionAccessHandlers';
 import checkDependencies from './checkDependencies';
 import { LOCATION_ENTRY_FIELD } from '../WidgetLocations';
 import TheLocaleStore from 'services/localeStore';
@@ -46,5 +47,7 @@ export default function createSnapshotExtensionBridge(dependencies) {
       'callSpaceMethod',
       makeExtensionSpaceMethodsHandlers({ ...dependencies, spaceContext }, { readOnly: true })
     );
+
+    api.registerHandler('checkAccess', makeExtensionAccessHandlers());
   }
 }
