@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { identity } from 'lodash';
 import PropTypes from 'prop-types';
+import { get } from 'lodash';
 import { APP_DEFINITION_TYPE, USER_TYPE } from './constants';
 import { getActionPerformer, getActionPerformerName } from './utils';
 
@@ -31,7 +32,9 @@ export const ActionPerformer = ({ children, link, loadingComponent, formatName }
 
   return children({
     actionPerformer,
-    formattedName: formatName(getActionPerformerName(link.sys.linkType, actionPerformer)),
+    formattedName: formatName(
+      getActionPerformerName(get(link, ['sys', 'linkType'], USER_TYPE), actionPerformer)
+    ),
   });
 };
 
@@ -39,9 +42,9 @@ ActionPerformer.propTypes = {
   children: PropTypes.func.isRequired,
   link: PropTypes.shape({
     sys: PropTypes.shape({
-      type: PropTypes.oneOf(['Link']).isRequired,
-      linkType: PropTypes.oneOf([APP_DEFINITION_TYPE, USER_TYPE]).isRequired,
-      id: PropTypes.string.isRequired,
+      type: PropTypes.oneOf(['Link']),
+      linkType: PropTypes.oneOf([APP_DEFINITION_TYPE, USER_TYPE]),
+      id: PropTypes.string,
     }).isRequired,
   }).isRequired,
   loadingComponent: PropTypes.element,

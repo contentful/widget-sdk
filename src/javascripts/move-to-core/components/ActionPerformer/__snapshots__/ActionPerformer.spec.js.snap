@@ -1,5 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`ActionPerformer should default to render a user when there is no linkType defined 1`] = `
+<span
+  data-test-id="basic-variant"
+>
+  Me
+</span>
+`;
+
 exports[`ActionPerformer should format the name when a formatName method is provided 1`] = `
 <span
   data-test-id="basic-variant"

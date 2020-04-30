@@ -29,7 +29,7 @@ describe('getUser', () => {
         get: () => Promise.resolve(null),
       },
     });
-    expect(await getUser('i-do-not-exist')).toBeNull();
+    expect(await getUser('i-do-not-exist')).toBe('');
   });
 });
 
@@ -43,7 +43,7 @@ describe('getApp', () => {
       getByKeys: () => Promise.resolve([]),
     });
 
-    expect(await getApp('i-do-not-exists')).toBeUndefined();
+    expect(await getApp('i-do-not-exists')).toBe('');
   });
 });
 

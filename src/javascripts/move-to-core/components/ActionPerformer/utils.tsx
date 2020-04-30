@@ -1,6 +1,7 @@
 import React from 'react';
 import Icon from 'ui/Components/Icon';
 import { styles } from './styles';
+import { get } from 'lodash';
 import { getModule } from 'core/NgRegistry';
 import { Tooltip } from '@contentful/forma-36-react-components';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
@@ -9,11 +10,18 @@ import { APP_DEFINITION_TYPE, USER_TYPE } from './constants';
 
 export async function getUser(id: string) {
   const spaceContext = getModule('spaceContext');
-  return await spaceContext.users.get(id);
+  const user = await spaceContext.users.get(id);
+  if (!user) {
+    return '';
+  }
+  return user;
 }
 
 export async function getApp(id: string) {
   const [app] = await getCustomWidgetLoader().getByKeys([[NAMESPACE_APP, id]]);
+  if (!app) {
+    return '';
+  }
   return app;
 }
 
@@ -43,13 +51,19 @@ export function formatUserName(user) {
 }
 
 export function getActionPerformerName(linkType: string, actor) {
-  if (linkType === 'User') {
-    return formatUserName(actor);
+  switch (linkType) {
+    case APP_DEFINITION_TYPE:
+      return formatAppName(actor);
+    case USER_TYPE:
+    default:
+      return formatUserName(actor);
   }
-  return formatAppName(actor);
 }
 
-export function getActionPerformer({ sys: { linkType, id } }) {
+export function getActionPerformer(link) {
+  const linkType = get(link, ['sys', 'linkType'], USER_TYPE);
+  const id = get(link, ['sys', 'id'], '');
+
   switch (linkType) {
     case APP_DEFINITION_TYPE:
       return getApp(id);

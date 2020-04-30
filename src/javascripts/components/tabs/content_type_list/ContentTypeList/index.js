@@ -112,7 +112,15 @@ class ContentTypeList extends Component {
                         ) : null}
                       </TableCell>
                       <TableCell className="x--small-cell" data-test-id="cell-created-by">
-                        <ActionPerformerName link={get(contentType, ['sys', 'publishedBy'], {})} />
+                        <ActionPerformerName
+                          link={get(contentType, ['sys', 'publishedBy'], {
+                            sys: {
+                              linkType: 'User',
+                              id: '',
+                              type: 'Link',
+                            },
+                          })}
+                        />
                       </TableCell>
                       <TableCell className="x--small-cell" data-test-id="cell-status">
                         <Tag tagType={statusType(contentType)}>{statusLabel(contentType)}</Tag>

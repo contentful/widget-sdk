@@ -48,4 +48,19 @@ describe('ActionPerformer', () => {
     );
     expect(await findByTestId('basic-variant')).toMatchSnapshot();
   });
+
+  it('should default to render a user when there is no linkType defined', async () => {
+    const brokenLink = {
+      sys: {
+        type: 'Link',
+        id: mockUser.sys.id,
+      },
+    };
+    const { findByTestId } = render(
+      <ActionPerformer link={brokenLink}>
+        {({ formattedName }) => <span data-test-id="basic-variant">{formattedName}</span>}
+      </ActionPerformer>
+    );
+    expect(await findByTestId('basic-variant')).toMatchSnapshot();
+  });
 });
