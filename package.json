@@ -197,7 +197,7 @@
     "eslint-plugin-rulesdir": "0.1.0",
     "express": "^4.17.1",
     "file-loader": "^5.0.2",
-    "fs-extra": "^0.30.0",
+    "fs-extra": "^9.0.0",
     "glob": "^5.0.14",
     "html-loader": "^0.5.5",
     "html-minifier": "^4.0.0",
