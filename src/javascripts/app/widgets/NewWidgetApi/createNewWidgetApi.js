@@ -9,6 +9,7 @@ import { createDialogsApi } from './createDialogsApi';
 import { createSpaceApi } from './createSpaceApi';
 import { createContentTypeApi } from './createContentTypeApi';
 import checkDependencies from 'widgets/bridges/checkDependencies';
+import makeExtensionAccessHandlers from 'widgets/bridges/makeExtensionAccessHandlers';
 
 /**
  * @typedef { import("contentful-ui-extensions-sdk").FieldAPI } FieldAPI
@@ -20,6 +21,7 @@ import checkDependencies from 'widgets/bridges/checkDependencies';
  * @typedef { import("contentful-ui-extensions-sdk").EntryAPI } EntryAPI
  * @typedef { import("contentful-ui-extensions-sdk").SpaceAPI } SpaceAPI
  * @typedef { import("contentful-ui-extensions-sdk").ContentType } ContentType
+ * @typedef { import("contentful-ui-extensions-sdk").AccessAPI } AccessAPI
  */
 
 /**
@@ -42,7 +44,8 @@ import checkDependencies from 'widgets/bridges/checkDependencies';
  *  parameters: ParametersAPI,
  *  notifier: NotifierAPI,
  *  navigator: NavigatorAPI,
- *  scheduledActions: any
+ *  scheduledActions: any,
+ *  access: AccessAPI,
  * }}
  */
 export default function createNewWidgetApi(dependencies) {
@@ -122,6 +125,9 @@ function createSpaceScopedWidgetApi({ cma: cmaOrBatchingApiClient, initialConten
     parameters: {
       installation: {},
       instance: {},
+    },
+    access: {
+      can: makeExtensionAccessHandlers(),
     },
   };
 }
