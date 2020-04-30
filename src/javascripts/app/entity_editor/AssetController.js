@@ -16,6 +16,7 @@ import initSidebarTogglesProps from 'app/entity_editor/entityEditorSidebarToggle
 import { getModule } from 'core/NgRegistry';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 import { statusProperty, valuePropertyAt } from './Document';
+import * as Navigator from 'states/Navigator';
 
 /**
  * @param {Object} $scope
@@ -44,7 +45,13 @@ export default async function create($scope, editorData, preferences) {
   initDocErrorHandler($scope, $scope.otDoc.state.error$);
 
   K.onValueScope($scope, statusProperty($scope.otDoc), (status) => {
-    $scope.statusNotificationProps = { status, entityLabel: 'asset' };
+    const entityRef = Navigator.makeEntityRef($scope.editorData.entity.data);
+    $scope.statusNotificationProps = {
+      status,
+      entityLabel: 'asset',
+      // Drop 'previousEntries' (comes from slide-in/bulk editor) to open the specific entry details page
+      entityHref: Navigator.href(entityRef).split('?').shift(),
+    };
   });
 
   installTracking(entityInfo, $scope.otDoc, K.scopeLifeline($scope));

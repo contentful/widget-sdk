@@ -3216,9 +3216,6 @@ pre,
   .workbench-layer:not(.workbench-layer--is-current) .workbench-header__icon {
     display: none;
   }
-  .workbench-layer:not(.workbench-layer--is-current) .entity-editor__notification {
-    display: none;
-  }
   @-webkit-keyframes slide-in-from-right {
     from {
       -webkit-transform: translate3d(100px, 0, 0);
@@ -8187,18 +8184,6 @@ pre,
   .entity-editor-form {
     padding-left: 2rem;
     padding-right: 2rem;
-  }
-  .entity-editor__notification {
-    line-height: 1.5;
-    padding: 0.848571428571429em 2rem 0;
-    border-bottom: 1px solid #d0a2a0;
-    background: #fbe3e2;
-    margin-top: 0;
-    margin-bottom: 1.285714285714286em;
-    color: #d9453f;
-  }
-  .entity-editor__notification p {
-    margin-bottom: 0.848571428571429em;
   }
   .sticky-parent {
     padding-top: 0;

@@ -31,9 +31,6 @@ const styles = {
     width: '360px',
     padding: '0',
   }),
-  statusNotification: css({
-    margin: `0 -${tokens.spacingL}`,
-  }),
   tabs: css({
     display: 'flex',
     paddingLeft: tokens.spacing2Xl,
@@ -221,7 +218,7 @@ const EntryEditorWorkbench = ({
                 </Tab>
               ))}
           </Tabs>
-          <StatusNotification {...statusNotificationProps} className={styles.statusNotification} />
+          <StatusNotification {...statusNotificationProps} />
           {Object.keys(tabs)
             .filter((key) => tabs[key].isVisible)
             .map((key) => (

@@ -3,6 +3,7 @@ import { groupBy, isEmpty, keys } from 'lodash';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes';
 import DocumentStatusCode from 'data/document/statusCode';
 import TheLocaleStore from 'services/localeStore';
+import * as Navigator from 'states/Navigator';
 import { statusProperty } from './Document';
 
 export default ($scope, { entityLabel, shouldHideLocaleErrors, emitter }) => {
@@ -115,7 +116,13 @@ function handleTopNavErrors($scope, entityLabel, shouldHideLocaleErrors) {
     ) {
       return;
     }
-    $scope.statusNotificationProps = { status, entityLabel };
+    const entityRef = Navigator.makeEntityRef($scope.editorData.entity.data);
+    $scope.statusNotificationProps = {
+      status,
+      entityLabel,
+      // Drop 'previousEntries' (comes from slide-in/bulk editor) to open the specific entry details page
+      entityHref: Navigator.href(entityRef).split('?').shift(),
+    };
   });
 }
 
