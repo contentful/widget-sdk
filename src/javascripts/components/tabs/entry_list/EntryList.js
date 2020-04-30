@@ -43,6 +43,7 @@ export default function EntryList({
     onClick: () => orderColumnBy(displayFieldName),
     direction: order.direction,
     type: 'EntryTitle',
+    colWidth: '20%',
   };
 
   const enrichedDisplayedFields = [
@@ -53,7 +54,6 @@ export default function EntryList({
       isActiveSort: isOrderField(field),
       onClick: () => orderColumnBy(field),
       direction: order.direction,
-      colWidth: '17%',
     })),
   ];
 

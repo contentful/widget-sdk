@@ -243,6 +243,9 @@ const EntityList = ({
     { isSelected, clearSelected, toggleSelected, toggleAllSelected },
   ] = useSelectedEntities({ entities });
 
+  // columnCount is the number of displayed fields + 2 (checkbox column and status column will always be there)
+  const columnCount = displayedFields.length + 2;
+
   return (
     <Table
       className={cn(className, styles.table)}
@@ -291,6 +294,7 @@ const EntityList = ({
           </TableCell>
         </TableRow>
         <BulkActionsRow
+          colSpan={columnCount}
           entityType={entityType}
           selectedEntities={selected}
           updateEntities={updateEntities}
@@ -302,7 +306,7 @@ const EntityList = ({
       </TableHead>
       <TableBody>
         {isLoading ? (
-          <SkeletonRow rowCount={entities.length || 10} columnCount={displayedFields.length + 2} />
+          <SkeletonRow rowCount={entities.length || 10} columnCount={columnCount} />
         ) : (
           entities.map((entity, index) => {
             const entityId = entity.getId();
