@@ -468,8 +468,8 @@ workflows:
                 env: 'flinkly'
           requires:
             - build-with-statistics
-      - ui-extensions-sdk/run:
-          name: run-ui-extensions-integration
+      # - ui-extensions-sdk/run:
+      #     name: run-ui-extensions-integration
       - saucelabs/run:
           name: run-win10-edge-tests
           browser: 'MicrosoftEdge'
