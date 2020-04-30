@@ -146,21 +146,19 @@ describe('CmaDocument', () => {
       });
 
       await doc.setValueAt(['fields', 'fieldA', 'en-US'], 'en-US-updated');
-      jest.runAllTimers();
-      // Ensure the document is saving, i.e. is waiting for CMA request to finish.
+      jest.advanceTimersByTime(THROTTLE_TIME);
+
       K.assertCurrentValue(doc.state.isSaving$, true);
       await doc.setValueAt(['fields', 'fieldB', 'en-US'], 'value set during saving');
       cmaResolve();
       await wait();
       K.assertCurrentValue(doc.state.isSaving$, false);
+
       // Ensure the value was not overwritten by the response entity.
       expect(doc.getValueAt(['fields', 'fieldB', 'en-US'])).toBe('value set during saving');
 
-      // Start a new CMA request with fake timer.
-      await doc.setValueAt(fieldPath, doc.getValueAt(fieldPath));
       jest.advanceTimersByTime(THROTTLE_TIME - 100);
       expect(entityRepo.update).toBeCalledTimes(1);
-
       jest.advanceTimersByTime(100);
       expect(entityRepo.update).toBeCalledTimes(2);
       const [entity] = entityRepo.update.mock.calls[1]; // take second call
@@ -183,17 +181,27 @@ describe('CmaDocument', () => {
         });
       });
 
-      await doc.setValueAt(['fields', 'fieldA', 'en-US'], 'en-US-updated');
+      await doc.setValueAt(['fields', 'fieldA', 'en-US'], 'A updated');
 
       jest.advanceTimersByTime(THROTTLE_TIME);
-      expect(entityRepo.update).toBeCalledTimes(1);
 
-      await doc.setValueAt(['fields', 'fieldB', 'en-US'], 'en-US-updated');
+      // Second change, while initial change is being saved:
+      await doc.setValueAt(['fields', 'fieldB', 'en-US'], 'B updated');
 
-      jest.advanceTimersByTime(THROTTLE_TIME + 100);
+      jest.advanceTimersByTime(THROTTLE_TIME * 2);
       cmaResolve();
       await wait();
+      expect(entityRepo.update).toBeCalledTimes(1); // Only first change got persisted.
+
+      jest.advanceTimersByTime(THROTTLE_TIME - 100);
       expect(entityRepo.update).toBeCalledTimes(1);
+      jest.advanceTimersByTime(100);
+      expect(entityRepo.update).toBeCalledTimes(2); // Second change just got persisted.
+      const [entity] = entityRepo.update.mock.calls[1];
+      expect(entity.fields).toMatchObject({
+        fieldA: { 'en-US': 'A updated' },
+        fieldB: { 'en-US': 'B updated' },
+      });
     });
   });
 
@@ -473,7 +481,8 @@ describe('CmaDocument', () => {
     beforeEach(() => {
       asset = newAsset();
 
-      entityRepo.onAssetFileProcessed.mockImplementation((_assetId, callback) => {
+      entityRepo.onAssetFileProcessed.mockImplementation((assetId, callback) => {
+        expect(assetId).toBe(asset.sys.id);
         handler = callback;
       });
 
