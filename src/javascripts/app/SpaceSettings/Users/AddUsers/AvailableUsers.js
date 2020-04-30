@@ -91,7 +91,7 @@ function UserOption({ orgMembership, selected, onChange }) {
       data-test-id="add-users.user-list.user"
       role="option"
       aria-selected={selected}>
-      <UserCard user={orgMembership.sys.user} status={orgMembership.status} size="small" />
+      <UserCard user={orgMembership.sys.user} status={orgMembership.sys.status} size="small" />
       {selected && <Icon icon="CheckCircleTrimmed" color="positive" />}
       {!selected && <Icon icon="PlusCircleTrimmed" color="muted" />}
     </div>

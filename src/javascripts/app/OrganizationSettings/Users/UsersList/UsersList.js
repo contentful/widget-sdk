@@ -299,7 +299,7 @@ class UsersList extends React.Component {
                               component={TextLink}
                               {...this.getLinkToUser(membership)}
                               className={styles.membershipLink}>
-                              <UserCard user={membership.sys.user} status={membership.status} />
+                              <UserCard user={membership.sys.user} status={membership.sys.status} />
                             </StateLink>
                           </TableCell>
                           <TableCell>{startCase(membership.role)}</TableCell>

@@ -199,7 +199,7 @@ export default function UserDetails({
         onBack={handleBackButtonClicked}
       />
       <Workbench.Content>
-        <UserCard user={membership.sys.user} size="large" status={membership.status} />
+        <UserCard user={membership.sys.user} size="large" status={membership.sys.status} />
         <UserAttributes
           membership={membership}
           isSelf={isSelf}

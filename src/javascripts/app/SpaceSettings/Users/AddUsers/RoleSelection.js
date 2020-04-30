@@ -105,7 +105,11 @@ export default function RoleSelection({
               key={orgMembership.sys.id}
               className={styles.user}
               data-test-id="add-users.role-selection.user-option">
-              <UserCard user={orgMembership.sys.user} status={orgMembership.status} size="small" />
+              <UserCard
+                user={orgMembership.sys.user}
+                status={orgMembership.sys.status}
+                size="small"
+              />
               <div className={styles.roleSelector}>
                 {invalidUsers.includes(orgMembership) && (
                   <Icon icon="ErrorCircle" color="negative" className={styles.errorIcon} />
