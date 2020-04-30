@@ -8,7 +8,6 @@ import {
   hasAnOrgWithSpaces,
   isAutomationTestUser,
   getUserSpaceRoles,
-  getUserCreationDateUnixTimestamp,
 } from 'data/User';
 import * as config from 'Config';
 import * as logger from 'services/logger';
@@ -78,7 +77,7 @@ async function ldUser(user, org, space) {
     isAutomationTestUser: isAutomationTestUser(user),
     currentUserOwnsAtleastOneOrg: ownsAtleastOneOrg(user),
     currentUserAge: getUserAgeInDays(user),
-    currentUserCreationDate: getUserCreationDateUnixTimestamp(user),
+    currentUserCreationDate: new Date(user.sys.createdAt).getTime(),
   };
 
   if (org) {

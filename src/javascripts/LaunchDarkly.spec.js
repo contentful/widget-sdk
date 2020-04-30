@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import moment from 'moment';
 import ldClient from 'ldclient-js';
 import { getVariation, clearCache } from './LaunchDarkly';
 import { getOrganization, getSpace, getUser } from 'services/TokenStore';
@@ -46,6 +45,7 @@ jest.mock('debug/EnforceFlags', () => ({
 }));
 
 const orgCreationDate = new Date(2018, 12, 25);
+const userCreationDate = new Date(2018, 12, 25);
 
 const organization = {
   name: 'Awesome Org',
@@ -89,7 +89,7 @@ describe('LaunchDarkly', () => {
       organizationMemberships: [organization],
       signInCount: 10,
       sys: {
-        createdAt: moment().subtract(7, 'days').toISOString(),
+        createdAt: userCreationDate.toISOString(),
         id: 'user-id-1',
       },
     };
@@ -229,7 +229,7 @@ describe('LaunchDarkly', () => {
           isAutomationTestUser: true,
           currentUserOwnsAtleastOneOrg: true,
           currentUserAge: 7,
-          currentUserCreationDate: 1234567890,
+          currentUserCreationDate: userCreationDate.getTime(),
         },
       });
     });
@@ -252,7 +252,7 @@ describe('LaunchDarkly', () => {
           isAutomationTestUser: true,
           currentUserOwnsAtleastOneOrg: true,
           currentUserAge: 7,
-          currentUserCreationDate: 1234567890,
+          currentUserCreationDate: userCreationDate.getTime(),
           currentOrgCreationDate: orgCreationDate.getTime(),
           currentOrgId: 'abcd_org',
           currentOrgPricingVersion: 'pricing_version_2',
@@ -286,7 +286,7 @@ describe('LaunchDarkly', () => {
           isAutomationTestUser: true,
           currentUserOwnsAtleastOneOrg: true,
           currentUserAge: 7,
-          currentUserCreationDate: 1234567890,
+          currentUserCreationDate: userCreationDate.getTime(),
 
           currentSpaceId: 'abcd_space',
           currentUserSpaceRole: ['editor', 'translator3'],
@@ -308,7 +308,7 @@ describe('LaunchDarkly', () => {
           isAutomationTestUser: true,
           currentUserOwnsAtleastOneOrg: true,
           currentUserAge: 7,
-          currentUserCreationDate: 1234567890,
+          currentUserCreationDate: userCreationDate.getTime(),
 
           currentOrgCreationDate: orgCreationDate.getTime(),
           currentOrgId: 'abcd_org',
