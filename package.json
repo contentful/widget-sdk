@@ -218,7 +218,7 @@
     "karma-jasmine": "1.1.2",
     "karma-junit-reporter": "^1.2.0",
     "karma-mocha-reporter": "2.2.5",
-    "karma-nested-reporter": "0.1.6",
+    "karma-nested-reporter": "0.1.7",
     "karma-nyan-reporter": "0.2.5",
     "karma-sourcemap-loader": "0.3.7",
     "karma-spec-json-reporter": "0.0.8",
