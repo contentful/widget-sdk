@@ -205,6 +205,37 @@ describe('CmaDocument', () => {
     });
   });
 
+  describe('when CMA call fails due to a network error', () => {
+    it('retries to save every 5s until successful', async () => {
+      entityRepo.update.mockImplementation(() => {
+        throw newError('-1', 'API request failed');
+      });
+
+      await doc.setValueAt(['fields', 'fieldA', 'en-US'], 'en-US-updated');
+      jest.advanceTimersByTime(THROTTLE_TIME);
+      expect(entityRepo.update).toBeCalledTimes(1);
+
+      jest.advanceTimersByTime(THROTTLE_TIME);
+      expect(entityRepo.update).toBeCalledTimes(2);
+
+      jest.advanceTimersByTime(THROTTLE_TIME);
+      expect(entityRepo.update).toBeCalledTimes(3);
+
+      entityRepo.update.mockImplementation((entity) => {
+        entry = cloneDeep(entity);
+        entry.sys.version++;
+        return Promise.resolve(entry);
+      });
+
+      jest.advanceTimersByTime(THROTTLE_TIME);
+      expect(entityRepo.update).toBeCalledTimes(4);
+
+      jest.runAllTimers();
+      await wait();
+      expect(entityRepo.update).toBeCalledTimes(4);
+    });
+  });
+
   describe('state update', () => {
     it('persists pending changes first and immediately', async () => {
       entityRepo.update.mockImplementationOnce((entity) => {
@@ -340,6 +371,16 @@ describe('CmaDocument', () => {
         K.assertCurrentValue(doc.state.error$, DocError.OpenForbidden());
       });
 
+      it('emits Disconnected on -1 error code', async () => {
+        entityRepo.update.mockImplementationOnce(() => {
+          throw newError('-1', 'API request failed');
+        });
+        await doc.setValueAt(fieldPath, 'en-US-updated');
+        jest.runAllTimers();
+        // We don't call `await wait()` for this error because it will clear out after a retry
+        K.assertCurrentValue(doc.state.error$, DocError.Disconnected());
+      });
+
       it('emits CmaInternalServerError(originalError) on ServerError error code', async () => {
         const error = newError('ServerError', 'API request failed');
         entityRepo.update.mockImplementationOnce(() => {
@@ -361,8 +402,6 @@ describe('CmaDocument', () => {
         await wait();
         K.assertCurrentValue(doc.state.error$, DocError.CmaInternalServerError(error));
       });
-
-      // TODO: when working on status$ ticket: not connected error.
     });
   });
 

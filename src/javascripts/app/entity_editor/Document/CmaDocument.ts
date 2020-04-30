@@ -16,6 +16,9 @@ import { EntityRepo, SpaceEndpoint } from 'data/CMA/EntityRepo';
 import changedEntityFieldPaths from './changedEntityFieldPaths';
 
 export const THROTTLE_TIME = 5000;
+const NETWORK_ERROR = Symbol('NETWORK_ERROR');
+const STATUS_UPDATED = Symbol('STATUS_UPDATED');
+const DOCUMENT_SAVED = Symbol('DOCUMENT_SAVED');
 
 /**
  * Used to edit an entry or asset through the CMA.
@@ -39,16 +42,22 @@ export function create(
   normalize();
 
   const sysBus: PropertyBus<EntitySys> = K.createPropertyBus(entity.sys);
+  const sys$ = sysBus.property;
   const changesBus: StreamBus<string[]> = K.createStreamBus();
   const isSavingBus: PropertyBus<boolean> = K.createPropertyBus(false);
   const isSaving$: Property<boolean, any> = isSavingBus.property.skipDuplicates();
-  const afterSave$: Stream<undefined, any> = isSaving$
+  const afterSave$: Stream<symbol, any> = isSaving$
     .changes()
     .filter((isSaving) => !isSaving)
-    .map((_) => undefined);
+    .map((_) => DOCUMENT_SAVED);
+
   const errorBus: PropertyBus<Error | null> = K.createPropertyBus(null);
+  const error$ = errorBus.property.skipDuplicates((a, b) => a?.constructor === b?.constructor);
+  const onNetworkError$: Stream<symbol, any> = errorBus.property
+    .changes()
+    .filter((error) => error instanceof DocError.Disconnected)
+    .map((_) => NETWORK_ERROR);
   const cleanupTasks: Function[] = [];
-  const sys$ = sysBus.property;
 
   let lastSavedEntity: Entity;
   let lastSavedEntityFetchedAt: Date;
@@ -71,10 +80,10 @@ export function create(
     spaceEndpoint,
     saveEntity // preApplyFn - triggered and awaited before applying the state change
   );
-  const afterStatusUpdate$: Stream<undefined, any> = resourceState.inProgress$
+  const afterStatusUpdate$: Stream<symbol, any> = resourceState.inProgress$
     .changes()
     .filter((isSaving) => !isSaving)
-    .map((_) => undefined);
+    .map((_) => STATUS_UPDATED);
 
   if (entity.sys.type === 'Asset') {
     const unsubscribe = entityRepo.onAssetFileProcessed(entity.sys.id, handleAssetFileProcessed);
@@ -94,27 +103,24 @@ export function create(
   // any changes during the last update.
   changesBus.stream
     .filter((path) => PathUtils.isPrefix(['fields'], path))
+    // The afterSave$ stream is here to make .bufferWhileBy check the value of isSaving$ again
     .merge(afterSave$)
     .bufferWhileBy(isSaving$)
+    // We can ignore the buffer when it contains no field changes (only the value emited by afterSave$)
+    .filter((values) => !(values.length === 1 && values[0] === DOCUMENT_SAVED))
+    // In case of a status update we try to save just to be on the save side,
+    // in case there's been edits while updating.
     .merge(afterStatusUpdate$)
+    .merge(onNetworkError$)
     .throttle(saveThrottleMs, { leading: false })
-    .onValue((value) => {
-      const values = value as Array<string | undefined> | undefined | null;
-
-      // Do nothing if there was no field change since last updating the entity.
-      // Values being `null` doesn't make any sense but happens for some reason
-      // in some cases, apparently because of throttle().
-      // In case of a status update (values === `undefined`) we try to save just
-      // to be on the save side, in case there's been edits while updating.
-      if (values === null || (values?.length === 1 && values[0] === undefined)) {
-        return;
-      }
+    .onValue((_value: Array<string[] | symbol> | symbol): void => {
+      // TODO: _value being `null` doesn't make any sense but happens for some reason
+      // in some cases, apparently because of throttle(). Investigate why.
       saveEntityAfterAnyStatusUpdate();
     });
 
   /**
-   * @description
-   * Property that is `true` if all of the following are true
+   * Property that is `true` if all of the following are true:
    * - The user has general permissions to change the entity
    * - The entity is not archived and has not been deleted
    *
@@ -126,7 +132,6 @@ export function create(
     .skipDuplicates();
 
   /**
-   * @description
    * Property that is `false` if and only if the document is published
    * and does not contain changes relative to the published version.
    *
@@ -188,7 +193,7 @@ export function create(
        *
        * So it also might then contain other errors: document disconnected, open error.
        */
-      error$: errorBus.property,
+      error$,
     },
 
     /**
@@ -292,7 +297,7 @@ export function create(
       }
     }
     // NOTE: We do not re-implement empty value `RichTextFieldSetter` behavior for now
-    //  as we can rely on the RT editor to be respons ible for giving us `undefined` as
+    //  as we can rely on the RT editor to be responsible for giving us `undefined` as
     //  an empty value.
 
     set(entity, path, value);
@@ -314,7 +319,7 @@ export function create(
     return entity;
   }
 
-  async function saveEntityAfterAnyStatusUpdate(...args) {
+  async function saveEntityAfterAnyStatusUpdate(...args): Promise<void> {
     if (K.getValue(resourceState.inProgress$)) {
       await afterStatusUpdate$.changes().take(1).toPromise();
       return saveEntityAfterAnyStatusUpdate(...args);
@@ -326,7 +331,7 @@ export function create(
    * @param options.updateEmitters Is used to save an entity on destroy without updating
    *  the document that is already destroyed once CMA response is received
    */
-  async function saveEntity(options = { updateEmitters: true }) {
+  async function saveEntity(options = { updateEmitters: true }): Promise<void> {
     // Wait for current ongoing update, then do the next one.
     if (K.getValue(isSaving$)) {
       await afterSave$.changes().take(1).toPromise();
@@ -365,7 +370,7 @@ export function create(
         VersionMismatch: DocError.VersionMismatch(),
         AccessDenied: DocError.OpenForbidden(),
         ServerError: DocError.CmaInternalServerError(e),
-        '-1': DocError.Disconnected(), // Is there a better way to detect if disconnected?
+        '-1': DocError.Disconnected(),
       };
       errorBus.set(errors[e.code] || errors.ServerError);
       isSavingBus.set(false);
