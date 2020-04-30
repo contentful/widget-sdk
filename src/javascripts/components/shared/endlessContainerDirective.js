@@ -29,7 +29,7 @@ export default function register() {
       }
 
       function handleAtBottom() {
-        if (!elem[0].matches(':visible')) return;
+        if (!elem.is(':visible')) return;
         const scrollBottom = elem.prop('scrollTop', 0) + elem.prop('clientHeight');
         if (elem.prop('scrollHeight') - getThreshold() <= scrollBottom) {
           scope.$eval(attr.atBottom);
