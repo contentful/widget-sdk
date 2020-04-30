@@ -120,11 +120,13 @@ describe('Modal dialog service', () => {
       });
 
       it('properly removes the global event listeners', () => {
-        $(window).trigger('keyup');
+        const event = document.createEvent('Event');
+        event.initEvent('keyup');
+        document.dispatchEvent(event);
         sinon.assert.called(dialog.scope.$apply);
         dialog.destroy();
         dialog.scope = { $apply: sinon.stub(), $destroy: sinon.stub() };
-        $(window).trigger('keyup');
+        document.dispatchEvent(event);
         sinon.assert.notCalled(dialog.scope.$apply);
       });
 

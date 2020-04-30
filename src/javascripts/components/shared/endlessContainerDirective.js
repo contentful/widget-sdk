@@ -19,7 +19,7 @@ export default function register() {
       });
 
       elem.on('scroll', () => {
-        elem.toggleClass('scrolled', elem.scrollTop() > 0);
+        elem.toggleClass('scrolled', elem.prop('scrollTop', 0) > 0);
         debouncedHandleAtBottom();
       });
 
@@ -29,8 +29,8 @@ export default function register() {
       }
 
       function handleAtBottom() {
-        if (!elem.is(':visible')) return;
-        const scrollBottom = elem.scrollTop() + elem.prop('clientHeight');
+        if (!elem[0].matches(':visible')) return;
+        const scrollBottom = elem.prop('scrollTop', 0) + elem.prop('clientHeight');
         if (elem.prop('scrollHeight') - getThreshold() <= scrollBottom) {
           scope.$eval(attr.atBottom);
         }

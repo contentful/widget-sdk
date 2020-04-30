@@ -14,6 +14,7 @@ async function generate() {
   const testDepNames = [
     'angular-mocks',
     'enzyme',
+    'jquery',
     'enzyme-adapter-react-16',
     'react-dom/test-utils',
     'sinon',

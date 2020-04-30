@@ -104,7 +104,7 @@ export default function register() {
     require: 'ngModel',
 
     link: function (scope, elem, attrs, modelCtrl) {
-      if (elem.is('input, textarea')) {
+      if (elem[0].matches('input, textarea')) {
         scope.$watch(
           () => modelCtrl.$invalid && !modelCtrl.hideErrors,
           (isInvalid) => {

@@ -29,7 +29,7 @@ export default function register() {
     restrict: 'E',
     scope: { component: '=' },
     link: function ($scope, $element) {
-      const mountPoint = createMountPoint($element.get(0));
+      const mountPoint = createMountPoint($element[0]);
       $scope.$watch('component', mountPoint.render);
       $scope.$on('$destroy', mountPoint.destroy);
     },
