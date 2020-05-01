@@ -3,7 +3,7 @@ import { iframeStateWrapper } from './utils';
 import { noop } from 'lodash';
 import ProfileNavigationBar from 'navigation/ProfileNavigationBar';
 import Settings from 'app/UserProfile/Settings';
-import SpaceMemberships from 'app/UserSettings/SpaceMemberships';
+import SpaceMembershipsRouter from 'app/UserSettings/SpaceMembershipsRouter';
 import OrganizationMembershipsRoute from 'app/UserSettings/OrganizationsRoute';
 import { UserCMATokensRoute } from 'features/api-keys-management';
 
@@ -16,7 +16,7 @@ const user = {
 const spaceMemberships = {
   name: 'space_memberships',
   url: '/space_memberships',
-  component: SpaceMemberships,
+  component: SpaceMembershipsRouter,
 };
 
 const organizationMemberships = {

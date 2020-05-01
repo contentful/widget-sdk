@@ -12,14 +12,22 @@ import * as SpaceMembershipRepository from 'access_control/SpaceMembershipReposi
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { ModalLauncher } from 'core/components/ModalLauncher';
 import { FetcherLoading } from 'app/common/createFetcherComponent';
+import { go } from 'states/Navigator';
 
-import SpaceMembershipsPresentation from './SpaceMembershipsPresentation';
+import SpaceMembershipsList from './SpaceMembershipsList';
 
-const SpaceMemberships = () => {
+const SpaceMembershipsRouter = () => {
   const [spaces, setSpaces] = useState(null);
   useEffect(() => {
     (async () => setSpaces(await TokenStore.getSpaces()))();
   }, []);
+
+  const goToSpace = (space) => {
+    go({
+      path: ['spaces', 'detail', 'home'],
+      params: { spaceId: space.sys.id },
+    });
+  };
 
   const onLeave = useCallback(
     async (space) => {
@@ -34,7 +42,9 @@ const SpaceMemberships = () => {
             onCancel={() => onClose(false)}>
             <React.Fragment>
               <Typography>
-                <Paragraph>You are about to leave space {space.name}.</Paragraph>
+                <Paragraph>
+                  You are about to leave space <strong>{space.name}.</strong>
+                </Paragraph>
                 <Paragraph>Do you want to proceed?</Paragraph>
               </Typography>
             </React.Fragment>
@@ -63,7 +73,7 @@ const SpaceMemberships = () => {
     return <FetcherLoading message="Loading spaces..." />;
   }
 
-  return <SpaceMembershipsPresentation onLeave={onLeave} spaces={spaces} />;
+  return <SpaceMembershipsList onLeave={onLeave} goToSpace={goToSpace} spaces={spaces} />;
 };
 
-export default SpaceMemberships;
+export default SpaceMembershipsRouter;
