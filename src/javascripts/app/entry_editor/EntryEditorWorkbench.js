@@ -93,6 +93,7 @@ const EntryEditorWorkbench = ({
 
       const isFeatureEnabled = await getVariation(ALL_REFERENCES_DIALOG, {
         organizationId: spaceData.organization.sys.id,
+        spaceId: spaceData.sys.id,
         environmentId: environment.sys.id,
       });
       setTabVisible({ entryReferences: isFeatureEnabled });
