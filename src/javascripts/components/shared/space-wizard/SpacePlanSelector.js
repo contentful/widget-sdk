@@ -186,7 +186,7 @@ function getCurrentPlan(spaceRatePlans) {
 }
 
 function getHighestPlan(spaceRatePlans) {
-  return spaceRatePlans.slice().sort((planX, planY) => planY.price >= planX.price)[0];
+  return [...spaceRatePlans].sort((planX, planY) => planY.price - planX.price)[0];
 }
 
 export default SpacePlanSelector;

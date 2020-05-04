@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
+import { get } from 'lodash';
 import { css } from 'emotion';
-import { joinAnd } from 'utils/StringUtils';
 import tokens from '@contentful/forma-36-tokens';
 import {
+  TextLink,
   TableRow,
   TableCell,
   Tooltip,
@@ -13,20 +14,18 @@ import {
   DropdownListItem,
 } from '@contentful/forma-36-react-components';
 
-import { get } from 'lodash';
-
 import { go } from 'states/Navigator';
 
-import { getEnabledFeatures } from 'utils/SubscriptionUtils';
 import { getUserName } from 'app/OrganizationSettings/Users/UserUtils';
+import { joinAnd } from 'utils/StringUtils';
+import { getEnabledFeatures } from 'utils/SubscriptionUtils';
 
 import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 import Price from 'ui/Components/Price';
 import QuestionMarkIcon from 'svg/QuestionMarkIcon.svg';
 
 const styles = {
-  dotsRow: css({
-    textAlign: 'right',
+  moreButton: css({
     verticalAlign: 'middle',
   }),
   spaceName: css({
@@ -47,11 +46,10 @@ const styles = {
   }),
 };
 
-function SpacePlanRow({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace }) {
+function SpacePlanRow({ basePlan, plan, onChangeSpace, onDeleteSpace, hasUpgraded }) {
   const space = plan.space;
   const enabledFeatures = getEnabledFeatures(plan);
   const hasAnyFeatures = enabledFeatures.length > 0;
-  const key = plan.sys.id || (plan.space && plan.space.sys.id);
 
   let createdBy = '';
   let createdAt = '';
@@ -75,10 +73,10 @@ function SpacePlanRow({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace }
       options: { reload: true },
     });
 
-  const className = upgraded ? 'x--success' : '';
-
   return (
-    <TableRow testId="subscription-page.spaces-list.table-row" className={className} key={key}>
+    <TableRow
+      testId="subscription-page.spaces-list.table-row"
+      className={hasUpgraded ? 'x--success' : ''}>
       <TableCell testId="subscription-page.spaces-list.space-name">
         <span className={styles.spaceName}>
           <strong>{get(space, 'name', '-')}</strong>
@@ -110,28 +108,30 @@ function SpacePlanRow({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace }
         )}
         <br />
         {!isEnterprisePlan(basePlan) && (
-          <Price
-            testId="subscription-page.spaces-list.plan-price"
-            value={plan.price}
-            unit="month"
-          />
+          <>
+            <Price
+              testId="subscription-page.spaces-list.plan-price"
+              value={plan.price}
+              unit="month"
+            />{' '}
+            -{' '}
+            <TextLink
+              testId="subscription-page.spaces-list.upgrade-plan-link"
+              onClick={onChangeSpace(space, 'change')}>
+              upgrade
+            </TextLink>
+          </>
         )}
       </TableCell>
       <TableCell testId="subscription-page.spaces-list.created-by">{createdBy}</TableCell>
       <TableCell testId="subscription-page.spaces-list.created-on">{createdAt}</TableCell>
-      <TableCell testId="subscription-page.spaces-list.option-dots" className={styles.dotsRow}>
+      <TableCell testId="subscription-page.spaces-list.option-dots" className={styles.moreButton}>
         <CardActions
           iconButtonProps={{
-            buttonType: 'primary',
             testId: 'subscription-page.spaces-list.dropdown-menu.trigger',
           }}
           data-test-id="subscription-page.spaces-list.dropdown-menu">
           <DropdownList>
-            <DropdownListItem
-              onClick={onChangeSpace(space, 'change')}
-              testId="subscription-page.spaces-list.change-space-link">
-              Change space type
-            </DropdownListItem>
             <DropdownListItem
               onClick={onViewSpace}
               isDisabled={Boolean(space && !space.isAccessible)}
@@ -161,7 +161,11 @@ SpacePlanRow.propTypes = {
   plan: PropTypes.object.isRequired,
   onChangeSpace: PropTypes.func.isRequired,
   onDeleteSpace: PropTypes.func.isRequired,
-  upgraded: PropTypes.bool,
+  hasUpgraded: PropTypes.bool,
+};
+
+SpacePlanRow.defaultProps = {
+  hasUpgraded: false,
 };
 
 export default SpacePlanRow;

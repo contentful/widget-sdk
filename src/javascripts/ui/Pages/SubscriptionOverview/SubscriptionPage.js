@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { css } from 'emotion';
-
 import { Notification, Workbench } from '@contentful/forma-36-react-components';
 
+import { track } from 'analytics/Analytics';
 import { showDialog as showCreateSpaceModal } from 'services/CreateSpace';
 import { showDialog as showChangeSpaceModal } from 'services/ChangeSpaceService';
 import { openDeleteSpaceDialog } from 'features/space-settings';
@@ -80,8 +80,13 @@ export default function SubscriptionPage({ organizationId, data }) {
 
   const changeSpace = (space, action) => {
     return () => {
+      track('subscription_overview:upgrade_plan_link_clicked', {
+        organizationId,
+        spaceId: space.sys.id,
+      });
+
       showChangeSpaceModal({
-        organizationId: organizationId,
+        organizationId,
         scope: 'organization',
         space,
         action,

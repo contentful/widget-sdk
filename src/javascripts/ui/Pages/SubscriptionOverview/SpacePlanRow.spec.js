@@ -35,7 +35,7 @@ isEnterprisePlan.mockImplementation(() => {
 
 jest.mock('utils/SubscriptionUtils', () => ({
   getEnabledFeatures: jest.fn().mockImplementation(() => {
-    return false;
+    return [];
   }),
 }));
 
@@ -66,6 +66,16 @@ describe('Space Plan Row', () => {
       expect(screen.getByTestId('subscription-page.spaces-list.space-type')).toHaveTextContent(
         SPACE_NAME
       );
+    });
+
+    it('should call onChangeSpace when upgrade-space-link is clicked', async () => {
+      isEnterprisePlan.mockImplementation(() => {
+        return false;
+      });
+      await build();
+      fireEvent.click(screen.getByTestId('subscription-page.spaces-list.upgrade-plan-link'));
+
+      expect(mockOnChangeSpace).toHaveBeenCalled();
     });
 
     it('should display the user who created', async () => {
@@ -144,7 +154,7 @@ describe('Space Plan Row', () => {
     });
 
     it('does not have special className when not upgraded', async () => {
-      await build({ upgraded: false });
+      await build({ hasUpgraded: false });
 
       // The class 'x--success' comes from the SpacePlanRow.js file
       expect(
@@ -155,7 +165,7 @@ describe('Space Plan Row', () => {
     });
 
     it('has upgraded className when upgraded', async () => {
-      await build({ upgraded: true });
+      await build({ hasUpgraded: true });
 
       // The class 'x--success' comes from the SpacePlanRow.js file
       expect(
@@ -210,14 +220,6 @@ describe('Space Plan Row', () => {
       expect(spaceUsageLinkButton.hasAttribute('disabled')).toBeTruthy();
     });
 
-    it('should call onChangeSpace when change-space-link is clicked', async () => {
-      await build();
-      fireEvent.click(screen.getByTestId('subscription-page.spaces-list.dropdown-menu.trigger'));
-      fireEvent.click(screen.getByTestId('subscription-page.spaces-list.change-space-link'));
-
-      expect(mockOnChangeSpace).toHaveBeenCalled();
-    });
-
     it('should navigate to space when space-link is clicked', async () => {
       await build({ basePlan: mockBasePlan, plan: mockPlan, isAccessible: true });
       fireEvent.click(screen.getByTestId('subscription-page.spaces-list.dropdown-menu.trigger'));
@@ -265,7 +267,7 @@ describe('Space Plan Row', () => {
 
 function build(input = {}) {
   const options = Object.assign(
-    { plan: mockPlan, isAccessible: false, upgraded: false, committed: false },
+    { plan: mockPlan, isAccessible: false, hasUpgraded: false, committed: false },
     input
   );
 
@@ -278,13 +280,17 @@ function build(input = {}) {
   }
 
   render(
-    <SpacePlanRow
-      basePlan={mockBasePlan}
-      plan={options.plan}
-      onChangeSpace={mockOnChangeSpace}
-      onDeleteSpace={mockOnDeleteSpace}
-      upgraded={options.upgraded}
-    />
+    <table>
+      <tbody>
+        <SpacePlanRow
+          basePlan={mockBasePlan}
+          plan={options.plan}
+          onChangeSpace={mockOnChangeSpace}
+          onDeleteSpace={mockOnDeleteSpace}
+          hasUpgraded={options.hasUpgraded}
+        />
+      </tbody>
+    </table>
   );
 
   // the component makes requests on mount.

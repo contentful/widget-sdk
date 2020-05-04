@@ -25,17 +25,17 @@ const styles = {
   total: css({
     marginBottom: '1.5em',
   }),
-  nameCell: css({
-    width: '33%',
+  nameCol: css({
+    width: '30%',
   }),
-  typeCell: css({
+  typeCol: css({
+    width: '30%',
+  }),
+  createdByCol: css({
     width: '20%',
   }),
-  createdByCell: css({
-    width: '25%',
-  }),
-  createdOnCell: css({
-    width: '15%',
+  actionsCol: css({
+    width: '60px',
   }),
 };
 
@@ -56,8 +56,7 @@ function SpacePlans({
     <>
       <Heading className="section-title">Spaces</Heading>
       <Paragraph className={styles.total}>
-        {!hasSpacePlans && "Your organization doesn't have any spaces. "}
-        {hasSpacePlans && (
+        {hasSpacePlans ? (
           <>
             Your organization has{' '}
             <b>
@@ -65,6 +64,8 @@ function SpacePlans({
             </b>
             {'. '}
           </>
+        ) : (
+          "Your organization doesn't have any spaces."
         )}
         {!isEnterprisePlan(basePlan) && totalCost > 0 && (
           <>
@@ -80,15 +81,20 @@ function SpacePlans({
 
       {hasSpacePlans && (
         <Table>
+          <colgroup>
+            <col className={styles.nameCol} />
+            <col className={styles.typeCol} />
+            <col className={styles.createdByCol} />
+            <col className={styles.createdOnCol} />
+            <col className={styles.actionsCol} />
+          </colgroup>
           <TableHead>
             <TableRow>
-              <TableCell className={styles.nameCell}>Name</TableCell>
-              <TableCell className={styles.typeCell}>
-                {isEnterprisePlan(basePlan) ? 'Space type' : 'Space type / price'}
-              </TableCell>
-              <TableCell className={styles.createdByCell}>Created by</TableCell>
-              <TableCell className={styles.createdOnCell}>Created on</TableCell>
-              <TableCell> </TableCell>
+              <TableCell>Name</TableCell>
+              <TableCell>Space type</TableCell>
+              <TableCell>Created by</TableCell>
+              <TableCell>Created on</TableCell>
+              <TableCell />
             </TableRow>
           </TableHead>
           <TableBody>
@@ -97,12 +103,12 @@ function SpacePlans({
               return (
                 <SpacePlanRow
                   key={plan.sys.id || (plan.space && plan.space.sys.id)}
-                  upgraded={isUpgraded}
                   basePlan={basePlan}
                   plan={plan}
                   onChangeSpace={onChangeSpace}
                   onDeleteSpace={onDeleteSpace}
                   isOrgOwner={isOrgOwner}
+                  hasUpgraded={isUpgraded}
                 />
               );
             })}
