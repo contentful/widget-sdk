@@ -82,6 +82,7 @@ function handleSidebarEvents($scope, entityLabel, shouldHideLocaleErrors, emitte
 
 function handleTopNavErrors($scope, entityLabel, shouldHideLocaleErrors) {
   K.onValueScope($scope, $scope.editorContext.validator.errors$, (errors) => {
+    const { defaultLocale, focusedLocale } = $scope.localeData;
     if (!$scope.localeData.isSingleLocaleModeOn) {
       // We only want to display the top-nav notification about locale errors
       // if we are in the single focused locale mode.
@@ -92,23 +93,46 @@ function handleTopNavErrors($scope, entityLabel, shouldHideLocaleErrors) {
     // asset editor, in which case it will be undefined. In that case we want
     // it to be aliased to the default locale's internal code, since this should
     // always refer to a missing file error.
-    $scope.localeData.errors = groupBy(
-      errors,
-      (error) => error.path[2] || $scope.localeData.defaultLocale.internal_code
-    );
+    const localesErrors = groupBy(errors, (error) => error.path[2] || defaultLocale.internal_code);
+    $scope.localeData.errors = localesErrors;
+    if (!isEmpty(localesErrors) || shouldHideLocaleErrors()) {
+      return;
+    }
 
-    if (errors.length && !shouldHideLocaleErrors()) {
-      const { errors, privateLocales: locales } = $scope.localeData;
-      const erroredLocales = keys(errors).map((ic) => locales.find((l) => l.internal_code === ic));
-      const status =
-        entityLabel === 'entry'
-          ? DocumentStatusCode.LOCALE_VALIDATION_ERRORS
-          : DocumentStatusCode.DEFAULT_LOCALE_FILE_ERROR;
-      $scope.statusNotificationProps = { status, entityLabel, erroredLocales };
+    const { privateLocales: locales } = $scope.localeData;
+    const erroredKeys = keys(localesErrors);
+    let erroredLocales = erroredKeys.map((ic) => locales.find((l) => l.internal_code === ic));
+    let status;
+
+    if (entityLabel === 'entry') {
+      status = DocumentStatusCode.LOCALE_VALIDATION_ERRORS;
+    } else if (entityLabel === 'asset') {
+      if (erroredKeys.length === 1 && erroredKeys.includes(defaultLocale.internal_code)) {
+        // Asset: When only default locale is invalid.
+        status = DocumentStatusCode.DEFAULT_LOCALE_FILE_ERROR;
+      } else {
+        // Asset: When non-default locales are invalid, ignore the currently focused locale.
+        // This also hides a validation error notification for when an asset is being processed – temporary has no "url" field.
+        erroredLocales = erroredLocales.filter(
+          (locale) => locale.internal_code !== focusedLocale.internal_code
+        );
+        if (!isEmpty(erroredLocales)) {
+          status = DocumentStatusCode.LOCALE_VALIDATION_ERRORS;
+        }
+      }
+    }
+
+    if (status) {
+      $scope.statusNotificationProps = {
+        status,
+        entityLabel,
+        erroredLocales,
+      };
     }
   });
 
   K.onValueScope($scope, statusProperty($scope.otDoc), (status) => {
+    // If there are locales errors (and doc is ok), keep the old notification.
     if (
       status === DocumentStatusCode.OK &&
       !isEmpty($scope.localeData.errors) &&

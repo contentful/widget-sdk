@@ -15,8 +15,7 @@ import setupNoShareJsCmaFakeRequestsExperiment from './NoShareJsCmaFakeRequestsE
 import initSidebarTogglesProps from 'app/entity_editor/entityEditorSidebarToggles';
 import { getModule } from 'core/NgRegistry';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
-import { statusProperty, valuePropertyAt } from './Document';
-import * as Navigator from 'states/Navigator';
+import { valuePropertyAt } from './Document';
 
 /**
  * @param {Object} $scope
@@ -43,16 +42,6 @@ export default async function create($scope, editorData, preferences) {
   // TODO rename the scope property
   $scope.otDoc = editorData.openDoc(K.scopeLifeline($scope));
   initDocErrorHandler($scope, $scope.otDoc.state.error$);
-
-  K.onValueScope($scope, statusProperty($scope.otDoc), (status) => {
-    const entityRef = Navigator.makeEntityRef($scope.editorData.entity.data);
-    $scope.statusNotificationProps = {
-      status,
-      entityLabel: 'asset',
-      // Drop 'previousEntries' (comes from slide-in/bulk editor) to open the specific entry details page
-      entityHref: Navigator.href(entityRef).split('?').shift(),
-    };
-  });
 
   installTracking(entityInfo, $scope.otDoc, K.scopeLifeline($scope));
 

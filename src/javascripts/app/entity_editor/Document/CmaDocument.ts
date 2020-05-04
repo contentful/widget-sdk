@@ -29,6 +29,13 @@ export function create(
 ): Document {
   // A single source of Truth, properties like sys$ and data$ reflect the state of this variable.
   const entity: Entity = cloneDeep(initialEntity.data);
+  const normalize = () =>
+    Normalizer.normalize(
+      { getValueAt, setValueAt },
+      entity,
+      contentType,
+      TheLocaleStore.getPrivateLocales()
+    );
   normalize();
 
   const sysBus: PropertyBus<EntitySys> = K.createPropertyBus(entity.sys);
@@ -69,97 +76,8 @@ export function create(
     .filter((isSaving) => !isSaving)
     .map((_) => undefined);
 
-  function normalize() {
-    const locales = TheLocaleStore.getPrivateLocales();
-    Normalizer.normalize({ getValueAt, setValueAt }, entity, contentType, locales);
-  }
-
-  /**
-   * Returns a constant value of the given path in the document.
-   * Also used for valuePropertyAt().
-   */
-  function getValueAt(path: string[]) {
-    // Use normalized entity to get the data.
-    return path.length === 0 ? entity : get(entity, path);
-  }
-
-  // TODO: Do we wait for the request to be made and THEN resolve or immediately?
-  //  This is of importance in `widgetApi.field.setValue()` which needs to throw
-  //  In case of insufficient rights to update a field (important for Slug editor).
-  async function setValueAt(path: string[], value: any) {
-    if (path.length === 3 && StringField.isStringField(path[1], contentType)) {
-      if (!StringField.isValidStringFieldValue(value)) {
-        throw new Error('Invalid string field value.');
-      }
-      if (value === '') {
-        if (getValueAt(path) === undefined) {
-          return entity;
-        }
-        value = undefined;
-      }
-    }
-    // NOTE: We do not re-implement empty value `RichTextFieldSetter` behavior for now
-    //  as we can rely on the RT editor to be respons ible for giving us `undefined` as
-    //  an empty value.
-
-    set(entity, path, value);
-
-    changesBus.emit(path);
-
-    // `FileEditor` will trigger processing of the file right after `setValueAt` resolves.
-    // TODO: We should keep `setValueAt` consistently synchronous, instead of having an exception
-    //   for this behavior. This would mean handling this case in the FileEditor by listening
-    //   to sys updates while resolving immediately in this case as in all the other cases.
-    if (
-      entity.sys.type === 'Asset' &&
-      PathUtils.isPrefix(['fields', 'file'], path) &&
-      value.upload
-    ) {
-      await saveEntityAfterAnyStatusUpdate();
-    }
-
-    return entity;
-  }
-
   if (entity.sys.type === 'Asset') {
-    const unsubscribe = entityRepo.onAssetFileProcessed(entity.sys.id, async () => {
-      // what if two users upload a new asset at the same time?
-      // should only compare a specific locale + also when emiting change (only when we need to merge fields?)
-      const remoteEntity = await entityRepo.get(entity.sys.type, entity.sys.id);
-      const localChangedFieldPaths = changedEntityFieldPaths(lastSavedEntity.fields, entity.fields);
-      const remoteChangedFieldPaths = changedEntityFieldPaths(
-        lastSavedEntity.fields,
-        remoteEntity.fields
-      );
-
-      const hasConflictingPendingChanges =
-        intersectionBy(localChangedFieldPaths, remoteChangedFieldPaths, (path) => path.join(':'))
-          .length > 0;
-
-      if (hasConflictingPendingChanges) {
-        trackVersionMismatch(entity, remoteEntity);
-        errorBus.set(DocError.VersionMismatch());
-        return;
-      }
-
-      const hasRemoteVersionConflict = some(remoteChangedFieldPaths, ([path]) => path !== 'file');
-
-      if (hasRemoteVersionConflict) {
-        if (localChangedFieldPaths.length > 0) {
-          trackVersionMismatch(entity, remoteEntity);
-        }
-        errorBus.set(DocError.VersionMismatch());
-        return;
-      }
-
-      const changedRemoteFilePaths = remoteChangedFieldPaths
-        .filter(([path]) => path === 'file')
-        .map((path) => setValueAt(['fields', ...path], get(remoteEntity, ['fields', ...path])));
-      await Promise.all([...changedRemoteFilePaths, setValueAt(['sys'], remoteEntity.sys)]);
-      setLastSavedEntity(entity);
-      sysBus.set(remoteEntity.sys);
-      normalize();
-    });
+    const unsubscribe = entityRepo.onAssetFileProcessed(entity.sys.id, handleAssetFileProcessed);
     cleanupTasks.push(unsubscribe);
   }
 
@@ -180,7 +98,7 @@ export function create(
     .bufferWhileBy(isSaving$)
     .merge(afterStatusUpdate$)
     .throttle(saveThrottleMs, { leading: false })
-    .onValue(async (value) => {
+    .onValue((value) => {
       const values = value as Array<string | undefined> | undefined | null;
 
       // Do nothing if there was no field change since last updating the entity.
@@ -193,82 +111,6 @@ export function create(
       }
       saveEntityAfterAnyStatusUpdate();
     });
-
-  async function saveEntityAfterAnyStatusUpdate(...args) {
-    if (K.getValue(resourceState.inProgress$)) {
-      await afterStatusUpdate$.changes().take(1).toPromise();
-      return saveEntityAfterAnyStatusUpdate(...args);
-    }
-    return saveEntity(...args);
-  }
-
-  /**
-   * @param options.updateEmitters Is used to save an entity on destroy without updating
-   *  the document that is already destroyed once CMA response is received
-   */
-  async function saveEntity(options = { updateEmitters: true }) {
-    // Wait for current ongoing update, then do the next one.
-    if (K.getValue(isSaving$)) {
-      await afterSave$.changes().take(1).toPromise();
-      return saveEntity(options);
-    }
-    // Do nothing if no unsaved changes - entity could be persisted
-    // before the throttled handler triggered, e.g. on status change.
-    if (isEqual(entity.fields, lastSavedEntity.fields)) {
-      return;
-    }
-    // Re-try saving after connection errors but no further attempt to save otherwise.
-    const lastError = K.getValue(errorBus.property);
-    if (lastError && !(lastError instanceof DocError.Disconnected)) {
-      return;
-    }
-    if (!options.updateEmitters) {
-      try {
-        await entityRepo.update(entity);
-      } catch (e) {
-        // TODO: Use affordable analytics to track how often this happens.
-      }
-      return;
-    }
-
-    isSavingBus.set(true);
-    // Clone as `entity` could get mutated while waiting for CMA request.
-    const changedLocalEntity: Entity = cloneDeep(entity);
-    try {
-      const newEntry = await entityRepo.update(changedLocalEntity);
-      setLastSavedEntity(newEntry);
-    } catch (e) {
-      if (e.code === 'VersionMismatch') {
-        trackVersionMismatch(changedLocalEntity);
-      }
-      const errors = {
-        VersionMismatch: DocError.VersionMismatch(),
-        AccessDenied: DocError.OpenForbidden(),
-        ServerError: DocError.CmaInternalServerError(e),
-        '-1': DocError.Disconnected(), // Is there a better way to detect if disconnected?
-      };
-      errorBus.set(errors[e.code] || errors.ServerError);
-      isSavingBus.set(false);
-      return;
-    }
-
-    // For now don't use the field data returned from CMA entity to not overwrite changes made during the request.
-    set(entity, 'sys', lastSavedEntity.sys);
-    sysBus.set(lastSavedEntity.sys);
-    normalize();
-    errorBus.set(null);
-    isSavingBus.set(false);
-  }
-
-  function trackVersionMismatch(entity: Entity, remoteEntity?: Entity): void {
-    trackEditConflict({
-      entityRepo,
-      localEntity: lastSavedEntity,
-      localEntityFetchedAt: lastSavedEntityFetchedAt,
-      changedLocalEntity: cloneDeep(entity),
-      remoteEntity,
-    });
-  }
 
   /**
    * @description
@@ -424,4 +266,166 @@ export function create(
       revert: noop,
     },
   };
+
+  /**
+   * Returns a constant value of the given path in the document.
+   * Also used for valuePropertyAt().
+   */
+  function getValueAt(path: string[]) {
+    // Use normalized entity to get the data.
+    return path.length === 0 ? entity : get(entity, path);
+  }
+
+  // TODO: Do we wait for the request to be made and THEN resolve or immediately?
+  //  This is of importance in `widgetApi.field.setValue()` which needs to throw
+  //  In case of insufficient rights to update a field (important for Slug editor).
+  async function setValueAt(path: string[], value: any) {
+    if (path.length === 3 && StringField.isStringField(path[1], contentType)) {
+      if (!StringField.isValidStringFieldValue(value)) {
+        throw new Error('Invalid string field value.');
+      }
+      if (value === '') {
+        if (getValueAt(path) === undefined) {
+          return entity;
+        }
+        value = undefined;
+      }
+    }
+    // NOTE: We do not re-implement empty value `RichTextFieldSetter` behavior for now
+    //  as we can rely on the RT editor to be respons ible for giving us `undefined` as
+    //  an empty value.
+
+    set(entity, path, value);
+
+    changesBus.emit(path);
+
+    // `FileEditor` will trigger processing of the file right after `setValueAt` resolves.
+    // TODO: We should keep `setValueAt` consistently synchronous, instead of having an exception
+    //   for this behavior. This would mean handling this case in the FileEditor by listening
+    //   to sys updates while resolving immediately in this case as in all the other cases.
+    if (
+      entity.sys.type === 'Asset' &&
+      PathUtils.isPrefix(['fields', 'file'], path) &&
+      value.upload
+    ) {
+      await saveEntityAfterAnyStatusUpdate();
+    }
+
+    return entity;
+  }
+
+  async function saveEntityAfterAnyStatusUpdate(...args) {
+    if (K.getValue(resourceState.inProgress$)) {
+      await afterStatusUpdate$.changes().take(1).toPromise();
+      return saveEntityAfterAnyStatusUpdate(...args);
+    }
+    return saveEntity(...args);
+  }
+
+  /**
+   * @param options.updateEmitters Is used to save an entity on destroy without updating
+   *  the document that is already destroyed once CMA response is received
+   */
+  async function saveEntity(options = { updateEmitters: true }) {
+    // Wait for current ongoing update, then do the next one.
+    if (K.getValue(isSaving$)) {
+      await afterSave$.changes().take(1).toPromise();
+      return saveEntity(options);
+    }
+    // Do nothing if no unsaved changes - entity could be persisted
+    // before the throttled handler triggered, e.g. on status change.
+    if (isEqual(entity.fields, lastSavedEntity.fields)) {
+      return;
+    }
+    // Re-try saving after connection errors but no further attempt to save otherwise.
+    const lastError = K.getValue(errorBus.property);
+    if (lastError && !(lastError instanceof DocError.Disconnected)) {
+      return;
+    }
+    if (!options.updateEmitters) {
+      try {
+        await entityRepo.update(entity);
+      } catch (e) {
+        // TODO: Use affordable analytics to track how often this happens.
+      }
+      return;
+    }
+
+    isSavingBus.set(true);
+    // Clone as `entity` could get mutated while waiting for CMA request.
+    const changedLocalEntity: Entity = cloneDeep(entity);
+    try {
+      const newEntry = await entityRepo.update(changedLocalEntity);
+      setLastSavedEntity(newEntry);
+    } catch (e) {
+      if (e.code === 'VersionMismatch') {
+        trackVersionMismatch(changedLocalEntity);
+      }
+      const errors = {
+        VersionMismatch: DocError.VersionMismatch(),
+        AccessDenied: DocError.OpenForbidden(),
+        ServerError: DocError.CmaInternalServerError(e),
+        '-1': DocError.Disconnected(), // Is there a better way to detect if disconnected?
+      };
+      errorBus.set(errors[e.code] || errors.ServerError);
+      isSavingBus.set(false);
+      return;
+    }
+
+    // For now don't use the field data returned from CMA entity to not overwrite changes made during the request.
+    set(entity, 'sys', lastSavedEntity.sys);
+    sysBus.set(lastSavedEntity.sys);
+    normalize();
+    errorBus.set(null);
+    isSavingBus.set(false);
+  }
+
+  function trackVersionMismatch(entity: Entity, remoteEntity?: Entity): void {
+    trackEditConflict({
+      entityRepo,
+      localEntity: lastSavedEntity,
+      localEntityFetchedAt: lastSavedEntityFetchedAt,
+      changedLocalEntity: cloneDeep(entity),
+      remoteEntity,
+    });
+  }
+
+  async function handleAssetFileProcessed() {
+    // what if two users upload a new asset at the same time?
+    // should only compare a specific locale + also when emiting change (only when we need to merge fields?)
+    const remoteEntity = await entityRepo.get(entity.sys.type, entity.sys.id);
+    const localChangedFieldPaths = changedEntityFieldPaths(lastSavedEntity.fields, entity.fields);
+    const remoteChangedFieldPaths = changedEntityFieldPaths(
+      lastSavedEntity.fields,
+      remoteEntity.fields
+    );
+
+    const hasConflictingPendingChanges =
+      intersectionBy(localChangedFieldPaths, remoteChangedFieldPaths, (path) => path.join(':'))
+        .length > 0;
+    if (hasConflictingPendingChanges) {
+      trackVersionMismatch(entity, remoteEntity);
+      errorBus.set(DocError.VersionMismatch());
+      return;
+    }
+
+    const hasRemoteVersionConflict = some(remoteChangedFieldPaths, ([path]) => path !== 'file');
+    if (hasRemoteVersionConflict) {
+      if (localChangedFieldPaths.length > 0) {
+        trackVersionMismatch(entity, remoteEntity);
+      }
+      errorBus.set(DocError.VersionMismatch());
+      return;
+    }
+
+    const changedRemoteFilePaths = remoteChangedFieldPaths
+      .filter(([path]) => path === 'file')
+      .map((path) => setValueAt(['fields', ...path], get(remoteEntity, ['fields', ...path])));
+    await Promise.all([...changedRemoteFilePaths]);
+
+    setLastSavedEntity(remoteEntity);
+    set(entity, 'sys', lastSavedEntity.sys);
+    sysBus.set(lastSavedEntity.sys);
+    normalize();
+  }
 }

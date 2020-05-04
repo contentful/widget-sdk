@@ -95,13 +95,19 @@ const messages = {
 const StatusCodeNotification = ({ status, entityLabel, erroredLocales, entityHref }) => {
   const activeIdRef = useRef(null);
 
+  async function closeCurrent() {
+    if (activeIdRef.current) {
+      await Notification.close(activeIdRef.current);
+      activeIdRef.current = null;
+    }
+  }
+
+  // Close document related notification on unmounting.
+  useEffect(() => closeCurrent, []);
+
   useEffect(() => {
     const trigger = async () => {
-      if (activeIdRef.current) {
-        await Notification.close(activeIdRef.current);
-        activeIdRef.current = null;
-      }
-
+      await closeCurrent();
       if (status in messages) {
         const notification = await messages[status]({
           entityLabel,
