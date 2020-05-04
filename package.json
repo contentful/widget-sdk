@@ -236,7 +236,7 @@
     "prettier": "2.0.4",
     "rework": "^1.0.1",
     "rework-plugin-url": "^1.1.0",
-    "rimraf": "^3.0.0",
+    "rimraf": "^3.0.2",
     "sinon": "4.5.0",
     "systemjs": "0.20.19",
     "terser": "4.6.3",
