@@ -99,7 +99,7 @@
     "react-helmet": "^5.2.1",
     "react-highlight-words": "^0.16.0",
     "react-hotkeys": "^2.0.0",
-    "react-joyride": "2.0.4",
+    "react-joyride": "2.2.1",
     "react-player": "^2.0.1",
     "react-redux": "^5.1.1",
     "react-sortable-hoc": "1.11.0",
