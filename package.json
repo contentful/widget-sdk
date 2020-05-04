@@ -251,7 +251,7 @@
     "webpack-dev-middleware": "^3.7.2",
     "webpack-manifest-plugin": "^3.0.0-rc.0",
     "webpack-merge": "4.2.2",
-    "webpack-require-from": "1.8.0",
+    "webpack-require-from": "1.8.1",
     "yargs": "^4.2.0"
   },
   "scripts": {
