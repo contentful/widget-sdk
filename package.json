@@ -10,7 +10,7 @@
     "npm": "6.4.1"
   },
   "dependencies": {
-    "@babel/polyfill": "^7.8.3",
+    "@babel/polyfill": "^7.8.7",
     "@contentful/asn1js": "^2.1.0",
     "@contentful/field-editor-boolean": "0.6.1",
     "@contentful/field-editor-checkbox": "0.8.1",
