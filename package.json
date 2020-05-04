@@ -180,7 +180,7 @@
     "cypress-testing-library": "^2.6.0",
     "cz-conventional-changelog": "^3.1.0",
     "dependency-cruiser": "8.0.2",
-    "diff": "4.0.1",
+    "diff": "4.0.2",
     "enzyme": "3.8.0",
     "enzyme-adapter-react-16": "1.9.1",
     "eslint": "6.8.0",
