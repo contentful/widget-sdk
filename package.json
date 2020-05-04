@@ -50,7 +50,7 @@
     "angular-sanitize": "~1.5.11",
     "angular-ui-router": "^0.3.2",
     "classnames": "2.2.6",
-    "codemirror": "^5.48.0",
+    "codemirror": "^5.53.2",
     "color": "^2.0.1",
     "contentful-resolve-response": "^1.1.4",
     "dataloader": "^1.4.0",
