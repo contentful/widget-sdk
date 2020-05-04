@@ -18,17 +18,19 @@ export type EntityRepo = {
 };
 
 interface EntityRepoOptions {
+  skipDraftValidation: boolean;
   skipTransformation: boolean;
 }
 
 export function create(
   spaceEndpoint: SpaceEndpoint,
   pubSubClient,
-  options: EntityRepoOptions = { skipTransformation: false }
+  options: EntityRepoOptions = {
+    skipDraftValidation: false,
+    skipTransformation: false,
+  }
 ): EntityRepo {
-  const spaceEndpointOptions = options.skipTransformation
-    ? { 'X-Contentful-Skip-Transformation': 'true' }
-    : {};
+  const spaceEndpointOptions = getSpaceEndpointOptions(options);
 
   return { onAssetFileProcessed, get, update };
 
@@ -65,4 +67,18 @@ export function create(
     pubSubClient.on(ASSET_PROCESSING_FINISHED_EVENT, handler);
     return () => pubSubClient.off(ASSET_PROCESSING_FINISHED_EVENT, handler);
   }
+}
+
+function getSpaceEndpointOptions(entityRepoOptions: EntityRepoOptions) {
+  const optionsHeaderMap = {
+    skipTransformation: 'X-Contentful-Skip-Transformation',
+    skipDraftValidation: 'X-Contentful-Skip-UI-Draft-Validation',
+  };
+  const spaceEndpointOptions = {};
+  for (const [option, header] of Object.entries(optionsHeaderMap)) {
+    if (entityRepoOptions[option]) {
+      spaceEndpointOptions[header] = 'true';
+    }
+  }
+  return spaceEndpointOptions;
 }

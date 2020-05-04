@@ -47,6 +47,7 @@ export async function create(docConnection, spaceEndpoint, pubSubClient, organiz
         (isObject(isCmaDocumentEnabled) && isCmaDocumentEnabled[entity.data.sys.type])
       ) {
         const entityRepo = createEntityRepo(spaceEndpoint, pubSubClient, {
+          skipDraftValidation: true,
           skipTransformation: true,
         });
         doc = createCmaDoc(entity, contentType, spaceEndpoint, entityRepo);
