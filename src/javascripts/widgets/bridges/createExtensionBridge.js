@@ -1,6 +1,6 @@
 import * as K from 'core/utils/kefir';
 import * as PathUtils from 'utils/Path';
-import get from 'lodash/get';
+import { get, isEqual } from 'lodash';
 import TheLocaleStore from 'services/localeStore';
 import { onSlideInNavigation } from 'navigation/SlideInNavigator/index';
 import * as Analytics from 'analytics/Analytics';
@@ -212,6 +212,10 @@ export default function createExtensionBridge(dependencies) {
       .forEach(({ fieldId, localeCode, fieldLocale }) => {
         K.onValueScope($scope, fieldLocale.access$, (access) => {
           api.send('isDisabledChangedForFieldLocale', [fieldId, localeCode, !!access.disabled]);
+        });
+
+        K.onValueScope($scope, fieldLocale.errors$.skipDuplicates(isEqual), (errors = []) => {
+          api.send('schemaErrorsChangedForFieldLocale', [fieldId, localeCode, errors]);
         });
       });
 

@@ -92,6 +92,8 @@ describe('createExtensionBridge', () => {
       setActive: jest.fn(),
       getEntry: jest.fn(),
       $watch: jest.fn(),
+      controllerErrors$: createMockProperty([]),
+      controllerAccess$: createMockProperty({ disconnected: false, disabled: false }),
     };
 
     const fieldLocale = {
@@ -145,7 +147,8 @@ describe('createExtensionBridge', () => {
         },
       },
       $controller: (_name, _$scope) => ({
-        access$: createMockProperty({ disconnected: false, disabled: false }),
+        access$: stubs.controllerAccess$,
+        errors$: stubs.controllerErrors$,
       }),
       currentWidgetId: 'test-id',
       currentWidgetNamespace: 'extension',
@@ -212,19 +215,29 @@ describe('createExtensionBridge', () => {
       // initial values
       expect(api.send).toBeCalledWith('isDisabledChanged', [false]);
       expect(api.send).toBeCalledWith('isDisabledChangedForFieldLocale', ['FIELD_ID', 'pl', false]);
+      expect(api.send).toBeCalledWith('schemaErrorsChangedForFieldLocale', ['FIELD_ID', 'pl', []]);
       expect(api.send).toBeCalledWith('sysChanged', [{ id: 'test', initial: true }]);
       expect(api.send).toBeCalledWith('schemaErrorsChanged', [[]]);
 
       // changes
       stubs.access.set({ disabled: true });
-
       expect(api.send).toBeCalledWith('isDisabledChanged', [true]);
+
+      stubs.controllerAccess$.set({ disabled: true });
+      expect(api.send).toBeCalledWith('isDisabledChangedForFieldLocale', ['FIELD_ID', 'pl', true]);
 
       stubs.sysProperty.set({ id: 'test', initial: false });
       expect(api.send).toBeCalledWith('sysChanged', [{ id: 'test', initial: false }]);
 
       stubs.errors.set([{ message: 'some error' }]);
       expect(api.send).toBeCalledWith('schemaErrorsChanged', [[{ message: 'some error' }]]);
+
+      stubs.controllerErrors$.set([{ message: 'some error' }]);
+      expect(api.send).toBeCalledWith('schemaErrorsChangedForFieldLocale', [
+        'FIELD_ID',
+        'pl',
+        [{ message: 'some error' }],
+      ]);
     });
 
     it('updates when the doc changes on top level or fields', () => {
