@@ -137,7 +137,7 @@
     "@contentful/cypress-pact": "^3.0.0",
     "@contentful/micro-backends": "^0.6.0",
     "@cypress/webpack-preprocessor": "^4.1.0",
-    "@dr.pogodin/babel-preset-svgr": "^1.0.4",
+    "@dr.pogodin/babel-preset-svgr": "^1.0.10",
     "@pact-foundation/pact": "^9.0.1",
     "@pact-foundation/pact-web": "^9.0.1",
     "@prettier/plugin-xml": "^0.3.0",
