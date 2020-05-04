@@ -4,7 +4,6 @@ import { noop } from 'lodash';
 import { registerDirective } from 'core/NgRegistry';
 import createExtensionBridge from 'widgets/bridges/createExtensionBridge';
 import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION, NAMESPACE_APP } from 'widgets/WidgetNamespaces';
-import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext';
 import WidgetRenderWarning from 'widgets/WidgetRenderWarning';
 import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer';
 import * as WidgetLocations from 'widgets/WidgetLocations';
@@ -31,9 +30,8 @@ export default function register() {
     ($rootScope, spaceContext, $controller) => {
       return {
         scope: true,
-        require: '?^cfWidgetApi',
         restrict: 'E',
-        link: function (scope, element, _attrs, widgetApi) {
+        link: function (scope, element, _attrs) {
           const {
             widget,
             locale,
@@ -43,10 +41,8 @@ export default function register() {
               problem,
               widgetNamespace,
               widgetId,
-              buildTemplate,
               renderFieldEditor,
               descriptor,
-              renderWhen,
               parameters,
             },
           } = scope;
@@ -69,15 +65,9 @@ export default function register() {
             });
           }
 
-          if (renderWhen) {
-            renderWhen().then((config) => {
-              renderEditorialComponent(config);
-            });
-          } else {
-            renderEditorialComponent({ problem, buildTemplate, renderFieldEditor });
-          }
+          renderEditorialComponent({ problem, renderFieldEditor });
 
-          function renderEditorialComponent({ problem, buildTemplate, renderFieldEditor }) {
+          function renderEditorialComponent({ problem, renderFieldEditor }) {
             if (problem) {
               trackLinksRendered();
               renderJsxTemplate(<WidgetRenderWarning message={problem}></WidgetRenderWarning>);
@@ -97,20 +87,6 @@ export default function register() {
                     location: WidgetLocations.LOCATION_ENTRY_FIELD,
                   })}
                 />
-              );
-            } else if (widgetNamespace === NAMESPACE_BUILTIN && buildTemplate) {
-              if (!widgetApi) {
-                throw new Error('widgetApi is unavailable in this context.');
-              }
-              handleWidgetLinkRenderEvents();
-              const jsxTemplate = buildTemplate({
-                widgetApi,
-                loadEvents: loadEvents || newNoopLoadEvents(),
-              });
-              renderJsxTemplate(
-                <WidgetAPIContext.Provider value={{ widgetApi }}>
-                  {jsxTemplate}
-                </WidgetAPIContext.Provider>
               );
             } else if (widgetNamespace === NAMESPACE_BUILTIN && renderFieldEditor) {
               const widgetApi = createNewWidgetApi({

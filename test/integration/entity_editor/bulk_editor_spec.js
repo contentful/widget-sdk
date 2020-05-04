@@ -6,10 +6,6 @@ import { $initialize, $inject, $apply, $compile } from 'test/utils/ng';
 
 describe('bulk editor', () => {
   beforeEach(async function () {
-    // module('contentful/test', $provide => {
-    //   $provide.removeDirectives('cfWidgetApi', 'cfWidgetRenderer');
-    // });
-
     const localeStore = {
       default: createLocaleStoreMock(),
     };

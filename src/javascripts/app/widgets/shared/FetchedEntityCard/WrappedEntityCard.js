@@ -1,18 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { EntryCard, Icon } from '@contentful/forma-36-react-components';
-import tokens from '@contentful/forma-36-tokens';
-import { css } from 'emotion';
-import { ScheduledIconWithTooltip } from 'app/widgets/shared/FetchedEntityCard/ScheduledIconWithTooltip';
+import { EntryCard } from '@contentful/forma-36-react-components';
 
 import Thumbnail from './Thumbnail';
 import { EntryActions, AssetActions } from './CardActions';
-
-const styles = {
-  marginRightXS: css({
-    marginRight: tokens.spacing2Xs,
-  }),
-};
 
 /**
  * Wrapper around Forma 36 EntryCard. Can be used with entries but works
@@ -61,7 +52,6 @@ export default class WrappedEntityCard extends React.Component {
   render() {
     const {
       entityType,
-      entityId,
       contentTypeName,
       entityDescription,
       entityFile,
@@ -87,17 +77,6 @@ export default class WrappedEntityCard extends React.Component {
         size={size}
         selected={selected}
         status={entityStatus}
-        statusIcon={
-          <ScheduledIconWithTooltip entityType={entityType} entityId={entityId}>
-            <Icon
-              icon="Clock"
-              className={styles.marginRightXS}
-              size="small"
-              color="muted"
-              testId="schedule-icon"
-            />
-          </ScheduledIconWithTooltip>
-        }
         thumbnailElement={entityFile && <Thumbnail thumbnail={entityFile} />}
         loading={isLoading}
         dropdownListElements={this.renderActions()}

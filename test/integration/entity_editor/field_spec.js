@@ -31,7 +31,7 @@ xdescribe('entity editor field integration', function () {
     });
 
     await $initialize(this.system);
-    await $removeDirectives(this.system, ['cfWidgetApi', 'cfWidgetRenderer']);
+    await $removeDirectives(this.system, ['cfWidgetRenderer']);
 
     this.createDocument = $inject('mocks/entityEditor/Document').create;
 

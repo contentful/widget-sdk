@@ -283,7 +283,7 @@ export default function register() {
        * Build the `entry.fields` api of the widget-sdk at one
        * place and put it on $scope so that we don't rebuild it
        * for every widget. Instead, we share this version in every
-       * cfWidgetApi instance.
+       * widgetApi instance.
        */
       const fields = entityInfo.contentType.fields;
       $scope.fields = buildFieldsApi(fields, $scope.otDoc);

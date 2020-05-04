@@ -4,7 +4,6 @@ import { create as createBuiltinWidgetList } from './BuiltinWidgets';
 const CMA_ID_REGEXP = /^[a-zA-Z0-9][a-zA-Z0-9-_]{0,63}$/;
 const BUILTIN_WIDGETS_COUNT = 25;
 
-jest.mock('app/widgets/LinkEditor', () => ({ withCfWebApp: () => {} }));
 jest.mock('ui/Framework/AngularComponent', () => () => null);
 
 describe('BuiltinWidgets', () => {
@@ -23,16 +22,10 @@ describe('BuiltinWidgets', () => {
           name: expect.any(String),
           fieldTypes: expect.any(Array),
         });
-        if (descriptor.template) {
-          expect(descriptor.template).toEqual(expect.any(String));
-        } else if (descriptor.buildTemplate) {
-          expect(descriptor.buildTemplate).toEqual(expect.any(Function));
-        } else if (descriptor.renderFieldEditor) {
+        if (descriptor.renderFieldEditor) {
           expect(descriptor.renderFieldEditor).toEqual(expect.any(Function));
-        } else if (descriptor.renderWhen) {
-          expect(descriptor.renderWhen).toEqual(expect.any(Function));
         } else {
-          throw new Error('expect `template`, `buildTemplate` or `renderFieldEditor`');
+          throw new Error('expect `renderFieldEditor`');
         }
       });
     });

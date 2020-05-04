@@ -28,9 +28,6 @@ import makeExtensionAccessHandlers from 'widgets/bridges/makeExtensionAccessHand
  * This widgetApi implementation is a partial map with actual `ui-extension-sdk` API, so all components that are using this API
  * can be developed as extensions first and then moved to the webapp without any changes.
  *
- * Eventually it supposed to be the only implementation of `widgetAPI`.
- *
- * Note: This deprecates the old `cfWidgetApi` directive and `WidgetAPi/buildWidgetApi`
  *
  * @param {{ $scope: Object, spaceContext: Object }}
  * @returns {{

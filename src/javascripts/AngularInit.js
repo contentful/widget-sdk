@@ -42,7 +42,6 @@ export const angularInitRun = [
       import(/* webpackMode: "eager" */ 'app/entity_editor/fieldLocaleController'),
       import(/* webpackMode: "eager" */ 'app/entity_editor/stateController'),
       import(/* webpackMode: "eager" */ 'app/entry_editor/cfEntryEditorDirective'),
-      import(/* webpackMode: "eager" */ 'app/entry_editor/cfWidgetApiDirective'),
       import(/* webpackMode: "eager" */ 'app/entry_editor/formWidgetsController'),
       import(/* webpackMode: "eager" */ 'components/field_dialog/cfValidationSettingsDirective'),
       import(/* webpackMode: "eager" */ 'components/field_dialog/validationAssetTypesController'),
