@@ -170,7 +170,7 @@
     "browserslist": "4.8.6",
     "bugsnag-sourcemaps": "^1.2.2",
     "caniuse-lite": "^1.0.30001025",
-    "canonical-path": "0.0.2",
+    "canonical-path": "1.0.0",
     "chalk": "^2.4.2",
     "codecov": "^3.6.5",
     "commitizen": "^4.0.3",
