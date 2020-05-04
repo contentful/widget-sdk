@@ -14,7 +14,7 @@ import WorkbenchTitle from 'components/shared/WorkbenchTitle';
 import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
 import ReferencesTab, { hasLinks } from './EntryReferences';
 import { track } from 'analytics/Analytics';
-import { getCurrentVariation } from 'utils/LaunchDarkly';
+import { getVariation } from 'LaunchDarkly';
 import { ALL_REFERENCES_DIALOG } from 'featureFlags';
 
 const styles = {
@@ -69,6 +69,7 @@ const EntryEditorWorkbench = ({
   entityInfo,
   entryActions,
   state,
+  getSpace,
   statusNotificationProps,
   getEditorData,
   customExtensionProps,
@@ -86,14 +87,18 @@ const EntryEditorWorkbench = ({
 
   const [selectedTab, setSelectedTab] = useState('entryEditor');
   const [tabVisible, setTabVisible] = useState({ entryReferences: false });
-
   useEffect(() => {
     async function getFeatureFlagVariation() {
-      const isFeatureEnabled = await getCurrentVariation(ALL_REFERENCES_DIALOG);
+      const { data: spaceData, environment } = getSpace();
+
+      const isFeatureEnabled = await getVariation(ALL_REFERENCES_DIALOG, {
+        organizationId: spaceData.organization.sys.id,
+        environmentId: environment.sys.id,
+      });
       setTabVisible({ entryReferences: isFeatureEnabled });
     }
     getFeatureFlagVariation();
-  }, [setTabVisible]);
+  }, [setTabVisible, getSpace]);
 
   const tabs = {
     entryEditor: {
@@ -262,6 +267,7 @@ EntryEditorWorkbench.propTypes = {
   }),
   fields: PropTypes.object,
   getEditorData: PropTypes.func,
+  getSpace: PropTypes.func,
   state: PropTypes.shape({
     delete: PropTypes.object,
   }),

@@ -140,6 +140,23 @@ describe('LaunchDarkly', () => {
       expect(getSpace).toHaveBeenNthCalledWith(1, 'space_1234');
     });
 
+    it('should add the environment to the custom data if envId is provided', async () => {
+      await getVariation('FLAG', { environmentId: 'env_id_1234' });
+
+      expect(ldClient.initialize).toHaveBeenNthCalledWith(1, launchDarkly.envId, {
+        key: 'user-id-1',
+        custom: {
+          currentUserSignInCount: 10,
+          currentUserSpaceRole: [],
+          currentSpaceEnvironmentId: 'env_id_1234',
+          isAutomationTestUser: true,
+          currentUserOwnsAtleastOneOrg: true,
+          currentUserAge: 7,
+          currentUserCreationDate: userCreationDate.getTime(),
+        },
+      });
+    });
+
     it('should attempt to get both org and space if provided both ids', async () => {
       await getVariation('FLAG', { organizationId: 'org_1234', spaceId: 'space_1234' });
 

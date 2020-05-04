@@ -67,7 +67,7 @@ export function clearCache() {
  * @returns {Object} customData
  */
 
-async function ldUser(user, org, space) {
+async function ldUser({ user, org, space, environmentId }) {
   let customData = {
     currentUserSignInCount: user.signInCount,
 
@@ -110,7 +110,6 @@ async function ldUser(user, org, space) {
       currentUserOrgRole: getOrgRole(user, organizationId),
       currentUserHasAtleastOneSpace: hasAnOrgWithSpaces(spacesByOrg),
       currentUserIsCurrentOrgCreator: isUserOrgCreator(user, org),
-
       isNonPayingUser: !['paid', 'free_paid'].includes(_.get(org, ['subscription', 'status'])),
     });
   }
@@ -120,6 +119,12 @@ async function ldUser(user, org, space) {
     customData = _.assign({}, customData, {
       currentSpaceId: space.sys.id,
       currentUserSpaceRole: roles,
+    });
+  }
+
+  if (environmentId) {
+    customData = _.assign({}, customData, {
+      currentSpaceEnvironmentId: environmentId,
     });
   }
 
@@ -162,7 +167,7 @@ async function ldUser(user, org, space) {
  * @param {String} flagName
  * @returns {Promise<Variation>}
  */
-export async function getVariation(flagName, { organizationId, spaceId } = {}) {
+export async function getVariation(flagName, { organizationId, spaceId, environmentId } = {}) {
   /**
    * if the flag is overridden, don't wait to
    * connect to LD before returning the overridden
@@ -177,7 +182,7 @@ export async function getVariation(flagName, { organizationId, spaceId } = {}) {
   // If the client doesn't exist, initialize with a basic LD user
   // object (no org or space data)
   if (!client) {
-    const clientUser = await ldUser(user);
+    const clientUser = await ldUser({ user, environmentId });
 
     client = LDClient.initialize(config.launchDarkly.envId, clientUser);
   }
@@ -195,12 +200,14 @@ export async function getVariation(flagName, { organizationId, spaceId } = {}) {
   //
   // No ID:
   // `:`
-  const key = `${organizationId ? organizationId : ''}:${spaceId ? spaceId : ''}`;
+  const key = `${organizationId ? organizationId : ''}:${spaceId ? spaceId : ''}${
+    environmentId ? environmentId : ''
+  }`;
 
   let flagsPromise = _.get(cache, key, null);
 
   if (!flagsPromise) {
-    flagsPromise = createFlagsPromise(user, organizationId, spaceId);
+    flagsPromise = createFlagsPromise({ user, organizationId, spaceId, environmentId });
 
     // Set the initial flags promise
     _.set(cache, key, flagsPromise);
@@ -226,7 +233,7 @@ export async function getVariation(flagName, { organizationId, spaceId } = {}) {
   Creates a promise that returns either the value of the flag in LaunchDarkly
   or undefined
  */
-async function createFlagsPromise(user, organizationId, spaceId) {
+async function createFlagsPromise({ user, organizationId, spaceId, environmentId }) {
   // Get the user data that will be used for LD client variation data
   await client.waitForInitialization();
 
@@ -259,7 +266,7 @@ async function createFlagsPromise(user, organizationId, spaceId) {
     return undefined;
   }
 
-  const clientUser = await ldUser(user, org, space);
+  const clientUser = await ldUser({ user, org, space, environmentId });
   await client.identify(clientUser);
 
   // Get and save the flags to the cache

@@ -117,6 +117,8 @@ export default async function create($scope, editorData, preferences, trackLoadE
     TheLocaleStore.getPrivateLocales()
   );
 
+  $scope.getSpace = () => spaceContext.getSpace();
+
   $scope.state = $controller('entityEditor/StateController', {
     $scope,
     entity: editorData.entity,
