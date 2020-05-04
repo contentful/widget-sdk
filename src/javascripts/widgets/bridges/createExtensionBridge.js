@@ -7,6 +7,7 @@ import * as Analytics from 'analytics/Analytics';
 
 import makeExtensionDialogsHandler from './makeExtensionDialogsHandlers';
 import makeExtensionSpaceMethodsHandlers from './makeExtensionSpaceMethodsHandlers';
+import makeListOfFieldLocales from './makeListOfFieldLocales';
 import {
   makeExtensionNavigationHandlers,
   makeExtensionBulkNavigationHandlers,
@@ -177,47 +178,15 @@ export default function createExtensionBridge(dependencies) {
       api.send('localeSettingsChanged', [getLocaleSettings()]);
     });
 
-    Object.values($scope.fields)
-      .reduce((acc, field) => {
-        const widget = $scope.widgets.find((w) => w.fieldId === field.id);
-
-        if (!widget) {
-          return acc;
-        }
-
-        const fieldLocales = field.locales
-          .map((localeCode) => {
-            const locale = TheLocaleStore.getPrivateLocales().find((l) => l.code == localeCode);
-
-            if (!locale) {
-              return;
-            }
-
-            const fieldLocaleScope = $scope.$new(false);
-            fieldLocaleScope.widget = widget;
-            fieldLocaleScope.locale = locale;
-
-            return {
-              fieldId: field.id,
-              localeCode,
-              fieldLocale: $controller('FieldLocaleController', {
-                $scope: fieldLocaleScope,
-              }),
-            };
-          })
-          .filter(Boolean);
-
-        return acc.concat(fieldLocales);
-      }, [])
-      .forEach(({ fieldId, localeCode, fieldLocale }) => {
-        K.onValueScope($scope, fieldLocale.access$, (access) => {
-          api.send('isDisabledChangedForFieldLocale', [fieldId, localeCode, !!access.disabled]);
-        });
-
-        K.onValueScope($scope, fieldLocale.errors$.skipDuplicates(isEqual), (errors = []) => {
-          api.send('schemaErrorsChangedForFieldLocale', [fieldId, localeCode, errors]);
-        });
+    makeListOfFieldLocales($scope, $controller).forEach(({ fieldId, localeCode, fieldLocale }) => {
+      K.onValueScope($scope, fieldLocale.access$, (access) => {
+        api.send('isDisabledChangedForFieldLocale', [fieldId, localeCode, !!access.disabled]);
       });
+
+      K.onValueScope($scope, fieldLocale.errors$.skipDuplicates(isEqual), (errors = []) => {
+        api.send('schemaErrorsChangedForFieldLocale', [fieldId, localeCode, errors]);
+      });
+    });
 
     // Available for field-level extensions only:
     if (isFieldLevelExtension) {
