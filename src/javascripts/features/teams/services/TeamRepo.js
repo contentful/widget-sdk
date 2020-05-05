@@ -2,6 +2,15 @@ import { fetchAll } from 'data/CMA/FetchAll';
 const BATCH_LIMIT = 100;
 
 /**
+ * Get all teams in the organization by id
+ * @param {endpoint} endpoint organization endpoint
+ * @param {object?} params
+ */
+export function getAllTeams(endpoint, params) {
+  return fetchAll(endpoint, ['teams'], BATCH_LIMIT, params);
+}
+
+/**
  * Get team in the organization by id
  * @param {endpoint} endpoint organization endpoint
  * @param {teamId} teamId team id
@@ -11,15 +20,6 @@ export function getTeam(endpoint, teamId) {
     method: 'GET',
     path: ['teams', teamId],
   });
-}
-
-/**
- * Get all teams in the organization by id
- * @param {endpoint} endpoint organization endpoint
- * @param {object?} params
- */
-export function getAllTeams(endpoint, params) {
-  return fetchAll(endpoint, ['teams'], BATCH_LIMIT, params);
 }
 
 /**

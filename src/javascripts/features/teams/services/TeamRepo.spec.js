@@ -26,31 +26,6 @@ describe('TeamRepo', () => {
     });
   });
 
-  // describe('#getAllTeams()', () => {
-  //   const endpointMock = jest.fn();
-  //   const teamIds = times(100, (i) => `Team${i}`);
-  //   const teams = teamIds.map(() => fake.Team());
-  //   const getAllTeams = () => TeamRepo.getAllTeams(endpointMock);
-
-  //   it('loads all teams', async function () {
-  //     const buildMockImplementation = (result) => ({ method, path }) => {
-  //       if (method === 'GET' && isEqual(path, ['teams'])) {
-  //         return result;
-  //       } else {
-  //         throw new Error('Arguments to api seemed wrong');
-  //       }
-  //     };
-
-  //     endpointMock.mockImplementationOnce(buildMockImplementation(teams));
-
-  //     const result = await getAllTeams();
-  //     console.log(result);
-  //     expect(endpointMock).toHaveBeenCalledTimes(1);
-  //     expect(result.items).toBe(teams);
-  //     expect(result.items.length).toBe(100);
-  //   });
-  // });
-
   describe('#createTeam()', () => {
     const endpointMock = jest.fn();
     const teamName = 'new team';
@@ -72,7 +47,6 @@ describe('TeamRepo', () => {
       endpointMock.mockImplementationOnce(buildMockImplementation(team));
 
       const result = await createTeam({ teamName, teamDescription });
-      console.log(result);
       expect(endpointMock).toHaveBeenCalledTimes(1);
       expect(result).toBe(team);
       expect(result.name).toBe(teamName);
