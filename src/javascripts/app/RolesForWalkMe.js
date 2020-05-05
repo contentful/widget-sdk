@@ -2,18 +2,22 @@ import { getModule } from 'core/NgRegistry';
 import { WALK_FOR_ME as WALK_FOR_ME_FLAG } from 'featureFlags';
 import _ from 'lodash';
 import * as LazyLoader from 'utils/LazyLoader';
-import { getCurrentVariation } from 'utils/LaunchDarkly';
+import { getVariation } from 'LaunchDarkly';
 
 const IS_ADMIN_ATTR = 'data-space-role-is-admin';
 const ROLE_NAMES_ATTR = 'data-space-role-names';
 let lastVariation = null;
 
 const setAttrOnAppContainer = (attr, value) => {
-  document.querySelector('cf-app-container').setAttribute(attr, value);
+  const container = document.querySelector('cf-app-container');
+
+  container && container.setAttribute(attr, value);
 };
 
 const removeAttrOnAppContainer = (attr) => {
-  document.querySelector('cf-app-container').removeAttribute(attr);
+  const container = document.querySelector('cf-app-container');
+
+  container && container.removeAttribute(attr);
 };
 
 export const init = () => {
@@ -21,7 +25,14 @@ export const init = () => {
   const spaceContext = getModule('spaceContext');
 
   $rootScope.$on('$stateChangeSuccess', () => {
-    getCurrentVariation(WALK_FOR_ME_FLAG).then((variation) => {
+    const spaceId = spaceContext.space.data.sys.id;
+
+    getVariation(WALK_FOR_ME_FLAG, { spaceId }).then((variation) => {
+      // Don't do anything if last and current variation are both null
+      if (lastVariation === null && variation === null) {
+        return;
+      }
+
       // If the new space is not the same variation, then reload the app
       // to remove the scripts from the page
       if (lastVariation && variation !== lastVariation) {
