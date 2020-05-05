@@ -95,7 +95,7 @@ function handleTopNavErrors($scope, entityLabel, shouldHideLocaleErrors) {
     // always refer to a missing file error.
     const localesErrors = groupBy(errors, (error) => error.path[2] || defaultLocale.internal_code);
     $scope.localeData.errors = localesErrors;
-    if (!isEmpty(localesErrors) || shouldHideLocaleErrors()) {
+    if (isEmpty(localesErrors) || shouldHideLocaleErrors()) {
       return;
     }
 
