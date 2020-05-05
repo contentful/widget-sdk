@@ -172,4 +172,8 @@ describe('OtDocument', () => {
       await expect(doc.setValueAt(fieldPath, 'en-US-updated')).rejects.toThrow('forbidden');
     });
   });
+
+  it('has a .isOtDocument property set to `true`', () => {
+    expect(doc.isOtDocument).toBe(true);
+  });
 });

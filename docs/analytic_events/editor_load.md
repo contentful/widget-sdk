@@ -1,5 +1,5 @@
 # `editor_load` event
-Event for the editor load sequence.
+Event for the editor load sequence. Tracks different stages of loading and their timings for the entry and asset editor.
 
 ## Questions this event should allow us to answer:
 
@@ -9,7 +9,7 @@ Event for the editor load sequence.
 
 ## Schema
 
-Snowplow schema: [editor_load/2.0.0.json](https://github.com/contentful/com.contentful-schema-registry/blob/master/schemas/com.contentful/editor_load/jsonschema/2-0-0)
+Snowplow schema: [editor_load/2.0.1.json](https://github.com/contentful/com.contentful-schema-registry/blob/master/schemas/com.contentful/editor_load/jsonschema/2-0-1)
 
 ## Use-cases
 
@@ -29,8 +29,8 @@ We track all of the following cases using the "`editor_load`" event:
   * `link_field_editor_instance_count`: refers to reference and media fields
   * `total_slide_count`
   * `load_ms`: number of ms since initial load
-* ShareJS connects
-  * `action`: `"sharejs_connected"`
+* ShareJS connects, or we run in a ShareJS-less editor
+  * `action`: `"sharejs_connected" | "doc_connected"`
   * `slides_controller_uuid`
   * `slide_uuid`
   * `slide_level` (zero-indexed)
@@ -63,9 +63,12 @@ We track all of the following cases using the "`editor_load`" event:
 
 *Notes:*
  - Either `sharejs_connected` or `links_rendered` can finish first, depending on ShareJS and CMA speed and whether there are any links to be rendered in the first place.
+ - `doc_connected` - in case ShareJS is disabled - is expected to finish together or just the fraction of a second after `entity_loaded`.
  - We currently only trigger this event for entry editor slides, not for asset and bulk editor slides.
 
 ## Change-log
+### Version `2-0-1`
+ - Introduce `action: "doc_connected"` as substitute for `sharejs_connected` in case of CMA powered editor (relevant if `feature-pen-04-2020-sharejs-removal-multi` feature flag is enabled).
 ### Version `2-0-0`
  - Introduced action `"entry_loaded"`
  - Added `slides_controller_uuid` to identify which slides were visible in the same browser/tab around the same time.

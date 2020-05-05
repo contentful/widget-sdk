@@ -363,6 +363,9 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
   );
 
   const document = {
+    // This is currently the only way to distinguish a `OtDocument` from a
+    // `CmaDocument` and is not part of the `Document` interface.
+    isOtDocument: true,
     destroy,
     getVersion,
 
