@@ -5,23 +5,18 @@ import {
   Paragraph,
   Button,
   Typography,
+  Tooltip,
 } from '@contentful/forma-36-react-components';
-import * as logger from 'services/logger';
 import { useAsync } from 'core/hooks';
 import { waitForCMInstance, openConsentManagementPanel } from 'services/OsanoService';
 
 export default function MangeCookieConsentSection() {
-  const { isLoading, error } = useAsync(
-    useCallback(async () => {
-      try {
-        await waitForCMInstance();
-      } catch (error) {
-        logger.logError('Could not load Osano', { error });
-        // We throw the error here so that useAsync() knows that an error occured and the Promise did not resolve successfully
-        throw error;
-      }
-    }, [])
-  );
+  const { isLoading, error } = useAsync(useCallback(waitForCMInstance, []));
+
+  const tooltipText =
+    !isLoading && error
+      ? 'The consent management script could not load. Check your content blockers.'
+      : '';
 
   return (
     <Typography testId="manage-cookie-consent.section">
@@ -32,13 +27,15 @@ export default function MangeCookieConsentSection() {
         on the purposes below. You may set your preferences for us independently from those of
         third-party partners.
       </Paragraph>
-      <Button
-        testId="manage-cookie-consent.button"
-        onClick={openConsentManagementPanel}
-        loading={isLoading}
-        disabled={isLoading || error}>
-        Manage consent
-      </Button>
+      <Tooltip content={tooltipText}>
+        <Button
+          testId="manage-cookie-consent.button"
+          onClick={openConsentManagementPanel}
+          loading={isLoading}
+          disabled={isLoading || error}>
+          Manage consent
+        </Button>
+      </Tooltip>
     </Typography>
   );
 }
