@@ -205,6 +205,38 @@ describe('CmaDocument', () => {
     });
   });
 
+  describe('when CMA call fails due to a network error', () => {
+    it('retries to save every 5s until successful', async () => {
+      entityRepo.update.mockImplementation(() => {
+        throw newError('-1', 'API request failed');
+      });
+
+      await doc.setValueAt(['fields', 'fieldA', 'en-US'], 'en-US-updated');
+      jest.advanceTimersByTime(THROTTLE_TIME);
+      expect(entityRepo.update).toBeCalledTimes(1);
+      expectDocError(doc.state.error$, DocError.Disconnected);
+
+      jest.advanceTimersByTime(THROTTLE_TIME);
+      expect(entityRepo.update).toBeCalledTimes(2);
+
+      jest.advanceTimersByTime(THROTTLE_TIME);
+      expect(entityRepo.update).toBeCalledTimes(3);
+
+      entityRepo.update.mockImplementation(async (entity) => {
+        entry = cloneDeep(entity);
+        entry.sys.version++;
+        return entry;
+      });
+
+      jest.advanceTimersByTime(THROTTLE_TIME);
+      await wait();
+      expect(entityRepo.update).toBeCalledTimes(4);
+
+      expect(entityRepo.update).toBeCalledTimes(4);
+      expectDocError(doc.state.error$, null);
+    });
+  });
+
   describe('state update', () => {
     it('persists pending changes first and immediately', async () => {
       entityRepo.update.mockImplementationOnce((entity) => {
@@ -327,7 +359,7 @@ describe('CmaDocument', () => {
         await doc.setValueAt(fieldPath, 'en-US-updated');
         jest.runAllTimers();
         await wait();
-        K.assertCurrentValue(doc.state.error$, DocError.VersionMismatch());
+        expectDocError(doc.state.error$, DocError.VersionMismatch);
       });
 
       it('emits OpenForbidden on AccessDenied error code', async () => {
@@ -337,7 +369,17 @@ describe('CmaDocument', () => {
         await doc.setValueAt(fieldPath, 'en-US-updated');
         jest.runAllTimers();
         await wait();
-        K.assertCurrentValue(doc.state.error$, DocError.OpenForbidden());
+        expectDocError(doc.state.error$, DocError.OpenForbidden);
+      });
+
+      it('emits Disconnected on -1 error code', async () => {
+        entityRepo.update.mockImplementationOnce(() => {
+          throw newError('-1', 'API request failed');
+        });
+        await doc.setValueAt(fieldPath, 'en-US-updated');
+        jest.runAllTimers();
+        // We don't call `await wait()` for this error because it will clear out after a retry
+        expectDocError(doc.state.error$, DocError.Disconnected);
       });
 
       it('emits CmaInternalServerError(originalError) on ServerError error code', async () => {
@@ -348,7 +390,7 @@ describe('CmaDocument', () => {
         await doc.setValueAt(fieldPath, 'en-US-updated');
         jest.runAllTimers();
         await wait();
-        K.assertCurrentValue(doc.state.error$, DocError.CmaInternalServerError(error));
+        expectDocError(doc.state.error$, DocError.CmaInternalServerError(error));
       });
 
       it('emits CmaInternalServerError(originalError) on any other error code', async () => {
@@ -359,10 +401,34 @@ describe('CmaDocument', () => {
         await doc.setValueAt(fieldPath, 'en-US-updated');
         jest.runAllTimers();
         await wait();
-        K.assertCurrentValue(doc.state.error$, DocError.CmaInternalServerError(error));
+        expectDocError(doc.state.error$, DocError.CmaInternalServerError(error));
+      });
+    });
+
+    describe('isConnected$', () => {
+      it('is `true` initially', () => {
+        K.assertCurrentValue(doc.state.isConnected$, true);
       });
 
-      // TODO: when working on status$ ticket: not connected error.
+      it('is `false` while CMA can not be reached', async () => {
+        entityRepo.update.mockImplementation(() => {
+          throw newError('-1', 'API request failed');
+        });
+
+        await doc.setValueAt(fieldPath, 'new value');
+        jest.advanceTimersByTime(THROTTLE_TIME);
+        K.assertCurrentValue(doc.state.isConnected$, false);
+
+        entityRepo.update.mockImplementation((entity) => {
+          entry = cloneDeep(entity);
+          entry.sys.version++;
+          return Promise.resolve(entry);
+        });
+
+        jest.advanceTimersByTime(THROTTLE_TIME);
+        await wait();
+        K.assertCurrentValue(doc.state.isConnected$, true);
+      });
     });
   });
 
@@ -566,3 +632,15 @@ describe('CmaDocument', () => {
     });
   });
 });
+
+function expectDocError(docError$, docErrorOrConstructor) {
+  const docError = K.getValue(docError$);
+  if (docErrorOrConstructor === null) {
+    expect(docError).toBe(null);
+  } else if (typeof docErrorOrConstructor === 'function') {
+    expect(docError).toBeInstanceOf(docErrorOrConstructor);
+  } else {
+    expect(docError).toBeInstanceOf(docErrorOrConstructor.constructor);
+    expect(docError).toStrictEqual(docErrorOrConstructor);
+  }
+}

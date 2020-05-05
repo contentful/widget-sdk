@@ -32,11 +32,11 @@ const formatErroredLocales = (erroredLocales) => {
 const messages = {
   [DocumentStatusCode.EDIT_CONFLICT]: ({ entityLabel, entityHref }) =>
     Notification.warning(
-      `A new version of this ${entityLabel} was created. To view or edit, refresh your browser or open the entry in a new tab. Your current changes may be lost.`,
+      `A new version of this ${entityLabel} was created. To view or edit, refresh your browser or open the ${entityLabel} in a new tab. Your current changes may be lost.`,
       {
         title: `There is a new version of this ${entityLabel}`,
         cta: {
-          label: 'View entry in new tab',
+          label: `View ${entityLabel} in new tab`,
           textLinkProps: { target: '_blank', href: entityHref },
         },
         duration: 0,
