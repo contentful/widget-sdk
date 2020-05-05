@@ -207,14 +207,12 @@ describe('EntityHelpers', () => {
           de: 'Ahoi! (0)',
         },
       };
-      expect(() => {
-        expect(appendDuplicateIndexToEntryTitle(fields, entryTitleId)).toEqual({
-          [entryTitleId]: {
-            'en-US': 'Hey! (0) (1)',
-            de: 'Ahoi! (0) (1)',
-          },
-        });
-      }).not.toThrow();
+      expect(appendDuplicateIndexToEntryTitle(fields, entryTitleId)).toEqual({
+        [entryTitleId]: {
+          'en-US': 'Hey! (0) (1)',
+          de: 'Ahoi! (0) (1)',
+        },
+      });
     });
 
     it('should increment a multi-digit index', () => {
@@ -225,14 +223,12 @@ describe('EntityHelpers', () => {
           de: 'Ahoi! (10)',
         },
       };
-      expect(() => {
-        expect(appendDuplicateIndexToEntryTitle(fields, entryTitleId)).toEqual({
-          [entryTitleId]: {
-            'en-US': 'Hey! (11)',
-            de: 'Ahoi! (11)',
-          },
-        });
-      }).not.toThrow();
+      expect(appendDuplicateIndexToEntryTitle(fields, entryTitleId)).toEqual({
+        [entryTitleId]: {
+          'en-US': 'Hey! (11)',
+          de: 'Ahoi! (11)',
+        },
+      });
     });
   });
 });

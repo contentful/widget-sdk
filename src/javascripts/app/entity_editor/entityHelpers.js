@@ -139,35 +139,34 @@ function assetFileUrl(file) {
 }
 
 /**
- * Ensures that the entryTitle value will be different from it's original
+ * Ensures that the entryTitle value will be different from it's original.
  * It adds (1) to the end or, if one is already there, increments the integer in the brackets
- * Ignores negative integers in the brackets.
+ * Ignores negative integers or zero in the brackets.
  *
- * Applies to values of each available locale
+ * Applies to values of each available locale.
  *
  * @param {object} fields - entry fields that the user has added
  * @param {string} entryTitleId - the id (displayField) of the entry title field
  * @returns {object}
  */
 export function appendDuplicateIndexToEntryTitle(fields, entryTitleId) {
+  // Finds positive numbers wrapped into round parenthesis preceded by a space at the end of
+  // a string like "foo (1)". References the actual number as $1.
+  const WRAPPED_NUMBER_REGEXP = /\s+\(([1-9]\d*)\)\s*$/;
+
   try {
     const fieldsCopy = _.cloneDeep(fields) || {};
     const localizedEntryTitles = fieldsCopy[entryTitleId];
     if (localizedEntryTitles) {
-      for (const [locale, entryTitleValue] of Object.entries(localizedEntryTitles)) {
-        if (entryTitleValue) {
-          const wrappedNumberRegexp = /\s\([1-9]\d{0,}\)$/; // finds numbers wrapped into round paranthesis, padded with a space, like (1)
-          const trimmedEntryTitleValue = entryTitleValue.trim();
-          const match = trimmedEntryTitleValue.match(wrappedNumberRegexp);
-          if (match && match.length) {
-            const copyId = parseInt(match[0].match(/[1-9]\d{0,}/), 10);
-            localizedEntryTitles[locale] = trimmedEntryTitleValue.replace(
-              wrappedNumberRegexp,
-              ` (${copyId + 1})`
-            );
-          } else {
-            localizedEntryTitles[locale] += ' (1)';
-          }
+      for (const [locale, title] of Object.entries(localizedEntryTitles)) {
+        if (title && title.trim()) {
+          const match = title.match(WRAPPED_NUMBER_REGEXP);
+          const index = match && Number(match[1]);
+          const newTitle = index
+            ? title.replace(WRAPPED_NUMBER_REGEXP, ` (${index + 1})`)
+            : `${title.trimEnd()} (1)`;
+          // TODO: If the title field is a `Symbol`, be cautious to not exceed 256 chars.
+          localizedEntryTitles[locale] = newTitle;
         }
       }
     }
