@@ -28,3 +28,4 @@ export const SHAREJS_REMOVAL = 'feature-pen-04-2020-sharejs-removal-multi';
 
 // Team Hejo Release Flags
 export const NEW_NAVIGATION_STYLES = 'new-navigation-styles';
+export const NEW_TEAM_DETAILS = 'feature-hejo-05-2020-new-team-details';
