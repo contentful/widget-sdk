@@ -3,6 +3,14 @@ import { isEqual } from 'lodash';
 import * as fake from 'test/helpers/fakeFactory';
 
 describe('TeamRepo', () => {
+  const assertEndpointCall = (request, method, path) => {
+    if (request.method === method && isEqual(request.path, path)) {
+      return true;
+    } else {
+      throw new Error('Arguments to api seemed wrong');
+    }
+  };
+
   describe('#getTeam()', () => {
     const endpointMock = jest.fn();
     const team = fake.Team();
@@ -10,11 +18,8 @@ describe('TeamRepo', () => {
 
     it('loads team by id', async function () {
       const buildMockImplementation = (result) => ({ method, path }) => {
-        if (method === 'GET' && isEqual(path, ['teams', team.sys.id])) {
-          return result;
-        } else {
-          throw new Error('Arguments to api seemed wrong');
-        }
+        assertEndpointCall({ method, path }, 'GET', ['teams', team.sys.id]);
+        return result;
       };
 
       endpointMock.mockImplementationOnce(buildMockImplementation(team));
@@ -37,11 +42,8 @@ describe('TeamRepo', () => {
 
     it('creates team with given name and description', async function () {
       const buildMockImplementation = (result) => ({ method, path }) => {
-        if (method === 'POST' && isEqual(path, ['teams'])) {
-          return result;
-        } else {
-          throw new Error('Arguments to api seemed wrong');
-        }
+        assertEndpointCall({ method, path }, 'POST', ['teams']);
+        return result;
       };
 
       endpointMock.mockImplementationOnce(buildMockImplementation(team));
@@ -65,11 +67,8 @@ describe('TeamRepo', () => {
 
     it('updates team with given name and description by teamId', async function () {
       const buildMockImplementation = (result) => ({ method, path }) => {
-        if (method === 'PUT' && isEqual(path, ['teams', team.sys.id])) {
-          return result;
-        } else {
-          throw new Error('Arguments to api seemed wrong');
-        }
+        assertEndpointCall({ method, path }, 'PUT', ['teams', team.sys.id]);
+        return result;
       };
 
       endpointMock.mockImplementationOnce(buildMockImplementation(team));
@@ -90,11 +89,8 @@ describe('TeamRepo', () => {
 
     it('removes team with given id from org', async function () {
       const buildMockImplementation = (result) => ({ method, path }) => {
-        if (method === 'DELETE' && isEqual(path, ['teams', team.sys.id])) {
-          return result;
-        } else {
-          throw new Error('Arguments to api seemed wrong');
-        }
+        assertEndpointCall({ method, path }, 'DELETE', ['teams', team.sys.id]);
+        return result;
       };
 
       endpointMock.mockImplementationOnce(buildMockImplementation(null));
