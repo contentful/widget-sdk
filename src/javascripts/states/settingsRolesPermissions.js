@@ -105,7 +105,9 @@ const detail = {
                 const entry = await loadEntry(spaceContext, entityId);
                 result.Entry[entityId] = entry;
               } catch (_) {
-                logger.logWarn(`Could not find entry ${entityId}`);
+                logger.logWarn(`Could not find entry ${entityId} for rule`, {
+                  groupingHash: 'missingRolesAndPermissionsRuleEntity',
+                });
               }
             }),
             ...PolicyBuilder.findAssetIds(role.policies).map(async (entityId) => {
@@ -113,7 +115,9 @@ const detail = {
                 const asset = await loadAsset(spaceContext, entityId);
                 result.Asset[entityId] = asset;
               } catch (_) {
-                logger.logWarn(`Could not find asset ${entityId}`);
+                logger.logWarn(`Could not find asset ${entityId} for rule`, {
+                  groupingHash: 'missingRolesAndPermissionsRuleEntity',
+                });
               }
             }),
           ]);
