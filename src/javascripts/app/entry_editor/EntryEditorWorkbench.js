@@ -277,7 +277,7 @@ EntryEditorWorkbench.propTypes = {
     id: PropTypes.string,
     type: PropTypes.string,
   }),
-  loadEvents: PropTypes.func,
+  loadEvents: PropTypes.object,
 };
 
 export default EntryEditorWorkbench;

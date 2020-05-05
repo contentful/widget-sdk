@@ -104,7 +104,7 @@ export default class EntrySidebar extends Component {
     sidebarToggleProps: PropTypes.shape({
       commentsToggle: PropTypes.shape({
         onClick: PropTypes.func,
-        isEnabled: PropTypes.bool.isRequired,
+        isEnabled: PropTypes.bool,
         commentsCount: PropTypes.number,
       }),
     }),

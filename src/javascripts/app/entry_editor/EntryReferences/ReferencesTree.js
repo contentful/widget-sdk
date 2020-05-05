@@ -124,7 +124,7 @@ class ReferencesTree extends React.Component {
         1;
 
       return (
-        <>
+        <React.Fragment key={`container-${entity.sys.id}`}>
           <ReferenceCard
             key={entity.sys.id}
             entity={entity}
@@ -136,7 +136,7 @@ class ReferencesTree extends React.Component {
           />
           {/* recursevly get all cards for the entitiy fields */}
           {nextLevelCards}
-        </>
+        </React.Fragment>
       );
     };
 
