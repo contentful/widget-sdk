@@ -81,7 +81,8 @@ export function bootstrapEntryEditorLoadEvents($scope, loadEvents, editorData, t
     if (loadShareJSConnected || status === false) {
       return;
     }
-    trackLoadEvent('sharejs_connected');
+    const connectedEvent = $scope.otDoc.isOtDocument ? 'sharejs_connected' : 'doc_connected';
+    trackLoadEvent(connectedEvent);
 
     loadShareJSConnected = true;
     if (loadLinksRendered) {

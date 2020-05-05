@@ -631,6 +631,10 @@ describe('CmaDocument', () => {
       expect(K.getValue(doc.sysProperty).version).toEqual(asset.sys.version);
     });
   });
+
+  it('does not have a truthy .isOtDocument property', () => {
+    expect(doc.isOtDocument).toBeFalsy();
+  });
 });
 
 function expectDocError(docError$, docErrorOrConstructor) {

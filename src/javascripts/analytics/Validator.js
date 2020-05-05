@@ -76,6 +76,7 @@ export const validEvents = {
     'init',
     'entity_loaded',
     'sharejs_connected',
+    'doc_connected',
     'links_rendered',
     'fully_interactive',
   ],
