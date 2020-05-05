@@ -16,7 +16,7 @@ import { EntityRepo, SpaceEndpoint } from 'data/CMA/EntityRepo';
 import changedEntityFieldPaths from './changedEntityFieldPaths';
 
 export const THROTTLE_TIME = 5000;
-const NETWORK_ERROR = Symbol('NETWORK_ERROR');
+const DISCONNECTED = Symbol('DISCONNECTED');
 const STATUS_UPDATED = Symbol('STATUS_UPDATED');
 const DOCUMENT_SAVED = Symbol('DOCUMENT_SAVED');
 
@@ -56,7 +56,7 @@ export function create(
   const onNetworkError$: Stream<symbol, any> = errorBus.property
     .changes()
     .filter((error) => error instanceof DocError.Disconnected)
-    .map((_) => NETWORK_ERROR);
+    .map((_) => DISCONNECTED);
   const cleanupTasks: Function[] = [];
 
   let lastSavedEntity: Entity;
@@ -103,10 +103,10 @@ export function create(
   // any changes during the last update.
   changesBus.stream
     .filter((path) => PathUtils.isPrefix(['fields'], path))
-    // The afterSave$ stream is here to make .bufferWhileBy check the value of isSaving$ again
+    // Required to force bufferWhileBy to emit all buffered changes immediately after a save.
     .merge(afterSave$)
     .bufferWhileBy(isSaving$)
-    // We can ignore the buffer when it contains no field changes (only the value emited by afterSave$)
+    // We can ignore the buffer when it contains no field changes (only the value emitted by afterSave$)
     .filter((values) => !(values.length === 1 && values[0] === DOCUMENT_SAVED))
     // In case of a status update we try to save just to be on the save side,
     // in case there's been edits while updating.
@@ -114,8 +114,8 @@ export function create(
     .merge(onNetworkError$)
     .throttle(saveThrottleMs, { leading: false })
     .onValue((_value: Array<string[] | symbol> | symbol): void => {
-      // TODO: _value being `null` doesn't make any sense but happens for some reason
-      // in some cases, apparently because of throttle(). Investigate why.
+      // TODO: _value being `null` doesn't make any sense but happens for some reason in
+      //  some cases (unit tests only?), apparently because of throttle(). Investigate why.
       saveEntityAfterAnyStatusUpdate();
     });
 
@@ -176,23 +176,17 @@ export function create(
     data$,
 
     state: {
-      // Used by Entry/Asset editor controller
+      // Used by Entry/Asset editor controller.
       isSaving$,
-      // Used by 'cfFocusOtInput' directive and 'FieldLocaleController'
-      isConnected$: K.constant(true),
+      // For CmaDocument this is only `false` while we have lost internet connection.
+      isConnected$: error$
+        .map((error) => !(error instanceof DocError.Disconnected))
+        .skipDuplicates(),
       // Used by Entry/Asset editor controller
       isDirty$,
-
       canEdit$,
-      // TODO: might set False when no internet connection
+      // CmaDocument is always "loaded" by design when instantiated.
       loaded$: K.constant(true),
-
-      /**
-       * This error is used by:
-       * - DocumentErrorHandler that processes ONLY Error.OpenForbidden and Error.SetValueForbidden
-       *
-       * So it also might then contain other errors: document disconnected, open error.
-       */
       error$,
     },
 
