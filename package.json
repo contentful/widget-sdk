@@ -145,7 +145,7 @@
     "@testing-library/jest-dom": "5.0.2",
     "@testing-library/react": "9.4.0",
     "@testing-library/react-hooks": "^3.2.1",
-    "@testing-library/user-event": "8.0.4",
+    "@testing-library/user-event": "10.1.0",
     "@typescript-eslint/eslint-plugin": "2.30.0",
     "@typescript-eslint/parser": "2.30.0",
     "@types/classnames": "^2.2.10",
