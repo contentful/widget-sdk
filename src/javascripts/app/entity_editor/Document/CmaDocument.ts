@@ -19,6 +19,7 @@ export const THROTTLE_TIME = 5000;
 const DISCONNECTED = Symbol('DISCONNECTED');
 const STATUS_UPDATED = Symbol('STATUS_UPDATED');
 const DOCUMENT_SAVED = Symbol('DOCUMENT_SAVED');
+const ASSET_UPDATED = Symbol('ASSET_UPDATED');
 
 /**
  * Used to edit an entry or asset through the CMA.
@@ -44,12 +45,9 @@ export function create(
   const sysBus: PropertyBus<EntitySys> = K.createPropertyBus(entity.sys);
   const sys$ = sysBus.property;
   const changesBus: StreamBus<string[]> = K.createStreamBus();
-  const isSavingBus: PropertyBus<boolean> = K.createPropertyBus(false);
-  const isSaving$: Property<boolean, any> = isSavingBus.property.skipDuplicates();
-  const afterSave$: Stream<symbol, any> = isSaving$
-    .changes()
-    .filter((isSaving) => !isSaving)
-    .map((_) => DOCUMENT_SAVED);
+
+  const [isSavingBus, isSaving$, afterSave$] = stateBus(false, DOCUMENT_SAVED);
+  const [isUpdatingBus, isUpdating$, afterUpdate$] = stateBus(false, ASSET_UPDATED);
 
   const errorBus: PropertyBus<Error | null> = K.createPropertyBus(null);
   const error$ = errorBus.property.skipDuplicates((a, b) => a?.constructor === b?.constructor);
@@ -331,6 +329,10 @@ export function create(
       await afterSave$.changes().take(1).toPromise();
       return saveEntity(options);
     }
+    if (K.getValue(isUpdating$)) {
+      await afterUpdate$.changes().take(1).toPromise();
+      return saveEntity(options);
+    }
     // Do nothing if no unsaved changes - entity could be persisted
     // before the throttled handler triggered, e.g. on status change.
     if (isEqual(entity.fields, lastSavedEntity.fields)) {
@@ -389,42 +391,75 @@ export function create(
     });
   }
 
+  /**
+   * Handler of the pub-sub "asset processed" event, updates the local entity sys and its file field.
+   * Does not need to wait for the saveEntity to finish, because saveEntity anyway would result in VersionMismatch
+   * if asset processing finished (and client received the pub-sub event) after the save process has started.
+   */
   async function handleAssetFileProcessed() {
-    // what if two users upload a new asset at the same time?
-    // should only compare a specific locale + also when emiting change (only when we need to merge fields?)
-    const remoteEntity = await entityRepo.get(entity.sys.type, entity.sys.id);
-    const localChangedFieldPaths = changedEntityFieldPaths(lastSavedEntity.fields, entity.fields);
-    const remoteChangedFieldPaths = changedEntityFieldPaths(
-      lastSavedEntity.fields,
-      remoteEntity.fields
-    );
-
-    const hasConflictingPendingChanges =
-      intersectionBy(localChangedFieldPaths, remoteChangedFieldPaths, (path) => path.join(':'))
-        .length > 0;
-    if (hasConflictingPendingChanges) {
-      trackVersionMismatch(entity, remoteEntity);
-      errorBus.set(DocError.VersionMismatch());
-      return;
+    // Wait for current ongoing update, then do the next one.
+    if (K.getValue(isUpdating$)) {
+      await afterUpdate$.changes().take(1).toPromise();
+      return handleAssetFileProcessed();
     }
 
-    const hasRemoteVersionConflict = some(remoteChangedFieldPaths, ([path]) => path !== 'file');
-    if (hasRemoteVersionConflict) {
-      if (localChangedFieldPaths.length > 0) {
-        trackVersionMismatch(entity, remoteEntity);
+    isUpdatingBus.set(true);
+    await updateAsset();
+    isUpdatingBus.set(false);
+
+    async function updateAsset() {
+      const remoteEntity = await entityRepo.get(entity.sys.type, entity.sys.id);
+      if (remoteEntity.sys.version <= entity.sys.version) {
+        return;
       }
-      errorBus.set(DocError.VersionMismatch());
-      return;
+
+      const localChangedFieldPaths = changedEntityFieldPaths(lastSavedEntity.fields, entity.fields);
+      const remoteChangedFieldPaths = changedEntityFieldPaths(
+        lastSavedEntity.fields,
+        remoteEntity.fields
+      );
+
+      const hasConflictingPendingChanges =
+        intersectionBy(localChangedFieldPaths, remoteChangedFieldPaths, (path) => path.join(':'))
+          .length > 0;
+      if (hasConflictingPendingChanges) {
+        trackVersionMismatch(entity, remoteEntity);
+        errorBus.set(DocError.VersionMismatch());
+        return;
+      }
+
+      const hasRemoteVersionConflict = some(remoteChangedFieldPaths, ([path]) => path !== 'file');
+      if (hasRemoteVersionConflict) {
+        if (localChangedFieldPaths.length > 0) {
+          trackVersionMismatch(entity, remoteEntity);
+        }
+        errorBus.set(DocError.VersionMismatch());
+        return;
+      }
+
+      const changedRemoteFilePaths = remoteChangedFieldPaths
+        .filter(([path]) => path === 'file')
+        .map((path) => setValueAt(['fields', ...path], get(remoteEntity, ['fields', ...path])));
+      await Promise.all([...changedRemoteFilePaths]);
+
+      setLastSavedEntity(remoteEntity);
+      set(entity, 'sys', remoteEntity.sys);
+      sysBus.set(remoteEntity.sys);
+      normalize();
     }
-
-    const changedRemoteFilePaths = remoteChangedFieldPaths
-      .filter(([path]) => path === 'file')
-      .map((path) => setValueAt(['fields', ...path], get(remoteEntity, ['fields', ...path])));
-    await Promise.all([...changedRemoteFilePaths]);
-
-    setLastSavedEntity(remoteEntity);
-    set(entity, 'sys', lastSavedEntity.sys);
-    sysBus.set(lastSavedEntity.sys);
-    normalize();
   }
+}
+
+function stateBus(
+  init: boolean,
+  emitAfter: symbol
+): [PropertyBus<boolean>, Property<boolean, any>, Stream<symbol, any>] {
+  const bus: PropertyBus<boolean> = K.createPropertyBus(init);
+  const value$: Property<boolean, any> = bus.property.skipDuplicates();
+  const after$: Stream<symbol, any> = value$
+    .changes()
+    .filter((isSaving) => !isSaving)
+    .map((_) => emitAfter);
+
+  return [bus, value$, after$];
 }

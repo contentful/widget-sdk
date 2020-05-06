@@ -12,7 +12,7 @@ export type SpaceEndpoint = {
 };
 
 export type EntityRepo = {
-  get(entityType: string, entityId: string): any;
+  get(entityType: string, entityId: string): Entity;
   onAssetFileProcessed: (assetId: string, callback: any) => () => any;
   update: (entity: Entity) => Entity;
 };

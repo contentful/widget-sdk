@@ -556,18 +556,7 @@ describe('CmaDocument', () => {
     });
 
     it('should update file from a successfully processed asset', async () => {
-      entityRepo.get.mockImplementation(() =>
-        Promise.resolve({
-          ...asset,
-          fields: {
-            ...asset.fields,
-            file: {
-              ...asset.fields.file,
-              'en-US': { url: 'https://example.com/bar.jpg' },
-            },
-          },
-        })
-      );
+      mockGetProcessedAsset(asset, 'fields.file.en-US', { url: 'https://example.com/bar.jpg' });
       await handler();
       expect(doc.getValueAt(['fields'])).toMatchObject({
         title: { 'en-US': 'foo' },
@@ -576,18 +565,7 @@ describe('CmaDocument', () => {
     });
 
     it('should not overwrite files outside the changed locale-specific file', async () => {
-      entityRepo.get.mockImplementation(() =>
-        Promise.resolve({
-          ...asset,
-          fields: {
-            ...asset.fields,
-            file: {
-              ...asset.fields.file,
-              de: { url: 'https://example.com/bar.jpg' },
-            },
-          },
-        })
-      );
+      mockGetProcessedAsset(asset, 'fields.file.de', { url: 'https://example.com/bar.jpg' });
       await handler();
       expect(doc.getValueAt(['fields'])).toMatchObject({
         title: { 'en-US': 'foo' },
@@ -599,36 +577,80 @@ describe('CmaDocument', () => {
     });
 
     it('should show VersionMismatch when has local pending changes', async () => {
-      entityRepo.get.mockImplementation(() =>
-        Promise.resolve({
-          ...asset,
-          fields: {
-            ...asset.fields,
-            file: {
-              ...asset.fields.file,
-              'en-US': { url: 'https://example.com/bar.jpg' },
-            },
-          },
-        })
-      );
+      mockGetProcessedAsset(asset, 'fields.file.en-US', { url: 'https://example.com/bar.jpg' });
       await doc.setValueAt(['fields', 'file', 'en-US'], 'bar');
       await handler();
       K.assertCurrentValue(doc.state.error$, DocError.VersionMismatch());
     });
 
     it('should show VersionMismatch when last saved entity is different than remote updated', async () => {
-      entityRepo.get.mockImplementation(() =>
-        Promise.resolve({
-          ...asset,
-          fields: {
-            ...asset.fields,
-            title: { 'en-US': 'bar' },
-          },
-        })
-      );
+      mockGetProcessedAsset(asset, 'fields.title.en-US', 'bar');
       await handler();
       K.assertCurrentValue(doc.state.error$, DocError.VersionMismatch());
       expect(K.getValue(doc.sysProperty).version).toEqual(asset.sys.version);
+    });
+
+    it('blocks save process while updating the asset due to pub-sub', async () => {
+      // Delay "get" that is called in the beginning of handleAssetFileProcessed
+      let cmaResolve;
+      entityRepo.get.mockImplementation(() => {
+        return new Promise((resolve) => {
+          cmaResolve = () => resolve(set(cloneDeep(asset), 'sys.version', asset.sys.version + 1));
+        });
+      });
+
+      // Trigger handleAssetFileProcessed
+      handler();
+      expect(entityRepo.get).toBeCalled();
+
+      // Trigger saveEntity: must be buffered, not called
+      await doc.setValueAt(['fields', 'title', 'en-US'], 'A updated');
+      jest.advanceTimersByTime(THROTTLE_TIME);
+      expect(entityRepo.update).not.toBeCalled();
+
+      // Now finish the handler process
+      cmaResolve();
+      // Trigger throttled buffer
+      await wait();
+      jest.advanceTimersByTime(THROTTLE_TIME);
+      await wait();
+
+      // Now saveEntity should be triggered
+      expect(entityRepo.update).toBeCalledTimes(1);
+      K.assertCurrentValue(doc.state.error$, null);
+      // Init version + 1 (processed asset) + 1 (saveEntity)
+      expect(doc.getVersion()).toEqual(asset.sys.version + 2);
+    });
+
+    it('blocks asset update process while updating the asset due to pub-sub', async () => {
+      let cmaResolve;
+      const editedAsset = cloneDeep(asset);
+      entityRepo.get.mockImplementationOnce(() => {
+        return new Promise((resolve) => {
+          cmaResolve = () => resolve(set(editedAsset, 'sys.version', asset.sys.version + 1));
+        });
+      });
+      mockGetProcessedAsset(editedAsset, 'fields.file.en-US', {
+        url: 'https://example.com/bar.jpg',
+      });
+
+      // Trigger handleAssetFileProcessed
+      handler();
+      expect(entityRepo.get).toBeCalledTimes(1);
+
+      // Second event
+      handler();
+      expect(entityRepo.get).toBeCalledTimes(1);
+
+      // Now finish the first event handler
+      cmaResolve();
+      await wait();
+      // Now second event handler should be triggered
+      expect(entityRepo.get).toBeCalledTimes(2);
+
+      K.assertCurrentValue(doc.state.error$, null);
+      // Init version + 1 (processed asset) + 1 (processed asset)
+      expect(doc.getVersion()).toEqual(asset.sys.version + 2);
     });
   });
 
@@ -637,10 +659,18 @@ describe('CmaDocument', () => {
   });
 });
 
+function mockGetProcessedAsset(asset, path, value) {
+  entityRepo.get.mockImplementation(async () => {
+    const processedAsset = cloneDeep(asset);
+    processedAsset.sys.version++;
+    return set(processedAsset, path, value);
+  });
+}
+
 function expectDocError(docError$, docErrorOrConstructor) {
   const docError = K.getValue(docError$);
   if (docErrorOrConstructor === null) {
-    expect(docError).toBe(null);
+    expect(docError).toBeNull();
   } else if (typeof docErrorOrConstructor === 'function') {
     expect(docError).toBeInstanceOf(docErrorOrConstructor);
   } else {
