@@ -91,7 +91,7 @@
     "proxyquire": "^1.8.0",
     "qrcode": "^1.4.2",
     "qs": "^6.7.0",
-    "react": "16.10.2",
+    "react": "16.13.1",
     "react-animate-height": "^2.0.15",
     "react-click-outside": "^3.0.1",
     "react-codemirror2": "6.0.0",
