@@ -1,128 +1,93 @@
-import moment from 'moment';
-import { getModule } from 'core/NgRegistry';
-import { getEndpoint, getCurrentState } from './Utils';
 import * as Telemetry from 'i13n/Telemetry';
+import { getEndpoint, getCurrentState, delay } from './Utils';
 
-const CALLS_IN_PERIOD = 7;
-const PERIOD = 1000;
-const DEFAULT_TTL = 5;
 const RATE_LIMIT_EXCEEDED = 429;
 const BAD_GATEWAY = 502;
 const SERVICE_UNAVAILABLE = 503;
 const GATEWAY_TIMEOUT = 504;
 
-/**
- * @ngdoc service
- * @name data/Request/Retry
+const CALLS_IN_PERIOD = 7;
+const PERIOD = 1000;
+const DEFAULT_TTL = 5;
 
- * @description
- * Queue wrapper for api requests
- * Wrapped requests will retry automatically when rate limit is exceeded,
- * and on certain api errors (codes: 429, 502, 503, 504)
-
- * @param {function} request function ($http(...))
- * @returns {function} wrapped request function
- */
-export default function wrapWithRetry(requestFn) {
-  const $q = getModule('$q');
-  const $timeout = getModule('$timeout');
-
-  let inFlight = 0;
+export default function withRetry(requestFn) {
   const queue = [];
+  let inFlight = 0;
 
-  return function push() {
-    const deferred = $q.defer();
+  setInterval(consumeQueue, PERIOD);
 
-    queue.push({
-      deferred,
-      args: Array.prototype.slice.call(arguments),
-      ttl: DEFAULT_TTL,
-      wait: 0,
+  return function addToQueue(...args) {
+    return new Promise((resolve, reject) => {
+      queue.push({
+        resolve,
+        reject,
+        // original request arguments
+        args,
+        // time to live
+        // how many times we retry before giving up
+        ttl: DEFAULT_TTL,
+        // time to wait before sending the request
+        // some errors cause longer waits before retries
+        wait: 0,
+      });
+      attemptImmediate();
     });
-    shift();
-
-    return deferred.promise;
   };
 
-  // the time sent here includes time needed to run the requestFn
-  // and the time it takes the JS runtime to have the resolve/reject
-  // handlers execute. Therefore, it is off from the times reported
-  // by the Network tab in your dev tools by a few milliseconds to
-  // tens of millisecond at worst (as per my limited testing).
-  function recordResponseTime({ status }, startTime, { url, method } = {}) {
-    try {
-      Telemetry.record('cma-response-time', now() - startTime, {
-        endpoint: getEndpoint(url),
-        status,
-        method,
-      });
-    } catch (_) {
-      // no-op
-    }
-  }
-
-  function shift() {
-    if (inFlight >= CALLS_IN_PERIOD || queue.length < 1) {
+  // if there are less then 7 simultaneos requests in fligh, make request immediately
+  function attemptImmediate() {
+    if (inFlight >= CALLS_IN_PERIOD) {
       return;
     }
 
-    const start = now();
     const call = queue.shift();
-    inFlight += 1;
+    doRequest(call);
+  }
 
-    $timeout(call.wait)
-      .then(() => requestFn(...call.args))
-      .then(
-        (res) => {
-          recordResponseTime(res, start + call.wait, ...call.args);
-          return res;
-        },
-        (err) => {
-          recordResponseTime(err, start + call.wait, ...call.args);
-          return $q.reject(err);
-        }
-      )
-      .then(handleSuccess, handleError)
-      .then(completePeriod)
-      .then(() => {
-        inFlight -= 1;
-        shift();
-      });
-
-    function handleSuccess(res) {
-      call.deferred.resolve(res);
+  async function doRequest(call) {
+    const startTime = Date.now();
+    inFlight++;
+    try {
+      const [response] = await Promise.all([requestFn(...call.args), delay(call.wait)]);
+      recordResponseTime({ status: 200 }, startTime + call.wait, call.args);
+      call.resolve(response);
+    } catch (e) {
+      handleError(call, e);
+      recordResponseTime(e, startTime + call.wait, call.args);
+    } finally {
+      inFlight--;
     }
+  }
 
-    function handleError(err) {
-      if (err.status === RATE_LIMIT_EXCEEDED && call.ttl > 0) {
-        try {
-          const [{ url } = {}] = call.args;
+  // every second, get the first 7 requests in the queue and send them
+  function consumeQueue() {
+    if (queue.length === 0) return;
+    const calls = queue.splice(0, CALLS_IN_PERIOD);
+    calls.forEach(doRequest);
+  }
 
-          Telemetry.count('cma-rate-limit-exceeded', {
-            endpoint: getEndpoint(url),
-            state: getCurrentState(),
-          });
-        } catch (_) {
-          // no op
-        }
-
-        queue.unshift(backOff(call));
-      } else if (
-        [BAD_GATEWAY, SERVICE_UNAVAILABLE, GATEWAY_TIMEOUT].indexOf(err.status) > -1 &&
-        call.ttl > 0
-      ) {
-        call.ttl -= 1;
-        queue.unshift(call);
-      } else {
-        call.deferred.reject(err);
+  function handleError(call, err) {
+    if (err.status === RATE_LIMIT_EXCEEDED && call.ttl > 0) {
+      try {
+        const url = call.args.url;
+        Telemetry.count('cma-rate-limit-exceeded', {
+          endpoint: getEndpoint(url),
+          state: getCurrentState(),
+        });
+      } catch {
+        // no op
       }
-    }
-
-    function completePeriod() {
-      const duration = now() - start;
-      if (duration < PERIOD) {
-        return $timeout(PERIOD - duration);
-      }
+      queue.unshift(backOff(call));
+      attemptImmediate();
+    } else if (
+      [BAD_GATEWAY, SERVICE_UNAVAILABLE, GATEWAY_TIMEOUT].includes(err.status) &&
+      call.ttl > 0
+    ) {
+      call.ttl -= 1;
+      queue.unshift(call);
+      attemptImmediate();
+    } else {
+      call.reject(err);
     }
   }
 }
@@ -134,6 +99,19 @@ function backOff(call) {
   return call;
 }
 
-function now() {
-  return moment().valueOf();
+// the time sent here includes time needed to run the requestFn
+// and the time it takes the JS runtime to have the resolve/reject
+// handlers execute. Therefore, it is off from the times reported
+// by the Network tab in your dev tools by a few milliseconds to
+// tens of millisecond at worst (as per my limited testing).
+function recordResponseTime({ status }, startTime, { url, method } = {}) {
+  try {
+    Telemetry.record('cma-response-time', Date.now() - startTime, {
+      endpoint: getEndpoint(url),
+      status,
+      method,
+    });
+  } catch {
+    // no-op
+  }
 }

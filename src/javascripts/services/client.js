@@ -10,20 +10,19 @@ const defaultHeaders = {
 };
 
 async function request(req) {
-  req = await buildRequest(req);
-
+  const request = await buildRequest(req);
   const baseRequest = makeRequest(Auth);
 
   try {
-    const response = await baseRequest(req);
-    return response.data;
+    const response = await baseRequest(request);
+    return response;
   } catch (e) {
     return Promise.reject({
       // We duplicate this property because `statusCode` is used througout the code base
       statusCode: parseInt(e.status, 10),
       status: e.status,
       body: e.data,
-      request: req,
+      request: request,
     });
   }
 }
@@ -37,8 +36,11 @@ async function buildRequest(data) {
     headers: _.extend({}, defaultHeaders, data.headers),
   };
 
-  const payloadProperty = data.method === 'GET' ? 'params' : 'data';
-  req[payloadProperty] = data.payload;
+  if (data.method === 'GET') {
+    req.query = data.payload;
+  } else {
+    req.body = data.payload;
+  }
 
   return req;
 }

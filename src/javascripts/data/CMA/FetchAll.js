@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import { getModule } from 'core/NgRegistry';
 
 /**
  * @ngdoc service
@@ -59,8 +58,6 @@ export function fetchAllWithIncludes(endpoint, path, batchLimit, params, headers
 }
 
 function makeRequests(endpoint, path, batchLimit, params, headers) {
-  const $q = getModule('$q');
-
   const requestPromises = [];
   let query = _.extend({}, params, { skip: 0, limit: batchLimit });
 
@@ -78,7 +75,7 @@ function makeRequests(endpoint, path, batchLimit, params, headers) {
       skip += batchLimit;
     }
 
-    return $q.all(requestPromises);
+    return Promise.all(requestPromises);
   });
 }
 

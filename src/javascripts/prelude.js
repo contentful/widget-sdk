@@ -36,7 +36,6 @@ import { awaitInitReady } from 'core/NgRegistry';
 
 const injectedConfig = readInjectedConfig();
 const env = injectedConfig.config.environment;
-const gitRevision = injectedConfig.uiVersion;
 
 // define global method for code splitting with static subdomain
 window.WebpackRequireFrom_getChunkURL = () => injectedConfig.config.assetUrl + '/app/';
@@ -183,35 +182,6 @@ angular
           return $q;
         },
       ]);
-    },
-  ])
-  .config([
-    '$httpProvider',
-    ($httpProvider) => {
-      // IE11 caches AJAX requests by default :facepalm: if we don’t set
-      // these headers.
-      // See: http://viralpatel.net/blogs/ajax-cache-problem-in-ie/
-      $httpProvider.defaults.headers.common['Cache-Control'] = 'no-cache';
-      $httpProvider.defaults.headers.common['If-Modified-Since'] = '0';
-
-      // Add header to denote UI traffic, so that information can be determined
-      // in services like Librato
-      //
-      // See [CEP-0056] SDK User Agent Headers
-      // https://contentful.atlassian.net/wiki/spaces/ENG/pages/122514052/CEP-0056+SDK+User+Agent+Headers
-      const headerParts = ['app contentful.web-app', 'platform browser'];
-
-      // Add active git revision to headers
-      if (gitRevision) {
-        headerParts.push(`sha ${gitRevision}`);
-      }
-
-      // Add environment, so that local dev versus direct traffic can be differentiated
-      if (env !== 'production') {
-        headerParts.push(`env ${env}`);
-      }
-
-      $httpProvider.defaults.headers.common['X-Contentful-User-Agent'] = headerParts.join('; ');
     },
   ])
   .config([

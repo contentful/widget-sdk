@@ -65,3 +65,5 @@ function makeStableName(relevantSegments) {
     return `${getPath(0)}${getId(0)}${getExperiment(1)}`;
   }
 }
+
+export const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));

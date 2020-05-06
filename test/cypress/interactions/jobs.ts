@@ -348,7 +348,7 @@ export const createScheduledPublicationForDefaultSpace = {
     cy.addInteraction({
       provider: 'jobs',
       state: States.MAX_PENDING_JOBS,
-      uponReceiving: `a request to create a scheduling publication for space "${defaultSpaceId}"`,
+      uponReceiving: `a request to create a scheduling publication for space "${defaultSpaceId}" above the limit`,
       withRequest: {
         method: 'POST',
         path: `/spaces/${defaultSpaceId}/scheduled_actions`,
@@ -364,6 +364,7 @@ export const createScheduledPublicationForDefaultSpace = {
       },
       willRespondWith: {
         status: 400,
+        body: createJobRequest,
       },
     }).as('createScheduledPublicationForDefaultSpace');
 

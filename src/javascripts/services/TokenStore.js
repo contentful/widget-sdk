@@ -13,7 +13,6 @@ import ReloadNotification from 'app/common/ReloadNotification';
 import * as OrganizationRoles from 'services/OrganizationRoles';
 import { deepFreezeClone, deepFreeze } from 'utils/Freeze';
 import { isEqual, groupBy, map, get, find, cloneDeep } from 'lodash';
-import { getModule } from 'core/NgRegistry';
 import { window } from 'core/services/window';
 
 // Refresh token info every 5 minutes
@@ -188,8 +187,7 @@ export function getDomains() {
 export function getOrganization(id) {
   return getOrganizations().then((orgs) => {
     const org = find(orgs, { sys: { id } });
-    const $q = getModule('$q');
-    return org || $q.reject(new Error('No organization with given ID could be found.'));
+    return org || Promise.reject(new Error('No organization with given ID could be found.'));
   });
 }
 

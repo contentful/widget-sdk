@@ -20,7 +20,9 @@ import { getDefaultEntry, getFirst7SnapshotsOfDefaultEntry } from '../../../inte
 import {
   PROVIDER as PRODUCT_CATALOG_PROVIDER,
   queryForScheduledPublishingOnEntryPage,
-  queryForTasksAndAppsInDefaultSpace,
+  queryForTasksInDefaultSpace,
+  queryForBasicAppsInDefaultSpace,
+  queryForContentTagsInDefaultSpace,
 } from '../../../interactions/product_catalog_features';
 import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
 
@@ -70,7 +72,9 @@ describe('Tasks entry editor sidebar', () => {
   context('tasks service error', () => {
     beforeEach(() => {
       const interactions = [
-        queryForTasksAndAppsInDefaultSpace.willFindBothEnabled(),
+        queryForTasksInDefaultSpace.willFindFeatureEnabled(),
+        queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
+        queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
         getAllTasksForDefaultEntry.willFailWithAnInternalServerError(),
       ];
 
@@ -87,7 +91,9 @@ describe('Tasks entry editor sidebar', () => {
   context('no tasks on the entry', () => {
     beforeEach(() => {
       const interactions = [
-        queryForTasksAndAppsInDefaultSpace.willFindBothEnabled(),
+        queryForTasksInDefaultSpace.willFindFeatureEnabled(),
+        queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
+        queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
         getAllTasksForDefaultEntry.willReturnNone(),
       ];
 
@@ -105,7 +111,9 @@ describe('Tasks entry editor sidebar', () => {
   context('several tasks on the entry', () => {
     beforeEach(() => {
       const interactions = [
-        queryForTasksAndAppsInDefaultSpace.willFindBothEnabled(),
+        queryForTasksInDefaultSpace.willFindFeatureEnabled(),
+        queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
+        queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
         getAllTasksForDefaultEntry.willReturnSeveral(),
       ];
 
@@ -236,7 +244,9 @@ describe('Tasks entry editor sidebar', () => {
     let interactions: string[];
     beforeEach(() => {
       interactions = [
-        queryForTasksAndAppsInDefaultSpace.willFindBothEnabled(),
+        queryForTasksInDefaultSpace.willFindFeatureEnabled(),
+        queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
+        queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
         getAllTasksForDefaultEntry.willReturnNone(),
       ];
     });

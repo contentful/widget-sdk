@@ -33,6 +33,9 @@ describe('Assets List Page', () => {
       cy.wait(interactions);
     });
     it('renders add asset button for empty state on assets list page', () => {
+      // TODO: this page is sending redundant requests, causing the this to reload twice
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(500);
       cy.getByTestId('cf-ui-empty-state')
         .should('be.visible')
         .find('#new-asset-menu')
@@ -50,6 +53,9 @@ describe('Assets List Page', () => {
       cy.wait(interactions);
     });
     it('renders table with items on assets list page', () => {
+      // TODO: this page is sending redundant requests, causing the this to reload twice
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(500);
       cy.getByTestId('add-asset-menu-trigger').should('be.enabled');
       cy.getByTestId('asset-list').should('be.visible');
       cy.getAllByTestId('asset-row').should('have.length', severalAssetsBody.total);

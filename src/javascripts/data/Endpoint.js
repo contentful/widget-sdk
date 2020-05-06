@@ -1,7 +1,6 @@
 import makeRequest from 'data/Request';
 import { extend, filter, get } from 'lodash';
 import shouldUseEnvEndpoint from './shouldUseEnvEndpoint';
-import { getModule } from 'core/NgRegistry';
 
 /**
  * @module
@@ -164,8 +163,6 @@ export function createAppDefinitionsEndpoint(baseUrl, auth) {
  * @returns {function(): Promise<Object>}
  */
 export function create(baseUrl, auth) {
-  const $q = getModule('$q');
-
   const baseRequest = makeRequest(auth);
   let withBaseUrl = baseUrl;
 
@@ -173,46 +170,47 @@ export function create(baseUrl, auth) {
     withBaseUrl = (path) => joinPath([baseUrl].concat(path));
   }
 
-  return function request(config, headers) {
-    const url = withBaseUrl(config.path);
-
+  return async function request(config, headers) {
     const req = {
+      query: config.query,
       method: config.method,
-      url,
       headers: makeHeaders(config.version, headers),
-      data: config.data,
-      params: config.query,
+      body: config.data,
+      url: withBaseUrl(config.path),
     };
 
-    return baseRequest(req).then(
-      (response) => response.data,
-      (response) => {
-        const status = parseInt(response.status, 10);
-        const error = extend(new Error('API request failed'), {
-          status,
-          // We duplicate this property because it is required by the
-          // request queue.
-          statusCode: status,
-          code: get(response, ['data', 'sys', 'id'], response.status),
-          data: response.data,
-          headers: response.headers,
-          request: req,
-        });
-        return $q.reject(error);
+    try {
+      const response = await baseRequest(req);
+      return response;
+    } catch (res) {
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        data = null;
       }
-    );
+      const error = extend(new Error('API request failed'), {
+        status: res.status,
+        data,
+        // We duplicate this property because it is required by the
+        // request queue.
+        statusCode: res.status,
+        code: get(res, ['data', 'sys', 'id'], res.status),
+        headers: res.headers,
+        request: req,
+      });
+
+      throw error;
+    }
   };
 
-  function makeHeaders(version, additional) {
-    const headers = extend(
-      {
-        'Content-Type': 'application/vnd.contentful.management.v1+json',
-      },
-      additional
-    );
+  function makeHeaders(version, incomingHeaders = {}) {
+    const headers = { ...incomingHeaders };
+
     if (version) {
       headers['X-Contentful-Version'] = version;
     }
+
     return headers;
   }
 }

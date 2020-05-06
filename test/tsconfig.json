@@ -23,5 +23,5 @@
     "jsx": "react"
   },
   "compileOnSave": false,
-  "include": ["./**/*.ts", "../node_modules/@contentful/cypress-pact"]
+  "include": ["./**/*.ts", "../node_modules/cypress", "../node_modules/@contentful/cypress-pact"]
 }

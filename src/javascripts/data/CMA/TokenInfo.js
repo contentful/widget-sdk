@@ -14,7 +14,7 @@ import * as logger from 'services/logger';
  * Tested as part of the 'TokenStore` module.
  */
 export default function makeFetchWithAuth(auth) {
-  const fetch = makeFetch(auth);
+  const doFetch = makeFetch(auth);
   const request = {
     method: 'GET',
     url: apiUrl('token'),
@@ -22,33 +22,33 @@ export default function makeFetchWithAuth(auth) {
       'Content-Type': 'application/vnd.contentful.management.v1+json',
     },
   };
-  return () =>
-    fetch(request).then(
-      (response) => {
-        const data = response.data;
-        if (data) {
-          // Locales are always fetched from the `/locales` endpoint.
-          // Do not resolve links to locales.
-          delete data.includes.Locale;
 
-          // TODO freeze returned object
-          return resolveTokenLinks(data);
-        } else {
-          logError('Obtained /token info without `data`', response);
-          throw newError();
-        }
-      },
-      (error) => {
-        // true if the request was rejected in preflight. Auth token is invalid
-        const isPreflightError = error.status === -1;
+  return async () => {
+    try {
+      const data = await doFetch(request);
 
-        if (!isPreflightError) {
-          logError('Could not obtain /token info', error);
-        }
+      if (data) {
+        // Locales are always fetched from the `/locales` endpoint.
+        // Do not resolve links to locales.
+        delete data.includes.Locale;
 
+        // TODO freeze returned object
+        return resolveTokenLinks(data);
+      } else {
+        logError('Obtained /token info without `data`', data);
         throw newError();
       }
-    );
+    } catch (error) {
+      // true if the request was rejected in preflight. Auth token is invalid
+      const isPreflightError = error.status === -1;
+
+      if (!isPreflightError) {
+        logError('Could not obtain /token info', error);
+      }
+
+      throw newError();
+    }
+  };
 
   function logError(message, { data, status, statusText }) {
     // We don't want e.g. `config` in here which contains secrets.

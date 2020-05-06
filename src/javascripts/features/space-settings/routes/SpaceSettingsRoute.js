@@ -50,6 +50,8 @@ export class SpaceSettingsRoute extends React.Component {
       })
       .then((newSpace) => spaceContext.resetWithSpace(newSpace))
       .then(() => {
+        const $rootScope = getModule('$rootScope');
+        $rootScope.$applyAsync();
         // re-render view with new space object
         this.forceUpdate();
         Notification.success(`Space renamed to ${newName} successfully.`);

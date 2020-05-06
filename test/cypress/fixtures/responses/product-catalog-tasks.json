@@ -1,0 +1,21 @@
+{
+  "total": 1,
+  "sys": { "type": "Array" },
+  "items": [
+    {
+      "sys": {
+        "type": "Feature",
+        "id": "fuuami4adicz-tasks",
+        "feature_id": "tasks",
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "fuuami4adicz"
+          }
+        }
+      },
+      "enabled": true
+    }
+  ]
+}

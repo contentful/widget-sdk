@@ -15,8 +15,10 @@ import {
 import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
 import { FeatureFlag } from '../../../util/featureFlag';
 import {
-  queryForTasksAndAppsInDefaultSpace,
+  queryForTasksInDefaultSpace,
+  queryForBasicAppsInDefaultSpace,
   queryForScheduledPublishingOnEntryPage,
+  queryForContentTagsInDefaultSpace,
 } from '../../../interactions/product_catalog_features';
 
 describe('Immediate release', () => {
@@ -154,7 +156,9 @@ function basicServerSetUp(): string[] {
     queryLinksToDefaultEntry.willReturnNone(),
     getFirst7SnapshotsOfDefaultEntry.willReturnNone(),
     getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
-    queryForTasksAndAppsInDefaultSpace.willFindBothEnabled(),
+    queryForTasksInDefaultSpace.willFindFeatureEnabled(),
+    queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
     queryForScheduledPublishingOnEntryPage.willFindFeatureEnabled(),
+    queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
   ];
 }

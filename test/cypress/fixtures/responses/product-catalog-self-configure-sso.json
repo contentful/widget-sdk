@@ -1,0 +1,17 @@
+{
+  "total": 1,
+  "sys": { "type": "Array" },
+  "items": [
+    {
+      "sys": {
+        "type": "Feature",
+        "id": "6lfmLizdm5psdqy4XKkV8J-self_configure_sso",
+        "feature_id": "self_configure_sso",
+        "organization": {
+          "sys": { "type": "Link", "linkType": "Organization", "id": "6lfmLizdm5psdqy4XKkV8J" }
+        }
+      },
+      "enabled": true
+    }
+  ]
+}

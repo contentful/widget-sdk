@@ -16,6 +16,7 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import ContactUsButton from 'ui/Components/ContactUsButton';
 import { deleteUserAccount } from './AccountRepository';
+import { logError } from 'services/logger';
 
 const styles = {
   warningNote: css({ marginBottom: tokens.spacingL }),
@@ -51,7 +52,9 @@ const DeleteUserModal = ({ singleOwnerOrganizations, onConfirm, onCancel, isShow
 
     try {
       await deleteUserAccount({ reason: activeOption, description: details });
-    } catch {
+    } catch (e) {
+      logError('Could not delete user account', { error: e });
+
       setDeleting(false);
 
       Notification.error('Something went wrong while deleting your account. Try again.');

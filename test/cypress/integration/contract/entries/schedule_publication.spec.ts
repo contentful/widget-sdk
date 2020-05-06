@@ -18,8 +18,14 @@ import {
 } from '../../../interactions/jobs';
 import { FeatureFlag } from '../../../util/featureFlag';
 import {
-  queryForTasksAndAppsInDefaultSpace,
+  queryForTasksInDefaultSpace,
+  queryForBasicAppsInDefaultSpace,
   queryForScheduledPublishingOnEntryPage,
+  queryForContentTagsInDefaultSpace,
+  queryForCustomSidebarInDefaultOrg,
+  queryForTeamsInDefaultOrg,
+  queryForSelfConfigureSsoInDefaultOrg,
+  queryForScimInDefaultOrg,
 } from '../../../interactions/product_catalog_features';
 
 describe('Schedule Publication', () => {
@@ -153,7 +159,13 @@ function basicServerSetUp(): string[] {
     queryLinksToDefaultEntry.willReturnNone(),
     getFirst7SnapshotsOfDefaultEntry.willReturnNone(),
     getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
-    queryForTasksAndAppsInDefaultSpace.willFindBothEnabled(),
+    queryForTasksInDefaultSpace.willFindFeatureEnabled(),
+    queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
     queryForScheduledPublishingOnEntryPage.willFindFeatureEnabled(),
+    queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
+    queryForCustomSidebarInDefaultOrg.willFindFeatureEnabled(),
+    queryForTeamsInDefaultOrg.willFindFeatureEnabled(),
+    queryForSelfConfigureSsoInDefaultOrg.willFindFeatureEnabled(),
+    queryForScimInDefaultOrg.willFindFeatureEnabled(),
   ];
 }

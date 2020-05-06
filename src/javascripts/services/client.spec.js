@@ -9,7 +9,7 @@ describe('Client', () => {
     let baseRequest;
 
     beforeEach(() => {
-      baseRequest = jest.fn().mockResolvedValue({ data: 'RESPONSE DATA' });
+      baseRequest = jest.fn().mockResolvedValue('RESPONSE DATA');
 
       makeRequest.mockReturnValue(baseRequest);
     });
@@ -19,9 +19,14 @@ describe('Client', () => {
       await client.request({ path: 'path/2' });
 
       expect(baseRequest).toHaveBeenCalledTimes(2);
-
-      expect(baseRequest.mock.calls[0][0].url).toEqual('//api.test.com/some/path');
-      expect(baseRequest.mock.calls[1][0].url).toEqual('//api.test.com/path/2');
+      expect(baseRequest).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({ url: '//api.test.com/some/path' })
+      );
+      expect(baseRequest).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({ url: '//api.test.com/path/2' })
+      );
     });
 
     it('passes through the method', async function () {
@@ -30,22 +35,31 @@ describe('Client', () => {
 
       expect(baseRequest).toHaveBeenCalledTimes(2);
 
-      expect(baseRequest.mock.calls[0][0].method).toEqual('GET');
-      expect(baseRequest.mock.calls[1][0].method).toEqual('POST');
+      expect(baseRequest).toHaveBeenNthCalledWith(1, expect.objectContaining({ method: 'GET' }));
+      expect(baseRequest).toHaveBeenNthCalledWith(2, expect.objectContaining({ method: 'POST' }));
     });
 
-    it('uses "params" for GET payload', async function () {
+    it('uses "query" for GET payload', async function () {
       await client.request({ method: 'GET', path: '', payload: 'TEST' });
 
-      expect(baseRequest.mock.calls[0][0].params).toEqual('TEST');
+      expect(baseRequest).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({ method: 'GET', query: 'TEST' })
+      );
     });
 
-    it('uses "data" for any other payload', async function () {
+    it('uses "body" for any other payload', async function () {
       await client.request({ method: 'POST', path: '', payload: 'TEST1' });
       await client.request({ method: 'PUT', path: '', payload: 'TEST2' });
 
-      expect(baseRequest.mock.calls[0][0].data).toEqual('TEST1');
-      expect(baseRequest.mock.calls[1][0].data).toEqual('TEST2');
+      expect(baseRequest).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({ method: 'POST', body: 'TEST1' })
+      );
+      expect(baseRequest).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({ method: 'PUT', body: 'TEST2' })
+      );
     });
 
     it('resolves with response data', async function () {

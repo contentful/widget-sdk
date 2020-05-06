@@ -1,6 +1,7 @@
 import DataLoader from 'dataloader';
 import { memoize, get, uniq, isUndefined } from 'lodash';
 import { getModule } from 'core/NgRegistry';
+import * as Config from 'Config';
 
 import { createOrganizationEndpoint, createSpaceEndpoint } from '../EndpointFactory';
 
@@ -31,32 +32,37 @@ const COMMON_FOR_ORG = ['custom_sidebar', 'teams', 'self_configure_sso', 'scim']
 // a malformed response.
 
 const getLoaderForEndpoint = (endpoint) => {
-  return new DataLoader(async (featureIds) => {
-    // API quirk:
-    // We're using QS array, not `sys.featureId[in]=comma,separated,ids`.
-    const qs = featureIds
-      .map(
-        (featureId) => `${encodeURIComponent('sys.featureId[]')}=${encodeURIComponent(featureId)}`
-      )
-      .join('&');
+  // disable batching in contract tests
+  const enableBatchRequests = Config.env !== 'development';
+  return new DataLoader(
+    async (featureIds) => {
+      // API quirk:
+      // We're using QS array, not `sys.featureId[in]=comma,separated,ids`.
+      const qs = featureIds
+        .map(
+          (featureId) => `${encodeURIComponent('sys.featureId[]')}=${encodeURIComponent(featureId)}`
+        )
+        .join('&');
 
-    const { items } = await endpoint({
-      method: 'GET',
-      path: `/product_catalog_features?${qs}`,
-    });
-
-    // We need to make sure flags for features are returned
-    // in exactly the same order as requested.
-    return featureIds.map((featureId) => {
-      const feature = (items || []).find((item) => {
-        // API quirk:
-        // It's `sys.feature_id`, not `sys.featureId`.
-        return get(item, ['sys', 'feature_id']) === featureId;
+      const { items } = await endpoint({
+        method: 'GET',
+        path: `/product_catalog_features?${qs}`,
       });
 
-      return feature && feature.enabled;
-    });
-  });
+      // We need to make sure flags for features are returned
+      // in exactly the same order as requested.
+      return featureIds.map((featureId) => {
+        const feature = (items || []).find((item) => {
+          // API quirk:
+          // It's `sys.feature_id`, not `sys.featureId`.
+          return get(item, ['sys', 'feature_id']) === featureId;
+        });
+
+        return feature && feature.enabled;
+      });
+    },
+    { batch: enableBatchRequests }
+  );
 };
 
 const getLoaderForOrg = memoize((orgId) => {

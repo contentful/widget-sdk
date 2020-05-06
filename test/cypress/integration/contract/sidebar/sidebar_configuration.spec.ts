@@ -9,10 +9,27 @@ import {
   saveDefaultContentTypeEditorInterface,
 } from '../../../interactions/content_types';
 import { defaultContentTypeId, defaultSpaceId } from '../../../util/requests';
+import {
+  queryForCustomSidebarInDefaultOrg,
+  queryForTeamsInDefaultOrg,
+  queryForSelfConfigureSsoInDefaultOrg,
+  queryForScimInDefaultOrg,
+} from '../../../interactions/product_catalog_features';
 
 describe('Sidebar configuration', () => {
   beforeEach(() => {
     cy.resetAllFakeServers();
+    // TODO: move this to a before block
+    cy.startFakeServers({
+      consumer: 'user_interface',
+      providers: ['jobs', 'entries', 'users', 'product_catalog_features'],
+      cors: true,
+      pactfileWriteMode: 'merge',
+      dir: Cypress.env('pactDir'),
+      spec: 2,
+    });
+
+    cy.server();
 
     const interactions = [
       ...defaultRequestsMock(),
@@ -20,6 +37,10 @@ describe('Sidebar configuration', () => {
       getAllContentTypesInDefaultSpace.willReturnOne(),
       getDefaultContentType.willReturnIt(),
       getPublishedVersionOfDefaultContentType.willReturnIt(),
+      queryForCustomSidebarInDefaultOrg.willFindFeatureEnabled(),
+      queryForTeamsInDefaultOrg.willFindFeatureEnabled(),
+      queryForSelfConfigureSsoInDefaultOrg.willFindFeatureEnabled(),
+      queryForScimInDefaultOrg.willFindFeatureEnabled(),
     ];
 
     cy.visit(

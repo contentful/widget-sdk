@@ -16,8 +16,11 @@ import {
   queryAllScheduledJobsForDefaultEntry,
 } from '../../../interactions/jobs';
 import {
-  queryForEnvironmentUsageAndAppsInDefaultSpace,
-  queryForTasksAndScheduledPublishingInDefaultSpace,
+  queryForEnvironmentUsageInDefaultSpace,
+  queryForTasksInDefaultSpace,
+  queryForScheduledPublishingInDefaultSpace,
+  queryForBasicAppsInDefaultSpace,
+  queryForContentTagsInDefaultSpace,
 } from '../../../interactions/product_catalog_features';
 
 const empty = require('../../../fixtures/responses/empty.json');
@@ -77,8 +80,11 @@ describe('Entries list page', () => {
         ...defaultRequestsMock({}),
         queryFirst100UsersInDefaultSpace.willFindSeveral(),
         queryPendingJobsForDefaultSpaceWithoutLimit.willFindSeveral(),
-        queryForTasksAndScheduledPublishingInDefaultSpace.willFindBothEnabled(),
-        queryForEnvironmentUsageAndAppsInDefaultSpace.willFindSeveral(),
+        queryForTasksInDefaultSpace.willFindFeatureEnabled(),
+        queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled(),
+        queryForEnvironmentUsageInDefaultSpace.willFindFeatureEnabled(),
+        queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
+        queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);
@@ -124,8 +130,11 @@ describe('Entries list page', () => {
         }),
         queryFirst100UsersInDefaultSpace.willFindSeveral(),
         queryPendingJobsForDefaultSpaceWithoutLimit.willFindSeveral(),
-        queryForTasksAndScheduledPublishingInDefaultSpace.willFindBothEnabled(),
-        queryForEnvironmentUsageAndAppsInDefaultSpace.willFindSeveral(),
+        queryForTasksInDefaultSpace.willFindFeatureEnabled(),
+        queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled(),
+        queryForEnvironmentUsageInDefaultSpace.willFindFeatureEnabled(),
+        queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
+        queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);
@@ -179,8 +188,11 @@ describe('Entries list page', () => {
         ...defaultRequestsMock({}),
         queryFirst100UsersInDefaultSpace.willFindSeveral(),
         queryPendingJobsForDefaultSpaceWithoutLimit.willFindSeveral(),
-        queryForTasksAndScheduledPublishingInDefaultSpace.willFindBothEnabled(),
-        queryForEnvironmentUsageAndAppsInDefaultSpace.willFindSeveral(),
+        queryForTasksInDefaultSpace.willFindFeatureEnabled(),
+        queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled(),
+        queryForEnvironmentUsageInDefaultSpace.willFindFeatureEnabled(),
+        queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
+        queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);
@@ -232,8 +244,11 @@ describe('Entries list page', () => {
         '@queryNonArchivedEntries',
         queryFirst100UsersInDefaultSpace.willFindSeveral(),
         queryPendingJobsForDefaultSpaceWithoutLimit.willFindSeveral(),
-        queryForTasksAndScheduledPublishingInDefaultSpace.willFindBothEnabled(),
-        queryForEnvironmentUsageAndAppsInDefaultSpace.willFindSeveral(),
+        queryForTasksInDefaultSpace.willFindFeatureEnabled(),
+        queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled(),
+        queryForEnvironmentUsageInDefaultSpace.willFindFeatureEnabled(),
+        queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
+        queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);

@@ -1,0 +1,21 @@
+{
+  "total": 1,
+  "sys": { "type": "Array" },
+  "items": [
+    {
+      "sys": {
+        "type": "Feature",
+        "id": "fuuami4adicz-scheduled_publishing",
+        "feature_id": "scheduled_publishing",
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "fuuami4adicz"
+          }
+        }
+      },
+      "enabled": true
+    }
+  ]
+}

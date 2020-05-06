@@ -1,5 +1,4 @@
-import { assign, clone } from 'lodash';
-import { getModule } from 'core/NgRegistry';
+import { assign } from 'lodash';
 
 const UNAUTHORIZED = 401;
 
@@ -20,26 +19,23 @@ const UNAUTHORIZED = 401;
  * @param {function(object): Promise} request
  */
 export default function wrapWithAuth(auth, request) {
-  const $q = getModule('$q');
-
-  return (params) =>
-    auth.getToken().then((token) => {
+  return (params) => {
+    return auth.getToken().then((token) => {
       return requestWithToken(params, token, 1);
     });
+  };
 
   function requestWithToken(params, token, retry) {
-    params = clone(params);
     params.headers = assign({}, params.headers, {
       Authorization: `Bearer ${token}`,
     });
-
     return request(params).catch((err) => {
       if (err.status === UNAUTHORIZED && retry > 0) {
         return ensureNewToken(token).then((token) => {
           return requestWithToken(params, token, retry - 1);
         });
       } else {
-        return $q.reject(err);
+        return Promise.reject(err);
       }
     });
   }

@@ -18,8 +18,9 @@
     "strictPropertyInitialization": true,
 
     // enable the following when we ready
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "types": ["node", "jest"]
   },
-  "include": ["./src/javascripts/**/*"],
+  "include": ["./src/javascripts/**/*", "../node_modules/@types/jest"],
   "exclude": ["**/node_modules"]
 }

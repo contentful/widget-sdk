@@ -14,7 +14,16 @@ import {
 import { queryForDefaultEntryWithoutEnvironment } from '../../../interactions/entries';
 import { queryForDefaultUserDetails, queryForUsers } from '../../../interactions/users';
 import { FeatureFlag } from '../../../util/featureFlag';
-import { queryForScheduledPublishingInDefaultSpace } from '../../../interactions/product_catalog_features';
+import {
+  queryForCustomSidebarInDefaultOrg,
+  queryForTeamsInDefaultOrg,
+  queryForSelfConfigureSsoInDefaultOrg,
+  queryForScimInDefaultOrg,
+  queryForScheduledPublishingInDefaultSpace,
+  queryForTasksInDefaultSpace,
+  queryForBasicAppsInDefaultSpace,
+  queryForContentTagsInDefaultSpace,
+} from '../../../interactions/product_catalog_features';
 
 describe('Jobs page', () => {
   before(() =>
@@ -35,15 +44,25 @@ describe('Jobs page', () => {
 
   context('no jobs in the space', () => {
     beforeEach(() => {
-      const interactions = defaultRequestsMock();
+      const interactions = [
+        ...defaultRequestsMock(),
+
+        queryForCustomSidebarInDefaultOrg.willFindFeatureEnabled(),
+        queryForTeamsInDefaultOrg.willFindFeatureEnabled(),
+        queryForSelfConfigureSsoInDefaultOrg.willFindFeatureEnabled(),
+        queryForScimInDefaultOrg.willFindFeatureEnabled(),
+
+        queryForTasksInDefaultSpace.willFindFeatureEnabled(),
+        queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled(),
+        queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
+        queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
+      ];
       const slowInteraction = queryPendingJobsForDefaultSpace.willFindNone();
-      const productCatalogInteraction = queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled();
 
       cy.visit(`/spaces/${defaultSpaceId}/jobs`);
 
       cy.wait(interactions);
       cy.wait(slowInteraction, { timeout: 10000 });
-      cy.wait(productCatalogInteraction);
     });
     it('renders illustration and heading for Scheduled tab empty state', () => {
       cy.getByTestId('cf-ui-tab-panel')
@@ -89,7 +108,6 @@ describe('Jobs page', () => {
         dir: Cypress.env('pactDir'),
         spec: 2,
       });
-      const productCatalogInteraction = queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled();
       const interactions = defaultRequestsMock({
         publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne,
       });
@@ -97,6 +115,16 @@ describe('Jobs page', () => {
         queryPendingJobsForDefaultSpace.willFindSeveral(),
         queryForDefaultEntryWithoutEnvironment.willFindIt(),
         queryForDefaultUserDetails.willFindTheUserDetails(),
+
+        queryForTasksInDefaultSpace.willFindFeatureEnabled(),
+        queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled(),
+        queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
+        queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
+
+        queryForCustomSidebarInDefaultOrg.willFindFeatureEnabled(),
+        queryForTeamsInDefaultOrg.willFindFeatureEnabled(),
+        queryForSelfConfigureSsoInDefaultOrg.willFindFeatureEnabled(),
+        queryForScimInDefaultOrg.willFindFeatureEnabled(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/jobs`);
@@ -104,7 +132,6 @@ describe('Jobs page', () => {
       cy.wait(slowInteractions, {
         timeout: 10000,
       });
-      cy.wait(productCatalogInteraction);
     });
     it('renders list of scheduled jobs', () => {
       cy.getByTestId('scheduled-jobs-date-group')
@@ -137,14 +164,24 @@ describe('Jobs page', () => {
 
   context('error state', () => {
     beforeEach(() => {
-      const interactions = defaultRequestsMock();
       const slowInteraction = queryPendingJobsForDefaultSpace.willFailWithAnInternalServerError();
-      const productCatalogInteraction = queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled();
+
+      const interactions = [
+        ...defaultRequestsMock(),
+        queryForTasksInDefaultSpace.willFindFeatureEnabled(),
+        queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled(),
+        queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
+        queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
+
+        queryForCustomSidebarInDefaultOrg.willFindFeatureEnabled(),
+        queryForTeamsInDefaultOrg.willFindFeatureEnabled(),
+        queryForSelfConfigureSsoInDefaultOrg.willFindFeatureEnabled(),
+        queryForScimInDefaultOrg.willFindFeatureEnabled(),
+      ];
 
       cy.visit(`/spaces/${defaultSpaceId}/jobs`);
       cy.wait(interactions);
       cy.wait(slowInteraction, { timeout: 10000 });
-      cy.wait(productCatalogInteraction);
     });
     it('renders illustration and heading for error state', () => {
       cy.getByTestId('cf-ui-tab-panel')
