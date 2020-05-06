@@ -80,9 +80,11 @@ describe('Endpoint', () => {
   });
 
   describe('error response', () => {
+    const data = { sys: { id: 'errorid' } };
+    const response = { json: jest.fn(async () => data) };
+
     beforeEach(() => {
       // jest doesn't support the Response() constructor
-      const response = { json: jest.fn() };
       mockRequest.mockRejectedValueOnce(response);
     });
 
@@ -102,6 +104,8 @@ describe('Endpoint', () => {
 
       expect(error instanceof Error).toBe(true);
       expect(error.message).toEqual('API request failed');
+      expect(error.data).toBe(data);
+      expect(error.code).toBe(data.sys.id);
     });
 
     it('has "request" object', async function () {

@@ -192,10 +192,9 @@ export function create(baseUrl, auth) {
       const error = extend(new Error('API request failed'), {
         status: res.status,
         data,
-        // We duplicate this property because it is required by the
-        // request queue.
         statusCode: res.status,
-        code: get(res, ['data', 'sys', 'id'], res.status),
+        // `code` is the error id. it falls back to the response status code
+        code: get(data, ['sys', 'id'], res.status),
         headers: res.headers,
         request: req,
       });
