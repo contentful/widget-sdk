@@ -364,7 +364,6 @@ export const createScheduledPublicationForDefaultSpace = {
       },
       willRespondWith: {
         status: 400,
-        body: createJobRequest,
       },
     }).as('createScheduledPublicationForDefaultSpace');
 
