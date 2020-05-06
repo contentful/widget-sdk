@@ -233,7 +233,7 @@
     "node-fetch": "^2.6.0",
     "node-jsx": "^0.13.3",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
-    "prettier": "2.0.4",
+    "prettier": "2.0.5",
     "rework": "^1.0.1",
     "rework-plugin-url": "^1.1.0",
     "rimraf": "^3.0.2",
