@@ -1,0 +1,5 @@
+# By default, everything is owned by the frontend chapter
+*   @contentful/frontend
+
+# Features
+src/javascripts/features/content-tags/*   @contentful/developer-workflows
