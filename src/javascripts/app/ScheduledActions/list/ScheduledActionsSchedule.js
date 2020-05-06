@@ -5,6 +5,7 @@ import moment from 'moment';
 import { SectionHeading, Tag } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
+import { Icon } from '@contentful/forma-36-react-components';
 
 import ScheduledActionsEmptyStateMessage from './ScheduledActionsEmptyStateMessage';
 import WrappedEntityList from 'app/common/WrappedEntityList';
@@ -26,16 +27,22 @@ const styles = {
     marginRight: tokens.spacingM,
     marginTop: tokens.spacingS,
     textAlign: 'right',
-    minWidth: '90px',
+    minWidth: '130px',
   }),
   timeGroupListWrapper: css({
-    maxWidth: 'calc(100% - 95px)',
+    maxWidth: 'calc(100% - 146px)',
     flexGrow: 1,
     paddingLeft: tokens.spacingM,
     borderLeft: `1px solid ${tokens.colorElementLight}`,
   }),
   timeGroupListItem: css({
     marginBottom: 0,
+  }),
+  jobsStatusLabel: css({
+    display: 'flex',
+  }),
+  statusTagIcon: css({
+    marginRight: tokens.spacing2Xs,
   }),
 };
 
@@ -45,12 +52,21 @@ const jobPropType = PropTypes.shape({
 });
 
 const TimeGroup = ({ jobs, entriesData, contentTypesData }) => {
+  const tagType = jobs[0].action === ScheduledActionAction.Publish ? 'positive' : 'secondary';
+  const isScheduleCompleted = jobs[0].sys.status === 'succeeded';
   return (
     <div className={styles.timeGroup}>
       <div className={styles.timeGroupHeader}>
         <SectionHeading>{moment(jobs[0].scheduledFor.datetime).format('hh:mm A')}</SectionHeading>
-        <Tag tagType={jobs[0].action === ScheduledActionAction.Publish ? 'positive' : 'secondary'}>
-          {jobs[0].action}
+        <Tag tagType={tagType}>
+          {isScheduleCompleted ? (
+            <div className={styles.jobsStatusLabel}>
+              <Icon className={styles.statusTagIcon} icon="CheckCircle" color={tagType} />
+              <span>{`${jobs[0].action}ed`}</span>
+            </div>
+          ) : (
+            jobs[0].action
+          )}
         </Tag>
       </div>
       <div className={styles.timeGroupListWrapper}>
