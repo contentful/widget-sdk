@@ -42,7 +42,7 @@
     "@contentful/rich-text-plain-text-renderer": "^14.0.0",
     "@contentful/rich-text-types": "^14.1.0",
     "@contentful/sharejs": "^2.15.0",
-    "@contentful/validation": "^12.2.0",
+    "@contentful/validation": "^12.8.0",
     "@contentful/worf": "^4.3.0",
     "ajv": "^5.5.2",
     "angular": "~1.5.11",
