@@ -7,7 +7,6 @@ import * as Navigator from 'states/Navigator';
 import { getApiKeyRepo } from 'features/api-keys-management';
 import { getTemplate } from 'services/SpaceTemplateLoader';
 import * as spaceTemplateCreator from 'services/SpaceTemplateCreator';
-import * as spaceTemplateEvents from 'analytics/events/SpaceCreation';
 import * as logger from 'services/logger';
 import { Notification } from '@contentful/forma-36-react-components';
 
@@ -146,13 +145,7 @@ function createTemplate(template, retried, spaceContext, templateCreator) {
 function loadSelectedTemplate(spaceContext, selectedTemplate, selectedLocale) {
   const itemHandlers = {
     // no need to show status of individual items
-    onItemSuccess: function (entityId, entityData, templateName) {
-      spaceTemplateEvents.entityActionSuccess(
-        entityId,
-        Object.assign({}, entityData, { entityAutomationScope: { scope: 'space_template' } }),
-        templateName
-      );
-    },
+    onItemSuccess: _.noop,
     onItemError: _.noop,
   };
 
