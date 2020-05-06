@@ -165,7 +165,7 @@
     "babel-loader": "^8.0.6",
     "babel-plugin-emotion": "^10.0.33",
     "babel-plugin-transform-es2015-modules-commonjs": "6.26.2",
-    "bluebird": "^3.5.5",
+    "bluebird": "^3.7.2",
     "browserchannel": "^2.1.0",
     "browserslist": "4.8.6",
     "bugsnag-sourcemaps": "^1.2.2",
