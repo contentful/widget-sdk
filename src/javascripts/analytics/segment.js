@@ -143,10 +143,6 @@ async function getIntegrations() {
   try {
     resp = await (await window.fetch(integrationsUrl)).json();
   } catch (error) {
-    logger.logWarn('Segment integrations call failed', {
-      error,
-    });
-
     return [];
   }
 
