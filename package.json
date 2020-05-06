@@ -89,7 +89,7 @@
     "promise": "^6.0.1",
     "prop-types": "15.7.2",
     "proxyquire": "^1.8.0",
-    "qrcode": "^1.4.2",
+    "qrcode": "^1.4.4",
     "qs": "^6.7.0",
     "react": "16.10.2",
     "react-animate-height": "^2.0.15",
