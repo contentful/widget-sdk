@@ -198,7 +198,7 @@
     "express": "^4.17.1",
     "file-loader": "^6.0.0",
     "fs-extra": "^9.0.0",
-    "glob": "^5.0.14",
+    "glob": "^7.1.6",
     "html-loader": "^0.5.5",
     "html-minifier": "^4.0.0",
     "htmlparser2": "^4.1.0",
