@@ -90,7 +90,7 @@
     "prop-types": "15.7.2",
     "proxyquire": "^1.8.0",
     "qrcode": "^1.4.4",
-    "qs": "^6.7.0",
+    "qs": "^6.9.4",
     "react": "16.13.1",
     "react-animate-height": "^2.0.15",
     "react-click-outside": "^3.0.1",
