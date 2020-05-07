@@ -116,7 +116,7 @@
     "truncate-middle": "^1.0.6",
     "tti-polyfill": "^0.2.2",
     "urlsafe-base64": "^1.0.0",
-    "use-debounce": "3.1.0"
+    "use-debounce": "3.4.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
