@@ -136,7 +136,7 @@
     "@commitlint/config-conventional": "8.3.4",
     "@contentful/cypress-pact": "^3.1.0",
     "@contentful/micro-backends": "^0.6.0",
-    "@cypress/webpack-preprocessor": "^5.1.2",
+    "@cypress/webpack-preprocessor": "^5.2.0",
     "@dr.pogodin/babel-preset-svgr": "^1.0.10",
     "@pact-foundation/pact": "^9.0.1",
     "@pact-foundation/pact-web": "^9.0.1",
