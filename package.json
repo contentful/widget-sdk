@@ -53,7 +53,7 @@
     "codemirror": "^5.53.2",
     "color": "^2.0.1",
     "contentful-resolve-response": "^1.1.4",
-    "dataloader": "^1.4.0",
+    "dataloader": "^2.0.0",
     "delay": "^4.3.0",
     "detect-browser": "^3.0.1",
     "downshift": "^5.2.4",
