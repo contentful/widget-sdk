@@ -2537,40 +2537,7 @@ pre,
     padding-bottom: 20px;
     margin-bottom: 20px;
   }
-  .users-search__filter-pill {
-    background-color: #d3dce0;
-    margin: 0 0 10px 10px !important;
-  }
-  .users-search__filter-pill:hover {
-    -webkit-box-shadow: none !important;
-    box-shadow: none !important;
-  }
-  .users-search__filter-pill .search__select-value::after {
-    color: #536171 !important;
-  }
-  .users-search__filter-pill .search__select-value .users-search__select,
-  .users-search__filter-pill .search__select-value .users-search__select:focus,
-  .users-search__filter-pill .search__select-value .users-search__select:active {
-    color: #536171;
-    background-color: #d3dce0;
-    border: none;
-    background-image: none;
-  }
-  .users-search__filter-pill .search__select-value .users-search__select:hover,
-  .users-search__filter-pill .search__select-value .users-search__select:focus:hover,
-  .users-search__filter-pill .search__select-value .users-search__select:active:hover {
-    background-color: #c3cfd5;
-    background-image: none;
-  }
-  .users-search__filter-pill:first-child {
-    margin: 0 !important;
-  }
-  .users-search__filter-pill-label {
-    color: #536171 !important;
-  }
-  .users-search__filter-pill-label:hover {
-    cursor: default;
-  }
+  
   .search__filter-pill--active .search__select-value::after {
     color: #fff !important;
   }

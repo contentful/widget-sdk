@@ -6,6 +6,7 @@ import { keyBy, isNil } from 'lodash';
 import { TextLink } from '@contentful/forma-36-react-components';
 import { updateDependentFilterDefs } from './UserListFiltersHelpers';
 import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 
 import {
   Filter as FilterPropType,
@@ -18,13 +19,14 @@ const styles = {
   header: css({
     display: 'flex',
     justifyContent: 'space-between',
-    color: '#8091a5',
+    color: tokens.colorTextLight,
   }),
   sort: css({
     display: 'flex',
     flexGrow: '1',
     marginBottom: '30px',
     minWidth: '165px',
+    marginRight: tokens.spacing4Xl,
   }),
   filters: css({
     display: 'flex',
@@ -32,10 +34,10 @@ const styles = {
     justifyContent: 'flex-end',
   }),
   subheader: css({
-    color: '#8091a5',
+    color: tokens.colorTextLight,
     display: 'flex',
     justifyContent: 'space-between',
-    marginBottom: '10px',
+    marginBottom: tokens.spacingS,
   }),
 };
 
