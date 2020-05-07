@@ -113,7 +113,11 @@ export function init() {
   const $location = getModule('$location');
 
   localStore.remove(LOGOUT_KEY);
-  localStore.externalChanges(LOGOUT_KEY).onValue(logout);
+  localStore.externalChanges(LOGOUT_KEY).onValue((value) => {
+    if (value !== null) {
+      logout();
+    }
+  });
 
   // We need to get token from location hash when running the app on localhost.
   // See https://github.com/contentful/user_interface#using-staging-and-production-apis

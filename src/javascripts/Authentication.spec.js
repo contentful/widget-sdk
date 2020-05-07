@@ -97,12 +97,46 @@ describe('Authentication', function () {
       expect(K.getValue(Auth.token$)).toBe('NEW TOKEN');
     });
 
-    it('triggers logout if user logged out from another tab', async function () {
-      const waitForLocationChange = async (window, initialValue) => {
+    it('should not trigger logout if loggedOut value is null', async () => {
+      const waitForLocationChange = async (window, initialValue, tries = 0) => {
+        if (tries > 10) {
+          throw new Error('location change did not occur in time');
+        }
+
         if (window.location === initialValue) {
           await new Promise((resolve) => setTimeout(resolve, 10));
 
-          return waitForLocationChange(window, initialValue);
+          return waitForLocationChange(window, initialValue, tries + 1);
+        }
+
+        return true;
+      };
+
+      let storageFn;
+      jest.spyOn(window, 'addEventListener').mockImplementation((name, fn) => {
+        if (name === 'storage') {
+          storageFn = fn;
+        }
+      });
+
+      store.set('STORED_TOKEN');
+      Auth.init();
+
+      storageFn({ key: 'loggedOut', newValue: null });
+
+      await expect(waitForLocationChange(window, '')).rejects.toThrow();
+    });
+
+    it('triggers logout if user logged out from another tab', async function () {
+      const waitForLocationChange = async (window, initialValue, tries = 0) => {
+        if (tries > 10) {
+          throw new Error('location change did not occur in time');
+        }
+
+        if (window.location === initialValue) {
+          await new Promise((resolve) => setTimeout(resolve, 10));
+
+          return waitForLocationChange(window, initialValue, tries + 1);
         }
 
         return true;
@@ -119,6 +153,8 @@ describe('Authentication', function () {
       Auth.init();
 
       storageFn({ key: 'loggedOut', newValue: true });
+
+      expect(window.location).not.toEqual('https://be.contentful.com/logout');
 
       await waitForLocationChange(window, '');
 
