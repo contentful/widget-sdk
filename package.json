@@ -140,7 +140,7 @@
     "@dr.pogodin/babel-preset-svgr": "^1.0.10",
     "@pact-foundation/pact": "^9.0.1",
     "@pact-foundation/pact-web": "^9.0.1",
-    "@prettier/plugin-xml": "^0.3.0",
+    "@prettier/plugin-xml": "^0.7.2",
     "@svgr/webpack": "^5.4.0",
     "@testing-library/jest-dom": "5.0.2",
     "@testing-library/react": "9.4.0",
