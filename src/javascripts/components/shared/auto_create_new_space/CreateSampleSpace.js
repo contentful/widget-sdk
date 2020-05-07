@@ -1,7 +1,6 @@
 import { getCreator } from 'services/SpaceTemplateCreator';
 import { track } from 'analytics/Analytics';
 import { go as gotoState } from 'states/Navigator';
-import { entityActionSuccess } from 'analytics/events/SpaceCreation';
 import { find, noop } from 'lodash';
 import { getTemplate, getTemplatesList } from 'services/SpaceTemplateLoader';
 import autoCreateSpaceTemplate from './Template';
@@ -119,16 +118,7 @@ async function applyTemplate(spaceContext, templateInfo) {
   const templateCreator = getCreator(
     spaceContext,
     {
-      onItemSuccess: (entityId, entityData, templateName) => {
-        entityActionSuccess(
-          entityId,
-          {
-            ...entityData,
-            entityAutomationScope: { scope: 'auto_create' },
-          },
-          templateName
-        );
-      },
+      onItemSuccess: noop,
       onItemError: noop,
     },
     templateInfo,
