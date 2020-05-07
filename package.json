@@ -55,7 +55,7 @@
     "contentful-resolve-response": "^1.1.4",
     "dataloader": "^2.0.0",
     "delay": "^4.3.0",
-    "detect-browser": "^3.0.1",
+    "detect-browser": "^5.1.0",
     "downshift": "^5.2.4",
     "echarts": "^4.6.0",
     "element-resize-detector": "^1.1.15",
