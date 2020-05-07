@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Button } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
-import Pluralized from 'ui/Components/Pluralized';
+import { Pluralized } from 'core/components/formatting';
 import StateLink from 'app/common/StateLink';
 import { Typography, Paragraph } from '@contentful/forma-36-react-components';
 import WorkbenchSidebarItem from 'app/common/WorkbenchSidebarItem';

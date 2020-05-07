@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Fullscreen from 'components/shared/Fullscreen';
+import { Fullscreen } from './components/Fullscreen';
 import { Button, Heading, Paragraph, List, ListItem } from '@contentful/forma-36-react-components';
 import Icon from 'ui/Components/Icon';
 import { get } from 'lodash';
@@ -18,7 +18,7 @@ import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 import { User as UserPropType } from 'app/OrganizationSettings/PropTypes';
 import { logError } from 'services/logger';
 
-export default class UserInvitation extends React.Component {
+export class UserInvitation extends React.Component {
   static propTypes = {
     invitation: PropTypes.shape({
       organizationName: PropTypes.string.isRequired,

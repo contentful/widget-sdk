@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function Price({ value, currency, unit, style, testId }) {
+export function Price({ value, currency, unit, style, testId }) {
   const valueStr = parseInt(value, 10).toLocaleString('en-US');
   const unitStr = unit && ` /${unit}`;
 
@@ -29,5 +29,3 @@ Price.defaultProps = {
   style: null,
   testId: null,
 };
-
-export default Price;

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import Icon from 'ui/Components/Icon';
 
-export default class Fullscreen extends React.Component {
+export class Fullscreen extends React.Component {
   static propTypes = {
     children: PropTypes.node,
     close: PropTypes.node,

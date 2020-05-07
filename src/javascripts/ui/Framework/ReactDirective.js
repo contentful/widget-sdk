@@ -27,7 +27,7 @@ import * as componentsSharedSpaceWizardWizardEs6 from 'components/shared/space-w
 import * as componentsTabsAssetListAddAssetButtonEs6 from 'components/tabs/asset_list/AddAssetButton';
 import * as componentsTabsPluralizeEntityMessageEs6 from 'components/tabs/PluralizeEntityMessage';
 import * as componentsRecordsResourceUsageIndexEs6 from 'components/RecordsResourceUsage';
-import * as uiComponentsPaginatorEs6 from 'ui/Components/Paginator';
+import { Paginator } from 'core/components/Paginator';
 import * as componentsTabsNoSearchResultsAdviceEs6 from 'components/tabs/NoSearchResultsAdvice';
 import * as componentsTabsAssetListAssetsEmptyStateEs6 from 'components/tabs/asset_list/AssetsEmptyState';
 import * as appScheduledActionsPageLinkEs6 from 'app/ScheduledActions/ScheduledActionsPageLink';
@@ -269,7 +269,7 @@ function getModule(name) {
     'components/tabs/asset_list/AddAssetButton': componentsTabsAssetListAddAssetButtonEs6,
     'components/tabs/PluralizeEntityMessage': componentsTabsPluralizeEntityMessageEs6,
     'components/RecordsResourceUsage': componentsRecordsResourceUsageIndexEs6,
-    'ui/Components/Paginator': uiComponentsPaginatorEs6,
+    'core/components/Paginator': { default: Paginator },
     'components/tabs/NoSearchResultsAdvice': componentsTabsNoSearchResultsAdviceEs6,
     'components/tabs/asset_list/AssetsEmptyState': componentsTabsAssetListAssetsEmptyStateEs6,
     'app/ScheduledActions/ScheduledActionsPageLink': appScheduledActionsPageLinkEs6,

@@ -6,7 +6,7 @@ import { getUser, getOrganization } from 'services/TokenStore';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { get } from 'lodash';
 import _ from 'lodash';
-import UserInvitation from 'components/shared/UserInvitation';
+import { UserInvitation } from 'features/user-invitations';
 
 export default makeState({
   name: 'invitations',

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { Paragraph } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import FileIcon from 'components/FileIcon/FileIcon';
+import FileIcon from './FileIcon/FileIcon';
 
 const styles = {
   fileArchived: css({

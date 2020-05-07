@@ -5,7 +5,7 @@ import { css } from 'emotion';
 import { Paragraph, TextLink, Heading } from '@contentful/forma-36-react-components';
 
 import { memberships as orgMemberships } from './links';
-import Pluralized from 'ui/Components/Pluralized';
+import { Pluralized } from 'core/components/formatting';
 import StateLink from 'app/common/StateLink';
 
 const styles = {

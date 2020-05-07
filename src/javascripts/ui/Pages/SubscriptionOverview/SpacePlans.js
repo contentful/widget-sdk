@@ -15,8 +15,7 @@ import {
 
 import { calculatePlansCost } from 'utils/SubscriptionUtils';
 
-import Pluralized from 'ui/Components/Pluralized';
-import Price from 'ui/Components/Price';
+import { Pluralized, Price } from 'core/components/formatting';
 import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 
 import SpacePlanRow from './SpacePlanRow';

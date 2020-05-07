@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { Note, SkeletonContainer, SkeletonBodyText } from '@contentful/forma-36-react-components';
-import Paginator from 'ui/Components/Paginator';
+import { Paginator } from 'core/components/Paginator';
 import { LinkOpen } from 'ui/Content';
 import * as Config from 'Config';
 import { TokenTable } from './TokenTable';

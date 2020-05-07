@@ -21,7 +21,7 @@ import { joinAnd } from 'utils/StringUtils';
 import { getEnabledFeatures } from 'utils/SubscriptionUtils';
 
 import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
-import Price from 'ui/Components/Price';
+import { Price } from 'core/components/formatting';
 import QuestionMarkIcon from 'svg/QuestionMarkIcon.svg';
 
 const styles = {

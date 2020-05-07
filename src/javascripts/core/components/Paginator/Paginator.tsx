@@ -22,7 +22,7 @@ type PaginatorProps = {
   pageCount?: number;
 };
 
-function Paginator({ select = _.noop, page = 0, pageCount = 0 }: PaginatorProps) {
+export function Paginator({ select = _.noop, page = 0, pageCount = 0 }: PaginatorProps) {
   if (pageCount < 2) {
     return null;
   }
@@ -116,5 +116,3 @@ function getLabels(list: number[]): number[] {
 
   return newList;
 }
-
-export default Paginator;

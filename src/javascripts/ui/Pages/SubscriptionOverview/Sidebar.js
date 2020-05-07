@@ -14,7 +14,7 @@ import { css } from 'emotion';
 import { billing } from './links';
 
 import Icon from 'ui/Components/Icon';
-import Price from 'ui/Components/Price';
+import { Price } from 'core/components/formatting';
 import ContactUsButton from 'ui/Components/ContactUsButton';
 
 import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';

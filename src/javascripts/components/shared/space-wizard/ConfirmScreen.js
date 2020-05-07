@@ -5,7 +5,7 @@ import { get, trim } from 'lodash';
 import moment from 'moment';
 import { Spinner } from '@contentful/forma-36-react-components';
 import { formatPrice } from './WizardUtils';
-import Price from 'ui/Components/Price';
+import { Price } from 'core/components/formatting';
 
 import * as propTypes from './PropTypes';
 import PartnershipForm from './PartnershipForm';
