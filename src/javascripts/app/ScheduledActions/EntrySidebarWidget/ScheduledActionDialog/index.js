@@ -141,6 +141,11 @@ function JobDialog({
   }
 
   function handleSubmit() {
+    const truncationLength = 60;
+    const truncatedTitle =
+      entryTitle.length > truncationLength
+        ? `${entryTitle.slice(0, truncationLength)}...`
+        : entryTitle;
     setSubmitDisabled(true);
     validateForm(async () => {
       if (action === ScheduledAction.Publish) {
@@ -149,7 +154,7 @@ function JobDialog({
         } catch (e) {
           validator.setApiResponseErrors(e);
           Notification.error(
-            `Error scheduling ${entryTitle}: Validation failed. Please check the individual fields for errors.`
+            `Error scheduling ${truncatedTitle}: Validation failed. Please check the individual fields for errors.`
           );
           return;
         }
