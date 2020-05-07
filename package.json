@@ -141,7 +141,7 @@
     "@pact-foundation/pact": "^9.0.1",
     "@pact-foundation/pact-web": "^9.0.1",
     "@prettier/plugin-xml": "^0.3.0",
-    "@svgr/webpack": "^4.3.3",
+    "@svgr/webpack": "^5.4.0",
     "@testing-library/jest-dom": "5.0.2",
     "@testing-library/react": "9.4.0",
     "@testing-library/react-hooks": "^3.2.1",
