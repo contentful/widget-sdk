@@ -54,15 +54,9 @@ class DeploymentStrategies extends React.Component {
   renderNetlifySteps = () => {
     /* eslint-disable react/jsx-key */
     const steps = [
-      <div className="modern-stack-onboarding--deployment-list-text">
-        <ExternalTextLink href="https://github.com/netlify/netlifyctl#installation">
-          Install the Netlify CLI
-        </ExternalTextLink>{' '}
-        (This is a free account. You may create an account and login through your CLI).
-      </div>,
-      this.renderCode('netlifyctl login'),
+      this.renderCode('npm run netlify:login'),
       this.renderCode('npm run build'),
-      this.renderCode('netlifyctl deploy -b public'),
+      this.renderCode('npm run netlify:deploy'),
       <p className="modern-stack-onboarding--deployment-list-text">
         Netlify will ask if you want to create a new website. Select YES to deploy this website.
       </p>,
@@ -74,6 +68,7 @@ class DeploymentStrategies extends React.Component {
           <ExternalTextLink href="https://www.netlify.com/">Netlify</ExternalTextLink>
           {' CLI commands'}
         </h4>
+        <h5>If you don’t have an account, you can create a free one through the CLI.</h5>
         {this.renderList(steps)}
       </div>
     );
