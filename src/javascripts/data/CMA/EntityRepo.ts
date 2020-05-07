@@ -18,8 +18,9 @@ export type EntityRepo = {
 };
 
 interface EntityRepoOptions {
-  skipDraftValidation: boolean;
-  skipTransformation: boolean;
+  skipDraftValidation?: boolean;
+  skipTransformation?: boolean;
+  indicateAutoSave?: boolean;
 }
 
 export function create(
@@ -28,9 +29,13 @@ export function create(
   options: EntityRepoOptions = {
     skipDraftValidation: false,
     skipTransformation: false,
+    indicateAutoSave: false,
   }
 ): EntityRepo {
-  const spaceEndpointOptions = getSpaceEndpointOptions(options);
+  const endpointGetOptions = getSpaceEndpointOptions({
+    skipTransformation: options.skipTransformation,
+  });
+  const endpointPutOptions = getSpaceEndpointOptions(options);
 
   return { onAssetFileProcessed, get, update };
 
@@ -45,7 +50,7 @@ export function create(
       version: entity.sys.version,
       data: entity,
     };
-    return spaceEndpoint(body, spaceEndpointOptions);
+    return spaceEndpoint(body, endpointPutOptions);
   }
 
   function get(entityType: string, entityId: string) {
@@ -54,7 +59,7 @@ export function create(
       method: 'GET',
       path: [collection, entityId],
     };
-    return spaceEndpoint(body, spaceEndpointOptions);
+    return spaceEndpoint(body, endpointGetOptions);
   }
 
   function onAssetFileProcessed(assetId: string, callback) {
@@ -73,6 +78,7 @@ function getSpaceEndpointOptions(entityRepoOptions: EntityRepoOptions) {
   const optionsHeaderMap = {
     skipTransformation: 'X-Contentful-Skip-Transformation',
     skipDraftValidation: 'X-Contentful-Skip-UI-Draft-Validation',
+    indicateAutoSave: 'X-Contentful-UI-Content-Auto-Save',
   };
   const spaceEndpointOptions = {};
   for (const [option, header] of Object.entries(optionsHeaderMap)) {
