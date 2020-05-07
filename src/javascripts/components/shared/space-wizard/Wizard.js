@@ -282,12 +282,12 @@ class Wizard extends React.Component {
     onConfirm && onConfirm();
   };
 
-  track = (eventName, data = {}) => {
-    const { track, action } = this.props;
+  track = (eventName, data) => {
+    const { track, action, space } = this.props;
 
-    const requiredTrackingData = { action };
+    const trackedData = { action, ...{ spaceId: space.sys.id, ...data } };
 
-    track(eventName, { ...data, ...requiredTrackingData });
+    track(eventName, trackedData);
   };
 
   setStateData = (stepData) => {

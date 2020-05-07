@@ -340,11 +340,8 @@ export function createTrackingData(data) {
     currentProductType: get(currentPlan, 'productType', null),
     recommendedSpaceType: get(recommendedPlan, 'internalName', null),
     recommendedProductType: get(recommendedPlan, 'productType', null),
+    ...(spaceId && { spaceId }),
   };
-
-  if (spaceId) {
-    trackingData.spaceId = spaceId;
-  }
 
   return trackingData;
 }
