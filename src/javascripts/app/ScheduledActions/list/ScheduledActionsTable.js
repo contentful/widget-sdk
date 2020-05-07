@@ -17,7 +17,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import { EntityStatusTag } from 'components/shared/EntityStatusTag';
 import { getEntryTitle } from 'classes/EntityFieldValueHelpers';
-import { ActionPerformerName } from 'move-to-core/components/ActionPerformerName';
+import { ActionPerformerName } from 'core/components/ActionPerformerName';
 
 import SecretiveLink from 'components/shared/SecretiveLink';
 import EntityStateLink from 'app/common/EntityStateLink';

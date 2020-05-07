@@ -1,14 +1,26 @@
 module.exports = {
   forbidden: [
+    // {
+    //   name: 'independent-core',
+    //   severity: 'error',
+    //   comment: `Core modules should not depend on modules outside of the core`,
+    //   from: {
+    //     path: 'src/javascripts/core',
+    //   },
+    //   to: {
+    //     pathNot: 'src/javascripts/core|node_modules',
+    //   },
+    // },
     {
-      name: 'independent-core',
+      // todo: replace with with 'independent-core' when we are done with restructuring
+      name: 'core-knows-nothing-about-features',
       severity: 'error',
-      comment: `Core modules should not depend on modules outside of the core`,
+      comment: `Core modules should not depend on features`,
       from: {
         path: 'src/javascripts/core',
       },
       to: {
-        pathNot: 'src/javascripts/core|node_modules',
+        path: '^src/javascripts/features/.+',
       },
     },
     {

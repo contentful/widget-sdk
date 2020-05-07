@@ -14,7 +14,7 @@ import {
   Tag,
 } from '@contentful/forma-36-react-components';
 
-import { ActionPerformerName } from 'move-to-core/components/ActionPerformerName';
+import { ActionPerformerName } from 'core/components/ActionPerformerName';
 import RelativeDateTime from 'components/shared/RelativeDateTime';
 import { isPublishedAndUpdated, isPublished } from '../ContentTypeListService';
 

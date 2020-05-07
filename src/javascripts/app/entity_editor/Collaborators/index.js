@@ -5,7 +5,7 @@ import { Tooltip, List, ListItem } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
 import { FetcherLoading } from 'app/common/createFetcherComponent';
-import { ActionPerformer } from 'move-to-core/components/ActionPerformer';
+import { ActionPerformer } from 'core/components/ActionPerformer';
 
 const styles = {
   collaborators: css({

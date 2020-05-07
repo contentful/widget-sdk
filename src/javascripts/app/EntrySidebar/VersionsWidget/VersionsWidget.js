@@ -8,7 +8,7 @@ import tokens from '@contentful/forma-36-tokens';
 import RelativeDateTime from 'components/shared/RelativeDateTime';
 import SnapshotStatus from 'app/snapshots/helpers/SnapshotStatus';
 import EntrySidebarWidget from '../EntrySidebarWidget';
-import { ActionPerformerName } from 'move-to-core/components/ActionPerformerName';
+import { ActionPerformerName } from 'core/components/ActionPerformerName';
 
 const styles = {
   table: css({

@@ -17,7 +17,7 @@ import {
 import { scheduleStyles as styles } from './styles';
 import CancellationModal from './CancellationModal';
 import { DateTime } from 'app/ScheduledActions/FormattedDateAndTime';
-import { ActionPerformerName } from 'move-to-core/components/ActionPerformerName';
+import { ActionPerformerName } from 'core/components/ActionPerformerName';
 import ScheduledActionAction from 'app/ScheduledActions/ScheduledActionAction';
 
 const tagTypeForAction = {

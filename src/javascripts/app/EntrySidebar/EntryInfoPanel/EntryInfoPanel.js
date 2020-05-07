@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import RelativeDateTime from 'components/shared/RelativeDateTime';
-import { ActionPerformerName } from 'move-to-core/components/ActionPerformerName';
+import { ActionPerformerName } from 'core/components/ActionPerformerName';
 
 export default class EntryInfoPanel extends Component {
   static propTypes = {
