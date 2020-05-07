@@ -47,7 +47,6 @@ const styles = {
   tabPanel: css({
     display: 'none',
     height: '100%',
-    padding: tokens.spacingM,
     maxHeight: 'calc(100% - 56px)',
     overflowY: 'scroll',
   }),
