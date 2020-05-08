@@ -58,7 +58,7 @@
     "detect-browser": "^5.1.0",
     "downshift": "^5.2.4",
     "echarts": "^4.6.0",
-    "element-resize-detector": "^1.1.15",
+    "element-resize-detector": "^1.2.1",
     "emotion": "^10.0.27",
     "fast-deep-equal": "^2.0.1",
     "fclone": "1.0.11",
