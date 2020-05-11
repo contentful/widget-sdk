@@ -2,12 +2,17 @@ import React from 'react';
 import { organizationRoute } from 'states/utils';
 import LazyLoadedComponent from 'app/common/LazyLoadedComponent';
 import importer from 'app/OrganizationSettings/importer';
-import { TeamDetailsRoute } from 'features/teams';
 
 const teamDetailState = organizationRoute({
   name: 'detail',
   url: '/:teamId',
-  component: TeamDetailsRoute,
+  component: (props) => (
+    <LazyLoadedComponent importer={importer}>
+      {({ TeamDetailsRoute }) => {
+        return <TeamDetailsRoute {...props} />;
+      }}
+    </LazyLoadedComponent>
+  ),
 });
 
 export default organizationRoute({

@@ -1,7 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { TeamDetails } from '../components/TeamDetails';
-import { createTeam } from '../services/TeamRepo';
 import { getVariation } from 'LaunchDarkly';
 import { NEW_TEAM_DETAILS } from 'featureFlags';
 import createFetcherComponent from 'app/common/createFetcherComponent';
@@ -14,17 +14,16 @@ const FeatureFetcher = createFetcherComponent(async () => {
   return { newTeamDetailsEnabled };
 });
 export class TeamDetailsRoute extends React.Component {
-  save = async ({ name, description }) => {
-    return await createTeam({ name, description });
+  static propTypes = {
+    teamId: PropTypes.string.isRequired,
+    orgId: PropTypes.string.isRequired,
   };
-
   render() {
     return (
       <React.Fragment>
         <DocumentTitle title="Team Details" />
         <FeatureFetcher>
           {({ isLoading, isError, data }) => {
-            console.log(data);
             if (isLoading) {
               return <FetcherLoading message="Loading..." />;
             }
@@ -32,7 +31,13 @@ export class TeamDetailsRoute extends React.Component {
               return <StateRedirect path="teams" />;
             }
             if (data.newTeamDetailsEnabled) {
-              return <TeamDetails save={this.save} />;
+              return (
+                <TeamDetails
+                  teamId={this.props.teamId}
+                  orgId={this.props.orgId}
+                  readOnlyPermission={false}
+                />
+              );
             }
 
             return <TeamPage />;
