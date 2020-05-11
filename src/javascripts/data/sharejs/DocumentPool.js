@@ -49,7 +49,7 @@ export async function create(docConnection, spaceEndpoint, pubSubClient, organiz
         const entityRepo = createEntityRepo(spaceEndpoint, pubSubClient, {
           skipDraftValidation: true,
           skipTransformation: true,
-          indicateAutoSave: true,
+          indicateAutoSave: false,
         });
         doc = createCmaDoc(entity, contentType, spaceEndpoint, entityRepo);
       } else {
