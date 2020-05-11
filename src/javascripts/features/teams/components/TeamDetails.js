@@ -79,10 +79,9 @@ export class TeamDetails extends React.Component {
   static propTypes = {
     teamId: PropTypes.string.isRequired,
     orgId: PropTypes.string.isRequired,
-    emptyTeamMemberships: PropTypes.bool.isRequired,
-    emptyTeamSpaceMemberships: PropTypes.bool.isRequired,
-    readOnlyPermission: PropTypes.bool.isRequired,
-    noOrgMembersLeft: PropTypes.bool.isRequired,
+    emptyTeamMemberships: PropTypes.bool,
+    emptyTeamSpaceMemberships: PropTypes.bool,
+    noOrgMembersLeft: PropTypes.bool,
   };
 
   isSelected(id) {
@@ -149,6 +148,7 @@ export class TeamDetails extends React.Component {
     selectedTab: this.tabs.teamMembers,
     showingForm: false,
   };
+
   getAddButton() {
     const { noOrgMembersLeft } = this.props;
     const { selectedTab, readOnlyPermission } = this.state;
@@ -292,7 +292,7 @@ export class TeamDetails extends React.Component {
                 </header>
 
                 {Object.entries(this.tabs).map(
-                  ([id, { component: Component, emptyStateMessage }]) => (
+                  ([id, { component: Component, emptyStateMessage, actionLabel }]) => (
                     <React.Fragment key={id}>
                       {this.isSelected(id) && !this.isListEmpty() ? (
                         <TabPanel id={id}>
@@ -311,7 +311,11 @@ export class TeamDetails extends React.Component {
                           {!readOnlyPermission && (
                             <>
                               <Paragraph>{emptyStateMessage().text}</Paragraph>
-                              <div>AddTeamButton</div>
+                              <TeamDetailsAddButton
+                                className={styles.addButton}
+                                onClick={() => this.setState({ showingForm: true })}
+                                label={actionLabel}
+                              />
                             </>
                           )}
                           {readOnlyPermission && (
