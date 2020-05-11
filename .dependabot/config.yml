@@ -7,6 +7,9 @@ update_configs:
     default_labels:
       - 'dependencies'
       - 'dependabot'
+    allowed_updates:
+      - match:
+          update_type: 'security'
     ignored_updates:
       - match:
           dependency_name: 'angular*'
