@@ -49,11 +49,11 @@ export default function withRetry(requestFn) {
     inFlight++;
     try {
       const [response] = await Promise.all([requestFn(...call.args), delay(call.wait)]);
-      recordResponseTime({ status: 200 }, startTime + call.wait, call.args);
+      recordResponseTime({ status: 200 }, startTime + call.wait, ...call.args);
       call.resolve(response);
     } catch (e) {
       handleError(call, e);
-      recordResponseTime(e, startTime + call.wait, call.args);
+      recordResponseTime(e, startTime + call.wait, ...call.args);
     } finally {
       inFlight--;
     }
@@ -69,7 +69,7 @@ export default function withRetry(requestFn) {
   function handleError(call, err) {
     if (err.status === RATE_LIMIT_EXCEEDED && call.ttl > 0) {
       try {
-        const url = call.args.url;
+        const [{ url } = {}] = call.args;
         Telemetry.count('cma-rate-limit-exceeded', {
           endpoint: getEndpoint(url),
           state: getCurrentState(),
