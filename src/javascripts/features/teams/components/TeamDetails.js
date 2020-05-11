@@ -20,6 +20,8 @@ import TeamsEmptyStateImage from 'svg/illustrations/add-user-illustration.svg';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 import { getUserName } from 'app/OrganizationSettings/Users/UserUtils';
 import * as Navigator from 'states/Navigator';
+import { getOrganization } from 'services/TokenStore';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { TeamDialog } from './TeamDialog';
 import { TeamDetailsAddButton } from './TeamDetailsAddButton';
 import { TeamMembershipList } from './TeamMembershipList';
@@ -141,14 +143,15 @@ export class TeamDetails extends React.Component {
   };
 
   state = {
-    team: {},
+    team: null,
+    readOnlyPermission: false,
     showTeamDialog: false,
     selectedTab: this.tabs.teamMembers,
     showingForm: false,
   };
   getAddButton() {
-    const { readOnlyPermission, noOrgMembersLeft } = this.props;
-    const { selectedTab } = this.state;
+    const { noOrgMembersLeft } = this.props;
+    const { selectedTab, readOnlyPermission } = this.state;
 
     if (readOnlyPermission) {
       return (
@@ -182,8 +185,13 @@ export class TeamDetails extends React.Component {
 
   async componentDidMount() {
     const endpoint = createOrganizationEndpoint(this.props.orgId);
-    const team = await getTeam(endpoint, this.props.teamId);
-    this.setState({ team });
+    const [team, organization] = await Promise.all([
+      getTeam(endpoint, this.props.teamId),
+      getOrganization(this.props.orgId),
+    ]);
+
+    const readOnlyPermission = isOwnerOrAdmin(organization);
+    this.setState({ team, readOnlyPermission });
   }
 
   async deleteTeam() {
@@ -193,8 +201,7 @@ export class TeamDetails extends React.Component {
   }
 
   render() {
-    const { team, showTeamDialog, showingForm } = this.state;
-    const { readOnlyPermission } = this.props;
+    const { team, showTeamDialog, showingForm, readOnlyPermission } = this.state;
     const path = ['organization', 'teams'];
 
     return (
