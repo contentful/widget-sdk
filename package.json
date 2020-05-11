@@ -225,7 +225,7 @@
     "karma-story-reporter": "0.3.1",
     "karma-tape-reporter": "1.0.3",
     "kexec": "^2.0.2",
-    "lint-staged": "^8.2.1",
+    "lint-staged": "^10.2.2",
     "loose-envify": "^1.4.0",
     "marked": "^1.0.0",
     "merge-stream": "^2.0.0",
