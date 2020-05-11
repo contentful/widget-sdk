@@ -240,7 +240,7 @@
     "sinon": "4.5.0",
     "systemjs": "0.20.19",
     "terser": "4.6.3",
-    "through2": "^2.0.5",
+    "through2": "^3.0.1",
     "trailduck": "^0.2.2",
     "ts-loader": "6.0.2",
     "typescript": "3.8.3",
