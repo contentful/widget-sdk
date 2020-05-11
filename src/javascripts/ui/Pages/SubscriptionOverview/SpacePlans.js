@@ -102,12 +102,12 @@ function SpacePlans({
               return (
                 <SpacePlanRow
                   key={plan.sys.id || (plan.space && plan.space.sys.id)}
-                  basePlan={basePlan}
                   plan={plan}
                   onChangeSpace={onChangeSpace}
                   onDeleteSpace={onDeleteSpace}
                   isOrgOwner={isOrgOwner}
                   hasUpgraded={isUpgraded}
+                  enterprisePlan={isEnterprisePlan(basePlan)}
                 />
               );
             })}

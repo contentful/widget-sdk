@@ -2,7 +2,6 @@ import React from 'react';
 import { render, screen, wait, fireEvent, within } from '@testing-library/react';
 import SpacePlanRow from './SpacePlanRow';
 import { go } from 'states/Navigator';
-import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 import { getEnabledFeatures } from 'utils/SubscriptionUtils';
 
 import * as fake from 'test/helpers/fakeFactory';
@@ -24,14 +23,6 @@ const mockPlan = {
 jest.mock('states/Navigator', () => ({
   go: jest.fn(),
 }));
-
-jest.mock('account/pricing/PricingDataProvider', () => ({
-  isEnterprisePlan: jest.fn(),
-}));
-
-isEnterprisePlan.mockImplementation(() => {
-  return true;
-});
 
 jest.mock('utils/SubscriptionUtils', () => ({
   getEnabledFeatures: jest.fn().mockImplementation(() => {
@@ -69,9 +60,6 @@ describe('Space Plan Row', () => {
     });
 
     it('should call onChangeSpace when upgrade-space-link is clicked', async () => {
-      isEnterprisePlan.mockImplementation(() => {
-        return false;
-      });
       await build();
       fireEvent.click(screen.getByTestId('subscription-page.spaces-list.upgrade-plan-link'));
 
@@ -94,11 +82,8 @@ describe('Space Plan Row', () => {
   });
 
   describe('render variations', () => {
-    it('hides the price when an enterprise plan', async () => {
-      isEnterprisePlan.mockImplementation(() => {
-        return true;
-      });
-      await build();
+    it("hides the price when it's an enterprise plan", async () => {
+      await build({ enterprisePlan: true });
 
       expect(() => {
         screen.getByTestId('subscription-page.spaces-list.plan-price');
@@ -106,9 +91,6 @@ describe('Space Plan Row', () => {
     });
 
     it('shows price when not an enterprise plan', async () => {
-      isEnterprisePlan.mockImplementation(() => {
-        return false;
-      });
       await build();
 
       expect(screen.getByTestId('subscription-page.spaces-list.plan-price')).toBeDefined();
@@ -192,6 +174,23 @@ describe('Space Plan Row', () => {
       expect(screen.getByTestId('cf-ui-card-actions-container')).toBeDefined();
     });
 
+    it('should call onChangeSpace when change-space-link is clicked', async () => {
+      await build({ enterprisePlan: true });
+      fireEvent.click(screen.getByTestId('subscription-page.spaces-list.dropdown-menu.trigger'));
+      fireEvent.click(screen.getByTestId('subscription-page.spaces-list.change-space-link'));
+
+      expect(mockOnChangeSpace).toHaveBeenCalled();
+    });
+
+    it('should hide change-space-link if user is not EnterprisePlan', async () => {
+      await build();
+      fireEvent.click(screen.getByTestId('subscription-page.spaces-list.dropdown-menu.trigger'));
+
+      expect(() => {
+        screen.getByTestId('subscription-page.spaces-list.change-space-link');
+      }).toThrow();
+    });
+
     it('the view space button should be disabled when it is not accessible', async () => {
       await build();
       fireEvent.click(screen.getByTestId('subscription-page.spaces-list.dropdown-menu.trigger'));
@@ -266,10 +265,14 @@ describe('Space Plan Row', () => {
 });
 
 function build(input = {}) {
-  const options = Object.assign(
-    { plan: mockPlan, isAccessible: false, hasUpgraded: false, committed: false },
-    input
-  );
+  const options = {
+    plan: mockPlan,
+    isAccessible: false,
+    committed: false,
+    hasUpgraded: false,
+    enterprisePlan: false,
+    ...input,
+  };
 
   if (options.isAccessible) {
     options.plan.space.isAccessible = true;
@@ -283,11 +286,11 @@ function build(input = {}) {
     <table>
       <tbody>
         <SpacePlanRow
-          basePlan={mockBasePlan}
           plan={options.plan}
           onChangeSpace={mockOnChangeSpace}
           onDeleteSpace={mockOnDeleteSpace}
           hasUpgraded={options.hasUpgraded}
+          enterprisePlan={options.enterprisePlan}
         />
       </tbody>
     </table>

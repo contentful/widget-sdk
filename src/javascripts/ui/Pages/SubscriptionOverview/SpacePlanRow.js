@@ -20,7 +20,6 @@ import { getUserName } from 'app/OrganizationSettings/Users/UserUtils';
 import { joinAnd } from 'utils/StringUtils';
 import { getEnabledFeatures } from 'utils/SubscriptionUtils';
 
-import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 import { Price } from 'core/components/formatting';
 import QuestionMarkIcon from 'svg/QuestionMarkIcon.svg';
 
@@ -46,18 +45,13 @@ const styles = {
   }),
 };
 
-function SpacePlanRow({ basePlan, plan, onChangeSpace, onDeleteSpace, hasUpgraded }) {
-  const space = plan.space;
+function SpacePlanRow({ plan, onChangeSpace, onDeleteSpace, hasUpgraded, enterprisePlan }) {
+  const { space } = plan;
   const enabledFeatures = getEnabledFeatures(plan);
   const hasAnyFeatures = enabledFeatures.length > 0;
 
-  let createdBy = '';
-  let createdAt = '';
-
-  if (space) {
-    createdBy = getUserName(space.sys.createdBy || {});
-    createdAt = moment.utc(space.sys.createdAt).format('DD/MM/YYYY');
-  }
+  const createdBy = space ? getUserName(space.sys.createdBy || {}) : '';
+  const createdAt = space ? moment.utc(space.sys.createdAt).format('DD/MM/YYYY') : '';
 
   const onViewSpace = () =>
     go({
@@ -107,7 +101,7 @@ function SpacePlanRow({ basePlan, plan, onChangeSpace, onDeleteSpace, hasUpgrade
           </div>
         )}
         <br />
-        {!isEnterprisePlan(basePlan) && (
+        {!enterprisePlan && (
           <>
             <Price
               testId="subscription-page.spaces-list.plan-price"
@@ -132,6 +126,13 @@ function SpacePlanRow({ basePlan, plan, onChangeSpace, onDeleteSpace, hasUpgrade
           }}
           data-test-id="subscription-page.spaces-list.dropdown-menu">
           <DropdownList>
+            {enterprisePlan && (
+              <DropdownListItem
+                onClick={onChangeSpace(space, 'change')}
+                testId="subscription-page.spaces-list.change-space-link">
+                Change space type
+              </DropdownListItem>
+            )}
             <DropdownListItem
               onClick={onViewSpace}
               isDisabled={Boolean(space && !space.isAccessible)}
@@ -157,14 +158,15 @@ function SpacePlanRow({ basePlan, plan, onChangeSpace, onDeleteSpace, hasUpgrade
 }
 
 SpacePlanRow.propTypes = {
-  basePlan: PropTypes.object.isRequired,
   plan: PropTypes.object.isRequired,
   onChangeSpace: PropTypes.func.isRequired,
   onDeleteSpace: PropTypes.func.isRequired,
+  enterprisePlan: PropTypes.bool,
   hasUpgraded: PropTypes.bool,
 };
 
 SpacePlanRow.defaultProps = {
+  enterprisePlan: false,
   hasUpgraded: false,
 };
 
