@@ -2,7 +2,7 @@
 * @contentful/frontend
 
 # Content Tags
-src/javascripts/features/content-tags/* @contentful/developer-workflows
+src/javascripts/features/content-tags/* @contentful/team-dev-workflows
 
 # Webhooks
 src/javascripts/features/webhooks/* @contentful/extensibility-devs
