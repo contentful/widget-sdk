@@ -1,5 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
+import { get } from 'lodash';
+import { css } from 'emotion';
 import {
   Tooltip,
   Tabs,
@@ -9,18 +11,18 @@ import {
   Paragraph,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes';
-import { css } from 'emotion';
-import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { useAsync } from 'core/hooks';
+import { createOrganizationEndpoint } from 'data/EndpointFactory';
+import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes';
+import { getAllMemberships } from 'access_control/OrganizationMembershipRepository';
+import { FetcherLoading } from 'app/common/createFetcherComponent';
+import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import TeamsEmptyStateImage from 'svg/illustrations/add-user-illustration.svg';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
+import { getTeamMemberships, getTeamSpaceMemberships } from '../services/TeamRepo';
 import { TeamDetailsAddButton } from './TeamDetailsAddButton';
 import { TeamMembershipList } from './TeamMembershipList';
 import { TeamSpaceMembershipList } from './TeamSpaceMembershipList';
-import { getTeamMemberships, getTeamSpaceMemberships } from '../services/TeamRepo';
-import { FetcherLoading } from 'app/common/createFetcherComponent';
-import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 
 const styles = {
   tabs: css({
@@ -40,19 +42,38 @@ const styles = {
 
 const fetchData = (teamId, orgId, setData) => async () => {
   const endpoint = createOrganizationEndpoint(orgId);
-  const [teamMemberships, teamSpaceMemberships] = await Promise.all([
+  const [teamMemberships, teamSpaceMemberships, orgMemberships] = await Promise.all([
     getTeamMemberships(endpoint, teamId),
     getTeamSpaceMemberships(endpoint),
+    getAllMemberships(endpoint),
   ]);
 
   const spaceMemberships = teamSpaceMemberships.items.filter((item) => {
     return item.sys.team.sys.id === teamId;
   });
-  setData({ teamMembers: teamMemberships.items, spaceMemberships });
+  const unavailableOrgMemberships = teamMemberships.items.map((item) =>
+    get(item, 'sys.organizationMembership.sys.id')
+  );
+  const availableOrgMemberships = orgMemberships
+    ? Object.values(orgMemberships).filter(
+        ({ sys: { id } }) => !unavailableOrgMemberships.includes(id)
+      )
+    : [];
+  setData({ teamMembers: teamMemberships.items, spaceMemberships, availableOrgMemberships });
+};
+
+TeamDetailsContent.propTypes = {
+  team: TeamPropType.isRequired,
+  orgId: PropTypes.string.isRequired,
+  readOnlyPermission: PropTypes.bool.isRequired,
 };
 
 export function TeamDetailsContent({ team, orgId, readOnlyPermission }) {
-  const [data, setData] = useState({ teamMembers: [], spaceMemberships: [] });
+  const [data, setData] = useState({
+    teamMembers: [],
+    spaceMemberships: [],
+    availableOrgMemberships: [],
+  });
 
   const tabs = {
     teamMembers: {
@@ -100,7 +121,6 @@ export function TeamDetailsContent({ team, orgId, readOnlyPermission }) {
 
   const [selectedTab, setSelectedTab] = useState(tabs.teamMembers);
   const [showingForm, setShowingForm] = useState(false);
-  // const [noOrgMembersLeft, setNoOrgMembersLeft] = useState(false);
 
   const isSelected = (id) => {
     return selectedTab.id === id;
@@ -131,16 +151,16 @@ export function TeamDetailsContent({ team, orgId, readOnlyPermission }) {
       );
     }
 
-    // if (selectedTab === tabs.teamMembers && noOrgMembersLeft) {
-    //   return (
-    //     <Tooltip
-    //       testId="no-members-left-tooltip"
-    //       place="left"
-    //       content="All organization members are already in this team">
-    //       <TeamDetailsAddButton disabled label={selectedTab.actionLabel} />
-    //     </Tooltip>
-    //   );
-    // }
+    if (selectedTab === tabs.teamMembers && data.availableOrgMemberships.length === 0) {
+      return (
+        <Tooltip
+          testId="no-members-left-tooltip"
+          place="left"
+          content="All organization members are already in this team">
+          <TeamDetailsAddButton disabled label={selectedTab.actionLabel} />
+        </Tooltip>
+      );
+    }
 
     return (
       <TeamDetailsAddButton onClick={() => setShowingForm(true)} label={selectedTab.actionLabel} />
@@ -152,6 +172,7 @@ export function TeamDetailsContent({ team, orgId, readOnlyPermission }) {
   }
 
   if (error) {
+    console.log(error);
     return <ForbiddenPage />;
   }
 
@@ -212,9 +233,3 @@ export function TeamDetailsContent({ team, orgId, readOnlyPermission }) {
     </div>
   );
 }
-
-TeamDetailsContent.propTypes = {
-  team: TeamPropType.isRequired,
-  orgId: PropTypes.string.isRequired,
-  readOnlyPermission: PropTypes.bool.isRequired,
-};
