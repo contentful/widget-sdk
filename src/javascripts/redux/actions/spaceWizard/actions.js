@@ -127,6 +127,14 @@ export function spaceWizardTrack(eventName, trackingData) {
   };
 }
 
+export const SPACE_WIZARD_CREATE_SESSION = 'SPACE_WIZARD/CREATE_SESSION';
+export function spaceWizardCreateSession(token) {
+  return {
+    type: SPACE_WIZARD_CREATE_SESSION,
+    token,
+  };
+}
+
 export const SPACE_WIZARD_NAVIGATE = 'SPACE_WIZARD/NAVIGATE';
 export function spaceWizardNavigate(stepId) {
   return {
