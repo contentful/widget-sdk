@@ -80,15 +80,11 @@ export default function SubscriptionPage({ organizationId, data }) {
 
   const changeSpace = ({ space, scope = 'organization' }) => {
     return () => {
-      // TODO: Move this to SpacePlanRow
-      if (scope !== 'organization:upgrade_link') {
-        track('subscription_overview:upgrade_plan_link_clicked', {
-          organizationId,
-          spaceId: space.sys.id,
-          scope,
-          // send SpaceWizard session id here too
-        });
-      }
+      track('subscription_overview:upgrade_plan_link_clicked', {
+        organizationId,
+        spaceId: space.sys.id,
+        scope,
+      });
 
       showChangeSpaceModal({
         action: 'change',

@@ -82,7 +82,7 @@ class Wizard extends React.Component {
     space: PropTypes.object,
 
     action: PropTypes.oneOf(['create', 'change']).isRequired,
-    wizardScope: PropTypes.oneOf(['space', 'organization', 'organization:upgrade_link']).isRequired,
+    wizardScope: PropTypes.oneOf(['space', 'organization']).isRequired,
     onCancel: PropTypes.func.isRequired,
     onConfirm: PropTypes.func.isRequired,
     onSpaceCreated: PropTypes.func.isRequired,
@@ -115,7 +115,7 @@ class Wizard extends React.Component {
     currentPlan: PropTypes.object,
     selectedPlan: PropTypes.object,
     partnershipMeta: propTypes.partnershipMeta,
-    spaceWizardSession: propTypes.string,
+    wizardSessionId: propTypes.string,
   };
 
   componentDidMount() {
@@ -126,7 +126,7 @@ class Wizard extends React.Component {
     createSession(token);
     this.track('open', {
       paymentDetailsExist: Boolean(organization.isBillable),
-      spaceWizardSession: token,
+      wizardSessionId: token,
     });
     this.navigate(steps[0].id);
   }
@@ -287,11 +287,11 @@ class Wizard extends React.Component {
   };
 
   track = (eventName, data) => {
-    const { track, action, wizardScope, spaceWizardSession } = this.props;
+    const { track, action, wizardScope, wizardSessionId } = this.props;
     const trackedData = {
       ...data,
       ...(wizardScope && { wizardScope }),
-      ...(spaceWizardSession && { spaceWizardSession }),
+      ...(wizardSessionId && { wizardSessionId }),
     };
 
     track(eventName, { action, ...trackedData });
@@ -388,7 +388,7 @@ const mapStateToProps = (state) => {
     spaceCreation: state.spaceWizard.spaceCreation,
     spaceChange: state.spaceWizard.spaceChange,
     partnershipMeta: state.spaceWizard.partnershipMeta,
-    spaceWizardSession: state.spaceWizard.spaceWizardSession,
+    wizardSessionId: state.spaceWizard.wizardSessionId,
   };
 };
 

@@ -12,7 +12,7 @@ export default combineReducers({
   spacePlans,
   templates,
   spacePlanSelected,
-  spaceWizardSession,
+  wizardSessionId,
 });
 
 function partnershipMeta(state = {}, action) {
@@ -101,7 +101,7 @@ function subscriptionPrice(state = {}, action) {
   }
 }
 
-function spaceWizardSession(state = '', action) {
+function wizardSessionId(state = '', action) {
   switch (action.type) {
     case actions.SPACE_WIZARD_CREATE_SESSION:
       return action.token;

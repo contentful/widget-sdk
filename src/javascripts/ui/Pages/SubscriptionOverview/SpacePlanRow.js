@@ -111,7 +111,7 @@ function SpacePlanRow({ plan, onChangeSpace, onDeleteSpace, hasUpgraded, enterpr
             -{' '}
             <TextLink
               testId="subscription-page.spaces-list.upgrade-plan-link"
-              onClick={onChangeSpace({ space, scope: 'organization:upgrade_link' })}>
+              onClick={onChangeSpace({ space })}>
               upgrade
             </TextLink>
           </>
