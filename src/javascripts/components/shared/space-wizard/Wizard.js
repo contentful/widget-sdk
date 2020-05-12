@@ -290,7 +290,7 @@ class Wizard extends React.Component {
     const { track, action, wizardScope, wizardSessionId } = this.props;
     const trackedData = {
       ...data,
-      ...(wizardScope && { wizardScope }),
+      ...(wizardScope && { startedAt: wizardScope }),
       ...(wizardSessionId && { wizardSessionId }),
     };
 

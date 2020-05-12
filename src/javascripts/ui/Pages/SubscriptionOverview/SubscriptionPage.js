@@ -78,18 +78,17 @@ export default function SubscriptionPage({ organizationId, data }) {
     };
   };
 
-  const changeSpace = ({ space, scope = 'organization' }) => {
+  const changeSpace = (space) => {
     return () => {
       track('subscription_overview:upgrade_plan_link_clicked', {
         organizationId,
         spaceId: space.sys.id,
-        scope,
       });
 
       showChangeSpaceModal({
         action: 'change',
         organizationId,
-        scope,
+        scope: 'organization',
         space,
         onSubmit: async (productRatePlanId) => {
           // Update current spacePlan for this space with new data

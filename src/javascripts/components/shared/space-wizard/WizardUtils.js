@@ -324,13 +324,13 @@ export function createTrackingData(data) {
     recommendedPlan,
     newSpaceName,
     newSpaceTemplate,
-    wizardScope,
+    startedAt,
     wizardSessionId,
   } = data;
 
   return {
     wizardSessionId: wizardSessionId || null,
-    wizardScope: wizardScope || null,
+    startedAt: startedAt || null,
     currentStep: currentStepId || null,
     targetStep: targetStepId || null,
     intendedAction: action,

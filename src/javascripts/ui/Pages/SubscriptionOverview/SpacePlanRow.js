@@ -111,7 +111,7 @@ function SpacePlanRow({ plan, onChangeSpace, onDeleteSpace, hasUpgraded, enterpr
             -{' '}
             <TextLink
               testId="subscription-page.spaces-list.upgrade-plan-link"
-              onClick={onChangeSpace({ space })}>
+              onClick={onChangeSpace(space)}>
               upgrade
             </TextLink>
           </>
@@ -128,7 +128,7 @@ function SpacePlanRow({ plan, onChangeSpace, onDeleteSpace, hasUpgraded, enterpr
           <DropdownList>
             {enterprisePlan && (
               <DropdownListItem
-                onClick={onChangeSpace({ space })}
+                onClick={onChangeSpace(space)}
                 testId="subscription-page.spaces-list.change-space-link">
                 Change space type
               </DropdownListItem>
