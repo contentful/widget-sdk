@@ -11,6 +11,30 @@ export function getAllTeams(endpoint, params) {
 }
 
 /**
+ * Get team memberships in the team
+ * @param {endpoint} endpoint organization endpoint
+ * @param {teamId} teamId team id
+ */
+export function getTeamMemberships(endpoint, teamId) {
+  return endpoint({
+    method: 'GET',
+    path: ['teams', teamId, 'team_memberships'],
+  });
+}
+
+/**
+ * Get team memberships in the team
+ * @param {endpoint} endpoint organization endpoint
+ * @param {teamId} teamId team id
+ */
+export function getTeamSpaceMemberships(endpoint) {
+  return endpoint({
+    method: 'GET',
+    path: ['team_space_memberships'],
+  });
+}
+
+/**
  * Get team in the organization by id
  * @param {endpoint} endpoint organization endpoint
  * @param {teamId} teamId team id

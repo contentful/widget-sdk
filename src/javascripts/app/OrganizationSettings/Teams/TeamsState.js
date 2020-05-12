@@ -7,7 +7,7 @@ import { TeamDetailsRoute } from 'features/teams';
 const teamDetailState = organizationRoute({
   name: 'detail',
   url: '/:teamId',
-  component: TeamDetailsRoute,
+  component: (props) => <TeamDetailsRoute {...props} />,
 });
 
 export default organizationRoute({
