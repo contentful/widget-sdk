@@ -81,7 +81,7 @@ class Wizard extends React.Component {
     space: PropTypes.object,
 
     action: PropTypes.oneOf(['create', 'change']).isRequired,
-    wizardScope: PropTypes.oneOf(['space', 'organization']).isRequired,
+    wizardScope: PropTypes.oneOf(['space', 'organization', 'organization:upgrade_link']).isRequired,
     onCancel: PropTypes.func.isRequired,
     onConfirm: PropTypes.func.isRequired,
     onSpaceCreated: PropTypes.func.isRequired,
@@ -156,7 +156,6 @@ class Wizard extends React.Component {
       organization,
       onCancel,
       onDimensionsChange,
-
       spacePlans,
       fetchSpacePlans,
       fetchSubscriptionPrice,
@@ -226,7 +225,6 @@ class Wizard extends React.Component {
         track: this.track,
         onChange: this.setStateData,
         onSubmit: this.goForward,
-
         spacePlans,
         fetchSpacePlans,
         fetchSubscriptionPrice,
@@ -283,11 +281,10 @@ class Wizard extends React.Component {
   };
 
   track = (eventName, data) => {
-    const { track, action, space } = this.props;
+    const { track, action, wizardScope } = this.props;
+    const trackedData = { ...data, ...(wizardScope && { wizardScope }) };
 
-    const trackedData = { action, ...{ spaceId: space.sys.id, ...data } };
-
-    track(eventName, trackedData);
+    track(eventName, { action, ...trackedData });
   };
 
   setStateData = (stepData) => {

@@ -78,18 +78,23 @@ export default function SubscriptionPage({ organizationId, data }) {
     };
   };
 
-  const changeSpace = (space, action) => {
+  const changeSpace = ({ space, scope = 'organization' }) => {
     return () => {
-      track('subscription_overview:upgrade_plan_link_clicked', {
-        organizationId,
-        spaceId: space.sys.id,
-      });
+      // TODO: Move this to SpacePlanRow
+      if (scope !== 'organization:upgrade_link') {
+        track('subscription_overview:upgrade_plan_link_clicked', {
+          organizationId,
+          spaceId: space.sys.id,
+          scope,
+          // send SpaceWizard session id here too
+        });
+      }
 
       showChangeSpaceModal({
+        action: 'change',
         organizationId,
-        scope: 'organization',
+        scope,
         space,
-        action,
         onSubmit: async (productRatePlanId) => {
           // Update current spacePlan for this space with new data
           const productRatePlan = data.productRatePlans.find(
