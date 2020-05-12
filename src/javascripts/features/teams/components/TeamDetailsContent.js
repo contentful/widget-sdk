@@ -2,14 +2,7 @@ import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import { css } from 'emotion';
-import {
-  Tooltip,
-  Tabs,
-  Tab,
-  TabPanel,
-  Heading,
-  Paragraph,
-} from '@contentful/forma-36-react-components';
+import { Tabs, Tab, TabPanel, Heading, Paragraph } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { useAsync } from 'core/hooks';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
@@ -139,34 +132,6 @@ export function TeamDetailsContent({ team, orgId, readOnlyPermission }) {
     );
   };
 
-  const getAddButton = () => {
-    if (readOnlyPermission) {
-      return (
-        <Tooltip
-          testId="read-only-tooltip"
-          place="left"
-          content="You don't have permission to change this team">
-          <TeamDetailsAddButton disabled label={selectedTab.actionLabel} />
-        </Tooltip>
-      );
-    }
-
-    if (selectedTab === tabs.teamMembers && data.availableOrgMemberships.length === 0) {
-      return (
-        <Tooltip
-          testId="no-members-left-tooltip"
-          place="left"
-          content="All organization members are already in this team">
-          <TeamDetailsAddButton disabled label={selectedTab.actionLabel} />
-        </Tooltip>
-      );
-    }
-
-    return (
-      <TeamDetailsAddButton onClick={() => setShowingForm(true)} label={selectedTab.actionLabel} />
-    );
-  };
-
   if (isLoading || !data) {
     return <FetcherLoading message="Loading data" />;
   }
@@ -191,7 +156,16 @@ export function TeamDetailsContent({ team, orgId, readOnlyPermission }) {
             </Tab>
           ))}
         </Tabs>
-        {!showingForm && !isListEmpty() && getAddButton()}
+        {!showingForm && !isListEmpty() && (
+          <TeamDetailsAddButton
+            label={selectedTab.actionLabel}
+            onClick={() => setShowingForm(true)}
+            readOnlyPermission={readOnlyPermission}
+            noOrgMembershipsLeft={
+              selectedTab === tabs.teamMembers && data.availableOrgMemberships.length === 0
+            }
+          />
+        )}
       </header>
 
       {Object.entries(tabs).map(
@@ -220,6 +194,7 @@ export function TeamDetailsContent({ team, orgId, readOnlyPermission }) {
                         className={styles.addButton}
                         onClick={() => setShowingForm(true)}
                         label={actionLabel}
+                        readOnlyPermission={readOnlyPermission}
                       />
                     </>
                   )}
