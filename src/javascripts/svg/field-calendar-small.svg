@@ -6,7 +6,10 @@
         <g transform="translate(5 5)" stroke="#000">
           <rect fill="none" y=".769" width="20" height="18.974" rx="2" />
           <path d="M.512 4.5h18.463" stroke-linecap="square" />
-          <path d="M3.5 2.185V.133M15.5 2.185V.133" stroke-linecap="round" stroke-linejoin="round"
+          <path
+            d="M3.5 2.185V.133M15.5 2.185V.133"
+            stroke-linecap="round"
+            stroke-linejoin="round"
           />
         </g>
         <path

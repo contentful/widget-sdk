@@ -53,10 +53,18 @@
       stroke-linecap="round"
       stroke-linejoin="round"
     />
-    <path d="m3.77 10.86l4.46-3.72" stroke="#05B87F" stroke-linecap="round" stroke-linejoin="round"
+    <path
+      d="m3.77 10.86l4.46-3.72"
+      stroke="#05B87F"
+      stroke-linecap="round"
+      stroke-linejoin="round"
     />
     <path d="m9.94 6.82l4.14 1.37" stroke="#05B87F" stroke-linejoin="round" />
-    <path d="m20.35 2.26l-4.7 5.48" stroke="#05B87F" stroke-linecap="round" stroke-linejoin="round"
+    <path
+      d="m20.35 2.26l-4.7 5.48"
+      stroke="#05B87F"
+      stroke-linecap="round"
+      stroke-linejoin="round"
     />
   </g>
 </svg>
