@@ -31,10 +31,10 @@ export default class ExtensionIFrameRenderer extends React.Component {
       uninstall: PropTypes.func,
     }).isRequired,
     descriptor: PropTypes.shape({
-      id: PropTypes.string,
-      namespace: PropTypes.string,
+      id: PropTypes.string.isRequired,
+      namespace: PropTypes.string.isRequired,
       appDefinitionId: PropTypes.string,
-      src: PropTypes.string,
+      src: PropTypes.string.isRequired,
       srcdoc: PropTypes.string,
     }).isRequired,
     parameters: PropTypes.shape({
