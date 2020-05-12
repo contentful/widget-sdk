@@ -325,9 +325,11 @@ export function createTrackingData(data) {
     newSpaceName,
     newSpaceTemplate,
     wizardScope,
+    spaceWizardSession,
   } = data;
 
   return {
+    spaceWizardSession: spaceWizardSession || null,
     wizardScope: wizardScope || null,
     currentStep: currentStepId || null,
     targetStep: targetStepId || null,

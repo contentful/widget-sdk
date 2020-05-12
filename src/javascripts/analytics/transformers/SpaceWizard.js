@@ -27,6 +27,8 @@ export default SpaceWizardTransformer;
 
 export function getSpaceWizardData(action, data) {
   return {
+    spaceWizardSession: data.spaceWizardSession || null,
+
     // The starting point of this wizard or where it was opened
     wizardScope: data.wizardScope || null,
 

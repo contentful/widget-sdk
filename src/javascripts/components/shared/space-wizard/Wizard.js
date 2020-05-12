@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { css } from 'emotion';
+import { generateToken } from 'utils/StringUtils';
 import { Steps, getFieldErrors } from './WizardUtils';
 import SpacePlanSelector from './SpacePlanSelector';
 import SpaceDetails from './SpaceDetails';
@@ -101,6 +102,7 @@ class Wizard extends React.Component {
     changeSpace: PropTypes.func.isRequired,
     track: PropTypes.func.isRequired,
     setPartnershipFields: PropTypes.func.isRequired,
+    createSession: PropTypes.func.isRequired,
 
     spacePlans: PropTypes.object.isRequired,
     currentStepId: PropTypes.string.isRequired,
@@ -113,14 +115,18 @@ class Wizard extends React.Component {
     currentPlan: PropTypes.object,
     selectedPlan: PropTypes.object,
     partnershipMeta: propTypes.partnershipMeta,
+    spaceWizardSession: propTypes.string,
   };
 
   componentDidMount() {
-    const { action, organization } = this.props;
+    const { action, organization, createSession } = this.props;
     const steps = getSteps(action);
+    const token = generateToken();
 
+    createSession(token);
     this.track('open', {
       paymentDetailsExist: Boolean(organization.isBillable),
+      spaceWizardSession: token,
     });
     this.navigate(steps[0].id);
   }
@@ -281,8 +287,12 @@ class Wizard extends React.Component {
   };
 
   track = (eventName, data) => {
-    const { track, action, wizardScope } = this.props;
-    const trackedData = { ...data, ...(wizardScope && { wizardScope }) };
+    const { track, action, wizardScope, spaceWizardSession } = this.props;
+    const trackedData = {
+      ...data,
+      ...(wizardScope && { wizardScope }),
+      ...(spaceWizardSession && { spaceWizardSession }),
+    };
 
     track(eventName, { action, ...trackedData });
   };
@@ -378,6 +388,7 @@ const mapStateToProps = (state) => {
     spaceCreation: state.spaceWizard.spaceCreation,
     spaceChange: state.spaceWizard.spaceChange,
     partnershipMeta: state.spaceWizard.partnershipMeta,
+    spaceWizardSession: state.spaceWizard.spaceWizardSession,
   };
 };
 
@@ -396,6 +407,7 @@ const mapDispatchToProps = {
   reset: actionCreators.reset,
   sendPartnershipEmail: actionCreators.sendPartnershipEmail,
   setPartnershipFields: actionCreators.setPartnershipFields,
+  createSession: actionCreators.createSession,
 };
 
 export { Wizard };
