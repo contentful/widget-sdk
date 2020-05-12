@@ -31,7 +31,7 @@ describe('createSnaphotExtensionBridge', () => {
       locale: { code: 'pl' },
       entity: { sys: {}, fields: {} },
       editorData: {
-        contentType: 'CONTENT TYPE',
+        contentType: { data: { name: 'someContentType', sys: { id: '123' } } },
         editorInterface: {
           controls: [],
           sidebar: [],
@@ -50,7 +50,7 @@ describe('createSnaphotExtensionBridge', () => {
         environmentId: 'environmentId',
         spaceId: 'spaceId',
         location: LOCATION_ENTRY_FIELD,
-        contentTypeData: 'CONTENT TYPE',
+        contentTypeData: { name: 'someContentType', sys: { id: '123' } },
         initialContentTypesData: [{ id: 'first-content-type' }, { id: 'second-content-type' }],
         current: { field: 'FIELD', locale: { code: 'pl' } },
         entryData: { fields: {}, sys: {} },

@@ -36,7 +36,7 @@ export default function createSnapshotExtensionBridge(dependencies) {
         default: TheLocaleStore.getDefaultLocale(),
       },
       entryData: entity,
-      contentTypeData: editorData.contentType,
+      contentTypeData: editorData.contentType.data,
       initialContentTypesData: spaceContext.publishedCTs.getAllBare(),
       editorInterface: editorData.editorInterface,
     };
