@@ -246,7 +246,7 @@
     "typescript": "3.8.3",
     "watchify": "3.11.1",
     "webpack": "^4.42.0",
-    "webpack-bundle-analyzer": "^3.6.0",
+    "webpack-bundle-analyzer": "^3.7.0",
     "webpack-cli": "^3.3.10",
     "webpack-dev-middleware": "^3.7.2",
     "webpack-manifest-plugin": "^3.0.0-rc.0",
