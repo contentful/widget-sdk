@@ -1,2 +1,8 @@
 import React from 'react';
-export const TeamSpaceMembershipList = () => <div>Space List</div>;
+import PropTypes from 'prop-types';
+
+export const TeamSpaceMembershipList = ({ items }) => <div>Space List {items.length}</div>;
+
+TeamSpaceMembershipList.propTypes = {
+  items: PropTypes.array.isRequired,
+};
