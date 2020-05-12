@@ -148,6 +148,10 @@ export default class AppDetails extends React.Component {
     }
 
     this.setState({ creator, appManagementViewsEnabled });
+
+    if (!Object.values(TabPaths).includes(this.props.tab)) {
+      this.onTabSelect(TabPaths.GENERAL);
+    }
   }
 
   save = async () => {
