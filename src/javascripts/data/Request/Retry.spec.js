@@ -5,7 +5,7 @@ import * as Telemetry from 'i13n/Telemetry';
 jest.useFakeTimers();
 
 jest.mock('./Utils', () => ({
-  delay: jest.fn(),
+  delay: jest.fn(async () => {}),
   getEndpoint: jest.fn((url) => url),
   getCurrentState: jest.fn(() => 'STATE'),
 }));
@@ -15,7 +15,8 @@ const wrappedFn = withRetry(requestFn);
 
 // executes all tasks and micro-tasks (timeouts and promise callbacks)
 // but won't execute newly scheduled micro-tasks (promise callbacks)
-function flush() {
+async function flush() {
+  await Promise.resolve();
   jest.runOnlyPendingTimers();
 }
 
@@ -40,12 +41,13 @@ describe('Retry', () => {
   it('consumes requests in a specific rate (7 per second)', async () => {
     runTimes(15);
     // immediately calls 7
+    await flush();
     expect(requestFn).toHaveBeenCalledTimes(7);
-    flush();
     // after 1 period, calls 7 more
+    await flush();
     expect(requestFn).toHaveBeenCalledTimes(14);
-    flush();
     // after 1 period, calls the remaining one
+    await flush();
     expect(requestFn).toHaveBeenCalledTimes(15);
   });
 
@@ -89,6 +91,23 @@ describe('Retry', () => {
 
     expect(requestFn).toHaveBeenCalledTimes(2);
     expect(result).toEqual('success');
+  });
+
+  it('retries 429s after a delay', async () => {
+    const error = { status: 429 };
+    requestFn.mockRejectedValue(error);
+
+    wrappedFn('foo').catch(() => {});
+    expect(requestFn).not.toHaveBeenCalled();
+    expect(delay).toHaveBeenCalledTimes(1);
+    await flush();
+    expect(requestFn).toHaveBeenCalledTimes(1);
+    await flush();
+    expect(delay).toHaveBeenCalledTimes(2);
+    expect(requestFn).toHaveBeenCalledTimes(2);
+    await flush();
+    expect(delay).toHaveBeenCalledTimes(3);
+    expect(requestFn).toHaveBeenCalledTimes(3);
   });
 
   it('retries 429s with exponential backoff', async () => {

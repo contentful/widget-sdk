@@ -47,8 +47,11 @@ export default function withRetry(requestFn) {
   async function doRequest(call) {
     const startTime = Date.now();
     inFlight++;
+
+    await delay(call.wait);
+
     try {
-      const [response] = await Promise.all([requestFn(...call.args), delay(call.wait)]);
+      const response = await requestFn(...call.args);
       recordResponseTime({ status: 200 }, startTime + call.wait, ...call.args);
       call.resolve(response);
     } catch (e) {
