@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { isEqual, uniqWith, uniqueId, get } from 'lodash';
@@ -36,6 +36,14 @@ import {
   pluralize,
   createCountMessage,
 } from './utils';
+
+import { ReferencesContext, ReferencesProvider } from './ReferencesContext';
+import {
+  SET_REFERENCES,
+  SET_LINKS_COUNTER,
+  SET_VALIDATIONS,
+  SET_MAX_DEPTH_REACHED,
+} from './state/actions';
 
 const MAX_LEVEL = 10;
 
@@ -111,19 +119,23 @@ export const hasLinks = (obj) => {
 };
 
 const ReferencesTab = ({ entity }) => {
-  const [defaultLocale, setDefaultLocale] = useState('');
-  const [references, setReferences] = useState([]);
-  const [linksCounter, setLinksCounter] = useState({});
-  const [selectedEntities, setSelectedEntities] = useState([]);
-  const [validations, setValidations] = useState(null);
-  const [isTooComplex, setIsTooComplex] = useState(false);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const [defaultLocale, setDefaultLocale] = useState('');
   const [processingAction, setProcessingAction] = useState(null);
-  const [isActionsDisabled, setActionsDisabled] = useState(false);
+  const [isTooComplex, setIsTooComplex] = useState(false);
   const [allReferencesSelected, setAllReferencesSelected] = useState(true);
   const [entityTitle, setEntityTitle] = useState(null);
   const [referenceTreeKey, setReferenceTreeKey] = useState(uniqueId('id_'));
-  const [isTreeMaxDepthReached, setIsTreeMaxDepthReached] = useState(false);
+
+  const { state: referencesState, dispatch } = useContext(ReferencesContext);
+  const {
+    references,
+    linksCounter,
+    selectedEntities,
+    validations,
+    isTreeMaxDepthReached,
+    isActionsDisabled,
+  } = referencesState;
 
   useEffect(() => {
     async function fetchDefaultLocale() {
@@ -133,10 +145,13 @@ const ReferencesTab = ({ entity }) => {
 
     async function fetchReferences() {
       const { resolved: fetchedRefs, response } = await getReferencesForEntryId(entity.sys.id);
-      setReferences(fetchedRefs);
-      setLinksCounter({
-        assets: get(response, 'includes.Asset.length') || 0,
-        entries: get(response, 'includes.Entry.length') || 0,
+      dispatch({ type: SET_REFERENCES, value: fetchedRefs });
+      dispatch({
+        type: SET_LINKS_COUNTER,
+        value: {
+          assets: get(response, 'includes.Asset.length') || 0,
+          entries: get(response, 'includes.Entry.length') || 0,
+        },
       });
       return fetchedRefs;
     }
@@ -161,7 +176,7 @@ const ReferencesTab = ({ entity }) => {
         });
       }
     });
-  }, [entity]);
+  }, [entity, dispatch]);
 
   if (entity.sys.type === 'Asset' || !hasLinks(entity.fields)) {
     return null;
@@ -172,7 +187,7 @@ const ReferencesTab = ({ entity }) => {
   };
 
   const displayValidation = (validationResponse) => {
-    setValidations(validationResponse);
+    dispatch({ type: SET_VALIDATIONS, value: validationResponse });
     setReferenceTreeKey(uniqueId('id_'));
 
     validationResponse.errored.length
@@ -204,7 +219,7 @@ const ReferencesTab = ({ entity }) => {
 
   const handlePublication = () => {
     setDropdownOpen(false);
-    setValidations(null);
+    dispatch({ type: SET_VALIDATIONS, value: null });
     setProcessingAction('Publishing');
 
     track(trackingEvents.publish, {
@@ -218,7 +233,9 @@ const ReferencesTab = ({ entity }) => {
       .then(() => {
         setProcessingAction(null);
         getReferencesForEntryId(entity.sys.id)
-          .then(({ resolved: fetchedRefs }) => setReferences(fetchedRefs))
+          .then(({ resolved: fetchedRefs }) =>
+            dispatch({ type: SET_REFERENCES, value: fetchedRefs })
+          )
           .then(() => {
             setReferenceTreeKey(uniqueId('id_'));
 
@@ -362,14 +379,12 @@ const ReferencesTab = ({ entity }) => {
               key={referenceTreeKey}
               defaultLocale={defaultLocale}
               validations={validations}
-              onSelectEntities={(entities) => {
-                setSelectedEntities(entities);
-                setActionsDisabled(!entities.length);
-              }}
               maxLevel={MAX_LEVEL}
               allReferencesSelected={allReferencesSelected}
               onReferenceCardClick={handleReferenceCardClick}
-              setIsTreeMaxDepthReached={setIsTreeMaxDepthReached}
+              setIsTreeMaxDepthReached={(value) => {
+                dispatch({ type: SET_MAX_DEPTH_REACHED, value });
+              }}
             />
           ) : (
             <SkeletonContainer
@@ -397,4 +412,10 @@ ReferencesTab.propTypes = {
   entity: PropTypes.object.isRequired,
 };
 
-export default ReferencesTab;
+const ReferencesTabWithProvider = (props) => (
+  <ReferencesProvider>
+    <ReferencesTab {...props} />
+  </ReferencesProvider>
+);
+
+export default ReferencesTabWithProvider;

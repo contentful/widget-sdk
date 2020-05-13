@@ -2,6 +2,8 @@ import React from 'react';
 import { render, cleanup, wait } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import resolveResponse from 'contentful-resolve-response';
+import { ReferencesContext } from './ReferencesContext';
+import { SET_SELECTED_ENTITIES, SET_ACTIONS_DISABLED } from './state/actions';
 
 import {
   simpleReferences,
@@ -19,20 +21,26 @@ import {
 
 import ReferencesTree from './ReferencesTree';
 
+const MockPovider = ({ children, references, dispatch }) => (
+  <ReferencesContext.Provider value={{ state: { references }, dispatch }}>
+    {children}
+  </ReferencesContext.Provider>
+);
+
+MockPovider.defaultProps = {
+  dispatch: () => {},
+};
+
 describe('ReferencesTree component', () => {
   afterEach(cleanup);
 
   it('should render simple references', async () => {
     const onCardClick = jest.fn();
     const response = resolveResponse(simpleReferences);
-    const root = response[0];
     const { getAllByTestId } = render(
-      <ReferencesTree
-        root={root}
-        defaultLocale="en-US"
-        maxLevel={5}
-        onReferenceCardClick={onCardClick}
-      />
+      <MockPovider references={response}>
+        <ReferencesTree defaultLocale="en-US" maxLevel={5} onReferenceCardClick={onCardClick} />
+      </MockPovider>
     );
 
     await wait();
@@ -43,14 +51,10 @@ describe('ReferencesTree component', () => {
   it('should render an array of references', async () => {
     const onCardClick = jest.fn();
     const response = resolveResponse(arrayOfReferences);
-    const root = response[0];
     const { getAllByTestId } = render(
-      <ReferencesTree
-        root={root}
-        defaultLocale="en-US"
-        maxLevel={5}
-        onReferenceCardClick={onCardClick}
-      />
+      <MockPovider references={response}>
+        <ReferencesTree defaultLocale="en-US" maxLevel={5} onReferenceCardClick={onCardClick} />
+      </MockPovider>
     );
 
     expect(getAllByTestId('cf-ui-card')).toHaveLength(4);
@@ -61,14 +65,10 @@ describe('ReferencesTree component', () => {
   it('should render nested plain entry', async () => {
     const onCardClick = jest.fn();
     const response = resolveResponse(nestedSimpleReferences);
-    const root = response[0];
     const { getAllByTestId } = render(
-      <ReferencesTree
-        root={root}
-        defaultLocale="en-US"
-        maxLevel={5}
-        onReferenceCardClick={onCardClick}
-      />
+      <MockPovider references={response}>
+        <ReferencesTree defaultLocale="en-US" maxLevel={5} onReferenceCardClick={onCardClick} />
+      </MockPovider>
     );
 
     expect(getAllByTestId('cf-ui-card')).toHaveLength(5);
@@ -79,14 +79,10 @@ describe('ReferencesTree component', () => {
   it('should render nested array of references', async () => {
     const onCardClick = jest.fn();
     const response = resolveResponse(nestedArrayOfReferences);
-    const root = response[0];
     const { getAllByTestId } = render(
-      <ReferencesTree
-        root={root}
-        defaultLocale="en-US"
-        maxLevel={5}
-        onReferenceCardClick={onCardClick}
-      />
+      <MockPovider references={response}>
+        <ReferencesTree defaultLocale="en-US" maxLevel={5} onReferenceCardClick={onCardClick} />
+      </MockPovider>
     );
 
     expect(getAllByTestId('cf-ui-card')).toHaveLength(5);
@@ -97,14 +93,10 @@ describe('ReferencesTree component', () => {
   it('should render entity references (entries and assets) from the rich text', async () => {
     const onCardClick = jest.fn();
     const response = resolveResponse(richTextSimpleReferences);
-    const root = response[0];
     const { getAllByTestId } = render(
-      <ReferencesTree
-        root={root}
-        defaultLocale="en-US"
-        maxLevel={5}
-        onReferenceCardClick={onCardClick}
-      />
+      <MockPovider references={response}>
+        <ReferencesTree defaultLocale="en-US" maxLevel={5} onReferenceCardClick={onCardClick} />
+      </MockPovider>
     );
 
     expect(getAllByTestId('cf-ui-card')).toHaveLength(5);
@@ -115,14 +107,10 @@ describe('ReferencesTree component', () => {
   it('should render embedded inline entry links from the rich text', async () => {
     const onCardClick = jest.fn();
     const response = resolveResponse(richTextEmbeddedInlineEntryReferences);
-    const root = response[0];
     const { getAllByTestId } = render(
-      <ReferencesTree
-        root={root}
-        defaultLocale="en-US"
-        maxLevel={5}
-        onReferenceCardClick={onCardClick}
-      />
+      <MockPovider references={response}>
+        <ReferencesTree defaultLocale="en-US" maxLevel={5} onReferenceCardClick={onCardClick} />
+      </MockPovider>
     );
 
     expect(getAllByTestId('cf-ui-card')).toHaveLength(2);
@@ -133,14 +121,10 @@ describe('ReferencesTree component', () => {
   it('should render hyperlink entry refs inside the rich text', async () => {
     const onCardClick = jest.fn();
     const response = resolveResponse(richTextHyperlinkReference);
-    const root = response[0];
     const { getAllByTestId } = render(
-      <ReferencesTree
-        root={root}
-        defaultLocale="en-US"
-        maxLevel={5}
-        onReferenceCardClick={onCardClick}
-      />
+      <MockPovider references={response}>
+        <ReferencesTree defaultLocale="en-US" maxLevel={5} onReferenceCardClick={onCardClick} />
+      </MockPovider>
     );
 
     expect(getAllByTestId('cf-ui-card')).toHaveLength(2);
@@ -151,14 +135,10 @@ describe('ReferencesTree component', () => {
   it('should stop at circular references and mark them with an icon', async () => {
     const onCardClick = jest.fn();
     const response = resolveResponse(circularReferences);
-    const root = response[0];
     const { getByTestId, getAllByTestId } = render(
-      <ReferencesTree
-        root={root}
-        defaultLocale="en-US"
-        maxLevel={5}
-        onReferenceCardClick={onCardClick}
-      />
+      <MockPovider references={response}>
+        <ReferencesTree defaultLocale="en-US" maxLevel={5} onReferenceCardClick={onCardClick} />
+      </MockPovider>
     );
 
     expect(getAllByTestId('cf-ui-card')).toHaveLength(4);
@@ -170,14 +150,10 @@ describe('ReferencesTree component', () => {
   it('stop at maxLevel of depth', async () => {
     const onCardClick = jest.fn();
     const response = resolveResponse(depthLimit);
-    const root = response[0];
     const { getByText, getAllByTestId } = render(
-      <ReferencesTree
-        root={root}
-        defaultLocale="en-US"
-        maxLevel={1}
-        onReferenceCardClick={onCardClick}
-      />
+      <MockPovider references={response}>
+        <ReferencesTree defaultLocale="en-US" maxLevel={1} onReferenceCardClick={onCardClick} />
+      </MockPovider>
     );
 
     expect(getAllByTestId('cf-ui-card')).toHaveLength(3);
@@ -189,14 +165,10 @@ describe('ReferencesTree component', () => {
   it('should display unresolved references', async () => {
     const onCardClick = jest.fn();
     const response = resolveResponse(unresolvedReferences);
-    const root = response[0];
     const { getAllByText, getAllByTestId } = render(
-      <ReferencesTree
-        root={root}
-        defaultLocale="en-US"
-        maxLevel={1}
-        onReferenceCardClick={onCardClick}
-      />
+      <MockPovider references={response}>
+        <ReferencesTree defaultLocale="en-US" maxLevel={1} onReferenceCardClick={onCardClick} />
+      </MockPovider>
     );
 
     expect(getAllByTestId('cf-ui-card')).toHaveLength(4);
@@ -207,21 +179,22 @@ describe('ReferencesTree component', () => {
   });
 
   it('should render entries with validations errors', async () => {
-    const onSelectEntities = jest.fn();
     const onReferenceCardClick = jest.fn();
     const response = resolveResponse(simpleReferences);
-    const root = response[0];
+    const dispatchSpy = jest.fn();
     const { queryAllByTestId } = render(
-      <ReferencesTree
-        root={root}
-        defaultLocale="en-US"
-        maxLevel={5}
-        onReferenceCardClick={onReferenceCardClick}
-        validations={simpleReferencesValidationErrorResponse}
-        onSelectEntities={onSelectEntities}
-      />
+      <MockPovider references={response} dispatch={dispatchSpy}>
+        <ReferencesTree
+          defaultLocale="en-US"
+          maxLevel={5}
+          onReferenceCardClick={onReferenceCardClick}
+          validations={simpleReferencesValidationErrorResponse}
+        />
+      </MockPovider>
     );
     expect(queryAllByTestId('validation-error')).toHaveLength(2);
-    expect(onSelectEntities).toHaveBeenCalledTimes(1);
+    expect(dispatchSpy).toHaveBeenCalledTimes(2);
+    expect(dispatchSpy).toHaveBeenCalledWith({ type: SET_SELECTED_ENTITIES, value: [] });
+    expect(dispatchSpy).toHaveBeenCalledWith({ type: SET_ACTIONS_DISABLED, value: true });
   });
 });
