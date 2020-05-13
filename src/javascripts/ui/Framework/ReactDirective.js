@@ -19,6 +19,7 @@ import * as appEntityEditorComponentsBackNavIndexEs6 from 'app/entity_editor/Com
 import * as appEntityEditorStatusNotificationEs6 from 'app/entity_editor/StatusNotification';
 import * as appEntrySidebarEntrySidebarEs6 from 'app/EntrySidebar/EntrySidebar';
 import * as appEntityEditorCollaboratorsIndexEs6 from 'app/entity_editor/Collaborators';
+import { WidgetRenderer } from 'app/entity_editor/WidgetRenderer';
 import * as appEntryEditorCustomEditorExtensionRendererEs6 from 'app/entry_editor/CustomEditorExtensionRenderer';
 import * as appHomeSpaceHomePageEs6 from 'app/home/SpaceHomePage';
 import * as componentsFieldDialogValidationValuesEs6 from 'components/field_dialog/ValidationValues';
@@ -261,6 +262,9 @@ function getModule(name) {
     'app/entity_editor/StatusNotification': appEntityEditorStatusNotificationEs6,
     'app/EntrySidebar/EntrySidebar': appEntrySidebarEntrySidebarEs6,
     'app/entity_editor/Collaborators': appEntityEditorCollaboratorsIndexEs6,
+    'app/entity_editor/WidgetRenderer': {
+      default: WidgetRenderer,
+    },
     'app/entry_editor/CustomEditorExtensionRenderer': appEntryEditorCustomEditorExtensionRendererEs6,
     'app/home/SpaceHomePage': appHomeSpaceHomePageEs6,
     'components/field_dialog/ValidationValues': componentsFieldDialogValidationValuesEs6,

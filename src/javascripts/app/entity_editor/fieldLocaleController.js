@@ -54,7 +54,7 @@ export default function register() {
        * The change in errors is picked up in the `validator.errors$`
        * listener below.
        *
-       * This is called by the `cfWidgetRenderer` directive when a field
+       * This is called by the `WidgetRenderer` directive when a field
        * editor is unfocussed.
        */
       controller.revalidate = () => {
@@ -181,7 +181,7 @@ export default function register() {
        * Tells the main document that the user is currently editing this
        * field locale.
        *
-       * Used by `cfWidgetRenderer` directive.
+       * Used by `WidgetRenderer` component.
        *
        * @param {boolean} active
        */

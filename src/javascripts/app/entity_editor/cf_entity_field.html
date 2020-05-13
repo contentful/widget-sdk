@@ -50,11 +50,11 @@
       </div>
     </div>
     <div class="entity-editor__control-group">
-      <cf-widget-renderer
+      <react-component
         class="entity-editor__control"
-        ng-class="{ 'x--dir-rtl': methods.shouldDisplayRtl(locale.code) }"
-        cf-focus-ot-input="data.hasInitialFocus"
-      ></cf-widget-renderer>
+        name="app/entity_editor/WidgetRenderer"
+        props="{ hasInitialFocus: data.hasInitialFocus, isRtl: methods.shouldDisplayRtl(locale.code) }"
+      />
       <react-component
         name="app/entity_editor/Collaborators"
         props="{users: fieldLocale.collaborators, className: 'entity-editor__field-collaborators'}"

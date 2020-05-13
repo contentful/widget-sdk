@@ -38,7 +38,6 @@ export const angularInitRun = [
         /* webpackMode: "eager" */ 'app/entity_editor/bulk_editor/cfBulkEntityEditorDirective'
       ),
       import(/* webpackMode: "eager" */ 'app/entity_editor/cfEntityFieldDirective'),
-      import(/* webpackMode: "eager" */ 'app/entity_editor/cfWidgetRendererDirective'),
       import(/* webpackMode: "eager" */ 'app/entity_editor/fieldLocaleController'),
       import(/* webpackMode: "eager" */ 'app/entity_editor/stateController'),
       import(/* webpackMode: "eager" */ 'app/entry_editor/cfEntryEditorDirective'),
@@ -69,7 +68,6 @@ export const angularInitRun = [
       import(/* webpackMode: "eager" */ 'components/tabs/entry_list/entryListDirective'),
       import(/* webpackMode: "eager" */ 'components/tabs/entry_list/entryListSearchController'),
       import(/* webpackMode: "eager" */ 'directives/bindHtmlCompileDirective'),
-      import(/* webpackMode: "eager" */ 'directives/cfFocusOtInputDirective'),
       import(/* webpackMode: "eager" */ 'directives/cfSchemaDirectives'),
       import(/* webpackMode: "eager" */ 'directives/cfValidateDirective'),
       import(/* webpackMode: "eager" */ 'directives/watchersTogglerDirective'),

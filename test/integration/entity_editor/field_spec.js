@@ -3,7 +3,7 @@ import $ from 'jquery';
 import * as DOM from 'test/utils/dom';
 import { forEach, clone } from 'lodash';
 import createLocaleStoreMock from 'test/utils/createLocaleStoreMock';
-import { $initialize, $inject, $compile, $apply, $removeDirectives } from 'test/utils/ng';
+import { $initialize, $inject, $compile, $apply } from 'test/utils/ng';
 import { it } from 'test/utils/dsl';
 
 /**
@@ -31,7 +31,6 @@ xdescribe('entity editor field integration', function () {
     });
 
     await $initialize(this.system);
-    await $removeDirectives(this.system, ['cfWidgetRenderer']);
 
     this.createDocument = $inject('mocks/entityEditor/Document').create;
 
