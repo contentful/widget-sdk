@@ -29,7 +29,6 @@ import {
   MultipleMediaEditorWithTracking,
 } from 'app/widgets/ReferenceEditor';
 import { SlugEditor } from '@contentful/field-editor-slug';
-import { canUploadMultipleAssets } from 'access_control/AccessChecker';
 
 const HELP_TEXT_PARAMETER = {
   id: 'helpText',
@@ -104,17 +103,7 @@ export function create() {
 
       sdk.dialogs.openExtension = openMarkdownDialog(sdk, previewComponents);
 
-      return (
-        <MarkdownEditor
-          sdk={sdk}
-          parameters={Object.assign({}, widgetApi.parameters, {
-            instance: {
-              canUploadAssets: canUploadMultipleAssets(),
-            },
-          })}
-          previewComponents={previewComponents}
-        />
-      );
+      return <MarkdownEditor sdk={sdk} previewComponents={previewComponents} />;
     },
   });
 

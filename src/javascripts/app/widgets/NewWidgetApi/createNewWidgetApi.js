@@ -100,6 +100,7 @@ function createSpaceScopedWidgetApi({ cma: cmaOrBatchingApiClient, initialConten
   const navigator = createNavigatorApi({ cma });
   const locales = createLocalesApi();
   const dialogs = createDialogsApi();
+  const canAccess = makeExtensionAccessHandlers();
 
   return {
     space,
@@ -124,7 +125,10 @@ function createSpaceScopedWidgetApi({ cma: cmaOrBatchingApiClient, initialConten
       instance: {},
     },
     access: {
-      can: makeExtensionAccessHandlers(),
+      can: (...args) => {
+        const result = canAccess(...args);
+        return Promise.resolve(result);
+      },
     },
   };
 }

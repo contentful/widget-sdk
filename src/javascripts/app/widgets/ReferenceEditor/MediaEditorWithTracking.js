@@ -1,6 +1,5 @@
 import React from 'react';
 import { getEntityLink } from 'app/common/EntityStateLink';
-import { canCreateAsset } from 'access_control/AccessChecker';
 import { SingleMediaEditor, MultipleMediaEditor } from '@contentful/field-editor-reference';
 import { safeNonBlockingTrack, EditorWithTrackingProps } from './utils';
 
@@ -48,7 +47,7 @@ export function SingleMediaEditorWithTracking(props) {
       getEntityUrl={(assetId) => getEntityLink({ id: assetId, type: 'Asset' }).href}
       parameters={{
         instance: {
-          canCreateEntity: canCreateAsset(),
+          canCreateEntity: true,
           canLinkEntity: true,
         },
       }}
@@ -67,7 +66,7 @@ export function MultipleMediaEditorWithTracking(props) {
       getEntityUrl={(assetId) => getEntityLink({ id: assetId, type: 'Asset' }).href}
       parameters={{
         instance: {
-          canCreateEntity: canCreateAsset(),
+          canCreateEntity: true,
           canLinkEntity: true,
         },
       }}
