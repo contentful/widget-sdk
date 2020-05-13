@@ -1,0 +1,11 @@
+# By default, everything is owned by the frontend chapter
+docs/* @contentful/frontend
+
+# Content Tags
+src/javascripts/features/content-tags/* @contentful/team-dev-workflows
+
+# Webhooks
+src/javascripts/features/webhooks/* @contentful/extensibility-devs
+
+# Extensions Manager
+src/javascripts/features/extensions-management/* @contentful/extensibility-devs
