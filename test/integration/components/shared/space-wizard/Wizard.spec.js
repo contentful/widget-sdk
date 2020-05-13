@@ -305,7 +305,6 @@ describe('Space Wizard', function () {
         this.stubs.getSpaceRatePlans.resolves(this.spaceRatePlansCreate);
         this.mount = this.mountWithAction.bind(this, 'create');
         this.createTrackingData = this.createTrackingDataWithAction.bind(this, 'create');
-        this.generateToken = () => 'test';
 
         this.enterDetails = async (wizard, selectTemplate) => {
           const nameInput = wizard.find('input[data-test-id="space-name"]').first();

@@ -312,6 +312,8 @@ class Wizard extends React.Component {
     this.track('navigate', {
       currentStepId,
       targetStepId: stepId,
+      // the sessionId from the store is the one that we want to track but it's only created when this component mounts
+      // so it's necessary to pass the id as an argument here during componentDidMount
       wizardSessionId: wizardSessionId || sessionId,
     });
     navigate(stepId);
