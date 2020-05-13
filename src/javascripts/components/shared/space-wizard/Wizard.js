@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { css } from 'emotion';
-import { generateToken } from 'utils/StringUtils';
+import { alnum } from 'utils/Random';
 import { Steps, getFieldErrors } from './WizardUtils';
 import SpacePlanSelector from './SpacePlanSelector';
 import SpaceDetails from './SpaceDetails';
@@ -12,7 +12,7 @@ import { Notification, IconButton } from '@contentful/forma-36-react-components'
 
 import { connect } from 'react-redux';
 
-import * as propTypes from './PropTypes';
+import { partnershipMeta as partnershipMetaPropType } from './PropTypes';
 import * as actionCreators from 'redux/actions/spaceWizard/actionCreators';
 import * as resourceActionCreators from 'redux/actions/resources/actionCreators';
 import * as logger from 'services/logger';
@@ -102,7 +102,7 @@ class Wizard extends React.Component {
     changeSpace: PropTypes.func.isRequired,
     track: PropTypes.func.isRequired,
     setPartnershipFields: PropTypes.func.isRequired,
-    createSession: PropTypes.func.isRequired,
+    setSessionId: PropTypes.func.isRequired,
 
     spacePlans: PropTypes.object.isRequired,
     currentStepId: PropTypes.string.isRequired,
@@ -114,21 +114,21 @@ class Wizard extends React.Component {
     resources: PropTypes.object.isRequired,
     currentPlan: PropTypes.object,
     selectedPlan: PropTypes.object,
-    partnershipMeta: propTypes.partnershipMeta,
-    wizardSessionId: propTypes.string,
+    partnershipMeta: partnershipMetaPropType,
+    wizardSessionId: PropTypes.string,
   };
 
   componentDidMount() {
-    const { action, organization, createSession } = this.props;
+    const { action, organization, setSessionId } = this.props;
     const steps = getSteps(action);
-    const token = generateToken();
+    const token = alnum(16);
 
-    createSession(token);
+    setSessionId(token);
     this.track('open', {
       paymentDetailsExist: Boolean(organization.isBillable),
       wizardSessionId: token,
     });
-    this.navigate(steps[0].id);
+    this.navigate(steps[0].id, token);
   }
 
   UNSAFE_componentWillReceiveProps = ({ spaceCreation: { error } }) => {
@@ -289,12 +289,13 @@ class Wizard extends React.Component {
   track = (eventName, data) => {
     const { track, action, wizardScope, wizardSessionId } = this.props;
     const trackedData = {
+      action,
+      wizardSessionId,
       ...data,
-      ...(wizardScope && { startedAt: wizardScope }),
-      ...(wizardSessionId && { wizardSessionId }),
+      ...(wizardScope && { wizardScope }),
     };
 
-    track(eventName, { action, ...trackedData });
+    track(eventName, trackedData);
   };
 
   setStateData = (stepData) => {
@@ -305,12 +306,13 @@ class Wizard extends React.Component {
     }));
   };
 
-  navigate = (stepId) => {
-    const { navigate, currentStepId } = this.props;
+  navigate = (stepId, sessionId) => {
+    const { navigate, currentStepId, wizardSessionId } = this.props;
 
     this.track('navigate', {
       currentStepId,
       targetStepId: stepId,
+      wizardSessionId: wizardSessionId || sessionId,
     });
     navigate(stepId);
   };
@@ -407,7 +409,7 @@ const mapDispatchToProps = {
   reset: actionCreators.reset,
   sendPartnershipEmail: actionCreators.sendPartnershipEmail,
   setPartnershipFields: actionCreators.setPartnershipFields,
-  createSession: actionCreators.createSession,
+  setSessionId: actionCreators.setSessionId,
 };
 
 export { Wizard };

@@ -281,11 +281,3 @@ export function joinWithAnd(items) {
     }
   }, '');
 }
-
-function random() {
-  return Math.random().toString(36).substr(2, 9);
-}
-
-export function generateToken() {
-  return random() + random();
-}

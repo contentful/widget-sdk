@@ -30,7 +30,7 @@ export function getSpaceWizardData(action, data) {
     wizardSessionId: data.wizardSessionId || null,
 
     // The starting point of this wizard or where it was opened
-    startedAt: data.startedAt || null,
+    wizardScope: data.wizardScope || null,
 
     // The current action the user is performing.
     //

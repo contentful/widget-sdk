@@ -269,7 +269,7 @@ export function track(eventName, data) {
   };
 }
 
-export function createSession(token) {
+export function setSessionId(token) {
   return (dispatch) => dispatch(actions.spaceWizardCreateSession(token));
 }
 
