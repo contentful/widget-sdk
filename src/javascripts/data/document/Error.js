@@ -10,6 +10,7 @@ import { makeSum } from 'sum-types';
  *  VersionMismatch: ErrorConstructor,
  *  ShareJsInternalServerError: ErrorConstructor,
  *  CmaInternalServerError: ErrorConstructor,
+ *  Archived: ErrorConstructor,
  * }}
  */
 export const Error = makeSum({
@@ -21,4 +22,5 @@ export const Error = makeSum({
   VersionMismatch: [],
   ShareJsInternalServerError: ['error'],
   CmaInternalServerError: ['error'],
+  Archived: [],
 });

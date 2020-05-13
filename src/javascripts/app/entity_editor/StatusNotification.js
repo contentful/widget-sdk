@@ -63,9 +63,10 @@ const messages = {
       }
     ),
   [DocumentStatusCode.ARCHIVED]: ({ entityLabel }) =>
-    Notification.error('', {
+    Notification.warning('', {
       title: `This ${entityLabel} is archived and cannot be modified. Please unarchive it to make any changes.`,
       duration: 0,
+      // canClose: false, // TODO: preferably should be non-closeable, but requires adjusting e2e tests
     }),
   [DocumentStatusCode.DELETED]: ({ entityLabel }) =>
     Notification.error('', {
@@ -73,7 +74,7 @@ const messages = {
       duration: 0,
     }),
   [DocumentStatusCode.NOT_ALLOWED]: ({ entityLabel }) =>
-    Notification.error('', {
+    Notification.warning('', {
       title: `You have read-only access to this ${entityLabel}. If you need to edit it please contact your administrator.`,
       duration: 0,
     }),

@@ -44,6 +44,9 @@ export function create(sys$, docError$, canUpdate) {
     if (docError instanceof DocError.Disconnected) {
       return DocumentStatusCode.CONNECTION_ERROR;
     }
+    if (docError instanceof DocError.Archived) {
+      return DocumentStatusCode.ARCHIVED;
+    }
     if (docError) {
       logger.logSharejsError('Unknown ShareJS document error', { error: { error: docError } });
       return DocumentStatusCode.CONNECTION_ERROR;

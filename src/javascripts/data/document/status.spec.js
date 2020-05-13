@@ -55,6 +55,10 @@ describe('Document status', () => {
     sys$.set({ archivedVersion: 1, deletedVersion: null });
     K.assertCurrentValue(status$, DocumentStatusCode.ARCHIVED);
   });
+  it('is ARCHIVED on Archived', () => {
+    docError$.set(DocError.Archived());
+    K.assertCurrentValue(status$, DocumentStatusCode.ARCHIVED);
+  });
   it('is DELETED for an deleted entity', () => {
     sys$.set({ archivedVersion: null, deletedVersion: 1 });
     K.assertCurrentValue(status$, DocumentStatusCode.DELETED);

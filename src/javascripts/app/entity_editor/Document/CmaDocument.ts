@@ -362,13 +362,9 @@ export function create(
       if (e.code === 'VersionMismatch') {
         trackVersionMismatch(changedLocalEntity);
       }
-      const errors = {
-        VersionMismatch: DocError.VersionMismatch(),
-        AccessDenied: DocError.OpenForbidden(),
-        ServerError: DocError.CmaInternalServerError(e),
-        '-1': DocError.Disconnected(),
-      };
-      errorBus.set(errors[e.code] || errors.ServerError);
+
+      const error = toDocumentError(e);
+      errorBus.set(error);
       isSavingBus.set(false);
       return;
     }
@@ -462,4 +458,20 @@ function stateBus(
     .map((_) => emitAfter);
 
   return [bus, value$, after$];
+}
+
+function toDocumentError(e) {
+  const errors = {
+    VersionMismatch: DocError.VersionMismatch(),
+    AccessDenied: DocError.OpenForbidden(),
+    ServerError: DocError.CmaInternalServerError(e),
+    '-1': DocError.Disconnected(),
+  };
+
+  // If entity was archived in the meantime. Can be removed once status changes are integrated with pub-sub.
+  if (e.code === 'BadRequest' && e.data?.message === 'Cannot edit archived') {
+    return DocError.Archived();
+  }
+
+  return errors[e.code] || errors.ServerError;
 }

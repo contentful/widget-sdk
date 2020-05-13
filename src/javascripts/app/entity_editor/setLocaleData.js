@@ -101,33 +101,42 @@ function handleTopNavErrors($scope, entityLabel, shouldHideLocaleErrors) {
 
     const { privateLocales: locales } = $scope.localeData;
     const erroredKeys = keys(localesErrors);
-    let erroredLocales = erroredKeys.map((ic) => locales.find((l) => l.internal_code === ic));
-    let status;
-
-    if (entityLabel === 'entry') {
-      status = DocumentStatusCode.LOCALE_VALIDATION_ERRORS;
-    } else if (entityLabel === 'asset') {
-      if (erroredKeys.length === 1 && erroredKeys.includes(defaultLocale.internal_code)) {
-        // Asset: When only default locale is invalid.
-        status = DocumentStatusCode.DEFAULT_LOCALE_FILE_ERROR;
-      } else {
-        // Asset: When non-default locales are invalid, ignore the currently focused locale.
-        // This also hides a validation error notification for when an asset is being processed – temporary has no "url" field.
-        erroredLocales = erroredLocales.filter(
-          (locale) => locale.internal_code !== focusedLocale.internal_code
-        );
-        if (!isEmpty(erroredLocales)) {
-          status = DocumentStatusCode.LOCALE_VALIDATION_ERRORS;
-        }
-      }
-    }
-
-    if (status) {
+    const erroredLocales = erroredKeys.map((ic) => locales.find((l) => l.internal_code === ic));
+    const setNotificationProps = (status, locales = null) => {
       $scope.statusNotificationProps = {
         status,
         entityLabel,
-        erroredLocales,
+        erroredLocales: locales || erroredLocales,
       };
+    };
+
+    if (entityLabel === 'entry') {
+      setNotificationProps(DocumentStatusCode.LOCALE_VALIDATION_ERRORS);
+      return;
+    }
+
+    // Asset errors.
+    const defaultLocaleErrors = localesErrors[defaultLocale.internal_code];
+    const isDefaultLocaleFileError =
+      erroredKeys.length === 1 && // 1) Only one locale failed
+      !isEmpty(defaultLocaleErrors) && // 2) It's a default locale
+      defaultLocaleErrors.length === 1 && // 3) Only one validation error
+      defaultLocaleErrors[0].path[1] === 'file'; // 4) It's a file validation error
+    if (isDefaultLocaleFileError) {
+      setNotificationProps(DocumentStatusCode.DEFAULT_LOCALE_FILE_ERROR);
+      return;
+    }
+
+    // When non-default locales are invalid, ignore the currently focused locale.
+    // This also hides a validation error notification for when an asset is being processed – temporary has no "url" field.
+    const erroredLocalesExceptFocused = erroredLocales.filter(
+      (locale) => locale.internal_code !== focusedLocale.internal_code
+    );
+    if (!isEmpty(erroredLocalesExceptFocused)) {
+      setNotificationProps(
+        DocumentStatusCode.LOCALE_VALIDATION_ERRORS,
+        erroredLocalesExceptFocused
+      );
     }
   });
 
