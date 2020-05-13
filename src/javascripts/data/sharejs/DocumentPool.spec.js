@@ -2,6 +2,9 @@ import { getVariation } from 'LaunchDarkly';
 import * as K from '../../../../test/utils/kefir';
 import { createOtDoc, createCmaDoc } from 'app/entity_editor/Document';
 import { create as createPool } from 'data/sharejs/DocumentPool';
+import { create as createEntityRepo } from 'data/CMA/EntityRepo';
+import { logError } from 'services/logger';
+import { times } from 'lodash';
 
 // Mock Angular getModule for PresenceHub in OtDocument
 jest.mock('core/NgRegistry', () => ({
@@ -11,6 +14,10 @@ jest.mock('core/NgRegistry', () => ({
       leave: () => jest.fn(),
     }),
   }),
+}));
+
+jest.mock('services/logger', () => ({
+  logError: jest.fn(),
 }));
 
 jest.mock('LaunchDarkly', () => ({
@@ -53,14 +60,16 @@ describe('DocumentPool', () => {
 
   beforeEach(async function () {
     mockDoc1 = {
-      destroy: jest.fn(),
+      destroy: jest.fn().mockResolvedValue(),
     };
 
     mockDoc2 = {
-      destroy: jest.fn(),
+      destroy: jest.fn().mockResolvedValue(),
     };
 
-    connection = {};
+    connection = {
+      open: jest.fn().mockResolvedValue({}),
+    };
 
     getVariation.mockResolvedValue({
       Entry: false,
@@ -125,6 +134,56 @@ describe('DocumentPool', () => {
       expect(createOtDoc).toBeCalledTimes(1);
       expect(createOtDoc).toBeCalledWith(connection, asset, ct, user, spaceEndpoint);
     });
+
+    describe('creating the CMA document', () => {
+      beforeEach(() => {
+        getVariation.mockResolvedValue({ Entry: true });
+      });
+
+      describe('triggering the auto_save action', () => {
+        describe('on successful shareJS connection', () => {
+          it('delegates auto_save calls to the shareJS shout method', async () => {
+            const mockShout = jest.fn();
+            connection.open.mockResolvedValue({ doc: { shout: mockShout } });
+            cmaDocumentPool = await createPool(connection, spaceEndpoint);
+            get('id', 'Entry', cmaDocumentPool);
+            const [[, , triggerCmaAutoSave]] = createEntityRepo.mock.calls;
+
+            // shout a couple of times before the doc connection opens...
+            triggerCmaAutoSave();
+            triggerCmaAutoSave();
+            expect(mockShout).toBeCalledTimes(0);
+
+            await connection.open();
+
+            // ...to ensure shout queueing works
+            expect(mockShout).toBeCalledTimes(2);
+
+            // shout once more to make sure further calls work synchronously
+            triggerCmaAutoSave();
+            expect(mockShout).toBeCalledTimes(3);
+            times(3, (i) => expect(mockShout).toHaveBeenNthCalledWith(i + 1, ['cma-auto-save']));
+          });
+        });
+
+        describe('on failed shareJS connection', () => {
+          it('logs the error to bugsnag', async () => {
+            connection.open.mockRejectedValue('boom');
+            cmaDocumentPool = await createPool(connection, spaceEndpoint);
+            get('id', 'Entry', cmaDocumentPool);
+            try {
+              await connection.open();
+            } catch (error) {
+              expect(logError).toBeCalledWith(expect.any(String), error);
+            }
+
+            // also, the callback supplied to triggerCmaAutoSave shouldn't break anything
+            const [[, , triggerCmaAutoSave]] = createEntityRepo.mock.calls;
+            triggerCmaAutoSave();
+          });
+        });
+      });
+    });
   });
 
   describe('disposing', () => {
@@ -151,13 +210,79 @@ describe('DocumentPool', () => {
   });
 
   describe('#destroy', () => {
-    it('destroys all document instances', function () {
-      const lifeline = K.createMockStream();
-      otDocumentPool.get(entry, ct, user, lifeline);
-      otDocumentPool.get(entry2, ct, user, lifeline);
-      otDocumentPool.destroy();
-      expect(mockDoc1.destroy).toBeCalledTimes(1);
-      expect(mockDoc2.destroy).toBeCalledTimes(1);
+    describe('OT document', () => {
+      it('destroys all document instances', () => {
+        const lifeline = K.createMockStream();
+        otDocumentPool.get(entry, ct, user, lifeline);
+        otDocumentPool.get(entry2, ct, user, lifeline);
+        otDocumentPool.destroy();
+        expect(mockDoc1.destroy).toBeCalledTimes(1);
+        expect(mockDoc2.destroy).toBeCalledTimes(1);
+      });
+    });
+
+    describe('CMA document', () => {
+      beforeEach(async () => {
+        getVariation.mockResolvedValue({ Entry: true });
+        cmaDocumentPool = await createPool(connection, spaceEndpoint);
+      });
+
+      describe('preceding shareJS connection', () => {
+        it('destroys all document instances', async () => {
+          const lifeline = K.createMockStream();
+          cmaDocumentPool.get(entry, ct, user, lifeline);
+          cmaDocumentPool.get(entry2, ct, user, lifeline);
+          cmaDocumentPool.destroy();
+          expect(mockDoc1.destroy).toBeCalledTimes(1);
+          expect(mockDoc2.destroy).toBeCalledTimes(1);
+        });
+      });
+
+      describe('following successful shareJS connection', () => {
+        it('destroys all document instances and closes the shareJS connection', async () => {
+          const mockDestroy1 = jest.fn();
+          const mockDestroy2 = jest.fn();
+          connection.open.mockResolvedValueOnce({ destroy: mockDestroy1 });
+          connection.open.mockResolvedValueOnce({ destroy: mockDestroy2 });
+
+          // ensure we still destroy the connection when doc.destroy rejects
+          mockDoc2.destroy.mockRejectedValue('boom');
+
+          const lifeline = K.createMockStream();
+          cmaDocumentPool.get(entry, ct, user, lifeline);
+          cmaDocumentPool.get(entry2, ct, user, lifeline);
+          await connection.open();
+
+          const cleanups = cmaDocumentPool.destroy();
+          try {
+            await Promise.all(cleanups);
+          } catch (e) {
+            expect(e).toBe('boom');
+          }
+          expect(mockDoc1.destroy).toBeCalledTimes(1);
+          expect(mockDoc2.destroy).toBeCalledTimes(1);
+          expect(mockDestroy1).toBeCalledTimes(1);
+          expect(mockDestroy2).toBeCalledTimes(1);
+        });
+      });
+
+      describe('following failed shareJS connection', () => {
+        it('destroys all document instances', async () => {
+          const lifeline = K.createMockStream();
+          cmaDocumentPool.get(entry, ct, user, lifeline);
+          cmaDocumentPool.get(entry2, ct, user, lifeline);
+          cmaDocumentPool.destroy();
+
+          connection.open.mockRejectedValue('boom');
+          try {
+            await connection.open();
+          } catch (e) {
+            // not important for this test
+          }
+          expect(mockDoc1.destroy).toBeCalledTimes(1);
+          expect(mockDoc2.destroy).toBeCalledTimes(1);
+        });
+      });
     });
   });
 });

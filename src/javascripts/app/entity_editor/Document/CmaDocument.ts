@@ -244,11 +244,17 @@ export function create(
       return;
     },
 
-    destroy: () => {
-      // TODO: It's a bit hacky to persist on destroy. This should be the
-      //  responsibility of any controller using `CmaDocument` instead.
-      saveEntityAfterAnyStatusUpdate({ updateEmitters: false });
+    async destroy() {
+      // clean-up first to prevent side-effects triggered by subscribers to these
+      // observable e.g. when navigating away from an entry or to another space.
       cleanupTasks.forEach((task) => task());
+      try {
+        // TODO: It's a bit hacky to persist on destroy. This should be the
+        //  responsibility of any controller using `CmaDocument` instead.
+        await saveEntityAfterAnyStatusUpdate({ updateEmitters: false });
+      } finally {
+        // do nothing
+      }
     },
 
     resourceState,

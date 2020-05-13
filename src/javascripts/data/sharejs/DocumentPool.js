@@ -1,8 +1,9 @@
 import { createOtDoc, createCmaDoc } from 'app/entity_editor/Document';
-import { isObject, find, includes, isString, get as getAtPath } from 'lodash';
+import { noop, isObject, find, includes, isString, get as getAtPath, times } from 'lodash';
 import { SHAREJS_REMOVAL } from 'featureFlags';
 import { getVariation } from 'LaunchDarkly';
 import { create as createEntityRepo } from 'data/CMA/EntityRepo';
+import * as logger from 'services/logger';
 
 /**
  * Creates a store for Document instances. Given an entity it always returns the
@@ -41,22 +42,47 @@ export async function create(docConnection, spaceEndpoint, pubSubClient, organiz
       doc = instance.doc;
       instance.count += 1;
     } else {
+      let cleanup;
+
       // This flag is an object, but check for `true` to use with `?ui_enable_flags=`
       if (
         isCmaDocumentEnabled === true ||
         (isObject(isCmaDocumentEnabled) && isCmaDocumentEnabled[entity.data.sys.type])
       ) {
-        const entityRepo = createEntityRepo(spaceEndpoint, pubSubClient, {
+        // This is a hack that lets us get away with queue any shouts that might take place
+        // in the unlikely event that the update call completes prior to the document
+        // connection opening.
+        // Note that sharejs messages are pooled so this will not trigger multiple requests.
+        let queuedShouts = 0;
+        let shout = () => queuedShouts++;
+        let destroyConnection = noop;
+        docConnection.open(entity).then(
+          (info) => {
+            shout = () => info.doc.shout(['cma-auto-save']);
+            destroyConnection = () => info.destroy();
+            times(queuedShouts, shout);
+          },
+          (error) => {
+            logger.logError(
+              "Failed to open ShareJS connection to shout(['cma-auto-save']) required to trigger `auto_save` webhook",
+              error
+            );
+          }
+        );
+        const triggerCmaAutoSave = () => shout();
+        const entityRepo = createEntityRepo(spaceEndpoint, pubSubClient, triggerCmaAutoSave, {
           skipDraftValidation: true,
           skipTransformation: true,
           indicateAutoSave: true,
         });
         doc = createCmaDoc(entity, contentType, spaceEndpoint, entityRepo);
+        cleanup = () => doc.destroy().finally(destroyConnection);
       } else {
         doc = createOtDoc(docConnection, entity, contentType, user, spaceEndpoint);
+        cleanup = () => doc.destroy();
       }
 
-      instances[key] = { key, doc, count: 1 };
+      instances[key] = { key, doc, cleanup, count: 1 };
     }
 
     lifeline$.onEnd(() => unref(doc));
@@ -94,10 +120,12 @@ export async function create(docConnection, spaceEndpoint, pubSubClient, organiz
    * Destroys all the instances in the pool.
    */
   function destroy() {
-    Object.keys(instances).forEach((key) => {
+    const cleanups = [];
+    for (const key of Object.keys(instances)) {
       const instance = instances[key];
-      instance.doc.destroy();
+      cleanups.push(instance.cleanup());
       delete instances[key];
-    });
+    }
+    return cleanups;
   }
 }
