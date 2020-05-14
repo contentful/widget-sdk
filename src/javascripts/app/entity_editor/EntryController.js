@@ -31,7 +31,7 @@ import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes';
 import { getAllForEntry } from 'data/CMA/CommentsRepo';
 import initSidebarTogglesProps from 'app/entity_editor/entityEditorSidebarToggles';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
-import { appendDuplicateIndexToEntryTitle } from './entityHelpers';
+import { appendDuplicateIndexToEntryTitle, alignSlugWithEntryTitle } from './entityHelpers';
 
 /**
  * @ngdoc type
@@ -145,12 +145,40 @@ export default async function create($scope, editorData, preferences, trackLoadE
     },
     onDuplicate: () => {
       const currentFields = K.getValue(valuePropertyAt(doc, ['fields']));
+      const displayFieldId = contentType.type.data.displayField;
+      const displayFieldControl =
+        contentType.type.data.fields.find((field) => field.id === displayFieldId) || {};
+      const currentFieldsWithIndexedDisplayField = appendDuplicateIndexToEntryTitle(
+        currentFields,
+        displayFieldId
+      );
+      const slugControl = editorData.editorInterface.controls.find(
+        (control) => control.widgetId === 'slugEditor'
+      );
+      // [PUL-809] We update the slug with the same index that was set on the displayField
+      if (slugControl) {
+        const slugField = contentType.type.data.fields.find((field) =>
+          [field.apiName, field.id].includes(slugControl.fieldId)
+        );
+        if (slugField) {
+          const slugFieldData = currentFieldsWithIndexedDisplayField[slugField.id];
+          const indexedSlugFieldData = alignSlugWithEntryTitle({
+            entryTitleData: currentFieldsWithIndexedDisplayField[displayFieldId],
+            unindexedTitleData: currentFields[displayFieldId],
+            slugFieldData,
+            isRequired: slugField.required,
+            isEntryTitleLocalized: displayFieldControl.localized,
+          });
+
+          if (indexedSlugFieldData) {
+            currentFieldsWithIndexedDisplayField[slugField.id] = indexedSlugFieldData;
+          }
+        }
+      }
+
       return spaceContext.space
         .createEntry(contentType.id, {
-          fields: appendDuplicateIndexToEntryTitle(
-            currentFields,
-            contentType.type.data.displayField
-          ),
+          fields: currentFieldsWithIndexedDisplayField,
         })
         .then((entry) => {
           Analytics.track('entry:create', {

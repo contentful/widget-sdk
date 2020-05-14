@@ -4,6 +4,7 @@ import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceCont
 import * as logger from 'services/logger';
 import TheLocaleStore from 'services/localeStore';
 import { transformHostname } from 'services/AssetUrlService';
+import { makeSlug, slugify } from '@contentful/field-editor-slug';
 
 /**
  * TODO This module is basically an adapter for the entity helper methods on
@@ -176,4 +177,55 @@ export function appendDuplicateIndexToEntryTitle(fields, entryTitleId) {
     logger.logError('appendDuplicateIndexToEntryTitle()', error);
     return fields;
   }
+}
+
+const getLocalizedEntryData = (data, locale, isLocalized) => {
+  let entryDataValue = null;
+  if (data) {
+    entryDataValue = isLocalized ? data[locale] : Object.values(data)[0];
+  }
+  return entryDataValue;
+};
+
+export function alignSlugWithEntryTitle({
+  entryTitleData,
+  unindexedTitleData,
+  isEntryTitleLocalized,
+  slugFieldData,
+  isRequired,
+  createdAt,
+}) {
+  if (!slugFieldData) {
+    return slugFieldData;
+  }
+
+  const result = {};
+
+  // we do this for each locale
+  for (const locale of Object.keys(slugFieldData)) {
+    const displayFieldValue = getLocalizedEntryData(entryTitleData, locale, isEntryTitleLocalized);
+
+    const unindexedDisplayFieldValue = getLocalizedEntryData(
+      unindexedTitleData,
+      locale,
+      isEntryTitleLocalized
+    );
+    const localeCode = TheLocaleStore.toInternalCode(locale);
+
+    const originalSlugValue = slugify(unindexedDisplayFieldValue, localeCode);
+    const bothSlugValuesFalsy = !originalSlugValue && !slugFieldData[locale];
+    const isSlugTracking =
+      (bothSlugValuesFalsy && isRequired) || originalSlugValue === slugFieldData[locale];
+
+    if (isSlugTracking) {
+      result[locale] = makeSlug(displayFieldValue, {
+        locale: localeCode,
+        isOptionalLocaleWithFallback: !isRequired,
+        createdAt: createdAt || new Date(),
+      });
+    } else {
+      result[locale] = slugFieldData[locale];
+    }
+  }
+  return result;
 }

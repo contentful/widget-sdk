@@ -10,6 +10,8 @@ describe('Entry Editor Controller', function () {
 
   const entryTitleId = 'fdsu4y3j432';
   const notEntryTitleId = 'notEntryTitleId';
+  const slugId = 'jrh32j4u92';
+  const slugFieldId = 'slug';
 
   // stub the following function to change the data that will be used to initialize
   // the angular controller and the document
@@ -19,6 +21,10 @@ describe('Entry Editor Controller', function () {
         'en-US': 'Hey, Sunshine!',
         de: 'Hallo, Sonnenlicht!',
       },
+      [slugId]: {
+        'en-US': 'hey-sunshine',
+        de: 'hallo-sonnenlicht',
+      },
       [notEntryTitleId]: {
         'en-US': 'this is a text in english',
         de: 'das ist ein text in Deutsch',
@@ -26,7 +32,7 @@ describe('Entry Editor Controller', function () {
     }),
   };
 
-  const configureForTest = async function () {
+  const configureForTest = async function (contentType, editorControls) {
     const createEntryController = (await this.system.import('app/entity_editor/EntryController'))
       .default;
 
@@ -39,6 +45,34 @@ describe('Entry Editor Controller', function () {
     ]);
 
     const createDocument = $inject('mocks/entityEditor/Document').create;
+    const defaultContentType = {
+      sys: {
+        id: 'ctId',
+      },
+      data: {
+        fields: [
+          {
+            id: entryTitleId,
+            apiName: 'title',
+            name: 'Tile Field',
+            required: true,
+            localized: true,
+            type: 'Symbol',
+          },
+          { id: slugId, apiName: slugFieldId, name: 'Slug Field', type: 'Symbol' },
+          { id: notEntryTitleId, apiName: 'secret', name: 'Secret Field', type: 'Symbol' },
+        ],
+        displayField: entryTitleId,
+      },
+    };
+
+    const defaultEditorControls = [
+      {
+        widgetId: 'slugEditor',
+        id: slugId,
+        fieldId: slugFieldId,
+      },
+    ];
 
     const mockEditorData = {
       entity: {
@@ -51,15 +85,10 @@ describe('Entry Editor Controller', function () {
           fields: {},
         },
       },
-      contentType: {
-        data: {
-          fields: [
-            { id: entryTitleId, apiName: 'title', name: 'title', type: 'Symbol' },
-            { id: notEntryTitleId, apiName: 'secret', name: 'secret', type: 'Symbol' },
-          ],
-          displayField: entryTitleId,
-        },
+      editorInterface: {
+        controls: editorControls || defaultEditorControls,
       },
+      contentType: contentType || defaultContentType,
       fieldControls: {},
       openDoc: () =>
         createDocument({
@@ -175,20 +204,73 @@ describe('Entry Editor Controller', function () {
   });
 
   describe('scope.entryActions.onDuplicate', () => {
-    it('should make the entity title (displayName) unique per each duplicate', async function () {
-      await configureForTest.call(this);
-      const entry = await this.scope.entryActions.onDuplicate();
-      for (const [locale, localizedValue] of Object.entries(entry.fields[entryTitleId])) {
-        expect(localizedValue).toBe(`${stubs.getDefaultEntryFields()[entryTitleId][locale]} (1)`);
-      }
+    it('should not break and add index to displayField if slugEditor field doesnt exist in contentType', async function () {
+      const contentType = {
+        data: {
+          fields: [
+            {
+              id: entryTitleId,
+              apiName: 'title',
+              name: 'Tile Field',
+              required: true,
+              localized: true,
+              type: 'Symbol',
+            },
+            { id: notEntryTitleId, apiName: 'secret', name: 'Secret Field', type: 'Symbol' },
+          ],
+          displayField: entryTitleId,
+        },
+      };
+      await configureForTest.call(this, contentType);
 
-      for (const [locale, localizedValue] of Object.entries(entry.fields[notEntryTitleId])) {
-        expect(localizedValue).toBe(stubs.getDefaultEntryFields()[notEntryTitleId][locale]);
-      }
+      const entry = await this.scope.entryActions.onDuplicate();
+      expect(entry.fields).toEqual({
+        [entryTitleId]: {
+          'en-US': 'Hey, Sunshine! (1)',
+          de: 'Hallo, Sonnenlicht! (1)',
+        },
+        [slugId]: stubs.getDefaultEntryFields()[slugId],
+        [notEntryTitleId]: {
+          'en-US': 'this is a text in english',
+          de: 'das ist ein text in Deutsch',
+        },
+      });
     });
 
-    it('should increment the copy index for the entry title (displayName) after each next duplicate', async function () {
+    it("should not break and add index to title if slug exists in contentType, but it's value is undefined", async function () {
       this.sandbox.stub(stubs, 'getDefaultEntryFields').returns({
+        [entryTitleId]: {
+          'en-US': 'Hey, Sunshine!',
+          de: 'Hallo, Sonnenlicht!',
+        },
+        [notEntryTitleId]: {
+          'en-US': 'this is a text in english',
+          de: 'das ist ein text in Deutsch',
+        },
+      });
+
+      const contentType = {
+        data: {
+          fields: [
+            {
+              id: entryTitleId,
+              apiName: 'title',
+              name: 'Tile Field',
+              required: true,
+              localized: true,
+              type: 'Symbol',
+            },
+            { id: slugId, apiName: slugFieldId, name: 'Slug Field', type: 'Symbol' },
+            { id: notEntryTitleId, apiName: 'secret', name: 'Secret Field', type: 'Symbol' },
+          ],
+          displayField: entryTitleId,
+        },
+      };
+
+      await configureForTest.call(this, contentType);
+
+      const entry = await this.scope.entryActions.onDuplicate();
+      expect(entry.fields).toEqual({
         [entryTitleId]: {
           'en-US': 'Hey, Sunshine! (1)',
           de: 'Hallo, Sonnenlicht! (1)',
@@ -198,14 +280,135 @@ describe('Entry Editor Controller', function () {
           de: 'das ist ein text in Deutsch',
         },
       });
+    });
 
+    it('should index the entity title (displayName) and slug', async function () {
       await configureForTest.call(this);
+      const entry = await this.scope.entryActions.onDuplicate();
+      for (const [locale, localizedValue] of Object.entries(entry.fields[entryTitleId])) {
+        expect(localizedValue).toBe(`${stubs.getDefaultEntryFields()[entryTitleId][locale]} (1)`);
+      }
+
+      for (const [locale, localizedValue] of Object.entries(entry.fields[slugId])) {
+        expect(localizedValue).toBe(`${stubs.getDefaultEntryFields()[slugId][locale]}-1`);
+      }
+
+      for (const [locale, localizedValue] of Object.entries(entry.fields[notEntryTitleId])) {
+        expect(localizedValue).toBe(stubs.getDefaultEntryFields()[notEntryTitleId][locale]);
+      }
+    });
+
+    it('should increment the index for the entry title (displayName) and slug after each next duplicate', async function () {
+      this.sandbox.stub(stubs, 'getDefaultEntryFields').returns({
+        [entryTitleId]: {
+          'en-US': 'Hey, Sunshine! (1)',
+          de: 'Hallo, Sonnenlicht! (1)',
+        },
+        [slugId]: {
+          'en-US': 'hey-sunshine-1',
+          de: 'hallo-sonnenlicht-1',
+        },
+        [notEntryTitleId]: {
+          'en-US': 'this is a text in english',
+          de: 'das ist ein text in Deutsch',
+        },
+      });
+
+      const contentType = {
+        data: {
+          fields: [
+            {
+              id: entryTitleId,
+              apiName: 'title',
+              name: 'Tile Field',
+              required: true,
+              localized: true,
+              type: 'Symbol',
+            },
+            { id: slugId, apiName: slugFieldId, name: 'Slug Field', type: 'Symbol' },
+            { id: notEntryTitleId, apiName: 'secret', name: 'Secret Field', type: 'Symbol' },
+          ],
+          displayField: entryTitleId,
+        },
+      };
+
+      await configureForTest.call(this, contentType);
 
       const entry = await this.scope.entryActions.onDuplicate();
       for (const [locale, localizedValue] of Object.entries(entry.fields[entryTitleId])) {
         expect(localizedValue).toBe(
           stubs.getDefaultEntryFields()[entryTitleId][locale].replace('(1)', '(2)')
         );
+      }
+
+      for (const [locale, localizedValue] of Object.entries(entry.fields[slugId])) {
+        expect(localizedValue).toBe(
+          stubs.getDefaultEntryFields()[slugId][locale].replace('1', '2')
+        );
+      }
+
+      for (const [locale, localizedValue] of Object.entries(entry.fields[notEntryTitleId])) {
+        expect(localizedValue).toBe(stubs.getDefaultEntryFields()[notEntryTitleId][locale]);
+      }
+    });
+
+    it("should set untitled slug if it is marked as required but it's value is null", async function () {
+      this.sandbox.stub(stubs, 'getDefaultEntryFields').returns({
+        [entryTitleId]: {
+          'en-US': 'Hey, Sunshine! (1)',
+          de: null,
+        },
+        [slugId]: {
+          'en-US': 'hey-sunshine-1',
+          de: null,
+        },
+        [notEntryTitleId]: {
+          'en-US': 'this is a text in english',
+          de: 'das ist ein text in Deutsch',
+        },
+      });
+
+      const contentType = {
+        data: {
+          fields: [
+            {
+              id: entryTitleId,
+              apiName: 'title',
+              name: 'Tile Field',
+              required: true,
+              localized: true,
+              type: 'Symbol',
+            },
+            {
+              id: slugId,
+              apiName: slugFieldId,
+              name: 'Slug Field',
+              required: true,
+              type: 'Symbol',
+            },
+            { id: notEntryTitleId, apiName: 'secret', name: 'Secret Field', type: 'Symbol' },
+          ],
+          displayField: entryTitleId,
+        },
+      };
+
+      await configureForTest.call(this, contentType);
+
+      const entry = await this.scope.entryActions.onDuplicate();
+      expect(entry.fields[entryTitleId]).toEqual({
+        'en-US': stubs.getDefaultEntryFields()[entryTitleId]['en-US'].replace('(1)', '(2)'),
+        de: null,
+      });
+
+      for (const [locale, localizedValue] of Object.entries(entry.fields[slugId])) {
+        const original = stubs.getDefaultEntryFields()[slugId][locale];
+        if (original) {
+          expect(localizedValue).toBe(
+            stubs.getDefaultEntryFields()[slugId][locale].replace('1', '2')
+          );
+        } else if (original === null) {
+          expect(localizedValue).not.toBeNull();
+        }
       }
 
       for (const [locale, localizedValue] of Object.entries(entry.fields[notEntryTitleId])) {
@@ -216,6 +419,7 @@ describe('Entry Editor Controller', function () {
     it('should not break down in case the entry title is not defined', async function () {
       this.sandbox.stub(stubs, 'getDefaultEntryFields').returns({
         [entryTitleId]: null,
+        [slugId]: null,
         [notEntryTitleId]: {
           'en-US': 'this is a text in english',
           de: 'das ist ein text in Deutsch',
@@ -238,10 +442,14 @@ describe('Entry Editor Controller', function () {
       ).not.toThrow();
     });
 
-    it("should not break down in case one of the entry title's localized values is not defined", async function () {
+    it("should not set untitled slug if it's not required and it's value is null", async function () {
       this.sandbox.stub(stubs, 'getDefaultEntryFields').returns({
         [entryTitleId]: {
           'en-US': 'Hey, Sunshine!',
+          de: null,
+        },
+        [slugId]: {
+          'en-US': 'hey-sunshine',
           de: null,
         },
         [notEntryTitleId]: {
@@ -267,6 +475,15 @@ describe('Entry Editor Controller', function () {
             }
           }
 
+          for (const [locale, localizedValue] of Object.entries(entry.fields[slugId])) {
+            const originalValue = entryFields[slugId][locale];
+            if (originalValue !== null) {
+              expect(localizedValue).toBe(`${originalValue}-1`);
+            } else {
+              expect(localizedValue).toBe(null);
+            }
+          }
+
           for (const [locale, localizedValue] of Object.entries(entry.fields[notEntryTitleId])) {
             expect(localizedValue).toBe(entryFields[notEntryTitleId][locale]);
           }
@@ -279,6 +496,10 @@ describe('Entry Editor Controller', function () {
         [entryTitleId]: {
           'en-US': 'Hey, Sunshine! (-1)',
           de: 'Hallo, Sonnenlicht! (-1)',
+        },
+        [slugId]: {
+          'en-US': 'hey-sunshine-1',
+          de: 'hallo-sonnenlicht-1',
         },
         [notEntryTitleId]: {
           'en-US': 'this is a text in english',
@@ -296,6 +517,10 @@ describe('Entry Editor Controller', function () {
 
           for (const [locale, localizedValue] of Object.entries(entry.fields[entryTitleId])) {
             expect(localizedValue).toBe(`${entryFields[entryTitleId][locale]} (1)`);
+          }
+
+          for (const [locale, localizedValue] of Object.entries(entry.fields[slugId])) {
+            expect(localizedValue).toBe(`${entryFields[slugId][locale]}-1`);
           }
 
           for (const [locale, localizedValue] of Object.entries(entry.fields[notEntryTitleId])) {
@@ -311,6 +536,10 @@ describe('Entry Editor Controller', function () {
           'en-US': 'Hey, Sunshine! (0)',
           de: 'Hallo, Sonnenlicht! (0)',
         },
+        [slugId]: {
+          'en-US': 'hey-sunshine-0',
+          de: 'hallo-sonnenlicht-0',
+        },
         [notEntryTitleId]: {
           'en-US': 'this is a text in english',
           de: 'das ist ein text in Deutsch',
@@ -329,6 +558,10 @@ describe('Entry Editor Controller', function () {
             expect(localizedValue).toBe(`${entryFields[entryTitleId][locale]} (1)`);
           }
 
+          for (const [locale, localizedValue] of Object.entries(entry.fields[slugId])) {
+            expect(localizedValue).toBe(`${entryFields[slugId][locale]}-1`);
+          }
+
           for (const [locale, localizedValue] of Object.entries(entry.fields[notEntryTitleId])) {
             expect(localizedValue).toBe(entryFields[notEntryTitleId][locale]);
           }
@@ -341,6 +574,10 @@ describe('Entry Editor Controller', function () {
         [entryTitleId]: {
           'en-US': 'Hey, Sunshine! (10)',
           de: 'Hallo, Sonnenlicht! (10)',
+        },
+        [slugId]: {
+          'en-US': 'hey-sunshine-10',
+          de: 'hallo-sonnenlicht-10',
         },
         [notEntryTitleId]: {
           'en-US': 'this is a text in english',
@@ -358,6 +595,131 @@ describe('Entry Editor Controller', function () {
 
           for (const [locale, localizedValue] of Object.entries(entry.fields[entryTitleId])) {
             expect(localizedValue).toBe(entryFields[entryTitleId][locale].replace('(10)', '(11)'));
+          }
+
+          for (const [locale, localizedValue] of Object.entries(entry.fields[slugId])) {
+            expect(localizedValue).toBe(entryFields[slugId][locale].replace('10', '11'));
+          }
+
+          for (const [locale, localizedValue] of Object.entries(entry.fields[notEntryTitleId])) {
+            expect(localizedValue).toBe(entryFields[notEntryTitleId][locale]);
+          }
+        }.bind(this)
+      ).not.toThrow();
+    });
+
+    it('should fall back to id if apiName doesnt match the slug fieldId', async function () {
+      this.sandbox.stub(stubs, 'getDefaultEntryFields').returns({
+        [entryTitleId]: {
+          'en-US': 'Test string',
+          de: 'Test string de',
+        },
+        [slugFieldId]: {
+          'en-US': 'test-string',
+          de: 'test-string-de',
+        },
+        [notEntryTitleId]: {
+          'en-US': 'random string',
+          de: 'random string de',
+        },
+      });
+
+      const editorControls = [
+        {
+          widgetId: 'slugEditor',
+          id: slugId,
+          fieldId: slugFieldId,
+        },
+      ];
+
+      const contentType = {
+        data: {
+          fields: [
+            { id: entryTitleId, name: 'Tile Field', localized: true, type: 'Symbol' },
+            { id: slugFieldId, apiName: 'something-weird', name: 'Slug Field', type: 'Symbol' },
+            { id: notEntryTitleId, name: 'Secret Field', type: 'Symbol' },
+          ],
+          displayField: entryTitleId,
+        },
+      };
+
+      await configureForTest.call(this, contentType, editorControls);
+
+      const entryFields = stubs.getDefaultEntryFields();
+
+      expect(
+        async function () {
+          const entry = await this.scope.entryActions.onDuplicate();
+
+          for (const [locale, localizedValue] of Object.entries(entry.fields[entryTitleId])) {
+            expect(localizedValue).toBe(`${entryFields[entryTitleId][locale]} (1)`);
+          }
+
+          for (const [locale, localizedValue] of Object.entries(entry.fields[slugFieldId])) {
+            expect(localizedValue).toBe(`${entryFields[slugFieldId][locale]}-1`);
+          }
+
+          for (const [locale, localizedValue] of Object.entries(entry.fields[notEntryTitleId])) {
+            expect(localizedValue).toBe(entryFields[notEntryTitleId][locale]);
+          }
+        }.bind(this)
+      ).not.toThrow();
+    });
+
+    it('should sync slugs for each locale if title being localized: false', async function () {
+      this.sandbox.stub(stubs, 'getDefaultEntryFields').returns({
+        [entryTitleId]: {
+          'en-US': 'Test string',
+        },
+        [slugId]: {
+          'en-US': 'test-string',
+          de: 'test-string',
+        },
+        [notEntryTitleId]: {
+          'en-US': 'random string',
+          de: 'random string de',
+        },
+      });
+
+      const editorControls = [
+        {
+          widgetId: 'slugEditor',
+          id: slugId,
+          fieldId: slugId,
+        },
+      ];
+
+      const contentType = {
+        data: {
+          fields: [
+            {
+              id: entryTitleId,
+              name: 'Tile Field',
+              required: true,
+              localized: false,
+              type: 'Symbol',
+            },
+            { id: slugId, apiName: slugId, name: 'Slug Field', type: 'Symbol' },
+            { id: notEntryTitleId, name: 'Secret Field', type: 'Symbol' },
+          ],
+          displayField: entryTitleId,
+        },
+      };
+
+      await configureForTest.call(this, contentType, editorControls);
+
+      const entryFields = stubs.getDefaultEntryFields();
+
+      expect(
+        async function () {
+          const entry = await this.scope.entryActions.onDuplicate();
+
+          for (const [locale, localizedValue] of Object.entries(entry.fields[entryTitleId])) {
+            expect(localizedValue).toBe(`${entryFields[entryTitleId][locale]} (1)`);
+          }
+
+          for (const [_, localizedValue] of Object.entries(entry.fields[slugId])) {
+            expect(localizedValue).toBe(`${entryFields[slugId]['en-US']}-1`);
           }
 
           for (const [locale, localizedValue] of Object.entries(entry.fields[notEntryTitleId])) {

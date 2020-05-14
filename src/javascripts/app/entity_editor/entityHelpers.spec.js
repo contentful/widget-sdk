@@ -1,5 +1,9 @@
 import _ from 'lodash';
-import { newForLocale, appendDuplicateIndexToEntryTitle } from './entityHelpers';
+import {
+  newForLocale,
+  appendDuplicateIndexToEntryTitle,
+  alignSlugWithEntryTitle,
+} from './entityHelpers';
 import * as spaceContextMocked from 'ng/spaceContext';
 import * as EntityFieldValueSpaceContextMocked from 'classes/EntityFieldValueSpaceContext';
 
@@ -229,6 +233,322 @@ describe('EntityHelpers', () => {
           de: 'Ahoi! (11)',
         },
       });
+    });
+  });
+
+  describe('alignSlugWithEntryTitle', () => {
+    it('should return back the given value if slugFieldData is falsy', () => {
+      expect(alignSlugWithEntryTitle({ slugFieldData: null })).toBeNull();
+      expect(alignSlugWithEntryTitle({ slugFieldData: undefined })).toBeUndefined();
+      expect(alignSlugWithEntryTitle({ slugFieldData: false })).toBe(false);
+    });
+
+    it('should align non localized slug with the non localized entry title', () => {
+      const entryTitleData = {
+        'en-US': 'hi (1)',
+      };
+
+      const slugFieldData = {
+        'en-US': 'hi',
+      };
+
+      const slugData = alignSlugWithEntryTitle({
+        entryTitleData,
+        unindexedTitleData: {
+          'en-US': 'hi',
+        },
+        isEntryTitleLocalized: false,
+        slugFieldData,
+        isRequired: false,
+      });
+
+      expect(slugData).toEqual({
+        'en-US': 'hi-1',
+      });
+    });
+
+    it('should align non localized slug with the correct locale of entry title', () => {
+      const entryTitleData = {
+        'en-US': 'hi (1)',
+        de: 'hallo (1)',
+      };
+
+      const slugFieldData = {
+        'en-US': 'hi',
+      };
+
+      const slugData = alignSlugWithEntryTitle({
+        entryTitleData,
+        unindexedTitleData: {
+          'en-US': 'hi',
+          de: 'hallo',
+        },
+        isEntryTitleLocalized: true,
+        slugFieldData,
+        isRequired: false,
+      });
+
+      expect(slugData).toEqual({
+        'en-US': 'hi-1',
+      });
+    });
+
+    it('should align each locale of localized slug with the non localized entry title only if the localized slug was not manually modified', () => {
+      const entryTitleData = {
+        'en-US': 'hi (1)',
+      };
+
+      const slugFieldData = {
+        'en-US': 'hi',
+        de: 'custom-value',
+      };
+
+      const slugData = alignSlugWithEntryTitle({
+        entryTitleData,
+        unindexedTitleData: {
+          'en-US': 'hi',
+        },
+        isEntryTitleLocalized: false,
+        slugFieldData,
+        isRequired: false,
+      });
+
+      expect(slugData).toEqual({
+        'en-US': 'hi-1',
+        de: 'custom-value',
+      });
+    });
+
+    it('should align each locale of localized slug with the localized entry title', () => {
+      const entryTitleData = {
+        'en-US': 'hi (1)',
+        de: 'hallo (1)',
+      };
+
+      const slugFieldData = {
+        'en-US': 'hi',
+        de: 'hallo',
+        ru: 'privet',
+      };
+
+      const slugData = alignSlugWithEntryTitle({
+        entryTitleData,
+        unindexedTitleData: {
+          'en-US': 'hi',
+          de: 'hallo',
+        },
+        isEntryTitleLocalized: true,
+        slugFieldData,
+        isRequired: false,
+      });
+
+      expect(slugData).toEqual({
+        'en-US': 'hi-1',
+        de: 'hallo-1',
+        ru: 'privet',
+      });
+    });
+
+    it('should align each locale of localized slug with the localized entry title only if localized slug was not set manually', () => {
+      const entryTitleData = {
+        'en-US': 'hi (1)',
+        de: 'hallo (1)',
+      };
+
+      const slugFieldData = {
+        'en-US': 'hi',
+        de: 'custom-value',
+        ru: 'privet',
+      };
+
+      const slugData = alignSlugWithEntryTitle({
+        entryTitleData,
+        unindexedTitleData: {
+          'en-US': 'hi',
+          de: 'hallo',
+        },
+        isEntryTitleLocalized: true,
+        slugFieldData,
+        isRequired: false,
+      });
+
+      expect(slugData).toEqual({
+        'en-US': 'hi-1',
+        de: 'custom-value',
+        ru: 'privet',
+      });
+    });
+
+    it('should not set untitled slug if it is undefined and required: false', () => {
+      const entryTitleData = {
+        'en-US': null,
+        de: 'hallo (1)',
+      };
+
+      const slugFieldData = {
+        'en-US': null,
+      };
+
+      const slugData = alignSlugWithEntryTitle({
+        entryTitleData,
+        unindexedTitleData: {
+          'en-US': null,
+          de: 'hallo',
+        },
+        isEntryTitleLocalized: true,
+        slugFieldData,
+        isRequired: false,
+      });
+
+      expect(slugData['en-US']).toBeNull();
+    });
+
+    it('should set untitled slug if is undefined and required: true', () => {
+      const entryTitleData = {
+        'en-US': null,
+        de: 'hallo (1)',
+      };
+
+      const slugFieldData = {
+        'en-US': null,
+      };
+
+      const slugData = alignSlugWithEntryTitle({
+        entryTitleData,
+        unindexedTitleData: {
+          'en-US': null,
+          de: 'hallo',
+        },
+        isEntryTitleLocalized: true,
+        slugFieldData,
+        isRequired: true,
+      });
+
+      expect(slugData['en-US']).not.toBeNull();
+      expect(slugData['en-US'].startsWith('untitled-entry')).toBe(true);
+    });
+
+    it('should not set untitled slug for localized slug field if localized value is undefined and required: false', () => {
+      const entryTitleData = {
+        'en-US': null,
+        de: 'hallo (1)',
+      };
+
+      const slugFieldData = {
+        'en-US': null,
+        de: 'hallo',
+      };
+
+      const slugData = alignSlugWithEntryTitle({
+        entryTitleData,
+        unindexedTitleData: {
+          'en-US': null,
+          de: 'hallo',
+        },
+        isEntryTitleLocalized: true,
+        slugFieldData,
+        isRequired: false,
+      });
+
+      expect(slugData['en-US']).toBeNull();
+      expect(slugData.de).toBe('hallo-1');
+    });
+
+    it('should set untitled slug for localized slug field if localized value is undefined and required: true', () => {
+      const entryTitleData = {
+        'en-US': null,
+        de: 'hallo (1)',
+      };
+
+      const slugFieldData = {
+        'en-US': null,
+        de: 'hallo',
+      };
+
+      const slugData = alignSlugWithEntryTitle({
+        entryTitleData,
+        unindexedTitleData: {
+          'en-US': null,
+          de: 'hallo',
+        },
+        isEntryTitleLocalized: true,
+        slugFieldData,
+        isRequired: true,
+      });
+
+      expect(slugData['en-US']).not.toBeNull();
+      expect(slugData['en-US'].startsWith('untitled-entry')).toBe(true);
+      expect(slugData.de).toBe('hallo-1');
+    });
+
+    it('should return the same slug if entryTitleData is undefined and slug is not required', () => {
+      const entryTitleData = null;
+
+      const slugFieldData = {
+        'en-US': null,
+        de: 'hallo',
+      };
+
+      const slugData = alignSlugWithEntryTitle({
+        entryTitleData,
+        unindexedTitleData: null,
+        isEntryTitleLocalized: false,
+        slugFieldData,
+        isRequired: false,
+      });
+
+      expect(slugData).toEqual({
+        'en-US': null,
+        de: 'hallo',
+      });
+    });
+
+    it('should return the same slug and initialized undefiled localized values if entryTitleData is undefined and slug is required', () => {
+      const entryTitleData = null;
+
+      const slugFieldData = {
+        'en-US': null,
+        de: 'hallo',
+      };
+
+      const slugData = alignSlugWithEntryTitle({
+        entryTitleData,
+        unindexedTitleData: null,
+        isEntryTitleLocalized: false,
+        slugFieldData,
+        isRequired: true,
+      });
+
+      expect(slugData['en-US']).not.toBeNull();
+      expect(slugData['en-US'].startsWith('untitled-entry')).toBe(true);
+      expect(slugData.de).toBe('hallo');
+    });
+
+    it('should allow to pass the date to be used in the untitled slug', () => {
+      const entryTitleData = {
+        'en-US': 'hi (1)',
+        de: null,
+      };
+      const createdAt = new Date('2020-02-22');
+
+      const slugFieldData = {
+        de: null,
+      };
+
+      const slugData = alignSlugWithEntryTitle({
+        entryTitleData,
+        unindexedTitleData: {
+          'en-US': 'hi',
+          de: null,
+        },
+        isEntryTitleLocalized: true,
+        slugFieldData,
+        isRequired: true,
+        createdAt,
+      });
+
+      expect(slugData['en-US']).toBeUndefined();
+      expect(slugData.de.startsWith('untitled-entry-2020-02-22')).toBe(true);
     });
   });
 });

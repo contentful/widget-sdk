@@ -4,7 +4,10 @@ import { Notification } from '@contentful/forma-36-react-components';
 
 import * as Analytics from 'analytics/Analytics';
 
-import { appendDuplicateIndexToEntryTitle } from 'app/entity_editor/entityHelpers';
+import {
+  appendDuplicateIndexToEntryTitle,
+  alignSlugWithEntryTitle,
+} from 'app/entity_editor/entityHelpers';
 
 const ACTION_NAMES = {
   publish: 'published',
@@ -19,6 +22,11 @@ const ENTITY_PLURAL_NAMES = {
   Entry: 'Entries',
   Asset: 'Assets',
 };
+
+const getEditorData = _.memoize(
+  (spaceContext, contentTypeId) => spaceContext.cma.getEditorInterface(contentTypeId),
+  (_spaceContext, contentTypeId) => contentTypeId
+);
 
 export function createBatchPerformer(config) {
   const entityType = _.upperFirst(config.entityType);
@@ -71,16 +79,44 @@ export function createBatchPerformer(config) {
     return entity[method]();
   }
 
-  function callDuplicate(entity) {
+  async function callDuplicate(entity) {
     const sys = entity.getSys();
+
     if (sys.type === 'Entry') {
       const spaceContext = getModule('spaceContext');
       const ctId = _.get(sys, 'contentType.sys.id');
       const contentType = spaceContext.publishedCTs.get(ctId);
+      const editorData = await getEditorData(spaceContext, ctId);
       const entryTitleId = _.get(contentType, 'data.displayField');
-      const data = _.omit(entity.data, 'sys');
+      const entryTitleField =
+        contentType.data.fields.find((field) => field.id === entryTitleId) || {};
+      const currentFieldsWithIndexedDisplayField = appendDuplicateIndexToEntryTitle(
+        entity.data.fields,
+        entryTitleId
+      );
+      const slugControl = editorData.controls.find((control) => control.widgetId === 'slugEditor');
+      // [PUL-809] We update the slug with the same index that was set on the displayField
+      if (slugControl) {
+        const slugField = contentType.data.fields.find((field) =>
+          [field.apiName, field.id].includes(slugControl.fieldId)
+        );
+        if (slugField) {
+          const slugFieldData = currentFieldsWithIndexedDisplayField[slugField.id];
+          const indexedSlugFieldData = alignSlugWithEntryTitle({
+            entryTitleData: currentFieldsWithIndexedDisplayField[entryTitleId],
+            unindexedTitleData: entity.data.fields[entryTitleId],
+            slugFieldData,
+            isRequired: slugField.required,
+            isEntryTitleLocalized: entryTitleField.localized,
+          });
+
+          if (indexedSlugFieldData) {
+            currentFieldsWithIndexedDisplayField[slugField.id] = indexedSlugFieldData;
+          }
+        }
+      }
       return spaceContext.space.createEntry(ctId, {
-        fields: appendDuplicateIndexToEntryTitle(data.fields, entryTitleId),
+        fields: currentFieldsWithIndexedDisplayField,
       });
     } else {
       return Promise.reject(new Error('Only entries can be duplicated'));
