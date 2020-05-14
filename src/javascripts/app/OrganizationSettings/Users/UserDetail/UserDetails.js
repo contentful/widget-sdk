@@ -276,7 +276,7 @@ function getAllUserSpaceMemberships(userId, orgId) {
   return fetchAndResolve(
     getAllSpaceMemberships(endpoint, {
       'sys.user.sys.id': userId,
-      include: includePaths.join(),
+      include: includePaths,
     }),
     includePaths
   );

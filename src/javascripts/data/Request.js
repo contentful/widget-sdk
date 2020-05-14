@@ -2,9 +2,8 @@ import wrapWithRetry from 'data/Request/Retry';
 import wrapWithAuth from 'data/Request/Auth';
 import { getEndpoint, getCurrentState } from 'data/Request/Utils';
 import * as Telemetry from 'i13n/Telemetry';
-import qs from 'qs';
+import queryString from 'query-string';
 import { gitRevision, env } from 'Config';
-import { toPairs, fromPairs } from 'lodash';
 
 /**
  * @description
@@ -68,13 +67,10 @@ function buildRequestArguments(data) {
 // convert request params to a query string and append it to the request url
 function withQuery(url, query) {
   if (query) {
-    // $http sorts all the query params alphabetically
-    // so contract tests compare the query string with what $http was doing
-    const sorted = fromPairs(toPairs(query).sort());
-    const stringified = qs.stringify(sorted, { arrayFormat: 'comma', encode: false });
-    // contract tests run `encodeURI` to send it to PACT, so we do the same
-    const queryString = encodeURI(stringified);
-    return `${url}?${queryString}`;
+    // Our contract tests assert the queries as strings with keys in alphabetical order
+    // Ideally our test should not care about the order
+    const stringified = queryString.stringify(query, { arrayFormat: 'comma' });
+    return `${url}?${stringified}`;
   }
   return url;
 }

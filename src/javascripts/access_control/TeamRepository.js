@@ -19,7 +19,7 @@ export async function getAllTeamsSpaceMemberships(orgEndpoint) {
     orgEndpoint,
     ['team_space_memberships'],
     BATCH_LIMIT,
-    { include: includePaths.join(',') }
+    { include: includePaths }
   );
   return ResolveLinks({ paths: includePaths, items, includes });
 }
@@ -30,7 +30,7 @@ export async function getTeamsSpaceMembershipsOfSpace(spaceEndpoint) {
     spaceEndpoint,
     ['team_space_memberships'],
     BATCH_LIMIT,
-    { include: includePaths.join(',') }
+    { include: includePaths }
   );
   return ResolveLinks({ paths: includePaths, items, includes });
 }
