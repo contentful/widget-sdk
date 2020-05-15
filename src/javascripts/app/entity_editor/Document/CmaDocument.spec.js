@@ -52,6 +52,8 @@ const newError = (code, msg, message) => {
   return error;
 };
 
+const DisconnectedError = newError(undefined, 'API request failed');
+
 function createCmaDocument(initialEntity, contentTypeFields, throttleMs) {
   const contentType =
     initialEntity.sys.type === 'Entry' &&
@@ -209,7 +211,7 @@ describe('CmaDocument', () => {
   describe('when CMA call fails due to a network error', () => {
     it('retries to save every 5s until successful', async () => {
       entityRepo.update.mockImplementation(() => {
-        throw newError('-1', 'API request failed');
+        throw DisconnectedError;
       });
 
       await doc.setValueAt(['fields', 'fieldA', 'en-US'], 'en-US-updated');
@@ -385,7 +387,7 @@ describe('CmaDocument', () => {
 
       it('emits Disconnected on -1 error code', async () => {
         entityRepo.update.mockImplementationOnce(() => {
-          throw newError('-1', 'API request failed');
+          throw DisconnectedError;
         });
         await doc.setValueAt(fieldPath, 'en-US-updated');
         jest.runAllTimers();
@@ -423,7 +425,7 @@ describe('CmaDocument', () => {
 
       it('is `false` while CMA can not be reached', async () => {
         entityRepo.update.mockImplementation(() => {
-          throw newError('-1', 'API request failed');
+          throw DisconnectedError;
         });
 
         await doc.setValueAt(fieldPath, 'new value');
