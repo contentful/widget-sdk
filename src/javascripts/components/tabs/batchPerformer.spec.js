@@ -409,7 +409,7 @@ describe('batch duplicate', () => {
     });
   });
 
-  it("should not modify slug if it's not required and the value is null but title is defined for the same locale", async () => {
+  it("should modify slug if it's not required and the value is null but title is defined for the same locale", async () => {
     mockSpace({
       data: {
         displayField: displayField,
@@ -455,7 +455,7 @@ describe('batch duplicate', () => {
         },
         [slugId]: {
           'en-US': 'hello-2',
-          de: null,
+          de: 'hallo-1',
         },
       });
     });
@@ -551,7 +551,7 @@ describe('batch duplicate', () => {
     );
   });
 
-  it("should not align index of entry title and slug if it's different from title", async () => {
+  it("should align index of entry title and slug if it's different from title", async () => {
     mockSpace();
 
     const data = {
@@ -578,8 +578,8 @@ describe('batch duplicate', () => {
           de: 'Hallo! (11)',
         },
         [slugId]: {
-          'en-US': 'hello-8',
-          de: 'hallo-8',
+          'en-US': 'hello-11',
+          de: 'hallo-11',
         },
       })
     );

@@ -293,7 +293,7 @@ describe('EntityHelpers', () => {
       });
     });
 
-    it('should align each locale of localized slug with the non localized entry title only if the localized slug was not manually modified', () => {
+    it('should align each locale of localized slug with the non localized entry title even if the localized slug was manually modified', () => {
       const entryTitleData = {
         'en-US': 'hi (1)',
       };
@@ -315,7 +315,7 @@ describe('EntityHelpers', () => {
 
       expect(slugData).toEqual({
         'en-US': 'hi-1',
-        de: 'custom-value',
+        de: 'hi-1',
       });
     });
 
@@ -349,7 +349,7 @@ describe('EntityHelpers', () => {
       });
     });
 
-    it('should align each locale of localized slug with the localized entry title only if localized slug was not set manually', () => {
+    it('should align each locale of localized slug with the localized entry title even if localized slug was set manually', () => {
       const entryTitleData = {
         'en-US': 'hi (1)',
         de: 'hallo (1)',
@@ -374,7 +374,7 @@ describe('EntityHelpers', () => {
 
       expect(slugData).toEqual({
         'en-US': 'hi-1',
-        de: 'custom-value',
+        de: 'hallo-1',
         ru: 'privet',
       });
     });

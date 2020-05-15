@@ -213,11 +213,15 @@ export function alignSlugWithEntryTitle({
     const localeCode = TheLocaleStore.toInternalCode(locale);
 
     const originalSlugValue = slugify(unindexedDisplayFieldValue, localeCode);
-    const bothSlugValuesFalsy = !originalSlugValue && !slugFieldData[locale];
-    const isSlugTracking =
-      (bothSlugValuesFalsy && isRequired) || originalSlugValue === slugFieldData[locale];
+    const indexedSlug = slugify(displayFieldValue, localeCode);
+    // in this case slug will become untitled slug
+    const slugWasAndIsFalsy = !originalSlugValue && !slugFieldData[locale];
+    const slugIsNotAlreadyAligned = indexedSlug !== slugFieldData[locale];
+    // first condition will result in untitled slug, second one will align slug with title, if title is defined
+    const slugShouldAlign =
+      (slugWasAndIsFalsy && isRequired) || (!!displayFieldValue && slugIsNotAlreadyAligned);
 
-    if (isSlugTracking) {
+    if (slugShouldAlign) {
       result[locale] = makeSlug(displayFieldValue, {
         locale: localeCode,
         isOptionalLocaleWithFallback: !isRequired,
