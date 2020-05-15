@@ -7,14 +7,14 @@ const COLLECTION_ENDPOINTS = {
 };
 
 export type SpaceEndpoint = {
-  (body: any, headers: any): Entity;
+  (body: object, headers: object): Promise<Entity>;
   envId: string;
 };
 
 export type EntityRepo = {
-  get(entityType: string, entityId: string): Entity;
+  get(entityType: string, entityId: string): Promise<Entity>;
   onAssetFileProcessed: (assetId: string, callback: any) => () => any;
-  update: (entity: Entity) => Entity;
+  update: (entity: Entity) => Promise<Entity>;
 };
 
 interface EntityRepoOptions {
@@ -26,6 +26,7 @@ interface EntityRepoOptions {
 export function create(
   spaceEndpoint: SpaceEndpoint,
   pubSubClient,
+  triggerCmaAutoSave,
   options: EntityRepoOptions = {
     skipDraftValidation: false,
     skipTransformation: false,
@@ -39,7 +40,7 @@ export function create(
 
   return { onAssetFileProcessed, get, update };
 
-  function update(entity: Entity) {
+  async function update(entity: Entity) {
     const collection = COLLECTION_ENDPOINTS[entity.sys.type];
     if (!collection) {
       throw new Error('Invalid entity type');
@@ -50,7 +51,9 @@ export function create(
       version: entity.sys.version,
       data: entity,
     };
-    return spaceEndpoint(body, endpointPutOptions);
+    const updatedEntity = await spaceEndpoint(body, endpointPutOptions);
+    triggerCmaAutoSave();
+    return updatedEntity;
   }
 
   function get(entityType: string, entityId: string) {
