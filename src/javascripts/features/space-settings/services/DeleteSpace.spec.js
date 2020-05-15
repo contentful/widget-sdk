@@ -3,7 +3,7 @@ import { screen, render, fireEvent, wait } from '@testing-library/react';
 import { openDeleteSpaceDialog, DeleteSpaceModal } from './DeleteSpace';
 import { ModalLauncher } from 'core/components/ModalLauncher';
 import { isEnterprisePlan, isFreeSpacePlan } from 'account/pricing/PricingDataProvider';
-import { openModal as openCommitedSpaceWarningModal } from 'components/shared/space-wizard/CommittedSpaceWarningModal';
+import { open as openChangeSpaceWarningModal } from 'app/SpaceWizards/ChangeSpaceWarning';
 import * as TokenStore from 'services/TokenStore';
 import { Notification } from '@contentful/forma-36-react-components';
 import APIClient from 'data/APIClient';
@@ -21,8 +21,9 @@ jest.mock('data/APIClient', () => {
   };
 });
 
-jest.mock('components/shared/space-wizard/CommittedSpaceWarningModal', () => ({
-  openModal: jest.fn(),
+jest.mock('app/SpaceWizards/ChangeSpaceWarning', () => ({
+  open: jest.fn(),
+  MODAL_TYPES: { COMMITTED: 'committed' },
 }));
 
 jest.mock('account/pricing/PricingDataProvider', () => ({
@@ -85,19 +86,19 @@ describe('DeleteSpace service', () => {
       expect(onSuccessMock).not.toBeCalled();
     });
 
-    it('should call openCommitedSpaceWarningModal if the plan is enterprise and not free', async () => {
+    it('should call openChangeSpaceWarningModal if the plan is enterprise and not free', async () => {
       isEnterprisePlan.mockReturnValue(true);
       isFreeSpacePlan.mockReturnValue(true);
 
       await open();
 
-      expect(openCommitedSpaceWarningModal).not.toBeCalled();
+      expect(openChangeSpaceWarningModal).not.toBeCalled();
 
       isFreeSpacePlan.mockReturnValue(false);
 
       await open();
 
-      expect(openCommitedSpaceWarningModal).toBeCalled();
+      expect(openChangeSpaceWarningModal).toBeCalled();
     });
   });
 
