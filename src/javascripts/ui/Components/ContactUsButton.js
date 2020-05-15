@@ -15,12 +15,17 @@ const openSupport = () => {
 };
 
 export default function ContactUsButton(props) {
-  const { noIcon, isLink, children, ...otherProps } = props;
+  const { noIcon, isLink, onClick, children, ...otherProps } = props;
 
   const ButtonComponent = isLink ? TextLink : Button;
 
   const buttonComponentProps = {
-    onClick: openSupport,
+    onClick: () => {
+      openSupport();
+
+      onClick && onClick();
+    },
+    testId: 'cf-contact-us-button',
     ...otherProps,
   };
 
@@ -38,6 +43,7 @@ export default function ContactUsButton(props) {
 ContactUsButton.propTypes = {
   noIcon: PropTypes.bool,
   isLink: PropTypes.bool,
+  onClick: PropTypes.func,
 };
 
 ContactUsButton.defaultProps = {
