@@ -5,8 +5,8 @@ import ContactUsButton from 'ui/Components/ContactUsButton';
 import { ModalLauncher } from 'core/components/ModalLauncher';
 
 export const MODAL_TYPES = {
-  POC: 'poc',
-  COMMITTED: 'committed',
+  POC: 'POC',
+  COMMITTED: 'COMMITTED',
 };
 
 const titles = {
@@ -24,20 +24,24 @@ const bodies = {
 export default function ChangeSpaceWarning({ isShown, onClose, type }) {
   return (
     <Modal testId="change-space-warning-modal" isShown={isShown} onClose={onClose}>
-      <Modal.Header title={titles[type]} onClose={() => onClose()} />
-      <Modal.Content>
-        <Typography>
-          <Paragraph>{bodies[type]}</Paragraph>
-        </Typography>
-      </Modal.Content>
-      <Modal.Controls>
-        <ContactUsButton buttonType="positive" noIcon onClick={() => onClose()}>
-          Talk to us
-        </ContactUsButton>
-        <Button onClick={() => onClose()} testId="close-button" buttonType="muted">
-          Close
-        </Button>
-      </Modal.Controls>
+      {() => (
+        <>
+          <Modal.Header title={titles[type]} onClose={() => onClose()} />
+          <Modal.Content>
+            <Typography>
+              <Paragraph>{bodies[type]}</Paragraph>
+            </Typography>
+          </Modal.Content>
+          <Modal.Controls>
+            <ContactUsButton buttonType="positive" noIcon onClick={() => onClose()}>
+              Talk to us
+            </ContactUsButton>
+            <Button onClick={() => onClose()} testId="close-button" buttonType="muted">
+              Close
+            </Button>
+          </Modal.Controls>
+        </>
+      )}
     </Modal>
   );
 }
@@ -49,7 +53,7 @@ ChangeSpaceWarning.propTypes = {
 };
 
 export function open(type) {
-  if (!Object.values(MODAL_TYPES).find((modalType) => modalType === type)) {
+  if (!(type in MODAL_TYPES)) {
     throw new Error(`Invalid valid type ${type} supplied to ChangeSpaceWarning.open`);
   }
 
