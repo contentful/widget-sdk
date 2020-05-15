@@ -210,36 +210,36 @@ const StatusSwitch = ({
             setDropdownOpen(false);
           }}
           toggleElement={
-            <Button
-              disabled={isSaving || isActionInProgress}
-              testId="change-state-menu-trigger"
-              buttonType={currentStatusProps.tagType}
-              indicateDropdown={!isButtonLocked}
-              loading={isSaving || isActionInProgress}
-              className={statusButtonStyle}
-              onClick={() => {
-                if (!isButtonLocked) {
-                  setDropdownOpen(!isDropdownOpen);
-                }
-              }}>
-              {isButtonLocked && (
-                <Tooltip content={<ActionRestrictedNote reason={lockReason} />}>
+            <Tooltip content={isButtonLocked ? <ActionRestrictedNote reason={lockReason} /> : null}>
+              <Button
+                disabled={isSaving || isActionInProgress}
+                testId="change-state-menu-trigger"
+                buttonType={currentStatusProps.tagType}
+                indicateDropdown={!isButtonLocked}
+                loading={isSaving || isActionInProgress}
+                className={statusButtonStyle}
+                onClick={() => {
+                  if (!isButtonLocked) {
+                    setDropdownOpen(!isDropdownOpen);
+                  }
+                }}>
+                {isButtonLocked && (
                   <Icon
                     icon="Lock"
                     color="white"
                     className={cx(styles.scheduledIcon, styles.statusScheduledIcon)}
                   />
-                </Tooltip>
-              )}
-              {isScheduled && !isButtonLocked && (
-                <Icon
-                  icon="Clock"
-                  color="white"
-                  className={cx(styles.scheduledIcon, styles.statusScheduledIcon)}
-                />
-              )}
-              {currentStatusProps.title}
-            </Button>
+                )}
+                {isScheduled && !isButtonLocked && (
+                  <Icon
+                    icon="Clock"
+                    color="white"
+                    className={cx(styles.scheduledIcon, styles.statusScheduledIcon)}
+                  />
+                )}
+                {currentStatusProps.title}
+              </Button>
+            </Tooltip>
           }>
           <DropdownList className={styles.dropdown} testId="change-state-menu">
             {primaryAction && primaryAction.targetStateId && (
