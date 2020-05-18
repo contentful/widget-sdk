@@ -40,14 +40,14 @@ describe('Immediate release', () => {
       const getEntryReferencesInteraction = getEntryReferences.willReturnSeveral();
       const validateEntryTreeInteraction = validateEntryReferencesResponse.willReturnNoErrors();
 
-      cy.getByTestId('test-id-entryReferences').click();
+      cy.findByTestId('test-id-entryReferences').click();
       cy.wait(getEntryReferencesInteraction);
 
-      cy.getByTestId('referencesActionDropdown').click();
-      cy.getByTestId('validateReferencesBtn').click();
+      cy.findByTestId('referencesActionDropdown').click();
+      cy.findByTestId('validateReferencesBtn').click();
       cy.wait(validateEntryTreeInteraction);
 
-      cy.getByTestId('cf-ui-notification')
+      cy.findByTestId('cf-ui-notification')
         .click({ timeout: 5000 }) // official cypress workaround for animation
         .should('be.visible')
         .should('contain', 'All references passed validation');
@@ -57,14 +57,14 @@ describe('Immediate release', () => {
       const getEntryReferencesInteraction = getEntryReferences.willReturnSeveral();
       const validateEntryTreeInteraction = validateEntryReferencesResponse.willReturnErrors();
 
-      cy.getByTestId('test-id-entryReferences').click();
+      cy.findByTestId('test-id-entryReferences').click();
       cy.wait(getEntryReferencesInteraction);
 
-      cy.getByTestId('referencesActionDropdown').click();
-      cy.getByTestId('validateReferencesBtn').click();
+      cy.findByTestId('referencesActionDropdown').click();
+      cy.findByTestId('validateReferencesBtn').click();
       cy.wait(validateEntryTreeInteraction);
 
-      cy.getByTestId('cf-ui-notification')
+      cy.findByTestId('cf-ui-notification')
         .click({ timeout: 5000 })
         .should('be.visible')
         .should('contain', 'Some references did not pass validation');
@@ -82,15 +82,15 @@ describe('Immediate release', () => {
       const getEntryReferencesInteraction = getEntryReferences.willReturnSeveral();
       const publishEntryTreeInteraction = publishEntryReferencesResponse.willReturnNoErrors();
 
-      cy.getByTestId('test-id-entryReferences').click();
+      cy.findByTestId('test-id-entryReferences').click();
       cy.wait(getEntryReferencesInteraction);
 
-      cy.getByTestId('referencesActionDropdown').click();
-      cy.getByTestId('publishReferencesBtn').click();
+      cy.findByTestId('referencesActionDropdown').click();
+      cy.findByTestId('publishReferencesBtn').click();
       cy.wait(publishEntryTreeInteraction);
       cy.wait(getEntryReferencesInteraction);
 
-      cy.getByTestId('cf-ui-notification')
+      cy.findByTestId('cf-ui-notification')
         .click({ timeout: 5000 })
         .should('be.visible')
         .should('contain', 'Untitled and 2 references were published successfully');
@@ -100,14 +100,14 @@ describe('Immediate release', () => {
       const getEntryReferencesInteraction = getEntryReferences.willReturnSeveral();
       const publishEntryTreeInteraction = publishEntryReferencesResponse.willReturnErrors();
 
-      cy.getByTestId('test-id-entryReferences').click();
+      cy.findByTestId('test-id-entryReferences').click();
       cy.wait(getEntryReferencesInteraction);
 
-      cy.getByTestId('referencesActionDropdown').click();
-      cy.getByTestId('publishReferencesBtn').click();
+      cy.findByTestId('referencesActionDropdown').click();
+      cy.findByTestId('publishReferencesBtn').click();
       cy.wait(publishEntryTreeInteraction);
 
-      cy.getByTestId('cf-ui-notification')
+      cy.findByTestId('cf-ui-notification')
         .click({ timeout: 5000 })
         .should('be.visible')
         .should('contain', 'Some references did not pass validation');
@@ -117,14 +117,14 @@ describe('Immediate release', () => {
       const getEntryReferencesInteraction = getEntryReferences.willReturnSeveral();
       const publishEntryTreeInteraction = publishEntryReferencesResponse.willFail();
 
-      cy.getByTestId('test-id-entryReferences').click();
+      cy.findByTestId('test-id-entryReferences').click();
       cy.wait(getEntryReferencesInteraction);
 
-      cy.getByTestId('referencesActionDropdown').click();
-      cy.getByTestId('publishReferencesBtn').click();
+      cy.findByTestId('referencesActionDropdown').click();
+      cy.findByTestId('publishReferencesBtn').click();
       cy.wait(publishEntryTreeInteraction);
 
-      cy.getByTestId('cf-ui-notification')
+      cy.findByTestId('cf-ui-notification')
         .click({ timeout: 5000 })
         .should('be.visible')
         .should('contain', 'We were unable to publish Untitled and 2 references');

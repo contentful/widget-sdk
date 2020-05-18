@@ -36,8 +36,8 @@ describe('Asset Page', () => {
     });
 
     it('renders asset fields and actions', () => {
-      cy.getByTestId('change-state-published').should('be.visible');
-      cy.getAllByTestId('entity-field-controls').should('have.length', 3);
+      cy.findByTestId('change-state-published').should('be.visible');
+      cy.findAllByTestId('entity-field-controls').should('have.length', 3);
     });
   });
 });

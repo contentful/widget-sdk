@@ -263,8 +263,8 @@ describe('Users in space page', () => {
     });
 
     it('should render sidebar, but no user items', () => {
-      cy.queryByTestId('cf-ui-workbench-sidebar-right').should('exist');
-      cy.queryByTestId('user-list.item').should('not.exist');
+      cy.findByTestId('cf-ui-workbench-sidebar-right').should('exist');
+      cy.findByTestId('user-list.item').should('not.exist');
     });
   });
 
@@ -278,15 +278,15 @@ describe('Users in space page', () => {
     });
 
     it('should render sidebar and user items', () => {
-      cy.queryByTestId('cf-ui-workbench-sidebar-right').should('exist');
-      cy.queryByTestId('user-list.item').should('exist');
+      cy.findByTestId('cf-ui-workbench-sidebar-right').should('exist');
+      cy.findAllByTestId('user-list.item').should('exist');
     });
 
     it('should make put request when changing role', () => {
-      cy.getByTestId('user-list.actions').first().click();
-      cy.getByTestId('user-change-role').click();
-      cy.getByTestId('RoleSelector.admin_false').click();
-      cy.getByTestId('cf-ui-checkbox-field').click();
+      cy.findAllByTestId('user-list.actions').first().click();
+      cy.findByTestId('user-change-role').click();
+      cy.findByTestId('RoleSelector.admin_false').click();
+      cy.findAllByTestId('cf-ui-checkbox-field').first().click();
 
       const putRoleUpdate = 'put_role_update';
       const roleLink = {
@@ -320,15 +320,15 @@ describe('Users in space page', () => {
         },
       }).as(putRoleUpdate);
 
-      cy.getByTestId('cf-ui-modal-confirm-confirm-button').click();
+      cy.findByTestId('cf-ui-modal-confirm-confirm-button').click();
 
       cy.wait(`@${putRoleUpdate}`);
     });
 
     it('should make delete request when revoking membership', () => {
-      cy.getByTestId('user-list.actions').first().click();
-      cy.getByTestId('user-remove-from-space').click();
-      cy.getByTestId('cf-ui-text-input').type('I UNDERSTAND');
+      cy.findAllByTestId('user-list.actions').first().click();
+      cy.findByTestId('user-remove-from-space').click();
+      cy.findByTestId('cf-ui-text-input').type('I UNDERSTAND');
 
       const deleteMembership = 'delete_membership';
       cy.addInteraction({
@@ -345,7 +345,7 @@ describe('Users in space page', () => {
         },
       }).as(deleteMembership);
 
-      cy.getByTestId('cf-ui-modal-confirm-confirm-button').click();
+      cy.findByTestId('cf-ui-modal-confirm-confirm-button').click();
       cy.wait(`@${deleteMembership}`);
     });
   });

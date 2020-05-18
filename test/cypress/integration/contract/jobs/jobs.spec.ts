@@ -65,34 +65,25 @@ describe('Jobs page', () => {
       cy.wait(slowInteraction, { timeout: 10000 });
     });
     it('renders illustration and heading for Scheduled tab empty state', () => {
-      cy.getByTestId('cf-ui-tab-panel')
-        .should('be.visible')
-        .find('svg')
-        .should('be.visible')
-        .getByTestId('jobs-state-message-heading')
-        .should('contain', 'Nothing is scheduled');
+      cy.findByTestId('cf-ui-tab-panel').should('be.visible').find('svg').should('be.visible');
+      cy.findByTestId('jobs-state-message-heading').should('contain', 'Nothing is scheduled');
     });
     it('renders illustration and heading for Completed tab empty state', () => {
       const completedJobsInteraction = queryCompletedJobsForDefaultSpace.willFindNone();
       selectCompletedTab();
       cy.wait(completedJobsInteraction);
-      cy.getByTestId('cf-ui-tab-panel')
-        .should('be.visible')
-        .find('svg')
-        .should('be.visible')
-        .getByTestId('jobs-state-message-heading')
-        .should('contain', 'No entries have been successfully published yet');
+      cy.findByTestId('cf-ui-tab-panel').should('be.visible').find('svg').should('be.visible');
+      cy.findByTestId('jobs-state-message-heading').should(
+        'contain',
+        'No entries have been successfully published yet'
+      );
     });
     it('renders illustration and heading for Failed tab empty state', () => {
       const failedJobsInteraction = queryFailedJobsForDefaultSpace.willFindNone();
       selectFailedTab();
       cy.wait(failedJobsInteraction);
-      cy.getByTestId('cf-ui-tab-panel')
-        .should('be.visible')
-        .find('svg')
-        .should('be.visible')
-        .getByTestId('jobs-state-message-heading')
-        .should('contain', 'Nothing here');
+      cy.findByTestId('cf-ui-tab-panel').should('be.visible').find('svg').should('be.visible');
+      cy.findByTestId('jobs-state-message-heading').should('contain', 'Nothing here');
     });
   });
 
@@ -134,18 +125,18 @@ describe('Jobs page', () => {
       });
     });
     it('renders list of scheduled jobs', () => {
-      cy.getByTestId('scheduled-jobs-date-group')
+      cy.findByTestId('scheduled-jobs-date-group')
         .should('be.visible')
-        .getAllByTestId('cf-ui-entity-list-item')
+        .findAllByTestId('cf-ui-entity-list-item')
         .should('have.length', severalPendingJobsResponse().items.length);
     });
     it('renders list of completed jobs', () => {
       const completedJobsInteraction = queryCompletedJobsForDefaultSpace.willFindSeveral();
       selectCompletedTab();
       cy.wait(completedJobsInteraction);
-      cy.getByTestId('scheduled-jobs-date-group')
+      cy.findByTestId('scheduled-jobs-date-group')
         .should('be.visible')
-        .getAllByTestId('cf-ui-entity-list-item')
+        .findAllByTestId('cf-ui-entity-list-item')
         .should('have.length', severalCompletedJobsResponse.items.length);
     });
     it('renders list of failed jobs', () => {
@@ -154,11 +145,11 @@ describe('Jobs page', () => {
       selectFailedTab();
       cy.wait(failedJobsInteraction);
       cy.wait(userData);
-      cy.getAllByTestId('scheduled-job').should(
+      cy.findAllByTestId('scheduled-job').should(
         'have.length',
         severalFailedJobsResponse.items.length
       );
-      cy.getByTestId('cf-ui-tag').should('contain', 'publish failed');
+      cy.findAllByTestId('cf-ui-tag').should('contain', 'publish failed');
     });
   });
 
@@ -184,19 +175,15 @@ describe('Jobs page', () => {
       cy.wait(slowInteraction, { timeout: 10000 });
     });
     it('renders illustration and heading for error state', () => {
-      cy.getByTestId('cf-ui-tab-panel')
-        .should('be.visible')
-        .find('svg')
-        .should('be.visible')
-        .getByTestId('cf-ui-jobs-state-error')
-        .should('contain', 'Something went wrong');
+      cy.findByTestId('cf-ui-tab-panel').should('be.visible').find('svg').should('be.visible');
+      cy.findByTestId('cf-ui-jobs-state-error').should('contain', 'Something went wrong');
     });
   });
 });
 function selectCompletedTab() {
-  cy.getAllByTestId('cf-ui-tab').eq(1).click();
+  cy.findAllByTestId('cf-ui-tab').eq(1).click();
 }
 
 function selectFailedTab() {
-  cy.getAllByTestId('cf-ui-tab').eq(2).click();
+  cy.findAllByTestId('cf-ui-tab').eq(2).click();
 }

@@ -49,10 +49,10 @@ describe('Schedule Publication', () => {
       const validateAnEntryInteraction = validateAnEntryValidResponse.willSucceed();
       const scheduledPubinteraction = createScheduledPublicationForDefaultSpace.willSucceed();
 
-      cy.getByTestId('change-state-menu-trigger').click();
-      cy.getByTestId('schedule-publication').click();
+      cy.findByTestId('change-state-menu-trigger').click();
+      cy.findByTestId('schedule-publication').click();
 
-      cy.getByTestId('schedule-publication-modal')
+      cy.findByTestId('schedule-publication-modal')
         .should('be.visible')
         .find('[data-test-id="schedule-publication"]')
         .first()
@@ -60,16 +60,16 @@ describe('Schedule Publication', () => {
 
       cy.wait(validateAnEntryInteraction);
       cy.wait(scheduledPubinteraction);
-      cy.getByTestId('scheduled-item').should('have.length', 1);
+      cy.findByTestId('scheduled-item').should('have.length', 1);
     });
     it('cannot create more jobs than the set limit', () => {
       const validateAnEntryInteraction = validateAnEntryValidResponse.willSucceed();
       const scheduledPubinteraction = createScheduledPublicationForDefaultSpace.willFailWithMaxPendingJobsError();
 
-      cy.getByTestId('change-state-menu-trigger').click();
-      cy.getByTestId('schedule-publication').click();
+      cy.findByTestId('change-state-menu-trigger').click();
+      cy.findByTestId('schedule-publication').click();
 
-      cy.getByTestId('schedule-publication-modal')
+      cy.findByTestId('schedule-publication-modal')
         .should('be.visible')
         .find('[data-test-id="schedule-publication"]')
         .first()
@@ -79,7 +79,7 @@ describe('Schedule Publication', () => {
       cy.wait(scheduledPubinteraction);
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(500); // extra wait for notification animation 500ms
-      cy.getAllByTestId('cf-ui-notification')
+      cy.findAllByTestId('cf-ui-notification')
         // .should('be.visible') // This is hidden by the modal
         .should('contain', 'There is a limit of 200 scheduled entries');
     });
@@ -98,9 +98,9 @@ describe('Schedule Publication', () => {
 
       const interaction = cancelDefaultJobInDefaultSpace.willSucceed();
 
-      cy.getByTestId('cancel-job-ddl').click();
-      cy.getByTestId('cancel-job').click();
-      cy.getByTestId('job-cancellation-modal')
+      cy.findByTestId('cancel-job-ddl').click();
+      cy.findByTestId('cancel-job').click();
+      cy.findByTestId('job-cancellation-modal')
         .should('be.visible')
         .find('[data-test-id="confirm-job-cancellation"]')
         .first()
@@ -108,8 +108,8 @@ describe('Schedule Publication', () => {
 
       cy.wait(interaction);
 
-      cy.getByTestId('change-state-menu-trigger').should('be.visible');
-      cy.getByTestId('change-state-published').should('be.enabled');
+      cy.findByTestId('change-state-menu-trigger').should('be.visible');
+      cy.findByTestId('change-state-published').should('be.enabled');
     });
   });
   describe('error states', () => {
@@ -119,8 +119,8 @@ describe('Schedule Publication', () => {
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
       cy.wait(interactions, { timeout: 10000 });
 
-      cy.getByTestId('failed-job-note').should('be.visible').should('contain', 'failed');
-      cy.getByTestId('change-state-published').should('be.enabled');
+      cy.findByTestId('failed-job-note').should('be.visible').should('contain', 'failed');
+      cy.findByTestId('change-state-published').should('be.enabled');
     });
 
     it('renders error note if jobs endpoint returns 500', () => {
@@ -129,8 +129,8 @@ describe('Schedule Publication', () => {
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
       cy.wait(interactions, { timeout: 10000 });
 
-      cy.getByTestId('cf-ui-note').should('be.visible').should('contain', 'refresh');
-      cy.getByTestId('change-state-published').should('be.enabled');
+      cy.findByTestId('cf-ui-note').should('be.visible').should('contain', 'refresh');
+      cy.findByTestId('change-state-published').should('be.enabled');
     });
   });
 });

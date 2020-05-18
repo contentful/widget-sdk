@@ -26,7 +26,7 @@ describe('Webhook', () => {
   function fillInDefaultWebhookDetails() {
     cy.get('#webhook-name').type(defaultWebhook.name);
     cy.get('#webhook-url').type(defaultWebhook.url);
-    cy.getByTestId('webhook-method-select').select(defaultWebhook.method);
+    cy.findByTestId('webhook-method-select').select(defaultWebhook.method);
   }
 
   before(() =>
@@ -62,7 +62,7 @@ describe('Webhook', () => {
       ];
 
       fillInDefaultWebhookDetails();
-      cy.getByTestId('webhook-save').click();
+      cy.findByTestId('webhook-save').click();
 
       cy.wait(extraInteractions);
 
@@ -79,7 +79,7 @@ describe('Webhook', () => {
       fillInDefaultWebhookDetails();
       cy.get("[data-test-id='webhook-editor-setting-option']").eq(1).click();
       cy.get("[data-test-id='checkbox-row']").eq(0).click();
-      cy.getByTestId('webhook-save').click();
+      cy.findByTestId('webhook-save').click();
 
       cy.wait(extraInteractions);
 
@@ -94,9 +94,9 @@ describe('Webhook', () => {
       ];
 
       fillInDefaultWebhookDetails();
-      cy.getByTestId('filter-entity-type').select('Entity ID (sys.id)');
-      cy.getByTestId('filter-operation').select('in');
-      cy.getByTestId('webhook-save').click();
+      cy.findByTestId('filter-entity-type').select('Entity ID (sys.id)');
+      cy.findByTestId('filter-operation').select('in');
+      cy.findByTestId('webhook-save').click();
 
       cy.wait(extraInteractions);
 
@@ -111,10 +111,10 @@ describe('Webhook', () => {
       ];
 
       fillInDefaultWebhookDetails();
-      cy.getByTestId('add-custom-header').click();
-      cy.getByTestId('0-key').type('key');
-      cy.getByTestId('0-value').type('value');
-      cy.getByTestId('webhook-save').click();
+      cy.findByTestId('add-custom-header').click();
+      cy.findByTestId('0-key').type('key');
+      cy.findByTestId('0-value').type('value');
+      cy.findByTestId('webhook-save').click();
 
       cy.wait(extraInteractions);
 
@@ -129,11 +129,11 @@ describe('Webhook', () => {
       ];
 
       fillInDefaultWebhookDetails();
-      cy.getByTestId('add-secret-header').click();
+      cy.findByTestId('add-secret-header').click();
       cy.get('#secret-header-key').type('key');
       cy.get('#secret-header-value').type('value');
-      cy.getByTestId('add-secret-header-button').click();
-      cy.getByTestId('webhook-save').click();
+      cy.findByTestId('add-secret-header-button').click();
+      cy.findByTestId('webhook-save').click();
 
       cy.wait(extraInteractions);
 
@@ -148,11 +148,11 @@ describe('Webhook', () => {
       ];
 
       fillInDefaultWebhookDetails();
-      cy.getByTestId('add-http-basic-url-header').click();
+      cy.findByTestId('add-http-basic-url-header').click();
       cy.get('#http-basic-user').type('user');
       cy.get('#http-basic-password').type('password');
-      cy.getByTestId('add-http-header-button').click();
-      cy.getByTestId('webhook-save').click();
+      cy.findByTestId('add-http-header-button').click();
+      cy.findByTestId('webhook-save').click();
 
       cy.wait(extraInteractions);
 
@@ -167,8 +167,8 @@ describe('Webhook', () => {
       ];
 
       fillInDefaultWebhookDetails();
-      cy.getByTestId('content-type-select').select('application/json');
-      cy.getByTestId('webhook-save').click();
+      cy.findByTestId('content-type-select').select('application/json');
+      cy.findByTestId('webhook-save').click();
 
       cy.wait(extraInteractions);
 
@@ -184,7 +184,7 @@ describe('Webhook', () => {
 
       fillInDefaultWebhookDetails();
       cy.get('#webhook-content-length').click();
-      cy.getByTestId('webhook-save').click();
+      cy.findByTestId('webhook-save').click();
 
       cy.wait(extraInteractions);
 
@@ -199,9 +199,9 @@ describe('Webhook', () => {
       ];
 
       fillInDefaultWebhookDetails();
-      cy.getAllByTestId('customize-webhook-payload').click();
+      cy.findAllByTestId('customize-webhook-payload').click();
       cy.get('.CodeMirror textarea').type('{}', { force: true });
-      cy.getByTestId('webhook-save').click();
+      cy.findByTestId('webhook-save').click();
 
       cy.wait(extraInteractions);
 
@@ -222,8 +222,8 @@ describe('Webhook', () => {
     });
 
     it('renders webhook call result', () => {
-      cy.getByTestId('status-indicator').should('be.visible');
-      cy.getByTestId('cf-ui-table-row').should('have.length', 1);
+      cy.findByTestId('status-indicator').should('be.visible');
+      cy.findByTestId('cf-ui-table-body').findByTestId('cf-ui-table-row').should('have.length', 1);
     });
   });
 
@@ -240,25 +240,25 @@ describe('Webhook', () => {
     });
 
     it('renders webhook page', () => {
-      cy.getByTestId('webhook-settings-tab').click();
-      cy.getByTestId('webhook-method-select').should('have.value', 'GET');
-      cy.getByTestId('filter-entity-type').should('have.value', 'sys.id');
-      cy.getByTestId('filter-operation').should('contain', 'not equals');
-      cy.getByTestId('filter-value').should('have.value', 'master');
+      cy.findByTestId('webhook-settings-tab').click();
+      cy.findByTestId('webhook-method-select').should('have.value', 'GET');
+      cy.findByTestId('filter-entity-type').should('have.value', 'sys.id');
+      cy.findByTestId('filter-operation').should('contain', 'not equals');
+      cy.findByTestId('filter-value').should('have.value', 'master');
       cy.get('[data-test-id="setting-row"]').should('have.length', 3);
-      cy.getByTestId('0-key').should('have.value', 'custom_header');
-      cy.getByTestId('0-value').should('have.value', '123');
-      cy.getByTestId('1-key').should('have.value', 'secret_header').and('have.attr', 'disabled');
-      cy.getByTestId('1-value').should('have.attr', 'readonly');
+      cy.findByTestId('0-key').should('have.value', 'custom_header');
+      cy.findByTestId('0-value').should('have.value', '123');
+      cy.findByTestId('1-key').should('have.value', 'secret_header').and('have.attr', 'disabled');
+      cy.findByTestId('1-value').should('have.attr', 'readonly');
       cy.get('[data-test-id="1-value"]')
         .invoke('attr', 'placeholder')
         .should('be.eq', 'Value of this header is secret');
-      cy.getByTestId('2-key').should('have.value', 'Authorization').and('have.attr', 'disabled');
-      cy.getByTestId('2-value').should('have.attr', 'readonly');
+      cy.findByTestId('2-key').should('have.value', 'Authorization').and('have.attr', 'disabled');
+      cy.findByTestId('2-value').should('have.attr', 'readonly');
       cy.get('[data-test-id="2-value"]')
         .invoke('attr', 'placeholder')
         .should('be.eq', 'Value of this header is secret');
-      cy.getByTestId('content-type-select').should('contain', 'application/json');
+      cy.findByTestId('content-type-select').should('contain', 'application/json');
       cy.get('.CodeMirror-line').should('have.text', '{}');
     });
   });
@@ -281,9 +281,9 @@ describe('Webhook', () => {
         queryFirst100WebhooksInDefaultSpace.willFindNone(),
       ];
 
-      cy.getByTestId('webhook-settings-tab').click();
-      cy.getByTestId('webhook-remove').click();
-      cy.getByTestId('remove-webhook-confirm').click();
+      cy.findByTestId('webhook-settings-tab').click();
+      cy.findByTestId('webhook-remove').click();
+      cy.findByTestId('remove-webhook-confirm').click();
 
       cy.wait(extraInteractions);
 
@@ -294,9 +294,9 @@ describe('Webhook', () => {
     it.skip('checks that error response is handled properly', () => {
       const deleteInteraction = deleteDefaultWebhook.willFailWithAnInternalServerError();
 
-      cy.getByTestId('cf-ui-tab').first().click();
-      cy.getByTestId('webhook-remove').click();
-      cy.getByTestId('remove-webhook-confirm').click();
+      cy.findByTestId('cf-ui-tab').first().click();
+      cy.findByTestId('webhook-remove').click();
+      cy.findByTestId('remove-webhook-confirm').click();
 
       cy.wait(deleteInteraction);
 

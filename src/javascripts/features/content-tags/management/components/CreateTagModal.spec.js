@@ -5,11 +5,8 @@ import userEvent from '@testing-library/user-event';
 import { ReadTagsProvider } from 'features/content-tags/core/state/ReadTagsProvider';
 import { Notification } from '@contentful/forma-36-react-components';
 import { TagsRepoContext } from 'features/content-tags/core/state/TagsRepoContext';
-/*
- * We should add '@testing-library/dom' to get 'waitFor'
- * instead of using transitive (hidden) dependency 'dom-testing-library'
- */
-import { wait } from 'dom-testing-library';
+
+import { wait } from '@testing-library/dom';
 
 describe('A CreateTagModal', () => {
   beforeEach(() => {

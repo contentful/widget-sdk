@@ -24,17 +24,17 @@ describe('Content types list page', () => {
     });
 
     it('Renders the page with no content types', () => {
-      cy.getByTestId('create-content-type-empty-state').should('be.visible').should('be.enabled');
+      cy.findByTestId('create-content-type-empty-state').should('be.visible').should('be.enabled');
     });
 
     it('Shows no content type advice', () => {
-      cy.getByTestId('no-content-type-advice').should('be.visible');
+      cy.findByTestId('no-content-type-advice').should('be.visible');
     });
 
     it('redirects correctly by "Add content type" button', () => {
       const interactions = [getAllContentTypesInDefaultSpace.willReturnNone()];
 
-      cy.getByTestId('create-content-type-empty-state').click();
+      cy.findByTestId('create-content-type-empty-state').click();
 
       cy.wait(interactions);
 
@@ -55,9 +55,9 @@ describe('Content types list page', () => {
     });
 
     it('Renders the page with several content types', () => {
-      cy.getByTestId('cf-ui-table').should('be.visible');
-      cy.getByTestId('create-content-type').should('be.visible');
-      cy.getAllByTestId('content-type-item').should('have.length', severalContentTypes.total);
+      cy.findByTestId('cf-ui-table').should('be.visible');
+      cy.findByTestId('create-content-type').should('be.visible');
+      cy.findAllByTestId('content-type-item').should('have.length', severalContentTypes.total);
     });
   });
 });

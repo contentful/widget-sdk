@@ -36,11 +36,11 @@ describe('Assets List Page', () => {
       // TODO: this page is sending redundant requests, causing the this to reload twice
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(500);
-      cy.getByTestId('cf-ui-empty-state')
+      cy.findByTestId('cf-ui-empty-state')
         .should('be.visible')
         .find('#new-asset-menu')
         .should('be.visible');
-      cy.getByTestId('add-asset-menu-trigger-empty-state').should('be.enabled');
+      cy.findByTestId('add-asset-menu-trigger-empty-state').should('be.enabled');
     });
   });
 
@@ -56,9 +56,9 @@ describe('Assets List Page', () => {
       // TODO: this page is sending redundant requests, causing the this to reload twice
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(500);
-      cy.getByTestId('add-asset-menu-trigger').should('be.enabled');
-      cy.getByTestId('asset-list').should('be.visible');
-      cy.getAllByTestId('asset-row').should('have.length', severalAssetsBody.total);
+      cy.findByTestId('add-asset-menu-trigger').should('be.enabled');
+      cy.findByTestId('asset-list').should('be.visible');
+      cy.findAllByTestId('asset-row').should('have.length', severalAssetsBody.total);
     });
   });
 });

@@ -35,8 +35,8 @@ describe('Webhooks', () => {
     });
 
     it('renders table and heading', () => {
-      cy.getByTestId('cf-ui-table').should('be.visible');
-      cy.queryAllByTestId('webhook-row').should('have.length', 0);
+      cy.findByTestId('cf-ui-table').should('be.visible');
+      cy.findAllByTestId('webhook-row').should('have.length', 0);
     });
   });
 
@@ -68,7 +68,7 @@ describe('Webhooks', () => {
     });
 
     it('renders title and table raw', () => {
-      cy.getAllByTestId('webhook-row').should('have.length', 1);
+      cy.findAllByTestId('webhook-row').should('have.length', 1);
     });
   });
 });

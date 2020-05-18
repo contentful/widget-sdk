@@ -144,12 +144,12 @@ describe('Tasks entry editor sidebar', () => {
 
         getTaskKebabMenu(task).should('be.enabled').click();
 
-        return getTaskKebabMenuItems(task).get('[data-test-id="delete-task"]').debug();
+        return getTaskKebabMenuItems().get('[data-test-id="delete-task"]').debug();
       }
 
       function deleteTaskUsingKebabMenu(task) {
         getDeleteTaskKebabMenuItem(task).click();
-        cy.getByTestId('cf-ui-modal-confirm-confirm-button').click();
+        cy.findByTestId('cf-ui-modal-confirm-confirm-button').click();
       }
     });
 
@@ -216,13 +216,13 @@ describe('Tasks entry editor sidebar', () => {
 
         getTaskKebabMenu(task).should('be.enabled').click();
 
-        return getTaskKebabMenuItems(task).get('[data-test-id="edit-task"]');
+        return getTaskKebabMenuItems().get('[data-test-id="edit-task"]');
       }
 
       function updateTaskAndSave(task: Cypress.Chainable, { body, assigneeId }: TaskUpdate) {
         getEditTaskKebabMenuItem(task).click();
         if (body) {
-          getTaskBodyTextarea(task)
+          getTaskBodyTextarea()
             .should('have.text', severalTasksDefinition.items[0].body)
             .clear()
             .type(body);
@@ -301,24 +301,24 @@ describe('Tasks entry editor sidebar', () => {
   });
 });
 
-const getTasksSidebarSection = () => cy.getByTestId('sidebar-tasks-widget');
-const getCreateTaskAction = () => getTasksSidebarSection().getByTestId('create-task');
+const getTasksSidebarSection = () => cy.findByTestId('sidebar-tasks-widget');
+const getCreateTaskAction = () => getTasksSidebarSection().findByTestId('create-task');
 const getTaskListError = () => getTasksSidebarSection().get('[data-test-id="task-list-error"]');
 const getTasks = () => getTasksSidebarSection().get('[data-test-id="task"]');
 const getDraftTask = () => getTasksSidebarSection().get('[data-test-id="task-draft"]');
-const getDraftTaskInput = () => getDraftTask().getByTestId('task-title-input').find('textarea');
+const getDraftTaskInput = () => getDraftTask().findByTestId('task-title-input').find('textarea');
 const getDraftAssigneeSelector = () => getSelectElement(getDraftTask());
 const expectTask = (task: Cypress.Chainable, { isResolved }) =>
   getTaskCheckbox(task)
     .should('be.enabled')
     .should(isResolved ? 'have.attr' : 'not.have.attr', 'checked');
 const getSelectElement = (chainable: Cypress.Chainable) =>
-  chainable.getByTestId('task-assignee-select').getByTestId('cf-ui-select');
-const getDraftTaskSaveAction = () => getDraftTask().getByTestId('save-task');
-const getDraftTaskError = () => getDraftTask().queryByTestId('cf-ui-validation-message');
-const getTaskKebabMenu = (task: Cypress.Chainable) => task.getByTestId('cf-ui-icon-button');
-const getTaskKebabMenuItems = (task: Cypress.Chainable) => task.getByTestId('cf-ui-dropdown-list');
-const getTaskBodyTextarea = (task: Cypress.Chainable) => task.getByTestId('cf-ui-textarea');
+  chainable.findByTestId('task-assignee-select').findByTestId('cf-ui-select');
+const getDraftTaskSaveAction = () => getDraftTask().findByTestId('save-task');
+const getDraftTaskError = () => getDraftTask().findByTestId('cf-ui-validation-message');
+const getTaskKebabMenu = (task: Cypress.Chainable) => task.findByTestId('cf-ui-icon-button');
+const getTaskKebabMenuItems = () => cy.findByTestId('cf-ui-dropdown-list');
+const getTaskBodyTextarea = () => cy.findByTestId('cf-ui-textarea');
 const selectTaskAssignee = (assigneeId: string) => getSelectElement(cy).select(assigneeId);
-const saveUpdatedTask = () => cy.getByTestId('save-task').click();
+const saveUpdatedTask = () => cy.findByTestId('save-task').click();
 const getTaskCheckbox = (task: Cypress.Chainable) => task.find('[data-test-id="status-checkbox"]');

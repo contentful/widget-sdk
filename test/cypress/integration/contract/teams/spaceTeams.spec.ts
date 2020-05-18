@@ -151,7 +151,7 @@ describe('Teams in space page', () => {
     });
 
     it('renders empty placeholder', () => {
-      cy.getByTestId('no-teams-in-space-placeholder').should('be.visible');
+      cy.findByTestId('no-teams-in-space-placeholder').should('be.visible');
     });
   });
 
@@ -246,10 +246,10 @@ describe('Teams in space page', () => {
     });
 
     it('renders the table with 3 teams', () => {
-      cy.getByTestId('membership-table').should('be.visible');
+      cy.findByTestId('membership-table').should('be.visible');
 
-      cy.getAllByTestId('membership-row').should('have.length', 3);
-      cy.getAllByTestId('membership-row').then((rows) => {
+      cy.findAllByTestId('membership-row').should('have.length', 3);
+      cy.findAllByTestId('membership-row').then((rows) => {
         cy.wrap(rows[0]).should('be.visible');
         cy.wrap(rows[0]).contains('td', '2 members').should('be.visible');
         cy.wrap(rows[0]).contains('td', 'Team 1').should('be.visible');
@@ -299,17 +299,17 @@ describe('Teams in space page', () => {
           },
         }).as(editmembershipInteraction);
 
-        cy.getByTestId('row-menu').first().click();
-        cy.getByTestId('change-role').click();
-        cy.getByTestId('space-role-editor.button').click();
-        cy.getAllByTestId('space-role-editor.role-option').first().click();
-        cy.getByTestId('confirm-change-role').click();
+        cy.findAllByTestId('row-menu').first().click();
+        cy.findByTestId('change-role').click();
+        cy.findByTestId('space-role-editor.button').click();
+        cy.findAllByTestId('space-role-editor.role-option').first().click();
+        cy.findByTestId('confirm-change-role').click();
 
         cy.wait(`@${editmembershipInteraction}`);
       });
 
       it('should have changed role', () => {
-        cy.getAllByTestId('membership-row').first().as('firstRow');
+        cy.findAllByTestId('membership-row').first().as('firstRow');
         cy.get('@firstRow').contains('td', 'Role 1').should('be.visible');
         cy.get('@firstRow').contains('td', 'Team 1').should('be.visible');
       });
@@ -332,15 +332,15 @@ describe('Teams in space page', () => {
           },
         }).as(removeTeamInteraction);
 
-        cy.getByTestId('row-menu').first().click();
-        cy.getByTestId('remove-team').click();
-        cy.getByTestId('cf-ui-modal-confirm-confirm-button').click();
+        cy.findAllByTestId('row-menu').first().click();
+        cy.findByTestId('remove-team').click();
+        cy.findByTestId('cf-ui-modal-confirm-confirm-button').click();
 
         cy.wait(`@${removeTeamInteraction}`);
       });
 
       it('should have removed team from space', () => {
-        cy.getAllByTestId('membership-row').first().as('firstRow');
+        cy.findAllByTestId('membership-row').first().as('firstRow');
         cy.get('@firstRow').contains('td', 'Team 1').should('not.exist');
       });
     });

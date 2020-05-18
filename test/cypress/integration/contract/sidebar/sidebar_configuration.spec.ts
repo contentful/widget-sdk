@@ -53,7 +53,7 @@ describe('Sidebar configuration', () => {
   describe('Saving the content type with configured custom sidebar', () => {
     beforeEach(() => {
       cy.resetAllFakeServers();
-      cy.getByTestId('custom-sidebar-option').find('input').click();
+      cy.findByTestId('custom-sidebar-option').find('input').click();
     });
 
     it('checks that content type with a custom sidebar has been successfully saved', () => {
@@ -64,9 +64,9 @@ describe('Sidebar configuration', () => {
         saveDefaultContentTypeEditorInterface.willSucceed(),
       ];
 
-      cy.getAllByTestId('cf-ui-icon-button').first().click();
+      cy.findAllByTestId('cf-ui-icon-button').first().click();
 
-      cy.getByTestId('save-content-type').click();
+      cy.findByTestId('save-content-type').click();
 
       cy.wait(interactions);
 

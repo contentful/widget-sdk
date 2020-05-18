@@ -92,8 +92,8 @@ describe('Entries list page', () => {
     });
 
     it('renders entries page correctly', () => {
-      cy.getByTestId('no-content-type-advice').should('be.visible');
-      cy.getByTestId('create-content-type-empty-state').should('be.enabled');
+      cy.findByTestId('no-content-type-advice').should('be.visible');
+      cy.findByTestId('create-content-type-empty-state').should('be.enabled');
     });
   });
 
@@ -143,8 +143,8 @@ describe('Entries list page', () => {
     });
 
     it('renders entries page correctly', () => {
-      cy.getByTestId('no-entries-advice').should('be.visible');
-      cy.getByTestId('create-entry-button-menu-trigger')
+      cy.findByTestId('no-entries-advice').should('be.visible');
+      cy.findByTestId('create-entry-button-menu-trigger')
         .should('be.visible')
         .find('button')
         .should('be.enabled');
@@ -160,12 +160,12 @@ describe('Entries list page', () => {
         queryAllScheduledJobsForDefaultEntry.willFindOnePendingJob(),
       ];
 
-      cy.getByTestId('create-entry-button-menu-trigger').click();
+      cy.findByTestId('create-entry-button-menu-trigger').click();
 
       cy.wait(interactions);
 
-      cy.getByTestId('entity-field-controls').should('be.visible');
-      cy.getByTestId('entry-editor-sidebar').should('be.visible');
+      cy.findByTestId('entity-field-controls').should('be.visible');
+      cy.findByTestId('entry-editor-sidebar').should('be.visible');
     });
   });
 
@@ -201,14 +201,14 @@ describe('Entries list page', () => {
     });
 
     it('renders entries page correctly', () => {
-      cy.getByTestId('entry-list').should('be.visible');
-      cy.getAllByTestId('entry-row').should('have.length', severalEntriesResponse.total);
+      cy.findByTestId('entry-list').should('be.visible');
+      cy.findAllByTestId('entry-row').should('have.length', severalEntriesResponse.total);
     });
 
     it('renders the tooltip for the scheduled the entry', () => {
-      cy.getByTestId('schedule-icon').trigger('mouseover');
-      cy.getByTestId(defaultJobId).should('be.visible').and('have.attr', 'role', 'tooltip');
-      cy.getByTestId(defaultJobId)
+      cy.findByTestId('schedule-icon').trigger('mouseover');
+      cy.findByTestId(defaultJobId).should('be.visible').and('have.attr', 'role', 'tooltip');
+      cy.findByTestId(defaultJobId)
         .find('p[data-test-id="cf-ui-paragraph"]')
         .should('have.text', '+ 2 more');
     });
@@ -256,7 +256,7 @@ describe('Entries list page', () => {
     });
 
     it('renders a disabled "Add Entry" button', () => {
-      cy.getByTestId('create-entry-button').should('be.disabled');
+      cy.findByTestId('create-entry-button').should('be.disabled');
     });
   });
 });

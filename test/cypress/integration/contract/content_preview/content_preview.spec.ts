@@ -40,7 +40,7 @@ describe('Content Preview Page', () => {
 
   describe('opening the page', () => {
     it('renders create new content preview page', () => {
-      cy.getByTestId('cf-ui-form')
+      cy.findByTestId('cf-ui-form')
         .should('be.visible')
         .get('h3')
         .should('contain', 'Content preview URLs');
@@ -48,7 +48,7 @@ describe('Content Preview Page', () => {
 
     // TODO: Does this test belongs to contract tests?
     it('has a save button disabled', () => {
-      cy.getByTestId('save-content-preview').should('be.disabled');
+      cy.findByTestId('save-content-preview').should('be.disabled');
     });
   });
 
@@ -87,19 +87,19 @@ describe('Content Preview Page', () => {
         queryFirst100PreviewEnvironments.willFindNone(),
       ];
 
-      cy.getByTestId('cf-ui-text-input')
+      cy.findByTestId('cf-ui-text-input')
         .type(defaultPreviewName)
         .should('have.value', defaultPreviewName);
-      cy.getByTestId('cf-ui-textarea')
+      cy.findByTestId('cf-ui-textarea')
         .type(defaultPreviewDescription)
         .should('have.value', defaultPreviewDescription);
-      cy.getByTestId('save-content-preview').should('be.enabled').click();
+      cy.findByTestId('save-content-preview').should('be.enabled').click();
 
       cy.wait(interactions);
     });
 
     it('submit the form correctly', () => {
-      cy.getByTestId('cf-ui-notification').should('contain', 'success');
+      cy.findByTestId('cf-ui-notification').should('contain', 'success');
       // TODO: Does this test belongs to contract tests?
       // NOTE: the app will navigate away from this page after a short time
       cy.url().should('include', defaultPreviewId);

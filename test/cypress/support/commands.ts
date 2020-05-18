@@ -57,7 +57,7 @@ export function disableFeatureFlags(flags: Array<string>): void {
 }
 
 export function verifyNotification(type: 'success' | 'error', message: string) {
-  cy.getByTestId('cf-ui-notification')
+  cy.findByTestId('cf-ui-notification')
     .should('contain', message)
     .should('have.attr', 'data-intent')
     .and('be.eq', type);

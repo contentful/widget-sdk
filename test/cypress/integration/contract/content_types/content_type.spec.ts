@@ -29,8 +29,8 @@ describe('Content type page', () => {
     });
     it('renders the page', () => {
       cy.get('[name=contentTypeForm]').should('be.visible');
-      cy.getByTestId('save-content-type').should('be.enabled');
-      cy.getByTestId('add-field-button').should('be.enabled');
+      cy.findByTestId('save-content-type').should('be.enabled');
+      cy.findByTestId('add-field-button').should('be.enabled');
     });
   });
 });

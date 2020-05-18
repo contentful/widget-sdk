@@ -37,7 +37,7 @@ describe('Entries page', () => {
       it('shows the default sidebar', () => {
         const widgetNames = ['Status', 'Preview', 'Links', 'Translation', 'Versions', 'Users'];
 
-        cy.getByTestId('entry-editor-sidebar')
+        cy.findByTestId('entry-editor-sidebar')
           .find('h2')
           .should('have.length', widgetNames.length)
           .each(($widget, index) => {
@@ -57,7 +57,7 @@ describe('Entries page', () => {
     });
     describe('Opening the Entry page', () => {
       it('shows the customised sidebar', () => {
-        cy.getByTestId('entry-editor-sidebar')
+        cy.findByTestId('entry-editor-sidebar')
           .find('h2')
           .should('have.length', '1')
           .and('contain', 'Status');

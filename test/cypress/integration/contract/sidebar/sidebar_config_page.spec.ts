@@ -30,14 +30,14 @@ describe('Sidebar configuration', () => {
 
   describe('Opening the page with no configuration saved', () => {
     it('displays sidebar options correctly', () => {
-      cy.getByTestId('default-sidebar-option').find('input').should('be.checked');
-      cy.getByTestId('custom-sidebar-option').find('input').should('not.be.checked');
+      cy.findByTestId('default-sidebar-option').find('input').should('be.checked');
+      cy.findByTestId('custom-sidebar-option').find('input').should('not.be.checked');
     });
 
     it('renders the page with a sidebar with no configurations', () => {
-      cy.getByTestId('default-sidebar-column')
+      cy.findByTestId('default-sidebar-column')
         .should('be.visible')
-        .getAllByTestId('sidebar-widget-name')
+        .findAllByTestId('sidebar-widget-name')
         .should('have.length', widgetNames.length)
         .each(($widget, index) => {
           cy.wrap($widget).should('have.text', widgetNames[index]);
@@ -47,12 +47,12 @@ describe('Sidebar configuration', () => {
 
   describe('Enabling of a custom sidebar configuration option', () => {
     beforeEach(() => {
-      cy.getByTestId('custom-sidebar-option').find('input').click();
+      cy.findByTestId('custom-sidebar-option').find('input').click();
     });
 
     it('renders the page with custom sidebar configuration option enabled', () => {
-      cy.getByTestId('custom-sidebar-column').should('be.visible');
-      cy.getByTestId('available-sidebar-items').should('be.visible');
+      cy.findByTestId('custom-sidebar-column').should('be.visible');
+      cy.findByTestId('available-sidebar-items').should('be.visible');
     });
 
     it('checks changing the order of widgets in custom sidebar', () => {
@@ -67,7 +67,7 @@ describe('Sidebar configuration', () => {
         'Users',
       ];
 
-      cy.getAllByTestId('sidebar-widget-item-draggable')
+      cy.findAllByTestId('sidebar-widget-item-draggable')
         .eq(3)
         .focus()
         .wait(0.2 * 1000)
@@ -76,26 +76,26 @@ describe('Sidebar configuration', () => {
         .trigger('keydown', { keyCode: arrowDown, force: true })
         .wait(0.2 * 1000)
         .trigger('keydown', { keyCode: space, force: true });
-      cy.getByTestId('custom-sidebar-column').should('be.visible');
-      cy.getAllByTestId('sidebar-widget-name').each(($widget, index) => {
+      cy.findByTestId('custom-sidebar-column').should('be.visible');
+      cy.findAllByTestId('sidebar-widget-name').each(($widget, index) => {
         cy.wrap($widget).should('have.text', widgetsReordered[index]);
       });
     });
 
     it('moves widget from a custom sidebar to available items and vice versa', () => {
-      cy.getAllByTestId('sidebar-widget-item')
+      cy.findAllByTestId('sidebar-widget-item')
         .eq(0)
-        .getAllByTestId('cf-ui-icon-button')
+        .findAllByTestId('cf-ui-icon-button')
         .eq(0)
         .click();
-      cy.getAllByTestId('sidebar-widget-name')
+      cy.findAllByTestId('sidebar-widget-name')
         .should('have.length', widgetNames.length - 1)
         .should('not.contain', 'Publish & Status');
-      cy.getAllByTestId('available-widget')
+      cy.findAllByTestId('available-widget')
         .should('have.length', 1)
-        .getByTestId('add-widget-to-sidebar')
+        .findByTestId('add-widget-to-sidebar')
         .click();
-      cy.getAllByTestId('sidebar-widget-name').should('have.length', widgetNames.length);
+      cy.findAllByTestId('sidebar-widget-name').should('have.length', widgetNames.length);
     });
   });
 });
