@@ -1,6 +1,8 @@
 import { getOrganization } from 'services/TokenStore';
-import { openModal as openCommittedSpaceWarningDialog } from 'components/shared/space-wizard/CommittedSpaceWarningModal';
-import { openModal as openPOCSpaceWarningDialog } from 'components/shared/space-wizard/POCSpaceWarningModal';
+import {
+  open as openChangeSpaceWarningModal,
+  MODAL_TYPES,
+} from 'app/SpaceWizards/ChangeSpaceWarning';
 import { getSingleSpacePlan, isPOCSpacePlan } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getModule } from 'core/NgRegistry';
@@ -50,9 +52,9 @@ export async function showDialog({ organizationId, space, action, scope, onSubmi
   const spacePlan = await getSingleSpacePlan(orgEndpoint, space.sys.id);
 
   if (spacePlan && spacePlan.committed) {
-    openCommittedSpaceWarningDialog();
+    openChangeSpaceWarningModal(MODAL_TYPES.COMMITTED);
   } else if (isPOCSpacePlan(spacePlan)) {
-    openPOCSpaceWarningDialog();
+    openChangeSpaceWarningModal(MODAL_TYPES.POC);
   } else {
     modalDialog.open({
       title: 'Create new space',

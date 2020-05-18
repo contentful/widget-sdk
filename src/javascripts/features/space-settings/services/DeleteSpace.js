@@ -10,7 +10,10 @@ import {
 } from '@contentful/forma-36-react-components';
 import * as TokenStore from 'services/TokenStore';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
-import { openModal as openCommittedSpaceWarningDialog } from 'components/shared/space-wizard/CommittedSpaceWarningModal';
+import {
+  open as openChangeSpaceWarningModal,
+  MODAL_TYPES,
+} from 'app/SpaceWizards/ChangeSpaceWarning';
 import APIClient from 'data/APIClient';
 import { isEnterprisePlan, isFreeSpacePlan } from 'account/pricing/PricingDataProvider';
 import { ModalLauncher } from 'core/components/ModalLauncher';
@@ -106,7 +109,9 @@ DeleteSpaceModal.propTypes = {
 
 export async function openDeleteSpaceDialog({ space, plan, onSuccess }) {
   if (plan && isEnterprisePlan(plan) && !isFreeSpacePlan(plan)) {
-    return openCommittedSpaceWarningDialog();
+    openChangeSpaceWarningModal(MODAL_TYPES.COMMITTED);
+
+    return;
   }
 
   const modalKey = Date.now();
