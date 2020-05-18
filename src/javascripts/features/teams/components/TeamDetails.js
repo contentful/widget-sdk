@@ -54,16 +54,24 @@ TeamDetails.propTypes = {
   emptyTeamMemberships: PropTypes.bool,
   emptyTeamSpaceMemberships: PropTypes.bool,
   noOrgMembersLeft: PropTypes.bool,
+  allTeams: PropTypes.objectOf(TeamPropType),
 };
 
-export function TeamDetails({ team, orgId, readOnlyPermission }) {
+export function TeamDetails({ team, allTeams, orgId, readOnlyPermission }) {
   const [showTeamDialog, setShowTeamDialog] = useState(false);
+  const [teamName, setTeamName] = useState(team.name);
+  const [teamDescription, setTeamDescription] = useState(team.description);
   const path = ['organization', 'teams'];
 
   const deleteTeam = async () => {
     const endpoint = createOrganizationEndpoint(this.props.orgId);
     await removeTeam(endpoint, this.props.team.sys.id);
     this.setState({ showingTeamDialog: true });
+  };
+
+  const onUpdateTeamDetailsValues = ({ name, description }) => {
+    setTeamName(name);
+    setTeamDescription(description);
   };
 
   return (
@@ -82,14 +90,14 @@ export function TeamDetails({ team, orgId, readOnlyPermission }) {
               <section className={styles.profileSection}>
                 <div className={styles.card}>
                   <Subheading className={styles.name} testId="team-card-name" title={team.name}>
-                    {team.name}
+                    {teamName}
                   </Subheading>
-                  {team.description && (
+                  {teamDescription && (
                     <div
                       className={styles.description}
                       data-test-id="team-card-description"
-                      title={team.description}>
-                      {team.description.split('\n').reduce((acc, cur, idx) => {
+                      title={teamDescription}>
+                      {teamDescription.split('\n').reduce((acc, cur, idx) => {
                         if (idx === 0) {
                           return [...acc, cur];
                         }
@@ -162,9 +170,11 @@ export function TeamDetails({ team, orgId, readOnlyPermission }) {
         )}
         <TeamDialog
           testId="edit-team-dialog"
-          onClose={() => setShowTeamDialog(true)}
+          onClose={() => setShowTeamDialog(false)}
           isShown={showTeamDialog}
           initialTeam={team}
+          allTeams={allTeams}
+          updateTeamDetailsValues={onUpdateTeamDetailsValues}
         />
       </Workbench.Content>
     </Workbench>

@@ -11,18 +11,19 @@ import StateRedirect from 'app/common/StateRedirect';
 import { FetcherLoading } from 'app/common/createFetcherComponent';
 import { getOrganization } from 'services/TokenStore';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
-import { getTeam } from '../services/TeamRepo';
+import { getTeam, getAllTeams } from '../services/TeamRepo';
 
 const TeamDetailsFetcher = createFetcherComponent(async ({ orgId, teamId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
-  const [team, organization, newTeamDetailsEnabled] = await Promise.all([
+  const [team, allTeams, organization, newTeamDetailsEnabled] = await Promise.all([
     getTeam(endpoint, teamId),
+    getAllTeams(endpoint),
     getOrganization(orgId),
     getVariation(NEW_TEAM_DETAILS),
   ]);
 
   const readOnlyPermission = !isOwnerOrAdmin(organization);
-  return { team, readOnlyPermission, newTeamDetailsEnabled };
+  return { team, allTeams, readOnlyPermission, newTeamDetailsEnabled };
 });
 export class TeamDetailsRoute extends React.Component {
   static propTypes = {
@@ -48,6 +49,7 @@ export class TeamDetailsRoute extends React.Component {
                   team={data.team}
                   readOnlyPermission={data.readOnlyPermission}
                   orgId={this.props.orgId}
+                  allTeams={data.allTeams}
                 />
               );
             }
