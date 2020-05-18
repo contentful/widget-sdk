@@ -324,10 +324,14 @@ export function createTrackingData(data) {
     recommendedPlan,
     newSpaceName,
     newSpaceTemplate,
+    wizardScope,
+    wizardSessionId,
     spaceId,
   } = data;
 
-  const trackingData = {
+  return {
+    wizardSessionId: wizardSessionId || null,
+    wizardScope: wizardScope || null,
     currentStep: currentStepId || null,
     targetStep: targetStepId || null,
     intendedAction: action,
@@ -340,11 +344,6 @@ export function createTrackingData(data) {
     currentProductType: get(currentPlan, 'productType', null),
     recommendedSpaceType: get(recommendedPlan, 'internalName', null),
     recommendedProductType: get(recommendedPlan, 'productType', null),
+    ...(spaceId && { spaceId }),
   };
-
-  if (spaceId) {
-    trackingData.spaceId = spaceId;
-  }
-
-  return trackingData;
 }

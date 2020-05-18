@@ -269,6 +269,10 @@ export function track(eventName, data) {
   };
 }
 
+export function setSessionId(token) {
+  return (dispatch) => dispatch(actions.spaceWizardCreateSession(token));
+}
+
 export function navigate(stepId) {
   return (dispatch) => dispatch(actions.spaceWizardNavigate(stepId));
 }

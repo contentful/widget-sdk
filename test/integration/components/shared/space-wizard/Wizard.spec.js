@@ -222,6 +222,10 @@ describe('Space Wizard', function () {
       },
     });
 
+    this.system.set('utils/Random', {
+      alnum: () => 'random_token',
+    });
+
     const { default: Wizard } = await this.system.import('components/shared/space-wizard/Wizard');
     this.store = (await this.system.import('redux/store')).default;
 
@@ -254,6 +258,8 @@ describe('Space Wizard', function () {
 
     this.createTrackingDataWithAction = function (intendedAction, newData = {}) {
       const base = {
+        wizardSessionId: 'random_token',
+        wizardScope: 'space',
         intendedAction,
         currentSpaceType: null,
         currentProductType: null,
@@ -327,6 +333,7 @@ describe('Space Wizard', function () {
           'space_wizard:open',
           this.createTrackingData({
             paymentDetailsExist: true,
+            wizardScope: 'space',
           })
         );
 
@@ -459,6 +466,8 @@ describe('Space Wizard', function () {
           7,
           'space_wizard:space_create',
           this.createTrackingData({
+            wizardScope: null,
+            wizardSessionId: null,
             spaceId: this.newSpace.sys.id,
           })
         );
@@ -549,7 +558,14 @@ describe('Space Wizard', function () {
         await this.selectPlan(wizard, 1);
         await this.confirm(wizard);
 
-        this.assertArgument(this.stubs.track, 4, 'space_wizard:confirm', this.createTrackingData());
+        this.assertArgument(
+          this.stubs.track,
+          4,
+          'space_wizard:confirm',
+          this.createTrackingData({
+            wizardScope: 'space',
+          })
+        );
       });
 
       it('should fire the space_type_change event when the space type is changed on the API', async function () {
@@ -563,7 +579,7 @@ describe('Space Wizard', function () {
           this.stubs.track,
           5,
           'space_wizard:space_type_change',
-          this.createTrackingData()
+          this.createTrackingData({ wizardScope: null, wizardSessionId: null })
         );
       });
     });

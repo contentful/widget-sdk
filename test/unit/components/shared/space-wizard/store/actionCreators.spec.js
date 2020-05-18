@@ -353,6 +353,8 @@ describe('Space Wizard action creators', function () {
             currentProductType: null,
             recommendedSpaceType: null,
             recommendedProductType: null,
+            wizardSessionId: null,
+            wizardScope: null,
           },
         },
       ]);

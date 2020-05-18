@@ -78,7 +78,7 @@ export default function SubscriptionPage({ organizationId, data }) {
     };
   };
 
-  const changeSpace = (space, action) => {
+  const changeSpace = (space) => {
     return () => {
       track('subscription_overview:upgrade_plan_link_clicked', {
         organizationId,
@@ -86,10 +86,10 @@ export default function SubscriptionPage({ organizationId, data }) {
       });
 
       showChangeSpaceModal({
+        action: 'change',
         organizationId,
         scope: 'organization',
         space,
-        action,
         onSubmit: async (productRatePlanId) => {
           // Update current spacePlan for this space with new data
           const productRatePlan = data.productRatePlans.find(

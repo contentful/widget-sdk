@@ -27,6 +27,11 @@ export default SpaceWizardTransformer;
 
 export function getSpaceWizardData(action, data) {
   return {
+    wizardSessionId: data.wizardSessionId || null,
+
+    // The starting point of this wizard or where it was opened
+    wizardScope: data.wizardScope || null,
+
     // The current action the user is performing.
     //
     // See below in the validation function for enum
