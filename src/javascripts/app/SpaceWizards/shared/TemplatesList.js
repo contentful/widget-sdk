@@ -6,12 +6,12 @@ import { get } from 'lodash';
 export default function TemplatesList(props) {
   const { templates, selectedTemplate, onSelect } = props;
 
-  if (!templates) {
+  if (!templates || templates.length === 0) {
     return null;
   }
 
   return (
-    <div className="create-new-space__templates__inner">
+    <div data-test-id="template-list-wrapper" className="create-new-space__templates__inner">
       <div className="create-new-space__templates__nav">
         {templates.map((template) => {
           const isSelected = get(selectedTemplate, 'sys.id') === get(template, 'sys.id');
@@ -27,7 +27,9 @@ export default function TemplatesList(props) {
         })}
       </div>
       {selectedTemplate && (
-        <div className="create-new-space__templates__description">
+        <div
+          data-test-id="selected-template-details"
+          className="create-new-space__templates__description">
           <img
             className="create-new-space__templates__image"
             src={get(selectedTemplate, 'image.fields.file.url')}

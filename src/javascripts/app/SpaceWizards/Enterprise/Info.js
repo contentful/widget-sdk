@@ -26,7 +26,7 @@ export default function Info() {
         to launch.
       </Paragraph>
       {showMore && (
-        <div className={styles.showMoreSection}>
+        <div data-test-id="show-more-section" className={styles.showMoreSection}>
           <Paragraph>
             A proof of concept space is free of charge until you decide to use it for a live
             application. We can then help you to convert it to a regular production space.
@@ -34,11 +34,13 @@ export default function Info() {
           <Paragraph>
             Proof of concept spaces share the same limits for API requests and asset bandwidth with
             the other spaces in your organization.{' '}
-            <TextLink onClick={onLearnMore}>Learn more</TextLink>
+            <TextLink testId="learn-more-link" onClick={onLearnMore}>
+              Learn more
+            </TextLink>
           </Paragraph>
         </div>
       )}
-      <TextLink onClick={() => setShowMore(!showMore)}>
+      <TextLink testId="show-more-link" onClick={() => setShowMore(!showMore)}>
         {showMore ? 'Show less' : 'Show more'}
       </TextLink>
     </section>

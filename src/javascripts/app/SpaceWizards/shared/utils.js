@@ -38,7 +38,11 @@ const ResourceTooltips = {
       </Paragraph>
     </div>
   ),
-  [SpaceResourceTypes.Records]: () => 'Records are entries and assets combined.',
+  [SpaceResourceTypes.Records]: () => (
+    <div>
+      <Paragraph>Records are entries and assets combined.</Paragraph>
+    </div>
+  ),
 };
 
 async function makeNewSpace(name, plan, organizationId) {
@@ -245,7 +249,9 @@ async function tryCreateTemplate(templateCreator, templateData, retried) {
     ]);
   } catch (err) {
     if (!retried) {
-      await tryCreateTemplate(templateCreator, err.template, true);
+      return tryCreateTemplate(templateCreator, err.template, true);
     }
+
+    throw err;
   }
 }

@@ -62,9 +62,9 @@ const submit = async (
   freeSpaceRatePlan,
   setShowProgressScreen,
   onClose,
-  setProcessing
+  onProcessing
 ) => {
-  setProcessing(true);
+  onProcessing(true);
 
   if (selectedTemplate) {
     await createSpaceWithTemplate({
@@ -75,7 +75,7 @@ const submit = async (
       onTemplateCreationStarted: () => setShowProgressScreen(true),
     });
 
-    setProcessing(false);
+    onProcessing(false);
   } else {
     await createSpace({
       name: spaceName,
@@ -131,7 +131,7 @@ export default function Wizard(props) {
       {!showProgressScreen && (
         <>
           <Modal.Header title="Create a space" onClose={onClose} />
-          <Modal.Content>
+          <Modal.Content testId="enterprise-wizard-contents">
             <Typography>
               {!isHighDemand && <POCInfo />}
               <POCPlan
@@ -150,6 +150,7 @@ export default function Wizard(props) {
                     required
                     value={spaceName}
                     disabled={isCreatingSpace}
+                    testId="space-name"
                     name="spaceName"
                     id="spaceName"
                     labelText="Space name"
@@ -171,13 +172,13 @@ export default function Wizard(props) {
               {!showForm && (
                 <>
                   {reachedLimit && !isFeatureDisabled && (
-                    <Note>
+                    <Note testId="reached-limit-note">
                       You’ve created {limit} proof of concept spaces. Delete an existing one or talk
                       to us if you need more.
                     </Note>
                   )}
                   {isFeatureDisabled && (
-                    <Note>
+                    <Note testId="poc-not-enabled-note">
                       You can’t create proof of concept spaces because they’re not a part of your
                       enterprise deal with Contentful. Get in touch with us if you want to create
                       new spaces.
@@ -192,7 +193,7 @@ export default function Wizard(props) {
               <ContactUsButton noIcon onClick={() => onClose()}>
                 Talk to us
               </ContactUsButton>
-              <Button buttonType="muted" onClick={() => onClose()}>
+              <Button testId="close-wizard" buttonType="muted" onClick={() => onClose()}>
                 Close
               </Button>
             </Modal.Controls>
@@ -200,6 +201,7 @@ export default function Wizard(props) {
           {showForm && (
             <Modal.Controls>
               <Button
+                testId="create-space-button"
                 buttonType="primary"
                 disabled={isCreatingSpace || spaceName === ''}
                 loading={isCreatingSpace}

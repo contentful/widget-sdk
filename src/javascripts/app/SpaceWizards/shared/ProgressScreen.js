@@ -58,10 +58,10 @@ export default function ProgressScreen(props) {
 
   return (
     <Typography>
-      <div className="create-new-space__templates__status" data-test-id="create-space-progress">
-        {!done && <Spinner size="large" />}
+      <div className="create-new-space__templates__status">
+        {!done && <Spinner testId="create-space-progress" size="large" />}
         {done && (
-          <div className={styles.checkmarkIcon} data-test-id="create-space-create-done">
+          <div className={styles.checkmarkIcon} data-test-id="create-space-done">
             <CheckmarkIcon />
           </div>
         )}
@@ -84,7 +84,7 @@ export default function ProgressScreen(props) {
         ))}
       </div>
       <div className={styles.center}>
-        <Button disabled={!done} loading={!done} onClick={onConfirm} testId="get-started">
+        <Button disabled={!done} loading={!done} onClick={onConfirm} testId="get-started-button">
           Get started
         </Button>
       </div>

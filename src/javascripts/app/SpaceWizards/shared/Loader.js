@@ -16,7 +16,7 @@ const styles = {
 
 export default function Loader() {
   return (
-    <div className={styles.spinnerWrapper}>
+    <div data-test-id="wizard-loader" className={styles.spinnerWrapper}>
       <Spinner size="large" />
     </div>
   );

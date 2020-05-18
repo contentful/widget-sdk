@@ -9,6 +9,7 @@ export default function TemplatesToggle(props) {
   const { isShowingTemplates, onChange, formAlign } = props;
   return (
     <div
+      data-test-id="templates-toggle-wrapper"
       className={classnames('cfnext-form__field create-new-space__form__radios', {
         'create-space-wizard__centered-block': !formAlign || formAlign === 'center',
       })}>
@@ -21,7 +22,7 @@ export default function TemplatesToggle(props) {
           onChange={() => onChange(false)}
           checked={!isShowingTemplates}
           value="false"
-          testId="newspace-template-none"
+          testId="template-toggle-false"
         />
         <RadioButtonField
           name="isShowingTemplates"
@@ -31,7 +32,7 @@ export default function TemplatesToggle(props) {
           onChange={() => onChange(true)}
           checked={isShowingTemplates}
           value="true"
-          testId="newspace-template-usetemplate"
+          testId="template-toggle-true"
         />
       </FieldGroup>
     </div>

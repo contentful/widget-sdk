@@ -26,7 +26,7 @@ export default function PlanFeatures({ resources, roleSet, disabled }) {
         }
 
         return (
-          <ListItem key={type}>
+          <ListItem testId="resource" key={type}>
             {toLocaleString(number) + ' '}
             {tooltipText && (
               <Tooltip content={tooltipText}>
