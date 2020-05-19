@@ -351,7 +351,8 @@ export function create(
     }
     if (!options.updateEmitters) {
       try {
-        await entityRepo.update(entity);
+        const newEntry = await entityRepo.update(entity);
+        setLastSavedEntity(newEntry);
       } catch (e) {
         // TODO: Use affordable analytics to track how often this happens.
       }

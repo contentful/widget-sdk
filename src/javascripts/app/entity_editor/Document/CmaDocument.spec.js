@@ -309,6 +309,17 @@ describe('CmaDocument', () => {
       await resourceStateUpdatePromise;
       expect(entityRepo.update).toBeCalledTimes(1);
     });
+
+    it('persists changes on destroy and updates the local state', async () => {
+      await doc.setValueAt(fieldPath, 'updated value');
+      doc.destroy();
+      expect(entityRepo.update).toBeCalledTimes(1);
+
+      await wait();
+      jest.runAllTimers();
+      // Not updated the second time because the entity is still the same
+      expect(entityRepo.update).toBeCalledTimes(1);
+    });
   });
 
   describe('state', () => {
