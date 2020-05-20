@@ -196,3 +196,18 @@ describe('ReferencesTree component', () => {
     expect(Notification.success).toHaveBeenCalledWith('Title was published successfully');
   });
 });
+
+it('should render the release dialog when add to release button is clicked', async () => {
+  const { getByTestId } = render(<ReferencesTree entity={entity} />);
+  await wait();
+
+  fireEvent.click(getByTestId('referencesActionDropdown'));
+  await wait();
+
+  fireEvent.click(
+    within(getByTestId('addReferencesToReleaseBtn')).getByTestId('cf-ui-dropdown-list-item-button')
+  );
+  await wait();
+
+  expect(getByTestId('content-release-modal')).toBeInTheDocument();
+});

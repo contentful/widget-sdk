@@ -12,6 +12,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 
 import ReleasesDialog from '../ReleasesWidget/ReleasesDialog';
+import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 export default class PublicationWidgetContainer extends Component {
   static propTypes = {
     emitter: PropTypes.object.isRequired,
@@ -141,6 +142,11 @@ export default class PublicationWidgetContainer extends Component {
     const secondary = get(commands, 'secondary', []);
     const publicationBlockedReason = values(publicationBlockedReasons)[0];
 
+    const entryTitle = EntityFieldValueSpaceContext.entryTitle({
+      getContentTypeId: () => entity.sys.contentType.sys.id,
+      data: entity,
+    });
+
     return (
       <>
         <ScheduledActionsFeatureFlag>
@@ -181,7 +187,8 @@ export default class PublicationWidgetContainer extends Component {
         </ScheduledActionsFeatureFlag>
         {this.state.isRelaseDialogShown && (
           <ReleasesDialog
-            entity={entity}
+            selectedEntities={[entity]}
+            releaseContentTitle={entryTitle}
             onCancel={() => this.setState({ isRelaseDialogShown: false })}
           />
         )}

@@ -1,4 +1,4 @@
-import { createSuccessMessage, createErrorMessage } from './utils';
+import { createSuccessMessage, createErrorMessage, createAddToReleaseDialogContent } from './utils';
 
 describe('Create Success Message', () => {
   it('should return a success message for just the root to be published successful', () => {
@@ -73,5 +73,42 @@ describe('Create Error Message', () => {
     expect(
       createErrorMessage({ selectedEntities, root, entityTitle: 'Root', action: 'publish' })
     ).toEqual(expected);
+  });
+});
+
+describe('Create Add To Release Content', () => {
+  it('should return message for the root and 1other reference', () => {
+    const selectedEntities = [{ sys: { id: 'root' } }, { sys: { id: 'entity1' } }];
+    const root = { sys: { id: 'root' } };
+    const entityTitle = 'Root';
+    const expected = 'Root and 1 reference';
+
+    expect(createAddToReleaseDialogContent(entityTitle, selectedEntities, root)).toEqual(expected);
+  });
+
+  it('should return message for the root and two other references', () => {
+    const selectedEntities = [
+      { sys: { id: 'root' } },
+      { sys: { id: 'entity1' } },
+      { sys: { id: 'entity2' } },
+    ];
+    const root = { sys: { id: 'root' } };
+    const entityTitle = 'Root';
+    const expected = 'Root and 2 references';
+
+    expect(createAddToReleaseDialogContent(entityTitle, selectedEntities, root)).toEqual(expected);
+  });
+
+  it('should return message for just two references without root', () => {
+    const selectedEntities = [
+      { sys: { id: 'root' } },
+      { sys: { id: 'entity1' } },
+      { sys: { id: 'entity2' } },
+    ];
+    const root = { sys: { id: 'root' } };
+    const entityTitle = 'Root';
+    const expected = 'Root and 2 references';
+
+    expect(createAddToReleaseDialogContent(entityTitle, selectedEntities, root)).toEqual(expected);
   });
 });

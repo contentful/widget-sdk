@@ -83,3 +83,17 @@ export const createCountMessage = ({ selectedEntities, root }) => {
     'is'
   )} selected.`;
 };
+
+export const createAddToReleaseDialogContent = (entityTitle, selectedEntities, root) => {
+  const doesContainRootEntry = doesContainRoot(selectedEntities, root);
+  const referencesAmount = selectedEntities.length;
+
+  if (doesContainRootEntry) {
+    return `${entityTitle} and ${referencesAmount - 1} ${pluralize(
+      referencesAmount - 1,
+      'reference'
+    )}`;
+  }
+
+  return `${referencesAmount} ${pluralize(referencesAmount, 'reference')}`;
+};

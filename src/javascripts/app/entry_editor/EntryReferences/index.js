@@ -35,7 +35,11 @@ import {
   doesContainRoot,
   pluralize,
   createCountMessage,
+  createAddToReleaseDialogContent,
 } from './utils';
+import ReleasesDialog from 'app/EntrySidebar/ReleasesWidget/ReleasesDialog';
+import * as LD from 'utils/LaunchDarkly';
+import { ADD_TO_RELEASE } from 'featureFlags';
 
 import { ReferencesContext, ReferencesProvider } from './ReferencesContext';
 import {
@@ -126,7 +130,8 @@ const ReferencesTab = ({ entity }) => {
   const [allReferencesSelected, setAllReferencesSelected] = useState(true);
   const [entityTitle, setEntityTitle] = useState(null);
   const [referenceTreeKey, setReferenceTreeKey] = useState(uniqueId('id_'));
-
+  const [isRelaseDialogShown, setRelaseDialogShown] = useState(false);
+  const [isAddToReleaseEnabled, setisAddToReleaseEnabled] = useState(false);
   const { state: referencesState, dispatch } = useContext(ReferencesContext);
   const {
     references,
@@ -166,8 +171,14 @@ const ReferencesTab = ({ entity }) => {
       }
     }
 
+    async function addToReleaseEnabled() {
+      const isAddToReleaseEnabled = await LD.getCurrentVariation(ADD_TO_RELEASE);
+      setisAddToReleaseEnabled(isAddToReleaseEnabled);
+    }
+
     fetchDefaultLocale();
     fetchReferencesAndTitle();
+    addToReleaseEnabled();
 
     slideInStackEmitter.on('changed', ({ newSlideLevel }) => {
       if (newSlideLevel === 0) {
@@ -271,6 +282,11 @@ const ReferencesTab = ({ entity }) => {
       });
   };
 
+  const handleAddToRelease = () => {
+    setRelaseDialogShown(true);
+    setDropdownOpen(false);
+  };
+
   const showPublishButtons = !!references.length && create(references[0].sys).can('publish');
 
   return (
@@ -361,6 +377,13 @@ const ReferencesTab = ({ entity }) => {
                   <DropdownListItem testId="validateReferencesBtn" onClick={handleValidation}>
                     Validate
                   </DropdownListItem>
+                  {isAddToReleaseEnabled && (
+                    <DropdownListItem
+                      testId="addReferencesToReleaseBtn"
+                      onClick={handleAddToRelease}>
+                      Add selected entities to Release
+                    </DropdownListItem>
+                  )}
                 </DropdownList>
               </Dropdown>
             </div>
@@ -403,6 +426,17 @@ const ReferencesTab = ({ entity }) => {
             </SkeletonContainer>
           )}
         </div>
+        {isRelaseDialogShown && (
+          <ReleasesDialog
+            selectedEntities={selectedEntities}
+            releaseContentTitle={createAddToReleaseDialogContent(
+              entityTitle,
+              selectedEntities,
+              references[0]
+            )}
+            onCancel={() => setRelaseDialogShown(false)}
+          />
+        )}
       </ErrorHandler>
     </>
   );

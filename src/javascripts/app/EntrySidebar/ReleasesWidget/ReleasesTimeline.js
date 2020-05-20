@@ -7,7 +7,7 @@ import Release from './Release';
 const styles = {
   list: css({
     maxHeight: '120px',
-    overflow: 'scroll',
+    overflow: 'auto',
   }),
   cursorPointer: css({
     cursor: 'pointer',

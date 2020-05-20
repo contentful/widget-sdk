@@ -15,7 +15,6 @@ import {
   TabPanel,
   Notification,
 } from '@contentful/forma-36-react-components';
-import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 import ReleasesTimeline from './ReleasesTimeline';
 import { releases } from './__fixtures__';
 
@@ -41,7 +40,7 @@ const styles = {
     display: 'none',
     height: '100%',
     paddingTop: tokens.spacingM,
-    overflowY: 'scroll',
+    overflowY: 'auto',
   }),
   form: css({
     '> div': {
@@ -62,7 +61,7 @@ export default class ReleasesDialog extends Component {
   static propTypes = {
     spaceId: PropTypes.string,
     environmentId: PropTypes.string,
-    entity: PropTypes.object,
+    selectedEntities: PropTypes.array,
     validator: PropTypes.shape({
       run: PropTypes.func,
       setApiResponseErrors: PropTypes.func,
@@ -72,6 +71,7 @@ export default class ReleasesDialog extends Component {
     isSubmitting: PropTypes.bool,
     pendingReleases: PropTypes.array,
     isMasterEnvironment: PropTypes.bool,
+    releaseContentTitle: PropTypes.string,
   };
 
   static defaultProps = {
@@ -85,13 +85,16 @@ export default class ReleasesDialog extends Component {
 
   handleSubmit(e) {
     const releaseName = e.target.releaseName.value;
+    const { releaseContentTitle } = this.props;
 
     if (!releaseName) {
       this.setState({ showError: true });
     } else {
       this.setState({ showError: false });
       this.onClose();
-      Notification.success(`${this.getEntityTitle()} was sucessfully added to ${releaseName}`);
+      Notification.success(
+        `${releaseContentTitle} was sucessfully added to release the ${releaseName}`
+      );
     }
   }
 
@@ -104,8 +107,12 @@ export default class ReleasesDialog extends Component {
   }
 
   onReleaseSelect(release) {
+    const { releaseContentTitle } = this.props;
+
     this.onClose();
-    Notification.success(`${this.getEntityTitle()} was sucessfully added to ${release.title}`);
+    Notification.success(
+      `${releaseContentTitle} was sucessfully added to release the ${release.title}`
+    );
   }
 
   tabs = {
@@ -153,18 +160,9 @@ export default class ReleasesDialog extends Component {
     },
   };
 
-  getEntityTitle() {
-    const { entity } = this.props;
-
-    const entryTitle = EntityFieldValueSpaceContext.entryTitle({
-      getContentTypeId: () => entity.sys.contentType.sys.id,
-      data: entity,
-    });
-
-    return entryTitle;
-  }
-
   render() {
+    const { releaseContentTitle } = this.props;
+
     return (
       <Modal
         title="Add to a Content Release"
@@ -178,7 +176,7 @@ export default class ReleasesDialog extends Component {
           <>
             <Modal.Header title={title} onClose={onClose} />
             <Modal.Content>
-              Add a `{this.getEntityTitle()}` into a content release:
+              Add <b>&apos;{releaseContentTitle}&apos;</b> into a content release:
               <Tabs className={styles.tabs} withDivider>
                 {Object.keys(this.tabs).map((key) => (
                   <Tab
