@@ -14,6 +14,7 @@ import {
   Links as LinksWidget,
   Translation as TranslationWidget,
   Users as UsersWidget,
+  Releases as ReleasesWidget,
 } from '../defaults';
 
 function getAllKeys(arr) {
@@ -156,7 +157,13 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
             problem: true,
           },
         ],
-        availableItems: [ContentPreviewWidget, LinksWidget, TranslationWidget, UsersWidget],
+        availableItems: [
+          ReleasesWidget,
+          ContentPreviewWidget,
+          LinksWidget,
+          TranslationWidget,
+          UsersWidget,
+        ],
       });
     });
 
@@ -253,6 +260,7 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
           TranslationWidget,
         ],
         availableItems: [
+          ReleasesWidget,
           {
             widgetId: 'custom-publish-button',
             widgetNamespace: NAMESPACE_EXTENSION,

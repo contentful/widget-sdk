@@ -21,6 +21,7 @@
     }
   ],
   "sidebar": [
+    { "widgetId": "releases-widget", "widgetNamespace": "sidebar-builtin", "settings": {} },
     { "widgetId": "content-preview-widget", "widgetNamespace": "sidebar-builtin", "settings": {} },
     { "widgetId": "incoming-links-widget", "widgetNamespace": "sidebar-builtin", "settings": {} },
     { "widgetId": "translation-widget", "widgetNamespace": "sidebar-builtin", "settings": {} },

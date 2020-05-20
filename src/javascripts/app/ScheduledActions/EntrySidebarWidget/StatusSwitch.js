@@ -19,7 +19,6 @@ const styles = {
     lineHeight: tokens.spacingM,
     display: 'flex',
     alignItems: 'center',
-    borderTop: `1px solid ${tokens.colorElementMid}`,
     marginBottom: `-${tokens.spacingS}`,
     '> button': {
       height: '2.5rem',

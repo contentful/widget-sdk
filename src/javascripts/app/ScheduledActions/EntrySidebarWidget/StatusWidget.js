@@ -31,7 +31,6 @@ const styles = {
     lineHeight: '1rem',
     display: 'flex',
     alignItems: 'center',
-    borderTop: `1px solid ${tokens.colorElementMid}`,
     marginBottom: `-${tokens.spacingS}`,
     '> button': {
       height: '2.5rem',
@@ -202,6 +201,7 @@ class StatusWidget extends React.PureComponent {
                     (action) =>
                       action.isAvailable() && (
                         <DropdownListItem
+                          className={action.className}
                           key={action.label}
                           testId={`change-state-${action.targetStateId}`}
                           onClick={() => {

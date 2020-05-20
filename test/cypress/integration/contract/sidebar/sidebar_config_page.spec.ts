@@ -26,7 +26,15 @@ describe('Sidebar configuration', () => {
     cy.wait(interactions);
   });
 
-  const widgetNames = ['Publish & Status', 'Preview', 'Links', 'Translation', 'Versions', 'Users'];
+  const widgetNames = [
+    'Publish & Status',
+    'Release',
+    'Preview',
+    'Links',
+    'Translation',
+    'Versions',
+    'Users',
+  ];
 
   describe('Opening the page with no configuration saved', () => {
     it('displays sidebar options correctly', () => {
@@ -60,6 +68,7 @@ describe('Sidebar configuration', () => {
       const arrowDown: number = 40;
       const widgetsReordered = [
         'Publish & Status',
+        'Release',
         'Preview',
         'Links',
         'Versions',
@@ -68,7 +77,7 @@ describe('Sidebar configuration', () => {
       ];
 
       cy.findAllByTestId('sidebar-widget-item-draggable')
-        .eq(3)
+        .eq(4)
         .focus()
         .wait(0.2 * 1000)
         .trigger('keydown', { keyCode: space, force: true })

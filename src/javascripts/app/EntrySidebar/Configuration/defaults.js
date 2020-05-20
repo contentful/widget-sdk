@@ -10,6 +10,13 @@ export const Publication = {
   description: 'Built-in - View entry status, publish, etc.',
 };
 
+export const Releases = {
+  widgetId: SidebarWidgetTypes.RELEASES,
+  widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
+  name: 'Release',
+  description: 'Built-in - View reasele, add to it, etc.',
+};
+
 export const Tasks = {
   widgetId: SidebarWidgetTypes.TASKS,
   widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
@@ -56,6 +63,7 @@ export const Users = {
 
 export const defaultWidgetsMap = {
   [Publication.widgetId]: Publication,
+  [Releases.widgetId]: Releases,
   [Tasks.widgetId]: Tasks,
   [ContentPreview.widgetId]: ContentPreview,
   [Links.widgetId]: Links,
@@ -66,6 +74,7 @@ export const defaultWidgetsMap = {
 
 export const EntryConfiguration = [
   Publication,
+  Releases,
   Tasks,
   ContentPreview,
   Links,
@@ -74,10 +83,11 @@ export const EntryConfiguration = [
   Users,
 ];
 
-export const AssetConfiguration = [Publication, Links, Translation, Users];
+export const AssetConfiguration = [Publication, Releases, Links, Translation, Users];
 
 const availabilityMap = {
   [Publication.widgetId]: true,
+  [Releases.widgetId]: true,
   [Tasks.widgetId]: () => getCurrentSpaceFeature(FeatureFlagKey.CONTENT_WORKFLOW_TASKS, false),
   [ContentPreview.widgetId]: true,
   [Links.widgetId]: true,

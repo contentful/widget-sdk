@@ -250,6 +250,10 @@ APIClient.prototype.validateEntry = function (data, version) {
   );
 };
 
+APIClient.prototype.getReleases = function (query) {
+  return this._getResource('releases', query);
+};
+
 APIClient.prototype.validateRelease = function (action, entities, type = 'immediate') {
   return this._request(
     {

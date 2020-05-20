@@ -20,6 +20,7 @@ export const PC_CONTENT_TAGS = 'content_tags';
 // Team Pulitzer Releases Flags
 export const ALL_REFERENCES_DIALOG = 'feature-pulitzer-02-2020-all-reference-dialog';
 export const NEW_STATUS_SWITCH = 'feature-pulitzer-03-2020-new-status-switch';
+export const ADD_TO_RELEASE = 'feature-pulitzer-05-2020-add-to-release';
 
 // Team Penguin Release Flags
 export const SHAREJS_REMOVAL = 'feature-pen-04-2020-sharejs-removal-multi';

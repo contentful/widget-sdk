@@ -111,6 +111,12 @@ export default ({ $scope, emitter }) => {
     });
   });
 
+  const initializeReleases = once(() => {
+    emitter.emit(SidebarEventTypes.UPDATED_RELEASES_WIDGET, {
+      entityInfo: $scope.entityInfo,
+    });
+  });
+
   const initializeTasksWidget = once(() => {
     const notifyUpdate = (update) => {
       emitter.emit(SidebarEventTypes.UPDATED_TASKS_WIDGET, {
@@ -193,6 +199,9 @@ export default ({ $scope, emitter }) => {
         break;
       case SidebarWidgetTypes.PUBLICATION:
         initializePublication();
+        break;
+      case SidebarWidgetTypes.RELEASES:
+        initializeReleases();
         break;
       case SidebarWidgetTypes.TASKS:
         initializeTasksWidget();

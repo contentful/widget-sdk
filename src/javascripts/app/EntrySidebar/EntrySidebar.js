@@ -13,6 +13,7 @@ import {
 } from 'widgets/WidgetNamespaces';
 
 import PublicationWidgetContainer from './PublicationWidget/PublicationWidgetContainer';
+import ReleasesWidgetContainer from './ReleasesWidget/ReleasesWidgetContainer';
 
 import TasksWidgetContainer from './TasksWidget/TasksWidgetContainer';
 import ContentPreviewWidget from './ContentPreviewWidget/ContentPreviewWidget';
@@ -62,6 +63,7 @@ const styles = {
 
 const ComponentsMap = {
   [SidebarWidgetTypes.PUBLICATION]: PublicationWidgetContainer,
+  [SidebarWidgetTypes.RELEASES]: ReleasesWidgetContainer,
   [SidebarWidgetTypes.TASKS]: TasksWidgetContainer,
   [SidebarWidgetTypes.CONTENT_PREVIEW]: ContentPreviewWidget,
   [SidebarWidgetTypes.INCOMING_LINKS]: IncomingLinksWidgetContainer,

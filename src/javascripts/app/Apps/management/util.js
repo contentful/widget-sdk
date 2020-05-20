@@ -91,5 +91,5 @@ export function formatPastDate(date) {
     return 'last month';
   }
 
-  return monthDiff + 'months ago';
+  return monthDiff + ' months ago';
 }
