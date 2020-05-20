@@ -1,4 +1,6 @@
-import { fetchAll } from 'data/CMA/FetchAll';
+import { fetchAllWithIncludes } from 'data/CMA/FetchAll';
+import ResolveLinks from 'data/LinkResolver';
+
 const BATCH_LIMIT = 100;
 
 /**
@@ -7,31 +9,39 @@ const BATCH_LIMIT = 100;
  * @param {object?} params
  */
 export function getAllTeams(endpoint, params) {
-  return fetchAll(endpoint, ['teams'], BATCH_LIMIT, params);
+  return fetchAllWithIncludes(endpoint, ['teams'], BATCH_LIMIT, params);
 }
 
 /**
- * Get team memberships in the team
+ * Get all team memberships in the team
  * @param {endpoint} endpoint organization endpoint
  * @param {teamId} teamId team id
  */
-export function getTeamMemberships(endpoint, teamId) {
-  return endpoint({
-    method: 'GET',
-    path: ['teams', teamId, 'team_memberships'],
-  });
+export async function getAllTeamMemberships(endpoint, teamId) {
+  const includePaths = ['sys.user', 'sys.createdBy'];
+  const { items, includes } = await fetchAllWithIncludes(
+    endpoint,
+    ['teams', teamId, 'team_memberships'],
+    BATCH_LIMIT,
+    { include: includePaths.join(',') }
+  );
+  return ResolveLinks({ paths: includePaths, items, includes });
 }
 
 /**
- * Get team memberships in the team
+ * Get all team space memberships in the team
  * @param {endpoint} endpoint organization endpoint
  * @param {teamId} teamId team id
  */
-export function getTeamSpaceMemberships(endpoint) {
-  return endpoint({
-    method: 'GET',
-    path: ['team_space_memberships'],
-  });
+export async function getAllTeamSpaceMemberships(endpoint) {
+  const includePaths = ['roles', 'sys.team', 'sys.space'];
+  const { items, includes } = await fetchAllWithIncludes(
+    endpoint,
+    ['team_space_memberships'],
+    BATCH_LIMIT,
+    { include: includePaths.join(',') }
+  );
+  return ResolveLinks({ paths: includePaths, items, includes });
 }
 
 /**
@@ -85,5 +95,36 @@ export function removeTeam(endpoint, teamId) {
   return endpoint({
     method: 'DELETE',
     path: ['teams', teamId],
+  });
+}
+
+/**
+ * Create new team membership
+ * @param {endpoint} endpoint organization endpoint
+ * @param {teamId} teamId team id
+ * @param {organizationMembershipId} organizationMembershipId organization membership id
+ */
+export async function createTeamMembership(
+  endpoint,
+  teamId,
+  organizationMembershipId,
+  admin = false
+) {
+  return endpoint({
+    method: 'POST',
+    path: ['teams', teamId, 'team_memberships'],
+    data: { admin, organizationMembershipId },
+  });
+}
+
+/**
+ * Remove team membership
+ * @param {endpoint} endpoint organization endpoint
+ * @param {teamId} teamId team id
+ */
+export function removeTeamMembership(endpoint, teamId, teamMembershipId) {
+  return endpoint({
+    method: 'DELETE',
+    path: ['teams', teamId, 'team_memberships', teamMembershipId],
   });
 }

@@ -1,21 +1,34 @@
-import React, { useState, useCallback } from 'react';
+import React, { useEffect, useCallback, useReducer } from 'react';
 import PropTypes from 'prop-types';
-import { get } from 'lodash';
 import { css } from 'emotion';
-import { Tabs, Tab, TabPanel, Heading, Paragraph } from '@contentful/forma-36-react-components';
+import {
+  Tabs,
+  Tab,
+  TabPanel,
+  Heading,
+  Paragraph,
+  Notification,
+  ModalConfirm,
+  SkeletonContainer,
+  SkeletonBodyText,
+} from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { useAsync } from 'core/hooks';
+import { useAsyncFn } from 'core/hooks';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes';
-import { getAllMemberships } from 'access_control/OrganizationMembershipRepository';
-import { FetcherLoading } from 'app/common/createFetcherComponent';
-import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import TeamsEmptyStateImage from 'svg/illustrations/add-user-illustration.svg';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
-import { getTeamMemberships, getTeamSpaceMemberships } from '../services/TeamRepo';
+import {
+  getAllTeamMemberships,
+  getAllTeamSpaceMemberships,
+  removeTeamMembership,
+} from '../services/TeamRepo';
 import { TeamDetailsAddButton } from './TeamDetailsAddButton';
 import { TeamMembershipList } from './TeamMembershipList';
+import { AddToTeamModal } from './AddToTeamModal';
 import { TeamSpaceMembershipList } from './TeamSpaceMembershipList';
+import { createImmerReducer } from 'core/utils/createImmerReducer';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 
 const styles = {
   tabs: css({
@@ -33,41 +46,32 @@ const styles = {
   }),
 };
 
-const fetchData = (teamId, orgId, setData) => async () => {
-  const endpoint = createOrganizationEndpoint(orgId);
-  const [teamMemberships, teamSpaceMemberships, orgMemberships] = await Promise.all([
-    getTeamMemberships(endpoint, teamId),
-    getTeamSpaceMemberships(endpoint),
-    getAllMemberships(endpoint),
-  ]);
+const userToString = ({ firstName, lastName, email }) =>
+  firstName ? `${firstName} ${lastName}` : email;
 
-  const spaceMemberships = teamSpaceMemberships.items.filter((item) => {
-    return item.sys.team.sys.id === teamId;
-  });
-  const unavailableOrgMemberships = teamMemberships.items.map((item) =>
-    get(item, 'sys.organizationMembership.sys.id')
-  );
-  const availableOrgMemberships = orgMemberships
-    ? Object.values(orgMemberships).filter(
-        ({ sys: { id } }) => !unavailableOrgMemberships.includes(id)
-      )
-    : [];
-  setData({ teamMembers: teamMemberships.items, spaceMemberships, availableOrgMemberships });
-};
-
-TeamDetailsContent.propTypes = {
-  team: TeamPropType.isRequired,
-  orgId: PropTypes.string.isRequired,
-  readOnlyPermission: PropTypes.bool.isRequired,
-};
+const reducer = createImmerReducer({
+  TAB_SELECTED: (state, action) => {
+    state.selectedTab = action.payload;
+  },
+  TEAM_MEMBERSHIPS_FETCHED: (state, action) => {
+    state.teamMembers = action.payload;
+  },
+  TEAM_MEMBERSHIPS_REMOVED: (state, action) => {
+    state.teamMembers = state.teamMembers.filter(
+      (membership) => membership.sys.id !== action.payload.sys.id
+    );
+  },
+  SPACE_MEMBERSHIPS_FETCHED: (state, action) => {
+    state.spaceMemberships = action.payload;
+  },
+  SPACE_MEMBERSHIP_REMOVED: (state, action) => {
+    state.spaceMemberships = state.spaceMemberships.filter(
+      (membership) => membership.sys.space.sys.id !== action.payload.sys.space.sys.id
+    );
+  },
+});
 
 export function TeamDetailsContent({ team, orgId, readOnlyPermission }) {
-  const [data, setData] = useState({
-    teamMembers: [],
-    spaceMemberships: [],
-    availableOrgMemberships: [],
-  });
-
   const tabs = {
     teamMembers: {
       id: 'teamMembers',
@@ -108,38 +112,116 @@ export function TeamDetailsContent({ team, orgId, readOnlyPermission }) {
     },
   };
 
-  const boundFetch = fetchData(team.sys.id, orgId, setData);
+  const [{ teamMembers, spaceMemberships, selectedTab }, dispatch] = useReducer(reducer, {
+    teamMembers: [],
+    spaceMemberships: [],
+    selectedTab: tabs.teamMembers,
+  });
 
-  const { isLoading, error } = useAsync(useCallback(boundFetch, []));
+  const orgEndpoint = createOrganizationEndpoint(orgId);
+  const teamId = team.sys.id;
 
-  const [selectedTab, setSelectedTab] = useState(tabs.teamMembers);
-  const [showingForm, setShowingForm] = useState(false);
+  //fetch TeamMemberships data
+  const fetchTeamMembersData = (orgEndpoint, teamId) => async () => {
+    const teamMembers = await getAllTeamMemberships(orgEndpoint, teamId);
+    dispatch({ type: 'TEAM_MEMBERSHIPS_FETCHED', payload: teamMembers });
+    return teamMembers;
+  };
+
+  const boundFetchTeamMembers = fetchTeamMembersData(orgEndpoint, teamId);
+  const [{ isLoading: isLoadingTeamMembers }, updateTeamMembers] = useAsyncFn(
+    useCallback(boundFetchTeamMembers, [])
+  );
+
+  //fetch TeamSpaceMemberships data
+  const fetchSpaceMembershipsData = (orgEndpoint, teamId) => async () => {
+    const data = await getAllTeamSpaceMemberships(orgEndpoint);
+    const spaceMemberships = data.filter((item) => {
+      return item.sys.team.sys.id === teamId;
+    });
+    dispatch({ type: 'SPACE_MEMBERSHIPS_FETCHED', payload: spaceMemberships });
+    return spaceMemberships;
+  };
+
+  const boundFetchSpaceMemberships = fetchSpaceMembershipsData(orgEndpoint, teamId);
+  const [{ isLoading: isLoadingSpaceMemberships }, updateSpaceMemberships] = useAsyncFn(
+    useCallback(boundFetchSpaceMemberships, [])
+  );
+
+  useEffect(() => {
+    updateSpaceMemberships();
+    updateTeamMembers();
+  }, [updateSpaceMemberships, updateTeamMembers]);
+
+  const handleAddToTeamClick = () => {
+    const currentTeamMembers = teamMembers.map((tm) => tm.sys.organizationMembership.sys.id);
+    ModalLauncher.open(({ isShown, onClose }) => {
+      return (
+        <AddToTeamModal
+          team={team}
+          orgId={orgId}
+          isShown={isShown}
+          onClose={onClose}
+          currentTeamMembers={currentTeamMembers}
+          onAddedToTeam={updateTeamMembers}
+        />
+      );
+    });
+  };
+
+  // Delete team membership
+  const removeFromTeam = async (teamMembership) => {
+    const user = teamMembership.sys.user;
+
+    const confirmation = await ModalLauncher.open(({ isShown, onClose }) => (
+      <ModalConfirm
+        title={`Remove user from team ${team.name}`}
+        intent="negative"
+        isShown={isShown}
+        confirmLabel="Remove"
+        onConfirm={() => onClose(true)}
+        onCancel={() => onClose(false)}>
+        <Paragraph>{`Are you sure you want to remove ${userToString(user)} from team ${
+          team.name
+        }?`}</Paragraph>
+      </ModalConfirm>
+    ));
+
+    if (!confirmation) {
+      return;
+    }
+
+    try {
+      await removeTeamMembership(
+        orgEndpoint,
+        teamMembership.sys.team.sys.id,
+        teamMembership.sys.id
+      );
+      dispatch({ type: 'TEAM_MEMBERSHIPS_REMOVED', payload: teamMembership });
+      Notification.success(`Successfully removed ${userToString(user)} from the team ${team.name}`);
+    } catch (e) {
+      Notification.error(`Could not remove ${userToString(user)} from team ${team.name}`);
+    }
+  };
+
+  if (isLoadingTeamMembers || isLoadingSpaceMemberships) {
+    return <Skeleton />;
+  }
 
   const isSelected = (id) => {
     return selectedTab.id === id;
   };
 
   const selectTab = (id) => {
-    setSelectedTab(tabs[id]);
-    setShowingForm(false);
+    dispatch({ type: 'TAB_SELECTED', payload: tabs[id] });
   };
 
   const isListEmpty = () => {
     return (
-      !showingForm &&
-      ((selectedTab === tabs.teamMembers && data.teamMembers.length === 0) ||
-        (selectedTab === tabs.spaceMemberships && data.spaceMemberships.length === 0))
+      (selectedTab === tabs.teamMembers && teamMembers.length === 0) ||
+      (selectedTab === tabs.spaceMemberships && spaceMemberships.length === 0)
     );
   };
-
-  if (isLoading || !data) {
-    return <FetcherLoading message="Loading data" />;
-  }
-
-  if (error) {
-    console.log(error);
-    return <ForbiddenPage />;
-  }
 
   return (
     <div className={styles.detailsContent}>
@@ -156,55 +238,77 @@ export function TeamDetailsContent({ team, orgId, readOnlyPermission }) {
             </Tab>
           ))}
         </Tabs>
-        {!showingForm && !isListEmpty() && (
+        {!isListEmpty() && (
           <TeamDetailsAddButton
             label={selectedTab.actionLabel}
-            onClick={() => setShowingForm(true)}
+            onClick={handleAddToTeamClick}
             readOnlyPermission={readOnlyPermission}
-            noOrgMembershipsLeft={
-              selectedTab === tabs.teamMembers && data.availableOrgMemberships.length === 0
-            }
           />
         )}
       </header>
 
-      {Object.entries(tabs).map(
-        ([id, { component: Component, emptyStateMessage, actionLabel }]) => {
-          return (
-            <React.Fragment key={id}>
-              {isSelected(id) && !isListEmpty() ? (
-                <TabPanel id={id}>
-                  <Component
-                    items={data[id]}
-                    showingForm={showingForm}
-                    onFormDismissed={() => setShowingForm(false)}
+      {Object.entries(tabs).map(([id, { emptyStateMessage, actionLabel }]) => {
+        return (
+          <React.Fragment key={id}>
+            {isSelected(id) && !isListEmpty() ? (
+              <TabPanel id={id}>
+                {selectedTab.id === 'teamMembers' && (
+                  <TeamMembershipList
+                    team={team}
+                    items={teamMembers}
+                    removeFromTeam={removeFromTeam}
+                    readOnlyPermission={readOnlyPermission}
                   />
-                </TabPanel>
-              ) : null}
-              {isSelected(id) && isListEmpty() && (
-                <EmptyStateContainer data-test-id="empty-placeholder">
-                  <div className={styles.svgContainer}>
-                    <TeamsEmptyStateImage />
-                  </div>
-                  <Heading>{emptyStateMessage().title}</Heading>
-                  {!readOnlyPermission && (
-                    <>
-                      <Paragraph>{emptyStateMessage().text}</Paragraph>
-                      <TeamDetailsAddButton
-                        className={styles.addButton}
-                        onClick={() => setShowingForm(true)}
-                        label={actionLabel}
-                        readOnlyPermission={readOnlyPermission}
-                      />
-                    </>
-                  )}
-                  {readOnlyPermission && <Paragraph>{emptyStateMessage().readOnly}</Paragraph>}
-                </EmptyStateContainer>
-              )}
-            </React.Fragment>
-          );
-        }
-      )}
+                )}
+                {selectedTab.id === 'spaceMemberships' && (
+                  <TeamSpaceMembershipList
+                    items={spaceMemberships}
+                    readOnlyPermission={readOnlyPermission}
+                  />
+                )}
+              </TabPanel>
+            ) : null}
+            {isSelected(id) && isListEmpty() && (
+              <EmptyStateContainer data-test-id="empty-placeholder">
+                <div className={styles.svgContainer}>
+                  <TeamsEmptyStateImage />
+                </div>
+                <Heading>{emptyStateMessage().title}</Heading>
+                {!readOnlyPermission && (
+                  <>
+                    <Paragraph>{emptyStateMessage().text}</Paragraph>
+                    <TeamDetailsAddButton
+                      className={styles.addButton}
+                      label={actionLabel}
+                      readOnlyPermission={readOnlyPermission}
+                    />
+                  </>
+                )}
+                {readOnlyPermission && <Paragraph>{emptyStateMessage().readOnly}</Paragraph>}
+              </EmptyStateContainer>
+            )}
+          </React.Fragment>
+        );
+      })}
     </div>
+  );
+}
+
+TeamDetailsContent.propTypes = {
+  team: TeamPropType.isRequired,
+  orgId: PropTypes.string.isRequired,
+  readOnlyPermission: PropTypes.bool.isRequired,
+};
+
+function Skeleton() {
+  return (
+    <SkeletonContainer data-test-id="content-loader" ariaLabel="Loading the list " svgWidth="100%">
+      <SkeletonBodyText numberOfLines={2} />
+      <SkeletonBodyText numberOfLines={2} offsetTop={75} />
+      <SkeletonBodyText numberOfLines={2} offsetTop={150} />
+      <SkeletonBodyText numberOfLines={2} offsetTop={225} />
+      <SkeletonBodyText numberOfLines={2} offsetTop={300} />
+      <SkeletonBodyText numberOfLines={2} offsetTop={375} />
+    </SkeletonContainer>
   );
 }
