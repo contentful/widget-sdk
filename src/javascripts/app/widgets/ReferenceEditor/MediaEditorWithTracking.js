@@ -1,4 +1,5 @@
 import React from 'react';
+import { get } from 'lodash';
 import { getEntityLink } from 'app/common/EntityStateLink';
 import { SingleMediaEditor, MultipleMediaEditor } from '@contentful/field-editor-reference';
 import { safeNonBlockingTrack, EditorWithTrackingProps } from './utils';
@@ -47,8 +48,8 @@ export function SingleMediaEditorWithTracking(props) {
       getEntityUrl={(assetId) => getEntityLink({ id: assetId, type: 'Asset' }).href}
       parameters={{
         instance: {
-          canCreateEntity: true,
-          canLinkEntity: true,
+          showCreateEntityAction: get(sdk, 'parameters.instance.showCreateEntityAction', true),
+          showLinkEntityAction: get(sdk, 'parameters.instance.showLinkEntityAction', true),
         },
       }}
       onAction={onAction}
@@ -66,8 +67,8 @@ export function MultipleMediaEditorWithTracking(props) {
       getEntityUrl={(assetId) => getEntityLink({ id: assetId, type: 'Asset' }).href}
       parameters={{
         instance: {
-          canCreateEntity: true,
-          canLinkEntity: true,
+          showCreateEntityAction: get(sdk, 'parameters.instance.showCreateEntityAction', true),
+          showLinkEntityAction: get(sdk, 'parameters.instance.showLinkEntityAction', true),
         },
       }}
       onAction={onAction}

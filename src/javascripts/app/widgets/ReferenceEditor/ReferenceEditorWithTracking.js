@@ -68,8 +68,8 @@ export function SingleEntryReferenceEditorWithTracking(props) {
       getEntityUrl={(entryId) => getEntityLink({ id: entryId, type: 'Entry' }).href}
       parameters={{
         instance: {
-          canCreateEntity: true,
-          canLinkEntity: true,
+          showCreateEntityAction: get(sdk, 'parameters.instance.showCreateEntityAction', true),
+          showLinkEntityAction: get(sdk, 'parameters.instance.showLinkEntityAction', true),
         },
       }}
       onAction={onAction}
@@ -89,8 +89,8 @@ export function MultipleEntryReferenceEditorWithTracking(props) {
       getEntityUrl={(entryId) => getEntityLink({ id: entryId, type: 'Entry' }).href}
       parameters={{
         instance: {
-          canCreateEntity: true,
-          canLinkEntity: true,
+          showCreateEntityAction: get(sdk, 'parameters.instance.showCreateEntityAction', true),
+          showLinkEntityAction: get(sdk, 'parameters.instance.showLinkEntityAction', true),
           bulkEditing: get(sdk, 'parameters.instance.bulkEditing', false),
         },
       }}

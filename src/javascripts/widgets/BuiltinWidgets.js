@@ -270,6 +270,28 @@ export function create() {
     },
   });
 
+  const getShowCreateEntityActionParam = (entity) => {
+    const name = entity === 'Entry' ? 'entries' : 'assets';
+    return {
+      id: 'showCreateEntityAction',
+      name: `Show "Create new ${name}"`,
+      description: `When enabled, people can create and link new ${name} (based on user permissions)`,
+      type: 'Boolean',
+      default: true,
+    };
+  };
+
+  const getShowLinkEntityActionParam = (entity) => {
+    const name = entity === 'Entry' ? 'entries' : 'assets';
+    return {
+      id: 'showLinkEntityAction',
+      name: `Show "Link existing ${name}"`,
+      description: `When enabled, people can link existing ${name} (based on user permissions)`,
+      type: 'Boolean',
+      default: true,
+    };
+  };
+
   registerWidget('entryLinkEditor', {
     fieldTypes: ['Entry'],
     name: 'Entry link',
@@ -283,6 +305,7 @@ export function create() {
         />
       );
     },
+    parameters: [getShowCreateEntityActionParam('Entry'), getShowLinkEntityActionParam('Entry')],
   });
 
   registerWidget('entryCardEditor', {
@@ -298,6 +321,7 @@ export function create() {
         />
       );
     },
+    parameters: [getShowCreateEntityActionParam('Entry'), getShowLinkEntityActionParam('Entry')],
   });
 
   // NOTE: We render this as "card" ever since we got rid of the actual "link" appearance
@@ -311,6 +335,7 @@ export function create() {
         <SingleMediaEditorWithTracking viewType="card" sdk={widgetApi} loadEvents={loadEvents} />
       );
     },
+    parameters: [getShowCreateEntityActionParam('Asset'), getShowLinkEntityActionParam('Asset')],
   });
 
   const BULK_EDITOR_PARAMETER = {
@@ -334,7 +359,11 @@ export function create() {
         />
       );
     },
-    parameters: [BULK_EDITOR_PARAMETER],
+    parameters: [
+      BULK_EDITOR_PARAMETER,
+      getShowCreateEntityActionParam('Entry'),
+      getShowLinkEntityActionParam('Entry'),
+    ],
   });
 
   registerWidget('entryCardsEditor', {
@@ -350,7 +379,11 @@ export function create() {
         />
       );
     },
-    parameters: [BULK_EDITOR_PARAMETER],
+    parameters: [
+      BULK_EDITOR_PARAMETER,
+      getShowCreateEntityActionParam('Entry'),
+      getShowLinkEntityActionParam('Entry'),
+    ],
   });
 
   registerWidget('assetLinksEditor', {
@@ -362,6 +395,7 @@ export function create() {
         <MultipleMediaEditorWithTracking viewType="link" sdk={widgetApi} loadEvents={loadEvents} />
       );
     },
+    parameters: [getShowCreateEntityActionParam('Asset'), getShowLinkEntityActionParam('Asset')],
   });
 
   registerWidget('assetGalleryEditor', {
@@ -373,6 +407,7 @@ export function create() {
         <MultipleMediaEditorWithTracking viewType="card" sdk={widgetApi} loadEvents={loadEvents} />
       );
     },
+    parameters: [getShowCreateEntityActionParam('Asset'), getShowLinkEntityActionParam('Asset')],
   });
 
   registerWidget('slugEditor', {
