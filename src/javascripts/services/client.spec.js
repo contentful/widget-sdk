@@ -69,7 +69,7 @@ describe('Client', () => {
     });
 
     it('rejects with status code, data and request for errors', async function () {
-      baseRequest.mockRejectedValue({ status: '777', data: 'OMG ERROR' });
+      baseRequest.mockRejectedValue({ status: '777', json: () => Promise.resolve('OMG ERROR') });
 
       let err;
 

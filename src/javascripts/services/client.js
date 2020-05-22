@@ -17,11 +17,18 @@ async function request(req) {
     const response = await baseRequest(request);
     return response;
   } catch (e) {
+    let data;
+    try {
+      data = await e.json();
+    } catch {
+      data = null;
+    }
+
     return Promise.reject({
       // We duplicate this property because `statusCode` is used througout the code base
       statusCode: parseInt(e.status, 10),
       status: e.status,
-      body: e.data,
+      body: data,
       request: request,
     });
   }
