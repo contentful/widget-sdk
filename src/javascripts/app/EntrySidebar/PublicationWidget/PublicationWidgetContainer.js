@@ -66,7 +66,7 @@ export default class PublicationWidgetContainer extends Component {
 
   onUpdatePublicationWidget = (update) => {
     this.setState({ ...update });
-    this.createReleasesDropDown();
+    this.createReleasesDropDown(update);
   };
 
   onUpdatePublicationBlocking = (publicationBlockedReasons) => {
@@ -81,7 +81,7 @@ export default class PublicationWidgetContainer extends Component {
     }));
   };
 
-  createReleasesDropDown() {
+  createReleasesDropDown(updatedState = {}) {
     if (!this.state.isAddToRelease) {
       return;
     }
@@ -111,9 +111,9 @@ export default class PublicationWidgetContainer extends Component {
 
     const commands = get(this.state, 'commands', {});
     const secondary = get(commands, 'secondary', []);
-
     this.setState({
       ...this.state,
+      ...updatedState,
       commands: {
         ...commands,
         secondary: [...secondary, addToReleaseCta],
