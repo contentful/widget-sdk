@@ -155,7 +155,12 @@ export default class EntrySidebar extends Component {
 
   componentDidUpdate(_, prevState) {
     if (prevState.selectedTab !== this.state.selectedTab) {
-      this.entitySidebarRef.current.scrollTo(0, 0);
+      try {
+        this.entitySidebarRef.current.scrollTo(0, 0);
+      } catch {
+        // Edge 44.18362
+        this.entitySidebarRef.current.scrollTop = 0;
+      }
     }
   }
 
