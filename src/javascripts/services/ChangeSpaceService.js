@@ -8,6 +8,26 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getModule } from 'core/NgRegistry';
 
 /**
+ * Creates a string to be passed to the notification
+ *
+ * @param {object} space - space that's been upgraded
+ * @param {object} currentSpacePlan - the space's previous plan
+ * @param {object} newSpacePlan - the space's new plan
+ */
+export const getNotificationMessage = (space, currentSpacePlan, newSpacePlan) => {
+  let notificationMsg = `Space ${space.name} successfully`;
+
+  if (currentSpacePlan) {
+    const changeType = newSpacePlan.price >= currentSpacePlan.price ? 'upgraded' : 'downgraded';
+    notificationMsg = `${notificationMsg} ${changeType} to a ${newSpacePlan.name} space.`;
+  } else {
+    notificationMsg = `${notificationMsg} changed.`;
+  }
+
+  return notificationMsg;
+};
+
+/**
  * Displays the space creation dialog. The dialog type will depend on the
  * organization that the new space should belong to.
  *

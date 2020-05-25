@@ -3,26 +3,43 @@ import { get } from 'lodash';
 import { getModule } from 'core/NgRegistry';
 import ReloadNotification from 'app/common/ReloadNotification';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import * as EndpointFactory from 'data/EndpointFactory';
-import * as PricingDataProvider from 'account/pricing/PricingDataProvider';
 import * as TokenStore from 'services/TokenStore';
 import { Notification } from '@contentful/forma-36-react-components';
 import { SpaceSettingsConnected } from '../components/SpaceSettings';
 import { openDeleteSpaceDialog } from '../services/DeleteSpace';
+import {
+  showDialog as showChangeSpaceModal,
+  getNotificationMessage,
+} from 'services/ChangeSpaceService';
+import { createOrganizationEndpoint } from 'data/EndpointFactory';
+import { track } from 'analytics/Analytics';
+import { getRatePlans, getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
+
+import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
+
+import { Spinner } from '@contentful/forma-36-react-components';
 
 export class SpaceSettingsRoute extends React.Component {
+  state = { plan: null, isLoading: true };
+
+  async componentDidMount() {
+    const plan = await this.getSpacePlan();
+    this.setState({ plan: plan, isLoading: false });
+  }
+
   getSpacePlan = async () => {
     const spaceContext = getModule('spaceContext');
 
     const orgId = spaceContext.organization.sys.id;
-    const orgEndpoint = EndpointFactory.createOrganizationEndpoint(orgId);
+    const orgEndpoint = createOrganizationEndpoint(orgId);
     let plan;
     try {
-      plan = await PricingDataProvider.getSingleSpacePlan(orgEndpoint, spaceContext.space.getId());
+      plan = await getSingleSpacePlan(orgEndpoint, spaceContext.space.getId());
     } catch (e) {
       // await getSingleSpacePlan throws for spaces on the old pricing
       // because they don't have a space plan. We catch it, dialog can handle lack of plan
     }
+
     return plan;
   };
 
@@ -72,18 +89,55 @@ export class SpaceSettingsRoute extends React.Component {
     });
   };
 
+  changeSpaceDialog = async () => {
+    const spaceContext = getModule('spaceContext');
+    const organizationId = spaceContext.organization.sys.id;
+    const space = await TokenStore.getSpace(spaceContext.space.data.sys.id);
+
+    const endpoint = createOrganizationEndpoint(organizationId);
+    const productRatePlans = await getRatePlans(endpoint);
+
+    track('space_settings:upgrade_plan_link_clicked', {
+      organizationId,
+      spaceId: space.sys.id,
+    });
+
+    showChangeSpaceModal({
+      organizationId,
+      scope: 'space',
+      space,
+      action: 'change',
+      onSubmit: async (productRatePlanId) => {
+        const newProductRatePlan = productRatePlans.find((prp) => prp.sys.id === productRatePlanId);
+
+        Notification.success(getNotificationMessage(space, this.state.plan, newProductRatePlan));
+        this.setState({ plan: newProductRatePlan });
+      },
+    });
+  };
+
   render() {
     const spaceContext = getModule('spaceContext');
 
     return (
       <React.Fragment>
         <DocumentTitle title="Settings" />
-        <SpaceSettingsConnected
-          save={this.save}
-          onRemoveClick={this.openRemovalDialog}
-          spaceName={spaceContext.space.data.name}
-          spaceId={spaceContext.space.getId()}
-        />
+        {this.state.isLoading && (
+          <EmptyStateContainer data-test-id="loading-spinner">
+            <Spinner size="large" />
+          </EmptyStateContainer>
+        )}
+
+        {!this.state.isLoading && (
+          <SpaceSettingsConnected
+            save={this.save}
+            onRemoveClick={this.openRemovalDialog}
+            spaceName={spaceContext.space.data.name}
+            plan={this.state.plan}
+            onChangeSpace={this.changeSpaceDialog}
+            spaceId={spaceContext.space.getId()}
+          />
+        )}
       </React.Fragment>
     );
   }

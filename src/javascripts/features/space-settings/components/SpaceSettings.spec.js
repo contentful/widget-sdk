@@ -1,6 +1,6 @@
 import React from 'react';
-
-import { render, fireEvent } from '@testing-library/react';
+import { screen, render, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { noop } from 'lodash';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
@@ -50,11 +50,37 @@ describe('SpaceSettings', () => {
           spaceId="test-id"
           onRemoveClick={noop}
           save={noop}
+          onChangeSpace={noop}
+          plan={{ name: 'testPlanName', price: 10 }}
           {...props}
         />
       </Provider>
     );
   };
+
+  it('does not display space-plan-card if it is v1 pricing', () => {
+    renderComponent({ plan: null });
+
+    expect(screen.queryByTestId('upgrade-space-plan-card')).not.toBeInTheDocument();
+  });
+
+  it('displays plan and plan information for v2 pricing', () => {
+    renderComponent();
+
+    expect(screen.getByTestId('space-settings-page.plan-price')).toHaveTextContent(
+      'testPlanName - $10 /month'
+    );
+  });
+
+  it('calls onChangeSpace when upgrade space button is clicked', () => {
+    const onChangeSpace = jest.fn();
+
+    renderComponent({ onChangeSpace });
+
+    userEvent.click(screen.getByTestId('upgrade-space-button'));
+
+    expect(onChangeSpace).toBeCalled();
+  });
 
   it('correct space data is present in the form', () => {
     const { getByTestId } = renderComponent();

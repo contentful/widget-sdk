@@ -6,7 +6,10 @@ import { Notification, Workbench } from '@contentful/forma-36-react-components';
 
 import { track } from 'analytics/Analytics';
 import { showDialog as showCreateSpaceModal } from 'services/CreateSpace';
-import { showDialog as showChangeSpaceModal } from 'services/ChangeSpaceService';
+import {
+  showDialog as showChangeSpaceModal,
+  getNotificationMessage,
+} from 'services/ChangeSpaceService';
 import { openDeleteSpaceDialog } from 'features/space-settings';
 import { isOwner } from 'services/OrganizationRoles';
 
@@ -32,19 +35,6 @@ const styles = {
       margin: '1em 0 3em',
     },
   }),
-};
-
-const getNotificationMessage = (space, currentSpacePlan, newSpacePlan) => {
-  let notificationMsg = `Space ${space.name} successfully`;
-
-  if (currentSpacePlan) {
-    const changeType = newSpacePlan.price >= currentSpacePlan.price ? 'upgraded' : 'downgraded';
-    notificationMsg = `${notificationMsg} ${changeType} to a ${newSpacePlan.name} space.`;
-  } else {
-    notificationMsg = `${notificationMsg} changed.`;
-  }
-
-  return notificationMsg;
 };
 
 export default function SubscriptionPage({ organizationId, data }) {
