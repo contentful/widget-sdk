@@ -1,4 +1,4 @@
-import { get, set, cloneDeep, noop, unset, isEqual, some, intersectionBy } from 'lodash';
+import { get, set, cloneDeep, noop, unset, isEqual, some, intersectionBy, once } from 'lodash';
 import * as K from 'core/utils/kefir';
 import * as ResourceStateManager from 'data/document/ResourceStateManager';
 import * as Permissions from 'access_control/EntityPermissions';
@@ -42,20 +42,26 @@ export function create(
     );
   normalize();
 
+  const cleanupTasks: Function[] = [];
+  let isDestroyed = false;
   const sysBus: PropertyBus<EntitySys> = K.createPropertyBus(entity.sys);
   const sys$ = sysBus.property;
+  cleanupTasks.push(sysBus.end);
   const changesBus: StreamBus<string[]> = K.createStreamBus();
+  cleanupTasks.push(changesBus.end);
 
   const [isSavingBus, isSaving$, afterSave$] = stateBus(false, DOCUMENT_SAVED);
+  cleanupTasks.push(isSavingBus.end);
   const [isUpdatingBus, isUpdating$, afterUpdate$] = stateBus(false, ASSET_UPDATED);
+  cleanupTasks.push(isUpdatingBus.end);
 
   const errorBus: PropertyBus<Error | null> = K.createPropertyBus(null);
+  cleanupTasks.push(errorBus.end);
   const error$ = errorBus.property.skipDuplicates((a, b) => a?.constructor === b?.constructor);
   const onNetworkError$: Stream<symbol, any> = errorBus.property
     .changes()
     .filter((error) => error instanceof DocError.Disconnected)
     .map((_) => DISCONNECTED);
-  const cleanupTasks: Function[] = [];
 
   let lastSavedEntity: Entity;
   let lastSavedEntityFetchedAt: Date;
@@ -82,6 +88,7 @@ export function create(
     .changes()
     .filter((isSaving) => !isSaving)
     .map((_) => STATUS_UPDATED);
+  cleanupTasks.push(resourceState.inProgressBus.end);
 
   if (entity.sys.type === 'Asset') {
     const unsubscribe = entityRepo.onAssetFileProcessed(entity.sys.id, handleAssetFileProcessed);
@@ -112,6 +119,10 @@ export function create(
     .merge(onNetworkError$)
     .throttle(saveThrottleMs, { leading: false })
     .onValue((_value: Array<string[] | symbol> | symbol): void => {
+      // TODO: even after ending all dependent streams and properties, this callback is still triggered
+      if (isDestroyed) {
+        return;
+      }
       // TODO: _value being `null` doesn't make any sense but happens for some reason in
       //  some cases (unit tests only?), apparently because of throttle(). Investigate why.
       saveEntityAfterAnyStatusUpdate();
@@ -244,18 +255,7 @@ export function create(
       return;
     },
 
-    async destroy() {
-      // clean-up first to prevent side-effects triggered by subscribers to these
-      // observable e.g. when navigating away from an entry or to another space.
-      cleanupTasks.forEach((task) => task());
-      try {
-        // TODO: It's a bit hacky to persist on destroy. This should be the
-        //  responsibility of any controller using `CmaDocument` instead.
-        await saveEntityAfterAnyStatusUpdate({ updateEmitters: false });
-      } finally {
-        // do nothing
-      }
-    },
+    destroy: once(destroy),
 
     resourceState,
     // Presence did rely on ShareJS. We could re-implement it using e.g. pub-sub
@@ -449,6 +449,20 @@ export function create(
       set(entity, 'sys', remoteEntity.sys);
       sysBus.set(remoteEntity.sys);
       normalize();
+    }
+  }
+
+  async function destroy() {
+    // clean-up first to prevent side-effects triggered by subscribers to these
+    // observable e.g. when navigating away from an entry or to another space.
+    cleanupTasks.forEach((task) => task());
+    isDestroyed = true;
+    try {
+      // TODO: It's a bit hacky to persist on destroy. This should be the
+      //  responsibility of any controller using `CmaDocument` instead.
+      await saveEntityAfterAnyStatusUpdate({ updateEmitters: false });
+    } finally {
+      // do nothing
     }
   }
 }

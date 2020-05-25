@@ -53,7 +53,7 @@ export function create(sys$, setSys, getData, spaceEndpoint, preApplyFn = null) 
   const inProgressBus = K.createPropertyBus(false);
   const inProgress$ = inProgressBus.property.skipDuplicates();
 
-  return { apply, stateChange$, state$, inProgress$ };
+  return { apply, stateChange$, state$, inProgress$, inProgressBus };
 
   async function apply(action) {
     const previousState = currentState;

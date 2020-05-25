@@ -40,6 +40,16 @@ export function assertCurrentValue(prop, expected) {
   expect(actual).toEqual(expected);
 }
 
+export function assertHasEnded(observable) {
+  let hasEnded = false;
+  const cb = () => {
+    hasEnded = true;
+  };
+  observable.onEnd(cb);
+  observable.offEnd(cb);
+  expect(hasEnded).toBe(true);
+}
+
 export function assertMatchCurrentValue(prop, matcher) {
   let called = false;
   let actual;

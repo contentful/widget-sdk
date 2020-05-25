@@ -64,6 +64,9 @@ export default (createDocument) => {
   describe('Document', () => {
     const fieldPath = ['fields', 'fieldA', 'en-US'];
     const anotherFieldPath = ['fields', 'fieldB', 'en-US'];
+    /**
+     * @var {Document} doc
+     */
     let doc;
     let entry;
 
@@ -306,6 +309,7 @@ export default (createDocument) => {
           stateChange$: expect.any(Kefir.Stream),
           state$: expect.any(Kefir.Property),
           inProgress$: expect.any(Kefir.Property),
+          inProgressBus: expect.any(Object),
         });
       });
     });
@@ -327,6 +331,26 @@ export default (createDocument) => {
           field1: { 'en-US': true },
           field2: { 'en-US': true, de: true }, // doc should keep even disabled locales
         });
+      });
+    });
+
+    describe('destroy', () => {
+      it('ends all observables', () => {
+        doc.destroy();
+
+        K.assertHasEnded(doc.sysProperty);
+        K.assertHasEnded(doc.data$);
+        K.assertHasEnded(doc.changes);
+        K.assertHasEnded(doc.state.isSaving$);
+        K.assertHasEnded(doc.state.isDirty$);
+        K.assertHasEnded(doc.state.loaded$);
+        K.assertHasEnded(doc.state.error$);
+
+        // TODO: figure out why they are not ending in OtDocument
+        if (!doc.isOtDocument) {
+          K.assertHasEnded(doc.state.canEdit$);
+          K.assertHasEnded(doc.state.isConnected$);
+        }
       });
     });
   });

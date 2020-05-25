@@ -314,11 +314,6 @@ describe('CmaDocument', () => {
       await doc.setValueAt(fieldPath, 'updated value');
       doc.destroy();
       expect(entityRepo.update).toBeCalledTimes(1);
-
-      await wait();
-      jest.runAllTimers();
-      // Not updated the second time because the entity is still the same
-      expect(entityRepo.update).toBeCalledTimes(1);
     });
   });
 
@@ -675,6 +670,32 @@ describe('CmaDocument', () => {
       K.assertCurrentValue(doc.state.error$, null);
       // Init version + 1 (processed asset) + 1 (processed asset)
       expect(doc.getVersion()).toEqual(asset.sys.version + 2);
+    });
+  });
+
+  describe('destroy', () => {
+    it('executed only once', () => {
+      doc.destroy();
+    });
+    it('persists changes and updates the local state', async () => {
+      await doc.setValueAt(fieldPath, 'updated value');
+      doc.destroy();
+      await wait();
+
+      doc.destroy();
+      expect(entityRepo.update).toBeCalledTimes(1);
+    });
+
+    it('stops changes stream and throttled save function', async () => {
+      await doc.setValueAt(fieldPath, 'updated value');
+      doc.destroy();
+      expect(entityRepo.update).toBeCalledTimes(1);
+
+      // Updates made after destroy won't trigger another save as the stream is stopped
+      await doc.setValueAt(fieldPath, 'destroyed');
+      await wait();
+      jest.runAllTimers();
+      expect(entityRepo.update).toBeCalledTimes(1);
     });
   });
 

@@ -71,6 +71,7 @@ export function createStreamBus(scope) {
     currentEmitter.end();
   }
 }
+
 // Deprecated alias
 export { createStreamBus as createBus };
 
