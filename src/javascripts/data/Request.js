@@ -4,6 +4,7 @@ import { getEndpoint, getCurrentState } from 'data/Request/Utils';
 import * as Telemetry from 'i13n/Telemetry';
 import queryString from 'query-string';
 import { gitRevision, env } from 'Config';
+import { fromPairs } from 'lodash';
 
 /**
  * @description
@@ -18,32 +19,42 @@ export default function makeRequest(auth) {
   return wrapWithCounter(wrapWithAuth(auth, wrapWithRetry(fetchFn)));
 }
 
-function wrapWithCounter(request) {
-  return async (args) => {
-    Telemetry.count('cma-req', {
-      endpoint: getEndpoint(args.url),
-      state: getCurrentState(),
-    });
-
-    return request(args);
-  };
-}
-
 async function fetchFn(config) {
   const args = buildRequestArguments(config);
-  const response = await window.fetch(...args);
+  let rawResponse;
 
-  if (response.ok) {
-    // 204s (or any response without payload) and .json() don't work well.
-    // we return null in those cases.
-    // we currently only accept JSON responses
-    try {
-      return await response.json();
-    } catch {
-      return null;
-    }
+  try {
+    rawResponse = await window.fetch(...args);
+  } catch {
+    // Network problem
+    throw Object.assign(new Error('API request failed'), { status: -1, config });
+  }
+
+  const data = await safelyGetResponseBody(rawResponse);
+  // matching AngularJS's $http response object
+  // https://docs.angularjs.org/api/ng/service/$http#$http-returns
+  const response = {
+    config,
+    data,
+    headers: fromPairs([...rawResponse.headers.entries()]),
+    status: rawResponse.status,
+    statusText: rawResponse.statusText,
+  };
+
+  if (rawResponse.ok) {
+    return response;
   } else {
-    throw response;
+    throw Object.assign(new Error('API request failed'), response);
+  }
+}
+
+// 204s (or any response without payload) and .json() don't work well.
+// we return null in those cases.
+async function safelyGetResponseBody(response) {
+  try {
+    return await response.json();
+  } catch {
+    return null;
   }
 }
 
@@ -94,5 +105,16 @@ function getDefaultHeaders() {
     Accept: 'application/json, text/plain, */*',
     'X-Contentful-User-Agent': userAgentParts.join('; '),
     'Content-Type': 'application/vnd.contentful.management.v1+json',
+  };
+}
+
+function wrapWithCounter(request) {
+  return async (args) => {
+    Telemetry.count('cma-req', {
+      endpoint: getEndpoint(args.url),
+      state: getCurrentState(),
+    });
+
+    return request(args);
   };
 }

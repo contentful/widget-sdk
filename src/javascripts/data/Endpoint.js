@@ -181,20 +181,14 @@ export function create(baseUrl, auth) {
 
     try {
       const response = await baseRequest(req);
-      return response;
+      return response.data;
     } catch (res) {
-      let data;
-      try {
-        data = await res.json();
-      } catch {
-        data = null;
-      }
       const error = extend(new Error('API request failed'), {
         status: res.status,
-        data,
+        data: res.data,
         statusCode: res.status,
         // `code` is the error id. it falls back to the response status code
-        code: get(data, ['sys', 'id'], res.status),
+        code: get(res.data, ['sys', 'id'], res.status),
         headers: res.headers,
         request: req,
       });

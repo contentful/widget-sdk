@@ -9,7 +9,7 @@ describe('Client', () => {
     let baseRequest;
 
     beforeEach(() => {
-      baseRequest = jest.fn().mockResolvedValue('RESPONSE DATA');
+      baseRequest = jest.fn().mockResolvedValue({ data: 'RESPONSE DATA' });
 
       makeRequest.mockReturnValue(baseRequest);
     });
@@ -69,7 +69,7 @@ describe('Client', () => {
     });
 
     it('rejects with status code, data and request for errors', async function () {
-      baseRequest.mockRejectedValue({ status: '777', json: () => Promise.resolve('OMG ERROR') });
+      baseRequest.mockRejectedValue({ status: '777', data: 'OMG ERROR' });
 
       let err;
 

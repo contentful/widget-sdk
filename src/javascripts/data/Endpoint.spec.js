@@ -1,6 +1,6 @@
 import * as Endpoint from './Endpoint';
 
-const mockRequest = jest.fn();
+const mockRequest = jest.fn(async () => ({ data: '' }));
 jest.mock('data/Request', () => jest.fn(() => mockRequest));
 
 const auth = jest.fn();
@@ -36,7 +36,7 @@ describe('Endpoint', () => {
   });
 
   it('resolves the promise with response data', async () => {
-    mockRequest.mockResolvedValueOnce('DATA');
+    mockRequest.mockResolvedValueOnce({ data: 'DATA' });
 
     const response = await doRequest({
       method: 'GET',
@@ -81,10 +81,9 @@ describe('Endpoint', () => {
 
   describe('error response', () => {
     const data = { sys: { id: 'errorid' } };
-    const response = { json: jest.fn(async () => data) };
+    const response = { data };
 
     beforeEach(() => {
-      // jest doesn't support the Response() constructor
       mockRequest.mockRejectedValueOnce(response);
     });
 

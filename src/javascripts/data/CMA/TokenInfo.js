@@ -25,17 +25,17 @@ export default function makeFetchWithAuth(auth) {
 
   return async () => {
     try {
-      const data = await doFetch(request);
+      const response = await doFetch(request);
 
-      if (data) {
+      if (response.data) {
         // Locales are always fetched from the `/locales` endpoint.
         // Do not resolve links to locales.
-        delete data.includes.Locale;
+        delete response.data.includes.Locale;
 
         // TODO freeze returned object
-        return resolveTokenLinks(data);
+        return resolveTokenLinks(response.data);
       } else {
-        logError('Obtained /token info without `data`', data);
+        logError('Obtained /token info without `data`', response);
         throw newError();
       }
     } catch (error) {
