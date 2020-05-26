@@ -10,9 +10,9 @@ import * as LD from 'utils/LaunchDarkly';
 import { NEW_STATUS_SWITCH, ADD_TO_RELEASE } from 'featureFlags';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
+import { getEntityTitle } from 'app/entry_editor/EntryReferences/referencesService';
 
 import ReleasesDialog from '../ReleasesWidget/ReleasesDialog';
-import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 export default class PublicationWidgetContainer extends Component {
   static propTypes = {
     emitter: PropTypes.object.isRequired,
@@ -31,6 +31,7 @@ export default class PublicationWidgetContainer extends Component {
     isStatusSwitch: false,
     isAddToRelease: false,
     isRelaseDialogShown: false,
+    entityTitle: null,
   };
 
   async componentDidMount() {
@@ -64,8 +65,9 @@ export default class PublicationWidgetContainer extends Component {
     );
   }
 
-  onUpdatePublicationWidget = (update) => {
-    this.setState({ ...update });
+  onUpdatePublicationWidget = async (update) => {
+    const entityTitle = await getEntityTitle(update.entity);
+    this.setState({ ...update, entityTitle });
     this.createReleasesDropDown(update);
   };
 
@@ -142,11 +144,6 @@ export default class PublicationWidgetContainer extends Component {
     const secondary = get(commands, 'secondary', []);
     const publicationBlockedReason = values(publicationBlockedReasons)[0];
 
-    const entryTitle = EntityFieldValueSpaceContext.entryTitle({
-      getContentTypeId: () => entity.sys.contentType.sys.id,
-      data: entity,
-    });
-
     return (
       <>
         <ScheduledActionsFeatureFlag>
@@ -188,7 +185,7 @@ export default class PublicationWidgetContainer extends Component {
         {this.state.isRelaseDialogShown && (
           <ReleasesDialog
             selectedEntities={[entity]}
-            releaseContentTitle={entryTitle}
+            releaseContentTitle={this.state.entityTitle}
             onCancel={() => this.setState({ isRelaseDialogShown: false })}
           />
         )}
