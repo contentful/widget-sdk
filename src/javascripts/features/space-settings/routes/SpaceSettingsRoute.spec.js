@@ -2,16 +2,15 @@ import React from 'react';
 import { screen, render, wait } from '@testing-library/react';
 
 import userEvent from '@testing-library/user-event';
-import { Provider } from 'react-redux';
 
 import { getSpace } from 'services/TokenStore';
 import {
   showDialog as showChangeSpaceModal,
   getNotificationMessage,
 } from 'services/ChangeSpaceService';
-import reducer from 'redux/reducer';
-import { createStore } from 'redux';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 
+import { openDeleteSpaceDialog } from '../services/DeleteSpace';
 import { getRatePlans, getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
 
 import { track } from 'analytics/Analytics';
@@ -29,8 +28,17 @@ jest.mock('analytics/Analytics', () => ({
   track: jest.fn(),
 }));
 
+jest.mock('../services/DeleteSpace', () => ({
+  openDeleteSpaceDialog: jest.fn(),
+}));
+
+jest.mock('services/OrganizationRoles', () => ({
+  isOwnerOrAdmin: jest.fn(),
+}));
+
 jest.mock('services/TokenStore', () => ({
   getSpace: jest.fn(),
+  getOrganization: jest.fn(),
 }));
 
 jest.mock('account/pricing/PricingDataProvider', () => ({
@@ -39,13 +47,7 @@ jest.mock('account/pricing/PricingDataProvider', () => ({
 }));
 
 const build = async (waitToRender = true) => {
-  // Need Provider and store even though they aren't used for jest to run the tests.
-  const store = createStore(reducer);
-  const renderedComponent = render(
-    <Provider store={store}>
-      <SpaceSettingsRoute />
-    </Provider>
-  );
+  const renderedComponent = render(<SpaceSettingsRoute />);
 
   if (waitToRender) {
     await wait();
@@ -66,6 +68,7 @@ describe('SpaceSettingsRoute', () => {
 
   getSpace.mockResolvedValue(testSpace);
   getNotificationMessage.mockReturnValue(notificationMessage);
+  isOwnerOrAdmin.mockReturnValue(false);
 
   spaceContextMocked.organization = testOrganization;
   spaceContextMocked.space.data = { name: 'test', sys: { id: 987 } };
@@ -130,5 +133,20 @@ describe('SpaceSettingsRoute', () => {
     expect(screen.getByTestId('space-settings-page.plan-price')).toHaveTextContent(
       `${largePlan.name} - $${largePlan.price} /month`
     );
+  });
+
+  it('should call openRemovalDialog when the user clicks on the delete space button', async () => {
+    isOwnerOrAdmin.mockReturnValue(true);
+    await build();
+
+    userEvent.click(await screen.getByTestId('delete-space'));
+
+    await wait();
+
+    expect(openDeleteSpaceDialog).toBeCalledWith({
+      onSuccess: expect.any(Function),
+      plan: mediumPlan,
+      space: spaceContextMocked.space.data,
+    });
   });
 });

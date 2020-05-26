@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { css } from 'emotion';
 import PropTypes from 'prop-types';
 import {
@@ -13,7 +12,6 @@ import {
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import NavigationIcon from 'ui/Components/NavigationIcon';
-import getOrgRole from 'redux/selectors/getOrgRole';
 import { Price } from 'core/components/formatting';
 
 const styles = {
@@ -33,7 +31,7 @@ const styles = {
   }),
 };
 
-class SpaceSettings extends React.Component {
+export class SpaceSettings extends React.Component {
   state = {
     isSaving: false,
     initialSpaceName: this.props.spaceName,
@@ -152,7 +150,3 @@ SpaceSettings.propTypes = {
   spaceId: PropTypes.string.isRequired,
   showDeleteButton: PropTypes.bool.isRequired,
 };
-
-export const SpaceSettingsConnected = connect((state) => ({
-  showDeleteButton: ['owner', 'admin'].includes(getOrgRole(state)),
-}))(SpaceSettings);

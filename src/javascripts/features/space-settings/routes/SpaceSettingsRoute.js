@@ -5,8 +5,9 @@ import ReloadNotification from 'app/common/ReloadNotification';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import * as TokenStore from 'services/TokenStore';
 import { Notification } from '@contentful/forma-36-react-components';
-import { SpaceSettingsConnected } from '../components/SpaceSettings';
+import { SpaceSettings } from '../components/SpaceSettings';
 import { openDeleteSpaceDialog } from '../services/DeleteSpace';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import {
   showDialog as showChangeSpaceModal,
   getNotificationMessage,
@@ -129,13 +130,14 @@ export class SpaceSettingsRoute extends React.Component {
         )}
 
         {!this.state.isLoading && (
-          <SpaceSettingsConnected
+          <SpaceSettings
             save={this.save}
             onRemoveClick={this.openRemovalDialog}
             spaceName={spaceContext.space.data.name}
             plan={this.state.plan}
             onChangeSpace={this.changeSpaceDialog}
             spaceId={spaceContext.space.getId()}
+            showDeleteButton={isOwnerOrAdmin(spaceContext.organization)}
           />
         )}
       </React.Fragment>
