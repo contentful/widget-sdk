@@ -2,7 +2,6 @@ import { getModule } from 'core/NgRegistry';
 import _ from 'lodash';
 import * as EntityFieldValueHelpers from './EntityFieldValueHelpers';
 import localeStore from 'services/localeStore';
-import * as logger from 'services/logger';
 
 /**
  * @param {string} contentTypeId
@@ -87,26 +86,13 @@ export function entityTitle(entity, localeCode) {
  */
 export function assetTitle(asset, localeCode, modelValue) {
   const defaultTitle = modelValue ? null : 'Untitled';
-
-  let title = defaultTitle;
-  try {
-    const defaultInternalLocaleCode = getDefaultInternalLocaleCode();
-
-    title = EntityFieldValueHelpers.getAssetTitle({
-      asset: asset.data,
-      defaultTitle,
-      internalLocaleCode: localeCode,
-      defaultInternalLocaleCode,
-    });
-  } catch (error) {
-    // TODO: Don't use try catch. Instead, handle undefined/unexpected values.
-    logger.logWarn('Failed to determine asset title', {
-      error: error,
-      assetSys: _.get(asset, 'data.sys'),
-    });
-  }
-
-  return title;
+  const defaultInternalLocaleCode = getDefaultInternalLocaleCode();
+  return EntityFieldValueHelpers.getAssetTitle({
+    asset: asset.data,
+    defaultTitle,
+    internalLocaleCode: localeCode,
+    defaultInternalLocaleCode,
+  });
 }
 
 /**
