@@ -135,11 +135,11 @@ const ReferencesTab = ({ entity }) => {
   const { state: referencesState, dispatch } = useContext(ReferencesContext);
   const {
     references,
-    linksCounter,
     selectedEntities,
     validations,
     isTreeMaxDepthReached,
     isActionsDisabled,
+    initialReferencesAmount,
   } = referencesState;
 
   useEffect(() => {
@@ -158,6 +158,7 @@ const ReferencesTab = ({ entity }) => {
           entries: get(response, 'includes.Entry.length') || 0,
         },
       });
+
       return fetchedRefs;
     }
 
@@ -252,7 +253,7 @@ const ReferencesTab = ({ entity }) => {
 
             Notification.success(
               createSuccessMessage({
-                selectedEntities: entitiesToPublish,
+                selectedEntities,
                 root: references[0],
                 entityTitle,
               })
@@ -289,6 +290,10 @@ const ReferencesTab = ({ entity }) => {
 
   const showPublishButtons = !!references.length && create(references[0].sys).can('publish');
 
+  const referencesAmount = doesContainRoot(selectedEntities, references[0])
+    ? selectedEntities.length - 1
+    : selectedEntities.length;
+
   return (
     <>
       <ErrorHandler
@@ -301,11 +306,7 @@ const ReferencesTab = ({ entity }) => {
           <LoadingOverlay
             actionName={processingAction}
             entityTitle={doesContainRoot(selectedEntities, references[0]) ? entityTitle : null}
-            referencesAmount={
-              doesContainRoot(selectedEntities, references[0])
-                ? selectedEntities.length - 1
-                : selectedEntities.length
-            }
+            referencesAmount={referencesAmount}
           />
         )}
         <div>
@@ -319,11 +320,7 @@ const ReferencesTab = ({ entity }) => {
               )}
               <Paragraph className={styles.paragraph}>
                 &quot;{entityTitle}&quot; has {''}
-                {linksCounter.entries + linksCounter.assets}{' '}
-                {pluralize(linksCounter.entries + linksCounter.assets, 'reference')} (
-                {linksCounter.entries} {pluralize(linksCounter.entries, 'entry')}
-                {' and '}
-                {linksCounter.assets} {pluralize(linksCounter.assets, 'asset')})
+                {initialReferencesAmount - 1} {pluralize(initialReferencesAmount - 1, 'reference')}
               </Paragraph>
             </>
           )}

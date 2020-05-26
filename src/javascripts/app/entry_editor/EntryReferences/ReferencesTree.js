@@ -7,7 +7,11 @@ import tokens from '@contentful/forma-36-tokens';
 import ReferenceCard from './ReferenceCard';
 import { track } from 'analytics/Analytics';
 import { ReferencesContext } from './ReferencesContext';
-import { SET_SELECTED_ENTITIES, SET_ACTIONS_DISABLED } from './state/actions';
+import {
+  SET_SELECTED_ENTITIES,
+  SET_ACTIONS_DISABLED,
+  SET_INITIAL_REFERENCES_AMOUNT,
+} from './state/actions';
 
 const styles = {
   description: css({
@@ -68,6 +72,7 @@ function ReferenceCards({
   setIsTreeMaxDepthReached,
   setInitialEntities,
   handleSelect,
+  setInitialReferenceAmount,
 }) {
   let isMoreCardRendered = false;
   let depth = 0;
@@ -236,6 +241,7 @@ function ReferenceCards({
 
   if (!initialized) {
     setInitialEntities(initialSelectedEntities);
+    setInitialReferenceAmount(entitiesPerLevel);
     setInitialized(true);
   }
 
@@ -284,6 +290,17 @@ const ReferencesTree = ({
     },
     [dispatch]
   );
+
+  const setInitialReferenceAmount = useCallback(
+    (entitiesPerLevel) => {
+      dispatch({
+        type: SET_INITIAL_REFERENCES_AMOUNT,
+        value: entitiesPerLevel.reduce((a, b) => a + b, 0),
+      });
+    },
+    [dispatch]
+  );
+
   const MemoizedReferencesCards = useMemo(
     () => (
       <ReferenceCards
@@ -297,6 +314,7 @@ const ReferencesTree = ({
         setIsTreeMaxDepthReached={setIsTreeMaxDepthReached}
         handleSelect={handleSelect}
         setInitialEntities={setInitialEntities}
+        setInitialReferenceAmount={setInitialReferenceAmount}
       />
     ),
     [
@@ -310,6 +328,7 @@ const ReferencesTree = ({
       handleSelect,
       setInitialEntities,
       root,
+      setInitialReferenceAmount,
     ]
   );
 

@@ -5,6 +5,7 @@ import {
   SET_VALIDATIONS,
   SET_MAX_DEPTH_REACHED,
   SET_ACTIONS_DISABLED,
+  SET_INITIAL_REFERENCES_AMOUNT,
 } from './actions';
 
 type ReferencesState = {
@@ -14,6 +15,7 @@ type ReferencesState = {
   validations: object | null;
   isTreeMaxDepthReached: boolean;
   isActionsDisabled: boolean;
+  initialReferencesAmount: number;
 };
 
 type Action = {
@@ -23,7 +25,8 @@ type Action = {
     | typeof SET_SELECTED_ENTITIES
     | typeof SET_VALIDATIONS
     | typeof SET_MAX_DEPTH_REACHED
-    | typeof SET_ACTIONS_DISABLED;
+    | typeof SET_ACTIONS_DISABLED
+    | typeof SET_INITIAL_REFERENCES_AMOUNT;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any;
 };
@@ -35,6 +38,7 @@ export const initialState: ReferencesState = {
   validations: null,
   isTreeMaxDepthReached: false,
   isActionsDisabled: false,
+  initialReferencesAmount: 0,
 };
 
 export function reducer(state: ReferencesState, action: Action): ReferencesState {
@@ -51,6 +55,8 @@ export function reducer(state: ReferencesState, action: Action): ReferencesState
       return { ...state, isTreeMaxDepthReached: action.value };
     case SET_ACTIONS_DISABLED:
       return { ...state, isActionsDisabled: action.value };
+    case SET_INITIAL_REFERENCES_AMOUNT:
+      return { ...state, initialReferencesAmount: action.value };
     default:
       return state;
   }

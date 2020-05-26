@@ -3,7 +3,11 @@ import { render, cleanup, wait } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import resolveResponse from 'contentful-resolve-response';
 import { ReferencesContext } from './ReferencesContext';
-import { SET_SELECTED_ENTITIES, SET_ACTIONS_DISABLED } from './state/actions';
+import {
+  SET_SELECTED_ENTITIES,
+  SET_ACTIONS_DISABLED,
+  SET_INITIAL_REFERENCES_AMOUNT,
+} from './state/actions';
 
 import {
   simpleReferences,
@@ -193,8 +197,9 @@ describe('ReferencesTree component', () => {
       </MockPovider>
     );
     expect(queryAllByTestId('validation-error')).toHaveLength(2);
-    expect(dispatchSpy).toHaveBeenCalledTimes(2);
+    expect(dispatchSpy).toHaveBeenCalledTimes(3);
     expect(dispatchSpy).toHaveBeenCalledWith({ type: SET_SELECTED_ENTITIES, value: [] });
     expect(dispatchSpy).toHaveBeenCalledWith({ type: SET_ACTIONS_DISABLED, value: true });
+    expect(dispatchSpy).toHaveBeenCalledWith({ type: SET_INITIAL_REFERENCES_AMOUNT, value: 4 });
   });
 });
