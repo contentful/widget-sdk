@@ -121,7 +121,7 @@ export async function openDeleteSpaceDialog({ space, plan, onSuccess }) {
   ));
 
   if (result) {
-    onSuccess();
+    onSuccess && onSuccess();
   }
 }
 

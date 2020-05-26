@@ -7,11 +7,12 @@ const ModernStackOverview = (props) => {
   return props.managementToken && props.entry && props.deploymentProvider ? (
     <DevChoiceAccordion {...props} />
   ) : (
-    <ResumeOnboarding />
+    <ResumeOnboarding spaceId={props.spaceId} />
   );
 };
 
 ModernStackOverview.propTypes = {
+  spaceId: PropTypes.string.isRequired,
   managementToken: PropTypes.string,
   entry: PropTypes.object,
   deploymentProvider: PropTypes.string,
