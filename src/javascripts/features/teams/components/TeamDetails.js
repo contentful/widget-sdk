@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import Placeholder from 'app/common/Placeholder';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes';
 import { Button, Tooltip, Subheading, Workbench } from '@contentful/forma-36-react-components';
@@ -10,7 +9,7 @@ import { css } from 'emotion';
 import { getUserName } from 'app/OrganizationSettings/Users/UserUtils';
 import * as Navigator from 'states/Navigator';
 import { TeamDialog } from './TeamDialog';
-import { removeTeam } from '../services/TeamRepo';
+import { DeleteTeamDialog } from './DeleteTeamDialog';
 import { DeleteButton } from './TeamDetailsDeleteButton';
 import { EditButton } from './TeamDetailsEditButton';
 import { TeamDetailsContent } from './TeamDetailsContent';
@@ -59,15 +58,10 @@ TeamDetails.propTypes = {
 
 export function TeamDetails({ team, allTeams, orgId, readOnlyPermission }) {
   const [showTeamDialog, setShowTeamDialog] = useState(false);
+  const [showDeleteTeamDialog, setShowDeleteTeamDialog] = useState(false);
   const [teamName, setTeamName] = useState(team.name);
   const [teamDescription, setTeamDescription] = useState(team.description);
-  const path = ['organization', 'teams'];
-
-  const deleteTeam = async () => {
-    const endpoint = createOrganizationEndpoint(this.props.orgId);
-    await removeTeam(endpoint, this.props.team.sys.id);
-    this.setState({ showingTeamDialog: true });
-  };
+  const path = ['account', 'organizations', 'teams'];
 
   const onUpdateTeamDetailsValues = ({ name, description }) => {
     setTeamName(name);
@@ -141,7 +135,7 @@ export function TeamDetails({ team, allTeams, orgId, readOnlyPermission }) {
                   <DeleteButton />
                 </Tooltip>
               ) : (
-                <DeleteButton onClick={() => deleteTeam()} />
+                <DeleteButton onClick={() => setShowDeleteTeamDialog(true)} />
               )}
             </div>
             <div className={styles.detailsContent}>
@@ -172,6 +166,14 @@ export function TeamDetails({ team, allTeams, orgId, readOnlyPermission }) {
           testId="edit-team-dialog"
           onClose={() => setShowTeamDialog(false)}
           isShown={showTeamDialog}
+          initialTeam={team}
+          allTeams={allTeams}
+          updateTeamDetailsValues={onUpdateTeamDetailsValues}
+        />
+        <DeleteTeamDialog
+          testId="edit-team-dialog"
+          onClose={() => setShowDeleteTeamDialog(false)}
+          isShown={showDeleteTeamDialog}
           initialTeam={team}
           allTeams={allTeams}
           updateTeamDetailsValues={onUpdateTeamDetailsValues}

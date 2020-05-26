@@ -84,7 +84,7 @@ export function Team(name = '', description = '') {
   return {
     name,
     description,
-    sys: sys({ type: types.TEAM }),
+    sys: sys({ type: types.TEAM, organization: { sys: { id: 'aTeam1' } } }),
   };
 }
 
