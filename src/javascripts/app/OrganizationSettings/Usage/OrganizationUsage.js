@@ -208,7 +208,7 @@ export class OrganizationUsage extends React.Component {
           spaceNames,
           isPoC,
           periods: periods.items,
-          apiRequestIncludedLimit,
+          apiRequestIncludedLimit: apiRequestIncludedLimit ?? 0,
           hasSpaces: spaces.length !== 0,
         });
 

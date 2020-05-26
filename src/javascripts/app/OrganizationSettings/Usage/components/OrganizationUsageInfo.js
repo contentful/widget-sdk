@@ -32,7 +32,7 @@ const OrganizationUsageInfo = (props) => {
       </Heading>
       <Paragraph data-test-id="org-usage-total" className={styles.usageNumber}>
         {totalUsage.toLocaleString('en-US')}
-        {totalUsage > includedLimit && (
+        {!!includedLimit && totalUsage > includedLimit && (
           <small data-test-id="org-usage-overage" className={styles.overageNumber}>
             {` +${(totalUsage - includedLimit).toLocaleString('en-US')} overage`}
           </small>

@@ -25,6 +25,17 @@ export const applyBorderStyle = (value) => ({
 const propsToChartOption = ({ period, usage, includedLimit }) => {
   const dataWithStyle = accumulate(usage).map(applyBorderStyle);
 
+  const markLine = {
+    symbol: ['none', 'circle'],
+    data: [{ yAxis: includedLimit }],
+    lineStyle: {
+      color: '#CC3C52',
+    },
+    label: {
+      show: false,
+    },
+  };
+
   return {
     xAxis: {
       data: period,
@@ -72,16 +83,7 @@ const propsToChartOption = ({ period, usage, includedLimit }) => {
           borderColor: '#2E75D4',
           opacity: 0.5,
         },
-        markLine: {
-          symbol: ['none', 'circle'],
-          data: [{ yAxis: includedLimit }],
-          lineStyle: {
-            color: '#CC3C52',
-          },
-          label: {
-            show: false,
-          },
-        },
+        markLine: includedLimit ? markLine : undefined,
       },
     ],
     grid: {
