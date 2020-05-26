@@ -2,7 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
-import { Paragraph, Heading, TextLink } from '@contentful/forma-36-react-components';
+import {
+  Paragraph,
+  Heading,
+  TextLink,
+  SkeletonContainer,
+  SkeletonBodyText,
+} from '@contentful/forma-36-react-components';
 
 import { joinAnd } from 'utils/StringUtils';
 import { getEnabledFeatures } from 'utils/SubscriptionUtils';
@@ -16,28 +22,40 @@ const styles = {
 };
 
 function BasePlan({ basePlan }) {
-  const enabledFeaturesNames = getEnabledFeatures(basePlan).map(({ name }) => name);
+  const enabledFeaturesNames = basePlan ? getEnabledFeatures(basePlan).map(({ name }) => name) : [];
 
   return (
     <div className={styles.container}>
       <Heading className="section-title">Platform</Heading>
-      <Paragraph testId="subscription-page.base-plan-details">
-        <b>{basePlan.name}</b>
-        {enabledFeaturesNames.length
-          ? ` – includes ${joinAnd(enabledFeaturesNames)}. `
-          : ' – doesn’t include enterprise features. '}
-        <TextLink
-          href={websiteUrl('/pricing/#platform-features')}
-          testId="subscription-page.org-usage-link">
-          Platform features
-        </TextLink>
-      </Paragraph>
+
+      {!basePlan ? (
+        <SkeletonContainer svgHeight={40}>
+          <SkeletonBodyText numberOfLines={2} />
+        </SkeletonContainer>
+      ) : (
+        <Paragraph testId="subscription-page.base-plan-details">
+          <b>{basePlan.name}</b>
+          {enabledFeaturesNames.length
+            ? ` – includes ${joinAnd(enabledFeaturesNames)}. `
+            : ' – doesn’t include enterprise features. '}
+          <TextLink
+            href={websiteUrl('/pricing/#platform-features')}
+            testId="subscription-page.org-usage-link"
+            target="_blank">
+            Platform features
+          </TextLink>
+        </Paragraph>
+      )}
     </div>
   );
 }
 
 BasePlan.propTypes = {
-  basePlan: PropTypes.object.isRequired,
+  basePlan: PropTypes.object,
+};
+
+BasePlan.defaultProps = {
+  basePlan: undefined,
 };
 
 export default BasePlan;

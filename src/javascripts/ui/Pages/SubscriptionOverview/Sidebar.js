@@ -9,6 +9,8 @@ import {
   TextLink,
   Note,
   Typography,
+  SkeletonContainer,
+  SkeletonBodyText,
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import { billing } from './links';
@@ -16,8 +18,6 @@ import { billing } from './links';
 import Icon from 'ui/Components/Icon';
 import { Price } from 'core/components/formatting';
 import ContactUsButton from 'ui/Components/ContactUsButton';
-
-import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 
 const styles = {
   icon: css({
@@ -33,13 +33,6 @@ const styles = {
     marginBottom: tokens.spacingM,
   }),
 };
-
-export function hasAnyInaccessibleSpaces(plans) {
-  return plans.some((plan) => {
-    const space = plan.space;
-    return space && !space.isAccessible;
-  });
-}
 
 function PayingOnDemandOrgCopy({ grandTotal }) {
   return (
@@ -61,6 +54,10 @@ function PayingOnDemandOrgCopy({ grandTotal }) {
   );
 }
 
+PayingOnDemandOrgCopy.propTypes = {
+  grandTotal: PropTypes.number.isRequired,
+};
+
 function NonPayingOrgCopy({ organizationId }) {
   return (
     <>
@@ -79,6 +76,10 @@ function NonPayingOrgCopy({ organizationId }) {
     </>
   );
 }
+
+NonPayingOrgCopy.propTypes = {
+  organizationId: PropTypes.string.isRequired,
+};
 
 function InaccessibleSpacesCopy({ isOrgOwner, organizationId: orgId }) {
   return (
@@ -102,10 +103,29 @@ function InaccessibleSpacesCopy({ isOrgOwner, organizationId: orgId }) {
   );
 }
 
-function NonEnterpriseCopy() {
+InaccessibleSpacesCopy.propTypes = {
+  organizationId: PropTypes.string.isRequired,
+  isOrgOwner: PropTypes.bool,
+};
+
+InaccessibleSpacesCopy.defaultProps = {
+  isOrgOwner: false,
+};
+
+function HelpCopy({ initialLoad, enterprisePlan }) {
   return (
     <>
       <Heading className="entity-sidebar__heading">Help</Heading>
+      {initialLoad && (
+        <SkeletonContainer svgHeight={56}>
+          <SkeletonBodyText numberOfLines={2} />
+        </SkeletonContainer>
+      )}
+      {enterprisePlan && (
+        <Paragraph>
+          Talk to us if you want to make changes to your spaces or launch a proof of concept space.
+        </Paragraph>
+      )}
       <Paragraph>
         <ContactUsButton
           isLink
@@ -117,47 +137,69 @@ function NonEnterpriseCopy() {
   );
 }
 
-function EnterpriseCopy() {
-  return (
-    <>
-      <Heading className="entity-sidebar__heading">Help</Heading>
-      <Paragraph>
-        Talk to us if you want to make changes to your spaces or launch a proof of concept space.
-      </Paragraph>
-      <Paragraph>
-        <ContactUsButton
-          isLink
-          className={styles.linkWithIcon}
-          testId="subscription-page.sidebar.contact-link"
-        />
-      </Paragraph>
-    </>
-  );
-}
+HelpCopy.propTypes = {
+  initialLoad: PropTypes.bool,
+  enterprisePlan: PropTypes.bool,
+};
+
+HelpCopy.defaultProps = {
+  initialLoad: true,
+  enterprisePlan: false,
+};
 
 function Sidebar(props) {
-  const { basePlan, isOrgOwner, isOrgBillable, spacePlans } = props;
-
-  const anyInaccessibleSpaces = hasAnyInaccessibleSpaces(spacePlans);
+  const {
+    initialLoad,
+    enterprisePlan,
+    isOrgOwner,
+    isOrgBillable,
+    hasAnyInaccessibleSpaces,
+    grandTotal,
+    organizationId,
+  } = props;
 
   return (
     <div className="entity-sidebar" data-test-id="subscription-page.sidebar">
-      {isOrgBillable && !isEnterprisePlan(basePlan) && <PayingOnDemandOrgCopy {...props} />}
-      {!isOrgBillable && isOrgOwner && <NonPayingOrgCopy {...props} />}
-      {anyInaccessibleSpaces && <InaccessibleSpacesCopy {...props} />}
-      {!isEnterprisePlan(basePlan) && <NonEnterpriseCopy {...props} />}
-      {isEnterprisePlan(basePlan) && <EnterpriseCopy {...props} />}
+      {initialLoad ? (
+        <>
+          <SkeletonContainer svgHeight={100}>
+            <SkeletonBodyText numberOfLines={4} />
+          </SkeletonContainer>
+          <br />
+          <SkeletonContainer svgHeight={100}>
+            <SkeletonBodyText numberOfLines={4} />
+          </SkeletonContainer>
+        </>
+      ) : (
+        <>
+          {isOrgBillable && !enterprisePlan && <PayingOnDemandOrgCopy grandTotal={grandTotal} />}
+          {!isOrgBillable && isOrgOwner && <NonPayingOrgCopy organizationId={organizationId} />}
+          {hasAnyInaccessibleSpaces && (
+            <InaccessibleSpacesCopy organizationId={organizationId} isOrgOwner={isOrgOwner} />
+          )}
+        </>
+      )}
+      <HelpCopy initialLoad={initialLoad} enterprisePlan={enterprisePlan} />
     </div>
   );
 }
 
-PayingOnDemandOrgCopy.propTypes = NonPayingOrgCopy.propTypes = InaccessibleSpacesCopy.propTypes = NonEnterpriseCopy.propTypes = Sidebar.propTypes = {
-  basePlan: PropTypes.object.isRequired,
-  grandTotal: PropTypes.number.isRequired,
+Sidebar.propTypes = {
+  initialLoad: PropTypes.bool.isRequired,
+  grandTotal: PropTypes.number,
   organizationId: PropTypes.string.isRequired,
-  isOrgOwner: PropTypes.bool.isRequired,
-  isOrgBillable: PropTypes.bool.isRequired,
-  spacePlans: PropTypes.array.isRequired,
+  hasAnyInaccessibleSpaces: PropTypes.bool,
+  enterprisePlan: PropTypes.bool,
+  isOrgOwner: PropTypes.bool,
+  isOrgBillable: PropTypes.bool,
+};
+
+Sidebar.defaultProps = {
+  grandTotal: 0,
+  hasAnyInaccessibleSpaces: false,
+  enterprisePlan: false,
+  isOrgOwner: false,
+  isOrgBillable: false,
 };
 
 export default Sidebar;

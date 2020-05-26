@@ -17,7 +17,6 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import SubscriptionPage from './SubscriptionPage';
 
 import { useAsync } from 'core/hooks';
-import { FetcherLoading } from 'app/common/createFetcherComponent';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 
 const getBasePlan = (plans) => plans.items.find(({ planType }) => planType === 'base');
@@ -86,11 +85,7 @@ const fetch = (organizationId) => async () => {
 };
 
 export default function SubscriptionPageRouter({ orgId: organizationId }) {
-  const { isLoading, error, data } = useAsync(useCallback(fetch(organizationId), []));
-
-  if (isLoading || !data) {
-    return <FetcherLoading message="Loading subscription" />;
-  }
+  const { isLoading, error, data = {} } = useAsync(useCallback(fetch(organizationId), []));
 
   if (error) {
     return <ForbiddenPage />;
@@ -99,7 +94,7 @@ export default function SubscriptionPageRouter({ orgId: organizationId }) {
   return (
     <>
       <DocumentTitle title="Subscription" />
-      <SubscriptionPage organizationId={organizationId} data={data} />
+      <SubscriptionPage initialLoad={isLoading} organizationId={organizationId} data={data} />
     </>
   );
 }

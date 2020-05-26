@@ -100,7 +100,7 @@ describe('Space Plan Row', () => {
       await build();
 
       expect(() => {
-        screen.getByTestId('subscription-page.spaces-list.enterprise-toolitp');
+        screen.getByTestId('subscription-page.spaces-list.enterprise-tooltip');
       }).toThrow();
     });
 
@@ -108,16 +108,16 @@ describe('Space Plan Row', () => {
       await build({ committed: true });
 
       fireEvent.mouseOver(
-        screen.getByTestId('subscription-page.spaces-list.enterprise-toolitp-trigger')
+        screen.getByTestId('subscription-page.spaces-list.enterprise-tooltip-trigger')
       );
-      expect(screen.getByTestId('subscription-page.spaces-list.enterprise-toolitp')).toBeDefined();
+      expect(screen.getByTestId('subscription-page.spaces-list.enterprise-tooltip')).toBeDefined();
     });
 
     it('hides the feature tooltips when the plan does not have enabled features', async () => {
       await build();
 
       expect(() => {
-        screen.getByTestId('subscription-page.spaces-list.features-toolitp-trigger');
+        screen.getByTestId('subscription-page.spaces-list.features-tooltip-trigger');
       }).toThrow();
     });
 
@@ -129,10 +129,10 @@ describe('Space Plan Row', () => {
       await build();
 
       fireEvent.mouseOver(
-        screen.getByTestId('subscription-page.spaces-list.features-toolitp-trigger')
+        screen.getByTestId('subscription-page.spaces-list.features-tooltip-trigger')
       );
 
-      expect(screen.getByTestId('subscription-page.spaces-list.features-toolitp')).toBeDefined();
+      expect(screen.getByTestId('subscription-page.spaces-list.features-tooltip')).toBeDefined();
     });
 
     it('does not have special className when not upgraded', async () => {
@@ -149,11 +149,11 @@ describe('Space Plan Row', () => {
     it('has upgraded className when upgraded', async () => {
       await build({ hasUpgraded: true });
 
-      // The class 'x--success' comes from the SpacePlanRow.js file
+      // The class 'hasUpgraded' comes from the SpacePlanRow.js file
       expect(
         screen
           .getByTestId('subscription-page.spaces-list.table-row')
-          .classList.contains('x--success')
+          .className.includes('hasUpgraded')
       ).toBeTruthy();
     });
   });

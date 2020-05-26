@@ -18,11 +18,12 @@ import UsersForPlan from './UsersForPlan';
 import SpacePlans from './SpacePlans';
 import Sidebar from './Sidebar';
 import NavigationIcon from 'ui/Components/NavigationIcon';
+import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 
 const styles = {
   content: css({
     // TODO: $rhythm for emotion?
-    padding: '1.28rem 2rem 0',
+    padding: '1.28rem 2rem',
   }),
   sidebar: css({
     position: 'relative',
@@ -37,16 +38,32 @@ const styles = {
   }),
 };
 
-export default function SubscriptionPage({ organizationId, data }) {
-  const [changedSpace, setChangedSpace] = useState(null);
-  const [spacePlans, setSpacePlans] = useState(data.spacePlans);
+const hasAnyInaccessibleSpaces = (plans) => {
+  return plans.some((plan) => {
+    const space = plan.space;
+    return space && !space.isAccessible;
+  });
+};
+
+export default function SubscriptionPage({ initialLoad, organizationId, data }) {
+  const [changedSpaceId, setChangedSpaceId] = useState('');
+  const [spacePlans, setSpacePlans] = useState([]);
 
   useEffect(() => {
-    changedSpace &&
-      setTimeout(() => {
-        setChangedSpace(null);
+    let timer;
+
+    if (changedSpaceId) {
+      timer = setTimeout(() => {
+        setChangedSpaceId(null);
       }, 6000);
-  }, [changedSpace]);
+    }
+
+    return () => clearTimeout(timer);
+  }, [changedSpaceId]);
+
+  useEffect(() => {
+    setSpacePlans(data.spacePlans || []);
+  }, [data.spacePlans]);
 
   const createSpace = () => {
     showCreateSpaceModal(organizationId);
@@ -103,7 +120,7 @@ export default function SubscriptionPage({ organizationId, data }) {
           const newSpacePlan = spacePlans.find((sp) => sp.space.sys.id === space.sys.id);
 
           setSpacePlans(newSpacePlans);
-          setChangedSpace(space.sys.id);
+          setChangedSpaceId(space.sys.id);
 
           Notification.success(getNotificationMessage(space, currentSpacePlan, newSpacePlan));
         },
@@ -112,6 +129,10 @@ export default function SubscriptionPage({ organizationId, data }) {
   };
 
   const { basePlan, usersMeta, organization, grandTotal } = data;
+
+  const enterprisePlan = basePlan && isEnterprisePlan(basePlan);
+  const anyInaccessibleSpaces = hasAnyInaccessibleSpaces(spacePlans);
+  const orgIsBillable = organization && organization.isBillable;
 
   return (
     <Workbench testId="subscription-page">
@@ -122,26 +143,32 @@ export default function SubscriptionPage({ organizationId, data }) {
       <Workbench.Content className={styles.content}>
         <div className={styles.header}>
           <BasePlan basePlan={basePlan} organizationId={organizationId} />
-          <UsersForPlan usersMeta={usersMeta} organizationId={organizationId} />
+          <UsersForPlan
+            organizationId={organizationId}
+            numberFreeUsers={usersMeta && usersMeta.numFree}
+            numberPaidUsers={usersMeta && usersMeta.numPaid}
+            costOfUsers={usersMeta && usersMeta.cost}
+          />
         </div>
         <SpacePlans
-          basePlan={basePlan}
+          initialLoad={initialLoad}
           spacePlans={spacePlans}
-          upgradedSpace={changedSpace}
+          upgradedSpaceId={changedSpaceId}
           onCreateSpace={createSpace}
           onChangeSpace={changeSpace}
           onDeleteSpace={deleteSpace}
-          isOrgOwner={isOwner(organization)}
+          enterprisePlan={enterprisePlan}
         />
       </Workbench.Content>
       <Workbench.Sidebar position="right" className={styles.sidebar}>
         <Sidebar
-          basePlan={basePlan}
+          initialLoad={initialLoad}
           organizationId={organizationId}
           grandTotal={grandTotal}
-          spacePlans={spacePlans}
+          hasAnyInaccessibleSpaces={anyInaccessibleSpaces}
+          enterprisePlan={enterprisePlan}
           isOrgOwner={isOwner(organization)}
-          isOrgBillable={Boolean(organization.isBillable)}
+          isOrgBillable={orgIsBillable}
         />
       </Workbench.Sidebar>
     </Workbench>
@@ -149,6 +176,7 @@ export default function SubscriptionPage({ organizationId, data }) {
 }
 
 SubscriptionPage.propTypes = {
+  initialLoad: PropTypes.bool,
   organizationId: PropTypes.string.isRequired,
   data: PropTypes.shape({
     basePlan: PropTypes.object,
@@ -158,4 +186,8 @@ SubscriptionPage.propTypes = {
     organization: PropTypes.object,
     productRatePlans: PropTypes.array,
   }).isRequired,
+};
+
+SubscriptionPage.defaultProps = {
+  initialLoad: true,
 };

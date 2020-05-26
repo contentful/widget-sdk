@@ -11,12 +11,11 @@ import {
   TableRow,
   TableCell,
   TableBody,
+  SkeletonRow,
 } from '@contentful/forma-36-react-components';
 
 import { calculatePlansCost } from 'utils/SubscriptionUtils';
-
 import { Pluralized, Price } from 'core/components/formatting';
-import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 
 import SpacePlanRow from './SpacePlanRow';
 
@@ -39,23 +38,23 @@ const styles = {
 };
 
 function SpacePlans({
-  basePlan,
+  initialLoad,
   spacePlans,
-  upgradedSpace,
+  upgradedSpaceId,
   onCreateSpace,
   onChangeSpace,
   onDeleteSpace,
-  isOrgOwner,
+  enterprisePlan,
 }) {
   const numSpaces = spacePlans.length;
-  const hasSpacePlans = numSpaces > 0;
   const totalCost = calculatePlansCost({ plans: spacePlans });
 
   return (
     <>
       <Heading className="section-title">Spaces</Heading>
+
       <Paragraph className={styles.total}>
-        {hasSpacePlans ? (
+        {numSpaces > 0 ? (
           <>
             Your organization has{' '}
             <b>
@@ -64,9 +63,9 @@ function SpacePlans({
             {'. '}
           </>
         ) : (
-          "Your organization doesn't have any spaces."
+          "Your organization doesn't have any spaces. "
         )}
-        {!isEnterprisePlan(basePlan) && totalCost > 0 && (
+        {!enterprisePlan && totalCost > 0 && (
           <>
             The total for your spaces is{' '}
             <b>
@@ -78,7 +77,7 @@ function SpacePlans({
         <TextLink onClick={onCreateSpace}>Create Space</TextLink>
       </Paragraph>
 
-      {hasSpacePlans && (
+      {(initialLoad || numSpaces > 0) && (
         <Table>
           <colgroup>
             <col className={styles.nameCol} />
@@ -97,20 +96,23 @@ function SpacePlans({
             </TableRow>
           </TableHead>
           <TableBody>
-            {spacePlans.map((plan) => {
-              const isUpgraded = Boolean(plan.space && plan.space.sys.id === upgradedSpace);
-              return (
-                <SpacePlanRow
-                  key={plan.sys.id || (plan.space && plan.space.sys.id)}
-                  plan={plan}
-                  onChangeSpace={onChangeSpace}
-                  onDeleteSpace={onDeleteSpace}
-                  isOrgOwner={isOrgOwner}
-                  hasUpgraded={isUpgraded}
-                  enterprisePlan={isEnterprisePlan(basePlan)}
-                />
-              );
-            })}
+            {initialLoad ? (
+              <SkeletonRow columnCount={5} rowCount={10} />
+            ) : (
+              spacePlans.map((plan) => {
+                const isUpgraded = Boolean(plan.space && plan.space.sys.id === upgradedSpaceId);
+                return (
+                  <SpacePlanRow
+                    key={plan.sys.id || (plan.space && plan.space.sys.id)}
+                    plan={plan}
+                    onChangeSpace={onChangeSpace}
+                    onDeleteSpace={onDeleteSpace}
+                    hasUpgraded={isUpgraded}
+                    enterprisePlan={enterprisePlan}
+                  />
+                );
+              })
+            )}
           </TableBody>
         </Table>
       )}
@@ -119,13 +121,19 @@ function SpacePlans({
 }
 
 SpacePlans.propTypes = {
-  basePlan: PropTypes.object.isRequired,
+  initialLoad: PropTypes.bool,
   spacePlans: PropTypes.array.isRequired,
   onCreateSpace: PropTypes.func.isRequired,
   onChangeSpace: PropTypes.func.isRequired,
   onDeleteSpace: PropTypes.func.isRequired,
-  isOrgOwner: PropTypes.bool.isRequired,
-  upgradedSpace: PropTypes.string,
+  enterprisePlan: PropTypes.bool,
+  upgradedSpaceId: PropTypes.string,
+};
+
+SpacePlans.defaultProps = {
+  initialLoad: true,
+  enterprisePlan: false,
+  upgradedSpaceId: '',
 };
 
 export default SpacePlans;

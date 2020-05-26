@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import cx from 'classnames';
 import moment from 'moment';
-import { get } from 'lodash';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import {
+  Icon,
   TextLink,
   TableRow,
   TableCell,
@@ -19,68 +20,61 @@ import { go } from 'states/Navigator';
 import { getUserName } from 'app/OrganizationSettings/Users/UserUtils';
 import { joinAnd } from 'utils/StringUtils';
 import { getEnabledFeatures } from 'utils/SubscriptionUtils';
-
 import { Price } from 'core/components/formatting';
-import QuestionMarkIcon from 'svg/QuestionMarkIcon.svg';
 
 const styles = {
-  moreButton: css({
-    verticalAlign: 'middle',
-  }),
-  spaceName: css({
-    display: 'inline-block',
-    marginRight: '5px',
-  }),
   star: css({
     color: tokens.colorOrangeLight,
-    fontSize: '12px',
+    fontSize: tokens.fontSizeS,
     cursor: 'default',
   }),
+  hasUpgraded: css({
+    backgroundColor: tokens.colorMintMid,
+  }),
   helpIcon: css({
-    display: 'inline',
-    position: 'relative',
-    bottom: '0.125em',
-    paddingLeft: '0.3em',
+    marginTop: '-4px',
+    verticalAlign: 'middle',
     cursor: 'help',
+  }),
+  moreButton: css({
+    verticalAlign: 'middle',
   }),
 };
 
 function SpacePlanRow({ plan, onChangeSpace, onDeleteSpace, hasUpgraded, enterprisePlan }) {
   const { space } = plan;
-  const enabledFeatures = getEnabledFeatures(plan);
-  const hasAnyFeatures = enabledFeatures.length > 0;
-
-  const createdBy = space ? getUserName(space.sys.createdBy || {}) : '';
+  const createdBy = space ? getUserName(space.sys.createdBy) : '';
   const createdAt = space ? moment.utc(space.sys.createdAt).format('DD/MM/YYYY') : '';
+
+  const enabledFeatures = getEnabledFeatures(plan);
+  const includedFeatures = joinAnd(enabledFeatures.map(({ name }) => name));
 
   const onViewSpace = () =>
     go({
       path: ['spaces', 'detail', 'home'],
-      params: { spaceId: space.sys.id },
+      params: { spaceId: space && space.sys.id },
       options: { reload: true },
     });
 
   const onViewUsage = () =>
     go({
       path: ['spaces', 'detail', 'settings', 'usage'],
-      params: { spaceId: space.sys.id },
+      params: { spaceId: space && space.sys.id },
       options: { reload: true },
     });
 
   return (
     <TableRow
       testId="subscription-page.spaces-list.table-row"
-      className={hasUpgraded ? 'x--success' : ''}>
+      className={cx({ [styles.hasUpgraded]: hasUpgraded })}>
       <TableCell testId="subscription-page.spaces-list.space-name">
-        <span className={styles.spaceName}>
-          <strong>{get(space, 'name', '-')}</strong>
-        </span>
+        {(space && space.name) || '-'}&nbsp;
         {plan.committed && (
           <Tooltip
-            testId="subscription-page.spaces-list.enterprise-toolitp"
+            testId="subscription-page.spaces-list.enterprise-tooltip"
             content="This space is part of your Enterprise deal with Contentful">
             <span
-              data-test-id="subscription-page.spaces-list.enterprise-toolitp-trigger"
+              data-test-id="subscription-page.spaces-list.enterprise-tooltip-trigger"
               className={styles.star}>
               ★
             </span>
@@ -88,17 +82,18 @@ function SpacePlanRow({ plan, onChangeSpace, onDeleteSpace, hasUpgraded, enterpr
         )}
       </TableCell>
       <TableCell testId="subscription-page.spaces-list.space-type">
-        <strong>{plan.name}</strong>
-        {hasAnyFeatures && (
-          <div className={styles.helpIcon}>
-            <Tooltip
-              testId="subscription-page.spaces-list.features-toolitp"
-              content={`This space includes ${joinAnd(enabledFeatures.map(({ name }) => name))}`}>
-              <span data-test-id="subscription-page.spaces-list.features-toolitp-trigger">
-                <QuestionMarkIcon color={tokens.colorTextLight} />
-              </span>
-            </Tooltip>
-          </div>
+        <strong>{plan.name}</strong>&nbsp;
+        {enabledFeatures.length > 0 && (
+          <Tooltip
+            testId="subscription-page.spaces-list.features-tooltip"
+            content={`This space includes ${includedFeatures}`}>
+            <Icon
+              icon="HelpCircle"
+              color="muted"
+              className={styles.helpIcon}
+              data-test-id="subscription-page.spaces-list.features-tooltip-trigger"
+            />
+          </Tooltip>
         )}
         <br />
         {!enterprisePlan && (
