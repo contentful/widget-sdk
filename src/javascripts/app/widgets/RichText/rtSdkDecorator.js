@@ -18,7 +18,7 @@ export function rtSdkDecorator(sdk) {
     },
   };
 
-  rtSdk.dialogs.openExtension = openRichTextDialog(rtSdk);
+  rtSdk.dialogs.openCurrent = openRichTextDialog(rtSdk);
 
   return rtSdk;
 }

@@ -101,7 +101,7 @@ export function create() {
         embedly: ({ url }) => <EmbedlyPreview previewUrl={url} delay={100} />,
       };
 
-      sdk.dialogs.openExtension = openMarkdownDialog(sdk, previewComponents);
+      sdk.dialogs.openCurrent = openMarkdownDialog(sdk, previewComponents);
 
       return <MarkdownEditor sdk={sdk} previewComponents={previewComponents} />;
     },

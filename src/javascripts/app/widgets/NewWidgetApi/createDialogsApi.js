@@ -41,7 +41,7 @@ export function createDialogsApi() {
         multiple: true,
       });
     },
-    openExtension: () => {
+    openCurrent: () => {
       throw new Error('Not implemented yet');
     },
   };
