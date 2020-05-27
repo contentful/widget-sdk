@@ -2,7 +2,6 @@ import { getModule } from 'core/NgRegistry';
 import _ from 'lodash';
 import * as EntityFieldValueHelpers from './EntityFieldValueHelpers';
 import localeStore from 'services/localeStore';
-import * as logger from 'services/logger';
 
 /**
  * @param {string} contentTypeId
@@ -39,28 +38,18 @@ export function displayFieldForType(contentTypeId) {
  */
 export function entryTitle(entry, localeCode, modelValue) {
   const defaultTitle = modelValue ? null : 'Untitled';
-  let title = defaultTitle;
-  try {
-    const contentTypeId = entry.getContentTypeId();
-    const contentType = getContentTypeById(contentTypeId);
-    const defaultInternalLocaleCode = getDefaultInternalLocaleCode();
-
-    title = EntityFieldValueHelpers.getEntryTitle({
-      entry: entry.data,
-      contentType: contentType.data,
-      internalLocaleCode: localeCode,
-      defaultInternalLocaleCode,
-      defaultTitle,
-    });
-  } catch (error) {
-    // TODO: Don't use try catch. Instead, handle undefined/unexpected values.
-    logger.logWarn('Failed to determine entry title', {
-      error: error,
-      entrySys: _.get(entry, 'data.sys'),
-    });
-  }
-
-  return title;
+  const contentTypeId = entry.getContentTypeId();
+  const contentType = getContentTypeById(contentTypeId);
+  const defaultInternalLocaleCode = getDefaultInternalLocaleCode();
+  return contentType
+    ? EntityFieldValueHelpers.getEntryTitle({
+        entry: entry.data,
+        contentType: contentType.data,
+        internalLocaleCode: localeCode,
+        defaultInternalLocaleCode,
+        defaultTitle,
+      })
+    : defaultTitle;
 }
 
 /**
@@ -97,26 +86,13 @@ export function entityTitle(entity, localeCode) {
  */
 export function assetTitle(asset, localeCode, modelValue) {
   const defaultTitle = modelValue ? null : 'Untitled';
-
-  let title = defaultTitle;
-  try {
-    const defaultInternalLocaleCode = getDefaultInternalLocaleCode();
-
-    title = EntityFieldValueHelpers.getAssetTitle({
-      asset: asset.data,
-      defaultTitle,
-      internalLocaleCode: localeCode,
-      defaultInternalLocaleCode,
-    });
-  } catch (error) {
-    // TODO: Don't use try catch. Instead, handle undefined/unexpected values.
-    logger.logWarn('Failed to determine asset title', {
-      error: error,
-      assetSys: _.get(asset, 'data.sys'),
-    });
-  }
-
-  return title;
+  const defaultInternalLocaleCode = getDefaultInternalLocaleCode();
+  return EntityFieldValueHelpers.getAssetTitle({
+    asset: asset.data,
+    defaultTitle,
+    internalLocaleCode: localeCode,
+    defaultInternalLocaleCode,
+  });
 }
 
 /**
