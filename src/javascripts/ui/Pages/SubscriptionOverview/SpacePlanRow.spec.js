@@ -11,7 +11,7 @@ const MOCK_USER_NAME = 'John Doe';
 const SPACE_NAME = 'SPACE_NAME';
 const MOCK_CREATED_AT_TIME_DAY_MONTH_YEAR = fake.CREATED_AT_TIME_DAY_MONTH_YEAR;
 
-const mockBasePlan = fake.BasePlan();
+const mockBasePlan = fake.Plan();
 const mockPlan = {
   sys: { id: 'random_id' },
   name: SPACE_NAME,

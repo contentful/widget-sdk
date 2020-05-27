@@ -1,7 +1,4 @@
-import React from 'react';
 import { get } from 'lodash';
-
-import { Paragraph } from '@contentful/forma-36-react-components';
 
 import pluralize from 'pluralize';
 import client from 'services/client';
@@ -27,22 +24,9 @@ export const SpaceResourceTypes = {
 
 const ResourceTooltips = {
   // eslint-disable-next-line react/prop-types
-  [SpaceResourceTypes.Environments]: ({ number }) => (
-    <div>
-      <Paragraph>
-        This space type includes 1 master and {pluralize('sandbox environment', number - 1, true)}.
-      </Paragraph>
-      <Paragraph>
-        Environments allow you to create and maintain multiple versions of the space-specific data,
-        and make changes to them in isolation.
-      </Paragraph>
-    </div>
-  ),
-  [SpaceResourceTypes.Records]: () => (
-    <div>
-      <Paragraph>Records are entries and assets combined.</Paragraph>
-    </div>
-  ),
+  [SpaceResourceTypes.Environments]: ({ number }) =>
+    `This space type includes 1 master and ${pluralize('sandbox environment', number - 1, true)}.`,
+  [SpaceResourceTypes.Records]: () => 'Records are entries and assets combined.',
 };
 
 async function makeNewSpace(name, plan, organizationId) {

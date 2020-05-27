@@ -30,7 +30,7 @@ export default function PlanFeatures({ resources, roleSet, disabled }) {
             {toLocaleString(number) + ' '}
             {tooltipText && (
               <Tooltip content={tooltipText}>
-                <em className={!disabled && styles.underline}>{pluralize(type, number)}</em>
+                <span className={!disabled && styles.underline}>{pluralize(type, number)}</span>
               </Tooltip>
             )}
             {!tooltipText && pluralize(type, number)}

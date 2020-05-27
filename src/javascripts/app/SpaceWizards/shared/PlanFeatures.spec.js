@@ -49,6 +49,7 @@ describe('PlanFeatures', () => {
   it('should not get tooltips if disabled is true', () => {
     build({
       resources: [
+        { type: 'Role', number: 5 },
         { type: 'Record', number: 10 },
         { type: 'Environment', number: 20 },
       ],
@@ -56,6 +57,7 @@ describe('PlanFeatures', () => {
     });
 
     expect(getTooltip).toBeCalledTimes(0);
+    expect(getRolesTooltip).toBeCalledTimes(0);
   });
 });
 

@@ -5,20 +5,15 @@ import { getSpaceRatePlans, isHighDemandEnterprisePlan } from 'account/pricing/P
 import createResourceService from 'services/ResourceService';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
 import { createSpace, createSpaceWithTemplate } from '../shared/utils';
+import * as FakeFactory from 'test/helpers/fakeFactory';
 
-import EnterpriseSpaceWizard from './Wizard';
+import EnterpriseWizard from './EnterpriseWizard';
 
+const mockOrganization = FakeFactory.Organization();
 const mockTemplate = {
   name: 'Awesome template',
   sys: {
     id: 'template_1234',
-  },
-};
-
-const mockOrganization = {
-  name: 'Test Organization',
-  sys: {
-    id: 'org_1234',
   },
 };
 
@@ -96,6 +91,8 @@ describe('Enterprise Wizard', () => {
   beforeEach(() => {
     getSpaceRatePlans.mockResolvedValue([mockFreeSpaceRatePlan]);
     getTemplatesList.mockResolvedValue([mockTemplate]);
+
+    window.open = jest.fn();
   });
 
   it('should show a loader while the initial data is fetching', async () => {
@@ -151,6 +148,24 @@ describe('Enterprise Wizard', () => {
     expect(screen.queryByTestId('close-wizard')).toBeVisible();
   });
 
+  it('should call onClose when the contact us button is clicked', async () => {
+    const service = createResourceService();
+    service.get.mockResolvedValueOnce({
+      usage: 1,
+      limits: {
+        maximum: 1,
+      },
+    });
+
+    const onClose = jest.fn();
+
+    await build({ onClose });
+
+    userEvent.click(screen.queryByTestId('cf-contact-us-button'));
+
+    expect(onClose).toBeCalled();
+  });
+
   it('should enable the create button once the user has typed a space name', async () => {
     await build();
 
@@ -162,6 +177,14 @@ describe('Enterprise Wizard', () => {
     );
 
     expect(screen.queryByTestId('create-space-button')).not.toHaveAttribute('disabled');
+  });
+
+  it('should not show the close icon in the modal header if isProcessing is true', async () => {
+    await build({ isProcessing: true });
+
+    expect(
+      within(screen.getByTestId('cf-ui-modal-header')).queryByTestId('cf-ui-icon-button')
+    ).toBeNull();
   });
 
   it('should show the reached limit note if the limit is reached', async () => {
@@ -322,6 +345,7 @@ describe('Enterprise Wizard', () => {
 async function build(custom = {}, shouldWait = true) {
   const props = Object.assign(
     {
+      isProcessing: false,
       onProcessing: () => {},
       onClose: () => {},
       basePlan: {},
@@ -330,7 +354,7 @@ async function build(custom = {}, shouldWait = true) {
     custom
   );
 
-  render(<EnterpriseSpaceWizard {...props} />);
+  render(<EnterpriseWizard {...props} />);
 
   if (shouldWait) {
     await wait();

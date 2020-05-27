@@ -10,7 +10,7 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { isEnterprisePlan, getBasePlan } from 'account/pricing/PricingDataProvider';
 import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes';
 
-import EnterpriseWizard from './Enterprise/Wizard';
+import EnterpriseWizard from './Enterprise/EnterpriseWizard';
 import Loader from './shared/Loader';
 
 const classes = {
@@ -19,7 +19,7 @@ const classes = {
   }),
 };
 
-const openLegacyOnDemandSpaceWizard = (organization) => {
+const openV2OnDemandModal = (organization) => {
   const modalDialog = getModule('modalDialog');
 
   modalDialog.open({
@@ -51,7 +51,7 @@ const fetch = (organization) => async () => {
   return result;
 };
 
-export default function SpaceWizardModal(props) {
+export default function SpaceWizardsWrapper(props) {
   const { isShown, onClose, organization } = props;
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -63,13 +63,14 @@ export default function SpaceWizardModal(props) {
     }
 
     // Right now, only the enterprise wizard is migrated to this new format, so we open
-    // the legacy on-demand modal and close this one
+    // the V2 on-demand modal and close this one. This has to happen in an effect because
+    // we open it using an Angular service.
     //
     // We do this here, rather than in the CreateSpace service, so that we can control
     // the loading state in one place and prevent two modals from showing for the
     // enterprise wizard.
     if (!data.shouldCreatePOC) {
-      openLegacyOnDemandSpaceWizard(organization);
+      openV2OnDemandModal(organization);
       onClose();
     }
   }, [isLoading, data, onClose, organization]);
@@ -95,6 +96,7 @@ export default function SpaceWizardModal(props) {
               onClose={onClose}
               basePlan={data.basePlan}
               onProcessing={setIsProcessing}
+              isProcessing={isProcessing}
             />
           )}
         </>
@@ -103,7 +105,7 @@ export default function SpaceWizardModal(props) {
   );
 }
 
-SpaceWizardModal.propTypes = {
+SpaceWizardsWrapper.propTypes = {
   isShown: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   organization: OrganizationPropType.isRequired,

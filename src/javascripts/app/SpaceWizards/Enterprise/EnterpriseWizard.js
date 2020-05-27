@@ -87,12 +87,12 @@ const submit = async (
   }
 };
 
-export default function Wizard(props) {
+export default function EnterpriseWizard(props) {
   const [spaceName, setSpaceName] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [showProgressScreen, setShowProgressScreen] = useState(false);
 
-  const { organization, basePlan, onProcessing, onClose } = props;
+  const { organization, basePlan, onProcessing, isProcessing, onClose } = props;
 
   const { isLoading, data = {} } = useAsync(useCallback(initialFetch(organization, basePlan), []));
 
@@ -130,7 +130,7 @@ export default function Wizard(props) {
       )}
       {!showProgressScreen && (
         <>
-          <Modal.Header title="Create a space" onClose={onClose} />
+          <Modal.Header title="Create a space" onClose={isProcessing ? null : onClose} />
           <Modal.Content testId="enterprise-wizard-contents">
             <Typography>
               {!isHighDemand && <POCInfo />}
@@ -190,10 +190,10 @@ export default function Wizard(props) {
           </Modal.Content>
           {!showForm && (
             <Modal.Controls>
-              <ContactUsButton noIcon onClick={() => onClose()}>
+              <ContactUsButton noIcon onClick={onClose}>
                 Talk to us
               </ContactUsButton>
-              <Button testId="close-wizard" buttonType="muted" onClick={() => onClose()}>
+              <Button testId="close-wizard" buttonType="muted" onClick={onClose}>
                 Close
               </Button>
             </Modal.Controls>
@@ -216,9 +216,10 @@ export default function Wizard(props) {
   );
 }
 
-Wizard.propTypes = {
+EnterpriseWizard.propTypes = {
   onClose: PropTypes.func.isRequired,
   onProcessing: PropTypes.func.isRequired,
   basePlan: PropTypes.object.isRequired,
   organization: OrganizationPropType.isRequired,
+  isProcessing: PropTypes.bool.isRequired,
 };

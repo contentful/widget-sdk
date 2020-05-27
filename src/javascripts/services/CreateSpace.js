@@ -7,7 +7,7 @@ import { ModalLauncher } from 'core/components/ModalLauncher';
 import { getModule } from 'core/NgRegistry';
 import LegacyNewSpaceModal from './CreateSpace/LegacyNewSpaceModal';
 
-import SpaceWizard from 'app/SpaceWizards/Wizard';
+import SpaceWizardsWrapper from 'app/SpaceWizards/SpaceWizardsWrapper';
 
 /**
  * Displays the space creation dialog. The dialog type will depend on the
@@ -50,7 +50,7 @@ export async function showDialog(organizationId) {
     });
   } else {
     ModalLauncher.open(({ isShown, onClose }) => (
-      <SpaceWizard isShown={isShown} onClose={onClose} organization={organization} />
+      <SpaceWizardsWrapper isShown={isShown} onClose={onClose} organization={organization} />
     ));
   }
 }

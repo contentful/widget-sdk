@@ -6,7 +6,7 @@ import {
   isEnterprisePlan,
 } from 'account/pricing/PricingDataProvider';
 import * as modalDialog from 'ng/modalDialog';
-import Wizard from './Wizard';
+import SpaceWizardsWrapper from './SpaceWizardsWrapper';
 
 const mockOrganization = {
   name: 'My org',
@@ -77,7 +77,7 @@ jest.mock('account/pricing/PricingDataProvider', () => ({
   isHighDemandEnterprisePlan: jest.fn(),
 }));
 
-describe('Wizard', () => {
+describe('SpaceWizardsWrapper', () => {
   beforeEach(() => {
     getSpaceRatePlans.mockResolvedValue([mockFreeSpaceRatePlan]);
   });
@@ -139,7 +139,7 @@ async function build(custom, shouldWait = true) {
     custom
   );
 
-  render(<Wizard {...props} />);
+  render(<SpaceWizardsWrapper {...props} />);
 
   if (shouldWait) {
     await wait();
