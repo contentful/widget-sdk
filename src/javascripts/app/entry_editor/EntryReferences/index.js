@@ -425,6 +425,7 @@ const ReferencesTab = ({ entity }) => {
         </div>
         {isRelaseDialogShown && (
           <ReleasesDialog
+            rootEntity={entity}
             selectedEntities={selectedEntities}
             releaseContentTitle={createAddToReleaseDialogContent(
               entityTitle,

@@ -1,9 +1,8 @@
-import React, { Component } from 'react';
+import React, { Component, useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import {
-  Note,
   Button,
   Modal,
   FieldGroup,
@@ -14,9 +13,17 @@ import {
   Tab,
   TabPanel,
   Notification,
+  SkeletonContainer,
+  SkeletonBodyText,
 } from '@contentful/forma-36-react-components';
 import ReleasesTimeline from './ReleasesTimeline';
-import { releases } from './__fixtures__';
+import {
+  createRelease,
+  getReleasesExcludingEntity,
+  getReleasesIncludingEntity,
+} from './releasesService';
+import { ReleasesProvider, ReleasesContext } from './ReleasesContext';
+import { SET_RELEASES_INCLUDING_ENTRY } from './state/actions';
 
 const styles = {
   noMarginBottom: css({
@@ -49,19 +56,82 @@ const styles = {
   }),
 };
 
+const CreateReleaseForm = ({ onClose, handleCreateRelease, rootEntity }) => {
+  const { dispatch } = useContext(ReleasesContext);
+  const [releaseName, setReleaseName] = useState('');
+
+  const onSubmit = () => {
+    if (releaseName) {
+      handleCreateRelease(releaseName).then(async () => {
+        const { id, type } = rootEntity.sys;
+        const fetchedReleases = await getReleasesIncludingEntity(id, type);
+
+        dispatch({ type: SET_RELEASES_INCLUDING_ENTRY, value: fetchedReleases.items });
+
+        onClose();
+      });
+    }
+  };
+
+  const onChange = (e) => {
+    setReleaseName(e.target.value);
+  };
+
+  return (
+    <Form spacing="condensed" className={styles.form} onSubmit={onSubmit}>
+      <FieldGroup row>
+        <FormLabel htmlFor="releaseName" className={styles.noMarginBottom} required>
+          Name the release
+        </FormLabel>
+      </FieldGroup>
+      <FieldGroup row>
+        <TextInput
+          autoFocus
+          id="releaseName"
+          isReadOnly={false}
+          maxLength={256}
+          name="releaseName"
+          value={releaseName}
+          onChange={onChange}
+        />
+      </FieldGroup>
+      <FieldGroup row>
+        <Button buttonType="positive" type="submit" loading={false} disabled={!releaseName}>
+          Create and Add
+        </Button>
+        <Button buttonType="muted" data-test-id="cancel" onClick={onClose}>
+          Cancel
+        </Button>
+      </FieldGroup>
+    </Form>
+  );
+};
+
+CreateReleaseForm.propTypes = {
+  onClose: PropTypes.func,
+  handleCreateRelease: PropTypes.func,
+  rootEntity: PropTypes.object,
+};
+
 export default class ReleasesDialog extends Component {
   constructor(props) {
     super(props);
 
     this.onClose = this.onClose.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
     this.onReleaseSelect = this.onReleaseSelect.bind(this);
+    this.handleCreateRelease = this.handleCreateRelease.bind(this);
   }
 
   static propTypes = {
     spaceId: PropTypes.string,
     environmentId: PropTypes.string,
     selectedEntities: PropTypes.array,
+    rootEntity: PropTypes.shape({
+      sys: PropTypes.shape({
+        id: PropTypes.string,
+        type: PropTypes.string,
+      }),
+    }).isRequired,
     validator: PropTypes.shape({
       run: PropTypes.func,
       setApiResponseErrors: PropTypes.func,
@@ -80,22 +150,25 @@ export default class ReleasesDialog extends Component {
 
   state = {
     selectedTab: 'existing',
-    showError: false,
+    fetchedReleases: [],
   };
 
-  handleSubmit(e) {
-    const releaseName = e.target.releaseName.value;
-    const { releaseContentTitle } = this.props;
+  async componentDidMount() {
+    const { id, type } = this.props.rootEntity.sys;
+    const fetchedReleases = await getReleasesExcludingEntity(id, type);
+    this.setState({ fetchedReleases: fetchedReleases.items });
+  }
 
-    if (!releaseName) {
-      this.setState({ showError: true });
-    } else {
-      this.setState({ showError: false });
-      this.onClose();
-      Notification.success(
-        `${releaseContentTitle} was sucessfully added to release the ${releaseName}`
-      );
-    }
+  handleCreateRelease(releaseName) {
+    const { releaseContentTitle, selectedEntities } = this.props;
+
+    return createRelease(releaseName, selectedEntities)
+      .then(() => {
+        Notification.success(`${releaseContentTitle} was sucessfully added to ${releaseName}`);
+      })
+      .catch(() => {
+        Notification.error(`Failed creating ${releaseName}`);
+      });
   }
 
   handleTabChange(newTab) {
@@ -110,51 +183,41 @@ export default class ReleasesDialog extends Component {
     const { releaseContentTitle } = this.props;
 
     this.onClose();
-    Notification.success(
-      `${releaseContentTitle} was sucessfully added to release the ${release.title}`
-    );
+    Notification.success(`${releaseContentTitle} was sucessfully added to ${release.title}`);
   }
 
   tabs = {
     existing: {
       title: 'Add to existing',
       render: () => {
-        return <ReleasesTimeline releases={releases} onReleaseSelect={this.onReleaseSelect} />;
+        if (this.state.fetchedReleases.length) {
+          return (
+            <ReleasesTimeline
+              releases={this.state.fetchedReleases}
+              onReleaseSelect={this.onReleaseSelect}
+            />
+          );
+        }
+        return (
+          <SkeletonContainer svgHeight={60}>
+            <SkeletonBodyText numberOfLines={1} />
+            <SkeletonBodyText numberOfLines={1} offsetTop={20} />
+            <SkeletonBodyText numberOfLines={1} offsetTop={40} />
+          </SkeletonContainer>
+        );
       },
     },
     new: {
       title: '+ Create new',
       render: () => {
         return (
-          <Form spacing="condensed" className={styles.form} onSubmit={this.handleSubmit}>
-            <FieldGroup row>
-              <FormLabel htmlFor="releaseName" className={styles.noMarginBottom} required>
-                Name the release
-              </FormLabel>
-            </FieldGroup>
-            <FieldGroup row>
-              <TextInput
-                autoFocus
-                id="releaseName"
-                isReadOnly={false}
-                maxLength={256}
-                name="releaseName"
-              />
-            </FieldGroup>
-            {this.state.showError && (
-              <FieldGroup row>
-                <Note noteType="negative">The release name should not be empty.</Note>
-              </FieldGroup>
-            )}
-            <FieldGroup row>
-              <Button buttonType="positive" type="submit" loading={false} disabled={false}>
-                Create and Add
-              </Button>
-              <Button buttonType="muted" data-test-id="cancel" onClick={this.onClose}>
-                Cancel
-              </Button>
-            </FieldGroup>
-          </Form>
+          <ReleasesProvider>
+            <CreateReleaseForm
+              onClose={this.onClose}
+              handleCreateRelease={this.handleCreateRelease}
+              rootEntity={this.props.rootEntity}
+            />
+          </ReleasesProvider>
         );
       },
     },

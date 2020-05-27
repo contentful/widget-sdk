@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import SidebarEventTypes from '../SidebarEventTypes';
 import SidebarWidgetTypes from '../SidebarWidgetTypes';
@@ -6,38 +6,83 @@ import ReleasesTimeline from './ReleasesTimeline';
 import EntrySidebarWidget from '../EntrySidebarWidget';
 import * as LD from 'utils/LaunchDarkly';
 import { ADD_TO_RELEASE } from 'featureFlags';
-import { getReleases } from './releasesService';
+import { getReleasesIncludingEntity } from './releasesService';
+import { ReleasesProvider, ReleasesContext } from './ReleasesContext';
+import { SET_RELEASES_INCLUDING_ENTRY } from './state/actions';
+
+const ReleasesWidget = ({ entityInfo }) => {
+  const { state, dispatch } = useContext(ReleasesContext);
+
+  useEffect(() => {
+    const { id, type } = entityInfo;
+
+    async function fetchReleases() {
+      const fetchedReleases = await getReleasesIncludingEntity(id, type);
+
+      dispatch({ type: SET_RELEASES_INCLUDING_ENTRY, value: fetchedReleases.items });
+    }
+
+    fetchReleases();
+  }, [entityInfo, dispatch]);
+
+  if (!state.releasesIncludingEntity.length) {
+    return null;
+  }
+
+  return (
+    <EntrySidebarWidget title="Releases" testId="sidebar-releases-section">
+      <ReleasesTimeline releases={state.releasesIncludingEntity} />
+    </EntrySidebarWidget>
+  );
+};
+
+ReleasesWidget.propTypes = {
+  entityInfo: PropTypes.object.isRequired,
+};
 
 export default class ReleasesWidgetContainer extends Component {
+  constructor(props) {
+    super(props);
+    this.onUpdateReleasesWidget = this.onUpdateReleasesWidget.bind(this);
+  }
+
   static propTypes = {
+    entityInfo: PropTypes.object,
     emitter: PropTypes.object.isRequired,
   };
 
   state = {
     featureEnabled: false,
-    fetchedReleases: [],
+    entityInfo: undefined,
   };
 
   async componentDidMount() {
-    this.props.emitter.emit(SidebarEventTypes.WIDGETREGISTERED, SidebarWidgetTypes.RELEASES);
+    this.props.emitter.on(SidebarEventTypes.UPDATED_RELEASES_WIDGET, this.onUpdateReleasesWidget);
+    this.props.emitter.emit(SidebarEventTypes.WIDGET_REGISTERED, SidebarWidgetTypes.RELEASES);
+
     const featureEnabled = await LD.getCurrentVariation(ADD_TO_RELEASE);
-    let fetchedReleases = [];
-    if (featureEnabled) {
-      fetchedReleases = await getReleases();
-    }
-    this.setState({ featureEnabled, fetchedReleases });
+    this.setState({ featureEnabled });
+  }
+
+  componentWillUnmount() {
+    this.props.emitter.off(SidebarEventTypes.UPDATED_RELEASES_WIDGET, this.onUpdateReleasesWidget);
+  }
+
+  async onUpdateReleasesWidget({ entityInfo }) {
+    this.setState({ entityInfo });
   }
 
   render() {
-    const { featureEnabled, fetchedReleases } = this.state;
-    if (!featureEnabled || !fetchedReleases.length) {
+    const { featureEnabled, entityInfo } = this.state;
+
+    if (!featureEnabled || !entityInfo) {
       return null;
     }
 
     return (
-      <EntrySidebarWidget title="Releases" testId="sidebar-releases-section">
-        <ReleasesTimeline releases={fetchedReleases} />
-      </EntrySidebarWidget>
+      <ReleasesProvider>
+        <ReleasesWidget entityInfo={entityInfo} />
+      </ReleasesProvider>
     );
   }
 }

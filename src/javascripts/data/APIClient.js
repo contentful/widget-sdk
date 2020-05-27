@@ -251,7 +251,35 @@ APIClient.prototype.validateEntry = function (data, version) {
 };
 
 APIClient.prototype.getReleases = function (query) {
-  return this._getResource('releases', query);
+  return this._request(
+    {
+      method: 'GET',
+      path: ['releases'],
+      query,
+    },
+    {
+      ...getAlphaHeader(IMMEDIATE_RELEASE),
+    }
+  );
+};
+
+APIClient.prototype.createRelease = function (title, items = []) {
+  return this._request(
+    {
+      method: 'POST',
+      path: ['releases'],
+      data: {
+        title,
+        entities: {
+          sys: { type: 'Array' },
+          items,
+        },
+      },
+    },
+    {
+      ...getAlphaHeader(IMMEDIATE_RELEASE),
+    }
+  );
 };
 
 APIClient.prototype.validateRelease = function (action, entities, type = 'immediate') {

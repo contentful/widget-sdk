@@ -15,6 +15,11 @@ import {
   getEntityTitle,
 } from './referencesService';
 
+import {
+  getReleases,
+  getReleasesExcludingEntity,
+} from '../../EntrySidebar/ReleasesWidget/releasesService';
+
 import { getCurrentVariation } from 'utils/LaunchDarkly';
 
 import {
@@ -26,6 +31,8 @@ import {
   simpleReferencesPublicationInvalidErrorResponse,
   simpleReferences,
 } from './__fixtures__';
+
+import { releases } from '../../EntrySidebar/ReleasesWidget/__fixtures__';
 
 jest.mock('access_control/EntityPermissions', () => ({
   create: () => ({
@@ -43,6 +50,13 @@ jest.mock('./referencesService', function () {
   };
 });
 
+jest.mock('../../EntrySidebar/ReleasesWidget/releasesService', function () {
+  return {
+    getReleasesExcludingEntity: jest.fn(),
+    getReleases: jest.fn(),
+  };
+});
+
 jest.mock('utils/LaunchDarkly', function () {
   return {
     getCurrentVariation: jest.fn(),
@@ -56,6 +70,8 @@ describe('ReferencesTree component', () => {
     jest.spyOn(Notification, 'success').mockImplementation(() => {});
     jest.spyOn(Notification, 'error').mockImplementation(() => {});
 
+    getReleases.mockResolvedValue({ items: releases });
+    getReleasesExcludingEntity.mockResolvedValue({ items: [] });
     getDefaultLocale.mockReturnValue('en-US');
     getReferencesForEntryId.mockResolvedValue({
       resolved: cfResolveResponse(simpleReferences),

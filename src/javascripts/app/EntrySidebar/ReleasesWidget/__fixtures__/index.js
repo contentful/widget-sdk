@@ -12,17 +12,14 @@ export const releases = [
       },
     },
     title: 'First release',
-    entities: {
-      sys: { type: 'Array' },
-      items: [
-        {
-          sys: { type: 'Link', linkType: 'Entry', id: 'some-entry' },
-        },
-        {
-          sys: { type: 'Link', linkType: 'Asset', id: 'some-asset' },
-        },
-      ],
-    },
+    items: [
+      {
+        sys: { type: 'Link', linkType: 'Entry', id: 'some-entry' },
+      },
+      {
+        sys: { type: 'Link', linkType: 'Asset', id: 'some-asset' },
+      },
+    ],
   },
   {
     sys: {
@@ -37,17 +34,14 @@ export const releases = [
       },
     },
     title: 'Second release',
-    entities: {
-      sys: { type: 'Array' },
-      items: [
-        {
-          sys: { type: 'Link', linkType: 'Entry', id: 'some-entry' },
-        },
-        {
-          sys: { type: 'Link', linkType: 'Asset', id: 'some-asset' },
-        },
-      ],
-    },
+    items: [
+      {
+        sys: { type: 'Link', linkType: 'Entry', id: 'some-entry' },
+      },
+      {
+        sys: { type: 'Link', linkType: 'Asset', id: 'some-asset' },
+      },
+    ],
   },
   {
     sys: {
@@ -62,17 +56,14 @@ export const releases = [
       },
     },
     title: 'Third release',
-    entities: {
-      sys: { type: 'Array' },
-      items: [
-        {
-          sys: { type: 'Link', linkType: 'Entry', id: 'some-entry' },
-        },
-        {
-          sys: { type: 'Link', linkType: 'Asset', id: 'some-asset' },
-        },
-      ],
-    },
+    items: [
+      {
+        sys: { type: 'Link', linkType: 'Entry', id: 'some-entry' },
+      },
+      {
+        sys: { type: 'Link', linkType: 'Asset', id: 'some-asset' },
+      },
+    ],
   },
   {
     sys: {
@@ -87,17 +78,14 @@ export const releases = [
       },
     },
     title: 'Fourth release',
-    entities: {
-      sys: { type: 'Array' },
-      items: [
-        {
-          sys: { type: 'Link', linkType: 'Entry', id: 'some-entry' },
-        },
-        {
-          sys: { type: 'Link', linkType: 'Asset', id: 'some-asset' },
-        },
-      ],
-    },
+    items: [
+      {
+        sys: { type: 'Link', linkType: 'Entry', id: 'some-entry' },
+      },
+      {
+        sys: { type: 'Link', linkType: 'Asset', id: 'some-asset' },
+      },
+    ],
   },
   {
     sys: {
@@ -112,17 +100,14 @@ export const releases = [
       },
     },
     title: 'Fifth release',
-    entities: {
-      sys: { type: 'Array' },
-      items: [
-        {
-          sys: { type: 'Link', linkType: 'Entry', id: 'some-entry' },
-        },
-        {
-          sys: { type: 'Link', linkType: 'Asset', id: 'some-asset' },
-        },
-      ],
-    },
+    items: [
+      {
+        sys: { type: 'Link', linkType: 'Entry', id: 'some-entry' },
+      },
+      {
+        sys: { type: 'Link', linkType: 'Asset', id: 'some-asset' },
+      },
+    ],
   },
   {
     sys: {
@@ -137,17 +122,14 @@ export const releases = [
       },
     },
     title: 'Sixth release',
-    entities: {
-      sys: { type: 'Array' },
-      items: [
-        {
-          sys: { type: 'Link', linkType: 'Entry', id: 'some-entry' },
-        },
-        {
-          sys: { type: 'Link', linkType: 'Asset', id: 'some-asset' },
-        },
-      ],
-    },
+    items: [
+      {
+        sys: { type: 'Link', linkType: 'Entry', id: 'some-entry' },
+      },
+      {
+        sys: { type: 'Link', linkType: 'Asset', id: 'some-asset' },
+      },
+    ],
   },
   {
     sys: {
@@ -162,17 +144,14 @@ export const releases = [
       },
     },
     title: 'Seventh release',
-    entities: {
-      sys: { type: 'Array' },
-      items: [
-        {
-          sys: { type: 'Link', linkType: 'Entry', id: 'some-entry' },
-        },
-        {
-          sys: { type: 'Link', linkType: 'Asset', id: 'some-asset' },
-        },
-      ],
-    },
+    items: [
+      {
+        sys: { type: 'Link', linkType: 'Entry', id: 'some-entry' },
+      },
+      {
+        sys: { type: 'Link', linkType: 'Asset', id: 'some-asset' },
+      },
+    ],
   },
   {
     sys: {
@@ -187,16 +166,13 @@ export const releases = [
       },
     },
     title: 'Eighth release',
-    entities: {
-      sys: { type: 'Array' },
-      items: [
-        {
-          sys: { type: 'Link', linkType: 'Entry', id: 'some-entry' },
-        },
-        {
-          sys: { type: 'Link', linkType: 'Asset', id: 'some-asset' },
-        },
-      ],
-    },
+    items: [
+      {
+        sys: { type: 'Link', linkType: 'Entry', id: 'some-entry' },
+      },
+      {
+        sys: { type: 'Link', linkType: 'Asset', id: 'some-asset' },
+      },
+    ],
   },
 ];

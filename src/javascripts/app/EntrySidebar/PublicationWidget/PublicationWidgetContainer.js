@@ -186,6 +186,7 @@ export default class PublicationWidgetContainer extends Component {
           <ReleasesDialog
             selectedEntities={[entity]}
             releaseContentTitle={this.state.entityTitle}
+            rootEntity={entity}
             onCancel={() => this.setState({ isRelaseDialogShown: false })}
           />
         )}
