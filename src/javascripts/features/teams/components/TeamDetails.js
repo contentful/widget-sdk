@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import Placeholder from 'app/common/Placeholder';
@@ -6,13 +6,15 @@ import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes';
 import { Button, Tooltip, Subheading, Workbench } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
-import { getUserName } from 'app/OrganizationSettings/Users/UserUtils';
 import * as Navigator from 'states/Navigator';
 import { TeamDialog } from './TeamDialog';
 import { DeleteTeamDialog } from './DeleteTeamDialog';
 import { DeleteButton } from './TeamDetailsDeleteButton';
 import { EditButton } from './TeamDetailsEditButton';
 import { TeamDetailsContent } from './TeamDetailsContent';
+import { createOrganizationEndpoint } from 'data/EndpointFactory';
+import { getUser } from 'access_control/OrganizationMembershipRepository';
+import { useAsync } from 'core/hooks';
 
 const ellipsisStyle = {
   overflowX: 'hidden',
@@ -53,7 +55,7 @@ TeamDetails.propTypes = {
   emptyTeamMemberships: PropTypes.bool,
   emptyTeamSpaceMemberships: PropTypes.bool,
   noOrgMembersLeft: PropTypes.bool,
-  allTeams: PropTypes.objectOf(TeamPropType),
+  allTeams: PropTypes.arrayOf(TeamPropType),
 };
 
 export function TeamDetails({ team, allTeams, orgId, readOnlyPermission }) {
@@ -62,6 +64,16 @@ export function TeamDetails({ team, allTeams, orgId, readOnlyPermission }) {
   const [teamName, setTeamName] = useState(team.name);
   const [teamDescription, setTeamDescription] = useState(team.description);
   const path = ['account', 'organizations', 'teams'];
+
+  const getCreatorName = useCallback(async () => {
+    const { firstName, lastName } = await getUser(
+      createOrganizationEndpoint(orgId),
+      team.sys.createdBy.sys.id
+    );
+    return `${firstName} ${lastName}`;
+  }, [team.sys.createdBy.sys.id, orgId]);
+
+  const { data: teamCreator } = useAsync(getCreatorName);
 
   const onUpdateTeamDetailsValues = ({ name, description }) => {
     setTeamName(name);
@@ -121,7 +133,7 @@ export function TeamDetails({ team, allTeams, orgId, readOnlyPermission }) {
                     {!readOnlyPermission && (
                       <React.Fragment>
                         <dt>Created by</dt>
-                        <dd data-test-id="creator-name">{getUserName(team.sys.createdBy)}</dd>
+                        <dd data-test-id="creator-name">{teamCreator}</dd>
                       </React.Fragment>
                     )}
                   </dl>

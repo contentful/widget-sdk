@@ -1,4 +1,5 @@
 import { fetchAllWithIncludes } from 'data/CMA/FetchAll';
+import { get } from 'lodash';
 import ResolveLinks from 'data/LinkResolver';
 
 const BATCH_LIMIT = 100;
@@ -34,7 +35,7 @@ export async function getAllTeamMemberships(endpoint, teamId) {
  * @param {teamId} teamId team id
  */
 export async function getAllTeamSpaceMemberships(endpoint) {
-  const includePaths = ['roles', 'sys.team', 'sys.space'];
+  const includePaths = ['roles', 'sys.team', 'sys.space', 'sys.createdBy'];
   const { items, includes } = await fetchAllWithIncludes(
     endpoint,
     ['team_space_memberships'],
@@ -42,6 +43,50 @@ export async function getAllTeamSpaceMemberships(endpoint) {
     { include: includePaths.join(',') }
   );
   return ResolveLinks({ paths: includePaths, items, includes });
+}
+
+export async function deleteTeamSpaceMembership(spaceEndpoint, membership) {
+  return spaceEndpoint(
+    {
+      method: 'DELETE',
+      path: ['team_space_memberships', get(membership, 'sys.id')],
+      version: get(membership, 'sys.version'),
+    },
+    { 'x-contentful-team': get(membership, 'sys.team.sys.id') }
+  );
+}
+
+export async function createTeamSpaceMembership(spaceEndpoint, teamId, { admin, roles }) {
+  let data;
+
+  if (admin) {
+    data = { admin: true };
+  } else {
+    data = { admin: false, roles };
+  }
+
+  return spaceEndpoint(
+    {
+      method: 'POST',
+      path: ['team_space_memberships'],
+      data,
+    },
+    {
+      'x-contentful-team': teamId,
+    }
+  );
+}
+
+export async function updateTeamSpaceMembership(spaceEndpoint, membership, admin, roles) {
+  return spaceEndpoint(
+    {
+      method: 'PUT',
+      path: ['team_space_memberships', get(membership, 'sys.id')],
+      data: { admin, roles },
+      version: get(membership, 'sys.version'),
+    },
+    { 'x-contentful-team': get(membership, 'sys.team.sys.id') }
+  );
 }
 
 /**

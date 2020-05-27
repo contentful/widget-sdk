@@ -49,7 +49,7 @@ export class TeamDetailsRoute extends React.Component {
                   team={data.team}
                   readOnlyPermission={data.readOnlyPermission}
                   orgId={this.props.orgId}
-                  allTeams={data.allTeams}
+                  allTeams={data.allTeams.items}
                 />
               );
             }

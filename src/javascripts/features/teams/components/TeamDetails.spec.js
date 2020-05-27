@@ -9,7 +9,9 @@ const activeOrgId = 'testOrgId';
 
 describe('TeamDetails', () => {
   const renderComponent = (props) => {
+    const createdBy = fake.User();
     const team = fake.Team();
+    team.sys.createdBy = createdBy;
     render(<TeamDetails orgId={activeOrgId} team={team} readOnlyPermission={false} {...props} />);
     return wait();
   };

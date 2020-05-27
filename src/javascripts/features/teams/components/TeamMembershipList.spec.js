@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, wait, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import * as fake from 'test/helpers/fakeFactory';
 import { TeamMembershipList } from './TeamMembershipList';
 
@@ -16,7 +16,7 @@ const removeFromTeamCB = jest.fn();
 
 describe('TeamMembershipList', () => {
   const build = (props) => {
-    render(
+    return render(
       <TeamMembershipList
         items={teamMembers}
         readOnlyPermission={true}
@@ -24,7 +24,6 @@ describe('TeamMembershipList', () => {
         {...props}
       />
     );
-    return wait();
   };
 
   it('renders the team members list', async () => {

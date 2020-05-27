@@ -14,7 +14,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { useAsyncFn } from 'core/hooks';
-import { createOrganizationEndpoint } from 'data/EndpointFactory';
+import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes';
 import TeamsEmptyStateImage from 'svg/illustrations/add-user-illustration.svg';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
@@ -22,11 +22,13 @@ import {
   getAllTeamMemberships,
   getAllTeamSpaceMemberships,
   removeTeamMembership,
+  deleteTeamSpaceMembership,
 } from '../services/TeamRepo';
 import { TeamDetailsAddButton } from './TeamDetailsAddButton';
 import { TeamMembershipList } from './TeamMembershipList';
 import { AddToTeamModal } from './AddToTeamModal';
 import { TeamSpaceMembershipList } from './TeamSpaceMembershipList';
+import { AddToSpacesModal } from './AddToSpacesModal';
 import { createImmerReducer } from 'core/utils/createImmerReducer';
 import { ModalLauncher } from 'core/components/ModalLauncher';
 
@@ -153,6 +155,7 @@ export function TeamDetailsContent({ team, orgId, readOnlyPermission }) {
     updateTeamMembers();
   }, [updateSpaceMemberships, updateTeamMembers]);
 
+  // Add team member
   const handleAddToTeamClick = () => {
     const currentTeamMembers = teamMembers.map((tm) => tm.sys.organizationMembership.sys.id);
     ModalLauncher.open(({ isShown, onClose }) => {
@@ -164,6 +167,22 @@ export function TeamDetailsContent({ team, orgId, readOnlyPermission }) {
           onClose={onClose}
           currentTeamMembers={currentTeamMembers}
           onAddedToTeam={updateTeamMembers}
+        />
+      );
+    });
+  };
+
+  // Add team to space
+  const handleAddToSpaceClick = () => {
+    ModalLauncher.open(({ isShown, onClose }) => {
+      return (
+        <AddToSpacesModal
+          team={team}
+          orgId={orgId}
+          currentSpaces={spaceMemberships.map((membership) => membership.sys.space)}
+          isShown={isShown}
+          onClose={onClose}
+          onAddedToSpaces={updateSpaceMemberships}
         />
       );
     });
@@ -204,6 +223,39 @@ export function TeamDetailsContent({ team, orgId, readOnlyPermission }) {
     }
   };
 
+  // Delete team space membership
+  const removeTeamSpaceMembership = async (teamSpaceMembership) => {
+    const confirmation = await ModalLauncher.open(({ isShown, onClose }) => (
+      <ModalConfirm
+        title={`Remove team ${team.name} from space ${teamSpaceMembership.sys.space.name}`}
+        intent="negative"
+        isShown={isShown}
+        confirmLabel="Remove"
+        onConfirm={() => onClose(true)}
+        onCancel={() => onClose(false)}>
+        <Paragraph>{`Are you sure you want to remove team ${team.name} from the space  ${teamSpaceMembership.sys.space.name}?`}</Paragraph>
+      </ModalConfirm>
+    ));
+
+    if (!confirmation) {
+      return;
+    }
+
+    try {
+      const spaceEndpoint = createSpaceEndpoint(teamSpaceMembership.sys.space.sys.id);
+      await deleteTeamSpaceMembership(spaceEndpoint, teamSpaceMembership);
+      dispatch({
+        type: 'SPACE_MEMBERSHIP_REMOVED',
+        payload: teamSpaceMembership,
+      });
+      Notification.success(
+        `Successfully removed team ${team.name} from space ${teamSpaceMembership.sys.space.name}`
+      );
+    } catch (e) {
+      Notification.error(`Could not remove team from space ${teamSpaceMembership.sys.space.name}`);
+    }
+  };
+
   if (isLoadingTeamMembers || isLoadingSpaceMemberships) {
     return <Skeleton />;
   }
@@ -241,7 +293,9 @@ export function TeamDetailsContent({ team, orgId, readOnlyPermission }) {
         {!isListEmpty() && (
           <TeamDetailsAddButton
             label={selectedTab.actionLabel}
-            onClick={handleAddToTeamClick}
+            onClick={
+              selectedTab.id === 'teamMembers' ? handleAddToTeamClick : handleAddToSpaceClick
+            }
             readOnlyPermission={readOnlyPermission}
           />
         )}
@@ -262,7 +316,10 @@ export function TeamDetailsContent({ team, orgId, readOnlyPermission }) {
                 )}
                 {selectedTab.id === 'spaceMemberships' && (
                   <TeamSpaceMembershipList
+                    orgId={orgId}
                     items={spaceMemberships}
+                    onEdit={updateSpaceMemberships}
+                    removeTeamSpaceMembership={removeTeamSpaceMembership}
                     readOnlyPermission={readOnlyPermission}
                   />
                 )}

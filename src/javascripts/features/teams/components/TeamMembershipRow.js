@@ -15,9 +15,7 @@ export function TeamMembershipRow({ membership, removeFromTeam, readOnlyPermissi
   return (
     <TableRow className="membership-list__item">
       <TableCell>
-        {readOnlyPermission ? (
-          <UserCard testId="user-card" user={user} />
-        ) : organizationMembership ? (
+        {!readOnlyPermission && organizationMembership ? (
           <StateLink
             component={TextLink}
             testId="user-text-link"

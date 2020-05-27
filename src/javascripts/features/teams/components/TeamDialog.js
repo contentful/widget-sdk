@@ -55,8 +55,7 @@ export function TeamDialog({ onClose, isShown, updateTeamDetailsValues, initialT
       some(
         allTeams,
         (otherTeam) =>
-          otherTeam.name === teamName.trim() &&
-          get(initialTeam.sys.id, 'sys.id') !== otherTeam.sys.id
+          otherTeam.name === teamName.trim() && get(initialTeam, 'sys.id') !== otherTeam.sys.id
       )
     ) {
       return 'This name is already in use';

@@ -42,18 +42,18 @@ export function AddToTeamModal({
 
   const handleSubmit = async () => {
     dispatch({ type: 'REQUEST_SENT' });
+    const orgEndpoint = createOrganizationEndpoint(orgId);
     try {
-      const orgEndpoint = createOrganizationEndpoint(orgId);
       const teamMembership = await createTeamMembership(
         orgEndpoint,
         team.sys.id,
         orgMembership.sys.id
       );
       dispatch({ type: 'TEAM_MEMBERSHIP_ADDED', payload: teamMembership });
-      onAddedToTeam();
       Notification.success(
         `Successfully added ${userToString(orgMembership.sys.user)} to team ${team.name}`
       );
+      onAddedToTeam();
     } catch (e) {
       Notification.error(
         `Could not add ${userToString(orgMembership.sys.user)} to team ${team.name}`

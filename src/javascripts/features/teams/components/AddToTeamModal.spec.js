@@ -78,21 +78,18 @@ describe('AddToTeamModal', () => {
 
   it('should create a new team membership', async () => {
     await build();
-    // focus on select field and wait for options to show up
-    const input = screen.getByTestId('user-select');
-    fireEvent.focus(input);
 
+    const input = screen.getByTestId('user-select');
     await screen.findAllByTestId('user-select-option');
-    const newTeamMemberOption = screen.getByText(
-      `${newOrgMembership.sys.user.firstName} ${newOrgMembership.sys.user.lastName} <${newOrgMembership.sys.user.email}>`
-    );
-    fireEvent.click(newTeamMemberOption);
+    fireEvent.change(input, { target: { value: newOrgMembership.sys.id } });
 
     const submitBtn = screen.getByTestId('add-to-team.modal.submit-button');
     expect(submitBtn).toBeInTheDocument();
-    // fireEvent.click(submitBtn);
-    // await waitFor(() => expect(onAddedToTeamCb).toHaveBeenCalledTimes(1));
-    // const notification = await screen.findByTestId('cf-ui-notification');
-    // expect(notification).toHaveTextContent('Successfully added John Doe to team Team A');
+
+    fireEvent.click(submitBtn);
+
+    const notification = await screen.findByTestId('cf-ui-notification');
+    expect(onAddedToTeamCb).toHaveBeenCalledTimes(1);
+    expect(notification).toHaveTextContent('Successfully added Jane Doe to team Team A');
   });
 });
