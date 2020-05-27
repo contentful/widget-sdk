@@ -52,7 +52,7 @@ const newError = (code, msg, message) => {
   return error;
 };
 
-const DisconnectedError = newError(undefined, 'API request failed');
+const DisconnectedError = newError(-1, 'API request failed');
 
 function createCmaDocument(initialEntity, contentTypeFields, throttleMs) {
   const contentType =

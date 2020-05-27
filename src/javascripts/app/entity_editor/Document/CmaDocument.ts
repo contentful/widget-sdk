@@ -503,11 +503,9 @@ function toDocumentError(e) {
     VersionMismatch: DocError.VersionMismatch(),
     AccessDenied: DocError.OpenForbidden(),
     ServerError: DocError.CmaInternalServerError(e),
+    [-1]: DocError.Disconnected(),
   };
 
-  if (e.code === undefined) {
-    return DocError.Disconnected();
-  }
   // If entity was archived in the meantime. Can be removed once status changes are integrated with pub-sub.
   if (e.code === 'BadRequest' && e.data?.message === 'Cannot edit archived') {
     return DocError.Archived();
