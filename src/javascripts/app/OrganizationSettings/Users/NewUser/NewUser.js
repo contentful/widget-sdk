@@ -96,6 +96,28 @@ export default function NewUser({ orgId, hasTeamsFeature, isOwner }) {
     dispatch({ type: 'EMAILS_CHANGED', payload: value });
   };
 
+  /*
+    Handles copy-pasting emails with the format
+    "John Doe <john.doe@example.com>, Jane Doe <jane.doe@example.com>"
+    It will only paste the email addresses
+  */
+  const handleEmailsPaste = (evt) => {
+    const text = evt.clipboardData.getData('text');
+    const target = evt.target;
+    // use comma as separator if it's already being used
+    // otherwise, use new lines
+    const separator = /,/.test(target.value) ? ', ' : '\n';
+    // match whatever is betwen < and >
+    const paste = [...text.matchAll(/<(.*?)>/g)].map((match) => match[1]).join(separator);
+
+    if (paste.length) {
+      // pastes
+      target.setRangeText(paste, target.selectionStart, target.selectionEnd, 'end');
+      dispatch({ type: 'EMAILS_CHANGED', payload: target.value });
+      evt.preventDefault();
+    }
+  };
+
   const handleRoleChange = (evt) => {
     const {
       target: { value },
@@ -192,6 +214,7 @@ export default function NewUser({ orgId, hasTeamsFeature, isOwner }) {
             textarea
             required
             onChange={handleEmailsChange}
+            onPaste={handleEmailsPaste}
             value={emailsValue}
             labelText="User email(s)"
             validationMessage={emailsErrorMessage}
