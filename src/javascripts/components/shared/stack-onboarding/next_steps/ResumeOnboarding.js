@@ -80,7 +80,7 @@ export default function ResumeOnboarding({ spaceId }) {
             Not sure where to begin? You can use our example blog to get familiar with content
             modeling. You can deploy the blog in 3 simple steps.
           </Paragraph>
-          <Button onClick={handleResume} data-test-id="ms-resume-onboarding">
+          <Button onClick={handleResume} data-test-id="resume-onboarding-cta">
             Deploy example
           </Button>
         </div>
@@ -90,7 +90,7 @@ export default function ResumeOnboarding({ spaceId }) {
             To start from scratch, delete this space and then add a new space. Deleting this space
             can’t be undone.
           </Paragraph>
-          <Button buttonType="negative" onClick={handleDeleteSpace} data-test-id="ms-delete-space">
+          <Button buttonType="negative" onClick={handleDeleteSpace} data-test-id="delete-space-cta">
             Delete space
           </Button>
         </div>
