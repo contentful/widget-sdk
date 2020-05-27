@@ -41,7 +41,8 @@ function BasePlan({ basePlan }) {
           <TextLink
             href={websiteUrl('/pricing/#platform-features')}
             testId="subscription-page.org-usage-link"
-            target="_blank">
+            target="_blank"
+            rel="noopener noreferrer">
             Platform features
           </TextLink>
         </Paragraph>

@@ -32,6 +32,7 @@ const SetupWebhooksDrawer = (props) => {
           onClick={() => trackClickCTA('webhook_guide_link')}
           className="f36-margin-top--m"
           target="_blank"
+          rel="noopener noreferrer"
           href={url}>
           View webhook guide
         </Button>
@@ -53,7 +54,10 @@ const NetlifyPrerequisite = () => {
         Your site must already be deployed to Netlify, and you must have configured it for
         continuous deployment by connecting it to a remote Git repo. If you haven’t done so already,
         follow the guide on the{' '}
-        <TextLink href="https://www.netlify.com/docs/continuous-deployment/" target="_blank">
+        <TextLink
+          href="https://www.netlify.com/docs/continuous-deployment/"
+          target="_blank"
+          rel="noopener noreferrer">
           Netlify documentation
         </TextLink>
         .

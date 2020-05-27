@@ -109,7 +109,8 @@ const AppPromotion = ({ canManageSpace }) => {
       {!!canManageSpace && (
         <TextLink
           href="https://www.contentful.com/developers/docs/extensibility/app-framework/locations/#page"
-          target="_blank">
+          target="_blank"
+          rel="noopener noreferrer">
           Learn more
         </TextLink>
       )}

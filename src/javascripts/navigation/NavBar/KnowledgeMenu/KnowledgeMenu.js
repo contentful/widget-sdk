@@ -49,21 +49,24 @@ function KnowledgeMenu() {
         <DropdownListItem
           testId="help-menu-help-center"
           href={`${Config.helpCenterUrl}/?${utmParams}`}
-          target="_blank">
+          target="_blank"
+          rel="noopener noreferrer">
           Help center
         </DropdownListItem>
 
         <DropdownListItem
           testId="help-menu-docs"
           href={`${Config.developerDocsUrl}/?${utmParams}`}
-          target="_blank">
+          target="_blank"
+          rel="noopener noreferrer">
           Developer docs
         </DropdownListItem>
 
         <DropdownListItem
           testId="help-menu-traning-center"
           href={`https://public.learningcenter.contentful.com/catalog`}
-          target="_blank">
+          target="_blank"
+          rel="noopener noreferrer">
           Training courses
         </DropdownListItem>
       </DropdownList>
@@ -72,7 +75,8 @@ function KnowledgeMenu() {
         <DropdownListItem
           testId="help-menu-what-is-new"
           href={`${Config.developersChangelogUrl}/?${utmParams}`}
-          target="_blank">
+          target="_blank"
+          rel="noopener noreferrer">
           What&apos;s new
         </DropdownListItem>
       </DropdownList>

@@ -30,7 +30,7 @@ const CTACardComponent = ({
         <Heading className={styles.heading}>{heading}</Heading>
         <Paragraph className={styles.description}>{description}</Paragraph>
         {isExternal ? (
-          <TextLink href={href} target="_blank">
+          <TextLink href={href} target="_blank" rel="noopener noreferrer">
             {ctaLabel}
           </TextLink>
         ) : (

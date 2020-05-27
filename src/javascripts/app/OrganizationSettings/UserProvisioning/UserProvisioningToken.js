@@ -21,7 +21,11 @@ export default function UserProvisioningToken({ personalAccessToken }) {
         Make sure to immediately copy your new personal access token. You won’t be able to see it
         again.
         <br />
-        <StateLink path="account.profile.cma_tokens" data-test-id="tokens-url" target="_blank">
+        <StateLink
+          path="account.profile.cma_tokens"
+          data-test-id="tokens-url"
+          target="_blank"
+          rel="noopener noreferrer">
           Manage your tokens.
         </StateLink>
       </Note>

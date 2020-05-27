@@ -86,7 +86,10 @@ export default function UserProvisioningConfiguration({ orgId }) {
           <Heading>Set up user provisioning with SCIM 2.0</Heading>
           <Paragraph className={styles.paragraph}>
             Set up user provisioning for your organization in Contentful in a few steps.{' '}
-            <TextLink href={withInAppHelpUtmParams(`${helpCenterUrl}/scim-faq`)} target="_blank">
+            <TextLink
+              href={withInAppHelpUtmParams(`${helpCenterUrl}/scim-faq`)}
+              target="_blank"
+              rel="noopener noreferrer">
               Check out the FAQs.
             </TextLink>
           </Paragraph>
@@ -122,7 +125,8 @@ export default function UserProvisioningConfiguration({ orgId }) {
               <StateLink
                 path="account.profile.cma_tokens"
                 data-test-id="tokens-url"
-                target="_blank">
+                target="_blank"
+                rel="noopener noreferrer">
                 Manage your tokens
               </StateLink>
             </>

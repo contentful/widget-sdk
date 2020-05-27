@@ -41,7 +41,8 @@ export default class TeamsEmptyState extends React.Component {
           testId="get-in-touch-button"
           className={styles.topMargin}
           href={`${supportUrl}?upgrade-teams=true`}
-          target="_blank">
+          target="_blank"
+          rel="noopener noreferrer">
           Get in touch with us
         </Button>
       </>

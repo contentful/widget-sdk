@@ -55,7 +55,8 @@ export default function AvailableItems(props) {
           <TextLink
             icon="ExternalLink"
             href="https://www.contentful.com/marketplace/"
-            target="_blank">
+            target="_blank"
+            rel="noopener noreferrer">
             Add a new UI Extension
           </TextLink>
         </div>
@@ -66,7 +67,8 @@ export default function AvailableItems(props) {
           href={withInAppHelpUtmParams(
             'https://www.contentful.com/developers/docs/extensibility/ui-extensions/'
           )}
-          target="_blank">
+          target="_blank"
+          rel="noopener noreferrer">
           UI Extensions
         </TextLink>
       </Paragraph>

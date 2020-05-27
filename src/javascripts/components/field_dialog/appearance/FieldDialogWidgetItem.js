@@ -62,7 +62,8 @@ export default class FieldDialogWidgetItem extends Component {
               <StateLink
                 path="^.^.^.settings.extensions.detail"
                 params={{ extensionId: widget.id }}
-                target="_blank">
+                target="_blank"
+                rel="noopener noreferrer">
                 <Icon name="edit" scale="0.9" />
               </StateLink>
             )}
@@ -72,7 +73,11 @@ export default class FieldDialogWidgetItem extends Component {
           <div className="field-dialog__widget-item-header">
             <span>App</span>
             {isAdmin && (
-              <StateLink path="^.^.^.apps.detail" params={{ appId: widget.appId }} target="_blank">
+              <StateLink
+                path="^.^.^.apps.detail"
+                params={{ appId: widget.appId }}
+                target="_blank"
+                rel="noopener noreferrer">
                 <Icon name="edit" scale="0.9" />
               </StateLink>
             )}

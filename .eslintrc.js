@@ -16,6 +16,10 @@ module.exports = {
     window: true,
     document: true,
   },
+  settings: {
+    linkComponents: ['TextLink', 'Button', 'DropdownListItem', 'StateLink'],
+  },
+
   overrides: [
     {
       files: ['**/*.{js,jsx}'],

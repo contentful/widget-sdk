@@ -49,7 +49,8 @@ function UserProvisioningUpsellState() {
                 <TextLink
                   testId="faq-url"
                   href={withInAppHelpUtmParams(`${helpCenterUrl}/scim-faq/`)}
-                  target="_blank">
+                  target="_blank"
+                  rel="noopener noreferrer">
                   Read our FAQs for more information.
                 </TextLink>
               </Paragraph>
@@ -62,7 +63,8 @@ function UserProvisioningUpsellState() {
               testId="get-in-touch-btn"
               className={styles.topMargin}
               href={salesUrl}
-              target="_blank">
+              target="_blank"
+              rel="noopener noreferrer">
               Get in touch
             </Button>
           </EmptyStateContainer>

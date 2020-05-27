@@ -21,7 +21,7 @@ const ReadOnlySpaceHome = ({ isAdmin }) => {
         </Paragraph>
       </Typography>
       {isAdmin && (
-        <Button href={supportUrl} target="_blank">
+        <Button href={supportUrl} target="_blank" rel="noopener noreferrer">
           Talk to support
         </Button>
       )}

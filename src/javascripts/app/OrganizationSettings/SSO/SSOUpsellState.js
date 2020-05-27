@@ -49,7 +49,10 @@ function SSOUpsellState() {
                 <Paragraph>
                   You can authorize users within your organization in Contentful directly from your
                   identity provider. We support SAML 2.0 for user authorization.{' '}
-                  <TextLink href={withInAppHelpUtmParams(websiteUrl('faq/sso/'))} target="_blank">
+                  <TextLink
+                    href={withInAppHelpUtmParams(websiteUrl('faq/sso/'))}
+                    target="_blank"
+                    rel="noopener noreferrer">
                     Read our FAQs for more information.
                   </TextLink>
                 </Paragraph>
@@ -62,7 +65,8 @@ function SSOUpsellState() {
                 testId="get-in-touch-btn"
                 className={styles.topMargin}
                 href={salesUrl}
-                target="_blank">
+                target="_blank"
+                rel="noopener noreferrer">
                 Get in touch
               </Button>
             </EmptyStateContainer>

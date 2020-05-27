@@ -122,7 +122,8 @@ const openAddPasswordModal = async (user, onAddPassword) => {
 const TwoFactorAuthenticationFaqLink = () => (
   <TextLink
     href={withInAppHelpUtmParams(websiteUrl('faq/two-factor-authentication/'))}
-    target="_blank">
+    target="_blank"
+    rel="noopener noreferrer">
     Learn more about 2FA
   </TextLink>
 );

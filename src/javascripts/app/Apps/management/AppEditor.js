@@ -404,7 +404,8 @@ export default function AppEditor({ definition, onChange }) {
                       navigation.{' '}
                       <TextLink
                         href="https://www.contentful.com/developers/docs/references/content-management-api/#page-location"
-                        target="_blank">
+                        target="_blank"
+                        rel="noopener noreferrer">
                         Learn more
                       </TextLink>
                       .

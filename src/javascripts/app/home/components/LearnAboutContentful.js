@@ -32,7 +32,8 @@ const LearnAboutContentful = () => {
           <TextLink
             onClick={() => trackClickCTA('case_studies_link')}
             href={withInAppHelpUtmParams('https://www.contentful.com/customers/')}
-            target="_blank">
+            target="_blank"
+            rel="noopener noreferrer">
             View case studies
           </TextLink>
         </Typography>
@@ -45,7 +46,8 @@ const LearnAboutContentful = () => {
           <TextLink
             onClick={() => trackClickCTA('documentation_link')}
             href={withInAppHelpUtmParams('https://www.contentful.com/developers/docs/')}
-            target="_blank">
+            target="_blank"
+            rel="noopener noreferrer">
             View documentation
           </TextLink>
         </Typography>
@@ -58,7 +60,8 @@ const LearnAboutContentful = () => {
           <TextLink
             onClick={() => trackClickCTA('community_link')}
             href={withInAppHelpUtmParams('https://www.contentful.com/developers/')}
-            target="_blank">
+            target="_blank"
+            rel="noopener noreferrer">
             Join Contentful community
           </TextLink>
         </Typography>

@@ -66,6 +66,7 @@ const AssetBandwidthSection = ({ limit, usage, uom }) => {
         <TextLink
           href="https://www.contentful.com/r/knowledgebase/fair-use/"
           target="_blank"
+          rel="noopener noreferrer"
           className={styles.learnMoreLink}>
           Fair Use Policy
         </TextLink>

@@ -43,7 +43,10 @@ const OrganizationUsageInfo = (props) => {
         <strong data-test-id="org-usage-limit">{`${shorten(includedLimit)}`}</strong>
         /month quota. This number includes CMA, CDA, CPA, and GraphQL requests. To learn about
         utility limits, read the{' '}
-        <TextLink href="https://www.contentful.com/r/knowledgebase/fair-use/" target="_blank">
+        <TextLink
+          href="https://www.contentful.com/r/knowledgebase/fair-use/"
+          target="_blank"
+          rel="noopener noreferrer">
           Fair Use Policy
         </TextLink>
         .
