@@ -43,10 +43,14 @@ function ReadTagsProvider({ children }) {
   const dataSize = Math.min(skip + limit, cachedData.length);
 
   const currentData = useMemo(() => {
-    return cachedData.slice(skip, dataSize).filter((entry) => {
-      const match = debouncedSearch.toLowerCase();
-      return entry.name.toLowerCase().includes(match) || entry.sys.id.toLowerCase().includes(match);
-    });
+    return cachedData
+      .filter((entry) => {
+        const match = debouncedSearch.toLowerCase();
+        return (
+          entry.name.toLowerCase().includes(match) || entry.sys.id.toLowerCase().includes(match)
+        );
+      })
+      .slice(skip, dataSize);
   }, [cachedData, skip, dataSize, debouncedSearch]);
 
   const total = cachedData
@@ -59,10 +63,19 @@ function ReadTagsProvider({ children }) {
     console.error(error);
   }
 
+  const nameExists = useCallback((name) => cachedData.some((tag) => tag.name === name), [
+    cachedData,
+  ]);
+
+  const idExists = useCallback((id) => cachedData.some((tag) => tag.sys.id === id), [cachedData]);
+
+  const getTag = useCallback((tagId) => cachedData.find((t) => t.sys.id === tagId), [cachedData]);
+
   return (
     <ReadTagsContext.Provider
       value={{
         data: currentData,
+        allData: cachedData,
         isLoading,
         error,
         reset,
@@ -75,6 +88,9 @@ function ReadTagsProvider({ children }) {
         debouncedSearch,
         total,
         hasTags: cachedData.length > 0,
+        nameExists,
+        idExists,
+        getTag,
       }}>
       {children}
     </ReadTagsContext.Provider>

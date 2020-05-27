@@ -8,8 +8,6 @@ const TagPropType = {
     createdAt: PropTypes.string.isRequired,
     version: PropTypes.number.isRequired,
   }),
-  entriesTagged: PropTypes.number,
-  assetsTagged: PropTypes.number,
   updatedAt: PropTypes.string,
 };
 

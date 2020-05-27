@@ -2,6 +2,7 @@ import React from 'react';
 
 const ReadTagsContext = React.createContext({
   data: [],
+  allData: [],
   isLoading: false,
   error: null,
   reset: null,
@@ -14,6 +15,9 @@ const ReadTagsContext = React.createContext({
   setSearch: null,
   debouncedSearch: null,
   hasTags: false,
+  nameExists: null,
+  idExists: null,
+  getTag: null,
 });
 
 export { ReadTagsContext };

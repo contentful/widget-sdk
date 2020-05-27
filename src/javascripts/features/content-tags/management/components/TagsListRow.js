@@ -1,13 +1,12 @@
 import {
+  CardActions,
   CopyButton,
-  Dropdown,
   DropdownList,
   DropdownListItem,
-  IconButton,
   TableCell,
   TableRow,
 } from '@contentful/forma-36-react-components';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
@@ -17,6 +16,10 @@ import { TagPropType } from 'features/content-tags/core/TagPropType';
 const styles = {
   delete: css({
     color: tokens.colorRedBase,
+  }),
+  longText: css({
+    wordBreak: 'break-word', //break-word,
+    overflowWrap: 'break-word',
   }),
   copy: css({
     margin: '0',
@@ -38,23 +41,8 @@ const styles = {
 };
 
 function TagActions(props) {
-  const [isOpen, setOpen] = useState(false);
   return (
-    <Dropdown
-      isOpen={isOpen}
-      onClose={() => setOpen(false)}
-      toggleElement={
-        <IconButton
-          testId="tag-menu"
-          onClick={() => {
-            setOpen(true);
-          }}
-          label="Actions"
-          iconProps={{
-            icon: 'MoreHorizontal',
-          }}
-        />
-      }>
+    <CardActions>
       <DropdownList>
         <DropdownListItem testId="tag-menu-edit" onClick={props.onEdit}>
           Rename tag
@@ -63,7 +51,7 @@ function TagActions(props) {
           <span className={styles.delete}>Delete tag</span>
         </DropdownListItem>
       </DropdownList>
-    </Dropdown>
+    </CardActions>
   );
 }
 
@@ -76,8 +64,6 @@ function TagsListRow(tag) {
   const {
     name,
     sys: { id, createdAt },
-    entriesTagged,
-    assetsTagged,
     onEdit,
     onDelete,
   } = tag;
@@ -96,13 +82,11 @@ function TagsListRow(tag) {
 
   return (
     <TableRow>
-      <TableCell>{name}</TableCell>
-      <TableCell>
+      <TableCell className={styles.longText}>{name}</TableCell>
+      <TableCell className={styles.longText}>
         <code>{id}</code>
         <CopyButton className={styles.copy} copyValue={id} testId="id.copy" />
       </TableCell>
-      <TableCell>{entriesTagged || 0}</TableCell>
-      <TableCell>{assetsTagged || 0}</TableCell>
       <TableCell>
         <RelativeDateTime value={createdAt} />
       </TableCell>

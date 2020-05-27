@@ -5,7 +5,6 @@ import {
   FieldGroup,
   Form,
   Modal,
-  Note,
   Notification,
   Paragraph,
 } from '@contentful/forma-36-react-components';
@@ -19,10 +18,6 @@ const styles = {
   controlsPanel: css({ display: 'flex', marginTop: tokens.spacingL }),
   marginLeftM: css({ marginLeft: tokens.spacingM }),
   marginBottom: css({ marginBottom: tokens.spacingM }),
-};
-
-export const formatNumber = (value) => {
-  return new Intl.NumberFormat().format(value);
 };
 
 const FORM_RESET = 'FORM_RESET';
@@ -95,10 +90,6 @@ function DeleteTagModal({ tag, isShown, onClose }) {
       <Paragraph className={styles.marginBottom}>
         Are you sure you want to delete the tag {tag.name}?
       </Paragraph>
-      <Note noteType={'warning'} className={styles.marginBottom}>
-        There are {formatNumber(tag.entriesTagged || 0)} entries and{' '}
-        {formatNumber(tag.assetsTagged || 0)} assets with this tag.
-      </Note>
       <Form spacing={'condensed'} testId={'delete-tag-modal-form'}>
         <FieldGroup>
           <CheckboxField

@@ -1,7 +1,6 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Button,
   Heading,
   Paragraph,
   SkeletonBodyText,
@@ -10,21 +9,25 @@ import {
   Workbench,
 } from '@contentful/forma-36-react-components';
 import NavigationIcon from 'ui/Components/NavigationIcon';
-import EmptyContentTags from 'svg/illustrations/empty-content-tags.svg';
 import BinocularsIllustration from 'svg/illustrations/binoculars-illustration.svg';
 import EmptyStateContainer, {
   defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
-import { useScrollToTop, useF36Modal } from 'features/content-tags/core/hooks';
+import {
+  useF36Modal,
+  useIsInitialLoadingOfTags,
+  useScrollToTop,
+} from 'features/content-tags/core/hooks';
 import { TagsWorkbenchActions } from './TagsWorkbenchActions';
 import { CreateTagModal } from 'features/content-tags/management/components/CreateTagModal';
+import { NoTagsContainer } from 'features/content-tags/core/components/NoTagsContainer';
 
 function TagsWorkbenchSkeleton(props) {
   const scrollToTop = useScrollToTop('.tags-workbench-content');
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const { modalComponent: createTagComponent, showModal: showCreateTagModal } = useF36Modal(
     CreateTagModal
   );
+  const isInitialLoad = useIsInitialLoadingOfTags();
 
   const onCreate = useCallback(() => {
     showCreateTagModal();
@@ -32,10 +35,9 @@ function TagsWorkbenchSkeleton(props) {
 
   useEffect(() => {
     if (!props.isLoading) {
-      setIsInitialLoad(false);
       scrollToTop();
     }
-  }, [scrollToTop, setIsInitialLoad, props.isLoading]);
+  }, [scrollToTop, props.isLoading]);
 
   const renderDefaultContent = useCallback(() => {
     return (
@@ -50,21 +52,7 @@ function TagsWorkbenchSkeleton(props) {
   }, []);
 
   const renderNoTags = useCallback(() => {
-    return (
-      <EmptyStateContainer>
-        <EmptyContentTags className={defaultSVGStyle} />
-        <Typography>
-          <Heading>Organize your content with tags</Heading>
-          <Paragraph>
-            Group content with tags to make it easier to find what you need. You can filter for tags
-            across content types and use tags to improve your workflows.
-          </Paragraph>
-          <Button buttonType="primary" onClick={onCreate}>
-            Add first tag
-          </Button>
-        </Typography>
-      </EmptyStateContainer>
-    );
+    return <NoTagsContainer onCreate={onCreate} />;
   }, [onCreate]);
 
   const renderNoResult = useCallback(() => {
@@ -81,7 +69,7 @@ function TagsWorkbenchSkeleton(props) {
 
   const content = useMemo(() => {
     if (isInitialLoad) {
-      return null;
+      return renderDefaultContent();
     } else if (props.hasTags && !props.isLoading && !props.hasData) {
       return renderNoResult();
     } else if (!props.hasTags && !props.isLoading) {

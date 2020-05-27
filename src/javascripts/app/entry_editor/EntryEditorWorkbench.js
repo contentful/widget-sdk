@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { css, cx } from 'emotion';
-import { Tabs, Tab, TabPanel, Workbench, Icon } from '@contentful/forma-36-react-components';
+import { Icon, Tab, TabPanel, Tabs, Workbench } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import NavigationIcon from 'ui/Components/NavigationIcon';
-import EntrtySecondaryActions from 'app/entry_editor/EntryTitlebar/EntrySecondaryActions/EntrySecondaryActions';
+import EntrySecondaryActions from 'app/entry_editor/EntryTitlebar/EntrySecondaryActions/EntrySecondaryActions';
 import StatusNotification from 'app/entity_editor/StatusNotification';
 import CustomEditorExtensionRenderer from 'app/entry_editor/CustomEditorExtensionRenderer';
 import NoLocalizedFieldsAdvice from 'components/tabs/NoLocalizedFieldsAdvice';
@@ -15,7 +15,11 @@ import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
 import ReferencesTab, { hasLinks } from './EntryReferences';
 import { track } from 'analytics/Analytics';
 import { getVariation } from 'LaunchDarkly';
-import { ALL_REFERENCES_DIALOG } from 'featureFlags';
+import { ALL_REFERENCES_DIALOG, SHAREJS_REMOVAL } from 'featureFlags';
+
+import { ContentTagsTab } from './EntryContentTags/ContentTagsTab';
+import { useTagsFeatureEnabled } from 'features/content-tags';
+import * as Config from 'Config';
 
 const styles = {
   mainContent: css({
@@ -97,6 +101,7 @@ const EntryEditorWorkbench = ({
       });
       setTabVisible({ entryReferences: isFeatureEnabled });
     }
+
     getFeatureFlagVariation();
   }, [setTabVisible, getSpace]);
 
@@ -177,6 +182,36 @@ const EntryEditorWorkbench = ({
     },
   };
 
+  const tagsTab = useMemo(() => {
+    return {
+      title: 'Tags',
+      icon: 'CodeTrimmed',
+      isVisible: true,
+      isEnabled: () => true,
+      render() {
+        return (
+          <div className="entity-editor-form cf-workbench-content cf-workbench-content-type__text">
+            {selectedTab === 'entryContentTags' && <ContentTagsTab doc={otDoc} />}
+          </div>
+        );
+      },
+      onClick(selectedTab) {
+        setSelectedTab(selectedTab);
+        trackTabOpen(selectedTab);
+      },
+    };
+  }, [selectedTab, setSelectedTab, otDoc]);
+
+  const { tagsEnabled } = useTagsFeatureEnabled();
+
+  if (tagsEnabled) {
+    if (otDoc.isOtDocument !== true) {
+      tabs['entryContentTags'] = tagsTab;
+    } else if (Config.env !== 'production') {
+      console.log(`enable "${SHAREJS_REMOVAL}" feature flag to show content tags`);
+    }
+  }
+
   return (
     <div className="entry-editor">
       <Workbench>
@@ -195,7 +230,7 @@ const EntryEditorWorkbench = ({
           actions={
             <>
               <div id={`editor-status-switch-${entityInfo.id}`} />
-              <EntrtySecondaryActions
+              <EntrySecondaryActions
                 entityInfo={entityInfo}
                 entryActions={entryActions}
                 onDelete={state.delete}

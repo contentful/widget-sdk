@@ -5,14 +5,12 @@ import {
   FieldGroup,
   Form,
   Modal,
-  Note,
   Notification,
   TextField,
 } from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { formatNumber } from './DeleteTagModal';
 import { TagPropType } from 'features/content-tags/core/TagPropType';
 import { useReadTags, useUpdateTag } from 'features/content-tags/core/hooks';
 
@@ -40,9 +38,9 @@ const styles = {
   marginLeftM: css({ marginLeft: tokens.spacingM }),
 };
 
-function validate(state, tags) {
+function validate(state, initialTag, nameExistsValidator) {
   const errors = {};
-  if (tags.some((tag) => tag.name === state.name)) {
+  if (state.name !== initialTag.name && nameExistsValidator(state.name)) {
     errors.name = 'This name is already taken.';
   }
   return errors;
@@ -53,8 +51,8 @@ function validate(state, tags) {
  */
 function UpdateTagModal({ isShown, onClose, tag }) {
   const [{ name, confirm, confirmTouched }, dispatch] = useReducer(reducer, FORM_INITIAL_STATE);
-  const { reset, data } = useReadTags();
-  const errors = validate({ name }, data);
+  const { reset, nameExists, getTag } = useReadTags();
+  const errors = validate({ name }, tag, nameExists);
   const hasAnyValidationErrors = Object.values(errors).some((item) => Boolean(item));
   const isConfirmEnabled = name && confirm && !hasAnyValidationErrors;
 
@@ -99,11 +97,11 @@ function UpdateTagModal({ isShown, onClose, tag }) {
   }, [updateTagData, name, close]);
 
   const onSubmit = useCallback(async () => {
-    const latestTag = data.find((t) => t.sys.id === tag.sys.id);
+    const latestTag = getTag(tag.sys.id);
     const currentTagVersion = latestTag ? latestTag.sys.version : tag.sys.version;
     await updateTag(tag.sys.id, name, currentTagVersion);
     await reset();
-  }, [tag, data, name, reset, updateTag]);
+  }, [tag, name, reset, updateTag, getTag]);
 
   const onCancel = () => {
     close();
@@ -150,10 +148,6 @@ function UpdateTagModal({ isShown, onClose, tag }) {
           }}
           onChange={onNameChange}
         />
-        <Note className={styles.marginBottom}>
-          There are {formatNumber(tag.entriesTagged || 0)} entries and{' '}
-          {formatNumber(tag.assetsTagged || 0)} assets with this tag.
-        </Note>
         <FieldGroup>
           <CheckboxField
             testId={'update-content-tag-checkbox-field'}

@@ -44,6 +44,10 @@ export function create(
 
   const cleanupTasks: Function[] = [];
   let isDestroyed = false;
+  const isFieldsOrMetadataPrefix = (path: string[]): boolean => {
+    return PathUtils.isPrefix(['fields'], path) || PathUtils.isPrefix(['metadata'], path);
+  };
+
   const sysBus: PropertyBus<EntitySys> = K.createPropertyBus(entity.sys);
   const sys$ = sysBus.property;
   cleanupTasks.push(sysBus.end);
@@ -99,7 +103,7 @@ export function create(
   // So document getters work with locally normalized entity, that is created initially and on every update in this handler.
   // Make sure that this handler is the first for the changes stream.
   changesBus.stream.onValue((path) => {
-    if (PathUtils.isPrefix(['fields'], path)) {
+    if (isFieldsOrMetadataPrefix(path)) {
       normalize();
     }
   });
@@ -107,7 +111,9 @@ export function create(
   // Persist changes if there were any in last N seconds. Also update if there were
   // any changes during the last update.
   changesBus.stream
-    .filter((path) => PathUtils.isPrefix(['fields'], path))
+    .filter((path) => {
+      return isFieldsOrMetadataPrefix(path);
+    })
     // Required to force bufferWhileBy to emit all buffered changes immediately after a save.
     .merge(afterSave$)
     .bufferWhileBy(isSaving$)
@@ -154,6 +160,7 @@ export function create(
   const data$ = K.combinePropertiesObject({
     sys: sys$,
     fields: valuePropertyAt({ changes: changesBus.stream, getValueAt }, ['fields']),
+    metadata: valuePropertyAt({ changes: changesBus.stream, getValueAt }, ['metadata']),
   });
 
   // Sync the data to the entity instance.
@@ -250,8 +257,12 @@ export function create(
       return entity;
     },
     async removeValueAt(path: string[]) {
-      unset(entity, path);
-      changesBus.emit(path);
+      if (path[0] === 'metadata') {
+        throw new Error("you can't remove any metadata field or itself");
+      } else {
+        unset(entity, path);
+        changesBus.emit(path);
+      }
       return;
     },
 
@@ -294,6 +305,7 @@ export function create(
         value = undefined;
       }
     }
+
     // NOTE: We do not re-implement empty value `RichTextFieldSetter` behavior for now
     //  as we can rely on the RT editor to be responsible for giving us `undefined` as
     //  an empty value.
@@ -322,6 +334,7 @@ export function create(
       await afterStatusUpdate$.changes().take(1).toPromise();
       return saveEntityAfterAnyStatusUpdate(...args);
     }
+
     return saveEntity(...args);
   }
 
@@ -341,7 +354,11 @@ export function create(
     }
     // Do nothing if no unsaved changes - entity could be persisted
     // before the throttled handler triggered, e.g. on status change.
-    if (isEqual(entity.fields, lastSavedEntity.fields)) {
+    if (
+      isEqual(entity.fields, lastSavedEntity.fields) &&
+      // TODO: Ensure that changed `metadata.tags` order won't trigger a save.
+      isEqual(entity.metadata, lastSavedEntity.metadata)
+    ) {
       return;
     }
     // Re-try saving after connection errors but no further attempt to save otherwise.

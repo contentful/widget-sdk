@@ -87,6 +87,8 @@ export default async function create($scope, editorData, preferences) {
     emitter: $scope.emitter,
   });
 
+  $scope.tagProps = { doc: $scope.otDoc };
+
   setLocaleData($scope, {
     entityLabel: 'asset',
     shouldHideLocaleErrors: defaultLocaleIsFocused,

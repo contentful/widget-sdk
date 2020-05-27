@@ -14,10 +14,21 @@ export interface EntitySys {
   };
 }
 
+export interface Link<T extends string> {
+  sys: {
+    id: string;
+    type: 'Link';
+    linkType: T;
+  };
+}
+
 export interface Entity {
   sys: EntitySys;
   fields: {
     [fieldName: string]: { [locale: string]: any };
+  };
+  metadata?: {
+    tags: Link<'Tag'>[];
   };
 }
 

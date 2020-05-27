@@ -23,6 +23,7 @@ export function normalize(otDoc, snapshot, contentType, locales) {
   const ctFields = get(contentType, ['data', 'fields']);
   const localeMap = makeLocaleMap(locales);
   forceFieldObject(otDoc);
+  forceMetadataObject(otDoc);
   removeDeletedFields(snapshot, ctFields);
   removeUnknownLocales(snapshot, localeMap);
   removeEmptyFields(snapshot);
@@ -32,6 +33,16 @@ function forceFieldObject(otDoc) {
   const fields = otDoc.getValueAt(['fields']);
   if (!isObject(fields)) {
     otDoc.setValueAt(['fields'], {});
+  }
+}
+
+// TODO: Always ensure presence of `metadata` field once it is 100% in production.
+function forceMetadataObject(otDoc) {
+  if (
+    isObject(otDoc.getValueAt(['metadata'])) &&
+    !Array.isArray(otDoc.getValueAt(['metadata', 'tags']))
+  ) {
+    otDoc.setValueAt(['metadata', 'tags'], []);
   }
 }
 

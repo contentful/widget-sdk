@@ -71,10 +71,14 @@ export function create({
   }
 
   function removeValueAt(path) {
-    return withRawDoc(path, (doc) => {
-      maybeEmitLocalChange(path);
-      return ShareJS.remove(doc, path);
-    });
+    if (path[0] === 'metadata') {
+      return Promise.reject(new Error("you can't remove any metadata field or itself"));
+    } else {
+      return withRawDoc(path, (doc) => {
+        maybeEmitLocalChange(path);
+        return ShareJS.remove(doc, path);
+      });
+    }
   }
 
   function insertValueAt(path, i, x) {

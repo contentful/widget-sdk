@@ -446,7 +446,7 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
    * @name Document#data$
    * @type Property<API.Entity>
    * @description
-   * Holds the current entity data, i.e. the 'sys' and 'fields' properties.
+   * Holds the current entity data, i.e. the 'sys', 'fields' and 'metadata' properties.
    *
    * Note that we cannot simply use `valuePropertiesAt([])` because this will
    * represents the raw SJS snapshot which does not have 'sys.updatedAt'.
@@ -454,6 +454,7 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
   document.data$ = K.combinePropertiesObject({
     sys: sysProperty,
     fields: valuePropertyAt(document, ['fields']),
+    metadata: valuePropertyAt(document, ['metadata']),
   });
 
   // Sync the data to the entity instance.

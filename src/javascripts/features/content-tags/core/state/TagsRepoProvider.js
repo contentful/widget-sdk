@@ -1,20 +1,20 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import * as TagsRepo from 'data/CMA/TagsRepo';
+import * as TagsRepo from 'features/content-tags/core/state/TagsRepo';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
-import { getModule } from 'core/NgRegistry';
 import { TagsRepoContext } from 'features/content-tags/core/state/TagsRepoContext';
+import { useSpaceContext } from 'features/content-tags/core/hooks';
 
 function TagsRepoProvider({ children }) {
   const [tagsRepo, setTagsRepo] = useState({});
+  const spaceContext = useSpaceContext();
 
   useEffect(() => {
-    const spaceContext = getModule('spaceContext');
     const spaceId = spaceContext.getId();
     const environmentId = spaceContext.getEnvironmentId();
     const endpoint = createSpaceEndpoint(spaceId, environmentId);
     setTagsRepo(TagsRepo.create(endpoint, environmentId));
-  }, []);
+  }, [spaceContext]);
 
   if (!tagsRepo) {
     throw 'TagsRepo not initialized';

@@ -22,7 +22,7 @@ const isEdgeBrowser = isEdge();
 
 const styles = {
   wideCell: css({
-    width: '30%',
+    width: '40%',
   }),
 };
 
@@ -72,8 +72,6 @@ function TagsList({ tags, isLoading }) {
           <TableRow>
             <TableCell className={styles.wideCell}>Tag name</TableCell>
             <TableCell className={styles.wideCell}>Tag ID</TableCell>
-            <TableCell>Entries tagged</TableCell>
-            <TableCell>Assets tagged</TableCell>
             <TableCell>Date added</TableCell>
             <TableCell />
           </TableRow>

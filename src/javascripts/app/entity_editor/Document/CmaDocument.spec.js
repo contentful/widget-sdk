@@ -1,10 +1,10 @@
 import { cloneDeep, set } from 'lodash';
 import * as CmaDocument from './CmaDocument';
+import { THROTTLE_TIME } from './CmaDocument';
 import { Action } from 'data/document/ResourceStateManager';
-import testDocumentBasic, { newEntry, newAsset, newContentType } from './Document.spec';
+import testDocumentBasic, { linkedTags, newAsset, newContentType, newEntry } from './Document.spec';
 import * as K from '../../../../../test/utils/kefir';
 import { Error as DocError } from '../../../data/document/Error';
-import { THROTTLE_TIME } from './CmaDocument';
 import { track } from 'analytics/Analytics';
 
 jest.mock('analytics/Analytics', () => ({
@@ -72,6 +72,7 @@ function createCmaDocument(initialEntity, contentTypeFields, throttleMs) {
 describe('CmaDocument', () => {
   testDocumentBasic(createCmaDocument);
   const fieldPath = ['fields', 'fieldA', 'en-US'];
+  const metadataPath = ['metadata', 'tags'];
   /**
    * @type {Document}
    */
@@ -123,10 +124,26 @@ describe('CmaDocument', () => {
     });
   });
 
+  describe('5 sec. after setValueAt(metadataPath) on a field', () => {
+    beforeEach(async () => {
+      await doc.setValueAt(metadataPath, linkedTags);
+      jest.runAllTimers();
+    });
+
+    it('triggers CMA request', () => {
+      expect(entityRepo.update).toBeCalledTimes(1);
+    });
+
+    it('bumps sysProperty version after remote update', () => {
+      expect(K.getValue(doc.sysProperty).version).toEqual(entry.sys.version + 1);
+    });
+  });
+
   describe('multiple setValueAt() calls within 5s', () => {
     it('sends one CMA request', async () => {
       await doc.setValueAt(['fields', 'fieldA', 'en-US'], 'en-US-updated');
       await doc.setValueAt(['fields', 'fieldB', 'en-US'], 'another updated');
+      await doc.setValueAt(['metadata', 'tags'], linkedTags);
       expect(entityRepo.update).not.toHaveBeenCalled();
 
       jest.runAllTimers();
@@ -135,6 +152,9 @@ describe('CmaDocument', () => {
       expect(entity.fields).toMatchObject({
         fieldA: { 'en-US': 'en-US-updated' },
         fieldB: { 'en-US': 'another updated' },
+      });
+      expect(entity.metadata).toMatchObject({
+        tags: linkedTags,
       });
     });
 

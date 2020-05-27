@@ -38,16 +38,18 @@ const reducer = (state, action) => {
   }
 };
 
-function validate(state, tags) {
+function validate(state, nameExistsValidator, idExistsValidator) {
   const errors = { id: null };
   if (state.id.length) {
     if (!isValidResourceId(state.id)) {
-      errors.id = 'Please use only letters, numbers and underscores';
+      errors.id = 'Use only Latin letters, numbers, dots, hyphens and underscores.';
     } else if (state.id.startsWith('contentful.')) {
       errors.id = 'The prefix "contentful" is reserved for internal usage.';
+    } else if (idExistsValidator(state.id)) {
+      errors.id = 'This id is already taken.';
     }
   }
-  if (tags.some((tag) => tag.name === state.name)) {
+  if (nameExistsValidator(state.name)) {
     errors.name = 'This name is already taken.';
   }
   return errors;
@@ -56,8 +58,8 @@ function validate(state, tags) {
 function CreateTagModal({ isShown, onClose }) {
   const [{ name, id, idTouched }, dispatch] = useReducer(reducer, FORM_INITIAL_STATE);
   const [continueCreation, setContinueCreation] = useState(false);
-  const { reset, data } = useReadTags();
-  const errors = validate({ name, id }, data);
+  const { reset, nameExists, idExists } = useReadTags();
+  const errors = validate({ name, id }, nameExists, idExists);
   const hasAnyValidationErrors = Object.values(errors).some((item) => Boolean(item));
   const isConfirmEnabled = name && id && hasAnyValidationErrors === false;
 
@@ -135,6 +137,7 @@ function CreateTagModal({ isShown, onClose }) {
           id={'name'}
           name="name"
           labelText={'Tag name'}
+          helpText={'Tip: Press ↵ on your keyboard to save and create another'}
           value={name}
           validationMessage={errors.name || null}
           textInputProps={{

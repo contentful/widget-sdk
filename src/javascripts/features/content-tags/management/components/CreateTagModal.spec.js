@@ -161,7 +161,7 @@ describe('A CreateTagModal', () => {
     });
 
     expect(
-      queries.getByText(/Please use only letters, numbers and underscores/)
+      queries.getByText(/Use only Latin letters, numbers, dots, hyphens and underscores./)
     ).toBeInTheDocument();
   });
 

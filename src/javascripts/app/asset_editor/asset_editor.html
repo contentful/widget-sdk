@@ -30,6 +30,8 @@
       <div class="entity-editor-form cf-workbench-content cf-workbench-content-type__text">
         <cf-error-list class="form-box-error" cf-error-path="['fields']"></cf-error-list>
         <cf-entity-field ng-repeat="widget in widgets track by widget.fieldId"></cf-entity-field>
+        <react-component name="app/asset_editor/ContentTagsField" props="tagProps">
+        </react-component>
       </div>
     </div>
     <div class="workbench-main__sidebar">

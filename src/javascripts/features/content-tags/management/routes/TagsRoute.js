@@ -34,9 +34,11 @@ function TagsRoute({ redirectUrl }) {
   if (isTagsEnabledLoading) {
     return null;
   }
+
   if (!tagsEnabled) {
     return <StateRedirect path={redirectUrl} />;
   }
+
   return (
     <TagsRepoProvider>
       <ReadTagsProvider>
