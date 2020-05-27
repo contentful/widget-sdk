@@ -35,7 +35,9 @@ export default function register() {
         order: 'scheduledFor.datetime',
         'sys.status': 'scheduled',
         'environment.sys.id': spaceContext.space.environment.sys.id,
-      }).then(({ items = [] }) => ($scope.jobs = items));
+      })
+        .then(({ items = [] }) => ($scope.jobs = items))
+        .catch(() => {});
 
       // HACK: This makes sure that component bridge renders
       // somethings until search UI is initialized.
