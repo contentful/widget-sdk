@@ -165,9 +165,7 @@ export default class AppDetails extends React.Component {
         definitionId: updated.sys.id,
       });
     } catch (err) {
-      Notification.error(
-        'Validation failed. Please check that you have provided an app Name, valid Source URL, Entry field types and/or page location information.'
-      );
+      Notification.error(ManagementApiClient.VALIDATION_MESSAGE);
     }
 
     this.setState({ busy: false });

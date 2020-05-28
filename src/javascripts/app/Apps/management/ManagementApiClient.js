@@ -4,6 +4,9 @@ import * as Config from 'Config';
 import { createOrganizationEndpoint } from 'data/Endpoint';
 import { getUser } from 'access_control/OrganizationMembershipRepository';
 
+export const VALIDATION_MESSAGE =
+  'Validation failed. Please check that you have provided valid configuration options.';
+
 function createOrgEndpointByDef(definition) {
   const orgId = get(definition, ['sys', 'organization', 'sys', 'id']);
   return createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);

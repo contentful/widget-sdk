@@ -58,9 +58,7 @@ export default class NewApp extends React.Component {
       });
       this.props.goToDefinition(saved.sys.id);
     } catch (err) {
-      Notification.error(
-        'Validation failed. Please check that you have provided an app Name, valid Source URL and/or Entry field types.'
-      );
+      Notification.error(ManagementApiClient.VALIDATION_MESSAGE);
     }
 
     this.setState({ busy: false });
