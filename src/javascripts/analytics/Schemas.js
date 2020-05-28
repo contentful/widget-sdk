@@ -291,7 +291,7 @@ registerSchema({
 
 registerSchema({
   name: 'entity_editor_edit_conflict',
-  version: '1-0-0',
+  version: '2-0-0',
 });
 
 function registerSchema(schema) {

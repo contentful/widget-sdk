@@ -551,8 +551,11 @@ describe('CmaDocument', () => {
       expect(body).toEqual({
         entityId: entry.sys.id,
         entityType: entry.sys.type,
-        localChangesFieldPaths: [fieldPath.slice(1).join(':')],
-        remoteChangesSinceLocalEntityFieldPaths: [fieldPath.slice(1).join(':')],
+        localChangesPaths: [fieldPath.join(':')],
+        remoteChangesPaths: [fieldPath.join(':')],
+        localEntityState: 'draft',
+        localStateChange: null,
+        remoteEntityState: 'draft',
         localEntityVersion: entry.sys.version,
         remoteEntityVersion: remoteEntity.sys.version,
         localEntityUpdatedAtTstamp: entry.sys.updatedAt,
@@ -561,6 +564,14 @@ describe('CmaDocument', () => {
         localEntityLastFetchedAtTstamp: new Date(now).toISOString(),
         isConflictAutoResolvable: false,
         autoConflictResolutionVersion: 1,
+        precomputed: {
+          sameFieldLocaleConflictsCount: 1,
+          localFieldLocaleChangesCount: 1,
+          remoteFieldLocaleChangesCount: 1,
+          sameMetadataConflictsCount: 0,
+          localMetadataChangesCount: 0,
+          remoteMetadataChangesCount: 0,
+        },
       });
     });
 

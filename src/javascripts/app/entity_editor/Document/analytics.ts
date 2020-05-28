@@ -1,8 +1,10 @@
+import { intersection } from 'lodash';
 import { Entity } from './types';
 import * as Analytics from 'analytics/Analytics';
 import changedEntityFieldPaths from './changedEntityFieldPaths';
 import { EntityRepo } from 'data/CMA/EntityRepo';
 import * as logger from 'services/logger';
+import { getState, State } from 'data/CMA/EntityState';
 
 export async function trackEditConflict({
   entityRepo,
@@ -50,17 +52,22 @@ function conflictEntitiesToTrackingData({
   changedLocalEntity,
   localEntityFetchedAt,
 }) {
+  const localChangesFieldPaths = formatFieldPaths(
+    changedEntityFieldPaths(localEntity.fields, changedLocalEntity.fields)
+  );
+  const remoteChangesFieldPaths = formatFieldPaths(
+    changedEntityFieldPaths(localEntity.fields, remoteEntity.fields || {})
+  );
+  const localChangesPaths = localChangesFieldPaths; // TODO: Include metadata.
+  const remoteChangesPaths = remoteChangesFieldPaths; // TODO: Include metadata.
   return {
     entityId: localEntity.sys.id,
     entityType: localEntity.sys.type,
-    localChangesFieldPaths: changedEntityFieldPaths(
-      localEntity.fields,
-      changedLocalEntity.fields
-    ).map((path) => path.join(':')),
-    remoteChangesSinceLocalEntityFieldPaths: changedEntityFieldPaths(
-      localEntity.fields,
-      remoteEntity.fields || {}
-    ).map((path) => path.join(':')),
+    localChangesPaths,
+    remoteChangesPaths,
+    localEntityState: stateTrackingString(getState(localEntity.sys)),
+    localStateChange: null, // TODO: Add some tracking of state change conflicts using this.
+    remoteEntityState: stateTrackingString(getState(remoteEntity.sys)),
     localEntityVersion: localEntity.sys.version,
     remoteEntityVersion: remoteEntity.sys.version,
     localEntityUpdatedAtTstamp: localEntity.sys.updatedAt,
@@ -69,5 +76,38 @@ function conflictEntitiesToTrackingData({
     localEntityLastFetchedAtTstamp: localEntityFetchedAt.toISOString(),
     isConflictAutoResolvable: false,
     autoConflictResolutionVersion: 1,
+    precomputed: {
+      sameFieldLocaleConflictsCount: intersection(localChangesFieldPaths, remoteChangesFieldPaths)
+        .length,
+      localFieldLocaleChangesCount: localChangesFieldPaths.length,
+      remoteFieldLocaleChangesCount: remoteChangesFieldPaths.length,
+      // TODO: Add metadata conflicts tracking:
+      sameMetadataConflictsCount: 0,
+      localMetadataChangesCount: 0,
+      remoteMetadataChangesCount: 0,
+    },
   };
+}
+
+function formatFieldPaths(paths) {
+  return paths.map((path) => `fields:${path.join(':')}`);
+}
+
+function stateTrackingString(state) {
+  switch (state) {
+    case State.Changed(): // Changed entries are actually "published".
+    case State.Published():
+      return 'published';
+    case State.Draft():
+      return 'draft';
+    case State.Archived():
+      return 'archived';
+    case State.Deleted(): // Might be deleted or just not accessible for the user.
+      return 'inaccessible';
+    default:
+      logger.logError(`Unhandled entity state ${state}`, {
+        groupingHash: 'unhandledEntityStatusInDocumentAnalytics',
+        data: { entityState: state },
+      });
+  }
 }

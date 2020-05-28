@@ -1,27 +1,33 @@
 import { getSchema } from 'analytics/Schemas';
-import { addUserOrgSpace } from './Decorators';
+import { addUserOrgSpace, omitMetadata, snakeCaseKeys } from './Decorators';
+
+const MAX_CSV_LENGTH = 8192; // As "maxLength" defined in the Snowplow schema.
 
 /**
  * Transforms data for the entity_editor_edit_conflict snowplow event.
  *
  * @returns {object}
  */
-export default addUserOrgSpace((_eventName, data) => {
+export default addUserOrgSpace(function (_eventName, data) {
+  const { localChangesPaths, remoteChangesPaths, precomputed, ...otherData } = omitMetadata(data);
+  localChangesPaths.join(',');
   return {
     schema: getSchema('entity_editor_edit_conflict').path,
     data: {
-      entity_id: data.entityId,
-      entity_type: data.entityType,
-      local_changes_field_paths: data.localChangesFieldPaths,
-      remote_changes_since_local_entity_field_paths: data.remoteChangesSinceLocalEntityFieldPaths,
-      local_entity_version: data.localEntityVersion,
-      remote_entity_version: data.remoteEntityVersion,
-      local_entity_updated_at_tstamp: data.localEntityUpdatedAtTstamp,
-      remote_entity_updated_at_tstamp: data.remoteEntityUpdatedAtTstamp,
-      remote_entity_updated_by_user_id: data.remoteEntityUpdatedByUserId,
-      local_entity_last_fetched_at_tstamp: data.localEntityLastFetchedAtTstamp,
-      is_conflict_auto_resolvable: data.isConflictAutoResolvable,
-      auto_conflict_resolution_version: data.autoConflictResolutionVersion,
+      ...snakeCaseKeys(otherData),
+      local_changes_paths: csvOrNull(localChangesPaths),
+      remote_changes_paths: csvOrNull(remoteChangesPaths),
+      precomputed: snakeCaseKeys(precomputed),
     },
   };
 });
+
+/**
+ * Ensures we do not send invalid events with too many IDs that have a combined
+ * length exceeding the event schema's limits. In this case we just track
+ * `null` while still having some of the relevant info as `precomputed`.
+ */
+function csvOrNull(array) {
+  const csv = array.join(',');
+  return csv.length > MAX_CSV_LENGTH ? null : csv;
+}
