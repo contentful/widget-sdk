@@ -326,7 +326,7 @@ export default function AppEditor({ definition, onChange }) {
           labelText="Widget URL"
           testId="app-src-input"
           value={definition.src || ''}
-          helpText="Optional. Valid URLs use HTTPS. Only localhost can use HTTP."
+          helpText="Required only if your app renders a widget. Valid URLs use HTTPS. Only localhost can use HTTP."
           onChange={(e) => onChange({ ...definition, src: e.target.value })}
         />
         {definition.src && (
