@@ -17,12 +17,18 @@ import { UpdateTagModal } from 'features/content-tags/management/components/Upda
 import { DeleteTagModal } from 'features/content-tags/management/components/DeleteTagModal';
 import { useF36Modal } from 'features/content-tags/core/hooks';
 import { TagPropType } from 'features/content-tags/core/TagPropType';
+import tokens from '@contentful/forma-36-tokens';
 
 const isEdgeBrowser = isEdge();
 
 const styles = {
   wideCell: css({
     width: '40%',
+  }),
+  tableHead: css({
+    th: {
+      zIndex: tokens.zIndexDefault,
+    },
   }),
 };
 
@@ -68,7 +74,10 @@ function TagsList({ tags, isLoading }) {
         className={classnames({
           'organization-membership-list--loading': isLoading,
         })}>
-        <TableHead offsetTop={isEdgeBrowser ? '0px' : '-1.8em'} isSticky>
+        <TableHead
+          className={styles.tableHead}
+          offsetTop={isEdgeBrowser ? '0px' : '-1.8em'}
+          isSticky>
           <TableRow>
             <TableCell className={styles.wideCell}>Tag name</TableCell>
             <TableCell className={styles.wideCell}>Tag ID</TableCell>
