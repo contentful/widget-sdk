@@ -20,7 +20,7 @@ const TagsAutocomplete = ({ tags, isLoading, onChange, onQueryChange }) => {
       onChange={onChange}
       isLoading={isLoading}
       placeholder={'search for tags'}
-      emptyListMessage={'empty list message'}
+      emptyListMessage={'no tags found'}
       noMatchesMessage={'no matches'}
       dropdownProps={{ isFullWidth: true }}
       className={styles.Autocomplete}>
