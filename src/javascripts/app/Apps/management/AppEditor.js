@@ -53,11 +53,15 @@ const styles = {
       color: tokens.colorElementDarkest,
       fontFamily: tokens.fontStackMonospace,
     }),
-    '& svg': css({
-      position: 'absolute',
-      right: tokens.spacingS,
-      top: 'calc(50% - 9px)',
-    }),
+  }),
+  checkboxInfo: css({
+    position: 'absolute',
+    right: tokens.spacingS,
+  }),
+  checkboxInfoIcon: css({
+    position: 'absolute',
+    right: tokens.spacingS,
+    top: 'calc(50% - 9px)',
   }),
   fieldTypes: css({
     opacity: '0',
@@ -180,8 +184,8 @@ const LOCATION_ORDER = [
   ['Entry field', WidgetLocations.LOCATION_ENTRY_FIELD],
   ['Entry sidebar', WidgetLocations.LOCATION_ENTRY_SIDEBAR],
   ['Entry editor', WidgetLocations.LOCATION_ENTRY_EDITOR],
-  ['Dialog', WidgetLocations.LOCATION_DIALOG],
   ['Page', WidgetLocations.LOCATION_PAGE],
+  ['Dialog', WidgetLocations.LOCATION_DIALOG],
 ];
 
 const FIELD_TYPES_ORDER = [
@@ -349,6 +353,7 @@ export default function AppEditor({ definition, onChange }) {
                     testId={`app-location-${locationValue}`}
                     className={styles.locationToggle}
                     isActive={hasLocation(locationValue)}
+                    isDisabled={locationValue === WidgetLocations.LOCATION_DIALOG}
                     onClick={() => toggleLocation(locationValue)}>
                     <div className={styles.checkbox}>
                       <div>
@@ -357,7 +362,10 @@ export default function AppEditor({ definition, onChange }) {
                           onChange={() => {}}
                           name={`location-check-${name}`}
                           type="checkbox"
-                          checked={hasLocation(locationValue)}
+                          checked={
+                            hasLocation(locationValue) ||
+                            locationValue === WidgetLocations.LOCATION_DIALOG
+                          }
                         />
                       </div>
                       <div>
@@ -366,11 +374,18 @@ export default function AppEditor({ definition, onChange }) {
                       <div>
                         <span>({locationValue})</span>
                       </div>
+                      {(locationValue === WidgetLocations.LOCATION_ENTRY_FIELD ||
+                        locationValue === WidgetLocations.LOCATION_PAGE) && (
+                        <div className={styles.checkboxInfoIcon}>
+                          <Icon icon="ListBulleted" color="secondary" />
+                        </div>
+                      )}
+                      {locationValue === WidgetLocations.LOCATION_DIALOG && (
+                        <div className={styles.checkboxInfo}>
+                          All locations can open dialogs programatically
+                        </div>
+                      )}
                     </div>
-                    {(locationValue === WidgetLocations.LOCATION_ENTRY_FIELD ||
-                      locationValue === WidgetLocations.LOCATION_PAGE) && (
-                      <Icon icon="ListBulleted" color="secondary" />
-                    )}
                   </ToggleButton>
                   {locationValue === WidgetLocations.LOCATION_ENTRY_FIELD && (
                     <div
