@@ -317,162 +317,165 @@ export default function AppEditor({ definition, onChange }) {
         />
         <TextField
           className={styles.input()}
-          required
           name="app-src"
           id="app-src"
-          labelText="Source URL"
+          labelText="Widget URL"
           testId="app-src-input"
           value={definition.src || ''}
-          helpText="Valid URLs use HTTPS. Only localhost can use HTTP."
+          helpText="Optional. Valid URLs use HTTPS. Only localhost can use HTTP."
           onChange={(e) => onChange({ ...definition, src: e.target.value })}
         />
-        <div className={styles.locationP}>
-          <FormLabel htmlFor="">Locations</FormLabel>
-          <Paragraph className={styles.helpParagraph}>
-            Specify where the app can be rendered. Check out the{' '}
-            <TextLink
-              href={withInAppHelpUtmParams(
-                'https://www.contentful.com/developers/docs/references/content-management-api/#/reference/app-definitions'
-              )}
-              target="_blank"
-              rel="noopener noreferrer">
-              documentation
-            </TextLink>{' '}
-            for more details.
-          </Paragraph>
-        </div>
-        {LOCATION_ORDER.map(([name, locationValue]) => {
-          return (
-            <div key={locationValue} className={styles.toggleContainer}>
-              <ToggleButton
-                testId={`app-location-${locationValue}`}
-                className={styles.locationToggle}
-                isActive={hasLocation(locationValue)}
-                onClick={() => toggleLocation(locationValue)}>
-                <div className={styles.checkbox}>
-                  <div>
-                    {/* eslint-disable-next-line rulesdir/restrict-non-f36-components */}
-                    <input
-                      onChange={() => {}}
-                      name={`location-check-${name}`}
-                      type="checkbox"
-                      checked={hasLocation(locationValue)}
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor={`location-check${name}`}>{name}</label>
-                  </div>
-                  <div>
-                    <span>({locationValue})</span>
-                  </div>
-                </div>
-                {(locationValue === WidgetLocations.LOCATION_ENTRY_FIELD ||
-                  locationValue === WidgetLocations.LOCATION_PAGE) && (
-                  <Icon icon="ListBulleted" color="secondary" />
-                )}
-              </ToggleButton>
-              {locationValue === WidgetLocations.LOCATION_ENTRY_FIELD && (
-                <div
-                  className={[styles.fieldTypes]
-                    .concat(hasLocation(locationValue) ? styles.fieldTypesOpen() : [])
-                    .join(' ')}>
-                  <Paragraph>Select the field types the app can be rendered in.</Paragraph>
-                  <div className={styles.fieldTypeChecks}>
-                    {FIELD_TYPES_ORDER.map(([label, internalFieldType]) => {
-                      return (
-                        <CheckboxField
-                          className={styles.entryFieldCheck}
-                          key={internalFieldType}
-                          labelText={label}
-                          onChange={() => toggleFieldType(internalFieldType)}
-                          checked={hasFieldType(internalFieldType)}
-                          id={`app-entry-field-type-${internalFieldType}`}
+        {definition.src && (
+          <>
+            <div className={styles.locationP}>
+              <FormLabel htmlFor="">Locations</FormLabel>
+              <Paragraph className={styles.helpParagraph}>
+                Specify where the app can be rendered. Check out the{' '}
+                <TextLink
+                  href={withInAppHelpUtmParams(
+                    'https://www.contentful.com/developers/docs/references/content-management-api/#/reference/app-definitions'
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer">
+                  documentation
+                </TextLink>{' '}
+                for more details.
+              </Paragraph>
+            </div>
+            {LOCATION_ORDER.map(([name, locationValue]) => {
+              return (
+                <div key={locationValue} className={styles.toggleContainer}>
+                  <ToggleButton
+                    testId={`app-location-${locationValue}`}
+                    className={styles.locationToggle}
+                    isActive={hasLocation(locationValue)}
+                    onClick={() => toggleLocation(locationValue)}>
+                    <div className={styles.checkbox}>
+                      <div>
+                        {/* eslint-disable-next-line rulesdir/restrict-non-f36-components */}
+                        <input
+                          onChange={() => {}}
+                          name={`location-check-${name}`}
+                          type="checkbox"
+                          checked={hasLocation(locationValue)}
                         />
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-              {locationValue === WidgetLocations.LOCATION_PAGE && (
-                <div
-                  className={[styles.fieldTypes]
-                    .concat(hasLocation(locationValue) ? styles.fieldTypesOpen(false) : [])
-                    .join(' ')}>
-                  <div className={styles.pageSwitch}>
-                    <Paragraph>
-                      Optionally, you can show a link to the page location of your app in the main
-                      navigation.{' '}
-                      <TextLink
-                        href="https://www.contentful.com/developers/docs/references/content-management-api/#page-location"
-                        target="_blank"
-                        rel="noopener noreferrer">
-                        Learn more
-                      </TextLink>
-                      .
-                    </Paragraph>
-                    <Switch
-                      id="page-switch"
-                      isChecked={hasPageLocationNavigation}
-                      labelText="Show app in main navigation"
-                      onToggle={togglePageLocationData}
-                    />
-                  </div>
-                  <div className={styles.pageLocation(hasPageLocationNavigation)}>
-                    <div>
-                      <TextField
-                        className={styles.input()}
-                        required
-                        textInputProps={{
-                          maxLength: 40,
-                        }}
-                        name="page-link-name"
-                        id="page-link-name"
-                        labelText="Link name"
-                        testId="page-link-name"
-                        value={getNavigationItemValue('name')}
-                        helpText="Maximum 40 characters."
-                        onChange={(e) =>
-                          updatePageLocation({ field: 'name', value: e.target.value })
-                        }
-                      />
-                      <TextField
-                        className={[styles.input(false), styles.linkPath].join(' ')}
-                        required
-                        textInputProps={{
-                          maxLength: 512,
-                        }}
-                        name="page-link-path"
-                        id="page-link-path"
-                        labelText="Link path"
-                        testId="page-link-path"
-                        helpText="Maximum 512 characters."
-                        value={getNavigationItemValue('path')}
-                        onChange={(e) =>
-                          updatePageLocation({ field: 'path', value: e.target.value })
-                        }
-                      />
-                    </div>
-                    <div>
-                      <div className={styles.pageLocationNav}>
-                        <Tag tagType="muted" className={styles.tag}>
-                          Preview
-                        </Tag>
-                        <div className={styles.nav}>
-                          <NavigationIcon icon="apps" size="medium" mono color="white" />{' '}
-                          <span>Apps</span> <Icon icon="ArrowDown" color="white" />
-                        </div>
-                        <Card className={styles.navItem}>
-                          <UIIcon name="page-apps" scale="0.65" />{' '}
-                          <span>{getNavigationItemValue('name') || definition.name}</span>
-                        </Card>
+                      </div>
+                      <div>
+                        <label htmlFor={`location-check${name}`}>{name}</label>
+                      </div>
+                      <div>
+                        <span>({locationValue})</span>
                       </div>
                     </div>
-                  </div>
+                    {(locationValue === WidgetLocations.LOCATION_ENTRY_FIELD ||
+                      locationValue === WidgetLocations.LOCATION_PAGE) && (
+                      <Icon icon="ListBulleted" color="secondary" />
+                    )}
+                  </ToggleButton>
+                  {locationValue === WidgetLocations.LOCATION_ENTRY_FIELD && (
+                    <div
+                      className={[styles.fieldTypes]
+                        .concat(hasLocation(locationValue) ? styles.fieldTypesOpen() : [])
+                        .join(' ')}>
+                      <Paragraph>Select the field types the app can be rendered in.</Paragraph>
+                      <div className={styles.fieldTypeChecks}>
+                        {FIELD_TYPES_ORDER.map(([label, internalFieldType]) => {
+                          return (
+                            <CheckboxField
+                              className={styles.entryFieldCheck}
+                              key={internalFieldType}
+                              labelText={label}
+                              onChange={() => toggleFieldType(internalFieldType)}
+                              checked={hasFieldType(internalFieldType)}
+                              id={`app-entry-field-type-${internalFieldType}`}
+                            />
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                  {locationValue === WidgetLocations.LOCATION_PAGE && (
+                    <div
+                      className={[styles.fieldTypes]
+                        .concat(hasLocation(locationValue) ? styles.fieldTypesOpen(false) : [])
+                        .join(' ')}>
+                      <div className={styles.pageSwitch}>
+                        <Paragraph>
+                          Optionally, you can show a link to the page location of your app in the
+                          main navigation.{' '}
+                          <TextLink
+                            href="https://www.contentful.com/developers/docs/references/content-management-api/#page-location"
+                            target="_blank"
+                            rel="noopener noreferrer">
+                            Learn more
+                          </TextLink>
+                          .
+                        </Paragraph>
+                        <Switch
+                          id="page-switch"
+                          isChecked={hasPageLocationNavigation}
+                          labelText="Show app in main navigation"
+                          onToggle={togglePageLocationData}
+                        />
+                      </div>
+                      <div className={styles.pageLocation(hasPageLocationNavigation)}>
+                        <div>
+                          <TextField
+                            className={styles.input()}
+                            required
+                            textInputProps={{
+                              maxLength: 40,
+                            }}
+                            name="page-link-name"
+                            id="page-link-name"
+                            labelText="Link name"
+                            testId="page-link-name"
+                            value={getNavigationItemValue('name')}
+                            helpText="Maximum 40 characters."
+                            onChange={(e) =>
+                              updatePageLocation({ field: 'name', value: e.target.value })
+                            }
+                          />
+                          <TextField
+                            className={[styles.input(false), styles.linkPath].join(' ')}
+                            required
+                            textInputProps={{
+                              maxLength: 512,
+                            }}
+                            name="page-link-path"
+                            id="page-link-path"
+                            labelText="Link path"
+                            testId="page-link-path"
+                            helpText="Maximum 512 characters."
+                            value={getNavigationItemValue('path')}
+                            onChange={(e) =>
+                              updatePageLocation({ field: 'path', value: e.target.value })
+                            }
+                          />
+                        </div>
+                        <div>
+                          <div className={styles.pageLocationNav}>
+                            <Tag tagType="muted" className={styles.tag}>
+                              Preview
+                            </Tag>
+                            <div className={styles.nav}>
+                              <NavigationIcon icon="apps" size="medium" mono color="white" />{' '}
+                              <span>Apps</span> <Icon icon="ArrowDown" color="white" />
+                            </div>
+                            <Card className={styles.navItem}>
+                              <UIIcon name="page-apps" scale="0.65" />{' '}
+                              <span>{getNavigationItemValue('name') || definition.name}</span>
+                            </Card>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          );
-        })}
+              );
+            })}
+          </>
+        )}
         {definition.sys.organization.sys.id === MARKETPLACE_ORG_ID && (
           <div className={styles.publicSwitch}>
             <Switch
