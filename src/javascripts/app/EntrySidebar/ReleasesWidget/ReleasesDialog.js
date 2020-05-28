@@ -1,6 +1,7 @@
 import React, { Component, useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { css, cx } from 'emotion';
+import { isEqual, uniqWith } from 'lodash';
 import tokens from '@contentful/forma-36-tokens';
 import {
   Button,
@@ -161,8 +162,9 @@ export default class ReleasesDialog extends Component {
 
   handleCreateRelease(releaseName) {
     const { releaseContentTitle, selectedEntities } = this.props;
+    const uniqueSelectedEntities = uniqWith(selectedEntities, isEqual);
 
-    return createRelease(releaseName, selectedEntities)
+    return createRelease(releaseName, uniqueSelectedEntities)
       .then(() => {
         Notification.success(`${releaseContentTitle} was sucessfully added to ${releaseName}`);
       })
