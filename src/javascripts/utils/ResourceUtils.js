@@ -92,6 +92,16 @@ export function getResourceLimits(resource) {
   }
 }
 
+// If resource has a parent, get the parent's usage instead
+// Useful in V1 plans where limits are shared between spaces
+export function getAccumulatedUsage(resource) {
+  if (!resource.parent) {
+    return resource.usage;
+  }
+
+  return getAccumulatedUsage(resource.parent);
+}
+
 /*
   Determine if an organization is legacy based on the
   pricing version.

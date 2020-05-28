@@ -216,6 +216,24 @@ describe('ResourceUtils', () => {
       expect(limits.maximum).toBe(1000);
     });
 
+    it('returns the accumulated limit of a resource', function () {
+      const withParent = {
+        usage: 0,
+        parent: {
+          usage: 100,
+        },
+        sys: {
+          id: 'role',
+        },
+      };
+      const withoutParent = {
+        usage: 0,
+      };
+
+      expect(this.ResourceUtils.getAccumulatedUsage(withParent)).toBe(100);
+      expect(this.ResourceUtils.getAccumulatedUsage(withoutParent)).toBe(0);
+    });
+
     it('returns a limits object even given a resource with a null limits key', function () {
       const resource = {
         name: 'Foo Resource',

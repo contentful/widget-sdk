@@ -30,7 +30,7 @@ const styles = {
 };
 
 function RoleListActions(props) {
-  const usage = props.rolesResource.usage;
+  const usage = ResourceUtils.getAccumulatedUsage(props.rolesResource);
   return (
     <div className={styles.actions}>
       {props.hasCustomRolesFeature && (
