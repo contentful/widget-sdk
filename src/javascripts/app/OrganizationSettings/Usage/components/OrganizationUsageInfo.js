@@ -24,6 +24,7 @@ const styles = {
 
 const OrganizationUsageInfo = (props) => {
   const { totalUsage, includedLimit } = props;
+  const limitedUsage = !!includedLimit;
 
   return (
     <Typography>
@@ -32,25 +33,39 @@ const OrganizationUsageInfo = (props) => {
       </Heading>
       <Paragraph data-test-id="org-usage-total" className={styles.usageNumber}>
         {totalUsage.toLocaleString('en-US')}
-        {!!includedLimit && totalUsage > includedLimit && (
+        {limitedUsage && totalUsage > includedLimit && (
           <small data-test-id="org-usage-overage" className={styles.overageNumber}>
             {` +${(totalUsage - includedLimit).toLocaleString('en-US')} overage`}
           </small>
         )}
       </Paragraph>
-      <Paragraph>
-        Total API calls made this month from a{' '}
-        <strong data-test-id="org-usage-limit">{`${shorten(includedLimit)}`}</strong>
-        /month quota. This number includes CMA, CDA, CPA, and GraphQL requests. To learn about
-        utility limits, read the{' '}
-        <TextLink
-          href="https://www.contentful.com/r/knowledgebase/fair-use/"
-          target="_blank"
-          rel="noopener noreferrer">
-          Fair Use Policy
-        </TextLink>
-        .
-      </Paragraph>
+      {limitedUsage ? (
+        <Paragraph>
+          Total API calls made this month from a{' '}
+          <strong data-test-id="org-usage-limit">{`${shorten(includedLimit)}`}</strong>
+          /month quota. This number includes CMA, CDA, CPA, and GraphQL requests. To learn about
+          utility limits, read the{' '}
+          <TextLink
+            href="https://www.contentful.com/r/knowledgebase/fair-use/"
+            target="_blank"
+            rel="noopener noreferrer">
+            Fair Use Policy
+          </TextLink>
+          .
+        </Paragraph>
+      ) : (
+        <Paragraph>
+          This number includes CMA, CDA, CPA, and GraphQL requests. The use of Contentful is subject
+          to our{' '}
+          <TextLink
+            href="https://www.contentful.com/r/knowledgebase/fair-use/"
+            target="_blank"
+            rel="noopener noreferrer">
+            Fair Use Policy
+          </TextLink>
+          .
+        </Paragraph>
+      )}
     </Typography>
   );
 };
