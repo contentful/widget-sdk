@@ -5,7 +5,7 @@ import { Button, Modal, FormLabel, Notification } from '@contentful/forma-36-rea
 import { AddToTeam } from './AddToTeam';
 
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { createTeamMembership } from '../services/TeamRepo';
+import { createTeamMembership } from '../services/TeamRepository';
 import { createImmerReducer } from 'core/utils/createImmerReducer';
 
 const userToString = ({ firstName, lastName, email }) =>

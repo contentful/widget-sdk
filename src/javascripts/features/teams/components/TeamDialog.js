@@ -5,7 +5,7 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { isEmpty, get, some } from 'lodash';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { updateTeam } from '../services/TeamRepo';
+import { updateTeam } from '../services/TeamRepository';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes';
 
 const styles = {

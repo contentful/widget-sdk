@@ -7,36 +7,37 @@ import { getAllMembershipsWithQuery } from 'access_control/OrganizationMembershi
 import { orderBy } from 'lodash';
 import { useAsync } from 'core/hooks';
 
-const getAvailableOrgMemberships = (orgId, currentTeamMembers, setData) => async () => {
-  const endpoint = createOrganizationEndpoint(orgId);
-  const includePaths = ['sys.user', 'sys.createdBy'];
-  const data = await fetchAndResolve(
-    getAllMembershipsWithQuery(endpoint, {
+function useFetchAvailableOrgMemberships(orgId, unavailableUserIds) {
+  const fetchAvailableOrgMemberships = useCallback(async () => {
+    const orgEndpoint = createOrganizationEndpoint(orgId);
+    // fetch all org memberships
+    const includePaths = ['sys.user'];
+    const promise = getAllMembershipsWithQuery(orgEndpoint, {
       include: includePaths,
-    }),
-    includePaths
-  );
-  const availableOrgMemberships = data
-    ? Object.values(data).filter(({ sys: { id } }) => !currentTeamMembers.includes(id))
-    : [];
-  const sortedOrgMemberships = orderBy(
-    availableOrgMemberships,
-    ['sys.user.firstName', 'sys.user.lastName', 'sys.user.email'],
-    ['asc', 'asc', 'asc']
-  );
-  setData(sortedOrgMemberships);
-};
+    });
+
+    const allOrgMemberships = await fetchAndResolve(promise, includePaths);
+    // get all memberships where the user is not already a member of the team
+    const availableOrgMemberships = allOrgMemberships.filter(
+      (membership) => !unavailableUserIds.includes(membership.sys.id)
+    );
+    return orderBy(
+      availableOrgMemberships,
+      ['sys.user.firstName', 'sys.user.lastName', 'sys.user.email'],
+      ['asc', 'asc', 'asc']
+    );
+  }, [orgId, unavailableUserIds]);
+
+  return useAsync(fetchAvailableOrgMemberships);
+}
 
 export function AddToTeam({ orgId, currentTeamMembers, onChange }) {
   const [orgMembership, setOrgMembership] = useState(null);
-  const [availableOrgMemberships, setAvailableOrgMemberships] = useState(null);
 
-  const boundFetch = getAvailableOrgMemberships(
+  const { isLoading, data: availableOrgMemberships } = useFetchAvailableOrgMemberships(
     orgId,
-    currentTeamMembers,
-    setAvailableOrgMemberships
+    currentTeamMembers
   );
-  const { isLoading } = useAsync(useCallback(boundFetch, []));
 
   const handleOrgMembershipSelected = (event) => {
     const orgMembership = availableOrgMemberships.find((item) => {

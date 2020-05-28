@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Modal, Button, Paragraph, Notification } from '@contentful/forma-36-react-components';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { removeTeam } from '../services/TeamRepo';
+import { removeTeam } from '../services/TeamRepository';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes';
 import * as Navigator from 'states/Navigator';
 

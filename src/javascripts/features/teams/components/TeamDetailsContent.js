@@ -23,7 +23,7 @@ import {
   getAllTeamSpaceMemberships,
   removeTeamMembership,
   deleteTeamSpaceMembership,
-} from '../services/TeamRepo';
+} from '../services/TeamRepository';
 import { TeamDetailsAddButton } from './TeamDetailsAddButton';
 import { TeamMembershipList } from './TeamMembershipList';
 import { AddToTeamModal } from './AddToTeamModal';
@@ -260,18 +260,18 @@ export function TeamDetailsContent({ team, orgId, readOnlyPermission }) {
     return <Skeleton />;
   }
 
-  const isSelected = (id) => {
-    return selectedTab.id === id;
-  };
-
   const selectTab = (id) => {
     dispatch({ type: 'TAB_SELECTED', payload: tabs[id] });
   };
 
+  const isSelected = (id) => {
+    return selectedTab.id === id;
+  };
+
   const isListEmpty = () => {
     return (
-      (selectedTab === tabs.teamMembers && teamMembers.length === 0) ||
-      (selectedTab === tabs.spaceMemberships && spaceMemberships.length === 0)
+      (isSelected('teamMembers') && teamMembers.length === 0) ||
+      (isSelected('spaceMemberships') && spaceMemberships.length === 0)
     );
   };
 
@@ -293,9 +293,7 @@ export function TeamDetailsContent({ team, orgId, readOnlyPermission }) {
         {!isListEmpty() && (
           <TeamDetailsAddButton
             label={selectedTab.actionLabel}
-            onClick={
-              selectedTab.id === 'teamMembers' ? handleAddToTeamClick : handleAddToSpaceClick
-            }
+            onClick={isSelected('teamMembers') ? handleAddToTeamClick : handleAddToSpaceClick}
             readOnlyPermission={readOnlyPermission}
           />
         )}
@@ -337,6 +335,9 @@ export function TeamDetailsContent({ team, orgId, readOnlyPermission }) {
                     <TeamDetailsAddButton
                       className={styles.addButton}
                       label={actionLabel}
+                      onClick={
+                        isSelected('teamMembers') ? handleAddToTeamClick : handleAddToSpaceClick
+                      }
                       readOnlyPermission={readOnlyPermission}
                     />
                   </>

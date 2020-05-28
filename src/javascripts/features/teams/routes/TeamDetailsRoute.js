@@ -11,7 +11,7 @@ import StateRedirect from 'app/common/StateRedirect';
 import { FetcherLoading } from 'app/common/createFetcherComponent';
 import { getOrganization } from 'services/TokenStore';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
-import { getTeam, getAllTeams } from '../services/TeamRepo';
+import { getTeam, getAllTeams } from '../services/TeamRepository';
 
 const TeamDetailsFetcher = createFetcherComponent(async ({ orgId, teamId }) => {
   const endpoint = createOrganizationEndpoint(orgId);

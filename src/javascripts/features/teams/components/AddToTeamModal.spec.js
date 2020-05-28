@@ -31,7 +31,7 @@ jest.mock('access_control/OrganizationMembershipRepository', () => ({
   getAllMembershipsWithQuery: jest.fn(async () => mockAllOrgMemberships),
 }));
 
-jest.mock('features/teams/services/TeamRepo', () => ({
+jest.mock('features/teams/services/TeamRepository', () => ({
   createTeamMembership: jest.fn(async () => mockNewTeamMembership),
 }));
 

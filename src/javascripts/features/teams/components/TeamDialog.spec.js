@@ -9,7 +9,7 @@ jest.mock('data/EndpointFactory', () => ({
   createOrganizationEndpoint: jest.fn(() => mockOrgEndpoint),
 }));
 
-jest.mock('../services/TeamRepo', () => ({
+jest.mock('features/teams/services/TeamRepository', () => ({
   updateTeam: jest.fn(),
 }));
 

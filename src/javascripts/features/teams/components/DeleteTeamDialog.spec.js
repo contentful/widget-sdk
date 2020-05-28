@@ -3,10 +3,10 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import * as fakeFactory from 'test/helpers/fakeFactory';
 
 import { DeleteTeamDialog } from './DeleteTeamDialog';
-import { removeTeam } from '../services/TeamRepo';
+import { removeTeam } from '../services/TeamRepository';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 
-jest.mock('../services/TeamRepo', () => ({
+jest.mock('../services/TeamRepository', () => ({
   removeTeam: jest.fn(),
 }));
 

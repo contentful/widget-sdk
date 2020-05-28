@@ -14,7 +14,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { joinAndTruncate } from 'utils/StringUtils';
 import { AddToSpaces } from './AddToSpaces';
 
-import { createTeamSpaceMembership } from '../services/TeamRepo';
+import { createTeamSpaceMembership } from '../services/TeamRepository';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { css } from 'emotion';
 import { createImmerReducer } from 'core/utils/createImmerReducer';
@@ -81,7 +81,7 @@ export function AddToSpacesModal({
 
   return (
     <Modal
-      title={`Add ${team.sys.name} to one or more spaces`}
+      title={`Add ${team.name} to one or more spaces`}
       isShown={isShown}
       onClose={onClose}
       shouldCloseOnEscapePress={!inProgress}

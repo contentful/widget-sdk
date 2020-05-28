@@ -20,10 +20,10 @@ describe('TeamDetailsContent', () => {
     await renderComponent();
     const tabs = screen.getByTestId('cf-ui-tabs');
     expect(tabs).toBeInTheDocument();
-    //by default we are on team members list
-    expect(screen.getByTestId('team-members-table')).toBeInTheDocument();
-    //show space list on tab click
+    //by default we are on team members list - empty paceholder with cta
+    expect(screen.getByText('Add a team member')).toBeInTheDocument();
     await fireEvent.click(screen.getByTestId('tab-spaceMemberships'));
-    expect(screen.getByTestId('team-space-memberships-table')).toBeInTheDocument();
+    //by default we are on team members list - empty paceholder with cta
+    expect(screen.getByText('Add to space')).toBeInTheDocument();
   });
 });

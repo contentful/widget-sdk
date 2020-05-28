@@ -10,7 +10,7 @@ import { useAsync } from 'core/hooks';
 import { TableCell, TableRow, Button, Notification } from '@contentful/forma-36-react-components';
 import { getMembershipRoles } from 'access_control/utils';
 import { TeamSpaceMembership as TeamSpaceMembershipPropType } from 'app/OrganizationSettings/PropTypes';
-import { updateTeamSpaceMembership } from '../services/TeamRepo';
+import { updateTeamSpaceMembership } from '../services/TeamRepository';
 
 TeamSpaceMembershipForm.propTypes = {
   orgId: PropTypes.string,
