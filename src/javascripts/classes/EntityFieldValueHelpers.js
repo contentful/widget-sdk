@@ -98,9 +98,15 @@ export function getEntryTitle({
 }
 
 function titleOrDefault(title, defaultTitle) {
-  if (!title || title.match(/^\s*$/)) {
+  if (!_.isString(title)) {
     return defaultTitle;
-  } else {
-    return title;
   }
+  if (title) {
+    const trimmedTitle = title.trim();
+    if (trimmedTitle.length === 0) {
+      return defaultTitle;
+    }
+    return trimmedTitle;
+  }
+  return defaultTitle;
 }
