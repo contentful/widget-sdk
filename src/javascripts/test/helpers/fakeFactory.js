@@ -195,7 +195,7 @@ export function Invitation(organizationMembership = Link(types.ORGANIZATION_MEMB
 }
 
 // Please add to this as needed
-export function BasePlan() {
+export function Plan() {
   return { sys: sys({ id: 'Plan' }) };
 }
 

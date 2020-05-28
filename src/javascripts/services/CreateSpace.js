@@ -1,36 +1,13 @@
 import React from 'react';
-import { Notification, Spinner, Modal } from '@contentful/forma-36-react-components';
-import tokens from '@contentful/forma-36-tokens';
+import { Notification } from '@contentful/forma-36-react-components';
 import { getOrganization } from 'services/TokenStore';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
-import createResourceService from 'services/ResourceService';
 import { canCreateSpaceInOrganization } from 'access_control/AccessChecker';
-import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { ModalLauncher } from 'core/components/ModalLauncher';
-import {
-  getSpaceRatePlans,
-  isEnterprisePlan,
-  getBasePlan,
-  isHighDemandEnterprisePlan,
-} from 'account/pricing/PricingDataProvider';
 import { getModule } from 'core/NgRegistry';
 import LegacyNewSpaceModal from './CreateSpace/LegacyNewSpaceModal';
 
-function Loading() {
-  const spinnerStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '100%',
-    padding: tokens.spacingL,
-  };
-
-  return (
-    <div style={spinnerStyle}>
-      <Spinner size="large" />
-    </div>
-  );
-}
+import SpaceWizardsWrapper from 'app/SpaceWizards/SpaceWizardsWrapper';
 
 /**
  * Displays the space creation dialog. The dialog type will depend on the
@@ -41,7 +18,6 @@ function Loading() {
  * @param {string} organizationId
  */
 export async function showDialog(organizationId) {
-  const modalDialog = getModule('modalDialog');
   const spaceContext = getModule('spaceContext');
 
   if (!organizationId) {
@@ -73,73 +49,8 @@ export async function showDialog(organizationId) {
       );
     });
   } else {
-    let closeLoadingModal;
-
-    ModalLauncher.open(({ isShown, onClose }) => {
-      closeLoadingModal = onClose;
-      return (
-        <Modal isShown={isShown} onClose={onClose}>
-          <Loading />
-        </Modal>
-      );
-    });
-
-    const orgEndpoint = createOrganizationEndpoint(organizationId);
-    const basePlan = await getBasePlan(orgEndpoint);
-    // org should create POC if it is Enterprise
-    const shouldCreatePOC = isEnterprisePlan(basePlan);
-
-    if (shouldCreatePOC) {
-      const resources = createResourceService(organizationId, 'organization');
-      const freeSpaceIdentifier = 'free_space';
-      const [freeSpaceResource, ratePlans] = await Promise.all([
-        resources.get(freeSpaceIdentifier),
-        getSpaceRatePlans(orgEndpoint),
-      ]);
-      const freeSpaceRatePlan = ratePlans.find(
-        (plan) => plan.productPlanType === freeSpaceIdentifier
-      );
-      const modalProps = {
-        freeSpaceRatePlan,
-        freeSpaceResource,
-        isHighDemand: isHighDemandEnterprisePlan(basePlan),
-        organization: {
-          sys: organization.sys,
-          name: organization.name,
-        },
-      };
-      modalDialog.open({
-        template: `
-          <react-component
-            watch-depth="reference"
-            name="components/shared/enterprise-space-wizard/EnterpriseSpaceWizard"
-            class="modal-background"
-            props="modalProps"
-          ></react-component>
-        `,
-        scopeData: { modalProps },
-        backgroundClose: false,
-        persistOnNavigation: true,
-      });
-    } else {
-      modalDialog.open({
-        title: 'Create new space',
-        template: '<cf-space-wizard class="modal-background"></cf-space-wizard>',
-        backgroundClose: false,
-        persistOnNavigation: true,
-        scopeData: {
-          action: 'create',
-          organization: {
-            sys: organization.sys,
-            name: organization.name,
-            isBillable: organization.isBillable,
-          },
-        },
-      });
-    }
-
-    if (closeLoadingModal) {
-      closeLoadingModal();
-    }
+    ModalLauncher.open(({ isShown, onClose }) => (
+      <SpaceWizardsWrapper isShown={isShown} onClose={onClose} organization={organization} />
+    ));
   }
 }

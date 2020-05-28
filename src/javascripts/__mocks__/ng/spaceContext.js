@@ -24,6 +24,7 @@ export const cma = {
 export const publishedCTs = {
   get: jest.fn(),
   getAllBare: jest.fn().mockReturnValue([]),
+  refresh: jest.fn(),
 };
 
 export const widgets = {
