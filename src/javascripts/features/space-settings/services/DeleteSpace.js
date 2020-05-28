@@ -57,6 +57,7 @@ export const DeleteSpaceModal = ({ isShown, onClose, space }) => {
       title="Remove space"
       isShown={isShown}
       onClose={() => onClose(false)}
+      testId="delete-space-modal"
       shouldCloseOnOverlayClick>
       {({ title }) => (
         <>
@@ -121,7 +122,7 @@ export async function openDeleteSpaceDialog({ space, plan, onSuccess }) {
   ));
 
   if (result) {
-    onSuccess();
+    onSuccess && onSuccess();
   }
 }
 
