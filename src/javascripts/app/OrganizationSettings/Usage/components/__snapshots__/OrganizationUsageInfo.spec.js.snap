@@ -33,15 +33,13 @@ exports[`OrganisationUsageInfoNew should render 1`] = `
       class="Paragraph__Paragraph___2aO-9 f36-margin-bottom--m"
       data-test-id="cf-ui-paragraph"
     >
-      Total API calls made this month from a
-       
+      Total API calls made this month from a 
       <strong
         data-test-id="org-usage-limit"
       >
         2M
       </strong>
-      /month quota. This number includes CMA, CDA, CPA, and GraphQL requests. To learn about utility limits, read the
-       
+      /month quota. This number includes CMA, CDA, CPA, and GraphQL requests. To learn about utility limits, read the 
       <a
         class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
         data-test-id="cf-ui-text-link"
