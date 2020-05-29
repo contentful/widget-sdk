@@ -1,8 +1,11 @@
-import { get, omit } from 'lodash';
+import { get } from 'lodash';
 import * as Auth from 'Authentication';
 import * as Config from 'Config';
 import { createOrganizationEndpoint } from 'data/Endpoint';
 import { getUser } from 'access_control/OrganizationMembershipRepository';
+
+export const VALIDATION_MESSAGE =
+  'Validation failed. Please check that you have provided valid configuration options.';
 
 function createOrgEndpointByDef(definition) {
   const orgId = get(definition, ['sys', 'organization', 'sys', 'id']);
@@ -34,10 +37,20 @@ export function save(definition) {
   const isPersisted = typeof id === 'string';
   const method = isPersisted ? 'PUT' : 'POST';
 
+  const widgetConfig = { src: definition.src, locations: definition.locations || [] };
+  const dialogLocation = widgetConfig.locations.find((l) => l.location === 'dialog');
+  if (!dialogLocation) {
+    widgetConfig.locations = [...widgetConfig.locations, { location: 'dialog' }];
+  }
+
   return orgEndpoint({
     method,
     path: ['app_definitions'].concat(isPersisted ? [id] : []),
-    data: omit(definition, ['sys']),
+    data: {
+      name: definition.name,
+      public: definition.public,
+      ...(definition.src ? widgetConfig : {}),
+    },
   });
 }
 

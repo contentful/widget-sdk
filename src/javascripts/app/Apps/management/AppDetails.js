@@ -24,7 +24,6 @@ import DeleteAppModal from './DeleteAppDialog';
 import SaveConfirmModal from './SaveConfirmModal';
 import KeyListing from './keys/KeyListing';
 import AppEvents from './events';
-import { track } from 'analytics/Analytics';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { APP_MANAGEMENT_VIEWS } from 'featureFlags';
 
@@ -161,13 +160,8 @@ export default class AppDetails extends React.Component {
       const updated = await ManagementApiClient.save(this.state.definition);
       this.setState({ name: updated.name, definition: updated });
       Notification.success('App updated successfully.');
-      track('app_management:updated', {
-        definitionId: updated.sys.id,
-      });
     } catch (err) {
-      Notification.error(
-        'Validation failed. Please check that you have provided an app Name, valid Source URL, Entry field types and/or page location information.'
-      );
+      Notification.error(ManagementApiClient.VALIDATION_MESSAGE);
     }
 
     this.setState({ busy: false });
@@ -179,9 +173,6 @@ export default class AppDetails extends React.Component {
     try {
       await ManagementApiClient.deleteDef(this.state.definition);
       Notification.success(`${this.state.definition.name} was deleted!`);
-      track('app_management:deleted', {
-        definitionId: this.state.definition.sys.id,
-      });
       this.props.goToListView();
     } catch (err) {
       Notification.error('App failed to delete. Please try again');
