@@ -72,7 +72,6 @@ class UnpublishedReferencesConfirm extends Component {
     isShown: PropTypes.bool.isRequired,
     onConfirm: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,
-    contentTypes: PropTypes.array.isRequired,
     unpublishedReferencesInfo: PropTypes.array.isRequired,
     modalTitle: PropTypes.string,
     confirmLabel: PropTypes.string,

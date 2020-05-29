@@ -52,9 +52,6 @@ TeamDetails.propTypes = {
   team: TeamPropType.isRequired,
   orgId: PropTypes.string.isRequired,
   readOnlyPermission: PropTypes.bool.isRequired,
-  emptyTeamMemberships: PropTypes.bool,
-  emptyTeamSpaceMemberships: PropTypes.bool,
-  noOrgMembersLeft: PropTypes.bool,
   allTeams: PropTypes.arrayOf(TeamPropType),
 };
 

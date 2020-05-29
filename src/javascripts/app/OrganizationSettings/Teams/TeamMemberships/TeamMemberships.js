@@ -40,7 +40,6 @@ class TeamMemberships extends React.Component {
     onFormDismissed: PropTypes.func.isRequired,
     readOnlyPermission: PropTypes.bool,
     memberships: PropTypes.arrayOf(TeamMembershipPropType),
-    teamName: PropTypes.string,
   };
 
   render() {

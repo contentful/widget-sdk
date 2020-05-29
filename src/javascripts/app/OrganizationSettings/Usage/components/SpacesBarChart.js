@@ -129,8 +129,8 @@ const propsToChartOptions = ({ spaceNames, data, period, colours }) => {
   };
 };
 
-const SpacesBarChart = (props) => {
-  const chartRef = useChart(propsToChartOptions(props));
+const SpacesBarChart = ({ spaceNames, data, period, colours }) => {
+  const chartRef = useChart(propsToChartOptions({ spaceNames, data, period, colours }));
   return <div ref={chartRef} className={styles.chartWrapper} data-test-id="api-usage-bar-chart" />;
 };
 
@@ -138,7 +138,6 @@ SpacesBarChart.propTypes = {
   data: PropTypes.arrayOf(organizationResourceUsagePropType).isRequired,
   period: PropTypes.arrayOf(PropTypes.string).isRequired,
   spaceNames: PropTypes.objectOf(PropTypes.string).isRequired,
-  isLoading: PropTypes.bool,
   colours: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 

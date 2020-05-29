@@ -193,7 +193,6 @@ export default class ScheduledActionsTable extends Component {
   static propTypes = {
     description: PropTypes.string,
     jobs: PropTypes.array, // Todo: Define propTypes when api clear
-    usersData: PropTypes.object,
     contentTypesData: PropTypes.object,
     entriesData: PropTypes.object,
     showStatusTransition: PropTypes.bool,

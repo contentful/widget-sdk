@@ -162,7 +162,6 @@ export default function DeeplinkSelectSpaceEnv(props) {
 }
 
 DeeplinkSelectSpaceEnv.propTypes = {
-  href: PropTypes.string.isRequired,
   searchParams: PropTypes.object.isRequired,
   marketplaceApps: PropTypes.object.isRequired,
   onContinue: PropTypes.func.isRequired,

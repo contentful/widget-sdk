@@ -47,7 +47,6 @@ export default class ReleasesWidgetContainer extends Component {
   }
 
   static propTypes = {
-    entityInfo: PropTypes.object,
     emitter: PropTypes.object.isRequired,
   };
 

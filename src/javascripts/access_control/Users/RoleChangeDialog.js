@@ -71,7 +71,6 @@ RoleChangeDialog.propTypes = {
   displayName: PropTypes.string.isRequired,
   isShown: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  memberId: PropTypes.string.isRequired,
   isLastAdmin: PropTypes.bool.isRequired,
 };
 

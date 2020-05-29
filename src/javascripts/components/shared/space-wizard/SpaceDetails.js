@@ -7,11 +7,8 @@ import { formatPrice, getFieldErrors } from './WizardUtils';
 class SpaceDetails extends React.Component {
   static propTypes = {
     track: PropTypes.func.isRequired,
-    onChange: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired,
     selectedPlan: PropTypes.object.isRequired,
-    serverValidationErrors: PropTypes.object,
-    isFormSubmitted: PropTypes.bool,
     setNewSpaceName: PropTypes.func.isRequired,
     setNewSpaceTemplate: PropTypes.func.isRequired,
     templates: PropTypes.object.isRequired,

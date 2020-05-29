@@ -287,7 +287,6 @@ ScheduledActionsWidget.propTypes = {
   spaceId: PropTypes.string.isRequired,
   environmentId: PropTypes.string.isRequired,
   isMasterEnvironment: PropTypes.bool.isRequired,
-  userId: PropTypes.string.isRequired,
   entity: PropTypes.object.isRequired,
   status: PropTypes.string,
   isSaving: PropTypes.bool.isRequired,

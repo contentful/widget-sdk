@@ -95,5 +95,4 @@ RemoveRoleModalConfirm.propTypes = {
   onCancel: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,
   count: PropTypes.number,
-  roleOptions: PropTypes.array.isRequired,
 };

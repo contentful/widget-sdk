@@ -95,10 +95,6 @@ function TagsListRow(tag) {
   );
 }
 
-TagsListRow.propTypes = {
-  onDelete: PropTypes.func,
-  onEdit: PropTypes.func,
-  ...TagPropType,
-};
+TagsListRow.propTypes = TagPropType;
 
 export { TagsListRow };

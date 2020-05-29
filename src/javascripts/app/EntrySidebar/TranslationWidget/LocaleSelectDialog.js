@@ -9,7 +9,6 @@ class LocaleSelectDialog extends React.Component {
     initialLocales: PropTypes.array,
     onClose: PropTypes.func,
     onUpdate: PropTypes.func,
-    isShown: PropTypes.bool,
   };
 
   state = {

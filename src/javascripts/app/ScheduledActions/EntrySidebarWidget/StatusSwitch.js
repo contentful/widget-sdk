@@ -302,7 +302,6 @@ StatusSwitch.propTypes = {
   secondaryActions: PropTypes.arrayOf(CommandPropType.isRequired).isRequired,
   isDisabled: PropTypes.bool.isRequired,
   publicationBlockedReason: PropTypes.string,
-  renderScheduledPublicationCta: PropTypes.func,
   isScheduledPublishDisabled: PropTypes.bool,
   onScheduledPublishClick: PropTypes.func,
   withScheduling: PropTypes.bool.isRequired,

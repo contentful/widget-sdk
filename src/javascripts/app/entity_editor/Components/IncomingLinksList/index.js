@@ -10,7 +10,6 @@ import {
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { template } from '../template';
-import { Origin as IncomingLinksOrigin } from 'analytics/events/IncomingLinks';
 
 const styles = {
   incomingLinksList: css({
@@ -41,7 +40,6 @@ class IncomingLinksList extends React.Component {
       }).isRequired
     ).isRequired,
     message: PropTypes.string.isRequired,
-    origin: PropTypes.oneOf([IncomingLinksOrigin.DIALOG, IncomingLinksOrigin.SIDEBAR]).isRequired,
     onComponentMount: PropTypes.func,
     onClick: PropTypes.func,
   };

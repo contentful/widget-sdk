@@ -124,8 +124,6 @@ export default class ReleasesDialog extends Component {
   }
 
   static propTypes = {
-    spaceId: PropTypes.string,
-    environmentId: PropTypes.string,
     selectedEntities: PropTypes.array,
     rootEntity: PropTypes.shape({
       sys: PropTypes.shape({
@@ -137,11 +135,7 @@ export default class ReleasesDialog extends Component {
       run: PropTypes.func,
       setApiResponseErrors: PropTypes.func,
     }),
-    onCreate: PropTypes.func,
     onCancel: PropTypes.func.isRequired,
-    isSubmitting: PropTypes.bool,
-    pendingReleases: PropTypes.array,
-    isMasterEnvironment: PropTypes.bool,
     releaseContentTitle: PropTypes.string,
   };
 

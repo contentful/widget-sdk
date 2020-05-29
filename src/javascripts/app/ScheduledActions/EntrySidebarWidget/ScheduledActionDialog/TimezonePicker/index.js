@@ -63,12 +63,7 @@ export function TimezonePicker({ validationMessage, onSelect, disabled, classNam
 
 TimezonePicker.propTypes = {
   onSelect: PropTypes.func.isRequired,
-  onBlur: PropTypes.func,
-  required: PropTypes.bool,
-  helpText: PropTypes.string,
   validationMessage: PropTypes.string,
-  id: PropTypes.string,
-  name: PropTypes.string,
   disabled: PropTypes.bool,
   className: PropTypes.string,
 };

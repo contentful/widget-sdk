@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { Modal, Button, TextField, Form } from '@contentful/forma-36-react-components';
 
 const DialogPropTypes = {
-  isShown: PropTypes.bool.isRequired,
   onConfirm: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
   originalName: PropTypes.string.isRequired,
@@ -95,4 +94,4 @@ export default function EditContentTypeDialog(props) {
   );
 }
 
-EditContentTypeDialog.propTypes = DialogPropTypes;
+EditContentTypeDialog.propTypes = { ...DialogPropTypes, isShown: PropTypes.bool.isRequired };

@@ -11,7 +11,6 @@ const SupportChatIllustration = () => <div className="support-chat-illustration"
 
 export default class WalkthroughComponent extends React.Component {
   static propTypes = {
-    spaceName: PropTypes.string.isRequired,
     isTourRunning: PropTypes.bool.isRequired,
     runTour: PropTypes.func.isRequired,
     walkthroughStarted: PropTypes.bool, // from user state

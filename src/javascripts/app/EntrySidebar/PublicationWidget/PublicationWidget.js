@@ -64,10 +64,6 @@ export default class PublicationWidget extends React.PureComponent {
     primary: CommandPropType,
     secondary: PropTypes.arrayOf(CommandPropType.isRequired).isRequired,
     publicationBlockedReason: PropTypes.string,
-
-    spaceId: PropTypes.string,
-    environmentId: PropTypes.string,
-    userId: PropTypes.string,
     entityId: PropTypes.string,
     isStatusSwitch: PropTypes.bool,
   };

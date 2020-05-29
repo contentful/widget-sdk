@@ -463,7 +463,6 @@ Sidebar.propTypes = {
   canCreateEnv: PropTypes.bool,
   aliasesEnabled: PropTypes.bool,
   resource: PropTypes.object,
-  organizationId: PropTypes.string,
   isLegacyOrganization: PropTypes.bool,
   canUpgradeSpace: PropTypes.bool,
   OpenCreateDialog: PropTypes.func.isRequired,

@@ -192,7 +192,6 @@ JobsTimeline.propTypes = {
   isReadOnly: PropTypes.bool.isRequired,
   showAllScheduleLink: PropTypes.bool,
   size: PropTypes.oneOf(['default', 'small']),
-  hasAlphaTag: PropTypes.bool,
 };
 
 JobsTimeline.defaultProps = {

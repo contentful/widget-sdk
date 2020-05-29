@@ -97,20 +97,6 @@ CreateEnvironmentView.propTypes = {
   currentEnvironment: PropTypes.any,
 };
 
-const CreateEnvironmentViewPropTypes = {
-  serverFailure: PropTypes.any,
-  fields: PropTypes.any,
-  inProgress: PropTypes.bool,
-  canSelectSource: PropTypes.bool,
-  environments: PropTypes.any,
-  selectedEnvironment: PropTypes.any,
-  currentEnvironment: PropTypes.any,
-  SetFieldValue: PropTypes.func.isRequired,
-  SetSourceEnvironment: PropTypes.func.isRequired,
-  CancelDialog: PropTypes.func.isRequired,
-  Submit: PropTypes.func.isRequired,
-};
-
 function CreateForm({
   inProgress,
   fields,
@@ -189,7 +175,18 @@ function CreateForm({
   );
 }
 
-CreateForm.propTypes = CreateEnvironmentViewPropTypes;
+CreateForm.propTypes = {
+  fields: PropTypes.any,
+  inProgress: PropTypes.bool,
+  canSelectSource: PropTypes.bool,
+  environments: PropTypes.any,
+  selectedEnvironment: PropTypes.any,
+  currentEnvironment: PropTypes.any,
+  SetFieldValue: PropTypes.func.isRequired,
+  SetSourceEnvironment: PropTypes.func.isRequired,
+  CancelDialog: PropTypes.func.isRequired,
+  Submit: PropTypes.func.isRequired,
+};
 
 function DisplayServerError({ inProgress, CancelDialog, Submit }) {
   return (
@@ -212,7 +209,11 @@ function DisplayServerError({ inProgress, CancelDialog, Submit }) {
   );
 }
 
-DisplayServerError.propTypes = CreateEnvironmentViewPropTypes;
+DisplayServerError.propTypes = {
+  inProgress: PropTypes.bool,
+  CancelDialog: PropTypes.func.isRequired,
+  Submit: PropTypes.func.isRequired,
+};
 
 function DialogActions({ submitLabel, inProgress, CancelDialog, Submit }) {
   return (

@@ -195,20 +195,27 @@ export function FileEditorActions(props) {
   );
 }
 
-const FileEditorActionsPropTypes = {
-  file: PropTypes.object.isRequired,
-  disabled: PropTypes.bool,
+const DisabledPropType = { disabled: PropTypes.bool };
+
+FileEditorActions.propTypes = { ...DisabledPropType, file: PropTypes.object.isRequired };
+DownloadButton.propTypes = { ...DisabledPropType, file: PropTypes.object.isRequired };
+ShowMetaButton.propTypes = {
+  ...DisabledPropType,
   onToggleMeta: PropTypes.func.isRequired,
+};
+RotateButton.propTypes = {
+  ...DisabledPropType,
   onRotate: PropTypes.func.isRequired,
+};
+ResizeButton.propTypes = {
+  ...DisabledPropType,
   onResize: PropTypes.func.isRequired,
+};
+CropButton.propTypes = {
+  ...DisabledPropType,
   onCrop: PropTypes.func.isRequired,
+};
+DeleteButton.propTypes = {
+  ...DisabledPropType,
   onDelete: PropTypes.func.isRequired,
 };
-
-FileEditorActions.propTypes = FileEditorActionsPropTypes;
-DownloadButton.propTypes = FileEditorActionsPropTypes;
-ShowMetaButton.propTypes = FileEditorActionsPropTypes;
-RotateButton.propTypes = FileEditorActionsPropTypes;
-ResizeButton.propTypes = FileEditorActionsPropTypes;
-CropButton.propTypes = FileEditorActionsPropTypes;
-DeleteButton.propTypes = FileEditorActionsPropTypes;

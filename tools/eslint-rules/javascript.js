@@ -7,6 +7,7 @@ module.exports = {
   },
   plugins: ['rulesdir'],
   rules: {
+    'no-console': 'warn',
     'rulesdir/restrict-angular-require': 'error',
 
     'rulesdir/enforce-getModule-call-inside-fn': 'error',

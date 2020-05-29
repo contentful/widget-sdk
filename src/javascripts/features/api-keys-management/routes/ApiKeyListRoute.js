@@ -112,7 +112,6 @@ function UsageInformation(props) {
 
 UsageInformation.propTypes = {
   isLegacyOrganization: PropTypes.bool,
-  reachedLimit: PropTypes.bool,
   limits: PropTypes.shape({
     maximum: PropTypes.number,
   }),

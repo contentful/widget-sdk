@@ -12,7 +12,6 @@ import { EntryActions, AssetActions } from './CardActions';
 export default class WrappedEntityCard extends React.Component {
   static propTypes = {
     entityType: PropTypes.string.isRequired,
-    entityId: PropTypes.string.isRequired,
     contentTypeName: PropTypes.string,
     entityDescription: PropTypes.string,
     entityFile: PropTypes.object,

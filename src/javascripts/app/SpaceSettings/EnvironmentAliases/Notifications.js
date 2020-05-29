@@ -211,7 +211,6 @@ export const InfoModal = ({
 };
 
 InfoModal.propTypes = {
-  currentEnvironmentId: PropTypes.string.isRequired,
   canManageEnvironments: PropTypes.bool.isRequired,
   newTarget: PropTypes.string.isRequired,
   oldTarget: PropTypes.string.isRequired,

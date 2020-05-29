@@ -223,11 +223,8 @@ TimePicker.propTypes = {
   date: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   onBlur: PropTypes.func,
-  required: PropTypes.bool,
   helpText: PropTypes.string,
   validationMessage: PropTypes.string,
-  id: PropTypes.string,
-  name: PropTypes.string,
 };
 
 TimePicker.defaultProps = {

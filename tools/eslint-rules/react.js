@@ -11,6 +11,7 @@ module.exports = {
     'react-hooks/exhaustive-deps': 'error',
     'react/display-name': 'off',
     'react/prop-types': ['error', { ignore: ['children'] }],
+    'react/no-unused-prop-types': 'error',
     'react/jsx-no-target-blank': ['error', { enforceDynamicLinks: 'always' }],
   },
 };

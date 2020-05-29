@@ -46,7 +46,6 @@ export class LocalesListSidebar extends React.Component {
     allowedToEnforceLimits: PropTypes.bool.isRequired,
     insideMasterEnv: PropTypes.bool.isRequired,
     canChangeSpace: PropTypes.bool.isRequired,
-    subscriptionState: PropTypes.object.isRequired,
     upgradeSpace: PropTypes.func.isRequired,
   };
 

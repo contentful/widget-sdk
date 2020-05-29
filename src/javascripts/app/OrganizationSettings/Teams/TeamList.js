@@ -54,7 +54,6 @@ const styles = {
 class TeamList extends React.Component {
   static propTypes = {
     teams: PropTypes.arrayOf(TeamPropType).isRequired,
-    submitNewTeam: PropTypes.func.isRequired,
     readOnlyPermission: PropTypes.bool.isRequired,
   };
 

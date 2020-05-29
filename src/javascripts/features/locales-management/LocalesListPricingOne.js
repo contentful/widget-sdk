@@ -22,7 +22,6 @@ const LocalesListPropTypes = {
   insideMasterEnv: PropTypes.bool.isRequired,
   subscriptionState: PropTypes.object,
   subscriptionPlanName: PropTypes.string.isRequired,
-  getComputeLocalesUsageForOrganization: PropTypes.func.isRequired,
 };
 
 export const AddLocaleButton = ({ getComputeLocalesUsageForOrganization }) => (
@@ -45,6 +44,7 @@ export const AddLocaleButton = ({ getComputeLocalesUsageForOrganization }) => (
     )}
   </StateLink>
 );
+
 AddLocaleButton.propTypes = {
   getComputeLocalesUsageForOrganization: PropTypes.func.isRequired,
 };
@@ -169,8 +169,6 @@ export const LocalesAdvice = (props) => {
 LocalesAdvice.propTypes = LocalesListPropTypes;
 
 export class LocalesListPricingOne extends React.Component {
-  static propTypes = LocalesListPropTypes;
-
   render() {
     return (
       <Workbench testId="locale-list-workbench">
@@ -200,3 +198,8 @@ export class LocalesListPricingOne extends React.Component {
     );
   }
 }
+
+LocalesListPricingOne.propTypes = {
+  ...LocalesListPropTypes,
+  getComputeLocalesUsageForOrganization: PropTypes.func.isRequired,
+};

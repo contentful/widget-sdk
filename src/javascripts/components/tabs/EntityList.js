@@ -158,8 +158,6 @@ CheckboxCell.propTypes = {
   name: PropTypes.string.isRequired,
   checked: PropTypes.bool.isRequired,
   onClick: PropTypes.func.isRequired,
-  className: PropTypes.string,
-  children: PropTypes.node,
 };
 
 const isTargetInput = ({ target }) => target.tagName === 'INPUT' || target.tagName === 'LABEL';

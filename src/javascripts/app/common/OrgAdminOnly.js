@@ -9,7 +9,6 @@ export default class OrgAdminOnly extends React.Component {
     orgId: PropTypes.string.isRequired,
     children: PropTypes.any,
     render: PropTypes.func,
-    redirect: PropTypes.string,
   };
 
   state = {

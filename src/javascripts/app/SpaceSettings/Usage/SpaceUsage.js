@@ -23,7 +23,6 @@ const styles = {
 
 class SpaceUsage extends React.Component {
   static propTypes = {
-    orgId: PropTypes.string.isRequired,
     spaceId: PropTypes.string.isRequired,
     environmentMeta: PropTypes.shape({
       aliasId: PropTypes.string,

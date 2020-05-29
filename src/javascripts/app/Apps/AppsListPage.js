@@ -167,7 +167,6 @@ const AppsListPageLoading = () => {
 
 export default class AppsListPage extends React.Component {
   static propTypes = {
-    goToContent: PropTypes.func.isRequired,
     repo: PropTypes.shape({
       getApps: PropTypes.func.isRequired,
     }).isRequired,
@@ -184,7 +183,6 @@ export default class AppsListPage extends React.Component {
     userId: PropTypes.string.isRequired,
     hasAppsFeature: PropTypes.bool.isRequired,
     deeplinkAppId: PropTypes.string,
-    deeplinkReferrer: PropTypes.string,
     canManageApps: PropTypes.bool,
   };
 

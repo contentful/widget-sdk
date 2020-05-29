@@ -163,7 +163,6 @@ ContentTypeForm.propTypes = {
   title: PropTypes.string.isRequired,
   onConfirm: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
-  originalName: PropTypes.string.isRequired,
   originalDescription: PropTypes.string,
   existingContentTypeIds: PropTypes.arrayOf(PropTypes.string.isRequired),
   confirmLabel: PropTypes.string.isRequired,

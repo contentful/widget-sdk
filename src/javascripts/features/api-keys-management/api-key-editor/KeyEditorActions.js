@@ -99,7 +99,6 @@ export function KeyEditorActions(props) {
 }
 
 KeyEditorActions.propTypes = {
-  isDeleteDisabled: PropTypes.bool.isRequired,
   isSaveDisabled: PropTypes.bool.isRequired,
   onRemove: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired,

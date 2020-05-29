@@ -106,7 +106,6 @@ function TagsWorkbenchSkeleton(props) {
 
 TagsWorkbenchSkeleton.propTypes = {
   className: PropTypes.string,
-  actions: PropTypes.node,
   children: PropTypes.node,
   isLoading: PropTypes.bool,
   hasTags: PropTypes.bool,
