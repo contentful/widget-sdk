@@ -211,6 +211,7 @@ async function createTemplate(templateInfo) {
   const defaultLocale = 'en-US';
 
   const templateCreator = getTemplateCreator(
+    spaceContext,
     { onItemSuccess: () => {}, onItemError: () => {} },
     templateInfo,
     defaultLocale

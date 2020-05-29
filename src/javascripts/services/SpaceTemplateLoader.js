@@ -21,15 +21,20 @@ export async function getTemplatesList() {
     client = newContentfulClient(getClientParams({ env: Config.env, ...contentfulConfig }));
   }
 
-  const templates = await client.entries({
-    content_type: contentfulConfig.spaceTemplateEntryContentTypeId,
-  });
+  // The templates are technically entries, but this abstraction doesn't matter
+  // for this purpose, so we take the keys/values in "fields" and make them on the base object
+
+  const templates = (
+    await client.entries({
+      content_type: contentfulConfig.spaceTemplateEntryContentTypeId,
+    })
+  ).map(({ fields, sys }) => ({ ...fields, sys }));
 
   // each template has a order field that determines its place
   // in the list when shown in the space creation wizard.
   // Here we sort by it.
   const orderedTemplates = _.sortBy(templates, (template) =>
-    _.isFinite(template.fields.order) ? template.fields.order : 99
+    _.isFinite(template.order) ? template.order : 99
   );
 
   return orderedTemplates;

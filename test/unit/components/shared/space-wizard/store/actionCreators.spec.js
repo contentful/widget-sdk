@@ -43,9 +43,7 @@ describe('Space Wizard action creators', function () {
     };
 
     this.template = {
-      fields: {
-        name: 'Testing Template',
-      },
+      name: 'Testing Template',
       sys: {
         id: 'template_1234',
       },
@@ -440,7 +438,7 @@ describe('Space Wizard action creators', function () {
       await this.dispatch(this.actionCreators.fetchTemplates);
       expect(this.stubs.dispatch.callCount).toBe(3);
 
-      const list = [this.template].map(({ fields, sys }) => ({ ...fields, sys }));
+      const list = [this.template];
 
       expect(this.stubs.dispatch.args[0]).toEqual([
         {

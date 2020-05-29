@@ -146,7 +146,7 @@ async function applyTemplate(spaceContext, templateInfo) {
  */
 async function loadTemplate(name) {
   const templates = await getTemplatesList();
-  const template = find(templates, (t) => t.fields.name.toLowerCase() === name.toLowerCase());
+  const template = find(templates, (t) => t.name.toLowerCase() === name.toLowerCase());
 
   if (!template) {
     throw new Error(`Template named ${name} not found`);
@@ -155,7 +155,7 @@ async function loadTemplate(name) {
       templateName: template.name,
     });
 
-    return template.fields;
+    return template;
   }
 }
 

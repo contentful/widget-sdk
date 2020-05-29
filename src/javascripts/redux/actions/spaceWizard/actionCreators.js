@@ -115,11 +115,6 @@ export function fetchTemplates() {
       return;
     }
 
-    // The templates are technically entries, but this abstraction doesn't matter
-    // here, so we take the keys/values in "fields" and make them on the base object
-
-    templatesList = templatesList.map(({ fields, sys }) => ({ ...fields, sys }));
-
     dispatch(actions.spaceTemplatesSuccess(templatesList));
     dispatch(actions.spaceTemplatesPending(false));
   };

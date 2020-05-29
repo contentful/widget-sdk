@@ -106,9 +106,7 @@ describe('Space Wizard', function () {
 
     this.templates = [
       {
-        fields: {
-          name: 'My awesome template!',
-        },
+        name: 'My awesome template!',
         sys: {
           id: 'awesome_template',
         },

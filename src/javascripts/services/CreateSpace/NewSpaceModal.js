@@ -46,15 +46,7 @@ const NewSpaceModal = ({
   const [selectedTemplate, setSelectedTemplate] = useState(templates && templates[0]);
 
   const getTemplates = useCallback(async () => {
-    const templates = await getTemplatesList().then((templates) => {
-      return templates.reduce((acc, template) => {
-        if (!template.fields.blank) {
-          const fields = { ...template.fields, sys: template.sys };
-          acc.push(fields);
-        }
-        return acc;
-      }, []);
-    });
+    const templates = await getTemplatesList();
     setTemplates(templates);
     setSelectedTemplate(templates[0]);
   }, []);
