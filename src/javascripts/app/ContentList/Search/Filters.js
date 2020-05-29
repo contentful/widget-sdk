@@ -99,6 +99,18 @@ const sysFieldFilters = [
     },
   ]);
 
+const metadataFilters = [
+  {
+    name: 'Tags',
+    type: 'Tags',
+    description: 'Metadata tags of the item',
+    queryKey: 'metadata.tags.sys.id',
+    operators: getOperatorsByType('Tags'),
+    valueInput: getControlByType({ type: 'Tags' }),
+    contentType: null,
+  },
+];
+
 // These are only applicable to assets
 const assetsFieldFilters = [
   ['width', 'AssetDetails'],
@@ -157,11 +169,12 @@ export function getFiltersFromQueryKey({
   contentTypeId,
   users,
   withAssets = false,
+  withMetadata = false,
 }) {
   const contentType = getContentTypeById(contentTypes, contentTypeId);
   const filters = searchFilters
     .map(([queryKey, op, value]) => [
-      buildFilterFieldByQueryKey(contentType, queryKey, withAssets),
+      buildFilterFieldByQueryKey(contentType, queryKey, withAssets, withMetadata),
       op,
       value,
     ])
@@ -174,7 +187,8 @@ export function sanitizeSearchFilters(
   filters = [],
   contentTypes,
   contentTypeId,
-  withAssets = false
+  withAssets = false,
+  withMetadata = false
 ) {
   const contentType = getContentTypeById(contentTypes, contentTypeId);
 
@@ -183,7 +197,8 @@ export function sanitizeSearchFilters(
       return getFieldByApiName(contentType, getApiName(queryKey)) !== undefined;
     } else {
       return (
-        find(getSysFilters(withAssets), (filter) => filter.queryKey === queryKey) !== undefined
+        find(getFilters(withAssets, withMetadata), (filter) => filter.queryKey === queryKey) !==
+        undefined
       );
     }
   });
@@ -198,7 +213,12 @@ export function sanitizeSearchFilters(
  *
  * @returns {FieldFilter}
  */
-export function buildFilterFieldByQueryKey(contentType, queryKey, withAssets = false) {
+export function buildFilterFieldByQueryKey(
+  contentType,
+  queryKey,
+  withAssets = false,
+  withMetadata = false
+) {
   let filterField;
 
   if (contentType && isContentTypeField(queryKey)) {
@@ -207,7 +227,10 @@ export function buildFilterFieldByQueryKey(contentType, queryKey, withAssets = f
       filterField = buildFilterField(contentType, field);
     }
   } else {
-    filterField = find(getSysFilters(withAssets), (filter) => filter.queryKey === queryKey);
+    filterField = find(
+      getFilters(withAssets, withMetadata),
+      (filter) => filter.queryKey === queryKey
+    );
   }
 
   return filterField;
@@ -244,14 +267,14 @@ export function isFieldFilterApplicableToContentType(contentType, queryKey) {
  * - A filter for each field of the given content types
  */
 // Memoized to improve performance on huge lists (>1500 elements).
-const allFilters = memoize((contentTypes, withAssets = false) => {
+const allFilters = memoize((contentTypes, withAssets = false, withMetadata = false) => {
   const ctFieldFilters = contentTypes.reduce((filters, ct) => {
     return ct.fields.reduce((filters, ctField) => {
       return push(filters, buildFilterField(ct, ctField));
     }, filters);
   }, []);
 
-  const fields = concat(getSysFilters(withAssets), withAssets ? [] : ctFieldFilters);
+  const fields = concat(getFilters(withAssets, withMetadata), withAssets ? [] : ctFieldFilters);
 
   return fields;
 });
@@ -273,9 +296,10 @@ export const getMatchingFilters = (
   searchString,
   contentTypeId,
   availableContentTypes,
-  withAssets
+  withAssets,
+  withMetadata
 ) => {
-  let filters = allFilters(availableContentTypes, withAssets);
+  let filters = allFilters(availableContentTypes, withAssets, withMetadata);
   filters = filterByName(filters, searchString);
   filters = filterByContentType(filters, contentTypeId);
 
@@ -350,8 +374,15 @@ function getFieldByApiName(contentType, apiName) {
   return find(contentType.fields, (field) => field.apiName === apiName);
 }
 
-function getSysFilters(withAssets = false) {
-  return withAssets ? [...sysFieldFilters, ...assetsFieldFilters] : sysFieldFilters;
+function getFilters(withAssets = false, withMetadata = false) {
+  let filters = [...sysFieldFilters];
+  if (withMetadata) {
+    filters = filters.concat(metadataFilters);
+  }
+  if (withAssets) {
+    filters = filters.concat(assetsFieldFilters);
+  }
+  return filters;
 }
 
 /**
@@ -438,6 +469,8 @@ function getControlByType(ctField) {
     );
   } else if (ctField.type === 'Date') {
     return ValueInput.Date();
+  } else if (ctField.type === 'Tags') {
+    return ValueInput.MetadataTag();
   } else if (type === 'AssetType') {
     const mimeTypes = map(mimetype.getGroupNames(), (label, value) => [value, label]);
     return ValueInput.Select(mimeTypes);

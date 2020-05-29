@@ -4,8 +4,9 @@ import * as K from 'core/utils/kefir';
 import { createStore, bindActions } from 'ui/Framework/Store';
 import * as logger from 'services/logger';
 import { pick } from 'lodash';
-
+import React from 'react';
 import renderSearch from './View';
+import { ReadTagsProvider, TagsRepoProvider } from 'features/content-tags';
 
 import { initialState, makeReducer, Actions } from './State';
 import {
@@ -24,6 +25,7 @@ export default function create({
   initState = {},
   users$,
   withAssets = false,
+  withMetadata = false,
 }) {
   try {
     // Removes invalid filters before initializing the state.
@@ -31,7 +33,8 @@ export default function create({
       initState.searchFilters,
       contentTypes,
       initState.contentTypeId,
-      withAssets
+      withAssets,
+      withMetadata
     );
     const reduce = makeReducer(dispatch, onSearchChange);
     const defaultState = initialState(
@@ -39,6 +42,7 @@ export default function create({
         searchFilters: sanitizedFilters,
         contentTypes,
         withAssets,
+        withMetadata,
       })
     );
     const store = createStore(defaultState, reduce);
@@ -58,10 +62,16 @@ export default function create({
       }
     );
 
-    const unsubscribeFromSearchStore = K.onValueScope($scope, store.state$, (state) => {
+    const unsubscribeFromSearchStore = K.onValueScope($scope, store.state$, async (state) => {
       // TODO remove workaround when search ui state is refactored to local
       uiState = pick(state, ['searchBoxHasFocus', 'isSuggestionOpen', 'focus']);
-      $scope.search = renderSearch(mapStateToProps(state, actions));
+      $scope.search = (
+        <TagsRepoProvider>
+          <ReadTagsProvider>
+            {renderSearch(mapStateToProps({ ...state, withMetadata }, actions))}
+          </ReadTagsProvider>
+        </TagsRepoProvider>
+      );
     });
 
     $scope.unsubscribeSearch = () => {
@@ -80,12 +90,21 @@ export default function create({
 }
 
 function mapStateToProps(state, actions) {
-  const { contentTypeId, filters, contentTypes, users, isSearching, withAssets } = state;
+  const {
+    contentTypeId,
+    filters,
+    contentTypes,
+    users,
+    isSearching,
+    withAssets,
+    withMetadata,
+  } = state;
   const suggestions = getMatchingFilters(
     state.input,
     state.contentTypeId,
     contentTypes,
-    withAssets
+    withAssets,
+    withMetadata
   );
   return {
     contentTypeFilter: contentTypeFilter(contentTypes),
@@ -95,6 +114,7 @@ function mapStateToProps(state, actions) {
       searchFilters: filters,
       contentTypeId,
       withAssets,
+      withMetadata,
     }),
     suggestions: state.isSuggestionOpen ? suggestions : [],
     focus: state.focus,

@@ -11,6 +11,7 @@ export default {
   Select: makeCtor(),
   // A simple text input
   Text: makeCtor(),
+  MetadataTag: makeCtor(),
   Reference: makeCtor(),
   Date: makeCtor(),
   AssetDetailsSize: makeCtor(),

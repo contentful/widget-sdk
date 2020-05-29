@@ -13,6 +13,8 @@ import * as ListQuery from 'search/listQuery';
 import { PromisedLoader } from './services/PromisedLoader';
 import createSearchInput from 'app/ContentList/Search';
 import * as Tracking from 'analytics/events/SearchAndViews';
+import { getCurrentSpaceFeature } from 'data/CMA/ProductCatalog';
+import { PC_CONTENT_TAGS } from 'featureFlags';
 
 export default function register() {
   registerController('AssetSearchController', [
@@ -171,7 +173,7 @@ export default function register() {
         viewPersistor.save(newView);
       }
 
-      function initializeSearchUI() {
+      async function initializeSearchUI() {
         const initialSearchState = getViewSearchState();
         const withAssets = true;
 
@@ -179,6 +181,7 @@ export default function register() {
           return;
         }
         lastUISearchState = initialSearchState;
+        const withMetadata = await getCurrentSpaceFeature(PC_CONTENT_TAGS, false);
         createSearchInput({
           $scope: $scope,
           contentTypes: spaceContext.publishedCTs.getAllBare(),
@@ -186,7 +189,8 @@ export default function register() {
           isSearching$: isSearching$,
           initState: initialSearchState,
           users$: Kefir.fromPromise(spaceContext.users.getAll()),
-          withAssets: withAssets,
+          withAssets,
+          withMetadata,
         });
       }
 

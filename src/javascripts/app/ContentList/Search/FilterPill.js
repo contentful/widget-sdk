@@ -5,6 +5,7 @@ import classNames from 'classnames';
 
 import ValueInput from './FilterValueInputs';
 import Date from './ValueInput/Date';
+import MetadataTag from './ValueInput/MetadataTag';
 import FilterValueReference from './ValueInput/Reference';
 import TextValueInput from './ValueInput/Text';
 import Select from './ValueInput/select';
@@ -33,7 +34,7 @@ function FilterOperator({ op, operators = [], onChange }) {
   );
 }
 
-function FilterValue({ valueInput, value, isFocused, onChange, onRemove }) {
+function FilterValue({ valueInput, value, isFocused, onChange, onRemove, setIsRemovable, op }) {
   const inputRef = (el) => {
     if (isFocused && el) {
       window.requestAnimationFrame(() => el.focus());
@@ -80,6 +81,18 @@ function FilterValue({ valueInput, value, isFocused, onChange, onRemove }) {
           testId={valueTestId}
           value={value}
           inputRef={inputRef}
+          onChange={onChange}
+          onKeyDown={handleKeyDown}
+        />
+      );
+    },
+    [ValueInput.MetadataTag]: () => {
+      return (
+        <MetadataTag
+          operator={op}
+          testId={valueTestId}
+          value={value}
+          setIsRemovable={setIsRemovable}
           onChange={onChange}
           onKeyDown={handleKeyDown}
         />
@@ -166,8 +179,11 @@ export default function FilterPill({
           if (isRemovable) {
             onRemove();
           }
-          e.stopPropagation();
-          e.preventDefault();
+          // tags subsearch needs to delete
+          if (filter.type != 'Tags') {
+            e.stopPropagation();
+            e.preventDefault();
+          }
         }
       }}>
       <div className="search__filter-pill-label">{filter.label || filter.name}</div>
@@ -178,9 +194,11 @@ export default function FilterPill({
       />
       <FilterValue
         valueInput={filter.valueInput}
+        op={op}
         value={value}
         isFocused={isValueFocused}
         onChange={(value) => onChange(value)}
+        setIsRemovable={(val) => (isRemovable = val ? true : false)}
         onRemove={() => {
           if (isRemovable) {
             onRemoveAttempt();

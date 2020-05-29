@@ -363,6 +363,7 @@ describe('app/ContentList/Search/State', () => {
       searchText: '',
       contentTypes: contentTypes,
       withAssets: false,
+      withMetadata: false,
     });
 
     const reduce = State.makeReducer(_.noop, _.noop);
@@ -475,6 +476,7 @@ function getInitialState(contentTypes) {
       suggestionsFocusIndex: null,
     },
     withAssets: false,
+    withMetadata: false,
   };
 }
 

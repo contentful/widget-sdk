@@ -38,7 +38,13 @@ describe('app/ContentList/Search/Filters', () => {
     describe('without assets', () => {
       const getMatchingFiltersMacro = (message, { searchQuery, contentType }, expected) => {
         it(message, () => {
-          const filters = Filters.getMatchingFilters(searchQuery, contentType, contentTypes);
+          const filters = Filters.getMatchingFilters(
+            searchQuery,
+            contentType,
+            contentTypes,
+            false,
+            true
+          );
           const queryKeys = filters.map(({ queryKey }) => queryKey);
 
           expect(queryKeys).toEqual(expected);
@@ -66,6 +72,7 @@ describe('app/ContentList/Search/Filters', () => {
           'sys.version',
           'sys.id',
           '__status',
+          'metadata.tags.sys.id',
           'fields.companyName',
           'fields.logo.sys.id',
           'fields.companyDescription',
@@ -108,6 +115,7 @@ describe('app/ContentList/Search/Filters', () => {
           'sys.version',
           'sys.id',
           '__status',
+          'metadata.tags.sys.id',
           'fields.companyName',
           'fields.logo.sys.id',
           'fields.companyDescription',
@@ -135,7 +143,7 @@ describe('app/ContentList/Search/Filters', () => {
           searchQuery: 't',
           contentType: null,
         },
-        ['fields.twitter', 'fields.tags']
+        ['metadata.tags.sys.id', 'fields.twitter', 'fields.tags']
       );
 
       getMatchingFiltersMacro(

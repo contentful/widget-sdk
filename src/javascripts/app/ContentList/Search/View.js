@@ -119,8 +119,11 @@ function Wrapper({ actions, searchBoxHasFocus, children }) {
           // Related target is not defined in IE11 so we need to fallback to the activeElement
           const activeElement = event.relatedTarget || document.activeElement;
 
-          const isChildFocused = parent !== activeElement && parent.contains(activeElement);
-
+          // Special case for tag-search-container, because the forma comp being used puts the ui
+          // outside of parent...
+          const isChildFocused =
+            (parent !== activeElement && parent.contains(activeElement)) ||
+            activeElement.closest('div.tag-search-container');
           if (!isChildFocused) {
             actions.SetBoxFocus(false);
           }

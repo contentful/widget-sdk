@@ -9,11 +9,15 @@ export const Operator = {
   EQUALS: '',
   NOT_EQUALS: 'ne',
   EXISTS: 'exists',
+  NOT_EXISTS: 'not exists',
   MATCH: 'match',
   LT: 'lt',
   LTE: 'lte',
   GT: 'gt',
   GTE: 'gte',
+  IN: 'in',
+  NOT_IN: 'nin',
+  ALL: 'all',
 };
 
 /**
@@ -64,6 +68,14 @@ export function getOperatorsByType(type) {
       return [equality, inequality];
     case 'AssetDetails':
       return [equality, ...ranges];
+    case 'Tags':
+      return [
+        [Operator.IN, 'include one of'],
+        [Operator.NOT_IN, `don't include`],
+        [Operator.ALL, 'include all of'],
+        [Operator.EXISTS, 'Any'],
+        [Operator.NOT_EXISTS, 'Not tagged'],
+      ];
     default:
       return [equality, inequality];
   }

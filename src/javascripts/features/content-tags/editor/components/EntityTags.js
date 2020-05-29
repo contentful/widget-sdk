@@ -9,7 +9,7 @@ const styles = {
   tag: css({ marginRight: tokens.spacing2Xs, marginBottom: tokens.spacing2Xs }),
 };
 
-const EntityTags = ({ tags, onRemove }) => {
+const EntityTags = ({ tags, onRemove, style = {} }) => {
   const onTagPillClose = useCallback(
     (tagId) => {
       if (onRemove) {
@@ -25,7 +25,7 @@ const EntityTags = ({ tags, onRemove }) => {
         {tags.map((tag) => {
           return (
             <Pill
-              className={styles.tag}
+              className={css(styles.tag, style)}
               key={tag.value}
               label={tag.label}
               onClose={() => onTagPillClose(tag.value)}
@@ -45,6 +45,7 @@ EntityTags.propTypes = {
     })
   ),
   onRemove: PropTypes.func,
+  style: PropTypes.object,
 };
 
 export { EntityTags };

@@ -48,18 +48,38 @@ export function buildQuery({
 }
 
 function applyGenericValue(query, [queryKey, operator, value]) {
-  if (!value || !isValidOperator(operator)) {
-    if (!isValidOperator(operator)) {
-      logger.logError(`invalid operator “${operator}” for search query`, {
-        queryKey,
-        operator,
-        value,
+  if (!isValidOperator(operator)) {
+    logger.logError(`invalid operator “${operator}” for search query`, {
+      queryKey,
+      operator,
+      value,
+    });
+    return query;
+  }
+
+  // value is not important for exists/not exists queries
+  // at this time the only exists queryies involve tags
+  // the specific queries api uses tags.sys.id,
+  // but the exists query just uses metadata.tags
+  if (queryKey === 'metadata.tags.sys.id') {
+    if (operator === Operator.EXISTS) {
+      return assign(query, {
+        [`metadata.tags[exists]`]: true,
       });
     }
+    if (operator === Operator.NOT_EXISTS) {
+      return assign(query, {
+        [`metadata.tags[exists]`]: false,
+      });
+    }
+  }
+
+  if (!value) {
     // Ignore missing values, we get them all the time when user adds a filter but
     // provides no value for that filter.
     return query;
   }
+
   operator = operator.length > 0 ? `[${operator}]` : '';
   return assign(query, {
     [queryKey + operator]: value,

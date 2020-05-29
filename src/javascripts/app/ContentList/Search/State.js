@@ -45,6 +45,7 @@ export const initialState = ({
   searchText = '',
   contentTypes,
   withAssets,
+  withMetadata,
   searchBoxHasFocus = false,
   isSuggestionOpen = false,
   isSearching = false,
@@ -57,6 +58,7 @@ export const initialState = ({
   isSuggestionOpen,
   focus,
   withAssets,
+  withMetadata,
 
   // FIXME: the following fields should have a separate reducer
   contentTypes,
@@ -226,7 +228,8 @@ export function makeReducer(dispatch, submitSearch) {
       state.input,
       state.contentTypeId,
       state.contentTypes,
-      state.withAssets
+      state.withAssets,
+      state.withMetadata
     );
     let indexToFocus;
 
@@ -336,7 +339,12 @@ export function makeReducer(dispatch, submitSearch) {
       contentType = getContentTypeById(state.contentTypes, filter.contentType.id);
     }
 
-    const filterField = buildFilterFieldByQueryKey(contentType, filter.queryKey, state.withAssets);
+    const filterField = buildFilterFieldByQueryKey(
+      contentType,
+      filter.queryKey,
+      state.withAssets,
+      state.withMetadata
+    );
 
     const value = tryGetValue(filterField);
 

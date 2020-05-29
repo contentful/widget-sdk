@@ -13,6 +13,8 @@ import * as ListQuery from 'search/listQuery';
 import * as ScheduledActionsService from 'app/ScheduledActions/DataManagement/ScheduledActionsService';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { createRequestQueue } from 'utils/overridingRequestQueue';
+import { getCurrentSpaceFeature } from 'data/CMA/ProductCatalog';
+import { PC_CONTENT_TAGS } from 'featureFlags';
 
 export default function register() {
   registerController('EntryListSearchController', [
@@ -206,7 +208,7 @@ export default function register() {
       }
 
       function initializeSearchUI() {
-        K.onValueScope($scope, accessChecker.isInitialized$, (isInitialized) => {
+        K.onValueScope($scope, accessChecker.isInitialized$, async (isInitialized) => {
           if (!isInitialized) {
             return;
           }
@@ -221,6 +223,8 @@ export default function register() {
           }
 
           lastUISearchState = initialSearchState;
+          const withMetadata = await getCurrentSpaceFeature(PC_CONTENT_TAGS, false);
+
           createSearchInput({
             $scope: $scope,
             contentTypes: contentTypes,
@@ -228,6 +232,7 @@ export default function register() {
             isSearching$: isSearching$,
             initState: initialSearchState,
             users$: Kefir.fromPromise(spaceContext.users.getAll()),
+            withMetadata,
           });
         });
       }

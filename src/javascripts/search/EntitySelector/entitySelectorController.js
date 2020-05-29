@@ -8,6 +8,8 @@ import * as EntityHelpers from 'app/entity_editor/entityHelpers';
 import getAccessibleCTs from 'data/ContentTypeRepo/accessibleCTs';
 import createSearchInput from 'app/ContentList/Search';
 import { createRequestQueue } from 'utils/overridingRequestQueue';
+import { getCurrentSpaceFeature } from 'data/CMA/ProductCatalog';
+import { PC_CONTENT_TAGS } from 'featureFlags';
 
 export default function register() {
   /**
@@ -109,7 +111,7 @@ export default function register() {
         }
       }
 
-      function initializeSearchUI() {
+      async function initializeSearchUI() {
         const withAssets = config.entityType === 'Asset';
         const initialSearchState = {};
         if (singleContentTypeId) {
@@ -128,6 +130,7 @@ export default function register() {
           accessibleContentTypes
         );
 
+        const withMetadata = await getCurrentSpaceFeature(PC_CONTENT_TAGS, false);
         createSearchInput({
           $scope: $scope,
           contentTypes: contentTypes,
@@ -135,7 +138,8 @@ export default function register() {
           isSearching$: isSearching$,
           initState: initialSearchState,
           users$: Kefir.fromPromise(spaceContext.users.getAll()),
-          withAssets: withAssets,
+          withAssets,
+          withMetadata,
         });
       }
 

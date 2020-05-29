@@ -7,6 +7,7 @@ function ReadTagsProvider({ children }) {
   const tagsRepo = useTagsRepo();
   const [skip, setSkip] = React.useState(0);
   const [limit, setLimit] = React.useState(25);
+  const [isLoading, setIsLoading] = React.useState(true);
   const [cachedData, setCachedData] = React.useState([]);
 
   const {
@@ -15,7 +16,7 @@ function ReadTagsProvider({ children }) {
     debouncedValue: debouncedSearch,
   } = useStateWithDebounce('');
 
-  const [{ isLoading, error, data }, fetchAll] = useAsyncFn(
+  const [{ error, data }, fetchAll] = useAsyncFn(
     useCallback(async () => tagsRepo.readTags(0, 1000), [tagsRepo]),
     true
   );
@@ -28,9 +29,13 @@ function ReadTagsProvider({ children }) {
 
   useEffect(() => {
     if (data) {
+      setIsLoading(false);
       setCachedData(data);
     }
-  }, [data, setCachedData]);
+    if (error) {
+      setIsLoading(false);
+    }
+  }, [data, setCachedData, error, setIsLoading]);
 
   const reset = useCallback(async () => {
     if (skip === 0) {
