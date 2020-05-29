@@ -10,14 +10,14 @@ import EmptyStateAdminIllustration from 'svg/folder-illustration.svg';
 
 const EmptySpaceHomePage = ({ orgId, orgOwnerOrAdmin }) => {
   return orgOwnerOrAdmin ? (
-    <EmptyStateContainer>
+    <EmptyStateContainer data-test-id="cf-ui-empty-space-admin">
       <EmptyStateAdminIllustration className={defaultSVGStyle} />
       <Heading>Starting something new?</Heading>
       <Paragraph>A space is an area to manage and store content for a specific project.</Paragraph>
       <Button onClick={() => CreateSpace.showDialog(orgId)}>Add a space</Button>
     </EmptyStateContainer>
   ) : (
-    <EmptyStateContainer>
+    <EmptyStateContainer data-test-id="cf-ui-empty-space">
       <Illustration className={defaultSVGStyle} />
       <Typography>
         <Heading>Waiting for space access?</Heading>

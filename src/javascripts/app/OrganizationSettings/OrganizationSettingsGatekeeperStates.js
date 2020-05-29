@@ -1,4 +1,5 @@
 import { iframeStateWrapper } from 'states/utils';
+import SpacesRoute from './SpacesV1/SpacesRoute';
 
 const edit = {
   name: 'edit',
@@ -23,9 +24,8 @@ const subscriptionBilling = {
 
 const spaces = {
   name: 'spaces',
-  title: 'Organization spaces',
-  icon: 'spaces',
-  url: '/spaces{pathSuffix:PathSuffix}',
+  url: '/spaces',
+  component: SpacesRoute,
 };
 
 const offsitebackup = {
@@ -46,12 +46,7 @@ const userGatekeeper = {
   url: '/organization_memberships/{pathSuffix:PathSuffix}',
 };
 
-export default [
-  spaces,
-  offsitebackup,
-  billing,
-  edit,
-  subscription,
-  subscriptionBilling,
-  userGatekeeper,
-].map(iframeStateWrapper);
+export default [offsitebackup, billing, edit, subscription, subscriptionBilling, userGatekeeper]
+  .map(iframeStateWrapper)
+  // The following routes were already migrated to UI
+  .concat([spaces]);
