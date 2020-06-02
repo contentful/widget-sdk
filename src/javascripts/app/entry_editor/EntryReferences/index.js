@@ -124,7 +124,6 @@ export const hasLinks = (obj) => {
 
 const ReferencesTab = ({ entity }) => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
-  const [defaultLocale, setDefaultLocale] = useState('');
   const [processingAction, setProcessingAction] = useState(null);
   const [isTooComplex, setIsTooComplex] = useState(false);
   const [allReferencesSelected, setAllReferencesSelected] = useState(true);
@@ -142,12 +141,9 @@ const ReferencesTab = ({ entity }) => {
     initialReferencesAmount,
   } = referencesState;
 
-  useEffect(() => {
-    async function fetchDefaultLocale() {
-      const defaultLocale = await getDefaultLocale();
-      setDefaultLocale(defaultLocale.internal_code);
-    }
+  const defaultLocale = getDefaultLocale().code;
 
+  useEffect(() => {
     async function fetchReferences() {
       const { resolved: fetchedRefs, response } = await getReferencesForEntryId(entity.sys.id);
       dispatch({ type: SET_REFERENCES, value: fetchedRefs });
@@ -177,7 +173,6 @@ const ReferencesTab = ({ entity }) => {
       setisAddToReleaseEnabled(isAddToReleaseEnabled);
     }
 
-    fetchDefaultLocale();
     fetchReferencesAndTitle();
     addToReleaseEnabled();
 

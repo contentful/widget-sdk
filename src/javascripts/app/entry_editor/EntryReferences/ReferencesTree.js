@@ -346,7 +346,6 @@ const ReferencesTree = ({
 };
 
 ReferencesTree.propTypes = {
-  // TODO: right now default locale has incorrect value
   defaultLocale: PropTypes.string,
   maxLevel: PropTypes.number,
   allReferencesSelected: PropTypes.bool,
