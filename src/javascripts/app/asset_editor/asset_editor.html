@@ -2,7 +2,12 @@
   name="components/shared/DocumentTitle"
   props="{title: [title, 'Media']}"
 ></react-component>
-<div class="asset-editor workbench">
+<react-component
+  name="app/asset_editor/AssetEditorWorkbench"
+  props="{localData, title, localeData, entityInfo}"
+></react-component>
+
+<!-- <div class="asset-editor workbench">
   <header class="workbench-header">
     <react-component name="app/entity_editor/Components/BackNav"></react-component>
     <cf-icon class="workbench-header__icon" name="page-media" scale="1"></cf-icon>
@@ -41,4 +46,4 @@
       ></react-component>
     </div>
   </div>
-</div>
+</div> -->
