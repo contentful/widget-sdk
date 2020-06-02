@@ -198,6 +198,40 @@ describe('utils/StringUtils', () => {
     });
   });
 
+  describe('parseCopyPastedEmailAddresses', () => {
+    it('parses a simple address', () => {
+      const result = utils.parseCopyPastedEmailAddresses('john.doe@example.com');
+      expect(result).toEqual('john.doe@example.com');
+    });
+
+    it('parses a complex address', () => {
+      const copied = 'John Doe <john.doe@example.com>';
+      const result = utils.parseCopyPastedEmailAddresses(copied);
+      expect(result).toEqual('john.doe@example.com');
+    });
+
+    it('parses a mixed formats', () => {
+      const copied = 'John Doe <john.doe@example.com>, jane.doe@example.com';
+      const result = utils.parseCopyPastedEmailAddresses(copied);
+      expect(result).toEqual('john.doe@example.com\njane.doe@example.com');
+    });
+
+    it('parses with mixed separators', () => {
+      const copied = '  John Doe <john.doe@example.com> \n jane.doe@example.com ';
+      const result = utils.parseCopyPastedEmailAddresses(copied);
+      expect(result).toEqual('john.doe@example.com\njane.doe@example.com');
+    });
+
+    it('accepts different separators', () => {
+      const copied =
+        'John Doe <john.doe@example.com>, jane.doe@example.com, Marta Mustermann <marta.mustermann@example.com>';
+      const result = utils.parseCopyPastedEmailAddresses(copied, ', ');
+      expect(result).toEqual(
+        'john.doe@example.com, jane.doe@example.com, marta.mustermann@example.com'
+      );
+    });
+  });
+
   describe('joinWithAnd', () => {
     const getItems = () => {
       return {

@@ -16,7 +16,7 @@ import {
 import pluralize from 'pluralize';
 import { orgRoles } from 'utils/MembershipUtils';
 import { useAddToOrg } from './NewUserHooks';
-import { isValidEmail, parseList } from 'utils/StringUtils';
+import { isValidEmail, parseList, parseCopyPastedEmailAddresses } from 'utils/StringUtils';
 import NewUserSuccess from './NewUserSuccess';
 import NewUserProgress from './NewUserProgress';
 import { css } from 'emotion';
@@ -108,7 +108,7 @@ export default function NewUser({ orgId, hasTeamsFeature, isOwner }) {
     // otherwise, use new lines
     const separator = /,/.test(target.value) ? ', ' : '\n';
     // match whatever is betwen < and >
-    const paste = [...text.matchAll(/<(.*?)>/g)].map((match) => match[1]).join(separator);
+    const paste = parseCopyPastedEmailAddresses(text, separator);
 
     if (paste.length) {
       // pastes

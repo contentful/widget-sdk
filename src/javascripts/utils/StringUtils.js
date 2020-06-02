@@ -252,6 +252,26 @@ export function isValidUrl(value) {
 }
 
 /**
+ * When users copy email addresses they often come in a a format like
+ * "John Doe <john.doe@example.com>, jane.doe@example.com".
+ * This extracts only the email addresses and joins them back into a string
+ *
+ * parseCopyPastedEmailAddresses("John Doe <john.doe@example.com>, jane.doe@example.com", ",")
+ * -> "john.doe@example.com, jane.doe@example.com"
+ *
+ */
+export function parseCopyPastedEmailAddresses(text = '', separator = '\n') {
+  return (
+    text
+      // split by commas or line breaks and surrounding white spaces
+      .split(/\s*[,\n]\s*/)
+      // for each item, replace "<foo>" with "foo"
+      .map((item) => item.replace(/^[^<]*<(.+)>$/, '$1').trim())
+      .join(separator)
+  );
+}
+
+/**
  * Takes an array and joins with "," and "and".
  *
  * @usage[js]
