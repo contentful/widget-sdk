@@ -140,8 +140,9 @@ export function disable() {
 /**
  * Mostly used by the $uncaughtException service
  * @param {Error} exception  Exception Error object
- * @param {Object} metaData  Metadata object. Can take any of the expected bugsnag metadata parameters.
- * @param {Object} metaData.data  Additional data (other objects). Shows up on the bugsnag data tab.
+ * @param {Object?} metaData  Metadata object. Can take any of the expected bugsnag metadata parameters.
+ * @param {Object?} metaData.data  Additional data (other objects). Shows up on the bugsnag data tab.
+ * @param {string?} metaData.groupingHash Allows to group as same bugsnag issue despite different `message`.
  */
 export function logException(exception, metaData) {
   const augmentedMetadata = augmentMetadata(metaData);
@@ -155,9 +156,10 @@ export function logException(exception, metaData) {
 /**
  * Log with error level
  * @param {string} message
- * @param {object} metaData       Can take any of the expected bugsnag metadata properties.
- * @param {object} metaData.data  Shows up on the bugsnag data tab.
- * @param {object} metaData.error Shows up on the bugsnag error tab.
+ * @param {object?} metaData       Can take any of the expected bugsnag metadata properties.
+ * @param {object?} metaData.data  Shows up on the bugsnag data tab.
+ * @param {object?} metaData.error Shows up on the bugsnag error tab.
+ * @param {string?} metaData.groupingHash Allows to group as same bugsnag issue despite different `message`.
  */
 export function logError(message, metaData) {
   _log('Logged Error', 'error', message, metaData);
@@ -168,9 +170,10 @@ export function logError(message, metaData) {
  * given message.
  *
  * @param {string} message
- * @param {object} metaData       Can take any of the expected bugsnag metadata properties.
- * @param {object} metaData.data  Shows up on the bugsnag data tab.
- * @param {object} metaData.error Shows up on the bugsnag error tab.
+ * @param {object?} metaData       Can take any of the expected bugsnag metadata properties.
+ * @param {object?} metaData.data  Shows up on the bugsnag data tab.
+ * @param {object?} metaData.error Shows up on the bugsnag error tab.
+ * @param {string?} metaData.groupingHash Allows to group as same bugsnag issue despite different `message`.
  */
 export function logWarn(message, metaData) {
   _log('Logged Warning', 'warning', message, metaData);
@@ -190,11 +193,12 @@ export function logWarn(message, metaData) {
  * ~~~
  *
  * @param {string} message
- * @param {object} metaData       Can take any of the expected bugsnag metadata properties.
- * @param {object} metaData.data  Shows up on the bugsnag data tab.
- * @param {object} metaData.error Shows up on the bugsnag error tab. Either the API error
+ * @param {object?} metaData       Can take any of the expected bugsnag metadata properties.
+ * @param {object?} metaData.data  Shows up on the bugsnag data tab.
+ * @param {object?} metaData.error Shows up on the bugsnag error tab. Either the API error
  *                                itself or a server response object with `body` or `data`
  *                                field holding the actual API error.
+ * @param {string} metaData.groupingHash Allows to group as same bugsnag issue despite different `message`.
  */
 export function logServerError(message, metaData) {
   if (_.get(metaData, 'error.statusCode') === 0) {
@@ -210,11 +214,12 @@ export function logServerError(message, metaData) {
  * The Bugsnag title of the error will be “Logged Server Warning”.
  *
  * @param {string} message
- * @param {object} metaData       Can take any of the expected bugsnag metadata properties.
- * @param {object} metaData.data  Shows up on the bugsnag data tab.
- * @param {object} metaData.error Shows up on the bugsnag error tab. Either the API error
+ * @param {object?} metaData       Can take any of the expected bugsnag metadata properties.
+ * @param {object?} metaData.data  Shows up on the bugsnag data tab.
+ * @param {object?} metaData.error Shows up on the bugsnag error tab. Either the API error
  *                                itself or a server response object with `body` or `data`
  *                                field holding the actual API error.
+ * @param {string?} metaData.groupingHash Allows to group as same bugsnag issue despite different `message`.
  */
 export function logServerWarn(message, metaData) {
   if (_.get(metaData, 'error.statusCode') === 0) {
@@ -227,9 +232,10 @@ export function logServerWarn(message, metaData) {
 /**
  * Log an error specific to ShareJS with error level
  * @param {string} message
- * @param {object} metaData       Can take any of the expected bugsnag metadata properties.
- * @param {object} metaData.data  Shows up on the bugsnag data tab.
- * @param {object} metaData.error Shows up on the bugsnag error tab.
+ * @param {object?} metaData       Can take any of the expected bugsnag metadata properties.
+ * @param {object?} metaData.data  Shows up on the bugsnag data tab.
+ * @param {object?} metaData.error Shows up on the bugsnag error tab.
+ * @param {string?} metaData.groupingHash Allows to group as same bugsnag issue despite different `message`.
  */
 export function logSharejsError(message, metaData) {
   _log('Logged ShareJS Error', 'error', message, metaData);
@@ -238,9 +244,10 @@ export function logSharejsError(message, metaData) {
 /**
  * Log an error specific to ShareJS with warn level
  * @param {string} message
- * @param {object} metaData       Can take any of the expected bugsnag metadata properties.
- * @param {object} metaData.data  Shows up on the bugsnag data tab.
- * @param {object} metaData.error Shows up on the bugsnag error tab.
+ * @param {object?} metaData       Can take any of the expected bugsnag metadata properties.
+ * @param {object?} metaData.data  Shows up on the bugsnag data tab.
+ * @param {object?} metaData.error Shows up on the bugsnag error tab.
+ * @param {string?} metaData.groupingHash Allows to group as same bugsnag issue despite different `message`.
  */
 export function logSharejsWarn(message, metaData) {
   _log('Logged ShareJS Warning', 'warning', message, metaData);
@@ -249,9 +256,10 @@ export function logSharejsWarn(message, metaData) {
 /**
  * Log detected CORS warnings
  * @param {string} message
- * @param {object} metaData       Can take any of the expected bugsnag metadata properties.
- * @param {object} metaData.data  Shows up on the bugsnag data tab.
- * @param {object} metaData.error Shows up on the bugsnag error tab.
+ * @param {object?} metaData       Can take any of the expected bugsnag metadata properties.
+ * @param {object?} metaData.data  Shows up on the bugsnag data tab.
+ * @param {object?} metaData.error Shows up on the bugsnag error tab.
+ * @param {string?} metaData.groupingHash Allows to group as same bugsnag issue despite different `message`.
  */
 function _logCorsWarn(message, metaData) {
   _log('CORS Warning', 'warning', message, metaData);
@@ -262,7 +270,7 @@ function _logCorsWarn(message, metaData) {
  * @param {String} type
  * @param {String} severity
  * @param {String} message
- * @param {Object} metadata
+ * @param {Object?} metadata
  * Additional info to show in bugsnag. Each key creates a tab that
  * displays the corresponding value.
  */

@@ -273,6 +273,8 @@ export function trackStateChange(state, params, from, fromParams) {
 }
 
 function getBasicPayload() {
+  // IMPORTANT: Do not add anything here without ensuring that it won't end up in any Snowplow
+  //  events which might be considered invalid with additional properties unknown to their schema!
   return _.pickBy(
     {
       userId: getSessionData('user.sys.id', VALUE_UNKNOWN),
