@@ -227,6 +227,7 @@ describe('utils', () => {
         await call({ template });
 
         expect(getCreator).toBeCalledWith(
+          spaceContext,
           { onItemSuccess: expect.any(Function), onItemError: expect.any(Function) },
           template,
           'en-US'

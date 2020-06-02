@@ -80,16 +80,16 @@ describe('SpaceTemplateLoader', () => {
 
   describe('getTemplatesList', () => {
     const entries = [
-      { fields: { order: 2 } },
-      { fields: { order: 1 } },
-      { fields: { order: 3 } },
-      { fields: {} },
+      { fields: { order: 2 }, sys: { id: 'template_1234' } },
+      { fields: { order: 1 }, sys: { id: 'template_2345' } },
+      { fields: { order: 3 }, sys: { id: 'template_3456' } },
+      { fields: {}, sys: { id: 'template_4567' } },
     ];
-    const sortedEntries = [
-      { fields: { order: 1 } },
-      { fields: { order: 2 } },
-      { fields: { order: 3 } },
-      { fields: {} },
+    const sortedResult = [
+      { order: 1, sys: { id: 'template_2345' } },
+      { order: 2, sys: { id: 'template_1234' } },
+      { order: 3, sys: { id: 'template_3456' } },
+      { sys: { id: 'template_4567' } },
     ];
 
     it("should instantiate a contentful client when there isn't one", async () => {
@@ -107,7 +107,7 @@ describe('SpaceTemplateLoader', () => {
       expect(newContentfulClient).toHaveBeenCalledTimes(1);
     });
 
-    it('should fetch entries for space templates content type and return them sorted by fields.order', async () => {
+    it('should fetch entries for space templates content type and return a mapped array sorted by `order`', async () => {
       clientGetEntriesMock.mockResolvedValue(entries);
       const templates = await getTemplatesList();
 
@@ -117,7 +117,8 @@ describe('SpaceTemplateLoader', () => {
       expect(clientGetEntriesMock).toHaveBeenCalledWith({
         content_type: 'space-template-ct-id', // comes from __mocks__/Config.js
       });
-      expect(templates).toEqual(sortedEntries);
+
+      expect(templates).toEqual(sortedResult);
     });
 
     it('should throw when something fails', async () => {

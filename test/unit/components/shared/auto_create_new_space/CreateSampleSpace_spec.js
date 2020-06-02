@@ -6,7 +6,10 @@ describe('CreateSampleSpace service', () => {
   beforeEach(async function () {
     this.templates = [
       {
-        fields: { name: 'the example app' },
+        name: 'the example app',
+        sys: {
+          id: 'template_1234',
+        },
       },
     ];
 
@@ -119,10 +122,7 @@ describe('CreateSampleSpace service', () => {
         },
       });
       sinon.assert.calledOnce(this.getCreator);
-      sinon.assert.calledWithExactly(
-        this.spaceTemplateLoader.getTemplate,
-        this.templates[0].fields
-      );
+      sinon.assert.calledWithExactly(this.spaceTemplateLoader.getTemplate, this.templates[0]);
       sinon.assert.calledWithExactly(this.templateLoader.create, this.template);
       sinon.assert.calledOnce(this.spaceContext.publishedCTs.refresh);
       sinon.assert.calledWithExactly(this.$rootScope.$broadcast, 'spaceTemplateCreated');
