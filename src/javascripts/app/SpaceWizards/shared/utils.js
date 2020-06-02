@@ -11,6 +11,7 @@ import { getTemplate } from 'services/SpaceTemplateLoader';
 import { go } from 'states/Navigator';
 import { getModule } from 'core/NgRegistry';
 import { joinWithAnd } from 'utils/StringUtils';
+import { canCreate } from 'utils/ResourceUtils';
 
 export const FREE_SPACE_IDENTIFIER = 'free_space';
 
@@ -100,6 +101,45 @@ export async function createSpace({ name, plan, organizationId }) {
   return newSpace;
 }
 
+export function goToBillingPage(organization, onClose) {
+  const orgId = organization.sys.id;
+
+  go({
+    path: ['account', 'organizations', 'subscription_billing'],
+    params: { orgId, pathSuffix: '/billing_address' },
+    options: { reload: true },
+  });
+
+  trackWizardEvent('link_click');
+  onClose && onClose(false);
+}
+
+export function transformSpaceRatePlans({ organization, spaceRatePlans, freeSpaceResource }) {
+  return spaceRatePlans.map((plan) => {
+    const isFree = plan.productPlanType === 'free_space';
+    const includedResources = getIncludedResources(plan.productRatePlanCharges);
+    let disabled = false;
+    let current = false;
+
+    if (plan.unavailabilityReasons && plan.unavailabilityReasons.length > 0) {
+      disabled = true;
+    } else if (isFree) {
+      disabled = !canCreate(freeSpaceResource);
+    } else if (!organization.isBillable) {
+      disabled = true;
+    }
+
+    if (
+      plan.unavailabilityReasons &&
+      plan.unavailabilityReasons.some((reason) => reason.type === 'currentPlan')
+    ) {
+      current = true;
+    }
+
+    return { ...plan, isFree, includedResources, disabled, current };
+  });
+}
+
 export function trackWizardEvent(eventName, payload) {
   const trackingData = createTrackingData(payload);
 
@@ -162,6 +202,10 @@ export function getIncludedResources(charges) {
 
     return { type, number };
   });
+}
+
+export function getHighestPlan(spaceRatePlans) {
+  return [...spaceRatePlans].sort((planX, planY) => planY.price - planX.price)[0];
 }
 
 export function getTooltip(type, number) {

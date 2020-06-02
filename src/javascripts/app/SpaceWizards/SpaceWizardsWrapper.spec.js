@@ -5,7 +5,6 @@ import {
   getSpaceRatePlans,
   isEnterprisePlan,
 } from 'account/pricing/PricingDataProvider';
-import * as modalDialog from 'ng/modalDialog';
 import SpaceWizardsWrapper from './SpaceWizardsWrapper';
 
 const mockOrganization = {
@@ -47,6 +46,9 @@ const mockFreeSpaceRatePlan = {
     name: 'lol',
     roles: ['Wizard'],
   },
+  sys: {
+    id: 'free_space_1234',
+  },
 };
 
 jest.mock('services/ResourceService', () => {
@@ -75,6 +77,8 @@ jest.mock('account/pricing/PricingDataProvider', () => ({
   getBasePlan: jest.fn().mockResolvedValue({}),
   getSpaceRatePlans: jest.fn(),
   isHighDemandEnterprisePlan: jest.fn(),
+  getSubscriptionPlans: jest.fn().mockResolvedValue({ items: [] }),
+  calculateTotalPrice: jest.fn(),
 }));
 
 describe('SpaceWizardsWrapper', () => {
@@ -104,28 +108,12 @@ describe('SpaceWizardsWrapper', () => {
     expect(screen.queryByTestId('enterprise-wizard-contents')).toBeVisible();
   });
 
-  it('should trigger the modalDialog if the base plan is not enterprise', async () => {
+  it('should show the on-demand space creation wizard if the base plan is not enterprise', async () => {
     isEnterprisePlan.mockReturnValueOnce(false);
 
-    const onClose = jest.fn();
+    await build();
 
-    await build({ onClose });
-
-    expect(onClose).toBeCalled();
-    expect(modalDialog.open).toBeCalledWith({
-      title: 'Create new space',
-      template: '<cf-space-wizard class="modal-background"></cf-space-wizard>',
-      backgroundClose: false,
-      persistOnNavigation: true,
-      scopeData: {
-        action: 'create',
-        organization: {
-          sys: mockOrganization.sys,
-          name: mockOrganization.name,
-          isBillable: mockOrganization.isBillable,
-        },
-      },
-    });
+    expect(screen.queryByTestId('create-on-demand-wizard-contents')).toBeVisible();
   });
 });
 
