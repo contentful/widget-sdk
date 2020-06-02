@@ -12,6 +12,9 @@ import {
   SkeletonContainer,
   SkeletonBodyText,
   Workbench,
+  Tag,
+  HelpText,
+  TextLink,
 } from '@contentful/forma-36-react-components';
 import { get } from 'lodash';
 
@@ -25,6 +28,8 @@ import UninstallModal from './UninstallModal';
 import { ModalLauncher } from 'core/components/ModalLauncher';
 import * as AppLifecycleTracking from './AppLifecycleTracking';
 import { isUsageExceededErrorResponse, USAGE_EXCEEDED_MESSAGE } from './isUsageExceeded';
+import { LOCATION_APP_CONFIG } from 'widgets/WidgetLocations';
+import { AppIcon } from './AppIcon';
 
 const BUSY_STATE_INSTALLATION = 'installation';
 const BUSY_STATE_UPDATE = 'update';
@@ -96,19 +101,19 @@ const styles = {
   spinner: css({
     marginRight: tokens.spacingS,
   }),
-  appIcon: css({
-    marginRight: tokens.spacingXs,
-    verticalAlign: 'middle',
-  }),
-  icon: css({
-    width: '45px',
-    height: '45px',
-    verticalAlign: 'middle',
-    marginRight: tokens.spacingS,
-  }),
   stillLoadingText: css({
     marginTop: '-80px',
   }),
+  heading: css({ display: 'flex', alignItems: 'center' }),
+  tag: css({ marginLeft: tokens.spacingS }),
+  noConfigContainer: css({
+    width: '100%',
+    '> div:last-child': {
+      borderTop: `1px solid ${tokens.colorElementLight}`,
+    },
+  }),
+  noConfigSection: css({ maxWidth: '700px', margin: '0 auto', padding: tokens.spacingXl }),
+  noConfigHelpText: css({ marginTop: tokens.spacingM }),
 };
 
 export default class AppRoute extends Component {
@@ -168,6 +173,13 @@ export default class AppRoute extends Component {
     }
   };
 
+  hasConfigLocation = (appDefinition) => {
+    const definition = appDefinition || this.state.appDefinition;
+    const locations = get(definition, ['locations'], []);
+
+    return locations.find((l) => l.location === LOCATION_APP_CONFIG);
+  };
+
   initialize = async () => {
     const { appHookBus, app } = this.props;
     const { appDefinition } = app;
@@ -185,6 +197,7 @@ export default class AppRoute extends Component {
         ready: true,
         isInstalled: !!appInstallation,
         appDefinition,
+        appLoaded: !this.hasConfigLocation(appDefinition),
         actionList: get(app, ['actionList'], []),
       },
       this.afterInitialize
@@ -264,7 +277,14 @@ export default class AppRoute extends Component {
 
   update = (busyWith) => {
     this.setState({ busyWith });
-    this.props.appHookBus.emit(APP_EVENTS_OUT.STARTED);
+
+    if (this.hasConfigLocation()) {
+      // The app implements config - hand over control.
+      this.props.appHookBus.emit(APP_EVENTS_OUT.STARTED);
+    } else {
+      // No config location - just use an empty config right away.
+      this.onAppConfigured({ config: {} });
+    }
   };
 
   uninstall = () => {
@@ -336,14 +356,11 @@ export default class AppRoute extends Component {
   }
 
   renderTitle() {
-    if (!this.state.appIcon) {
-      return <Heading>{this.state.title}</Heading>;
-    }
-
     return (
-      <Heading>
-        <img src={this.state.appIcon} className={styles.icon} />
+      <Heading className={styles.heading}>
+        <AppIcon icon={this.state.appIcon} />
         {this.state.title}
+        {this.props.app.isPrivateApp && <Tag className={styles.tag}>Private</Tag>}
       </Heading>
     );
   }
@@ -440,10 +457,47 @@ export default class AppRoute extends Component {
     );
   };
 
-  render() {
-    const { ready, appLoaded, loadingError } = this.state;
+  renderConfigLocation() {
+    const { appLoaded, loadingError } = this.state;
 
-    if (!ready) {
+    return (
+      <>
+        {loadingError && this.renderLoadingError()}
+        {!appLoaded && !loadingError && this.renderLoading(true)}
+        {!loadingError && this.renderContent()}
+      </>
+    );
+  }
+
+  renderNoConfigLocation() {
+    return (
+      <div className={styles.noConfigContainer}>
+        <div className={styles.noConfigSection}>
+          {this.renderTitle()}
+          <HelpText className={styles.noConfigHelpText}>
+            This app does not require additional configuration.
+          </HelpText>
+        </div>
+        <div className={styles.noConfigSection}>
+          <Paragraph>
+            This is the default configuration screen of your app. Build advanced installation flows
+            for your users by adding the app configuration location. Learn more about{' '}
+            <TextLink
+              href="https://www.contentful.com/developers/docs/extensibility/app-framework/locations/"
+              rel="noopener noreferrer"
+              target="_blank"
+              icon="ExternalLink">
+              app locations
+            </TextLink>
+            .
+          </Paragraph>
+        </div>
+      </div>
+    );
+  }
+
+  render() {
+    if (!this.state.ready) {
       return this.renderLoading();
     }
 
@@ -459,9 +513,7 @@ export default class AppRoute extends Component {
             title={this.renderTitle()}
             actions={this.renderActions()}
           />
-          {loadingError && this.renderLoadingError()}
-          {!appLoaded && !loadingError && this.renderLoading(true)}
-          {!loadingError && this.renderContent()}
+          {this.hasConfigLocation() ? this.renderConfigLocation() : this.renderNoConfigLocation()}
         </Workbench>
       </>
     );
