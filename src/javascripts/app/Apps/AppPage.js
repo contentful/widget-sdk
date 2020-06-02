@@ -57,6 +57,7 @@ export default class AppRoute extends Component {
       getAppInstallation: PropTypes.func.isRequired,
     }).isRequired,
     evictWidget: PropTypes.func.isRequired,
+    canManageThisApp: PropTypes.bool.isRequired,
   };
 
   state = {
@@ -405,20 +406,22 @@ export default class AppRoute extends Component {
             This app does not require additional configuration.
           </HelpText>
         </div>
-        <div className={styles.noConfigSection}>
-          <Paragraph>
-            This is the default configuration screen of your app. Build advanced installation flows
-            for your users by adding the app configuration location. Learn more about{' '}
-            <TextLink
-              href="https://www.contentful.com/developers/docs/extensibility/app-framework/locations/"
-              rel="noopener noreferrer"
-              target="_blank"
-              icon="ExternalLink">
-              app locations
-            </TextLink>
-            .
-          </Paragraph>
-        </div>
+        {this.props.canManageThisApp && (
+          <div className={styles.noConfigSection}>
+            <Paragraph>
+              This is the default configuration screen of your app. Build advanced installation
+              flows for your users by adding the app configuration location. Learn more about{' '}
+              <TextLink
+                href="https://www.contentful.com/developers/docs/extensibility/app-framework/locations/"
+                rel="noopener noreferrer"
+                target="_blank"
+                icon="ExternalLink">
+                app locations
+              </TextLink>
+              .
+            </Paragraph>
+          </div>
+        )}
       </div>
     );
   }
