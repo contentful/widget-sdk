@@ -105,7 +105,7 @@ export default class AppRoute extends Component {
     const definition = appDefinition || this.state.appDefinition;
     const locations = get(definition, ['locations'], []);
 
-    return locations.find((l) => l.location === LOCATION_APP_CONFIG);
+    return locations.some((l) => l.location === LOCATION_APP_CONFIG);
   };
 
   initialize = async () => {
