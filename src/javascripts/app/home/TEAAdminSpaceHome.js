@@ -46,11 +46,7 @@ const TEAAdminSpaceHome = ({
           <AccordionComponent
             drawersContent={[
               {
-                headerText: (
-                  <>
-                    Modify sample content in <span className={styles.demiBold}>{spaceName}</span>
-                  </>
-                ),
+                headerText: <span className={styles.demiBold}>Play with our example project</span>,
                 content: <ExampleProjectOverview cdaToken={cdaToken} cpaToken={cpaToken} />,
               },
             ]}
