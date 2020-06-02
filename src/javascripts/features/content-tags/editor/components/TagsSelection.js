@@ -16,6 +16,19 @@ import * as Navigator from 'states/Navigator';
 import { FieldFocus } from 'features/content-tags/core/components/FieldFocus';
 import { orderByLabel, tagsPayloadToValues } from 'features/content-tags/editor/utils';
 
+import { css } from 'emotion';
+import FeedbackButton from 'app/common/FeedbackButton';
+
+const styles = {
+  wrapper: css({
+    display: 'flex',
+  }),
+  iconWrapper: css({
+    marginLeft: 'auto',
+    order: '2',
+  }),
+};
+
 const TagsSelection = ({ showEmpty, onAdd, onRemove, selectedTags = [] }) => {
   const { data, isLoading, setSearch, setLimit, hasTags } = useReadTags();
   const isInitialLoad = useIsInitialLoadingOfTags();
@@ -68,7 +81,12 @@ const TagsSelection = ({ showEmpty, onAdd, onRemove, selectedTags = [] }) => {
     return (
       <FieldFocus>
         {userListModal}
-        <Paragraph>Tags</Paragraph>
+        <div className={styles.wrapper}>
+          <Paragraph>Tags</Paragraph>
+          <div className={styles.iconWrapper}>
+            <FeedbackButton about="Tags" target="devWorkflows" label="Give feedback" />
+          </div>
+        </div>
         <TagsAutocomplete
           tags={filteredTags}
           isLoading={isLoading}

@@ -5,6 +5,7 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { useReadTags } from 'features/content-tags/core/hooks';
 import PropTypes from 'prop-types';
+import FeedbackButton from 'app/common/FeedbackButton';
 
 const styles = {
   search: css({
@@ -20,6 +21,16 @@ const styles = {
     paddingLeft: tokens.spacingL,
     marginLeft: 'auto',
     display: 'flex',
+  }),
+  feedback: css({
+    flexGrow: '',
+    display: 'flex',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: tokens.spacingXl,
+    marginLeft: tokens.spacing3Xl,
+    minWidth: '120px',
   }),
 };
 
@@ -47,6 +58,9 @@ function TagsWorkbenchActions({ hasData, onCreate }) {
             value={search}
           />
           <div className={styles.ctaWrapper}>
+            <div className={styles.feedback}>
+              <FeedbackButton about="Tags" target="devWorkflows" label="Give feedback" />
+            </div>
             <Button onClick={onCreate} buttonType="primary" testId="tags.add">
               Create Tag
             </Button>
