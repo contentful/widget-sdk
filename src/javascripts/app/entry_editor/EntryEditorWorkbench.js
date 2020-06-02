@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { css, cx } from 'emotion';
-import { Icon, Tab, TabPanel, Tabs, Workbench } from '@contentful/forma-36-react-components';
+import { Icon, Tab, TabPanel, Tabs, Tag, Workbench } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 import EntrySecondaryActions from 'app/entry_editor/EntryTitlebar/EntrySecondaryActions/EntrySecondaryActions';
@@ -56,6 +56,18 @@ const styles = {
   }),
   isVisible: css({
     display: 'block',
+  }),
+  promotionTag: css({
+    padding: '3px 5px',
+    fontSize: '10px',
+    lineHeight: '10px',
+    letterSpacing: '0.5px',
+    fontWeight: tokens.fontWeightMedium,
+    borderRadius: '3px',
+    backgroundColor: tokens.colorBlueDark,
+    marginLeft: tokens.spacingXs,
+    color: `${tokens.colorWhite} !important`,
+    textTransform: 'uppercase',
   }),
 };
 
@@ -257,6 +269,7 @@ const EntryEditorWorkbench = ({
                   onSelect={tabs[key].onClick}>
                   <Icon icon={tabs[key].icon} color="muted" className={styles.tabIcon} />
                   {tabs[key].title}
+                  {key === 'entryContentTags' && <Tag className={styles.promotionTag}>new</Tag>}
                 </Tab>
               ))}
           </Tabs>

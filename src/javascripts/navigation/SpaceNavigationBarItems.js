@@ -39,6 +39,7 @@ export function getSpaceNavigationItems({
       //rootSref: makeRef('settings.tags', isMasterEnvironment),
       dataViewType: 'spaces-settings-tags',
       title: 'Tags',
+      tagLabel: 'new',
     },
     settings: {
       if: canNavigateTo('settings'),
