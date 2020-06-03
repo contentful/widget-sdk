@@ -72,14 +72,15 @@ export const styles = {
     width: '100%',
     '> div:last-child': {
       borderTop: `1px solid ${tokens.colorElementLight}`,
+      paddingTop: tokens.spacingL,
     },
   }),
   noConfigSection: css({
-    maxWidth: '700px',
+    maxWidth: '768px',
     margin: '0 auto',
     padding: tokens.spacingXl,
   }),
   noConfigHelpText: css({
-    marginTop: tokens.spacingM,
+    marginTop: tokens.spacingL,
   }),
 };
