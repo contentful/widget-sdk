@@ -7,6 +7,7 @@ import {
   Spinner,
   Paragraph,
   Heading,
+  Subheading,
   SkeletonContainer,
   SkeletonBodyText,
   Workbench,
@@ -283,13 +284,13 @@ export default class AppRoute extends Component {
     );
   }
 
-  renderTitle() {
+  renderTitle(Component = Heading) {
     return (
-      <Heading className={styles.heading}>
+      <Component className={styles.heading}>
         <AppIcon icon={this.state.appIcon} />
         {this.state.title}
         {this.props.app.isPrivateApp && <Tag className={styles.tag}>Private</Tag>}
-      </Heading>
+      </Component>
     );
   }
 
@@ -401,7 +402,7 @@ export default class AppRoute extends Component {
     return (
       <div className={styles.noConfigContainer}>
         <div className={styles.noConfigSection}>
-          {this.renderTitle()}
+          {this.renderTitle(Subheading)}
           <HelpText className={styles.noConfigHelpText}>
             This app does not require additional configuration.
           </HelpText>
