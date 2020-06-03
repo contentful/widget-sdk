@@ -33,15 +33,16 @@ export default function SpacePlanSelector(props) {
   const highestPlan = getHighestPlan(spaceRatePlans);
 
   const atHighestPlan =
+    highestPlan &&
     highestPlan.unavailabilityReasons &&
     highestPlan.unavailabilityReasons.some(({ type }) => type === 'currentPlan');
-  const payingOrg = organization.isBillable;
+  const payingOrg = !!organization.isBillable;
 
   // TODO: add this logic when refactor the change space wizard
   // const recommendedPlan = isChangingInSpace && getRecommendedPlan(spaceRatePlans, resources)
 
   return (
-    <div className={styles.container}>
+    <div data-test-id="space-plan-selector" className={styles.container}>
       <Typography>
         {!payingOrg && (
           <BillingInfo canSetupBilling={isOwner(organization)} goToBilling={goToBillingPage} />
@@ -70,7 +71,7 @@ export default function SpacePlanSelector(props) {
 SpacePlanSelector.propTypes = {
   organization: PropTypes.object.isRequired,
   spaceRatePlans: PropTypes.array.isRequired,
-  freeSpacesResource: PropTypes.object.isRequired,
+  freeSpacesResource: PropTypes.object,
   onSelectPlan: PropTypes.func.isRequired,
   selectedPlan: PropTypes.object,
   goToBillingPage: PropTypes.func.isRequired,

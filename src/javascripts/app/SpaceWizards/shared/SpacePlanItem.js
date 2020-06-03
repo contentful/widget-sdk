@@ -132,16 +132,22 @@ export default function SpacePlanItem(props) {
   const freeSpacesUsage = freeSpacesResource && freeSpacesResource.usage;
   const freeSpacesLimit = freeSpacesResource && freeSpacesResource.limits.maximum;
 
+  // We should not show the chevron in the following cases:
+  // - the plan is disabled
+  // - the plan is not free, and the org is not paying
+  const showChevron = plan.disabled ? false : plan.isFree ? true : isPayingOrg ? true : false;
+
   return (
     <div
       key={plan.sys.id}
+      data-test-id="space-plan-item"
       className={cx(styles.planItem, styles.plans[camelCase(plan.name)], {
         [styles.selectedPlan]: isSelected,
         [styles.disabledPlan]: plan.disabled,
         [styles.currentPlan]: plan.current,
       })}
       onClick={() => !plan.disabled && onSelect(plan)}>
-      <div className={styles.planName}>
+      <div className={styles.planName} data-test-id="contents">
         <strong data-test-id="space-plan-name">{plan.name}</strong>
         {plan.price > 0 && (
           <>
@@ -165,9 +171,9 @@ export default function SpacePlanItem(props) {
 
       <PlanFeatures resources={plan.includedResources} roleSet={plan.roleSet} />
 
-      {(!isPayingOrg || !plan.disabled) && (
+      {showChevron && (
         <div className={styles.planChevron}>
-          <Icon icon="ChevronRight" color="muted" />
+          <Icon testId="plan-chevron" icon="ChevronRight" color="muted" />
         </div>
       )}
     </div>

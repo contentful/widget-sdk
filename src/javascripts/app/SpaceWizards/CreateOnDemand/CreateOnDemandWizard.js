@@ -1,6 +1,7 @@
 import React, { useCallback, useReducer } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
+import moment from 'moment';
 import SpaceDetails from './SpaceDetails';
 import ConfirmScreenNormal from './ConfirmScreenNormal';
 import SpacePlanSelector from '../shared/SpacePlanSelector';
@@ -27,6 +28,7 @@ import {
   FREE_SPACE_IDENTIFIER,
   transformSpaceRatePlans,
   goToBillingPage,
+  sendParnershipEmail,
 } from '../shared/utils';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
 import {
@@ -82,32 +84,53 @@ const submit = async ({
   selectedPlan,
   spaceName,
   selectedTemplate,
+  partnerDetails,
   onTemplateCreationStarted,
   onProcessing,
   onClose,
 }) => {
   onProcessing(true);
 
-  if (selectedTemplate) {
-    await createSpaceWithTemplate({
-      name: spaceName,
-      plan: selectedPlan,
-      template: selectedTemplate,
-      organizationId: organization.sys.id,
-      onTemplateCreationStarted,
-    });
+  let newSpaceId;
 
+  try {
+    if (selectedTemplate) {
+      const newSpace = await createSpaceWithTemplate({
+        name: spaceName,
+        plan: selectedPlan,
+        template: selectedTemplate,
+        organizationId: organization.sys.id,
+        onTemplateCreationStarted,
+      });
+
+      newSpaceId = newSpace.sys.id;
+
+      onProcessing(false);
+    } else {
+      const newSpace = await createSpace({
+        name: spaceName,
+        plan: selectedPlan,
+        organizationId: organization.sys.id,
+      });
+
+      newSpaceId = newSpace.sys.id;
+
+      Notification.success(`${spaceName} successfully created!`);
+
+      onClose();
+    }
+
+    if (partnerDetails.clientName !== '') {
+      // Ignore errors from this API call
+      try {
+        await sendParnershipEmail(newSpaceId, partnerDetails);
+      } catch {
+        //
+      }
+    }
+  } catch {
     onProcessing(false);
-  } else {
-    await createSpace({
-      name: spaceName,
-      plan: selectedPlan,
-      organizationId: organization.sys.id,
-    });
-
-    Notification.success(`${spaceName} successfully created!`);
-
-    onClose();
+    Notification.error('Your space couldn’t be created. Try again.');
   }
 };
 
@@ -149,7 +172,7 @@ export default function CreateOnDemandWizard(props) {
     partnerDetails: {
       clientName: '',
       projectDescription: '',
-      estimatedDeliveryDate: null,
+      estimatedDeliveryDate: moment().format('YYYY-MM-DD'),
     },
   });
 
@@ -171,6 +194,7 @@ export default function CreateOnDemandWizard(props) {
       selectedPlan,
       spaceName,
       selectedTemplate,
+      partnerDetails,
       onTemplateCreationStarted: () => dispatch({ type: 'SHOW_PROCESS_SCREEN', payload: true }),
       onProcessing,
       onClose,
@@ -196,6 +220,7 @@ export default function CreateOnDemandWizard(props) {
             <div className={styles.tabs}>
               <Tab
                 id="spacePlanSelector"
+                testId="space-plan-selector-tab"
                 selected={selectedTab === 'spacePlanSelector'}
                 onSelect={() =>
                   dispatch({ type: 'SET_SELECTED_TAB', payload: 'spacePlanSelector' })
@@ -204,6 +229,7 @@ export default function CreateOnDemandWizard(props) {
               </Tab>
               <Tab
                 id="spaceDetails"
+                testId="space-details-tab"
                 selected={selectedTab === 'spaceDetails'}
                 onSelect={() => dispatch({ type: 'SET_SELECTED_TAB', payload: 'spaceDetails' })}
                 disabled={!selectedPlan}>
@@ -211,6 +237,7 @@ export default function CreateOnDemandWizard(props) {
               </Tab>
               <Tab
                 id="confirmation"
+                testId="confirmation-tab"
                 selected={selectedTab === 'confirmation'}
                 onSelect={() => dispatch({ type: 'SET_SELECTED_TAB', payload: 'confirmation' })}
                 disabled={!spaceName}>
@@ -221,6 +248,7 @@ export default function CreateOnDemandWizard(props) {
               <IconButton
                 iconProps={{ icon: 'Close' }}
                 label="Close space wizard"
+                testId="close-icon"
                 buttonType="muted"
                 className={styles.closeButton}
                 onClick={onClose}

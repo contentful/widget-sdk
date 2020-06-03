@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import moment from 'moment';
-import Datepicker from '@contentful/forma-36-react-datepicker';
+import { Datepicker } from '@contentful/forma-36-react-datepicker';
 
 import {
   Paragraph,
@@ -40,13 +40,19 @@ export default function ConfirmScreenPartnerPlan(props) {
     onChangePartnerDetails,
   } = props;
 
+  const submitButtonDisabled =
+    creating ||
+    partnerDetails.clientName === '' ||
+    partnerDetails.projectDescription === '' ||
+    partnerDetails.estimatedDeliveryDate === '';
+
   return (
     <Typography>
       <Heading className={styles.center}>Confirm your selection</Heading>
       <Paragraph className={styles.center}>
         Make sure everything is in order before creating your space.
       </Paragraph>
-      <Paragraph>
+      <Paragraph testId="body">
         You’re about to create a space for the organization <em>{organization.name}</em>. The
         space’s name will be <em>{spaceName}</em>
         {selectedTemplate && ', and we will fill it with example content'}
@@ -61,6 +67,7 @@ export default function ConfirmScreenPartnerPlan(props) {
             labelText="Client name"
             name="clientName"
             id="clientName"
+            testId="client-name"
             value={partnerDetails.clientName}
             required
             onChange={(e) => onChangePartnerDetails('clientName', e.target.value)}
@@ -69,6 +76,7 @@ export default function ConfirmScreenPartnerPlan(props) {
             labelText="Short project description"
             name="description"
             id="description"
+            testId="description"
             value={partnerDetails.projectDescription}
             required
             onChange={(e) => onChangePartnerDetails('projectDescription', e.target.value)}
@@ -82,12 +90,17 @@ export default function ConfirmScreenPartnerPlan(props) {
             value={partnerDetails.estimatedDeliveryDate}
             dateFormat="YYYY-MM-DD"
             minDate={moment().toDate()}
-            data-test-id="date"
+            testId="estimated-delivery-date"
           />
         </Form>
       </fieldset>
       <div className={styles.confirmButton}>
-        <Button disabled={creating} loading={creating} onClick={onConfirm} buttonType="positive">
+        <Button
+          testId="confirm-button"
+          disabled={submitButtonDisabled}
+          loading={creating}
+          onClick={onConfirm}
+          buttonType="positive">
           Confirm and create space
         </Button>
       </div>

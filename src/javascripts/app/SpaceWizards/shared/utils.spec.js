@@ -6,15 +6,17 @@ import { createApiKeyRepo } from 'features/api-keys-management';
 import { go } from 'states/Navigator';
 import { getCreator } from 'services/SpaceTemplateCreator';
 import { getTemplate } from 'services/SpaceTemplateLoader';
+import { canCreate } from 'utils/ResourceUtils';
 
 import { $broadcast } from 'ng/$rootScope';
 import * as spaceContext from 'ng/spaceContext';
+import { createSpaceEndpoint, mockEndpoint } from 'data/EndpointFactory';
 
-import * as FakeFactory from 'test/helpers/fakeFactory';
+import * as Fake from 'test/helpers/fakeFactory';
 
-const mockSpace = FakeFactory.Space();
-const mockOrganization = FakeFactory.Organization();
-const mockPlan = FakeFactory.Plan();
+const mockSpace = Fake.Space();
+const mockOrganization = Fake.Organization({ isBillable: true });
+const mockPlan = Fake.Plan();
 
 jest.mock('utils/ResourceUtils', () => ({
   resourceHumanNameMap: {
@@ -462,6 +464,401 @@ describe('utils', () => {
       expect(tooltip).toBe(
         `This space type includes the Admin, Editor, and Translator roles and an additional 7 custom roles`
       );
+    });
+  });
+
+  describe('goToBillingPage', () => {
+    it('should navigate the user to the organization settings billing page', () => {
+      utils.goToBillingPage(mockOrganization);
+
+      expect(go).toBeCalledWith({
+        path: ['account', 'organizations', 'subscription_billing'],
+        params: { orgId: mockOrganization.sys.id, pathSuffix: '/billing_address' },
+        options: { reload: true },
+      });
+    });
+
+    it('should track the link_click event', () => {
+      utils.goToBillingPage(mockOrganization);
+
+      expect(Analytics.track).toBeCalledWith(
+        'space_wizard:link_click',
+        expect.objectContaining({
+          intendedAction: undefined,
+        })
+      );
+    });
+
+    it('should call onClose if provided', () => {
+      const onClose = jest.fn();
+
+      utils.goToBillingPage(mockOrganization, onClose);
+
+      expect(onClose).toBeCalled();
+    });
+  });
+
+  describe('transformSpaceRatePlans', () => {
+    const createProductRatePlanCharges = (
+      envLimit = 1,
+      rolesLimit = 2,
+      localesLimit = 3,
+      ctLimit = 4,
+      recordsLimit = 5
+    ) => {
+      return [
+        {
+          name: 'Environments',
+          tiers: [{ endingUnit: envLimit }],
+        },
+        {
+          name: 'Roles',
+          tiers: [{ endingUnit: rolesLimit }],
+        },
+        {
+          name: 'Locales',
+          tiers: [{ endingUnit: localesLimit }],
+        },
+        {
+          name: 'Content types',
+          tiers: [{ endingUnit: ctLimit }],
+        },
+        {
+          name: 'Records',
+          tiers: [{ endingUnit: recordsLimit }],
+        },
+      ];
+    };
+    it('should return an empty array if given no space rate plans', () => {
+      expect(utils.transformSpaceRatePlans({ organization: mockOrganization })).toEqual([]);
+    });
+
+    it('should mark the transformed plan with isFree is the productPlanType is free_space', () => {
+      const spaceRatePlans = [
+        Fake.Plan({
+          productPlanType: 'free_space',
+          productRatePlanCharges: createProductRatePlanCharges(),
+        }),
+      ];
+
+      expect(
+        utils.transformSpaceRatePlans({ organization: mockOrganization, spaceRatePlans })
+      ).toEqual([
+        expect.objectContaining({
+          isFree: true,
+        }),
+      ]);
+    });
+
+    it('should mark a plan as disabled if there are any unavailabilityReasons', () => {
+      const spaceRatePlans = [
+        Fake.Plan({
+          productRatePlanCharges: createProductRatePlanCharges(),
+          unavailabilityReasons: [{ type: 'something' }],
+        }),
+      ];
+
+      expect(
+        utils.transformSpaceRatePlans({ organization: mockOrganization, spaceRatePlans })
+      ).toEqual([
+        expect.objectContaining({
+          disabled: true,
+        }),
+      ]);
+    });
+
+    it('should mark a plan as disabled if the the plan is free and cannot create more free spaces', () => {
+      canCreate.mockReturnValue(false);
+
+      const spaceRatePlans = [
+        Fake.Plan({
+          productPlanType: 'free_space',
+          productRatePlanCharges: createProductRatePlanCharges(),
+        }),
+      ];
+
+      expect(
+        utils.transformSpaceRatePlans({ organization: mockOrganization, spaceRatePlans })
+      ).toEqual([
+        expect.objectContaining({
+          disabled: true,
+        }),
+      ]);
+    });
+
+    it('should mark a plan as disabled if the plan is not free and organization is not billable', () => {
+      // By default, above, isBillable is true
+      const organization = Fake.Organization({ isBillable: false });
+
+      const spaceRatePlans = [
+        Fake.Plan({
+          productPlanType: 'some_space_type',
+          productRatePlanCharges: createProductRatePlanCharges(),
+        }),
+      ];
+
+      expect(utils.transformSpaceRatePlans({ organization, spaceRatePlans })).toEqual([
+        expect.objectContaining({
+          disabled: true,
+        }),
+      ]);
+    });
+
+    it('should mark the plan as current if the plan has an unavailabilityReason with type as currentPlan', () => {
+      const spaceRatePlans = [
+        Fake.Plan({
+          productRatePlanCharges: createProductRatePlanCharges(),
+          unavailabilityReasons: [{ type: 'currentPlan' }],
+        }),
+      ];
+
+      expect(
+        utils.transformSpaceRatePlans({ organization: mockOrganization, spaceRatePlans })
+      ).toEqual([
+        expect.objectContaining({
+          current: true,
+        }),
+      ]);
+    });
+
+    it('should return expected transformed plans', () => {
+      canCreate.mockReturnValue(false);
+
+      const spaceRatePlans = [
+        Fake.Plan({
+          productPlanType: 'free_space',
+          productRatePlanCharges: createProductRatePlanCharges(),
+        }),
+        Fake.Plan({
+          productPlanType: 'space_type_1',
+          productRatePlanCharges: createProductRatePlanCharges(10, 20, 30, 40, 50),
+        }),
+        Fake.Plan({
+          productPlanType: 'space_type_2',
+          productRatePlanCharges: createProductRatePlanCharges(5, 10, 15, 20, 25),
+          unavailabilityReasons: [{ type: 'something' }],
+        }),
+        Fake.Plan({
+          productPlanType: 'space_type_3',
+          productRatePlanCharges: createProductRatePlanCharges(9, 8, 7, 6, 5),
+        }),
+        Fake.Plan({
+          productPlanType: 'space_type_4',
+          productRatePlanCharges: createProductRatePlanCharges(0, 0, 0, 0, 0),
+          unavailabilityReasons: [{ type: 'currentPlan' }],
+        }),
+      ];
+
+      expect(
+        utils.transformSpaceRatePlans({ organization: mockOrganization, spaceRatePlans })
+      ).toEqual([
+        {
+          isFree: true,
+          disabled: true,
+          current: false,
+          includedResources: [
+            {
+              type: 'Environments',
+              number: 2,
+            },
+            {
+              type: 'Roles',
+              number: 3,
+            },
+            {
+              type: 'Locales',
+              number: 3,
+            },
+            {
+              type: 'Content types',
+              number: 4,
+            },
+            {
+              type: 'Records',
+              number: 5,
+            },
+          ],
+          ...spaceRatePlans[0],
+        },
+        {
+          isFree: false,
+          disabled: false,
+          current: false,
+          includedResources: [
+            {
+              type: 'Environments',
+              number: 11,
+            },
+            {
+              type: 'Roles',
+              number: 21,
+            },
+            {
+              type: 'Locales',
+              number: 30,
+            },
+            {
+              type: 'Content types',
+              number: 40,
+            },
+            {
+              type: 'Records',
+              number: 50,
+            },
+          ],
+          ...spaceRatePlans[1],
+        },
+        {
+          isFree: false,
+          disabled: true,
+          current: false,
+          includedResources: [
+            {
+              type: 'Environments',
+              number: 6,
+            },
+            {
+              type: 'Roles',
+              number: 11,
+            },
+            {
+              type: 'Locales',
+              number: 15,
+            },
+            {
+              type: 'Content types',
+              number: 20,
+            },
+            {
+              type: 'Records',
+              number: 25,
+            },
+          ],
+          ...spaceRatePlans[2],
+        },
+        {
+          isFree: false,
+          disabled: false,
+          current: false,
+          includedResources: [
+            {
+              type: 'Environments',
+              number: 10,
+            },
+            {
+              type: 'Roles',
+              number: 9,
+            },
+            {
+              type: 'Locales',
+              number: 7,
+            },
+            {
+              type: 'Content types',
+              number: 6,
+            },
+            {
+              type: 'Records',
+              number: 5,
+            },
+          ],
+          ...spaceRatePlans[3],
+        },
+        {
+          isFree: false,
+          disabled: true,
+          current: true,
+          includedResources: [
+            {
+              type: 'Environments',
+              number: 1,
+            },
+            {
+              type: 'Roles',
+              number: 1,
+            },
+            {
+              type: 'Locales',
+              number: 0,
+            },
+            {
+              type: 'Content types',
+              number: 0,
+            },
+            {
+              type: 'Records',
+              number: 0,
+            },
+          ],
+          ...spaceRatePlans[4],
+        },
+      ]);
+    });
+  });
+
+  describe('getHighestPlan', () => {
+    it('should return the plan with the highest price', () => {
+      const plans = [
+        Fake.Plan({ price: 1 }),
+        Fake.Plan({ price: 5 }),
+        Fake.Plan({ price: 20 }),
+        Fake.Plan({ price: 2 }),
+        Fake.Plan({ price: 7 }),
+        Fake.Plan({ price: 8 }),
+      ];
+
+      expect(utils.getHighestPlan(plans)).toEqual(plans[2]);
+    });
+
+    it('should handle a plan with no price given', () => {
+      const plans = [
+        // There is no price by default in the fake plan
+        Fake.Plan(),
+
+        Fake.Plan({ price: 5 }),
+        Fake.Plan({ price: 20 }),
+        Fake.Plan({ price: 2 }),
+        Fake.Plan({ price: 7 }),
+        Fake.Plan({ price: 8 }),
+      ];
+
+      expect(utils.getHighestPlan(plans)).toEqual(plans[2]);
+    });
+  });
+
+  describe('sendParnershipEmail', () => {
+    it('should call the partner_projects endpoint with given spaceId and specific fields', () => {
+      utils.sendParnershipEmail(mockSpace.sys.id, {
+        clientName: 'Cyberdyne Systems',
+        projectDescription: 'Skynet',
+        estimatedDeliveryDate: '1997-08-04',
+        anotherField: 'this-should-be-ignored',
+      });
+
+      expect(createSpaceEndpoint).toBeCalledWith(mockSpace.sys.id);
+      expect(mockEndpoint).toBeCalledWith({
+        method: 'POST',
+        path: ['partner_projects'],
+        data: {
+          clientName: 'Cyberdyne Systems',
+          projectDescription: 'Skynet',
+          estimatedDeliveryDate: '1997-08-04',
+        },
+      });
+    });
+
+    it('should handle missing field data', () => {
+      utils.sendParnershipEmail(mockSpace.sys.id);
+
+      expect(mockEndpoint).toBeCalledWith({
+        method: 'POST',
+        path: ['partner_projects'],
+        data: {
+          clientName: '',
+          projectDescription: '',
+          estimatedDeliveryDate: '',
+        },
+      });
     });
   });
 });

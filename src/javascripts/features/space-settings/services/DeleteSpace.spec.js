@@ -5,9 +5,9 @@ import { ModalLauncher } from 'core/components/ModalLauncher';
 import { isEnterprisePlan, isFreeSpacePlan } from 'account/pricing/PricingDataProvider';
 import { open as openChangeSpaceWarningModal } from 'app/SpaceWizards/ChangeSpaceWarning';
 import * as TokenStore from 'services/TokenStore';
-import { Notification } from '@contentful/forma-36-react-components';
 import APIClient from 'data/APIClient';
 import ReloadNotification from 'app/common/ReloadNotification';
+import cleanupNotifications from 'test/helpers/cleanupNotifications';
 
 jest.mock('services/TokenStore');
 
@@ -36,17 +36,6 @@ jest.mock('app/common/ReloadNotification', () => ({
 }));
 
 jest.useFakeTimers();
-
-const cleanupNotifications = () => {
-  if (!global.setTimeout.mock) {
-    throw new Error(
-      'Call `jest.useFakeTimers()` in the spec file before calling `cleanupNotifications`'
-    );
-  }
-
-  Notification.closeAll();
-  jest.runOnlyPendingTimers();
-};
 
 describe('DeleteSpace service', () => {
   const space = { name: 'DeepSpace', sys: { id: '_id' } };

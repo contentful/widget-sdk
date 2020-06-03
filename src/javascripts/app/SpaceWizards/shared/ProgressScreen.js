@@ -63,9 +63,9 @@ export default function ProgressScreen(props) {
     <Typography>
       <div className={styles.center}>
         <div className={styles.loadingIndicator}>
-          {!done && <Spinner testId="create-space-progress" size="large" />}
+          {!done && <Spinner testId="create-template-progress" size="large" />}
           {done && (
-            <div className={styles.checkmarkIcon} data-test-id="create-space-done">
+            <div className={styles.checkmarkIcon} data-test-id="create-template-done">
               <CheckmarkIcon />
             </div>
           )}

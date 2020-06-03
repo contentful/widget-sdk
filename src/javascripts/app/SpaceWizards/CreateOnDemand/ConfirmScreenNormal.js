@@ -27,12 +27,12 @@ export default function ConfirmScreenNormal(props) {
   } = props;
 
   return (
-    <Typography>
+    <Typography testId="confirmation-contents">
       <Heading className={styles.center}>Confirm your selection</Heading>
       <Paragraph className={styles.center}>
         Make sure everything is in order before creating your space.
       </Paragraph>
-      <Paragraph>
+      <Paragraph testId="body-copy">
         {selectedPlan.price > 0 && (
           <>
             You are about to purchase a {selectedPlan.name.toLowerCase()} space for{' '}
@@ -64,7 +64,12 @@ export default function ConfirmScreenNormal(props) {
         </>
       </Paragraph>
       <div className={styles.confirmButton}>
-        <Button disabled={creating} loading={creating} onClick={onConfirm} buttonType="positive">
+        <Button
+          testId="confirm-button"
+          disabled={creating}
+          loading={creating}
+          onClick={onConfirm}
+          buttonType="positive">
           Confirm and create space
         </Button>
       </div>

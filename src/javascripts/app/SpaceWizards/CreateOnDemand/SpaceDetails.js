@@ -39,7 +39,7 @@ export default function SpaceDetails(props) {
   } = props;
 
   return (
-    <Typography>
+    <Typography testId="space-details">
       <Heading className={classes.center}>Choose a name</Heading>
       <Paragraph className={classes.center}>
         You are about to create a {selectedPlan.name.toLowerCase()} space for{' '}
@@ -55,6 +55,7 @@ export default function SpaceDetails(props) {
             placeholder="Space name"
             name="name"
             id="name"
+            testId="space-name"
             required
             autoFocus
             value={spaceName}
@@ -68,7 +69,7 @@ export default function SpaceDetails(props) {
         selectedTemplate={selectedTemplate}
       />
       <div className={classes.confirmButton}>
-        <Button disabled={spaceName === ''} onClick={onSubmit}>
+        <Button testId="go-to-confirmation-button" disabled={spaceName === ''} onClick={onSubmit}>
           Proceed to confirmation
         </Button>
       </div>

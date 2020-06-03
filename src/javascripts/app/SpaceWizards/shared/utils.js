@@ -114,7 +114,7 @@ export function goToBillingPage(organization, onClose) {
   onClose && onClose(false);
 }
 
-export function transformSpaceRatePlans({ organization, spaceRatePlans, freeSpaceResource }) {
+export function transformSpaceRatePlans({ organization, spaceRatePlans = [], freeSpaceResource }) {
   return spaceRatePlans.map((plan) => {
     const isFree = plan.productPlanType === 'free_space';
     const includedResources = getIncludedResources(plan.productRatePlanCharges);
@@ -140,7 +140,7 @@ export function transformSpaceRatePlans({ organization, spaceRatePlans, freeSpac
   });
 }
 
-export function trackWizardEvent(eventName, payload) {
+export function trackWizardEvent(eventName, payload = {}) {
   const trackingData = createTrackingData(payload);
 
   Analytics.track(`space_wizard:${eventName}`, trackingData);
@@ -205,7 +205,12 @@ export function getIncludedResources(charges) {
 }
 
 export function getHighestPlan(spaceRatePlans) {
-  return [...spaceRatePlans].sort((planX, planY) => planY.price - planX.price)[0];
+  return [...spaceRatePlans].sort(
+    // Handle the case where price isn't in the plan object, and default it to neg. infinity so that it will always
+    // be sorted to the end
+    ({ price: planXPrice = -Infinity }, { price: planYPrice = -Infinity }) =>
+      planYPrice - planXPrice
+  )[0];
 }
 
 export function getTooltip(type, number) {
@@ -247,6 +252,20 @@ export function getRolesTooltip(limit, roleSet) {
     // e.g. [...] Admin, Editor, and Translator roles
     return `${intro} ${rolesString} ${pluralized}`;
   }
+}
+
+export async function sendParnershipEmail(spaceId, fields) {
+  const endpoint = createSpaceEndpoint(spaceId);
+
+  await endpoint({
+    method: 'POST',
+    path: ['partner_projects'],
+    data: {
+      clientName: get(fields, 'clientName', ''),
+      projectDescription: get(fields, 'projectDescription', ''),
+      estimatedDeliveryDate: get(fields, 'estimatedDeliveryDate', ''),
+    },
+  });
 }
 
 async function createTemplate(templateInfo) {

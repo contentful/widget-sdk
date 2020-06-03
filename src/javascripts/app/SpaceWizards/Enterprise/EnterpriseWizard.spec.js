@@ -326,12 +326,12 @@ describe('Enterprise Wizard', () => {
 
     await wait();
 
-    expect(screen.queryByTestId('create-space-progress')).toBeNull();
+    expect(screen.queryByTestId('create-template-progress')).toBeNull();
 
     spaceCreationCompleted();
     await wait();
 
-    expect(screen.queryByTestId('create-space-progress')).toBeVisible();
+    expect(screen.queryByTestId('create-template-progress')).toBeVisible();
 
     templateCreationCompleted();
     await wait();

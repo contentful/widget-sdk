@@ -6,7 +6,7 @@ import ContactUsButton from 'ui/Components/ContactUsButton';
 
 export default function NoMorePlans({ canSetupBilling }) {
   return (
-    <Note>
+    <Note testId="no-more-plans-note">
       <span>You’re using the largest space available.</span>
       {canSetupBilling && (
         <span>

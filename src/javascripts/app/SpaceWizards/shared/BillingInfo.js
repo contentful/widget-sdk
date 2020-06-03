@@ -7,15 +7,17 @@ export default function BillingInfo(props) {
   const { canSetupBilling, goToBilling } = props;
 
   return (
-    <Note>
+    <Note testId="billing-info-note">
       {canSetupBilling && (
         <Paragraph>
-          <TextLink onClick={goToBilling}>Add payment details</TextLink> for the organization before
-          creating a paid space.
+          <TextLink testId="go-to-billing-link" onClick={goToBilling}>
+            Add payment details
+          </TextLink>{' '}
+          for the organization before creating a paid space.
         </Paragraph>
       )}
       {!canSetupBilling && (
-        <Paragraph>
+        <Paragraph testId="payment-details-missing">
           The owner of this organization needs to add payment details before you can create a paid
           space.
         </Paragraph>
