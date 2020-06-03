@@ -13,7 +13,7 @@ import {
 } from 'widgets/WidgetNamespaces';
 
 import PublicationWidgetContainer from './PublicationWidget/PublicationWidgetContainer';
-import ReleasesWidgetContainer from './ReleasesWidget/ReleasesWidgetContainer';
+import ReleasesWidgetContainer from '../Releases/ReleasesWidget/ReleasesWidgetContainer';
 
 import TasksWidgetContainer from './TasksWidget/TasksWidgetContainer';
 import ContentPreviewWidget from './ContentPreviewWidget/ContentPreviewWidget';

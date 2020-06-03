@@ -29,6 +29,11 @@ async function getReleases(query) {
   return await apiClient.getReleases(query);
 }
 
+async function deleteRelease(id) {
+  const apiClient = new APIClient(createEndpoint());
+  return await apiClient.deleteRelease(id);
+}
+
 function getReleasesIncludingEntity(entityId, entityType) {
   return getReleases({
     'entities.sys.linkType': entityType,
@@ -43,4 +48,10 @@ function getReleasesExcludingEntity(entityId, entityType) {
   });
 }
 
-export { createRelease, getReleases, getReleasesIncludingEntity, getReleasesExcludingEntity };
+export {
+  createRelease,
+  getReleases,
+  getReleasesIncludingEntity,
+  getReleasesExcludingEntity,
+  deleteRelease,
+};

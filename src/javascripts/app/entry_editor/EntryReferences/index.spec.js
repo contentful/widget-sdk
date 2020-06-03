@@ -15,10 +15,7 @@ import {
   getEntityTitle,
 } from './referencesService';
 
-import {
-  getReleases,
-  getReleasesExcludingEntity,
-} from '../../EntrySidebar/ReleasesWidget/releasesService';
+import { getReleases, getReleasesExcludingEntity } from '../../Releases/releasesService';
 
 import { getCurrentVariation } from 'utils/LaunchDarkly';
 
@@ -32,7 +29,7 @@ import {
   simpleReferences,
 } from './__fixtures__';
 
-import { releases } from '../../EntrySidebar/ReleasesWidget/__fixtures__';
+import { releases } from '../../Releases/__fixtures__';
 
 jest.mock('access_control/EntityPermissions', () => ({
   create: () => ({
@@ -50,7 +47,7 @@ jest.mock('./referencesService', function () {
   };
 });
 
-jest.mock('../../EntrySidebar/ReleasesWidget/releasesService', function () {
+jest.mock('../../Releases/releasesService', function () {
   return {
     getReleasesExcludingEntity: jest.fn(),
     getReleases: jest.fn(),

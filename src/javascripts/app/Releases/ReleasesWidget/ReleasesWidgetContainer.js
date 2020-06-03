@@ -1,14 +1,14 @@
 import React, { Component, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import SidebarEventTypes from '../SidebarEventTypes';
-import SidebarWidgetTypes from '../SidebarWidgetTypes';
+import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes';
+import SidebarWidgetTypes from 'app/EntrySidebar/SidebarWidgetTypes';
+import EntrySidebarWidget from 'app/EntrySidebar/EntrySidebarWidget';
 import ReleasesTimeline from './ReleasesTimeline';
-import EntrySidebarWidget from '../EntrySidebarWidget';
 import * as LD from 'utils/LaunchDarkly';
 import { ADD_TO_RELEASE } from 'featureFlags';
-import { getReleasesIncludingEntity } from './releasesService';
+import { getReleasesIncludingEntity } from '../releasesService';
 import { ReleasesProvider, ReleasesContext } from './ReleasesContext';
-import { SET_RELEASES_INCLUDING_ENTRY } from './state/actions';
+import { SET_RELEASES_INCLUDING_ENTRY } from '../state/actions';
 
 const ReleasesWidget = ({ entityInfo }) => {
   const { state, dispatch } = useContext(ReleasesContext);

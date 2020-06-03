@@ -14,4 +14,5 @@ export enum FeatureFlag {
   ACCESS_TOOLS = 'feature-ogg-02-2020-access-tools',
   RELEASES = 'feature-pulitzer-02-2020-all-reference-dialog',
   SHAREJS_REMOVAL = 'feature-pen-04-2020-sharejs-removal-multi',
+  ADD_TO_RELEASE = 'feature-pulitzer-05-2020-add-to-release',
 }

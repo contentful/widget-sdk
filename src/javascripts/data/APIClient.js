@@ -282,6 +282,18 @@ APIClient.prototype.createRelease = function (title, items = []) {
   );
 };
 
+APIClient.prototype.deleteRelease = function (id) {
+  return this._request(
+    {
+      method: 'DELETE',
+      path: ['releases', id],
+    },
+    {
+      ...getAlphaHeader(IMMEDIATE_RELEASE),
+    }
+  );
+};
+
 APIClient.prototype.validateRelease = function (action, entities, type = 'immediate') {
   return this._request(
     {

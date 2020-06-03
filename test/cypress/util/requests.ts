@@ -23,6 +23,7 @@ export const defaultHeader = {
 export const defaultUserId = '1AMbGlddLG0ISEoa1I423p';
 export const defaultJobId = 'jobID';
 export const defaultWebhookId = 'webhookId';
+export const defaultReleaseId = 'releaseId';
 
 export function getEntries(spaceId: string = defaultSpaceId, query?: Query): RequestOptions {
   return {

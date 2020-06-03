@@ -12,7 +12,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { getEntityTitle } from 'app/entry_editor/EntryReferences/referencesService';
 
-import ReleasesDialog from '../ReleasesWidget/ReleasesDialog';
+import ReleasesDialog from 'app/Releases/ReleasesWidget/ReleasesDialog';
 export default class PublicationWidgetContainer extends Component {
   static propTypes = {
     emitter: PropTypes.object.isRequired,

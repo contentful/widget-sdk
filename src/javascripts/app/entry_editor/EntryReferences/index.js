@@ -37,7 +37,7 @@ import {
   createCountMessage,
   createAddToReleaseDialogContent,
 } from './utils';
-import ReleasesDialog from 'app/EntrySidebar/ReleasesWidget/ReleasesDialog';
+import ReleasesDialog from 'app/Releases/ReleasesWidget/ReleasesDialog';
 import * as LD from 'utils/LaunchDarkly';
 import { ADD_TO_RELEASE } from 'featureFlags';
 

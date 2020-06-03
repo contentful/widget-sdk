@@ -1,143 +1,86 @@
+import { getReleasesList, deleteRelease } from '../../../interactions/releases';
 import { defaultRequestsMock } from '../../../util/factories';
-import { queryFirst100UsersInDefaultSpace } from '../../../interactions/users';
-import {
-  getAllPublicContentTypesInDefaultSpace,
-  getEditorInterfaceForDefaultContentType,
-} from '../../../interactions/content_types';
-import {
-  getDefaultEntry,
-  validateEntryReferencesResponse,
-  publishEntryReferencesResponse,
-  queryLinksToDefaultEntry,
-  getFirst7SnapshotsOfDefaultEntry,
-  getEntryReferences,
-} from '../../../interactions/entries';
-import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
+import { defaultSpaceId } from '../../../util/requests';
 import { FeatureFlag } from '../../../util/featureFlag';
-import {
-  queryForTasksInDefaultSpace,
-  queryForBasicAppsInDefaultSpace,
-  queryForScheduledPublishingOnEntryPage,
-  queryForContentTagsInDefaultSpace,
-} from '../../../interactions/product_catalog_features';
+import { severalReleases } from '../../../fixtures/responses/releases';
 
-describe('Immediate release', () => {
+describe('Releases', () => {
   let interactions: string[];
+  let getReleasesInteraction;
 
   beforeEach(() => {
-    cy.enableFeatureFlags([FeatureFlag.RELEASES]);
+    cy.enableFeatureFlags([FeatureFlag.ADD_TO_RELEASE]);
     interactions = basicServerSetUp();
   });
 
-  describe('Validation', () => {
-    beforeEach(() => {
-      cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
-      cy.wait(interactions, { timeout: 20000 });
+  describe('Releases page', () => {
+    afterEach(() => {
       cy.resetAllFakeServers();
     });
 
-    it('validates release without errors', () => {
-      const getEntryReferencesInteraction = getEntryReferences.willReturnSeveral();
-      const validateEntryTreeInteraction = validateEntryReferencesResponse.willReturnNoErrors();
+    context('no releases', () => {
+      beforeEach(() => {
+        getReleasesInteraction = getReleasesList.willReturnNone();
 
-      cy.findByTestId('test-id-entryReferences').click();
-      cy.wait(getEntryReferencesInteraction);
+        cy.visit(`/spaces/${defaultSpaceId}/releases`);
+        cy.wait(interactions, { timeout: 20000 });
+      });
 
-      cy.findByTestId('referencesActionDropdown').click();
-      cy.findByTestId('validateReferencesBtn').click();
-      cy.wait(validateEntryTreeInteraction);
+      it('opens releases page successfully', () => {
+        cy.wait(getReleasesInteraction);
 
-      cy.findByTestId('cf-ui-notification')
-        .click({ timeout: 5000 }) // official cypress workaround for animation
-        .should('be.visible')
-        .should('contain', 'All references passed validation');
+        cy.findByTestId('releases-state-message-heading')
+          .should('be.visible')
+          .should('contain', 'No upcoming releases at the moment');
+      });
     });
 
-    it('validates release with errors', () => {
-      const getEntryReferencesInteraction = getEntryReferences.willReturnSeveral();
-      const validateEntryTreeInteraction = validateEntryReferencesResponse.willReturnErrors();
+    context('several releases', () => {
+      beforeEach(() => {
+        getReleasesInteraction = getReleasesList.willReturnSeveral();
 
-      cy.findByTestId('test-id-entryReferences').click();
-      cy.wait(getEntryReferencesInteraction);
+        cy.visit(`/spaces/${defaultSpaceId}/releases`);
+        cy.wait(interactions, { timeout: 20000 });
+      });
 
-      cy.findByTestId('referencesActionDropdown').click();
-      cy.findByTestId('validateReferencesBtn').click();
-      cy.wait(validateEntryTreeInteraction);
+      it('opens releases page successfully', () => {
+        cy.wait(getReleasesInteraction);
 
-      cy.findByTestId('cf-ui-notification')
-        .click({ timeout: 5000 })
-        .should('be.visible')
-        .should('contain', 'Some references did not pass validation');
-    });
-  });
+        cy.findAllByTestId('release-card')
+          .should('exist')
+          .should('have.length', severalReleases().items.length);
+      });
 
-  describe('Publication', () => {
-    beforeEach(() => {
-      cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
-      cy.wait(interactions, { timeout: 20000 });
-      cy.resetAllFakeServers();
-    });
+      it('removes releases successfully', () => {
+        const deleteReleaseInteraction = deleteRelease.willSucceed();
 
-    it('publishes release successfully', () => {
-      const getEntryReferencesInteraction = getEntryReferences.willReturnSeveral();
-      const publishEntryTreeInteraction = publishEntryReferencesResponse.willReturnNoErrors();
+        cy.wait(getReleasesInteraction);
 
-      cy.findByTestId('test-id-entryReferences').click();
-      cy.wait(getEntryReferencesInteraction);
+        cy.get("[data-test-id='release-card']")
+          .eq(0)
+          .find("[data-test-id='remove-release-ddl']")
+          .click();
 
-      cy.findByTestId('referencesActionDropdown').click();
-      cy.findByTestId('publishReferencesBtn').click();
-      cy.wait(publishEntryTreeInteraction);
-      cy.wait(getEntryReferencesInteraction);
+        cy.findByTestId('release-card-delete-cta').click();
 
-      cy.findByTestId('cf-ui-notification')
-        .click({ timeout: 5000 })
-        .should('be.visible')
-        .should('contain', 'Untitled and 2 references were published successfully');
-    });
+        cy.wait(deleteReleaseInteraction);
+        cy.wait(getReleasesInteraction);
 
-    it('publishes release returns validation errors', () => {
-      const getEntryReferencesInteraction = getEntryReferences.willReturnSeveral();
-      const publishEntryTreeInteraction = publishEntryReferencesResponse.willReturnErrors();
-
-      cy.findByTestId('test-id-entryReferences').click();
-      cy.wait(getEntryReferencesInteraction);
-
-      cy.findByTestId('referencesActionDropdown').click();
-      cy.findByTestId('publishReferencesBtn').click();
-      cy.wait(publishEntryTreeInteraction);
-
-      cy.findByTestId('cf-ui-notification')
-        .click({ timeout: 5000 })
-        .should('be.visible')
-        .should('contain', 'Some references did not pass validation');
-    });
-
-    it('publishes release fails', () => {
-      const getEntryReferencesInteraction = getEntryReferences.willReturnSeveral();
-      const publishEntryTreeInteraction = publishEntryReferencesResponse.willFail();
-
-      cy.findByTestId('test-id-entryReferences').click();
-      cy.wait(getEntryReferencesInteraction);
-
-      cy.findByTestId('referencesActionDropdown').click();
-      cy.findByTestId('publishReferencesBtn').click();
-      cy.wait(publishEntryTreeInteraction);
-
-      cy.findByTestId('cf-ui-notification')
-        .click({ timeout: 5000 })
-        .should('be.visible')
-        .should('contain', 'We were unable to publish Untitled and 2 references');
+        cy.findAllByTestId('cf-ui-notification').should(
+          'contain',
+          'First release was sucessfully deleted'
+        );
+      });
     });
   });
 });
 
 function basicServerSetUp(): string[] {
   cy.resetAllFakeServers();
-  // TODO: move this to a before block
+
   cy.startFakeServers({
     consumer: 'user_interface',
-    providers: ['jobs', 'entries', 'users', 'product_catalog_features', 'releases'],
+    providers: ['users', 'releases'],
     cors: true,
     pactfileWriteMode: 'merge',
     dir: Cypress.env('pactDir'),
@@ -145,20 +88,6 @@ function basicServerSetUp(): string[] {
   });
 
   cy.server();
-  cy.route('**/channel/**', []).as('shareJS');
 
-  return [
-    ...defaultRequestsMock({
-      publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne,
-    }),
-    queryFirst100UsersInDefaultSpace.willFindSeveral(),
-    getDefaultEntry.willReturnIt(),
-    queryLinksToDefaultEntry.willReturnNone(),
-    getFirst7SnapshotsOfDefaultEntry.willReturnNone(),
-    getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
-    queryForTasksInDefaultSpace.willFindFeatureEnabled(),
-    queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
-    queryForScheduledPublishingOnEntryPage.willFindFeatureEnabled(),
-    queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
-  ];
+  return defaultRequestsMock();
 }

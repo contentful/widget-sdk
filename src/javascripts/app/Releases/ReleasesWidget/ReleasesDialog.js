@@ -22,9 +22,9 @@ import {
   createRelease,
   getReleasesExcludingEntity,
   getReleasesIncludingEntity,
-} from './releasesService';
+} from '../releasesService';
 import { ReleasesProvider, ReleasesContext } from './ReleasesContext';
-import { SET_RELEASES_INCLUDING_ENTRY } from './state/actions';
+import { SET_RELEASES_INCLUDING_ENTRY } from '../state/actions';
 
 const styles = {
   noMarginBottom: css({

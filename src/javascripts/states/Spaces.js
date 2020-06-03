@@ -18,6 +18,7 @@ import scheduledActions from 'app/ScheduledActions/routes';
 import tasks from 'app/TasksPage/routes';
 import pageExtensions from 'app/pageExtensions/routes';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
+import releasesActions from 'app/Releases/routes';
 
 import createSpaceAdviceTemplate from 'components/app_container/cf_create_space_advice.html';
 import SpaceHibernationAdvice from 'components/app_container/SpaceHibernationAdvice';
@@ -90,6 +91,7 @@ const spaceEnvironment = {
     scheduledActions,
     tasks,
     pageExtensions,
+    releasesActions,
   ],
 };
 
@@ -145,6 +147,7 @@ const spaceDetail = {
     scheduledActions,
     tasks,
     pageExtensions,
+    releasesActions,
   ],
 };
 
