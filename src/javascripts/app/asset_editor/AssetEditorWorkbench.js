@@ -1,13 +1,32 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 // import { css, cx } from 'emotion';
-import { Workbench } from '@contentful/forma-36-react-components';
+import { Workbench, Button } from '@contentful/forma-36-react-components';
 // import tokens from '@contentful/forma-36-tokens';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 import WorkbenchTitle from 'components/shared/WorkbenchTitle';
+import StatusNotification from 'app/entity_editor/StatusNotification';
+import ContentTagsField from 'app/asset_editor/ContentTagsField';
 import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
+import EntrySidebar from 'app/EntrySidebar/EntrySidebar';
+import AngularComponent from 'ui/Framework/AngularComponent';
 
-const AssetEditorWorkbench = ({ title, localeData, entityInfo }) => {
+const AssetEditorWorkbench = ({
+  title,
+  localeData,
+  entityInfo,
+  state,
+  statusNotificationProps,
+  tagProps,
+  entrySidebarProps,
+  fields,
+  widgets,
+  editorContext,
+  getOtDoc,
+  getEditorData,
+}) => {
+  const otDoc = getOtDoc();
+  const editorData = getEditorData();
   return (
     <div className="asset-editor">
       <Workbench>
@@ -26,49 +45,51 @@ const AssetEditorWorkbench = ({ title, localeData, entityInfo }) => {
           actions={
             <>
               <div id={`editor-status-switch-${entityInfo.id}`} />
-              {/* <EntrySecondaryActions
-                entityInfo={entityInfo}
-                entryActions={entryActions}
-                onDelete={state.delete}
-              /> */}
+              <Button onClick={() => state.delete} buttonType="muted">
+                Delete
+              </Button>
             </>
-          }></Workbench.Header>
-      </Workbench>
-      {/* <header class="workbench-header">
-        <react-component name="app/entity_editor/Components/BackNav"></react-component>
-        <cf-icon class="workbench-header__icon" name="page-media" scale="1"></cf-icon>
-        <react-component
-          name="components/shared/WorkbenchTitle"
-          props="{title, localeName: localeData.focusedLocale.name, isSingleLocaleModeOn: localeData.isSingleLocaleModeOn, contentTypeName: 'Asset', entityInfo }"></react-component>
-        <div class="workbench-header__actions">
-          <div id="editor-status-switch-{{entityInfo.id}}"></div>
-          <button
-            class="btn-secondary-action"
-            data-test-id="trigger-delete-modal"
-            ui-command="state.delete">
-            Delete
-          </button>
-        </div>
-      </header>
-      <div class="workbench-main">
-        <div class="workbench-main__content">
-          <react-component
-            name="app/entity_editor/StatusNotification"
-            props="statusNotificationProps"></react-component>
-          <div class="entity-editor-form cf-workbench-content cf-workbench-content-type__text">
-            <cf-error-list class="form-box-error" cf-error-path="['fields']"></cf-error-list>
-            <cf-entity-field ng-repeat="widget in widgets track by widget.fieldId"></cf-entity-field>
-            <react-component
-              name="app/asset_editor/ContentTagsField"
-              props="tagProps"></react-component>
+          }
+        />
+        <Workbench.Content>
+          <StatusNotification {...statusNotificationProps} />
+          <div className="entity-editor-form">
+            <AngularComponent
+              template={`<cf-error-list class="form-box-error" cf-error-path="['fields']"></cf-error-list>`}
+              scope={{
+                widgets,
+                localeData,
+                editorContext,
+                fields,
+                entityInfo,
+                otDoc,
+                editorData,
+              }}
+            />
+
+            <AngularComponent
+              template={`<cf-entity-field ng-repeat="widget in widgets track by widget.fieldId"></cf-entity-field>`}
+              scope={{
+                widgets,
+                localeData,
+                editorContext,
+                fields,
+                entityInfo,
+                otDoc,
+                editorData: getEditorData(),
+              }}
+            />
+
+            <ContentTagsField {...tagProps} />
           </div>
-        </div>
-        <div class="workbench-main__sidebar">
-          <react-component
-            name="app/EntrySidebar/EntrySidebar"
-            props="{entrySidebarProps, sidebarToggleProps: { commentsToggle: {isEnabled: false }}}"></react-component>
-        </div>
-      </div> */}
+        </Workbench.Content>
+        <Workbench.Sidebar>
+          <EntrySidebar
+            entrySidebarProps={entrySidebarProps}
+            sidebarToggleProps={{ commentsToggle: { isEnabled: false } }}
+          />
+        </Workbench.Sidebar>
+      </Workbench>
     </div>
   );
 };
@@ -85,6 +106,19 @@ AssetEditorWorkbench.propTypes = {
     id: PropTypes.string,
     type: PropTypes.string,
   }),
+  state: PropTypes.shape({
+    delete: PropTypes.object,
+  }),
+  statusNotificationProps: PropTypes.object,
+  tagProps: PropTypes.any,
+  entrySidebarProps: PropTypes.object,
+  fields: PropTypes.object,
+  widgets: PropTypes.object,
+  getOtDoc: PropTypes.func,
+  editorContext: PropTypes.shape({
+    entityInfo: PropTypes.object,
+  }),
+  getEditorData: PropTypes.func,
 };
 
 export default AssetEditorWorkbench;
