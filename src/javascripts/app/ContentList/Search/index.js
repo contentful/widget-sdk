@@ -65,12 +65,14 @@ export default function create({
     const unsubscribeFromSearchStore = K.onValueScope($scope, store.state$, async (state) => {
       // TODO remove workaround when search ui state is refactored to local
       uiState = pick(state, ['searchBoxHasFocus', 'isSuggestionOpen', 'focus']);
-      $scope.search = (
+      $scope.search = withMetadata ? (
         <TagsRepoProvider>
           <ReadTagsProvider>
             {renderSearch(mapStateToProps({ ...state, withMetadata }, actions))}
           </ReadTagsProvider>
         </TagsRepoProvider>
+      ) : (
+        renderSearch(mapStateToProps({ ...state, withMetadata }, actions))
       );
     });
 
