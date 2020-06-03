@@ -416,10 +416,10 @@ export default class AppRoute extends Component {
                 href="https://www.contentful.com/developers/docs/extensibility/app-framework/locations/"
                 rel="noopener noreferrer"
                 target="_blank"
-                icon="ExternalLink">
+                icon="ExternalLink"
+                iconPosition="right">
                 app locations
               </TextLink>
-              .
             </Paragraph>
           </div>
         )}
