@@ -47,7 +47,6 @@ describe('app/EntrySidebar/PublicationWidget', () => {
   const TEST_IDS = {
     dateText: 'last-saved',
     publishedStatus: 'entity-state',
-    revertButton: 'discard-changed-button',
     primaryActionRestrictionNote: 'action-restriction-note',
     secondaryActionsDropdown: 'change-state-menu-trigger',
     restrictedActionIcon: 'action-restriction-icon',
@@ -92,7 +91,6 @@ describe('app/EntrySidebar/PublicationWidget', () => {
     itRendersStatus(props, {
       expectedText: 'Draft',
     });
-    itCanRenderRevert(props);
     itRendersPrimaryActions(props);
     itCanRenderSecondaryActions(props);
   });
@@ -105,7 +103,6 @@ describe('app/EntrySidebar/PublicationWidget', () => {
     itRendersStatus(props, {
       expectedText: 'Changed',
     });
-    itCanRenderRevert(props);
     itRendersPrimaryActions(props);
     itCanRenderSecondaryActions(props);
   });
@@ -118,7 +115,6 @@ describe('app/EntrySidebar/PublicationWidget', () => {
     itRendersStatus(props, {
       expectedText: 'Archived',
     });
-    itCanRenderRevert(props);
     itRendersPrimaryActions(props);
     itCanRenderSecondaryActions(props);
   });
@@ -131,7 +127,6 @@ describe('app/EntrySidebar/PublicationWidget', () => {
     itRendersStatus(props, {
       expectedText: 'Published',
     });
-    itCanRenderRevert(props);
     itCanRenderSecondaryActions(props);
 
     // TODO: Instead of all this status depending logic, we should probably just
@@ -171,30 +166,6 @@ describe('app/EntrySidebar/PublicationWidget', () => {
       const { wrapper, props: allProps } = render(props);
       expect(select.publishedStatus(wrapper)).toHaveTextContent(expectedText);
       expect(select.publishedStatus(wrapper)).toHaveAttribute('data-state', allProps.status);
-    });
-  }
-
-  function itCanRenderRevert(props) {
-    it('does not render revert action if "revert" prop is not defined', () => {
-      const { wrapper } = render(props);
-      expect(select.revertButton(wrapper)).not.toBeInTheDocument();
-    });
-
-    it('renders revert action if "revert" prop is defined', () => {
-      const revertCommand = createCommand({
-        label: 'Reeeeevert!!!', // This is ignored as shown in the label assertion.
-        isAvailable: () => true,
-      });
-      const { wrapper } = render({
-        ...props,
-        revert: revertCommand,
-      });
-      const revertButtonElem = select.revertButton(wrapper);
-      expect(revertButtonElem).toBeInTheDocument();
-      expect(revertButtonElem).not.toHaveTextContent(revertCommand.label);
-      expect(revertButtonElem).toHaveTextContent('Discard changes');
-      fireEvent.click(revertButtonElem);
-      expect(revertCommand.execute).toHaveBeenCalled();
     });
   }
 

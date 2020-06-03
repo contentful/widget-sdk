@@ -21,7 +21,6 @@ const selectors = {
   publishBtn: (renderResult) => renderResult.getByTestId('change-state-published'),
   secondaryArchiveBtn: (renderResult) => renderResult.getByTestId('change-state-archived'),
   secondaryDropdownTrigger: (renderResult) => renderResult.getByTestId('change-state-menu-trigger'),
-  revertButton: (renderResult) => renderResult.getByTestId('discard-changed-button'),
   secondaryUnpublishBtn: (renderResult) => renderResult.getByTestId('change-state-draft'),
   actionRestrictionNote: (renderResult) => renderResult.getByTestId('action-restriction-note'),
 };
@@ -137,19 +136,12 @@ describe('<StatusWidget />', () => {
   });
 
   it('shows proper buttons for "Published" status', () => {
-    const stubs = {
-      revertOnClick: jest.fn(),
-    };
     const { renderResult } = renderWidget({
       status: 'published',
       updatedAt: '2018-01-14T15:15:49.230Z',
       primary: createCommand({
         isAvailable: () => false,
         isRestricted: () => false,
-      }),
-      revert: createCommand({
-        isAvailable: () => true,
-        execute: stubs.revertOnClick,
       }),
       secondary: [
         createCommand({
@@ -170,10 +162,6 @@ describe('<StatusWidget />', () => {
 
     expect(renderResult.queryByTestId('change-state-archived')).toBeNull();
     expect(renderResult.queryByTestId('change-state-draft')).toBeNull();
-
-    expect(selectors.revertButton(renderResult)).toBeInTheDocument();
-    fireEvent.click(selectors.revertButton(renderResult));
-    expect(stubs.revertOnClick).toHaveBeenCalled();
 
     expect(selectors.secondaryDropdownTrigger(renderResult).textContent).toBe('Change status');
     fireEvent.click(selectors.secondaryDropdownTrigger(renderResult));

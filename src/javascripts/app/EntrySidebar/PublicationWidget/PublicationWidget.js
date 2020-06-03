@@ -9,7 +9,6 @@ import {
   DropdownListItem,
   Icon,
   Paragraph,
-  TextLink,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
@@ -60,7 +59,6 @@ export default class PublicationWidget extends React.PureComponent {
     status: PropTypes.string.isRequired,
     isSaving: PropTypes.bool.isRequired,
     updatedAt: PropTypes.string,
-    revert: CommandPropType,
     primary: CommandPropType,
     secondary: PropTypes.arrayOf(CommandPropType.isRequired).isRequired,
     publicationBlockedReason: PropTypes.string,
@@ -84,7 +82,6 @@ export default class PublicationWidget extends React.PureComponent {
       secondary,
       isSaving,
       updatedAt,
-      revert,
       publicationBlockedReason,
       isStatusSwitch,
     } = this.props;
@@ -191,14 +188,6 @@ export default class PublicationWidget extends React.PureComponent {
                 Last saved <RelativeTimeData value={updatedAt} />
               </span>
             </div>
-          )}
-          {revert && revert.isAvailable() && (
-            <TextLink
-              className="entity-sidebar__revert btn-link"
-              data-test-id="discard-changed-button"
-              onClick={() => revert.execute()}>
-              Discard changes
-            </TextLink>
           )}
         </div>
       </EntrySidebarWidget>
