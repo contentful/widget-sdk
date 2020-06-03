@@ -12,6 +12,8 @@ import { getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { NAMESPACE_APP } from 'widgets/WidgetNamespaces';
 import { shouldHide, Action } from 'access_control/AccessChecker';
+import * as TokenStore from 'services/TokenStore';
+import { isOwnerOrAdmin, isDeveloper } from 'services/OrganizationRoles';
 
 const BASIC_APPS_FEATURE_KEY = 'basic_apps';
 const DEFAULT_FEATURE_STATUS = true; // Fail open
@@ -83,6 +85,17 @@ export default {
         // only when the space is initialized.
         app: ['$stateParams', 'spaceContext', ({ appId }) => getAppsRepo().getApp(appId)],
         hasAppsFeature: appsFeatureResolver,
+        canManageThisApp: [
+          'app',
+          'spaceContext',
+          async ({ appDefinition }, { organization }) => {
+            const sameOrg = organization.sys.id === appDefinition.sys.organization.sys.id;
+            const org = await TokenStore.getOrganization(organization.sys.id);
+            const isDeveloperOrHigher = isOwnerOrAdmin(org) || isDeveloper(org);
+
+            return sameOrg && isDeveloperOrHigher;
+          },
+        ],
       },
       onEnter: [
         '$state',
@@ -127,7 +140,8 @@ export default {
         'spaceContext',
         '$state',
         'app',
-        (spaceContext, $state, app) => {
+        'canManageThisApp',
+        (spaceContext, $state, app, canManageThisApp) => {
           const appHookBus = makeAppHookBus();
 
           const bridge = createAppExtensionBridge({
@@ -151,6 +165,7 @@ export default {
 
               getCustomWidgetLoader().evict([NAMESPACE_APP, widgetId]);
             },
+            canManageThisApp,
           };
         },
       ],
