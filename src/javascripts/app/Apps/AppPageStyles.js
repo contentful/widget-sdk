@@ -70,8 +70,8 @@ export const styles = {
   }),
   noConfigContainer: css({
     width: '100%',
-    '> div:last-child': {
-      borderTop: `1px solid ${tokens.colorElementLight}`,
+    backgroundColor: tokens.colorElementLightest,
+    '> div:nth-child(3)': {
       paddingTop: tokens.spacingL,
     },
   }),
@@ -82,5 +82,10 @@ export const styles = {
   }),
   noConfigHelpText: css({
     marginTop: tokens.spacingL,
+  }),
+  divider: css({
+    height: '1px',
+    maxHeight: '1px',
+    backgroundColor: tokens.colorElementLight,
   }),
 };

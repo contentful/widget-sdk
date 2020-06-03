@@ -408,20 +408,23 @@ export default class AppRoute extends Component {
           </HelpText>
         </div>
         {this.props.canManageThisApp && (
-          <div className={styles.noConfigSection}>
-            <Paragraph>
-              This is the default configuration screen of your app. Build advanced installation
-              flows for your users by adding the app configuration location. Learn more about{' '}
-              <TextLink
-                href="https://www.contentful.com/developers/docs/extensibility/app-framework/locations/"
-                rel="noopener noreferrer"
-                target="_blank"
-                icon="ExternalLink"
-                iconPosition="right">
-                app locations
-              </TextLink>
-            </Paragraph>
-          </div>
+          <>
+            <div className={styles.divider} />
+            <div className={styles.noConfigSection}>
+              <Paragraph>
+                This is the default configuration screen of your app. Build advanced installation
+                flows for your users by adding the app configuration location. Learn more about{' '}
+                <TextLink
+                  href="https://www.contentful.com/developers/docs/extensibility/app-framework/locations/"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  icon="ExternalLink"
+                  iconPosition="right">
+                  app locations
+                </TextLink>
+              </Paragraph>
+            </div>
+          </>
         )}
       </div>
     );
