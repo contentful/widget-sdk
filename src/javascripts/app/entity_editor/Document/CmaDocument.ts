@@ -1,25 +1,30 @@
-import { get, set, cloneDeep, noop, unset, isEqual, some, intersectionBy, once } from 'lodash';
+import { get, set, cloneDeep, noop, unset, isEqual, intersectionBy, once, some } from 'lodash';
+import { Stream, Property } from 'kefir';
 import * as K from 'core/utils/kefir';
 import * as ResourceStateManager from 'data/document/ResourceStateManager';
 import * as Permissions from 'access_control/EntityPermissions';
 import { valuePropertyAt } from './documentHelpers';
-import { Stream, Property } from 'kefir';
 import * as Normalizer from 'data/document/Normalize';
 import TheLocaleStore from 'services/localeStore';
 import * as PathUtils from 'utils/Path';
 import { Error as DocError } from 'data/document/Error';
 import { Document, Entity, EntitySys, PropertyBus, StreamBus } from './types';
 import * as StringField from 'data/document/StringFieldSetter';
-import { trackEditConflict } from './analytics';
+import { trackEditConflict, ConflictType } from './analytics';
 import { createNoopPresenceHub } from './PresenceHub';
 import { EntityRepo, SpaceEndpoint } from 'data/CMA/EntityRepo';
-import changedEntityFieldPaths from './changedEntityFieldPaths';
+import { changedEntityFieldPaths, changedEntityMetadataPaths } from './changedPaths';
 
 export const THROTTLE_TIME = 5000;
 const DISCONNECTED = Symbol('DISCONNECTED');
 const STATUS_UPDATED = Symbol('STATUS_UPDATED');
 const DOCUMENT_SAVED = Symbol('DOCUMENT_SAVED');
 const ASSET_UPDATED = Symbol('ASSET_UPDATED');
+
+enum UpdateReason {
+  AssetFileProcessed,
+  VersionMismatchError,
+}
 
 /**
  * Used to edit an entry or asset through the CMA.
@@ -65,7 +70,7 @@ export function create(
   const onNetworkError$: Stream<symbol, any> = errorBus.property
     .changes()
     .filter((error) => error instanceof DocError.Disconnected)
-    .map((_) => DISCONNECTED);
+    .map(() => DISCONNECTED);
 
   let lastSavedEntity: Entity;
   let lastSavedEntityFetchedAt: Date;
@@ -91,7 +96,7 @@ export function create(
   const afterStatusUpdate$: Stream<symbol, any> = resourceState.inProgress$
     .changes()
     .filter((isSaving) => !isSaving)
-    .map((_) => STATUS_UPDATED);
+    .map(() => STATUS_UPDATED);
   cleanupTasks.push(resourceState.inProgressBus.end);
 
   if (entity.sys.type === 'Asset') {
@@ -151,7 +156,7 @@ export function create(
    * and does not contain changes relative to the published version.
    *
    * Note that an entry is in the same state as its published version
-   * if and only if its version is on more than the published version.
+   * if and only if its version is one more than the published version.
    */
   const isDirty$: Property<boolean, any> = sys$.map((sys) =>
     sys.publishedVersion ? sys.version > sys.publishedVersion + 1 : true
@@ -384,11 +389,16 @@ export function create(
       setLastSavedEntity(newEntry);
     } catch (e) {
       if (e.code === 'VersionMismatch') {
-        trackVersionMismatch(changedLocalEntity);
+        // Updating entry data and sys is handled in `updateEntity`
+        const updated = await updateEntity(UpdateReason.VersionMismatchError);
+        if (updated) {
+          isSavingBus.set(false);
+          await saveEntity();
+        }
+      } else {
+        const documentError = toDocumentError(e);
+        errorBus.set(documentError);
       }
-
-      const error = toDocumentError(e);
-      errorBus.set(error);
       isSavingBus.set(false);
       return;
     }
@@ -401,13 +411,17 @@ export function create(
     isSavingBus.set(false);
   }
 
-  function trackVersionMismatch(entity: Entity, remoteEntity?: Entity): void {
+  function trackVersionMismatch(
+    changedLocalEntity: Entity,
+    remoteEntity: Entity,
+    isConflictAutoResolvable: boolean
+  ): void {
     trackEditConflict({
-      entityRepo,
       localEntity: lastSavedEntity,
       localEntityFetchedAt: lastSavedEntityFetchedAt,
-      changedLocalEntity: cloneDeep(entity),
+      changedLocalEntity,
       remoteEntity,
+      isConflictAutoResolvable,
     });
   }
 
@@ -424,49 +438,83 @@ export function create(
     }
 
     isUpdatingBus.set(true);
-    await updateAsset();
+    await updateEntity(UpdateReason.AssetFileProcessed);
     isUpdatingBus.set(false);
+  }
 
-    async function updateAsset() {
-      const remoteEntity = await entityRepo.get(entity.sys.type, entity.sys.id);
-      if (remoteEntity.sys.version <= entity.sys.version) {
-        return;
-      }
-
-      const localChangedFieldPaths = changedEntityFieldPaths(lastSavedEntity.fields, entity.fields);
-      const remoteChangedFieldPaths = changedEntityFieldPaths(
-        lastSavedEntity.fields,
-        remoteEntity.fields
-      );
-
-      const hasConflictingPendingChanges =
-        intersectionBy(localChangedFieldPaths, remoteChangedFieldPaths, (path) => path.join(':'))
-          .length > 0;
-      if (hasConflictingPendingChanges) {
-        trackVersionMismatch(entity, remoteEntity);
-        errorBus.set(DocError.VersionMismatch());
-        return;
-      }
-
-      const hasRemoteVersionConflict = some(remoteChangedFieldPaths, ([path]) => path !== 'file');
-      if (hasRemoteVersionConflict) {
-        if (localChangedFieldPaths.length > 0) {
-          trackVersionMismatch(entity, remoteEntity);
-        }
-        errorBus.set(DocError.VersionMismatch());
-        return;
-      }
-
-      const changedRemoteFilePaths = remoteChangedFieldPaths
-        .filter(([path]) => path === 'file')
-        .map((path) => setValueAt(['fields', ...path], get(remoteEntity, ['fields', ...path])));
-      await Promise.all([...changedRemoteFilePaths]);
-
-      setLastSavedEntity(remoteEntity);
-      set(entity, 'sys', remoteEntity.sys);
-      sysBus.set(remoteEntity.sys);
-      normalize();
+  /**
+   * Attempts to update local entity with remote entity changes.
+   * Executed after a VersionMismatch error on `saveEntity` and
+   * as part of the pub-sub "asset processed" event handler.
+   * Either resolves or reports version conflicts and tracks them.
+   */
+  async function updateEntity(updateReason: UpdateReason): Promise<boolean> {
+    let remoteEntity: Entity;
+    try {
+      remoteEntity = await entityRepo.get(entity.sys.type, entity.sys.id);
+    } catch (e) {
+      // TODO: Use affordable analytics to track how often this happens.
+      const documentError = toDocumentError(e);
+      errorBus.set(documentError);
+      return false;
     }
+
+    // Local version shouldn't ever be higher than remote version.
+    // They can be equal though, when multiple files in the same asset get processed.
+    if (remoteEntity.sys.version <= entity.sys.version) {
+      return false;
+    }
+
+    // Note: we still report a version mismatch if remote changes are exactly the same as local changes
+    const localChangedFieldPaths = changedEntityFieldPaths(lastSavedEntity.fields, entity.fields);
+    const remoteChangedFieldPaths = changedEntityFieldPaths(
+      lastSavedEntity.fields,
+      remoteEntity.fields
+    );
+    const hasConflictingFieldChanges =
+      intersectionBy(localChangedFieldPaths, remoteChangedFieldPaths, (path) => path.join(':'))
+        .length > 0;
+
+    const localChangedMetadataPaths = changedEntityMetadataPaths(
+      lastSavedEntity.metadata,
+      entity.metadata
+    );
+    const remoteChangedMetadataPaths = changedEntityMetadataPaths(
+      lastSavedEntity.metadata,
+      remoteEntity.metadata
+    );
+
+    const hasConflictingMetadataChanges =
+      localChangedMetadataPaths.length && remoteChangedMetadataPaths.length;
+
+    if (hasConflictingFieldChanges || hasConflictingMetadataChanges) {
+      trackVersionMismatch(entity, remoteEntity, ConflictType.NotAutoResolvable);
+      errorBus.set(DocError.VersionMismatch());
+      return false;
+    }
+
+    if (
+      updateReason === UpdateReason.VersionMismatchError ||
+      (localChangedFieldPaths.length && some(remoteChangedFieldPaths, ([path]) => path !== 'file'))
+    ) {
+      trackVersionMismatch(entity, remoteEntity, ConflictType.AutoResolvable);
+    }
+
+    const setRemoteFieldsValues = remoteChangedFieldPaths.map((path) =>
+      setValueAt(['fields', ...path], get(remoteEntity, ['fields', ...path]))
+    );
+    const setRemoteMetadataValues = remoteChangedMetadataPaths.map((path) =>
+      setValueAt(['metadata', ...path], get(remoteEntity, ['metadata', ...path]))
+    );
+
+    await Promise.all([...setRemoteFieldsValues, ...setRemoteMetadataValues]);
+
+    setLastSavedEntity(remoteEntity);
+    set(entity, 'sys', remoteEntity.sys);
+    sysBus.set(remoteEntity.sys);
+    normalize();
+    // TODO: Do we want to reset errors here?
+    return true;
   }
 
   async function destroy() {
@@ -493,14 +541,13 @@ function stateBus(
   const after$: Stream<symbol, any> = value$
     .changes()
     .filter((isSaving) => !isSaving)
-    .map((_) => emitAfter);
+    .map(() => emitAfter);
 
   return [bus, value$, after$];
 }
 
 function toDocumentError(e) {
   const errors = {
-    VersionMismatch: DocError.VersionMismatch(),
     AccessDenied: DocError.OpenForbidden(),
     ServerError: DocError.CmaInternalServerError(e),
     [-1]: DocError.Disconnected(),

@@ -6,6 +6,7 @@ import * as Permissions from 'access_control/EntityPermissions';
 
 const kefirHelpers = jestKefir(Kefir);
 const { value } = kefirHelpers;
+
 expect.extend(kefirHelpers.extensions);
 
 jest.mock('services/localeStore', () => ({
@@ -27,6 +28,7 @@ export const newEntry = (fields, metadata) => ({
       contentType: {
         sys: { id: 'ctId' },
       },
+      updatedAt: '2020-06-06T12:58:25.641Z',
       updatedBy: {
         sys: { id: 'userId' },
       },

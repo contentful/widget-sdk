@@ -74,6 +74,8 @@ describe('OtDocument', () => {
   describe('sysProperty', () => {
     it('bumps version after update', function () {
       const newVersionSys = { ...entry.sys, version: entry.sys.version + 1 };
+      // OtDocument will set updatedAt to the current time
+      delete newVersionSys.updatedAt;
       doc.setValueAt(fieldPath, 'en-US-updated');
       expect(K.getValue(doc.sysProperty)).toMatchObject(newVersionSys);
     });

@@ -139,8 +139,8 @@ describe('CmaDocument', () => {
     });
   });
 
-  describe('multiple setValueAt() calls within 5s', () => {
-    it('sends one CMA request', async () => {
+  describe('multiple changes within 5s', () => {
+    it('sends only one CMA request', async () => {
       await doc.setValueAt(['fields', 'fieldA', 'en-US'], 'en-US-updated');
       await doc.setValueAt(['fields', 'fieldB', 'en-US'], 'another updated');
       await doc.setValueAt(['metadata', 'tags'], linkedTags);
@@ -379,18 +379,6 @@ describe('CmaDocument', () => {
     });
 
     describe('error$', () => {
-      it('emits VersionMismatch on VersionMismatch error code', async () => {
-        const remoteEntity = cloneDeep(entry);
-        entityRepo.update.mockImplementationOnce(() => {
-          throw newError('VersionMismatch', 'API request failed');
-        });
-        entityRepo.get.mockImplementationOnce(() => Promise.resolve(remoteEntity));
-        await doc.setValueAt(fieldPath, 'en-US-updated');
-        jest.runAllTimers();
-        await wait();
-        expectDocError(doc.state.error$, DocError.VersionMismatch);
-      });
-
       it('emits OpenForbidden on AccessDenied error code', async () => {
         entityRepo.update.mockImplementationOnce(() => {
           throw newError('AccessDenied', 'API request failed');
@@ -532,55 +520,20 @@ describe('CmaDocument', () => {
   });
 
   describe('edit conflict tracking', () => {
-    it('happens on VersionMismatch error', async () => {
-      const remoteEntity = cloneDeep(entry);
-      set(remoteEntity, fieldPath, 'en-US-remote-updated');
-      remoteEntity.sys.version++;
+    it('does not happen when the remote entity was archived', async () => {
       entityRepo.update.mockImplementationOnce(() => {
-        throw newError('VersionMismatch', 'API request failed');
+        throw newError('BadRequest', 'Cannot edit archived');
       });
-      entityRepo.get.mockImplementationOnce(() => Promise.resolve(remoteEntity));
-
       await doc.setValueAt(fieldPath, 'en-US-updated');
       jest.runAllTimers();
       await wait();
 
-      expect(track).toBeCalledTimes(1);
-      const [id, body] = track.mock.calls[0];
-      expect(id).toBe('entity_editor:edit_conflict');
-      expect(body).toEqual({
-        entityId: entry.sys.id,
-        entityType: entry.sys.type,
-        localChangesPaths: [fieldPath.join(':')],
-        remoteChangesPaths: [fieldPath.join(':')],
-        localEntityState: 'draft',
-        localStateChange: null,
-        remoteEntityState: 'draft',
-        localEntityVersion: entry.sys.version,
-        remoteEntityVersion: remoteEntity.sys.version,
-        localEntityUpdatedAtTstamp: entry.sys.updatedAt,
-        remoteEntityUpdatedAtTstamp: entry.sys.updatedAt,
-        remoteEntityUpdatedByUserId: entry.sys.updatedBy.sys.id,
-        localEntityLastFetchedAtTstamp: new Date(now).toISOString(),
-        isConflictAutoResolvable: false,
-        autoConflictResolutionVersion: 1,
-        precomputed: {
-          sameFieldLocaleConflictsCount: 1,
-          localFieldLocaleChangesCount: 1,
-          remoteFieldLocaleChangesCount: 1,
-          sameMetadataConflictsCount: 0,
-          localMetadataChangesCount: 0,
-          remoteMetadataChangesCount: 0,
-        },
-      });
+      expect(track).not.toBeCalled();
     });
 
     it('does not happen when the remote entity was deleted', async () => {
       entityRepo.update.mockImplementationOnce(() => {
-        throw newError('BadRequest', '');
-      });
-      entityRepo.get.mockImplementationOnce(() => {
-        throw newError('NotFound', 'The resource could not be found.');
+        throw newError('BadRequest', 'Missing content type parameter');
       });
       await doc.setValueAt(fieldPath, 'en-US-updated');
       jest.runAllTimers();
@@ -590,7 +543,7 @@ describe('CmaDocument', () => {
     });
   });
 
-  describe('asset update', () => {
+  describe('asset file processed event', () => {
     let asset;
     let handler;
 
@@ -605,7 +558,7 @@ describe('CmaDocument', () => {
       ({ document: doc } = createCmaDocument(asset, [{ id: 'title' }, { id: 'file' }]));
     });
 
-    it('should update file from a successfully processed asset', async () => {
+    it('should update processed file', async () => {
       mockGetProcessedAsset(asset, 'fields.file.en-US', { url: 'https://example.com/bar.jpg' });
       await handler();
       expect(doc.getValueAt(['fields'])).toMatchObject({
@@ -626,18 +579,21 @@ describe('CmaDocument', () => {
       });
     });
 
-    it('should show VersionMismatch when has local pending changes', async () => {
+    it('should show VersionMismatch when there are local pending changes on the same field locale', async () => {
       mockGetProcessedAsset(asset, 'fields.file.en-US', { url: 'https://example.com/bar.jpg' });
       await doc.setValueAt(['fields', 'file', 'en-US'], 'bar');
       await handler();
       K.assertCurrentValue(doc.state.error$, DocError.VersionMismatch());
     });
 
-    it('should show VersionMismatch when last saved entity is different than remote updated', async () => {
-      mockGetProcessedAsset(asset, 'fields.title.en-US', 'bar');
+    it('should update processed file when there are local pending changes on different field locale', async () => {
+      mockGetProcessedAsset(asset, 'fields.file.en-US', { url: 'https://example.com/bar.jpg' });
+      await doc.setValueAt(['fields', 'title', 'en-US'], 'local-title');
       await handler();
-      K.assertCurrentValue(doc.state.error$, DocError.VersionMismatch());
-      expect(K.getValue(doc.sysProperty).version).toEqual(asset.sys.version);
+      expect(doc.getValueAt(['fields'])).toMatchObject({
+        title: { 'en-US': 'local-title' },
+        file: { 'en-US': { url: 'https://example.com/bar.jpg' } },
+      });
     });
 
     it('blocks save process while updating the asset due to pub-sub', async () => {
@@ -743,7 +699,7 @@ function mockGetProcessedAsset(asset, path, value) {
   });
 }
 
-function expectDocError(docError$, docErrorOrConstructor) {
+export function expectDocError(docError$, docErrorOrConstructor) {
   const docError = K.getValue(docError$);
   if (docErrorOrConstructor === null) {
     expect(docError).toBeNull();

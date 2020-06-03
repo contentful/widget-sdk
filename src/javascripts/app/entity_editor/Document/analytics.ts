@@ -1,72 +1,52 @@
 import { intersection } from 'lodash';
 import { Entity } from './types';
 import * as Analytics from 'analytics/Analytics';
-import changedEntityFieldPaths from './changedEntityFieldPaths';
-import { EntityRepo } from 'data/CMA/EntityRepo';
+import { changedEntityFieldPaths, changedEntityMetadataPaths } from './changedPaths';
 import * as logger from 'services/logger';
 import { getState, State } from 'data/CMA/EntityState';
 
+export const ConflictType = {
+  AutoResolvable: true,
+  NotAutoResolvable: false,
+};
+
 export async function trackEditConflict({
-  entityRepo,
   localEntity,
   localEntityFetchedAt,
   changedLocalEntity,
-  ...options
+  remoteEntity,
+  isConflictAutoResolvable,
 }: {
-  entityRepo: EntityRepo;
   localEntity: Entity;
   localEntityFetchedAt: Date;
   changedLocalEntity: Entity;
-  remoteEntity?: Entity;
+  remoteEntity: Entity;
+  isConflictAutoResolvable: boolean;
 }) {
-  let remoteEntity: Entity | null;
-  try {
-    remoteEntity =
-      options.remoteEntity || (await entityRepo.get(localEntity.sys.type, localEntity.sys.id));
-  } catch (e) {
-    if (e.code === 'NotFound') {
-      // TODO: Track deleted entity conflict with affordable analytics. move to separate function
-      //  To avoid accidentally tracking `BadRequest` errors as a conflict.
-    } else {
-      logger.logError('Could not fetch remote entity for CmaDocument edit conflict tracking', e);
-    }
-    return;
-  }
-
-  // Do not track if there's no conflict. E.g. if we call this function due to a `BadRequest`
-  // error to accommodate for possible entity deletion kind of conflict.
-  if (remoteEntity && localEntity.sys.version !== remoteEntity.sys.version) {
-    const data = conflictEntitiesToTrackingData({
-      localEntity,
-      remoteEntity,
-      changedLocalEntity,
-      localEntityFetchedAt,
-    });
-    Analytics.track('entity_editor:edit_conflict', data);
-  }
-}
-
-function conflictEntitiesToTrackingData({
-  localEntity,
-  remoteEntity,
-  changedLocalEntity,
-  localEntityFetchedAt,
-}) {
-  const localChangesFieldPaths = formatFieldPaths(
+  // TODO: Get rid of the repetition between the code below and the code in CmaDocument.updateEntity
+  const localChangedFieldPaths = formatFieldPaths(
     changedEntityFieldPaths(localEntity.fields, changedLocalEntity.fields)
   );
-  const remoteChangesFieldPaths = formatFieldPaths(
-    changedEntityFieldPaths(localEntity.fields, remoteEntity.fields || {})
+  const remoteChangedFieldPaths = formatFieldPaths(
+    changedEntityFieldPaths(localEntity.fields, remoteEntity.fields)
   );
-  const localChangesPaths = localChangesFieldPaths; // TODO: Include metadata.
-  const remoteChangesPaths = remoteChangesFieldPaths; // TODO: Include metadata.
-  return {
+  const localChangedMetadataPaths = formatMetadataPaths(
+    changedEntityMetadataPaths(localEntity.metadata, changedLocalEntity.metadata)
+  );
+  const remoteChangedMetadataPaths = formatMetadataPaths(
+    changedEntityMetadataPaths(localEntity.metadata, remoteEntity.metadata)
+  );
+
+  const localChangesPaths = localChangedFieldPaths.concat(localChangedMetadataPaths);
+  const remoteChangesPaths = remoteChangedFieldPaths.concat(remoteChangedMetadataPaths);
+  const data = {
     entityId: localEntity.sys.id,
     entityType: localEntity.sys.type,
     localChangesPaths,
     remoteChangesPaths,
     localEntityState: stateTrackingString(getState(localEntity.sys)),
-    localStateChange: null, // TODO: Add some tracking of state change conflicts using this.
+    // TODO: Add some tracking of state change conflicts using this.
+    localStateChange: null,
     remoteEntityState: stateTrackingString(getState(remoteEntity.sys)),
     localEntityVersion: localEntity.sys.version,
     remoteEntityVersion: remoteEntity.sys.version,
@@ -74,23 +54,30 @@ function conflictEntitiesToTrackingData({
     remoteEntityUpdatedAtTstamp: remoteEntity.sys.updatedAt,
     remoteEntityUpdatedByUserId: remoteEntity.sys.updatedBy.sys.id,
     localEntityLastFetchedAtTstamp: localEntityFetchedAt.toISOString(),
-    isConflictAutoResolvable: false,
-    autoConflictResolutionVersion: 1,
+    isConflictAutoResolvable,
+    autoConflictResolutionVersion: 2,
     precomputed: {
-      sameFieldLocaleConflictsCount: intersection(localChangesFieldPaths, remoteChangesFieldPaths)
+      sameFieldLocaleConflictsCount: intersection(localChangedFieldPaths, remoteChangedFieldPaths)
         .length,
-      localFieldLocaleChangesCount: localChangesFieldPaths.length,
-      remoteFieldLocaleChangesCount: remoteChangesFieldPaths.length,
-      // TODO: Add metadata conflicts tracking:
-      sameMetadataConflictsCount: 0,
-      localMetadataChangesCount: 0,
-      remoteMetadataChangesCount: 0,
+      localFieldLocaleChangesCount: localChangedFieldPaths.length,
+      remoteFieldLocaleChangesCount: remoteChangedFieldPaths.length,
+      sameMetadataConflictsCount: intersection(
+        localChangedMetadataPaths,
+        remoteChangedMetadataPaths
+      ).length,
+      localMetadataChangesCount: localChangedMetadataPaths.length,
+      remoteMetadataChangesCount: remoteChangedMetadataPaths.length,
     },
   };
+  Analytics.track('entity_editor:edit_conflict', data);
 }
 
 function formatFieldPaths(paths) {
   return paths.map((path) => `fields:${path.join(':')}`);
+}
+
+function formatMetadataPaths(paths) {
+  return paths.map((path) => `metadata:${path.join(':')}`);
 }
 
 function stateTrackingString(state) {

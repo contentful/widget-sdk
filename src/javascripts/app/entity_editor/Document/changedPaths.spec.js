@@ -1,5 +1,6 @@
 import { forEach, omit } from 'lodash';
-import changedEntityFieldPaths from './changedEntityFieldPaths';
+import { changedEntityFieldPaths, changedEntityMetadataPaths } from './changedPaths';
+import * as fake from 'test/helpers/fakeFactory';
 
 describe('changedEntityFieldPaths(fields1, fields2)', () => {
   const FIELDS = {
@@ -84,6 +85,91 @@ describe('changedEntityFieldPaths(fields1, fields2)', () => {
     it(`handles ${description}`, () => {
       expect(changedEntityFieldPaths(fields1, fields2)).toIncludeSameMembers(result);
       expect(changedEntityFieldPaths(fields2, fields1)).toIncludeSameMembers(result);
+    });
+  });
+});
+
+describe('changedEntityMetadataPaths', () => {
+  const TAG_1 = fake.Link('Tag', 'tag1');
+  const TAG_2 = fake.Link('Tag', 'tag2');
+  const TAG_3 = fake.Link('Tag', 'tag3');
+
+  const testCases = {
+    'identical empty metadata': {
+      metadata1: {},
+      metadata2: {},
+      result: [],
+    },
+    'undefined metadata': {
+      metadata1: undefined,
+      metadata2: undefined,
+      result: [],
+    },
+    'undefined and empty metadata': {
+      metadata1: undefined,
+      metadata2: {},
+      result: [],
+    },
+    'tag and empty metadata': {
+      metadata1: {
+        tags: [TAG_1],
+      },
+      metadata2: {},
+      result: [['tags']],
+    },
+    'same tag': {
+      metadata1: {
+        tags: [TAG_1],
+      },
+      metadata2: {
+        tags: [TAG_1],
+      },
+      result: [],
+    },
+    'additoinal tag': {
+      metadata1: {
+        tags: [TAG_1],
+      },
+      metadata2: {
+        tags: [TAG_1, TAG_2],
+      },
+      result: [['tags']],
+    },
+    'same tags, same order': {
+      metadata1: {
+        tags: [TAG_1, TAG_2, TAG_3],
+      },
+      metadata2: {
+        tags: [TAG_1, TAG_2, TAG_3],
+      },
+      result: [],
+    },
+    'same tags, different order': {
+      metadata1: {
+        tags: [TAG_1, TAG_2, TAG_3],
+      },
+      metadata2: {
+        tags: [TAG_3, TAG_1, TAG_2],
+      },
+      result: [],
+    },
+    'different tags': {
+      metadata1: {
+        tags: [TAG_1, TAG_2],
+      },
+      metadata2: {
+        tags: [TAG_1, TAG_3],
+      },
+      result: [['tags']],
+    },
+  };
+
+  forEach(testCases, (testCase, description) => {
+    const { metadata1, metadata2, result } = testCase;
+
+    it(`handles ${description}`, () => {
+      expect(changedEntityMetadataPaths(metadata1, metadata2)).toIncludeSameMembers(result);
+      expect(changedEntityMetadataPaths(metadata2, metadata1)).toIncludeSameMembers(result);
     });
   });
 });
