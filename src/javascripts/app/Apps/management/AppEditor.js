@@ -57,6 +57,7 @@ const styles = {
   checkboxInfo: css({
     position: 'absolute',
     right: tokens.spacingS,
+    color: tokens.colorTextDarkest,
   }),
   checkboxInfoIcon: css({
     position: 'absolute',
@@ -323,10 +324,10 @@ export default function AppEditor({ definition, onChange }) {
           className={styles.input()}
           name="app-src"
           id="app-src"
-          labelText="Widget URL"
+          labelText="App URL"
           testId="app-src-input"
           value={definition.src || ''}
-          helpText="Required only if your app renders a widget. Valid URLs use HTTPS. Only localhost can use HTTP."
+          helpText="Only required if your app renders into locations within the Contentful web app. Valid URLs use HTTPS. Only localhost can use HTTP."
           onChange={(e) => onChange({ ...definition, src: e.target.value })}
         />
         {definition.src && (
