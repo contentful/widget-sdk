@@ -38,63 +38,62 @@ export function getAssetTitle({
 }
 
 export function getEntryTitle({
-  /**
-   * Expects an entity fetched with a flag Skip-Transformation: true
-   */
-  entry,
+  entry, // Expects an entity fetched with a flag Skip-Transformation: true
   contentType,
   internalLocaleCode,
   defaultInternalLocaleCode,
   defaultTitle,
 }) {
-  let title;
   if (!contentType) {
     return defaultTitle;
   }
   const displayField = contentType.displayField;
   if (!displayField) {
     return defaultTitle;
-  } else {
-    const displayFieldInfo = _.find(contentType.fields, { id: displayField });
+  }
+  const displayFieldInfo = _.find(contentType.fields, { id: displayField });
+  if (!displayFieldInfo) {
+    return defaultTitle;
+  }
 
-    // when localization for a field is "turned off",
-    // we don't clean up the "old" localized data, so it is still in the response.
-    // Therefore, we're checking if displayField is localizable.
-    if (displayFieldInfo.localized) {
+  let title;
+  // when localization for a field is "turned off",
+  // we don't clean up the "old" localized data, so it is still in the response.
+  // Therefore, we're checking if displayField is localizable.
+  if (displayFieldInfo.localized) {
+    title = getFieldValue({
+      entity: entry,
+      internalFieldId: displayField,
+      internalLocaleCode,
+      defaultInternalLocaleCode,
+    });
+    if (!title) {
+      // Older content types may return id/apiName, but some entry lookup paths do not fetch raw data
+      // In order to still return a title in this case, look for displayField as apiName in content type,
+      // ...but still look for displayField as a field in the entry
       title = getFieldValue({
         entity: entry,
-        internalFieldId: displayField,
+        internalFieldId: displayFieldInfo.apiName,
         internalLocaleCode,
         defaultInternalLocaleCode,
       });
-      if (!title) {
-        // Older content types may return id/apiName, but some entry lookup paths do not fetch raw data
-        // In order to still return a title in this case, look for displayField as apiName in content type,
-        // ...but still look for displayField as a field in the entry
-        title = getFieldValue({
-          entity: entry,
-          internalFieldId: displayFieldInfo.apiName,
-          internalLocaleCode,
-          defaultInternalLocaleCode,
-        });
-      }
-    } else {
+    }
+  } else {
+    title = getFieldValue({
+      entity: entry,
+      internalFieldId: displayField,
+      defaultInternalLocaleCode,
+    });
+    if (!title) {
       title = getFieldValue({
         entity: entry,
-        internalFieldId: displayField,
+        internalFieldId: displayFieldInfo.apiName,
         defaultInternalLocaleCode,
       });
-      if (!title) {
-        title = getFieldValue({
-          entity: entry,
-          internalFieldId: displayFieldInfo.apiName,
-          defaultInternalLocaleCode,
-        });
-      }
     }
-
-    return titleOrDefault(title, defaultTitle);
   }
+
+  return titleOrDefault(title, defaultTitle);
 }
 
 function titleOrDefault(title, defaultTitle) {
