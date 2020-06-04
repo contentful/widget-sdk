@@ -24,7 +24,6 @@ const AssetEditorWorkbench = ({
   entityInfo,
   state,
   statusNotificationProps,
-  tagProps,
   entrySidebarProps,
   fields,
   widgets,
@@ -83,11 +82,11 @@ const AssetEditorWorkbench = ({
                 fields,
                 entityInfo,
                 otDoc,
-                editorData: getEditorData(),
+                editorData,
               }}
             />
 
-            <ContentTagsField {...tagProps} />
+            <ContentTagsField doc={otDoc} />
           </div>
         </Workbench.Content>
         <Workbench.Sidebar position="right" className={styles.sidebar}>
@@ -117,7 +116,6 @@ AssetEditorWorkbench.propTypes = {
     delete: PropTypes.object,
   }),
   statusNotificationProps: PropTypes.object,
-  tagProps: PropTypes.any,
   entrySidebarProps: PropTypes.object,
   fields: PropTypes.object,
   widgets: PropTypes.object,
