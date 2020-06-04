@@ -87,8 +87,8 @@ export default function ConfirmScreenPartnerPlan(props) {
             }}
             labelText="Estimated Delivery Date"
             required
-            value={partnerDetails.estimatedDeliveryDate}
-            dateFormat="YYYY-MM-DD"
+            value={moment(partnerDetails.estimatedDeliveryDate).toDate()}
+            dateFormat="yyyy-MM-dd"
             minDate={moment().toDate()}
             testId="estimated-delivery-date"
           />

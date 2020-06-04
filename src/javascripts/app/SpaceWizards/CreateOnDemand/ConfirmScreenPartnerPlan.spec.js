@@ -56,18 +56,6 @@ describe('ConfirmScreenPartnerPlan', () => {
     expect(screen.getByTestId('confirm-button')).toHaveAttribute('disabled');
   });
 
-  it('should disable the submit button if the estimated delivery date is not provided', () => {
-    build({
-      partnerDetails: {
-        clientName: 'A client name',
-        projectDescription: 'Some project',
-        estimatedDeliveryDate: '',
-      },
-    });
-
-    expect(screen.getByTestId('confirm-button')).toHaveAttribute('disabled');
-  });
-
   it('should disable the submit button if creating is true', () => {
     build({
       creating: true,
@@ -111,7 +99,10 @@ function build(custom) {
       partnerDetails: {
         clientName: '',
         projectDescription: '',
-        estimatedDeliveryDate: '',
+
+        // The delivery date is always provided from the CreateOnDemandWizard component, and there's no way
+        // for the user to unset it themselves via the UI, so a default here is ok.
+        estimatedDeliveryDate: '2020-06-03',
       },
     },
     custom
