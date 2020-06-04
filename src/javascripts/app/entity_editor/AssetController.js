@@ -87,7 +87,12 @@ export default async function create($scope, editorData, preferences) {
     emitter: $scope.emitter,
   });
 
-  $scope.tagProps = { doc: $scope.otDoc };
+  $scope.tagProps = {
+    // it's not possible to forward otDoc because of angular things,
+    getValueAt: (path) => $scope.otDoc.getValueAt(path),
+    setValueAt: (path, value) => $scope.otDoc.setValueAt(path, value),
+    show: !$scope.otDoc.isOtDocument,
+  };
 
   setLocaleData($scope, {
     entityLabel: 'asset',

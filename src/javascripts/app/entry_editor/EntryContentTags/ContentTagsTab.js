@@ -7,8 +7,8 @@ import {
   useDocTags,
 } from 'features/content-tags';
 
-const ContentTagsTab = ({ doc }) => {
-  const { tags, setTags } = useDocTags(doc);
+const ContentTagsTab = ({ getValueAt, setValueAt }) => {
+  const { tags, setTags } = useDocTags({ getValueAt, setValueAt });
   return (
     <TagsRepoProvider>
       <ReadTagsProvider>
@@ -19,7 +19,8 @@ const ContentTagsTab = ({ doc }) => {
 };
 
 ContentTagsTab.propTypes = {
-  doc: PropTypes.object,
+  getValueAt: PropTypes.func.isRequired,
+  setValueAt: PropTypes.func.isRequired,
 };
 
 export { ContentTagsTab };

@@ -191,7 +191,9 @@ const EntryEditorWorkbench = ({
       render() {
         return (
           <div className="entity-editor-form cf-workbench-content cf-workbench-content-type__text">
-            {selectedTab === 'entryContentTags' && <ContentTagsTab doc={otDoc} />}
+            {selectedTab === 'entryContentTags' && (
+              <ContentTagsTab getValueAt={otDoc.getValueAt} setValueAt={otDoc.setValueAt} />
+            )}
           </div>
         );
       },
@@ -273,7 +275,8 @@ const EntryEditorWorkbench = ({
         <Workbench.Sidebar className={styles.sidebar}>
           <EntrySidebar
             entrySidebarProps={entrySidebarProps}
-            sidebarToggleProps={sidebarToggleProps}></EntrySidebar>
+            sidebarToggleProps={sidebarToggleProps}
+          />
         </Workbench.Sidebar>
       </Workbench>
     </div>

@@ -2,11 +2,11 @@ import { useCallback } from 'react';
 
 const METADATA_TAGS_PATH = ['metadata', 'tags'];
 
-const useDocTags = (doc) => {
-  const tags = doc.getValueAt(METADATA_TAGS_PATH);
+const useDocTags = ({ getValueAt, setValueAt }) => {
+  const tags = getValueAt(METADATA_TAGS_PATH);
   const setTags = useCallback(
     async (tags) => {
-      await doc.setValueAt(
+      await setValueAt(
         METADATA_TAGS_PATH,
         tags.map((tag) => ({
           sys: {
@@ -17,7 +17,7 @@ const useDocTags = (doc) => {
         }))
       );
     },
-    [doc]
+    [setValueAt]
   );
   return { tags, setTags };
 };
