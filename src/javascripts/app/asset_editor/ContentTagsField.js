@@ -8,10 +8,10 @@ import {
   useTagsFeatureEnabled,
 } from 'features/content-tags';
 
-const ContentTagsField = ({ doc }) => {
-  const { tags, setTags } = useDocTags(doc);
+const ContentTagsField = ({ getValueAt, setValueAt, show }) => {
+  const { tags, setTags } = useDocTags({ getValueAt, setValueAt });
   const { tagsEnabled } = useTagsFeatureEnabled();
-  return tagsEnabled && doc.isOtDocument !== true ? (
+  return tagsEnabled && show ? (
     <TagsRepoProvider>
       <ReadTagsProvider>
         <EditorTagsSkeleton showEmpty={false} tags={tags} setTags={setTags} />
@@ -21,7 +21,9 @@ const ContentTagsField = ({ doc }) => {
 };
 
 ContentTagsField.propTypes = {
-  doc: PropTypes.object,
+  getValueAt: PropTypes.func.isRequired,
+  setValueAt: PropTypes.func.isRequired,
+  show: PropTypes.bool,
 };
 
 export default ContentTagsField;
