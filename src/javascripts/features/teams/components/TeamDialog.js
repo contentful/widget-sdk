@@ -21,15 +21,17 @@ const styles = {
 TeamDialog.propTypes = {
   isShown: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  updateTeamDetailsValues: PropTypes.func.isRequired,
+  updateTeamDetailsValues: PropTypes.func,
   initialTeam: TeamPropType,
   allTeams: PropTypes.arrayOf(TeamPropType),
 };
 
 export function TeamDialog({ onClose, isShown, updateTeamDetailsValues, initialTeam, allTeams }) {
   const [validationMessage, setValidationMessage] = useState(null);
-  const [teamName, setTeamName] = useState(initialTeam.name);
-  const [teamDescription, setTeamDescription] = useState(initialTeam.description);
+  const [teamName, setTeamName] = useState(initialTeam ? initialTeam.name : '');
+  const [teamDescription, setTeamDescription] = useState(
+    initialTeam ? initialTeam.description : ''
+  );
 
   const updateTeamDetails = async () => {
     const endpoint = createOrganizationEndpoint(initialTeam.sys.organization.sys.id);
