@@ -43,6 +43,7 @@ const styles = {
   tabs: css({
     display: 'flex',
     justifyContent: 'center',
+    minHeight: '56px', // TODO: Change Workbench Sidebar design, and remove
   }),
   noteClassName: css({
     marginBottom: tokens.spacingL,

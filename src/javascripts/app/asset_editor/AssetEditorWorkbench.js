@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-// import { css, cx } from 'emotion';
+import { css } from 'emotion';
 import { Workbench, Button } from '@contentful/forma-36-react-components';
 // import tokens from '@contentful/forma-36-tokens';
 import NavigationIcon from 'ui/Components/NavigationIcon';
@@ -10,6 +10,13 @@ import ContentTagsField from 'app/asset_editor/ContentTagsField';
 import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
 import EntrySidebar from 'app/EntrySidebar/EntrySidebar';
 import AngularComponent from 'ui/Framework/AngularComponent';
+
+const styles = {
+  sidebar: css({
+    boxShadow: '1px 0 4px 0 rgba(0, 0, 0, 0.9)',
+    padding: '0',
+  }),
+};
 
 const AssetEditorWorkbench = ({
   title,
@@ -45,13 +52,13 @@ const AssetEditorWorkbench = ({
           actions={
             <>
               <div id={`editor-status-switch-${entityInfo.id}`} />
-              <Button onClick={() => state.delete} buttonType="muted">
+              <Button onClick={() => state.delete.execute()} buttonType="muted">
                 Delete
               </Button>
             </>
           }
         />
-        <Workbench.Content>
+        <Workbench.Content type="text">
           <StatusNotification {...statusNotificationProps} />
           <div className="entity-editor-form">
             <AngularComponent
@@ -83,7 +90,7 @@ const AssetEditorWorkbench = ({
             <ContentTagsField {...tagProps} />
           </div>
         </Workbench.Content>
-        <Workbench.Sidebar>
+        <Workbench.Sidebar position="right" className={styles.sidebar}>
           <EntrySidebar
             entrySidebarProps={entrySidebarProps}
             sidebarToggleProps={{ commentsToggle: { isEnabled: false } }}
