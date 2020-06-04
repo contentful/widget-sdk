@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { Workbench, Button } from '@contentful/forma-36-react-components';
-// import tokens from '@contentful/forma-36-tokens';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 import WorkbenchTitle from 'components/shared/WorkbenchTitle';
 import StatusNotification from 'app/entity_editor/StatusNotification';
@@ -29,6 +28,7 @@ const AssetEditorWorkbench = ({
   widgets,
   editorContext,
   getOtDoc,
+  tagProps,
   getEditorData,
 }) => {
   const otDoc = getOtDoc();
@@ -86,7 +86,7 @@ const AssetEditorWorkbench = ({
               }}
             />
 
-            <ContentTagsField doc={otDoc} />
+            <ContentTagsField {...tagProps} />
           </div>
         </Workbench.Content>
         <Workbench.Sidebar position="right" className={styles.sidebar}>
@@ -124,6 +124,7 @@ AssetEditorWorkbench.propTypes = {
     entityInfo: PropTypes.object,
   }),
   getEditorData: PropTypes.func,
+  tagProps: PropTypes.any,
 };
 
 export default AssetEditorWorkbench;
