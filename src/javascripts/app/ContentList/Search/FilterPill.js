@@ -90,6 +90,7 @@ function FilterValue({ valueInput, value, isFocused, onChange, onRemove, setIsRe
       return (
         <MetadataTag
           operator={op}
+          isFocused={isFocused}
           testId={valueTestId}
           value={value}
           setIsRemovable={setIsRemovable}
@@ -178,11 +179,6 @@ export default function FilterPill({
         if (Keys.backspace(e)) {
           if (isRemovable) {
             onRemove();
-          }
-          // tags subsearch needs to delete
-          if (filter.type != 'Tags') {
-            e.stopPropagation();
-            e.preventDefault();
           }
         }
       }}>

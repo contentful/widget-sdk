@@ -22,6 +22,7 @@ class MetadataTag extends React.Component {
     operator: PropTypes.string,
     value: PropTypes.string,
     onChange: PropTypes.func,
+    isFocused: PropTypes.bool,
     onSearch: PropTypes.func,
     setIsRemovable: PropTypes.func,
     tags: PropTypes.array,
@@ -44,9 +45,14 @@ class MetadataTag extends React.Component {
   };
 
   render() {
-    const { tags, onSearch, setIsRemovable, operator } = this.props;
+    const { tags, onSearch, isFocused, setIsRemovable, operator } = this.props;
     if (operator === Operator.EXISTS || operator === Operator.NOT_EXISTS) {
-      return <fieldset className="search__input-text"></fieldset>;
+      return (
+        <fieldset
+          className={`search__input-text ${css({
+            minWidth: tokens.spacingS,
+          })}`}></fieldset>
+      );
     }
 
     return (
@@ -57,6 +63,7 @@ class MetadataTag extends React.Component {
           onQueryChange={onSearch}
           setIsRemovable={setIsRemovable}
           selectedTags={this.state.selectedTags}
+          isFocused={isFocused}
           maxHeight={280}
           styles={{
             TagSummary: css({ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }),

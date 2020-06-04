@@ -6,6 +6,11 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';
 import { summarizeTags } from '../editor/utils';
+import keycodes from 'utils/keycodes';
+
+function shouldOpenSelector({ keyCode }) {
+  return keyCode === keycodes.DOWN || keyCode === keycodes.ENTER || keyCode === keycodes.SPACE;
+}
 
 const defaultStyles = {
   Autocomplete: css({
@@ -28,12 +33,13 @@ const TagsMultiSelectAutocomplete = ({
   tags,
   onChange,
   onQueryChange,
+  isFocused,
   selectedTags,
   setIsRemovable,
   maxHeight,
   styles = {},
 }) => {
-  const [isSearching, setIsSearching] = useState(false);
+  const [isSearching, setIsSearching] = useState(isFocused);
   const [newSelectedTags, setNewSelectedTags] = useState(selectedTags);
   setIsRemovable(!isSearching);
 
@@ -76,45 +82,62 @@ const TagsMultiSelectAutocomplete = ({
     ...tags.filter((tag) => !selectedTags.some((selectedTag) => selectedTag.value === tag.value)),
   ];
 
+  const onClose = () => {
+    onQueryChange('');
+    setIsSearching(false);
+    setIsRemovable(true);
+    onChange(newSelectedTags);
+  };
+
+  const handleSummaryKeyDown = ({ keyCode }) => {
+    if (shouldOpenSelector({ keyCode })) {
+      setIsSearching(true);
+    }
+  };
+
+  const handleSearchKeyDown = ({ keyCode }) => {
+    if (keyCode === keycodes.TAB) {
+      onClose();
+    }
+  };
+
   return (
     <>
       <div
+        onKeyDown={handleSummaryKeyDown}
+        tabIndex="0"
         className={css(defaultStyles.TagSummary, styles.TagSummary)}
+        onFocus={() => setIsSearching(true)}
         onClick={() => setIsSearching(true)}>
         {summarizeTags(selectedTags)}
       </div>
       {isSearching && (
-        <Autocomplete
-          items={sortedTags}
-          width={'full'}
-          onChange={onSelectedTagChange}
-          willClearQueryOnClose={true}
-          willUpdateOnSelect={false}
-          takeFocus={true}
-          onQueryChange={onQueryChange}
-          maxHeight={maxHeight}
-          placeholder={'Search for tags'}
-          emptyListMessage={'No tags found'}
-          noMatchesMessage={'No tags found'}
-          dropdownProps={{
-            isFullWidth: true,
-            isOpen: true,
-            isAutoalignmentEnabled: false,
-            position: 'bottom-left',
-            dropdownContainerClassName: `tag-search-container ${styles.DropdownContainer}`,
-            onClose: () => {
-              // remove onQueryChange when Autocomplete combines it's onClose with this one...
-              // then "willClearQueryOnClose" will work again
-              onQueryChange('');
-              setIsSearching(false);
-              setIsRemovable(true);
-              onChange(newSelectedTags);
-            },
-          }}
-          dropdownListItemProps={{ className: defaultStyles.DropdownListItem }}
-          className={css(defaultStyles.Autocomplete, styles.Autocomplete)}>
-          {(options) => options.map(tagSelectRow)}
-        </Autocomplete>
+        <span onKeyDown={handleSearchKeyDown}>
+          <Autocomplete
+            items={sortedTags}
+            width={'full'}
+            onChange={onSelectedTagChange}
+            willClearQueryOnClose={true}
+            willUpdateOnSelect={false}
+            takeFocus={true}
+            onQueryChange={onQueryChange}
+            maxHeight={maxHeight}
+            placeholder={'Search for tags'}
+            emptyListMessage={'No tags found'}
+            noMatchesMessage={'No tags found'}
+            dropdownProps={{
+              isFullWidth: true,
+              isOpen: true,
+              isAutoalignmentEnabled: false,
+              position: 'bottom-left',
+              dropdownContainerClassName: 'tag-search-container',
+              onClose,
+            }}
+            dropdownListItemProps={{ className: defaultStyles.DropdownListItem }}
+            className={css(defaultStyles.Autocomplete, styles.Autocomplete)}>
+            {(options) => options.map(tagSelectRow)}
+          </Autocomplete>
+        </span>
       )}
     </>
   );
@@ -125,6 +148,7 @@ TagsMultiSelectAutocomplete.propTypes = {
   selectedTags: PropTypes.array.isRequired,
   onChange: PropTypes.func.isRequired,
   onQueryChange: PropTypes.func.isRequired,
+  isFocused: PropTypes.bool,
   setIsRemovable: PropTypes.func.isRequired,
   maxHeight: PropTypes.number.isRequired,
   styles: PropTypes.object,
