@@ -18,7 +18,6 @@ const styles = {
 export class TeamsEmptyState extends React.Component {
   static propTypes = {
     isLegacy: PropTypes.bool,
-    isEmpty: PropTypes.bool,
     isAdmin: PropTypes.bool,
   };
 
