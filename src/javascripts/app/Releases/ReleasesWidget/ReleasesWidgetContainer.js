@@ -9,6 +9,7 @@ import { ADD_TO_RELEASE } from 'featureFlags';
 import { getReleasesIncludingEntity } from '../releasesService';
 import { ReleasesProvider, ReleasesContext } from './ReleasesContext';
 import { SET_RELEASES_INCLUDING_ENTRY } from '../state/actions';
+import { releaseDetailNavigation } from '../ReleaseDetail/utils';
 
 const ReleasesWidget = ({ entityInfo }) => {
   const { state, dispatch } = useContext(ReleasesContext);
@@ -25,13 +26,20 @@ const ReleasesWidget = ({ entityInfo }) => {
     fetchReleases();
   }, [entityInfo, dispatch]);
 
+  const onReleaseSelect = (release) => {
+    releaseDetailNavigation(release);
+  };
+
   if (!state.releasesIncludingEntity.length) {
     return null;
   }
 
   return (
     <EntrySidebarWidget title="Releases" testId="sidebar-releases-section">
-      <ReleasesTimeline releases={state.releasesIncludingEntity} />
+      <ReleasesTimeline
+        releases={state.releasesIncludingEntity}
+        onReleaseSelect={onReleaseSelect}
+      />
     </EntrySidebarWidget>
   );
 };

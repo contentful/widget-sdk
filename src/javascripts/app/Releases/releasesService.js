@@ -48,10 +48,22 @@ function getReleasesExcludingEntity(entityId, entityType) {
   });
 }
 
+async function getReleaseById(releaseId) {
+  const apiClient = new APIClient(createEndpoint());
+  return await apiClient.getReleaseById(releaseId);
+}
+
+async function deleteEntityFromReleaseById(releaseId, title, items) {
+  const apiClient = new APIClient(createEndpoint());
+  return await apiClient.updateReleaseById(releaseId, title, items);
+}
+
 export {
   createRelease,
   getReleases,
   getReleasesIncludingEntity,
   getReleasesExcludingEntity,
   deleteRelease,
+  getReleaseById,
+  deleteEntityFromReleaseById,
 };

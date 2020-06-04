@@ -57,6 +57,11 @@ export default class Release extends Component {
   getItemsCountByLinkType = (release, linkType) =>
     release.entities.items.filter((item) => item.sys.linkType === linkType).length;
 
+  handleClick(event) {
+    event.stopPropagation();
+    this.setState({ isDropdownOpen: !this.state.isDropdownOpen });
+  }
+
   render() {
     const { release } = this.props;
     return (
@@ -76,7 +81,7 @@ export default class Release extends Component {
               data-test-id="remove-release-ddl"
               icon="MoreHorizontal"
               className={styles.dropdownButton}
-              onClick={() => this.setState({ isDropdownOpen: !this.state.isDropdownOpen })}
+              onClick={(event) => this.handleClick(event)}
             />
           }>
           <DropdownList>

@@ -85,6 +85,11 @@ export default class Release extends Component {
       });
   }
 
+  handleClick(event) {
+    event.stopPropagation();
+    this.setState({ isDropdownOpen: !this.state.isDropdownOpen });
+  }
+
   render() {
     const { release } = this.props;
     const assets = this.getItemsCountByLinkType(release, 'Asset');
@@ -108,7 +113,7 @@ export default class Release extends Component {
                 data-test-id="remove-release-ddl"
                 icon="MoreHorizontal"
                 className={styles.dropdownButton}
-                onClick={() => this.setState({ isDropdownOpen: !this.state.isDropdownOpen })}
+                onClick={(event) => this.handleClick(event)}
               />
             }>
             <DropdownList>

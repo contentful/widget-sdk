@@ -14,6 +14,7 @@ import {
 import tokens from '@contentful/forma-36-tokens';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import UnknownErrorMessage from 'components/shared/UnknownErrorMessage';
+import { releaseDetailNavigation } from '../ReleaseDetail/utils';
 import ReleasesEmptyStateMessage from './ReleasesEmptyStateMessage';
 import { getReleases } from '../releasesService';
 import ReleasesTimeline from './ReleasesTimeline';
@@ -106,6 +107,7 @@ class ReleasesListPage extends Component {
 
     this.state = { ...this.initialState };
     this.fetchReleases = this.fetchReleases.bind(this);
+    this.onReleaseSelect = this.onReleaseSelect.bind(this);
   }
 
   componentDidMount() {
@@ -139,12 +141,20 @@ class ReleasesListPage extends Component {
     }
   };
 
+  onReleaseSelect(release) {
+    releaseDetailNavigation(release);
+  }
+
   renderReleases() {
     const { activeTab, releases } = this.state;
 
     if (releases[activeTab].length) {
       return (
-        <ReleasesTimeline releases={releases[activeTab]} onDeleteRelease={this.fetchReleases} />
+        <ReleasesTimeline
+          releases={releases[activeTab]}
+          onDeleteRelease={this.fetchReleases}
+          onReleaseSelect={this.onReleaseSelect}
+        />
       );
     }
 

@@ -16,13 +16,24 @@ const styles = {
     marginBottom: tokens.spacingM,
     boxShadow: tokens.boxShadowDefault,
   }),
+  cursorPointer: css({
+    cursor: 'pointer',
+  }),
 };
 
-const ReleasesTimeline = ({ releases, ...rest }) => {
+const ReleasesTimeline = ({ releases, onReleaseSelect, ...rest }) => {
+  const handleClick = (release) => {
+    if (onReleaseSelect) {
+      onReleaseSelect(release);
+    }
+  };
   return (
     <List className={styles.list} testId="releases-timeline">
       {releases.map((release, index) => (
-        <li key={`release-${index}`} className={styles.item}>
+        <li
+          key={`release-${index}`}
+          className={styles.item && styles.cursorPointer}
+          onClick={() => handleClick(release)}>
           <Release release={release} {...rest} />
         </li>
       ))}
@@ -32,6 +43,7 @@ const ReleasesTimeline = ({ releases, ...rest }) => {
 
 ReleasesTimeline.propTypes = {
   releases: PropTypes.array,
+  onReleaseSelect: PropTypes.func,
 };
 
 export default ReleasesTimeline;

@@ -3,11 +3,13 @@ import { pick } from 'lodash';
 const useSelectedEntities = ({ entities }) => {
   const [selectedObject, setSelected] = useState({});
 
+  const getId = (entity) => (entity.getId ? entity.getId() : entity.sys.id);
+
   useEffect(() => {
     setSelected((oldVal) => {
       return pick(
         oldVal,
-        entities.map((entity) => entity.getId())
+        entities.map((entity) => getId(entity))
       );
     });
   }, [entities]);
@@ -17,19 +19,16 @@ const useSelectedEntities = ({ entities }) => {
 
   const clearSelected = () => setSelected({});
   const setAllSelected = () => {
-    const allEntities = entities.reduce(
-      (acc, entity) => ({ ...acc, [entity.getId()]: entity }),
-      {}
-    );
+    const allEntities = entities.reduce((acc, entity) => ({ ...acc, [getId(entity)]: entity }), {});
     setSelected(allEntities);
   };
   const isSelected = (entity) => {
-    return Boolean(selectedObject[entity.getId()]);
+    return Boolean(selectedObject[getId(entity)]);
   };
 
   const toggleSelected = (entity) =>
     setSelected((oldVal) => {
-      const entityId = entity.getId();
+      const entityId = getId(entity);
       if (isSelected(entity)) {
         return Object.entries(oldVal).reduce((acc, [id, entity]) => {
           if (id === entityId) return acc;

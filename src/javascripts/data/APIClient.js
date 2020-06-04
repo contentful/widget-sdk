@@ -294,6 +294,37 @@ APIClient.prototype.deleteRelease = function (id) {
   );
 };
 
+APIClient.prototype.getReleaseById = function (id) {
+  return this._request(
+    {
+      method: 'GET',
+      path: ['releases', id],
+    },
+    {
+      ...getAlphaHeader(IMMEDIATE_RELEASE),
+    }
+  );
+};
+
+APIClient.prototype.updateReleaseById = function (id, title, items = []) {
+  return this._request(
+    {
+      method: 'PUT',
+      path: ['releases', id],
+      data: {
+        title,
+        entities: {
+          sys: { type: 'Array' },
+          items,
+        },
+      },
+    },
+    {
+      ...getAlphaHeader(IMMEDIATE_RELEASE),
+    }
+  );
+};
+
 APIClient.prototype.validateRelease = function (action, entities, type = 'immediate') {
   return this._request(
     {
