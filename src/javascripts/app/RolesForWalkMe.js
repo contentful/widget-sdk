@@ -14,17 +14,15 @@ const setAttrOnAppContainer = (attr, value) => {
   container && container.setAttribute(attr, value);
 };
 
-const removeAttrOnAppContainer = (attr) => {
-  const container = document.querySelector('cf-app-container');
-
-  container && container.removeAttribute(attr);
-};
-
 export const init = () => {
   const $rootScope = getModule('$rootScope');
   const spaceContext = getModule('spaceContext');
 
   $rootScope.$on('$stateChangeSuccess', () => {
+    if (!spaceContext.space) {
+      return;
+    }
+
     const spaceId = spaceContext.space.data.sys.id;
 
     getVariation(WALK_FOR_ME_FLAG, { spaceId }).then((variation) => {
@@ -37,9 +35,11 @@ export const init = () => {
       // to remove the scripts from the page
       if (lastVariation && variation !== lastVariation) {
         window.location.reload();
+        return;
       }
 
-      if (variation && variation !== lastVariation) {
+      // We have a variation, and no previous one, so we load WalkMe
+      if (variation) {
         const spaceMember = spaceContext.getData('spaceMember');
         const isSpaceAdmin = spaceMember ? spaceMember.admin : false;
         const spaceRoleNames = _.sortBy(_.map(spaceMember ? spaceMember.roles : [], 'name')).join(
@@ -50,7 +50,7 @@ export const init = () => {
         //
         // These attributes must be set on `cf-app-container` directly, as the current code for
         // walkMe has jQuery selectors like `cf-app-container[data-space-role-names="SuperAdmin"]`.
-        setAttrOnAppContainer(IS_ADMIN_ATTR, isSpaceAdmin);
+        setAttrOnAppContainer(IS_ADMIN_ATTR, JSON.stringify(isSpaceAdmin));
         setAttrOnAppContainer(ROLE_NAMES_ATTR, JSON.stringify(spaceRoleNames));
 
         // Tell walkMe to use smartLoad
@@ -60,11 +60,6 @@ export const init = () => {
         // map to the values in LazyLoader. Since the code doesn't change between
         // spaces of the same variation, this is okay.
         LazyLoader.get(variation);
-      }
-
-      if (!variation) {
-        removeAttrOnAppContainer(IS_ADMIN_ATTR);
-        removeAttrOnAppContainer(ROLE_NAMES_ATTR);
       }
 
       lastVariation = variation;
