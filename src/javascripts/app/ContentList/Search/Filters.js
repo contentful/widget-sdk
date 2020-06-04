@@ -101,9 +101,9 @@ const sysFieldFilters = [
 
 const metadataFilters = [
   {
-    name: 'Tags',
+    name: 'tags',
     type: 'Tags',
-    description: 'Metadata tags of the item',
+    description: 'Tags on the item',
     queryKey: 'metadata.tags.sys.id',
     operators: getOperatorsByType('Tags'),
     valueInput: getControlByType({ type: 'Tags' }),
