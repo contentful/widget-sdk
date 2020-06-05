@@ -7,7 +7,6 @@ import * as entityStatus from 'app/entity_editor/EntityStatus';
 import * as ResourceUtils from 'utils/ResourceUtils';
 
 import TheLocaleStore from 'services/localeStore';
-import createSavedViewsSidebar from 'app/ContentList/SavedViewsSidebar';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as BulkAssetsCreator from 'services/BulkAssetsCreator';
 import * as Analytics from 'analytics/Analytics';
@@ -22,6 +21,8 @@ export default function register() {
     'spaceContext',
     function AssetListController($scope, $controller, $state, spaceContext) {
       const entityType = 'asset';
+      $scope.entityType = entityType;
+
       const viewPersistor = createViewPersistor({ entityType });
 
       const searchController = $controller('AssetSearchController', {
@@ -29,19 +30,16 @@ export default function register() {
         viewPersistor,
       });
 
-      $scope.savedViewsState = 'loading';
-      spaceContext.uiConfig.then(
-        (api) => {
-          $scope.savedViewsSidebar = createSavedViewsSidebar({
-            entityFolders: api.assets,
-            entityType,
-          });
-          $scope.savedViewsState = 'ready';
-        },
-        () => {
-          $scope.savedViewsState = 'error';
-        }
-      );
+      // temporary helper to make react sibling update
+      $scope.savedViewsUpdated = 0;
+      $scope.onViewSaved = (tab) => {
+        $scope.initialTab = tab;
+        $scope.savedViewsUpdated += 1;
+        $scope.$apply();
+      };
+      $scope.onSelectSavedView = () => {
+        searchController.resetAssets();
+      };
 
       $scope.entityStatus = entityStatus;
 
@@ -141,7 +139,7 @@ export default function register() {
       $scope.hasNoSearchResults = () => {
         const hasQuery = searchController.hasQuery();
         const hasAssets = $scope.paginator.getTotal() > 0;
-        return !hasAssets && hasQuery && !$scope.context.isSearching;
+        return !hasAssets && hasQuery && !$scope.context.isLoading;
       };
 
       // TODO this code is duplicated in the entry list controller
@@ -149,7 +147,7 @@ export default function register() {
         const hasQuery = searchController.hasQuery();
         const hasAssets = $scope.paginator.getTotal() > 0;
 
-        return !hasAssets && !hasQuery && !$scope.context.isSearching;
+        return !hasAssets && !hasQuery && !$scope.context.isLoading;
       };
 
       $scope.createMultipleAssets = () => {

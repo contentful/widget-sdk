@@ -60,7 +60,7 @@ function AssetList({ context, assets = [], updateAssets }) {
       displayedFields={displayedFields}
       entities={assets}
       entityType="asset"
-      isLoading={context.isSearching}
+      isLoading={context.isLoading}
       renderDisplayField={(props) => <DisplayField {...props} />}
       updateEntities={updateAssets}
     />

@@ -2804,6 +2804,10 @@ pre,
     flex-direction: column;
     margin-right: auto;
   }
+  .workbench-main__left-sidebar > react-component[name="app/ContentList/SavedViews/Sidebar"] {
+    height: 100%;
+    overflow-y: hidden;
+  }
   @media (max-width: 1279px) {
     .workbench-main__left-sidebar {
       -ms-flex: 0 0 280px;

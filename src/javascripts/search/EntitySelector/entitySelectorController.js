@@ -303,12 +303,14 @@ export default function register() {
 
       function resetAndLoad() {
         $scope.isLoading = true;
-        load().then((response) => {
-          $scope.items = [];
-          $scope.paginator.setTotal(0);
-          $scope.paginator.setPage(0);
-          handleResponse(response);
-        });
+        load()
+          .then((response) => {
+            $scope.items = [];
+            $scope.paginator.setTotal(0);
+            $scope.paginator.setPage(0);
+            handleResponse(response);
+          })
+          .catch(console.error);
       }
 
       function loadMore() {

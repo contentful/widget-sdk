@@ -36,27 +36,29 @@ async function stubConfig(system) {
 async function stubClientStorage(system) {
   let localStore = {};
 
+  function mockedCreate() {
+    return {
+      getItem: function (key) {
+        return localStore[key];
+      },
+      setItem: function (key, value) {
+        localStore[key] = value + '';
+      },
+      removeItem: function (key) {
+        delete localStore[key];
+      },
+      clear: function () {
+        localStore = {};
+      },
+    };
+  }
+
   const mocked = {
     _store: localStore,
-    default: function () {
-      return {
-        getItem: function (key) {
-          return localStore[key];
-        },
-        setItem: function (key, value) {
-          localStore[key] = value + '';
-        },
-        removeItem: function (key) {
-          delete localStore[key];
-        },
-        clear: function () {
-          localStore = {};
-        },
-      };
-    },
+    createClientStorageWrapper: mockedCreate,
   };
 
-  await system.set('browserStorage/ClientStorageWrapper', mocked);
+  await system.set('core/services/BrowserStorage/ClientStorageWrapper', mocked);
 }
 
 async function stubShareJsLibClient(system) {

@@ -142,7 +142,7 @@ describe('Asset List Controller', () => {
     it('unsets isSearching flag if successful', () => {
       scope.searchController.resetAssets();
       scope.$apply();
-      expect(scope.context.isSearching).toBe(false);
+      expect(scope.context.isLoading).toBe(false);
     });
 
     it('loads assets', () => {
@@ -364,7 +364,7 @@ describe('Asset List Controller', () => {
     beforeEach(function () {
       this.assertShowNoAssetsAdvice = ({ total, searching, expected }) => {
         scope.searchController.paginator.setTotal(total);
-        scope.context.isSearching = searching;
+        scope.context.isLoading = searching;
         expect(scope.showNoAssetsAdvice()).toBe(expected);
       };
     });

@@ -27,7 +27,7 @@ export default function register() {
       let lastUISearchState = null;
 
       $scope.context.ready = false;
-      $scope.context.loading = true;
+      $scope.context.isLoading = true;
       $scope.jobs = [];
       const spaceEndpoint = createSpaceEndpoint(
         spaceContext.space.data.sys.id,
@@ -54,7 +54,7 @@ export default function register() {
 
       const updateEntries = createRequestQueue(requestEntries, setupEntriesHandler);
 
-      const isSearching$ = K.fromScopeValue($scope, ($scope) => $scope.context.isSearching);
+      const isSearching$ = K.fromScopeValue($scope, ($scope) => $scope.context.isLoading);
 
       this.hasQuery = hasQuery;
 
@@ -110,7 +110,7 @@ export default function register() {
       // - Enter is pressed and not selecting an autocompletion item
       // - "magnifying glass" icon next to input is clicked
       $scope.$on('forceSearch', () => {
-        if (!$scope.context.loading) {
+        if (!$scope.context.isLoading) {
           resetEntries();
         }
       });
@@ -120,7 +120,7 @@ export default function register() {
       // page.
       $scope.$watch('entries.length', (entriesLength) => {
         const currPage = $scope.paginator.getPage();
-        if (!entriesLength && !$scope.context.loading && $scope.paginator.getPage() > 0) {
+        if (!entriesLength && !$scope.context.isLoading && $scope.paginator.getPage() > 0) {
           $scope.paginator.setPage(currPage - 1);
         }
       });
@@ -145,8 +145,7 @@ export default function register() {
        */
       function requestEntries(chunkSize = null) {
         initialized = true;
-        $scope.context.loading = true;
-        $scope.context.isSearching = true;
+        $scope.context.isLoading = true;
 
         let query;
         return prepareQuery()
@@ -176,7 +175,7 @@ export default function register() {
           )
           .then(
             (result) => {
-              $scope.context.isSearching = false;
+              $scope.context.isLoading = false;
               Tracking.searchPerformed(viewPersistor.read(), result.total);
               return result;
             },
@@ -243,7 +242,7 @@ export default function register() {
           .catch((err) => {
             if (_.isObject(err) && 'statusCode' in err && err.statusCode === -1) {
               // entries update failed due to some network issue
-              $scope.context.isSearching = true;
+              $scope.context.isLoading = true;
             }
             return $q.reject(err);
           })
@@ -268,13 +267,12 @@ export default function register() {
         }
         refreshEntityCaches();
         $scope.context.ready = true;
-        $scope.context.loading = false;
+        $scope.context.isLoading = false;
       }
 
       function handleEntriesError(err) {
         const isInvalidQuery = isInvalidQueryError(err);
-        $scope.context.loading = false;
-        $scope.context.isSearching = false;
+        $scope.context.isLoading = false;
         $scope.context.ready = true;
 
         // Reset the view only if the UI was not edited yet.

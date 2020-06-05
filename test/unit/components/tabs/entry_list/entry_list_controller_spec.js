@@ -136,9 +136,9 @@ describe('Entry List Controller', () => {
 
     it('sets loading flag', () => {
       scope.updateEntries();
-      expect(scope.context.loading).toBe(true);
+      expect(scope.context.isLoading).toBe(true);
       scope.$apply();
-      expect(scope.context.loading).toBe(false);
+      expect(scope.context.isLoading).toBe(false);
     });
 
     it('sets entries num on the paginator', () => {
@@ -195,7 +195,7 @@ describe('Entry List Controller', () => {
 
   describe('#showNoEntriesAdvice()', () => {
     beforeEach(() => {
-      scope.context.loading = false;
+      scope.context.isLoading = false;
     });
 
     it('is true when there are no entries', () => {

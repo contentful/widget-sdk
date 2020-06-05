@@ -261,11 +261,10 @@ export default function create($scope, contentTypeIds) {
         .then(() => {
           setPristine();
           getContentPreview().clearCache();
-          return spaceContext.uiConfig;
         })
-        .then((uiConfig) => {
+        .then(() => {
           // Try to update UIConfig but proceed if it failed.
-          return uiConfig.addOrEditCt($scope.contentType.data).catch(() => {});
+          return spaceContext.uiConfig.addOrEditCt($scope.contentType.data).catch(() => {});
         })
         .then(() => {
           if (redirect && $scope.context.isNew) {

@@ -56,6 +56,8 @@ import * as DateRangeValidation from 'components/field_dialog/validations/DateRa
 import * as AssetList from 'components/tabs/asset_list/AssetList';
 import * as EntryEditorWorkbench from 'app/entry_editor/EntryEditorWorkbench';
 import * as ContentTagsField from 'app/asset_editor/ContentTagsField';
+import * as SavedViewsAdapter from 'app/ContentList/SavedViews/Sidebar';
+import * as SavedViewsLink from 'app/ContentList/SavedViews/Link';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container, store) {
@@ -302,6 +304,8 @@ function getModule(name) {
     'components/tabs/asset_list/AssetList': AssetList,
     'app/entry_editor/EntryEditorWorkbench': EntryEditorWorkbench,
     'app/asset_editor/ContentTagsField': ContentTagsField,
+    'app/ContentList/SavedViews/Sidebar': SavedViewsAdapter,
+    'app/ContentList/SavedViews/Link': SavedViewsLink,
   };
 
   return get(allowedModules, name, null);

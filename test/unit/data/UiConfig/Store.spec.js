@@ -46,20 +46,18 @@ describe('data/UiConfig/Store', () => {
   });
 
   describe('#entries.shared', () => {
+    it('#get() returns and saves default values if not set', async function () {
+      const api = await this.create();
+      expect((await api.entries.shared.get()).length).toEqual(3);
+    });
+
     it('#get() gets loaded config', async function () {
       this.store.default = { _migrated: { entryListViews: 'DATA' } };
       const api = await this.create();
-      expect(api.entries.shared.get()).toEqual('DATA');
+      expect(await api.entries.shared.get()).toEqual('DATA');
     });
 
-    it('#get() returns default values if not set', async function () {
-      this.store.default = { _migrated: { entryListViews: undefined } };
-      const api = await this.create();
-      expect(api.entries.shared.get().length).toEqual(3);
-    });
-
-    it('#set() creates, updates and deletes UiConfig', async function () {
-      expect(this.store.default).toBe(undefined);
+    it('#set() creates, updates and reinitializes UiConfig', async function () {
       const api = await this.create();
 
       await api.entries.shared.set('DATA1');
@@ -69,7 +67,7 @@ describe('data/UiConfig/Store', () => {
       expect(this.store.default._migrated.entryListViews).toEqual('DATA2');
 
       await api.entries.shared.set(undefined);
-      expect(this.store.default._migrated.entryListViews).toEqual(undefined);
+      expect((await api.entries.shared.get()).length).toEqual(3);
     });
   });
 

@@ -1,5 +1,5 @@
 import * as Defaults from './Defaults';
-import { findIndex, get as getPath, extend, omit, pick } from 'lodash';
+import { findIndex, get as getPath, extend, omit, pick, isEmpty } from 'lodash';
 import { update, concat } from 'utils/Collections';
 import { deepFreeze } from 'utils/Freeze';
 import * as logger from 'services/logger';
@@ -59,14 +59,13 @@ export default function create(space, spaceEndpoint$q, publishedCTs, viewMigrato
     },
   });
 
-  // TODO: optimization - lazy loading
-  // We could return `{ withApi }`, where `withApi` takes a callback
-  // and fetches UIConfigs ONLY on the first use:
-  //
-  // uiConfig.withApi(api => doSomething(api.entries.shared)) // fetches...
-  // uiConfig.withApi(api => doSomething(api.entries.private)) // instant!
+  return api;
 
-  return Promise.all([load(SHARED_VIEWS), load(PRIVATE_VIEWS)]).then(() => api);
+  async function initializeIfNeeded(type) {
+    if ((type === SHARED_VIEWS || type === PRIVATE_VIEWS) && isEmpty(state[type])) {
+      await load(type);
+    }
+  }
 
   /**
    * Create a scoped store for a property on the root UI config.
@@ -75,12 +74,23 @@ export default function create(space, spaceEndpoint$q, publishedCTs, viewMigrato
    * If the scoped value is not set we use `getDefaults()` to return a default.
    */
   function forScope(type, key, getDefaults, canEdit) {
-    const get = () => (state[type][key] === undefined ? getDefaults() : state[type][key]);
-    const set = (val) =>
-      save(
+    async function get() {
+      await initializeIfNeeded(type);
+      const currentState = state[type][key];
+      if (!currentState) {
+        return set(getDefaults());
+      }
+      return currentState;
+    }
+
+    async function set(val) {
+      await initializeIfNeeded(type);
+      await save(
         type,
         update(state[type], key, () => val)
-      ).then(get);
+      );
+      return get();
+    }
 
     return { get, set, canEdit };
   }
@@ -189,7 +199,8 @@ export default function create(space, spaceEndpoint$q, publishedCTs, viewMigrato
    * if it already exists. This method is called only from the content type
    * editor. It expects content type data object, not @contentful/client entity.
    */
-  function addOrEditCt(ct) {
+  async function addOrEditCt(ct) {
+    await initializeIfNeeded(SHARED_VIEWS);
     const { folder, folderIndex, folderExists } = findFolder((f) => f.title === 'Content Type');
     const canEdit = membership.admin;
 
@@ -202,7 +213,7 @@ export default function create(space, spaceEndpoint$q, publishedCTs, viewMigrato
       }
     } else {
       // Nothing was updated but we don't fail.
-      return Promise.resolve(state[SHARED_VIEWS]);
+      return state[SHARED_VIEWS];
     }
   }
 

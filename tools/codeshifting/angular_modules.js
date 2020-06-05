@@ -56,7 +56,6 @@ module.exports = function (fileInfo, { jscodeshift: j }) {
       'sanitize-html',
       'scroll-into-view',
       'searchParser',
-      'sortablejs',
       'json-stringify-safe',
       'sum-types',
       'sum-types/caseof-eq',

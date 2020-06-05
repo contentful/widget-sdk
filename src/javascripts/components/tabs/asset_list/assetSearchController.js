@@ -32,7 +32,7 @@ export default function register() {
       let lastUISearchState = null;
 
       $scope.context.ready = false;
-      $scope.context.loading = true;
+      $scope.context.isLoading = true;
 
       // HACK: This makes sure that component bridge renders
       // somethings until search UI is initialized.
@@ -45,7 +45,7 @@ export default function register() {
 
       // TODO: Get rid of duplicate code in entry_list_search_controller.js
 
-      const isSearching$ = K.fromScopeValue($scope, ($scope) => $scope.context.isSearching);
+      const isSearching$ = K.fromScopeValue($scope, ($scope) => $scope.context.isLoading);
 
       $scope.$watch(
         () => getViewSearchState(),
@@ -97,8 +97,7 @@ export default function register() {
 
       function handleAssetsError(err) {
         const isInvalidQuery = isInvalidQueryError(err);
-        $scope.context.loading = false;
-        $scope.context.isSearching = false;
+        $scope.context.isLoading = false;
         $scope.context.ready = true;
 
         // Reset the view only if the UI was not edited yet.
@@ -154,7 +153,7 @@ export default function register() {
 
       function makeIsSearchingSetter(flag) {
         return (val) => {
-          $scope.context.isSearching = flag;
+          $scope.context.isLoading = flag;
           return val;
         };
       }

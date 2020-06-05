@@ -5,7 +5,6 @@ import Paginator from 'classes/Paginator';
 import * as entityStatus from 'app/entity_editor/EntityStatus';
 import * as ResourceUtils from 'utils/ResourceUtils';
 import EntityListCache from 'classes/entityListCache';
-import createSavedViewsSidebar from 'app/ContentList/SavedViewsSidebar';
 import * as Analytics from 'analytics/Analytics';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as entityCreator from 'components/app_container/entityCreator';
@@ -24,7 +23,19 @@ export default function register() {
     'spaceContext',
     function EntryListController($scope, $state, $controller, spaceContext) {
       const entityType = 'entry';
+      $scope.entityType = entityType;
       $scope.paginator = Paginator.create();
+
+      // temporary helper to make react sibling update
+      $scope.savedViewsUpdated = 0;
+      $scope.onViewSaved = (tab) => {
+        $scope.initialTab = tab;
+        $scope.savedViewsUpdated += 1;
+        $scope.$apply();
+      };
+      $scope.onSelectSavedView = () => {
+        $scope.updateEntries();
+      };
 
       const viewPersistor = createViewPersistor({ entityType });
       const searchController = $controller('EntryListSearchController', {
@@ -43,25 +54,6 @@ export default function register() {
         entityType: 'Asset',
         limit: 3,
       });
-
-      $scope.savedViewsState = 'loading';
-      spaceContext.uiConfig.then(
-        (api) => {
-          $scope.savedViewsSidebar = createSavedViewsSidebar({
-            entityFolders: api.entries,
-            entityType,
-            // a view can be assigned to roles only in the Entry List
-            roleAssignment: {
-              membership: spaceContext.space.data.spaceMember,
-              endpoint: spaceContext.endpoint,
-            },
-          });
-          $scope.savedViewsState = 'ready';
-        },
-        () => {
-          $scope.savedViewsState = 'error';
-        }
-      );
 
       $scope.isLegacyOrganization = ResourceUtils.isLegacyOrganization(spaceContext.organization);
       $scope.environmentId = spaceContext.getEnvironmentId();
@@ -85,7 +77,7 @@ export default function register() {
 
       const resetSearchResults = _.debounce(() => {
         $scope.entryProps = {
-          isSearching: $scope.context.isSearching,
+          isSearching: $scope.context.isLoading,
           displayFieldForFilteredContentType: $scope.displayFieldForFilteredContentType,
           entries: $scope.entries,
           updateEntries: () => $scope.updateEntries(),
@@ -121,7 +113,7 @@ export default function register() {
 
       $scope.$watchGroup(
         [
-          'context.isSearching',
+          'context.isLoading',
           'paginator.getPage()',
           'paginator.getTotal()',
           'entryCache.inProgress',
@@ -209,7 +201,7 @@ export default function register() {
         const hasQuery = searchController.hasQuery();
         const hasEntries = $scope.paginator.getTotal() > 0;
 
-        return !hasEntries && !hasQuery && !$scope.context.loading;
+        return !hasEntries && !hasQuery && !$scope.context.isLoading;
       };
 
       /**
@@ -224,7 +216,7 @@ export default function register() {
       $scope.hasNoSearchResults = () => {
         const hasQuery = searchController.hasQuery();
         const hasEntries = $scope.paginator.getTotal() > 0;
-        return !hasEntries && hasQuery && !$scope.context.loading;
+        return !hasEntries && hasQuery && !$scope.context.isLoading;
       };
 
       /**

@@ -19,14 +19,9 @@
     </h1>
   </div>
   <div class="workbench-header__search">
-    <cf-component-bridge style="flex: 1; z-index: 1;" component="search"></cf-component-bridge
-    ><a
-      class="text-link"
-      style="margin-left: 15px;"
-      ng-if="savedViewsState === 'ready'"
-      ng-click="savedViewsSidebar.api.saveCurrentView()"
-      >Save as view</a
-    >
+    <cf-component-bridge style="flex: 1; z-index: 1;" component="search"></cf-component-bridge>
+    <react-component name="app/ContentList/SavedViews/Link" props="{ entityType, onViewSaved }">
+    </react-component>
   </div>
   <div class="workbench-header__actions" ng-if="!showNoEntriesAdvice()">
     <react-component
@@ -36,7 +31,7 @@
   </div>
 </header>
 <div class="workbench-main" ng-hide="showNoEntriesAdvice()">
-  <div class="workbench-main__left-sidebar" style="max-height: 100vh; overflow-y: hidden;">
+  <div class="workbench-main__left-sidebar">
     <react-component
       name="app/ScheduledActions/ScheduledActionsPageLink"
       props="{isMasterEnvironment: isMasterEnvironment}"
@@ -45,23 +40,10 @@
       name="app/Releases/ReleasesPageLink"
       props="{isMasterEnvironment: isMasterEnvironment}"
     ></react-component>
-    <div
-      class="saved-views-wrapper"
-      ng-if="savedViewsState === 'loading'"
-      style="padding: 4rem 1rem; text-align: center;"
-    >
-      Loading&nbsp;
-      <react-component name="@contentful/forma-36-react-components/Spinner"></react-component>
-    </div>
-    <div class="saved-views-wrapper" ng-if="savedViewsState === 'error'" style="padding: 0.5rem;">
-      <react-component
-        name="@contentful/forma-36-react-components/Note"
-        props="{noteType: 'warning', title: 'Failed to load views', children: 'Please refresh the page.'}"
-      ></react-component>
-    </div>
-    <div class="saved-views-sidebar-wrapper" ng-if="savedViewsState === 'ready'">
-      <cf-component-store-bridge component="savedViewsSidebar"></cf-component-store-bridge>
-    </div>
+    <react-component
+      name="app/ContentList/SavedViews/Sidebar"
+      props="{ entityType, initialTab, onSelectSavedView, savedViewsUpdated }"
+    ></react-component>
   </div>
   <div class="workbench-main__right-content">
     <div class="search-results__count" ng-show="hasPage()">
