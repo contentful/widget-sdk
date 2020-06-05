@@ -84,7 +84,8 @@ export const handleConsentChanged = debounce(async function debouncedHandleConse
 }, 500);
 
 export async function init() {
-  if (cm) {
+  // Do not run init if we already did before, or if we specifically opt to disable (for example in testing)
+  if (cm || localStorage.has('__disable_consentmanager')) {
     return;
   }
 
@@ -139,11 +140,6 @@ export async function init() {
     marketingToggles.forEach((toggle) => {
       toggle.parentElement.parentElement.style.display = 'none';
     });
-  }
-
-  // This allows us to programmatically disable the consent manager during testing
-  if (localStorage.has('__disable_consentmanager')) {
-    cm.teardown();
   }
 
   return cm;
