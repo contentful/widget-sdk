@@ -51,7 +51,10 @@ const AssetEditorWorkbench = ({
           actions={
             <>
               <div id={`editor-status-switch-${entityInfo.id}`} />
-              <Button onClick={() => state.delete.execute()} buttonType="muted">
+              <Button
+                testId="trigger-delete-modal"
+                onClick={() => state.delete.execute()}
+                buttonType="muted">
                 Delete
               </Button>
             </>
@@ -118,7 +121,7 @@ AssetEditorWorkbench.propTypes = {
   statusNotificationProps: PropTypes.object,
   entrySidebarProps: PropTypes.object,
   fields: PropTypes.object,
-  widgets: PropTypes.object,
+  widgets: PropTypes.array,
   getOtDoc: PropTypes.func,
   editorContext: PropTypes.shape({
     entityInfo: PropTypes.object,
