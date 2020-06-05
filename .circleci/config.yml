@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   cypress: cypress-io/cypress@1.7.0
+  samson: contentful/trigger-samson@1
   copy-assets:
     orbs:
       aws-s3: circleci/aws-s3@1.0.15
@@ -256,6 +257,8 @@ jobs:
             ~/bin/estivador docker-ecr-login
             ~/bin/estivador put-image
             ~/bin/estivador promote-image
+      - samson/trigger-samson:
+          samson-url: https://samson.contentful.org/integrations/generic/24884e787b5439c88cedef3d8bf1ca90
       - run:
           name: Upload build to user_interface build tracker server and post comment
           command: |
@@ -491,7 +494,3 @@ workflows:
       #     requires:
       #       - copy-assets-to-s3
       #     <<: *run_only_on_master_branch
-
-notify:
-  webhooks:
-    - url: https://samson.contentful.org/integrations/circleci/24884e787b5439c88cedef3d8bf1ca90
