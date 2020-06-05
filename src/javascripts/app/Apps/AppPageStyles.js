@@ -70,16 +70,22 @@ export const styles = {
   }),
   noConfigContainer: css({
     width: '100%',
-    '> div:last-child': {
-      borderTop: `1px solid ${tokens.colorElementLight}`,
+    backgroundColor: tokens.colorElementLightest,
+    '> div:nth-child(3)': {
+      paddingTop: tokens.spacingL,
     },
   }),
   noConfigSection: css({
-    maxWidth: '700px',
+    maxWidth: '768px',
     margin: '0 auto',
     padding: tokens.spacingXl,
   }),
   noConfigHelpText: css({
-    marginTop: tokens.spacingM,
+    marginTop: tokens.spacingL,
+  }),
+  divider: css({
+    height: '1px',
+    maxHeight: '1px',
+    backgroundColor: tokens.colorElementLight,
   }),
 };

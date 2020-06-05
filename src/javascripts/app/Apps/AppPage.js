@@ -7,6 +7,7 @@ import {
   Spinner,
   Paragraph,
   Heading,
+  Subheading,
   SkeletonContainer,
   SkeletonBodyText,
   Workbench,
@@ -283,13 +284,13 @@ export default class AppRoute extends Component {
     );
   }
 
-  renderTitle() {
+  renderTitle(Component = Heading) {
     return (
-      <Heading className={styles.heading}>
+      <Component className={styles.heading}>
         <AppIcon icon={this.state.appIcon} />
         {this.state.title}
         {this.props.app.isPrivateApp && <Tag className={styles.tag}>Private</Tag>}
-      </Heading>
+      </Component>
     );
   }
 
@@ -401,26 +402,29 @@ export default class AppRoute extends Component {
     return (
       <div className={styles.noConfigContainer}>
         <div className={styles.noConfigSection}>
-          {this.renderTitle()}
+          {this.renderTitle(Subheading)}
           <HelpText className={styles.noConfigHelpText}>
             This app does not require additional configuration.
           </HelpText>
         </div>
         {this.props.canManageThisApp && (
-          <div className={styles.noConfigSection}>
-            <Paragraph>
-              This is the default configuration screen of your app. Build advanced installation
-              flows for your users by adding the app configuration location. Learn more about{' '}
-              <TextLink
-                href="https://www.contentful.com/developers/docs/extensibility/app-framework/locations/"
-                rel="noopener noreferrer"
-                target="_blank"
-                icon="ExternalLink">
-                app locations
-              </TextLink>
-              .
-            </Paragraph>
-          </div>
+          <>
+            <div className={styles.divider} />
+            <div className={styles.noConfigSection}>
+              <Paragraph>
+                This is the default configuration screen of your app. Build advanced installation
+                flows for your users by adding the app configuration location. Learn more about{' '}
+                <TextLink
+                  href="https://www.contentful.com/developers/docs/extensibility/app-framework/locations/"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  icon="ExternalLink"
+                  iconPosition="right">
+                  app locations
+                </TextLink>
+              </Paragraph>
+            </div>
+          </>
         )}
       </div>
     );
