@@ -7,7 +7,6 @@ import {
   Dropdown,
   DropdownList,
   DropdownListItem,
-  TextLink,
   Icon,
   Subheading,
 } from '@contentful/forma-36-react-components';
@@ -113,7 +112,6 @@ class StatusWidget extends React.PureComponent {
       secondary,
       isSaving,
       updatedAt,
-      revert,
       isDisabled,
       isScheduled,
       publicationBlockedReason,
@@ -241,14 +239,6 @@ class StatusWidget extends React.PureComponent {
               </span>
             </div>
           )}
-          {revert && revert.isAvailable() && (
-            <TextLink
-              className="entity-sidebar__revert btn-link"
-              data-test-id="discard-changed-button"
-              onClick={() => revert.execute()}>
-              Discard changes
-            </TextLink>
-          )}
         </div>
       </div>
     );
@@ -260,7 +250,6 @@ StatusWidget.propTypes = {
   isSaving: PropTypes.bool.isRequired,
   updatedAt: PropTypes.string,
   isScheduled: PropTypes.bool,
-  revert: CommandPropType,
   primary: CommandPropType,
   secondary: PropTypes.arrayOf(CommandPropType.isRequired).isRequired,
   onScheduledPublishClick: PropTypes.func.isRequired,
