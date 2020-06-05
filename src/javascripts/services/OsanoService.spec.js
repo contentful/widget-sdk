@@ -1,4 +1,4 @@
-import { get } from 'utils/LazyLoader';
+import * as LazyLoader from 'utils/LazyLoader';
 import * as service from './OsanoService';
 import isAnalyticsAllowed from 'analytics/isAnalyticsAllowed';
 import * as Analytics from 'analytics/Analytics';
@@ -116,7 +116,7 @@ describe('OsanoService', () => {
   });
 
   const setupService = async (opts = generateConsentOptions()) => {
-    const { cm } = await get();
+    const { cm } = await LazyLoader.get();
     cm.storage.getConsent.mockReturnValue(opts);
     await service.init();
     return cm;
@@ -236,7 +236,7 @@ describe('OsanoService', () => {
     });
 
     it('should set local consent from Gatekeeper consent if present', async () => {
-      const { cm } = await get();
+      const { cm } = await LazyLoader.get();
 
       await service.init();
       callHandleInitialize();
@@ -250,7 +250,7 @@ describe('OsanoService', () => {
 
     it('should save local consent to Gatekeeper if there is local consent but no Gatekeeper consent', async () => {
       getUserSync.mockReturnValueOnce({ sys: { version: 456 } });
-      const { cm } = await get();
+      const { cm } = await LazyLoader.get();
       const localConsent = generateConsentOptions();
       cm.storage.getConsent.mockReturnValue(localConsent);
 
@@ -272,7 +272,7 @@ describe('OsanoService', () => {
     });
 
     it('does not save any consent if the user has not consented yet', async () => {
-      const { cm } = await get();
+      const { cm } = await LazyLoader.get();
       cm.storage.getExpDate.mockReturnValue(0);
       const store = getBrowserStorage();
 
@@ -309,7 +309,7 @@ describe('OsanoService', () => {
     });
 
     it('it should intialize consent if it has not been done yet', async () => {
-      const { cm } = await get();
+      const { cm } = await LazyLoader.get();
       cm.storage.getExpDate.mockReturnValue(0);
       cm.storage.getConsent.mockReturnValue(generateConsentOptions());
       getUserSync.mockReturnValue({ sys: { version: 123 } });
@@ -337,14 +337,14 @@ describe('OsanoService', () => {
 
   describe('init', () => {
     afterEach(async () => {
-      const { cm } = await get();
+      const { cm } = await LazyLoader.get();
       cm.storage.key = 'osano_consentmanager';
     });
 
     it('should get Osano from LazyLoader', async () => {
       await service.init();
 
-      expect(get).toHaveBeenCalled();
+      expect(LazyLoader.get).toHaveBeenCalled();
     });
 
     it('should only call the LazyLoader once, even after multiple init calls', async () => {
@@ -352,11 +352,21 @@ describe('OsanoService', () => {
       await service.init();
       await service.init();
 
-      expect(get).toHaveBeenCalledTimes(1);
+      expect(LazyLoader.get).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not fetch Osano if __disable_consentmanager is in localStorage', async () => {
+      const store = getBrowserStorage();
+      store.has.mockReturnValueOnce(true);
+
+      await service.init();
+
+      // We should not fetch the Osano script if the flag exists
+      expect(LazyLoader.get).toHaveBeenCalledTimes(0);
     });
 
     it('should immediately teardown the original instance', async () => {
-      const { cm } = await get();
+      const { cm } = await LazyLoader.get();
 
       await service.init();
 
@@ -364,7 +374,7 @@ describe('OsanoService', () => {
     });
 
     it('should set the updated cookie value', async () => {
-      const { cm } = await get();
+      const { cm } = await LazyLoader.get();
 
       expect(cm.storage.key).toBe('osano_consentmanager');
 
@@ -374,7 +384,7 @@ describe('OsanoService', () => {
     });
 
     it('should gracefully handle teardown failures', async () => {
-      const { cm } = await get();
+      const { cm } = await LazyLoader.get();
       cm.teardown.mockImplementationOnce(() => {
         throw new Error('Teardown failure');
       });
@@ -387,7 +397,7 @@ describe('OsanoService', () => {
     });
 
     it('should setup listeners for various events', async () => {
-      const { cm } = await get();
+      const { cm } = await LazyLoader.get();
 
       await service.init();
 
@@ -399,7 +409,7 @@ describe('OsanoService', () => {
       const store = getBrowserStorage();
       store.get.mockReturnValue({ hello: 'world' });
 
-      const { cm } = await get();
+      const { cm } = await LazyLoader.get();
 
       await service.init();
 
@@ -407,24 +417,12 @@ describe('OsanoService', () => {
     });
 
     it('should override whenReady and call the readyCb during initialization', async () => {
-      const { cm } = await get();
+      const { cm } = await LazyLoader.get();
 
       await service.init();
 
       expect(cm.whenReady).not.toHaveBeenCalled();
       expect(cm.whenReadyCb).toHaveBeenCalledTimes(1);
-    });
-
-    it('should call teardown if __disable_consentmanager is in localStorage', async () => {
-      const store = getBrowserStorage();
-      store.has.mockReturnValue(true);
-
-      const { cm } = await get();
-
-      await service.init();
-
-      // Torn down initially, and then due to __disable_consentmanager
-      expect(cm.teardown).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -455,7 +453,7 @@ describe('OsanoService', () => {
 
   describe('openConsentManagementPanel', () => {
     it('should emit the "info-dialog-open" Osano event', async () => {
-      const { cm } = await get();
+      const { cm } = await LazyLoader.get();
 
       await service.init();
 
