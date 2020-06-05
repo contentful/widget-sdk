@@ -6,7 +6,6 @@ import { getVariation } from 'LaunchDarkly';
 
 const IS_ADMIN_ATTR = 'data-space-role-is-admin';
 const ROLE_NAMES_ATTR = 'data-space-role-names';
-let lastVariation = null;
 
 const setAttrOnAppContainer = (attr, value) => {
   const container = document.querySelector('cf-app-container');
@@ -15,6 +14,9 @@ const setAttrOnAppContainer = (attr, value) => {
 };
 
 export const init = () => {
+  // The service is only initialized once in prelude.js, so this is safe to do.
+  let lastVariation = null;
+
   const $rootScope = getModule('$rootScope');
   const spaceContext = getModule('spaceContext');
 

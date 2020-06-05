@@ -167,13 +167,14 @@ describe('RolesForWalkMe handler', () => {
     expect(window.location.reload).toBeCalled();
   });
 
-  it('should not do the above if the variation is null', async () => {
+  it('should not do anything if both variation and lastVariation are null', async () => {
     initService();
 
     $rootScope.__trigger$on('$stateChangeSuccess');
 
     await wait();
 
+    expect(window.location.reload).not.toBeCalled();
     expect(screen.getByTestId('app-container')).not.toHaveAttribute('data-space-role-is-admin');
     expect(screen.getByTestId('app-container')).not.toHaveAttribute('data-space-role-names');
     expect(mockWalkMeConfigSetter).not.toBeCalled();
