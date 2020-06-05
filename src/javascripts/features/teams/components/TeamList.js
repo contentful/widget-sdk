@@ -14,6 +14,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
+import { orderBy } from 'lodash';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 import { useAsync } from 'core/hooks';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
@@ -59,7 +60,7 @@ TeamList.propTypes = {
 const fetchTeamsData = (orgId, setData) => async () => {
   const orgEndpoint = createOrganizationEndpoint(orgId);
   const teams = await getAllTeams(orgEndpoint);
-  setData(teams.items);
+  setData(orderBy(teams.items, ['name']));
 };
 
 export function TeamList({ readOnlyPermission, orgId }) {

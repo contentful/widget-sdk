@@ -5,6 +5,7 @@ import pluralize from 'pluralize';
 import { css } from 'emotion';
 import StateLink from 'app/common/StateLink';
 import {
+  TextLink,
   TableRow,
   TableCell,
   Spinner,
@@ -49,7 +50,12 @@ export function TeamListRow({ team, onClose, readOnlyPermission }) {
       <TableCell>
         <div className={styles.name}>
           {teamId !== 'placeholder' ? (
-            <StateLink key={teamId} path="^.detail" data-test-id="team-name">
+            <StateLink
+              component={TextLink}
+              path="account.organizations.teams.detail"
+              key={teamId}
+              params={{ teamId }}
+              data-test-id="team-name">
               {team.name}
             </StateLink>
           ) : (
