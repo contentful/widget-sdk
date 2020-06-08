@@ -14,7 +14,7 @@ const styles = {
 
 export default function PlanFeatures({ resources, roleSet, disabled }) {
   return (
-    <List className="space-plans-list__item__features" data-test-id="plan-features">
+    <List className="space-plans-list__item__features" testId="plan-features">
       {resources.map(({ type, number }) => {
         let tooltipText = '';
 

@@ -21,6 +21,9 @@ const styles = {
   checkmarkIcon: css({
     transform: 'scale(2)',
   }),
+  loadingIndicator: css({
+    marginBottom: '20px',
+  }),
   center: css({
     textAlign: 'center',
   }),
@@ -58,18 +61,20 @@ export default function ProgressScreen(props) {
 
   return (
     <Typography>
-      <div className="create-new-space__templates__status">
-        {!done && <Spinner testId="create-space-progress" size="large" />}
-        {done && (
-          <div className={styles.checkmarkIcon} data-test-id="create-space-done">
-            <CheckmarkIcon />
-          </div>
-        )}
+      <div className={styles.center}>
+        <div className={styles.loadingIndicator}>
+          {!done && <Spinner testId="create-template-progress" size="large" />}
+          {done && (
+            <div className={styles.checkmarkIcon} data-test-id="create-template-done">
+              <CheckmarkIcon />
+            </div>
+          )}
+        </div>
+        <Heading>Hang on, we’re preparing your space</Heading>
+        <Paragraph>
+          In the meantime, let us quickly explain the kind of things you’ll find in your space
+        </Paragraph>
       </div>
-      <Heading>Hang on, we’re preparing your space</Heading>
-      <Paragraph>
-        In the meantime, let us quickly explain the kind of things you’ll find in your space
-      </Paragraph>
       <div className="create-new-space__templates__entities">
         {infoItems.map(({ Icon, title, description }) => (
           <div key={title} className="create-new-space__templates__entity">

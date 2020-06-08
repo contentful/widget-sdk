@@ -11,6 +11,7 @@ import { getTemplate } from 'services/SpaceTemplateLoader';
 import { go } from 'states/Navigator';
 import { getModule } from 'core/NgRegistry';
 import { joinWithAnd } from 'utils/StringUtils';
+import { canCreate } from 'utils/ResourceUtils';
 
 export const FREE_SPACE_IDENTIFIER = 'free_space';
 
@@ -100,7 +101,46 @@ export async function createSpace({ name, plan, organizationId }) {
   return newSpace;
 }
 
-export function trackWizardEvent(eventName, payload) {
+export function goToBillingPage(organization, onClose) {
+  const orgId = organization.sys.id;
+
+  go({
+    path: ['account', 'organizations', 'subscription_billing'],
+    params: { orgId, pathSuffix: '/billing_address' },
+    options: { reload: true },
+  });
+
+  trackWizardEvent('link_click');
+  onClose && onClose();
+}
+
+export function transformSpaceRatePlans({ organization, spaceRatePlans = [], freeSpaceResource }) {
+  return spaceRatePlans.map((plan) => {
+    const isFree = plan.productPlanType === 'free_space';
+    const includedResources = getIncludedResources(plan.productRatePlanCharges);
+    let disabled = false;
+    let current = false;
+
+    if (plan.unavailabilityReasons && plan.unavailabilityReasons.length > 0) {
+      disabled = true;
+    } else if (isFree) {
+      disabled = !canCreate(freeSpaceResource);
+    } else if (!organization.isBillable) {
+      disabled = true;
+    }
+
+    if (
+      plan.unavailabilityReasons &&
+      plan.unavailabilityReasons.some((reason) => reason.type === 'currentPlan')
+    ) {
+      current = true;
+    }
+
+    return { ...plan, isFree, includedResources, disabled, current };
+  });
+}
+
+export function trackWizardEvent(eventName, payload = {}) {
   const trackingData = createTrackingData(payload);
 
   Analytics.track(`space_wizard:${eventName}`, trackingData);
@@ -164,6 +204,15 @@ export function getIncludedResources(charges) {
   });
 }
 
+export function getHighestPlan(spaceRatePlans) {
+  return [...spaceRatePlans].sort(
+    // Handle the case where price isn't in the plan object, and default it to neg. infinity so that it will always
+    // be sorted to the end
+    ({ price: planXPrice = -Infinity }, { price: planYPrice = -Infinity }) =>
+      planYPrice - planXPrice
+  )[0];
+}
+
 export function getTooltip(type, number) {
   return ResourceTooltips[type] && ResourceTooltips[type]({ number });
 }
@@ -203,6 +252,20 @@ export function getRolesTooltip(limit, roleSet) {
     // e.g. [...] Admin, Editor, and Translator roles
     return `${intro} ${rolesString} ${pluralized}`;
   }
+}
+
+export async function sendParnershipEmail(spaceId, fields) {
+  const endpoint = createSpaceEndpoint(spaceId);
+
+  await endpoint({
+    method: 'POST',
+    path: ['partner_projects'],
+    data: {
+      clientName: get(fields, 'clientName', ''),
+      projectDescription: get(fields, 'projectDescription', ''),
+      estimatedDeliveryDate: get(fields, 'estimatedDeliveryDate', ''),
+    },
+  });
 }
 
 async function createTemplate(templateInfo) {
