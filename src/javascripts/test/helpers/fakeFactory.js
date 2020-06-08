@@ -195,7 +195,7 @@ export function Invitation(organizationMembership = Link(types.ORGANIZATION_MEMB
 }
 
 export function Plan(options) {
-  return Object.assign({ sys: sys({ id: 'Plan', type: 'ProductRatePlan' }) }, options);
+  return { sys: sys({ id: 'Plan', type: 'ProductRatePlan' }), ...options };
 }
 
 export function SpaceRole(name = '') {

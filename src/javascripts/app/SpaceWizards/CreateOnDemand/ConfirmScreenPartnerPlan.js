@@ -12,10 +12,11 @@ import {
   Button,
   Heading,
 } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
 
 const styles = {
   fieldset: css({
-    border: '1px solid #d3dce0',
+    border: `1px solid ${tokens.colorElementMid}`,
     padding: '0 10px',
     margin: '20px 0 0',
     borderRadius: '2px',

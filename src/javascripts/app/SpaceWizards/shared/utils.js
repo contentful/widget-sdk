@@ -111,7 +111,7 @@ export function goToBillingPage(organization, onClose) {
   });
 
   trackWizardEvent('link_click');
-  onClose && onClose(false);
+  onClose && onClose();
 }
 
 export function transformSpaceRatePlans({ organization, spaceRatePlans = [], freeSpaceResource }) {
