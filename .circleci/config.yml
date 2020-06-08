@@ -443,6 +443,7 @@ workflows:
             - build-with-statistics
       - cypress/run:
           name: run-contract-tests
+          no-workspace: true
           executor: cypress-base-10
           parallelism: 4
           pre-steps:
