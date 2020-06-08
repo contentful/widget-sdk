@@ -196,9 +196,14 @@ function identify(extension) {
   const user = _.omitBy(rawUserData, (val) => _.isArray(val) || _.isObject(val));
 
   const userId = getSessionData('user.sys.id');
+  const userSignature = getSessionData('user.intercomUserSignature');
 
   if (userId && user) {
-    segment.identify(userId, user);
+    segment.identify(userId, user, {
+      integrations: {
+        Intercom: { user_hash: userSignature }, // for identity verification purpose
+      },
+    });
     Snowplow.identify(userId);
   }
 
