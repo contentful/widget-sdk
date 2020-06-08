@@ -250,7 +250,7 @@ export default class AccountDropdown extends Component {
         </DropdownList>
 
         <DropdownList border="bottom">
-          {Intercom.isEnabled && (
+          {Intercom.isEnabled() && (
             <DropdownListItem testId="nav.account.intercom" onClick={this.handleLiveChat}>
               Talk to us
             </DropdownListItem>
