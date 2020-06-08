@@ -12,7 +12,7 @@ const projectDir = path.resolve(__dirname, '..', '..', '..');
 const sourcemapsDir = path.join(projectDir, 'public', 'sourcemaps');
 const appDir = path.join(projectDir, 'public', 'app');
 
-module.exports = async function uploadSourcemapsToBugsnag({ version }) {
+module.exports = async function uploadSourcemapsToBugsnag({ gitSha }) {
   const appFiles = fs.readdirSync(appDir, { withFileTypes: true });
   const uploadSourcemap = promisify(upload);
 
@@ -29,7 +29,7 @@ module.exports = async function uploadSourcemapsToBugsnag({ version }) {
       promises.push(
         uploadSourcemap({
           apiKey,
-          appVersion: version,
+          appVersion: gitSha,
           minifiedUrl: `*/app/${sourceFilename}`,
           minifiedFile: sourcePath,
           sourceMap: sourcemapPath,
