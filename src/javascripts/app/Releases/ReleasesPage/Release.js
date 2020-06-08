@@ -116,7 +116,7 @@ export default class Release extends Component {
                 onClick={(event) => this.handleClick(event)}
               />
             }>
-            <DropdownList>
+            <DropdownList onClick={(event) => event.stopPropagation()}>
               <DropdownListItem onClick={this.deleteRelease} testId="release-card-delete-cta">
                 Delete
               </DropdownListItem>

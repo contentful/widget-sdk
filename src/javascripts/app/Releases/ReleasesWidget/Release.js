@@ -84,7 +84,7 @@ export default class Release extends Component {
               onClick={(event) => this.handleClick(event)}
             />
           }>
-          <DropdownList>
+          <DropdownList onClick={(event) => event.stopPropagation()}>
             <DropdownListItem>
               Contains {this.getItemsCountByLinkType(release, 'Entry')} entries and{' '}
               {this.getItemsCountByLinkType(release, 'Asset')} assets
