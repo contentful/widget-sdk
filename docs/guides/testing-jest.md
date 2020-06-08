@@ -13,17 +13,20 @@
       - [Static Rendering API with `Enzyme.render`](#static-rendering-api-with-enzymerender)
       - [`shallow` vs. `mount` vs. `render`](#shallow-vs-mount-vs-render)
     - [Jest](#jest)
-      - [Snapshots](#snapshots)
+      - [Snapshots [deprecated]](#snapshots-[deprecated])
   - [Writing tests](#writing-tests)
-    - [Testing basic component rendering](#testing-basic-component-rendering)
-    - [Testing events](#testing-events)
-    - [Testing event handlers](#testing-event-handlers)
-    - [Testing custom hooks](#testing-custom-hooks)
+    - [Unit vs Component tests](#unit-vs-component-tests)
+    - [React Testing Library](#react-testing-library)
+      - [Cheatsheet](#cheatsheet)
+      - [Async Utils](#async-utils)
+      - [Testing custom react hooks](#testing-custom-react-hooks)
     - [Matchers](#matchers)
-    - [Async tests](#async-tests)
     - [Mocks](#mocks)
+      - [Faker Library](#faker-library)
       - [Mock functions](#mock-functions)
-      - [Mock modules](#mock-modules)
+      - [mockResolveValue vs mockReturnValue vs mockRejectedValueOnce](#mockResolveValue-vs-mockReturnValue-vs-mockRejectedValueOnce)
+      - [What not to mock](#What-not-to-mock)
+      - [Modals](#modals)
       - [Mock Angular modules](#mock-angular-modules)
   - [Skipping tests](#skipping-tests)
   - [Debugging tests](#debugging-tests)
@@ -126,7 +129,9 @@ Enzyme's render function is used to render react components to static HTML and a
 
 ### Jest
 
-#### Snapshots
+#### Snapshots [Deprecated]
+
+**Please create at least a basic render test instead of using a snapshot as while snapshots are easy to set up, they generally do a worse job at checking if something was broken from a change and are easy to ignore**
 
 Snapshot is a rendered output of your component stored in a text file.
 
@@ -147,59 +152,165 @@ Jest stores snapshots besides your tests in files like `__snapshots__/Label.spec
 
 ## Writing tests
 
-### Testing basic component rendering
+### Unit vs Component tests
 
-That's enough for most non-interactive components:
+By unit testing, we mean testing an individual functionality or method. Ideally, a tests get input and expect a specific output, so we can check if the implementation is correctly covering corner cases.
 
-```js
-import { render } from '@testing-library/react';
-import Comment from './comment.es6';
+Here is an example of a good set of unit tests:
 
-describe('Comment component', () => {
-  it('renders the comment body', () => {
-    const { getByTestId } = render(<Commment text="Hello world" />);
-    const body = getByTestId('comment.body');
-    expect(body.textContent).toBe('Hello world');
+```javascript
+/**
+ * Make a storage unit number more readable by making them smaller
+ * shortenStorageUnit(1000, 'GB'); // "1 TB"
+ * shortenStorageUnit(0.001, 'TB'); // "1 GB"
+ * @param {Number} number
+ * @param {String} uom Unit of measure
+ * @returns {String}
+ */
+export function shortenStorageUnit(value, uom) {
+  if (value <= 0) {
+    return '0 B';
+  }
+
+  const units = ['PB', 'TB', 'GB', 'MB', 'KB', 'B'];
+
+  const getBigger = (unit) => units[units.indexOf(unit) - 1];
+  const getSmaller = (unit) => units[units.indexOf(unit) + 1];
+  const isBiggestUnit = (unit) => units.indexOf(unit) === 0;
+  const isSmallestUnit = (unit) => units.indexOf(unit) === units.length - 1;
+
+  const reduce = (number, unit) => {
+    if (number < 0.99 && !isSmallestUnit(unit)) {
+      return reduce(number * 1000, getSmaller(unit));
+    } else if (number >= 1000 && !isBiggestUnit(unit)) {
+      return reduce(number / 1000, getBigger(unit));
+    } else {
+      return { number, unit };
+    }
+  };
+
+  const { number, unit } = reduce(value, uom);
+
+  return `${formatFloat(number)} ${unit}`;
+}
+
+// spec for the function:
+describe('shortenStorageUnit', () => {
+  it('supports 0 as a number', () => {
+    expect(shortenStorageUnit(0, 'MB')).toEqual('0 B');
+  });
+
+  it('transforms numbers lower than 0.99 into smaller units', () => {
+    expect(shortenStorageUnit(0.01, 'PB')).toEqual('10 TB');
+    expect(shortenStorageUnit(0.0025, 'TB')).toEqual('2.5 GB');
+    expect(shortenStorageUnit(0.615, 'TB')).toEqual('615 GB');
+  });
+
+  it('does not transform numbers greater than 0.99 and smaller than 1000', () => {
+    expect(shortenStorageUnit(1.01, 'TB')).toEqual('1.01 TB');
+    expect(shortenStorageUnit(999, 'GB')).toEqual('999 GB');
+  });
+
+  it('transforms numbers bigger than 999 into bigger units', () => {
+    expect(shortenStorageUnit(1000, 'B')).toEqual('1 KB');
+    expect(shortenStorageUnit(25729, 'MB')).toEqual('25.73 GB');
+  });
+
+  it('does not transform if there no bigger unit', () => {
+    expect(shortenStorageUnit(10000, 'PB')).toEqual('10000 PB');
+  });
+
+  it('does not transform if there is no smaller unit', () => {
+    expect(shortenStorageUnit(0.01, 'B')).toEqual('0.01 B');
   });
 });
 ```
 
-### Testing events
+Component test - recommendation is to use react-library, which work with actual DOM nodes. This approach reflects more how the user would interact with the actual rendered component in a browser.
 
-You can simulate an event like click or change and then check for the changes in the DOM:
+Here's an example of a good component test:
 
-```js
-it('renders Markdown in preview mode', () => {
-  const { queryByTestId, getByTestId } = render(<MarkdownEditor value="*Hello* Jest!" />);
+```javascript
+// Component that we are testing in UserListRow which display item with
+// description, tooltip and dropdown
+const UserListRow = ({props here} => {
+  ...
+  return (
+   // and markup
+  );
+});
 
-  expect(queryByTestId('markdown.preview')).toBeNull();
+// Spec
 
-  fireEvent.click(getByTestId('markdown.toggle-preview'));
+const build = custom => {
+  const props = Object.assign(
+    {
+      member: defaultSpaceMembership,
+      canModifyUsers: false,
+      openRoleChangeDialog: openRoleChangeDialog,
+      openRemovalConfirmationDialog: openRemovalConfirmationDialog,
+      numberOfTeamMemberships: { 'random id': 4 },
+      adminCount: 1
+    },
+    custom
+  );
 
-  expect(getByTestId('markdown.preview')).toContainHTML('<strong>Hello</strong> Jest!');
+  render(<UserListRow {...props} />);
+
+  return wait();
+};
+
+describe('renders correctly', () => {
+
+  it('should display the name correctly', async () => {
+    await build();
+
+    expect(screen.getByTestId('user-list.name')).toHaveTextContent('John Doe');
+  });
+
+  describe('Edit user dropdown', () => {
+    it('should drop down when clicked', async () => {
+      await build({ canModifyUsers: true });
+      userEvent.click(screen.getByTestId('user-list.actions'));
+
+      expect(screen.getByTestId('user-change-role')).toBeDefined();
+    });
+
+    it('should call openRoleChangeDialog when that is clicked', async () => {
+      await build({ canModifyUsers: true });
+      userEvent.click(screen.getByTestId('user-list.actions'));
+
+      const editUserRoleButtonContainer = screen.getByTestId('user-change-role');
+      userEvent.click(
+        within(editUserRoleButtonContainer).getByTestId(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
+      );
+
+      expect(openRoleChangeDialog).toHaveBeenCalled();
+    });
+  });
 });
 ```
 
-### Testing event handlers
+#### React Testing Library
 
-<!-- Similar to events testing but instead of testing component’s rendered output with a snapshot use Jest’s mock function to test an event handler itself: -->
+##### Cheatsheet
 
-```js
-import { render, cleanup, fireEvent } from '@testing-library/react';
+Can be viewed [here](https://gist.github.com/vbeleuta/7d85ee5799fece8a4fba0229cf2bfcd0)
 
-it('it calls the onChange handler with the selected value', () => {
-  const value = '2';
-  const onChange = jest.fn();
-  const { getByTestId } = render(<Select items={items} onChange={onChange} />);
-  const selectEl = getByTestId('select');
+##### Async Utils
 
-  fireEvent.change(selectEl, { target: { value } });
+For information on:
 
-  expect(onChange).toBeCalledWith(value);
-});
-```
+- Solving act() warnings
+- wait, waitForElement, waitForElementToBeRemoved
 
-### Testing custom hooks
+Look [here!](https://gist.github.com/guilebarbosa/df244462c823986a22d16fc4e9a5704c)
+
+#### Commonly used Jest assertions
+
+- A list of all jest assertions can be found [here](https://jestjs.io/docs/en/expect)
+
+#### Testing custom react hooks
 
 You can use `renderHook()` to wrap the custom hook under test and use `act()` to call it's update functions in order to simulate the rendering cycle.
 The documentation for `@testing-library/react-hooks` can be found [here](https://react-hooks-testing-library.com/usage/basic-hooks).
@@ -212,7 +323,7 @@ import { renderHook, act } from '@testing-library/react-hooks';
 const useCounter = (initial = 0) => {
   const [count, setCount] = useState(initial);
 
-  const increment = useCallback(() => setCount(x => x + 1), []);
+  const increment = useCallback(() => setCount((x) => x + 1), []);
 
   return { count, increment };
 };
@@ -234,44 +345,200 @@ test('should increment counter', () => {
 
 Refer to [Jest Cheet sheet](https://github.com/sapegin/jest-cheat-sheet#matchers) and [jest-dom](https://github.com/testing-library/jest-dom#readme) to learn about matchers;
 
-### Async tests
-
-See [more examples](https://jestjs.io/docs/en/tutorial-async.html) in Jest docs.
-
-It’s a good practice to specify a number of expected assertions in async tests, so the test will fail if your assertions weren’t called at all.
-
-```js
-it('async test', () => {
-  expect.assertions(3); // Exactly three assertions are called during a test
-  // OR
-  expect.hasAssertions(); // At least one assertion is called during a test
-
-  // Your async tests
-});
-```
-
-Refer [Jest Cheet sheet](https://github.com/sapegin/jest-cheat-sheet#async-tests) to learn more about async tests.
-
 ### Mocks
 
-#### Mock functions
+#### Faker Library
 
-[Mock functions docs](https://jestjs.io/docs/en/mock-function-api)
+We use [fakeFactory.js](https://github.com/contentful/user_interface/blob/master/src/javascripts/test/helpers/fakeFactory.js) to fake testing objects so we do not have to recreate these each time we write a new test. For example we have have a basic Space object that can be created.
 
-```js
-it('calls the callback', () => {
-  const callback = jest.fn();
-  fn(callback);
-  expect(callback).toBeCalled();
-  expect(callback.mock.calls[0][1].baz).toBe('pizza'); // Second argument of the first call
-});
+```javascript
+export function Space(options = {}) {
+  return {
+    name: uniqueId(types.SPACE),
+    organization: Organization(),
+    spaceMembership: SpaceMembership(),
+    sys: sys({
+      type: types.SPACE,
+      id: uniqueId(types.SPACE),
+      createdAt: DEFAULT_CREATED_AT_TIME_ISO,
+      createdBy: User(),
+    }),
+    ...options,
+  };
+}
 ```
 
-#### Mock modules
+Any part of this can be overwritten, or any field add. Here's an example where two spaces are made for testing. One that doesn't have a spaceMembership, and one that's a default space.
+
+```javascript
+// It's creation and set up
+const spaces = [fake.Space({ spaceMembership: null }), fake.Space()];
+
+beforeEach(() => {
+  getSpaces.mockResolvedValue(spaces);
+});
+
+...
+
+// How it's tested. Use the spaces constant to verify that it's called with the correct ID
+expect(someFunction).toHaveBeenCalledWith(spaces[1].sys.id);
+```
+
+A more complex example would be:
 
 ```js
-jest.mock('lodash/memoize', () => a => a); // The original lodash/memoize should exist
-jest.mock('lodash/memoize', () => a => a, { virtual: true }); // The original lodash/memoize isn’t required
+import * as fakeFactory from 'testHelpers/fakeFactory';
+
+const user = fakeFactory.User({
+  firstName: 'John',
+  lastName: 'Smith',
+  email: 'john@example.com',
+});
+
+const mockOrgMemberships = [fakeFactory.OrganizationMembership('member', 'active', user)];
+
+const editorRole = fakeFactory.Role('Editor');
+const authorRole = fakeFactory.Role('Author');
+const mockSpaceRoles = [editorRole, authorRole];
+
+jest.mock('access_control/OrganizationMembershipRepository', () => ({
+  getAllMembershipsWithQuery: jest.fn(async () => ({ items: mockOrgMemberships })),
+}));
+jest.mock('access_control/RoleRepository', () => ({
+  getInstance: () => ({
+    getAll: jest.fn(async () => mockSpaceRoles),
+  }),
+}));
+```
+
+#### Mocking functions
+
+Mocking functions: When mocking dependencies, you’ll want to verify that the function was called correctly. That requires keeping track of how often the function was called and what arguments it was called with. That way we can make assertions on how many times it was called and ensure it was called with the right arguments.
+
+Often it is a good idea to check that the mocked functions are called the expected number of times and with the expected arguments.
+
+Simple case usage:
+
+- setup:
+
+```js
+import { createOrganizationEndpoint } from 'data/EndpointFactory';
+
+jest.mock('data/EndpointFactory', () => ({
+  createOrganizationEndpoint: jest.fn().mockReturnValue(VALUE_YOU_WANT_FUNCTION_TO_RETURN),
+}));
+```
+
+- Update it using `mockReturnValue()`
+
+```js
+createOrganizationEndpoint.mockReturnValue(fakeOrgEnpoint);
+```
+
+- Mocking external dependencies
+
+```js
+jest.mock('lodash/memoize', () => (a) => a); // The original lodash/memoize should exist
+jest.mock('lodash/memoize', () => (a) => a, { virtual: true }); // The original lodash/memoize isn’t required
+```
+
+- More complex examples:
+
+```js
+// When there are multiple chained calls to the mock
+jest.mock('moment', () => ({
+  utc: jest.fn(() => {
+    return {
+      format: jest.fn(() => {
+        return MOCK_CREATED_AT_TIME_DAY_MONTH_YEAR;
+      }),
+    };
+  }),
+}));
+
+// Mocks returning mocks of mocks on mocks.
+
+// Set up
+jest.mock('services/TokenStore', () => ({
+  getSpaces: jest.fn(),
+}));
+
+jest.mock('states/Navigator', () => ({
+  go: jest.fn(),
+}));
+
+jest.mock('access_control/SpaceMembershipRepository', () => ({
+  remove: jest.fn(),
+  create: jest.fn(),
+}));
+
+jest.mock('data/EndpointFactory', () => ({
+  createSpaceEndpoint: jest.fn(),
+}));
+
+// ...
+
+const spaces = [fake.Space({ spaceMembership: null }), fake.Space()];
+const createdEndpoint = { example: 'test' };
+
+beforeEach(() => {
+  getSpaces.mockResolvedValue(spaces);
+  createSpaceEndpoint.mockReturnValue(createdEndpoint);
+  create.mockReturnValue({ remove: remove });
+});
+
+// ...
+// Testing the mocks
+expect(createSpaceEndpoint).toHaveBeenCalledWith(spaces[1].sys.id);
+expect(create).toHaveBeenCalledWith(createdEndpoint);
+expect(remove).toHaveBeenCalledWith(spaces[1].spaceMembership);
+```
+
+#### mockResolveValue vs mockReturnValue vs mockRejectedValueOnce
+
+- mockResolvedValue Returns a resolved promise. Should be used when mocking async functions
+- mockReturnValue Returns a value. Should be used when mocking synchronous functions
+- mockReset().mockRejectedValueOnce(new Error()) When testing try - catch code, when imported modules can throw errors
+- mockResolvedValueOnce && mockReturnValueOnce These functions should generally not be used as react components especially ones using hooks can be rendered multiple times leading to the incorrect state being passed to the react component when running the expect().tobe()
+
+#### What not to mock
+
+See here: https://gist.github.com/guilebarbosa/fdfcff0fda0108a6d8f71276c0f1a9c0
+
+#### Mocking Modals
+
+How to test Modals
+
+Modals are automatically mocked. So just put
+
+`import ModalLauncher from 'app/common/ModalLauncher';`
+
+in your testing file, returns the mock defined at which currently looks like this:
+
+```js
+export const open = jest.fn().mockResolvedValue(true);
+
+export default {
+  open,
+};
+```
+
+The mock defaults the resolved value to true meaning the user clicked the “confirm” button on the modal
+
+Test example that the modal is called:
+
+```js
+userEvent.click(buttonThatTriggersModal);
+
+await expect(ModalLauncher.open).toHaveBeenCalled();
+```
+
+Test example when the modal shouldn’t be called (for example, clicking on a disabled button that normally triggers a modal)
+
+```js
+userEvent.click(buttonThatTriggersModalButIsDisable);
+
+await expect(ModalLauncher.open).not.toHaveBeenCalled();
 ```
 
 #### Mock Angular modules
