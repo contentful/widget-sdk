@@ -2,9 +2,10 @@ import { get, cloneDeep } from 'lodash';
 import { deepFreeze } from 'utils/Freeze';
 import { applyDefaultValues } from './WidgetParametersUtils';
 import { toInternalFieldType } from './FieldTypes';
-import { NAMESPACE_EXTENSION, NAMESPACE_APP } from './WidgetNamespaces';
+import { NAMESPACE_EXTENSION, NAMESPACE_APP, NAMESPACE_EDITOR_BUILTIN } from './WidgetNamespaces';
 
 const CUSTOM_NAMESPACES = [NAMESPACE_EXTENSION, NAMESPACE_APP];
+const EDITOR_NAMESPACES = [NAMESPACE_EDITOR_BUILTIN, ...CUSTOM_NAMESPACES];
 
 // Given EditorInterface controls and a list of all widgets in a space
 // builds an array of "renderables". A "renderable" is a data structure
@@ -72,6 +73,7 @@ function convertToRenderable(item, widgets) {
   const renderable = {
     widgetId: item.widgetId,
     widgetNamespace: item.widgetNamespace,
+    disabled: !!item.disabled,
   };
 
   const descriptor = widgets.find((w) => {
@@ -106,8 +108,20 @@ export function buildSidebarRenderables(sidebar, widgets) {
     .map((item) => convertToRenderable(item, widgets));
 }
 
-export function buildEditorRenderable(editor, widgets) {
-  if (editor && CUSTOM_NAMESPACES.includes(editor.widgetNamespace)) {
-    return convertToRenderable(editor, widgets);
-  }
+export function buildEditorsRenderables(editors, widgets) {
+  const filtered = editors.filter((item) => EDITOR_NAMESPACES.includes(item.widgetNamespace));
+  const defaultEditors = widgets
+    .filter((widget) => widget.namespace === NAMESPACE_EDITOR_BUILTIN)
+    .map((widget) => ({
+      widgetId: widget.id,
+      widgetNamespace: widget.namespace,
+      ...widget,
+    }));
+
+  // remove all disabled default editors
+  const missingDefaultEditors = defaultEditors.filter((editor) => {
+    return !filtered.find((item) => item.widgetId === editor.widgetId);
+  });
+
+  return filtered.concat(missingDefaultEditors).map((item) => convertToRenderable(item, widgets));
 }

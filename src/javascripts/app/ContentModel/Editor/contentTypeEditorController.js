@@ -238,8 +238,11 @@ export default function register() {
       };
 
       const updateEditorConfiguration = (updatedEditor) => {
-        if (!_.isEqual($scope.editorInterface.editor, updatedEditor)) {
-          $scope.editorInterface.editor = updatedEditor;
+        const editors = $scope.editorInterface.editors;
+        if (!_.isEqual(editors[0], updatedEditor)) {
+          $scope.editorInterface.editors = updatedEditor
+            ? [updatedEditor, ...editors.slice(1)]
+            : editors.slice(1);
           $scope.$applyAsync();
           setDirty();
         }
@@ -343,7 +346,7 @@ export default function register() {
         currentTab: getCurrentTab($state),
         canEdit: accessChecker.can('update', 'ContentType'),
         sidebarConfiguration: $scope.editorInterface.sidebar,
-        editorConfiguration: $scope.editorInterface.editor,
+        editorConfiguration: $scope.editorInterface.editors[0],
         extensions: $scope.customWidgets,
         actions: {
           showMetadataDialog,

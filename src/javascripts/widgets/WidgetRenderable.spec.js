@@ -1,5 +1,6 @@
-import { buildRenderables } from './WidgetRenderable';
+import { buildRenderables, buildEditorsRenderables } from './WidgetRenderable';
 import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from './WidgetNamespaces';
+import { cloneDeep } from 'lodash';
 
 describe('WidgetRenderables', () => {
   describe('#buildRenderables()', () => {
@@ -177,5 +178,148 @@ describe('WidgetRenderables', () => {
     );
 
     expect(renderables.form[0].renderFieldEditor()).toBe('FOO-FROM-EXT');
+  });
+
+  describe('#buildEditorsRenderables', () => {
+    it('includes non-disabled default editors', () => {
+      const editorsRenderables = buildEditorsRenderables(
+        [{ settings: {}, widgetId: '72XtXyOy2cTtAH0ByYV8Qb', widgetNamespace: 'extension' }],
+        [
+          {
+            srcdoc: '<h1>Enter here:</h1>\n<input />\n',
+            id: '72XtXyOy2cTtAH0ByYV8Qb',
+            namespace: 'extension',
+            name: 'Buggy Extension',
+            fieldTypes: [],
+            sidebar: false,
+            parameters: [],
+            installationParameters: { definitions: [], values: {} },
+          },
+          { namespace: 'editor-builtin', name: 'Editor', id: 'default-editor' },
+          { namespace: 'editor-builtin', name: 'References', id: 'reference-tree' },
+        ]
+      ).map(cloneDeep);
+
+      expect(editorsRenderables).toEqual([
+        {
+          widgetId: '72XtXyOy2cTtAH0ByYV8Qb',
+          widgetNamespace: 'extension',
+          disabled: false,
+          parameters: { installation: {}, instance: {} },
+          descriptor: {
+            srcdoc: '<h1>Enter here:</h1>\n<input />\n',
+            id: '72XtXyOy2cTtAH0ByYV8Qb',
+            namespace: 'extension',
+            name: 'Buggy Extension',
+            fieldTypes: [],
+            sidebar: false,
+            parameters: [],
+            installationParameters: { definitions: [], values: {} },
+          },
+        },
+        {
+          widgetNamespace: 'editor-builtin',
+          descriptor: { name: 'Editor', id: 'default-editor', namespace: 'editor-builtin' },
+          widgetId: 'default-editor',
+          disabled: false,
+          parameters: { installation: {}, instance: {} },
+        },
+        {
+          widgetNamespace: 'editor-builtin',
+          descriptor: { name: 'References', id: 'reference-tree', namespace: 'editor-builtin' },
+          widgetId: 'reference-tree',
+          disabled: false,
+          parameters: { installation: {}, instance: {} },
+        },
+      ]);
+    });
+
+    it('uses built default editors when editors list is empty', () => {
+      const editorsRenderables = buildEditorsRenderables(
+        [],
+        [
+          { namespace: 'editor-builtin', name: 'Editor', id: 'default-editor' },
+          { namespace: 'editor-builtin', name: 'References', id: 'reference-tree' },
+        ]
+      ).map(cloneDeep);
+
+      expect(editorsRenderables).toEqual([
+        {
+          widgetNamespace: 'editor-builtin',
+          widgetId: 'default-editor',
+          disabled: false,
+          parameters: { installation: {}, instance: {} },
+          descriptor: { name: 'Editor', id: 'default-editor', namespace: 'editor-builtin' },
+        },
+        {
+          widgetNamespace: 'editor-builtin',
+          widgetId: 'reference-tree',
+          disabled: false,
+          parameters: { installation: {}, instance: {} },
+          descriptor: { name: 'References', id: 'reference-tree', namespace: 'editor-builtin' },
+        },
+      ]);
+    });
+
+    it('marks disabled editors accordingly', () => {
+      const editorsRenderables = buildEditorsRenderables(
+        [
+          { settings: {}, widgetId: '72XtXyOy2cTtAH0ByYV8Qb', widgetNamespace: 'extension' },
+          {
+            settings: {},
+            widgetId: 'default-editor',
+            widgetNamespace: 'editor-builtin',
+            disabled: true,
+          },
+        ],
+        [
+          {
+            srcdoc: '<h1>Enter here:</h1>\n<input />\n',
+            id: '72XtXyOy2cTtAH0ByYV8Qb',
+            namespace: 'extension',
+            name: 'Buggy Extension',
+            fieldTypes: [],
+            sidebar: false,
+            parameters: [],
+            installationParameters: { definitions: [], values: {} },
+          },
+          { namespace: 'editor-builtin', name: 'Editor', id: 'default-editor' },
+          { namespace: 'editor-builtin', name: 'References', id: 'reference-tree' },
+        ]
+      ).map(cloneDeep);
+
+      expect(editorsRenderables).toEqual([
+        {
+          widgetId: '72XtXyOy2cTtAH0ByYV8Qb',
+          widgetNamespace: 'extension',
+          disabled: false,
+          parameters: { installation: {}, instance: {} },
+          descriptor: {
+            srcdoc: '<h1>Enter here:</h1>\n<input />\n',
+            id: '72XtXyOy2cTtAH0ByYV8Qb',
+            namespace: 'extension',
+            name: 'Buggy Extension',
+            fieldTypes: [],
+            sidebar: false,
+            parameters: [],
+            installationParameters: { definitions: [], values: {} },
+          },
+        },
+        {
+          widgetNamespace: 'editor-builtin',
+          widgetId: 'default-editor',
+          disabled: true,
+          parameters: { installation: {}, instance: {} },
+          descriptor: { name: 'Editor', id: 'default-editor', namespace: 'editor-builtin' },
+        },
+        {
+          widgetNamespace: 'editor-builtin',
+          widgetId: 'reference-tree',
+          disabled: false,
+          parameters: { installation: {}, instance: {} },
+          descriptor: { name: 'References', id: 'reference-tree', namespace: 'editor-builtin' },
+        },
+      ]);
+    });
   });
 });

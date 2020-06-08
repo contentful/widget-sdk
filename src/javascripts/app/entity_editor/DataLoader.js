@@ -10,10 +10,11 @@ import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer'
 import { create as createBuiltinWidgetList } from 'widgets/BuiltinWidgets';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { getWidgetTrackingContexts } from 'widgets/WidgetTracking';
+import { NAMESPACE_EXTENSION, NAMESPACE_APP } from 'widgets/WidgetNamespaces';
 import {
   buildRenderables,
   buildSidebarRenderables,
-  buildEditorRenderable,
+  buildEditorsRenderables,
 } from 'widgets/WidgetRenderable';
 
 const assetEditorInterface = EditorInterfaceTransformer.fromAPI(
@@ -134,14 +135,14 @@ async function loadEditorData(loader, id) {
 
   const editorInterface = EditorInterfaceTransformer.fromAPI(contentType.data, apiEditorInterface);
 
-  const { controls, sidebar, editor } = editorInterface;
+  const { controls, sidebar, editors } = editorInterface;
 
   // There's nothing that prevents users to configure a custom
   // sidebar with the API. The feature check only happens here.
   // If a user has no feature, we undefine any config they may
   // have so they see the default one.
   const sidebarConfig = hasAdvancedExtensibility ? sidebar : undefined;
-  const editorConfig = hasAdvancedExtensibility ? editor : undefined;
+  const editorsConfig = hasAdvancedExtensibility ? editors : undefined;
 
   const widgets = [
     ...createBuiltinWidgetList(),
@@ -150,7 +151,10 @@ async function loadEditorData(loader, id) {
 
   const fieldControls = buildRenderables(controls, widgets);
   const sidebarExtensions = buildSidebarRenderables(sidebarConfig || [], widgets);
-  const editorExtension = buildEditorRenderable(editorConfig, widgets);
+  const editorsExtensions = buildEditorsRenderables(editorsConfig || [], widgets);
+  const customEditor = editorsExtensions.find((editor) => {
+    return [NAMESPACE_EXTENSION, NAMESPACE_APP].includes(editor.widgetNamespace);
+  });
 
   const entityInfo = makeEntityInfo(entity, contentType);
   const openDoc = loader.getOpenDoc(entity, contentType);
@@ -159,7 +163,8 @@ async function loadEditorData(loader, id) {
     fieldControls,
     sidebar: sidebarConfig,
     sidebarExtensions,
-    editorExtension,
+    editorsExtensions,
+    customEditor,
   };
 
   const widgetTrackingContexts = getWidgetTrackingContexts(widgetData);

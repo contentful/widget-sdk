@@ -273,7 +273,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
   /* Custom Extension */
 
   $scope.customExtensionProps = {
-    extension: editorData.editorExtension,
+    extension: editorData.customEditor,
     createBridge: (currentWidgetId, currentWidgetNamespace) =>
       createExtensionBridge({
         $rootScope,
