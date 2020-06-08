@@ -6,7 +6,7 @@ import {
   getSpaceRatePlans,
   getSubscriptionPlans,
   calculateTotalPrice,
-  changeSpace as changeSpaceApiCall,
+  changeSpacePlan as changeSpaceApiCall,
 } from 'account/pricing/PricingDataProvider';
 import { createApiKeyRepo } from 'features/api-keys-management';
 import * as TokenStore from 'services/TokenStore';

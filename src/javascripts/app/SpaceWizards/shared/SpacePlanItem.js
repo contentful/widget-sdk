@@ -104,12 +104,38 @@ const styles = {
     alignItems: 'flex-end',
     height: '100%',
   }),
+
+  recommendedPlan: css({
+    '&:after': {
+      content: '"Recommended"',
+      color: '#fff',
+      backgroundColor: '#5095ed',
+      borderRadius: '2px',
+      position: 'absolute',
+      right: '-20px',
+      top: '35%',
+      padding: '6px 10px',
+      textTransform: 'uppercase',
+      fontWeight: '600',
+      fontSize: '12px',
+      lineHeight: '12px',
+      letterSpacing: '0.4px',
+      opacity: '0.9',
+      filter: 'alpha(opacity=90)',
+    },
+  }),
+
+  planName: css({
+    fontSize: '17px',
+    lineHeight: '1.2',
+  }),
 };
 
 export default function SpacePlanItem(props) {
   const {
     plan,
     isSelected,
+    isRecommended,
     freeSpacesResource,
     isPayingOrg,
     onSelect,
@@ -144,6 +170,7 @@ export default function SpacePlanItem(props) {
         styles.plans[camelCase(plan.name)],
         plan.current && styles.currentPlan,
         plan.disabled && styles.disabled,
+        plan.recommended && styles.recommendedPlan,
       ])}
       selected={isSelected}
       onClick={handleClick}
@@ -186,4 +213,5 @@ SpacePlanItem.propTypes = {
   onSelect: PropTypes.func.isRequired,
   isPayingOrg: PropTypes.bool.isRequired,
   isCommunityPlanEnabled: PropTypes.bool,
+  isRecommended: PropTypes.bool,
 };

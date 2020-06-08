@@ -1,3 +1,4 @@
+import React from 'react';
 import { getOrganization } from 'services/TokenStore';
 import {
   open as openChangeSpaceWarningModal,
@@ -5,7 +6,8 @@ import {
 } from 'app/SpaceWizards/ChangeSpaceWarning';
 import { getSingleSpacePlan, isPOCSpacePlan } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { getModule } from 'core/NgRegistry';
+import { ModalLauncher } from 'core/components/ModalLauncher';
+import SpaceWizardsWrapper from 'app/SpaceWizards/SpaceWizardsWrapper';
 
 /**
  * Creates a string to be passed to the notification
@@ -37,35 +39,18 @@ export const getNotificationMessage = (space, currentSpacePlan, newSpacePlan) =>
  * @param {string} scope - The scope of the call (from a space or organization page). One of 'space', 'organization'.
  * @param {function} onSubmit
  */
-export async function showDialog({ organizationId, space, action, scope, onSubmit }) {
-  const modalDialog = getModule('modalDialog');
-
-  const validActions = ['change', 'upgrade', 'downgrade'];
+export async function showDialog({ organizationId, space, onSubmit: onSuccess }) {
+  // onSubmit is aliased to onSuccess because it's actually fired once the modal is successful, not every time.
+  // Will be updated in a later PR.
 
   if (!organizationId) {
-    throw new Error('organizationId not supplied for space creation');
+    throw new Error('organizationId not supplied for space change');
   }
 
   const organization = await getOrganization(organizationId);
 
   if (!space) {
-    throw new Error('space not supplied for space creation');
-  }
-
-  if (!action) {
-    throw new Error('ChangeSpaceService.showDialog: action required but not supplied');
-  }
-
-  if (!scope) {
-    throw new Error('ChangeSpaceService.showDialog: scope required but not supplied');
-  }
-
-  if (validActions.indexOf(action) === -1) {
-    throw new Error(
-      `ChangeSpaceService.showDialog: action ${action} invalid, valid actions: ${validActions.join(
-        ', '
-      )}`
-    );
+    throw new Error('space not supplied for space change');
   }
 
   const orgEndpoint = createOrganizationEndpoint(organization.sys.id);
@@ -76,18 +61,17 @@ export async function showDialog({ organizationId, space, action, scope, onSubmi
   } else if (isPOCSpacePlan(spacePlan)) {
     openChangeSpaceWarningModal(MODAL_TYPES.POC);
   } else {
-    modalDialog.open({
-      title: 'Create new space',
-      template: '<cf-space-wizard class="modal-background"></cf-space-wizard>',
-      backgroundClose: false,
-      persistOnNavigation: true,
-      scopeData: {
-        action,
-        scope,
-        space,
-        organization,
-        onSubmit,
-      },
-    });
+    const result = await ModalLauncher.open(({ isShown, onClose }) => (
+      <SpaceWizardsWrapper
+        isShown={isShown}
+        onClose={onClose}
+        organization={organization}
+        space={space}
+      />
+    ));
+
+    if (result) {
+      onSuccess && onSuccess(result);
+    }
   }
 }

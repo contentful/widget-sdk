@@ -9,8 +9,9 @@ import tokens from '@contentful/forma-36-tokens';
 import SpacePlanItem from './SpacePlanItem';
 import BillingInfo from './BillingInfo';
 import NoMorePlans from './NoMorePlans';
+import ExplainRecommendation from './ExplainRecommendation';
 
-import { getHighestPlan } from '../shared/utils';
+import { getHighestPlan, getRecommendedPlan } from '../shared/utils';
 
 const styles = {
   textCenter: css({
@@ -30,9 +31,12 @@ export default function SpacePlanSelector(props) {
     spaceRatePlans,
     freeSpacesResource,
     selectedPlan,
+    currentPlan,
+    spaceResources,
     goToBillingPage,
     onSelectPlan,
     isCommunityPlanEnabled,
+    isChanging = false,
   } = props;
 
   const highestPlan = getHighestPlan(spaceRatePlans);
@@ -42,9 +46,8 @@ export default function SpacePlanSelector(props) {
     highestPlan.unavailabilityReasons &&
     highestPlan.unavailabilityReasons.some(({ type }) => type === 'currentPlan');
   const payingOrg = !!organization.isBillable;
-
-  // TODO: add this logic when refactor the change space wizard
-  // const recommendedPlan = isChangingInSpace && getRecommendedPlan(spaceRatePlans, resources)
+  const recommendedPlan =
+    isChanging && getRecommendedPlan(currentPlan, spaceRatePlans, spaceResources);
 
   return (
     <div data-test-id="space-plan-selector" className={styles.container}>
@@ -67,6 +70,14 @@ export default function SpacePlanSelector(props) {
           </div>
         )}
 
+        {payingOrg && recommendedPlan && (
+          <ExplainRecommendation
+            currentPlan={currentPlan}
+            recommendedPlan={recommendedPlan}
+            resources={spaceResources}
+          />
+        )}
+
         {spaceRatePlans.map((plan) => (
           <SpacePlanItem
             key={plan.sys.id}
@@ -74,6 +85,7 @@ export default function SpacePlanSelector(props) {
             freeSpacesResource={freeSpacesResource}
             isPayingOrg={payingOrg}
             isSelected={get(selectedPlan, 'sys.id') === plan.sys.id}
+            isRecommended={get(recommendedPlan, 'sys.id') === plan.sys.id}
             onSelect={onSelectPlan}
             isCommunityPlanEnabled={isCommunityPlanEnabled}
           />
@@ -88,7 +100,10 @@ SpacePlanSelector.propTypes = {
   spaceRatePlans: PropTypes.array.isRequired,
   freeSpacesResource: PropTypes.object,
   onSelectPlan: PropTypes.func.isRequired,
+  currentPlan: PropTypes.object,
   selectedPlan: PropTypes.object,
+  spaceResources: PropTypes.array,
   goToBillingPage: PropTypes.func.isRequired,
   isCommunityPlanEnabled: PropTypes.bool,
+  isChanging: PropTypes.bool,
 };

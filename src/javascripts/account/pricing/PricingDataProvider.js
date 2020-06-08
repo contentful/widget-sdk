@@ -140,7 +140,7 @@ export async function getPlansWithSpaces(endpoint) {
   };
 }
 
-export function changeSpace(endpoint, productRatePlanId) {
+export function changeSpacePlan(endpoint, productRatePlanId) {
   return endpoint(
     {
       method: 'PUT',

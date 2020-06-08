@@ -104,7 +104,7 @@ describe('SpaceSettingsRoute', () => {
     getSingleSpacePlan.mockResolvedValue(mediumPlan);
     showChangeSpaceModal.mockImplementation((argumentVariables) => {
       // Pretend that the user selected the large plan in the showChangeSpaceModal.
-      argumentVariables.onSubmit(largePlan.sys.id);
+      argumentVariables.onSubmit(largePlan);
     });
 
     await build();

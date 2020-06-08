@@ -182,7 +182,7 @@ describe('Space Wizard', function () {
       getSpaceRatePlans: this.stubs.getSpaceRatePlans,
       getSubscriptionRatePlans: this.stubs.getSubscriptionRatePlans,
       calculateTotalPrice: this.stubs.getTotalPrice,
-      changeSpace: this.stubs.changeSpace,
+      changeSpacePlan: this.stubs.changeSpace,
     });
 
     this.system.set('features/api-keys-management', {

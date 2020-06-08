@@ -14,7 +14,7 @@ import {
 } from 'services/ChangeSpaceService';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { track } from 'analytics/Analytics';
-import { getRatePlans, getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
+import { getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
 
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 
@@ -95,9 +95,6 @@ export class SpaceSettingsRoute extends React.Component {
     const organizationId = spaceContext.organization.sys.id;
     const space = await TokenStore.getSpace(spaceContext.space.data.sys.id);
 
-    const endpoint = createOrganizationEndpoint(organizationId);
-    const productRatePlans = await getRatePlans(endpoint);
-
     track('space_settings:upgrade_plan_link_clicked', {
       organizationId,
       spaceId: space.sys.id,
@@ -108,9 +105,7 @@ export class SpaceSettingsRoute extends React.Component {
       scope: 'space',
       space,
       action: 'change',
-      onSubmit: async (productRatePlanId) => {
-        const newProductRatePlan = productRatePlans.find((prp) => prp.sys.id === productRatePlanId);
-
+      onSubmit: async (newProductRatePlan) => {
         Notification.success(getNotificationMessage(space, this.state.plan, newProductRatePlan));
         this.setState({ plan: newProductRatePlan });
       },
