@@ -7,19 +7,19 @@ import NavigationIcon from 'ui/Components/NavigationIcon';
 import EntrySecondaryActions from 'app/entry_editor/EntryTitlebar/EntrySecondaryActions/EntrySecondaryActions';
 import StatusNotification from 'app/entity_editor/StatusNotification';
 import CustomEditorExtensionRenderer from 'app/entry_editor/CustomEditorExtensionRenderer';
+import NoLocalizedFieldsAdvice from 'components/tabs/NoLocalizedFieldsAdvice';
 import EntrySidebar from 'app/EntrySidebar/EntrySidebar';
+import AngularComponent from 'ui/Framework/AngularComponent';
 import WorkbenchTitle from 'components/shared/WorkbenchTitle';
 import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
+import ReferencesTab, { hasLinks } from './EntryReferences';
 import { track } from 'analytics/Analytics';
 import { getVariation } from 'LaunchDarkly';
 import { ALL_REFERENCES_DIALOG, SHAREJS_REMOVAL } from 'featureFlags';
+
 import { ContentTagsTab } from './EntryContentTags/ContentTagsTab';
 import { useTagsFeatureEnabled } from 'features/content-tags';
 import * as Config from 'Config';
-import { NAMESPACE_EDITOR_BUILTIN } from 'widgets/WidgetNamespaces';
-import renderDefaultEditor from './DefaultEntryEditor';
-import EntryEditorWidgetTypes from 'app/entry_editor/EntryEditorWidgetTypes';
-import { hasLinks } from './EntryReferences';
 
 const styles = {
   mainContent: css({
@@ -64,27 +64,31 @@ const trackTabOpen = (tab) =>
     tab_name: tab,
   });
 
-const EntryEditorWorkbench = (props) => {
-  const {
-    localeData,
-    title,
-    entityInfo,
-    entryActions,
-    state,
-    getSpace,
-    statusNotificationProps,
-    getOtDoc,
-    getEditorData,
-    customExtensionProps,
-    editorContext,
-    entrySidebarProps,
-    sidebarToggleProps,
-  } = props;
-  const editorData = getEditorData();
+const EntryEditorWorkbench = ({
+  localeData,
+  loadEvents,
+  title,
+  fields,
+  entityInfo,
+  entryActions,
+  state,
+  getSpace,
+  statusNotificationProps,
+  getEditorData,
+  customExtensionProps,
+  preferences,
+  widgets,
+  editorContext,
+  getOtDoc,
+  shouldDisplayNoLocalizedFieldsAdvice,
+  noLocalizedFieldsAdviceProps,
+  entrySidebarProps,
+  sidebarToggleProps,
+}) => {
   const otDoc = getOtDoc();
-  const defaultTabKey = `${editorData.editorsExtensions[0].widgetNamespace}-${editorData.editorsExtensions[0].widgetId}`;
+  const editorData = getEditorData();
 
-  const [selectedTab, setSelectedTab] = useState(defaultTabKey);
+  const [selectedTab, setSelectedTab] = useState('entryEditor');
   const [tabVisible, setTabVisible] = useState({ entryReferences: false });
   useEffect(() => {
     async function getFeatureFlagVariation() {
@@ -101,44 +105,85 @@ const EntryEditorWorkbench = (props) => {
     getFeatureFlagVariation();
   }, [setTabVisible, getSpace]);
 
-  const tabs = editorData.editorsExtensions
-    .filter((editor) => !editor.disabled)
-    .map((currentTab) => {
-      const isReferenceTab = currentTab.widgetId === EntryEditorWidgetTypes.REFERENCE_TREE.id;
-      const isReferenceTabVisible = isReferenceTab && tabVisible.entryReferences;
-      const isReferenceTabEnabled =
-        isReferenceTab && entityInfo.type === 'Entry' && hasLinks(editorData.entity.data.fields);
-      const isTabVisible = isReferenceTab ? isReferenceTabVisible : true;
-      const isTabEnabled = isReferenceTab ? isReferenceTabEnabled : true;
+  const tabs = {
+    entryEditor: {
+      title: 'Entry',
+      icon: 'Entry',
+      isVisible: true,
+      isEnabled: () => true,
+      render() {
+        return (
+          <>
+            {editorData.editorExtension && (
+              <CustomEditorExtensionRenderer {...customExtensionProps} />
+            )}
+            {!editorData.editorExtension && (
+              <div className="entity-editor-form cf-workbench-content cf-workbench-content-type__text">
+                <AngularComponent
+                  template={`<cf-error-list
+                        className="form-box-error"
+                        cf-error-path="['fields']"></cf-error-list>`}
+                  scope={{
+                    widgets,
+                    editorContext,
+                    localeData,
+                    fields,
+                    editorData,
+                    otDoc,
+                    entityInfo,
+                  }}
+                />
 
-      return {
-        key: `${currentTab.widgetNamespace}-${currentTab.widgetId}`,
-        title: currentTab.descriptor.name,
-        icon: currentTab.descriptor.icon || 'Entry',
-        isVisible: isTabVisible,
-        isEnabled: () => isTabEnabled,
-        render() {
-          if (currentTab.widgetNamespace === NAMESPACE_EDITOR_BUILTIN) {
-            return renderDefaultEditor(currentTab.widgetId, { tabVisible, selectedTab, ...props });
-          } else {
-            return (
-              <CustomEditorExtensionRenderer
-                extension={currentTab}
-                createBridge={customExtensionProps.createBridge}
-              />
-            );
-          }
-        },
-        onClick(selectedTab) {
-          setSelectedTab(selectedTab);
-          trackTabOpen(selectedTab);
-        },
-      };
-    });
+                <AngularComponent
+                  template={
+                    '<cf-entity-field ng-repeat="widget in widgets track by widget.fieldId" />'
+                  }
+                  scope={{
+                    widgets,
+                    editorContext,
+                    localeData,
+                    fields,
+                    loadEvents,
+                    editorData: getEditorData(),
+                    otDoc,
+                    preferences,
+                    entityInfo,
+                  }}
+                />
+                {shouldDisplayNoLocalizedFieldsAdvice && (
+                  <NoLocalizedFieldsAdvice {...noLocalizedFieldsAdviceProps} />
+                )}
+              </div>
+            )}
+          </>
+        );
+      },
+      onClick(selectedTab) {
+        setSelectedTab(selectedTab);
+        trackTabOpen(selectedTab);
+      },
+    },
+    entryReferences: {
+      title: 'References',
+      icon: 'ListBulleted',
+      isVisible: tabVisible.entryReferences,
+      isEnabled: () => entityInfo.type === 'Entry' && hasLinks(editorData.entity.data.fields),
+      render() {
+        return (
+          <div className="entity-editor-form cf-workbench-content cf-workbench-content-type__text">
+            {selectedTab === 'entryReferences' && <ReferencesTab entity={editorData.entity.data} />}
+          </div>
+        );
+      },
+      onClick(selectedTab) {
+        setSelectedTab(selectedTab);
+        trackTabOpen(selectedTab);
+      },
+    },
+  };
 
   const tagsTab = useMemo(() => {
     return {
-      key: 'entryContentTags',
       title: 'Tags',
       icon: 'CodeTrimmed',
       isVisible: true,
@@ -163,7 +208,7 @@ const EntryEditorWorkbench = (props) => {
 
   if (tagsEnabled) {
     if (otDoc.isOtDocument !== true) {
-      tabs.push(tagsTab);
+      tabs['entryContentTags'] = tagsTab;
     } else if (Config.env !== 'production') {
       console.log(`enable "${SHAREJS_REMOVAL}" feature flag to show content tags`);
     }
@@ -196,34 +241,34 @@ const EntryEditorWorkbench = (props) => {
           }
         />
         <Workbench.Content
-          type={editorData.customEditor ? 'full' : 'default'}
+          type={editorData.editorExtension ? 'full' : 'default'}
           className={styles.mainContent}>
           <Tabs className={styles.tabs} withDivider>
-            {tabs
-              .filter((tab) => tab.isVisible)
-              .map((tab) => (
+            {Object.keys(tabs)
+              .filter((key) => tabs[key].isVisible)
+              .map((key) => (
                 <Tab
-                  id={tab.key}
-                  key={tab.key}
-                  testId={`test-id-${tab.key}`}
-                  disabled={!tab.isEnabled()}
-                  selected={selectedTab === tab.key}
+                  id={key}
+                  key={key}
+                  testId={`test-id-${key}`}
+                  disabled={!tabs[key].isEnabled()}
+                  selected={selectedTab === key}
                   className={styles.tab}
-                  onSelect={tab.onClick}>
-                  <Icon icon={tab.icon} color="muted" className={styles.tabIcon} />
-                  {tab.title}
+                  onSelect={tabs[key].onClick}>
+                  <Icon icon={tabs[key].icon} color="muted" className={styles.tabIcon} />
+                  {tabs[key].title}
                 </Tab>
               ))}
           </Tabs>
           <StatusNotification {...statusNotificationProps} />
-          {tabs
-            .filter((tab) => tab.isVisible)
-            .map((tab) => (
+          {Object.keys(tabs)
+            .filter((key) => tabs[key].isVisible)
+            .map((key) => (
               <TabPanel
-                id={tab.key}
-                key={tab.key}
-                className={cx(styles.tabPanel, { [styles.isVisible]: selectedTab === tab.key })}>
-                {tab.render()}
+                id={key}
+                key={key}
+                className={cx(styles.tabPanel, { [styles.isVisible]: selectedTab === key })}>
+                {tabs[key].render()}
               </TabPanel>
             ))}
         </Workbench.Content>

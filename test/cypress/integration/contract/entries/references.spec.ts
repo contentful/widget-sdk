@@ -40,7 +40,7 @@ describe('Entry references', () => {
       const getEntryReferencesInteraction = getEntryReferences.willReturnSeveral();
       const validateEntryTreeInteraction = validateEntryReferencesResponse.willReturnNoErrors();
 
-      cy.findByTestId('test-id-editor-builtin-reference-tree').click();
+      cy.findByTestId('test-id-entryReferences').click();
       cy.wait(getEntryReferencesInteraction);
 
       cy.findByTestId('referencesActionDropdown').click();
@@ -57,7 +57,7 @@ describe('Entry references', () => {
       const getEntryReferencesInteraction = getEntryReferences.willReturnSeveral();
       const validateEntryTreeInteraction = validateEntryReferencesResponse.willReturnErrors();
 
-      cy.findByTestId('test-id-editor-builtin-reference-tree').click();
+      cy.findByTestId('test-id-entryReferences').click();
       cy.wait(getEntryReferencesInteraction);
 
       cy.findByTestId('referencesActionDropdown').click();
@@ -82,7 +82,7 @@ describe('Entry references', () => {
       const getEntryReferencesInteraction = getEntryReferences.willReturnSeveral();
       const publishEntryTreeInteraction = publishEntryReferencesResponse.willReturnNoErrors();
 
-      cy.findByTestId('test-id-editor-builtin-reference-tree').click();
+      cy.findByTestId('test-id-entryReferences').click();
       cy.wait(getEntryReferencesInteraction);
 
       cy.findByTestId('referencesActionDropdown').click();
@@ -100,7 +100,7 @@ describe('Entry references', () => {
       const getEntryReferencesInteraction = getEntryReferences.willReturnSeveral();
       const publishEntryTreeInteraction = publishEntryReferencesResponse.willReturnErrors();
 
-      cy.findByTestId('test-id-editor-builtin-reference-tree').click();
+      cy.findByTestId('test-id-entryReferences').click();
       cy.wait(getEntryReferencesInteraction);
 
       cy.findByTestId('referencesActionDropdown').click();
@@ -117,7 +117,7 @@ describe('Entry references', () => {
       const getEntryReferencesInteraction = getEntryReferences.willReturnSeveral();
       const publishEntryTreeInteraction = publishEntryReferencesResponse.willFail();
 
-      cy.findByTestId('test-id-editor-builtin-reference-tree').click();
+      cy.findByTestId('test-id-entryReferences').click();
       cy.wait(getEntryReferencesInteraction);
 
       cy.findByTestId('referencesActionDropdown').click();

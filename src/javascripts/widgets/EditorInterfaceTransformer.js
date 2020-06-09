@@ -1,23 +1,10 @@
 import { cloneDeep } from 'lodash';
 import { migrateControl, WIDGET_MIGRATIONS } from './ControlMigrations';
 import getDefaultWidgetId from './DefaultWidget';
-import {
-  NAMESPACE_BUILTIN,
-  NAMESPACE_EXTENSION,
-  NAMESPACE_APP,
-  NAMESPACE_EDITOR_BUILTIN,
-} from './WidgetNamespaces';
+import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION, NAMESPACE_APP } from './WidgetNamespaces';
 import { create as createBuiltinWidgetList } from './BuiltinWidgets';
-import EntryEditorTypes from 'app/entry_editor/EntryEditorWidgetTypes';
 
 const NAMESPACES = [NAMESPACE_BUILTIN, NAMESPACE_EXTENSION, NAMESPACE_APP];
-const defaultEditors = Object.values(EntryEditorTypes).map((editor) => {
-  return {
-    widgetId: editor.id,
-    widgetNamespace: NAMESPACE_EDITOR_BUILTIN,
-    disabled: true,
-  };
-});
 
 const isNonEmptyString = (s) => typeof s === 'string' && s.length > 0;
 
@@ -71,22 +58,6 @@ function determineNamespace({ widgetNamespace, widgetId }) {
   return isBuiltinWidget ? NAMESPACE_BUILTIN : NAMESPACE_EXTENSION;
 }
 
-// editor and editors are mutually exclusive properties
-// lets treat them as one to avoid null checkings
-function convertEditorToEditors(editor, editors = []) {
-  // old editor need to be ignore rendering default editors
-  if (editor) {
-    return [editor, ...defaultEditors];
-  }
-  // if no editors provided - enable default editors
-  return editors.length
-    ? editors
-    : defaultEditors.map((editor) => ({
-        ...editor,
-        disabled: false,
-      }));
-}
-
 // Given an API editor interface entity convert it to our
 // internal representation as described in `syncControls`.
 export function fromAPI(ct, ei) {
@@ -94,23 +65,18 @@ export function fromAPI(ct, ei) {
     sys: makeSys(ct, ei),
     controls: syncControls(ct, ei.controls),
     sidebar: ei.sidebar,
-    editors: convertEditorToEditors(ei.editor, ei.editors),
+    editor: ei.editor,
   };
 }
 
 // Given an internal representation of an editor interface
 // prepares it to be stored in the API.
 export function toAPI(ct, ei) {
-  const convertedEditors = convertEditorToEditors(ei.editor, ei.editors);
-  const filteredEnabledDefaultEditors = convertedEditors.filter((editor) => {
-    return editor.widgetNamespace !== NAMESPACE_EDITOR_BUILTIN || editor.disabled;
-  });
-  const editors = filteredEnabledDefaultEditors.length ? filteredEnabledDefaultEditors : undefined;
   return {
     sys: makeSys(ct, ei),
     controls: syncControls(ct, ei.controls).map((c) => prepareAPIControl(c)),
     sidebar: ei.sidebar,
-    editors,
+    editor: ei.editor,
   };
 }
 

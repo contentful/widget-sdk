@@ -13,7 +13,7 @@ describe('app/entity_editor/DataLoader', () => {
     this.system.set('widgets/WidgetRenderable', {
       buildRenderables: this.stubs.buildRenderables,
       buildSidebarRenderables: sinon.stub().returns([]),
-      buildEditorsRenderables: sinon.stub().returns([]),
+      buildEditorRenderable: sinon.stub().returns(undefined),
     });
 
     this.system.set('services/localeStore', {
@@ -119,8 +119,7 @@ describe('app/entity_editor/DataLoader', () => {
         'fieldControls',
         'sidebar',
         'sidebarExtensions',
-        'editorsExtensions',
-        'customEditor',
+        'editorExtension',
       ]);
     });
 
@@ -220,8 +219,7 @@ describe('app/entity_editor/DataLoader', () => {
         'fieldControls',
         'sidebar',
         'sidebarExtensions',
-        'editorsExtensions',
-        'customEditor',
+        'editorExtension',
       ]);
     });
   });

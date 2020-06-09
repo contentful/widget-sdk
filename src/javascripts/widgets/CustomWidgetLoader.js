@@ -85,9 +85,9 @@ export function createCustomWidgetLoader(cma, appsRepo) {
   function getForEditor(editorInterface) {
     const controls = get(editorInterface, ['controls'], []);
     const sidebar = get(editorInterface, ['sidebar'], []);
-    const editors = get(editorInterface, ['editors'], []);
+    const editor = get(editorInterface, ['editor'], {});
 
-    const customWidgetKeys = [...controls, ...sidebar, ...editors]
+    const customWidgetKeys = [...controls, ...sidebar, editor]
       .filter(({ widgetNamespace }) => CUSTOM_NAMESPACES.includes(widgetNamespace))
       .filter(({ widgetId }) => typeof widgetId === 'string' && widgetId.length > 0)
       .map(({ widgetNamespace, widgetId }) => [widgetNamespace, widgetId]);
