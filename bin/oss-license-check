@@ -14,7 +14,8 @@ PACKAGELIST=(
   filestack-loader@3.0.4
   node-jsx@0.13.3
   jest-dom@4.0.0
-  pako@1.0.10
+  buffers@0.1.1
+  pako@1.0.11
 )
 
 
