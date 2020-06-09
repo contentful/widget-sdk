@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, wait } from '@testing-library/react';
+import { render, fireEvent, wait, screen, waitForElement } from '@testing-library/react';
 
 import AccountDropdown from './AccountDropdown';
 import { href } from 'states/Navigator';
@@ -7,8 +7,7 @@ import { getUser } from 'services/TokenStore';
 import { getOpenAssignedTasksAndEntries } from 'app/TasksPage/helpers';
 import * as Analytics from 'analytics/Analytics';
 import * as Authentication from 'Authentication';
-
-let wrapper;
+import * as Intercom from 'services/intercom';
 
 jest.mock('analytics/Analytics', () => ({
   track: jest.fn(),
@@ -43,16 +42,21 @@ describe('AccountDropdown', () => {
     Analytics.track.mockClear();
     Authentication.logout.mockClear();
     getUser.mockClear();
-    wrapper = render(<AccountDropdown />);
+
+    Intercom.isEnabled.mockClear().mockReturnValue(false);
   });
 
-  it('renders the account dropdown toggle', () => {
-    expect(wrapper.getByTestId('account-menu-trigger')).toBeVisible();
+  it('renders the account dropdown toggle', async () => {
+    await build();
+
+    expect(screen.getByTestId('account-menu-trigger')).toBeVisible();
   });
 
-  it('navigates to the user profile page', () => {
-    fireEvent.click(wrapper.getByTestId('account-menu-trigger'));
-    fireEvent.click(wrapper.getByTestId('nav.account.userProfile'));
+  it('navigates to the user profile page', async () => {
+    await build();
+
+    fireEvent.click(screen.getByTestId('account-menu-trigger'));
+    fireEvent.click(screen.getByTestId('nav.account.userProfile'));
 
     expect(href).toHaveBeenCalledWith({
       path: 'account.profile.user',
@@ -62,12 +66,39 @@ describe('AccountDropdown', () => {
   });
 
   it('logs out the user', async () => {
-    fireEvent.click(wrapper.getByTestId('account-menu-trigger'));
-    fireEvent.click(wrapper.getByTestId('nav.account.logout').querySelector('button'));
+    await build();
+
+    fireEvent.click(screen.getByTestId('account-menu-trigger'));
+    fireEvent.click(screen.getByTestId('nav.account.logout').querySelector('button'));
 
     await wait();
 
     expect(Analytics.track).toHaveBeenCalledWith('global:logout_clicked');
     expect(Authentication.logout).toHaveBeenCalled();
   });
+
+  it('should show the `Talk to us` button if Intercom is enabled', async () => {
+    Intercom.isEnabled.mockClear().mockReturnValue(true);
+
+    await build();
+
+    fireEvent.click(screen.getByTestId('account-menu-trigger'));
+
+    expect(screen.getByTestId('nav.account.intercom')).toBeVisible();
+  });
+
+  it('should not show the `Talk to us` button if Intercom is not enabled', async () => {
+    await build();
+
+    fireEvent.click(screen.getByTestId('account-menu-trigger'));
+
+    // By default, Intercom is not enabled
+    expect(screen.queryByTestId('nav.account.intercom')).toBeNull();
+  });
 });
+
+async function build() {
+  render(<AccountDropdown />);
+
+  await waitForElement(() => screen.getByTestId('account-menu'));
+}
