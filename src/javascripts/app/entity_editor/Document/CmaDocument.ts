@@ -555,7 +555,7 @@ function toDocumentError(e) {
 
   // If entity was archived in the meantime. Can be removed once status changes are integrated with pub-sub.
   if (e.code === 'BadRequest' && e.data?.message === 'Cannot edit archived') {
-    return DocError.Archived();
+    return DocError.VersionMismatch();
   }
   return errors[e.code] || errors.ServerError;
 }

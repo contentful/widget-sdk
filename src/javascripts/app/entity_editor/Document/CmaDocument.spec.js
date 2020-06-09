@@ -389,14 +389,14 @@ describe('CmaDocument', () => {
         expectDocError(doc.state.error$, DocError.OpenForbidden);
       });
 
-      it('emits Archived on BadRequest error code and archived message', async () => {
+      it('emits VersionMismatch on BadRequest error code and archived message', async () => {
         entityRepo.update.mockImplementationOnce(() => {
           throw newError('BadRequest', 'API request failed', 'Cannot edit archived');
         });
         await doc.setValueAt(fieldPath, 'en-US-updated');
         jest.runAllTimers();
         await wait();
-        expectDocError(doc.state.error$, DocError.Archived);
+        expectDocError(doc.state.error$, DocError.VersionMismatch);
       });
 
       it('emits Disconnected on -1 error code', async () => {
