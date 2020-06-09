@@ -30,7 +30,6 @@ const styles = {
   notification: css({
     display: 'flex',
     alignItems: 'center',
-    color: tokens.colorWhite,
     flexWrap: 'wrap',
     whiteSpace: 'pre',
   }),
