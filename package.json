@@ -252,7 +252,7 @@
     "webpack-manifest-plugin": "^3.0.0-rc.0",
     "webpack-merge": "4.2.2",
     "webpack-require-from": "1.8.1",
-    "yargs": "^4.2.0"
+    "yargs": "^15.3.1"
   },
   "scripts": {
     "clean-logs-pacts": "rm -rf logs/ pacts/",

@@ -52,17 +52,17 @@ Usage: ... configure-file-dist --branch BRANCH --version VERSION
         .strict()
         .usage(`Usage: ... configure-file-dist [options]\n\n${TRAVIS_DESC}`)
         .options({
-          branch: {
+          branchName: {
             type: 'string',
             alias: 'b',
             description: 'Branch name',
             requiresArgs: true,
             required: true,
           },
-          version: {
+          gitSha: {
             type: 'string',
-            alias: 'v',
-            description: 'Set the version identifier',
+            alias: 'g',
+            description: 'Git commit SHA hash',
             requiresArg: true,
             required: true,
           },
@@ -73,10 +73,10 @@ Usage: ... configure-file-dist --branch BRANCH --version VERSION
         .strict()
         .usage(`Usage: ... upload-sourcemaps-to-bugsnag [options]\n\n${SOURCEMAPS_DESC}`)
         .options({
-          version: {
+          gitSha: {
             type: 'string',
-            alias: 'v',
-            description: 'Set the version identifier',
+            alias: 'g',
+            description: 'Git commit SHA hash',
             requiresArg: true,
             required: true,
           },

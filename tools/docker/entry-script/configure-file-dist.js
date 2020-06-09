@@ -17,8 +17,8 @@ const configureAndWriteIndex = require('../../lib/index-configure');
  *
  * output/files/staging/index.html (served for request to app.flinkly.com)
  */
-module.exports = async function configureFileDistribution({ branch, version }) {
-  console.log(`BRANCH: ${branch}, COMMIT: ${version}`);
+module.exports = async function configureFileDistribution({ branchName, gitSha }) {
+  console.log(`BRANCH: ${branchName}, COMMIT: ${gitSha}`);
 
   // Supported environments
   const ENV = {
@@ -33,21 +33,21 @@ module.exports = async function configureFileDistribution({ branch, version }) {
     master: ENV.production,
   };
 
-  await createFileDist(ENV.development, version, branch);
-  await createFileDist(ENV.preview, version, branch);
-  await createFileDist(ENV.staging, version, branch);
-  await createFileDist(ENV.production, version, branch);
+  await createFileDist(ENV.development, gitSha, branchName);
+  await createFileDist(ENV.preview, gitSha, branchName);
+  await createFileDist(ENV.staging, gitSha, branchName);
+  await createFileDist(ENV.production, gitSha, branchName);
 
   // Do the next bit only for production, master and preview branches
-  if (branch in BRANCH_ENV_MAP) {
-    const env = BRANCH_ENV_MAP[branch];
+  if (branchName in BRANCH_ENV_MAP) {
+    const env = BRANCH_ENV_MAP[branchName];
 
-    await createIndex(env, version);
+    await createIndex(env, gitSha);
 
     // Deploy to preview environment whenever we deploy to staging
     // to keep both envs in sync
     if (env === ENV.staging) {
-      await createIndex(ENV.preview, version);
+      await createIndex(ENV.preview, gitSha);
     }
   }
 };
@@ -58,16 +58,16 @@ module.exports = async function configureFileDistribution({ branch, version }) {
  * and user_interface commit hash.
  *
  * @param env {string} env - Target environment. One of production, staging, preview
- * @param version {string} version - Git commit hash of the commit that's being built
+ * @param gitSha {string} gitSha - Git commit hash of the commit that's being built
  */
-async function createIndex(env, version) {
+async function createIndex(env, gitSha) {
   const rootIndexPathForEnv = targetPath(env, 'index.html');
   const logMsg = `Creating root index file for "${env}"`;
 
   console.log('-'.repeat(logMsg.length), `\n${logMsg}`);
 
   // This generates output/files/${env}/index.html
-  return configureAndWriteIndex(version, `config/${env}.json`, rootIndexPathForEnv);
+  return configureAndWriteIndex(gitSha, `config/${env}.json`, rootIndexPathForEnv);
 }
 
 /*
@@ -76,17 +76,17 @@ async function createIndex(env, version) {
  * Copies the following files.
  * ~~~
  * build/app        -> output/files/${env}/app
- * build/index.html -> output/files/${env}/archive/${version}/index-compiled.html
- * build/index.html -> output/files/${env}/archive/${branch}/index-compiled.html
+ * build/index.html -> output/files/${env}/archive/${gitSha}/index-compiled.html
+ * build/index.html -> output/files/${env}/archive/${branchName}/index-compiled.html
  * ~~~
  *
  * The index.html file is configured with `config/{env}.json`.
  *
  * @param {string} env
- * @param {string} version
- * @param {string} branch
+ * @param {string} gitSha
+ * @param {string} branchName
  */
-async function createFileDist(env, version, branch) {
+async function createFileDist(env, gitSha, branchName) {
   console.log(`Creating file distribution for "${env}"`);
 
   // This directory contains all the files needed to run the app.
@@ -94,11 +94,11 @@ async function createFileDist(env, version, branch) {
 
   await copy(P.join(BUILD_SRC, 'app'), targetPath(env, 'app'));
 
-  const commitHashIndexPath = targetPath(env, 'archive', version, 'index-compiled.html');
-  await configureAndWriteIndex(version, `config/${env}.json`, commitHashIndexPath);
+  const commitHashIndexPath = targetPath(env, 'archive', gitSha, 'index-compiled.html');
+  await configureAndWriteIndex(gitSha, `config/${env}.json`, commitHashIndexPath);
 
-  const branchIndexPath = targetPath(env, 'archive', branch, 'index-compiled.html');
-  await configureAndWriteIndex(version, `config/${env}.json`, branchIndexPath);
+  const branchIndexPath = targetPath(env, 'archive', branchName, 'index-compiled.html');
+  await configureAndWriteIndex(gitSha, `config/${env}.json`, branchIndexPath);
 }
 
 /**
