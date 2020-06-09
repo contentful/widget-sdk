@@ -17,6 +17,7 @@ import { updateUserData } from 'app/UserProfile/Settings/AccountRepository';
 import * as logger from 'services/logger';
 import { debounce } from 'lodash';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
+import * as Config from 'Config';
 
 const localStorage = getBrowserStorage();
 
@@ -84,8 +85,10 @@ export const handleConsentChanged = debounce(async function debouncedHandleConse
 }, 500);
 
 export async function init() {
+  // Enable only on production until, we fix Osano.ConsentManager.prototype error
+  const isDevelopmentEnv = Config.env === 'development' || Config.env === 'staging';
   // Do not run init if we already did before, or if we specifically opt to disable (for example in testing)
-  if (cm || localStorage.has('__disable_consentmanager')) {
+  if (cm || localStorage.has('__disable_consentmanager') || isDevelopmentEnv) {
     return;
   }
 
