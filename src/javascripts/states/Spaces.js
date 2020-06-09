@@ -22,7 +22,7 @@ import releasesActions from 'app/Releases/routes';
 
 import createSpaceAdviceTemplate from 'components/app_container/cf_create_space_advice.html';
 import SpaceHibernationAdvice from 'components/app_container/SpaceHibernationAdvice';
-import noSectionAvailableTemplate from 'components/app_container/cf_no_section_available.html';
+import AccessForbidden from 'components/access-forbidden/AccessForbidden';
 
 const store = getBrowserStorage();
 
@@ -115,7 +115,7 @@ const spaceDetail = {
       Analytics.trackContextChange(spaceData, organizationData);
     },
   ],
-  template: noSectionAvailableTemplate,
+  template: '<react-component component="component" props="props"></react-component>',
   controller: [
     '$scope',
     '$state',
@@ -129,7 +129,7 @@ const spaceDetail = {
         storeCurrentIds(spaceData);
         $state.go(accessibleSref);
       } else {
-        $scope.noSectionAvailable = true;
+        $scope.component = AccessForbidden;
       }
     },
   ],
