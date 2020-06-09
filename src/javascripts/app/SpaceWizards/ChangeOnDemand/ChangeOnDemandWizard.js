@@ -4,7 +4,14 @@ import { css } from 'emotion';
 import SpacePlanSelector from '../shared/SpacePlanSelector';
 import ConfirmScreen from './ConfirmScreen';
 
-import { Modal, Tabs, Tab, TabPanel, IconButton } from '@contentful/forma-36-react-components';
+import {
+  Modal,
+  Tabs,
+  Tab,
+  TabPanel,
+  IconButton,
+  Notification,
+} from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import {
   getSpaceRatePlans,
@@ -76,9 +83,13 @@ const initialFetch = (organization, space) => async () => {
 const submit = async (space, selectedPlan, onProcessing, onClose) => {
   onProcessing(true);
 
-  await changeSpacePlan({ space, plan: selectedPlan });
-
-  onClose(selectedPlan);
+  try {
+    await changeSpacePlan({ space, plan: selectedPlan });
+    onClose(selectedPlan);
+  } catch {
+    Notification.error('Your space plan couldn’t be changed. Try again.');
+    return;
+  }
 };
 
 export default function Wizard(props) {
@@ -103,6 +114,7 @@ export default function Wizard(props) {
         <div className={styles.tabs}>
           <Tab
             id="spacePlanSelector"
+            testId="space-plan-selector-tab"
             selected={selectedTab === 'spacePlanSelector'}
             onSelect={() => setSelectedTab('spacePlanSelector')}>
             1. Space type
@@ -110,6 +122,7 @@ export default function Wizard(props) {
           <Tab
             id="confirmation"
             selected={selectedTab === 'confirmation'}
+            testId="confirmation-tab"
             onSelect={() => setSelectedTab('confirmation')}
             disabled={!selectedPlan}>
             2. Confirmation
@@ -126,7 +139,7 @@ export default function Wizard(props) {
           />
         )}
       </Tabs>
-      <Modal.Content>
+      <Modal.Content testId="change-on-demand-wizard-contents">
         {selectedTab === 'spacePlanSelector' && (
           <TabPanel id="spacePlanSelector">
             <SpacePlanSelector

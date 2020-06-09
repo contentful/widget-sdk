@@ -11,6 +11,7 @@ import { canCreate } from 'utils/ResourceUtils';
 import { $broadcast } from 'ng/$rootScope';
 import * as spaceContext from 'ng/spaceContext';
 import { createSpaceEndpoint, mockEndpoint } from 'data/EndpointFactory';
+import { changeSpacePlan as changeSpacePlanApiCall } from 'account/pricing/PricingDataProvider';
 
 import * as Fake from 'test/helpers/fakeFactory';
 
@@ -26,6 +27,7 @@ jest.mock('utils/ResourceUtils', () => ({
     locale: 'Locales',
     environment: 'Environments',
     record: 'Records',
+    role: 'Roles',
   },
   canCreate: jest.fn(),
 }));
@@ -37,6 +39,10 @@ jest.mock('services/client', () => {
 
   return client;
 });
+
+jest.mock('account/pricing/PricingDataProvider', () => ({
+  changeSpacePlan: jest.fn(),
+}));
 
 jest.mock('services/TokenStore', () => ({
   refresh: jest.fn(),
@@ -293,6 +299,23 @@ describe('utils', () => {
     });
   });
 
+  describe('changeSpacePlan', () => {
+    it('should attempt to change the space plan and track the correct events', async () => {
+      await utils.changeSpacePlan({ space: mockSpace, plan: mockPlan });
+
+      expect(changeSpacePlanApiCall).toBeCalledWith(expect.any(Function), mockPlan.sys.id);
+
+      // We will do more strict assertions below, so we just test that the specific properties we want are here
+      expect(Analytics.track).toBeCalledWith(
+        'space_wizard:space_type_change',
+        expect.objectContaining({
+          intendedAction: 'change',
+          spaceId: mockSpace.sys.id,
+        })
+      );
+    });
+  });
+
   describe('trackWizardEvent', () => {
     it('should track `space_wizard:eventName` with serialized given payload', () => {
       utils.trackWizardEvent('some_wizard_event', {
@@ -529,6 +552,7 @@ describe('utils', () => {
         },
       ];
     };
+
     it('should return an empty array if given no space rate plans', () => {
       expect(utils.transformSpaceRatePlans({ organization: mockOrganization })).toEqual([]);
     });
@@ -859,6 +883,185 @@ describe('utils', () => {
           estimatedDeliveryDate: '',
         },
       });
+    });
+  });
+
+  describe('getPlanResourceFulfillment', () => {
+    it('should return an object with `near` and `reached` statuses for a plan and resources', () => {
+      const plan = utils.transformSpaceRatePlan({
+        organization: mockOrganization,
+        plan: Fake.Plan({
+          productPlanType: 'some_space_type',
+          productRatePlanCharges: [
+            {
+              name: 'Records',
+              tiers: [{ endingUnit: 10 }],
+            },
+            {
+              name: 'Content types',
+              tiers: [{ endingUnit: 10 }],
+            },
+            {
+              name: 'Locales',
+              tiers: [{ endingUnit: 10 }],
+            },
+          ],
+        }),
+        freeSpaceResource: Fake.OrganizationResource(1, 3, 'free_space'),
+      });
+
+      const resources = [
+        Fake.SpaceResource(1, 10, 'record'),
+        Fake.SpaceResource(9, 10, 'content_type'),
+        Fake.SpaceResource(10, 10, 'locale'),
+      ];
+
+      expect(utils.getPlanResourceFulfillment(plan, resources)).toEqual({
+        Records: {
+          near: false,
+          reached: false,
+        },
+        'Content types': {
+          near: true,
+          reached: false,
+        },
+        Locales: {
+          near: true,
+          reached: true,
+        },
+      });
+    });
+  });
+
+  describe('getRecommendedPlan', () => {
+    const currentPlan = utils.transformSpaceRatePlan({
+      organization: mockOrganization,
+      plan: Fake.Plan({
+        productPlanType: 'some_space_type',
+        productRatePlanCharges: [
+          {
+            name: 'Records',
+            tiers: [{ endingUnit: 10 }],
+          },
+          {
+            name: 'Content types',
+            tiers: [{ endingUnit: 10 }],
+          },
+          {
+            name: 'Locales',
+            tiers: [{ endingUnit: 10 }],
+          },
+          {
+            name: 'Environments',
+            tiers: [{ endingUnit: 10 }],
+          },
+          {
+            name: 'Roles',
+            tiers: [{ endingUnit: 10 }],
+          },
+        ],
+      }),
+      freeSpaceResource: Fake.OrganizationResource(1, 3, 'free_space'),
+    });
+
+    const nonrecommendablePlan = utils.transformSpaceRatePlan({
+      organization: mockOrganization,
+      plan: Fake.Plan({
+        productPlanType: 'some_space_type',
+        productRatePlanCharges: [
+          {
+            name: 'Records',
+            tiers: [{ endingUnit: 20 }],
+          },
+          {
+            name: 'Content types',
+            tiers: [{ endingUnit: 10 }],
+          },
+          {
+            name: 'Locales',
+            tiers: [{ endingUnit: 20 }],
+          },
+          {
+            name: 'Environments',
+            tiers: [{ endingUnit: 20 }],
+          },
+          {
+            name: 'Roles',
+            tiers: [{ endingUnit: 10 }],
+          },
+        ],
+      }),
+      freeSpaceResource: Fake.OrganizationResource(1, 3, 'free_space'),
+    });
+
+    const recommendablePlan = utils.transformSpaceRatePlan({
+      organization: mockOrganization,
+      plan: Fake.Plan({
+        productPlanType: 'some_space_type',
+        productRatePlanCharges: [
+          {
+            name: 'Records',
+            tiers: [{ endingUnit: 20 }],
+          },
+          {
+            name: 'Content types',
+            tiers: [{ endingUnit: 20 }],
+          },
+          {
+            name: 'Locales',
+            tiers: [{ endingUnit: 20 }],
+          },
+          {
+            name: 'Environments',
+            tiers: [{ endingUnit: 20 }],
+          },
+          {
+            name: 'Roles',
+            tiers: [{ endingUnit: 20 }],
+          },
+        ],
+      }),
+      freeSpaceResource: Fake.OrganizationResource(1, 3, 'free_space'),
+    });
+
+    it('should return null if nothing is near or has reached limit', () => {
+      const resources = [
+        Fake.SpaceResource(3, 10, 'record'),
+        Fake.SpaceResource(5, 10, 'content_type'),
+        Fake.SpaceResource(6, 10, 'locale'),
+        Fake.SpaceResource(6, 10, 'environment'),
+        Fake.SpaceResource(6, 10, 'role'),
+      ];
+
+      expect(
+        utils.getRecommendedPlan(currentPlan, [nonrecommendablePlan, recommendablePlan], resources)
+      ).toBeNull();
+    });
+
+    it('should return null if there is no larger plan that can fulfill the resource usage', () => {
+      const resources = [
+        Fake.SpaceResource(9, 10, 'record'),
+        Fake.SpaceResource(10, 10, 'content_type'), // At limit
+        Fake.SpaceResource(6, 10, 'locale'),
+        Fake.SpaceResource(9, 10, 'environment'), // Near limit
+        Fake.SpaceResource(6, 10, 'role'),
+      ];
+
+      expect(utils.getRecommendedPlan(currentPlan, [nonrecommendablePlan], resources)).toBeNull();
+    });
+
+    it('should return the recommended plan that fulfills all the resource usage', () => {
+      const resources = [
+        Fake.SpaceResource(9, 10, 'record'),
+        Fake.SpaceResource(10, 10, 'content_type'), // At limit
+        Fake.SpaceResource(6, 10, 'locale'),
+        Fake.SpaceResource(9, 10, 'environment'), // Near limit
+        Fake.SpaceResource(6, 10, 'role'),
+      ];
+
+      expect(
+        utils.getRecommendedPlan(currentPlan, [nonrecommendablePlan, recommendablePlan], resources)
+      ).toEqual(recommendablePlan);
     });
   });
 });

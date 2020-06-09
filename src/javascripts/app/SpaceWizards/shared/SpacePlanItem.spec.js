@@ -65,6 +65,24 @@ describe('SpacePlanItem', () => {
 
     expect(onSelect).toBeCalledWith(plan);
   });
+
+  it('should add the recommendedPlan class if isRecommended is true', () => {
+    build({ isRecommended: true });
+
+    expect(screen.getByTestId('space-plan-item')).toHaveAttribute(
+      'class',
+      expect.stringMatching('recommendedPlan')
+    );
+  });
+
+  it('should add the Forma --is-selected class if isSelected is true', () => {
+    build({ isSelected: true });
+
+    expect(screen.getByTestId('space-plan-item')).toHaveAttribute(
+      'class',
+      expect.stringMatching('--is-selected')
+    );
+  });
 });
 
 function createPlan(custom) {

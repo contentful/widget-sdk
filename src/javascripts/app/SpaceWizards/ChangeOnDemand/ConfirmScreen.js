@@ -19,13 +19,13 @@ export default function ConfirmScreenNormal(props) {
   const { selectedPlan, space, changing, currentPlan, onConfirm, currentSubscriptionPrice } = props;
 
   return (
-    <Typography>
+    <Typography testId="confirmation-screen">
       <Heading className={classes.center}>Confirm your selection</Heading>
       <Paragraph className={classes.center}>
         Make sure everything is in order before creating your space.
       </Paragraph>
 
-      <Paragraph>
+      <Paragraph testId="contents">
         <>
           You’re about to change the space <em>{space.name}</em> from a {currentPlan.name} to a{' '}
           {selectedPlan.name} space type.{' '}
@@ -79,7 +79,12 @@ export default function ConfirmScreenNormal(props) {
         </span>
       </Paragraph>
       <div className={classes.confirmButton}>
-        <Button disabled={changing} loading={changing} onClick={onConfirm} buttonType="positive">
+        <Button
+          testId="confirm-button"
+          disabled={changing}
+          loading={changing}
+          onClick={onConfirm}
+          buttonType="positive">
           Confirm and change space
         </Button>
       </div>

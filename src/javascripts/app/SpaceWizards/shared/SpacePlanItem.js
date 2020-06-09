@@ -170,7 +170,7 @@ export default function SpacePlanItem(props) {
         styles.plans[camelCase(plan.name)],
         plan.current && styles.currentPlan,
         plan.disabled && styles.disabled,
-        plan.recommended && styles.recommendedPlan,
+        isRecommended && styles.recommendedPlan,
       ])}
       selected={isSelected}
       onClick={handleClick}

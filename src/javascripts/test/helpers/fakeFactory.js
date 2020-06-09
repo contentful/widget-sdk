@@ -195,7 +195,7 @@ export function Invitation(organizationMembership = Link(types.ORGANIZATION_MEMB
 }
 
 export function Plan(options) {
-  return { sys: sys({ id: 'Plan', type: 'ProductRatePlan' }), ...options };
+  return { sys: sys({ id: uniqueId('Plan'), type: 'ProductRatePlan' }), ...options };
 }
 
 export function SpaceRole(name = '') {
@@ -206,4 +206,26 @@ export function SpaceRole(name = '') {
     policies: [],
     sys: sys(),
   };
+}
+
+function BaseResource(type, usage, limit, id) {
+  return {
+    usage,
+    limits: {
+      maximum: limit,
+      included: limit,
+    },
+    sys: {
+      type,
+      id,
+    },
+  };
+}
+
+export function SpaceResource(usage, limit, id) {
+  return BaseResource('SpaceResource', usage, limit, id);
+}
+
+export function OrganizationResource(usage, limit, id) {
+  return BaseResource('OrganizationResource', usage, limit, id);
 }

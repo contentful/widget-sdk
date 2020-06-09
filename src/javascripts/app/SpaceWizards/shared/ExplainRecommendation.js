@@ -32,8 +32,10 @@ export default function ExplainRecommendation({ currentPlan, recommendedPlan, re
     return null;
   }
 
+  const totalFulfillments = negFulfillments.reached.length + negFulfillments.near.length;
+
   return (
-    <Note>
+    <Note testId="explain-recommendation">
       <Paragraph>
         We’re recommending you the {recommendPlanName} space because{' '}
         {negFulfillments.reached.length > 0 && (
@@ -46,7 +48,7 @@ export default function ExplainRecommendation({ currentPlan, recommendedPlan, re
             near the {joinWithAnd(negFulfillments.near).toLowerCase()}
           </>
         )}{' '}
-        limit for your current space plan.
+        limit{totalFulfillments > 1 ? 's' : ''} for your current space plan.
       </Paragraph>
     </Note>
   );
