@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import { isEqual, uniqWith, uniqueId, get } from 'lodash';
+import { isEqual, uniqWith, uniqueId, get, isObject } from 'lodash';
 import {
   Button,
   Note,
@@ -111,7 +111,7 @@ export const hasLinks = (obj) => {
       (key === 'nodeType' && obj[key] === 'entry-hyperlink')
     ) {
       linksFound = true;
-    } else if (typeof obj[key] === 'object' && !linksFound) {
+    } else if (isObject(obj[key]) && !linksFound) {
       linksFound = hasLinks(obj[key]);
     } else if (Array.isArray(obj[key]) && !linksFound) {
       obj[key].forEach((value) => {

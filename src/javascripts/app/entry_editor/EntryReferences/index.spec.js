@@ -5,7 +5,7 @@ import { Notification } from '@contentful/forma-36-react-components';
 
 import '@testing-library/jest-dom/extend-expect';
 
-import ReferencesTree from './index';
+import ReferencesTree, { hasLinks } from './index';
 
 import {
   validateEntities,
@@ -223,4 +223,10 @@ it('should render the release dialog when add to release button is clicked', asy
   await wait();
 
   expect(getByTestId('content-release-modal')).toBeInTheDocument();
+});
+
+describe('validating hasLinks', () => {
+  it('should avoid null locales', () => {
+    expect(hasLinks({ cpeq: { 'en-US': null } })).toBeFalsy();
+  });
 });
