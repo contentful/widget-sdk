@@ -84,6 +84,7 @@ export default function register() {
           entryCache: $scope.entryCache,
           assetCache: $scope.assetCache,
           jobs: $scope.jobs,
+          pageIndex: $scope.paginator.getPage(),
         };
         $scope.suggestedContentTypeId = getCurrentContentTypeId();
         $scope.paginatorProps = {

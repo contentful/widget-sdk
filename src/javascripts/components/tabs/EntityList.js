@@ -235,6 +235,7 @@ const EntityList = ({
   onBulkActionComplete,
   renderViewCustomizer,
   renderDisplayField,
+  pageIndex,
 }) => {
   const [
     { allSelected, selected },
@@ -251,11 +252,13 @@ const EntityList = ({
       aria-label="Content Search Results"
       cellPadding={`${tokens.spacingM} ${tokens.spacingS}`}>
       <colgroup>
-        <col /> {/* checkbox column */}
+        <col />
+        {/* checkbox column */}
         {displayedFields.map(({ colWidth = 'auto' }, i) => (
           <col key={i} className={css({ width: colWidth })} />
         ))}
-        <col className={styles.statusColumn} /> {/* status column */}
+        <col className={styles.statusColumn} />
+        {/* status column */}
       </colgroup>
       <TableHead offsetTop={isEdge() ? '0px' : '-20px'} isSticky className={styles.tableHead}>
         <TableRow testId="column-names">
@@ -315,7 +318,7 @@ const EntityList = ({
                 path="^.detail"
                 params={{ [`${type}Id`]: entityId }}
                 trackingEvent={entityType === 'entry' ? 'search:entry_clicked' : null}
-                trackParams={{ index }}
+                trackParams={{ entry_index: index, page_index: pageIndex }}
                 key={entityId}>
                 {({ onClick, getHref }) => {
                   const href = getHref();
@@ -387,6 +390,7 @@ EntityList.propTypes = {
   onBulkActionComplete: PropTypes.func,
   renderViewCustomizer: PropTypes.func,
   renderDisplayField: PropTypes.func.isRequired,
+  pageIndex: PropTypes.number,
 };
 
 EntityList.defaultProps = {
@@ -395,6 +399,7 @@ EntityList.defaultProps = {
   jobs: [],
   onBulkActionComplete: noop,
   renderViewCustomizer: noop,
+  pageIndex: 0,
 };
 
 export default EntityList;
