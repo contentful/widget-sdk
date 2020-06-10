@@ -5,6 +5,10 @@ import { get } from 'lodash';
 import { isOwner } from 'services/OrganizationRoles';
 import { Typography, Heading, Paragraph } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
+import {
+  Organization as OrganizationPropType,
+  Space as SpacePropType,
+} from 'app/OrganizationSettings/PropTypes';
 
 import SpacePlanItem from './SpacePlanItem';
 import BillingInfo from './BillingInfo';
@@ -28,6 +32,7 @@ const styles = {
 export default function SpacePlanSelector(props) {
   const {
     organization,
+    space,
     spaceRatePlans,
     freeSpacesResource,
     selectedPlan,
@@ -55,7 +60,8 @@ export default function SpacePlanSelector(props) {
         <Heading className={styles.textCenter}>Choose the space type</Heading>
 
         <Paragraph className={styles.textCenter}>
-          You are creating this space for the organization {organization.name}.
+          You are {isChanging ? `changing the space ${space.name}` : `creating this space`} for the
+          organization {organization.name}.
         </Paragraph>
 
         {atHighestPlan && (
@@ -71,11 +77,13 @@ export default function SpacePlanSelector(props) {
         )}
 
         {payingOrg && recommendedPlan && (
-          <ExplainRecommendation
-            currentPlan={currentPlan}
-            recommendedPlan={recommendedPlan}
-            resources={spaceResources}
-          />
+          <div className={styles.marginBottom}>
+            <ExplainRecommendation
+              currentPlan={currentPlan}
+              recommendedPlan={recommendedPlan}
+              resources={spaceResources}
+            />
+          </div>
         )}
 
         {spaceRatePlans.map((plan) => (
@@ -96,7 +104,8 @@ export default function SpacePlanSelector(props) {
 }
 
 SpacePlanSelector.propTypes = {
-  organization: PropTypes.object.isRequired,
+  organization: OrganizationPropType.isRequired,
+  space: SpacePropType,
   spaceRatePlans: PropTypes.array.isRequired,
   freeSpacesResource: PropTypes.object,
   onSelectPlan: PropTypes.func.isRequired,

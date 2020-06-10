@@ -31,7 +31,7 @@ describe('ConfirmScreen', () => {
   it('should show the total price for the subscription + space change', () => {
     build();
 
-    // 150 (current sub price) - 100 (current plan price) + 200 (selected plan price)
+    // 150 (current sub price) - 100 (current plan price) + 200 (selected plan price) = 250
     expect(screen.getByTestId('contents')).toHaveTextContent(
       'the total price of the spaces in your organization to $250 /month'
     );

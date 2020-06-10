@@ -26,6 +26,8 @@ describe('SpacePlanSelector', () => {
   });
 
   describe('ExplainRecommendation', () => {
+    const space = Fake.Space();
+
     const spaceResources = [
       Fake.SpaceResource(9, 10, 'record'),
       Fake.SpaceResource(1, 10, 'locale'),
@@ -50,6 +52,7 @@ describe('SpacePlanSelector', () => {
 
     it('should show the ExplainRecommendation note if the space plan is changing and a plan is recommendable', () => {
       build({
+        space,
         isChanging: true,
         currentPlan,
         spaceRatePlans: [currentPlan, recommendedPlan],
@@ -61,6 +64,7 @@ describe('SpacePlanSelector', () => {
 
     it('should not show the ExplainRecommendation note if space plan is not changing, even if a plan is recommendable', () => {
       build({
+        space,
         isChanging: false,
         currentPlan,
         spaceRatePlans: [currentPlan, recommendedPlan],

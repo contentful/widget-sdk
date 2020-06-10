@@ -144,6 +144,7 @@ export default function Wizard(props) {
           <TabPanel id="spacePlanSelector">
             <SpacePlanSelector
               organization={organization}
+              space={space}
               spaceRatePlans={data.spaceRatePlans}
               freeSpacesResource={data.freeSpaceResource}
               currentPlan={data.currentPlan}

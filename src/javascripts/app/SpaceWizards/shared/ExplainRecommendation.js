@@ -4,14 +4,14 @@ import PropTypes from 'prop-types';
 import { getPlanResourceFulfillment } from './utils';
 import { joinWithAnd } from 'utils/StringUtils';
 
-import { Note, Paragraph } from '@contentful/forma-36-react-components';
+import { Note } from '@contentful/forma-36-react-components';
 
 export default function ExplainRecommendation({ currentPlan, recommendedPlan, resources }) {
   // The fulfillments object describes if the resource is near or has reached a limit
   const fulfillments = getPlanResourceFulfillment(currentPlan, resources);
   const recommendPlanName = recommendedPlan.name;
 
-  const negFulfillments = Object.keys(fulfillments).reduce(
+  const fulfillmentDetails = Object.keys(fulfillments).reduce(
     (memo, name) => {
       if (fulfillments[name].reached) {
         memo.reached.push(name);
@@ -28,28 +28,26 @@ export default function ExplainRecommendation({ currentPlan, recommendedPlan, re
   );
 
   // Don't render this if there are no reached or near fulfillments
-  if (negFulfillments.reached.length === 0 && negFulfillments.near.length === 0) {
+  if (fulfillmentDetails.reached.length === 0 && fulfillmentDetails.near.length === 0) {
     return null;
   }
 
-  const totalFulfillments = negFulfillments.reached.length + negFulfillments.near.length;
+  const totalFulfillments = fulfillmentDetails.reached.length + fulfillmentDetails.near.length;
 
   return (
     <Note testId="explain-recommendation">
-      <Paragraph>
-        We’re recommending you the {recommendPlanName} space because{' '}
-        {negFulfillments.reached.length > 0 && (
-          <>you’ve reached the {joinWithAnd(negFulfillments.reached).toLowerCase()}</>
-        )}
-        {negFulfillments.near.length > 0 && (
-          <>
-            {negFulfillments.reached.length > 0 && ' and are '}
-            {negFulfillments.reached.length === 0 && ' you’re '}
-            near the {joinWithAnd(negFulfillments.near).toLowerCase()}
-          </>
-        )}{' '}
-        limit{totalFulfillments > 1 ? 's' : ''} for your current space plan.
-      </Paragraph>
+      We’re recommending you the {recommendPlanName} space because{' '}
+      {fulfillmentDetails.reached.length > 0 && (
+        <>you’ve reached the {joinWithAnd(fulfillmentDetails.reached).toLowerCase()}</>
+      )}
+      {fulfillmentDetails.near.length > 0 && (
+        <>
+          {fulfillmentDetails.reached.length > 0 && ' and are '}
+          {fulfillmentDetails.reached.length === 0 && ' you’re '}
+          near the {joinWithAnd(fulfillmentDetails.near).toLowerCase()}
+        </>
+      )}{' '}
+      limit{totalFulfillments > 1 ? 's' : ''} for your current space plan.
     </Note>
   );
 }

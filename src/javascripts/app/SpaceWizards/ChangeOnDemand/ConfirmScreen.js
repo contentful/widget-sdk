@@ -40,7 +40,7 @@ export default function ConfirmScreenNormal(props) {
             and will increase
           </>
         )}
-        {currentPlan.price !== 0 && currentPlan.price >= selectedPlan.price && (
+        {currentPlan.plan !== 0 && (
           <>
             The price of this space will change from{' '}
             <strong>
@@ -50,20 +50,7 @@ export default function ConfirmScreenNormal(props) {
             <strong>
               <Price value={selectedPlan.price} />
             </strong>{' '}
-            and will reduce
-          </>
-        )}
-        {currentPlan.price !== 0 && currentPlan.price < selectedPlan.price && (
-          <>
-            The price of this space will change from{' '}
-            <strong>
-              <Price value={currentPlan.price} />
-            </strong>{' '}
-            to{' '}
-            <strong>
-              <Price value={selectedPlan.price} />
-            </strong>{' '}
-            and will increase
+            and will {currentPlan.price >= selectedPlan.price ? 'reduce' : 'increase'}
           </>
         )}
         <span>

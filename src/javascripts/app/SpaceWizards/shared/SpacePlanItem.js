@@ -181,7 +181,7 @@ export default function SpacePlanItem(props) {
             {plan.name}
           </Subheading>
 
-          {plan.price && plan.price > 0 && (
+          {plan.price > 0 && (
             <span data-test-id="space-plan-price">
               <Price value={plan.price} unit="month" />
             </span>
