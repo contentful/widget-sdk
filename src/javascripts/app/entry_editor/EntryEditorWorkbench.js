@@ -32,7 +32,6 @@ const styles = {
   }),
   sidebar: css({
     boxShadow: '1px 0 4px 0 rgba(0, 0, 0, 0.9)',
-    width: '360px',
     padding: '0',
   }),
   tabs: css({
@@ -285,7 +284,7 @@ const EntryEditorWorkbench = ({
               </TabPanel>
             ))}
         </Workbench.Content>
-        <Workbench.Sidebar className={styles.sidebar}>
+        <Workbench.Sidebar position="right" className={styles.sidebar}>
           <EntrySidebar
             entrySidebarProps={entrySidebarProps}
             sidebarToggleProps={sidebarToggleProps}

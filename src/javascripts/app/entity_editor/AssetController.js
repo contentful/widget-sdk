@@ -94,6 +94,9 @@ export default async function create($scope, editorData, preferences) {
     show: !$scope.otDoc.isOtDocument,
   };
 
+  $scope.getOtDoc = () => $scope.otDoc;
+  $scope.getEditorData = () => $scope.editorData;
+
   setLocaleData($scope, {
     entityLabel: 'asset',
     shouldHideLocaleErrors: defaultLocaleIsFocused,
