@@ -14,7 +14,7 @@ export const Releases = {
   widgetId: SidebarWidgetTypes.RELEASES,
   widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
   name: 'Release',
-  description: 'Built-in - View reasele, add to it, etc.',
+  description: 'Built-in - View release, add to it, etc.',
 };
 
 export const Tasks = {
