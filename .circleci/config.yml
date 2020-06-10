@@ -3,6 +3,7 @@ version: 2.1
 orbs:
   cypress: cypress-io/cypress@1.7.0
   samson: contentful/trigger-samson@1
+  e2e-tests: contentful/e2e-tests@1
   copy-assets:
     orbs:
       aws-s3: circleci/aws-s3@1.0.15
@@ -194,6 +195,15 @@ orbs:
               path: test/cypress/reports
           - store_artifacts:
               path: test/cypress/screenshots
+
+parameters:
+  # This parameter is used to trigger the main workflow
+  push:
+    type: boolean
+    default: true
+  with-e2e:
+    type: boolean
+    default: false
 
 run_only_on_master_branch: &run_only_on_master_branch
   filters:
@@ -431,7 +441,13 @@ jobs:
             /pact/entrypoint.sh publish $PACT_FILES --consumer-app-version=$CIRCLE_SHA1 --tag=$CIRCLE_BRANCH
 
 workflows:
+  push:
+    when: << pipeline.parameters.push >>
+    jobs:
+      - e2e-tests/trigger-conditional-workflows
   build:
+    unless:
+      or: [<< pipeline.parameters.push >>, << pipeline.parameters.with-e2e >>]
     jobs:
       - lint
       - build-with-statistics:
@@ -441,6 +457,7 @@ workflows:
       - run-e2e-tests:
           requires:
             - build-with-statistics
+          <<: *run_only_on_master_branch
       - cypress/run:
           name: run-contract-tests
           no-workspace: true
@@ -495,3 +512,59 @@ workflows:
       #     requires:
       #       - copy-assets-to-s3
       #     <<: *run_only_on_master_branch
+  build-with-e2e:
+    when: << pipeline.parameters.with-e2e >>
+    # This needs some copy/pasting unfortunately (circleci yaml limitations)
+    jobs:
+      - lint
+      - build-with-statistics:
+          requires:
+            - lint
+      - run-unit-tests
+      - run-e2e-tests:
+          requires:
+            - build-with-statistics
+      - cypress/run:
+          name: run-contract-tests
+          no-workspace: true
+          executor: cypress-base-10
+          parallelism: 4
+          pre-steps:
+            - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc'
+            - run: npm install -g wait-on
+          post-steps:
+            - store_test_results:
+                path: cypress/reports
+            - persist_to_workspace:
+                root: ~/project
+                paths:
+                  - pacts/*
+          start: npm start
+          wait-on: 'http-get://localhost:3001/app/app.js'
+          command: |
+            TESTFILES=$(circleci tests glob "test/cypress/integration/**/*.ts" | circleci tests split --split-by=timings --timings-type=filename | tr '\n' ',')
+            npx cypress run --spec "${TESTFILES}" --env PACT_DIR="./pacts/${CIRCLE_NODE_INDEX}"
+          store_artifacts: true
+      - publish-pact-contracts:
+          requires:
+            - run-contract-tests
+      - copy-assets/to-s3:
+          name: copy-assets-to-s3
+          post-steps:
+            - post-comment/deployment:
+                env: 'flinkly'
+          requires:
+            - build-with-statistics
+      - saucelabs/run:
+          name: run-win10-edge-tests
+          browser: 'MicrosoftEdge'
+          selenium: '3.14.0'
+          requires:
+            - copy-assets-to-s3
+          <<: *run_only_on_master_branch
+      - saucelabs/run:
+          name: run-win10-firefox-tests
+          browser: 'firefox'
+          requires:
+            - copy-assets-to-s3
+          <<: *run_only_on_master_branch
