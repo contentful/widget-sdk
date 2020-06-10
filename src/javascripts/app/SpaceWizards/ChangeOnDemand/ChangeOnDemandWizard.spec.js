@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, wait, waitForElementToBeRemoved } from '@testing-library/react';
+import { render, screen, within, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ChangeOnDemandWizard from './ChangeOnDemandWizard';
 import * as Fake from 'test/helpers/fakeFactory';
@@ -8,112 +8,22 @@ import {
   getSubscriptionPlans,
   calculateTotalPrice,
 } from 'account/pricing/PricingDataProvider';
-import { transformSpaceRatePlans, getRecommendedPlan, changeSpacePlan } from '../shared/utils';
+import * as utils from '../shared/utils';
 import createResourceService from 'services/ResourceService';
 import cleanupNotifications from 'test/helpers/cleanupNotifications';
+import { currentMicroSpace, mediumSpace, freeSpace } from '../__test__/fixtures/plans';
+import { createResourcesForPlan, FULFILLMENT_STATUSES } from '../__test__/helpers';
 
-const mockOrganization = Fake.Organization();
+const mockOrganization = Fake.Organization({ isBillable: true });
 const mockSpace = Fake.Space();
-
-const mockResources = [
-  Fake.SpaceResource(3, 3, 'environment'),
-  Fake.SpaceResource(2, 3, 'role'),
-  Fake.SpaceResource(1, 3, 'locale'),
-  Fake.SpaceResource(2, 3, 'content_type'),
-  Fake.SpaceResource(1, 3, 'record'),
-];
 
 const mockFreeSpaceResource = Fake.OrganizationResource(1, 5, 'free_space');
 
-const mockPlans = [
-  Fake.Plan({
-    productPlanType: 'free_space',
-    productRatePlanCharges: [
-      {
-        name: 'Environments',
-        tiers: [{ endingUnit: 3 }],
-      },
-      {
-        name: 'Roles',
-        tiers: [{ endingUnit: 3 }],
-      },
-      {
-        name: 'Locales',
-        tiers: [{ endingUnit: 3 }],
-      },
-      {
-        name: 'Content types',
-        tiers: [{ endingUnit: 3 }],
-      },
-      {
-        name: 'Records',
-        tiers: [{ endingUnit: 3 }],
-      },
-    ],
-    unavailabilityReasons: [{ type: 'currentPlan' }],
-    name: 'A free space',
-    roleSet: {
-      name: 'lol',
-      roles: ['Wizard'],
-    },
-  }),
-  Fake.Plan({
-    productPlanType: 'another_space_plan',
-    productRatePlanCharges: [
-      {
-        name: 'Environments',
-        tiers: [{ endingUnit: 10 }],
-      },
-      {
-        name: 'Roles',
-        tiers: [{ endingUnit: 10 }],
-      },
-      {
-        name: 'Locales',
-        tiers: [{ endingUnit: 10 }],
-      },
-      {
-        name: 'Content types',
-        tiers: [{ endingUnit: 10 }],
-      },
-      {
-        name: 'Records',
-        tiers: [{ endingUnit: 10 }],
-      },
-    ],
-    unavailabilityReasons: [],
-    name: 'Not free plan',
-    roleSet: {
-      name: 'lmao',
-      roles: ['Witch', 'The Masked One'],
-    },
-  }),
-];
+const mockPlans = [currentMicroSpace, mediumSpace];
+const mockResources = createResourcesForPlan(currentMicroSpace, FULFILLMENT_STATUSES.REACHED);
 
-const mockTransformedPlans = mockPlans.map((plan) => ({
-  current: plan.unavailabilityReasons.find(({ type }) => type === 'currentPlan'),
-  disabled: plan.unavailabilityReasons.length > 0,
-  includedResources: plan.productRatePlanCharges.map(({ name, tiers }) => ({
-    type: name,
-    number: tiers[0].endingUnit,
-  })),
-  isFree: plan.productPlanType === 'free_space',
-  ...plan,
-}));
-
-jest.mock('../shared/utils', () => ({
-  changeSpacePlan: jest.fn(),
-  getIncludedResources: jest.fn().mockReturnValue([]),
-  FREE_SPACE_IDENTIFIER: 'free_space',
-  transformSpaceRatePlans: jest.fn(),
-  getHighestPlan: jest.fn(),
-  SpaceResourceTypes: {
-    Roles: 'Role',
-  },
-  getTooltip: jest.fn().mockReturnValue(null),
-  getRolesTooltip: jest.fn().mockReturnValue(null),
-  getRecommendedPlan: jest.fn(),
-}));
+jest.spyOn(utils, 'transformSpaceRatePlans');
+jest.spyOn(utils, 'changeSpacePlan').mockImplementation(async () => {});
 
 jest.mock('account/pricing/PricingDataProvider', () => ({
   getSpaceRatePlans: jest.fn(),
@@ -141,7 +51,6 @@ jest.useFakeTimers();
 describe('ChangeOnDemandWizard', () => {
   beforeEach(() => {
     getSpaceRatePlans.mockResolvedValue(mockPlans);
-    transformSpaceRatePlans.mockReturnValue(mockTransformedPlans);
   });
 
   afterEach(cleanupNotifications);
@@ -165,7 +74,7 @@ describe('ChangeOnDemandWizard', () => {
     expect(getSubscriptionPlans).toBeCalledWith(expect.any(Function));
     expect(getSpaceRatePlans).toBeCalledWith(expect.any(Function), mockSpace.sys.id);
 
-    expect(transformSpaceRatePlans).toBeCalledWith({
+    expect(utils.transformSpaceRatePlans).toBeCalledWith({
       organization: mockOrganization,
       spaceRatePlans: mockPlans,
       freeSpaceResource: mockFreeSpaceResource,
@@ -189,24 +98,24 @@ describe('ChangeOnDemandWizard', () => {
     expect(screen.getByTestId('confirmation-screen')).toBeVisible();
   });
 
-  it('should recommend the bigger plan if getRecommendedPlan is true', async () => {
-    getRecommendedPlan.mockReturnValueOnce(mockPlans[1]);
-
+  it('should recommend the bigger plan if there is a plan to recommend', async () => {
     await build();
 
-    expect(screen.getAllByTestId('space-plan-item')[1]).toHaveAttribute(
-      'class',
-      expect.stringMatching('recommendedPlan')
-    );
+    // The medium space should be recommended
+    const mediumPlanElement = screen.getAllByTestId('space-plan-item').find((ele) => {
+      return within(ele).getByTestId('space-plan-name').textContent === 'Medium';
+    });
+    expect(mediumPlanElement).toHaveAttribute('class', expect.stringMatching('recommendedPlan'));
   });
 
-  it('shouid not recommend the bigger plan is getRecommendedPlan is false', async () => {
+  it('shouid not recommend the bigger plan is there is no plan to recommend', async () => {
+    getSpaceRatePlans.mockClear().mockResolvedValue([currentMicroSpace, freeSpace]);
+
     await build();
 
-    expect(screen.getAllByTestId('space-plan-item')[1]).not.toHaveAttribute(
-      'class',
-      expect.stringMatching('recommendedPlan')
-    );
+    screen.getAllByTestId('space-plan-item').forEach((planEle) => {
+      expect(planEle).not.toHaveAttribute('class', expect.stringMatching('recommendedPlan'));
+    });
   });
 
   it('should call onProcessing with true when the change is confirmed', async () => {
@@ -216,9 +125,7 @@ describe('ChangeOnDemandWizard', () => {
     userEvent.click(screen.getAllByTestId('space-plan-item')[1]);
     userEvent.click(screen.getByTestId('confirm-button'));
 
-    expect(onProcessing).toBeCalledWith(true);
-
-    await wait();
+    await waitFor(() => expect(onProcessing).toBeCalledWith(true));
   });
 
   it('should hide the close button while the space plan is being changed', async () => {
@@ -229,9 +136,7 @@ describe('ChangeOnDemandWizard', () => {
     userEvent.click(screen.getAllByTestId('space-plan-item')[1]);
     userEvent.click(screen.getByTestId('confirm-button'));
 
-    expect(screen.queryByTestId('close-icon')).toBeNull();
-
-    await wait();
+    await waitFor(() => expect(screen.queryByTestId('close-icon')).toBeNull());
   });
 
   it('should call changeSpacePlan with the current space and new plan, and call onClose when successful', async () => {
@@ -241,15 +146,28 @@ describe('ChangeOnDemandWizard', () => {
     userEvent.click(screen.getAllByTestId('space-plan-item')[1]);
     userEvent.click(screen.getByTestId('confirm-button'));
 
-    expect(changeSpacePlan).toBeCalledWith({ space: mockSpace, plan: mockTransformedPlans[1] });
+    expect(utils.changeSpacePlan).toBeCalledWith({
+      space: mockSpace,
+      plan: utils.transformSpaceRatePlan({
+        organization: mockOrganization,
+        plan: mockPlans[1],
+        freeSpaceResource: mockFreeSpaceResource,
+      }),
+    });
 
-    await wait();
+    await waitFor(() => expect(onClose).toBeCalled());
 
-    expect(onClose).toBeCalledWith(mockTransformedPlans[1]);
+    expect(onClose).toBeCalledWith(
+      utils.transformSpaceRatePlan({
+        organization: mockOrganization,
+        plan: mockPlans[1],
+        freeSpaceResource: mockFreeSpaceResource,
+      })
+    );
   });
 
   it('should not call onClose and should trigger a notification if changeSpacePlan rejects', async () => {
-    changeSpacePlan.mockRejectedValueOnce(new Error());
+    utils.changeSpacePlan.mockRejectedValueOnce(new Error());
 
     const onClose = jest.fn();
     await build({ onClose });
@@ -257,10 +175,10 @@ describe('ChangeOnDemandWizard', () => {
     userEvent.click(screen.getAllByTestId('space-plan-item')[1]);
     userEvent.click(screen.getByTestId('confirm-button'));
 
-    await wait();
+    await waitFor(() => screen.getByTestId('cf-ui-notification'));
 
     expect(onClose).not.toBeCalled();
-    expect(await screen.findByTestId('cf-ui-notification')).toHaveAttribute('data-intent', 'error');
+    expect(screen.getByTestId('cf-ui-notification')).toHaveAttribute('data-intent', 'error');
   });
 });
 
