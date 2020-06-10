@@ -3,7 +3,15 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import Placeholder from 'app/common/Placeholder';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes';
-import { Button, Tooltip, Subheading, Workbench } from '@contentful/forma-36-react-components';
+import {
+  Button,
+  Tooltip,
+  Paragraph,
+  Heading,
+  Typography,
+  Workbench,
+} from '@contentful/forma-36-react-components';
+import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import * as Navigator from 'states/Navigator';
@@ -24,25 +32,39 @@ const ellipsisStyle = {
 
 const styles = {
   details: css({
-    padding: '1em 2em 2em',
+    padding: `${tokens.spacingM} ${tokens.spacingXl} ${tokens.spacingXl}`,
     display: 'flex',
+    flexDirection: 'column',
   }),
   detailsContent: css({
-    flex: 1,
-  }),
-  sidebar: css({
-    marginRight: '25px',
-    width: '400px',
+    width: '100%',
   }),
   profileSection: css({
-    borderBottom: `1px solid ${tokens.colorElementLight}`,
-    paddingBottom: '20px',
-    marginBottom: '20px',
+    marginBottom: tokens.spacing2Xl,
   }),
-  card: css({
-    '> *': {
-      marginBottom: '1rem',
-    },
+  column: css({
+    borderTop: `1px solid ${tokens.colorElementLight}`,
+    paddingTop: tokens.spacingL,
+    color: tokens.colorTextMid,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+  }),
+  columnContent: css({
+    marginBottom: tokens.spacingXl,
+  }),
+  columnActions: css({
+    display: 'flex',
+  }),
+  editButton: css({
+    marginRight: tokens.spacingS,
+  }),
+  teamCard: css({
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    height: '100%',
+    maxWidth: '400px',
   }),
   name: css(ellipsisStyle),
   description: css(ellipsisStyle),
@@ -89,14 +111,18 @@ export function TeamDetails({ team, allTeams, orgId, readOnlyPermission }) {
       <Workbench.Content>
         {team && (
           <div className={styles.details} data-test-id="team-details">
-            <div className={styles.sidebar}>
-              <section className={styles.profileSection}>
-                <div className={styles.card}>
-                  <Subheading className={styles.name} testId="team-card-name" title={team.name}>
+            <section className={styles.profileSection}>
+              <div className={styles.teamCard}>
+                <Typography>
+                  <Heading
+                    element="h2"
+                    className={styles.name}
+                    testId="team-card-name"
+                    title={team.name}>
                     {teamName}
-                  </Subheading>
+                  </Heading>
                   {teamDescription && (
-                    <div
+                    <Paragraph
                       className={styles.description}
                       data-test-id="team-card-description"
                       title={teamDescription}>
@@ -106,47 +132,61 @@ export function TeamDetails({ team, allTeams, orgId, readOnlyPermission }) {
                         }
                         return [...acc, <br key={idx} />, cur];
                       }, [])}
+                    </Paragraph>
+                  )}
+                </Typography>
+              </div>
+              <Grid columns={3} rows={1} columnGap="spacingL" flow="row">
+                <div className={styles.column}>
+                  <>
+                    <div className={styles.columnContent}>
+                      <dl className="definition-list">
+                        <dt>Created at</dt>
+                        <dd data-test-id="creation-date">
+                          {moment(team.sys.createdAt).format('MMMM DD, YYYY')}
+                        </dd>
+                        {!readOnlyPermission && (
+                          <>
+                            <dt>Created by</dt>
+                            <dd data-test-id="creator-name">{teamCreator}</dd>
+                          </>
+                        )}
+                      </dl>
                     </div>
-                  )}
-                  {readOnlyPermission ? (
-                    <Tooltip
-                      testId="read-only-tooltip"
-                      place="right"
-                      content="You don't have permission to edit team details">
-                      <EditButton />
-                    </Tooltip>
-                  ) : (
-                    <EditButton onClick={() => setShowTeamDialog(true)} />
-                  )}
-                </div>
-              </section>
-              {team.sys && (
-                <section className={styles.profileSection}>
-                  <dl className="definition-list">
-                    <dt>Created at</dt>
-                    <dd data-test-id="creation-date">
-                      {moment(team.sys.createdAt).format('MMMM DD, YYYY')}
-                    </dd>
-                    {!readOnlyPermission && (
-                      <React.Fragment>
-                        <dt>Created by</dt>
-                        <dd data-test-id="creator-name">{teamCreator}</dd>
-                      </React.Fragment>
+                  </>
+                  <div className={styles.columnActions}>
+                    {readOnlyPermission ? (
+                      <Tooltip
+                        testId="read-only-tooltip"
+                        place="right"
+                        content="You don't have permission to edit team details">
+                        <EditButton />
+                      </Tooltip>
+                    ) : (
+                      <div className={styles.editButton}>
+                        <EditButton onClick={() => setShowTeamDialog(true)} />
+                      </div>
                     )}
-                  </dl>
-                </section>
-              )}
-              {readOnlyPermission ? (
-                <Tooltip
-                  testId="read-only-tooltip"
-                  place="right"
-                  content="You don't have permission to delete a team">
-                  <DeleteButton />
-                </Tooltip>
-              ) : (
-                <DeleteButton onClick={() => setShowDeleteTeamDialog(true)} />
-              )}
-            </div>
+                    {team.sys && (
+                      <>
+                        {readOnlyPermission ? (
+                          <Tooltip
+                            testId="read-only-tooltip"
+                            place="right"
+                            content="You don't have permission to delete a team">
+                            <DeleteButton />
+                          </Tooltip>
+                        ) : (
+                          <div>
+                            <DeleteButton onClick={() => setShowDeleteTeamDialog(true)} />
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
+              </Grid>
+            </section>
             <div className={styles.detailsContent}>
               <TeamDetailsContent
                 team={team}

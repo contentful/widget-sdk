@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useReducer } from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'emotion';
+import { cx, css } from 'emotion';
 import {
   Tabs,
   Tab,
@@ -34,9 +34,12 @@ import { ModalLauncher } from 'core/components/ModalLauncher';
 
 const styles = {
   tabs: css({
+    marginBottom: tokens.spacingL,
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
+  }),
+  emptyTabs: css({
     marginBottom: tokens.spacingL,
   }),
   svgContainer: css({ width: '15vw', minWidth: '280px', marginLeft: '-1vw' }),
@@ -277,8 +280,8 @@ export function TeamDetailsContent({ team, orgId, readOnlyPermission }) {
 
   return (
     <div className={styles.detailsContent}>
-      <header className={styles.tabs}>
-        <Tabs role="tablist">
+      <header className={cx(isListEmpty() ? styles.emptyTabs : styles.tabs)}>
+        <Tabs role="tablist" withDivider={isListEmpty()}>
           {Object.entries(tabs).map(([id, { label }]) => (
             <Tab
               key={id}
