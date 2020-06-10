@@ -17,6 +17,7 @@ export default function EntryList({
   assetCache,
   updateEntries,
   jobs = [],
+  pageIndex = 0,
 }) {
   const entityType = 'entry';
   const viewPersistor = useMemo(() => createViewPersistor({ entityType }), [entityType]);
@@ -66,6 +67,7 @@ export default function EntryList({
       onBulkActionComplete={onEntryEvent}
       updateEntities={updateEntries}
       isLoading={isSearching}
+      pageIndex={pageIndex}
       renderDisplayField={(props) => (
         <DisplayField entryCache={entryCache} assetCache={assetCache} {...props} />
       )}
@@ -91,4 +93,5 @@ EntryList.propTypes = {
   entryCache: PropTypes.object,
   assetCache: PropTypes.object,
   jobs: PropTypes.array,
+  pageIndex: PropTypes.number,
 };
