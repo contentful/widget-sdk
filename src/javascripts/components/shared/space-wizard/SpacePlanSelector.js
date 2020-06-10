@@ -161,9 +161,7 @@ class SpacePlanSelector extends React.Component {
                 key={plan.sys.id}
                 plan={plan}
                 freeSpacesResource={freeSpacesResource}
-                isCurrentPlan={currentPlan === plan}
                 isSelected={get(selectedPlan, 'sys.id') === plan.sys.id}
-                isRecommended={get(recommendedPlan, 'sys.id') === plan.sys.id}
                 isPayingOrg={payingOrg}
                 onSelect={this.selectPlan(currentPlan, recommendedPlan)}
                 isCommunityPlanEnabled={isCommunityPlanEnabled}

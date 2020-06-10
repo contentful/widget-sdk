@@ -10,7 +10,7 @@ describe('SpacePlanItem', () => {
     expect(screen.queryByTestId('space-plan-price')).toBeNull();
   });
 
-  it('should show a price if the plan price is not 0', () => {
+  it('should show a price if the plan price is greater than 0', () => {
     build({ plan: createPlan({ price: 1 }) });
 
     expect(screen.getByTestId('space-plan-price')).toBeVisible();

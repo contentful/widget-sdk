@@ -2,132 +2,108 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { camelCase } from 'lodash';
 import { css, cx } from 'emotion';
-import { Tooltip, Icon } from '@contentful/forma-36-react-components';
+import { Tooltip, Icon, Card, Subheading } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
 import PlanFeatures from '../shared/PlanFeatures';
 import { Pluralized, Price } from 'core/components/formatting';
 
-const createPlanCss = (backgroundColor, borderColor) => {
+const getPlanBGColor = (backgroundColor) => {
   return css({
     '&:before': {
       backgroundColor,
-      border: `1px solid ${borderColor}`,
     },
   });
 };
 
 const styles = {
-  planChevron: css({
-    position: 'absolute',
-    right: '19px',
-    bottom: '22px',
-  }),
   helpIcon: css({
     fill: tokens.colorElementDarkest,
     marginBottom: '-3px',
+    marginLeft: tokens.spacingXs,
   }),
-  planItem: css({
-    height: '73px',
-    borderRadius: '2px',
-    border: '1px solid #d3dce0',
-    boxShadow: '0 1px 3px 0 rgba(0,0,0,0.08)',
-    backgroundColor: '#fff',
-    marginBottom: '10px',
-    padding: '14px 30px',
-    lineHeight: '1.5em',
-    display: 'flex',
-    flexDirection: 'column',
+
+  planCard: css({
     position: 'relative',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingLeft: tokens.spacingXl,
+    marginBottom: tokens.spacingM,
     cursor: 'pointer',
     transition: 'all ease-in-out 0.1s',
     '&:last-child': {
       marginBottom: 0,
     },
     '&:before': {
-      backgroundColor: '#a9b9c0',
-      border: '1px solid #8091a5',
-      content: "''",
-      width: '8px',
-      height: '100%',
+      content: '""',
       position: 'absolute',
-      top: '-1px',
-      left: '-1px',
-      borderRadius: '2px 0 0 2px',
-    },
-    '&:hover': {
-      zIndex: '1',
-      border: '1px solid #b4c3ca',
-      boxShadow: '0 3px 3px 0 rgba(0,0,0,0.08)',
-      transform: 'translateY(-2px)',
+      width: tokens.spacingXs,
+      height: '100%',
+      top: 0,
+      left: 0,
+      backgroundColor: tokens.colorElementLight,
     },
   }),
 
-  selectedPlan: css({
-    border: '1px solid #3c80cf',
-  }),
-
-  disabledPlan: css({
-    cursor: 'not-allowed',
-    border: '1px solid #d3dce0',
-    color: 'rgba(42,48,57,0.3)',
-
-    strong: {
-      color: 'rgba(42,48,57,0.3)',
-    },
-
-    '&:before': {
-      opacity: '0.3',
-      filter: 'alpha(opacity=30)',
-    },
-
-    '&:after': {
-      border: '1px solid #d3dce0',
-      boxShadow: '0 1px 3px 0 rgba(0,0,0,0.08)',
-      transform: 'none',
-    },
-
-    '&:hover': {
-      border: '1px solid #d3dce0',
-      boxShadow: '0 1px 3px 0 rgba(0,0,0,0.08)',
-      transform: 'none',
-    },
-  }),
+  plans: {
+    free: getPlanBGColor(tokens.colorElementLight),
+    micro: getPlanBGColor(tokens.colorOrangeMid),
+    small: getPlanBGColor(tokens.colorRedLight),
+    medium: getPlanBGColor(tokens.colorBlueLight),
+    large: getPlanBGColor(tokens.colorGreenLight),
+    partnerSpacePlan: getPlanBGColor(tokens.colorBlueBase),
+    proofOfConcept: getPlanBGColor(tokens.colorBlueBase),
+  },
 
   currentPlan: css({
     '&:after': {
       content: '"Current"',
-      color: '#fff',
-      backgroundColor: '#a9b9c0',
-      borderRadius: '2px',
       position: 'absolute',
+      top: 'calc(50% - 14px)', // 12px is half the height of this tag
       right: '-20px',
-      top: '35%',
-      padding: '6px 10px',
+      padding: `${tokens.spacingXs} ${tokens.spacingS}`,
+      color: tokens.colorWhite,
+      fontSize: tokens.fontSizeS,
+      fontWeight: tokens.fontWeightDemiBold,
+      lineHeight: 1,
       textTransform: 'uppercase',
-      fontWeight: '600',
-      fontSize: '12px',
-      lineHeight: '12px',
-      letterSpacing: '0.4px',
-      opacity: '0.9',
-      filter: 'alpha(opacity=90)',
+      backgroundColor: tokens.colorElementMid,
+      borderRadius: '2px',
     },
   }),
 
-  planName: css({
-    fontSize: '17px',
-    lineHeight: '1.2',
+  disabled: css({
+    cursor: 'not-allowed !important',
+    color: tokens.colorTextLightest,
+    '& h2': {
+      color: tokens.colorTextLightest,
+    },
+    '&:before': {
+      opacity: 0.3,
+    },
+    '&:hover': {
+      border: '1px solid #d3dce0',
+    },
   }),
 
-  plans: {
-    free: createPlanCss('#e5ebed', '#d3dce0'),
-    micro: createPlanCss('#fba012', '#ea9005'),
-    small: createPlanCss('#f05751', ' #e34e48'),
-    medium: createPlanCss('#5b9fef', '#4a90e2'),
-    large: createPlanCss('#14d997', '#19cd91'),
-    partnerSpacePlan: createPlanCss('#3c80cf', '#3072be'),
-    proofOfConcept: createPlanCss('#3c80cf', '#3072be'),
-  },
+  headingContainer: css({
+    display: 'flex',
+    alignItems: 'center',
+    fontSize: tokens.fontSizeL,
+    '& h2': {
+      marginBottom: 0,
+      marginRight: tokens.spacingXs,
+    },
+  }),
+
+  arrowIconColumn: css({
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    height: '100%',
+  }),
 };
 
 export default function SpacePlanItem(props) {
@@ -159,45 +135,47 @@ export default function SpacePlanItem(props) {
     </>
   );
 
+  const handleClick = () => !plan.disabled && onSelect(plan);
+
   return (
-    <div
-      key={plan.sys.id}
-      data-test-id="space-plan-item"
-      className={cx(styles.planItem, styles.plans[camelCase(plan.name)], {
-        [styles.selectedPlan]: isSelected,
-        [styles.disabledPlan]: plan.disabled,
-        [styles.currentPlan]: plan.current,
-      })}
-      onClick={() => !plan.disabled && onSelect(plan)}>
-      <div className={styles.planName} data-test-id="contents">
-        <strong data-test-id="space-plan-name">{plan.name}</strong>
-        {plan.price > 0 && (
-          <>
-            {' - '}
+    <Card
+      className={cx([
+        styles.planCard,
+        styles.plans[camelCase(plan.name)],
+        plan.current && styles.currentPlan,
+        plan.disabled && styles.disabled,
+      ])}
+      selected={isSelected}
+      onClick={handleClick}
+      testId="space-plan-item">
+      <div data-test-id="contents">
+        <div className={styles.headingContainer}>
+          <Subheading element="h2" testId="space-plan-name">
+            {plan.name}
+          </Subheading>
+
+          {plan.price && plan.price > 0 && (
             <span data-test-id="space-plan-price">
               <Price value={plan.price} unit="month" />
             </span>
-          </>
-        )}
-        {plan.isFree && freeSpacesLimit && (
-          <>
-            {' '}
-            <Pluralized text="free space" count={freeSpacesUsage} />{' '}
-            <Tooltip content={tooltipContent}>
-              <Icon icon="HelpCircle" className={styles.helpIcon} />
-            </Tooltip>
-          </>
-        )}
-      </div>
+          )}
 
-      <PlanFeatures resources={plan.includedResources} roleSet={plan.roleSet} />
-
-      {showChevron && (
-        <div className={styles.planChevron}>
-          <Icon testId="plan-chevron" icon="ChevronRight" color="muted" />
+          {plan.isFree && freeSpacesLimit && (
+            <>
+              <Pluralized text="free space" count={freeSpacesUsage} />
+              <Tooltip content={tooltipContent}>
+                <Icon icon="HelpCircle" className={styles.helpIcon} />
+              </Tooltip>
+            </>
+          )}
         </div>
-      )}
-    </div>
+
+        <PlanFeatures resources={plan.includedResources} roleSet={plan.roleSet} />
+      </div>
+      <div className={styles.arrowIconColumn}>
+        {showChevron && <Icon testId="plan-chevron" icon="ChevronRight" color="muted" />}
+      </div>
+    </Card>
   );
 }
 
