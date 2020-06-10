@@ -1,24 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Note } from '@contentful/forma-36-react-components';
 
 import ContactUsButton from 'ui/Components/ContactUsButton';
 
-export default function NoMorePlans({ canSetupBilling }) {
+export default function NoMorePlans({ canSetupBilling = false }) {
   return (
-    <div className="note-box--info create-space-wizard__info">
-      <p>
-        <span>You&apos;re using the largest space available.</span>
-        {canSetupBilling && (
-          <span>
-            {' '}
-            <ContactUsButton noIcon isLink /> if you need higher limits.
-          </span>
-        )}
-      </p>
-    </div>
+    <Note noteType="primary">
+      You’re using the largest space available.
+      {canSetupBilling && (
+        <>
+          {' '}
+          <ContactUsButton noIcon isLink /> if you need higher limits.
+        </>
+      )}
+    </Note>
   );
 }
 
 NoMorePlans.propTypes = {
-  canSetupBilling: PropTypes.bool.isRequired,
+  canSetupBilling: PropTypes.bool,
 };

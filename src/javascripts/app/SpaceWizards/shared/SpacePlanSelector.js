@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { get } from 'lodash';
 import { isOwner } from 'services/OrganizationRoles';
-import { Heading, Paragraph, Typography } from '@contentful/forma-36-react-components';
+import { Typography, Heading, Paragraph } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
 
 import SpacePlanItem from './SpacePlanItem';
 import BillingInfo from './BillingInfo';
@@ -12,11 +13,14 @@ import NoMorePlans from './NoMorePlans';
 import { getHighestPlan } from '../shared/utils';
 
 const styles = {
-  center: css({
+  textCenter: css({
     textAlign: 'center',
   }),
+  marginBottom: css({
+    marginBottom: tokens.spacingM,
+  }),
   container: css({
-    padding: '20px',
+    margin: `0 ${tokens.spacingL}`,
   }),
 };
 
@@ -28,6 +32,7 @@ export default function SpacePlanSelector(props) {
     selectedPlan,
     goToBillingPage,
     onSelectPlan,
+    isCommunityPlanEnabled,
   } = props;
 
   const highestPlan = getHighestPlan(spaceRatePlans);
@@ -44,15 +49,24 @@ export default function SpacePlanSelector(props) {
   return (
     <div data-test-id="space-plan-selector" className={styles.container}>
       <Typography>
-        {!payingOrg && (
-          <BillingInfo canSetupBilling={isOwner(organization)} goToBilling={goToBillingPage} />
-        )}
-        {atHighestPlan && <NoMorePlans canSetupBilling={isOwner(organization)} />}
+        <Heading className={styles.textCenter}>Choose the space type</Heading>
 
-        <Heading className={styles.center}>Choose the space type</Heading>
-        <Paragraph className={styles.center}>
-          You are creating this space for the organization <em>{organization.name}</em>.
+        <Paragraph className={styles.textCenter}>
+          You are creating this space for the organization {organization.name}.
         </Paragraph>
+
+        {atHighestPlan && (
+          <div className={styles.marginBottom}>
+            <NoMorePlans canSetupBilling={isOwner(organization)} />
+          </div>
+        )}
+
+        {!payingOrg && (
+          <div className={styles.marginBottom}>
+            <BillingInfo goToBilling={goToBillingPage} canSetupBilling={isOwner(organization)} />
+          </div>
+        )}
+
         {spaceRatePlans.map((plan) => (
           <SpacePlanItem
             key={plan.sys.id}
@@ -61,6 +75,7 @@ export default function SpacePlanSelector(props) {
             isPayingOrg={payingOrg}
             isSelected={get(selectedPlan, 'sys.id') === plan.sys.id}
             onSelect={onSelectPlan}
+            isCommunityPlanEnabled={isCommunityPlanEnabled}
           />
         ))}
       </Typography>
@@ -75,4 +90,5 @@ SpacePlanSelector.propTypes = {
   onSelectPlan: PropTypes.func.isRequired,
   selectedPlan: PropTypes.object,
   goToBillingPage: PropTypes.func.isRequired,
+  isCommunityPlanEnabled: PropTypes.bool,
 };

@@ -22,7 +22,7 @@ describe('SpacePlanItem', () => {
 
     build({ plan, freeSpacesResource });
 
-    expect(screen.getByTestId('contents')).toHaveTextContent('- 1/2 used');
+    expect(screen.getByTestId('contents')).toHaveTextContent('1 free space');
   });
 
   it('should show the plan features', () => {
@@ -89,7 +89,7 @@ function build(custom) {
     {
       plan: createPlan(),
       isSelected: false,
-      freeSpacesResource: null,
+      freeSpacesResource: { usage: 1, limits: { maximum: 1 } },
       onSelect: () => {},
       isPayingOrg: true,
     },

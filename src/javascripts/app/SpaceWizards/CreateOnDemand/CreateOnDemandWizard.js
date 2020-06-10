@@ -2,6 +2,8 @@ import React, { useCallback, useReducer } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import moment from 'moment';
+import { getVariation } from 'LaunchDarkly';
+import { COMMUNITY_PLAN_FLAG } from 'featureFlags';
 import SpaceDetails from './SpaceDetails';
 import ConfirmScreenNormal from './ConfirmScreenNormal';
 import SpacePlanSelector from '../shared/SpacePlanSelector';
@@ -54,14 +56,22 @@ const styles = {
 };
 
 const initialFetch = (organization) => async () => {
-  const endpoint = createOrganizationEndpoint(organization.sys.id);
-  const orgResources = createResourceService(organization.sys.id, 'organization');
+  const organizationId = organization.sys.id;
+  const endpoint = createOrganizationEndpoint(organizationId);
+  const orgResources = createResourceService(organizationId, 'organization');
 
-  const [freeSpaceResource, rawSpaceRatePlans, templates, subscriptionPlans] = await Promise.all([
+  const [
+    freeSpaceResource,
+    rawSpaceRatePlans,
+    templates,
+    subscriptionPlans,
+    isCommunityPlanEnabled,
+  ] = await Promise.all([
     orgResources.get(FREE_SPACE_IDENTIFIER),
     getSpaceRatePlans(endpoint),
     getTemplatesList(),
     getSubscriptionPlans(endpoint),
+    getVariation(COMMUNITY_PLAN_FLAG, { organizationId }),
   ]);
 
   const currentSubscriptionPrice = calculateTotalPrice(subscriptionPlans.items);
@@ -76,6 +86,7 @@ const initialFetch = (organization) => async () => {
     spaceRatePlans,
     templates,
     currentSubscriptionPrice,
+    isCommunityPlanEnabled,
   };
 };
 
@@ -268,6 +279,7 @@ export default function CreateOnDemandWizard(props) {
                     dispatch({ type: 'SET_SELECTED_TAB', payload: 'spaceDetails' });
                   }}
                   goToBillingPage={() => goToBillingPage(organization, onClose)}
+                  isCommunityPlanEnabled={data.isCommunityPlanEnabled}
                 />
               </TabPanel>
             )}

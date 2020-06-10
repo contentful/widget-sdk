@@ -1,32 +1,29 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { TextLink, Paragraph, Note } from '@contentful/forma-36-react-components';
+import { TextLink, Note } from '@contentful/forma-36-react-components';
 
-export default function BillingInfo(props) {
-  const { canSetupBilling, goToBilling } = props;
-
+export default function BillingInfo({ canSetupBilling, goToBilling }) {
   return (
-    <Note testId="billing-info-note">
-      {canSetupBilling && (
-        <Paragraph>
-          <TextLink testId="go-to-billing-link" onClick={goToBilling}>
+    <Note noteType="warning" testId="billing-info-note">
+      {canSetupBilling ? (
+        <>
+          <TextLink onClick={goToBilling} testId="go-to-billing-link">
             Add payment details
           </TextLink>{' '}
           for the organization before creating a paid space.
-        </Paragraph>
-      )}
-      {!canSetupBilling && (
-        <Paragraph testId="payment-details-missing">
+        </>
+      ) : (
+        <span data-test-id="payment-details-missing">
           The owner of this organization needs to add payment details before you can create a paid
           space.
-        </Paragraph>
+        </span>
       )}
     </Note>
   );
 }
 
 BillingInfo.propTypes = {
-  canSetupBilling: PropTypes.bool.isRequired,
   goToBilling: PropTypes.func.isRequired,
+  canSetupBilling: PropTypes.bool,
 };

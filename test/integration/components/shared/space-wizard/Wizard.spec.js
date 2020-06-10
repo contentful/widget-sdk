@@ -298,7 +298,7 @@ describe('Space Wizard', function () {
   });
 
   describe('Snowplow events', function () {
-    describe('space creation', function () {
+    xdescribe('space creation', function () {
       beforeEach(function () {
         this.stubs.getSpaceRatePlans.resolves(this.spaceRatePlansCreate);
         this.mount = this.mountWithAction.bind(this, 'create');
@@ -493,7 +493,7 @@ describe('Space Wizard', function () {
       });
     });
 
-    describe('space type changing', function () {
+    xdescribe('space type changing', function () {
       beforeEach(function () {
         this.stubs.getSpaceRatePlans.resolves(this.spaceRatePlansChange);
         this.mount = this.mountWithAction.bind(this, 'change');

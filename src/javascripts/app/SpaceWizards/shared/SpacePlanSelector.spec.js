@@ -5,7 +5,7 @@ import SpacePlanSelector from './SpacePlanSelector';
 
 describe('SpacePlanSelector', () => {
   it('should show the BillingInfo note if the org is not billable', () => {
-    build({ organization: Fake.Organization() });
+    build({ organization: Fake.Organization({ isBillable: false }) });
 
     expect(screen.getByTestId('billing-info-note')).toBeVisible();
   });
@@ -62,7 +62,7 @@ function build(custom) {
     {
       organization: Fake.Organization({ isBillable: true }),
       spaceRatePlans: [createPlan()],
-      freeSpacesResource: null,
+      freeSpacesResource: { usage: 1, limits: { maximum: 1 } },
       onSelectPlan: () => {},
       selectedPlan: null,
       goToBillingPage: () => {},

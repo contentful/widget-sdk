@@ -1,15 +1,14 @@
-/* eslint "rulesdir/restrict-inline-styles": "warn" */
-import React, { Fragment } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { kebabCase } from 'lodash';
-
-import tokens from '@contentful/forma-36-tokens';
-import PlanFeatures from 'components/shared/space-wizard/PlanFeatures';
-import { formatPrice, unavailabilityTooltipNode } from './WizardUtils';
-
-import { Tooltip, Icon } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
+import { kebabCase } from 'lodash';
+import { Tooltip, Icon } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
+
+import PlanFeatures from 'components/shared/space-wizard/PlanFeatures';
+import { Pluralized } from 'core/components/formatting';
+import { formatPrice } from './WizardUtils';
 
 const styles = {
   planChevron: css({
@@ -19,6 +18,7 @@ const styles = {
   }),
   helpIcon: css({
     fill: tokens.colorElementDarkest,
+    marginBottom: '-3px',
   }),
 };
 
@@ -33,6 +33,7 @@ class SpacePlanItem extends React.Component {
     isPayingOrg: PropTypes.bool.isRequired,
     isCurrentPlan: PropTypes.bool,
     isRecommended: PropTypes.bool,
+    isCommunityPlanEnabled: PropTypes.bool,
   };
 
   render() {
@@ -44,15 +45,25 @@ class SpacePlanItem extends React.Component {
       freeSpacesResource,
       isPayingOrg,
       onSelect,
+      isCommunityPlanEnabled,
     } = this.props;
     const freeSpacesUsage = freeSpacesResource && freeSpacesResource.usage;
     const freeSpacesLimit = freeSpacesResource && freeSpacesResource.limits.maximum;
 
-    const unavailabilityTooltip = unavailabilityTooltipNode(plan);
+    const tooltipContent = isCommunityPlanEnabled ? (
+      <>
+        You have <Pluralized text="free community space" count={freeSpacesLimit} /> for your
+        organization. If you delete a community space, you can create another one.
+      </>
+    ) : (
+      <>
+        You can have up to <Pluralized text="free space" count={freeSpacesLimit} /> for your
+        organization. If you delete a free space, another one can be created.
+      </>
+    );
 
     return (
       <div
-        key={plan.sys.id}
         className={classnames(
           'space-plans-list__item',
           `space-plans-list__item--${kebabCase(plan.name)}`,
@@ -67,33 +78,25 @@ class SpacePlanItem extends React.Component {
         <div className="space-plans-list__item__heading">
           <strong data-test-id="space-plan-name">{plan.name}</strong>
           {plan.price > 0 && (
-            <React.Fragment>
-              {' - '}
+            <>
+              {' '}
               <span data-test-id="space-plan-price">{formatPrice(plan.price)}</span>
               {' / month'}
-            </React.Fragment>
+            </>
           )}
           {plan.isFree && freeSpacesLimit && (
-            <Fragment>
-              {` - ${freeSpacesUsage}/${freeSpacesLimit} used `}
-              <Tooltip
-                content={`You can have up to ${freeSpacesLimit} free spaces for your organization. If you
-                delete a free space, another one can be created.`}>
+            <>
+              {' '}
+              <Pluralized text="free space" count={freeSpacesUsage} />{' '}
+              <Tooltip content={tooltipContent}>
                 <Icon icon="HelpCircle" className={styles.helpIcon} />
               </Tooltip>
-            </Fragment>
+            </>
           )}
         </div>
 
         <PlanFeatures resources={plan.includedResources} roleSet={plan.roleSet} />
 
-        {isPayingOrg && plan.disabled && !isCurrentPlan && (
-          <div className={styles.planChevron}>
-            <Tooltip content={unavailabilityTooltip}>
-              <Icon icon="HelpCircle" className={styles.helpIcon} />
-            </Tooltip>
-          </div>
-        )}
         {(!isPayingOrg || !plan.disabled) && (
           <div className={styles.planChevron}>
             <Icon icon="ChevronRight" color="muted" />

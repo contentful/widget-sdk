@@ -1,16 +1,42 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
 import { get } from 'lodash';
 import { isOwner } from 'services/OrganizationRoles';
 import { go } from 'states/Navigator';
-import { Spinner } from '@contentful/forma-36-react-components';
+import { getVariation } from 'LaunchDarkly';
+import { COMMUNITY_PLAN_FLAG } from 'featureFlags';
+import {
+  SkeletonContainer,
+  SkeletonBodyText,
+  Card,
+  Heading,
+  Paragraph,
+  Note,
+} from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
+
 import { getStoreResources } from 'utils/ResourceUtils';
 import { getRecommendedPlan } from './WizardUtils';
-
 import SpacePlanItem from './SpacePlanItem';
 import BillingInfo from './BillingInfo';
 import NoMorePlans from './NoMorePlans';
 import ExplainRecommendation from './ExplainRecommendation';
+
+const styles = {
+  marginBottom: css({
+    marginBottom: tokens.spacingM,
+  }),
+  skeletonCard: css({
+    marginBottom: tokens.spacingM,
+    '&:last-child': {
+      marginBottom: 0,
+    },
+  }),
+  textCenter: css({
+    textAlign: 'center',
+  }),
+};
 
 class SpacePlanSelector extends React.Component {
   static propTypes = {
@@ -30,7 +56,11 @@ class SpacePlanSelector extends React.Component {
     selectedPlan: PropTypes.object,
   };
 
-  componentDidMount() {
+  state = {
+    isCommunityPlanEnabled: undefined,
+  };
+
+  async componentDidMount() {
     const {
       fetchSpacePlans,
       getResourcesForSpace,
@@ -42,7 +72,14 @@ class SpacePlanSelector extends React.Component {
     } = this.props;
     const spaceId = space && space.sys.id;
 
-    fetchSpacePlans({ organization, spaceId }).then(reposition);
+    const isCommunityPlanEnabled = await getVariation(COMMUNITY_PLAN_FLAG, {
+      organizationId: organization.sys.id,
+      spaceId,
+    });
+    this.setState({ isCommunityPlanEnabled });
+
+    await fetchSpacePlans({ organization, spaceId });
+    reposition();
 
     if (action === 'change' && wizardScope === 'space') {
       getResourcesForSpace(spaceId);
@@ -50,6 +87,7 @@ class SpacePlanSelector extends React.Component {
   }
 
   render() {
+    const { isCommunityPlanEnabled } = this.state;
     const {
       organization,
       space,
@@ -77,21 +115,39 @@ class SpacePlanSelector extends React.Component {
 
     return (
       <div>
-        {isPending && (
-          <div className="loader__container">
-            <Spinner size="large" />
-          </div>
-        )}
+        <Heading className={styles.textCenter}>Choose the space type</Heading>
+        <br />
+
+        {isPending && <LoadingState />}
+
         {!isPending && spaceRatePlans && (
-          <div>
-            {!payingOrg && (
-              <BillingInfo
-                canSetupBilling={isOwner(organization)}
-                goToBilling={this.goToBilling}
-                action={action}
-              />
+          <>
+            <Paragraph className={styles.textCenter}>
+              {action === 'create' ? (
+                <>You are creating this space for the organization {organization.name}.</>
+              ) : (
+                <>
+                  You are changing the space {space.name} for organization {organization.name}.
+                </>
+              )}
+            </Paragraph>
+            <br />
+
+            {atHighestPlan && (
+              <div className={styles.marginBottom}>
+                <NoMorePlans canSetupBilling={isOwner(organization)} />
+              </div>
             )}
-            {atHighestPlan && <NoMorePlans canSetupBilling={isOwner(organization)} />}
+
+            {!payingOrg && (
+              <div className={styles.marginBottom}>
+                <BillingInfo
+                  goToBilling={this.goToBilling}
+                  canSetupBilling={isOwner(organization)}
+                />
+              </div>
+            )}
+
             {payingOrg && recommendedPlan && (
               <ExplainRecommendation
                 currentPlan={currentPlan}
@@ -99,55 +155,25 @@ class SpacePlanSelector extends React.Component {
                 resources={resources}
               />
             )}
-            <h2 className="create-space-wizard__heading">Choose the space type</h2>
-            {action === 'create' && (
-              <Fragment>
-                <p className="create-space-wizard__subheading">
-                  You are creating this space for the organization <em>{organization.name}</em>.
-                  <br />
-                </p>
-                <div className="space-plans-list">
-                  {spaceRatePlans.map((plan) => (
-                    <SpacePlanItem
-                      key={plan.sys.id}
-                      plan={plan}
-                      freeSpacesResource={freeSpacesResource}
-                      isPayingOrg={payingOrg}
-                      isSelected={get(selectedPlan, 'sys.id') === plan.sys.id}
-                      onSelect={this.selectPlan()}
-                    />
-                  ))}
-                </div>
-              </Fragment>
-            )}
-            {action === 'change' && (
-              <Fragment>
-                <p className="create-space-wizard__subheading">
-                  You are changing the space <em>{space.name}</em> for organization{' '}
-                  <em>{organization.name}</em>.<br />
-                </p>
-                <div className="space-plans-list">
-                  {spaceRatePlans.map((plan) => (
-                    <SpacePlanItem
-                      key={plan.sys.id}
-                      plan={plan}
-                      freeSpacesResource={freeSpacesResource}
-                      isCurrentPlan={currentPlan === plan}
-                      isSelected={get(selectedPlan, 'sys.id') === plan.sys.id}
-                      isRecommended={get(recommendedPlan, 'sys.id') === plan.sys.id}
-                      isPayingOrg={payingOrg}
-                      onSelect={this.selectPlan(currentPlan, recommendedPlan)}
-                    />
-                  ))}
-                </div>
-              </Fragment>
-            )}
-          </div>
+
+            {spaceRatePlans.map((plan) => (
+              <SpacePlanItem
+                key={plan.sys.id}
+                plan={plan}
+                freeSpacesResource={freeSpacesResource}
+                isCurrentPlan={currentPlan === plan}
+                isSelected={get(selectedPlan, 'sys.id') === plan.sys.id}
+                isRecommended={get(recommendedPlan, 'sys.id') === plan.sys.id}
+                isPayingOrg={payingOrg}
+                onSelect={this.selectPlan(currentPlan, recommendedPlan)}
+                isCommunityPlanEnabled={isCommunityPlanEnabled}
+              />
+            ))}
+          </>
         )}
+
         {!isPending && !spaceRatePlans && (
-          <div className="note-box--warning">
-            <p>Could not fetch space plans.</p>
-          </div>
+          <Note noteType="negative">Could not fetch space plans.</Note>
         )}
       </div>
     );
@@ -174,6 +200,31 @@ class SpacePlanSelector extends React.Component {
     track('link_click');
     onCancel();
   };
+}
+
+function LoadingState() {
+  return (
+    <div>
+      <SkeletonContainer svgHeight={32}>
+        <SkeletonBodyText numberOfLines={1} />
+      </SkeletonContainer>
+      <Card className={styles.skeletonCard}>
+        <SkeletonContainer svgHeight={48}>
+          <SkeletonBodyText numberOfLines={2} />
+        </SkeletonContainer>
+      </Card>
+      <Card className={styles.skeletonCard}>
+        <SkeletonContainer svgHeight={48}>
+          <SkeletonBodyText numberOfLines={2} />
+        </SkeletonContainer>
+      </Card>
+      <Card className={styles.skeletonCard}>
+        <SkeletonContainer svgHeight={48}>
+          <SkeletonBodyText numberOfLines={2} />
+        </SkeletonContainer>
+      </Card>
+    </div>
+  );
 }
 
 function getCurrentPlan(spaceRatePlans) {

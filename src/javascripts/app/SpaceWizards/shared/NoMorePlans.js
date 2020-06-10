@@ -6,18 +6,18 @@ import ContactUsButton from 'ui/Components/ContactUsButton';
 
 export default function NoMorePlans({ canSetupBilling }) {
   return (
-    <Note testId="no-more-plans-note">
-      <span>You’re using the largest space available.</span>
+    <Note noteType="primary" testId="no-more-plans-note">
+      You’re using the largest space available.
       {canSetupBilling && (
-        <span>
+        <>
           {' '}
           <ContactUsButton noIcon isLink /> if you need higher limits.
-        </span>
+        </>
       )}
     </Note>
   );
 }
 
 NoMorePlans.propTypes = {
-  canSetupBilling: PropTypes.bool.isRequired,
+  canSetupBilling: PropTypes.bool,
 };

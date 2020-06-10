@@ -1,13 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { camelCase } from 'lodash';
-
-import tokens from '@contentful/forma-36-tokens';
-import PlanFeatures from '../shared/PlanFeatures';
-import { Price } from 'core/components/formatting';
-
-import { Tooltip, Icon } from '@contentful/forma-36-react-components';
 import { css, cx } from 'emotion';
+import { Tooltip, Icon } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
+
+import PlanFeatures from '../shared/PlanFeatures';
+import { Pluralized, Price } from 'core/components/formatting';
 
 const createPlanCss = (backgroundColor, borderColor) => {
   return css({
@@ -26,6 +25,7 @@ const styles = {
   }),
   helpIcon: css({
     fill: tokens.colorElementDarkest,
+    marginBottom: '-3px',
   }),
   planItem: css({
     height: '73px',
@@ -41,6 +41,9 @@ const styles = {
     position: 'relative',
     cursor: 'pointer',
     transition: 'all ease-in-out 0.1s',
+    '&:last-child': {
+      marginBottom: 0,
+    },
     '&:before': {
       backgroundColor: '#a9b9c0',
       border: '1px solid #8091a5',
@@ -128,7 +131,14 @@ const styles = {
 };
 
 export default function SpacePlanItem(props) {
-  const { plan, isSelected, freeSpacesResource, isPayingOrg, onSelect } = props;
+  const {
+    plan,
+    isSelected,
+    freeSpacesResource,
+    isPayingOrg,
+    onSelect,
+    isCommunityPlanEnabled,
+  } = props;
   const freeSpacesUsage = freeSpacesResource && freeSpacesResource.usage;
   const freeSpacesLimit = freeSpacesResource && freeSpacesResource.limits.maximum;
 
@@ -136,6 +146,18 @@ export default function SpacePlanItem(props) {
   // - the plan is disabled
   // - the plan is not free, and the org is not paying
   const showChevron = plan.disabled ? false : plan.isFree ? true : isPayingOrg ? true : false;
+
+  const tooltipContent = isCommunityPlanEnabled ? (
+    <>
+      You have <Pluralized text="free community space" count={freeSpacesLimit} /> for your
+      organization. If you delete a community space, you can create another one.
+    </>
+  ) : (
+    <>
+      You can have up to <Pluralized text="free space" count={freeSpacesLimit} /> for your
+      organization. If you delete a free space, another one can be created.
+    </>
+  );
 
   return (
     <div
@@ -159,10 +181,9 @@ export default function SpacePlanItem(props) {
         )}
         {plan.isFree && freeSpacesLimit && (
           <>
-            {` - ${freeSpacesUsage}/${freeSpacesLimit} used `}
-            <Tooltip
-              content={`You can have up to ${freeSpacesLimit} free spaces for your organization. If you
-              delete a free space, another one can be created.`}>
+            {' '}
+            <Pluralized text="free space" count={freeSpacesUsage} />{' '}
+            <Tooltip content={tooltipContent}>
               <Icon icon="HelpCircle" className={styles.helpIcon} />
             </Tooltip>
           </>
@@ -186,4 +207,5 @@ SpacePlanItem.propTypes = {
   freeSpacesResource: PropTypes.object,
   onSelect: PropTypes.func.isRequired,
   isPayingOrg: PropTypes.bool.isRequired,
+  isCommunityPlanEnabled: PropTypes.bool,
 };
