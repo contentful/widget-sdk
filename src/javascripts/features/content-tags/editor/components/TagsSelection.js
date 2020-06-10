@@ -34,7 +34,7 @@ const TagsSelection = ({ showEmpty, onAdd, onRemove, selectedTags = [] }) => {
   const isInitialLoad = useIsInitialLoadingOfTags();
 
   useEffect(() => {
-    setLimit(10);
+    setLimit(1000);
   }, [setLimit]);
 
   const onSearch = useCallback(
@@ -44,15 +44,14 @@ const TagsSelection = ({ showEmpty, onAdd, onRemove, selectedTags = [] }) => {
     [setSearch]
   );
 
-  const filteredTags = useMemo(
-    () =>
-      orderByLabel(
-        tagsPayloadToValues(
-          data.filter((tag) => !selectedTags.some((localTag) => localTag.value === tag.sys.id))
-        )
-      ),
-    [data, selectedTags]
-  );
+  const filteredTags = useMemo(() => {
+    const filtered = orderByLabel(
+      tagsPayloadToValues(
+        data.filter((tag) => !selectedTags.some((localTag) => localTag.value === tag.sys.id))
+      )
+    );
+    return filtered.splice(0, Math.min(10, filtered.length));
+  }, [data, selectedTags]);
 
   const { showModal: showUserListModal, modalComponent: userListModal } = useF36Modal(
     AdminsOnlyModal
