@@ -224,7 +224,6 @@
     "karma-spec-json-reporter": "0.0.8",
     "karma-story-reporter": "0.3.1",
     "karma-tape-reporter": "1.0.3",
-    "kexec": "^2.0.2",
     "lint-staged": "^10.2.2",
     "loose-envify": "^1.4.0",
     "marked": "^1.0.0",

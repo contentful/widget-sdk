@@ -1,4 +1,3 @@
-const kexec = require('kexec');
 const yargs = require('yargs');
 
 const configureFileDistribution = require('./configure-file-dist');
@@ -13,8 +12,6 @@ module.exports = async function main(argv) {
   const { command, options } = parseArgs(argv);
   if (command === 'configure-file-dist') {
     await configureFileDistribution(options);
-  } else if (command === 'test') {
-    kexec('./bin/test');
   } else if (command === 'upload-sourcemaps-to-bugsnag') {
     await uploadSourcemapsToBugsnag(options);
   } else {
