@@ -176,7 +176,7 @@ export default function register() {
               $scope.editorData = editorData;
               $scope.otDoc = editorData.doc;
               $scope.customExtensionProps = {
-                extension: editorData.editorExtension,
+                extension: editorData.customEditor,
                 createBridge: (currentWidgetId, currentWidgetNamespace) =>
                   createExtensionBridge({
                     $rootScope,

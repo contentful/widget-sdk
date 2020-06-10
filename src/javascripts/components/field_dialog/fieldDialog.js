@@ -107,10 +107,9 @@ export default function register() {
       }
 
       const fieldType = toInternalFieldType($scope.field);
-      const availableWidgets = [
-        ...createBuiltinWidgetList(),
-        ...$scope.customWidgets,
-      ].filter((widget) => widget.fieldTypes.includes(fieldType));
+      const availableWidgets = [...createBuiltinWidgetList(), ...$scope.customWidgets].filter(
+        (widget) => widget.fieldTypes && widget.fieldTypes.includes(fieldType)
+      );
 
       $scope.availableWidgets = availableWidgets;
       $scope.fieldTypeLabel = fieldFactory.getLabel($scope.field);

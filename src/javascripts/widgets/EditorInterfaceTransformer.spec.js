@@ -116,6 +116,43 @@ describe('EditorInterfaceTransformer', () => {
       });
     });
 
+    it('convert old editor to editors', () => {
+      const ct = {
+        sys: { id: 'CT' },
+      };
+      const ei = { editor: { settings: {}, widgetId: 'app-id', widgetNamespace: 'app' } };
+      const { editors } = fromAPI(ct, ei);
+
+      expect(editors).toEqual([
+        { settings: {}, widgetId: 'app-id', widgetNamespace: 'app' },
+        { widgetId: 'default-editor', widgetNamespace: 'editor-builtin', disabled: true },
+        { widgetId: 'reference-tree', widgetNamespace: 'editor-builtin', disabled: true },
+      ]);
+    });
+
+    it('use default editors in case no editors are present', () => {
+      const ct = {
+        sys: { id: 'CT' },
+      };
+      const ei = { editors: [] };
+      const { editors } = fromAPI(ct, ei);
+
+      expect(editors).toEqual([
+        { widgetId: 'default-editor', widgetNamespace: 'editor-builtin', disabled: false },
+        { widgetId: 'reference-tree', widgetNamespace: 'editor-builtin', disabled: false },
+      ]);
+    });
+
+    it('doesnt do anything in case editors list isnt empty', () => {
+      const ct = {
+        sys: { id: 'CT' },
+      };
+      const ei = { editors: [{ settings: {}, widgetId: 'app-id', widgetNamespace: 'app' }] };
+      const { editors } = fromAPI(ct, ei);
+
+      expect(editors).toEqual([{ settings: {}, widgetId: 'app-id', widgetNamespace: 'app' }]);
+    });
+
     describe('field mapping', () => {
       it('prefers the apiName over the field ID', () => {
         const ct = {
@@ -219,6 +256,35 @@ describe('EditorInterfaceTransformer', () => {
         type: 'EditorInterface',
         contentType: { sys: { type: 'Link', linkType: 'ContentType', id: 'CT' } },
       });
+    });
+
+    it('convert old editor to editors', () => {
+      const ct = {
+        sys: { id: 'CT' },
+      };
+      const ei = { editor: { settings: {}, widgetId: 'app-id', widgetNamespace: 'app' } };
+      const { editors } = toAPI(ct, ei);
+
+      expect(editors).toEqual([
+        { settings: {}, widgetId: 'app-id', widgetNamespace: 'app' },
+        { widgetId: 'default-editor', widgetNamespace: 'editor-builtin', disabled: true },
+        { widgetId: 'reference-tree', widgetNamespace: 'editor-builtin', disabled: true },
+      ]);
+    });
+
+    it('never sends enabled default editors', () => {
+      const ct = {
+        sys: { id: 'CT' },
+      };
+      const ei = {
+        editors: [
+          { settings: {}, widgetId: 'app-id', widgetNamespace: 'app' },
+          { widgetId: 'default-editor', widgetNamespace: 'editor-builtin', disabled: false },
+        ],
+      };
+      const { editors } = toAPI(ct, ei);
+
+      expect(editors).toEqual([{ settings: {}, widgetId: 'app-id', widgetNamespace: 'app' }]);
     });
   });
 });

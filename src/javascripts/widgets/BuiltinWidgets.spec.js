@@ -1,8 +1,13 @@
 import { uniq } from 'lodash';
 import { create as createBuiltinWidgetList } from './BuiltinWidgets';
+import { NAMESPACE_EDITOR_BUILTIN } from './WidgetNamespaces';
 
 const CMA_ID_REGEXP = /^[a-zA-Z0-9][a-zA-Z0-9-_]{0,63}$/;
-const BUILTIN_WIDGETS_COUNT = 25;
+const widgetList = createBuiltinWidgetList();
+const BUILTIN_WIDGETS_COUNT = widgetList.length;
+const EDITOR_WIDGETS_COUNT = widgetList.filter(
+  (widget) => widget.namespace == NAMESPACE_EDITOR_BUILTIN
+).length;
 
 jest.mock('ui/Framework/AngularComponent', () => () => null);
 
@@ -15,17 +20,25 @@ describe('BuiltinWidgets', () => {
     });
 
     it('returns a list of widget descriptors', () => {
-      expect.assertions(BUILTIN_WIDGETS_COUNT * 2);
+      expect.assertions(BUILTIN_WIDGETS_COUNT * 2 - EDITOR_WIDGETS_COUNT);
       createBuiltinWidgetList().forEach((descriptor) => {
-        expect(descriptor).toMatchObject({
-          id: expect.any(String),
-          name: expect.any(String),
-          fieldTypes: expect.any(Array),
-        });
-        if (descriptor.renderFieldEditor) {
-          expect(descriptor.renderFieldEditor).toEqual(expect.any(Function));
+        if (descriptor.namespace === NAMESPACE_EDITOR_BUILTIN) {
+          expect(descriptor).toMatchObject({
+            id: expect.any(String),
+            name: expect.any(String),
+            namespace: NAMESPACE_EDITOR_BUILTIN,
+          });
         } else {
-          throw new Error('expect `renderFieldEditor`');
+          expect(descriptor).toMatchObject({
+            id: expect.any(String),
+            name: expect.any(String),
+            fieldTypes: expect.any(Array),
+          });
+          if (descriptor.renderFieldEditor) {
+            expect(descriptor.renderFieldEditor).toEqual(expect.any(Function));
+          } else {
+            throw new Error('expect `renderFieldEditor`');
+          }
         }
       });
     });

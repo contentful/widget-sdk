@@ -17,6 +17,7 @@ import ContentTypesPage from 'app/ContentModel/Editor/ContentTypesPage';
 
 import { AddFieldDialogModal } from './Dialogs/AddField';
 import { ModalLauncher } from 'core/components/ModalLauncher';
+import { NAMESPACE_EDITOR_BUILTIN } from 'widgets/WidgetNamespaces';
 
 export default function register() {
   registerDirective('cfContentTypeEditor', [
@@ -238,8 +239,17 @@ export default function register() {
       };
 
       const updateEditorConfiguration = (updatedEditor) => {
-        if (!_.isEqual($scope.editorInterface.editor, updatedEditor)) {
-          $scope.editorInterface.editor = updatedEditor;
+        const customEditor = $scope.editorInterface.editors.find(
+          (editor) => editor.widgetNamespace !== NAMESPACE_EDITOR_BUILTIN
+        );
+        if (!_.isEqual(customEditor, updatedEditor)) {
+          if (updatedEditor) {
+            $scope.editorInterface.editors.push(updatedEditor);
+          } else {
+            $scope.editorInterface.editors = $scope.editorInterface.editors.filter(
+              (editor) => editor !== customEditor
+            );
+          }
           $scope.$applyAsync();
           setDirty();
         }
@@ -343,7 +353,9 @@ export default function register() {
         currentTab: getCurrentTab($state),
         canEdit: accessChecker.can('update', 'ContentType'),
         sidebarConfiguration: $scope.editorInterface.sidebar,
-        editorConfiguration: $scope.editorInterface.editor,
+        editorConfiguration: $scope.editorInterface.editors.find(
+          (editor) => editor.widgetNamespace !== NAMESPACE_EDITOR_BUILTIN
+        ),
         extensions: $scope.customWidgets,
         actions: {
           showMetadataDialog,

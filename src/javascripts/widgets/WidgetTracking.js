@@ -9,20 +9,20 @@ export function getWidgetTrackingContexts({
   fieldControls,
   sidebar,
   sidebarExtensions,
-  editorExtension,
+  editorsExtensions,
 }) {
   return [
-    ...getExtensionTrackingContexts({ fieldControls, sidebarExtensions, editorExtension }),
+    ...getExtensionTrackingContexts({ fieldControls, sidebarExtensions, editorsExtensions }),
     getSidebarTrackingContext({ fieldControls, sidebar }),
   ];
 }
 
-function getExtensionTrackingContexts({ fieldControls, sidebarExtensions, editorExtension }) {
+function getExtensionTrackingContexts({ fieldControls, sidebarExtensions, editorsExtensions }) {
   const extensionsByLocation = {
     [WidgetLocations.LOCATION_ENTRY_FIELD]: getExtensions(fieldControls, ['form']),
     [WidgetLocations.LOCATION_ENTRY_FIELD_SIDEBAR]: getExtensions(fieldControls, ['sidebar']),
     [WidgetLocations.LOCATION_ENTRY_SIDEBAR]: getExtensions(sidebarExtensions),
-    [WidgetLocations.LOCATION_ENTRY_EDITOR]: getExtensions([editorExtension]),
+    [WidgetLocations.LOCATION_ENTRY_EDITOR]: getExtensions(editorsExtensions),
   };
 
   return Object.keys(extensionsByLocation).reduce(
