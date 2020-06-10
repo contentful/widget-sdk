@@ -2,7 +2,7 @@ import React from 'react';
 import {
   render,
   screen,
-  wait,
+  waitFor,
   fireEvent,
   within,
   waitForElementToBeRemoved,
@@ -11,7 +11,8 @@ import UserDetails from './UserDetails';
 
 import * as fake from 'test/helpers/fakeFactory';
 import { ModalLauncher } from 'core/components/ModalLauncher';
-import { removeTeamMembership } from 'access_control/TeamRepository';
+import { getAllSpaceMemberships } from 'access_control/OrganizationMembershipRepository';
+import { getAllTeamMemberships, removeTeamMembership } from 'access_control/TeamRepository';
 
 const membershipUser = fake.User({ firstName: 'John', lastName: 'Doe' });
 const createdByUser = fake.User({ firstName: 'Jane', lastName: 'Smith' });
@@ -186,7 +187,10 @@ function build(options = { initialMembership: mockOrgMembership }) {
 
   // the component makes requests on mount.
   // wait until there are changes as effect of the calls.
-  return wait();
+  return waitFor(() => {
+    expect(getAllSpaceMemberships).toHaveBeenCalled();
+    expect(getAllTeamMemberships).toHaveBeenCalled();
+  });
 }
 
 function selectTeamsTab() {

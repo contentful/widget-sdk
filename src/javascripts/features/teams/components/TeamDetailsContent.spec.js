@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { render, wait, screen, fireEvent } from '@testing-library/react';
+import { render, waitForElementToBeRemoved, screen, fireEvent } from '@testing-library/react';
 
 import * as fake from 'test/helpers/fakeFactory';
 import { TeamDetailsContent } from './TeamDetailsContent';
@@ -13,7 +13,7 @@ describe('TeamDetailsContent', () => {
     render(
       <TeamDetailsContent orgId={activeOrgId} team={team} readOnlyPermission={false} {...props} />
     );
-    return wait();
+    return waitForElementToBeRemoved(() => screen.getByTestId('content-loader'));
   };
 
   it('can view both team members list and space list by switching tabs', async () => {

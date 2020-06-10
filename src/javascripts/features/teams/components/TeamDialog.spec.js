@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, wait } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
 import { TeamDialog } from './TeamDialog';
 
@@ -43,13 +43,12 @@ describe('TeamDialog', () => {
   };
 
   function build() {
-    render(<TeamDialog {...props} />);
-    return wait();
+    return render(<TeamDialog {...props} />);
   }
 
   describe('team dialog when isShown is true', () => {
-    beforeEach(async () => {
-      await build({ isShown: true });
+    beforeEach(() => {
+      build({ isShown: true });
     });
 
     it('renders the dialog', () => {
@@ -85,7 +84,7 @@ describe('TeamDialog', () => {
       fireEvent.click(submitButton);
 
       expect(props.onClose).toHaveBeenCalledTimes(1);
-      wait(() =>
+      waitFor(() =>
         expect(props.updateTeamDetailsValues).toHaveBeenCalledWith({
           name: changedValues.input,
           description: changedValues.textarea,

@@ -181,8 +181,8 @@ describe('AddUsers', () => {
 
       expect(screen.queryByText('Assign roles to selected users')).not.toBeInTheDocument();
 
-      // TODO: the loading state should not come back! Fix the actual bug instead of testing it
-      await waitForElementToBeRemoved(() => screen.getByTestId('add-users.user-list.skeleton'));
+      // // TODO: the loading state should not come back! Fix the actual bug instead of testing it
+      // await waitForElementToBeRemoved(() => screen.getByTestId('add-users.user-list.skeleton'));
 
       const user1 = screen.getByText(victoria.email);
       const user2 = screen.getByText(patrycja.email);
