@@ -9,6 +9,7 @@ import {
   Dropdown,
   DropdownList,
   DropdownListItem,
+  Tag,
   Tooltip,
 } from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';
@@ -99,6 +100,18 @@ const styles = {
     div: css({
       marginRight: '10px',
     }),
+  }),
+  tag: css({
+    top: tokens.spacingXs,
+    background: tokens.colorBlueDark,
+    color: tokens.colorWhite,
+    padding: '3px 5px',
+    fontSize: '10px',
+    lineHeight: '10px',
+    borderRadius: '3px',
+    textTransform: 'uppercase',
+    letterSpacing: '0.05rem',
+    marginLeft: tokens.spacingS,
   }),
 };
 
@@ -201,6 +214,7 @@ export default function NavigationDropdown({
                   onClose();
                 }}>
                 {subitem.render ? subitem.render(subitem) : subitem.title}
+                {subitem.tagLabel && <Tag className={styles.tag}>{subitem.tagLabel}</Tag>}
               </DropdownListItem>
             );
           })}
