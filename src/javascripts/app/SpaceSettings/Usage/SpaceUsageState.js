@@ -4,7 +4,7 @@ import SpaceUsage from './SpaceUsage';
 export default {
   name: 'usage',
   url: '/usage',
-  template: '<react-component component="component" props="props" />',
+  template: '<react-component component="component" props="props"></react-component>',
   controller: [
     '$state',
     '$scope',
