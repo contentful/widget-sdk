@@ -23,9 +23,6 @@ const styles = {
   workbenchContent: css({
     padding: tokens.spacingXl,
   }),
-  tabs: css({
-    paddingLeft: tokens.spacing2Xl,
-  }),
   tabPanel: css({
     paddingTop: tokens.spacingL,
   }),
@@ -168,7 +165,7 @@ class ReleasesListPage extends Component {
     return (
       <PageShell>
         <DocumentTitle title="Content Releases" />
-        <Tabs className={styles.tabs} withDivider>
+        <Tabs withDivider>
           {Object.entries(TabsData).map(([key, tab]) => (
             <Tab key={key} selected={activeTab === key} id={key} onSelect={this.selectTab}>
               {tab.title}

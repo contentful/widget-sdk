@@ -1,5 +1,5 @@
 import React from 'react';
-import { css } from 'emotion';
+import { css, cx } from 'emotion';
 import PropTypes from 'prop-types';
 
 import { List } from '@contentful/forma-36-react-components';
@@ -9,12 +9,12 @@ import Release from './Release';
 
 const styles = {
   list: css({
-    margin: 'auto',
-    width: '70%',
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
   }),
   item: css({
     marginBottom: tokens.spacingM,
-    boxShadow: tokens.boxShadowDefault,
   }),
   cursorPointer: css({
     cursor: 'pointer',
@@ -28,11 +28,11 @@ const ReleasesTimeline = ({ releases, onReleaseSelect, ...rest }) => {
     }
   };
   return (
-    <List className={styles.list} testId="releases-timeline">
+    <List testId="releases-timeline" className={styles.list}>
       {releases.map((release, index) => (
         <li
           key={`release-${index}`}
-          className={styles.item && styles.cursorPointer}
+          className={cx(styles.item, styles.cursorPointer)}
           onClick={() => handleClick(release)}>
           <Release release={release} {...rest} />
         </li>

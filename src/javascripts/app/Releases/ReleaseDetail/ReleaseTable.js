@@ -56,9 +56,12 @@ const styles = {
     display: 'flex !important',
     alignItems: 'center',
   }),
+  headingTableCell: css({
+    paddingLeft: 0,
+  }),
   tableCell: css({
     verticalAlign: 'middle',
-    padding: tokens.spacingXl,
+    padding: 0,
     outline: 'none',
   }),
   actionTableHeader: css({
@@ -141,6 +144,7 @@ const ReleaseTable = ({
           {displayedFields.map(({ id, name, onClick, direction }) => {
             return (
               <TableCell
+                className={styles.headingTableCell}
                 key={id}
                 testId={id}
                 onClick={onClick}

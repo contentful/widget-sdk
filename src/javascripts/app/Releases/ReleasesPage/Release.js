@@ -1,28 +1,34 @@
-import React, { Component } from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import { css } from 'emotion';
 
 import {
   Card,
-  Icon,
   Dropdown,
   DropdownList,
   DropdownListItem,
   Button,
-  Heading,
+  Subheading,
   Paragraph,
   Notification,
 } from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
+import TheLocaleStore from 'services/localeStore';
 
+import * as EntityResolver from 'data/CMA/EntityResolver';
 import { formatPastDate } from 'app/Apps/management/util';
 import { ActionPerformerName } from 'core/components/ActionPerformerName';
 import { deleteRelease } from '../releasesService';
 
+const getHexOutOfString = (str) =>
+  (parseInt(parseInt(str, 36).toExponential().slice(2, -5), 10) & 0xffffff)
+    .toString(16)
+    .toUpperCase();
+
 const styles = {
   card: css({
     alignItems: 'center',
-    display: 'flex',
+    display: 'inline-block',
     padding: 0,
   }),
   dropdownButton: css({
@@ -34,9 +40,82 @@ const styles = {
   paragraph: css({
     fontSize: tokens.fontSizeS,
     textTransform: 'uppercase',
+    marginLeft: tokens.spacingXs,
   }),
   releaseIcon: css({
     marginRight: tokens.spacing2Xs,
+    alignSelf: 'center',
+  }),
+  headingContainer: css({
+    padding: tokens.spacingXs,
+  }),
+  actionHeading: css({
+    display: 'flex',
+    alignItems: 'center',
+  }),
+  textOverlay: css({
+    width: '100%',
+    height: '100%',
+    color: 'rgba(255,255,255,.5)',
+    textAlign: 'center',
+    textTransform: 'uppercase',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: 'rgba(255,255,255,.2)',
+    fontWeight: 'bold',
+    overflow: 'hidden',
+  }),
+  releaseImage: (images, id) =>
+    css({
+      width: 250,
+      height: 150,
+      background: images ? `url(${images[0]}?w=250&h=150)` : `#${getHexOutOfString(id)}`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+    }),
+};
+
+const ReleaseImage = ({ release }) => {
+  const [images, setImages] = useState(null);
+  useEffect(() => {
+    const assets = release.entities.items.filter((item) => item.sys.linkType === 'Asset');
+    if (images) {
+      return undefined;
+    }
+    if (assets.length) {
+      EntityResolver.fetchForType(
+        'Asset',
+        assets.map((asset) => asset.sys.id)
+      ).then((images) => {
+        const defaultLocale = TheLocaleStore.getDefaultLocale();
+        const srcFiles = images.map(
+          (image) => image.fields.file && image.fields.file[defaultLocale.code].url
+        );
+        setImages(srcFiles);
+      });
+    }
+  });
+  return (
+    <div className={styles.releaseImage(images, release.sys.id)}>
+      {!images && <div className={styles.textOverlay}>{release.title}</div>}
+    </div>
+  );
+};
+
+ReleaseImage.propTypes = {
+  release: PropTypes.shape({
+    title: PropTypes.string,
+    sys: PropTypes.shape({
+      id: PropTypes.string,
+    }),
+    entities: PropTypes.shape({
+      items: PropTypes.arrayOf({
+        sys: PropTypes.shape({
+          id: PropTypes.string,
+        }),
+      }),
+    }),
   }),
 };
 
@@ -94,42 +173,43 @@ export default class Release extends Component {
     const { release } = this.props;
     const assets = this.getItemsCountByLinkType(release, 'Asset');
     const entries = this.getItemsCountByLinkType(release, 'Entry');
-
     return (
-      <Card testId="release-card">
-        <div className={styles.card}>
-          <Icon icon="Release" color="secondary" className={styles.releaseIcon} />
-          <Paragraph className={styles.paragraph}>
-            Content Release - {entries} entries, {assets} assets
-          </Paragraph>
-          <Dropdown
-            className={styles.dropdown}
-            isOpen={this.state.isDropdownOpen}
-            position="bottom-right"
-            onClose={() => this.setState({ isDropdownOpen: false })}
-            toggleElement={
-              <Button
-                buttonType="naked"
-                data-test-id="remove-release-ddl"
-                icon="MoreHorizontal"
-                className={styles.dropdownButton}
-                onClick={(event) => this.handleClick(event)}
-              />
-            }>
-            <DropdownList onClick={(event) => event.stopPropagation()}>
-              <DropdownListItem onClick={this.deleteRelease} testId="release-card-delete-cta">
-                Delete
-              </DropdownListItem>
-              <DropdownListItem isDisabled>
-                Create {formatPastDate(release.sys.createdAt)}
-                {' by '}
-                <ActionPerformerName link={release.sys.createdBy} />
-              </DropdownListItem>
-            </DropdownList>
-          </Dropdown>
-        </div>
+      <Card testId="release-card" className={styles.card}>
+        <ReleaseImage release={release} />
         <div>
-          <Heading element="h2">{release.title}</Heading>
+          <div className={styles.headingContainer}>
+            <div className={styles.actionHeading}>
+              <Subheading element="h2">{release.title}</Subheading>
+              <Dropdown
+                className={styles.dropdown}
+                isOpen={this.state.isDropdownOpen}
+                position="bottom-right"
+                onClose={() => this.setState({ isDropdownOpen: false })}
+                toggleElement={
+                  <Button
+                    buttonType="naked"
+                    data-test-id="remove-release-ddl"
+                    icon="MoreHorizontal"
+                    className={styles.dropdownButton}
+                    onClick={(event) => this.handleClick(event)}
+                  />
+                }>
+                <DropdownList>
+                  <DropdownListItem onClick={this.deleteRelease} testId="release-card-delete-cta">
+                    Delete
+                  </DropdownListItem>
+                  <DropdownListItem isDisabled>
+                    Create {formatPastDate(release.sys.createdAt)}
+                    {' by '}
+                    <ActionPerformerName link={release.sys.createdBy} />
+                  </DropdownListItem>
+                </DropdownList>
+              </Dropdown>
+            </div>
+            <Paragraph>
+              {entries} entries, {assets} assets
+            </Paragraph>
+          </div>
         </div>
       </Card>
     );
