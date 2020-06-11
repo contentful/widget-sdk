@@ -5,6 +5,7 @@ import { render, screen, fireEvent, waitForElementToBeRemoved } from '@testing-l
 import * as fake from 'test/helpers/fakeFactory';
 import { TeamList } from './TeamList';
 import { getAllTeams } from 'features/teams/services/TeamRepository';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 
 const teamA = fake.Team('Team A', 'the awesome team');
 const teamB = fake.Team('Team B', 'the brave team');
@@ -40,7 +41,7 @@ describe('TeamList', () => {
     const newTeamBtn = screen.getByTestId('new-team-button');
     expect(newTeamBtn).toBeInTheDocument();
     await fireEvent.click(newTeamBtn);
-    expect(screen.getByTestId('team-form')).toBeInTheDocument();
+    expect(ModalLauncher.open).toHaveBeenCalled();
   });
 
   it('can see remove and edit btns for teams', async () => {

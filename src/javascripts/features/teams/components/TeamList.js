@@ -19,9 +19,10 @@ import NavigationIcon from 'ui/Components/NavigationIcon';
 import { useAsync } from 'core/hooks';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getAllTeams } from '../services/TeamRepository';
-import { TeamDialog } from './TeamDialog';
+import { NewTeamDialog } from './NewTeamDialog';
 import { TeamListRow } from './TeamListRow';
 import { TeamsEmptyState } from './TeamsEmptyState';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 
 const styles = {
   section: css({
@@ -64,15 +65,22 @@ const fetchTeamsData = (orgId, setData) => async () => {
 };
 
 export function TeamList({ readOnlyPermission, orgId }) {
-  const [showTeamDialog, setShowTeamDialog] = useState(false);
   const [teams, setTeams] = useState([]);
 
   const boundFetch = fetchTeamsData(orgId, setTeams);
   const { isLoading } = useAsync(useCallback(boundFetch, []));
 
-  const onNewTeamCreated = () => {
-    setShowTeamDialog(false);
-    boundFetch();
+  const showNewTeamDialog = () => {
+    ModalLauncher.open(({ isShown, onClose }) => (
+      <NewTeamDialog
+        testId="create-team-dialog"
+        isShown={isShown}
+        onClose={onClose}
+        onTeamAdded={boundFetch}
+        allTeams={teams}
+        orgId={orgId}
+      />
+    ));
   };
 
   const teamsPlural = pluralize('teams', teams.length, true);
@@ -102,7 +110,7 @@ export function TeamList({ readOnlyPermission, orgId }) {
                 </Button>
               </Tooltip>
             ) : (
-              <Button testId="new-team-button" onClick={() => setShowTeamDialog(true)}>
+              <Button testId="new-team-button" onClick={() => showNewTeamDialog()}>
                 New team
               </Button>
             )}
@@ -147,11 +155,6 @@ export function TeamList({ readOnlyPermission, orgId }) {
             </TableBody>
           </Table>
         </section>
-        <TeamDialog
-          testId="create-team-dialog"
-          onClose={onNewTeamCreated}
-          isShown={showTeamDialog}
-        />
       </Workbench.Content>
     </Workbench>
   );
