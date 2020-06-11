@@ -33,13 +33,12 @@ const TagsMultiSelectAutocomplete = ({
   tags,
   onChange,
   onQueryChange,
-  isFocused,
   selectedTags,
   setIsRemovable,
   maxHeight,
   styles = {},
 }) => {
-  const [isSearching, setIsSearching] = useState(isFocused);
+  const [isSearching, setIsSearching] = useState(false);
   const [newSelectedTags, setNewSelectedTags] = useState(selectedTags);
   setIsRemovable(!isSearching);
 
@@ -148,7 +147,6 @@ TagsMultiSelectAutocomplete.propTypes = {
   selectedTags: PropTypes.array.isRequired,
   onChange: PropTypes.func.isRequired,
   onQueryChange: PropTypes.func.isRequired,
-  isFocused: PropTypes.bool,
   setIsRemovable: PropTypes.func.isRequired,
   maxHeight: PropTypes.number.isRequired,
   styles: PropTypes.object,
