@@ -5,12 +5,17 @@ import { get } from 'lodash';
 import { isOwner } from 'services/OrganizationRoles';
 import { Typography, Heading, Paragraph } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
+import {
+  Organization as OrganizationPropType,
+  Space as SpacePropType,
+} from 'app/OrganizationSettings/PropTypes';
 
 import SpacePlanItem from './SpacePlanItem';
 import BillingInfo from './BillingInfo';
 import NoMorePlans from './NoMorePlans';
+import ExplainRecommendation from './ExplainRecommendation';
 
-import { getHighestPlan } from '../shared/utils';
+import { getHighestPlan, getRecommendedPlan } from '../shared/utils';
 
 const styles = {
   textCenter: css({
@@ -27,12 +32,16 @@ const styles = {
 export default function SpacePlanSelector(props) {
   const {
     organization,
+    space,
     spaceRatePlans,
     freeSpacesResource,
     selectedPlan,
+    currentPlan,
+    spaceResources,
     goToBillingPage,
     onSelectPlan,
     isCommunityPlanEnabled,
+    isChanging = false,
   } = props;
 
   const highestPlan = getHighestPlan(spaceRatePlans);
@@ -42,9 +51,8 @@ export default function SpacePlanSelector(props) {
     highestPlan.unavailabilityReasons &&
     highestPlan.unavailabilityReasons.some(({ type }) => type === 'currentPlan');
   const payingOrg = !!organization.isBillable;
-
-  // TODO: add this logic when refactor the change space wizard
-  // const recommendedPlan = isChangingInSpace && getRecommendedPlan(spaceRatePlans, resources)
+  const recommendedPlan =
+    isChanging && getRecommendedPlan(currentPlan, spaceRatePlans, spaceResources);
 
   return (
     <div data-test-id="space-plan-selector" className={styles.container}>
@@ -52,7 +60,8 @@ export default function SpacePlanSelector(props) {
         <Heading className={styles.textCenter}>Choose the space type</Heading>
 
         <Paragraph className={styles.textCenter}>
-          You are creating this space for the organization {organization.name}.
+          You are {isChanging ? `changing the space ${space.name}` : `creating this space`} for the
+          organization {organization.name}.
         </Paragraph>
 
         {atHighestPlan && (
@@ -67,6 +76,16 @@ export default function SpacePlanSelector(props) {
           </div>
         )}
 
+        {payingOrg && recommendedPlan && (
+          <div className={styles.marginBottom}>
+            <ExplainRecommendation
+              currentPlan={currentPlan}
+              recommendedPlan={recommendedPlan}
+              resources={spaceResources}
+            />
+          </div>
+        )}
+
         {spaceRatePlans.map((plan) => (
           <SpacePlanItem
             key={plan.sys.id}
@@ -74,6 +93,7 @@ export default function SpacePlanSelector(props) {
             freeSpacesResource={freeSpacesResource}
             isPayingOrg={payingOrg}
             isSelected={get(selectedPlan, 'sys.id') === plan.sys.id}
+            isRecommended={get(recommendedPlan, 'sys.id') === plan.sys.id}
             onSelect={onSelectPlan}
             isCommunityPlanEnabled={isCommunityPlanEnabled}
           />
@@ -84,11 +104,15 @@ export default function SpacePlanSelector(props) {
 }
 
 SpacePlanSelector.propTypes = {
-  organization: PropTypes.object.isRequired,
+  organization: OrganizationPropType.isRequired,
+  space: SpacePropType,
   spaceRatePlans: PropTypes.array.isRequired,
   freeSpacesResource: PropTypes.object,
   onSelectPlan: PropTypes.func.isRequired,
+  currentPlan: PropTypes.object,
   selectedPlan: PropTypes.object,
+  spaceResources: PropTypes.array,
   goToBillingPage: PropTypes.func.isRequired,
   isCommunityPlanEnabled: PropTypes.bool,
+  isChanging: PropTypes.bool,
 };

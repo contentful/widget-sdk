@@ -25,6 +25,56 @@ describe('SpacePlanSelector', () => {
     expect(screen.getByTestId('no-more-plans-note')).toBeVisible();
   });
 
+  describe('ExplainRecommendation', () => {
+    const space = Fake.Space();
+
+    const spaceResources = [
+      Fake.SpaceResource(9, 10, 'record'),
+      Fake.SpaceResource(1, 10, 'locale'),
+    ];
+
+    const currentPlan = createPlan({
+      price: 0,
+      unavailabilityReasons: [{ type: 'currentPlan' }],
+      includedResources: [
+        { type: 'Records', number: 10 },
+        { type: 'Locales', number: 10 },
+      ],
+    });
+
+    const recommendedPlan = createPlan({
+      price: 20,
+      includedResources: [
+        { type: 'Records', number: 20 },
+        { type: 'Locales', number: 20 },
+      ],
+    });
+
+    it('should show the ExplainRecommendation note if the space plan is changing and a plan is recommendable', () => {
+      build({
+        space,
+        isChanging: true,
+        currentPlan,
+        spaceRatePlans: [currentPlan, recommendedPlan],
+        spaceResources,
+      });
+
+      expect(screen.getByTestId('explain-recommendation')).toBeVisible();
+    });
+
+    it('should not show the ExplainRecommendation note if space plan is not changing, even if a plan is recommendable', () => {
+      build({
+        space,
+        isChanging: false,
+        currentPlan,
+        spaceRatePlans: [currentPlan, recommendedPlan],
+        spaceResources,
+      });
+
+      expect(screen.queryByTestId('explain-recommendation')).toBeNull();
+    });
+  });
+
   it('should show a SpacePlanItem for each given space plan', () => {
     const plans = [
       createPlan({ price: 0 }),
@@ -41,19 +91,18 @@ describe('SpacePlanSelector', () => {
 });
 
 function createPlan(custom) {
-  return Object.assign(
-    {
-      name: 'Space plan',
-      roleSet: {
-        name: 'Role set',
-        roles: [],
+  return Fake.Plan(
+    Object.assign(
+      {
+        name: 'Space plan',
+        roleSet: {
+          name: 'Role set',
+          roles: [],
+        },
+        includedResources: [],
       },
-      includedResources: [],
-      sys: {
-        id: 'plan_1234',
-      },
-    },
-    custom
+      custom
+    )
   );
 }
 

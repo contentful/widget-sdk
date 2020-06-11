@@ -97,11 +97,8 @@ export default function SubscriptionPage({ initialLoad, organizationId, data }) 
         organizationId,
         scope: 'organization',
         space,
-        onSubmit: async (productRatePlanId) => {
+        onSubmit: async (productRatePlan) => {
           // Update current spacePlan for this space with new data
-          const productRatePlan = data.productRatePlans.find(
-            (prp) => prp.sys.id === productRatePlanId
-          );
           const currentSpacePlan = _.cloneDeep(
             spacePlans.find((sp) => sp.space.sys.id === space.sys.id)
           );

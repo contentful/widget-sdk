@@ -6,14 +6,12 @@ import {
   isEnterprisePlan,
 } from 'account/pricing/PricingDataProvider';
 import SpaceWizardsWrapper from './SpaceWizardsWrapper';
+import * as Fake from 'test/helpers/fakeFactory';
 
-const mockOrganization = {
-  name: 'My org',
+const mockOrganization = Fake.Organization({
   isBillable: true,
-  sys: {
-    id: 'org_1234',
-  },
-};
+});
+const mockSpace = Fake.Space();
 
 const mockRatePlanCharges = [
   {
@@ -38,31 +36,36 @@ const mockRatePlanCharges = [
   },
 ];
 
-const mockFreeSpaceRatePlan = {
+const mockFreeSpaceRatePlan = Fake.Plan({
   productPlanType: 'free_space',
   productRatePlanCharges: mockRatePlanCharges,
+  unavailabilityReasons: [],
   name: 'Enterprise Space',
   roleSet: {
     name: 'lol',
     roles: ['Wizard'],
   },
-  sys: {
-    id: 'free_space_1234',
-  },
-};
+});
+
+const mockCurrentSpaceRatePlan = Object.assign({}, mockFreeSpaceRatePlan, {
+  unavailabilityReasons: [
+    {
+      type: 'currentPlan',
+    },
+  ],
+});
+
+const mockFreeSpaceResource = Fake.OrganizationResource(1, 5, 'free_space');
+const mockSpaceResources = [Fake.SpaceResource(1, 3, 'environment')];
 
 jest.mock('services/ResourceService', () => {
   const service = {
     get: jest.fn((type) => {
       if (type === 'free_space') {
-        return {
-          usage: 1,
-          limits: {
-            maximum: 5,
-          },
-        };
+        return mockFreeSpaceResource;
       }
     }),
+    getAll: jest.fn(() => mockSpaceResources),
   };
 
   return () => service;
@@ -86,10 +89,11 @@ describe('SpaceWizardsWrapper', () => {
     getSpaceRatePlans.mockResolvedValue([mockFreeSpaceRatePlan]);
   });
 
-  it('should get the base plan and determine if the plan is enterprise if creating a space', async () => {
+  it('should always get the base plan and determine if the plan is enterprise', async () => {
     await build();
 
     expect(getBasePlan).toBeCalled();
+    expect(isEnterprisePlan).toBeCalled();
   });
 
   it('should show the loading spinner while the data is being fetched', async () => {
@@ -102,18 +106,32 @@ describe('SpaceWizardsWrapper', () => {
     expect(screen.queryByTestId('wizard-loader')).toBeNull();
   });
 
-  it('should show the POC space creation wizard if the base plan is enterprise', async () => {
-    await build();
+  describe('space creation', () => {
+    it('should show the POC space creation wizard if the base plan is enterprise', async () => {
+      await build();
 
-    expect(screen.queryByTestId('enterprise-wizard-contents')).toBeVisible();
+      expect(screen.queryByTestId('enterprise-wizard-contents')).toBeVisible();
+    });
+
+    it('should show the on-demand space creation wizard if the base plan is not enterprise', async () => {
+      isEnterprisePlan.mockReturnValueOnce(false);
+
+      await build();
+
+      expect(screen.queryByTestId('create-on-demand-wizard-contents')).toBeVisible();
+    });
   });
 
-  it('should show the on-demand space creation wizard if the base plan is not enterprise', async () => {
-    isEnterprisePlan.mockReturnValueOnce(false);
+  describe('space plan change', () => {
+    beforeEach(() => {
+      getSpaceRatePlans.mockClear().mockResolvedValue([mockCurrentSpaceRatePlan]);
+    });
 
-    await build();
+    it('should show the on-demand space change wizard if a space is provided', async () => {
+      await build({ space: mockSpace });
 
-    expect(screen.queryByTestId('create-on-demand-wizard-contents')).toBeVisible();
+      expect(screen.queryByTestId('change-on-demand-wizard-contents')).toBeVisible();
+    });
   });
 });
 
@@ -123,6 +141,7 @@ async function build(custom, shouldWait = true) {
       isShown: true,
       onClose: () => {},
       organization: mockOrganization,
+      space: null,
     },
     custom
   );

@@ -85,7 +85,7 @@ describe('Space Wizard action creators', function () {
 
     this.system.set('account/pricing/PricingDataProvider', {
       getSpaceRatePlans: this.stubs.getSpaceRatePlans,
-      changeSpace: this.stubs.changeSpace,
+      changeSpacePlan: this.stubs.changeSpace,
       getSubscriptionPlans: this.stubs.getSubscriptionPlans,
       calculateTotalPrice: this.stubs.calculateTotalPrice,
     });
