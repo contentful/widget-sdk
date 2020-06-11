@@ -24,7 +24,6 @@ import * as appEntryEditorCustomEditorExtensionRendererEs6 from 'app/entry_edito
 import * as appHomeSpaceHomePageEs6 from 'app/home/SpaceHomePage';
 import * as componentsFieldDialogValidationValuesEs6 from 'components/field_dialog/ValidationValues';
 import * as componentsFieldDialogAppearanceFieldDialogAppearanceTabEs6 from 'components/field_dialog/appearance/FieldDialogAppearanceTab';
-import * as componentsSharedSpaceWizardWizardEs6 from 'components/shared/space-wizard/Wizard';
 import * as componentsTabsAssetListAddAssetButtonEs6 from 'components/tabs/asset_list/AddAssetButton';
 import * as componentsTabsPluralizeEntityMessageEs6 from 'components/tabs/PluralizeEntityMessage';
 import * as componentsRecordsResourceUsageIndexEs6 from 'components/RecordsResourceUsage';
@@ -273,7 +272,6 @@ function getModule(name) {
     'app/home/SpaceHomePage': appHomeSpaceHomePageEs6,
     'components/field_dialog/ValidationValues': componentsFieldDialogValidationValuesEs6,
     'components/field_dialog/appearance/FieldDialogAppearanceTab': componentsFieldDialogAppearanceFieldDialogAppearanceTabEs6,
-    'components/shared/space-wizard/Wizard': componentsSharedSpaceWizardWizardEs6,
     'components/tabs/asset_list/AddAssetButton': componentsTabsAssetListAddAssetButtonEs6,
     'components/tabs/PluralizeEntityMessage': componentsTabsPluralizeEntityMessageEs6,
     'components/RecordsResourceUsage': componentsRecordsResourceUsageIndexEs6,
