@@ -20,8 +20,10 @@
   </div>
   <div class="workbench-header__search">
     <cf-component-bridge style="flex: 1; z-index: 1;" component="search"></cf-component-bridge>
-    <react-component name="app/ContentList/SavedViews/Link" props="{ entityType, onViewSaved }">
-    </react-component>
+    <react-component
+      name="app/ContentList/SavedViews/Link"
+      props="{ entityType, onViewSaved }"
+    ></react-component>
   </div>
   <div class="workbench-header__actions" ng-if="!showNoEntriesAdvice()">
     <react-component

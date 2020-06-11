@@ -19,8 +19,7 @@
           ng-if="!slideState.loadingError"
           name="ui/Loader"
           props="{isShown: true, message: 'Loading entry…'}"
-        />
-        >
+        ></react-component>
         <div class="empty-state" ng-if="slideState.loadingError">
           <div class="empty-state__title" ng-if="slideState.loadingError.statusCode === 404">
             Entry missing or inaccessible
@@ -41,7 +40,7 @@
           ng-if="!slideState.loadingError"
           name="ui/Loader"
           props="{isShown: true, message: 'Loading entry…'}"
-        />
+        ></react-component>
         <div class="empty-state" ng-if="slideState.loadingError">
           <div class="empty-state__title" ng-if="slideState.loadingError.statusCode === 404">
             Entry missing or inaccessible
@@ -62,7 +61,7 @@
           ng-if="!slideState.loadingError"
           name="ui/Loader"
           props="{isShown: true, message: 'Loading asset…'}"
-        />
+        ></react-component>
         <div class="empty-state" ng-if="slideState.loadingError">
           <div class="empty-state__title" ng-if="slideState.loadingError.statusCode === 404">
             Asset missing or inaccessible

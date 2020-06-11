@@ -4,7 +4,7 @@ React components can be used with the `react-component` directive.
 
 ```js
     template:
-      '<react-component class="optional-css-class" name="path/to/Component.es6" props="props"/>',
+      '<react-component class="optional-css-class" name="path/to/Component.es6" props="props"></react-component>',
     controller: function($scope) {
       $scope.props = {
         prop1: value1,
@@ -17,7 +17,7 @@ or even better
 
 ```js
     template:
-      '<react-component component="component" props="props"/>',
+      '<react-component component="component" props="props"></react-component>',
     controller: function($scope) {
       $scope.props = {
         prop1: value1,

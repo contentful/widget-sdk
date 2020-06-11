@@ -22,7 +22,7 @@ import { NAMESPACE_EDITOR_BUILTIN } from 'widgets/WidgetNamespaces';
 export default function register() {
   registerDirective('cfContentTypeEditor', [
     () => ({
-      template: '<react-component component="component" props="componentProps" />',
+      template: '<react-component component="component" props="componentProps"></react-component>',
       restrict: 'A',
       controller: 'ContentTypeEditorController',
       controllerAs: 'ctEditorController',

@@ -79,14 +79,14 @@ export default function register() {
         if (state.navComponent) {
           views['nav-bar@'] = {
             template:
-              '<react-component component="component" props="props" style="width: 100%" class="app-top-bar" />',
+              '<react-component component="component" props="props" style="width: 100%" class="app-top-bar"></react-component>',
             controller: makeReactNavigationController(state.navComponent),
           };
         }
 
         if (state.component) {
           views['content@'] = {
-            template: '<react-component component="component" props="props" />',
+            template: '<react-component component="component" props="props" ></react-component>',
             controller: makeReactController(state, state.component),
           };
         }

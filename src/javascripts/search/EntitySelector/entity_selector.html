@@ -39,14 +39,16 @@
       class="entity-selector__item-list-placeholder"
       ng-if="!isLoading &amp;&amp; items.length &lt; 1"
     >
-      {{ labels.empty }} found.<span
-        ng-if="!isLoading &amp;&amp; items.length &lt; 1 &amp;&amp; config.withCreate"
-        ><react-component
+      {{ labels.empty }} found.
+      <span ng-if="!isLoading &amp;&amp; items.length &lt; 1 &amp;&amp; config.withCreate">
+        <react-component
           name="search/EntitySelector/CreateEntity"
-          props="createEntityInlineProps" /></span
-      ><span ng-if="!supportsAdvancedSearch &amp;&amp; view.searchText.length &gt; 0">
-        for <strong>{{ view.searchText }}</strong></span
-      >
+          props="createEntityInlineProps"
+        ></react-component>
+      </span>
+      <span ng-if="!supportsAdvancedSearch &amp;&amp; view.searchText.length &gt; 0">
+        for <strong>{{ view.searchText }}</strong>
+      </span>
     </div>
     <div
       class="entity-selector__item"
