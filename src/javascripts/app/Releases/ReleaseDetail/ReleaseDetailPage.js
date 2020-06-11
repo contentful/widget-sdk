@@ -16,7 +16,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import RelativeDateTime from 'components/shared/RelativeDateTime';
 import ReleaseTable from './ReleaseTable';
-import { getReleaseById, deleteEntityFromReleaseById } from '../releasesService';
+import { getReleaseById, replaceReleaseById } from '../releasesService';
 import ReleasesEmptyStateMessage from '../ReleasesPage/ReleasesEmptyStateMessage';
 import { getEntities, displayedFields } from './utils';
 
@@ -112,7 +112,7 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
       ({ sys: { id } }) => id !== entity.sys.id
     );
 
-    deleteEntityFromReleaseById(releaseId, release.title, releaseWithoutEntity)
+    replaceReleaseById(releaseId, release.title, releaseWithoutEntity)
       .then(() => {
         setEntityDeleteKey(entity.sys.id);
         Notification.success('Entity was sucessfully deleted');

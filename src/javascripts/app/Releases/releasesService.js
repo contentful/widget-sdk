@@ -53,9 +53,9 @@ async function getReleaseById(releaseId) {
   return await apiClient.getReleaseById(releaseId);
 }
 
-async function deleteEntityFromReleaseById(releaseId, title, items) {
+async function replaceReleaseById(releaseId, title, items) {
   const apiClient = new APIClient(createEndpoint());
-  return await apiClient.updateReleaseById(releaseId, title, items);
+  return await apiClient.replaceReleaseById(releaseId, title, items);
 }
 
 export {
@@ -65,5 +65,5 @@ export {
   getReleasesExcludingEntity,
   deleteRelease,
   getReleaseById,
-  deleteEntityFromReleaseById,
+  replaceReleaseById,
 };

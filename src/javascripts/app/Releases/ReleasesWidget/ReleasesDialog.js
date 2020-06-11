@@ -22,6 +22,8 @@ import {
   createRelease,
   getReleasesExcludingEntity,
   getReleasesIncludingEntity,
+  getReleases,
+  replaceReleaseById,
 } from '../releasesService';
 import { ReleasesProvider, ReleasesContext } from './ReleasesContext';
 import { SET_RELEASES_INCLUDING_ENTRY } from '../state/actions';
@@ -131,10 +133,6 @@ export default class ReleasesDialog extends Component {
         type: PropTypes.string,
       }),
     }).isRequired,
-    validator: PropTypes.shape({
-      run: PropTypes.func,
-      setApiResponseErrors: PropTypes.func,
-    }),
     onCancel: PropTypes.func.isRequired,
     releaseContentTitle: PropTypes.string,
   };
@@ -149,9 +147,19 @@ export default class ReleasesDialog extends Component {
   };
 
   async componentDidMount() {
-    const { id, type } = this.props.rootEntity.sys;
-    const fetchedReleases = await getReleasesExcludingEntity(id, type);
-    this.setState({ fetchedReleases: fetchedReleases.items });
+    const { rootEntity, selectedEntities } = this.props;
+    const { id, type } = rootEntity.sys;
+
+    this.setState({ loading: true });
+
+    const entityPage =
+      selectedEntities.length === 1 && selectedEntities[0].sys.id == rootEntity.sys.id;
+
+    const fetchedReleases = entityPage
+      ? await getReleasesExcludingEntity(id, type)
+      : await getReleases();
+
+    this.setState({ fetchedReleases: fetchedReleases.items, loading: false });
   }
 
   handleCreateRelease(releaseName) {
@@ -176,31 +184,49 @@ export default class ReleasesDialog extends Component {
   }
 
   onReleaseSelect(release) {
-    const { releaseContentTitle } = this.props;
-
+    const { releaseContentTitle, selectedEntities } = this.props;
     this.onClose();
-    Notification.success(`${releaseContentTitle} was sucessfully added to ${release.title}`);
+
+    const releaseItems = [
+      ...release.entities.items,
+      ...selectedEntities.map(({ sys }) => ({
+        sys: {
+          type: 'Link',
+          linkType: sys.type,
+          id: sys.id,
+        },
+      })),
+    ];
+
+    replaceReleaseById(release.sys.id, release.title, releaseItems)
+      .then(() => {
+        Notification.success(`${releaseContentTitle} was sucessfully added to ${release.title}`);
+      })
+      .catch(() => {
+        Notification.error(`Failed adding ${releaseContentTitle} to ${release.title}`);
+      });
   }
 
   tabs = {
     existing: {
       title: 'Add to existing',
       render: () => {
-        if (this.state.fetchedReleases.length) {
+        const { fetchedReleases, loading } = this.state;
+        if (fetchedReleases.length) {
           return (
-            <ReleasesTimeline
-              releases={this.state.fetchedReleases}
-              onReleaseSelect={this.onReleaseSelect}
-            />
+            <ReleasesTimeline releases={fetchedReleases} onReleaseSelect={this.onReleaseSelect} />
           );
         }
-        return (
-          <SkeletonContainer svgHeight={60}>
-            <SkeletonBodyText numberOfLines={1} />
-            <SkeletonBodyText numberOfLines={1} offsetTop={20} />
-            <SkeletonBodyText numberOfLines={1} offsetTop={40} />
-          </SkeletonContainer>
-        );
+        if (loading) {
+          return (
+            <SkeletonContainer svgHeight={60}>
+              <SkeletonBodyText numberOfLines={1} />
+              <SkeletonBodyText numberOfLines={1} offsetTop={20} />
+              <SkeletonBodyText numberOfLines={1} offsetTop={40} />
+            </SkeletonContainer>
+          );
+        }
+        return '';
       },
     },
     new: {

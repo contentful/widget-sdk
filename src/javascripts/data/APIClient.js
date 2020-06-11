@@ -306,7 +306,7 @@ APIClient.prototype.getReleaseById = function (id) {
   );
 };
 
-APIClient.prototype.updateReleaseById = function (id, title, items = []) {
+APIClient.prototype.replaceReleaseById = function (id, title, items = []) {
   return this._request(
     {
       method: 'PUT',
