@@ -1,19 +1,24 @@
   @charset "utf-8";
 
 :root {
-  --font-stack-primary: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
-    Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
-  --color-element-lightest: #f7f9fa;
-  --color-element-light: #e5ebed;
-  --color-element-mid: #d3dce0;
-  --color-element-base: #c3cfd5;
-  --color-element-dark: #c3cfd5;
+  --font-stack-primary: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
+  --font-stack-mono: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace!important;
+
+  --color-element-lightest: #F7F9FA;
+  --color-element-light: #E5EBED;
+  --color-element-mid: #D3DCE0;
+  --color-element-base: #C3CFD5;
+  --color-element-dark: #B4C3CA;
+
   --color-text-mid: #536171;
   --color-text-base: #283848;
-  --color-green-mid: #0eb87f;
-  --color-green-base: #0baa75;
-  --color-green-dark: #0baa75;
+
+  --color-green-mid: #0C9869;
+  --color-green-base: #1D7D58;
+  --color-green-dark: #1C583F;
+
   --color-positive-gradient: linear-gradient(to top, #0eb87f, #14d997);
+
   --font-size-s: 0.75rem;
   --font-size-m: 0.875rem;
   --line-height-default: 1.5;
@@ -26,7 +31,7 @@
 code,
 pre,
 .CodeMirror {
-  font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace!important;
+  font-family: var(--font-stack-mono);
 }
 
   :-moz-ui-invalid {
@@ -59,7 +64,7 @@ pre,
     box-sizing: border-box;
   }
   body {
-    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
+    font-family: var(--font-stack-primary);
     font-size: 14px;
     line-height: 18px;
     color: var(--color-text-base);
@@ -2018,7 +2023,7 @@ pre,
     background-color: inherit;
   }
   .code-block__line {
-    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace!important;
+    font-family: var(--font-stack-mono);
     display: block;
     line-height: 0.6rem;
     padding-right: 2em;
@@ -5542,7 +5547,7 @@ pre,
     margin-top: 1.285714285714286em;
   }
   .validation-controls__re-pattern {
-    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace!important;
+    font-family: var(--font-stack-mono);
     width: 28em;
   }
   .validation-controls__re-flags-label {
@@ -5550,7 +5555,7 @@ pre,
     margin-right: 0.8em;
   }
   .validation-controls__re-flags {
-    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace!important;
+    font-family: var(--font-stack-mono);
     width: 4em;
   }
   .validation-controls__option-list {
@@ -6269,7 +6274,7 @@ pre,
     margin-bottom: 0.642857142857143em;
   }
   .cfnext-form__input {
-    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
+    font-family: var(--font-stack-primary);
     font-size: inherit;
     border: 1px solid #969fa6;
     border-radius: 3px 3px 3px 3px;
@@ -6310,7 +6315,7 @@ pre,
     height: auto;
   }
   .cfnext-form__input--short {
-    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
+    font-family: var(--font-stack-primary);
     font-size: inherit;
     border: 1px solid #969fa6;
     border-radius: 3px 3px 3px 3px;
@@ -6353,7 +6358,7 @@ pre,
   .cfnext-form__input--full-size,
   .tab-iframe .formtastic .input input.form-control:not([type="checkbox"]):not([type="radio"]),
   .tab-iframe .formtastic .input textarea.form-control {
-    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
+    font-family: var(--font-stack-primary);
     font-size: inherit;
     border: 1px solid #969fa6;
     border-radius: 3px 3px 3px 3px;
@@ -7584,7 +7589,7 @@ pre,
   .entry-editor__input {
     font-size: 16px;
     color: #2a3039;
-    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
+    font-family: var(--font-stack-primary);
     display: block;
     width: 100%;
     line-height: 1.5;
@@ -7620,7 +7625,7 @@ pre,
   .entry-editor__textarea {
     font-size: 16px;
     color: #2a3039;
-    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
+    font-family: var(--font-stack-primary);
     display: block;
     width: 100%;
     line-height: 1.5;
@@ -7660,7 +7665,7 @@ pre,
   .entry-editor__input-group > input {
     font-size: 16px;
     color: #2a3039;
-    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
+    font-family: var(--font-stack-primary);
     display: block;
     width: 100%;
     line-height: 1.5;
@@ -7756,7 +7761,7 @@ pre,
     appearance: none;
     font-size: 16px;
     color: #2a3039;
-    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
+    font-family: var(--font-stack-primary);
     display: block;
     width: 100%;
     line-height: 1.5;
@@ -8182,7 +8187,7 @@ pre,
     padding-top: 0;
   }
   .json-editor__disabled-content {
-    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace!important;
+    font-family: var(--font-stack-mono);
     color: #8091a5;
     background: #f7f9fa;
     line-height: 1.5;
@@ -8307,7 +8312,7 @@ pre,
   .json-editor__editor .CodeMirror {
     height: auto;
     color: #2a3039;
-    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace!important;
+    font-family: var(--font-stack-mono);
   }
   .json-editor__editor .CodeMirror-scroll {
     min-height: 7.714285714285715em;
@@ -9266,11 +9271,11 @@ pre,
     color: #8091a5;
   }
   .api-key-boilerplate-instructions code {
-    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace!important;
+    font-family: var(--font-stack-mono);
   }
   .api-key-boilerplate-instructions pre > code {
     font-size: 12px;
-    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace!important;
+    font-family: var(--font-stack-mono);
     white-space: pre-wrap;
     overflow-wrap: break-word;
     word-wrap: break-word;
@@ -11429,7 +11434,7 @@ pre,
     margin-right: -5px;
     height: 100%;
     border-radius: 0 3px 3px 0;
-    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
+    font-family: var(--font-stack-primary);
     font-weight: 600;
   }
   .search__select-value .search__select:hover,
