@@ -1380,7 +1380,7 @@ pre,
     color: var(--color-text-base);
   }
   .copy-to-clipboard .fa-check {
-    color: #0eb87f;
+    color: var(--color-green-mid);
     opacity: 0;
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
     filter: alpha(opacity=0);
@@ -1573,7 +1573,7 @@ pre,
     color: #e34e48;
   }
   .code-block .s2 {
-    color: #0eb87f;
+    color: var(--color-green-mid);
   }
   .code-block__copy-wrapper {
     background-color: var(--color-element-light);
@@ -1825,7 +1825,7 @@ pre,
     margin-right: 6px;
   }
   .webhook-call__status-indicator[data-status="success"] {
-    background: #0eb87f;
+    background: var(--color-green-mid);
   }
   .webhook-call__status-indicator[data-status="warning"] {
     background: #db8500;
@@ -2986,7 +2986,7 @@ pre,
     top: 13px;
   }
   .note-box--success a {
-    color: #0eb87f;
+    color: var(--color-green-mid);
   }
   .note-box--success:before {
     background-image: url("../javascripts/svg/note-success.svg");
@@ -6584,7 +6584,7 @@ pre,
   }
   .entity-selector-dialog--for-user-entities .entity-selector__item.x--selected .user-link::after {
     content: "\f058";
-    color: #0eb87f;
+    color: var(--color-green-mid);
   }
   .entity-selector-dialog--for-user-entities .entity-selector__item:hover {
     background-color: var(--color-element-light);
@@ -7482,7 +7482,7 @@ pre,
   }
   .entity-sidebar__state-indicator[data-state="published"] {
     background: #14d997;
-    border: 1px solid #0eb87f;
+    border: 1px solid var(--color-green-mid);
   }
   .entity-sidebar__state-indicator[data-state="changes"] {
     background: #5b9fef;
@@ -8826,7 +8826,7 @@ pre,
     margin: 0;
   }
   .content-preview-sidebar__token {
-    color: #0eb87f;
+    color: var(--color-green-mid);
     font-weight: lighter;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
@@ -9468,7 +9468,7 @@ pre,
     margin-right: 2px;
   }
   .tea-onboarding__pill-active {
-    background: #0eb87f;
+    background: var(--color-green-mid);
   }
   .tea-onboarding__screenshot-container {
     position: relative;
