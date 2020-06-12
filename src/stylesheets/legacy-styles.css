@@ -4248,8 +4248,8 @@ pre,
     font-weight: bold;
   }
   .app-notification.x--error {
-    background: #f05650;
-    border: 1px solid #cd3f39;
+    background: var(--color-red-light);
+    border: 1px solid var(--color-red-mid);
   }
   .app-notification.ng-hide-add {
     -webkit-transition: none;
