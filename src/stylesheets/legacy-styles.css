@@ -123,7 +123,7 @@ pre,
   }
   hr {
     height: 1px;
-    background-color: #f5f5f5;
+    background-color: var(--color-element-lightest);
     margin: 30px 0;
     border: none;
   }
@@ -141,7 +141,7 @@ pre,
     padding: 0;
   }
   blockquote {
-    border-left: 4px solid #f5f5f5;
+    border-left: 4px solid var(--color-element-lightest);
     padding-left: 20px;
     margin-top: 10px;
     font-style: italic;
@@ -156,7 +156,7 @@ pre,
   }
   .ui-widget-header {
     background-image: none;
-    background-color: #f5f5f5;
+    background-color: var(--color-element-lightest);
     color: #2d2f31;
   }
   .ui-autocomplete li {
@@ -3911,10 +3911,10 @@ pre,
   .dropdown-menu-item.top-separator {
     height: auto;
     background: inherit;
-    border-top: 1px solid #f5f5f5;
+    border-top: 1px solid var(--color-element-lightest);
   }
   .dropdown-menu-item.bottom-separator {
-    border-bottom: 1px solid #f5f5f5;
+    border-bottom: 1px solid var(--color-element-lightest);
   }
   .dropdown-menu-item.hint {
     color: #9b9b9b;
@@ -3950,10 +3950,10 @@ pre,
   .dropdown-menu-item--label.top-separator {
     height: auto;
     background: inherit;
-    border-top: 1px solid #f5f5f5;
+    border-top: 1px solid var(--color-element-lightest);
   }
   .dropdown-menu-item--label.bottom-separator {
-    border-bottom: 1px solid #f5f5f5;
+    border-bottom: 1px solid var(--color-element-lightest);
   }
   .dropdown-menu-item--label.hint {
     color: #9b9b9b;
@@ -3992,10 +3992,10 @@ pre,
   .dropdown-menu-item--no-highlight.top-separator {
     height: auto;
     background: inherit;
-    border-top: 1px solid #f5f5f5;
+    border-top: 1px solid var(--color-element-lightest);
   }
   .dropdown-menu-item--no-highlight.bottom-separator {
-    border-bottom: 1px solid #f5f5f5;
+    border-bottom: 1px solid var(--color-element-lightest);
   }
   .dropdown-menu-item--no-highlight.hint {
     color: #9b9b9b;
@@ -5151,7 +5151,7 @@ pre,
     color: #9b9b9b;
   }
   .result-list td {
-    border-bottom: 1px solid #f5f5f5;
+    border-bottom: 1px solid var(--color-element-lightest);
   }
   .result-list thead .button-icon {
     color: #dedede;
@@ -5351,7 +5351,7 @@ pre,
     transform: translateX(100%);
   }
   .inner-result-list {
-    background-color: #f5f5f5;
+    background-color: var(--color-element-lightest);
     padding-top: 5px;
     padding-bottom: 3px;
     padding-left: 2%;
@@ -7148,7 +7148,7 @@ pre,
   .file-info .file-selector,
   .file-info .file-progress,
   .file-info .no-file {
-    background-color: #f5f5f5;
+    background-color: var(--color-element-lightest);
     border: 1px solid #9b9b9b;
     border-radius: 3px;
     -webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.1) inset;
@@ -12350,7 +12350,7 @@ pre,
     padding-top: 28px;
     padding-left: 25px;
     background-color: #fdfcfc;
-    border-right: 1px solid #f5f5f5;
+    border-right: 1px solid var(--color-element-lightest);
   }
   .spaces .settings-panel a {
     color: #8d8c8c;
@@ -12396,9 +12396,9 @@ pre,
   .account .settings-panel h3 {
     font-size: 16px;
     font-weight: bold;
-    background: #f5f5f5;
-    background-image: -webkit-gradient(linear, left top, left bottom, from(#f5f5f5), to(#f5f5f5));
-    background-image: linear-gradient(#f5f5f5, #f5f5f5);
+    background: var(--color-element-lightest);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(var(--color-element-lightest)), to(var(--color-element-lightest)));
+    background-image: linear-gradient(var(--color-element-lightest), var(--color-element-lightest));
     line-height: 40px;
     position: relative;
     border-bottom: 1px solid #dedede;
@@ -12442,7 +12442,7 @@ pre,
     cursor: pointer;
   }
   .tab-iframe .result-list tbody tr:last-child {
-    border-bottom: 1px solid #f5f5f5;
+    border-bottom: 1px solid var(--color-element-lightest);
   }
   .tab-iframe .result-list-thumbnail {
     vertical-align: middle;
@@ -12887,7 +12887,7 @@ pre,
   .plan-details .details-show:hover,
   .plan-details .details-hide:hover {
     color: #9b9b9b;
-    background-color: #f5f5f5;
+    background-color: var(--color-element-lightest);
   }
   .plan-details .details-show {
     font-size: 15px;
@@ -12898,7 +12898,7 @@ pre,
     display: -ms-flexbox;
     display: flex;
     margin-bottom: 20px;
-    background-color: #f5f5f5;
+    background-color: var(--color-element-lightest);
   }
   .plan-summary {
     width: 15em;
@@ -13023,7 +13023,7 @@ pre,
   .subscription-progress-bar .active {
     color: #2d2f31;
     font-weight: bold;
-    background-color: #f5f5f5;
+    background-color: var(--color-element-lightest);
   }
   .tab-iframe .formtastic .input.yellow-highlight,
   .formtastic .input.yellow-highlight,
