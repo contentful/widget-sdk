@@ -4089,7 +4089,7 @@ pre,
     padding: 0;
   }
   .field-dialog__widget-item:hover {
-    border: 2px solid #a2a9b1;
+    border: 2px solid var(--color-element-dark);
   }
   .field-dialog__widget-item.is-custom {
     -ms-flex-pack: justify;
@@ -4144,7 +4144,7 @@ pre,
     border-bottom: 1px solid var(--color-element-mid);
     height: 30px;
     min-height: 30px;
-    color: #a2a9b1;
+    color: var(--color-element-dark);
     text-transform: uppercase;
     font-size: 0.9em;
     padding: 0 8px;
@@ -4153,7 +4153,7 @@ pre,
     text-align: left;
   }
   .field-dialog__widget-item-header a {
-    color: #a2a9b1;
+    color: var(--color-element-dark);
   }
   .field-dialog__widget-item-header a:hover,
   .field-dialog__widget-item-header a:focus {
@@ -6086,11 +6086,11 @@ pre,
     -ms-flex-pack: center;
     -webkit-box-pack: center;
             justify-content: center;
-    color: #a2a9b1;
+    color: var(--color-element-dark);
     margin-left: 0.5rem;
   }
   .ct-field__drag-handle svg {
-    fill: #a2a9b1;
+    fill: var(--color-element-dark);
   }
   .ct-field__settings {
     position: relative;
@@ -6100,7 +6100,7 @@ pre,
     background-color: var(--color-element-lightest);
     -webkit-box-shadow: none;
     box-shadow: none;
-    color: #a2a9b1;
+    color: var(--color-element-dark);
   }
   .ct-fields--dummy .ct-field__drag-handle {
     background-color: rgba(0,0,0,0.1);
@@ -6287,7 +6287,7 @@ pre,
   .x--omitted .icon-component[data-icon-name="field-boolean-small"] circle,
   .x--omitted .icon-component[data-icon-name="field-json"] circle,
   .x--omitted .icon-component[data-icon-name="field-json-small"] circle {
-    fill: #a2a9b1;
+    fill: var(--color-element-dark);
   }
   .x--disabled .icon-component[data-icon-name="field-shorttext"] rect,
   .x--disabled .icon-component[data-icon-name="field-shorttext-small"] rect,
@@ -6313,7 +6313,7 @@ pre,
   .x--omitted .icon-component[data-icon-name="field-boolean-small"] rect,
   .x--omitted .icon-component[data-icon-name="field-json"] rect,
   .x--omitted .icon-component[data-icon-name="field-json-small"] rect {
-    stroke: #a2a9b1;
+    stroke: var(--color-element-dark);
   }
   .icon-component[data-icon-name="field-calendar"] path,
   .icon-component[data-icon-name="field-calendar-small"] path,
@@ -6389,7 +6389,7 @@ pre,
   .x--omitted .icon-component[data-icon-name="field-location-small"] rect,
   .x--omitted .icon-component[data-icon-name="field-reference"] rect,
   .x--omitted .icon-component[data-icon-name="field-reference-small"] rect {
-    stroke: #a2a9b1;
+    stroke: var(--color-element-dark);
   }
   .icon-component[data-icon-name="field-calendar"] rect {
     fill: #16ca8e;
@@ -10273,7 +10273,7 @@ pre,
     max-width: 900px;
   }
   .modern-stack-onboarding--deployment-strategy {
-    border-top: 2px solid #a2a9b1;
+    border-top: 2px solid var(--color-element-dark);
     padding-top: 50px;
   }
   .modern-stack-onboarding--deployment-strategy-title-container {
