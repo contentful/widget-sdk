@@ -3,7 +3,7 @@ import React from 'react';
 import isNumber from 'lodash/isNumber';
 import { Modal } from '@contentful/forma-36-react-components';
 import { ModalLauncher } from 'core/components/ModalLauncher';
-import ExtensionIFrameRenderer from '../ExtensionIFrameRenderer';
+import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIFrameRenderer';
 import * as Dialogs from '../ExtensionDialogs';
 import { applyDefaultValues } from '../WidgetParametersUtils';
 import trackExtensionRender from '../TrackExtensionRender';
@@ -114,7 +114,7 @@ export default function makeExtensionDialogsHandlers(dependencies) {
               {options.title && <Modal.Header title={options.title} onClose={onCloseHandler} />}
               {/* eslint-disable-next-line rulesdir/restrict-inline-styles */}
               <div style={{ minHeight: options.minHeight || 'auto' }}>
-                <ExtensionIFrameRenderer
+                <ExtensionIFrameRendererWithLocalHostWarning
                   bridge={bridge}
                   descriptor={descriptor}
                   parameters={parameters}

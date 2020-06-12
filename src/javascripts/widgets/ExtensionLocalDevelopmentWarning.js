@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
+import propTypes from 'prop-types';
 import { Note, TextLink } from '@contentful/forma-36-react-components';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 
 const sessionStore = getBrowserStorage('session');
 const FLAG_KEY = 'extensions-development-mode';
 
-export default function ExtensionDevelopmentMode() {
+export function ExtensionDevelopmentModeWarningBanner() {
   const [showMixedContentInfo, setShowMixedContentInfo] = useState(
     sessionStore.get(FLAG_KEY) !== true
   );
@@ -27,3 +28,16 @@ export default function ExtensionDevelopmentMode() {
     </Note>
   );
 }
+
+export default function ExtensionLocalDevelopmentWarning({ children, developmentMode }) {
+  return (
+    <>
+      {developmentMode && <ExtensionDevelopmentModeWarningBanner />}
+      {children}
+    </>
+  );
+}
+
+ExtensionLocalDevelopmentWarning.propTypes = {
+  developmentMode: propTypes.bool,
+};

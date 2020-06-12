@@ -23,7 +23,7 @@ import UsersWidgetContainer from './UsersWidget/UsersWidgetContainer';
 import VersionsWidgetContainer from './VersionsWidget/VersionsWidgetContainer';
 import SidebarWidgetTypes from './SidebarWidgetTypes';
 import EntryInfoPanelContainer from './EntryInfoPanel/EntryInfoPanelContainer';
-import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer';
+import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIFrameRenderer';
 import CommentsPanelContainer from './CommentsPanel/CommentsPanelContainer';
 
 const styles = {
@@ -212,7 +212,7 @@ export default class EntrySidebar extends Component {
       <EntrySidebarWidget
         title={item.descriptor.name}
         key={`${item.widgetNamespace},${item.widgetId}`}>
-        <ExtensionIFrameRenderer
+        <ExtensionIFrameRendererWithLocalHostWarning
           bridge={this.props.entrySidebarProps.buildSidebarExtensionsBridge(
             item.widgetId,
             item.widgetNamespace
@@ -239,7 +239,7 @@ export default class EntrySidebar extends Component {
   renderLegacyExtensions = (legacyExtensions) => {
     return legacyExtensions.map(({ bridge, widget }) => (
       <EntrySidebarWidget title={widget.field.name} key={widget.field.id}>
-        <ExtensionIFrameRenderer
+        <ExtensionIFrameRendererWithLocalHostWarning
           bridge={bridge}
           descriptor={widget.descriptor}
           parameters={widget.parameters}

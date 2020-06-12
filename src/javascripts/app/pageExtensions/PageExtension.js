@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer';
+import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIFrameRenderer';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { applyDefaultValues } from 'widgets/WidgetParametersUtils';
 import trackExtensionRender from 'widgets/TrackExtensionRender';
@@ -43,7 +43,7 @@ export default class PageExtension extends React.Component {
     return (
       <div data-test-id="page-extension" className={styles.root}>
         <DocumentTitle title={descriptor.name} />
-        <ExtensionIFrameRenderer
+        <ExtensionIFrameRendererWithLocalHostWarning
           bridge={bridge}
           descriptor={descriptor}
           parameters={parameters}

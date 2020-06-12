@@ -6,7 +6,7 @@ import { noop, defer } from 'lodash';
 import createExtensionBridge from 'widgets/bridges/createExtensionBridge';
 import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION, NAMESPACE_APP } from 'widgets/WidgetNamespaces';
 import WidgetRenderWarning from 'widgets/WidgetRenderWarning';
-import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer';
+import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIFrameRenderer';
 import * as WidgetLocations from 'widgets/WidgetLocations';
 import createNewWidgetApi from 'app/widgets/NewWidgetApi/createNewWidgetApi';
 import * as LoadEventTracker from 'app/entity_editor/LoadEventTracker';
@@ -46,7 +46,7 @@ function WidgetRendererInternal(props) {
     const spaceContext = getModule('spaceContext');
     const $controller = getModule('$controller');
     return (
-      <ExtensionIFrameRenderer
+      <ExtensionIFrameRendererWithLocalHostWarning
         descriptor={descriptor}
         parameters={parameters}
         bridge={createExtensionBridge({

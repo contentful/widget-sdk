@@ -4,7 +4,7 @@ import { get } from 'lodash';
 
 import * as Config from 'Config';
 
-import ExtensionDevelopmentMode from './ExtensionDevelopmentMode';
+import ExtensionLocalDevelopmentWarning from './ExtensionLocalDevelopmentWarning';
 import ExtensionIFrameChannel from './ExtensionIFrameChannel';
 import ExtensionAPI from './ExtensionAPI';
 
@@ -28,28 +28,30 @@ function isAppDomain(src) {
   }
 }
 
+const sharedPropTypes = {
+  bridge: PropTypes.shape({
+    getData: PropTypes.func.isRequired,
+    apply: PropTypes.func.isRequired,
+    install: PropTypes.func.isRequired,
+    uninstall: PropTypes.func,
+  }).isRequired,
+  descriptor: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    namespace: PropTypes.string.isRequired,
+    appDefinitionId: PropTypes.string,
+    src: PropTypes.string.isRequired,
+    srcdoc: PropTypes.string,
+  }).isRequired,
+  parameters: PropTypes.shape({
+    instance: PropTypes.object.isRequired,
+    installation: PropTypes.object.isRequired,
+    invocation: PropTypes.object,
+  }).isRequired,
+  isFullSize: PropTypes.bool,
+};
+
 export default class ExtensionIFrameRenderer extends React.Component {
-  static propTypes = {
-    bridge: PropTypes.shape({
-      getData: PropTypes.func.isRequired,
-      apply: PropTypes.func.isRequired,
-      install: PropTypes.func.isRequired,
-      uninstall: PropTypes.func,
-    }).isRequired,
-    descriptor: PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      namespace: PropTypes.string.isRequired,
-      appDefinitionId: PropTypes.string,
-      src: PropTypes.string.isRequired,
-      srcdoc: PropTypes.string,
-    }).isRequired,
-    parameters: PropTypes.shape({
-      instance: PropTypes.object.isRequired,
-      installation: PropTypes.object.isRequired,
-      invocation: PropTypes.object,
-    }).isRequired,
-    isFullSize: PropTypes.bool,
-  };
+  static propTypes = sharedPropTypes;
 
   // There's no need to update. Once the iframe is loaded
   // it's only `ExtensionAPI` talking with the Extension over
@@ -69,9 +71,6 @@ export default class ExtensionIFrameRenderer extends React.Component {
   }
 
   render() {
-    const src = get(this.props, ['descriptor', 'src'], '');
-    const isDevMode = src.startsWith('http://localhost');
-
     const style = { width: '100%' };
     if (this.props.isFullSize) {
       // Setting `height` inline style overrides `height` element attribute
@@ -83,7 +82,6 @@ export default class ExtensionIFrameRenderer extends React.Component {
 
     return (
       <>
-        {isDevMode && <ExtensionDevelopmentMode />}
         <iframe style={style} ref={this.initialize} onLoad={this.onLoad} />
       </>
     );
@@ -150,3 +148,17 @@ export default class ExtensionIFrameRenderer extends React.Component {
     }
   };
 }
+
+export function ExtensionIFrameRendererWithLocalHostWarning(props) {
+  const src = get(props, ['descriptor', 'src'], '');
+  const isDevMode = src.startsWith('http://localhost');
+  return (
+    <>
+      <ExtensionLocalDevelopmentWarning developmentMode={isDevMode}>
+        <ExtensionIFrameRenderer {...props} />
+      </ExtensionLocalDevelopmentWarning>
+    </>
+  );
+}
+
+ExtensionIFrameRendererWithLocalHostWarning.propTypes = sharedPropTypes;

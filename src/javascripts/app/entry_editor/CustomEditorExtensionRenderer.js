@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { Note } from '@contentful/forma-36-react-components';
-import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer';
+import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIFrameRenderer';
 
 const styles = {
   installationNote: css({
@@ -37,7 +37,7 @@ export default class CustomEditorExtensionRenderer extends React.Component {
     }
 
     return (
-      <ExtensionIFrameRenderer
+      <ExtensionIFrameRendererWithLocalHostWarning
         bridge={createBridge(extension.widgetId, extension.widgetNamespace)}
         descriptor={descriptor}
         parameters={parameters}
