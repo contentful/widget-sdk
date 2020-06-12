@@ -1,15 +1,21 @@
 import React from 'react';
-import { render, screen, wait, within } from '@testing-library/react';
+import { render, screen, waitFor, waitForElementToBeRemoved, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { getSpaceRatePlans, isHighDemandEnterprisePlan } from 'account/pricing/PricingDataProvider';
-import createResourceService from 'services/ResourceService';
-import { getTemplatesList } from 'services/SpaceTemplateLoader';
-import { createSpace, createSpaceWithTemplate } from '../shared/utils';
-import * as FakeFactory from 'test/helpers/fakeFactory';
+import { when } from 'jest-when';
+import { ENTERPRISE_HIGH_DEMAND } from 'account/pricing/PricingDataProvider';
+import client from 'services/client';
+import { getTemplatesList, getTemplate } from 'services/SpaceTemplateLoader';
+import * as utils from '../shared/utils';
+import * as Fake from 'test/helpers/fakeFactory';
 
 import EnterpriseWizard from './EnterpriseWizard';
 
-const mockOrganization = FakeFactory.Organization();
+import { freeSpace } from '../__tests__/fixtures/plans';
+import { mockEndpoint } from 'data/EndpointFactory';
+
+const mockOrganization = Fake.Organization();
+const mockSpace = Fake.Space();
+const mockFreeSpaceResource = Fake.SpaceResource(1, 5, 'free_space');
 const mockTemplate = {
   name: 'Awesome template',
   sys: {
@@ -17,102 +23,79 @@ const mockTemplate = {
   },
 };
 
-const mockRatePlanCharges = [
-  {
-    name: 'Environments',
-    tiers: [{ endingUnit: 10 }],
-  },
-  {
-    name: 'Roles',
-    tiers: [{ endingUnit: 10 }],
-  },
-  {
-    name: 'Locales',
-    tiers: [{ endingUnit: 10 }],
-  },
-  {
-    name: 'Content types',
-    tiers: [{ endingUnit: 10 }],
-  },
-  {
-    name: 'Records',
-    tiers: [{ endingUnit: 10 }],
-  },
-];
-
-const mockFreeSpaceRatePlan = {
-  productPlanType: 'free_space',
-  productRatePlanCharges: mockRatePlanCharges,
-  name: 'Enterprise Space',
-  roleSet: {
-    name: 'lol',
-    roles: ['Wizard'],
-  },
-};
-
-jest.mock('../shared/utils', () => ({
-  getIncludedResources: jest.fn().mockReturnValue([]),
-  createSpace: jest.fn().mockResolvedValue(),
-  createSpaceWithTemplate: jest.fn().mockResolvedValue(),
-  FREE_SPACE_IDENTIFIER: 'free_space',
-}));
+mockEndpoint.mockRejectedValue();
+when(mockEndpoint)
+  .calledWith(expect.objectContaining({ path: ['product_rate_plans'] }))
+  .mockResolvedValue({ items: [freeSpace] })
+  .calledWith(expect.objectContaining({ path: ['plans'] }))
+  .mockResolvedValue({ items: [] })
+  .calledWith(expect.objectContaining({ path: [] }))
+  .mockResolvedValue()
+  .calledWith(expect.objectContaining({ path: ['resources', 'free_space'] }))
+  .mockResolvedValue(mockFreeSpaceResource);
 
 jest.mock('analytics/Analytics', () => ({
   track: jest.fn(),
 }));
 
-jest.mock('account/pricing/PricingDataProvider', () => ({
-  isHighDemandEnterprisePlan: jest.fn().mockReturnValue(false),
-  getSpaceRatePlans: jest.fn(),
-}));
-
 jest.mock('services/SpaceTemplateLoader', () => ({
   getTemplatesList: jest.fn(),
+  getTemplate: jest.fn(),
 }));
 
-jest.mock('services/ResourceService', () => {
-  const service = {
-    get: jest.fn((type) => {
-      if (type === 'free_space') {
-        return {
-          usage: 1,
-          limits: {
-            maximum: 5,
-          },
-        };
-      }
+jest.mock('services/SpaceTemplateCreator', () => {
+  const creator = {
+    create: jest.fn().mockReturnValue({
+      spaceSetup: Promise.resolve(),
+      contentCreated: Promise.resolve(),
     }),
   };
 
-  return () => service;
+  return {
+    getCreator: () => creator,
+  };
 });
+
+jest.mock('services/client', () => {
+  return {
+    createSpace: jest.fn(),
+  };
+});
+
+jest.mock('services/TokenStore', () => ({
+  refresh: jest.fn().mockResolvedValue(),
+}));
+
+jest.mock('features/api-keys-management', () => ({
+  createApiKeyRepo: () => {
+    const repo = {
+      create: jest.fn().mockResolvedValue(),
+    };
+
+    return repo;
+  },
+}));
+
+jest.spyOn(utils, 'createSpace');
+jest.spyOn(utils, 'createSpaceWithTemplate');
 
 describe('Enterprise Wizard', () => {
   beforeEach(() => {
-    getSpaceRatePlans.mockResolvedValue([mockFreeSpaceRatePlan]);
     getTemplatesList.mockResolvedValue([mockTemplate]);
+    getTemplate.mockResolvedValue(mockTemplate);
+    client.createSpace.mockResolvedValue(mockSpace);
 
     window.open = jest.fn();
   });
 
-  it('should show a loader while the initial data is fetching', async () => {
+  it('should show a loading spinner when fetching initial data', async () => {
     build({}, false);
 
     expect(screen.queryByTestId('wizard-loader')).toBeVisible();
 
-    await wait();
+    await waitForElementToBeRemoved(() => screen.queryByTestId('wizard-loader'));
 
     expect(screen.queryByTestId('wizard-loader')).toBeNull();
-  });
-
-  it('should fetch the free space resource, space rate plans, and templates initially', async () => {
-    const service = createResourceService();
-
-    await build();
-
-    expect(getSpaceRatePlans).toBeCalled();
-    expect(service.get).toBeCalledWith('free_space');
-    expect(getTemplatesList).toBeCalled();
   });
 
   it('should show the POC plan', async () => {
@@ -126,20 +109,16 @@ describe('Enterprise Wizard', () => {
   });
 
   it('should not display a disclaimer about POC spaces if the plan is "High Demand"', async () => {
-    isHighDemandEnterprisePlan.mockReturnValue(true);
+    const highDemandBasePlan = Fake.Plan({ customerType: ENTERPRISE_HIGH_DEMAND });
 
-    await build();
+    await build({ basePlan: highDemandBasePlan });
     expect(screen.queryByTestId('enterprise-space-wizard.info')).toBeNull();
   });
 
   it('should hide the create button and show the contact us and close buttons if the user is at their free space limit', async () => {
-    const service = createResourceService();
-    service.get.mockResolvedValueOnce({
-      usage: 1,
-      limits: {
-        maximum: 1,
-      },
-    });
+    when(mockEndpoint)
+      .calledWith(expect.objectContaining({ path: ['resources', 'free_space'] }))
+      .mockResolvedValueOnce(Fake.SpaceResource(1, 1, 'free_space'));
 
     await build();
 
@@ -149,13 +128,9 @@ describe('Enterprise Wizard', () => {
   });
 
   it('should call onClose when the contact us button is clicked', async () => {
-    const service = createResourceService();
-    service.get.mockResolvedValueOnce({
-      usage: 1,
-      limits: {
-        maximum: 1,
-      },
-    });
+    when(mockEndpoint)
+      .calledWith(expect.objectContaining({ path: ['resources', 'free_space'] }))
+      .mockResolvedValueOnce(Fake.SpaceResource(1, 1, 'free_space'));
 
     const onClose = jest.fn();
 
@@ -188,28 +163,18 @@ describe('Enterprise Wizard', () => {
   });
 
   it('should show the reached limit note if the limit is reached', async () => {
-    const service = createResourceService();
-    service.get.mockResolvedValueOnce({
-      usage: 1,
-      limits: {
-        maximum: 1,
-      },
-    });
-
+    when(mockEndpoint)
+      .calledWith(expect.objectContaining({ path: ['resources', 'free_space'] }))
+      .mockResolvedValueOnce(Fake.SpaceResource(1, 1, 'free_space'));
     await build();
 
     expect(screen.queryByTestId('reached-limit-note')).toBeVisible();
   });
 
   it('should show the not enabled note if the limit is zero', async () => {
-    const service = createResourceService();
-    service.get.mockResolvedValueOnce({
-      usage: 1,
-      limits: {
-        maximum: 0,
-      },
-    });
-
+    when(mockEndpoint)
+      .calledWith(expect.objectContaining({ path: ['resources', 'free_space'] }))
+      .mockResolvedValueOnce(Fake.SpaceResource(1, 0, 'free_space'));
     await build();
 
     expect(screen.queryByTestId('poc-not-enabled-note')).toBeVisible();
@@ -227,9 +192,9 @@ describe('Enterprise Wizard', () => {
 
     userEvent.click(screen.queryByTestId('create-space-button'));
 
-    expect(onProcessing).toHaveBeenNthCalledWith(1, true);
-
-    await wait();
+    await waitFor(() => {
+      expect(onProcessing).toHaveBeenNthCalledWith(1, true);
+    });
   });
 
   it('should create a space without a template and call onClose if no template is selected', async () => {
@@ -244,15 +209,15 @@ describe('Enterprise Wizard', () => {
 
     userEvent.click(screen.queryByTestId('create-space-button'));
 
-    await wait();
-
-    expect(createSpace).toHaveBeenCalledWith({
+    expect(utils.createSpace).toHaveBeenCalledWith({
       name: 'my space name',
-      plan: mockFreeSpaceRatePlan,
+      plan: freeSpace,
       organizationId: mockOrganization.sys.id,
     });
 
-    expect(onClose).toBeCalled();
+    await waitFor(() => {
+      expect(onClose).toBeCalled();
+    });
   });
 
   it('should create a space with a template if a template is selected', async () => {
@@ -270,19 +235,17 @@ describe('Enterprise Wizard', () => {
     );
     userEvent.click(screen.getByTestId('create-space-button'));
 
-    await wait();
-
-    expect(createSpaceWithTemplate).toHaveBeenCalledWith({
+    expect(utils.createSpaceWithTemplate).toHaveBeenCalledWith({
       name: 'my space name',
       template: mockTemplate,
-      plan: mockFreeSpaceRatePlan,
+      plan: freeSpace,
       organizationId: mockOrganization.sys.id,
       onTemplateCreationStarted: expect.any(Function),
     });
 
-    expect(onProcessing).toHaveBeenNthCalledWith(2, false);
-
-    await wait();
+    await waitFor(() => {
+      expect(onProcessing).toHaveBeenNthCalledWith(2, false);
+    });
   });
 
   it('should show the progress screen when creating a space with a template, when the template is being created', async () => {
@@ -302,7 +265,7 @@ describe('Enterprise Wizard', () => {
       templateCreationCompleted = resolve;
     });
 
-    createSpaceWithTemplate.mockImplementation(async ({ onTemplateCreationStarted }) => {
+    utils.createSpaceWithTemplate.mockImplementationOnce(async ({ onTemplateCreationStarted }) => {
       await spaceCreationPromise;
 
       onTemplateCreationStarted();
@@ -324,21 +287,18 @@ describe('Enterprise Wizard', () => {
     );
     userEvent.click(screen.getByTestId('create-space-button'));
 
-    await wait();
-
-    expect(screen.queryByTestId('create-template-progress')).toBeNull();
+    await waitFor(() => {
+      expect(screen.queryByTestId('create-template-progress')).toBeNull();
+    });
 
     spaceCreationCompleted();
-    await wait();
-
-    expect(screen.queryByTestId('create-template-progress')).toBeVisible();
-
+    await waitFor(() => {
+      expect(screen.queryByTestId('create-template-progress')).toBeVisible();
+    });
     templateCreationCompleted();
-    await wait();
-
-    expect(onProcessing).toBeCalled();
-
-    await wait();
+    await waitFor(() => {
+      expect(onProcessing).toBeCalled();
+    });
   });
 });
 
@@ -357,6 +317,6 @@ async function build(custom = {}, shouldWait = true) {
   render(<EnterpriseWizard {...props} />);
 
   if (shouldWait) {
-    await wait();
+    await waitForElementToBeRemoved(() => screen.queryByTestId('wizard-loader'));
   }
 }

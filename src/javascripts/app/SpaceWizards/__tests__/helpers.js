@@ -7,7 +7,18 @@ export const FULFILLMENT_STATUSES = {
   OKAY: 'okay',
 };
 
-export function createResourcesForPlan(plan, status) {
+/*
+  Plan is one of the plan fixtures in SpaceWizards/__tests__/fixtures/plan.js
+
+  resourceStatuses is an object that has keys that match the resourceHumanNameMap key, and
+  value of a FULFILLMENT_STATUSES status:
+
+  {
+    environment: FULFILLMENT_STATUSES.REACHED,
+    locale: FULFILLMENT_STATUSES.NEAR
+  }
+ */
+export function createResourcesForPlan(plan, resourceStatuses) {
   return plan.productRatePlanCharges.reduce((resources, charge) => {
     // Some product rate plan charges have no tiers, so we can't make resources from those
     if (!charge.tiers) {
@@ -17,14 +28,17 @@ export function createResourcesForPlan(plan, status) {
     const resourceType = Object.entries(resourceHumanNameMap).find(([, humanName]) => {
       return humanName.toLowerCase() === charge.name.toLowerCase();
     })[0];
+
     const limit = charge.tiers[0].endingUnit;
     let usage;
 
-    if (status === FULFILLMENT_STATUSES.OKAY) {
+    const resourceStatus = resourceStatuses[resourceType];
+
+    if (!resourceStatus || resourceStatus === FULFILLMENT_STATUSES.OKAY) {
       usage = 1;
-    } else if (status === FULFILLMENT_STATUSES.NEAR) {
+    } else if (resourceStatus === FULFILLMENT_STATUSES.NEAR) {
       usage = Math.ceil(limit * 0.9); // 90%
-    } else if (status === FULFILLMENT_STATUSES.REACHED) {
+    } else if (resourceStatus === FULFILLMENT_STATUSES.REACHED) {
       usage = limit;
     }
 

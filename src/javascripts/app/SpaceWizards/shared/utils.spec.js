@@ -62,14 +62,6 @@ jest.mock('states/Navigator', () => ({
   go: jest.fn(),
 }));
 
-jest.mock(
-  'ng/$rootScope',
-  () => ({
-    $broadcast: jest.fn(),
-  }),
-  { virtual: true }
-);
-
 jest.mock('services/SpaceTemplateCreator', () => {
   const createApi = {
     spaceSetup: Promise.resolve(),

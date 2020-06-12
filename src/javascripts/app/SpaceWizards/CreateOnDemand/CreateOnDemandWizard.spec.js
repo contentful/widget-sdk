@@ -1,75 +1,20 @@
 import React from 'react';
-import { render, screen, within, wait, waitForElementToBeRemoved } from '@testing-library/react';
+import { render, screen, within, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { when } from 'jest-when';
 import * as Fake from 'test/helpers/fakeFactory';
 import cleanupNotifications from 'test/helpers/cleanupNotifications';
-import createResourceService from 'services/ResourceService';
-import { getTemplatesList } from 'services/SpaceTemplateLoader';
-import {
-  getSpaceRatePlans,
-  getSubscriptionPlans,
-  calculateTotalPrice,
-} from 'account/pricing/PricingDataProvider';
-import {
-  transformSpaceRatePlans,
-  createSpace,
-  createSpaceWithTemplate,
-  sendParnershipEmail,
-} from '../shared/utils';
-
+import * as utils from '../shared/utils';
+import client from 'services/client';
+import { getTemplatesList, getTemplate } from 'services/SpaceTemplateLoader';
 import CreateOnDemandWizard from './CreateOnDemandWizard';
 
+import { freeSpace } from '../__tests__/fixtures/plans';
+import { mockEndpoint } from 'data/EndpointFactory';
+
 const mockSpace = Fake.Space();
-const mockOrganization = Fake.Organization();
-const mockPlan = Fake.Plan({
-  productPlanType: 'free_space',
-  productRatePlanCharges: [
-    {
-      name: 'Environments',
-      tiers: [{ endingUnit: 10 }],
-    },
-    {
-      name: 'Roles',
-      tiers: [{ endingUnit: 10 }],
-    },
-    {
-      name: 'Locales',
-      tiers: [{ endingUnit: 10 }],
-    },
-    {
-      name: 'Content types',
-      tiers: [{ endingUnit: 10 }],
-    },
-    {
-      name: 'Records',
-      tiers: [{ endingUnit: 10 }],
-    },
-  ],
-  name: 'Enterprise Space',
-  roleSet: {
-    name: 'lol',
-    roles: ['Wizard'],
-  },
-});
-
-const mockTransformedPlan = {
-  current: false,
-  disabled: false,
-  includedResources: mockPlan.productRatePlanCharges.map(({ name, tiers }) => ({
-    type: name,
-    number: tiers[0].endingUnit,
-  })),
-  isFree: true,
-  ...mockPlan,
-};
-
-const mockFreeSpaceResource = {
-  usage: 1,
-  limits: {
-    maximum: 5,
-  },
-};
-
+const mockOrganization = Fake.Organization({ isBillable: true });
+const mockFreeSpaceResource = Fake.SpaceResource(1, 5, 'free_space');
 const mockTemplate = {
   name: 'My template',
   sys: {
@@ -77,52 +22,66 @@ const mockTemplate = {
   },
 };
 
-jest.mock('../shared/utils', () => ({
-  getIncludedResources: jest.fn().mockReturnValue([]),
-  createSpace: jest.fn().mockResolvedValue(),
-  createSpaceWithTemplate: jest.fn().mockResolvedValue(),
-  FREE_SPACE_IDENTIFIER: 'free_space',
-  transformSpaceRatePlans: jest.fn(),
-  getHighestPlan: jest.fn(),
-  SpaceResourceTypes: {
-    Roles: 'Role',
-  },
-  getTooltip: jest.fn().mockReturnValue(null),
-  getRolesTooltip: jest.fn().mockReturnValue(null),
-  sendParnershipEmail: jest.fn().mockResolvedValue(),
-}));
-
-jest.mock('account/pricing/PricingDataProvider', () => ({
-  getSpaceRatePlans: jest.fn(),
-  getSubscriptionPlans: jest.fn().mockResolvedValue({ items: [] }),
-  calculateTotalPrice: jest.fn().mockReturnValue(0),
-}));
+mockEndpoint.mockRejectedValue();
+when(mockEndpoint)
+  .calledWith(expect.objectContaining({ path: ['product_rate_plans'] }))
+  .mockResolvedValue({ items: [freeSpace] })
+  .calledWith(expect.objectContaining({ path: ['plans'] }))
+  .mockResolvedValue({ items: [] })
+  .calledWith(expect.objectContaining({ path: [] }))
+  .mockResolvedValue()
+  .calledWith(expect.objectContaining({ path: ['resources', 'free_space'] }))
+  .mockResolvedValue(mockFreeSpaceResource);
 
 jest.mock('services/SpaceTemplateLoader', () => ({
   getTemplatesList: jest.fn(),
+  getTemplate: jest.fn(),
 }));
 
-jest.mock('services/ResourceService', () => {
-  const service = {
-    get: jest.fn((type) => {
-      if (type === 'free_space') {
-        return mockFreeSpaceResource;
-      }
+jest.mock('services/SpaceTemplateCreator', () => {
+  const creator = {
+    create: jest.fn().mockReturnValue({
+      spaceSetup: Promise.resolve(),
+      contentCreated: Promise.resolve(),
     }),
   };
 
-  return () => service;
+  return {
+    getCreator: () => creator,
+  };
 });
+
+jest.mock('services/client', () => {
+  return {
+    createSpace: jest.fn(),
+  };
+});
+
+jest.mock('services/TokenStore', () => ({
+  refresh: jest.fn().mockResolvedValue(),
+}));
+
+jest.mock('features/api-keys-management', () => ({
+  createApiKeyRepo: () => {
+    const repo = {
+      create: jest.fn().mockResolvedValue(),
+    };
+
+    return repo;
+  },
+}));
+
+jest.spyOn(utils, 'createSpace');
+jest.spyOn(utils, 'createSpaceWithTemplate');
+jest.spyOn(utils, 'sendParnershipEmail');
 
 jest.useFakeTimers();
 
 describe('CreateOnDemandWizard', () => {
   beforeEach(() => {
-    createSpace.mockResolvedValue(mockSpace);
-    createSpaceWithTemplate.mockResolvedValue(mockSpace);
-    getSpaceRatePlans.mockResolvedValue([mockPlan]);
-    transformSpaceRatePlans.mockReturnValue([mockTransformedPlan]);
+    client.createSpace.mockResolvedValue(mockSpace);
     getTemplatesList.mockResolvedValue([mockTemplate]);
+    getTemplate.mockResolvedValue(mockTemplate);
   });
 
   afterEach(cleanupNotifications);
@@ -135,24 +94,6 @@ describe('CreateOnDemandWizard', () => {
     await waitForElementToBeRemoved(() => screen.queryByTestId('wizard-loader'));
 
     expect(screen.queryByTestId('wizard-loader')).toBeNull();
-  });
-
-  it('should get all the data when loading', async () => {
-    const resourceService = createResourceService();
-
-    await build();
-
-    expect(resourceService.get).toBeCalledWith('free_space');
-    expect(getTemplatesList).toBeCalled();
-    expect(getSpaceRatePlans).toBeCalledWith(expect.any(Function));
-    expect(getSubscriptionPlans).toBeCalledWith(expect.any(Function));
-
-    expect(transformSpaceRatePlans).toBeCalledWith({
-      organization: mockOrganization,
-      spaceRatePlans: [mockPlan],
-      freeSpaceResource: mockFreeSpaceResource,
-    });
-    expect(calculateTotalPrice).toBeCalled();
   });
 
   it('should call onClose if the close button is clicked', async () => {
@@ -233,47 +174,43 @@ describe('CreateOnDemandWizard', () => {
       await beginCreatingSpace({ onProcessing });
 
       expect(screen.queryByTestId('close-icon')).toBeNull();
-      expect(onProcessing).toBeCalledWith(true);
 
-      await wait();
+      await waitFor(() => {
+        expect(onProcessing).toBeCalledWith(true);
+      });
     });
 
     it('should attempt to create a space without a template if no template is selected during the flow', async () => {
       await beginCreatingSpace();
 
-      expect(createSpace).toBeCalledWith({
-        name: 'A space name',
-        plan: mockTransformedPlan,
-        organizationId: mockOrganization.sys.id,
+      await waitFor(() => {
+        expect(utils.createSpace).toBeCalledWith({
+          name: 'A space name',
+          plan: expect.objectContaining(freeSpace),
+          organizationId: mockOrganization.sys.id,
+        });
       });
-
-      await wait();
     });
 
     it('should close itself once the non-templated space is successfully created', async () => {
       const onClose = jest.fn();
       await beginCreatingSpace({ onClose });
 
-      await wait();
-
-      expect(onClose).toBeCalled();
+      await waitFor(() => expect(onClose).toBeCalled());
     });
 
     it('should show an error notification and not close if the space creation process fails', async () => {
-      createSpace.mockRejectedValueOnce(new Error('oops'));
+      client.createSpace.mockRejectedValueOnce();
 
       const onProcessing = jest.fn();
       const onClose = jest.fn();
       await beginCreatingSpace({ onClose, onProcessing });
 
-      await wait();
+      await waitFor(() => screen.getByTestId('cf-ui-notification'));
 
       expect(onClose).not.toBeCalled();
       expect(onProcessing).toBeCalledWith(false);
-      expect(await screen.findByTestId('cf-ui-notification')).toHaveAttribute(
-        'data-intent',
-        'error'
-      );
+      expect(screen.getByTestId('cf-ui-notification')).toHaveAttribute('data-intent', 'error');
     });
   });
 
@@ -300,23 +237,22 @@ describe('CreateOnDemandWizard', () => {
       await beginCreatingSpace({ onProcessing });
 
       expect(screen.queryByTestId('close-icon')).toBeNull();
-      expect(onProcessing).toBeCalledWith(true);
 
-      await wait();
+      await waitFor(() => expect(onProcessing).toBeCalledWith(true));
     });
 
     it('should attempt to create a templated space if a template is selected during the flow', async () => {
       await beginCreatingSpace();
 
-      expect(createSpaceWithTemplate).toBeCalledWith({
-        name: 'A templated space name',
-        plan: mockTransformedPlan,
-        template: mockTemplate,
-        organizationId: mockOrganization.sys.id,
-        onTemplateCreationStarted: expect.any(Function),
+      await waitFor(() => {
+        expect(utils.createSpaceWithTemplate).toBeCalledWith({
+          name: 'A templated space name',
+          plan: expect.objectContaining(freeSpace),
+          template: mockTemplate,
+          organizationId: mockOrganization.sys.id,
+          onTemplateCreationStarted: expect.any(Function),
+        });
       });
-
-      await wait();
     });
 
     it('should show the progress screen once the space is created and the template is being created', async () => {
@@ -336,29 +272,34 @@ describe('CreateOnDemandWizard', () => {
         templateCreationCompleted = resolve;
       });
 
-      createSpaceWithTemplate.mockImplementation(async ({ onTemplateCreationStarted }) => {
-        await spaceCreationPromise;
+      utils.createSpaceWithTemplate.mockImplementationOnce(
+        async ({ onTemplateCreationStarted }) => {
+          await spaceCreationPromise;
 
-        onTemplateCreationStarted();
+          onTemplateCreationStarted();
 
-        await templateCreationPromise;
-      });
+          await templateCreationPromise;
+        }
+      );
 
       const onClose = jest.fn();
 
       await beginCreatingSpace({ onClose });
 
-      await wait();
-
-      expect(screen.queryByTestId('create-template-progress')).toBeNull();
+      await waitFor(() => {
+        expect(screen.queryByTestId('create-template-progress')).toBeNull();
+      });
 
       spaceCreationCompleted();
-      await wait();
 
-      expect(screen.queryByTestId('create-template-progress')).toBeVisible();
+      await waitFor(() => {
+        expect(screen.queryByTestId('create-template-progress')).toBeVisible();
+      });
 
       templateCreationCompleted();
-      await wait();
+      await waitFor(() => {
+        expect(screen.getByTestId('get-started-button')).not.toHaveAttribute('disabled');
+      });
 
       userEvent.click(screen.getByTestId('get-started-button'));
 
@@ -370,29 +311,26 @@ describe('CreateOnDemandWizard', () => {
 
       await beginCreatingSpace({ onProcessing });
 
-      await wait();
-
-      expect(onProcessing).toBeCalledWith(false);
+      await waitFor(() => {
+        expect(onProcessing).toBeCalledWith(false);
+      });
     });
 
     it('should show an error notification if the space creation process fails', async () => {
-      createSpaceWithTemplate.mockRejectedValueOnce(new Error('oops'));
+      client.createSpace.mockRejectedValueOnce();
 
       const onProcessing = jest.fn();
       await beginCreatingSpace({ onProcessing });
 
-      await wait();
+      await waitFor(() => screen.getByTestId('cf-ui-notification'));
 
       expect(onProcessing).toBeCalledWith(false);
-      expect(await screen.findByTestId('cf-ui-notification')).toHaveAttribute(
-        'data-intent',
-        'error'
-      );
+      expect(screen.getByTestId('cf-ui-notification')).toHaveAttribute('data-intent', 'error');
     });
   });
 
   describe('partner plans', () => {
-    const mockPartnerSpacePlan = Object.assign({}, mockTransformedPlan, {
+    const mockPartnerSpacePlan = Object.assign({}, freeSpace, {
       productPlanType: 'space',
       productType: 'partner',
     });
@@ -425,32 +363,36 @@ describe('CreateOnDemandWizard', () => {
     };
 
     beforeEach(() => {
-      transformSpaceRatePlans.mockReturnValueOnce([mockPartnerSpacePlan]);
+      when(mockEndpoint)
+        .calledWith(expect.objectContaining({ path: ['product_rate_plans'] }))
+        .mockResolvedValueOnce({ items: [mockPartnerSpacePlan] });
     });
 
     it('should require the client name and project description before submitting, and call sendParnershipEmail with the details on submission', async () => {
       const onClose = jest.fn();
 
       await beginCreatingSpace({ onClose });
-      await wait();
-
-      expect(sendParnershipEmail).toBeCalledWith(mockSpace.sys.id, {
-        clientName: 'Cyberdyne Systems',
-        projectDescription: 'Skynet',
-        estimatedDeliveryDate: expect.any(String),
+      await waitFor(() => {
+        expect(utils.sendParnershipEmail).toBeCalledWith(mockSpace.sys.id, {
+          clientName: 'Cyberdyne Systems',
+          projectDescription: 'Skynet',
+          estimatedDeliveryDate: expect.any(String),
+        });
+        expect(onClose).toBeCalled();
       });
-      expect(onClose).toBeCalled();
     });
 
     it('should not care if sendParnershipEmail throws', async () => {
-      sendParnershipEmail.mockRejectedValueOnce(new Error('oops'));
+      when(mockEndpoint)
+        .calledWith(expect.objectContaining({ path: ['partner_projects'] }))
+        .mockRejectedValueOnce();
 
       const onClose = jest.fn();
       await beginCreatingSpace({ onClose });
-      await wait();
-
-      expect(sendParnershipEmail).toBeCalled();
-      expect(onClose).toBeCalled();
+      await waitFor(() => {
+        expect(utils.sendParnershipEmail).toBeCalled();
+        expect(onClose).toBeCalled();
+      });
     });
   });
 });

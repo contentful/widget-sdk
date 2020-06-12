@@ -1,58 +1,50 @@
 import React from 'react';
 import { render, screen, within, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { when } from 'jest-when';
 import userEvent from '@testing-library/user-event';
 import ChangeOnDemandWizard from './ChangeOnDemandWizard';
 import * as Fake from 'test/helpers/fakeFactory';
-import {
-  getSpaceRatePlans,
-  getSubscriptionPlans,
-  calculateTotalPrice,
-} from 'account/pricing/PricingDataProvider';
+import * as PricingDataProvider from 'account/pricing/PricingDataProvider';
 import * as utils from '../shared/utils';
-import createResourceService from 'services/ResourceService';
 import cleanupNotifications from 'test/helpers/cleanupNotifications';
-import { currentMicroSpace, mediumSpace, freeSpace } from '../__test__/fixtures/plans';
-import { createResourcesForPlan, FULFILLMENT_STATUSES } from '../__test__/helpers';
+import { mediumSpaceCurrent, largeSpace, freeSpace } from '../__tests__/fixtures/plans';
+import { createResourcesForPlan, FULFILLMENT_STATUSES } from '../__tests__/helpers';
+import { mockEndpoint } from 'data/EndpointFactory';
 
 const mockOrganization = Fake.Organization({ isBillable: true });
 const mockSpace = Fake.Space();
 
 const mockFreeSpaceResource = Fake.OrganizationResource(1, 5, 'free_space');
 
-const mockPlans = [currentMicroSpace, mediumSpace];
-const mockResources = createResourcesForPlan(currentMicroSpace, FULFILLMENT_STATUSES.REACHED);
+const mockPlans = [mediumSpaceCurrent, largeSpace];
+const mockResources = createResourcesForPlan(mediumSpaceCurrent, {
+  environment: FULFILLMENT_STATUSES.REACHED,
+  locale: FULFILLMENT_STATUSES.NEAR,
+});
 
 jest.spyOn(utils, 'transformSpaceRatePlans');
-jest.spyOn(utils, 'changeSpacePlan').mockImplementation(async () => {});
+jest.spyOn(utils, 'changeSpacePlan');
+jest.spyOn(PricingDataProvider, 'getSubscriptionPlans');
+jest.spyOn(PricingDataProvider, 'getSpaceRatePlans');
+jest.spyOn(PricingDataProvider, 'calculateTotalPrice');
+jest.spyOn(PricingDataProvider, 'changeSpacePlan');
 
-jest.mock('account/pricing/PricingDataProvider', () => ({
-  getSpaceRatePlans: jest.fn(),
-  getSubscriptionPlans: jest.fn().mockResolvedValue({ items: [] }),
-  calculateTotalPrice: jest.fn().mockReturnValue(0),
-}));
-
-jest.mock('services/ResourceService', () => {
-  const service = {
-    get: jest.fn((type) => {
-      if (type === 'free_space') {
-        return mockFreeSpaceResource;
-      }
-    }),
-    getAll: jest.fn(async () => {
-      return mockResources;
-    }),
-  };
-
-  return () => service;
-});
+mockEndpoint.mockRejectedValue();
+when(mockEndpoint)
+  .calledWith(expect.objectContaining({ path: ['product_rate_plans'] }))
+  .mockResolvedValue({ items: mockPlans })
+  .calledWith(expect.objectContaining({ path: ['plans'] }))
+  .mockResolvedValue({ items: [] })
+  .calledWith(expect.objectContaining({ path: [] }))
+  .mockResolvedValue()
+  .calledWith(expect.objectContaining({ path: ['resources'] }))
+  .mockResolvedValue({ items: mockResources })
+  .calledWith(expect.objectContaining({ path: ['resources', 'free_space'] }))
+  .mockResolvedValue(mockFreeSpaceResource);
 
 jest.useFakeTimers();
 
 describe('ChangeOnDemandWizard', () => {
-  beforeEach(() => {
-    getSpaceRatePlans.mockResolvedValue(mockPlans);
-  });
-
   afterEach(cleanupNotifications);
 
   it('should show the loading spinner initially', async () => {
@@ -63,23 +55,6 @@ describe('ChangeOnDemandWizard', () => {
     await waitForElementToBeRemoved(() => screen.queryByTestId('wizard-loader'));
 
     expect(screen.queryByTestId('wizard-loader')).toBeNull();
-  });
-
-  it('should fetch all the data initially', async () => {
-    const service = createResourceService();
-    await build();
-
-    expect(service.get).toBeCalledWith('free_space');
-    expect(service.getAll).toBeCalled();
-    expect(getSubscriptionPlans).toBeCalledWith(expect.any(Function));
-    expect(getSpaceRatePlans).toBeCalledWith(expect.any(Function), mockSpace.sys.id);
-
-    expect(utils.transformSpaceRatePlans).toBeCalledWith({
-      organization: mockOrganization,
-      spaceRatePlans: mockPlans,
-      freeSpaceResource: mockFreeSpaceResource,
-    });
-    expect(calculateTotalPrice).toBeCalled();
   });
 
   it('should show the SpacePlanSelector initially and disable the confirmation tab', async () => {
@@ -101,15 +76,19 @@ describe('ChangeOnDemandWizard', () => {
   it('should recommend the bigger plan if there is a plan to recommend', async () => {
     await build();
 
-    // The medium space should be recommended
+    // The perf 1x space should be recommended
     const mediumPlanElement = screen.getAllByTestId('space-plan-item').find((ele) => {
-      return within(ele).getByTestId('space-plan-name').textContent === 'Medium';
+      return within(ele).getByTestId('space-plan-name').textContent === largeSpace.name;
     });
     expect(mediumPlanElement).toHaveAttribute('class', expect.stringMatching('recommendedPlan'));
   });
 
   it('shouid not recommend the bigger plan is there is no plan to recommend', async () => {
-    getSpaceRatePlans.mockClear().mockResolvedValue([currentMicroSpace, freeSpace]);
+    when(mockEndpoint)
+      .calledWith(expect.objectContaining({ path: ['product_rate_plans'] }))
+      .mockResolvedValueOnce({
+        items: [mediumSpaceCurrent, freeSpace],
+      });
 
     await build();
 
@@ -148,26 +127,16 @@ describe('ChangeOnDemandWizard', () => {
 
     expect(utils.changeSpacePlan).toBeCalledWith({
       space: mockSpace,
-      plan: utils.transformSpaceRatePlan({
-        organization: mockOrganization,
-        plan: mockPlans[1],
-        freeSpaceResource: mockFreeSpaceResource,
-      }),
+      plan: expect.objectContaining(mockPlans[1]),
     });
 
     await waitFor(() => expect(onClose).toBeCalled());
-
-    expect(onClose).toBeCalledWith(
-      utils.transformSpaceRatePlan({
-        organization: mockOrganization,
-        plan: mockPlans[1],
-        freeSpaceResource: mockFreeSpaceResource,
-      })
-    );
   });
 
-  it('should not call onClose and should trigger a notification if changeSpacePlan rejects', async () => {
-    utils.changeSpacePlan.mockRejectedValueOnce(new Error());
+  it('should not call onClose and should trigger a notification if the plans endpoint rejects', async () => {
+    when(mockEndpoint)
+      .calledWith(expect.objectContaining({ path: [] }))
+      .mockRejectedValueOnce(new Error());
 
     const onClose = jest.fn();
     await build({ onClose });
