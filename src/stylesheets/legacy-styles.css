@@ -16,7 +16,7 @@
   --color-text-light: #606C7C;
   --color-text-lightest: #6A7889;
 
-  --color-contrast-dark: #0C141C;
+  --color-contrast-dark: #0c141c;
   --color-contrast-light: #263545;
 
   --color-blue-dark: #174E8C;
@@ -2278,7 +2278,7 @@ pre,
     right: 0;
     bottom: 0;
     left: 0;
-    background: #0c141c;
+    background: var(--color-contrast-dark);
     opacity: 0.8;
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
     filter: alpha(opacity=80);
@@ -2713,7 +2713,7 @@ pre,
     top: 0;
     left: 0;
     z-index: 10;
-    background: #0c141c;
+    background: var(--color-contrast-dark);
     width: 100%;
     height: 100%;
     cursor: pointer;
@@ -4471,7 +4471,7 @@ pre,
   }
   .app-top-bar__sidepanel-trigger:hover,
   .app-top-bar__account-menu-trigger:hover {
-    background-color: #0c141c;
+    background-color: var(--color-contrast-dark);
   }
   .app-top-bar__sidepanel-trigger {
     height: 100%;
