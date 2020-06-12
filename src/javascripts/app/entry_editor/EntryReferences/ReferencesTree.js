@@ -22,14 +22,14 @@ const styles = {
   }),
   listItem: css({
     position: 'relative',
-    margin: '0',
-    '&:after': {
+    '&:not(:last-child):before': {
       content: '""',
       position: 'absolute',
-      bottom: '0',
-      width: '20px',
-      height: '20px',
-      background: 'white',
+      borderLeft: `1px solid ${tokens.colorElementMid}`,
+      height: 'calc(100% + 10px)',
+      left: '-10px',
+      top: '-40px',
+      zIndex: '-1',
     },
   }),
   parentList: css({
