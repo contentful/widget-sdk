@@ -105,7 +105,13 @@ function ReferenceCards({
 
     // deleted entity is still referenced
     if (entity.sys.type === 'Link') {
-      return <ReferenceCard entity={entity} key={entity.sys.id} isUnresolved />;
+      return (
+        <ReferenceCard
+          entity={entity}
+          key={`deleted-${entityIndexInTree}-${entity.sys.id}`}
+          isUnresolved
+        />
+      );
     }
 
     // eslint-disable-next-line
@@ -115,9 +121,9 @@ function ReferenceCards({
       1;
 
     return (
-      <React.Fragment key={`container-${entity.sys.id}`}>
+      <React.Fragment key={`container-${entityIndexInTree}-${entity.sys.id}`}>
         <ReferenceCard
-          key={entity.sys.id}
+          key={`entity-${entityIndexInTree}-${entity.sys.id}`}
           entity={entity}
           onClick={onReferenceCardClick}
           isCircular={isCircular}
