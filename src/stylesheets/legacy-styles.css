@@ -2921,7 +2921,7 @@ pre,
     color: var(--color-text-base);
     line-height: 1.5;
     background-color: var(--color-blue-lightest);
-    border: 1px solid #c5d2d8;
+    border: 1px solid var(--color-element-mid);
   }
   .note-box--info > *:first-child {
     padding-top: 0;
@@ -3266,7 +3266,7 @@ pre,
     color: var(--color-text-base);
     line-height: 1.5;
     background-color: var(--color-blue-lightest);
-    border: 1px solid #c5d2d8;
+    border: 1px solid var(--color-element-mid);
     margin: 0 0 2.571428571428572em;
   }
   .advice__note > *:first-child {
@@ -3634,7 +3634,7 @@ pre,
     color: var(--color-text-base);
     line-height: 1.5;
     background-color: var(--color-blue-lightest);
-    border: 1px solid #c5d2d8;
+    border: 1px solid var(--color-element-mid);
     margin-top: 28px;
     width: auto;
   }
@@ -6566,7 +6566,7 @@ pre,
     height: auto !important;
     min-height: 235px;
     max-height: 235px;
-    border: 1px solid #c5d2d8;
+    border: 1px solid var(--color-element-mid);
     padding: 12.5px 0;
     background-color: var(--color-element-lightest);
   }
@@ -6603,7 +6603,7 @@ pre,
   }
   .user-role-selector {
     display: block;
-    border: 1px solid #c5d2d8;
+    border: 1px solid var(--color-element-mid);
     background-color: var(--color-element-lightest);
     max-height: 235px;
     overflow: auto;
@@ -7321,7 +7321,7 @@ pre,
     margin-top: 19px;
     margin-bottom: 29px;
     padding-left: 1em;
-    border-left: 3px solid #c5d2d8;
+    border-left: 3px solid var(--color-element-mid);
     -webkit-transition: border-color 0.18s linear;
     transition: border-color 0.18s linear;
   }
@@ -9912,7 +9912,7 @@ pre,
     position: relative;
   }
   .extension-examples {
-    border: 1px solid #c5d2d8;
+    border: 1px solid var(--color-element-mid);
     border-width: 1px 0;
     background-color: var(--color-element-lightest);
     width: 600px;
@@ -9922,7 +9922,7 @@ pre,
   .extension-examples__item {
     color: var(--color-text-dark);
     padding: 25px 25px 20px;
-    border: 1px solid #c5d2d8;
+    border: 1px solid var(--color-element-mid);
     border-top-width: 0;
     display: -webkit-box;
     display: -ms-flexbox;
