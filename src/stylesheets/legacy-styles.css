@@ -16,6 +16,7 @@
 
   --color-blue-base: #1D61AF;
   --color-blue-mid: #2C75C9;
+  --color-blue-light: #84B9F5;
 
   --color-green-mid: #0C9869;
   --color-green-base: #1D7D58;
@@ -221,7 +222,7 @@ pre,
   .tab-list [role=tab]:hover:before {
     content: "";
     position: absolute;
-    background: #a7e2ff;
+    background: var(--color-blue-light);
     bottom: 0;
     left: 0;
     right: 0;
@@ -4544,7 +4545,7 @@ pre,
   .field-dialog__tab-list [role=tab]:hover:before {
     content: "";
     position: absolute;
-    background: #a7e2ff;
+    background: var(--color-blue-light);
     bottom: 0;
     left: 0;
     right: 0;
@@ -5906,7 +5907,7 @@ pre,
   .create-space-wizard__navigation [role=tab]:hover:before {
     content: "";
     position: absolute;
-    background: #a7e2ff;
+    background: var(--color-blue-light);
     bottom: 0;
     left: 0;
     right: 0;
