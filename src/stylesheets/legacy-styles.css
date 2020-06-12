@@ -34,6 +34,7 @@
 
   --color-orange-base: #D28004;
   --color-orange-mid: #FA9A05;
+  --color-orange-light: #FCC169;
 
   --color-white: #FFFFFF;
 
@@ -4674,10 +4675,10 @@ pre,
   }
   .result-list .draft,
   .result-list .pending {
-    color: #e6ae17;
+    color: var(--color-orange-light);
   }
   .result-list .archived {
-    color: #f2602e;
+    color: var(--color-red-mid);
   }
   .result-list .cell-select {
     cursor: default;
@@ -6666,7 +6667,7 @@ pre,
   }
   .form-inline-error {
     display: inline-block;
-    color: #f2602e;
+    color: var(--color-red-mid);
     padding-top: 0.3em;
     font-size: 0.8em;
     line-height: 1;
@@ -6678,8 +6679,8 @@ pre,
     display: block;
     text-align: center;
     padding: 0.6em 6px;
-    background: #f15a26;
-    border: 1px solid #e4450e;
+    background: var(--color-red-mid);
+    border: 1px solid var(--color-red-mid);
     color: var(--color-white);
     -webkit-box-shadow: 0 1px 1px rgba(255,255,255,0.25) inset;
     box-shadow: 0 1px 1px rgba(255,255,255,0.25) inset;
