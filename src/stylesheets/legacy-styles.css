@@ -1215,7 +1215,7 @@ pre,
     background-color: var(--color-element-light);
     background-image: url("../javascripts/svg/dd-arrow-down-disabled.svg");
     border: 1px solid var(--color-element-mid);
-    color: var(--color-text-base);;
+    color: var(--color-text-base);
     cursor: not-allowed;
   }
   .cfnext-select-box[aria-invalid=true] {
@@ -3438,9 +3438,7 @@ pre,
   .dropdown-menu-item.hover {
     cursor: pointer;
     color: var(--color-white);
-    background: #3e97d6;
-    background-image: -webkit-gradient(linear, left top, left bottom, from(#3e97d6), to(#3090d3));
-    background-image: linear-gradient(#3e97d6, #3090d3);
+    background: var(--color-blue-mid);
   }
   .dropdown-menu-item:hover a:link,
   .dropdown-menu-item.hover a:link {
@@ -3477,9 +3475,7 @@ pre,
   .dropdown-menu-item--label.hover {
     cursor: pointer;
     color: var(--color-white);
-    background: #3e97d6;
-    background-image: -webkit-gradient(linear, left top, left bottom, from(#3e97d6), to(#3090d3));
-    background-image: linear-gradient(#3e97d6, #3090d3);
+    background: var(--color-blue-mid);
   }
   .dropdown-menu-item--label:hover a:link,
   .dropdown-menu-item--label.hover a:link {
@@ -3519,9 +3515,7 @@ pre,
   .dropdown-menu-item--no-highlight.hover {
     cursor: pointer;
     color: var(--color-white);
-    background: #3e97d6;
-    background-image: -webkit-gradient(linear, left top, left bottom, from(#3e97d6), to(#3090d3));
-    background-image: linear-gradient(#3e97d6, #3090d3);
+    background: var(--color-blue-mid);
   }
   .dropdown-menu-item--no-highlight:hover a:link,
   .dropdown-menu-item--no-highlight.hover a:link {
@@ -4719,7 +4713,7 @@ pre,
     color: #33ca6c;
   }
   .result-list .updated {
-    color: #3e97d6;
+    color: var(--color-blue-mid);
   }
   .result-list .draft,
   .result-list .pending {
@@ -4825,7 +4819,7 @@ pre,
     text-overflow: ellipsis;
   }
   .result-list tbody button {
-    color: #3e97d6;
+    color: var(--color-blue-mid);
   }
   .result-list .linked-entries,
   .result-list .linked-assets {
@@ -12012,7 +12006,7 @@ pre,
   .subscription-plan .price {
     text-align: center;
     width: 25%;
-    color: #3e97d6;
+    color: var(--color-blue-mid);
   }
   .subscription-plan .aligned-number {
     display: inline;
@@ -12052,7 +12046,7 @@ pre,
     color: var(--color-text-mid);
   }
   .price .plan-big-row {
-    color: #3e97d6;
+    color: var(--color-blue-mid);
   }
   .plan-big-row .fa-info-circle {
     font-size: 14px;
@@ -12067,7 +12061,7 @@ pre,
     font-weight: lighter;
     line-height: 14px;
     font-size: 14px;
-    color: #3e97d6;
+    color: var(--color-blue-mid);
   }
   .plan-details {
     clear: both;
@@ -12088,13 +12082,13 @@ pre,
     height: 20px;
   }
   .plan-details .details-feature .fa-check {
-    color: #3e97d6;
+    color: var(--color-blue-mid);
   }
   .plan-details .details-number {
     font-weight: bold;
   }
   .plan-details .details-period {
-    color: #3e97d6;
+    color: var(--color-blue-mid);
     text-transform: uppercase;
     letter-spacing: 1px;
     font-size: 85%;
@@ -12151,7 +12145,7 @@ pre,
     position: relative;
     top: 2px;
     font-size: 150%;
-    color: #3e97d6;
+    color: var(--color-blue-mid);
     text-shadow: 0 0 2px var(--color-contrast-dark);
   }
   .plan-properties {
