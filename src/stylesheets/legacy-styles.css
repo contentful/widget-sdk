@@ -30,7 +30,8 @@
 
   --color-red-mid: #CC3C52;
 
-  --color-oragne-base: #D28004;
+  --color-orange-base: #D28004;
+  --color-orange-mid: #FA9A05;
 
   --color-white: #FFFFFF;
 
@@ -1834,7 +1835,7 @@ pre,
     background: var(--color-green-mid);
   }
   .webhook-call__status-indicator[data-status="warning"] {
-    background: var(--color-oragne-base);
+    background: var(--color-orange-base);
   }
   .webhook-call__status-indicator[data-status="failure"] {
     background: var(--color-red-mid);
@@ -2062,7 +2063,7 @@ pre,
     height: 70px;
   }
   .webhook-template-item--3-lines small:last-child {
-    color: #ea9005;
+    color: var(--color-orange-mid);
   }
   .webhook-template-item--active {
     background-color: var(--color-element-light);
@@ -5530,7 +5531,7 @@ pre,
   }
   .space-plans-list__item--micro:before {
     background-color: #fba012;
-    border: 1px solid #ea9005;
+    border: 1px solid var(--color-orange-mid);
   }
   .space-plans-list__item--small:before {
     background-color: #f05751;
@@ -5971,7 +5972,7 @@ pre,
     color: inherit;
   }
   .cfnext-form__field-warning {
-    color: var(--color-oragne-base);
+    color: var(--color-orange-base);
   }
   .cfnext-form__fieldset legend {
     width: 100%;
@@ -7478,7 +7479,7 @@ pre,
   }
   .entity-sidebar__state-indicator[data-state="draft"] {
     background: #fba012;
-    border: 1px solid var(--color-oragne-base);
+    border: 1px solid var(--color-orange-base);
   }
   .entity-sidebar__state-indicator[data-state="published"] {
     background: var(--color-green-mid);
@@ -8835,7 +8836,7 @@ pre,
     border-radius: 2px;
   }
   .content-preview-sidebar__token__alt {
-    color: var(--color-oragne-base);
+    color: var(--color-orange-base);
   }
   .home {
     position: absolute;
