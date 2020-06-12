@@ -50,7 +50,7 @@ const SVGs = {
 
 const colorsConfig = {
   white: tokens.colorWhite,
-  green: tokens.colorGreenBase,
+  green: tokens.colorGreenMid,
 };
 
 const sizesConfig = {
