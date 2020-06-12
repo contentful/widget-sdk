@@ -11071,7 +11071,7 @@ pre,
     display: flex;
     background: var(--color-white);
     border: 1px solid transparent;
-    border-color: var(--color-element-lightest);
+    border-color: var(--color-element-mid);
     height: 40px;
     overflow: hidden;
   }
