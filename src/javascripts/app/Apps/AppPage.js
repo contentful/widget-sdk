@@ -320,7 +320,7 @@ export default class AppRoute extends Component {
             Uninstall
           </Button>
         )}
-        {appLoaded && isInstalled && (
+        {appLoaded && isInstalled && this.hasConfigLocation() && (
           <Button
             buttonType="primary"
             onClick={() => this.update(BUSY_STATE_UPDATE)}
