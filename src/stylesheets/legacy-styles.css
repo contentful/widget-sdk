@@ -353,7 +353,7 @@ pre,
   a.knowledge-base-link {
     display: inline-block;
     position: relative;
-    color: #3072be;
+    color: var(--color-blue-mid);
     text-decoration: underline;
     cursor: pointer;
   }
@@ -871,7 +871,7 @@ pre,
     border: 1px solid transparent;
     border-radius: 2px;
     line-height: 18px;
-    color: #3072be;
+    color: var(--color-blue-mid);
     text-decoration: underline;
   }
   .btn-plain:hover {
@@ -1631,7 +1631,7 @@ pre,
   a.text-link,
   a.text-link--standard,
   a.text-link--neutral {
-    color: #3072be;
+    color: var(--color-blue-mid);
   }
   .text-link:disabled,
   .text-link--standard:disabled,
@@ -5545,11 +5545,11 @@ pre,
   }
   .space-plans-list__item--partner-space-plan:before {
     background-color: var(--color-blue-mid);
-    border: 1px solid #3072be;
+    border: 1px solid var(--color-blue-mid);
   }
   .space-plans-list__item--proof-of-concept:before {
     background-color: var(--color-blue-mid);
-    border: 1px solid #3072be;
+    border: 1px solid var(--color-blue-mid);
   }
   .space-plans-list__item--proof-of-concept:hover {
     border: 1px solid var(--color-element-lightest);
@@ -9659,11 +9659,11 @@ pre,
   .tea-onboarding__alt-step-cta {
     display: block;
     font-weight: bold;
-    color: #3072be;
+    color: var(--color-blue-mid);
     cursor: pointer;
   }
   .tea-onboarding__alt-step-cta:hover {
-    color: #3072be;
+    color: var(--color-blue-mid);
   }
   .usage__period-selector {
     display: -webkit-box;
@@ -10483,7 +10483,7 @@ pre,
     margin-top: -10px;
     font-size: 14px;
     line-height: 19px;
-    color: ;
+    color: var(--color-blue-mid);
   }
   .modern-stack-onboarding--code-wrapper {
     margin-top: 1.5rem;
@@ -10880,8 +10880,7 @@ pre,
   .search__select-value .search__select:hover,
   .search__select-value .search__select:focus,
   .search__select-value .search__select:active {
-    background-image: -webkit-gradient(linear, right top, left top, from(#3072be), to(var(--color-blue-mid)));
-    background-image: linear-gradient(to left, #3072be, var(--color-blue-mid));
+    background-color: var(--color-blue-mid);
     cursor: pointer;
   }
   .search__select-operator {
@@ -10915,7 +10914,7 @@ pre,
     background-color: var(--color-white);
     border-radius: 10em;
     z-index: 10;
-    color: #3072be;
+    color: var(--color-blue-mid);
     border: 1px solid transparent;
     text-align-last: center;
     font-size: 85%;
@@ -10923,15 +10922,15 @@ pre,
   .search__select-operator .search__select:hover,
   .search__select-operator .search__select:focus,
   .search__select-operator .search__select:active {
-    border: 1px solid #3072be;
+    border: 1px solid var(--color-blue-mid);
     cursor: pointer;
   }
   .search__select-operator .search__select:focus::-ms-value {
     background-color: transparent;
-    color: #3072be;
+    color: var(--color-blue-mid);
   }
   .search__select-operator .search__select option {
-    color: #3072be;
+    color: var(--color-blue-mid);
     background-color: var(--color-white);
   }
   .search__datepicker {
@@ -10954,8 +10953,7 @@ pre,
   .search__input-text:hover,
   .search__input-text:focus,
   .search__input-text:active {
-    background-image: -webkit-gradient(linear, right top, left top, from(#3072be), to(var(--color-blue-mid)));
-    background-image: linear-gradient(to left, #3072be, var(--color-blue-mid));
+    background-color: var(--color-blue-mid);
   }
   .search__input-text .search__input-spacer {
     min-width: 50px;
