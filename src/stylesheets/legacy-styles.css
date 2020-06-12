@@ -2910,7 +2910,6 @@ pre,
     top: 13px;
   }
   .note-box.note-box--info,
-  .note-box.note-box--success,
   .note-box.note-box--warning {
     margin: 1.285714285714286em;
   }
@@ -2954,50 +2953,6 @@ pre,
   }
   .note-box--info:before {
     background-image: url("../javascripts/svg/note-info.svg");
-  }
-  .note-box--success {
-    clear: both;
-    overflow: hidden;
-    position: relative;
-    padding: 12px 12px 12px 42px;
-    color: var(--color-text-base);
-    line-height: 1.5;
-    background-color: #f4fffb;
-    border: 1px solid #b7ded0;
-  }
-  .note-box--success > *:first-child {
-    padding-top: 0;
-    margin-top: 0;
-  }
-  .note-box--success > p:last-of-type {
-    margin-bottom: 0;
-    padding-bottom: 0;
-  }
-  .note-box--success > h3 {
-    color: var(--color-text-dark);
-    font-size: 14px;
-    line-height: inherit;
-    text-transform: none;
-    margin: 0;
-  }
-  .note-box--success a {
-    text-decoration: underline;
-    cursor: pointer;
-  }
-  .note-box--success:before {
-    position: absolute;
-    content: '';
-    background-repeat: no-repeat;
-    height: 18px;
-    width: 18px;
-    left: 12px;
-    top: 13px;
-  }
-  .note-box--success a {
-    color: var(--color-green-mid);
-  }
-  .note-box--success:before {
-    background-image: url("../javascripts/svg/note-success.svg");
   }
   .note-box--warning {
     clear: both;
