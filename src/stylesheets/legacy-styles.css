@@ -17,6 +17,7 @@
   --color-text-lightest: #6A7889;
 
   --color-contrast-dark: #0C141C;
+  --color-contrast-light: #263545;
 
   --color-blue-dark: #174E8C;
   --color-blue-base: #1D61AF;
@@ -2858,7 +2859,7 @@ pre,
   .app-top-bar__outer-wrapper {
     display: flex;
     width: 100%;
-    background-color: #263545;
+    background-color: var(--color-contrast-light);
   }
 
   .app-top-bar__inner-wrapper {
@@ -4460,7 +4461,7 @@ pre,
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    background-color: #263545;
+    background-color: var(--color-contrast-light);
   }
   .app-top-bar__sidepanel-trigger,
   .app-top-bar__account-menu-trigger {
@@ -9702,7 +9703,7 @@ pre,
     line-height: 21px;
   }
   .usage-page__api-chart-tooltip {
-    background-color: #263545;
+    background-color: var(--color-contrast-light);
   }
   .usage-page__api-chart-tooltip .value {
     font-size: 14px;
@@ -10767,8 +10768,8 @@ pre,
     box-shadow: 0 0 0 1px var(--color-element-dark);
   }
   .search__filter-pill:focus {
-    -webkit-box-shadow: 0 0 0 1px #263545;
-    box-shadow: 0 0 0 1px #263545;
+    -webkit-box-shadow: 0 0 0 1px var(--color-contrast-light);
+    box-shadow: 0 0 0 1px var(--color-contrast-light);
   }
   .search__filter-pill-label {
     background-color: var(--color-element-light);
@@ -11012,7 +11013,7 @@ pre,
   }
   .line-chart--empty,
   .line-chart--loading {
-    outline-color: #263545;
+    outline-color: var(--color-contrast-light);
   }
   .line-chart--empty .line-chart__mount,
   .line-chart--loading .line-chart__mount {
