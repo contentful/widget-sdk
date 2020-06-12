@@ -12,7 +12,7 @@ export default function PluralizeEntityMessage({ entityType, count, testId, rest
   const plural = endsWithY ? entityType.replace(/(.*)(y|Y)$/, '$1ies') : `${entityType}s`;
 
   return (
-    <HelpText data-test-id={testId}>
+    <HelpText testId={testId}>
       {count} {count === 1 ? entityType : plural} {restOfTheMsg}
     </HelpText>
   );
