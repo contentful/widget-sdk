@@ -10,6 +10,7 @@ export const ENTITY_EDITOR_CMA_EXPERIMENT =
 export const ACCESS_TOOLS = 'feature-ogg-02-2020-access-tools';
 export const APP_MANAGEMENT_VIEWS = 'feature-ext-04-2020-app-backends';
 export const COMMUNITY_PLAN_FLAG = 'ogg-05-2020-enable-community-platform-in-gk';
+export const PAYING_PREV_V2_ORG = 'feature-ogg-06-2020-v2-team-user';
 
 // Gatekeeper Product Catalog Flags
 export const ENVIRONMENT_USAGE_ENFORCEMENT = 'environment_usage_enforcements';
