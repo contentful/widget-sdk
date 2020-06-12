@@ -29,6 +29,7 @@
   --color-green-base: #1D7D58;
   --color-green-dark: #1C583F;
 
+  --color-red-lightest: #FBE3E2;
   --color-red-mid: #CC3C52;
   --color-red-base: #A03343;
 
@@ -2963,7 +2964,7 @@ pre,
     padding: 12px 12px 12px 42px;
     color: var(--color-text-base);
     line-height: 1.5;
-    background-color: #fbe3e2;
+    background-color: var(--color-red-lightest);
     border: 1px solid #d0a2a0;
   }
   .note-box--warning > *:first-child {
@@ -10405,7 +10406,7 @@ pre,
     line-height: 16px;
   }
   .modern-stack-onboarding--data-flow-elem-title__red {
-    background-color: #fbe3e2;
+    background-color: var(--color-red-lightest);
   }
   .modern-stack-onboarding--data-flow-elem-title__green {
     background-color: #f4fffb;
