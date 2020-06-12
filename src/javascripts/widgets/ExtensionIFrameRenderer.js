@@ -8,7 +8,13 @@ import ExtensionDevelopmentMode from './ExtensionDevelopmentMode';
 import ExtensionIFrameChannel from './ExtensionIFrameChannel';
 import ExtensionAPI from './ExtensionAPI';
 
-const SANDBOX = 'allow-scripts allow-popups allow-popups-to-escape-sandbox allow-forms';
+const SANDBOX = [
+  'allow-scripts',
+  'allow-popups',
+  'allow-popups-to-escape-sandbox',
+  'allow-forms',
+  'allow-downloads',
+].join(' ');
 
 function isAppDomain(src) {
   const protocol = ['//', 'http://', 'https://'].find((p) => src.startsWith(p));
