@@ -13,6 +13,7 @@
   --color-text-dark: #192532;
   --color-text-mid: #536171;
   --color-text-base: #283848;
+  --color-text-light: #606C7C;
   --color-text-lightest: #6A7889;
 
   --color-blue-dark: #174E8C;
@@ -1570,7 +1571,7 @@ pre,
     margin-right: 0;
   }
   .code-block .s1 {
-    color: #e34e48;
+    color: var(--color-red-mid);
   }
   .code-block .s2 {
     color: var(--color-green-mid);
@@ -1707,7 +1708,7 @@ pre,
     border-left: none;
   }
   .entity-list .result-list tbody tr:hover {
-    background-color: #e1e1e1;
+    background-color: var(--color-element-mid);
     cursor: pointer;
   }
   .entity-list__heading {
@@ -1873,7 +1874,7 @@ pre,
   .webhook-editor__settings .webhook-editor__settings_payload {
     width: 75%;
     margin-top: 1.285714285714286em;
-    border: 1px solid #ddd;
+    border: 1px solid var(--color-element-mid);
     border-radius: 4px;
   }
   .webhook-editor__segmentation-table {
@@ -3090,7 +3091,7 @@ pre,
     top: 70px;
   }
   .advice__icon {
-    color: #7f7f7f;
+    color: var(--color-text-light);
     text-shadow: 0 -1px 0px rgba(0,0,0,0.7);
     margin-bottom: 1rem;
   }
@@ -3411,7 +3412,7 @@ pre,
   }
   .dropdown-menu-item a:link,
   .dropdown-menu-item a:visited {
-    color: #7f7f7f;
+    color: var(--color-text-light);
   }
   .dropdown-menu-item label {
     cursor: pointer;
@@ -3450,7 +3451,7 @@ pre,
   }
   .dropdown-menu-item--label a:link,
   .dropdown-menu-item--label a:visited {
-    color: #7f7f7f;
+    color: var(--color-text-light);
   }
   .dropdown-menu-item--label label {
     cursor: pointer;
@@ -3492,7 +3493,7 @@ pre,
   }
   .dropdown-menu-item--no-highlight a:link,
   .dropdown-menu-item--no-highlight a:visited {
-    color: #7f7f7f;
+    color: var(--color-text-light);
   }
   .dropdown-menu-item--no-highlight label {
     cursor: pointer;
@@ -3835,7 +3836,7 @@ pre,
   }
   .main-header.result-list {
     border: 0;
-    border-bottom: 1px solid #dedede;
+    border-bottom: 1px solid var(--color-element-mid);
   }
   .main-header.result-list tr {
     height: 29px;
@@ -4661,7 +4662,7 @@ pre,
     border-bottom: 1px solid var(--color-element-lightest);
   }
   .result-list thead .button-icon {
-    color: #dedede;
+    color: var(--color-element-mid);
   }
   .result-list thead .active .button-icon {
     color: #9b9b9b;
@@ -4745,7 +4746,7 @@ pre,
   .result-list .cell-integer,
   .result-list .cell-number,
   .result-list .cell-boolean {
-    color: #7f7f7f;
+    color: var(--color-text-light);
   }
   .result-list .cell-name {
     color: var(--color-text-dark);
@@ -4875,7 +4876,7 @@ pre,
     padding-left: 20px;
   }
   .inner-result-list td {
-    border-bottom: 1px solid #dedede;
+    border-bottom: 1px solid var(--color-element-mid);
   }
   .linked-entries__more,
   .linked-assets__more {
@@ -5534,7 +5535,7 @@ pre,
   }
   .space-plans-list__item--small:before {
     background-color: #f05751;
-    border: 1px solid #e34e48;
+    border: 1px solid var(--color-red-mid);
   }
   .space-plans-list__item--medium:before {
     background-color: #5b9fef;
@@ -6788,7 +6789,7 @@ pre,
     transition: none;
   }
   .form-control[disabled] {
-    color: #7f7f7f;
+    color: var(--color-text-light);
   }
   .form-control[readonly] {
     color: #333a42;
@@ -6808,7 +6809,7 @@ pre,
     border: 0;
   }
   .form-control--with-unit > input[disabled] {
-    color: #7f7f7f;
+    color: var(--color-text-light);
     background-color: #ebebeb;
     -webkit-box-shadow: none;
     box-shadow: none;
@@ -7328,7 +7329,7 @@ pre,
     border-left-color: var(--color-blue-mid);
   }
   .entity-editor__field-group[aria-invalid="true"] {
-    border-left-color: #e34e48;
+    border-left-color: var(--color-red-mid);
   }
   .entity-editor__field-group .x--dir-rtl .x--directed {
     direction: rtl;
@@ -9970,7 +9971,7 @@ pre,
     margin-bottom: 10px;
   }
   .extension-form__cm {
-    border: 1px solid #ddd;
+    border: 1px solid var(--color-element-mid);
     border-radius: 4px;
   }
   .extension-form__cm.x--readonly .CodeMirror {
@@ -11503,24 +11504,6 @@ pre,
     padding-top: 10px;
     padding-bottom: 10px;
   }
-  .tippy-tooltip {
-    font-size: 12px;
-    line-height: 16px;
-    padding: 7px 10px;
-    border-radius: 2px;
-    background-color: #192532;
-    cursor: default;
-  }
-  .tippy-popper {
-    pointer-events: initial;
-  }
-  .tippy-popper[x-placement^=bottom] [x-arrow] {
-    border-bottom: 5px solid #192532;
-    border-right: 5px solid transparent;
-    border-left: 5px solid transparent;
-    top: -5px;
-    margin: 0 9px;
-  }
   .user-invitation--wrapper {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -11639,7 +11622,7 @@ pre,
     border: 0;
   }
   .tab-content.tab-iframe .header-separator {
-    color: #dedede;
+    color: var(--color-element-mid);
   }
   .account .tab-iframe {
     font-size: 14px;
@@ -11663,7 +11646,7 @@ pre,
     letter-spacing: 1px;
   }
   .tab-iframe .result-list .clickable tr:hover {
-    background-color: #e1e1e1;
+    background-color: var(--color-element-mid);
     cursor: pointer;
   }
   .tab-iframe .result-list tbody tr:last-child {
@@ -11794,8 +11777,8 @@ pre,
   .toggle-button:active,
   .toggle-button.active {
     top: 0;
-    -webkit-box-shadow: 0 2px 2px #ddd inset;
-    box-shadow: 0 2px 2px #ddd inset;
+    -webkit-box-shadow: 0 2px 2px var(--color-element-mid) inset;
+    box-shadow: 0 2px 2px var(--color-element-mid) inset;
     cursor: default;
   }
   .button-icon-right {
@@ -11834,9 +11817,9 @@ pre,
   .tab-iframe .auth_provider {
     display: inline-block;
     height: 60px;
-    border: 1px solid #dedede;
+    border: 1px solid var(--color-element-mid);
     border-radius: 3px;
-    background-color: #eee;
+    background-color: var(--color-element-mid);
     padding: 10px;
     position: relative;
     margin-right: 10px;
@@ -11879,7 +11862,7 @@ pre,
   }
   .tab-iframe .identity .remove .fa-close:hover,
   .tab-iframe .auth_provider .remove .fa-close:hover {
-    color: #7f7f7f;
+    color: var(--color-text-light);
     cursor: pointer;
   }
   .tab-iframe .identity:hover .remove {
@@ -11924,12 +11907,12 @@ pre,
   .current-plan .current-plan-price {
     float: left;
     padding-left: 20px;
-    border-left: 1px solid #dedede;
+    border-left: 1px solid var(--color-element-mid);
   }
   .current-plan .current-plan-billing {
     float: left;
     padding-left: 20px;
-    border-left: 1px solid #dedede;
+    border-left: 1px solid var(--color-element-mid);
   }
   .subscription-notice {
     position: relative;
@@ -11982,11 +11965,11 @@ pre,
     margin-bottom: 2em;
   }
   .available-plans {
-    border-top: 1px solid #dedede;
+    border-top: 1px solid var(--color-element-mid);
   }
   .subscription-plan {
     width: 100%;
-    border-bottom: 1px solid #dedede;
+    border-bottom: 1px solid var(--color-element-mid);
     padding: 15px 0 0 0;
   }
   .subscription-plan .col {
@@ -12095,11 +12078,11 @@ pre,
   }
   .plan-details .details-show,
   .plan-details .details-hide {
-    color: #dedede;
+    color: var(--color-element-mid);
     margin: auto;
     width: 50px;
     height: 20px;
-    border: 1px solid #dedede;
+    border: 1px solid var(--color-element-mid);
     border-bottom-style: none;
     text-align: center;
     cursor: pointer;
@@ -12186,7 +12169,7 @@ pre,
     width: 150px;
   }
   .enterprise-close-form-button {
-    color: #7f7f7f;
+    color: var(--color-text-light);
     font-size: 130%;
     float: right;
   }
@@ -12215,7 +12198,7 @@ pre,
     line-height: 40px;
     margin: 0 0 20px 0;
     padding: 0 20px;
-    border-bottom: 1px solid #dedede;
+    border-bottom: 1px solid var(--color-element-mid);
     text-transform: uppercase;
     letter-spacing: 1px;
     font-size: 14px;
@@ -12276,7 +12259,7 @@ pre,
     margin-left: 40px;
   }
   .credit-card-secure {
-    color: #7f7f7f;
+    color: var(--color-text-light);
   }
   .form-table {
     width: 60%;
@@ -12313,7 +12296,7 @@ pre,
     padding: 15px 0;
   }
   .billing-sidebar .sidebar-separator {
-    border-top: 1px solid #dedede;
+    border-top: 1px solid var(--color-element-mid);
   }
   .billing-sidebar a {
     font-size: smaller;
@@ -12379,7 +12362,7 @@ pre,
   }
   .billing-info-box,
   .formtastic .billing-info-box {
-    border: 1px solid #dedede;
+    border: 1px solid var(--color-element-mid);
     border-style: solid none;
     background-color: var(--color-white)eec;
     padding: 10px;
