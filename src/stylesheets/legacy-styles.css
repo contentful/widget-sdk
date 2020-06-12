@@ -4504,7 +4504,7 @@ pre,
   }
   .app-top-bar__sidepanel-trigger,
   .app-top-bar__account-menu-trigger {
-    background-color: #192532;
+    background-color: var(--color-text-dark);
     -webkit-transition: background-color 0.1s ease-in-out;
     transition: background-color 0.1s ease-in-out;
   }
@@ -4936,7 +4936,7 @@ pre,
     color: var(--color-white);
     text-align: center;
     text-decoration: none;
-    background-color: #192532;
+    background-color: var(--color-text-dark);
     border-radius: 4px;
   }
   .tooltip-arrow {
@@ -4950,28 +4950,28 @@ pre,
     bottom: 0;
     left: 50%;
     margin-left: -5px;
-    border-top-color: #192532;
+    border-top-color: var(--color-text-dark);
     border-width: 5px 5px 0;
   }
   .tooltip.right .tooltip-arrow {
     top: 50%;
     left: 0;
     margin-top: -5px;
-    border-right-color: #192532;
+    border-right-color: var(--color-text-dark);
     border-width: 5px 5px 5px 0;
   }
   .tooltip.left .tooltip-arrow {
     top: 50%;
     right: 0;
     margin-top: -5px;
-    border-left-color: #192532;
+    border-left-color: var(--color-text-dark);
     border-width: 5px 0 5px 5px;
   }
   .tooltip.bottom .tooltip-arrow {
     top: 0;
     left: 50%;
     margin-left: -5px;
-    border-bottom-color: #192532;
+    border-bottom-color: var(--color-text-dark);
     border-width: 0 5px 5px;
   }
   .tooltip.hidden {
@@ -11006,7 +11006,7 @@ pre,
     background: var(--color-element-lightest);
   }
   .fullscreen--container-with-gradient {
-    background-image: linear-gradient(to bottom, #192532, #192532 350px, var(--color-element-lightest) 350px, var(--color-element-lightest));
+    background-image: linear-gradient(to bottom, var(--color-text-dark), var(--color-text-dark) 350px, var(--color-element-lightest) 350px, var(--color-element-lightest));
   }
   .fullscreen--wrapper {
     margin: 15px auto;
@@ -11508,14 +11508,14 @@ pre,
     line-height: 16px;
     padding: 7px 10px;
     border-radius: 2px;
-    background-color: #192532;
+    background-color: var(--color-text-dark);
     cursor: default;
   }
   .tippy-popper {
     pointer-events: initial;
   }
   .tippy-popper[x-placement^=bottom] [x-arrow] {
-    border-bottom: 5px solid #192532;
+    border-bottom: 5px solid var(--color-text-dark);
     border-right: 5px solid transparent;
     border-left: 5px solid transparent;
     top: -5px;
