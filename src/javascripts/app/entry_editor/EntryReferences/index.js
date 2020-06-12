@@ -37,7 +37,7 @@ import {
   createCountMessage,
   createAddToReleaseDialogContent,
 } from './utils';
-import ReleasesDialog from 'app/Releases/ReleasesWidget/ReleasesDialog';
+import ReleasesWidgetDialog from 'app/Releases/ReleasesWidget/ReleasesWidgetDialog';
 import * as LD from 'utils/LaunchDarkly';
 import { ADD_TO_RELEASE } from 'featureFlags';
 
@@ -419,7 +419,7 @@ const ReferencesTab = ({ entity }) => {
           )}
         </div>
         {isRelaseDialogShown && (
-          <ReleasesDialog
+          <ReleasesWidgetDialog
             rootEntity={entity}
             selectedEntities={selectedEntities}
             releaseContentTitle={createAddToReleaseDialogContent(

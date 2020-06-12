@@ -1,6 +1,6 @@
-import { getReleasesList, deleteRelease } from '../../../interactions/releases';
+import { getReleasesList, deleteRelease, createEmptyRelease } from '../../../interactions/releases';
 import { defaultRequestsMock } from '../../../util/factories';
-import { defaultSpaceId } from '../../../util/requests';
+import { defaultSpaceId, defaultReleaseId } from '../../../util/requests';
 import { FeatureFlag } from '../../../util/featureFlag';
 import { severalReleases } from '../../../fixtures/responses/releases';
 
@@ -70,6 +70,35 @@ describe('Releases', () => {
           'contain',
           'First release was sucessfully deleted'
         );
+      });
+    });
+
+    context('create empty release', () => {
+      beforeEach(() => {
+        getReleasesInteraction = getReleasesList.willReturnSeveral();
+
+        cy.visit(`/spaces/${defaultSpaceId}/releases`);
+        cy.wait(interactions, { timeout: 20000 });
+      });
+
+      it('should create a new release', () => {
+        const createEmptyReleaseInteraction = createEmptyRelease.willReturnEmptyRelease();
+        cy.wait(getReleasesInteraction);
+
+        cy.findByTestId('create-new-release').should('be.visible').click();
+        cy.findByTestId('content-release-modal').should('be.visible').click();
+        cy.findByTestId('release-name').should('be.visible').type('New Release');
+        cy.findAllByTestId('create-release').should('be.enabled').click();
+
+        cy.wait(createEmptyReleaseInteraction);
+
+        cy.findAllByTestId('cf-ui-notification').should(
+          'contain',
+          'New Release was sucessfully created'
+        );
+
+        cy.findByTestId('view-release').should('be.visible').click();
+        cy.url().should('contain', `/releases/${defaultReleaseId}`);
       });
     });
   });

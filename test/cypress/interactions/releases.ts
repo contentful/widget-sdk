@@ -4,8 +4,9 @@ import {
   defaultEnvironmentId,
   defaultReleaseId,
 } from '../util/requests';
+import { createReleaseRequest } from '../fixtures/requests/releases';
 
-import { noReleases, severalReleases } from '../fixtures/responses/releases';
+import { noReleases, severalReleases, emptyReleaseResponse } from '../fixtures/responses/releases';
 
 enum States {
   NONE = 'releases/none',
@@ -57,6 +58,31 @@ export const getReleasesList = {
     }).as('willReturnSeveral');
 
     return '@willReturnSeveral';
+  },
+};
+
+export const createEmptyRelease = {
+  willReturnEmptyRelease() {
+    cy.addInteraction({
+      provider: 'releases',
+      state: States.NONE,
+      uponReceiving: `a request to create release in space "${defaultSpaceId}"`,
+      withRequest: {
+        method: 'POST',
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases`,
+        headers: {
+          ...defaultHeader,
+          'x-contentful-enable-alpha-feature': 'immediate-release',
+        },
+        body: createReleaseRequest(),
+      },
+      willRespondWith: {
+        status: 200,
+        body: emptyReleaseResponse(),
+      },
+    }).as('willReturnEmptyRelease');
+
+    return '@willReturnEmptyRelease';
   },
 };
 
