@@ -15,9 +15,11 @@
   --color-text-base: #283848;
   --color-text-lightest: #6A7889;
 
+  --color-blue-dark: #174E8C;
   --color-blue-base: #1D61AF;
   --color-blue-mid: #2C75C9;
   --color-blue-light: #84B9F5;
+  --color-blue-lightest: #EDF4FC;
 
   --color-green-mid: #0C9869;
   --color-green-base: #1D7D58;
@@ -101,7 +103,7 @@ pre,
     text-decoration: none;
   }
   a:hover {
-    color: #0c2c52;
+    color: var(--color-blue-dark);
   }
   i {
     font-style: normal;
@@ -1200,11 +1202,10 @@ pre,
     display: none;
   }
   .cfnext-select-box:hover:not(:disabled) {
-    background-image: url("../javascripts/svg/dd-arrow-down.svg"), -webkit-gradient(linear, left top, left bottom, from(var(--color-white)), to(#f9f9f9));
-    background-image: url("../javascripts/svg/dd-arrow-down.svg"), linear-gradient(to bottom, var(--color-white), #f9f9f9);
+    background-image: url("../javascripts/svg/dd-arrow-down.svg"), var(--color-white);
   }
   .cfnext-select-box:disabled {
-    background-color: var(--color-element-light);;
+    background-color: var(--color-element-light);
     background-image: url("../javascripts/svg/dd-arrow-down-disabled.svg");
     border: 1px solid var(--color-element-mid);
     color: var(--color-text-base);;
@@ -2912,7 +2913,7 @@ pre,
     padding: 12px 12px 12px 42px;
     color: var(--color-text-base);
     line-height: 1.5;
-    background-color: #e8f7ff;
+    background-color: var(--color-blue-lightest);
     border: 1px solid #c5d2d8;
   }
   .note-box--info > *:first-child {
@@ -3257,7 +3258,7 @@ pre,
     padding: 12px 12px 12px 42px;
     color: var(--color-text-base);
     line-height: 1.5;
-    background-color: #e8f7ff;
+    background-color: var(--color-blue-lightest);
     border: 1px solid #c5d2d8;
     margin: 0 0 2.571428571428572em;
   }
@@ -3631,7 +3632,7 @@ pre,
     padding: 12px 12px 12px 42px;
     color: var(--color-text-base);
     line-height: 1.5;
-    background-color: #e8f7ff;
+    background-color: var(--color-blue-lightest);
     border: 1px solid #c5d2d8;
     margin-top: 28px;
     width: auto;
@@ -8725,7 +8726,7 @@ pre,
     fill: var(--color-blue-base);
   }
   .api-cm-list__item__toggle:hover cf-icon[name="dd-arrow-down"] path {
-    fill: #0c2c52;
+    fill: var(--color-blue-dark);
   }
   .api-cm-list__item.x--open {
     background-color: var(--color-white);
@@ -10902,7 +10903,7 @@ pre,
   }
   .search__select-operator::before {
     left: 0;
-    background-color: #e2e7ea;
+    background-color: var(--color-element-light);
   }
   .search__select-operator::after {
     right: 0;
@@ -11217,7 +11218,7 @@ pre,
   }
   .search-next__completion-item .__filter-pill {
     display: inline-block;
-    background-color: #e2e7ea;
+    background-color: var(--color-element-light);
     color: var(--color-text-lightest);
     padding: 6px 10px 5px;
     line-height: 18px;
@@ -11455,7 +11456,7 @@ pre,
     background-color: var(--color-element-light);
   }
   table .x--highlight {
-    background-color: #e8f7ff;
+    background-color: var(--color-blue-lightest);
   }
   table .x--success {
     background-color: #f4fffb;
