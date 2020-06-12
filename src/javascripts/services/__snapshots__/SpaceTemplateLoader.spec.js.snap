@@ -491,126 +491,20 @@ Object {
   "entries": Array [
     Object {
       "fields": Object {
-        "brand": Object {
-          "en-US": Object {
-            "sys": Object {
-              "id": "JrePkDVYomE8AwcuCUyMi",
-              "linkType": "Link",
-              "type": "Link",
-            },
-          },
-        },
-        "categories": Object {
-          "en-US": Array [
-            Object {
-              "sys": Object {
-                "id": "24DPGBDeGEaYy8ms4Y8QMQ",
-                "linkType": "Link",
-                "type": "Link",
-              },
-            },
-          ],
-        },
-        "image": Object {
-          "en-US": Array [
-            Object {
-              "sys": Object {
-                "id": "wtrHxeu3zEoEce2MokCSi",
-                "linkType": "Link",
-                "type": "Link",
-              },
-            },
-          ],
-        },
-        "price": Object {
-          "en-US": 44,
-        },
-        "productDescription": Object {
-          "en-US": "A classic Playsam design, the Streamliner Classic Car has been selected as Swedish Design Classic by the Swedish National Museum for its inventive style and sleek surface. It's no wonder that this wooden car has also been a long-standing favorite for children both big and small!",
-        },
-        "productName": Object {
-          "en-US": "Playsam Streamliner Classic Car, Espresso",
-        },
-        "quantity": Object {
-          "en-US": 56,
-        },
-        "sizetypecolor": Object {
-          "en-US": "Length: 135 mm | color: espresso, green, or icar (white)",
-        },
-        "sku": Object {
-          "en-US": "B001R6JUZ2",
-        },
-        "slug": Object {
-          "en-US": "playsam-streamliner-classic-car-espresso",
-        },
-        "tags": Object {
-          "en-US": Array [
-            "wood",
-            "toy",
-            "car",
-            "sweden",
-            "design",
-          ],
-        },
-        "website": Object {
-          "en-US": "http://www.amazon.com/dp/B001R6JUZ2/",
-        },
-      },
-      "sys": Object {
-        "contentType": Object {
-          "sys": Object {
-            "id": "product",
-          },
-        },
-        "id": "5KsDBWseXY6QegucYAoacS",
-      },
-    },
-    Object {
-      "fields": Object {
-        "companyDescription": Object {
-          "en-US": "Playsam is the leading Scandinavian design company for executive wooden toy gift. Scandinavian design playful creativity, integrity and sophistication are Playsam. Scandinavian design and wooden toy makes Playsam gift lovely to the world of design since 1984.",
-        },
-        "companyName": Object {
-          "en-US": "Playsam",
-        },
-        "logo": Object {
-          "en-US": Object {
-            "sys": Object {
-              "id": "4zj1ZOfHgQ8oqgaSKm4Qo2",
-              "linkType": "Link",
-              "type": "Link",
-            },
-          },
-        },
-        "website": Object {
-          "en-US": "http://playsam.com/",
-        },
-      },
-      "sys": Object {
-        "contentType": Object {
-          "sys": Object {
-            "id": "brand",
-          },
-        },
-        "id": "JrePkDVYomE8AwcuCUyMi",
-      },
-    },
-    Object {
-      "fields": Object {
         "categoryDescription": Object {
-          "en-US": "Shop for toys, games, educational aids",
+          "en-US": "Shop for furniture, bedding, bath, vacuums, kitchen products, and more",
         },
         "icon": Object {
           "en-US": Object {
             "sys": Object {
-              "id": "6t4HKjytPi0mYgs240wkG",
+              "id": "6m5AJ9vMPKc8OUoQeoCS4o",
               "linkType": "Link",
               "type": "Link",
             },
           },
         },
         "title": Object {
-          "en-US": "Toys",
+          "en-US": "Home & Kitchen",
         },
       },
       "sys": Object {
@@ -619,7 +513,7 @@ Object {
             "id": "category",
           },
         },
-        "id": "24DPGBDeGEaYy8ms4Y8QMQ",
+        "id": "7LAnCobuuWYSqks6wAwY2a",
       },
     },
     Object {
@@ -648,7 +542,7 @@ Object {
           "en-US": Array [
             Object {
               "sys": Object {
-                "id": "Xc0ny7GWsMEMCeASWO2um",
+                "id": "10TkaLheGeQG6qQGqWYqUI",
                 "linkType": "Link",
                 "type": "Link",
               },
@@ -656,35 +550,37 @@ Object {
           ],
         },
         "price": Object {
-          "en-US": 11,
+          "en-US": 22,
         },
         "productDescription": Object {
-          "en-US": "Wall Hanging Glass Flower Vase and Terrarium",
+          "en-US": "A creative little whisk that comes in 8 different colors. Handy and easy to clean after use. A great gift idea.",
         },
         "productName": Object {
-          "en-US": "Hudson Wall Cup",
+          "en-US": "Whisk Beater",
         },
         "quantity": Object {
-          "en-US": 101,
+          "en-US": 89,
         },
         "sizetypecolor": Object {
-          "en-US": "3 x 3 x 5 inches; 5.3 ounces",
+          "en-US": "0.8 x 0.8 x 11.2 inches; 1.6 ounces",
         },
         "sku": Object {
-          "en-US": "B00E82D7I8",
+          "en-US": "B0081F2CCK",
         },
         "slug": Object {
-          "en-US": "hudson-wall-cup",
+          "en-US": "whisk-beater",
         },
         "tags": Object {
           "en-US": Array [
-            "vase",
-            "flowers",
+            "kitchen",
             "accessories",
+            "whisk",
+            "scandinavia",
+            "design",
           ],
         },
         "website": Object {
-          "en-US": "http://www.amazon.com/dp/B00E82D7I8/",
+          "en-US": "http://www.amazon.com/dp/B0081F2CCK/",
         },
       },
       "sys": Object {
@@ -693,24 +589,34 @@ Object {
             "id": "product",
           },
         },
-        "id": "3DVqIYj4dOwwcKu6sgqOgg",
+        "id": "6dbjWqNd9SqccegcqYq224",
       },
     },
     Object {
       "fields": Object {
         "companyDescription": Object {
-          "en-US": "Normann Copenhagen is a way of living - a mindset. We love to challenge the conventional design rules. This is why you will find traditional materials put into untraditional use such as a Stone Hook made of Icelandic stones, a vase made out of silicon and last but not least a dog made out of plastic.",
+          "en-US": "TAKATA Lemnos Inc. was founded in 1947 as a brass casting manufacturing industry in Takaoka-city, Toyama Prefecture, Japan and we launched out into the full-scale business trade with Seiko Clock Co., Ltd. since 1966.
+
+We entered into the development for the original planning from late 1980 and \\"Lemnos Brand\\" recognized as the global design clock by a masterpiece \\"HOLA\\" designed by Kazuo KAWASAKI which released in 1989.
+
+Afterwards, we made a lot of projects with well-known designers who took in active in Japan and overseas such as Riki WATANABE, Kazuo KAWASAKI, Shin AZUMI, Tomoko AZUMI, Kanae TSUKAMOTO etc. and we made announcement of their fine works abounding in artistry and prominent designs. In addition, we realized to make a special project by the collaboration with Andrea Branzi, a well-known architect in the world.
+
+Lemnos brand products are now highly praised from the design shops and the interior shops all over the world.
+
+In recent years, we also have been given high priority to develop interior accessories making full use of our traditional techniques by the founding manufacturer and we always focus our minds on the development for the new Lemnos products in the new market.
+
+Our Lemnos products are made carefully by our craftsmen finely honed skillful techniques in Japan. They surely bring out the attractiveness of the materials to the maximum and create fine products not being influenced on the fashion trend accordingly. TAKATA Lemnos Inc. definitely would like to be innovative and continuously propose the beauty lasts forever.",
         },
         "companyName": Object {
-          "en-US": "Normann Copenhagen",
+          "en-US": "Lemnos",
         },
         "email": Object {
-          "en-US": "normann@normann-copenhagen.com",
+          "en-US": "info@acgears.com",
         },
         "logo": Object {
           "en-US": Object {
             "sys": Object {
-              "id": "3wtvPBbBjiMKqKKga8I2Cu",
+              "id": "2Y8LhXLnYAYqKCGEWG4EKI",
               "linkType": "Link",
               "type": "Link",
             },
@@ -718,14 +624,11 @@ Object {
         },
         "phone": Object {
           "en-US": Array [
-            "+45 35 55 44 59",
+            "+1 212 260 2269",
           ],
         },
-        "twitter": Object {
-          "en-US": "https://twitter.com/NormannCPH",
-        },
         "website": Object {
-          "en-US": "http://www.normann-copenhagen.com/",
+          "en-US": "http://www.lemnos.jp/en/",
         },
       },
       "sys": Object {
@@ -734,7 +637,7 @@ Object {
             "id": "brand",
           },
         },
-        "id": "651CQ8rLoIYCeY6G0QG22q",
+        "id": "4LgMotpNF6W20YKmuemW0a",
       },
     },
     Object {
@@ -816,28 +719,18 @@ Object {
     Object {
       "fields": Object {
         "companyDescription": Object {
-          "en-US": "TAKATA Lemnos Inc. was founded in 1947 as a brass casting manufacturing industry in Takaoka-city, Toyama Prefecture, Japan and we launched out into the full-scale business trade with Seiko Clock Co., Ltd. since 1966.
-
-We entered into the development for the original planning from late 1980 and \\"Lemnos Brand\\" recognized as the global design clock by a masterpiece \\"HOLA\\" designed by Kazuo KAWASAKI which released in 1989.
-
-Afterwards, we made a lot of projects with well-known designers who took in active in Japan and overseas such as Riki WATANABE, Kazuo KAWASAKI, Shin AZUMI, Tomoko AZUMI, Kanae TSUKAMOTO etc. and we made announcement of their fine works abounding in artistry and prominent designs. In addition, we realized to make a special project by the collaboration with Andrea Branzi, a well-known architect in the world.
-
-Lemnos brand products are now highly praised from the design shops and the interior shops all over the world.
-
-In recent years, we also have been given high priority to develop interior accessories making full use of our traditional techniques by the founding manufacturer and we always focus our minds on the development for the new Lemnos products in the new market.
-
-Our Lemnos products are made carefully by our craftsmen finely honed skillful techniques in Japan. They surely bring out the attractiveness of the materials to the maximum and create fine products not being influenced on the fashion trend accordingly. TAKATA Lemnos Inc. definitely would like to be innovative and continuously propose the beauty lasts forever.",
+          "en-US": "Normann Copenhagen is a way of living - a mindset. We love to challenge the conventional design rules. This is why you will find traditional materials put into untraditional use such as a Stone Hook made of Icelandic stones, a vase made out of silicon and last but not least a dog made out of plastic.",
         },
         "companyName": Object {
-          "en-US": "Lemnos",
+          "en-US": "Normann Copenhagen",
         },
         "email": Object {
-          "en-US": "info@acgears.com",
+          "en-US": "normann@normann-copenhagen.com",
         },
         "logo": Object {
           "en-US": Object {
             "sys": Object {
-              "id": "2Y8LhXLnYAYqKCGEWG4EKI",
+              "id": "3wtvPBbBjiMKqKKga8I2Cu",
               "linkType": "Link",
               "type": "Link",
             },
@@ -845,11 +738,14 @@ Our Lemnos products are made carefully by our craftsmen finely honed skillful te
         },
         "phone": Object {
           "en-US": Array [
-            "+1 212 260 2269",
+            "+45 35 55 44 59",
           ],
         },
+        "twitter": Object {
+          "en-US": "https://twitter.com/NormannCPH",
+        },
         "website": Object {
-          "en-US": "http://www.lemnos.jp/en/",
+          "en-US": "http://www.normann-copenhagen.com/",
         },
       },
       "sys": Object {
@@ -858,7 +754,7 @@ Our Lemnos products are made carefully by our craftsmen finely honed skillful te
             "id": "brand",
           },
         },
-        "id": "4LgMotpNF6W20YKmuemW0a",
+        "id": "651CQ8rLoIYCeY6G0QG22q",
       },
     },
     Object {
@@ -887,7 +783,7 @@ Our Lemnos products are made carefully by our craftsmen finely honed skillful te
           "en-US": Array [
             Object {
               "sys": Object {
-                "id": "10TkaLheGeQG6qQGqWYqUI",
+                "id": "Xc0ny7GWsMEMCeASWO2um",
                 "linkType": "Link",
                 "type": "Link",
               },
@@ -895,37 +791,35 @@ Our Lemnos products are made carefully by our craftsmen finely honed skillful te
           ],
         },
         "price": Object {
-          "en-US": 22,
+          "en-US": 11,
         },
         "productDescription": Object {
-          "en-US": "A creative little whisk that comes in 8 different colors. Handy and easy to clean after use. A great gift idea.",
+          "en-US": "Wall Hanging Glass Flower Vase and Terrarium",
         },
         "productName": Object {
-          "en-US": "Whisk Beater",
+          "en-US": "Hudson Wall Cup",
         },
         "quantity": Object {
-          "en-US": 89,
+          "en-US": 101,
         },
         "sizetypecolor": Object {
-          "en-US": "0.8 x 0.8 x 11.2 inches; 1.6 ounces",
+          "en-US": "3 x 3 x 5 inches; 5.3 ounces",
         },
         "sku": Object {
-          "en-US": "B0081F2CCK",
+          "en-US": "B00E82D7I8",
         },
         "slug": Object {
-          "en-US": "whisk-beater",
+          "en-US": "hudson-wall-cup",
         },
         "tags": Object {
           "en-US": Array [
-            "kitchen",
+            "vase",
+            "flowers",
             "accessories",
-            "whisk",
-            "scandinavia",
-            "design",
           ],
         },
         "website": Object {
-          "en-US": "http://www.amazon.com/dp/B0081F2CCK/",
+          "en-US": "http://www.amazon.com/dp/B00E82D7I8/",
         },
       },
       "sys": Object {
@@ -934,25 +828,25 @@ Our Lemnos products are made carefully by our craftsmen finely honed skillful te
             "id": "product",
           },
         },
-        "id": "6dbjWqNd9SqccegcqYq224",
+        "id": "3DVqIYj4dOwwcKu6sgqOgg",
       },
     },
     Object {
       "fields": Object {
         "categoryDescription": Object {
-          "en-US": "Shop for furniture, bedding, bath, vacuums, kitchen products, and more",
+          "en-US": "Shop for toys, games, educational aids",
         },
         "icon": Object {
           "en-US": Object {
             "sys": Object {
-              "id": "6m5AJ9vMPKc8OUoQeoCS4o",
+              "id": "6t4HKjytPi0mYgs240wkG",
               "linkType": "Link",
               "type": "Link",
             },
           },
         },
         "title": Object {
-          "en-US": "Home & Kitchen",
+          "en-US": "Toys",
         },
       },
       "sys": Object {
@@ -961,7 +855,113 @@ Our Lemnos products are made carefully by our craftsmen finely honed skillful te
             "id": "category",
           },
         },
-        "id": "7LAnCobuuWYSqks6wAwY2a",
+        "id": "24DPGBDeGEaYy8ms4Y8QMQ",
+      },
+    },
+    Object {
+      "fields": Object {
+        "companyDescription": Object {
+          "en-US": "Playsam is the leading Scandinavian design company for executive wooden toy gift. Scandinavian design playful creativity, integrity and sophistication are Playsam. Scandinavian design and wooden toy makes Playsam gift lovely to the world of design since 1984.",
+        },
+        "companyName": Object {
+          "en-US": "Playsam",
+        },
+        "logo": Object {
+          "en-US": Object {
+            "sys": Object {
+              "id": "4zj1ZOfHgQ8oqgaSKm4Qo2",
+              "linkType": "Link",
+              "type": "Link",
+            },
+          },
+        },
+        "website": Object {
+          "en-US": "http://playsam.com/",
+        },
+      },
+      "sys": Object {
+        "contentType": Object {
+          "sys": Object {
+            "id": "brand",
+          },
+        },
+        "id": "JrePkDVYomE8AwcuCUyMi",
+      },
+    },
+    Object {
+      "fields": Object {
+        "brand": Object {
+          "en-US": Object {
+            "sys": Object {
+              "id": "JrePkDVYomE8AwcuCUyMi",
+              "linkType": "Link",
+              "type": "Link",
+            },
+          },
+        },
+        "categories": Object {
+          "en-US": Array [
+            Object {
+              "sys": Object {
+                "id": "24DPGBDeGEaYy8ms4Y8QMQ",
+                "linkType": "Link",
+                "type": "Link",
+              },
+            },
+          ],
+        },
+        "image": Object {
+          "en-US": Array [
+            Object {
+              "sys": Object {
+                "id": "wtrHxeu3zEoEce2MokCSi",
+                "linkType": "Link",
+                "type": "Link",
+              },
+            },
+          ],
+        },
+        "price": Object {
+          "en-US": 44,
+        },
+        "productDescription": Object {
+          "en-US": "A classic Playsam design, the Streamliner Classic Car has been selected as Swedish Design Classic by the Swedish National Museum for its inventive style and sleek surface. It's no wonder that this wooden car has also been a long-standing favorite for children both big and small!",
+        },
+        "productName": Object {
+          "en-US": "Playsam Streamliner Classic Car, Espresso",
+        },
+        "quantity": Object {
+          "en-US": 56,
+        },
+        "sizetypecolor": Object {
+          "en-US": "Length: 135 mm | color: espresso, green, or icar (white)",
+        },
+        "sku": Object {
+          "en-US": "B001R6JUZ2",
+        },
+        "slug": Object {
+          "en-US": "playsam-streamliner-classic-car-espresso",
+        },
+        "tags": Object {
+          "en-US": Array [
+            "wood",
+            "toy",
+            "car",
+            "sweden",
+            "design",
+          ],
+        },
+        "website": Object {
+          "en-US": "http://www.amazon.com/dp/B001R6JUZ2/",
+        },
+      },
+      "sys": Object {
+        "contentType": Object {
+          "sys": Object {
+            "id": "product",
+          },
+        },
+        "id": "5KsDBWseXY6QegucYAoacS",
       },
     },
   ],
