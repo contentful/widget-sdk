@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { css } from 'emotion';
-import pluralize from 'pluralize';
 
 import {
   Tag,
@@ -16,6 +15,7 @@ import tokens from '@contentful/forma-36-tokens';
 
 import { formatPastDate } from 'app/Apps/management/util';
 import { ActionPerformerName } from 'core/components/ActionPerformerName';
+import { Pluralized } from 'core/components/formatting/Pluralized/Pluralized';
 
 const styles = {
   card: css({
@@ -91,9 +91,9 @@ export default class Release extends Component {
           <DropdownList onClick={(event) => event.stopPropagation()}>
             <DropdownListItem>
               Contains&nbsp;
-              {entries && pluralize('entry', entries, true)}
+              {entries && <Pluralized text="entry" count={entries} />}
               {entries && assets && ', '}
-              {assets && pluralize('asset', assets, true)}
+              {assets && <Pluralized text="asset" count={assets} />}
             </DropdownListItem>
             <DropdownListItem isDisabled>
               Created {formatPastDate(release.sys.createdAt)}
