@@ -24,6 +24,7 @@
   --color-blue-light: #84B9F5;
   --color-blue-lightest: #EDF4FC;
 
+  --color-green-light: #8AD6B1;
   --color-green-mid: #0C9869;
   --color-green-base: #1D7D58;
   --color-green-dark: #1C583F;
@@ -4711,7 +4712,7 @@ pre,
     width: auto;
   }
   .result-list .published {
-    color: #33ca6c;
+    color: var(--color-green-light);
   }
   .result-list .updated {
     color: var(--color-blue-mid);
@@ -12238,7 +12239,7 @@ pre,
     margin: 0;
   }
   .subscription-progress-bar .fa-check {
-    color: #33ca6c;
+    color: var(--color-green-light);
     padding-right: 0.5em;
     position: relative;
     top: 2px;
@@ -12357,7 +12358,7 @@ pre,
   }
   .done-icon {
     margin: auto;
-    background-color: #33ca6c;
+    background-color: var(--color-green-light);
     width: 80px;
     height: 80px;
     border-radius: 40px;
