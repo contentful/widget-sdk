@@ -5,7 +5,7 @@
   --font-stack-mono: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace!important;
 
   --color-element-lightest: #F7F9FA;
-  --color-element-light: var(--color-element-light);
+  --color-element-light: #E5EBED;
   --color-element-mid: #D3DCE0;
   --color-element-base: #C3CFD5;
   --color-element-dark: #B4C3CA;
@@ -23,7 +23,7 @@
   --color-green-base: #1D7D58;
   --color-green-dark: #1C583F;
 
-  --color-white: var(--color-white);
+  --color-white: #FFFFFF;
 
   --color-positive-gradient: linear-gradient(to top, #0eb87f, #14d997);
 
