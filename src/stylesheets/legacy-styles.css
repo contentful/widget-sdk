@@ -268,7 +268,7 @@ pre,
     text-decoration: underline;
   }
   .text-dimmed {
-    color: #808080;
+    color: var(--color-text-mid);
   }
   .separated-links > *:not(:last-child):after {
     content: "|";
@@ -1403,7 +1403,7 @@ pre,
   .context-menu__item[aria-disabled],
   .context-menu [role="menuitem"][aria-disabled] {
     cursor: default;
-    color: #808080;
+    color: var(--color-text-mid);
     background: transparent;
   }
   .context-menu hr {
@@ -4475,7 +4475,7 @@ pre,
     font-weight: 600;
   }
   .modal-dialog__hint {
-    color: #808080;
+    color: var(--color-text-mid);
     margin: 1.285714285714286em 0 0;
   }
   .modal-dialog__message {
@@ -4710,7 +4710,7 @@ pre,
   }
   .field-dialog__widget-warning {
     font-size: 0.928571428571429em;
-    color: #808080;
+    color: var(--color-text-mid);
     margin: 0 0 1.285714285714286em;
   }
   .field-dialog__widget-warning > i.fa {
@@ -6419,7 +6419,7 @@ pre,
   .tab-iframe .formtastic .input .inline-hints {
     margin-top: 0.642857142857143em;
     margin-bottom: 0;
-    color: #808080;
+    color: var(--color-text-mid);
     font-size: 0.928571428571429em;
   }
   .cfnext-form__hint--normal-text {
@@ -6428,7 +6428,7 @@ pre,
   }
   .cfnext-form__label-hint {
     margin-left: 1ex;
-    color: #808080;
+    color: var(--color-text-mid);
     font-size: 0.928571428571429em;
   }
   .cfnext-form__label-hint.x--invalid {
@@ -6505,7 +6505,7 @@ pre,
   }
   .cfnext-form-option > input[type="checkbox"]:disabled + .cfnext-form-option__desc,
   .cfnext-form-option > input[type="checkbox"]:disabled + label {
-    color: #808080;
+    color: var(--color-text-mid);
   }
   .cfnext-form__fieldset--horizontal {
     display: -webkit-box;
@@ -6570,7 +6570,7 @@ pre,
   .ct-field.x--omitted,
   .ct-field.x--disabled .btn-inline,
   .ct-field.x--omitted .btn-inline {
-    color: #808080;
+    color: var(--color-text-mid);
   }
   .ct-field__name {
     overflow: hidden;
@@ -6591,7 +6591,7 @@ pre,
         -ms-flex-positive: 1;
             flex-grow: 1;
     margin-right: 1em;
-    color: #808080;
+    color: var(--color-text-mid);
   }
   .ct-field__status {
     margin-right: 2em;
@@ -12711,7 +12711,7 @@ pre,
   }
   .subscription-notice {
     position: relative;
-    border: 1px solid #808080;
+    border: 1px solid var(--color-text-mid);
     margin-bottom: 20px;
     padding: 10px;
     padding-right: 20px;
