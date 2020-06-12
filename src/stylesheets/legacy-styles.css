@@ -16,6 +16,7 @@
   --color-text-light: #606C7C;
   --color-text-lightest: #6A7889;
 
+  --color-contrast-mid: #192532;
   --color-contrast-dark: #0C141C;
 
   --color-blue-dark: #174E8C;
@@ -30,6 +31,7 @@
   --color-green-dark: #1C583F;
 
   --color-red-lightest: #FBE3E2;
+  --color-red-light: #EB8D9B;
   --color-red-mid: #CC3C52;
   --color-red-base: #A03343;
 
@@ -2398,7 +2400,7 @@ pre,
     color: var(--color-orange-mid);
   }
   .workbench-main__right-content .resource-usage--danger {
-    color: #f05751;
+    color: var(--color-red-mid);
   }
   .workbench-main__info-sidebar {
     overflow-y: auto;
@@ -2857,7 +2859,7 @@ pre,
   .app-top-bar__outer-wrapper {
     display: flex;
     width: 100%;
-    background-color: #263545;
+    background-color: var(--color-contrast-mid);
   }
 
   .app-top-bar__inner-wrapper {
@@ -4459,7 +4461,7 @@ pre,
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    background-color: #263545;
+    background-color: var(--color-contrast-mid);
   }
   .app-top-bar__sidepanel-trigger,
   .app-top-bar__account-menu-trigger {
@@ -5492,7 +5494,7 @@ pre,
     border: 1px solid var(--color-orange-mid);
   }
   .space-plans-list__item--small:before {
-    background-color: #f05751;
+    background-color: var(--color-red-mid);
     border: 1px solid var(--color-red-mid);
   }
   .space-plans-list__item--medium:before {
@@ -6929,7 +6931,7 @@ pre,
     margin-left: 5px;
   }
   .bulk-editor-entry__status[data-state="archived"] {
-    color: #f05751;
+    color: var(--color-red-mid);
   }
   .bulk-editor-entry__status[data-state="archived"][aria-busy="true"]:after {
     -webkit-transition: width 0.2s linear, margin 0.2s linear, opacity 0.5s ease-in;
@@ -6943,8 +6945,8 @@ pre,
     -webkit-animation: fa-spin 2s infinite linear;
     animation: fa-spin 2s infinite linear;
     border-radius: 50%;
-    border-bottom: 2px solid #f05751;
-    border-left: 2px solid #f05751;
+    border-bottom: 2px solid var(--color-red-mid);
+    border-left: 2px solid var(--color-red-mid);
     border-top: 2px solid rgba(245,143,138,0.6);
     border-right: 2px solid rgba(245,143,138,0.6);
   }
@@ -7432,7 +7434,7 @@ pre,
     margin-right: 0.4rem;
   }
   .entity-sidebar__state-indicator[data-state="archived"] {
-    background: #f05751;
+    background: var(--color-red-mid);
     border: 1px solid var(--color-red-mid);
   }
   .entity-sidebar__state-indicator[data-state="draft"] {
@@ -9701,7 +9703,7 @@ pre,
     line-height: 21px;
   }
   .usage-page__api-chart-tooltip {
-    background-color: #263545;
+    background-color: var(--color-contrast-mid);
   }
   .usage-page__api-chart-tooltip .value {
     font-size: 14px;
@@ -10408,10 +10410,10 @@ pre,
     background-color: var(--color-red-lightest);
   }
   .modern-stack-onboarding--data-flow-elem-title__green {
-    background-color: #f4fffb;
+    background-color: var(--color-white);
   }
   .modern-stack-onboarding--data-flow-elem-title__blue {
-    background-color: #e9f7ff;
+    background-color: var(--color-blue-lightest);
   }
   .modern-stack-onboarding--data-flow-elem-subtitle {
     border-top: 1px solid var(--color-element-lightest);
@@ -10502,7 +10504,7 @@ pre,
     transition: all 0.1s ease-in-out;
   }
   .browser-tab {
-    background: #ccc;
+    background: var(--color-element-light);
     border-radius: 4px 4px 0 0;
   }
   .browser-tab--line {
@@ -10529,7 +10531,7 @@ pre,
     border-radius: 100%;
   }
   .browser-tab--dot__red {
-    background: #df7166;
+    background: var(--color-red-light);
   }
   .browser-tab--dot__yellow {
     background: #e6c646;
@@ -10766,8 +10768,8 @@ pre,
     box-shadow: 0 0 0 1px var(--color-element-dark);
   }
   .search__filter-pill:focus {
-    -webkit-box-shadow: 0 0 0 1px #263545;
-    box-shadow: 0 0 0 1px #263545;
+    -webkit-box-shadow: 0 0 0 1px var(--color-contrast-mid);
+    box-shadow: 0 0 0 1px var(--color-contrast-mid);
   }
   .search__filter-pill-label {
     background-color: var(--color-element-light);
@@ -11011,7 +11013,7 @@ pre,
   }
   .line-chart--empty,
   .line-chart--loading {
-    outline-color: #263545;
+    outline-color: var(--color-contrast-mid);
   }
   .line-chart--empty .line-chart__mount,
   .line-chart--loading .line-chart__mount {
@@ -11418,7 +11420,7 @@ pre,
     background-color: var(--color-blue-lightest);
   }
   table .x--success {
-    background-color: #f4fffb;
+    background-color: var(--color-white);
   }
   .td__checkbox-cell,
   .th__checkbox-cell {
@@ -12287,7 +12289,7 @@ pre,
   }
   .annual-savings {
     color: var(--color-white);
-    background-color: #f00;
+    background-color: var(--color-red-base);
     font-size: 85%;
     border-radius: 3px;
     padding: 0 15px;
