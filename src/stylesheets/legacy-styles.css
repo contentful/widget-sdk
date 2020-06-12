@@ -29,6 +29,7 @@
   --color-green-dark: #1C583F;
 
   --color-red-mid: #CC3C52;
+  --color-red-base: #A03343;
 
   --color-orange-base: #D28004;
   --color-orange-mid: #FA9A05;
@@ -12209,7 +12210,7 @@ pre,
     text-align: right;
   }
   .plan-cancel-account a {
-    color: #be390c;
+    color: var(--color-red-base);
   }
   .subscription-progress-bar {
     width: 100%;
