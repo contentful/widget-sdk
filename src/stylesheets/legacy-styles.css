@@ -152,7 +152,7 @@ pre,
   }
   b,
   strong {
-    color: #2d2f31;
+    color: var(--color-text-dark);
     font-weight: bold;
   }
   .ui-corner-all {
@@ -161,7 +161,7 @@ pre,
   .ui-widget-header {
     background-image: none;
     background-color: var(--color-element-lightest);
-    color: #2d2f31;
+    color: var(--color-text-dark);
   }
   .ui-autocomplete li {
     list-style-type: none;
@@ -1303,7 +1303,7 @@ pre,
   .entity-list-link:link {
     display: block;
     padding: 8px 0;
-    color: #2d2f31;
+    color: var(--color-text-dark);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1371,7 +1371,7 @@ pre,
     display: block;
     text-align: left;
     cursor: pointer;
-    color: #2d2f31;
+    color: var(--color-text-dark);
   }
   .context-menu__items > *[disabled],
   .context-menu__item[disabled],
@@ -4685,7 +4685,7 @@ pre,
   }
   .field-dialog__widget-item-header a:hover,
   .field-dialog__widget-item-header a:focus {
-    color: #2d2f31;
+    color: var(--color-text-dark);
   }
   .field-dialog__widget-item-content {
     -webkit-box-flex: 1;
@@ -5239,7 +5239,7 @@ pre,
     color: #7f7f7f;
   }
   .result-list .cell-name {
-    color: #2d2f31;
+    color: var(--color-text-dark);
   }
   .result-list .cell-anchor {
     color: var(--color-blue-base);
@@ -6165,7 +6165,7 @@ pre,
     -webkit-box-direction: normal;
             flex-direction: row;
     overflow: hidden;
-    color: #2d2f31;
+    color: var(--color-text-dark);
   }
   .breadcrumbs-container .btn {
     padding: 22px 18px 15px 17px;
@@ -6254,7 +6254,7 @@ pre,
     display: block;
     text-overflow: ellipsis;
     overflow: hidden;
-    color: #2d2f31;
+    color: var(--color-text-dark);
   }
   .breadcrumbs-container .breadcrumbs-ancestor-container .breadcrumbs-ancestor-list__items li a cf-icon {
     display: inline;
@@ -12968,7 +12968,7 @@ pre,
     float: right;
   }
   .enterprise-close-form-button:hover {
-    color: #2d2f31;
+    color: var(--color-text-dark);
   }
   .plan-questions,
   .plan-cancel-account {
@@ -13019,7 +13019,7 @@ pre,
     top: 2px;
   }
   .subscription-progress-bar .active {
-    color: #2d2f31;
+    color: var(--color-text-dark);
     font-weight: bold;
     background-color: var(--color-element-lightest);
   }
