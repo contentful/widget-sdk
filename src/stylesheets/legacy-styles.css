@@ -2966,7 +2966,7 @@ pre,
     color: var(--color-text-base);
     line-height: 1.5;
     background-color: var(--color-red-lightest);
-    border: 1px solid #d0a2a0;
+    border: 1px solid var(--color-red-lightest);
   }
   .note-box--warning > *:first-child {
     padding-top: 0;
