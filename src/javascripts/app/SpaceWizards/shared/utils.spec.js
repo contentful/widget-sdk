@@ -6,7 +6,6 @@ import { createApiKeyRepo } from 'features/api-keys-management';
 import { go } from 'states/Navigator';
 import { getCreator } from 'services/SpaceTemplateCreator';
 import { getTemplate } from 'services/SpaceTemplateLoader';
-import { canCreate } from 'utils/ResourceUtils';
 
 import { $broadcast } from 'ng/$rootScope';
 import * as spaceContext from 'ng/spaceContext';
@@ -14,6 +13,12 @@ import { createSpaceEndpoint, mockEndpoint } from 'data/EndpointFactory';
 import { changeSpacePlan as changeSpacePlanApiCall } from 'account/pricing/PricingDataProvider';
 
 import * as Fake from 'test/helpers/fakeFactory';
+import {
+  freeSpace,
+  unavailableFreeSpace,
+  mediumSpace,
+  mediumSpaceCurrent,
+} from '../__tests__/fixtures/plans';
 
 const mockSpace = Fake.Space();
 const mockOrganization = Fake.Organization({ isBillable: true });
@@ -514,51 +519,17 @@ describe('utils', () => {
   });
 
   describe('transformSpaceRatePlans', () => {
-    const createProductRatePlanCharges = (
-      envLimit = 1,
-      rolesLimit = 2,
-      localesLimit = 3,
-      ctLimit = 4,
-      recordsLimit = 5
-    ) => {
-      return [
-        {
-          name: 'Environments',
-          tiers: [{ endingUnit: envLimit }],
-        },
-        {
-          name: 'Roles',
-          tiers: [{ endingUnit: rolesLimit }],
-        },
-        {
-          name: 'Locales',
-          tiers: [{ endingUnit: localesLimit }],
-        },
-        {
-          name: 'Content types',
-          tiers: [{ endingUnit: ctLimit }],
-        },
-        {
-          name: 'Records',
-          tiers: [{ endingUnit: recordsLimit }],
-        },
-      ];
-    };
-
     it('should return an empty array if given no space rate plans', () => {
       expect(utils.transformSpaceRatePlans({ organization: mockOrganization })).toEqual([]);
     });
 
     it('should mark the transformed plan with isFree is the productPlanType is free_space', () => {
-      const spaceRatePlans = [
-        Fake.Plan({
-          productPlanType: 'free_space',
-          productRatePlanCharges: createProductRatePlanCharges(),
-        }),
-      ];
-
       expect(
-        utils.transformSpaceRatePlans({ organization: mockOrganization, spaceRatePlans })
+        utils.transformSpaceRatePlans({
+          organization: mockOrganization,
+          spaceRatePlans: [freeSpace],
+          freeSpaceResource: Fake.SpaceResource(1, 5, 'free_space'),
+        })
       ).toEqual([
         expect.objectContaining({
           isFree: true,
@@ -567,15 +538,12 @@ describe('utils', () => {
     });
 
     it('should mark a plan as disabled if there are any unavailabilityReasons', () => {
-      const spaceRatePlans = [
-        Fake.Plan({
-          productRatePlanCharges: createProductRatePlanCharges(),
-          unavailabilityReasons: [{ type: 'something' }],
-        }),
-      ];
-
       expect(
-        utils.transformSpaceRatePlans({ organization: mockOrganization, spaceRatePlans })
+        utils.transformSpaceRatePlans({
+          organization: mockOrganization,
+          spaceRatePlans: [unavailableFreeSpace],
+          freeSpaceResource: Fake.SpaceResource(1, 5, 'free_space'),
+        })
       ).toEqual([
         expect.objectContaining({
           disabled: true,
@@ -584,17 +552,12 @@ describe('utils', () => {
     });
 
     it('should mark a plan as disabled if the the plan is free and cannot create more free spaces', () => {
-      canCreate.mockReturnValue(false);
-
-      const spaceRatePlans = [
-        Fake.Plan({
-          productPlanType: 'free_space',
-          productRatePlanCharges: createProductRatePlanCharges(),
-        }),
-      ];
-
       expect(
-        utils.transformSpaceRatePlans({ organization: mockOrganization, spaceRatePlans })
+        utils.transformSpaceRatePlans({
+          organization: mockOrganization,
+          spaceRatePlans: [freeSpace],
+          freeSpaceResource: Fake.SpaceResource(2, 2, 'free_space'),
+        })
       ).toEqual([
         expect.objectContaining({
           disabled: true,
@@ -606,14 +569,13 @@ describe('utils', () => {
       // By default, above, isBillable is true
       const organization = Fake.Organization({ isBillable: false });
 
-      const spaceRatePlans = [
-        Fake.Plan({
-          productPlanType: 'some_space_type',
-          productRatePlanCharges: createProductRatePlanCharges(),
-        }),
-      ];
-
-      expect(utils.transformSpaceRatePlans({ organization, spaceRatePlans })).toEqual([
+      expect(
+        utils.transformSpaceRatePlans({
+          organization,
+          spaceRatePlans: [mediumSpace],
+          freeSpaceResource: Fake.SpaceResource(1, 5, 'free_space'),
+        })
+      ).toEqual([
         expect.objectContaining({
           disabled: true,
         }),
@@ -621,15 +583,12 @@ describe('utils', () => {
     });
 
     it('should mark the plan as current if the plan has an unavailabilityReason with type as currentPlan', () => {
-      const spaceRatePlans = [
-        Fake.Plan({
-          productRatePlanCharges: createProductRatePlanCharges(),
-          unavailabilityReasons: [{ type: 'currentPlan' }],
-        }),
-      ];
-
       expect(
-        utils.transformSpaceRatePlans({ organization: mockOrganization, spaceRatePlans })
+        utils.transformSpaceRatePlans({
+          organization: mockOrganization,
+          spaceRatePlans: [mediumSpaceCurrent],
+          freeSpaceResource: Fake.SpaceResource(1, 5, 'free_space'),
+        })
       ).toEqual([
         expect.objectContaining({
           current: true,
@@ -638,7 +597,36 @@ describe('utils', () => {
     });
 
     it('should return expected transformed plans', () => {
-      canCreate.mockReturnValue(false);
+      const createProductRatePlanCharges = (
+        envLimit = 1,
+        rolesLimit = 2,
+        localesLimit = 3,
+        ctLimit = 4,
+        recordsLimit = 5
+      ) => {
+        return [
+          {
+            name: 'Environments',
+            tiers: [{ endingUnit: envLimit }],
+          },
+          {
+            name: 'Roles',
+            tiers: [{ endingUnit: rolesLimit }],
+          },
+          {
+            name: 'Locales',
+            tiers: [{ endingUnit: localesLimit }],
+          },
+          {
+            name: 'Content types',
+            tiers: [{ endingUnit: ctLimit }],
+          },
+          {
+            name: 'Records',
+            tiers: [{ endingUnit: recordsLimit }],
+          },
+        ];
+      };
 
       const spaceRatePlans = [
         Fake.Plan({
@@ -666,7 +654,11 @@ describe('utils', () => {
       ];
 
       expect(
-        utils.transformSpaceRatePlans({ organization: mockOrganization, spaceRatePlans })
+        utils.transformSpaceRatePlans({
+          organization: mockOrganization,
+          spaceRatePlans,
+          freeSpaceResource: Fake.SpaceResource(2, 2, 'free_space'),
+        })
       ).toEqual([
         {
           isFree: true,
@@ -880,27 +872,29 @@ describe('utils', () => {
 
   describe('getPlanResourceFulfillment', () => {
     it('should return an object with `near` and `reached` statuses for a plan and resources', () => {
-      const plan = utils.transformSpaceRatePlan({
+      const plan = utils.transformSpaceRatePlans({
         organization: mockOrganization,
-        plan: Fake.Plan({
-          productPlanType: 'some_space_type',
-          productRatePlanCharges: [
-            {
-              name: 'Records',
-              tiers: [{ endingUnit: 10 }],
-            },
-            {
-              name: 'Content types',
-              tiers: [{ endingUnit: 10 }],
-            },
-            {
-              name: 'Locales',
-              tiers: [{ endingUnit: 10 }],
-            },
-          ],
-        }),
+        spaceRatePlans: [
+          Fake.Plan({
+            productPlanType: 'some_space_type',
+            productRatePlanCharges: [
+              {
+                name: 'Records',
+                tiers: [{ endingUnit: 10 }],
+              },
+              {
+                name: 'Content types',
+                tiers: [{ endingUnit: 10 }],
+              },
+              {
+                name: 'Locales',
+                tiers: [{ endingUnit: 10 }],
+              },
+            ],
+          }),
+        ],
         freeSpaceResource: Fake.OrganizationResource(1, 3, 'free_space'),
-      });
+      })[0];
 
       const resources = [
         Fake.SpaceResource(1, 10, 'record'),
@@ -926,95 +920,101 @@ describe('utils', () => {
   });
 
   describe('getRecommendedPlan', () => {
-    const currentPlan = utils.transformSpaceRatePlan({
+    const currentPlan = utils.transformSpaceRatePlans({
       organization: mockOrganization,
-      plan: Fake.Plan({
-        productPlanType: 'some_space_type',
-        productRatePlanCharges: [
-          {
-            name: 'Records',
-            tiers: [{ endingUnit: 10 }],
-          },
-          {
-            name: 'Content types',
-            tiers: [{ endingUnit: 10 }],
-          },
-          {
-            name: 'Locales',
-            tiers: [{ endingUnit: 10 }],
-          },
-          {
-            name: 'Environments',
-            tiers: [{ endingUnit: 10 }],
-          },
-          {
-            name: 'Roles',
-            tiers: [{ endingUnit: 10 }],
-          },
-        ],
-      }),
+      spaceRatePlans: [
+        Fake.Plan({
+          productPlanType: 'some_space_type',
+          productRatePlanCharges: [
+            {
+              name: 'Records',
+              tiers: [{ endingUnit: 10 }],
+            },
+            {
+              name: 'Content types',
+              tiers: [{ endingUnit: 10 }],
+            },
+            {
+              name: 'Locales',
+              tiers: [{ endingUnit: 10 }],
+            },
+            {
+              name: 'Environments',
+              tiers: [{ endingUnit: 10 }],
+            },
+            {
+              name: 'Roles',
+              tiers: [{ endingUnit: 10 }],
+            },
+          ],
+        }),
+      ],
       freeSpaceResource: Fake.OrganizationResource(1, 3, 'free_space'),
-    });
+    })[0];
 
-    const nonrecommendablePlan = utils.transformSpaceRatePlan({
+    const nonrecommendablePlan = utils.transformSpaceRatePlans({
       organization: mockOrganization,
-      plan: Fake.Plan({
-        productPlanType: 'some_space_type',
-        productRatePlanCharges: [
-          {
-            name: 'Records',
-            tiers: [{ endingUnit: 20 }],
-          },
-          {
-            name: 'Content types',
-            tiers: [{ endingUnit: 10 }],
-          },
-          {
-            name: 'Locales',
-            tiers: [{ endingUnit: 20 }],
-          },
-          {
-            name: 'Environments',
-            tiers: [{ endingUnit: 20 }],
-          },
-          {
-            name: 'Roles',
-            tiers: [{ endingUnit: 10 }],
-          },
-        ],
-      }),
+      spaceRatePlans: [
+        Fake.Plan({
+          productPlanType: 'some_space_type',
+          productRatePlanCharges: [
+            {
+              name: 'Records',
+              tiers: [{ endingUnit: 20 }],
+            },
+            {
+              name: 'Content types',
+              tiers: [{ endingUnit: 10 }],
+            },
+            {
+              name: 'Locales',
+              tiers: [{ endingUnit: 20 }],
+            },
+            {
+              name: 'Environments',
+              tiers: [{ endingUnit: 20 }],
+            },
+            {
+              name: 'Roles',
+              tiers: [{ endingUnit: 10 }],
+            },
+          ],
+        }),
+      ],
       freeSpaceResource: Fake.OrganizationResource(1, 3, 'free_space'),
-    });
+    })[0];
 
-    const recommendablePlan = utils.transformSpaceRatePlan({
+    const recommendablePlan = utils.transformSpaceRatePlans({
       organization: mockOrganization,
-      plan: Fake.Plan({
-        productPlanType: 'some_space_type',
-        productRatePlanCharges: [
-          {
-            name: 'Records',
-            tiers: [{ endingUnit: 20 }],
-          },
-          {
-            name: 'Content types',
-            tiers: [{ endingUnit: 20 }],
-          },
-          {
-            name: 'Locales',
-            tiers: [{ endingUnit: 20 }],
-          },
-          {
-            name: 'Environments',
-            tiers: [{ endingUnit: 20 }],
-          },
-          {
-            name: 'Roles',
-            tiers: [{ endingUnit: 20 }],
-          },
-        ],
-      }),
+      spaceRatePlans: [
+        Fake.Plan({
+          productPlanType: 'some_space_type',
+          productRatePlanCharges: [
+            {
+              name: 'Records',
+              tiers: [{ endingUnit: 20 }],
+            },
+            {
+              name: 'Content types',
+              tiers: [{ endingUnit: 20 }],
+            },
+            {
+              name: 'Locales',
+              tiers: [{ endingUnit: 20 }],
+            },
+            {
+              name: 'Environments',
+              tiers: [{ endingUnit: 20 }],
+            },
+            {
+              name: 'Roles',
+              tiers: [{ endingUnit: 20 }],
+            },
+          ],
+        }),
+      ],
       freeSpaceResource: Fake.OrganizationResource(1, 3, 'free_space'),
-    });
+    })[0];
 
     it('should return null if nothing is near or has reached limit', () => {
       const resources = [
