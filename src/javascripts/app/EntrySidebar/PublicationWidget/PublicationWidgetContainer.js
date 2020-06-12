@@ -8,11 +8,8 @@ import { ScheduledActionsWidget } from 'app/ScheduledActions';
 import ScheduledActionsFeatureFlag from 'app/ScheduledActions/ScheduledActionsFeatureFlag';
 import * as LD from 'utils/LaunchDarkly';
 import { NEW_STATUS_SWITCH, ADD_TO_RELEASE } from 'featureFlags';
-import tokens from '@contentful/forma-36-tokens';
-import { css } from 'emotion';
 import { getEntityTitle } from 'app/entry_editor/EntryReferences/referencesService';
 
-import ReleasesWidgetDialog from 'app/Releases/ReleasesWidget/ReleasesWidgetDialog';
 export default class PublicationWidgetContainer extends Component {
   static propTypes = {
     emitter: PropTypes.object.isRequired,
@@ -30,7 +27,6 @@ export default class PublicationWidgetContainer extends Component {
     validator: undefined,
     isStatusSwitch: false,
     isAddToRelease: false,
-    isRelaseDialogShown: false,
     entityTitle: null,
   };
 
@@ -50,8 +46,6 @@ export default class PublicationWidgetContainer extends Component {
       this.onUpdatePublicationBlocking
     );
     this.props.emitter.emit(SidebarEventTypes.WIDGET_REGISTERED, SidebarWidgetTypes.PUBLICATION);
-
-    this.createReleasesDropDown();
   }
 
   componentWillUnmount() {
@@ -68,7 +62,6 @@ export default class PublicationWidgetContainer extends Component {
   onUpdatePublicationWidget = async (update) => {
     const entityTitle = await getEntityTitle(update.entity);
     this.setState({ ...update, entityTitle });
-    this.createReleasesDropDown(update);
   };
 
   onUpdatePublicationBlocking = (publicationBlockedReasons) => {
@@ -82,46 +75,6 @@ export default class PublicationWidgetContainer extends Component {
       ),
     }));
   };
-
-  createReleasesDropDown(updatedState = {}) {
-    if (!this.state.isAddToRelease) {
-      return;
-    }
-
-    const addToReleaseCta = {
-      label: 'Add to a Content Release',
-      targetStateId: 'add-to-release',
-      className: css({
-        borderTop: `1px solid ${tokens.colorElementMid}`,
-      }),
-      isAvailable() {
-        return true;
-      },
-      isDisabled() {
-        return false;
-      },
-      isRestricted() {
-        return false;
-      },
-      inProgress() {
-        return false;
-      },
-      execute: () => {
-        this.setState({ isRelaseDialogShown: true });
-      },
-    };
-
-    const commands = get(this.state, 'commands', {});
-    const secondary = get(commands, 'secondary', []);
-    this.setState({
-      ...this.state,
-      ...updatedState,
-      commands: {
-        ...commands,
-        secondary: [...secondary, addToReleaseCta],
-      },
-    });
-  }
 
   render() {
     const {
@@ -145,52 +98,42 @@ export default class PublicationWidgetContainer extends Component {
     const publicationBlockedReason = values(publicationBlockedReasons)[0];
 
     return (
-      <>
-        <ScheduledActionsFeatureFlag>
-          {({ currentVariation }) => {
-            const isJobsFeatureEnabled = currentVariation;
-            const isAssetOrDeletedEntry = !entity || entity.sys.type !== 'Entry';
-            return !isJobsFeatureEnabled || isAssetOrDeletedEntry ? (
-              <PublicationWidget
-                status={status}
-                entityId={get(entity, 'sys.id')}
-                primary={primary}
-                secondary={secondary}
-                revert={revert}
-                isSaving={this.state.isSaving}
-                updatedAt={this.state.updatedAt}
-                publicationBlockedReason={publicationBlockedReason}
-                isStatusSwitch={!!entity && isStatusSwitch}
-              />
-            ) : (
-              <ScheduledActionsWidget
-                spaceId={spaceId}
-                environmentId={environmentId}
-                isMasterEnvironment={isMasterEnvironment}
-                userId={userId}
-                entity={entity}
-                status={status}
-                primary={primary}
-                secondary={secondary}
-                revert={revert}
-                isSaving={isSaving}
-                updatedAt={updatedAt}
-                validator={validator}
-                publicationBlockedReason={publicationBlockedReason}
-                isStatusSwitch={isStatusSwitch}
-              />
-            );
-          }}
-        </ScheduledActionsFeatureFlag>
-        {this.state.isRelaseDialogShown && (
-          <ReleasesWidgetDialog
-            selectedEntities={[entity]}
-            releaseContentTitle={this.state.entityTitle}
-            rootEntity={entity}
-            onCancel={() => this.setState({ isRelaseDialogShown: false })}
-          />
-        )}
-      </>
+      <ScheduledActionsFeatureFlag>
+        {({ currentVariation }) => {
+          const isJobsFeatureEnabled = currentVariation;
+          const isAssetOrDeletedEntry = !entity || entity.sys.type !== 'Entry';
+          return !isJobsFeatureEnabled || isAssetOrDeletedEntry ? (
+            <PublicationWidget
+              status={status}
+              entityId={get(entity, 'sys.id')}
+              primary={primary}
+              secondary={secondary}
+              revert={revert}
+              isSaving={this.state.isSaving}
+              updatedAt={this.state.updatedAt}
+              publicationBlockedReason={publicationBlockedReason}
+              isStatusSwitch={!!entity && isStatusSwitch}
+            />
+          ) : (
+            <ScheduledActionsWidget
+              spaceId={spaceId}
+              environmentId={environmentId}
+              isMasterEnvironment={isMasterEnvironment}
+              userId={userId}
+              entity={entity}
+              status={status}
+              primary={primary}
+              secondary={secondary}
+              revert={revert}
+              isSaving={isSaving}
+              updatedAt={updatedAt}
+              validator={validator}
+              publicationBlockedReason={publicationBlockedReason}
+              isStatusSwitch={isStatusSwitch}
+            />
+          );
+        }}
+      </ScheduledActionsFeatureFlag>
     );
   }
 }

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { css } from 'emotion';
+import pluralize from 'pluralize';
 
 import {
   Tag,
@@ -64,6 +65,9 @@ export default class Release extends Component {
 
   render() {
     const { release } = this.props;
+    const entries = this.getItemsCountByLinkType(release, 'Entry') || null;
+    const assets = this.getItemsCountByLinkType(release, 'Asset') || null;
+
     return (
       <Card className={styles.card}>
         <Icon icon="Release" color="secondary" className={styles.icon} />
@@ -86,11 +90,13 @@ export default class Release extends Component {
           }>
           <DropdownList onClick={(event) => event.stopPropagation()}>
             <DropdownListItem>
-              Contains {this.getItemsCountByLinkType(release, 'Entry')} entries and{' '}
-              {this.getItemsCountByLinkType(release, 'Asset')} assets
+              Contains&nbsp;
+              {entries && pluralize('entry', entries, true)}
+              {entries && assets && ', '}
+              {assets && pluralize('asset', assets, true)}
             </DropdownListItem>
             <DropdownListItem isDisabled>
-              Create {formatPastDate(release.sys.createdAt)}
+              Created {formatPastDate(release.sys.createdAt)}
               {' by '}
               <ActionPerformerName link={release.sys.createdBy} />
             </DropdownListItem>
