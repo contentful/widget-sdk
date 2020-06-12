@@ -5262,7 +5262,7 @@ pre,
     background-color: var(--color-white);
   }
   .create-new-space__templates__navitem.selected path {
-    fill: #19cd91;
+    fill: var(--color-green-mid);
   }
   .create-new-space__templates__navitem__icon {
     padding-right: 5px;
@@ -5541,8 +5541,8 @@ pre,
     border: 1px solid var(--color-blue-mid);
   }
   .space-plans-list__item--large:before {
-    background-color: #14d997;
-    border: 1px solid #19cd91;
+    background-color: var(--color-green-mid);
+    border: 1px solid var(--color-green-mid);
   }
   .space-plans-list__item--partner-space-plan:before {
     background-color: var(--color-blue-mid);
@@ -6134,7 +6134,7 @@ pre,
   }
   .ct-fields--dummy .ct-field {
     border: 1px dashed var(--color-element-mid);
-    background-color: #f7f8fa;
+    background-color: var(--color-element-lightest);
     -webkit-box-shadow: none;
     box-shadow: none;
     color: #a2a9b1;
@@ -6172,7 +6172,7 @@ pre,
     width: 80ex;
     padding: 1.285714285714286em 1.5em;
     border: 1px dashed var(--color-element-mid);
-    background-color: #f7f8fa;
+    background-color: var(color-element-lightest);
     border-style: solid;
     border-radius: 3px;
     text-align: center;
@@ -6260,7 +6260,7 @@ pre,
   .icon-component[data-icon-name="field-boolean-small"] circle,
   .icon-component[data-icon-name="field-json"] circle,
   .icon-component[data-icon-name="field-json-small"] circle {
-    fill: #19cd91;
+    fill: var(--color-green-mid);
   }
   .icon-component[data-icon-name="field-shorttext"] rect,
   .icon-component[data-icon-name="field-shorttext-small"] rect,
@@ -6274,7 +6274,7 @@ pre,
   .icon-component[data-icon-name="field-boolean-small"] rect,
   .icon-component[data-icon-name="field-json"] rect,
   .icon-component[data-icon-name="field-json-small"] rect {
-    stroke: #19cd91;
+    stroke: var(--color-green-mid);
   }
   .x--disabled .icon-component[data-icon-name="field-shorttext"] path,
   .x--disabled .icon-component[data-icon-name="field-shorttext-small"] path,
@@ -6376,7 +6376,7 @@ pre,
   .icon-component[data-icon-name="field-location-small"] rect,
   .icon-component[data-icon-name="field-reference"] rect,
   .icon-component[data-icon-name="field-reference-small"] rect {
-    stroke: #19cd91;
+    stroke: var(--color-green-mid);
   }
   .x--disabled .icon-component[data-icon-name="field-calendar"] path,
   .x--disabled .icon-component[data-icon-name="field-calendar-small"] path,
@@ -6435,7 +6435,7 @@ pre,
     fill: none;
   }
   .icon-component[data-icon-name="field-media"] rect {
-    fill: #19cd91;
+    fill: var(--color-green-mid);
   }
   .icon-component[data-icon-name="field-media"] rect:last-of-type {
     fill: none;
@@ -7010,7 +7010,7 @@ pre,
     border-right: 2px solid rgba(252,192,97,0.6);
   }
   .bulk-editor-entry__status[data-state="published"] {
-    color: #14d997;
+    color: var(--color-green-mid);
   }
   .bulk-editor-entry__status[data-state="published"][aria-busy="true"]:after {
     -webkit-transition: width 0.2s linear, margin 0.2s linear, opacity 0.5s ease-in;
@@ -7024,8 +7024,8 @@ pre,
     -webkit-animation: fa-spin 2s infinite linear;
     animation: fa-spin 2s infinite linear;
     border-radius: 50%;
-    border-bottom: 2px solid #14d997;
-    border-left: 2px solid #14d997;
+    border-bottom: 2px solid var(--color-green-mid);
+    border-left: 2px solid var(--color-green-mid);
     border-top: 2px solid rgba(88,240,188,0.6);
     border-right: 2px solid rgba(88,240,188,0.6);
   }
@@ -7481,7 +7481,7 @@ pre,
     border: 1px solid #db8500;
   }
   .entity-sidebar__state-indicator[data-state="published"] {
-    background: #14d997;
+    background: var(--color-green-mid);
     border: 1px solid var(--color-green-mid);
   }
   .entity-sidebar__state-indicator[data-state="changes"] {
@@ -8800,7 +8800,7 @@ pre,
     padding: 1.285714285714286em 1.5em;
     margin-bottom: 1.5em;
     border: 1px solid var(--color-element-mid);
-    background-color: #f7f8fa;
+    background-color: var(color-element-lightest);
     border-radius: 3px;
   }
   .locale-list__advice-frame > div {
@@ -9906,7 +9906,7 @@ pre,
   }
   .progress-bar__current {
     display: block;
-    background: #14d997;
+    background: var(--color-green-mid);
     height: 2px;
     position: relative;
   }
@@ -10030,7 +10030,7 @@ pre,
     color: var(--color-text-base);
   }
   .modern-stack-onboarding--floating-hint {
-    color: #14d997;
+    color: var(--color-green-mid);
     margin-top: 55px;
     font-size: 21px;
     font-weight: bold;
@@ -10502,7 +10502,7 @@ pre,
     border-radius: 4px;
     -webkit-transition: background 0.2s;
     transition: background 0.2s;
-    background: #14d997;
+    background: var(--color-green-mid);
     opacity: 0.3;
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
     filter: alpha(opacity=30);
