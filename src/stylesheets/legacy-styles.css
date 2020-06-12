@@ -16,7 +16,8 @@
   --color-text-light: #606C7C;
   --color-text-lightest: #6A7889;
 
-  --color-contrast-dark: #0C141C;
+  --color-contrast-dark: #0c141c;
+  --color-contrast-light: #263545;
 
   --color-blue-dark: #174E8C;
   --color-blue-base: #1D61AF;
@@ -35,6 +36,7 @@
 
   --color-orange-base: #D28004;
   --color-orange-mid: #FA9A05;
+  --color-orange-light: #FCC169;
 
   --color-white: #FFFFFF;
 
@@ -2276,7 +2278,7 @@ pre,
     right: 0;
     bottom: 0;
     left: 0;
-    background: #0c141c;
+    background: var(--color-contrast-dark);
     opacity: 0.8;
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
     filter: alpha(opacity=80);
@@ -2711,7 +2713,7 @@ pre,
     top: 0;
     left: 0;
     z-index: 10;
-    background: #0c141c;
+    background: var(--color-contrast-dark);
     width: 100%;
     height: 100%;
     cursor: pointer;
@@ -2857,7 +2859,7 @@ pre,
   .app-top-bar__outer-wrapper {
     display: flex;
     width: 100%;
-    background-color: #263545;
+    background-color: var(--color-contrast-light);
   }
 
   .app-top-bar__inner-wrapper {
@@ -4459,7 +4461,7 @@ pre,
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    background-color: #263545;
+    background-color: var(--color-contrast-light);
   }
   .app-top-bar__sidepanel-trigger,
   .app-top-bar__account-menu-trigger {
@@ -4469,7 +4471,7 @@ pre,
   }
   .app-top-bar__sidepanel-trigger:hover,
   .app-top-bar__account-menu-trigger:hover {
-    background-color: #0c141c;
+    background-color: var(--color-contrast-dark);
   }
   .app-top-bar__sidepanel-trigger {
     height: 100%;
@@ -4675,10 +4677,10 @@ pre,
   }
   .result-list .draft,
   .result-list .pending {
-    color: #e6ae17;
+    color: var(--color-orange-light);
   }
   .result-list .archived {
-    color: #f2602e;
+    color: var(--color-red-mid);
   }
   .result-list .cell-select {
     cursor: default;
@@ -6667,7 +6669,7 @@ pre,
   }
   .form-inline-error {
     display: inline-block;
-    color: #f2602e;
+    color: var(--color-red-mid);
     padding-top: 0.3em;
     font-size: 0.8em;
     line-height: 1;
@@ -6679,8 +6681,8 @@ pre,
     display: block;
     text-align: center;
     padding: 0.6em 6px;
-    background: #f15a26;
-    border: 1px solid #e4450e;
+    background: var(--color-red-mid);
+    border: 1px solid var(--color-red-mid);
     color: var(--color-white);
     -webkit-box-shadow: 0 1px 1px rgba(255,255,255,0.25) inset;
     box-shadow: 0 1px 1px rgba(255,255,255,0.25) inset;
@@ -9701,7 +9703,7 @@ pre,
     line-height: 21px;
   }
   .usage-page__api-chart-tooltip {
-    background-color: #263545;
+    background-color: var(--color-contrast-light);
   }
   .usage-page__api-chart-tooltip .value {
     font-size: 14px;
@@ -10766,8 +10768,8 @@ pre,
     box-shadow: 0 0 0 1px var(--color-element-dark);
   }
   .search__filter-pill:focus {
-    -webkit-box-shadow: 0 0 0 1px #263545;
-    box-shadow: 0 0 0 1px #263545;
+    -webkit-box-shadow: 0 0 0 1px var(--color-contrast-light);
+    box-shadow: 0 0 0 1px var(--color-contrast-light);
   }
   .search__filter-pill-label {
     background-color: var(--color-element-light);
@@ -11011,7 +11013,7 @@ pre,
   }
   .line-chart--empty,
   .line-chart--loading {
-    outline-color: #263545;
+    outline-color: var(--color-contrast-light);
   }
   .line-chart--empty .line-chart__mount,
   .line-chart--loading .line-chart__mount {
