@@ -1396,7 +1396,7 @@ pre,
   }
   .copy-to-clipboard.x--input-suffix {
     background-color: var(--color-element-light);
-    border: 1px solid #c3cfd5;
+    border: 1px solid var(--color-element-base);
     border-radius: 0 3px 3px 0;
   }
   .copy-to-clipboard.x--input-suffix:hover,
@@ -1577,7 +1577,7 @@ pre,
   }
   .code-block__copy-wrapper {
     background-color: var(--color-element-light);
-    border: 1px solid #c3cfd5;
+    border: 1px solid var(--color-element-base);
     border-left: none;
     padding-left: 1em;
     padding-right: 1em;
@@ -1930,7 +1930,7 @@ pre,
     top: 0;
     bottom: 0;
     left: 256px;
-    border-left: 1px solid #c3cfd5;
+    border-left: 1px solid var(--color-element-base);
   }
   .webhook-templates-dialog-tabs__list {
     width: 256px;
@@ -3326,7 +3326,7 @@ pre,
     letter-spacing: 1px;
     text-transform: uppercase;
     line-height: 2;
-    border-bottom: 1px solid #c3cfd5;
+    border-bottom: 1px solid var(--color-element-base);
   }
   .entity-info-panel table td {
     margin-bottom: 1.71em;
@@ -3819,7 +3819,7 @@ pre,
   }
   .view-folder__separator {
     margin-bottom: 25px;
-    border-bottom: 1px solid #c3cfd5;
+    border-bottom: 1px solid var(--color-element-base);
   }
   .main-results {
     border-left: none;
@@ -3916,7 +3916,7 @@ pre,
     padding-right: 30px;
     background-color: var(--color-element-lightest);
     border-radius: 3px 3px 0 0;
-    border-bottom: 1px solid #c3cfd5;
+    border-bottom: 1px solid var(--color-element-base);
   }
   .modal-dialog__header > h1 {
     font-size: 1.2em;
@@ -5651,7 +5651,7 @@ pre,
     right: 30px;
     top: 50%;
     height: 0;
-    color: #c3cfd5;
+    color: var(--color-element-base);
   }
   .breadcrumbs-widget {
     display: -webkit-box;
@@ -5806,7 +5806,7 @@ pre,
   .cfnext-form__input:disabled {
     color: var(--color-text-base);
     background-color: var(--color-element-lightest);
-    border: 1px solid #c3cfd5;
+    border: 1px solid var(--color-element-base);
     -webkit-box-shadow: none;
     box-shadow: none;
     -webkit-transition: none;
@@ -5847,7 +5847,7 @@ pre,
   .cfnext-form__input--short:disabled {
     color: var(--color-text-base);
     background-color: var(--color-element-lightest);
-    border: 1px solid #c3cfd5;
+    border: 1px solid var(--color-element-base);
     -webkit-box-shadow: none;
     box-shadow: none;
     -webkit-transition: none;
@@ -5899,7 +5899,7 @@ pre,
   .tab-iframe .formtastic .input textarea.form-control:disabled {
     color: var(--color-text-base);
     background-color: var(--color-element-lightest);
-    border: 1px solid #c3cfd5;
+    border: 1px solid var(--color-element-base);
     -webkit-box-shadow: none;
     box-shadow: none;
     -webkit-transition: none;
@@ -6895,8 +6895,8 @@ pre,
     transition: background-color 0.2s linear;
     background: var(--color-element-lightest);
     margin-top: -1px;
-    border-top: 1px solid #c3cfd5;
-    border-bottom: 1px solid #c3cfd5;
+    border-top: 1px solid var(--color-element-base);
+    border-bottom: 1px solid var(--color-element-base);
     -webkit-box-shadow: 0 1px 2px 0 rgba(0,0,0,0.09);
     box-shadow: 0 1px 2px 0 rgba(0,0,0,0.09);
   }
@@ -7439,7 +7439,7 @@ pre,
     font-weight: 500;
     text-transform: uppercase;
     color: var(--color-text-lightest);
-    border-bottom: 1px solid #c3cfd5;
+    border-bottom: 1px solid var(--color-element-base);
     margin-bottom: 1.928571428571429em;
     margin-top: 1.928571428571429em;
     line-height: 2;
@@ -7748,7 +7748,7 @@ pre,
     transition-timing-function: ease-in-out;
     -webkit-transition-duration: 0.1s;
     transition-duration: 0.1s;
-    border-color: #c3cfd5;
+    border-color: var(--color-element-base);
     margin-left: 1ex;
     padding: 0 1.5ex;
     line-height: 24px;
@@ -7835,7 +7835,7 @@ pre,
   }
   .rich-text__editor {
     border-radius: 0 0 3px 3px;
-    border: 1px solid #c3cfd5;
+    border: 1px solid var(--color-element-base);
     border-top: 0;
     background: var(--color-element-lightest);
   }
@@ -7851,10 +7851,10 @@ pre,
     cursor: pointer;
   }
   .rich-text--hidden-toolbar .rich-text__editor {
-    border: 1px solid #c3cfd5;
+    border: 1px solid var(--color-element-base);
   }
   .rich-text__button {
-    border: 1px solid #c3cfd5;
+    border: 1px solid var(--color-element-base);
     background: var(--color-element-light);
     padding: 0 8px;
   }
@@ -8336,7 +8336,7 @@ pre,
     transform: translate3d(0, -2px, 0);
     -webkit-box-shadow: 0 6px 3px -3px rgba(0,0,0,0.1);
     box-shadow: 0 6px 3px -3px rgba(0,0,0,0.1);
-    border-color: #c3cfd5;
+    border-color: var(--color-element-base);
   }
   .ReferenceCard--minimized:hover {
     -webkit-transform: none;
@@ -8422,7 +8422,7 @@ pre,
     min-width: 123px;
     min-height: 123px;
     font-size: 50px;
-    color: #c3cfd5;
+    color: var(--color-element-base);
     background-color: rgba(255,255,255,0.95);
     border: 1px solid var(--color-element-lightest);
     border-radius: 1px;
@@ -9011,7 +9011,7 @@ pre,
     height: 70px;
     -ms-flex-negative: 0;
         flex-shrink: 0;
-    border-bottom: 1px solid #c3cfd5;
+    border-bottom: 1px solid var(--color-element-base);
     padding: 0 20px;
     cursor: pointer;
     -webkit-transition: background-color 0.1s ease-in-out;
@@ -9299,7 +9299,7 @@ pre,
   }
   .nav-sidepanel__org-actions-separator {
     margin-bottom: 12px;
-    border-bottom: 1px solid #c3cfd5;
+    border-bottom: 1px solid var(--color-element-base);
   }
   .nav-sidepanel__org-actions-goto-settings {
     color: var(--color-text-base);
