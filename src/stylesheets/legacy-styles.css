@@ -13,6 +13,8 @@
   --color-text-mid: #536171;
   --color-text-base: #283848;
 
+  --color-blue-base: #1D61AF;
+
   --color-green-mid: #0C9869;
   --color-green-base: #1D7D58;
   --color-green-dark: #1C583F;
@@ -84,11 +86,11 @@ pre,
     border-collapse: separate;
   }
   a {
-    color: #1683d0;
+    color: var(--color-blue-base);
     text-decoration: none;
   }
   a:link {
-    color: #1683d0;
+    color: var(--color-blue-base);
     text-decoration: none;
   }
   a:hover {
@@ -3835,7 +3837,7 @@ pre,
     white-space: nowrap;
     text-overflow: ellipsis;
     padding: 10px;
-    color: #1683d0;
+    color: var(--color-blue-base);
     cursor: pointer;
   }
   .block-list > li:hover .close-button {
@@ -5241,7 +5243,7 @@ pre,
     color: #2d2f31;
   }
   .result-list .cell-anchor {
-    color: #1683d0;
+    color: var(--color-blue-base);
   }
   .result-list .cell-text,
   .result-list .cell-description {
@@ -7256,7 +7258,7 @@ pre,
   input.form-control:not([type="checkbox"]):not([type="radio"]):focus,
   textarea.form-control:focus {
     background-color: #fff;
-    border-color: #1683d0;
+    border-color: var(--color-blue-base);
     -webkit-box-shadow: 0 0 3px #a4c7f1 inset;
     box-shadow: 0 0 3px #a4c7f1 inset;
   }
@@ -8584,7 +8586,7 @@ pre,
     display: inline !important;
   }
   .rich-text .rich-text__hyperlink--ie-fallback {
-    color: #1683d0;
+    color: var(--color-blue-base);
     text-decoration: underline;
   }
   .rich-text .rich-text__hyperlink:hover .rich-text__hyperlink-icon,
@@ -9217,7 +9219,7 @@ pre,
     margin-bottom: 8px;
   }
   .api-cm-list__item__toggle cf-icon[name="dd-arrow-down"] path {
-    fill: #1683d0;
+    fill: var(--color-blue-base);
   }
   .api-cm-list__item__toggle:hover cf-icon[name="dd-arrow-down"] path {
     fill: #0c2c52;
