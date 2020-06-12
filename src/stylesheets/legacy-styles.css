@@ -3353,7 +3353,7 @@ pre,
     cursor: pointer;
   }
   .block-list > li:hover .close-button {
-    color: #545454;
+    color: var(--color-text-mid);
   }
   .block-list .close-button {
     position: absolute;
@@ -5139,7 +5139,7 @@ pre,
     padding-top: 10px;
     padding-left: 20px;
     text-align: center;
-    color: #545454;
+    color: var(--color-text-mid);
   }
   .layout-field--info-text {
     padding-top: 10px;
@@ -5147,7 +5147,7 @@ pre,
     color: var(--color-text-lightest);
   }
   .layout-field--section-break {
-    background-color: #545454;
+    background-color: var(--color-text-mid);
     height: 1px;
     margin-left: 20px;
     margin-right: 20px;
@@ -11959,7 +11959,7 @@ pre,
     font-weight: bold;
     line-height: 30px;
     height: 30px;
-    color: #545454;
+    color: var(--color-text-mid);
   }
   .plan-header.muted {
     color: inherit;
@@ -11975,7 +11975,7 @@ pre,
   }
   .plan-subscript-header {
     margin-top: 0.5em;
-    color: #545454;
+    color: var(--color-text-mid);
     font-weight: bold;
     font-size: 85%;
   }
@@ -12045,7 +12045,7 @@ pre,
     line-height: 30px;
     font-size: 25px;
     font-weight: bold;
-    color: #545454;
+    color: var(--color-text-mid);
   }
   .price .plan-big-row {
     color: #3e97d6;
