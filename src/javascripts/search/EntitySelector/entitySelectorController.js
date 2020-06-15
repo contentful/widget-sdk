@@ -47,6 +47,7 @@ export default function register() {
     function EntitySelectorController($scope, $timeout, spaceContext) {
       const MIN_SEARCH_TRIGGERING_LEN = 1;
       const MODES = { AVAILABLE: 1, SELECTED: 2 };
+      const ITEMS_PER_PAGE = 40;
 
       const config = $scope.config;
       const singleContentTypeId =
@@ -70,7 +71,7 @@ export default function register() {
         onNoEntities: $scope.onNoEntities || _.noop,
         spaceContext: spaceContext,
         view: { mode: MODES.AVAILABLE },
-        paginator: Paginator.create(),
+        paginator: Paginator.create(ITEMS_PER_PAGE),
         items: [],
         selected: [],
         selectedIds: {},
@@ -153,6 +154,7 @@ export default function register() {
 
         return contentTypes;
       }
+
       function onSearchChange(newSearchState) {
         _.assign($scope.view, newSearchState);
 
@@ -229,6 +231,7 @@ export default function register() {
 
       // @TODO: Move toggle logic into a service and improve edge cases.
       let lastToggled;
+
       function toggleSelection(entity, event) {
         if (!config.multiple) {
           $scope.onChange([entity]);
@@ -303,14 +306,13 @@ export default function register() {
 
       function resetAndLoad() {
         $scope.isLoading = true;
-        load()
-          .then((response) => {
-            $scope.items = [];
-            $scope.paginator.setTotal(0);
-            $scope.paginator.setPage(0);
-            handleResponse(response);
-          })
-          .catch(console.error);
+        loadItems().then((response) => {
+          $scope.items = [];
+          $scope.paginator.setPerPage(ITEMS_PER_PAGE);
+          $scope.paginator.setTotal(0);
+          $scope.paginator.setPage(0);
+          handleResponse(response);
+        });
       }
 
       function loadMore() {
@@ -319,8 +321,34 @@ export default function register() {
         if (!$scope.config.noPagination && !$scope.isLoading && !$scope.paginator.isAtLast()) {
           $scope.isLoadingMore = true;
           $scope.paginator.next();
-          load().then(handleResponse);
+          loadItems().then(handleResponse);
         }
+      }
+
+      /**
+       * Load items trying with smaller and smaller batches if "Response is too big" error occurs.
+       * The current page pointer is adjusted respectively.
+       */
+      function loadItems(requestFewer = false) {
+        const newPageSize = Math.floor($scope.paginator.getPerPage() / 2);
+        if (requestFewer) {
+          // Reduce the page size to avoid the "response is too big" error
+          $scope.paginator.setPerPage(newPageSize);
+          // Adjust the current page to the new smaller page size
+          $scope.paginator.setPage($scope.paginator.getPage() * 2);
+        }
+
+        return load().catch((err) => {
+          if (
+            err.status === 400 &&
+            _.get(err, 'data.message', '').startsWith('Response size too big') &&
+            (!requestFewer || newPageSize > 1)
+          ) {
+            return loadItems(true);
+          }
+
+          throw err;
+        });
       }
 
       function getSearchPlaceholder() {

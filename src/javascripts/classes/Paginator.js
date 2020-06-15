@@ -101,6 +101,13 @@ export function create(perPage) {
       return perPage;
     },
     /**
+     * Set the number of items per page.
+     * @param {number} value
+     */
+    setPerPage(value) {
+      perPage = value;
+    },
+    /**
      * @ngdoc method
      * @name Paginator#getSkipParam
      * @returns {number}
