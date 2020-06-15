@@ -63,7 +63,7 @@ module.exports = {
             The same goes for typescript definition files:
            */
         pathNot:
-          'unused__|__mocks__|__tests__|__fixtures__|saved-views-migrator|test\\/helpers|\\.spec\\.(js|ts|tsx)$|\\.d\\.ts$',
+          'unused__|__mocks__|__tests__|__fixtures__|node_modules|saved-views-migrator|test\\/helpers|\\.spec\\.(js|ts|tsx)$|\\.d\\.ts$',
 
         /*
             for each file matching path and pathNot, check if it's reachable from the
