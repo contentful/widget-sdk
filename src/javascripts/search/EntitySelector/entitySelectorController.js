@@ -7,9 +7,9 @@ import Paginator from 'classes/Paginator';
 import * as EntityHelpers from 'app/entity_editor/entityHelpers';
 import getAccessibleCTs from 'data/ContentTypeRepo/accessibleCTs';
 import createSearchInput from 'app/ContentList/Search';
-import { createRequestQueue } from 'utils/overridingRequestQueue';
 import { getCurrentSpaceFeature } from 'data/CMA/ProductCatalog';
 import { PC_CONTENT_TAGS } from 'featureFlags';
+import * as random from 'utils/Random';
 
 export default function register() {
   /**
@@ -54,10 +54,9 @@ export default function register() {
         config.linkedContentTypeIds && config.linkedContentTypeIds.length === 1
           ? config.linkedContentTypeIds[0]
           : null;
+      let lastRequestId = null;
 
       initializeSearchUI();
-
-      const load = createRequestQueue(fetch);
 
       // Returns a promise for the content type of the given entry.
       // We cache this by the entry id
@@ -103,6 +102,21 @@ export default function register() {
       $scope.$on('forceSearch', resetAndLoad);
 
       resetAndLoad();
+
+      /**
+       * Resolves with a result of the last call.
+       */
+      function fetch() {
+        const requestId = random.id();
+        lastRequestId = requestId;
+        $scope.isLoading = true;
+        return new Promise((resolve, reject) => {
+          config
+            .fetch(getParams())
+            .then((res) => requestId === lastRequestId && resolve(res))
+            .catch((err) => requestId === lastRequestId && reject(err));
+        });
+      }
 
       function getEntityHelpers(config) {
         if (['Entry', 'Asset'].indexOf(config.entityType) < 0) {
@@ -163,11 +177,6 @@ export default function register() {
         }
 
         resetAndLoad();
-      }
-
-      function fetch() {
-        $scope.isLoading = true;
-        return config.fetch(getParams());
       }
 
       function getParams() {
@@ -306,11 +315,11 @@ export default function register() {
 
       function resetAndLoad() {
         $scope.isLoading = true;
+        $scope.paginator.setPerPage(ITEMS_PER_PAGE);
+        $scope.paginator.setPage(0);
         loadItems().then((response) => {
           $scope.items = [];
-          $scope.paginator.setPerPage(ITEMS_PER_PAGE);
           $scope.paginator.setTotal(0);
-          $scope.paginator.setPage(0);
           handleResponse(response);
         });
       }
@@ -329,22 +338,26 @@ export default function register() {
        * Load items trying with smaller and smaller batches if "Response is too big" error occurs.
        * The current page pointer is adjusted respectively.
        */
-      function loadItems(requestFewer = false) {
-        const newPageSize = Math.floor($scope.paginator.getPerPage() / 2);
-        if (requestFewer) {
+      function loadItems({ pageSize, page } = {}) {
+        const perPage = pageSize ?? $scope.paginator.getPerPage();
+        const currentPage = page ?? $scope.paginator.getPage();
+
+        if (pageSize > 0) {
           // Reduce the page size to avoid the "response is too big" error
-          $scope.paginator.setPerPage(newPageSize);
+          $scope.paginator.setPerPage(pageSize);
           // Adjust the current page to the new smaller page size
-          $scope.paginator.setPage($scope.paginator.getPage() * 2);
+          $scope.paginator.setPage(page);
         }
 
-        return load().catch((err) => {
+        return fetch().catch((err) => {
           if (
             err.status === 400 &&
             _.get(err, 'data.message', '').startsWith('Response size too big') &&
-            (!requestFewer || newPageSize > 1)
+            (!pageSize || perPage > 1)
           ) {
-            return loadItems(true);
+            const newPageSize = Math.floor(perPage / 2);
+            const newPage = currentPage * 2;
+            return loadItems({ pageSize: newPageSize, page: newPage });
           }
 
           throw err;
