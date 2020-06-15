@@ -872,29 +872,27 @@ describe('utils', () => {
 
   describe('getPlanResourceFulfillment', () => {
     it('should return an object with `near` and `reached` statuses for a plan and resources', () => {
-      const plan = utils.transformSpaceRatePlans({
+      const plan = utils.transformSpaceRatePlan({
         organization: mockOrganization,
-        spaceRatePlans: [
-          Fake.Plan({
-            productPlanType: 'some_space_type',
-            productRatePlanCharges: [
-              {
-                name: 'Records',
-                tiers: [{ endingUnit: 10 }],
-              },
-              {
-                name: 'Content types',
-                tiers: [{ endingUnit: 10 }],
-              },
-              {
-                name: 'Locales',
-                tiers: [{ endingUnit: 10 }],
-              },
-            ],
-          }),
-        ],
+        plan: Fake.Plan({
+          productPlanType: 'some_space_type',
+          productRatePlanCharges: [
+            {
+              name: 'Records',
+              tiers: [{ endingUnit: 10 }],
+            },
+            {
+              name: 'Content types',
+              tiers: [{ endingUnit: 10 }],
+            },
+            {
+              name: 'Locales',
+              tiers: [{ endingUnit: 10 }],
+            },
+          ],
+        }),
         freeSpaceResource: Fake.OrganizationResource(1, 3, 'free_space'),
-      })[0];
+      });
 
       const resources = [
         Fake.SpaceResource(1, 10, 'record'),
@@ -920,101 +918,95 @@ describe('utils', () => {
   });
 
   describe('getRecommendedPlan', () => {
-    const currentPlan = utils.transformSpaceRatePlans({
+    const currentPlan = utils.transformSpaceRatePlan({
       organization: mockOrganization,
-      spaceRatePlans: [
-        Fake.Plan({
-          productPlanType: 'some_space_type',
-          productRatePlanCharges: [
-            {
-              name: 'Records',
-              tiers: [{ endingUnit: 10 }],
-            },
-            {
-              name: 'Content types',
-              tiers: [{ endingUnit: 10 }],
-            },
-            {
-              name: 'Locales',
-              tiers: [{ endingUnit: 10 }],
-            },
-            {
-              name: 'Environments',
-              tiers: [{ endingUnit: 10 }],
-            },
-            {
-              name: 'Roles',
-              tiers: [{ endingUnit: 10 }],
-            },
-          ],
-        }),
-      ],
+      plan: Fake.Plan({
+        productPlanType: 'some_space_type',
+        productRatePlanCharges: [
+          {
+            name: 'Records',
+            tiers: [{ endingUnit: 10 }],
+          },
+          {
+            name: 'Content types',
+            tiers: [{ endingUnit: 10 }],
+          },
+          {
+            name: 'Locales',
+            tiers: [{ endingUnit: 10 }],
+          },
+          {
+            name: 'Environments',
+            tiers: [{ endingUnit: 10 }],
+          },
+          {
+            name: 'Roles',
+            tiers: [{ endingUnit: 10 }],
+          },
+        ],
+      }),
       freeSpaceResource: Fake.OrganizationResource(1, 3, 'free_space'),
-    })[0];
+    });
 
-    const nonrecommendablePlan = utils.transformSpaceRatePlans({
+    const nonrecommendablePlan = utils.transformSpaceRatePlan({
       organization: mockOrganization,
-      spaceRatePlans: [
-        Fake.Plan({
-          productPlanType: 'some_space_type',
-          productRatePlanCharges: [
-            {
-              name: 'Records',
-              tiers: [{ endingUnit: 20 }],
-            },
-            {
-              name: 'Content types',
-              tiers: [{ endingUnit: 10 }],
-            },
-            {
-              name: 'Locales',
-              tiers: [{ endingUnit: 20 }],
-            },
-            {
-              name: 'Environments',
-              tiers: [{ endingUnit: 20 }],
-            },
-            {
-              name: 'Roles',
-              tiers: [{ endingUnit: 10 }],
-            },
-          ],
-        }),
-      ],
+      plan: Fake.Plan({
+        productPlanType: 'some_space_type',
+        productRatePlanCharges: [
+          {
+            name: 'Records',
+            tiers: [{ endingUnit: 20 }],
+          },
+          {
+            name: 'Content types',
+            tiers: [{ endingUnit: 10 }],
+          },
+          {
+            name: 'Locales',
+            tiers: [{ endingUnit: 20 }],
+          },
+          {
+            name: 'Environments',
+            tiers: [{ endingUnit: 20 }],
+          },
+          {
+            name: 'Roles',
+            tiers: [{ endingUnit: 10 }],
+          },
+        ],
+      }),
       freeSpaceResource: Fake.OrganizationResource(1, 3, 'free_space'),
-    })[0];
+    });
 
-    const recommendablePlan = utils.transformSpaceRatePlans({
+    const recommendablePlan = utils.transformSpaceRatePlan({
       organization: mockOrganization,
-      spaceRatePlans: [
-        Fake.Plan({
-          productPlanType: 'some_space_type',
-          productRatePlanCharges: [
-            {
-              name: 'Records',
-              tiers: [{ endingUnit: 20 }],
-            },
-            {
-              name: 'Content types',
-              tiers: [{ endingUnit: 20 }],
-            },
-            {
-              name: 'Locales',
-              tiers: [{ endingUnit: 20 }],
-            },
-            {
-              name: 'Environments',
-              tiers: [{ endingUnit: 20 }],
-            },
-            {
-              name: 'Roles',
-              tiers: [{ endingUnit: 20 }],
-            },
-          ],
-        }),
-      ],
+      plan: Fake.Plan({
+        productPlanType: 'some_space_type',
+        productRatePlanCharges: [
+          {
+            name: 'Records',
+            tiers: [{ endingUnit: 20 }],
+          },
+          {
+            name: 'Content types',
+            tiers: [{ endingUnit: 20 }],
+          },
+          {
+            name: 'Locales',
+            tiers: [{ endingUnit: 20 }],
+          },
+          {
+            name: 'Environments',
+            tiers: [{ endingUnit: 20 }],
+          },
+          {
+            name: 'Roles',
+            tiers: [{ endingUnit: 20 }],
+          },
+        ],
+      }),
       freeSpaceResource: Fake.OrganizationResource(1, 3, 'free_space'),
-    })[0];
+    });
 
     it('should return null if nothing is near or has reached limit', () => {
       const resources = [

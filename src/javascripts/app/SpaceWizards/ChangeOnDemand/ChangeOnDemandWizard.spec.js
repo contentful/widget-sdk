@@ -22,7 +22,6 @@ const mockResources = createResourcesForPlan(mediumSpaceCurrent, {
   locale: FULFILLMENT_STATUSES.NEAR,
 });
 
-jest.spyOn(utils, 'transformSpaceRatePlans');
 jest.spyOn(utils, 'changeSpacePlan');
 jest.spyOn(PricingDataProvider, 'getSubscriptionPlans');
 jest.spyOn(PricingDataProvider, 'getSpaceRatePlans');

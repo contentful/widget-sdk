@@ -129,30 +129,34 @@ export function goToBillingPage(organization, onClose) {
   onClose && onClose();
 }
 
+export function transformSpaceRatePlan({ organization, plan, freeSpaceResource }) {
+  const isFree = plan.productPlanType === 'free_space';
+  const includedResources = getIncludedResources(plan.productRatePlanCharges);
+  let disabled = false;
+  let current = false;
+
+  if (plan.unavailabilityReasons && plan.unavailabilityReasons.length > 0) {
+    disabled = true;
+  } else if (isFree) {
+    disabled = !canCreate(freeSpaceResource);
+  } else if (!organization.isBillable) {
+    disabled = true;
+  }
+
+  if (
+    plan.unavailabilityReasons &&
+    plan.unavailabilityReasons.some((reason) => reason.type === 'currentPlan')
+  ) {
+    current = true;
+  }
+
+  return { ...plan, isFree, includedResources, disabled, current };
+}
+
 export function transformSpaceRatePlans({ organization, spaceRatePlans = [], freeSpaceResource }) {
-  return spaceRatePlans.map((plan) => {
-    const isFree = plan.productPlanType === 'free_space';
-    const includedResources = getIncludedResources(plan.productRatePlanCharges);
-    let disabled = false;
-    let current = false;
-
-    if (plan.unavailabilityReasons && plan.unavailabilityReasons.length > 0) {
-      disabled = true;
-    } else if (isFree) {
-      disabled = !canCreate(freeSpaceResource);
-    } else if (!organization.isBillable) {
-      disabled = true;
-    }
-
-    if (
-      plan.unavailabilityReasons &&
-      plan.unavailabilityReasons.some((reason) => reason.type === 'currentPlan')
-    ) {
-      current = true;
-    }
-
-    return { ...plan, isFree, includedResources, disabled, current };
-  });
+  return spaceRatePlans.map((plan) =>
+    transformSpaceRatePlan({ organization, plan, freeSpaceResource })
+  );
 }
 
 export function trackWizardEvent(eventName, payload = {}) {
