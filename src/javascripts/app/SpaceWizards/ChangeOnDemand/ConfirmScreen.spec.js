@@ -3,13 +3,8 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as Fake from 'test/helpers/fakeFactory';
 import ConfirmScreen from './ConfirmScreen';
+import { microSpace, mediumSpaceCurrent, largeSpace, freeSpace } from '../__tests__/fixtures/plans';
 
-const mockCurrentPlan = Fake.Plan({ price: 100 });
-const mockCurrentPlanFree = Fake.Plan({ price: 0 });
-const mockSelectedPlanHigherPrice = Fake.Plan({
-  price: 200,
-});
-const mockSelectedPlanLowerPrice = Fake.Plan({ price: 50 });
 const mockSpace = Fake.Space();
 
 describe('ConfirmScreen', () => {
@@ -31,18 +26,22 @@ describe('ConfirmScreen', () => {
   it('should show the total price for the subscription + space change', () => {
     build();
 
-    // 150 (current sub price) - 100 (current plan price) + 200 (selected plan price) = 250
+    // 150 (current sub price)
+    // - medium space price (current plan price)
+    // + large space price (selected plan price)
     expect(screen.getByTestId('contents')).toHaveTextContent(
-      'the total price of the spaces in your organization to $250 /month'
+      `the total price of the spaces in your organization to $${
+        150 - mediumSpaceCurrent.price + largeSpace.price
+      } /month`
     );
   });
 
   describe('free to paid space', () => {
     it('should show the free -> paid space copy', () => {
-      build({ currentPlan: mockCurrentPlanFree });
+      build({ currentPlan: freeSpace });
 
       expect(screen.getByTestId('contents')).toHaveTextContent(
-        'The price of this space will now be $200'
+        `The price of this space will now be $${largeSpace.price}`
       );
     });
   });
@@ -52,17 +51,17 @@ describe('ConfirmScreen', () => {
       build();
 
       expect(screen.getByTestId('contents')).toHaveTextContent(
-        'The price of this space will change from $100 to $200 and will increase'
+        `The price of this space will change from $${mediumSpaceCurrent.price} to $${largeSpace.price} and will increase`
       );
     });
   });
 
   describe('paid spaces, higher to lower price', () => {
     it('should show the paid higher -> lower space copy', () => {
-      build({ selectedPlan: mockSelectedPlanLowerPrice });
+      build({ selectedPlan: microSpace });
 
       expect(screen.getByTestId('contents')).toHaveTextContent(
-        'The price of this space will change from $100 to $50 and will reduce'
+        `The price of this space will change from $${mediumSpaceCurrent.price} to $${microSpace.price} and will reduce`
       );
     });
   });
@@ -71,8 +70,8 @@ describe('ConfirmScreen', () => {
 function build(custom) {
   const props = Object.assign(
     {
-      selectedPlan: mockSelectedPlanHigherPrice,
-      currentPlan: mockCurrentPlan,
+      selectedPlan: largeSpace,
+      currentPlan: mediumSpaceCurrent,
       changing: false,
       onConfirm: () => {},
       space: mockSpace,
