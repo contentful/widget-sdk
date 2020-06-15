@@ -62,7 +62,8 @@ describe('cfPersistentNotification Directive', () => {
   describe('broadcast `actionMessage`', () => {
     beforeEach(() => {
       $rootScope.$broadcast('persistentNotification', {
-        actionMessage: 'some message',
+        message: 'some message',
+        actionMessage: 'some action message',
       });
       digest();
     });
@@ -70,7 +71,7 @@ describe('cfPersistentNotification Directive', () => {
     itShowsTheNotification();
 
     it('shows a button', () => {
-      expect($body().find('button')).not.toBeNgHidden();
+      expect($actionButton().length).toBe(1);
     });
   });
 
@@ -130,11 +131,15 @@ describe('cfPersistentNotification Directive', () => {
   }
 
   function $body() {
-    return element.find('.persistent-notification');
+    return element.find('[data-test-id="persistent-notification"]');
   }
 
   function $message() {
-    return $body().find('[data-test-id="message"]');
+    return $body().find('[data-test-id="persistent-notification-message"]');
+  }
+
+  function $actionButton() {
+    return $body().find('[data-test-id="persistent-notification-action-button"]');
   }
 
   function digest() {

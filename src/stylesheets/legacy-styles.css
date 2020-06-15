@@ -4771,41 +4771,6 @@ pre,
             flex: 1 1 auto;
     margin: 0 1em 0 0;
   }
-  .persistent-notification {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-align: center;
-    -webkit-box-align: center;
-            align-items: center;
-    width: 100%;
-    height: 45px;
-    padding: 8px 16px;
-    background-color: #3c80cf;
-    color: #fff;
-  }
-  .persistent-notification__link > a {
-    color: #fff;
-    margin-left: 1rem;
-    text-decoration: underline;
-  }
-  .persistent-notification__link > a:hover {
-    color: #fff;
-    text-decoration: none;
-  }
-  .persistent-notification__action {
-    margin-bottom: 0px;
-    padding: 0.4rem 1rem 0.3rem;
-  }
-  .persistent-notification__action:active {
-    padding: 0.5rem 1rem 0.2rem;
-  }
-  .persistent-notification__icon {
-    margin-right: 1rem;
-  }
-  .persistent-notification__icon svg > path {
-    fill: #fff;
-  }
   .user-space-invitation-dialog {
     width: 66vw;
     max-width: 720px;
