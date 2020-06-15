@@ -87,7 +87,7 @@ export default class SpaceNavigationBar extends React.Component {
       usageEnabled,
       hasOrgTeamFeature,
       teamsInSpacesFF,
-      useSpaceEnviroment: canManageEnvironments && environmentsEnabled,
+      useSpaceEnvironment: canManageEnvironments && environmentsEnabled,
       isMasterEnvironment,
       contentTagsEnabled,
       canManageSpace,

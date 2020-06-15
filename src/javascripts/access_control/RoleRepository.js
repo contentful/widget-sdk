@@ -6,6 +6,7 @@ const AVAILABLE_PERMISSIONS = {
   Settings: ['manage'],
   Environments: ['manage'],
   EnvironmentAliases: ['manage'],
+  Tags: ['manage'],
 };
 
 const PERMISSION_GROUP_NAME_MAP = {
@@ -14,6 +15,7 @@ const PERMISSION_GROUP_NAME_MAP = {
   Settings: 'settings',
   Environments: 'environments',
   EnvironmentAliases: 'environmentAliases',
+  Tags: 'tags',
 };
 
 export function getInstance(space) {

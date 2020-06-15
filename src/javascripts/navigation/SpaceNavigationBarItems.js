@@ -13,7 +13,7 @@ export function getSpaceNavigationItems({
   usageEnabled,
   hasOrgTeamFeature,
   teamsInSpacesFF,
-  useSpaceEnviroment,
+  useSpaceEnvironment,
   isMasterEnvironment,
   contentTagsEnabled,
   canManageSpace,
@@ -96,7 +96,7 @@ export function getSpaceNavigationItems({
       dataViewType: 'spaces-settings-content-preview',
       title: 'Content preview',
       srefOptions: {
-        reload: useSpaceEnviroment,
+        reload: useSpaceEnvironment,
       },
     },
     usage: {
@@ -105,7 +105,7 @@ export function getSpaceNavigationItems({
       dataViewType: 'spaces-settings-usage',
       title: 'Usage',
       srefOptions: {
-        reload: useSpaceEnviroment,
+        reload: useSpaceEnvironment,
       },
     },
   };
@@ -139,6 +139,7 @@ export function getSpaceNavigationItems({
   ].filter((item) => item.if !== false);
 
   const spaceSettingsDropdown = [
+    dropdownItems.tags,
     dropdownItems.settings,
     dropdownItems.locales,
     dropdownItems.users,
@@ -152,7 +153,7 @@ export function getSpaceNavigationItems({
   ].filter((item) => item.if !== false);
 
   return [
-    !useSpaceEnviroment || isMasterEnvironment
+    !useSpaceEnvironment || isMasterEnvironment
       ? {
           if: canNavigateTo('spaceHome'),
           sref: 'spaces.detail.home',
@@ -200,13 +201,13 @@ export function getSpaceNavigationItems({
       render: (item) => renderAppsNavigationItem(item, { isMasterEnvironment, canManageSpace }),
     },
     {
-      if: useSpaceEnviroment ? envSettingsDropdown.length > 0 : spaceSettingsDropdown.length > 0,
+      if: useSpaceEnvironment ? envSettingsDropdown.length > 0 : spaceSettingsDropdown.length > 0,
       dataViewType: 'space-settings',
       rootSref: makeRef('settings', isMasterEnvironment),
       navIcon: 'settings',
       icon: 'nav-settings',
       title: 'Settings',
-      children: useSpaceEnviroment ? envSettingsDropdown : spaceSettingsDropdown,
+      children: useSpaceEnvironment ? envSettingsDropdown : spaceSettingsDropdown,
     },
   ].filter((item) => item.if !== false);
 }

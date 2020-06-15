@@ -11,6 +11,8 @@ import * as accessChecker from 'access_control/AccessChecker';
 import * as ResourceUtils from 'utils/ResourceUtils';
 import { RoleEditor } from '../role_editor/RoleEditor';
 import DocumentTitle from 'components/shared/DocumentTitle';
+import { getCurrentSpaceFeature } from 'data/CMA/ProductCatalog';
+import { PC_CONTENT_TAGS } from 'featureFlags';
 
 const RoleEditorFetcher = createFetcherComponent(
   async ({ spaceId, getContentTypes, getEntities, isNew }) => {
@@ -18,12 +20,14 @@ const RoleEditorFetcher = createFetcherComponent(
       contentTypes,
       hasEnvironmentAliasesEnabled,
       hasCustomRolesFeature,
+      hasContentTagsFeature,
       resource,
       entities,
     ] = await Promise.all([
       getContentTypes(),
       getSpaceFeature(spaceId, ENVIRONMENT_ALIASING),
       accessChecker.canModifyRoles(),
+      getCurrentSpaceFeature(PC_CONTENT_TAGS, false),
       createResourceService(spaceId).get('role'),
       getEntities(),
     ]);
@@ -34,6 +38,7 @@ const RoleEditorFetcher = createFetcherComponent(
         entities,
         hasEnvironmentAliasesEnabled,
         hasCustomRolesFeature: false,
+        hasContentTagsFeature,
         canModifyRoles: false,
       };
     }
@@ -45,6 +50,7 @@ const RoleEditorFetcher = createFetcherComponent(
         entities,
         hasEnvironmentAliasesEnabled,
         hasCustomRolesFeature: true,
+        hasContentTagsFeature,
         canModifyRoles: false,
       };
     }
@@ -54,6 +60,7 @@ const RoleEditorFetcher = createFetcherComponent(
       entities,
       hasEnvironmentAliasesEnabled,
       hasCustomRolesFeature: true,
+      hasContentTagsFeature,
       canModifyRoles: true,
     };
   }
