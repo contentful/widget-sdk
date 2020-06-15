@@ -6392,7 +6392,7 @@ pre,
     stroke: var(--color-element-dark);
   }
   .icon-component[data-icon-name="field-calendar"] rect {
-    fill: #16ca8e;
+    fill: var(--color-green-mid);
   }
   .icon-component[data-icon-name="field-calendar"] rect:first-of-type {
     fill: none;
