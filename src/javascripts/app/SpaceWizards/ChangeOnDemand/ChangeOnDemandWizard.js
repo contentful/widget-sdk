@@ -1,6 +1,8 @@
 import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
+import { getVariation } from 'LaunchDarkly';
+import { COMMUNITY_PLAN_FLAG, PAYING_PREV_V2_ORG } from 'featureFlags';
 import SpacePlanSelector from '../shared/SpacePlanSelector';
 import ConfirmScreen from './ConfirmScreen';
 
@@ -46,8 +48,9 @@ const styles = {
 };
 
 const initialFetch = (organization, space) => async () => {
-  const orgEndpoint = createOrganizationEndpoint(organization.sys.id);
-  const orgResources = createResourceService(organization.sys.id, 'organization');
+  const organizationId = organization.sys.id;
+  const orgEndpoint = createOrganizationEndpoint(organizationId);
+  const orgResources = createResourceService(organizationId, 'organization');
   const spaceResourceService = createResourceService(space.sys.id);
 
   const [
@@ -55,11 +58,15 @@ const initialFetch = (organization, space) => async () => {
     freeSpaceResource,
     subscriptionPlans,
     rawSpaceRatePlans,
+    isCommunityPlanEnabled,
+    isPayingPreviousToV2,
   ] = await Promise.all([
     spaceResourceService.getAll(),
     orgResources.get(FREE_SPACE_IDENTIFIER),
     getSubscriptionPlans(orgEndpoint),
     getSpaceRatePlans(orgEndpoint, space.sys.id),
+    getVariation(COMMUNITY_PLAN_FLAG, { organizationId }),
+    getVariation(PAYING_PREV_V2_ORG, { organizationId }),
   ]);
 
   const spaceRatePlans = transformSpaceRatePlans({
@@ -77,6 +84,8 @@ const initialFetch = (organization, space) => async () => {
     currentSubscriptionPrice,
     currentPlan,
     freeSpaceResource,
+    isCommunityPlanEnabled,
+    isPayingPreviousToV2,
   };
 };
 
@@ -155,6 +164,8 @@ export default function Wizard(props) {
               }}
               goToBillingPage={() => goToBillingPage(organization, onClose)}
               spaceResources={data.spaceResources}
+              isCommunityPlanEnabled={data.isCommunityPlanEnabled}
+              isPayingPreviousToV2={data.isPayingPreviousToV2}
               isChanging
             />
           </TabPanel>

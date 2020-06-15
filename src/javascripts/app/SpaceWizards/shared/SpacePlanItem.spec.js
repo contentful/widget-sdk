@@ -22,7 +22,7 @@ describe('SpacePlanItem', () => {
 
     build({ plan, freeSpacesResource });
 
-    expect(screen.getByTestId('contents')).toHaveTextContent('1 free space');
+    expect(screen.getByTestId('contents')).toHaveTextContent('2 free spaces');
   });
 
   it('should show the plan features', () => {

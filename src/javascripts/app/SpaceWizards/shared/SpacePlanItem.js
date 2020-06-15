@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { camelCase } from 'lodash';
 import { css, cx } from 'emotion';
 import { Tooltip, Icon, Card, Subheading } from '@contentful/forma-36-react-components';
+import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 
 import PlanFeatures from '../shared/PlanFeatures';
@@ -25,9 +26,6 @@ const styles = {
 
   planCard: css({
     position: 'relative',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
     paddingLeft: tokens.spacingXl,
     marginBottom: tokens.spacingM,
     cursor: 'pointer',
@@ -58,9 +56,10 @@ const styles = {
 
   currentPlan: css({
     '&:after': {
-      content: '"Current"',
+      content: `"Current"`, // the content property needs the extra ""
+      backgroundColor: tokens.colorElementMid,
       position: 'absolute',
-      top: 'calc(50% - 14px)', // 12px is half the height of this tag
+      top: 'calc(50% - 14px)', // 14px is half the height of this tag
       right: '-20px',
       padding: `${tokens.spacingXs} ${tokens.spacingS}`,
       color: tokens.colorWhite,
@@ -68,7 +67,23 @@ const styles = {
       fontWeight: tokens.fontWeightDemiBold,
       lineHeight: 1,
       textTransform: 'uppercase',
-      backgroundColor: tokens.colorElementMid,
+      borderRadius: '2px',
+    },
+  }),
+
+  recommendedPlan: css({
+    '&:after': {
+      content: `"Recommended"`, // the content property needs the extra ""
+      backgroundColor: tokens.colorBlueBase,
+      position: 'absolute',
+      top: 'calc(50% - 14px)', // 14px is half the height of this tag
+      right: '-20px',
+      padding: `${tokens.spacingXs} ${tokens.spacingS}`,
+      color: tokens.colorWhite,
+      fontSize: tokens.fontSizeS,
+      fontWeight: tokens.fontWeightDemiBold,
+      lineHeight: 1,
+      textTransform: 'uppercase',
       borderRadius: '2px',
     },
   }),
@@ -104,31 +119,6 @@ const styles = {
     alignItems: 'flex-end',
     height: '100%',
   }),
-
-  recommendedPlan: css({
-    '&:after': {
-      content: '"Recommended"',
-      color: '#fff',
-      backgroundColor: '#5095ed',
-      borderRadius: '2px',
-      position: 'absolute',
-      right: '-20px',
-      top: '35%',
-      padding: '6px 10px',
-      textTransform: 'uppercase',
-      fontWeight: '600',
-      fontSize: '12px',
-      lineHeight: '12px',
-      letterSpacing: '0.4px',
-      opacity: '0.9',
-      filter: 'alpha(opacity=90)',
-    },
-  }),
-
-  planName: css({
-    fontSize: '17px',
-    lineHeight: '1.2',
-  }),
 };
 
 export default function SpacePlanItem(props) {
@@ -141,7 +131,6 @@ export default function SpacePlanItem(props) {
     onSelect,
     isCommunityPlanEnabled,
   } = props;
-  const freeSpacesUsage = freeSpacesResource && freeSpacesResource.usage;
   const freeSpacesLimit = freeSpacesResource && freeSpacesResource.limits.maximum;
 
   // We should not show the chevron in the following cases:
@@ -165,43 +154,43 @@ export default function SpacePlanItem(props) {
 
   return (
     <Card
-      className={cx([
-        styles.planCard,
-        styles.plans[camelCase(plan.name)],
-        plan.current && styles.currentPlan,
-        plan.disabled && styles.disabled,
-        isRecommended && styles.recommendedPlan,
-      ])}
+      className={cx(styles.planCard, styles.plans[camelCase(plan.name)], {
+        [styles.currentPlan]: plan.current,
+        [styles.recommendedPlan]: isRecommended,
+        [styles.disabled]: plan.disabled,
+      })}
       selected={isSelected}
       onClick={handleClick}
       testId="space-plan-item">
-      <div data-test-id="contents">
-        <div className={styles.headingContainer}>
-          <Subheading element="h2" testId="space-plan-name">
-            {plan.name}
-          </Subheading>
+      <Grid columns="auto 18px" columnGap="spacingS">
+        <div data-test-id="contents">
+          <div className={styles.headingContainer}>
+            <Subheading element="h2" testId="space-plan-name">
+              {plan.name}
+            </Subheading>
 
-          {plan.price > 0 && (
-            <span data-test-id="space-plan-price">
-              <Price value={plan.price} unit="month" />
-            </span>
-          )}
+            {plan.price > 0 && (
+              <span data-test-id="space-plan-price">
+                <Price value={plan.price} unit="month" />
+              </span>
+            )}
 
-          {plan.isFree && freeSpacesLimit && (
-            <>
-              <Pluralized text="free space" count={freeSpacesUsage} />
-              <Tooltip content={tooltipContent}>
-                <Icon icon="HelpCircle" className={styles.helpIcon} />
-              </Tooltip>
-            </>
-          )}
+            {plan.isFree && freeSpacesLimit && (
+              <>
+                <Pluralized text="free space" count={freeSpacesLimit} />
+                <Tooltip content={tooltipContent}>
+                  <Icon icon="HelpCircle" className={styles.helpIcon} />
+                </Tooltip>
+              </>
+            )}
+          </div>
+
+          <PlanFeatures resources={plan.includedResources} roleSet={plan.roleSet} />
         </div>
-
-        <PlanFeatures resources={plan.includedResources} roleSet={plan.roleSet} />
-      </div>
-      <div className={styles.arrowIconColumn}>
-        {showChevron && <Icon testId="plan-chevron" icon="ChevronRight" color="muted" />}
-      </div>
+        <div className={styles.arrowIconColumn}>
+          {showChevron && <Icon testId="plan-chevron" icon="ChevronRight" color="muted" />}
+        </div>
+      </Grid>
     </Card>
   );
 }
