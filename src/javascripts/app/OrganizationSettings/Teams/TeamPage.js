@@ -44,7 +44,13 @@ class TeamPage extends React.Component {
     const { hasAccess, deniedReason, showList, showDetails, isLoading, organization } = this.props;
     if (!hasAccess) {
       if (deniedReason === FEATURE_INACTIVE) {
-        return <TeamsEmptyState isLegacy={true} isAdmin={isOwnerOrAdmin(organization)} />;
+        return (
+          <TeamsEmptyState
+            isLegacy={true}
+            isAdmin={isOwnerOrAdmin(organization)}
+            orgId={organization.sys.id}
+          />
+        );
       } else {
         const text = 'Access forbidden.';
         return (

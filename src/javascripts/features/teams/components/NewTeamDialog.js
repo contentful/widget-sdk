@@ -14,11 +14,11 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { createTeam } from '../services/TeamRepository';
 import { logServerError } from 'services/logger';
 import { isTaken } from 'utils/ServerErrorUtils';
+import * as Navigator from 'states/Navigator';
 
 NewTeamDialog.propTypes = {
   isShown: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  onTeamAdded: PropTypes.func.isRequired,
   orgId: PropTypes.string.isRequired,
   allTeams: PropTypes.arrayOf(TeamPropType),
 };
@@ -31,7 +31,7 @@ function createNewTeam({ name, description }, orgId) {
   });
 }
 
-export function NewTeamDialog({ isShown, onClose, onTeamAdded, allTeams, orgId }) {
+export function NewTeamDialog({ isShown, onClose, allTeams, orgId }) {
   const { onChange, onSubmit, fields, form } = useForm({
     fields: {
       name: {
@@ -50,11 +50,14 @@ export function NewTeamDialog({ isShown, onClose, onTeamAdded, allTeams, orgId }
         required: false,
       },
     },
-    submitFn: async ({ name, description }, createCallback) => {
+    submitFn: async ({ name, description }, createFn) => {
       try {
-        await createCallback({ name, description }, orgId);
-        onTeamAdded();
+        const newTeam = await createFn({ name, description }, orgId);
         onClose();
+        Navigator.go({
+          path: ['account', 'organizations', 'teams', 'detail'],
+          params: { teamId: newTeam.sys.id },
+        });
         Notification.success(`Team ${name} created successfully`);
       } catch (e) {
         if (isTaken(e)) {
@@ -62,7 +65,7 @@ export function NewTeamDialog({ isShown, onClose, onTeamAdded, allTeams, orgId }
             name: 'This name is already in use',
           };
         } else {
-          Notification.error(e.message);
+          Notification.error('Something went wrong. Could not create team');
           logServerError('Could not create team', { error: e });
         }
       }

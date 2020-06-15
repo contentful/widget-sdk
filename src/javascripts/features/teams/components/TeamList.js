@@ -76,7 +76,6 @@ export function TeamList({ readOnlyPermission, orgId }) {
         testId="create-team-dialog"
         isShown={isShown}
         onClose={onClose}
-        onTeamAdded={boundFetch}
         allTeams={teams}
         orgId={orgId}
       />
@@ -88,7 +87,8 @@ export function TeamList({ readOnlyPermission, orgId }) {
     ? `You are in ${teamsPlural}`
     : `${teamsPlural} in your organization`;
 
-  if (!isLoading && teams.length === 0) return <TeamsEmptyState isAdmin={!readOnlyPermission} />;
+  if (!isLoading && teams.length === 0)
+    return <TeamsEmptyState isAdmin={!readOnlyPermission} orgId={orgId} />;
 
   return (
     <Workbench>
