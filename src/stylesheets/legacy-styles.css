@@ -3361,7 +3361,7 @@ pre,
     font-size: 11px;
     background: var(--color-white);
     background: rgba(255,255,255,0.96);
-    border: 1px solid #e5e5e5;
+    border: 1px solid var(--color-element-light);
     -webkit-box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     border-radius: 0 0 3px 3px;
@@ -4237,7 +4237,7 @@ pre,
     transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out, -webkit-transform 0.2s ease-in-out;
     -webkit-transform: translateY(0);
     transform: translateY(0);
-    background: #16ca8e;
+    background: var(--color-green-light);
     border: 1px solid var(--color-green-mid);
   }
   .app-notification__dismiss {
@@ -4369,7 +4369,7 @@ pre,
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
     border-color: var(--color-element-dark);
-    color: #333a42;
+    color: var(--color-text-base);
   }
   .search-field__button > .fa-search {
     position: relative;
@@ -4964,7 +4964,7 @@ pre,
   .validation-settings__help-text {
     margin: 0;
     padding: 10px 0 0 20px;
-    color: #b7b6b6;
+    color: var(--color-element-dark);
     font-weight: normal;
   }
   .validation-settings__rich-text {
@@ -5500,7 +5500,7 @@ pre,
     border: 1px solid var(--color-red-mid);
   }
   .space-plans-list__item--medium:before {
-    background-color: #5b9fef;
+    background-color: var(--color-blue-light);
     border: 1px solid var(--color-blue-mid);
   }
   .space-plans-list__item--large:before {
@@ -5566,7 +5566,7 @@ pre,
   .space-plans-list__item--recommended:after {
     content: "Recommended";
     color: var(--color-white);
-    background-color: #5095ed;
+    background-color: var(--color-blue-mid);
     border-radius: 2px;
     position: absolute;
     right: -20px;
@@ -6392,7 +6392,7 @@ pre,
     stroke: var(--color-element-dark);
   }
   .icon-component[data-icon-name="field-calendar"] rect {
-    fill: var(--color-green-mid);
+    fill: var(--color-green-light);
   }
   .icon-component[data-icon-name="field-calendar"] rect:first-of-type {
     fill: none;
@@ -6754,7 +6754,7 @@ pre,
     color: var(--color-text-light);
   }
   .form-control[readonly] {
-    color: #333a42;
+    color: var(--color-text-base);
   }
   .form-control--with-unit {
     line-height: 31px;
@@ -6993,7 +6993,7 @@ pre,
     border-right: 2px solid rgba(88,240,188,0.6);
   }
   .bulk-editor-entry__status[data-state="changes"] {
-    color: #5b9fef;
+    color: var(--color-blue-light);
   }
   .bulk-editor-entry__status[data-state="changes"][aria-busy="true"]:after {
     -webkit-transition: width 0.2s linear, margin 0.2s linear, opacity 0.5s ease-in;
@@ -7007,8 +7007,8 @@ pre,
     -webkit-animation: fa-spin 2s infinite linear;
     animation: fa-spin 2s infinite linear;
     border-radius: 50%;
-    border-bottom: 2px solid #5b9fef;
-    border-left: 2px solid #5b9fef;
+    border-bottom: 2px solid var(--color-blue-light);
+    border-left: 2px solid var(--color-blue-light);
     border-top: 2px solid rgba(145,192,245,0.6);
     border-right: 2px solid rgba(145,192,245,0.6);
   }
@@ -7448,7 +7448,7 @@ pre,
     border: 1px solid var(--color-green-mid);
   }
   .entity-sidebar__state-indicator[data-state="changes"] {
-    background: #5b9fef;
+    background: var(--color-blue-light);
     border: 1px solid var(--color-blue-mid);
   }
   .entity-sidebar__update {
@@ -8421,7 +8421,7 @@ pre,
   }
   .asset-card__action,
   .asset-card__action:link {
-    color: #5b9fef;
+    color: var(--color-blue-light);
   }
   .asset-card__action:hover {
     color: var(--color-blue-mid);
@@ -8656,7 +8656,7 @@ pre,
   }
   .pika-button:hover {
     color: var(--color-white);
-    background: #5b9fef;
+    background: var(--color-blue-light);
   }
   .pika-row .is-disabled {
     opacity: 0.3;

@@ -7,7 +7,7 @@ import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceServic
 import { getResourceLimits } from 'utils/ResourceUtils';
 
 import createResourceService from 'services/ResourceService';
-import { TextLink } from '@contentful/forma-36-react-components';
+import { TextLink, HelpText } from '@contentful/forma-36-react-components';
 
 const openUpgradeModal = (space, onSubmit) =>
   showUpgradeSpaceDialog({
@@ -65,11 +65,11 @@ export default function RecordsResourceUsage({
         'resource-usage--warn': usage / limit >= warnThreshold && usage / limit < errorThreshold,
         'resource-usage--danger': usage / limit >= errorThreshold,
       })}>
-      {atLimit && <span>You’ve reached the limit of {limit} entries and assets. </span>}
+      {atLimit && <HelpText>You’ve reached the limit of {limit} entries and assets. </HelpText>}
       {!atLimit && (
-        <span>
+        <HelpText>
           Usage: {usage} / {limit} entries and assets{' '}
-        </span>
+        </HelpText>
       )}
       {usagePercentage >= warnThreshold && isMasterEnvironment && (
         <TextLink onClick={() => openUpgradeModal(space, updateResource)}>Upgrade space</TextLink>
