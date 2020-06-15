@@ -148,7 +148,7 @@ export default function create(space, spaceEndpoint$q, publishedCTs, viewMigrato
    * TODO we should queue saves to prevent race conditions
    */
   function save(type, uiConfig) {
-    setUiConfig(type, uiConfig);
+    const config = setUiConfig(type, uiConfig);
 
     const data = prepareUIConfigForStorage(uiConfig);
     return spaceEndpoint(
@@ -164,9 +164,14 @@ export default function create(space, spaceEndpoint$q, publishedCTs, viewMigrato
         return setUiConfigOrMigrate(type, remoteData);
       },
       (error) => {
-        const reject = () => Promise.reject(error);
-        logger.logServerWarn(`Could not save ${getEntityName(type)}`, { error });
-        return load(type).then(reject, reject);
+        const statusCode = getPath(error, 'statusCode');
+        if (statusCode === 403) {
+          return config;
+        } else {
+          const reject = () => Promise.reject(error);
+          logger.logServerWarn(`Could not save ${getEntityName(type)}`, { error });
+          return load(type).then(reject, reject);
+        }
       }
     );
   }
