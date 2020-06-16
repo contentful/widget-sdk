@@ -153,7 +153,7 @@ const EntryEditorWorkbench = (props) => {
     return {
       key: 'entryContentTags',
       title: 'Tags',
-      icon: 'CodeTrimmed',
+      icon: 'Tags',
       isVisible: true,
       isEnabled: () => true,
       render() {
