@@ -7,6 +7,9 @@ const styles = {
     alignItems: 'center',
     transform: `translateX(-${tokens.spacingXs})`,
   }),
+  tooltip: css({
+    display: 'inline-flex',
+  }),
   icon: css({
     marginRight: tokens.spacingXs,
     marginLeft: tokens.spacingXs,
