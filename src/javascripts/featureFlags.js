@@ -28,5 +28,3 @@ export const ADD_TO_RELEASE = 'feature-pulitzer-05-2020-add-to-release';
 export const SHAREJS_REMOVAL = 'feature-pen-04-2020-sharejs-removal-multi';
 
 // Team Hejo Release Flags
-export const NEW_TEAM_DETAILS = 'feature-hejo-05-2020-new-team-details';
-export const NEW_TEAM_LIST = 'feature-hejo-05-2020-new-team-list';

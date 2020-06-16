@@ -2,11 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { TeamDetails } from '../components/TeamDetails';
-import { getVariation } from 'LaunchDarkly';
-import { NEW_TEAM_DETAILS } from 'featureFlags';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import TeamPage from 'app/OrganizationSettings/Teams/TeamPage';
 import StateRedirect from 'app/common/StateRedirect';
 import { FetcherLoading } from 'app/common/createFetcherComponent';
 import { getOrganization } from 'services/TokenStore';
@@ -15,15 +12,14 @@ import { getTeam, getAllTeams } from '../services/TeamRepository';
 
 const TeamDetailsFetcher = createFetcherComponent(async ({ orgId, teamId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
-  const [team, allTeams, organization, newTeamDetailsEnabled] = await Promise.all([
+  const [team, allTeams, organization] = await Promise.all([
     getTeam(endpoint, teamId),
     getAllTeams(endpoint),
     getOrganization(orgId),
-    getVariation(NEW_TEAM_DETAILS),
   ]);
 
   const readOnlyPermission = !isOwnerOrAdmin(organization);
-  return { team, allTeams, readOnlyPermission, newTeamDetailsEnabled };
+  return { team, allTeams, readOnlyPermission };
 });
 export class TeamDetailsRoute extends React.Component {
   static propTypes = {
@@ -43,18 +39,14 @@ export class TeamDetailsRoute extends React.Component {
             if (isError) {
               return <StateRedirect path="teams" />;
             }
-            if (data.newTeamDetailsEnabled) {
-              return (
-                <TeamDetails
-                  team={data.team}
-                  readOnlyPermission={data.readOnlyPermission}
-                  orgId={this.props.orgId}
-                  allTeams={data.allTeams.items}
-                />
-              );
-            }
-
-            return <TeamPage />;
+            return (
+              <TeamDetails
+                team={data.team}
+                readOnlyPermission={data.readOnlyPermission}
+                orgId={this.props.orgId}
+                allTeams={data.allTeams.items}
+              />
+            );
           }}
         </TeamDetailsFetcher>
       </React.Fragment>
