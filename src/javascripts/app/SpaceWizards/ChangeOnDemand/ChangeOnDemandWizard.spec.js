@@ -10,6 +10,7 @@ import cleanupNotifications from 'test/helpers/cleanupNotifications';
 import { mediumSpaceCurrent, largeSpace, freeSpace } from '../__tests__/fixtures/plans';
 import { createResourcesForPlan, FULFILLMENT_STATUSES } from '../__tests__/helpers';
 import { mockEndpoint } from 'data/EndpointFactory';
+import * as Analytics from 'analytics/Analytics';
 
 const mockOrganization = Fake.Organization({ isBillable: true });
 const mockSpace = Fake.Space();
@@ -97,6 +98,53 @@ describe('ChangeOnDemandWizard', () => {
     expect(screen.queryByTestId('space-plan-recommended-tag')).toBeNull();
   });
 
+  it('should track when the space plan is selected', async () => {
+    await build();
+
+    userEvent.click(screen.getAllByTestId('space-plan-item')[1]);
+
+    expect(Analytics.track).toBeCalledWith(
+      `space_wizard:${utils.WIZARD_EVENTS.SELECT_PLAN}`,
+      expect.objectContaining({
+        intendedAction: utils.WIZARD_INTENT.CHANGE,
+        currentSpaceType: mediumSpaceCurrent.internalName,
+        targetSpaceType: largeSpace.internalName,
+        recommendedSpaceType: largeSpace.internalName,
+      })
+    );
+  });
+
+  it('should allow for navigating between screens using the tabs and should track those navigation events', async () => {
+    await build();
+
+    userEvent.click(screen.getAllByTestId('space-plan-item')[1]);
+
+    expect(screen.getByTestId('confirmation-screen')).toBeVisible();
+
+    // The first event is WIZARD_EVENTS.SELECT_PLAN
+    expect(Analytics.track).toHaveBeenNthCalledWith(
+      2,
+      `space_wizard:${utils.WIZARD_EVENTS.NAVIGATE}`,
+      expect.objectContaining({
+        currentStep: 'spacePlanSelector',
+        targetStep: 'confirmation',
+      })
+    );
+
+    userEvent.click(screen.getByTestId('space-plan-selector-tab'));
+
+    expect(screen.getByTestId('space-plan-selector')).toBeVisible();
+
+    expect(Analytics.track).toHaveBeenNthCalledWith(
+      3,
+      `space_wizard:${utils.WIZARD_EVENTS.NAVIGATE}`,
+      expect.objectContaining({
+        currentStep: 'confirmation',
+        targetStep: 'spacePlanSelector',
+      })
+    );
+  });
+
   it('should call onProcessing with true when the change is confirmed', async () => {
     const onProcessing = jest.fn();
     await build({ onProcessing });
@@ -105,6 +153,22 @@ describe('ChangeOnDemandWizard', () => {
     userEvent.click(screen.getByTestId('confirm-button'));
 
     await waitFor(() => expect(onProcessing).toBeCalledWith(true));
+  });
+
+  it('should track the confirm event when the confirm button is clicked', async () => {
+    await build();
+
+    userEvent.click(screen.getAllByTestId('space-plan-item')[1]);
+    userEvent.click(screen.getByTestId('confirm-button'));
+
+    await waitFor(() =>
+      expect(Analytics.track).toBeCalledWith(
+        `space_wizard:${utils.WIZARD_EVENTS.CONFIRM}`,
+        expect.objectContaining({
+          intendedAction: utils.WIZARD_INTENT.CHANGE,
+        })
+      )
+    );
   });
 
   it('should hide the close button while the space plan is being changed', async () => {

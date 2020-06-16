@@ -7,6 +7,7 @@ import cleanupNotifications from 'test/helpers/cleanupNotifications';
 import * as utils from '../shared/utils';
 import client from 'services/client';
 import { getTemplatesList, getTemplate } from 'services/SpaceTemplateLoader';
+import * as Analytics from 'analytics/Analytics';
 import CreateOnDemandWizard from './CreateOnDemandWizard';
 
 import { freeSpace } from '../__tests__/fixtures/plans';
@@ -123,7 +124,23 @@ describe('CreateOnDemandWizard', () => {
     expect(screen.getByTestId('space-details')).toBeVisible();
   });
 
-  it('should show the confirmation screen when the space details are input', async () => {
+  it('should track when a space plan in selected', async () => {
+    await build();
+
+    userEvent.click(screen.getAllByTestId('space-plan-item')[0]);
+
+    expect(Analytics.track).toBeCalledWith(
+      `space_wizard:${utils.WIZARD_EVENTS.SELECT_PLAN}`,
+      expect.objectContaining({
+        intendedAction: utils.WIZARD_INTENT.CREATE,
+        currentSpaceType: null,
+        targetSpaceType: freeSpace.internalName,
+        recommendedSpaceType: null,
+      })
+    );
+  });
+
+  it('should show the confirmation screen when the space details are entered', async () => {
     await build();
 
     userEvent.click(screen.getAllByTestId('space-plan-item')[0]);
@@ -136,7 +153,7 @@ describe('CreateOnDemandWizard', () => {
     expect(screen.getByTestId('confirmation-contents')).toBeVisible();
   });
 
-  it('should allow for navigating between screens using the tabs', async () => {
+  it('should track when the space details are entered', async () => {
     await build();
 
     userEvent.click(screen.getAllByTestId('space-plan-item')[0]);
@@ -146,13 +163,95 @@ describe('CreateOnDemandWizard', () => {
     );
     userEvent.click(screen.getByTestId('go-to-confirmation-button'));
 
+    expect(Analytics.track).toBeCalledWith(
+      `space_wizard:${utils.WIZARD_EVENTS.ENTERED_DETAILS}`,
+      expect.objectContaining({
+        intendedAction: utils.WIZARD_INTENT.CREATE,
+        targetSpaceName: 'A space name',
+        targetSpaceTemplateId: null,
+      })
+    );
+  });
+
+  it('should track when space name and space template is selected', async () => {
+    await build();
+
+    userEvent.click(screen.getAllByTestId('space-plan-item')[0]);
+    userEvent.type(
+      within(screen.getByTestId('space-name')).getByTestId('cf-ui-text-input'),
+      'A space name'
+    );
+    userEvent.click(
+      within(screen.getByTestId('template-toggle-true')).getByTestId('cf-ui-controlled-input')
+    );
+    userEvent.click(screen.getByTestId('go-to-confirmation-button'));
+
+    expect(Analytics.track).toBeCalledWith(
+      `space_wizard:${utils.WIZARD_EVENTS.ENTERED_DETAILS}`,
+      expect.objectContaining({
+        intendedAction: utils.WIZARD_INTENT.CREATE,
+        targetSpaceName: 'A space name',
+        targetSpaceTemplateId: mockTemplate.name,
+      })
+    );
+  });
+
+  it('should allow for navigating between screens using the tabs and track the navigation events', async () => {
+    await build();
+
+    userEvent.click(screen.getAllByTestId('space-plan-item')[0]);
+
+    // The first event is WIZARD_EVENTS.SELECT_PLAN
+    expect(Analytics.track).toHaveBeenNthCalledWith(
+      2,
+      `space_wizard:${utils.WIZARD_EVENTS.NAVIGATE}`,
+      expect.objectContaining({
+        currentStep: 'spacePlanSelector',
+        targetStep: 'spaceDetails',
+      })
+    );
+
+    userEvent.type(
+      within(screen.getByTestId('space-name')).getByTestId('cf-ui-text-input'),
+      'A space name'
+    );
+    userEvent.click(screen.getByTestId('go-to-confirmation-button'));
+
+    // The third event is WIZARD_EVENTS.ENTERED_DETAILS
+    expect(Analytics.track).toHaveBeenNthCalledWith(
+      4,
+      `space_wizard:${utils.WIZARD_EVENTS.NAVIGATE}`,
+      expect.objectContaining({
+        currentStep: 'spaceDetails',
+        targetStep: 'confirmation',
+      })
+    );
+
     expect(screen.getByTestId('confirmation-contents')).toBeVisible();
 
     userEvent.click(screen.getByTestId('space-plan-selector-tab'));
 
+    expect(Analytics.track).toHaveBeenNthCalledWith(
+      5,
+      `space_wizard:${utils.WIZARD_EVENTS.NAVIGATE}`,
+      expect.objectContaining({
+        currentStep: 'confirmation',
+        targetStep: 'spacePlanSelector',
+      })
+    );
+
     expect(screen.getByTestId('space-plan-selector')).toBeVisible();
 
     userEvent.click(screen.getByTestId('space-details-tab'));
+
+    expect(Analytics.track).toHaveBeenNthCalledWith(
+      6,
+      `space_wizard:${utils.WIZARD_EVENTS.NAVIGATE}`,
+      expect.objectContaining({
+        currentStep: 'spacePlanSelector',
+        targetStep: 'spaceDetails',
+      })
+    );
 
     expect(screen.getByTestId('space-details')).toBeVisible();
   });
@@ -169,6 +268,19 @@ describe('CreateOnDemandWizard', () => {
       userEvent.click(screen.getByTestId('go-to-confirmation-button'));
       userEvent.click(screen.getByTestId('confirm-button'));
     };
+
+    it('should track the confirm analytics event', async () => {
+      await beginCreatingSpace();
+
+      await waitFor(() =>
+        expect(Analytics.track).toBeCalledWith(
+          `space_wizard:${utils.WIZARD_EVENTS.CONFIRM}`,
+          expect.objectContaining({
+            intendedAction: utils.WIZARD_INTENT.CREATE,
+          })
+        )
+      );
+    });
 
     it('should hide the close button and call onProcessing with true when creating a space', async () => {
       const onProcessing = jest.fn();
@@ -233,6 +345,19 @@ describe('CreateOnDemandWizard', () => {
       userEvent.click(screen.getByTestId('go-to-confirmation-button'));
       userEvent.click(screen.getByTestId('confirm-button'));
     };
+
+    it('should track the confirm analytics event', async () => {
+      await beginCreatingSpace();
+
+      await waitFor(() =>
+        expect(Analytics.track).toBeCalledWith(
+          `space_wizard:${utils.WIZARD_EVENTS.CONFIRM}`,
+          expect.objectContaining({
+            intendedAction: utils.WIZARD_INTENT.CREATE,
+          })
+        )
+      );
+    });
 
     it('should hide the close button and call onProcessing with true when creating a space', async () => {
       const onProcessing = jest.fn();

@@ -30,6 +30,8 @@ import {
   goToBillingPage,
   FREE_SPACE_IDENTIFIER,
   WIZARD_INTENT,
+  WIZARD_EVENTS,
+  trackWizardEvent,
 } from '../shared/utils';
 import Loader from '../shared/Loader';
 
@@ -93,6 +95,8 @@ const initialFetch = (organization, space) => async () => {
 const submit = async (space, selectedPlan, sessionId, onProcessing, onClose) => {
   onProcessing(true);
 
+  trackWizardEvent(WIZARD_INTENT.CHANGE, WIZARD_EVENTS.CONFIRM, sessionId);
+
   try {
     await changeSpacePlan({ space, plan: selectedPlan, sessionId });
     onClose(selectedPlan);
@@ -112,6 +116,15 @@ export default function Wizard(props) {
     submit(space, selectedPlan, sessionId, onProcessing, onClose)
   );
 
+  const navigate = (newTab) => {
+    trackWizardEvent(WIZARD_INTENT.CHANGE, WIZARD_EVENTS.NAVIGATE, sessionId, {
+      currentStepId: selectedTab,
+      targetStepId: newTab,
+    });
+
+    setSelectedTab(newTab);
+  };
+
   const { isLoading, data } = useAsync(useCallback(initialFetch(organization, space), []));
 
   if (isLoading) {
@@ -126,14 +139,14 @@ export default function Wizard(props) {
             id="spacePlanSelector"
             testId="space-plan-selector-tab"
             selected={selectedTab === 'spacePlanSelector'}
-            onSelect={() => setSelectedTab('spacePlanSelector')}>
+            onSelect={() => navigate('spacePlanSelector')}>
             1. Space type
           </Tab>
           <Tab
             id="confirmation"
             selected={selectedTab === 'confirmation'}
             testId="confirmation-tab"
-            onSelect={() => setSelectedTab('confirmation')}
+            onSelect={() => navigate('confirmation')}
             disabled={!selectedPlan}>
             2. Confirmation
           </Tab>
@@ -159,9 +172,15 @@ export default function Wizard(props) {
               freeSpacesResource={data.freeSpaceResource}
               currentPlan={data.currentPlan}
               selectedPlan={selectedPlan}
-              onSelectPlan={(plan) => {
+              onSelectPlan={(plan, recommendedPlan) => {
+                trackWizardEvent(WIZARD_INTENT.CHANGE, WIZARD_EVENTS.SELECT_PLAN, sessionId, {
+                  selectedPlan: plan,
+                  currentPlan: data.currentPlan,
+                  recommendedPlan,
+                });
+
                 setSelectedPlan(plan);
-                setSelectedTab('confirmation');
+                navigate('confirmation');
               }}
               goToBillingPage={() =>
                 goToBillingPage(organization, WIZARD_INTENT.CHANGE, sessionId, onClose)

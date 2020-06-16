@@ -29,7 +29,9 @@ import {
   createSpaceWithTemplate,
   FREE_SPACE_IDENTIFIER,
   WIZARD_INTENT,
+  WIZARD_EVENTS,
   transformSpaceRatePlans,
+  trackWizardEvent,
   goToBillingPage,
   sendParnershipEmail,
 } from '../shared/utils';
@@ -106,6 +108,8 @@ const submit = async ({
   onClose,
 }) => {
   onProcessing(true);
+
+  trackWizardEvent(WIZARD_INTENT.CREATE, WIZARD_EVENTS.CONFIRM, sessionId);
 
   let newSpaceId;
 
@@ -220,6 +224,15 @@ export default function CreateOnDemandWizard(props) {
     })
   );
 
+  const navigate = (newTab) => {
+    trackWizardEvent(WIZARD_INTENT.CREATE, WIZARD_EVENTS.NAVIGATE, sessionId, {
+      currentStepId: selectedTab,
+      targetStepId: newTab,
+    });
+
+    dispatch({ type: 'SET_SELECTED_TAB', payload: newTab });
+  };
+
   const { isLoading, data } = useAsync(useCallback(initialFetch(organization), []));
 
   if (isLoading) {
@@ -241,16 +254,14 @@ export default function CreateOnDemandWizard(props) {
                 id="spacePlanSelector"
                 testId="space-plan-selector-tab"
                 selected={selectedTab === 'spacePlanSelector'}
-                onSelect={() =>
-                  dispatch({ type: 'SET_SELECTED_TAB', payload: 'spacePlanSelector' })
-                }>
+                onSelect={() => navigate('spacePlanSelector')}>
                 1. Space type
               </Tab>
               <Tab
                 id="spaceDetails"
                 testId="space-details-tab"
                 selected={selectedTab === 'spaceDetails'}
-                onSelect={() => dispatch({ type: 'SET_SELECTED_TAB', payload: 'spaceDetails' })}
+                onSelect={() => navigate('spaceDetails')}
                 disabled={!selectedPlan}>
                 2. Space details
               </Tab>
@@ -258,7 +269,7 @@ export default function CreateOnDemandWizard(props) {
                 id="confirmation"
                 testId="confirmation-tab"
                 selected={selectedTab === 'confirmation'}
-                onSelect={() => dispatch({ type: 'SET_SELECTED_TAB', payload: 'confirmation' })}
+                onSelect={() => navigate('confirmation')}
                 disabled={!spaceName}>
                 3. Confirmation
               </Tab>
@@ -270,7 +281,7 @@ export default function CreateOnDemandWizard(props) {
                 testId="close-icon"
                 buttonType="muted"
                 className={styles.closeButton}
-                onClick={onClose}
+                onClick={() => onClose()}
               />
             )}
           </Tabs>
@@ -283,8 +294,12 @@ export default function CreateOnDemandWizard(props) {
                   freeSpacesResource={data.freeSpaceResource}
                   selectedPlan={selectedPlan}
                   onSelectPlan={(plan) => {
+                    trackWizardEvent(WIZARD_INTENT.CREATE, WIZARD_EVENTS.SELECT_PLAN, sessionId, {
+                      selectedPlan: plan,
+                    });
                     dispatch({ type: 'SET_SELECTED_PLAN', payload: plan });
-                    dispatch({ type: 'SET_SELECTED_TAB', payload: 'spaceDetails' });
+
+                    navigate('spaceDetails');
                   }}
                   goToBillingPage={() =>
                     goToBillingPage(organization, WIZARD_INTENT.CREATE, sessionId, onClose)
@@ -305,7 +320,19 @@ export default function CreateOnDemandWizard(props) {
                   onChangeSelectedTemplate={(template) =>
                     dispatch({ type: 'SET_SELECTED_TEMPLATE', payload: template })
                   }
-                  onSubmit={() => dispatch({ type: 'SET_SELECTED_TAB', payload: 'confirmation' })}
+                  onSubmit={() => {
+                    trackWizardEvent(
+                      WIZARD_INTENT.CREATE,
+                      WIZARD_EVENTS.ENTERED_DETAILS,
+                      sessionId,
+                      {
+                        newSpaceName: spaceName,
+                        newSpaceTemplate: selectedTemplate,
+                      }
+                    );
+
+                    navigate('confirmation');
+                  }}
                 />
               </TabPanel>
             )}

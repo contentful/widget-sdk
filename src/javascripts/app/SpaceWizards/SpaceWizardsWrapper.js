@@ -17,6 +17,7 @@ import EnterpriseWizard from './Enterprise/EnterpriseWizard';
 import CreateOnDemandWizard from './CreateOnDemand/CreateOnDemandWizard';
 import ChangeOnDemandWizard from './ChangeOnDemand/ChangeOnDemandWizard';
 import Loader from './shared/Loader';
+import { trackWizardEvent, WIZARD_INTENT, WIZARD_EVENTS } from './shared/utils';
 
 const classes = {
   modal: css({
@@ -24,13 +25,8 @@ const classes = {
   }),
 };
 
-const ACTIONS = {
-  CREATE: 'create',
-  CHANGE: 'change',
-};
-
 const fetch = (organization, space) => async () => {
-  const action = space ? ACTIONS.CHANGE : ACTIONS.CREATE;
+  const action = space ? WIZARD_INTENT.CHANGE : WIZARD_INTENT.CREATE;
   const sessionId = alnum(16);
   const endpoint = createOrganizationEndpoint(organization.sys.id);
 
@@ -44,6 +40,8 @@ const fetch = (organization, space) => async () => {
   // org should create POC if it is Enterprise
   result.shouldCreatePOC = isEnterprisePlan(result.basePlan);
 
+  trackWizardEvent(action, WIZARD_EVENTS.OPEN, sessionId);
+
   return result;
 };
 
@@ -55,9 +53,20 @@ export default function SpaceWizardsWrapper(props) {
 
   const { shouldCreatePOC, action, sessionId } = data;
 
-  const showEnterprise = action === ACTIONS.CREATE && shouldCreatePOC;
-  const showOnDemandCreate = action === ACTIONS.CREATE && !shouldCreatePOC;
-  const showOnDemandChange = action === ACTIONS.CHANGE;
+  const handleClose = (...args) => {
+    // To prevent useless data from being tracked, we wait until we have action and
+    // sessionId before doing any tracking
+
+    if (action && sessionId) {
+      trackWizardEvent(action, WIZARD_EVENTS.CANCEL, sessionId);
+    }
+
+    onClose(...args);
+  };
+
+  const showEnterprise = action === WIZARD_INTENT.CREATE && shouldCreatePOC;
+  const showOnDemandCreate = action === WIZARD_INTENT.CREATE && !shouldCreatePOC;
+  const showOnDemandChange = action === WIZARD_INTENT.CHANGE;
 
   return (
     <Modal
@@ -68,7 +77,7 @@ export default function SpaceWizardsWrapper(props) {
       shouldCloseOnEscapePress={!isProcessing}
       shouldCloseOnOverlayClick={!isProcessing}
       isShown={isShown}
-      onClose={() => onClose()}>
+      onClose={handleClose}>
       {() => (
         <>
           {isLoading && <Loader />}

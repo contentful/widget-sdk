@@ -54,8 +54,9 @@ export default function SpacePlanSelector(props) {
     highestPlan.unavailabilityReasons &&
     highestPlan.unavailabilityReasons.some(({ type }) => type === 'currentPlan');
   const payingOrg = !!organization.isBillable;
-  const recommendedPlan =
-    isChanging && getRecommendedPlan(currentPlan, spaceRatePlans, spaceResources);
+  const recommendedPlan = isChanging
+    ? getRecommendedPlan(currentPlan, spaceRatePlans, spaceResources)
+    : null;
 
   return (
     <div data-test-id="space-plan-selector" className={styles.container}>
@@ -124,7 +125,7 @@ export default function SpacePlanSelector(props) {
             isPayingOrg={payingOrg}
             isSelected={get(selectedPlan, 'sys.id') === plan.sys.id}
             isRecommended={get(recommendedPlan, 'sys.id') === plan.sys.id}
-            onSelect={onSelectPlan}
+            onSelect={(plan) => onSelectPlan(plan, recommendedPlan)}
             isCommunityPlanEnabled={isCommunityPlanEnabled}
           />
         ))}

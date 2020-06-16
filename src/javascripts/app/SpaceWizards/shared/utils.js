@@ -19,6 +19,18 @@ export const WIZARD_INTENT = {
   CREATE: 'create',
 };
 
+export const WIZARD_EVENTS = {
+  OPEN: 'open',
+  SELECT_PLAN: 'select_plan',
+  NAVIGATE: 'navigate',
+  ENTERED_DETAILS: 'entered_details',
+  CANCEL: 'cancel',
+  LINK_CLICK: 'link_click',
+  CONFIRM: 'confirm',
+  SPACE_CREATE: 'space_create',
+  SPACE_TYPE_CHANGE: 'space_type_change',
+};
+
 // Threshold for usage limit displaying/causing an error (100% usage e.g. limit reached)
 const ERROR_THRESHOLD = 1;
 
@@ -53,7 +65,7 @@ async function makeNewSpace(name, plan, organizationId, sessionId) {
 
   await TokenStore.refresh();
 
-  trackWizardEvent(WIZARD_INTENT.CREATE, 'space_create', sessionId, {
+  trackWizardEvent(WIZARD_INTENT.CREATE, WIZARD_EVENTS.SPACE_CREATE, sessionId, {
     spaceId: newSpace.sys.id,
   });
 
@@ -118,7 +130,9 @@ export async function changeSpacePlan({ space, plan, sessionId }) {
 
   await changeSpacePlanApiCall(endpoint, plan.sys.id);
 
-  trackWizardEvent(WIZARD_INTENT.CHANGE, 'space_type_change', sessionId, { spaceId: space.sys.id });
+  trackWizardEvent(WIZARD_INTENT.CHANGE, WIZARD_EVENTS.SPACE_TYPE_CHANGE, sessionId, {
+    spaceId: space.sys.id,
+  });
 }
 
 export function goToBillingPage(organization, intent, sessionId, onClose) {
@@ -130,7 +144,7 @@ export function goToBillingPage(organization, intent, sessionId, onClose) {
     options: { reload: true },
   });
 
-  trackWizardEvent(intent, 'link_click', sessionId);
+  trackWizardEvent(intent, WIZARD_EVENTS.LINK_CLICK, sessionId);
   onClose && onClose();
 }
 

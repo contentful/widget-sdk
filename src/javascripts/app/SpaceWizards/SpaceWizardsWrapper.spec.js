@@ -4,8 +4,10 @@ import { when } from 'jest-when';
 import * as PricingDataProvider from 'account/pricing/PricingDataProvider';
 import SpaceWizardsWrapper from './SpaceWizardsWrapper';
 import * as Fake from 'test/helpers/fakeFactory';
+import * as Analytics from 'analytics/Analytics';
 import { freeSpace, mediumSpaceCurrent } from './__tests__/fixtures/plans';
 import { mockEndpoint } from 'data/EndpointFactory';
+import * as utils from './shared/utils';
 
 const mockOrganization = Fake.Organization({
   isBillable: true,
@@ -53,6 +55,17 @@ describe('SpaceWizardsWrapper', () => {
   });
 
   describe('space creation', () => {
+    it('should track the open event with creation intent', async () => {
+      await build();
+
+      expect(Analytics.track).toBeCalledWith(
+        `space_wizard:${utils.WIZARD_EVENTS.OPEN}`,
+        expect.objectContaining({
+          intendedAction: utils.WIZARD_INTENT.CREATE,
+        })
+      );
+    });
+
     it('should show the POC space creation wizard if the base plan is enterprise', async () => {
       await build();
 
@@ -77,6 +90,18 @@ describe('SpaceWizardsWrapper', () => {
         .calledWith(expect.objectContaining({ path: ['product_rate_plans'] }))
         .mockResolvedValue({ items: [mediumSpaceCurrent] });
     });
+
+    it('should track the open event with creation intent', async () => {
+      await build({ space: mockSpace });
+
+      expect(Analytics.track).toBeCalledWith(
+        `space_wizard:${utils.WIZARD_EVENTS.OPEN}`,
+        expect.objectContaining({
+          intendedAction: utils.WIZARD_INTENT.CHANGE,
+        })
+      );
+    });
+
     it('should show the on-demand space change wizard if a space is provided', async () => {
       await build({ space: mockSpace });
 
