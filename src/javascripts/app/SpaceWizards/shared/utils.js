@@ -14,6 +14,11 @@ import { joinWithAnd } from 'utils/StringUtils';
 import { canCreate, resourceHumanNameMap } from 'utils/ResourceUtils';
 import { changeSpacePlan as changeSpacePlanApiCall } from 'account/pricing/PricingDataProvider';
 
+export const WIZARD_INTENT = {
+  CHANGE: 'change',
+  CREATE: 'create',
+};
+
 // Threshold for usage limit displaying/causing an error (100% usage e.g. limit reached)
 const ERROR_THRESHOLD = 1;
 
@@ -48,8 +53,7 @@ async function makeNewSpace(name, plan, organizationId, sessionId) {
 
   await TokenStore.refresh();
 
-  trackWizardEvent('space_create', sessionId, {
-    action: 'create',
+  trackWizardEvent(WIZARD_INTENT.CREATE, 'space_create', sessionId, {
     spaceId: newSpace.sys.id,
   });
 
@@ -114,10 +118,10 @@ export async function changeSpacePlan({ space, plan, sessionId }) {
 
   await changeSpacePlanApiCall(endpoint, plan.sys.id);
 
-  trackWizardEvent('space_type_change', sessionId, { action: 'change', spaceId: space.sys.id });
+  trackWizardEvent(WIZARD_INTENT.CHANGE, 'space_type_change', sessionId, { spaceId: space.sys.id });
 }
 
-export function goToBillingPage(organization, sessionId, onClose) {
+export function goToBillingPage(organization, intent, sessionId, onClose) {
   const orgId = organization.sys.id;
 
   go({
@@ -126,7 +130,7 @@ export function goToBillingPage(organization, sessionId, onClose) {
     options: { reload: true },
   });
 
-  trackWizardEvent('link_click', sessionId);
+  trackWizardEvent(intent, 'link_click', sessionId);
   onClose && onClose();
 }
 
@@ -160,15 +164,14 @@ export function transformSpaceRatePlans({ organization, spaceRatePlans = [], fre
   );
 }
 
-export function trackWizardEvent(eventName, sessionId, payload = {}) {
-  const trackingData = createTrackingData(sessionId, payload);
+export function trackWizardEvent(intent, eventName, sessionId, payload = {}) {
+  const trackingData = createTrackingData(intent, sessionId, payload);
 
   Analytics.track(`space_wizard:${eventName}`, trackingData);
 }
 
-function createTrackingData(sessionId, data) {
+function createTrackingData(intent, sessionId, data) {
   const {
-    action,
     paymentDetailsExist,
     currentStepId,
     targetStepId,
@@ -183,7 +186,7 @@ function createTrackingData(sessionId, data) {
   const trackingData = {
     currentStep: currentStepId || null,
     targetStep: targetStepId || null,
-    intendedAction: action,
+    intendedAction: intent,
     wizardSessionId: sessionId,
     paymentDetailsExist: typeof paymentDetailsExist === 'boolean' ? paymentDetailsExist : null,
     targetSpaceType: get(selectedPlan, 'internalName', null),

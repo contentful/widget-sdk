@@ -28,6 +28,7 @@ import {
   createSpace,
   createSpaceWithTemplate,
   FREE_SPACE_IDENTIFIER,
+  WIZARD_INTENT,
   transformSpaceRatePlans,
   goToBillingPage,
   sendParnershipEmail,
@@ -285,7 +286,9 @@ export default function CreateOnDemandWizard(props) {
                     dispatch({ type: 'SET_SELECTED_PLAN', payload: plan });
                     dispatch({ type: 'SET_SELECTED_TAB', payload: 'spaceDetails' });
                   }}
-                  goToBillingPage={() => goToBillingPage(organization, sessionId, onClose)}
+                  goToBillingPage={() =>
+                    goToBillingPage(organization, WIZARD_INTENT.CREATE, sessionId, onClose)
+                  }
                   isCommunityPlanEnabled={data.isCommunityPlanEnabled}
                   isPayingPreviousToV2={data.isPayingPreviousToV2}
                 />

@@ -29,6 +29,7 @@ import {
   transformSpaceRatePlans,
   goToBillingPage,
   FREE_SPACE_IDENTIFIER,
+  WIZARD_INTENT,
 } from '../shared/utils';
 import Loader from '../shared/Loader';
 
@@ -162,7 +163,9 @@ export default function Wizard(props) {
                 setSelectedPlan(plan);
                 setSelectedTab('confirmation');
               }}
-              goToBillingPage={() => goToBillingPage(organization, sessionId, onClose)}
+              goToBillingPage={() =>
+                goToBillingPage(organization, WIZARD_INTENT.CHANGE, sessionId, onClose)
+              }
               spaceResources={data.spaceResources}
               isCommunityPlanEnabled={data.isCommunityPlanEnabled}
               isPayingPreviousToV2={data.isPayingPreviousToV2}

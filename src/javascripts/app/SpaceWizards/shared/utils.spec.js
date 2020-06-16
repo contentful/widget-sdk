@@ -123,7 +123,7 @@ describe('utils', () => {
       expect(Analytics.track).toBeCalledWith(
         'space_wizard:space_create',
         expect.objectContaining({
-          intendedAction: 'create',
+          intendedAction: utils.WIZARD_INTENT.CREATE,
           spaceId: mockSpace.sys.id,
           wizardSessionId: mockWizardSessionId,
         })
@@ -194,7 +194,7 @@ describe('utils', () => {
       expect(Analytics.track).toBeCalledWith(
         'space_wizard:space_create',
         expect.objectContaining({
-          intendedAction: 'create',
+          intendedAction: utils.WIZARD_INTENT.CREATE,
           spaceId: mockSpace.sys.id,
           wizardSessionId: mockWizardSessionId,
         })
@@ -315,7 +315,7 @@ describe('utils', () => {
       expect(Analytics.track).toBeCalledWith(
         'space_wizard:space_type_change',
         expect.objectContaining({
-          intendedAction: 'change',
+          intendedAction: utils.WIZARD_INTENT.CHANGE,
           spaceId: mockSpace.sys.id,
           wizardSessionId: mockWizardSessionId,
         })
@@ -325,11 +325,10 @@ describe('utils', () => {
 
   describe('trackWizardEvent', () => {
     it('should track `space_wizard:eventName` with serialized given payload', () => {
-      utils.trackWizardEvent('some_wizard_event', mockWizardSessionId, {
+      utils.trackWizardEvent('awesome_intent', 'some_wizard_event', mockWizardSessionId, {
         spaceId: mockSpace.sys.id,
         currentStepId: 'current_step',
         targetStepId: 'next_step',
-        action: 'awesome_action',
         paymentDetailsExist: true,
         currentPlan: {
           internalName: 'current_test_plan',
@@ -354,7 +353,7 @@ describe('utils', () => {
         wizardSessionId: mockWizardSessionId,
         currentStep: 'current_step',
         targetStep: 'next_step',
-        intendedAction: 'awesome_action',
+        intendedAction: 'awesome_intent',
         paymentDetailsExist: true,
         targetSpaceType: 'selected_test_plan',
         targetProductType: 'test_product_type_2',
@@ -368,9 +367,8 @@ describe('utils', () => {
     });
 
     it('should give all optional keys null values if not given in payload', () => {
-      utils.trackWizardEvent('another_wizard_event', mockWizardSessionId, {
+      utils.trackWizardEvent('some_intent', 'another_wizard_event', mockWizardSessionId, {
         spaceId: mockSpace.sys.id,
-        action: 'an_action',
       });
 
       expect(Analytics.track).toBeCalledWith('space_wizard:another_wizard_event', {
@@ -378,7 +376,7 @@ describe('utils', () => {
         wizardSessionId: mockWizardSessionId,
         currentStep: null,
         targetStep: null,
-        intendedAction: 'an_action',
+        intendedAction: 'some_intent',
         paymentDetailsExist: null,
         targetSpaceType: null,
         targetProductType: null,
@@ -392,14 +390,12 @@ describe('utils', () => {
     });
 
     it('should not include the spaceId if not given in the payload', () => {
-      utils.trackWizardEvent('third_wizard_event', mockWizardSessionId, {
-        action: 'third_action',
-      });
+      utils.trackWizardEvent('third_intent', 'third_wizard_event', mockWizardSessionId);
 
       expect(Analytics.track).toBeCalledWith('space_wizard:third_wizard_event', {
         currentStep: null,
         targetStep: null,
-        intendedAction: 'third_action',
+        intendedAction: 'third_intent',
         wizardSessionId: mockWizardSessionId,
         paymentDetailsExist: null,
         targetSpaceType: null,
@@ -502,7 +498,7 @@ describe('utils', () => {
 
   describe('goToBillingPage', () => {
     it('should navigate the user to the organization settings billing page', () => {
-      utils.goToBillingPage(mockOrganization, mockWizardSessionId);
+      utils.goToBillingPage(mockOrganization, utils.WIZARD_INTENT.CREATE, mockWizardSessionId);
 
       expect(go).toBeCalledWith({
         path: ['account', 'organizations', 'subscription_billing'],
@@ -512,13 +508,13 @@ describe('utils', () => {
     });
 
     it('should track the link_click event', () => {
-      utils.goToBillingPage(mockOrganization, mockWizardSessionId);
+      utils.goToBillingPage(mockOrganization, utils.WIZARD_INTENT.CREATE, mockWizardSessionId);
 
       expect(Analytics.track).toBeCalledWith(
         'space_wizard:link_click',
         expect.objectContaining({
           wizardSessionId: mockWizardSessionId,
-          intendedAction: undefined,
+          intendedAction: utils.WIZARD_INTENT.CREATE,
         })
       );
     });
@@ -526,7 +522,12 @@ describe('utils', () => {
     it('should call onClose if provided', () => {
       const onClose = jest.fn();
 
-      utils.goToBillingPage(mockOrganization, mockWizardSessionId, onClose);
+      utils.goToBillingPage(
+        mockOrganization,
+        utils.WIZARD_INTENT.CREATE,
+        mockWizardSessionId,
+        onClose
+      );
 
       expect(onClose).toBeCalled();
     });
