@@ -21,6 +21,7 @@ const mockTemplate = {
     id: 'template_1234',
   },
 };
+const mockWizardSessionId = 'session_id_1234';
 
 mockEndpoint.mockRejectedValue();
 when(mockEndpoint)
@@ -188,6 +189,7 @@ describe('CreateOnDemandWizard', () => {
           name: 'A space name',
           plan: expect.objectContaining(freeSpace),
           organizationId: mockOrganization.sys.id,
+          sessionId: mockWizardSessionId,
         });
       });
     });
@@ -250,6 +252,7 @@ describe('CreateOnDemandWizard', () => {
           plan: expect.objectContaining(freeSpace),
           template: mockTemplate,
           organizationId: mockOrganization.sys.id,
+          sessionId: mockWizardSessionId,
           onTemplateCreationStarted: expect.any(Function),
         });
       });
@@ -403,6 +406,7 @@ async function build(custom, shouldWait = true) {
       organization: mockOrganization,
       onClose: () => {},
       onProcessing: () => {},
+      sessionId: mockWizardSessionId,
     },
     custom
   );

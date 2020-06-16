@@ -37,7 +37,7 @@ const ResourceTooltips = {
   [SpaceResourceTypes.Records]: () => 'Records are entries and assets combined.',
 };
 
-async function makeNewSpace(name, plan, organizationId) {
+async function makeNewSpace(name, plan, organizationId, sessionId) {
   const spaceData = {
     defaultLocale: 'en-US',
     name,
@@ -48,7 +48,7 @@ async function makeNewSpace(name, plan, organizationId) {
 
   await TokenStore.refresh();
 
-  trackWizardEvent('space_create', {
+  trackWizardEvent('space_create', sessionId, {
     action: 'create',
     spaceId: newSpace.sys.id,
   });
@@ -60,12 +60,13 @@ export async function createSpaceWithTemplate({
   name,
   plan,
   organizationId,
+  sessionId,
   template,
   onTemplateCreationStarted,
 }) {
   const $rootScope = getModule('$rootScope');
 
-  const newSpace = await makeNewSpace(name, plan, organizationId);
+  const newSpace = await makeNewSpace(name, plan, organizationId, sessionId);
   onTemplateCreationStarted();
 
   // This needs to come before creating the template, so that we have `spaceContext`
@@ -87,8 +88,8 @@ export async function createSpaceWithTemplate({
   return newSpace;
 }
 
-export async function createSpace({ name, plan, organizationId }) {
-  const newSpace = await makeNewSpace(name, plan, organizationId);
+export async function createSpace({ name, plan, organizationId, sessionId }) {
+  const newSpace = await makeNewSpace(name, plan, organizationId, sessionId);
 
   Analytics.track('space:create', { templateName: 'Blank' });
 
@@ -108,15 +109,15 @@ export async function createSpace({ name, plan, organizationId }) {
   return newSpace;
 }
 
-export async function changeSpacePlan({ space, plan }) {
+export async function changeSpacePlan({ space, plan, sessionId }) {
   const endpoint = createSpaceEndpoint(space.sys.id);
 
   await changeSpacePlanApiCall(endpoint, plan.sys.id);
 
-  trackWizardEvent('space_type_change', { action: 'change', spaceId: space.sys.id });
+  trackWizardEvent('space_type_change', sessionId, { action: 'change', spaceId: space.sys.id });
 }
 
-export function goToBillingPage(organization, onClose) {
+export function goToBillingPage(organization, sessionId, onClose) {
   const orgId = organization.sys.id;
 
   go({
@@ -125,7 +126,7 @@ export function goToBillingPage(organization, onClose) {
     options: { reload: true },
   });
 
-  trackWizardEvent('link_click');
+  trackWizardEvent('link_click', sessionId);
   onClose && onClose();
 }
 
@@ -159,13 +160,13 @@ export function transformSpaceRatePlans({ organization, spaceRatePlans = [], fre
   );
 }
 
-export function trackWizardEvent(eventName, payload = {}) {
-  const trackingData = createTrackingData(payload);
+export function trackWizardEvent(eventName, sessionId, payload = {}) {
+  const trackingData = createTrackingData(sessionId, payload);
 
   Analytics.track(`space_wizard:${eventName}`, trackingData);
 }
 
-function createTrackingData(data) {
+function createTrackingData(sessionId, data) {
   const {
     action,
     paymentDetailsExist,
@@ -183,6 +184,7 @@ function createTrackingData(data) {
     currentStep: currentStepId || null,
     targetStep: targetStepId || null,
     intendedAction: action,
+    wizardSessionId: sessionId,
     paymentDetailsExist: typeof paymentDetailsExist === 'boolean' ? paymentDetailsExist : null,
     targetSpaceType: get(selectedPlan, 'internalName', null),
     targetProductType: get(selectedPlan, 'productType', null),

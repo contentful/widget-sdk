@@ -95,6 +95,7 @@ const initialFetch = (organization) => async () => {
 
 const submit = async ({
   organization,
+  sessionId,
   selectedPlan,
   spaceName,
   selectedTemplate,
@@ -114,6 +115,7 @@ const submit = async ({
         plan: selectedPlan,
         template: selectedTemplate,
         organizationId: organization.sys.id,
+        sessionId,
         onTemplateCreationStarted,
       });
 
@@ -125,6 +127,7 @@ const submit = async ({
         name: spaceName,
         plan: selectedPlan,
         organizationId: organization.sys.id,
+        sessionId,
       });
 
       newSpaceId = newSpace.sys.id;
@@ -200,11 +203,12 @@ export default function CreateOnDemandWizard(props) {
     partnerDetails,
   } = state;
 
-  const { organization, onClose, onProcessing } = props;
+  const { organization, sessionId, onClose, onProcessing } = props;
 
   const [{ isLoading: isCreatingSpace }, handleSubmit] = useAsyncFn(() =>
     submit({
       organization,
+      sessionId,
       selectedPlan,
       spaceName,
       selectedTemplate,
@@ -281,7 +285,7 @@ export default function CreateOnDemandWizard(props) {
                     dispatch({ type: 'SET_SELECTED_PLAN', payload: plan });
                     dispatch({ type: 'SET_SELECTED_TAB', payload: 'spaceDetails' });
                   }}
-                  goToBillingPage={() => goToBillingPage(organization, onClose)}
+                  goToBillingPage={() => goToBillingPage(organization, sessionId, onClose)}
                   isCommunityPlanEnabled={data.isCommunityPlanEnabled}
                   isPayingPreviousToV2={data.isPayingPreviousToV2}
                 />
@@ -339,6 +343,7 @@ export default function CreateOnDemandWizard(props) {
 
 CreateOnDemandWizard.propTypes = {
   organization: PropTypes.object.isRequired,
+  sessionId: PropTypes.string.isRequired,
   onClose: PropTypes.func.isRequired,
   onProcessing: PropTypes.func.isRequired,
 };

@@ -89,11 +89,11 @@ const initialFetch = (organization, space) => async () => {
   };
 };
 
-const submit = async (space, selectedPlan, onProcessing, onClose) => {
+const submit = async (space, selectedPlan, sessionId, onProcessing, onClose) => {
   onProcessing(true);
 
   try {
-    await changeSpacePlan({ space, plan: selectedPlan });
+    await changeSpacePlan({ space, plan: selectedPlan, sessionId });
     onClose(selectedPlan);
   } catch {
     Notification.error('Your space plan couldn’t be changed. Try again.');
@@ -105,10 +105,10 @@ export default function Wizard(props) {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [selectedTab, setSelectedTab] = useState('spacePlanSelector');
 
-  const { organization, space, onClose, onProcessing } = props;
+  const { organization, space, sessionId, onClose, onProcessing } = props;
 
   const [{ isLoading: isChangingSpacePlan }, handleSubmit] = useAsyncFn(() =>
-    submit(space, selectedPlan, onProcessing, onClose)
+    submit(space, selectedPlan, sessionId, onProcessing, onClose)
   );
 
   const { isLoading, data } = useAsync(useCallback(initialFetch(organization, space), []));
@@ -162,7 +162,7 @@ export default function Wizard(props) {
                 setSelectedPlan(plan);
                 setSelectedTab('confirmation');
               }}
-              goToBillingPage={() => goToBillingPage(organization, onClose)}
+              goToBillingPage={() => goToBillingPage(organization, sessionId, onClose)}
               spaceResources={data.spaceResources}
               isCommunityPlanEnabled={data.isCommunityPlanEnabled}
               isPayingPreviousToV2={data.isPayingPreviousToV2}
@@ -191,6 +191,7 @@ export default function Wizard(props) {
 Wizard.propTypes = {
   organization: PropTypes.object.isRequired,
   space: PropTypes.object.isRequired,
+  sessionId: PropTypes.string.isRequired,
   onClose: PropTypes.func.isRequired,
   onProcessing: PropTypes.func.isRequired,
 };

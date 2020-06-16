@@ -21,6 +21,7 @@ const mockResources = createResourcesForPlan(mediumSpaceCurrent, {
   environment: FULFILLMENT_STATUSES.REACHED,
   locale: FULFILLMENT_STATUSES.NEAR,
 });
+const mockWizardSessionId = 'session_id_1234';
 
 jest.spyOn(utils, 'changeSpacePlan');
 jest.spyOn(PricingDataProvider, 'getSubscriptionPlans');
@@ -127,6 +128,7 @@ describe('ChangeOnDemandWizard', () => {
     expect(utils.changeSpacePlan).toBeCalledWith({
       space: mockSpace,
       plan: expect.objectContaining(mockPlans[1]),
+      sessionId: mockWizardSessionId,
     });
 
     await waitFor(() => expect(onClose).toBeCalled());
@@ -155,6 +157,7 @@ async function build(custom, shouldWait = true) {
     {
       organization: mockOrganization,
       space: mockSpace,
+      sessionId: mockWizardSessionId,
       onClose: () => {},
       onProcessing: () => {},
     },

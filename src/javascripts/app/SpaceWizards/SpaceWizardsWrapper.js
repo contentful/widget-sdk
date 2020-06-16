@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Modal } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 
+import { alnum } from 'utils/Random';
 import { useAsync } from 'core/hooks/useAsync';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 
@@ -30,10 +31,12 @@ const ACTIONS = {
 
 const fetch = (organization, space) => async () => {
   const action = space ? ACTIONS.CHANGE : ACTIONS.CREATE;
+  const sessionId = alnum(16);
   const endpoint = createOrganizationEndpoint(organization.sys.id);
 
   const result = {
     action,
+    sessionId,
   };
 
   result.basePlan = await getBasePlan(endpoint);
@@ -50,7 +53,7 @@ export default function SpaceWizardsWrapper(props) {
 
   const { isLoading, data = {} } = useAsync(useCallback(fetch(organization, space), []));
 
-  const { shouldCreatePOC, action } = data;
+  const { shouldCreatePOC, action, sessionId } = data;
 
   const showEnterprise = action === ACTIONS.CREATE && shouldCreatePOC;
   const showOnDemandCreate = action === ACTIONS.CREATE && !shouldCreatePOC;
@@ -81,6 +84,7 @@ export default function SpaceWizardsWrapper(props) {
           {!isLoading && showOnDemandCreate && (
             <CreateOnDemandWizard
               organization={organization}
+              sessionId={sessionId}
               onClose={onClose}
               onProcessing={setIsProcessing}
               isProcessing={isProcessing}
@@ -90,6 +94,7 @@ export default function SpaceWizardsWrapper(props) {
             <ChangeOnDemandWizard
               organization={organization}
               space={space}
+              sessionId={sessionId}
               onClose={onClose}
               onProcessing={setIsProcessing}
               isProcessing={isProcessing}
