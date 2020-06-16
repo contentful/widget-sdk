@@ -207,7 +207,7 @@ class Icon extends React.Component {
     style: PropTypes.object,
     name: PropTypes.string.isRequired,
     ariaLabel: PropTypes.string,
-    ariaHideIcon: PropTypes.boolean,
+    ariaHideIcon: PropTypes.bool,
     ariaDescribedBy: PropTypes.string,
     scale: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -261,7 +261,7 @@ class Icon extends React.Component {
         data-icon-name={name}
         className={cn('icon-component', className)}
         aria-label={ariaLabel}
-        aria-desbribedby={ariaDescribedBy}
+        aria-describedby={ariaDescribedBy}
         style={style}
         ref={(node) => {
           this.container = node;

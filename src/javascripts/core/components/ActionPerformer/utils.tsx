@@ -26,17 +26,16 @@ export async function getApp(id: string) {
 }
 
 export function formatAppName({ name }: { name: string }) {
-
   return (
     <div className={styles.wrapper}>
-      <Tooltip id={"page-app"} content="Updated by an app">
+      <Tooltip id={'page-app'} content="Updated by an app">
         <Icon
           name="page-apps"
           scale="0.37"
           className={styles.icon}
-          ariaLabel={"App"}
+          ariaLabel={'App'}
           ariaHideIcon={true}
-          ariaDescribedBy={"page-app"}
+          ariaDescribedBy={'page-app'}
         />
       </Tooltip>
       {name}
