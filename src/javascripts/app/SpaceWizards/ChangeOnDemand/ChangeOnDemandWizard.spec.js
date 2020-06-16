@@ -75,11 +75,13 @@ describe('ChangeOnDemandWizard', () => {
   it('should recommend the bigger plan if there is a plan to recommend', async () => {
     await build();
 
-    // The perf 1x space should be recommended
-    const mediumPlanElement = screen.getAllByTestId('space-plan-item').find((ele) => {
-      return within(ele).getByTestId('space-plan-name').textContent === largeSpace.name;
-    });
-    expect(mediumPlanElement).toHaveAttribute('class', expect.stringMatching('recommendedPlan'));
+    expect(
+      within(screen.getAllByTestId('space-plan-item')[1]).getByTestId('space-plan-recommended-tag')
+        .innerHTML
+    ).toEqual('Recommended');
+    expect(
+      within(screen.getAllByTestId('space-plan-item')[1]).getByTestId('space-plan-recommended-tag')
+    ).toBeVisible();
   });
 
   it('shouid not recommend the bigger plan is there is no plan to recommend', async () => {
@@ -91,9 +93,7 @@ describe('ChangeOnDemandWizard', () => {
 
     await build();
 
-    screen.getAllByTestId('space-plan-item').forEach((planEle) => {
-      expect(planEle).not.toHaveAttribute('class', expect.stringMatching('recommendedPlan'));
-    });
+    expect(screen.queryByTestId('space-plan-recommended-tag')).toBeNull();
   });
 
   it('should call onProcessing with true when the change is confirmed', async () => {

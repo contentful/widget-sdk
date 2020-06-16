@@ -9,14 +9,6 @@ import tokens from '@contentful/forma-36-tokens';
 import PlanFeatures from '../shared/PlanFeatures';
 import { Pluralized, Price } from 'core/components/formatting';
 
-const getPlanBGColor = (backgroundColor) => {
-  return css({
-    '&:before': {
-      backgroundColor,
-    },
-  });
-};
-
 const styles = {
   helpIcon: css({
     fill: tokens.colorElementDarkest,
@@ -54,39 +46,8 @@ const styles = {
     proofOfConcept: getPlanBGColor(tokens.colorBlueBase),
   },
 
-  currentPlan: css({
-    '&:after': {
-      content: `"Current"`, // the content property needs the extra ""
-      backgroundColor: tokens.colorElementMid,
-      position: 'absolute',
-      top: 'calc(50% - 14px)', // 14px is half the height of this tag
-      right: '-20px',
-      padding: `${tokens.spacingXs} ${tokens.spacingS}`,
-      color: tokens.colorWhite,
-      fontSize: tokens.fontSizeS,
-      fontWeight: tokens.fontWeightDemiBold,
-      lineHeight: 1,
-      textTransform: 'uppercase',
-      borderRadius: '2px',
-    },
-  }),
-
-  recommendedPlan: css({
-    '&:after': {
-      content: `"Recommended"`, // the content property needs the extra ""
-      backgroundColor: tokens.colorBlueBase,
-      position: 'absolute',
-      top: 'calc(50% - 14px)', // 14px is half the height of this tag
-      right: '-20px',
-      padding: `${tokens.spacingXs} ${tokens.spacingS}`,
-      color: tokens.colorWhite,
-      fontSize: tokens.fontSizeS,
-      fontWeight: tokens.fontWeightDemiBold,
-      lineHeight: 1,
-      textTransform: 'uppercase',
-      borderRadius: '2px',
-    },
-  }),
+  currentTag: getTagStyle(tokens.colorElementMid),
+  recommendedTag: getTagStyle(tokens.colorBlueBase),
 
   disabled: css({
     cursor: 'not-allowed !important',
@@ -155,8 +116,6 @@ export default function SpacePlanItem(props) {
   return (
     <Card
       className={cx(styles.planCard, styles.plans[camelCase(plan.name)], {
-        [styles.currentPlan]: plan.current,
-        [styles.recommendedPlan]: isRecommended,
         [styles.disabled]: plan.disabled,
       })}
       selected={isSelected}
@@ -191,6 +150,16 @@ export default function SpacePlanItem(props) {
           {showChevron && <Icon testId="plan-chevron" icon="ChevronRight" color="muted" />}
         </div>
       </Grid>
+      {plan.current && (
+        <span className={styles.currentTag} data-test-id="space-plan-current-tag">
+          Current
+        </span>
+      )}
+      {isRecommended && (
+        <span className={styles.recommendedTag} data-test-id="space-plan-recommended-tag">
+          Recommended
+        </span>
+      )}
     </Card>
   );
 }
@@ -204,3 +173,27 @@ SpacePlanItem.propTypes = {
   isCommunityPlanEnabled: PropTypes.bool,
   isRecommended: PropTypes.bool,
 };
+
+function getTagStyle(backgroundColor) {
+  return css({
+    backgroundColor,
+    position: 'absolute',
+    top: 'calc(50% - 14px)', // 14px is half the height of this tag
+    right: '-20px',
+    padding: `${tokens.spacingXs} ${tokens.spacingS}`,
+    color: tokens.colorWhite,
+    fontSize: tokens.fontSizeS,
+    fontWeight: tokens.fontWeightDemiBold,
+    lineHeight: 1,
+    textTransform: 'uppercase',
+    borderRadius: '2px',
+  });
+}
+
+function getPlanBGColor(backgroundColor) {
+  return css({
+    '&:before': {
+      backgroundColor,
+    },
+  });
+}
