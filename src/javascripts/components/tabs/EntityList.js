@@ -85,6 +85,9 @@ const styles = {
   tableHead: css({
     zIndex: tokens.zIndexWorkbenchHeader,
   }),
+  tableHeadCell: css({
+    zIndex: tokens.zIndexWorkbenchHeader,
+  }),
   cursorPointer: css({
     cursor: 'pointer',
   }),
@@ -279,7 +282,7 @@ const EntityList = ({
                   onClick={onClick}
                   direction={direction}
                   aria-label={name}
-                  className={cn(className)}>
+                  className={cn(className) || styles.tableHeadCell}>
                   <span className={styles.fieldWrapper} title={name}>
                     {name}
                   </span>
