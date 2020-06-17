@@ -284,12 +284,10 @@
   "lint-staged": {
     "*.js": [
       "prettier --write",
-      "eslint --ext '.ts,.tsx,.js,.jsx' --fix ",
-      "git add"
+      "eslint --ext '.ts,.tsx,.js,.jsx' --fix "
     ],
     "*.{json,yml,html}": [
-      "prettier --write",
-      "git add"
+      "prettier --write"
     ]
   },
   "repository": {
