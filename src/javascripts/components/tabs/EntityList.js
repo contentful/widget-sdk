@@ -85,8 +85,9 @@ const styles = {
   tableHead: css({
     zIndex: tokens.zIndexWorkbenchHeader,
   }),
+  // This z-index is needed to hit the sweet spot between hiding the app icon below the header and the header not overlapping the dropdown menu
   tableHeadCell: css({
-    zIndex: tokens.zIndexWorkbenchHeader,
+    zIndex: 2,
   }),
   cursorPointer: css({
     cursor: 'pointer',

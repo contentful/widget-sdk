@@ -156,7 +156,6 @@ describe('app/ContentList/Search/View', () => {
         ...searchFilters,
         [fieldId, 'match', undefined],
       ]);
-      await waitFor(() => expect(wrapper.queryByTestId(fieldId)).toBe(document.activeElement));
     });
 
     it('selects a contentType field filter', async () => {
@@ -174,7 +173,6 @@ describe('app/ContentList/Search/View', () => {
         ...searchFilters,
         [fieldId, '', undefined],
       ]);
-      await waitFor(() => expect(wrapper.queryByTestId(fieldId)).toBe(document.activeElement));
     });
   });
 });
