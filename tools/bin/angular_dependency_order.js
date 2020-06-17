@@ -24,7 +24,6 @@ const exceptions = [
   'states/config.es6.js',
   'components/app_container/cfAppContainerDirective.es6.js',
   'navigation/Sidepanel/directive.es6.js',
-  'ui/Framework/CfComponentBridgeDirective.es6.js',
   'components/shared/persistent_notification/cfPersistentNotificationDirective.es6.js',
 ];
 

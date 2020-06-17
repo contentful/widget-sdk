@@ -1,20 +1,15 @@
 import { registerController } from 'core/NgRegistry';
 import _ from 'lodash';
-import * as K from 'core/utils/kefir';
-import * as Kefir from 'kefir';
 import React from 'react';
 import { Notification } from '@contentful/forma-36-react-components';
 
 import getAccessibleCTs from 'data/ContentTypeRepo/accessibleCTs';
-import createSearchInput from 'app/ContentList/Search';
 import * as Tracking from 'analytics/events/SearchAndViews';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as ListQuery from 'search/listQuery';
 import * as ScheduledActionsService from 'app/ScheduledActions/DataManagement/ScheduledActionsService';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { createRequestQueue } from 'utils/overridingRequestQueue';
-import { getCurrentSpaceFeature } from 'data/CMA/ProductCatalog';
-import { PC_CONTENT_TAGS } from 'featureFlags';
 
 export default function register() {
   registerController('EntryListSearchController', [
@@ -24,7 +19,7 @@ export default function register() {
     'viewPersistor',
     function EntryListSearchController($scope, $q, spaceContext, viewPersistor) {
       let initialized = false;
-      let lastUISearchState = null;
+      const lastUISearchState = null;
 
       $scope.context.ready = false;
       $scope.context.isLoading = true;
@@ -47,14 +42,20 @@ export default function register() {
 
       // TODO rename this everywhere
       $scope.updateEntries = () => {
-        if (isViewLoaded()) {
-          resetEntries();
-        }
+        resetEntries();
       };
 
-      const updateEntries = createRequestQueue(requestEntries, setupEntriesHandler);
+      $scope.isLoading = $scope.context.isSearching;
+      $scope.onUpdate = () => {
+        resetEntries();
+        $scope.forcedRender++;
+      };
+      $scope.getContentTypes = () =>
+        getAccessibleCTs(spaceContext.publishedCTs, viewPersistor.readKey('contentTypeId'));
+      $scope.forcedRender = 0;
+      $scope.$watch(() => viewPersistor.readKey('id'), $scope.onUpdate);
 
-      const isSearching$ = K.fromScopeValue($scope, ($scope) => $scope.context.isLoading);
+      const updateEntries = createRequestQueue(requestEntries, setupEntriesHandler);
 
       this.hasQuery = hasQuery;
 
@@ -73,18 +74,6 @@ export default function register() {
       );
 
       // TODO: Get rid of duplicate code in asset_search_controller.js
-
-      $scope.$watch(
-        () => getViewSearchState(),
-        () => {
-          if (!isViewLoaded()) {
-            return;
-          }
-          resetEntries();
-          initializeSearchUI();
-        },
-        true
-      );
 
       $scope.$watch(
         () => {
@@ -106,15 +95,6 @@ export default function register() {
         true
       );
 
-      // "forceSearch" event is emitted by the tokenized search directive when:
-      // - Enter is pressed and not selecting an autocompletion item
-      // - "magnifying glass" icon next to input is clicked
-      $scope.$on('forceSearch', () => {
-        if (!$scope.context.isLoading) {
-          resetEntries();
-        }
-      });
-
       // When the user deletes an entry it is removed from the entries
       // list. If that list becomes empty we want to go to the previous
       // page.
@@ -131,8 +111,7 @@ export default function register() {
         return updateEntries();
       }
 
-      resetEntries();
-      initializeSearchUI();
+      $scope.onUpdate();
 
       /**
        * This function tries to recover from a response that is to big for the API to handle.
@@ -197,43 +176,6 @@ export default function register() {
               return $q.reject(err);
             }
           );
-      }
-
-      function onSearchChange(newSearchState) {
-        lastUISearchState = newSearchState;
-        const oldView = viewPersistor.read();
-        const newView = _.extend(oldView, newSearchState);
-        viewPersistor.save(newView);
-      }
-
-      function initializeSearchUI() {
-        K.onValueScope($scope, accessChecker.isInitialized$, async (isInitialized) => {
-          if (!isInitialized) {
-            return;
-          }
-          const initialSearchState = getViewSearchState();
-          const contentTypes = getAccessibleCTs(
-            spaceContext.publishedCTs,
-            initialSearchState.contentTypeId
-          );
-
-          if (_.isEqual(lastUISearchState, initialSearchState)) {
-            return;
-          }
-
-          lastUISearchState = initialSearchState;
-          const withMetadata = await getCurrentSpaceFeature(PC_CONTENT_TAGS, false);
-
-          createSearchInput({
-            $scope: $scope,
-            contentTypes: contentTypes,
-            onSearchChange: onSearchChange,
-            isSearching$: isSearching$,
-            initState: initialSearchState,
-            users$: Kefir.fromPromise(spaceContext.users.getAll()),
-            withMetadata,
-          });
-        });
       }
 
       function setupEntriesHandler(promise) {
@@ -321,10 +263,6 @@ export default function register() {
           $scope.assetCache.setDisplayedFieldIds(fieldIds);
           $scope.assetCache.resolveLinkedEntities($scope.entries);
         }
-      }
-
-      function isViewLoaded() {
-        return !_.isEmpty(viewPersistor.read());
       }
 
       function getQueryOptions() {

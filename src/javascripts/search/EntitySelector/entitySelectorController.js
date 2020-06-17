@@ -1,14 +1,9 @@
 import { registerController } from 'core/NgRegistry';
 import _ from 'lodash';
-import * as Kefir from 'kefir';
-import * as K from 'core/utils/kefir';
 import { Operator } from 'app/ContentList/Search/Operators';
 import Paginator from 'classes/Paginator';
 import * as EntityHelpers from 'app/entity_editor/entityHelpers';
 import getAccessibleCTs from 'data/ContentTypeRepo/accessibleCTs';
-import createSearchInput from 'app/ContentList/Search';
-import { getCurrentSpaceFeature } from 'data/CMA/ProductCatalog';
-import { PC_CONTENT_TAGS } from 'featureFlags';
 import * as random from 'utils/Random';
 
 export default function register() {
@@ -45,7 +40,6 @@ export default function register() {
     '$timeout',
     'spaceContext',
     function EntitySelectorController($scope, $timeout, spaceContext) {
-      const MIN_SEARCH_TRIGGERING_LEN = 1;
       const MODES = { AVAILABLE: 1, SELECTED: 2 };
       const ITEMS_PER_PAGE = 40;
 
@@ -56,14 +50,17 @@ export default function register() {
           : null;
       let lastRequestId = null;
 
-      initializeSearchUI();
-
       // Returns a promise for the content type of the given entry.
       // We cache this by the entry id
       const getContentType = _.memoize(
         (entity) => spaceContext.publishedCTs.fetch(entity.sys.contentType.sys.id),
         (entity) => entity.sys.id
       );
+
+      $scope.entityType = config.entityType.toLowerCase();
+      $scope.onUpdate = (view) => onSearchChange(view);
+      $scope.initialState = getInitialState();
+      $scope.getContentTypes = () => getContentTypes($scope.initialState.contentTypeId);
 
       Object.assign($scope, MODES, {
         onChange: $scope.onChange || _.noop,
@@ -98,7 +95,6 @@ export default function register() {
         $scope.createEntityInlineProps = { ...$scope.createEntityProps, hasPlusIcon: false };
       }
 
-      $scope.$watch('view.searchText', handleTermChange);
       $scope.$on('forceSearch', resetAndLoad);
 
       resetAndLoad();
@@ -126,36 +122,17 @@ export default function register() {
         }
       }
 
-      async function initializeSearchUI() {
-        const withAssets = config.entityType === 'Asset';
+      function getInitialState() {
         const initialSearchState = {};
         if (singleContentTypeId) {
           initialSearchState.contentTypeId = singleContentTypeId;
         }
-        const isSearching$ = K.fromScopeValue(
-          $scope,
-          ($scope) => $scope.isLoading && !$scope.isLoadingMore
-        );
-        const accessibleContentTypes = getAccessibleCTs(
-          spaceContext.publishedCTs,
-          initialSearchState.contentTypeId
-        );
-        const contentTypes = getValidContentTypes(
-          config.linkedContentTypeIds,
-          accessibleContentTypes
-        );
+        return initialSearchState;
+      }
 
-        const withMetadata = await getCurrentSpaceFeature(PC_CONTENT_TAGS, false);
-        createSearchInput({
-          $scope: $scope,
-          contentTypes: contentTypes,
-          onSearchChange: onSearchChange,
-          isSearching$: isSearching$,
-          initState: initialSearchState,
-          users$: Kefir.fromPromise(spaceContext.users.getAll()),
-          withAssets,
-          withMetadata,
-        });
+      function getContentTypes(contentTypeId) {
+        const accessibleContentTypes = getAccessibleCTs(spaceContext.publishedCTs, contentTypeId);
+        return getValidContentTypes(config.linkedContentTypeIds, accessibleContentTypes);
       }
 
       function getValidContentTypes(linkedContentTypeIds, contentTypes) {
@@ -261,20 +238,6 @@ export default function register() {
           }
           lastToggled = { entity: entity, toggleMethod: toggleMethod };
         }
-      }
-
-      function handleTermChange(term, prev) {
-        if (isTermTriggering(term) || isClearingTerm(term, prev)) {
-          resetAndLoad();
-        }
-      }
-
-      function isTermTriggering(term) {
-        return _.isString(term) && term.length >= MIN_SEARCH_TRIGGERING_LEN;
-      }
-
-      function isClearingTerm(term, prev) {
-        return _.isString(prev) && (!_.isString(term) || term.length < prev.length);
       }
 
       function handleResponse(res) {

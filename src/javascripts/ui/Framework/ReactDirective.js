@@ -58,6 +58,7 @@ import * as AssetEditorWorkbench from 'app/asset_editor/AssetEditorWorkbench';
 import * as ContentTagsField from 'app/asset_editor/ContentTagsField';
 import * as SavedViewsAdapter from 'app/ContentList/SavedViews/Sidebar';
 import * as SavedViewsLink from 'app/ContentList/SavedViews/Link';
+import * as Search from 'app/ContentList/Search/View';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container, store) {
@@ -306,6 +307,7 @@ function getModule(name) {
     'app/asset_editor/ContentTagsField': ContentTagsField,
     'app/ContentList/SavedViews/Sidebar': SavedViewsAdapter,
     'app/ContentList/SavedViews/Link': SavedViewsLink,
+    'app/ContentList/Search/View': Search,
   };
 
   return get(allowedModules, name, null);

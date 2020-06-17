@@ -1,8 +1,5 @@
 import { registerController } from 'core/NgRegistry';
 import _ from 'lodash';
-import * as K from 'core/utils/kefir';
-import * as Kefir from 'kefir';
-import React from 'react';
 import Paginator from 'classes/Paginator';
 import ReloadNotification from 'app/common/ReloadNotification';
 import { Notification } from '@contentful/forma-36-react-components';
@@ -11,10 +8,7 @@ import * as SystemFields from 'data/SystemFields';
 import * as logger from 'services/logger';
 import * as ListQuery from 'search/listQuery';
 import { PromisedLoader } from './services/PromisedLoader';
-import createSearchInput from 'app/ContentList/Search';
 import * as Tracking from 'analytics/events/SearchAndViews';
-import { getCurrentSpaceFeature } from 'data/CMA/ProductCatalog';
-import { PC_CONTENT_TAGS } from 'featureFlags';
 
 export default function register() {
   registerController('AssetSearchController', [
@@ -29,14 +23,8 @@ export default function register() {
       const setIsSearching = makeIsSearchingSetter(true);
       const unsetIsSearching = makeIsSearchingSetter(false);
 
-      let lastUISearchState = null;
-
       $scope.context.ready = false;
       $scope.context.isLoading = true;
-
-      // HACK: This makes sure that component bridge renders
-      // somethings until search UI is initialized.
-      $scope.search = React.createElement('div');
 
       this.hasQuery = hasQuery;
 
@@ -45,23 +33,14 @@ export default function register() {
 
       // TODO: Get rid of duplicate code in entry_list_search_controller.js
 
-      const isSearching$ = K.fromScopeValue($scope, ($scope) => $scope.context.isLoading);
-
-      $scope.$watch(
-        () => getViewSearchState(),
-        () => {
-          if (!isViewLoaded()) {
-            return;
-          }
-          resetAssets();
-          initializeSearchUI();
-        },
-        true
-      );
-
-      function resetAssets() {
-        return controller.resetAssets(true);
-      }
+      $scope.isLoading = $scope.context.isSearching;
+      $scope.onUpdate = () => {
+        controller.resetAssets(true);
+        $scope.forcedRender++;
+      };
+      $scope.getContentTypes = () => spaceContext.publishedCTs.getAllBare();
+      $scope.forcedRender = 0;
+      $scope.$watch(() => viewPersistor.readKey('id'), $scope.onUpdate);
 
       this.resetAssets = function (resetPage) {
         const currPage = this.paginator.getPage();
@@ -93,7 +72,7 @@ export default function register() {
           .catch(ReloadNotification.apiErrorHandler);
       };
 
-      initializeSearchUI();
+      $scope.onUpdate();
 
       function handleAssetsError(err) {
         const isInvalidQuery = isInvalidQueryError(err);
@@ -102,10 +81,8 @@ export default function register() {
 
         // Reset the view only if the UI was not edited yet.
         if (isInvalidQuery) {
-          if (lastUISearchState === null) {
-            // invalid search query, let's reset the view...
-            viewPersistor.save({});
-          }
+          // invalid search query, let's reset the view...
+          viewPersistor.save({});
           // ...and let it request assets again after notifing a user
           Notification.error('We detected an invalid search query. Please try again.');
         }
@@ -162,37 +139,6 @@ export default function register() {
         return _.filter(assets, (asset) => !asset.isDeleted());
       }
 
-      function onSearchChange(newSearchState) {
-        const nextState = _.cloneDeep(newSearchState);
-        delete nextState.contentTypeId; // Assets don't have a content type.
-        lastUISearchState = nextState;
-
-        const oldView = viewPersistor.read();
-        const newView = _.extend(oldView, nextState);
-        viewPersistor.save(newView);
-      }
-
-      async function initializeSearchUI() {
-        const initialSearchState = getViewSearchState();
-        const withAssets = true;
-
-        if (_.isEqual(lastUISearchState, initialSearchState)) {
-          return;
-        }
-        lastUISearchState = initialSearchState;
-        const withMetadata = await getCurrentSpaceFeature(PC_CONTENT_TAGS, false);
-        createSearchInput({
-          $scope: $scope,
-          contentTypes: spaceContext.publishedCTs.getAllBare(),
-          onSearchChange: onSearchChange,
-          isSearching$: isSearching$,
-          initState: initialSearchState,
-          users$: Kefir.fromPromise(spaceContext.users.getAll()),
-          withAssets,
-          withMetadata,
-        });
-      }
-
       function prepareQuery() {
         return ListQuery.getForAssets(getQueryOptions());
       }
@@ -202,10 +148,6 @@ export default function register() {
           order: SystemFields.getDefaultOrder(),
           paginator: controller.paginator,
         });
-      }
-
-      function isViewLoaded() {
-        return !!viewPersistor.read();
       }
 
       function hasQuery() {

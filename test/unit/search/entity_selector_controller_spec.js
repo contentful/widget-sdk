@@ -67,33 +67,6 @@ describe('EntitySelectorController', () => {
       // (1) init (2) forced
       sinon.assert.calledTwice(this.fetch);
     });
-
-    it('triggers when term >= 1', async function () {
-      await this.createController();
-      this.scope.view.searchText = '';
-      $apply();
-      this.scope.view.searchText = '1';
-      $apply();
-      sinon.assert.calledTwice(this.fetch);
-    });
-
-    it('triggers when clearing', async function () {
-      await this.createController();
-      this.scope.view.searchText = '4444';
-      $apply();
-      this.scope.view.searchText = '333';
-      $apply();
-      sinon.assert.calledThrice(this.fetch);
-    });
-
-    it('triggers when deleting the value', async function () {
-      await this.createController();
-      this.scope.view.searchText = '4444';
-      $apply();
-      delete this.scope.view.searchText;
-      $apply();
-      sinon.assert.calledThrice(this.fetch);
-    });
   });
 
   describe('search placeholder', () => {

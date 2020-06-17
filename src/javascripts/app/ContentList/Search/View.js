@@ -1,21 +1,20 @@
-/* eslint "rulesdir/restrict-inline-styles": "warn" */
-/* eslint-disable react/prop-types */
-// TODO: add prop-types
-
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { css } from 'emotion';
-import { Spinner } from '@contentful/forma-36-react-components';
-
+import { Spinner, TextInput, Icon } from '@contentful/forma-36-react-components';
 import Keys from './Keys';
-import FilterIcon from 'svg/filter.svg';
 import tokens from '@contentful/forma-36-tokens';
 
 import FilterPill from './FilterPill';
 import SuggestionsBox from './SuggestionsBox';
-import QueryInput from './Components/QueryInput';
+import pluralize from 'pluralize';
 
 import { track as analyticsTrack } from 'analytics/Analytics';
+import useFocus from './useFocus';
+import useSearchContext from './useSearchContext';
+import useView from './useView';
+import noop from 'lodash/noop';
 
 const track = (e, data) => analyticsTrack('search:' + e, data);
 
@@ -36,8 +35,8 @@ function PillsList({
           op,
           value,
           testId: filter.queryKey,
-          isFocused: defaultFocus.index === index && !defaultFocus.isValueFocused,
-          isValueFocused: defaultFocus.index === index && defaultFocus.isValueFocused,
+          isFocused: defaultFocus.pillIndex === index && !defaultFocus.isOnPillValue,
+          isValueFocused: defaultFocus.pillIndex === index && defaultFocus.isOnPillValue,
           onChange: (value) => {
             track('filter_added', { filter: filter.name });
             onChange({ index, value });
@@ -54,223 +53,265 @@ function PillsList({
   });
 }
 
+const focus = {
+  outline: 'none',
+  borderColor: tokens.colorBlueMid,
+  height: 'auto',
+  overflow: 'visible',
+};
+
 const styles = {
-  searchWrapper: css({
-    marginLeft: tokens.spacingS,
+  wrapper: css({
+    height: '40px',
+    width: '100%',
+    position: 'relative',
   }),
-  searchIconWrapper: css({
-    marginTop: '-3px',
-    marginRight: tokens.spacingS,
+  inputWrapper: css({
+    paddingLeft: tokens.spacingXs,
+    display: 'flex',
+    background: tokens.colorWhite,
+    border: '1px solid transparent',
+    borderColor: tokens.colorElementMid,
+    height: '38px',
+    overflow: 'hidden',
+    '&:focus-within, &:focus': focus,
+  }),
+  focused: css(focus),
+  input: css({
+    flex: '1 1 auto',
+    width: 'auto',
+    height: '30px',
+    '& > input': {
+      padding: 0,
+      border: 'none !important',
+      boxShadow: 'none !important',
+    },
+  }),
+  pillsInput: css({
+    transition: 'padding 0.1s ease-in-out',
+    display: 'flex',
+    alignItems: 'center',
+    flex: '1 1 auto',
+    flexWrap: 'wrap',
+  }),
+  centerTop: css({
+    height: '36px',
+    display: 'flex',
+    alignItems: 'center',
+    '& > svg': {
+      marginRight: tokens.spacingS,
+    },
+  }),
+  hidden: css({
+    visibility: 'hidden',
+  }),
+  filterWrapper: css({
+    cursor: 'pointer',
+    padding: '0 14px',
+    fontSize: tokens.fontSizeS,
+    color: tokens.colorBlueMid,
+    borderLeft: '1px solid transparent',
+    '&:hover': {
+      backgroundColor: tokens.colorElementLightest,
+    },
+  }),
+  filterActive: css({
+    borderColor: tokens.colorBlueMid,
   }),
 };
 
-function PillsWrapper({ searchBoxHasFocus, actions, children }) {
-  const [isOverflownY, setOverflownY] = useState(false);
-  const el = useRef(null);
-
-  // eslint-disable-next-line
-  useLayoutEffect(() => {
-    if (el.current) {
-      // HACK: fixes the scroll position after selecting entity
-      // in reference filter pill
-      if (!searchBoxHasFocus) {
-        el.current.scrollTop = 0;
-      }
-      if (el.current.scrollHeight > el.current.clientHeight) {
-        setOverflownY(true);
-      } else {
-        setOverflownY(false);
-      }
-    }
+export default function View({
+  isLoading,
+  onUpdate,
+  entityType,
+  getContentTypes,
+  initialState,
+  isPersisted = true,
+}) {
+  const [view, setView] = useView({
+    entityType,
+    initialState,
+    isPersisted,
   });
 
-  return (
-    <div
-      className={classNames('search-next__pills-wrapper', {
-        'search-next__pills-wrapper--state-active': searchBoxHasFocus,
-        'is-overflown-y': isOverflownY,
-      })}
-      onClick={() => actions.SetFocusOnQueryInput()}
-      onBlur={() => actions.ResetFocus()}
-      ref={el}>
-      {children}
-    </div>
-  );
-}
+  const [
+    {
+      contentTypeFilter,
+      contentTypeId,
+      filters,
+      hasLoaded,
+      isSuggestionOpen,
+      isTyping,
+      searchText,
+      suggestions,
+    },
+    {
+      hideSuggestions,
+      removeFilter,
+      selectFilterSuggestion,
+      setContentType,
+      setFilterOperator,
+      setFilterValue,
+      setSearchText,
+      showSuggestions,
+      toggleSuggestions,
+    },
+  ] = useSearchContext({ entityType, onUpdate, view, setView, getContentTypes });
 
-function Wrapper({ actions, searchBoxHasFocus, children }) {
-  const el = useRef(null);
-
-  return (
-    <div
-      style={{
-        height: '40px',
-        width: '100%',
-        position: 'relative',
-      }}
-      onFocus={() => {
-        if (!searchBoxHasFocus) {
-          actions.SetBoxFocus(true);
-        }
-      }}
-      onBlur={(event) => {
-        if (el.current) {
-          const parent = el.current;
-          // Related target is not defined in IE11 so we need to fallback to the activeElement
-          const activeElement = event.relatedTarget || document.activeElement;
-
-          // Special case for tag-search-container, because the forma comp being used puts the ui
-          // outside of parent...
-          const isChildFocused =
-            (parent !== activeElement && parent.contains(activeElement)) ||
-            activeElement.closest('div.tag-search-container');
-          if (!isChildFocused) {
-            actions.SetBoxFocus(false);
-          }
-        }
-      }}
-      ref={el}>
-      {children}
-    </div>
-  );
-}
-
-export default function View(props) {
-  const {
-    isSearching,
-    isTyping,
-    searchBoxHasFocus,
-    contentTypeId,
-    contentTypeFilter,
-    filters,
-    input,
-    isSuggestionOpen,
-    suggestions,
-    actions,
-    withAssets,
-    hasLoaded,
-  } = props;
+  const [
+    { focus, inputRef },
+    {
+      resetFocus,
+      setFocusOnFirstSuggestion,
+      setFocusOnLastPill,
+      setFocusOnLastPillValue,
+      setFocusOnNextSuggestion,
+      setFocusOnPill,
+      setFocusOnPillValue,
+      setFocusOnPrevSuggestion,
+      setFocusOnQueryInput,
+    },
+  ] = useFocus({ suggestions, filters });
 
   if (!hasLoaded) {
     return <div data-test-id="loader" />;
   }
 
-  const hasFilters = filters.length > 0;
-  const hasSpinner = isSearching || isTyping;
-  const placeholder = hasFilters ? '' : 'Type to search for ' + (withAssets ? 'assets' : 'entries');
-  const defaultFocus = props.focus;
+  const hideSpinner = !isLoading && !isTyping;
+  const placeholder = filters.length > 0 ? '' : `Type to search for ${pluralize(entityType)}`;
 
   return (
-    <Wrapper actions={actions} searchBoxHasFocus={searchBoxHasFocus}>
-      <PillsWrapper actions={actions} searchBoxHasFocus={searchBoxHasFocus}>
-        <div className="search-next__pills-list">
-          {!withAssets && (
+    <div className={styles.wrapper}>
+      <div
+        className={classNames(styles.inputWrapper, {
+          [styles.focused]: isSuggestionOpen,
+        })}
+        onClick={setFocusOnQueryInput}>
+        <div className={styles.pillsInput}>
+          {entityType === 'entry' && (
             <FilterPill
               value={contentTypeId}
               testId="contentTypeFilter"
               isRemovable={false}
               filter={contentTypeFilter}
-              onChange={(value) => actions.SetContentType(value)}
+              onChange={setContentType}
             />
           )}
           <PillsList
             filters={filters}
-            defaultFocus={defaultFocus}
+            defaultFocus={focus}
             onChange={({ index, value }) => {
               // Keep the focus on the search box after setting a pill value
               // with a dialog/anyway that loses searchbox focus.
-              actions.SetFocusOnPillValue(index);
-              actions.SetFilterValueInput([index, value]);
+              setFocusOnPillValue(index);
+              setFilterValue([index, value]);
             }}
-            onOperatorChange={({ index, value }) => actions.SetFilterOperator([index, value])}
-            onRemove={({ index }) => actions.RemoveFilter(index)}
-            onRemoveAttempt={({ index }) => actions.SetFocusOnPill(index)}
+            onOperatorChange={({ index, value }) => {
+              setFilterOperator([index, value]);
+            }}
+            onRemove={({ index }) => {
+              removeFilter(index);
+              resetFocus();
+              setFocusOnQueryInput();
+            }}
+            onRemoveAttempt={({ index }) => setFocusOnPill(index)}
           />
-          <QueryInput
+          <TextInput
+            testId="queryInput"
+            inputRef={inputRef}
+            className={styles.input}
             placeholder={placeholder}
-            value={input || ''}
-            onChange={(value) => actions.SetQueryInput(value)}
-            autoFocus={!input && !hasFilters}
-            isFocused={defaultFocus.isQueryInputFocused}
-            onKeyUp={(e) => {
-              if (Keys.escape(e)) {
-                if (isSuggestionOpen) {
-                  e.stopPropagation();
-                  actions.HideSuggestions();
-                }
+            value={searchText}
+            autoComplete="off"
+            onChange={(evt) => {
+              evt.stopPropagation();
+              resetFocus();
+              setSearchText(evt.target.value);
+            }}
+            onClick={() => {
+              hideSuggestions();
+              resetFocus();
+            }}
+            autoFocus
+            onKeyUp={(evt) => {
+              if (Keys.escape(evt) && isSuggestionOpen) {
+                evt.stopPropagation();
+                hideSuggestions();
               }
             }}
-            onKeyDown={(e) => {
-              const { target } = e;
+            onKeyDown={(evt) => {
+              const { target } = evt;
+              evt.stopPropagation();
               const hasSelection = target.selectionStart !== 0 || target.selectionEnd !== 0;
-              if (Keys.backspace(e) && !hasSelection) {
-                actions.SetFocusOnLast();
-              } else if (Keys.arrowDown(e)) {
-                if (!isSuggestionOpen) {
-                  actions.ShowSuggestions();
-                } else {
-                  actions.SetFocusOnFirstSuggestion();
-                }
-              } else if (Keys.enter(e)) {
-                actions.HideSuggestions();
+              if (Keys.backspace(evt) && !hasSelection) {
+                setFocusOnLastPill();
+              } else if (Keys.arrowDown(evt)) {
+                setFocusOnFirstSuggestion();
+                showSuggestions();
+              } else if (Keys.enter(evt)) {
+                hideSuggestions();
               }
             }}
           />
         </div>
-        <div
-          style={{
-            paddingTop: '10px',
-            // We need to occupy the space to prevent breaking based on the
-            // spinners visibility
-            visibility: hasSpinner ? '' : 'hidden',
-          }}>
-          <Spinner style={{ display: 'inline-block' }} />
+        <div className={classNames(styles.centerTop, { [styles.hidden]: hideSpinner })}>
+          <Spinner />
         </div>
         <div
-          className={classNames(styles.searchWrapper, 'search-next__filter-toggle', {
-            '-active': isSuggestionOpen,
-            '-focus': searchBoxHasFocus,
+          className={classNames(styles.filterWrapper, {
+            [styles.filterActive]: isSuggestionOpen,
           })}
-          onClick={() => actions.ToggleSuggestions()}>
-          <div
-            style={{
-              alignSelf: 'flex-start',
-              height: '38px',
-              display: 'flex',
-              alignItems: 'center',
-            }}>
-            <div className={styles.searchIconWrapper}>
-              <FilterIcon />
-            </div>
+          onClick={() => {
+            toggleSuggestions();
+            resetFocus();
+          }}>
+          <div className={styles.centerTop}>
+            <Icon icon="Filter" />
             Filter
           </div>
         </div>
-      </PillsWrapper>
-      {isSuggestionOpen &&
-        (defaultFocus.suggestionsFocusIndex >= 0 || defaultFocus.isQueryInputFocused) && (
-          <SuggestionsBox
-            items={suggestions}
-            searchTerm={input}
-            defaultFocus={defaultFocus}
-            onSelect={(key) => {
-              actions.SelectFilterSuggestions(key);
-            }}
-            onKeyUp={(e) => {
-              if (Keys.escape(e)) {
-                e.stopPropagation();
-                actions.ToggleSuggestions();
-                actions.SetFocusOnQueryInput();
-              }
-            }}
-            onKeyDown={(e) => {
-              if (Keys.arrowUp(e) || Keys.shiftTab(e)) {
-                actions.SetFocusOnPrevSuggestion();
-              } else if (Keys.arrowDown(e) || Keys.tab(e)) {
-                actions.SetFocusOnNextSuggestion();
-              }
-            }}
-          />
-        )}
-    </Wrapper>
+      </div>
+      {isSuggestionOpen && (
+        <SuggestionsBox
+          items={suggestions}
+          searchTerm={searchText}
+          defaultFocus={focus}
+          hideSuggestions={hideSuggestions}
+          selectedSuggestion={focus.suggestionIndex}
+          onSelect={(field) => {
+            selectFilterSuggestion(field);
+            setFocusOnLastPillValue();
+          }}
+          onKeyUp={(evt) => {
+            if (Keys.escape(evt)) {
+              evt.stopPropagation();
+              hideSuggestions();
+              setFocusOnQueryInput();
+            }
+          }}
+          onKeyDown={(evt) => {
+            if (Keys.arrowUp(evt) || Keys.shiftTab(evt)) {
+              setFocusOnPrevSuggestion();
+            } else if (Keys.arrowDown(evt) || Keys.tab(evt)) {
+              setFocusOnNextSuggestion();
+            }
+          }}
+        />
+      )}
+    </div>
   );
 }
+
+View.propTypes = {
+  getContentTypes: PropTypes.func.isRequired,
+  entityType: PropTypes.oneOf(['entry', 'asset']).isRequired,
+  initialState: PropTypes.object,
+  isLoading: PropTypes.bool,
+  isPersisted: PropTypes.bool.isRequired,
+  onUpdate: PropTypes.func.isRequired,
+};
+
+View.defaultProps = {
+  isPersisted: true,
+  onUpdate: noop,
+};
