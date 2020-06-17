@@ -10775,7 +10775,7 @@ pre,
   }
   .search__filter-pill-label {
     background-color: var(--color-element-light);
-    color: var(--color-text-lightest);
+    color: var(--color-text-mid);
     padding: 0 12px;
     border-radius: 3px 0 0 3px;
     cursor: pointer;
@@ -11182,7 +11182,7 @@ pre,
   .search-next__completion-item .__filter-pill {
     display: inline-block;
     background-color: var(--color-element-light);
-    color: var(--color-text-lightest);
+    color: var(--color-text-mid);
     padding: 6px 10px 5px;
     line-height: 18px;
     border-radius: 3px;
