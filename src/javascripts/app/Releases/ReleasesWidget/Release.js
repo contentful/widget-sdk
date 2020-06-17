@@ -15,6 +15,7 @@ import tokens from '@contentful/forma-36-tokens';
 
 import { formatPastDate } from 'app/Apps/management/util';
 import { ActionPerformerName } from 'core/components/ActionPerformerName';
+import { Pluralized } from 'core/components/formatting/Pluralized/Pluralized';
 
 const styles = {
   card: css({
@@ -64,6 +65,9 @@ export default class Release extends Component {
 
   render() {
     const { release } = this.props;
+    const entriesCount = this.getItemsCountByLinkType(release, 'Entry') || 0;
+    const assetsCount = this.getItemsCountByLinkType(release, 'Asset') || 0;
+
     return (
       <Card className={styles.card}>
         <Icon icon="Release" color="secondary" className={styles.icon} />
@@ -86,11 +90,12 @@ export default class Release extends Component {
           }>
           <DropdownList onClick={(event) => event.stopPropagation()}>
             <DropdownListItem>
-              Contains {this.getItemsCountByLinkType(release, 'Entry')} entries and{' '}
-              {this.getItemsCountByLinkType(release, 'Asset')} assets
+              Contains {entriesCount && <Pluralized text="entry" count={entriesCount} />}
+              {entriesCount && assetsCount && ', '}
+              {assetsCount && <Pluralized text="asset" count={assetsCount} />}
             </DropdownListItem>
             <DropdownListItem isDisabled>
-              Create {formatPastDate(release.sys.createdAt)}
+              Created {formatPastDate(release.sys.createdAt)}
               {' by '}
               <ActionPerformerName link={release.sys.createdBy} />
             </DropdownListItem>

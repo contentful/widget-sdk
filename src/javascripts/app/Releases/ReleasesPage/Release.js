@@ -1,5 +1,6 @@
 import React, { Component, useState, useEffect } from 'react';
 import { css } from 'emotion';
+import pluralize from 'pluralize';
 
 import {
   Card,
@@ -171,8 +172,9 @@ export default class Release extends Component {
 
   render() {
     const { release } = this.props;
-    const assets = this.getItemsCountByLinkType(release, 'Asset');
-    const entries = this.getItemsCountByLinkType(release, 'Entry');
+    const assets = this.getItemsCountByLinkType(release, 'Asset') || null;
+    const entries = this.getItemsCountByLinkType(release, 'Entry') || null;
+
     return (
       <Card testId="release-card" className={styles.card}>
         <ReleaseImage release={release} />
@@ -199,7 +201,7 @@ export default class Release extends Component {
                     Delete
                   </DropdownListItem>
                   <DropdownListItem isDisabled>
-                    Create {formatPastDate(release.sys.createdAt)}
+                    Created {formatPastDate(release.sys.createdAt)}
                     {' by '}
                     <ActionPerformerName link={release.sys.createdBy} />
                   </DropdownListItem>
@@ -207,7 +209,10 @@ export default class Release extends Component {
               </Dropdown>
             </div>
             <Paragraph>
-              {entries} entries, {assets} assets
+              {entries && pluralize('entry', entries, true)}
+              {entries && assets && ', '}
+              {assets && pluralize('asset', assets, true)}
+              {!entries && !assets && 'Empty'}
             </Paragraph>
           </div>
         </div>
