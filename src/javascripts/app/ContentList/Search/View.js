@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { css } from 'emotion';
 import { Spinner, TextInput, Icon } from '@contentful/forma-36-react-components';
 import Keys from './Keys';
 import tokens from '@contentful/forma-36-tokens';
+import { ReadTagsProvider, TagsRepoProvider } from 'features/content-tags';
+import { getCurrentSpaceFeature } from 'data/CMA/ProductCatalog';
+import { PC_CONTENT_TAGS } from 'featureFlags';
 
 import FilterPill from './FilterPill';
 import SuggestionsBox from './SuggestionsBox';
@@ -120,13 +123,37 @@ const styles = {
   }),
 };
 
-export default function View({
+export default function ConditionalView(props) {
+  const [withMetadata, setWithMetadata] = useState(false);
+
+  useEffect(() => {
+    const init = async () => {
+      const withMetadata = await getCurrentSpaceFeature(PC_CONTENT_TAGS, false);
+      setWithMetadata(withMetadata);
+    };
+    init();
+  }, []);
+
+  if (withMetadata) {
+    return (
+      <TagsRepoProvider>
+        <ReadTagsProvider>
+          <View withMetadata {...props} />
+        </ReadTagsProvider>
+      </TagsRepoProvider>
+    );
+  }
+  return <View {...props} />;
+}
+
+function View({
   isLoading,
   onUpdate,
   entityType,
   getContentTypes,
   initialState,
   isPersisted = true,
+  withMetadata,
 }) {
   const [view, setView] = useView({
     entityType,
@@ -156,7 +183,7 @@ export default function View({
       showSuggestions,
       toggleSuggestions,
     },
-  ] = useSearchContext({ entityType, onUpdate, view, setView, getContentTypes });
+  ] = useSearchContext({ entityType, onUpdate, view, setView, getContentTypes, withMetadata });
 
   const [
     { focus, inputRef },
@@ -308,10 +335,12 @@ View.propTypes = {
   initialState: PropTypes.object,
   isLoading: PropTypes.bool,
   isPersisted: PropTypes.bool.isRequired,
+  withMetadata: PropTypes.bool.isRequired,
   onUpdate: PropTypes.func.isRequired,
 };
 
 View.defaultProps = {
   isPersisted: true,
+  withMetadata: false,
   onUpdate: noop,
 };

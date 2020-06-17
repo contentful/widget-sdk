@@ -12,13 +12,17 @@ import {
 import ValueInput from './FilterValueInputs';
 import { cloneDeep, debounce } from 'lodash';
 import { track } from 'analytics/Analytics';
-import { getCurrentSpaceFeature } from 'data/CMA/ProductCatalog';
-import { PC_CONTENT_TAGS } from 'featureFlags';
 
-const useSearchContext = ({ entityType, onUpdate, view, setView, getContentTypes }) => {
+const useSearchContext = ({
+  entityType,
+  onUpdate,
+  view,
+  setView,
+  getContentTypes,
+  withMetadata,
+}) => {
   const [users, setUsers] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
-  const [withMetadata, setWithMetadata] = useState(false);
 
   const [isSuggestionOpen, setIsSuggestionOpen] = useState(false);
   const hideSuggestions = () => setIsSuggestionOpen(false);
@@ -32,8 +36,6 @@ const useSearchContext = ({ entityType, onUpdate, view, setView, getContentTypes
     const init = async () => {
       const result = await spaceContext.users.getAll();
       setUsers(result);
-      const withMetadata = await getCurrentSpaceFeature(PC_CONTENT_TAGS, false);
-      setWithMetadata(withMetadata);
     };
     init();
   }, [spaceContext]);
@@ -43,8 +45,9 @@ const useSearchContext = ({ entityType, onUpdate, view, setView, getContentTypes
   const { searchFilters = [], contentTypeId = '', searchText = '' } = view;
 
   const sanitizedFilters = useMemo(
-    () => sanitizeSearchFilters(searchFilters, contentTypes, contentTypeId, withAssets),
-    [searchFilters, contentTypes, contentTypeId, withAssets]
+    () =>
+      sanitizeSearchFilters(searchFilters, contentTypes, contentTypeId, withAssets, withMetadata),
+    [searchFilters, contentTypes, contentTypeId, withAssets, withMetadata]
   );
 
   const filters = useMemo(
