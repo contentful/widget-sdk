@@ -65,8 +65,8 @@ export default class Release extends Component {
 
   render() {
     const { release } = this.props;
-    const entries = this.getItemsCountByLinkType(release, 'Entry') || null;
-    const assets = this.getItemsCountByLinkType(release, 'Asset') || null;
+    const entriesCount = this.getItemsCountByLinkType(release, 'Entry') || 0;
+    const assetsCount = this.getItemsCountByLinkType(release, 'Asset') || 0;
 
     return (
       <Card className={styles.card}>
@@ -90,10 +90,9 @@ export default class Release extends Component {
           }>
           <DropdownList onClick={(event) => event.stopPropagation()}>
             <DropdownListItem>
-              Contains&nbsp;
-              {entries && <Pluralized text="entry" count={entries} />}
-              {entries && assets && ', '}
-              {assets && <Pluralized text="asset" count={assets} />}
+              Contains {entriesCount && <Pluralized text="entry" count={entriesCount} />}
+              {entriesCount && assetsCount && ', '}
+              {assetsCount && <Pluralized text="asset" count={assetsCount} />}
             </DropdownListItem>
             <DropdownListItem isDisabled>
               Created {formatPastDate(release.sys.createdAt)}
