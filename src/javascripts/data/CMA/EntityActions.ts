@@ -1,10 +1,11 @@
 import { constant, compact } from 'lodash';
 import { caseof } from 'sum-types/caseof-eq';
+import { Entity } from 'app/entity_editor/Document/types';
+import { SpaceEndpoint } from './types';
+
+export type EntityAction = 'publish' | 'unpublish' | 'archive' | 'unarchive' | 'delete';
 
 /**
- * @ngdoc service
- * @name data/CMA/EntityActions
- * @description
  * This service exports a function that calls on of five actions on the
  * REST endpoint for an entry or asset. The actions are, (un)publish,
  * (un)archive, and delete.
@@ -27,42 +28,14 @@ import { caseof } from 'sum-types/caseof-eq';
 // relying on the values we should make the dependent functions
 // abstract for the actions.
 export const Action = {
-  /**
-   * @ngdoc method
-   * @name data/CMA/EntityActions#Action.Publish
-   * @returns {data/CMA/EntityActions.Action}
-   */
-  Publish: constant('publish'),
-  /**
-   * @ngdoc method
-   * @name data/CMA/EntityActions#Action.Unpublish
-   * @returns {data/CMA/EntityActions.Action}
-   */
-  Unpublish: constant('unpublish'),
-  /**
-   * @ngdoc method
-   * @name data/CMA/EntityActions#Action.Archive
-   * @returns {data/CMA/EntityActions.Action}
-   */
-  Archive: constant('archive'),
-  /**
-   * @ngdoc method
-   * @name data/CMA/EntityActions#Action.Unarchive
-   * @returns {data/CMA/EntityActions.Action}
-   */
-  Unarchive: constant('unarchive'),
-  /**
-   * @ngdoc method
-   * @name data/CMA/EntityActions#Action.Delete
-   * @returns {data/CMA/EntityActions.Action}
-   */
-  Delete: constant('delete'),
+  Publish: constant<EntityAction>('publish'),
+  Unpublish: constant<EntityAction>('unpublish'),
+  Archive: constant<EntityAction>('archive'),
+  Unarchive: constant<EntityAction>('unarchive'),
+  Delete: constant<EntityAction>('delete'),
 };
 
 /**
- * @ngdoc method
- * @name data/CMA/EntityActions#makePerform
- * @description
  * A curried function to perform an action on an entity. Called as
  * ~~~js
  * const updatedEntityData = await makePerform(spaceEndpoint)(action, data)
@@ -76,8 +49,8 @@ export const Action = {
  * The call returns a promise that resolves with the response payload
  * or rejects with an HTTP error from the spaceEndpoint call.
  */
-export function makePerform(spaceEndpoint) {
-  return function perform(action, data) {
+export function makePerform(spaceEndpoint: SpaceEndpoint) {
+  return function perform(action: EntityAction, data: Entity) {
     const [method, path] = restArgs(action);
     const id = data.sys.id;
     const version = data.sys.version;
@@ -99,7 +72,7 @@ export function makePerform(spaceEndpoint) {
  * Returns a [method, path] tuple that specify which endpoint to call
  * with which method.
  */
-function restArgs(action) {
+function restArgs(action: EntityAction): [string, string] {
   return caseof(action, [
     [Action.Publish(), constant(['PUT', 'published'])],
     [Action.Unpublish(), constant(['DELETE', 'published'])],
@@ -109,7 +82,7 @@ function restArgs(action) {
   ]);
 }
 
-function getCollectionName(type) {
+function getCollectionName(type: string): string {
   if (type === 'Entry') {
     return 'entries';
   }

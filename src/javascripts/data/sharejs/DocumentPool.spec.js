@@ -94,7 +94,7 @@ describe('DocumentPool', () => {
     it('creates doc instance if never requested before', function () {
       const ref = get('id');
       expect(ref).toBe(mockDoc1);
-      expect(createOtDoc).toBeCalledWith(connection, entry, ct, user, spaceEndpoint);
+      expect(createOtDoc).toBeCalledWith(connection, entry, ct, user, mockEntityRepo);
     });
 
     it('uses previously requested doc instance', function () {
@@ -128,11 +128,11 @@ describe('DocumentPool', () => {
 
       get('id', 'Entry', cmaDocumentPool);
       expect(createCmaDoc).toBeCalledTimes(1);
-      expect(createCmaDoc).toBeCalledWith(entry, ct, spaceEndpoint, mockEntityRepo);
+      expect(createCmaDoc).toBeCalledWith(entry, ct, mockEntityRepo);
 
       get('id', 'Asset', cmaDocumentPool);
       expect(createOtDoc).toBeCalledTimes(1);
-      expect(createOtDoc).toBeCalledWith(connection, asset, ct, user, spaceEndpoint);
+      expect(createOtDoc).toBeCalledWith(connection, asset, ct, user, mockEntityRepo);
     });
 
     describe('creating the CMA document', () => {

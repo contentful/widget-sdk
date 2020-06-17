@@ -2,6 +2,7 @@ import sinon from 'sinon';
 import * as K from 'test/utils/kefir';
 import _ from 'lodash';
 import { create as createResourceState } from 'data/document/ResourceStateManager';
+import { create as createEntityRepo } from 'data/CMA/EntityRepo';
 
 /**
  * @ngdoc service
@@ -45,11 +46,12 @@ angular.module('contentful/mocks').factory('mocks/entityEditor/Document', [
         const sysProperty = valuePropertyAt(['sys']);
         const changesStream = K.createMockStream();
 
+        const entityRepo = createEntityRepo(spaceEndpoint);
         const resourceState = createResourceState({
           sys$: sysProperty,
           setSys,
           getData,
-          spaceEndpoint,
+          entityRepo,
         });
 
         return {

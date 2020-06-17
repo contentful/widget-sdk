@@ -16,17 +16,19 @@ describe('data/document/ResourceStateManager', () => {
       },
     });
 
-    const { Action, State } = await this.system.import('data/document/ResourceStateManager');
+    const { Action, State } = await this.system.import('data/CMA/EntityState');
     this.Action = Action;
     this.State = State;
 
     const { DocLoad } = await this.system.import('data/sharejs/Connection');
     const Doc = await this.system.import('app/entity_editor/Document/OtDocument');
+    const EntityRepo = await this.system.import('data/CMA/EntityRepo');
 
     await $initialize(this.system);
 
     const endpoint = createMockSpaceEndpoint();
     this.spaceEndpoint = sinon.spy(endpoint.request);
+    const entityRepo = EntityRepo.create(this.spaceEndpoint);
 
     const entityData = {
       sys: {
@@ -62,7 +64,7 @@ describe('data/document/ResourceStateManager', () => {
       getDocLoader: sinon.stub().returns(docLoader),
     };
 
-    this.doc = Doc.create(docConnection, entity, {}, { sys: { id: 'USER' } }, this.spaceEndpoint);
+    this.doc = Doc.create(docConnection, entity, {}, { sys: { id: 'USER' } }, entityRepo);
 
     // TODO we cannot load the ShareJS doc before the the entity
     // document is created.

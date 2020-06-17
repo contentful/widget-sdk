@@ -75,10 +75,15 @@ export async function create(docConnection, spaceEndpoint, pubSubClient, organiz
           skipTransformation: true,
           indicateAutoSave: true,
         });
-        doc = createCmaDoc(entity, contentType, spaceEndpoint, entityRepo);
+        doc = createCmaDoc(entity, contentType, entityRepo);
         cleanup = () => doc.destroy().finally(destroyConnection);
       } else {
-        doc = createOtDoc(docConnection, entity, contentType, user, spaceEndpoint);
+        const entityRepo = createEntityRepo(spaceEndpoint, pubSubClient, noop, {
+          skipDraftValidation: true,
+          skipTransformation: true,
+          indicateAutoSave: true,
+        });
+        doc = createOtDoc(docConnection, entity, contentType, user, entityRepo);
         cleanup = () => doc.destroy();
       }
 

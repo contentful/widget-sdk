@@ -12,11 +12,10 @@ import { Entity, EntitySys, PropertyBus, StreamBus } from './types';
 import * as StringField from 'data/document/StringFieldSetter';
 import { trackEditConflict, ConflictType } from './analytics';
 import { createNoopPresenceHub } from './PresenceHub';
-import { EntityRepo, SpaceEndpoint } from 'data/CMA/EntityRepo';
+import { EntityRepo } from 'data/CMA/EntityRepo';
 import { changedEntityFieldPaths, changedEntityMetadataPaths } from './changedPaths';
 import { Document } from './typesDocument';
-import { getState } from 'data/CMA/EntityState';
-import { State } from 'data/document/ResourceStateManager';
+import { getState, State } from 'data/CMA/EntityState';
 
 export const THROTTLE_TIME = 5000;
 const DISCONNECTED = Symbol('DISCONNECTED');
@@ -35,7 +34,6 @@ enum UpdateReason {
 export function create(
   initialEntity: { data: Entity; setDeleted: { (): void } },
   contentType: any,
-  spaceEndpoint: SpaceEndpoint,
   entityRepo: EntityRepo,
   saveThrottleMs: number = THROTTLE_TIME
 ): Document {
@@ -96,7 +94,7 @@ export function create(
     },
     // "entity" local state is used, because sys$, data$ are only a reflection of the current state.
     getData: () => cloneDeep(getValueAt([])),
-    spaceEndpoint,
+    entityRepo,
     preApplyFn: saveEntity,
     forceChangedState$: fieldAndMetadataChanges$
       // Changes are not relevant unless the current state is "Published"

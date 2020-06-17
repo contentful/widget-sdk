@@ -1,12 +1,10 @@
-import { makeApply, getState, Action, State } from 'data/CMA/EntityState';
+import { getState, State, EntityState } from 'data/CMA/EntityState';
+import { Entity, EntitySys, PropertyBus, StreamBus } from 'app/entity_editor/Document/types';
+import { EntityAction } from '../CMA/EntityActions';
+import { EntityRepo } from '../CMA/EntityRepo';
 import * as K from 'core/utils/kefir';
 import { Property, Stream } from 'kefir';
-import { Entity, EntitySys, PropertyBus, StreamBus } from 'app/entity_editor/Document/types';
 
-export { Action, State };
-
-type EntityState = '__DELETED__' | '__ARCHIVED__' | '__DRAFT__' | '__CHANGED__' | '__PUBLISHED__';
-type EntityAction = 'publish' | 'unpublish' | 'archive' | 'unarchive' | 'delete';
 type StateChange = { from: EntityState; to: EntityState };
 
 export interface ResourceStateManager {
@@ -49,12 +47,11 @@ export function create(config: {
   sys$: Property<EntitySys, any>;
   setSys: { (sys: EntitySys): void };
   getData: { (): Entity }; // Returns most actual entity data
-  spaceEndpoint;
+  entityRepo: EntityRepo;
   preApplyFn?: { (): Promise<void> }; // Function that will be invoked before the status change API request
   forceChangedState$?: Property<boolean, any>;
 }): ResourceStateManager {
-  const { sys$, setSys, getData, spaceEndpoint, preApplyFn, forceChangedState$ } = config;
-  const applyAction: { (action: EntityAction, data: Entity): Entity } = makeApply(spaceEndpoint);
+  const { sys$, setSys, getData, entityRepo, preApplyFn, forceChangedState$ } = config;
 
   const state$: Property<EntityState, any> =
     forceChangedState$ === undefined
@@ -97,7 +94,7 @@ export function create(config: {
       if (preApplyFn) {
         await preApplyFn();
       }
-      data = await applyAction(action, getData());
+      data = await entityRepo.applyAction(action, getData());
     } catch (error) {
       inProgressBus.set(false);
       throw error;

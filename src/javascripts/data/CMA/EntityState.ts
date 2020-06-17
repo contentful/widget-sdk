@@ -1,54 +1,26 @@
 import { caseof } from 'sum-types/caseof-eq';
 import { constant } from 'lodash';
-import { Action, makePerform } from './EntityActions';
+import { Action, EntityAction, makePerform } from './EntityActions';
+import { Entity, EntitySys } from 'app/entity_editor/Document/types';
+import { SpaceEndpoint } from './types';
 
-/**
- * @ngdoc service
- * @name data/CMA/EntityState
- * @description
- * This service exports functions to manage the state of an entity.
- */
+export type EntityState =
+  | '__DELETED__'
+  | '__ARCHIVED__'
+  | '__DRAFT__'
+  | '__CHANGED__'
+  | '__PUBLISHED__';
+export { Action };
 
 export const State = {
-  /**
-   * @ngdoc method
-   * @name data/CMA/EntityState#State.Deleted
-   * @returns {data/CMA/EntityState.State}
-   */
-  Deleted: constant('__DELETED__'),
-  /**
-   * @ngdoc method
-   * @name data/CMA/EntityState#State.Archived
-   * @returns {data/CMA/EntityState.State}
-   */
-  Archived: constant('__ARCHIVED__'),
-  /**
-   * @ngdoc method
-   * @name data/CMA/EntityState#State.Draft
-   * @returns {data/CMA/EntityState.State}
-   */
-  Draft: constant('__DRAFT__'),
-  /**
-   * @ngdoc method
-   * @name data/CMA/EntityState#State.Changed
-   * @returns {data/CMA/EntityState.State}
-   */
-  Changed: constant('__CHANGED__'),
-  /**
-   * @ngdoc method
-   * @name data/CMA/EntityState#State.Published
-   * @returns {data/CMA/EntityState.State}
-   */
-  Published: constant('__PUBLISHED__'),
+  Deleted: constant<EntityState>('__DELETED__'),
+  Archived: constant<EntityState>('__ARCHIVED__'),
+  Draft: constant<EntityState>('__DRAFT__'),
+  Changed: constant<EntityState>('__CHANGED__'),
+  Published: constant<EntityState>('__PUBLISHED__'),
 };
 
-/**
- * @ngdoc method
- * @name data/CMA/EntityState#stateName
- * @param {data/CMA/EntityState.State} state
- * @returns {string}
- */
-export function stateName(state) {
+export function stateName(state: EntityState): string {
   return caseof(state, [
     [State.Deleted(), constant('deleted')],
     [State.Archived(), constant('archived')],
@@ -58,17 +30,10 @@ export function stateName(state) {
   ]);
 }
 
-export { Action };
-
 /**
- * @ngdoc method
- * @name data/CMA/EntityState#getState
- * @description
- * Returns the state of an entity with the given 'sys' property.
- * @param {API.Sys} sys
- * @returns {data/CMA/EntityState#State}
+ * Return the state of an entity with the given 'sys' property.
  */
-export function getState(sys) {
+export function getState(sys: EntitySys): EntityState {
   if (!sys || (sys.type !== 'Entry' && sys.type !== 'Asset')) {
     throw new TypeError('Invalid entity metadata object');
   }
@@ -82,15 +47,11 @@ export function getState(sys) {
     } else {
       return State.Published();
     }
-  } else {
-    return State.Draft();
   }
+  return State.Draft();
 }
 
 /**
- * @ngdoc method
- * @name data/CMA/EntityState#makeApply
- * @description
  * Apply an action to an entity to change its state.
  *
  * ~~~js
@@ -105,10 +66,10 @@ export function getState(sys) {
  * 'spaceEndpoint' is a function to make the request to a space as defined in
  * the 'data/Endpoint' module.
  */
-export function makeApply(spaceEndpoint) {
+export function makeApply(spaceEndpoint: SpaceEndpoint) {
   const changeTo = makeChangeTo(spaceEndpoint);
 
-  return function applyAction(action, data) {
+  return function applyAction(action: EntityAction, data: Entity) {
     const targetState = caseof(action, [
       [Action.Publish(), State.Published],
       [Action.Unpublish(), State.Draft],
@@ -125,10 +86,10 @@ export function makeApply(spaceEndpoint) {
  * state and the entity data. It performs an API request to change the
  * entity to the target state and returns the updated entity data.
  */
-function makeChangeTo(spaceEndpoint) {
+function makeChangeTo(spaceEndpoint: SpaceEndpoint) {
   const performAction = makePerform(spaceEndpoint);
 
-  return function changeTo(state, data) {
+  return function changeTo(state: EntityState, data: Entity) {
     if (state === State.Changed()) {
       throw new Error('"Changed" is not a valid entity target state');
     }
@@ -156,7 +117,7 @@ function makeChangeTo(spaceEndpoint) {
     ]);
   };
 
-  function toDraft(data) {
+  function toDraft(data: Entity) {
     return caseof(getState(data.sys), [
       [State.Published(), () => performAction(Action.Unpublish(), data)],
       [State.Changed(), () => performAction(Action.Unpublish(), data)],
@@ -165,7 +126,7 @@ function makeChangeTo(spaceEndpoint) {
     ]);
   }
 
-  function performActionWithDraftEnsured(action, data) {
+  function performActionWithDraftEnsured(action: EntityAction, data: Entity) {
     return toDraft(data).then((data) => performAction(action, data));
   }
 }

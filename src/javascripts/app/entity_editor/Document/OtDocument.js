@@ -22,7 +22,7 @@ import * as PresenceHub from './PresenceHub';
  * @description
  * Used to edit an entry or asset through ShareJS
  */
-export function create(docConnection, initialEntity, contentType, user, spaceEndpoint) {
+export function create(docConnection, initialEntity, contentType, user, entityRepo) {
   const entity = cloneDeep(initialEntity);
 
   let currentDoc;
@@ -359,7 +359,7 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
     sys$: sysProperty,
     setSys: sysBus.set,
     getData,
-    spaceEndpoint,
+    entityRepo,
   });
 
   const document = {

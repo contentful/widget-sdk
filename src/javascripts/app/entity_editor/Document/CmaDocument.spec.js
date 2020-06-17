@@ -1,7 +1,7 @@
 import { cloneDeep, set } from 'lodash';
 import * as CmaDocument from './CmaDocument';
 import { THROTTLE_TIME } from './CmaDocument';
-import { Action } from 'data/document/ResourceStateManager';
+import { Action } from 'data/CMA/EntityActions';
 import testDocumentBasic, { linkedTags, newAsset, newContentType, newEntry } from './Document.spec';
 import * as K from '../../../../../test/utils/kefir';
 import { Error as DocError } from '../../../data/document/Error';
@@ -42,6 +42,7 @@ const mockEntityRepo = () => ({
   }),
   get: jest.fn(),
   onAssetFileProcessed: jest.fn(),
+  applyAction: jest.fn(),
 });
 let entityRepo;
 
@@ -62,7 +63,6 @@ function createCmaDocument(initialEntity, contentTypeFields, throttleMs) {
     document: CmaDocument.create(
       { data: initialEntity, setDeleted: jest.fn() },
       contentType,
-      spaceEndpoint,
       entityRepo,
       throttleMs
     ),
@@ -296,15 +296,15 @@ describe('CmaDocument', () => {
       });
 
       await doc.setValueAt(fieldPath, 'updated value');
-      expect(spaceEndpoint).not.toHaveBeenCalled();
+      expect(entityRepo.applyAction).not.toHaveBeenCalled();
 
       await doc.resourceState.apply(Action.Publish());
       expect(entityRepo.update).toBeCalledTimes(1);
-      expect(spaceEndpoint).toBeCalledTimes(1);
+      expect(entityRepo.applyAction).toBeCalledTimes(1);
 
       jest.runAllTimers();
       await wait();
-      expect(spaceEndpoint).toBeCalledTimes(1);
+      expect(entityRepo.applyAction).toBeCalledTimes(1);
     });
 
     it('persists changes made during state update 5s afterwards', async () => {
@@ -314,12 +314,9 @@ describe('CmaDocument', () => {
         entry.sys.version++;
         return Promise.resolve(entry);
       });
-      spaceEndpoint.mockImplementationOnce((body) => {
-        expect(body).toEqual({
-          method: 'PUT',
-          path: ['entries', 'published'],
-          version: entry.sys.version,
-        });
+      entityRepo.applyAction.mockImplementationOnce((action, data) => {
+        expect(action).toEqual(Action.Publish());
+        expect(data.sys.version).toBe(entry.sys.version);
         entry = cloneDeep(entry);
         return new Promise((resolve) => {
           entry.sys.publishedVersion = entry.sys.version;
@@ -332,7 +329,7 @@ describe('CmaDocument', () => {
 
       const resourceStateUpdatePromise = doc.resourceState.apply(Action.Publish());
       await wait();
-      expect(spaceEndpoint).toBeCalledTimes(1);
+      expect(entityRepo.applyAction).toBeCalledTimes(1);
 
       await doc.setValueAt(fieldPath, 'updated value');
 
