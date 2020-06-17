@@ -22,7 +22,7 @@ const styles = {
   }),
 };
 
-function ReleaseDetailStateLink({ releaseId }) {
+export function ReleaseDetailStateLink({ releaseId }) {
   const isMasterEnvironment = getModule('spaceContext').isMasterEnvironment();
   const path = `spaces.detail.${isMasterEnvironment ? '' : 'environment.'}releases.detail`;
   return (

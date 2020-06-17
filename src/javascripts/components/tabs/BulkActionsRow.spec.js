@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, wait } from '@testing-library/react';
+import { render, wait, fireEvent } from '@testing-library/react';
 import { upperFirst } from 'lodash';
 import BulkActionsRow from './BulkActionsRow';
 import * as batchPerformer from './batchPerformer';
@@ -9,10 +9,31 @@ jest.mock('access_control/AccessChecker', () => ({
   canPerformActionOnEntity: jest.fn().mockReturnValue(true),
   shouldHide: jest.fn().mockReturnValue(false),
   shouldDisable: jest.fn().mockReturnValue(false),
+  canUserReadEntities: jest.fn().mockReturnValue(true),
 }));
 jest.mock('./batchPerformer', () => ({
   createBatchPerformer: jest.fn(),
 }));
+jest.mock('core/NgRegistry', () => ({
+  getModule: () => ({
+    space: {
+      data: {
+        sys: {
+          id: 'space-id',
+        },
+      },
+      environment: {
+        sys: {
+          id: 'environment-id',
+        },
+      },
+    },
+  }),
+}));
+jest.mock('app/Releases/releasesService', () => ({
+  getReleases: jest.fn().mockResolvedValue({ items: [] }),
+}));
+
 const performer = {
   archive: jest.fn().mockResolvedValue('success'),
   unarchive: jest.fn().mockResolvedValue('success'),
@@ -62,6 +83,7 @@ describe('BulkActionsRow', () => {
     accessChecker.canPerformActionOnEntity.mockReturnValue(true);
     accessChecker.shouldDisable.mockReturnValue(false);
     accessChecker.shouldHide.mockReturnValue(false);
+    accessChecker.canUserReadEntities.mockReturnValue(true);
   });
   it('should hide the component when nothing is selected', () => {
     const { container } = renderComponent();
@@ -104,6 +126,7 @@ describe('BulkActionsRow', () => {
       expect(getByTestId('publish')).toBeInTheDocument();
       expect(getByTestId('unpublish')).toBeInTheDocument();
       expect(getByTestId('delete')).toBeInTheDocument();
+      expect(getByTestId('add to release')).toBeInTheDocument();
     });
 
     it('should show some action links', () => {
@@ -120,9 +143,10 @@ describe('BulkActionsRow', () => {
       expect(getByTestId('publish')).toBeInTheDocument();
       expect(getByTestId('unpublish')).toBeInTheDocument();
       expect(queryByTestId('delete')).not.toBeInTheDocument();
+      expect(queryByTestId('add to release')).toBeInTheDocument();
     });
 
-    it('should hide all action links and show info message', () => {
+    it('should show add to release action when no other actions can be performed', () => {
       accessChecker.canPerformActionOnEntity.mockReturnValue(false);
       const { getByTestId, queryByTestId } = renderComponent({
         selectedEntities: generateEntities(1, false),
@@ -134,6 +158,24 @@ describe('BulkActionsRow', () => {
       expect(queryByTestId('publish')).not.toBeInTheDocument();
       expect(queryByTestId('unpublish')).not.toBeInTheDocument();
       expect(queryByTestId('delete')).not.toBeInTheDocument();
+      expect(getByTestId('add to release')).toBeInTheDocument();
+      expect(queryByTestId('no-actions-message')).not.toBeInTheDocument();
+    });
+
+    it('should hide all action links and show info message', () => {
+      accessChecker.canPerformActionOnEntity.mockReturnValue(false);
+      accessChecker.canUserReadEntities.mockReturnValue(false);
+      const { getByTestId, queryByTestId } = renderComponent({
+        selectedEntities: generateEntities(1, false),
+        entityType: 'asset',
+      });
+      expect(queryByTestId('duplicate')).not.toBeInTheDocument();
+      expect(queryByTestId('archive')).not.toBeInTheDocument();
+      expect(queryByTestId('unarchive')).not.toBeInTheDocument();
+      expect(queryByTestId('publish')).not.toBeInTheDocument();
+      expect(queryByTestId('unpublish')).not.toBeInTheDocument();
+      expect(queryByTestId('delete')).not.toBeInTheDocument();
+      expect(queryByTestId('add to release')).not.toBeInTheDocument();
       expect(getByTestId('no-actions-message')).toBeInTheDocument();
     });
 
@@ -216,6 +258,15 @@ describe('BulkActionsRow', () => {
       expect(performer.archive).not.toHaveBeenCalled();
       expect(updateEntities).not.toHaveBeenCalled();
       expect(onActionComplete).not.toHaveBeenCalled();
+    });
+
+    it('should display the release modal when clicked on "Add to Release" action', async () => {
+      const { getByTestId } = renderComponent({
+        selectedEntities: generateEntities(5, false),
+      });
+      const link = getByTestId('add to release');
+      fireEvent.click(link);
+      expect(getByTestId('content-release-modal')).toBeInTheDocument();
     });
   });
 });

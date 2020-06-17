@@ -9,12 +9,23 @@ import {
 import ReleasesTimeline from './ReleasesTimeline';
 import {
   createRelease,
+  getReleases,
   getReleasesExcludingEntity,
   getReleasesIncludingEntity,
+  replaceReleaseById,
 } from '../releasesService';
 import { SET_RELEASES_INCLUDING_ENTRY } from '../state/actions';
 import { ReleasesProvider } from './ReleasesContext';
 import { ReleasesDialog, CreateReleaseForm } from '../ReleasesDialog';
+import { ReleaseDetailStateLink } from '../ReleasesPage/ReleasesListDialog';
+import { css } from 'emotion';
+
+const styles = {
+  notification: css({
+    display: 'flex',
+    justifyContent: 'space-between',
+  }),
+};
 
 export default class ReleasesWidgetDialog extends Component {
   constructor(props) {
@@ -32,7 +43,7 @@ export default class ReleasesWidgetDialog extends Component {
         id: PropTypes.string,
         type: PropTypes.string,
       }),
-    }).isRequired,
+    }),
     validator: PropTypes.shape({
       run: PropTypes.func,
       setApiResponseErrors: PropTypes.func,
@@ -47,21 +58,33 @@ export default class ReleasesWidgetDialog extends Component {
 
   state = {
     fetchedReleases: [],
+    isFetchingReleases: false,
   };
 
   async componentDidMount() {
-    const { id, type } = this.props.rootEntity.sys;
-    const fetchedReleases = await getReleasesExcludingEntity(id, type);
-    this.setState({ fetchedReleases: fetchedReleases.items });
+    const { rootEntity } = this.props;
+    this.setState({ isFetchingReleases: true });
+    const fetchedReleases = rootEntity
+      ? await getReleasesExcludingEntity(rootEntity.sys.id, rootEntity.sys.type)
+      : await getReleases();
+    this.setState({ fetchedReleases: fetchedReleases.items, isFetchingReleases: false });
   }
 
   handleCreateRelease(releaseName) {
-    const { releaseContentTitle, selectedEntities } = this.props;
+    const { releaseContentTitle, selectedEntities, rootEntity } = this.props;
     const uniqueSelectedEntities = uniqWith(selectedEntities, isEqual);
 
     return createRelease(releaseName, uniqueSelectedEntities)
-      .then(() => {
-        Notification.success(`${releaseContentTitle} was sucessfully added to ${releaseName}`);
+      .then((release) => {
+        const predicate = rootEntity || uniqueSelectedEntities.length === 1 ? 'was' : 'were';
+        Notification.success(
+          <div className={styles.notification}>
+            <span>
+              {releaseContentTitle} {predicate} sucessfully added to {releaseName}
+            </span>
+            <ReleaseDetailStateLink releaseId={release.sys.id} />
+          </div>
+        );
       })
       .catch(() => {
         Notification.error(`Failed creating ${releaseName}`);
@@ -76,20 +99,48 @@ export default class ReleasesWidgetDialog extends Component {
     this.props.onCancel();
   }
 
-  onReleaseSelect(release) {
-    const { releaseContentTitle } = this.props;
+  async onReleaseSelect(release) {
+    const { releaseContentTitle, rootEntity, selectedEntities } = this.props;
+
+    try {
+      const releaseItems = [
+        ...release.entities.items,
+        ...selectedEntities.map(({ sys }) => ({
+          sys: {
+            type: 'Link',
+            linkType: sys.type,
+            id: sys.id,
+          },
+        })),
+      ];
+
+      await replaceReleaseById(release.sys.id, release.title, releaseItems);
+      const predicate = rootEntity || selectedEntities.length === 1 ? 'was' : 'were';
+      Notification.success(
+        <div className={styles.notification}>
+          <span>
+            {releaseContentTitle} {predicate} sucessfully added to {release.title}
+          </span>
+          <ReleaseDetailStateLink releaseId={release.sys.id} />
+        </div>
+      );
+    } catch (error) {
+      Notification.error(`Failed adding ${releaseContentTitle} to ${release.title}`);
+    }
 
     this.onClose();
-    Notification.success(`${releaseContentTitle} was sucessfully added to ${release.title}`);
   }
 
   onSubmit = (releaseName, dispatch) => {
     if (releaseName) {
       this.handleCreateRelease(releaseName).then(async () => {
-        const { id, type } = this.props.rootEntity.sys;
-        const fetchedReleases = await getReleasesIncludingEntity(id, type);
+        const { rootEntity } = this.props;
+        if (rootEntity) {
+          const { id, type } = rootEntity.sys;
+          const fetchedReleases = await getReleasesIncludingEntity(id, type);
 
-        dispatch({ type: SET_RELEASES_INCLUDING_ENTRY, value: fetchedReleases.items });
+          dispatch({ type: SET_RELEASES_INCLUDING_ENTRY, value: fetchedReleases.items });
+        }
 
         this.onClose();
       });
@@ -100,7 +151,7 @@ export default class ReleasesWidgetDialog extends Component {
     existing: {
       title: 'Add to existing',
       render: () => {
-        if (this.state.fetchedReleases.length) {
+        if (!this.state.isFetchingReleases) {
           return (
             <ReleasesTimeline
               releases={this.state.fetchedReleases}

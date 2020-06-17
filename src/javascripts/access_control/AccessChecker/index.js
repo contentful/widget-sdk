@@ -387,6 +387,20 @@ export function canReadApiKeys() {
   return get(responses, 'read.apiKey.can', false);
 }
 
+export function canUserReadEntities(entities) {
+  if (!entities || !Array.isArray(entities) || !entities.length) {
+    return false;
+  }
+
+  for (const entity of entities) {
+    if (!canPerformActionOnEntity(Action.READ, entity)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 /**
  * @name accessChecker#canCreateSpace
  * @returns {boolean}
