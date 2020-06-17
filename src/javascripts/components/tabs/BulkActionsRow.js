@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
@@ -10,6 +10,8 @@ import BulkActionDeleteConfirm from './BulkActionDeleteConfirm';
 import { noop } from 'lodash';
 import useBulkActions from './useBulkActions';
 import ReleaseDialog from 'app/Releases/ReleasesWidget/ReleasesWidgetDialog';
+import * as LD from 'utils/LaunchDarkly';
+import { ADD_TO_RELEASE } from 'featureFlags';
 
 const styles = {
   /*
@@ -43,6 +45,7 @@ const BulkActionsRow = ({
   onActionComplete,
   updateEntities,
 }) => {
+  const [isReleaseFeatureEnabled, setReleaseFeatureEnabled] = useState(false);
   const [pendingMessage, setPendingMessage] = useState(undefined);
   const [isReleaseDialogOpen, openReleaseDialog] = useState(false);
   const [{ actions }] = useBulkActions({
@@ -50,6 +53,15 @@ const BulkActionsRow = ({
     entities: selectedEntities,
     updateEntities,
   });
+
+  useEffect(() => {
+    async function checkFeatureFlag() {
+      const isEnabled = await LD.getCurrentVariation(ADD_TO_RELEASE);
+      setReleaseFeatureEnabled(isEnabled);
+    }
+
+    checkFeatureFlag();
+  }, []);
 
   const fireAction = async (actionLabel) => {
     let message;
@@ -108,7 +120,7 @@ const BulkActionsRow = ({
       !showUnarchive &&
       !showUnpublish &&
       !showPublish &&
-      !canAddToRelease;
+      (!isReleaseFeatureEnabled || !canAddToRelease);
 
     if (noActionAvailable)
       return <span data-test-id="no-actions-message">No bulk action available</span>;
@@ -150,12 +162,14 @@ const BulkActionsRow = ({
           onClick={fireAction}
           visible={showPublish}
         />
-        <BulkActionLink
-          label="Add to Release"
-          linkType="secondary"
-          onClick={() => openReleaseDialog(true)}
-          visible={canAddToRelease}
-        />
+        {isReleaseFeatureEnabled ? (
+          <BulkActionLink
+            label="Add to Release"
+            linkType="secondary"
+            onClick={() => openReleaseDialog(true)}
+            visible={canAddToRelease}
+          />
+        ) : null}
       </Fragment>
     );
   };
@@ -181,7 +195,7 @@ const BulkActionsRow = ({
               count={selectedCount}
             />
             {renderActions()}
-            {isReleaseDialogOpen ? (
+            {isReleaseFeatureEnabled && isReleaseDialogOpen ? (
               <ReleaseDialog
                 selectedEntities={selectedEntities.map((entry) => entry.data)}
                 onCancel={() => openReleaseDialog(false)}

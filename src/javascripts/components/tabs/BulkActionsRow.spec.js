@@ -4,6 +4,7 @@ import { upperFirst } from 'lodash';
 import BulkActionsRow from './BulkActionsRow';
 import * as batchPerformer from './batchPerformer';
 import * as accessChecker from 'access_control/AccessChecker';
+import * as LD from 'utils/LaunchDarkly';
 
 jest.mock('access_control/AccessChecker', () => ({
   canPerformActionOnEntity: jest.fn().mockReturnValue(true),
@@ -33,6 +34,11 @@ jest.mock('core/NgRegistry', () => ({
 jest.mock('app/Releases/releasesService', () => ({
   getReleases: jest.fn().mockResolvedValue({ items: [] }),
 }));
+jest.mock('utils/LaunchDarkly', function () {
+  return {
+    getCurrentVariation: jest.fn().mockResolvedValue(true),
+  };
+});
 
 const performer = {
   archive: jest.fn().mockResolvedValue('success'),
@@ -84,6 +90,7 @@ describe('BulkActionsRow', () => {
     accessChecker.shouldDisable.mockReturnValue(false);
     accessChecker.shouldHide.mockReturnValue(false);
     accessChecker.canUserReadEntities.mockReturnValue(true);
+    LD.getCurrentVariation.mockReturnValue(true);
   });
   it('should hide the component when nothing is selected', () => {
     const { container } = renderComponent();
@@ -118,8 +125,9 @@ describe('BulkActionsRow', () => {
   });
 
   describe('render action links', () => {
-    it('should show all action links', () => {
+    it('should show all action links', async () => {
       const { getByTestId } = renderComponent({ selectedEntities: generateEntities(1, false) });
+      await wait(); // for feature flag
       expect(getByTestId('duplicate')).toBeInTheDocument();
       expect(getByTestId('archive')).toBeInTheDocument();
       expect(getByTestId('unarchive')).toBeInTheDocument();
@@ -129,7 +137,7 @@ describe('BulkActionsRow', () => {
       expect(getByTestId('add to release')).toBeInTheDocument();
     });
 
-    it('should show some action links', () => {
+    it('should show some action links', async () => {
       accessChecker.canPerformActionOnEntity.mockImplementation((action) => {
         return !['duplicate', 'unarchive', 'delete'].includes(action);
       });
@@ -137,6 +145,7 @@ describe('BulkActionsRow', () => {
       const { getByTestId, queryByTestId } = renderComponent({
         selectedEntities: generateEntities(1, false),
       });
+      await wait(); // for feature flag
       expect(queryByTestId('duplicate')).not.toBeInTheDocument();
       expect(getByTestId('archive')).toBeInTheDocument();
       expect(queryByTestId('unarchive')).not.toBeInTheDocument();
@@ -146,12 +155,13 @@ describe('BulkActionsRow', () => {
       expect(queryByTestId('add to release')).toBeInTheDocument();
     });
 
-    it('should show add to release action when no other actions can be performed', () => {
+    it('should show add to release action when no other actions can be performed', async () => {
       accessChecker.canPerformActionOnEntity.mockReturnValue(false);
       const { getByTestId, queryByTestId } = renderComponent({
         selectedEntities: generateEntities(1, false),
         entityType: 'asset',
       });
+      await wait(); // for feature flag
       expect(queryByTestId('duplicate')).not.toBeInTheDocument();
       expect(queryByTestId('archive')).not.toBeInTheDocument();
       expect(queryByTestId('unarchive')).not.toBeInTheDocument();
@@ -162,13 +172,14 @@ describe('BulkActionsRow', () => {
       expect(queryByTestId('no-actions-message')).not.toBeInTheDocument();
     });
 
-    it('should hide all action links and show info message', () => {
+    it('should hide all action links and show info message', async () => {
       accessChecker.canPerformActionOnEntity.mockReturnValue(false);
       accessChecker.canUserReadEntities.mockReturnValue(false);
       const { getByTestId, queryByTestId } = renderComponent({
         selectedEntities: generateEntities(1, false),
         entityType: 'asset',
       });
+      await wait(); // for feature flag
       expect(queryByTestId('duplicate')).not.toBeInTheDocument();
       expect(queryByTestId('archive')).not.toBeInTheDocument();
       expect(queryByTestId('unarchive')).not.toBeInTheDocument();
@@ -177,6 +188,21 @@ describe('BulkActionsRow', () => {
       expect(queryByTestId('delete')).not.toBeInTheDocument();
       expect(queryByTestId('add to release')).not.toBeInTheDocument();
       expect(getByTestId('no-actions-message')).toBeInTheDocument();
+    });
+
+    it('should not display the Add to release action when feature flag is disabled', async () => {
+      LD.getCurrentVariation.mockResolvedValue(false);
+      const { getByTestId, queryByTestId } = renderComponent({
+        selectedEntities: generateEntities(1, false),
+      });
+      await wait(); // for feature flag
+      expect(getByTestId('duplicate')).toBeInTheDocument();
+      expect(getByTestId('archive')).toBeInTheDocument();
+      expect(getByTestId('unarchive')).toBeInTheDocument();
+      expect(getByTestId('publish')).toBeInTheDocument();
+      expect(getByTestId('unpublish')).toBeInTheDocument();
+      expect(getByTestId('delete')).toBeInTheDocument();
+      expect(queryByTestId('add to release')).not.toBeInTheDocument();
     });
 
     it('should show the publish label', () => {
@@ -264,6 +290,7 @@ describe('BulkActionsRow', () => {
       const { getByTestId } = renderComponent({
         selectedEntities: generateEntities(5, false),
       });
+      await wait(); // for feature flag
       const link = getByTestId('add to release');
       fireEvent.click(link);
       expect(getByTestId('content-release-modal')).toBeInTheDocument();
