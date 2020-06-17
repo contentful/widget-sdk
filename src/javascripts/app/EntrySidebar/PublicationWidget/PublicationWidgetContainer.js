@@ -12,7 +12,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { getEntityTitle } from 'app/entry_editor/EntryReferences/referencesService';
 
-import ReleasesDialog from 'app/Releases/ReleasesWidget/ReleasesDialog';
+import ReleasesWidgetDialog from 'app/Releases/ReleasesWidget/ReleasesWidgetDialog';
 export default class PublicationWidgetContainer extends Component {
   static propTypes = {
     emitter: PropTypes.object.isRequired,
@@ -183,7 +183,7 @@ export default class PublicationWidgetContainer extends Component {
           }}
         </ScheduledActionsFeatureFlag>
         {this.state.isRelaseDialogShown && (
-          <ReleasesDialog
+          <ReleasesWidgetDialog
             selectedEntities={[entity]}
             releaseContentTitle={this.state.entityTitle}
             rootEntity={entity}

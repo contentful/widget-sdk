@@ -10,6 +10,7 @@ import {
   Tab,
   TabPanel,
   Workbench,
+  Button,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import DocumentTitle from 'components/shared/DocumentTitle';
@@ -18,6 +19,7 @@ import { releaseDetailNavigation } from '../ReleaseDetail/utils';
 import ReleasesEmptyStateMessage from './ReleasesEmptyStateMessage';
 import { getReleases } from '../releasesService';
 import ReleasesTimeline from './ReleasesTimeline';
+import ReleasesListdialog from './ReleasesListDialog';
 
 const styles = {
   workbenchContent: css({
@@ -75,18 +77,30 @@ const TabsData = {
   },
 };
 
-const PageShell = ({ children }) => (
+const PageShell = ({ children, setIsRelaseDialogShown }) => (
   <Workbench>
     <Workbench.Header
       icon={<Icon icon="Release" color="positive" size="large" />}
       title="Content Releases"
       onBack={() => window.history.back()}
+      actions={
+        <Button
+          buttonType="primary"
+          testId="create-new-release"
+          onClick={() => setIsRelaseDialogShown(true)}>
+          Create new Release
+        </Button>
+      }
     />
     <Workbench.Content type="text" className={styles.workbenchContent}>
       <div>{children}</div>
     </Workbench.Content>
   </Workbench>
 );
+
+PageShell.propTypes = {
+  setIsRelaseDialogShown: PropTypes.func,
+};
 
 class ReleasesListPage extends Component {
   constructor(props) {
@@ -100,11 +114,13 @@ class ReleasesListPage extends Component {
         [TabTypes.PastReleases]: [],
         [TabTypes.UpcomingReleases]: [],
       },
+      isReleaseDialogShown: false,
     };
 
     this.state = { ...this.initialState };
     this.fetchReleases = this.fetchReleases.bind(this);
     this.onReleaseSelect = this.onReleaseSelect.bind(this);
+    this.handleCreateNewReleaseDialog = this.handleCreateNewReleaseDialog.bind(this);
   }
 
   componentDidMount() {
@@ -142,6 +158,10 @@ class ReleasesListPage extends Component {
     releaseDetailNavigation(release);
   }
 
+  handleCreateNewReleaseDialog(isReleaseDialogShown) {
+    this.setState({ isReleaseDialogShown });
+  }
+
   renderReleases() {
     const { activeTab, releases } = this.state;
 
@@ -163,7 +183,7 @@ class ReleasesListPage extends Component {
     const { activeTab, isLoading, isError } = this.state;
 
     return (
-      <PageShell>
+      <PageShell setIsRelaseDialogShown={this.handleCreateNewReleaseDialog}>
         <DocumentTitle title="Content Releases" />
         <Tabs withDivider>
           {Object.entries(TabsData).map(([key, tab]) => (
@@ -177,6 +197,12 @@ class ReleasesListPage extends Component {
           {isLoading && <ReleasesPageLoading />}
           {!isError && !isLoading && this.renderReleases()}
         </TabPanel>
+        {this.state.isReleaseDialogShown && (
+          <ReleasesListdialog
+            onCreateRelease={this.fetchReleases}
+            onCancel={() => this.setState({ isReleaseDialogShown: false })}
+          />
+        )}
       </PageShell>
     );
   }

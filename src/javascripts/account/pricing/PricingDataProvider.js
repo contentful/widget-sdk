@@ -3,10 +3,10 @@ import { getAllSpaces, getUsersByIds } from 'access_control/OrganizationMembersh
 import { SUBSCRIPTIONS_API, getAlphaHeader } from 'alphaHeaders.js';
 const alphaHeader = getAlphaHeader(SUBSCRIPTIONS_API);
 
-const SELF_SERVICE = 'Self-service';
-const ENTERPRISE = 'Enterprise';
+export const SELF_SERVICE = 'Self-service';
+export const ENTERPRISE = 'Enterprise';
 const ENTERPRISE_TRIAL = 'Enterprise Trial';
-const ENTERPRISE_HIGH_DEMAND = 'Enterprise High Demand';
+export const ENTERPRISE_HIGH_DEMAND = 'Enterprise High Demand';
 
 export const customerTypes = {
   selfService: [SELF_SERVICE],

@@ -22,7 +22,7 @@ describe('SpacePlanItem', () => {
 
     build({ plan, freeSpacesResource });
 
-    expect(screen.getByTestId('contents')).toHaveTextContent('1 free space');
+    expect(screen.getByTestId('contents')).toHaveTextContent('2 free spaces');
   });
 
   it('should show the plan features', () => {
@@ -66,13 +66,18 @@ describe('SpacePlanItem', () => {
     expect(onSelect).toBeCalledWith(plan);
   });
 
-  it('should add the recommendedPlan class if isRecommended is true', () => {
+  it('should show the Current tag if plan.current is true', () => {
+    build({ plan: createPlan({ current: true }) });
+
+    expect(screen.getByTestId('space-plan-current-tag')).toBeVisible();
+    expect(screen.getByTestId('space-plan-current-tag')).toHaveTextContent('Current');
+  });
+
+  it('should show the Recommended tag if isRecommended is true', () => {
     build({ isRecommended: true });
 
-    expect(screen.getByTestId('space-plan-item')).toHaveAttribute(
-      'class',
-      expect.stringMatching('recommendedPlan')
-    );
+    expect(screen.getByTestId('space-plan-recommended-tag')).toBeVisible();
+    expect(screen.getByTestId('space-plan-recommended-tag')).toHaveTextContent('Recommended');
   });
 
   it('should add the Forma --is-selected class if isSelected is true', () => {

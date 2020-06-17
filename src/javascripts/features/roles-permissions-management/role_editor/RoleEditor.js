@@ -77,6 +77,7 @@ export class RoleEditor extends React.Component {
     roleRepo: PropTypes.object.isRequired,
     canModifyRoles: PropTypes.bool.isRequired,
     hasCustomRolesFeature: PropTypes.bool.isRequired,
+    hasContentTagsFeature: PropTypes.bool.isRequired,
     hasEnvironmentAliasesEnabled: PropTypes.bool.isRequired,
   };
 
@@ -358,6 +359,7 @@ export class RoleEditor extends React.Component {
       autofixed,
       canModifyRoles,
       hasCustomRolesFeature,
+      hasContentTagsFeature,
       hasEnvironmentAliasesEnabled,
     } = this.props;
 
@@ -505,6 +507,22 @@ export class RoleEditor extends React.Component {
               />
             </div>
           </FormSection>
+          {hasContentTagsFeature && (
+            <FormSection title="Tags">
+              <div className="cfnext-form-option">
+                <CheckboxField
+                  id="opt_tags_access"
+                  name="opt_tags_access"
+                  labelIsLight
+                  labelText="Can create and manage tags"
+                  disabled={!canModifyRoles}
+                  checked={internal.tags.manage}
+                  onChange={this.updateRoleFromCheckbox('tags.manage')}
+                  type="checkbox"
+                />
+              </div>
+            </FormSection>
+          )}
           <FormSection title="API keys">
             <div className="cfnext-form-option">
               <CheckboxField

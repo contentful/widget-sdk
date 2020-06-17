@@ -125,7 +125,7 @@ export default function SubscriptionPage({ initialLoad, organizationId, data }) 
     };
   };
 
-  const { basePlan, usersMeta, organization, grandTotal } = data;
+  const { basePlan, usersMeta, organization, grandTotal, showMicroSmallSupportCard } = data;
 
   const enterprisePlan = basePlan && isEnterprisePlan(basePlan);
   const anyInaccessibleSpaces = hasAnyInaccessibleSpaces(spacePlans);
@@ -153,6 +153,8 @@ export default function SubscriptionPage({ initialLoad, organizationId, data }) 
           upgradedSpaceId={changedSpaceId}
           onCreateSpace={createSpace}
           onChangeSpace={changeSpace}
+          organizationId={organizationId}
+          showMicroSmallSupportCard={showMicroSmallSupportCard}
           onDeleteSpace={deleteSpace}
           enterprisePlan={enterprisePlan}
         />
@@ -182,6 +184,7 @@ SubscriptionPage.propTypes = {
     usersMeta: PropTypes.object,
     organization: PropTypes.object,
     productRatePlans: PropTypes.array,
+    showMicroSmallSupportCard: PropTypes.bool,
   }).isRequired,
 };
 

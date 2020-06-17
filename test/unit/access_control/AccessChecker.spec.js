@@ -433,6 +433,40 @@ describe('Access Checker', () => {
       });
     });
 
+    describe('#canUserReadEntities', () => {
+      it('returns false if entities are falsy or not array', () => {
+        expect(ac.canUserReadEntities(false)).toEqual(false);
+        expect(ac.canUserReadEntities([])).toEqual(false);
+        expect(ac.canUserReadEntities({})).toEqual(false);
+        expect(ac.canUserReadEntities(null)).toEqual(false);
+        expect(ac.canUserReadEntities(undefined)).toEqual(false);
+      });
+
+      it('returns true if the user has access to read each entity', () => {
+        const entities = [
+          { data: { sys: { type: 'Entry' } } },
+          { data: { sys: { type: 'Asset' } } },
+          { data: { sys: { type: 'Entry' } } },
+          { data: { sys: { type: 'Asset' } } },
+        ];
+        getResStub.withArgs('read', entities[0].data).returns(true);
+        getResStub.withArgs('read', entities[1].data).returns(true);
+        expect(ac.canUserReadEntities(entities)).toEqual(true);
+      });
+
+      it('returns false if the user has no access to read at least one entity', () => {
+        const entities = [
+          { data: { sys: { type: 'Entry' } } },
+          { data: { sys: { type: 'Asset' } } },
+          { data: { sys: { type: 'Entry' } } },
+          { data: { sys: { type: 'Asset' } } },
+        ];
+        getResStub.withArgs('read', entities[0].data).returns(true);
+        getResStub.withArgs('read', entities[1].data).returns(false);
+        expect(ac.canUserReadEntities(entities)).toEqual(false);
+      });
+    });
+
     describe('#canPerformActionOnEntryOfType', () => {
       it('calls "can" with fake entity of given content type and extracts result from response', () => {
         getResStub.returns(true);

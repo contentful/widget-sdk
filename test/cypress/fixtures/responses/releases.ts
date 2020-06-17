@@ -17,6 +17,29 @@ export const noReleases = () => ({
   items: [],
 });
 
+export const emptyReleaseResponse = () => ({
+  title: 'New Release',
+  entities: {
+    sys: { type: 'Array' },
+    items: [],
+  },
+  sys: {
+    createdAt: Matchers.iso8601DateTimeWithMillis('2020-05-02T14:00:00.000Z'),
+    createdBy: { sys: { id: defaultUserId, type: 'Link', linkType: 'User' } },
+    space: { sys: { id: defaultSpaceId, type: 'Link', linkType: 'Space' } },
+    environment: {
+      sys: {
+        id: defaultEnvironmentId,
+        type: 'Link',
+        linkType: 'Environment',
+      },
+    },
+    id: defaultReleaseId,
+    type: 'Release',
+    updatedAt: Matchers.iso8601DateTimeWithMillis('2019-09-02T14:00:00.000Z'),
+  },
+});
+
 export const severalReleases = () => ({
   sys: {
     type: 'Array',

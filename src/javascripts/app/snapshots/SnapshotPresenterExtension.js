@@ -2,12 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import createSnapshotExtensionBridge from 'widgets/bridges/createSnapshotExtensionBridge';
-import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer';
+import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIFrameRenderer';
 
 const SnapshotPresenterExtension = ({ descriptor, parameters, ...bridgeProps }) => {
   return (
     <div data-test-id="snapshot-presenter-extension">
-      <ExtensionIFrameRenderer
+      <ExtensionIFrameRendererWithLocalHostWarning
         bridge={createSnapshotExtensionBridge(bridgeProps)}
         descriptor={descriptor}
         parameters={parameters}

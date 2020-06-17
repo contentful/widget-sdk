@@ -45,7 +45,7 @@ const pickLegacyValue = (entityKey, spaceId) => {
 
 let initialized = false;
 
-export default function create({ entityType }) {
+export default function create({ entityType, isNative }) {
   const spaceContext = getModule('spaceContext');
   const spaceId = spaceContext.getId();
   const environmentId = spaceContext.getEnvironmentId();
@@ -86,7 +86,7 @@ export default function create({ entityType }) {
   function save(view) {
     const viewData = serialize(omitUIConfigOnlyViewProperties(view));
     store.set(viewData);
-    setContextView(prepareQueryObject(viewData));
+    setContextView(prepareQueryObject(viewData), isNative);
   }
 
   function readKey(key) {
@@ -114,12 +114,16 @@ export default function create({ entityType }) {
   }
 }
 
-function setContextView(state) {
+function setContextView(state, isNative) {
   const queryString = prepareQueryString(state);
   // this can be replaced by 'window.history.pushState(state, '', `?${queryString}`);' when angular is gone
   const $location = getModule('$location');
-  $location.search(queryString);
-  $location.replace();
+  if (isNative) {
+    window.history.pushState(state, '', `?${queryString}`);
+  } else {
+    $location.search(queryString);
+    $location.replace();
+  }
 }
 
 function omitUIConfigOnlyViewProperties(view) {

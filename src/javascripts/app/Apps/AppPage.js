@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
+import { css } from 'emotion';
 import {
   Button,
   Notification,
@@ -18,6 +19,7 @@ import {
 import { get } from 'lodash';
 
 import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer';
+import ExtensionLocalDevelopmentWarning from 'widgets/ExtensionLocalDevelopmentWarning';
 import { buildAppDefinitionWidget } from 'widgets/WidgetTypes';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { installOrUpdate, uninstall } from './AppOperations';
@@ -318,7 +320,7 @@ export default class AppRoute extends Component {
             Uninstall
           </Button>
         )}
-        {appLoaded && isInstalled && (
+        {appLoaded && isInstalled && this.hasConfigLocation() && (
           <Button
             buttonType="primary"
             onClick={() => this.update(BUSY_STATE_UPDATE)}
@@ -447,7 +449,15 @@ export default class AppRoute extends Component {
             title={this.renderTitle()}
             actions={this.renderActions()}
           />
-          {this.hasConfigLocation() ? this.renderConfigLocation() : this.renderNoConfigLocation()}
+
+          <div className={css({ display: 'flex', flexDirection: 'column', width: '100%' })}>
+            <ExtensionLocalDevelopmentWarning
+              developmentMode={this.props.app.appDefinition.src?.startsWith('http://localhost')}>
+              {this.hasConfigLocation()
+                ? this.renderConfigLocation()
+                : this.renderNoConfigLocation()}
+            </ExtensionLocalDevelopmentWarning>
+          </div>
         </Workbench>
       </>
     );

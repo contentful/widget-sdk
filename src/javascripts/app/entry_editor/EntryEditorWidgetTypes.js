@@ -7,6 +7,6 @@ export default {
   REFERENCE_TREE: {
     name: 'References',
     id: 'reference-tree',
-    icon: 'ListBulleted',
+    icon: 'References',
   },
 };

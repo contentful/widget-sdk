@@ -7,7 +7,6 @@ import classesSpaceContextEs6 from 'classes/spaceContext';
 import componentsClientClientControllerEs6 from 'components/client/ClientController';
 import statesConfigEs6 from 'states/config';
 import componentsAppContainerCfAppContainerDirectiveEs6 from 'components/app_container/cfAppContainerDirective';
-import uiFrameworkCfComponentBridgeDirectiveEs6 from 'ui/Framework/CfComponentBridgeDirective';
 import componentsSharedPersistentNotificationCfPersistentNotificationDirectiveEs6 from 'components/shared/persistent_notification/cfPersistentNotificationDirective';
 
 export const angularInitRun = [
@@ -23,7 +22,6 @@ export const angularInitRun = [
     componentsClientClientControllerEs6();
     statesConfigEs6();
     componentsAppContainerCfAppContainerDirectiveEs6();
-    uiFrameworkCfComponentBridgeDirectiveEs6();
     componentsSharedPersistentNotificationCfPersistentNotificationDirectiveEs6();
 
     const modules = await Promise.all([

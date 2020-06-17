@@ -1,24 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import { getVariation } from 'LaunchDarkly';
-import { NEW_TEAM_LIST } from 'featureFlags';
+import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import createFetcherComponent from 'app/common/createFetcherComponent';
-import TeamPage from 'app/OrganizationSettings/Teams/TeamPage';
 import StateRedirect from 'app/common/StateRedirect';
 import { FetcherLoading } from 'app/common/createFetcherComponent';
 import { getOrganization } from 'services/TokenStore';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { TeamList } from '../components/TeamList';
+import { TeamsEmptyState } from '../components/TeamsEmptyState';
 
 const TeamListFetcher = createFetcherComponent(async ({ orgId }) => {
-  const [organization, newTeamListEnabled] = await Promise.all([
+  const [organization, hasTeamsEnabled] = await Promise.all([
     getOrganization(orgId),
-    getVariation(NEW_TEAM_LIST),
+    getOrgFeature(orgId, 'teams', true),
   ]);
 
   const readOnlyPermission = !isOwnerOrAdmin(organization);
-  return { readOnlyPermission, newTeamListEnabled };
+  return { readOnlyPermission, hasTeamsEnabled };
 });
 
 export class TeamListRoute extends React.Component {
@@ -38,13 +37,20 @@ export class TeamListRoute extends React.Component {
             if (isError) {
               return <StateRedirect path="settings" />;
             }
-            if (data.newTeamListEnabled) {
+
+            if (!data.hasTeamsEnabled) {
               return (
-                <TeamList readOnlyPermission={data.readOnlyPermission} orgId={this.props.orgId} />
+                <TeamsEmptyState
+                  isLegacy={true}
+                  isAdmin={!data.readOnlyPermission}
+                  orgId={this.props.orgId}
+                />
               );
             }
 
-            return <TeamPage />;
+            return (
+              <TeamList readOnlyPermission={data.readOnlyPermission} orgId={this.props.orgId} />
+            );
           }}
         </TeamListFetcher>
       </React.Fragment>

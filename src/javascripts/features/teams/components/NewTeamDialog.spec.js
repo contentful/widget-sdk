@@ -10,7 +10,6 @@ import { mockEndpoint } from '__mocks__/data/EndpointFactory';
 import { Notification } from '@contentful/forma-36-react-components';
 
 const onCloseFn = jest.fn();
-const onTeamAddedFn = jest.fn();
 const teamA = Team('Team A');
 const mockNewTeam = Team('Team B');
 
@@ -22,15 +21,7 @@ describe('NewTeamDialog', () => {
   let nameField, descriptionField, submitButton, cancelButton;
 
   beforeEach(() => {
-    render(
-      <NewTeamDialog
-        onClose={onCloseFn}
-        allTeams={[teamA]}
-        onTeamAdded={onTeamAddedFn}
-        orgId="orgid"
-        isShown={true}
-      />
-    );
+    render(<NewTeamDialog onClose={onCloseFn} allTeams={[teamA]} orgId="orgid" isShown={true} />);
     nameField = screen.getByTestId('new-team.name').querySelector('input');
     descriptionField = screen.getByLabelText('Team description');
     submitButton = screen.getByTestId('new-team.submit');
@@ -50,7 +41,6 @@ describe('NewTeamDialog', () => {
       description: 'Not Team A',
     });
     await screen.findByText('Team Team B created successfully');
-    expect(onTeamAddedFn).toHaveBeenCalled();
     expect(onCloseFn).toHaveBeenCalled();
   });
 
@@ -86,6 +76,6 @@ describe('NewTeamDialog', () => {
     userEvent.type(nameField, 'Team C');
     fireEvent.click(submitButton);
 
-    await screen.findByText('Generic error');
+    await screen.findByText('Something went wrong. Could not create team');
   });
 });

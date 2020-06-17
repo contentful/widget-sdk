@@ -146,6 +146,7 @@ export function toExternal(internal) {
       'settings',
       'environments',
       'environmentAliases',
+      'tags',
     ]),
   };
 }

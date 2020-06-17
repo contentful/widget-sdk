@@ -32,9 +32,6 @@ global.Date.now = jest.fn(() => now);
 const realSetTimeout = global.setTimeout; // unaffected by jest.useFakeTimers()
 const wait = () => new Promise((resolve) => realSetTimeout(resolve, 0));
 
-const mockSpaceEndpoint = () => jest.fn();
-let spaceEndpoint;
-
 const localMetadata = [fake.Link('Tag', 'officeMontreal'), fake.Link('Tag', 'blackFriday')];
 const remoteMetadata = [fake.Link('Tag', 'officeMontreal'), fake.Link('Tag', 'cyberMonday')];
 
@@ -64,7 +61,6 @@ function createCmaDocument(initialEntity, contentTypeFields, throttleMs) {
     document: CmaDocument.create(
       { data: initialEntity, setDeleted: jest.fn() },
       contentType,
-      spaceEndpoint,
       entityRepo,
       throttleMs
     ),
@@ -86,7 +82,6 @@ describe('CmaDocument - conflict resolution', () => {
     jest.useFakeTimers();
     entry = newEntry();
     entityRepo = mockEntityRepo();
-    spaceEndpoint = mockSpaceEndpoint();
     doc = createCmaDocument(entry).document;
   });
 

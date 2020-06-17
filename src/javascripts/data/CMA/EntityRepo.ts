@@ -1,20 +1,19 @@
 import { ASSET_PROCESSING_FINISHED_EVENT } from 'services/PubSubService';
 import { Entity } from 'app/entity_editor/Document/types';
+import { makeApply } from './EntityState';
+import { EntityAction } from './EntityActions';
+import { SpaceEndpoint } from './types';
 
 const COLLECTION_ENDPOINTS = {
   Entry: 'entries',
   Asset: 'assets',
 };
 
-export type SpaceEndpoint = {
-  (body: object, headers: object): Promise<Entity>;
-  envId: string;
-};
-
 export type EntityRepo = {
   get(entityType: string, entityId: string): Promise<Entity>;
   onAssetFileProcessed: (assetId: string, callback: any) => () => any;
   update: (entity: Entity) => Promise<Entity>;
+  applyAction: (action: EntityAction, data: Entity) => Entity;
 };
 
 interface EntityRepoOptions {
@@ -26,7 +25,7 @@ interface EntityRepoOptions {
 export function create(
   spaceEndpoint: SpaceEndpoint,
   pubSubClient,
-  triggerCmaAutoSave,
+  triggerCmaAutoSave: { (): void },
   options: EntityRepoOptions = {
     skipDraftValidation: false,
     skipTransformation: false,
@@ -37,8 +36,9 @@ export function create(
     skipTransformation: options.skipTransformation,
   });
   const endpointPutOptions = getSpaceEndpointOptions(options);
+  const applyAction = makeApply(spaceEndpoint);
 
-  return { onAssetFileProcessed, get, update };
+  return { onAssetFileProcessed, get, update, applyAction };
 
   async function update(entity: Entity) {
     const collection = COLLECTION_ENDPOINTS[entity.sys.type];

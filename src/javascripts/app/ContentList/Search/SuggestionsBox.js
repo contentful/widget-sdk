@@ -13,24 +13,35 @@ import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 export default function SuggestionsBox({
   items,
   searchTerm,
-  defaultFocus,
   onSelect,
   onKeyUp,
   onKeyDown,
+  hideSuggestions,
+  selectedSuggestion,
 }) {
+  let lastFocused = -1;
   const suggestions = items.map((field, index) => {
+    const key = `${get(field, 'contentType.id', 'none')}::${field.queryKey}`;
     return (
       <div
         className="search-next__completion-item"
-        key={`${get(field, 'contentType.id', 'none')}::${field.queryKey}`}
-        data-test-id={field.queryKey}
+        key={key}
+        data-test-id={key}
         tabIndex="0"
+        onBlur={() => {
+          if (lastFocused === selectedSuggestion) {
+            hideSuggestions();
+            lastFocused = -1;
+          } else {
+            lastFocused = selectedSuggestion;
+          }
+        }}
         ref={(el) => {
-          if (defaultFocus.suggestionsFocusIndex === index && el) {
+          if (selectedSuggestion === index && el) {
             el.focus();
           }
         }}
-        onClick={() => {
+        onMouseDown={() => {
           onSelect(field);
         }}
         onKeyUp={onKeyUp}
@@ -78,7 +89,8 @@ export default function SuggestionsBox({
 SuggestionsBox.propTypes = {
   items: PropTypes.array,
   searchTerm: PropTypes.string,
-  defaultFocus: PropTypes.object,
+  selectedSuggestion: PropTypes.number,
+  hideSuggestions: PropTypes.func.isRequired,
   onSelect: PropTypes.func,
   onKeyDown: PropTypes.func,
   onKeyUp: PropTypes.func,
@@ -92,6 +104,7 @@ const withInAppHelpUtmParams = buildUrlWithUtmParams({
 
 const SearchHelpBanner = () => (
   <div
+    onMouseDown={(e) => e.preventDefault()}
     style={{
       display: 'flex',
       alignItems: 'center',
@@ -166,7 +179,6 @@ class SuggestionsList extends React.Component {
     const { children, searchTerm, hasSuggestions } = this.props;
     return (
       <div
-        tabIndex="0"
         data-test-id="suggestions"
         style={{
           zIndex: 1,
@@ -174,8 +186,9 @@ class SuggestionsList extends React.Component {
           borderWidth: '0 1px 1px 1px',
           background: 'white',
         }}>
-        {hasSuggestions && (
+        {hasSuggestions ? (
           <div
+            onMouseDown={(e) => e.preventDefault()}
             style={{
               maxHeight: '50vh',
               overflowX: 'hidden',
@@ -188,8 +201,7 @@ class SuggestionsList extends React.Component {
             </div>
             {children}
           </div>
-        )}
-        {!hasSuggestions && (
+        ) : (
           <div className="search-next__suggestions__no-results">
             {`There are no filters matching “${truncate(searchTerm.trim(), 25)}”`}
           </div>

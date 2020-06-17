@@ -90,7 +90,6 @@ function FilterValue({ valueInput, value, isFocused, onChange, onRemove, setIsRe
       return (
         <MetadataTag
           operator={op}
-          isFocused={isFocused}
           testId={valueTestId}
           value={value}
           setIsRemovable={setIsRemovable}

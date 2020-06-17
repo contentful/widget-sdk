@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer';
+import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIFrameRenderer';
 import { NAMESPACE_APP } from 'widgets/WidgetNamespaces';
 
 export default function AppPageLocation({ app, path, bridge }) {
   return (
-    <ExtensionIFrameRenderer
+    <ExtensionIFrameRendererWithLocalHostWarning
       bridge={bridge}
       descriptor={{
         id: app.id,

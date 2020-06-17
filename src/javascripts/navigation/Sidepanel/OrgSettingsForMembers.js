@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { Spinner } from '@contentful/forma-36-react-components';
 import OrgActions from './OrgActions';
-import * as TeamsFeature from 'app/OrganizationSettings/Teams/TeamsFeature';
+import { isEnabled } from 'features/teams';
 
 const styles = {
   spinner: css({
@@ -22,7 +22,7 @@ export default class OrgSettingsForMembers extends React.Component {
   async componentDidMount() {
     this.setState({
       isLoading: false,
-      shouldSeeTeams: await TeamsFeature.isEnabled(this.props.currOrg),
+      shouldSeeTeams: await isEnabled(this.props.currOrg),
     });
   }
 

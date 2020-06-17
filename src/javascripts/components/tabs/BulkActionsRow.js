@@ -3,11 +3,13 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { TableRow, TableCell, Spinner } from '@contentful/forma-36-react-components';
+import { canUserReadEntities } from 'access_control/AccessChecker/index';
 import BulkActionLink from './BulkActionLink';
 import PluralizeEntityMessage from './PluralizeEntityMessage';
 import BulkActionDeleteConfirm from './BulkActionDeleteConfirm';
 import { noop } from 'lodash';
 import useBulkActions from './useBulkActions';
+import ReleaseDialog from 'app/Releases/ReleasesWidget/ReleasesWidgetDialog';
 
 const styles = {
   /*
@@ -42,6 +44,7 @@ const BulkActionsRow = ({
   updateEntities,
 }) => {
   const [pendingMessage, setPendingMessage] = useState(undefined);
+  const [isReleaseDialogOpen, openReleaseDialog] = useState(false);
   const [{ actions }] = useBulkActions({
     entityType,
     entities: selectedEntities,
@@ -96,6 +99,7 @@ const BulkActionsRow = ({
     const showUnarchive = actions.showUnarchive && actions.showUnarchive();
     const showUnpublish = actions.showUnpublish && actions.showUnpublish();
     const showPublish = actions.showPublish && actions.showPublish();
+    const canAddToRelease = canUserReadEntities(selectedEntities);
 
     const noActionAvailable =
       !showDuplicate &&
@@ -103,7 +107,8 @@ const BulkActionsRow = ({
       !showArchive &&
       !showUnarchive &&
       !showUnpublish &&
-      !showPublish;
+      !showPublish &&
+      !canAddToRelease;
 
     if (noActionAvailable)
       return <span data-test-id="no-actions-message">No bulk action available</span>;
@@ -113,37 +118,43 @@ const BulkActionsRow = ({
           label="Duplicate"
           linkType="secondary"
           onClick={fireAction}
-          visible={actions.showDuplicate && actions.showDuplicate()}
+          visible={showDuplicate}
         />
         <BulkActionDeleteConfirm
           itemsCount={selectedEntities.length}
           fireAction={fireAction}
           entityType={entityType}
-          visible={actions.showDelete && actions.showDelete()}
+          visible={showDelete}
         />
         <BulkActionLink
           label="Archive"
           linkType="secondary"
           onClick={fireAction}
-          visible={actions.showArchive && actions.showArchive()}
+          visible={showArchive}
         />
         <BulkActionLink
           label="Unarchive"
           linkType="secondary"
           onClick={fireAction}
-          visible={actions.showUnarchive && actions.showUnarchive()}
+          visible={showUnarchive}
         />
         <BulkActionLink
           label="Unpublish"
           linkType="secondary"
           onClick={fireAction}
-          visible={actions.showUnpublish && actions.showUnpublish()}
+          visible={showUnpublish}
         />
         <BulkActionLink
           label={getPublishLabel(selectedEntities)}
           linkType="positive"
           onClick={fireAction}
-          visible={actions.showPublish && actions.showPublish()}
+          visible={showPublish}
+        />
+        <BulkActionLink
+          label="Add to Release"
+          linkType="secondary"
+          onClick={() => openReleaseDialog(true)}
+          visible={canAddToRelease}
         />
       </Fragment>
     );
@@ -170,6 +181,13 @@ const BulkActionsRow = ({
               count={selectedCount}
             />
             {renderActions()}
+            {isReleaseDialogOpen ? (
+              <ReleaseDialog
+                selectedEntities={selectedEntities.map((entry) => entry.data)}
+                onCancel={() => openReleaseDialog(false)}
+                releaseContentTitle={`${selectedEntities.length} selected entities`}
+              />
+            ) : null}
           </Fragment>
         )}
       </TableCell>

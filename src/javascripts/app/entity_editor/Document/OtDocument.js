@@ -22,7 +22,7 @@ import * as PresenceHub from './PresenceHub';
  * @description
  * Used to edit an entry or asset through ShareJS
  */
-export function create(docConnection, initialEntity, contentType, user, spaceEndpoint) {
+export function create(docConnection, initialEntity, contentType, user, entityRepo) {
   const entity = cloneDeep(initialEntity);
 
   let currentDoc;
@@ -355,12 +355,12 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
     docLoader.destroy();
   });
 
-  const resourceState = ResourceStateManager.create(
-    sysProperty,
-    sysBus.set,
+  const resourceState = ResourceStateManager.create({
+    sys$: sysProperty,
+    setSys: sysBus.set,
     getData,
-    spaceEndpoint
-  );
+    entityRepo,
+  });
 
   const document = {
     // This is currently the only way to distinguish a `OtDocument` from a

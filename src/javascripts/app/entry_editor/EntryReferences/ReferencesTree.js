@@ -22,14 +22,14 @@ const styles = {
   }),
   listItem: css({
     position: 'relative',
-    margin: '0',
-    '&:after': {
+    '&:not(:last-child):before': {
       content: '""',
       position: 'absolute',
-      bottom: '0',
-      width: '20px',
-      height: '20px',
-      background: 'white',
+      borderLeft: `1px solid ${tokens.colorElementMid}`,
+      height: 'calc(100% + 10px)',
+      left: '-10px',
+      top: '-40px',
+      zIndex: '-1',
     },
   }),
   parentList: css({
@@ -77,6 +77,7 @@ function ReferenceCards({
   let isMoreCardRendered = false;
   let depth = 0;
   let circularReferenceCount = 0;
+  let maxLevelReached = false;
   const [initialized, setInitialized] = useState(false);
   const entitiesPerLevel = [];
   const visitedEntities = { 0: [root.sys.id] };
@@ -84,7 +85,7 @@ function ReferenceCards({
 
   const toReferenceCard = (entity, level, entityIndexInTree) => {
     if (level === maxLevel) {
-      setIsTreeMaxDepthReached(true);
+      maxLevelReached = true;
     }
     /**
      * if level > than maxLevel we still want to
@@ -243,6 +244,9 @@ function ReferenceCards({
     setInitialEntities(initialSelectedEntities);
     setInitialReferenceAmount(entitiesPerLevel);
     setInitialized(true);
+    if (maxLevelReached) {
+      setIsTreeMaxDepthReached(true);
+    }
   }
 
   track(trackingEvents.dialogOpen, {

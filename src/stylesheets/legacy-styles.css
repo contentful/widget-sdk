@@ -2595,9 +2595,10 @@ pre,
         flex-shrink: 1;
     max-width: 1100px;
     padding-right: 20px;
+    white-space: nowrap;
   }
   .workbench-header__search > *:first-child {
-    width: 100%;
+    flex-grow: 1;
   }
   .workbench-nav {
     display: -webkit-box;
@@ -3634,48 +3635,6 @@ pre,
     background-image: url("../javascripts/svg/note-info.svg");
   }
 
-  .saved-views-sidebar-wrapper {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-    -ms-flex-direction: column;
-            flex-direction: column;
-    -webkit-box-flex: 1;
-    -ms-flex-positive: 1;
-            flex-grow: 1;
-  }
-
-  .saved-views-sidebar-wrapper > cf-component-store-bridge {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-    -ms-flex-direction: column;
-            flex-direction: column;
-    -webkit-box-flex: 1;
-    -ms-flex-positive: 1;
-            flex-grow: 1;
-  }
-
-  .saved-views-wrapper {
-    background-color: var(--color-element-lightest);
-    height: 100vh;
-    border-right: 1px solid var(--color-element-dark);
-    -webkit-box-shadow: 1px 0 2px 0 rgba(0,0,0,0.09);
-    box-shadow: 1px 0 2px 0 rgba(0,0,0,0.09);
-    height: 100%;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    flex-grow: 1;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-            flex-direction: column;
-  }
   .view-folder:first-child .view-folder__header {
     border-top: 0;
   }
@@ -4272,41 +4231,6 @@ pre,
     -webkit-box-flex: 1;
             flex: 1 1 auto;
     margin: 0 1em 0 0;
-  }
-  .persistent-notification {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-align: center;
-    -webkit-box-align: center;
-            align-items: center;
-    width: 100%;
-    height: 45px;
-    padding: 8px 16px;
-    background-color: var(--color-blue-mid);
-    color: var(--color-white);
-  }
-  .persistent-notification__link > a {
-    color: var(--color-white);
-    margin-left: 1rem;
-    text-decoration: underline;
-  }
-  .persistent-notification__link > a:hover {
-    color: var(--color-white);
-    text-decoration: none;
-  }
-  .persistent-notification__action {
-    margin-bottom: 0px;
-    padding: 0.4rem 1rem 0.3rem;
-  }
-  .persistent-notification__action:active {
-    padding: 0.5rem 1rem 0.2rem;
-  }
-  .persistent-notification__icon {
-    margin-right: 1rem;
-  }
-  .persistent-notification__icon svg > path {
-    fill: var(--color-white);
   }
   .user-space-invitation-dialog {
     width: 66vw;
@@ -10761,6 +10685,7 @@ pre,
     font-weight: 600;
     height: 30px;
     margin-top: 3px;
+    margin-bottom: 3px;
     margin-right: 5px;
     border-radius: 3px;
   }
@@ -11073,15 +10998,11 @@ pre,
     border: 1px solid transparent;
     border-color: var(--color-element-mid);
     height: 40px;
-    overflow: hidden;
   }
   .search-next__pills-wrapper--state-active {
     border-color: var(--color-blue-mid);
     height: auto;
     overflow: visible;
-  }
-  .search-next__pills-wrapper--state-active .search-next__pills-list {
-    padding: 1px 10px 3px !important;
   }
   .search-next__pills-wrapper.is-overflown-y .search-next__pills-list {
     -webkit-transition: padding 0.1s ease-in-out;
@@ -11108,6 +11029,7 @@ pre,
     position: relative;
     height: 30px;
     margin-top: 3px;
+    flex-grow: 1;
   }
   .search-next__query-input {
     position: absolute;
@@ -11150,6 +11072,7 @@ pre,
     padding: 15px 20px;
   }
   .search-next__completion-item {
+    outline: none;
     height: 56px;
     padding: 0 20px;
     display: -webkit-box;

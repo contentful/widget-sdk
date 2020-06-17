@@ -1,15 +1,10 @@
 import { registerController } from 'core/NgRegistry';
 import _ from 'lodash';
-import * as Kefir from 'kefir';
-import * as K from 'core/utils/kefir';
 import { Operator } from 'app/ContentList/Search/Operators';
 import Paginator from 'classes/Paginator';
 import * as EntityHelpers from 'app/entity_editor/entityHelpers';
 import getAccessibleCTs from 'data/ContentTypeRepo/accessibleCTs';
-import createSearchInput from 'app/ContentList/Search';
-import { createRequestQueue } from 'utils/overridingRequestQueue';
-import { getCurrentSpaceFeature } from 'data/CMA/ProductCatalog';
-import { PC_CONTENT_TAGS } from 'featureFlags';
+import * as random from 'utils/Random';
 
 export default function register() {
   /**
@@ -45,18 +40,15 @@ export default function register() {
     '$timeout',
     'spaceContext',
     function EntitySelectorController($scope, $timeout, spaceContext) {
-      const MIN_SEARCH_TRIGGERING_LEN = 1;
       const MODES = { AVAILABLE: 1, SELECTED: 2 };
+      const ITEMS_PER_PAGE = 40;
 
       const config = $scope.config;
       const singleContentTypeId =
         config.linkedContentTypeIds && config.linkedContentTypeIds.length === 1
           ? config.linkedContentTypeIds[0]
           : null;
-
-      initializeSearchUI();
-
-      const load = createRequestQueue(fetch);
+      let lastRequestId = null;
 
       // Returns a promise for the content type of the given entry.
       // We cache this by the entry id
@@ -65,12 +57,17 @@ export default function register() {
         (entity) => entity.sys.id
       );
 
+      $scope.entityType = config.entityType.toLowerCase();
+      $scope.onUpdate = (view) => onSearchChange(view);
+      $scope.initialState = getInitialState();
+      $scope.getContentTypes = () => getContentTypes($scope.initialState.contentTypeId);
+
       Object.assign($scope, MODES, {
         onChange: $scope.onChange || _.noop,
         onNoEntities: $scope.onNoEntities || _.noop,
         spaceContext: spaceContext,
         view: { mode: MODES.AVAILABLE },
-        paginator: Paginator.create(),
+        paginator: Paginator.create(ITEMS_PER_PAGE),
         items: [],
         selected: [],
         selectedIds: {},
@@ -98,10 +95,24 @@ export default function register() {
         $scope.createEntityInlineProps = { ...$scope.createEntityProps, hasPlusIcon: false };
       }
 
-      $scope.$watch('view.searchText', handleTermChange);
       $scope.$on('forceSearch', resetAndLoad);
 
       resetAndLoad();
+
+      /**
+       * Resolves with a result of the last call.
+       */
+      function fetch() {
+        const requestId = random.id();
+        lastRequestId = requestId;
+        $scope.isLoading = true;
+        return new Promise((resolve, reject) => {
+          config
+            .fetch(getParams())
+            .then((res) => requestId === lastRequestId && resolve(res))
+            .catch((err) => requestId === lastRequestId && reject(err));
+        });
+      }
 
       function getEntityHelpers(config) {
         if (['Entry', 'Asset'].indexOf(config.entityType) < 0) {
@@ -111,36 +122,17 @@ export default function register() {
         }
       }
 
-      async function initializeSearchUI() {
-        const withAssets = config.entityType === 'Asset';
+      function getInitialState() {
         const initialSearchState = {};
         if (singleContentTypeId) {
           initialSearchState.contentTypeId = singleContentTypeId;
         }
-        const isSearching$ = K.fromScopeValue(
-          $scope,
-          ($scope) => $scope.isLoading && !$scope.isLoadingMore
-        );
-        const accessibleContentTypes = getAccessibleCTs(
-          spaceContext.publishedCTs,
-          initialSearchState.contentTypeId
-        );
-        const contentTypes = getValidContentTypes(
-          config.linkedContentTypeIds,
-          accessibleContentTypes
-        );
+        return initialSearchState;
+      }
 
-        const withMetadata = await getCurrentSpaceFeature(PC_CONTENT_TAGS, false);
-        createSearchInput({
-          $scope: $scope,
-          contentTypes: contentTypes,
-          onSearchChange: onSearchChange,
-          isSearching$: isSearching$,
-          initState: initialSearchState,
-          users$: Kefir.fromPromise(spaceContext.users.getAll()),
-          withAssets,
-          withMetadata,
-        });
+      function getContentTypes(contentTypeId) {
+        const accessibleContentTypes = getAccessibleCTs(spaceContext.publishedCTs, contentTypeId);
+        return getValidContentTypes(config.linkedContentTypeIds, accessibleContentTypes);
       }
 
       function getValidContentTypes(linkedContentTypeIds, contentTypes) {
@@ -153,6 +145,7 @@ export default function register() {
 
         return contentTypes;
       }
+
       function onSearchChange(newSearchState) {
         _.assign($scope.view, newSearchState);
 
@@ -161,11 +154,6 @@ export default function register() {
         }
 
         resetAndLoad();
-      }
-
-      function fetch() {
-        $scope.isLoading = true;
-        return config.fetch(getParams());
       }
 
       function getParams() {
@@ -229,6 +217,7 @@ export default function register() {
 
       // @TODO: Move toggle logic into a service and improve edge cases.
       let lastToggled;
+
       function toggleSelection(entity, event) {
         if (!config.multiple) {
           $scope.onChange([entity]);
@@ -249,20 +238,6 @@ export default function register() {
           }
           lastToggled = { entity: entity, toggleMethod: toggleMethod };
         }
-      }
-
-      function handleTermChange(term, prev) {
-        if (isTermTriggering(term) || isClearingTerm(term, prev)) {
-          resetAndLoad();
-        }
-      }
-
-      function isTermTriggering(term) {
-        return _.isString(term) && term.length >= MIN_SEARCH_TRIGGERING_LEN;
-      }
-
-      function isClearingTerm(term, prev) {
-        return _.isString(prev) && (!_.isString(term) || term.length < prev.length);
       }
 
       function handleResponse(res) {
@@ -303,14 +278,13 @@ export default function register() {
 
       function resetAndLoad() {
         $scope.isLoading = true;
-        load()
-          .then((response) => {
-            $scope.items = [];
-            $scope.paginator.setTotal(0);
-            $scope.paginator.setPage(0);
-            handleResponse(response);
-          })
-          .catch(console.error);
+        $scope.paginator.setPerPage(ITEMS_PER_PAGE);
+        $scope.paginator.setPage(0);
+        loadItems().then((response) => {
+          $scope.items = [];
+          $scope.paginator.setTotal(0);
+          handleResponse(response);
+        });
       }
 
       function loadMore() {
@@ -319,8 +293,38 @@ export default function register() {
         if (!$scope.config.noPagination && !$scope.isLoading && !$scope.paginator.isAtLast()) {
           $scope.isLoadingMore = true;
           $scope.paginator.next();
-          load().then(handleResponse);
+          loadItems().then(handleResponse);
         }
+      }
+
+      /**
+       * Load items trying with smaller and smaller batches if "Response is too big" error occurs.
+       * The current page pointer is adjusted respectively.
+       */
+      function loadItems({ pageSize, page } = {}) {
+        const perPage = pageSize ?? $scope.paginator.getPerPage();
+        const currentPage = page ?? $scope.paginator.getPage();
+
+        if (pageSize > 0) {
+          // Reduce the page size to avoid the "response is too big" error
+          $scope.paginator.setPerPage(pageSize);
+          // Adjust the current page to the new smaller page size
+          $scope.paginator.setPage(page);
+        }
+
+        return fetch().catch((err) => {
+          if (
+            err.status === 400 &&
+            _.get(err, 'data.message', '').startsWith('Response size too big') &&
+            (!pageSize || perPage > 1)
+          ) {
+            const newPageSize = Math.floor(perPage / 2);
+            const newPage = currentPage * 2;
+            return loadItems({ pageSize: newPageSize, page: newPage });
+          }
+
+          throw err;
+        });
       }
 
       function getSearchPlaceholder() {

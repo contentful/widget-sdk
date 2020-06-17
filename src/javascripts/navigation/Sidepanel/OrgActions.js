@@ -23,7 +23,7 @@ export default function OrgActions({ gotoOrgSettings, showOrgSettingsAsTeams }) 
             ) : (
               <>
                 <SettingsIcon />
-                <span>Organization settings</span>
+                <span>Organization settings &amp; subscriptions</span>
               </>
             )}
           </div>

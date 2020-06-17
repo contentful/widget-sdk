@@ -52,8 +52,9 @@ function createOtDocument(initialEntity, contentTypeFields) {
   const shareJsDoc = new otDocMock(initialEntity);
   docLoader.doc.set(DocLoad.Doc(shareJsDoc));
   const entity = newLegacyClientEntityMock(initialEntity);
+  const entityRepo = {};
   return {
-    document: OtDocument.create(docConnection, entity, contentType, user, 'fake/endpoint'),
+    document: OtDocument.create(docConnection, entity, contentType, user, entityRepo),
     docLoader,
     shareJsDoc,
   };

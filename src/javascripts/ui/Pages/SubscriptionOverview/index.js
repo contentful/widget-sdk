@@ -11,6 +11,9 @@ import { getSpaces } from 'services/TokenStore';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { calcUsersMeta, calculateTotalPrice } from 'utils/SubscriptionUtils';
 import { getOrganization } from 'services/TokenStore';
+import { getVariation } from 'LaunchDarkly';
+import { COMMUNITY_PLAN_FLAG, PAYING_PREV_V2_ORG } from 'featureFlags';
+import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 
 import DocumentTitle from 'components/shared/DocumentTitle';
 
@@ -81,7 +84,28 @@ const fetch = (organizationId) => async () => {
     numMemberships,
   });
 
-  return { basePlan, spacePlans, grandTotal, usersMeta, organization, productRatePlans };
+  const isCommunityPlanEnabled = await getVariation(COMMUNITY_PLAN_FLAG, {
+    organizationId,
+  });
+
+  const isOrgCreatedBeforeV2Pricing = await getVariation(PAYING_PREV_V2_ORG, {
+    organizationId,
+  });
+
+  // We only want to show this support card for non-enterprise on-demand users who originally had access
+  // to these types of spaces and have since been migrated to the community plan.
+  const showMicroSmallSupportCard =
+    !isEnterprisePlan(basePlan) && isCommunityPlanEnabled && isOrgCreatedBeforeV2Pricing;
+
+  return {
+    basePlan,
+    spacePlans,
+    grandTotal,
+    usersMeta,
+    organization,
+    productRatePlans,
+    showMicroSmallSupportCard,
+  };
 };
 
 export default function SubscriptionPageRouter({ orgId: organizationId }) {

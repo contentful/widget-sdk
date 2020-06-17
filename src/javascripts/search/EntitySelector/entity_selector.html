@@ -17,7 +17,10 @@
     </p>
   </div>
   <div class="entity-selector__search" ng-if="supportsAdvancedSearch">
-    <cf-component-bridge component="search"></cf-component-bridge>
+    <react-component
+      name="app/ContentList/Search/View"
+      props="{ entityType, isLoading, onUpdate, isPersisted: false, initialState, getContentTypes }"
+    ></react-component>
   </div>
   <div class="entity-selector__search" ng-if="!supportsAdvancedSearch">
     <input

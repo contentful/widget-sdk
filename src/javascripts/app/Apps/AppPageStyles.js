@@ -21,6 +21,7 @@ export const styles = {
       width: '100%',
     },
     overflow: 'hidden',
+    height: '100%',
   }),
   hideRenderer: css({
     display: 'none',

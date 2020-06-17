@@ -34,6 +34,13 @@ describe('classes/Paginator', () => {
     });
   });
 
+  describe('#setPerPage', () => {
+    it('updates number of items per page', () => {
+      paginator.setPerPage(100);
+      expect(paginator.getPerPage()).toBe(100);
+    });
+  });
+
   describe('#getSkipParam', () => {
     it('returns number of items to skip in query', function () {
       expect(paginator.getSkipParam()).toBe(0);

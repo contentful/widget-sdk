@@ -6,7 +6,6 @@ import { createApiKeyRepo } from 'features/api-keys-management';
 import { go } from 'states/Navigator';
 import { getCreator } from 'services/SpaceTemplateCreator';
 import { getTemplate } from 'services/SpaceTemplateLoader';
-import { canCreate } from 'utils/ResourceUtils';
 
 import { $broadcast } from 'ng/$rootScope';
 import * as spaceContext from 'ng/spaceContext';
@@ -14,6 +13,12 @@ import { createSpaceEndpoint, mockEndpoint } from 'data/EndpointFactory';
 import { changeSpacePlan as changeSpacePlanApiCall } from 'account/pricing/PricingDataProvider';
 
 import * as Fake from 'test/helpers/fakeFactory';
+import {
+  freeSpace,
+  unavailableFreeSpace,
+  mediumSpace,
+  mediumSpaceCurrent,
+} from '../__tests__/fixtures/plans';
 
 const mockSpace = Fake.Space();
 const mockOrganization = Fake.Organization({ isBillable: true });
@@ -61,14 +66,6 @@ jest.mock('features/api-keys-management', () => {
 jest.mock('states/Navigator', () => ({
   go: jest.fn(),
 }));
-
-jest.mock(
-  'ng/$rootScope',
-  () => ({
-    $broadcast: jest.fn(),
-  }),
-  { virtual: true }
-);
 
 jest.mock('services/SpaceTemplateCreator', () => {
   const createApi = {
@@ -522,51 +519,17 @@ describe('utils', () => {
   });
 
   describe('transformSpaceRatePlans', () => {
-    const createProductRatePlanCharges = (
-      envLimit = 1,
-      rolesLimit = 2,
-      localesLimit = 3,
-      ctLimit = 4,
-      recordsLimit = 5
-    ) => {
-      return [
-        {
-          name: 'Environments',
-          tiers: [{ endingUnit: envLimit }],
-        },
-        {
-          name: 'Roles',
-          tiers: [{ endingUnit: rolesLimit }],
-        },
-        {
-          name: 'Locales',
-          tiers: [{ endingUnit: localesLimit }],
-        },
-        {
-          name: 'Content types',
-          tiers: [{ endingUnit: ctLimit }],
-        },
-        {
-          name: 'Records',
-          tiers: [{ endingUnit: recordsLimit }],
-        },
-      ];
-    };
-
     it('should return an empty array if given no space rate plans', () => {
       expect(utils.transformSpaceRatePlans({ organization: mockOrganization })).toEqual([]);
     });
 
     it('should mark the transformed plan with isFree is the productPlanType is free_space', () => {
-      const spaceRatePlans = [
-        Fake.Plan({
-          productPlanType: 'free_space',
-          productRatePlanCharges: createProductRatePlanCharges(),
-        }),
-      ];
-
       expect(
-        utils.transformSpaceRatePlans({ organization: mockOrganization, spaceRatePlans })
+        utils.transformSpaceRatePlans({
+          organization: mockOrganization,
+          spaceRatePlans: [freeSpace],
+          freeSpaceResource: Fake.SpaceResource(1, 5, 'free_space'),
+        })
       ).toEqual([
         expect.objectContaining({
           isFree: true,
@@ -575,15 +538,12 @@ describe('utils', () => {
     });
 
     it('should mark a plan as disabled if there are any unavailabilityReasons', () => {
-      const spaceRatePlans = [
-        Fake.Plan({
-          productRatePlanCharges: createProductRatePlanCharges(),
-          unavailabilityReasons: [{ type: 'something' }],
-        }),
-      ];
-
       expect(
-        utils.transformSpaceRatePlans({ organization: mockOrganization, spaceRatePlans })
+        utils.transformSpaceRatePlans({
+          organization: mockOrganization,
+          spaceRatePlans: [unavailableFreeSpace],
+          freeSpaceResource: Fake.SpaceResource(1, 5, 'free_space'),
+        })
       ).toEqual([
         expect.objectContaining({
           disabled: true,
@@ -592,17 +552,12 @@ describe('utils', () => {
     });
 
     it('should mark a plan as disabled if the the plan is free and cannot create more free spaces', () => {
-      canCreate.mockReturnValue(false);
-
-      const spaceRatePlans = [
-        Fake.Plan({
-          productPlanType: 'free_space',
-          productRatePlanCharges: createProductRatePlanCharges(),
-        }),
-      ];
-
       expect(
-        utils.transformSpaceRatePlans({ organization: mockOrganization, spaceRatePlans })
+        utils.transformSpaceRatePlans({
+          organization: mockOrganization,
+          spaceRatePlans: [freeSpace],
+          freeSpaceResource: Fake.SpaceResource(2, 2, 'free_space'),
+        })
       ).toEqual([
         expect.objectContaining({
           disabled: true,
@@ -614,14 +569,13 @@ describe('utils', () => {
       // By default, above, isBillable is true
       const organization = Fake.Organization({ isBillable: false });
 
-      const spaceRatePlans = [
-        Fake.Plan({
-          productPlanType: 'some_space_type',
-          productRatePlanCharges: createProductRatePlanCharges(),
-        }),
-      ];
-
-      expect(utils.transformSpaceRatePlans({ organization, spaceRatePlans })).toEqual([
+      expect(
+        utils.transformSpaceRatePlans({
+          organization,
+          spaceRatePlans: [mediumSpace],
+          freeSpaceResource: Fake.SpaceResource(1, 5, 'free_space'),
+        })
+      ).toEqual([
         expect.objectContaining({
           disabled: true,
         }),
@@ -629,15 +583,12 @@ describe('utils', () => {
     });
 
     it('should mark the plan as current if the plan has an unavailabilityReason with type as currentPlan', () => {
-      const spaceRatePlans = [
-        Fake.Plan({
-          productRatePlanCharges: createProductRatePlanCharges(),
-          unavailabilityReasons: [{ type: 'currentPlan' }],
-        }),
-      ];
-
       expect(
-        utils.transformSpaceRatePlans({ organization: mockOrganization, spaceRatePlans })
+        utils.transformSpaceRatePlans({
+          organization: mockOrganization,
+          spaceRatePlans: [mediumSpaceCurrent],
+          freeSpaceResource: Fake.SpaceResource(1, 5, 'free_space'),
+        })
       ).toEqual([
         expect.objectContaining({
           current: true,
@@ -646,7 +597,36 @@ describe('utils', () => {
     });
 
     it('should return expected transformed plans', () => {
-      canCreate.mockReturnValue(false);
+      const createProductRatePlanCharges = (
+        envLimit = 1,
+        rolesLimit = 2,
+        localesLimit = 3,
+        ctLimit = 4,
+        recordsLimit = 5
+      ) => {
+        return [
+          {
+            name: 'Environments',
+            tiers: [{ endingUnit: envLimit }],
+          },
+          {
+            name: 'Roles',
+            tiers: [{ endingUnit: rolesLimit }],
+          },
+          {
+            name: 'Locales',
+            tiers: [{ endingUnit: localesLimit }],
+          },
+          {
+            name: 'Content types',
+            tiers: [{ endingUnit: ctLimit }],
+          },
+          {
+            name: 'Records',
+            tiers: [{ endingUnit: recordsLimit }],
+          },
+        ];
+      };
 
       const spaceRatePlans = [
         Fake.Plan({
@@ -674,7 +654,11 @@ describe('utils', () => {
       ];
 
       expect(
-        utils.transformSpaceRatePlans({ organization: mockOrganization, spaceRatePlans })
+        utils.transformSpaceRatePlans({
+          organization: mockOrganization,
+          spaceRatePlans,
+          freeSpaceResource: Fake.SpaceResource(2, 2, 'free_space'),
+        })
       ).toEqual([
         {
           isFree: true,

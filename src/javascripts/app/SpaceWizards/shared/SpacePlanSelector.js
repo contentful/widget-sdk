@@ -9,6 +9,8 @@ import {
   Organization as OrganizationPropType,
   Space as SpacePropType,
 } from 'app/OrganizationSettings/PropTypes';
+import ExternalTextLink from 'app/common/ExternalTextLink';
+import { websiteUrl } from 'Config';
 
 import SpacePlanItem from './SpacePlanItem';
 import BillingInfo from './BillingInfo';
@@ -25,7 +27,7 @@ const styles = {
     marginBottom: tokens.spacingM,
   }),
   container: css({
-    margin: `0 ${tokens.spacingL}`,
+    margin: `0 ${tokens.spacingXl}`,
   }),
 };
 
@@ -41,6 +43,7 @@ export default function SpacePlanSelector(props) {
     goToBillingPage,
     onSelectPlan,
     isCommunityPlanEnabled,
+    isPayingPreviousToV2,
     isChanging = false,
   } = props;
 
@@ -63,6 +66,33 @@ export default function SpacePlanSelector(props) {
           You are {isChanging ? `changing the space ${space.name}` : `creating this space`} for the
           organization {organization.name}.
         </Paragraph>
+
+        {isCommunityPlanEnabled && isPayingPreviousToV2 && (
+          <>
+            <Paragraph className={styles.textCenter}>
+              <b>Where are the Micro and Small spaces?</b>{' '}
+              {isChanging ? (
+                <>
+                  We have made some changes to our space plans.
+                  <br />
+                  To learn about the new features you have access to{' '}
+                </>
+              ) : (
+                <>
+                  You can continue to buy micro or small spaces by{' '}
+                  <ExternalTextLink
+                    href={websiteUrl(
+                      'support/?utm_source=webapp&utm_medium=account-menu&utm_campaign=in-app-help'
+                    )}>
+                    submitting a support request.
+                  </ExternalTextLink>{' '}
+                  To learn about our space plan changes
+                </>
+              )}{' '}
+              <ExternalTextLink href={websiteUrl('pricing/')}>visit our website.</ExternalTextLink>
+            </Paragraph>
+          </>
+        )}
 
         {atHighestPlan && (
           <div className={styles.marginBottom}>
@@ -114,5 +144,6 @@ SpacePlanSelector.propTypes = {
   spaceResources: PropTypes.array,
   goToBillingPage: PropTypes.func.isRequired,
   isCommunityPlanEnabled: PropTypes.bool,
+  isPayingPreviousToV2: PropTypes.bool,
   isChanging: PropTypes.bool,
 };

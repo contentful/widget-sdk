@@ -1,3 +1,4 @@
+// TODO: this should be mockSpaceEndpoint, mockOrgEndpoint, etc.
 export const mockEndpoint = jest.fn().mockResolvedValue();
 
 export const createEndpoint = jest.fn().mockReturnValue(mockEndpoint);

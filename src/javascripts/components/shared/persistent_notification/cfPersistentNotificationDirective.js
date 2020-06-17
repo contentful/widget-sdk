@@ -1,19 +1,21 @@
 import { registerDirective } from 'core/NgRegistry';
 import _ from 'lodash';
-import persistentNotificationTemplate from './cf_persistent_notification.html';
+import PersistentNotification from 'components/persistent-notification/PersistentNotification';
 
 export default function register() {
   registerDirective('cfPersistentNotification', [
-    '$sce',
     '$timeout',
-    ($sce, $timeout) => {
+    ($timeout) => {
       return {
         restrict: 'E',
-        template: persistentNotificationTemplate,
-        link,
+        template: '<react-component component="component" props="props"></react-component>',
+        controller: ['$scope', controller],
       };
 
-      function link(scope) {
+      function controller($scope) {
+        $scope.component = PersistentNotification;
+        $scope.props = {};
+
         /**
          * Contains what was broadcasted with all `persistentNotification` events during
          * the same digestion cycle. At the end of the cycle we
@@ -30,7 +32,7 @@ export default function register() {
 
         // TODO: Introduce a service with full control over a notification's
         //  lifecycle instead of abusing broadcast.
-        scope.$on('persistentNotification', (_ev, params) => {
+        $scope.$on('persistentNotification', (_, params) => {
           dismissed = false;
           if (!notificationsOfCycle.length) {
             $timeout(updateNotificationForCycle, 0);
@@ -38,7 +40,7 @@ export default function register() {
           notificationsOfCycle.push(params);
         });
 
-        scope.$on('resetPersistentNotification', () => {
+        $scope.$on('resetPersistentNotification', () => {
           dismissed = true;
           resetNotification();
         });
@@ -63,17 +65,20 @@ export default function register() {
             return;
           }
           resetNotification();
-          scope.persistentNotification = true;
-          _.assign(scope, params);
-          const message = params.message;
-          scope.message = message && $sce.trustAsHtml(message);
+
+          $scope.persistentNotification = true;
+
+          $scope.props = {
+            contents: params.message,
+            linkUrl: params.link?.href,
+            linkText: params.link?.text,
+            actionMessage: params.actionMessage,
+            onClickAction: params.action,
+          };
         }
 
         function resetNotification() {
-          scope.message = null;
-          scope.action = null;
-          scope.actionMessage = null;
-          scope.persistentNotification = null;
+          $scope.props = {};
         }
 
         async function logConcurrentNotifications(notifications) {

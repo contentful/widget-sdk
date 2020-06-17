@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import moment from 'moment';
 import { getVariation } from 'LaunchDarkly';
-import { COMMUNITY_PLAN_FLAG } from 'featureFlags';
+import { COMMUNITY_PLAN_FLAG, PAYING_PREV_V2_ORG } from 'featureFlags';
 import SpaceDetails from './SpaceDetails';
 import ConfirmScreenNormal from './ConfirmScreenNormal';
 import SpacePlanSelector from '../shared/SpacePlanSelector';
@@ -66,12 +66,14 @@ const initialFetch = (organization) => async () => {
     templates,
     subscriptionPlans,
     isCommunityPlanEnabled,
+    isPayingPreviousToV2,
   ] = await Promise.all([
     orgResources.get(FREE_SPACE_IDENTIFIER),
     getSpaceRatePlans(endpoint),
     getTemplatesList(),
     getSubscriptionPlans(endpoint),
     getVariation(COMMUNITY_PLAN_FLAG, { organizationId }),
+    getVariation(PAYING_PREV_V2_ORG, { organizationId }),
   ]);
 
   const currentSubscriptionPrice = calculateTotalPrice(subscriptionPlans.items);
@@ -87,6 +89,7 @@ const initialFetch = (organization) => async () => {
     templates,
     currentSubscriptionPrice,
     isCommunityPlanEnabled,
+    isPayingPreviousToV2,
   };
 };
 
@@ -280,6 +283,7 @@ export default function CreateOnDemandWizard(props) {
                   }}
                   goToBillingPage={() => goToBillingPage(organization, onClose)}
                   isCommunityPlanEnabled={data.isCommunityPlanEnabled}
+                  isPayingPreviousToV2={data.isPayingPreviousToV2}
                 />
               </TabPanel>
             )}

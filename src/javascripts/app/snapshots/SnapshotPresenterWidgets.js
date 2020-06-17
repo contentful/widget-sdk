@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
 import { isRtlLocale } from 'utils/locales';
-import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
+import { NAMESPACE_EXTENSION, NAMESPACE_APP } from 'widgets/WidgetNamespaces';
 import SnapshotPresenterArraySymbol from './SnapshotPresenterArraySymbol';
 import SnapshotPresenterBoolean from './SnapshotPresenterBoolean';
 import SnapshotPresenterDate from './SnapshotPresenterDate';
@@ -32,7 +32,7 @@ const SnapshotPresenterWidgets = ({
 }) => {
   const { field, widgetNamespace, descriptor, parameters, settings } = widget;
 
-  if (widgetNamespace === NAMESPACE_EXTENSION) {
+  if ([NAMESPACE_EXTENSION, NAMESPACE_APP].includes(widgetNamespace)) {
     return (
       <SnapshotPresenterExtension
         descriptor={descriptor}

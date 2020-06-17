@@ -9,6 +9,8 @@ import { supportUrl } from 'Config';
 import EmptyStateContainer, {
   defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
+import { ModalLauncher } from 'core/components/ModalLauncher';
+import { NewTeamDialog } from './NewTeamDialog';
 
 const styles = {
   pageWrapper: css({ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0 }),
@@ -19,6 +21,7 @@ export class TeamsEmptyState extends React.Component {
   static propTypes = {
     isLegacy: PropTypes.bool,
     isAdmin: PropTypes.bool,
+    orgId: PropTypes.string.isRequired,
   };
 
   state = {
@@ -26,7 +29,15 @@ export class TeamsEmptyState extends React.Component {
   };
 
   toggleDialog() {
-    this.setState({ showingDialog: !this.state.showingDialog });
+    ModalLauncher.open(({ isShown, onClose }) => (
+      <NewTeamDialog
+        testId="create-team-dialog"
+        isShown={isShown}
+        onClose={onClose}
+        allTeams={[]}
+        orgId={this.props.orgId}
+      />
+    ));
   }
 
   renderAdminWarning() {

@@ -206,6 +206,9 @@ class Icon extends React.Component {
     className: PropTypes.string,
     style: PropTypes.object,
     name: PropTypes.string.isRequired,
+    ariaLabel: PropTypes.string,
+    ariaHideIcon: PropTypes.bool,
+    ariaDescribedBy: PropTypes.string,
     scale: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   };
@@ -245,7 +248,7 @@ class Icon extends React.Component {
   }
 
   render() {
-    const { className, style, name } = this.props;
+    const { className, style, name, ariaLabel, ariaHideIcon, ariaDescribedBy } = this.props;
     const IconComponent = SVGs[name];
 
     if (!IconComponent) {
@@ -257,11 +260,13 @@ class Icon extends React.Component {
       <span
         data-icon-name={name}
         className={cn('icon-component', className)}
+        aria-label={ariaLabel}
+        aria-describedby={ariaDescribedBy}
         style={style}
         ref={(node) => {
           this.container = node;
         }}>
-        {IconComponent && <IconComponent />}
+        {IconComponent && <IconComponent aria-hidden={ariaHideIcon} />}
       </span>
     );
   }
