@@ -8,6 +8,7 @@ import {
   TextLink,
   SkeletonContainer,
   SkeletonBodyText,
+  SkeletonDisplayText,
 } from '@contentful/forma-36-react-components';
 
 import { joinAnd } from 'utils/StringUtils';
@@ -26,26 +27,33 @@ function BasePlan({ basePlan }) {
 
   return (
     <div className={styles.container}>
-      <Heading className="section-title">Platform</Heading>
-
       {!basePlan ? (
-        <SkeletonContainer svgHeight={40}>
-          <SkeletonBodyText numberOfLines={2} />
-        </SkeletonContainer>
+        <>
+          <SkeletonContainer svgHeight={30}>
+            <SkeletonDisplayText className="section-title" />
+          </SkeletonContainer>
+          <SkeletonContainer svgHeight={90}>
+            <SkeletonBodyText numberOfLines={4} />
+          </SkeletonContainer>
+        </>
       ) : (
-        <Paragraph testId="subscription-page.base-plan-details">
-          <b>{basePlan.name}</b>
-          {enabledFeaturesNames.length
-            ? ` – includes ${joinAnd(enabledFeaturesNames)}. `
-            : ' – doesn’t include enterprise features. '}
-          <TextLink
-            href={websiteUrl('/pricing/#platform-features')}
-            testId="subscription-page.org-usage-link"
-            target="_blank"
-            rel="noopener noreferrer">
-            Platform features
-          </TextLink>
-        </Paragraph>
+        <>
+          {' '}
+          <Heading className="section-title">Platform</Heading>
+          <Paragraph testId="subscription-page.base-plan-details">
+            <b>{basePlan.name}</b>
+            {enabledFeaturesNames.length
+              ? ` – includes ${joinAnd(enabledFeaturesNames)}. `
+              : ' – doesn’t include enterprise features. '}
+            <TextLink
+              href={websiteUrl('/pricing/#platform-features')}
+              testId="subscription-page.org-usage-link"
+              target="_blank"
+              rel="noopener noreferrer">
+              Platform features
+            </TextLink>
+          </Paragraph>
+        </>
       )}
     </div>
   );

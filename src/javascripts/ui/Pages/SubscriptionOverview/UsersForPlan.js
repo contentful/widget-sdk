@@ -6,6 +6,7 @@ import {
   TextLink,
   Heading,
   SkeletonContainer,
+  SkeletonDisplayText,
   SkeletonBodyText,
 } from '@contentful/forma-36-react-components';
 
@@ -18,38 +19,42 @@ function UsersForPlan({ organizationId, numberFreeUsers, numberPaidUsers, costOf
 
   return (
     <div>
-      <Heading className="section-title">Users</Heading>
-
       {totalOfUsers === 0 ? (
-        <SkeletonContainer svgHeight={40}>
-          <SkeletonBodyText numberOfLines={2} />
-        </SkeletonContainer>
+        <>
+          <SkeletonContainer svgHeight={30}>
+            <SkeletonDisplayText className="section-title" />
+          </SkeletonContainer>
+          <SkeletonContainer svgHeight={90}>
+            <SkeletonBodyText numberOfLines={4} />
+          </SkeletonContainer>
+        </>
       ) : (
-        <Paragraph>
-          Your organization has{' '}
-          <b>
-            <Pluralized text="user" count={totalOfUsers} />
-          </b>
-          .{' '}
-          {numberPaidUsers > 0 && (
-            <>
-              <br />
-              You are exceeding the limit of <Pluralized
-                text="free user"
-                count={numberFreeUsers}
-              />{' '}
-              by <Pluralized text="user" count={numberPaidUsers} />.
-              <br />
-              That is <strong>${costOfUsers}</strong> per month.{' '}
-            </>
-          )}
-          <StateLink
-            {...orgMemberships(organizationId)}
-            component={TextLink}
-            testId="subscription-page.org-memberships-link">
-            Manage users
-          </StateLink>
-        </Paragraph>
+        <>
+          <Heading className="section-title">Users</Heading>
+          <Paragraph>
+            Your organization has{' '}
+            <b>
+              <Pluralized text="user" count={totalOfUsers} />
+            </b>
+            .{' '}
+            {numberPaidUsers > 0 && (
+              <>
+                <br />
+                You are exceeding the limit of{' '}
+                <Pluralized text="free user" count={numberFreeUsers} /> by{' '}
+                <Pluralized text="user" count={numberPaidUsers} />.
+                <br />
+                That is <strong>${costOfUsers}</strong> per month.{' '}
+              </>
+            )}
+            <StateLink
+              {...orgMemberships(organizationId)}
+              component={TextLink}
+              testId="subscription-page.org-memberships-link">
+              Manage users
+            </StateLink>
+          </Paragraph>
+        </>
       )}
     </div>
   );
