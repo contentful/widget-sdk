@@ -8,12 +8,15 @@ import * as Normalizer from 'data/document/Normalize';
 import TheLocaleStore from 'services/localeStore';
 import * as PathUtils from 'utils/Path';
 import { Error as DocError } from 'data/document/Error';
-import { Document, Entity, EntitySys, PropertyBus, StreamBus } from './types';
+import { Entity, EntitySys, PropertyBus, StreamBus } from './types';
 import * as StringField from 'data/document/StringFieldSetter';
 import { trackEditConflict, ConflictType } from './analytics';
 import { createNoopPresenceHub } from './PresenceHub';
 import { EntityRepo, SpaceEndpoint } from 'data/CMA/EntityRepo';
 import { changedEntityFieldPaths, changedEntityMetadataPaths } from './changedPaths';
+import { Document } from './typesDocument';
+import { getState } from 'data/CMA/EntityState';
+import { State } from 'data/document/ResourceStateManager';
 
 export const THROTTLE_TIME = 5000;
 const DISCONNECTED = Symbol('DISCONNECTED');
@@ -49,15 +52,18 @@ export function create(
 
   const cleanupTasks: Function[] = [];
   let isDestroyed = false;
-  const isFieldsOrMetadataPrefix = (path: string[]): boolean => {
-    return PathUtils.isPrefix(['fields'], path) || PathUtils.isPrefix(['metadata'], path);
-  };
 
   const sysBus: PropertyBus<EntitySys> = K.createPropertyBus(entity.sys);
   const sys$ = sysBus.property;
   cleanupTasks.push(sysBus.end);
   const changesBus: StreamBus<string[]> = K.createStreamBus();
   cleanupTasks.push(changesBus.end);
+
+  const isFieldsOrMetadataPrefix = (path: string[]) =>
+    PathUtils.isPrefix(['fields'], path) || PathUtils.isPrefix(['metadata'], path);
+  const fieldAndMetadataChanges$ = changesBus.stream.filter((path) =>
+    isFieldsOrMetadataPrefix(path)
+  );
 
   const [isSavingBus, isSaving$, afterSave$] = stateBus(false, DOCUMENT_SAVED);
   cleanupTasks.push(isSavingBus.end);
@@ -82,17 +88,22 @@ export function create(
 
   // We assume that the permissions only depend on the immutable data like the ID the content type ID and the creator.
   const permissions = Permissions.create(entity.sys);
-  const resourceState = ResourceStateManager.create(
+  const resourceState = ResourceStateManager.create({
     sys$,
-    (newSys) => {
+    setSys(newSys) {
       set(entity, ['sys'], newSys);
       sysBus.set(newSys);
     },
     // "entity" local state is used, because sys$, data$ are only a reflection of the current state.
-    () => cloneDeep(getValueAt([])),
+    getData: () => cloneDeep(getValueAt([])),
     spaceEndpoint,
-    saveEntity // preApplyFn - triggered and awaited before applying the state change
-  );
+    preApplyFn: saveEntity,
+    forceChangedState$: fieldAndMetadataChanges$
+      // Changes are not relevant unless the current state is "Published"
+      .filter(() => getState(K.getValue(sys$)) === State.Published())
+      .map(() => !isEqual(lastSavedEntity, entity))
+      .toProperty(() => false),
+  });
   const afterStatusUpdate$: Stream<symbol, any> = resourceState.inProgress$
     .changes()
     .filter((isSaving) => !isSaving)
@@ -107,18 +118,11 @@ export function create(
   // Entities from the server might include removed locales or deleted fields which the UI can't handle.
   // So document getters work with locally normalized entity, that is created initially and on every update in this handler.
   // Make sure that this handler is the first for the changes stream.
-  changesBus.stream.onValue((path) => {
-    if (isFieldsOrMetadataPrefix(path)) {
-      normalize();
-    }
-  });
+  fieldAndMetadataChanges$.onValue(normalize);
 
   // Persist changes if there were any in last N seconds. Also update if there were
   // any changes during the last update.
-  changesBus.stream
-    .filter((path) => {
-      return isFieldsOrMetadataPrefix(path);
-    })
+  fieldAndMetadataChanges$
     // Required to force bufferWhileBy to emit all buffered changes immediately after a save.
     .merge(afterSave$)
     .bufferWhileBy(isSaving$)

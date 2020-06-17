@@ -21,25 +21,23 @@ export const linkedTags = [
 export const initiallyLinkedTags = [{ sys: { id: 'tagId', type: 'Link', linkType: 'Tag' } }];
 
 export const newEntry = (fields, metadata) => ({
-  ...{
-    sys: {
-      type: 'Entry',
-      version: 1,
-      contentType: {
-        sys: { id: 'ctId' },
-      },
-      updatedAt: '2020-06-06T12:58:25.641Z',
-      updatedBy: {
-        sys: { id: 'userId' },
-      },
+  sys: {
+    type: 'Entry',
+    version: 1,
+    contentType: {
+      sys: { id: 'ctId' },
     },
-    fields: fields || {
-      fieldA: { 'en-US': 'en' },
-      fieldB: { 'en-US': 'val-EN', de: 'val-DE' },
-      listField: { 'en-US': ['one'] },
-      symbolField: { 'en-US': 'symbol value' },
-      textField: { 'en-US': 'text value' },
+    updatedAt: '2020-06-06T12:58:25.641Z',
+    updatedBy: {
+      sys: { id: 'userId' },
     },
+  },
+  fields: fields || {
+    fieldA: { 'en-US': 'en' },
+    fieldB: { 'en-US': 'val-EN', de: 'val-DE' },
+    listField: { 'en-US': ['one'] },
+    symbolField: { 'en-US': 'symbol value' },
+    textField: { 'en-US': 'text value' },
   },
   ...metadata,
 });

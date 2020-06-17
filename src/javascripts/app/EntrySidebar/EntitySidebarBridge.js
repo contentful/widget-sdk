@@ -94,6 +94,14 @@ export default ({ $scope, emitter }) => {
       });
     });
 
+    // Listen for state updates, specifically "published" -> "changed" on pending local changes,
+    // which might be triggered before the auto-save request is fired changing the sys property.
+    K.onValueScope($scope, $scope.otDoc.resourceState.state$, () => {
+      notifyUpdate({
+        status: $scope.state.current,
+      });
+    });
+
     let setNotSavingTimeout;
     K.onValueScope($scope, $scope.otDoc.state.isSaving$, (isSaving) => {
       clearTimeout(setNotSavingTimeout);
@@ -224,7 +232,9 @@ export default ({ $scope, emitter }) => {
     fieldLocaleScope.locale = TheLocaleStore.getDefaultLocale();
     // There's no validity indicator for sidebar extensions.
     // We just provide a noop for this SDK method here:
-    fieldLocaleScope.fieldController = { setInvalid: () => {} };
+    fieldLocaleScope.fieldController = {
+      setInvalid: () => {},
+    };
     fieldLocaleScope.fieldLocale = $controller('FieldLocaleController', {
       $scope: fieldLocaleScope,
     });

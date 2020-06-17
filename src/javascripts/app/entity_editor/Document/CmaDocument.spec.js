@@ -107,6 +107,21 @@ describe('CmaDocument', () => {
     it('keeps the old sysProperty version after local update', () => {
       expect(K.getValue(doc.sysProperty).version).toEqual(entry.sys.version);
     });
+
+    it('it doesn\'t switch to "changed" from "draft" state', async () => {
+      expect(K.getValue(doc.resourceState.state$)).toBe('__DRAFT__');
+    });
+
+    it('it switches to "changed" from "published" state', async () => {
+      entry = newEntry();
+      entry.sys.publishedVersion = entry.sys.version;
+      doc = createCmaDocument(entry).document;
+      expect(K.getValue(doc.resourceState.state$)).toBe('__PUBLISHED__');
+
+      await doc.setValueAt(fieldPath, 'en-US-updated');
+      expect(K.getValue(doc.resourceState.state$)).toBe('__CHANGED__');
+      expect(entityRepo.update).not.toHaveBeenCalled();
+    });
   });
 
   describe('5 sec. after setValueAt(fieldPath) on a field', () => {

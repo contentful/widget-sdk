@@ -355,12 +355,12 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
     docLoader.destroy();
   });
 
-  const resourceState = ResourceStateManager.create(
-    sysProperty,
-    sysBus.set,
+  const resourceState = ResourceStateManager.create({
+    sys$: sysProperty,
+    setSys: sysBus.set,
     getData,
-    spaceEndpoint
-  );
+    spaceEndpoint,
+  });
 
   const document = {
     // This is currently the only way to distinguish a `OtDocument` from a
