@@ -50,26 +50,26 @@ export default function AvailableItems(props) {
       {items.length === 0 && (
         <div className={styles.uiExtensionInfo}>
           <Paragraph className={styles.uiExtensionInfoTitle}>
-            UI Extensions can enrich how content is created, edited, or shared with other services.
+            Contentful apps extend and expand the capabilities of the Contentful web app.
           </Paragraph>
           <TextLink
             icon="ExternalLink"
-            href="https://www.contentful.com/marketplace/"
+            href="https://www.contentful.com/marketplace/?utm_campaign=in-app-help"
             target="_blank"
             rel="noopener noreferrer">
-            Add a new UI Extension
+            Browse all apps
           </TextLink>
         </div>
       )}
       <Paragraph>
-        Learn more about{' '}
+        Learn{' '}
         <TextLink
           href={withInAppHelpUtmParams(
-            'https://www.contentful.com/developers/docs/extensibility/ui-extensions/'
+            'https://www.contentful.com/developers/docs/extensibility/app-framework/tutorial/?utm_campaign=in-app-help'
           )}
           target="_blank"
           rel="noopener noreferrer">
-          UI Extensions
+          how to build your first app
         </TextLink>
       </Paragraph>
     </div>
