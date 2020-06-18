@@ -138,7 +138,19 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
       });
   };
 
-  const handleValidation = (action) => {
+  const handleReleaseAction = (validatedResponse, action) => {
+    if (validatedResponse.errored.length) {
+      setProcessingAction(null);
+      setValidationErrors(validatedResponse.errored);
+      setSelectedTab(switchToErroredTab(validatedResponse.errored, selectedTab));
+      Notification.error('Some entities did not pass validation');
+    } else {
+      setProcessingAction(null);
+      action.onSuccess();
+    }
+  };
+
+  const validate = (action = null) => {
     setProcessingAction('Validating');
     return validateReleaseAction(releaseId, action);
   };
@@ -160,15 +172,15 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
   };
 
   const handlePublication = () => {
-    handleValidation('publish').then((response) => {
-      if (response.errored.length) {
-        setProcessingAction(null);
-        setValidationErrors(response.errored);
-        setSelectedTab(switchToErroredTab(response.errored, selectedTab));
-        Notification.error('Some entities did not pass validation');
-      } else {
-        publish();
-      }
+    validate('publish').then((response) => {
+      handleReleaseAction(response, { onSuccess: publish });
+    });
+  };
+
+  const handleValidation = () => {
+    const displaySuccessNotification = () => Notification.success('All entities passed validation');
+    validate().then((response) => {
+      handleReleaseAction(response, { onSuccess: displaySuccessNotification });
     });
   };
 
@@ -282,12 +294,20 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
             testId="cf-ui-workbench-sidebar">
             <div className={styles.buttons}>
               <Button
-                buttonType="muted"
+                buttonType="positive"
                 className=""
                 isFullWidth
                 disabled={!entries.length && !assets.length}
                 onClick={handlePublication}>
                 Publish now
+              </Button>
+              <Button
+                buttonType="muted"
+                className={styles.buttons}
+                isFullWidth
+                disabled={!entries.length && !assets.length}
+                onClick={handleValidation}>
+                Validate
               </Button>
             </div>
           </Workbench.Sidebar>
