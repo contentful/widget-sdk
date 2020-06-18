@@ -21,24 +21,24 @@
   --color-contrast-light: #263545;
 
   --color-blue-dark: #174E8C;
-  --color-blue-base: #1D61AF;
-  --color-blue-mid: #2C75C9;
+  --color-blue-base: #2D64B3;
+  --color-blue-mid: #2E75D4;
   --color-blue-light: #84B9F5;
   --color-blue-lightest: #EDF4FC;
 
+  --color-green-dark: #1A593E;
+  --color-green-base: #1A6848;
+  --color-green-mid: #16875D;
   --color-green-light: #8AD6B1;
-  --color-green-mid: #0C9869;
-  --color-green-base: #1D7D58;
-  --color-green-dark: #1C583F;
 
   --color-red-lightest: #FBE3E2;
   --color-red-light: #EB8D9B;
   --color-red-mid: #CC3C52;
   --color-red-base: #A03343;
 
-  --color-orange-base: #D28004;
-  --color-orange-mid: #FA9A05;
-  --color-orange-light: #FCC169;
+  --color-orange-base: #DE8907;
+  --color-orange-mid: #F79B0C;
+  --color-orange-light: #FFD7A2;
 
   --color-yellow-mid: #FFD354;
 
