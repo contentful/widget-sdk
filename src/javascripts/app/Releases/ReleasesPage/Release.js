@@ -31,6 +31,7 @@ const styles = {
     alignItems: 'center',
     display: 'inline-block',
     padding: 0,
+    width: '250px',
   }),
   dropdownButton: css({
     height: tokens.spacingXl,
@@ -66,6 +67,11 @@ const styles = {
     background: 'rgba(255,255,255,.2)',
     fontWeight: 'bold',
     overflow: 'hidden',
+  }),
+  subheading: css({
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
   }),
   releaseImage: (images, id) =>
     css({
@@ -111,11 +117,7 @@ ReleaseImage.propTypes = {
       id: PropTypes.string,
     }),
     entities: PropTypes.shape({
-      items: PropTypes.arrayOf({
-        sys: PropTypes.shape({
-          id: PropTypes.string,
-        }),
-      }),
+      items: PropTypes.array,
     }),
   }),
 };
@@ -181,7 +183,9 @@ export default class Release extends Component {
         <div>
           <div className={styles.headingContainer}>
             <div className={styles.actionHeading}>
-              <Subheading element="h2">{release.title}</Subheading>
+              <Subheading element="h2" className={styles.subheading}>
+                {release.title}
+              </Subheading>
               <Dropdown
                 className={styles.dropdown}
                 isOpen={this.state.isDropdownOpen}
@@ -196,7 +200,7 @@ export default class Release extends Component {
                     onClick={(event) => this.handleClick(event)}
                   />
                 }>
-                <DropdownList>
+                <DropdownList onClick={(event) => event.stopPropagation()}>
                   <DropdownListItem onClick={this.deleteRelease} testId="release-card-delete-cta">
                     Delete
                   </DropdownListItem>
