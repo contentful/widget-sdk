@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { css } from 'emotion';
 import { Spinner, TextInput, Icon } from '@contentful/forma-36-react-components';
 import Keys from './Keys';
 import tokens from '@contentful/forma-36-tokens';
-import { ReadTagsProvider, TagsRepoProvider } from 'features/content-tags';
-import { getCurrentSpaceFeature } from 'data/CMA/ProductCatalog';
-import { PC_CONTENT_TAGS } from 'featureFlags';
+import { ReadTagsProvider, TagsRepoProvider, useTagsFeatureEnabled } from 'features/content-tags';
 
 import FilterPill from './FilterPill';
 import SuggestionsBox from './SuggestionsBox';
@@ -124,15 +122,7 @@ const styles = {
 };
 
 export default function ConditionalView(props) {
-  const [withMetadata, setWithMetadata] = useState(false);
-
-  useEffect(() => {
-    const init = async () => {
-      const withMetadata = await getCurrentSpaceFeature(PC_CONTENT_TAGS, false);
-      setWithMetadata(withMetadata);
-    };
-    init();
-  }, []);
+  const { tagsEnabled: withMetadata } = useTagsFeatureEnabled();
 
   if (withMetadata) {
     return (

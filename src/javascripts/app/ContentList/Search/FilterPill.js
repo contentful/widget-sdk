@@ -95,6 +95,7 @@ function FilterValue({ valueInput, value, isFocused, onChange, onRemove, setIsRe
           setIsRemovable={setIsRemovable}
           onChange={onChange}
           onKeyDown={handleKeyDown}
+          isFocused={isFocused}
         />
       );
     },

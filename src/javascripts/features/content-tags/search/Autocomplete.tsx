@@ -220,6 +220,7 @@ export const Autocomplete = <T extends {}>({
           value={toggleProps.query}
           onChange={(e) => toggleProps.onChange(e.target.value)}
           onFocus={toggleProps.onFocus}
+          onBlur={() => inputRef.current?.focus()} // HACK keep focus to keep element on top of others
           onKeyDown={toggleProps.onKeyDown}
           disabled={toggleProps.disabled}
           placeholder={toggleProps.placeholder}

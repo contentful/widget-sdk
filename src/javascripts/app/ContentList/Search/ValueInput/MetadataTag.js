@@ -26,6 +26,7 @@ class MetadataTag extends React.Component {
     setIsRemovable: PropTypes.func,
     tags: PropTypes.array,
     selectedTags: PropTypes.array,
+    isFocused: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -44,7 +45,7 @@ class MetadataTag extends React.Component {
   };
 
   render() {
-    const { tags, onSearch, setIsRemovable, operator } = this.props;
+    const { tags, onSearch, setIsRemovable, operator, isFocused } = this.props;
     if (operator === Operator.EXISTS || operator === Operator.NOT_EXISTS) {
       return (
         <fieldset
@@ -63,6 +64,7 @@ class MetadataTag extends React.Component {
           setIsRemovable={setIsRemovable}
           selectedTags={this.state.selectedTags}
           maxHeight={280}
+          isFocused={isFocused}
           styles={{
             TagSummary: css({ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }),
             Autocomplete: css({
