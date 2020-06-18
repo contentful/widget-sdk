@@ -34,10 +34,12 @@ const styles = {
   }),
 };
 
-function PersistentNotification(props) {
+export function NotificationBar(props) {
   if (!props.contents) return null;
 
   const { contents, linkUrl, linkText, actionMessage, onClickAction } = props;
+  const shouldShowLink = linkText && linkUrl;
+  const shouldShowActionButton = actionMessage && onClickAction;
 
   return (
     <div className={styles.notification} data-test-id="persistent-notification">
@@ -46,7 +48,7 @@ function PersistentNotification(props) {
         data-test-id="persistent-notification-message"
         dangerouslySetInnerHTML={{ __html: contents }}
       />
-      {linkText && linkUrl && (
+      {shouldShowLink && (
         <TextLink
           href={linkUrl}
           className={styles.link}
@@ -54,7 +56,7 @@ function PersistentNotification(props) {
           {linkText}
         </TextLink>
       )}
-      {actionMessage && (
+      {shouldShowActionButton && (
         <Button
           className={styles.button}
           buttonType="primary"
@@ -67,12 +69,10 @@ function PersistentNotification(props) {
   );
 }
 
-PersistentNotification.propTypes = {
+NotificationBar.propTypes = {
   contents: PropTypes.oneOfType([PropTypes.string, PropTypes.node, PropTypes.element]),
   linkText: PropTypes.string,
   linkUrl: PropTypes.string,
   actionMessage: PropTypes.string,
   onClickAction: PropTypes.func,
 };
-
-export default PersistentNotification;

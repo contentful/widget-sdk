@@ -1,5 +1,6 @@
 import { getModule } from 'core/NgRegistry';
 import { initActivationEmailResend } from './activationEmailResendController';
+import { hidePersistentNotification } from 'components/shared/persistent-notification/service';
 
 /**
  * Takes care of initialization of modal dialog related global, lifelong services.
@@ -17,7 +18,7 @@ export function initDialogsController() {
     (spaceId) => {
       if (spaceId) {
         // Reset notification related to the previous space.
-        $rootScope.$broadcast('persistentNotification', null);
+        hidePersistentNotification();
       }
     }
   );

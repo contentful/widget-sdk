@@ -3,13 +3,13 @@ import * as K from 'core/utils/kefir';
 import * as policyChecker from './PolicyChecker';
 import * as cache from './ResponseCache';
 import { create as createGKPermissionChecker } from './GKPermissionChecker';
-import broadcastEnforcement from './utils/broadcastEnforcement';
 import resetEnforcements from './utils/resetEnforcements';
 import { toType, getContentTypeIdFor, isAuthor, shouldPerformNewUsageCheck } from './Utils';
 import { capitalize, capitalizeFirst } from 'utils/StringUtils';
 import { chain, get, set, some, forEach, values, find, isArray } from 'lodash';
 import * as Enforcements from 'access_control/Enforcements';
 import * as logger from 'services/logger';
+import { showPersistentNotification } from 'components/shared/persistent-notification/service';
 
 export { wasForbidden } from './Utils';
 
@@ -224,8 +224,8 @@ function setContext(context) {
   resetEnforcements();
 
   if (denied.length) {
-    // show the yellow notification bar if space has reached a limit
-    denied.forEach((value) => broadcastEnforcement(value.enforcement));
+    // show the blue notification bar if space has reached a limit
+    denied.forEach((value) => showPersistentNotification(value.enforcement));
   }
 
   // Access checker is initialized when at least an auth context is set.
@@ -414,7 +414,7 @@ export function canCreateSpace() {
 
   const response = checkIfCanCreateSpace(authContext);
   if (!response) {
-    broadcastEnforcement(getEnforcement(Action.CREATE, 'Space'));
+    showPersistentNotification(getEnforcement(Action.CREATE, 'Space'));
   }
 
   return response;
