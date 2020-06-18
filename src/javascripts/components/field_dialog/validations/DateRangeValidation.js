@@ -24,9 +24,9 @@ const ValidationRow = ({ date: fullDate, onDateUpdate, checkboxLabel, id }) => {
   useEffect(() => {
     if (moment(date).isValid()) {
       let updatedDate;
-      updatedDate = moment.parseZone(date).format('YYYY-MM-DDT');
+      updatedDate = moment.parseZone(date).format('YYYY-MM-DD');
       if (time) {
-        updatedDate = updatedDate + '00' + timeZone;
+        updatedDate = updatedDate + 'T' + time + timeZone;
       }
       onDateUpdate(updatedDate);
     }
