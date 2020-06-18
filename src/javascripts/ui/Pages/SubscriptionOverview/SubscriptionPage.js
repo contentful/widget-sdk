@@ -13,13 +13,14 @@ import {
   TextLink,
   SkeletonBodyText,
   SkeletonContainer,
+  SkeletonDisplayText,
 } from '@contentful/forma-36-react-components';
 import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 
 import StateLink from 'app/common/StateLink';
 import { billing } from './links';
-import Icon from 'ui/Components/Icon';
+import { go } from 'states/Navigator';
 
 import { track } from 'analytics/Analytics';
 import { showDialog as showCreateSpaceModal } from 'services/CreateSpace';
@@ -99,84 +100,25 @@ const styles = {
   }),
 };
 
-const hasAnyInaccessibleSpaces = (plans) => {
-  return plans.some((plan) => {
-    const space = plan.space;
-    return space && !space.isAccessible;
-  });
-};
-function PayingOnDemandOrgCopy({ grandTotal }) {
-  return (
-    <Typography>
-      <Heading className="section-title">Monthly total</Heading>
-      <DisplayText
-        element="h2"
-        data-test-id="subscription-page.sidebar.grand-total"
-        className={styles.grandTotal}>
-        <Price value={grandTotal} />
-      </DisplayText>
-      <Note>
-        The amount on your invoice might differ from the amount shown above because of usage
-        overages or changes you make to the subscription during a billing cycle.
-      </Note>
-    </Typography>
-  );
-}
-
-PayingOnDemandOrgCopy.propTypes = {
-  grandTotal: PropTypes.number.isRequired,
+const goToBillingPage = (organizationId) => {
+  go(billing(organizationId));
 };
 
-function NonPayingOrgCopy({ organizationId }) {
-  return (
-    <Typography>
-      <Heading className="section-title">Your payment details</Heading>
-      <Paragraph>
-        You need to provide us with your billing address and credit card details before creating
-        paid spaces or adding users beyond the free limit.
-      </Paragraph>
-      <Icon name="invoice" className={styles.icon} />
-      <StateLink
-        component={TextLink}
-        testId="subscription-page.sidebar.add-payment-link"
-        {...billing(organizationId)}>
-        Enter payment details
-      </StateLink>
-    </Typography>
-  );
-}
+export default function SubscriptionPage(props) {
+  const {
+    basePlan,
+    usersMeta,
+    organization,
+    grandTotal,
+    showMicroSmallSupportCard,
+    organizationId,
+    initialLoad,
+    spacePlans,
+    onSpacePlansChange,
+  } = props;
 
-NonPayingOrgCopy.propTypes = {
-  organizationId: PropTypes.string.isRequired,
-};
-
-function InaccessibleSpacesCopy({ isOrgOwner, organizationId: orgId }) {
-  return (
-    <Typography>
-      <Heading className="section-title">Spaces without permission</Heading>
-      <Paragraph>
-        You can’t see usage or content for some of your spaces because you’re not a member of those
-        spaces.
-      </Paragraph>
-      <Paragraph>
-        However, since you’re an organization {isOrgOwner ? 'owner' : 'admin'} you can grant
-        yourself access by going to{' '}
-        <StateLink path="account.organizations.users.list" params={{ orgId }}>
-          Users
-        </StateLink>{' '}
-        and adding yourself to the space.
-      </Paragraph>
-    </Typography>
-  );
-}
-
-InaccessibleSpacesCopy.propTypes = {
-  organizationId: PropTypes.string.isRequired,
-  isOrgOwner: PropTypes.bool,
-};
-
-export default function SubscriptionPage({ initialLoad, organizationId, data }) {
   const [changedSpaceId, setChangedSpaceId] = useState('');
+<<<<<<< HEAD
   const [spacePlans, setSpacePlans] = useState([]);
   const [isNewsSliderEnabled, setIsNewsSliderEnabled] = useState(false);
   const [sliderVisible, setSliderVisible] = useState(true);
@@ -188,6 +130,8 @@ export default function SubscriptionPage({ initialLoad, organizationId, data }) 
     }
     getFeatureFlagVariation();
   }, [isNewsSliderEnabled]);
+=======
+>>>>>>> Add initial testing and minor code refactor
 
   useEffect(() => {
     let timer;
@@ -200,10 +144,6 @@ export default function SubscriptionPage({ initialLoad, organizationId, data }) 
 
     return () => clearTimeout(timer);
   }, [changedSpaceId]);
-
-  useEffect(() => {
-    setSpacePlans(data.spacePlans || []);
-  }, [data.spacePlans]);
 
   const createSpace = () => {
     showCreateSpaceModal(organizationId);
@@ -224,7 +164,7 @@ export default function SubscriptionPage({ initialLoad, organizationId, data }) 
             return plan.space && plan.space.sys.id !== space.sys.id;
           });
 
-          setSpacePlans(newSpacePlans);
+          onSpacePlansChange(newSpacePlans);
         },
       });
     };
@@ -261,7 +201,7 @@ export default function SubscriptionPage({ initialLoad, organizationId, data }) 
 
           const newSpacePlan = spacePlans.find((sp) => sp.space.sys.id === space.sys.id);
 
-          setSpacePlans(newSpacePlans);
+          onSpacePlansChange(newSpacePlans);
           setChangedSpaceId(space.sys.id);
 
           Notification.success(getNotificationMessage(space, currentSpacePlan, newSpacePlan));
@@ -270,15 +210,13 @@ export default function SubscriptionPage({ initialLoad, organizationId, data }) 
     };
   };
 
-  const { basePlan, usersMeta, organization, grandTotal, showMicroSmallSupportCard } = data;
-
   const enterprisePlan = basePlan && isEnterprisePlan(basePlan);
   const isOrgBillable = organization && organization.isBillable;
   const isOrgOwner = isOwner(organization);
 
   const showPayingOnDemandCopy = isOrgBillable && !enterprisePlan;
   const showAddBillingDetailsCopy = !isOrgBillable && isOrgOwner;
-  const showInaccessibleSpacesCopy = hasAnyInaccessibleSpaces(spacePlans);
+  const showInaccessibleSpacesCopy = spacePlans && hasAnyInaccessibleSpaces(spacePlans);
 
   const rightColumnHasContent =
     showPayingOnDemandCopy || showAddBillingDetailsCopy || showInaccessibleSpacesCopy;
@@ -301,8 +239,18 @@ export default function SubscriptionPage({ initialLoad, organizationId, data }) 
             )}
           </div>
           <div className={styles.leftSection}>
-            {/* HERE */}
-            <BasePlan basePlan={basePlan} organizationId={organizationId} />
+            {initialLoad ? (
+              <>
+                <SkeletonContainer svgHeight={30}>
+                  <SkeletonDisplayText className="section-title" />
+                </SkeletonContainer>
+                <SkeletonContainer svgHeight={90}>
+                  <SkeletonBodyText numberOfLines={4} />
+                </SkeletonContainer>
+              </>
+            ) : (
+              <BasePlan basePlan={basePlan} organizationId={organizationId} />
+            )}
             {rightColumnHasContent && (
               <UsersForPlan
                 organizationId={organizationId}
@@ -313,19 +261,31 @@ export default function SubscriptionPage({ initialLoad, organizationId, data }) 
             )}
           </div>
           <div className={styles.rightSection}>
-            {/* HERE */}
-            {!rightColumnHasContent && (
-              <UsersForPlan
-                organizationId={organizationId}
-                numberFreeUsers={usersMeta && usersMeta.numFree}
-                numberPaidUsers={usersMeta && usersMeta.numPaid}
-                costOfUsers={usersMeta && usersMeta.cost}
-              />
-            )}
-            {showPayingOnDemandCopy && <PayingOnDemandOrgCopy grandTotal={grandTotal} />}
-            {showAddBillingDetailsCopy && <NonPayingOrgCopy organizationId={organizationId} />}
-            {showInaccessibleSpacesCopy && (
-              <InaccessibleSpacesCopy organizationId={organizationId} isOrgOwner={isOrgOwner} />
+            {initialLoad ? (
+              <>
+                <SkeletonContainer svgHeight={30}>
+                  <SkeletonDisplayText className="section-title" />
+                </SkeletonContainer>
+                <SkeletonContainer svgHeight={90}>
+                  <SkeletonBodyText numberOfLines={4} />
+                </SkeletonContainer>
+              </>
+            ) : (
+              <>
+                {!rightColumnHasContent && (
+                  <UsersForPlan
+                    organizationId={organizationId}
+                    numberFreeUsers={usersMeta && usersMeta.numFree}
+                    numberPaidUsers={usersMeta && usersMeta.numPaid}
+                    costOfUsers={usersMeta && usersMeta.cost}
+                  />
+                )}
+                {showPayingOnDemandCopy && <PayingOnDemandOrgCopy grandTotal={grandTotal} />}
+                {showAddBillingDetailsCopy && <NonPayingOrgCopy organizationId={organizationId} />}
+                {showInaccessibleSpacesCopy && (
+                  <InaccessibleSpacesCopy organizationId={organizationId} isOrgOwner={isOrgOwner} />
+                )}
+              </>
             )}
           </div>
           <div className={cx(styles.spacesSection, styles.marginTop)}>
@@ -362,19 +322,90 @@ export default function SubscriptionPage({ initialLoad, organizationId, data }) 
 }
 
 SubscriptionPage.propTypes = {
-  initialLoad: PropTypes.bool,
+  initialLoad: PropTypes.bool.isRequired,
   organizationId: PropTypes.string.isRequired,
-  data: PropTypes.shape({
-    basePlan: PropTypes.object,
-    spacePlans: PropTypes.array,
-    grandTotal: PropTypes.number,
-    usersMeta: PropTypes.object,
-    organization: PropTypes.object,
-    productRatePlans: PropTypes.array,
-    showMicroSmallSupportCard: PropTypes.bool,
-  }).isRequired,
+  basePlan: PropTypes.object,
+  spacePlans: PropTypes.array,
+  grandTotal: PropTypes.number,
+  usersMeta: PropTypes.object,
+  organization: PropTypes.object,
+  showMicroSmallSupportCard: PropTypes.bool,
+  onSpacePlansChange: PropTypes.func,
 };
 
 SubscriptionPage.defaultProps = {
   initialLoad: true,
+};
+
+function hasAnyInaccessibleSpaces(plans) {
+  return plans.some((plan) => {
+    const space = plan.space;
+    return space && !space.isAccessible;
+  });
+}
+
+function PayingOnDemandOrgCopy({ grandTotal }) {
+  return (
+    <Typography>
+      <Heading className="section-title">Monthly total</Heading>
+      <DisplayText
+        element="h2"
+        data-test-id="subscription-page.sidebar.grand-total"
+        className={styles.grandTotal}>
+        <Price value={grandTotal} />
+      </DisplayText>
+      <Note>
+        The amount on your invoice might differ from the amount shown above because of usage
+        overages or changes you make to the subscription during a billing cycle.
+      </Note>
+    </Typography>
+  );
+}
+
+PayingOnDemandOrgCopy.propTypes = {
+  grandTotal: PropTypes.number.isRequired,
+};
+
+function NonPayingOrgCopy({ organizationId }) {
+  return (
+    <Typography>
+      <Heading className="section-title">Your payment details</Heading>
+      <Paragraph>
+        You need to provide us with your billing address and credit card details before creating
+        paid spaces or adding users beyond the free limit.
+      </Paragraph>
+      <TextLink icon="Receipt" onClick={() => goToBillingPage(organizationId)}>
+        Enter payment details
+      </TextLink>
+    </Typography>
+  );
+}
+
+NonPayingOrgCopy.propTypes = {
+  organizationId: PropTypes.string.isRequired,
+};
+
+function InaccessibleSpacesCopy({ isOrgOwner, organizationId: orgId }) {
+  return (
+    <Typography>
+      <Heading className="section-title">Spaces without permission</Heading>
+      <Paragraph>
+        You can’t see usage or content for some of your spaces because you’re not a member of those
+        spaces.
+      </Paragraph>
+      <Paragraph>
+        However, since you’re an organization {isOrgOwner ? 'owner' : 'admin'} you can grant
+        yourself access by going to{' '}
+        <StateLink path="account.organizations.users.list" params={{ orgId }}>
+          Users
+        </StateLink>{' '}
+        and adding yourself to the space.
+      </Paragraph>
+    </Typography>
+  );
+}
+
+InaccessibleSpacesCopy.propTypes = {
+  organizationId: PropTypes.string.isRequired,
+  isOrgOwner: PropTypes.bool,
 };

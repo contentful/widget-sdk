@@ -1,14 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {
-  Paragraph,
-  TextLink,
-  Heading,
-  SkeletonContainer,
-  SkeletonDisplayText,
-  SkeletonBodyText,
-} from '@contentful/forma-36-react-components';
+import { Paragraph, TextLink, Heading } from '@contentful/forma-36-react-components';
 
 import { memberships as orgMemberships } from './links';
 import { Pluralized } from 'core/components/formatting';
@@ -18,44 +11,33 @@ function UsersForPlan({ organizationId, numberFreeUsers, numberPaidUsers, costOf
   const totalOfUsers = numberFreeUsers + numberPaidUsers;
 
   return (
-    <div>
-      {totalOfUsers === 0 ? (
-        <>
-          <SkeletonContainer svgHeight={30}>
-            <SkeletonDisplayText className="section-title" />
-          </SkeletonContainer>
-          <SkeletonContainer svgHeight={90}>
-            <SkeletonBodyText numberOfLines={4} />
-          </SkeletonContainer>
-        </>
-      ) : (
-        <>
-          <Heading className="section-title">Users</Heading>
-          <Paragraph>
-            Your organization has{' '}
-            <b>
-              <Pluralized text="user" count={totalOfUsers} />
-            </b>
-            .{' '}
-            {numberPaidUsers > 0 && (
-              <>
-                <br />
-                You are exceeding the limit of{' '}
-                <Pluralized text="free user" count={numberFreeUsers} /> by{' '}
-                <Pluralized text="user" count={numberPaidUsers} />.
-                <br />
-                That is <strong>${costOfUsers}</strong> per month.{' '}
-              </>
-            )}
-            <StateLink
-              {...orgMemberships(organizationId)}
-              component={TextLink}
-              testId="subscription-page.org-memberships-link">
-              Manage users
-            </StateLink>
-          </Paragraph>
-        </>
-      )}
+    <div data-test-id="users-for-plan">
+      <Heading className="section-title">Users</Heading>
+      <Paragraph>
+        Your organization has{' '}
+        <b>
+          <Pluralized text="user" count={totalOfUsers} />
+        </b>
+        .{' '}
+        {numberPaidUsers > 0 && (
+          <>
+            <br />
+            You are exceeding the limit of <Pluralized
+              text="free user"
+              count={numberFreeUsers}
+            />{' '}
+            by <Pluralized text="user" count={numberPaidUsers} />.
+            <br />
+            That is <strong>${costOfUsers}</strong> per month.{' '}
+          </>
+        )}
+        <StateLink
+          {...orgMemberships(organizationId)}
+          component={TextLink}
+          testId="subscription-page.org-memberships-link">
+          Manage users
+        </StateLink>
+      </Paragraph>
     </div>
   );
 }
