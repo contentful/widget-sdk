@@ -77,21 +77,21 @@ const ReleaseDisplayField = ({ entity, field, defaultLocale, validationError }) 
       const contentTypeData = EntityFieldValueSpaceContext.getContentTypeById(
         entity.sys.contentType.sys.id
       );
-      const contentType = contentTypeData && (
+      const contentType = contentTypeData ? (
         <span className={styles.textOverflow}>{contentTypeData.getName()}</span>
-      );
+      ) : null;
       return contentType;
     }
     case 'added': {
-      const createdAt = entity.sys.createdAt && (
+      const createdAt = entity.sys.createdAt ? (
         <RelativeDateFieldValue value={entity.sys.createdAt} />
-      );
+      ) : null;
       return createdAt;
     }
     case 'updated': {
-      const updatedAt = entity.sys.updatedAt && (
+      const updatedAt = entity.sys.updatedAt ? (
         <RelativeDateFieldValue value={entity.sys.updatedAt} />
-      );
+      ) : null;
       return updatedAt;
     }
     case 'status': {

@@ -21,11 +21,11 @@ const styles = {
   }),
 };
 
-const ReleasesEmptyStateMessage = ({ title, text, ...otherProps }) => {
+const ReleasesEmptyStateMessage = ({ testId, title, text, ...otherProps }) => {
   return (
     <div className={styles.container} {...otherProps}>
       <MediaEmptyStateIllustration className={styles.illustration} />
-      <Heading className={styles.heading} testId="releases-state-message-heading">
+      <Heading className={styles.heading} testId={`releases-state-message-heading_${testId}`}>
         {title}
       </Heading>
       <Paragraph>{text}</Paragraph>
@@ -36,6 +36,7 @@ const ReleasesEmptyStateMessage = ({ title, text, ...otherProps }) => {
 ReleasesEmptyStateMessage.propTypes = {
   title: PropTypes.string,
   text: PropTypes.string,
+  testId: PropTypes.string,
 };
 
 export default ReleasesEmptyStateMessage;

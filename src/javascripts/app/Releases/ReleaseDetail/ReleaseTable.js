@@ -90,7 +90,7 @@ CheckboxCell.propTypes = {
   onClick: PropTypes.func.isRequired,
 };
 
-const DropdownCell = ({ handleEntityDelete, entity }) => {
+const DropdownCell = ({ id, handleEntityDelete, entity }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   return (
@@ -102,7 +102,7 @@ const DropdownCell = ({ handleEntityDelete, entity }) => {
       toggleElement={
         <Button
           buttonType="naked"
-          data-test-id="remove-release-ddl"
+          data-test-id={`${id}_remove-release-ddl`}
           icon="MoreHorizontal"
           className={styles.dropdownButton}
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -110,6 +110,7 @@ const DropdownCell = ({ handleEntityDelete, entity }) => {
       }>
       <DropdownList>
         <DropdownListItem
+          testId="delete-entity"
           onClick={() => {
             handleEntityDelete(entity);
             setIsDropdownOpen(false);
@@ -122,6 +123,7 @@ const DropdownCell = ({ handleEntityDelete, entity }) => {
 };
 
 DropdownCell.propTypes = {
+  id: PropTypes.string.isRequired,
   entity: PropTypes.object.isRequired,
   handleEntityDelete: PropTypes.func.isRequired,
 };
@@ -228,7 +230,11 @@ const ReleaseTable = ({
                         );
                       })}
                       <TableCell className={styles.tableCell} testId="action">
-                        <DropdownCell handleEntityDelete={handleEntityDelete} entity={entity} />
+                        <DropdownCell
+                          id={`${entityType}_${index}`}
+                          handleEntityDelete={handleEntityDelete}
+                          entity={entity}
+                        />
                       </TableCell>
                     </TableRow>
                   );

@@ -31,6 +31,23 @@ function queryAllAssetsInTheDefaultSpaceRequest(query: Query): RequestOptions {
   };
 }
 
+export const queryForDefaultAssets = {
+  willFindOne() {
+    cy.addInteraction({
+      provider: 'releases',
+      state: States.SEVERAL,
+      uponReceiving: `a request of entry "${defaultAssetId}" in space "${defaultSpaceId}"`,
+      withRequest: queryAllAssetsInTheDefaultSpaceRequest({ 'sys.id[in]': defaultAssetId }),
+      willRespondWith: {
+        status: 200,
+        body: severalAssetsBody,
+      },
+    }).as('queryForAssets');
+
+    return '@queryForAssets';
+  },
+};
+
 export const queryAllNonArchivedAssetsInTheDefaultSpace = {
   willFindNone() {
     cy.addInteraction({

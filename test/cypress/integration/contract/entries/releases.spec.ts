@@ -1,8 +1,18 @@
-import { getReleasesList, deleteRelease, createEmptyRelease } from '../../../interactions/releases';
+import {
+  getReleasesList,
+  deleteRelease,
+  getReleaseEntities,
+  deleteEntityFromRelease,
+  createEmptyRelease,
+} from '../../../interactions/releases';
+import { queryForDefaultEntryWithoutEnvironment } from '../../../interactions/entries';
+import { queryForDefaultAssets, severalAssetsBody } from '../../../interactions/assets';
 import { defaultRequestsMock } from '../../../util/factories';
 import { defaultSpaceId, defaultReleaseId } from '../../../util/requests';
 import { FeatureFlag } from '../../../util/featureFlag';
 import { severalReleases } from '../../../fixtures/responses/releases';
+
+const severalEntriesResponse = require('../../../fixtures/responses/entries-several.json');
 
 describe('Releases', () => {
   let interactions: string[];
@@ -29,7 +39,7 @@ describe('Releases', () => {
       it('opens releases page successfully', () => {
         cy.wait(getReleasesInteraction);
 
-        cy.findByTestId('releases-state-message-heading')
+        cy.findByTestId('releases-state-message-heading_releases')
           .should('be.visible')
           .should('contain', 'No upcoming releases at the moment');
       });
@@ -102,6 +112,69 @@ describe('Releases', () => {
       });
     });
   });
+
+  describe('Release Detail Page', () => {
+    afterEach(() => {
+      cy.resetAllFakeServers();
+    });
+
+    context('no entities in the release', () => {
+      beforeEach(() => {
+        getReleasesInteraction = getReleaseEntities.willReturnNone();
+        cy.visit(`/spaces/${defaultSpaceId}/releases/${defaultReleaseId}`);
+        cy.wait(interactions, { timeout: 20000 });
+      });
+
+      it('shows no entries message for empty release', () => {
+        cy.wait(getReleasesInteraction);
+        cy.findByTestId('releases-state-message-heading_entries')
+          .should('be.visible')
+          .should('contain', 'No entries in this release');
+      });
+    });
+
+    context('several entities in the release', () => {
+      beforeEach(() => {
+        getReleasesInteraction = getReleaseEntities.willReturnSeveral();
+        interactions.push(getReleasesInteraction);
+        const slowInteractions = [
+          queryForDefaultEntryWithoutEnvironment.willFindIt(),
+          queryForDefaultAssets.willFindOne(),
+        ];
+
+        cy.visit(`/spaces/${defaultSpaceId}/releases/${defaultReleaseId}`);
+        cy.wait(interactions, { timeout: 20000 });
+        cy.wait(slowInteractions, { timeout: 20000 });
+      });
+
+      it('shows list of entries on detailed release page', () => {
+        cy.findAllByTestId('entry-row')
+          .should('be.visible')
+          .should('have.length', severalEntriesResponse.items.length);
+      });
+
+      it('shows list of assets on detailed release page', () => {
+        cy.findAllByTestId('test-id-assets').click();
+        cy.findAllByTestId('asset-row')
+          .should('be.visible')
+          .should('have.length', severalAssetsBody.items.length);
+      });
+
+      it('removes entity successfully', () => {
+        const deleteEntityInteraction = deleteEntityFromRelease.willSucceed();
+
+        cy.findByTestId('entry_2_remove-release-ddl').click();
+        cy.findByTestId('delete-entity').click();
+
+        cy.wait(deleteEntityInteraction);
+
+        cy.findAllByTestId('cf-ui-notification').should(
+          'contain',
+          'Entity was sucessfully deleted'
+        );
+      });
+    });
+  });
 });
 
 function basicServerSetUp(): string[] {
@@ -109,7 +182,7 @@ function basicServerSetUp(): string[] {
 
   cy.startFakeServers({
     consumer: 'user_interface',
-    providers: ['users', 'releases'],
+    providers: ['users', 'releases', 'entries'],
     cors: true,
     pactfileWriteMode: 'merge',
     dir: Cypress.env('pactDir'),

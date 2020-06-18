@@ -213,7 +213,7 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
       ),
       render: () =>
         !isLoading && !entries.length ? (
-          <ReleasesEmptyStateMessage title="No entries in this release" />
+          <ReleasesEmptyStateMessage testId="entries" title="No entries in this release" />
         ) : (
           <ReleaseTable
             displayedFields={displayedFields.entries}
@@ -234,7 +234,7 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
       ),
       render: () =>
         !isLoading && !assets.length ? (
-          <ReleasesEmptyStateMessage title="No assets in this release" />
+          <ReleasesEmptyStateMessage testId="assets" title="No assets in this release" />
         ) : (
           <ReleaseTable
             displayedFields={displayedFields.assets}

@@ -176,7 +176,7 @@ class ReleasesListPage extends Component {
     }
 
     const { title, text } = TabsData[activeTab].emptyStateMessage;
-    return <ReleasesEmptyStateMessage title={title} text={text} />;
+    return <ReleasesEmptyStateMessage testId="releases" title={title} text={text} />;
   }
 
   render() {

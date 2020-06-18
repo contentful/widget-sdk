@@ -40,6 +40,32 @@ export const emptyReleaseResponse = () => ({
   },
 });
 
+export const severalEntitiesReleaseResponse = () => ({
+  title: 'Twentieth Release',
+  entities: {
+    sys: { type: 'Array' },
+    items: [
+      { sys: { id: defaultEntryId, linkType: 'Entry', type: 'Link' } },
+      { sys: { id: defaultAssetId, linkType: 'Asset', type: 'Link' } },
+    ],
+  },
+  sys: {
+    createdAt: Matchers.iso8601DateTimeWithMillis('2020-05-02T14:00:00.000Z'),
+    createdBy: { sys: { id: defaultUserId, type: 'Link', linkType: 'User' } },
+    space: { sys: { id: defaultSpaceId, type: 'Link', linkType: 'Space' } },
+    environment: {
+      sys: {
+        id: defaultEnvironmentId,
+        type: 'Link',
+        linkType: 'Environment',
+      },
+    },
+    id: defaultReleaseId,
+    type: 'Release',
+    updatedAt: Matchers.iso8601DateTimeWithMillis('2019-09-02T14:00:00.000Z'),
+  },
+});
+
 export const severalReleases = () => ({
   sys: {
     type: 'Array',
@@ -131,4 +157,26 @@ export const severalReleases = () => ({
   ],
   limit: 100,
   pages: {},
+});
+
+export const deleteEntityBodyResponse = () => ({
+  title: 'Twentieth Release',
+  entities: {
+    items: [{ sys: { id: defaultAssetId, linkType: 'Asset', type: 'Link' } }],
+  },
+  sys: {
+    createdAt: Matchers.iso8601DateTimeWithMillis('2020-05-02T14:00:00.000Z'),
+    createdBy: { sys: { id: defaultUserId, type: 'Link', linkType: 'User' } },
+    space: { sys: { id: defaultSpaceId, type: 'Link', linkType: 'Space' } },
+    environment: {
+      sys: {
+        id: defaultEnvironmentId,
+        type: 'Link',
+        linkType: 'Environment',
+      },
+    },
+    id: defaultReleaseId,
+    type: 'Release',
+    updatedAt: Matchers.iso8601DateTimeWithMillis('2019-09-02T14:00:00.000Z'),
+  },
 });
