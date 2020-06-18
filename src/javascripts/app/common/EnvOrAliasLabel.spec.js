@@ -50,7 +50,7 @@ describe('EnvOrAliasLabel', () => {
     it('displays the selected not-master with colorized font', () => {
       const { getByTestId } = build({ colorizeFont: true, isMaster: false });
       const wrapper = getByTestId('envoralias.wrapper-active');
-      expect(getAttribute(wrapper, 'color')).toBe('rgb(252, 193, 105)');
+      expect(getAttribute(wrapper, 'color')).toBe('rgb(255, 215, 162)');
     });
 
     it('displays the correct italic font', () => {
