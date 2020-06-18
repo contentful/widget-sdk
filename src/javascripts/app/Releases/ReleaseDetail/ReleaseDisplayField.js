@@ -1,18 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
+import { Tooltip, Icon } from '@contentful/forma-36-react-components';
 import { stateName, getState } from 'data/CMA/EntityState';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 import RelativeDateTime from 'components/shared/RelativeDateTime';
 import { EntityStatusTag } from 'components/shared/EntityStatusTag';
 import Thumbnail from 'components/Thumbnail/Thumbnail';
 import { newForLocale } from 'app/entity_editor/entityHelpers';
+import tokens from '@contentful/forma-36-tokens';
 
 const styles = {
   textOverflow: css({
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
+  }),
+  nameWrapper: css({
+    display: 'flex',
+  }),
+  validationTooltip: css({
+    display: 'flex',
+    marginRight: tokens.spacingXs,
   }),
 };
 
@@ -28,7 +37,7 @@ RelativeDateFieldValue.propTypes = {
   value: PropTypes.string.isRequired,
 };
 
-const ReleaseDisplayField = ({ entity, field, defaultLocale }) => {
+const ReleaseDisplayField = ({ entity, field, defaultLocale, validationError }) => {
   const [fetchedEntityTitle, setFetchedEntityTitle] = useState('Untitled');
   const [fetchedEntityFile, setFetchedEntityFile] = useState({});
 
@@ -48,8 +57,20 @@ const ReleaseDisplayField = ({ entity, field, defaultLocale }) => {
   }, [entity, defaultLocale]);
 
   switch (field) {
-    case 'name':
-      return <span>{fetchedEntityTitle || 'Untitled'}</span>;
+    case 'name': {
+      return (
+        <div className={styles.nameWrapper}>
+          {validationError && (
+            <span data-test-id="validation-error">
+              <Tooltip content={validationError} targetWrapperClassName={styles.validationTooltip}>
+                <Icon icon="ErrorCircle" color="negative" />
+              </Tooltip>
+            </span>
+          )}
+          <span>{fetchedEntityTitle || 'Untitled'}</span>
+        </div>
+      );
+    }
     case 'preview':
       return <Thumbnail file={fetchedEntityFile} size="30" fit="thumb" focus="faces" />;
     case 'contentType': {
@@ -86,6 +107,7 @@ ReleaseDisplayField.propTypes = {
   entity: PropTypes.object.isRequired,
   field: PropTypes.string.isRequired,
   defaultLocale: PropTypes.object.isRequired,
+  validationError: PropTypes.string,
 };
 
 export default ReleaseDisplayField;

@@ -8,17 +8,28 @@ import {
   TabPanel,
   Workbench,
   Icon,
-  Card,
-  Tag,
   Note,
-  IconButton,
+  Button,
   Notification,
+  Tooltip,
 } from '@contentful/forma-36-react-components';
-import RelativeDateTime from 'components/shared/RelativeDateTime';
 import ReleaseTable from './ReleaseTable';
-import { getReleaseById, replaceReleaseById } from '../releasesService';
+import {
+  getReleaseById,
+  replaceReleaseById,
+  publishRelease,
+  validateReleaseAction,
+} from '../releasesService';
 import ReleasesEmptyStateMessage from '../ReleasesPage/ReleasesEmptyStateMessage';
-import { getEntities, displayedFields } from './utils';
+import {
+  getEntities,
+  displayedFields,
+  waitForReleaseAction,
+  pluralize,
+  erroredEntityType,
+  switchToErroredTab,
+} from './utils';
+import LoadingOverlay from 'app/common/LoadingOverlay';
 
 const styles = {
   mainContent: css({
@@ -60,7 +71,7 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
   }),
-  cardIntro: css({
+  buttons: css({
     marginTop: tokens.spacingM,
     marginBottom: tokens.spacingM,
   }),
@@ -71,6 +82,9 @@ const styles = {
     margin: 'auto',
     marginTop: tokens.spacing4Xl,
   }),
+  validationTooltip: css({
+    display: 'flex',
+  }),
 };
 
 const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
@@ -80,7 +94,9 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
   const [release, setRelease] = useState(null);
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [entityDeleteKey, setEntityDeleteKey] = useState(null);
+  const [entityRefreshKey, setEntityRefreshKey] = useState(null);
+  const [processingAction, setProcessingAction] = useState(null);
+  const [validationErrors, setValidationErrors] = useState([]);
 
   useEffect(() => {
     async function fetchRelease() {
@@ -105,7 +121,7 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
     }
 
     fetchEntriesAndAssets();
-  }, [releaseId, entityDeleteKey]);
+  }, [releaseId, entityRefreshKey]);
 
   const handleEntityDelete = (entity) => {
     const releaseWithoutEntity = release.entities.items.filter(
@@ -114,7 +130,7 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
 
     replaceReleaseById(releaseId, release.title, releaseWithoutEntity)
       .then(() => {
-        setEntityDeleteKey(entity.sys.id);
+        setEntityRefreshKey(entity.sys.id);
         Notification.success('Entity was sucessfully deleted');
       })
       .catch(() => {
@@ -122,11 +138,64 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
       });
   };
 
+  const handleValidation = (action) => {
+    setProcessingAction('Validating');
+    return validateReleaseAction(releaseId, action);
+  };
+
+  const publish = async () => {
+    setProcessingAction('Publishing');
+    try {
+      const publishResponse = await publishRelease(releaseId, release.sys.version);
+      const releaseAction = await waitForReleaseAction(releaseId, publishResponse.sys.id);
+
+      setProcessingAction(null);
+      Notification.success('Release was published successfully');
+      setEntityRefreshKey(publishResponse.sys.id);
+      return releaseAction;
+    } catch {
+      setProcessingAction(null);
+      Notification.error('Failed publishing Release');
+    }
+  };
+
+  const handlePublication = () => {
+    handleValidation('publish').then((response) => {
+      if (response.errored.length) {
+        setProcessingAction(null);
+        setValidationErrors(response.errored);
+        setSelectedTab(switchToErroredTab(response.errored, selectedTab));
+        Notification.error('Some entities did not pass validation');
+      } else {
+        publish();
+      }
+    });
+  };
+
+  const renderTabIcon = (entityType) => {
+    const erroredEntityTypeLength = erroredEntityType(entityType, validationErrors).length;
+    if (erroredEntityTypeLength) {
+      const toolTipText = `${erroredEntityTypeLength} ${pluralize(
+        erroredEntityTypeLength,
+        `${entityType.toLowerCase()} has`
+      )} validation errors`;
+      return (
+        <Tooltip
+          content={toolTipText}
+          targetWrapperClassName={styles.validationTooltip}
+          place="top">
+          <Icon icon="ErrorCircle" color="negative" />
+        </Tooltip>
+      );
+    }
+    return <Icon icon={entityType} size="small" color="primary" />;
+  };
+
   const tabs = {
     entries: {
       title: (
         <div className={styles.tab}>
-          <Icon icon="Entry" size="small" color="primary" />
+          {renderTabIcon('Entry')}
           <div className={styles.tabTitle}>Entries {entries.length ? entries.length : 0}</div>
         </div>
       ),
@@ -140,13 +209,14 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
             isLoading={isLoading}
             defaultLocale={defaultLocale}
             handleEntityDelete={handleEntityDelete}
+            validationErrors={validationErrors}
           />
         ),
     },
     assets: {
       title: (
         <div className={styles.tab}>
-          <Icon icon="Asset" size="small" color="primary" />
+          {renderTabIcon('Asset')}
           <div className={styles.tabTitle}>Assets {assets.length ? assets.length : 0}</div>
         </div>
       ),
@@ -160,6 +230,7 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
             isLoading={isLoading}
             defaultLocale={defaultLocale}
             handleEntityDelete={handleEntityDelete}
+            validationErrors={validationErrors}
           />
         ),
     },
@@ -167,6 +238,7 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
 
   return (
     <div>
+      {processingAction && <LoadingOverlay message={`${processingAction} ${release.title}`} />}
       {hasError ? (
         <Note noteType="negative" className={styles.errorNote}>
           We are currently unable to display the details for this release due to a temporary system
@@ -208,26 +280,16 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
             className={styles.sidebar}
             position="right"
             testId="cf-ui-workbench-sidebar">
-            {/* Placeholder. To be changed when there are actual statuses to the release */}
-            <div className={styles.cardIntro}>The release was created at</div>
-            <Card padding="large">
-              <Tag className={styles.tag} testId="release-item" tagType="positive">
-                Created
-                <IconButton
-                  iconProps={{
-                    icon: 'MoreHorizontal',
-                  }}
-                  buttonType="muted"
-                  label="Remove team"
-                  testId="release-action"
-                />
-              </Tag>
-              {release && (
-                <div>
-                  <RelativeDateTime value={release.sys.createdAt} />
-                </div>
-              )}
-            </Card>
+            <div className={styles.buttons}>
+              <Button
+                buttonType="muted"
+                className=""
+                isFullWidth
+                disabled={!entries.length && !assets.length}
+                onClick={handlePublication}>
+                Publish now
+              </Button>
+            </div>
           </Workbench.Sidebar>
         </Workbench>
       )}

@@ -325,6 +325,44 @@ APIClient.prototype.replaceReleaseById = function (id, title, items = []) {
   );
 };
 
+APIClient.prototype.publishRelease = function (id, version) {
+  return this._request(
+    {
+      method: 'PUT',
+      path: ['releases', id, 'published'],
+    },
+    {
+      ...getAlphaHeader(IMMEDIATE_RELEASE),
+      'X-Contentful-Version': version,
+    }
+  );
+};
+
+APIClient.prototype.getReleaseAction = function (releaseId, actionId) {
+  return this._request(
+    {
+      method: 'GET',
+      path: ['releases', releaseId, 'actions', actionId],
+    },
+    {
+      ...getAlphaHeader(IMMEDIATE_RELEASE),
+    }
+  );
+};
+
+APIClient.prototype.validateReleaseAction = function (releaseId, action) {
+  return this._request(
+    {
+      method: 'PUT',
+      path: ['releases', releaseId, 'validated'],
+      action,
+    },
+    {
+      ...getAlphaHeader(IMMEDIATE_RELEASE),
+    }
+  );
+};
+
 APIClient.prototype.validateRelease = function (action, entities, type = 'immediate') {
   return this._request(
     {

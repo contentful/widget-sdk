@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { Spinner, Subheading } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { pluralize } from './utils';
 
 const styles = {
   overlay: css({
@@ -28,20 +27,13 @@ const styles = {
   }),
 };
 
-const renderReferenceAmount = (referencesAmount) =>
-  referencesAmount ? `${referencesAmount} ${pluralize(referencesAmount, 'reference')}` : null;
-
-const LoadingOverlay = ({ actionName, entityTitle, referencesAmount }) => {
-  const references = [entityTitle, renderReferenceAmount(referencesAmount)]
-    .filter((str) => str)
-    .join(' and ');
-
+const LoadingOverlay = ({ message }) => {
   return (
     <div className={styles.overlay}>
       <div>
         <Subheading element="p" className={styles.description}>
           <Spinner className={styles.spinner} />
-          {actionName} {references}
+          {message}
         </Subheading>
       </div>
     </div>
@@ -49,9 +41,7 @@ const LoadingOverlay = ({ actionName, entityTitle, referencesAmount }) => {
 };
 
 LoadingOverlay.propTypes = {
-  actionName: PropTypes.string,
-  entityTitle: PropTypes.string,
-  referencesAmount: PropTypes.number,
+  message: PropTypes.string,
 };
 
 export default LoadingOverlay;

@@ -58,6 +58,21 @@ async function replaceReleaseById(releaseId, title, items) {
   return await apiClient.replaceReleaseById(releaseId, title, items);
 }
 
+async function publishRelease(releaseId, version) {
+  const apiClient = new APIClient(createEndpoint());
+  return await apiClient.publishRelease(releaseId, version);
+}
+
+async function getReleaseAction(releaseId, actionId) {
+  const apiClient = new APIClient(createEndpoint());
+  return await apiClient.getReleaseAction(releaseId, actionId);
+}
+
+async function validateReleaseAction(releaseId, action) {
+  const apiClient = new APIClient(createEndpoint());
+  return await apiClient.validateReleaseAction(releaseId, action);
+}
+
 export {
   createRelease,
   getReleases,
@@ -66,4 +81,7 @@ export {
   deleteRelease,
   getReleaseById,
   replaceReleaseById,
+  publishRelease,
+  getReleaseAction,
+  validateReleaseAction,
 };

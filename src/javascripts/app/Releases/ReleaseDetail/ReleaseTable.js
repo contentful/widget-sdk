@@ -21,6 +21,7 @@ import useSelectedEntities from 'components/tabs/useSelectedEntities';
 import SecretiveLink from 'components/shared/SecretiveLink';
 import StateLink from 'app/common/StateLink';
 import ReleaseDisplayField from './ReleaseDisplayField';
+import { findValidationErrorForEntity } from './utils';
 
 const styles = {
   checkboxCell: css({
@@ -66,6 +67,12 @@ const styles = {
   }),
   actionTableHeader: css({
     zIndex: tokens.zIndexDefault,
+  }),
+  borderCollapse: css({
+    borderCollapse: 'collapse',
+  }),
+  erroredListItem: css({
+    border: `2px solid ${tokens.colorRedBase}`,
   }),
 };
 
@@ -125,6 +132,7 @@ const ReleaseTable = ({
   defaultLocale,
   isLoading,
   handleEntityDelete,
+  validationErrors,
 }) => {
   const [{ allSelected }, { isSelected, toggleSelected, toggleAllSelected }] = useSelectedEntities({
     entities,
@@ -132,7 +140,7 @@ const ReleaseTable = ({
 
   const columnCount = displayedFields.length + 2;
   return (
-    <Table className={styles.table}>
+    <Table className={cn(styles.table, { [styles.borderCollapse]: validationErrors.length })}>
       <TableHead offsetTop={isEdge() ? '0px' : '-20px'} isSticky className={styles.tableHead}>
         <TableRow>
           <CheckboxCell
@@ -172,6 +180,7 @@ const ReleaseTable = ({
             const entityIsSelected = isSelected(entity);
             const entityType = type.toLowerCase();
             const pathType = entityType === 'entry' ? 'entries' : 'assets';
+            const validated = findValidationErrorForEntity(entityId, validationErrors);
             return (
               <StateLink
                 path={['spaces', 'detail', pathType, 'detail']}
@@ -188,6 +197,7 @@ const ReleaseTable = ({
                       className={cn(styles.tableRow, {
                         [styles.highlight]: entityIsSelected,
                         [styles.visibilityHidden]: !entities.length,
+                        [styles.erroredListItem]: validated,
                       })}
                       testId={`${entityType}-row`}>
                       <CheckboxCell
@@ -211,6 +221,7 @@ const ReleaseTable = ({
                                 field={id}
                                 entity={entity}
                                 defaultLocale={defaultLocale}
+                                validationError={validated}
                               />
                             </SecretiveLink>
                           </TableCell>
@@ -237,6 +248,7 @@ ReleaseTable.propTypes = {
   isLoading: PropTypes.bool.isRequired,
   defaultLocale: PropTypes.object.isRequired,
   handleEntityDelete: PropTypes.func.isRequired,
+  validationErrors: PropTypes.array,
 };
 
 export default ReleaseTable;

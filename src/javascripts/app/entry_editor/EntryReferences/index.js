@@ -21,7 +21,7 @@ import ErrorHandler from 'components/shared/ErrorHandlerComponent.js';
 import { create } from 'access_control/EntityPermissions';
 import { goToSlideInEntity, slideInStackEmitter } from 'navigation/SlideInNavigator';
 import ReferencesTree from './ReferencesTree';
-import LoadingOverlay from './LoadingOverlay';
+import LoadingOverlay from 'app/common/LoadingOverlay';
 import {
   getReferencesForEntryId,
   getEntityTitle,
@@ -289,6 +289,16 @@ const ReferencesTab = ({ entity }) => {
     ? selectedEntities.length - 1
     : selectedEntities.length;
 
+  const renderReferenceAmount = (referencesAmount) =>
+    referencesAmount ? `${referencesAmount} ${pluralize(referencesAmount, 'reference')}` : null;
+
+  const referenceText = [
+    doesContainRoot(selectedEntities, references[0]) ? entityTitle : null,
+    renderReferenceAmount(referencesAmount),
+  ]
+    .filter((str) => str)
+    .join(' and ');
+
   return (
     <>
       <ErrorHandler
@@ -297,13 +307,7 @@ const ReferencesTab = ({ entity }) => {
             Sorry, we are unable to show the references for this entry at this time
           </Note>
         }>
-        {processingAction && (
-          <LoadingOverlay
-            actionName={processingAction}
-            entityTitle={doesContainRoot(selectedEntities, references[0]) ? entityTitle : null}
-            referencesAmount={referencesAmount}
-          />
-        )}
+        {processingAction && <LoadingOverlay message={`${processingAction} ${referenceText}`} />}
         <div>
           {!!references.length && (
             <>
