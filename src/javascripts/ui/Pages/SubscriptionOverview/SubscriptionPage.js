@@ -2,7 +2,14 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { css } from 'emotion';
-import { Notification, Workbench } from '@contentful/forma-36-react-components';
+import {
+  Notification,
+  Workbench,
+  Typography,
+  Paragraph,
+  Heading,
+  TextLink,
+} from '@contentful/forma-36-react-components';
 
 import { track } from 'analytics/Analytics';
 import { showDialog as showCreateSpaceModal } from 'services/CreateSpace';
@@ -19,6 +26,12 @@ import SpacePlans from './SpacePlans';
 import Sidebar from './Sidebar';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
+
+// Test news slider
+import { NEWS_SLIDER } from 'featureFlags';
+import { getVariation } from 'LaunchDarkly';
+import { NewsSlider } from 'features/news-slider';
+import { Slide } from 'features/news-slider';
 
 const styles = {
   content: css({
@@ -48,6 +61,16 @@ const hasAnyInaccessibleSpaces = (plans) => {
 export default function SubscriptionPage({ initialLoad, organizationId, data }) {
   const [changedSpaceId, setChangedSpaceId] = useState('');
   const [spacePlans, setSpacePlans] = useState([]);
+  const [isNewsSliderEnabled, setIsNewsSliderEnabled] = useState(false);
+  const [sliderVisible, setSliderVisible] = useState(true);
+
+  useEffect(() => {
+    async function getFeatureFlagVariation() {
+      const isFeatureEnabled = await getVariation(NEWS_SLIDER);
+      setIsNewsSliderEnabled(isFeatureEnabled);
+    }
+    getFeatureFlagVariation();
+  }, [isNewsSliderEnabled]);
 
   useEffect(() => {
     let timer;
@@ -67,6 +90,11 @@ export default function SubscriptionPage({ initialLoad, organizationId, data }) 
 
   const createSpace = () => {
     showCreateSpaceModal(organizationId);
+  };
+
+  // temporary for development purposes
+  const handleClosingSlider = () => {
+    setSliderVisible(false);
   };
 
   const deleteSpace = (space, plan) => {
@@ -147,6 +175,39 @@ export default function SubscriptionPage({ initialLoad, organizationId, data }) 
             costOfUsers={usersMeta && usersMeta.cost}
           />
         </div>
+        {isNewsSliderEnabled && sliderVisible ? (
+          <NewsSlider onClose={handleClosingSlider}>
+            <Slide>
+              {({ onNext }) => (
+                <Typography>
+                  <Heading>Slide 1</Heading>
+                  <Paragraph>This is the first slide</Paragraph>
+                  <TextLink onClick={onNext}>What is this?</TextLink>
+                </Typography>
+              )}
+            </Slide>
+            <Slide>
+              {({ onNext, onPrev }) => (
+                <Typography>
+                  <Heading>Slide 2</Heading>
+                  <Paragraph>This is the second slide</Paragraph>
+                  <TextLink onClick={onPrev}>Go back</TextLink>
+                  {' | '}
+                  <TextLink onClick={onNext}>What else?</TextLink>
+                </Typography>
+              )}
+            </Slide>
+            <Slide>
+              {({ onPrev }) => (
+                <Typography>
+                  <Heading>Slide 3</Heading>
+                  <Paragraph>This is the final slide</Paragraph>
+                  <TextLink onClick={onPrev}>Go back to slide 2</TextLink>
+                </Typography>
+              )}
+            </Slide>
+          </NewsSlider>
+        ) : null}
         <SpacePlans
           initialLoad={initialLoad}
           spacePlans={spacePlans}
