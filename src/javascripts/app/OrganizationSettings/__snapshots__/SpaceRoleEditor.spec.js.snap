@@ -185,11 +185,11 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
-  color: #2a3039;
+  color: #192532;
 }
 
 .emotion-0 {
-  color: #8091a5;
+  color: #606C7C;
   grid-column-start: 2;
   max-width: 200px;
   white-space: normal;
@@ -430,11 +430,11 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
-  color: #2a3039;
+  color: #192532;
 }
 
 .emotion-0 {
-  color: #8091a5;
+  color: #606C7C;
   grid-column-start: 2;
   max-width: 200px;
   white-space: normal;

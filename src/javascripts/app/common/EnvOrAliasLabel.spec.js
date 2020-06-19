@@ -44,13 +44,13 @@ describe('EnvOrAliasLabel', () => {
     it('displays the selected master with colorized font', () => {
       const { getByTestId } = build({ colorizeFont: true });
       const wrapper = getByTestId('envoralias.wrapper-active');
-      expect(getAttribute(wrapper, 'color')).toBe('rgb(20, 217, 151)');
+      expect(getAttribute(wrapper, 'color')).toBe('rgb(138, 214, 177)');
     });
 
     it('displays the selected not-master with colorized font', () => {
       const { getByTestId } = build({ colorizeFont: true, isMaster: false });
       const wrapper = getByTestId('envoralias.wrapper-active');
-      expect(getAttribute(wrapper, 'color')).toBe('rgb(255, 178, 57)');
+      expect(getAttribute(wrapper, 'color')).toBe('rgb(255, 215, 162)');
     });
 
     it('displays the correct italic font', () => {

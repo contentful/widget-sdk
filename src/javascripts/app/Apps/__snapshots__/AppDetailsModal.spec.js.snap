@@ -18,7 +18,7 @@ exports[`AppDetailsModal should match the snapshot 1`] = `
 .emotion-3 h6 {
   margin-top: 1.5rem;
   margin-bottom: 1rem;
-  color: #2a3039;
+  color: #192532;
 }
 
 .emotion-3 h1:first-child,
@@ -102,7 +102,7 @@ exports[`AppDetailsModal should match the snapshot 1`] = `
 }
 
 .emotion-3 a {
-  color: #4a90e2;
+  color: #2E75D4;
 }
 
 .emotion-3 hr {
