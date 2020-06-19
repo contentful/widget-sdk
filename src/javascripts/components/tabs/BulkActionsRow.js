@@ -1,14 +1,16 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
+import { noop } from 'lodash';
 import tokens from '@contentful/forma-36-tokens';
 import { TableRow, TableCell, Spinner } from '@contentful/forma-36-react-components';
 import { canUserReadEntities } from 'access_control/AccessChecker/index';
 import BulkActionLink from './BulkActionLink';
 import PluralizeEntityMessage from './PluralizeEntityMessage';
 import BulkActionDeleteConfirm from './BulkActionDeleteConfirm';
-import { noop } from 'lodash';
 import useBulkActions from './useBulkActions';
+import { useTagsFeatureEnabled } from 'features/content-tags';
+import { TagsBulkAction } from 'components/tabs/TagsBulkAction';
 import ReleaseDialog from 'app/Releases/ReleasesWidget/ReleasesWidgetDialog';
 import * as LD from 'utils/LaunchDarkly';
 import { ADD_TO_RELEASE } from 'featureFlags';
@@ -104,6 +106,8 @@ const BulkActionsRow = ({
     setPendingMessage(undefined);
   };
 
+  const { tagsEnabled } = useTagsFeatureEnabled();
+
   const renderActions = () => {
     const showDuplicate = actions.showDuplicate && actions.showDuplicate();
     const showDelete = actions.showDelete && actions.showDelete();
@@ -170,6 +174,12 @@ const BulkActionsRow = ({
             visible={canAddToRelease}
           />
         ) : null}
+        <BulkActionLink
+          label="Add or remove tags"
+          linkType="primary"
+          onClick={() => TagsBulkAction(selectedEntities)}
+          visible={tagsEnabled}
+        />
       </Fragment>
     );
   };

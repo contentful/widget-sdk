@@ -16,6 +16,7 @@ const ACTION_NAMES = {
   unarchive: 'unarchived',
   delete: 'deleted',
   duplicate: 'duplicated',
+  save: 'saved',
 };
 
 const ENTITY_PLURAL_NAMES = {
@@ -76,6 +77,7 @@ export function createBatchPerformer(config) {
     if (method === 'duplicate') {
       return callDuplicate(entity);
     }
+
     return entity[method]();
   }
 

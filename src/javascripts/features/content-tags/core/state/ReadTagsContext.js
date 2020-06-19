@@ -18,6 +18,7 @@ const ReadTagsContext = React.createContext({
   nameExists: null,
   idExists: null,
   getTag: null,
+  setExcludedTags: null,
 });
 
 export { ReadTagsContext };

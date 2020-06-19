@@ -8,6 +8,7 @@ const Keys = {
   shiftTab: (e) => e.keyCode === keycodes.TAB && e.shiftKey,
   escape: (e) => e.keyCode === keycodes.ESC,
   enter: (e) => e.keyCode === keycodes.ENTER,
+  control: (e) => e.keyCode === keycodes.CONTROL,
 };
 
 export default Keys;

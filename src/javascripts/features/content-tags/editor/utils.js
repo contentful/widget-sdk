@@ -1,10 +1,10 @@
-import _ from 'lodash';
+import { sortBy } from 'lodash';
 
 export const tagPayloadToValue = (tag) => ({ value: tag.sys.id, label: tag.name });
 export const tagsPayloadToValues = (tags) => tags.map(tagPayloadToValue);
 
 export const orderByLabel = (tags) => {
-  return _.sortBy(tags, [(tag) => tag.label.toLowerCase()]);
+  return sortBy(tags, [(tag) => tag.label.toLowerCase()]);
 };
 
 export const summarizeTags = (tags) => {
@@ -18,3 +18,13 @@ export const summarizeTags = (tags) => {
 
   return `${tags[0].label} and ${tags.length - 1} more`;
 };
+
+export function tagLink(id) {
+  return {
+    sys: {
+      id,
+      type: 'Link',
+      linkType: 'Tag',
+    },
+  };
+}

@@ -1,15 +1,6 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { createBatchPerformer } from './batchPerformer';
 import * as accessChecker from 'access_control/AccessChecker';
-
-const isActionVisible = (entities, action, predicate) => {
-  return (
-    entities.length > 0 &&
-    entities.every(
-      (entity) => accessChecker.canPerformActionOnEntity(action, entity) && entity[predicate]()
-    )
-  );
-};
 
 const useBulkActions = ({ entityType, entities, updateEntities }) => {
   const performer = useMemo(() => createBatchPerformer({ entityType, entities }), [
@@ -17,11 +8,23 @@ const useBulkActions = ({ entityType, entities, updateEntities }) => {
     entities,
   ]);
 
-  const handleAction = (func, withUpdate) => async () => {
-    const result = await func();
-    if (withUpdate) await updateEntities();
-    return result;
-  };
+  const isActionVisible = useCallback((entities, action, predicate) => {
+    return (
+      entities.length > 0 &&
+      entities.every(
+        (entity) => accessChecker.canPerformActionOnEntity(action, entity) && entity[predicate]()
+      )
+    );
+  }, []);
+
+  const handleAction = useCallback(
+    (func, withUpdate) => async () => {
+      const result = await func();
+      if (withUpdate) await updateEntities();
+      return result;
+    },
+    [updateEntities]
+  );
 
   const actions = {
     showArchive: () => isActionVisible(entities, 'archive', 'canArchive'),
@@ -34,6 +37,7 @@ const useBulkActions = ({ entityType, entities, updateEntities }) => {
     publishSelected: handleAction(performer.publish),
     showUnpublish: () => isActionVisible(entities, 'unpublish', 'canUnpublish'),
     unpublishSelected: handleAction(performer.unpublish),
+    updateTagSelected: handleAction(performer.save),
   };
 
   const allowDuplicate = entityType === 'entry';

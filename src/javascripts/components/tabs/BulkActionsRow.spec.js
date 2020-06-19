@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, wait, fireEvent } from '@testing-library/react';
+import { render, wait, fireEvent, act } from '@testing-library/react';
 import { upperFirst } from 'lodash';
 import BulkActionsRow from './BulkActionsRow';
 import * as batchPerformer from './batchPerformer';
@@ -236,7 +236,9 @@ describe('BulkActionsRow', () => {
           selectedEntities: generateEntities(1, false),
         });
         const link = getByTestId(action);
-        link.click();
+        act(() => {
+          link.click();
+        });
         await wait();
         expect(performer[action]).toHaveBeenCalledTimes(1);
         expect(onActionComplete).toHaveBeenCalledWith(action, 'success');
