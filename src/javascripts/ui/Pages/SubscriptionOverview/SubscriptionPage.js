@@ -2,14 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { css } from 'emotion';
-import {
-  Notification,
-  Workbench,
-  Typography,
-  Paragraph,
-  Heading,
-  TextLink,
-} from '@contentful/forma-36-react-components';
+import { Notification, Workbench } from '@contentful/forma-36-react-components';
 
 import { track } from 'analytics/Analytics';
 import { showDialog as showCreateSpaceModal } from 'services/CreateSpace';
@@ -30,8 +23,13 @@ import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 // Test news slider
 import { NEWS_SLIDER } from 'featureFlags';
 import { getVariation } from 'LaunchDarkly';
-import { NewsSlider } from 'features/news-slider';
-import { Slide } from 'features/news-slider';
+import {
+  NewsSlider,
+  Slide,
+  PricingNewCommunitySpace,
+  PricingNewFeatures,
+  PricingAssignedCommunitySpace,
+} from 'features/news-slider';
 
 const styles = {
   content: css({
@@ -177,33 +175,14 @@ export default function SubscriptionPage({ initialLoad, organizationId, data }) 
         </div>
         {isNewsSliderEnabled && sliderVisible ? (
           <NewsSlider onClose={handleClosingSlider}>
+            <Slide>{({ onNext }) => <PricingNewCommunitySpace onNext={onNext} />}</Slide>
+            <Slide>{({ onNext }) => <PricingNewFeatures onNext={onNext} />}</Slide>
             <Slide>
-              {({ onNext }) => (
-                <Typography>
-                  <Heading>Slide 1</Heading>
-                  <Paragraph>This is the first slide</Paragraph>
-                  <TextLink onClick={onNext}>What is this?</TextLink>
-                </Typography>
-              )}
-            </Slide>
-            <Slide>
-              {({ onNext, onPrev }) => (
-                <Typography>
-                  <Heading>Slide 2</Heading>
-                  <Paragraph>This is the second slide</Paragraph>
-                  <TextLink onClick={onPrev}>Go back</TextLink>
-                  {' | '}
-                  <TextLink onClick={onNext}>What else?</TextLink>
-                </Typography>
-              )}
-            </Slide>
-            <Slide>
-              {({ onPrev }) => (
-                <Typography>
-                  <Heading>Slide 3</Heading>
-                  <Paragraph>This is the final slide</Paragraph>
-                  <TextLink onClick={onPrev}>Go back to slide 2</TextLink>
-                </Typography>
+              {() => (
+                <PricingAssignedCommunitySpace
+                  communitySpaceName="Space 1"
+                  microSpaceNames={['Space 2', 'Space 3']}
+                />
               )}
             </Slide>
           </NewsSlider>

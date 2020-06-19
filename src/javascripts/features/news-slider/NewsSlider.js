@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
 import { TextLink } from '@contentful/forma-36-react-components';
+import { ProgressBar } from './ProgressBar';
 import FullScreen from 'components/shared/stack-onboarding/components/FullScreen';
 
 const initialState = {
@@ -89,12 +90,12 @@ export const NewsSlider = ({ children, onClose }) => {
   return (
     <NewsSliderContext.Provider value={{ onNext, onPrev }}>
       <FullScreen
+        progressBar={<ProgressBar current={state.currentSlide} total={state.numSlides} />}
         close={
           <TextLink linkType="muted" onClick={onClose} data-test-id="close-news-slider">
             Skip
           </TextLink>
         }>
-        <header>{`${state.currentSlide + 1}/${state.numSlides}`}</header>
         <div className={styles.slidesContainer} ref={listRef}>
           {children.map((slide, index) => (
             <div
