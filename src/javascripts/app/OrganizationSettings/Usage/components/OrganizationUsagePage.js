@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Tabs, Tab, TabPanel, Heading } from '@contentful/forma-36-react-components';
+import { Grid, GridItem } from '@contentful/forma-36-react-components/dist/alpha';
 import SpacesTabs from './SpacesTabs';
 import OrganizationBarChart from './OrganizationBarChart';
 import OrganizationUsageInfo from './OrganizationUsageInfo';
 import AssetBandwidthSection from './AssetBandwidthSection';
-import { Grid, GridItem } from './common/Grid';
 
 import PropTypes from 'prop-types';
 import { periodicUsagePropType, periodPropType } from '../propTypes';
@@ -75,14 +75,14 @@ const OrganizationUsagePage = ({
 
       {selected === 'apiRequest' && (
         <TabPanel id="apiRequest" className={styles.tabPanel}>
-          <Grid columns={'repeat(12, 1fr)'}>
-            <GridItem columnStart="span 4">
+          <Grid columns={'1fr 2fr'}>
+            <GridItem>
               <OrganizationUsageInfo
                 totalUsage={totalUsage}
                 includedLimit={apiRequestIncludedLimit}
               />
             </GridItem>
-            <GridItem columnStart="span 8">
+            <GridItem>
               <OrganizationBarChart
                 period={dates}
                 usage={orgUsage}
@@ -103,8 +103,8 @@ const OrganizationUsagePage = ({
       )}
       {selected === 'assetBandwidth' && (
         <TabPanel id="assetBandwidth" className={styles.tabPanel}>
-          <Grid columns={'repeat(12, 1fr)'}>
-            <GridItem columnStart="span 12">
+          <Grid columns={1}>
+            <GridItem>
               {currentAssetBandwidthData.usage !== null && (
                 <AssetBandwidthSection {...currentAssetBandwidthData} />
               )}

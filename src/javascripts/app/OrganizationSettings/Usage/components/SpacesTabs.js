@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Tabs, Tab, TabPanel } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { Grid, GridItem } from './common/Grid';
+import { Grid, GridItem } from '@contentful/forma-36-react-components/dist/alpha';
 import { css } from 'emotion';
 import PropTypes from 'prop-types';
 import SpacesTable from './SpacesTable';
@@ -64,8 +64,8 @@ const SpacesTabs = ({ spaceNames, period, periodicUsage, isPoC }) => {
         ))}
       </Tabs>
       <TabPanel id="api-usage-tab-panel" className={styles.tabPanel}>
-        <Grid columns={'repeat(12, 1fr)'}>
-          <GridItem columnStart={'span 4'}>
+        <Grid columns={'1fr 2fr'}>
+          <GridItem>
             <SpacesTable
               spaceNames={spaceNames}
               data={data}
@@ -74,7 +74,7 @@ const SpacesTabs = ({ spaceNames, period, periodicUsage, isPoC }) => {
               isPoC={isPoC}
             />
           </GridItem>
-          <GridItem columnStart={'span 8'}>
+          <GridItem>
             <SpacesBarChart spaceNames={spaceNames} period={period} data={data} colours={colours} />
           </GridItem>
         </Grid>

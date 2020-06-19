@@ -3,29 +3,14 @@
 exports[`SpacesTabs renders correctly 1`] = `
 Object {
   "asFragment": [Function],
-  "baseElement": .emotion-1 {
+  "baseElement": .emotion-0 {
   height: 512px;
   width: 100%;
 }
 
-.emotion-4 {
+.emotion-1 {
   padding-top: 3rem;
   padding-bottom: 3rem;
-}
-
-.emotion-3 {
-  display: grid;
-  grid-template-columns: repeat(12,1fr);
-  grid-template-rows: auto;
-  grid-gap: 24px 0;
-}
-
-.emotion-0 {
-  grid-column-start: span 4;
-}
-
-.emotion-2 {
-  grid-column-start: span 8;
 }
 
 <body>
@@ -77,17 +62,17 @@ Object {
         </div>
       </div>
       <div
-        class="emotion-4"
+        class="emotion-1"
         data-test-id="cf-ui-tab-panel"
         id="api-usage-tab-panel"
         role="tabpanel"
       >
         <div
-          class="emotion-3"
+          class="Grid__Grid___2_rpl"
+          data-test-id="cf-ui-grid"
+          style="grid-template-columns: 1fr 2fr; grid-template-rows: auto;"
         >
-          <div
-            class="emotion-0"
-          >
+          <div>
             <table
               cellpadding="0"
               cellspacing="0"
@@ -211,11 +196,9 @@ Object {
               </tbody>
             </table>
           </div>
-          <div
-            class="emotion-2"
-          >
+          <div>
             <div
-              class="emotion-1"
+              class="emotion-0"
               data-test-id="api-usage-bar-chart"
             />
           </div>
@@ -224,29 +207,14 @@ Object {
     </div>
     <div />
   </body>,
-  "container": .emotion-1 {
+  "container": .emotion-0 {
   height: 512px;
   width: 100%;
 }
 
-.emotion-4 {
+.emotion-1 {
   padding-top: 3rem;
   padding-bottom: 3rem;
-}
-
-.emotion-3 {
-  display: grid;
-  grid-template-columns: repeat(12,1fr);
-  grid-template-rows: auto;
-  grid-gap: 24px 0;
-}
-
-.emotion-0 {
-  grid-column-start: span 4;
-}
-
-.emotion-2 {
-  grid-column-start: span 8;
 }
 
 <div>
@@ -297,17 +265,17 @@ Object {
       </div>
     </div>
     <div
-      class="emotion-4"
+      class="emotion-1"
       data-test-id="cf-ui-tab-panel"
       id="api-usage-tab-panel"
       role="tabpanel"
     >
       <div
-        class="emotion-3"
+        class="Grid__Grid___2_rpl"
+        data-test-id="cf-ui-grid"
+        style="grid-template-columns: 1fr 2fr; grid-template-rows: auto;"
       >
-        <div
-          class="emotion-0"
-        >
+        <div>
           <table
             cellpadding="0"
             cellspacing="0"
@@ -431,11 +399,9 @@ Object {
             </tbody>
           </table>
         </div>
-        <div
-          class="emotion-2"
-        >
+        <div>
           <div
-            class="emotion-1"
+            class="emotion-0"
             data-test-id="api-usage-bar-chart"
           />
         </div>
