@@ -28,7 +28,10 @@ import {
   createSpace,
   createSpaceWithTemplate,
   FREE_SPACE_IDENTIFIER,
+  WIZARD_INTENT,
+  WIZARD_EVENTS,
   transformSpaceRatePlans,
+  trackWizardEvent,
   goToBillingPage,
   sendParnershipEmail,
 } from '../shared/utils';
@@ -95,6 +98,7 @@ const initialFetch = (organization) => async () => {
 
 const submit = async ({
   organization,
+  sessionId,
   selectedPlan,
   spaceName,
   selectedTemplate,
@@ -105,6 +109,8 @@ const submit = async ({
 }) => {
   onProcessing(true);
 
+  trackWizardEvent(WIZARD_INTENT.CREATE, WIZARD_EVENTS.CONFIRM, sessionId);
+
   let newSpaceId;
 
   try {
@@ -114,6 +120,7 @@ const submit = async ({
         plan: selectedPlan,
         template: selectedTemplate,
         organizationId: organization.sys.id,
+        sessionId,
         onTemplateCreationStarted,
       });
 
@@ -125,6 +132,7 @@ const submit = async ({
         name: spaceName,
         plan: selectedPlan,
         organizationId: organization.sys.id,
+        sessionId,
       });
 
       newSpaceId = newSpace.sys.id;
@@ -200,11 +208,12 @@ export default function CreateOnDemandWizard(props) {
     partnerDetails,
   } = state;
 
-  const { organization, onClose, onProcessing } = props;
+  const { organization, sessionId, onClose, onProcessing } = props;
 
   const [{ isLoading: isCreatingSpace }, handleSubmit] = useAsyncFn(() =>
     submit({
       organization,
+      sessionId,
       selectedPlan,
       spaceName,
       selectedTemplate,
@@ -214,6 +223,15 @@ export default function CreateOnDemandWizard(props) {
       onClose,
     })
   );
+
+  const navigate = (newTab) => {
+    trackWizardEvent(WIZARD_INTENT.CREATE, WIZARD_EVENTS.NAVIGATE, sessionId, {
+      currentStepId: selectedTab,
+      targetStepId: newTab,
+    });
+
+    dispatch({ type: 'SET_SELECTED_TAB', payload: newTab });
+  };
 
   const { isLoading, data } = useAsync(useCallback(initialFetch(organization), []));
 
@@ -236,16 +254,14 @@ export default function CreateOnDemandWizard(props) {
                 id="spacePlanSelector"
                 testId="space-plan-selector-tab"
                 selected={selectedTab === 'spacePlanSelector'}
-                onSelect={() =>
-                  dispatch({ type: 'SET_SELECTED_TAB', payload: 'spacePlanSelector' })
-                }>
+                onSelect={() => navigate('spacePlanSelector')}>
                 1. Space type
               </Tab>
               <Tab
                 id="spaceDetails"
                 testId="space-details-tab"
                 selected={selectedTab === 'spaceDetails'}
-                onSelect={() => dispatch({ type: 'SET_SELECTED_TAB', payload: 'spaceDetails' })}
+                onSelect={() => navigate('spaceDetails')}
                 disabled={!selectedPlan}>
                 2. Space details
               </Tab>
@@ -253,7 +269,7 @@ export default function CreateOnDemandWizard(props) {
                 id="confirmation"
                 testId="confirmation-tab"
                 selected={selectedTab === 'confirmation'}
-                onSelect={() => dispatch({ type: 'SET_SELECTED_TAB', payload: 'confirmation' })}
+                onSelect={() => navigate('confirmation')}
                 disabled={!spaceName}>
                 3. Confirmation
               </Tab>
@@ -265,7 +281,7 @@ export default function CreateOnDemandWizard(props) {
                 testId="close-icon"
                 buttonType="muted"
                 className={styles.closeButton}
-                onClick={onClose}
+                onClick={() => onClose()}
               />
             )}
           </Tabs>
@@ -278,10 +294,16 @@ export default function CreateOnDemandWizard(props) {
                   freeSpacesResource={data.freeSpaceResource}
                   selectedPlan={selectedPlan}
                   onSelectPlan={(plan) => {
+                    trackWizardEvent(WIZARD_INTENT.CREATE, WIZARD_EVENTS.SELECT_PLAN, sessionId, {
+                      selectedPlan: plan,
+                    });
                     dispatch({ type: 'SET_SELECTED_PLAN', payload: plan });
-                    dispatch({ type: 'SET_SELECTED_TAB', payload: 'spaceDetails' });
+
+                    navigate('spaceDetails');
                   }}
-                  goToBillingPage={() => goToBillingPage(organization, onClose)}
+                  goToBillingPage={() =>
+                    goToBillingPage(organization, WIZARD_INTENT.CREATE, sessionId, onClose)
+                  }
                   isCommunityPlanEnabled={data.isCommunityPlanEnabled}
                   isPayingPreviousToV2={data.isPayingPreviousToV2}
                 />
@@ -298,7 +320,19 @@ export default function CreateOnDemandWizard(props) {
                   onChangeSelectedTemplate={(template) =>
                     dispatch({ type: 'SET_SELECTED_TEMPLATE', payload: template })
                   }
-                  onSubmit={() => dispatch({ type: 'SET_SELECTED_TAB', payload: 'confirmation' })}
+                  onSubmit={() => {
+                    trackWizardEvent(
+                      WIZARD_INTENT.CREATE,
+                      WIZARD_EVENTS.ENTERED_DETAILS,
+                      sessionId,
+                      {
+                        newSpaceName: spaceName,
+                        newSpaceTemplate: selectedTemplate,
+                      }
+                    );
+
+                    navigate('confirmation');
+                  }}
                 />
               </TabPanel>
             )}
@@ -339,6 +373,7 @@ export default function CreateOnDemandWizard(props) {
 
 CreateOnDemandWizard.propTypes = {
   organization: PropTypes.object.isRequired,
+  sessionId: PropTypes.string.isRequired,
   onClose: PropTypes.func.isRequired,
   onProcessing: PropTypes.func.isRequired,
 };

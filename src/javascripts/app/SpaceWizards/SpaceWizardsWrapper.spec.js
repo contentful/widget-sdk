@@ -1,11 +1,14 @@
 import React from 'react';
-import { render, screen, waitForElementToBeRemoved } from '@testing-library/react';
+import { render, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { when } from 'jest-when';
 import * as PricingDataProvider from 'account/pricing/PricingDataProvider';
 import SpaceWizardsWrapper from './SpaceWizardsWrapper';
 import * as Fake from 'test/helpers/fakeFactory';
+import * as Analytics from 'analytics/Analytics';
 import { freeSpace, mediumSpaceCurrent } from './__tests__/fixtures/plans';
 import { mockEndpoint } from 'data/EndpointFactory';
+import * as utils from './shared/utils';
 
 const mockOrganization = Fake.Organization({
   isBillable: true,
@@ -52,7 +55,54 @@ describe('SpaceWizardsWrapper', () => {
     expect(screen.queryByTestId('wizard-loader')).toBeNull();
   });
 
+  it('should track the CANCEL event when clicking on the close button', async () => {
+    const onClose = jest.fn();
+
+    await build({ onClose });
+
+    // The overlay does not have a testId, so we get it by getting the grandparent of the modal
+    const overlay = screen.getByTestId('cf-ui-modal').parentElement.parentElement;
+
+    userEvent.click(overlay);
+
+    expect(Analytics.track).toBeCalledWith(
+      `space_wizard:${utils.WIZARD_EVENTS.CANCEL}`,
+      expect.objectContaining({
+        intendedAction: utils.WIZARD_INTENT.CREATE,
+      })
+    );
+
+    expect(onClose).toBeCalled();
+  });
+
+  it('should not track the CANCEL event if the modal is closed before loading finishes', async () => {
+    const onClose = jest.fn();
+
+    build({ onClose }, false);
+
+    const overlay = screen.getByTestId('cf-ui-modal').parentElement.parentElement;
+
+    userEvent.click(overlay);
+
+    expect(Analytics.track).toHaveBeenCalledTimes(0);
+    expect(onClose).toBeCalled();
+
+    // There's nothing to really wait for, except for the act call, so we wait for... nothing
+    await waitFor(() => {});
+  });
+
   describe('space creation', () => {
+    it('should track the open event with creation intent', async () => {
+      await build();
+
+      expect(Analytics.track).toBeCalledWith(
+        `space_wizard:${utils.WIZARD_EVENTS.OPEN}`,
+        expect.objectContaining({
+          intendedAction: utils.WIZARD_INTENT.CREATE,
+        })
+      );
+    });
+
     it('should show the POC space creation wizard if the base plan is enterprise', async () => {
       await build();
 
@@ -77,6 +127,18 @@ describe('SpaceWizardsWrapper', () => {
         .calledWith(expect.objectContaining({ path: ['product_rate_plans'] }))
         .mockResolvedValue({ items: [mediumSpaceCurrent] });
     });
+
+    it('should track the open event with creation intent', async () => {
+      await build({ space: mockSpace });
+
+      expect(Analytics.track).toBeCalledWith(
+        `space_wizard:${utils.WIZARD_EVENTS.OPEN}`,
+        expect.objectContaining({
+          intendedAction: utils.WIZARD_INTENT.CHANGE,
+        })
+      );
+    });
+
     it('should show the on-demand space change wizard if a space is provided', async () => {
       await build({ space: mockSpace });
 

@@ -29,6 +29,9 @@ import {
   transformSpaceRatePlans,
   goToBillingPage,
   FREE_SPACE_IDENTIFIER,
+  WIZARD_INTENT,
+  WIZARD_EVENTS,
+  trackWizardEvent,
 } from '../shared/utils';
 import Loader from '../shared/Loader';
 
@@ -89,11 +92,13 @@ const initialFetch = (organization, space) => async () => {
   };
 };
 
-const submit = async (space, selectedPlan, onProcessing, onClose) => {
+const submit = async (space, selectedPlan, sessionId, onProcessing, onClose) => {
   onProcessing(true);
 
+  trackWizardEvent(WIZARD_INTENT.CHANGE, WIZARD_EVENTS.CONFIRM, sessionId);
+
   try {
-    await changeSpacePlan({ space, plan: selectedPlan });
+    await changeSpacePlan({ space, plan: selectedPlan, sessionId });
     onClose(selectedPlan);
   } catch {
     Notification.error('Your space plan couldn’t be changed. Try again.');
@@ -105,11 +110,20 @@ export default function Wizard(props) {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [selectedTab, setSelectedTab] = useState('spacePlanSelector');
 
-  const { organization, space, onClose, onProcessing } = props;
+  const { organization, space, sessionId, onClose, onProcessing } = props;
 
   const [{ isLoading: isChangingSpacePlan }, handleSubmit] = useAsyncFn(() =>
-    submit(space, selectedPlan, onProcessing, onClose)
+    submit(space, selectedPlan, sessionId, onProcessing, onClose)
   );
+
+  const navigate = (newTab) => {
+    trackWizardEvent(WIZARD_INTENT.CHANGE, WIZARD_EVENTS.NAVIGATE, sessionId, {
+      currentStepId: selectedTab,
+      targetStepId: newTab,
+    });
+
+    setSelectedTab(newTab);
+  };
 
   const { isLoading, data } = useAsync(useCallback(initialFetch(organization, space), []));
 
@@ -125,14 +139,14 @@ export default function Wizard(props) {
             id="spacePlanSelector"
             testId="space-plan-selector-tab"
             selected={selectedTab === 'spacePlanSelector'}
-            onSelect={() => setSelectedTab('spacePlanSelector')}>
+            onSelect={() => navigate('spacePlanSelector')}>
             1. Space type
           </Tab>
           <Tab
             id="confirmation"
             selected={selectedTab === 'confirmation'}
             testId="confirmation-tab"
-            onSelect={() => setSelectedTab('confirmation')}
+            onSelect={() => navigate('confirmation')}
             disabled={!selectedPlan}>
             2. Confirmation
           </Tab>
@@ -158,11 +172,19 @@ export default function Wizard(props) {
               freeSpacesResource={data.freeSpaceResource}
               currentPlan={data.currentPlan}
               selectedPlan={selectedPlan}
-              onSelectPlan={(plan) => {
+              onSelectPlan={(plan, recommendedPlan) => {
+                trackWizardEvent(WIZARD_INTENT.CHANGE, WIZARD_EVENTS.SELECT_PLAN, sessionId, {
+                  selectedPlan: plan,
+                  currentPlan: data.currentPlan,
+                  recommendedPlan,
+                });
+
                 setSelectedPlan(plan);
-                setSelectedTab('confirmation');
+                navigate('confirmation');
               }}
-              goToBillingPage={() => goToBillingPage(organization, onClose)}
+              goToBillingPage={() =>
+                goToBillingPage(organization, WIZARD_INTENT.CHANGE, sessionId, onClose)
+              }
               spaceResources={data.spaceResources}
               isCommunityPlanEnabled={data.isCommunityPlanEnabled}
               isPayingPreviousToV2={data.isPayingPreviousToV2}
@@ -191,6 +213,7 @@ export default function Wizard(props) {
 Wizard.propTypes = {
   organization: PropTypes.object.isRequired,
   space: PropTypes.object.isRequired,
+  sessionId: PropTypes.string.isRequired,
   onClose: PropTypes.func.isRequired,
   onProcessing: PropTypes.func.isRequired,
 };

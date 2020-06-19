@@ -14,6 +14,23 @@ import { joinWithAnd } from 'utils/StringUtils';
 import { canCreate, resourceHumanNameMap } from 'utils/ResourceUtils';
 import { changeSpacePlan as changeSpacePlanApiCall } from 'account/pricing/PricingDataProvider';
 
+export const WIZARD_INTENT = {
+  CHANGE: 'change',
+  CREATE: 'create',
+};
+
+export const WIZARD_EVENTS = {
+  OPEN: 'open',
+  SELECT_PLAN: 'select_plan',
+  NAVIGATE: 'navigate',
+  ENTERED_DETAILS: 'entered_details',
+  CANCEL: 'cancel',
+  LINK_CLICK: 'link_click',
+  CONFIRM: 'confirm',
+  SPACE_CREATE: 'space_create',
+  SPACE_TYPE_CHANGE: 'space_type_change',
+};
+
 // Threshold for usage limit displaying/causing an error (100% usage e.g. limit reached)
 const ERROR_THRESHOLD = 1;
 
@@ -37,7 +54,7 @@ const ResourceTooltips = {
   [SpaceResourceTypes.Records]: () => 'Records are entries and assets combined.',
 };
 
-async function makeNewSpace(name, plan, organizationId) {
+async function makeNewSpace(name, plan, organizationId, sessionId) {
   const spaceData = {
     defaultLocale: 'en-US',
     name,
@@ -48,8 +65,7 @@ async function makeNewSpace(name, plan, organizationId) {
 
   await TokenStore.refresh();
 
-  trackWizardEvent('space_create', {
-    action: 'create',
+  trackWizardEvent(WIZARD_INTENT.CREATE, WIZARD_EVENTS.SPACE_CREATE, sessionId, {
     spaceId: newSpace.sys.id,
   });
 
@@ -60,12 +76,13 @@ export async function createSpaceWithTemplate({
   name,
   plan,
   organizationId,
+  sessionId,
   template,
   onTemplateCreationStarted,
 }) {
   const $rootScope = getModule('$rootScope');
 
-  const newSpace = await makeNewSpace(name, plan, organizationId);
+  const newSpace = await makeNewSpace(name, plan, organizationId, sessionId);
   onTemplateCreationStarted();
 
   // This needs to come before creating the template, so that we have `spaceContext`
@@ -87,8 +104,8 @@ export async function createSpaceWithTemplate({
   return newSpace;
 }
 
-export async function createSpace({ name, plan, organizationId }) {
-  const newSpace = await makeNewSpace(name, plan, organizationId);
+export async function createSpace({ name, plan, organizationId, sessionId }) {
+  const newSpace = await makeNewSpace(name, plan, organizationId, sessionId);
 
   Analytics.track('space:create', { templateName: 'Blank' });
 
@@ -108,15 +125,17 @@ export async function createSpace({ name, plan, organizationId }) {
   return newSpace;
 }
 
-export async function changeSpacePlan({ space, plan }) {
+export async function changeSpacePlan({ space, plan, sessionId }) {
   const endpoint = createSpaceEndpoint(space.sys.id);
 
   await changeSpacePlanApiCall(endpoint, plan.sys.id);
 
-  trackWizardEvent('space_type_change', { action: 'change', spaceId: space.sys.id });
+  trackWizardEvent(WIZARD_INTENT.CHANGE, WIZARD_EVENTS.SPACE_TYPE_CHANGE, sessionId, {
+    spaceId: space.sys.id,
+  });
 }
 
-export function goToBillingPage(organization, onClose) {
+export function goToBillingPage(organization, intent, sessionId, onClose) {
   const orgId = organization.sys.id;
 
   go({
@@ -125,7 +144,7 @@ export function goToBillingPage(organization, onClose) {
     options: { reload: true },
   });
 
-  trackWizardEvent('link_click');
+  trackWizardEvent(intent, WIZARD_EVENTS.LINK_CLICK, sessionId);
   onClose && onClose();
 }
 
@@ -159,15 +178,14 @@ export function transformSpaceRatePlans({ organization, spaceRatePlans = [], fre
   );
 }
 
-export function trackWizardEvent(eventName, payload = {}) {
-  const trackingData = createTrackingData(payload);
+export function trackWizardEvent(intent, eventName, sessionId, payload = {}) {
+  const trackingData = createTrackingData(intent, sessionId, payload);
 
   Analytics.track(`space_wizard:${eventName}`, trackingData);
 }
 
-function createTrackingData(data) {
+function createTrackingData(intent, sessionId, data) {
   const {
-    action,
     paymentDetailsExist,
     currentStepId,
     targetStepId,
@@ -182,7 +200,8 @@ function createTrackingData(data) {
   const trackingData = {
     currentStep: currentStepId || null,
     targetStep: targetStepId || null,
-    intendedAction: action,
+    intendedAction: intent,
+    wizardSessionId: sessionId,
     paymentDetailsExist: typeof paymentDetailsExist === 'boolean' ? paymentDetailsExist : null,
     targetSpaceType: get(selectedPlan, 'internalName', null),
     targetProductType: get(selectedPlan, 'productType', null),
