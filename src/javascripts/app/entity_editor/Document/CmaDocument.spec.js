@@ -41,7 +41,8 @@ const mockEntityRepo = () => ({
     return Promise.resolve(entry);
   }),
   get: jest.fn(),
-  onAssetFileProcessed: jest.fn(),
+  onContentEntityChanged: jest.fn().mockReturnValue(jest.fn()),
+  onAssetFileProcessed: jest.fn().mockReturnValue(jest.fn()),
   applyAction: jest.fn(),
 });
 let entityRepo;
@@ -562,9 +563,11 @@ describe('CmaDocument', () => {
     beforeEach(() => {
       asset = newAsset();
 
-      entityRepo.onAssetFileProcessed.mockImplementation((assetId, callback) => {
-        expect(assetId).toBe(asset.sys.id);
+      entityRepo.onAssetFileProcessed.mockImplementation(({ type, id }, callback) => {
+        expect(type).toBe('Asset');
+        expect(id).toBe(asset.sys.id);
         handler = callback;
+        return () => {};
       });
 
       ({ document: doc } = createCmaDocument(asset, [{ id: 'title' }, { id: 'file' }]));
