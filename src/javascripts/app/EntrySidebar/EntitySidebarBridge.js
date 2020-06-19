@@ -120,8 +120,10 @@ export default ({ $scope, emitter }) => {
   });
 
   const initializeReleases = once(() => {
+    const entity = K.getValue($scope.otDoc.data$);
     emitter.emit(SidebarEventTypes.UPDATED_RELEASES_WIDGET, {
       entityInfo: $scope.entityInfo,
+      entity: entity && { ...entity },
     });
   });
 
