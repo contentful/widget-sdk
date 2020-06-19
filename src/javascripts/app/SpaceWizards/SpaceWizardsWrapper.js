@@ -26,12 +26,12 @@ const classes = {
 };
 
 const fetch = (organization, space) => async () => {
-  const action = space ? WIZARD_INTENT.CHANGE : WIZARD_INTENT.CREATE;
+  const intent = space ? WIZARD_INTENT.CHANGE : WIZARD_INTENT.CREATE;
   const sessionId = alnum(16);
   const endpoint = createOrganizationEndpoint(organization.sys.id);
 
   const result = {
-    action,
+    intent,
     sessionId,
   };
 
@@ -40,7 +40,7 @@ const fetch = (organization, space) => async () => {
   // org should create POC if it is Enterprise
   result.shouldCreatePOC = isEnterprisePlan(result.basePlan);
 
-  trackWizardEvent(action, WIZARD_EVENTS.OPEN, sessionId);
+  trackWizardEvent(intent, WIZARD_EVENTS.OPEN, sessionId);
 
   return result;
 };
@@ -51,22 +51,22 @@ export default function SpaceWizardsWrapper(props) {
 
   const { isLoading, data = {} } = useAsync(useCallback(fetch(organization, space), []));
 
-  const { shouldCreatePOC, action, sessionId } = data;
+  const { shouldCreatePOC, intent, sessionId } = data;
 
   const handleClose = (...args) => {
-    // To prevent useless data from being tracked, we wait until we have action and
+    // To prevent useless data from being tracked, we wait until we have intent and
     // sessionId before doing any tracking
 
-    if (action && sessionId) {
-      trackWizardEvent(action, WIZARD_EVENTS.CANCEL, sessionId);
+    if (intent && sessionId) {
+      trackWizardEvent(intent, WIZARD_EVENTS.CANCEL, sessionId);
     }
 
     onClose(...args);
   };
 
-  const showEnterprise = action === WIZARD_INTENT.CREATE && shouldCreatePOC;
-  const showOnDemandCreate = action === WIZARD_INTENT.CREATE && !shouldCreatePOC;
-  const showOnDemandChange = action === WIZARD_INTENT.CHANGE;
+  const showEnterprise = intent === WIZARD_INTENT.CREATE && shouldCreatePOC;
+  const showOnDemandCreate = intent === WIZARD_INTENT.CREATE && !shouldCreatePOC;
+  const showOnDemandChange = intent === WIZARD_INTENT.CHANGE;
 
   return (
     <Modal

@@ -1,5 +1,6 @@
 import React from 'react';
-import { render, screen, waitForElementToBeRemoved } from '@testing-library/react';
+import { render, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { when } from 'jest-when';
 import * as PricingDataProvider from 'account/pricing/PricingDataProvider';
 import SpaceWizardsWrapper from './SpaceWizardsWrapper';
@@ -52,6 +53,42 @@ describe('SpaceWizardsWrapper', () => {
     await waitForElementToBeRemoved(() => screen.queryByTestId('wizard-loader'));
 
     expect(screen.queryByTestId('wizard-loader')).toBeNull();
+  });
+
+  it('should track the CANCEL event when clicking on the close button', async () => {
+    const onClose = jest.fn();
+
+    await build({ onClose });
+
+    // The overlay does not have a testId, so we get it by getting the grandparent of the modal
+    const overlay = screen.getByTestId('cf-ui-modal').parentElement.parentElement;
+
+    userEvent.click(overlay);
+
+    expect(Analytics.track).toBeCalledWith(
+      `space_wizard:${utils.WIZARD_EVENTS.CANCEL}`,
+      expect.objectContaining({
+        intendedAction: utils.WIZARD_INTENT.CREATE,
+      })
+    );
+
+    expect(onClose).toBeCalled();
+  });
+
+  it('should not track the CANCEL event if the modal is closed before loading finishes', async () => {
+    const onClose = jest.fn();
+
+    build({ onClose }, false);
+
+    const overlay = screen.getByTestId('cf-ui-modal').parentElement.parentElement;
+
+    userEvent.click(overlay);
+
+    expect(Analytics.track).toHaveBeenCalledTimes(0);
+    expect(onClose).toBeCalled();
+
+    // There's nothing to really wait for, except for the act call, so we wait for... nothing
+    await waitFor(() => {});
   });
 
   describe('space creation', () => {
