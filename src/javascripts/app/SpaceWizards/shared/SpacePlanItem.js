@@ -92,24 +92,13 @@ export default function SpacePlanItem(props) {
     onSelect,
     isCommunityPlanEnabled,
   } = props;
+  const freeSpacesUsage = freeSpacesResource && freeSpacesResource.usage;
   const freeSpacesLimit = freeSpacesResource && freeSpacesResource.limits.maximum;
 
   // We should not show the chevron in the following cases:
   // - the plan is disabled
   // - the plan is not free, and the org is not paying
   const showChevron = plan.disabled ? false : plan.isFree ? true : isPayingOrg ? true : false;
-
-  const tooltipContent = isCommunityPlanEnabled ? (
-    <>
-      You have <Pluralized text="free community space" count={freeSpacesLimit} /> for your
-      organization. If you delete a community space, you can create another one.
-    </>
-  ) : (
-    <>
-      You can have up to <Pluralized text="free space" count={freeSpacesLimit} /> for your
-      organization. If you delete a free space, another one can be created.
-    </>
-  );
 
   const handleClick = () => !plan.disabled && onSelect(plan);
 
@@ -136,10 +125,23 @@ export default function SpacePlanItem(props) {
 
             {plan.isFree && freeSpacesLimit && (
               <>
-                <Pluralized text="free space" count={freeSpacesLimit} />
-                <Tooltip content={tooltipContent}>
-                  <Icon icon="HelpCircle" className={styles.helpIcon} />
-                </Tooltip>
+                {isCommunityPlanEnabled ? (
+                  'free space'
+                ) : (
+                  <>
+                    {freeSpacesUsage}/{freeSpacesLimit} used
+                    <Tooltip
+                      content={
+                        <>
+                          You can have up to{' '}
+                          <Pluralized text="free space" count={freeSpacesLimit} /> for your
+                          organization. If you delete a free space, another one can be created.
+                        </>
+                      }>
+                      <Icon icon="HelpCircle" className={styles.helpIcon} />
+                    </Tooltip>
+                  </>
+                )}
               </>
             )}
           </div>
