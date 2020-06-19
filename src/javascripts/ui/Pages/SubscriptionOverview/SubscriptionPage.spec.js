@@ -1,19 +1,24 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-// import { render, screen, waitFor } from '@testing-library/react';
-// import userEvent from '@testing-library/user-event';
+import userEvent from '@testing-library/user-event';
 import * as Fake from 'test/helpers/fakeFactory';
 import SubscriptionPage from './SubscriptionPage';
+import { getVariation } from 'LaunchDarkly';
 
-// import { isOwner } from 'services/OrganizationRoles';
-// import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
-// import { calcUsersMeta } from 'utils/SubscriptionUtils';
+import { isOwner } from 'services/OrganizationRoles';
+import { go } from 'states/Navigator';
+import { billing } from './links';
 
 jest.mock('services/OrganizationRoles', () => ({
   isOwner: jest.fn(),
 }));
-jest.mock('account/pricing/PricingDataProvider', () => ({
-  isEnterprisePlan: jest.fn(),
+jest.mock('./links', () => ({
+  billing: jest.fn(),
+  memberships: jest.fn().mockReturnValue({ path: 'not-important-path' }),
+}));
+jest.mock('states/Navigator', () => ({
+  go: jest.fn(),
+  href: jest.fn(),
 }));
 
 const mockOrganization = Fake.Organization();
@@ -28,6 +33,10 @@ const mockSpacePlans = [
 ];
 
 describe('SubscriptionPage', () => {
+  beforeEach(() => {
+    getVariation.mockClear().mockResolvedValue(false);
+  });
+
   it('should show skeletons when initialLoad is true', () => {
     build({ initialLoad: true });
 
@@ -71,23 +80,76 @@ describe('SubscriptionPage', () => {
   });
 
   it('should show copy about inaccessible spaces if the user has inaccessible spaces', () => {
-    // insert test here
+    const inaccessibleSpace = Fake.Plan({
+      space: Fake.Space({ isAccessible: false }),
+    });
+
+    build({
+      spacePlans: [...mockSpacePlans, inaccessibleSpace],
+    });
+
+    expect(screen.getByTestId('subscription-page.inaccessible-space-copy')).toBeVisible();
+  });
+
+  it('should link to users page when link to users page button is clicked', () => {
+    const inaccessibleSpace = Fake.Plan({
+      space: Fake.Space({ isAccessible: false }),
+    });
+
+    build({
+      spacePlans: [...mockSpacePlans, inaccessibleSpace],
+    });
+
+    userEvent.click(screen.getByTestId('subscription-page.link-to-users-list'));
+    expect(go).toBeCalledWith({
+      path: 'account.organizations.users.list',
+      params: {
+        orgId: mockOrganization.sys.id,
+      },
+    });
   });
 
   it('should show the monthly cost for on demand users', () => {
-    // insert test here
+    build({ organization: Fake.Organization({ isBillable: true }), grandTotal: 3000 });
+
+    expect(screen.getByText('Monthly total')).toBeVisible();
+    expect(screen.getByTestId('on-demand-monthly-cost')).toHaveTextContent('$3,000');
   });
 
   it('should show CTA to add billing copy if the org is free and user is org owner', () => {
-    // insert test here
+    isOwner.mockReturnValue(true);
+    build({ organization: Fake.Organization({ isBillable: false }) });
+
+    expect(screen.getByTestId('subscription-page.billing-copy')).toBeVisible();
   });
 
   it('should not show the add billing copy if the org is free but the user is not org owner', () => {
-    // insert test here
+    isOwner.mockReturnValue(false);
+    build({ organization: Fake.Organization({ isBillable: false }) });
+
+    expect(screen.queryByTestId('subscription-page.billing-copy')).toBeNull();
+  });
+
+  it('should redirect to the billing page when the CTA add billing button is clicked', () => {
+    const navigatorObject = { test: true };
+    const nonBillableOrganization = Fake.Organization({ isBillable: false });
+    isOwner.mockReturnValue(true);
+    billing.mockReturnValue(navigatorObject);
+
+    build({
+      organization: nonBillableOrganization,
+      organizationId: nonBillableOrganization.sys.id,
+    });
+
+    userEvent.click(screen.getByTestId('subscription-page.add-billing-button'));
+    expect(billing).toHaveBeenCalledWith(nonBillableOrganization.sys.id);
+    expect(go).toHaveBeenCalledWith(navigatorObject);
   });
 
   it('should show CTA to talk to support', () => {
-    // insert test here
+    build();
+
+    expect(screen.getByText('Get in touch with us')).toBeVisible();
   });
 });
 

@@ -90,9 +90,6 @@ const styles = {
     gridColumnStart: 2,
     gridRowStart: 2,
   }),
-  usersSection: css({
-    gridRowStart: 3,
-  }),
   spacesSection: css({
     gridColumnEnd: 3,
     gridColumnStart: 1,
@@ -104,22 +101,18 @@ const goToBillingPage = (organizationId) => {
   go(billing(organizationId));
 };
 
-export default function SubscriptionPage(props) {
-  const {
-    basePlan,
-    usersMeta,
-    organization,
-    grandTotal,
-    showMicroSmallSupportCard,
-    organizationId,
-    initialLoad,
-    spacePlans,
-    onSpacePlansChange,
-  } = props;
-
+export default function SubscriptionPage({
+  basePlan,
+  usersMeta,
+  organization,
+  grandTotal,
+  showMicroSmallSupportCard,
+  organizationId,
+  initialLoad,
+  spacePlans,
+  onSpacePlansChange,
+}) {
   const [changedSpaceId, setChangedSpaceId] = useState('');
-<<<<<<< HEAD
-  const [spacePlans, setSpacePlans] = useState([]);
   const [isNewsSliderEnabled, setIsNewsSliderEnabled] = useState(false);
   const [sliderVisible, setSliderVisible] = useState(true);
 
@@ -130,8 +123,6 @@ export default function SubscriptionPage(props) {
     }
     getFeatureFlagVariation();
   }, [isNewsSliderEnabled]);
-=======
->>>>>>> Add initial testing and minor code refactor
 
   useEffect(() => {
     let timer;
@@ -352,7 +343,7 @@ function PayingOnDemandOrgCopy({ grandTotal }) {
         element="h2"
         data-test-id="subscription-page.sidebar.grand-total"
         className={styles.grandTotal}>
-        <Price value={grandTotal} />
+        <Price value={grandTotal} testId="on-demand-monthly-cost" />
       </DisplayText>
       <Note>
         The amount on your invoice might differ from the amount shown above because of usage
@@ -368,13 +359,16 @@ PayingOnDemandOrgCopy.propTypes = {
 
 function NonPayingOrgCopy({ organizationId }) {
   return (
-    <Typography>
+    <Typography testId="subscription-page.billing-copy">
       <Heading className="section-title">Your payment details</Heading>
       <Paragraph>
         You need to provide us with your billing address and credit card details before creating
         paid spaces or adding users beyond the free limit.
       </Paragraph>
-      <TextLink icon="Receipt" onClick={() => goToBillingPage(organizationId)}>
+      <TextLink
+        icon="Receipt"
+        testId="subscription-page.add-billing-button"
+        onClick={() => goToBillingPage(organizationId)}>
         Enter payment details
       </TextLink>
     </Typography>
@@ -387,7 +381,7 @@ NonPayingOrgCopy.propTypes = {
 
 function InaccessibleSpacesCopy({ isOrgOwner, organizationId: orgId }) {
   return (
-    <Typography>
+    <Typography testId="subscription-page.inaccessible-space-copy">
       <Heading className="section-title">Spaces without permission</Heading>
       <Paragraph>
         You can’t see usage or content for some of your spaces because you’re not a member of those
@@ -396,7 +390,10 @@ function InaccessibleSpacesCopy({ isOrgOwner, organizationId: orgId }) {
       <Paragraph>
         However, since you’re an organization {isOrgOwner ? 'owner' : 'admin'} you can grant
         yourself access by going to{' '}
-        <StateLink path="account.organizations.users.list" params={{ orgId }}>
+        <StateLink
+          data-test-id="subscription-page.link-to-users-list"
+          path="account.organizations.users.list"
+          params={{ orgId }}>
           Users
         </StateLink>{' '}
         and adding yourself to the space.
