@@ -2,13 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
-import {
-  Paragraph,
-  Heading,
-  TextLink,
-  SkeletonContainer,
-  SkeletonBodyText,
-} from '@contentful/forma-36-react-components';
+import { Paragraph, Heading, TextLink } from '@contentful/forma-36-react-components';
 
 import { joinAnd } from 'utils/StringUtils';
 import { getEnabledFeatures } from 'utils/SubscriptionUtils';
@@ -27,26 +21,19 @@ function BasePlan({ basePlan }) {
   return (
     <div className={styles.container}>
       <Heading className="section-title">Platform</Heading>
-
-      {!basePlan ? (
-        <SkeletonContainer svgHeight={40}>
-          <SkeletonBodyText numberOfLines={2} />
-        </SkeletonContainer>
-      ) : (
-        <Paragraph testId="subscription-page.base-plan-details">
-          <b>{basePlan.name}</b>
-          {enabledFeaturesNames.length
-            ? ` – includes ${joinAnd(enabledFeaturesNames)}. `
-            : ' – doesn’t include enterprise features. '}
-          <TextLink
-            href={websiteUrl('/pricing/#platform-features')}
-            testId="subscription-page.org-usage-link"
-            target="_blank"
-            rel="noopener noreferrer">
-            Platform features
-          </TextLink>
-        </Paragraph>
-      )}
+      <Paragraph testId="subscription-page.base-plan-details">
+        <b>{basePlan.name}</b>
+        {enabledFeaturesNames.length
+          ? ` – includes ${joinAnd(enabledFeaturesNames)}. `
+          : ' – doesn’t include enterprise features. '}
+        <TextLink
+          href={websiteUrl('/pricing/#platform-features')}
+          testId="subscription-page.org-usage-link"
+          target="_blank"
+          rel="noopener noreferrer">
+          Platform features
+        </TextLink>
+      </Paragraph>
     </div>
   );
 }

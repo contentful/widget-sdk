@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 
@@ -53,7 +53,7 @@ async function fetchNumMemberships(organizationId) {
   return membershipsResource.usage;
 }
 
-const fetch = (organizationId) => async () => {
+const fetch = (organizationId, setSpacePlans) => async () => {
   const organization = await getOrganization(organizationId);
 
   if (!isOwnerOrAdmin(organization)) {
@@ -97,9 +97,10 @@ const fetch = (organizationId) => async () => {
   const showMicroSmallSupportCard =
     !isEnterprisePlan(basePlan) && isCommunityPlanEnabled && isOrgCreatedBeforeV2Pricing;
 
+  setSpacePlans(spacePlans);
+
   return {
     basePlan,
-    spacePlans,
     grandTotal,
     usersMeta,
     organization,
@@ -109,16 +110,29 @@ const fetch = (organizationId) => async () => {
 };
 
 export default function SubscriptionPageRouter({ orgId: organizationId }) {
-  const { isLoading, error, data = {} } = useAsync(useCallback(fetch(organizationId), []));
+  const [spacePlans, setSpacePlans] = useState([]);
+  const { isLoading, error, data = {} } = useAsync(
+    useCallback(fetch(organizationId, setSpacePlans), [])
+  );
 
   if (error) {
     return <ForbiddenPage />;
   }
 
+  const props = {
+    ...data,
+    initialLoad: isLoading,
+    organizationId,
+    spacePlans,
+    onSpacePlansChange: (newSpacePlans) => {
+      setSpacePlans(newSpacePlans);
+    },
+  };
+
   return (
     <>
       <DocumentTitle title="Subscription" />
-      <SubscriptionPage initialLoad={isLoading} organizationId={organizationId} data={data} />
+      <SubscriptionPage {...props} />
     </>
   );
 }
