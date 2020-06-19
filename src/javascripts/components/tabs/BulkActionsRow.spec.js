@@ -286,7 +286,7 @@ describe('BulkActionsRow', () => {
       expect(onActionComplete).not.toHaveBeenCalled();
     });
 
-    it('should display the release modal when clicked on "Add to Release" action', async () => {
+    it('should display the release modal when clicked on "Add to release" action', async () => {
       const { getByTestId } = renderComponent({
         selectedEntities: generateEntities(5, false),
       });

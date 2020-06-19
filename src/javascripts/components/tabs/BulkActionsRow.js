@@ -164,7 +164,7 @@ const BulkActionsRow = ({
         />
         {isReleaseFeatureEnabled ? (
           <BulkActionLink
-            label="Add to Release"
+            label="Add to release"
             linkType="secondary"
             onClick={() => openReleaseDialog(true)}
             visible={canAddToRelease}

@@ -197,7 +197,7 @@ export default class ReleasesWidgetDialog extends Component {
         releaseContentTitle={contentTitle}
         tabs={this.tabs}
         defaultTab={'existing'}
-        title="Add to a Content Release"
+        title="Add to a release"
         onClose={this.onClose}
         showTabs={true}
       />

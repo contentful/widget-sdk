@@ -81,7 +81,7 @@ const PageShell = ({ children, setIsRelaseDialogShown }) => (
   <Workbench>
     <Workbench.Header
       icon={<Icon icon="Release" color="positive" size="large" />}
-      title="Content Releases"
+      title="Content releases"
       onBack={() => window.history.back()}
       actions={
         <Button
