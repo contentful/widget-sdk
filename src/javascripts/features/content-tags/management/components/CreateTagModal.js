@@ -41,16 +41,21 @@ const reducer = (state, action) => {
 function validate(state, nameExistsValidator, idExistsValidator) {
   const errors = { id: null };
   if (state.id.length) {
-    if (!isValidResourceId(state.id)) {
+    if (state.id.startsWith('contentful.')) {
+      errors.id =
+        'Nice try! Unfortunately, we keep the "contentful." tag ID prefix for internal purposes.';
+    } else if (!isValidResourceId(state.id)) {
       errors.id = 'Use only Latin letters, numbers, dots, hyphens and underscores.';
-    } else if (state.id.startsWith('contentful.')) {
-      errors.id = 'The prefix "contentful" is reserved for internal usage.';
     } else if (idExistsValidator(state.id)) {
       errors.id = 'This id is already taken.';
     }
   }
   if (nameExistsValidator(state.name)) {
     errors.name = 'This name is already taken.';
+  }
+  if (state.name.length && state.name.startsWith('contentful.')) {
+    errors.name =
+      'Nice try! Unfortunately, we keep the "contentful." tag name prefix for internal purposes.';
   }
   return errors;
 }

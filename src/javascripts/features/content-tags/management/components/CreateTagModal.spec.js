@@ -187,6 +187,24 @@ describe('A CreateTagModal', () => {
       await wait(() => expect(form).toHaveFormValues({ name: 'Hello World', id: 'helloWorld' }));
     });
   });
+
+  it("doesn't allow id with prefix 'contentful.'", async () => {
+    const { events, idInput, queries, form } = setup();
+
+    await act(async () => {
+      events.change(idInput, { target: { value: 'contentful.test-id' } });
+    });
+
+    await act(async () => {
+      await wait(() => expect(form).toHaveFormValues({ name: '', id: 'contentful.test-id' }));
+    });
+
+    expect(
+      queries.getByText(
+        /Nice try! Unfortunately, we keep the "contentful." tag ID prefix for internal purposes./
+      )
+    ).toBeInTheDocument();
+  });
 });
 
 function setup(props = { isShown: true, onClose: jest.fn() }, tagsRepo = {}) {

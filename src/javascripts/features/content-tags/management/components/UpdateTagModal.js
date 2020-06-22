@@ -42,6 +42,9 @@ function validate(state, initialTag, nameExistsValidator) {
   const errors = {};
   if (state.name !== initialTag.name && nameExistsValidator(state.name)) {
     errors.name = 'This name is already taken.';
+  } else if (state.name.length && state.name.startsWith('contentful.')) {
+    errors.name =
+      'Nice try! Unfortunately, we keep the "contentful." tag name prefix for internal purposes.';
   }
   return errors;
 }
