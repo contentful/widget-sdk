@@ -6,12 +6,18 @@ import { Notification } from '@contentful/forma-36-react-components';
 import * as entityStatus from 'app/entity_editor/EntityStatus';
 import * as ResourceUtils from 'utils/ResourceUtils';
 
+import * as TokenStore from 'services/TokenStore';
 import TheLocaleStore from 'services/localeStore';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as BulkAssetsCreator from 'services/BulkAssetsCreator';
 import * as Analytics from 'analytics/Analytics';
 import * as entityCreator from 'components/app_container/entityCreator';
 import createViewPersistor from 'data/ListViewPersistor';
+import { isOwner } from 'services/OrganizationRoles';
+import {
+  showDialog as showChangeSpaceModal,
+  getNotificationMessage,
+} from 'services/ChangeSpaceService';
 
 export default function register() {
   registerController('AssetListController', [
@@ -105,6 +111,25 @@ export default function register() {
 
       resetUsageProps();
 
+      // These are the props for AssetLimitWarning
+      $scope.isOrgOwner = isOwner(spaceContext.organization);
+      $scope.onUpgradeSpace = async () => {
+        const organizationId = spaceContext.organization.sys.id;
+        const space = await TokenStore.getSpace(spaceContext.space.data.sys.id);
+
+        showChangeSpaceModal({
+          organizationId,
+          scope: 'space',
+          space,
+          action: 'change',
+          onSubmit: async (newProductRatePlan) => {
+            Notification.success(
+              getNotificationMessage(space, this.state.plan, newProductRatePlan)
+            );
+            this.setState({ plan: newProductRatePlan });
+          },
+        });
+      };
       const debouncedResetAssets = debounce(() => {
         searchController.resetAssets();
         resetUsageProps();
