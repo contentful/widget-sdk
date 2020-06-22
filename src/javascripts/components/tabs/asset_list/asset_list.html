@@ -42,6 +42,7 @@
   </div>
   <div class="workbench-main__right-content">
     <react-component
+      ng-show="reachingRecordsLimit"
       name="components/tabs/asset_list/AssetLimitWarning"
       props="{ isOrgOwner, onUpgradeSpace }"
     ></react-component>
@@ -54,7 +55,7 @@
     <react-component
       ng-if="!isLegacyOrganization &amp;&amp; paginator.getTotal() &gt; 0"
       name="components/RecordsResourceUsage"
-      props="usageProps"
+      props="{ recordsUsage, recordsLimit }"
       watch-depth="reference"
     ></react-component>
     <react-component

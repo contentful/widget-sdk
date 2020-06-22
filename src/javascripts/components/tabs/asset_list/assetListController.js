@@ -8,6 +8,8 @@ import * as ResourceUtils from 'utils/ResourceUtils';
 
 import * as TokenStore from 'services/TokenStore';
 import TheLocaleStore from 'services/localeStore';
+import createResourceService from 'services/ResourceService';
+import { getResourceLimits } from 'utils/ResourceUtils';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as BulkAssetsCreator from 'services/BulkAssetsCreator';
 import * as Analytics from 'analytics/Analytics';
@@ -99,23 +101,14 @@ export default function register() {
       $scope.$watch('paginator.getPage()', resetPaginatorProps);
       $scope.$watch('paginator.getTotal()', resetPaginatorProps);
 
-      // These are the props that are sent to the RecordsResourceUsage component
-      const resetUsageProps = debounce(() => {
-        $scope.usageProps = {
-          space: spaceContext.space.data,
-          environmentId: spaceContext.getEnvironmentId(),
-          isMasterEnvironment: spaceContext.isMasterEnvironment(),
-          currentTotal: $scope.paginator.getTotal(),
-        };
-      });
+      // These are the props for AssetLimitWarning and RecordsResourceUsage
+      const spaceData = spaceContext.space.data;
+      const environmentId = spaceContext.getEnvironmentId();
 
-      resetUsageProps();
-
-      // These are the props for AssetLimitWarning
       $scope.isOrgOwner = isOwner(spaceContext.organization);
       $scope.onUpgradeSpace = async () => {
         const organizationId = spaceContext.organization.sys.id;
-        const space = await TokenStore.getSpace(spaceContext.space.data.sys.id);
+        const space = await TokenStore.getSpace(spaceData.sys.id);
 
         showChangeSpaceModal({
           organizationId,
@@ -130,6 +123,21 @@ export default function register() {
           },
         });
       };
+
+      const resetUsageProps = debounce(async () => {
+        const resourceService = createResourceService(spaceData.sys.id);
+        const recordResource = await resourceService.get('record', environmentId);
+
+        const recordsUsage = recordResource.usage;
+        const recordsLimit = getResourceLimits(recordResource).maximum;
+
+        $scope.recordsUsage = recordsUsage;
+        $scope.recordsLimit = recordsLimit;
+        $scope.reachingRecordsLimit = recordsUsage / recordsLimit <= 0.8; // TODO: befoe pushing this condition needs to be inverted
+      });
+
+      resetUsageProps();
+
       const debouncedResetAssets = debounce(() => {
         searchController.resetAssets();
         resetUsageProps();
