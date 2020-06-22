@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { get } from 'lodash';
 import { Price } from 'core/components/formatting';
 import { css } from 'emotion';
 
@@ -25,6 +26,9 @@ export default function ConfirmScreenNormal(props) {
     currentSubscriptionPrice,
   } = props;
 
+  const currentAndSelectedPriceDiffers =
+    get(currentSpaceSubscriptionPlan, 'price', 0) !== selectedPlan.price;
+
   return (
     <Typography testId="confirmation-screen">
       <Heading className={classes.center}>Confirm your selection</Heading>
@@ -33,47 +37,64 @@ export default function ConfirmScreenNormal(props) {
       </Paragraph>
 
       <Paragraph testId="contents">
-        <>
-          You’re about to change the space <em>{space.name}</em> from a{' '}
-          {currentSpaceSubscriptionPlan.name} to a {selectedPlan.name} space type.{' '}
-        </>
+        You’re about to change the space <em>{space.name}</em>
+        {currentSpaceSubscriptionPlan ? ` from a ${currentSpaceSubscriptionPlan.name} ` : ' '}
+        to a {selectedPlan.name} space type. The price of this space will{' '}
+        {!currentAndSelectedPriceDiffers && 'remain the same'}
+        {currentAndSelectedPriceDiffers && currentSpaceSubscriptionPlan && (
+          <>
+            {currentSpaceSubscriptionPlan.price === 0 && selectedPlan.price !== 0 && (
+              <>
+                increase to{' '}
+                <strong>
+                  <Price value={selectedPlan.price} />
+                </strong>{' '}
+                and increase
+              </>
+            )}
 
-        {currentSpaceSubscriptionPlan.price === 0 && (
+            {currentSpaceSubscriptionPlan.price !== 0 && (
+              <>
+                change from{' '}
+                <strong>
+                  <Price value={currentSpaceSubscriptionPlan.price} />
+                </strong>{' '}
+                to{' '}
+                <strong>
+                  <Price value={selectedPlan.price} />
+                </strong>{' '}
+                and will{' '}
+                {currentSpaceSubscriptionPlan.price >= selectedPlan.price ? 'reduce' : 'increase'}
+              </>
+            )}
+          </>
+        )}
+        {!currentSpaceSubscriptionPlan && currentAndSelectedPriceDiffers && (
           <>
-            The price of this space will now be{' '}
+            now be{' '}
             <strong>
               <Price value={selectedPlan.price} />
             </strong>{' '}
-            and will increase
+            and change
           </>
         )}
-        {currentSpaceSubscriptionPlan.plan !== 0 && (
+        {currentAndSelectedPriceDiffers && (
           <>
-            The price of this space will change from{' '}
+            {' '}
+            the total price of the spaces in your organization to{' '}
             <strong>
-              <Price value={currentSpaceSubscriptionPlan.price} />
-            </strong>{' '}
-            to{' '}
-            <strong>
-              <Price value={selectedPlan.price} />
-            </strong>{' '}
-            and will{' '}
-            {currentSpaceSubscriptionPlan.price >= selectedPlan.price ? 'reduce' : 'increase'}
+              <Price
+                unit="month"
+                value={
+                  currentSubscriptionPrice +
+                  selectedPlan.price -
+                  (currentSpaceSubscriptionPlan ? currentSpaceSubscriptionPlan.price : 0)
+                }
+              />
+            </strong>
           </>
         )}
-        <span>
-          {' '}
-          the total price of the spaces in your organization to{' '}
-          <strong>
-            <Price
-              unit="month"
-              value={
-                currentSubscriptionPrice + selectedPlan.price - currentSpaceSubscriptionPlan.price
-              }
-            />
-          </strong>
-          .
-        </span>
+        .
       </Paragraph>
       <div className={classes.confirmButton}>
         <Button
@@ -91,7 +112,7 @@ export default function ConfirmScreenNormal(props) {
 
 ConfirmScreenNormal.propTypes = {
   selectedPlan: PropTypes.object.isRequired,
-  currentSpaceSubscriptionPlan: PropTypes.object.isRequired,
+  currentSpaceSubscriptionPlan: PropTypes.object,
   changing: PropTypes.bool.isRequired,
   onConfirm: PropTypes.func.isRequired,
   space: PropTypes.object.isRequired,
