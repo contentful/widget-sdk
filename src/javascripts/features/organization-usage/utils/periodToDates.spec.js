@@ -1,4 +1,4 @@
-import periodToDates from './periodToDates';
+import { periodToDates } from './periodToDates';
 
 describe('periodToDates', () => {
   const defaultPeriod = {

@@ -128,7 +128,7 @@ const propsToChartOption = ({ period, usage, includedLimit }) => {
   };
 };
 
-const OrganizationBarChart = ({ period, usage, includedLimit }) => {
+export const OrganizationBarChart = ({ period, usage, includedLimit }) => {
   const chartRef = useChart(propsToChartOption({ period, usage, includedLimit }));
   return <div ref={chartRef} className={styles.chartWrapper}></div>;
 };
@@ -138,5 +138,3 @@ OrganizationBarChart.propTypes = {
   usage: PropTypes.array,
   includedLimit: PropTypes.any,
 };
-
-export default OrganizationBarChart;

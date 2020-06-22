@@ -1,5 +1,5 @@
 import { sum } from 'lodash';
 
-export default (spaceUsage, totalUsage) => {
+export const calcRelativeSpaceUsage = (spaceUsage, totalUsage) => {
   return !totalUsage ? 0 : Math.round((sum(spaceUsage) / totalUsage) * 100);
 };

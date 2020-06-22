@@ -6,12 +6,12 @@ import { Spinner, Workbench } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification';
 
 import DocumentTitle from 'components/shared/DocumentTitle';
-import OrganizationResourceUsageList from './components/OrganizationResourceUsageList';
-import OrganizationUsagePage from './components/OrganizationUsagePage';
-import PeriodSelector from './components/PeriodSelector';
-import NoSpacesPlaceholder from './components/NoSpacesPlaceholder';
+import { OrganizationResourceUsageList } from '../components/OrganizationResourceUsageList';
+import { OrganizationUsagePage } from '../components/OrganizationUsagePage';
+import { PeriodSelector } from '../components/PeriodSelector';
+import { NoSpacesPlaceholder } from '../components/NoSpacesPlaceholder';
 import { track } from 'analytics/Analytics';
-import * as UsageService from './UsageService';
+import * as UsageService from '../services/UsageService';
 
 import * as TokenStore from 'services/TokenStore';
 import * as EndpointFactory from 'data/EndpointFactory';
@@ -139,7 +139,9 @@ export class WorkbenchActions extends React.Component {
   }
 }
 
-export class OrganizationUsage extends React.Component {
+// need to do this for the test
+// eslint-disable-next-line rulesdir/restrict-multiple-react-component-exports
+export class OrganizationUsageRoute extends React.Component {
   static propTypes = {
     orgId: PropTypes.string.isRequired,
   };
@@ -360,5 +362,3 @@ export class OrganizationUsage extends React.Component {
     );
   }
 }
-
-export default OrganizationUsage;

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`OrganizationUsage should render page without errors 1`] = `
+exports[`OrganizationUsageRoute should render page without errors 1`] = `
 <Fragment>
   <DocumentTitle
     title="Usage"

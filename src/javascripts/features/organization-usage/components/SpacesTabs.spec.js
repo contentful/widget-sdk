@@ -3,7 +3,7 @@ import { render, fireEvent, within } from '@testing-library/react';
 import * as echarts from 'echarts';
 
 import { track } from 'analytics/Analytics';
-import SpacesTabs from './SpacesTabs';
+import { SpacesTabs } from './SpacesTabs';
 
 jest.mock('echarts', () => ({
   init: jest.fn(),

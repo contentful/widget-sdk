@@ -6,7 +6,7 @@ import { keyBy, property } from 'lodash';
 import { ResourceUsage } from 'app/SpaceSettings/Usage/ResourceUsage';
 import { Paragraph, Heading } from '@contentful/forma-36-react-components';
 
-export default class OrganizationResourceUsageList extends React.Component {
+export class OrganizationResourceUsageList extends React.Component {
   static propTypes = {
     resources: PropTypes.arrayOf(PropTypes.object),
   };

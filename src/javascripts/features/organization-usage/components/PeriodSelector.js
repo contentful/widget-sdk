@@ -4,11 +4,11 @@ import moment from 'moment';
 import { Select, Option } from '@contentful/forma-36-react-components';
 import { cond, constant, stubTrue } from 'lodash';
 
-import { periodPropType } from '../propTypes';
+import { periodPropType } from './propTypes';
 
 const formatDate = (date) => moment(date).format('DD MMM');
 
-export default class PeriodSelector extends React.Component {
+export class PeriodSelector extends React.Component {
   static propTypes = {
     periods: PropTypes.arrayOf(periodPropType).isRequired,
     selectedPeriodIndex: PropTypes.number.isRequired,

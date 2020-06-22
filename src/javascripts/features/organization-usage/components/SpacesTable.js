@@ -11,8 +11,8 @@ import {
 import PropTypes from 'prop-types';
 import { sum } from 'lodash';
 import { shorten } from 'utils/NumberUtils';
-import { organizationResourceUsagePropType } from '../propTypes';
-import calcRelativeSpaceUsage from '../utils/calcRelativeSpaceUsage';
+import { organizationResourceUsagePropType } from './propTypes';
+import { calcRelativeSpaceUsage } from '../utils/calcRelativeSpaceUsage';
 
 const SpaceRow = ({ spaceName, spaceUsage, totalUsage, colour, isPoC }) => {
   return (
@@ -45,7 +45,7 @@ SpaceRow.propTypes = {
   isPoC: PropTypes.bool,
 };
 
-const SpacesTable = ({ spaceNames, data, totalUsage, colours, isPoC }) => {
+export const SpacesTable = ({ spaceNames, data, totalUsage, colours, isPoC }) => {
   return (
     <Table data-test-id="api-usage-table">
       <TableHead>
@@ -79,5 +79,3 @@ SpacesTable.propTypes = {
   colours: PropTypes.arrayOf(PropTypes.string).isRequired,
   isPoC: PropTypes.objectOf(PropTypes.bool).isRequired,
 };
-
-export default SpacesTable;

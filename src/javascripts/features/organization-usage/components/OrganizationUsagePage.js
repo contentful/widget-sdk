@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Tabs, Tab, TabPanel, Heading } from '@contentful/forma-36-react-components';
 import { Grid, GridItem } from '@contentful/forma-36-react-components/dist/alpha';
-import SpacesTabs from './SpacesTabs';
-import OrganizationBarChart from './OrganizationBarChart';
-import OrganizationUsageInfo from './OrganizationUsageInfo';
-import AssetBandwidthSection from './AssetBandwidthSection';
+import { SpacesTabs } from './SpacesTabs';
+import { OrganizationBarChart } from './OrganizationBarChart';
+import { OrganizationUsageInfo } from './OrganizationUsageInfo';
+import { AssetBandwidthSection } from './AssetBandwidthSection';
 
 import PropTypes from 'prop-types';
-import { periodicUsagePropType, periodPropType } from '../propTypes';
+import { periodicUsagePropType, periodPropType } from './propTypes';
 
-import periodToDates from '../utils/periodToDates';
+import { periodToDates } from '../utils/periodToDates';
 import { sum, get } from 'lodash';
 
 import { css } from 'emotion';
@@ -30,7 +30,7 @@ const styles = {
   }),
 };
 
-const OrganizationUsagePage = ({
+export const OrganizationUsagePage = ({
   spaceNames,
   period,
   periodicUsage,
@@ -131,5 +131,3 @@ OrganizationUsagePage.propTypes = {
   isPoC: PropTypes.objectOf(PropTypes.bool).isRequired,
   onTabSelect: PropTypes.func,
 };
-
-export default OrganizationUsagePage;

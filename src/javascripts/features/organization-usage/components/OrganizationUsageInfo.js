@@ -22,7 +22,7 @@ const styles = {
   }),
 };
 
-const OrganizationUsageInfo = ({ totalUsage, includedLimit }) => {
+export const OrganizationUsageInfo = ({ totalUsage, includedLimit }) => {
   const limitedUsage = !!includedLimit;
   return (
     <Typography>
@@ -65,5 +65,3 @@ OrganizationUsageInfo.propTypes = {
   totalUsage: PropTypes.number.isRequired,
   includedLimit: PropTypes.number.isRequired,
 };
-
-export default OrganizationUsageInfo;

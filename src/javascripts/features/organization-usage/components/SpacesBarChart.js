@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { organizationResourceUsagePropType } from '../propTypes';
+import { organizationResourceUsagePropType } from './propTypes';
 import tokens from '@contentful/forma-36-tokens';
 import { shorten } from 'utils/NumberUtils';
 import { css } from 'emotion';
@@ -13,7 +13,7 @@ const styles = {
   }),
 };
 
-const propsToChartOptions = ({ spaceNames, data, period, colours }) => {
+export const propsToChartOptions = ({ spaceNames, data, period, colours }) => {
   const series = data.map((item, index) => ({
     name: item.sys.space.sys.id,
     type: 'bar',
@@ -129,7 +129,7 @@ const propsToChartOptions = ({ spaceNames, data, period, colours }) => {
   };
 };
 
-const SpacesBarChart = ({ spaceNames, data, period, colours }) => {
+export const SpacesBarChart = ({ spaceNames, data, period, colours }) => {
   const chartRef = useChart(propsToChartOptions({ spaceNames, data, period, colours }));
   return <div ref={chartRef} className={styles.chartWrapper} data-test-id="api-usage-bar-chart" />;
 };
@@ -140,5 +140,3 @@ SpacesBarChart.propTypes = {
   spaceNames: PropTypes.objectOf(PropTypes.string).isRequired,
   colours: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
-
-export default SpacesBarChart;

@@ -42,7 +42,7 @@ const styles = {
   }),
 };
 
-const AssetBandwidthSection = ({ limit, usage, uom }) => {
+export const AssetBandwidthSection = ({ limit, usage, uom }) => {
   const withUnit = partialRight(shortenStorageUnit, uom);
 
   return (
@@ -83,5 +83,3 @@ AssetBandwidthSection.propTypes = {
   usage: PropTypes.number.isRequired,
   uom: PropTypes.string.isRequired,
 };
-
-export default AssetBandwidthSection;

@@ -1,4 +1,4 @@
-import calcRelativeSpaceUsage from './calcRelativeSpaceUsage';
+import { calcRelativeSpaceUsage } from './calcRelativeSpaceUsage';
 
 describe('calcRelativeSpaceUsage', () => {
   it('should return correct relative space usage for values > 0', () => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import OrganizationUsageInfo from './OrganizationUsageInfo';
+import { OrganizationUsageInfo } from './OrganizationUsageInfo';
 
 describe('OrganisationUsageInfoNew', () => {
   const defaultProps = {

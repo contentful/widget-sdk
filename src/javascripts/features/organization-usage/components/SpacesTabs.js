@@ -4,10 +4,10 @@ import tokens from '@contentful/forma-36-tokens';
 import { Grid, GridItem } from '@contentful/forma-36-react-components/dist/alpha';
 import { css } from 'emotion';
 import PropTypes from 'prop-types';
-import SpacesTable from './SpacesTable';
-import SpacesBarChart from './SpacesBarChart';
+import { SpacesTable } from './SpacesTable';
+import { SpacesBarChart } from './SpacesBarChart';
 import { sum } from 'lodash';
-import { periodicUsagePropType } from '../propTypes';
+import { periodicUsagePropType } from './propTypes';
 
 import { track } from 'analytics/Analytics';
 
@@ -40,7 +40,7 @@ const tabsData = [
 
 const colours = ['#2E75D4', '#0EB87F', '#EA9005', '#8C53C2', '#CC3C52'];
 
-const SpacesTabs = ({ spaceNames, period, periodicUsage, isPoC }) => {
+export const SpacesTabs = ({ spaceNames, period, periodicUsage, isPoC }) => {
   const defaultActiveTab = tabsData.find((item) => item.defaultActive);
   const [selected, setSelected] = useState(
     defaultActiveTab ? defaultActiveTab.id : tabsData[0]['id']
@@ -89,5 +89,3 @@ SpacesTabs.propTypes = {
   periodicUsage: periodicUsagePropType.isRequired,
   isPoC: PropTypes.objectOf(PropTypes.bool).isRequired,
 };
-
-export default SpacesTabs;

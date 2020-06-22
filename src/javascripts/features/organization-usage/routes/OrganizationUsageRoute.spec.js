@@ -3,11 +3,15 @@ import { shallow } from 'enzyme';
 import 'jest-enzyme';
 import { Spinner } from '@contentful/forma-36-react-components';
 
-import { OrganizationUsage, WorkbenchContent, WorkbenchActions } from './OrganizationUsage';
-import PeriodSelector from './components/PeriodSelector';
-import NoSpacesPlaceholder from './components/NoSpacesPlaceholder';
-import OrganizationUsagePage from './components/OrganizationUsagePage';
-import OrganizationResourceUsageList from './components/OrganizationResourceUsageList';
+import {
+  OrganizationUsageRoute,
+  WorkbenchContent,
+  WorkbenchActions,
+} from './OrganizationUsageRoute';
+import { PeriodSelector } from '../components/PeriodSelector';
+import { NoSpacesPlaceholder } from '../components/NoSpacesPlaceholder';
+import { OrganizationUsagePage } from '../components/OrganizationUsagePage';
+import { OrganizationResourceUsageList } from '../components/OrganizationResourceUsageList';
 import ReloadNotification from 'app/common/ReloadNotification';
 import * as OrganizationRolesMocked from 'services/OrganizationRoles';
 import * as TokenStoreMocked from 'services/TokenStore';
@@ -98,7 +102,7 @@ jest.mock('app/common/ReloadNotification', () => ({
 }));
 
 const shallowRenderComponent = async (props) => {
-  const wrapper = shallow(<OrganizationUsage {...props} />);
+  const wrapper = shallow(<OrganizationUsageRoute {...props} />);
   // Need to wait for internal async logic to finish
   // This means `componentDidMount` is called twice,
   //  which could potentially cause problems if it's not
@@ -107,7 +111,7 @@ const shallowRenderComponent = async (props) => {
   return wrapper;
 };
 
-describe('OrganizationUsage', () => {
+describe('OrganizationUsageRoute', () => {
   let defaultProps;
 
   beforeAll(() => {

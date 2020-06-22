@@ -2,7 +2,7 @@ import base from 'states/Base';
 import { iframeStateWrapper } from 'states/utils';
 
 import subscriptionState from './Subscription/SubscriptionState';
-import usageState from './Usage/UsageState';
+import { usageState } from 'features/organization-usage';
 import teamsState from './Teams/TeamsState';
 import { inviteUsersState, userDetailState, usersListState } from './Users/UsersState';
 import accessToolsState from './AccessToolsState';
