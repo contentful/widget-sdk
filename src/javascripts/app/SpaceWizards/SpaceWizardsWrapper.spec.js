@@ -72,7 +72,8 @@ describe('SpaceWizardsWrapper', () => {
       })
     );
 
-    expect(onClose).toBeCalled();
+    // onClose should be called with nothing
+    expect(onClose).toBeCalledWith();
   });
 
   it('should not track the CANCEL event if the modal is closed before loading finishes', async () => {
@@ -85,7 +86,7 @@ describe('SpaceWizardsWrapper', () => {
     userEvent.click(overlay);
 
     expect(Analytics.track).toHaveBeenCalledTimes(0);
-    expect(onClose).toBeCalled();
+    expect(onClose).toBeCalledWith();
 
     // There's nothing to really wait for, except for the act call, so we wait for... nothing
     await waitFor(() => {});

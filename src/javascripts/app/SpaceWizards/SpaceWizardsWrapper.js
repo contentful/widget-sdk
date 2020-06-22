@@ -77,14 +77,14 @@ export default function SpaceWizardsWrapper(props) {
       shouldCloseOnEscapePress={!isProcessing}
       shouldCloseOnOverlayClick={!isProcessing}
       isShown={isShown}
-      onClose={handleClose}>
+      onClose={() => handleClose()}>
       {() => (
         <>
           {isLoading && <Loader />}
           {!isLoading && showEnterprise && (
             <EnterpriseWizard
               organization={organization}
-              onClose={onClose}
+              onClose={handleClose}
               basePlan={data.basePlan}
               onProcessing={setIsProcessing}
               isProcessing={isProcessing}
@@ -94,7 +94,7 @@ export default function SpaceWizardsWrapper(props) {
             <CreateOnDemandWizard
               organization={organization}
               sessionId={sessionId}
-              onClose={onClose}
+              onClose={handleClose}
               onProcessing={setIsProcessing}
               isProcessing={isProcessing}
             />
@@ -104,7 +104,7 @@ export default function SpaceWizardsWrapper(props) {
               organization={organization}
               space={space}
               sessionId={sessionId}
-              onClose={onClose}
+              onClose={handleClose}
               onProcessing={setIsProcessing}
               isProcessing={isProcessing}
             />
