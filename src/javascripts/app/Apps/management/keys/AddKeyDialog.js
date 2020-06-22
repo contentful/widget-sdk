@@ -13,8 +13,16 @@ import {
 } from '@contentful/forma-36-react-components';
 import * as util from '../util';
 
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+
 const KEY_GEN_GUIDE_URL =
-  'https://en.wikibooks.org/wiki/Cryptography/Generate_a_keypair_using_OpenSSL';
+  'https://www.contentful.com/developers/docs/extensibility/app-framework/backend-app/#creating-your-app-keys';
+
+const withInAppHelpUtmParams = buildUrlWithUtmParams({
+  source: 'webapp',
+  medium: 'new-app',
+  campaign: 'in-app-help',
+});
 
 const styles = {
   appName: css({
@@ -48,10 +56,14 @@ function AddKeyForm({ value, setValue }) {
   return (
     <>
       <Paragraph className={styles.spacer}>
-        Paste your public key into the field below. We require a key size of 4096 bit.{' '}
-        <TextLink target="_blank" rel="noreferrer noopener" href={KEY_GEN_GUIDE_URL}>
-          Learn how to generate a key pair
+        Paste your public key into the field below. We require a key size of 4096 bit. Learn{' '}
+        <TextLink
+          target="_blank"
+          rel="noreferrer noopener"
+          href={withInAppHelpUtmParams(KEY_GEN_GUIDE_URL)}>
+          how to generate a key pair
         </TextLink>
+        .
       </Paragraph>
 
       <Textarea

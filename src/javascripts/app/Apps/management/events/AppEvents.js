@@ -18,13 +18,27 @@ import { css } from 'emotion';
 import { TopicEventTable } from './TopicEventTable';
 import { transformMapToTopics, transformTopicsToMap } from './TopicEventMap';
 import { DisableAppEventsModal } from './DisableAppEventsModal';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+
+const LEARN_MORE_URL =
+  'https://www.contentful.com/developers/docs/extensibility/app-framework/backend-app/';
+
+const withInAppHelpUtmParams = buildUrlWithUtmParams({
+  source: 'webapp',
+  medium: 'new-app',
+  campaign: 'in-app-help',
+});
 
 const styles = {
   spacer: css({
-    marginBottom: tokens.spacingXl,
+    marginBottom: tokens.spacingL,
   }),
   spacerButton: css({
-    marginTop: tokens.spacing2Xl,
+    marginTop: tokens.spacingXl,
+  }),
+  topicsHelp: css({
+    marginBottom: tokens.spacingL,
+    color: tokens.colorTextLight,
   }),
 };
 
@@ -44,7 +58,7 @@ export function AppEvents({ definition }) {
 
   const updateAppEvents = async () => {
     if (!httpsRegExp.test(targetUrl)) {
-      setError('Please enter a valid URL');
+      setError('Please enter a valid URL.');
       return;
     }
     setIsUpdating(true);
@@ -104,8 +118,15 @@ export function AppEvents({ definition }) {
   return (
     <div>
       <Paragraph className={styles.spacer}>
-        Your App can subscribe to events happening in its installation environments using webhooks.{' '}
-        <TextLink> Learn more about app events.</TextLink>
+        Use app events to be notified about changes in the environments your app is installed in.
+        Learn more about{' '}
+        <TextLink
+          href={withInAppHelpUtmParams(LEARN_MORE_URL)}
+          target="_blank"
+          rel="noopener noreferrer">
+          backend apps
+        </TextLink>
+        .
       </Paragraph>
       {isLoading ? (
         <SkeletonContainer>
@@ -144,12 +165,11 @@ export function AppEvents({ definition }) {
                 }}
                 name="url"
                 labelText="URL"
-                helpText="Only HTTPS URLs are supported"
+                helpText="Events will send POST requests to this URL. URLs must be public and use HTTPS."
               />
               <FormLabel htmlFor="appEventTopics">Topics</FormLabel>
-              <Paragraph className={styles.spacer}>
-                Select which topics you want to subscribe to. The selection is based on your apps
-                read-access <TextLink>perimssions</TextLink>
+              <Paragraph className={styles.topicsHelp}>
+                Select which topics your app subscribes to.
               </Paragraph>
               <TopicEventTable
                 id="appEventTopics"

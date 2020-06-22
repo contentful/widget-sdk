@@ -7,7 +7,7 @@ import { ModalConfirm, Paragraph } from '@contentful/forma-36-react-components';
 
 const styles = {
   spacer: css({
-    marginBottom: tokens.spacingL,
+    marginBottom: tokens.spacingM,
   }),
 };
 
@@ -36,9 +36,11 @@ export default function RevokeKeyDialog({ onConfirm, isShown, onCancel }) {
       onCancel={onCancel}
       onConfirm={onConfirmHandler}>
       <Paragraph className={styles.spacer}>
-        Are you sure you want to revoke this public key from the app? You will no longer be able to
-        sign tokens with this key.
+        After revoking a public key, your app will no longer be able to generate tokens with the
+        corresponding private key.
       </Paragraph>
+
+      <Paragraph>Are you sure you want to revoke this public key from your app?</Paragraph>
     </ModalConfirm>
   );
 }

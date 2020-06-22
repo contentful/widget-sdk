@@ -7,6 +7,7 @@ import {
   Paragraph,
   TextLink,
   Workbench,
+  Note,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import AppEditor from './AppEditor';
@@ -27,6 +28,9 @@ const styles = {
   }),
   spacerXl: css({
     marginBottom: tokens.spacingXl,
+  }),
+  spacer2Xl: css({
+    marginBottom: tokens.spacing2Xl,
   }),
   createButton: css({
     marginBottom: tokens.spacing4Xl,
@@ -71,21 +75,21 @@ export default class NewApp extends React.Component {
           onBack={this.props.goToListView}
           icon={<NavigationIcon icon="apps" size="large" color="green" />}></Workbench.Header>
         <Workbench.Content type="text">
-          <Paragraph className={styles.spacerM}>
-            Build apps for Contentful to extend the core functionality of the web app and optimize
-            the workflow of editors.
-          </Paragraph>
-          <Paragraph className={styles.spacerXl}>
-            Learn more about{' '}
-            <TextLink
-              href={withInAppHelpUtmParams(BUILDING_APPS_URL)}
-              target="_blank"
-              rel="noopener noreferrer">
-              building Contentful apps
-            </TextLink>{' '}
-            to get started.
-          </Paragraph>
-          <div className={styles.spacerXl}>
+          <Note className={styles.spacerXl}>
+            <Paragraph>
+              Build apps for Contentful to extend the core functionality of the web app and optimize
+              the workflow of editors. Learn{' '}
+              <TextLink
+                href={withInAppHelpUtmParams(BUILDING_APPS_URL)}
+                target="_blank"
+                rel="noopener noreferrer">
+                how to build your first app
+              </TextLink>{' '}
+              to get started.
+            </Paragraph>
+          </Note>
+
+          <div className={styles.spacer2Xl}>
             <AppEditor
               definition={definition}
               onChange={(definition) => this.setState({ definition })}

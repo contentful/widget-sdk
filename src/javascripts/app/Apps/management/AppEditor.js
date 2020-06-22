@@ -42,7 +42,7 @@ const styles = {
     marginBottom: tokens.spacingXs,
   }),
   locationP: css({
-    marginBottom: tokens.spacingL,
+    marginBottom: tokens.spacingM,
   }),
   locationToggle: css({
     width: '100%',
@@ -327,7 +327,7 @@ export default function AppEditor({ definition, onChange }) {
           labelText="App URL"
           testId="app-src-input"
           value={definition.src || ''}
-          helpText="Only required if your app renders into locations within the Contentful web app. Valid URLs use HTTPS. Only localhost can use HTTP."
+          helpText="Only required if your app renders into locations within the Contentful web app. Public URLs must use HTTPS."
           onChange={(e) => onChange({ ...definition, src: e.target.value })}
         />
         {definition.src && (
@@ -335,16 +335,16 @@ export default function AppEditor({ definition, onChange }) {
             <div className={styles.locationP}>
               <FormLabel htmlFor="">Locations</FormLabel>
               <Paragraph className={styles.helpParagraph}>
-                Specify where the app can be rendered. Check out the{' '}
+                Specify where your app can be rendered. Learn more about{' '}
                 <TextLink
                   href={withInAppHelpUtmParams(
-                    'https://www.contentful.com/developers/docs/references/content-management-api/#/reference/app-definitions'
+                    'https://www.contentful.com/developers/docs/extensibility/app-framework/locations/'
                   )}
                   target="_blank"
                   rel="noopener noreferrer">
-                  documentation
-                </TextLink>{' '}
-                for more details.
+                  app locations
+                </TextLink>
+                .
               </Paragraph>
             </div>
             {LOCATION_ORDER.map(([name, locationValue]) => {

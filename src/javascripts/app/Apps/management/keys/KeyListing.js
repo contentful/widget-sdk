@@ -25,6 +25,16 @@ import AddKeyModal from './AddKeyDialog';
 import RevokeKeyModal from './RevokeKeyDialog';
 import * as util from '../util';
 import { MAX_KEYS_ALLOWED } from 'app/Apps/config';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+
+const LEARN_MORE_URL =
+  'https://www.contentful.com/developers/docs/extensibility/app-framework/backend-app/';
+
+const withInAppHelpUtmParams = buildUrlWithUtmParams({
+  source: 'webapp',
+  medium: 'new-app',
+  campaign: 'in-app-help',
+});
 
 const styles = {
   spacer: css({
@@ -37,6 +47,11 @@ const styles = {
   }),
   lightText: css({
     color: tokens.colorTextLight,
+  }),
+  emptyStateRow: css({
+    '&:hover': {
+      background: 'transparent',
+    },
   }),
 };
 
@@ -178,7 +193,15 @@ export default function KeyListing({ definition }) {
   return (
     <>
       <Paragraph className={styles.spacer}>
-        Your app needs a key pair to sign access token requests. We do not store private keys.
+        Use key pairs to generate temporary content management tokens in your app’s backend. Learn
+        more about{' '}
+        <TextLink
+          href={withInAppHelpUtmParams(LEARN_MORE_URL)}
+          target="_blank"
+          rel="noopener noreferrer">
+          backend apps
+        </TextLink>
+        .
       </Paragraph>
 
       <div>
@@ -237,7 +260,7 @@ export default function KeyListing({ definition }) {
         </TableWrapper>
       ) : (
         <TableWrapper>
-          <TableRow>
+          <TableRow className={styles.emptyStateRow}>
             <TableCell>
               <Paragraph>Your app currently has no key pairs associated with it.</Paragraph>
             </TableCell>

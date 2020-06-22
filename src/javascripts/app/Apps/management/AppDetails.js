@@ -84,7 +84,7 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: tokens.spacingXl,
+    marginTop: tokens.spacing2Xl,
   }),
   creatorMissing: css({
     opacity: 0,
@@ -159,7 +159,7 @@ export default class AppDetails extends React.Component {
     try {
       const updated = await ManagementApiClient.save(this.state.definition);
       this.setState({ name: updated.name, definition: updated });
-      Notification.success('App updated successfully.');
+      Notification.success('App saved successfully.');
     } catch (err) {
       Notification.error(ManagementApiClient.VALIDATION_MESSAGE);
     }
@@ -258,7 +258,7 @@ export default class AppDetails extends React.Component {
                 </span>
               </Paragraph>
             </div>
-            <Tabs>
+            <Tabs withDivider>
               <Tab
                 id={TabPaths.GENERAL}
                 selected={selectedTab === TabPaths.GENERAL}
