@@ -11,7 +11,7 @@ import { getTemplate } from 'services/SpaceTemplateLoader';
 import { go } from 'states/Navigator';
 import { getModule } from 'core/NgRegistry';
 import { joinWithAnd } from 'utils/StringUtils';
-import { canCreate, resourceHumanNameMap } from 'utils/ResourceUtils';
+import { canCreate, resourceHumanNameMap, getResourceLimits } from 'utils/ResourceUtils';
 import { changeSpacePlan as changeSpacePlanApiCall } from 'account/pricing/PricingDataProvider';
 
 export const WIZARD_INTENT = {
@@ -38,6 +38,9 @@ const ERROR_THRESHOLD = 1;
 const WARNING_THRESHOLD = 0.8;
 
 export const FREE_SPACE_IDENTIFIER = 'free_space';
+
+// These are the resources we specifically care about when recommending
+const RECOMMENDATION_RESOURCE_TYPES = ['environment', 'content_type', 'record', 'locale'];
 
 export const SpaceResourceTypes = {
   Environments: 'Environments',
@@ -152,7 +155,6 @@ export function transformSpaceRatePlan({ organization, plan, freeSpaceResource }
   const isFree = plan.productPlanType === 'free_space';
   const includedResources = getIncludedResources(plan.productRatePlanCharges);
   let disabled = false;
-  let current = false;
 
   if (plan.unavailabilityReasons && plan.unavailabilityReasons.length > 0) {
     disabled = true;
@@ -162,14 +164,7 @@ export function transformSpaceRatePlan({ organization, plan, freeSpaceResource }
     disabled = true;
   }
 
-  if (
-    plan.unavailabilityReasons &&
-    plan.unavailabilityReasons.some((reason) => reason.type === 'currentPlan')
-  ) {
-    current = true;
-  }
-
-  return { ...plan, isFree, includedResources, disabled, current };
+  return { ...plan, isFree, includedResources, disabled };
 }
 
 export function transformSpaceRatePlans({ organization, spaceRatePlans = [], freeSpaceResource }) {
@@ -221,20 +216,12 @@ function createTrackingData(intent, sessionId, data) {
 }
 
 export function getIncludedResources(charges) {
-  const ResourceTypes = {
-    Environments: 'Environments',
-    Roles: 'Roles',
-    Locales: 'Locales',
-    ContentTypes: 'Content types',
-    Records: 'Records',
-  };
-
-  return Object.values(ResourceTypes).map((type) => {
+  return Object.values(SpaceResourceTypes).map((type) => {
     const charge = charges.find(({ name }) => name === type);
     let number = get(charge, 'tiers[0].endingUnit');
 
     // Add "extra" environment and role to include `master` and `admin`
-    if ([ResourceTypes.Environments, ResourceTypes.Roles].includes(type)) {
+    if ([SpaceResourceTypes.Environments, SpaceResourceTypes.Roles].includes(type)) {
       number = number + 1;
     }
 
@@ -306,6 +293,87 @@ export async function sendParnershipEmail(spaceId, fields) {
   });
 }
 
+function generateFulfillmentDetails(usage, limit) {
+  const usagePercentage = usage / limit;
+  const fulfillment = {
+    reached: false,
+    near: false,
+  };
+
+  if (usagePercentage >= ERROR_THRESHOLD) {
+    fulfillment.reached = true;
+  } else if (usagePercentage >= WARNING_THRESHOLD) {
+    fulfillment.near = true;
+  }
+
+  return fulfillment;
+}
+
+function shouldRecommendPlan(resources) {
+  // We shouldn't recommend a plan if the user isn't near (also hasn't reached) their limits
+  return !!RECOMMENDATION_RESOURCE_TYPES.map((type) => {
+    const resource = resources.find((r) => r.sys.id === type);
+
+    if (!resource) {
+      return generateFulfillmentDetails(0, 1);
+    }
+
+    return generateFulfillmentDetails(resource.usage, getResourceLimits(resource).maximum);
+  }).find(({ reached, near }) => reached || near);
+}
+
+export function explanationReasonText(resources) {
+  if (!shouldRecommendPlan(resources)) {
+    return '';
+  }
+
+  const resourcesDetails = RECOMMENDATION_RESOURCE_TYPES.reduce(
+    (memo, type) => {
+      const resource = resources.find((r) => r.sys.id === type);
+      let details;
+
+      if (!resource) {
+        // If we don't have a resource somehow, then we can ignore it by simply giving
+        // a usage of 0, which will be marked neither "near" nor "reached"
+        details = generateFulfillmentDetails(0, 1);
+      } else {
+        details = generateFulfillmentDetails(resource.usage, getResourceLimits(resource).maximum);
+      }
+
+      if (details.reached) {
+        memo.reached.push(resourceHumanNameMap[type]);
+      } else if (details.near) {
+        memo.near.push(resourceHumanNameMap[type]);
+      }
+
+      return memo;
+    },
+    { near: [], reached: [] }
+  );
+
+  const numTotalDetails = resourcesDetails.reached.length + resourcesDetails.near.length;
+
+  let resultText = '';
+
+  if (resourcesDetails.reached.length > 0) {
+    resultText += `you’ve reached the ${joinWithAnd(resourcesDetails.reached).toLowerCase()}`;
+  }
+
+  if (resourcesDetails.near.length > 0) {
+    if (resourcesDetails.reached.length > 0) {
+      resultText += ' and are ';
+    } else {
+      resultText += 'you’re ';
+    }
+
+    resultText += `near the ${joinWithAnd(resourcesDetails.near).toLowerCase()}`;
+  }
+
+  resultText += ` limit${numTotalDetails > 1 ? 's' : ''} for your current space plan`;
+
+  return resultText;
+}
+
 /*
   Returns the space plan relative resource usage information (resource fulfillment) based on
   the current resource usage.
@@ -332,7 +400,7 @@ export async function sendParnershipEmail(spaceId, fields) {
   the limit, but would be near it and should be aware during the recommendation process.
 
  */
-export function getPlanResourceFulfillment(plan, spaceResources = []) {
+function getPlanResourceFulfillment(plan, spaceResources = []) {
   const planIncludedResources = plan.includedResources;
 
   return planIncludedResources.reduce((fulfillments, planResource) => {
@@ -343,27 +411,13 @@ export function getPlanResourceFulfillment(plan, spaceResources = []) {
       return mappedId === typeLower;
     });
 
-    if (!spaceResource) {
+    if (!spaceResource || !RECOMMENDATION_RESOURCE_TYPES.includes(spaceResource.sys.id)) {
       return fulfillments;
     } else {
-      const usagePercentage = spaceResource.usage / planResource.number;
-
-      if (usagePercentage >= ERROR_THRESHOLD) {
-        fulfillments[planResource.type] = {
-          reached: true,
-          near: true,
-        };
-      } else if (usagePercentage >= WARNING_THRESHOLD) {
-        fulfillments[planResource.type] = {
-          reached: false,
-          near: true,
-        };
-      } else {
-        fulfillments[planResource.type] = {
-          reached: false,
-          near: false,
-        };
-      }
+      fulfillments[planResource.type] = generateFulfillmentDetails(
+        spaceResource.usage,
+        planResource.number
+      );
 
       return fulfillments;
     }
@@ -374,13 +428,8 @@ export function getPlanResourceFulfillment(plan, spaceResources = []) {
   Returns the plan that would fulfill your resource usage, given a set of space rate plans and
   the current space resources (usage/limits).
  */
-export function getRecommendedPlan(currentPlan, spaceRatePlans = [], resources) {
-  // We do not recommend a plan if the user isn't near (also hasn't reached) their limits
-  const canRecommend = !!Object.values(getPlanResourceFulfillment(currentPlan, resources)).find(
-    ({ reached, near }) => reached || near
-  );
-
-  if (!canRecommend) {
+export function getRecommendedPlan(spaceRatePlans = [], resources) {
+  if (!shouldRecommendPlan(resources)) {
     return null;
   }
 

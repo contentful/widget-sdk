@@ -78,14 +78,16 @@ const initialFetch = (organization, space) => async () => {
     freeSpaceResource,
   });
 
-  const currentPlan = spaceRatePlans.find((plan) => plan.current);
+  const currentSpaceSubscriptionPlan = subscriptionPlans.items.find(
+    (plan) => plan.gatekeeperKey === space.sys.id
+  );
   const currentSubscriptionPrice = calculateTotalPrice(subscriptionPlans.items);
 
   return {
     spaceResources,
     spaceRatePlans,
     currentSubscriptionPrice,
-    currentPlan,
+    currentSpaceSubscriptionPlan,
     freeSpaceResource,
     isCommunityPlanEnabled,
     isPayingPreviousToV2,
@@ -170,12 +172,13 @@ export default function Wizard(props) {
               space={space}
               spaceRatePlans={data.spaceRatePlans}
               freeSpacesResource={data.freeSpaceResource}
-              currentPlan={data.currentPlan}
               selectedPlan={selectedPlan}
               onSelectPlan={(plan, recommendedPlan) => {
                 trackWizardEvent(WIZARD_INTENT.CHANGE, WIZARD_EVENTS.SELECT_PLAN, sessionId, {
                   selectedPlan: plan,
-                  currentPlan: data.currentPlan,
+
+                  // TODO: get rid of this here and in the tracking
+                  currentPlan: null,
                   recommendedPlan,
                 });
 
@@ -196,7 +199,7 @@ export default function Wizard(props) {
           <TabPanel id="confirmation">
             <ConfirmScreen
               selectedPlan={selectedPlan}
-              currentPlan={data.currentPlan}
+              currentSpaceSubscriptionPlan={data.currentSpaceSubscriptionPlan}
               currentSubscriptionPrice={data.currentSubscriptionPrice}
               changing={isChangingSpacePlan}
               onConfirm={handleSubmit}

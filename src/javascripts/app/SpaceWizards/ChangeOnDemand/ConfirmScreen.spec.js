@@ -3,9 +3,20 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as Fake from 'test/helpers/fakeFactory';
 import ConfirmScreen from './ConfirmScreen';
-import { microSpace, mediumSpaceCurrent, largeSpace, freeSpace } from '../__tests__/fixtures/plans';
+import { microSpace, largeSpace } from '../__tests__/fixtures/plans';
 
 const mockSpace = Fake.Space();
+const mockCurrentSpace = Fake.Space();
+const mockCurrentSpaceSubscriptionPlan = {
+  name: 'Medium',
+  gatekeeperKey: mockCurrentSpace.sys.id,
+  price: 39,
+};
+const mockCurrentSpaceSubscriptionPlanFree = {
+  name: 'Free',
+  gatekeeperKey: mockCurrentSpace.sys.id,
+  price: 0,
+};
 
 describe('ConfirmScreen', () => {
   it('should call onConfirm when the confirm button is clicked', () => {
@@ -31,14 +42,14 @@ describe('ConfirmScreen', () => {
     // + large space price (selected plan price)
     expect(screen.getByTestId('contents')).toHaveTextContent(
       `the total price of the spaces in your organization to $${
-        150 - mediumSpaceCurrent.price + largeSpace.price
+        150 - mockCurrentSpaceSubscriptionPlan.price + largeSpace.price
       } /month`
     );
   });
 
   describe('free to paid space', () => {
     it('should show the free -> paid space copy', () => {
-      build({ currentPlan: freeSpace });
+      build({ currentSpaceSubscriptionPlan: mockCurrentSpaceSubscriptionPlanFree });
 
       expect(screen.getByTestId('contents')).toHaveTextContent(
         `The price of this space will now be $${largeSpace.price}`
@@ -51,7 +62,7 @@ describe('ConfirmScreen', () => {
       build();
 
       expect(screen.getByTestId('contents')).toHaveTextContent(
-        `The price of this space will change from $${mediumSpaceCurrent.price} to $${largeSpace.price} and will increase`
+        `The price of this space will change from $${mockCurrentSpaceSubscriptionPlan.price} to $${largeSpace.price} and will increase`
       );
     });
   });
@@ -61,7 +72,7 @@ describe('ConfirmScreen', () => {
       build({ selectedPlan: microSpace });
 
       expect(screen.getByTestId('contents')).toHaveTextContent(
-        `The price of this space will change from $${mediumSpaceCurrent.price} to $${microSpace.price} and will reduce`
+        `The price of this space will change from $${mockCurrentSpaceSubscriptionPlan.price} to $${microSpace.price} and will reduce`
       );
     });
   });
@@ -71,7 +82,7 @@ function build(custom) {
   const props = Object.assign(
     {
       selectedPlan: largeSpace,
-      currentPlan: mediumSpaceCurrent,
+      currentSpaceSubscriptionPlan: mockCurrentSpaceSubscriptionPlan,
       changing: false,
       onConfirm: () => {},
       space: mockSpace,

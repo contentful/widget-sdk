@@ -16,7 +16,14 @@ const classes = {
 import { Paragraph, Typography, Heading, Button } from '@contentful/forma-36-react-components';
 
 export default function ConfirmScreenNormal(props) {
-  const { selectedPlan, space, changing, currentPlan, onConfirm, currentSubscriptionPrice } = props;
+  const {
+    selectedPlan,
+    space,
+    changing,
+    currentSpaceSubscriptionPlan,
+    onConfirm,
+    currentSubscriptionPrice,
+  } = props;
 
   return (
     <Typography testId="confirmation-screen">
@@ -27,11 +34,11 @@ export default function ConfirmScreenNormal(props) {
 
       <Paragraph testId="contents">
         <>
-          You’re about to change the space <em>{space.name}</em> from a {currentPlan.name} to a{' '}
-          {selectedPlan.name} space type.{' '}
+          You’re about to change the space <em>{space.name}</em> from a{' '}
+          {currentSpaceSubscriptionPlan.name} to a {selectedPlan.name} space type.{' '}
         </>
 
-        {currentPlan.price === 0 && (
+        {currentSpaceSubscriptionPlan.price === 0 && (
           <>
             The price of this space will now be{' '}
             <strong>
@@ -40,17 +47,18 @@ export default function ConfirmScreenNormal(props) {
             and will increase
           </>
         )}
-        {currentPlan.plan !== 0 && (
+        {currentSpaceSubscriptionPlan.plan !== 0 && (
           <>
             The price of this space will change from{' '}
             <strong>
-              <Price value={currentPlan.price} />
+              <Price value={currentSpaceSubscriptionPlan.price} />
             </strong>{' '}
             to{' '}
             <strong>
               <Price value={selectedPlan.price} />
             </strong>{' '}
-            and will {currentPlan.price >= selectedPlan.price ? 'reduce' : 'increase'}
+            and will{' '}
+            {currentSpaceSubscriptionPlan.price >= selectedPlan.price ? 'reduce' : 'increase'}
           </>
         )}
         <span>
@@ -59,7 +67,9 @@ export default function ConfirmScreenNormal(props) {
           <strong>
             <Price
               unit="month"
-              value={currentSubscriptionPrice + selectedPlan.price - currentPlan.price}
+              value={
+                currentSubscriptionPrice + selectedPlan.price - currentSpaceSubscriptionPlan.price
+              }
             />
           </strong>
           .
@@ -81,7 +91,7 @@ export default function ConfirmScreenNormal(props) {
 
 ConfirmScreenNormal.propTypes = {
   selectedPlan: PropTypes.object.isRequired,
-  currentPlan: PropTypes.object.isRequired,
+  currentSpaceSubscriptionPlan: PropTypes.object.isRequired,
   changing: PropTypes.bool.isRequired,
   onConfirm: PropTypes.func.isRequired,
   space: PropTypes.object.isRequired,

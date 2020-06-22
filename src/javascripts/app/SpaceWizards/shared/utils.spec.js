@@ -13,30 +13,12 @@ import { createSpaceEndpoint, mockEndpoint } from 'data/EndpointFactory';
 import { changeSpacePlan as changeSpacePlanApiCall } from 'account/pricing/PricingDataProvider';
 
 import * as Fake from 'test/helpers/fakeFactory';
-import {
-  freeSpace,
-  unavailableFreeSpace,
-  mediumSpace,
-  mediumSpaceCurrent,
-} from '../__tests__/fixtures/plans';
+import { freeSpace, unavailableFreeSpace, mediumSpace } from '../__tests__/fixtures/plans';
 
 const mockSpace = Fake.Space();
 const mockOrganization = Fake.Organization({ isBillable: true });
 const mockPlan = Fake.Plan();
 const mockWizardSessionId = 'session_id_abcd_1234';
-
-jest.mock('utils/ResourceUtils', () => ({
-  resourceHumanNameMap: {
-    asset: 'Assets',
-    content_type: 'Content Types',
-    entry: 'Entries',
-    locale: 'Locales',
-    environment: 'Environments',
-    record: 'Records',
-    role: 'Roles',
-  },
-  canCreate: jest.fn(),
-}));
 
 jest.mock('services/client', () => {
   const client = {
@@ -597,20 +579,6 @@ describe('utils', () => {
       ]);
     });
 
-    it('should mark the plan as current if the plan has an unavailabilityReason with type as currentPlan', () => {
-      expect(
-        utils.transformSpaceRatePlans({
-          organization: mockOrganization,
-          spaceRatePlans: [mediumSpaceCurrent],
-          freeSpaceResource: Fake.SpaceResource(1, 5, 'free_space'),
-        })
-      ).toEqual([
-        expect.objectContaining({
-          current: true,
-        }),
-      ]);
-    });
-
     it('should return expected transformed plans', () => {
       const createProductRatePlanCharges = (
         envLimit = 1,
@@ -661,11 +629,6 @@ describe('utils', () => {
           productPlanType: 'space_type_3',
           productRatePlanCharges: createProductRatePlanCharges(9, 8, 7, 6, 5),
         }),
-        Fake.Plan({
-          productPlanType: 'space_type_4',
-          productRatePlanCharges: createProductRatePlanCharges(0, 0, 0, 0, 0),
-          unavailabilityReasons: [{ type: 'currentPlan' }],
-        }),
       ];
 
       expect(
@@ -678,7 +641,6 @@ describe('utils', () => {
         {
           isFree: true,
           disabled: true,
-          current: false,
           includedResources: [
             {
               type: 'Environments',
@@ -706,7 +668,6 @@ describe('utils', () => {
         {
           isFree: false,
           disabled: false,
-          current: false,
           includedResources: [
             {
               type: 'Environments',
@@ -734,7 +695,6 @@ describe('utils', () => {
         {
           isFree: false,
           disabled: true,
-          current: false,
           includedResources: [
             {
               type: 'Environments',
@@ -762,7 +722,6 @@ describe('utils', () => {
         {
           isFree: false,
           disabled: false,
-          current: false,
           includedResources: [
             {
               type: 'Environments',
@@ -786,34 +745,6 @@ describe('utils', () => {
             },
           ],
           ...spaceRatePlans[3],
-        },
-        {
-          isFree: false,
-          disabled: true,
-          current: true,
-          includedResources: [
-            {
-              type: 'Environments',
-              number: 1,
-            },
-            {
-              type: 'Roles',
-              number: 1,
-            },
-            {
-              type: 'Locales',
-              number: 0,
-            },
-            {
-              type: 'Content types',
-              number: 0,
-            },
-            {
-              type: 'Records',
-              number: 0,
-            },
-          ],
-          ...spaceRatePlans[4],
         },
       ]);
     });
@@ -885,84 +816,7 @@ describe('utils', () => {
     });
   });
 
-  describe('getPlanResourceFulfillment', () => {
-    it('should return an object with `near` and `reached` statuses for a plan and resources', () => {
-      const plan = utils.transformSpaceRatePlan({
-        organization: mockOrganization,
-        plan: Fake.Plan({
-          productPlanType: 'some_space_type',
-          productRatePlanCharges: [
-            {
-              name: 'Records',
-              tiers: [{ endingUnit: 10 }],
-            },
-            {
-              name: 'Content types',
-              tiers: [{ endingUnit: 10 }],
-            },
-            {
-              name: 'Locales',
-              tiers: [{ endingUnit: 10 }],
-            },
-          ],
-        }),
-        freeSpaceResource: Fake.OrganizationResource(1, 3, 'free_space'),
-      });
-
-      const resources = [
-        Fake.SpaceResource(1, 10, 'record'),
-        Fake.SpaceResource(9, 10, 'content_type'),
-        Fake.SpaceResource(10, 10, 'locale'),
-      ];
-
-      expect(utils.getPlanResourceFulfillment(plan, resources)).toEqual({
-        Records: {
-          near: false,
-          reached: false,
-        },
-        'Content types': {
-          near: true,
-          reached: false,
-        },
-        Locales: {
-          near: true,
-          reached: true,
-        },
-      });
-    });
-  });
-
   describe('getRecommendedPlan', () => {
-    const currentPlan = utils.transformSpaceRatePlan({
-      organization: mockOrganization,
-      plan: Fake.Plan({
-        productPlanType: 'some_space_type',
-        productRatePlanCharges: [
-          {
-            name: 'Records',
-            tiers: [{ endingUnit: 10 }],
-          },
-          {
-            name: 'Content types',
-            tiers: [{ endingUnit: 10 }],
-          },
-          {
-            name: 'Locales',
-            tiers: [{ endingUnit: 10 }],
-          },
-          {
-            name: 'Environments',
-            tiers: [{ endingUnit: 10 }],
-          },
-          {
-            name: 'Roles',
-            tiers: [{ endingUnit: 10 }],
-          },
-        ],
-      }),
-      freeSpaceResource: Fake.OrganizationResource(1, 3, 'free_space'),
-    });
-
     const nonrecommendablePlan = utils.transformSpaceRatePlan({
       organization: mockOrganization,
       plan: Fake.Plan({
@@ -1033,7 +887,7 @@ describe('utils', () => {
       ];
 
       expect(
-        utils.getRecommendedPlan(currentPlan, [nonrecommendablePlan, recommendablePlan], resources)
+        utils.getRecommendedPlan([nonrecommendablePlan, recommendablePlan], resources)
       ).toBeNull();
     });
 
@@ -1046,7 +900,7 @@ describe('utils', () => {
         Fake.SpaceResource(6, 10, 'role'),
       ];
 
-      expect(utils.getRecommendedPlan(currentPlan, [nonrecommendablePlan], resources)).toBeNull();
+      expect(utils.getRecommendedPlan([nonrecommendablePlan], resources)).toBeNull();
     });
 
     it('should return the recommended plan that fulfills all the resource usage', () => {
@@ -1059,8 +913,56 @@ describe('utils', () => {
       ];
 
       expect(
-        utils.getRecommendedPlan(currentPlan, [nonrecommendablePlan, recommendablePlan], resources)
+        utils.getRecommendedPlan([nonrecommendablePlan, recommendablePlan], resources)
       ).toEqual(recommendablePlan);
+    });
+  });
+
+  describe('explanationReasonText', () => {
+    it('should return copy when all given resources have reached their limit', () => {
+      const resources = [
+        Fake.SpaceResource(20, 20, 'record'),
+        Fake.SpaceResource(20, 20, 'locale'),
+      ];
+
+      expect(utils.explanationReasonText(resources)).toBe(
+        'you’ve reached the records and locales limits for your current space plan'
+      );
+    });
+
+    it('should return copy when all given resources are near their limit', () => {
+      const resources = [
+        Fake.SpaceResource(19, 20, 'record'),
+        Fake.SpaceResource(19, 20, 'locale'),
+      ];
+
+      expect(utils.explanationReasonText(resources)).toBe(
+        'you’re near the records and locales limits for your current space plan'
+      );
+    });
+
+    it('should return copy when some resources are near and some have reached their limit', () => {
+      const resources = [
+        Fake.SpaceResource(19, 20, 'record'),
+        Fake.SpaceResource(20, 20, 'locale'),
+      ];
+
+      expect(utils.explanationReasonText(resources)).toBe(
+        'you’ve reached the locales and are near the records limits for your current space plan'
+      );
+    });
+
+    it('should only consider certain "recommendable" resources when creating the copy', () => {
+      const resources = [
+        Fake.SpaceResource(20, 20, 'record'),
+        Fake.SpaceResource(20, 20, 'locale'),
+        Fake.SpaceResource(19, 20, 'role'),
+        Fake.SpaceResource(19, 20, 'something_else'),
+      ];
+
+      expect(utils.explanationReasonText(resources)).toBe(
+        'you’ve reached the records and locales limits for your current space plan'
+      );
     });
   });
 });
