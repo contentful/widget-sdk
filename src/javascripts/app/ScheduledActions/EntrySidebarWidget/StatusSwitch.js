@@ -157,7 +157,7 @@ const StatusSwitch = ({
     backgroundColor: currentStatusProps.background,
     borderColor: currentStatusProps.background,
     '& span': {
-      color: tokens.colorWhite,
+      color: `${tokens.colorWhite} !important`,
     },
     '&:hover': {
       borderColor: currentStatusProps.background,

@@ -9,11 +9,15 @@ import ContentTagsField from 'app/asset_editor/ContentTagsField';
 import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
 import EntrySidebar from 'app/EntrySidebar/EntrySidebar';
 import AngularComponent from 'ui/Framework/AngularComponent';
+import tokens from '@contentful/forma-36-tokens';
 
 const styles = {
   sidebar: css({
     boxShadow: '1px 0 4px 0 rgba(0, 0, 0, 0.9)',
     padding: '0',
+  }),
+  statusSwitchWrapper: css({
+    marginRight: tokens.spacingM,
   }),
 };
 
@@ -50,7 +54,10 @@ const AssetEditorWorkbench = ({
           icon={<NavigationIcon icon="media" size="xlarge" color="green" />}
           actions={
             <>
-              <div id={`editor-status-switch-${entityInfo.id}`} />
+              <div
+                className={styles.statusSwitchWrapper}
+                id={`editor-status-switch-${entityInfo.id}`}
+              />
               <Button
                 testId="trigger-delete-modal"
                 onClick={() => state.delete.execute()}
