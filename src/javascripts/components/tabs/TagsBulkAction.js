@@ -48,7 +48,7 @@ const ConfirmModal = ({ onClose, onSave, confirmIsShown, confirmOnClose }) => {
       isShown={confirmIsShown}
       title={'You have unsaved changes'}>
       <Button
-        buttonType={'primary'}
+        buttonType={'positive'}
         className={styles.button}
         onClick={() => {
           confirmOnClose();
@@ -97,10 +97,10 @@ const launchConfirmModal = (onClose, onSave) => {
   });
 };
 
-const TagsBulkContent = ({ isShown, onClose, selectedEntities }) => {
+const TagsBulkContent = ({ isShown, onClose, selectedEntities, updateEntities }) => {
   const { hasChanges, back, forward } = useBulkTaggingProvider();
   const { computeEntities } = useComputeTags();
-  const { setEntities, progressComponent } = useBulkSaveTags(onClose);
+  const { setEntities, progressComponent } = useBulkSaveTags(onClose, updateEntities);
   const onKeyDown = useCallback(
     (event) => {
       if (Keys.control(event) && event.metaKey && event.shiftKey) {
@@ -149,7 +149,11 @@ const TagsBulkContent = ({ isShown, onClose, selectedEntities }) => {
           </div>
         </Workbench>
         <div className={styles.footer}>
-          <Button disabled={!hasChanges} className={styles.button} onClick={onSave}>
+          <Button
+            buttonType="positive"
+            disabled={!hasChanges}
+            className={styles.button}
+            onClick={onSave}>
             Save
           </Button>
           <Button buttonType={'naked'} onClick={close}>
@@ -165,9 +169,10 @@ TagsBulkContent.propTypes = {
   isShown: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   selectedEntities: PropTypes.array.isRequired,
+  updateEntities: PropTypes.func,
 };
 
-const TagsBulkAction = (selectedEntities) => {
+const TagsBulkAction = (selectedEntities, updateEntities) => {
   ModalLauncher.open(
     ({ isShown, onClose }) => {
       return (
@@ -176,6 +181,7 @@ const TagsBulkAction = (selectedEntities) => {
             isShown={isShown}
             onClose={onClose}
             selectedEntities={selectedEntities}
+            updateEntities={updateEntities}
           />
         </BulkTaggingProvider>
       );

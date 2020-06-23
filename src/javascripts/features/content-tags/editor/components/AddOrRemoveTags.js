@@ -50,8 +50,8 @@ const AddOrRemoveTags = ({ selectedEntities: entities }) => {
         </TagsRepoProvider>
       </FieldFocus>
       {hasChanges && (
-        <Note title={'Pro tip'} className={styles.entitiesCount}>
-          Use <code>Strg + Z</code> (Mac: <code>⌘ + Z</code>) to revert your changes
+        <Note className={styles.entitiesCount}>
+          Tip: Use <code>Ctrl + Z</code> (Mac: <code>Cmd + Z</code>) to undo
         </Note>
       )}
     </div>

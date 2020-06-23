@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
-import { cloneDeep, orderBy } from 'lodash';
+import { cloneDeep } from 'lodash';
 import { useHistoryReducer } from 'features/content-tags/core/hooks/useHistoryReducer';
+import { orderByLabel } from 'features/content-tags/editor/utils';
 
 type TagRecordState = { value: string; occurrence: number; label: string };
 type TagRecordStateWithChangeType = TagRecordState & { changeType: string };
@@ -110,8 +111,8 @@ export const BulkTaggingProvider: React.FC = ({ children }) => {
       return result;
     }, initialResult);
 
-    states.tags = orderBy(states.tags, ['label']);
-    states.newTags = orderBy(states.newTags, ['label']);
+    states.tags = orderByLabel(states.tags);
+    states.newTags = orderByLabel(states.newTags);
 
     return states;
   }, [currentState, initialState, getChangeType]);

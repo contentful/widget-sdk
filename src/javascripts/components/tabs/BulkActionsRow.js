@@ -176,8 +176,8 @@ const BulkActionsRow = ({
         ) : null}
         <BulkActionLink
           label="Add or remove tags"
-          linkType="primary"
-          onClick={() => TagsBulkAction(selectedEntities)}
+          linkType="secondary"
+          onClick={() => TagsBulkAction(selectedEntities, updateEntities)}
           visible={tagsEnabled}
         />
       </Fragment>

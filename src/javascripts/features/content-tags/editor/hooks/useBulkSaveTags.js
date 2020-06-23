@@ -1,23 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import useBulkActions from 'components/tabs/useBulkActions';
-import { Modal, Spinner } from '@contentful/forma-36-react-components';
-import { css } from 'emotion';
-import tokens from '@contentful/forma-36-tokens';
+import LoadingOverlay from 'app/common/LoadingOverlay';
 
-const styles = {
-  modal: css({
-    Button: {
-      display: 'none',
-    },
-  }),
-  content: css({
-    padding: tokens.spacing2Xl,
-    display: 'flex',
-    justifyContent: 'center',
-  }),
-};
-
-const useBulkSaveTags = (onClose) => {
+const useBulkSaveTags = (onClose, updateEntities) => {
   const [isRunning, setIsRunning] = useState(false);
   const [entities, setEntities] = useState([]);
   const entityType = entities.length > 0 ? entities[0].getSys().type : 'UNKNOWN';
@@ -30,20 +15,7 @@ const useBulkSaveTags = (onClose) => {
     if (!isRunning) {
       return null;
     }
-    return (
-      <Modal
-        className={styles.modal}
-        size={'small'}
-        isShown={true}
-        onClose={() => {}}
-        title={'Updating tags'}
-        shouldCloseOnEscapePress={false}
-        shouldCloseOnOverlayClick={false}>
-        <div className={styles.content}>
-          <Spinner size={'large'} />
-        </div>
-      </Modal>
-    );
+    return <LoadingOverlay message="Updating tags" />;
   }, [isRunning]);
 
   useEffect(() => {
@@ -52,6 +24,7 @@ const useBulkSaveTags = (onClose) => {
         setIsRunning(true);
         await actions.updateTagSelected();
         setIsRunning(false);
+        updateEntities();
         onClose();
       })();
     }

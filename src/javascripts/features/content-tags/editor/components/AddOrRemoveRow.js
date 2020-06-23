@@ -15,24 +15,29 @@ import classNames from 'classnames';
 const styles = {
   tag: css({ marginRight: tokens.spacing2Xs, marginBottom: tokens.spacing2Xs }),
   metaText: css({ lineHeight: '2.5rem', textAlign: 'right' }),
-  tCell: css({ padding: 0, border: 'none', textAlign: 'right' }),
-  pillCell: css({ textAlign: 'left' }),
+  tCell: css({ padding: 0, border: 'none', textAlign: 'right', verticalAlign: 'middle' }),
+  pillCell: css({
+    textAlign: 'left',
+    div: css({
+      margin: '0px 0px',
+    }),
+  }),
   orangePill: css({
-    background: tokens.colorOrangeDark,
+    background: tokens.colorOrangeMid,
     span: {
-      color: tokens.colorWhite,
+      color: tokens.colorTextDark,
     },
   }),
   appliedOrangePill: css({
     button: css({
       '&:hover': {
-        background: tokens.colorOrangeDark,
+        background: tokens.colorOrangeMid,
         opacity: 0.5,
       },
-      borderColor: tokens.colorWhite,
+      borderColor: tokens.colorTextMid,
       span: css({
         svg: css({
-          fill: tokens.colorWhite,
+          fill: tokens.colorTextDark,
         }),
       }),
     }),
@@ -106,15 +111,11 @@ const AddOrRemoveRow = ({ tag, label, meta, onAction, changeType, style }) => {
   return (
     <TableRow>
       <TableCell className={classNames(styles.tCell, styles.pillCell, styles.row1)}>
-        <div>
-          <div>
-            <Pill key={tag.value} label={tag.label} {...pillProps()} />
-          </div>
-        </div>
+        <Pill key={tag.value} label={tag.label} {...pillProps()} />
       </TableCell>
       <TableCell className={classNames(styles.tCell, styles.row2)}>
         {label && (
-          <Button buttonType="naked" onClick={onClick}>
+          <Button buttonType="naked" onClick={onClick} size="small">
             {label}
           </Button>
         )}
