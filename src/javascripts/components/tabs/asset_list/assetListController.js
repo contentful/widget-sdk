@@ -110,6 +110,11 @@ export default function register() {
         const organizationId = spaceContext.organization.sys.id;
         const space = await TokenStore.getSpace(spaceData.sys.id);
 
+        Analytics.track('asset_list:upgrade_plan_link_clicked', {
+          organizationId,
+          spaceId: space.sys.id,
+        });
+
         showChangeSpaceModal({
           organizationId,
           scope: 'space',
