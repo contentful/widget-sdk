@@ -267,17 +267,20 @@ export function isFieldFilterApplicableToContentType(contentType, queryKey) {
  * - A filter for each field of the given content types
  */
 // Memoized to improve performance on huge lists (>1500 elements).
-const allFilters = memoize((contentTypes, withAssets = false, withMetadata = false) => {
-  const ctFieldFilters = contentTypes.reduce((filters, ct) => {
-    return ct.fields.reduce((filters, ctField) => {
-      return push(filters, buildFilterField(ct, ctField));
-    }, filters);
-  }, []);
+const allFilters = memoize(
+  (contentTypes, withAssets = false, withMetadata = false) => {
+    const ctFieldFilters = contentTypes.reduce((filters, ct) => {
+      return ct.fields.reduce((filters, ctField) => {
+        return push(filters, buildFilterField(ct, ctField));
+      }, filters);
+    }, []);
 
-  const fields = concat(getFilters(withAssets, withMetadata), withAssets ? [] : ctFieldFilters);
-
-  return fields;
-});
+    const fields = concat(getFilters(withAssets, withMetadata), withAssets ? [] : ctFieldFilters);
+    return fields;
+  },
+  (contentTypes, withAssets, withMetadata) =>
+    contentTypes.concat([{ withAssets: withAssets, withMetadata: withMetadata }])
+);
 
 /**
  * Returns a list of filters that begin with the search string and
