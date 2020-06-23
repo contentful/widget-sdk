@@ -8,8 +8,6 @@ import * as ResourceUtils from 'utils/ResourceUtils';
 
 import * as TokenStore from 'services/TokenStore';
 import TheLocaleStore from 'services/localeStore';
-import createResourceService from 'services/ResourceService';
-import { getResourceLimits } from 'utils/ResourceUtils';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as BulkAssetsCreator from 'services/BulkAssetsCreator';
 import * as Analytics from 'analytics/Analytics';
@@ -105,6 +103,7 @@ export default function register() {
       const spaceData = spaceContext.space.data;
       const environmentId = spaceContext.getEnvironmentId();
 
+      $scope.isFreeSpacePlan = true;
       $scope.isOrgOwner = isOwner(spaceContext.organization);
       $scope.onUpgradeSpace = async () => {
         const organizationId = spaceContext.organization.sys.id;
@@ -129,16 +128,13 @@ export default function register() {
         });
       };
 
+      // These are the props for RecordsResourceUsage
       const resetUsageProps = debounce(async () => {
-        const resourceService = createResourceService(spaceData.sys.id);
-        const recordResource = await resourceService.get('record', environmentId);
-
-        const recordsUsage = recordResource.usage;
-        const recordsLimit = getResourceLimits(recordResource).maximum;
-
-        $scope.recordsUsage = recordsUsage;
-        $scope.recordsLimit = recordsLimit;
-        $scope.reachingRecordsLimit = recordsUsage / recordsLimit >= 0.9;
+        $scope.usageProps = {
+          space: spaceData,
+          environmentId,
+          isMasterEnvironment: spaceContext.isMasterEnvironment(),
+        };
       });
 
       resetUsageProps();
