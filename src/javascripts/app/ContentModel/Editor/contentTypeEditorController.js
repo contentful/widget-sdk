@@ -246,9 +246,10 @@ export default function register() {
           if (updatedEditor) {
             $scope.editorInterface.editors.push(updatedEditor);
           } else {
-            $scope.editorInterface.editors = $scope.editorInterface.editors.filter(
-              (editor) => editor !== customEditor
-            );
+            // because we dont support editor mgmt UI yet, we empty the list
+            // this way it renders default editors by default
+            // and we avoid marking default editors as disabled
+            $scope.editorInterface.editors = [];
           }
           $scope.$applyAsync();
           setDirty();
