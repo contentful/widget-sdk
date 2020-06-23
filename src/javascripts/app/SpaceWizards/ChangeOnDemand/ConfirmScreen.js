@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { get } from 'lodash';
 import { Price } from 'core/components/formatting';
 import { css } from 'emotion';
 
@@ -27,7 +26,7 @@ export default function ConfirmScreenNormal(props) {
   } = props;
 
   const currentAndSelectedPriceDiffers =
-    get(currentSpaceSubscriptionPlan, 'price', 0) !== selectedPlan.price;
+    (currentSpaceSubscriptionPlan?.price || 0) !== selectedPlan.price;
 
   return (
     <Typography testId="confirmation-screen">
@@ -41,46 +40,23 @@ export default function ConfirmScreenNormal(props) {
         {currentSpaceSubscriptionPlan ? ` from a ${currentSpaceSubscriptionPlan.name} ` : ' '}
         to a {selectedPlan.name} space type. The price of this space will{' '}
         {!currentAndSelectedPriceDiffers && 'remain the same'}
-        {currentAndSelectedPriceDiffers && currentSpaceSubscriptionPlan && (
-          <>
-            {currentSpaceSubscriptionPlan.price === 0 && selectedPlan.price !== 0 && (
-              <>
-                increase to{' '}
-                <strong>
-                  <Price value={selectedPlan.price} />
-                </strong>{' '}
-                and increase
-              </>
-            )}
-
-            {currentSpaceSubscriptionPlan.price !== 0 && (
-              <>
-                change from{' '}
-                <strong>
-                  <Price value={currentSpaceSubscriptionPlan.price} />
-                </strong>{' '}
-                to{' '}
-                <strong>
-                  <Price value={selectedPlan.price} />
-                </strong>{' '}
-                and will{' '}
-                {currentSpaceSubscriptionPlan.price >= selectedPlan.price ? 'reduce' : 'increase'}
-              </>
-            )}
-          </>
-        )}
-        {!currentSpaceSubscriptionPlan && currentAndSelectedPriceDiffers && (
-          <>
-            now be{' '}
-            <strong>
-              <Price value={selectedPlan.price} />
-            </strong>{' '}
-            and change
-          </>
-        )}
         {currentAndSelectedPriceDiffers && (
           <>
-            {' '}
+            {currentSpaceSubscriptionPlan && (
+              <PlansWithDifferentPriceCopy
+                currentPlanPrice={currentSpaceSubscriptionPlan.price}
+                selectedPlanPrice={selectedPlan.price}
+              />
+            )}
+            {!currentSpaceSubscriptionPlan && (
+              <>
+                now be{' '}
+                <strong>
+                  <Price value={selectedPlan.price} />
+                </strong>{' '}
+                and change
+              </>
+            )}{' '}
             the total price of the spaces in your organization to{' '}
             <strong>
               <Price
@@ -88,7 +64,7 @@ export default function ConfirmScreenNormal(props) {
                 value={
                   currentSubscriptionPrice +
                   selectedPlan.price -
-                  (currentSpaceSubscriptionPlan ? currentSpaceSubscriptionPlan.price : 0)
+                  (currentSpaceSubscriptionPlan?.price || 0)
                 }
               />
             </strong>
@@ -117,4 +93,39 @@ ConfirmScreenNormal.propTypes = {
   onConfirm: PropTypes.func.isRequired,
   space: PropTypes.object.isRequired,
   currentSubscriptionPrice: PropTypes.number.isRequired,
+};
+
+function PlansWithDifferentPriceCopy({ currentPlanPrice, selectedPlanPrice }) {
+  return (
+    <>
+      {currentPlanPrice === 0 && selectedPlanPrice !== 0 && (
+        <>
+          increase to{' '}
+          <strong>
+            <Price value={selectedPlanPrice} />
+          </strong>{' '}
+          and increase
+        </>
+      )}
+
+      {currentPlanPrice !== 0 && (
+        <>
+          change from{' '}
+          <strong>
+            <Price value={currentPlanPrice} />
+          </strong>{' '}
+          to{' '}
+          <strong>
+            <Price value={selectedPlanPrice} />
+          </strong>{' '}
+          and will {currentPlanPrice >= selectedPlanPrice ? 'reduce' : 'increase'}
+        </>
+      )}
+    </>
+  );
+}
+
+PlansWithDifferentPriceCopy.propTypes = {
+  currentPlanPrice: PropTypes.number.isRequired,
+  selectedPlanPrice: PropTypes.number.isRequired,
 };

@@ -293,33 +293,30 @@ export async function sendParnershipEmail(spaceId, fields) {
   });
 }
 
-function generateFulfillmentDetails(usage, limit) {
-  const usagePercentage = usage / limit;
-  const fulfillment = {
-    reached: false,
-    near: false,
-  };
+function usageAtErrorThreshold(resource) {
+  return resource.usage / getResourceLimits(resource).maximum >= ERROR_THRESHOLD;
+}
 
-  if (usagePercentage >= ERROR_THRESHOLD) {
-    fulfillment.reached = true;
-  } else if (usagePercentage >= WARNING_THRESHOLD) {
-    fulfillment.near = true;
-  }
-
-  return fulfillment;
+function usageAtWarningThreshold(resource) {
+  return resource.usage / getResourceLimits(resource).maximum >= WARNING_THRESHOLD;
 }
 
 function shouldRecommendPlan(resources) {
   // We shouldn't recommend a plan if the user isn't near (also hasn't reached) their limits
-  return !!RECOMMENDATION_RESOURCE_TYPES.map((type) => {
+  return RECOMMENDATION_RESOURCE_TYPES.reduce((shouldRecommend, type) => {
+    if (shouldRecommend) {
+      return true;
+    }
+
     const resource = resources.find((r) => r.sys.id === type);
 
     if (!resource) {
-      return generateFulfillmentDetails(0, 1);
+      // Ignore if the resource is missing from the API
+      return false;
     }
 
-    return generateFulfillmentDetails(resource.usage, getResourceLimits(resource).maximum);
-  }).find(({ reached, near }) => reached || near);
+    return usageAtErrorThreshold(resource) || usageAtWarningThreshold(resource);
+  }, false);
 }
 
 export function explanationReasonText(resources) {
@@ -328,25 +325,20 @@ export function explanationReasonText(resources) {
   }
 
   const resourcesDetails = RECOMMENDATION_RESOURCE_TYPES.reduce(
-    (memo, type) => {
+    (details, type) => {
       const resource = resources.find((r) => r.sys.id === type);
-      let details;
 
       if (!resource) {
-        // If we don't have a resource somehow, then we can ignore it by simply giving
-        // a usage of 0, which will be marked neither "near" nor "reached"
-        details = generateFulfillmentDetails(0, 1);
-      } else {
-        details = generateFulfillmentDetails(resource.usage, getResourceLimits(resource).maximum);
+        return details;
       }
 
-      if (details.reached) {
-        memo.reached.push(resourceHumanNameMap[type]);
-      } else if (details.near) {
-        memo.near.push(resourceHumanNameMap[type]);
+      if (usageAtErrorThreshold(resource)) {
+        details.reached.push(resourceHumanNameMap[type]);
+      } else if (usageAtWarningThreshold(resource)) {
+        details.near.push(resourceHumanNameMap[type]);
       }
 
-      return memo;
+      return details;
     },
     { near: [], reached: [] }
   );
@@ -374,54 +366,37 @@ export function explanationReasonText(resources) {
   return resultText;
 }
 
-/*
-  Returns the space plan relative resource usage information (resource fulfillment) based on
-  the current resource usage.
-
-  Returns an object, keyed by the resource name, which has values that are objects with
-  two keys, `reached` and `near`:
-
-  {
-    'Content types': {
-      reached: true,
-      near: true
-    },
-    'Environments': {
-      reached: false,
-      near: true
-    }
-  }
-
-  `reached` denotes that, if the user were to change to this space plan, that they would
-  either be at the limit or over the limit, which means it doesn't make sense to recommend them
-  this space plan.
-
-  `near` denotes that, if the user were to change to this space plan, that they would not be at
-  the limit, but would be near it and should be aware during the recommendation process.
-
- */
-function getPlanResourceFulfillment(plan, spaceResources = []) {
-  const planIncludedResources = plan.includedResources;
-
-  return planIncludedResources.reduce((fulfillments, planResource) => {
-    const typeLower = planResource.type.toLowerCase();
-    const spaceResource = spaceResources.find((r) => {
-      const mappedId = resourceHumanNameMap[get(r, 'sys.id')].toLowerCase();
-
-      return mappedId === typeLower;
+function generatePlanRecommendationResources(plan, resources) {
+  return RECOMMENDATION_RESOURCE_TYPES.map((type) => {
+    const planIncludedResource = plan.includedResources.find((r) => {
+      return resourceHumanNameMap[type].toLowerCase() === r.type.toLowerCase();
     });
+    const resource = resources.find((r) => r.sys.id === type);
 
-    if (!spaceResource || !RECOMMENDATION_RESOURCE_TYPES.includes(spaceResource.sys.id)) {
-      return fulfillments;
-    } else {
-      fulfillments[planResource.type] = generateFulfillmentDetails(
-        spaceResource.usage,
-        planResource.number
-      );
-
-      return fulfillments;
+    if (!planIncludedResource || !resource) {
+      // If we don't have either a plan resource or a current space resource
+      // just return a generated resource that will not be at its limit.
+      return {
+        usage: 0,
+        limits: {
+          maximum: Infinity,
+        },
+        sys: {
+          id: type,
+        },
+      };
     }
-  }, {});
+
+    return {
+      usage: resource.usage,
+      limits: {
+        maximum: planIncludedResource.number,
+      },
+      sys: {
+        id: type,
+      },
+    };
+  });
 }
 
 /*
@@ -440,16 +415,12 @@ export function getRecommendedPlan(spaceRatePlans = [], resources) {
     return null;
   }
 
-  // Find the first plan that has all true fulfillments, e.g. the status is "true" for all of the given fulfillments
-  // for a given space rate plan, which means the plan fulfills the given resource usage
   const recommendedPlan = validPlans.find((plan) => {
-    const statuses = Object.values(getPlanResourceFulfillment(plan, resources));
+    const planResources = generatePlanRecommendationResources(plan, resources);
 
-    if (statuses.length === 0) {
-      return false;
-    }
-
-    return statuses.reduce((fulfills, { reached }) => fulfills && !reached, true);
+    // Ensure that there are no generated "resources" for this plan that would be at
+    // the error threshold right now
+    return !planResources.find((resource) => usageAtErrorThreshold(resource));
   });
 
   if (!recommendedPlan) {
