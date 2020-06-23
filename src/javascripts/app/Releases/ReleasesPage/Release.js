@@ -21,10 +21,14 @@ import { formatPastDate } from 'app/Apps/management/util';
 import { ActionPerformerName } from 'core/components/ActionPerformerName';
 import { deleteRelease } from '../releasesService';
 
-const getHexOutOfString = (str) =>
-  (parseInt(parseInt(str, 36).toExponential().slice(2, -5), 10) & 0xffffff)
+const getHexOutOfString = (str) => {
+  // convert release id to hex color codes
+  const hexColorCode = (parseInt(parseInt(str, 36).toExponential().slice(2, -5), 10) & 0xffffff)
     .toString(16)
     .toUpperCase();
+
+  return hexColorCode.length > 6 ? hexColorCode : hexColorCode.padEnd(6, '0');
+};
 
 const styles = {
   card: css({
@@ -75,7 +79,7 @@ const styles = {
   }),
   releaseImage: (images, id) =>
     css({
-      width: 250,
+      width: '100%',
       height: 150,
       background: images ? `url(${images[0]}?w=250&h=150)` : `#${getHexOutOfString(id)}`,
       backgroundSize: 'cover',

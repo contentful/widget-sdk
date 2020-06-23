@@ -9,9 +9,9 @@ import Release from './Release';
 
 const styles = {
   list: css({
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    display: 'grid',
+    gridTemplateColumns: 'auto auto auto',
+    gridGap: `${tokens.spacingXs} ${tokens.spacingXs}`,
   }),
   item: css({
     marginBottom: tokens.spacingM,
