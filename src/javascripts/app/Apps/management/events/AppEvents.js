@@ -161,7 +161,7 @@ export function AppEvents({ definition }) {
                 validationMessage={error}
                 onChange={(event) => {
                   setError('');
-                  setTargetUrl(event.target.value);
+                  setTargetUrl(event.target.value.trim());
                 }}
                 name="url"
                 labelText="URL"

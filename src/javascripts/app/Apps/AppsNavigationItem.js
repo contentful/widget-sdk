@@ -160,7 +160,7 @@ export const AppsNavigationItem = ({ item, context }) => {
   };
   const children = buildChildren(apps, context);
 
-  return <NavigationDropdown disableHighlight item={{ ...item, children }} onOpen={onOpen} />;
+  return <NavigationDropdown item={{ ...item, children }} onOpen={onOpen} />;
 };
 
 AppsNavigationItem.propTypes = {

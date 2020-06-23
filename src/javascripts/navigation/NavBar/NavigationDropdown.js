@@ -126,11 +126,7 @@ function getNavigationProps(item) {
   };
 }
 
-export default function NavigationDropdown({
-  item,
-  onOpen: onDropdownOpen = noop,
-  disableHighlight = false,
-}) {
+export default function NavigationDropdown({ item, onOpen: onDropdownOpen = noop }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const onOpen = () => {
@@ -153,8 +149,7 @@ export default function NavigationDropdown({
         toggleElement={
           <a
             className={cn(styles.navBarLink, styles.appTopBarMenuTrigger, {
-              'is-active':
-                !disableHighlight && Navigator.includes({ path: item.rootSref || item.sref }),
+              'is-active': Navigator.includes({ path: item.rootSref || item.sref }),
             })}
             role="button"
             tabIndex="0"
@@ -201,10 +196,6 @@ export default function NavigationDropdown({
                 data-view-type={subitem.dataViewType}
                 key={subitem.title}
                 href={Navigator.href(navigationProps)}
-                isActive={
-                  !disableHighlight &&
-                  Navigator.includes({ path: subitem.rootSref || subitem.sref })
-                }
                 onClick={(e) => {
                   if (e.ctrlKey || e.metaKey) {
                     return;
@@ -252,5 +243,4 @@ NavigationDropdown.propTypes = {
       })
     ).isRequired,
   }).isRequired,
-  disableHighlight: PropTypes.bool,
 };

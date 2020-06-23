@@ -318,7 +318,7 @@ export default function AppEditor({ definition, onChange }) {
           labelText="Name"
           testId="app-name-input"
           value={definition.name || ''}
-          onChange={(e) => onChange({ ...definition, name: e.target.value })}
+          onChange={(e) => onChange({ ...definition, name: e.target.value.trim() })}
         />
         <TextField
           className={styles.input()}
@@ -328,7 +328,7 @@ export default function AppEditor({ definition, onChange }) {
           testId="app-src-input"
           value={definition.src || ''}
           helpText="Only required if your app renders into locations within the Contentful web app. Public URLs must use HTTPS."
-          onChange={(e) => onChange({ ...definition, src: e.target.value })}
+          onChange={(e) => onChange({ ...definition, src: e.target.value.trim() })}
         />
         {definition.src && (
           <>
