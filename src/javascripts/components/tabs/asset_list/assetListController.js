@@ -138,7 +138,7 @@ export default function register() {
 
         $scope.recordsUsage = recordsUsage;
         $scope.recordsLimit = recordsLimit;
-        $scope.reachingRecordsLimit = recordsUsage / recordsLimit <= 0.8; // TODO: befoe pushing this condition needs to be inverted
+        $scope.reachingRecordsLimit = recordsUsage / recordsLimit >= 0.9;
       });
 
       resetUsageProps();

@@ -8,7 +8,6 @@ const errorThreshold = 0.95;
 
 export default function RecordsResourceUsage({ recordsUsage = 0, recordsLimit = 0 }) {
   const usagePercentage = recordsUsage / recordsLimit;
-  const atLimit = usagePercentage >= 1;
 
   return (
     <div
@@ -18,14 +17,9 @@ export default function RecordsResourceUsage({ recordsUsage = 0, recordsLimit = 
           usagePercentage >= warnThreshold && usagePercentage < errorThreshold,
         'resource-usage--danger': usagePercentage >= errorThreshold,
       })}>
-      {/** TODO: remove this messages since we have AssetLimitWarning now */}
-      {atLimit ? (
-        <HelpText>You’ve reached the limit of {recordsLimit} entries and assets. </HelpText>
-      ) : (
-        <HelpText>
-          Usage: {recordsUsage} / {recordsLimit} entries and assets
-        </HelpText>
-      )}
+      <HelpText>
+        Usage: {recordsUsage} / {recordsLimit} entries and assets
+      </HelpText>
     </div>
   );
 }
