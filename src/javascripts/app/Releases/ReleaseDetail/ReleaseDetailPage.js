@@ -138,24 +138,31 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
       });
   };
 
-  const handleReleaseAction = (validatedResponse, action) => {
-    if (validatedResponse.errored.length) {
-      setProcessingAction(null);
-      setValidationErrors(validatedResponse.errored);
-      setSelectedTab(switchToErroredTab(validatedResponse.errored, selectedTab));
-      Notification.error('Some entities did not pass validation');
-    } else {
-      setProcessingAction(null);
-      action.onSuccess();
-    }
+  const displayValidation = (errors) => {
+    setProcessingAction(null);
+    setValidationErrors(errors);
+    setSelectedTab(switchToErroredTab(errors, selectedTab));
+    Notification.error('Some entities did not pass validation');
   };
 
-  const validate = (action = null) => {
+  const handleValidation = () => {
     setProcessingAction('Validating');
-    return validateReleaseAction(releaseId, action);
+    validateReleaseAction(releaseId)
+      .then((validatedResponse) => {
+        setProcessingAction(null);
+        const errored = validatedResponse.errored;
+        if (errored.length) {
+          return displayValidation(errored);
+        }
+        Notification.success('All entities passed validation');
+      })
+      .catch(() => {
+        setProcessingAction(null);
+        Notification.error('Entities validation failed');
+      });
   };
 
-  const publish = async () => {
+  const handlePublication = async () => {
     setProcessingAction('Publishing');
     try {
       const publishResponse = await publishRelease(releaseId, release.sys.version);
@@ -165,23 +172,16 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
       Notification.success('Release was published successfully');
       setEntityRefreshKey(publishResponse.sys.id);
       return releaseAction;
-    } catch {
+    } catch (error) {
       setProcessingAction(null);
+      if (error.statusCode && error.statusCode === 422) {
+        const errored = error.data.details.errors;
+        if (errored.length) {
+          return displayValidation(errored);
+        }
+      }
       Notification.error('Failed publishing Release');
     }
-  };
-
-  const handlePublication = () => {
-    validate('publish').then((response) => {
-      handleReleaseAction(response, { onSuccess: publish });
-    });
-  };
-
-  const handleValidation = () => {
-    const displaySuccessNotification = () => Notification.success('All entities passed validation');
-    validate().then((response) => {
-      handleReleaseAction(response, { onSuccess: displaySuccessNotification });
-    });
   };
 
   const renderTabIcon = (entityType) => {
