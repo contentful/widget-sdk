@@ -104,20 +104,14 @@ describe('A UpdateTagModal', () => {
   });
 
   it('calls reset after successfully update a tag', async () => {
-    const readTags = jest.fn();
-    const { events, nameInput, submit, checkboxInput } = setup(
-      {
-        isShown: true,
-        onClose: jest.fn(),
-        tag: {
-          name: 'Hello World',
-          sys: { id: 'helloWorld', type: 'TAG', createdAt: '0', version: 0 },
-        },
+    const { events, nameInput, submit, checkboxInput, tagsRepo } = setup({
+      isShown: true,
+      onClose: jest.fn(),
+      tag: {
+        name: 'Hello World',
+        sys: { id: 'helloWorld', type: 'TAG', createdAt: '0', version: 0 },
       },
-      { readTags }
-    );
-
-    readTags.mockResolvedValue([]);
+    });
 
     act(() => {
       events.click(checkboxInput);
@@ -128,7 +122,7 @@ describe('A UpdateTagModal', () => {
       submit.click();
     });
 
-    expect(readTags).toHaveBeenCalled();
+    expect(tagsRepo.readTags).toHaveBeenCalled();
   });
 });
 
@@ -145,7 +139,7 @@ function setup(
 ) {
   const defaultTagsRepo = {
     createTag: jest.fn().mockResolvedValue(true),
-    readTags: jest.fn().mockResolvedValue([]),
+    readTags: jest.fn().mockResolvedValue({ total: 0, items: [] }),
     updateTag: jest.fn().mockResolvedValue(true),
     deleteTag: jest.fn().mockResolvedValue(true),
   };
@@ -168,5 +162,6 @@ function setup(
     checkboxInput: queries.getByTestId('update-content-tag-checkbox-input'),
     submit: queries.getByTestId('update-content-tag-submit-button'),
     queries,
+    tagsRepo: { ...defaultTagsRepo, ...tagsRepo },
   };
 }

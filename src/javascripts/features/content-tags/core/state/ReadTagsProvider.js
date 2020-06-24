@@ -19,7 +19,18 @@ function ReadTagsProvider({ children }) {
   const [excludedTags, setExcludedTags] = useState([]);
 
   const [{ error, data }, fetchAll] = useAsyncFn(
-    useCallback(async () => tagsRepo.readTags(0, 1000), [tagsRepo]),
+    useCallback(async () => {
+      const getResult = async (skip = 0) => {
+        const result = await tagsRepo.readTags(skip, 1000);
+        const length = skip + result.items.length;
+        if (result.total > length) {
+          return [...result.items, ...(await getResult(length))];
+        } else {
+          return result.items;
+        }
+      };
+      return getResult();
+    }, [tagsRepo]),
     true
   );
 

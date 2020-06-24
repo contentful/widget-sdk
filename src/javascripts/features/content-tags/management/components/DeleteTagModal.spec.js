@@ -57,7 +57,7 @@ async function setup(
 ) {
   const defaultTagsRepo = {
     createTag: jest.fn().mockResolvedValue(true),
-    readTags: jest.fn().mockResolvedValue([]),
+    readTags: jest.fn().mockResolvedValue({ total: 0, items: [] }),
     updateTag: jest.fn().mockResolvedValue(true),
     deleteTag: jest.fn().mockResolvedValue(true),
   };

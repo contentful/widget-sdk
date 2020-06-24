@@ -19,12 +19,11 @@ function create(spaceEndpoint, environmentId) {
   }
 
   async function readTags(skip, limit) {
-    const { items } = await spaceEndpoint({
+    return await spaceEndpoint({
       method: 'GET',
       path: ['environments', environmentId, 'tags'],
       query: { limit, skip },
     });
-    return items;
   }
 
   async function updateTag(id, name, version) {
