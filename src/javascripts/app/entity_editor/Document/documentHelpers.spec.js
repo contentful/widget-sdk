@@ -30,7 +30,14 @@ describe('entity_editor/Document helpers', () => {
    */
   let doc;
   beforeEach(() => {
-    doc = createCmaDoc(ENTRY, { sys: {}, fields: [{ id: 'fieldA' }, { id: 'fieldB' }] }, () => {});
+    doc = createCmaDoc(
+      ENTRY,
+      { sys: {}, fields: [{ id: 'fieldA' }, { id: 'fieldB' }] },
+      {
+        onContentEntityChanged: jest.fn().mockReturnValue(jest.fn()),
+        onAssetFileProcessed: jest.fn().mockReturnValue(jest.fn()),
+      }
+    );
   });
 
   describe('valuePropertyAt', () => {

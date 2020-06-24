@@ -42,7 +42,8 @@ const mockEntityRepo = () => ({
     return Promise.resolve(entry);
   }),
   get: jest.fn(),
-  onAssetFileProcessed: jest.fn(),
+  onContentEntityChanged: jest.fn().mockReturnValue(jest.fn()),
+  onAssetFileProcessed: jest.fn().mockReturnValue(jest.fn()),
 });
 let entityRepo;
 

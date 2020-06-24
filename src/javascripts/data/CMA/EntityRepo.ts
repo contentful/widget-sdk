@@ -1,4 +1,7 @@
-import { ASSET_PROCESSING_FINISHED_EVENT } from 'services/PubSubService';
+import {
+  ASSET_PROCESSING_FINISHED_EVENT,
+  CONTENT_ENTITY_UPDATED_EVENT,
+} from 'services/PubSubService';
 import { Entity } from 'app/entity_editor/Document/types';
 import { makeApply } from './EntityState';
 import { EntityAction } from './EntityActions';
@@ -11,7 +14,8 @@ const COLLECTION_ENDPOINTS = {
 
 export type EntityRepo = {
   get(entityType: string, entityId: string): Promise<Entity>;
-  onAssetFileProcessed: (assetId: string, callback: any) => () => any;
+  onContentEntityChanged: (entitySys: { type: string; id: string }, callback: any) => () => any;
+  onAssetFileProcessed: (entitySys: { type: string; id: string }, callback: any) => () => any;
   update: (entity: Entity) => Promise<Entity>;
   applyAction: (action: EntityAction, data: Entity) => Entity;
 };
@@ -38,7 +42,7 @@ export function create(
   const endpointPutOptions = getSpaceEndpointOptions(options);
   const applyAction = makeApply(spaceEndpoint);
 
-  return { onAssetFileProcessed, get, update, applyAction };
+  return { onAssetFileProcessed, onContentEntityChanged, get, update, applyAction };
 
   async function update(entity: Entity) {
     const collection = COLLECTION_ENDPOINTS[entity.sys.type];
@@ -65,10 +69,29 @@ export function create(
     return spaceEndpoint(body, endpointGetOptions);
   }
 
-  function onAssetFileProcessed(assetId: string, callback) {
-    const handler = ({ assetId: assetIdFromPayload, environmentId }) => {
+  function onContentEntityChanged(entitySys, callback) {
+    const handler = (msg) => {
       const envId = spaceEndpoint.envId || 'master';
-      if (assetIdFromPayload === assetId && environmentId === envId) {
+      if (
+        msg.entityType === entitySys.type &&
+        msg.entityId === entitySys.id &&
+        msg.environmentId === envId
+      ) {
+        callback();
+      }
+    };
+    pubSubClient.on(CONTENT_ENTITY_UPDATED_EVENT, handler);
+    return () => pubSubClient.off(CONTENT_ENTITY_UPDATED_EVENT, handler);
+  }
+
+  function onAssetFileProcessed(entitySys, callback) {
+    const handler = (msg) => {
+      const envId = spaceEndpoint.envId || 'master';
+      if (
+        entitySys.type === 'Asset' &&
+        msg.assetId === entitySys.id &&
+        msg.environmentId === envId
+      ) {
         callback();
       }
     };

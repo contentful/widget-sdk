@@ -26,6 +26,7 @@ const ASSET_UPDATED = Symbol('ASSET_UPDATED');
 enum UpdateReason {
   AssetFileProcessed,
   VersionMismatchError,
+  ContentEntityChanged,
 }
 
 /**
@@ -108,10 +109,16 @@ export function create(
     .map(() => STATUS_UPDATED);
   cleanupTasks.push(resourceState.inProgressBus.end);
 
-  if (entity.sys.type === 'Asset') {
-    const unsubscribe = entityRepo.onAssetFileProcessed(entity.sys.id, handleAssetFileProcessed);
+  // Setup pubsub subscriptions.
+  const subscriptions = [
+    [entityRepo.onContentEntityChanged, UpdateReason.ContentEntityChanged],
+    [entityRepo.onAssetFileProcessed, UpdateReason.AssetFileProcessed],
+  ] as [Function, UpdateReason][];
+
+  subscriptions.forEach(([subscribe, reason]) => {
+    const unsubscribe = subscribe(entity.sys, () => handleIncomingChange(reason));
     cleanupTasks.push(unsubscribe);
-  }
+  });
 
   // Entities from the server might include removed locales or deleted fields which the UI can't handle.
   // So document getters work with locally normalized entity, that is created initially and on every update in this handler.
@@ -428,19 +435,21 @@ export function create(
   }
 
   /**
-   * Handler of the pub-sub "asset processed" event, updates the local entity sys and its file field.
-   * Does not need to wait for the saveEntity to finish, because saveEntity anyway would result in VersionMismatch
-   * if asset processing finished (and client received the pub-sub event) after the save process has started.
+   * Handler for all pubsub events indicating an incoming external change.
+   * It updates the local entity.
+   * It does not need to wait for the saveEntity to finish, because saveEntity
+   * anyway would result in VersionMismatch if the client received an event
+   * after the save process has started.
    */
-  async function handleAssetFileProcessed() {
+  async function handleIncomingChange(updateReason: UpdateReason) {
     // Wait for current ongoing update, then do the next one.
     if (K.getValue(isUpdating$)) {
       await afterUpdate$.changes().take(1).toPromise();
-      return handleAssetFileProcessed();
+      return handleIncomingChange(updateReason);
     }
 
     isUpdatingBus.set(true);
-    await updateEntity(UpdateReason.AssetFileProcessed);
+    await updateEntity(updateReason);
     isUpdatingBus.set(false);
   }
 
