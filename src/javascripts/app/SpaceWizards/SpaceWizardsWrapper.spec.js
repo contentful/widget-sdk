@@ -6,7 +6,7 @@ import * as PricingDataProvider from 'account/pricing/PricingDataProvider';
 import SpaceWizardsWrapper from './SpaceWizardsWrapper';
 import * as Fake from 'test/helpers/fakeFactory';
 import * as Analytics from 'analytics/Analytics';
-import { freeSpace, mediumSpaceCurrent } from './__tests__/fixtures/plans';
+import { freeSpace } from './__tests__/fixtures/plans';
 import { mockEndpoint } from 'data/EndpointFactory';
 import * as utils from './shared/utils';
 
@@ -28,7 +28,7 @@ when(mockEndpoint)
   .calledWith(expect.objectContaining({ path: ['resources', 'free_space'] }))
   .mockResolvedValue(mockFreeSpaceResource)
   .calledWith(expect.objectContaining({ path: ['resources'] }))
-  .mockResolvedValue(mockSpaceResources);
+  .mockResolvedValue({ items: mockSpaceResources });
 
 jest.mock('services/SpaceTemplateLoader', () => ({
   getTemplatesList: jest.fn().mockResolvedValue([]),
@@ -123,12 +123,6 @@ describe('SpaceWizardsWrapper', () => {
   });
 
   describe('space plan change', () => {
-    beforeEach(() => {
-      when(mockEndpoint)
-        .calledWith(expect.objectContaining({ path: ['product_rate_plans'] }))
-        .mockResolvedValue({ items: [mediumSpaceCurrent] });
-    });
-
     it('should track the open event with creation intent', async () => {
       await build({ space: mockSpace });
 

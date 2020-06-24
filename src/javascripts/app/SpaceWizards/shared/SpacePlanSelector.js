@@ -54,9 +54,7 @@ export default function SpacePlanSelector(props) {
     highestPlan.unavailabilityReasons &&
     highestPlan.unavailabilityReasons.some(({ type }) => type === 'currentPlan');
   const payingOrg = !!organization.isBillable;
-  const recommendedPlan = isChanging
-    ? getRecommendedPlan(currentPlan, spaceRatePlans, spaceResources)
-    : null;
+  const recommendedPlan = isChanging ? getRecommendedPlan(spaceRatePlans, spaceResources) : null;
 
   return (
     <div data-test-id="space-plan-selector" className={styles.container}>

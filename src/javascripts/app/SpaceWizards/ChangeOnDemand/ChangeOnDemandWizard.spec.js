@@ -22,6 +22,11 @@ const mockResources = createResourcesForPlan(mediumSpaceCurrent, {
   environment: FULFILLMENT_STATUSES.REACHED,
   locale: FULFILLMENT_STATUSES.NEAR,
 });
+const mockCurrentSpaceSubscriptionPlan = {
+  name: 'Medium',
+  gatekeeperKey: mockSpace.sys.id,
+  price: 39,
+};
 const mockWizardSessionId = 'session_id_1234';
 
 jest.spyOn(utils, 'changeSpacePlan');
@@ -35,7 +40,7 @@ when(mockEndpoint)
   .calledWith(expect.objectContaining({ path: ['product_rate_plans'] }))
   .mockResolvedValue({ items: mockPlans })
   .calledWith(expect.objectContaining({ path: ['plans'] }))
-  .mockResolvedValue({ items: [] })
+  .mockResolvedValue({ items: [mockCurrentSpaceSubscriptionPlan] })
   .calledWith(expect.objectContaining({ path: [] }))
   .mockResolvedValue()
   .calledWith(expect.objectContaining({ path: ['resources'] }))
@@ -107,7 +112,6 @@ describe('ChangeOnDemandWizard', () => {
       `space_wizard:${utils.WIZARD_EVENTS.SELECT_PLAN}`,
       expect.objectContaining({
         intendedAction: utils.WIZARD_INTENT.CHANGE,
-        currentSpaceType: mediumSpaceCurrent.internalName,
         targetSpaceType: largeSpace.internalName,
         recommendedSpaceType: largeSpace.internalName,
       })
