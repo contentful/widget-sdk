@@ -53,13 +53,15 @@ const DRAFT_TASK = {
  * @param {Object} .tasksInEditMode
  * @param {Object} .tasksErrors
  * @param {TaskPermissionChecker} permissionChecker
+ * @param {bool} taskCreationBlocked
  * @returns {TaskListViewData}
  */
 export function createTaskListViewData(
   tasksFetchingStatus,
   usersFetchingStatus,
   { tasksInEditMode, tasksErrors },
-  permissionChecker
+  permissionChecker,
+  taskCreationBlocked
 ) {
   if (!tasksFetchingStatus || tasksFetchingStatus.isLoading) {
     return createLoadingStateTasksViewData();
@@ -75,7 +77,7 @@ export function createTaskListViewData(
     statusText: tasks ? getPendingTasksMessage(tasks) : null,
     isLoading: tasksFetchingStatus.isLoading && !tasks,
     errorMessage: loadingError ? `Error ${tasks ? 'syncing' : 'loading'} tasks` : null,
-    hasCreateAction: !isCreatingDraft && !loadingError,
+    hasCreateAction: !isCreatingDraft && !loadingError && !taskCreationBlocked,
     tasks: [...(tasks || []).map(newTaskVD), ...draftTasksVD],
   };
 

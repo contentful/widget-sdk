@@ -61,6 +61,9 @@ describe('<ScheduledActionsWidget />', () => {
       validator: {
         run: jest.fn().mockReturnValueOnce(true),
       },
+      emitter: {
+        emit: jest.fn(),
+      },
       ...props,
     };
 

@@ -130,6 +130,7 @@ export default class PublicationWidgetContainer extends Component {
               validator={validator}
               publicationBlockedReason={publicationBlockedReason}
               isStatusSwitch={isStatusSwitch}
+              emitter={this.props.emitter}
             />
           );
         }}

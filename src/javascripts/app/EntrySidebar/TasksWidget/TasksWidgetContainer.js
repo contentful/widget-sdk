@@ -46,15 +46,18 @@ export class TasksWidgetContainer extends Component {
     tasksErrors: {},
     users: [],
     taskPermissionChecker: createProhibitiveTaskPermissionChecker(),
+    taskCreationBlocked: false,
   };
 
   componentDidMount() {
     this.props.emitter.on(SidebarEventTypes.UPDATED_TASKS_WIDGET, this.onUpdateTasksWidget);
+    this.props.emitter.on(SidebarEventTypes.SET_TASK_CREATION_BLOCKING, this.onSetTasksCreation);
     this.props.emitter.emit(SidebarEventTypes.WIDGET_REGISTERED, SidebarWidgetTypes.TASKS);
   }
 
   componentWillUnmount() {
     this.props.emitter.off(SidebarEventTypes.UPDATED_TASKS_WIDGET, this.onUpdateTasksWidget);
+    this.props.emitter.off(SidebarEventTypes.SET_TASK_CREATION_BLOCKING, this.onSetTasksCreation);
     this.offTasksFetching && this.offTasksFetching();
     this.offUsersFetching && this.offUsersFetching();
   }
@@ -103,12 +106,17 @@ export class TasksWidgetContainer extends Component {
     });
   }
 
+  onSetTasksCreation = ({ blocked }) => {
+    this.setState({ taskCreationBlocked: blocked });
+  };
+
   renderTasks() {
     const {
       tasksInteractor,
       tasksFetchingStatus,
       usersFetchingStatus,
       taskPermissionChecker,
+      taskCreationBlocked,
     } = this.state;
     const { tasksInEditMode, tasksErrors } = this.state;
     const localState = { tasksInEditMode, tasksErrors };
@@ -116,7 +124,8 @@ export class TasksWidgetContainer extends Component {
       tasksFetchingStatus,
       usersFetchingStatus,
       localState,
-      taskPermissionChecker
+      taskPermissionChecker,
+      taskCreationBlocked
     );
     return <TaskList viewData={tasksViewData} tasksInteractor={tasksInteractor} />;
   }

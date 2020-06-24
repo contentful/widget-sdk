@@ -5,6 +5,7 @@ import moment from 'moment';
 import { css } from 'emotion';
 import ErrorHandler from 'components/shared/ErrorHandlerComponent';
 import CommandPropType from 'app/entity_editor/CommandPropType';
+import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.js';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 
 import {
@@ -109,6 +110,7 @@ export default function ScheduledActionsWidget({
   validator,
   publicationBlockedReason,
   isStatusSwitch,
+  emitter,
 }) {
   const [jobs, setJobs] = useState([]);
   const [isDialogShown, setIsDialogShown] = useState(false);
@@ -118,6 +120,12 @@ export default function ScheduledActionsWidget({
     getContentTypeId: () => entity.sys.contentType.sys.id,
     data: entity,
   });
+
+  function setJobsState(jobs) {
+    emitter.emit(SidebarEventTypes.SET_TASK_CREATION_BLOCKING, { blocked: !!jobs.length });
+    setJobs(jobs);
+  }
+
   const [{ isLoading, error }, fetchJobs] = useAsyncFn(
     useCallback(async () => {
       const jobCollection = await ScheduledActionsService.getNotCanceledJobsForEntity(
@@ -125,10 +133,15 @@ export default function ScheduledActionsWidget({
         entity.sys.id,
         { 'environment.sys.id': environmentId }
       );
+
       setJobs(jobCollection);
 
+      emitter.emit(SidebarEventTypes.SET_TASK_CREATION_BLOCKING, {
+        blocked: !!jobCollection.length,
+      });
+
       return jobCollection;
-    }, [spaceId, environmentId, entity.sys.id]),
+    }, [spaceId, environmentId, entity.sys.id, emitter]),
     true
   );
 
@@ -173,7 +186,7 @@ export default function ScheduledActionsWidget({
       setIsCreatingJob(false);
       setIsDialogShown(false);
       trackCreatedJob(job, timezone);
-      setJobs([job, ...jobs]);
+      setJobsState([job, ...jobs]);
     }
   };
 
@@ -185,7 +198,7 @@ export default function ScheduledActionsWidget({
     ).then(() => {
       const job = jobs.find((j) => j.sys.id === jobId);
       trackCancelledJob(job);
-      setJobs(jobs.filter((j) => j !== job));
+      setJobsState(jobs.filter((j) => j !== job));
       Notification.success('Schedule canceled');
     });
   };
@@ -300,6 +313,7 @@ ScheduledActionsWidget.propTypes = {
   }).isRequired,
   publicationBlockedReason: PropTypes.string,
   isStatusSwitch: PropTypes.bool,
+  emitter: PropTypes.object.isRequired,
 };
 
 ScheduledActionsWidget.defaultProps = {

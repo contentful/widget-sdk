@@ -3,6 +3,7 @@ export default {
   SET_ACTIVE_LOCALES: 'sidebar:set-active-locales',
   SET_SINGLE_LOCALE_MODE: 'sidebar:set-single-locale-mode',
   SET_PUBLICATION_BLOCKING: 'sidebar:set-publication-blocking',
+  SET_TASK_CREATION_BLOCKING: 'sidebar:set-task-creation-blocking',
   UPDATED_USERS_WIDGET: 'sidebar:updated-users-widget',
   UPDATED_CONTENT_PREVIEW_WIDGET: 'sidebar:updated-content-preview-widget',
   UPDATED_INCOMING_LINKS_WIDGET: 'sidebar:updated-incoming-links-widget',
