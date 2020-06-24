@@ -15,6 +15,7 @@ import { AdminsOnlyModal } from 'features/content-tags/editor/components/AdminsO
 import * as Navigator from 'states/Navigator';
 import { FieldFocus } from 'features/content-tags/core/components/FieldFocus';
 import { orderByLabel, tagsPayloadToValues } from 'features/content-tags/editor/utils';
+import { useSpaceContext } from 'features/content-tags/core/hooks';
 
 import { css } from 'emotion';
 import FeedbackButton from 'app/common/FeedbackButton';
@@ -32,6 +33,7 @@ const styles = {
 const TagsSelection = ({ showEmpty, onAdd, onRemove, selectedTags = [] }) => {
   const { data, isLoading, setSearch, setLimit, hasTags } = useReadTags();
   const isInitialLoad = useIsInitialLoadingOfTags();
+  const spaceContext = useSpaceContext();
 
   useEffect(() => {
     setLimit(1000);
@@ -61,11 +63,12 @@ const TagsSelection = ({ showEmpty, onAdd, onRemove, selectedTags = [] }) => {
 
   const onCreate = useCallback(() => {
     if (isAdmin) {
-      Navigator.go({ path: 'spaces.detail.settings.tags' });
+      const isMaster = spaceContext.isMasterEnvironment();
+      Navigator.go({ path: `spaces.detail.${isMaster ? '' : 'environment.'}settings.tags` });
     } else {
       showUserListModal();
     }
-  }, [isAdmin, showUserListModal]);
+  }, [isAdmin, showUserListModal, spaceContext]);
 
   const renderNoTags = useMemo(() => {
     return (
