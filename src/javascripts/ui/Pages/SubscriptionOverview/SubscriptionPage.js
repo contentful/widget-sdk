@@ -39,17 +39,6 @@ import NavigationIcon from 'ui/Components/NavigationIcon';
 import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 import ContactUsButton from 'ui/Components/ContactUsButton';
 
-// Test news slider
-import { NEWS_SLIDER } from 'featureFlags';
-import { getVariation } from 'LaunchDarkly';
-import {
-  NewsSlider,
-  Slide,
-  PricingNewCommunitySpace,
-  PricingNewFeatures,
-  PricingAssignedCommunitySpace,
-} from 'features/news-slider';
-
 const styles = {
   sidebar: css({
     position: 'relative',
@@ -113,16 +102,6 @@ export default function SubscriptionPage({
   onSpacePlansChange,
 }) {
   const [changedSpaceId, setChangedSpaceId] = useState('');
-  const [isNewsSliderEnabled, setIsNewsSliderEnabled] = useState(false);
-  const [sliderVisible, setSliderVisible] = useState(true);
-
-  useEffect(() => {
-    async function getFeatureFlagVariation() {
-      const isFeatureEnabled = await getVariation(NEWS_SLIDER);
-      setIsNewsSliderEnabled(isFeatureEnabled);
-    }
-    getFeatureFlagVariation();
-  }, [isNewsSliderEnabled]);
 
   useEffect(() => {
     let timer;
@@ -138,11 +117,6 @@ export default function SubscriptionPage({
 
   const createSpace = () => {
     showCreateSpaceModal(organizationId);
-  };
-
-  // temporary for development purposes
-  const handleClosingSlider = () => {
-    setSliderVisible(false);
   };
 
   const deleteSpace = (space, plan) => {
@@ -293,20 +267,6 @@ export default function SubscriptionPage({
             />
           </div>
         </Grid>
-        {isNewsSliderEnabled && sliderVisible ? (
-          <NewsSlider onClose={handleClosingSlider}>
-            <Slide>{({ onNext }) => <PricingNewCommunitySpace onNext={onNext} />}</Slide>
-            <Slide>{({ onNext }) => <PricingNewFeatures onNext={onNext} />}</Slide>
-            <Slide>
-              {() => (
-                <PricingAssignedCommunitySpace
-                  communitySpaceName="Space 1"
-                  microSpaceNames={['Space 2', 'Space 3']}
-                />
-              )}
-            </Slide>
-          </NewsSlider>
-        ) : null}
       </Workbench.Content>
     </Workbench>
   );

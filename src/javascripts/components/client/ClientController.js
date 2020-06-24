@@ -28,6 +28,7 @@ export default function register() {
       let ENVIRONMENT_ALIAS_CHANGED_EVENT;
       let initEnvAliasChangeHandler;
       let initOsano;
+      let openPricing2020Warning;
 
       // TODO remove this eventually. All components should access it as a service
       $scope.spaceContext = spaceContext;
@@ -45,6 +46,11 @@ export default function register() {
         store.dispatch({
           type: 'LOCATION_CHANGED',
           payload: { location: pickSerializable(window.location) },
+        });
+
+        const unsubscribe = $rootScope.$on('$stateChangeSuccess', () => {
+          openPricing2020Warning();
+          unsubscribe();
         });
 
         $scope.$watchCollection(
@@ -190,6 +196,7 @@ export default function register() {
           { ENVIRONMENT_ALIAS_CHANGED_EVENT },
           { default: initEnvAliasChangeHandler },
           { init: initOsano },
+          { openPricing2020Warning },
         ] = await Promise.all([
           import(/* webpackMode: "eager" */ 'services/logger'),
           import(/* webpackMode: "eager" */ 'data/CMA/ProductCatalog'),
@@ -205,6 +212,7 @@ export default function register() {
             /* webpackMode: "eager" */ 'app/SpaceSettings/EnvironmentAliases/NotificationsService'
           ),
           import(/* webpackMode: "eager" */ 'services/OsanoService'),
+          import(/* webpackMode: "eager" */ 'features/news-slider'),
         ]);
 
         refreshNavState = NavState.makeStateRefresher($state, spaceContext);
