@@ -16,7 +16,7 @@ export default class FeedbackButton extends Component {
   onClick = async () => {
     const { about, target } = this.props;
 
-    const { feedback, canBeContacted } = await ModalLauncher.open(({ isShown, onClose }) => (
+    const feedback = await ModalLauncher.open(({ isShown, onClose }) => (
       <FeedbackDialog
         key={`${Date.now()}`}
         about={about}
@@ -27,26 +27,24 @@ export default class FeedbackButton extends Component {
     ));
 
     if (feedback) {
-      this.send({ about, target, feedback, canBeContacted });
+      this.send({ about, target, feedback });
     }
   };
 
-  send = async ({ about, target, feedback, canBeContacted }) => {
+  send = async ({ about, target, feedback }) => {
     const client = createMicroBackendsClient({ backendName: 'feedback' });
 
-    const userData = {};
-    if (canBeContacted) {
-      const spaceContext = getModule('spaceContext');
-      Object.assign(userData, {
-        userId: spaceContext.user.sys.id,
-        orgId: spaceContext.organization.sys.id,
-      });
-    }
-
+    const spaceContext = getModule('spaceContext');
     const res = await client.call('/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ about, target, feedback, ...userData }),
+      body: JSON.stringify({
+        about,
+        target,
+        feedback,
+        userId: spaceContext.user.sys.id,
+        orgId: spaceContext.organization.sys.id,
+      }),
     });
 
     if (res.ok) {
