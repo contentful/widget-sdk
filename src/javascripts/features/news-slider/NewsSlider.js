@@ -2,7 +2,7 @@ import React, { useReducer, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
-import { TextLink } from '@contentful/forma-36-react-components';
+import { Button, Icon } from '@contentful/forma-36-react-components';
 import { ProgressBar } from './ProgressBar';
 import FullScreen from 'components/shared/stack-onboarding/components/FullScreen';
 
@@ -23,6 +23,13 @@ const reducer = (state, action) => {
     }
     case 'PREV': {
       const currentSlide = Math.max(state.currentSlide - 1, 0);
+      return {
+        ...state,
+        currentSlide,
+      };
+    }
+    case 'GOTO': {
+      const currentSlide = action.payload;
       return {
         ...state,
         currentSlide,
@@ -74,6 +81,7 @@ export const NewsSlider = ({ children, onClose }) => {
 
   const onNext = () => dispatch({ type: 'NEXT' });
   const onPrev = () => dispatch({ type: 'PREV' });
+  const goTo = (index) => dispatch({ type: 'GOTO', payload: index });
 
   useEffect(() => {
     dispatch({ type: 'REGISTER', payload: children.length });
@@ -90,11 +98,18 @@ export const NewsSlider = ({ children, onClose }) => {
   return (
     <NewsSliderContext.Provider value={{ onNext, onPrev }}>
       <FullScreen
-        progressBar={<ProgressBar current={state.currentSlide} total={state.numSlides} />}
+        backgroundColor="white"
+        progressBar={
+          <ProgressBar current={state.currentSlide} total={state.numSlides} goTo={goTo} />
+        }
         close={
-          <TextLink linkType="muted" onClick={onClose} data-test-id="close-news-slider">
-            Skip
-          </TextLink>
+          <Button
+            buttonType="naked"
+            onClick={onClose}
+            size="large"
+            data-test-id="close-news-slider">
+            <Icon icon="Close" color="muted" size="medium" />
+          </Button>
         }>
         <div className={styles.slidesContainer} ref={listRef}>
           {children.map((slide, index) => (

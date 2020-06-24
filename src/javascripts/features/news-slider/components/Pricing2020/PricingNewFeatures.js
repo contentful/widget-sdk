@@ -3,7 +3,7 @@ import { css } from 'emotion';
 import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
 import NewFeaturesImage from 'svg/illustrations/new-spaces-illustrations-b.svg';
-import { DisplayText, Button, List, ListItem } from '@contentful/forma-36-react-components';
+import { DisplayText, Button, List, ListItem, Icon } from '@contentful/forma-36-react-components';
 import { Grid, GridItem } from '@contentful/forma-36-react-components/dist/alpha';
 
 const styles = {
@@ -27,6 +27,11 @@ const styles = {
       color: tokens.colorBlueBase,
     },
   }),
+  alignedButtonLabel: css({
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  }),
 };
 export const PricingNewFeatures = ({ onNext }) => (
   <Grid columns={2} rows={1} columnGap="spacing3Xl" flow="row" className={styles.grid}>
@@ -41,7 +46,10 @@ export const PricingNewFeatures = ({ onNext }) => (
           <ListItem className={styles.listItem}>4 environments</ListItem>
         </List>
         <Button size="large" onClick={onNext}>
-          Show me more important changes
+          <span className={styles.alignedButtonLabel}>
+            Show me more important changes
+            <Icon icon="ChevronRight" color="white" size="medium" />
+          </span>
         </Button>
       </div>
     </GridItem>

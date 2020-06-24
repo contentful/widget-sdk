@@ -9874,6 +9874,12 @@ pre,
     overflow-y: auto;
     padding: 43px 65px;
   }
+  .modern-stack-onboarding--white {
+    background: var(--color-white);
+  }
+  .modern-stack-onboarding--element-lightest {
+    background: var(--color-element-lightest);
+  }
   .modern-stack-onboarding--wrapper {
     margin: 15px auto;
     max-width: 1500px;

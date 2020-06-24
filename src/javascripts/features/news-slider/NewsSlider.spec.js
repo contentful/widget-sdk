@@ -126,5 +126,46 @@ describe('NewsSlider', () => {
     expect(mockCloseCallback).toHaveBeenCalled();
   });
 
-  it('should highlight current slide in the bullet navigation', () => {});
+  it('should go to choosen slide based on the bullet navigation', () => {
+    build();
+
+    const allDots = screen.getAllByTestId('progress-bar-nav');
+    const allSlides = screen.getAllByTestId('news-slider-slide');
+
+    fireEvent.click(allDots[2]);
+    expect(allSlides[0]).toHaveAttribute('data-active', 'false');
+    expect(allSlides[1]).toHaveAttribute('data-active', 'false');
+    expect(allSlides[2]).toHaveAttribute('data-active', 'true');
+
+    fireEvent.click(allDots[0]);
+    expect(allSlides[0]).toHaveAttribute('data-active', 'true');
+    expect(allSlides[1]).toHaveAttribute('data-active', 'false');
+    expect(allSlides[2]).toHaveAttribute('data-active', 'false');
+
+    fireEvent.click(allDots[1]);
+    expect(allSlides[0]).toHaveAttribute('data-active', 'false');
+    expect(allSlides[1]).toHaveAttribute('data-active', 'true');
+    expect(allSlides[2]).toHaveAttribute('data-active', 'false');
+  });
+
+  it('should highlight current slide in the bullet navigation', () => {
+    build();
+
+    const allDots = screen.getAllByTestId('progress-bar-nav');
+
+    fireEvent.click(allDots[2]);
+    expect(allDots[0]).toHaveAttribute('data-active', 'false');
+    expect(allDots[1]).toHaveAttribute('data-active', 'false');
+    expect(allDots[2]).toHaveAttribute('data-active', 'true');
+
+    fireEvent.click(allDots[0]);
+    expect(allDots[0]).toHaveAttribute('data-active', 'true');
+    expect(allDots[1]).toHaveAttribute('data-active', 'false');
+    expect(allDots[2]).toHaveAttribute('data-active', 'false');
+
+    fireEvent.click(allDots[1]);
+    expect(allDots[0]).toHaveAttribute('data-active', 'false');
+    expect(allDots[1]).toHaveAttribute('data-active', 'true');
+    expect(allDots[2]).toHaveAttribute('data-active', 'false');
+  });
 });

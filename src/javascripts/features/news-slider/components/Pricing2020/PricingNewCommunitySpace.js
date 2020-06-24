@@ -3,7 +3,7 @@ import { css } from 'emotion';
 import PropTypes from 'prop-types';
 import NewCommunitySpaceImage from 'svg/illustrations/new-spaces-illustrations-a.svg';
 import tokens from '@contentful/forma-36-tokens';
-import { Typography, DisplayText, Button } from '@contentful/forma-36-react-components';
+import { Typography, DisplayText, Button, Icon } from '@contentful/forma-36-react-components';
 import { Grid, GridItem } from '@contentful/forma-36-react-components/dist/alpha';
 
 const styles = {
@@ -13,6 +13,11 @@ const styles = {
     color: tokens.colorTextLight,
     fontWeight: tokens.fontWeightNormal,
     marginBottom: tokens.spacingL,
+  }),
+  alignedButtonLabel: css({
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   }),
 };
 export const PricingNewCommunitySpace = ({ onNext }) => (
@@ -29,7 +34,10 @@ export const PricingNewCommunitySpace = ({ onNext }) => (
           </DisplayText>
         </Typography>
         <Button size="large" onClick={onNext}>
-          What&apos;s new?
+          <span className={styles.alignedButtonLabel}>
+            What&apos;s new?
+            <Icon icon="ChevronRight" color="white" size="medium" />
+          </span>
         </Button>
       </div>
     </GridItem>
