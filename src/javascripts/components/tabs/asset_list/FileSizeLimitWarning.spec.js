@@ -2,9 +2,9 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import AssetLimitWarning from './AssetLimitWarning';
+import FileSizeLimitWarning from './FileSizeLimitWarning';
 
-describe('AssetLimitWarning', () => {
+describe('FileSizeLimitWarning', () => {
   it('should render the warning note for a user that is NOT the space owner', () => {
     build();
 
@@ -38,5 +38,5 @@ function build(customProps) {
     ...customProps,
   };
 
-  render(<AssetLimitWarning {...props} />);
+  render(<FileSizeLimitWarning {...props} />);
 }
