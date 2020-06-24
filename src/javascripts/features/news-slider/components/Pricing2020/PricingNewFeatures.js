@@ -3,7 +3,14 @@ import { css } from 'emotion';
 import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
 import NewFeaturesImage from 'svg/illustrations/new-spaces-illustrations-b.svg';
-import { DisplayText, Button, List, ListItem, Icon } from '@contentful/forma-36-react-components';
+import {
+  DisplayText,
+  Button,
+  List,
+  ListItem,
+  TextLink,
+  Icon,
+} from '@contentful/forma-36-react-components';
 import { Grid, GridItem } from '@contentful/forma-36-react-components/dist/alpha';
 
 const styles = {
@@ -27,12 +34,20 @@ const styles = {
       color: tokens.colorBlueBase,
     },
   }),
+  link: css({
+    span: { fontSize: tokens.fontSize2Xl },
+    'span > div > svg': {
+      width: tokens.fontSize2Xl,
+      height: tokens.fontSize2Xl,
+    },
+  }),
   alignedButtonLabel: css({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
   }),
 };
+
 export const PricingNewFeatures = ({ onNext }) => (
   <Grid columns={2} rows={1} columnGap="spacing3Xl" flow="row" className={styles.grid}>
     <GridItem>
@@ -45,12 +60,23 @@ export const PricingNewFeatures = ({ onNext }) => (
           <ListItem className={styles.listItem}>an additional role</ListItem>
           <ListItem className={styles.listItem}>4 environments</ListItem>
         </List>
-        <Button size="large" onClick={onNext}>
-          <span className={styles.alignedButtonLabel}>
-            Show me more important changes
-            <Icon icon="ChevronRight" color="white" size="medium" />
-          </span>
-        </Button>
+        {onNext ? (
+          <Button size="large" onClick={onNext}>
+            <span className={styles.alignedButtonLabel}>
+              Show me more important changes
+              <Icon icon="ChevronRight" color="white" size="medium" />
+            </span>
+          </Button>
+        ) : (
+          <TextLink
+            href="https://www.contentful.com/pricing/"
+            rel="noopener noreferrer"
+            target="_blank"
+            icon="ExternalLink"
+            className={styles.link}>
+            Learn more
+          </TextLink>
+        )}
       </div>
     </GridItem>
     <GridItem>
@@ -60,5 +86,5 @@ export const PricingNewFeatures = ({ onNext }) => (
 );
 
 PricingNewFeatures.propTypes = {
-  onNext: PropTypes.func.isRequired,
+  onNext: PropTypes.func,
 };

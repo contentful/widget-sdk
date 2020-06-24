@@ -7,7 +7,7 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
 import { getVariation } from 'LaunchDarkly';
 import { PRICING_2020_WARNING } from 'featureFlags';
-import { SelfService } from '../components/Pricing2020';
+import { SelfService, Free } from '../components/Pricing2020';
 import { ModalLauncher } from 'core/components/ModalLauncher';
 import { createClientStorage } from 'core/services/BrowserStorage/ClientStorage';
 
@@ -62,16 +62,7 @@ export async function openPricing2020Warning() {
   }
 
   if (isCommunity) {
-    // TODO: display the community slides when they're ready
-    ModalLauncher.open(({ isShown, onClose }) => (
-      <SelfService
-        isShown={isShown}
-        onClose={onClose}
-        freeSpace={freeSpace}
-        microSpaces={microSpaces}
-        orgId={org.sys.id}
-      />
-    ));
+    ModalLauncher.open(({ isShown, onClose }) => <Free isShown={isShown} onClose={onClose} />);
   } else if (isTeam) {
     ModalLauncher.open(({ isShown, onClose }) => (
       <SelfService
@@ -79,7 +70,6 @@ export async function openPricing2020Warning() {
         onClose={onClose}
         freeSpace={freeSpace}
         microSpaces={microSpaces}
-        orgId={org.sys.id}
       />
     ));
   }

@@ -8,7 +8,7 @@ import { Grid, GridItem } from '@contentful/forma-36-react-components/dist/alpha
 
 const styles = {
   grid: css({ alignItems: 'center' }),
-  content: css({ marginRight: '160px' }),
+  content: css({ marginRight: '80px' }),
   list: css({
     color: tokens.colorTextMid,
     marginTop: tokens.spacingL,
@@ -42,19 +42,18 @@ export const PricingAssignedCommunitySpace = ({ communitySpaceName, microSpaceNa
     </GridItem>
     <GridItem>
       <div className={styles.content}>
-        {microSpaceNames ? (
+        {microSpaceNames && microSpaceNames.length > 0 ? (
           <>
             <DisplayText size="large">You have 1 free community space per organization</DisplayText>
             <List className={styles.list}>
               <ListItem className={styles.listItem}>
                 {communitySpaceName} has been assigned as your community space
               </ListItem>
-              {microSpaceNames &&
-                microSpaceNames.map((spaceName, index) => (
-                  <ListItem key={index} className={styles.listItem}>
-                    {spaceName} will remain a micro space
-                  </ListItem>
-                ))}
+              {microSpaceNames.map((spaceName, index) => (
+                <ListItem key={index} className={styles.listItem}>
+                  {spaceName} will remain a micro space
+                </ListItem>
+              ))}
             </List>
           </>
         ) : (
@@ -63,7 +62,7 @@ export const PricingAssignedCommunitySpace = ({ communitySpaceName, microSpaceNa
           </DisplayText>
         )}
         <TextLink
-          href="https://www.contentful.com/help/" //todo: add pricing page link
+          href="https://www.contentful.com/pricing/"
           rel="noopener noreferrer"
           target="_blank"
           icon="ExternalLink"
