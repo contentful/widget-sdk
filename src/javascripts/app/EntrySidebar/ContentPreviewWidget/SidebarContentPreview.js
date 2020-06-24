@@ -99,8 +99,7 @@ export default class SidebarContentPreview extends Component {
           isFullWidth
           onClick={trackPreviewOpened}
           buttonType="muted"
-          icon="ExternalLink"
-          rel="noopener noreferrer">
+          icon="ExternalLink">
           Open preview
         </Button>
         {isInitialized && !isPreviewSetup && this.renderNoPreviewNote()}

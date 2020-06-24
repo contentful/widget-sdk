@@ -79,7 +79,7 @@ export class SidebarContentPreviewContainer extends Component {
     const { selectedContentPreview, contentPreviews } = this.state;
     const { dataForTracking, contentType, entry } = this.props;
     const previewUrl = await this.getCompiledUrls(contentPreviews, entry, contentType);
-    window.open(previewUrl.compiledUrl);
+    window.open(previewUrl.compiledUrl, undefined, 'noopener,noreferrer');
 
     const contentTypeId = selectedContentPreview.contentType;
     const contentTypeName = get(contentType, 'name', '<UNPUBLISHED CONTENT TYPE>');

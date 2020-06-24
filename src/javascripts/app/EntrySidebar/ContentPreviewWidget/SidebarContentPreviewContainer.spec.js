@@ -109,6 +109,10 @@ describe('entity_editor/Components/SidebarContentPreviewContainer', () => {
     wrapper.update();
 
     expect(mockContentPreview.replaceVariablesInUrl).toHaveBeenCalledTimes(1);
-    expect(window.open).toHaveBeenCalledWith('https://google.com/search?q=VALUE');
+    expect(window.open).toHaveBeenCalledWith(
+      'https://google.com/search?q=VALUE',
+      undefined,
+      'noopener,noreferrer'
+    );
   });
 });
