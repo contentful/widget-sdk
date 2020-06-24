@@ -1,13 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-  ModalConfirm,
-  TextField,
-  FieldGroup,
-  RadioButtonField,
-  Paragraph,
-  Form,
-} from '@contentful/forma-36-react-components';
+import { ModalConfirm, TextField, Paragraph, Form } from '@contentful/forma-36-react-components';
 
 export default class FeedbackDialog extends Component {
   static propTypes = {
@@ -17,13 +10,10 @@ export default class FeedbackDialog extends Component {
     onCancel: PropTypes.func.isRequired,
   };
 
-  state = {
-    canBeContacted: false,
-    feedback: '',
-  };
+  state = { feedback: '' };
 
   render() {
-    const { canBeContacted, feedback } = this.state;
+    const { feedback } = this.state;
     const { about, isShown, onConfirm, onCancel } = this.props;
 
     return (
@@ -32,7 +22,7 @@ export default class FeedbackDialog extends Component {
         confirmLabel="Send feedback"
         intent="positive"
         isShown={isShown}
-        onConfirm={() => onConfirm({ canBeContacted, feedback })}
+        onConfirm={() => onConfirm(feedback)}
         isConfirmDisabled={feedback.length < 1}
         onCancel={onCancel}
         allowHeightOverflow>
@@ -52,24 +42,6 @@ export default class FeedbackDialog extends Component {
               rows: 6,
             }}
           />
-          <FieldGroup>
-            <RadioButtonField
-              labelText="Make it anonymous"
-              helpText="Your contact information won't be included in the feedback"
-              checked={!canBeContacted}
-              onChange={() => this.setState({ canBeContacted: false })}
-              name="anonymous"
-              id="anonymous"
-            />
-            <RadioButtonField
-              labelText="Include my contact information in the feedback"
-              helpText="We might reach out with some additional questions"
-              checked={canBeContacted}
-              onChange={() => this.setState({ canBeContacted: true })}
-              name="can-be-contacted"
-              id="can-be-contacted"
-            />
-          </FieldGroup>
         </Form>
       </ModalConfirm>
     );
