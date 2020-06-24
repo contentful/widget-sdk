@@ -58,6 +58,42 @@ const autofixPolicies = (internal, contentTypes) => {
   return null;
 };
 
+export function handleSaveError(response) {
+  const errors = get(response, 'body.details.errors', []);
+
+  if (includes(['403', '404'], get(response, 'statusCode'))) {
+    Notification.error('You have exceeded your plan limits for Custom Roles.');
+    return Promise.reject();
+  }
+
+  if (isObject(find(errors, { name: 'taken', path: 'name' }))) {
+    Notification.error('This role name is already used.');
+    return Promise.reject();
+  }
+
+  const nameError = find(errors, { name: 'length', path: 'name' });
+
+  if (nameError) {
+    const nameValue = isObject(nameError) ? nameError.value : null;
+    if (!nameValue) {
+      Notification.error('You have to provide a role name.');
+    } else if (isString(nameValue) && nameValue.length > 0) {
+      Notification.error('The provided role name is too long.');
+    }
+    return Promise.reject();
+  }
+
+  if (includes(['422'], get(response, 'statusCode')) && errors.length > 0) {
+    Notification.error(errors[0].name);
+    return Promise.reject();
+  }
+
+  Notification.error('Error saving role. Please try again.');
+  logger.logServerWarn('Error saving role', { errors });
+
+  return Promise.reject();
+}
+
 export class RoleEditor extends React.Component {
   static propTypes = {
     role: PropTypes.shape({
@@ -209,7 +245,7 @@ export class RoleEditor extends React.Component {
     const isDuplicate = !!baseRole;
     const method = isNew || isDuplicate ? 'create' : 'save';
     return this.props.roleRepo[method](external)
-      .then(this.handleSaveSuccess(autofix), this.handleSaveError)
+      .then(this.handleSaveSuccess(autofix), handleSaveError)
       .finally(() => this.setState({ saving: false }));
   };
 
@@ -230,34 +266,6 @@ export class RoleEditor extends React.Component {
       this.setDirty(false);
       return Promise.resolve(role);
     }
-  };
-
-  handleSaveError = (response) => {
-    const errors = get(response, 'body.details.errors', []);
-
-    if (includes(['403', '404'], get(response, 'statusCode'))) {
-      Notification.error('You have exceeded your plan limits for Custom Roles.');
-      return Promise.reject();
-    }
-
-    if (isObject(find(errors, { name: 'taken', path: 'name' }))) {
-      Notification.error('This role name is already used.');
-      return Promise.reject();
-    }
-
-    const nameError = find(errors, { name: 'length', path: 'name' });
-    const nameValue = isObject(nameError) ? nameError.value : null;
-
-    if (!nameValue) {
-      Notification.error('You have to provide a role name.');
-    } else if (isString(nameValue) && nameValue.length > 0) {
-      Notification.error('The provided role name is too long.');
-    } else {
-      Notification.error('Error saving role. Please try again.');
-      logger.logServerWarn('Error saving role', { errors });
-    }
-
-    return Promise.reject();
   };
 
   updateInternal = (updater) => {
