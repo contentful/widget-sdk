@@ -21,6 +21,7 @@ const EnvOrAliasLabel = ({
   isSelected,
   isMaster,
   colorizeFont,
+  darkBackground,
   testId,
 }) => {
   if (!environmentId) return null;
@@ -28,7 +29,11 @@ const EnvOrAliasLabel = ({
   let fill = tokens.colorTextLight;
   if (isSelected) {
     testId = `${testId}-active`;
-    fill = isMaster ? tokens.colorGreenLight : tokens.colorOrangeLight;
+    fill = isMaster
+      ? darkBackground
+        ? tokens.colorGreenLight
+        : tokens.colorPositive
+      : tokens.colorWarning;
   }
 
   const iconStyle = css({
@@ -97,7 +102,9 @@ EnvOrAliasLabel.propTypes = {
   showAliasedTo: PropTypes.bool,
   isMaster: PropTypes.bool,
   isSelected: PropTypes.bool,
+  // TODO: Refactor, abstract colors to icon components
   colorizeFont: PropTypes.bool,
+  darkBackground: PropTypes.bool,
   testId: PropTypes.string,
 };
 

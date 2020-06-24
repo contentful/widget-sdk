@@ -166,6 +166,7 @@ function environmentLabel(environmentMeta) {
       showAliasedTo={false}
       isSelected
       colorizeFont
+      darkBackground
     />
   );
 }

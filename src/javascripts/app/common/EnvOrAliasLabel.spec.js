@@ -32,25 +32,25 @@ describe('EnvOrAliasLabel', () => {
     it('displays the selected master icon', () => {
       const { getByTestId } = build();
       const aliasIcon = getByTestId('envoralias.aliasicon');
-      expect(getAttribute(aliasIcon, 'fill')).toBe(tokens.colorGreenLight);
+      expect(getAttribute(aliasIcon, 'fill')).toBe(tokens.colorPositive);
     });
 
     it('displays the selected not-master icon', () => {
       const { getByTestId } = build({ isMaster: false });
       const aliasIcon = getByTestId('envoralias.aliasicon');
-      expect(getAttribute(aliasIcon, 'fill')).toBe(tokens.colorOrangeLight);
+      expect(getAttribute(aliasIcon, 'fill')).toBe(tokens.colorWarning);
     });
 
     it('displays the selected master with colorized font', () => {
       const { getByTestId } = build({ colorizeFont: true });
       const wrapper = getByTestId('envoralias.wrapper-active');
-      expect(getAttribute(wrapper, 'color')).toBe('rgb(138, 214, 177)');
+      expect(getAttribute(wrapper, 'color')).toBe('rgb(22, 135, 93)');
     });
 
     it('displays the selected not-master with colorized font', () => {
       const { getByTestId } = build({ colorizeFont: true, isMaster: false });
       const wrapper = getByTestId('envoralias.wrapper-active');
-      expect(getAttribute(wrapper, 'color')).toBe('rgb(255, 215, 162)');
+      expect(getAttribute(wrapper, 'color')).toBe('rgb(247, 155, 12)');
     });
 
     it('displays the correct italic font', () => {
