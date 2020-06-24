@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import { Notification, TextLink } from '@contentful/forma-36-react-components';
 import { ModalLauncher } from 'core/components/ModalLauncher';
 import FeedbackDialog from './FeedbackDialog';
-import createMicroBackendsClient from 'MicroBackendsClient';
-import { getModule } from 'core/NgRegistry';
+import * as Analytics from 'analytics/Analytics';
 
 export default class FeedbackButton extends Component {
   static propTypes = {
@@ -27,30 +26,8 @@ export default class FeedbackButton extends Component {
     ));
 
     if (feedback) {
-      this.send({ about, target, feedback });
-    }
-  };
-
-  send = async ({ about, target, feedback }) => {
-    const client = createMicroBackendsClient({ backendName: 'feedback' });
-
-    const spaceContext = getModule('spaceContext');
-    const res = await client.call('/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        about,
-        target,
-        feedback,
-        userId: spaceContext.user.sys.id,
-        orgId: spaceContext.organization.sys.id,
-      }),
-    });
-
-    if (res.ok) {
+      Analytics.track('feedback:give', { about, target, feedback });
       Notification.success('Thank you for your feedback!');
-    } else {
-      Notification.error("We couldn't send your feedback. Please try again.");
     }
   };
 

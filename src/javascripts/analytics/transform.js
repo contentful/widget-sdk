@@ -207,6 +207,19 @@ registerEvent('personal_access_token:action', 'personal_access_token', (_, data)
   };
 });
 
+registerEvent('feedback:give', 'generic', (_, data) => {
+  return {
+    data: {
+      scope: 'feedback',
+      action: data.target,
+      payload: { about: data.about, feedback: data.feedback },
+      organization_id: data.organizationId,
+      space_id: data.spaceId,
+      executing_user_id: data.userId,
+    },
+  };
+});
+
 const SearchAndViewsWithSequence = (event, data) =>
   SearchAndViews(event, withSequenceContext(data));
 
