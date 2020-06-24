@@ -11,9 +11,9 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import {
   showDialog as showChangeSpaceModal,
   getNotificationMessage,
+  trackCTAClick,
 } from 'services/ChangeSpaceService';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { track } from 'analytics/Analytics';
 import { getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
 
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
@@ -95,16 +95,11 @@ export class SpaceSettingsRoute extends React.Component {
     const organizationId = spaceContext.organization.sys.id;
     const space = await TokenStore.getSpace(spaceContext.space.data.sys.id);
 
-    track('space_settings:upgrade_plan_link_clicked', {
-      organizationId,
-      spaceId: space.sys.id,
-    });
+    trackCTAClick(organizationId, space.sys.id);
 
     showChangeSpaceModal({
       organizationId,
-      scope: 'space',
       space,
-      action: 'change',
       onSubmit: async (newProductRatePlan) => {
         Notification.success(getNotificationMessage(space, this.state.plan, newProductRatePlan));
         this.setState({ plan: newProductRatePlan });
