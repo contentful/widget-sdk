@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { getVariation } from 'LaunchDarkly';
-import { COMMUNITY_PLAN_FLAG, PAYING_PREV_V2_ORG } from 'featureFlags';
+import { PRICING_2020_RELEASED, PAYING_PREV_V2_ORG } from 'featureFlags';
 import SpacePlanSelector from '../shared/SpacePlanSelector';
 import ConfirmScreen from './ConfirmScreen';
 
@@ -68,7 +68,7 @@ const initialFetch = (organization, space) => async () => {
     orgResources.get(FREE_SPACE_IDENTIFIER),
     getSubscriptionPlans(orgEndpoint),
     getSpaceRatePlans(orgEndpoint, space.sys.id),
-    getVariation(COMMUNITY_PLAN_FLAG, { organizationId }),
+    getVariation(PRICING_2020_RELEASED, { organizationId }),
     getVariation(PAYING_PREV_V2_ORG, { organizationId }),
   ]);
 

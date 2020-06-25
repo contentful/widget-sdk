@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import moment from 'moment';
 import { getVariation } from 'LaunchDarkly';
-import { COMMUNITY_PLAN_FLAG, PAYING_PREV_V2_ORG } from 'featureFlags';
+import { PRICING_2020_RELEASED, PAYING_PREV_V2_ORG } from 'featureFlags';
 import SpaceDetails from './SpaceDetails';
 import ConfirmScreenNormal from './ConfirmScreenNormal';
 import SpacePlanSelector from '../shared/SpacePlanSelector';
@@ -75,7 +75,7 @@ const initialFetch = (organization) => async () => {
     getSpaceRatePlans(endpoint),
     getTemplatesList(),
     getSubscriptionPlans(endpoint),
-    getVariation(COMMUNITY_PLAN_FLAG, { organizationId }),
+    getVariation(PRICING_2020_RELEASED, { organizationId }),
     getVariation(PAYING_PREV_V2_ORG, { organizationId }),
   ]);
 
