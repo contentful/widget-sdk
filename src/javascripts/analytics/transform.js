@@ -106,6 +106,8 @@ registerGenericEvent('usage:period_selected');
 registerGenericEvent('usage:org_tab_selected');
 registerGenericEvent('usage:space_tab_selected');
 
+registerGenericEvent('pricing_update:communication_seen');
+
 registerGenericEvent('quick_navigation:opened_by_shortcut');
 
 registerBulkEditorEvent('bulk_editor:add');

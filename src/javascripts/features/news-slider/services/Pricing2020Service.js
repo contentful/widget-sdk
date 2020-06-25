@@ -1,6 +1,4 @@
 import React from 'react';
-import { getModule } from 'core/NgRegistry';
-import { getOrganization, getSpace } from 'services/TokenStore';
 import { getSubscriptionPlans } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
@@ -10,20 +8,8 @@ import { PRICING_2020_WARNING } from 'featureFlags';
 import { SelfService, Free } from '../components/Pricing2020';
 import { ModalLauncher } from 'core/components/ModalLauncher';
 import { createClientStorage } from 'core/services/BrowserStorage/ClientStorage';
-
-// TODO: move this somewhere else
-export async function getCurrentOrg() {
-  const { orgId, spaceId } = getModule('$stateParams');
-
-  if (orgId) {
-    return getOrganization(orgId);
-  } else if (spaceId) {
-    const space = await getSpace(spaceId);
-    return space.sys.organization;
-  }
-
-  return null;
-}
+import { track } from 'analytics/Analytics';
+import { getCurrentOrg } from 'core/utils/getCurrentOrg';
 
 export async function openPricing2020Warning() {
   const org = await getCurrentOrg();
@@ -59,6 +45,7 @@ export async function openPricing2020Warning() {
     const key = getStorageKey(org.sys.id);
     const storage = createClientStorage('local');
     storage.set(key, 'true');
+    track('pricing_update:communication_seen', { basePlanName: basePlan.name });
   }
 
   if (isCommunity) {
