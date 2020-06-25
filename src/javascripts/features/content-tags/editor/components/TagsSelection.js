@@ -6,9 +6,9 @@ import { TagsAutocomplete } from 'features/content-tags/editor/components/TagsAu
 import { EntityTags } from 'features/content-tags/editor/components/EntityTags';
 import {
   useF36Modal,
-  useIsAdmin,
   useIsInitialLoadingOfTags,
   useReadTags,
+  useCanManageTags,
 } from 'features/content-tags/core/hooks';
 import { NoTagsContainer } from 'features/content-tags/core/components/NoTagsContainer';
 import { AdminsOnlyModal } from 'features/content-tags/editor/components/AdminsOnlyModal';
@@ -59,16 +59,15 @@ const TagsSelection = ({ showEmpty, onAdd, onRemove, selectedTags = [] }) => {
     AdminsOnlyModal
   );
 
-  const isAdmin = useIsAdmin();
-
+  const canManageTags = useCanManageTags();
   const onCreate = useCallback(() => {
-    if (isAdmin) {
+    if (canManageTags) {
       const isMaster = spaceContext.isMasterEnvironment();
       Navigator.go({ path: `spaces.detail.${isMaster ? '' : 'environment.'}settings.tags` });
     } else {
       showUserListModal();
     }
-  }, [isAdmin, showUserListModal, spaceContext]);
+  }, [canManageTags, showUserListModal, spaceContext]);
 
   const renderNoTags = useMemo(() => {
     return (
