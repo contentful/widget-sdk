@@ -149,7 +149,7 @@ export const validEvents = {
   jobs: ['cancel', 'create'],
   teams_in_space: ['teams_added', 'users_added', 'users_to_teams_page_navigation'],
   entity_state: ['revert'],
-  asset_list: ['add_asset_single', 'add_asset_multiple', 'upgrade_plan_link_clicked'],
+  asset_list: ['add_asset_single', 'add_asset_multiple'],
   telemetry: ['measurement'],
   app_management: ['created', 'deleted', 'updated'],
   tracking: ['invalid_event'],

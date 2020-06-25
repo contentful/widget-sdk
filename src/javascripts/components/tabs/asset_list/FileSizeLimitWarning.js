@@ -3,15 +3,14 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { Note, Paragraph, TextLink } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { track } from 'analytics/Analytics';
 import * as TokenStore from 'services/TokenStore';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import { useAsync } from 'core/hooks';
-import { showDialog as showChangeSpaceModal } from 'services/ChangeSpaceService';
+import { showDialog as showChangeSpaceModal, trackCTAClick } from 'services/ChangeSpaceService';
 import { isOwner } from 'services/OrganizationRoles';
 
 const styles = {
-  warningContainer: css({
+  marginBottom: css({
     marginBottom: tokens.spacingM,
   }),
 };
@@ -40,10 +39,7 @@ function FileSizeLimitWarning({ organizationId, spaceId }) {
   const { space, organization } = data;
 
   const onUpgradeSpace = () => {
-    track('asset_list:upgrade_plan_link_clicked', {
-      organizationId,
-      spaceId,
-    });
+    trackCTAClick(organizationId, spaceId);
 
     showChangeSpaceModal({
       organizationId,
@@ -52,24 +48,22 @@ function FileSizeLimitWarning({ organizationId, spaceId }) {
   };
 
   return (
-    <div className={styles.warningContainer}>
-      <Note testId="asset-limit-warning">
-        <Paragraph>The free community tier has a size limit of 50MB per asset.</Paragraph>
-        <Paragraph>
-          To increase your limit,{' '}
-          {isOwner(organization) ? (
-            <>
-              <TextLink onClick={onUpgradeSpace} testId="asset-limit-upgrade-link">
-                upgrade this space
-              </TextLink>
-              .
-            </>
-          ) : (
-            <>the organization admin must upgrade this space.</>
-          )}
-        </Paragraph>
-      </Note>
-    </div>
+    <Note className={styles.marginBottom} testId="asset-limit-warning">
+      <Paragraph>The free community tier has a size limit of 50MB per asset.</Paragraph>
+      <Paragraph>
+        To increase your limit,{' '}
+        {isOwner(organization) ? (
+          <>
+            <TextLink onClick={onUpgradeSpace} testId="asset-limit-upgrade-link">
+              upgrade this space
+            </TextLink>
+            .
+          </>
+        ) : (
+          <>the organization admin must upgrade this space.</>
+        )}
+      </Paragraph>
+    </Note>
   );
 }
 
