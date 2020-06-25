@@ -62,7 +62,7 @@ describe('Schedule Publication', () => {
       cy.wait(scheduledPubinteraction);
       cy.findByTestId('scheduled-item').should('have.length', 1);
     });
-    it('cannot create more jobs than the set limit', () => {
+    it.skip('cannot create more jobs than the set limit', () => {
       const validateAnEntryInteraction = validateAnEntryValidResponse.willSucceed();
       const scheduledPubinteraction = createScheduledPublicationForDefaultSpace.willFailWithMaxPendingJobsError();
 
