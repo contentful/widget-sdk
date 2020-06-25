@@ -4,10 +4,31 @@ import {
   open as openChangeSpaceWarningModal,
   MODAL_TYPES,
 } from 'app/SpaceWizards/ChangeSpaceWarning';
+import { getCurrentStateName } from 'states/Navigator';
+import * as Analytics from 'analytics/Analytics';
 import { getSingleSpacePlan, isPOCSpacePlan } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { ModalLauncher } from 'core/components/ModalLauncher';
 import SpaceWizardsWrapper from 'app/SpaceWizards/SpaceWizardsWrapper';
+
+/**
+ * Tracks if a targeted CTA is clicked.
+ *
+ * This is specifically for tracking a CTA that is shown to the user given a certain
+ * condition, such as if the user sees a CTA when reaching their content types limit,
+ * but not for actions/CTAs that are always shown, like the `upgrade` link on the
+ * subscription page.
+ *
+ * @param  {string} organizationId
+ * @param  {string} spaceId
+ */
+export function trackCTAClick(organizationId, spaceId) {
+  Analytics.track('upgrade_plan_link:targeted_cta_clicked', {
+    ctaLocation: getCurrentStateName(),
+    organizationId,
+    spaceId,
+  });
+}
 
 /**
  * Creates a string to be passed to the notification
@@ -35,8 +56,6 @@ export const getNotificationMessage = (space, currentSpacePlan, newSpacePlan) =>
  *
  * @param {string} organizationId
  * @param {object?} space - optional space to upgrade
- * @param {string} action - one of 'change', 'create'.
- * @param {string} scope - The scope of the call (from a space or organization page). One of 'space', 'organization'.
  * @param {function} onSubmit
  */
 export async function showDialog({ organizationId, space, onSubmit: onSuccess }) {

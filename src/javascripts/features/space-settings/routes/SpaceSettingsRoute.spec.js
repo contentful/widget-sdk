@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen, render, wait } from '@testing-library/react';
+import { screen, render, waitFor } from '@testing-library/react';
 
 import userEvent from '@testing-library/user-event';
 
@@ -7,13 +7,13 @@ import { getSpace } from 'services/TokenStore';
 import {
   showDialog as showChangeSpaceModal,
   getNotificationMessage,
+  trackCTAClick,
 } from 'services/ChangeSpaceService';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 
 import { openDeleteSpaceDialog } from '../services/DeleteSpace';
 import { getRatePlans, getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
 
-import { track } from 'analytics/Analytics';
 import { SpaceSettingsRoute } from './SpaceSettingsRoute';
 import * as fake from 'test/helpers/fakeFactory';
 import * as spaceContextMocked from 'ng/spaceContext';
@@ -22,10 +22,7 @@ jest.mock('services/ChangeSpaceService', () => ({
   showChangeSpaceModal: jest.fn(),
   showDialog: jest.fn(),
   getNotificationMessage: jest.fn(),
-}));
-
-jest.mock('analytics/Analytics', () => ({
-  track: jest.fn(),
+  trackCTAClick: jest.fn(),
 }));
 
 jest.mock('../services/DeleteSpace', () => ({
@@ -46,11 +43,11 @@ jest.mock('account/pricing/PricingDataProvider', () => ({
   getRatePlans: jest.fn(),
 }));
 
-const build = async (waitToRender = true) => {
+const build = async (shouldWait = true) => {
   const renderedComponent = render(<SpaceSettingsRoute />);
 
-  if (waitToRender) {
-    await wait();
+  if (shouldWait) {
+    await waitFor(() => expect(screen.queryByTestId('loading-spinner')).not.toBeInTheDocument());
   }
 
   return renderedComponent;
@@ -80,9 +77,8 @@ describe('SpaceSettingsRoute', () => {
     expect(screen.queryByTestId('loading-spinner')).toBeInTheDocument();
     expect(screen.queryByTestId('upgrade-space-plan-card')).not.toBeInTheDocument();
 
-    await wait();
+    await waitFor(() => expect(screen.queryByTestId('loading-spinner')).not.toBeInTheDocument());
 
-    expect(screen.queryByTestId('loading-spinner')).not.toBeInTheDocument();
     expect(screen.queryByTestId('upgrade-space-plan-card')).toBeInTheDocument();
     expect(screen.getByTestId('space-settings-page.plan-price')).toHaveTextContent(
       `${mediumPlan.name} - $${mediumPlan.price} /month`
@@ -100,7 +96,7 @@ describe('SpaceSettingsRoute', () => {
     expect(screen.queryByTestId('upgrade-space-plan-card')).not.toBeInTheDocument();
   });
 
-  it('should with call changeSpaceDialog with all the right things', async () => {
+  it('should with call changeSpaceDialog and track the CTA click', async () => {
     getSingleSpacePlan.mockResolvedValue(mediumPlan);
     showChangeSpaceModal.mockImplementation((argumentVariables) => {
       // Pretend that the user selected the large plan in the showChangeSpaceModal.
@@ -109,24 +105,19 @@ describe('SpaceSettingsRoute', () => {
 
     await build();
 
-    expect(await screen.getByTestId('space-settings-page.plan-price')).toHaveTextContent(
+    expect(screen.getByTestId('space-settings-page.plan-price')).toHaveTextContent(
       `${mediumPlan.name} - $${mediumPlan.price} /month`
     );
     userEvent.click(screen.getByTestId('upgrade-space-button'));
 
-    await wait();
+    await waitFor(() => expect(showChangeSpaceModal).toBeCalled());
+
+    expect(trackCTAClick).toBeCalledWith(testOrganization.sys.id, testSpace.sys.id);
 
     expect(showChangeSpaceModal).toBeCalledWith({
-      action: 'change',
       organizationId: testOrganization.sys.id,
       space: testSpace,
-      scope: 'space',
       onSubmit: expect.any(Function),
-    });
-
-    expect(track).toBeCalledWith('space_settings:upgrade_plan_link_clicked', {
-      organizationId: testOrganization.sys.id,
-      spaceId: testSpace.sys.id,
     });
 
     expect(await screen.findByText(notificationMessage)).toBeInTheDocument();
@@ -139,14 +130,14 @@ describe('SpaceSettingsRoute', () => {
     isOwnerOrAdmin.mockReturnValue(true);
     await build();
 
-    userEvent.click(await screen.getByTestId('delete-space'));
+    userEvent.click(screen.getByTestId('delete-space'));
 
-    await wait();
-
-    expect(openDeleteSpaceDialog).toBeCalledWith({
-      onSuccess: expect.any(Function),
-      plan: mediumPlan,
-      space: spaceContextMocked.space.data,
+    await waitFor(() => {
+      expect(openDeleteSpaceDialog).toBeCalledWith({
+        onSuccess: expect.any(Function),
+        plan: mediumPlan,
+        space: spaceContextMocked.space.data,
+      });
     });
   });
 });

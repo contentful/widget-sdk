@@ -22,9 +22,9 @@ import StateLink from 'app/common/StateLink';
 import { billing } from './links';
 import { go } from 'states/Navigator';
 
-import { track } from 'analytics/Analytics';
 import { showDialog as showCreateSpaceModal } from 'services/CreateSpace';
 import {
+  trackCTAClick,
   showDialog as showChangeSpaceModal,
   getNotificationMessage,
 } from 'services/ChangeSpaceService';
@@ -137,10 +137,7 @@ export default function SubscriptionPage({
 
   const changeSpace = (space) => {
     return () => {
-      track('subscription_overview:upgrade_plan_link_clicked', {
-        organizationId,
-        spaceId: space.sys.id,
-      });
+      trackCTAClick(organizationId, space.sys.id);
 
       showChangeSpaceModal({
         action: 'change',

@@ -154,9 +154,8 @@ export const validEvents = {
   app_management: ['created', 'deleted', 'updated'],
   tracking: ['invalid_event'],
   sharejs: ['cma_entity_version_mismatch'],
-  subscription_overview: ['upgrade_plan_link_clicked'],
-  space_settings: ['upgrade_plan_link_clicked'],
   feedback: ['give'],
+  upgrade_plan_link: ['targeted_cta_clicked'],
 };
 
 export const validateEvent = (eventName) => {
