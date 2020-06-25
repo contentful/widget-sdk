@@ -41,10 +41,7 @@
     ></react-component>
   </div>
   <div class="workbench-main__right-content">
-    <react-component
-      name="components/tabs/asset_list/FileSizeLimitWarning"
-      props="limitWarningProps"
-    ></react-component>
+    <react-component component="fileSizeLimitComponent" props="limitWarningProps"></react-component>
     <div class="search-results__count" ng-show="paginator.getTotal() &gt; 0">
       <react-component
         name="components/tabs/PluralizeEntityMessage"

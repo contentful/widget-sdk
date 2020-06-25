@@ -53,7 +53,6 @@ import * as AssetLink from 'app/widgets/link/AssetLink';
 import * as EntryLink from 'app/widgets/link/EntryLink';
 import * as DateRangeValidation from 'components/field_dialog/validations/DateRangeValidation';
 import * as AssetList from 'components/tabs/asset_list/AssetList';
-import * as FileSizeLimitWarning from 'components/tabs/asset_list/FileSizeLimitWarning';
 import * as EntryEditorWorkbench from 'app/entry_editor/EntryEditorWorkbench';
 import * as AssetEditorWorkbench from 'app/asset_editor/AssetEditorWorkbench';
 import * as ContentTagsField from 'app/asset_editor/ContentTagsField';
@@ -303,7 +302,6 @@ function getModule(name) {
     'app/widgets/link/EntryLink': EntryLink,
     'components/field_dialog/validations/DateRangeValidation': DateRangeValidation,
     'components/tabs/asset_list/AssetList': AssetList,
-    'components/tabs/asset_list/FileSizeLimitWarning': FileSizeLimitWarning,
     'app/entry_editor/EntryEditorWorkbench': EntryEditorWorkbench,
     'app/asset_editor/AssetEditorWorkbench': AssetEditorWorkbench,
     'app/asset_editor/ContentTagsField': ContentTagsField,

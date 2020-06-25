@@ -58,7 +58,12 @@ function FileSizeLimitWarning({ organizationId, spaceId }) {
         <Paragraph>
           To increase your limit,{' '}
           {isOwner(organization) ? (
-            <TextLink onClick={onUpgradeSpace}>upgrade this space.</TextLink>
+            <>
+              <TextLink onClick={onUpgradeSpace} testId="asset-limit-upgrade-link">
+                upgrade this space
+              </TextLink>
+              .
+            </>
           ) : (
             <>the organization admin must upgrade this space.</>
           )}

@@ -55,27 +55,31 @@ describe('FileSizeLimitWarning', () => {
     build();
 
     await waitFor(() => expect(screen.getByTestId('asset-limit-warning')).toBeVisible());
-    expect(screen.getByTestId('asset-limit-warning').textContent).toEqual('The free community tier has a size limit of 50MB per asset.To increase your limit, the organization admin must upgrade this space.');
+
+    expect(screen.getByTestId('asset-limit-warning').textContent).toEqual(
+      'The free community tier has a size limit of 50MB per asset.To increase your limit, the organization admin must upgrade this space.'
+    );
   });
 
   it('should render the warning for a user that is the space owner', async () => {
     build();
     isOwner.mockReturnValue(true);
 
-    await waitFor(() =>
-      expect(screen.getByTestId('asset-limit-warning')).toHaveTextContent(
-        'The free community tier has a size limit of 50MB per asset.To increase your limit, upgrade this space.'
-      )
+    await waitFor(() => () => expect(screen.getByTestId('asset-limit-warning')).toBeVisible());
+
+    expect(screen.getByTestId('asset-limit-warning').textContent).toEqual(
+      'The free community tier has a size limit of 50MB per asset.To increase your limit, upgrade this space.'
     );
+    expect(screen.getByTestId('asset-limit-upgrade-link')).toBeVisible();
   });
 
   it('should call onUpgradeSpace when the "upgrade this space" link is clicked', async () => {
     build();
     isOwner.mockReturnValue(true);
 
-    await waitFor(() => expect(screen.getByText('upgrade this space.')).toBeVisible());
+    await waitFor(() => expect(screen.getByTestId('asset-limit-upgrade-link')).toBeVisible());
 
-    userEvent.click(screen.getByText('upgrade this space.'));
+    userEvent.click(screen.getByTestId('asset-limit-upgrade-link'));
 
     expect(Analytics.track).toBeCalledWith(
       'asset_list:upgrade_plan_link_clicked',

@@ -12,6 +12,7 @@ import * as BulkAssetsCreator from 'services/BulkAssetsCreator';
 import * as Analytics from 'analytics/Analytics';
 import * as entityCreator from 'components/app_container/entityCreator';
 import createViewPersistor from 'data/ListViewPersistor';
+import FileSizeLimitWarning from './FileSizeLimitWarning';
 
 export default function register() {
   registerController('AssetListController', [
@@ -101,6 +102,7 @@ export default function register() {
         organizationId: spaceContext.organization.sys.id,
         spaceId: space.sys.id,
       };
+      $scope.fileSizeLimitComponent = FileSizeLimitWarning;
 
       // These are the props for RecordsResourceUsage
       const resetUsageProps = debounce(async () => {
