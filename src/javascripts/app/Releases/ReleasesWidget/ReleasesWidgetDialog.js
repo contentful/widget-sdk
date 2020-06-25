@@ -5,7 +5,9 @@ import {
   Notification,
   SkeletonContainer,
   SkeletonBodyText,
+  TextLink,
 } from '@contentful/forma-36-react-components';
+import EmptyStateIllustration from 'svg/create-compelling-experiences.svg';
 import ReleasesTimeline from './ReleasesTimeline';
 import {
   createRelease,
@@ -24,6 +26,18 @@ const styles = {
   notification: css({
     display: 'flex',
     justifyContent: 'space-between',
+  }),
+  emptyStateContainer: css({
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    width: '250px',
+    margin: 'auto',
+  }),
+  illustration: css({
+    width: '80%',
+    height: 'auto',
+    opacity: '40%',
   }),
 };
 
@@ -59,6 +73,7 @@ export default class ReleasesWidgetDialog extends Component {
   state = {
     fetchedReleases: [],
     isFetchingReleases: false,
+    selectedTab: 'existing',
   };
 
   async componentDidMount() {
@@ -91,9 +106,9 @@ export default class ReleasesWidgetDialog extends Component {
       });
   }
 
-  handleTabChange(newTab) {
+  handleTabChange = (newTab) => {
     this.setState({ selectedTab: newTab });
-  }
+  };
 
   onClose() {
     this.props.onCancel();
@@ -151,7 +166,17 @@ export default class ReleasesWidgetDialog extends Component {
     existing: {
       title: 'Add to existing',
       render: () => {
-        if (!this.state.isFetchingReleases) {
+        if (this.state.isFetchingReleases) {
+          return (
+            <SkeletonContainer svgHeight={60}>
+              <SkeletonBodyText numberOfLines={1} />
+              <SkeletonBodyText numberOfLines={1} offsetTop={20} />
+              <SkeletonBodyText numberOfLines={1} offsetTop={40} />
+            </SkeletonContainer>
+          );
+        }
+
+        if (this.state.fetchedReleases.length) {
           return (
             <ReleasesTimeline
               releases={this.state.fetchedReleases}
@@ -159,12 +184,13 @@ export default class ReleasesWidgetDialog extends Component {
             />
           );
         }
+
         return (
-          <SkeletonContainer svgHeight={60}>
-            <SkeletonBodyText numberOfLines={1} />
-            <SkeletonBodyText numberOfLines={1} offsetTop={20} />
-            <SkeletonBodyText numberOfLines={1} offsetTop={40} />
-          </SkeletonContainer>
+          <div className={styles.emptyStateContainer}>
+            <EmptyStateIllustration className={styles.illustration} />
+            You do not have any releases yet.
+            <TextLink onClick={() => this.handleTabChange('new')}>Create a new release</TextLink>
+          </div>
         );
       },
     },
@@ -186,6 +212,7 @@ export default class ReleasesWidgetDialog extends Component {
 
   render() {
     const { releaseContentTitle } = this.props;
+    const { selectedTab } = this.state;
     const contentTitle = (
       <span>
         Add <b>&apos;{releaseContentTitle}&apos;</b> into a content release:
@@ -196,10 +223,11 @@ export default class ReleasesWidgetDialog extends Component {
       <ReleasesDialog
         releaseContentTitle={contentTitle}
         tabs={this.tabs}
-        defaultTab={'existing'}
+        defaultTab={selectedTab}
         title="Add to a release"
         onClose={this.onClose}
         showTabs={true}
+        handleTabChange={this.handleTabChange}
       />
     );
   }

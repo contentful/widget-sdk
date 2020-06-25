@@ -21,6 +21,7 @@ const styles = {
   }),
   isVisible: css({
     display: 'block',
+    height: 'auto',
   }),
   tabs: css({
     display: 'flex',
@@ -115,13 +116,8 @@ const ReleasesDialog = ({
   title,
   onClose,
   showTabs,
+  handleTabChange,
 }) => {
-  const [selectedTab, setSelectedTab] = useState(defaultTab);
-
-  const handleTabChange = (newTab) => {
-    setSelectedTab(newTab);
-  };
-
   return (
     <Modal
       title={title}
@@ -143,7 +139,7 @@ const ReleasesDialog = ({
                     id={key}
                     key={key}
                     testId={`test-id-${key}`}
-                    selected={selectedTab === key}
+                    selected={defaultTab === key}
                     className={styles.tab}
                     onSelect={() => handleTabChange(key)}>
                     {tabs[key].title}
@@ -156,7 +152,7 @@ const ReleasesDialog = ({
                 id={key}
                 key={key}
                 className={cx(styles.tabPanel, {
-                  [styles.isVisible]: selectedTab === key,
+                  [styles.isVisible]: defaultTab === key,
                 })}>
                 {tabs[key].render()}
               </TabPanel>
@@ -176,6 +172,7 @@ ReleasesDialog.propTypes = {
   title: PropTypes.string.isRequired,
   onClose: PropTypes.func.isRequired,
   showTabs: PropTypes.bool,
+  handleTabChange: PropTypes.func,
 };
 
 export { ReleasesDialog, CreateReleaseForm };
