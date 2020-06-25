@@ -1,6 +1,9 @@
 import { getModule } from 'core/NgRegistry';
+import { isEqual, uniqWith } from 'lodash';
 import * as EndpointFactory from 'data/EndpointFactory';
 import APIClient from 'data/APIClient.js';
+
+const toArrayOfUnique = (entities) => uniqWith(entities, isEqual);
 
 function createEndpoint() {
   const spaceContext = getModule('spaceContext');
@@ -12,16 +15,14 @@ function createEndpoint() {
 
 async function createRelease(title, items = []) {
   const apiClient = new APIClient(createEndpoint());
-  return await apiClient.createRelease(
-    title,
-    items.map((item) => ({
-      sys: {
-        type: 'Link',
-        linkType: item.sys.type,
-        id: item.sys.id,
-      },
-    }))
-  );
+  const arrayOfEntityLinks = items.map((item) => ({
+    sys: {
+      type: 'Link',
+      linkType: item.sys.type,
+      id: item.sys.id,
+    },
+  }));
+  return await apiClient.createRelease(title, toArrayOfUnique(arrayOfEntityLinks));
 }
 
 async function getReleases(query) {
@@ -55,7 +56,7 @@ async function getReleaseById(releaseId) {
 
 async function replaceReleaseById(releaseId, title, items) {
   const apiClient = new APIClient(createEndpoint());
-  return await apiClient.replaceReleaseById(releaseId, title, items);
+  return await apiClient.replaceReleaseById(releaseId, title, toArrayOfUnique(items));
 }
 
 async function publishRelease(releaseId, version) {
