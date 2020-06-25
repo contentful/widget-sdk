@@ -7,8 +7,8 @@ import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceServic
 import createResourceService from 'services/ResourceService';
 import { getResourceLimits } from 'utils/ResourceUtils';
 
-const warnThreshold = 0.9;
-const errorThreshold = 0.95;
+const WARN_THRESHOLD = 0.9;
+const ERROR_THRESHOLD = 0.95;
 
 const openUpgradeModal = (space, onSubmit) =>
   showUpgradeSpaceDialog({
@@ -19,7 +19,7 @@ const openUpgradeModal = (space, onSubmit) =>
     onSubmit,
   });
 
-const fetchRecordsResource = async (spaceId, environmentId) => {
+const fetchRecordsResource = (spaceId, environmentId) => {
   const resourceService = createResourceService(spaceId);
   return resourceService.get('record', environmentId);
 };
@@ -50,8 +50,8 @@ export function RecordsResourceUsage({ space, environmentId, isMasterEnvironment
       data-test-id="container"
       className={classnames('resource-usage', {
         'resource-usage--warn':
-          usagePercentage >= warnThreshold && usagePercentage < errorThreshold,
-        'resource-usage--danger': usagePercentage >= errorThreshold,
+          usagePercentage >= WARN_THRESHOLD && usagePercentage < ERROR_THRESHOLD,
+        'resource-usage--danger': usagePercentage >= ERROR_THRESHOLD,
       })}>
       {usagePercentage >= 1 ? (
         <HelpText>You’ve reached the limit of {resourceLimit} entries and assets. </HelpText>
@@ -61,7 +61,7 @@ export function RecordsResourceUsage({ space, environmentId, isMasterEnvironment
         </HelpText>
       )}
 
-      {usagePercentage >= warnThreshold && isMasterEnvironment && (
+      {usagePercentage >= WARN_THRESHOLD && isMasterEnvironment && (
         <TextLink onClick={() => openUpgradeModal(space, updateResource)}>Upgrade space</TextLink>
       )}
     </div>
