@@ -6,15 +6,16 @@ import { TagsAutocomplete } from 'features/content-tags/editor/components/TagsAu
 import { EntityTags } from 'features/content-tags/editor/components/EntityTags';
 import {
   useF36Modal,
-  useIsAdmin,
   useIsInitialLoadingOfTags,
   useReadTags,
+  useCanManageTags,
 } from 'features/content-tags/core/hooks';
 import { NoTagsContainer } from 'features/content-tags/core/components/NoTagsContainer';
 import { AdminsOnlyModal } from 'features/content-tags/editor/components/AdminsOnlyModal';
 import * as Navigator from 'states/Navigator';
 import { FieldFocus } from 'features/content-tags/core/components/FieldFocus';
 import { orderByLabel, tagsPayloadToValues } from 'features/content-tags/editor/utils';
+import { useSpaceContext } from 'features/content-tags/core/hooks';
 
 import { css } from 'emotion';
 import FeedbackButton from 'app/common/FeedbackButton';
@@ -32,6 +33,7 @@ const styles = {
 const TagsSelection = ({ showEmpty, onAdd, onRemove, selectedTags = [] }) => {
   const { data, isLoading, setSearch, setLimit, hasTags } = useReadTags();
   const isInitialLoad = useIsInitialLoadingOfTags();
+  const spaceContext = useSpaceContext();
 
   useEffect(() => {
     setLimit(1000);
@@ -57,15 +59,15 @@ const TagsSelection = ({ showEmpty, onAdd, onRemove, selectedTags = [] }) => {
     AdminsOnlyModal
   );
 
-  const isAdmin = useIsAdmin();
-
+  const canManageTags = useCanManageTags();
   const onCreate = useCallback(() => {
-    if (isAdmin) {
-      Navigator.go({ path: 'spaces.detail.settings.tags' });
+    if (canManageTags) {
+      const isMaster = spaceContext.isMasterEnvironment();
+      Navigator.go({ path: `spaces.detail.${isMaster ? '' : 'environment.'}settings.tags` });
     } else {
       showUserListModal();
     }
-  }, [isAdmin, showUserListModal]);
+  }, [canManageTags, showUserListModal, spaceContext]);
 
   const renderNoTags = useMemo(() => {
     return (

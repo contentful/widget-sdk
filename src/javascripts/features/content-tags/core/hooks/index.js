@@ -11,3 +11,4 @@ export { useSpaceContext } from 'features/content-tags/core/hooks/useSpaceContex
 export { useIsAdmin } from 'features/content-tags/core/hooks/useIsAdmin';
 export { useIsInitialLoadingOfTags } from 'features/content-tags/core/hooks/useIsInitialLoadingOfTags';
 export { useHistoryReducer } from 'features/content-tags/core/hooks/useHistoryReducer';
+export { useCanManageTags } from 'features/content-tags/core/hooks/useCanManageTags';

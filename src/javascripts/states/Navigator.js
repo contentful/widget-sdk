@@ -38,11 +38,8 @@ const ENTITY_PLURALS = {
  */
 export function go(state) {
   const $state = getModule('$state');
-  return $state.go(
-    isArray(state.path) ? state.path.join('.') : state.path,
-    state.params,
-    state.options
-  );
+  const path = isArray(state.path) ? state.path.join('.') : state.path;
+  return $state.go(path, state.params, state.options);
 }
 
 /**
