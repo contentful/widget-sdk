@@ -6,12 +6,21 @@ import * as batchPerformer from './batchPerformer';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as LD from 'utils/LaunchDarkly';
 
-jest.mock('access_control/AccessChecker', () => ({
-  canPerformActionOnEntity: jest.fn().mockReturnValue(true),
-  shouldHide: jest.fn().mockReturnValue(false),
-  shouldDisable: jest.fn().mockReturnValue(false),
-  canUserReadEntities: jest.fn().mockReturnValue(true),
-}));
+jest.mock('access_control/AccessChecker', () => {
+  // Importing the default module here in order to not overwrite the whole
+  // thing when mocking `getSectionVisibility`. Because SectionAccess relies on
+  // other functions in this file.
+  const AccessChecker = require.requireActual('access_control/AccessChecker');
+
+  return {
+    ...AccessChecker,
+    canPerformActionOnEntity: jest.fn().mockReturnValue(true),
+    shouldHide: jest.fn().mockReturnValue(false),
+    shouldDisable: jest.fn().mockReturnValue(false),
+    canUserReadEntities: jest.fn().mockReturnValue(true),
+  };
+});
+
 jest.mock('./batchPerformer', () => ({
   createBatchPerformer: jest.fn(),
 }));

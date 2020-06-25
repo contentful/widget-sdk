@@ -13,7 +13,7 @@ import {
 import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
 
-import { formatPastDate } from 'app/Apps/management/util';
+import { formatPastDate } from 'features/apps';
 import { ActionPerformerName } from 'core/components/ActionPerformerName';
 import { Pluralized } from 'core/components/formatting/Pluralized/Pluralized';
 

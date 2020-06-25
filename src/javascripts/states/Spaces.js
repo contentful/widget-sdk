@@ -7,7 +7,7 @@ import SpaceNavigationBar from 'navigation/SpaceNavigationBar';
 import * as TokenStore from 'services/TokenStore';
 
 import contentTypes from './contentTypes';
-import apps from 'app/Apps/routes';
+import { appRoute as apps } from 'features/apps';
 import { apiKeysState } from './settingsApiKeys';
 import entries from './entries';
 import assets from './assets';

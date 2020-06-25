@@ -9,7 +9,7 @@ import { LOCATION_APP_CONFIG } from '../WidgetLocations';
 import * as Random from 'utils/Random';
 import TheLocaleStore from 'services/localeStore';
 
-import { APP_EVENTS_IN, APP_EVENTS_OUT } from 'app/Apps/AppHookBus';
+import { APP_EVENTS_IN, APP_EVENTS_OUT } from 'features/apps-core';
 
 const STAGE_PRE_INSTALL = 'preInstall';
 const STAGE_POST_INSTALL = 'postInstall';

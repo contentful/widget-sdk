@@ -17,7 +17,7 @@ import tokens from '@contentful/forma-36-tokens';
 import TheLocaleStore from 'services/localeStore';
 
 import * as EntityResolver from 'data/CMA/EntityResolver';
-import { formatPastDate } from 'app/Apps/management/util';
+import { formatPastDate } from 'features/apps';
 import { ActionPerformerName } from 'core/components/ActionPerformerName';
 import { deleteRelease } from '../releasesService';
 

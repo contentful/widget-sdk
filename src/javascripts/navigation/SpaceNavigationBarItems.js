@@ -1,4 +1,4 @@
-import renderAppsNavigationItem from 'app/Apps/AppsNavigationItem';
+import { renderAppsNavigationItem } from 'features/apps';
 
 const makeRef = (ref, isMaster) => {
   if (isMaster) {

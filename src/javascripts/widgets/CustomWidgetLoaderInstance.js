@@ -1,7 +1,7 @@
 import { getModule } from 'core/NgRegistry';
 import { get, set } from 'lodash';
 import { createCustomWidgetLoader } from './CustomWidgetLoader';
-import { getAppsRepo } from 'app/Apps/AppsRepoInstance';
+import { getAppsRepo } from 'features/apps-core';
 
 // Both Extension and AppInstallation are environment-level
 // entities: we cache loaders per space-environment.

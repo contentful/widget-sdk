@@ -9,7 +9,7 @@ import {
   getStoragePrefix,
 } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import { getSpaceAutoCreatedKey } from 'components/shared/auto_create_new_space/getSpaceAutoCreatedKey';
-import { fetchMarketplaceApps } from 'app/Apps/MarketplaceClient';
+import { fetchMarketplaceApps } from 'features/apps-core';
 
 function getUser() {
   // user$ is a property which starts with `null`

@@ -1,0 +1,1 @@
+export { AppDetailsModal } from './AppDetailsModal';
