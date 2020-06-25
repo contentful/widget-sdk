@@ -14,9 +14,10 @@ import SpaceWizardsWrapper from 'app/SpaceWizards/SpaceWizardsWrapper';
 /**
  * Tracks if a targeted CTA is clicked.
  *
- * This is specifically if a CTA is shown to the user given a certain condition, not
- * e.g. when upgrading from the subscription page, as this isn't shown only in
- * certain conditions.
+ * This is specifically for tracking a CTA that is shown to the user given a certain
+ * condition, such as if the user sees a CTA when reaching their content types limit,
+ * but not for actions/CTAs that are always shown, like the `upgrade` link on the
+ * subscription page.
  *
  * @param  {string} organizationId
  * @param  {string} spaceId
