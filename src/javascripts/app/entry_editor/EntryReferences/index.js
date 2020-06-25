@@ -38,8 +38,7 @@ import {
   createAddToReleaseDialogContent,
 } from './utils';
 import ReleasesWidgetDialog from 'app/Releases/ReleasesWidget/ReleasesWidgetDialog';
-import * as LD from 'utils/LaunchDarkly';
-import { ADD_TO_RELEASE } from 'featureFlags';
+import { getReleasesFeatureVariation as releasesFeatureFlagVariation } from 'app/Releases/ReleasesFeatureFlag';
 
 import { ReferencesContext, ReferencesProvider } from './ReferencesContext';
 import {
@@ -169,7 +168,7 @@ const ReferencesTab = ({ entity }) => {
     }
 
     async function addToReleaseEnabled() {
-      const isAddToReleaseEnabled = await LD.getCurrentVariation(ADD_TO_RELEASE);
+      const isAddToReleaseEnabled = await releasesFeatureFlagVariation();
       setisAddToReleaseEnabled(isAddToReleaseEnabled);
     }
 

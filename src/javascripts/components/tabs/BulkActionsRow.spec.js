@@ -4,7 +4,7 @@ import { upperFirst } from 'lodash';
 import BulkActionsRow from './BulkActionsRow';
 import * as batchPerformer from './batchPerformer';
 import * as accessChecker from 'access_control/AccessChecker';
-import * as LD from 'utils/LaunchDarkly';
+import { getVariation } from 'LaunchDarkly';
 
 jest.mock('access_control/AccessChecker', () => {
   // Importing the default module here in order to not overwrite the whole
@@ -38,14 +38,17 @@ jest.mock('core/NgRegistry', () => ({
         },
       },
     },
+    getData: () => {},
+    getId: () => {},
+    getEnvironmentId: () => {},
   }),
 }));
 jest.mock('app/Releases/releasesService', () => ({
   getReleases: jest.fn().mockResolvedValue({ items: [] }),
 }));
-jest.mock('utils/LaunchDarkly', function () {
+jest.mock('LaunchDarkly', function () {
   return {
-    getCurrentVariation: jest.fn().mockResolvedValue(true),
+    getVariation: jest.fn().mockResolvedValue(true),
   };
 });
 
@@ -99,7 +102,7 @@ describe('BulkActionsRow', () => {
     accessChecker.shouldDisable.mockReturnValue(false);
     accessChecker.shouldHide.mockReturnValue(false);
     accessChecker.canUserReadEntities.mockReturnValue(true);
-    LD.getCurrentVariation.mockReturnValue(true);
+    getVariation.mockReturnValue(true);
   });
   it('should hide the component when nothing is selected', () => {
     const { container } = renderComponent();
@@ -200,7 +203,7 @@ describe('BulkActionsRow', () => {
     });
 
     it('should not display the Add to release action when feature flag is disabled', async () => {
-      LD.getCurrentVariation.mockResolvedValue(false);
+      getVariation.mockResolvedValue(false);
       const { getByTestId, queryByTestId } = renderComponent({
         selectedEntities: generateEntities(1, false),
       });

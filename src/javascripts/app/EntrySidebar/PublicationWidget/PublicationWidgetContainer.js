@@ -7,8 +7,9 @@ import PublicationWidget from './PublicationWidget';
 import { ScheduledActionsWidget } from 'app/ScheduledActions';
 import ScheduledActionsFeatureFlag from 'app/ScheduledActions/ScheduledActionsFeatureFlag';
 import * as LD from 'utils/LaunchDarkly';
-import { NEW_STATUS_SWITCH, ADD_TO_RELEASE } from 'featureFlags';
+import { NEW_STATUS_SWITCH } from 'featureFlags';
 import { getEntityTitle } from 'app/entry_editor/EntryReferences/referencesService';
+import { getReleasesFeatureVariation as releasesFeatureFlagVariation } from 'app/Releases/ReleasesFeatureFlag';
 
 export default class PublicationWidgetContainer extends Component {
   static propTypes = {
@@ -34,7 +35,7 @@ export default class PublicationWidgetContainer extends Component {
     const statusSwitchEnabled = await LD.getCurrentVariation(NEW_STATUS_SWITCH);
     this.setState({ isStatusSwitch: statusSwitchEnabled });
 
-    const addToReleaseEnabled = await LD.getCurrentVariation(ADD_TO_RELEASE);
+    const addToReleaseEnabled = await releasesFeatureFlagVariation();
     this.setState({ isAddToRelease: addToReleaseEnabled });
 
     this.props.emitter.on(

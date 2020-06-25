@@ -9,8 +9,7 @@ import SidebarWidgetTypes from 'app/EntrySidebar/SidebarWidgetTypes';
 import EntrySidebarWidget from 'app/EntrySidebar/EntrySidebarWidget';
 import ReleasesTimeline from './ReleasesTimeline';
 import ReleasesWidgetDialog from './ReleasesWidgetDialog';
-import * as LD from 'utils/LaunchDarkly';
-import { ADD_TO_RELEASE } from 'featureFlags';
+import { getReleasesFeatureVariation } from '../ReleasesFeatureFlag';
 import { getReleasesIncludingEntity } from '../releasesService';
 import { ReleasesProvider, ReleasesContext } from './ReleasesContext';
 import { SET_RELEASES_INCLUDING_ENTRY } from '../state/actions';
@@ -94,7 +93,7 @@ export default class ReleasesWidgetContainer extends Component {
     this.props.emitter.on(SidebarEventTypes.UPDATED_RELEASES_WIDGET, this.onUpdateReleasesWidget);
     this.props.emitter.emit(SidebarEventTypes.WIDGET_REGISTERED, SidebarWidgetTypes.RELEASES);
 
-    const featureEnabled = await LD.getCurrentVariation(ADD_TO_RELEASE);
+    const featureEnabled = await getReleasesFeatureVariation();
     this.setState({ featureEnabled });
   }
 

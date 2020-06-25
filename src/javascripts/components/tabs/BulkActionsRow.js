@@ -12,8 +12,7 @@ import useBulkActions from './useBulkActions';
 import { useTagsFeatureEnabled } from 'features/content-tags';
 import { TagsBulkAction } from 'components/tabs/TagsBulkAction';
 import ReleaseDialog from 'app/Releases/ReleasesWidget/ReleasesWidgetDialog';
-import * as LD from 'utils/LaunchDarkly';
-import { ADD_TO_RELEASE } from 'featureFlags';
+import { getReleasesFeatureVariation as releasesFeatureFlagVariation } from 'app/Releases/ReleasesFeatureFlag';
 
 const styles = {
   /*
@@ -58,7 +57,7 @@ const BulkActionsRow = ({
 
   useEffect(() => {
     async function checkFeatureFlag() {
-      const isEnabled = await LD.getCurrentVariation(ADD_TO_RELEASE);
+      const isEnabled = await releasesFeatureFlagVariation();
       setReleaseFeatureEnabled(isEnabled);
     }
 

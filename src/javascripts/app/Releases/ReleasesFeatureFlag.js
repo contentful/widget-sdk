@@ -2,10 +2,22 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import * as FeatureFlagKey from 'featureFlags';
-import { getCurrentVariation } from 'utils/LaunchDarkly';
+import { getVariation } from 'LaunchDarkly';
+import { getModule } from 'core/NgRegistry';
 
-export function getReleasesFeatureVariation() {
-  return getCurrentVariation(FeatureFlagKey.ADD_TO_RELEASE);
+export async function getReleasesFeatureVariation() {
+  try {
+    const spaceContext = getModule('spaceContext');
+    const flag = await getVariation(FeatureFlagKey.ADD_TO_RELEASE, {
+      spaceId: spaceContext.getId(),
+      environmentId: spaceContext.getEnvironmentId(),
+      organizationId: spaceContext.getData(['organization', 'sys', 'id']),
+    });
+
+    return flag;
+  } catch (_e) {
+    return false;
+  }
 }
 
 /**
