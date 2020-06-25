@@ -202,7 +202,7 @@ const environmentTableStyles = {
     alignItems: 'center',
     '& > svg': {
       margin: `0 ${tokens.spacingXs}`,
-      fill: tokens.colorGreenLight,
+      fill: tokens.colorPositive,
     },
   }),
   createdAtCell: css({

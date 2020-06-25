@@ -24,7 +24,7 @@ import { Price } from 'core/components/formatting';
 
 const styles = {
   star: css({
-    color: tokens.colorOrangeLight,
+    color: tokens.colorOrangeMid,
     fontSize: tokens.fontSizeS,
     cursor: 'default',
   }),
