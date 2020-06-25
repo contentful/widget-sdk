@@ -45,7 +45,7 @@ describe('FileSizeLimitWarning', () => {
     });
   });
 
-  it('should render the warning note for a user with no unlimited_asset_file_size', async () => {
+  it('should render the warning note for a user without the unlimited_asset_file_size feature', async () => {
     build();
 
     await waitFor(() => expect(screen.getByTestId('asset-limit-warning')).toBeVisible());
