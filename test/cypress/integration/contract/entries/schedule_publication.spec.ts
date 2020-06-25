@@ -113,7 +113,7 @@ describe('Schedule Publication', () => {
     });
   });
   describe('error states', () => {
-    it('renders error note if the last job is failed', () => {
+    it.skip('renders error note if the last job is failed', () => {
       interactions.push(queryAllScheduledJobsForDefaultEntry.willFindOneFailedJob());
 
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);

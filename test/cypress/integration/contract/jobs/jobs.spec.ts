@@ -68,7 +68,7 @@ describe('Jobs page', () => {
       cy.findByTestId('cf-ui-tab-panel').should('be.visible').find('svg').should('be.visible');
       cy.findByTestId('jobs-state-message-heading').should('contain', 'Nothing is scheduled');
     });
-    it('renders illustration and heading for Completed tab empty state', () => {
+    it.skip('renders illustration and heading for Completed tab empty state', () => {
       const completedJobsInteraction = queryCompletedJobsForDefaultSpace.willFindNone();
       selectCompletedTab();
       cy.wait(completedJobsInteraction);
