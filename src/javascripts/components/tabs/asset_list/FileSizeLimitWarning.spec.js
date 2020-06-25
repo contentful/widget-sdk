@@ -54,11 +54,8 @@ describe('FileSizeLimitWarning', () => {
   it('should render the warning for a user that is NOT the space owner', async () => {
     build();
 
-    await waitFor(() =>
-      expect(screen.getByTestId('asset-limit-warning')).toHaveTextContent(
-        'The free community tier has a size limit of 50MB per asset.To increase your limit, the organization admin must upgrade this space.'
-      )
-    );
+    await waitFor(() => expect(screen.getByTestId('asset-limit-warning')).toBeVisible());
+    expect(screen.getByTestId('asset-limit-warning').textContent).toEqual('The free community tier has a size limit of 50MB per asset.To increase your limit, the organization admin must upgrade this space.');
   });
 
   it('should render the warning for a user that is the space owner', async () => {
