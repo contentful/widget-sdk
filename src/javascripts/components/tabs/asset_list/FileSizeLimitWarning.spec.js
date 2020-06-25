@@ -35,7 +35,7 @@ jest.mock('analytics/Analytics', () => ({
 }));
 
 describe('FileSizeLimitWarning', () => {
-  it('should render the warning note for a user that has unlimited_asset_file_size', async () => {
+  it('should not render the warning note for a user that has the unlimited_asset_file_size feature', async () => {
     getOrgFeature.mockResolvedValueOnce(true);
     build();
 
