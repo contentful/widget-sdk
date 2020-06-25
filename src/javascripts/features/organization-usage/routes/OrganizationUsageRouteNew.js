@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { mapValues, flow, keyBy, get, eq, isNumber, pick } from 'lodash/fp';
+import moment from 'moment';
 
 import { Spinner, Workbench } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification';
 
 import DocumentTitle from 'components/shared/DocumentTitle';
-import { OrganizationResourceUsageList } from '../components/OrganizationResourceUsageList';
 import { OrganizationUsagePage } from '../components/OrganizationUsagePage';
 import { PeriodSelector } from '../components/PeriodSelector';
 import { NoSpacesPlaceholder } from '../components/NoSpacesPlaceholder';
@@ -22,61 +22,48 @@ import * as OrganizationRoles from 'services/OrganizationRoles';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 import ErrorState from 'app/common/ErrorState';
 
-import { PRICING_2020_RELEASED } from 'featureFlags';
-import { getVariation } from 'LaunchDarkly';
-import { OrganizationUsageRouteNew } from './OrganizationUsageRouteNew';
-
-export const WorkbenchContent = (props) => {
-  const {
-    committed,
-    hasSpaces,
-    selectedPeriodIndex,
-    spaceNames,
-    isPoC,
-    periodicUsage,
-    apiRequestIncludedLimit,
-    assetBandwidthData,
-    isLoading,
-    error,
-    periods,
-    resources,
-    onTabSelect,
-  } = props;
-
+export const WorkbenchContent = ({
+  hasSpaces,
+  selectedPeriodIndex,
+  spaceNames,
+  isPoC,
+  periodicUsage,
+  apiRequestIncludedLimit,
+  assetBandwidthData,
+  isLoading,
+  error,
+  periods,
+  onTabSelect,
+}) => {
   if (error) {
     return <ErrorState />;
   }
 
-  if (committed) {
-    if (!hasSpaces) {
-      return <NoSpacesPlaceholder />;
-    }
-    if (typeof selectedPeriodIndex !== 'undefined') {
-      return (
-        <OrganizationUsagePage
-          {...{
-            period: periods[selectedPeriodIndex],
-            spaceNames,
-            isPoC,
-            periodicUsage,
-            apiRequestIncludedLimit,
-            assetBandwidthData,
-            isLoading,
-            onTabSelect,
-          }}
-        />
-      );
-    }
-  } else {
-    if (typeof resources !== 'undefined') {
-      return <OrganizationResourceUsageList resources={resources} />;
-    }
+  if (!isLoading && !hasSpaces) {
+    return <NoSpacesPlaceholder />;
   }
+
+  if (typeof selectedPeriodIndex !== 'undefined') {
+    return (
+      <OrganizationUsagePage
+        {...{
+          period: periods[selectedPeriodIndex],
+          spaceNames,
+          isPoC,
+          periodicUsage,
+          apiRequestIncludedLimit,
+          assetBandwidthData,
+          isLoading,
+          onTabSelect,
+        }}
+      />
+    );
+  }
+
   return <div />;
 };
 
 WorkbenchContent.propTypes = {
-  committed: PropTypes.bool,
   hasSpaces: PropTypes.bool,
   selectedPeriodIndex: PropTypes.number,
   spaceNames: PropTypes.objectOf(PropTypes.string),
@@ -93,59 +80,52 @@ WorkbenchContent.propTypes = {
   isLoading: PropTypes.bool,
   error: PropTypes.string,
   periods: PropTypes.arrayOf(PropTypes.object),
-  resources: PropTypes.arrayOf(PropTypes.object),
   onTabSelect: PropTypes.func,
 };
 
-export class WorkbenchActions extends React.Component {
-  static propTypes = {
-    isLoading: PropTypes.bool,
-    error: PropTypes.string,
-    hasSpaces: PropTypes.bool,
-    committed: PropTypes.bool,
-    periods: PropTypes.array,
-    selectedPeriodIndex: PropTypes.number,
-    setPeriodIndex: PropTypes.func,
-    showPeriodSelector: PropTypes.bool,
-  };
-
-  render() {
-    const {
-      isLoading,
-      error,
-      hasSpaces,
-      committed,
-      periods,
-      selectedPeriodIndex,
-      setPeriodIndex,
-      showPeriodSelector,
-    } = this.props;
-
-    if (error) {
-      return null;
-    }
-
-    if (isLoading) {
-      return <Spinner />;
-    }
-
-    if (hasSpaces && committed && periods && showPeriodSelector) {
-      return (
-        <PeriodSelector
-          periods={periods}
-          selectedPeriodIndex={selectedPeriodIndex}
-          onChange={setPeriodIndex}
-        />
-      );
-    }
-
+export const WorkbenchActions = ({
+  isLoading,
+  error,
+  hasSpaces,
+  periods,
+  selectedPeriodIndex,
+  setPeriodIndex,
+  showPeriodSelector,
+}) => {
+  if (error) {
     return null;
   }
-}
+
+  if (isLoading) {
+    return <Spinner />;
+  }
+
+  if (hasSpaces && periods && showPeriodSelector) {
+    return (
+      <PeriodSelector
+        periods={periods}
+        selectedPeriodIndex={selectedPeriodIndex}
+        onChange={setPeriodIndex}
+      />
+    );
+  }
+
+  return null;
+};
+
+WorkbenchActions.propTypes = {
+  isLoading: PropTypes.bool,
+  error: PropTypes.string,
+  hasSpaces: PropTypes.bool,
+  periods: PropTypes.array,
+  selectedPeriodIndex: PropTypes.number,
+  setPeriodIndex: PropTypes.func,
+  showPeriodSelector: PropTypes.bool,
+};
 
 // need to do this for the test
 // eslint-disable-next-line rulesdir/restrict-multiple-react-component-exports
-export class OrganizationUsageRoute extends React.Component {
+export class OrganizationUsageRouteNew extends React.Component {
   static propTypes = {
     orgId: PropTypes.string.isRequired,
   };
@@ -165,15 +145,9 @@ export class OrganizationUsageRoute extends React.Component {
 
   async componentDidMount() {
     try {
-      const variation = await getVariation(PRICING_2020_RELEASED, {
-        organizationId: this.props.orgId,
-      });
-      this.setState({ showNewPricingFeature: variation });
-      if (variation) {
-        return;
-      }
       await this.checkPermissions();
       await this.fetchOrgData();
+      this.setState({ isLoading: false });
     } catch (ex) {
       this.setState({ isLoading: false, error: ex.message });
     }
@@ -194,43 +168,49 @@ export class OrganizationUsageRoute extends React.Component {
     try {
       const service = createResourceService(orgId, 'organization');
       const basePlan = await PricingDataProvider.getBasePlan(this.endpoint);
-      const committed = PricingDataProvider.isEnterprisePlan(basePlan);
+      const isTeamOrEnterpriseCustomer =
+        PricingDataProvider.isEnterprisePlan(basePlan) ||
+        PricingDataProvider.isSelfServicePlan(basePlan);
 
-      if (committed) {
-        const [
-          spaces,
-          plans,
-          periods,
-          {
-            limits: { included: apiRequestIncludedLimit },
-          },
-        ] = await Promise.all([
-          OrganizationMembershipRepository.getAllSpaces(this.endpoint),
-          PricingDataProvider.getPlansWithSpaces(this.endpoint),
-          UsageService.getPeriods(this.endpoint),
-          service.get('api_request'),
-        ]);
-        const spaceNames = flow(keyBy('sys.id'), mapValues('name'))(spaces);
+      const getPeriod = isTeamOrEnterpriseCustomer
+        ? UsageService.getPeriods(this.endpoint)
+        : {
+            // return a period of 30 days from today for the community tier
+            items: [
+              { startDate: moment().subtract(30, 'days').format(), endDate: moment().format() },
+            ],
+          };
 
-        const isPoC = flow(
-          keyBy('space.sys.id'),
-          mapValues(flow(get('name'), eq('Proof of concept')))
-        )(plans.items);
+      const [
+        spaces,
+        plans,
+        periods,
+        {
+          limits: { included: apiRequestIncludedLimit },
+        },
+      ] = await Promise.all([
+        OrganizationMembershipRepository.getAllSpaces(this.endpoint),
+        PricingDataProvider.getPlansWithSpaces(this.endpoint),
+        getPeriod,
+        service.get('api_request'),
+      ]);
 
-        this.setState({
-          spaceNames,
-          isPoC,
-          periods: periods.items,
-          apiRequestIncludedLimit: apiRequestIncludedLimit ?? 0,
-          hasSpaces: spaces.length !== 0,
-        });
+      const spaceNames = flow(keyBy('sys.id'), mapValues('name'))(spaces);
 
-        await this.loadPeriodData(0);
-      } else {
-        this.setState({ resources: await service.getAll(), isLoading: false });
-      }
+      const isPoC = flow(
+        keyBy('space.sys.id'),
+        mapValues(flow(get('name'), eq('Proof of concept')))
+      )(plans.items);
 
-      this.setState({ committed });
+      this.setState({
+        spaceNames,
+        isPoC,
+        periods: periods.items,
+        apiRequestIncludedLimit: apiRequestIncludedLimit ?? 0,
+        hasSpaces: spaces.length !== 0,
+      });
+
+      await this.loadPeriodData(0);
     } catch (e) {
       // Show the forbidden screen on 404 and 403
       if ([404, 403].includes(e.status)) {
@@ -261,14 +241,12 @@ export class OrganizationUsageRoute extends React.Component {
         UsageService.getOrgUsage(this.endpoint, {
           startDate: newPeriod.startDate,
           endDate: newPeriod.endDate,
-          periodId: newPeriod.sys.id,
         }),
         ...['cma', 'cda', 'cpa', 'gql'].map((apiType) =>
           UsageService.getApiUsage(this.endpoint, {
             apiType,
             startDate: newPeriod.startDate,
             endDate: newPeriod.endDate,
-            periodId: newPeriod.sys.id,
             limit: 5,
           })
         ),
@@ -304,7 +282,6 @@ export class OrganizationUsageRoute extends React.Component {
   };
 
   async setPeriodIndex(e) {
-    this.setState({ isLoading: true });
     await this.loadPeriodData(parseInt(e.target.value));
   }
 
@@ -323,16 +300,9 @@ export class OrganizationUsageRoute extends React.Component {
       periodicUsage,
       apiRequestIncludedLimit,
       assetBandwidthData,
-      committed,
-      resources,
       hasSpaces,
       showPeriodSelector,
-      showNewPricingFeature,
     } = this.state;
-
-    if (showNewPricingFeature) {
-      return <OrganizationUsageRouteNew {...this.props} />;
-    }
 
     return (
       <>
@@ -346,7 +316,6 @@ export class OrganizationUsageRoute extends React.Component {
                 {...{
                   isLoading,
                   hasSpaces,
-                  committed,
                   periods,
                   selectedPeriodIndex,
                   setPeriodIndex: this.setPeriodIndex,
@@ -357,7 +326,6 @@ export class OrganizationUsageRoute extends React.Component {
           <Workbench.Content>
             <WorkbenchContent
               {...{
-                committed,
                 hasSpaces,
                 selectedPeriodIndex,
                 spaceNames,
@@ -368,7 +336,6 @@ export class OrganizationUsageRoute extends React.Component {
                 isLoading,
                 error,
                 periods,
-                resources,
                 onTabSelect: this.setShowPeriodSelector,
               }}
             />

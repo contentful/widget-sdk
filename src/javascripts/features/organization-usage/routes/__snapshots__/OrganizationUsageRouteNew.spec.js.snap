@@ -1,0 +1,72 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OrganizationUsageRouteNew should render page without errors 1`] = `
+<Fragment>
+  <DocumentTitle
+    title="Usage"
+  />
+  <Workbench
+    testId="organization.usage"
+  >
+    <WorkbenchHeader
+      actions={
+        <WorkbenchActions
+          hasSpaces={true}
+          isLoading={false}
+          periods={
+            Array [
+              Object {
+                "endDate": "1970-01-18T12:01:22+00:00",
+                "startDate": "1969-12-19T12:01:22+00:00",
+              },
+            ]
+          }
+          setPeriodIndex={[Function]}
+          showPeriodSelector={true}
+        />
+      }
+      icon={
+        <NavigationIcon
+          color="green"
+          icon="usage"
+          size="large"
+        />
+      }
+      testId="cf-ui-workbench-header"
+      title="Usage"
+    />
+    <WorkbenchContent
+      testId="cf-ui-workbench-content"
+      type="default"
+    >
+      <WorkbenchContent
+        apiRequestIncludedLimit={1000000}
+        error={null}
+        hasSpaces={true}
+        isLoading={false}
+        isPoC={
+          Object {
+            "space1": false,
+            "space2": false,
+          }
+        }
+        onTabSelect={[Function]}
+        periods={
+          Array [
+            Object {
+              "endDate": "1970-01-18T12:01:22+00:00",
+              "startDate": "1969-12-19T12:01:22+00:00",
+            },
+          ]
+        }
+        spaceNames={
+          Object {
+            "test1": "Test1",
+            "test2": "Test2",
+          }
+        }
+      />
+    </WorkbenchContent>
+  </Workbench>
+</Fragment>
+`;

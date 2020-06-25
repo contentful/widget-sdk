@@ -101,6 +101,10 @@ jest.mock('app/common/ReloadNotification', () => ({
   trigger: jest.fn(),
 }));
 
+jest.mock('LaunchDarkly', () => ({
+  getVariation: jest.fn().mockResolvedValue(null),
+}));
+
 const shallowRenderComponent = async (props) => {
   const wrapper = shallow(<OrganizationUsageRoute {...props} />);
   // Need to wait for internal async logic to finish

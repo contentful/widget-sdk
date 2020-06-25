@@ -27,7 +27,7 @@ export class PeriodSelector extends React.Component {
           name="period-selector"
           id="period-selector">
           {periods.map(({ startDate, endDate }, index) => {
-            const isCurrentPeriod = endDate === null;
+            const isCurrentPeriod = endDate === null || moment().diff(moment(endDate), 'days') == 0; // the end day is today
             const start = moment(startDate);
             const end = isCurrentPeriod
               ? moment(start).add(1, 'month').subtract(1, 'day')
