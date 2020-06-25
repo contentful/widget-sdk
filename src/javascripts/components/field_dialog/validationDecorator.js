@@ -361,6 +361,7 @@ function updateField(field, validations, nodeValidations) {
   if (!_.isEmpty(itemValidations)) {
     field.items.validations = extractFieldValidations(itemValidations);
   }
+  return field;
 }
 
 function addEnabledRichTextOptions(field, options) {

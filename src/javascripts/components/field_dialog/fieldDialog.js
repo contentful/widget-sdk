@@ -127,7 +127,18 @@ export default function register() {
         }
 
         fieldDecorator.update($scope.decoratedField, $scope.field, contentTypeData);
-        validationDecorator.updateField($scope.field, $scope.validations, $scope.nodeValidations);
+
+        const updatedField = validationDecorator.updateField(
+          $scope.field,
+          $scope.validations,
+          $scope.nodeValidations
+        );
+
+        const updatedCTfields = contentTypeData.fields.map((field) =>
+          field.apiName === updatedField.apiName ? updatedField : field
+        );
+        $scope.contentType.data.fields = updatedCTfields;
+        $scope.$applyAsync();
 
         if ($scope.field.type === 'RichText') {
           validationDecorator.addEnabledRichTextOptions($scope.field, $scope.richTextOptions);
