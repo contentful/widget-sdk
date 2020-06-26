@@ -11,6 +11,11 @@ import { createClientStorage } from 'core/services/BrowserStorage/ClientStorage'
 import { track } from 'analytics/Analytics';
 import { getCurrentOrg } from 'core/utils/getCurrentOrg';
 
+const MICRO_SPACE_NAME = 'Micro (Free)';
+const COMMUNITY_BASE_PLAN_NAME = 'Community Platform';
+const TEAM_BASE_PLAN_NAME = 'Team';
+const RELEASE_DATE = new Date('2020-13-07');
+
 export async function openPricing2020Warning() {
   const org = await getCurrentOrg();
 
@@ -26,20 +31,23 @@ export async function openPricing2020Warning() {
   const basePlan = plans.find((plan) => plan.planType === 'base');
   const spacePlans = plans.filter((plan) => plan.planType === 'space');
   // TODO: filter by search plan id instead
-  const microPlans = spacePlans.filter((plan) => plan.name === 'Micro');
-  const microSpaces = microPlans.map(
-    (plan) => spaces.find((space) => space.sys.id === plan.gatekeeperKey)?.name
-  );
+  const microPlans = spacePlans.filter((plan) => plan.name === MICRO_SPACE_NAME);
+  const microSpaces = microPlans
+    .map((plan) => spaces.find((space) => space.sys.id === plan.gatekeeperKey)?.name)
+    .filter(Boolean);
   const freeSpace = spaces.find(
     (space) => !spacePlans.some((plan) => space.sys.id === plan.gatekeeperKey)
   )?.name;
-  const isCommunity = basePlan.name === 'Community Platform';
-  const isTeam = basePlan.name === 'Team';
-
-  // TODO: return early if free space was created after the migration
+  const isCommunity = basePlan.name === COMMUNITY_BASE_PLAN_NAME;
+  const isTeam = basePlan.name === TEAM_BASE_PLAN_NAME;
 
   // if org has no free spaces, there's nothing to see
   if (!freeSpace) return;
+
+  const freeSpaceCreationDate = new Date(freeSpace.sys.createdAt);
+
+  // return early if free the space was created after the migration
+  if (freeSpaceCreationDate > RELEASE_DATE) return;
 
   if (isCommunity || isTeam) {
     const key = getStorageKey(org.sys.id);
