@@ -408,7 +408,7 @@ function expectEditConflictTracking(conflicts) {
       remoteEntityUpdatedByUserId: remoteEntity.sys.updatedBy.sys.id,
       localEntityLastFetchedAtTstamp: new Date(now).toISOString(),
       isConflictAutoResolvable,
-      autoConflictResolutionVersion: 2,
+      autoConflictResolutionVersion: 3,
       precomputed,
     });
   }
