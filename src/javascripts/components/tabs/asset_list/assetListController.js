@@ -12,6 +12,7 @@ import * as BulkAssetsCreator from 'services/BulkAssetsCreator';
 import * as Analytics from 'analytics/Analytics';
 import * as entityCreator from 'components/app_container/entityCreator';
 import createViewPersistor from 'data/ListViewPersistor';
+import FileSizeLimitWarning from './FileSizeLimitWarning';
 
 export default function register() {
   registerController('AssetListController', [
@@ -93,13 +94,22 @@ export default function register() {
       $scope.$watch('paginator.getPage()', resetPaginatorProps);
       $scope.$watch('paginator.getTotal()', resetPaginatorProps);
 
-      // These are the props that are sent to the RecordsResourceUsage component
-      const resetUsageProps = debounce(() => {
+      // These are the props for FileSizeLimitWarning and RecordsResourceUsage
+      const space = spaceContext.space.data;
+      const environmentId = spaceContext.getEnvironmentId();
+
+      $scope.limitWarningProps = {
+        organizationId: spaceContext.organization.sys.id,
+        spaceId: space.sys.id,
+      };
+      $scope.fileSizeLimitComponent = FileSizeLimitWarning;
+
+      // These are the props for RecordsResourceUsage
+      const resetUsageProps = debounce(async () => {
         $scope.usageProps = {
-          space: spaceContext.space.data,
-          environmentId: spaceContext.getEnvironmentId(),
+          space,
+          environmentId,
           isMasterEnvironment: spaceContext.isMasterEnvironment(),
-          currentTotal: $scope.paginator.getTotal(),
         };
       });
 

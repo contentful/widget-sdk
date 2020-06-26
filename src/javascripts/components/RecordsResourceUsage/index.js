@@ -1,13 +1,14 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { get } from 'lodash';
+import { HelpText, TextLink } from '@contentful/forma-36-react-components';
 
 import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService';
+import createResourceService from 'services/ResourceService';
 import { getResourceLimits } from 'utils/ResourceUtils';
 
-import createResourceService from 'services/ResourceService';
-import { TextLink, HelpText } from '@contentful/forma-36-react-components';
+const WARN_THRESHOLD = 0.9;
+const ERROR_THRESHOLD = 0.95;
 
 const openUpgradeModal = (space, onSubmit) =>
   showUpgradeSpaceDialog({
@@ -19,59 +20,48 @@ const openUpgradeModal = (space, onSubmit) =>
   });
 
 const fetchRecordsResource = (spaceId, environmentId) => {
-  const service = createResourceService(spaceId);
-
-  return service.get('record', environmentId);
+  const resourceService = createResourceService(spaceId);
+  return resourceService.get('record', environmentId);
 };
 
-export default function RecordsResourceUsage({
-  space,
-  environmentId,
-  isMasterEnvironment,
-  currentTotal,
-}) {
-  const [resource, setResource] = useState(null);
-  const spaceId = space.sys.id;
+export function RecordsResourceUsage({ space, environmentId, isMasterEnvironment }) {
+  const [resource, setResource] = useState();
 
   const updateResource = useCallback(async () => {
-    const recordResource = await fetchRecordsResource(spaceId, environmentId);
+    const recordResource = await fetchRecordsResource(space.sys.id, environmentId);
 
     setResource(recordResource);
-  }, [spaceId, environmentId]);
+  }, [space, environmentId]);
 
   useEffect(() => {
-    const update = updateResource;
-
-    update();
-  }, [currentTotal, updateResource]);
+    updateResource();
+  }, [updateResource]);
 
   if (!resource) {
     return null;
   }
 
-  const usage = get(resource, 'usage');
-  const limit = getResourceLimits(resource).maximum;
-
-  const warnThreshold = 0.9;
-  const errorThreshold = 0.95;
-
-  const usagePercentage = usage / limit;
-  const atLimit = usagePercentage >= 1;
+  const resourceUsage = resource.usage;
+  const resourceLimit = getResourceLimits(resource).maximum;
+  const usagePercentage = resourceUsage / resourceLimit;
 
   return (
     <div
       data-test-id="container"
       className={classnames('resource-usage', {
-        'resource-usage--warn': usage / limit >= warnThreshold && usage / limit < errorThreshold,
-        'resource-usage--danger': usage / limit >= errorThreshold,
+        'resource-usage--warn':
+          usagePercentage >= WARN_THRESHOLD && usagePercentage < ERROR_THRESHOLD,
+        'resource-usage--danger': usagePercentage >= ERROR_THRESHOLD,
       })}>
-      {atLimit && <HelpText>You’ve reached the limit of {limit} entries and assets. </HelpText>}
-      {!atLimit && (
+      {usagePercentage >= 1 ? (
+        <HelpText>You’ve reached the limit of {resourceLimit} entries and assets. </HelpText>
+      ) : (
         <HelpText>
-          Usage: {usage} / {limit} entries and assets{' '}
+          Usage: {resourceUsage} / {resourceLimit} entries and assets
         </HelpText>
       )}
-      {usagePercentage >= warnThreshold && isMasterEnvironment && (
+
+      {usagePercentage >= WARN_THRESHOLD && isMasterEnvironment && (
         <TextLink onClick={() => openUpgradeModal(space, updateResource)}>Upgrade space</TextLink>
       )}
     </div>
@@ -79,10 +69,9 @@ export default function RecordsResourceUsage({
 }
 
 RecordsResourceUsage.propTypes = {
-  space: PropTypes.object.isRequired,
-  environmentId: PropTypes.string.isRequired,
-  isMasterEnvironment: PropTypes.bool.isRequired,
-  currentTotal: PropTypes.number.isRequired,
+  space: PropTypes.object,
+  environmentId: PropTypes.string,
+  isMasterEnvironment: PropTypes.bool,
 };
 
-export { RecordsResourceUsage };
+export default RecordsResourceUsage;
