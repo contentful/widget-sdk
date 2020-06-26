@@ -11,7 +11,7 @@ import {
 import styles from '../styles';
 import { toString, toNumber, isNumber, isNil, startCase, isEmpty } from 'lodash';
 
-const DimensionsParameters = ({ type, settings, setSettings, className }) => {
+const DimensionsParameters = ({ type, settings, setSettings, className, onBlur }) => {
   const getCurrentViewState = ({ min, max }) => {
     if (min === max && !isNil(min) && !isNil(max)) {
       return 'exact';
@@ -41,6 +41,7 @@ const DimensionsParameters = ({ type, settings, setSettings, className }) => {
               setSettings({ ...settings, min: normalizeValue(value) });
             }}
             disabled={!isChecked}
+            onBlur={onBlur}
           />
         );
       case 'max':
@@ -52,6 +53,7 @@ const DimensionsParameters = ({ type, settings, setSettings, className }) => {
               setSettings({ ...settings, max: normalizeValue(value) });
             }}
             disabled={!isChecked}
+            onBlur={onBlur}
           />
         );
       case 'min-max':
@@ -64,6 +66,7 @@ const DimensionsParameters = ({ type, settings, setSettings, className }) => {
                 setSettings({ ...settings, min: normalizeValue(value) });
               }}
               disabled={!isChecked}
+              onBlur={onBlur}
             />
             <div className={styles.union}>and</div>
             <PxInputField
@@ -73,6 +76,7 @@ const DimensionsParameters = ({ type, settings, setSettings, className }) => {
                 setSettings({ ...settings, max: normalizeValue(value) });
               }}
               disabled={!isChecked}
+              onBlur={onBlur}
             />
           </>
         );
@@ -85,6 +89,7 @@ const DimensionsParameters = ({ type, settings, setSettings, className }) => {
               setSettings({ min: normalizeValue(value), max: normalizeValue(value) });
             }}
             disabled={!isChecked}
+            onBlur={onBlur}
           />
         );
       default:
@@ -131,6 +136,7 @@ DimensionsParameters.propTypes = {
   className: PropTypes.string,
   type: PropTypes.string.isRequired,
   setSettings: PropTypes.func.isRequired,
+  onBlur: PropTypes.func,
   settings: PropTypes.shape({
     min: PropTypes.number,
     max: PropTypes.number,
@@ -139,7 +145,7 @@ DimensionsParameters.propTypes = {
 
 export default DimensionsParameters;
 
-const PxInputField = ({ id, value, onChange, disabled }) => {
+const PxInputField = ({ id, value, onChange, disabled, onBlur }) => {
   return (
     <div className={cx(styles.flexContainer, styles.positionRelative)}>
       <TextInput
@@ -153,6 +159,7 @@ const PxInputField = ({ id, value, onChange, disabled }) => {
         type="number"
         min="1"
         willBlurOnEsc
+        onBlur={onBlur}
       />
       <FormLabel className={styles.pxLabel} htmlFor={id}>
         px
@@ -166,4 +173,5 @@ PxInputField.propTypes = {
   value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   disabled: PropTypes.bool.isRequired,
+  onBlur: PropTypes.func,
 };

@@ -127,7 +127,7 @@ const FieldDialogSettingsComponent = ({
             testId="content-type-field-id"
             name="content-type-field-id"
             id="content-type-field-id"
-            setValue={(value) => {
+            onChange={(value) => {
               const updatedValidation = { ...formValidation, id: validateId(value) };
               update({ updatedField: { ...field, apiName: value }, validation: updatedValidation });
               setFormValidation(updatedValidation);

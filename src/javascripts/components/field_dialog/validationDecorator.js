@@ -154,6 +154,7 @@ export default {
   validateAll,
   updateField,
   addEnabledRichTextOptions,
+  richTextOptionsLabels,
 };
 
 /**
@@ -346,6 +347,7 @@ function validate(validation) {
  * @param {ContentType.Field} field
  * @param {DecoratedValdiation[]} validations
  */
+// $scope.field, $scope.validations, $scope.nodeValidations
 function updateField(field, validations, nodeValidations) {
   const { true: itemValidations, false: baseValidations } = _.groupBy(validations, 'onItems');
 

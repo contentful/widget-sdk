@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { Select, Option, TextInput } from '@contentful/forma-36-react-components';
 import { toString, toNumber, map, findLast, isFinite, startCase, isEmpty } from 'lodash';
@@ -19,23 +19,31 @@ const getUnitFactor = (baseValue) => {
   return factor || unitFactors[0];
 };
 
-const getScaledValue = (displayValue, factor) => {
+const getScaledValue = (value, factor) => {
+  const displayValue = toNumber(value);
   return isFinite(displayValue) ? displayValue * factor : null;
 };
 
-const FileSizeComponent = ({ type, value, onUpdate }) => {
+const FileSizeComponent = ({ type, value, onUpdate, onBlur }) => {
   const [factor, setFactor] = useState(() => getUnitFactor(value));
   const [displayValue, setDisplayValue] = useState(() => getDisplayValue(value, factor));
 
   const normalizeValue = (value) => (isEmpty(value) ? null : toNumber(value));
 
-  useEffect(() => {
+  const onValueUpdate = (displayValue) => {
+    setDisplayValue(normalizeValue(displayValue));
     const value = getScaledValue(displayValue, factor);
     onUpdate(value);
-  }, [displayValue, factor, onUpdate]);
+  };
+
+  const onFactorUpdate = (factor) => {
+    setFactor(normalizeValue(factor));
+    const value = getScaledValue(displayValue, factor);
+    onUpdate(value);
+  };
 
   return (
-    <>
+    <Fragment>
       <TextInput
         testId={`${type}-size-input`}
         className={styles.textInputNumber}
@@ -43,13 +51,14 @@ const FileSizeComponent = ({ type, value, onUpdate }) => {
         type="number"
         min="0"
         value={toString(displayValue)}
-        onChange={({ target: { value } }) => setDisplayValue(normalizeValue(value))}
+        onChange={({ target: { value } }) => onValueUpdate(value)}
+        onBlur={onBlur}
         width="small"
       />
       <Select
         name="Select size unit"
         testId={`select-${type}-size-unit`}
-        onChange={({ target: { value } }) => setFactor(normalizeValue(value))}
+        onChange={({ target: { value } }) => onFactorUpdate(value)}
         value={toString(factor)}
         width="small">
         {units.map(({ label, factor }, index) => (
@@ -58,7 +67,7 @@ const FileSizeComponent = ({ type, value, onUpdate }) => {
           </Option>
         ))}
       </Select>
-    </>
+    </Fragment>
   );
 };
 
@@ -66,6 +75,7 @@ FileSizeComponent.propTypes = {
   type: PropTypes.string.isRequired,
   value: PropTypes.number,
   onUpdate: PropTypes.func.isRequired,
+  onBlur: PropTypes.func,
 };
 
 export default FileSizeComponent;

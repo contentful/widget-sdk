@@ -1,6 +1,15 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { TextField, FieldGroup, IconButton, Tooltip } from '@contentful/forma-36-react-components';
+import {
+  TextField,
+  FieldGroup,
+  IconButton,
+  Tooltip,
+  ModalConfirm,
+  Typography,
+  Paragraph,
+} from '@contentful/forma-36-react-components';
+import { ModalLauncher } from 'core/components/ModalLauncher';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -16,11 +25,37 @@ const styles = {
   }),
 };
 
+const onUnlock = async (setDisabled) => {
+  const result = await ModalLauncher.open(({ isShown, onClose }) => (
+    <ModalConfirm
+      title="Warning! Changing a published field ID"
+      confirmLabel="Unlock field for editing"
+      intent="primary"
+      isShown={isShown}
+      onCancel={() => onClose(false)}
+      onConfirm={() => onClose(true)}>
+      <Typography>
+        <Paragraph>
+          Changing the ID of this field is immediate and will cause problems for any applications
+          currently using it until those applications are updated.
+        </Paragraph>
+        <Paragraph>
+          Your content will not show correctly until you update the field ID in your applications,
+          too.
+        </Paragraph>
+      </Typography>
+    </ModalConfirm>
+  ));
+  if (result) {
+    setDisabled(false);
+  }
+};
+
 const LockedField = ({
   value,
-  setValue,
+  onChange,
+  onBlur,
   isDisabled,
-  onUnlock,
   validationMessage,
   testId,
   // restProps contains
@@ -33,7 +68,8 @@ const LockedField = ({
       <div className={styles.fieldGroup}>
         <TextField
           value={value}
-          onChange={({ target: { value } }) => setValue(value)}
+          onChange={({ target: { value } }) => onChange(value)}
+          onBlur={onBlur}
           textInputProps={{
             disabled: disabled,
             type: 'text',
@@ -46,7 +82,9 @@ const LockedField = ({
             <Tooltip content="Unlock published field">
               <IconButton
                 testId="unlock-icon-button"
-                iconProps={{ icon: 'Lock' }}
+                iconProps={{
+                  icon: 'Lock',
+                }}
                 label="Unlock published field"
                 onClick={() => onUnlock(setDisabled)}
               />
@@ -60,9 +98,9 @@ const LockedField = ({
 
 LockedField.propTypes = {
   value: PropTypes.string.isRequired,
-  setValue: PropTypes.func.isRequired,
+  onChange: PropTypes.func.isRequired,
+  onBlur: PropTypes.func,
   isDisabled: PropTypes.bool.isRequired,
-  onUnlock: PropTypes.func.isRequired,
   validationMessage: PropTypes.string.isRequired,
   testId: PropTypes.string.isRequired,
 };

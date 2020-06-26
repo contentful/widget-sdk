@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { CheckboxField, ValidationMessage, TextField } from '@contentful/forma-36-react-components';
 import { toString } from 'lodash';
@@ -94,7 +94,7 @@ const DateRangeValidation = ({
   }, [message, updateValidationMessageValue]);
 
   return (
-    <>
+    <Fragment>
       <ValidationRow
         id={'min'}
         checkboxLabel={'Later than'}
@@ -117,7 +117,7 @@ const DateRangeValidation = ({
         textInputProps={{ type: 'text' }}
         onChange={({ target: { value } }) => setMessage(value)}
       />
-    </>
+    </Fragment>
   );
 };
 

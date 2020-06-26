@@ -181,7 +181,6 @@ export default function register() {
           $scope.field.validations.filter((value) => {
             return value.enabledNodeTypes || value.enabledMarks;
           });
-
         return Object.assign({}, ...(validationsForEnabledNodeTypesOrMarks || []));
       }
 
