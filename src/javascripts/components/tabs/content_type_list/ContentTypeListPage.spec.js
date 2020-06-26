@@ -1,18 +1,50 @@
 import React from 'react';
 
-import { render, waitForElement, fireEvent } from '@testing-library/react';
+import {
+  screen,
+  render,
+  waitFor,
+  fireEvent,
+  waitForElementToBeRemoved,
+} from '@testing-library/react';
 import { flatten, concat } from 'lodash';
 
 import { ContentTypesPage as Page } from './ContentTypeListPage';
 
 import * as spaceContextMocked from 'ng/spaceContext';
 import * as contentTypeFactory from 'test/helpers/contentTypeFactory';
+import { getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles';
+import createResourceService from 'services/ResourceService';
+import * as fake from 'test/helpers/fakeFactory';
+import userEvent from '@testing-library/user-event';
+import { track } from 'analytics/Analytics';
 
 jest.mock('lodash/debounce', () => (fn) => fn);
 
 jest.mock('detect-browser', () => ({
   detect: jest.fn().mockReturnValue({ name: 'not-ie' }),
 }));
+
+jest.mock('services/OrganizationRoles', () => ({
+  isOwnerOrAdmin: jest.fn(),
+}));
+
+jest.mock('analytics/Analytics', () => ({
+  track: jest.fn(),
+}));
+
+jest.mock('account/pricing/PricingDataProvider', () => ({
+  getSingleSpacePlan: jest.fn().mockResolvedValue({ name: 'Medium' }),
+}));
+
+jest.mock('services/ResourceService', () => {
+  const resourceService = {
+    get: jest.fn(),
+  };
+
+  return () => resourceService;
+});
 
 jest.mock('./ContentTypeList', () => {
   return (props) => props.contentTypes.map((item) => item.sys.id).join(',');
@@ -38,10 +70,14 @@ const mockContentTypeList = [
   contentTypeFactory.createPublished(),
   contentTypeFactory.createPublished(),
 ];
+const mockOrganization = fake.Organization();
 
 function renderComponent({ props = {}, items = [] }) {
   const getStub = jest.fn().mockResolvedValue({ items });
+  const getEnvironmentId = jest.fn();
   spaceContextMocked.endpoint = getStub;
+  spaceContextMocked.organization = mockOrganization;
+  spaceContextMocked.getEnvironmentId = getEnvironmentId;
 
   const wrapper = render(<Page {...props} />);
 
@@ -49,6 +85,8 @@ function renderComponent({ props = {}, items = [] }) {
 }
 
 describe('ContentTypeList Page', () => {
+  createResourceService().get.mockResolvedValue({ usage: 1, limits: { maximum: 1 } });
+
   it('renders loader', () => {
     const [{ container }, getStub] = renderComponent({ items: mockContentTypeList });
 
@@ -59,7 +97,7 @@ describe('ContentTypeList Page', () => {
   it('renders results once loaded', async () => {
     const [{ container }] = renderComponent({ items: mockContentTypeList });
 
-    await waitForElement(() => {
+    await waitFor(() => {
       return container.querySelector(selectors.contentTypeList);
     });
 
@@ -71,7 +109,7 @@ describe('ContentTypeList Page', () => {
   it('renders empty page if no content types loaded', async () => {
     const [{ container }] = renderComponent({ items: [] });
 
-    await waitForElement(() => {
+    await waitFor(() => {
       return container.querySelector(selectors.emptyState);
     });
 
@@ -85,7 +123,7 @@ describe('ContentTypeList Page', () => {
       items: mockContentTypeList,
     });
 
-    await waitForElement(() => {
+    await waitFor(() => {
       return container.querySelector(selectors.searchBox);
     });
 
@@ -103,7 +141,7 @@ describe('ContentTypeList Page', () => {
         items: contentTypes,
       });
 
-      await waitForElement(() => {
+      await waitFor(() => {
         return container.querySelector(selectors.searchBox);
       });
 
@@ -112,7 +150,7 @@ describe('ContentTypeList Page', () => {
       });
 
       expect(container.querySelector(selectors.contentTypeList).textContent).toMatchInlineSnapshot(
-        `"content-type-id11"`
+        `"content-type-id14"`
       );
     });
 
@@ -121,7 +159,7 @@ describe('ContentTypeList Page', () => {
         items: contentTypes,
       });
 
-      await waitForElement(() => {
+      await waitFor(() => {
         return container.querySelector(selectors.searchBox);
       });
 
@@ -131,6 +169,93 @@ describe('ContentTypeList Page', () => {
 
       expect(container.querySelector(selectors.contentTypeList)).not.toBeInTheDocument();
       expect(container.querySelector(selectors.noSearchResults)).toBeInTheDocument();
+    });
+  });
+
+  describe('Limit banner', () => {
+    it('does not show up if they are not at the 90% limit', async () => {
+      getSingleSpacePlan.mockResolvedValue({ name: 'Medium' });
+      createResourceService().get.mockResolvedValue({ usage: 43, limits: { maximum: 48 } });
+      isOwnerOrAdmin.mockReturnValue(true);
+
+      renderComponent({ props: {}, items: [] });
+      await waitForElementToBeRemoved(screen.getByTestId('content-loader'));
+
+      expect(screen.queryByTestId('content-type-limit-banner')).toBeNull();
+    });
+
+    it('does not show up if they are not on a medium or large space', async () => {
+      getSingleSpacePlan.mockResolvedValue({ name: 'Small' });
+      createResourceService().get.mockResolvedValue({ usage: 44, limits: { maximum: 48 } });
+      isOwnerOrAdmin.mockReturnValue(true);
+
+      renderComponent({ props: {}, items: [] });
+      await waitForElementToBeRemoved(screen.getByTestId('content-loader'));
+
+      expect(screen.queryByTestId('content-type-limit-banner')).toBeNull();
+    });
+
+    it('does not show up if they are not an owner or admin', async () => {
+      getSingleSpacePlan.mockResolvedValue({ name: 'Large' });
+      createResourceService().get.mockResolvedValue({ usage: 44, limits: { maximum: 48 } });
+      isOwnerOrAdmin.mockReturnValue(false);
+
+      renderComponent({ props: {}, items: [] });
+      await waitForElementToBeRemoved(screen.getByTestId('content-loader'));
+
+      expect(screen.queryByTestId('content-type-limit-banner')).toBeNull();
+    });
+
+    it('shows up if they are at the 90% limit and a medium space', async () => {
+      isOwnerOrAdmin.mockReturnValue(true);
+      getSingleSpacePlan.mockResolvedValue({ name: 'Medium' });
+      createResourceService().get.mockResolvedValue({ usage: 44, limits: { maximum: 48 } });
+      renderComponent({ props: {}, items: [] });
+      await waitForElementToBeRemoved(screen.getByTestId('content-loader'));
+
+      expect(screen.queryByTestId('content-type-limit-banner')).toBeVisible();
+    });
+
+    it('shows up if they are at the 90% limit and a large space', async () => {
+      isOwnerOrAdmin.mockReturnValue(true);
+      getSingleSpacePlan.mockResolvedValue({ name: 'Large' });
+      createResourceService().get.mockResolvedValue({ usage: 44, limits: { maximum: 48 } });
+
+      renderComponent({ props: {}, items: [] });
+      await waitForElementToBeRemoved(screen.getByTestId('content-loader'));
+
+      expect(screen.queryByTestId('content-type-limit-banner')).toBeVisible();
+    });
+
+    it('shows up with a link to sales if they are an owner or admin', async () => {
+      getSingleSpacePlan.mockResolvedValue({ name: 'Large' });
+      createResourceService().get.mockResolvedValue({ usage: 44, limits: { maximum: 48 } });
+      isOwnerOrAdmin.mockReturnValue(true);
+
+      renderComponent({ props: {}, items: [] });
+      await waitForElementToBeRemoved(screen.getByTestId('content-loader'));
+
+      expect(screen.queryByTestId('content-type-limit-banner')).toBeVisible();
+      expect(screen.queryByTestId('link-to-sales')).toBeVisible();
+    });
+
+    it('tracks click on the link to sales', async () => {
+      getSingleSpacePlan.mockResolvedValue({ name: 'Large' });
+      createResourceService().get.mockResolvedValue({ usage: 44, limits: { maximum: 48 } });
+      isOwnerOrAdmin.mockReturnValue(true);
+      const fakeSpaceId = 'fakeSpaceId';
+
+      renderComponent({ props: { spaceId: fakeSpaceId }, items: [] });
+      await waitForElementToBeRemoved(screen.getByTestId('content-loader'));
+
+      expect(screen.queryByTestId('content-type-limit-banner')).toBeVisible();
+      userEvent.click(screen.getByTestId('link-to-sales'));
+
+      expect(track).toBeCalledWith('targeted_cta_clicked:upgrade_to_enterprise', {
+        ctaLocation: 'content_types',
+        orgId: mockOrganization.sys.id,
+        spaceId: fakeSpaceId,
+      });
     });
   });
 
@@ -148,7 +273,7 @@ describe('ContentTypeList Page', () => {
         items: contentTypes,
       });
 
-      await waitForElement(() => {
+      await waitFor(() => {
         return container.querySelector(selectors.statusFilter);
       });
 
@@ -168,7 +293,7 @@ describe('ContentTypeList Page', () => {
           items: contentTypes,
         });
 
-        await waitForElement(() => {
+        await waitFor(() => {
           return container.querySelector(selectors.statusFilter);
         });
 

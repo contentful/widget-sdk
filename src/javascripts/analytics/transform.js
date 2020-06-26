@@ -177,6 +177,8 @@ registerSSOSelfConfigurationEvent('sso:enable');
 
 registerGenericEvent('upgrade_plan_link:targeted_cta_clicked');
 
+registerGenericEvent('targeted_cta_clicked:upgrade_to_enterprise');
+
 registerEvent('global:app_loaded', 'app_open', AppOpen);
 
 registerEvent('invite_user:learn', 'generic', InviteUserExperiment);

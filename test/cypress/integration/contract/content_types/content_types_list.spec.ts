@@ -4,11 +4,13 @@ import {
   getAllContentTypesInDefaultSpace,
   getFirst1000ContentTypesInDefaultSpaceOrderedByName,
 } from '../../../interactions/content_types';
+import { FeatureFlag } from '../../../util/featureFlag';
 const severalContentTypes = require('../../../fixtures/responses/content-types-several.json');
 
 describe('Content types list page', () => {
   beforeEach(() => {
     cy.resetAllFakeServers();
+    cy.disableFeatureFlags([FeatureFlag.PRICING_2020_RELEASED]);
   });
 
   context('with no content types', () => {
