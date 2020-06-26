@@ -55,7 +55,10 @@ export async function trackEditConflict({
     remoteEntityUpdatedByUserId: remoteEntity.sys.updatedBy.sys.id,
     localEntityLastFetchedAtTstamp: localEntityFetchedAt.toISOString(),
     isConflictAutoResolvable,
-    autoConflictResolutionVersion: 2,
+    // v1: Initial implementation without any conflict resolution.
+    // v2: Auto-merging of different field locales or metadata.tags remotely vs. locally.
+    // v3: Syncing remote entity changes back to local state via pubsub.
+    autoConflictResolutionVersion: 3,
     precomputed: {
       sameFieldLocaleConflictsCount: intersection(localChangedFieldPaths, remoteChangedFieldPaths)
         .length,
