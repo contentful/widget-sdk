@@ -62,7 +62,7 @@ describe('Schedule Publication', () => {
       cy.wait(scheduledPubinteraction);
       cy.findByTestId('scheduled-item').should('have.length', 1);
     });
-    it.skip('cannot create more jobs than the set limit', () => {
+    it('cannot create more jobs than the set limit', () => {
       const validateAnEntryInteraction = validateAnEntryValidResponse.willSucceed();
       const scheduledPubinteraction = createScheduledPublicationForDefaultSpace.willFailWithMaxPendingJobsError();
 
@@ -113,7 +113,7 @@ describe('Schedule Publication', () => {
     });
   });
   describe('error states', () => {
-    it.skip('renders error note if the last job is failed', () => {
+    it('renders error note if the last job is failed', () => {
       interactions.push(queryAllScheduledJobsForDefaultEntry.willFindOneFailedJob());
 
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
