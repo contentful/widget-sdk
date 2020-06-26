@@ -84,8 +84,8 @@
 .osano-cm-info-dialog .osano-cm-button,
 .osano-cm-accept-all,
 .osano-cm-accept {
-  border: calc(1rem * (1 / 16)) solid var(--color-green-dark);
-  background-image: var(--color-positive-gradient);
+  border: calc(1rem * (1 / 16)) solid var(--color-green-mid);
+  background-color: var(--color-green-mid);
   background-size: 100% 200%;
   color: var(--color-element-lightest);
 }
@@ -96,7 +96,6 @@
 .osano-cm-accept-all:focus,
 .osano-cm-button.osano-cm-accept:hover,
 .osano-cm-button.osano-cm-accept:focus {
-  background-image: var(--color-positive-gradient);
   background-color: var(--color-green-base);
   background-size: 100% 200%;
   background-position: 0 100%;
