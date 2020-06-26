@@ -20,6 +20,8 @@ import {
   SkeletonContainer,
   SkeletonBodyText,
   SkeletonImage,
+  Note,
+  Paragraph,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import StateLink from 'app/common/StateLink';
@@ -43,6 +45,12 @@ import {
   Team as TeamPropType,
 } from 'app/OrganizationSettings/PropTypes';
 import NavigationIcon from 'ui/Components/NavigationIcon';
+import { getVariation } from 'LaunchDarkly';
+import { PRICING_2020_RELEASED } from 'featureFlags';
+import { showDialog as showChangeSpaceModal, trackCTAClick } from 'services/ChangeSpaceService';
+import { showDialog as showCreateSpaceModal } from 'services/CreateSpace';
+import * as TokenStore from 'services/TokenStore';
+import { isOwner } from 'services/OrganizationRoles';
 
 const styles = {
   filters: css({
@@ -125,7 +133,7 @@ class UsersList extends React.Component {
   };
 
   fetch = async () => {
-    const { filters, searchTerm } = this.props;
+    const { filters, searchTerm, orgId, spaces } = this.props;
     const { pagination } = this.state;
     const filterQuery = formatQuery(filters.map((item) => item.filter));
     const includePaths = ['sys.user'];
@@ -142,10 +150,21 @@ class UsersList extends React.Component {
     const { total, items, includes } = await getMemberships(this.endpoint, query);
     const resolved = ResolveLinks({ paths: includePaths, items, includes });
 
+    const organization = await TokenStore.getOrganization(orgId);
+    const spaceToUpgrade = spaces.length > 0 ? spaces[0] : null;
+
+    // If the organization is billable, they can add more than just the free users so we don't need to tell them to upgrade
+
+    const shouldDisplayCommunityBanner =
+      getVariation(PRICING_2020_RELEASED, { orgId }) && !organization.isBillable;
+
     const newState = {
       usersList: resolved,
       queryTotal: total,
       loading: false,
+      userIsOwner: isOwner(organization),
+      spaceToUpgrade,
+      shouldDisplayCommunityBanner,
     };
 
     this.setState(newState);
@@ -223,8 +242,35 @@ class UsersList extends React.Component {
     updateSearchTerm(newSearchTerm);
   }, 500);
 
+  changeSpace = () => {
+    const { orgId } = this.props;
+    const { spaceToUpgrade } = this.state;
+
+    trackCTAClick(orgId, spaceToUpgrade.sys.id);
+
+    showChangeSpaceModal({
+      action: 'change',
+      organizationId: orgId,
+      space: spaceToUpgrade,
+    });
+  };
+
+  createSpace = () => {
+    const { orgId } = this.props;
+
+    showCreateSpaceModal(orgId);
+  };
+
   render() {
-    const { queryTotal, usersList, pagination, loading } = this.state;
+    const {
+      queryTotal,
+      usersList,
+      pagination,
+      loading,
+      shouldDisplayCommunityBanner,
+      userIsOwner,
+      spaceToUpgrade,
+    } = this.state;
     const { searchTerm, spaces, spaceRoles, filters } = this.props;
 
     return (
@@ -251,6 +297,24 @@ class UsersList extends React.Component {
           }
         />
         <Workbench.Content>
+          {shouldDisplayCommunityBanner && (
+            <Note noteType="primary">
+              <Paragraph>The free community plan has a limit of 5 users.</Paragraph>
+              <Paragraph>
+                To increase the limit,{' '}
+                {userIsOwner ? (
+                  <TextLink
+                    onClick={spaceToUpgrade ? this.changeSpace : this.createSpace}
+                    testId="upgrade-space-plan">
+                    {spaceToUpgrade ? 'upgrade your free space' : 'purchase a space'}
+                  </TextLink>
+                ) : (
+                  'the organization owner must upgrade your tier by purchasing or upgrading a space'
+                )}
+                .
+              </Paragraph>
+            </Note>
+          )}
           <section className={styles.filters}>
             <UserListFilters
               queryTotal={queryTotal}
