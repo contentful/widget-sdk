@@ -1,4 +1,4 @@
-import { get, set, cloneDeep, noop, unset, isEqual, intersectionBy, once, some } from 'lodash';
+import { get, set, cloneDeep, noop, unset, isEqual, intersectionBy, once } from 'lodash';
 import { Stream, Property } from 'kefir';
 import * as K from 'core/utils/kefir';
 import * as ResourceStateManager from 'data/document/ResourceStateManager';
@@ -22,12 +22,6 @@ const DISCONNECTED = Symbol('DISCONNECTED');
 const STATUS_UPDATED = Symbol('STATUS_UPDATED');
 const DOCUMENT_SAVED = Symbol('DOCUMENT_SAVED');
 const ASSET_UPDATED = Symbol('ASSET_UPDATED');
-
-enum UpdateReason {
-  AssetFileProcessed,
-  VersionMismatchError,
-  ContentEntityChanged,
-}
 
 /**
  * Used to edit an entry or asset through the CMA.
@@ -110,15 +104,8 @@ export function create(
   cleanupTasks.push(resourceState.inProgressBus.end);
 
   // Setup pubsub subscriptions.
-  const subscriptions = [
-    [entityRepo.onContentEntityChanged, UpdateReason.ContentEntityChanged],
-    [entityRepo.onAssetFileProcessed, UpdateReason.AssetFileProcessed],
-  ] as [Function, UpdateReason][];
-
-  subscriptions.forEach(([subscribe, reason]) => {
-    const unsubscribe = subscribe(entity.sys, () => handleIncomingChange(reason));
-    cleanupTasks.push(unsubscribe);
-  });
+  cleanupTasks.push(entityRepo.onContentEntityChanged(entity.sys, () => handleIncomingChange()));
+  cleanupTasks.push(entityRepo.onAssetFileProcessed(entity.sys, () => handleIncomingChange()));
 
   // Entities from the server might include removed locales or deleted fields which the UI can't handle.
   // So document getters work with locally normalized entity, that is created initially and on every update in this handler.
@@ -399,7 +386,7 @@ export function create(
     } catch (e) {
       if (e.code === 'VersionMismatch') {
         // Updating entry data and sys is handled in `updateEntity`
-        const updated = await updateEntity(UpdateReason.VersionMismatchError);
+        const updated = await updateEntity();
         if (updated) {
           isSavingBus.set(false);
           await saveEntity();
@@ -441,15 +428,15 @@ export function create(
    * anyway would result in VersionMismatch if the client received an event
    * after the save process has started.
    */
-  async function handleIncomingChange(updateReason: UpdateReason) {
+  async function handleIncomingChange() {
     // Wait for current ongoing update, then do the next one.
     if (K.getValue(isUpdating$)) {
       await afterUpdate$.changes().take(1).toPromise();
-      return handleIncomingChange(updateReason);
+      return handleIncomingChange();
     }
 
     isUpdatingBus.set(true);
-    await updateEntity(updateReason);
+    await updateEntity();
     isUpdatingBus.set(false);
   }
 
@@ -459,7 +446,7 @@ export function create(
    * as part of the pub-sub "asset processed" event handler.
    * Either resolves or reports version conflicts and tracks them.
    */
-  async function updateEntity(updateReason: UpdateReason): Promise<boolean> {
+  async function updateEntity(): Promise<boolean> {
     let remoteEntity: Entity;
     try {
       remoteEntity = await entityRepo.get(entity.sys.type, entity.sys.id);
@@ -482,7 +469,7 @@ export function create(
       lastSavedEntity.fields,
       remoteEntity.fields
     );
-    const hasConflictingFieldChanges =
+    const hasUnresolvableFieldsConflict =
       intersectionBy(localChangedFieldPaths, remoteChangedFieldPaths, (path) => path.join(':'))
         .length > 0;
 
@@ -495,19 +482,20 @@ export function create(
       remoteEntity.metadata
     );
 
-    const hasConflictingMetadataChanges =
+    const hasUnresolvableMetadataConflict =
       localChangedMetadataPaths.length && remoteChangedMetadataPaths.length;
 
-    if (hasConflictingFieldChanges || hasConflictingMetadataChanges) {
+    if (hasUnresolvableFieldsConflict || hasUnresolvableMetadataConflict) {
       trackVersionMismatch(entity, remoteEntity, ConflictType.NotAutoResolvable);
       errorBus.set(DocError.VersionMismatch());
       return false;
     }
 
-    if (
-      updateReason === UpdateReason.VersionMismatchError ||
-      (localChangedFieldPaths.length && some(remoteChangedFieldPaths, ([path]) => path !== 'file'))
-    ) {
+    const hasLocalChange = localChangedFieldPaths.length || localChangedMetadataPaths.length;
+    const hasRemoteChange = remoteChangedFieldPaths.length || remoteChangedMetadataPaths.length;
+    const hasResolvableConflictingChanges = hasLocalChange && hasRemoteChange;
+
+    if (hasResolvableConflictingChanges) {
       trackVersionMismatch(entity, remoteEntity, ConflictType.AutoResolvable);
     }
 
