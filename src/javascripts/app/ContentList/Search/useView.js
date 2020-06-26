@@ -1,6 +1,6 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import createViewPersistor from 'data/ListViewPersistor';
-import { assign, cloneDeep, set, isEmpty, isEqual } from 'lodash';
+import { assign, cloneDeep, set } from 'lodash';
 
 const createDummyViewPersistor = () => ({
   read: (initialState = {}) => initialState,
@@ -18,10 +18,6 @@ const useView = ({ entityType, initialState, isPersisted }) => {
 
   const initial = viewPersistor.read(initialState);
   const [state, setState] = useState(initial);
-
-  useEffect(() => {
-    !isEmpty(initial) && !isEqual(initial, state) && setState(initial);
-  }, [initial, state]);
 
   const setView = (key, value, callback) => {
     viewPersistor.saveKey(key, value);
