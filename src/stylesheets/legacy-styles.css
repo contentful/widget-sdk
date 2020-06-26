@@ -918,7 +918,7 @@ pre,
     border: 0;
     background: none;
     cursor: pointer;
-    color: var(--color-blue-light);
+    color: var(--color-blue-mid);
   }
   .btn-link,
   .cfnext-btn-link {
