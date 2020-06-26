@@ -20,6 +20,7 @@ import {
   publishRelease,
   validateReleaseAction,
 } from '../releasesService';
+import { newForLocale } from 'app/entity_editor/entityHelpers';
 import ReleasesEmptyStateMessage from '../ReleasesPage/ReleasesEmptyStateMessage';
 import {
   getEntities,
@@ -131,7 +132,11 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
     replaceReleaseById(releaseId, release.title, releaseWithoutEntity)
       .then(() => {
         setEntityRefreshKey(entity.sys.id);
-        Notification.success('Entity was sucessfully deleted');
+        newForLocale(defaultLocale)
+          .entityTitle(entity)
+          .then((entityTitle) => {
+            Notification.success(`${entityTitle || 'Untitled'} was removed from ${release.title}`);
+          });
       })
       .catch(() => {
         Notification.error(`Failed deleting entity`);

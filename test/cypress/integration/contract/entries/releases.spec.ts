@@ -72,6 +72,7 @@ describe('Releases', () => {
           .click();
 
         cy.findByTestId('release-card-delete-cta').click();
+        cy.findByTestId('confirm').click();
 
         cy.wait(deleteReleaseInteraction);
         cy.wait(getReleasesInteraction);
@@ -170,7 +171,7 @@ describe('Releases', () => {
 
         cy.findAllByTestId('cf-ui-notification').should(
           'contain',
-          'Entity was sucessfully deleted'
+          'Untitled was removed from Twentieth Release'
         );
       });
     });

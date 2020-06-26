@@ -20,6 +20,7 @@ import * as EntityResolver from 'data/CMA/EntityResolver';
 import { formatPastDate } from 'features/apps';
 import { ActionPerformerName } from 'core/components/ActionPerformerName';
 import { deleteRelease } from '../releasesService';
+import DeleteReleaseConfirmationDialog from './DeleteReleaseDialog';
 
 const getHexOutOfString = (str) => {
   // convert release id to hex color codes
@@ -152,6 +153,7 @@ export default class Release extends Component {
   };
 
   state = {
+    isConfirmationDialogOpen: false,
     isDropdownOpen: false,
   };
 
@@ -171,6 +173,14 @@ export default class Release extends Component {
       });
   }
 
+  handleOpenConfirmationDialog = () => {
+    this.setState({ isConfirmationDialogOpen: true, isDropdownOpen: false });
+  };
+
+  handleCloseConfirmationDialog = () => {
+    this.setState({ isConfirmationDialogOpen: false });
+  };
+
   handleClick(event) {
     event.stopPropagation();
     this.setState({ isDropdownOpen: !this.state.isDropdownOpen });
@@ -178,6 +188,7 @@ export default class Release extends Component {
 
   render() {
     const { release } = this.props;
+    const { isConfirmationDialogOpen, isDropdownOpen } = this.state;
     const assets = this.getItemsCountByLinkType(release, 'Asset') || null;
     const entries = this.getItemsCountByLinkType(release, 'Entry') || null;
 
@@ -192,7 +203,7 @@ export default class Release extends Component {
               </Subheading>
               <Dropdown
                 className={styles.dropdown}
-                isOpen={this.state.isDropdownOpen}
+                isOpen={isDropdownOpen}
                 position="bottom-right"
                 onClose={() => this.setState({ isDropdownOpen: false })}
                 toggleElement={
@@ -205,7 +216,9 @@ export default class Release extends Component {
                   />
                 }>
                 <DropdownList onClick={(event) => event.stopPropagation()}>
-                  <DropdownListItem onClick={this.deleteRelease} testId="release-card-delete-cta">
+                  <DropdownListItem
+                    onClick={this.handleOpenConfirmationDialog}
+                    testId="release-card-delete-cta">
                     Delete
                   </DropdownListItem>
                   <DropdownListItem isDisabled>
@@ -223,6 +236,13 @@ export default class Release extends Component {
               {!entries && !assets && 'Empty'}
             </Paragraph>
           </div>
+        </div>
+        <div onClick={(event) => event.stopPropagation()}>
+          <DeleteReleaseConfirmationDialog
+            onConfirm={this.deleteRelease}
+            onCancel={this.handleCloseConfirmationDialog}
+            isShown={isConfirmationDialogOpen}
+          />
         </div>
       </Card>
     );
