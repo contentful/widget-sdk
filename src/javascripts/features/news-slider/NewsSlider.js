@@ -2,7 +2,7 @@ import React, { useReducer, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
-import { Button, Icon } from '@contentful/forma-36-react-components';
+import { TextLink } from '@contentful/forma-36-react-components';
 import { ProgressBar } from './ProgressBar';
 import FullScreen from 'components/shared/stack-onboarding/components/FullScreen';
 
@@ -103,13 +103,9 @@ export const NewsSlider = ({ children, onClose }) => {
           <ProgressBar current={state.currentSlide} total={state.numSlides} goTo={goTo} />
         }
         close={
-          <Button
-            buttonType="naked"
-            onClick={onClose}
-            size="large"
-            data-test-id="close-news-slider">
-            <Icon icon="Close" color="muted" size="medium" />
-          </Button>
+          <TextLink linkType="muted" onClick={onClose} data-test-id="close-news-slider">
+            Close
+          </TextLink>
         }>
         <div className={styles.slidesContainer} ref={listRef}>
           {children.map((slide, index) => (
