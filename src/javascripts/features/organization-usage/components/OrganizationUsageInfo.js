@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Typography, Paragraph, TextLink, Heading } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
+import { track } from 'analytics/Analytics';
 import { css } from 'emotion';
 
 import { shorten } from 'utils/NumberUtils';
@@ -24,6 +25,9 @@ const styles = {
 
 export const OrganizationUsageInfo = ({ totalUsage, includedLimit }) => {
   const limitedUsage = !!includedLimit;
+  const handleClick = () => {
+    track('usage:fair_use_policy_clicked');
+  };
   return (
     <Typography>
       <Heading element="h2" className={styles.heading}>
@@ -52,6 +56,8 @@ export const OrganizationUsageInfo = ({ totalUsage, includedLimit }) => {
         <TextLink
           href="https://www.contentful.com/r/knowledgebase/fair-use/"
           target="_blank"
+          data-test-id="fair_use_policy_link"
+          onClick={handleClick}
           rel="noopener noreferrer">
           Fair Use Policy
         </TextLink>

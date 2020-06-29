@@ -1,5 +1,6 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
+import { track } from 'analytics/Analytics';
 import { OrganizationUsageInfo } from './OrganizationUsageInfo';
 
 describe('OrganisationUsageInfoNew', () => {
@@ -34,5 +35,12 @@ describe('OrganisationUsageInfoNew', () => {
     const { getByTestId } = renderComp(overageProps);
     const overage = getByTestId('org-usage-overage');
     expect(overage).toHaveTextContent('+500,000 overage');
+  });
+
+  it('tracks fair use policy click', () => {
+    const { getByTestId } = renderComp(defaultProps);
+    fireEvent.click(getByTestId('fair_use_policy_link'));
+    expect(track).toHaveBeenCalledTimes(1);
+    expect(track).toHaveBeenCalledWith('usage:fair_use_policy_clicked');
   });
 });
