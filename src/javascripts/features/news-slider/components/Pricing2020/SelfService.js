@@ -26,7 +26,7 @@ export function SelfService({ isShown, onClose, freeSpace, microSpaces }) {
 }
 SelfService.propTypes = {
   isShown: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired.prototype,
+  onClose: PropTypes.func.isRequired,
   freeSpace: PropTypes.string,
   microSpaces: PropTypes.arrayOf(PropTypes.string),
 };

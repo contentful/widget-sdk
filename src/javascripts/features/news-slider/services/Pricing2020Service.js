@@ -32,21 +32,22 @@ export async function openPricing2020Warning() {
   const spacePlans = plans.filter((plan) => plan.planType === 'space');
   // TODO: filter by search plan id instead
   const microPlans = spacePlans.filter((plan) => plan.name === MICRO_SPACE_NAME);
-  const microSpaces = microPlans
+  const microSpaceNames = microPlans
     .map((plan) => spaces.find((space) => space.sys.id === plan.gatekeeperKey)?.name)
     .filter(Boolean);
   const freeSpace = spaces.find(
     (space) => !spacePlans.some((plan) => space.sys.id === plan.gatekeeperKey)
-  )?.name;
+  );
   const isCommunity = basePlan.name === COMMUNITY_BASE_PLAN_NAME;
   const isTeam = basePlan.name === TEAM_BASE_PLAN_NAME;
 
   // if org has no free spaces, there's nothing to see
   if (!freeSpace) return;
 
+  const freeSpaceName = freeSpace.name;
   const freeSpaceCreationDate = new Date(freeSpace.sys.createdAt);
 
-  // return early if free the space was created after the migration
+  // return early if the free space was created after the migration
   if (freeSpaceCreationDate > RELEASE_DATE) return;
 
   if (isCommunity || isTeam) {
@@ -63,8 +64,8 @@ export async function openPricing2020Warning() {
       <SelfService
         isShown={isShown}
         onClose={onClose}
-        freeSpace={freeSpace}
-        microSpaces={microSpaces}
+        freeSpace={freeSpaceName}
+        microSpaces={microSpaceNames}
       />
     ));
   }

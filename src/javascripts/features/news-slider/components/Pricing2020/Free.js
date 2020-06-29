@@ -17,5 +17,5 @@ export function Free({ isShown, onClose }) {
 }
 Free.propTypes = {
   isShown: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired.prototype,
+  onClose: PropTypes.func.isRequired,
 };
