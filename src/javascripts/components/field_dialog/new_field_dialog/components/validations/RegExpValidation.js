@@ -37,8 +37,7 @@ const RegExpValidation = ({ fieldName, validation, onChange, onBlur }) => {
   };
 
   const updatePattern = (updatedPattern) => {
-    const updatedView =
-      views.find((view) => updatedPattern === view.pattern) || validation.views[0];
+    const updatedView = views.find((view) => updatedPattern === view.pattern) || views[0];
     onChangeRegEx({ currentView: updatedView.name, pattern: updatedPattern });
   };
 
