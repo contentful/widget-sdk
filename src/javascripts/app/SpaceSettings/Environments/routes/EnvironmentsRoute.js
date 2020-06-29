@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import pluralize from 'pluralize';
 import moment from 'moment';
@@ -19,6 +19,7 @@ import {
   Tag,
   DisplayText,
   Heading,
+  Typography,
   Paragraph,
   Button,
   SkeletonContainer,
@@ -70,7 +71,7 @@ export default function EnvironmentsRoute(props) {
   });
 
   return (
-    <Fragment>
+    <>
       <DocumentTitle title="Environments" />
       <Workbench>
         <Workbench.Header
@@ -100,7 +101,7 @@ export default function EnvironmentsRoute(props) {
           <Sidebar {...state} {...actions} />
         </Workbench.Sidebar>
       </Workbench>
-    </Fragment>
+    </>
   );
 }
 
@@ -352,17 +353,14 @@ DeleteButton.propTypes = {
 const sidebarStyles = {
   subHeaderFirst: css({
     fontSize: tokens.fontSizeM,
-    paddingBottom: tokens.spacingXs,
+    marginBottom: tokens.spacingXs,
     color: tokens.colorTextDark,
   }),
   subHeader: css({
     fontSize: tokens.fontSizeM,
-    paddingTop: tokens.spacingL,
-    paddingBottom: tokens.spacingXs,
+    marginTop: tokens.spacingM,
+    marginBottom: tokens.spacingXs,
     color: tokens.colorTextDark,
-  }),
-  paragraph: css({
-    marginBottom: tokens.spacingM,
   }),
 };
 
@@ -396,62 +394,61 @@ function Sidebar({
       <Heading element="h2" className={`${css({ marginTop: 0 })} entity-sidebar__heading`}>
         Usage
       </Heading>
-      <div className="entity-sidebar__text-profile">
+
+      <Typography>
         <Paragraph testId="environmentsUsage">
           You are using {usage}{' '}
           {limit ? `out of ${limit} environments available ` : pluralize('environment', usage)} in
           this space.
           {!isLegacyOrganization && <UsageTooltip resource={resource} />}
         </Paragraph>
-      </div>
-      <div className="entity-sidebar__widget">
-        {canCreateEnv && (
-          <Button isFullWidth testId="openCreateDialog" onClick={OpenCreateDialog}>
-            Add environment
-          </Button>
-        )}
-        {/** We need to wait for the spacePlan or the button will jump from 'Upgrade space' to 'Talk to us' */}
-        {!canCreateEnv && !isLegacyOrganization && canUpgradeSpace && !!spacePlan && (
-          <UpgradeButton
-            handleOpenUpgradeSpaceDialog={OpenUpgradeSpaceDialog}
-            isLargePlan={spacePlan?.name === 'Large'}
-          />
-        )}
-      </div>
+      </Typography>
+
+      {canCreateEnv && (
+        <Button isFullWidth testId="openCreateDialog" onClick={OpenCreateDialog}>
+          Add environment
+        </Button>
+      )}
+
+      {/** We need to wait for the spacePlan or the button will jump from 'Upgrade space' to 'Talk to us' */}
+      {!canCreateEnv && !isLegacyOrganization && canUpgradeSpace && !!spacePlan && (
+        <UpgradeButton
+          handleOpenUpgradeSpaceDialog={OpenUpgradeSpaceDialog}
+          isLargePlan={spacePlan?.name === 'Large'}
+        />
+      )}
+
       <Heading element="h2" className="entity-sidebar__heading">
         Documentation
       </Heading>
-      <Paragraph className={sidebarStyles.subHeaderFirst}>Environment</Paragraph>
-      <div className="entity-sidebar__text-profile">
+
+      <Typography>
+        <Paragraph className={sidebarStyles.subHeaderFirst}>Environment</Paragraph>
         <Paragraph>
           Environments allow you to develop and test changes to data in isolation.
-        </Paragraph>
-        <Paragraph>
+          <br />
           See the{' '}
           <ExternalTextLink href={docLinks.domainModelConcepts}>
             Contentful domain model
           </ExternalTextLink>{' '}
           for details.
         </Paragraph>
-      </div>
-      {aliasesEnabled && shouldShowAliasDefinition && (
-        <Fragment>
-          <Paragraph className={sidebarStyles.subHeader}>Environment Aliases</Paragraph>
-          <div className="entity-sidebar__text-profile">
+        {aliasesEnabled && shouldShowAliasDefinition && (
+          <>
+            <Paragraph className={sidebarStyles.subHeader}>Environment Aliases</Paragraph>
             <Paragraph>
               An environment alias allows you to access and modify the data of an environment
               through a different static identifier.
-            </Paragraph>
-            <Paragraph>
+              <br />
               Read our{' '}
               <ExternalTextLink href={docLinks.envAliasesConcepts}>
                 environment alias documentation
               </ExternalTextLink>{' '}
               for more information.
             </Paragraph>
-          </div>
-        </Fragment>
-      )}
+          </>
+        )}
+      </Typography>
     </>
   );
 }
