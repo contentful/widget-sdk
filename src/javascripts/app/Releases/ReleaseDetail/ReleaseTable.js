@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import cn from 'classnames';
@@ -11,10 +11,6 @@ import {
   TableRow,
   Checkbox,
   SkeletonRow,
-  Dropdown,
-  DropdownList,
-  DropdownListItem,
-  Button,
 } from '@contentful/forma-36-react-components';
 import { isEdge } from 'utils/browser';
 import useSelectedEntities from 'components/tabs/useSelectedEntities';
@@ -22,10 +18,11 @@ import SecretiveLink from 'components/shared/SecretiveLink';
 import StateLink from 'app/common/StateLink';
 import ReleaseDisplayField from './ReleaseDisplayField';
 import { findValidationErrorForEntity } from './utils';
+import DropdownCell from './shared/DropdownContainer';
 
 const styles = {
   checkboxCell: css({
-    width: tokens.spacingXl,
+    width: tokens.spacing4Xl,
     zIndex: tokens.zIndexDefault,
     verticalAlign: 'middle',
     outline: 'none',
@@ -35,6 +32,8 @@ const styles = {
   }),
   table: css({
     marginBottom: tokens.spacing4Xl,
+    paddingBottom: tokens.spacing4Xl,
+    tableLayout: 'fixed',
   }),
   tableHead: css({
     zIndex: tokens.zIndexWorkbenchHeader,
@@ -59,10 +58,11 @@ const styles = {
   }),
   headingTableCell: css({
     paddingLeft: 0,
+    padding: tokens.spacingM,
   }),
   tableCell: css({
     verticalAlign: 'middle',
-    padding: 0,
+    padding: tokens.spacingM,
     outline: 'none',
   }),
   actionTableHeader: css({
@@ -88,44 +88,6 @@ CheckboxCell.propTypes = {
   name: PropTypes.string.isRequired,
   checked: PropTypes.bool.isRequired,
   onClick: PropTypes.func.isRequired,
-};
-
-const DropdownCell = ({ id, handleEntityDelete, entity }) => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-  return (
-    <Dropdown
-      className={styles.dropdown}
-      isOpen={isDropdownOpen}
-      position="bottom-right"
-      onClose={() => setIsDropdownOpen(false)}
-      toggleElement={
-        <Button
-          buttonType="naked"
-          data-test-id={`${id}_remove-release-ddl`}
-          icon="MoreHorizontal"
-          className={styles.dropdownButton}
-          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-        />
-      }>
-      <DropdownList>
-        <DropdownListItem
-          testId="delete-entity"
-          onClick={() => {
-            handleEntityDelete(entity);
-            setIsDropdownOpen(false);
-          }}>
-          Remove from release
-        </DropdownListItem>
-      </DropdownList>
-    </Dropdown>
-  );
-};
-
-DropdownCell.propTypes = {
-  id: PropTypes.string.isRequired,
-  entity: PropTypes.object.isRequired,
-  handleEntityDelete: PropTypes.func.isRequired,
 };
 
 const ReleaseTable = ({

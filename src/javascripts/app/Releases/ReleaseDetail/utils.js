@@ -2,6 +2,7 @@ import { getModule } from 'core/NgRegistry';
 import { go } from 'states/Navigator';
 import * as EntityResolver from 'data/CMA/EntityResolver';
 import { getReleaseAction } from '../releasesService';
+import { newForLocale } from 'app/entity_editor/entityHelpers';
 
 const MAX_POLL_COUNT = 60;
 const MAX_POLL_INTERVAL = 1000;
@@ -16,6 +17,20 @@ const releaseDetailNavigation = (release) => {
   go({
     path,
     params: { releaseId: release.sys.id },
+  });
+};
+
+const entityNavigation = (entity, pathType, entityType) => {
+  const spaceContext = getModule('spaceContext');
+  const path = ['spaces', 'detail', pathType, 'detail'];
+
+  if (!spaceContext.isMasterEnvironment()) {
+    path.splice(2, 0, 'environment');
+  }
+
+  go({
+    path,
+    params: { [`${entityType}Id`]: entity.sys.id },
   });
 };
 
@@ -114,6 +129,7 @@ const pluralize = (amount, word) => {
     entry: 'entries',
     asset: 'assets',
     entity: 'entities',
+    item: 'items',
   };
 
   if (amount > 1) {
@@ -139,6 +155,23 @@ const switchToErroredTab = (validationErrors, currentTab) => {
   return erroredTab.length === 1 ? pluralize(2, erroredTab[0].toLowerCase()) : currentTab;
 };
 
+const CARD_VIEW = 'card';
+const LIST_VIEW = 'list';
+const VIEW_LABELS = {
+  [CARD_VIEW]: 'Card',
+  [LIST_VIEW]: 'List',
+};
+
+async function getEntityFile(entity, defaultLocale, func) {
+  const fetchedEntityFile = await newForLocale(defaultLocale).assetFile(entity);
+  func(fetchedEntityFile);
+}
+
+async function getEntityTitle(entity, defaultLocale, func) {
+  const fetchedEntityTitle = await newForLocale(defaultLocale).entityTitle(entity);
+  return func(fetchedEntityTitle);
+}
+
 export {
   releaseDetailNavigation,
   getEntities,
@@ -148,4 +181,8 @@ export {
   pluralize,
   erroredEntityType,
   switchToErroredTab,
+  VIEW_LABELS,
+  getEntityFile,
+  getEntityTitle,
+  entityNavigation,
 };

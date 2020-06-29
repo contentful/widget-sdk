@@ -126,11 +126,11 @@ describe('Releases', () => {
         cy.wait(interactions, { timeout: 20000 });
       });
 
-      it('shows no entries message for empty release', () => {
+      it('shows no entities message for empty release', () => {
         cy.wait(getReleasesInteraction);
-        cy.findByTestId('releases-state-message-heading_entries')
+        cy.findByTestId('releases-state-message-heading_detail')
           .should('be.visible')
-          .should('contain', 'No entries in this release');
+          .should('contain', 'No entities in this release');
       });
     });
 
@@ -148,31 +148,69 @@ describe('Releases', () => {
         cy.wait(slowInteractions, { timeout: 20000 });
       });
 
-      it('shows list of entries on detailed release page', () => {
-        cy.findAllByTestId('entry-row')
-          .should('be.visible')
-          .should('have.length', severalEntriesResponse.items.length);
+      context('card view', () => {
+        it('shows entities in card view', () => {
+          cy.findAllByTestId('release-detail-card-view').should('be.visible');
+        });
+
+        it('shows entries', () => {
+          cy.findAllByTestId('release-entry-card')
+            .should('be.visible')
+            .should('have.length', severalEntriesResponse.items.length);
+        });
+
+        it('shows assets', () => {
+          cy.findAllByTestId('release-asset-card')
+            .should('be.visible')
+            .should('have.length', severalAssetsBody.items.length);
+        });
+
+        it('removes entity successfully', () => {
+          const deleteEntityInteraction = deleteEntityFromRelease.willSucceed();
+
+          cy.findByTestId('entry_testEntryId_2_remove-release-ddl').click();
+          cy.findByTestId('delete-entity').click();
+
+          cy.wait(deleteEntityInteraction);
+
+          cy.findAllByTestId('cf-ui-notification').should(
+            'contain',
+            'Untitled was removed from Twentieth Release'
+          );
+        });
       });
 
-      it('shows list of assets on detailed release page', () => {
-        cy.findAllByTestId('test-id-assets').click();
-        cy.findAllByTestId('asset-row')
-          .should('be.visible')
-          .should('have.length', severalAssetsBody.items.length);
-      });
+      context('list view', () => {
+        beforeEach(() => {
+          cy.get('select').select('list');
+        });
 
-      it('removes entity successfully', () => {
-        const deleteEntityInteraction = deleteEntityFromRelease.willSucceed();
+        it('shows list of entries on detailed release page', () => {
+          cy.findAllByTestId('entry-row')
+            .should('be.visible')
+            .should('have.length', severalEntriesResponse.items.length);
+        });
 
-        cy.findByTestId('entry_2_remove-release-ddl').click();
-        cy.findByTestId('delete-entity').click();
+        it('shows list of assets on detailed release page', () => {
+          cy.findAllByTestId('test-id-assets').click();
+          cy.findAllByTestId('asset-row')
+            .should('be.visible')
+            .should('have.length', severalAssetsBody.items.length);
+        });
 
-        cy.wait(deleteEntityInteraction);
+        it('removes entity successfully', () => {
+          const deleteEntityInteraction = deleteEntityFromRelease.willSucceed();
 
-        cy.findAllByTestId('cf-ui-notification').should(
-          'contain',
-          'Untitled was removed from Twentieth Release'
-        );
+          cy.findByTestId('entry_2_remove-release-ddl').click();
+          cy.findByTestId('delete-entity').click();
+
+          cy.wait(deleteEntityInteraction);
+
+          cy.findAllByTestId('cf-ui-notification').should(
+            'contain',
+            'Untitled was removed from Twentieth Release'
+          );
+        });
       });
     });
   });

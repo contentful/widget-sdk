@@ -1,19 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import {
-  Tabs,
-  Tab,
-  TabPanel,
   Workbench,
   Icon,
   Note,
   Button,
   Notification,
-  Tooltip,
+  Subheading,
 } from '@contentful/forma-36-react-components';
-import ReleaseTable from './ReleaseTable';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
+import FilterPill from 'app/ContentList/Search/FilterPill';
+import ValueInput from 'app/ContentList/Search/FilterValueInputs';
+import { ReleasesProvider, ReleasesContext } from '../ReleasesWidget/ReleasesContext';
+import ReleasesEmptyStateMessage from '../ReleasesPage/ReleasesEmptyStateMessage';
 import {
   getReleaseById,
   replaceReleaseById,
@@ -21,16 +22,23 @@ import {
   validateReleaseAction,
 } from '../releasesService';
 import { newForLocale } from 'app/entity_editor/entityHelpers';
-import ReleasesEmptyStateMessage from '../ReleasesPage/ReleasesEmptyStateMessage';
 import {
   getEntities,
-  displayedFields,
   waitForReleaseAction,
-  pluralize,
-  erroredEntityType,
   switchToErroredTab,
+  VIEW_LABELS,
+  pluralize,
 } from './utils';
+import {
+  SET_RELEASE_ENTITIES,
+  SET_RELEASE_ENTITIES_LOADING,
+  SET_RELEASE_VALIDATIONS,
+  SET_RELEASE_LIST_SELECTED_TAB,
+  SET_RELEASE_PROCESSING_ACTION,
+} from '../state/actions';
 import LoadingOverlay from 'app/common/LoadingOverlay';
+import ListView from './ListView';
+import CardView from './CardView';
 
 const styles = {
   mainContent: css({
@@ -39,38 +47,17 @@ const styles = {
       height: '100%',
       minHeight: '100%',
       maxWidth: '100%',
-      overflowY: 'hidden',
     },
   }),
-  tabs: css({
-    display: 'flex',
-    paddingLeft: tokens.spacing3Xl,
-  }),
-  tab: css({
-    alignItems: 'center',
-    display: 'flex',
-    textAlign: 'center',
-  }),
-  tabPanel: css({
-    display: 'none',
-    height: '100%',
-    paddingTop: tokens.spacingM,
-    overflowY: 'auto',
-  }),
-  isVisible: css({
-    display: 'block',
+  mainContentListView: css({
+    '& > div': {
+      overflowY: 'hidden',
+    },
   }),
   sidebar: css({
     boxShadow: '1px 0 4px 0 rgba(0, 0, 0, 0.9)',
     width: '360px',
     padding: tokens.spacingM,
-  }),
-  tabTitle: css({
-    marginLeft: tokens.spacing2Xs,
-  }),
-  tag: css({
-    display: 'flex',
-    justifyContent: 'space-between',
   }),
   buttons: css({
     marginTop: tokens.spacingM,
@@ -83,21 +70,61 @@ const styles = {
     margin: 'auto',
     marginTop: tokens.spacing4Xl,
   }),
-  validationTooltip: css({
+  layoutPillsWrapper: css({
     display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    cursor: 'pointer',
+    width: '70%',
+    margin: 'auto',
+    marginTop: tokens.spacingXl,
+    marginBottom: tokens.spacingM,
+  }),
+  layoutPills: css({
+    pointerEvents: 'none',
+    ':focus, :hover': {
+      boxShadow: 'none',
+    },
+    '& select': css({
+      width: 'auto !important',
+      textAlign: 'center',
+      pointerEvents: 'all',
+    }),
+  }),
+  layoutList: css({
+    width: '91%',
+  }),
+  activePill: css({
+    backgroundColor: tokens.colorElementDark,
+  }),
+  header: css({
+    display: 'flex',
+    alignItems: 'baseline',
+    '& h2': css({
+      marginRight: tokens.spacingXs,
+    }),
+  }),
+  hideDisplay: css({
+    display: 'none',
   }),
 };
 
 const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
-  const [selectedTab, setSelectedTab] = useState('entries');
-  const [entries, setEntries] = useState([]);
-  const [assets, setAssets] = useState([]);
+  const localStorage = getBrowserStorage('local');
+
   const [release, setRelease] = useState(null);
   const [hasError, setHasError] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const [entityRefreshKey, setEntityRefreshKey] = useState(null);
-  const [processingAction, setProcessingAction] = useState(null);
-  const [validationErrors, setValidationErrors] = useState([]);
+  const [entitiesLayout, setEntitiesLayout] = useState(localStorage.get('defaultView') || 'view');
+  const {
+    state: {
+      entities: { entries, assets },
+      selectedTab,
+      processingAction,
+      loading: isLoading,
+    },
+    dispatch,
+  } = useContext(ReleasesContext);
 
   useEffect(() => {
     async function fetchRelease() {
@@ -112,17 +139,28 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
         setRelease(fetchedRelease);
 
         const [fetchedEntries, fetchedAssets] = await getEntities(fetchedRelease);
-        setEntries(fetchedEntries);
-        setAssets(fetchedAssets);
-        setIsLoading(false);
+
+        dispatch({
+          type: SET_RELEASE_ENTITIES,
+          value: {
+            entries: fetchedEntries,
+            assets: fetchedAssets,
+          },
+        });
+        dispatch({ type: SET_RELEASE_ENTITIES_LOADING, value: false });
       } catch {
         setHasError(true);
-        setIsLoading(false);
+        dispatch({ type: SET_RELEASE_ENTITIES_LOADING, value: false });
       }
     }
 
     fetchEntriesAndAssets();
-  }, [releaseId, entityRefreshKey]);
+  }, [releaseId, entityRefreshKey, dispatch]);
+
+  useEffect(() => {
+    localStorage.set('defaultView', entitiesLayout);
+    setEntitiesLayout(localStorage.get('defaultView'));
+  }, [localStorage, entitiesLayout]);
 
   const handleEntityDelete = (entity) => {
     const releaseWithoutEntity = release.entities.items.filter(
@@ -144,17 +182,20 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
   };
 
   const displayValidation = (errors) => {
-    setProcessingAction(null);
-    setValidationErrors(errors);
-    setSelectedTab(switchToErroredTab(errors, selectedTab));
+    dispatch({ type: SET_RELEASE_VALIDATIONS, value: errors });
+    dispatch({
+      type: SET_RELEASE_LIST_SELECTED_TAB,
+      value: switchToErroredTab(errors, selectedTab),
+    });
     Notification.error('Some entities did not pass validation');
   };
 
   const handleValidation = () => {
-    setProcessingAction('Validating');
+    dispatch({ type: SET_RELEASE_VALIDATIONS, value: [] });
+    dispatch({ type: SET_RELEASE_PROCESSING_ACTION, value: 'Validating' });
     validateReleaseAction(releaseId)
       .then((validatedResponse) => {
-        setProcessingAction(null);
+        dispatch({ type: SET_RELEASE_PROCESSING_ACTION, value: null });
         const errored = validatedResponse.errored;
         if (errored.length) {
           return displayValidation(errored);
@@ -162,23 +203,24 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
         Notification.success('All entities passed validation');
       })
       .catch(() => {
-        setProcessingAction(null);
+        dispatch({ type: SET_RELEASE_PROCESSING_ACTION, value: null });
         Notification.error('Entities validation failed');
       });
   };
 
   const handlePublication = async () => {
-    setProcessingAction('Publishing');
+    dispatch({ type: SET_RELEASE_PROCESSING_ACTION, value: 'Publishing' });
+    dispatch({ type: SET_RELEASE_VALIDATIONS, value: [] });
     try {
       const publishResponse = await publishRelease(releaseId, release.sys.version);
       const releaseAction = await waitForReleaseAction(releaseId, publishResponse.sys.id);
 
-      setProcessingAction(null);
+      dispatch({ type: SET_RELEASE_PROCESSING_ACTION, value: null });
       Notification.success('Release was published successfully');
       setEntityRefreshKey(publishResponse.sys.id);
       return releaseAction;
     } catch (error) {
-      setProcessingAction(null);
+      dispatch({ type: SET_RELEASE_PROCESSING_ACTION, value: null });
       if (error.statusCode && error.statusCode === 422) {
         const errored = error.data.details.errors;
         if (errored.length) {
@@ -189,69 +231,7 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
     }
   };
 
-  const renderTabIcon = (entityType) => {
-    const erroredEntityTypeLength = erroredEntityType(entityType, validationErrors).length;
-    if (erroredEntityTypeLength) {
-      const toolTipText = `${erroredEntityTypeLength} ${pluralize(
-        erroredEntityTypeLength,
-        `${entityType.toLowerCase()} has`
-      )} validation errors`;
-      return (
-        <Tooltip
-          content={toolTipText}
-          targetWrapperClassName={styles.validationTooltip}
-          place="top">
-          <Icon icon="ErrorCircle" color="negative" />
-        </Tooltip>
-      );
-    }
-    return <Icon icon={entityType} size="small" color="primary" />;
-  };
-
-  const tabs = {
-    entries: {
-      title: (
-        <div className={styles.tab}>
-          {renderTabIcon('Entry')}
-          <div className={styles.tabTitle}>Entries {entries.length ? entries.length : 0}</div>
-        </div>
-      ),
-      render: () =>
-        !isLoading && !entries.length ? (
-          <ReleasesEmptyStateMessage testId="entries" title="No entries in this release" />
-        ) : (
-          <ReleaseTable
-            displayedFields={displayedFields.entries}
-            entities={entries}
-            isLoading={isLoading}
-            defaultLocale={defaultLocale}
-            handleEntityDelete={handleEntityDelete}
-            validationErrors={validationErrors}
-          />
-        ),
-    },
-    assets: {
-      title: (
-        <div className={styles.tab}>
-          {renderTabIcon('Asset')}
-          <div className={styles.tabTitle}>Assets {assets.length ? assets.length : 0}</div>
-        </div>
-      ),
-      render: () =>
-        !isLoading && !assets.length ? (
-          <ReleasesEmptyStateMessage testId="assets" title="No assets in this release" />
-        ) : (
-          <ReleaseTable
-            displayedFields={displayedFields.assets}
-            entities={assets}
-            isLoading={isLoading}
-            defaultLocale={defaultLocale}
-            handleEntityDelete={handleEntityDelete}
-            validationErrors={validationErrors}
-          />
-        ),
-    },
-  };
+  const activeLayout = (layout) => entitiesLayout === layout;
 
   return (
     <div>
@@ -268,30 +248,45 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
             title={release ? release.title : 'Untitled'}
             icon={<Icon icon="Release" size="large" color="positive" />}
           />
-          <Workbench.Content className={styles.mainContent}>
-            <Tabs className={styles.tabs} withDivider>
-              {Object.keys(tabs).map((key) => (
-                <Tab
-                  id={key}
-                  key={key}
-                  testId={`test-id-${key}`}
-                  selected={selectedTab === key}
-                  className={styles.tab}
-                  onSelect={() => setSelectedTab(key)}>
-                  {tabs[key].title}
-                </Tab>
-              ))}
-            </Tabs>
-            {Object.keys(tabs).map((key) => (
-              <TabPanel
-                id={key}
-                key={key}
-                className={cx(styles.tabPanel, {
-                  [styles.isVisible]: selectedTab === key,
-                })}>
-                {tabs[key].render()}
-              </TabPanel>
-            ))}
+          <Workbench.Content
+            className={cx(styles.mainContent, {
+              [styles.mainContentListView]: activeLayout('list'),
+            })}>
+            {!isLoading && !release.entities.items.length ? (
+              <ReleasesEmptyStateMessage testId="detail" title="No entities in this release" />
+            ) : (
+              <>
+                <div
+                  className={cx(styles.layoutPillsWrapper, {
+                    [styles.layoutList]: activeLayout('list'),
+                  })}>
+                  <div className={styles.header}>
+                    <Subheading element="h2">Content</Subheading>
+                    <span className={cx({ [styles.hideDisplay]: activeLayout('list') })}>
+                      {entries.length} {pluralize(entries.length, 'entry')} and {assets.length}{' '}
+                      {pluralize(assets.length, 'asset')}
+                    </span>
+                  </div>
+                  <FilterPill
+                    className={styles.layoutPills}
+                    filter={{
+                      label: 'View',
+                      valueInput: ValueInput.Select(
+                        Object.keys(VIEW_LABELS).map((key) => [key, VIEW_LABELS[key]])
+                      ),
+                    }}
+                    value={entitiesLayout}
+                    onChange={setEntitiesLayout}
+                  />
+                </div>
+
+                {activeLayout('list') ? (
+                  <ListView defaultLocale={defaultLocale} handleEntityDelete={handleEntityDelete} />
+                ) : (
+                  <CardView handleEntityDelete={handleEntityDelete} defaultLocale={defaultLocale} />
+                )}
+              </>
+            )}
           </Workbench.Content>
           <Workbench.Sidebar
             className={styles.sidebar}
@@ -327,4 +322,10 @@ ReleaseDetailPage.propTypes = {
   releaseId: PropTypes.string.isRequired,
 };
 
-export default ReleaseDetailPage;
+const ReleaseDetailPageContainer = (props) => (
+  <ReleasesProvider>
+    <ReleaseDetailPage {...props} />
+  </ReleasesProvider>
+);
+
+export default ReleaseDetailPageContainer;

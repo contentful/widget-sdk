@@ -7,8 +7,8 @@ import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceCont
 import RelativeDateTime from 'components/shared/RelativeDateTime';
 import { EntityStatusTag } from 'components/shared/EntityStatusTag';
 import Thumbnail from 'components/Thumbnail/Thumbnail';
-import { newForLocale } from 'app/entity_editor/entityHelpers';
 import tokens from '@contentful/forma-36-tokens';
+import { getEntityFile, getEntityTitle } from './utils';
 
 const styles = {
   textOverflow: css({
@@ -42,18 +42,8 @@ const ReleaseDisplayField = ({ entity, field, defaultLocale, validationError }) 
   const [fetchedEntityFile, setFetchedEntityFile] = useState({});
 
   useEffect(() => {
-    async function getEntityTitle(entity, defaultLocale) {
-      const fetchedEntityTitle = await newForLocale(defaultLocale).entityTitle(entity);
-      setFetchedEntityTitle(fetchedEntityTitle);
-    }
-
-    async function getEntityFile(entity, defaultLocale) {
-      const fetchedEntityFile = await newForLocale(defaultLocale).assetFile(entity);
-      setFetchedEntityFile(fetchedEntityFile);
-    }
-
-    getEntityTitle(entity, defaultLocale);
-    getEntityFile(entity, defaultLocale);
+    getEntityTitle(entity, defaultLocale, setFetchedEntityTitle);
+    getEntityFile(entity, defaultLocale, setFetchedEntityFile);
   }, [entity, defaultLocale]);
 
   switch (field) {
