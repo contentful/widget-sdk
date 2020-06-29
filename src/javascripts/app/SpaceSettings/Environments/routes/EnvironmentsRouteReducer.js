@@ -9,7 +9,9 @@ import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceServic
 import * as SpaceEnvironmentsRepo from 'data/CMA/SpaceEnvironmentsRepo';
 import { openCreateEnvDialog } from '../CreateEnvDialog';
 import { openDeleteEnvironmentDialog } from '../DeleteDialog';
-import { ENVIRONMENTS_FLAG } from 'featureFlags';
+import { ENVIRONMENTS_FLAG, PRICING_2020_RELEASED } from 'featureFlags';
+import { getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
+import { createOrganizationEndpoint } from 'data/EndpointFactory';
 
 /**
  * Actions
@@ -18,6 +20,7 @@ import { ENVIRONMENTS_FLAG } from 'featureFlags';
 const SET_PERMISSIONS = 'SET_PERMISSIONS';
 const SET_ENVIRONMENTS = 'SET_ENVIRONMENTS';
 const SET_IS_LOADING = 'SET_IS_LOADING';
+const SET_SPACE_PLAN = 'SET_SPACE_PAN';
 
 /**
  * Reducer
@@ -42,6 +45,9 @@ export const createEnvReducer = createImmerReducer({
   [SET_IS_LOADING]: (state, { value }) => {
     state.isLoading = value;
   },
+  [SET_SPACE_PLAN]: (state, { spacePlan }) => {
+    state.spacePlan = spacePlan;
+  },
 });
 
 export const useEnvironmentsRouteState = (props) => {
@@ -58,6 +64,7 @@ export const useEnvironmentsRouteState = (props) => {
     isLegacyOrganization: props.isLegacyOrganization,
     organizationId: props.organizationId,
     spaceId: props.spaceId,
+    spacePlan: undefined,
     pubsubClient: props.pubsubClient,
   };
 
@@ -190,9 +197,23 @@ export const useEnvironmentsRouteState = (props) => {
     });
   };
 
+  const FetchSpacePlan = async () => {
+    const { organizationId, spaceId, canUpgradeSpace } = props;
+    const isNewPricingReleased = await LD.getCurrentVariation(PRICING_2020_RELEASED, {
+      organizationId,
+    });
+
+    if (canUpgradeSpace && isNewPricingReleased) {
+      const organizationEndpoint = createOrganizationEndpoint(organizationId);
+      const spacePlan = await getSingleSpacePlan(organizationEndpoint, spaceId);
+      dispatch({ type: SET_SPACE_PLAN, spacePlan });
+    }
+  };
+
   const actions = {
     FetchPermissions,
     FetchEnvironments,
+    FetchSpacePlan,
     RefetchEnvironments,
     OpenCreateDialog,
     OpenDeleteDialog,

@@ -38,11 +38,12 @@ import EnvironmentDetails from 'app/common/EnvironmentDetails';
 import ExternalTextLink from 'app/common/ExternalTextLink';
 import { useEnvironmentsRouteState } from './EnvironmentsRouteReducer';
 import { ENVIRONMENT_CREATION_COMPLETE_EVENT } from 'services/PubSubService';
+import { websiteUrl } from 'Config';
 
 export default function EnvironmentsRoute(props) {
   const [
     state,
-    { FetchPermissions, FetchEnvironments, RefetchEnvironments, ...actions },
+    { FetchPermissions, FetchEnvironments, FetchSpacePlan, RefetchEnvironments, ...actions },
   ] = useEnvironmentsRouteState(props);
 
   const { aliasesEnabled, canManageAliases, hasOptedInEnv, pubsubClient } = state;
@@ -51,6 +52,7 @@ export default function EnvironmentsRoute(props) {
     (async () => {
       await FetchPermissions();
       await FetchEnvironments();
+      await FetchSpacePlan();
     })();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   // top: effect forced to happen only once
@@ -382,6 +384,7 @@ function Sidebar({
   aliasesEnabled,
   canManageAliases,
   hasOptedInEnv,
+  spacePlan,
 }) {
   // Master is not included in the api, display +1 usage and limit
   const usage = resource.usage + 1;
@@ -400,17 +403,6 @@ function Sidebar({
           this space.
           {!isLegacyOrganization && <UsageTooltip resource={resource} />}
         </Paragraph>
-        {!canCreateEnv && !isLegacyOrganization && (
-          <Paragraph>
-            {limit > 1 && 'Delete existing environments or '}
-            {canUpgradeSpace &&
-              (limit > 1 ? 'change the space to add more' : 'Change change the space to add more')}
-            {!canUpgradeSpace &&
-              `${
-                limit > 1 ? 'ask' : 'Ask'
-              } the administrator of your organization to change the space to add more. `}
-          </Paragraph>
-        )}
       </div>
       <div className="entity-sidebar__widget">
         {canCreateEnv && (
@@ -418,8 +410,12 @@ function Sidebar({
             Add environment
           </Button>
         )}
-        {!canCreateEnv && !isLegacyOrganization && canUpgradeSpace && (
-          <UpgradeButton OpenUpgradeSpaceDialog={OpenUpgradeSpaceDialog} />
+        {/** We need to wait for the spacePlan or the button will jump from 'Upgrade space' to 'Talk to us' */}
+        {!canCreateEnv && !isLegacyOrganization && canUpgradeSpace && !!spacePlan && (
+          <UpgradeButton
+            handleOpenUpgradeSpaceDialog={OpenUpgradeSpaceDialog}
+            isLargePlan={spacePlan?.name === 'Large'}
+          />
         )}
       </div>
       <Heading element="h2" className="entity-sidebar__heading">
@@ -469,6 +465,7 @@ Sidebar.propTypes = {
   OpenUpgradeSpaceDialog: PropTypes.func.isRequired,
   canManageAliases: PropTypes.bool.isRequired,
   hasOptedInEnv: PropTypes.bool.isRequired,
+  spacePlan: PropTypes.object,
 };
 
 function UsageTooltip({ resource }) {
@@ -506,14 +503,28 @@ UsageTooltip.propTypes = {
   resource: PropTypes.object.isRequired,
 };
 
-function UpgradeButton({ OpenUpgradeSpaceDialog }) {
+function UpgradeButton({ handleOpenUpgradeSpaceDialog, isLargePlan = false }) {
+  if (isLargePlan) {
+    return (
+      <Button
+        isFullWidth
+        testId="upgradeToEnterpriseButton"
+        href={websiteUrl(
+          'support/?utm_source=webapp&utm_medium=account-menu&utm_campaign=in-app-help'
+        )}>
+        Talk to us
+      </Button>
+    );
+  }
+
   return (
-    <Button isFullWidth testId="openUpgradeDialog" onClick={() => OpenUpgradeSpaceDialog()}>
+    <Button isFullWidth testId="openUpgradeDialog" onClick={() => handleOpenUpgradeSpaceDialog()}>
       Upgrade space
     </Button>
   );
 }
 
 UpgradeButton.propTypes = {
-  OpenUpgradeSpaceDialog: PropTypes.func.isRequired,
+  handleOpenUpgradeSpaceDialog: PropTypes.func.isRequired,
+  isLargePlan: PropTypes.bool,
 };

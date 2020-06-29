@@ -9,6 +9,8 @@ import { openDeleteEnvironmentDialog } from '../DeleteDialog';
 import createResourceService from 'services/ResourceService';
 import { canCreate } from 'utils/ResourceUtils';
 import { createPaginationEndpoint } from '__mocks__/data/EndpointFactory';
+import { getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
+import * as Fake from 'test/helpers/fakeFactory';
 
 jest.mock('services/ResourceService', () => ({
   __esModule: true, // this property makes it work
@@ -48,6 +50,12 @@ jest.mock('services/ChangeSpaceService', () => ({
 jest.mock('../DeleteDialog', () => ({
   openDeleteEnvironmentDialog: jest.fn(),
 }));
+
+jest.mock('account/pricing/PricingDataProvider', () => ({
+  getSingleSpacePlan: jest.fn(),
+}));
+
+const mockSpacePlan = Fake.Space();
 
 describe('EnvironmentsRoute', () => {
   const defaultProps = {
@@ -260,6 +268,7 @@ describe('EnvironmentsRoute', () => {
 
     it('should render upgrade space button when user is admin', async () => {
       canCreate.mockReturnValueOnce(false);
+      getSingleSpacePlan.mockReturnValueOnce(mockSpacePlan);
       defaultProps.canUpgradeSpace = true;
 
       const { getByTestId, queryByTestId } = await renderEnvironmentsComponent({
@@ -268,6 +277,22 @@ describe('EnvironmentsRoute', () => {
       });
 
       expect(getByTestId('openUpgradeDialog')).toBeVisible();
+      expect(getByTestId('openUpgradeDialog').textContent).toEqual('Upgrade space');
+      expect(queryByTestId('subscriptionLink')).toBeNull();
+    });
+
+    it('should render talk to us button when user is admin/owner and space is Large', async () => {
+      canCreate.mockReturnValueOnce(false);
+      getSingleSpacePlan.mockReturnValueOnce(Fake.Space({ name: 'Large' }));
+      defaultProps.canUpgradeSpace = true;
+
+      const { getByTestId, queryByTestId } = await renderEnvironmentsComponent({
+        id: 'e1',
+        status: 'ready',
+      });
+
+      expect(getByTestId('upgradeToEnterpriseButton')).toBeVisible();
+      expect(getByTestId('upgradeToEnterpriseButton').textContent).toEqual('Talk to us');
       expect(queryByTestId('subscriptionLink')).toBeNull();
     });
 
