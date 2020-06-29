@@ -13,7 +13,7 @@ function useCurrentSpaceFeature(featureId, defaultValue) {
   }, [featureId, defaultValue]);
 
   const { data, isLoading } = useAsync(load);
-  return { spaceFeatureEnabled: data, isSpaceFeatureLoading: isLoading };
+  return { spaceFeatureEnabled: !!data, isSpaceFeatureLoading: isLoading };
 }
 
 export { useCurrentSpaceFeature };

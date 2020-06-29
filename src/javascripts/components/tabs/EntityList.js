@@ -7,12 +7,12 @@ import {
   CheckboxField,
   Icon,
   IconButton,
+  SkeletonRow,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
-  SkeletonRow,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import isHotkey from 'is-hotkey';
@@ -24,6 +24,8 @@ import * as EntityState from 'data/CMA/EntityState';
 import StateLink from 'app/common/StateLink';
 import useSelectedEntities from './useSelectedEntities';
 import BulkActionsRow from './BulkActionsRow';
+import { useTagsFeatureEnabled } from 'features/content-tags';
+import { ReadTagsProvider, TagsRepoProvider } from 'features/content-tags';
 
 const noWrapEllipsis = {
   overflow: 'hidden',
@@ -249,126 +251,138 @@ const EntityList = ({
   // columnCount is the number of displayed fields + 2 (checkbox column and status column will always be there)
   const columnCount = displayedFields.length + 2;
 
-  return (
-    <Table
-      className={cn(className, styles.table)}
-      testId={`${entityType}-list`}
-      aria-label="Content Search Results"
-      cellPadding={`${tokens.spacingM} ${tokens.spacingS}`}>
-      <colgroup>
-        <col />
-        {/* checkbox column */}
-        {displayedFields.map(({ colWidth = 'auto' }, i) => (
-          <col key={i} className={css({ width: colWidth })} />
-        ))}
-        <col className={styles.statusColumn} />
-        {/* status column */}
-      </colgroup>
-      <TableHead offsetTop={isEdge() ? '0px' : '-20px'} isSticky className={styles.tableHead}>
-        <TableRow testId="column-names">
-          <CheckboxCell
-            visible
-            name="select-all"
-            checked={allSelected}
-            onClick={toggleAllSelected}
+  const { tagsEnabled } = useTagsFeatureEnabled();
+
+  const renderContent = () => {
+    return (
+      <Table
+        className={cn(className, styles.table)}
+        testId={`${entityType}-list`}
+        aria-label="Content Search Results"
+        cellPadding={`${tokens.spacingM} ${tokens.spacingS}`}>
+        <colgroup>
+          <col />
+          {/* checkbox column */}
+          {displayedFields.map(({ colWidth = 'auto' }, i) => (
+            <col key={i} className={css({ width: colWidth })} />
+          ))}
+          <col className={styles.statusColumn} />
+          {/* status column */}
+        </colgroup>
+        <TableHead offsetTop={isEdge() ? '0px' : '-20px'} isSticky className={styles.tableHead}>
+          <TableRow testId="column-names">
+            <CheckboxCell
+              visible
+              name="select-all"
+              checked={allSelected}
+              onClick={toggleAllSelected}
+            />
+            {displayedFields.map(
+              ({ id, className, name, onClick, isActiveSort, isSortable, direction }) => {
+                return (
+                  <SortableTableCell
+                    key={id}
+                    testId={id}
+                    isSortable={isSortable}
+                    isActiveSort={isActiveSort}
+                    onClick={onClick}
+                    direction={direction}
+                    aria-label={name}
+                    className={cn(className) || styles.tableHeadCell}>
+                    <span className={styles.fieldWrapper} title={name}>
+                      {name}
+                    </span>
+                  </SortableTableCell>
+                );
+              }
+            )}
+            <TableCell testId="status" className={styles.statusTableHeader}>
+              <span className={cn(styles.flexCenter, styles.justifySpaceBetween)}>
+                Status
+                {renderViewCustomizer()}
+              </span>
+            </TableCell>
+          </TableRow>
+          <BulkActionsRow
+            colSpan={columnCount}
+            entityType={entityType}
+            selectedEntities={selected}
+            updateEntities={updateEntities}
+            onActionComplete={(...args) => {
+              clearSelected();
+              onBulkActionComplete(...args);
+            }}
           />
-          {displayedFields.map(
-            ({ id, className, name, onClick, isActiveSort, isSortable, direction }) => {
+        </TableHead>
+        <TableBody>
+          {isLoading ? (
+            <SkeletonRow rowCount={entities.length || 10} columnCount={columnCount} />
+          ) : (
+            entities.map((entity, index) => {
+              const entityId = entity.getId();
+              const type = entity.getType().toLowerCase();
+              const entityIsSelected = isSelected(entity);
               return (
-                <SortableTableCell
-                  key={id}
-                  testId={id}
-                  isSortable={isSortable}
-                  isActiveSort={isActiveSort}
-                  onClick={onClick}
-                  direction={direction}
-                  aria-label={name}
-                  className={cn(className) || styles.tableHeadCell}>
-                  <span className={styles.fieldWrapper} title={name}>
-                    {name}
-                  </span>
-                </SortableTableCell>
+                <StateLink
+                  path="^.detail"
+                  params={{ [`${type}Id`]: entityId }}
+                  trackingEvent={entityType === 'entry' ? 'search:entry_clicked' : null}
+                  trackParams={{ entry_index: index, page_index: pageIndex }}
+                  key={entityId}>
+                  {({ onClick, getHref }) => {
+                    const href = getHref();
+                    return (
+                      <TableRow
+                        tabIndex="0"
+                        onKeyDown={onKeyDownEvent(onClick, false)}
+                        className={cn(styles.cursorPointer, {
+                          [styles.highlight]: entityIsSelected,
+                          [styles.visibilityHidden]: isLoading,
+                        })}
+                        testId={`${entityType}-row`}>
+                        <CheckboxCell
+                          name={`select-${entityId}`}
+                          checked={entityIsSelected}
+                          onClick={() => toggleSelected(entity)}
+                        />
+                        {displayedFields.map((field) => {
+                          const { id, className } = field;
+                          const uniqueId = `${entityId}_${id}`;
+                          return (
+                            <TableCell
+                              key={uniqueId}
+                              className={className}
+                              testId={id}
+                              onClick={onClick}>
+                              <SecretiveLink
+                                href={href}
+                                className={cn(styles.flexCenter, styles.fieldWrapper)}>
+                                {renderDisplayField({ field, entity, tagsEnabled })}
+                              </SecretiveLink>
+                            </TableCell>
+                          );
+                        })}
+                        <TableCell testId="status">
+                          <StatusCell href={href} jobs={jobs} entity={entity} />
+                        </TableCell>
+                      </TableRow>
+                    );
+                  }}
+                </StateLink>
               );
-            }
+            })
           )}
-          <TableCell testId="status" className={styles.statusTableHeader}>
-            <span className={cn(styles.flexCenter, styles.justifySpaceBetween)}>
-              Status
-              {renderViewCustomizer()}
-            </span>
-          </TableCell>
-        </TableRow>
-        <BulkActionsRow
-          colSpan={columnCount}
-          entityType={entityType}
-          selectedEntities={selected}
-          updateEntities={updateEntities}
-          onActionComplete={(...args) => {
-            clearSelected();
-            onBulkActionComplete(...args);
-          }}
-        />
-      </TableHead>
-      <TableBody>
-        {isLoading ? (
-          <SkeletonRow rowCount={entities.length || 10} columnCount={columnCount} />
-        ) : (
-          entities.map((entity, index) => {
-            const entityId = entity.getId();
-            const type = entity.getType().toLowerCase();
-            const entityIsSelected = isSelected(entity);
-            return (
-              <StateLink
-                path="^.detail"
-                params={{ [`${type}Id`]: entityId }}
-                trackingEvent={entityType === 'entry' ? 'search:entry_clicked' : null}
-                trackParams={{ entry_index: index, page_index: pageIndex }}
-                key={entityId}>
-                {({ onClick, getHref }) => {
-                  const href = getHref();
-                  return (
-                    <TableRow
-                      tabIndex="0"
-                      onKeyDown={onKeyDownEvent(onClick, false)}
-                      className={cn(styles.cursorPointer, {
-                        [styles.highlight]: entityIsSelected,
-                        [styles.visibilityHidden]: isLoading,
-                      })}
-                      testId={`${entityType}-row`}>
-                      <CheckboxCell
-                        name={`select-${entityId}`}
-                        checked={entityIsSelected}
-                        onClick={() => toggleSelected(entity)}
-                      />
-                      {displayedFields.map((field) => {
-                        const { id, className } = field;
-                        const uniqueId = `${entityId}_${id}`;
-                        return (
-                          <TableCell
-                            key={uniqueId}
-                            className={className}
-                            testId={id}
-                            onClick={onClick}>
-                            <SecretiveLink
-                              href={href}
-                              className={cn(styles.flexCenter, styles.fieldWrapper)}>
-                              {renderDisplayField({ field, entity })}
-                            </SecretiveLink>
-                          </TableCell>
-                        );
-                      })}
-                      <TableCell testId="status">
-                        <StatusCell href={href} jobs={jobs} entity={entity} />
-                      </TableCell>
-                    </TableRow>
-                  );
-                }}
-              </StateLink>
-            );
-          })
-        )}
-      </TableBody>
-    </Table>
+        </TableBody>
+      </Table>
+    );
+  };
+
+  return tagsEnabled ? (
+    <TagsRepoProvider>
+      <ReadTagsProvider>{renderContent()}</ReadTagsProvider>
+    </TagsRepoProvider>
+  ) : (
+    renderContent()
   );
 };
 

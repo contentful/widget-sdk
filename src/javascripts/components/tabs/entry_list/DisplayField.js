@@ -9,8 +9,13 @@ import RelativeDateTime from 'components/shared/RelativeDateTime';
 import { ActionPerformerName } from 'core/components/ActionPerformerName';
 import Thumbnail from 'components/Thumbnail/Thumbnail';
 
+import { Pill, SkeletonText } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
+
 import { css } from 'emotion';
 import { truncate } from 'utils/StringUtils';
+import { useReadTags } from 'features/content-tags';
+import { METADATA_TAGS_ID } from 'data/MetadataFields';
 
 const styles = {
   textOverflow: css({
@@ -20,6 +25,11 @@ const styles = {
   }),
   noWrap: css({
     whiteSpace: 'nowrap',
+  }),
+  tag: css({
+    marginRight: tokens.spacing2Xs,
+    marginBottom: tokens.spacing2Xs,
+    userSelect: 'none',
   }),
 };
 
@@ -33,6 +43,10 @@ const displayType = (field) => {
 
   if (field.type === 'Symbol' && field.id === 'author') {
     return 'author';
+  }
+
+  if (field.type === 'Symbol' && field.id === METADATA_TAGS_ID) {
+    return 'tags';
   }
 
   if (field.type === 'Link') {
@@ -164,6 +178,11 @@ AbsoluteDateFieldValue.propTypes = {
   value: PropTypes.string.isRequired,
 };
 
+function addGetTagsMethodToEntity(entity, getTag) {
+  entity.getTags = () => entity.data.metadata?.tags?.map((tag) => getTag(tag.sys.id));
+  return entity;
+}
+
 export default function DisplayField({ entity, field, entryCache, assetCache }) {
   let result;
   switch (displayType(field)) {
@@ -194,6 +213,21 @@ export default function DisplayField({ entity, field, entryCache, assetCache }) 
     case 'author':
       result = <ActionPerformerName link={entity.getUpdatedBy()} />;
       break;
+    case 'tags': {
+      const tagsList = entity.getTags() || [];
+      result = (
+        <span>
+          {tagsList?.map((tag, index) => {
+            if (tag) {
+              return <Pill className={css(styles.tag, {})} key={tag.sys.id} label={tag.name} />;
+            } else {
+              return <SkeletonText numberOfLines={1} key={`skeleton-text-${index}`} />;
+            }
+          })}
+        </span>
+      );
+      break;
+    }
     case 'Boolean':
       result = <span>{displayBool(dataForField(entity, field))}</span>;
       break;
@@ -273,3 +307,19 @@ export default function DisplayField({ entity, field, entryCache, assetCache }) 
 
   return result || null;
 }
+
+export const DisplayFieldWithTagsEnabled = ({ entity, field, entryCache, assetCache }) => {
+  const { getTag } = useReadTags();
+
+  entity = addGetTagsMethodToEntity(entity, getTag);
+  return (
+    <DisplayField entity={entity} field={field} entryCache={entryCache} assetCache={assetCache} />
+  );
+};
+
+DisplayFieldWithTagsEnabled.propTypes = {
+  entity: PropTypes.object.isRequired,
+  field: PropTypes.object.isRequired,
+  entryCache: PropTypes.object,
+  assetCache: PropTypes.object,
+};

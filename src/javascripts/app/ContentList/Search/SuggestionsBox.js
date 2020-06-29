@@ -7,6 +7,15 @@ import PropTypes from 'prop-types';
 import { truncate } from 'utils/StringUtils';
 import InfoIcon from 'svg/info.svg';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+import { NewTag } from 'components/shared/NewTag';
+import { css } from 'emotion';
+import { METADATA_TAGS_ID } from 'data/MetadataFields';
+
+const styles = {
+  tag: css({
+    marginLeft: tokens.spacingS,
+  }),
+};
 
 // Suggestions
 // -----------
@@ -54,7 +63,8 @@ export default function SuggestionsBox({
           }
         }}>
         <div data-test-id="label" style={{ flex: '0 0 30%' }}>
-          <div className="__filter-pill">{field.name}</div>
+          <div className="__filter-pill">{field.displayName || field.name}</div>
+          {field.name === METADATA_TAGS_ID && <NewTag className={styles.tag} />}
         </div>
         <div
           data-test-id="contentType"

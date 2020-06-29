@@ -129,25 +129,51 @@ describe('app/ContentList/Search/Filters', () => {
       );
 
       getMatchingFiltersMacro(
-        'returns filters if apiName startsWith searchQuery',
+        'returns filters if apiName startsWith searchQuery "cr"',
         {
           searchQuery: 'cr',
           contentType: null,
         },
-        ['sys.createdAt', 'sys.createdBy.sys.id', 'fields.createdAt']
+        [
+          'sys.createdAt',
+          'sys.createdBy.sys.id',
+          'fields.companyDescription',
+          'fields.productDescription',
+          'fields.createdAt',
+        ]
       );
 
       getMatchingFiltersMacro(
-        'returns filters if apiName startsWith searchQuery',
+        'returns filters if apiName startsWith searchQuery "t"',
         {
           searchQuery: 't',
           contentType: null,
         },
-        ['metadata.tags.sys.id', 'fields.twitter', 'fields.tags']
+        [
+          'sys.updatedAt',
+          'sys.createdAt',
+          'sys.publishedAt',
+          'sys.firstPublishedAt',
+          'sys.updatedBy.sys.id',
+          'sys.createdBy.sys.id',
+          '__status',
+          'metadata.tags.sys.id',
+          'fields.companyDescription',
+          'fields.website',
+          'fields.twitter',
+          'fields.productName',
+          'fields.productDescription',
+          'fields.sizetypecolor',
+          'fields.tags',
+          'fields.categories.sys.id',
+          'fields.quantity',
+          'fields.website',
+          'fields.createdAt',
+        ]
       );
 
       getMatchingFiltersMacro(
-        'returns filters if apiName startsWith searchQuery',
+        'returns filters if apiName startsWith searchQuery "twi"',
         {
           searchQuery: 'twi',
           contentType: null,
@@ -156,7 +182,7 @@ describe('app/ContentList/Search/Filters', () => {
       );
 
       getMatchingFiltersMacro(
-        'returns filters if apiName startsWith searchQuery',
+        'returns filters if apiName startsWith searchQuery "web"',
         {
           searchQuery: 'web',
           contentType: null,
@@ -165,12 +191,12 @@ describe('app/ContentList/Search/Filters', () => {
       );
 
       getMatchingFiltersMacro(
-        'returns empty array if there is no matching filters',
+        'returns empty array if there is no matching filters "witter"',
         {
           searchQuery: 'witter',
           contentType: null,
         },
-        []
+        ['fields.twitter']
       );
     });
   });

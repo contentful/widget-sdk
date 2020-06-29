@@ -1,4 +1,4 @@
-import { renderHook, act } from '@testing-library/react-hooks';
+import { act, renderHook } from '@testing-library/react-hooks';
 import { useDisplayFields } from './useDisplayFields';
 import createViewPersistor from 'data/ListViewPersistor';
 import { getModule } from 'core/NgRegistry';
@@ -68,6 +68,12 @@ describe('useSelectedEntities', () => {
         type: 'Date',
         canPersist: true,
       },
+      {
+        id: 'metadata.tags',
+        name: 'Tags',
+        type: 'Symbol',
+        decoration: 'new',
+      },
     ]);
     expect(updateEntities).toHaveBeenCalledTimes(1);
   });
@@ -95,6 +101,12 @@ describe('useSelectedEntities', () => {
         type: 'Date',
         canPersist: true,
       },
+      {
+        id: 'metadata.tags',
+        name: 'Tags',
+        type: 'Symbol',
+        decoration: 'new',
+      },
     ]);
     expect(updateEntities).toHaveBeenCalledTimes(2);
   });
@@ -121,6 +133,12 @@ describe('useSelectedEntities', () => {
         name: 'Published',
         type: 'Date',
         canPersist: true,
+      },
+      {
+        id: 'metadata.tags',
+        name: 'Tags',
+        type: 'Symbol',
+        decoration: 'new',
       },
     ]);
     expect(updateEntities).toHaveBeenCalledTimes(2);
@@ -164,6 +182,12 @@ describe('useSelectedEntities', () => {
         type: 'Date',
         canPersist: true,
       },
+      {
+        id: 'metadata.tags',
+        name: 'Tags',
+        type: 'Symbol',
+        decoration: 'new',
+      },
     ]);
     expect(updateEntities).toHaveBeenCalledTimes(2);
   });
@@ -188,6 +212,12 @@ describe('useSelectedEntities', () => {
         name: 'Published',
         type: 'Date',
         canPersist: true,
+      },
+      {
+        id: 'metadata.tags',
+        name: 'Tags',
+        type: 'Symbol',
+        decoration: 'new',
       },
       { id: 2 },
     ]);

@@ -4,10 +4,12 @@ import { onEntryEvent } from './eventTracker';
 
 import EntityList from '../EntityList';
 import ViewCustomizer from './ViewCustomizer';
-import DisplayField from './DisplayField';
+import DisplayField, { DisplayFieldWithTagsEnabled } from './DisplayField';
 import createViewPersistor from 'data/ListViewPersistor';
 import { useDisplayFields } from './useDisplayFields';
 import { useOrderedColumns } from './useOrderedColumns';
+import { useTagsFeatureEnabled } from 'features/content-tags';
+import { METADATA_TAGS_ID } from 'data/MetadataFields';
 
 export default function EntryList({
   isSearching,
@@ -33,6 +35,14 @@ export default function EntryList({
 
   const hasContentTypeSelected = !!contentTypeId;
 
+  const { tagsEnabled } = useTagsFeatureEnabled();
+
+  const filteredDisplayFields = useMemo(() => {
+    return tagsEnabled
+      ? displayedFields
+      : displayedFields.filter((field) => field.id !== METADATA_TAGS_ID);
+  }, [tagsEnabled, displayedFields]);
+
   // can be undefined
   const displayFieldName = displayFieldForFilteredContentType() || {};
   const nameField = {
@@ -49,7 +59,7 @@ export default function EntryList({
 
   const enrichedDisplayedFields = [
     nameField,
-    ...displayedFields.map((field) => ({
+    ...filteredDisplayFields.map((field) => ({
       ...field,
       isSortable: fieldIsSortable(field),
       isActiveSort: isOrderField(field),
@@ -68,13 +78,23 @@ export default function EntryList({
       updateEntities={updateEntries}
       isLoading={isSearching}
       pageIndex={pageIndex}
-      renderDisplayField={(props) => (
-        <DisplayField entryCache={entryCache} assetCache={assetCache} {...props} />
-      )}
+      renderDisplayField={(props) => {
+        if (props.tagsEnabled) {
+          return (
+            <DisplayFieldWithTagsEnabled
+              entryCache={entryCache}
+              assetCache={assetCache}
+              {...props}
+            />
+          );
+        } else {
+          return <DisplayField entryCache={entryCache} assetCache={assetCache} {...props} />;
+        }
+      }}
       renderViewCustomizer={(props = {}) => {
         return (
           <ViewCustomizer
-            displayedFields={displayedFields}
+            displayedFields={filteredDisplayFields}
             hiddenFields={hiddenFields}
             {...displayFieldsActions}
             {...props}
@@ -94,4 +114,5 @@ EntryList.propTypes = {
   assetCache: PropTypes.object,
   jobs: PropTypes.array,
   pageIndex: PropTypes.number,
+  tagsEnabled: PropTypes.bool,
 };

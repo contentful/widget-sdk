@@ -1,9 +1,10 @@
-import { cloneDeep, startsWith, find, get, has, map, memoize } from 'lodash';
-import { assign, push, concat } from 'utils/Collections';
-import { getOperatorsByType, equality as equalityOperator } from './Operators';
+import { cloneDeep, find, get, has, map, memoize } from 'lodash';
+import { assign, concat, push } from 'utils/Collections';
+import { equality as equalityOperator, getOperatorsByType } from './Operators';
 import mimetype from '@contentful/mimetype';
 
 import ValueInput from './FilterValueInputs';
+import { METADATA_TAGS_ID } from 'data/MetadataFields';
 
 const CT_QUERY_KEY_PREFIX = 'fields';
 
@@ -101,8 +102,9 @@ const sysFieldFilters = [
 
 const metadataFilters = [
   {
-    name: 'tags',
+    name: METADATA_TAGS_ID,
     type: 'Tags',
+    displayName: 'tags',
     description: 'Tags on the item',
     queryKey: 'metadata.tags.sys.id',
     operators: getOperatorsByType('Tags'),
@@ -320,9 +322,8 @@ function filterBySupportedTypes(filters) {
 
 function filterByName(filters, searchString = '') {
   searchString = searchString.trim().toLowerCase();
-
   return filters.filter((filter) => {
-    return startsWith(filter.name.toLowerCase(), searchString);
+    return filter.name.toLowerCase().includes(searchString);
   });
 }
 

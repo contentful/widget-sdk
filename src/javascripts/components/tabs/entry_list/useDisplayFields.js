@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { sortBy } from 'lodash';
 import { getModule } from 'core/NgRegistry';
 import * as SystemFields from 'data/SystemFields';
+import * as MetadataFields from 'data/MetadataFields';
 
 const getAvailableFields = (contentTypeId) => {
   const spaceContext = getModule('spaceContext');
   const filteredContentType = spaceContext.publishedCTs.get(contentTypeId);
-  let fields = SystemFields.getList();
+  let fields = [...SystemFields.getList(), ...MetadataFields.getList()];
 
   if (filteredContentType) {
     fields = [...fields, ...filteredContentType.data.fields].filter(
@@ -17,6 +18,7 @@ const getAvailableFields = (contentTypeId) => {
 };
 
 const VIEW_KEYS = ['displayedFieldIds', 'contentTypeId'];
+
 export const useDisplayFields = ({ viewPersistor, updateEntities }) => {
   const [hiddenFields, setHiddenFields] = useState([]);
   const [displayedFields, setDisplayedFields] = useState([]);
@@ -25,6 +27,7 @@ export const useDisplayFields = ({ viewPersistor, updateEntities }) => {
 
   const refreshDisplayFields = ({ displayedFieldIds = [], contentTypeId }) => {
     const fields = getAvailableFields(contentTypeId);
+
     const displayedFields = displayedFieldIds
       .map((id) => fields.find((field) => field.id === id))
       .filter(Boolean);

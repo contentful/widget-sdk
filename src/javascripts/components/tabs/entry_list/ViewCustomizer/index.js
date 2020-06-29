@@ -9,13 +9,14 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 
 import {
-  Icon,
   Dropdown,
-  DropdownListItem,
   DropdownList,
+  DropdownListItem,
+  Icon,
   IconButton,
   Tooltip,
 } from '@contentful/forma-36-react-components';
+import { NewTag } from 'components/shared/NewTag';
 
 const styles = {
   root: css({
@@ -41,13 +42,17 @@ const styles = {
   sortableHelper: css({
     zIndex: 9999,
   }),
+  decoration: css({
+    marginLeft: tokens.spacingS,
+  }),
 };
 
 const SortableContainer = sortableContainer(({ children }) => <div>{children}</div>);
-const SortableItem = sortableElement(({ name, onClick }) => (
+const SortableItem = sortableElement(({ name, decoration, onClick }) => (
   <DropdownListItem onClick={onClick} className={styles.listItem}>
     <SortHandle />
     <span>{name}</span>
+    {decoration && <NewTag className={styles.decoration} label={decoration} />}
   </DropdownListItem>
 ));
 const SortHandle = sortableHandle(() => (
@@ -120,6 +125,7 @@ export default class ViewCustomizer extends React.Component {
               <SortableItem
                 key={fieldInfo.id}
                 name={fieldInfo.name}
+                decoration={fieldInfo.decoration}
                 index={index}
                 onClick={() => {
                   this.props.removeDisplayField(fieldInfo);
@@ -141,6 +147,9 @@ export default class ViewCustomizer extends React.Component {
                         this.props.addDisplayField(fieldInfo);
                       }}>
                       {fieldInfo.name}
+                      {fieldInfo.decoration && (
+                        <NewTag className={styles.decoration} label={fieldInfo.decoration} />
+                      )}
                     </DropdownListItem>
                   )
               )}

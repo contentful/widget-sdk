@@ -182,7 +182,9 @@ export default function FilterPill({
           }
         }
       }}>
-      <div className="search__filter-pill-label">{filter.label || filter.name}</div>
+      <div className="search__filter-pill-label">
+        {filter.label || filter.displayName || filter.name}
+      </div>
       <FilterOperator
         operators={filter.operators}
         op={op}

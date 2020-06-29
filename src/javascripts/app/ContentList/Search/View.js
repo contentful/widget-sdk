@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { css } from 'emotion';
-import { Spinner, TextInput, Icon } from '@contentful/forma-36-react-components';
+import { Icon, Spinner, TextInput } from '@contentful/forma-36-react-components';
 import Keys from './Keys';
 import tokens from '@contentful/forma-36-tokens';
 import { ReadTagsProvider, TagsRepoProvider, useTagsFeatureEnabled } from 'features/content-tags';
@@ -123,7 +123,6 @@ const styles = {
 
 export default function ConditionalView(props) {
   const { tagsEnabled: withMetadata } = useTagsFeatureEnabled();
-
   if (withMetadata) {
     return (
       <TagsRepoProvider>

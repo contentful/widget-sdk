@@ -11,7 +11,9 @@ export const useOrderedColumns = ({ viewPersistor, updateEntities }) => {
   };
 
   const fieldIsSortable = (field) => {
-    return field && SORTABLE_TYPES.includes(field.type) && field.id !== 'author';
+    return (
+      field && SORTABLE_TYPES.includes(field.type) && field.id !== 'author' && field.id !== 'tags'
+    );
   };
 
   const orderColumnBy = (field) => {

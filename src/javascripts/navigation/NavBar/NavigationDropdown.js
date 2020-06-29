@@ -9,7 +9,6 @@ import {
   Dropdown,
   DropdownList,
   DropdownListItem,
-  Tag,
   Tooltip,
 } from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';
@@ -18,6 +17,7 @@ import NavigationItemTag from './NavigationItemTag';
 import Icon from 'ui/Components/Icon';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 import { noop } from 'lodash';
+import { NewTag } from 'components/shared/NewTag';
 
 const styles = {
   dropdown: css({
@@ -103,14 +103,6 @@ const styles = {
   }),
   tag: css({
     top: tokens.spacingXs,
-    background: tokens.colorBlueDark,
-    color: tokens.colorWhite,
-    padding: '3px 5px',
-    fontSize: '10px',
-    lineHeight: '10px',
-    borderRadius: '3px',
-    textTransform: 'uppercase',
-    letterSpacing: '0.05rem',
     marginLeft: tokens.spacingS,
   }),
 };
@@ -205,7 +197,7 @@ export default function NavigationDropdown({ item, onOpen: onDropdownOpen = noop
                   onClose();
                 }}>
                 {subitem.render ? subitem.render(subitem) : subitem.title}
-                {subitem.tagLabel && <Tag className={styles.tag}>{subitem.tagLabel}</Tag>}
+                {subitem.tagLabel && <NewTag className={styles.tag} label={subitem.tagLabel} />}
               </DropdownListItem>
             );
           })}
