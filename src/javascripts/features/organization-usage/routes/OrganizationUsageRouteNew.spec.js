@@ -2,7 +2,6 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import 'jest-enzyme';
 import { Spinner } from '@contentful/forma-36-react-components';
-import moment from 'moment';
 import {
   OrganizationUsageRouteNew,
   WorkbenchContent,
@@ -22,6 +21,7 @@ import {
 } from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
 import { getPeriods, getOrgUsage, getApiUsage } from '../services/UsageService';
+import LoadingState from 'app/common/LoadingState';
 
 jest.mock('services/intercom', () => ({}));
 jest.mock('utils/ResourceUtils', () => ({}));
@@ -112,7 +112,7 @@ jest.mock('app/common/ReloadNotification', () => ({
 }));
 
 jest.mock('../services/UsageService', () => ({
-  getPeriods: jest.fn(),
+  getPeriods: jest.fn().mockReturnValue({ items: [{}] }),
   getApiUsage: jest.fn(),
   getOrgUsage: jest.fn(),
 }));
@@ -205,30 +205,16 @@ describe('OrganizationUsageRouteNew', () => {
       isSelfServicePlan.mockReset().mockReturnValue(false);
     });
 
-    it('should fetch spaces, plans and resources data', async () => {
+    it('should fetch data', async () => {
       await shallowRenderComponent(defaultProps);
 
       expect(getPlansWithSpaces).toHaveBeenCalled();
       expect(OrganizationMembershipRepositoryMocked.getAllSpaces).toHaveBeenCalled();
+      expect(getPeriods).toHaveBeenCalled();
       expect(createResourceService().get).toHaveBeenCalledWith('api_request');
-    });
 
-    it('should not query usage periods', async () => {
-      await shallowRenderComponent(defaultProps);
-
-      // The period is manually generated
-      expect(getPeriods).toHaveBeenCalledTimes(0);
-    });
-
-    it('should query usage data for the last 30 days', async () => {
-      await shallowRenderComponent(defaultProps);
-
-      // The period is manually generated (last 30 days)
-      const { startDate: start_1, endDate: end_1 } = getApiUsage.mock.calls[0][1];
-      expect(moment(start_1).diff(moment(end_1), 'days')).toEqual(-30);
-
-      const { startDate: start_2, endDate: end_2 } = getOrgUsage.mock.calls[0][1];
-      expect(moment(start_2).diff(moment(end_2), 'days')).toEqual(-30);
+      expect(getOrgUsage).toHaveBeenCalled();
+      expect(getApiUsage).toHaveBeenCalled();
     });
   });
 
@@ -239,13 +225,16 @@ describe('OrganizationUsageRouteNew', () => {
         isSelfServicePlan.mockReset().mockReturnValue(false);
       });
 
-      it('should fetch spaces, plans, resources and periods data', async () => {
+      it('should fetch data', async () => {
         await shallowRenderComponent(defaultProps);
 
         expect(getPlansWithSpaces).toHaveBeenCalled();
         expect(OrganizationMembershipRepositoryMocked.getAllSpaces).toHaveBeenCalled();
         expect(createResourceService().get).toHaveBeenCalledWith('api_request');
         expect(getPeriods).toHaveBeenCalled();
+
+        expect(getOrgUsage).toHaveBeenCalled();
+        expect(getApiUsage).toHaveBeenCalled();
       });
     });
 
@@ -255,13 +244,16 @@ describe('OrganizationUsageRouteNew', () => {
         isSelfServicePlan.mockReset().mockReturnValue(true);
       });
 
-      it('should fetch spaces, plans, resources and periods data', async () => {
+      it('should fetch data', async () => {
         await shallowRenderComponent(defaultProps);
 
         expect(getPlansWithSpaces).toHaveBeenCalled();
         expect(OrganizationMembershipRepositoryMocked.getAllSpaces).toHaveBeenCalled();
         expect(createResourceService().get).toHaveBeenCalledWith('api_request');
         expect(getPeriods).toHaveBeenCalled();
+
+        expect(getApiUsage).toHaveBeenCalled();
+        expect(getOrgUsage).toHaveBeenCalled();
       });
     });
   });
@@ -276,47 +268,39 @@ describe('WorkbenchActions', () => {
       periods: [],
       selectedPeriodIndex: 0,
       setPeriodIndex: jest.fn(),
-      showPeriodSelector: true,
+      isAssetBandwidthTab: false,
+      isTeamOrEnterpriseCustomer: true,
     };
   });
 
   describe('isLoading', () => {
-    it('should render a spinner', () => {
+    it('should render a spinner for the team or enterprise customers', () => {
       const wrapper = shallow(<WorkbenchActions isLoading={true} {...defaultProps} />);
 
       expect(wrapper.find(Spinner)).toHaveLength(1);
 
       expect(wrapper.find(PeriodSelector)).toHaveLength(0);
     });
-  });
 
-  describe('org is on the team tier', () => {
-    beforeEach(() => {
-      isEnterprisePlan.mockReset().mockReturnValue(false);
-      isSelfServicePlan.mockReset().mockReturnValue(true);
-    });
+    it('should not render a spinner for the community customers', () => {
+      defaultProps.isTeamOrEnterpriseCustomer = false;
+      const wrapper = shallow(<WorkbenchActions isLoading={true} {...defaultProps} />);
 
-    it('should render the PeriodSelector', () => {
-      const wrapper = shallow(<WorkbenchActions {...defaultProps} />);
-
-      expect(wrapper.find(PeriodSelector)).toHaveLength(1);
-    });
-
-    it('should render nothing if there are no spaces', () => {
-      defaultProps.hasSpaces = false;
-      const wrapper = shallow(<WorkbenchActions {...defaultProps} />);
+      expect(wrapper.find(Spinner)).toHaveLength(0);
 
       expect(wrapper.find(PeriodSelector)).toHaveLength(0);
+    });
+
+    it('should not render spinner if there are no spaces', () => {
+      const wrapper = shallow(<WorkbenchActions isLoading hasSpaces={false} />);
+
       expect(wrapper.find(Spinner)).toHaveLength(0);
+
+      expect(wrapper.find(PeriodSelector)).toHaveLength(0);
     });
   });
 
-  describe('org is on the enterprise tier', () => {
-    beforeEach(() => {
-      isEnterprisePlan.mockReset().mockReturnValue(true);
-      isSelfServicePlan.mockReset().mockReturnValue(false);
-    });
-
+  describe('org is on the enterprise or team tier', () => {
     it('should render the PeriodSelector', () => {
       const wrapper = shallow(<WorkbenchActions {...defaultProps} />);
 
@@ -333,18 +317,15 @@ describe('WorkbenchActions', () => {
   });
 
   describe('org is on the community tier', () => {
-    beforeEach(() => {
-      isEnterprisePlan.mockReset().mockReturnValue(false);
-      isSelfServicePlan.mockReset().mockReturnValue(false);
-    });
-
-    it('should render the PeriodSelector', () => {
+    it('should not render the PeriodSelector', () => {
+      defaultProps.isTeamOrEnterpriseCustomer = false;
       const wrapper = shallow(<WorkbenchActions {...defaultProps} />);
 
-      expect(wrapper.find(PeriodSelector)).toHaveLength(1);
+      expect(wrapper.find(PeriodSelector)).toHaveLength(0);
     });
 
     it('should render nothing if there are no spaces', () => {
+      defaultProps.isTeamOrEnterpriseCustomer = false;
       defaultProps.hasSpaces = false;
       const wrapper = shallow(<WorkbenchActions {...defaultProps} />);
 
@@ -376,75 +357,29 @@ describe('WorkbenchContent', () => {
     };
   });
 
-  describe('org is on the team tier', () => {
-    beforeEach(() => {
-      isEnterprisePlan.mockReset().mockReturnValue(false);
-      isSelfServicePlan.mockReset().mockReturnValue(true);
-    });
-
-    it('should render the OrganizationUsagePage if there are spaces', () => {
+  describe('isLoading', () => {
+    it('should render a LoadingState', () => {
+      defaultProps.isLoading = true;
       const wrapper = shallow(<WorkbenchContent {...defaultProps} />);
 
-      expect(wrapper.find(OrganizationUsagePage)).toHaveLength(1);
-
-      expect(wrapper.find(NoSpacesPlaceholder)).toHaveLength(0);
-    });
-
-    it('should render NoSpacePlaceholder if there are no spaces', () => {
-      const wrapper = shallow(
-        <WorkbenchContent {...{ ...defaultProps, ...{ hasSpaces: false } }} />
-      );
-
-      expect(wrapper.find(NoSpacesPlaceholder)).toHaveLength(1);
-      expect(wrapper.find(OrganizationUsagePage)).toHaveLength(0);
+      expect(wrapper.find(LoadingState)).toHaveLength(1);
     });
   });
 
-  describe('org is on the enterprise tier', () => {
-    beforeEach(() => {
-      isEnterprisePlan.mockReset().mockReturnValue(true);
-      isSelfServicePlan.mockReset().mockReturnValue(false);
-    });
+  it('should render the OrganizationUsagePage if there are spaces', () => {
+    const wrapper = shallow(<WorkbenchContent {...defaultProps} />);
 
-    it('should render the OrganizationUsagePage if there are spaces', () => {
-      const wrapper = shallow(<WorkbenchContent {...defaultProps} />);
+    expect(wrapper.find(OrganizationUsagePage)).toHaveLength(1);
 
-      expect(wrapper.find(OrganizationUsagePage)).toHaveLength(1);
-
-      expect(wrapper.find(NoSpacesPlaceholder)).toHaveLength(0);
-    });
-
-    it('should render NoSpacePlaceholder if there are no spaces', () => {
-      const wrapper = shallow(
-        <WorkbenchContent {...{ ...defaultProps, ...{ hasSpaces: false } }} />
-      );
-
-      expect(wrapper.find(NoSpacesPlaceholder)).toHaveLength(1);
-      expect(wrapper.find(OrganizationUsagePage)).toHaveLength(0);
-    });
+    expect(wrapper.find(NoSpacesPlaceholder)).toHaveLength(0);
   });
 
-  describe('org is on the community tier', () => {
-    beforeEach(() => {
-      isEnterprisePlan.mockReset().mockReturnValue(false);
-      isSelfServicePlan.mockReset().mockReturnValue(false);
-    });
+  it('should render NoSpacePlaceholder if there are no spaces', () => {
+    defaultProps.hasSpaces = false;
+    const wrapper = shallow(<WorkbenchContent {...defaultProps} />);
 
-    it('should render the OrganizationUsagePage if there are spaces', () => {
-      const wrapper = shallow(<WorkbenchContent {...defaultProps} />);
+    expect(wrapper.find(NoSpacesPlaceholder)).toHaveLength(1);
 
-      expect(wrapper.find(OrganizationUsagePage)).toHaveLength(1);
-
-      expect(wrapper.find(NoSpacesPlaceholder)).toHaveLength(0);
-    });
-
-    it('should render NoSpacePlaceholder if there are no spaces', () => {
-      defaultProps.hasSpaces = false;
-      const wrapper = shallow(<WorkbenchContent {...defaultProps} />);
-
-      expect(wrapper.find(NoSpacesPlaceholder)).toHaveLength(1);
-
-      expect(wrapper.find(OrganizationUsagePage)).toHaveLength(0);
-    });
+    expect(wrapper.find(OrganizationUsagePage)).toHaveLength(0);
   });
 });

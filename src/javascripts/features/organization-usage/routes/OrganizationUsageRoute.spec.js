@@ -196,10 +196,26 @@ describe('WorkbenchActions', () => {
   });
 
   describe('isLoading', () => {
-    it('should render a spinner', () => {
-      const wrapper = shallow(<WorkbenchActions isLoading />);
+    it('should render a spinner if the org is committed', () => {
+      const wrapper = shallow(<WorkbenchActions isLoading committed />);
 
       expect(wrapper.find(Spinner)).toHaveLength(1);
+
+      expect(wrapper.find(PeriodSelector)).toHaveLength(0);
+    });
+
+    it('should not render spinner if the org is non-committed', () => {
+      const wrapper = shallow(<WorkbenchActions isLoading />);
+
+      expect(wrapper.find(Spinner)).toHaveLength(0);
+
+      expect(wrapper.find(PeriodSelector)).toHaveLength(0);
+    });
+
+    it('should not render spinner if there are no spaces', () => {
+      const wrapper = shallow(<WorkbenchActions isLoading hasSpaces={false} />);
+
+      expect(wrapper.find(Spinner)).toHaveLength(0);
 
       expect(wrapper.find(PeriodSelector)).toHaveLength(0);
     });

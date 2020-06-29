@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { mapValues, flow, keyBy, get, eq, isNumber, pick } from 'lodash/fp';
-import moment from 'moment';
-
+import { css } from 'emotion';
 import { Spinner, Workbench } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification';
 
@@ -21,6 +20,16 @@ import createResourceService from 'services/ResourceService';
 import * as OrganizationRoles from 'services/OrganizationRoles';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 import ErrorState from 'app/common/ErrorState';
+import LoadingState from 'app/common/LoadingState';
+
+const styles = {
+  content: css({
+    height: '100%',
+    '> div': {
+      height: '100%',
+    },
+  }),
+};
 
 export const WorkbenchContent = ({
   hasSpaces,
@@ -37,6 +46,11 @@ export const WorkbenchContent = ({
 }) => {
   if (error) {
     return <ErrorState />;
+  }
+
+  if (isLoading) {
+    // TODO: use skeleton loading
+    return <LoadingState />;
   }
 
   if (!isLoading && !hasSpaces) {
@@ -90,17 +104,18 @@ export const WorkbenchActions = ({
   periods,
   selectedPeriodIndex,
   setPeriodIndex,
-  showPeriodSelector,
+  isAssetBandwidthTab,
+  isTeamOrEnterpriseCustomer,
 }) => {
   if (error) {
-    return null;
+    return null; // The workbench content renders the error state
   }
 
-  if (isLoading) {
+  if (isLoading && isTeamOrEnterpriseCustomer && hasSpaces) {
     return <Spinner />;
   }
 
-  if (hasSpaces && periods && showPeriodSelector) {
+  if (hasSpaces && periods && isTeamOrEnterpriseCustomer && !isAssetBandwidthTab) {
     return (
       <PeriodSelector
         periods={periods}
@@ -120,7 +135,8 @@ WorkbenchActions.propTypes = {
   periods: PropTypes.array,
   selectedPeriodIndex: PropTypes.number,
   setPeriodIndex: PropTypes.func,
-  showPeriodSelector: PropTypes.bool,
+  isAssetBandwidthTab: PropTypes.bool,
+  isTeamOrEnterpriseCustomer: PropTypes.bool,
 };
 
 // need to do this for the test
@@ -136,7 +152,7 @@ export class OrganizationUsageRouteNew extends React.Component {
     this.state = {
       isLoading: true,
       error: null,
-      showPeriodSelector: true,
+      isAssetBandwidthTab: false,
     };
 
     this.endpoint = EndpointFactory.createOrganizationEndpoint(props.orgId);
@@ -172,15 +188,6 @@ export class OrganizationUsageRouteNew extends React.Component {
         PricingDataProvider.isEnterprisePlan(basePlan) ||
         PricingDataProvider.isSelfServicePlan(basePlan);
 
-      const getPeriod = isTeamOrEnterpriseCustomer
-        ? UsageService.getPeriods(this.endpoint)
-        : {
-            // return a period of 30 days from today for the community tier
-            items: [
-              { startDate: moment().subtract(30, 'days').format(), endDate: moment().format() },
-            ],
-          };
-
       const [
         spaces,
         plans,
@@ -191,7 +198,7 @@ export class OrganizationUsageRouteNew extends React.Component {
       ] = await Promise.all([
         OrganizationMembershipRepository.getAllSpaces(this.endpoint),
         PricingDataProvider.getPlansWithSpaces(this.endpoint),
-        getPeriod,
+        UsageService.getPeriods(this.endpoint),
         service.get('api_request'),
       ]);
 
@@ -207,6 +214,7 @@ export class OrganizationUsageRouteNew extends React.Component {
         isPoC,
         periods: periods.items,
         apiRequestIncludedLimit: apiRequestIncludedLimit ?? 0,
+        isTeamOrEnterpriseCustomer,
         hasSpaces: spaces.length !== 0,
       });
 
@@ -282,11 +290,12 @@ export class OrganizationUsageRouteNew extends React.Component {
   };
 
   async setPeriodIndex(e) {
+    this.setState({ isLoading: true });
     await this.loadPeriodData(parseInt(e.target.value));
   }
 
-  setShowPeriodSelector = (val) => {
-    this.setState({ showPeriodSelector: val !== 'assetBandwidth' });
+  setIsAssetBandwidthTab = (val) => {
+    this.setState({ isAssetBandwidthTab: val == 'assetBandwidth' });
   };
 
   render() {
@@ -301,7 +310,8 @@ export class OrganizationUsageRouteNew extends React.Component {
       apiRequestIncludedLimit,
       assetBandwidthData,
       hasSpaces,
-      showPeriodSelector,
+      isAssetBandwidthTab,
+      isTeamOrEnterpriseCustomer,
     } = this.state;
 
     return (
@@ -319,11 +329,12 @@ export class OrganizationUsageRouteNew extends React.Component {
                   periods,
                   selectedPeriodIndex,
                   setPeriodIndex: this.setPeriodIndex,
-                  showPeriodSelector,
+                  isAssetBandwidthTab,
+                  isTeamOrEnterpriseCustomer,
                 }}
               />
             }></Workbench.Header>
-          <Workbench.Content>
+          <Workbench.Content className={styles.content}>
             <WorkbenchContent
               {...{
                 hasSpaces,
@@ -336,7 +347,7 @@ export class OrganizationUsageRouteNew extends React.Component {
                 isLoading,
                 error,
                 periods,
-                onTabSelect: this.setShowPeriodSelector,
+                onTabSelect: this.setIsAssetBandwidthTab,
               }}
             />
           </Workbench.Content>

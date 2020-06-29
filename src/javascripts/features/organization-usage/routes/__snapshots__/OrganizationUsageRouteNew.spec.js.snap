@@ -1,6 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`OrganizationUsageRouteNew should render page without errors 1`] = `
+.emotion-0 {
+  height: 100%;
+}
+
+.emotion-0 > div {
+  height: 100%;
+}
+
 <Fragment>
   <DocumentTitle
     title="Usage"
@@ -12,17 +20,14 @@ exports[`OrganizationUsageRouteNew should render page without errors 1`] = `
       actions={
         <WorkbenchActions
           hasSpaces={true}
+          isAssetBandwidthTab={false}
           isLoading={false}
           periods={
             Array [
-              Object {
-                "endDate": "1970-01-18T12:01:22+00:00",
-                "startDate": "1969-12-19T12:01:22+00:00",
-              },
+              Object {},
             ]
           }
           setPeriodIndex={[Function]}
-          showPeriodSelector={true}
         />
       }
       icon={
@@ -36,6 +41,7 @@ exports[`OrganizationUsageRouteNew should render page without errors 1`] = `
       title="Usage"
     />
     <WorkbenchContent
+      className="emotion-0"
       testId="cf-ui-workbench-content"
       type="default"
     >
@@ -53,10 +59,7 @@ exports[`OrganizationUsageRouteNew should render page without errors 1`] = `
         onTabSelect={[Function]}
         periods={
           Array [
-            Object {
-              "endDate": "1970-01-18T12:01:22+00:00",
-              "startDate": "1969-12-19T12:01:22+00:00",
-            },
+            Object {},
           ]
         }
         spaceNames={

@@ -125,7 +125,7 @@ export class WorkbenchActions extends React.Component {
       return null;
     }
 
-    if (isLoading) {
+    if (isLoading && committed) {
       return <Spinner />;
     }
 
@@ -165,14 +165,16 @@ export class OrganizationUsageRoute extends React.Component {
 
   async componentDidMount() {
     try {
+      // check permission first to decide wether to render the usage page
+      await this.checkPermissions();
+
+      // if the flag is ON, use the new route
       const variation = await getVariation(PRICING_2020_RELEASED, {
         organizationId: this.props.orgId,
       });
       this.setState({ showNewPricingFeature: variation });
-      if (variation) {
-        return;
-      }
-      await this.checkPermissions();
+      if (variation) return;
+
       await this.fetchOrgData();
     } catch (ex) {
       this.setState({ isLoading: false, error: ex.message });
