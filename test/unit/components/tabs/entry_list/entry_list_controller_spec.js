@@ -208,25 +208,35 @@ describe('Entry List Controller', () => {
 
   describe('Api Errors', () => {
     it('shows error notification on 500 err', function () {
-      spaceContext.space.getEntries.rejects({ statusCode: 500 });
-      scope.updateEntries();
-      scope.$apply();
-      expect(
-        this.ComponentLibrary.Notification.error.calledWith(
-          'There was a problem searching Contentful.'
-        )
-      ).toBe(true);
+      try {
+        spaceContext.space.getEntries.rejects({ statusCode: 500 });
+        scope.updateEntries();
+        scope.$apply();
+
+        fail('scope.$apply() should have thrown an error');
+      } catch (err) {
+        expect(
+          this.ComponentLibrary.Notification.error.calledWith(
+            'There was a problem searching Contentful.'
+          )
+        ).toBe(true);
+      }
     });
 
     it('shows error notification on 400 err', function () {
-      spaceContext.space.getEntries.rejects({ statusCode: 400 });
-      scope.updateEntries();
-      scope.$apply();
-      expect(
-        this.ComponentLibrary.Notification.error.calledWith(
-          'We detected an invalid search query. Please try again.'
-        )
-      ).toBe(true);
+      try {
+        spaceContext.space.getEntries.rejects({ statusCode: 400 });
+        scope.updateEntries();
+        scope.$apply();
+
+        fail('scope.$apply() should have thrown an error');
+      } catch (err) {
+        expect(
+          this.ComponentLibrary.Notification.error.calledWith(
+            'We detected an invalid search query. Please try again.'
+          )
+        ).toBe(true);
+      }
     });
   });
 
