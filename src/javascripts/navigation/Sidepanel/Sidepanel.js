@@ -16,7 +16,6 @@ import * as logger from 'services/logger';
 import * as LD from 'utils/LaunchDarkly';
 import { ENVIRONMENTS_FLAG } from 'featureFlags';
 import { navState$ } from 'navigation/NavState';
-import OrgSettingsForMembers from './OrgSettingsForMembers';
 
 export default class Sidepanel extends React.Component {
   static propTypes = {
@@ -167,15 +166,10 @@ export default class Sidepanel extends React.Component {
               goToSpace={this.goToSpace}
               setOpenedSpaceId={this.setOpenedSpaceId}
             />
-            {isOwnerOrAdmin(this.state.currOrg) ? (
-              <OrgActions gotoOrgSettings={this.gotoOrgSettings} showOrgSettingsAsTeams={false} />
-            ) : (
-              <OrgSettingsForMembers
-                gotoOrgSettings={this.gotoOrgSettings}
-                currOrg={this.state.currOrg}
-                key={this.state.currOrg.sys.id}
-              />
-            )}
+            <OrgActions
+              gotoOrgSettings={this.gotoOrgSettings}
+              showSubscriptionSettings={isOwnerOrAdmin(this.state.currOrg)}
+            />
           </React.Fragment>
         )}
         {!this.state.currOrg && this.state.initialized && (
