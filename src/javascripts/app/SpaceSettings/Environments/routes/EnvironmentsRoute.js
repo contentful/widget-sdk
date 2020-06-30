@@ -402,6 +402,15 @@ function Sidebar({
           this space.
           {!isLegacyOrganization && <UsageTooltip resource={resource} />}
         </Paragraph>
+        {!canCreateEnv && !isLegacyOrganization && (
+          <Paragraph>
+            {canUpgradeSpace
+              ? spacePlan?.name === 'Large'
+                ? 'Talk to us about upgrading to an enterprise space plan.'
+                : 'Upgrade the space to add more.'
+              : 'Ask the administrator of your organization to upgrade the space plan.'}
+          </Paragraph>
+        )}
       </Typography>
 
       {canCreateEnv && (
@@ -503,12 +512,7 @@ UsageTooltip.propTypes = {
 function UpgradeButton({ handleOpenUpgradeSpaceDialog, isLargePlan = false }) {
   if (isLargePlan) {
     return (
-      <Button
-        isFullWidth
-        testId="upgradeToEnterpriseButton"
-        href={websiteUrl(
-          'contact/sales/'
-        )}>
+      <Button isFullWidth testId="upgradeToEnterpriseButton" href={websiteUrl('contact/sales/')}>
         Talk to us
       </Button>
     );
