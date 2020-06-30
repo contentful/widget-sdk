@@ -294,6 +294,7 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
             testId="cf-ui-workbench-sidebar">
             <div className={styles.buttons}>
               <Button
+                testId="publish-release"
                 buttonType="positive"
                 className=""
                 isFullWidth
@@ -302,6 +303,7 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
                 Publish now
               </Button>
               <Button
+                testId="validate-release"
                 buttonType="muted"
                 className={styles.buttons}
                 isFullWidth
