@@ -26,9 +26,7 @@ import { RevokeKeyDialog } from './RevokeKeyDialog';
 import * as util from '../util';
 import { MAX_KEYS_ALLOWED } from 'features/apps/config';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
-
-const LEARN_MORE_URL =
-  'https://www.contentful.com/developers/docs/extensibility/app-framework/backend-app/';
+import { LEARN_MORE_URL } from '../constants';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
   source: 'webapp',
@@ -199,7 +197,7 @@ export function KeyListing({ definition }) {
           href={withInAppHelpUtmParams(LEARN_MORE_URL)}
           target="_blank"
           rel="noopener noreferrer">
-          backend apps
+          app identities and events
         </TextLink>
         .
       </Paragraph>

@@ -12,11 +12,9 @@ import {
   Notification,
 } from '@contentful/forma-36-react-components';
 import * as util from '../util';
+import { KEY_GEN_GUIDE_URL } from '../constants';
 
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
-
-const KEY_GEN_GUIDE_URL =
-  'https://www.contentful.com/developers/docs/extensibility/app-framework/backend-app/#creating-your-app-keys';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
   source: 'webapp',
