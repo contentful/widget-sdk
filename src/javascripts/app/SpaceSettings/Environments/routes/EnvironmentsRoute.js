@@ -507,7 +507,7 @@ function UpgradeButton({ handleOpenUpgradeSpaceDialog, isLargePlan = false }) {
         isFullWidth
         testId="upgradeToEnterpriseButton"
         href={websiteUrl(
-          'support/?utm_source=webapp&utm_medium=account-menu&utm_campaign=in-app-help'
+          'contact/sales/'
         )}>
         Talk to us
       </Button>
