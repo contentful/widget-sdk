@@ -38,7 +38,9 @@ export default function register() {
         $scope.savedViewsUpdated += 1;
         $scope.$apply();
       };
-      $scope.onSelectSavedView = () => {
+      $scope.onSelectSavedView = (view) => {
+        $scope.initialState = view;
+        $scope.$apply();
         searchController.resetAssets();
       };
 
