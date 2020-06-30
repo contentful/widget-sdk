@@ -1,7 +1,7 @@
 import React, { Component, useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import { TextLink, Icon } from '@contentful/forma-36-react-components';
+import { TextLink, Icon, Notification } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { getEntityTitle } from 'app/entry_editor/EntryReferences/referencesService';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes';
@@ -10,10 +10,10 @@ import EntrySidebarWidget from 'app/EntrySidebar/EntrySidebarWidget';
 import ReleasesTimeline from './ReleasesTimeline';
 import ReleasesWidgetDialog from './ReleasesWidgetDialog';
 import { getReleasesFeatureVariation } from '../ReleasesFeatureFlag';
-import { getReleasesIncludingEntity } from '../releasesService';
+import { replaceReleaseById } from '../releasesService';
 import { ReleasesProvider, ReleasesContext } from './ReleasesContext';
-import { SET_RELEASES_INCLUDING_ENTRY } from '../state/actions';
 import { releaseDetailNavigation } from '../ReleaseDetail/utils';
+import { excludeEntityFromRelease, fetchReleases } from '../common/utils';
 
 const styles = {
   textLink: css({
@@ -27,19 +27,28 @@ const ReleasesWidget = ({ entityInfo, entity, entityTitle }) => {
   const [isRelaseDialogShown, setIsRelaseDialogShown] = useState(false);
 
   useEffect(() => {
-    const { id, type } = entityInfo;
-
-    async function fetchReleases() {
-      const fetchedReleases = await getReleasesIncludingEntity(id, type);
-
-      dispatch({ type: SET_RELEASES_INCLUDING_ENTRY, value: fetchedReleases.items });
-    }
-
-    fetchReleases();
+    fetchReleases(entityInfo, dispatch);
   }, [entityInfo, dispatch]);
 
   const onReleaseSelect = (release) => {
     releaseDetailNavigation(release);
+  };
+
+  const handleReleaseRefresh = async () => {
+    fetchReleases(entityInfo, dispatch);
+  };
+
+  const deleteEntityFromRelease = (release) => {
+    const releaseWithoutEntity = excludeEntityFromRelease(release, entityInfo.id);
+
+    replaceReleaseById(release.sys.id, release.title, releaseWithoutEntity)
+      .then(() => {
+        handleReleaseRefresh();
+        Notification.success(`${entityTitle || 'Untitled'} was removed from ${release.title}`);
+      })
+      .catch(() => {
+        Notification.error(`Failed deleting entity`);
+      });
   };
 
   return (
@@ -48,6 +57,7 @@ const ReleasesWidget = ({ entityInfo, entity, entityTitle }) => {
         <ReleasesTimeline
           releases={state.releasesIncludingEntity}
           onReleaseSelect={onReleaseSelect}
+          deleteEntityFromRelease={deleteEntityFromRelease}
         />
       ) : null}
       <div className={styles.textLink}>
@@ -59,6 +69,7 @@ const ReleasesWidget = ({ entityInfo, entity, entityTitle }) => {
           selectedEntities={[entity]}
           releaseContentTitle={entityTitle}
           rootEntity={entity}
+          handleReleaseRefresh={handleReleaseRefresh}
           onCancel={() => setIsRelaseDialogShown(false)}
         />
       )}

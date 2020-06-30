@@ -32,6 +32,19 @@ const styles = {
   dropdown: css({
     marginLeft: 'auto',
   }),
+  dropdownList: css({
+    padding: 0,
+    '> li': css({
+      paddingTop: tokens.spacing2Xs,
+    }),
+  }),
+  infoSection: css({
+    backgroundColor: tokens.colorElementLight,
+    paddingBottom: tokens.spacingS,
+    ':hover': css({
+      backgroundColor: tokens.colorElementLight,
+    }),
+  }),
 };
 
 export default class Release extends Component {
@@ -49,6 +62,7 @@ export default class Release extends Component {
         }),
       }),
     }),
+    deleteEntityFromRelease: PropTypes.func,
   };
 
   state = {
@@ -60,6 +74,11 @@ export default class Release extends Component {
 
   handleClick(event) {
     event.stopPropagation();
+    this.setState({ isDropdownOpen: !this.state.isDropdownOpen });
+  }
+
+  handleEntityDeleteFromRelease(release) {
+    this.props.deleteEntityFromRelease(release);
     this.setState({ isDropdownOpen: !this.state.isDropdownOpen });
   }
 
@@ -88,16 +107,25 @@ export default class Release extends Component {
               onClick={(event) => this.handleClick(event)}
             />
           }>
-          <DropdownList onClick={(event) => event.stopPropagation()}>
-            <DropdownListItem>
-              Contains {entriesCount && <Pluralized text="entry" count={entriesCount} />}
-              {entriesCount && assetsCount && ', '}
-              {assetsCount && <Pluralized text="asset" count={assetsCount} />}
-            </DropdownListItem>
-            <DropdownListItem isDisabled>
-              Created {formatPastDate(release.sys.createdAt)}
-              {' by '}
-              <ActionPerformerName link={release.sys.createdBy} />
+          <DropdownList
+            className={styles.dropdownList}
+            onClick={(event) => event.stopPropagation()}>
+            {this.props.deleteEntityFromRelease ? (
+              <DropdownListItem onClick={() => this.handleEntityDeleteFromRelease(release)}>
+                Remove from Release
+              </DropdownListItem>
+            ) : null}
+            <DropdownListItem className={styles.infoSection} isDisabled>
+              <div>
+                Contains {entriesCount && <Pluralized text="entry" count={entriesCount} />}
+                {entriesCount && assetsCount && ', '}
+                {assetsCount && <Pluralized text="asset" count={assetsCount} />}
+              </div>
+              <div>
+                Created {formatPastDate(release.sys.createdAt)}
+                {' by '}
+                <ActionPerformerName link={release.sys.createdBy} />
+              </div>
             </DropdownListItem>
           </DropdownList>
         </Dropdown>
