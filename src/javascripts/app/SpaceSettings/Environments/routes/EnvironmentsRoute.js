@@ -403,7 +403,7 @@ function Sidebar({
           {!isLegacyOrganization && <UsageTooltip resource={resource} />}
         </Paragraph>
         {!canCreateEnv && !isLegacyOrganization && (
-          <Paragraph>
+          <Paragraph testId="upgradeMessage">
             {canUpgradeSpace
               ? spacePlan?.name === 'Large'
                 ? 'Talk to us about upgrading to an enterprise space plan.'

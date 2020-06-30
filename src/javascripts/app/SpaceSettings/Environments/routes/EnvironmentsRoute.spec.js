@@ -255,19 +255,18 @@ describe('EnvironmentsRoute', () => {
   describe('when limit is reached on v2 pricing', () => {
     beforeEach(() => {
       defaultProps.isLegacyOrganization = false;
+      canCreate.mockReturnValueOnce(false);
       createResourceService.mockImplementation(() => ({
         get: jest.fn().mockResolvedValue({ usage: 1, limits: { maximum: 1 } }),
       }));
     });
 
     it('does not render create button', async () => {
-      canCreate.mockReturnValueOnce(false);
       const { queryByTestId } = await renderEnvironmentsComponent({ id: 'e1', status: 'ready' });
       expect(queryByTestId('openCreateDialog')).toBeNull();
     });
 
     it('should render upgrade space button when user is admin', async () => {
-      canCreate.mockReturnValueOnce(false);
       getSingleSpacePlan.mockReturnValueOnce(mockSpacePlan);
       defaultProps.canUpgradeSpace = true;
 
@@ -278,11 +277,11 @@ describe('EnvironmentsRoute', () => {
 
       expect(getByTestId('openUpgradeDialog')).toBeVisible();
       expect(getByTestId('openUpgradeDialog').textContent).toEqual('Upgrade space');
+      expect(getByTestId('upgradeMessage').textContent).toEqual('Upgrade the space to add more.');
       expect(queryByTestId('subscriptionLink')).toBeNull();
     });
 
     it('should render talk to us button when user is admin/owner and space is Large', async () => {
-      canCreate.mockReturnValueOnce(false);
       getSingleSpacePlan.mockReturnValueOnce(Fake.Space({ name: 'Large' }));
       defaultProps.canUpgradeSpace = true;
 
@@ -293,15 +292,26 @@ describe('EnvironmentsRoute', () => {
 
       expect(getByTestId('upgradeToEnterpriseButton')).toBeVisible();
       expect(getByTestId('upgradeToEnterpriseButton').textContent).toEqual('Talk to us');
+      expect(getByTestId('upgradeMessage').textContent).toEqual(
+        'Talk to us about upgrading to an enterprise space plan.'
+      );
       expect(queryByTestId('subscriptionLink')).toBeNull();
     });
 
     it('should not show upgrade action when user is not admin', async () => {
       defaultProps.canUpgradeSpace = false;
 
-      const { queryByTestId } = await renderEnvironmentsComponent({ id: 'e1', status: 'ready' });
+      const { getByTestId, queryByTestId } = await renderEnvironmentsComponent({
+        id: 'e1',
+        status: 'ready',
+      });
 
       expect(queryByTestId('openUpgradeDialog')).toBeNull();
+      expect(queryByTestId('upgradeToEnterpriseButton')).toBeNull();
+      expect(getByTestId('upgradeMessage')).toBeVisible();
+      expect(getByTestId('upgradeMessage').textContent).toEqual(
+        'Ask the administrator of your organization to upgrade the space plan.'
+      );
       expect(queryByTestId('subscriptionLink')).toBeNull();
     });
   });
