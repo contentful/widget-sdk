@@ -1,5 +1,7 @@
-import { map, sum, unzip } from 'lodash';
+import { map, sum, unzip, get } from 'lodash';
 import { USAGE_INSIGHTS, getAlphaHeader } from 'alphaHeaders.js';
+import createResourceService from 'services/ResourceService';
+import * as EndpointFactory from 'data/EndpointFactory';
 
 const headers = getAlphaHeader(USAGE_INSIGHTS);
 
@@ -86,16 +88,7 @@ export const transformOrg = (org) => {
   return map(unzip(Object.values(newOrg)), sum);
 };
 
-export const mapResponseToState = ({
-  org,
-  cma,
-  cda,
-  cpa,
-  gql,
-  assetBandwidthData = 0,
-  newIndex = 0,
-}) => ({
-  isLoading: false,
+export const mapResponseToState = ({ org, cma, cda, cpa, gql, assetBandwidthData = 0 }) => ({
   periodicUsage: {
     org: { usage: transformOrg(org) },
     apis: transformApi([
@@ -105,6 +98,37 @@ export const mapResponseToState = ({
       { type: 'gql', api: gql },
     ]),
   },
-  selectedPeriodIndex: newIndex,
   assetBandwidthData,
 });
+
+export const loadPeriodData = async (orgId, period) => {
+  const endpoint = EndpointFactory.createOrganizationEndpoint(orgId);
+  const promises = [
+    getOrgUsage(endpoint, {
+      startDate: period.startDate,
+      endDate: period.endDate,
+    }),
+    ...['cma', 'cda', 'cpa', 'gql'].map((apiType) =>
+      getApiUsage(endpoint, {
+        apiType,
+        startDate: period.startDate,
+        endDate: period.endDate,
+        limit: 5,
+      })
+    ),
+  ];
+
+  const [org, cma, cda, cpa, gql] = await Promise.all(promises);
+
+  return { org, cma, cda, cpa, gql };
+};
+
+export const getAssetBandwidthData = async (orgId) => {
+  const service = createResourceService(orgId, 'organization');
+  const data = await service.get('asset_bandwidth');
+  return {
+    usage: get(data, ['usage']),
+    limit: get(data, ['limits', 'included']),
+    uom: get(data, ['unitOfMeasure']),
+  };
+};

@@ -11,16 +11,20 @@ import {
 import PropTypes from 'prop-types';
 import { sum } from 'lodash';
 import { shorten } from 'utils/NumberUtils';
-import { organizationResourceUsagePropType } from './propTypes';
 import { calcRelativeSpaceUsage } from '../utils/calcRelativeSpaceUsage';
+import { useUsageState, colours } from '../hooks/usageContext';
 
-const SpaceRow = ({ spaceName, spaceUsage, totalUsage, colour, isPoC }) => {
+const SpaceRow = ({ spaceId, spaceUsage, color }) => {
+  const { spaceNames, totalUsage, isPoC } = useUsageState();
+
+  const spaceName = spaceNames[spaceId];
+
   return (
     <TableRow data-test-id="api-usage-table-row">
       <TableCell>
         <div>{spaceName || 'Deleted space'}</div>
         <div>
-          {isPoC && (
+          {isPoC[spaceId] && (
             <Tooltip content="Proof of concept">
               <Tag tagType="muted">POC</Tag>
             </Tooltip>
@@ -30,7 +34,7 @@ const SpaceRow = ({ spaceName, spaceUsage, totalUsage, colour, isPoC }) => {
       {/* eslint-disable-next-line */}
       <TableCell style={{ verticalAlign: 'middle' }}>{shorten(sum(spaceUsage))}</TableCell>
       {/* eslint-disable-next-line */}
-      <TableCell style={{ color: colour, verticalAlign: 'middle' }}>
+      <TableCell style={{ color: color, verticalAlign: 'middle' }}>
         {calcRelativeSpaceUsage(spaceUsage, totalUsage)}%
       </TableCell>
     </TableRow>
@@ -38,14 +42,16 @@ const SpaceRow = ({ spaceName, spaceUsage, totalUsage, colour, isPoC }) => {
 };
 
 SpaceRow.propTypes = {
-  spaceName: PropTypes.string,
-  spaceUsage: PropTypes.arrayOf(PropTypes.number).isRequired,
-  totalUsage: PropTypes.number.isRequired,
-  colour: PropTypes.string.isRequired,
-  isPoC: PropTypes.bool,
+  spaceId: PropTypes.string,
+  spaceUsage: PropTypes.arrayOf(PropTypes.number),
+  color: PropTypes.string,
 };
 
-export const SpacesTable = ({ spaceNames, data, totalUsage, colours, isPoC }) => {
+export const SpacesTable = () => {
+  const { periodicUsage, selectedSpacesTab } = useUsageState();
+
+  const data = periodicUsage.apis[selectedSpacesTab].items;
+
   return (
     <Table data-test-id="api-usage-table">
       <TableHead>
@@ -59,23 +65,12 @@ export const SpacesTable = ({ spaceNames, data, totalUsage, colours, isPoC }) =>
         {data.map((item, index) => (
           <SpaceRow
             key={index}
-            spaceName={spaceNames[item.sys.space.sys.id]}
+            spaceId={item.sys.space.sys.id}
             spaceUsage={item.usage}
-            totalUsage={totalUsage}
-            colour={colours[index]}
-            index={index}
-            isPoC={isPoC[item.sys.space.sys.id]}
+            color={colours[index]}
           />
         ))}
       </TableBody>
     </Table>
   );
-};
-
-SpacesTable.propTypes = {
-  spaceNames: PropTypes.objectOf(PropTypes.string).isRequired,
-  totalUsage: PropTypes.number.isRequired,
-  data: PropTypes.arrayOf(organizationResourceUsagePropType).isRequired,
-  colours: PropTypes.arrayOf(PropTypes.string).isRequired,
-  isPoC: PropTypes.objectOf(PropTypes.bool).isRequired,
 };
