@@ -13,8 +13,10 @@ import {
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
+import { track } from 'analytics/Analytics';
 import * as Config from 'Config';
 import ExternalTextLink from 'app/common/ExternalTextLink';
+import { trackCTAClick } from 'services/ChangeSpaceService';
 
 const envDocSidebarUtmParams =
   '?utm_source=webapp&utm_medium=environments-sidebar&utm_campaign=in-app-help';
@@ -49,23 +51,28 @@ export default function EnvironmentsSidebar({
   canManageAliases,
   hasOptedInEnv,
   spacePlan,
+  spaceId,
+  organizationId,
 }) {
   // Master is not included in the api, display +1 usage and limit
   const usage = resource.usage + 1;
   const limit = get(resource, 'limits.maximum', -1) + 1;
   const shouldShowAliasDefinition = canManageAliases || hasOptedInEnv;
 
-  // const handleBannerClickCTA = () => {
-  //   const { spaceId } = this.props;
-  //   const spaceContext = getModule('spaceContext');
-  //   const orgId = spaceContext.organization.sys.id;
+  const upgradeToEnterpriseOnClick = () => {
+    track('targeted_cta_clicked:upgrade_to_enterprise', {
+      ctaLocation: 'environments',
+      spaceId,
+      orgId: organizationId,
+    });
+  };
 
-  //   track('targeted_cta_clicked:upgrade_to_enterprise', {
-  //     ctaLocation: 'environments',
-  //     spaceId,
-  //     orgId,
-  //   });
-  // };
+  const upgradeOnDemandOnClick = () => {
+    trackCTAClick(organizationId, spaceId);
+    OpenUpgradeSpaceDialog();
+  };
+
+  const spacePlanIsLarge = spacePlan?.name === 'Large';
 
   return (
     <>
@@ -83,7 +90,7 @@ export default function EnvironmentsSidebar({
         {!canCreateEnv && !isLegacyOrganization && (
           <Paragraph testId="upgradeMessage">
             {canUpgradeSpace
-              ? spacePlan?.name === 'Large'
+              ? spacePlanIsLarge
                 ? 'Talk to us about upgrading to an enterprise space plan.'
                 : 'Upgrade the space to add more.'
               : 'Ask the administrator of your organization to upgrade the space plan.'}
@@ -99,10 +106,13 @@ export default function EnvironmentsSidebar({
 
       {/** We need to wait for the spacePlan or the button will jump from 'Upgrade space' to 'Talk to us' */}
       {!canCreateEnv && !isLegacyOrganization && canUpgradeSpace && !!spacePlan && (
-        <UpgradeButton
-          handleOpenUpgradeSpaceDialog={OpenUpgradeSpaceDialog}
-          isLargePlan={spacePlan?.name === 'Large'}
-        />
+        <>
+          {spacePlanIsLarge ? (
+            <UpgradeToEnterpriseButton handleOnClick={upgradeToEnterpriseOnClick} />
+          ) : (
+            <UpgradeOnDemandButton handleOnClick={upgradeOnDemandOnClick} />
+          )}
+        </>
       )}
 
       <Heading element="h2" className="entity-sidebar__heading">
@@ -150,6 +160,8 @@ EnvironmentsSidebar.propTypes = {
   canManageAliases: PropTypes.bool.isRequired,
   hasOptedInEnv: PropTypes.bool.isRequired,
   spacePlan: PropTypes.object,
+  spaceId: PropTypes.string,
+  organizationId: PropTypes.string,
 };
 
 function UsageTooltip({ resource }) {
@@ -185,26 +197,28 @@ UsageTooltip.propTypes = {
   resource: PropTypes.object.isRequired,
 };
 
-function UpgradeButton({ handleOpenUpgradeSpaceDialog, isLargePlan = false }) {
-  if (isLargePlan) {
-    return (
-      <Button
-        isFullWidth
-        testId="upgradeToEnterpriseButton"
-        href={Config.websiteUrl('contact/sales/')}>
-        Talk to us
-      </Button>
-    );
-  }
+const UpgradeButtonProptypes = {
+  handleOnClick: PropTypes.func.isRequired,
+};
 
+function UpgradeOnDemandButton({ handleOnClick }) {
   return (
-    <Button isFullWidth testId="openUpgradeDialog" onClick={() => handleOpenUpgradeSpaceDialog()}>
+    <Button isFullWidth testId="openUpgradeDialog" onClick={handleOnClick}>
       Upgrade space
     </Button>
   );
 }
+UpgradeOnDemandButton.propTypes = UpgradeButtonProptypes;
 
-UpgradeButton.propTypes = {
-  handleOpenUpgradeSpaceDialog: PropTypes.func.isRequired,
-  isLargePlan: PropTypes.bool,
-};
+function UpgradeToEnterpriseButton({ handleOnClick }) {
+  return (
+    <Button
+      isFullWidth
+      testId="upgradeToEnterpriseButton"
+      href={Config.websiteUrl('contact/sales/')}
+      onClick={handleOnClick}>
+      Talk to us
+    </Button>
+  );
+}
+UpgradeToEnterpriseButton.propTypes = UpgradeButtonProptypes;
