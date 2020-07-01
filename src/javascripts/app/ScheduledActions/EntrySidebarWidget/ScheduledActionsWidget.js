@@ -121,8 +121,12 @@ export default function ScheduledActionsWidget({
     data: entity,
   });
 
+  const hasActiveScheduledAction = (jobs) => jobs.find((job) => job.sys.status === 'scheduled');
+
   function setJobsState(jobs) {
-    emitter.emit(SidebarEventTypes.SET_TASK_CREATION_BLOCKING, { blocked: !!jobs.length });
+    emitter.emit(SidebarEventTypes.SET_TASK_CREATION_BLOCKING, {
+      blocked: !!hasActiveScheduledAction(jobs),
+    });
     setJobs(jobs);
   }
 
@@ -137,7 +141,7 @@ export default function ScheduledActionsWidget({
       setJobs(jobCollection);
 
       emitter.emit(SidebarEventTypes.SET_TASK_CREATION_BLOCKING, {
-        blocked: !!jobCollection.length,
+        blocked: !!hasActiveScheduledAction(jobCollection),
       });
 
       return jobCollection;
