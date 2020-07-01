@@ -69,7 +69,7 @@ export function getState(sys: EntitySys): EntityState {
 export function makeApply(spaceEndpoint: SpaceEndpoint) {
   const changeTo = makeChangeTo(spaceEndpoint);
 
-  return function applyAction(action: EntityAction, data: Entity) {
+  return function applyAction(action: EntityAction, uiState: EntityState, data: Entity) {
     const targetState = caseof(action, [
       [Action.Publish(), State.Published],
       [Action.Unpublish(), State.Draft],
@@ -77,7 +77,7 @@ export function makeApply(spaceEndpoint: SpaceEndpoint) {
       [Action.Unarchive(), State.Draft],
       [Action.Delete(), State.Deleted],
     ]);
-    return changeTo(targetState, data);
+    return changeTo(targetState, uiState, data);
   };
 }
 
@@ -89,7 +89,7 @@ export function makeApply(spaceEndpoint: SpaceEndpoint) {
 function makeChangeTo(spaceEndpoint: SpaceEndpoint) {
   const performAction = makePerform(spaceEndpoint);
 
-  return function changeTo(state: EntityState, data: Entity) {
+  return function changeTo(state: EntityState, uiState: EntityState, data: Entity) {
     if (state === State.Changed()) {
       throw new Error('"Changed" is not a valid entity target state');
     }
@@ -107,7 +107,7 @@ function makeChangeTo(spaceEndpoint: SpaceEndpoint) {
       [
         State.Published(),
         () => {
-          if (currentState === State.Changed()) {
+          if ([currentState, uiState].includes(State.Changed())) {
             return performAction(Action.Publish(), data);
           } else {
             return performActionWithDraftEnsured(Action.Publish(), data);
