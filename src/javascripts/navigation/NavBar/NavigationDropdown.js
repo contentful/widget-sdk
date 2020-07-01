@@ -90,6 +90,11 @@ const styles = {
       color: tokens.colorTextLight,
       cursor: 'not-allowed',
     }),
+
+    '&:focus': css({
+      outline: 0,
+      backgroundColor: tokens.colorContrastDark,
+    }),
   }),
   navBarListLabel: css({
     display: 'flex',
