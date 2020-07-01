@@ -20,23 +20,10 @@ import pageExtensions from 'app/pageExtensions/routes';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
 import releasesActions from 'app/Releases/routes';
 
-import createSpaceAdviceTemplate from 'components/app_container/cf_create_space_advice.html';
 import SpaceHibernationAdvice from 'components/app_container/SpaceHibernationAdvice';
 import AccessForbidden from 'components/access-forbidden/AccessForbidden';
 
 const store = getBrowserStorage();
-
-const newSpace = {
-  name: 'new',
-  url: '_new',
-  template: createSpaceAdviceTemplate,
-  controller: [
-    '$scope',
-    ($scope) => {
-      $scope.canCreateSpace = accessChecker.canCreateSpace;
-    },
-  ],
-};
 
 const hibernation = {
   name: 'hibernation',
@@ -165,5 +152,5 @@ export default {
   url: '/spaces',
   abstract: true,
   navComponent: SpaceNavigationBar,
-  children: [newSpace, spaceDetail],
+  children: [spaceDetail],
 };
