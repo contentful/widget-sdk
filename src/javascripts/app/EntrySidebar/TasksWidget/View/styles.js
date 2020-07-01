@@ -9,6 +9,9 @@ export const taskListStyles = {
   listItem: css({
     marginBottom: '0',
   }),
+  blockedTaskCreator: css({
+    display: 'none',
+  }),
   addTaskCta: css({
     marginTop: tokens.spacingS,
   }),

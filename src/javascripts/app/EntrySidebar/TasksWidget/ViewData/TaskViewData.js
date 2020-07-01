@@ -77,7 +77,8 @@ export function createTaskListViewData(
     statusText: tasks ? getPendingTasksMessage(tasks) : null,
     isLoading: tasksFetchingStatus.isLoading && !tasks,
     errorMessage: loadingError ? `Error ${tasks ? 'syncing' : 'loading'} tasks` : null,
-    hasCreateAction: !isCreatingDraft && !loadingError && !taskCreationBlocked,
+    hasCreateAction: !isCreatingDraft && !loadingError,
+    taskCreationBlocked: taskCreationBlocked,
     tasks: [...(tasks || []).map(newTaskVD), ...draftTasksVD],
   };
 
