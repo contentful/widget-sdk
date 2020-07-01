@@ -142,7 +142,7 @@ function organizationName(orgName) {
       data-test-id="sidepanel-trigger-text-subtitle"
       className={css({
         ...oneLineTruncate,
-        color: tokens.colorTextLightest,
+        color: tokens.colorBlueLightest,
         fontSize: '12px',
         lineHeight: '1.5',
       })}>
