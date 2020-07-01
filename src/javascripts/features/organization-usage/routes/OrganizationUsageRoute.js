@@ -22,7 +22,7 @@ import * as OrganizationRoles from 'services/OrganizationRoles';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 import ErrorState from 'app/common/ErrorState';
 
-import { PRICING_2020_RELEASED } from 'featureFlags';
+import { NEW_USAGE_PAGE } from 'featureFlags';
 import { getVariation } from 'LaunchDarkly';
 import { OrganizationUsageRouteNew } from './OrganizationUsageRouteNew';
 
@@ -169,7 +169,7 @@ export class OrganizationUsageRoute extends React.Component {
       await this.checkPermissions();
 
       // if the flag is ON, use the new route
-      const variation = await getVariation(PRICING_2020_RELEASED, {
+      const variation = await getVariation(NEW_USAGE_PAGE, {
         organizationId: this.props.orgId,
       });
       this.setState({ showNewPricingFeature: variation });
