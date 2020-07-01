@@ -35,3 +35,6 @@ export const NEW_TEAM_LIST = 'feature-hejo-05-2020-new-team-list';
 
 //React migration Release Flags
 export const NEW_FIELD_DIALOG = 'react-migration-new-content-type-field-dialog';
+
+// Team Moi Release Flags
+export const NEW_USAGE_PAGE = 'feature-moi-06-2020-organization-usage-page';
