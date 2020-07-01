@@ -1,5 +1,6 @@
 import React from 'react';
-import { render, waitForElement, wait } from '@testing-library/react';
+import { render, waitForElement, wait, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 import EnvironmentsRoute from './EnvironmentsRoute';
 import * as accessChecker from 'access_control/AccessChecker';
@@ -7,9 +8,11 @@ import * as LD from 'utils/LaunchDarkly';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { openDeleteEnvironmentDialog } from '../DeleteDialog';
 import createResourceService from 'services/ResourceService';
+import { showDialog as showUpgradeSpaceDialog, trackCTAClick } from 'services/ChangeSpaceService';
 import { canCreate } from 'utils/ResourceUtils';
 import { createPaginationEndpoint } from '__mocks__/data/EndpointFactory';
 import { getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
+import { track } from 'analytics/Analytics';
 import * as Fake from 'test/helpers/fakeFactory';
 
 jest.mock('services/ResourceService', () => ({
@@ -44,7 +47,13 @@ jest.mock('utils/ResourceUtils', () => ({
 }));
 
 jest.mock('services/ChangeSpaceService', () => ({
+  showDialog: jest.fn(),
   showUpgradeSpaceDialog: jest.fn(),
+  trackCTAClick: jest.fn(),
+}));
+
+jest.mock('analytics/Analytics', () => ({
+  track: jest.fn(),
 }));
 
 jest.mock('../DeleteDialog', () => ({
@@ -270,32 +279,48 @@ describe('EnvironmentsRoute', () => {
       getSingleSpacePlan.mockReturnValueOnce(mockSpacePlan);
       defaultProps.canUpgradeSpace = true;
 
-      const { getByTestId, queryByTestId } = await renderEnvironmentsComponent({
+      await renderEnvironmentsComponent({
         id: 'e1',
         status: 'ready',
       });
 
-      expect(getByTestId('openUpgradeDialog')).toBeVisible();
-      expect(getByTestId('openUpgradeDialog').textContent).toEqual('Upgrade space');
-      expect(getByTestId('upgradeMessage').textContent).toEqual('Upgrade the space to add more.');
-      expect(queryByTestId('subscriptionLink')).toBeNull();
+      expect(screen.getByTestId('upgradeMessage').textContent).toEqual(
+        'Upgrade the space to add more.'
+      );
+
+      expect(screen.getByTestId('openUpgradeDialog')).toBeVisible();
+      expect(screen.getByTestId('openUpgradeDialog').textContent).toEqual('Upgrade space');
+
+      userEvent.click(screen.getByTestId('openUpgradeDialog'));
+      expect(trackCTAClick).toBeCalled();
+      expect(showUpgradeSpaceDialog).toBeCalled();
+
+      expect(screen.queryByTestId('subscriptionLink')).toBeNull();
     });
 
     it('should render talk to us button when user is admin/owner and space is Large', async () => {
       getSingleSpacePlan.mockReturnValueOnce(Fake.Space({ name: 'Large' }));
       defaultProps.canUpgradeSpace = true;
 
-      const { getByTestId, queryByTestId } = await renderEnvironmentsComponent({
+      await renderEnvironmentsComponent({
         id: 'e1',
         status: 'ready',
       });
 
-      expect(getByTestId('upgradeToEnterpriseButton')).toBeVisible();
-      expect(getByTestId('upgradeToEnterpriseButton').textContent).toEqual('Talk to us');
-      expect(getByTestId('upgradeMessage').textContent).toEqual(
+      expect(screen.getByTestId('upgradeMessage').textContent).toEqual(
         'Talk to us about upgrading to an enterprise space plan.'
       );
-      expect(queryByTestId('subscriptionLink')).toBeNull();
+
+      expect(screen.getByTestId('upgradeToEnterpriseButton')).toBeVisible();
+      expect(screen.getByTestId('upgradeToEnterpriseButton').textContent).toEqual('Talk to us');
+      userEvent.click(screen.getByTestId('upgradeToEnterpriseButton'));
+      expect(track).toBeCalledWith('targeted_cta_clicked:upgrade_to_enterprise', {
+        ctaLocation: 'environments',
+        orgId: defaultProps.organizationId,
+        spaceId: defaultProps.spaceId,
+      });
+
+      expect(screen.queryByTestId('subscriptionLink')).toBeNull();
     });
 
     it('should not show upgrade action when user is not admin', async () => {
