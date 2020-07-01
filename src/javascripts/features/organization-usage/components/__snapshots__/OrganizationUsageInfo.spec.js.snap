@@ -39,7 +39,7 @@ exports[`OrganisationUsageInfoNew should render 1`] = `
       >
         2M
       </strong>
-      /month quota. This number includes CMA, CDA, CPA, and GraphQL requests. To learn about utility limits, read the 
+      /month quota. This number includes CMA, CDA, CPA, and GraphQL requests. The use of Contentful is subject to our 
       <a
         class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
         data-test-id="fair_use_policy_link"

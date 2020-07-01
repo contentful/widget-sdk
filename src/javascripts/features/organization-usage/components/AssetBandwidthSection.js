@@ -11,6 +11,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import * as tokens from '@contentful/forma-36-tokens';
 
+import { track } from 'analytics/Analytics';
 import { shortenStorageUnit } from 'utils/NumberUtils';
 
 const styles = {
@@ -44,7 +45,9 @@ const styles = {
 
 export const AssetBandwidthSection = ({ limit, usage, uom }) => {
   const withUnit = partialRight(shortenStorageUnit, uom);
-
+  const handleClick = () => {
+    track('usage:fair_use_policy_clicked');
+  };
   return (
     <Typography>
       <Heading element="h2" className={styles.heading}>
@@ -66,6 +69,8 @@ export const AssetBandwidthSection = ({ limit, usage, uom }) => {
         <TextLink
           href="https://www.contentful.com/r/knowledgebase/fair-use/"
           target="_blank"
+          onClick={handleClick}
+          data-test-id="fair_use_policy_link"
           rel="noopener noreferrer"
           className={styles.learnMoreLink}>
           Fair Use Policy

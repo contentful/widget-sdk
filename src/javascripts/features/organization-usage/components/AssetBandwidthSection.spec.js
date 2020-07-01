@@ -1,6 +1,7 @@
 import '@testing-library/dom';
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
+import { track } from 'analytics/Analytics';
 import { AssetBandwidthSection } from './AssetBandwidthSection';
 
 describe('AssetBandwidthSection', () => {
@@ -36,5 +37,12 @@ describe('AssetBandwidthSection', () => {
     const { getByTestId } = renderComp(overageProps);
     const overage = getByTestId('asset-bandwidth-overage');
     expect(overage.textContent).toBe(' + 550 GB overage');
+  });
+
+  it('should track fair use policy clicks', () => {
+    const { getByTestId } = renderComp(defaultProps);
+    fireEvent.click(getByTestId('fair_use_policy_link'));
+    expect(track).toHaveBeenCalledTimes(1);
+    expect(track).toHaveBeenCalledWith('usage:fair_use_policy_clicked');
   });
 });
