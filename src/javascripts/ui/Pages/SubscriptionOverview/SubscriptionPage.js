@@ -202,14 +202,10 @@ export default function SubscriptionPage({
           </div>
           <div className={styles.leftSection}>
             {initialLoad ? (
-              <>
-                <SkeletonContainer svgHeight={30}>
-                  <SkeletonDisplayText className="section-title" />
-                </SkeletonContainer>
-                <SkeletonContainer svgHeight={90}>
-                  <SkeletonBodyText numberOfLines={4} />
-                </SkeletonContainer>
-              </>
+              <SkeletonContainer svgHeight={117}>
+                <SkeletonDisplayText />
+                <SkeletonBodyText numberOfLines={4} offsetTop={29} />
+              </SkeletonContainer>
             ) : (
               <BasePlan basePlan={basePlan} organizationId={organizationId} />
             )}
@@ -224,14 +220,10 @@ export default function SubscriptionPage({
           </div>
           <div className={styles.rightSection}>
             {initialLoad ? (
-              <>
-                <SkeletonContainer svgHeight={30}>
-                  <SkeletonDisplayText className="section-title" />
-                </SkeletonContainer>
-                <SkeletonContainer svgHeight={90}>
-                  <SkeletonBodyText numberOfLines={4} />
-                </SkeletonContainer>
-              </>
+              <SkeletonContainer svgHeight={117}>
+                <SkeletonDisplayText />
+                <SkeletonBodyText numberOfLines={4} offsetTop={29} />
+              </SkeletonContainer>
             ) : (
               <>
                 {!rightColumnHasContent && (
