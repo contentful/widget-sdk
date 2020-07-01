@@ -5,6 +5,7 @@ import {
 import { Entity } from 'app/entity_editor/Document/types';
 import { makeApply } from './EntityState';
 import { EntityAction } from './EntityActions';
+import { EntityState } from 'data/CMA/EntityState';
 import { SpaceEndpoint } from './types';
 
 const COLLECTION_ENDPOINTS = {
@@ -17,7 +18,7 @@ export type EntityRepo = {
   onContentEntityChanged: (entitySys: { type: string; id: string }, callback: any) => () => any;
   onAssetFileProcessed: (entitySys: { type: string; id: string }, callback: any) => () => any;
   update: (entity: Entity) => Promise<Entity>;
-  applyAction: (action: EntityAction, data: Entity) => Entity;
+  applyAction: (action: EntityAction, uiState: EntityState, data: Entity) => Entity;
 };
 
 interface EntityRepoOptions {

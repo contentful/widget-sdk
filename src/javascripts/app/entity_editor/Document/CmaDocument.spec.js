@@ -2,6 +2,7 @@ import { cloneDeep, set } from 'lodash';
 import * as CmaDocument from './CmaDocument';
 import { THROTTLE_TIME } from './CmaDocument';
 import { Action } from 'data/CMA/EntityActions';
+import { State as EntityState } from 'data/CMA/EntityState';
 import testDocumentBasic, { linkedTags, newAsset, newContentType, newEntry } from './Document.spec';
 import * as K from '../../../../../test/utils/kefir';
 import { Error as DocError } from '../../../data/document/Error';
@@ -315,8 +316,9 @@ describe('CmaDocument', () => {
         entry.sys.version++;
         return Promise.resolve(entry);
       });
-      entityRepo.applyAction.mockImplementationOnce((action, data) => {
+      entityRepo.applyAction.mockImplementationOnce((action, uiState, data) => {
         expect(action).toEqual(Action.Publish());
+        expect(uiState).toEqual(EntityState.Draft());
         expect(data.sys.version).toBe(entry.sys.version);
         entry = cloneDeep(entry);
         return new Promise((resolve) => {

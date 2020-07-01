@@ -94,7 +94,7 @@ export function create(config: {
       if (preApplyFn) {
         await preApplyFn();
       }
-      data = await entityRepo.applyAction(action, getData());
+      data = await entityRepo.applyAction(action, currentState, getData());
     } catch (error) {
       inProgressBus.set(false);
       throw error;
