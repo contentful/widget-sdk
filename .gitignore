@@ -28,10 +28,6 @@ public/*
 *.ignore
 output/
 
-# micro-backends
-/micro-backends/.dependency-cache
-/micro-backends/.kv
-
 # Cypress artifacts
 screenshots/
 videos/

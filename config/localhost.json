@@ -8,7 +8,7 @@
   "marketingUrl": "http://localhost:5000",
   "main_domain": "localhost.com:5000",
   "toolsServiceUrl": "http://localhost:5000",
-  "microBackendsUrl": "http://localhost:5000/_microbackends/backends",
+  "microBackendsUrl": "https://q1bbmbmz6d.execute-api.us-east-1.amazonaws.com/backends",
   "contentful": {
     "apiUrl": "api.contentful.com",
     "cdaApiUrl": "cdn.contentful.com",
