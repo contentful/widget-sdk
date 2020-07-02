@@ -11,6 +11,7 @@ import {
   Subheading,
   Paragraph,
   Notification,
+  Icon,
 } from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
@@ -22,13 +23,21 @@ import { ActionPerformerName } from 'core/components/ActionPerformerName';
 import { deleteRelease } from '../releasesService';
 import DeleteReleaseConfirmationDialog from './DeleteReleaseDialog';
 
-const getHexOutOfString = (str) => {
-  // convert release id to hex color codes
-  const hexColorCode = (parseInt(parseInt(str, 36).toExponential().slice(2, -5), 10) & 0xffffff)
-    .toString(16)
-    .toUpperCase();
+const getColorCode = (str) => {
+  const releaseColorPalette = [
+    tokens.colorIceDark,
+    tokens.colorMintDark,
+    tokens.colorPeachDark,
+    tokens.colorCoralDark,
+    tokens.colorGreenLight,
+    tokens.colorBlueLight,
+    tokens.colorElementLight,
+  ];
 
-  return hexColorCode.length > 6 ? hexColorCode : hexColorCode.padEnd(6, '0');
+  const convertIdToNumber = parseInt(str, 36).toExponential().split('e')[0];
+  const convertNumberToFloat = convertIdToNumber.replace(convertIdToNumber[0], '0');
+
+  return releaseColorPalette[Math.floor(convertNumberToFloat * releaseColorPalette.length)];
 };
 
 const styles = {
@@ -60,18 +69,13 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
   }),
-  textOverlay: css({
-    width: '100%',
-    height: '100%',
-    color: 'rgba(255,255,255,.5)',
-    textAlign: 'center',
-    textTransform: 'uppercase',
+  iconOverlay: css({
+    width: tokens.spacing4Xl,
+    height: tokens.spacing4Xl,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    background: 'rgba(255,255,255,.2)',
-    fontWeight: 'bold',
-    overflow: 'hidden',
+    opacity: '0.2',
   }),
   subheading: css({
     whiteSpace: 'nowrap',
@@ -80,9 +84,12 @@ const styles = {
   }),
   releaseImage: (images, id) =>
     css({
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
       width: '100%',
       height: 150,
-      background: images ? `url(${images[0]}?w=250&h=150)` : `#${getHexOutOfString(id)}`,
+      background: images ? `url(${images[0]}?w=250&h=150)` : `${getColorCode(id)}`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
     }),
@@ -110,7 +117,7 @@ const ReleaseImage = ({ release }) => {
   });
   return (
     <div className={styles.releaseImage(images, release.sys.id)}>
-      {!images && <div className={styles.textOverlay}>{release.title}</div>}
+      {!images && <Icon className={styles.iconOverlay} icon="Release" size="large" color="white" />}
     </div>
   );
 };
