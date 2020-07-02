@@ -45,6 +45,13 @@ const styles = {
       backgroundColor: tokens.colorElementLight,
     }),
   }),
+  textTag: css({
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    width: '70%',
+    textTransform: 'none',
+  }),
 };
 
 export default class Release extends Component {
@@ -90,7 +97,7 @@ export default class Release extends Component {
     return (
       <Card className={styles.card}>
         <Icon icon="Release" color="secondary" className={styles.icon} />
-        <Tag testId="release-item" tagType="muted">
+        <Tag testId="release-item" tagType="muted" title={release.title} className={styles.textTag}>
           {release.title}
         </Tag>
         <Dropdown
