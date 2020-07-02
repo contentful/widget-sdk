@@ -13,6 +13,10 @@ import {
   emptyReleaseResponse,
   severalEntitiesReleaseResponse,
   deleteEntityBodyResponse,
+  validateBodyResponse,
+  validateErrorResponse,
+  publishValidationErrorResponse,
+  releaseAction,
 } from '../fixtures/responses/releases';
 
 import { deleteEntityBodyRequest } from '../fixtures/requests/releases';
@@ -22,6 +26,12 @@ enum States {
   SEVERAL = 'releases/several',
   DELETE = 'releases/delete',
   DELETE_ENTITY = 'release/entity/delete',
+  VALIDATE_RELEASE = 'release/validate',
+  VALIDATE_RELEASE_ERROR = 'release/validate/error',
+  PUBLISH_RELEASE = 'release/publish',
+  PUBLISH_RELEASE_VALIDATION_ERROR = 'release/publish/validate/error',
+  RELEASE_ACTION_SUCCEED = 'release/publish/actions/succeded',
+  RELEASE_ACTION_FAIL = 'release/publish/actions/fail',
 }
 
 export const getReleasesList = {
@@ -187,5 +197,141 @@ export const deleteRelease = {
     }).as('willSucceed');
 
     return '@willSucceed';
+  },
+};
+
+export const validateRelease = {
+  willSucceed() {
+    cy.addInteraction({
+      provider: 'releases',
+      state: States.VALIDATE_RELEASE,
+      uponReceiving: `a request to validate release "${defaultReleaseId}"`,
+      withRequest: {
+        method: 'PUT',
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases/${defaultReleaseId}/validated`,
+        headers: {
+          ...defaultHeader,
+          'x-contentful-enable-alpha-feature': 'immediate-release',
+        },
+      },
+      willRespondWith: {
+        status: 200,
+        body: validateBodyResponse(),
+      },
+    }).as('willSucceed');
+
+    return '@willSucceed';
+  },
+
+  willFail() {
+    cy.addInteraction({
+      provider: 'releases',
+      state: States.VALIDATE_RELEASE_ERROR,
+      uponReceiving: `a request to validate release "${defaultReleaseId}"`,
+      withRequest: {
+        method: 'PUT',
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases/${defaultReleaseId}/validated`,
+        headers: {
+          ...defaultHeader,
+          'x-contentful-enable-alpha-feature': 'immediate-release',
+        },
+      },
+      willRespondWith: {
+        status: 200,
+        body: validateErrorResponse(),
+      },
+    }).as('willFail');
+
+    return '@willFail';
+  },
+};
+
+export const publishRelease = {
+  willReturnIt() {
+    cy.addInteraction({
+      provider: 'releases',
+      state: States.PUBLISH_RELEASE,
+      uponReceiving: `a request to publish release "${defaultReleaseId}"`,
+      withRequest: {
+        method: 'PUT',
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases/${defaultReleaseId}/published`,
+        headers: {
+          ...defaultHeader,
+          'x-contentful-enable-alpha-feature': 'immediate-release',
+        },
+      },
+      willRespondWith: {
+        status: 202,
+        body: releaseAction('created'),
+      },
+    }).as('willSucceed');
+
+    return '@willSucceed';
+  },
+
+  willSucceed() {
+    cy.addInteraction({
+      provider: 'releases',
+      state: States.RELEASE_ACTION_SUCCEED,
+      uponReceiving: `a request to publish release "${defaultReleaseId}"`,
+      withRequest: {
+        method: 'GET',
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases/${defaultReleaseId}/actions/6PGYc55NYDi7rysoKGEoWS`,
+        headers: {
+          ...defaultHeader,
+          'x-contentful-enable-alpha-feature': 'immediate-release',
+        },
+      },
+      willRespondWith: {
+        status: 200,
+        body: releaseAction('succeeded'),
+      },
+    }).as('willSucceed');
+
+    return '@willSucceed';
+  },
+
+  willFail() {
+    cy.addInteraction({
+      provider: 'releases',
+      state: States.RELEASE_ACTION_FAIL,
+      uponReceiving: `a request to publish release "${defaultReleaseId}"`,
+      withRequest: {
+        method: 'GET',
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases/${defaultReleaseId}/actions/6PGYc55NYDi7rysoKGEoWS`,
+        headers: {
+          ...defaultHeader,
+          'x-contentful-enable-alpha-feature': 'immediate-release',
+        },
+      },
+      willRespondWith: {
+        status: 200,
+        body: releaseAction('failed'),
+      },
+    }).as('willSucceed');
+
+    return '@willSucceed';
+  },
+
+  willFailWithValidationErrors() {
+    cy.addInteraction({
+      provider: 'releases',
+      state: States.PUBLISH_RELEASE_VALIDATION_ERROR,
+      uponReceiving: `a request to validate release "${defaultReleaseId}"`,
+      withRequest: {
+        method: 'PUT',
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/releases/${defaultReleaseId}/published`,
+        headers: {
+          ...defaultHeader,
+          'x-contentful-enable-alpha-feature': 'immediate-release',
+        },
+      },
+      willRespondWith: {
+        status: 422,
+        body: publishValidationErrorResponse(),
+      },
+    }).as('willFailWithValidationErrors');
+
+    return '@willFailWithValidationErrors';
   },
 };

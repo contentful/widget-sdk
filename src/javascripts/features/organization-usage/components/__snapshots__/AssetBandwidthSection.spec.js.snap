@@ -58,7 +58,7 @@ exports[`AssetBandwidthSection should render 1`] = `
       </strong>
       <a
         class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 emotion-3 TextLink__TextLink--primary___2Vc9F"
-        data-test-id="cf-ui-text-link"
+        data-test-id="fair_use_policy_link"
         href="https://www.contentful.com/r/knowledgebase/fair-use/"
         rel="noopener noreferrer"
         target="_blank"

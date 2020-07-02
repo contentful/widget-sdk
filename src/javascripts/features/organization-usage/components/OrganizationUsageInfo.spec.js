@@ -52,7 +52,7 @@ describe('OrganisationUsageInfo', () => {
     expect(overage).toHaveTextContent('+500,000 overage');
   });
 
-  it('tracks fair use policy click', () => {
+  it('should track fair use policy clicks', () => {
     const { getByTestId } = renderComp(defaultData);
     fireEvent.click(getByTestId('fair_use_policy_link'));
     expect(track).toHaveBeenCalledTimes(1);

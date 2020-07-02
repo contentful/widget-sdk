@@ -4,6 +4,8 @@ import {
   getReleaseEntities,
   deleteEntityFromRelease,
   createEmptyRelease,
+  validateRelease,
+  publishRelease,
 } from '../../../interactions/releases';
 import { queryForDefaultEntryWithoutEnvironment } from '../../../interactions/entries';
 import { queryForDefaultAssets, severalAssetsBody } from '../../../interactions/assets';
@@ -209,6 +211,65 @@ describe('Releases', () => {
           cy.findAllByTestId('cf-ui-notification').should(
             'contain',
             'Untitled was removed from Twentieth Release'
+          );
+        });
+      });
+
+      context('release actions', () => {
+        it('succesfully validate a release', () => {
+          const validateReleaseInteraction = validateRelease.willSucceed();
+          cy.findAllByTestId('validate-release').click();
+
+          cy.wait(validateReleaseInteraction);
+          cy.findAllByTestId('cf-ui-notification').should(
+            'contain',
+            'All entities passed validation'
+          );
+        });
+
+        it('validate a release with errors', () => {
+          const validateReleaseInteraction = validateRelease.willFail();
+          cy.findAllByTestId('validate-release').click();
+
+          cy.wait(validateReleaseInteraction);
+          cy.findAllByTestId('cf-ui-notification').should(
+            'contain',
+            'Some entities did not pass validation'
+          );
+          cy.findAllByTestId('validation-error').should('be.visible');
+        });
+
+        it('succesfully publish a release without errors', () => {
+          const publishReleaseInteraction = publishRelease.willReturnIt();
+          const releaseActionSucceeded = publishRelease.willSucceed();
+          cy.findAllByTestId('publish-release').click();
+
+          cy.wait(publishReleaseInteraction);
+          cy.wait(releaseActionSucceeded);
+          cy.findAllByTestId('cf-ui-notification').should(
+            'contain',
+            'Release was published successfully'
+          );
+        });
+
+        it('fail to publish a release', () => {
+          const publishReleaseInteraction = publishRelease.willReturnIt();
+          const releaseActionFailed = publishRelease.willFail();
+          cy.findAllByTestId('publish-release').click();
+
+          cy.wait(publishReleaseInteraction);
+          cy.wait(releaseActionFailed);
+          cy.findAllByTestId('cf-ui-notification').should('contain', 'Failed publishing Release');
+        });
+
+        it('fail to publish a release because of validation errors', () => {
+          const publishReleaseInteraction = publishRelease.willFailWithValidationErrors();
+          cy.findAllByTestId('publish-release').click();
+
+          cy.wait(publishReleaseInteraction);
+          cy.findAllByTestId('cf-ui-notification').should(
+            'contain',
+            'Some entities did not pass validation'
           );
         });
       });

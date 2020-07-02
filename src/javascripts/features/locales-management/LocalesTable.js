@@ -39,7 +39,10 @@ export class LocalesTable extends React.Component {
     return (
       <StateLink path="^.detail" params={{ localeId: locale.sys.id }} key={locale.sys.id}>
         {({ onClick }) => (
-          <TableRow onClick={onClick} style={{ cursor: 'pointer' }}>
+          <TableRow
+            onClick={onClick}
+            style={{ cursor: 'pointer' }}
+            testId={`locale-${locale.code}`}>
             <TableCell aria-label="cell-name">
               {locale.name} ({locale.code})
               {locale.default && (

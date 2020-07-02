@@ -8,7 +8,7 @@
   "marketingUrl": "http://www.joistio.com:8888",
   "main_domain": "joistio.com:8888",
   "toolsServiceUrl": "http://tools.joistio.com:8888",
-  "microBackendsUrl": "/_microbackends/backends",
+  "microBackendsUrl": "https://q1bbmbmz6d.execute-api.us-east-1.amazonaws.com/backends",
   "contentful": {
     "apiUrl": "api.contentful.com",
     "cdaApiUrl": "cdn.contentful.com",

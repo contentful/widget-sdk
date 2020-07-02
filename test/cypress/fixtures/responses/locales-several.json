@@ -1,0 +1,86 @@
+{
+  "total": 2,
+  "limit": 100,
+  "skip": 0,
+  "sys": {
+    "type": "Array"
+  },
+  "items": [
+    {
+      "name": "English (United States)",
+      "internal_code": "en-US",
+      "code": "en-US",
+      "fallbackCode": null,
+      "default": true,
+      "contentManagementApi": true,
+      "contentDeliveryApi": true,
+      "optional": false,
+      "sys": {
+        "type": "Locale",
+        "id": "2lo8AZRjJuPIHOw2ngUwTi",
+        "version": 1,
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "ip0jivfe5nzs"
+          }
+        },
+        "environment": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Environment",
+            "id": "test"
+          }
+        },
+        "createdAt": "2020-06-27T05:57:02Z",
+        "updatedAt": "2020-06-27T05:57:02Z"
+      }
+    },
+    {
+      "name": "French",
+      "internal_code": "fr",
+      "code": "fr",
+      "fallbackCode": null,
+      "default": false,
+      "contentManagementApi": true,
+      "contentDeliveryApi": true,
+      "optional": false,
+      "sys": {
+        "type": "Locale",
+        "id": "2hLVK2lyr6js7J1PiMOI9q",
+        "version": 1,
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "ip0jivfe5nzs"
+          }
+        },
+        "environment": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Environment",
+            "id": "test"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0Wqpu0iURWIzkfkG7a4pKb"
+          }
+        },
+        "createdAt": "2020-06-30T21:33:42Z",
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "0Wqpu0iURWIzkfkG7a4pKb"
+          }
+        },
+        "updatedAt": "2020-06-30T21:33:42Z"
+      }
+    }
+  ]
+}

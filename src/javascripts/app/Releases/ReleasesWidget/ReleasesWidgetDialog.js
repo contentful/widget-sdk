@@ -13,14 +13,13 @@ import {
   createRelease,
   getReleases,
   getReleasesExcludingEntity,
-  getReleasesIncludingEntity,
   replaceReleaseById,
 } from '../releasesService';
-import { SET_RELEASES_INCLUDING_ENTRY } from '../state/actions';
 import { ReleasesProvider } from './ReleasesContext';
 import { ReleasesDialog, CreateReleaseForm } from '../ReleasesDialog';
 import { ReleaseDetailStateLink } from '../ReleasesPage/ReleasesListDialog';
 import { css } from 'emotion';
+import { fetchReleases } from '../common/utils';
 
 const styles = {
   notification: css({
@@ -64,6 +63,7 @@ export default class ReleasesWidgetDialog extends Component {
     }),
     onCancel: PropTypes.func.isRequired,
     releaseContentTitle: PropTypes.string,
+    handleReleaseRefresh: PropTypes.func,
   };
 
   static defaultProps = {
@@ -86,7 +86,7 @@ export default class ReleasesWidgetDialog extends Component {
   }
 
   handleCreateRelease(releaseName) {
-    const { releaseContentTitle, selectedEntities, rootEntity } = this.props;
+    const { releaseContentTitle, selectedEntities, rootEntity, handleReleaseRefresh } = this.props;
     const uniqueSelectedEntities = uniqWith(selectedEntities, isEqual);
 
     return createRelease(releaseName, uniqueSelectedEntities)
@@ -100,6 +100,7 @@ export default class ReleasesWidgetDialog extends Component {
             <ReleaseDetailStateLink releaseId={release.sys.id} />
           </div>
         );
+        handleReleaseRefresh && handleReleaseRefresh();
       })
       .catch(() => {
         Notification.error(`Failed creating ${releaseName}`);
@@ -115,7 +116,7 @@ export default class ReleasesWidgetDialog extends Component {
   }
 
   async onReleaseSelect(release) {
-    const { releaseContentTitle, rootEntity, selectedEntities } = this.props;
+    const { releaseContentTitle, rootEntity, selectedEntities, handleReleaseRefresh } = this.props;
 
     try {
       const releaseItems = [
@@ -131,6 +132,7 @@ export default class ReleasesWidgetDialog extends Component {
 
       await replaceReleaseById(release.sys.id, release.title, releaseItems);
       const predicate = rootEntity || selectedEntities.length === 1 ? 'was' : 'were';
+      handleReleaseRefresh && this.props.handleReleaseRefresh();
       Notification.success(
         <div className={styles.notification}>
           <span>
@@ -151,12 +153,8 @@ export default class ReleasesWidgetDialog extends Component {
       this.handleCreateRelease(releaseName).then(async () => {
         const { rootEntity } = this.props;
         if (rootEntity) {
-          const { id, type } = rootEntity.sys;
-          const fetchedReleases = await getReleasesIncludingEntity(id, type);
-
-          dispatch({ type: SET_RELEASES_INCLUDING_ENTRY, value: fetchedReleases.items });
+          fetchReleases(rootEntity.sys, dispatch);
         }
-
         this.onClose();
       });
     }

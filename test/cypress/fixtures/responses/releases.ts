@@ -180,3 +180,105 @@ export const deleteEntityBodyResponse = () => ({
     updatedAt: Matchers.iso8601DateTimeWithMillis('2019-09-02T14:00:00.000Z'),
   },
 });
+
+export const validateBodyResponse = () => ({
+  sys: {
+    type: 'ReleaseValidation',
+    id: 'ZaadqOy5t5HYKgU7lXNgE',
+  },
+  errored: [],
+});
+
+export const validateErrorResponse = () => ({
+  sys: {
+    type: 'ReleaseValidation',
+    id: 'ZaadqOy5t5HYKgU7lXNgE',
+  },
+  errored: [
+    {
+      sys: {
+        type: 'Link',
+        linkType: 'Entry',
+        id: defaultEntryId,
+      },
+      error: {
+        sys: {
+          type: 'Error',
+          id: 'InvalidEntry',
+        },
+        message: 'Validation error',
+        details: {
+          errors: [
+            {
+              name: 'required',
+              path: ['fields', 'title'],
+              details: 'The property \title is required here',
+            },
+          ],
+        },
+      },
+    },
+  ],
+});
+
+export const publishValidationErrorResponse = () => ({
+  sys: {
+    type: 'Error',
+    id: 'ValidationFailed',
+  },
+  message: 'Validation error',
+  details: {
+    errors: [
+      {
+        sys: {
+          type: 'Link',
+          linkType: 'Entry',
+          id: defaultEntryId,
+        },
+        error: {
+          sys: {
+            type: 'Error',
+            id: 'InvalidEntry',
+          },
+          message: 'Validation error',
+          details: {
+            errors: [
+              {
+                name: 'required',
+                path: ['fields', 'title'],
+                details: 'The property \title is required here',
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+});
+
+export const releaseAction = (status) => ({
+  sys: {
+    type: 'ReleaseAction',
+    id: '6PGYc55NYDi7rysoKGEoWS',
+    release: {
+      sys: {
+        type: 'Link',
+        linkType: 'Release',
+        id: defaultReleaseId,
+      },
+    },
+    status: status,
+    createdAt: Matchers.iso8601DateTimeWithMillis('2020-05-02T14:00:00.000Z'),
+    updatedAt: Matchers.iso8601DateTimeWithMillis('2019-09-02T14:00:00.000Z'),
+    createdBy: { sys: { id: defaultUserId, type: 'Link', linkType: 'User' } },
+    space: { sys: { id: defaultSpaceId, type: 'Link', linkType: 'Space' } },
+    environment: {
+      sys: {
+        id: defaultEnvironmentId,
+        type: 'Link',
+        linkType: 'Environment',
+      },
+    },
+  },
+  action: 'publish',
+});

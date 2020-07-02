@@ -22,7 +22,7 @@ const defaultHandlers: DefaultHandlers = {
 
 export function defaultRequestsMock(customHandlers: Partial<DefaultHandlers> = {}): string[] {
   /*
-   * This function provides a minimum amount of deafult requests
+   * This function provides a minimum amount of default requests
    * that is enough to render almost every page in the app.
    * It can be used only if these requests are not the main aspect of the test.
    */

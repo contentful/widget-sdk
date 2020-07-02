@@ -39,6 +39,7 @@ import {
 import LoadingOverlay from 'app/common/LoadingOverlay';
 import ListView from './ListView';
 import CardView from './CardView';
+import { excludeEntityFromRelease } from '../common/utils';
 
 const styles = {
   mainContent: css({
@@ -163,10 +164,7 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
   }, [localStorage, entitiesLayout]);
 
   const handleEntityDelete = (entity) => {
-    const releaseWithoutEntity = release.entities.items.filter(
-      ({ sys: { id } }) => id !== entity.sys.id
-    );
-
+    const releaseWithoutEntity = excludeEntityFromRelease(release, entity.sys.id);
     replaceReleaseById(releaseId, release.title, releaseWithoutEntity)
       .then(() => {
         setEntityRefreshKey(entity.sys.id);
@@ -294,6 +292,7 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
             testId="cf-ui-workbench-sidebar">
             <div className={styles.buttons}>
               <Button
+                testId="publish-release"
                 buttonType="positive"
                 className=""
                 isFullWidth
@@ -302,6 +301,7 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
                 Publish now
               </Button>
               <Button
+                testId="validate-release"
                 buttonType="muted"
                 className={styles.buttons}
                 isFullWidth

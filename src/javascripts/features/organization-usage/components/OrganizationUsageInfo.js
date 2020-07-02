@@ -50,7 +50,7 @@ export const OrganizationUsageInfo = () => {
             {'Total API calls made this month from a '}
             <strong data-test-id="org-usage-limit">{shorten(apiRequestIncludedLimit)}</strong>
             {
-              '/month quota. This number includes CMA, CDA, CPA, and GraphQL requests. To learn about utility limits, read the '
+              '/month quota. This number includes CMA, CDA, CPA, and GraphQL requests. The use of Contentful is subject to our '
             }
           </>
         ) : (

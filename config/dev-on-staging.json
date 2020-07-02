@@ -14,7 +14,7 @@
   "marketingUrl": "https://www.flinkly.com",
   "main_domain": "flinkly.com",
   "toolsServiceUrl": "https://tools.flinkly.com",
-  "microBackendsUrl": "/_microbackends/backends",
+  "microBackendsUrl": "https://q1bbmbmz6d.execute-api.us-east-1.amazonaws.com/backends",
   "contentful": {
     "apiUrl": "api.contentful.com",
     "accessToken": "0c783036ae7540a10db86150e1cb564c8c0bad53482794604f227dc199e6dde1",

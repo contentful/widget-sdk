@@ -105,6 +105,7 @@ registerEnvironmentAliasesEvent('environment_aliases:notification_continue_on_en
 registerGenericEvent('usage:period_selected');
 registerGenericEvent('usage:org_tab_selected');
 registerGenericEvent('usage:space_tab_selected');
+registerGenericEvent('usage:fair_use_policy_clicked');
 
 registerGenericEvent('pricing_update:communication_seen');
 

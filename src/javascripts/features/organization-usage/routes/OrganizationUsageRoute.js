@@ -22,7 +22,7 @@ import NavigationIcon from 'ui/Components/NavigationIcon';
 import ErrorState from 'app/common/ErrorState';
 import { UsageProvider, useUsageState, useUsageDispatch } from '../hooks/usageContext';
 
-import { PRICING_2020_RELEASED } from 'featureFlags';
+import { NEW_USAGE_PAGE } from 'featureFlags';
 import { getVariation } from 'LaunchDarkly';
 
 export const WorkbenchContent = ({ resources, showNewPricingFeature }) => {
@@ -108,7 +108,7 @@ export const OrganizationUsage = () => {
           return;
         }
 
-        const variation = await getVariation(PRICING_2020_RELEASED, {
+        const variation = await getVariation(NEW_USAGE_PAGE, {
           organizationId: orgId,
         });
         setShowNewPricingFeature(variation);

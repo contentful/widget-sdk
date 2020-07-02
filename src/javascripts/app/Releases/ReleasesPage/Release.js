@@ -198,7 +198,7 @@ export default class Release extends Component {
         <div>
           <div className={styles.headingContainer}>
             <div className={styles.actionHeading}>
-              <Subheading element="h2" className={styles.subheading}>
+              <Subheading element="h2" title={release.title} className={styles.subheading}>
                 {release.title}
               </Subheading>
               <Dropdown

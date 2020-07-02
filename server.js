@@ -4,7 +4,6 @@ const express = require('express');
 const middleware = require('webpack-dev-middleware');
 const webpack = require('webpack');
 const createWebpackConfig = require('./tools/webpack.config');
-const MicroBackends = require('@contentful/micro-backends');
 const { render: renderIndex } = require('./tools/lib/index-page');
 
 const publicDir = path.resolve(__dirname, 'public');
@@ -50,14 +49,6 @@ const webpackDevMiddleware = middleware(compiler, {
 });
 
 const PORT = Number.parseInt(process.env.PORT, 10) || 3001;
-
-app.use(
-  '/_microbackends',
-  MicroBackends.createMiddleware({
-    backendsDir: path.resolve(__dirname, 'micro-backends'),
-    isolationType: process.env.MICRO_BACKENDS_ISOLATION_TYPE || 'subprocess',
-  })
-);
 
 app.use(webpackDevMiddleware);
 

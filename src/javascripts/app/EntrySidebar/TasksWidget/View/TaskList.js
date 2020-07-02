@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { cx } from 'emotion';
 import { TaskListViewData } from '../ViewData/TaskViewData';
 import TasksInteractor from '../TasksInteractor';
 import Task from './Task';
@@ -10,6 +11,7 @@ import {
   ValidationMessage,
   SkeletonContainer,
   SkeletonBodyText,
+  Tooltip,
 } from '@contentful/forma-36-react-components';
 import { taskListStyles as styles } from './styles';
 import { trackTaskCreated, trackTaskResolved } from '../analytics';
@@ -66,7 +68,14 @@ export default class TasksWidget extends React.PureComponent {
 
   render() {
     const { viewData, tasksInteractor } = this.props;
-    const { statusText, errorMessage, tasks, hasCreateAction, isLoading } = viewData;
+    const {
+      statusText,
+      errorMessage,
+      tasks,
+      hasCreateAction,
+      isLoading,
+      taskCreationBlocked,
+    } = viewData;
 
     return (
       <React.Fragment>
@@ -86,13 +95,19 @@ export default class TasksWidget extends React.PureComponent {
               <ValidationMessage testId="task-list-error">{errorMessage}</ValidationMessage>
             )}
             {hasCreateAction && (
-              <TextLink
-                testId="create-task"
-                icon="Plus"
-                className={styles.addTaskCta}
-                onClick={() => tasksInteractor.startTaskDraft()}>
-                Create new task
-              </TextLink>
+              <Tooltip
+                content="Unable to create a task when an entry is scheduled"
+                place="top"
+                className={cx({ [styles.blockedTaskCreator]: !taskCreationBlocked })}>
+                <TextLink
+                  disabled={taskCreationBlocked}
+                  testId="create-task"
+                  icon={taskCreationBlocked ? 'Lock' : 'Plus'}
+                  className={styles.addTaskCta}
+                  onClick={() => tasksInteractor.startTaskDraft()}>
+                  Create new task
+                </TextLink>
+              </Tooltip>
             )}{' '}
           </React.Fragment>
         )}

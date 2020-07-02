@@ -18,6 +18,7 @@ export default class ReleasesTimeline extends Component {
   static propTypes = {
     releases: PropTypes.array,
     onReleaseSelect: PropTypes.func,
+    deleteEntityFromRelease: PropTypes.func,
   };
 
   handleClick(release) {
@@ -34,7 +35,10 @@ export default class ReleasesTimeline extends Component {
             key={`release-${index}`}
             onClick={() => this.handleClick(release)}
             className={this.props.onReleaseSelect && styles.cursorPointer}>
-            <Release release={release} />
+            <Release
+              release={release}
+              deleteEntityFromRelease={this.props.deleteEntityFromRelease}
+            />
           </li>
         ))}
       </List>

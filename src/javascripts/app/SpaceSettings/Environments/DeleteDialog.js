@@ -9,14 +9,14 @@ import {
   TextInput,
   Note,
 } from '@contentful/forma-36-react-components';
-import { spacingL } from '@contentful/forma-36-tokens';
+import tokens from '@contentful/forma-36-tokens';
 import { ModalLauncher } from 'core/components/ModalLauncher';
 import * as StateNavigator from 'states/Navigator';
 import { css } from 'emotion';
 
 const styles = {
   spacer: css({
-    marginBottom: spacingL,
+    marginBottom: tokens.spacingL,
   }),
 };
 
@@ -50,7 +50,11 @@ export function openDeleteEnvironmentDialog(runDelete, environmentId, activeEnvi
   });
 }
 
-function SpaceEnvironmentsDeleteDialogContent({ inputValue, setInputValue, confirmationId }) {
+export function SpaceEnvironmentsDeleteDialogContent({
+  inputValue,
+  setInputValue,
+  confirmationId,
+}) {
   const inputRef = useRef();
 
   useEffect(() => {
