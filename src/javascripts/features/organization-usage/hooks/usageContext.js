@@ -1,7 +1,7 @@
 import React from 'react';
 import { mapResponseToState } from '../services/UsageService';
 import { periodToDates } from '../utils/periodToDates';
-import { sum } from 'lodash';
+import { sum, get } from 'lodash';
 import PropTypes from 'prop-types';
 
 export const colours = ['#2E75D4', '#0EB87F', '#EA9005', '#8C53C2', '#CC3C52'];
@@ -35,7 +35,12 @@ const reducer = (state, action) => {
       return { ...state, periodicUsage, totalUsage };
     }
     case 'SET_ASSET_BANDWIDTH_DATA': {
-      return { ...state, assetBandwidthData: action.value };
+      const assetBandwidthData = {
+        usage: get(action.value, ['usage']),
+        limit: get(action.value, ['limits', 'included']),
+        uom: get(action.value, ['unitOfMeasure']),
+      };
+      return { ...state, assetBandwidthData };
     }
     case 'CHANGE_PERIOD': {
       return { ...state, selectedPeriodIndex: action.value };
@@ -52,6 +57,9 @@ const reducer = (state, action) => {
     }
     case 'SWITCH_SPACES_TAB': {
       return { ...state, selectedSpacesTab: action.value };
+    }
+    case 'SET_ERROR': {
+      return { ...state, error: action.value };
     }
     default: {
       throw new Error(`Unhandled action type: ${action.type}`);
