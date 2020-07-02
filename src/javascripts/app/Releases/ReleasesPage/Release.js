@@ -72,9 +72,6 @@ const styles = {
   iconOverlay: css({
     width: tokens.spacing4Xl,
     height: tokens.spacing4Xl,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
     opacity: '0.2',
   }),
   subheading: css({
