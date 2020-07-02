@@ -15,8 +15,8 @@ const initialState = {
   selectedSpacesTab: 'cma',
 };
 
-const UsageStateContext = React.createContext();
-const UsageDispatchContext = React.createContext();
+export const UsageStateContext = React.createContext();
+export const UsageDispatchContext = React.createContext();
 
 const reducer = (state, action) => {
   switch (action.type) {

@@ -5,20 +5,28 @@ import * as echarts from 'echarts';
 import { track } from 'analytics/Analytics';
 import { SpacesTabs } from './SpacesTabs';
 
+import { UsageStateContext, UsageDispatchContext } from '../hooks/usageContext';
+import { sum } from 'lodash';
+
 jest.mock('echarts', () => ({
   init: jest.fn(),
 }));
 
-const defaultProps = {
+const ORG_USAGE = [147, 651];
+const CMA_USAGE = [48, 46];
+const CMA_USAGE_DELETED_SPACE = [48, 56];
+const CDA_USAGE = [48, 66];
+
+const defaultData = {
   spaceNames: { cmaSpace: 'CMASpace', cdaSpace: 'CDASpace' },
-  period: ['1 Feb', '2 Feb'],
+  periodDates: ['1 Feb', '2 Feb'],
   periodicUsage: {
-    org: { usage: [147, 651] },
+    org: { usage: ORG_USAGE },
     apis: {
       cma: {
         items: [
           {
-            usage: [48, 46],
+            usage: CMA_USAGE,
             sys: {
               space: {
                 sys: {
@@ -28,7 +36,7 @@ const defaultProps = {
             },
           },
           {
-            usage: [48, 56],
+            usage: CMA_USAGE_DELETED_SPACE,
             sys: {
               space: {
                 sys: {
@@ -42,7 +50,7 @@ const defaultProps = {
       cda: {
         items: [
           {
-            usage: [48, 66],
+            usage: CDA_USAGE,
             sys: {
               space: {
                 sys: {
@@ -59,36 +67,61 @@ const defaultProps = {
     cmaSpace: true,
     cdaSpace: false,
   },
+  selectedSpacesTab: 'cma',
+  totalUsage: sum(ORG_USAGE),
+};
+
+const renderComp = (data, dispatch) => {
+  return render(
+    <MockPovider {...data} dispatch={dispatch}>
+      <SpacesTabs />
+    </MockPovider>
+  );
+};
+
+const MockPovider = (data) => {
+  const { dispatch, children } = data;
+  return (
+    <UsageStateContext.Provider value={data}>
+      <UsageDispatchContext.Provider value={dispatch}>{children}</UsageDispatchContext.Provider>
+    </UsageStateContext.Provider>
+  );
+};
+
+MockPovider.defaultProps = {
+  dispatch: () => {},
 };
 
 describe('SpacesTabs', () => {
-  const build = (props) => {
-    return render(<SpacesTabs {...props} />);
-  };
-
   it('renders correctly', () => {
-    const container = build(defaultProps);
+    const container = renderComp(defaultData);
     expect(container).toMatchSnapshot();
   });
 
   describe('by default', () => {
     it('renders CMA data correctly', () => {
-      const { getByTestId, getByText } = build(defaultProps);
+      const { getByTestId, getByText } = renderComp(defaultData);
+
       const table = getByTestId('api-usage-table');
       expect(table).toBeInTheDocument();
-      expect(getByText('94')).toBeInTheDocument();
-      expect(getByText('104')).toBeInTheDocument();
+
+      const usage = `${sum(CMA_USAGE)}`;
+      expect(getByText(usage)).toBeInTheDocument();
+
+      const usageDeletedSpace = `${sum(CMA_USAGE_DELETED_SPACE)}`;
+      expect(getByText(usageDeletedSpace)).toBeInTheDocument();
+
       expect(getByText('CMASpace')).toBeInTheDocument();
     });
 
     describe('SpacesTable', () => {
       it('shows deleted space', () => {
-        const { getByText } = build(defaultProps);
+        const { getByText } = renderComp(defaultData);
         expect(getByText('Deleted space')).toBeInTheDocument();
       });
 
       it('shows one space as PoC', () => {
-        const { getAllByText } = build(defaultProps);
+        const { getAllByText } = renderComp(defaultData);
         const tags = getAllByText('POC');
         expect(tags).toHaveLength(1);
         fireEvent.mouseOver(tags[0]);
@@ -97,7 +130,7 @@ describe('SpacesTabs', () => {
     });
 
     it('renders a bar chart', () => {
-      const { getByTestId } = build(defaultProps);
+      const { getByTestId } = renderComp(defaultData);
       expect(getByTestId('api-usage-bar-chart')).toBeInTheDocument();
 
       expect(echarts.init).toHaveBeenCalledTimes(1);
@@ -105,26 +138,44 @@ describe('SpacesTabs', () => {
   });
 
   describe('on CDA tab click', () => {
-    it('renders CDA data correctly', () => {
-      const { getByTestId, getByText } = build(defaultProps);
+    it('switch to the correct tab', () => {
+      const dispatchSpy = jest.fn();
+      const { getByText } = renderComp(defaultData, dispatchSpy);
+
+      expect(dispatchSpy).not.toHaveBeenCalled();
       fireEvent.click(getByText('CDA Requests'));
+      expect(dispatchSpy).toHaveBeenCalledWith({ type: 'SWITCH_SPACES_TAB', value: 'cda' });
+    });
+
+    it('renders CDA data correctly', () => {
+      const updatedData = {
+        ...defaultData,
+        selectedSpacesTab: 'cda',
+      };
+
+      const { getByText, getByTestId } = renderComp(updatedData);
 
       const table = getByTestId('api-usage-table');
       expect(table).toBeInTheDocument();
-      expect(getByText('114')).toBeInTheDocument();
+
+      const usage = `${sum(CDA_USAGE)}`;
+      expect(getByText(usage)).toBeInTheDocument();
+
       expect(getByText('CDASpace')).toBeInTheDocument();
     });
 
-    describe('SpacesTable', () => {
-      it('does not show any PoC spaces', () => {
-        const { getByText, queryByText } = build(defaultProps);
-        fireEvent.click(getByText('CDA Requests'));
-        expect(queryByText('POC')).toBeNull();
-      });
+    it('does not show any PoC spaces', () => {
+      const updatedData = {
+        ...defaultData,
+        selectedSpacesTab: 'cda',
+      };
+
+      const { queryByText } = renderComp(updatedData);
+      expect(queryByText('POC')).toBeNull();
     });
 
     it('renders a bar chart and initializes once', () => {
-      const { getByTestId, getByText } = build(defaultProps);
+      const { getByTestId, getByText } = renderComp(defaultData);
       expect(echarts.init).toHaveBeenCalledTimes(1);
 
       fireEvent.click(getByText('CDA Requests'));
@@ -134,7 +185,7 @@ describe('SpacesTabs', () => {
     });
 
     it('sends a cma to cda tracking event', () => {
-      const { getByText } = build(defaultProps);
+      const { getByText } = renderComp(defaultData);
 
       fireEvent.click(getByText('CDA Requests'));
 
@@ -144,7 +195,7 @@ describe('SpacesTabs', () => {
   });
 
   describe('with empty data', () => {
-    const localProps = {
+    const data = {
       spaceNames: {},
       period: [],
       periodicUsage: {
@@ -155,10 +206,11 @@ describe('SpacesTabs', () => {
         org: { usage: [] },
       },
       isPoC: {},
+      selectedSpacesTab: 'cma',
     };
 
     it('renders an empty table', () => {
-      const { getByTestId, queryByTestId } = build(localProps);
+      const { getByTestId, queryByTestId } = renderComp(data);
       const table = getByTestId('api-usage-table');
       expect(table).toBeInTheDocument();
       expect(table.firstElementChild).toBeInTheDocument();
@@ -167,13 +219,13 @@ describe('SpacesTabs', () => {
     });
 
     it('renders a chart', () => {
-      const { getByTestId } = build(localProps);
+      const { getByTestId } = renderComp(data);
       expect(getByTestId('api-usage-bar-chart')).toBeInTheDocument();
       expect(echarts.init).toHaveBeenCalledTimes(1);
     });
 
     it('can switch tab', () => {
-      const { getByTestId, getByText } = build(localProps);
+      const { getByTestId, getByText } = renderComp(data);
       fireEvent.click(getByText('CDA Requests'));
       const table = getByTestId('api-usage-table');
       expect(table).toBeInTheDocument();

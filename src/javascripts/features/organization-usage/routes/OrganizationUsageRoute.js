@@ -74,7 +74,7 @@ export const WorkbenchActions = () => {
   }
 
   if (isLoading && isTeamOrEnterpriseCustomer && hasSpaces) {
-    return <Spinner />;
+    return <Spinner testId="organization-usage_spinner" />;
   }
 
   if (hasSpaces && periods && isTeamOrEnterpriseCustomer && !isAssetBandwidthTab) {
@@ -84,8 +84,6 @@ export const WorkbenchActions = () => {
   return null;
 };
 
-// need to do this for the test
-// eslint-disable-next-line rulesdir/restrict-multiple-react-component-exports
 export const OrganizationUsage = () => {
   const { selectedPeriodIndex, orgId } = useUsageState();
   const dispatch = useUsageDispatch();

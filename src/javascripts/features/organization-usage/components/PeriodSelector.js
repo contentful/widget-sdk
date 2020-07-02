@@ -40,7 +40,7 @@ export const PeriodSelector = () => {
         onChange={handleChange}
         width="auto"
         name="period-selector"
-        id="period-selector">
+        testId="period-selector">
         {periods.map(({ startDate, endDate }, index) => {
           const isCurrentPeriod = endDate === null || moment().diff(moment(endDate), 'days') == 0; // the end day is today
           const start = moment(startDate);
