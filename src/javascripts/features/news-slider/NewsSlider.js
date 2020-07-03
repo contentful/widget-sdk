@@ -1,6 +1,7 @@
 import React, { useReducer, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
+import cn from 'classnames';
 
 import { TextLink } from '@contentful/forma-36-react-components';
 import { ProgressBar } from './ProgressBar';
@@ -110,7 +111,7 @@ export const NewsSlider = ({ children, onClose }) => {
         <div className={styles.slidesContainer} ref={listRef}>
           {children.map((slide, index) => (
             <div
-              className={styles.slide}
+              className={cn(styles.slide, { slideActive: index === state.currentSlide })}
               key={index}
               data-test-id="news-slider-slide"
               data-active={index === state.currentSlide}>

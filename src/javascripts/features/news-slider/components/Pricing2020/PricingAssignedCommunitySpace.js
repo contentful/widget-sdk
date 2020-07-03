@@ -2,7 +2,7 @@ import React from 'react';
 import { css } from 'emotion';
 import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
-import AssignedSpaceImage from 'svg/illustrations/new-spaces-illustrations-c.svg';
+import { AssignedSpaceImage } from '../illustrations';
 import { DisplayText, List, ListItem, TextLink } from '@contentful/forma-36-react-components';
 import { Grid, GridItem } from '@contentful/forma-36-react-components/dist/alpha';
 

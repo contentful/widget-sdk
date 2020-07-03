@@ -1,7 +1,7 @@
 import React from 'react';
 import { css } from 'emotion';
 import PropTypes from 'prop-types';
-import NewCommunitySpaceImage from 'svg/illustrations/new-spaces-illustrations-a.svg';
+import { NewCommunitySpaceImage } from '../illustrations';
 import tokens from '@contentful/forma-36-tokens';
 import { Typography, DisplayText, Button, Icon } from '@contentful/forma-36-react-components';
 import { Grid, GridItem } from '@contentful/forma-36-react-components/dist/alpha';

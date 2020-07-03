@@ -2,7 +2,8 @@ import React from 'react';
 import { css } from 'emotion';
 import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
-import NewFeaturesImage from 'svg/illustrations/new-spaces-illustrations-b.svg';
+import { NewFeaturesImage } from '../illustrations';
+
 import {
   DisplayText,
   Button,
