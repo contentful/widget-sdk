@@ -1,14 +1,8 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import pluralize from 'pluralize';
 import moment from 'moment';
 import { css } from 'emotion';
-import { get } from 'lodash';
-import * as Config from 'Config';
-import { assign } from 'utils/Collections';
 import { caseofEq } from 'sum-types';
-import AliasIcon from 'svg/alias.svg';
-import { LinkOpen } from 'ui/Content';
 import {
   Table,
   TableHead,
@@ -17,32 +11,34 @@ import {
   TableBody,
   TextLink,
   Tag,
+  Tooltip,
   DisplayText,
-  Heading,
-  Paragraph,
-  Button,
   SkeletonContainer,
   SkeletonBodyText,
   Workbench,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
-import QuestionMarkIcon from 'svg/QuestionMarkIcon.svg';
-import Icon from 'ui/Components/Icon';
-import NavigationIcon from 'ui/Components/NavigationIcon';
+import * as Config from 'Config';
+import { ENVIRONMENT_CREATION_COMPLETE_EVENT } from 'services/PubSubService';
 
-import { Tooltip } from '@contentful/forma-36-react-components';
-import DocumentTitle from 'components/shared/DocumentTitle';
+import NavigationIcon from 'ui/Components/NavigationIcon';
+import { LinkOpen } from 'ui/Content';
+import { assign } from 'utils/Collections';
+
 import EnvironmentAliases from 'app/SpaceSettings/EnvironmentAliases/EnvironmentAliases';
 import EnvironmentDetails from 'app/common/EnvironmentDetails';
-import ExternalTextLink from 'app/common/ExternalTextLink';
+import DocumentTitle from 'components/shared/DocumentTitle';
 import { useEnvironmentsRouteState } from './EnvironmentsRouteReducer';
-import { ENVIRONMENT_CREATION_COMPLETE_EVENT } from 'services/PubSubService';
+import EnvironmentsSidebar from '../EnvironmentsSidebar';
+
+import QuestionMarkIcon from 'svg/QuestionMarkIcon.svg';
+import AliasIcon from 'svg/alias.svg';
 
 export default function EnvironmentsRoute(props) {
   const [
     state,
-    { FetchPermissions, FetchEnvironments, RefetchEnvironments, ...actions },
+    { FetchPermissions, FetchEnvironments, FetchSpacePlan, RefetchEnvironments, ...actions },
   ] = useEnvironmentsRouteState(props);
 
   const { aliasesEnabled, canManageAliases, hasOptedInEnv, pubsubClient } = state;
@@ -51,6 +47,7 @@ export default function EnvironmentsRoute(props) {
     (async () => {
       await FetchPermissions();
       await FetchEnvironments();
+      await FetchSpacePlan();
     })();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   // top: effect forced to happen only once
@@ -68,7 +65,7 @@ export default function EnvironmentsRoute(props) {
   });
 
   return (
-    <Fragment>
+    <>
       <DocumentTitle title="Environments" />
       <Workbench>
         <Workbench.Header
@@ -95,10 +92,10 @@ export default function EnvironmentsRoute(props) {
           <EnvironmentList {...state} {...actions} />
         </Workbench.Content>
         <Workbench.Sidebar position="right">
-          <Sidebar {...state} {...actions} />
+          <EnvironmentsSidebar {...state} {...actions} />
         </Workbench.Sidebar>
       </Workbench>
-    </Fragment>
+    </>
   );
 }
 
@@ -345,175 +342,4 @@ function DeleteButton({ environment }) {
 
 DeleteButton.propTypes = {
   environment: PropTypes.object.isRequired,
-};
-
-const sidebarStyles = {
-  subHeaderFirst: css({
-    fontSize: tokens.fontSizeM,
-    paddingBottom: tokens.spacingXs,
-    color: tokens.colorTextDark,
-  }),
-  subHeader: css({
-    fontSize: tokens.fontSizeM,
-    paddingTop: tokens.spacingL,
-    paddingBottom: tokens.spacingXs,
-    color: tokens.colorTextDark,
-  }),
-  paragraph: css({
-    marginBottom: tokens.spacingM,
-  }),
-};
-
-const envDocSidebarUtmParams =
-  '?utm_source=webapp&utm_medium=environments-sidebar&utm_campaign=in-app-help';
-
-const docLinks = {
-  domainModelConcepts: `${Config.developerDocsUrl}/concepts/domain-model/${envDocSidebarUtmParams}`,
-  envAliasesConcepts: `${Config.developerDocsUrl}/concepts/environment-aliases/${envDocSidebarUtmParams}`,
-};
-
-function Sidebar({
-  canCreateEnv,
-  resource,
-  isLegacyOrganization,
-  canUpgradeSpace,
-  OpenCreateDialog,
-  OpenUpgradeSpaceDialog,
-  aliasesEnabled,
-  canManageAliases,
-  hasOptedInEnv,
-}) {
-  // Master is not included in the api, display +1 usage and limit
-  const usage = resource.usage + 1;
-  const limit = get(resource, 'limits.maximum', -1) + 1;
-  const shouldShowAliasDefinition = canManageAliases || hasOptedInEnv;
-
-  return (
-    <>
-      <Heading element="h2" className={`${css({ marginTop: 0 })} entity-sidebar__heading`}>
-        Usage
-      </Heading>
-      <div className="entity-sidebar__text-profile">
-        <Paragraph testId="environmentsUsage">
-          You are using {usage}{' '}
-          {limit ? `out of ${limit} environments available ` : pluralize('environment', usage)} in
-          this space.
-          {!isLegacyOrganization && <UsageTooltip resource={resource} />}
-        </Paragraph>
-        {!canCreateEnv && !isLegacyOrganization && (
-          <Paragraph>
-            {limit > 1 && 'Delete existing environments or '}
-            {canUpgradeSpace &&
-              (limit > 1 ? 'change the space to add more' : 'Change change the space to add more')}
-            {!canUpgradeSpace &&
-              `${
-                limit > 1 ? 'ask' : 'Ask'
-              } the administrator of your organization to change the space to add more. `}
-          </Paragraph>
-        )}
-      </div>
-      <div className="entity-sidebar__widget">
-        {canCreateEnv && (
-          <Button isFullWidth testId="openCreateDialog" onClick={OpenCreateDialog}>
-            Add environment
-          </Button>
-        )}
-        {!canCreateEnv && !isLegacyOrganization && canUpgradeSpace && (
-          <UpgradeButton OpenUpgradeSpaceDialog={OpenUpgradeSpaceDialog} />
-        )}
-      </div>
-      <Heading element="h2" className="entity-sidebar__heading">
-        Documentation
-      </Heading>
-      <Paragraph className={sidebarStyles.subHeaderFirst}>Environment</Paragraph>
-      <div className="entity-sidebar__text-profile">
-        <Paragraph>
-          Environments allow you to develop and test changes to data in isolation.
-        </Paragraph>
-        <Paragraph>
-          See the{' '}
-          <ExternalTextLink href={docLinks.domainModelConcepts}>
-            Contentful domain model
-          </ExternalTextLink>{' '}
-          for details.
-        </Paragraph>
-      </div>
-      {aliasesEnabled && shouldShowAliasDefinition && (
-        <Fragment>
-          <Paragraph className={sidebarStyles.subHeader}>Environment Aliases</Paragraph>
-          <div className="entity-sidebar__text-profile">
-            <Paragraph>
-              An environment alias allows you to access and modify the data of an environment
-              through a different static identifier.
-            </Paragraph>
-            <Paragraph>
-              Read our{' '}
-              <ExternalTextLink href={docLinks.envAliasesConcepts}>
-                environment alias documentation
-              </ExternalTextLink>{' '}
-              for more information.
-            </Paragraph>
-          </div>
-        </Fragment>
-      )}
-    </>
-  );
-}
-Sidebar.propTypes = {
-  canCreateEnv: PropTypes.bool,
-  aliasesEnabled: PropTypes.bool,
-  resource: PropTypes.object,
-  isLegacyOrganization: PropTypes.bool,
-  canUpgradeSpace: PropTypes.bool,
-  OpenCreateDialog: PropTypes.func.isRequired,
-  OpenUpgradeSpaceDialog: PropTypes.func.isRequired,
-  canManageAliases: PropTypes.bool.isRequired,
-  hasOptedInEnv: PropTypes.bool.isRequired,
-};
-
-function UsageTooltip({ resource }) {
-  const limit = get(resource, 'limits.maximum');
-  if (!limit) {
-    return null;
-  }
-
-  const tooltipContent = (
-    <div>
-      This space type includes {pluralize('sandbox environment', limit, true)}
-      <br />
-      additional to the master environment
-    </div>
-  );
-
-  return (
-    <Tooltip
-      content={tooltipContent}
-      place="bottom"
-      targetWrapperClassName={css({
-        marginLeft: tokens.spacingXs,
-      })}
-      className={css({
-        color: tokens.colorElementDarkest,
-      })}>
-      <span data-test-id="environments-usage-tooltip">
-        <Icon name="question-mark" />
-      </span>
-    </Tooltip>
-  );
-}
-
-UsageTooltip.propTypes = {
-  resource: PropTypes.object.isRequired,
-};
-
-function UpgradeButton({ OpenUpgradeSpaceDialog }) {
-  return (
-    <Button isFullWidth testId="openUpgradeDialog" onClick={() => OpenUpgradeSpaceDialog()}>
-      Upgrade space
-    </Button>
-  );
-}
-
-UpgradeButton.propTypes = {
-  OpenUpgradeSpaceDialog: PropTypes.func.isRequired,
 };
