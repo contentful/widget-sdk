@@ -43,7 +43,11 @@ const reducer = (state, action) => {
       return { ...state, assetBandwidthData };
     }
     case 'CHANGE_PERIOD': {
-      return { ...state, selectedPeriodIndex: action.value };
+      return {
+        ...state,
+        selectedPeriodIndex: action.value,
+        periodDates: periodToDates(state.periods[action.value]),
+      };
     }
     case 'SET_LOADING': {
       return { ...state, isLoading: action.value };
