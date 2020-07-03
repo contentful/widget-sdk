@@ -54,6 +54,7 @@ const styles = {
     '&:hover': css({
       backgroundColor: tokens.colorContrastDark,
     }),
+
     '&.is-active': css({
       backgroundColor: tokens.colorContrastMid,
     }),
@@ -61,6 +62,11 @@ const styles = {
     '&.is-disabled, &.is-disabled:hover': css({
       color: tokens.colorTextLight,
       cursor: 'not-allowed',
+    }),
+
+    '&:focus': css({
+      outline: 0,
+      backgroundColor: tokens.colorContrastDark,
     }),
   }),
   navBarListLabel: css({
