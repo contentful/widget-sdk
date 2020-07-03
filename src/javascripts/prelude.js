@@ -296,8 +296,9 @@ angular
       const {
         config: { authUrl },
       } = Config.readInjectedConfig();
+
       const cb = (evt) => {
-        if (evt.origin.includes(authUrl)) {
+        if (evt.origin === authUrl) {
           handleGKMessage(evt.data);
         }
       };
