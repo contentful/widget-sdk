@@ -18,12 +18,12 @@ import * as Config from 'Config';
 import ExternalTextLink from 'app/common/ExternalTextLink';
 import { trackCTAClick } from 'services/ChangeSpaceService';
 
-const envDocSidebarUtmParams =
+const ENV_DOC_SIDEBAR_UTM_PARAMS =
   '?utm_source=webapp&utm_medium=environments-sidebar&utm_campaign=in-app-help';
 
 const docLinks = {
-  domainModelConcepts: `${Config.developerDocsUrl}/concepts/domain-model/${envDocSidebarUtmParams}`,
-  envAliasesConcepts: `${Config.developerDocsUrl}/concepts/environment-aliases/${envDocSidebarUtmParams}`,
+  domainModelConcepts: `${Config.developerDocsUrl}/concepts/domain-model/${ENV_DOC_SIDEBAR_UTM_PARAMS}`,
+  envAliasesConcepts: `${Config.developerDocsUrl}/concepts/environment-aliases/${ENV_DOC_SIDEBAR_UTM_PARAMS}`,
 };
 
 const sidebarStyles = {

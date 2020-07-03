@@ -315,7 +315,7 @@ describe('EnvironmentsRoute', () => {
       expect(screen.getByTestId('upgradeToEnterpriseButton').textContent).toEqual('Talk to us');
       userEvent.click(screen.getByTestId('upgradeToEnterpriseButton'));
       expect(track).toBeCalledWith('targeted_cta_clicked:upgrade_to_enterprise', {
-        ctaLocation: 'environments',
+        ctaLocation: 'environments_page',
         orgId: defaultProps.organizationId,
         spaceId: defaultProps.spaceId,
       });
