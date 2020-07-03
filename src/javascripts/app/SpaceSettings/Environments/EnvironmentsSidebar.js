@@ -61,7 +61,7 @@ export default function EnvironmentsSidebar({
 
   const upgradeToEnterpriseOnClick = () => {
     track('targeted_cta_clicked:upgrade_to_enterprise', {
-      ctaLocation: 'environments',
+      ctaLocation: 'environments_page',
       spaceId,
       orgId: organizationId,
     });
