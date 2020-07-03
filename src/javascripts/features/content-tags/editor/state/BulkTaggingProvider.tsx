@@ -143,10 +143,14 @@ export const BulkTaggingProvider: React.FC = ({ children }) => {
     push(newState);
   };
 
+  const hasChanges =
+    renderState.newTags.length !== 0 ||
+    renderState.tags.some((tag) => tag.changeType !== CHANGE_TYPE.NONE);
+
   return (
     <BulkTagging.Provider
       value={{
-        hasChanges: past.length > 0,
+        hasChanges,
         renderState,
         currentState,
         push,
