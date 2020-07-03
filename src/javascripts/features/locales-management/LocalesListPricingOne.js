@@ -17,7 +17,7 @@ import { LocalesUsageStatus, getLocalesUsageStatus } from './utils/LocalesUsageS
 const LocalesListPropTypes = {
   locales: PropTypes.arrayOf(PropTypes.object).isRequired,
   canCreateMultipleLocales: PropTypes.bool.isRequired,
-  canChangeSpace: PropTypes.bool.isRequired,
+  isOrgOwnerOrAdmin: PropTypes.bool.isRequired,
   localeResource: PropTypes.object.isRequired,
   insideMasterEnv: PropTypes.bool.isRequired,
   subscriptionState: PropTypes.object,
@@ -54,7 +54,7 @@ export const LocalesAdvice = (props) => {
     localeResource,
     insideMasterEnv,
     subscriptionPlanName,
-    canChangeSpace,
+    isOrgOwnerOrAdmin,
     subscriptionState,
     locales,
     canCreateMultipleLocales,
@@ -122,12 +122,12 @@ export const LocalesAdvice = (props) => {
           Your current subscription plan <strong>({subscriptionPlanName})</strong> enables a maximum
           of {localeResource.parent.limits.maximum} locales per organization
         </Paragraph>
-        {canChangeSpace && (
+        {isOrgOwnerOrAdmin && (
           <Paragraph className="advice__description">
             Please {upgradeLink} if you need more locales or delete some of the existing ones
           </Paragraph>
         )}
-        {!canChangeSpace && (
+        {!isOrgOwnerOrAdmin && (
           <Paragraph className="advice__description">
             Please ask your organization owner to upgrade if you need more locales or delete some of
             the existing ones
@@ -143,12 +143,12 @@ export const LocalesAdvice = (props) => {
           Your current subscription plan <strong>({subscriptionPlanName})</strong> does not support
           localizing content
         </Paragraph>
-        {canChangeSpace && (
+        {isOrgOwnerOrAdmin && (
           <Paragraph className="advice__description">
             Please {upgradeLink} to a plan that includes locales to benefit from this feature
           </Paragraph>
         )}
-        {!canChangeSpace && (
+        {!isOrgOwnerOrAdmin && (
           <Paragraph className="advice__description">
             Please ask your organization owner to upgrade to a plan that includes locales to benefit
             from this feature

@@ -10,6 +10,9 @@ import WorkbenchSidebarItem from 'app/common/WorkbenchSidebarItem';
 import ExternalTextLink from 'app/common/ExternalTextLink';
 import { developerDocsUrl } from 'Config';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+import { websiteUrl } from 'Config';
+import { track } from 'analytics/Analytics';
+import { getModule } from 'core/NgRegistry';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
   source: 'webapp',
@@ -45,89 +48,127 @@ export class LocalesListSidebar extends React.Component {
     localeResource: PropTypes.object.isRequired,
     allowedToEnforceLimits: PropTypes.bool.isRequired,
     insideMasterEnv: PropTypes.bool.isRequired,
-    canChangeSpace: PropTypes.bool.isRequired,
+    isOrgOwnerOrAdmin: PropTypes.bool.isRequired,
     upgradeSpace: PropTypes.func.isRequired,
+    isLargePlan: PropTypes.bool,
   };
 
   constructor(props) {
     super(props);
   }
 
-  renderAddButton() {
-    return (
-      <div className="entity-sidebar__widget">
-        <StateLink path="^.new">
-          {({ onClick }) => (
-            <Button onClick={onClick} isFullWidth buttonType="primary" testId="add-locales-button">
-              Add Locale
-            </Button>
-          )}
-        </StateLink>
-      </div>
-    );
-  }
-
   renderChangeSpace() {
-    const { localeResource, canChangeSpace } = this.props;
+    const { localeResource, isOrgOwnerOrAdmin, isLargePlan } = this.props;
+
     let instruction = '';
     if (localeResource.limits.maximum > 1) {
-      if (canChangeSpace) {
-        instruction = 'Delete an existing locale or change the space to add more.';
+      if (isOrgOwnerOrAdmin) {
+        instruction = isLargePlan
+          ? 'Talk to us about upgrading to an enterprise space plan.'
+          : 'Upgrade the space to add more.';
       } else {
-        instruction = `Delete an existing locale or ask the administrator of your organization to change the space to add more.`;
+        instruction = `Ask the administrator of your organization to upgrade the space to add more locales.`;
       }
     } else {
-      if (canChangeSpace) {
-        instruction = 'Change the space to add more.';
+      if (isOrgOwnerOrAdmin) {
+        instruction = 'Upgrade the space to add more.';
       } else {
-        instruction = 'Ask the administrator of your organization to change the space to add more.';
+        instruction =
+          'Ask the administrator of your organization to upgrade the space to add more locales.';
       }
     }
+
     return (
       <div data-test-id="change-space-block">
         <Typography>
           <Paragraph>{instruction}</Paragraph>
         </Typography>
-        {canChangeSpace && (
-          <div className="entity-sidebar__widget">
-            <Button
-              onClick={this.props.upgradeSpace}
-              isFullWidth
-              buttonType="primary"
-              testId="locales-change">
-              Upgrade space
-            </Button>
-          </div>
-        )}
+        {isOrgOwnerOrAdmin &&
+          (isLargePlan ? (
+            <UpgradeToEnterprise />
+          ) : (
+            <UpgradeOnDemand upgradeSpace={this.props.upgradeSpace} />
+          ))}
       </div>
     );
   }
 
-  renderUsage() {
-    const { localeResource } = this.props;
-    const isReachedLimit = localeResource.usage >= localeResource.limits.maximum;
-    return (
-      <WorkbenchSidebarItem testId="locales-usage" title="Usage">
-        <Typography>
-          <Paragraph>
-            You are using {localeResource.usage} out of{' '}
-            <Pluralized text="locale" count={localeResource.limits.maximum} /> available in this
-            space.
-          </Paragraph>
-        </Typography>
-        {isReachedLimit ? this.renderChangeSpace() : this.renderAddButton()}
-      </WorkbenchSidebarItem>
-    );
-  }
-
   render() {
-    const { insideMasterEnv, allowedToEnforceLimits } = this.props;
+    const { insideMasterEnv, allowedToEnforceLimits, localeResource } = this.props;
+    const isReachedLimit = localeResource.usage >= localeResource.limits.maximum;
 
     return (
       <>
-        {allowedToEnforceLimits || insideMasterEnv ? this.renderUsage() : this.renderAddButton()}
+        {allowedToEnforceLimits || insideMasterEnv ? (
+          <WorkbenchSidebarItem testId="locales-usage" title="Usage">
+            <Typography>
+              <Paragraph>
+                You are using {localeResource.usage} out of{' '}
+                <Pluralized text="locale" count={localeResource.limits.maximum} /> available in this
+                space.
+              </Paragraph>
+            </Typography>
+            {isReachedLimit ? this.renderChangeSpace() : <AddLocaleButton />}
+          </WorkbenchSidebarItem>
+        ) : (
+          <AddLocaleButton />
+        )}
         <DocumentationsSection />
       </>
     );
   }
 }
+
+const handleTalkToUsClickCTA = () => {
+  const spaceContext = getModule('spaceContext');
+
+  track('upgrade_to_enterprise:cta_clicked', {
+    location: 'locales_page',
+    spaceId: spaceContext.getId(),
+    orgId: spaceContext.organization.sys.id,
+  });
+};
+
+const UpgradeToEnterprise = () => {
+  return (
+    <Button
+      className="entity-sidebar__widget"
+      isFullWidth
+      buttonType="primary"
+      testId="link-to-sales-button"
+      href={websiteUrl('contact/sales/')}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={() => handleTalkToUsClickCTA()}>
+      Talk to us
+    </Button>
+  );
+};
+
+const UpgradeOnDemand = ({ upgradeSpace }) => {
+  return (
+    <Button
+      className="entity-sidebar__widget"
+      isFullWidth
+      buttonType="primary"
+      testId="locales-change"
+      onClick={upgradeSpace}>
+      Upgrade space
+    </Button>
+  );
+};
+UpgradeOnDemand.propTypes = { upgradeSpace: PropTypes.func.isRequired };
+
+const AddLocaleButton = () => {
+  return (
+    <div className="entity-sidebar__widget">
+      <StateLink path="^.new">
+        {({ onClick }) => (
+          <Button onClick={onClick} isFullWidth buttonType="primary" testId="add-locales-button">
+            Add Locale
+          </Button>
+        )}
+      </StateLink>
+    </div>
+  );
+};

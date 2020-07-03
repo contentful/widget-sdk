@@ -10,11 +10,12 @@ export class LocalesListPricingTwo extends React.Component {
   static propTypes = {
     locales: PropTypes.arrayOf(PropTypes.object).isRequired,
     allowedToEnforceLimits: PropTypes.bool.isRequired,
-    canChangeSpace: PropTypes.bool.isRequired,
+    isOrgOwnerOrAdmin: PropTypes.bool.isRequired,
     localeResource: PropTypes.object.isRequired,
     insideMasterEnv: PropTypes.bool.isRequired,
     subscriptionState: PropTypes.object.isRequired,
     upgradeSpace: PropTypes.func.isRequired,
+    isLargePlan: PropTypes.bool,
   };
 
   renderTitle() {
@@ -43,9 +44,10 @@ export class LocalesListPricingTwo extends React.Component {
             insideMasterEnv={this.props.insideMasterEnv}
             localeResource={this.props.localeResource}
             allowedToEnforceLimits={this.props.allowedToEnforceLimits}
-            canChangeSpace={this.props.canChangeSpace}
+            isOrgOwnerOrAdmin={this.props.isOrgOwnerOrAdmin}
             subscriptionState={this.props.subscriptionState}
             upgradeSpace={this.props.upgradeSpace}
+            isLargePlan={this.props.isLargePlan}
           />
         </Workbench.Sidebar>
       </Workbench>

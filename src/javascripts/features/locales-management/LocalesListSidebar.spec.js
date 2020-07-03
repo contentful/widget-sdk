@@ -1,10 +1,20 @@
 import React from 'react';
 
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, screen } from '@testing-library/react';
 import { LocalesListSidebar } from './LocalesListSidebar';
 import * as $stateMocked from 'ng/$state';
+import * as spaceContextMocked from 'ng/spaceContext';
+import userEvent from '@testing-library/user-event';
+
+import { track } from 'analytics/Analytics';
+
+jest.mock('analytics/Analytics', () => ({
+  track: jest.fn(),
+}));
 
 describe('features/locales-management/LocalesListSidebar', () => {
+  spaceContextMocked.getId.mockReturnValue(321);
+
   const renderComponent = (props) => {
     const stubs = {
       upgradeSpace: jest.fn(),
@@ -49,7 +59,7 @@ describe('features/locales-management/LocalesListSidebar', () => {
           upgradeSpaceButton,
         } = renderComponent({
           insideMasterEnv: false,
-          canChangeSpace: false,
+          isOrgOwnerOrAdmin: false,
           localeResource: {
             usage: 1,
             limits: {
@@ -81,7 +91,7 @@ describe('features/locales-management/LocalesListSidebar', () => {
         } = renderComponent({
           allowedToEnforceLimits: true,
           insideMasterEnv: false,
-          canChangeSpace: true,
+          isOrgOwnerOrAdmin: true,
           localeResource: {
             usage: 2,
             limits: {
@@ -96,9 +106,45 @@ describe('features/locales-management/LocalesListSidebar', () => {
         expect(usagesSection).toHaveTextContent(
           'You are using 2 out of 2 locales available in this space.'
         );
-        expect(usagesSection).toHaveTextContent(
-          'Delete an existing locale or change the space to add more.'
+        expect(usagesSection).toHaveTextContent('Upgrade the space to add more.');
+      });
+
+      it('shows CTA button to talk to support about upgrading to enterprise when a large plan and limit is reached', () => {
+        const {
+          documentationSection,
+          addLocaleButton,
+          upgradeSpaceButton,
+          usagesSection,
+        } = renderComponent({
+          allowedToEnforceLimits: true,
+          insideMasterEnv: false,
+          isOrgOwnerOrAdmin: true,
+          isLargePlan: true,
+          localeResource: {
+            usage: 2,
+            limits: {
+              maximum: 2,
+            },
+          },
+        });
+        expect(screen.getByTestId('link-to-sales-button')).toBeInTheDocument();
+        expect(screen.getByTestId('link-to-sales-button').getAttribute('href')).toEqual(
+          'https://www.contentful.comcontact/sales/'
         );
+        expect(documentationSection).toBeInTheDocument();
+        expect(addLocaleButton).not.toBeInTheDocument();
+        expect(upgradeSpaceButton).not.toBeInTheDocument();
+        expect(usagesSection.textContent).toMatch(
+          'You are using 2 out of 2 locales available in this space.'
+        );
+
+        userEvent.click(screen.getByTestId('link-to-sales-button'));
+
+        expect(track).toBeCalledWith('upgrade_to_enterprise:cta_clicked', {
+          location: 'locales_page',
+          orgId: 'org',
+          spaceId: 321,
+        });
       });
     });
   });
@@ -115,7 +161,7 @@ describe('features/locales-management/LocalesListSidebar', () => {
           changeSpaceSection,
         } = renderComponent({
           insideMasterEnv: true,
-          canChangeSpace: false,
+          isOrgOwnerOrAdmin: false,
           localeResource: {
             usage: 1,
             limits: {
@@ -142,7 +188,7 @@ describe('features/locales-management/LocalesListSidebar', () => {
         expect.assertions(4);
         const { documentationSection, addLocaleButton, usagesSection } = renderComponent({
           insideMasterEnv: true,
-          canChangeSpace: true,
+          isOrgOwnerOrAdmin: true,
           localeResource: {
             usage: 2,
             limits: {
@@ -155,9 +201,7 @@ describe('features/locales-management/LocalesListSidebar', () => {
         expect(usagesSection).toHaveTextContent(
           'You are using 2 out of 2 locales available in this space.'
         );
-        expect(usagesSection).toHaveTextContent(
-          'Delete an existing locale or change the space to add more.'
-        );
+        expect(usagesSection).toHaveTextContent('Upgrade the space to add more.');
       });
 
       it('all sections and texts are shown correctly if limit is 1', () => {
@@ -165,7 +209,7 @@ describe('features/locales-management/LocalesListSidebar', () => {
 
         const { documentationSection, addLocaleButton, usagesSection } = renderComponent({
           insideMasterEnv: true,
-          canChangeSpace: true,
+          isOrgOwnerOrAdmin: true,
           localeResource: {
             usage: 1,
             limits: {
@@ -178,7 +222,7 @@ describe('features/locales-management/LocalesListSidebar', () => {
         expect(usagesSection).toHaveTextContent(
           'You are using 1 out of 1 locale available in this space.'
         );
-        expect(usagesSection).toHaveTextContent('Change the space to add more.');
+        expect(usagesSection).toHaveTextContent('Upgrade the space to add more.');
       });
     });
 
@@ -192,7 +236,7 @@ describe('features/locales-management/LocalesListSidebar', () => {
           usagesSection,
         } = renderComponent({
           insideMasterEnv: true,
-          canChangeSpace: false,
+          isOrgOwnerOrAdmin: false,
           localeResource: {
             usage: 2,
             limits: {
@@ -207,7 +251,7 @@ describe('features/locales-management/LocalesListSidebar', () => {
           'You are using 2 out of 2 locales available in this space.'
         );
         expect(usagesSection).toHaveTextContent(
-          'Delete an existing locale or ask the administrator of your organization to change the space to add more.'
+          'Ask the administrator of your organization to upgrade the space to add more locales.'
         );
       });
 
@@ -220,7 +264,7 @@ describe('features/locales-management/LocalesListSidebar', () => {
           usagesSection,
         } = renderComponent({
           insideMasterEnv: true,
-          canChangeSpace: false,
+          isOrgOwnerOrAdmin: false,
           localeResource: {
             usage: 1,
             limits: {
@@ -235,7 +279,7 @@ describe('features/locales-management/LocalesListSidebar', () => {
           'You are using 1 out of 1 locale available in this space.'
         );
         expect(usagesSection).toHaveTextContent(
-          'Ask the administrator of your organization to change the space to add more.'
+          'Ask the administrator of your organization to upgrade the space to add more locales.'
         );
       });
     });
@@ -245,7 +289,7 @@ describe('features/locales-management/LocalesListSidebar', () => {
     it('has the UTM paramters for the documentation link', () => {
       const { documentationLink } = renderComponent({
         insideMasterEnv: true,
-        canChangeSpace: false,
+        isOrgOwnerOrAdmin: false,
         localeResource: {
           usage: 1,
           limits: {

@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { getModule } from 'core/NgRegistry';
 import { LocalesListSkeleton } from '../skeletons/LocalesListSkeleton';
 import { LocalesListPricingOne } from '../LocalesListPricingOne';
 import { LocalesListPricingTwo } from '../LocalesListPricingTwo';
-import createFetcherComponent from 'app/common/createFetcherComponent';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import StateRedirect from 'app/common/StateRedirect';
 import createLegacyFeatureService from 'services/LegacyFeatureService';
@@ -15,93 +14,127 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import { getSubscriptionState } from './utils/getSubscriptionState';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { ENVIRONMENT_USAGE_ENFORCEMENT } from 'featureFlags';
+import { useAsync } from 'core/hooks';
 
 import * as OrganizationRoles from 'services/OrganizationRoles';
 import * as ResourceService from 'services/ResourceService';
+import { createOrganizationEndpoint } from 'data/EndpointFactory';
+import { getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
 
-const LocalesFetcher = createFetcherComponent(() => {
+const fetch = async () => {
   const spaceContext = getModule('spaceContext');
+  const isOrgOwnerOrAdmin = OrganizationRoles.isOwnerOrAdmin(spaceContext.organization);
 
   const createResourceService = ResourceService.default;
+  const endpoint = createOrganizationEndpoint(spaceContext.organization.sys.id);
 
-  return Promise.all([
+  const promisesArray = [
     spaceContext.localeRepo.getAll(),
     isLegacyOrganization(spaceContext.organization),
     createResourceService(spaceContext.getId()).get('locale', spaceContext.getEnvironmentId()),
     createLegacyFeatureService(spaceContext.getId()).get('multipleLocales'),
-    OrganizationRoles.isOwnerOrAdmin(spaceContext.organization),
     spaceContext.isMasterEnvironment(),
     getSpaceFeature(spaceContext.getId(), ENVIRONMENT_USAGE_ENFORCEMENT),
     _.get(spaceContext.organization, ['subscriptionPlan', 'name']),
-  ]);
-});
+  ];
 
-export class LocalesListRoute extends React.Component {
-  static propTypes = {
-    showUpgradeSpaceDialog: PropTypes.func.isRequired,
-    getComputeLocalesUsageForOrganization: PropTypes.func.isRequired,
-  };
-
-  render() {
-    if (!getSectionVisibility()['locales']) {
-      return <ForbiddenPage />;
-    }
-
-    return (
-      <React.Fragment>
-        <DocumentTitle title="Locales" />
-        <LocalesFetcher>
-          {({ isLoading, isError, data, fetch }) => {
-            if (isLoading) {
-              return <LocalesListSkeleton />;
-            }
-            if (isError) {
-              return <StateRedirect path="spaces.detail.entries.list" />;
-            }
-            const [
-              locales,
-              isLegacy,
-              localeResource,
-              isMultipleLocalesFeatureEnabled,
-              isOwnerOrAdmin,
-              insideMasterEnv,
-              allowedToEnforceLimits,
-              subscriptionPlanName,
-            ] = data;
-            if (isLegacy) {
-              return (
-                <LocalesListPricingOne
-                  locales={locales}
-                  canCreateMultipleLocales={isMultipleLocalesFeatureEnabled}
-                  canChangeSpace={isOwnerOrAdmin}
-                  localeResource={localeResource}
-                  subscriptionState={getSubscriptionState()}
-                  insideMasterEnv={insideMasterEnv}
-                  subscriptionPlanName={subscriptionPlanName}
-                  getComputeLocalesUsageForOrganization={
-                    this.props.getComputeLocalesUsageForOrganization
-                  }
-                />
-              );
-            }
-            return (
-              <LocalesListPricingTwo
-                locales={locales}
-                allowedToEnforceLimits={allowedToEnforceLimits}
-                canChangeSpace={isOwnerOrAdmin}
-                localeResource={localeResource}
-                subscriptionState={getSubscriptionState()}
-                insideMasterEnv={insideMasterEnv}
-                upgradeSpace={() =>
-                  this.props.showUpgradeSpaceDialog({
-                    onSubmit: () => fetch(),
-                  })
-                }
-              />
-            );
-          }}
-        </LocalesFetcher>
-      </React.Fragment>
-    );
+  if (isOrgOwnerOrAdmin) {
+    // This fetch only works when user is an owner or admin.
+    promisesArray.push(getSingleSpacePlan(endpoint, spaceContext.getId()));
   }
-}
+
+  const [
+    // Required Promises
+    locales,
+    isLegacy,
+    localeResource,
+    isMultipleLocalesFeatureEnabled,
+    insideMasterEnv,
+    allowedToEnforceLimits,
+    subscriptionPlanName,
+    // Conditional Promises:
+    spacePlan,
+  ] = await Promise.all(promisesArray);
+
+  const isLargePlan = spacePlan?.name === 'Large';
+
+  return {
+    locales,
+    isLegacy,
+    localeResource,
+    isMultipleLocalesFeatureEnabled,
+    insideMasterEnv,
+    allowedToEnforceLimits,
+    subscriptionPlanName,
+    isOrgOwnerOrAdmin,
+    isLargePlan,
+  };
+};
+
+export const LocalesListRoute = ({
+  showUpgradeSpaceDialog,
+  getComputeLocalesUsageForOrganization,
+}) => {
+  const { isLoading, error, data = {} } = useAsync(useCallback(fetch, []));
+
+  if (!getSectionVisibility()['locales']) {
+    return <ForbiddenPage />;
+  }
+
+  if (error) {
+    return <StateRedirect path="spaces.detail.entries.list" />;
+  }
+
+  const {
+    locales,
+    isLegacy,
+    localeResource,
+    isMultipleLocalesFeatureEnabled,
+    isOrgOwnerOrAdmin,
+    insideMasterEnv,
+    allowedToEnforceLimits,
+    subscriptionPlanName,
+    isLargePlan,
+  } = data;
+
+  return (
+    <>
+      <DocumentTitle title="Locales" />
+
+      {isLoading ? (
+        <LocalesListSkeleton />
+      ) : isLegacy ? (
+        <LocalesListPricingOne
+          locales={locales}
+          canCreateMultipleLocales={isMultipleLocalesFeatureEnabled}
+          isOrgOwnerOrAdmin={isOrgOwnerOrAdmin}
+          localeResource={localeResource}
+          subscriptionState={getSubscriptionState()}
+          insideMasterEnv={insideMasterEnv}
+          subscriptionPlanName={subscriptionPlanName}
+          getComputeLocalesUsageForOrganization={getComputeLocalesUsageForOrganization}
+        />
+      ) : (
+        <LocalesListPricingTwo
+          locales={locales}
+          allowedToEnforceLimits={allowedToEnforceLimits}
+          isOrgOwnerOrAdmin={isOrgOwnerOrAdmin}
+          localeResource={localeResource}
+          subscriptionState={getSubscriptionState()}
+          insideMasterEnv={insideMasterEnv}
+          upgradeSpace={() =>
+            showUpgradeSpaceDialog({
+              onSubmit: () => fetch(),
+            })
+          }
+          isLargePlan={isLargePlan}
+        />
+      )}
+    </>
+  );
+};
+
+LocalesListRoute.propTypes = {
+  showUpgradeSpaceDialog: PropTypes.func.isRequired,
+  getComputeLocalesUsageForOrganization: PropTypes.func.isRequired,
+};

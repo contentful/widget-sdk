@@ -38,7 +38,7 @@ describe('features/locales-management/LocalesListPricingOne', () => {
       return render(
         <LocalesAdvice
           canCreateMultipleLocales={true}
-          canChangeSpace={true}
+          isOrgOwnerOrAdmin={true}
           insideMasterEnv={true}
           subscriptionState={null}
           subscriptionPlanName="some subscription plan name"
@@ -85,7 +85,7 @@ describe('features/locales-management/LocalesListPricingOne', () => {
       });
     });
 
-    const renderComponentWithReachedLimit = ({ canChangeSpace }) => {
+    const renderComponentWithReachedLimit = ({ isOrgOwnerOrAdmin }) => {
       return renderComponent({
         localeResource: {
           usage: 2,
@@ -100,11 +100,11 @@ describe('features/locales-management/LocalesListPricingOne', () => {
         subscriptionState: {
           path: ['account', 'organization', 'subscription'],
         },
-        canChangeSpace,
+        isOrgOwnerOrAdmin,
       });
     };
 
-    const renderComponentWithNoMultipleLocales = ({ canChangeSpace }) => {
+    const renderComponentWithNoMultipleLocales = ({ isOrgOwnerOrAdmin }) => {
       return renderComponent({
         canCreateMultipleLocales: false,
         localeResource: {
@@ -117,13 +117,13 @@ describe('features/locales-management/LocalesListPricingOne', () => {
         subscriptionState: {
           path: ['account', 'organization', 'subscription'],
         },
-        canChangeSpace,
+        isOrgOwnerOrAdmin,
       });
     };
 
-    describe('when canChangeSpace is true', () => {
+    describe('when isOrgOwnerOrAdmin is true', () => {
       it('it should show correct message if status is LocalesUsageStatus.LOCALES_LIMIT_REACHED', () => {
-        const { getByTestId } = renderComponentWithReachedLimit({ canChangeSpace: true });
+        const { getByTestId } = renderComponentWithReachedLimit({ isOrgOwnerOrAdmin: true });
         [
           'You have reached the organization locales limit',
           'Your current subscription plan (some subscription plan name) enables a maximum of 2 locales per organization',
@@ -142,7 +142,7 @@ describe('features/locales-management/LocalesListPricingOne', () => {
 
       it('should show correct message if status is LocalesUsageStatus.NO_MULTIPLE_LOCALES', () => {
         const { getByTestId } = renderComponentWithNoMultipleLocales({
-          canChangeSpace: true,
+          isOrgOwnerOrAdmin: true,
         });
         [
           'Your plan does not include multiple locales',
@@ -162,9 +162,9 @@ describe('features/locales-management/LocalesListPricingOne', () => {
       });
     });
 
-    describe('when canChangeSpace is false', () => {
+    describe('when isOrgOwnerOrAdmin is false', () => {
       it('it should show correct message if status is LocalesUsageStatus.LOCALES_LIMIT_REACHED', () => {
-        const { getByTestId } = renderComponentWithReachedLimit({ canChangeSpace: false });
+        const { getByTestId } = renderComponentWithReachedLimit({ isOrgOwnerOrAdmin: false });
         [
           'You have reached the organization locales limit',
           'Your current subscription plan (some subscription plan name) enables a maximum of 2 locales per organization',
@@ -178,7 +178,7 @@ describe('features/locales-management/LocalesListPricingOne', () => {
       });
 
       it('should show correct message if status is LocalesUsageStatus.NO_MULTIPLE_LOCALES', () => {
-        const { getByTestId } = renderComponentWithNoMultipleLocales({ canChangeSpace: false });
+        const { getByTestId } = renderComponentWithNoMultipleLocales({ isOrgOwnerOrAdmin: false });
         [
           'Your plan does not include multiple locales',
           'Your current subscription plan (some subscription plan name) does not support localizing content',
