@@ -239,7 +239,7 @@ describe('WorkbenchContent', () => {
     it('should render the OrganizationUsagePage', () => {
       const { queryByTestId, getByTestId } = render(
         <MockPovider {...defaultData}>
-          <WorkbenchContent resources={[]} />
+          <WorkbenchContent resources={[]} showNewPricingFeature={false} />
         </MockPovider>
       );
 
@@ -258,7 +258,7 @@ describe('WorkbenchContent', () => {
       };
       const { queryByTestId, getByTestId } = render(
         <MockPovider {...data}>
-          <WorkbenchContent resources={[]} />
+          <WorkbenchContent resources={[]} showNewPricingFeature={false} />
         </MockPovider>
       );
 
@@ -277,7 +277,7 @@ describe('WorkbenchContent', () => {
       };
       const { queryByTestId, getByTestId } = render(
         <MockPovider {...data}>
-          <WorkbenchContent resources={[]} />
+          <WorkbenchContent resources={[]} showNewPricingFeature={false} />
         </MockPovider>
       );
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { mapValues, flow, keyBy, get, eq } from 'lodash/fp';
-
+import { css } from 'emotion';
 import { Spinner, Workbench } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification';
 
@@ -11,6 +11,7 @@ import { OrganizationUsagePage } from '../components/OrganizationUsagePage';
 import { PeriodSelector } from '../components/PeriodSelector';
 import { NoSpacesPlaceholder } from '../components/NoSpacesPlaceholder';
 import { getPeriods, loadPeriodData } from '../services/UsageService';
+import { UsageProvider, useUsageState, useUsageDispatch } from '../hooks/usageContext';
 
 import * as TokenStore from 'services/TokenStore';
 import * as EndpointFactory from 'data/EndpointFactory';
@@ -20,26 +21,37 @@ import createResourceService from 'services/ResourceService';
 import * as OrganizationRoles from 'services/OrganizationRoles';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 import ErrorState from 'app/common/ErrorState';
-import { UsageProvider, useUsageState, useUsageDispatch } from '../hooks/usageContext';
+import LoadingState from 'app/common/LoadingState';
 
 import { NEW_USAGE_PAGE } from 'featureFlags';
 import { getVariation } from 'LaunchDarkly';
 
+const styles = {
+  content: css({
+    height: '100%',
+    '> div': {
+      height: '100%',
+    },
+  }),
+};
+
 export const WorkbenchContent = ({ resources, showNewPricingFeature }) => {
-  const {
-    hasSpaces,
-    error,
-    isTeamOrEnterpriseCustomer,
-    periodicUsage,
-    assetBandwidthData,
-  } = useUsageState();
+  const { hasSpaces, error, isTeamOrEnterpriseCustomer } = useUsageState();
 
   if (error) {
     return <ErrorState />;
   }
 
+  // To be removed with a feature flag
+  if (isTeamOrEnterpriseCustomer === undefined || showNewPricingFeature === undefined) {
+    return <LoadingState />;
+  }
+
   // targets free customer on pricing v2
-  if (!!resources && !showNewPricingFeature && !isTeamOrEnterpriseCustomer) {
+  if (!showNewPricingFeature && !isTeamOrEnterpriseCustomer) {
+    if (resources === undefined) {
+      return <LoadingState />;
+    }
     return <OrganizationResourceUsageList resources={resources} />;
   }
 
@@ -47,11 +59,7 @@ export const WorkbenchContent = ({ resources, showNewPricingFeature }) => {
     return <NoSpacesPlaceholder />;
   }
 
-  if (!!periodicUsage && !!assetBandwidthData) {
-    return <OrganizationUsagePage />;
-  }
-
-  return <div />;
+  return <OrganizationUsagePage />;
 };
 
 WorkbenchContent.propTypes = {
@@ -81,7 +89,7 @@ export const OrganizationUsage = () => {
   const { selectedPeriodIndex, orgId } = useUsageState();
   const dispatch = useUsageDispatch();
 
-  const [showNewPricingFeature, setShowNewPricingFeature] = useState(false);
+  const [showNewPricingFeature, setShowNewPricingFeature] = useState();
   const [resources, setResources] = useState();
 
   useEffect(() => {
@@ -114,6 +122,7 @@ export const OrganizationUsage = () => {
           ? PricingDataProvider.isEnterprisePlan(basePlan) ||
             PricingDataProvider.isSelfServicePlan(basePlan)
           : PricingDataProvider.isEnterprisePlan(basePlan);
+        dispatch({ type: 'SET_CUSTOMER_TYPE', value: isTeamOrEnterpriseCustomer });
 
         if (!variation && !isTeamOrEnterpriseCustomer) {
           setResources(await service.getAll());
@@ -149,18 +158,17 @@ export const OrganizationUsage = () => {
             isPoC,
             periods: periods,
             apiRequestIncludedLimit: apiRequestIncludedLimit ?? 0,
-            isTeamOrEnterpriseCustomer,
             hasSpaces: spaces.length !== 0,
           },
         });
 
-        const [usageData, aassetBandwidthData] = await Promise.all([
+        const [usageData, assetBandwidthData] = await Promise.all([
           loadPeriodData(orgId, periods[selectedPeriodIndex]),
           service.get('asset_bandwidth'),
         ]);
 
         dispatch({ type: 'SET_USAGE_DATA', value: usageData });
-        dispatch({ type: 'SET_ASSET_BANDWIDTH_DATA', value: aassetBandwidthData });
+        dispatch({ type: 'SET_ASSET_BANDWIDTH_DATA', value: assetBandwidthData });
         dispatch({ type: 'SET_LOADING', value: false });
       } catch (e) {
         // Show the forbidden screen on 404 and 403
@@ -184,7 +192,7 @@ export const OrganizationUsage = () => {
           title="Usage"
           icon={<NavigationIcon icon="usage" color="green" size="large" />}
           actions={<WorkbenchActions />}></Workbench.Header>
-        <Workbench.Content>
+        <Workbench.Content className={styles.content}>
           <WorkbenchContent
             {...{
               resources,

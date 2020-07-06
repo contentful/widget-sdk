@@ -129,12 +129,14 @@ export const propsToChartOptions = ({ spaceNames, data, period }) => {
 };
 
 export const SpacesBarChart = () => {
-  const { spaceNames, periodicUsage, selectedSpacesTab, periodDates } = useUsageState();
+  const { spaceNames, periodicUsage, selectedSpacesTab, periodDates, isLoading } = useUsageState();
+
+  const data = isLoading ? [] : periodicUsage.apis[selectedSpacesTab].items;
 
   const chartRef = useChart(
     propsToChartOptions({
       spaceNames,
-      data: periodicUsage.apis[selectedSpacesTab].items,
+      data,
       period: periodDates,
     })
   );

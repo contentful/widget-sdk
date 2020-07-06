@@ -7,6 +7,7 @@ import {
   TableBody,
   Tooltip,
   Tag,
+  SkeletonRow,
 } from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';
 import { sum } from 'lodash';
@@ -48,9 +49,9 @@ SpaceRow.propTypes = {
 };
 
 export const SpacesTable = () => {
-  const { periodicUsage, selectedSpacesTab } = useUsageState();
+  const { periodicUsage, selectedSpacesTab, isLoading } = useUsageState();
 
-  const data = periodicUsage.apis[selectedSpacesTab].items;
+  const data = isLoading ? [] : periodicUsage.apis[selectedSpacesTab].items;
 
   return (
     <Table data-test-id="api-usage-table">
@@ -62,6 +63,7 @@ export const SpacesTable = () => {
         </TableRow>
       </TableHead>
       <TableBody>
+        {isLoading && <SkeletonRow rowCount={5} columnCount={3} />}
         {data.map((item, index) => (
           <SpaceRow
             key={index}

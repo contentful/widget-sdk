@@ -4,11 +4,12 @@ import { track } from 'analytics/Analytics';
 import { OrganizationUsageInfo } from './OrganizationUsageInfo';
 import { UsageStateContext } from '../hooks/usageContext';
 
-const MockPovider = ({ children, totalUsage, apiRequestIncludedLimit }) => (
+const MockPovider = ({ children, totalUsage, apiRequestIncludedLimit, isLoading }) => (
   <UsageStateContext.Provider
     value={{
       totalUsage,
       apiRequestIncludedLimit,
+      isLoading,
     }}>
     {children}
   </UsageStateContext.Provider>
@@ -57,5 +58,13 @@ describe('OrganisationUsageInfo', () => {
     fireEvent.click(getByTestId('fair_use_policy_link'));
     expect(track).toHaveBeenCalledTimes(1);
     expect(track).toHaveBeenCalledWith('usage:fair_use_policy_clicked');
+  });
+
+  it('should show skeleton when loading', () => {
+    const { getAllByTestId } = renderComp({ ...defaultData, isLoading: true });
+
+    getAllByTestId('cf-ui-skeleton-form').forEach((ele) => {
+      expect(ele).toBeVisible();
+    });
   });
 });

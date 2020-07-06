@@ -129,12 +129,13 @@ const propsToChartOption = ({ period, usage, includedLimit }) => {
 };
 
 export const OrganizationBarChart = () => {
-  const { periodDates, periodicUsage, apiRequestIncludedLimit } = useUsageState();
+  const { periodDates, periodicUsage, apiRequestIncludedLimit, isLoading } = useUsageState();
 
+  const usage = isLoading ? [] : periodicUsage.org.usage;
   const chartRef = useChart(
     propsToChartOption({
       period: periodDates,
-      usage: periodicUsage.org.usage,
+      usage,
       includedLimit: apiRequestIncludedLimit,
     })
   );

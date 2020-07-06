@@ -20,6 +20,9 @@ export const UsageDispatchContext = React.createContext();
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case 'SET_CUSTOMER_TYPE': {
+      return { ...state, isTeamOrEnterpriseCustomer: action.value };
+    }
     case 'SET_ORG_DATA': {
       const { periods } = action.value;
       const periodDates = periodToDates(periods[state.selectedPeriodIndex]);

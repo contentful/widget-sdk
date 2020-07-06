@@ -233,4 +233,14 @@ describe('SpacesTabs', () => {
       expect(getByTestId('api-usage-bar-chart')).toBeInTheDocument();
     });
   });
+
+  describe('loading state', () => {
+    it('shows skeleton rows', () => {
+      const { getAllByTestId } = renderComp({ ...defaultData, isLoading: true });
+
+      getAllByTestId('cf-ui-skeleton-form').forEach((ele) => {
+        expect(ele).toBeVisible();
+      });
+    });
+  });
 });
