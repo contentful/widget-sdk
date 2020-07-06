@@ -1,5 +1,5 @@
 import React, { Component, useState, useEffect } from 'react';
-import { css } from 'emotion';
+import { css, cx } from 'emotion';
 import pluralize from 'pluralize';
 
 import {
@@ -79,13 +79,18 @@ const styles = {
     overflow: 'hidden',
     textOverflow: 'ellipsis',
   }),
+  imageLayout: css({
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '150px',
+  }),
+  releaseImageLoad: css({
+    background: `linear-gradient(to right, ${tokens.colorElementLight}, ${tokens.colorWhite})`,
+  }),
   releaseImage: (images, id) =>
     css({
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      width: '100%',
-      height: 150,
       background: images ? `url(${images[0]}?w=250&h=150)` : `${getColorCode(id)}`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
@@ -94,8 +99,10 @@ const styles = {
 
 const ReleaseImage = ({ release }) => {
   const [images, setImages] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const assets = release.entities.items.filter((item) => item.sys.linkType === 'Asset');
   useEffect(() => {
-    const assets = release.entities.items.filter((item) => item.sys.linkType === 'Asset');
     if (images) {
       return undefined;
     }
@@ -109,11 +116,19 @@ const ReleaseImage = ({ release }) => {
           (image) => image.fields.file && image.fields.file[defaultLocale.code].url
         );
         setImages(srcFiles);
+        setLoading(false);
       });
+    } else {
+      setLoading(false);
     }
-  });
+  }, [loading, assets, images]);
   return (
-    <div className={styles.releaseImage(images, release.sys.id)}>
+    <div
+      className={cx(
+        styles.imageLayout,
+        loading ? styles.releaseImageLoad : styles.releaseImage(images, release.sys.id)
+      )}
+      id="release-image">
       {!images && <Icon className={styles.iconOverlay} icon="Release" size="large" color="white" />}
     </div>
   );
