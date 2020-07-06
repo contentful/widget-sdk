@@ -180,7 +180,12 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
 
   const fields = formData.fields;
   const userHasPassword = user.passwordSet;
+  const userIsSSORestricted = user.ssoLoginOnly;
+
   const currentPasswordIsRequired = userHasPassword && fields.email.interacted;
+
+  // Users can only change their email if they aren't SSO restricted
+  const userCanChangeEmail = !userIsSSORestricted;
 
   const validateForm = () => {
     dispatch({ type: 'SET_ALL_FIELDS_BLURRED' });
@@ -264,32 +269,33 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
             placeholder: 'Müller',
           }}
         />
-        <TextField
-          required
-          validationMessage={getValidationMessageFor(formData.fields, 'email')}
-          id="email-field"
-          testId="email-field"
-          name="email"
-          value={fields.email.value}
-          onChange={(e) =>
-            dispatch({
-              type: 'UPDATE_FIELD_VALUE',
-              payload: { field: 'email', value: e.target.value },
-            })
-          }
-          onBlur={() => dispatch({ type: 'SET_FIELD_BLURRED', payload: { field: 'email' } })}
-          labelText="Email"
-          textInputProps={{
-            type: 'email',
-            autoComplete: 'off',
-            placeholder: 'felix.mueller@example.com',
-          }}
-          helpText={
-            userHasPassword && fields.email.interacted
-              ? 'Enter your password to confirm your updated email.'
-              : ''
-          }
-        />
+        {userCanChangeEmail && (
+          <TextField
+            validationMessage={getValidationMessageFor(formData.fields, 'email')}
+            id="email-field"
+            testId="email-field"
+            name="email"
+            value={fields.email.value}
+            onChange={(e) =>
+              dispatch({
+                type: 'UPDATE_FIELD_VALUE',
+                payload: { field: 'email', value: e.target.value },
+              })
+            }
+            onBlur={() => dispatch({ type: 'SET_FIELD_BLURRED', payload: { field: 'email' } })}
+            labelText="Email"
+            textInputProps={{
+              type: 'email',
+              autoComplete: 'off',
+              placeholder: 'felix.mueller@example.com',
+            }}
+            helpText={
+              userHasPassword && fields.email.interacted
+                ? 'Enter your password to confirm your updated email.'
+                : ''
+            }
+          />
+        )}
         {currentPasswordIsRequired && (
           <>
             <Subheading>Confirm changes</Subheading>
