@@ -4,7 +4,7 @@ import {
   CHANGE_TYPE,
   useBulkTaggingProvider,
 } from 'features/content-tags/editor/state/BulkTaggingProvider';
-import { tagLink } from 'features/content-tags/editor/utils';
+import { idList, tagLink } from 'features/content-tags/editor/utils';
 
 function computeState({ tags, newTags }) {
   const state = tags.reduce(
@@ -23,21 +23,30 @@ function computeState({ tags, newTags }) {
   );
 
   state.all = [...state.all, ...newTags.map((tag) => tagLink(tag.value))];
-
   return state;
 }
 
+function filterWithChanges(state) {
+  const tagsToRemove = state.remove;
+  const tagsToAdd = state.all ? idList(state.all) : [];
+  return (entity) => {
+    const currentTags = idList(entity.data.metadata.tags);
+    return (
+      tagsToAdd.some((tag) => !currentTags.includes(tag)) ||
+      currentTags.some((tag) => tagsToRemove.includes(tag))
+    );
+  };
+}
+
 function transformEntities(entities, state) {
-  return entities.map((entity) => {
-    const tags = uniqBy(
+  return entities.filter(filterWithChanges(state)).map((entity) => {
+    entity.data.metadata.tags = uniqBy(
       [
         ...entity.data.metadata.tags.filter((tag) => !state.remove.includes(tag.sys.id)),
         ...state.all,
       ],
       'sys.id'
     );
-
-    entity.data.metadata.tags = tags;
     return entity;
   });
 }
