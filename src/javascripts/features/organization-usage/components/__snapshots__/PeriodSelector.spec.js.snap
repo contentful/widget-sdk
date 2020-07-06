@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`PeriodSelector should render 1`] = `
-<span
+<div
   className="usage__period-selector"
 >
   <label>
@@ -34,5 +34,5 @@ exports[`PeriodSelector should render 1`] = `
       05 Dec – 05 Jan (a month ago)
     </Option>
   </Select>
-</span>
+</div>
 `;

@@ -104,7 +104,6 @@ export const WorkbenchActions = ({
   periods,
   selectedPeriodIndex,
   setPeriodIndex,
-  isAssetBandwidthTab,
   isTeamOrEnterpriseCustomer,
 }) => {
   if (error) {
@@ -115,10 +114,11 @@ export const WorkbenchActions = ({
     return <Spinner />;
   }
 
-  if (hasSpaces && periods && isTeamOrEnterpriseCustomer && !isAssetBandwidthTab) {
+  if (hasSpaces && periods) {
     return (
       <PeriodSelector
         periods={periods}
+        isTeamOrEnterpriseCustomer={isTeamOrEnterpriseCustomer}
         selectedPeriodIndex={selectedPeriodIndex}
         onChange={setPeriodIndex}
       />
@@ -135,7 +135,6 @@ WorkbenchActions.propTypes = {
   periods: PropTypes.array,
   selectedPeriodIndex: PropTypes.number,
   setPeriodIndex: PropTypes.func,
-  isAssetBandwidthTab: PropTypes.bool,
   isTeamOrEnterpriseCustomer: PropTypes.bool,
 };
 

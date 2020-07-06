@@ -40,6 +40,7 @@ describe('PeriodSelector', () => {
       ],
       selectedPeriodIndex: 0,
       onChange: jest.fn(),
+      isTeamOrEnterpriseCustomer: true,
     };
   });
 

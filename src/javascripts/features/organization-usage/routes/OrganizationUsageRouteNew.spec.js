@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import 'jest-enzyme';
-import { Spinner } from '@contentful/forma-36-react-components';
+import { Spinner, Select } from '@contentful/forma-36-react-components';
 import {
   OrganizationUsageRouteNew,
   WorkbenchContent,
@@ -274,19 +274,10 @@ describe('WorkbenchActions', () => {
   });
 
   describe('isLoading', () => {
-    it('should render a spinner for the team or enterprise customers', () => {
+    it('should render a spinner', () => {
       const wrapper = shallow(<WorkbenchActions isLoading={true} {...defaultProps} />);
 
       expect(wrapper.find(Spinner)).toHaveLength(1);
-
-      expect(wrapper.find(PeriodSelector)).toHaveLength(0);
-    });
-
-    it('should not render a spinner for the community customers', () => {
-      defaultProps.isTeamOrEnterpriseCustomer = false;
-      const wrapper = shallow(<WorkbenchActions isLoading={true} {...defaultProps} />);
-
-      expect(wrapper.find(Spinner)).toHaveLength(0);
 
       expect(wrapper.find(PeriodSelector)).toHaveLength(0);
     });
@@ -317,11 +308,12 @@ describe('WorkbenchActions', () => {
   });
 
   describe('org is on the community tier', () => {
-    it('should not render the PeriodSelector', () => {
+    it('should render the PeriodSelector without Select', () => {
       defaultProps.isTeamOrEnterpriseCustomer = false;
       const wrapper = shallow(<WorkbenchActions {...defaultProps} />);
 
-      expect(wrapper.find(PeriodSelector)).toHaveLength(0);
+      expect(wrapper.find(PeriodSelector)).toHaveLength(1);
+      expect(wrapper.find(Select)).toHaveLength(0);
     });
 
     it('should render nothing if there are no spaces', () => {
