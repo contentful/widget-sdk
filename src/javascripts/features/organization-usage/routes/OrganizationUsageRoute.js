@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { mapValues, flow, keyBy, get, eq, isNumber, pick } from 'lodash/fp';
+import { mapValues, flow, keyBy, get, eq } from 'lodash/fp';
 
 import { Spinner, Workbench } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification';
@@ -10,8 +10,7 @@ import { OrganizationResourceUsageList } from '../components/OrganizationResourc
 import { OrganizationUsagePage } from '../components/OrganizationUsagePage';
 import { PeriodSelector } from '../components/PeriodSelector';
 import { NoSpacesPlaceholder } from '../components/NoSpacesPlaceholder';
-import { track } from 'analytics/Analytics';
-import * as UsageService from '../services/UsageService';
+import { getPeriods, loadPeriodData } from '../services/UsageService';
 
 import * as TokenStore from 'services/TokenStore';
 import * as EndpointFactory from 'data/EndpointFactory';
@@ -21,362 +20,191 @@ import createResourceService from 'services/ResourceService';
 import * as OrganizationRoles from 'services/OrganizationRoles';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 import ErrorState from 'app/common/ErrorState';
+import { UsageProvider, useUsageState, useUsageDispatch } from '../hooks/usageContext';
 
 import { NEW_USAGE_PAGE } from 'featureFlags';
 import { getVariation } from 'LaunchDarkly';
-import { OrganizationUsageRouteNew } from './OrganizationUsageRouteNew';
 
-export const WorkbenchContent = (props) => {
+export const WorkbenchContent = ({ resources, showNewPricingFeature }) => {
   const {
-    committed,
     hasSpaces,
-    selectedPeriodIndex,
-    spaceNames,
-    isPoC,
-    periodicUsage,
-    apiRequestIncludedLimit,
-    assetBandwidthData,
-    isLoading,
     error,
-    periods,
-    resources,
-    onTabSelect,
-  } = props;
+    isTeamOrEnterpriseCustomer,
+    periodicUsage,
+    assetBandwidthData,
+  } = useUsageState();
 
   if (error) {
     return <ErrorState />;
   }
 
-  if (committed) {
-    if (!hasSpaces) {
-      return <NoSpacesPlaceholder />;
-    }
-    if (typeof selectedPeriodIndex !== 'undefined') {
-      return (
-        <OrganizationUsagePage
-          {...{
-            period: periods[selectedPeriodIndex],
-            spaceNames,
-            isPoC,
-            periodicUsage,
-            apiRequestIncludedLimit,
-            assetBandwidthData,
-            isLoading,
-            onTabSelect,
-          }}
-        />
-      );
-    }
-  } else {
-    if (typeof resources !== 'undefined') {
-      return <OrganizationResourceUsageList resources={resources} />;
-    }
+  // targets free customer on pricing v2
+  if (!!resources && !showNewPricingFeature && !isTeamOrEnterpriseCustomer) {
+    return <OrganizationResourceUsageList resources={resources} />;
   }
+
+  if (hasSpaces === false) {
+    return <NoSpacesPlaceholder />;
+  }
+
+  if (!!periodicUsage && !!assetBandwidthData) {
+    return <OrganizationUsagePage />;
+  }
+
   return <div />;
 };
 
 WorkbenchContent.propTypes = {
-  committed: PropTypes.bool,
-  hasSpaces: PropTypes.bool,
-  selectedPeriodIndex: PropTypes.number,
-  spaceNames: PropTypes.objectOf(PropTypes.string),
-  isPoC: PropTypes.objectOf(PropTypes.bool),
-  periodicUsage: PropTypes.object,
-  apiRequestIncludedLimit: PropTypes.number,
-  assetBandwidthData: PropTypes.shape({
-    usage: PropTypes.number,
-    unitOfMeasure: PropTypes.string,
-    limits: PropTypes.shape({
-      included: PropTypes.number,
-    }),
-  }),
-  isLoading: PropTypes.bool,
-  error: PropTypes.string,
-  periods: PropTypes.arrayOf(PropTypes.object),
   resources: PropTypes.arrayOf(PropTypes.object),
-  onTabSelect: PropTypes.func,
+  showNewPricingFeature: PropTypes.bool,
 };
 
-export class WorkbenchActions extends React.Component {
-  static propTypes = {
-    isLoading: PropTypes.bool,
-    error: PropTypes.string,
-    hasSpaces: PropTypes.bool,
-    committed: PropTypes.bool,
-    periods: PropTypes.array,
-    selectedPeriodIndex: PropTypes.number,
-    setPeriodIndex: PropTypes.func,
-    showPeriodSelector: PropTypes.bool,
-  };
+export const WorkbenchActions = () => {
+  const { isLoading, error, hasSpaces, periods, isTeamOrEnterpriseCustomer } = useUsageState();
 
-  render() {
-    const {
-      isLoading,
-      error,
-      hasSpaces,
-      committed,
-      periods,
-      selectedPeriodIndex,
-      setPeriodIndex,
-      showPeriodSelector,
-    } = this.props;
-
-    if (error) {
-      return null;
-    }
-
-    if (isLoading && committed) {
-      return <Spinner />;
-    }
-
-    if (hasSpaces && committed && periods && showPeriodSelector) {
-      return (
-        <PeriodSelector
-          periods={periods}
-          selectedPeriodIndex={selectedPeriodIndex}
-          onChange={setPeriodIndex}
-        />
-      );
-    }
-
+  if (error) {
     return null;
   }
-}
 
-// need to do this for the test
-// eslint-disable-next-line rulesdir/restrict-multiple-react-component-exports
-export class OrganizationUsageRoute extends React.Component {
-  static propTypes = {
-    orgId: PropTypes.string.isRequired,
-  };
+  if (isLoading && isTeamOrEnterpriseCustomer && hasSpaces) {
+    return <Spinner testId="organization-usage_spinner" />;
+  }
 
-  constructor(props) {
-    super(props);
+  if (hasSpaces && periods) {
+    return <PeriodSelector />;
+  }
 
-    this.state = {
-      isLoading: true,
-      error: null,
-      showPeriodSelector: true,
+  return null;
+};
+
+export const OrganizationUsage = () => {
+  const { selectedPeriodIndex, orgId } = useUsageState();
+  const dispatch = useUsageDispatch();
+
+  const [showNewPricingFeature, setShowNewPricingFeature] = useState(false);
+  const [resources, setResources] = useState();
+
+  useEffect(() => {
+    const checkPermissions = async () => {
+      const organization = await TokenStore.getOrganization(orgId);
+
+      return OrganizationRoles.isOwnerOrAdmin(organization);
     };
 
-    this.endpoint = EndpointFactory.createOrganizationEndpoint(props.orgId);
-    this.setPeriodIndex = this.setPeriodIndex.bind(this);
-  }
+    const fetchOrgData = async () => {
+      try {
+        // check permission first to decide wether to render the usage page
+        const hasPermission = await checkPermissions();
+        if (!hasPermission) {
+          dispatch({ type: 'SET_ERROR', value: true });
+          dispatch({ type: 'SET_LOADING', value: false });
+          return;
+        }
 
-  async componentDidMount() {
-    try {
-      // check permission first to decide wether to render the usage page
-      await this.checkPermissions();
+        const variation = await getVariation(NEW_USAGE_PAGE, {
+          organizationId: orgId,
+        });
+        setShowNewPricingFeature(variation);
 
-      // if the flag is ON, use the new route
-      const variation = await getVariation(NEW_USAGE_PAGE, {
-        organizationId: this.props.orgId,
-      });
-      this.setState({ showNewPricingFeature: variation });
-      if (variation) return;
+        const endpoint = EndpointFactory.createOrganizationEndpoint(orgId);
+        const service = createResourceService(orgId, 'organization');
+        const basePlan = await PricingDataProvider.getBasePlan(endpoint);
 
-      await this.fetchOrgData();
-    } catch (ex) {
-      this.setState({ isLoading: false, error: ex.message });
-    }
-  }
+        const isTeamOrEnterpriseCustomer = variation
+          ? PricingDataProvider.isEnterprisePlan(basePlan) ||
+            PricingDataProvider.isSelfServicePlan(basePlan)
+          : PricingDataProvider.isEnterprisePlan(basePlan);
 
-  async checkPermissions() {
-    const { orgId } = this.props;
-    const organization = await TokenStore.getOrganization(orgId);
+        if (!variation && !isTeamOrEnterpriseCustomer) {
+          setResources(await service.getAll());
+          dispatch({ type: 'SET_LOADING', value: false });
+          return;
+        }
 
-    if (!OrganizationRoles.isOwnerOrAdmin(organization)) {
-      throw new Error('No permission');
-    }
-  }
-
-  async fetchOrgData() {
-    const { orgId } = this.props;
-
-    try {
-      const service = createResourceService(orgId, 'organization');
-      const basePlan = await PricingDataProvider.getBasePlan(this.endpoint);
-      const committed = PricingDataProvider.isEnterprisePlan(basePlan);
-
-      if (committed) {
         const [
           spaces,
           plans,
-          periods,
+          usagePeriods,
           {
             limits: { included: apiRequestIncludedLimit },
           },
         ] = await Promise.all([
-          OrganizationMembershipRepository.getAllSpaces(this.endpoint),
-          PricingDataProvider.getPlansWithSpaces(this.endpoint),
-          UsageService.getPeriods(this.endpoint),
+          OrganizationMembershipRepository.getAllSpaces(endpoint),
+          PricingDataProvider.getPlansWithSpaces(endpoint),
+          getPeriods(endpoint),
           service.get('api_request'),
         ]);
-        const spaceNames = flow(keyBy('sys.id'), mapValues('name'))(spaces);
 
+        const periods = usagePeriods.items;
+        const spaceNames = flow(keyBy('sys.id'), mapValues('name'))(spaces);
         const isPoC = flow(
           keyBy('space.sys.id'),
           mapValues(flow(get('name'), eq('Proof of concept')))
         )(plans.items);
 
-        this.setState({
-          spaceNames,
-          isPoC,
-          periods: periods.items,
-          apiRequestIncludedLimit: apiRequestIncludedLimit ?? 0,
-          hasSpaces: spaces.length !== 0,
+        dispatch({
+          type: 'SET_ORG_DATA',
+          value: {
+            spaceNames,
+            isPoC,
+            periods: periods,
+            apiRequestIncludedLimit: apiRequestIncludedLimit ?? 0,
+            isTeamOrEnterpriseCustomer,
+            hasSpaces: spaces.length !== 0,
+          },
         });
 
-        await this.loadPeriodData(0);
-      } else {
-        this.setState({ resources: await service.getAll(), isLoading: false });
+        const [usageData, aassetBandwidthData] = await Promise.all([
+          loadPeriodData(orgId, periods[selectedPeriodIndex]),
+          service.get('asset_bandwidth'),
+        ]);
+
+        dispatch({ type: 'SET_USAGE_DATA', value: usageData });
+        dispatch({ type: 'SET_ASSET_BANDWIDTH_DATA', value: aassetBandwidthData });
+        dispatch({ type: 'SET_LOADING', value: false });
+      } catch (e) {
+        // Show the forbidden screen on 404 and 403
+        if ([404, 403].includes(e.status)) {
+          throw e;
+        }
+
+        ReloadNotification.trigger();
       }
+    };
 
-      this.setState({ committed });
-    } catch (e) {
-      // Show the forbidden screen on 404 and 403
-      if ([404, 403].includes(e.status)) {
-        throw e;
-      }
+    fetchOrgData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-      ReloadNotification.trigger();
-    }
-  }
+  return (
+    <>
+      <DocumentTitle title="Usage" />
+      <Workbench testId="organization.usage">
+        <Workbench.Header
+          title="Usage"
+          icon={<NavigationIcon icon="usage" color="green" size="large" />}
+          actions={<WorkbenchActions />}></Workbench.Header>
+        <Workbench.Content>
+          <WorkbenchContent
+            {...{
+              resources,
+              showNewPricingFeature,
+            }}
+          />
+        </Workbench.Content>
+      </Workbench>
+    </>
+  );
+};
 
-  loadPeriodData = async (newIndex) => {
-    const { orgId } = this.props;
-    const { periods } = this.state;
+export const OrganizationUsageRoute = ({ orgId }) => {
+  return (
+    <UsageProvider orgId={orgId}>
+      <OrganizationUsage />
+    </UsageProvider>
+  );
+};
 
-    const service = createResourceService(orgId, 'organization');
-    const newPeriod = periods[newIndex];
-
-    if (isNumber(this.state.selectedPeriodIndex)) {
-      const oldPeriod = periods[this.state.selectedPeriodIndex];
-      track('usage:period_selected', {
-        oldPeriod: pick(['startDate', 'endDate'], oldPeriod),
-        newPeriod: pick(['startDate', 'endDate'], newPeriod),
-      });
-    }
-
-    try {
-      const promises = [
-        UsageService.getOrgUsage(this.endpoint, {
-          startDate: newPeriod.startDate,
-          endDate: newPeriod.endDate,
-          periodId: newPeriod.sys.id,
-        }),
-        ...['cma', 'cda', 'cpa', 'gql'].map((apiType) =>
-          UsageService.getApiUsage(this.endpoint, {
-            apiType,
-            startDate: newPeriod.startDate,
-            endDate: newPeriod.endDate,
-            periodId: newPeriod.sys.id,
-            limit: 5,
-          })
-        ),
-      ];
-
-      if (newIndex === 0) {
-        promises.push(service.get('asset_bandwidth'));
-      } else {
-        // If the current usage period is not the first (current/most recent), we return null
-        // for the asset bandwidth information.
-        //
-        // We don't have historical (or day-to-day) AB usage and can only show data for the user's
-        // current usage period.
-        promises.push(Promise.resolve(null));
-      }
-
-      const [org, cma, cda, cpa, gql, assetBandwidthData] = await Promise.all(promises);
-
-      this.setState(
-        UsageService.mapResponseToState({
-          org,
-          cma,
-          cda,
-          cpa,
-          gql,
-          assetBandwidthData,
-          newIndex,
-        })
-      );
-    } catch (e) {
-      ReloadNotification.trigger();
-    }
-  };
-
-  async setPeriodIndex(e) {
-    this.setState({ isLoading: true });
-    await this.loadPeriodData(parseInt(e.target.value));
-  }
-
-  setShowPeriodSelector = (val) => {
-    this.setState({ showPeriodSelector: val !== 'assetBandwidth' });
-  };
-
-  render() {
-    const {
-      spaceNames,
-      isPoC,
-      selectedPeriodIndex,
-      isLoading,
-      error,
-      periods,
-      periodicUsage,
-      apiRequestIncludedLimit,
-      assetBandwidthData,
-      committed,
-      resources,
-      hasSpaces,
-      showPeriodSelector,
-      showNewPricingFeature,
-    } = this.state;
-
-    if (showNewPricingFeature) {
-      return <OrganizationUsageRouteNew {...this.props} />;
-    }
-
-    return (
-      <>
-        <DocumentTitle title="Usage" />
-        <Workbench testId="organization.usage">
-          <Workbench.Header
-            title="Usage"
-            icon={<NavigationIcon icon="usage" color="green" size="large" />}
-            actions={
-              <WorkbenchActions
-                {...{
-                  isLoading,
-                  hasSpaces,
-                  committed,
-                  periods,
-                  selectedPeriodIndex,
-                  setPeriodIndex: this.setPeriodIndex,
-                  showPeriodSelector,
-                }}
-              />
-            }></Workbench.Header>
-          <Workbench.Content>
-            <WorkbenchContent
-              {...{
-                committed,
-                hasSpaces,
-                selectedPeriodIndex,
-                spaceNames,
-                isPoC,
-                periodicUsage,
-                apiRequestIncludedLimit,
-                assetBandwidthData,
-                isLoading,
-                error,
-                periods,
-                resources,
-                onTabSelect: this.setShowPeriodSelector,
-              }}
-            />
-          </Workbench.Content>
-        </Workbench>
-      </>
-    );
-  }
-}
+OrganizationUsageRoute.propTypes = {
+  orgId: PropTypes.string.isRequired,
+};

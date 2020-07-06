@@ -3,25 +3,36 @@ import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { track } from 'analytics/Analytics';
 import { AssetBandwidthSection } from './AssetBandwidthSection';
+import { UsageStateContext } from '../hooks/usageContext';
 
-describe('AssetBandwidthSection', () => {
-  const defaultProps = {
+const MockPovider = ({ children, assetBandwidthData }) => (
+  <UsageStateContext.Provider value={{ assetBandwidthData }}>{children}</UsageStateContext.Provider>
+);
+
+const defaultData = {
+  assetBandwidthData: {
     limit: 750,
     usage: 200,
     uom: 'GB',
-  };
+  },
+};
 
-  const renderComp = (props) => {
-    return render(<AssetBandwidthSection {...props} />);
-  };
+const renderComp = (data) => {
+  return render(
+    <MockPovider {...data}>
+      <AssetBandwidthSection />
+    </MockPovider>
+  );
+};
 
+describe('AssetBandwidthSection', () => {
   it('should render', () => {
-    const { container } = render();
+    const { container } = renderComp(defaultData);
     expect(container).toMatchSnapshot();
   });
 
   it('should render correct data', () => {
-    const { getByTestId } = renderComp(defaultProps);
+    const { getByTestId } = renderComp(defaultData);
     const bandwidthUsage = getByTestId('asset-bandwidth-usage');
     const bandwidthLimit = getByTestId('asset-bandwidth-limit');
     expect(bandwidthUsage.textContent).toBe('200 GB');
@@ -29,18 +40,20 @@ describe('AssetBandwidthSection', () => {
   });
 
   it('should render overage with correct data', () => {
-    const overageProps = {
-      limit: 200,
-      usage: 750,
-      uom: 'GB',
+    const overageData = {
+      assetBandwidthData: {
+        limit: 200,
+        usage: 750,
+        uom: 'GB',
+      },
     };
-    const { getByTestId } = renderComp(overageProps);
+    const { getByTestId } = renderComp(overageData);
     const overage = getByTestId('asset-bandwidth-overage');
     expect(overage.textContent).toBe(' + 550 GB overage');
   });
 
   it('should track fair use policy clicks', () => {
-    const { getByTestId } = renderComp(defaultProps);
+    const { getByTestId } = renderComp(defaultData);
     fireEvent.click(getByTestId('fair_use_policy_link'));
     expect(track).toHaveBeenCalledTimes(1);
     expect(track).toHaveBeenCalledWith('usage:fair_use_policy_clicked');

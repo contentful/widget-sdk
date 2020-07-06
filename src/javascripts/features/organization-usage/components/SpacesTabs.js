@@ -1,15 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Tabs, Tab, TabPanel } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { Grid, GridItem } from '@contentful/forma-36-react-components/dist/alpha';
 import { css } from 'emotion';
-import PropTypes from 'prop-types';
 import { SpacesTable } from './SpacesTable';
 import { SpacesBarChart } from './SpacesBarChart';
-import { sum } from 'lodash';
-import { periodicUsagePropType } from './propTypes';
 
 import { track } from 'analytics/Analytics';
+import { useUsageState, useUsageDispatch } from '../hooks/usageContext';
 
 const styles = {
   tabPanel: css({
@@ -22,7 +20,6 @@ const tabsData = [
   {
     id: 'cma',
     title: 'CMA Requests',
-    defaultActive: true,
   },
   {
     id: 'cda',
@@ -38,27 +35,24 @@ const tabsData = [
   },
 ];
 
-const colours = ['#2E75D4', '#0EB87F', '#EA9005', '#8C53C2', '#CC3C52'];
-
-export const SpacesTabs = ({ spaceNames, period, periodicUsage, isPoC }) => {
-  const defaultActiveTab = tabsData.find((item) => item.defaultActive);
-  const [selected, setSelected] = useState(
-    defaultActiveTab ? defaultActiveTab.id : tabsData[0]['id']
-  );
+export const SpacesTabs = () => {
+  const { selectedSpacesTab } = useUsageState();
+  const dispatch = useUsageDispatch();
 
   const handleSelected = (id) => {
-    track('usage:space_tab_selected', { old: selected, new: id });
-    setSelected(id);
+    track('usage:space_tab_selected', { old: selectedSpacesTab, new: id });
+    dispatch({ type: 'SWITCH_SPACES_TAB', value: id });
   };
-
-  const data = periodicUsage.apis[selected].items;
-  const totalUsage = sum(periodicUsage.org.usage);
 
   return (
     <>
       <Tabs withDivider={true}>
         {tabsData.map((item) => (
-          <Tab id={item.id} key={item.id} selected={selected === item.id} onSelect={handleSelected}>
+          <Tab
+            id={item.id}
+            key={item.id}
+            selected={selectedSpacesTab === item.id}
+            onSelect={handleSelected}>
             {item.title}
           </Tab>
         ))}
@@ -66,26 +60,13 @@ export const SpacesTabs = ({ spaceNames, period, periodicUsage, isPoC }) => {
       <TabPanel id="api-usage-tab-panel" className={styles.tabPanel}>
         <Grid columns={'1fr 2fr'}>
           <GridItem>
-            <SpacesTable
-              spaceNames={spaceNames}
-              data={data}
-              totalUsage={totalUsage}
-              colours={colours}
-              isPoC={isPoC}
-            />
+            <SpacesTable />
           </GridItem>
           <GridItem>
-            <SpacesBarChart spaceNames={spaceNames} period={period} data={data} colours={colours} />
+            <SpacesBarChart />
           </GridItem>
         </Grid>
       </TabPanel>
     </>
   );
-};
-
-SpacesTabs.propTypes = {
-  spaceNames: PropTypes.objectOf(PropTypes.string).isRequired,
-  period: PropTypes.arrayOf(PropTypes.string).isRequired,
-  periodicUsage: periodicUsagePropType.isRequired,
-  isPoC: PropTypes.objectOf(PropTypes.bool).isRequired,
 };

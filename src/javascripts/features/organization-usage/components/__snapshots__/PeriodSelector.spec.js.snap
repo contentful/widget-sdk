@@ -1,38 +1,54 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`PeriodSelector should render 1`] = `
-<div
-  className="usage__period-selector"
->
-  <label>
-    API requests usage period
-  </label>
-  <Select
-    defaultValue={0}
-    hasError={false}
-    id="period-selector"
-    isDisabled={false}
-    name="period-selector"
-    onChange={[MockFunction]}
-    required={false}
-    testId="cf-ui-select"
-    width="auto"
-    willBlurOnEsc={true}
+<div>
+  <div
+    class="usage__period-selector"
   >
-    <Option
-      key="0"
-      testId="cf-ui-select-option"
-      value="0"
+    <label>
+      API requests usage period
+    </label>
+    <div
+      class="Select__Select__wrapper___2mbYV Select__Select--auto___3Y-B9"
     >
-      06 Jan – 05 Feb (current)
-    </Option>
-    <Option
-      key="1"
-      testId="cf-ui-select-option"
-      value="1"
-    >
-      05 Dec – 05 Jan (a month ago)
-    </Option>
-  </Select>
+      <select
+        aria-label="period-selector"
+        class="Select__Select___2Gi9N a11y__focus-border--default___60AXp"
+        data-test-id="period-selector"
+        id="period-selector"
+        name="period-selector"
+      >
+        <option
+          data-test-id="cf-ui-select-option"
+          selected=""
+          value="0"
+        >
+          06 Jan – 05 Feb (current)
+        </option>
+        <option
+          data-test-id="cf-ui-select-option"
+          value="1"
+        >
+          05 Dec – 05 Jan (a month ago)
+        </option>
+      </select>
+      <svg
+        class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--muted___3egnD Select__Select__icon___OBmvS"
+        data-test-id="cf-ui-icon"
+        height="24"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M7 10l5 5 5-5z"
+        />
+        <path
+          d="M0 0h24v24H0z"
+          fill="none"
+        />
+      </svg>
+    </div>
+  </div>
 </div>
 `;

@@ -1,10 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { last } from 'lodash';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { shorten } from 'utils/NumberUtils';
 import { useChart } from '../hooks/useChart';
+import { useUsageState } from '../hooks/usageContext';
 
 const styles = {
   chartWrapper: css({
@@ -128,13 +128,15 @@ const propsToChartOption = ({ period, usage, includedLimit }) => {
   };
 };
 
-export const OrganizationBarChart = ({ period, usage, includedLimit }) => {
-  const chartRef = useChart(propsToChartOption({ period, usage, includedLimit }));
-  return <div ref={chartRef} className={styles.chartWrapper}></div>;
-};
+export const OrganizationBarChart = () => {
+  const { periodDates, periodicUsage, apiRequestIncludedLimit } = useUsageState();
 
-OrganizationBarChart.propTypes = {
-  period: PropTypes.arrayOf(PropTypes.string).isRequired,
-  usage: PropTypes.array,
-  includedLimit: PropTypes.any,
+  const chartRef = useChart(
+    propsToChartOption({
+      period: periodDates,
+      usage: periodicUsage.org.usage,
+      includedLimit: apiRequestIncludedLimit,
+    })
+  );
+  return <div ref={chartRef} className={styles.chartWrapper}></div>;
 };

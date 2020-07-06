@@ -1,22 +1,38 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import moment from 'moment';
 import { Select, Option } from '@contentful/forma-36-react-components';
 import { cond, constant, stubTrue } from 'lodash';
-
-import { periodPropType } from './propTypes';
+import { track } from 'analytics/Analytics';
+import { useUsageState, useUsageDispatch } from '../hooks/usageContext';
+import { pick } from 'lodash/fp';
+import { loadPeriodData } from '../services/UsageService';
 
 const formatDate = (date) => moment(date).format('DD MMM');
 
-export class PeriodSelector extends React.Component {
-  static propTypes = {
-    periods: PropTypes.arrayOf(periodPropType).isRequired,
-    selectedPeriodIndex: PropTypes.number,
-    onChange: PropTypes.func.isRequired,
-    isTeamOrEnterpriseCustomer: PropTypes.bool,
+export const PeriodSelector = () => {
+  const { periods, selectedPeriodIndex, orgId, isTeamOrEnterpriseCustomer } = useUsageState();
+  const dispatch = useUsageDispatch();
+
+  const handleChange = async (e) => {
+    dispatch({ type: 'SET_LOADING', value: true });
+
+    const newPeriodIndex = parseInt(e.target.value);
+
+    // analytics
+    const oldPeriod = periods[selectedPeriodIndex];
+    const newPeriod = periods[newPeriodIndex];
+    track('usage:period_selected', {
+      oldPeriod: pick(['startDate', 'endDate'], oldPeriod),
+      newPeriod: pick(['startDate', 'endDate'], newPeriod),
+    });
+
+    const data = await loadPeriodData(orgId, newPeriod);
+    dispatch({ type: 'SET_USAGE_DATA', value: data });
+    dispatch({ type: 'CHANGE_PERIOD', value: newPeriodIndex });
+    dispatch({ type: 'SET_LOADING', value: false });
   };
 
-  processDate(startDate, endDate) {
+  const processDate = (startDate, endDate) => {
     const isCurrentPeriod = endDate === null || moment().diff(moment(endDate), 'days') == 0; // the end day is today
     const start = moment(startDate);
     const end = isCurrentPeriod
@@ -27,43 +43,39 @@ export class PeriodSelector extends React.Component {
       [constant(end.year() === moment().year()), constant(`(${moment().to(start)})`)],
       [constant(stubTrue), constant(end.year())],
     ])()}`;
-  }
+  };
 
-  renderSelect() {
-    const { periods, onChange, selectedPeriodIndex } = this.props;
+  const renderSelect = () => {
     return (
       <Select
         defaultValue={selectedPeriodIndex}
-        onChange={onChange}
+        onChange={handleChange}
         width="auto"
         name="period-selector"
+        testId="period-selector"
         id="period-selector">
         {periods.map(({ startDate, endDate }, index) => {
           const value = `${index}`;
 
           return (
             <Option key={index} value={value}>
-              {this.processDate(startDate, endDate)}
+              {processDate(startDate, endDate)}
             </Option>
           );
         })}
       </Select>
     );
-  }
+  };
 
-  renderCurrentPeriodTextOnly() {
-    const { periods } = this.props;
+  const renderCurrentPeriodTextOnly = () => {
     const { startDate, endDate } = periods[0];
-    return <strong data-test-id="usage-period-text">{this.processDate(startDate, endDate)}</strong>;
-  }
+    return <strong data-test-id="usage-period-text">{processDate(startDate, endDate)}</strong>;
+  };
 
-  render() {
-    const { isTeamOrEnterpriseCustomer } = this.props;
-    return (
-      <div className="usage__period-selector">
-        <label>API requests usage period</label>
-        {isTeamOrEnterpriseCustomer ? this.renderSelect() : this.renderCurrentPeriodTextOnly()}
-      </div>
-    );
-  }
-}
+  return (
+    <div className="usage__period-selector">
+      <label>API requests usage period</label>
+      {isTeamOrEnterpriseCustomer ? renderSelect() : renderCurrentPeriodTextOnly()}
+    </div>
+  );
+};
