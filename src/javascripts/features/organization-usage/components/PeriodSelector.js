@@ -29,6 +29,7 @@ export const PeriodSelector = () => {
     const data = await loadPeriodData(orgId, newPeriod);
     dispatch({ type: 'SET_USAGE_DATA', value: data });
     dispatch({ type: 'CHANGE_PERIOD', value: newPeriodIndex });
+    dispatch({ type: 'SWITCH_MAIN_TAB', value: 'apiRequest' });
     dispatch({ type: 'SET_LOADING', value: false });
   };
 

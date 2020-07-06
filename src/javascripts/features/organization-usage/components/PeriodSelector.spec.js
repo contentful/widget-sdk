@@ -86,9 +86,10 @@ describe('PeriodSelector', () => {
 
     expect(dispatchSpy).toHaveBeenCalledWith({ type: 'SET_LOADING', value: true });
     expect(loadPeriodData).toHaveBeenCalledWith(defaultData.orgId, defaultData.periods[1]);
-    await waitFor(() => expect(dispatchSpy).toHaveBeenCalledTimes(4));
+    await waitFor(() => expect(dispatchSpy).toHaveBeenCalledTimes(5));
     expect(dispatchSpy).toHaveBeenCalledWith({ type: 'SET_USAGE_DATA', value: {} });
     expect(dispatchSpy).toHaveBeenCalledWith({ type: 'CHANGE_PERIOD', value: 1 });
+    expect(dispatchSpy).toHaveBeenCalledWith({ type: 'SWITCH_MAIN_TAB', value: 'apiRequest' });
     expect(dispatchSpy).toHaveBeenCalledWith({ type: 'SET_LOADING', value: false });
   });
 

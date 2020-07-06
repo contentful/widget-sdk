@@ -165,7 +165,7 @@ const defaultData = {
 
 describe('WorkbenchActions', () => {
   describe('isLoading', () => {
-    it('should render a spinner if the org is committed', () => {
+    it('should render a spinner', () => {
       const { getByTestId, queryByTestId } = render(
         <MockPovider isLoading={true} isTeamOrEnterpriseCustomer={true} hasSpaces={true}>
           <WorkbenchActions />
@@ -173,17 +173,6 @@ describe('WorkbenchActions', () => {
       );
 
       expect(getByTestId('organization-usage_spinner')).toBeVisible();
-      expect(queryByTestId('period-selector')).toBeNull();
-    });
-
-    it('should not render spinner if the org is non-committed', () => {
-      const { queryByTestId } = render(
-        <MockPovider isLoading={true} isTeamOrEnterpriseCustomer={false} hasSpaces={true}>
-          <WorkbenchActions />
-        </MockPovider>
-      );
-
-      expect(queryByTestId('organization-usage_spinner')).toBeNull();
       expect(queryByTestId('period-selector')).toBeNull();
     });
 
@@ -211,23 +200,6 @@ describe('WorkbenchActions', () => {
     });
   });
 
-  describe('org is not committed', () => {
-    it('should render nothing', () => {
-      const data = {
-        ...defaultData,
-        isTeamOrEnterpriseCustomer: false,
-      };
-      const { queryByTestId } = render(
-        <MockPovider {...data}>
-          <WorkbenchActions />
-        </MockPovider>
-      );
-
-      expect(queryByTestId('organization-usage_spinner')).toBeNull();
-      expect(queryByTestId('period-selector')).toBeNull();
-    });
-  });
-
   describe('org has no spaces', () => {
     it('should render nothing', () => {
       const data = {
@@ -239,7 +211,6 @@ describe('WorkbenchActions', () => {
           <WorkbenchActions />
         </MockPovider>
       );
-
       expect(queryByTestId('organization-usage_spinner')).toBeNull();
       expect(queryByTestId('period-selector')).toBeNull();
     });
@@ -258,7 +229,7 @@ describe('WorkbenchActions', () => {
       );
 
       expect(queryByTestId('organization-usage_spinner')).toBeNull();
-      expect(queryByTestId('period-selector')).toBeNull();
+      expect(queryByTestId('period-selector')).toBeInTheDocument();
     });
   });
 });
