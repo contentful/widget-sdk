@@ -71,19 +71,6 @@ const AssetEditorWorkbench = ({
           <StatusNotification {...statusNotificationProps} />
           <div className="entity-editor-form">
             <AngularComponent
-              template={`<cf-error-list class="form-box-error" cf-error-path="['fields']"></cf-error-list>`}
-              scope={{
-                widgets,
-                localeData,
-                editorContext,
-                fields,
-                entityInfo,
-                otDoc,
-                editorData,
-              }}
-            />
-
-            <AngularComponent
               template={`<cf-entity-field ng-repeat="widget in widgets track by widget.fieldId"></cf-entity-field>`}
               scope={{
                 widgets,
