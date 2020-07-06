@@ -1,11 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Typography, Paragraph, TextLink, Heading } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { track } from 'analytics/Analytics';
 import { css } from 'emotion';
-
 import { shorten } from 'utils/NumberUtils';
+import { useUsageState } from '../hooks/usageContext';
 
 const styles = {
   heading: css({
@@ -23,11 +22,15 @@ const styles = {
   }),
 };
 
-export const OrganizationUsageInfo = ({ totalUsage, includedLimit }) => {
-  const limitedUsage = !!includedLimit;
+export const OrganizationUsageInfo = () => {
+  const { totalUsage, apiRequestIncludedLimit } = useUsageState();
+
+  const limitedUsage = !!apiRequestIncludedLimit;
+
   const handleClick = () => {
     track('usage:fair_use_policy_clicked');
   };
+
   return (
     <Typography>
       <Heading element="h2" className={styles.heading}>
@@ -35,9 +38,9 @@ export const OrganizationUsageInfo = ({ totalUsage, includedLimit }) => {
       </Heading>
       <Paragraph data-test-id="org-usage-total" className={styles.usageNumber}>
         {totalUsage.toLocaleString('en-US')}
-        {limitedUsage && totalUsage > includedLimit && (
+        {limitedUsage && totalUsage > apiRequestIncludedLimit && (
           <small data-test-id="org-usage-overage" className={styles.overageNumber}>
-            {` +${(totalUsage - includedLimit).toLocaleString('en-US')} overage`}
+            {` +${(totalUsage - apiRequestIncludedLimit).toLocaleString('en-US')} overage`}
           </small>
         )}
       </Paragraph>
@@ -45,7 +48,7 @@ export const OrganizationUsageInfo = ({ totalUsage, includedLimit }) => {
         {limitedUsage ? (
           <>
             {'Total API calls made this month from a '}
-            <strong data-test-id="org-usage-limit">{shorten(includedLimit)}</strong>
+            <strong data-test-id="org-usage-limit">{shorten(apiRequestIncludedLimit)}</strong>
             {
               '/month quota. This number includes CMA, CDA, CPA, and GraphQL requests. The use of Contentful is subject to our '
             }
@@ -65,9 +68,4 @@ export const OrganizationUsageInfo = ({ totalUsage, includedLimit }) => {
       </Paragraph>
     </Typography>
   );
-};
-
-OrganizationUsageInfo.propTypes = {
-  totalUsage: PropTypes.number.isRequired,
-  includedLimit: PropTypes.number.isRequired,
 };

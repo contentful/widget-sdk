@@ -1,6 +1,5 @@
 import React from 'react';
 import { css } from 'emotion';
-import PropTypes from 'prop-types';
 import { partialRight } from 'lodash';
 import {
   TextLink,
@@ -13,6 +12,7 @@ import * as tokens from '@contentful/forma-36-tokens';
 
 import { track } from 'analytics/Analytics';
 import { shortenStorageUnit } from 'utils/NumberUtils';
+import { useUsageState } from '../hooks/usageContext';
 
 const styles = {
   heading: css({
@@ -43,7 +43,10 @@ const styles = {
   }),
 };
 
-export const AssetBandwidthSection = ({ limit, usage, uom }) => {
+export const AssetBandwidthSection = () => {
+  const { assetBandwidthData } = useUsageState();
+
+  const { limit, usage, uom } = assetBandwidthData;
   const withUnit = partialRight(shortenStorageUnit, uom);
   const handleClick = () => {
     track('usage:fair_use_policy_clicked');
@@ -81,10 +84,4 @@ export const AssetBandwidthSection = ({ limit, usage, uom }) => {
       </div>
     </Typography>
   );
-};
-
-AssetBandwidthSection.propTypes = {
-  limit: PropTypes.number.isRequired,
-  usage: PropTypes.number.isRequired,
-  uom: PropTypes.string.isRequired,
 };

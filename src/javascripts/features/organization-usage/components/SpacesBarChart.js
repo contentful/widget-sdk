@@ -1,10 +1,9 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { organizationResourceUsagePropType } from './propTypes';
 import tokens from '@contentful/forma-36-tokens';
 import { shorten } from 'utils/NumberUtils';
 import { css } from 'emotion';
 import { useChart } from '../hooks/useChart';
+import { useUsageState, colours } from '../hooks/usageContext';
 
 const styles = {
   chartWrapper: css({
@@ -13,7 +12,7 @@ const styles = {
   }),
 };
 
-export const propsToChartOptions = ({ spaceNames, data, period, colours }) => {
+export const propsToChartOptions = ({ spaceNames, data, period }) => {
   const series = data.map((item, index) => ({
     name: item.sys.space.sys.id,
     type: 'bar',
@@ -129,14 +128,15 @@ export const propsToChartOptions = ({ spaceNames, data, period, colours }) => {
   };
 };
 
-export const SpacesBarChart = ({ spaceNames, data, period, colours }) => {
-  const chartRef = useChart(propsToChartOptions({ spaceNames, data, period, colours }));
-  return <div ref={chartRef} className={styles.chartWrapper} data-test-id="api-usage-bar-chart" />;
-};
+export const SpacesBarChart = () => {
+  const { spaceNames, periodicUsage, selectedSpacesTab, periodDates } = useUsageState();
 
-SpacesBarChart.propTypes = {
-  data: PropTypes.arrayOf(organizationResourceUsagePropType).isRequired,
-  period: PropTypes.arrayOf(PropTypes.string).isRequired,
-  spaceNames: PropTypes.objectOf(PropTypes.string).isRequired,
-  colours: PropTypes.arrayOf(PropTypes.string).isRequired,
+  const chartRef = useChart(
+    propsToChartOptions({
+      spaceNames,
+      data: periodicUsage.apis[selectedSpacesTab].items,
+      period: periodDates,
+    })
+  );
+  return <div ref={chartRef} className={styles.chartWrapper} data-test-id="api-usage-bar-chart" />;
 };

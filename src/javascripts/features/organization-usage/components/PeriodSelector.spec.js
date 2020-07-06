@@ -1,66 +1,104 @@
-import { shallow } from 'enzyme';
-import 'jest-enzyme';
+import '@testing-library/dom';
 import React from 'react';
 import moment from 'moment';
-import { Select, Option } from '@contentful/forma-36-react-components';
-
+import { render, fireEvent, waitFor } from '@testing-library/react';
 import { PeriodSelector } from './PeriodSelector';
+import { UsageStateContext, UsageDispatchContext } from '../hooks/usageContext';
+import { loadPeriodData } from '../services/UsageService';
+
+jest.mock('../services/UsageService', () => ({
+  loadPeriodData: jest.fn(),
+}));
+
+// set fixed date for stable snapshots
+// moment('2017-12-01').unix() = 1512082800
+jest.spyOn(Date, 'now').mockImplementation(() => 1512082800);
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 
-const render = (props) => shallow(<PeriodSelector {...props} />);
+// start date is 12 days before today
+const startDate = moment().startOf('day').subtract(12, 'days');
+const defaultData = {
+  periods: [
+    {
+      sys: { type: 'UsagePeriod', id: 'period1' },
+      startDate: startDate.format(DATE_FORMAT),
+      endDate: null,
+    },
+    {
+      sys: { type: 'UsagePeriod', id: 'period1' },
+      startDate: moment(startDate).subtract(1, 'day').subtract(1, 'month').format(DATE_FORMAT),
+      endDate: moment(startDate).subtract(1, 'day').format(DATE_FORMAT),
+    },
+  ],
+  selectedPeriodIndex: 0,
+  orgId: 'abcd',
+  isTeamOrEnterpriseCustomer: true,
+};
+
+const renderComp = (data, dispatch) => {
+  return render(
+    <MockPovider {...data} dispatch={dispatch}>
+      <PeriodSelector />
+    </MockPovider>
+  );
+};
+
+const MockPovider = ({
+  children,
+  periods,
+  selectedPeriodIndex,
+  orgId,
+  isTeamOrEnterpriseCustomer,
+  dispatch,
+}) => (
+  <UsageStateContext.Provider
+    value={{
+      periods,
+      selectedPeriodIndex,
+      orgId,
+      isTeamOrEnterpriseCustomer,
+    }}>
+    <UsageDispatchContext.Provider value={dispatch}>{children}</UsageDispatchContext.Provider>
+  </UsageStateContext.Provider>
+);
+
+MockPovider.defaultProps = {
+  dispatch: () => {},
+};
 
 describe('PeriodSelector', () => {
-  let props;
-
-  beforeAll(() => {
-    // set fixed date for stable snapshots
-    // moment('2017-12-01').unix() = 1512082800
-    jest.spyOn(Date, 'now').mockImplementation(() => 1512082800);
-  });
-
-  afterAll(() => {
-    Date.now.mockRestore();
-  });
-
-  beforeEach(() => {
-    const startDate = moment().startOf('day').subtract(12, 'days');
-    props = {
-      periods: [
-        {
-          sys: { type: 'UsagePeriod', id: 'period1' },
-          startDate: startDate.format(DATE_FORMAT),
-          endDate: null,
-        },
-        {
-          sys: { type: 'UsagePeriod', id: 'period1' },
-          startDate: moment(startDate).subtract(1, 'day').subtract(1, 'month').format(DATE_FORMAT),
-          endDate: moment(startDate).subtract(1, 'day').format(DATE_FORMAT),
-        },
-      ],
-      selectedPeriodIndex: 0,
-      onChange: jest.fn(),
-    };
-  });
-
   it('should render', () => {
-    const wrapper = render(props);
-    expect(wrapper).toMatchSnapshot();
+    const { container } = renderComp(defaultData);
+    expect(container).toMatchSnapshot();
   });
 
-  it('should call onChange when option is selected', () => {
-    const wrapper = render(props);
-    expect(props.onChange).not.toHaveBeenCalled();
-    wrapper.find(Select).simulate('change', { target: { value: 1 } });
-    expect(props.onChange).toHaveBeenCalledWith({ target: { value: 1 } });
+  it('should load new period data when option is selected', async () => {
+    loadPeriodData.mockReset().mockReturnValue(Promise.resolve({}));
+    const dispatchSpy = jest.fn();
+    const { getByTestId } = renderComp(defaultData, dispatchSpy);
+
+    expect(loadPeriodData).not.toHaveBeenCalled();
+    expect(dispatchSpy).not.toHaveBeenCalled();
+
+    const periodSelector = getByTestId('period-selector');
+    fireEvent.change(periodSelector, { target: { value: 1 } });
+
+    expect(dispatchSpy).toHaveBeenCalledWith({ type: 'SET_LOADING', value: true });
+    expect(loadPeriodData).toHaveBeenCalledWith(defaultData.orgId, defaultData.periods[1]);
+    await waitFor(() => expect(dispatchSpy).toHaveBeenCalledTimes(5));
+    expect(dispatchSpy).toHaveBeenCalledWith({ type: 'SET_USAGE_DATA', value: {} });
+    expect(dispatchSpy).toHaveBeenCalledWith({ type: 'CHANGE_PERIOD', value: 1 });
+    expect(dispatchSpy).toHaveBeenCalledWith({ type: 'SWITCH_MAIN_TAB', value: 'apiRequest' });
+    expect(dispatchSpy).toHaveBeenCalledWith({ type: 'SET_LOADING', value: false });
   });
 
-  it('should correctly indicate the period is a current period', () => {
-    // when endDate is null (default)
-    expect(render(props).find(Option).first().html()).toContain('current');
+  it('should correctly show the helper text', () => {
+    const { getByText, getByTestId } = renderComp(defaultData);
+    expect(getByText('current', { exact: false })).toBeVisible();
 
-    // when endDate is given (for the community tier)
-    props.periods[0].endDate = moment().format(DATE_FORMAT); // today
-    expect(render(props).find(Option).first().html()).toContain('current');
+    const periodSelector = getByTestId('period-selector');
+    fireEvent.change(periodSelector, { target: { value: 1 } });
+    expect(getByText('a month ago', { exact: false })).toBeVisible();
   });
 });

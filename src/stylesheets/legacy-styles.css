@@ -9557,9 +9557,10 @@ pre,
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
+		align-items: center;
   }
   .usage__period-selector > label {
-    margin: 0.75rem 1rem 0 0;
+		padding-right: 1rem;
   }
   .usage-page {
     display: -webkit-box;
