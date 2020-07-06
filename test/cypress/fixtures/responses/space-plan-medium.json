@@ -1,0 +1,125 @@
+{
+  "total": 1,
+  "sys": { "type": "Array" },
+  "items": [
+    {
+      "sys": { "type": "Plan", "id": "2c92c0fa72ff5e8e0173048a1a0c414a" },
+      "name": "Medium",
+      "price": 489.0,
+      "productRatePlanId": "2c92c0f8626c79640162717515231773",
+      "productName": "V2 Pricing Plans MASTER (0.4)",
+      "planType": "space",
+      "gatekeeperKey": "5f6qrd02q4dg",
+      "committed": false,
+      "customerType": "Self-service",
+      "ratePlanCharges": [
+        {
+          "sys": { "type": "RatePlanCharge", "id": "2c92c0fa72ff5e8e0173048a1a10414c" },
+          "name": "Space fee",
+          "model": "FlatFee",
+          "uom": null,
+          "price": 489.0,
+          "number": "C-02186336",
+          "tiers": null,
+          "ratePlanChargeType": "Recurring",
+          "unitType": "charge"
+        },
+        {
+          "sys": { "type": "RatePlanCharge", "id": "2c92c0fa72ff5e8e0173048a1a10414e" },
+          "name": "Roles",
+          "model": "PerUnit",
+          "uom": "Role Limit",
+          "price": 0.0,
+          "number": "C-02186337",
+          "tiers": [
+            {
+              "tier": 1,
+              "price": 0.0,
+              "startingUnit": 0,
+              "endingUnit": 1,
+              "priceFormat": "FlatFee"
+            }
+          ],
+          "ratePlanChargeType": "Recurring",
+          "unitType": "limit"
+        },
+        {
+          "sys": { "type": "RatePlanCharge", "id": "2c92c0fa72ff5e8e0173048a1a104154" },
+          "name": "Records",
+          "model": "PerUnit",
+          "uom": "Record Limit",
+          "price": 0.0,
+          "number": "C-02186340",
+          "tiers": [
+            {
+              "tier": 1,
+              "price": 0.0,
+              "startingUnit": 0,
+              "endingUnit": 25000,
+              "priceFormat": "FlatFee"
+            }
+          ],
+          "ratePlanChargeType": "Recurring",
+          "unitType": "limit"
+        },
+        {
+          "sys": { "type": "RatePlanCharge", "id": "2c92c0fa72ff5e8e0173048a1a104156" },
+          "name": "Environments",
+          "model": "PerUnit",
+          "uom": "Environment Limit",
+          "price": 0.0,
+          "number": "C-02186341",
+          "tiers": [
+            {
+              "tier": 1,
+              "price": 0.0,
+              "startingUnit": 0,
+              "endingUnit": 3,
+              "priceFormat": "FlatFee"
+            }
+          ],
+          "ratePlanChargeType": "Recurring",
+          "unitType": "limit"
+        },
+        {
+          "sys": { "type": "RatePlanCharge", "id": "2c92c0fa72ff5e8e0173048a1a104150" },
+          "name": "Locales",
+          "model": "PerUnit",
+          "uom": "Locale Limit",
+          "price": 0.0,
+          "number": "C-02186338",
+          "tiers": [
+            {
+              "tier": 1,
+              "price": 0.0,
+              "startingUnit": 0,
+              "endingUnit": 7,
+              "priceFormat": "FlatFee"
+            }
+          ],
+          "ratePlanChargeType": "Recurring",
+          "unitType": "limit"
+        },
+        {
+          "sys": { "type": "RatePlanCharge", "id": "2c92c0fa72ff5e8e0173048a1a104152" },
+          "name": "Content types",
+          "model": "PerUnit",
+          "uom": "Content Type Limit",
+          "price": 0.0,
+          "number": "C-02186339",
+          "tiers": [
+            {
+              "tier": 1,
+              "price": 0.0,
+              "startingUnit": 0,
+              "endingUnit": 48,
+              "priceFormat": "FlatFee"
+            }
+          ],
+          "ratePlanChargeType": "Recurring",
+          "unitType": "limit"
+        }
+      ]
+    }
+  ]
+}
