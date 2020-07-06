@@ -27,6 +27,7 @@ import createResourceService from 'services/ResourceService';
 import { track } from 'analytics/Analytics';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
+import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { PRICING_2020_RELEASED } from 'featureFlags';
 import { getVariation } from 'LaunchDarkly';
 
@@ -80,9 +81,10 @@ export class ContentTypesPage extends React.Component {
     });
 
     const isOrgAdminOrOwner = isOwnerOrAdmin(spaceContext.organization);
+    const orgIsLegacy = isLegacyOrganization(spaceContext.organization);
 
     // Only want to make this fetch if isNewPricingReleased.
-    if (isOrgAdminOrOwner && isNewPricingReleased) {
+    if (isNewPricingReleased && !orgIsLegacy && isOrgAdminOrOwner) {
       promisesArray.push(
         Promise.race([
           Promise.all([
