@@ -17,7 +17,7 @@ import { ENVIRONMENT_USAGE_ENFORCEMENT } from 'featureFlags';
 import { useAsync } from 'core/hooks';
 
 import * as OrganizationRoles from 'services/OrganizationRoles';
-import * as ResourceService from 'services/ResourceService';
+import createResourceService from 'services/ResourceService';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
 
@@ -25,12 +25,11 @@ const fetch = async () => {
   const spaceContext = getModule('spaceContext');
   const isOrgOwnerOrAdmin = OrganizationRoles.isOwnerOrAdmin(spaceContext.organization);
 
-  const createResourceService = ResourceService.default;
   const endpoint = createOrganizationEndpoint(spaceContext.organization.sys.id);
+  const orgIsLegacy = isLegacyOrganization(spaceContext.organization);
 
   const promisesArray = [
     spaceContext.localeRepo.getAll(),
-    isLegacyOrganization(spaceContext.organization),
     createResourceService(spaceContext.getId()).get('locale', spaceContext.getEnvironmentId()),
     createLegacyFeatureService(spaceContext.getId()).get('multipleLocales'),
     spaceContext.isMasterEnvironment(),
@@ -38,7 +37,7 @@ const fetch = async () => {
     _.get(spaceContext.organization, ['subscriptionPlan', 'name']),
   ];
 
-  if (isOrgOwnerOrAdmin) {
+  if (!orgIsLegacy && isOrgOwnerOrAdmin) {
     // This fetch only works when user is an owner or admin.
     promisesArray.push(getSingleSpacePlan(endpoint, spaceContext.getId()));
   }
@@ -46,7 +45,6 @@ const fetch = async () => {
   const [
     // Required Promises
     locales,
-    isLegacy,
     localeResource,
     isMultipleLocalesFeatureEnabled,
     insideMasterEnv,
@@ -60,7 +58,7 @@ const fetch = async () => {
 
   return {
     locales,
-    isLegacy,
+    isLegacy: orgIsLegacy,
     localeResource,
     isMultipleLocalesFeatureEnabled,
     insideMasterEnv,

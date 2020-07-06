@@ -16,6 +16,7 @@ import * as contentTypeFactory from 'test/helpers/contentTypeFactory';
 import { getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import createResourceService from 'services/ResourceService';
+import { isLegacyOrganization } from 'utils/ResourceUtils';
 import * as fake from 'test/helpers/fakeFactory';
 import userEvent from '@testing-library/user-event';
 import { track } from 'analytics/Analytics';
@@ -36,6 +37,10 @@ jest.mock('analytics/Analytics', () => ({
 
 jest.mock('account/pricing/PricingDataProvider', () => ({
   getSingleSpacePlan: jest.fn().mockResolvedValue({ name: 'Medium' }),
+}));
+
+jest.mock('utils/ResourceUtils', () => ({
+  isLegacyOrganization: jest.fn().mockReturnValue(false),
 }));
 
 jest.mock('services/ResourceService', () => {
@@ -199,6 +204,18 @@ describe('ContentTypeList Page', () => {
       getSingleSpacePlan.mockResolvedValue({ name: 'Large' });
       createResourceService().get.mockResolvedValue({ usage: 44, limits: { maximum: 48 } });
       isOwnerOrAdmin.mockReturnValue(false);
+
+      renderComponent({ props: {}, items: [] });
+      await waitForElementToBeRemoved(screen.getByTestId('content-loader'));
+
+      expect(screen.queryByTestId('content-type-limit-banner')).toBeNull();
+    });
+
+    it('does not show up if the org is legacy', async () => {
+      getSingleSpacePlan.mockResolvedValue({ name: 'Large' });
+      createResourceService().get.mockResolvedValue({ usage: 48, limits: { maximum: 48 } });
+      isOwnerOrAdmin.mockReturnValue(true);
+      isLegacyOrganization.mockReturnValueOnce(true);
 
       renderComponent({ props: {}, items: [] });
       await waitForElementToBeRemoved(screen.getByTestId('content-loader'));
