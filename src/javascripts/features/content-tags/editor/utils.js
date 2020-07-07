@@ -1,4 +1,4 @@
-import { sortBy } from 'lodash';
+import { camelCase, groupBy, min, sortBy, upperFirst } from 'lodash';
 
 export const tagPayloadToValue = (tag) => ({ value: tag.sys.id, label: tag.name });
 export const tagsPayloadToValues = (tags) => tags.map(tagPayloadToValue);
@@ -30,3 +30,36 @@ export function tagLink(id) {
     },
   };
 }
+
+/* fancy grouping stuff */
+
+export const getFirstDelimiterIndex = (value, delimiters) =>
+  min(delimiters.map((delimiter) => value.indexOf(delimiter)).filter((index) => index >= 0));
+
+export const groupByField = (tags, field, delimiters) =>
+  groupBy(tags, (tag) => {
+    const input = tag[field].slice(0, tag[field].length);
+    const delimiterIndex = getFirstDelimiterIndex(input, delimiters);
+    if (!delimiterIndex || delimiterIndex <= 0) {
+      return 'Uncategorized';
+    } else {
+      return upperFirst(camelCase(input.slice(0, delimiterIndex)));
+    }
+  });
+
+export const applyMinimumGroupSize = (
+  groups,
+  defaultGroupName = 'Uncategorized',
+  minGroupLength = 2
+) => {
+  Object.keys(groups).forEach((groupName) => {
+    if (groups[groupName].length < minGroupLength) {
+      groups[defaultGroupName] = orderByLabel([...groups[defaultGroupName], ...groups[groupName]]);
+      delete groups[groupName];
+    }
+  });
+  return groups;
+};
+
+export const groupByName = (tags) =>
+  applyMinimumGroupSize(groupByField(tags, 'label', ['.', ':', '_', '-', '#']));
