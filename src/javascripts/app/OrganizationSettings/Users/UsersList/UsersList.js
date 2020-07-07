@@ -44,7 +44,7 @@ import {
   Space as SpacePropType,
   Team as TeamPropType,
 } from 'app/OrganizationSettings/PropTypes';
-import NavigationIcon from 'ui/Components/NavigationIcon';
+import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { getVariation } from 'LaunchDarkly';
 import { PRICING_2020_RELEASED } from 'featureFlags';
 import { showDialog as showChangeSpaceModal, trackCTAClick } from 'services/ChangeSpaceService';
@@ -278,7 +278,7 @@ class UsersList extends React.Component {
     return (
       <Workbench testId="organization-users-page">
         <Workbench.Header
-          icon={<NavigationIcon icon="users" size="large" color="green" />}
+          icon={<NavigationIcon icon="Users" size="large" />}
           title="Users"
           actions={
             <div className={styles.actionsWrapper}>

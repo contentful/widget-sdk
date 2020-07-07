@@ -6,7 +6,7 @@ import {
   SkeletonDisplayText,
   Workbench,
 } from '@contentful/forma-36-react-components';
-import NavigationIcon from 'ui/Components/NavigationIcon';
+import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 export function RolesWorkbenchSkeleton(props) {
   return (
@@ -27,7 +27,7 @@ export function RolesWorkbenchSkeleton(props) {
             </SkeletonContainer>
           )
         }
-        icon={<NavigationIcon icon="settings" color="green" size="large" />}></Workbench.Header>
+        icon={<NavigationIcon icon="Settings" size="large" />}></Workbench.Header>
       <Workbench.Content type="default">
         {props.children || (
           <SkeletonContainer

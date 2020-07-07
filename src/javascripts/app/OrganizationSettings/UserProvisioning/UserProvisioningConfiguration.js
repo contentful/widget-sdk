@@ -10,7 +10,7 @@ import {
   Button,
   Typography,
 } from '@contentful/forma-36-react-components';
-import NavigationIcon from 'ui/Components/NavigationIcon';
+import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 import { css } from 'emotion';
 import { helpCenterUrl, apiUrl } from 'Config';
@@ -78,7 +78,7 @@ export default function UserProvisioningConfiguration({ orgId }) {
   return (
     <Workbench>
       <Workbench.Header
-        icon={<NavigationIcon icon="sso" size="large" color="green" />}
+        icon={<NavigationIcon icon="Sso" size="large" />}
         title="User Provisioning"
       />
       <Workbench.Content type="text">

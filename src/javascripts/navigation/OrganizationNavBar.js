@@ -43,7 +43,7 @@ function getItems(params, { orgId }) {
         inherit: false,
       },
       rootSref: 'account.organizations.edit',
-      navIcon: 'org-info',
+      navIcon: 'OrgInfo',
       dataViewType: 'organization-information',
     },
     {
@@ -55,7 +55,7 @@ function getItems(params, { orgId }) {
         inherit: false,
       },
       rootSref: 'account.organizations.subscription',
-      navIcon: 'subscription',
+      navIcon: 'Subscription',
       dataViewType: 'subscription',
     },
     {
@@ -67,7 +67,7 @@ function getItems(params, { orgId }) {
       srefOptions: {
         inherit: false,
       },
-      navIcon: 'subscription',
+      navIcon: 'Subscription',
       dataViewType: 'subscription-new',
     },
 
@@ -80,7 +80,7 @@ function getItems(params, { orgId }) {
       srefOptions: {
         inherit: false,
       },
-      navIcon: 'billing',
+      navIcon: 'Billing',
       dataViewType: 'billing',
     },
     {
@@ -92,7 +92,7 @@ function getItems(params, { orgId }) {
       srefOptions: {
         inherit: false,
       },
-      navIcon: 'usage',
+      navIcon: 'Usage',
       dataViewType: 'platform-usage',
     },
     {
@@ -104,7 +104,7 @@ function getItems(params, { orgId }) {
       srefOptions: {
         inherit: false,
       },
-      navIcon: 'users',
+      navIcon: 'Users',
       dataViewType: 'organization-users',
     },
     {
@@ -115,7 +115,7 @@ function getItems(params, { orgId }) {
       srefOptions: {
         inherit: false,
       },
-      navIcon: 'teams',
+      navIcon: 'Teams',
       dataViewType: 'organization-teams',
     },
     {
@@ -127,7 +127,7 @@ function getItems(params, { orgId }) {
       srefOptions: {
         inherit: false,
       },
-      navIcon: 'apps',
+      navIcon: 'Apps',
       icon: 'nav-apps',
       dataViewType: 'organization-apps',
     },
@@ -136,7 +136,7 @@ function getItems(params, { orgId }) {
       title: 'Access Tools',
       tagLabel: 'new',
       rootSref: 'account.organizations.access-tools',
-      navIcon: 'sso',
+      navIcon: 'Sso',
       dataViewType: 'organization-access-tools',
       children: accessToolsDropdownItems,
     },
@@ -149,7 +149,7 @@ function getItems(params, { orgId }) {
       srefOptions: {
         inherit: false,
       },
-      navIcon: 'sso',
+      navIcon: 'Sso',
       dataViewType: 'organization-sso',
     },
     {
@@ -161,7 +161,7 @@ function getItems(params, { orgId }) {
       srefOptions: {
         inherit: false,
       },
-      navIcon: 'spaces',
+      navIcon: 'Spaces',
       dataViewType: 'organization-spaces',
     },
     {

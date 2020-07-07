@@ -28,7 +28,7 @@ import { connect } from 'react-redux';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import SSOUpsellState from './SSOUpsellState';
-import NavigationIcon from 'ui/Components/NavigationIcon';
+import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
@@ -160,7 +160,7 @@ export class SSOSetup extends React.Component {
         <DocumentTitle title="SSO" />
         <Workbench className="sso-setup">
           <Workbench.Header
-            icon={<NavigationIcon icon="sso" size="large" color="green" />}
+            icon={<NavigationIcon icon="Sso" size="large" />}
             title="Single Sign-On (SSO)"
           />
           <Workbench.Content>

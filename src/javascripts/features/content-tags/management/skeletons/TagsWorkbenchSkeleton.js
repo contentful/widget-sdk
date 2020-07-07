@@ -8,7 +8,7 @@ import {
   Typography,
   Workbench,
 } from '@contentful/forma-36-react-components';
-import NavigationIcon from 'ui/Components/NavigationIcon';
+import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import BinocularsIllustration from 'svg/illustrations/binoculars-illustration.svg';
 import EmptyStateContainer, {
   defaultSVGStyle,
@@ -95,7 +95,7 @@ function TagsWorkbenchSkeleton(props) {
       <Workbench.Header
         title={'Tags'}
         actions={<TagsWorkbenchActions hasData={props.hasTags} onCreate={onCreate} />}
-        icon={<NavigationIcon icon="settings" color="green" size="large" />}
+        icon={<NavigationIcon icon="Settings" size="large" />}
       />
       <Workbench.Content type="default" className={'tags-workbench-content'}>
         <>{content}</>

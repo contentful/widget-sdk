@@ -20,7 +20,7 @@ import { ModalLauncher } from 'core/components/ModalLauncher';
 import AddToSpacesModal from 'app/OrganizationSettings/Users/common/AddToSpacesModal';
 import EditSpaceMembershipModal from './EditSpaceMembershipModal';
 import { getFullNameOrEmail } from 'app/OrganizationSettings/Users/UserUtils';
-import NavigationIcon from 'ui/Components/NavigationIcon';
+import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import AddToTeamsModal from '../common/AddToTeamsModal';
 
 const styles = {
@@ -195,7 +195,7 @@ export default function UserDetails({
     <Workbench>
       <Workbench.Header
         title={getFullNameOrEmail(initialMembership.sys.user)}
-        icon={<NavigationIcon icon="users" size="large" color="green" />}
+        icon={<NavigationIcon icon="Users" size="large" />}
         onBack={handleBackButtonClicked}
       />
       <Workbench.Content>

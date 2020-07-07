@@ -6,7 +6,7 @@ export default function ProfileNavigationBar() {
   const accessTokensDropdownItems = [
     {
       title: 'Personal access tokens',
-      navIcon: 'token',
+      navIcon: 'Token',
       sref: 'account.profile.cma_tokens',
       srefOptions: {
         inherit: false,
@@ -15,7 +15,7 @@ export default function ProfileNavigationBar() {
     },
     {
       title: 'OAuth tokens',
-      navIcon: 'token',
+      navIcon: 'Token',
       sref: 'account.profile.access_grants',
       srefOptions: {
         inherit: false,
@@ -34,7 +34,7 @@ export default function ProfileNavigationBar() {
           listItems={[
             {
               title: 'User profile',
-              navIcon: 'user-profile',
+              navIcon: 'UserProfile',
               sref: 'account.profile.user',
               srefOptions: {
                 inherit: false,
@@ -43,7 +43,7 @@ export default function ProfileNavigationBar() {
             },
             {
               title: 'Spaces',
-              navIcon: 'spaces',
+              navIcon: 'Spaces',
               sref: 'account.profile.space_memberships',
               srefOptions: {
                 inherit: false,
@@ -52,7 +52,7 @@ export default function ProfileNavigationBar() {
             },
             {
               title: 'Organizations',
-              navIcon: 'organizations',
+              navIcon: 'Organizations',
               sref: 'account.profile.organization_memberships',
               srefOptions: {
                 inherit: false,
@@ -61,7 +61,7 @@ export default function ProfileNavigationBar() {
             },
             {
               title: 'Tokens',
-              navIcon: 'token',
+              navIcon: 'Token',
               srefOptions: {
                 inherit: false,
               },
@@ -70,7 +70,7 @@ export default function ProfileNavigationBar() {
             },
             {
               title: 'OAuth applications',
-              navIcon: 'oauth',
+              navIcon: 'Oauth',
               sref: 'account.profile.applications',
               srefOptions: {
                 inherit: false,

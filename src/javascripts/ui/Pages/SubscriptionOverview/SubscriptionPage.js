@@ -35,7 +35,7 @@ import { Price } from 'core/components/formatting';
 import BasePlan from './BasePlan';
 import UsersForPlan from './UsersForPlan';
 import SpacePlans from './SpacePlans';
-import NavigationIcon from 'ui/Components/NavigationIcon';
+import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 import ContactUsButton from 'ui/Components/ContactUsButton';
 
@@ -186,7 +186,7 @@ export default function SubscriptionPage({
   return (
     <Workbench testId="subscription-page">
       <Workbench.Header
-        icon={<NavigationIcon icon="subscription" size="large" color="green" />}
+        icon={<NavigationIcon icon="Subscription" size="large" />}
         title="Subscription"
       />
       <Workbench.Content className={styles.content}>

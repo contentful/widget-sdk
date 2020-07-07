@@ -9,7 +9,7 @@ import {
   Workbench,
 } from '@contentful/forma-36-react-components';
 import * as Navigator from 'states/Navigator';
-import NavigationIcon from 'ui/Components/NavigationIcon';
+import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 import {
   WhatIsContentPreview,
@@ -25,7 +25,7 @@ export const ContentPreviewFormSkeleton = (props) => {
         onBack={() => {
           Navigator.go({ path: '^.list' });
         }}
-        icon={<NavigationIcon icon="settings" color="green" size="large" />}
+        icon={<NavigationIcon icon="Settings" size="large" />}
         title={
           <>
             {props.title && <Heading>{props.title}</Heading>}

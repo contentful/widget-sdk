@@ -14,6 +14,7 @@ import {
   DropdownList,
   DropdownListItem,
 } from '@contentful/forma-36-react-components';
+import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import moment from 'moment';
 import { css } from 'emotion';
 import { keyBy } from 'lodash';
@@ -22,7 +23,6 @@ import { showDialog } from 'services/CreateSpace';
 import EmptySpaceState from 'app/home/EmptySpaceHome';
 import LoadingState from 'app/common/LoadingState';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import NavigationIcon from 'ui/Components/NavigationIcon';
 import ErrorState from 'app/common/ErrorState';
 import { openDeleteSpaceDialog } from 'features/space-settings';
 import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
@@ -113,7 +113,7 @@ const SpacesRoute = ({ orgId }) => {
       <DocumentTitle title="Organization spaces" />
       <Workbench>
         <Workbench.Header
-          icon={<NavigationIcon icon="spaces" size="large" color="green" />}
+          icon={<NavigationIcon icon="Spaces" size="large" />}
           testId="v1-spaces-list.title"
           title="Organization spaces"
           actions={

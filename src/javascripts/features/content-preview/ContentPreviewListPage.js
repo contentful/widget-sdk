@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import NavigationIcon from 'ui/Components/NavigationIcon';
+import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { Workbench } from '@contentful/forma-36-react-components';
 import { WhatIsContentPreview } from './ContentPreviewSidebar';
 import { CreatePreviewButton } from './CreatePreviewButton';
@@ -24,7 +24,7 @@ export class ContentPreviewListPage extends Component {
     return (
       <Workbench>
         <Workbench.Header
-          icon={<NavigationIcon icon="settings" color="green" size="large" />}
+          icon={<NavigationIcon icon="Settings" size="large" />}
           title="Content preview"
           actions={<CreatePreviewButton />}
         />

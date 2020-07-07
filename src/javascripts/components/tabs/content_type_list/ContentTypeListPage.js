@@ -19,7 +19,7 @@ import ContentTypeListSearch from './ContentTypeListSearch';
 import ContentTypeListFilter from './ContentTypeListFilter';
 import * as service from './ContentTypeListService';
 import { getSearchTerm } from 'redux/selectors/filters';
-import NavigationIcon from 'ui/Components/NavigationIcon';
+import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { css } from 'emotion';
 import ExternalTextLink from 'app/common/ExternalTextLink';
@@ -184,7 +184,7 @@ export class ContentTypesPage extends React.Component {
         <DocumentTitle title="Content Model" />
         <Workbench>
           <Workbench.Header
-            icon={<NavigationIcon icon="content-model" color="green" size="large" />}
+            icon={<NavigationIcon icon="ContentModel" size="large" />}
             title={
               <>
                 <Heading>Content Model</Heading>

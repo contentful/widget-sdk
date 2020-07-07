@@ -11,7 +11,7 @@ import {
   Notification,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import NavigationIcon from 'ui/Components/NavigationIcon';
+import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import * as Permissions from 'access_control/EntityPermissions';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 import * as trackVersioning from 'analytics/events/versioning';
@@ -148,7 +148,7 @@ const SnapshotComparator = ({
       <Workbench.Header
         title={title}
         onBack={onClose}
-        icon={<NavigationIcon icon="content" size="large" color="green" />}
+        icon={<NavigationIcon icon="Content" size="large" />}
         actions={
           <Fragment>
             <Button

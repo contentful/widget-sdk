@@ -14,7 +14,7 @@ import { salesUrl, websiteUrl } from 'Config';
 import EmptyStateContainer, {
   defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
-import NavigationIcon from 'ui/Components/NavigationIcon';
+import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 
@@ -35,7 +35,7 @@ function SSOUpsellState() {
       <DocumentTitle title="SSO" />
       <Workbench className="sso-setup">
         <Workbench.Header
-          icon={<NavigationIcon icon="sso" size="large" color="green" />}
+          icon={<NavigationIcon icon="Sso" size="large" />}
           title="Single Sign-On (SSO)"
         />
         <Workbench.Content>
