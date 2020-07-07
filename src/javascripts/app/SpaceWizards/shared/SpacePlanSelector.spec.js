@@ -37,6 +37,12 @@ describe('SpacePlanSelector', () => {
     expect(onSelectPlan).toBeCalledWith(plan, null);
   });
 
+  it('should show the micro and small CTA if shouldShowMicroSmallCTA is true', () => {
+    build({ shouldShowMicroSmallCTA: true });
+
+    expect(screen.getByTestId('small-micro-cta')).toBeVisible();
+  });
+
   describe('with recommended plan', () => {
     const space = Fake.Space();
 

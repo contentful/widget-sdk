@@ -40,6 +40,7 @@ import {
   getSpaceRatePlans,
   getSubscriptionPlans,
   calculateTotalPrice,
+  isSelfServicePlan,
 } from 'account/pricing/PricingDataProvider';
 import { createImmerReducer } from 'core/utils/createImmerReducer';
 
@@ -58,7 +59,7 @@ const styles = {
   }),
 };
 
-const initialFetch = (organization) => async () => {
+const initialFetch = (organization, basePlan) => async () => {
   const organizationId = organization.sys.id;
   const endpoint = createOrganizationEndpoint(organizationId);
   const orgResources = createResourceService(organizationId, 'organization');
@@ -86,6 +87,10 @@ const initialFetch = (organization) => async () => {
     freeSpaceResource,
   });
 
+  const basePlanIsSelfService = isSelfServicePlan(basePlan);
+  const shouldShowMicroSmallCTA =
+    isCommunityPlanEnabled && isPayingPreviousToV2 && basePlanIsSelfService;
+
   return {
     freeSpaceResource,
     spaceRatePlans,
@@ -93,6 +98,7 @@ const initialFetch = (organization) => async () => {
     currentSubscriptionPrice,
     isCommunityPlanEnabled,
     isPayingPreviousToV2,
+    shouldShowMicroSmallCTA,
   };
 };
 
@@ -208,7 +214,7 @@ export default function CreateOnDemandWizard(props) {
     partnerDetails,
   } = state;
 
-  const { organization, sessionId, onClose, onProcessing } = props;
+  const { organization, basePlan, sessionId, onClose, onProcessing } = props;
 
   const [{ isLoading: isCreatingSpace }, handleSubmit] = useAsyncFn(() =>
     submit({
@@ -233,7 +239,7 @@ export default function CreateOnDemandWizard(props) {
     dispatch({ type: 'SET_SELECTED_TAB', payload: newTab });
   };
 
-  const { isLoading, data } = useAsync(useCallback(initialFetch(organization), []));
+  const { isLoading, data } = useAsync(useCallback(initialFetch(organization, basePlan), []));
 
   if (isLoading) {
     return <Loader />;
@@ -305,7 +311,7 @@ export default function CreateOnDemandWizard(props) {
                     goToBillingPage(organization, WIZARD_INTENT.CREATE, sessionId, onClose)
                   }
                   isCommunityPlanEnabled={data.isCommunityPlanEnabled}
-                  isPayingPreviousToV2={data.isPayingPreviousToV2}
+                  shouldShowMicroSmallCTA={data.shouldShowMicroSmallCTA}
                 />
               </TabPanel>
             )}
@@ -376,4 +382,5 @@ CreateOnDemandWizard.propTypes = {
   sessionId: PropTypes.string.isRequired,
   onClose: PropTypes.func.isRequired,
   onProcessing: PropTypes.func.isRequired,
+  basePlan: PropTypes.object.isRequired,
 };
