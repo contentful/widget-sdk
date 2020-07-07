@@ -52,7 +52,7 @@
     "classnames": "2.2.6",
     "codemirror": "^5.53.2",
     "color": "^2.0.1",
-    "contentful-management": "^5.27.3",
+    "contentful-management": "^5.28.0-experimental.9",
     "contentful-resolve-response": "^1.1.4",
     "dataloader": "^2.0.0",
     "delay": "^4.3.0",

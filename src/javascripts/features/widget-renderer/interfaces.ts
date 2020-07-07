@@ -3,7 +3,7 @@ type HostingType = 'src' | 'srcdoc'
 
 type ParameterType = 'Boolean' | 'Symbol' | 'Number' | 'Enum'
 type ParameterOption = string | { [key: string]: string }
-interface ParameterDefinition {
+export interface ParameterDefinition {
   name: string
   id: string
   description?: string
@@ -18,7 +18,7 @@ interface ParameterDefinition {
   }
 }
 
-type FieldType =
+export type FieldType =
   | { type: 'Symbol' }
   | { type: 'Text' }
   | { type: 'RichText' }
@@ -47,7 +47,7 @@ type PageLocation = {
   }
 }
 
-type Location =
+export type Location =
   | EntryFieldLocation
   | PageLocation
   | { location: 'entry-sidebar' }

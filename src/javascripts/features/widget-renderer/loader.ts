@@ -1,87 +1,230 @@
-import { WidgetNamespace } from "./interfaces"
-import { createClient } from 'contentful-management'
+import { WidgetNamespace, Widget, ParameterDefinition, FieldType, Location } from "./interfaces"
+import { createPlainClient } from 'contentful-management'
 import DataLoader from 'dataloader';
+import { NAMESPACE_EXTENSION, NAMESPACE_APP } from "widgets/WidgetNamespaces";
+import { get } from "lodash";
 
-var client = createClient({
-  // This is the access token for this space. Normally you get the token in the Contentful web app
-  accessToken: 'YOUR_ACCESS_TOKEN',
-})
+type ClientAPI = ReturnType<typeof createPlainClient>
 
-type ClientAPI = ReturnType<typeof createClient>
-
-async function (spaceId: string, envId: string, orgId: string) {
-  
-  const uis = await env.getUiExtensions()
-
-  const appInstallations = await env.getAppInstallations();
-
-  // Getting definitions if resolved:
-  appInstallations.items[0].sys.appDefinition // -> object, not link
-  // Getting definitions if includes are included:
-  appInstallations.includes.AppDefinition // -> array of AppDef
-
-  // Getting definitions if non of above works
-  // We would need to do it for each source org
-  ;(await client.getOrganization(orgId)).getAppDefinitions()
+interface Extension {
+  sys: {
+    type: 'Extension',
+    id: string,
+    srcdocSha256?: string
+  },
+  extension: {
+    name: string,
+    fieldTypes?: FieldType[],
+    src?: string
+    srcdoc?:string,
+    sidebar?: boolean,
+    parameters?: {
+      instance?: ParameterDefinition[]
+      installation?: ParameterDefinition[]
+    }
+  },
+  parameters?: Record<string, string | number | boolean>
 }
+
+interface AppDefinition {
+  sys: {
+    type: 'AppDefinition',
+    id: string
+  },
+  name: string,
+  src?: string
+  locations?: Location[]
+}
+
+interface AppInstallation {
+  sys: {
+    type: 'AppInstallation',
+    appDefinition: {
+      sys: {
+        type: 'Link',
+        linkType: 'AppDefinition',
+        id: string
+      }
+    }
+  },
+  parameters?: Record<string, any> | Array<any> | number | string | boolean
+}
+
+interface WidgetRef {
+  widgetNamespace: WidgetNamespace,
+  widgetId: string
+  // setting
+}
+
+interface ControlWidgetRef {
+  widgetNamespace?: WidgetNamespace
+  widgetId?: string
+}
+
+interface EditorInterface {
+  sys: {
+    type: 'EditorInterface',
+    contentType: {
+      sys: {
+        type: 'Link',
+        linkType: 'ContentType',
+        id: string
+      }
+    }
+  },
+  controls?: ControlWidgetRef[]
+  sidebar?: WidgetRef[]
+  editor?: WidgetRef
+  editors?: WidgetRef[]
+}
+
+type CacheKey = [WidgetNamespace, string];
+type CacheValue = Widget | null
 
 export class WidgetLoader {
   private client: ClientAPI
-  private spaceId: string;
-  private envId: string
+  private baseUrl: string;
+  private loader: DataLoader<CacheKey, CacheValue, string>
 
-  constructor(client: ClientApi, spaceId: string, envId: string) {
+  constructor(client: ClientAPI, spaceId: string, envId: string) {
     this.client = client
+    this.baseUrl = `/spaces/${spaceId}/environments/${envId}`
+    this.loader = new DataLoader(this.load.bind(this), {
+      cacheKeyFn: ([ns, id]: CacheKey): string => [ns, id].join(',')
+    })
   }
 
-  private async load(keys: [WidgetNamespace, string][]) {
+  private async load(keys: readonly CacheKey[]): Promise<Array<CacheValue>> {
     if (keys.length < 1) {
       return [];
     }
-
-    const space = await client.getSpace(this.spaceId)
-    const env = await space.getEnvironment(this.envId)
 
     const extensionIds = keys
       .filter(([namespace]) => namespace === NAMESPACE_EXTENSION)
       .map(([, id]) => id);
 
-      // Add support for the following in the SDK:
-      // - sys.id[in]: list of comma separated IDs
-      // - `stripSrcdoc=true`
-    const { items: extensions } = await env.getUiExtensions(/*{ 'sys.id[in]': extensionIds.join(',') }*/)
-    // Todo: promise.all
-    const { items: installedApps } = await env.getAppInstallations()
-    // Todo installed apps don't know about their definitions
+    
+    const extensionsRes = this.client.raw.get(`${this.baseUrl}/extensions`, {
+      params: {
+        'sys.id[in]': extensionIds.join(',')
+      }
+    })
 
+    const appInstallationsRes = this.client.raw.get(`${this.baseUrl}/app_installations`);
 
-    // return keys.map(([namespace, id]) => {
-    //   if (namespace === NAMESPACE_APP) {
-    //     const app = apps.find((app) => get(app, ['appDefinition', 'sys', 'id']) === id);
+    const [
+      { items: extensions },
+      { items: installedApps, includes: { AppDefinition: usedAppDefinitions } }
+    ] = (await Promise.all([extensionsRes, appInstallationsRes])) as [
+      { items: Extension[] },
+      { items: AppInstallation[], includes: { AppDefinition: AppDefinition[] }}
+    ]
 
-    //     return app ? buildAppWidget(app) : null;
-    //   }
+    return keys.map(([namespace, id]) => {
+      if (namespace === NAMESPACE_APP) {
+        const installation = installedApps.find((app) => get(app, ['appDefinition', 'sys', 'id']) === id);
+        const definition = usedAppDefinitions.find((def) => get(def, ['sys', 'id']) === id)
 
-    //   if (namespace === NAMESPACE_EXTENSION) {
-    //     const ext = extensions.find((ext) => get(ext, ['sys', 'id']) === id);
+        if (installation && definition && definition.src) {
+          return this.buildAppWidget(installation, definition)
+        } else {
+          return null
+        }
+      }
 
-    //     return ext ? buildExtensionWidget(ext) : null;
-    //   }
+      if (namespace === NAMESPACE_EXTENSION) {
+        const ext = extensions.find((ext) => get(ext, ['sys', 'id']) === id);
 
-    //   return null;
-    // });
+        return ext ? this.buildExtensionWidget(ext) : null;
+      }
+
+      return null;
+    });
   }
 
-  public warmUp(namespace: WidgetNamespace, id: string): Promise<void> {
-
+  private buildAppWidget (installation: AppInstallation, definition: AppDefinition): Widget {
+    return {
+      namespace: NAMESPACE_APP,
+      id: definition.sys.id,
+      slug: /* marketplaceSlug || */ definition.sys.id,
+      iconUrl: '', // marketplace icon, fall back to the default one
+      name: definition.name,
+      hosting: {
+        type: 'src',
+        value: definition.src!
+      },
+      parameters: {
+        definitions: {
+          instance: [],
+          installation: []
+        },
+        values: {
+          instance: {},
+          installation: typeof installation.parameters === 'undefined' ? {} : installation.parameters!
+        }
+      },
+      locations: definition.locations || []
+    }
   }
 
-  public warmUpWithEditorInterface(ei: EditorInterface): Promise<void> {
+  private buildExtensionWidget (extension: Extension): Widget {
+    const locations: Location[] = [
+      {
+        location: 'entry-field',
+        fieldTypes: extension.extension.fieldTypes || []
+      },
+      { location: 'page' },
+      { location: 'entry-sidebar' },
+      { location: 'entry-editor' },
+      { location: 'dialog' },
+    ];
 
+    if (extension.extension.sidebar) {
+      locations.push({ location: 'entry-field-sidebar' })
+    }
+
+    return {
+      namespace: NAMESPACE_EXTENSION,
+      id: extension.sys.id,
+      slug: extension.sys.id,
+      iconUrl: '', // one predefined icon
+      name: extension.extension.name,
+      hosting: {
+        type: typeof extension.sys.srcdocSha256 === 'string' ? 'srcdoc' : 'src',
+        value: extension.extension.src || extension.extension.srcdoc!
+      },
+      parameters: {
+        definitions: {
+          instance: get(extension, ['extension', 'parameters', 'instance'], []),
+          installation: get(extension, ['extension', 'parameters', 'installation'], [])
+        },
+        values: {
+          instance: {},
+          installation: extension.parameters || {} 
+        }
+      },
+      locations
+    }
   }
 
-  public getOne(namespace: WidgetNamespace, id: string): Promise<Widget> {
+  public async warmUp(namespace: WidgetNamespace, id: string): Promise<void> {
+    await this.loader.load([namespace, id])
+  }
 
+  public async warmUpWithEditorInterface(ei: EditorInterface): Promise<void> {
+    const keys = [
+      ...(ei.sidebar || []),
+      ...(ei.editor ? [ei.editor] : []),
+      ...(ei.editors || [])
+    ].filter(ref => [NAMESPACE_APP, NAMESPACE_EXTENSION].includes(ref.widgetNamespace))
+    .filter(ref => ref.widgetId)
+    .map(ref => [ref.widgetNamespace, ref.widgetId] as [WidgetNamespace, string])
+
+    await this.loader.loadMany(keys);
+  }
+
+  public getOne(namespace: WidgetNamespace, id: string): Promise<Widget | null> {
+    
   }
 
   public getMultiple(keys: [WidgetNamespace, string][]): Promise<Widget[]> {
@@ -89,10 +232,10 @@ export class WidgetLoader {
   }
 
   public evict(namespace: WidgetNamespace, id: string): void {
-
+    this.loader.clear([namespace, id])
   }
 
   public purge(): void {
-
+    this.loader.clearAll();
   }
 }
