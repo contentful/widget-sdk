@@ -19,6 +19,7 @@ import {
   getSpaceRatePlans,
   getSubscriptionPlans,
   calculateTotalPrice,
+  isSelfServicePlan,
 } from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
 
@@ -50,7 +51,7 @@ const styles = {
   }),
 };
 
-const initialFetch = (organization, space) => async () => {
+const initialFetch = (organization, space, basePlan) => async () => {
   const organizationId = organization.sys.id;
   const orgEndpoint = createOrganizationEndpoint(organizationId);
   const orgResources = createResourceService(organizationId, 'organization');
@@ -83,6 +84,9 @@ const initialFetch = (organization, space) => async () => {
   );
   const currentSubscriptionPrice = calculateTotalPrice(subscriptionPlans.items);
 
+  const shouldShowMicroSmallCTA =
+    isCommunityPlanEnabled && isPayingPreviousToV2 && isSelfServicePlan(basePlan);
+
   return {
     spaceResources,
     spaceRatePlans,
@@ -91,6 +95,7 @@ const initialFetch = (organization, space) => async () => {
     freeSpaceResource,
     isCommunityPlanEnabled,
     isPayingPreviousToV2,
+    shouldShowMicroSmallCTA,
   };
 };
 
@@ -112,7 +117,7 @@ export default function Wizard(props) {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [selectedTab, setSelectedTab] = useState('spacePlanSelector');
 
-  const { organization, space, sessionId, onClose, onProcessing } = props;
+  const { organization, space, basePlan, sessionId, onClose, onProcessing } = props;
 
   const [{ isLoading: isChangingSpacePlan }, handleSubmit] = useAsyncFn(() =>
     submit(space, selectedPlan, sessionId, onProcessing, onClose)
@@ -127,7 +132,9 @@ export default function Wizard(props) {
     setSelectedTab(newTab);
   };
 
-  const { isLoading, data } = useAsync(useCallback(initialFetch(organization, space), []));
+  const { isLoading, data } = useAsync(
+    useCallback(initialFetch(organization, space, basePlan), [])
+  );
 
   if (isLoading) {
     return <Loader />;
@@ -190,7 +197,7 @@ export default function Wizard(props) {
               }
               spaceResources={data.spaceResources}
               isCommunityPlanEnabled={data.isCommunityPlanEnabled}
-              isPayingPreviousToV2={data.isPayingPreviousToV2}
+              shouldShowMicroSmallCTA={data.shouldShowMicroSmallCTA}
               isChanging
             />
           </TabPanel>
@@ -216,6 +223,7 @@ export default function Wizard(props) {
 Wizard.propTypes = {
   organization: PropTypes.object.isRequired,
   space: PropTypes.object.isRequired,
+  basePlan: PropTypes.object.isRequired,
   sessionId: PropTypes.string.isRequired,
   onClose: PropTypes.func.isRequired,
   onProcessing: PropTypes.func.isRequired,

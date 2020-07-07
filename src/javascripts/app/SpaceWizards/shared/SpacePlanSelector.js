@@ -43,7 +43,7 @@ export default function SpacePlanSelector(props) {
     goToBillingPage,
     onSelectPlan,
     isCommunityPlanEnabled,
-    isPayingPreviousToV2,
+    shouldShowMicroSmallCTA,
     isChanging = false,
   } = props;
 
@@ -66,9 +66,9 @@ export default function SpacePlanSelector(props) {
           organization {organization.name}.
         </Paragraph>
 
-        {isCommunityPlanEnabled && isPayingPreviousToV2 && (
+        {shouldShowMicroSmallCTA && (
           <>
-            <Paragraph className={styles.textCenter}>
+            <Paragraph className={styles.textCenter} testId="small-micro-cta">
               <b>Where are the Micro and Small spaces?</b>{' '}
               {isChanging ? (
                 <>
@@ -143,6 +143,6 @@ SpacePlanSelector.propTypes = {
   spaceResources: PropTypes.array,
   goToBillingPage: PropTypes.func.isRequired,
   isCommunityPlanEnabled: PropTypes.bool,
-  isPayingPreviousToV2: PropTypes.bool,
+  shouldShowMicroSmallCTA: PropTypes.bool,
   isChanging: PropTypes.bool,
 };

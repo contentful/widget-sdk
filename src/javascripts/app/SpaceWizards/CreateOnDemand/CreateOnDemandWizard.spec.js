@@ -529,6 +529,7 @@ async function build(custom, shouldWait = true) {
   const props = Object.assign(
     {
       organization: mockOrganization,
+      basePlan: {},
       onClose: () => {},
       onProcessing: () => {},
       sessionId: mockWizardSessionId,
