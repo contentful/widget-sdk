@@ -27,7 +27,7 @@ import tokens from '@contentful/forma-36-tokens';
 import StateLink from 'app/common/StateLink';
 import { formatQuery } from './QueryBuilder';
 import ResolveLinks from 'data/LinkResolver';
-import UserListFilters from './UserListFilters';
+import { UserListFilters } from './UserListFilters';
 import UserCard from '../UserCard';
 import Pagination from 'app/common/Pagination';
 import { getMemberships, removeMembership } from 'access_control/OrganizationMembershipRepository';
@@ -97,6 +97,8 @@ class UsersList extends React.Component {
     updateSearchTerm: PropTypes.func.isRequired,
     hasSsoEnabled: PropTypes.bool,
     hasTeamsFeature: PropTypes.bool,
+    onChange: PropTypes.func,
+    onReset: PropTypes.func,
   };
 
   state = {
@@ -271,7 +273,7 @@ class UsersList extends React.Component {
       userIsOwner,
       spaceToUpgrade,
     } = this.state;
-    const { searchTerm, spaces, spaceRoles, filters } = this.props;
+    const { searchTerm, spaces, spaceRoles, filters, onChange, onReset } = this.props;
 
     return (
       <Workbench testId="organization-users-page">
@@ -321,6 +323,8 @@ class UsersList extends React.Component {
               spaces={spaces}
               spaceRoles={spaceRoles}
               filters={filters}
+              onChange={onChange}
+              onReset={onReset}
             />
             {loading || queryTotal > 0 ? (
               <div className={styles.list}>
@@ -466,5 +470,7 @@ export default connect(
   (dispatch) => ({
     updateSearchTerm: (newSearchTerm) =>
       dispatch({ type: 'UPDATE_SEARCH_TERM', payload: { newSearchTerm } }),
+    onChange: (newFilters) => dispatch({ type: 'CHANGE_FILTERS', payload: { newFilters } }),
+    onReset: () => dispatch({ type: 'RESET_FILTERS' }),
   })
 )(UsersList);
