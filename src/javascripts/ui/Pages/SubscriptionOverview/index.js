@@ -13,7 +13,7 @@ import { calcUsersMeta, calculateTotalPrice } from 'utils/SubscriptionUtils';
 import { getOrganization } from 'services/TokenStore';
 import { getVariation } from 'LaunchDarkly';
 import { PRICING_2020_RELEASED, PAYING_PREV_V2_ORG } from 'featureFlags';
-import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
+import { isSelfServicePlan } from 'account/pricing/PricingDataProvider';
 
 import DocumentTitle from 'components/shared/DocumentTitle';
 
@@ -92,10 +92,10 @@ const fetch = (organizationId, setSpacePlans) => async () => {
     organizationId,
   });
 
-  // We only want to show this support card for non-enterprise on-demand users who originally had access
+  // We only want to show this support card for self-service on-demand users who originally had access
   // to these types of spaces and have since been migrated to the community plan.
   const showMicroSmallSupportCard =
-    !isEnterprisePlan(basePlan) && isCommunityPlanEnabled && isOrgCreatedBeforeV2Pricing;
+    isSelfServicePlan(basePlan) && isCommunityPlanEnabled && isOrgCreatedBeforeV2Pricing;
 
   setSpacePlans(spacePlans);
 
