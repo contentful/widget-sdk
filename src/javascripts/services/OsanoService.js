@@ -85,10 +85,22 @@ export const handleConsentChanged = debounce(async function debouncedHandleConse
 }, 500);
 
 export async function init() {
-  // Enable only on production until, we fix Osano.ConsentManager.prototype error
-  const isDevelopmentEnv = Config.env === 'development' || Config.env === 'staging';
   // Do not run init if we already did before, or if we specifically opt to disable (for example in testing)
-  if (cm || localStorage.has('__disable_consentmanager') || isDevelopmentEnv) {
+  if (cm || localStorage.has('__disable_consentmanager')) {
+    return;
+  }
+
+  // Only handle consents in production, and just enable in non-production, since Osano is more or less
+  // broken in staging/preview
+  const isDevelopmentEnv = Config.env === 'development' || Config.env === 'staging';
+
+  if (isDevelopmentEnv) {
+    const user = getUserSync();
+    const segmentLoadOptions = await generateSegmentLoadOptions(true, true);
+
+    Analytics.enable(user, segmentLoadOptions);
+    Intercom.enable();
+
     return;
   }
 
