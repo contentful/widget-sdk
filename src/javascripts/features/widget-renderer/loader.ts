@@ -1,4 +1,5 @@
 import { WidgetNamespace, Widget, ParameterDefinition, FieldType, Location } from './interfaces';
+import { MarketplaceDataProvider } from './marketplace-data-provider';
 import { createPlainClient } from 'contentful-management';
 import DataLoader, { BatchLoadFn } from 'dataloader';
 import { NAMESPACE_EXTENSION, NAMESPACE_APP, NAMESPACE_BUILTIN } from 'widgets/WidgetNamespaces';
@@ -89,11 +90,18 @@ const cacheKeyFn = ({ widgetNamespace, widgetId }: WidgetRef): string =>
 
 export class WidgetLoader {
   private client: ClientAPI;
+  private marketplaceDataProvider: MarketplaceDataProvider;
   private baseUrl: string;
   private loader: DataLoader<WidgetRef, CacheValue, string>;
 
-  constructor(client: ClientAPI, spaceId: string, envId: string) {
+  constructor(
+    client: ClientAPI,
+    marketplaceDataProvider: MarketplaceDataProvider,
+    spaceId: string,
+    envId: string
+  ) {
     this.client = client;
+    this.marketplaceDataProvider = marketplaceDataProvider;
     this.baseUrl = `/spaces/${spaceId}/environments/${envId}`;
     this.loader = new DataLoader(this.load.bind(this), {
       cacheKeyFn,
@@ -133,13 +141,11 @@ export class WidgetLoader {
         items: installedApps,
         includes: { AppDefinition: usedAppDefinitions },
       },
-    ] = (await Promise.all([
+    ] = await Promise.all([
       extensionsRes.catch(() => emptyExtensionResponse),
       appInstallationsRes.catch(() => emptyAppsResponse),
-    ])) as [
-      { items: Extension[] },
-      { items: AppInstallation[]; includes: { AppDefinition: AppDefinition[] } }
-    ];
+      this.marketplaceDataProvider.prefetch(),
+    ]);
 
     return keys.map(({ widgetId, widgetNamespace }) => {
       if (widgetNamespace === NAMESPACE_APP) {
@@ -169,8 +175,8 @@ export class WidgetLoader {
     return {
       namespace: NAMESPACE_APP,
       id: definition.sys.id,
-      slug: /* marketplaceSlug || */ definition.sys.id,
-      iconUrl: '', // marketplace icon, fall back to the default one
+      slug: this.marketplaceDataProvider.getSlug(NAMESPACE_APP, definition.sys.id),
+      iconUrl: this.marketplaceDataProvider.getIconUrl(NAMESPACE_APP, definition.sys.id),
       name: definition.name,
       hosting: {
         type: 'src',
@@ -209,8 +215,8 @@ export class WidgetLoader {
     return {
       namespace: NAMESPACE_EXTENSION,
       id: extension.sys.id,
-      slug: extension.sys.id,
-      iconUrl: '', // one predefined icon
+      slug: this.marketplaceDataProvider.getSlug(NAMESPACE_EXTENSION, extension.sys.id),
+      iconUrl: this.marketplaceDataProvider.getIconUrl(NAMESPACE_EXTENSION, extension.sys.id),
       name: extension.extension.name,
       hosting: {
         type: typeof extension.sys.srcdocSha256 === 'string' ? 'srcdoc' : 'src',
