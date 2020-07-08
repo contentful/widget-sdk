@@ -1,8 +1,12 @@
 import { WidgetNamespace, Widget, ParameterDefinition, FieldType, Location } from './interfaces';
 import { createPlainClient } from 'contentful-management';
 import DataLoader, { BatchLoadFn } from 'dataloader';
-import { NAMESPACE_EXTENSION, NAMESPACE_APP } from 'widgets/WidgetNamespaces';
+import { NAMESPACE_EXTENSION, NAMESPACE_APP, NAMESPACE_BUILTIN } from 'widgets/WidgetNamespaces';
 import { get } from 'lodash';
+
+// TODO
+// * Tests
+// * Actually use it, update downstream consumers
 
 type ClientAPI = ReturnType<typeof createPlainClient>;
 
@@ -78,30 +82,30 @@ interface EditorInterface {
   editors?: WidgetRef[];
 }
 
-type CacheKey = [WidgetNamespace, string];
 type CacheValue = Widget | null;
 
 export class WidgetLoader {
   private client: ClientAPI;
   private baseUrl: string;
-  private loader: DataLoader<CacheKey, CacheValue, string>;
+  private loader: DataLoader<WidgetRef, CacheValue, string>;
 
   constructor(client: ClientAPI, spaceId: string, envId: string) {
     this.client = client;
     this.baseUrl = `/spaces/${spaceId}/environments/${envId}`;
     this.loader = new DataLoader(this.load.bind(this), {
-      cacheKeyFn: ([ns, id]: CacheKey): string => [ns, id].join(','),
+      cacheKeyFn: ({ widgetNamespace, widgetId }: WidgetRef): string =>
+        [widgetNamespace, widgetId].join(','),
     });
   }
 
-  private load: BatchLoadFn<CacheKey, CacheValue> = async (keys) => {
+  private load: BatchLoadFn<WidgetRef, CacheValue> = async (keys) => {
     if (keys.length < 1) {
       return [];
     }
 
     const extensionIds = keys
-      .filter(([namespace]) => namespace === NAMESPACE_EXTENSION)
-      .map(([, id]) => id);
+      .filter(({ widgetNamespace }) => widgetNamespace === NAMESPACE_EXTENSION)
+      .map(({ widgetId }) => widgetId);
 
     const extensionsRes = this.client.raw.get(`${this.baseUrl}/extensions`, {
       params: {
@@ -122,12 +126,12 @@ export class WidgetLoader {
       { items: AppInstallation[]; includes: { AppDefinition: AppDefinition[] } }
     ];
 
-    return keys.map(([namespace, id]) => {
-      if (namespace === NAMESPACE_APP) {
+    return keys.map(({ widgetId, widgetNamespace }) => {
+      if (widgetNamespace === NAMESPACE_APP) {
         const installation = installedApps.find(
-          (app) => get(app, ['appDefinition', 'sys', 'id']) === id
+          (app) => get(app, ['appDefinition', 'sys', 'id']) === widgetId
         );
-        const definition = usedAppDefinitions.find((def) => get(def, ['sys', 'id']) === id);
+        const definition = usedAppDefinitions.find((def) => get(def, ['sys', 'id']) === widgetId);
 
         if (installation && definition && definition.src) {
           return this.buildAppWidget(installation, definition);
@@ -136,8 +140,8 @@ export class WidgetLoader {
         }
       }
 
-      if (namespace === NAMESPACE_EXTENSION) {
-        const ext = extensions.find((ext) => get(ext, ['sys', 'id']) === id);
+      if (widgetNamespace === NAMESPACE_EXTENSION) {
+        const ext = extensions.find((ext) => get(ext, ['sys', 'id']) === widgetId);
 
         return ext ? this.buildExtensionWidget(ext) : null;
       }
@@ -212,25 +216,77 @@ export class WidgetLoader {
     };
   }
 
-  public async warmUp(namespace: WidgetNamespace, id: string): Promise<void> {
-    await this.loader.load([namespace, id]);
+  public async warmUp(widgetNamespace: WidgetNamespace, widgetId: string): Promise<void> {
+    await this.loader.load({ widgetNamespace, widgetId });
+  }
+
+  private getControlWidgetRefs(controls: ControlWidgetRef[] = []): WidgetRef[] {
+    const isNonEmptyString = (s: any) => typeof s === 'string' && s.length > 0;
+
+    return controls
+      .filter((control) => isNonEmptyString(control.widgetId))
+      .filter((control) => control.widgetNamespace !== NAMESPACE_BUILTIN)
+      .reduce((acc, control) => {
+        if (
+          control.widgetNamespace === NAMESPACE_APP ||
+          control.widgetNamespace === NAMESPACE_EXTENSION
+        ) {
+          return acc.concat([
+            { widgetNamespace: control.widgetNamespace!, widgetId: control.widgetId! },
+          ]);
+        } else {
+          return acc.concat([
+            { widgetNamespace: NAMESPACE_APP, widgetId: control.widgetId! },
+            { widgetNamespace: NAMESPACE_EXTENSION, widgetId: control.widgetId! },
+          ]);
+        }
+      }, [] as WidgetRef[]);
+  }
+
+  private extractWidgetRefsFromEditorInterface(ei: EditorInterface): WidgetRef[] {
+    return [
+      ...(ei.sidebar || []),
+      ...(ei.editor ? [ei.editor] : []),
+      ...(ei.editors || []),
+      ...this.getControlWidgetRefs(ei.controls),
+    ]
+      .filter((ref) => [NAMESPACE_APP, NAMESPACE_EXTENSION].includes(ref.widgetNamespace))
+      .filter((ref) => ref.widgetId)
+      .map(({ widgetNamespace, widgetId }) => ({ widgetNamespace, widgetId }));
   }
 
   public async warmUpWithEditorInterface(ei: EditorInterface): Promise<void> {
-    const keys = [...(ei.sidebar || []), ...(ei.editor ? [ei.editor] : []), ...(ei.editors || [])]
-      .filter((ref) => [NAMESPACE_APP, NAMESPACE_EXTENSION].includes(ref.widgetNamespace))
-      .filter((ref) => ref.widgetId)
-      .map((ref) => [ref.widgetNamespace, ref.widgetId] as [WidgetNamespace, string]);
+    const keys = this.extractWidgetRefsFromEditorInterface(ei);
 
     await this.loader.loadMany(keys);
   }
 
-  public getOne(namespace: WidgetNamespace, id: string): Promise<Widget | null> {}
+  public getOne(widgetNamespace: WidgetNamespace, widgetId: string): Promise<Widget | null> {
+    return this.loader.load({ widgetNamespace, widgetId });
+  }
 
-  public getMultiple(keys: [WidgetNamespace, string][]): Promise<Widget[]> {}
+  public getWithEditorInterface(ei: EditorInterface): Promise<Array<Widget>> {
+    const keys = this.extractWidgetRefsFromEditorInterface(ei);
 
-  public evict(namespace: WidgetNamespace, id: string): void {
-    this.loader.clear([namespace, id]);
+    return this.getMultiple(keys);
+  }
+
+  public async getMultiple(keys: WidgetRef[]): Promise<Widget[]> {
+    const widgets = await this.loader.loadMany(keys);
+
+    return widgets.filter((w) => {
+      if (w instanceof Error) {
+        return false;
+      }
+      if (w === null) {
+        return false;
+      }
+      return true;
+    }) as Widget[];
+  }
+
+  public evict(widgetNamespace: WidgetNamespace, widgetId: string): void {
+    this.loader.clear({ widgetNamespace, widgetId });
   }
 
   public purge(): void {

@@ -1,21 +1,21 @@
-export type WidgetNamespace = 'app' | 'extension'
-type HostingType = 'src' | 'srcdoc'
+export type WidgetNamespace = 'app' | 'extension' | 'builtin';
+type HostingType = 'src' | 'srcdoc';
 
-type ParameterType = 'Boolean' | 'Symbol' | 'Number' | 'Enum'
-type ParameterOption = string | { [key: string]: string }
+type ParameterType = 'Boolean' | 'Symbol' | 'Number' | 'Enum';
+type ParameterOption = string | { [key: string]: string };
 export interface ParameterDefinition {
-  name: string
-  id: string
-  description?: string
-  type: ParameterType
-  required?: boolean
-  default?: boolean | string | number
-  options?: ParameterOption[]
+  name: string;
+  id: string;
+  description?: string;
+  type: ParameterType;
+  required?: boolean;
+  default?: boolean | string | number;
+  options?: ParameterOption[];
   labels?: {
-    empty?: string
-    true?: string
-    false?: string
-  }
+    empty?: string;
+    true?: string;
+    false?: string;
+  };
 }
 
 export type FieldType =
@@ -32,20 +32,20 @@ export type FieldType =
   | { type: 'Link'; linkType: 'Entry' }
   | { type: 'Array'; items: { type: 'Symbol' } }
   | { type: 'Array'; items: { type: 'Link'; linkType: 'Entry' } }
-  | { type: 'Array'; items: { type: 'Link'; linkType: 'Asset' } }
+  | { type: 'Array'; items: { type: 'Link'; linkType: 'Asset' } };
 
 type EntryFieldLocation = {
-  location: 'entry-field'
-  fieldTypes: FieldType[]
-}
+  location: 'entry-field';
+  fieldTypes: FieldType[];
+};
 
 type PageLocation = {
-  location: 'page'
+  location: 'page';
   navigationItem?: {
-    name: string
-    path: string
-  }
-}
+    name: string;
+    path: string;
+  };
+};
 
 export type Location =
   | EntryFieldLocation
@@ -54,31 +54,30 @@ export type Location =
   | { location: 'entry-editor' }
   | { location: 'dialog' }
   | { location: 'app-config' }
-  | { location: 'entry-field-sidebar' }
-
+  | { location: 'entry-field-sidebar' };
 
 export interface Widget {
   // Minimal data needed to list widgets
-  namespace: WidgetNamespace
-  id: string
-  slug: string
-  iconUrl: string
-  name: string
+  namespace: WidgetNamespace;
+  id: string;
+  slug: string;
+  iconUrl: string;
+  name: string;
   // For rendering
   hosting: {
-    type: HostingType,
-    value: string // src or srcdoc, up to renderer to check "type"
-  },
+    type: HostingType;
+    value: string; // src or srcdoc, up to renderer to check "type"
+  };
   parameters: {
     definitions: {
-      instance: ParameterDefinition[] // empty arr for apps
-      installation: ParameterDefinition[] // empty arr for apps
-    },
+      instance: ParameterDefinition[]; // empty arr for apps
+      installation: ParameterDefinition[]; // empty arr for apps
+    };
     values: {
-      instance: Record<string, string | number | boolean> // empty object for apps
-      installation: any // if not present in the api default to `{}`
-    }
-  },
+      instance: Record<string, string | number | boolean>; // empty object for apps
+      installation: any; // if not present in the api default to `{}`
+    };
+  };
   // For assignment and misc
-  locations: Location[]
+  locations: Location[];
 }
