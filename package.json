@@ -243,6 +243,7 @@
     "trailduck": "^0.2.2",
     "ts-loader": "6.0.2",
     "typescript": "3.8.3",
+    "wait-on": "^5.0.1",
     "watchify": "3.11.1",
     "webpack": "^4.42.0",
     "webpack-bundle-analyzer": "^3.7.0",
@@ -278,7 +279,8 @@
     "prettier:check": "prettier --config .prettierrc --no-editorconfig --check ./src/javascripts ./tools ./bin ./micro-backends ./test",
     "postshrinkwrap": "if [ \"`uname`\" = \"Darwin\" ]; then sed -i '' 's/http:\\/\\//https:\\/\\//g' package-lock.json; else sed -i 's/http:\\/\\//https:\\/\\//g' package-lock.json; fi",
     "cruise": "depcruise --output-type err-long --validate ./tools/dependency-cruise/dependency-cruise.js src/javascripts",
-    "check-types": "tsc"
+    "check-types": "tsc",
+    "wait-for-app": "wait-on http-get://localhost:3001/app/app.js"
   },
   "lint-staged": {
     "*.js": [
