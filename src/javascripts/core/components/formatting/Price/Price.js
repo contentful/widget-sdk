@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 export function Price({ value, currency, unit, style, testId }) {
   const valueStr = parseInt(value, 10).toLocaleString('en-US');
-  const unitStr = unit && ` /${unit}`;
+  const unitStr = unit && `/${unit}`;
 
   const priceStr = [currency, valueStr, unitStr].join('');
 

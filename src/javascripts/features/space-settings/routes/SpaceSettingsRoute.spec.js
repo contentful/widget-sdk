@@ -81,7 +81,7 @@ describe('SpaceSettingsRoute', () => {
 
     expect(screen.queryByTestId('upgrade-space-plan-card')).toBeInTheDocument();
     expect(screen.getByTestId('space-settings-page.plan-price')).toHaveTextContent(
-      `${mediumPlan.name} - $${mediumPlan.price} /month`
+      `${mediumPlan.name} - $${mediumPlan.price}/month`
     );
   });
 
@@ -106,7 +106,7 @@ describe('SpaceSettingsRoute', () => {
     await build();
 
     expect(screen.getByTestId('space-settings-page.plan-price')).toHaveTextContent(
-      `${mediumPlan.name} - $${mediumPlan.price} /month`
+      `${mediumPlan.name} - $${mediumPlan.price}/month`
     );
     userEvent.click(screen.getByTestId('upgrade-space-button'));
 
@@ -122,7 +122,7 @@ describe('SpaceSettingsRoute', () => {
 
     expect(await screen.findByText(notificationMessage)).toBeInTheDocument();
     expect(screen.getByTestId('space-settings-page.plan-price')).toHaveTextContent(
-      `${largePlan.name} - $${largePlan.price} /month`
+      `${largePlan.name} - $${largePlan.price}/month`
     );
   });
 

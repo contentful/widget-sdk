@@ -117,11 +117,7 @@ export default function SpacePlanItem(props) {
               {plan.name}
             </Subheading>
 
-            {plan.price > 0 && (
-              <span data-test-id="space-plan-price">
-                <Price value={plan.price} unit="month" />
-              </span>
-            )}
+            {plan.price > 0 && <Price value={plan.price} unit="month" testId="space-plan-price" />}
 
             {plan.isFree && freeSpacesLimit && (
               <>

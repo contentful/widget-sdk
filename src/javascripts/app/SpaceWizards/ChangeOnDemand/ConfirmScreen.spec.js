@@ -53,7 +53,7 @@ describe('ConfirmScreen', () => {
           microSpace.price
         } and change the total price of the spaces in your organization to $${
           150 + microSpace.price
-        } /month.`
+        }/month.`
       );
     });
   });
@@ -72,7 +72,7 @@ describe('ConfirmScreen', () => {
           microSpace.price
         } and increase the total price of the spaces in your organization to $${
           150 + microSpace.price
-        } /month.`
+        }/month.`
       );
     });
 
@@ -91,7 +91,7 @@ describe('ConfirmScreen', () => {
           largeSpace.price
         } and will increase the total price of the spaces in your organization to $${
           150 + largeSpace.price - mockCurrentSpaceSubscriptionPlan.price
-        } /month.`
+        }/month.`
       );
     });
 
@@ -110,7 +110,7 @@ describe('ConfirmScreen', () => {
           microSpace.price
         } and will reduce the total price of the spaces in your organization to $${
           150 + microSpace.price - mockCurrentSpaceSubscriptionPlan.price
-        } /month.`
+        }/month.`
       );
     });
 
@@ -129,7 +129,7 @@ describe('ConfirmScreen', () => {
           freeSpace.price
         } and will reduce the total price of the spaces in your organization to $${
           150 + freeSpace.price - mockCurrentSpaceSubscriptionPlan.price
-        } /month.`
+        }/month.`
       );
     });
 

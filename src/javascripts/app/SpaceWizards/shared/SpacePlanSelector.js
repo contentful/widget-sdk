@@ -72,9 +72,10 @@ export default function SpacePlanSelector(props) {
               <b>Where are the Micro and Small spaces?</b>{' '}
               {isChanging ? (
                 <>
-                  We have made some changes to our space plans.
+                  We’ve changed our space plans.
                   <br />
-                  To learn about the new features you have access to{' '}
+                  Learn about the new, enhanced features now available{' '}
+                  <ExternalTextLink href={websiteUrl('pricing/')}>on our website</ExternalTextLink>.
                 </>
               ) : (
                 <>
@@ -83,12 +84,15 @@ export default function SpacePlanSelector(props) {
                     href={websiteUrl(
                       'support/?utm_source=webapp&utm_medium=account-menu&utm_campaign=in-app-help'
                     )}>
-                    submitting a support request.
-                  </ExternalTextLink>{' '}
-                  To learn about our space plan changes
+                    submitting a support request
+                  </ExternalTextLink>
+                  . To learn about our space plan changes{' '}
+                  <ExternalTextLink href={websiteUrl('pricing/')}>
+                    visit our website
+                  </ExternalTextLink>
+                  .
                 </>
               )}{' '}
-              <ExternalTextLink href={websiteUrl('pricing/')}>visit our website.</ExternalTextLink>
             </Paragraph>
           </>
         )}
