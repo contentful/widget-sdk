@@ -51,6 +51,7 @@ import { showDialog as showChangeSpaceModal, trackCTAClick } from 'services/Chan
 import { showDialog as showCreateSpaceModal } from 'services/CreateSpace';
 import * as TokenStore from 'services/TokenStore';
 import { isOwner } from 'services/OrganizationRoles';
+import { getBasePlan, isFreePlan } from 'account/pricing/PricingDataProvider';
 
 const styles = {
   filters: css({
@@ -155,10 +156,9 @@ class UsersList extends React.Component {
     const organization = await TokenStore.getOrganization(orgId);
     const spaceToUpgrade = spaces.length > 0 ? spaces[0] : null;
 
-    // If the organization is billable, they can add more than just the free users so we don't need to tell them to upgrade
-
+    const basePlan = await getBasePlan(this.endpoint);
     const shouldDisplayCommunityBanner =
-      getVariation(PRICING_2020_RELEASED, { orgId }) && !organization.isBillable;
+      getVariation(PRICING_2020_RELEASED, { orgId }) && isFreePlan(basePlan);
 
     const newState = {
       usersList: resolved,
