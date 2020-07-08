@@ -3,12 +3,14 @@ import PropTypes from 'prop-types';
 import NavBar from './NavBar/NavBar';
 import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
-import { ACCESS_TOOLS } from 'featureFlags';
+import { ACCESS_TOOLS, PRICING_2020_WARNING } from 'featureFlags';
 import { getOrgFeature } from '../data/CMA/ProductCatalog';
 import SidepanelContainer from './Sidepanel/SidepanelContainer';
 import createLegacyFeatureService from 'services/LegacyFeatureService';
 import { getVariation } from 'LaunchDarkly';
 import { AdvancedExtensibilityFeature } from 'features/extensions-management';
+import { createOrganizationEndpoint } from 'data/EndpointFactory';
+import { getBasePlan, isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 
 function getItems(params, { orgId }) {
   const shouldDisplayAccessTools = params.accessToolsFeatureEnabled && params.isOwnerOrAdmin;
@@ -92,6 +94,7 @@ function getItems(params, { orgId }) {
       srefOptions: {
         inherit: false,
       },
+      tagLabel: params.showUsageNewLabel ? 'new' : null,
       navIcon: 'Usage',
       dataViewType: 'platform-usage',
     },
@@ -203,6 +206,8 @@ export default class OrganizationNavigationBar extends React.Component {
   async getConfiguration() {
     const { orgId } = this.props.stateParams;
     const FeatureService = createLegacyFeatureService(orgId, 'organization');
+    const endpoint = createOrganizationEndpoint(orgId);
+
     const [
       ssoFeatureEnabled,
       scimFeatureEnabled,
@@ -210,6 +215,8 @@ export default class OrganizationNavigationBar extends React.Component {
       organization,
       hasOffsiteBackup,
       hasAdvancedExtensibility,
+      newPricingFeatureDisplayed,
+      basePlan,
     ] = await Promise.all([
       getOrgFeature(orgId, 'self_configure_sso'),
       getOrgFeature(orgId, 'scim'),
@@ -219,6 +226,10 @@ export default class OrganizationNavigationBar extends React.Component {
       TokenStore.getOrganization(orgId),
       FeatureService.get('offsiteBackup'),
       AdvancedExtensibilityFeature.isEnabled(),
+      getVariation(PRICING_2020_WARNING, {
+        organizationId: orgId,
+      }),
+      getBasePlan(endpoint),
     ]);
 
     const params = {
@@ -231,6 +242,7 @@ export default class OrganizationNavigationBar extends React.Component {
       hasOffsiteBackup,
       hasBillingTab: organization.isBillable && isOwner(organization),
       hasSettingsTab: isOwner(organization),
+      showUsageNewLabel: newPricingFeatureDisplayed && !isEnterprisePlan(basePlan),
     };
 
     this.setState({ items: getItems(params, { orgId }) });

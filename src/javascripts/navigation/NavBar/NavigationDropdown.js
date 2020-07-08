@@ -101,10 +101,6 @@ const styles = {
     height: '100%',
     alignItems: 'center',
     color: tokens.colorWhite,
-
-    div: css({
-      marginRight: '10px',
-    }),
   }),
   tag: css({
     top: tokens.spacingXs,

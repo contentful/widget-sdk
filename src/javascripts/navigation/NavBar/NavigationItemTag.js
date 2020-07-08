@@ -8,7 +8,7 @@ const styles = {
   tag: css({
     position: 'absolute',
     top: tokens.spacingXs,
-    right: `-${tokens.spacing2Xs}`,
+    right: `${tokens.spacing2Xs}`,
   }),
 };
 
