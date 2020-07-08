@@ -228,7 +228,8 @@ jobs:
       COMMENT_LAMBDA_URL: https://tooling-lambdas.ctfl.now.sh/user_interface/githubComments
       SNIFFER_UPLOAD_URL: https://user-interface-sniffer.herokuapp.com
     steps:
-      - setup_remote_docker
+      - setup_remote_docker:
+          docker_layer_caching: true
       - checkout
       - estivador/install
       - run:
