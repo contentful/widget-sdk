@@ -98,6 +98,7 @@ function UserTeamRow({ membership, onRemove }) {
       <TableCell>{moment(membership.sys.createdAt).format('MMMM DD, YYYY')}</TableCell>
       <TableCell align="right">
         <CardActions
+          isAutoalignmentEnabled={true}
           iconButtonProps={{ buttonType: 'primary', testId: 'user-team-list.menu.trigger' }}
           data-test-id="user-team-list.menu">
           <DropdownList>

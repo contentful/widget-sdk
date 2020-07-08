@@ -116,6 +116,7 @@ function SpacePlanRow({ plan, onChangeSpace, onDeleteSpace, hasUpgraded, enterpr
       <TableCell testId="subscription-page.spaces-list.created-on">{createdAt}</TableCell>
       <TableCell testId="subscription-page.spaces-list.option-dots" className={styles.moreButton}>
         <CardActions
+          isAutoalignmentEnabled={true}
           iconButtonProps={{
             testId: 'subscription-page.spaces-list.dropdown-menu.trigger',
           }}

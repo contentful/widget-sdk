@@ -116,6 +116,7 @@ const OrganizationRow = ({ organization, onLeaveSuccess }) => {
       <TableCell testId="organization-row.user-role">{userRole}</TableCell>
       <TableCell testId="organization-row.option-dots" className={styles.dotsRow}>
         <CardActions
+          isAutoalignmentEnabled={true}
           iconButtonProps={{
             buttonType: 'primary',
             testId: 'organization-row.dropdown-menu.trigger',

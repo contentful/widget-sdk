@@ -270,7 +270,9 @@ export function AppListing({ definitions, canManageApps }) {
                     <div className={styles.menuCell}>
                       <StateLink path="^.definitions" params={{ definitionId: def.sys.id }}>
                         {({ onClick }) => (
-                          <CardActions iconButtonProps={{ buttonType: 'primary' }}>
+                          <CardActions
+                            iconButtonProps={{ buttonType: 'primary' }}
+                            isAutoalignmentEnabled={true}>
                             <DropdownList>
                               <DropdownListItem onClick={onClick}>Edit</DropdownListItem>
                               <DropdownListItem

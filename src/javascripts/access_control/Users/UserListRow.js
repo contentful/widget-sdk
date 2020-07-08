@@ -86,6 +86,7 @@ const UserListRow = ({
       </div>
       <Tooltip targetWrapperClassName={styles.userMenu} place="left" content={toolTipContent}>
         <CardActions
+          isAutoalignmentEnabled={true}
           iconButtonProps={{ buttonType: 'primary', testId: 'user-list.actions' }}
           data-test-id="user-list.menu"
           isDisabled={!canModifyUsers || numberOfTeamMemberships[id] > 0}>
