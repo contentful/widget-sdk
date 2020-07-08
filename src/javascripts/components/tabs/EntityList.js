@@ -106,7 +106,7 @@ const styles = {
   checkboxCell: css({
     width: tokens.spacingXl,
     zIndex: tokens.zIndexDefault,
-    verticalAlign: 'middle',
+    verticalAlign: 'top',
     '& > div': {
       marginRight: tokens.spacingS,
     },
