@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SpacePlans from './SpacePlans';
 
@@ -110,48 +110,36 @@ describe('Space Plan', () => {
       expect(screen.queryByTestId('subscription-page.support-request-card')).toBeNull();
     });
 
-    it('should render a support card when showMicroSmallSupportCard is true', () => {
-      build({ showMicroSmallSupportCard: true });
+    it('should render a help icon and tooltip when anySpacesInaccessible is true', () => {
+      build({ anySpacesInaccessible: true });
 
-      expect(screen.getByTestId('subscription-page.support-request-card')).toBeVisible();
+      const helpIcon = screen.getByTestId('inaccessible-help-icon');
 
-      expect(
-        screen.getByTestId('subscription-page.support-request-link').getAttribute('href')
-      ).toContain(
-        'support/?utm_source=webapp&utm_medium=account-menu&utm_campaign=in-app-help&purchase-micro-or-small-space=123'
-      );
-      expect(
-        screen.getByTestId('subscription-page.pricing-information-link').getAttribute('href')
-      ).toContain('pricing/');
+      expect(helpIcon).toBeVisible();
+      expect(screen.queryByTestId('inaccessible-help-tooltip')).toBeNull();
+
+      fireEvent.mouseEnter(helpIcon);
+
+      expect(screen.getByTestId('inaccessible-help-tooltip')).toBeVisible();
     });
   });
 });
 
-function build(input = {}) {
-  const options = {
-    initialLoad: false,
-    spacePlans: mockPlans,
-    upgradedSpaceId: 'string',
-    onCreateSpace: mockOnCreateSpace,
-    onChangeSpace: mockOnChangeSpace,
-    onDeleteSpace: mockOnDeleteSpace,
-    enterprisePlan: false,
-    organizationId: '123',
-    showMicroSmallSupportCard: false,
-    ...input,
-  };
-
-  render(
-    <SpacePlans
-      initialLoad={options.initialLoad}
-      spacePlans={options.spacePlans}
-      upgradedSpaceId={options.upgradedSpaceId}
-      onCreateSpace={options.onCreateSpace}
-      onChangeSpace={options.onChangeSpace}
-      onDeleteSpace={options.onDeleteSpace}
-      enterprisePlan={options.enterprisePlan}
-      organizationId={options.organizationId}
-      showMicroSmallSupportCard={options.showMicroSmallSupportCard}
-    />
+function build(custom) {
+  const props = Object.assign(
+    {
+      initialLoad: false,
+      spacePlans: mockPlans,
+      upgradedSpaceId: 'string',
+      onCreateSpace: mockOnCreateSpace,
+      onChangeSpace: mockOnChangeSpace,
+      onDeleteSpace: mockOnDeleteSpace,
+      enterprisePlan: false,
+      organizationId: '123',
+      anySpacesInaccessible: false,
+    },
+    custom
   );
+
+  render(<SpacePlans {...props} />);
 }

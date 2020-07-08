@@ -79,36 +79,6 @@ describe('SubscriptionPage', () => {
     );
   });
 
-  it('should show copy about inaccessible spaces if the user has inaccessible spaces', () => {
-    const inaccessibleSpace = Fake.Plan({
-      space: Fake.Space({ isAccessible: false }),
-    });
-
-    build({
-      spacePlans: [...mockSpacePlans, inaccessibleSpace],
-    });
-
-    expect(screen.getByTestId('subscription-page.inaccessible-space-copy')).toBeVisible();
-  });
-
-  it('should link to users page when link to users page button is clicked', () => {
-    const inaccessibleSpace = Fake.Plan({
-      space: Fake.Space({ isAccessible: false }),
-    });
-
-    build({
-      spacePlans: [...mockSpacePlans, inaccessibleSpace],
-    });
-
-    userEvent.click(screen.getByTestId('subscription-page.link-to-users-list'));
-    expect(go).toBeCalledWith({
-      path: 'account.organizations.users.list',
-      params: {
-        orgId: mockOrganization.sys.id,
-      },
-    });
-  });
-
   it('should show the monthly cost for on demand users', () => {
     build({ organization: Fake.Organization({ isBillable: true }), grandTotal: 3000 });
 
