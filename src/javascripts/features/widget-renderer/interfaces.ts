@@ -74,7 +74,6 @@ export interface Widget {
       installation: ParameterDefinition[]; // empty arr for apps
     };
     values: {
-      instance: Record<string, string | number | boolean>; // empty object for apps
       installation: any; // if not present in the api default to `{}`
     };
   };
