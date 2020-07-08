@@ -11,6 +11,10 @@ import { get, uniqBy } from 'lodash';
 
 type ClientAPI = ReturnType<typeof createPlainClient>;
 
+export const isWidget = (w: Widget | Error | null): w is Widget => {
+  return typeof w !== undefined && (w as Widget).hosting !== undefined;
+};
+
 interface Extension {
   sys: {
     type: 'Extension';
@@ -108,7 +112,7 @@ export class WidgetLoader {
     });
   }
 
-  private load: BatchLoadFn<WidgetRef, CacheValue> = async keys => {
+  private load: BatchLoadFn<WidgetRef, CacheValue> = async (keys) => {
     if (keys.length < 1) {
       return [];
     }
@@ -121,10 +125,10 @@ export class WidgetLoader {
     const extensionsRes =
       extensionIds.length > 0
         ? this.client.raw.get(`${this.baseUrl}/extensions`, {
-            params: {
-              'sys.id[in]': extensionIds.join(','),
-            },
-          })
+          params: {
+            'sys.id[in]': extensionIds.join(','),
+          },
+        })
         : Promise.resolve(emptyExtensionResponse);
 
     const emptyAppsResponse = { items: [], includes: { AppDefinition: [] } };
@@ -150,9 +154,9 @@ export class WidgetLoader {
     return keys.map(({ widgetId, widgetNamespace }) => {
       if (widgetNamespace === NAMESPACE_APP) {
         const installation = installedApps.find(
-          app => get(app, ['appDefinition', 'sys', 'id']) === widgetId
+          (app) => get(app, ['appDefinition', 'sys', 'id']) === widgetId
         );
-        const definition = usedAppDefinitions.find(def => get(def, ['sys', 'id']) === widgetId);
+        const definition = usedAppDefinitions.find((def) => get(def, ['sys', 'id']) === widgetId);
 
         if (installation && definition && definition.src) {
           return this.buildAppWidget(installation, definition);
@@ -162,7 +166,7 @@ export class WidgetLoader {
       }
 
       if (widgetNamespace === NAMESPACE_EXTENSION) {
-        const ext = extensions.find(ext => get(ext, ['sys', 'id']) === widgetId);
+        const ext = extensions.find((ext) => get(ext, ['sys', 'id']) === widgetId);
 
         return ext ? this.buildExtensionWidget(ext) : null;
       }
@@ -243,8 +247,8 @@ export class WidgetLoader {
     const isNonEmptyString = (s: any) => typeof s === 'string' && s.length > 0;
 
     return controls
-      .filter(control => isNonEmptyString(control.widgetId))
-      .filter(control => control.widgetNamespace !== NAMESPACE_BUILTIN)
+      .filter((control) => isNonEmptyString(control.widgetId))
+      .filter((control) => control.widgetNamespace !== NAMESPACE_BUILTIN)
       .reduce((acc, control) => {
         if (
           control.widgetNamespace === NAMESPACE_APP ||
@@ -269,8 +273,8 @@ export class WidgetLoader {
       ...(ei.editors || []),
       ...this.getControlWidgetRefs(ei.controls),
     ]
-      .filter(ref => [NAMESPACE_APP, NAMESPACE_EXTENSION].includes(ref.widgetNamespace))
-      .filter(ref => ref.widgetId)
+      .filter((ref) => [NAMESPACE_APP, NAMESPACE_EXTENSION].includes(ref.widgetNamespace))
+      .filter((ref) => ref.widgetId)
       .map(({ widgetNamespace, widgetId }) => ({ widgetNamespace, widgetId }));
   }
 
@@ -293,15 +297,7 @@ export class WidgetLoader {
   public async getMultiple(keys: WidgetRef[]): Promise<Widget[]> {
     const widgets = await this.loader.loadMany(uniqBy(keys, cacheKeyFn));
 
-    return widgets.filter(w => {
-      if (w instanceof Error) {
-        return false;
-      }
-      if (w === null) {
-        return false;
-      }
-      return true;
-    }) as Widget[];
+    return widgets.filter(isWidget);
   }
 
   public evict(widgetNamespace: WidgetNamespace, widgetId: string): void {

@@ -56,6 +56,10 @@ export type Location =
   | { location: 'app-config' }
   | { location: 'entry-field-sidebar' };
 
+export const isWidget = (w: Widget | Error | null): w is Widget => {
+  return typeof w !== undefined && (w as Widget).hosting !== undefined;
+};
+
 export interface Widget {
   // Minimal data needed to list widgets
   namespace: WidgetNamespace;
