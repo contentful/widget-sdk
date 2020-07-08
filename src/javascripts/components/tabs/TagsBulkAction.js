@@ -3,14 +3,13 @@ import { Button, Modal, Workbench } from '@contentful/forma-36-react-components'
 import React, { useCallback, useEffect } from 'react';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import Keys from 'app/ContentList/Search/Keys';
 import {
   AddOrRemoveTags,
   BulkTaggingProvider,
   SlideIn,
+  useBulkSaveTags,
   useBulkTaggingProvider,
   useComputeTags,
-  useBulkSaveTags,
 } from 'features/content-tags';
 import PropTypes from 'prop-types';
 import { usePrevious } from 'core/hooks';
@@ -103,9 +102,11 @@ const TagsBulkContent = ({ isShown, onClose, selectedEntities, updateEntities })
   const { setEntities, progressComponent } = useBulkSaveTags(onClose, updateEntities);
   const onKeyDown = useCallback(
     (event) => {
-      if (Keys.control(event) && event.metaKey && event.shiftKey) {
+      const isModifierKey = event.metaKey || event.ctrlKey;
+      const isZKey = event.keyCode === 90;
+      if (isZKey && isModifierKey && event.shiftKey) {
         forward();
-      } else if (Keys.control(event) && event.metaKey) {
+      } else if (isZKey && isModifierKey) {
         back();
       }
     },
