@@ -196,10 +196,10 @@ export class WidgetLoader {
     const extensionsRes =
       extensionIds.length > 0
         ? this.client.raw.get(`${this.baseUrl}/extensions`, {
-          params: {
-            'sys.id[in]': extensionIds.join(','),
-          },
-        })
+            params: {
+              'sys.id[in]': extensionIds.join(','),
+            },
+          })
         : Promise.resolve(emptyExtensionResponse);
 
     const emptyAppsResponse = { items: [], includes: { AppDefinition: [] } };
