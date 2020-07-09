@@ -1,21 +1,18 @@
 /* global Headers */
 
 import makeRequest from './Request';
-import wrapWithRetry from 'data/Request/Retry';
 import wrapWithAuth from 'data/Request/Auth';
 
 const mockAuth = {};
-const mockWithRetry = (fn) => (...args) => fn(...args);
 const mockWithAuth = (_, fn) => (...args) => fn(...args);
 
-jest.mock('data/Request/Retry', () => jest.fn());
+jest.mock('data/Request/Retry', () => jest.fn((fn) => (...args) => fn(...args)));
 jest.mock('data/Request/Auth', () => jest.fn());
 jest.mock('data/Request/Utils', () => ({
   getEndpoint: jest.fn(),
   getCurrentState: jest.fn(),
 }));
 
-wrapWithRetry.mockImplementation(mockWithRetry);
 wrapWithAuth.mockImplementation(mockWithAuth);
 
 describe('Request', () => {
@@ -39,7 +36,6 @@ describe('Request', () => {
     await request({ url: 'http://foo.com' });
 
     expect(wrapWithAuth).toHaveBeenCalledWith(mockAuth, expect.any(Function));
-    expect(wrapWithRetry).toHaveBeenCalledWith(expect.any(Function));
   });
 
   it('builds a query string', async () => {
