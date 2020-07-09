@@ -102,6 +102,9 @@ const styles = {
     alignItems: 'center',
     color: tokens.colorWhite,
   }),
+  navBarNavigationIcon: css({
+    marginRight: tokens.spacingM,
+  }),
   tag: css({
     top: tokens.spacingXs,
     marginLeft: tokens.spacingS,
@@ -155,7 +158,12 @@ export default function NavigationDropdown({ item, onOpen: onDropdownOpen = noop
             }}>
             <span className={styles.navBarListLabel}>
               {item.navIcon ? (
-                <NavigationIcon icon={item.navIcon} size="medium" color="white" />
+                <NavigationIcon
+                  icon={item.navIcon}
+                  size="medium"
+                  color="white"
+                  className={styles.navBarNavigationIcon}
+                />
               ) : (
                 <Icon name={item.icon} />
               )}
