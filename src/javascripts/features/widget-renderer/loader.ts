@@ -1,5 +1,5 @@
 import { WidgetNamespace, Widget, ParameterDefinition, FieldType, Location } from './interfaces';
-import { MarketplaceDataProvider } from './marketplace-data-provider';
+import MarketplaceDataProvider from './marketplace-data-provider';
 import { createPlainClient } from 'contentful-management';
 import DataLoader, { BatchLoadFn } from 'dataloader';
 import { NAMESPACE_EXTENSION, NAMESPACE_APP, NAMESPACE_BUILTIN } from 'widgets/WidgetNamespaces';

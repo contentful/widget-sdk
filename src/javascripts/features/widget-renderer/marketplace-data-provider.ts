@@ -1,7 +1,7 @@
 import { WidgetNamespace } from './interfaces';
 import { NAMESPACE_APP, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
 
-export class MarketplaceDataProvider {
+export default class MarketplaceDataProvider {
   private cache: any = null;
 
   public async prefetch(): Promise<void> {
