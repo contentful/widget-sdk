@@ -288,10 +288,15 @@ export function create(docConnection, initialEntity, contentType, user, entityRe
     })
     .skipDuplicates();
 
-  const loaded$ = K.holdWhen(
-    pending$.map((x) => !x),
-    (x) => x
-  );
+  let loadedOnce = false;
+  const loaded$ = pending$
+    .map((v) => {
+      if (!v && !loadedOnce) {
+        loadedOnce = true;
+      }
+      return loadedOnce;
+    })
+    .skipDuplicates();
 
   const offDoc = K.onValue(doc$, setDoc);
   cleanupTasks.push(offDoc);

@@ -1,6 +1,6 @@
 import { get, set, cloneDeep, noop, unset, isEqual, intersectionBy, once } from 'lodash';
-import { Stream, Property } from 'kefir';
 import * as K from 'core/utils/kefir';
+import type { Stream, Property, PropertyBus, StreamBus } from 'core/utils/kefir';
 import * as ResourceStateManager from 'data/document/ResourceStateManager';
 import * as Permissions from 'access_control/EntityPermissions';
 import { valuePropertyAt } from './documentHelpers';
@@ -8,7 +8,7 @@ import * as Normalizer from 'data/document/Normalize';
 import TheLocaleStore from 'services/localeStore';
 import * as PathUtils from 'utils/Path';
 import { Error as DocError } from 'data/document/Error';
-import { Entity, EntitySys, PropertyBus, StreamBus } from './types';
+import { Entity, EntitySys } from './types';
 import * as StringField from 'data/document/StringFieldSetter';
 import { trackEditConflict, ConflictType } from './analytics';
 import { createNoopPresenceHub } from './PresenceHub';
@@ -63,7 +63,7 @@ export function create(
   const [isUpdatingBus, isUpdating$, afterUpdate$] = stateBus(false, ASSET_UPDATED);
   cleanupTasks.push(isUpdatingBus.end);
 
-  const errorBus: PropertyBus<Error | null> = K.createPropertyBus(null);
+  const errorBus: PropertyBus<Error | null> = K.createPropertyBus<Error | null>(null);
   cleanupTasks.push(errorBus.end);
   const error$ = errorBus.property.skipDuplicates((a, b) => a?.constructor === b?.constructor);
   const onNetworkError$: Stream<symbol, any> = errorBus.property
@@ -158,7 +158,7 @@ export function create(
     sys.publishedVersion ? sys.version > sys.publishedVersion + 1 : true
   );
 
-  const data$ = K.combinePropertiesObject({
+  const data$ = K.combinePropertiesObject<Entity>({
     sys: sys$,
     fields: valuePropertyAt({ changes: changesBus.stream, getValueAt }, ['fields']),
     metadata: valuePropertyAt({ changes: changesBus.stream, getValueAt }, ['metadata']),

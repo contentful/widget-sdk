@@ -1,9 +1,9 @@
 import { getState, State, EntityState } from 'data/CMA/EntityState';
-import { Entity, EntitySys, PropertyBus, StreamBus } from 'app/entity_editor/Document/types';
+import { Entity, EntitySys } from 'app/entity_editor/Document/types';
 import { EntityAction } from '../CMA/EntityActions';
 import { EntityRepo } from '../CMA/EntityRepo';
 import * as K from 'core/utils/kefir';
-import { Property, Stream } from 'kefir';
+import type { PropertyBus, Property, Stream } from 'core/utils/kefir';
 
 type StateChange = { from: EntityState; to: EntityState };
 
@@ -73,11 +73,11 @@ export function create(config: {
     currentState = state;
   });
 
-  const stateChangeBus: StreamBus<StateChange> = K.createBus();
+  const stateChangeBus = K.createBus<StateChange>();
   const stateChange$ = stateChangeBus.stream;
   sys$.onEnd(stateChangeBus.end);
 
-  const inProgressBus: PropertyBus<boolean> = K.createPropertyBus(false);
+  const inProgressBus = K.createPropertyBus<boolean>(false);
   const inProgress$ = inProgressBus.property.skipDuplicates();
 
   return { apply, stateChange$, state$, inProgress$, inProgressBus };
