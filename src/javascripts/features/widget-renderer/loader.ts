@@ -1,18 +1,17 @@
 import { WidgetNamespace, Widget, ParameterDefinition, FieldType, Location } from './interfaces';
-import MarketplaceDataProvider from './marketplace-data-provider';
+import { MarketplaceDataProvider } from './marketplace-data-provider';
 import { createPlainClient } from 'contentful-management';
 import DataLoader, { BatchLoadFn } from 'dataloader';
 import { NAMESPACE_EXTENSION, NAMESPACE_APP, NAMESPACE_BUILTIN } from 'widgets/WidgetNamespaces';
-import { get, uniqBy } from 'lodash';
+import { get, uniqBy, isNil } from 'lodash';
 
 // TODO
-// * Tests
 // * Actually use it, update downstream consumers
 
 export type ClientAPI = ReturnType<typeof createPlainClient>;
 
 const isWidget = (w: Widget | Error | null): w is Widget => {
-  return typeof w !== undefined && (w as Widget).hosting !== undefined;
+  return !isNil(w) && (w as Widget).hosting !== undefined;
 };
 
 export interface Extension {
@@ -196,10 +195,10 @@ export class WidgetLoader {
     const extensionsRes =
       extensionIds.length > 0
         ? this.client.raw.get(`${this.baseUrl}/extensions`, {
-            params: {
-              'sys.id[in]': extensionIds.join(','),
-            },
-          })
+          params: {
+            'sys.id[in]': extensionIds.join(','),
+          },
+        })
         : Promise.resolve(emptyExtensionResponse);
 
     const emptyAppsResponse = { items: [], includes: { AppDefinition: [] } };
