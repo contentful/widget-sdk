@@ -18,8 +18,7 @@ import * as WidgetLocations from 'widgets/WidgetLocations';
 import { toInternalFieldType, toApiFieldType } from 'widgets/FieldTypes';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import NavigationIcon from 'ui/Components/NavigationIcon';
-import UIIcon from 'ui/Components/Icon';
+import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 import { MARKETPLACE_ORG_ID } from '../config';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
@@ -174,6 +173,9 @@ const styles = {
       marginRight: tokens.spacingXs,
     }),
     '& span': css({}),
+  }),
+  navItemIcon: css({
+    marginRight: tokens.spacingS,
   }),
   tag: css({
     marginBottom: tokens.spacingXs,
@@ -475,11 +477,13 @@ export function AppEditor({ definition, onChange }) {
                               Preview
                             </Tag>
                             <div className={styles.nav}>
-                              <NavigationIcon icon="apps" size="medium" mono color="white" />{' '}
+                              <NavigationIcon icon="Apps" size="medium" color="white" />{' '}
                               <span>Apps</span> <Icon icon="ArrowDown" color="white" />
                             </div>
                             <Card className={styles.navItem}>
-                              <UIIcon name="page-apps" scale="0.65" />{' '}
+                              <span className={styles.navItemIcon}>
+                                <NavigationIcon icon="Apps" size="small" />{' '}
+                              </span>
                               <span>{getNavigationItemValue('name') || definition.name}</span>
                             </Card>
                           </div>

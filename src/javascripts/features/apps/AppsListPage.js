@@ -19,7 +19,7 @@ import {
   Workbench,
 } from '@contentful/forma-36-react-components';
 
-import NavigationIcon from 'ui/Components/NavigationIcon';
+import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { ModalLauncher } from 'core/components/ModalLauncher';
@@ -120,7 +120,7 @@ const AppsListShell = (props) => (
   <Workbench className={styles.workbench}>
     <Workbench.Header
       title={<Header />}
-      icon={<NavigationIcon icon="apps" color="green" size="large" />}
+      icon={<NavigationIcon icon="Apps" size="large" />}
       actions={<FeedbackButton target="extensibility" about="Apps" label="Give your feedback" />}
     />
     <Workbench.Content type="text">

@@ -3,11 +3,11 @@
 exports[`AppListing should render the app listing when definitions are present 1`] = `
 Object {
   "asFragment": [Function],
-  "baseElement": .emotion-8 {
+  "baseElement": .emotion-6 {
   vertical-align: middle;
 }
 
-.emotion-5 button {
+.emotion-3 button {
   height: 20px;
   border: none;
   background-color: transparent;
@@ -19,7 +19,7 @@ Object {
   transition: all 0.2s cubic-bezier(0.13,0.62,0.11,0.99);
 }
 
-.emotion-5 button:hover {
+.emotion-3 button:hover {
   background-color: transparent;
   border: none;
   opacity: 1;
@@ -28,13 +28,13 @@ Object {
   transform: translateX(0);
 }
 
-.emotion-23 {
+.emotion-21 {
   color: #b4c3ca;
   border-bottom: 1px solid #d3dce0;
   font-weight: 400;
 }
 
-.emotion-3 {
+.emotion-1 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -45,12 +45,24 @@ Object {
   align-items: center;
 }
 
-.emotion-2 {
+.emotion-0 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
   margin-right: 0.75rem;
   vertical-align: sub;
 }
 
-.emotion-7 {
+.emotion-5 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -62,7 +74,7 @@ Object {
   height: 20px;
 }
 
-.emotion-7 div {
+.emotion-5 div {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -73,31 +85,15 @@ Object {
   justify-content: center;
 }
 
-.emotion-4 {
+.emotion-2 {
   font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
 }
 
-.emotion-4:hover ~ .emotion-5 button {
+.emotion-2:hover ~ .emotion-3 button {
   opacity: 1;
   -webkit-transform: translateX(0);
   -ms-transform: translateX(0);
   transform: translateX(0);
-}
-
-.emotion-0 {
-  fill: #16875D;
-}
-
-.emotion-1 {
-  width: 100%;
-  height: 100%;
-  display: block;
-  width: 32px;
-  height: 32px;
-  max-width: 32px;
-  max-height: 32px;
-  min-width: 32px;
-  min-height: 32px;
 }
 
 <body>
@@ -114,13 +110,19 @@ Object {
             class="Workbench__Workbench__header-icon___1kJlL"
           >
             <div
-              class="icon-component emotion-1"
-              data-icon-name="headline-apps"
-              data-test-id="product-icon"
+              class="NavigationIcon__NavigationIconContainer___337Bk NavigationIcon__NavigationIconContainer--large___3A1HH"
+              data-test-id="cf-ui-navigation-icon"
             >
-              <apps.svg
-                class="emotion-0"
-              />
+              <svg
+                class="NavigationIcon__NavigationIcon___2YLM_ NavigationIcon__NavigationIcon--positive___2GZmg"
+                fill="none"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M18.364 11.09h.909a2.727 2.727 0 1 1 0 5.456h-.91v3.181A2.278 2.278 0 0 1 16.092 22h-3.91v-1.818a2.001 2.001 0 0 0-4 0V22H4.274A2.278 2.278 0 0 1 2 19.727v-3.909h1.818a2.001 2.001 0 0 0 0-4H2.01V7.91a2.27 2.27 0 0 1 2.264-2.273h3.182v-.909a2.727 2.727 0 1 1 5.454 0v.91h3.182a2.278 2.278 0 0 1 2.273 2.272v3.182zm-2.273 10c.749 0 1.363-.614 1.363-1.363v-4.09h1.819a1.818 1.818 0 0 0 0-3.637h-1.819V7.91c0-.75-.614-1.365-1.363-1.365H12V4.727a1.818 1.818 0 0 0-3.636 0v1.818H4.273c-.747 0-1.355.612-1.355 1.364v3h.9a2.91 2.91 0 0 1 2.91 2.91 2.91 2.91 0 0 1-2.91 2.908H2.91v3c0 .75.615 1.364 1.364 1.364h3v-.91a2.91 2.91 0 0 1 2.909-2.908 2.91 2.91 0 0 1 2.909 2.909v.909h3z"
+                />
+              </svg>
             </div>
           </div>
           <div
@@ -217,16 +219,29 @@ Object {
                       style="top: 0px;"
                     >
                       <div
-                        class="emotion-3"
+                        class="emotion-1"
                       >
                         <a
                           href="^.definitions?definitionId=3AjEyjWz5tRouW4cVOF9la"
                         >
                           <span
-                            class="icon-component emotion-2"
-                            data-icon-name="page-apps"
+                            class="emotion-0"
                           >
-                            <page-apps.svg />
+                            <div
+                              class="NavigationIcon__NavigationIconContainer___337Bk NavigationIcon__NavigationIconContainer--small___3DACp"
+                              data-test-id="cf-ui-navigation-icon"
+                            >
+                              <svg
+                                class="NavigationIcon__NavigationIcon___2YLM_ NavigationIcon__NavigationIcon--positive___2GZmg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M18.364 11.09h.909a2.727 2.727 0 1 1 0 5.456h-.91v3.181A2.278 2.278 0 0 1 16.092 22h-3.91v-1.818a2.001 2.001 0 0 0-4 0V22H4.274A2.278 2.278 0 0 1 2 19.727v-3.909h1.818a2.001 2.001 0 0 0 0-4H2.01V7.91a2.27 2.27 0 0 1 2.264-2.273h3.182v-.909a2.727 2.727 0 1 1 5.454 0v.91h3.182a2.278 2.278 0 0 1 2.273 2.272v3.182zm-2.273 10c.749 0 1.363-.614 1.363-1.363v-4.09h1.819a1.818 1.818 0 0 0 0-3.637h-1.819V7.91c0-.75-.614-1.365-1.363-1.365H12V4.727a1.818 1.818 0 0 0-3.636 0v1.818H4.273c-.747 0-1.355.612-1.355 1.364v3h.9a2.91 2.91 0 0 1 2.91 2.91 2.91 2.91 0 0 1-2.91 2.908H2.91v3c0 .75.615 1.364 1.364 1.364h3v-.91a2.91 2.91 0 0 1 2.909-2.908 2.91 2.91 0 0 1 2.909 2.909v.909h3z"
+                                />
+                              </svg>
+                            </div>
                           </span>
                            
                           <b>
@@ -242,16 +257,16 @@ Object {
                       style="top: 0px;"
                     >
                       <div
-                        class="emotion-3"
+                        class="emotion-1"
                       >
                         <span
-                          class="emotion-4"
+                          class="emotion-2"
                         >
                           3AjEyjWz5tRouW4cVOF9la
                            
                         </span>
                         <div
-                          class="CopyButton__CopyButton___OoA5D emotion-5"
+                          class="CopyButton__CopyButton___OoA5D emotion-3"
                           data-test-id="cf-ui-copy-button"
                           id="copyButton"
                         >
@@ -297,12 +312,12 @@ Object {
                     </td>
                     <td
                       align="right"
-                      class="TableCell__TableCell___Wou8a emotion-8"
+                      class="TableCell__TableCell___Wou8a emotion-6"
                       data-test-id="cf-ui-table-cell"
                       style="top: 0px;"
                     >
                       <div
-                        class="emotion-7"
+                        class="emotion-5"
                       >
                         <div
                           class="Dropdown__Dropdown___nAsJ-"
@@ -358,16 +373,29 @@ Object {
                       style="top: 0px;"
                     >
                       <div
-                        class="emotion-3"
+                        class="emotion-1"
                       >
                         <a
                           href="^.definitions?definitionId=2WoMzSs2fRJx79JeVvqdGR"
                         >
                           <span
-                            class="icon-component emotion-2"
-                            data-icon-name="page-apps"
+                            class="emotion-0"
                           >
-                            <page-apps.svg />
+                            <div
+                              class="NavigationIcon__NavigationIconContainer___337Bk NavigationIcon__NavigationIconContainer--small___3DACp"
+                              data-test-id="cf-ui-navigation-icon"
+                            >
+                              <svg
+                                class="NavigationIcon__NavigationIcon___2YLM_ NavigationIcon__NavigationIcon--positive___2GZmg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M18.364 11.09h.909a2.727 2.727 0 1 1 0 5.456h-.91v3.181A2.278 2.278 0 0 1 16.092 22h-3.91v-1.818a2.001 2.001 0 0 0-4 0V22H4.274A2.278 2.278 0 0 1 2 19.727v-3.909h1.818a2.001 2.001 0 0 0 0-4H2.01V7.91a2.27 2.27 0 0 1 2.264-2.273h3.182v-.909a2.727 2.727 0 1 1 5.454 0v.91h3.182a2.278 2.278 0 0 1 2.273 2.272v3.182zm-2.273 10c.749 0 1.363-.614 1.363-1.363v-4.09h1.819a1.818 1.818 0 0 0 0-3.637h-1.819V7.91c0-.75-.614-1.365-1.363-1.365H12V4.727a1.818 1.818 0 0 0-3.636 0v1.818H4.273c-.747 0-1.355.612-1.355 1.364v3h.9a2.91 2.91 0 0 1 2.91 2.91 2.91 2.91 0 0 1-2.91 2.908H2.91v3c0 .75.615 1.364 1.364 1.364h3v-.91a2.91 2.91 0 0 1 2.909-2.908 2.91 2.91 0 0 1 2.909 2.909v.909h3z"
+                                />
+                              </svg>
+                            </div>
                           </span>
                            
                           <b>
@@ -383,16 +411,16 @@ Object {
                       style="top: 0px;"
                     >
                       <div
-                        class="emotion-3"
+                        class="emotion-1"
                       >
                         <span
-                          class="emotion-4"
+                          class="emotion-2"
                         >
                           2WoMzSs2fRJx79JeVvqdGR
                            
                         </span>
                         <div
-                          class="CopyButton__CopyButton___OoA5D emotion-5"
+                          class="CopyButton__CopyButton___OoA5D emotion-3"
                           data-test-id="cf-ui-copy-button"
                           id="copyButton"
                         >
@@ -438,12 +466,12 @@ Object {
                     </td>
                     <td
                       align="right"
-                      class="TableCell__TableCell___Wou8a emotion-8"
+                      class="TableCell__TableCell___Wou8a emotion-6"
                       data-test-id="cf-ui-table-cell"
                       style="top: 0px;"
                     >
                       <div
-                        class="emotion-7"
+                        class="emotion-5"
                       >
                         <div
                           class="Dropdown__Dropdown___nAsJ-"
@@ -499,16 +527,29 @@ Object {
                       style="top: 0px;"
                     >
                       <div
-                        class="emotion-3"
+                        class="emotion-1"
                       >
                         <a
                           href="^.definitions?definitionId=3cG9ueyzkY0GCndLiQzmZ0"
                         >
                           <span
-                            class="icon-component emotion-2"
-                            data-icon-name="page-apps"
+                            class="emotion-0"
                           >
-                            <page-apps.svg />
+                            <div
+                              class="NavigationIcon__NavigationIconContainer___337Bk NavigationIcon__NavigationIconContainer--small___3DACp"
+                              data-test-id="cf-ui-navigation-icon"
+                            >
+                              <svg
+                                class="NavigationIcon__NavigationIcon___2YLM_ NavigationIcon__NavigationIcon--positive___2GZmg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M18.364 11.09h.909a2.727 2.727 0 1 1 0 5.456h-.91v3.181A2.278 2.278 0 0 1 16.092 22h-3.91v-1.818a2.001 2.001 0 0 0-4 0V22H4.274A2.278 2.278 0 0 1 2 19.727v-3.909h1.818a2.001 2.001 0 0 0 0-4H2.01V7.91a2.27 2.27 0 0 1 2.264-2.273h3.182v-.909a2.727 2.727 0 1 1 5.454 0v.91h3.182a2.278 2.278 0 0 1 2.273 2.272v3.182zm-2.273 10c.749 0 1.363-.614 1.363-1.363v-4.09h1.819a1.818 1.818 0 0 0 0-3.637h-1.819V7.91c0-.75-.614-1.365-1.363-1.365H12V4.727a1.818 1.818 0 0 0-3.636 0v1.818H4.273c-.747 0-1.355.612-1.355 1.364v3h.9a2.91 2.91 0 0 1 2.91 2.91 2.91 2.91 0 0 1-2.91 2.908H2.91v3c0 .75.615 1.364 1.364 1.364h3v-.91a2.91 2.91 0 0 1 2.909-2.908 2.91 2.91 0 0 1 2.909 2.909v.909h3z"
+                                />
+                              </svg>
+                            </div>
                           </span>
                            
                           <b>
@@ -524,16 +565,16 @@ Object {
                       style="top: 0px;"
                     >
                       <div
-                        class="emotion-3"
+                        class="emotion-1"
                       >
                         <span
-                          class="emotion-4"
+                          class="emotion-2"
                         >
                           3cG9ueyzkY0GCndLiQzmZ0
                            
                         </span>
                         <div
-                          class="CopyButton__CopyButton___OoA5D emotion-5"
+                          class="CopyButton__CopyButton___OoA5D emotion-3"
                           data-test-id="cf-ui-copy-button"
                           id="copyButton"
                         >
@@ -579,12 +620,12 @@ Object {
                     </td>
                     <td
                       align="right"
-                      class="TableCell__TableCell___Wou8a emotion-8"
+                      class="TableCell__TableCell___Wou8a emotion-6"
                       data-test-id="cf-ui-table-cell"
                       style="top: 0px;"
                     >
                       <div
-                        class="emotion-7"
+                        class="emotion-5"
                       >
                         <div
                           class="Dropdown__Dropdown___nAsJ-"
@@ -642,7 +683,7 @@ Object {
               data-test-id="cf-ui-text-container"
             >
               <h3
-                class="SectionHeading__SectionHeading___39J6j emotion-23 f36-margin-bottom--l"
+                class="SectionHeading__SectionHeading___39J6j emotion-21 f36-margin-bottom--l"
                 data-test-id="cf-ui-section-heading"
               >
                 About Apps
@@ -697,11 +738,11 @@ Object {
     <div />
     <div />
   </body>,
-  "container": .emotion-8 {
+  "container": .emotion-6 {
   vertical-align: middle;
 }
 
-.emotion-5 button {
+.emotion-3 button {
   height: 20px;
   border: none;
   background-color: transparent;
@@ -713,7 +754,7 @@ Object {
   transition: all 0.2s cubic-bezier(0.13,0.62,0.11,0.99);
 }
 
-.emotion-5 button:hover {
+.emotion-3 button:hover {
   background-color: transparent;
   border: none;
   opacity: 1;
@@ -722,13 +763,13 @@ Object {
   transform: translateX(0);
 }
 
-.emotion-23 {
+.emotion-21 {
   color: #b4c3ca;
   border-bottom: 1px solid #d3dce0;
   font-weight: 400;
 }
 
-.emotion-3 {
+.emotion-1 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -739,12 +780,24 @@ Object {
   align-items: center;
 }
 
-.emotion-2 {
+.emotion-0 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
   margin-right: 0.75rem;
   vertical-align: sub;
 }
 
-.emotion-7 {
+.emotion-5 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -756,7 +809,7 @@ Object {
   height: 20px;
 }
 
-.emotion-7 div {
+.emotion-5 div {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -767,31 +820,15 @@ Object {
   justify-content: center;
 }
 
-.emotion-4 {
+.emotion-2 {
   font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
 }
 
-.emotion-4:hover ~ .emotion-5 button {
+.emotion-2:hover ~ .emotion-3 button {
   opacity: 1;
   -webkit-transform: translateX(0);
   -ms-transform: translateX(0);
   transform: translateX(0);
-}
-
-.emotion-0 {
-  fill: #16875D;
-}
-
-.emotion-1 {
-  width: 100%;
-  height: 100%;
-  display: block;
-  width: 32px;
-  height: 32px;
-  max-width: 32px;
-  max-height: 32px;
-  min-width: 32px;
-  min-height: 32px;
 }
 
 <div>
@@ -807,13 +844,19 @@ Object {
           class="Workbench__Workbench__header-icon___1kJlL"
         >
           <div
-            class="icon-component emotion-1"
-            data-icon-name="headline-apps"
-            data-test-id="product-icon"
+            class="NavigationIcon__NavigationIconContainer___337Bk NavigationIcon__NavigationIconContainer--large___3A1HH"
+            data-test-id="cf-ui-navigation-icon"
           >
-            <apps.svg
-              class="emotion-0"
-            />
+            <svg
+              class="NavigationIcon__NavigationIcon___2YLM_ NavigationIcon__NavigationIcon--positive___2GZmg"
+              fill="none"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M18.364 11.09h.909a2.727 2.727 0 1 1 0 5.456h-.91v3.181A2.278 2.278 0 0 1 16.092 22h-3.91v-1.818a2.001 2.001 0 0 0-4 0V22H4.274A2.278 2.278 0 0 1 2 19.727v-3.909h1.818a2.001 2.001 0 0 0 0-4H2.01V7.91a2.27 2.27 0 0 1 2.264-2.273h3.182v-.909a2.727 2.727 0 1 1 5.454 0v.91h3.182a2.278 2.278 0 0 1 2.273 2.272v3.182zm-2.273 10c.749 0 1.363-.614 1.363-1.363v-4.09h1.819a1.818 1.818 0 0 0 0-3.637h-1.819V7.91c0-.75-.614-1.365-1.363-1.365H12V4.727a1.818 1.818 0 0 0-3.636 0v1.818H4.273c-.747 0-1.355.612-1.355 1.364v3h.9a2.91 2.91 0 0 1 2.91 2.91 2.91 2.91 0 0 1-2.91 2.908H2.91v3c0 .75.615 1.364 1.364 1.364h3v-.91a2.91 2.91 0 0 1 2.909-2.908 2.91 2.91 0 0 1 2.909 2.909v.909h3z"
+              />
+            </svg>
           </div>
         </div>
         <div
@@ -910,16 +953,29 @@ Object {
                     style="top: 0px;"
                   >
                     <div
-                      class="emotion-3"
+                      class="emotion-1"
                     >
                       <a
                         href="^.definitions?definitionId=3AjEyjWz5tRouW4cVOF9la"
                       >
                         <span
-                          class="icon-component emotion-2"
-                          data-icon-name="page-apps"
+                          class="emotion-0"
                         >
-                          <page-apps.svg />
+                          <div
+                            class="NavigationIcon__NavigationIconContainer___337Bk NavigationIcon__NavigationIconContainer--small___3DACp"
+                            data-test-id="cf-ui-navigation-icon"
+                          >
+                            <svg
+                              class="NavigationIcon__NavigationIcon___2YLM_ NavigationIcon__NavigationIcon--positive___2GZmg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M18.364 11.09h.909a2.727 2.727 0 1 1 0 5.456h-.91v3.181A2.278 2.278 0 0 1 16.092 22h-3.91v-1.818a2.001 2.001 0 0 0-4 0V22H4.274A2.278 2.278 0 0 1 2 19.727v-3.909h1.818a2.001 2.001 0 0 0 0-4H2.01V7.91a2.27 2.27 0 0 1 2.264-2.273h3.182v-.909a2.727 2.727 0 1 1 5.454 0v.91h3.182a2.278 2.278 0 0 1 2.273 2.272v3.182zm-2.273 10c.749 0 1.363-.614 1.363-1.363v-4.09h1.819a1.818 1.818 0 0 0 0-3.637h-1.819V7.91c0-.75-.614-1.365-1.363-1.365H12V4.727a1.818 1.818 0 0 0-3.636 0v1.818H4.273c-.747 0-1.355.612-1.355 1.364v3h.9a2.91 2.91 0 0 1 2.91 2.91 2.91 2.91 0 0 1-2.91 2.908H2.91v3c0 .75.615 1.364 1.364 1.364h3v-.91a2.91 2.91 0 0 1 2.909-2.908 2.91 2.91 0 0 1 2.909 2.909v.909h3z"
+                              />
+                            </svg>
+                          </div>
                         </span>
                          
                         <b>
@@ -935,16 +991,16 @@ Object {
                     style="top: 0px;"
                   >
                     <div
-                      class="emotion-3"
+                      class="emotion-1"
                     >
                       <span
-                        class="emotion-4"
+                        class="emotion-2"
                       >
                         3AjEyjWz5tRouW4cVOF9la
                          
                       </span>
                       <div
-                        class="CopyButton__CopyButton___OoA5D emotion-5"
+                        class="CopyButton__CopyButton___OoA5D emotion-3"
                         data-test-id="cf-ui-copy-button"
                         id="copyButton"
                       >
@@ -990,12 +1046,12 @@ Object {
                   </td>
                   <td
                     align="right"
-                    class="TableCell__TableCell___Wou8a emotion-8"
+                    class="TableCell__TableCell___Wou8a emotion-6"
                     data-test-id="cf-ui-table-cell"
                     style="top: 0px;"
                   >
                     <div
-                      class="emotion-7"
+                      class="emotion-5"
                     >
                       <div
                         class="Dropdown__Dropdown___nAsJ-"
@@ -1051,16 +1107,29 @@ Object {
                     style="top: 0px;"
                   >
                     <div
-                      class="emotion-3"
+                      class="emotion-1"
                     >
                       <a
                         href="^.definitions?definitionId=2WoMzSs2fRJx79JeVvqdGR"
                       >
                         <span
-                          class="icon-component emotion-2"
-                          data-icon-name="page-apps"
+                          class="emotion-0"
                         >
-                          <page-apps.svg />
+                          <div
+                            class="NavigationIcon__NavigationIconContainer___337Bk NavigationIcon__NavigationIconContainer--small___3DACp"
+                            data-test-id="cf-ui-navigation-icon"
+                          >
+                            <svg
+                              class="NavigationIcon__NavigationIcon___2YLM_ NavigationIcon__NavigationIcon--positive___2GZmg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M18.364 11.09h.909a2.727 2.727 0 1 1 0 5.456h-.91v3.181A2.278 2.278 0 0 1 16.092 22h-3.91v-1.818a2.001 2.001 0 0 0-4 0V22H4.274A2.278 2.278 0 0 1 2 19.727v-3.909h1.818a2.001 2.001 0 0 0 0-4H2.01V7.91a2.27 2.27 0 0 1 2.264-2.273h3.182v-.909a2.727 2.727 0 1 1 5.454 0v.91h3.182a2.278 2.278 0 0 1 2.273 2.272v3.182zm-2.273 10c.749 0 1.363-.614 1.363-1.363v-4.09h1.819a1.818 1.818 0 0 0 0-3.637h-1.819V7.91c0-.75-.614-1.365-1.363-1.365H12V4.727a1.818 1.818 0 0 0-3.636 0v1.818H4.273c-.747 0-1.355.612-1.355 1.364v3h.9a2.91 2.91 0 0 1 2.91 2.91 2.91 2.91 0 0 1-2.91 2.908H2.91v3c0 .75.615 1.364 1.364 1.364h3v-.91a2.91 2.91 0 0 1 2.909-2.908 2.91 2.91 0 0 1 2.909 2.909v.909h3z"
+                              />
+                            </svg>
+                          </div>
                         </span>
                          
                         <b>
@@ -1076,16 +1145,16 @@ Object {
                     style="top: 0px;"
                   >
                     <div
-                      class="emotion-3"
+                      class="emotion-1"
                     >
                       <span
-                        class="emotion-4"
+                        class="emotion-2"
                       >
                         2WoMzSs2fRJx79JeVvqdGR
                          
                       </span>
                       <div
-                        class="CopyButton__CopyButton___OoA5D emotion-5"
+                        class="CopyButton__CopyButton___OoA5D emotion-3"
                         data-test-id="cf-ui-copy-button"
                         id="copyButton"
                       >
@@ -1131,12 +1200,12 @@ Object {
                   </td>
                   <td
                     align="right"
-                    class="TableCell__TableCell___Wou8a emotion-8"
+                    class="TableCell__TableCell___Wou8a emotion-6"
                     data-test-id="cf-ui-table-cell"
                     style="top: 0px;"
                   >
                     <div
-                      class="emotion-7"
+                      class="emotion-5"
                     >
                       <div
                         class="Dropdown__Dropdown___nAsJ-"
@@ -1192,16 +1261,29 @@ Object {
                     style="top: 0px;"
                   >
                     <div
-                      class="emotion-3"
+                      class="emotion-1"
                     >
                       <a
                         href="^.definitions?definitionId=3cG9ueyzkY0GCndLiQzmZ0"
                       >
                         <span
-                          class="icon-component emotion-2"
-                          data-icon-name="page-apps"
+                          class="emotion-0"
                         >
-                          <page-apps.svg />
+                          <div
+                            class="NavigationIcon__NavigationIconContainer___337Bk NavigationIcon__NavigationIconContainer--small___3DACp"
+                            data-test-id="cf-ui-navigation-icon"
+                          >
+                            <svg
+                              class="NavigationIcon__NavigationIcon___2YLM_ NavigationIcon__NavigationIcon--positive___2GZmg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M18.364 11.09h.909a2.727 2.727 0 1 1 0 5.456h-.91v3.181A2.278 2.278 0 0 1 16.092 22h-3.91v-1.818a2.001 2.001 0 0 0-4 0V22H4.274A2.278 2.278 0 0 1 2 19.727v-3.909h1.818a2.001 2.001 0 0 0 0-4H2.01V7.91a2.27 2.27 0 0 1 2.264-2.273h3.182v-.909a2.727 2.727 0 1 1 5.454 0v.91h3.182a2.278 2.278 0 0 1 2.273 2.272v3.182zm-2.273 10c.749 0 1.363-.614 1.363-1.363v-4.09h1.819a1.818 1.818 0 0 0 0-3.637h-1.819V7.91c0-.75-.614-1.365-1.363-1.365H12V4.727a1.818 1.818 0 0 0-3.636 0v1.818H4.273c-.747 0-1.355.612-1.355 1.364v3h.9a2.91 2.91 0 0 1 2.91 2.91 2.91 2.91 0 0 1-2.91 2.908H2.91v3c0 .75.615 1.364 1.364 1.364h3v-.91a2.91 2.91 0 0 1 2.909-2.908 2.91 2.91 0 0 1 2.909 2.909v.909h3z"
+                              />
+                            </svg>
+                          </div>
                         </span>
                          
                         <b>
@@ -1217,16 +1299,16 @@ Object {
                     style="top: 0px;"
                   >
                     <div
-                      class="emotion-3"
+                      class="emotion-1"
                     >
                       <span
-                        class="emotion-4"
+                        class="emotion-2"
                       >
                         3cG9ueyzkY0GCndLiQzmZ0
                          
                       </span>
                       <div
-                        class="CopyButton__CopyButton___OoA5D emotion-5"
+                        class="CopyButton__CopyButton___OoA5D emotion-3"
                         data-test-id="cf-ui-copy-button"
                         id="copyButton"
                       >
@@ -1272,12 +1354,12 @@ Object {
                   </td>
                   <td
                     align="right"
-                    class="TableCell__TableCell___Wou8a emotion-8"
+                    class="TableCell__TableCell___Wou8a emotion-6"
                     data-test-id="cf-ui-table-cell"
                     style="top: 0px;"
                   >
                     <div
-                      class="emotion-7"
+                      class="emotion-5"
                     >
                       <div
                         class="Dropdown__Dropdown___nAsJ-"
@@ -1335,7 +1417,7 @@ Object {
             data-test-id="cf-ui-text-container"
           >
             <h3
-              class="SectionHeading__SectionHeading___39J6j emotion-23 f36-margin-bottom--l"
+              class="SectionHeading__SectionHeading___39J6j emotion-21 f36-margin-bottom--l"
               data-test-id="cf-ui-section-heading"
             >
               About Apps

@@ -13,8 +13,9 @@ import {
   Tab,
   TabPanel,
 } from '@contentful/forma-36-react-components';
+import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+
 import { css } from 'emotion';
-import Icon from 'ui/Components/Icon';
 import { getVariation } from 'LaunchDarkly';
 import { AppEditor } from './AppEditor';
 import * as ManagementApiClient from './ManagementApiClient';
@@ -236,9 +237,7 @@ export class AppDetails extends React.Component {
         <Workbench.Content>
           <div className={styles.workbenchContent}>
             <div className={styles.title}>
-              <div>
-                <Icon name="page-apps" scale="1.6" />
-              </div>
+              <NavigationIcon icon="Apps" size="xlarge" />
               <div>
                 <Heading>{name}</Heading>
                 <div className={sysIdStyle}>
