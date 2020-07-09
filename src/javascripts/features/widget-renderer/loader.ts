@@ -70,7 +70,7 @@ interface ControlWidgetRef {
   widgetId?: string;
 }
 
-interface EditorInterface {
+export interface EditorInterface {
   sys: {
     type: 'EditorInterface';
     contentType: {
@@ -225,7 +225,7 @@ export class WidgetLoader {
     return keys.map(({ widgetId, widgetNamespace }) => {
       if (widgetNamespace === NAMESPACE_APP) {
         const installation = installedApps.find(
-          (app) => get(app, ['appDefinition', 'sys', 'id']) === widgetId
+          (app) => get(app, ['sys', 'appDefinition', 'sys', 'id']) === widgetId
         );
         const definition = usedAppDefinitions.find((def) => get(def, ['sys', 'id']) === widgetId);
 

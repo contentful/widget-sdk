@@ -1,5 +1,6 @@
 import {
     WidgetLoader,
+    EditorInterface,
     ClientAPI,
     buildAppWidget,
     buildExtensionWidget,
@@ -12,20 +13,6 @@ import 'contentful-management';
 import { NAMESPACE_EXTENSION, NAMESPACE_APP } from 'widgets/WidgetNamespaces';
 
 // generate these
-const get = jest.fn((path) => {
-    if (path.includes('extensions')) {
-        return Promise.resolve({ items: [] });
-    }
-    if (path.includes('app_installations')) {
-        return Promise.resolve({ items: [], includes: { AppDefinition: [] } });
-    }
-});
-
-const mockClient = {
-    raw: {
-        get,
-    },
-};
 
 const Something: any = jest.genMockFromModule('./marketplace-data-provider');
 const mockDataProvider = new Something.default();
@@ -34,7 +21,23 @@ const envId = 'envId';
 
 describe('Loader', () => {
     let loader: WidgetLoader;
+    let get;
+    let mockClient;
     beforeEach(() => {
+        get = jest.fn((path) => {
+            if (path.includes('extensions')) {
+                return Promise.resolve({ items: [] });
+            }
+            if (path.includes('app_installations')) {
+                return Promise.resolve({ items: [], includes: { AppDefinition: [] } });
+            }
+        });
+
+        mockClient = {
+            raw: {
+                get,
+            },
+        };
         loader = new WidgetLoader(
             (mockClient as unknown) as ClientAPI,
             mockDataProvider,
@@ -56,7 +59,6 @@ describe('Loader', () => {
                     expect(get).toHaveBeenCalledWith(
                         `/spaces/${spaceId}/environments/${envId}/app_installations`
                     );
-                    expect(true).toBe(true);
                 });
             });
             describe(`for extensions`, () => {
@@ -67,15 +69,122 @@ describe('Loader', () => {
                             'sys.id[in]': 'my_id',
                         },
                     });
-                    expect(true).toBe(true);
                 });
             });
         });
+
+        describe('warmUpWithEditorInterface', () => {
+            describe('with editor', () => {
+                it('warms up the correct widgets', async () => {
+                    const editorInterface: EditorInterface = {
+                        sys: {
+                            type: 'EditorInterface',
+                            contentType: {
+                                sys: {
+                                    type: 'Link',
+                                    linkType: 'ContentType',
+                                    id: 'id',
+                                },
+                            },
+                        },
+                        controls: [{ widgetNamespace: undefined, widgetId: 'my_control' }],
+                        sidebar: [{ widgetNamespace: NAMESPACE_EXTENSION, widgetId: 'my_extension' }],
+                        editor: { widgetNamespace: NAMESPACE_APP, widgetId: 'myapp' },
+                    };
+                    // loader.load = jest.fn();
+                    await loader.warmUpWithEditorInterface(editorInterface);
+                    expect(mockDataProvider.prefetch).toHaveBeenCalled();
+                    expect(get).toHaveBeenCalledWith(
+                        `/spaces/${spaceId}/environments/${envId}/app_installations`
+                    );
+                    expect(get).toHaveBeenCalledWith(`/spaces/${spaceId}/environments/${envId}/extensions`, {
+                        params: {
+                            'sys.id[in]': 'my_extension,my_control',
+                        },
+                    });
+                });
+            });
+            describe('with editors', () => {
+                it('warms up the correct widgets', async () => {
+                    const editorInterface: EditorInterface = {
+                        sys: {
+                            type: 'EditorInterface',
+                            contentType: {
+                                sys: {
+                                    type: 'Link',
+                                    linkType: 'ContentType',
+                                    id: 'id',
+                                },
+                            },
+                        },
+                        controls: [{ widgetNamespace: undefined, widgetId: 'my_control' }],
+                        sidebar: [{ widgetNamespace: NAMESPACE_EXTENSION, widgetId: 'my_extension' }],
+                        editors: [{ widgetNamespace: NAMESPACE_APP, widgetId: 'myapp' }],
+                    };
+                    // loader.load = jest.fn();
+                    await loader.warmUpWithEditorInterface(editorInterface);
+                    expect(mockDataProvider.prefetch).toHaveBeenCalled();
+                    expect(get).toHaveBeenCalledWith(
+                        `/spaces/${spaceId}/environments/${envId}/app_installations`
+                    );
+                    expect(get).toHaveBeenCalledWith(`/spaces/${spaceId}/environments/${envId}/extensions`, {
+                        params: {
+                            'sys.id[in]': 'my_extension,my_control',
+                        },
+                    });
+                });
+            });
+        });
+
+        describe('getOne', () => {
+            it('returns a formatted version of the app', async () => {
+                const appId = 'myapp';
+                const appInstallation: AppInstallation = {
+                    sys: {
+                        type: 'AppInstallation',
+                        appDefinition: {
+                            sys: {
+                                type: 'Link',
+                                linkType: 'AppDefinition',
+                                id: appId,
+                            },
+                        },
+                    },
+                };
+                const appDefinition: AppDefinition = {
+                    sys: {
+                        type: 'AppDefinition',
+                        id: appId,
+                    },
+                    name: 'myapp',
+                    src: 'https://example.com',
+                    locations: [],
+                };
+
+                get.mockImplementation((path) => {
+                    if (path.includes('extensions')) {
+                        return Promise.resolve({ items: [] });
+                    }
+                    if (path.includes('app_installations')) {
+                        return Promise.resolve({
+                            items: [appInstallation],
+                            includes: { AppDefinition: [appDefinition] },
+                        });
+                    }
+                });
+
+                const result = await loader.getOne(NAMESPACE_APP, appId);
+                expect(result?.id).toEqual(appId);
+            });
+        });
+        // describe('getWithEditorInterface');
+        // describe('getMultiple');
+        // describe('evict');
+        // describe('purge');
     });
 
     describe('Helpers', () => {
         describe('buildExtensionWidget', () => {
-            // src doc or not
             describe('with src', () => {
                 it('builds a widget from extension data', () => {
                     const parameterDefinition: ParameterDefinition = {
@@ -156,10 +265,6 @@ describe('Loader', () => {
                         extension: {
                             name: 'myextension',
                             srcdoc: '<html>a nice html page</html>',
-                            // parameters?: {
-                            //     instance?: ParameterDefinition[],
-                            //     installation?: ParameterDefinition[],
-                            // },
                         },
                         parameters: { myParam: 'hello' },
                     };
