@@ -9,13 +9,13 @@ import { get, uniqBy } from 'lodash';
 // * Tests
 // * Actually use it, update downstream consumers
 
-type ClientAPI = ReturnType<typeof createPlainClient>;
+export type ClientAPI = ReturnType<typeof createPlainClient>;
 
-export const isWidget = (w: Widget | Error | null): w is Widget => {
+const isWidget = (w: Widget | Error | null): w is Widget => {
   return typeof w !== undefined && (w as Widget).hosting !== undefined;
 };
 
-interface Extension {
+export interface Extension {
   sys: {
     type: 'Extension';
     id: string;
@@ -35,7 +35,7 @@ interface Extension {
   parameters?: Record<string, string | number | boolean>;
 }
 
-interface AppDefinition {
+export interface AppDefinition {
   sys: {
     type: 'AppDefinition';
     id: string;
@@ -45,7 +45,7 @@ interface AppDefinition {
   locations?: Location[];
 }
 
-interface AppInstallation {
+export interface AppInstallation {
   sys: {
     type: 'AppInstallation';
     appDefinition: {
@@ -91,6 +91,77 @@ type CacheValue = Widget | null;
 
 const cacheKeyFn = ({ widgetNamespace, widgetId }: WidgetRef): string =>
   [widgetNamespace, widgetId].join(',');
+
+export const buildExtensionWidget = (
+  extension: Extension,
+  marketplaceDataProvider: MarketplaceDataProvider
+): Widget => {
+  const locations: Location[] = [
+    {
+      location: 'entry-field',
+      fieldTypes: extension.extension.fieldTypes || [],
+    },
+    { location: 'page' },
+    { location: 'entry-sidebar' },
+    { location: 'entry-editor' },
+    { location: 'dialog' },
+  ];
+
+  if (extension.extension.sidebar) {
+    locations.push({ location: 'entry-field-sidebar' });
+  }
+
+  return {
+    namespace: NAMESPACE_EXTENSION,
+    id: extension.sys.id,
+    slug: marketplaceDataProvider.getSlug(NAMESPACE_EXTENSION, extension.sys.id),
+    iconUrl: marketplaceDataProvider.getIconUrl(NAMESPACE_EXTENSION, extension.sys.id),
+    name: extension.extension.name,
+    hosting: {
+      type: typeof extension.sys.srcdocSha256 === 'string' ? 'srcdoc' : 'src',
+      value: extension.extension.src || extension.extension.srcdoc!,
+    },
+    parameters: {
+      definitions: {
+        instance: get(extension, ['extension', 'parameters', 'instance'], []),
+        installation: get(extension, ['extension', 'parameters', 'installation'], []),
+      },
+      values: {
+        installation: extension.parameters || {},
+      },
+    },
+    locations,
+  };
+};
+
+export const buildAppWidget = (
+  installation: AppInstallation,
+  definition: AppDefinition,
+  marketplaceDataProvider: MarketplaceDataProvider
+): Widget => {
+  return {
+    namespace: NAMESPACE_APP,
+    id: definition.sys.id,
+    slug: marketplaceDataProvider.getSlug(NAMESPACE_APP, definition.sys.id),
+    iconUrl: marketplaceDataProvider.getIconUrl(NAMESPACE_APP, definition.sys.id),
+    name: definition.name,
+    hosting: {
+      type: 'src',
+      value: definition.src!,
+    },
+    parameters: {
+      definitions: {
+        instance: [],
+        installation: [],
+      },
+      values: {
+        installation:
+          typeof installation.parameters === 'undefined' ? {} : installation.parameters!,
+      },
+    },
+    locations: definition.locations || [],
+  };
+};
 
 export class WidgetLoader {
   private client: ClientAPI;
@@ -159,7 +230,7 @@ export class WidgetLoader {
         const definition = usedAppDefinitions.find((def) => get(def, ['sys', 'id']) === widgetId);
 
         if (installation && definition && definition.src) {
-          return this.buildAppWidget(installation, definition);
+          return buildAppWidget(installation, definition, this.marketplaceDataProvider);
         } else {
           return null;
         }
@@ -168,76 +239,12 @@ export class WidgetLoader {
       if (widgetNamespace === NAMESPACE_EXTENSION) {
         const ext = extensions.find((ext) => get(ext, ['sys', 'id']) === widgetId);
 
-        return ext ? this.buildExtensionWidget(ext) : null;
+        return ext ? buildExtensionWidget(ext, this.marketplaceDataProvider) : null;
       }
 
       return null;
     });
   };
-
-  private buildAppWidget(installation: AppInstallation, definition: AppDefinition): Widget {
-    return {
-      namespace: NAMESPACE_APP,
-      id: definition.sys.id,
-      slug: this.marketplaceDataProvider.getSlug(NAMESPACE_APP, definition.sys.id),
-      iconUrl: this.marketplaceDataProvider.getIconUrl(NAMESPACE_APP, definition.sys.id),
-      name: definition.name,
-      hosting: {
-        type: 'src',
-        value: definition.src!,
-      },
-      parameters: {
-        definitions: {
-          instance: [],
-          installation: [],
-        },
-        values: {
-          installation:
-            typeof installation.parameters === 'undefined' ? {} : installation.parameters!,
-        },
-      },
-      locations: definition.locations || [],
-    };
-  }
-
-  private buildExtensionWidget(extension: Extension): Widget {
-    const locations: Location[] = [
-      {
-        location: 'entry-field',
-        fieldTypes: extension.extension.fieldTypes || [],
-      },
-      { location: 'page' },
-      { location: 'entry-sidebar' },
-      { location: 'entry-editor' },
-      { location: 'dialog' },
-    ];
-
-    if (extension.extension.sidebar) {
-      locations.push({ location: 'entry-field-sidebar' });
-    }
-
-    return {
-      namespace: NAMESPACE_EXTENSION,
-      id: extension.sys.id,
-      slug: this.marketplaceDataProvider.getSlug(NAMESPACE_EXTENSION, extension.sys.id),
-      iconUrl: this.marketplaceDataProvider.getIconUrl(NAMESPACE_EXTENSION, extension.sys.id),
-      name: extension.extension.name,
-      hosting: {
-        type: typeof extension.sys.srcdocSha256 === 'string' ? 'srcdoc' : 'src',
-        value: extension.extension.src || extension.extension.srcdoc!,
-      },
-      parameters: {
-        definitions: {
-          instance: get(extension, ['extension', 'parameters', 'instance'], []),
-          installation: get(extension, ['extension', 'parameters', 'installation'], []),
-        },
-        values: {
-          installation: extension.parameters || {},
-        },
-      },
-      locations,
-    };
-  }
 
   public async warmUp(widgetNamespace: WidgetNamespace, widgetId: string): Promise<void> {
     await this.loader.load({ widgetNamespace, widgetId });
