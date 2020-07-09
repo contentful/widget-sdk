@@ -1,37 +1,48 @@
+import * as TagsRepo from 'features/content-tags/core/state/TagsRepo';
 import makeExtensionSpaceMethodsHandlers from './makeExtensionSpaceMethodsHandlers';
+jest.mock('features/content-tags/core/state/TagsRepo');
 
-let tagsRepoMock;
-jest.mock('features/content-tags/core/state/TagsRepo', () => ({
-  create() {
-    tagsRepoMock = {
-      createTag: jest.fn(),
-      deleteTag: jest.fn(),
-      updateTag: jest.fn(),
-      readTags: jest.fn(),
-    };
+const mockRepo = {
+  createTag: jest.fn(),
+  deleteTag: jest.fn(),
+  updateTag: jest.fn(),
+  readTags: jest.fn(),
+};
 
-    return tagsRepoMock;
-  },
-}));
+const spaceContext = { getEnvironmentId: jest.fn() };
 
 describe('makeExtensionAccessHandlers', () => {
-  let extensionSpaceMethodsHandlers;
+  beforeAll(() => {
+    TagsRepo.create.mockImplementation(() => mockRepo);
+  });
 
-  beforeEach(() => {
-    extensionSpaceMethodsHandlers = makeExtensionSpaceMethodsHandlers({
-      spaceContext: { getEnvironmentId: jest.fn() },
+  describe('when calling the factory', () => {
+    it('creates tags repository', () => {
+      makeExtensionSpaceMethodsHandlers({ spaceContext });
+
+      expect(TagsRepo.create).toHaveBeenCalled();
     });
   });
 
-  describe('when calling a tag method', () => {
-    it('calls methods on Tags Repo if method is tag related', async () => {
-      const methods = ['createTag', 'deleteTag', 'updateTag', 'readTags'];
+  describe('when using the handlers', () => {
+    let extensionSpaceMethodsHandlers;
 
-      for (const method of methods) {
-        await extensionSpaceMethodsHandlers(method);
+    beforeEach(() => {
+      extensionSpaceMethodsHandlers = makeExtensionSpaceMethodsHandlers({
+        spaceContext: { endpoint: jest.fn(), getEnvironmentId: jest.fn() },
+      });
+    });
 
-        expect(tagsRepoMock[method]).toHaveBeenCalled();
-      }
+    describe('when calling a tag method', () => {
+      it('calls methods on Tags Repo if method is tag related', async () => {
+        const methods = ['createTag', 'deleteTag', 'updateTag', 'readTags'];
+
+        for (const method of methods) {
+          await extensionSpaceMethodsHandlers(method, []);
+
+          expect(mockRepo[method]).toHaveBeenCalled();
+        }
+      });
     });
   });
 });
