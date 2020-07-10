@@ -208,29 +208,36 @@ export default class OrganizationNavigationBar extends React.Component {
     const FeatureService = createLegacyFeatureService(orgId, 'organization');
     const endpoint = createOrganizationEndpoint(orgId);
 
-    const [
-      ssoFeatureEnabled,
-      scimFeatureEnabled,
-      accessToolsFeatureEnabled,
-      organization,
-      hasOffsiteBackup,
-      hasAdvancedExtensibility,
-      newPricingFeatureDisplayed,
-      basePlan,
-    ] = await Promise.all([
+    const organization = await TokenStore.getOrganization(orgId);
+
+    let promises = [
       getOrgFeature(orgId, 'self_configure_sso'),
       getOrgFeature(orgId, 'scim'),
       getVariation(ACCESS_TOOLS, {
         organizationId: orgId,
       }),
-      TokenStore.getOrganization(orgId),
       FeatureService.get('offsiteBackup'),
       AdvancedExtensibilityFeature.isEnabled(),
-      getVariation(PRICING_2020_WARNING, {
-        organizationId: orgId,
-      }),
-      getBasePlan(endpoint),
-    ]);
+    ];
+
+    if (organization.pricingVersion !== 'pricing_version_1') {
+      promises = promises.concat([
+        getVariation(PRICING_2020_WARNING, {
+          organizationId: orgId,
+        }),
+        getBasePlan(endpoint).then((basePlan) => isEnterprisePlan(basePlan)),
+      ]);
+    }
+
+    const [
+      ssoFeatureEnabled,
+      scimFeatureEnabled,
+      accessToolsFeatureEnabled,
+      hasOffsiteBackup,
+      hasAdvancedExtensibility,
+      newPricingFeatureDisplayed,
+      basePlanIsEnterprise,
+    ] = await Promise.all(promises);
 
     const params = {
       ssoEnabled: ssoFeatureEnabled,
@@ -242,7 +249,7 @@ export default class OrganizationNavigationBar extends React.Component {
       hasOffsiteBackup,
       hasBillingTab: organization.isBillable && isOwner(organization),
       hasSettingsTab: isOwner(organization),
-      showUsageNewLabel: newPricingFeatureDisplayed && !isEnterprisePlan(basePlan),
+      showUsageNewLabel: newPricingFeatureDisplayed && !basePlanIsEnterprise,
     };
 
     this.setState({ items: getItems(params, { orgId }) });
