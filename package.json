@@ -30,7 +30,7 @@
     "@contentful/field-editor-slug": "0.5.1",
     "@contentful/field-editor-tags": "0.8.1",
     "@contentful/field-editor-url": "0.7.1",
-    "@contentful/field-editor-validation-errors": "0.1.1",
+    "@contentful/field-editor-validation-errors": "0.1.2",
     "@contentful/forma-36-fcss": "0.2.1",
     "@contentful/forma-36-react-components": "3.41.1",
     "@contentful/forma-36-react-datepicker": "0.3.1-alpha.0",

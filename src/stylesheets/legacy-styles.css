@@ -876,7 +876,7 @@ pre,
   .btn-secondary-action--large > .btn-icon {
     height: 0.8em;
   }
-  
+
   .btn-plain {
     background: none;
     display: inline-block;
@@ -2097,7 +2097,7 @@ pre,
     padding-bottom: 20px;
     margin-bottom: 20px;
   }
-  
+
   .search__filter-pill--active .search__select-value::after {
     color: var(--color-white) !important;
   }
@@ -2877,7 +2877,7 @@ pre,
     white-space: pre-wrap;
     width: 200px;
   }
-  
+
   .app-top-bar__menu-trigger.is-active {
     padding: 0 16px;
   }
@@ -5832,7 +5832,6 @@ pre,
     color: var(--color-red-mid);
   }
   .cfnext-form__field-error,
-  .cfnext-form__field-errors,
   .cfnext-form__field-suffix-error,
   .cfnext-form__field-warning,
   .tab-iframe .formtastic .input .inline-errors {
@@ -5842,14 +5841,10 @@ pre,
     color: var(--color-red-mid);
   }
   .cfnext-form__field-error strong,
-  .cfnext-form__field-errors strong,
   .cfnext-form__field-suffix-error strong,
   .cfnext-form__field-warning strong,
   .tab-iframe .formtastic .input .inline-errors strong {
     color: inherit;
-  }
-  .cfnext-form__field-errors > li {
-    margin-bottom: 0.642857142857143em;
   }
   .cfnext-form__field-suffix-error {
     display: inline;
@@ -7278,30 +7273,12 @@ pre,
     fill: var(--color-text-lightest);
   }
   .entity-editor__control-group {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
+    display: block;
+    width: 100%;
   }
   .entity-editor__control {
     width: 100%;
     max-width: 800px;
-  }
-  .entity-editor__control-error {
-    list-style-type: disc;
-    margin-left: 1em;
-    font-weight: bold;
-  }
-  .entity-editor__control-error a:link {
-    color: var(--color-red-mid);
-  }
-  .entity-editor__control-error a:hover,
-  .entity-editor__control-error a:visited {
-    color: var(--color-red-mid);
-  }
-  .entity-editor__control-error i.fa.fa-external-link {
-    margin-left: 0.5em;
-    position: relative;
-    top: 1px;
   }
   .entity-editor__field-hint {
     color: var(--color-text-lightest);
