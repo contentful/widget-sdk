@@ -56,10 +56,6 @@ export type Location =
   | { location: 'app-config' }
   | { location: 'entry-field-sidebar' };
 
-export const isWidget = (w: Widget | Error | null): w is Widget => {
-  return typeof w !== undefined && (w as Widget).hosting !== undefined;
-};
-
 export interface Widget {
   // Minimal data needed to list widgets
   namespace: WidgetNamespace;
@@ -83,4 +79,48 @@ export interface Widget {
   };
   // For assignment and misc
   locations: Location[];
+}
+
+export interface Extension {
+  sys: {
+    type: 'Extension';
+    id: string;
+    srcdocSha256?: string;
+  };
+  extension: {
+    name: string;
+    fieldTypes?: FieldType[];
+    src?: string;
+    srcdoc?: string;
+    sidebar?: boolean;
+    parameters?: {
+      instance?: ParameterDefinition[];
+      installation?: ParameterDefinition[];
+    };
+  };
+  parameters?: Record<string, string | number | boolean>;
+}
+
+export interface AppInstallation {
+  sys: {
+    type: 'AppInstallation';
+    appDefinition: {
+      sys: {
+        type: 'Link';
+        linkType: 'AppDefinition';
+        id: string;
+      };
+    };
+  };
+  parameters?: Record<string, any> | Array<any> | number | string | boolean;
+}
+
+export interface AppDefinition {
+  sys: {
+    type: 'AppDefinition';
+    id: string;
+  };
+  name: string;
+  src?: string;
+  locations?: Location[];
 }

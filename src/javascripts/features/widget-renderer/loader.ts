@@ -1,9 +1,10 @@
-import { WidgetNamespace, Widget, ParameterDefinition, FieldType, Location } from './interfaces';
+import { WidgetNamespace, Widget } from './interfaces';
 import { MarketplaceDataProvider } from './marketplace-data-provider';
 import { createPlainClient } from 'contentful-management';
 import DataLoader, { BatchLoadFn } from 'dataloader';
 import { NAMESPACE_EXTENSION, NAMESPACE_APP, NAMESPACE_BUILTIN } from 'widgets/WidgetNamespaces';
 import { get, uniqBy, isNil } from 'lodash';
+import { buildExtensionWidget, buildAppWidget } from './buildWidgets';
 
 // TODO
 // * Actually use it, update downstream consumers
@@ -11,52 +12,8 @@ import { get, uniqBy, isNil } from 'lodash';
 export type ClientAPI = ReturnType<typeof createPlainClient>;
 
 const isWidget = (w: Widget | Error | null): w is Widget => {
-  return !isNil(w) && (w as Widget).hosting !== undefined;
+  return !isNil(w) && !(w instanceof Error);
 };
-
-export interface Extension {
-  sys: {
-    type: 'Extension';
-    id: string;
-    srcdocSha256?: string;
-  };
-  extension: {
-    name: string;
-    fieldTypes?: FieldType[];
-    src?: string;
-    srcdoc?: string;
-    sidebar?: boolean;
-    parameters?: {
-      instance?: ParameterDefinition[];
-      installation?: ParameterDefinition[];
-    };
-  };
-  parameters?: Record<string, string | number | boolean>;
-}
-
-export interface AppDefinition {
-  sys: {
-    type: 'AppDefinition';
-    id: string;
-  };
-  name: string;
-  src?: string;
-  locations?: Location[];
-}
-
-export interface AppInstallation {
-  sys: {
-    type: 'AppInstallation';
-    appDefinition: {
-      sys: {
-        type: 'Link';
-        linkType: 'AppDefinition';
-        id: string;
-      };
-    };
-  };
-  parameters?: Record<string, any> | Array<any> | number | string | boolean;
-}
 
 interface WidgetRef {
   widgetNamespace: WidgetNamespace;
@@ -91,77 +48,6 @@ type CacheValue = Widget | null;
 const cacheKeyFn = ({ widgetNamespace, widgetId }: WidgetRef): string =>
   [widgetNamespace, widgetId].join(',');
 
-export const buildExtensionWidget = (
-  extension: Extension,
-  marketplaceDataProvider: MarketplaceDataProvider
-): Widget => {
-  const locations: Location[] = [
-    {
-      location: 'entry-field',
-      fieldTypes: extension.extension.fieldTypes || [],
-    },
-    { location: 'page' },
-    { location: 'entry-sidebar' },
-    { location: 'entry-editor' },
-    { location: 'dialog' },
-  ];
-
-  if (extension.extension.sidebar) {
-    locations.push({ location: 'entry-field-sidebar' });
-  }
-
-  return {
-    namespace: NAMESPACE_EXTENSION,
-    id: extension.sys.id,
-    slug: marketplaceDataProvider.getSlug(NAMESPACE_EXTENSION, extension.sys.id),
-    iconUrl: marketplaceDataProvider.getIconUrl(NAMESPACE_EXTENSION, extension.sys.id),
-    name: extension.extension.name,
-    hosting: {
-      type: typeof extension.sys.srcdocSha256 === 'string' ? 'srcdoc' : 'src',
-      value: extension.extension.src || extension.extension.srcdoc!,
-    },
-    parameters: {
-      definitions: {
-        instance: get(extension, ['extension', 'parameters', 'instance'], []),
-        installation: get(extension, ['extension', 'parameters', 'installation'], []),
-      },
-      values: {
-        installation: extension.parameters || {},
-      },
-    },
-    locations,
-  };
-};
-
-export const buildAppWidget = (
-  installation: AppInstallation,
-  definition: AppDefinition,
-  marketplaceDataProvider: MarketplaceDataProvider
-): Widget => {
-  return {
-    namespace: NAMESPACE_APP,
-    id: definition.sys.id,
-    slug: marketplaceDataProvider.getSlug(NAMESPACE_APP, definition.sys.id),
-    iconUrl: marketplaceDataProvider.getIconUrl(NAMESPACE_APP, definition.sys.id),
-    name: definition.name,
-    hosting: {
-      type: 'src',
-      value: definition.src!,
-    },
-    parameters: {
-      definitions: {
-        instance: [],
-        installation: [],
-      },
-      values: {
-        installation:
-          typeof installation.parameters === 'undefined' ? {} : installation.parameters!,
-      },
-    },
-    locations: definition.locations || [],
-  };
-};
-
 export class WidgetLoader {
   private client: ClientAPI;
   private marketplaceDataProvider: MarketplaceDataProvider;
@@ -182,7 +68,7 @@ export class WidgetLoader {
     });
   }
 
-  private load: BatchLoadFn<WidgetRef, CacheValue> = async (keys) => {
+  private load: BatchLoadFn<WidgetRef, CacheValue> = async keys => {
     if (keys.length < 1) {
       return [];
     }
@@ -224,9 +110,9 @@ export class WidgetLoader {
     return keys.map(({ widgetId, widgetNamespace }) => {
       if (widgetNamespace === NAMESPACE_APP) {
         const installation = installedApps.find(
-          (app) => get(app, ['sys', 'appDefinition', 'sys', 'id']) === widgetId
+          app => get(app, ['sys', 'appDefinition', 'sys', 'id']) === widgetId
         );
-        const definition = usedAppDefinitions.find((def) => get(def, ['sys', 'id']) === widgetId);
+        const definition = usedAppDefinitions.find(def => get(def, ['sys', 'id']) === widgetId);
 
         if (installation && definition && definition.src) {
           return buildAppWidget(installation, definition, this.marketplaceDataProvider);
@@ -236,7 +122,7 @@ export class WidgetLoader {
       }
 
       if (widgetNamespace === NAMESPACE_EXTENSION) {
-        const ext = extensions.find((ext) => get(ext, ['sys', 'id']) === widgetId);
+        const ext = extensions.find(ext => get(ext, ['sys', 'id']) === widgetId);
 
         return ext ? buildExtensionWidget(ext, this.marketplaceDataProvider) : null;
       }
@@ -253,8 +139,8 @@ export class WidgetLoader {
     const isNonEmptyString = (s: any) => typeof s === 'string' && s.length > 0;
 
     return controls
-      .filter((control) => isNonEmptyString(control.widgetId))
-      .filter((control) => control.widgetNamespace !== NAMESPACE_BUILTIN)
+      .filter(control => isNonEmptyString(control.widgetId))
+      .filter(control => control.widgetNamespace !== NAMESPACE_BUILTIN)
       .reduce((acc, control) => {
         if (
           control.widgetNamespace === NAMESPACE_APP ||
@@ -279,8 +165,8 @@ export class WidgetLoader {
       ...(ei.editors || []),
       ...this.getControlWidgetRefs(ei.controls),
     ]
-      .filter((ref) => [NAMESPACE_APP, NAMESPACE_EXTENSION].includes(ref.widgetNamespace))
-      .filter((ref) => ref.widgetId)
+      .filter(ref => [NAMESPACE_APP, NAMESPACE_EXTENSION].includes(ref.widgetNamespace))
+      .filter(ref => ref.widgetId)
       .map(({ widgetNamespace, widgetId }) => ({ widgetNamespace, widgetId }));
   }
 

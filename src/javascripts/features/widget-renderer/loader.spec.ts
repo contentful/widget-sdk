@@ -1,20 +1,12 @@
-import {
-  WidgetLoader,
-  EditorInterface,
-  ClientAPI,
-  buildAppWidget,
-  buildExtensionWidget,
-  AppInstallation,
-  AppDefinition,
-  Extension,
-} from './loader';
-import { ParameterDefinition } from './interfaces';
+import { WidgetLoader, EditorInterface, ClientAPI } from './loader';
+import { ParameterDefinition, Extension, AppInstallation, AppDefinition } from './interfaces';
+
 import { NAMESPACE_EXTENSION, NAMESPACE_APP } from 'widgets/WidgetNamespaces';
 
 const spaceId = 'spaceid';
 const envId = 'envId';
 
-const buildAppInstallation = (id: string): any => {
+const buildAppInstallation = (id: string): [AppInstallation, AppDefinition] => {
   const appInstallation: AppInstallation = {
     sys: {
       type: 'AppInstallation',
@@ -39,7 +31,7 @@ const buildAppInstallation = (id: string): any => {
   return [appInstallation, appDefinition];
 };
 
-const buildExtensionResponse = (id: string): any => {
+const buildExtensionResponse = (id: string): [Extension, ParameterDefinition] => {
   const parameterDefinition: ParameterDefinition = {
     name: 'exampleparameter',
     id: 'exampleparameter',
@@ -72,20 +64,33 @@ describe('Loader', () => {
   let mockClient: ClientAPI;
   let mockDataProvider: any;
 
+  const mockGet = (
+    extensions: Extension[],
+    installations: AppInstallation[],
+    definitions: AppDefinition[]
+  ) => {
+    get.mockImplementation(path => {
+      if (path === `/spaces/${spaceId}/environments/${envId}/extensions`) {
+        return Promise.resolve({ items: extensions });
+      } else if (path === `/spaces/${spaceId}/environments/${envId}/app_installations`) {
+        return Promise.resolve({
+          items: installations,
+          includes: { AppDefinition: definitions },
+        });
+      } else {
+        throw new Error(`get received an unexpected path: ${path}`);
+      }
+    });
+  };
+
   beforeEach(() => {
     mockDataProvider = {
       prefetch: jest.fn(),
       getSlug: jest.fn(),
       getIconUrl: jest.fn(),
     };
-    get = jest.fn((path) => {
-      if (path.includes('extensions')) {
-        return Promise.resolve({ items: [] });
-      }
-      if (path.includes('app_installations')) {
-        return Promise.resolve({ items: [], includes: { AppDefinition: [] } });
-      }
-    });
+    get = jest.fn();
+    mockGet([], [], []);
 
     mockClient = ({
       raw: {
@@ -102,7 +107,7 @@ describe('Loader', () => {
         expect(mockDataProvider.prefetch).toHaveBeenCalledTimes(1);
       });
 
-      describe(`for Apps`, () => {
+      describe('for Apps', () => {
         it('fetches data for that widget', async () => {
           await loader.warmUp(NAMESPACE_APP, 'my_id');
           expect(get).toHaveBeenCalledTimes(1);
@@ -204,21 +209,12 @@ describe('Loader', () => {
 
         const [appInstallation, appDefinition] = buildAppInstallation(appId);
 
-        get.mockImplementation((path) => {
-          if (path.includes('extensions')) {
-            return Promise.resolve({ items: [] });
-          }
-          if (path.includes('app_installations')) {
-            return Promise.resolve({
-              items: [appInstallation],
-              includes: { AppDefinition: [appDefinition] },
-            });
-          }
-        });
+        mockGet([], [appInstallation], [appDefinition]);
 
         const result = await loader.getOne(NAMESPACE_APP, appId);
 
         expect(result?.id).toEqual(appId);
+        expect(result?.namespace).toEqual(NAMESPACE_APP);
       });
     });
 
@@ -232,17 +228,11 @@ describe('Loader', () => {
         const [appInstallationTwo, appDefinitionTwo] = buildAppInstallation(controlId);
         const [extension] = buildExtensionResponse(extensionId);
 
-        get.mockImplementation((path) => {
-          if (path.includes('extensions')) {
-            return Promise.resolve({ items: [extension] });
-          }
-          if (path.includes('app_installations')) {
-            return Promise.resolve({
-              items: [appInstallationOne, appInstallationTwo],
-              includes: { AppDefinition: [appDefinitionOne, appDefinitionTwo] },
-            });
-          }
-        });
+        mockGet(
+          [extension],
+          [appInstallationOne, appInstallationTwo],
+          [appDefinitionOne, appDefinitionTwo]
+        );
 
         const editorInterface: EditorInterface = {
           sys: {
@@ -262,7 +252,7 @@ describe('Loader', () => {
 
         const result = await loader.getWithEditorInterface(editorInterface);
 
-        expect(result.map(({ id }) => id)).toEqual([extensionId, appId, controlId]);
+        expect(result.map(({ id }) => id).sort()).toEqual([extensionId, appId, controlId].sort());
       });
     });
 
@@ -274,24 +264,14 @@ describe('Loader', () => {
         const [appInstallation, appDefinition] = buildAppInstallation(appId);
         const [extension] = buildExtensionResponse(extensionId);
 
-        get.mockImplementation((path) => {
-          if (path.includes('extensions')) {
-            return Promise.resolve({ items: [extension] });
-          }
-          if (path.includes('app_installations')) {
-            return Promise.resolve({
-              items: [appInstallation],
-              includes: { AppDefinition: [appDefinition] },
-            });
-          }
-        });
+        mockGet([extension], [appInstallation], [appDefinition]);
 
         const result = await loader.getMultiple([
           { widgetNamespace: NAMESPACE_EXTENSION, widgetId: extensionId },
           { widgetNamespace: NAMESPACE_APP, widgetId: appId },
         ]);
 
-        expect(result.map(({ id }) => id)).toEqual([extensionId, appId]);
+        expect(result.map(({ id }) => id).sort()).toEqual([extensionId, appId].sort());
       });
     });
 
@@ -358,171 +338,6 @@ describe('Loader', () => {
             },
           }
         );
-      });
-    });
-  });
-
-  describe('Helpers', () => {
-    describe('buildExtensionWidget', () => {
-      describe('with src', () => {
-        it('builds a widget from extension data', () => {
-          const [extension, parameterDefinition] = buildExtensionResponse('myextension');
-
-          mockDataProvider.getSlug.mockReturnValue('a_nice_slug');
-          mockDataProvider.getIconUrl.mockReturnValue('url');
-
-          expect(buildExtensionWidget(extension, mockDataProvider)).toEqual({
-            hosting: {
-              type: 'src',
-              value: 'https://example.com',
-            },
-            iconUrl: 'url',
-            id: 'myextension',
-            locations: [
-              {
-                fieldTypes: [],
-                location: 'entry-field',
-              },
-              {
-                location: 'page',
-              },
-              {
-                location: 'entry-sidebar',
-              },
-              {
-                location: 'entry-editor',
-              },
-              {
-                location: 'dialog',
-              },
-            ],
-            name: 'myextension',
-            namespace: 'extension',
-            parameters: {
-              definitions: {
-                installation: [],
-                instance: [parameterDefinition],
-              },
-              values: {
-                installation: {
-                  exampleparameter: true,
-                },
-              },
-            },
-            slug: 'a_nice_slug',
-          });
-        });
-      });
-
-      describe('with srcdoc', () => {
-        it('builds a widget from extension data', () => {
-          const extension: Extension = {
-            sys: {
-              type: 'Extension',
-              id: 'myextension',
-              srcdocSha256: 'arealgenuinesha',
-            },
-            extension: {
-              name: 'myextension',
-              srcdoc: '<html>a nice html page</html>',
-            },
-            parameters: { myParam: 'hello' },
-          };
-          mockDataProvider.getSlug.mockReturnValue('a_nice_slug');
-          mockDataProvider.getIconUrl.mockReturnValue('url');
-
-          expect(buildExtensionWidget(extension, mockDataProvider)).toEqual({
-            hosting: {
-              type: 'srcdoc',
-              value: '<html>a nice html page</html>',
-            },
-            iconUrl: 'url',
-            id: 'myextension',
-            locations: [
-              {
-                fieldTypes: [],
-                location: 'entry-field',
-              },
-              {
-                location: 'page',
-              },
-              {
-                location: 'entry-sidebar',
-              },
-              {
-                location: 'entry-editor',
-              },
-              {
-                location: 'dialog',
-              },
-            ],
-            name: 'myextension',
-            namespace: 'extension',
-            parameters: {
-              definitions: {
-                installation: [],
-                instance: [],
-              },
-              values: {
-                installation: {
-                  myParam: 'hello',
-                },
-              },
-            },
-            slug: 'a_nice_slug',
-          });
-        });
-      });
-    });
-
-    describe('buildAppWidget', () => {
-      it('builds a widget from app data', () => {
-        const appInstallation: AppInstallation = {
-          sys: {
-            type: 'AppInstallation',
-            appDefinition: {
-              sys: {
-                type: 'Link',
-                linkType: 'AppDefinition',
-                id: 'myapp',
-              },
-            },
-          },
-        };
-        const appDefinition: AppDefinition = {
-          sys: {
-            type: 'AppDefinition',
-            id: 'myapp',
-          },
-          name: 'myapp',
-          src: 'https://example.com',
-          locations: [],
-        };
-
-        mockDataProvider.getSlug.mockReturnValue('a_nice_slug');
-        mockDataProvider.getIconUrl.mockReturnValue('url');
-
-        expect(buildAppWidget(appInstallation, appDefinition, mockDataProvider)).toEqual({
-          hosting: {
-            type: 'src',
-            value: 'https://example.com',
-          },
-          iconUrl: 'url',
-          id: 'myapp',
-          locations: [],
-          name: 'myapp',
-          namespace: 'app',
-          parameters: {
-            definitions: {
-              installation: [],
-              instance: [],
-            },
-            values: {
-              installation: {},
-            },
-          },
-          slug: 'a_nice_slug',
-        });
       });
     });
   });
