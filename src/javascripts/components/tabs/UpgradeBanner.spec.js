@@ -4,12 +4,11 @@ import UpgradeBanner from './UpgradeBanner';
 import * as fake from 'test/helpers/fakeFactory';
 
 import { getResourceLimits, isLegacyOrganization } from 'utils/ResourceUtils';
-import { showDialog as showUpgradeSpaceDialog, trackCTAClick } from 'services/ChangeSpaceService';
+import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService';
 import { getSingleSpacePlan, isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
-import { getCurrentStateName } from 'states/Navigator';
-import { track } from 'analytics/Analytics';
+import { trackCTAClick } from 'analytics/targetedCTA';
 import userEvent from '@testing-library/user-event';
 
 const SPACE = fake.Space();
@@ -54,6 +53,10 @@ jest.mock('data/EndpointFactory', () => ({
   createOrganizationEndpoint: jest.fn(),
 }));
 
+jest.mock('analytics/targetedCTA', () => ({
+  trackCTAClick: jest.fn(),
+}));
+
 async function build(custom = {}, shouldWait = true) {
   const props = Object.assign({ space: SPACE, isMasterEnvironment: true }, custom);
 
@@ -77,7 +80,6 @@ describe('UpgradeBanner', () => {
     isLegacyOrganization.mockReturnValue(false);
     isEnterprisePlan.mockReturnValue(false);
     getSingleSpacePlan.mockResolvedValue({ name: 'Large' });
-    getCurrentStateName.mockReturnValue('Test Environment');
   });
 
   it('should load an empty div when fetching initial data', async () => {
@@ -114,8 +116,7 @@ describe('UpgradeBanner', () => {
     userEvent.click(enterpriseLink);
 
     await waitFor(() => {
-      expect(track).toBeCalledWith('targeted_cta_clicked:upgrade_to_enterprise', {
-        ctaLocation: 'Test Environment',
+      expect(trackCTAClick).toBeCalledWith('upgrade_to_enterprise', {
         organizationId: SPACE.organization.sys.id,
         spaceId: SPACE.sys.id,
       });
@@ -137,7 +138,10 @@ describe('UpgradeBanner', () => {
     userEvent.click(upgradeSpaceLink);
 
     await waitFor(() => {
-      expect(trackCTAClick).toBeCalledWith(SPACE.organization.sys.id, SPACE.sys.id);
+      expect(trackCTAClick).toBeCalledWith('upgrade_space_plan', {
+        organizationId: SPACE.organization.sys.id,
+        spaceId: SPACE.sys.id,
+      });
       expect(showUpgradeSpaceDialog).toBeCalledWith({
         organizationId: SPACE.organization.sys.id,
         space: SPACE,

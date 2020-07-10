@@ -7,9 +7,9 @@ import { getSpace } from 'services/TokenStore';
 import {
   showDialog as showChangeSpaceModal,
   getNotificationMessage,
-  trackCTAClick,
 } from 'services/ChangeSpaceService';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { trackCTAClick } from 'analytics/targetedCTA';
 
 import { openDeleteSpaceDialog } from '../services/DeleteSpace';
 import { getRatePlans, getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
@@ -22,7 +22,6 @@ jest.mock('services/ChangeSpaceService', () => ({
   showChangeSpaceModal: jest.fn(),
   showDialog: jest.fn(),
   getNotificationMessage: jest.fn(),
-  trackCTAClick: jest.fn(),
 }));
 
 jest.mock('../services/DeleteSpace', () => ({
@@ -41,6 +40,10 @@ jest.mock('services/TokenStore', () => ({
 jest.mock('account/pricing/PricingDataProvider', () => ({
   getSingleSpacePlan: jest.fn(),
   getRatePlans: jest.fn(),
+}));
+
+jest.mock('analytics/targetedCTA', () => ({
+  trackCTAClick: jest.fn(),
 }));
 
 const build = async (shouldWait = true) => {
@@ -112,7 +115,10 @@ describe('SpaceSettingsRoute', () => {
 
     await waitFor(() => expect(showChangeSpaceModal).toBeCalled());
 
-    expect(trackCTAClick).toBeCalledWith(testOrganization.sys.id, testSpace.sys.id);
+    expect(trackCTAClick).toBeCalledWith('upgrade_space_plan', {
+      organizationId: testOrganization.sys.id,
+      spaceId: testSpace.sys.id,
+    });
 
     expect(showChangeSpaceModal).toBeCalledWith({
       organizationId: testOrganization.sys.id,

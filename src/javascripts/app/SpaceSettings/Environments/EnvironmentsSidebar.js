@@ -13,10 +13,9 @@ import {
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
-import { track } from 'analytics/Analytics';
 import * as Config from 'Config';
 import ExternalTextLink from 'app/common/ExternalTextLink';
-import { trackCTAClick } from 'services/ChangeSpaceService';
+import { trackCTAClick } from 'analytics/targetedCTA';
 
 const ENV_DOC_SIDEBAR_UTM_PARAMS =
   '?utm_source=webapp&utm_medium=environments-sidebar&utm_campaign=in-app-help';
@@ -60,15 +59,14 @@ export default function EnvironmentsSidebar({
   const shouldShowAliasDefinition = canManageAliases || hasOptedInEnv;
 
   const upgradeToEnterpriseOnClick = () => {
-    track('targeted_cta_clicked:upgrade_to_enterprise', {
-      ctaLocation: 'environments_page',
+    trackCTAClick('upgrade_to_enterprise', {
       spaceId,
-      orgId: organizationId,
+      organizationId,
     });
   };
 
   const upgradeOnDemandOnClick = () => {
-    trackCTAClick(organizationId, spaceId);
+    trackCTAClick('upgrade_space_plan', { organizationId, spaceId });
     OpenUpgradeSpaceDialog();
   };
 

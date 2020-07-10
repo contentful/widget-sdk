@@ -11,10 +11,10 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import {
   showDialog as showChangeSpaceModal,
   getNotificationMessage,
-  trackCTAClick,
 } from 'services/ChangeSpaceService';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
+import { trackCTAClick } from 'analytics/targetedCTA';
 
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 
@@ -95,7 +95,10 @@ export class SpaceSettingsRoute extends React.Component {
     const organizationId = spaceContext.organization.sys.id;
     const space = await TokenStore.getSpace(spaceContext.space.data.sys.id);
 
-    trackCTAClick(organizationId, space.sys.id);
+    trackCTAClick('upgrade_space_plan', {
+      organizationId,
+      spaceId: space.sys.id,
+    });
 
     showChangeSpaceModal({
       organizationId,

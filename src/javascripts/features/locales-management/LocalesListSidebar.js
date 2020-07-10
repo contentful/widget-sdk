@@ -11,7 +11,7 @@ import ExternalTextLink from 'app/common/ExternalTextLink';
 import { developerDocsUrl } from 'Config';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { websiteUrl } from 'Config';
-import { track } from 'analytics/Analytics';
+import { trackCTAClick } from 'analytics/targetedCTA';
 import { getModule } from 'core/NgRegistry';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
@@ -122,10 +122,9 @@ export class LocalesListSidebar extends React.Component {
 const handleTalkToUsClickCTA = () => {
   const spaceContext = getModule('spaceContext');
 
-  track('upgrade_to_enterprise:cta_clicked', {
-    location: 'locales_page',
+  trackCTAClick('upgrade_to_enterprise', {
     spaceId: spaceContext.getId(),
-    orgId: spaceContext.organization.sys.id,
+    organizationId: spaceContext.organization.sys.id,
   });
 };
 

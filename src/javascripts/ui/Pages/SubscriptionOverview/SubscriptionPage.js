@@ -23,13 +23,13 @@ import { go } from 'states/Navigator';
 
 import { showDialog as showCreateSpaceModal } from 'services/CreateSpace';
 import {
-  trackCTAClick,
   showDialog as showChangeSpaceModal,
   getNotificationMessage,
 } from 'services/ChangeSpaceService';
 import { openDeleteSpaceDialog } from 'features/space-settings';
 import { isOwner } from 'services/OrganizationRoles';
 import { Price } from 'core/components/formatting';
+import { trackCTAClick } from 'analytics/targetedCTA';
 
 import BasePlan from './BasePlan';
 import UsersForPlan from './UsersForPlan';
@@ -136,7 +136,7 @@ export default function SubscriptionPage({
 
   const changeSpace = (space) => {
     return () => {
-      trackCTAClick(organizationId, space.sys.id);
+      trackCTAClick('upgrade_space_plan', { organizationId, spaceId: space.sys.id });
 
       showChangeSpaceModal({
         action: 'change',

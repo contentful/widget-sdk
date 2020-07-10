@@ -47,12 +47,13 @@ import {
 import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { getVariation } from 'LaunchDarkly';
 import { PRICING_2020_RELEASED } from 'featureFlags';
-import { showDialog as showChangeSpaceModal, trackCTAClick } from 'services/ChangeSpaceService';
+import { showDialog as showChangeSpaceModal } from 'services/ChangeSpaceService';
 import { showDialog as showCreateSpaceModal } from 'services/CreateSpace';
 import * as TokenStore from 'services/TokenStore';
 import { isOwner } from 'services/OrganizationRoles';
 import { getBasePlan, isFreePlan } from 'account/pricing/PricingDataProvider';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
+import { trackCTAClick } from 'analytics/targetedCTA';
 
 const styles = {
   filters: css({
@@ -257,7 +258,10 @@ class UsersList extends React.Component {
     const { orgId } = this.props;
     const { spaceToUpgrade } = this.state;
 
-    trackCTAClick(orgId, spaceToUpgrade.sys.id);
+    trackCTAClick('upgrade_space_plan', {
+      organizationId: orgId,
+      spaceId: spaceToUpgrade.sys.id,
+    });
 
     showChangeSpaceModal({
       action: 'change',
@@ -268,6 +272,10 @@ class UsersList extends React.Component {
 
   createSpace = () => {
     const { orgId } = this.props;
+
+    trackCTAClick('create_space', {
+      organizationId: orgId,
+    });
 
     showCreateSpaceModal(orgId);
   };

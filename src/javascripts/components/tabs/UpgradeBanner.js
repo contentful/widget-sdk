@@ -6,7 +6,7 @@ import { css } from 'emotion';
 
 import { getResourceLimits, isLegacyOrganization } from 'utils/ResourceUtils';
 import { websiteUrl } from 'Config';
-import { showDialog as showUpgradeSpaceDialog, trackCTAClick } from 'services/ChangeSpaceService';
+import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService';
 import { getSingleSpacePlan, isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import ExternalTextLink from 'app/common/ExternalTextLink';
@@ -14,8 +14,7 @@ import ExternalTextLink from 'app/common/ExternalTextLink';
 import createResourceService from 'services/ResourceService';
 import { Note, Paragraph, TextLink } from '@contentful/forma-36-react-components';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
-import { getCurrentStateName } from 'states/Navigator';
-import { track } from 'analytics/Analytics';
+import { trackCTAClick } from 'analytics/targetedCTA';
 
 const WARNING_THRESHOLD = 0.9;
 
@@ -39,13 +38,15 @@ const fetchRecordsResource = (spaceId) => {
 };
 
 const handleOnUpgradeClick = (space, updateResource) => {
-  trackCTAClick(space.organization.sys.id, space.sys.id);
+  trackCTAClick('upgrade_space_plan', {
+    organizationId: space.organization.sys.id,
+    spaceId: space.sys.id,
+  });
 
   openUpgradeModal(space, updateResource);
 };
 const handleUpgradeToEnterpriseClick = (space) => {
-  track('targeted_cta_clicked:upgrade_to_enterprise', {
-    ctaLocation: getCurrentStateName(),
+  trackCTAClick('upgrade_to_enterprise', {
     spaceId: space.sys.id,
     organizationId: space.organization.sys.id,
   });

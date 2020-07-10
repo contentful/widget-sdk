@@ -176,9 +176,9 @@ registerSSOSelfConfigurationEvent('sso:connection_test_result');
 registerSSOSelfConfigurationEvent('sso:contact_support');
 registerSSOSelfConfigurationEvent('sso:enable');
 
-registerGenericEvent('upgrade_plan_link:targeted_cta_clicked');
-
 registerGenericEvent('targeted_cta_clicked:upgrade_to_enterprise');
+registerGenericEvent('targeted_cta_clicked:upgrade_space_plan');
+registerGenericEvent('targeted_cta_clicked:create_space');
 
 registerEvent('global:app_loaded', 'app_open', AppOpen);
 

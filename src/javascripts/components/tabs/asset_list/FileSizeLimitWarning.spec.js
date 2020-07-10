@@ -3,10 +3,11 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import * as Fake from 'test/helpers/fakeFactory';
-import { showDialog as showChangeSpaceModal, trackCTAClick } from 'services/ChangeSpaceService';
+import { showDialog as showChangeSpaceModal } from 'services/ChangeSpaceService';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import { isOwner } from 'services/OrganizationRoles';
 import FileSizeLimitWarning from './FileSizeLimitWarning';
+import { trackCTAClick } from 'analytics/targetedCTA';
 
 const mockOrganization = Fake.Organization();
 const mockSpace = Fake.Space();
@@ -27,6 +28,9 @@ jest.mock('services/OrganizationRoles', () => ({
 jest.mock('services/ChangeSpaceService', () => ({
   showChangeSpaceModal: jest.fn(),
   showDialog: jest.fn(),
+}));
+
+jest.mock('analytics/targetedCTA', () => ({
   trackCTAClick: jest.fn(),
 }));
 
@@ -69,7 +73,10 @@ describe('FileSizeLimitWarning', () => {
 
     userEvent.click(screen.getByTestId('asset-limit-upgrade-link'));
 
-    expect(trackCTAClick).toBeCalledWith(mockOrganization.sys.id, mockSpace.sys.id);
+    expect(trackCTAClick).toBeCalledWith('upgrade_space_plan', {
+      organizationId: mockOrganization.sys.id,
+      spaceId: mockSpace.sys.id,
+    });
 
     expect(showChangeSpaceModal).toBeCalledWith({
       organizationId: mockOrganization.sys.id,
