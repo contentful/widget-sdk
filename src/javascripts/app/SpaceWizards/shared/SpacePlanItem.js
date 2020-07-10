@@ -96,9 +96,10 @@ export default function SpacePlanItem(props) {
   const freeSpacesLimit = freeSpacesResource && freeSpacesResource.limits.maximum;
 
   // We should not show the chevron in the following cases:
-  // - the plan is disabled
-  // - the plan is not free, and the org is not paying
-  const showChevron = plan.disabled ? false : plan.isFree ? true : isPayingOrg ? true : false;
+  // - the plan is disabled => plan.disabled
+  // - the plan is not free, and the org is not paying => !plan.isFree && !isPayingOrg
+  const hideChevron = plan.disabled || (!plan.isFree && !isPayingOrg);
+  const showChevron = !hideChevron;
 
   const handleClick = () => !plan.disabled && onSelect(plan);
 

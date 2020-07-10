@@ -1,15 +1,33 @@
 import * as Kefir from 'kefir';
 import { noop, zipObject } from 'lodash';
 import { makeSum } from 'sum-types';
+import type { Emitter, Observable, Stream, Property } from 'kefir';
 
-/**
- * @ngdoc service
- * @name utils/kefir
- * @description
- * Exports all functions from the 'kefir' node module plus additional
- * helpers.
- */
 export * from 'kefir';
+
+interface Bus {
+  end: () => void;
+  error: (e: unknown) => void;
+}
+
+export interface StreamBus<T> extends Bus {
+  stream: Stream<T, unknown>;
+  emit: (value: T) => void;
+}
+
+export interface PropertyBus<T> extends Bus {
+  property: Property<T, unknown>;
+  set: (value: T) => void;
+}
+
+type Handler = (value: unknown) => void;
+type Off = () => void;
+type Scope = {
+  $applyAsync: () => void;
+  $on: (event: string, cb: () => void) => Off;
+  $watch: (watch: Function, cb: Handler) => void;
+  $$destroyed: boolean;
+};
 
 export const PromiseStatus = makeSum({
   Pending: ['value'],
@@ -18,8 +36,6 @@ export const PromiseStatus = makeSum({
 });
 
 /**
- * @ngdoc method
- * @name utils/kefir#createStreamBus
  * @usage[js]
  * var bus = K.createStreamBus(scope)
  * bus.stream.onValue(cb)
@@ -34,20 +50,15 @@ export const PromiseStatus = makeSum({
  *
  * If the scope parameter is given the stream ends when the scope is
  * destroyed.
- *
- * @param {Scope=} scope
- * @returns {utils/kefir.Bus}
  */
-export function createStreamBus(scope) {
-  let currentEmitter;
-
-  const stream = Kefir.stream((emitter) => {
+export function createStreamBus<T>(scope?: Scope): StreamBus<T> {
+  let currentEmitter: Emitter<T, unknown>;
+  const stream = Kefir.stream<T, unknown>((emitter) => {
     currentEmitter = emitter;
   });
 
   // We activate the stream so that `currentEmitter` gets assigned.
   stream.onValue(noop);
-
   if (scope) {
     scope.$on('$destroy', end);
   }
@@ -76,8 +87,6 @@ export function createStreamBus(scope) {
 export { createStreamBus as createBus };
 
 /**
- * @ngdoc method
- * @name utils/kefir#createPropertyBus
  * @usage[js]
  * var bus = K.createPropertyBus('INITIAL', scope)
  * bus.property.onValue(cb1)
@@ -95,14 +104,9 @@ export { createStreamBus as createBus };
  *
  * If the scope parameter is given the stream ends when the scope is
  * destroyed.
- *
- * @param {any} initialValue
- * @param {Scope=} scope
- * @returns {utils/kefir.PropertyBus}
  */
-export function createPropertyBus(initialValue, scope) {
-  const streamBus = createStreamBus(scope);
-
+export function createPropertyBus<T>(initialValue: T, scope?: Scope): PropertyBus<T> {
+  const streamBus = createStreamBus<T>(scope);
   const property = streamBus.stream.toProperty();
 
   // We activate the property so that we can start setting its value
@@ -118,8 +122,6 @@ export function createPropertyBus(initialValue, scope) {
 }
 
 /**
- * @ngdoc method
- * @name utils/kefir#onValueScope
  * @description
  * `K.onValueScope(scope, stream, cb)` is like to
  * `K.onValue(stream, cb)` but bound to the the lifetime of the
@@ -129,70 +131,42 @@ export function createPropertyBus(initialValue, scope) {
  * - The callback is detached from the stream when the scope is
  *   destroyed
  * - `scope.$applyAsync()` is called after each time the value changes
- *
- * @param {Scope} scope
- * @param {Observable} observable
- * @param {function} cb
- *
- * @returns {function}
- *   Call this function to detach the callback
  */
-export function onValueScope(scope, stream, cb) {
+export function onValueScope(scope: Scope, stream: Observable<unknown, unknown>, cb: Handler): Off {
   const lifeline = scopeLifeline(scope);
-  const off = onValueWhile(lifeline, stream, (value) => {
+
+  return onValueWhile(lifeline, stream, (value) => {
     cb(value);
     scope.$applyAsync();
   });
-  return off;
 }
 
 /**
- * @ngdoc method
- * @name utils/kefir#onValue
  * @description
  * `K.onValue(stream, cb)` is similar to `stream.onValue(cb)` but the
  * former returns a function that, when called, removes the listener.
- *
- * @param {Observable} observable
- * @param {function} cb
- *
- * @returns {function}
- *   Call this function to detach the callback
  */
-export function onValue(stream, cb) {
-  stream.onValue(cb);
-
-  return function off() {
-    if (stream) {
-      stream.offValue(cb);
-      stream = cb = null;
-    }
-  };
+export function onValue(stream: Observable<unknown, unknown>, cb: Handler): Off {
+  const subscription = stream.observe(cb);
+  return subscription.unsubscribe;
 }
 
 /**
- * @ngdoc method
- * @name utils/kefir#onValueWhile
  * @description
  * Similar to `K.onValue(observable, cb)` but detaches the callback
  * when the lifeline stream argument ends.
- *
- * @param {Observable} lifeline
- * @param {Observable} observable
- * @param {function} cb
- *
- * @returns {function}
- *   Call this function to detach the callback
  */
-export function onValueWhile(lifeline, stream, cb) {
+export function onValueWhile(
+  lifeline: Observable<unknown, unknown>,
+  stream: Observable<unknown, unknown>,
+  cb: Handler
+): Off {
   const off = onValue(stream, cb);
   lifeline.onEnd(off);
   return off;
 }
 
 /**
- * @ngdoc method
- * @name utils/kefir#fromScopeEvent
  * @description
  * Create a stream of events emitted on the scope.
  *
@@ -204,15 +178,16 @@ export function onValueWhile(lifeline, stream, cb) {
  * scope.$emit('myEvent', 'value')
  * // => 'value' is logged
  *
- * @param {Scope} scope
- * @param {string} event
- * @param {boolean} uncurry
  * If true, multiple arguments passed to an event will be turned into
  * an array value in the stream.
  */
-export function fromScopeEvent(scope, event, uncurry) {
+export function fromScopeEvent(
+  scope: Scope,
+  event: string,
+  uncurry?: boolean
+): Stream<unknown, unknown> {
   return Kefir.stream((emitter) => {
-    const offEvent = scope.$on(event, function (...args) {
+    const offEvent = scope.$on(event, function (...args: unknown[]) {
       let value;
       if (uncurry) {
         value = Array.prototype.slice.call(args, 1);
@@ -234,8 +209,6 @@ export function fromScopeEvent(scope, event, uncurry) {
 }
 
 /**
- * @ngdoc method
- * @name utils/kefir#fromScopeValue
  * @description
  * Create a property that is updated whenever the scope value changes.
  *
@@ -247,32 +220,23 @@ export function fromScopeEvent(scope, event, uncurry) {
  *   Function that takes the scope and returns the value
  * @returns {Property<T>}
  */
-export function fromScopeValue(scope, get) {
-  const bus = createPropertyBus(get(scope));
+export function fromScopeValue<T>(scope: Scope, get): Property<T, unknown> {
+  const bus = createPropertyBus(get(scope), scope);
   scope.$watch(get, bus.set);
-  scope.$on('$destroy', bus.end);
   return bus.property;
 }
 
 /**
- * @ngdoc method
- * @name utils/kefir#sampleBy
  * @description
  * Create a property that is updated whenever the observable emits a
  * new event. The sampler function is used to obtain the value.
- *
- * @param {Observable<any>} obs
- * @param {function} sampler
- * @returns {Property<any>}
  */
-export function sampleBy(obs, sampler) {
+export function sampleBy<T>(obs, sampler: { (): T }): Property<T, unknown> {
   // We need to pass `noop` to get an initial, undefined value.
   return obs.toProperty(noop).map(sampler);
 }
 
 /**
- * @ngdoc method
- * @name utils/kefir#promiseProperty
  * @usage[js]
  * const prop = K.promiseProperty(promise, 'PENDING')
  * prop.onValue((p) => {
@@ -291,13 +255,11 @@ export function sampleBy(obs, sampler) {
  *
  * You can pass an optional value parameter that is assigned to the
  * 'Pending' constructor.
- *
- *
- * @param {Promise<T>} promise
- * @param {T?} pendingValue
- * @returns {Property<PromiseStatus<T>>}
  */
-export function promiseProperty(promise, pendingValue) {
+export function promiseProperty(
+  promise: Promise<unknown>,
+  pendingValue?: unknown
+): Property<unknown, unknown> {
   const bus = createPropertyBus(PromiseStatus.Pending(pendingValue));
   promise.then(
     (value) => {
@@ -311,8 +273,6 @@ export function promiseProperty(promise, pendingValue) {
 }
 
 /**
- * @ngdoc method
- * @name utils/kefir#combineProperties
  * @description
  * Similar to [Kefir.combine](kefir-combine) but returns a property
  * instead of a stream.
@@ -320,19 +280,16 @@ export function promiseProperty(promise, pendingValue) {
  * Throws an error if one of the arguments is not a Kefir property.
  *
  * [kefir-combine]: https://rpominov.github.io/kefir/#combine
- *
- * @param {Kefir.Property[]} props
- * @param {function(): T} combinator
- * @returns {Property<T>}
  */
-export function combineProperties(props, combinator) {
+export function combineProperties<T>(
+  props: Property<unknown, unknown>[],
+  combinator: { (...values: unknown[]): T }
+): Property<T, unknown> {
   props.forEach(assertIsProperty);
-  return Kefir.combine(props, combinator).toProperty(() => {});
+  return Kefir.combine(props, combinator).toProperty();
 }
 
 /**
- * @ngdoc method
- * @name utils/kefir#combinePropertiesObject
  * @description
  * Combines an object with properties as values into a property with
  * objects as values.
@@ -346,69 +303,28 @@ export function combineProperties(props, combinator) {
  * ~~~
  * The combined property is updated when any of the input properties
  * changes. The values from other properties are retained.
- *
- * @param {object} props
- * @returns {Property<object>}
  */
-export function combinePropertiesObject(props) {
+export function combinePropertiesObject<T>(props: {
+  [k: string]: Property<unknown, unknown>;
+}): Property<T, unknown> {
   const keys = Object.keys(props);
   const values$ = keys.map((k) => {
     const prop = props[k];
     assertIsProperty(prop);
     return prop;
   });
-  return combineProperties(values$).map((values) => zipObject(keys, values));
+  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+  // @ts-ignore
+  return combineProperties<T>(values$).map((values) => zipObject(keys, values));
 }
 
 /**
- * @ngdoc method
- * @name utils/kefir#holdWhen
- * @description
- * Takes a property and a predicate and returns a property that has the
- * same values as the initial property until the current value
- * satisfies the predicate. After that the property is constant with
- * that value.
- *
- * @param {Kefir.Property<T>} props
- * @param {function(T): boolean} predicate
- * @returns {Kefir.Property<T>}
- */
-export function holdWhen(prop, predicate) {
-  assertIsProperty(prop);
-  let hold = false;
-  return prop.withHandler((emitter, event) => {
-    if (hold) {
-      return;
-    }
-
-    if (event.type === 'error') {
-      throw new Error(event.value);
-    } else if (event.type === 'end') {
-      emitter.end();
-    } else if (event.type === 'value') {
-      emitter.value(event.value);
-      if (predicate(event.value)) {
-        hold = true;
-        prop = null;
-        emitter.end();
-      }
-    }
-  });
-}
-
-/**
- * @ngdoc method
- * @name utils/kefir#getValue
- * @description
  * Gets the current value of a property and throws an error if the
  * property does not have a value.
  *
  * WARNING: Use this sparsely. Using this leads to un-idomatic code
- *
- * @param {Kefir.Property<T>} props
- * @returns {T}
  */
-export function getValue(prop) {
+export function getValue<T>(prop: Property<T, unknown>): T {
   let called = false;
   let value;
   const off = onValue(prop, (x) => {
@@ -425,55 +341,18 @@ export function getValue(prop) {
 }
 
 /**
- * Returns a reference object to the current value of the property.
- *
- * ~~~js
- * const ref = K.getRef(prop)
- * ref.value // => current value
- * ref.dispose() // => unsubcribes once and for all
- * ~~~
- *
- * The function subscribes to the property immediately and sets the
- * `value` property of the reference object.
- *
- * The reference object also has a `dispose()` function that
- * unsubscribes from the property. In addition it cleans up the
- * reference deleting both the `value` and `dispose` properties.
- */
-export function getRef(prop) {
-  assertIsProperty(prop);
-  const ref = { dispose };
-
-  const unsub = onValue(prop, (value) => {
-    ref.value = value;
-  });
-  return ref;
-
-  function dispose() {
-    unsub();
-    delete ref.value;
-    delete ref.dispose;
-  }
-}
-
-/**
- * @ngdoc method
- * @name utils/kefir#scopeLifeline
- * @description
  * Returns a stream that ends when the scope is destroyed.
- * @params {Scope} scope
- * @returns {Kefir.Stream<void>}
  */
-export function scopeLifeline(scope) {
+export function scopeLifeline(scope: Scope): Stream<void, unknown> {
+  let watchScope: Scope | null = scope;
   return Kefir.stream((emitter) => {
-    if (!scope || scope.$$destroyed) {
+    if (!watchScope || watchScope.$$destroyed) {
       return end();
-    } else {
-      return scope.$on('$destroy', end);
     }
+    return watchScope.$on('$destroy', end);
 
     function end() {
-      scope = null;
+      watchScope = null;
       emitter.end();
       return noop;
     }
@@ -481,34 +360,24 @@ export function scopeLifeline(scope) {
 }
 
 /**
- * @ngdoc method
- * @name utils/kefir#endWith
- * @description
  * Returns a property that ends when
  *
  * This starts listening on both the `prop` and `lifeline` observables.
- *
- * @params {Kefir.Property<T>} prop
- * @params {Kefir.Stream<any>} lifeline
- * @returns {Kefir.Property<T>}
  */
-export function endWith(prop, lifeline) {
-  const bus = createPropertyBus();
+export function endWith<T>(
+  prop: Property<T, unknown>,
+  lifeline: Stream<unknown, unknown>
+): Property<T, unknown> {
+  return Kefir.stream<T, unknown>((emitter) => {
+    const propSub = prop.observe({ value: emitter.emit, end });
+    const lifelineSub = lifeline.observe({ end });
 
-  const propSub = prop.observe({
-    value: bus.set,
-    end,
-  });
-
-  const lifelineSub = lifeline.observe({ end });
-
-  return bus.property;
-
-  function end() {
-    bus.end();
-    propSub.unsubscribe();
-    lifelineSub.unsubscribe();
-  }
+    function end() {
+      emitter.end();
+      propSub.unsubscribe();
+      lifelineSub.unsubscribe();
+    }
+  }).toProperty();
 }
 
 function assertIsProperty(prop) {

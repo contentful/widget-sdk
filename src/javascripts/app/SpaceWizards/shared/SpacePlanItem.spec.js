@@ -44,7 +44,7 @@ describe('SpacePlanItem', () => {
   });
 
   it('should not show the chevron if the plan is not free and the org is not paying', () => {
-    build({ isPayingOrg: false });
+    build({ isPayingOrg: false, plan: createPlan({ isFree: false }) });
 
     expect(screen.queryByTestId('plan-chevron')).toBeNull();
   });
@@ -91,33 +91,29 @@ describe('SpacePlanItem', () => {
 });
 
 function createPlan(custom) {
-  return Object.assign(
-    {
-      name: 'Space plan',
-      roleSet: {
-        name: 'Role set',
-        roles: [],
-      },
-      includedResources: [],
-      sys: {
-        id: 'plan_1234',
-      },
+  return {
+    name: 'Space plan',
+    roleSet: {
+      name: 'Role set',
+      roles: [],
     },
-    custom
-  );
+    includedResources: [],
+    sys: {
+      id: 'plan_1234',
+    },
+    ...custom,
+  };
 }
 
 function build(custom) {
-  const props = Object.assign(
-    {
-      plan: createPlan(),
-      isSelected: false,
-      freeSpacesResource: { usage: 1, limits: { maximum: 1 } },
-      onSelect: () => {},
-      isPayingOrg: true,
-    },
-    custom
-  );
+  const props = {
+    plan: createPlan(),
+    isSelected: false,
+    freeSpacesResource: { usage: 1, limits: { maximum: 1 } },
+    onSelect: () => {},
+    isPayingOrg: true,
+    ...custom,
+  };
 
   render(<SpacePlanItem {...props} />);
 }

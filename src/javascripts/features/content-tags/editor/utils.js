@@ -52,8 +52,11 @@ export const applyMinimumGroupSize = (
   defaultGroupName = 'Uncategorized',
   minGroupLength = 2
 ) => {
+  if (!Array.isArray(groups[defaultGroupName])) {
+    groups[defaultGroupName] = [];
+  }
   Object.keys(groups).forEach((groupName) => {
-    if (groups[groupName].length < minGroupLength) {
+    if (groups[groupName].length < minGroupLength && groupName !== defaultGroupName) {
       groups[defaultGroupName] = orderByLabel([...groups[defaultGroupName], ...groups[groupName]]);
       delete groups[groupName];
     }

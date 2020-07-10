@@ -42,6 +42,8 @@ export const styles = {
       backgroundColor: '#fff',
       boxShadow: tokens.boxShadowDefault,
       padding: '2px',
+      width: '35px',
+      height: '35px',
     })
   ),
   navbarIcon: cx(

@@ -271,34 +271,6 @@ describe('core/utils/kefir', () => {
     });
   });
 
-  describe('#holdWhen', () => {
-    it('emits values until predicate is true', () => {
-      const prop = KMock.createMockProperty('A');
-
-      const hold = K.holdWhen(prop, (x) => x === 'X');
-      KMock.assertCurrentValue(hold, 'A');
-
-      prop.set('B');
-      KMock.assertCurrentValue(hold, 'B');
-
-      prop.set('X');
-      KMock.assertCurrentValue(hold, 'X');
-
-      prop.set('Y');
-      KMock.assertCurrentValue(hold, 'X');
-    });
-
-    it('ends after predicate is true', () => {
-      const prop = KMock.createMockProperty('A');
-      const hold = K.holdWhen(prop, (x) => x === 'X');
-
-      const ended = sinon.spy();
-      hold.onEnd(ended);
-      prop.set('X');
-      sinon.assert.calledOnce(ended);
-    });
-  });
-
   describe('#scopeLifeline', () => {
     beforeEach(function () {
       this.scope = $inject('$rootScope').$new();
