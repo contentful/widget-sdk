@@ -18,7 +18,6 @@ import {
 import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 
-import StateLink from 'app/common/StateLink';
 import { billing } from './links';
 import { go } from 'states/Navigator';
 
@@ -35,7 +34,7 @@ import { Price } from 'core/components/formatting';
 import BasePlan from './BasePlan';
 import UsersForPlan from './UsersForPlan';
 import SpacePlans from './SpacePlans';
-import NavigationIcon from 'ui/Components/NavigationIcon';
+import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 import ContactUsButton from 'ui/Components/ContactUsButton';
 
@@ -178,15 +177,14 @@ export default function SubscriptionPage({
 
   const showPayingOnDemandCopy = isOrgBillable && !enterprisePlan;
   const showAddBillingDetailsCopy = !isOrgBillable && isOrgOwner;
-  const showInaccessibleSpacesCopy = spacePlans && hasAnyInaccessibleSpaces(spacePlans);
+  const anySpacesInaccessible = !!spacePlans && hasAnyInaccessibleSpaces(spacePlans);
 
-  const rightColumnHasContent =
-    showPayingOnDemandCopy || showAddBillingDetailsCopy || showInaccessibleSpacesCopy;
+  const rightColumnHasContent = showPayingOnDemandCopy || showAddBillingDetailsCopy;
 
   return (
     <Workbench testId="subscription-page">
       <Workbench.Header
-        icon={<NavigationIcon icon="subscription" size="large" color="green" />}
+        icon={<NavigationIcon icon="Subscription" size="large" />}
         title="Subscription"
       />
       <Workbench.Content className={styles.content}>
@@ -236,9 +234,6 @@ export default function SubscriptionPage({
                 )}
                 {showPayingOnDemandCopy && <PayingOnDemandOrgCopy grandTotal={grandTotal} />}
                 {showAddBillingDetailsCopy && <NonPayingOrgCopy organizationId={organizationId} />}
-                {showInaccessibleSpacesCopy && (
-                  <InaccessibleSpacesCopy organizationId={organizationId} isOrgOwner={isOrgOwner} />
-                )}
               </>
             )}
           </div>
@@ -253,6 +248,7 @@ export default function SubscriptionPage({
               showMicroSmallSupportCard={showMicroSmallSupportCard}
               onDeleteSpace={deleteSpace}
               enterprisePlan={enterprisePlan}
+              anySpacesInaccessible={anySpacesInaccessible}
             />
           </div>
         </Grid>
@@ -326,32 +322,4 @@ function NonPayingOrgCopy({ organizationId }) {
 
 NonPayingOrgCopy.propTypes = {
   organizationId: PropTypes.string.isRequired,
-};
-
-function InaccessibleSpacesCopy({ isOrgOwner, organizationId: orgId }) {
-  return (
-    <Typography testId="subscription-page.inaccessible-space-copy">
-      <Heading className="section-title">Spaces without permission</Heading>
-      <Paragraph>
-        You can’t see usage or content for some of your spaces because you’re not a member of those
-        spaces.
-      </Paragraph>
-      <Paragraph>
-        However, since you’re an organization {isOrgOwner ? 'owner' : 'admin'} you can grant
-        yourself access by going to{' '}
-        <StateLink
-          data-test-id="subscription-page.link-to-users-list"
-          path="account.organizations.users.list"
-          params={{ orgId }}>
-          Users
-        </StateLink>{' '}
-        and adding yourself to the space.
-      </Paragraph>
-    </Typography>
-  );
-}
-
-InaccessibleSpacesCopy.propTypes = {
-  organizationId: PropTypes.string.isRequired,
-  isOrgOwner: PropTypes.bool,
 };

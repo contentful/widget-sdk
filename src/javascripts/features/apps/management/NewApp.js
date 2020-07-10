@@ -13,7 +13,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { AppEditor } from './AppEditor';
 import * as ManagementApiClient from './ManagementApiClient';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import NavigationIcon from 'ui/Components/NavigationIcon';
+import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
@@ -73,7 +73,7 @@ export class NewApp extends React.Component {
         <Workbench.Header
           title="Create app"
           onBack={this.props.goToListView}
-          icon={<NavigationIcon icon="apps" size="large" color="green" />}></Workbench.Header>
+          icon={<NavigationIcon icon="Apps" size="large" />}></Workbench.Header>
         <Workbench.Content type="text">
           <Note className={styles.spacerXl}>
             <Paragraph>

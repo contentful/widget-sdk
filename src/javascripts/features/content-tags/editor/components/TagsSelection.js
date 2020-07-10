@@ -3,7 +3,6 @@ import * as React from 'react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { Paragraph } from '@contentful/forma-36-react-components';
 import { TagsAutocomplete } from 'features/content-tags/editor/components/TagsAutocomplete';
-import { EntityTags } from 'features/content-tags/editor/components/EntityTags';
 import {
   useF36Modal,
   useIsInitialLoadingOfTags,
@@ -19,6 +18,7 @@ import { useSpaceContext } from 'features/content-tags/core/hooks';
 
 import { css } from 'emotion';
 import FeedbackButton from 'app/common/FeedbackButton';
+import { EntityTags } from 'features/content-tags/editor/components/EntityTags';
 
 const styles = {
   wrapper: css({

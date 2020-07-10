@@ -22,7 +22,9 @@ describe('SpacePlanItem', () => {
 
     build({ plan, freeSpacesResource });
 
-    expect(screen.getByTestId('contents')).toHaveTextContent('1/2 used');
+    expect(screen.getByTestId('contents').textContent).toBe(
+      `${plan.name}${freeSpacesResource.usage}/${freeSpacesResource.limits.maximum} free spaces`
+    );
   });
 
   it('should show the plan features', () => {
@@ -44,7 +46,7 @@ describe('SpacePlanItem', () => {
   });
 
   it('should not show the chevron if the plan is not free and the org is not paying', () => {
-    build({ isPayingOrg: false });
+    build({ isPayingOrg: false, plan: createPlan({ isFree: false }) });
 
     expect(screen.queryByTestId('plan-chevron')).toBeNull();
   });

@@ -7,7 +7,7 @@ import {
   SkeletonBodyText,
   Workbench,
 } from '@contentful/forma-36-react-components';
-import NavigationIcon from 'ui/Components/NavigationIcon';
+import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import * as Navigator from 'states/Navigator';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 
@@ -28,7 +28,7 @@ export function KeyEditorWorkbench(props) {
             </div>
           </>
         }
-        icon={<NavigationIcon icon="apis" color="green" size="large" />}
+        icon={<NavigationIcon icon="Apis" size="large" />}
         onBack={() => {
           Navigator.go({ path: '^.list' });
         }}

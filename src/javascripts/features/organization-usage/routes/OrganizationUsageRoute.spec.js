@@ -1,21 +1,16 @@
 import React from 'react';
-import { shallow } from 'enzyme';
-import 'jest-enzyme';
-import { Spinner } from '@contentful/forma-36-react-components';
+import { render, waitFor } from '@testing-library/react';
 
 import {
   OrganizationUsageRoute,
   WorkbenchContent,
   WorkbenchActions,
 } from './OrganizationUsageRoute';
-import { PeriodSelector } from '../components/PeriodSelector';
-import { NoSpacesPlaceholder } from '../components/NoSpacesPlaceholder';
-import { OrganizationUsagePage } from '../components/OrganizationUsagePage';
-import { OrganizationResourceUsageList } from '../components/OrganizationResourceUsageList';
 import ReloadNotification from 'app/common/ReloadNotification';
 import * as OrganizationRolesMocked from 'services/OrganizationRoles';
 import * as TokenStoreMocked from 'services/TokenStore';
 import * as OrganizationMembershipRepositoryMocked from 'access_control/OrganizationMembershipRepository';
+import { UsageStateContext } from '../hooks/usageContext';
 
 jest.mock('services/intercom', () => ({}));
 jest.mock('utils/ResourceUtils', () => ({}));
@@ -102,75 +97,35 @@ jest.mock('app/common/ReloadNotification', () => ({
 }));
 
 jest.mock('LaunchDarkly', () => ({
-  getVariation: jest.fn().mockResolvedValue(null),
+  getVariation: jest.fn().mockResolvedValue(false),
 }));
 
-const shallowRenderComponent = async (props) => {
-  const wrapper = shallow(<OrganizationUsageRoute {...props} />);
-  // Need to wait for internal async logic to finish
-  // This means `componentDidMount` is called twice,
-  //  which could potentially cause problems if it's not
-  //  idempotent.
-  await wrapper.instance().componentDidMount();
-  return wrapper;
-};
+jest.mock('../components/PeriodSelector', () => ({
+  PeriodSelector: jest.fn().mockReturnValue(<div data-test-id="period-selector"></div>),
+}));
+
+jest.mock('../components/OrganizationUsagePage', () => ({
+  OrganizationUsagePage: jest.fn().mockReturnValue(<div data-test-id="usage-page"></div>),
+}));
+
+jest.mock('../components/OrganizationResourceUsageList', () => ({
+  OrganizationResourceUsageList: jest
+    .fn()
+    .mockReturnValue(<div data-test-id="resource-list"></div>),
+}));
+
+const DEFAULT_ORG = 'abcd';
 
 describe('OrganizationUsageRoute', () => {
-  let defaultProps;
-
-  beforeAll(() => {
-    defaultProps = {
-      orgId: '23423',
-    };
-    // set fixed date for stable snapshots
-    // moment('2017-12-01').unix() = 1512082800
-    jest.spyOn(Date, 'now').mockImplementation(() => 1512082800);
-  });
-
-  afterAll(() => {
-    Date.now.mockRestore();
-  });
-
-  it('should render page without errors', async () => {
-    const wrapper = await shallowRenderComponent(defaultProps);
-
-    expect(wrapper).toMatchSnapshot();
-  });
-
   describe('user is not owner or admin', () => {
     it('should populate error in the state', async () => {
       OrganizationRolesMocked.isOwnerOrAdmin.mockReturnValueOnce(false);
 
-      const wrapper = await shallowRenderComponent(defaultProps);
+      const { getByText } = render(<OrganizationUsageRoute orgId={DEFAULT_ORG} />);
 
-      expect(TokenStoreMocked.getOrganization).toHaveBeenCalledWith(defaultProps.orgId);
-      expect(OrganizationRolesMocked.isOwnerOrAdmin).toHaveBeenCalledWith({});
-      expect(wrapper.state('error')).toBeTruthy();
-    });
-  });
-
-  describe('fetching org data fails with 404', () => {
-    it('should populate error in the state', async () => {
-      const error404 = new Error('Test error');
-      error404.status = 404;
-
-      OrganizationMembershipRepositoryMocked.getAllSpaces.mockRejectedValueOnce(error404);
-
-      const wrapper = await shallowRenderComponent(defaultProps);
-
-      expect(wrapper.state('error')).toBeTruthy();
-    });
-  });
-
-  describe('fetching org data fails with 403', () => {
-    it('should populate error in the state', async () => {
-      const error403 = new Error('Test error');
-      error403.status = 403;
-      OrganizationMembershipRepositoryMocked.getAllSpaces.mockRejectedValueOnce(error403);
-
-      const wrapper = await shallowRenderComponent(defaultProps);
-
-      expect(wrapper.state('error')).toBeTruthy();
+      expect(TokenStoreMocked.getOrganization).toHaveBeenCalledWith(DEFAULT_ORG);
+      await waitFor(() => expect(OrganizationRolesMocked.isOwnerOrAdmin).toHaveBeenCalledWith({}));
+      expect(getByText('Something went wrong')).toBeInTheDocument();
     });
   });
 
@@ -181,195 +136,155 @@ describe('OrganizationUsageRoute', () => {
 
       OrganizationMembershipRepositoryMocked.getAllSpaces.mockRejectedValueOnce(error400);
 
-      await shallowRenderComponent(defaultProps);
+      render(<OrganizationUsageRoute orgId={DEFAULT_ORG} />);
 
-      expect(ReloadNotification.trigger).toHaveBeenCalled();
+      await waitFor(() => expect(ReloadNotification.trigger).toHaveBeenCalled());
     });
   });
 });
 
+const MockPovider = (data) => {
+  const { children } = data;
+  return <UsageStateContext.Provider value={data}>{children}</UsageStateContext.Provider>;
+};
+
+MockPovider.defaultProps = {
+  dispatch: () => {},
+};
+
+const defaultData = {
+  isLoading: false,
+  error: false,
+  hasSpaces: true,
+  periods: [],
+  isAssetBandwidthTab: false,
+  isTeamOrEnterpriseCustomer: true,
+  periodicUsage: {},
+  assetBandwidthData: {},
+};
+
 describe('WorkbenchActions', () => {
-  it('should render', () => {
-    const wrapper = shallow(<WorkbenchActions />);
-
-    expect(wrapper).toMatchSnapshot();
-  });
-
   describe('isLoading', () => {
-    it('should render a spinner if the org is committed', () => {
-      const wrapper = shallow(<WorkbenchActions isLoading committed />);
+    it('should render a spinner', () => {
+      const { getByTestId, queryByTestId } = render(
+        <MockPovider isLoading={true} isTeamOrEnterpriseCustomer={true} hasSpaces={true}>
+          <WorkbenchActions />
+        </MockPovider>
+      );
 
-      expect(wrapper.find(Spinner)).toHaveLength(1);
-
-      expect(wrapper.find(PeriodSelector)).toHaveLength(0);
-    });
-
-    it('should not render spinner if the org is non-committed', () => {
-      const wrapper = shallow(<WorkbenchActions isLoading />);
-
-      expect(wrapper.find(Spinner)).toHaveLength(0);
-
-      expect(wrapper.find(PeriodSelector)).toHaveLength(0);
+      expect(getByTestId('organization-usage_spinner')).toBeVisible();
+      expect(queryByTestId('period-selector')).toBeNull();
     });
 
     it('should not render spinner if there are no spaces', () => {
-      const wrapper = shallow(<WorkbenchActions isLoading hasSpaces={false} />);
+      const { queryByTestId } = render(
+        <MockPovider isLoading={true} isTeamOrEnterpriseCustomer={true} hasSpaces={false}>
+          <WorkbenchActions />
+        </MockPovider>
+      );
 
-      expect(wrapper.find(Spinner)).toHaveLength(0);
-
-      expect(wrapper.find(PeriodSelector)).toHaveLength(0);
+      expect(queryByTestId('organization-usage_spinner')).toBeNull();
+      expect(queryByTestId('period-selector')).toBeNull();
     });
   });
 
   describe('org is committed and periods received', () => {
     it('should render the PeriodSelector', () => {
-      const wrapper = shallow(
-        <WorkbenchActions
-          hasSpaces
-          committed
-          periods={[]}
-          selectedPeriodIndex={0}
-          setPeriodIndex={() => {}}
-          showPeriodSelector
-        />
+      const { getByTestId } = render(
+        <MockPovider {...defaultData}>
+          <WorkbenchActions />
+        </MockPovider>
       );
 
-      expect(wrapper.find(PeriodSelector)).toHaveLength(1);
-    });
-  });
-
-  describe('org is not committed', () => {
-    it('should render nothing', () => {
-      const wrapper = shallow(
-        <WorkbenchActions
-          hasSpaces
-          periods={[]}
-          selectedPeriodIndex={0}
-          setPeriodIndex={() => {}}
-          showPeriodSelector
-        />
-      );
-
-      expect(wrapper.find(PeriodSelector)).toHaveLength(0);
-      expect(wrapper.find(Spinner)).toHaveLength(0);
+      expect(getByTestId('period-selector')).toBeInTheDocument();
     });
   });
 
   describe('org has no spaces', () => {
     it('should render nothing', () => {
-      const wrapper = shallow(
-        <WorkbenchActions
-          committed
-          periods={[]}
-          selectedPeriodIndex={0}
-          setPeriodIndex={() => {}}
-          showPeriodSelector
-        />
+      const data = {
+        ...defaultData,
+        hasSpaces: false,
+      };
+      const { queryByTestId } = render(
+        <MockPovider {...data}>
+          <WorkbenchActions />
+        </MockPovider>
       );
-
-      expect(wrapper.find(PeriodSelector)).toHaveLength(0);
-      expect(wrapper.find(Spinner)).toHaveLength(0);
+      expect(queryByTestId('organization-usage_spinner')).toBeNull();
+      expect(queryByTestId('period-selector')).toBeNull();
     });
   });
 
-  describe('the PeriodSelect must be hidden', () => {
+  describe('user is on the asset bandwidth tab', () => {
     it('should render nothing', () => {
-      const wrapper = shallow(
-        <WorkbenchActions
-          hasSpaces
-          committed
-          periods={[]}
-          selectedPeriodIndex={0}
-          setPeriodIndex={() => {}}
-        />
+      const data = {
+        ...defaultData,
+        isAssetBandwidthTab: true,
+      };
+      const { queryByTestId } = render(
+        <MockPovider {...data}>
+          <WorkbenchActions />
+        </MockPovider>
       );
 
-      expect(wrapper.find(PeriodSelector)).toHaveLength(0);
-      expect(wrapper.find(Spinner)).toHaveLength(0);
+      expect(queryByTestId('organization-usage_spinner')).toBeNull();
+      expect(queryByTestId('period-selector')).toBeInTheDocument();
     });
   });
 });
 
 describe('WorkbenchContent', () => {
-  let defaultProps = null;
-
-  beforeEach(() => {
-    defaultProps = {
-      committed: true,
-      hasSpaces: true,
-      selectedPeriodIndex: 0,
-      spaceNames: { space1: 'Space1', space2: 'Space2' },
-      isPoC: { space1: false, space2: true },
-      periodicUsage: {
-        org: { usage: [] },
-        apis: { cma: { items: [] } },
-      },
-      apiRequestIncludedLimit: 1000,
-      assetBandwidthUsage: 100,
-      assetBandwidthIncludedLimit: 50,
-      assetBandwidthUOM: 'GB',
-      isLoading: false,
-      periods: [],
-      resources: [],
-    };
-  });
-
-  it('should render', () => {
-    const wrapper = shallow(<WorkbenchContent {...defaultProps} />);
-
-    expect(wrapper).toMatchSnapshot();
-  });
-
   describe('org is committed and there are spaces', () => {
     it('should render the OrganizationUsagePage', () => {
-      const wrapper = shallow(<WorkbenchContent {...defaultProps} />);
+      const { queryByTestId, getByTestId } = render(
+        <MockPovider {...defaultData}>
+          <WorkbenchContent resources={[]} showNewPricingFeature={false} />
+        </MockPovider>
+      );
 
-      expect(wrapper.find(OrganizationUsagePage)).toHaveLength(1);
+      expect(getByTestId('usage-page')).toBeInTheDocument();
 
-      expect(wrapper.find(NoSpacesPlaceholder)).toHaveLength(0);
-      expect(wrapper.find(OrganizationResourceUsageList)).toHaveLength(0);
+      expect(queryByTestId('usage-page__no-spaces-placeholder')).toBeNull();
+      expect(queryByTestId('resource-list')).toBeNull();
     });
   });
 
   describe('org has no spaces', () => {
     it('should render NoSpacePlaceholder', () => {
-      const wrapper = shallow(
-        <WorkbenchContent {...{ ...defaultProps, ...{ hasSpaces: false } }} />
+      const data = {
+        ...defaultData,
+        hasSpaces: false,
+      };
+      const { queryByTestId, getByTestId } = render(
+        <MockPovider {...data}>
+          <WorkbenchContent resources={[]} showNewPricingFeature={false} />
+        </MockPovider>
       );
 
-      expect(wrapper.find(NoSpacesPlaceholder)).toHaveLength(1);
+      expect(getByTestId('usage-page__no-spaces-placeholder')).toBeInTheDocument();
 
-      expect(wrapper.find(OrganizationUsagePage)).toHaveLength(0);
-      expect(wrapper.find(OrganizationResourceUsageList)).toHaveLength(0);
+      expect(queryByTestId('usage-page')).toBeNull();
+      expect(queryByTestId('resource-list')).toBeNull();
     });
   });
 
   describe('org is not committed', () => {
-    beforeEach(() => {
-      defaultProps.committed = false;
-    });
-
     it('should render OrganizationResourceUsageList', () => {
-      const wrapper = shallow(<WorkbenchContent {...defaultProps} />);
+      const data = {
+        ...defaultData,
+        isTeamOrEnterpriseCustomer: false,
+      };
+      const { queryByTestId, getByTestId } = render(
+        <MockPovider {...data}>
+          <WorkbenchContent resources={[]} showNewPricingFeature={false} />
+        </MockPovider>
+      );
 
-      expect(wrapper.find(OrganizationResourceUsageList)).toHaveLength(1);
+      expect(getByTestId('resource-list')).toBeInTheDocument();
 
-      expect(wrapper.find(OrganizationUsagePage)).toHaveLength(0);
-      expect(wrapper.find(NoSpacesPlaceholder)).toHaveLength(0);
-    });
-
-    describe('no resources given', () => {
-      beforeEach(() => {
-        defaultProps.resources = undefined;
-      });
-
-      it('should render nothing', () => {
-        const wrapper = shallow(<WorkbenchContent {...defaultProps} />);
-
-        expect(wrapper.find(OrganizationResourceUsageList)).toHaveLength(0);
-        expect(wrapper.find(OrganizationUsagePage)).toHaveLength(0);
-        expect(wrapper.find(NoSpacesPlaceholder)).toHaveLength(0);
-      });
+      expect(queryByTestId('usage-page')).toBeNull();
+      expect(queryByTestId('usage-page__no-spaces-placeholder')).toBeNull();
     });
   });
 });

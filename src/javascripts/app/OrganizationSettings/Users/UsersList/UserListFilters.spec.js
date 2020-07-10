@@ -1,62 +1,61 @@
 import React from 'react';
 import { cloneDeep } from 'lodash';
-import { shallow } from 'enzyme';
-import 'jest-enzyme';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { generateFilterDefinitions } from './FilterDefinitions';
-import SearchFilter from './SearchFilter';
 import { UserListFilters } from './UserListFilters';
-import { TextLink } from '@contentful/forma-36-react-components';
+
+const onChangeCb = jest.fn();
+const onResetCb = jest.fn();
+const filters = generateFilterDefinitions({});
+const activeFilters = cloneDeep(filters);
+activeFilters[1].filter = { key: 'sys.status', value: 'active' };
+
+async function build(props) {
+  return render(
+    <UserListFilters
+      filters={filters}
+      queryTotal={1}
+      onChange={onChangeCb}
+      onReset={onResetCb}
+      {...props}
+    />
+  );
+}
 
 describe('UserListFilters', () => {
-  const filters = generateFilterDefinitions({});
-  const activeFilters = cloneDeep(filters);
-  activeFilters[1].filter.value = 'foo';
-
-  let onChangeCb, onResetCb, component;
-
-  function simulateChange(filter) {
-    component.find(SearchFilter).at(1).simulate('change', filter);
-  }
-
-  beforeEach(() => {
-    onChangeCb = jest.fn();
-    onResetCb = jest.fn();
-    component = shallow(
-      <UserListFilters
-        filters={filters}
-        queryTotal={99}
-        onChange={onChangeCb}
-        onReset={onResetCb}
-      />
-    );
+  it('should render all options', async () => {
+    await build();
+    expect(screen.getAllByTestId('search-filter')).toHaveLength(filters.length);
   });
 
-  it('should render all options', () => {
-    expect(component.find(SearchFilter)).toHaveLength(filters.length);
-  });
-
-  it('should trigger the onChange callback when any of the filters change', () => {
-    const filter = {
+  it('should trigger the onChange callback when any of the filters change', async () => {
+    await build();
+    const filters = generateFilterDefinitions({});
+    filters[0].filter = {
+      id: 'sort',
       key: 'order',
       value: 'sys.createdAt',
     };
-    simulateChange(filter);
-    expect(onChangeCb.mock.calls[0][0]).toHaveLength(filters.length);
-    expect(onChangeCb.mock.calls[0][0][0]).toHaveProperty(['filter'], filter);
+
+    const selectEl = screen.getAllByTestId('search-filter.options');
+    fireEvent.change(selectEl[0], { target: { value: 'sys.createdAt' } });
+    expect(onChangeCb).toHaveBeenCalledTimes(1);
+    expect(onChangeCb).toHaveBeenCalledWith(filters);
   });
 
-  it('should not show the reset button if no filters are active', () => {
-    expect(component.find(TextLink)).toHaveLength(0);
+  it('should not show the reset button if no filters are active', async () => {
+    await build();
+    expect(screen.queryAllByText('Clear filters')).toHaveLength(0);
   });
 
-  it('should show the reset button if there are active filters', () => {
-    component.setProps({ filters: activeFilters });
-    expect(component.find(TextLink)).toHaveLength(1);
+  it('should show the reset button if there are active filters', async () => {
+    await build({ filters: activeFilters });
+    expect(screen.getByText('Clear filters')).toBeVisible();
   });
 
-  it('triggers the reset callback', () => {
-    component.setProps({ filters: activeFilters });
-    component.find(TextLink).simulate('click');
+  it('triggers the reset callback', async () => {
+    await build({ filters: activeFilters });
+    fireEvent.click(screen.getByText('Clear filters'));
     expect(onResetCb).toHaveBeenCalledTimes(1);
   });
 });

@@ -31,7 +31,7 @@ describe('SpaceSettings', () => {
     renderComponent();
 
     expect(screen.getByTestId('space-settings-page.plan-price')).toHaveTextContent(
-      'testPlanName - $10 /month'
+      'testPlanName - $10/month'
     );
   });
 

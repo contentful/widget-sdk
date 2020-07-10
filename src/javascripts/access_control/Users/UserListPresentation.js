@@ -1,13 +1,14 @@
 import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { SectionHeading, Button, Workbench } from '@contentful/forma-36-react-components';
+import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { map } from 'lodash';
 
 import { List } from '@contentful/forma-36-react-components';
 import { SpaceMember as SpaceMemberPropType } from 'app/OrganizationSettings/PropTypes';
-import NavigationIcon from 'ui/Components/NavigationIcon';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import FilterPill from 'app/ContentList/Search/FilterPill';
 import ValueInput from 'app/ContentList/Search/FilterValueInputs';
@@ -89,7 +90,7 @@ const UserListPresentation = ({
       <Workbench>
         <Workbench.Header
           title={`Users (${spaceUsersCount})`}
-          icon={<NavigationIcon icon="users" size="large" color="green" />}
+          icon={<NavigationIcon icon="Users" size="large" />}
           actions={
             <Button
               buttonType="primary"

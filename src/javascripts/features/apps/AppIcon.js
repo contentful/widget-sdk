@@ -1,11 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import DefaultIcon from 'ui/Components/Icon';
+import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+
 import { styles } from './styles';
 
-const IconRaw = ({ icon, className }) => {
+const IconRaw = ({ icon, className, size }) => {
   if (!icon) {
-    return <DefaultIcon name="page-apps" className={className} />;
+    return (
+      <div className={className}>
+        <NavigationIcon icon="Apps" tag="span" size={size ? size : 'large'} />
+      </div>
+    );
   }
 
   return <img src={icon} className={className} />;
@@ -13,9 +18,12 @@ const IconRaw = ({ icon, className }) => {
 IconRaw.propTypes = {
   icon: PropTypes.string,
   className: PropTypes.string.isRequired,
+  size: PropTypes.string,
 };
 
-const NavigationAppIcon = ({ icon }) => <IconRaw className={styles.navbarIcon} icon={icon} />;
+const NavigationAppIcon = ({ icon }) => (
+  <IconRaw className={styles.navbarIcon} icon={icon} size="medium" />
+);
 NavigationAppIcon.propTypes = {
   icon: IconRaw.propTypes.icon,
 };

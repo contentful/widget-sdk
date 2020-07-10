@@ -1,5 +1,3 @@
-import { Emitter, Property, Stream } from 'kefir';
-
 export interface EntitySys {
   type: 'Entry' | 'Asset';
   id: string;
@@ -30,19 +28,4 @@ export interface Entity {
   metadata?: {
     tags: Link<'Tag'>[];
   };
-}
-
-interface KefirBus<V> {
-  end: Emitter<V, any>['end'];
-  error: Emitter<V, any>['error'];
-}
-
-export interface StreamBus<V> extends KefirBus<V> {
-  stream: Stream<V, any>;
-  emit: Emitter<V, any>['emit'];
-}
-
-export interface PropertyBus<V> extends KefirBus<V> {
-  property: Property<V, any>;
-  set: Emitter<V, any>['emit'];
 }

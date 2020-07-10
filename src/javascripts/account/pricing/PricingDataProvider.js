@@ -7,8 +7,10 @@ export const SELF_SERVICE = 'Self-service';
 export const ENTERPRISE = 'Enterprise';
 const ENTERPRISE_TRIAL = 'Enterprise Trial';
 export const ENTERPRISE_HIGH_DEMAND = 'Enterprise High Demand';
+const FREE = 'Free';
 
 export const customerTypes = {
+  free: [FREE],
   selfService: [SELF_SERVICE],
   enterprise: [ENTERPRISE, ENTERPRISE_TRIAL, ENTERPRISE_HIGH_DEMAND],
 };
@@ -19,6 +21,10 @@ export function isSelfServicePlan(plan) {
 
 export function isEnterprisePlan(plan) {
   return customerTypes.enterprise.includes(plan.customerType);
+}
+
+export function isFreePlan(plan) {
+  return customerTypes.free.includes(plan.customerType);
 }
 
 export function isHighDemandEnterprisePlan(plan) {

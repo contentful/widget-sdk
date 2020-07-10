@@ -53,11 +53,10 @@ export default function register() {
    *   Contains methods that can be called to track actions.
    */
   registerDirective('cfBulkEntityEditor', [
-    '$q',
     '$controller',
     '$timeout',
     'spaceContext',
-    ($q, $controller, $timeout, spaceContext) => {
+    ($controller, $timeout, spaceContext) => {
       return {
         restrict: 'E',
         scope: {
@@ -113,11 +112,10 @@ export default function register() {
             const editorDataPromise$ = K.promiseProperty(
               bulkEditorContext.loadEditorData(entityContext.id).then((editorData) => {
                 const doc = editorData.openDoc(K.scopeLifeline($scope));
-                // We wait for the document to be opened until we setup the
-                // editor
-                return doc.state.loaded$
-                  .toPromise($q)
-                  .then(() => _.assign({ doc: doc }, editorData));
+                // We wait for the document to be opened until we setup the editor
+                return new Promise((resolve) => {
+                  doc.state.loaded$.onValue((loaded) => loaded && resolve());
+                }).then(() => _.assign({ doc: doc }, editorData));
               })
             );
 

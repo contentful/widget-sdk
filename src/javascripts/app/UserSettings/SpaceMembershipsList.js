@@ -16,7 +16,7 @@ import moment from 'moment';
 import { css } from 'emotion';
 
 import { Space as SpacePropType } from 'app/OrganizationSettings/PropTypes';
-import NavigationIcon from 'ui/Components/NavigationIcon';
+import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 const styles = {
   dotsRow: css({
@@ -28,7 +28,7 @@ const styles = {
 const SpaceMembershipsList = ({ spaces, onLeave, goToSpace }) => (
   <Workbench>
     <Workbench.Header
-      icon={<NavigationIcon icon="spaces" size="large" color="green" />}
+      icon={<NavigationIcon icon="Spaces" size="large" />}
       title={`Space memberships (${(spaces || []).length})`}
     />
     <Workbench.Content type="default">
@@ -52,6 +52,7 @@ const SpaceMembershipsList = ({ spaces, onLeave, goToSpace }) => (
                 </TableCell>
                 <TableCell testId="organization-row.actions-cell" className={styles.dotsRow}>
                   <CardActions
+                    isAutoalignmentEnabled={true}
                     iconButtonProps={{
                       buttonType: 'primary',
                       testId: 'organization-row.dropdown-menu.trigger',

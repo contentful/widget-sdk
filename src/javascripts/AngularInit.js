@@ -43,18 +43,6 @@ export const angularInitRun = [
       import(/* webpackMode: "eager" */ 'components/field_dialog/validationLinkTypeController'),
       import(/* webpackMode: "eager" */ 'components/shared/cfSelectionDirective'),
       import(/* webpackMode: "eager" */ 'components/shared/endlessContainerDirective'),
-      import(
-        /* webpackMode: "eager" */ 'components/shared/validation_error_display/cfErrorListDirective'
-      ),
-      import(
-        /* webpackMode: "eager" */ 'components/shared/validation_error_display/cfErrorMessagesDirective'
-      ),
-      import(
-        /* webpackMode: "eager" */ 'components/shared/validation_error_display/cfErrorPathDirective'
-      ),
-      import(
-        /* webpackMode: "eager" */ 'components/shared/validation_error_display/errorPathController'
-      ),
       import(/* webpackMode: "eager" */ 'components/shared/viewStateController'),
       import(/* webpackMode: "eager" */ 'components/tabs/asset_list/assetListController'),
       import(/* webpackMode: "eager" */ 'components/tabs/asset_list/assetListDirective'),

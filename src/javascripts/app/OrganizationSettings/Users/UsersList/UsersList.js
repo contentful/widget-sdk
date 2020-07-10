@@ -27,7 +27,7 @@ import tokens from '@contentful/forma-36-tokens';
 import StateLink from 'app/common/StateLink';
 import { formatQuery } from './QueryBuilder';
 import ResolveLinks from 'data/LinkResolver';
-import UserListFilters from './UserListFilters';
+import { UserListFilters } from './UserListFilters';
 import UserCard from '../UserCard';
 import Pagination from 'app/common/Pagination';
 import { getMemberships, removeMembership } from 'access_control/OrganizationMembershipRepository';
@@ -44,13 +44,14 @@ import {
   Space as SpacePropType,
   Team as TeamPropType,
 } from 'app/OrganizationSettings/PropTypes';
-import NavigationIcon from 'ui/Components/NavigationIcon';
+import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { getVariation } from 'LaunchDarkly';
 import { PRICING_2020_RELEASED } from 'featureFlags';
 import { showDialog as showChangeSpaceModal, trackCTAClick } from 'services/ChangeSpaceService';
 import { showDialog as showCreateSpaceModal } from 'services/CreateSpace';
 import * as TokenStore from 'services/TokenStore';
 import { isOwner } from 'services/OrganizationRoles';
+import { getBasePlan, isFreePlan } from 'account/pricing/PricingDataProvider';
 
 const styles = {
   filters: css({
@@ -97,6 +98,8 @@ class UsersList extends React.Component {
     updateSearchTerm: PropTypes.func.isRequired,
     hasSsoEnabled: PropTypes.bool,
     hasTeamsFeature: PropTypes.bool,
+    onChange: PropTypes.func,
+    onReset: PropTypes.func,
   };
 
   state = {
@@ -153,10 +156,9 @@ class UsersList extends React.Component {
     const organization = await TokenStore.getOrganization(orgId);
     const spaceToUpgrade = spaces.length > 0 ? spaces[0] : null;
 
-    // If the organization is billable, they can add more than just the free users so we don't need to tell them to upgrade
-
+    const basePlan = await getBasePlan(this.endpoint);
     const shouldDisplayCommunityBanner =
-      getVariation(PRICING_2020_RELEASED, { orgId }) && !organization.isBillable;
+      getVariation(PRICING_2020_RELEASED, { orgId }) && isFreePlan(basePlan);
 
     const newState = {
       usersList: resolved,
@@ -271,12 +273,12 @@ class UsersList extends React.Component {
       userIsOwner,
       spaceToUpgrade,
     } = this.state;
-    const { searchTerm, spaces, spaceRoles, filters } = this.props;
+    const { searchTerm, spaces, spaceRoles, filters, onChange, onReset } = this.props;
 
     return (
       <Workbench testId="organization-users-page">
         <Workbench.Header
-          icon={<NavigationIcon icon="users" size="large" color="green" />}
+          icon={<NavigationIcon icon="Users" size="large" />}
           title="Users"
           actions={
             <div className={styles.actionsWrapper}>
@@ -321,6 +323,8 @@ class UsersList extends React.Component {
               spaces={spaces}
               spaceRoles={spaceRoles}
               filters={filters}
+              onChange={onChange}
+              onReset={onReset}
             />
             {loading || queryTotal > 0 ? (
               <div className={styles.list}>
@@ -466,5 +470,7 @@ export default connect(
   (dispatch) => ({
     updateSearchTerm: (newSearchTerm) =>
       dispatch({ type: 'UPDATE_SEARCH_TERM', payload: { newSearchTerm } }),
+    onChange: (newFilters) => dispatch({ type: 'CHANGE_FILTERS', payload: { newFilters } }),
+    onReset: () => dispatch({ type: 'RESET_FILTERS' }),
   })
 )(UsersList);

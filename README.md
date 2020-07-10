@@ -44,10 +44,6 @@ staging, and production APIs. To do so, first the following conditions must be t
 - You must have [NVM][nvm] installed
 - You must have an account on our staging environment `app.flinkly.com`.
 
-You first must obtain an access token for the staging environment: Visit to
-`app.flinkly.com`, log in, and go to “APIs” → “Content management tokens”.
-Create a new token and copy its value. You’ll need it later
-
 If you don't have an account, use `bootstrap` as "Coupon Code" to setup a new account.
 
 Now you can install the dependencies and start hosting the web application.
@@ -59,7 +55,7 @@ npm install
 npm run dev-staging
 ```
 
-Next, go to the `app.flinkly.com` and sign in. Once signed in, you'll need to get the
+While this is starting, go to the `app.flinkly.com` and sign in. Once signed in, you'll need to get the
 `access token`, which is in session storage. Copy its value, and then visit
 
 ```
@@ -78,10 +74,13 @@ javascript:window.location.href=`http://localhost:3001${window.location.pathname
 - Click on the bookmark
 - Start developing!
 
-#### Limitations
+#### Notes and limitations
 
-Note that you cannot login using the "normal" flow, e.g. by signing in locally. You
-can only login using `localhost:3001#access_token=<your access token>`.
+- Note that you cannot login using the "normal" flow, e.g. by signing in locally. You
+  can only login using `localhost:3001#access_token=<your access token>`.
+- Don't use an access token you created yourself; use the token that comes from session storage. The way that
+  our APIs handle user created tokens and login generated ones is a bit different and you will get cryptic issues
+  if you use one you created.
 
 ### Running the tests
 

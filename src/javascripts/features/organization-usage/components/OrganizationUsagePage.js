@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Tabs, Tab, TabPanel, Heading } from '@contentful/forma-36-react-components';
 import { Grid, GridItem } from '@contentful/forma-36-react-components/dist/alpha';
 import { SpacesTabs } from './SpacesTabs';
@@ -6,16 +6,11 @@ import { OrganizationBarChart } from './OrganizationBarChart';
 import { OrganizationUsageInfo } from './OrganizationUsageInfo';
 import { AssetBandwidthSection } from './AssetBandwidthSection';
 
-import PropTypes from 'prop-types';
-import { periodicUsagePropType, periodPropType } from './propTypes';
-
-import { periodToDates } from '../utils/periodToDates';
-import { sum, get } from 'lodash';
-
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 
 import { track } from 'analytics/Analytics';
+import { useUsageState, useUsageDispatch } from '../hooks/usageContext';
 
 const styles = {
   tabPanel: css({
@@ -30,104 +25,51 @@ const styles = {
   }),
 };
 
-export const OrganizationUsagePage = ({
-  spaceNames,
-  period,
-  periodicUsage,
-  apiRequestIncludedLimit,
-  assetBandwidthData,
-  onTabSelect,
-  isPoC,
-}) => {
-  const orgUsage = periodicUsage.org.usage;
-  const totalUsage = sum(orgUsage);
-  const dates = periodToDates(period);
-
-  const [selected, setSelected] = useState('apiRequest');
-  const [currentAssetBandwidthData, setCurrentBandwidthData] = useState();
+export const OrganizationUsagePage = () => {
+  const { selectedMainTab, isAssetBandwidthTab } = useUsageState();
+  const dispatch = useUsageDispatch();
 
   const handleSelected = (id) => {
-    track('usage:org_tab_selected', { old: selected, new: id });
-    setSelected(id);
-    onTabSelect(id);
+    track('usage:org_tab_selected', { old: selectedMainTab, new: id });
+    dispatch({ type: 'SWITCH_MAIN_TAB', value: id });
   };
-
-  useEffect(() => {
-    const data = {
-      usage: get(assetBandwidthData, ['usage']),
-      limit: get(assetBandwidthData, ['limits', 'included']),
-      uom: get(assetBandwidthData, ['unitOfMeasure']),
-    };
-    setCurrentBandwidthData(data);
-    // eslint-disable-next-line
-  }, []);
 
   return (
     <>
       <Tabs withDivider>
-        <Tab id="apiRequest" selected={selected === 'apiRequest'} onSelect={handleSelected}>
+        <Tab id="apiRequest" selected={!isAssetBandwidthTab} onSelect={handleSelected}>
           API Requests
         </Tab>
-        <Tab id="assetBandwidth" selected={selected === 'assetBandwidth'} onSelect={handleSelected}>
+        <Tab id="assetBandwidth" selected={isAssetBandwidthTab} onSelect={handleSelected}>
           Asset Bandwidth
         </Tab>
       </Tabs>
 
-      {selected === 'apiRequest' && (
+      {!isAssetBandwidthTab && (
         <TabPanel id="apiRequest" className={styles.tabPanel}>
           <Grid columns={'1fr 2fr'}>
             <GridItem>
-              <OrganizationUsageInfo
-                totalUsage={totalUsage}
-                includedLimit={apiRequestIncludedLimit}
-              />
+              <OrganizationUsageInfo />
             </GridItem>
             <GridItem>
-              <OrganizationBarChart
-                period={dates}
-                usage={orgUsage}
-                includedLimit={apiRequestIncludedLimit}
-              />
+              <OrganizationBarChart />
             </GridItem>
           </Grid>
           <Heading element="h2" className={styles.heading}>
             View API requests by type and space
           </Heading>
-          <SpacesTabs
-            period={dates}
-            spaceNames={spaceNames}
-            periodicUsage={periodicUsage}
-            isPoC={isPoC}
-          />
+          <SpacesTabs />
         </TabPanel>
       )}
-      {selected === 'assetBandwidth' && (
+      {isAssetBandwidthTab && (
         <TabPanel id="assetBandwidth" className={styles.tabPanel}>
           <Grid columns={1}>
             <GridItem>
-              {currentAssetBandwidthData.usage !== null && (
-                <AssetBandwidthSection {...currentAssetBandwidthData} />
-              )}
+              <AssetBandwidthSection />
             </GridItem>
           </Grid>
         </TabPanel>
       )}
     </>
   );
-};
-
-OrganizationUsagePage.propTypes = {
-  spaceNames: PropTypes.objectOf(PropTypes.string).isRequired,
-  periodicUsage: periodicUsagePropType.isRequired,
-  period: periodPropType,
-  apiRequestIncludedLimit: PropTypes.number.isRequired,
-  assetBandwidthData: PropTypes.shape({
-    usage: PropTypes.number,
-    unitOfMeasure: PropTypes.string,
-    limits: PropTypes.shape({
-      included: PropTypes.number,
-    }),
-  }),
-  isPoC: PropTypes.objectOf(PropTypes.bool).isRequired,
-  onTabSelect: PropTypes.func,
 };

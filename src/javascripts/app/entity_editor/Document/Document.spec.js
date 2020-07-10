@@ -415,13 +415,13 @@ export default (createDocument) => {
         K.assertHasEnded(doc.changes);
         K.assertHasEnded(doc.state.isSaving$);
         K.assertHasEnded(doc.state.isDirty$);
-        K.assertHasEnded(doc.state.loaded$);
         K.assertHasEnded(doc.state.error$);
 
         // TODO: figure out why they are not ending in OtDocument
         if (!doc.isOtDocument) {
           K.assertHasEnded(doc.state.canEdit$);
           K.assertHasEnded(doc.state.isConnected$);
+          K.assertHasEnded(doc.state.loaded$);
         }
       });
     });

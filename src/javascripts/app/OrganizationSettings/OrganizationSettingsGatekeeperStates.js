@@ -4,21 +4,21 @@ import SpacesRoute from './SpacesV1/SpacesRoute';
 const edit = {
   name: 'edit',
   title: 'Organization information',
-  icon: 'org-info',
+  icon: 'OrgInfo',
   url: '/edit{pathSuffix:PathSuffix}',
 };
 
 const subscription = {
   name: 'subscription',
   title: 'Subscription',
-  icon: 'subscription',
+  icon: 'Subscription',
   url: '/z_subscription{pathSuffix:PathSuffix}',
 };
 
 const subscriptionBilling = {
   name: 'subscription_billing',
   title: 'Subscription',
-  icon: 'subscription',
+  icon: 'Subscription',
   url: '/subscription{pathSuffix:PathSuffix}',
 };
 

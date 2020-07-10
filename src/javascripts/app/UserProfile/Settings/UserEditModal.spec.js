@@ -12,6 +12,7 @@ describe('UserEditModal', () => {
   const build = (custom) => {
     const opts = Object.assign(
       {
+        ssoLoginOnly: false,
         passwordSet: true,
         onConfirm: () => {},
         onCancel: () => {},
@@ -24,6 +25,7 @@ describe('UserEditModal', () => {
       lastName: 'Zimmer',
       email: 'hans@hanszimmer.com',
       passwordSet: opts.passwordSet,
+      ssoLoginOnly: opts.ssoLoginOnly,
       sys: {
         version: 3,
       },
@@ -109,6 +111,12 @@ describe('UserEditModal', () => {
     fireEvent.change(input, { target: { value: '        ' } });
 
     expect(getValidationMessage(lastNameField)).toEqual(expect.any(String));
+  });
+
+  it('should not show the email is the user is SSO login only', () => {
+    const { queryByTestId } = build({ ssoLoginOnly: true });
+
+    expect(queryByTestId('email-field')).toBeNull();
   });
 
   it('should warn on change when typing in a empty trimmed email', () => {

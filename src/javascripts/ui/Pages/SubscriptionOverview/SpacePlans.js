@@ -13,6 +13,8 @@ import {
   TableBody,
   SkeletonRow,
   Card,
+  Tooltip,
+  Icon,
 } from '@contentful/forma-36-react-components';
 
 import ExternalTextLink from 'app/common/ExternalTextLink';
@@ -49,6 +51,11 @@ const styles = {
     fontWeight: 'bold',
     color: tokens.colorTextMid,
   }),
+  inaccessibleHelpIcon: css({
+    fill: tokens.colorElementDarkest,
+    marginBottom: '-3px',
+    marginLeft: tokens.spacingXs,
+  }),
 };
 
 function SpacePlans({
@@ -61,6 +68,7 @@ function SpacePlans({
   enterprisePlan,
   organizationId,
   showMicroSmallSupportCard,
+  anySpacesInaccessible,
 }) {
   const numSpaces = spacePlans.length;
   const totalCost = calculatePlansCost({ plans: spacePlans });
@@ -71,7 +79,25 @@ function SpacePlans({
 
   return (
     <>
-      <Heading className="section-title">Spaces</Heading>
+      <Heading className="section-title">
+        Spaces
+        {anySpacesInaccessible && (
+          <Tooltip
+            testId="inaccessible-help-tooltip"
+            content={
+              <>
+                You can’t see usage or content for spaces you’re not a member of. You can add
+                yourself to these spaces in the organization users settings.
+              </>
+            }>
+            <Icon
+              testId="inaccessible-help-icon"
+              icon="HelpCircle"
+              className={styles.inaccessibleHelpIcon}
+            />
+          </Tooltip>
+        )}
+      </Heading>
 
       {showMicroSmallSupportCard && (
         <Card className={styles.planChangingCard} testId="subscription-page.support-request-card">
@@ -174,12 +200,14 @@ SpacePlans.propTypes = {
   onDeleteSpace: PropTypes.func.isRequired,
   enterprisePlan: PropTypes.bool,
   upgradedSpaceId: PropTypes.string,
+  anySpacesInaccessible: PropTypes.bool,
 };
 
 SpacePlans.defaultProps = {
   initialLoad: true,
   enterprisePlan: false,
   upgradedSpaceId: '',
+  anySpacesInaccessible: false,
 };
 
 export default SpacePlans;

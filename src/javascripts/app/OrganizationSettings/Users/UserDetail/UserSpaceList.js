@@ -82,6 +82,7 @@ function UserSpaceRow({ membership, onRemove, onEdit }) {
       <TableCell>{moment(membership.sys.createdAt).format('MMMM DD, YYYY')}</TableCell>
       <TableCell align="right">
         <CardActions
+          isAutoalignmentEnabled={true}
           iconButtonProps={{ buttonType: 'primary', testId: 'user-space-list.menu.trigger' }}
           data-test-id="user-space-list.menu">
           <DropdownList>

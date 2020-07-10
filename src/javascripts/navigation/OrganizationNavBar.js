@@ -3,12 +3,14 @@ import PropTypes from 'prop-types';
 import NavBar from './NavBar/NavBar';
 import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
-import { ACCESS_TOOLS } from 'featureFlags';
+import { ACCESS_TOOLS, PRICING_2020_WARNING } from 'featureFlags';
 import { getOrgFeature } from '../data/CMA/ProductCatalog';
 import SidepanelContainer from './Sidepanel/SidepanelContainer';
 import createLegacyFeatureService from 'services/LegacyFeatureService';
 import { getVariation } from 'LaunchDarkly';
 import { AdvancedExtensibilityFeature } from 'features/extensions-management';
+import { createOrganizationEndpoint } from 'data/EndpointFactory';
+import { getBasePlan, isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 
 function getItems(params, { orgId }) {
   const shouldDisplayAccessTools = params.accessToolsFeatureEnabled && params.isOwnerOrAdmin;
@@ -43,7 +45,7 @@ function getItems(params, { orgId }) {
         inherit: false,
       },
       rootSref: 'account.organizations.edit',
-      navIcon: 'org-info',
+      navIcon: 'OrgInfo',
       dataViewType: 'organization-information',
     },
     {
@@ -55,7 +57,7 @@ function getItems(params, { orgId }) {
         inherit: false,
       },
       rootSref: 'account.organizations.subscription',
-      navIcon: 'subscription',
+      navIcon: 'Subscription',
       dataViewType: 'subscription',
     },
     {
@@ -67,7 +69,7 @@ function getItems(params, { orgId }) {
       srefOptions: {
         inherit: false,
       },
-      navIcon: 'subscription',
+      navIcon: 'Subscription',
       dataViewType: 'subscription-new',
     },
 
@@ -80,7 +82,7 @@ function getItems(params, { orgId }) {
       srefOptions: {
         inherit: false,
       },
-      navIcon: 'billing',
+      navIcon: 'Billing',
       dataViewType: 'billing',
     },
     {
@@ -92,7 +94,8 @@ function getItems(params, { orgId }) {
       srefOptions: {
         inherit: false,
       },
-      navIcon: 'usage',
+      tagLabel: params.showUsageNewLabel ? 'new' : null,
+      navIcon: 'Usage',
       dataViewType: 'platform-usage',
     },
     {
@@ -104,7 +107,7 @@ function getItems(params, { orgId }) {
       srefOptions: {
         inherit: false,
       },
-      navIcon: 'users',
+      navIcon: 'Users',
       dataViewType: 'organization-users',
     },
     {
@@ -115,7 +118,7 @@ function getItems(params, { orgId }) {
       srefOptions: {
         inherit: false,
       },
-      navIcon: 'teams',
+      navIcon: 'Teams',
       dataViewType: 'organization-teams',
     },
     {
@@ -127,7 +130,7 @@ function getItems(params, { orgId }) {
       srefOptions: {
         inherit: false,
       },
-      navIcon: 'apps',
+      navIcon: 'Apps',
       icon: 'nav-apps',
       dataViewType: 'organization-apps',
     },
@@ -136,7 +139,7 @@ function getItems(params, { orgId }) {
       title: 'Access Tools',
       tagLabel: 'new',
       rootSref: 'account.organizations.access-tools',
-      navIcon: 'sso',
+      navIcon: 'Sso',
       dataViewType: 'organization-access-tools',
       children: accessToolsDropdownItems,
     },
@@ -149,7 +152,7 @@ function getItems(params, { orgId }) {
       srefOptions: {
         inherit: false,
       },
-      navIcon: 'sso',
+      navIcon: 'Sso',
       dataViewType: 'organization-sso',
     },
     {
@@ -161,7 +164,7 @@ function getItems(params, { orgId }) {
       srefOptions: {
         inherit: false,
       },
-      navIcon: 'spaces',
+      navIcon: 'Spaces',
       dataViewType: 'organization-spaces',
     },
     {
@@ -203,23 +206,38 @@ export default class OrganizationNavigationBar extends React.Component {
   async getConfiguration() {
     const { orgId } = this.props.stateParams;
     const FeatureService = createLegacyFeatureService(orgId, 'organization');
-    const [
-      ssoFeatureEnabled,
-      scimFeatureEnabled,
-      accessToolsFeatureEnabled,
-      organization,
-      hasOffsiteBackup,
-      hasAdvancedExtensibility,
-    ] = await Promise.all([
+    const endpoint = createOrganizationEndpoint(orgId);
+
+    const organization = await TokenStore.getOrganization(orgId);
+
+    let promises = [
       getOrgFeature(orgId, 'self_configure_sso'),
       getOrgFeature(orgId, 'scim'),
       getVariation(ACCESS_TOOLS, {
         organizationId: orgId,
       }),
-      TokenStore.getOrganization(orgId),
       FeatureService.get('offsiteBackup'),
       AdvancedExtensibilityFeature.isEnabled(),
-    ]);
+    ];
+
+    if (organization.pricingVersion !== 'pricing_version_1') {
+      promises = promises.concat([
+        getVariation(PRICING_2020_WARNING, {
+          organizationId: orgId,
+        }),
+        getBasePlan(endpoint).then((basePlan) => isEnterprisePlan(basePlan)),
+      ]);
+    }
+
+    const [
+      ssoFeatureEnabled,
+      scimFeatureEnabled,
+      accessToolsFeatureEnabled,
+      hasOffsiteBackup,
+      hasAdvancedExtensibility,
+      newPricingFeatureDisplayed,
+      basePlanIsEnterprise,
+    ] = await Promise.all(promises);
 
     const params = {
       ssoEnabled: ssoFeatureEnabled,
@@ -231,6 +249,7 @@ export default class OrganizationNavigationBar extends React.Component {
       hasOffsiteBackup,
       hasBillingTab: organization.isBillable && isOwner(organization),
       hasSettingsTab: isOwner(organization),
+      showUsageNewLabel: newPricingFeatureDisplayed && !basePlanIsEnterprise,
     };
 
     this.setState({ items: getItems(params, { orgId }) });

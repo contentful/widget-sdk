@@ -10,5 +10,4 @@ export default {
   P: 80,
   BACKSPACE: 8,
   SPACE: 32,
-  CONTROL: 90,
 };

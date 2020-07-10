@@ -4,15 +4,12 @@ import {
   SkeletonBodyText,
   Workbench,
 } from '@contentful/forma-36-react-components';
-import NavigationIcon from 'ui/Components/NavigationIcon';
+import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 export function LocalesListSkeleton() {
   return (
     <Workbench testId="locale-list-workbench">
-      <Workbench.Header
-        icon={<NavigationIcon icon="settings" color="green" size="large" />}
-        title="Locales"
-      />
+      <Workbench.Header icon={<NavigationIcon icon="Settings" size="large" />} title="Locales" />
       <Workbench.Content type="full">
         <SkeletonContainer
           svgWidth={600}

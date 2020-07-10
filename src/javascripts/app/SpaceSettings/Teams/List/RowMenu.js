@@ -3,7 +3,10 @@ import PropTypes from 'prop-types';
 import { CardActions, DropdownList, DropdownListItem } from '@contentful/forma-36-react-components';
 
 const RowMenu = ({ setEditing, onRemove }) => (
-  <CardActions testId="row-menu" iconButtonProps={{ buttonType: 'primary' }}>
+  <CardActions
+    testId="row-menu"
+    iconButtonProps={{ buttonType: 'primary' }}
+    isAutoalignmentEnabled={true}>
     <DropdownList>
       <DropdownListItem testId="change-role" onClick={() => setEditing(true)}>
         Change team role

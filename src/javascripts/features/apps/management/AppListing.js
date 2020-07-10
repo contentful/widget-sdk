@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import Icon from 'ui/Components/Icon';
 import get from 'lodash/get';
 import {
   CardActions,
@@ -13,7 +12,7 @@ import AppsPrivateFrameworkIllustration from 'svg/illustrations/apps-private-fra
 import tokens from '@contentful/forma-36-tokens';
 import { ModalLauncher } from 'core/components/ModalLauncher';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import NavigationIcon from 'ui/Components/NavigationIcon';
+import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 import { MARKETPLACE_ORG_ID, MAX_DEFINITIONS_ALLOWED } from '../config';
 
@@ -86,6 +85,9 @@ export const styles = {
     alignItems: 'center',
   }),
   miniIcon: css({
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     marginRight: tokens.spacingS,
     verticalAlign: 'sub',
   }),
@@ -226,7 +228,7 @@ export function AppListing({ definitions, canManageApps }) {
       <DocumentTitle title="Apps" />
       <Workbench.Header
         title={<Heading>Apps</Heading>}
-        icon={<NavigationIcon icon="apps" size="large" color="green" />}
+        icon={<NavigationIcon icon="Apps" size="large" />}
         actions={
           <StateLink path="^.new_definition">
             {({ onClick }) => (
@@ -255,7 +257,9 @@ export function AppListing({ definitions, canManageApps }) {
                   <TableCell>
                     <div className={styles.cell}>
                       <StateLink path="^.definitions" params={{ definitionId: def.sys.id }}>
-                        <Icon name="page-apps" scale="0.5" className={styles.miniIcon} />{' '}
+                        <span className={styles.miniIcon}>
+                          <NavigationIcon icon="Apps" size="small" />
+                        </span>{' '}
                         <b>{def.name}</b>
                       </StateLink>
                     </div>
@@ -270,7 +274,9 @@ export function AppListing({ definitions, canManageApps }) {
                     <div className={styles.menuCell}>
                       <StateLink path="^.definitions" params={{ definitionId: def.sys.id }}>
                         {({ onClick }) => (
-                          <CardActions iconButtonProps={{ buttonType: 'primary' }}>
+                          <CardActions
+                            iconButtonProps={{ buttonType: 'primary' }}
+                            isAutoalignmentEnabled={true}>
                             <DropdownList>
                               <DropdownListItem onClick={onClick}>Edit</DropdownListItem>
                               <DropdownListItem

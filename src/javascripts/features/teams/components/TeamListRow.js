@@ -76,6 +76,7 @@ export function TeamListRow({ team, onClose, readOnlyPermission }) {
       {!readOnlyPermission && (
         <TableCell align="right">
           <CardActions
+            isAutoalignmentEnabled={true}
             iconButtonProps={{
               buttonType: 'primary',
               testId: 'team-list.menu.trigger',

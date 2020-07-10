@@ -34,14 +34,14 @@ const cmaTokens = {
 const accessGrants = userBase({
   name: 'access_grants',
   title: 'OAuth tokens',
-  icon: 'token',
+  icon: 'Token',
   url: '/access_grants{pathSuffix:PathSuffix}',
 });
 
 const applications = userBase({
   name: 'applications',
   title: 'OAuth applications',
-  icon: 'oauth',
+  icon: 'Oauth',
   url: '/developers/applications{pathSuffix:PathSuffix}',
 });
 

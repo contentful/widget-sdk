@@ -5,7 +5,7 @@ import { Subheading } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';
 
-import NavigationIcon from 'ui/Components/NavigationIcon';
+import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 const styles = {
   heading: css({
@@ -55,7 +55,7 @@ const styles = {
 export default function BulkEditorTitle({ title, isCollapsed, entityInfo }) {
   return (
     <div className={styles.wrapper}>
-      <NavigationIcon className={styles.icon} icon="content" color="green" size="large" />
+      <NavigationIcon className={styles.icon} icon="Content" size="large" />
       <div className={styles.titleWrapper}>
         <div className={styles.contentType}>{entityInfo.contentType.name}</div>
         <Subheading className={styles.heading} testId="cf-bulk-editor-title">

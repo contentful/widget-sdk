@@ -11,7 +11,7 @@ import {
   Paragraph,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import NavigationIcon from 'ui/Components/NavigationIcon';
+import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { Price } from 'core/components/formatting';
 
 const styles = {
@@ -66,7 +66,7 @@ export class SpaceSettings extends React.Component {
       <Workbench>
         <Workbench.Header
           title="Space settings"
-          icon={<NavigationIcon icon="settings" color="green" size="large" />}></Workbench.Header>
+          icon={<NavigationIcon icon="Settings" size="large" />}></Workbench.Header>
         <Workbench.Content type="text">
           <Card className={styles.section} testId="space-information-card">
             <Typography>

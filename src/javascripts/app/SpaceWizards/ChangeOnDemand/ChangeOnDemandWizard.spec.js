@@ -226,6 +226,7 @@ async function build(custom, shouldWait = true) {
       organization: mockOrganization,
       space: mockSpace,
       sessionId: mockWizardSessionId,
+      basePlan: {},
       onClose: () => {},
       onProcessing: () => {},
     },

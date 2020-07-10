@@ -159,9 +159,6 @@ orbs:
           - run:
               name: Provide NPM Token
               command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-          - run:
-              name: Install global dependencies
-              command: npm install -g wait-on
           - checkout:
               path: /home/circleci/components/user_interface
           - run:
@@ -181,7 +178,7 @@ orbs:
               background: true
           - run:
               name: Wait http://localhost:3001/app/app.js to be ready
-              command: npx wait-on http-get://localhost:3001/app/app.js
+              command: npm run wait-for-app
           - run:
               name: Run integration tests
               environment:
@@ -231,7 +228,8 @@ jobs:
       COMMENT_LAMBDA_URL: https://tooling-lambdas.ctfl.now.sh/user_interface/githubComments
       SNIFFER_UPLOAD_URL: https://user-interface-sniffer.herokuapp.com
     steps:
-      - setup_remote_docker
+      - setup_remote_docker:
+          docker_layer_caching: true
       - checkout
       - estivador/install
       - run:
@@ -465,7 +463,6 @@ workflows:
           parallelism: 4
           pre-steps:
             - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc'
-            - run: npm install -g wait-on
           post-steps:
             - store_test_results:
                 path: cypress/reports
@@ -474,8 +471,8 @@ workflows:
                 paths:
                   - pacts/*
           start: npm start
-          wait-on: 'http-get://localhost:3001/app/app.js'
           command: |
+            npm run wait-for-app
             TESTFILES=$(circleci tests glob "test/cypress/integration/**/*.ts" | circleci tests split --split-by=timings --timings-type=filename | tr '\n' ',')
             npx cypress run --spec "${TESTFILES}" --env PACT_DIR="./pacts/${CIRCLE_NODE_INDEX}"
           store_artifacts: true
@@ -531,7 +528,6 @@ workflows:
           parallelism: 4
           pre-steps:
             - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc'
-            - run: npm install -g wait-on
           post-steps:
             - store_test_results:
                 path: cypress/reports
@@ -540,8 +536,8 @@ workflows:
                 paths:
                   - pacts/*
           start: npm start
-          wait-on: 'http-get://localhost:3001/app/app.js'
           command: |
+            npm run wait-for-app
             TESTFILES=$(circleci tests glob "test/cypress/integration/**/*.ts" | circleci tests split --split-by=timings --timings-type=filename | tr '\n' ',')
             npx cypress run --spec "${TESTFILES}" --env PACT_DIR="./pacts/${CIRCLE_NODE_INDEX}"
           store_artifacts: true

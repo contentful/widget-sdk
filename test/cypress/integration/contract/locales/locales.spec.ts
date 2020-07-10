@@ -11,6 +11,7 @@ import {
   putLocaleForSpace,
   queryFirst100LocalesOfDefaultSpace,
 } from '../../../interactions/locales';
+import { getSpacePlan } from '../../../interactions/plans';
 
 describe('Locales Management', () => {
   let interactions: string[];
@@ -26,7 +27,7 @@ describe('Locales Management', () => {
   beforeEach(() => {
     cy.startFakeServers({
       consumer: 'user_interface',
-      providers: ['users', 'resources', 'features'],
+      providers: ['users', 'resources', 'plans', 'features'],
       cors: true,
       pactfileWriteMode: 'merge',
       dir: Cypress.env('pactDir'),
@@ -42,6 +43,7 @@ describe('Locales Management', () => {
         getResourcesWithLocale.willReturnSeveral(),
         getResourcesForEnvironmentWithLocale.willReturnSeveral(),
         getFeaturesWithCustomRoles.willReturnSeveral(),
+        getSpacePlan.willReturnDefault(),
       ];
       cy.visit(`/spaces/${defaultSpaceId}/settings/locales`);
       cy.wait(interactions, { timeout: 10000 });
@@ -99,6 +101,7 @@ describe('Locales Management', () => {
         getResourcesWithLocale.willReturnSeveral(),
         getResourcesForEnvironmentWithLocale.willReturnSeveral(),
         getFeaturesWithCustomRoles.willReturnSeveral(),
+        getSpacePlan.willReturnDefault(),
       ];
       cy.visit(`/spaces/${defaultSpaceId}/settings/locales`);
       cy.wait(interactions, { timeout: 10000 });

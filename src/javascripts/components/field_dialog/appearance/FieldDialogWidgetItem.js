@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Icon from 'ui/Components/Icon';
+import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import StateLink from 'app/common/StateLink';
 import { css } from 'emotion';
 import { NAMESPACE_EXTENSION, NAMESPACE_APP } from 'widgets/WidgetNamespaces';
@@ -38,8 +39,10 @@ export default class FieldDialogWidgetItem extends Component {
       return <img className={styles.appIcon} src={appIconUrl} />;
     }
 
-    return (
-      <Icon className="field-dialog__widget-icon" name={icon ? `${icon}-widget` : 'page-apps'} />
+    return icon ? (
+      <Icon className="field-dialog__widget-icon" name={`${icon}-widget`} />
+    ) : (
+      <NavigationIcon icon="Apps" /> // size 24px
     );
   }
 

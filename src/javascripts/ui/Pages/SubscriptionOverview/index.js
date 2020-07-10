@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 
@@ -13,7 +13,7 @@ import { calcUsersMeta, calculateTotalPrice } from 'utils/SubscriptionUtils';
 import { getOrganization } from 'services/TokenStore';
 import { getVariation } from 'LaunchDarkly';
 import { PRICING_2020_RELEASED, PAYING_PREV_V2_ORG } from 'featureFlags';
-import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
+import { isSelfServicePlan } from 'account/pricing/PricingDataProvider';
 
 import DocumentTitle from 'components/shared/DocumentTitle';
 
@@ -53,7 +53,7 @@ async function fetchNumMemberships(organizationId) {
   return membershipsResource.usage;
 }
 
-const fetch = (organizationId, setSpacePlans) => async () => {
+const fetch = (organizationId, { setSpacePlans, setGrandTotal }) => async () => {
   const organization = await getOrganization(organizationId);
 
   if (!isOwnerOrAdmin(organization)) {
@@ -78,11 +78,6 @@ const fetch = (organizationId, setSpacePlans) => async () => {
   const basePlan = getBasePlan(plans);
   const spacePlans = getSpacePlans(plans, accessibleSpaces);
   const usersMeta = calcUsersMeta({ basePlan, numMemberships });
-  const grandTotal = calculateTotalPrice({
-    allPlans: plans.items,
-    basePlan,
-    numMemberships,
-  });
 
   const isCommunityPlanEnabled = await getVariation(PRICING_2020_RELEASED, {
     organizationId,
@@ -92,17 +87,23 @@ const fetch = (organizationId, setSpacePlans) => async () => {
     organizationId,
   });
 
-  // We only want to show this support card for non-enterprise on-demand users who originally had access
+  // We only want to show this support card for self-service on-demand users who originally had access
   // to these types of spaces and have since been migrated to the community plan.
   const showMicroSmallSupportCard =
-    !isEnterprisePlan(basePlan) && isCommunityPlanEnabled && isOrgCreatedBeforeV2Pricing;
+    isSelfServicePlan(basePlan) && isCommunityPlanEnabled && isOrgCreatedBeforeV2Pricing;
 
   setSpacePlans(spacePlans);
+  setGrandTotal(
+    calculateTotalPrice({
+      allPlans: plans.items,
+      numMemberships,
+    })
+  );
 
   return {
     basePlan,
-    grandTotal,
     usersMeta,
+    numMemberships,
     organization,
     productRatePlans,
     showMicroSmallSupportCard,
@@ -111,9 +112,26 @@ const fetch = (organizationId, setSpacePlans) => async () => {
 
 export default function SubscriptionPageRouter({ orgId: organizationId }) {
   const [spacePlans, setSpacePlans] = useState([]);
+  const [grandTotal, setGrandTotal] = useState(0);
+
   const { isLoading, error, data = {} } = useAsync(
-    useCallback(fetch(organizationId, setSpacePlans), [])
+    useCallback(fetch(organizationId, { setSpacePlans, setGrandTotal }), [])
   );
+
+  useEffect(() => {
+    if (spacePlans.length === 0 || !data.basePlan || !data.numMemberships) {
+      return;
+    }
+    // The spacePlans doesn't include the base plan, so we add it back in so that the total price can be calculatd.
+    const allPlans = spacePlans.concat([data.basePlan]);
+
+    setGrandTotal(
+      calculateTotalPrice({
+        allPlans,
+        numMemberships: data.numMemberships,
+      })
+    );
+  }, [spacePlans, data.basePlan, data.numMemberships]);
 
   if (error) {
     return <ForbiddenPage />;
@@ -124,6 +142,7 @@ export default function SubscriptionPageRouter({ orgId: organizationId }) {
     initialLoad: isLoading,
     organizationId,
     spacePlans,
+    grandTotal,
     onSpacePlansChange: (newSpacePlans) => {
       setSpacePlans(newSpacePlans);
     },

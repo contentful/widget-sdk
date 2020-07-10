@@ -95,6 +95,7 @@ export default function SpaceWizardsWrapper(props) {
               organization={organization}
               sessionId={sessionId}
               onClose={handleClose}
+              basePlan={data.basePlan}
               onProcessing={setIsProcessing}
               isProcessing={isProcessing}
             />
@@ -103,6 +104,7 @@ export default function SpaceWizardsWrapper(props) {
             <ChangeOnDemandWizard
               organization={organization}
               space={space}
+              basePlan={data.basePlan}
               sessionId={sessionId}
               onClose={handleClose}
               onProcessing={setIsProcessing}

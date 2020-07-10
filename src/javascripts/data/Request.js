@@ -15,8 +15,13 @@ import { fromPairs } from 'lodash';
  *
  * See the wrapper documentation for details.
  */
+let withRetry;
+
 export default function makeRequest(auth) {
-  return wrapWithCounter(wrapWithAuth(auth, wrapWithRetry(fetchFn)));
+  if (!withRetry) {
+    withRetry = wrapWithRetry(fetchFn);
+  }
+  return wrapWithCounter(wrapWithAuth(auth, withRetry));
 }
 
 async function fetchFn(config) {

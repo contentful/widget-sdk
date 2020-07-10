@@ -52,13 +52,6 @@ describe('Authentication', function () {
       });
     });
 
-    it('emits token on token$', async function () {
-      const tokenRef = K.getRef(Auth.token$);
-      expect(tokenRef.value).toBe('STORED_TOKEN');
-      await Auth.refreshToken();
-      expect(tokenRef.value).toBe('NEW TOKEN');
-    });
-
     it('stores the new token in local storage', async function () {
       await Auth.refreshToken();
       expect(store.get()).toBe('NEW TOKEN');

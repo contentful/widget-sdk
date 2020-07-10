@@ -42,21 +42,6 @@ export default function renderDefaultEditor(
     return (
       <div className="entity-editor-form cf-workbench-content cf-workbench-content-type__text">
         <AngularComponent
-          template={`<cf-error-list
-                className="form-box-error"
-                cf-error-path="['fields']"></cf-error-list>`}
-          scope={{
-            widgets,
-            editorContext,
-            localeData,
-            fields,
-            editorData,
-            otDoc,
-            entityInfo,
-          }}
-        />
-
-        <AngularComponent
           template={'<cf-entity-field ng-repeat="widget in widgets track by widget.fieldId" />'}
           scope={{
             widgets,

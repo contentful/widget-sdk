@@ -42,8 +42,7 @@ export default function SpacePlanSelector(props) {
     spaceResources,
     goToBillingPage,
     onSelectPlan,
-    isCommunityPlanEnabled,
-    isPayingPreviousToV2,
+    shouldShowMicroSmallCTA,
     isChanging = false,
   } = props;
 
@@ -66,15 +65,16 @@ export default function SpacePlanSelector(props) {
           organization {organization.name}.
         </Paragraph>
 
-        {isCommunityPlanEnabled && isPayingPreviousToV2 && (
+        {shouldShowMicroSmallCTA && (
           <>
-            <Paragraph className={styles.textCenter}>
+            <Paragraph className={styles.textCenter} testId="small-micro-cta">
               <b>Where are the Micro and Small spaces?</b>{' '}
               {isChanging ? (
                 <>
-                  We have made some changes to our space plans.
+                  We’ve changed our space plans.
                   <br />
-                  To learn about the new features you have access to{' '}
+                  Learn about the new, enhanced features now available{' '}
+                  <ExternalTextLink href={websiteUrl('pricing/')}>on our website</ExternalTextLink>.
                 </>
               ) : (
                 <>
@@ -83,12 +83,15 @@ export default function SpacePlanSelector(props) {
                     href={websiteUrl(
                       'support/?utm_source=webapp&utm_medium=account-menu&utm_campaign=in-app-help'
                     )}>
-                    submitting a support request.
-                  </ExternalTextLink>{' '}
-                  To learn about our space plan changes
+                    submitting a support request
+                  </ExternalTextLink>
+                  . To learn about our space plan changes{' '}
+                  <ExternalTextLink href={websiteUrl('pricing/')}>
+                    visit our website
+                  </ExternalTextLink>
+                  .
                 </>
               )}{' '}
-              <ExternalTextLink href={websiteUrl('pricing/')}>visit our website.</ExternalTextLink>
             </Paragraph>
           </>
         )}
@@ -124,7 +127,6 @@ export default function SpacePlanSelector(props) {
             isSelected={get(selectedPlan, 'sys.id') === plan.sys.id}
             isRecommended={get(recommendedPlan, 'sys.id') === plan.sys.id}
             onSelect={(plan) => onSelectPlan(plan, recommendedPlan)}
-            isCommunityPlanEnabled={isCommunityPlanEnabled}
           />
         ))}
       </Typography>
@@ -142,7 +144,6 @@ SpacePlanSelector.propTypes = {
   selectedPlan: PropTypes.object,
   spaceResources: PropTypes.array,
   goToBillingPage: PropTypes.func.isRequired,
-  isCommunityPlanEnabled: PropTypes.bool,
-  isPayingPreviousToV2: PropTypes.bool,
+  shouldShowMicroSmallCTA: PropTypes.bool,
   isChanging: PropTypes.bool,
 };

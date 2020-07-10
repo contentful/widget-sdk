@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { Workbench, Button } from '@contentful/forma-36-react-components';
-import NavigationIcon from 'ui/Components/NavigationIcon';
+import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import WorkbenchTitle from 'components/shared/WorkbenchTitle';
 import StatusNotification from 'app/entity_editor/StatusNotification';
 import ContentTagsField from 'app/asset_editor/ContentTagsField';
@@ -51,7 +51,7 @@ const AssetEditorWorkbench = ({
               entityInfo={entityInfo}
             />
           }
-          icon={<NavigationIcon icon="media" size="xlarge" color="green" />}
+          icon={<NavigationIcon icon="Media" size="xlarge" />}
           actions={
             <>
               <div
@@ -70,19 +70,6 @@ const AssetEditorWorkbench = ({
         <Workbench.Content type="text">
           <StatusNotification {...statusNotificationProps} />
           <div className="entity-editor-form">
-            <AngularComponent
-              template={`<cf-error-list class="form-box-error" cf-error-path="['fields']"></cf-error-list>`}
-              scope={{
-                widgets,
-                localeData,
-                editorContext,
-                fields,
-                entityInfo,
-                otDoc,
-                editorData,
-              }}
-            />
-
             <AngularComponent
               template={`<cf-entity-field ng-repeat="widget in widgets track by widget.fieldId"></cf-entity-field>`}
               scope={{
