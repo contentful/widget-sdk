@@ -3,7 +3,7 @@ import * as Analytics from 'analytics/Analytics';
 import { getToken } from 'Authentication';
 import { uploadApiUrl } from 'Config';
 import ScheduledActionsRepo from 'app/ScheduledActions/DataManagement/ScheduledActionsRepo';
-import { create as createTagsRepo } from 'features/content-tags/core/state/TagsRepo';
+import { createTagsRepo } from 'features/content-tags';
 import checkDependencies from './checkDependencies';
 
 const ASSET_PROCESSING_POLL_MS = 500;
@@ -70,7 +70,7 @@ export default function makeExtensionSpaceMethodsHandlers(dependencies, handlerO
     'spaceContext',
   ]);
 
-  const TagsRepo = createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId());
+  const tagsRepo = createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId());
 
   return async function (methodName, args) {
     if (handlerOptions.readOnly === true) {
@@ -111,7 +111,7 @@ export default function makeExtensionSpaceMethodsHandlers(dependencies, handlerO
       }
 
       if (ALLOWED_TAG_METHODS.includes(methodName)) {
-        return TagsRepo[methodName](...args);
+        return tagsRepo[methodName](...args);
       }
 
       // TODO: Use `getBatchingApiClient(spaceContext.cma)`.
