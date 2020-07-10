@@ -3,9 +3,12 @@ import * as Analytics from 'analytics/Analytics';
 import { getToken } from 'Authentication';
 import { uploadApiUrl } from 'Config';
 import ScheduledActionsRepo from 'app/ScheduledActions/DataManagement/ScheduledActionsRepo';
+import { createTagsRepo } from 'features/content-tags';
 import checkDependencies from './checkDependencies';
 
 const ASSET_PROCESSING_POLL_MS = 500;
+
+const ALLOWED_TAG_METHODS = ['readTags', 'createTag', 'deleteTag', 'updateTag'];
 
 // This list helps prevent unknown or malicious use of methods that exist on the cma
 // by whitelisting only the actions we deem necessary
@@ -59,12 +62,15 @@ const ALLOWED_SDK_METHODS = [
   'validateEntry',
   'validateRelease',
   'executeRelease',
+  ...ALLOWED_TAG_METHODS,
 ];
 
 export default function makeExtensionSpaceMethodsHandlers(dependencies, handlerOptions = {}) {
   const { spaceContext } = checkDependencies('ExtensionSpaceMethodsHandlers', dependencies, [
     'spaceContext',
   ]);
+
+  const tagsRepo = createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId());
 
   return async function (methodName, args) {
     if (handlerOptions.readOnly === true) {
@@ -102,6 +108,10 @@ export default function makeExtensionSpaceMethodsHandlers(dependencies, handlerO
 
       if (methodName === 'getAllScheduledActions') {
         return ScheduledActionsRepo.getAllScheduledActions();
+      }
+
+      if (ALLOWED_TAG_METHODS.includes(methodName)) {
+        return tagsRepo[methodName](...args);
       }
 
       // TODO: Use `getBatchingApiClient(spaceContext.cma)`.
