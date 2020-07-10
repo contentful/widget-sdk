@@ -33,6 +33,7 @@ import * as componentsTabsAssetListAssetsEmptyStateEs6 from 'components/tabs/ass
 import * as appScheduledActionsPageLinkEs6 from 'app/ScheduledActions/ScheduledActionsPageLink';
 import * as appReleasesPageLinkEs6 from 'app/Releases/ReleasesPage/ReleasesPageLink';
 import * as componentsTabsEntryListEntryListEs6 from 'components/tabs/entry_list/EntryList';
+import * as componentsTabsEntryListUpgradeBannerEs6 from 'components/tabs/UpgradeBanner';
 import * as componentsTabsEntryListEmptyStatesIndexEs6 from 'components/tabs/entry_list/EmptyStates';
 import * as searchEntitySelectorCreateEntityIndexEs6 from 'search/EntitySelector/CreateEntity';
 import * as appEntityEditorBulkEditorTitleEs6 from 'app/entity_editor/bulk_editor/BulkEditorTitle';
@@ -282,6 +283,7 @@ function getModule(name) {
     'app/ScheduledActions/ScheduledActionsPageLink': appScheduledActionsPageLinkEs6,
     'app/Releases/ReleasesPageLink': appReleasesPageLinkEs6,
     'components/tabs/entry_list/EntryList': componentsTabsEntryListEntryListEs6,
+    'components/tabs/UpgradeBanner': componentsTabsEntryListUpgradeBannerEs6,
     'components/tabs/entry_list/EmptyStates': componentsTabsEntryListEmptyStatesIndexEs6,
     'search/EntitySelector/CreateEntity': searchEntitySelectorCreateEntityIndexEs6,
     'app/entity_editor/bulk_editor/BulkEditorTitle': appEntityEditorBulkEditorTitleEs6,
