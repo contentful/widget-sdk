@@ -1,6 +1,7 @@
-import * as TagsRepo from 'features/content-tags/core/state/TagsRepo';
+import { createTagsRepo } from 'features/content-tags';
 import makeExtensionSpaceMethodsHandlers from './makeExtensionSpaceMethodsHandlers';
-jest.mock('features/content-tags/core/state/TagsRepo');
+
+jest.mock('features/content-tags');
 
 const mockRepo = {
   createTag: jest.fn(),
@@ -13,14 +14,14 @@ const spaceContext = { getEnvironmentId: jest.fn() };
 
 describe('makeExtensionAccessHandlers', () => {
   beforeAll(() => {
-    TagsRepo.create.mockImplementation(() => mockRepo);
+    createTagsRepo.mockImplementation(() => mockRepo);
   });
 
   describe('when calling the factory', () => {
     it('creates tags repository', () => {
       makeExtensionSpaceMethodsHandlers({ spaceContext });
 
-      expect(TagsRepo.create).toHaveBeenCalled();
+      expect(createTagsRepo).toHaveBeenCalled();
     });
   });
 
