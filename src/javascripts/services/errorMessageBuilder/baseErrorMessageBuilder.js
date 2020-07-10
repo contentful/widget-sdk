@@ -41,9 +41,9 @@ const messages = {
 
   unique: function (error) {
     if (error.conflicting.length > 1) {
-      return 'There are already entries with the same field value. The value has to be unique.';
+      return 'There are already entries with the same ${fieldName} field';
     } else {
-      return "There's already an entry with the same field value. The value has to be unique.";
+      return "There's already an entry with the same ${fieldName} field";
     }
   },
 };

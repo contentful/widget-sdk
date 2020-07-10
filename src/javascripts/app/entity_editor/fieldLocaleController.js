@@ -1,10 +1,11 @@
 import { registerController } from 'core/NgRegistry';
-import { isEqual } from 'lodash';
+import { find, isEqual, property } from 'lodash';
 import * as K from 'core/utils/kefir';
+import * as Navigator from 'states/Navigator';
 import createFieldLocaleDoc from 'app/entity_editor/FieldLocaleDocument';
 import DocumentStatusCode from 'data/document/statusCode';
+import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 import { statusProperty } from './Document';
-import { FieldAccess } from './EntityField/EntityFieldAccess';
 
 export default function register() {
   /**
@@ -24,12 +25,20 @@ export default function register() {
    */
   registerController('FieldLocaleController', [
     '$scope',
-    function FieldLocaleController($scope) {
+    'spaceContext',
+    function FieldLocaleController($scope, spaceContext) {
       const controller = this;
       const field = $scope.widget.field;
       const locale = $scope.locale;
       const fieldPath = ['fields', field.id];
       const localePath = fieldPath.concat([locale.internal_code]);
+
+      // Values for controller.access
+      const DENIED = { denied: true, disabled: true };
+      const EDITING_DISABLED = { editing_disabled: true, disabled: true };
+      const OCCUPIED = { occupied: true, disabled: true };
+      const EDITABLE = { editable: true };
+      const DISCONNECTED = { disconnected: true, disabled: true };
 
       controller.doc = createFieldLocaleDoc($scope.otDoc, field.id, locale.internal_code);
 
@@ -67,6 +76,16 @@ export default function register() {
        */
       controller.errors$ = editorContext.validator.errors$.map((errors) => {
         errors = filterLocaleErrors(errors);
+
+        // TODO instead of initiating a request that mutates the error
+        // object we should have a dedicated error component that takes
+        // care of this.
+        errors.forEach((error) => {
+          if (error.name === 'unique') {
+            decorateUniquenessError(error);
+          }
+        });
+
         return errors.length > 0 ? errors : null;
       });
 
@@ -103,6 +122,27 @@ export default function register() {
 
           return isEqual(path.slice(0, 3), localePath);
         });
+      }
+
+      function decorateUniquenessError(error) {
+        const conflicts = error.conflicting;
+        const conflictingEntryIds = conflicts.map(property('sys.id')).join(',');
+        const query = { 'sys.id[in]': conflictingEntryIds };
+
+        // asynchronously add conflicting entry title to the error objects
+        // so that we can display the list in the UI
+        spaceContext.space.getEntries(query).then((entries) => {
+          entries.forEach((entry) => {
+            const conflict = find(conflicts, (c) => c.sys.id === entry.data.sys.id);
+
+            conflict.data = conflict.data || {};
+            conflict.data.entryTitle = EntityFieldValueSpaceContext.entryTitle(entry);
+            conflict.data.ref = Navigator.makeEntityRef(entry.data);
+          });
+        });
+
+        // poor man's string interpolation
+        error.message = error.message.replace('${fieldName}', field.name);
       }
 
       /**
@@ -181,15 +221,15 @@ export default function register() {
           [documentStatus$, $scope.otDoc.state.isConnected$, controller.doc.collaborators],
           (status, isConnected, collaborators) => {
             if (field.disabled) {
-              return FieldAccess.EDITING_DISABLED;
+              return EDITING_DISABLED;
             } else if (!canEditLocale) {
-              return FieldAccess.DENIED;
+              return DENIED;
             } else if (
               isCollaborativeEditingDisabledForFieldType(field.type) &&
               collaborators &&
               collaborators.length > 0
             ) {
-              return FieldAccess.OCCUPIED;
+              return OCCUPIED;
             } else if (isConnected) {
               // CmaDocument is always "connected" by design (unless internet down)
               // so we need to be more granular than in case of `OtDocument`.
@@ -200,10 +240,10 @@ export default function register() {
                 DocumentStatusCode.DELETED,
                 DocumentStatusCode.CONNECTION_ERROR,
               ].includes(status)
-                ? FieldAccess.DISCONNECTED
-                : FieldAccess.EDITABLE;
+                ? DISCONNECTED
+                : EDITABLE;
             } else {
-              return FieldAccess.DISCONNECTED;
+              return DISCONNECTED;
             }
           }
         ).toProperty();

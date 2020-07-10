@@ -8,6 +8,7 @@ import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION, NAMESPACE_APP } from 'widgets/W
 import WidgetRenderWarning from 'widgets/WidgetRenderWarning';
 import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIFrameRenderer';
 import * as WidgetLocations from 'widgets/WidgetLocations';
+import createNewWidgetApi from 'app/widgets/NewWidgetApi/createNewWidgetApi';
 import * as LoadEventTracker from 'app/entity_editor/LoadEventTracker';
 
 const { createLinksRenderedEvent, createWidgetLinkRenderEventsHandler } = LoadEventTracker;
@@ -19,7 +20,7 @@ function newNoopLoadEvents() {
 }
 
 function WidgetRendererInternal(props) {
-  const { widget, locale, editorData, loadEvents, scope } = props;
+  const { widget, locale, editorData, loadEvents } = props;
   const { problem, widgetNamespace, widgetId, renderFieldEditor, descriptor, parameters } = widget;
 
   let trackLinksRendered = noop;
@@ -50,7 +51,7 @@ function WidgetRendererInternal(props) {
         parameters={parameters}
         bridge={createExtensionBridge({
           $rootScope,
-          $scope: scope,
+          $scope: props.scope,
           spaceContext,
           $controller,
           currentWidgetId: widgetId,
@@ -60,10 +61,17 @@ function WidgetRendererInternal(props) {
       />
     );
   } else if (widgetNamespace === NAMESPACE_BUILTIN) {
+    const spaceContext = getModule('spaceContext');
+
+    const widgetApi = createNewWidgetApi({
+      $scope: props.scope,
+      spaceContext,
+    });
+
     const widget = renderFieldEditor({
       $scope: props.scope,
       loadEvents: loadEvents || newNoopLoadEvents(),
-      widgetApi: props.widgetApi,
+      widgetApi,
     });
 
     handleWidgetLinkRenderEvents();
@@ -80,7 +88,6 @@ WidgetRendererInternal.propTypes = {
   widget: PropTypes.object.isRequired,
   editorData: PropTypes.object.isRequired,
   loadEvents: PropTypes.object.isRequired,
-  widgetApi: PropTypes.object.isRequired,
 };
 
 export function WidgetRenderer(props) {
@@ -122,7 +129,6 @@ export function WidgetRenderer(props) {
         locale={locale}
         editorData={editorData}
         loadEvents={loadEvents}
-        widgetApi={props.widgetApi}
         scope={props.scope}
       />
     </div>
@@ -133,5 +139,4 @@ WidgetRenderer.propTypes = {
   hasInitialFocus: PropTypes.bool.isRequired,
   isRtl: PropTypes.bool.isRequired,
   scope: PropTypes.object.isRequired,
-  widgetApi: PropTypes.object.isRequired,
 };

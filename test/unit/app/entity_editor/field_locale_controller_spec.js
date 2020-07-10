@@ -192,7 +192,6 @@ describe('FieldLocaleController', () => {
       expect(scope.fieldLocale.access).toEqual({
         disconnected: true,
         disabled: true,
-        type: 'DISCONNECTED',
       });
     });
 
@@ -201,11 +200,7 @@ describe('FieldLocaleController', () => {
       this.otDoc.state.isConnected$.set(true);
       const scope = this.init();
       $apply();
-      expect(scope.fieldLocale.access).toEqual({
-        type: 'DISCONNECTED',
-        disconnected: true,
-        disabled: true,
-      });
+      expect(scope.fieldLocale.access).toEqual({ disconnected: true, disabled: true });
     });
 
     it('is "disabled" and "editing_disabled" if a field is disabled', function () {
@@ -217,7 +212,6 @@ describe('FieldLocaleController', () => {
       expect(scope.fieldLocale.access).toEqual({
         editing_disabled: true,
         disabled: true,
-        type: 'EDITING_DISABLED',
       });
     });
 
@@ -230,7 +224,6 @@ describe('FieldLocaleController', () => {
       expect(scope.fieldLocale.access).toEqual({
         occupied: true,
         disabled: true,
-        type: 'OCCUPIED',
       });
     });
 
@@ -241,7 +234,6 @@ describe('FieldLocaleController', () => {
       expect(scope.fieldLocale.access).toEqual({
         denied: true,
         disabled: true,
-        type: 'DENIED',
       });
     });
 
@@ -253,7 +245,6 @@ describe('FieldLocaleController', () => {
       expect(scope.fieldLocale.access).toEqual({
         denied: true,
         disabled: true,
-        type: 'DENIED',
       });
     });
 
@@ -263,7 +254,6 @@ describe('FieldLocaleController', () => {
       $apply();
       expect(scope.fieldLocale.access).toEqual({
         editable: true,
-        type: 'EDITABLE',
       });
     });
   });
