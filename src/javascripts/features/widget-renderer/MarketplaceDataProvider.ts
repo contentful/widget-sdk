@@ -1,5 +1,4 @@
 import { WidgetNamespace } from './interfaces';
-import { NAMESPACE_APP, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
 
 type FetchFn = (input: RequestInfo, init?: RequestInit) => Promise<Response>;
 
@@ -85,7 +84,7 @@ export class MarketplaceDataProvider {
   }
 
   public getSlug(widgetNamespace: WidgetNamespace, widgetId: string): string {
-    if (widgetNamespace === NAMESPACE_APP) {
+    if (widgetNamespace === WidgetNamespace.APP) {
       return this.cache[widgetId]?.slug || widgetId;
     } else {
       return widgetId;
@@ -93,9 +92,9 @@ export class MarketplaceDataProvider {
   }
 
   public getIconUrl(widgetNamespace: WidgetNamespace, widgetId: string): string {
-    if (widgetNamespace === NAMESPACE_EXTENSION) {
+    if (widgetNamespace === WidgetNamespace.EXTENSION) {
       return this.icons.defaultExtensionIconUrl;
-    } else if (widgetNamespace === NAMESPACE_APP) {
+    } else if (widgetNamespace === WidgetNamespace.APP) {
       return this.cache[widgetId]?.iconUrl || this.icons.defaultAppIconUrl;
     } else {
       return this.icons.unknownWidgetTypeIconUrl;

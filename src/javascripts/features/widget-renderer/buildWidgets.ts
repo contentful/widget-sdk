@@ -1,6 +1,14 @@
-import { Widget, Location, Extension, AppInstallation, AppDefinition } from './interfaces';
-import { MarketplaceDataProvider } from './marketplace-data-provider';
-import { NAMESPACE_EXTENSION, NAMESPACE_APP } from 'widgets/WidgetNamespaces';
+import {
+  Widget,
+  Location,
+  Extension,
+  AppInstallation,
+  AppDefinition,
+  HostingType,
+  WidgetNamespace,
+  WidgetLocation,
+} from './interfaces';
+import { MarketplaceDataProvider } from './MarketplaceDataProvider';
 import { get } from 'lodash';
 
 export const buildAppWidget = (
@@ -9,13 +17,13 @@ export const buildAppWidget = (
   marketplaceDataProvider: MarketplaceDataProvider
 ): Widget => {
   return {
-    namespace: NAMESPACE_APP,
+    namespace: WidgetNamespace.APP,
     id: definition.sys.id,
-    slug: marketplaceDataProvider.getSlug(NAMESPACE_APP, definition.sys.id),
-    iconUrl: marketplaceDataProvider.getIconUrl(NAMESPACE_APP, definition.sys.id),
+    slug: marketplaceDataProvider.getSlug(WidgetNamespace.APP, definition.sys.id),
+    iconUrl: marketplaceDataProvider.getIconUrl(WidgetNamespace.APP, definition.sys.id),
     name: definition.name,
     hosting: {
-      type: 'src',
+      type: HostingType.SRC,
       value: definition.src!,
     },
     parameters: {
@@ -38,27 +46,27 @@ export const buildExtensionWidget = (
 ): Widget => {
   const locations: Location[] = [
     {
-      location: 'entry-field',
+      location: WidgetLocation.ENTRY_FIELD,
       fieldTypes: extension.extension.fieldTypes || [],
     },
-    { location: 'page' },
-    { location: 'entry-sidebar' },
-    { location: 'entry-editor' },
-    { location: 'dialog' },
+    { location: WidgetLocation.PAGE },
+    { location: WidgetLocation.ENTRY_SIDEBAR },
+    { location: WidgetLocation.ENTRY_EDITOR },
+    { location: WidgetLocation.DIALOG },
   ];
 
   if (extension.extension.sidebar) {
-    locations.push({ location: 'entry-field-sidebar' });
+    locations.push({ location: WidgetLocation.ENTRY_FIELD_SIDEBAR });
   }
 
   return {
-    namespace: NAMESPACE_EXTENSION,
+    namespace: WidgetNamespace.EXTENSION,
     id: extension.sys.id,
-    slug: marketplaceDataProvider.getSlug(NAMESPACE_EXTENSION, extension.sys.id),
-    iconUrl: marketplaceDataProvider.getIconUrl(NAMESPACE_EXTENSION, extension.sys.id),
+    slug: marketplaceDataProvider.getSlug(WidgetNamespace.EXTENSION, extension.sys.id),
+    iconUrl: marketplaceDataProvider.getIconUrl(WidgetNamespace.EXTENSION, extension.sys.id),
     name: extension.extension.name,
     hosting: {
-      type: typeof extension.sys.srcdocSha256 === 'string' ? 'srcdoc' : 'src',
+      type: typeof extension.sys.srcdocSha256 === 'string' ? HostingType.SRCDOC : HostingType.SRC,
       value: extension.extension.src || extension.extension.srcdoc!,
     },
     parameters: {

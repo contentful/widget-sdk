@@ -1,34 +1,6 @@
 import { buildExtensionWidget, buildAppWidget } from './buildWidgets';
-import { ParameterDefinition, Extension, AppInstallation, AppDefinition } from './interfaces';
-
-// TODO: Deduplicate this, as it also exists in loader.spec.ts.
-// Not sure where the appropriate place would be though.
-const buildExtensionResponse = (id: string): [Extension, ParameterDefinition] => {
-  const parameterDefinition: ParameterDefinition = {
-    name: 'exampleparameter',
-    id: 'exampleparameter',
-    type: 'Boolean',
-    required: true,
-  };
-
-  const extension: Extension = {
-    sys: {
-      type: 'Extension',
-      id,
-    },
-    extension: {
-      name: 'myextension',
-      src: 'https://example.com',
-      parameters: {
-        instance: [parameterDefinition],
-        // installation?: ParameterDefinition[],
-      },
-    },
-    parameters: { exampleparameter: true },
-  };
-
-  return [extension, parameterDefinition];
-};
+import { Extension, HostingType, WidgetLocation, WidgetNamespace } from './interfaces';
+import { prepareExtensionEntity, prepareAppInstallationEntity } from './apiMocks';
 
 describe('buildExtensionWidget', () => {
   let mockDataProvider: any;
@@ -43,14 +15,14 @@ describe('buildExtensionWidget', () => {
 
   describe('with src', () => {
     it('builds a widget from extension data', () => {
-      const [extension, parameterDefinition] = buildExtensionResponse('myextension');
+      const [extension, parameterDefinition] = prepareExtensionEntity('myextension');
 
       mockDataProvider.getSlug.mockReturnValue('a_nice_slug');
       mockDataProvider.getIconUrl.mockReturnValue('url');
 
       expect(buildExtensionWidget(extension, mockDataProvider)).toEqual({
         hosting: {
-          type: 'src',
+          type: HostingType.SRC,
           value: 'https://example.com',
         },
         iconUrl: 'url',
@@ -58,27 +30,27 @@ describe('buildExtensionWidget', () => {
         locations: [
           {
             fieldTypes: [],
-            location: 'entry-field',
+            location: WidgetLocation.ENTRY_FIELD,
           },
           {
-            location: 'page',
+            location: WidgetLocation.PAGE,
           },
           {
-            location: 'entry-sidebar',
+            location: WidgetLocation.ENTRY_SIDEBAR,
           },
           {
-            location: 'entry-editor',
+            location: WidgetLocation.ENTRY_EDITOR,
           },
           {
-            location: 'dialog',
+            location: WidgetLocation.DIALOG,
           },
         ],
         name: 'myextension',
-        namespace: 'extension',
+        namespace: WidgetNamespace.EXTENSION,
         parameters: {
           definitions: {
-            installation: [],
-            instance: [parameterDefinition],
+            installation: [parameterDefinition],
+            instance: [],
           },
           values: {
             installation: {
@@ -103,14 +75,14 @@ describe('buildExtensionWidget', () => {
           name: 'myextension',
           srcdoc: '<html>a nice html page</html>',
         },
-        parameters: { myParam: 'hello' },
       };
+
       mockDataProvider.getSlug.mockReturnValue('a_nice_slug');
       mockDataProvider.getIconUrl.mockReturnValue('url');
 
       expect(buildExtensionWidget(extension, mockDataProvider)).toEqual({
         hosting: {
-          type: 'srcdoc',
+          type: HostingType.SRCDOC,
           value: '<html>a nice html page</html>',
         },
         iconUrl: 'url',
@@ -118,32 +90,30 @@ describe('buildExtensionWidget', () => {
         locations: [
           {
             fieldTypes: [],
-            location: 'entry-field',
+            location: WidgetLocation.ENTRY_FIELD,
           },
           {
-            location: 'page',
+            location: WidgetLocation.PAGE,
           },
           {
-            location: 'entry-sidebar',
+            location: WidgetLocation.ENTRY_SIDEBAR,
           },
           {
-            location: 'entry-editor',
+            location: WidgetLocation.ENTRY_EDITOR,
           },
           {
-            location: 'dialog',
+            location: WidgetLocation.DIALOG,
           },
         ],
         name: 'myextension',
-        namespace: 'extension',
+        namespace: WidgetNamespace.EXTENSION,
         parameters: {
           definitions: {
             installation: [],
             instance: [],
           },
           values: {
-            installation: {
-              myParam: 'hello',
-            },
+            installation: {},
           },
         },
         slug: 'a_nice_slug',
@@ -153,48 +123,30 @@ describe('buildExtensionWidget', () => {
 
   describe('buildAppWidget', () => {
     it('builds a widget from app data', () => {
-      const appInstallation: AppInstallation = {
-        sys: {
-          type: 'AppInstallation',
-          appDefinition: {
-            sys: {
-              type: 'Link',
-              linkType: 'AppDefinition',
-              id: 'myapp',
-            },
-          },
-        },
-      };
-      const appDefinition: AppDefinition = {
-        sys: {
-          type: 'AppDefinition',
-          id: 'myapp',
-        },
-        name: 'myapp',
-        src: 'https://example.com',
-        locations: [],
-      };
+      const [appInstallation, appDefinition] = prepareAppInstallationEntity('myapp');
 
       mockDataProvider.getSlug.mockReturnValue('a_nice_slug');
       mockDataProvider.getIconUrl.mockReturnValue('url');
 
       expect(buildAppWidget(appInstallation, appDefinition, mockDataProvider)).toEqual({
         hosting: {
-          type: 'src',
+          type: HostingType.SRC,
           value: 'https://example.com',
         },
         iconUrl: 'url',
         id: 'myapp',
-        locations: [],
+        locations: [{ location: WidgetLocation.APP_CONFIG }],
         name: 'myapp',
-        namespace: 'app',
+        namespace: WidgetNamespace.APP,
         parameters: {
           definitions: {
             installation: [],
             instance: [],
           },
           values: {
-            installation: {},
+            installation: {
+              hello: 'world',
+            },
           },
         },
         slug: 'a_nice_slug',

@@ -1,8 +1,28 @@
-export type WidgetNamespace = 'app' | 'extension' | 'builtin';
-type HostingType = 'src' | 'srcdoc';
+export enum WidgetLocation {
+  ENTRY_FIELD = 'entry-field',
+  ENTRY_FIELD_SIDEBAR = 'entry-field-sidebar',
+  ENTRY_SIDEBAR = 'entry-sidebar',
+  DIALOG = 'dialog',
+  ENTRY_EDITOR = 'entry-editor',
+  PAGE = 'page',
+  APP_CONFIG = 'app-config',
+}
 
-type ParameterType = 'Boolean' | 'Symbol' | 'Number' | 'Enum';
-type ParameterOption = string | { [key: string]: string };
+export enum WidgetNamespace {
+  BUILTIN = 'builtin',
+  EXTENSION = 'extension',
+  SIDEBAR_BUILTIN = 'sidebar-builtin',
+  APP = 'app',
+  EDITOR_BUILTIN = 'editor-builtin',
+}
+
+export enum HostingType {
+  SRC = 'src',
+  SRCDOC = 'srcdoc',
+}
+
+export type ParameterType = 'Boolean' | 'Symbol' | 'Number' | 'Enum';
+export type ParameterOption = string | { [key: string]: string };
 export interface ParameterDefinition {
   name: string;
   id: string;
@@ -34,13 +54,13 @@ export type FieldType =
   | { type: 'Array'; items: { type: 'Link'; linkType: 'Entry' } }
   | { type: 'Array'; items: { type: 'Link'; linkType: 'Asset' } };
 
-type EntryFieldLocation = {
-  location: 'entry-field';
+export type EntryFieldLocation = {
+  location: WidgetLocation.ENTRY_FIELD;
   fieldTypes: FieldType[];
 };
 
-type PageLocation = {
-  location: 'page';
+export type PageLocation = {
+  location: WidgetLocation.PAGE;
   navigationItem?: {
     name: string;
     path: string;
@@ -50,34 +70,34 @@ type PageLocation = {
 export type Location =
   | EntryFieldLocation
   | PageLocation
-  | { location: 'entry-sidebar' }
-  | { location: 'entry-editor' }
-  | { location: 'dialog' }
-  | { location: 'app-config' }
-  | { location: 'entry-field-sidebar' };
+  | { location: WidgetLocation.ENTRY_SIDEBAR }
+  | { location: WidgetLocation.ENTRY_EDITOR }
+  | { location: WidgetLocation.DIALOG }
+  | { location: WidgetLocation.APP_CONFIG }
+  | { location: WidgetLocation.ENTRY_FIELD_SIDEBAR }; // legacy sidebar widget tied to a field
+
+export type ExtensionParameterValues = Record<string, string | number | boolean>;
+export type AppParameterValues = Record<string, any> | Array<any> | number | string | boolean;
 
 export interface Widget {
-  // Minimal data needed to list widgets
   namespace: WidgetNamespace;
   id: string;
   slug: string;
   iconUrl: string;
   name: string;
-  // For rendering
   hosting: {
     type: HostingType;
-    value: string; // src or srcdoc, up to renderer to check "type"
+    value: string;
   };
   parameters: {
     definitions: {
-      instance: ParameterDefinition[]; // empty arr for apps
-      installation: ParameterDefinition[]; // empty arr for apps
+      instance: ParameterDefinition[];
+      installation: ParameterDefinition[];
     };
     values: {
-      installation: any; // if not present in the api default to `{}`
+      installation: ExtensionParameterValues | AppParameterValues;
     };
   };
-  // For assignment and misc
   locations: Location[];
 }
 
@@ -98,7 +118,7 @@ export interface Extension {
       installation?: ParameterDefinition[];
     };
   };
-  parameters?: Record<string, string | number | boolean>;
+  parameters?: ExtensionParameterValues;
 }
 
 export interface AppInstallation {
@@ -112,7 +132,7 @@ export interface AppInstallation {
       };
     };
   };
-  parameters?: Record<string, any> | Array<any> | number | string | boolean;
+  parameters?: AppParameterValues;
 }
 
 export interface AppDefinition {
@@ -123,4 +143,33 @@ export interface AppDefinition {
   name: string;
   src?: string;
   locations?: Location[];
+}
+
+export interface WidgetRef {
+  widgetNamespace: WidgetNamespace;
+  widgetId: string;
+  settings?: ExtensionParameterValues;
+}
+
+export interface ControlWidgetRef {
+  widgetNamespace?: WidgetNamespace;
+  widgetId?: string;
+  settings?: ExtensionParameterValues;
+}
+
+export interface EditorInterface {
+  sys: {
+    type: 'EditorInterface';
+    contentType: {
+      sys: {
+        type: 'Link';
+        linkType: 'ContentType';
+        id: string;
+      };
+    };
+  };
+  controls?: ControlWidgetRef[];
+  sidebar?: WidgetRef[];
+  editor?: WidgetRef;
+  editors?: WidgetRef[];
 }

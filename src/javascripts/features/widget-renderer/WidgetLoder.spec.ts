@@ -1,62 +1,15 @@
-import { WidgetLoader, EditorInterface, ClientAPI } from './loader';
-import { ParameterDefinition, Extension, AppInstallation, AppDefinition } from './interfaces';
-
-import { NAMESPACE_EXTENSION, NAMESPACE_APP } from 'widgets/WidgetNamespaces';
+import { WidgetLoader, ClientAPI } from './WidgetLoader';
+import {
+  Extension,
+  AppInstallation,
+  AppDefinition,
+  EditorInterface,
+  WidgetNamespace,
+} from './interfaces';
+import { prepareAppInstallationEntity, prepareExtensionEntity } from './apiMocks';
 
 const spaceId = 'spaceid';
 const envId = 'envId';
-
-const buildAppInstallation = (id: string): [AppInstallation, AppDefinition] => {
-  const appInstallation: AppInstallation = {
-    sys: {
-      type: 'AppInstallation',
-      appDefinition: {
-        sys: {
-          type: 'Link',
-          linkType: 'AppDefinition',
-          id,
-        },
-      },
-    },
-  };
-  const appDefinition: AppDefinition = {
-    sys: {
-      type: 'AppDefinition',
-      id,
-    },
-    name: 'myapp',
-    src: 'https://example.com',
-    locations: [],
-  };
-  return [appInstallation, appDefinition];
-};
-
-const buildExtensionResponse = (id: string): [Extension, ParameterDefinition] => {
-  const parameterDefinition: ParameterDefinition = {
-    name: 'exampleparameter',
-    id: 'exampleparameter',
-    type: 'Boolean',
-    required: true,
-  };
-
-  const extension: Extension = {
-    sys: {
-      type: 'Extension',
-      id,
-    },
-    extension: {
-      name: 'myextension',
-      src: 'https://example.com',
-      parameters: {
-        instance: [parameterDefinition],
-        // installation?: ParameterDefinition[],
-      },
-    },
-    parameters: { exampleparameter: true },
-  };
-
-  return [extension, parameterDefinition];
-};
 
 describe('Loader', () => {
   let loader: WidgetLoader;
@@ -69,7 +22,7 @@ describe('Loader', () => {
     installations: AppInstallation[],
     definitions: AppDefinition[]
   ) => {
-    get.mockImplementation(path => {
+    get.mockImplementation((path) => {
       if (path === `/spaces/${spaceId}/environments/${envId}/extensions`) {
         return Promise.resolve({ items: extensions });
       } else if (path === `/spaces/${spaceId}/environments/${envId}/app_installations`) {
@@ -103,13 +56,13 @@ describe('Loader', () => {
   describe('Public interface', () => {
     describe('Warmup', () => {
       it('prefetchs marketplace data', async () => {
-        await loader.warmUp(NAMESPACE_EXTENSION, 'my_id');
+        await loader.warmUp(WidgetNamespace.EXTENSION, 'my_id');
         expect(mockDataProvider.prefetch).toHaveBeenCalledTimes(1);
       });
 
       describe('for Apps', () => {
         it('fetches data for that widget', async () => {
-          await loader.warmUp(NAMESPACE_APP, 'my_id');
+          await loader.warmUp(WidgetNamespace.APP, 'my_id');
           expect(get).toHaveBeenCalledTimes(1);
           expect(get).toHaveBeenCalledWith(
             `/spaces/${spaceId}/environments/${envId}/app_installations`
@@ -119,7 +72,7 @@ describe('Loader', () => {
 
       describe(`for extensions`, () => {
         it('fetches data for that widget', async () => {
-          await loader.warmUp(NAMESPACE_EXTENSION, 'my_id');
+          await loader.warmUp(WidgetNamespace.EXTENSION, 'my_id');
           expect(get).toHaveBeenCalledTimes(1);
           expect(get).toHaveBeenCalledWith(`/spaces/${spaceId}/environments/${envId}/extensions`, {
             params: {
@@ -145,8 +98,8 @@ describe('Loader', () => {
               },
             },
             controls: [{ widgetNamespace: undefined, widgetId: 'my_control' }],
-            sidebar: [{ widgetNamespace: NAMESPACE_EXTENSION, widgetId: 'my_extension' }],
-            editor: { widgetNamespace: NAMESPACE_APP, widgetId: 'myapp' },
+            sidebar: [{ widgetNamespace: WidgetNamespace.EXTENSION, widgetId: 'my_extension' }],
+            editor: { widgetNamespace: WidgetNamespace.APP, widgetId: 'myapp' },
           };
 
           await loader.warmUpWithEditorInterface(editorInterface);
@@ -180,8 +133,8 @@ describe('Loader', () => {
               },
             },
             controls: [{ widgetNamespace: undefined, widgetId: 'my_control' }],
-            sidebar: [{ widgetNamespace: NAMESPACE_EXTENSION, widgetId: 'my_extension' }],
-            editors: [{ widgetNamespace: NAMESPACE_APP, widgetId: 'myapp' }],
+            sidebar: [{ widgetNamespace: WidgetNamespace.EXTENSION, widgetId: 'my_extension' }],
+            editors: [{ widgetNamespace: WidgetNamespace.APP, widgetId: 'myapp' }],
           };
 
           await loader.warmUpWithEditorInterface(editorInterface);
@@ -207,14 +160,14 @@ describe('Loader', () => {
       it('returns a formatted version of the app', async () => {
         const appId = 'myapp';
 
-        const [appInstallation, appDefinition] = buildAppInstallation(appId);
+        const [appInstallation, appDefinition] = prepareAppInstallationEntity(appId);
 
         mockGet([], [appInstallation], [appDefinition]);
 
-        const result = await loader.getOne(NAMESPACE_APP, appId);
+        const result = await loader.getOne(WidgetNamespace.APP, appId);
 
         expect(result?.id).toEqual(appId);
-        expect(result?.namespace).toEqual(NAMESPACE_APP);
+        expect(result?.namespace).toEqual(WidgetNamespace.APP);
       });
     });
 
@@ -224,9 +177,9 @@ describe('Loader', () => {
         const extensionId = 'myextension';
         const controlId = 'mycontrol';
 
-        const [appInstallationOne, appDefinitionOne] = buildAppInstallation(appId);
-        const [appInstallationTwo, appDefinitionTwo] = buildAppInstallation(controlId);
-        const [extension] = buildExtensionResponse(extensionId);
+        const [appInstallationOne, appDefinitionOne] = prepareAppInstallationEntity(appId);
+        const [appInstallationTwo, appDefinitionTwo] = prepareAppInstallationEntity(controlId);
+        const [extension] = prepareExtensionEntity(extensionId);
 
         mockGet(
           [extension],
@@ -246,8 +199,8 @@ describe('Loader', () => {
             },
           },
           controls: [{ widgetNamespace: undefined, widgetId: controlId }],
-          sidebar: [{ widgetNamespace: NAMESPACE_EXTENSION, widgetId: extensionId }],
-          editor: { widgetNamespace: NAMESPACE_APP, widgetId: appId },
+          sidebar: [{ widgetNamespace: WidgetNamespace.EXTENSION, widgetId: extensionId }],
+          editor: { widgetNamespace: WidgetNamespace.APP, widgetId: appId },
         };
 
         const result = await loader.getWithEditorInterface(editorInterface);
@@ -261,14 +214,14 @@ describe('Loader', () => {
         const appId = 'myapp';
         const extensionId = 'myextension';
 
-        const [appInstallation, appDefinition] = buildAppInstallation(appId);
-        const [extension] = buildExtensionResponse(extensionId);
+        const [appInstallation, appDefinition] = prepareAppInstallationEntity(appId);
+        const [extension] = prepareExtensionEntity(extensionId);
 
         mockGet([extension], [appInstallation], [appDefinition]);
 
         const result = await loader.getMultiple([
-          { widgetNamespace: NAMESPACE_EXTENSION, widgetId: extensionId },
-          { widgetNamespace: NAMESPACE_APP, widgetId: appId },
+          { widgetNamespace: WidgetNamespace.EXTENSION, widgetId: extensionId },
+          { widgetNamespace: WidgetNamespace.APP, widgetId: appId },
         ]);
 
         expect(result.map(({ id }) => id).sort()).toEqual([extensionId, appId].sort());
@@ -277,8 +230,8 @@ describe('Loader', () => {
 
     describe('when get is called after warmup', () => {
       it('only fetches data once', async () => {
-        await loader.warmUp(NAMESPACE_EXTENSION, 'my_id');
-        await loader.getOne(NAMESPACE_EXTENSION, 'my_id');
+        await loader.warmUp(WidgetNamespace.EXTENSION, 'my_id');
+        await loader.getOne(WidgetNamespace.EXTENSION, 'my_id');
 
         expect(mockDataProvider.prefetch).toHaveBeenCalledTimes(1);
 
@@ -294,9 +247,9 @@ describe('Loader', () => {
 
     describe('When evict is called on a loaded entitiy', () => {
       it('clears the data', async () => {
-        await loader.warmUp(NAMESPACE_EXTENSION, 'my_id');
-        loader.evict(NAMESPACE_EXTENSION, 'my_id');
-        await loader.getOne(NAMESPACE_EXTENSION, 'my_id');
+        await loader.warmUp(WidgetNamespace.EXTENSION, 'my_id');
+        loader.evict(WidgetNamespace.EXTENSION, 'my_id');
+        await loader.getOne(WidgetNamespace.EXTENSION, 'my_id');
 
         expect(get).toHaveBeenCalledTimes(2);
         expect(get).toHaveBeenNthCalledWith(
@@ -313,11 +266,11 @@ describe('Loader', () => {
 
     describe('purge', () => {
       it('clears all data', async () => {
-        await loader.warmUp(NAMESPACE_EXTENSION, 'my_id');
-        await loader.warmUp(NAMESPACE_EXTENSION, 'different_id');
+        await loader.warmUp(WidgetNamespace.EXTENSION, 'my_id');
+        await loader.warmUp(WidgetNamespace.EXTENSION, 'different_id');
         loader.purge();
-        await loader.getOne(NAMESPACE_EXTENSION, 'my_id');
-        await loader.getOne(NAMESPACE_EXTENSION, 'different_id');
+        await loader.getOne(WidgetNamespace.EXTENSION, 'my_id');
+        await loader.getOne(WidgetNamespace.EXTENSION, 'different_id');
 
         expect(get).toHaveBeenCalledTimes(4);
         expect(get).toHaveBeenNthCalledWith(

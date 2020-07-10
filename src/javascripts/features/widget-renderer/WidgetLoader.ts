@@ -1,52 +1,27 @@
-import { WidgetNamespace, Widget } from './interfaces';
-import { MarketplaceDataProvider } from './marketplace-data-provider';
+import {
+  WidgetNamespace,
+  Widget,
+  WidgetRef,
+  ControlWidgetRef,
+  EditorInterface,
+} from './interfaces';
+import { MarketplaceDataProvider } from './MarketplaceDataProvider';
 import { createPlainClient } from 'contentful-management';
 import DataLoader, { BatchLoadFn } from 'dataloader';
-import { NAMESPACE_EXTENSION, NAMESPACE_APP, NAMESPACE_BUILTIN } from 'widgets/WidgetNamespaces';
-import { get, uniqBy, isNil } from 'lodash';
+import { get, uniqBy } from 'lodash';
 import { buildExtensionWidget, buildAppWidget } from './buildWidgets';
 
-// TODO
-// * Actually use it, update downstream consumers
-
 export type ClientAPI = ReturnType<typeof createPlainClient>;
-
-const isWidget = (w: Widget | Error | null): w is Widget => {
-  return !isNil(w) && !(w instanceof Error);
-};
-
-interface WidgetRef {
-  widgetNamespace: WidgetNamespace;
-  widgetId: string;
-  // setting
-}
-
-interface ControlWidgetRef {
-  widgetNamespace?: WidgetNamespace;
-  widgetId?: string;
-}
-
-export interface EditorInterface {
-  sys: {
-    type: 'EditorInterface';
-    contentType: {
-      sys: {
-        type: 'Link';
-        linkType: 'ContentType';
-        id: string;
-      };
-    };
-  };
-  controls?: ControlWidgetRef[];
-  sidebar?: WidgetRef[];
-  editor?: WidgetRef;
-  editors?: WidgetRef[];
-}
-
 type CacheValue = Widget | null;
+
+const CUSTOM_NAMESPACES = [WidgetNamespace.APP, WidgetNamespace.EXTENSION];
 
 const cacheKeyFn = ({ widgetNamespace, widgetId }: WidgetRef): string =>
   [widgetNamespace, widgetId].join(',');
+
+const isWidget = (w: Widget | Error | null): w is Widget => {
+  return w !== null && !(w instanceof Error);
+};
 
 export class WidgetLoader {
   private client: ClientAPI;
@@ -68,14 +43,14 @@ export class WidgetLoader {
     });
   }
 
-  private load: BatchLoadFn<WidgetRef, CacheValue> = async keys => {
+  private load: BatchLoadFn<WidgetRef, CacheValue> = async (keys) => {
     if (keys.length < 1) {
       return [];
     }
 
     const emptyExtensionResponse = { items: [] };
     const extensionIds = keys
-      .filter(({ widgetNamespace }) => widgetNamespace === NAMESPACE_EXTENSION)
+      .filter(({ widgetNamespace }) => widgetNamespace === WidgetNamespace.EXTENSION)
       .map(({ widgetId }) => widgetId);
 
     const extensionsRes =
@@ -88,7 +63,7 @@ export class WidgetLoader {
         : Promise.resolve(emptyExtensionResponse);
 
     const emptyAppsResponse = { items: [], includes: { AppDefinition: [] } };
-    const appRefs = keys.filter(({ widgetNamespace }) => widgetNamespace === NAMESPACE_APP);
+    const appRefs = keys.filter(({ widgetNamespace }) => widgetNamespace === WidgetNamespace.APP);
 
     const appInstallationsRes =
       appRefs.length > 0
@@ -108,11 +83,11 @@ export class WidgetLoader {
     ]);
 
     return keys.map(({ widgetId, widgetNamespace }) => {
-      if (widgetNamespace === NAMESPACE_APP) {
+      if (widgetNamespace === WidgetNamespace.APP) {
         const installation = installedApps.find(
-          app => get(app, ['sys', 'appDefinition', 'sys', 'id']) === widgetId
+          (app) => get(app, ['sys', 'appDefinition', 'sys', 'id']) === widgetId
         );
-        const definition = usedAppDefinitions.find(def => get(def, ['sys', 'id']) === widgetId);
+        const definition = usedAppDefinitions.find((def) => get(def, ['sys', 'id']) === widgetId);
 
         if (installation && definition && definition.src) {
           return buildAppWidget(installation, definition, this.marketplaceDataProvider);
@@ -121,8 +96,8 @@ export class WidgetLoader {
         }
       }
 
-      if (widgetNamespace === NAMESPACE_EXTENSION) {
-        const ext = extensions.find(ext => get(ext, ['sys', 'id']) === widgetId);
+      if (widgetNamespace === WidgetNamespace.EXTENSION) {
+        const ext = extensions.find((ext) => get(ext, ['sys', 'id']) === widgetId);
 
         return ext ? buildExtensionWidget(ext, this.marketplaceDataProvider) : null;
       }
@@ -136,26 +111,22 @@ export class WidgetLoader {
   }
 
   private getControlWidgetRefs(controls: ControlWidgetRef[] = []): WidgetRef[] {
-    const isNonEmptyString = (s: any) => typeof s === 'string' && s.length > 0;
-
     return controls
-      .filter(control => isNonEmptyString(control.widgetId))
-      .filter(control => control.widgetNamespace !== NAMESPACE_BUILTIN)
-      .reduce((acc, control) => {
-        if (
-          control.widgetNamespace === NAMESPACE_APP ||
-          control.widgetNamespace === NAMESPACE_EXTENSION
-        ) {
+      .filter((control) => control.widgetNamespace !== WidgetNamespace.BUILTIN)
+      .reduce((acc: WidgetRef[], control: ControlWidgetRef) => {
+        if (!control.widgetId) {
+          return acc;
+        } else if (control.widgetNamespace && CUSTOM_NAMESPACES.includes(control.widgetNamespace)) {
           return acc.concat([
-            { widgetNamespace: control.widgetNamespace!, widgetId: control.widgetId! },
+            { widgetNamespace: control.widgetNamespace, widgetId: control.widgetId },
           ]);
         } else {
           return acc.concat([
-            { widgetNamespace: NAMESPACE_APP, widgetId: control.widgetId! },
-            { widgetNamespace: NAMESPACE_EXTENSION, widgetId: control.widgetId! },
+            { widgetNamespace: WidgetNamespace.APP, widgetId: control.widgetId },
+            { widgetNamespace: WidgetNamespace.EXTENSION, widgetId: control.widgetId },
           ]);
         }
-      }, [] as WidgetRef[]);
+      }, []);
   }
 
   private extractWidgetRefsFromEditorInterface(ei: EditorInterface): WidgetRef[] {
@@ -165,8 +136,8 @@ export class WidgetLoader {
       ...(ei.editors || []),
       ...this.getControlWidgetRefs(ei.controls),
     ]
-      .filter(ref => [NAMESPACE_APP, NAMESPACE_EXTENSION].includes(ref.widgetNamespace))
-      .filter(ref => ref.widgetId)
+      .filter((ref) => CUSTOM_NAMESPACES.includes(ref.widgetNamespace))
+      .filter((ref) => ref.widgetId)
       .map(({ widgetNamespace, widgetId }) => ({ widgetNamespace, widgetId }));
   }
 
