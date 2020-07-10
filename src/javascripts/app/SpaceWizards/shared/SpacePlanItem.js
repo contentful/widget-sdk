@@ -83,15 +83,7 @@ const styles = {
 };
 
 export default function SpacePlanItem(props) {
-  const {
-    plan,
-    isSelected,
-    isRecommended,
-    freeSpacesResource,
-    isPayingOrg,
-    onSelect,
-    isCommunityPlanEnabled,
-  } = props;
+  const { plan, isSelected, isRecommended, freeSpacesResource, isPayingOrg, onSelect } = props;
   const freeSpacesUsage = freeSpacesResource && freeSpacesResource.usage;
   const freeSpacesLimit = freeSpacesResource && freeSpacesResource.limits.maximum;
 
@@ -122,23 +114,16 @@ export default function SpacePlanItem(props) {
 
             {plan.isFree && freeSpacesLimit && (
               <>
-                {isCommunityPlanEnabled ? (
-                  'free space'
-                ) : (
-                  <>
-                    {freeSpacesUsage}/{freeSpacesLimit} used
-                    <Tooltip
-                      content={
-                        <>
-                          You can have up to{' '}
-                          <Pluralized text="free space" count={freeSpacesLimit} /> for your
-                          organization. If you delete a free space, another one can be created.
-                        </>
-                      }>
-                      <Icon icon="HelpCircle" className={styles.helpIcon} />
-                    </Tooltip>
-                  </>
-                )}
+                {freeSpacesUsage}/<Pluralized text="free space" count={freeSpacesLimit} />
+                <Tooltip
+                  content={
+                    <>
+                      You can have up to <Pluralized text="free space" count={freeSpacesLimit} />{' '}
+                      for your organization.
+                    </>
+                  }>
+                  <Icon icon="HelpCircle" className={styles.helpIcon} />
+                </Tooltip>
               </>
             )}
           </div>
@@ -169,7 +154,6 @@ SpacePlanItem.propTypes = {
   freeSpacesResource: PropTypes.object,
   onSelect: PropTypes.func.isRequired,
   isPayingOrg: PropTypes.bool.isRequired,
-  isCommunityPlanEnabled: PropTypes.bool,
   isRecommended: PropTypes.bool,
 };
 

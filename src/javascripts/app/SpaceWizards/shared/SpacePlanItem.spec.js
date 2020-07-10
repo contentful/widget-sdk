@@ -22,7 +22,9 @@ describe('SpacePlanItem', () => {
 
     build({ plan, freeSpacesResource });
 
-    expect(screen.getByTestId('contents')).toHaveTextContent('1/2 used');
+    expect(screen.getByTestId('contents').textContent).toBe(
+      `${plan.name}${freeSpacesResource.usage}/${freeSpacesResource.limits.maximum} free spaces`
+    );
   });
 
   it('should show the plan features', () => {
@@ -91,29 +93,33 @@ describe('SpacePlanItem', () => {
 });
 
 function createPlan(custom) {
-  return {
-    name: 'Space plan',
-    roleSet: {
-      name: 'Role set',
-      roles: [],
+  return Object.assign(
+    {
+      name: 'Space plan',
+      roleSet: {
+        name: 'Role set',
+        roles: [],
+      },
+      includedResources: [],
+      sys: {
+        id: 'plan_1234',
+      },
     },
-    includedResources: [],
-    sys: {
-      id: 'plan_1234',
-    },
-    ...custom,
-  };
+    custom
+  );
 }
 
 function build(custom) {
-  const props = {
-    plan: createPlan(),
-    isSelected: false,
-    freeSpacesResource: { usage: 1, limits: { maximum: 1 } },
-    onSelect: () => {},
-    isPayingOrg: true,
-    ...custom,
-  };
+  const props = Object.assign(
+    {
+      plan: createPlan(),
+      isSelected: false,
+      freeSpacesResource: { usage: 1, limits: { maximum: 1 } },
+      onSelect: () => {},
+      isPayingOrg: true,
+    },
+    custom
+  );
 
   render(<SpacePlanItem {...props} />);
 }

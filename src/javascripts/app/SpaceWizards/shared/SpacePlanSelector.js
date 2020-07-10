@@ -42,7 +42,6 @@ export default function SpacePlanSelector(props) {
     spaceResources,
     goToBillingPage,
     onSelectPlan,
-    isCommunityPlanEnabled,
     shouldShowMicroSmallCTA,
     isChanging = false,
   } = props;
@@ -128,7 +127,6 @@ export default function SpacePlanSelector(props) {
             isSelected={get(selectedPlan, 'sys.id') === plan.sys.id}
             isRecommended={get(recommendedPlan, 'sys.id') === plan.sys.id}
             onSelect={(plan) => onSelectPlan(plan, recommendedPlan)}
-            isCommunityPlanEnabled={isCommunityPlanEnabled}
           />
         ))}
       </Typography>
@@ -146,7 +144,6 @@ SpacePlanSelector.propTypes = {
   selectedPlan: PropTypes.object,
   spaceResources: PropTypes.array,
   goToBillingPage: PropTypes.func.isRequired,
-  isCommunityPlanEnabled: PropTypes.bool,
   shouldShowMicroSmallCTA: PropTypes.bool,
   isChanging: PropTypes.bool,
 };
