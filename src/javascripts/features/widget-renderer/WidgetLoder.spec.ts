@@ -1,4 +1,4 @@
-import { WidgetLoader, ClientAPI } from './WidgetLoader';
+import { WidgetLoader } from './WidgetLoader';
 import {
   Extension,
   AppInstallation,
@@ -14,7 +14,7 @@ const envId = 'envId';
 describe('Loader', () => {
   let loader: WidgetLoader;
   let get: jest.Mock;
-  let mockClient: ClientAPI;
+  let mockClient: any;
   let mockDataProvider: any;
 
   const mockGet = (
@@ -42,27 +42,24 @@ describe('Loader', () => {
       getSlug: jest.fn(),
       getIconUrl: jest.fn(),
     };
+
     get = jest.fn();
     mockGet([], [], []);
+    mockClient = { raw: { get } }
 
-    mockClient = ({
-      raw: {
-        get,
-      },
-    } as unknown) as ClientAPI;
     loader = new WidgetLoader(mockClient, mockDataProvider, spaceId, envId);
   });
 
   describe('Public interface', () => {
     describe('Warmup', () => {
       it('prefetchs marketplace data', async () => {
-        await loader.warmUp(WidgetNamespace.EXTENSION, 'my_id');
+        await loader.warmUp({ widgetNamespace: WidgetNamespace.EXTENSION, widgetId: 'my_id' });
         expect(mockDataProvider.prefetch).toHaveBeenCalledTimes(1);
       });
 
       describe('for Apps', () => {
         it('fetches data for that widget', async () => {
-          await loader.warmUp(WidgetNamespace.APP, 'my_id');
+          await loader.warmUp({ widgetNamespace: WidgetNamespace.APP, widgetId: 'my_id' });
           expect(get).toHaveBeenCalledTimes(1);
           expect(get).toHaveBeenCalledWith(
             `/spaces/${spaceId}/environments/${envId}/app_installations`
@@ -72,7 +69,7 @@ describe('Loader', () => {
 
       describe(`for extensions`, () => {
         it('fetches data for that widget', async () => {
-          await loader.warmUp(WidgetNamespace.EXTENSION, 'my_id');
+          await loader.warmUp({ widgetNamespace: WidgetNamespace.EXTENSION, widgetId: 'my_id' });
           expect(get).toHaveBeenCalledTimes(1);
           expect(get).toHaveBeenCalledWith(`/spaces/${spaceId}/environments/${envId}/extensions`, {
             params: {
@@ -97,7 +94,7 @@ describe('Loader', () => {
                 },
               },
             },
-            controls: [{ widgetNamespace: undefined, widgetId: 'my_control' }],
+            controls: [{ fieldId: 'foo', widgetNamespace: undefined, widgetId: 'my_control' }],
             sidebar: [{ widgetNamespace: WidgetNamespace.EXTENSION, widgetId: 'my_extension' }],
             editor: { widgetNamespace: WidgetNamespace.APP, widgetId: 'myapp' },
           };
@@ -132,7 +129,7 @@ describe('Loader', () => {
                 },
               },
             },
-            controls: [{ widgetNamespace: undefined, widgetId: 'my_control' }],
+            controls: [{ fieldId: 'foo', widgetNamespace: undefined, widgetId: 'my_control' }],
             sidebar: [{ widgetNamespace: WidgetNamespace.EXTENSION, widgetId: 'my_extension' }],
             editors: [{ widgetNamespace: WidgetNamespace.APP, widgetId: 'myapp' }],
           };
@@ -164,7 +161,7 @@ describe('Loader', () => {
 
         mockGet([], [appInstallation], [appDefinition]);
 
-        const result = await loader.getOne(WidgetNamespace.APP, appId);
+        const result = await loader.getOne({ widgetNamespace: WidgetNamespace.APP, widgetId: appId });
 
         expect(result?.id).toEqual(appId);
         expect(result?.namespace).toEqual(WidgetNamespace.APP);
@@ -198,7 +195,7 @@ describe('Loader', () => {
               },
             },
           },
-          controls: [{ widgetNamespace: undefined, widgetId: controlId }],
+          controls: [{ fieldId: 'foo', widgetNamespace: undefined, widgetId: controlId }],
           sidebar: [{ widgetNamespace: WidgetNamespace.EXTENSION, widgetId: extensionId }],
           editor: { widgetNamespace: WidgetNamespace.APP, widgetId: appId },
         };
@@ -230,8 +227,8 @@ describe('Loader', () => {
 
     describe('when get is called after warmup', () => {
       it('only fetches data once', async () => {
-        await loader.warmUp(WidgetNamespace.EXTENSION, 'my_id');
-        await loader.getOne(WidgetNamespace.EXTENSION, 'my_id');
+        await loader.warmUp({ widgetNamespace: WidgetNamespace.EXTENSION, widgetId: 'my_id' });
+        await loader.getOne({ widgetNamespace: WidgetNamespace.EXTENSION, widgetId: 'my_id' });
 
         expect(mockDataProvider.prefetch).toHaveBeenCalledTimes(1);
 
@@ -247,9 +244,9 @@ describe('Loader', () => {
 
     describe('When evict is called on a loaded entitiy', () => {
       it('clears the data', async () => {
-        await loader.warmUp(WidgetNamespace.EXTENSION, 'my_id');
-        loader.evict(WidgetNamespace.EXTENSION, 'my_id');
-        await loader.getOne(WidgetNamespace.EXTENSION, 'my_id');
+        await loader.warmUp({ widgetNamespace: WidgetNamespace.EXTENSION, widgetId: 'my_id' });
+        loader.evict({ widgetNamespace: WidgetNamespace.EXTENSION, widgetId: 'my_id' });
+        await loader.getOne({ widgetNamespace: WidgetNamespace.EXTENSION, widgetId: 'my_id' });
 
         expect(get).toHaveBeenCalledTimes(2);
         expect(get).toHaveBeenNthCalledWith(
@@ -266,11 +263,11 @@ describe('Loader', () => {
 
     describe('purge', () => {
       it('clears all data', async () => {
-        await loader.warmUp(WidgetNamespace.EXTENSION, 'my_id');
-        await loader.warmUp(WidgetNamespace.EXTENSION, 'different_id');
+        await loader.warmUp({ widgetNamespace: WidgetNamespace.EXTENSION, widgetId: 'my_id' });
+        await loader.warmUp({ widgetNamespace: WidgetNamespace.EXTENSION, widgetId: 'different_id' });
         loader.purge();
-        await loader.getOne(WidgetNamespace.EXTENSION, 'my_id');
-        await loader.getOne(WidgetNamespace.EXTENSION, 'different_id');
+        await loader.getOne({ widgetNamespace: WidgetNamespace.EXTENSION, widgetId: 'my_id' });
+        await loader.getOne({ widgetNamespace: WidgetNamespace.EXTENSION, widgetId: 'different_id' });
 
         expect(get).toHaveBeenCalledTimes(4);
         expect(get).toHaveBeenNthCalledWith(

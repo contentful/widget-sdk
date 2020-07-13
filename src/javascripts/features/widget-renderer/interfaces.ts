@@ -145,15 +145,22 @@ export interface AppDefinition {
   locations?: Location[];
 }
 
-export interface WidgetRef {
+export interface Control {
+  fieldId: string
+  widgetNamespace?: WidgetNamespace;
+  widgetId?: string;
+  settings?: ExtensionParameterValues;
+}
+
+export interface SidebarItem {
   widgetNamespace: WidgetNamespace;
   widgetId: string;
   settings?: ExtensionParameterValues;
 }
 
-export interface ControlWidgetRef {
-  widgetNamespace?: WidgetNamespace;
-  widgetId?: string;
+export interface Editor {
+  widgetNamespace: WidgetNamespace;
+  widgetId: string;
   settings?: ExtensionParameterValues;
 }
 
@@ -168,8 +175,8 @@ export interface EditorInterface {
       };
     };
   };
-  controls?: ControlWidgetRef[];
-  sidebar?: WidgetRef[];
-  editor?: WidgetRef;
-  editors?: WidgetRef[];
+  controls?: Control[];
+  sidebar?: SidebarItem[];
+  editor?: Editor;
+  editors?: Editor[];
 }

@@ -1,9 +1,8 @@
 import {
   WidgetNamespace,
   Widget,
-  WidgetRef,
-  ControlWidgetRef,
   EditorInterface,
+  Control,
 } from './interfaces';
 import { MarketplaceDataProvider } from './MarketplaceDataProvider';
 import { createPlainClient } from 'contentful-management';
@@ -11,7 +10,12 @@ import DataLoader, { BatchLoadFn } from 'dataloader';
 import { get, uniqBy } from 'lodash';
 import { buildExtensionWidget, buildAppWidget } from './buildWidgets';
 
-export type ClientAPI = ReturnType<typeof createPlainClient>;
+interface WidgetRef {
+  widgetNamespace: WidgetNamespace,
+  widgetId: string
+}
+
+type ClientAPI = ReturnType<typeof createPlainClient>;
 type CacheValue = Widget | null;
 
 const CUSTOM_NAMESPACES = [WidgetNamespace.APP, WidgetNamespace.EXTENSION];
@@ -106,14 +110,10 @@ export class WidgetLoader {
     });
   };
 
-  public async warmUp(widgetNamespace: WidgetNamespace, widgetId: string): Promise<void> {
-    await this.loader.load({ widgetNamespace, widgetId });
-  }
-
-  private getControlWidgetRefs(controls: ControlWidgetRef[] = []): WidgetRef[] {
+  private getControlWidgetRefs(controls: Control[] = []): WidgetRef[] {
     return controls
       .filter((control) => control.widgetNamespace !== WidgetNamespace.BUILTIN)
-      .reduce((acc: WidgetRef[], control: ControlWidgetRef) => {
+      .reduce((acc: WidgetRef[], control: Control) => {
         if (!control.widgetId) {
           return acc;
         } else if (control.widgetNamespace && CUSTOM_NAMESPACES.includes(control.widgetNamespace)) {
@@ -141,30 +141,34 @@ export class WidgetLoader {
       .map(({ widgetNamespace, widgetId }) => ({ widgetNamespace, widgetId }));
   }
 
-  public async warmUpWithEditorInterface(ei: EditorInterface): Promise<void> {
-    const keys = this.extractWidgetRefsFromEditorInterface(ei);
-
-    await this.loader.loadMany(keys);
+  public async warmUp(widgetRef: WidgetRef): Promise<void> {
+    await this.loader.load(widgetRef);
   }
 
-  public getOne(widgetNamespace: WidgetNamespace, widgetId: string): Promise<Widget | null> {
-    return this.loader.load({ widgetNamespace, widgetId });
+  public async warmUpWithEditorInterface(ei: EditorInterface): Promise<void> {
+    const widgetRefs = this.extractWidgetRefsFromEditorInterface(ei);
+
+    await this.loader.loadMany(widgetRefs);
+  }
+
+  public getOne(widgetRef: WidgetRef): Promise<Widget | null> {
+    return this.loader.load(widgetRef);
   }
 
   public getWithEditorInterface(ei: EditorInterface): Promise<Array<Widget>> {
-    const keys = this.extractWidgetRefsFromEditorInterface(ei);
+    const widgetRefs = this.extractWidgetRefsFromEditorInterface(ei);
 
-    return this.getMultiple(keys);
+    return this.getMultiple(widgetRefs);
   }
 
-  public async getMultiple(keys: WidgetRef[]): Promise<Widget[]> {
-    const widgets = await this.loader.loadMany(uniqBy(keys, cacheKeyFn));
+  public async getMultiple(widgetRefs: WidgetRef[]): Promise<Widget[]> {
+    const widgets = await this.loader.loadMany(uniqBy(widgetRefs, cacheKeyFn));
 
     return widgets.filter(isWidget);
   }
 
-  public evict(widgetNamespace: WidgetNamespace, widgetId: string): void {
-    this.loader.clear({ widgetNamespace, widgetId });
+  public evict(widgetRef: WidgetRef): void {
+    this.loader.clear(widgetRef);
   }
 
   public purge(): void {
