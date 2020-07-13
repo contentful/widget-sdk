@@ -11,49 +11,57 @@ export function getCtId(entry) {
   return get(entry, 'sys.contentType.sys.id');
 }
 
-const onEntryAction = (loadEvents, sdk) => (action) => {
-  switch (action.type) {
-    case 'select_and_link':
-      safeNonBlockingTrack('reference_editor_action:link', {
-        ctId: getCtId(action.entityData),
-      });
-      break;
-    case 'create_and_link':
-      safeNonBlockingTrack('reference_editor_action:create', {
-        ctId: getCtId(action.entityData),
-      });
-      safeNonBlockingTrack('entry:create', {
-        eventOrigin: 'reference-editor',
-        contentType: sdk.contentType,
-        response: action.entityData,
-      });
-      if (action.slide) {
-        safeNonBlockingTrack('slide_in_editor:open_create', action.slide);
-      }
-      break;
-    case 'delete':
-      safeNonBlockingTrack('reference_editor_action:delete', {
-        ctId: action.contentTypeId,
-      });
-      break;
-    case 'edit':
-      safeNonBlockingTrack('reference_editor_action:edit', { ctId: action.contentTypeId });
-      if (action.slide) {
-        safeNonBlockingTrack('slide_in_editor:open', action.slide);
-      }
-      break;
-    case 'rendered':
-      loadEvents.emit({
-        actionName: 'linksRendered',
-        field: {
-          id: sdk.field.id,
-          locale: sdk.field.locale,
-        },
-      });
-      break;
-    default:
-      break;
-  }
+const onEntryAction = (loadEvents, sdk) => {
+  const toRenderCount = (sdk.field.getValue() || []).length;
+  let renderedCount = 0;
+
+  return (action) => {
+    switch (action.type) {
+      case 'select_and_link':
+        safeNonBlockingTrack('reference_editor_action:link', {
+          ctId: getCtId(action.entityData),
+        });
+        break;
+      case 'create_and_link':
+        safeNonBlockingTrack('reference_editor_action:create', {
+          ctId: getCtId(action.entityData),
+        });
+        safeNonBlockingTrack('entry:create', {
+          eventOrigin: 'reference-editor',
+          contentType: sdk.contentType,
+          response: action.entityData,
+        });
+        if (action.slide) {
+          safeNonBlockingTrack('slide_in_editor:open_create', action.slide);
+        }
+        break;
+      case 'delete':
+        safeNonBlockingTrack('reference_editor_action:delete', {
+          ctId: action.contentTypeId,
+        });
+        break;
+      case 'edit':
+        safeNonBlockingTrack('reference_editor_action:edit', { ctId: action.contentTypeId });
+        if (action.slide) {
+          safeNonBlockingTrack('slide_in_editor:open', action.slide);
+        }
+        break;
+      case 'rendered':
+        renderedCount += 1;
+        if (!toRenderCount || renderedCount === toRenderCount) {
+          loadEvents.emit({
+            actionName: 'linksRendered',
+            field: {
+              id: sdk.field.id,
+              locale: sdk.field.locale,
+            },
+          });
+        }
+        break;
+      default:
+        break;
+    }
+  };
 };
 
 export function SingleEntryReferenceEditorWithTracking(props) {
@@ -80,7 +88,7 @@ export function SingleEntryReferenceEditorWithTracking(props) {
 export function MultipleEntryReferenceEditorWithTracking(props) {
   const { loadEvents, viewType, sdk } = props;
 
-  const onAction = onEntryAction(loadEvents, sdk);
+  const onAction = React.useMemo(() => onEntryAction(loadEvents, sdk), [loadEvents, sdk]);
 
   return (
     <MultipleEntryReferenceEditor

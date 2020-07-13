@@ -138,6 +138,13 @@ export function createWidgetLinkRenderEventsHandler({
 }) {
   return function handleWidgetLinkRenderEvents() {
     const { field } = widget;
+
+    if (!isLinkField(field)) {
+      // TODO: why do track "links rendered" for a non-link field? it increases the counter of loaded fields, even though we didn't count it as a field that must load links
+      // trackLinksRendered();
+      return;
+    }
+
     let getLinkCountForField;
     if (isRichTextField(field)) {
       getLinkCountForField = getRichTextLinkCount;
@@ -146,8 +153,7 @@ export function createWidgetLinkRenderEventsHandler({
       // TODO: Remove once we get rid of legacy Angular link field editors:
       handleAngularReferenceFieldEditor(loadEvents, trackLinksRendered);
     } else {
-      trackLinksRendered();
-      return;
+      throw new Error('Unknown link field type');
     }
     handleField({
       widget,
@@ -201,6 +207,7 @@ function getRichTextLinkCount(localeField) {
   const { Entry, Asset } = getRichTextEntityLinks(localeField);
   return Entry.length + Asset.length;
 }
+
 function getLinkFieldLinkCount(localeField) {
   return Array.isArray(localeField) ? localeField.length : Number(!!localeField);
 }
