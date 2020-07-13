@@ -70,7 +70,7 @@ export const PricingNewFeatures = ({ onNext }) => (
           </Button>
         ) : (
           <TextLink
-            href="https://www.contentful.com/pricing/"
+            href="https://www.contentful.com/pricing/?utm_medium=webapp&utm_source=product&utm_campaign=20q3-community-edition-launch"
             rel="noopener noreferrer"
             target="_blank"
             icon="ExternalLink"

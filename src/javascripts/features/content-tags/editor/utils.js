@@ -33,36 +33,50 @@ export function tagLink(id) {
 
 /* fancy grouping stuff */
 
+const GROUP_DELIMITERS = ['.', ':', '_', '-', '#'];
+export const DEFAULT_GROUP = 'Uncategorized';
+
 export const getFirstDelimiterIndex = (value, delimiters) =>
   min(delimiters.map((delimiter) => value.indexOf(delimiter)).filter((index) => index >= 0));
 
-export const groupByField = (tags, field, delimiters) =>
-  groupBy(tags, (tag) => {
-    const input = tag[field].slice(0, tag[field].length);
-    const delimiterIndex = getFirstDelimiterIndex(input, delimiters);
-    if (!delimiterIndex || delimiterIndex <= 0) {
-      return 'Uncategorized';
-    } else {
-      return upperFirst(camelCase(input.slice(0, delimiterIndex)));
-    }
-  });
+const groupForLabel = (label, delimiters) => {
+  const delimiterIndex = getFirstDelimiterIndex(label, delimiters);
+  if (!delimiterIndex || delimiterIndex <= 0) {
+    return DEFAULT_GROUP;
+  } else {
+    return upperFirst(camelCase(label.slice(0, delimiterIndex)));
+  }
+};
 
-export const applyMinimumGroupSize = (
-  groups,
-  defaultGroupName = 'Uncategorized',
-  minGroupLength = 2
-) => {
-  if (!Array.isArray(groups[defaultGroupName])) {
-    groups[defaultGroupName] = [];
+export const groupByField = (tags, field, delimiters) =>
+  groupBy(tags, (tag) => groupForLabel(tag[field], delimiters));
+
+export const applyMinimumGroupSize = (groups, minGroupLength = 1) => {
+  if (!Array.isArray(groups[DEFAULT_GROUP])) {
+    groups[DEFAULT_GROUP] = [];
   }
   Object.keys(groups).forEach((groupName) => {
-    if (groups[groupName].length < minGroupLength && groupName !== defaultGroupName) {
-      groups[defaultGroupName] = orderByLabel([...groups[defaultGroupName], ...groups[groupName]]);
+    if (groups[groupName].length < minGroupLength && groupName !== DEFAULT_GROUP) {
+      groups[DEFAULT_GROUP] = orderByLabel([...groups[DEFAULT_GROUP], ...groups[groupName]]);
       delete groups[groupName];
     }
   });
   return groups;
 };
 
-export const groupByName = (tags) =>
-  applyMinimumGroupSize(groupByField(tags, 'label', ['.', ':', '_', '-', '#']));
+export const applyGroups = (tags, groups) => {
+  const result = {};
+  tags.forEach((tag) => {
+    const group = groupForLabel(tag.label, GROUP_DELIMITERS);
+    if (groups.includes(group)) {
+      if (!result[group]) {
+        result[group] = [];
+      }
+      result[group].push(tag);
+    }
+  });
+  return result;
+};
+
+export const groupByName = (tags, minGroupSize = 2) =>
+  applyMinimumGroupSize(groupByField(tags, 'label', GROUP_DELIMITERS), minGroupSize);
