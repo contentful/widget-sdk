@@ -8,12 +8,12 @@ import * as LD from 'utils/LaunchDarkly';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { openDeleteEnvironmentDialog } from '../DeleteDialog';
 import createResourceService from 'services/ResourceService';
-import { showDialog as showUpgradeSpaceDialog, trackCTAClick } from 'services/ChangeSpaceService';
+import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService';
 import { canCreate } from 'utils/ResourceUtils';
 import { createPaginationEndpoint } from '__mocks__/data/EndpointFactory';
 import { getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
-import { track } from 'analytics/Analytics';
 import * as Fake from 'test/helpers/fakeFactory';
+import { trackCTAClick } from 'analytics/targetedCTA';
 
 jest.mock('services/ResourceService', () => ({
   __esModule: true, // this property makes it work
@@ -49,11 +49,10 @@ jest.mock('utils/ResourceUtils', () => ({
 jest.mock('services/ChangeSpaceService', () => ({
   showDialog: jest.fn(),
   showUpgradeSpaceDialog: jest.fn(),
-  trackCTAClick: jest.fn(),
 }));
 
-jest.mock('analytics/Analytics', () => ({
-  track: jest.fn(),
+jest.mock('analytics/targetedCTA', () => ({
+  trackCTAClick: jest.fn(),
 }));
 
 jest.mock('../DeleteDialog', () => ({
@@ -314,9 +313,9 @@ describe('EnvironmentsRoute', () => {
       expect(screen.getByTestId('upgradeToEnterpriseButton')).toBeVisible();
       expect(screen.getByTestId('upgradeToEnterpriseButton').textContent).toEqual('Talk to us');
       userEvent.click(screen.getByTestId('upgradeToEnterpriseButton'));
-      expect(track).toBeCalledWith('targeted_cta_clicked:upgrade_to_enterprise', {
-        ctaLocation: 'environments_page',
-        orgId: defaultProps.organizationId,
+
+      expect(trackCTAClick).toBeCalledWith('upgrade_to_enterprise', {
+        organizationId: defaultProps.organizationId,
         spaceId: defaultProps.spaceId,
       });
 

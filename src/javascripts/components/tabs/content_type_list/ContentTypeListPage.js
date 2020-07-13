@@ -24,12 +24,12 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { css } from 'emotion';
 import ExternalTextLink from 'app/common/ExternalTextLink';
 import createResourceService from 'services/ResourceService';
-import { track } from 'analytics/Analytics';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { PRICING_2020_RELEASED } from 'featureFlags';
 import { getVariation } from 'LaunchDarkly';
+import { trackCTAClick } from 'analytics/targetedCTA';
 
 import { websiteUrl } from 'Config';
 import { getModule } from 'core/NgRegistry';
@@ -135,12 +135,11 @@ export class ContentTypesPage extends React.Component {
   handleBannerClickCTA() {
     const { spaceId } = this.props;
     const spaceContext = getModule('spaceContext');
-    const orgId = spaceContext.organization.sys.id;
+    const organizationId = spaceContext.organization.sys.id;
 
-    track('targeted_cta_clicked:upgrade_to_enterprise', {
-      ctaLocation: 'content_types',
+    trackCTAClick('upgrade_to_enterprise', {
       spaceId,
-      orgId,
+      organizationId,
     });
   }
 

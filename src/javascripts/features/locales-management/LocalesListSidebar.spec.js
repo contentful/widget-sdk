@@ -6,10 +6,10 @@ import * as $stateMocked from 'ng/$state';
 import * as spaceContextMocked from 'ng/spaceContext';
 import userEvent from '@testing-library/user-event';
 
-import { track } from 'analytics/Analytics';
+import { trackCTAClick } from 'analytics/targetedCTA';
 
-jest.mock('analytics/Analytics', () => ({
-  track: jest.fn(),
+jest.mock('analytics/targetedCTA', () => ({
+  trackCTAClick: jest.fn(),
 }));
 
 describe('features/locales-management/LocalesListSidebar', () => {
@@ -140,9 +140,8 @@ describe('features/locales-management/LocalesListSidebar', () => {
 
         userEvent.click(screen.getByTestId('link-to-sales-button'));
 
-        expect(track).toBeCalledWith('upgrade_to_enterprise:cta_clicked', {
-          location: 'locales_page',
-          orgId: 'org',
+        expect(trackCTAClick).toBeCalledWith('upgrade_to_enterprise', {
+          organizationId: 'org',
           spaceId: 321,
         });
       });

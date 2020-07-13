@@ -66,7 +66,7 @@ export default function register() {
       $scope.shouldHide = accessChecker.shouldHide;
       $scope.shouldDisable = accessChecker.shouldDisable;
 
-      // Properties passed to RecordsResourceUsage
+      // Properties passed to RecordsResourceUsage && UpgradeBanner
       const resetUsageProps = _.debounce(() => {
         $scope.usageProps = {
           space: spaceContext.space.data,

@@ -6,8 +6,9 @@ import tokens from '@contentful/forma-36-tokens';
 import * as TokenStore from 'services/TokenStore';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import { useAsync } from 'core/hooks';
-import { showDialog as showChangeSpaceModal, trackCTAClick } from 'services/ChangeSpaceService';
+import { showDialog as showChangeSpaceModal } from 'services/ChangeSpaceService';
 import { isOwner } from 'services/OrganizationRoles';
+import { trackCTAClick } from 'analytics/targetedCTA';
 
 const styles = {
   marginBottom: css({
@@ -39,7 +40,10 @@ function FileSizeLimitWarning({ organizationId, spaceId }) {
   const { space, organization } = data;
 
   const onUpgradeSpace = () => {
-    trackCTAClick(organizationId, spaceId);
+    trackCTAClick('upgrade_space_plan', {
+      organizationId,
+      spaceId,
+    });
 
     showChangeSpaceModal({
       organizationId,

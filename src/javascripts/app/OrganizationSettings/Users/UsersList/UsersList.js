@@ -47,11 +47,13 @@ import {
 import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { getVariation } from 'LaunchDarkly';
 import { PRICING_2020_RELEASED } from 'featureFlags';
-import { showDialog as showChangeSpaceModal, trackCTAClick } from 'services/ChangeSpaceService';
+import { showDialog as showChangeSpaceModal } from 'services/ChangeSpaceService';
 import { showDialog as showCreateSpaceModal } from 'services/CreateSpace';
 import * as TokenStore from 'services/TokenStore';
 import { isOwner } from 'services/OrganizationRoles';
 import { getBasePlan, isFreePlan } from 'account/pricing/PricingDataProvider';
+import { isLegacyOrganization } from 'utils/ResourceUtils';
+import { trackCTAClick } from 'analytics/targetedCTA';
 
 const styles = {
   filters: css({
@@ -156,9 +158,17 @@ class UsersList extends React.Component {
     const organization = await TokenStore.getOrganization(orgId);
     const spaceToUpgrade = spaces.length > 0 ? spaces[0] : null;
 
-    const basePlan = await getBasePlan(this.endpoint);
+    // If the base plan can't be fetched (for v1), we can just consider it
+    // not free, since the community banner shouldn't show in this case
+    // anyway.
+    let basePlanIsFree = false;
+
+    if (!isLegacyOrganization(organization)) {
+      basePlanIsFree = await getBasePlan(this.endpoint).then(isFreePlan);
+    }
+
     const shouldDisplayCommunityBanner =
-      getVariation(PRICING_2020_RELEASED, { orgId }) && isFreePlan(basePlan);
+      getVariation(PRICING_2020_RELEASED, { orgId }) && basePlanIsFree;
 
     const newState = {
       usersList: resolved,
@@ -248,7 +258,10 @@ class UsersList extends React.Component {
     const { orgId } = this.props;
     const { spaceToUpgrade } = this.state;
 
-    trackCTAClick(orgId, spaceToUpgrade.sys.id);
+    trackCTAClick('upgrade_space_plan', {
+      organizationId: orgId,
+      spaceId: spaceToUpgrade.sys.id,
+    });
 
     showChangeSpaceModal({
       action: 'change',
@@ -259,6 +272,10 @@ class UsersList extends React.Component {
 
   createSpace = () => {
     const { orgId } = this.props;
+
+    trackCTAClick('create_space', {
+      organizationId: orgId,
+    });
 
     showCreateSpaceModal(orgId);
   };
