@@ -10,7 +10,7 @@ import {
 import { MarketplaceDataProvider } from './MarketplaceDataProvider';
 import { createPlainClient } from 'contentful-management';
 import DataLoader, { BatchLoadFn } from 'dataloader';
-import { uniqBy } from 'lodash';
+import { uniqBy, noop } from 'lodash';
 import { buildExtensionWidget, buildAppWidget } from './buildWidgets';
 
 interface WidgetRef {
@@ -67,7 +67,7 @@ export class WidgetLoader {
     this.loader = new DataLoader(this.load.bind(this), {
       cacheKeyFn,
     });
-    this.onWarning = onWarning || (() => {});
+    this.onWarning = onWarning || noop;
   }
 
   private handleApiFailure = (message: string, ids: string[], fallbackRes: any) => {
