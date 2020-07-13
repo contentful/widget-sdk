@@ -4,7 +4,7 @@ import {
   Extension,
   ParameterDefinition,
   WidgetLocation,
-} from './interfaces';
+} from '../interfaces';
 
 export const prepareAppInstallationEntity = (id: string): [AppInstallation, AppDefinition] => {
   const appInstallation: AppInstallation = {

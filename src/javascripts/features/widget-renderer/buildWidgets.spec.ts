@@ -1,6 +1,6 @@
 import { buildExtensionWidget, buildAppWidget } from './buildWidgets';
 import { Extension, HostingType, WidgetLocation, WidgetNamespace } from './interfaces';
-import { prepareExtensionEntity, prepareAppInstallationEntity } from './apiMocks';
+import { prepareExtensionEntity, prepareAppInstallationEntity } from './__fixtures__/apiEntities';
 
 describe('buildExtensionWidget', () => {
   let mockDataProvider: any;

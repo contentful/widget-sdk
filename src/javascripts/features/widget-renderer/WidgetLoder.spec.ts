@@ -6,7 +6,7 @@ import {
   EditorInterface,
   WidgetNamespace,
 } from './interfaces';
-import { prepareAppInstallationEntity, prepareExtensionEntity } from './apiMocks';
+import { prepareAppInstallationEntity, prepareExtensionEntity } from './__fixtures__/apiEntities';
 
 const spaceId = 'spaceid';
 const envId = 'envId';
