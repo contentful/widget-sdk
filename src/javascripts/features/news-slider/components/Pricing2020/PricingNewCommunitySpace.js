@@ -30,7 +30,7 @@ export const PricingNewCommunitySpace = ({ onNext }) => (
         <Typography>
           <DisplayText size="large">We increased your space limit - for free.</DisplayText>
           <DisplayText className={styles.text}>
-            Our new community space has replaced the free micro space
+            Our new Community space has replaced the free Micro space
           </DisplayText>
         </Typography>
         <Button size="large" onClick={onNext}>

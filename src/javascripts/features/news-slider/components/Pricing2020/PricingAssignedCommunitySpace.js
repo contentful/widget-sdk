@@ -44,21 +44,21 @@ export const PricingAssignedCommunitySpace = ({ communitySpaceName, microSpaceNa
       <div className={styles.content}>
         {microSpaceNames && microSpaceNames.length > 0 ? (
           <>
-            <DisplayText size="large">You have 1 free community space per organization</DisplayText>
+            <DisplayText size="large">You have 1 free Community space per organization</DisplayText>
             <List className={styles.list}>
               <ListItem className={styles.listItem}>
-                {communitySpaceName} has been assigned as your community space
+                {communitySpaceName} has been assigned as your Community space
               </ListItem>
               {microSpaceNames.map((spaceName, index) => (
                 <ListItem key={index} className={styles.listItem}>
-                  {spaceName} will remain a micro space
+                  {spaceName} will remain a Micro space
                 </ListItem>
               ))}
             </List>
           </>
         ) : (
           <DisplayText size="large" className={css({ marginBottom: tokens.spacingL })}>
-            {communitySpaceName} has been assigned as your community space
+            {communitySpaceName} has been assigned as your Community space
           </DisplayText>
         )}
         <TextLink

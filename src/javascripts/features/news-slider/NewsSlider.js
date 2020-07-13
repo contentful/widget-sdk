@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import cn from 'classnames';
 
+import tokens from '@contentful/forma-36-tokens';
 import { TextLink } from '@contentful/forma-36-react-components';
 import { ProgressBar } from './ProgressBar';
 import FullScreen from 'components/shared/stack-onboarding/components/FullScreen';
@@ -73,6 +74,9 @@ const styles = {
     flexShrink: '0',
     textAlign: 'left',
   }),
+  closeButton: css({
+    fontSize: tokens.fontSizeL,
+  }),
 };
 
 export const NewsSlider = ({ children, onClose }) => {
@@ -104,7 +108,11 @@ export const NewsSlider = ({ children, onClose }) => {
           <ProgressBar current={state.currentSlide} total={state.numSlides} goTo={goTo} />
         }
         close={
-          <TextLink linkType="muted" onClick={onClose} data-test-id="close-news-slider">
+          <TextLink
+            linkType="muted"
+            onClick={onClose}
+            data-test-id="close-news-slider"
+            className={styles.closeButton}>
             Close
           </TextLink>
         }>

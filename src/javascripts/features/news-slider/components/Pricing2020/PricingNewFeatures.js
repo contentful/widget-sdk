@@ -64,7 +64,7 @@ export const PricingNewFeatures = ({ onNext }) => (
         {onNext ? (
           <Button size="large" onClick={onNext}>
             <span className={styles.alignedButtonLabel}>
-              Show me more important changes
+              How does this affect me
               <Icon icon="ChevronRight" color="white" size="medium" />
             </span>
           </Button>
