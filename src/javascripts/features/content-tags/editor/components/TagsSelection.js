@@ -4,21 +4,22 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { Paragraph } from '@contentful/forma-36-react-components';
 import { TagsAutocomplete } from 'features/content-tags/editor/components/TagsAutocomplete';
 import {
+  useCanManageTags,
   useF36Modal,
   useIsInitialLoadingOfTags,
   useReadTags,
-  useCanManageTags,
+  useSpaceContext,
 } from 'features/content-tags/core/hooks';
 import { NoTagsContainer } from 'features/content-tags/core/components/NoTagsContainer';
 import { AdminsOnlyModal } from 'features/content-tags/editor/components/AdminsOnlyModal';
 import * as Navigator from 'states/Navigator';
 import { FieldFocus } from 'features/content-tags/core/components/FieldFocus';
 import { orderByLabel, tagsPayloadToValues } from 'features/content-tags/editor/utils';
-import { useSpaceContext } from 'features/content-tags/core/hooks';
 
 import { css } from 'emotion';
 import FeedbackButton from 'app/common/FeedbackButton';
 import { EntityTags } from 'features/content-tags/editor/components/EntityTags';
+import { useAllTagsGroups } from 'features/content-tags/core/hooks/useAllTagsGroups';
 
 const styles = {
   wrapper: css({
@@ -34,6 +35,7 @@ const TagsSelection = ({ showEmpty, onAdd, onRemove, selectedTags = [] }) => {
   const { data, isLoading, setSearch, setLimit, hasTags } = useReadTags();
   const isInitialLoad = useIsInitialLoadingOfTags();
   const spaceContext = useSpaceContext();
+  const tagGroups = useAllTagsGroups();
 
   useEffect(() => {
     setLimit(1000);
@@ -94,10 +96,10 @@ const TagsSelection = ({ showEmpty, onAdd, onRemove, selectedTags = [] }) => {
           onChange={onAdd}
           onQueryChange={onSearch}
         />
-        <EntityTags tags={selectedTags} onRemove={onRemove} />
+        <EntityTags tags={selectedTags} onRemove={onRemove} tagGroups={tagGroups} />
       </FieldFocus>
     );
-  }, [filteredTags, selectedTags, isLoading, onAdd, onSearch, onRemove, userListModal]);
+  }, [filteredTags, selectedTags, isLoading, onAdd, onSearch, onRemove, userListModal, tagGroups]);
 
   if (isInitialLoad) {
     return null;

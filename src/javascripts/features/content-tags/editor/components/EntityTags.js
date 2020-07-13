@@ -4,14 +4,14 @@ import { Pill } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';
-import { groupByName } from 'features/content-tags/editor/utils';
+import { applyGroups, DEFAULT_GROUP } from 'features/content-tags/editor/utils';
 
 const styles = {
   tag: css({ marginRight: tokens.spacing2Xs, marginBottom: '0px' }),
   headline: css({ color: tokens.colorTextMid }),
 };
 
-const EntityTags = ({ tags, onRemove, style = {} }) => {
+const EntityTags = ({ tags, onRemove, style = {}, tagGroups = [] }) => {
   const onTagPillClose = useCallback(
     (tagId) => {
       if (onRemove) {
@@ -24,8 +24,8 @@ const EntityTags = ({ tags, onRemove, style = {} }) => {
   const [groupedTags, setGroupedTags] = useState({});
 
   useEffect(() => {
-    setGroupedTags(groupByName(tags));
-  }, [tags, setGroupedTags]);
+    setGroupedTags(applyGroups(tags, tagGroups));
+  }, [tags, setGroupedTags, tagGroups]);
 
   const renderTags = (tags) => {
     return tags.sort().map((tag) => (
@@ -42,7 +42,7 @@ const EntityTags = ({ tags, onRemove, style = {} }) => {
 
   const renderGroup = (content, groupName) => {
     return (
-      <ul key={groupName || 'uncategorized'}>
+      <ul key={groupName || DEFAULT_GROUP}>
         <li key={'group-heading'}>
           <h4 className={styles.headline}>{groupName}</h4>
         </li>
@@ -56,8 +56,8 @@ const EntityTags = ({ tags, onRemove, style = {} }) => {
   const groups = Object.keys(groupedTags).sort();
   const result = [];
 
-  if (groups.includes('Uncategorized')) {
-    result.push(renderGroup(groupedTags['Uncategorized']));
+  if (groups.includes(DEFAULT_GROUP)) {
+    result.push(renderGroup(groupedTags[DEFAULT_GROUP]));
   }
 
   return (
@@ -65,7 +65,7 @@ const EntityTags = ({ tags, onRemove, style = {} }) => {
       {[
         result,
         ...groups
-          .filter((groupName) => groupName !== 'Uncategorized')
+          .filter((groupName) => groupName !== DEFAULT_GROUP)
           .map((groupName) => renderGroup(groupedTags[groupName], groupName)),
       ]}
     </div>
@@ -81,6 +81,7 @@ EntityTags.propTypes = {
   ),
   onRemove: PropTypes.func,
   style: PropTypes.object,
+  tagGroups: PropTypes.array,
 };
 
 export { EntityTags };
