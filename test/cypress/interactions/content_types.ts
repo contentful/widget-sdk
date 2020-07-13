@@ -3,8 +3,11 @@ import {
   defaultContentType,
   defaultContentTypeId,
   defaultHeader,
+  appContentTypeId,
 } from '../util/requests';
 import { RequestOptions, Query } from '@pact-foundation/pact-web';
+import { editorInterfaceResponseWithApp } from '../fixtures/responses/editor-interface-with-app';
+import { severalPublicContentTypes } from '../fixtures/responses/content-types-several-public';
 
 const empty = require('../fixtures/responses/empty.json');
 const contentTypeSingle = require('../fixtures/responses/content-types-single.json');
@@ -19,11 +22,15 @@ enum States {
   NONE = 'content_types/none',
   EDITORINTERFACE_WITHOUT_SIDEBAR = 'content_types/editor_interface_without_sidebar',
   EDITORINTERFACE_WITH_SIDEBAR = 'content_types/editor_interface_with_sidebar',
+  EDITORINTERFACE_WITH_APP = 'content_types/editor_interface_with_app',
   SINGLE = 'content_types/single',
   SEVERAL = 'content_types/several',
   DEFAULT_CONTENT_TYPE_IS_PUBLISHED = 'content_types/default-content-type-is-published',
+  CONTENT_TYPE_APP_IMAGE_FOCAL_POINT = 'content_types/app-image-focal-point',
+  UPDATE_CONTENT_TYPE_APP_IMAGE_FOCAL_POINT = 'content_types/update-app-image-focal-point',
   NO_PUBLIC_CONTENT_TYPES = 'content_types/no-public-content-types',
   ONLY_ONE_CONTENT_TYPE_IS_PUBLIC = 'content_types/one-single-content-type',
+  SEVERAL_CONTENT_TYPES_ARE_PUBLIC = 'content_types/several-public',
 }
 
 const getAllPublicContentTypesInDefaultSpaceRequest: RequestOptions = {
@@ -65,6 +72,20 @@ export const getAllPublicContentTypesInDefaultSpace = {
     }).as('getAllPublicContentTypesInDefaultSpace');
 
     return '@getAllPublicContentTypesInDefaultSpace';
+  },
+  willReturnSeveral() {
+    cy.addInteraction({
+      provider: 'content_types',
+      state: States.SEVERAL_CONTENT_TYPES_ARE_PUBLIC,
+      uponReceiving: `a request for multiple public content types in space ${defaultSpaceId}`,
+      withRequest: getAllPublicContentTypesInDefaultSpaceRequest,
+      willRespondWith: {
+        status: 200,
+        body: severalPublicContentTypes,
+      },
+    }).as('getSeveralPublicContentTypesInDefaultSpace');
+
+    return '@getSeveralPublicContentTypesInDefaultSpace';
   },
 };
 
@@ -181,6 +202,24 @@ export const getEditorInterfaceForDefaultContentType = {
     }).as('getEditorInterfaceForDefaultContentType');
 
     return '@getEditorInterfaceForDefaultContentType';
+  },
+  willReturnEditorInterfaceWithAppInstalled() {
+    cy.addInteraction({
+      provider: 'content_types',
+      state: States.EDITORINTERFACE_WITH_APP,
+      uponReceiving: `a request for the editor interface of content type "${appContentTypeId}" in space "${defaultSpaceId}"`,
+      withRequest: {
+        path: `/spaces/${defaultSpaceId}/content_types/${appContentTypeId}/editor_interface`,
+        method: 'GET',
+        headers: defaultHeader,
+      },
+      willRespondWith: {
+        status: 200,
+        body: editorInterfaceResponseWithApp,
+      },
+    }).as('getEditorInterfaceForContentTypeWithApp');
+
+    return '@getEditorInterfaceForContentTypeWithApp';
   },
 };
 

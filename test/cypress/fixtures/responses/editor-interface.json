@@ -1,0 +1,57 @@
+{
+  "sys": {
+    "id": "default",
+    "type": "EditorInterface",
+    "space": {
+      "sys": {
+        "id": "lpjm8d10rkpy",
+        "type": "Link",
+        "linkType": "Space"
+      }
+    },
+    "version": 2,
+    "createdAt": "2020-07-03T07:50:27.735Z",
+    "createdBy": {
+      "sys": {
+        "id": "7JWRGOYWY5AnjuoNVzBwyO",
+        "type": "Link",
+        "linkType": "User"
+      }
+    },
+    "updatedAt": "2020-07-03T07:50:29.012Z",
+    "updatedBy": {
+      "sys": {
+        "type": "Link",
+        "linkType": "User",
+        "id": "7JWRGOYWY5AnjuoNVzBwyO"
+      }
+    },
+    "contentType": {
+      "sys": {
+        "id": "imageWithFocalPoint",
+        "type": "Link",
+        "linkType": "ContentType"
+      }
+    },
+    "environment": {
+      "sys": {
+        "id": "master",
+        "type": "Link",
+        "linkType": "Environment"
+      }
+    }
+  },
+  "controls": [
+    {
+      "fieldId": "title"
+    },
+    {
+      "fieldId": "image"
+    },
+    {
+      "fieldId": "focalPoint",
+      "widgetNamespace": "app",
+      "widgetId": "342Q2DqCjmsdN5BJCEPkrJ"
+    }
+  ]
+}

@@ -5,6 +5,7 @@ import {
   defaultSpaceId,
   defaultEnvironmentId,
   defaultAssetId,
+  entryIdWithApp,
 } from '../util/requests';
 
 const empty = require('../fixtures/responses/empty.json');
@@ -17,10 +18,12 @@ import {
   publishEntryReferencesSeveralErrorsResponse,
   publishEntryReferencesSeveralSuccessResponse,
 } from '../fixtures/responses/entry-several-references';
+import { entryWithApp } from '../fixtures/responses/entry-with-app';
 
 enum States {
   NONE = 'entries/none',
   SEVERAL = 'entries/several',
+  WITH_APP = 'entries/with-app',
   NO_ERRORS = 'releases/no-errors',
   VALIDATION_ERRORS = 'release/validation-errors',
   ERRORS = 'release/errors',
@@ -48,6 +51,24 @@ export const getDefaultEntry = {
     }).as('getDefaultEntry');
 
     return '@getDefaultEntry';
+  },
+  willReturnEntryWithAppInstalled() {
+    cy.addInteraction({
+      provider: 'entries',
+      state: States.WITH_APP,
+      uponReceiving: `a request for the entry "${entryIdWithApp}" in space "${defaultSpaceId}" that has an app installed`,
+      withRequest: {
+        method: 'GET',
+        path: `/spaces/${defaultSpaceId}/entries/${entryIdWithApp}`,
+        headers: defaultHeader,
+      },
+      willRespondWith: {
+        status: 200,
+        body: entryWithApp,
+      },
+    }).as('getDefaultEntryWithApp');
+
+    return '@getDefaultEntryWithApp';
   },
 };
 

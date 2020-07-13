@@ -1,0 +1,515 @@
+{
+  "sys": {
+    "type": "Array"
+  },
+  "total": 7,
+  "items": [
+    {
+      "sys": {
+        "type": "EditorInterface",
+        "space": {
+          "sys": {
+            "id": "lpjm8d10rkpy",
+            "type": "Link",
+            "linkType": "Space"
+          }
+        },
+        "version": 1,
+        "createdAt": "2020-07-03T07:50:27.735Z",
+        "createdBy": {
+          "sys": {
+            "id": "7JWRGOYWY5AnjuoNVzBwyO",
+            "type": "Link",
+            "linkType": "User"
+          }
+        },
+        "updatedAt": "2020-07-03T07:50:27.735Z",
+        "updatedBy": {
+          "sys": {
+            "id": "7JWRGOYWY5AnjuoNVzBwyO",
+            "type": "Link",
+            "linkType": "User"
+          }
+        },
+        "contentType": {
+          "sys": {
+            "id": "imageWithFocalPoint",
+            "type": "Link",
+            "linkType": "ContentType"
+          }
+        },
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        }
+      },
+      "controls": [
+        {
+          "fieldId": "title"
+        },
+        {
+          "fieldId": "image"
+        },
+        {
+          "fieldId": "focalPoint"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "type": "EditorInterface",
+        "space": {
+          "sys": {
+            "id": "lpjm8d10rkpy",
+            "type": "Link",
+            "linkType": "Space"
+          }
+        },
+        "version": 12,
+        "createdAt": "2019-08-23T14:17:10.791Z",
+        "createdBy": {
+          "sys": {
+            "id": "2jvc3kU4n7OIABiFMTaGyB",
+            "type": "Link",
+            "linkType": "User"
+          }
+        },
+        "updatedAt": "2020-02-12T13:12:58.661Z",
+        "updatedBy": {
+          "sys": {
+            "id": "46JHc8ru6cDDm0CtthS0Kw",
+            "type": "Link",
+            "linkType": "User"
+          }
+        },
+        "contentType": {
+          "sys": {
+            "id": "uninstallMessages",
+            "type": "Link",
+            "linkType": "ContentType"
+          }
+        },
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        }
+      },
+      "controls": [
+        {
+          "fieldId": "negative",
+          "settings": {
+            "helpText": "Pick the icon that will show up next to the message. (Exclamations are for actions that will remove or delete artifacts.)",
+            "trueLabel": "Info Circle",
+            "falseLabel": "Exclamation Triangle"
+          },
+          "widgetId": "boolean",
+          "widgetNamespace": "builtin"
+        },
+        {
+          "fieldId": "info",
+          "widgetId": "singleLine",
+          "widgetNamespace": "builtin"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "type": "EditorInterface",
+        "space": {
+          "sys": {
+            "id": "lpjm8d10rkpy",
+            "type": "Link",
+            "linkType": "Space"
+          }
+        },
+        "version": 14,
+        "createdAt": "2019-08-09T10:26:37.082Z",
+        "createdBy": {
+          "sys": {
+            "id": "5aZ5pwqlNWeMnNIZP6lCE1",
+            "type": "Link",
+            "linkType": "User"
+          }
+        },
+        "updatedAt": "2019-11-27T10:40:45.314Z",
+        "updatedBy": {
+          "sys": {
+            "id": "46JHc8ru6cDDm0CtthS0Kw",
+            "type": "Link",
+            "linkType": "User"
+          }
+        },
+        "contentType": {
+          "sys": {
+            "id": "developer",
+            "type": "Link",
+            "linkType": "ContentType"
+          }
+        },
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        }
+      },
+      "controls": [
+        {
+          "fieldId": "name",
+          "widgetId": "singleLine",
+          "widgetNamespace": "builtin"
+        },
+        {
+          "fieldId": "slug",
+          "widgetId": "slugEditor",
+          "widgetNamespace": "builtin"
+        },
+        {
+          "fieldId": "icon",
+          "widgetId": "assetLinkEditor",
+          "widgetNamespace": "builtin"
+        },
+        {
+          "fieldId": "websiteUrl",
+          "widgetId": "urlEditor",
+          "widgetNamespace": "builtin"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "type": "EditorInterface",
+        "space": {
+          "sys": {
+            "id": "lpjm8d10rkpy",
+            "type": "Link",
+            "linkType": "Space"
+          }
+        },
+        "version": 12,
+        "createdAt": "2019-08-09T10:47:24.370Z",
+        "createdBy": {
+          "sys": {
+            "id": "5aZ5pwqlNWeMnNIZP6lCE1",
+            "type": "Link",
+            "linkType": "User"
+          }
+        },
+        "updatedAt": "2019-09-03T12:00:32.374Z",
+        "updatedBy": {
+          "sys": {
+            "id": "46JHc8ru6cDDm0CtthS0Kw",
+            "type": "Link",
+            "linkType": "User"
+          }
+        },
+        "contentType": {
+          "sys": {
+            "id": "category",
+            "type": "Link",
+            "linkType": "ContentType"
+          }
+        },
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        }
+      },
+      "controls": [
+        {
+          "fieldId": "name",
+          "widgetId": "singleLine",
+          "widgetNamespace": "builtin"
+        },
+        {
+          "fieldId": "slug",
+          "widgetId": "slugEditor",
+          "widgetNamespace": "builtin"
+        },
+        {
+          "fieldId": "icon",
+          "widgetId": "assetLinkEditor",
+          "widgetNamespace": "builtin"
+        },
+        {
+          "fieldId": "description",
+          "widgetId": "multipleLine",
+          "widgetNamespace": "builtin"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "type": "EditorInterface",
+        "space": {
+          "sys": {
+            "id": "lpjm8d10rkpy",
+            "type": "Link",
+            "linkType": "Space"
+          }
+        },
+        "version": 8,
+        "createdAt": "2019-10-02T14:56:44.544Z",
+        "createdBy": {
+          "sys": {
+            "id": "2MzbkIYbpZL19Dtc16UoJy",
+            "type": "Link",
+            "linkType": "User"
+          }
+        },
+        "updatedAt": "2020-02-20T11:32:52.653Z",
+        "updatedBy": {
+          "sys": {
+            "id": "5FvvIcNbfAn7SPSO97fIMp",
+            "type": "Link",
+            "linkType": "User"
+          }
+        },
+        "contentType": {
+          "sys": {
+            "id": "appsListing",
+            "type": "Link",
+            "linkType": "ContentType"
+          }
+        },
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        }
+      },
+      "sidebar": [
+        {
+          "widgetId": "publication-widget",
+          "widgetNamespace": "sidebar-builtin"
+        },
+        {
+          "widgetId": "content-workflows-tasks-widget",
+          "widgetNamespace": "sidebar-builtin"
+        },
+        {
+          "widgetId": "content-preview-widget",
+          "widgetNamespace": "sidebar-builtin"
+        },
+        {
+          "widgetId": "incoming-links-widget",
+          "widgetNamespace": "sidebar-builtin"
+        },
+        {
+          "widgetId": "translation-widget",
+          "widgetNamespace": "sidebar-builtin"
+        },
+        {
+          "widgetId": "versions-widget",
+          "widgetNamespace": "sidebar-builtin"
+        },
+        {
+          "widgetId": "users-widget",
+          "widgetNamespace": "sidebar-builtin"
+        }
+      ],
+      "controls": [
+        {
+          "fieldId": "title",
+          "widgetId": "singleLine",
+          "widgetNamespace": "builtin"
+        },
+        {
+          "fieldId": "apps",
+          "settings": {
+            "bulkEditing": false
+          },
+          "widgetId": "entryCardsEditor",
+          "widgetNamespace": "builtin"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "type": "EditorInterface",
+        "space": {
+          "sys": {
+            "id": "lpjm8d10rkpy",
+            "type": "Link",
+            "linkType": "Space"
+          }
+        },
+        "version": 4,
+        "createdAt": "2019-08-09T10:41:30.310Z",
+        "createdBy": {
+          "sys": {
+            "id": "5aZ5pwqlNWeMnNIZP6lCE1",
+            "type": "Link",
+            "linkType": "User"
+          }
+        },
+        "updatedAt": "2020-02-12T13:11:58.287Z",
+        "updatedBy": {
+          "sys": {
+            "id": "46JHc8ru6cDDm0CtthS0Kw",
+            "type": "Link",
+            "linkType": "User"
+          }
+        },
+        "contentType": {
+          "sys": {
+            "id": "appLink",
+            "type": "Link",
+            "linkType": "ContentType"
+          }
+        },
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        }
+      },
+      "controls": [
+        {
+          "fieldId": "title",
+          "widgetId": "singleLine",
+          "widgetNamespace": "builtin"
+        },
+        {
+          "fieldId": "url",
+          "widgetId": "urlEditor",
+          "widgetNamespace": "builtin"
+        }
+      ]
+    },
+    {
+      "sys": {
+        "type": "EditorInterface",
+        "space": {
+          "sys": {
+            "id": "lpjm8d10rkpy",
+            "type": "Link",
+            "linkType": "Space"
+          }
+        },
+        "version": 68,
+        "createdAt": "2019-08-09T10:21:29.840Z",
+        "createdBy": {
+          "sys": {
+            "id": "5aZ5pwqlNWeMnNIZP6lCE1",
+            "type": "Link",
+            "linkType": "User"
+          }
+        },
+        "updatedAt": "2020-02-12T13:11:16.613Z",
+        "updatedBy": {
+          "sys": {
+            "id": "46JHc8ru6cDDm0CtthS0Kw",
+            "type": "Link",
+            "linkType": "User"
+          }
+        },
+        "contentType": {
+          "sys": {
+            "id": "app",
+            "type": "Link",
+            "linkType": "ContentType"
+          }
+        },
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        }
+      },
+      "controls": [
+        {
+          "fieldId": "title",
+          "widgetId": "singleLine",
+          "widgetNamespace": "builtin"
+        },
+        {
+          "fieldId": "slug",
+          "widgetId": "slugEditor",
+          "widgetNamespace": "builtin"
+        },
+        {
+          "fieldId": "appDefinitionId",
+          "widgetId": "singleLine",
+          "widgetNamespace": "builtin"
+        },
+        {
+          "fieldId": "icon",
+          "widgetId": "assetLinkEditor",
+          "widgetNamespace": "builtin"
+        },
+        {
+          "fieldId": "developer",
+          "widgetId": "entryLinkEditor",
+          "widgetNamespace": "builtin"
+        },
+        {
+          "fieldId": "categories",
+          "settings": {
+            "bulkEditing": false
+          },
+          "widgetId": "entryLinksEditor",
+          "widgetNamespace": "builtin"
+        },
+        {
+          "fieldId": "links",
+          "settings": {
+            "bulkEditing": true
+          },
+          "widgetId": "entryLinksEditor",
+          "widgetNamespace": "builtin"
+        },
+        {
+          "fieldId": "description",
+          "widgetId": "markdown",
+          "widgetNamespace": "builtin"
+        },
+        {
+          "fieldId": "tagLine",
+          "widgetId": "singleLine",
+          "widgetNamespace": "builtin"
+        },
+        {
+          "fieldId": "uninstallMessages",
+          "settings": {
+            "bulkEditing": true
+          },
+          "widgetId": "entryLinksEditor",
+          "widgetNamespace": "builtin"
+        },
+        {
+          "fieldId": "eula",
+          "settings": {
+            "helpText": "The URL to the app's EULA"
+          },
+          "widgetId": "singleLine",
+          "widgetNamespace": "builtin"
+        },
+        {
+          "fieldId": "privacyPolicy",
+          "settings": {
+            "helpText": "The URL to the app's privacy policy"
+          },
+          "widgetId": "singleLine",
+          "widgetNamespace": "builtin"
+        }
+      ]
+    }
+  ]
+}
