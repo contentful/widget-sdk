@@ -14,6 +14,7 @@ const envId = 'envId';
 describe('Loader', () => {
   let loader: WidgetLoader;
   let get: jest.Mock;
+  let onWarning: jest.Mock;
   let mockClient: any;
   let mockDataProvider: any;
 
@@ -38,7 +39,7 @@ describe('Loader', () => {
 
   beforeEach(() => {
     mockDataProvider = {
-      prefetch: jest.fn(),
+      prefetch: jest.fn().mockResolvedValue(undefined),
       getSlug: jest.fn(),
       getIconUrl: jest.fn(),
     };
@@ -47,7 +48,9 @@ describe('Loader', () => {
     mockGet([], [], []);
     mockClient = { raw: { get } };
 
-    loader = new WidgetLoader(mockClient, mockDataProvider, spaceId, envId);
+    onWarning = jest.fn();
+
+    loader = new WidgetLoader(mockClient, mockDataProvider, spaceId, envId, onWarning);
   });
 
   describe('Public interface', () => {
@@ -55,6 +58,21 @@ describe('Loader', () => {
       it('prefetchs marketplace data', async () => {
         await loader.warmUp({ widgetNamespace: WidgetNamespace.EXTENSION, widgetId: 'my_id' });
         expect(mockDataProvider.prefetch).toHaveBeenCalledTimes(1);
+      });
+
+      it('reports warnings', async () => {
+        const err = new Error('500');
+        mockDataProvider.prefetch.mockRejectedValueOnce(err);
+
+        await loader.warmUp({ widgetNamespace: WidgetNamespace.APP, widgetId: 'test' });
+
+        expect(onWarning).toHaveBeenCalledTimes(1);
+        expect(onWarning).toHaveBeenCalledWith({
+          message: 'Failed to load marketplace data',
+          fallbackRes: undefined,
+          ids: ['test'],
+          err,
+        });
       });
 
       describe('for Apps', () => {

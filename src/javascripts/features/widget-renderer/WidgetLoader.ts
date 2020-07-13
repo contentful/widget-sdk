@@ -18,8 +18,16 @@ interface WidgetRef {
   widgetId: string;
 }
 
+interface WidgetLoadWarning {
+  message: string;
+  ids: string[];
+  fallbackRes: any;
+  err: any;
+}
+
 type ClientAPI = ReturnType<typeof createPlainClient>;
 type CacheValue = Widget | null;
+type WarningCallbackFn = (warning: WidgetLoadWarning) => void;
 
 const EMPTY_EXTENSIONS_RES = { items: [] };
 const EMPTY_APPS_RES = { items: [], includes: { AppDefinition: [] } };
@@ -44,12 +52,14 @@ export class WidgetLoader {
   private marketplaceDataProvider: MarketplaceDataProvider;
   private baseUrl: string;
   private loader: DataLoader<WidgetRef, CacheValue, string>;
+  private onWarning: WarningCallbackFn;
 
   constructor(
     client: ClientAPI,
     marketplaceDataProvider: MarketplaceDataProvider,
     spaceId: string,
-    envId: string
+    envId: string,
+    onWarning?: WarningCallbackFn
   ) {
     this.client = client;
     this.marketplaceDataProvider = marketplaceDataProvider;
@@ -57,7 +67,15 @@ export class WidgetLoader {
     this.loader = new DataLoader(this.load.bind(this), {
       cacheKeyFn,
     });
+    this.onWarning = onWarning || (() => {});
   }
+
+  private handleApiFailure = (message: string, ids: string[], fallbackRes: any) => {
+    return (err: any) => {
+      this.onWarning({ message, ids, fallbackRes, err });
+      return fallbackRes;
+    };
+  };
 
   private load: BatchLoadFn<WidgetRef, CacheValue> = async (widgetRefs) => {
     if (widgetRefs.length < 1) {
@@ -84,9 +102,15 @@ export class WidgetLoader {
         includes: { AppDefinition: appDefinitions },
       },
     ] = await Promise.all([
-      extensionsRes.catch(() => EMPTY_EXTENSIONS_RES),
-      appInstallationsRes.catch(() => EMPTY_APPS_RES),
-      this.marketplaceDataProvider.prefetch(),
+      extensionsRes.catch(
+        this.handleApiFailure('Failed to load extensions', extensionIds, EMPTY_EXTENSIONS_RES)
+      ),
+      appInstallationsRes.catch(
+        this.handleApiFailure('Failed to load apps', appIds, EMPTY_APPS_RES)
+      ),
+      this.marketplaceDataProvider
+        .prefetch()
+        .catch(this.handleApiFailure('Failed to load marketplace data', appIds, undefined)),
     ]);
 
     return widgetRefs.map(({ widgetId, widgetNamespace }) => {

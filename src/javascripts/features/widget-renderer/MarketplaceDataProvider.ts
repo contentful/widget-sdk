@@ -66,7 +66,7 @@ export class MarketplaceDataProvider {
     const res = await this.fetch(url, { headers: { Authorization } });
 
     if (!res.ok) {
-      return;
+      throw new Error('Invalid marketplace response.');
     }
 
     const data: MarketplaceData = await res.json();

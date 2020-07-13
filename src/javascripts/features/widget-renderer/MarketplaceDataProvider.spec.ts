@@ -60,12 +60,17 @@ describe('MarketplaceDataProvider', () => {
       expect(fetch).toHaveBeenCalledTimes(1);
     });
 
-    it('ignores networking issues', async () => {
+    it('throws on network issues', async () => {
       fetch.mockResolvedValue({ ok: false });
 
-      await provider.prefetch();
+      expect.assertions(2);
 
-      expect(provider.getIconUrl(WidgetNamespace.APP, 'some-app')).toBe(DEFAULT_APP_ICON_URL);
+      try {
+        await provider.prefetch();
+      } catch (err) {
+        expect(err).toBeInstanceOf(Error);
+        expect(provider.getIconUrl(WidgetNamespace.APP, 'some-app')).toBe(DEFAULT_APP_ICON_URL);
+      }
     });
   });
 
