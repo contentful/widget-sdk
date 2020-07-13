@@ -45,7 +45,7 @@ describe('Loader', () => {
 
     get = jest.fn();
     mockGet([], [], []);
-    mockClient = { raw: { get } }
+    mockClient = { raw: { get } };
 
     loader = new WidgetLoader(mockClient, mockDataProvider, spaceId, envId);
   });
@@ -161,7 +161,10 @@ describe('Loader', () => {
 
         mockGet([], [appInstallation], [appDefinition]);
 
-        const result = await loader.getOne({ widgetNamespace: WidgetNamespace.APP, widgetId: appId });
+        const result = await loader.getOne({
+          widgetNamespace: WidgetNamespace.APP,
+          widgetId: appId,
+        });
 
         expect(result?.id).toEqual(appId);
         expect(result?.namespace).toEqual(WidgetNamespace.APP);
@@ -264,10 +267,16 @@ describe('Loader', () => {
     describe('purge', () => {
       it('clears all data', async () => {
         await loader.warmUp({ widgetNamespace: WidgetNamespace.EXTENSION, widgetId: 'my_id' });
-        await loader.warmUp({ widgetNamespace: WidgetNamespace.EXTENSION, widgetId: 'different_id' });
+        await loader.warmUp({
+          widgetNamespace: WidgetNamespace.EXTENSION,
+          widgetId: 'different_id',
+        });
         loader.purge();
         await loader.getOne({ widgetNamespace: WidgetNamespace.EXTENSION, widgetId: 'my_id' });
-        await loader.getOne({ widgetNamespace: WidgetNamespace.EXTENSION, widgetId: 'different_id' });
+        await loader.getOne({
+          widgetNamespace: WidgetNamespace.EXTENSION,
+          widgetId: 'different_id',
+        });
 
         expect(get).toHaveBeenCalledTimes(4);
         expect(get).toHaveBeenNthCalledWith(

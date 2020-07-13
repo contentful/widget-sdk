@@ -3,28 +3,40 @@ import {
   Widget,
   EditorInterface,
   Control,
+  AppInstallation,
+  AppDefinition,
+  Extension,
 } from './interfaces';
 import { MarketplaceDataProvider } from './MarketplaceDataProvider';
 import { createPlainClient } from 'contentful-management';
 import DataLoader, { BatchLoadFn } from 'dataloader';
-import { get, uniqBy } from 'lodash';
+import { uniqBy } from 'lodash';
 import { buildExtensionWidget, buildAppWidget } from './buildWidgets';
 
 interface WidgetRef {
-  widgetNamespace: WidgetNamespace,
-  widgetId: string
+  widgetNamespace: WidgetNamespace;
+  widgetId: string;
 }
 
 type ClientAPI = ReturnType<typeof createPlainClient>;
 type CacheValue = Widget | null;
 
+const EMPTY_EXTENSIONS_RES = { items: [] };
+const EMPTY_APPS_RES = { items: [], includes: { AppDefinition: [] } };
 const CUSTOM_NAMESPACES = [WidgetNamespace.APP, WidgetNamespace.EXTENSION];
 
-const cacheKeyFn = ({ widgetNamespace, widgetId }: WidgetRef): string =>
-  [widgetNamespace, widgetId].join(',');
+const cacheKeyFn = ({ widgetNamespace, widgetId }: WidgetRef): string => {
+  return [widgetNamespace, widgetId].join(',');
+};
 
 const isWidget = (w: Widget | Error | null): w is Widget => {
   return w !== null && !(w instanceof Error);
+};
+
+const getIdsOf = (widgetRefs: readonly WidgetRef[], ns: WidgetNamespace) => {
+  return widgetRefs
+    .filter(({ widgetNamespace }) => widgetNamespace === ns)
+    .map(({ widgetId }) => widgetId);
 };
 
 export class WidgetLoader {
@@ -47,51 +59,42 @@ export class WidgetLoader {
     });
   }
 
-  private load: BatchLoadFn<WidgetRef, CacheValue> = async (keys) => {
-    if (keys.length < 1) {
+  private load: BatchLoadFn<WidgetRef, CacheValue> = async (widgetRefs) => {
+    if (widgetRefs.length < 1) {
       return [];
     }
 
-    const emptyExtensionResponse = { items: [] };
-    const extensionIds = keys
-      .filter(({ widgetNamespace }) => widgetNamespace === WidgetNamespace.EXTENSION)
-      .map(({ widgetId }) => widgetId);
-
+    const extensionIds = getIdsOf(widgetRefs, WidgetNamespace.EXTENSION);
+    const extensionIdsParam = { 'sys.id[in]': extensionIds.join(',') };
     const extensionsRes =
       extensionIds.length > 0
-        ? this.client.raw.get(`${this.baseUrl}/extensions`, {
-            params: {
-              'sys.id[in]': extensionIds.join(','),
-            },
-          })
-        : Promise.resolve(emptyExtensionResponse);
+        ? this.client.raw.get(`${this.baseUrl}/extensions`, { params: extensionIdsParam })
+        : Promise.resolve(EMPTY_EXTENSIONS_RES);
 
-    const emptyAppsResponse = { items: [], includes: { AppDefinition: [] } };
-    const appRefs = keys.filter(({ widgetNamespace }) => widgetNamespace === WidgetNamespace.APP);
-
+    const appIds = getIdsOf(widgetRefs, WidgetNamespace.APP);
     const appInstallationsRes =
-      appRefs.length > 0
+      appIds.length > 0
         ? this.client.raw.get(`${this.baseUrl}/app_installations`)
-        : Promise.resolve(emptyAppsResponse);
+        : Promise.resolve(EMPTY_APPS_RES);
 
     const [
       { items: extensions },
       {
-        items: installedApps,
-        includes: { AppDefinition: usedAppDefinitions },
+        items: appInstallations,
+        includes: { AppDefinition: appDefinitions },
       },
     ] = await Promise.all([
-      extensionsRes.catch(() => emptyExtensionResponse),
-      appInstallationsRes.catch(() => emptyAppsResponse),
+      extensionsRes.catch(() => EMPTY_EXTENSIONS_RES),
+      appInstallationsRes.catch(() => EMPTY_APPS_RES),
       this.marketplaceDataProvider.prefetch(),
     ]);
 
-    return keys.map(({ widgetId, widgetNamespace }) => {
+    return widgetRefs.map(({ widgetId, widgetNamespace }) => {
       if (widgetNamespace === WidgetNamespace.APP) {
-        const installation = installedApps.find(
-          (app) => get(app, ['sys', 'appDefinition', 'sys', 'id']) === widgetId
+        const installation = appInstallations.find(
+          (i: AppInstallation) => i.sys.appDefinition.sys.id === widgetId
         );
-        const definition = usedAppDefinitions.find((def) => get(def, ['sys', 'id']) === widgetId);
+        const definition = appDefinitions.find((d: AppDefinition) => d.sys.id === widgetId);
 
         if (installation && definition && definition.src) {
           return buildAppWidget(installation, definition, this.marketplaceDataProvider);
@@ -101,9 +104,9 @@ export class WidgetLoader {
       }
 
       if (widgetNamespace === WidgetNamespace.EXTENSION) {
-        const ext = extensions.find((ext) => get(ext, ['sys', 'id']) === widgetId);
+        const extension = extensions.find((e: Extension) => e.sys.id === widgetId);
 
-        return ext ? buildExtensionWidget(ext, this.marketplaceDataProvider) : null;
+        return extension ? buildExtensionWidget(extension, this.marketplaceDataProvider) : null;
       }
 
       return null;

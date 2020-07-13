@@ -146,7 +146,7 @@ export interface AppDefinition {
 }
 
 export interface Control {
-  fieldId: string
+  fieldId: string;
   widgetNamespace?: WidgetNamespace;
   widgetId?: string;
   settings?: ExtensionParameterValues;
