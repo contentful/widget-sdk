@@ -9,7 +9,6 @@ import tokens from '@contentful/forma-36-tokens';
 
 import {
   Filter as FilterPropType,
-  Space as SpacePropType,
   SpaceRole as SpaceRolePropType,
 } from 'app/OrganizationSettings/PropTypes';
 import SearchFilter from './SearchFilter';
@@ -40,15 +39,8 @@ const styles = {
   }),
 };
 
-UserListFilters.defaultProps = {
-  filters: [],
-  spaces: [],
-  spaceRoles: [],
-};
-
 UserListFilters.propTypes = {
   filters: PropTypes.arrayOf(FilterPropType),
-  spaces: PropTypes.arrayOf(SpacePropType),
   spaceRoles: PropTypes.arrayOf(SpaceRolePropType),
   queryTotal: PropTypes.number.isRequired,
   onChange: PropTypes.func.isRequired,
