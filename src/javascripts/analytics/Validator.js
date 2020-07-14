@@ -156,6 +156,7 @@ export const validEvents = {
   sharejs: ['cma_entity_version_mismatch'],
   feedback: ['give'],
   targeted_cta_clicked: ['upgrade_to_enterprise', 'upgrade_space_plan', 'create_space'],
+  pricing_update: ['communication_seen'],
 };
 
 export const validateEvent = (eventName) => {
