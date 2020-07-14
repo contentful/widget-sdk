@@ -3,6 +3,7 @@ import createIDMap from './IDMap';
 import * as PublicContentType from './PublicContentType';
 import * as Analytics from 'analytics/Analytics';
 import { getLocalesObject } from 'app/widgets/NewWidgetApi/createLocalesApi';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 const sharedFieldProps = (field) => ({
   id: field.apiName || field.id,
@@ -11,7 +12,7 @@ const sharedFieldProps = (field) => ({
 });
 
 const REQUIRED_CONFIG_KEYS = [
-  'descriptor',
+  'widget',
   'spaceId',
   'environmentId',
   'location', // Where the extension is rendered. See `WidgetLocations`.
@@ -57,7 +58,7 @@ export default class ExtensionAPI {
   getIds() {
     const {
       current,
-      descriptor,
+      widget,
       spaceId,
       environmentId,
       contentTypeData,
@@ -67,7 +68,7 @@ export default class ExtensionAPI {
 
     return {
       // Results in `{ app: 'some-app-id' }` or `{ extension: 'some-ext-id' }`.
-      [descriptor.namespace]: descriptor.id,
+      [widget.namespace]: widget.id,
 
       space: spaceId,
       environment: environmentId,
@@ -159,8 +160,8 @@ export default class ExtensionAPI {
           entryId: this.entryData.sys.id,
           fieldId,
           localeCode,
-          extensionId: this.descriptor.id,
-          appDefinitionId: this.descriptor.appDefinitionId || null,
+          extensionId: this.widget.id,
+          appDefinitionId: this.widget.namespace === WidgetNamespace.APP ? this.widget.id : null,
         });
       }
     },

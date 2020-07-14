@@ -4,7 +4,7 @@ import { LOCATION_ENTRY_FIELD } from './WidgetLocations';
 describe('ExtensionAPI', () => {
   const createAPI = (extraConfig) => {
     const config = {
-      descriptor: {
+      widget: {
         id: 'my-extension-id',
       },
       spaceId: 'my-space-id',
