@@ -20,7 +20,6 @@ import { get } from 'lodash';
 import { APP_EVENTS_IN, APP_EVENTS_OUT } from 'features/apps-core';
 import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer';
 import ExtensionLocalDevelopmentWarning from 'widgets/ExtensionLocalDevelopmentWarning';
-import { buildAppDefinitionWidget } from 'widgets/WidgetTypes';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { installOrUpdate, uninstall } from './AppOperations';
 import UnknownErrorMessage from 'components/shared/UnknownErrorMessage';
@@ -31,6 +30,7 @@ import { isUsageExceededErrorResponse, USAGE_EXCEEDED_MESSAGE } from './isUsageE
 import { LOCATION_APP_CONFIG } from 'widgets/WidgetLocations';
 import { AppIcon } from './AppIcon';
 import { styles } from './AppPageStyles';
+import { WidgetNamespace, HostingType } from 'features/widget-renderer';
 
 const BUSY_STATE_INSTALLATION = 'installation';
 const BUSY_STATE_UPDATE = 'update';
@@ -342,7 +342,16 @@ export class AppRoute extends Component {
         className={cx(styles.renderer, { [styles.hideRenderer]: !appLoaded })}>
         <ExtensionIFrameRenderer
           bridge={this.props.bridge}
-          descriptor={buildAppDefinitionWidget(appDefinition)}
+          widget={{
+            id: appDefinition.sys.id,
+            namespace: WidgetNamespace.APP,
+            name: this.state.title,
+            iconUrl: this.state.appIcon,
+            hosting: {
+              type: HostingType.SRC,
+              value: appDefinition.src,
+            },
+          }}
           parameters={this.parameters}
           isFullSize
         />
