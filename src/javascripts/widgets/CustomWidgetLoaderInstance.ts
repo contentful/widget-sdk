@@ -1,36 +1,22 @@
 import { getModule } from 'core/NgRegistry';
 import { get, set } from 'lodash';
-import { createCustomWidgetLoader } from './CustomWidgetLoader';
-import { getAppsRepo } from 'features/apps-core';
 import { WidgetLoader, MarketplaceDataProvider } from 'features/widget-renderer';
 import { createPlainClient } from 'contentful-management';
+import { getToken } from 'Authentication';
 
 // Both Extension and AppInstallation are environment-level
-// entities: we cache loaders per space-environment.
-const perSpaceEnvCache = {};
-const newPerSpaceEnvCache = {};
+// entities. The loader uses the SDK with the current token.
+// Hence we cache loaders per token/space-environment combination.
+const cache = {};
 
-export function getCustomWidgetLoader() {
+export async function getCustomWidgetLoader() {
+  const accessToken = await getToken();
   const spaceContext = getModule('spaceContext');
   const spaceId = spaceContext.getId();
   const environmentId = spaceContext.getEnvironmentId();
+  const cachePath = [accessToken, spaceId, environmentId];
 
-  let loader = get(perSpaceEnvCache, [spaceId, environmentId]);
-
-  if (!loader) {
-    loader = createCustomWidgetLoader(spaceContext.cma, getAppsRepo());
-    set(perSpaceEnvCache, [spaceId, environmentId], loader);
-  }
-
-  return loader;
-}
-
-export function getNewCustomWidgetLoader(accessToken) {
-  const spaceContext = getModule('spaceContext');
-  const spaceId = spaceContext.getId();
-  const environmentId = spaceContext.getEnvironmentId();
-
-  let loader = get(newPerSpaceEnvCache, [spaceId, environmentId]);
+  let loader: WidgetLoader = get(cache, cachePath);
 
   if (!loader) {
     const client = createPlainClient({ accessToken });
@@ -42,7 +28,7 @@ export function getNewCustomWidgetLoader(accessToken) {
 
     loader = new WidgetLoader(client, marketplaceDataProvider, spaceId, environmentId);
 
-    set(newPerSpaceEnvCache, [spaceId, environmentId], loader);
+    set(cache, cachePath, loader);
   }
 
   return loader;

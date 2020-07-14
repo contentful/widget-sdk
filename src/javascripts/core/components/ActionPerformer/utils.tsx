@@ -5,8 +5,8 @@ import { get } from 'lodash';
 import { getModule } from 'core/NgRegistry';
 import { Tooltip } from '@contentful/forma-36-react-components';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
-import { NAMESPACE_APP } from 'widgets/WidgetNamespaces';
 import { APP_DEFINITION_TYPE, USER_TYPE } from './constants';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 export async function getUser(id: string) {
   const spaceContext = getModule('spaceContext');
@@ -18,7 +18,8 @@ export async function getUser(id: string) {
 }
 
 export async function getApp(id: string) {
-  const [app] = await getCustomWidgetLoader().getByKeys([[NAMESPACE_APP, id]]);
+  const loader = await getCustomWidgetLoader();
+  const app = await loader.getOne({ widgetNamespace: WidgetNamespace.APP, widgetId: id });
   if (!app) {
     return '';
   }
