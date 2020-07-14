@@ -18,13 +18,7 @@ export default ({ getState }) => (next) => (action) => {
   const newPath = getPath(newState);
   // check if any change have to be applied to browser history
   if (oldQuery !== newQuery || oldPath !== newPath) {
-    if (['RESET_FILTERS', 'CHANGE_FILTERS', 'UPDATE_SEARCH_TERM'].includes(action.type)) {
-      // if a change is cause by these actions, the history state should be replaced
-      // the user should not navigate back through e.g. filter changes
-      updateLocation('replaceState', newQuery, newPath);
-      // LOCATION_CHANGED means the browser history already changed through other means
-      // and the change must not be applied again
-    } else if (action.type !== 'LOCATION_CHANGED') {
+    if (action.type !== 'LOCATION_CHANGED') {
       // all other changes should be pushed to browser history (and therefor navigatable)
       updateLocation('pushState', newQuery, newPath);
     }
