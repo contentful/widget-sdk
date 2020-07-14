@@ -20,6 +20,7 @@ import {
 import ExternalTextLink from 'app/common/ExternalTextLink';
 import { websiteUrl } from 'Config';
 import tokens from '@contentful/forma-36-tokens';
+import { trackCTAClick } from 'analytics/targetedCTA';
 
 import { calculatePlansCost } from 'utils/SubscriptionUtils';
 import { Pluralized, Price } from 'core/components/formatting';
@@ -77,6 +78,12 @@ function SpacePlans({
     `support/?utm_source=webapp&utm_medium=account-menu&utm_campaign=in-app-help&purchase-micro-or-small-space=${organizationId}`
   );
 
+  const handleSupportRedirct = () => {
+    trackCTAClick('purchase_micro_small_via_support', {
+      organizationId,
+    });
+  };
+
   return (
     <>
       <Heading className="section-title">
@@ -114,6 +121,9 @@ function SpacePlans({
             {'.'}
           </Paragraph>
           <ExternalTextLink
+            onClick={() => {
+              handleSupportRedirct();
+            }}
             testId="subscription-page.support-request-link"
             href={linkToSupportPage}>
             Submit a support request

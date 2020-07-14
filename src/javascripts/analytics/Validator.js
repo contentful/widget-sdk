@@ -155,7 +155,12 @@ export const validEvents = {
   tracking: ['invalid_event'],
   sharejs: ['cma_entity_version_mismatch'],
   feedback: ['give'],
-  targeted_cta_clicked: ['upgrade_to_enterprise', 'upgrade_space_plan', 'create_space'],
+  targeted_cta_clicked: [
+    'upgrade_to_enterprise',
+    'upgrade_space_plan',
+    'create_space',
+    'purchase_micro_small_via_support',
+  ],
   pricing_update: ['communication_seen'],
 };
 

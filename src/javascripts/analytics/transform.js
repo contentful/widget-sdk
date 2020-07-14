@@ -179,6 +179,7 @@ registerSSOSelfConfigurationEvent('sso:enable');
 registerGenericEvent('targeted_cta_clicked:upgrade_to_enterprise');
 registerGenericEvent('targeted_cta_clicked:upgrade_space_plan');
 registerGenericEvent('targeted_cta_clicked:create_space');
+registerGenericEvent('targeted_cta_clicked:purchase_micro_small_via_support');
 
 registerEvent('global:app_loaded', 'app_open', AppOpen);
 

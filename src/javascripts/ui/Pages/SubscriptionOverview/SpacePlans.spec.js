@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SpacePlans from './SpacePlans';
+import { trackCTAClick } from 'analytics/targetedCTA';
 
 import * as fake from 'test/helpers/fakeFactory';
 
@@ -22,6 +23,10 @@ const mockPlanTwo = {
 };
 
 const mockPlans = [mockPlanOne, mockPlanTwo];
+
+jest.mock('analytics/targetedCTA', () => ({
+  trackCTAClick: jest.fn(),
+}));
 
 jest.mock('utils/SubscriptionUtils', () => ({
   calculatePlansCost: jest.fn().mockReturnValue(123),
@@ -121,6 +126,18 @@ describe('Space Plan', () => {
       fireEvent.mouseEnter(helpIcon);
 
       expect(screen.getByTestId('inaccessible-help-tooltip')).toBeVisible();
+    });
+
+    it('should fire an event when a user clicks on the link to support', () => {
+      build({ showMicroSmallSupportCard: true });
+
+      expect(screen.getByTestId('subscription-page.support-request-card')).toBeVisible();
+
+      userEvent.click(screen.getByTestId('subscription-page.support-request-link'));
+
+      expect(trackCTAClick).toBeCalledWith('purchase_micro_small_via_support', {
+        organizationId: '123',
+      });
     });
   });
 });
