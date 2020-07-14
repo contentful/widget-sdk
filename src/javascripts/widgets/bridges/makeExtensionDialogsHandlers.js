@@ -8,12 +8,11 @@ import * as Dialogs from '../ExtensionDialogs';
 import { applyDefaultValues } from '../WidgetParametersUtils';
 import trackExtensionRender from '../TrackExtensionRender';
 import { LOCATION_DIALOG } from '../WidgetLocations';
-import { NAMESPACE_EXTENSION, NAMESPACE_APP } from '../WidgetNamespaces';
 import * as entitySelector from 'search/EntitySelector/entitySelector';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
-import { buildAppDefinitionWidget } from 'widgets/WidgetTypes';
 
 import createDialogExtensionBridge from './createDialogExtensionBridge';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 const SIMPLE_DIALOG_TYPE_TO_OPENER = {
   alert: Dialogs.openAlert,
@@ -34,31 +33,30 @@ export default function makeExtensionDialogsHandlers(dependencies) {
       return entitySelector.openFromExtension(options);
     }
 
-    if ([NAMESPACE_EXTENSION, NAMESPACE_APP].includes(type)) {
+    if ([WidgetNamespace.APP, WidgetNamespace.EXTENSION].includes(type)) {
       return openCustomDialog(type, options);
     }
 
     throw new Error('Unknown dialog type.');
   }
 
-  async function findWidget(namespace, id) {
-    const key = [namespace, id];
-    const [descriptor] = await getCustomWidgetLoader().getByKeys([key]);
+  async function findWidget(widgetNamespace, widgetId) {
+    const loader = await getCustomWidgetLoader();
+    const widget = await loader.getOne({ widgetNamespace, widgetId });
 
-    // If a descriptor was found, meaning that an app or an extension
+    // If a widgeet was found, meaning that an app or an extension
     // are already installed, just return it.
-    if (descriptor) {
-      return descriptor;
+    if (widget) {
+      return widget;
     }
 
-    // If there is no descriptor but we're in the installation
-    // process, create a descriptor out of AppDefinition.
-    const { appDefinition } = dependencies;
-    if (namespace === NAMESPACE_APP && appDefinition) {
-      return buildAppDefinitionWidget(appDefinition);
+    // If there is no widget found but we may be in the installation
+    // process, create an artificial widget out of AppDefinition.
+    if (widgetNamespace === WidgetNamespace.APP) {
+      return loader.getForAppDefinition(widgetId);
     }
 
-    throw new Error(`No widget with ID "${id}" found in "${namespace}" namespace.`);
+    throw new Error(`No widget with ID "${widgetId}" found in "${widgetNamespace}" namespace.`);
   }
 
   async function openCustomDialog(namespace, options) {
@@ -66,21 +64,21 @@ export default function makeExtensionDialogsHandlers(dependencies) {
       throw new Error('No ID provided.');
     }
 
-    const descriptor = await findWidget(namespace, options.id);
+    const widget = await findWidget(namespace, options.id);
 
     const parameters = {
       // No instance parameters for dialogs.
       instance: {},
       // Regular installation parameters.
       installation: applyDefaultValues(
-        descriptor.installationParameters.definitions,
-        descriptor.installationParameters.values
+        widget.parameters.installation.definitions,
+        widget.parameters.installation.values
       ),
       // Parameters passed directly to the dialog.
       invocation: options.parameters || {},
     };
 
-    trackExtensionRender(LOCATION_DIALOG, descriptor);
+    trackExtensionRender(LOCATION_DIALOG, widget);
 
     const dialogKey = Date.now().toString();
 
@@ -116,7 +114,7 @@ export default function makeExtensionDialogsHandlers(dependencies) {
               <div style={{ minHeight: options.minHeight || 'auto' }}>
                 <ExtensionIFrameRendererWithLocalHostWarning
                   bridge={bridge}
-                  descriptor={descriptor}
+                  widget={widget}
                   parameters={parameters}
                 />
               </div>
