@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import * as EntityResolver from 'data/CMA/EntityResolver';
 
 export function fetchEntities({ entryIds, assetIds }) {

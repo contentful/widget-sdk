@@ -53,6 +53,9 @@ function getEntities(fetch, ids) {
       .catch((error) => {
         if (error.status === 404) {
           return [];
+        } else if (isResponseTooBigError(error) && ids.length > 1) {
+          const [ids1, ids2] = chunk(ids, Math.ceil(ids.length / 2));
+          return Promise.all([getEntities(fetch, ids1), getEntities(fetch, ids2)]).then(flatten);
         } else {
           return Promise.reject(error);
         }
@@ -60,4 +63,8 @@ function getEntities(fetch, ids) {
   );
 
   return Promise.all(queries).then(flatten);
+}
+
+function isResponseTooBigError(e) {
+  return e.status === 400 && e.data?.message?.startsWith('Response size too big');
 }
