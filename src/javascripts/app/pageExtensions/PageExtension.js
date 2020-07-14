@@ -17,24 +17,24 @@ const styles = {
 export default class PageExtension extends React.Component {
   static propTypes = {
     path: PropTypes.string.isRequired,
-    descriptor: PropTypes.object.isRequired,
+    widget: PropTypes.object.isRequired,
     bridge: PropTypes.object.isRequired,
   };
 
   componentDidMount() {
-    trackExtensionRender(LOCATION_PAGE, this.props.descriptor);
+    trackExtensionRender(LOCATION_PAGE, this.props.widget);
   }
 
   render() {
-    const { path, descriptor, bridge } = this.props;
+    const { path, widget, bridge } = this.props;
 
     const parameters = {
       // No instance parameters for Page Extensions.
       instance: {},
       // Regular installation parameters.
       installation: applyDefaultValues(
-        descriptor.installationParameters.definitions,
-        descriptor.installationParameters.values
+        widget.parameters.definitions.installation,
+        widget.parameters.values.installation
       ),
       // Current `path` is the only invocation parameter.
       invocation: { path },
@@ -42,10 +42,10 @@ export default class PageExtension extends React.Component {
 
     return (
       <div data-test-id="page-extension" className={styles.root}>
-        <DocumentTitle title={descriptor.name} />
+        <DocumentTitle title={widget.name} />
         <ExtensionIFrameRendererWithLocalHostWarning
           bridge={bridge}
-          descriptor={descriptor}
+          widget={widget}
           parameters={parameters}
           isFullSize
         />

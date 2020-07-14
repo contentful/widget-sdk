@@ -13,25 +13,25 @@ import {
 import Placeholder from 'app/common/Placeholder';
 import BinocularsIllustration from 'svg/illustrations/binoculars-illustration.svg';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
-import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 const PageExtensionFetcher = createFetcherComponent(async ({ extensionId, orgId }) => {
-  const key = [NAMESPACE_EXTENSION, extensionId];
-  const [isEnabled, widgets] = await Promise.all([
+  const loader = await getCustomWidgetLoader();
+
+  const [isEnabled, widget] = await Promise.all([
     AdvancedExtensibilityFeature.isEnabled(orgId),
-    getCustomWidgetLoader().getByKeys([key]),
+    loader.getOne({ widgetNamespace: WidgetNamespace.EXTENSION, widgetId: extensionId }),
   ]);
 
   if (!isEnabled) {
     throw new Error('advanced extensibility not enabled');
   }
 
-  const [descriptor] = widgets;
-  if (!descriptor) {
+  if (!widget) {
     throw new Error('no widget found ');
   }
 
-  return descriptor;
+  return widget;
 });
 
 const styles = {
@@ -73,7 +73,7 @@ export default function PageExtensionRoute(props) {
           return <ErrorMessage />;
         }
 
-        return <PageExtension bridge={props.bridge} descriptor={data} path={props.path} />;
+        return <PageExtension bridge={props.bridge} widget={data} path={props.path} />;
       }}
     </PageExtensionFetcher>
   );
