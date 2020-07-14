@@ -53,7 +53,7 @@ describe('AppOperations', () => {
         }),
         getEditorInterfaces: jest.fn(() => Promise.resolve({ items: [] })),
       };
-      const evictWidget = jest.fn();
+      const evictWidget = jest.fn().mockResolvedValue();
       const checkAppStatus = jest.fn(() => Promise.resolve(status));
 
       await AppOperations.installOrUpdate(cma, evictWidget, checkAppStatus, {
@@ -73,7 +73,7 @@ describe('AppOperations', () => {
       const cma = {
         updateAppInstallation: jest.fn(() => Promise.reject('unprocessable')),
       };
-      const evictWidget = jest.fn();
+      const evictWidget = jest.fn().mockResolvedValue();
       const checkAppStatus = jest.fn(() => Promise.resolve(status));
 
       expect.assertions(3);
@@ -108,7 +108,7 @@ describe('AppOperations', () => {
         }),
         updateEditorInterface: jest.fn((ext) => Promise.resolve(ext)),
       };
-      const evictWidget = jest.fn();
+      const evictWidget = jest.fn().mockResolvedValue();
       const checkAppStatus = jest.fn(() => Promise.resolve(status));
 
       await AppOperations.installOrUpdate(cma, evictWidget, checkAppStatus, {
@@ -170,7 +170,7 @@ describe('AppOperations', () => {
         updateEditorInterface: jest.fn((ei) => Promise.resolve(ei)),
         deleteAppInstallation: jest.fn(() => Promise.resolve()),
       };
-      const evictWidget = jest.fn();
+      const evictWidget = jest.fn().mockResolvedValue();
       const checkAppStatus = jest.fn(() => Promise.resolve(status));
 
       await AppOperations.uninstall(cma, evictWidget, checkAppStatus);
@@ -199,7 +199,7 @@ describe('AppOperations', () => {
         getEditorInterfaces: jest.fn(() => Promise.resolve({ items: [] })),
         deleteAppInstallation: jest.fn(() => Promise.resolve()),
       };
-      const evictWidget = jest.fn();
+      const evictWidget = jest.fn().mockResolvedValue();
       const checkAppStatus = jest.fn(() => Promise.resolve(status));
 
       await AppOperations.uninstall(cma, evictWidget, checkAppStatus);
@@ -216,7 +216,7 @@ describe('AppOperations', () => {
         getEditorInterfaces: jest.fn(() => Promise.resolve({ items: [] })),
         deleteAppInstallation: jest.fn(() => Promise.reject('unauthorized')),
       };
-      const evictWidget = jest.fn();
+      const evictWidget = jest.fn().mockResolvedValue();
       const checkAppStatus = jest.fn(() => Promise.resolve(status));
 
       expect.assertions(3);

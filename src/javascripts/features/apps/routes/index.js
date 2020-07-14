@@ -160,10 +160,13 @@ export const appRoute = {
             bridge,
             appHookBus,
             cma: spaceContext.cma,
-            evictWidget: (appInstallation) => {
-              const widgetId = get(appInstallation, ['sys', 'appDefinition', 'sys', 'id']);
+            evictWidget: async (appInstallation) => {
+              const loader = await getCustomWidgetLoader();
 
-              getCustomWidgetLoader().evict([WidgetNamespace.APP, widgetId]);
+              loader.evict({
+                widgetNamespace: WidgetNamespace.APP,
+                widgetId: get(appInstallation, ['sys', 'appDefinition', 'sys', 'id']),
+              });
             },
             canManageThisApp,
           };
