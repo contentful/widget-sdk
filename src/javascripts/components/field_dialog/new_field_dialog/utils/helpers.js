@@ -1,9 +1,9 @@
-import { isNil } from 'lodash';
+import { isNull, pickBy } from 'lodash';
 import { capitalize, joinWithAnd } from 'utils/StringUtils';
 import validationDecorator from 'components/field_dialog/validationDecorator';
 
 const areSettingsEmpty = (settings) =>
-  isNil(settings) || (isNil(settings.min) && isNil(settings.max));
+  isNull(settings) || (isNull(settings.min) && isNull(settings.max));
 
 export const rangeTypes = {
   MIN: 'min',
@@ -17,6 +17,7 @@ export const extractRichTextNodesValidations = (fields) => {
     if (areSettingsEmpty(field.settings)) return;
     const validation = {};
     validation[field.type] = field.settings;
+    validation.message = field.message;
     if (nodes[field.nodeType]) {
       nodes[field.nodeType].push(validation);
     } else {
@@ -67,4 +68,10 @@ export const getWidgetSettings = (widget) => {
     namespace: widget.widgetNamespace,
     params: Object.assign({}, widget.settings),
   };
+};
+
+export const groupValidations = (validations) => {
+  const itemValidations = pickBy(validations, (validation) => validation.onItems);
+  const baseValidations = pickBy(validations, (validation) => !validation.onItems);
+  return { itemValidations, baseValidations };
 };

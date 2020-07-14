@@ -101,7 +101,7 @@ const RegExpValidation = ({ fieldName, validation, onChange, onBlur }) => {
           <TextField
             className={styles.helpTextInput}
             name="Custom error message"
-            id="customErrorMessage"
+            id={`custom-error-message-${fieldName}`}
             labelText="Custom error message"
             value={toString(message)}
             textInputProps={{ type: 'text' }}

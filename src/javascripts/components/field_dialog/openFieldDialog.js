@@ -2,11 +2,12 @@ import { getModule } from 'core/NgRegistry';
 import fieldDialogTemplate from './field_dialog.html';
 // new_field_dialog - temporal folder to contain the refactored component
 import openFieldModalDialog from './new_field_dialog/FieldModalDialog';
-import { extend } from 'lodash';
+import { extend, isEmpty } from 'lodash';
 import validationDecorator from './validationDecorator';
 import {
   extractRichTextNodesValidations,
   getEnabledRichTextOptions,
+  groupValidations,
 } from 'components/field_dialog/new_field_dialog/utils/helpers';
 import { getVariation } from 'LaunchDarkly';
 import { NEW_FIELD_DIALOG } from 'featureFlags';
@@ -35,18 +36,19 @@ export async function openFieldDialog($scope, field, widget) {
     richTextOptions,
     widgetSettings
   ) => {
+    const { itemValidations, baseValidations } = groupValidations(validationFields);
+
     if (isTitle) {
       $scope.contentType.data.displayField = apiName;
     }
 
-    const validations = validationDecorator.extractFieldValidations(validationFields);
+    const isRichText = field.type === 'RichText';
 
-    const options = getEnabledRichTextOptions(richTextOptions);
-
-    let fieldValidations = [...validations, ...options];
+    let fieldValidations = [...validationDecorator.extractFieldValidations(baseValidations)];
 
     // only add RichText node validations to a RichText field
-    if (field.type === 'RichText') {
+    if (isRichText) {
+      const options = getEnabledRichTextOptions(richTextOptions);
       const nodeValidations = extractRichTextNodesValidations({
         assetHyperlinkSize,
         embeddedAssetBlockSize,
@@ -57,7 +59,11 @@ export async function openFieldDialog($scope, field, widget) {
         entryHyperlinkLinkContentType,
         entryHyperlinkSize,
       });
-      fieldValidations = [...fieldValidations, nodeValidations];
+      fieldValidations = [...fieldValidations, ...options, nodeValidations];
+    }
+
+    if (!isEmpty(itemValidations)) {
+      field.items.validations = [...validationDecorator.extractFieldValidations(itemValidations)];
     }
 
     // update field on scope with data from React component

@@ -236,7 +236,7 @@ export default function ValidationValues({
                 {currentItems.map((value, index) => {
                   return (
                     <SortablePill
-                      value={value}
+                      value={value.toString()}
                       index={index}
                       key={value + index}
                       onRemoveItem={() => onRemoveItem(index)}
@@ -249,7 +249,7 @@ export default function ValidationValues({
 
           <TextField
             className={styles.helpTextInput}
-            id="customErrorMessage"
+            id={`custom-error-message-${type}`}
             name="customErrorMessage"
             labelText="Custom error message"
             value={toString(message)}
