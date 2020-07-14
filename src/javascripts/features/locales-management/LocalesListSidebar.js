@@ -131,7 +131,6 @@ const handleTalkToUsClickCTA = () => {
 const UpgradeToEnterprise = () => {
   return (
     <Button
-      className="entity-sidebar__widget"
       isFullWidth
       buttonType="primary"
       testId="link-to-sales-button"
@@ -146,12 +145,7 @@ const UpgradeToEnterprise = () => {
 
 const UpgradeOnDemand = ({ upgradeSpace }) => {
   return (
-    <Button
-      className="entity-sidebar__widget"
-      isFullWidth
-      buttonType="primary"
-      testId="locales-change"
-      onClick={upgradeSpace}>
+    <Button isFullWidth buttonType="primary" testId="locales-change" onClick={upgradeSpace}>
       Upgrade space
     </Button>
   );
@@ -160,14 +154,12 @@ UpgradeOnDemand.propTypes = { upgradeSpace: PropTypes.func.isRequired };
 
 const AddLocaleButton = () => {
   return (
-    <div className="entity-sidebar__widget">
-      <StateLink path="^.new">
-        {({ onClick }) => (
-          <Button onClick={onClick} isFullWidth buttonType="primary" testId="add-locales-button">
-            Add Locale
-          </Button>
-        )}
-      </StateLink>
-    </div>
+    <StateLink path="^.new">
+      {({ onClick }) => (
+        <Button onClick={onClick} isFullWidth buttonType="primary" testId="add-locales-button">
+          Add Locale
+        </Button>
+      )}
+    </StateLink>
   );
 };
