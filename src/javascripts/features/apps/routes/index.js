@@ -10,10 +10,10 @@ import * as Navigator from 'states/Navigator';
 import * as SlideInNavigator from 'navigation/SlideInNavigator/index';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
-import { NAMESPACE_APP } from 'widgets/WidgetNamespaces';
 import { shouldHide, Action } from 'access_control/AccessChecker';
 import * as TokenStore from 'services/TokenStore';
 import { isOwnerOrAdmin, isDeveloper } from 'services/OrganizationRoles';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 const BASIC_APPS_FEATURE_KEY = 'basic_apps';
 const DEFAULT_FEATURE_STATUS = true; // Fail open
@@ -151,7 +151,7 @@ export const appRoute = {
             SlideInNavigator,
             appDefinition: app.appDefinition,
             currentWidgetId: app.appDefinition.sys.id,
-            currentWidgetNamespace: NAMESPACE_APP,
+            currentWidgetNamespace: WidgetNamespace.APP,
           });
 
           return {
@@ -163,7 +163,7 @@ export const appRoute = {
             evictWidget: (appInstallation) => {
               const widgetId = get(appInstallation, ['sys', 'appDefinition', 'sys', 'id']);
 
-              getCustomWidgetLoader().evict([NAMESPACE_APP, widgetId]);
+              getCustomWidgetLoader().evict([WidgetNamespace.APP, widgetId]);
             },
             canManageThisApp,
           };
@@ -200,7 +200,7 @@ export const appRoute = {
             SlideInNavigator,
             appDefinition: app.appDefinition,
             currentWidgetId: app.id,
-            currentWidgetNamespace: NAMESPACE_APP,
+            currentWidgetNamespace: WidgetNamespace.APP,
           });
 
           return {

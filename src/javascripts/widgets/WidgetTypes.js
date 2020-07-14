@@ -1,8 +1,8 @@
 import { get, isPlainObject } from 'lodash';
 
-import { NAMESPACE_EXTENSION, NAMESPACE_APP } from './WidgetNamespaces';
 import { LOCATION_ENTRY_FIELD, LOCATION_PAGE } from './WidgetLocations';
 import { toInternalFieldType } from './FieldTypes';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 export function buildExtensionWidget({ sys, extension, parameters }) {
   // We identify srcdoc-backed extensions by taking a look
@@ -16,7 +16,7 @@ export function buildExtensionWidget({ sys, extension, parameters }) {
   return {
     ...hosting,
     id: sys.id,
-    namespace: NAMESPACE_EXTENSION,
+    namespace: WidgetNamespace.EXTENSION,
     name: extension.name,
     fieldTypes: (extension.fieldTypes || []).map(toInternalFieldType),
     sidebar: !!extension.sidebar,
@@ -49,7 +49,7 @@ export function buildAppWidget({ id, title, icon, appDefinition, appInstallation
     src: appDefinition.src,
     id: appDefinition.sys.id,
     appDefinitionId: appDefinition.sys.id,
-    namespace: NAMESPACE_APP,
+    namespace: WidgetNamespace.APP,
     name: title,
     fieldTypes: getAppFieldTypes(appDefinition),
     navigationItem: getAppNavigationItem(appDefinition),
@@ -71,7 +71,7 @@ export function buildAppWidget({ id, title, icon, appDefinition, appInstallation
 // `LOCATION_APP_CONFIG` and `LOCATION_DIALOG`.
 export function buildAppDefinitionWidget(appDefinition) {
   return {
-    namespace: NAMESPACE_APP,
+    namespace: WidgetNamespace.APP,
     id: appDefinition.sys.id,
     appDefinitionId: appDefinition.sys.id,
     src: appDefinition.src,

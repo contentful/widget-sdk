@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIFrameRenderer';
-import { NAMESPACE_APP } from 'widgets/WidgetNamespaces';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 export function AppPageLocation({ app, path, bridge }) {
   return (
@@ -9,7 +9,7 @@ export function AppPageLocation({ app, path, bridge }) {
       bridge={bridge}
       descriptor={{
         id: app.id,
-        namespace: NAMESPACE_APP,
+        namespace: WidgetNamespace.APP,
         appDefinitionId: app.appDefinition.sys.id,
         src: app.appDefinition.src,
       }}

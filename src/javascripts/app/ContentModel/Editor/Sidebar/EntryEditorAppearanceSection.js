@@ -13,12 +13,12 @@ import {
   TextLink,
   Subheading,
 } from '@contentful/forma-36-react-components';
-import { NAMESPACE_APP, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
 import { LOCATION_ENTRY_EDITOR } from 'widgets/WidgetLocations';
 import EditorInstanceParametersConfigurationModal from './EditorInstanceParametersConfigurationModal';
 import { reducer, actions } from './EntryEditorAppearanceReducer';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 const Options = {
   default: 'default',
@@ -48,7 +48,9 @@ function getInitialValues(configuration, widgets) {
   configuration = configuration || {};
   configuration.settings = configuration.settings || {};
 
-  const isCustom = [NAMESPACE_EXTENSION, NAMESPACE_APP].includes(configuration.widgetNamespace);
+  const isCustom = [WidgetNamespace.EXTENSION, WidgetNamespace.APP].includes(
+    configuration.widgetNamespace
+  );
   const isValid = !!validWidgets.find((w) => {
     return w.namespace === configuration.widgetNamespace && w.id === configuration.widgetId;
   });
@@ -134,7 +136,7 @@ export default function EntryEditorAppearanceSection(props) {
               {state.validWidgets.map((w, i) => (
                 <Option value={`${i}`} key={[w.namespace, w.id].join(',')}>
                   {w.name}
-                  {w.namespace === NAMESPACE_APP ? ' (app)' : ''}
+                  {w.namespace === WidgetNamespace.APP ? ' (app)' : ''}
                 </Option>
               ))}
             </Select>

@@ -2,14 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { sortableContainer } from 'react-sortable-hoc';
 import { Subheading, Paragraph, TextLink } from '@contentful/forma-36-react-components';
-import {
-  NAMESPACE_SIDEBAR_BUILTIN,
-  NAMESPACE_EXTENSION,
-  NAMESPACE_APP,
-} from 'widgets/WidgetNamespaces';
 import SidebarWidgetItem from './SidebarWidgetItem';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 const styles = {
   customSidebarTitle: css({
@@ -35,15 +31,15 @@ function WidgetItem({ widget, onRemoveClick, onConfigureClick, index }) {
       isProblem={widget.problem}
       onRemoveClick={onRemoveClick}
       availabilityStatus={widget.availabilityStatus}>
-      {widget.widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN && (
+      {widget.widgetNamespace === WidgetNamespace.SIDEBAR_BUILTIN && (
         <Paragraph>{widget.description}</Paragraph>
       )}
-      {[NAMESPACE_EXTENSION, NAMESPACE_APP].includes(widget.widgetNamespace) && (
+      {[WidgetNamespace.EXTENSION, WidgetNamespace.APP].includes(widget.widgetNamespace) && (
         <>
-          {widget.widgetNamespace === NAMESPACE_EXTENSION && (
+          {widget.widgetNamespace === WidgetNamespace.EXTENSION && (
             <Paragraph className={styles.widgetType}>UI Extension</Paragraph>
           )}
-          {widget.widgetNamespace === NAMESPACE_APP && (
+          {widget.widgetNamespace === WidgetNamespace.APP && (
             <Paragraph className={styles.widgetType}>App</Paragraph>
           )}
           {hasParams && (

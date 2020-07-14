@@ -17,7 +17,7 @@ import ContentTypesPage from 'app/ContentModel/Editor/ContentTypesPage';
 
 import { AddFieldDialogModal } from './Dialogs/AddField';
 import { ModalLauncher } from 'core/components/ModalLauncher';
-import { NAMESPACE_EDITOR_BUILTIN } from 'widgets/WidgetNamespaces';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 export default function register() {
   registerDirective('cfContentTypeEditor', [
@@ -240,7 +240,7 @@ export default function register() {
 
       const updateEditorConfiguration = (updatedEditor) => {
         const customEditor = $scope.editorInterface.editors.find(
-          (editor) => editor.widgetNamespace !== NAMESPACE_EDITOR_BUILTIN
+          (editor) => editor.widgetNamespace !== WidgetNamespace.EDITOR_BUILTIN
         );
         if (!_.isEqual(customEditor, updatedEditor)) {
           if (updatedEditor) {
@@ -355,7 +355,7 @@ export default function register() {
         canEdit: accessChecker.can('update', 'ContentType'),
         sidebarConfiguration: $scope.editorInterface.sidebar,
         editorConfiguration: $scope.editorInterface.editors.find(
-          (editor) => editor.widgetNamespace !== NAMESPACE_EDITOR_BUILTIN
+          (editor) => editor.widgetNamespace !== WidgetNamespace.EDITOR_BUILTIN
         ),
         extensions: $scope.customWidgets,
         actions: {

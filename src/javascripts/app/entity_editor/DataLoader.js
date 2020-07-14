@@ -10,12 +10,12 @@ import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer'
 import { create as createBuiltinWidgetList } from 'widgets/BuiltinWidgets';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { getWidgetTrackingContexts } from 'widgets/WidgetTracking';
-import { NAMESPACE_EXTENSION, NAMESPACE_APP } from 'widgets/WidgetNamespaces';
 import {
   buildRenderables,
   buildSidebarRenderables,
   buildEditorsRenderables,
 } from 'widgets/WidgetRenderable';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 const assetEditorInterface = EditorInterfaceTransformer.fromAPI(
   assetContentType.data,
@@ -153,7 +153,7 @@ async function loadEditorData(loader, id) {
   const sidebarExtensions = buildSidebarRenderables(sidebarConfig || [], widgets);
   const editorsExtensions = buildEditorsRenderables(editorsConfig || [], widgets);
   const customEditor = editorsExtensions.find((editor) => {
-    return [NAMESPACE_EXTENSION, NAMESPACE_APP].includes(editor.widgetNamespace);
+    return [WidgetNamespace.EXTENSION, WidgetNamespace.APP].includes(editor.widgetNamespace);
   });
 
   const entityInfo = makeEntityInfo(entity, contentType);

@@ -1,8 +1,8 @@
 import { get, identity } from 'lodash';
 import { getSchema } from 'analytics/Schemas';
-import { NAMESPACE_EXTENSION } from './WidgetNamespaces';
 import * as WidgetLocations from './WidgetLocations';
 import { makeEventFromWidget } from './TrackExtensionRender';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 // Arguments are expected to be produced in `app/entity_editor/DataLoader#loadEditorData()`.
 export function getWidgetTrackingContexts({
@@ -75,7 +75,7 @@ function getExtensions(container, path) {
   if (Array.isArray(locationWidgets)) {
     return locationWidgets
       .filter(identity)
-      .filter((w) => w.widgetNamespace === NAMESPACE_EXTENSION);
+      .filter((w) => w.widgetNamespace === WidgetNamespace.EXTENSION);
   } else {
     return [];
   }

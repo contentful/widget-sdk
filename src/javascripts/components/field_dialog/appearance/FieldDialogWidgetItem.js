@@ -8,7 +8,7 @@ import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha
 import tokens from '@contentful/forma-36-tokens';
 import StateLink from 'app/common/StateLink';
 import { css } from 'emotion';
-import { NAMESPACE_EXTENSION, NAMESPACE_APP } from 'widgets/WidgetNamespaces';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 const styles = {
   appIcon: css({
@@ -41,7 +41,7 @@ export default class FieldDialogWidgetItem extends Component {
   renderIcon() {
     const { namespace, icon, appIconUrl } = this.props.widget;
 
-    if (namespace === NAMESPACE_APP && appIconUrl) {
+    if (namespace === WidgetNamespace.APP && appIconUrl) {
       return <img className={styles.appIcon} src={appIconUrl} />;
     }
 
@@ -61,12 +61,12 @@ export default class FieldDialogWidgetItem extends Component {
       <li
         className={classNames('field-dialog__widget-item', {
           'is-selected': isSelected,
-          'is-custom': [NAMESPACE_EXTENSION, NAMESPACE_APP].includes(widget.namespace),
+          'is-custom': [WidgetNamespace.APP, WidgetNamespace.EXTENSION].includes(widget.namespace),
         })}
         data-current-widget-index={index}
         onClick={onClick}
         title={widget.name}>
-        {widget.namespace === NAMESPACE_EXTENSION && (
+        {widget.namespace === WidgetNamespace.EXTENSION && (
           <div className="field-dialog__widget-item-header">
             <span>UI Extension</span>
             {isAdmin && (
@@ -80,7 +80,7 @@ export default class FieldDialogWidgetItem extends Component {
             )}
           </div>
         )}
-        {widget.namespace === NAMESPACE_APP && (
+        {widget.namespace === WidgetNamespace.AP && (
           <div className="field-dialog__widget-item-header">
             <span>App</span>
             {isAdmin && (

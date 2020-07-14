@@ -1,20 +1,15 @@
 import { cloneDeep } from 'lodash';
 import { migrateControl, WIDGET_MIGRATIONS } from './ControlMigrations';
 import getDefaultWidgetId from './DefaultWidget';
-import {
-  NAMESPACE_BUILTIN,
-  NAMESPACE_EXTENSION,
-  NAMESPACE_APP,
-  NAMESPACE_EDITOR_BUILTIN,
-} from './WidgetNamespaces';
 import { create as createBuiltinWidgetList } from './BuiltinWidgets';
 import EntryEditorTypes from 'app/entry_editor/EntryEditorWidgetTypes';
+import { WidgetNamespace } from 'features/widget-renderer';
 
-const NAMESPACES = [NAMESPACE_BUILTIN, NAMESPACE_EXTENSION, NAMESPACE_APP];
+const NAMESPACES = [WidgetNamespace.BUILTIN, WidgetNamespace.EXTENSION, WidgetNamespace.APP];
 const defaultEditors = Object.values(EntryEditorTypes).map((editor) => {
   return {
     widgetId: editor.id,
-    widgetNamespace: NAMESPACE_EDITOR_BUILTIN,
+    widgetNamespace: WidgetNamespace.EDITOR_BUILTIN,
     disabled: true,
   };
 });
@@ -40,7 +35,7 @@ export function syncControls(ct, controls) {
     const hasValidWidgetId = isNonEmptyString(control.widgetId);
     const hasValidNamespace = NAMESPACES.includes(control.widgetNamespace);
     if (!hasValidWidgetId || !hasValidNamespace) {
-      control.widgetNamespace = NAMESPACE_BUILTIN;
+      control.widgetNamespace = WidgetNamespace.BUILTIN;
       control.widgetId = getDefaultWidgetId(field, ct.displayField);
     }
 
@@ -68,7 +63,7 @@ function determineNamespace({ widgetNamespace, widgetId }) {
   const allBuiltinWidgetIds = [...builtinWidgetIds, ...deprecatedBuiltinWidgetIds];
   const isBuiltinWidget = !!allBuiltinWidgetIds.find((id) => id === widgetId);
 
-  return isBuiltinWidget ? NAMESPACE_BUILTIN : NAMESPACE_EXTENSION;
+  return isBuiltinWidget ? WidgetNamespace.BUILTIN : WidgetNamespace.EXTENSION;
 }
 
 // editor and editors are mutually exclusive properties
@@ -103,7 +98,7 @@ export function fromAPI(ct, ei) {
 export function toAPI(ct, ei) {
   const convertedEditors = convertEditorToEditors(ei.editor, ei.editors);
   const filteredEnabledDefaultEditors = convertedEditors.filter((editor) => {
-    return editor.widgetNamespace !== NAMESPACE_EDITOR_BUILTIN || editor.disabled;
+    return editor.widgetNamespace !== WidgetNamespace.EDITOR_BUILTIN || editor.disabled;
   });
   const editors = filteredEnabledDefaultEditors.length ? filteredEnabledDefaultEditors : undefined;
   return {
@@ -149,6 +144,6 @@ function makeDefaultControl(ct, field) {
     fieldId: field.apiName || field.id,
     field,
     widgetId: getDefaultWidgetId(field, ct.displayField),
-    widgetNamespace: NAMESPACE_BUILTIN,
+    widgetNamespace: WidgetNamespace.BUILTIN,
   };
 }

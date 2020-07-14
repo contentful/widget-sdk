@@ -1,6 +1,6 @@
 import makePageExtensionHandlers from './makePageExtensionHandlers';
-import { NAMESPACE_APP, NAMESPACE_EXTENSION } from '../WidgetNamespaces';
 import * as Navigator from 'states/Navigator';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 jest.mock('states/Navigator', () => ({
   go: jest.fn((x) => Promise.resolve(x)),
@@ -21,7 +21,7 @@ describe('makePageExtensionHandlers', () => {
     const navigate = makePageExtensionHandlers({
       spaceContext,
       currentWidgetId: 'extension-id',
-      currentWidgetNamespace: NAMESPACE_EXTENSION,
+      currentWidgetNamespace: WidgetNamespace.EXTENSION,
     });
     let error;
 
@@ -38,7 +38,7 @@ describe('makePageExtensionHandlers', () => {
     const navigate = makePageExtensionHandlers({
       spaceContext,
       currentWidgetId: 'extension-id',
-      currentWidgetNamespace: NAMESPACE_EXTENSION,
+      currentWidgetNamespace: WidgetNamespace.EXTENSION,
     });
     let error;
 
@@ -55,7 +55,7 @@ describe('makePageExtensionHandlers', () => {
     const navigate = makePageExtensionHandlers({
       spaceContext,
       currentWidgetId: 'extension-id',
-      currentWidgetNamespace: NAMESPACE_EXTENSION,
+      currentWidgetNamespace: WidgetNamespace.EXTENSION,
     });
 
     const result = await navigate({ id: 'extension-id' });
@@ -67,7 +67,7 @@ describe('makePageExtensionHandlers', () => {
     const navigate = makePageExtensionHandlers({
       spaceContext,
       currentWidgetId: 'extension-id',
-      currentWidgetNamespace: NAMESPACE_EXTENSION,
+      currentWidgetNamespace: WidgetNamespace.EXTENSION,
     });
 
     await navigate({ id: 'extension-id' });
@@ -91,7 +91,7 @@ describe('makePageExtensionHandlers', () => {
       {
         spaceContext,
         currentWidgetId: 'extension-id',
-        currentWidgetNamespace: NAMESPACE_EXTENSION,
+        currentWidgetNamespace: WidgetNamespace.EXTENSION,
       },
       true
     );
@@ -116,7 +116,7 @@ describe('makePageExtensionHandlers', () => {
     const navigate = makePageExtensionHandlers({
       spaceContext,
       currentWidgetId: 'extension-id',
-      currentWidgetNamespace: NAMESPACE_EXTENSION,
+      currentWidgetNamespace: WidgetNamespace.EXTENSION,
     });
 
     await navigate({ id: 'extension-id', path: '/settings' });
@@ -142,7 +142,7 @@ describe('makePageExtensionHandlers', () => {
     const navigate = makePageExtensionHandlers({
       spaceContext,
       currentWidgetId: 'extension-id',
-      currentWidgetNamespace: NAMESPACE_EXTENSION,
+      currentWidgetNamespace: WidgetNamespace.EXTENSION,
     });
 
     await navigate({ id: 'extension-id-env', path: '/settings' });
@@ -168,10 +168,10 @@ describe('makePageExtensionHandlers', () => {
     const navigate = makePageExtensionHandlers({
       spaceContext,
       currentWidgetId: 'app-id',
-      currentWidgetNamespace: NAMESPACE_APP,
+      currentWidgetNamespace: WidgetNamespace.APP,
     });
 
-    await navigate({ id: 'app-id', path: '/settings', type: NAMESPACE_APP });
+    await navigate({ id: 'app-id', path: '/settings', type: WidgetNamespace.APP });
 
     expect(Navigator.go).toHaveBeenCalledWith({
       options: {
@@ -194,11 +194,11 @@ describe('makePageExtensionHandlers', () => {
     const navigate = makePageExtensionHandlers({
       spaceContext,
       currentWidgetId: 'app-id',
-      currentWidgetNamespace: NAMESPACE_APP,
+      currentWidgetNamespace: WidgetNamespace.APP,
     });
 
     try {
-      await navigate({ id: 'some-other-app-id', path: '/settings', type: NAMESPACE_APP });
+      await navigate({ id: 'some-other-app-id', path: '/settings', type: WidgetNamespace.APP });
     } catch (e) {
       expect(e).toEqual(new Error('The current ID does not match the ID of the app!'));
     }
@@ -211,11 +211,11 @@ describe('makePageExtensionHandlers', () => {
     const navigate = makePageExtensionHandlers({
       spaceContext,
       currentWidgetId: 'app-id',
-      currentWidgetNamespace: NAMESPACE_APP,
+      currentWidgetNamespace: WidgetNamespace.APP,
     });
 
     try {
-      await navigate({ id: 'app-id', path: '/settings', type: NAMESPACE_EXTENSION });
+      await navigate({ id: 'app-id', path: '/settings', type: WidgetNamespace.EXTENSION });
     } catch (e) {
       expect(e).toEqual(new Error('Cannot navigate between different widget types!'));
     }

@@ -1,6 +1,6 @@
 import { buildRenderables, buildEditorsRenderables } from './WidgetRenderable';
-import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from './WidgetNamespaces';
 import { cloneDeep } from 'lodash';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 describe('WidgetRenderables', () => {
   describe('#buildRenderables()', () => {
@@ -21,11 +21,17 @@ describe('WidgetRenderables', () => {
 
     it('adds sidebar widges to sidebar collection', () => {
       const renderables = buildRenderables(
-        [{ widgetId: 'SIDEBAR', widgetNamespace: NAMESPACE_EXTENSION, field: { type: 'Symbol' } }],
+        [
+          {
+            widgetId: 'SIDEBAR',
+            widgetNamespace: WidgetNamespace.EXTENSION,
+            field: { type: 'Symbol' },
+          },
+        ],
         [
           {
             id: 'SIDEBAR',
-            namespace: NAMESPACE_EXTENSION,
+            namespace: WidgetNamespace.EXTENSION,
             fieldTypes: ['Symbol'],
             sidebar: true,
             parameters: [],
@@ -47,8 +53,8 @@ describe('WidgetRenderables', () => {
 
     it('sets problem warning flag if widget is incompatible', () => {
       const renderables = buildRenderables(
-        [{ widgetId: 'foo', widgetNamespace: NAMESPACE_BUILTIN, field: { type: 'Symbol' } }],
-        [{ id: 'foo', namespace: NAMESPACE_BUILTIN, fieldTypes: ['Boolean'] }]
+        [{ widgetId: 'foo', widgetNamespace: WidgetNamespace.BUILTIN, field: { type: 'Symbol' } }],
+        [{ id: 'foo', namespace: WidgetNamespace.BUILTIN, fieldTypes: ['Boolean'] }]
       );
       expect(renderables.form[0].problem).toBe('incompatible');
     });
@@ -59,7 +65,7 @@ describe('WidgetRenderables', () => {
         [
           {
             widgetId: 'foo',
-            widgetNamespace: NAMESPACE_EXTENSION,
+            widgetNamespace: WidgetNamespace.EXTENSION,
             field: { type: 'Symbol' },
             settings: params,
           },
@@ -67,7 +73,7 @@ describe('WidgetRenderables', () => {
         [
           {
             id: 'foo',
-            namespace: NAMESPACE_EXTENSION,
+            namespace: WidgetNamespace.EXTENSION,
             fieldTypes: ['Symbol'],
             parameters: [{ id: 'param' }],
           },
@@ -78,11 +84,17 @@ describe('WidgetRenderables', () => {
 
     it('adds default parameters if there are no parameters', () => {
       const renderables = buildRenderables(
-        [{ widgetId: 'foo', widgetNamespace: NAMESPACE_EXTENSION, field: { type: 'Symbol' } }],
+        [
+          {
+            widgetId: 'foo',
+            widgetNamespace: WidgetNamespace.EXTENSION,
+            field: { type: 'Symbol' },
+          },
+        ],
         [
           {
             id: 'foo',
-            namespace: NAMESPACE_EXTENSION,
+            namespace: WidgetNamespace.EXTENSION,
             fieldTypes: ['Symbol'],
             parameters: [{ id: 'bar', default: 'lol' }, { id: 'baz' }],
           },
@@ -93,11 +105,17 @@ describe('WidgetRenderables', () => {
 
     it('adds default parameters data does not contain an object', () => {
       const renderables = buildRenderables(
-        [{ widgetId: 'foo', widgetNamespace: NAMESPACE_EXTENSION, field: { type: 'Symbol' } }],
+        [
+          {
+            widgetId: 'foo',
+            widgetNamespace: WidgetNamespace.EXTENSION,
+            field: { type: 'Symbol' },
+          },
+        ],
         [
           {
             id: 'foo',
-            namespace: NAMESPACE_EXTENSION,
+            namespace: WidgetNamespace.EXTENSION,
             fieldTypes: ['Symbol'],
             parameters: [{ id: 'foo', default: 'bar' }],
           },
@@ -111,7 +129,7 @@ describe('WidgetRenderables', () => {
         [
           {
             widgetId: 'foo',
-            widgetNamespace: NAMESPACE_EXTENSION,
+            widgetNamespace: WidgetNamespace.EXTENSION,
             field: { type: 'Symbol' },
             settings: { x: true },
           },
@@ -119,7 +137,7 @@ describe('WidgetRenderables', () => {
         [
           {
             id: 'foo',
-            namespace: NAMESPACE_EXTENSION,
+            namespace: WidgetNamespace.EXTENSION,
             fieldTypes: ['Symbol'],
             parameters: [
               { id: 'x', default: 'DEF_X' },
@@ -139,7 +157,7 @@ describe('WidgetRenderables', () => {
         [
           {
             widgetId: 'foo',
-            widgetNamespace: NAMESPACE_EXTENSION,
+            widgetNamespace: WidgetNamespace.EXTENSION,
             field: { type: 'Symbol' },
             settings: { x: true },
           },
@@ -147,7 +165,7 @@ describe('WidgetRenderables', () => {
         [
           {
             id: 'foo',
-            namespace: NAMESPACE_EXTENSION,
+            namespace: WidgetNamespace.EXTENSION,
             fieldTypes: ['Symbol'],
             parameters: [{ id: 'x' }],
             installationParameters: {
@@ -165,15 +183,15 @@ describe('WidgetRenderables', () => {
 
   it('looks up the widget in the right namespace', () => {
     const renderables = buildRenderables(
-      [{ widgetId: 'foo', widgetNamespace: NAMESPACE_EXTENSION, field: { type: 'Boolean' } }],
+      [{ widgetId: 'foo', widgetNamespace: WidgetNamespace.EXTENSION, field: { type: 'Boolean' } }],
       [
         {
           id: 'foo',
-          namespace: NAMESPACE_EXTENSION,
+          namespace: WidgetNamespace.EXTENSION,
           fieldTypes: 'Boolean',
           renderFieldEditor: () => 'FOO-FROM-EXT',
         },
-        { id: 'foo', namespace: NAMESPACE_BUILTIN },
+        { id: 'foo', namespace: WidgetNamespace.BUILTIN },
       ]
     );
 

@@ -1,4 +1,4 @@
-import { NAMESPACE_BUILTIN } from './WidgetNamespaces';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 /**
  * This service exposes a list of widget migration specifications that
@@ -52,7 +52,7 @@ export function migrateControl(control, migrations = WIDGET_MIGRATIONS) {
   const { field, widgetNamespace, widgetId } = control;
 
   // All migrations are applicable to builtins only.
-  if (widgetNamespace !== NAMESPACE_BUILTIN) {
+  if (widgetNamespace !== WidgetNamespace.BUILTIN) {
     return widgetId;
   }
 

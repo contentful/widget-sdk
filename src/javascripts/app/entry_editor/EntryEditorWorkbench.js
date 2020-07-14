@@ -16,10 +16,10 @@ import { ALL_REFERENCES_DIALOG, SHAREJS_REMOVAL } from 'featureFlags';
 import { ContentTagsTab } from './EntryContentTags/ContentTagsTab';
 import { useTagsFeatureEnabled } from 'features/content-tags';
 import * as Config from 'Config';
-import { NAMESPACE_EDITOR_BUILTIN } from 'widgets/WidgetNamespaces';
 import renderDefaultEditor from './DefaultEntryEditor';
 import EntryEditorWidgetTypes from 'app/entry_editor/EntryEditorWidgetTypes';
 import { hasLinks } from './EntryReferences';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 const styles = {
   mainContent: css({
@@ -131,7 +131,7 @@ const EntryEditorWorkbench = (props) => {
       isVisible: isTabVisible,
       isEnabled: () => isTabEnabled,
       render() {
-        if (currentTab.widgetNamespace === NAMESPACE_EDITOR_BUILTIN) {
+        if (currentTab.widgetNamespace === WidgetNamespace.EDITOR_BUILTIN) {
           return renderDefaultEditor(currentTab.widgetId, { tabVisible, selectedTab, ...props });
         } else {
           return (
@@ -178,6 +178,7 @@ const EntryEditorWorkbench = (props) => {
     if (otDoc.isOtDocument !== true) {
       tabs.push(tagsTab);
     } else if (Config.env !== 'production') {
+      // eslint-disable-next-line
       console.log(`enable "${SHAREJS_REMOVAL}" feature flag to show content tags`);
     }
   }
