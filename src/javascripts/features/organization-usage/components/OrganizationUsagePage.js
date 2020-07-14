@@ -40,7 +40,11 @@ export const OrganizationUsagePage = () => {
         <Tab id="apiRequest" selected={!isAssetBandwidthTab} onSelect={handleSelected}>
           API Requests
         </Tab>
-        <Tab id="assetBandwidth" selected={isAssetBandwidthTab} onSelect={handleSelected}>
+        <Tab
+          testId="organization-usage_asset-bandwidth-tab"
+          id="assetBandwidth"
+          selected={isAssetBandwidthTab}
+          onSelect={handleSelected}>
           Asset Bandwidth
         </Tab>
       </Tabs>

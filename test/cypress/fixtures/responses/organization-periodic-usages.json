@@ -1,0 +1,106 @@
+{
+  "total": 4,
+  "limit": 100,
+  "skip": 0,
+  "sys": {
+    "type": "Array"
+  },
+  "items": [
+    {
+      "metric": "cma",
+      "usage": 40,
+      "usagePerDay": {
+        "2020-06-25": 0,
+        "2020-06-26": 40
+      },
+      "unitOfMeasure": "apiRequestsCount",
+      "sys": {
+        "type": "OrganizationPeriodicUsage",
+        "id": "usage-cma-7wM1gkZsT9yMkRf6Ze3GTM-2020-06-25-2020-08-08",
+        "organization": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Organization",
+            "id": "7wM1gkZsT9yMkRf6Ze3GTM"
+          }
+        }
+      },
+      "dateRange": {
+        "startAt": "2020-06-25",
+        "endAt": "2020-08-08"
+      }
+    },
+    {
+      "metric": "cpa",
+      "usage": 0,
+      "usagePerDay": {
+        "2020-06-25": 0,
+        "2020-06-26": 0
+      },
+      "unitOfMeasure": "apiRequestsCount",
+      "sys": {
+        "type": "OrganizationPeriodicUsage",
+        "id": "usage-cpa-7wM1gkZsT9yMkRf6Ze3GTM-2020-06-25-2020-08-08",
+        "organization": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Organization",
+            "id": "7wM1gkZsT9yMkRf6Ze3GTM"
+          }
+        }
+      },
+      "dateRange": {
+        "startAt": "2020-06-25",
+        "endAt": "2020-08-08"
+      }
+    },
+    {
+      "metric": "cda",
+      "usage": 0,
+      "usagePerDay": {
+        "2020-06-25": 0,
+        "2020-06-26": 0
+      },
+      "unitOfMeasure": "apiRequestsCount",
+      "sys": {
+        "type": "OrganizationPeriodicUsage",
+        "id": "usage-cda-7wM1gkZsT9yMkRf6Ze3GTM-2020-06-25-2020-08-08",
+        "organization": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Organization",
+            "id": "7wM1gkZsT9yMkRf6Ze3GTM"
+          }
+        }
+      },
+      "dateRange": {
+        "startAt": "2020-06-25",
+        "endAt": "2020-08-08"
+      }
+    },
+    {
+      "metric": "gql",
+      "usage": 0,
+      "usagePerDay": {
+        "2020-06-25": 0,
+        "2020-06-26": 0
+      },
+      "unitOfMeasure": "apiRequestsCount",
+      "sys": {
+        "type": "OrganizationPeriodicUsage",
+        "id": "usage-gql-7wM1gkZsT9yMkRf6Ze3GTM-2020-06-25-2020-08-08",
+        "organization": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Organization",
+            "id": "7wM1gkZsT9yMkRf6Ze3GTM"
+          }
+        }
+      },
+      "dateRange": {
+        "startAt": "2020-06-25",
+        "endAt": "2020-08-08"
+      }
+    }
+  ]
+}

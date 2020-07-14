@@ -139,5 +139,10 @@ export const OrganizationBarChart = () => {
       includedLimit: apiRequestIncludedLimit,
     })
   );
-  return <div ref={chartRef} className={styles.chartWrapper}></div>;
+  return (
+    <div
+      ref={chartRef}
+      className={styles.chartWrapper}
+      data-test-id="organization-usage-bar-chart"></div>
+  );
 };

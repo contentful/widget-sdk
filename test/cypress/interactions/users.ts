@@ -1,7 +1,10 @@
-import { defaultHeader, defaultSpaceId, defaultUserId } from '../util/requests';
+import { defaultHeader, defaultSpaceId, defaultUserId, defaultOrgId } from '../util/requests';
 import { Query, RequestOptions } from '@pact-foundation/pact-web';
 
 const users = require('../fixtures/responses/users.json');
+const userResponse = require('../fixtures/responses/user.json');
+
+const getUsersInteraction = 'query_users';
 
 enum States {
   SINGLE = 'users/single',
@@ -75,5 +78,27 @@ export const queryForUsers = {
     }).as('queryForUsers');
 
     return '@queryForUsers';
+  },
+};
+
+export const getUsers = {
+  willReturnSingle() {
+    cy.addInteraction({
+      provider: 'organization_usage',
+      state: 'single user',
+      uponReceiving: `a request to get the default user details`,
+      withRequest: {
+        method: 'GET',
+        path: `/organizations/${defaultOrgId}/users`,
+        query: { 'sys.id': defaultUserId },
+        headers: defaultHeader,
+      },
+      willRespondWith: {
+        status: 200,
+        body: userResponse,
+      },
+    }).as(getUsersInteraction);
+
+    return `@${getUsersInteraction}`;
   },
 };

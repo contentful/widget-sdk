@@ -1,0 +1,153 @@
+{
+  "total": 3,
+  "sys": {
+    "type": "Array"
+  },
+  "items": [
+    {
+      "sys": {
+        "type": "ProductRatePlan",
+        "id": "free"
+      },
+      "name": "Community",
+      "price": 0.0,
+      "internalName": "free_space",
+      "productPlanType": "free_space",
+      "productType": "on_demand",
+      "productRatePlanCharges": [
+        {
+          "sys": {
+            "type": "ProductRatePlanCharge",
+            "id": "2c92c0f97270b6ac017274ca48fb4562"
+          },
+          "name": "Roles",
+          "model": "PerUnit",
+          "uom": "Role Limit",
+          "price": 0.0,
+          "tiers": [
+            {
+              "tier": 1,
+              "price": 0.0,
+              "startingUnit": 0,
+              "endingUnit": 1,
+              "priceFormat": "FlatFee"
+            }
+          ],
+          "chargeType": "Recurring",
+          "unitType": "limit"
+        },
+        {
+          "sys": {
+            "type": "ProductRatePlanCharge",
+            "id": "2c92c0f97270b6ac017274ca49c44576"
+          },
+          "name": "Records",
+          "model": "PerUnit",
+          "uom": "Record Limit",
+          "price": 0.0,
+          "tiers": [
+            {
+              "tier": 1,
+              "price": 0.0,
+              "startingUnit": 0,
+              "endingUnit": 25000,
+              "priceFormat": "FlatFee"
+            }
+          ],
+          "chargeType": "Recurring",
+          "unitType": "limit"
+        },
+        {
+          "sys": {
+            "type": "ProductRatePlanCharge",
+            "id": "2c92c0f97270b6ac017274ca4a0e457c"
+          },
+          "name": "Environments",
+          "model": "PerUnit",
+          "uom": "Environment Limit",
+          "price": 0.0,
+          "tiers": [
+            {
+              "tier": 1,
+              "price": 0.0,
+              "startingUnit": 0,
+              "endingUnit": 3,
+              "priceFormat": "FlatFee"
+            }
+          ],
+          "chargeType": "Recurring",
+          "unitType": "limit"
+        },
+        {
+          "sys": {
+            "type": "ProductRatePlanCharge",
+            "id": "2c92c0f97270b6ac017274ca497d456e"
+          },
+          "name": "Content types",
+          "model": "PerUnit",
+          "uom": "Content Type Limit",
+          "price": 0.0,
+          "tiers": [
+            {
+              "tier": 1,
+              "price": 0.0,
+              "startingUnit": 0,
+              "endingUnit": 48,
+              "priceFormat": "FlatFee"
+            }
+          ],
+          "chargeType": "Recurring",
+          "unitType": "limit"
+        },
+        {
+          "sys": {
+            "type": "ProductRatePlanCharge",
+            "id": "2c92c0f97270b6ac017274ca49404568"
+          },
+          "name": "Locales",
+          "model": "PerUnit",
+          "uom": "Locale Limit",
+          "price": 0.0,
+          "tiers": [
+            {
+              "tier": 1,
+              "price": 0.0,
+              "startingUnit": 0,
+              "endingUnit": 2,
+              "priceFormat": "FlatFee"
+            }
+          ],
+          "chargeType": "Recurring",
+          "unitType": "limit"
+        },
+        {
+          "sys": {
+            "type": "ProductRatePlanCharge",
+            "id": "2c92c0f97270b6ac017274ca48b64558"
+          },
+          "name": "Space fee",
+          "model": "FlatFee",
+          "uom": null,
+          "price": 0.0,
+          "tiers": null,
+          "chargeType": "Recurring",
+          "unitType": "charge"
+        }
+      ],
+      "roleSet": {
+        "id": "basic_v2",
+        "roles": ["Editor"]
+      },
+      "committed": false,
+      "customerType": "Self-service",
+      "unavailabilityReasons": [
+        {
+          "type": "freeSpacesMaximumLimitReached",
+          "maximumLimit": 1,
+          "usage": 1,
+          "additionalInfo": "Free spaces"
+        }
+      ]
+    }
+  ]
+}

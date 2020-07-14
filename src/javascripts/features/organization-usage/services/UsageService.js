@@ -32,9 +32,9 @@ export const getOrgUsage = (endpoint, { startDate, endDate }) =>
     method: 'GET',
     path: ['organization_periodic_usages'],
     query: {
-      'metric[in]': 'cpa,cda,cma,gql',
+      'metric[in]': ['cpa', 'cda', 'cma', 'gql'],
       'dateRange.startAt': startDate,
-      'dateRange.endAt': endDate,
+      'dateRange.endAt': endDate ?? '',
     },
   });
 
@@ -56,7 +56,7 @@ export const getApiUsage = (endpoint, { apiType, startDate, endDate, limit }) =>
     query: {
       'metric[in]': apiType,
       'dateRange.startAt': startDate,
-      'dateRange.endAt': endDate,
+      'dateRange.endAt': endDate ?? '',
       limit,
     },
   });
