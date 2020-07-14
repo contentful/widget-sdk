@@ -27,7 +27,7 @@ function BasePlan({ basePlan }) {
           ? ` – includes ${joinAnd(enabledFeaturesNames)}. `
           : ' – doesn’t include enterprise features. '}
         <TextLink
-          href={websiteUrl('/pricing/#platform-features')}
+          href={websiteUrl('/pricing#feature-overview')}
           testId="subscription-page.org-usage-link"
           target="_blank"
           rel="noopener noreferrer">

@@ -86,7 +86,10 @@ export default function SpacePlanSelector(props) {
                     submitting a support request
                   </ExternalTextLink>
                   . To learn about our space plan changes{' '}
-                  <ExternalTextLink href={websiteUrl('pricing/')}>
+                  <ExternalTextLink
+                    href={websiteUrl(
+                      'pricing/?utm_medium=webapp&utm_source=product&utm_campaign=20q3-community-edition-launch'
+                    )}>
                     visit our website
                   </ExternalTextLink>
                   .
