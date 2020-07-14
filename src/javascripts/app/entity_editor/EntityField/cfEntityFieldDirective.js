@@ -1,21 +1,8 @@
-import React from 'react';
-import { Icon, Tooltip } from '@contentful/forma-36-react-components';
 import { registerDirective } from 'core/NgRegistry';
 import _ from 'lodash';
 import * as K from 'core/utils/kefir';
-import { css } from 'emotion';
 
-import * as localesUtils from 'utils/locales';
 import entityFieldTemplate from './cf_entity_field.html';
-
-const styles = {
-  lockComponentContainer: css({
-    whiteSpace: 'nowrap',
-  }),
-  lockIcon: css({
-    marginBottom: '-3px',
-  }),
-};
 
 export default function register() {
   /**
@@ -41,8 +28,6 @@ export default function register() {
    */
   registerDirective('cfEntityField', [
     () => {
-      const { isRtlLocale } = localesUtils;
-
       return {
         restrict: 'E',
         template: entityFieldTemplate,
@@ -66,16 +51,6 @@ export default function register() {
                 $scope.editorContext.hasInitialFocus && $scope.$first && widget.isFocusable,
             };
             $scope.data = templateData;
-
-            // eslint-disable-next-line
-            $scope.lockComponent = ({ text, tooltipContent }) => (
-              <Tooltip content={tooltipContent} place="left">
-                <div className={styles.lockComponentContainer}>
-                  <Icon icon="Lock" color="muted" className={styles.lockIcon} />
-                  <span>{text}</span>
-                </div>
-              </Tooltip>
-            );
 
             /**
              * @ngdoc method
@@ -118,10 +93,6 @@ export default function register() {
             K.onValueScope($scope, $scope.editorContext.focus.field$, (focusedField) => {
               templateData.fieldHasFocus = focusedField === field.id;
             });
-
-            $scope.methods = {
-              shouldDisplayRtl: isRtlLocale,
-            };
 
             function updateErrorStatus() {
               const { validator } = $scope.editorContext;

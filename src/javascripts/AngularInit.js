@@ -33,7 +33,7 @@ export const angularInitRun = [
       import(
         /* webpackMode: "eager" */ 'app/entity_editor/bulk_editor/cfBulkEntityEditorDirective'
       ),
-      import(/* webpackMode: "eager" */ 'app/entity_editor/cfEntityFieldDirective'),
+      import(/* webpackMode: "eager" */ 'app/entity_editor/EntityField/cfEntityFieldDirective'),
       import(/* webpackMode: "eager" */ 'app/entity_editor/fieldLocaleController'),
       import(/* webpackMode: "eager" */ 'app/entity_editor/stateController'),
       import(/* webpackMode: "eager" */ 'app/entry_editor/cfEntryEditorDirective'),

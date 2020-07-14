@@ -501,14 +501,6 @@ workflows:
           requires:
             - copy-assets-to-s3
           <<: *run_only_on_master_branch
-      # # Temporary turned off due to problems with SauceLabs
-      # - saucelabs/run:
-      #     name: run-osx10-safari-tests
-      #     platform: 'macOS 10.13'
-      #     browser: 'safari'
-      #     requires:
-      #       - copy-assets-to-s3
-      #     <<: *run_only_on_master_branch
   build-with-e2e:
     when: << pipeline.parameters.with-e2e >>
     # This needs some copy/pasting unfortunately (circleci yaml limitations)
@@ -557,10 +549,8 @@ workflows:
           selenium: '3.14.0'
           requires:
             - copy-assets-to-s3
-          <<: *run_only_on_master_branch
       - saucelabs/run:
           name: run-win10-firefox-tests
           browser: 'firefox'
           requires:
             - copy-assets-to-s3
-          <<: *run_only_on_master_branch

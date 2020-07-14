@@ -120,8 +120,11 @@ function gatherFiles(p) {
 
   fs.readdirSync(p).forEach((name) => {
     const resolved = path.resolve(p, name);
-    const isJsFile = resolved.endsWith('.js') || resolved.endsWith('.ts');
-    const isSpecFile = isJsFile && (resolved.endsWith('.spec.js') || resolved.endsWith('.spec.ts'));
+    const isJsFile =
+      resolved.endsWith('.js') || resolved.endsWith('.ts') || resolved.endsWith('.tsx');
+    const isSpecFile =
+      (isJsFile && (resolved.endsWith('.spec.js') || resolved.endsWith('.spec.ts'))) ||
+      resolved.endsWith('.spec.tsx');
     const isMocksDir = resolved.endsWith('__mocks__');
     const isTestsDir = resolved.endsWith('__test__');
 
