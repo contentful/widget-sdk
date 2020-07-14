@@ -14,7 +14,7 @@ import FieldsList from './FieldsTab/FieldsList';
 import ContentTypePreview from './PreviewTab/ContentTypePreview';
 import SidebarConfiguration from 'app/EntrySidebar/Configuration/SidebarConfiguration';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import ContentFieldsIcon from './ContentFieldsIcon';
+import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 export default function ContentTypesPage(props) {
   const showSidebar = props.currentTab === 'fields' || props.currentTab === 'preview';
@@ -33,7 +33,7 @@ export default function ContentTypesPage(props) {
     <Workbench>
       <Workbench.Header
         title={props.contentTypeName}
-        icon={<ContentFieldsIcon />}
+        icon={<NavigationIcon icon="ContentModel" size="large" color="positive" />}
         description={props.contentTypeData.description}
         actions={
           <ContentTypePageActions
