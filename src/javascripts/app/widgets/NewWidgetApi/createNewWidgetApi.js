@@ -52,6 +52,7 @@ export default function createNewWidgetApi(dependencies) {
   const { locale, widget, otDoc } = $scope;
   const { contentType } = $scope.entityInfo;
   const contentTypeApi = createContentTypeApi({ contentType });
+  const environmentIds = [spaceContext.getEnvironmentId(), ...spaceContext.getAliasesIds()];
 
   const entry = createEntryApi({ contentType, locale, otDoc });
   const field = createFieldApi({ $scope }); // TODO: Get rid of $scope here, pass actual dependencies.
@@ -65,6 +66,8 @@ export default function createNewWidgetApi(dependencies) {
     ...createSpaceScopedWidgetApi({
       cma,
       initialContentTypes: spaceContext.publishedCTs.getAllBare(),
+      pubSubClient: spaceContext.pubsubClient,
+      environmentIds,
     }),
     contentType: contentTypeApi,
     entry,
@@ -94,9 +97,14 @@ export function createNewReadOnlyWidgetApi({
   };
 }
 
-function createSpaceScopedWidgetApi({ cma: cmaOrBatchingApiClient, initialContentTypes }) {
+function createSpaceScopedWidgetApi({
+  cma: cmaOrBatchingApiClient,
+  initialContentTypes,
+  pubSubClient,
+  environmentIds,
+}) {
   const cma = getBatchingApiClient(cmaOrBatchingApiClient);
-  const space = createSpaceApi({ cma, initialContentTypes });
+  const space = createSpaceApi({ cma, initialContentTypes, pubSubClient, environmentIds });
   const navigator = createNavigatorApi({ cma });
   const locales = createLocalesApi();
   const dialogs = createDialogsApi();

@@ -1,12 +1,17 @@
 import {
   ASSET_PROCESSING_FINISHED_EVENT,
   CONTENT_ENTITY_UPDATED_EVENT,
+  PubSubClient,
 } from 'services/PubSubService';
 import { Entity } from 'app/entity_editor/Document/types';
 import { makeApply } from './EntityState';
 import { EntityAction } from './EntityActions';
 import { EntityState } from 'data/CMA/EntityState';
 import { SpaceEndpoint } from './types';
+import {
+  AssetProcessingFinishedPayload,
+  ContentEntityUpdatedPayload,
+} from '@contentful/pubsub-types';
 
 const COLLECTION_ENDPOINTS = {
   Entry: 'entries',
@@ -29,7 +34,7 @@ interface EntityRepoOptions {
 
 export function create(
   spaceEndpoint: SpaceEndpoint,
-  pubSubClient,
+  pubSubClient: PubSubClient,
   triggerCmaAutoSave: { (): void },
   options: EntityRepoOptions = {
     skipDraftValidation: false,
@@ -71,7 +76,7 @@ export function create(
   }
 
   function onContentEntityChanged(entitySys, callback) {
-    const handler = (msg) => {
+    const handler = (msg: ContentEntityUpdatedPayload) => {
       const envId = spaceEndpoint.envId || 'master';
       if (
         msg.entityType === entitySys.type &&
@@ -86,7 +91,7 @@ export function create(
   }
 
   function onAssetFileProcessed(entitySys, callback) {
-    const handler = (msg) => {
+    const handler = (msg: AssetProcessingFinishedPayload) => {
       const envId = spaceEndpoint.envId || 'master';
       if (
         entitySys.type === 'Asset' &&

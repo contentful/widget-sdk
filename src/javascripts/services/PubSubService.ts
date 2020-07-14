@@ -1,6 +1,13 @@
-import { Client } from '@contentful/pubsub-subscriber';
+import { Client, SpaceClient } from '@contentful/pubsub-subscriber';
 import { apiUrl, pusher } from 'Config';
 import { getToken } from 'Authentication';
+import { Payloads } from '@contentful/pubsub-types';
+
+export type PubSubClient = {
+  on: SpaceClient['on'];
+  off: SpaceClient['off'];
+};
+type Handler<T> = (ctx: T) => void;
 
 export const ENVIRONMENT_ALIAS_CHANGED_EVENT = 'environment-alias-changed';
 export const ENVIRONMENT_CREATION_COMPLETE_EVENT = 'environment-creation-complete';
@@ -20,13 +27,7 @@ const client = (async () => {
   });
 })();
 
-/**
- * Create a pubsub client for a specific spaceId
- *
- * @param {string} spaceId
- * @returns {SpaceClient}
- */
-export async function createPubSubClientForSpace(spaceId) {
+export async function createPubSubClientForSpace(spaceId: string) {
   const spaceClient = (await client).forSpace(spaceId);
 
   /*
@@ -37,14 +38,12 @@ export async function createPubSubClientForSpace(spaceId) {
     In order to fix this, we wrap the client in an object that serializes cleanly.
     This can all be removed once there is a state management solution that is not based on Angular.
   */
-  const serializableClient = {
-    on(...args) {
-      return spaceClient.on(...args);
+  return {
+    on<Topic extends keyof Payloads>(topic: Topic, handler: Handler<Payloads[Topic]>) {
+      return spaceClient.on(topic, handler);
     },
-    off(...args) {
-      return spaceClient.off(...args);
+    off<Topic extends keyof Payloads>(topic: Topic, handler?: Handler<Payloads[Topic]>) {
+      return spaceClient.off(topic, handler);
     },
   };
-
-  return serializableClient;
 }
