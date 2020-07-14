@@ -11,8 +11,8 @@ import { toInternalFieldType, toApiFieldType } from 'widgets/FieldTypes';
 import { ExtensionForm } from './ExtensionForm';
 import * as Analytics from 'analytics/Analytics';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
-import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
 import { ExtensionEditorSkeleton } from './skeletons/ExtensionEditorSkeleton';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 const styles = {
   actionButton: css({
@@ -79,40 +79,41 @@ export class ExtensionEditor extends React.Component {
     return !isEqual(initial, { ...entity, extension });
   };
 
-  save = () => {
+  save = async () => {
     this.setState({ saving: true });
     const entity = this.prepareForSave(this.state.entity);
-    return this.props.cma
-      .updateExtension(entity)
-      .then((newEntity) => {
-        this.setState(
-          () => this.entityToFreshState(newEntity),
-          () => {
-            const { sys, extension } = this.state.entity;
 
-            Analytics.track('extension:save', {
-              ui_extension_id: sys.id,
-              name: extension.name,
-              version: sys.version,
-              fieldTypes: extension.fieldTypes,
-              ...getExtensionParameterIds(extension),
-            });
+    try {
+      const newEntity = await this.props.cma.updateExtension(entity);
+      const loader = await getCustomWidgetLoader();
 
-            Notification.success('Your extension was updated successfully.');
+      this.setState(
+        () => this.entityToFreshState(newEntity),
+        () => {
+          const { sys, extension } = this.state.entity;
 
-            getCustomWidgetLoader().evict([NAMESPACE_EXTENSION, sys.id]);
-          }
-        );
-      })
-      .catch(() => {
-        Notification.error(
-          [
-            'There was an error while saving your extension.',
-            'See validation errors for more details.',
-          ].join(' ')
-        );
-        this.setState({ saving: false });
-      });
+          loader.evict({ widgetNamespace: WidgetNamespace.EXTENSION, widgetId: sys.id });
+
+          Analytics.track('extension:save', {
+            ui_extension_id: sys.id,
+            name: extension.name,
+            version: sys.version,
+            fieldTypes: extension.fieldTypes,
+            ...getExtensionParameterIds(extension),
+          });
+
+          Notification.success('Your extension was updated successfully.');
+        }
+      );
+    } catch (err) {
+      Notification.error(
+        [
+          'There was an error while saving your extension.',
+          'See validation errors for more details.',
+        ].join(' ')
+      );
+      this.setState({ saving: false });
+    }
   };
 
   renderContent = () => {
