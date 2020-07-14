@@ -122,7 +122,7 @@ describe('OsanoService', () => {
     return cm;
   };
 
-  describe('handleInitialize', () => {
+  describe('initialization', () => {
     it('should enable analytics with all Segment integrations and Intercom if analytics and personalization is allowed', async () => {
       await setupService();
 
@@ -144,6 +144,12 @@ describe('OsanoService', () => {
       });
 
       expect(Intercom.enable).toHaveBeenCalledTimes(1);
+    });
+
+    it('should do nothing if LazyLoader returned nothing', async () => {
+      LazyLoader.get.mockResolvedValueOnce(null);
+
+      expect(await service.init()).toBe(false);
     });
 
     it('should disable any additional integrations from Segment', async () => {

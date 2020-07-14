@@ -106,6 +106,13 @@ export async function init() {
 
   const Osano = await LazyLoader.get('osano');
 
+  if (!Osano) {
+    // There's nothing we can do it we couldn't load Osano, so just bail early
+    //
+    // This returns false for testing (it's ignored in app code)
+    return false;
+  }
+
   // Get the original options and teardown the injected script
   // generated Cosnent Manager instance
   const options = Osano.cm.options;
