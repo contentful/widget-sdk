@@ -203,11 +203,11 @@ export class WidgetLoader {
   }
 
   public async getForAppDefinition(appDefinitionId: string) {
-    const params =  { 'sys.id[in]': appDefinitionId };
+    const params = { 'sys.id[in]': appDefinitionId };
     const { items } = await this.client.raw.get('/app_definitions', { params });
 
     if (Array.isArray(items) && items.length === 1) {
-      return buildAppWidget({} as AppInstallation, items[0], this.marketplaceDataProvider)
+      return buildAppWidget({} as AppInstallation, items[0], this.marketplaceDataProvider);
     } else {
       throw new Error('Could not fetch app definition.');
     }

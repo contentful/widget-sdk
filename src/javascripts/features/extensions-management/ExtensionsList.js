@@ -24,12 +24,12 @@ import EmptyStateContainer, {
 import EmptyStateIllustration from 'svg/illustrations/connected-forms-illustration.svg';
 import { websiteUrl } from 'Config';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
-import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
 import { ExtensionListSkeleton } from './skeletons/ExtensionListSkeleton';
 
 import { DocsLink } from './ExtensionsSidebar';
 import { ExtensionsActions } from './ExtensionsActions';
 import { openGitHubInstaller } from './ExtensionsActions';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 const styles = {
   deleteDropdown: css({
@@ -47,7 +47,10 @@ const styles = {
 async function deleteExtension(id, cma, refresh) {
   try {
     await cma.deleteExtension(id);
-    getCustomWidgetLoader().evict([NAMESPACE_EXTENSION, id]);
+
+    const loader = await getCustomWidgetLoader();
+    loader.evict({ widgetNamespace: WidgetNamespace.EXTENSION, widgetId: id });
+
     await refresh();
     Notification.success('Your extension was successfully deleted.');
   } catch (err) {
