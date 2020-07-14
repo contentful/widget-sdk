@@ -150,7 +150,7 @@ describe('Retry', () => {
     it('tracks response time os successful calls', async () => {
       await wrappedFn({ url: 'bar/foo', method: 'POST' });
 
-      expect(Telemetry.record).toHaveBeenCalledTimes(1);
+      expect(Telemetry.record).toHaveBeenCalledTimes(2);
       expect(Telemetry.record).toHaveBeenCalledWith('cma-response-time', expect.any(Number), {
         endpoint: 'bar/foo',
         status: 200,
@@ -163,8 +163,31 @@ describe('Retry', () => {
 
       await wrappedFn({ url: 'foo/foo', method: 'DELETE' }).catch(() => {});
 
-      expect(Telemetry.record).toHaveBeenCalledTimes(1);
+      expect(Telemetry.record).toHaveBeenCalledTimes(2);
       expect(Telemetry.record).toHaveBeenCalledWith('cma-response-time', expect.any(Number), {
+        endpoint: 'foo/foo',
+        status: 404,
+        method: 'DELETE',
+      });
+    });
+
+    it('tracks queue time of successful calls', async () => {
+      await wrappedFn({ url: 'bar/foo', method: 'POST' });
+
+      expect(Telemetry.record).toHaveBeenCalledWith('cma-queue-time', expect.any(Number), {
+        endpoint: 'bar/foo',
+        status: 200,
+        method: 'POST',
+      });
+    });
+
+    it('tracks queue time of rejected calls', async () => {
+      requestFn.mockRejectedValue({ status: 404 });
+
+      await wrappedFn({ url: 'foo/foo', method: 'DELETE' }).catch(() => {});
+
+      expect(Telemetry.record).toHaveBeenCalledTimes(2);
+      expect(Telemetry.record).toHaveBeenCalledWith('cma-queue-time', expect.any(Number), {
         endpoint: 'foo/foo',
         status: 404,
         method: 'DELETE',

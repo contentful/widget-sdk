@@ -29,6 +29,7 @@ export default function withRetry(requestFn) {
         // time to wait before sending the request
         // some errors cause longer waits before retries
         wait: 0,
+        queuedAt: Date.now(),
       });
       attemptImmediate();
     });
@@ -53,6 +54,7 @@ export default function withRetry(requestFn) {
     try {
       const response = await requestFn(...call.args);
       recordResponseTime({ status: 200 }, startTime + call.wait, ...call.args);
+      recordQueueTime({ status: 200 }, call.queuedAt, ...call.args);
       call.resolve(response);
     } catch (e) {
       handleError(call, e);
@@ -90,6 +92,7 @@ export default function withRetry(requestFn) {
       queue.unshift(call);
       attemptImmediate();
     } else {
+      recordQueueTime({ status: err.status }, call.queuedAt, ...call.args);
       call.reject(err);
     }
   }
@@ -110,6 +113,18 @@ function backOff(call) {
 function recordResponseTime({ status }, startTime, { url, method } = {}) {
   try {
     Telemetry.record('cma-response-time', Date.now() - startTime, {
+      endpoint: getEndpoint(url),
+      status,
+      method,
+    });
+  } catch {
+    // no-op
+  }
+}
+
+function recordQueueTime({ status }, queuedAt, { url, method } = {}) {
+  try {
+    Telemetry.record('cma-queue-time', Date.now() - queuedAt, {
       endpoint: getEndpoint(url),
       status,
       method,
