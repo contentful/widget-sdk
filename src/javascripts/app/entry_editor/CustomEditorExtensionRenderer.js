@@ -4,6 +4,7 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { Note } from '@contentful/forma-36-react-components';
 import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIFrameRenderer';
+import { toRendererWidget } from 'widgets/WidgetCompat';
 
 const styles = {
   installationNote: css({
@@ -39,7 +40,7 @@ export default class CustomEditorExtensionRenderer extends React.Component {
     return (
       <ExtensionIFrameRendererWithLocalHostWarning
         bridge={createBridge(extension.widgetId, extension.widgetNamespace)}
-        descriptor={descriptor}
+        widget={toRendererWidget(descriptor)}
         parameters={parameters}
         isFullSize
       />

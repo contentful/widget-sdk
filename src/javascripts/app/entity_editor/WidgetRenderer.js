@@ -9,6 +9,7 @@ import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIF
 import * as WidgetLocations from 'widgets/WidgetLocations';
 import * as LoadEventTracker from 'app/entity_editor/LoadEventTracker';
 import { WidgetNamespace } from 'features/widget-renderer';
+import { toRendererWidget } from 'widgets/WidgetCompat';
 
 const { createLinksRenderedEvent, createWidgetLinkRenderEventsHandler } = LoadEventTracker;
 
@@ -46,7 +47,7 @@ function WidgetRendererInternal(props) {
     const $controller = getModule('$controller');
     return (
       <ExtensionIFrameRendererWithLocalHostWarning
-        descriptor={descriptor}
+        widget={toRendererWidget(descriptor)}
         parameters={parameters}
         bridge={createExtensionBridge({
           $rootScope,

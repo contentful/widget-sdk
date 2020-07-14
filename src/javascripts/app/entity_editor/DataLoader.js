@@ -16,6 +16,7 @@ import {
   buildEditorsRenderables,
 } from 'widgets/WidgetRenderable';
 import { WidgetNamespace } from 'features/widget-renderer';
+import { toLegacyWidget } from 'widgets/WidgetCompat';
 
 const assetEditorInterface = EditorInterfaceTransformer.fromAPI(
   assetContentType.data,
@@ -127,10 +128,16 @@ async function loadEditorData(loader, id) {
   const entity = await loader.getEntity(id);
   const contentTypeId = get(entity, ['data', 'sys', 'contentType', 'sys', 'id']);
 
-  const [contentType, apiEditorInterface, hasAdvancedExtensibility] = await Promise.all([
+  const [
+    contentType,
+    apiEditorInterface,
+    hasAdvancedExtensibility,
+    customWidgetLoader,
+  ] = await Promise.all([
     loader.getContentType(contentTypeId),
     loader.getEditorInterface(contentTypeId),
     loader.hasAdvancedExtensibility(),
+    getCustomWidgetLoader(),
   ]);
 
   const editorInterface = EditorInterfaceTransformer.fromAPI(contentType.data, apiEditorInterface);
@@ -146,7 +153,7 @@ async function loadEditorData(loader, id) {
 
   const widgets = [
     ...createBuiltinWidgetList(),
-    ...(await getCustomWidgetLoader().getForEditor(editorInterface)),
+    ...(await customWidgetLoader.getWithEditorInterface(editorInterface)).map(toLegacyWidget),
   ];
 
   const fieldControls = buildRenderables(controls, widgets);

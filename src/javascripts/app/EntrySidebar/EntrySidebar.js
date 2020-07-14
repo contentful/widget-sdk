@@ -21,6 +21,7 @@ import EntryInfoPanelContainer from './EntryInfoPanel/EntryInfoPanelContainer';
 import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIFrameRenderer';
 import CommentsPanelContainer from './CommentsPanel/CommentsPanelContainer';
 import { WidgetNamespace } from 'features/widget-renderer';
+import { toRendererWidget } from 'widgets/WidgetCompat';
 
 const styles = {
   activity: css({
@@ -213,7 +214,7 @@ export default class EntrySidebar extends Component {
             item.widgetId,
             item.widgetNamespace
           )}
-          descriptor={item.descriptor}
+          widget={toRendererWidget(item.descriptor)}
           parameters={item.parameters}
         />
       </EntrySidebarWidget>
@@ -237,7 +238,7 @@ export default class EntrySidebar extends Component {
       <EntrySidebarWidget title={widget.field.name} key={widget.field.id}>
         <ExtensionIFrameRendererWithLocalHostWarning
           bridge={bridge}
-          descriptor={widget.descriptor}
+          widget={toRendererWidget(widget.descriptor)}
           parameters={widget.parameters}
         />
       </EntrySidebarWidget>
