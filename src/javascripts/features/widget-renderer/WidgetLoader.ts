@@ -12,6 +12,7 @@ import { createPlainClient } from 'contentful-management';
 import DataLoader, { BatchLoadFn } from 'dataloader';
 import { uniqBy, noop } from 'lodash';
 import { buildExtensionWidget, buildAppWidget } from './buildWidgets';
+import { isCustomWidget } from '.';
 
 interface WidgetRef {
   widgetNamespace: WidgetNamespace;
@@ -31,7 +32,6 @@ type WarningCallbackFn = (warning: WidgetLoadWarning) => void;
 
 const EMPTY_EXTENSIONS_RES = { items: [] };
 const EMPTY_APPS_RES = { items: [], includes: { AppDefinition: [] } };
-const CUSTOM_NAMESPACES = [WidgetNamespace.APP, WidgetNamespace.EXTENSION];
 
 const cacheKeyFn = ({ widgetNamespace, widgetId }: WidgetRef): string => {
   return [widgetNamespace, widgetId].join(',');
@@ -143,7 +143,7 @@ export class WidgetLoader {
       .reduce((acc: WidgetRef[], control: Control) => {
         if (!control.widgetId) {
           return acc;
-        } else if (control.widgetNamespace && CUSTOM_NAMESPACES.includes(control.widgetNamespace)) {
+        } else if (control.widgetNamespace && isCustomWidget(control.widgetNamespace)) {
           return acc.concat([
             { widgetNamespace: control.widgetNamespace, widgetId: control.widgetId },
           ]);
@@ -163,7 +163,7 @@ export class WidgetLoader {
       ...(ei.editors || []),
       ...this.getControlWidgetRefs(ei.controls),
     ]
-      .filter((ref) => CUSTOM_NAMESPACES.includes(ref.widgetNamespace))
+      .filter((ref) => isCustomWidget(ref.widgetNamespace))
       .filter((ref) => ref.widgetId)
       .map(({ widgetNamespace, widgetId }) => ({ widgetNamespace, widgetId }));
   }

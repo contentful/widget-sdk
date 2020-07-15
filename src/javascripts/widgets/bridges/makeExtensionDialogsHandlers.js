@@ -12,7 +12,7 @@ import * as entitySelector from 'search/EntitySelector/entitySelector';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 
 import createDialogExtensionBridge from './createDialogExtensionBridge';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace, isCustomWidget } from 'features/widget-renderer';
 
 const SIMPLE_DIALOG_TYPE_TO_OPENER = {
   alert: Dialogs.openAlert,
@@ -33,7 +33,7 @@ export default function makeExtensionDialogsHandlers(dependencies) {
       return entitySelector.openFromExtension(options);
     }
 
-    if ([WidgetNamespace.APP, WidgetNamespace.EXTENSION].includes(type)) {
+    if (isCustomWidget(type)) {
       return openCustomDialog(type, options);
     }
 

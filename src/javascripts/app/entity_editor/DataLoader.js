@@ -15,7 +15,7 @@ import {
   buildSidebarRenderables,
   buildEditorsRenderables,
 } from 'widgets/WidgetRenderable';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { isCustomWidget } from 'features/widget-renderer';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
 
 const assetEditorInterface = EditorInterfaceTransformer.fromAPI(
@@ -159,9 +159,7 @@ async function loadEditorData(loader, id) {
   const fieldControls = buildRenderables(controls, widgets);
   const sidebarExtensions = buildSidebarRenderables(sidebarConfig || [], widgets);
   const editorsExtensions = buildEditorsRenderables(editorsConfig || [], widgets);
-  const customEditor = editorsExtensions.find((editor) => {
-    return [WidgetNamespace.EXTENSION, WidgetNamespace.APP].includes(editor.widgetNamespace);
-  });
+  const customEditor = editorsExtensions.find((e) => isCustomWidget(e.widgetNamespace));
 
   const entityInfo = makeEntityInfo(entity, contentType);
   const openDoc = loader.getOpenDoc(entity, contentType);

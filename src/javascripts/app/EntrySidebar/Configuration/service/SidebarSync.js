@@ -4,7 +4,7 @@ import { defaultWidgetsMap } from '../defaults';
 import { SidebarType } from '../constants';
 
 import { LOCATION_ENTRY_SIDEBAR } from 'widgets/WidgetLocations';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace, isCustomWidget } from 'features/widget-renderer';
 
 /**
  * Converts internal state of configuration reducer
@@ -89,7 +89,7 @@ export function convertConfigurationToInternalState(configuration, widgets, init
           : { ...configItem, problem: true };
       }
 
-      if ([WidgetNamespace.EXTENSION, WidgetNamespace.APP].includes(configItem.widgetNamespace)) {
+      if (isCustomWidget(configItem.widgetNamespace)) {
         const found = widgets.find(
           (e) =>
             e.widgetNamespace === configItem.widgetNamespace && e.widgetId === configItem.widgetId

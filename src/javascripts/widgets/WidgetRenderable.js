@@ -2,10 +2,13 @@ import { get, cloneDeep } from 'lodash';
 import { deepFreeze } from 'utils/Freeze';
 import { applyDefaultValues } from './WidgetParametersUtils';
 import { toInternalFieldType } from './FieldTypes';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace, isCustomWidget } from 'features/widget-renderer';
 
-const CUSTOM_NAMESPACES = [WidgetNamespace.EXTENSION, WidgetNamespace.APP];
-const EDITOR_NAMESPACES = [WidgetNamespace.EDITOR_BUILTIN, ...CUSTOM_NAMESPACES];
+const EDITOR_NAMESPACES = [
+  WidgetNamespace.EDITOR_BUILTIN,
+  WidgetNamespace.EXTENSION,
+  WidgetNamespace.APP,
+];
 
 // Given EditorInterface controls and a list of all widgets in a space
 // builds an array of "renderables". A "renderable" is a data structure
@@ -104,7 +107,7 @@ function convertToRenderable(item, widgets) {
 
 export function buildSidebarRenderables(sidebar, widgets) {
   return sidebar
-    .filter((item) => CUSTOM_NAMESPACES.includes(item.widgetNamespace))
+    .filter((item) => isCustomWidget(item.widgetNamespace))
     .map((item) => convertToRenderable(item, widgets));
 }
 

@@ -5,7 +5,7 @@ import { Subheading, Paragraph, TextLink } from '@contentful/forma-36-react-comp
 import SidebarWidgetItem from './SidebarWidgetItem';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace, isCustomWidget } from 'features/widget-renderer';
 
 const styles = {
   customSidebarTitle: css({
@@ -34,7 +34,7 @@ function WidgetItem({ widget, onRemoveClick, onConfigureClick, index }) {
       {widget.widgetNamespace === WidgetNamespace.SIDEBAR_BUILTIN && (
         <Paragraph>{widget.description}</Paragraph>
       )}
-      {[WidgetNamespace.EXTENSION, WidgetNamespace.APP].includes(widget.widgetNamespace) && (
+      {isCustomWidget(widget.widgetNamespace) && (
         <>
           {widget.widgetNamespace === WidgetNamespace.EXTENSION && (
             <Paragraph className={styles.widgetType}>UI Extension</Paragraph>

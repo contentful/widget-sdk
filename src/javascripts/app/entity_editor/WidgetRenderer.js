@@ -8,7 +8,7 @@ import WidgetRenderWarning from 'widgets/WidgetRenderWarning';
 import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIFrameRenderer';
 import * as WidgetLocations from 'widgets/WidgetLocations';
 import * as LoadEventTracker from 'app/entity_editor/LoadEventTracker';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace, isCustomWidget } from 'features/widget-renderer';
 import { toRendererWidget } from 'widgets/WidgetCompat';
 
 const { createLinksRenderedEvent, createWidgetLinkRenderEventsHandler } = LoadEventTracker;
@@ -40,7 +40,7 @@ function WidgetRendererInternal(props) {
   if (problem) {
     trackLinksRendered();
     return <WidgetRenderWarning message={problem}></WidgetRenderWarning>;
-  } else if ([WidgetNamespace.EXTENSION, WidgetNamespace.APP].includes(widgetNamespace)) {
+  } else if (isCustomWidget(widgetNamespace)) {
     trackLinksRendered();
     const $rootScope = getModule('$rootScope');
     const spaceContext = getModule('spaceContext');

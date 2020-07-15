@@ -20,7 +20,7 @@ import SidebarWidgetTypes from './SidebarWidgetTypes';
 import EntryInfoPanelContainer from './EntryInfoPanel/EntryInfoPanelContainer';
 import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIFrameRenderer';
 import CommentsPanelContainer from './CommentsPanel/CommentsPanelContainer';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace, isCustomWidget } from 'features/widget-renderer';
 import { toRendererWidget } from 'widgets/WidgetCompat';
 
 const styles = {
@@ -226,7 +226,7 @@ export default class EntrySidebar extends Component {
       if (item.widgetNamespace === WidgetNamespace.SIDEBAR_BUILTIN) {
         return this.renderBuiltinWidget(item);
       }
-      if ([WidgetNamespace.EXTENSION, WidgetNamespace.APP].includes(item.widgetNamespace)) {
+      if (isCustomWidget(item.widgetNamespace)) {
         return this.renderExtensionWidget(item);
       }
       return null;

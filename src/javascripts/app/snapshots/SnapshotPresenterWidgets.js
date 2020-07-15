@@ -13,7 +13,7 @@ import SnapshotPresenterLocation from './SnapshotPresenterLocation';
 import SnapshotPresenterMarkdown from './SnapshotPresenterMarkdown';
 import SnapshotPresenterRichText from './SnapshotPresenterRichText';
 import SnapshotPresenterStandard from './SnapshotPresenterStandard';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { isCustomWidget } from 'features/widget-renderer';
 
 const styles = {
   rtl: css({
@@ -32,7 +32,7 @@ const SnapshotPresenterWidgets = ({
 }) => {
   const { field, widgetNamespace, descriptor, parameters, settings } = widget;
 
-  if ([WidgetNamespace.EXTENSION, WidgetNamespace.APP].includes(widgetNamespace)) {
+  if (isCustomWidget(widgetNamespace)) {
     return (
       <SnapshotPresenterExtension
         descriptor={descriptor}

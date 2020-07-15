@@ -8,7 +8,7 @@ import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha
 import tokens from '@contentful/forma-36-tokens';
 import StateLink from 'app/common/StateLink';
 import { css } from 'emotion';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace, isCustomWidget } from 'features/widget-renderer';
 
 const styles = {
   appIcon: css({
@@ -61,7 +61,7 @@ export default class FieldDialogWidgetItem extends Component {
       <li
         className={classNames('field-dialog__widget-item', {
           'is-selected': isSelected,
-          'is-custom': [WidgetNamespace.APP, WidgetNamespace.EXTENSION].includes(widget.namespace),
+          'is-custom': isCustomWidget(widget.namespace),
         })}
         data-current-widget-index={index}
         onClick={onClick}

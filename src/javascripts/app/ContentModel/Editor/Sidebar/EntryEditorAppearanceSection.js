@@ -18,7 +18,7 @@ import EditorInstanceParametersConfigurationModal from './EditorInstanceParamete
 import { reducer, actions } from './EntryEditorAppearanceReducer';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace, isCustomWidget } from 'features/widget-renderer';
 
 const Options = {
   default: 'default',
@@ -48,9 +48,7 @@ function getInitialValues(configuration, widgets) {
   configuration = configuration || {};
   configuration.settings = configuration.settings || {};
 
-  const isCustom = [WidgetNamespace.EXTENSION, WidgetNamespace.APP].includes(
-    configuration.widgetNamespace
-  );
+  const isCustom = isCustomWidget(configuration.widgetNamespace);
   const isValid = !!validWidgets.find((w) => {
     return w.namespace === configuration.widgetNamespace && w.id === configuration.widgetId;
   });
