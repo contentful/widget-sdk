@@ -4,17 +4,24 @@ import {
   LOADING_TITLE,
   MANAGE_APPS_TITLE,
 } from './AppsNavigationItem';
+import { WidgetLocation } from 'features/widget-renderer';
 
 describe('AppsNavigationItem', () => {
   describe('building children', () => {
     const appWithoutNavItem = {
-      navigationItem: null,
+      locations: [{ location: WidgetLocation.ENTRY_SIDEBAR }],
     };
     const appWithNavItem = {
-      navigationItem: {
-        name: 'my app',
-        path: '/',
-      },
+      locations: [
+        { location: WidgetLocation.ENTRY_SIDEBAR },
+        {
+          location: WidgetLocation.PAGE,
+          navigationItem: {
+            name: 'my app',
+            path: '/',
+          },
+        },
+      ],
     };
 
     it('adds "explore apps" child for non-admins', () => {
@@ -57,7 +64,7 @@ describe('AppsNavigationItem', () => {
     it('uses name as child title', () => {
       const [, , { title }] = buildChildren([appWithNavItem], {});
 
-      expect(title).toEqual(appWithNavItem.navigationItem.name);
+      expect(title).toEqual(appWithNavItem.locations[1].navigationItem.name);
     });
 
     it('uses path as routing info', () => {
@@ -69,7 +76,7 @@ describe('AppsNavigationItem', () => {
         },
       ] = buildChildren([appWithNavItem], {});
 
-      expect(path).toEqual(appWithNavItem.navigationItem.path);
+      expect(path).toEqual(appWithNavItem.locations[1].navigationItem.path);
     });
   });
 });
