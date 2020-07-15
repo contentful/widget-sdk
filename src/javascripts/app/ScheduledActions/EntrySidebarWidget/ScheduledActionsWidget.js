@@ -18,7 +18,7 @@ import {
 import tokens from '@contentful/forma-36-tokens';
 
 import StatusWidget from './StatusWidget';
-import ScheduledActionDialog from './ScheduledActionDialog';
+import ScheduledActionDialog from './ScheduledActionDialog/ScheduledActionWidgetJobDialog';
 
 import * as EndpointFactory from 'data/EndpointFactory';
 
