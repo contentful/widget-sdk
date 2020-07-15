@@ -146,11 +146,15 @@ function logEventPayloadSize(event, safePayload) {
           .flatMap(([_, v]) => Object.values(v || {}))
           .some((v) => _.isFunction(v));
 
+        // TODO: Consider different criteria for considering Snowplow events with "contexts" as bloated.
         if (size > 5000 || hasMethods) {
+          const hasContexts = _.isArray(safePayload.contexts);
           logger.logWarn('Potentially bloated tracking event payload', {
             event,
             size,
             hasMethods,
+            contextEventsCount: hasContexts ? safePayload.contexts.length : 0,
+            contextEventsSize: hasContexts ? JSON.stringify(safePayload.contexts).length : 0,
           });
         }
       } catch (error) {
