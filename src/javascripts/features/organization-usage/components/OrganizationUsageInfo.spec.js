@@ -57,7 +57,7 @@ describe('OrganisationUsageInfo', () => {
     const { getByTestId } = renderComp(defaultData);
     fireEvent.click(getByTestId('fair_use_policy_link'));
     expect(track).toHaveBeenCalledTimes(1);
-    expect(track).toHaveBeenCalledWith('usage:fair_use_policy_clicked');
+    expect(track).toHaveBeenCalledWith('usage:fair_use_policy_clicked', { source: 'API Requests' });
   });
 
   it('should show skeleton when loading', () => {

@@ -49,8 +49,9 @@ export const AssetBandwidthSection = () => {
   const { limit, usage, uom } = assetBandwidthData;
   const withUnit = partialRight(shortenStorageUnit, uom);
   const handleClick = () => {
-    track('usage:fair_use_policy_clicked');
+    track('usage:fair_use_policy_clicked', { source: 'Asset Bandwidth' });
   };
+
   return (
     <Typography>
       <Heading element="h2" className={styles.heading}>

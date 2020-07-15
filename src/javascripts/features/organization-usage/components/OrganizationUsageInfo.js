@@ -36,7 +36,7 @@ export const OrganizationUsageInfo = () => {
   const limitedUsage = !!apiRequestIncludedLimit;
 
   const handleClick = () => {
-    track('usage:fair_use_policy_clicked');
+    track('usage:fair_use_policy_clicked', { source: 'API Requests' });
   };
 
   return (
