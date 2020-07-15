@@ -307,6 +307,66 @@ describe('AppEditorInterfaces', () => {
       });
     });
 
+    it('removes references from controls, sidebar and editor only for current app', async () => {
+      const ANOTHER_APP_ID = 'another-app-id';
+
+      cma.getEditorInterfaces.mockImplementationOnce(() =>
+        Promise.resolve({
+          items: [
+            {
+              sys: { contentType: { sys: { id: 'CT1' } } },
+              editors: [
+                { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
+                { widgetNamespace: NAMESPACE_APP, widgetId: ANOTHER_APP_ID },
+              ],
+              sidebar: [
+                { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: APP_ID },
+                { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: ANOTHER_APP_ID },
+                { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
+                { widgetNamespace: NAMESPACE_APP, widgetId: ANOTHER_APP_ID },
+              ],
+            },
+            {
+              sys: { contentType: { sys: { id: 'CT2' } } },
+              controls: [
+                { fieldId: 'title' },
+                { fieldId: 'author', widgetNamespace: NAMESPACE_BUILTIN, widgetId: APP_ID },
+                { fieldId: 'date', widgetNamespace: NAMESPACE_APP, widgetId: ANOTHER_APP_ID },
+              ],
+              editors: [
+                { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
+                { widgetNamespace: NAMESPACE_APP, widgetId: ANOTHER_APP_ID },
+              ],
+            },
+          ],
+        })
+      );
+
+      await remove();
+
+      expect(cma.updateEditorInterface).toBeCalledTimes(2);
+
+      expect(cma.updateEditorInterface).toBeCalledWith({
+        sys: { contentType: { sys: { id: 'CT1' } } },
+        sidebar: [
+          { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: APP_ID },
+          { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: ANOTHER_APP_ID },
+          { widgetNamespace: NAMESPACE_APP, widgetId: ANOTHER_APP_ID },
+        ],
+        editors: [{ widgetNamespace: NAMESPACE_APP, widgetId: ANOTHER_APP_ID }],
+      });
+
+      expect(cma.updateEditorInterface).toBeCalledWith({
+        sys: { contentType: { sys: { id: 'CT2' } } },
+        controls: [
+          { fieldId: 'title' },
+          { fieldId: 'author', widgetNamespace: NAMESPACE_BUILTIN, widgetId: APP_ID },
+          { fieldId: 'date', widgetNamespace: NAMESPACE_APP, widgetId: ANOTHER_APP_ID },
+        ],
+        editors: [{ widgetNamespace: NAMESPACE_APP, widgetId: ANOTHER_APP_ID }],
+      });
+    });
+
     it('ignores failures when getting/updating editor interfaces (best effort)', async () => {
       cma.getEditorInterfaces.mockImplementationOnce(() =>
         Promise.resolve({
