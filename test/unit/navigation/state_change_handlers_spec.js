@@ -55,24 +55,6 @@ describe('navigation/stateChangeHandlers', () => {
     });
   });
 
-  describe('error handling', () => {
-    it('logs exceptions raised during routing', function () {
-      this.logger.logException = sinon.stub();
-
-      const error = new Error();
-      $rootScope.$emit('$stateChangeError', {}, {}, {}, {}, error);
-      sinon.assert.calledWith(this.logger.logException, error);
-    });
-
-    it('logs servers errors encountered during routing', function () {
-      this.logger.logServerError = sinon.stub();
-
-      const error = { statusCode: 500 };
-      $rootScope.$emit('$stateChangeError', {}, {}, {}, {}, error);
-      sinon.assert.called(this.logger.logServerError);
-    });
-  });
-
   describe('redirections', () => {
     it('does not close modals', () => {
       sinon.assert.notCalled(modalCloseStub);

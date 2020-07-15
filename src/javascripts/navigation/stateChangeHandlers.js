@@ -134,7 +134,7 @@ function stateChangeStartHandler(event, toState, toStateParams, fromState, fromS
 /**
  * Switches to the first space's entry list if there is a navigation error
  */
-function stateChangeErrorHandler(event, toState, toParams, fromState, fromParams, error) {
+function stateChangeErrorHandler(event, toState, toParams, _fromState, _fromParams, error) {
   event.preventDefault();
 
   const $state = getModule('$state');
@@ -149,48 +149,7 @@ function stateChangeErrorHandler(event, toState, toParams, fromState, fromParams
     $state.go('spaces.detail.' + matchedSection[1] + '.list', { spaceId: toParams.spaceId });
   } else {
     // Otherwise we redirect the user to the homepage
-    // TODO We should notify the user of what happened and maybe
-    // rethrow the exception. As a temporary measure we log the error
-    // to figure out what errors are actually thrown.
     $state.go('error');
-    logRoutingError(
-      event,
-      error,
-      { state: toState, params: toParams },
-      { state: fromState, params: fromParams }
-    );
-  }
-}
-
-function logRoutingError(event, error, from, to) {
-  const metaData = {
-    error: error,
-    event: {
-      name: event.name,
-    },
-    data: {
-      toState: {
-        name: _.get(to, 'state.name'),
-        params: _.get(to, 'params'),
-      },
-      fromState: {
-        name: _.get(from, 'state.name'),
-        params: _.get(from, 'params'),
-      },
-    },
-  };
-
-  if (error && error.statusCode) {
-    // $http requests may return rejections that are *not* instances of
-    // 'Error'. We record them separately
-    // property.
-    logger.logServerError('error during routing', metaData);
-  } else if (error) {
-    metaData.groupingHash = 'routing-event';
-    logger.logException(error, metaData);
-  } else {
-    // Error might not be defined for $stateNotFound events
-    logger.logError('State change error', metaData);
   }
 }
 
