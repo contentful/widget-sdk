@@ -66,7 +66,7 @@ export const toRendererWidget = (legacy: any): Widget => {
 
   if (legacy.namespace === WidgetNamespace.APP) {
     widget.slug = legacy.appId;
-    widget.iconUrl = widget.iconUrl;
+    widget.iconUrl = legacy.appIconUrl;
   }
 
   return widget;
