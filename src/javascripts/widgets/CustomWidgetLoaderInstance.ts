@@ -37,7 +37,7 @@ export async function getCustomWidgetLoader() {
   if (!loader) {
     const client = createPlainClient({ accessToken });
 
-    loader = new WidgetLoader(client, marketplaceDataProvider, spaceId, environmentId);
+    loader = new WidgetLoader(client, getMarketplaceDataProvider(), spaceId, environmentId);
 
     set(cache, cachePath, loader);
   }

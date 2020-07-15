@@ -26,6 +26,13 @@ describe('app/entity_editor/DataLoader', () => {
       getOrgFeature: () => Promise.resolve(true),
     });
 
+    this.system.set('widgets/CustomWidgetLoaderInstance', {
+      getCustomWidgetLoader: () =>
+        Promise.resolve({
+          getWithEditorInterface: () => Promise.resolve([]),
+        }),
+    });
+
     this.localeStore = (await this.system.import('services/localeStore')).default;
 
     const DataLoader = await this.system.import('app/entity_editor/DataLoader');
