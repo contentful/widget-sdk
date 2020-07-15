@@ -7,18 +7,18 @@ import {
   fireEvent,
   waitForElementToBeRemoved,
 } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { flatten, concat } from 'lodash';
 
 import { ContentTypesPage as Page } from './ContentTypeListPage';
 
 import * as spaceContextMocked from 'ng/spaceContext';
 import * as contentTypeFactory from 'test/helpers/contentTypeFactory';
-import { getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
+import * as PricingService from 'services/PricingService';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import createResourceService from 'services/ResourceService';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import * as fake from 'test/helpers/fakeFactory';
-import userEvent from '@testing-library/user-event';
 import * as trackCTA from 'analytics/trackCTA';
 
 jest.mock('lodash/debounce', () => (fn) => fn);
@@ -33,12 +33,9 @@ jest.mock('services/OrganizationRoles', () => ({
 
 const trackTargetedCTAClick = jest.spyOn(trackCTA, 'trackTargetedCTAClick');
 
-jest.mock('account/pricing/PricingDataProvider', () => ({
-  getSingleSpacePlan: jest.fn().mockResolvedValue({ name: 'Medium' }),
-}));
-
 jest.mock('utils/ResourceUtils', () => ({
   isLegacyOrganization: jest.fn().mockReturnValue(false),
+  getResourceLimits: jest.fn((r) => r.limits),
 }));
 
 jest.mock('services/ResourceService', () => {
@@ -88,7 +85,17 @@ function renderComponent({ props = {}, items = [] }) {
 }
 
 describe('ContentTypeList Page', () => {
-  createResourceService().get.mockResolvedValue({ usage: 1, limits: { maximum: 1 } });
+  beforeEach(() => {
+    createResourceService().get.mockResolvedValue({ usage: 1, limits: { maximum: 1 } });
+
+    jest.spyOn(PricingService, 'nextSpacePlanForResource').mockResolvedValue({
+      nextSpacePlan: null,
+    });
+  });
+
+  afterEach(() => {
+    PricingService.nextSpacePlanForResource.mockRestore();
+  });
 
   it('renders loader', () => {
     const [{ container }, getStub] = renderComponent({ items: mockContentTypeList });
@@ -176,99 +183,94 @@ describe('ContentTypeList Page', () => {
   });
 
   describe('Limit banner', () => {
-    it('does not show up if they are not at the 90% limit', async () => {
-      getSingleSpacePlan.mockResolvedValue({ name: 'Medium' });
-      createResourceService().get.mockResolvedValue({ usage: 43, limits: { maximum: 48 } });
-      isOwnerOrAdmin.mockReturnValue(true);
+    describe('with next available space plan', () => {
+      beforeEach(() => {
+        PricingService.nextSpacePlanForResource.mockResolvedValueOnce({
+          nextSpacePlan: {
+            name: 'Some space plan',
+          },
+        });
+      });
 
-      renderComponent({ props: {}, items: [] });
-      await waitForElementToBeRemoved(screen.getByTestId('content-loader'));
+      it('does not show up if they are not at the 90% threshold', async () => {
+        createResourceService().get.mockResolvedValue({ usage: 43, limits: { maximum: 48 } });
+        isOwnerOrAdmin.mockReturnValue(true);
 
-      expect(screen.queryByTestId('content-type-limit-banner')).toBeNull();
+        renderComponent({ props: {}, items: [] });
+        await waitForElementToBeRemoved(screen.getByTestId('content-loader'));
+
+        expect(screen.queryByTestId('content-type-limit-banner')).toBeNull();
+      });
+
+      it('does not show up even if they are at above the 90% threshold', async () => {
+        isOwnerOrAdmin.mockReturnValue(true);
+        createResourceService().get.mockResolvedValue({ usage: 46, limits: { maximum: 48 } });
+        renderComponent({ props: {}, items: [] });
+        await waitForElementToBeRemoved(screen.getByTestId('content-loader'));
+
+        expect(screen.queryByTestId('content-type-limit-banner')).toBeNull();
+      });
     });
 
-    it('does not show up if they are not on a medium or large space', async () => {
-      getSingleSpacePlan.mockResolvedValue({ name: 'Small' });
-      createResourceService().get.mockResolvedValue({ usage: 44, limits: { maximum: 48 } });
-      isOwnerOrAdmin.mockReturnValue(true);
+    describe('with no next available space plan', () => {
+      // The default in the topmost `beforeEach` is no next space plan
+      it('does not show up if they are not an owner or admin', async () => {
+        createResourceService().get.mockResolvedValue({ usage: 44, limits: { maximum: 48 } });
+        isOwnerOrAdmin.mockReturnValue(false);
 
-      renderComponent({ props: {}, items: [] });
-      await waitForElementToBeRemoved(screen.getByTestId('content-loader'));
+        renderComponent({ props: {}, items: [] });
+        await waitForElementToBeRemoved(screen.getByTestId('content-loader'));
 
-      expect(screen.queryByTestId('content-type-limit-banner')).toBeNull();
-    });
+        expect(screen.queryByTestId('content-type-limit-banner')).toBeNull();
+      });
 
-    it('does not show up if they are not an owner or admin', async () => {
-      getSingleSpacePlan.mockResolvedValue({ name: 'Large' });
-      createResourceService().get.mockResolvedValue({ usage: 44, limits: { maximum: 48 } });
-      isOwnerOrAdmin.mockReturnValue(false);
+      it('does not show up if the org is legacy', async () => {
+        createResourceService().get.mockResolvedValue({ usage: 48, limits: { maximum: 48 } });
+        isOwnerOrAdmin.mockReturnValue(true);
+        isLegacyOrganization.mockReturnValueOnce(true);
 
-      renderComponent({ props: {}, items: [] });
-      await waitForElementToBeRemoved(screen.getByTestId('content-loader'));
+        renderComponent({ props: {}, items: [] });
+        await waitForElementToBeRemoved(screen.getByTestId('content-loader'));
 
-      expect(screen.queryByTestId('content-type-limit-banner')).toBeNull();
-    });
+        expect(screen.queryByTestId('content-type-limit-banner')).toBeNull();
+      });
 
-    it('does not show up if the org is legacy', async () => {
-      getSingleSpacePlan.mockResolvedValue({ name: 'Large' });
-      createResourceService().get.mockResolvedValue({ usage: 48, limits: { maximum: 48 } });
-      isOwnerOrAdmin.mockReturnValue(true);
-      isLegacyOrganization.mockReturnValueOnce(true);
+      it('shows up if they are at the 90% threshold', async () => {
+        isOwnerOrAdmin.mockReturnValue(true);
+        createResourceService().get.mockResolvedValue({ usage: 44, limits: { maximum: 48 } });
 
-      renderComponent({ props: {}, items: [] });
-      await waitForElementToBeRemoved(screen.getByTestId('content-loader'));
+        renderComponent({ props: {}, items: [] });
+        await waitForElementToBeRemoved(screen.getByTestId('content-loader'));
 
-      expect(screen.queryByTestId('content-type-limit-banner')).toBeNull();
-    });
+        expect(screen.queryByTestId('content-type-limit-banner')).toBeVisible();
+      });
 
-    it('shows up if they are at the 90% limit and a medium space', async () => {
-      isOwnerOrAdmin.mockReturnValue(true);
-      getSingleSpacePlan.mockResolvedValue({ name: 'Medium' });
-      createResourceService().get.mockResolvedValue({ usage: 44, limits: { maximum: 48 } });
-      renderComponent({ props: {}, items: [] });
-      await waitForElementToBeRemoved(screen.getByTestId('content-loader'));
+      it('shows up with a link to sales if they are an owner or admin', async () => {
+        createResourceService().get.mockResolvedValue({ usage: 44, limits: { maximum: 48 } });
+        isOwnerOrAdmin.mockReturnValue(true);
 
-      expect(screen.queryByTestId('content-type-limit-banner')).toBeVisible();
-    });
+        renderComponent({ props: {}, items: [] });
+        await waitForElementToBeRemoved(screen.getByTestId('content-loader'));
 
-    it('shows up if they are at the 90% limit and a large space', async () => {
-      isOwnerOrAdmin.mockReturnValue(true);
-      getSingleSpacePlan.mockResolvedValue({ name: 'Large' });
-      createResourceService().get.mockResolvedValue({ usage: 44, limits: { maximum: 48 } });
+        expect(screen.queryByTestId('content-type-limit-banner')).toBeVisible();
+        expect(screen.queryByTestId('link-to-sales')).toBeVisible();
+      });
 
-      renderComponent({ props: {}, items: [] });
-      await waitForElementToBeRemoved(screen.getByTestId('content-loader'));
+      it('tracks click on the link to sales', async () => {
+        createResourceService().get.mockResolvedValue({ usage: 44, limits: { maximum: 48 } });
+        isOwnerOrAdmin.mockReturnValue(true);
+        const fakeSpaceId = 'fakeSpaceId';
 
-      expect(screen.queryByTestId('content-type-limit-banner')).toBeVisible();
-    });
+        renderComponent({ props: { spaceId: fakeSpaceId }, items: [] });
+        await waitForElementToBeRemoved(screen.getByTestId('content-loader'));
 
-    it('shows up with a link to sales if they are an owner or admin', async () => {
-      getSingleSpacePlan.mockResolvedValue({ name: 'Large' });
-      createResourceService().get.mockResolvedValue({ usage: 44, limits: { maximum: 48 } });
-      isOwnerOrAdmin.mockReturnValue(true);
+        expect(screen.queryByTestId('content-type-limit-banner')).toBeVisible();
+        userEvent.click(screen.getByTestId('link-to-sales'));
 
-      renderComponent({ props: {}, items: [] });
-      await waitForElementToBeRemoved(screen.getByTestId('content-loader'));
-
-      expect(screen.queryByTestId('content-type-limit-banner')).toBeVisible();
-      expect(screen.queryByTestId('link-to-sales')).toBeVisible();
-    });
-
-    it('tracks click on the link to sales', async () => {
-      getSingleSpacePlan.mockResolvedValue({ name: 'Large' });
-      createResourceService().get.mockResolvedValue({ usage: 44, limits: { maximum: 48 } });
-      isOwnerOrAdmin.mockReturnValue(true);
-      const fakeSpaceId = 'fakeSpaceId';
-
-      renderComponent({ props: { spaceId: fakeSpaceId }, items: [] });
-      await waitForElementToBeRemoved(screen.getByTestId('content-loader'));
-
-      expect(screen.queryByTestId('content-type-limit-banner')).toBeVisible();
-      userEvent.click(screen.getByTestId('link-to-sales'));
-
-      expect(trackTargetedCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
-        organizationId: mockOrganization.sys.id,
-        spaceId: fakeSpaceId,
+        expect(trackTargetedCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
+          organizationId: mockOrganization.sys.id,
+          spaceId: fakeSpaceId,
+        });
       });
     });
   });

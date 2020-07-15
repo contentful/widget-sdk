@@ -34,7 +34,7 @@ describe('SpacePlanSelector', () => {
 
     userEvent.click(screen.getAllByTestId('space-plan-item')[0]);
 
-    expect(onSelectPlan).toBeCalledWith(plan, null);
+    expect(onSelectPlan).toBeCalledWith(plan);
   });
 
   it('should show the micro and small CTA if shouldShowMicroSmallCTA is true', () => {
@@ -60,14 +60,6 @@ describe('SpacePlanSelector', () => {
       ],
     });
 
-    const nonRecommendablePlan = createPlan({
-      price: 10,
-      includedResources: [
-        { type: 'Records', number: 10 },
-        { type: 'Locales', number: 10 },
-      ],
-    });
-
     const recommendedPlan = createPlan({
       price: 20,
       includedResources: [
@@ -76,19 +68,12 @@ describe('SpacePlanSelector', () => {
       ],
     });
 
-    const largerPlan = createPlan({
-      price: 30,
-      includedResources: [
-        { type: 'Records', number: 30 },
-        { type: 'Locales', number: 30 },
-      ],
-    });
-
     it('should show the ExplainRecommendation note if the space plan is changing and a plan is recommendable', () => {
       build({
         space,
         isChanging: true,
         currentPlan,
+        recommendedPlan,
         spaceRatePlans: [currentPlan, recommendedPlan],
         spaceResources,
       });
@@ -101,45 +86,12 @@ describe('SpacePlanSelector', () => {
         space,
         isChanging: false,
         currentPlan,
+        recommendedPlan,
         spaceRatePlans: [currentPlan, recommendedPlan],
         spaceResources,
       });
 
       expect(screen.queryByTestId('explain-recommendation')).toBeNull();
-    });
-
-    it('should call onSelectPlan with the recommendedPlan when selected', () => {
-      const onSelectPlan = jest.fn();
-
-      build({
-        space,
-        isChanging: true,
-        currentPlan,
-        spaceRatePlans: [currentPlan, recommendedPlan, largerPlan],
-        spaceResources,
-        onSelectPlan,
-      });
-
-      userEvent.click(screen.getAllByTestId('space-plan-item')[2]);
-
-      expect(onSelectPlan).toBeCalledWith(largerPlan, recommendedPlan);
-    });
-
-    it('should call onSelectPlan with null if there is no recommendable plan', () => {
-      const onSelectPlan = jest.fn();
-
-      build({
-        space,
-        isChanging: true,
-        currentPlan,
-        spaceRatePlans: [currentPlan, nonRecommendablePlan],
-        spaceResources,
-        onSelectPlan,
-      });
-
-      userEvent.click(screen.getAllByTestId('space-plan-item')[1]);
-
-      expect(onSelectPlan).toBeCalledWith(nonRecommendablePlan, null);
     });
   });
 

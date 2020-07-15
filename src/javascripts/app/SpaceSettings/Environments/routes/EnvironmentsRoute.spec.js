@@ -11,9 +11,9 @@ import createResourceService from 'services/ResourceService';
 import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService';
 import { canCreate } from 'utils/ResourceUtils';
 import { createPaginationEndpoint } from '__mocks__/data/EndpointFactory';
-import { getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
 import * as Fake from 'test/helpers/fakeFactory';
 import * as trackCTA from 'analytics/trackCTA';
+import * as PricingService from 'services/PricingService';
 
 jest.mock('services/ResourceService', () => ({
   __esModule: true, // this property makes it work
@@ -57,10 +57,6 @@ jest.mock('../DeleteDialog', () => ({
   openDeleteEnvironmentDialog: jest.fn(),
 }));
 
-jest.mock('account/pricing/PricingDataProvider', () => ({
-  getSingleSpacePlan: jest.fn(),
-}));
-
 const mockSpacePlan = Fake.Space();
 
 describe('EnvironmentsRoute', () => {
@@ -81,8 +77,14 @@ describe('EnvironmentsRoute', () => {
     },
   };
 
+  beforeEach(() => {
+    jest.spyOn(PricingService, 'nextSpacePlanForResource').mockImplementation(async () => {});
+  });
+
   afterEach(() => {
     defaultProps.goToSpaceDetail.mockClear();
+
+    PricingService.nextSpacePlanForResource.mockRestore();
   });
 
   const generateEnvironments = (...args) => {
@@ -272,8 +274,10 @@ describe('EnvironmentsRoute', () => {
       expect(queryByTestId('openCreateDialog')).toBeNull();
     });
 
-    it('should render upgrade space button when user is admin', async () => {
-      getSingleSpacePlan.mockReturnValueOnce(mockSpacePlan);
+    it('should render upgrade space button when user is admin and there is an available next space plan', async () => {
+      PricingService.nextSpacePlanForResource.mockResolvedValueOnce({
+        nextSpacePlan: mockSpacePlan,
+      });
       defaultProps.canUpgradeSpace = true;
 
       await renderEnvironmentsComponent({
@@ -298,8 +302,11 @@ describe('EnvironmentsRoute', () => {
       expect(screen.queryByTestId('subscriptionLink')).toBeNull();
     });
 
-    it('should render talk to us button when user is admin/owner and space is Large', async () => {
-      getSingleSpacePlan.mockReturnValueOnce(Fake.Space({ name: 'Large' }));
+    it('should render talk to us button when user is admin/owner and there is no available next space plan', async () => {
+      PricingService.nextSpacePlanForResource.mockResolvedValueOnce({
+        nextSpacePlan: null,
+      });
+
       defaultProps.canUpgradeSpace = true;
 
       await renderEnvironmentsComponent({

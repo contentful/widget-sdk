@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { explanationReasonText } from './utils';
+import { recommendationReasonText } from 'services/PricingService';
 
 import { Note } from '@contentful/forma-36-react-components';
 
 export default function ExplainRecommendation({ recommendedPlan, resources }) {
-  const explanation = explanationReasonText(resources);
+  const explanation = recommendationReasonText(resources);
 
   if (explanation === '') {
     return null;

@@ -5,6 +5,7 @@ import { getVariation } from 'LaunchDarkly';
 import { PRICING_2020_RELEASED, PAYING_PREV_V2_ORG } from 'featureFlags';
 import SpacePlanSelector from '../shared/SpacePlanSelector';
 import ConfirmScreen from './ConfirmScreen';
+import * as PricingService from 'services/PricingService';
 
 import {
   Modal,
@@ -62,6 +63,7 @@ const initialFetch = (organization, space, basePlan) => async () => {
     freeSpaceResource,
     subscriptionPlans,
     rawSpaceRatePlans,
+    recommendedPlan,
     isCommunityPlanEnabled,
     isPayingPreviousToV2,
   ] = await Promise.all([
@@ -69,6 +71,7 @@ const initialFetch = (organization, space, basePlan) => async () => {
     orgResources.get(FREE_SPACE_IDENTIFIER),
     getSubscriptionPlans(orgEndpoint),
     getSpaceRatePlans(orgEndpoint, space.sys.id),
+    PricingService.recommendedSpacePlan(organizationId, space.sys.id),
     getVariation(PRICING_2020_RELEASED, { organizationId }),
     getVariation(PAYING_PREV_V2_ORG, { organizationId }),
   ]);
@@ -90,6 +93,7 @@ const initialFetch = (organization, space, basePlan) => async () => {
   return {
     spaceResources,
     spaceRatePlans,
+    recommendedPlan,
     currentSubscriptionPrice,
     currentSpaceSubscriptionPlan,
     freeSpaceResource,
@@ -180,13 +184,13 @@ export default function Wizard(props) {
               spaceRatePlans={data.spaceRatePlans}
               freeSpacesResource={data.freeSpaceResource}
               selectedPlan={selectedPlan}
-              onSelectPlan={(plan, recommendedPlan) => {
+              onSelectPlan={(plan) => {
                 trackWizardEvent(WIZARD_INTENT.CHANGE, WIZARD_EVENTS.SELECT_PLAN, sessionId, {
                   selectedPlan: plan,
 
                   // TODO: get rid of this here and in the tracking
                   currentPlan: null,
-                  recommendedPlan,
+                  recommendedPlan: data.recommendedPlan,
                 });
 
                 setSelectedPlan(plan);
@@ -198,6 +202,7 @@ export default function Wizard(props) {
               spaceResources={data.spaceResources}
               isCommunityPlanEnabled={data.isCommunityPlanEnabled}
               shouldShowMicroSmallCTA={data.shouldShowMicroSmallCTA}
+              recommendedPlan={data.recommendedPlan}
               isChanging
             />
           </TabPanel>

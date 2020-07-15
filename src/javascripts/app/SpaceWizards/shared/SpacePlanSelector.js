@@ -17,7 +17,7 @@ import BillingInfo from './BillingInfo';
 import NoMorePlans from './NoMorePlans';
 import ExplainRecommendation from './ExplainRecommendation';
 
-import { getHighestPlan, getRecommendedPlan } from '../shared/utils';
+import { getHighestPlan } from '../shared/utils';
 
 const styles = {
   textCenter: css({
@@ -43,6 +43,7 @@ export default function SpacePlanSelector(props) {
     goToBillingPage,
     onSelectPlan,
     shouldShowMicroSmallCTA,
+    recommendedPlan,
     isChanging = false,
   } = props;
 
@@ -53,7 +54,6 @@ export default function SpacePlanSelector(props) {
     highestPlan.unavailabilityReasons &&
     highestPlan.unavailabilityReasons.some(({ type }) => type === 'currentPlan');
   const payingOrg = !!organization.isBillable;
-  const recommendedPlan = isChanging ? getRecommendedPlan(spaceRatePlans, spaceResources) : null;
 
   return (
     <div data-test-id="space-plan-selector" className={styles.container}>
@@ -111,7 +111,7 @@ export default function SpacePlanSelector(props) {
           </div>
         )}
 
-        {payingOrg && recommendedPlan && (
+        {isChanging && payingOrg && recommendedPlan && (
           <div className={styles.marginBottom}>
             <ExplainRecommendation
               currentPlan={currentPlan}
@@ -129,7 +129,7 @@ export default function SpacePlanSelector(props) {
             isPayingOrg={payingOrg}
             isSelected={get(selectedPlan, 'sys.id') === plan.sys.id}
             isRecommended={get(recommendedPlan, 'sys.id') === plan.sys.id}
-            onSelect={(plan) => onSelectPlan(plan, recommendedPlan)}
+            onSelect={(plan) => onSelectPlan(plan)}
           />
         ))}
       </Typography>
@@ -144,6 +144,7 @@ SpacePlanSelector.propTypes = {
   freeSpacesResource: PropTypes.object,
   onSelectPlan: PropTypes.func.isRequired,
   currentPlan: PropTypes.object,
+  recommendedPlan: PropTypes.object,
   selectedPlan: PropTypes.object,
   spaceResources: PropTypes.array,
   goToBillingPage: PropTypes.func.isRequired,

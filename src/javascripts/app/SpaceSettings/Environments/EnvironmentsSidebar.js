@@ -50,7 +50,7 @@ export default function EnvironmentsSidebar({
   aliasesEnabled,
   canManageAliases,
   hasOptedInEnv,
-  spacePlan,
+  hasNextSpacePlan,
   spaceId,
   organizationId,
 }) {
@@ -71,8 +71,6 @@ export default function EnvironmentsSidebar({
     OpenUpgradeSpaceDialog();
   };
 
-  const spacePlanIsLarge = spacePlan?.name === 'Large';
-
   return (
     <>
       <Heading element="h2" className={`${css({ marginTop: 0 })} entity-sidebar__heading`}>
@@ -88,11 +86,13 @@ export default function EnvironmentsSidebar({
         </Paragraph>
         {!canCreateEnv && !isLegacyOrganization && (
           <Paragraph testId="upgradeMessage">
-            {canUpgradeSpace
-              ? spacePlanIsLarge
-                ? 'Talk to us about upgrading to an enterprise space plan.'
-                : 'Upgrade the space to add more.'
-              : 'Ask the administrator of your organization to upgrade the space plan.'}
+            {!canUpgradeSpace &&
+              'Ask the administrator of your organization to upgrade the space plan.'}
+            {canUpgradeSpace &&
+              hasNextSpacePlan !== undefined &&
+              (hasNextSpacePlan
+                ? 'Upgrade the space to add more.'
+                : 'Talk to us about upgrading to an enterprise space plan.')}
           </Paragraph>
         )}
       </Typography>
@@ -104,16 +104,16 @@ export default function EnvironmentsSidebar({
       )}
 
       {/** We need to wait for the spacePlan or the button will jump from 'Upgrade space' to 'Talk to us' */}
-      {!canCreateEnv && !isLegacyOrganization && canUpgradeSpace && !!spacePlan && (
+      {!canCreateEnv && !isLegacyOrganization && canUpgradeSpace && hasNextSpacePlan !== undefined && (
         <TrackTargetedCTAImpression
           impressionType={
-            spacePlanIsLarge ? CTA_EVENTS.UPGRADE_TO_ENTERPRISE : CTA_EVENTS.UPGRADE_SPACE_PLAN
+            hasNextSpacePlan ? CTA_EVENTS.UPGRADE_SPACE_PLAN : CTA_EVENTS.UPGRADE_TO_ENTERPRISE
           }
           meta={{ organizationId, spaceId }}>
-          {spacePlanIsLarge ? (
-            <UpgradeToEnterpriseButton handleOnClick={upgradeToEnterpriseOnClick} />
-          ) : (
+          {hasNextSpacePlan ? (
             <UpgradeOnDemandButton handleOnClick={upgradeOnDemandOnClick} />
+          ) : (
+            <UpgradeToEnterpriseButton handleOnClick={upgradeToEnterpriseOnClick} />
           )}
         </TrackTargetedCTAImpression>
       )}
@@ -162,7 +162,7 @@ EnvironmentsSidebar.propTypes = {
   OpenUpgradeSpaceDialog: PropTypes.func.isRequired,
   canManageAliases: PropTypes.bool.isRequired,
   hasOptedInEnv: PropTypes.bool.isRequired,
-  spacePlan: PropTypes.object,
+  hasNextSpacePlan: PropTypes.bool,
   spaceId: PropTypes.string,
   organizationId: PropTypes.string,
 };

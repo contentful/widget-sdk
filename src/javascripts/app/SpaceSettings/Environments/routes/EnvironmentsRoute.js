@@ -38,7 +38,7 @@ import AliasIcon from 'svg/alias.svg';
 export default function EnvironmentsRoute(props) {
   const [
     state,
-    { FetchPermissions, FetchEnvironments, FetchSpacePlan, RefetchEnvironments, ...actions },
+    { FetchPermissions, FetchEnvironments, FetchNextSpacePlan, RefetchEnvironments, ...actions },
   ] = useEnvironmentsRouteState(props);
 
   const { aliasesEnabled, canManageAliases, hasOptedInEnv, pubsubClient } = state;
@@ -47,7 +47,7 @@ export default function EnvironmentsRoute(props) {
     (async () => {
       await FetchPermissions();
       await FetchEnvironments();
-      await FetchSpacePlan();
+      await FetchNextSpacePlan();
     })();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   // top: effect forced to happen only once

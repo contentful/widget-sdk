@@ -51,7 +51,7 @@ export class LocalesListSidebar extends React.Component {
     insideMasterEnv: PropTypes.bool.isRequired,
     isOrgOwnerOrAdmin: PropTypes.bool.isRequired,
     upgradeSpace: PropTypes.func.isRequired,
-    isLargePlan: PropTypes.bool,
+    hasNextSpacePlan: PropTypes.bool,
   };
 
   constructor(props) {
@@ -59,14 +59,14 @@ export class LocalesListSidebar extends React.Component {
   }
 
   renderChangeSpace() {
-    const { localeResource, isOrgOwnerOrAdmin, isLargePlan } = this.props;
+    const { localeResource, isOrgOwnerOrAdmin, hasNextSpacePlan } = this.props;
 
     let instruction = '';
     if (localeResource.limits.maximum > 1) {
       if (isOrgOwnerOrAdmin) {
-        instruction = isLargePlan
-          ? 'Talk to us about upgrading to an enterprise space plan.'
-          : 'Upgrade the space to add more.';
+        instruction = hasNextSpacePlan
+          ? 'Upgrade the space to add more.'
+          : 'Talk to us about upgrading to an enterprise space plan.';
       } else {
         instruction = `Ask the administrator of your organization to upgrade the space to add more locales.`;
       }
@@ -85,10 +85,10 @@ export class LocalesListSidebar extends React.Component {
           <Paragraph>{instruction}</Paragraph>
         </Typography>
         {isOrgOwnerOrAdmin &&
-          (isLargePlan ? (
-            <UpgradeToEnterprise />
-          ) : (
+          (hasNextSpacePlan ? (
             <UpgradeOnDemand upgradeSpace={this.props.upgradeSpace} />
+          ) : (
+            <UpgradeToEnterprise />
           ))}
       </div>
     );

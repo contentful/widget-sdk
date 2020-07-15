@@ -4,7 +4,6 @@ import { when } from 'jest-when';
 import userEvent from '@testing-library/user-event';
 import ChangeOnDemandWizard from './ChangeOnDemandWizard';
 import * as Fake from 'test/helpers/fakeFactory';
-import * as PricingDataProvider from 'account/pricing/PricingDataProvider';
 import * as utils from '../shared/utils';
 import cleanupNotifications from 'test/helpers/cleanupNotifications';
 import { mediumSpaceCurrent, largeSpace, freeSpace } from '../__tests__/fixtures/plans';
@@ -30,10 +29,6 @@ const mockCurrentSpaceSubscriptionPlan = {
 const mockWizardSessionId = 'session_id_1234';
 
 jest.spyOn(utils, 'changeSpacePlan');
-jest.spyOn(PricingDataProvider, 'getSubscriptionPlans');
-jest.spyOn(PricingDataProvider, 'getSpaceRatePlans');
-jest.spyOn(PricingDataProvider, 'calculateTotalPrice');
-jest.spyOn(PricingDataProvider, 'changeSpacePlan');
 
 mockEndpoint.mockRejectedValue();
 when(mockEndpoint)
