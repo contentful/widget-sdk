@@ -195,7 +195,7 @@ export const appRoute = {
       onEnter: [
         'widget',
         (widget) => {
-          const pageLocation = widget.locations.find((l) => l.location === 'page');
+          const pageLocation = widget && widget.locations.find((l) => l.location === 'page');
 
           if (!pageLocation) {
             throw new Error('This app has not defined a page location!');
@@ -220,10 +220,10 @@ export const appRoute = {
           return {
             widget,
             bridge,
-            parameteters: {
+            parameters: {
               instance: {},
               invocation: { path: path.startsWith('/') ? path : `/${path}` },
-              installation: widget.parameteters.values.installation,
+              installation: widget.parameters.values.installation,
             },
           };
         },
