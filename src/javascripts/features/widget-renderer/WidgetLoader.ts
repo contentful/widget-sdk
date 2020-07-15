@@ -12,7 +12,7 @@ import { createPlainClient } from 'contentful-management';
 import DataLoader from 'dataloader';
 import { uniqBy, noop } from 'lodash';
 import { buildExtensionWidget, buildAppWidget } from './buildWidgets';
-import { isCustomWidget } from '.';
+import { isCustomWidget } from './utils';
 
 interface WidgetRef {
   widgetNamespace: WidgetNamespace;

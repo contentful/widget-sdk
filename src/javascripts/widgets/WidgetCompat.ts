@@ -1,6 +1,11 @@
-import { WidgetNamespace, HostingType, WidgetLocation, Widget } from 'features/widget-renderer';
+import {
+  WidgetNamespace,
+  HostingType,
+  WidgetLocation,
+  Widget,
+  EntryFieldLocation,
+} from 'features/widget-renderer';
 import { toInternalFieldType, toApiFieldType } from 'widgets/FieldTypes';
-import { EntryFieldLocation } from 'features/widget-renderer/interfaces';
 
 export const toLegacyWidget = (widget: Widget) => {
   const locations = widget.locations.map((l) => l.location);
