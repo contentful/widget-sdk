@@ -219,6 +219,26 @@ export class WidgetLoader {
     return this.getMultiple(widgetRefs);
   }
 
+  public async getUncachedForListing(): Promise<Widget> {
+    const [
+      { items: extensions },
+      {
+        items: appInstallations,
+        includes: { AppDefinition: appDefinitions },
+      },
+    ] = await Promise.all([
+      this.client.raw.get(`${this.baseUrl}/extensions`, { params: { stripSrcdoc: 'true' } }),
+      this.client.raw.get(`${this.baseUrl}/app_installations`),
+    ]);
+
+    return appInstallations
+      .map((i: AppInstallation) =>
+        this.buildAppWidget(appInstallations, appDefinitions, i.sys.appDefinition.sys.id)
+      )
+      .concat(extensions.map((e: Extension) => this.buildExtensionWidget(extensions, e.sys.id)))
+      .filter(isWidget);
+  }
+
   public evict(widgetRef: WidgetRef): void {
     this.loader.clear(widgetRef);
   }

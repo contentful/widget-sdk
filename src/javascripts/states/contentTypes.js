@@ -2,6 +2,7 @@ import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer'
 import { AdvancedExtensibilityFeature } from 'features/extensions-management';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import ContentTypeListPage from 'components/tabs/content_type_list/ContentTypeListPage';
+import { toLegacyWidget } from 'widgets/WidgetCompat';
 
 const list = {
   name: 'list',
@@ -38,7 +39,12 @@ const widgetResolvers = {
     // Define dependency on spaceContext so we get custom widgets
     // only when the space is initialized.
     'spaceContext',
-    () => getCustomWidgetLoader().getUncachedForListing(),
+    async () => {
+      const loader = await getCustomWidgetLoader();
+      const widgets = await loader.getUncachedForListing();
+
+      return widgets.map(toLegacyWidget);
+    },
   ],
   editorInterface: [
     'spaceContext',
