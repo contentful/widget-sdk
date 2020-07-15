@@ -9,7 +9,7 @@ import {
 } from './interfaces';
 import { MarketplaceDataProvider } from './MarketplaceDataProvider';
 import { createPlainClient } from 'contentful-management';
-import DataLoader, { BatchLoadFn } from 'dataloader';
+import DataLoader from 'dataloader';
 import { uniqBy, noop } from 'lodash';
 import { buildExtensionWidget, buildAppWidget } from './buildWidgets';
 import { isCustomWidget } from '.';
@@ -51,7 +51,7 @@ export class WidgetLoader {
   private client: ClientAPI;
   private marketplaceDataProvider: MarketplaceDataProvider;
   private baseUrl: string;
-  private loader: DataLoader<WidgetRef, CacheValue, string>;
+  private loader: DataLoader<WidgetRef, CacheValue>;
   private onWarning: WarningCallbackFn;
 
   constructor(
@@ -64,9 +64,7 @@ export class WidgetLoader {
     this.client = client;
     this.marketplaceDataProvider = marketplaceDataProvider;
     this.baseUrl = `/spaces/${spaceId}/environments/${envId}`;
-    this.loader = new DataLoader(this.load.bind(this), {
-      cacheKeyFn,
-    });
+    this.loader = new DataLoader(this.load, { cacheKeyFn });
     this.onWarning = onWarning || noop;
   }
 
@@ -77,7 +75,7 @@ export class WidgetLoader {
     };
   };
 
-  private load: BatchLoadFn<WidgetRef, CacheValue> = async (widgetRefs) => {
+  private load = async (widgetRefs: readonly WidgetRef[]): Promise<CacheValue[]> => {
     if (widgetRefs.length < 1) {
       return [];
     }
@@ -117,7 +115,7 @@ export class WidgetLoader {
       if (widgetNamespace === WidgetNamespace.APP) {
         return this.buildAppWidget(appInstallations, appDefinitions, widgetId);
       } else if (widgetNamespace === WidgetNamespace.EXTENSION) {
-        this.buildExtensionWidget(extensions, widgetId);
+        return this.buildExtensionWidget(extensions, widgetId);
       } else {
         return null;
       }
