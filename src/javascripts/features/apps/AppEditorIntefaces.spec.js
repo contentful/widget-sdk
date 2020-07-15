@@ -65,11 +65,13 @@ describe('AppEditorInterfaces', () => {
             },
             {
               sys: { contentType: { sys: { id: 'CT2' } } },
-              editor: {
-                widgetNamespace: NAMESPACE_EXTENSION,
-                widgetId: 'some-different-extension',
-                settings: { hello: 'world' },
-              },
+              editors: [
+                {
+                  widgetNamespace: NAMESPACE_EXTENSION,
+                  widgetId: 'some-different-extension',
+                  settings: { hello: 'world' },
+                },
+              ],
               sidebar: [
                 { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'versions-widget' },
               ],
@@ -94,26 +96,19 @@ describe('AppEditorInterfaces', () => {
       expect(cma.updateEditorInterface).toBeCalledWith({
         sys: { contentType: { sys: { id: 'CT1' } } },
         controls: [
-          {
-            fieldId: 'test',
-            widgetNamespace: NAMESPACE_APP,
-            widgetId: APP_ID,
-          },
+          { fieldId: 'test', widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
           { fieldId: 'test2', widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
         ],
         sidebar: [
           { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'publication-widget' },
-          {
-            widgetNamespace: NAMESPACE_APP,
-            widgetId: APP_ID,
-          },
+          { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
           { widgetNamespace: NAMESPACE_EXTENSION, widgetId: 'some-extension' },
         ],
       });
 
       expect(cma.updateEditorInterface).toBeCalledWith({
         sys: { contentType: { sys: { id: 'CT2' } } },
-        editor: { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
+        editors: [{ widgetNamespace: NAMESPACE_APP, widgetId: APP_ID }],
         sidebar: [
           { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'versions-widget' },
           { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
@@ -242,7 +237,7 @@ describe('AppEditorInterfaces', () => {
           items: [
             {
               sys: { contentType: { sys: { id: 'CT1' } } },
-              editor: { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
+              editors: [{ widgetNamespace: NAMESPACE_APP, widgetId: APP_ID }],
             },
           ],
         });
@@ -261,10 +256,7 @@ describe('AppEditorInterfaces', () => {
           items: [
             {
               sys: { contentType: { sys: { id: 'CT1' } } },
-              editor: {
-                widgetNamespace: NAMESPACE_APP,
-                widgetId: APP_ID,
-              },
+              editors: [{ widgetNamespace: NAMESPACE_APP, widgetId: APP_ID }],
               sidebar: [
                 { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: APP_ID },
                 { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'publication-widget' },
@@ -282,10 +274,7 @@ describe('AppEditorInterfaces', () => {
                 { fieldId: 'lead', widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
                 { fieldId: 'content', widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
               ],
-              editor: {
-                widgetNamespace: NAMESPACE_APP,
-                widgetId: 'some-other-editor',
-              },
+              editors: [{ widgetNamespace: NAMESPACE_APP, widgetId: 'some-other-editor' }],
             },
           ],
         })
@@ -302,6 +291,7 @@ describe('AppEditorInterfaces', () => {
           { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'publication-widget' },
           { widgetNamespace: NAMESPACE_EXTENSION, widgetId: 'different-extension' },
         ],
+        editors: [],
       });
 
       expect(cma.updateEditorInterface).toBeCalledWith({
@@ -313,10 +303,7 @@ describe('AppEditorInterfaces', () => {
           { fieldId: 'lead' },
           { fieldId: 'content' },
         ],
-        editor: {
-          widgetNamespace: NAMESPACE_APP,
-          widgetId: 'some-other-editor',
-        },
+        editors: [{ widgetNamespace: NAMESPACE_APP, widgetId: 'some-other-editor' }],
       });
     });
 

@@ -106,7 +106,7 @@ function transformSingleEditorInterfaceToTargetState(
 
   // If editor target state is set to `true` we just use the widget.
   if (targetState.editor === true) {
-    result.editor = { widgetNamespace: NAMESPACE_APP, widgetId };
+    result.editors = [{ widgetNamespace: NAMESPACE_APP, widgetId }];
   }
 
   return result;
@@ -139,9 +139,9 @@ function removeSingleEditorInterfaceReferences(ei, appInstallation) {
     result.sidebar = ei.sidebar.filter((widget) => !isCurrentApp(widget, appInstallation));
   }
 
-  // If the app is used as `editor`, unset the reference.
-  if (isObject(ei.editor) && !isCurrentApp(ei.editor, appInstallation)) {
-    result.editor = ei.editor;
+  if (Array.isArray(ei.editors)) {
+    // If the app is used as `editor`, remove it from the list.
+    result.editors = ei.editors.filter((widget) => !isCurrentApp(widget, appInstallation));
   }
 
   return result;
