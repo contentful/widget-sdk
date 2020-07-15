@@ -12,6 +12,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import { styles } from './styles';
 import PropTypes from 'prop-types';
+import { LOCATION_PAGE } from 'widgets/WidgetLocations';
 
 const makeRef = (ref, isMaster) => {
   if (isMaster) {
@@ -21,7 +22,11 @@ const makeRef = (ref, isMaster) => {
   }
 };
 
-const hasNavigationItem = ({ navigationItem }) => navigationItem;
+const hasNavigationItem = (widget) => {
+  const pageLocation = widget.locations.find((l) => l.location === LOCATION_PAGE);
+
+  return pageLocation && pageLocation.navigationItem;
+};
 
 const buildAppListingChildren = (title) => ({ isMasterEnvironment }) => ({
   title,
@@ -47,16 +52,18 @@ const buildLoadingChildren = () => {
   ];
 };
 
-const buildAppChild = ({ id, appIconUrl, navigationItem }, { isMasterEnvironment }) => {
+const buildAppChild = (widget, { isMasterEnvironment }) => {
+  const { navigationItem } = widget.locations.find((l) => l.location === LOCATION_PAGE);
+
   return {
-    dataViewType: `apps-${id}`,
+    dataViewType: `apps-${widget.id}`,
     sref: makeRef(`apps.page`, isMasterEnvironment),
     srefParams: {
-      appId: id,
+      appId: widget.slug,
       path: navigationItem.path,
     },
     title: navigationItem.name,
-    render: (item) => <AppNavigationLink icon={appIconUrl} title={item.title} />,
+    render: (item) => <AppNavigationLink icon={widget.iconUrl} title={item.title} />,
   };
 };
 
@@ -155,7 +162,8 @@ export const AppsNavigationItem = ({ item, context }) => {
     }
 
     setInFlight(true);
-    setApps(await getCustomWidgetLoader().getOnlyInstalledApps());
+    const loader = await getCustomWidgetLoader();
+    setApps(await loader.getInstalledApps());
     setInFlight(false);
   };
   const children = buildChildren(apps, context);
