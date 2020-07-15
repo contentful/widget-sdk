@@ -80,7 +80,7 @@ export default class FieldDialogWidgetItem extends Component {
             )}
           </div>
         )}
-        {widget.namespace === WidgetNamespace.AP && (
+        {widget.namespace === WidgetNamespace.APP && (
           <div className="field-dialog__widget-item-header">
             <span>App</span>
             {isAdmin && (
