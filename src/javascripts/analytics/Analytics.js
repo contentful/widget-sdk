@@ -135,26 +135,26 @@ export function track(event, data) {
  * of the web app caused by heavy payload serialization in wootric (loaded in segment)
  *
  */
-function logEventPayloadSize(event, safePayload) {
+function logEventPayloadSize(eventName, safePayload) {
   if (typeof window.requestIdleCallback !== 'undefined') {
     window.requestIdleCallback(() => {
       try {
-        const size = JSON.stringify(safePayload).length;
+        const { contexts: contextEvents = [], ...primaryPayload } = safePayload;
+        const primaryEventSize = JSON.stringify(primaryPayload).length;
+        const contextEventsSize = JSON.stringify(contextEvents).length - 2; // -2 to account for `[]`
 
         // any of the payload fields has methods on the first level
         const hasMethods = Object.entries(safePayload || {})
           .flatMap(([_, v]) => Object.values(v || {}))
           .some((v) => _.isFunction(v));
 
-        // TODO: Consider different criteria for considering Snowplow events with "contexts" as bloated.
-        if (size > 5000 || hasMethods) {
-          const hasContexts = _.isArray(safePayload.contexts);
+        if (primaryEventSize > 5000 || contextEventsSize > 15000 || hasMethods) {
           logger.logWarn('Potentially bloated tracking event payload', {
-            event,
-            size,
+            event: eventName,
+            primaryEventSize,
+            contextEventsSize,
+            contextEventsCount: contextEvents.length,
             hasMethods,
-            contextEventsCount: hasContexts ? safePayload.contexts.length : 0,
-            contextEventsSize: hasContexts ? JSON.stringify(safePayload.contexts).length : 0,
           });
         }
       } catch (error) {
