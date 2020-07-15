@@ -4,13 +4,13 @@ import { WidgetLoader, MarketplaceDataProvider } from 'features/widget-renderer'
 import { createPlainClient } from 'contentful-management';
 import { getToken } from 'Authentication';
 
-const marketplaceDataProvider = new MarketplaceDataProvider(window.fetch, {
+const marketplaceDataProvider = new MarketplaceDataProvider(window.fetch.bind(window), {
   defaultAppIconUrl: 'https://default-app-icon',
   defaultExtensionIconUrl: 'https://default-extension-icon',
   unknownWidgetTypeIconUrl: 'https://unknown-widget-type-icon',
 });
 
-export async function getMarketplaceDataProvider() {
+export function getMarketplaceDataProvider() {
   return marketplaceDataProvider;
 }
 
