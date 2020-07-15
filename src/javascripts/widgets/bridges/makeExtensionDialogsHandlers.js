@@ -13,6 +13,7 @@ import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 
 import createDialogExtensionBridge from './createDialogExtensionBridge';
 import { WidgetNamespace, isCustomWidget } from 'features/widget-renderer';
+import { toLegacyWidget } from 'widgets/WidgetCompat';
 
 const SIMPLE_DIALOG_TYPE_TO_OPENER = {
   alert: Dialogs.openAlert,
@@ -78,7 +79,7 @@ export default function makeExtensionDialogsHandlers(dependencies) {
       invocation: options.parameters || {},
     };
 
-    trackExtensionRender(LOCATION_DIALOG, widget);
+    trackExtensionRender(LOCATION_DIALOG, toLegacyWidget(widget));
 
     const dialogKey = Date.now().toString();
 

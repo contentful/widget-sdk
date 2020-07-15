@@ -6,6 +6,7 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import { applyDefaultValues } from 'widgets/WidgetParametersUtils';
 import trackExtensionRender from 'widgets/TrackExtensionRender';
 import { LOCATION_PAGE } from 'widgets/WidgetLocations';
+import { toLegacyWidget } from 'widgets/WidgetCompat';
 
 const styles = {
   root: css({
@@ -22,7 +23,7 @@ export default class PageExtension extends React.Component {
   };
 
   componentDidMount() {
-    trackExtensionRender(LOCATION_PAGE, this.props.widget);
+    trackExtensionRender(LOCATION_PAGE, toLegacyWidget(this.props.widget));
   }
 
   render() {
