@@ -77,7 +77,7 @@ export async function openFieldDialog($scope, field, widget) {
     };
 
     const updatedCTfields = $scope.contentType.data.fields.map((field) =>
-      field.apiName === updatedField.apiName ? updatedField : field
+      field.id === updatedField.id ? updatedField : field
     );
     $scope.contentType.data.fields = updatedCTfields;
     $scope.$applyAsync();
