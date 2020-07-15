@@ -62,11 +62,13 @@ describe('AppEditorInterfaces', () => {
             },
             {
               sys: { contentType: { sys: { id: 'CT2' } } },
-              editor: {
-                widgetNamespace: WidgetNamespace.EXTENSION,
-                widgetId: 'some-different-extension',
-                settings: { hello: 'world' },
-              },
+              editors: [
+                {
+                  widgetNamespace: WidgetNamespace.EXTENSION,
+                  widgetId: 'some-different-extension',
+                  settings: { hello: 'world' },
+                },
+              ],
               sidebar: [
                 { widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN, widgetId: 'versions-widget' },
               ],
@@ -110,7 +112,7 @@ describe('AppEditorInterfaces', () => {
 
       expect(cma.updateEditorInterface).toBeCalledWith({
         sys: { contentType: { sys: { id: 'CT2' } } },
-        editor: { widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID },
+        editors: [{ widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID }],
         sidebar: [
           { widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN, widgetId: 'versions-widget' },
           { widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID },
@@ -242,7 +244,7 @@ describe('AppEditorInterfaces', () => {
           items: [
             {
               sys: { contentType: { sys: { id: 'CT1' } } },
-              editor: { widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID },
+              editors: [{ widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID }],
             },
           ],
         });
@@ -261,10 +263,7 @@ describe('AppEditorInterfaces', () => {
           items: [
             {
               sys: { contentType: { sys: { id: 'CT1' } } },
-              editor: {
-                widgetNamespace: WidgetNamespace.APP,
-                widgetId: APP_ID,
-              },
+              editors: [{ widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID }],
               sidebar: [
                 { widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN, widgetId: APP_ID },
                 {
@@ -285,10 +284,7 @@ describe('AppEditorInterfaces', () => {
                 { fieldId: 'lead', widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID },
                 { fieldId: 'content', widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID },
               ],
-              editor: {
-                widgetNamespace: WidgetNamespace.APP,
-                widgetId: 'some-other-editor',
-              },
+              editors: [{ widgetNamespace: WidgetNamespace.APP, widgetId: 'some-other-editor' }],
             },
           ],
         })
@@ -305,6 +301,7 @@ describe('AppEditorInterfaces', () => {
           { widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN, widgetId: 'publication-widget' },
           { widgetNamespace: WidgetNamespace.EXTENSION, widgetId: 'different-extension' },
         ],
+        editors: [],
       });
 
       expect(cma.updateEditorInterface).toBeCalledWith({
@@ -316,10 +313,67 @@ describe('AppEditorInterfaces', () => {
           { fieldId: 'lead' },
           { fieldId: 'content' },
         ],
-        editor: {
-          widgetNamespace: WidgetNamespace.APP,
-          widgetId: 'some-other-editor',
-        },
+        editors: [{ widgetNamespace: WidgetNamespace.APP, widgetId: 'some-other-editor' }],
+      });
+    });
+
+    it('removes references from controls, sidebar and editor only for current app', async () => {
+      const ANOTHER_APP_ID = 'another-app-id';
+
+      cma.getEditorInterfaces.mockImplementationOnce(() =>
+        Promise.resolve({
+          items: [
+            {
+              sys: { contentType: { sys: { id: 'CT1' } } },
+              editors: [
+                { widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID },
+                { widgetNamespace: WidgetNamespace.APP, widgetId: ANOTHER_APP_ID },
+              ],
+              sidebar: [
+                { widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN, widgetId: APP_ID },
+                { widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN, widgetId: ANOTHER_APP_ID },
+                { widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID },
+                { widgetNamespace: WidgetNamespace.APP, widgetId: ANOTHER_APP_ID },
+              ],
+            },
+            {
+              sys: { contentType: { sys: { id: 'CT2' } } },
+              controls: [
+                { fieldId: 'title' },
+                { fieldId: 'author', widgetNamespace: WidgetNamespace.BUILTIN, widgetId: APP_ID },
+                { fieldId: 'date', widgetNamespace: WidgetNamespace.APP, widgetId: ANOTHER_APP_ID },
+              ],
+              editors: [
+                { widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID },
+                { widgetNamespace: WidgetNamespace.APP, widgetId: ANOTHER_APP_ID },
+              ],
+            },
+          ],
+        })
+      );
+
+      await remove();
+
+      expect(cma.updateEditorInterface).toBeCalledTimes(2);
+
+      expect(cma.updateEditorInterface).toBeCalledWith({
+        sys: { contentType: { sys: { id: 'CT1' } } },
+        sidebar: [
+          { widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN, widgetId: APP_ID },
+          { widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN, widgetId: ANOTHER_APP_ID },
+          { widgetNamespace: WidgetNamespace.APP, widgetId: ANOTHER_APP_ID },
+        ],
+        editors: [{ widgetNamespace: WidgetNamespace.APP, widgetId: ANOTHER_APP_ID }],
+      });
+
+      expect(cma.updateEditorInterface).toBeCalledWith({
+        sys: { contentType: { sys: { id: 'CT2' } } },
+        controls: [
+          { fieldId: 'title' },
+          { fieldId: 'author', widgetNamespace: WidgetNamespace.BUILTIN, widgetId: APP_ID },
+          { fieldId: 'date', widgetNamespace: WidgetNamespace.APP, widgetId: ANOTHER_APP_ID },
+        ],
+        editors: [{ widgetNamespace: WidgetNamespace.APP, widgetId: ANOTHER_APP_ID }],
       });
     });
 
