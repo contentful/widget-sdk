@@ -115,27 +115,35 @@ export class WidgetLoader {
 
     return widgetRefs.map(({ widgetId, widgetNamespace }) => {
       if (widgetNamespace === WidgetNamespace.APP) {
-        const installation = appInstallations.find(
-          (i: AppInstallation) => i.sys.appDefinition.sys.id === widgetId
-        );
-        const definition = appDefinitions.find((d: AppDefinition) => d.sys.id === widgetId);
-
-        if (installation && definition && definition.src) {
-          return buildAppWidget(installation, definition, this.marketplaceDataProvider);
-        } else {
-          return null;
-        }
+        return this.buildAppWidget(appInstallations, appDefinitions, widgetId);
+      } else if (widgetNamespace === WidgetNamespace.EXTENSION) {
+        this.buildExtensionWidget(extensions, widgetId);
+      } else {
+        return null;
       }
-
-      if (widgetNamespace === WidgetNamespace.EXTENSION) {
-        const extension = extensions.find((e: Extension) => e.sys.id === widgetId);
-
-        return extension ? buildExtensionWidget(extension, this.marketplaceDataProvider) : null;
-      }
-
-      return null;
     });
   };
+
+  private buildAppWidget(
+    appInstallations: AppInstallation[],
+    appDefinitions: AppDefinition[],
+    widgetId: string
+  ): Widget | null {
+    const installation = appInstallations.find((i) => i.sys.appDefinition.sys.id === widgetId);
+    const definition = appDefinitions.find((d) => d.sys.id === widgetId);
+
+    if (installation && definition && definition.src) {
+      return buildAppWidget(installation, definition, this.marketplaceDataProvider);
+    } else {
+      return null;
+    }
+  }
+
+  private buildExtensionWidget(extensions: Extension[], widgetId: string): Widget | null {
+    const extension = extensions.find((e: Extension) => e.sys.id === widgetId);
+
+    return extension ? buildExtensionWidget(extension, this.marketplaceDataProvider) : null;
+  }
 
   private getControlWidgetRefs(controls: Control[] = []): WidgetRef[] {
     return controls
@@ -192,6 +200,25 @@ export class WidgetLoader {
     const widgets = await this.loader.loadMany(uniqBy(widgetRefs, cacheKeyFn));
 
     return widgets.filter(isWidget);
+  }
+
+  public async getInstalledApps(): Promise<Widget[]> {
+    const {
+      items: appInstallations,
+      includes: { AppDefinition: appDefinitions },
+    } = await this.client.raw.get(`${this.baseUrl}/app_installations`);
+
+    const widgetRefs: WidgetRef[] = appInstallations.map((i: AppInstallation) => ({
+      widgetNamespace: WidgetNamespace.APP,
+      widgetId: i.sys.appDefinition.sys.id,
+    }));
+
+    widgetRefs.forEach((ref) => {
+      const widget = this.buildAppWidget(appInstallations, appDefinitions, ref.widgetId);
+      this.loader.prime(ref, widget);
+    });
+
+    return this.getMultiple(widgetRefs);
   }
 
   public evict(widgetRef: WidgetRef): void {
