@@ -9,10 +9,17 @@ import { applyDefaultValues } from '../WidgetParametersUtils';
 import trackExtensionRender from '../TrackExtensionRender';
 import { LOCATION_DIALOG } from '../WidgetLocations';
 import * as entitySelector from 'search/EntitySelector/entitySelector';
-import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
+import {
+  getCustomWidgetLoader,
+  getMarketplaceDataProvider,
+} from 'widgets/CustomWidgetLoaderInstance';
 
 import createDialogExtensionBridge from './createDialogExtensionBridge';
-import { WidgetNamespace, isCustomWidget } from 'features/widget-renderer';
+import {
+  WidgetNamespace,
+  isCustomWidget,
+  buildAppDefinitionWidget,
+} from 'features/widget-renderer';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
 
 const SIMPLE_DIALOG_TYPE_TO_OPENER = {
@@ -53,8 +60,9 @@ export default function makeExtensionDialogsHandlers(dependencies) {
 
     // If there is no widget found but we may be in the installation
     // process, create an artificial widget out of AppDefinition.
-    if (widgetNamespace === WidgetNamespace.APP) {
-      return loader.getForAppDefinition(widgetId);
+    const { appDefinition } = dependencies;
+    if (widgetNamespace === WidgetNamespace.APP && appDefinition) {
+      return buildAppDefinitionWidget(appDefinition, getMarketplaceDataProvider());
     }
 
     throw new Error(`No widget with ID "${widgetId}" found in "${widgetNamespace}" namespace.`);

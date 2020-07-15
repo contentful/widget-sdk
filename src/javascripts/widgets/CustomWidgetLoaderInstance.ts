@@ -4,6 +4,16 @@ import { WidgetLoader, MarketplaceDataProvider } from 'features/widget-renderer'
 import { createPlainClient } from 'contentful-management';
 import { getToken } from 'Authentication';
 
+const marketplaceDataProvider = new MarketplaceDataProvider(window.fetch, {
+  defaultAppIconUrl: 'https://default-app-icon',
+  defaultExtensionIconUrl: 'https://default-extension-icon',
+  unknownWidgetTypeIconUrl: 'https://unknown-widget-type-icon',
+});
+
+export async function getMarketplaceDataProvider() {
+  return marketplaceDataProvider;
+}
+
 // Both Extension and AppInstallation are environment-level
 // entities. The loader uses the SDK with the current token.
 // Hence we cache loaders per token/space-environment combination.
@@ -20,11 +30,6 @@ export async function getCustomWidgetLoader() {
 
   if (!loader) {
     const client = createPlainClient({ accessToken });
-    const marketplaceDataProvider = new MarketplaceDataProvider(window.fetch, {
-      defaultAppIconUrl: 'https://default-app-icon',
-      defaultExtensionIconUrl: 'https://default-extension-icon',
-      unknownWidgetTypeIconUrl: 'https://unknown-widget-type-icon',
-    });
 
     loader = new WidgetLoader(client, marketplaceDataProvider, spaceId, environmentId);
 
