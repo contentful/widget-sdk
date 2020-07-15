@@ -5,8 +5,10 @@ import { track } from 'analytics/Analytics';
 import { AssetBandwidthSection } from './AssetBandwidthSection';
 import { UsageStateContext } from '../hooks/usageContext';
 
-const MockPovider = ({ children, assetBandwidthData }) => (
-  <UsageStateContext.Provider value={{ assetBandwidthData }}>{children}</UsageStateContext.Provider>
+const MockPovider = ({ children, assetBandwidthData, isLoading }) => (
+  <UsageStateContext.Provider value={{ assetBandwidthData, isLoading }}>
+    {children}
+  </UsageStateContext.Provider>
 );
 
 const defaultData = {
@@ -15,6 +17,7 @@ const defaultData = {
     usage: 200,
     uom: 'GB',
   },
+  isLoading: false,
 };
 
 const renderComp = (data) => {
@@ -59,5 +62,20 @@ describe('AssetBandwidthSection', () => {
     expect(track).toHaveBeenCalledWith('usage:fair_use_policy_clicked', {
       source: 'Asset Bandwidth',
     });
+  });
+
+  it('should show skeleton on the initial loading', () => {
+    // asset bandwidth data is not fetched (yet)
+    const { getAllByTestId } = renderComp({ isLoading: true });
+
+    getAllByTestId('cf-ui-skeleton-form').forEach((ele) => {
+      expect(ele).toBeVisible();
+    });
+  });
+
+  it('should not show skeleton if data already exists', () => {
+    const { queryByTestId } = renderComp({ ...defaultData, isLoading: true });
+
+    expect(queryByTestId('cf-ui-skeleton-form')).toBeNull();
   });
 });

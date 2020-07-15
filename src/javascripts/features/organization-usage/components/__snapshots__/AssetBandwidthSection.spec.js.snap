@@ -12,7 +12,7 @@ exports[`AssetBandwidthSection should render 1`] = `
   font-weight: 600;
 }
 
-.emotion-5 {
+.emotion-4 {
   font-size: 0.875rem;
 }
 
@@ -24,7 +24,7 @@ exports[`AssetBandwidthSection should render 1`] = `
   margin-left: 0.75rem;
 }
 
-.emotion-4 {
+.emotion-5 {
   width: 40%;
   margin-top: 0.75rem;
   color: #27457A;
@@ -48,7 +48,7 @@ exports[`AssetBandwidthSection should render 1`] = `
       200 GB
     </p>
     <div
-      class="emotion-5"
+      class="emotion-4"
     >
       <strong
         class="emotion-2"
@@ -70,34 +70,34 @@ exports[`AssetBandwidthSection should render 1`] = `
           Fair Use Policy
         </span>
       </a>
+    </div>
+    <div
+      class="Note__Note___2eSKN emotion-5 Note__Note--primary___-8-7D"
+      data-test-id="cf-ui-note"
+    >
       <div
-        class="Note__Note___2eSKN emotion-4 Note__Note--primary___-8-7D"
-        data-test-id="cf-ui-note"
+        class="Note__Note__icon___20RqC"
       >
-        <div
-          class="Note__Note__icon___20RqC"
+        <svg
+          class="Icon__Icon___38Epv Icon__Icon--small___1yGZK undefined"
+          data-test-id="cf-ui-icon"
+          height="18"
+          viewBox="0 0 24 24"
+          width="18"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          <svg
-            class="Icon__Icon___38Epv Icon__Icon--small___1yGZK undefined"
-            data-test-id="cf-ui-icon"
-            height="18"
-            viewBox="0 0 24 24"
-            width="18"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M0 0h24v24H0z"
-              fill="none"
-            />
-            <path
-              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"
-            />
-          </svg>
-        </div>
+          <path
+            d="M0 0h24v24H0z"
+            fill="none"
+          />
+          <path
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"
+          />
+        </svg>
+      </div>
+      <div>
         <div>
-          <div>
-            Please note that asset bandwidth is calculated daily with a 48 hour delay.
-          </div>
+          Please note that asset bandwidth is calculated daily with a 48 hour delay.
         </div>
       </div>
     </div>

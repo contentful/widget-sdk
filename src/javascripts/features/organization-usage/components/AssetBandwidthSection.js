@@ -7,6 +7,9 @@ import {
   Typography,
   Heading,
   Paragraph,
+  SkeletonContainer,
+  SkeletonDisplayText,
+  SkeletonBodyText,
 } from '@contentful/forma-36-react-components';
 import * as tokens from '@contentful/forma-36-tokens';
 
@@ -44,19 +47,20 @@ const styles = {
 };
 
 export const AssetBandwidthSection = () => {
-  const { assetBandwidthData } = useUsageState();
+  const { assetBandwidthData, isLoading } = useUsageState();
 
-  const { limit, usage, uom } = assetBandwidthData;
+  const { limit, usage, uom } = assetBandwidthData ?? {};
+
+  // Show loading state once at the initial data fetch
+  const isPageLoading = isLoading && !assetBandwidthData;
+
   const withUnit = partialRight(shortenStorageUnit, uom);
   const handleClick = () => {
     track('usage:fair_use_policy_clicked', { source: 'Asset Bandwidth' });
   };
 
-  return (
-    <Typography>
-      <Heading element="h2" className={styles.heading}>
-        Total asset bandwidth
-      </Heading>
+  const UsageAndLimit = () => (
+    <>
       <Paragraph data-test-id="asset-bandwidth-usage" className={styles.usageNumber}>
         {withUnit(usage)}
       </Paragraph>
@@ -79,10 +83,25 @@ export const AssetBandwidthSection = () => {
           className={styles.learnMoreLink}>
           Fair Use Policy
         </TextLink>
-        <Note className={styles.note}>
-          Please note that asset bandwidth is calculated daily with a 48 hour delay.
-        </Note>
       </div>
+    </>
+  );
+
+  return (
+    <Typography>
+      <Heading element="h2" className={styles.heading}>
+        Total asset bandwidth
+      </Heading>
+      {isPageLoading && (
+        <SkeletonContainer svgWidth="40%" svgHeight="80px">
+          <SkeletonDisplayText numberOfLines={1} />
+          <SkeletonBodyText numberOfLines={1} offsetTop={50} />
+        </SkeletonContainer>
+      )}
+      {!isPageLoading && <UsageAndLimit />}
+      <Note className={styles.note}>
+        Please note that asset bandwidth is calculated daily with a 48 hour delay.
+      </Note>
     </Typography>
   );
 };
