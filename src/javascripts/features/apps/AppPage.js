@@ -30,7 +30,8 @@ import { isUsageExceededErrorResponse, USAGE_EXCEEDED_MESSAGE } from './isUsageE
 import { LOCATION_APP_CONFIG } from 'widgets/WidgetLocations';
 import { AppIcon } from './AppIcon';
 import { styles } from './AppPageStyles';
-import { WidgetNamespace, HostingType } from 'features/widget-renderer';
+import { buildAppDefinitionWidget } from 'features/widget-renderer';
+import { getMarketplaceDataProvider } from 'widgets/CustomWidgetLoaderInstance';
 
 const BUSY_STATE_INSTALLATION = 'installation';
 const BUSY_STATE_UPDATE = 'update';
@@ -113,7 +114,11 @@ export class AppRoute extends Component {
   initialize = async () => {
     const { appHookBus, app } = this.props;
     const { appDefinition } = app;
-    const { appInstallation } = await this.checkAppStatus(appDefinition);
+
+    const [{ appInstallation }] = await Promise.all([
+      this.checkAppStatus(appDefinition),
+      getMarketplaceDataProvider().prefetch(),
+    ]);
 
     appHookBus.setInstallation(appInstallation);
     appHookBus.on(APP_EVENTS_IN.CONFIGURED, this.onAppConfigured);
@@ -342,16 +347,7 @@ export class AppRoute extends Component {
         className={cx(styles.renderer, { [styles.hideRenderer]: !appLoaded })}>
         <ExtensionIFrameRenderer
           bridge={this.props.bridge}
-          widget={{
-            id: appDefinition.sys.id,
-            namespace: WidgetNamespace.APP,
-            name: this.state.title,
-            iconUrl: this.state.appIcon,
-            hosting: {
-              type: HostingType.SRC,
-              value: appDefinition.src,
-            },
-          }}
+          widget={buildAppDefinitionWidget(appDefinition, getMarketplaceDataProvider())}
           parameters={this.parameters}
           isFullSize
         />
