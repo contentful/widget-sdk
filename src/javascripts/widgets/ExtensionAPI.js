@@ -91,6 +91,7 @@ export default class ExtensionAPI {
       contentTypeData,
       initialContentTypesData,
     } = this;
+    const entryMetadata = get(entryData, ['metadata']);
 
     this.channel.connect({
       location,
@@ -137,9 +138,12 @@ export default class ExtensionAPI {
         availableLocales: locales.available,
         defaultLocale: locales.default,
       }),
-      // We only need `sys` in the SDK.
+      // We only need `sys` and `metadata` in the SDK.
       // Make sure we don't leak internal field IDs:
-      entry: { sys: entryData.sys },
+      entry: {
+        sys: entryData.sys,
+        ...(entryMetadata ? { metadata: entryMetadata } : {}),
+      },
       // Convert content type to its public form for external consumption:
       contentType: PublicContentType.fromInternal(contentTypeData),
       initialContentTypes: (initialContentTypesData || []).map((ct) =>
