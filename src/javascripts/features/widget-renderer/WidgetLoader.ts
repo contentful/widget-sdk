@@ -58,12 +58,12 @@ export class WidgetLoader {
     client: ClientAPI,
     marketplaceDataProvider: MarketplaceDataProvider,
     spaceId: string,
-    envId: string,
+    envId?: string,
     onWarning?: WarningCallbackFn
   ) {
     this.client = client;
     this.marketplaceDataProvider = marketplaceDataProvider;
-    this.baseUrl = `/spaces/${spaceId}/environments/${envId}`;
+    this.baseUrl = envId ? `/spaces/${spaceId}/environments/${envId}` : `/spaces/${spaceId}`
     this.loader = new DataLoader(this.load, { cacheKeyFn });
     this.onWarning = onWarning || noop;
   }
