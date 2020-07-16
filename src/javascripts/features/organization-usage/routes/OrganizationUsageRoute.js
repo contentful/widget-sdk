@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { mapValues, flow, keyBy, get, eq } from 'lodash/fp';
 import { css } from 'emotion';
@@ -6,7 +6,6 @@ import { Spinner, Workbench } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification';
 
 import DocumentTitle from 'components/shared/DocumentTitle';
-import { OrganizationResourceUsageList } from '../components/OrganizationResourceUsageList';
 import { OrganizationUsagePage } from '../components/OrganizationUsagePage';
 import { PeriodSelector } from '../components/PeriodSelector';
 import { NoSpacesPlaceholder } from '../components/NoSpacesPlaceholder';
@@ -21,10 +20,6 @@ import createResourceService from 'services/ResourceService';
 import * as OrganizationRoles from 'services/OrganizationRoles';
 import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import ErrorState from 'app/common/ErrorState';
-import LoadingState from 'app/common/LoadingState';
-
-import { NEW_USAGE_PAGE } from 'featureFlags';
-import { getVariation } from 'LaunchDarkly';
 
 const styles = {
   content: css({
@@ -35,24 +30,11 @@ const styles = {
   }),
 };
 
-export const WorkbenchContent = ({ resources, showNewPricingFeature }) => {
-  const { hasSpaces, error, isTeamOrEnterpriseCustomer } = useUsageState();
+export const WorkbenchContent = () => {
+  const { hasSpaces, error } = useUsageState();
 
   if (error) {
     return <ErrorState />;
-  }
-
-  // To be removed with a feature flag
-  if (isTeamOrEnterpriseCustomer === undefined || showNewPricingFeature === undefined) {
-    return <LoadingState />;
-  }
-
-  // targets free customer on pricing v2
-  if (!showNewPricingFeature && !isTeamOrEnterpriseCustomer) {
-    if (resources === undefined) {
-      return <LoadingState />;
-    }
-    return <OrganizationResourceUsageList resources={resources} />;
   }
 
   if (hasSpaces === false) {
@@ -60,11 +42,6 @@ export const WorkbenchContent = ({ resources, showNewPricingFeature }) => {
   }
 
   return <OrganizationUsagePage />;
-};
-
-WorkbenchContent.propTypes = {
-  resources: PropTypes.arrayOf(PropTypes.object),
-  showNewPricingFeature: PropTypes.bool,
 };
 
 export const WorkbenchActions = () => {
@@ -89,9 +66,6 @@ export const OrganizationUsage = () => {
   const { selectedPeriodIndex, orgId } = useUsageState();
   const dispatch = useUsageDispatch();
 
-  const [showNewPricingFeature, setShowNewPricingFeature] = useState();
-  const [resources, setResources] = useState();
-
   useEffect(() => {
     const checkPermissions = async () => {
       const organization = await TokenStore.getOrganization(orgId);
@@ -109,26 +83,14 @@ export const OrganizationUsage = () => {
           return;
         }
 
-        const variation = await getVariation(NEW_USAGE_PAGE, {
-          organizationId: orgId,
-        });
-        setShowNewPricingFeature(variation);
-
         const endpoint = EndpointFactory.createOrganizationEndpoint(orgId);
         const service = createResourceService(orgId, 'organization');
         const basePlan = await PricingDataProvider.getBasePlan(endpoint);
 
-        const isTeamOrEnterpriseCustomer = variation
-          ? PricingDataProvider.isEnterprisePlan(basePlan) ||
-            PricingDataProvider.isSelfServicePlan(basePlan)
-          : PricingDataProvider.isEnterprisePlan(basePlan);
+        const isTeamOrEnterpriseCustomer =
+          PricingDataProvider.isEnterprisePlan(basePlan) ||
+          PricingDataProvider.isSelfServicePlan(basePlan);
         dispatch({ type: 'SET_CUSTOMER_TYPE', value: isTeamOrEnterpriseCustomer });
-
-        if (!variation && !isTeamOrEnterpriseCustomer) {
-          setResources(await service.getAll());
-          dispatch({ type: 'SET_LOADING', value: false });
-          return;
-        }
 
         const [
           spaces,
@@ -193,12 +155,7 @@ export const OrganizationUsage = () => {
           icon={<NavigationIcon icon="Usage" size="large" />}
           actions={<WorkbenchActions />}></Workbench.Header>
         <Workbench.Content className={styles.content}>
-          <WorkbenchContent
-            {...{
-              resources,
-              showNewPricingFeature,
-            }}
-          />
+          <WorkbenchContent />
         </Workbench.Content>
       </Workbench>
     </>

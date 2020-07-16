@@ -12,92 +12,20 @@ import * as TokenStoreMocked from 'services/TokenStore';
 import * as OrganizationMembershipRepositoryMocked from 'access_control/OrganizationMembershipRepository';
 import { UsageStateContext } from '../hooks/usageContext';
 
-jest.mock('services/intercom', () => ({}));
-jest.mock('utils/ResourceUtils', () => ({}));
 jest.mock('services/OrganizationRoles', () => ({
   isOwnerOrAdmin: jest.fn().mockReturnValue(true),
 }));
-jest.mock('services/ResourceService', () => () => ({
-  get: jest.fn((resource) => {
-    switch (resource) {
-      case 'api_request':
-        return { limits: { included: 1000000 } };
-      case 'asset_bandwidth':
-        return {
-          usage: 200,
-          unitOfMeasure: 'MB',
-          limits: { included: 2000 },
-        };
-    }
-  }),
-  getAll: jest.fn(),
-}));
-
-jest.mock('account/pricing/PricingDataProvider', () => {
-  const isEnterprisePlan = jest.fn(() => true);
-
-  const getPlansWithSpaces = jest.fn(() => ({
-    items: [
-      { name: 'Test plan', space: { sys: { id: 'space1' } } },
-      { name: 'Proof of concept (space trial)', space: { sys: { id: 'space2' } } },
-    ],
-  }));
-  return {
-    isEnterprisePlan,
-    getBasePlan: jest.fn(),
-    getPlansWithSpaces,
-  };
-});
 
 jest.mock('access_control/OrganizationMembershipRepository', () => ({
-  getAllSpaces: jest.fn(() => [
-    { name: 'Test1', sys: { id: 'test1' } },
-    { name: 'Test2', sys: { id: 'test2' } },
-  ]),
+  getAllSpaces: jest.fn(),
 }));
 
 jest.mock('services/TokenStore', () => ({
   getOrganization: jest.fn(() => ({})),
 }));
 
-jest.mock('data/EndpointFactory', () => {
-  const moment = require('moment');
-  const _ = require('lodash');
-  const DATE_FORMAT = 'YYYY-MM-DD';
-  const startDate = moment('2019-01-04').subtract(12, 'days');
-  const endpoint = jest.fn().mockImplementation(({ method, path }) => {
-    if (method === 'GET' && _.isEqual(path, ['usage_periods'])) {
-      return {
-        items: [
-          {
-            startDate: startDate.format(DATE_FORMAT),
-            endDate: null,
-            sys: { type: 'UsagePeriod', id: '0' },
-          },
-          {
-            startDate: moment(startDate)
-              .subtract(1, 'day')
-              .subtract(1, 'month')
-              .format(DATE_FORMAT),
-            endDate: moment(startDate).subtract(1, 'day').format(DATE_FORMAT),
-            sys: { type: 'UsagePeriod', id: '1' },
-          },
-        ],
-      };
-    }
-  });
-
-  return {
-    createOrganizationEndpoint: () => endpoint,
-  };
-});
-
 jest.mock('app/common/ReloadNotification', () => ({
   trigger: jest.fn(),
-}));
-
-jest.mock('LaunchDarkly', () => ({
-  getVariation: jest.fn().mockResolvedValue(false),
 }));
 
 jest.mock('../components/PeriodSelector', () => ({
@@ -106,12 +34,6 @@ jest.mock('../components/PeriodSelector', () => ({
 
 jest.mock('../components/OrganizationUsagePage', () => ({
   OrganizationUsagePage: jest.fn().mockReturnValue(<div data-test-id="usage-page"></div>),
-}));
-
-jest.mock('../components/OrganizationResourceUsageList', () => ({
-  OrganizationResourceUsageList: jest
-    .fn()
-    .mockReturnValue(<div data-test-id="resource-list"></div>),
 }));
 
 const DEFAULT_ORG = 'abcd';
@@ -188,7 +110,7 @@ describe('WorkbenchActions', () => {
     });
   });
 
-  describe('org is committed and periods received', () => {
+  describe('org is on Team or Enterprise tier', () => {
     it('should render the PeriodSelector', () => {
       const { getByTestId } = render(
         <MockPovider {...defaultData}>
@@ -217,7 +139,7 @@ describe('WorkbenchActions', () => {
   });
 
   describe('user is on the asset bandwidth tab', () => {
-    it('should render nothing', () => {
+    it('should render a period selector', () => {
       const data = {
         ...defaultData,
         isAssetBandwidthTab: true,
@@ -235,18 +157,17 @@ describe('WorkbenchActions', () => {
 });
 
 describe('WorkbenchContent', () => {
-  describe('org is committed and there are spaces', () => {
+  describe('there are spaces', () => {
     it('should render the OrganizationUsagePage', () => {
       const { queryByTestId, getByTestId } = render(
         <MockPovider {...defaultData}>
-          <WorkbenchContent resources={[]} showNewPricingFeature={false} />
+          <WorkbenchContent />
         </MockPovider>
       );
 
       expect(getByTestId('usage-page')).toBeInTheDocument();
 
       expect(queryByTestId('usage-page__no-spaces-placeholder')).toBeNull();
-      expect(queryByTestId('resource-list')).toBeNull();
     });
   });
 
@@ -258,33 +179,13 @@ describe('WorkbenchContent', () => {
       };
       const { queryByTestId, getByTestId } = render(
         <MockPovider {...data}>
-          <WorkbenchContent resources={[]} showNewPricingFeature={false} />
+          <WorkbenchContent />
         </MockPovider>
       );
 
       expect(getByTestId('usage-page__no-spaces-placeholder')).toBeInTheDocument();
 
       expect(queryByTestId('usage-page')).toBeNull();
-      expect(queryByTestId('resource-list')).toBeNull();
-    });
-  });
-
-  describe('org is not committed', () => {
-    it('should render OrganizationResourceUsageList', () => {
-      const data = {
-        ...defaultData,
-        isTeamOrEnterpriseCustomer: false,
-      };
-      const { queryByTestId, getByTestId } = render(
-        <MockPovider {...data}>
-          <WorkbenchContent resources={[]} showNewPricingFeature={false} />
-        </MockPovider>
-      );
-
-      expect(getByTestId('resource-list')).toBeInTheDocument();
-
-      expect(queryByTestId('usage-page')).toBeNull();
-      expect(queryByTestId('usage-page__no-spaces-placeholder')).toBeNull();
     });
   });
 });
