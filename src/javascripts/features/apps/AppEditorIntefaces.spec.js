@@ -382,8 +382,8 @@ describe('AppEditorInterfaces', () => {
           items: [
             {
               sys: { contentType: { sys: { id: 'CT1' } } },
-              editors: [{ widgetNamespace: NAMESPACE_APP, widgetId: APP_ID }],
-              sidebar: [{ widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: APP_ID }],
+              editors: [{ widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID }],
+              sidebar: [{ widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN, widgetId: APP_ID }],
             },
           ],
         })
@@ -393,7 +393,7 @@ describe('AppEditorInterfaces', () => {
 
       expect(cma.updateEditorInterface).toBeCalledWith({
         sys: { contentType: { sys: { id: 'CT1' } } },
-        sidebar: [{ widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: APP_ID }],
+        sidebar: [{ widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN, widgetId: APP_ID }],
       });
     });
 
