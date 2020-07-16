@@ -63,7 +63,7 @@ export class WidgetLoader {
   ) {
     this.client = client;
     this.marketplaceDataProvider = marketplaceDataProvider;
-    this.baseUrl = envId ? `/spaces/${spaceId}/environments/${envId}` : `/spaces/${spaceId}`
+    this.baseUrl = envId ? `/spaces/${spaceId}/environments/${envId}` : `/spaces/${spaceId}`;
     this.loader = new DataLoader(this.load, { cacheKeyFn });
     this.onWarning = onWarning || noop;
   }
