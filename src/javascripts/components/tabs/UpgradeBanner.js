@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react';
-import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import { useAsync } from 'core/hooks';
 import { css } from 'emotion';
@@ -15,6 +14,7 @@ import createResourceService from 'services/ResourceService';
 import { Note, Paragraph, TextLink } from '@contentful/forma-36-react-components';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { trackCTAClick } from 'analytics/targetedCTA';
+import { getModule } from 'core/NgRegistry';
 
 const WARNING_THRESHOLD = 0.9;
 
@@ -52,15 +52,17 @@ const handleUpgradeToEnterpriseClick = (space) => {
   });
 };
 
-export default function UpgradeBanner({ space, isMasterEnvironment }) {
+export default function UpgradeBanner() {
+  const spaceContext = getModule('spaceContext');
+  const space = spaceContext.getSpace();
+
   const updateResource = useCallback(async () => {
     // We only want to make these fetches if the user is an owner or admin && the organization is v2+
     // && it's the master environment
     if (
-      !space ||
       !isOwnerOrAdmin(space.organization) ||
       isLegacyOrganization(space.organization) ||
-      !isMasterEnvironment
+      !spaceContext.isMasterEnvironment
     ) {
       return null;
     }
@@ -72,7 +74,7 @@ export default function UpgradeBanner({ space, isMasterEnvironment }) {
     ]);
 
     return { resource, spacePlan };
-  }, [space, isMasterEnvironment]);
+  }, [space, spaceContext.isMasterEnvironment]);
 
   const { isLoading, data } = useAsync(updateResource);
 
@@ -134,8 +136,3 @@ export default function UpgradeBanner({ space, isMasterEnvironment }) {
     </Note>
   );
 }
-
-UpgradeBanner.propTypes = {
-  space: PropTypes.object.isRequired,
-  isMasterEnvironment: PropTypes.bool.isRequired,
-};

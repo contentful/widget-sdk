@@ -10,6 +10,7 @@ import createResourceService from 'services/ResourceService';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { trackCTAClick } from 'analytics/targetedCTA';
 import userEvent from '@testing-library/user-event';
+import * as spaceContextMocked from 'ng/spaceContext';
 
 const SPACE = fake.Space();
 
@@ -57,10 +58,8 @@ jest.mock('analytics/targetedCTA', () => ({
   trackCTAClick: jest.fn(),
 }));
 
-async function build(custom = {}, shouldWait = true) {
-  const props = Object.assign({ space: SPACE, isMasterEnvironment: true }, custom);
-
-  render(<UpgradeBanner {...props} />);
+async function build(shouldWait = true) {
+  render(<UpgradeBanner />);
 
   if (shouldWait) {
     await waitForElementToBeRemoved(() => screen.queryByTestId('upgrade-banner.is-loading'));
@@ -80,10 +79,12 @@ describe('UpgradeBanner', () => {
     isLegacyOrganization.mockReturnValue(false);
     isEnterprisePlan.mockReturnValue(false);
     getSingleSpacePlan.mockResolvedValue({ name: 'Large' });
+    spaceContextMocked.getSpace.mockReturnValue(SPACE);
+    spaceContextMocked.isMasterEnvironment = true;
   });
 
   it('should load an empty div when fetching initial data', async () => {
-    build({}, false);
+    build(false);
 
     expect(screen.queryByTestId('upgrade-banner.is-loading').textContent).toEqual('');
 
@@ -173,7 +174,8 @@ describe('UpgradeBanner', () => {
     });
 
     it('when it is not a master environment', async () => {
-      await build({ isMasterEnvironment: false });
+      spaceContextMocked.isMasterEnvironment = false;
+      await build();
 
       expect(screen.queryByTestId('upgrade-banner.container')).toBeNull();
     });
