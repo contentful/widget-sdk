@@ -3,6 +3,7 @@ import { get, set } from 'lodash';
 import { WidgetLoader, MarketplaceDataProvider } from 'features/widget-renderer';
 import { createPlainClient } from 'contentful-management';
 import { getToken } from 'Authentication';
+import * as Config from 'Config';
 
 let marketplaceDataProvider: MarketplaceDataProvider;
 
@@ -35,7 +36,13 @@ export async function getCustomWidgetLoader() {
   let loader: WidgetLoader = get(cache, cachePath);
 
   if (!loader) {
-    const client = createPlainClient({ accessToken });
+    const [proto, host] = Config.apiUrl().split('://');
+
+    const client = createPlainClient({
+      accessToken,
+      host: host.replace(/\/+$/, ''),
+      insecure: proto !== 'https',
+    });
 
     loader = new WidgetLoader(client, getMarketplaceDataProvider(), spaceId, environmentId);
 
