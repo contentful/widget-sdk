@@ -141,7 +141,11 @@ function removeSingleEditorInterfaceReferences(ei, appInstallation) {
 
   if (Array.isArray(ei.editors)) {
     // If the app is used as `editor`, remove it from the list.
-    result.editors = ei.editors.filter((widget) => !isCurrentApp(widget, appInstallation));
+    const otherEditors = ei.editors.filter((widget) => !isCurrentApp(widget, appInstallation));
+
+    if (otherEditors.length > 0) {
+      result.editors = otherEditors;
+    }
   }
 
   return result;
