@@ -10,6 +10,7 @@ import { getAllTeams } from 'access_control/TeamRepository';
 import { getOrganization } from 'services/TokenStore';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import DocumentTitle from 'components/shared/DocumentTitle';
+import { LocationProvider } from 'core/services/LocationContext';
 
 const UserListFetcher = createFetcherComponent(({ orgId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
@@ -54,14 +55,16 @@ export default class UserListRoute extends React.Component {
             return (
               <>
                 <DocumentTitle title="Users" />
-                <UsersList
-                  spaces={spaces}
-                  spaceRoles={roles}
-                  orgId={orgId}
-                  teams={teams}
-                  hasSsoEnabled={org && org.hasSsoEnabled}
-                  hasTeamsFeature={hasTeamsFeature}
-                />
+                <LocationProvider>
+                  <UsersList
+                    spaces={spaces}
+                    spaceRoles={roles}
+                    orgId={orgId}
+                    teams={teams}
+                    hasSsoEnabled={org && org.hasSsoEnabled}
+                    hasTeamsFeature={hasTeamsFeature}
+                  />
+                </LocationProvider>
               </>
             );
           }}

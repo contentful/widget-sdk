@@ -1,5 +1,5 @@
 import { orgRoles } from 'utils/MembershipUtils';
-import { set, cloneDeep } from 'lodash';
+import { set, cloneDeep, omit, isEmpty } from 'lodash';
 import {
   getRoleOptions,
   getSpaceRoleOptions,
@@ -192,4 +192,23 @@ export function generateFilterDefinitions({
   if (hasTeamsFeature) definitions.push(team);
 
   return definitions;
+}
+
+export const defaultFilterValues = { order: '-sys.createdAt' };
+export function getFilterValuesFromQuery(query = {}) {
+  if (isEmpty(query)) {
+    return defaultFilterValues;
+  }
+  const filterQuery = omit(query, 'searchTerm');
+  if (isEmpty(filterQuery)) {
+    return defaultFilterValues;
+  }
+  return filterQuery;
+}
+
+export function getSearchTermFromQuery(query = {}) {
+  if (query && query.searchTerm) {
+    return query.searchTerm;
+  }
+  return '';
 }

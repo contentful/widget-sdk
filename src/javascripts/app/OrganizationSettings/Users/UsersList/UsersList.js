@@ -1,4 +1,4 @@
-import React, { useCallback, useReducer, useEffect } from 'react';
+import React, { useCallback, useReducer, useEffect, useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { debounce, times } from 'lodash';
 import { css } from 'emotion';
@@ -30,16 +30,19 @@ import { ModalLauncher } from 'core/components/ModalLauncher';
 import RemoveOrgMemberDialog from '../RemoveUserDialog';
 import Placeholder from 'app/common/Placeholder';
 import { UserListRow } from './UserListRow';
-import { generateFilterDefinitions } from './FilterDefinitions';
 import {
-  Filter as FilterPropType,
-  Space as SpacePropType,
-  Team as TeamPropType,
-} from 'app/OrganizationSettings/PropTypes';
+  defaultFilterValues,
+  generateFilterDefinitions,
+  getFilterValuesFromQuery,
+  getSearchTermFromQuery,
+} from './FilterDefinitions';
+import { Space as SpacePropType, Team as TeamPropType } from 'app/OrganizationSettings/PropTypes';
 import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { useAsyncFn } from 'core/hooks';
 import { createImmerReducer } from 'core/utils/createImmerReducer';
 import { UserListCommunityBanner } from './UserListCommunityBanner';
+import { LocationStateContext, LocationDispatchContext } from 'core/services/LocationContext';
+import qs from 'qs';
 
 const styles = {
   filters: css({
@@ -73,11 +76,8 @@ UsersList.propTypes = {
   spaceRoles: PropTypes.array,
   teams: PropTypes.arrayOf(TeamPropType),
   spaces: PropTypes.arrayOf(SpacePropType),
-  filters: PropTypes.arrayOf(FilterPropType),
   hasSsoEnabled: PropTypes.bool,
   hasTeamsFeature: PropTypes.bool,
-  onChange: PropTypes.func,
-  onReset: PropTypes.func,
 };
 
 const reducer = createImmerReducer({
@@ -87,44 +87,47 @@ const reducer = createImmerReducer({
   USER_REMOVED: (state, action) => {
     state.users.items = state.users.items.filter((user) => user.sys.id !== action.payload.sys.id);
   },
-  FILTERS_CHANGED: (state, action) => {
-    state.filters = action.payload;
-  },
-  SEARCH_TERM_CHANGED: (state, action) => {
-    state.searchTerm = action.payload;
-    state.pagination = { ...state.pagination, skip: 0 };
-  },
   PAGINATION_CHANGED: (state, action) => {
     state.pagination = action.payload;
   },
 });
 
 export function UsersList({ orgId, spaceRoles, teams, spaces, hasSsoEnabled, hasTeamsFeature }) {
-  const initialFilters = generateFilterDefinitions({
+  const updateLocation = useContext(LocationDispatchContext);
+  const locationValue = useContext(LocationStateContext);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterValues, setFilterValues] = useState(defaultFilterValues);
+
+  useEffect(() => {
+    const queryValues = locationValue.search ? qs.parse(locationValue.search.slice(1)) : {};
+    setFilterValues(getFilterValuesFromQuery(queryValues));
+    setSearchTerm(getSearchTermFromQuery(queryValues));
+  }, [locationValue]);
+
+  const filters = generateFilterDefinitions({
     spaceRoles,
     spaces,
     teams,
     hasSsoEnabled,
     hasTeamsFeature,
+    filterValues,
   });
+
   const initialState = {
     users: { items: [], queryTotal: 0 },
     pagination: {
       skip: 0,
       limit: 10,
     },
-    filters: initialFilters,
-    searchTerm: '',
   };
 
-  const [{ users, pagination, filters, searchTerm }, dispatch] = useReducer(reducer, initialState);
+  const [{ users, pagination }, dispatch] = useReducer(reducer, initialState);
 
   const fetchUsers = useCallback(async () => {
     const orgEndpoint = createOrganizationEndpoint(orgId);
-    const filterQuery = formatQuery(filters.map((item) => item.filter));
     const includePaths = ['sys.user'];
     const query = {
-      ...filterQuery,
+      ...filterValues,
       query: searchTerm,
       include: includePaths,
       skip: pagination.skip,
@@ -134,7 +137,7 @@ export function UsersList({ orgId, spaceRoles, teams, spaces, hasSsoEnabled, has
     const resolved = ResolveLinks({ paths: includePaths, items, includes });
     dispatch({ type: 'USERS_FETCHED', payload: { items: resolved, queryTotal: total } });
     return { items: resolved, queryTotal: total };
-  }, [orgId, filters, searchTerm, pagination, dispatch]);
+  }, [orgId, filterValues, searchTerm, pagination, dispatch]);
 
   const [{ isLoading: isLoadingUsers }, updateUsers] = useAsyncFn(fetchUsers);
 
@@ -149,12 +152,32 @@ export function UsersList({ orgId, spaceRoles, teams, spaces, hasSsoEnabled, has
     };
   };
 
-  const handleFiltersChanged = (newFilter) => {
-    dispatch({ type: 'FILTERS_CHANGED', payload: newFilter });
+  const handleFiltersChanged = (newFilters) => {
+    let newFilterValues = formatQuery(newFilters.map((item) => item.filter));
+    if (searchTerm !== '') {
+      newFilterValues = { ...newFilterValues, searchTerm: searchTerm };
+    }
+    updateLocation(newFilterValues);
   };
 
   const handleFiltersReset = () => {
-    dispatch({ type: 'FILTERS_CHANGED', payload: initialFilters });
+    updateLocation({});
+  };
+
+  const debouncedSearch = useCallback(
+    debounce((newSearchTerm, currentFilters) => {
+      let newQuery = currentFilters;
+      if (newSearchTerm !== '') {
+        newQuery = { ...newQuery, searchTerm: newSearchTerm };
+      }
+      updateLocation(newQuery);
+    }, 500),
+    []
+  );
+
+  const search = (e) => {
+    const newSearchTerm = e.target.value;
+    debouncedSearch(newSearchTerm, filterValues);
   };
 
   const handleMembershipRemove = (membership) => async () => {
@@ -198,23 +221,6 @@ export function UsersList({ orgId, spaceRoles, teams, spaces, hasSsoEnabled, has
         limit,
       },
     });
-  };
-
-  const debouncedSearch = useCallback(
-    debounce(
-      (newSearchTerm) =>
-        dispatch({
-          type: 'SEARCH_TERM_CHANGED',
-          payload: newSearchTerm,
-        }),
-      500
-    ),
-    []
-  );
-
-  const search = (e) => {
-    const newSearchTerm = e.target.value;
-    debouncedSearch(newSearchTerm);
   };
 
   return (

@@ -1,16 +1,14 @@
 import React from 'react';
-import { cloneDeep } from 'lodash';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent, cleanup } from '@testing-library/react';
 import { generateFilterDefinitions } from './FilterDefinitions';
 import { UsersList } from './UsersList';
 import { ModalLauncher } from 'core/components/ModalLauncher';
 import * as fake from 'test/helpers/fakeFactory';
 import cleanupNotifications from 'test/helpers/cleanupNotifications';
 import { removeMembership, getMemberships } from 'access_control/OrganizationMembershipRepository';
+import { LocationStateContext, LocationDispatchContext } from 'core/services/LocationContext';
 
 const filters = generateFilterDefinitions({});
-const activeFilters = cloneDeep(filters);
-activeFilters[1].filter = { key: 'sys.status', value: 'active' };
 
 const mockOrg = fake.Organization();
 const user1 = fake.User({
@@ -33,6 +31,10 @@ const mockOrgMemberships = [
   fake.OrganizationMembership('member', 'active', user2),
   fake.OrganizationMembership('member', 'active', user3),
 ];
+const spaceRoleOne = fake.SpaceRole('Role 1');
+const spaceRoleTwo = fake.SpaceRole('Role 2');
+const spaceOne = fake.Space('Space 1');
+const spaceTwo = fake.Space('Space 2');
 
 jest.mock('access_control/OrganizationMembershipRepository', () => ({
   getMemberships: jest.fn(async () => ({ items: mockOrgMemberships, total: 13 })), //mock bigger total to test pagination
@@ -56,23 +58,23 @@ jest.mock('account/pricing/PricingDataProvider', () => {
 
 jest.useFakeTimers();
 
-async function build(props) {
-  const spaceRoleOne = fake.SpaceRole('Role 1');
-  const spaceRoleTwo = fake.SpaceRole('Role 2');
-  const spaceOne = fake.Space('Space 1');
-  const spaceTwo = fake.Space('Space 2');
+const locationValueWithSearch = { search: '?order=-sys.createdAt&sys.status=pending' };
+const updateLocation = jest.fn();
 
+async function build(locationValue = {}) {
   render(
-    <UsersList
-      orgId={mockOrg.sys.id}
-      spaceRoles={[spaceRoleOne, spaceRoleTwo]}
-      spaces={[spaceOne, spaceTwo]}
-      filters={filters}
-      teams={[]}
-      hasSsoEnabled={false}
-      hasTeamsFeature={false}
-      {...props}
-    />
+    <LocationStateContext.Provider value={locationValue}>
+      <LocationDispatchContext.Provider value={updateLocation}>
+        <UsersList
+          orgId={mockOrg.sys.id}
+          spaceRoles={[spaceRoleOne, spaceRoleTwo]}
+          spaces={[spaceOne, spaceTwo]}
+          teams={[]}
+          hasSsoEnabled={false}
+          hasTeamsFeature={false}
+        />
+      </LocationDispatchContext.Provider>
+    </LocationStateContext.Provider>
   );
 
   return waitFor(() =>
@@ -83,24 +85,29 @@ async function build(props) {
 }
 
 describe('UsersList', () => {
-  afterEach(cleanupNotifications);
+  afterEach(() => {
+    cleanup();
+    cleanupNotifications();
+  });
+
   it('should render users list and filters', async () => {
-    await build();
+    await build({});
     expect(screen.getAllByTestId('search-filter')).toHaveLength(filters.length);
+
+    expect(getMemberships).toHaveBeenCalledWith(mockOrgEndpoint, {
+      order: '-sys.createdAt',
+      query: '',
+      include: ['sys.user'],
+      skip: 0,
+      limit: 10,
+    });
     expect(screen.getAllByTestId('organization-membership-list-row')).toHaveLength(
       mockOrgMemberships.length
     );
   });
 
-  it('should call getMemberships with correct query when filters change', async () => {
-    await build();
-    const query = {
-      order: '-sys.createdAt',
-      query: '',
-      include: ['sys.user'],
-      skip: 0,
-      limit: 10,
-    };
+  it('should call updateLocation and getMemberships with correct args when filters change', async () => {
+    await build(locationValueWithSearch);
 
     //user sets status filter to Invited
     const selectEl = screen.getAllByTestId('search-filter.options');
@@ -109,40 +116,38 @@ describe('UsersList', () => {
         value: 'pending',
       },
     });
-    expect(getMemberships).toHaveBeenCalledWith(mockOrgEndpoint, {
-      ...query,
+
+    expect(updateLocation).toHaveBeenCalledWith({
+      order: '-sys.createdAt',
       'sys.status': 'pending',
+    });
+
+    expect(getMemberships).toHaveBeenCalledWith(mockOrgEndpoint, {
+      order: '-sys.createdAt',
+      'sys.status': 'pending',
+      query: '',
+      include: ['sys.user'],
+      skip: 0,
+      limit: 10,
     });
     await screen.findAllByTestId('organization-membership-list-row');
   });
 
-  it('should call getMemberships with initial query when filters reset', async () => {
-    await build();
-    const query = {
-      order: '-sys.createdAt',
-      query: '',
-      include: ['sys.user'],
-      skip: 0,
-      limit: 10,
-    };
+  it('should call clear filters on click reset', async () => {
+    await build(locationValueWithSearch);
 
-    //user sets status filter to Invited
-    const selectEl = screen.getAllByTestId('search-filter.options');
-    fireEvent.change(selectEl[1], {
-      target: {
-        value: 'pending',
-      },
-    });
-
+    getMemberships.mockClear();
     //user resets filters
     expect(screen.getByText('Clear filters')).toBeVisible();
     fireEvent.click(screen.getByText('Clear filters'));
-    expect(getMemberships).toHaveBeenCalledWith(mockOrgEndpoint, query);
+    expect(updateLocation).toHaveBeenCalledWith({});
+
     await screen.findAllByTestId('organization-membership-list-row');
   });
 
   it('should get users with correct query when pagination changes', async () => {
-    await build();
+    await build({});
+
     const query = {
       order: '-sys.createdAt',
       query: '',
