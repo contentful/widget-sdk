@@ -57,6 +57,7 @@ function ScheduledActionWidgetJobDialog({
       onCancel={onCancel}
       isSubmitting={isSubmitting}
       pendingJobs={pendingJobs}
+      showUnpublish={true}
       isMasterEnvironment={isMasterEnvironment}
     />
   );

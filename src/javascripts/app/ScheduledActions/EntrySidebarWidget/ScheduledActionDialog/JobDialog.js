@@ -62,7 +62,14 @@ TimezoneNote.propTypes = {
   timezone: PropTypes.string,
 };
 
-function JobDialog({ handleSubmit, onCancel, isSubmitting, pendingJobs, isMasterEnvironment }) {
+function JobDialog({
+  showUnpublish,
+  handleSubmit,
+  onCancel,
+  isSubmitting,
+  pendingJobs,
+  isMasterEnvironment,
+}) {
   const now = moment(Date.now());
   const currentTimezone = moment.tz.guess();
   const suggestedDate = getSuggestedDate(pendingJobs, now);
@@ -152,13 +159,15 @@ function JobDialog({ handleSubmit, onCancel, isSubmitting, pendingJobs, isMaster
                   checked={action === ScheduledAction.Publish}
                   labelIsLight={action !== ScheduledAction.Publish}
                 />
-                <RadioButtonField
-                  id="action-unpublish"
-                  labelText="Unpublish"
-                  onClick={() => setAction(ScheduledAction.Unpublish)}
-                  checked={action === ScheduledAction.Unpublish}
-                  labelIsLight={action !== ScheduledAction.Unpublish}
-                />
+                {showUnpublish ? (
+                  <RadioButtonField
+                    id="action-unpublish"
+                    labelText="Unpublish"
+                    onClick={() => setAction(ScheduledAction.Unpublish)}
+                    checked={action === ScheduledAction.Unpublish}
+                    labelIsLight={action !== ScheduledAction.Unpublish}
+                  />
+                ) : null}
               </FieldGroup>
               <FieldGroup row>
                 <DatePicker
@@ -228,6 +237,7 @@ JobDialog.propTypes = {
   onCancel: PropTypes.func.isRequired,
   isSubmitting: PropTypes.bool.isRequired,
   pendingJobs: PropTypes.array,
+  showUnpublish: PropTypes.bool,
   isMasterEnvironment: PropTypes.bool,
 };
 

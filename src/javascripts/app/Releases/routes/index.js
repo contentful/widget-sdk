@@ -13,8 +13,9 @@ const detail = {
   mapInjectedToProps: [
     '$stateParams',
     'spaceContext',
-    ({ releaseId }) => ({
+    ({ releaseId }, spaceContext) => ({
       releaseId,
+      isMasterEnvironment: spaceContext.isMasterEnvironment(),
       defaultLocale: TheLocaleStore.getDefaultLocale(),
     }),
   ],

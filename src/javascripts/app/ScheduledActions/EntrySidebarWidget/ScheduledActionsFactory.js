@@ -1,9 +1,9 @@
-export function create({ environmentId, entityId, action, scheduledAt }) {
+export function create({ environmentId, entityId, action, scheduledAt, linkType }) {
   return {
     entity: {
       sys: {
         type: 'Link',
-        linkType: 'Entry',
+        linkType: linkType,
         id: entityId,
       },
     },

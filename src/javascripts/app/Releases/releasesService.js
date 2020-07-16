@@ -2,15 +2,23 @@ import { getModule } from 'core/NgRegistry';
 import { isEqual, uniqWith } from 'lodash';
 import * as EndpointFactory from 'data/EndpointFactory';
 import APIClient from 'data/APIClient.js';
+import { create as createDto } from 'app/ScheduledActions/EntrySidebarWidget/ScheduledActionsFactory.js';
+import * as ScheduledActionsService from 'app/ScheduledActions/DataManagement/ScheduledActionsService';
 
 const toArrayOfUnique = (entities) => uniqWith(entities, isEqual);
 
-function createEndpoint() {
+function getContextIds() {
   const spaceContext = getModule('spaceContext');
-  return EndpointFactory.createSpaceEndpoint(
-    spaceContext.space.data.sys.id,
-    spaceContext.space.environment.sys.id
-  );
+
+  return {
+    spaceId: spaceContext.space.data.sys.id,
+    environmentId: spaceContext.space.environment.sys.id,
+  };
+}
+
+function createEndpoint() {
+  const { spaceId, environmentId } = getContextIds();
+  return EndpointFactory.createSpaceEndpoint(spaceId, environmentId);
 }
 
 async function createRelease(title, items = []) {
@@ -74,6 +82,32 @@ async function validateReleaseAction(releaseId, action) {
   return await apiClient.validateReleaseAction(releaseId, action);
 }
 
+async function fetchReleaseScheduleJobs(releaseId) {
+  const jobCollection = await ScheduledActionsService.getNotCanceledJobsForEntity(
+    createEndpoint(),
+    releaseId,
+    { 'environment.sys.id': getContextIds().environmentId }
+  );
+
+  return jobCollection;
+}
+
+async function createReleaseScheduleJob({ releaseId, action, scheduledAt }) {
+  const { environmentId } = getContextIds();
+  const job = await ScheduledActionsService.createJob(
+    createEndpoint(),
+    createDto({
+      environmentId: environmentId,
+      entityId: releaseId,
+      action: action,
+      linkType: 'Release',
+      scheduledAt,
+    }),
+    { 'environment.sys.id': environmentId }
+  );
+  return job;
+}
+
 export {
   createRelease,
   getReleases,
@@ -85,4 +119,6 @@ export {
   publishRelease,
   getReleaseAction,
   validateReleaseAction,
+  fetchReleaseScheduleJobs,
+  createReleaseScheduleJob,
 };

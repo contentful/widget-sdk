@@ -161,6 +161,7 @@ export default function ScheduledActionsWidget({
           environmentId,
           entityId: entity.sys.id,
           action: action,
+          linkType: 'Entry',
           scheduledAt,
         }),
         { 'environment.sys.id': environmentId }
