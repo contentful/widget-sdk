@@ -34,7 +34,7 @@ export default class DeploymentForm extends React.Component {
   };
 
   getChosenDeploymentProvider = (url) => {
-    if (url.includes('netlify.com')) {
+    if (url.match(/netlify\.(com|app)/)) {
       return DEPLOYMENT_PROVIDERS.NETLIFY;
     }
 
