@@ -54,6 +54,9 @@ export function createSpaceApi({ cma, initialContentTypes, pubSubClient, environ
       if (!['Entry', 'Asset'].includes(entityType)) {
         throw new Error('Invalid entity type');
       }
+      if (!pubSubClient) {
+        return () => {};
+      }
       const getEntity = entityType === 'Entry' ? getEntry : getAsset;
       const handler = (msg) => {
         if (
