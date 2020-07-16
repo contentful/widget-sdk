@@ -52,7 +52,7 @@ export default function makeExtensionDialogsHandlers(dependencies) {
     const loader = await getCustomWidgetLoader();
     const widget = await loader.getOne({ widgetNamespace, widgetId });
 
-    // If a widgeet was found, meaning that an app or an extension
+    // If a widget was found, meaning that an app or an extension
     // are already installed, just return it.
     if (widget) {
       return widget;
