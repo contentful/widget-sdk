@@ -1,6 +1,7 @@
 /* eslint-disable rulesdir/allow-only-import-export-in-index, import/no-default-export */
 import React from 'react';
 import { get } from 'lodash';
+import { css } from 'emotion';
 import { AppsListPage } from '../AppsListPage';
 import { AppRoute } from '../AppPage';
 import { makeAppHookBus, getAppsRepo } from 'features/apps-core';
@@ -177,7 +178,21 @@ export const appRoute = {
     {
       name: 'page',
       url: '/app_installations/:appId{path:PathSuffix}',
-      component: (props) => <ExtensionIFrameRendererWithLocalHostWarning {...props} isFullSize />,
+      component: (props) => (
+        <div
+          className={css({
+            display: 'flex',
+            flexDirection: 'column',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            overflowX: 'hidden',
+          })}>
+          <ExtensionIFrameRendererWithLocalHostWarning {...props} isFullSize />
+        </div>
+      ),
       resolve: {
         app: ['$stateParams', 'spaceContext', ({ appId }) => getAppsRepo().getApp(appId)],
         widget: [
