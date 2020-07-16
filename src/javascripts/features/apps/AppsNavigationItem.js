@@ -22,8 +22,12 @@ const makeRef = (ref, isMaster) => {
   }
 };
 
+const getPageLocation = (widget) => {
+  return widget.locations.find((l) => l.location === LOCATION_PAGE);
+};
+
 const hasNavigationItem = (widget) => {
-  const pageLocation = widget.locations.find((l) => l.location === LOCATION_PAGE);
+  const pageLocation = getPageLocation(widget);
 
   return pageLocation && pageLocation.navigationItem;
 };
@@ -53,7 +57,7 @@ const buildLoadingChildren = () => {
 };
 
 const buildAppChild = (widget, { isMasterEnvironment }) => {
-  const { navigationItem } = widget.locations.find((l) => l.location === LOCATION_PAGE);
+  const { navigationItem } = getPageLocation(widget);
 
   return {
     dataViewType: `apps-${widget.id}`,
