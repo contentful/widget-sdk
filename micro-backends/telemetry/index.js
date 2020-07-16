@@ -11,7 +11,7 @@ module.exports = {
       return {
         statusCode: 404,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ meassage: 'Not found.' }),
+        body: JSON.stringify({ message: 'Not found.' }),
       };
     }
 

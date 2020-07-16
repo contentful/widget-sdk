@@ -10,6 +10,8 @@ const CALLS_IN_PERIOD = 7;
 const PERIOD = 1000;
 const DEFAULT_TTL = 5;
 
+const REPORTING_TIMEOUT = 60 * 1000;
+
 export default function withRetry(requestFn) {
   const queue = [];
   let inFlight = 0;
@@ -111,24 +113,30 @@ function backOff(call) {
 // by the Network tab in your dev tools by a few milliseconds to
 // tens of millisecond at worst (as per my limited testing).
 function recordResponseTime({ status }, startTime, { url, method } = {}) {
+  const duration = Date.now() - startTime;
   try {
-    Telemetry.record('cma-response-time', Date.now() - startTime, {
-      endpoint: getEndpoint(url),
-      status,
-      method,
-    });
+    if (duration < REPORTING_TIMEOUT) {
+      Telemetry.record('cma-response-time', duration, {
+        endpoint: getEndpoint(url),
+        status,
+        method,
+      });
+    }
   } catch {
     // no-op
   }
 }
 
 function recordQueueTime({ status }, queuedAt, { url, method } = {}) {
+  const duration = Date.now() - queuedAt;
   try {
-    Telemetry.record('cma-queue-time', Date.now() - queuedAt, {
-      endpoint: getEndpoint(url),
-      status,
-      method,
-    });
+    if (duration < REPORTING_TIMEOUT) {
+      Telemetry.record('cma-queue-time', duration, {
+        endpoint: getEndpoint(url),
+        status,
+        method,
+      });
+    }
   } catch {
     // no-op
   }
