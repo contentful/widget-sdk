@@ -227,8 +227,14 @@ export class WidgetLoader {
         includes: { AppDefinition: appDefinitions },
       },
     ] = await Promise.all([
-      this.client.raw.get(`${this.baseUrl}/extensions`, { params: { stripSrcdoc: 'true' } }),
-      this.client.raw.get(`${this.baseUrl}/app_installations`),
+      this.client.raw
+        .get(`${this.baseUrl}/extensions`, { params: { stripSrcdoc: 'true' } })
+        .catch(
+          this.handleApiFailure('Failed to load extensions for listing', [], EMPTY_EXTENSIONS_RES)
+        ),
+      this.client.raw
+        .get(`${this.baseUrl}/app_installations`)
+        .catch(this.handleApiFailure('Failed to load apps for listing', [], EMPTY_APPS_RES)),
     ]);
 
     return appInstallations
