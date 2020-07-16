@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-// import ScheduledAction from 'app/ScheduledActions/ScheduledActionAction';
 import JobDialog from 'app/ScheduledActions/EntrySidebarWidget/ScheduledActionDialog/JobDialog';
 
 import { formatScheduledAtDate } from 'app/ScheduledActions/EntrySidebarWidget/ScheduledActionDialog/utils.js';
@@ -31,6 +30,7 @@ function ReleaseActionJobDialog({
       isSubmitting={isSubmitting}
       pendingJobs={pendingJobs}
       isMasterEnvironment={isMasterEnvironment}
+      linkType="release"
     />
   );
 }

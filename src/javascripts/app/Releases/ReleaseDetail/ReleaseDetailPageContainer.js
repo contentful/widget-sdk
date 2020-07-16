@@ -12,10 +12,6 @@ import {
 import { newForLocale } from 'app/entity_editor/entityHelpers';
 import * as logger from 'services/logger';
 import { useAsyncFn } from 'core/hooks';
-// import {
-//   createJob as trackCreatedJob,
-//   cancelJob as trackCancelledJob,
-// } from 'app/ScheduledActions/Analytics/ScheduledActionsAnalytics.js';
 import { getEntities, waitForReleaseAction, switchToErroredTab } from './utils';
 import {
   SET_RELEASE_ENTITIES,
@@ -27,7 +23,7 @@ import {
 import LoadingOverlay from 'app/common/LoadingOverlay';
 import ReleaseActionJobDialog from './ReleaseScheduledActionDialog';
 import { excludeEntityFromRelease } from '../common/utils';
-import { createReleaseScheduleJob, fetchReleaseScheduleJobs } from '../releasesService';
+import { createReleaseJob, fetchReleaseJobs, cancelReleaseJob } from '../releasesService';
 import ReleaseWorkBenchContent from './ReleaseWorkBenchContent';
 import ReleaseWorkBenchSideBar from './ReleaseWorkBenchSideBar';
 import { styles } from './styles';
@@ -111,7 +107,7 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale, isMasterEnvironment }) =>
   const createJob = async ({ action, scheduledAt }) => {
     const releaseTitle = release.title;
     try {
-      const job = await createReleaseScheduleJob({ releaseId, action, scheduledAt });
+      const job = await createReleaseJob({ releaseId, action, scheduledAt });
       return job;
     } catch (error) {
       if (400 === error.status) {
@@ -122,28 +118,33 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale, isMasterEnvironment }) =>
         Notification.error(`${releaseTitle} failed to schedule`);
       }
       setIsCreatingJob(false);
-      logger.logError(`Entry failed to schedule`, {
+      logger.logError(`Release failed to schedule`, {
         error,
         message: error.message,
       });
     }
   };
 
-  const handleScheduleCreate = async ({ scheduledAt, action }, timezone) => {
+  const handleScheduleCreate = async ({ scheduledAt, action }) => {
     setIsCreatingJob(true);
     const job = await createJob({ scheduledAt, action });
     if (job && job.sys) {
       Notification.success(`${release.title} was scheduled successfully`);
       setIsCreatingJob(false);
       setShowScheduleActionDialog(false);
-      console.log('yap', timezone);
-      // trackCreatedJob(job, timezone);
       setJobs([job, ...jobs]);
     }
   };
 
-  const handleScheduleCancel = (jobId) => {
-    console.log('yap', jobId);
+  const handleScheduleCancel = async (jobId) => {
+    try {
+      await cancelReleaseJob(jobId);
+      const job = jobs.find((j) => j.sys.id === jobId);
+      setJobs(jobs.filter((j) => j !== job));
+      Notification.success('Schedule canceled');
+    } catch (error) {
+      Notification.success('Failed to cancel schedule');
+    }
   };
 
   const handleValidation = () => {
@@ -191,7 +192,7 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale, isMasterEnvironment }) =>
 
   const [{ isJobsLoading, error }, fetchJobs] = useAsyncFn(
     useCallback(async () => {
-      const jobCollection = await fetchReleaseScheduleJobs(releaseId);
+      const jobCollection = await fetchReleaseJobs(releaseId);
       setJobs(jobCollection);
 
       return jobCollection;
@@ -249,6 +250,7 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale, isMasterEnvironment }) =>
                 handleScheduleCreate(newJob, timezone);
               }}
               isMasterEnvironment={isMasterEnvironment}
+              linkType="release"
             />
           ) : null}
         </Workbench>

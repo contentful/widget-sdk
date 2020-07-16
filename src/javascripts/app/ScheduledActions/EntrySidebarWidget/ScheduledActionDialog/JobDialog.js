@@ -69,6 +69,7 @@ function JobDialog({
   isSubmitting,
   pendingJobs,
   isMasterEnvironment,
+  linkType,
 }) {
   const now = moment(Date.now());
   const currentTimezone = moment.tz.guess();
@@ -144,6 +145,7 @@ function JobDialog({
                 jobs={pendingJobs}
                 isMasterEnvironment={isMasterEnvironment}
                 showAllScheduleLink={false}
+                linkType={linkType}
                 isReadOnly
               />
             )}
@@ -239,6 +241,7 @@ JobDialog.propTypes = {
   pendingJobs: PropTypes.array,
   showUnpublish: PropTypes.bool,
   isMasterEnvironment: PropTypes.bool,
+  linkType: PropTypes.string.isRequired,
 };
 
 export default JobDialog;

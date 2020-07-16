@@ -82,7 +82,7 @@ async function validateReleaseAction(releaseId, action) {
   return await apiClient.validateReleaseAction(releaseId, action);
 }
 
-async function fetchReleaseScheduleJobs(releaseId) {
+async function fetchReleaseJobs(releaseId) {
   const jobCollection = await ScheduledActionsService.getNotCanceledJobsForEntity(
     createEndpoint(),
     releaseId,
@@ -92,7 +92,7 @@ async function fetchReleaseScheduleJobs(releaseId) {
   return jobCollection;
 }
 
-async function createReleaseScheduleJob({ releaseId, action, scheduledAt }) {
+async function createReleaseJob({ releaseId, action, scheduledAt }) {
   const { environmentId } = getContextIds();
   const job = await ScheduledActionsService.createJob(
     createEndpoint(),
@@ -103,6 +103,16 @@ async function createReleaseScheduleJob({ releaseId, action, scheduledAt }) {
       linkType: 'Release',
       scheduledAt,
     }),
+    { 'environment.sys.id': environmentId }
+  );
+  return job;
+}
+
+async function cancelReleaseJob(jobId) {
+  const { spaceId, environmentId } = getContextIds();
+  const job = await ScheduledActionsService.cancelJob(
+    createEndpoint(spaceId, environmentId),
+    jobId,
     { 'environment.sys.id': environmentId }
   );
   return job;
@@ -119,6 +129,7 @@ export {
   publishRelease,
   getReleaseAction,
   validateReleaseAction,
-  fetchReleaseScheduleJobs,
-  createReleaseScheduleJob,
+  fetchReleaseJobs,
+  createReleaseJob,
+  cancelReleaseJob,
 };

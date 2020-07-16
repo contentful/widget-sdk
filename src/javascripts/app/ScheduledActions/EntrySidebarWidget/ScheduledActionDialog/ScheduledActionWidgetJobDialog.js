@@ -59,6 +59,7 @@ function ScheduledActionWidgetJobDialog({
       pendingJobs={pendingJobs}
       showUnpublish={true}
       isMasterEnvironment={isMasterEnvironment}
+      linkType="entry"
     />
   );
 }

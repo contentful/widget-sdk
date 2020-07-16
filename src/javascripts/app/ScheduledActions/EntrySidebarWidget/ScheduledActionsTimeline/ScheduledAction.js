@@ -120,7 +120,8 @@ class Job extends Component {
               this.toggleCancelDialog();
               onCancel(id);
             }}>
-            This entry is scheduled to {action} on <DateTime date={scheduledAt} />. <br />
+            This {this.props.linkType} is scheduled to {action} on <DateTime date={scheduledAt} />.{' '}
+            <br />
             Are you sure you want to cancel?
           </CancellationModal>
         )}
@@ -163,6 +164,7 @@ export const propTypes = {
   onCancel: PropTypes.func.isRequired,
   isReadOnly: PropTypes.bool.isRequired,
   size: PropTypes.oneOf(['default', 'small']).isRequired,
+  linkType: PropTypes.string.isRequired,
 };
 Job.propTypes = propTypes;
 

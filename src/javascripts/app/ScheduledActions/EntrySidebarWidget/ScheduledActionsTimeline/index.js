@@ -145,6 +145,7 @@ const JobsTimeline = ({
   isReadOnly,
   showAllScheduleLink,
   size,
+  linkType,
 }) => {
   const jobsSortedByScheduledFor = _.sortBy(jobs, 'scheduledFor.datetime');
   return (
@@ -164,7 +165,13 @@ const JobsTimeline = ({
         <List className={cn(styles.jobList, size === 'small' ? styles.jobListSmall : '')}>
           {jobsSortedByScheduledFor.map((job, index) => (
             <li key={`${job.action}-${job.scheduledFor.datetime}-${index}`}>
-              <Job job={job} onCancel={onCancel} isReadOnly={isReadOnly} size={size} />
+              <Job
+                job={job}
+                onCancel={onCancel}
+                isReadOnly={isReadOnly}
+                size={size}
+                linkType={linkType}
+              />
               {size === 'default' && (
                 <Divider currentJob={job} nextJob={jobsSortedByScheduledFor[index + 1]} />
               )}
@@ -192,6 +199,7 @@ JobsTimeline.propTypes = {
   isReadOnly: PropTypes.bool.isRequired,
   showAllScheduleLink: PropTypes.bool,
   size: PropTypes.oneOf(['default', 'small']),
+  linkType: PropTypes.string.isRequired,
 };
 
 JobsTimeline.defaultProps = {

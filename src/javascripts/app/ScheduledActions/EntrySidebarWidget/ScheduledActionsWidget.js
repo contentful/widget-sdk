@@ -275,6 +275,7 @@ export default function ScheduledActionsWidget({
               jobs={pendingJobs}
               onCancel={handleCancel}
               isReadOnly={primary.isDisabled()}
+              linkType="entry"
             />
           )}
         </>

@@ -32,6 +32,8 @@ const ReleaseWorkBenchSideBar = ({
               jobs={pendingJobs}
               onCancel={handleScheduleCancel}
               isReadOnly={false}
+              showAllScheduleLink={false}
+              linkType="release"
             />
           )}
         </>
@@ -70,8 +72,8 @@ const ReleaseWorkBenchSideBar = ({
 };
 
 ReleaseWorkBenchSideBar.propTypes = {
-  isJobsLoading: PropTypes.bool.isRequired,
-  error: PropTypes.object.isRequired,
+  isJobsLoading: PropTypes.bool,
+  error: PropTypes.object,
   hasScheduledActions: PropTypes.bool.isRequired,
   pendingJobs: PropTypes.array.isRequired,
   handlePublication: PropTypes.func.isRequired,

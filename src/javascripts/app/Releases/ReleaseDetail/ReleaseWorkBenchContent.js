@@ -73,7 +73,7 @@ const ReleaseWorkBenchContent = ({
 ReleaseWorkBenchContent.propTypes = {
   defaultLocale: PropTypes.object.isRequired,
   activeLayout: PropTypes.func.isRequired,
-  release: PropTypes.object.isRequired,
+  release: PropTypes.object,
   entitiesLayout: PropTypes.string.isRequired,
   setEntitiesLayout: PropTypes.func.isRequired,
   handleEntityDelete: PropTypes.func.isRequired,
