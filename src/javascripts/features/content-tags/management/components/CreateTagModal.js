@@ -12,10 +12,13 @@ import tokens from '@contentful/forma-36-tokens';
 import { isValidResourceId } from 'data/utils';
 import * as stringUtils from 'utils/StringUtils';
 import { useCreateTag, useReadTags } from 'features/content-tags/core/hooks';
+import { TAGS_PER_SPACE } from 'features/content-tags/core/limits';
+import { LimitsReachedNote } from 'features/content-tags/management/components/LimitsReachedNote';
 
 const styles = {
   controlsPanel: css({ display: 'flex' }),
   marginLeftM: css({ marginLeft: tokens.spacingM }),
+  marginBottom: css({ marginBottom: tokens.spacingM }),
 };
 
 const FORM_NAME_CHANGED = 'FORM_NAME_CHANGED';
@@ -63,10 +66,11 @@ function validate(state, nameExistsValidator, idExistsValidator) {
 function CreateTagModal({ isShown, onClose }) {
   const [{ name, id, idTouched }, dispatch] = useReducer(reducer, FORM_INITIAL_STATE);
   const [continueCreation, setContinueCreation] = useState(false);
-  const { reset, nameExists, idExists } = useReadTags();
+  const { reset, nameExists, idExists, total } = useReadTags();
   const errors = validate({ name, id }, nameExists, idExists);
   const hasAnyValidationErrors = Object.values(errors).some((item) => Boolean(item));
   const isConfirmEnabled = name && id && hasAnyValidationErrors === false;
+  const limitsReached = total >= TAGS_PER_SPACE;
 
   const {
     createTag,
@@ -134,6 +138,7 @@ function CreateTagModal({ isShown, onClose }) {
       onClose={onClose}
       shouldCloseOnOverlayClick={!createTagIsLoading}
       shouldCloseOnEscapePress={!createTagIsLoading}>
+      {limitsReached && <LimitsReachedNote className={styles.marginBottom} />}
       <Form spacing={'condensed'} testId={'create-content-tags-form'}>
         <TextField
           required
@@ -176,7 +181,7 @@ function CreateTagModal({ isShown, onClose }) {
             buttonType="positive"
             loading={createTagIsLoading}
             testId={'create-content-tag-continues-submit-button'}
-            disabled={createTagIsLoading || !isConfirmEnabled}>
+            disabled={limitsReached || createTagIsLoading || !isConfirmEnabled}>
             Save and create another
           </Button>
           <Button
@@ -186,7 +191,7 @@ function CreateTagModal({ isShown, onClose }) {
             type="submit"
             buttonType="positive"
             loading={createTagIsLoading}
-            disabled={createTagIsLoading || !isConfirmEnabled}>
+            disabled={limitsReached || createTagIsLoading || !isConfirmEnabled}>
             Save tag
           </Button>
           <Button

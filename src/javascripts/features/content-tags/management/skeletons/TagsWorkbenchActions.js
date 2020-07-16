@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { useCallback } from 'react';
-import { Button, TextInput } from '@contentful/forma-36-react-components';
+import { useCallback, useMemo } from 'react';
+import { Button, TextInput, Tooltip } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { useReadTags } from 'features/content-tags/core/hooks';
 import PropTypes from 'prop-types';
-import FeedbackButton from 'app/common/FeedbackButton';
+import { TagsFeedbackLink } from 'features/content-tags/core/components/TagsFeedbackLink';
+import { TAGS_PER_SPACE } from 'features/content-tags/core/limits';
 
 const styles = {
   search: css({
@@ -35,7 +36,7 @@ const styles = {
 };
 
 function TagsWorkbenchActions({ hasData, onCreate }) {
-  const { search, setSearch, setSkip } = useReadTags();
+  const { search, setSearch, setSkip, total } = useReadTags();
 
   const onSearch = useCallback(
     (event) => {
@@ -44,6 +45,31 @@ function TagsWorkbenchActions({ hasData, onCreate }) {
     },
     [setSearch, setSkip]
   );
+
+  const createButton = useMemo(() => {
+    const button = (
+      <Button
+        onClick={onCreate}
+        disabled={total >= TAGS_PER_SPACE}
+        buttonType="primary"
+        testId="tags.add">
+        Create Tag
+      </Button>
+    );
+
+    if (total >= TAGS_PER_SPACE) {
+      return (
+        <Tooltip
+          content="You've reached the limit for the number of tags in this space"
+          id="createTip"
+          maxWidth={180}
+          place="top">
+          {button}
+        </Tooltip>
+      );
+    }
+    return button;
+  }, [total, onCreate]);
 
   return (
     <div className={styles.actionsWrapper}>
@@ -59,11 +85,9 @@ function TagsWorkbenchActions({ hasData, onCreate }) {
           />
           <div className={styles.ctaWrapper}>
             <div className={styles.feedback}>
-              <FeedbackButton about="Tags" target="devWorkflows" label="Give feedback" />
+              <TagsFeedbackLink label="Give feedback" />
             </div>
-            <Button onClick={onCreate} buttonType="primary" testId="tags.add">
-              Create Tag
-            </Button>
+            {createButton}
           </div>
         </>
       )}

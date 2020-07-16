@@ -18,6 +18,8 @@ import { DeleteTagModal } from 'features/content-tags/management/components/Dele
 import { useF36Modal } from 'features/content-tags/core/hooks';
 import { TagPropType } from 'features/content-tags/core/TagPropType';
 import tokens from '@contentful/forma-36-tokens';
+import { TAGS_PER_SPACE } from 'features/content-tags/core/limits';
+import { LimitsReachedNote } from 'features/content-tags/management/components/LimitsReachedNote';
 
 const isEdgeBrowser = isEdge();
 
@@ -30,9 +32,18 @@ const styles = {
       zIndex: tokens.zIndexDefault,
     },
   }),
+  tagLimits: css({
+    marginLeft: 'auto',
+  }),
+  flexContainer: css({
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: tokens.spacingL,
+  }),
 };
 
-function TagsList({ tags, isLoading }) {
+function TagsList({ tags, isLoading, total }) {
   const { modalComponent: deleteTagComponent, showModal: showDeleteModal } = useF36Modal(
     DeleteTagModal
   );
@@ -42,6 +53,13 @@ function TagsList({ tags, isLoading }) {
 
   const onDelete = useCallback((tag) => showDeleteModal({ tag }), [showDeleteModal]);
   const onEdit = useCallback((tag) => showUpdateModal({ tag }), [showUpdateModal]);
+
+  const limitNote = useMemo(() => {
+    if (total >= TAGS_PER_SPACE) {
+      return <LimitsReachedNote />;
+    }
+    return null;
+  }, [total]);
 
   const renderNoTags = useMemo(() => {
     return (
@@ -69,6 +87,12 @@ function TagsList({ tags, isLoading }) {
     <>
       {updateTagComponent}
       {deleteTagComponent}
+      <div className={styles.flexContainer}>
+        {limitNote}
+        <p className={styles.tagLimits}>
+          {total} / {TAGS_PER_SPACE}
+        </p>
+      </div>
       <Table
         testId="tags-list-table"
         className={classnames({
@@ -94,6 +118,7 @@ function TagsList({ tags, isLoading }) {
 TagsList.propTypes = {
   tags: PropTypes.arrayOf(PropTypes.shape(TagPropType)),
   isLoading: PropTypes.bool,
+  total: PropTypes.number,
 };
 
 export { TagsList };

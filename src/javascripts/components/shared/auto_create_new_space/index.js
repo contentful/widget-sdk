@@ -1,11 +1,10 @@
+import React from 'react';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { combine, getValue } from 'core/utils/kefir';
 import { user$, spacesByOrganization$ as spacesByOrg$ } from 'services/TokenStore';
-import createSampleSpace from './CreateSampleSpace';
 import { organizations$ } from 'services/TokenStore';
 import { getModule } from 'core/NgRegistry';
 import { getSpaceAutoCreatedKey } from './getSpaceAutoCreatedKey';
-
 import {
   getFirstOwnedOrgWithoutSpaces,
   hasAnOrgWithSpaces,
@@ -13,10 +12,12 @@ import {
   getCurrOrg,
   isUserOrgCreator,
 } from 'data/User';
-
 import { create } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
+import { ModalLauncher } from 'core/components/ModalLauncher';
+import { CreateSampleSpaceModal } from './CreateSampleSpaceModal';
 
 const store = getBrowserStorage();
+let creatingSampleSpace = false;
 
 /**
  * @description
@@ -25,56 +26,55 @@ const store = getBrowserStorage();
  * It is hooked up in the run block in application prelude.
  */
 export function init() {
-  let creatingSampleSpace = false;
-
   combine([user$, spacesByOrg$])
-    .filter(
-      ([user, spacesByOrg]) =>
-        user && spacesByOrg && qualifyUser(user, spacesByOrg) && !creatingSampleSpace
-    )
+    .filter(([user, spacesByOrg]) => {
+      return user && spacesByOrg && qualifyUser(user, spacesByOrg) && !creatingSampleSpace;
+    })
     .onValue(async ([user, spacesByOrg]) => {
       const org = getFirstOwnedOrgWithoutSpaces(user, spacesByOrg);
 
+      creatingSampleSpace = true;
+
       create({
         markOnboarding,
-        onDefaultChoice: async () => {
-          const newSpace = await defaultChoice();
-
-          store.set(
-            `ctfl:${user.sys.id}:modernStackOnboarding:contentChoiceSpace`,
-            newSpace.sys.id
-          );
+        onDefaultChoice: () => {
+          defaultChoice({ org, user });
         },
         org,
         user,
       });
 
-      creatingSampleSpace = true;
-
-      async function defaultChoice() {
-        // we swallow all errors, so auto creation modal will always have green mark
-        const newSpace = await createSampleSpace(org).then(
-          (createdSpace) => {
-            store.set(getSpaceAutoCreatedKey(user, 'success'), true);
-
-            return createdSpace;
-          },
-          () => {
-            // serialize the fact that auto space creation failed to localStorage
-            // to power any behaviour to work around the failure
-            store.set(getSpaceAutoCreatedKey(user, 'failure'), true);
-          }
-        );
-
-        creatingSampleSpace = false;
-
-        return newSpace;
-      }
-
       function markOnboarding(action = 'success') {
         store.set(getSpaceAutoCreatedKey(user, action), true);
       }
     });
+}
+
+function defaultChoice({ org, user }) {
+  const handleSpaceCreationSuccess = (createdSpace) => {
+    store.set(getSpaceAutoCreatedKey(user, 'success'), true);
+    store.set(`ctfl:${user.sys.id}:modernStackOnboarding:contentChoiceSpace`, createdSpace.sys.id);
+
+    creatingSampleSpace = false;
+  };
+
+  const handleSpaceCreationFailure = () => {
+    // serialize the fact that auto space creation failed to localStorage
+    // to power any behaviour to work around the failure
+    store.set(getSpaceAutoCreatedKey(user, 'failure'), true);
+
+    creatingSampleSpace = false;
+  };
+
+  ModalLauncher.open(({ isShown, onClose }) => (
+    <CreateSampleSpaceModal
+      isShown={isShown}
+      onClose={onClose}
+      organization={org}
+      onFail={handleSpaceCreationFailure}
+      onSuccess={handleSpaceCreationSuccess}
+    />
+  ));
 }
 
 function qualifyUser(user, spacesByOrg) {

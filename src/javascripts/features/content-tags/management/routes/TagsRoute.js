@@ -65,7 +65,7 @@ function TagsRoute({ redirectUrl }) {
                   renderError(error, reloadAll)
                 ) : (
                   <>
-                    <TagsList tags={data || []} isLoading={isLoading} />
+                    <TagsList tags={data || []} isLoading={isLoading} total={total} />
                     <Pagination
                       skip={skip}
                       limit={limit}
