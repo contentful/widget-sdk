@@ -1,4 +1,4 @@
-import { isNull, pickBy } from 'lodash';
+import { isNull, pickBy, get } from 'lodash';
 import { capitalize, joinWithAnd } from 'utils/StringUtils';
 import validationDecorator from 'components/field_dialog/validationDecorator';
 
@@ -64,9 +64,9 @@ export const getEnabledRichTextOptions = (options) => {
 
 export const getWidgetSettings = (widget) => {
   return {
-    id: widget.widgetId,
-    namespace: widget.widgetNamespace,
-    params: Object.assign({}, widget.settings),
+    id: get(widget, 'widgetId'),
+    namespace: get(widget, 'widgetNamespace'),
+    params: Object.assign({}, get(widget, 'settings')),
   };
 };
 
