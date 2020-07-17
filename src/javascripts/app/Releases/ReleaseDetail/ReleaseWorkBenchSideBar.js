@@ -1,19 +1,22 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import { Workbench, Button } from '@contentful/forma-36-react-components';
+import { cx } from 'emotion';
+import { Workbench, Button, Subheading } from '@contentful/forma-36-react-components';
 import { ReleasesContext } from '../ReleasesWidget/ReleasesContext';
-import ScheduledActionsTimeline from 'app/ScheduledActions/EntrySidebarWidget/ScheduledActionsTimeline/index.js';
+import { DateTime } from 'app/ScheduledActions/FormattedDateAndTime';
+import FailedScheduleNote from 'app/ScheduledActions/EntrySidebarWidget/FailedScheduleNote/index';
+import ScheduledActionsTimeline from 'app/ScheduledActions/EntrySidebarWidget/ScheduledActionsTimeline/index';
 import { styles } from './styles';
 
 const ReleaseWorkBenchSideBar = ({
   isJobsLoading,
   error,
-  hasScheduledActions,
+  lastJob,
   pendingJobs,
   handlePublication,
   handleValidation,
   handleScheduleCancel,
-  setShowScheduleActionDialog,
+  handleShowingScheduleActionDialog,
   isMasterEnvironment,
 }) => {
   const {
@@ -21,11 +24,31 @@ const ReleaseWorkBenchSideBar = ({
       entities: { entries, assets },
     },
   } = useContext(ReleasesContext);
+  const hasScheduledActions = pendingJobs.length > 0;
+  const shouldShowErrorNote = () => {
+    if (!lastJob) {
+      return false;
+    }
+
+    const isFailed = lastJob.sys.status === 'failed';
+    return isFailed;
+  };
+
+  const failedScheduleNote = (scheduledAt) => {
+    return (
+      <>
+        Due to validation errors this release failed to publish on <DateTime date={scheduledAt} />.
+      </>
+    );
+  };
+
   return (
     <Workbench.Sidebar className={styles.sidebar} position="right" testId="cf-ui-workbench-sidebar">
       {!isJobsLoading && !error && (
         <>
-          {/* {shouldShowErrorNote(lastJob, entity) && <FailedScheduleNote job={lastJob} />} */}
+          {shouldShowErrorNote() && (
+            <FailedScheduleNote job={lastJob} failedScheduleNote={failedScheduleNote} />
+          )}
           {hasScheduledActions && (
             <ScheduledActionsTimeline
               isMasterEnvironment={isMasterEnvironment}
@@ -38,11 +61,20 @@ const ReleaseWorkBenchSideBar = ({
           )}
         </>
       )}
-      <div className={styles.buttons}>
+      <div>
+        <header className="entity-sidebar__header">
+          <Subheading
+            className={cx('entity-sidebar__heading', {
+              [styles.sideBarHeader]: hasScheduledActions,
+            })}>
+            Actions
+          </Subheading>
+        </header>
+        <div>These actions will apply to all the contents in this release</div>
         <Button
           testId="publish-release"
           buttonType="positive"
-          className=""
+          className={styles.buttons}
           isFullWidth
           disabled={!entries.length && !assets.length}
           onClick={handlePublication}>
@@ -63,7 +95,7 @@ const ReleaseWorkBenchSideBar = ({
           className={styles.buttons}
           isFullWidth
           disabled={!entries.length && !assets.length}
-          onClick={() => setShowScheduleActionDialog(true)}>
+          onClick={handleShowingScheduleActionDialog}>
           Schedule
         </Button>
       </div>
@@ -74,12 +106,12 @@ const ReleaseWorkBenchSideBar = ({
 ReleaseWorkBenchSideBar.propTypes = {
   isJobsLoading: PropTypes.bool,
   error: PropTypes.object,
-  hasScheduledActions: PropTypes.bool.isRequired,
+  lastJob: PropTypes.object,
   pendingJobs: PropTypes.array.isRequired,
   handlePublication: PropTypes.func.isRequired,
   handleValidation: PropTypes.func.isRequired,
   handleScheduleCancel: PropTypes.func.isRequired,
-  setShowScheduleActionDialog: PropTypes.func.isRequired,
+  handleShowingScheduleActionDialog: PropTypes.func.isRequired,
   isMasterEnvironment: PropTypes.bool.isRequired,
 };
 

@@ -67,4 +67,10 @@ export const styles = {
   hideDisplay: css({
     display: 'none',
   }),
+  validateReleaseDialogText: css({
+    marginTop: tokens.spacingXs,
+  }),
+  sideBarHeader: css({
+    marginTop: `-${tokens.spacingM}`,
+  }),
 };

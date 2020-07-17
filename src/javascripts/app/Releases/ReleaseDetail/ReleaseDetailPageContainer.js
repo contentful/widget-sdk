@@ -12,7 +12,12 @@ import {
 import { newForLocale } from 'app/entity_editor/entityHelpers';
 import * as logger from 'services/logger';
 import { useAsyncFn } from 'core/hooks';
-import { getEntities, waitForReleaseAction, switchToErroredTab } from './utils';
+import {
+  getEntities,
+  waitForReleaseAction,
+  switchToErroredTab,
+  unpublishedEntities,
+} from './utils';
 import {
   SET_RELEASE_ENTITIES,
   SET_RELEASE_ENTITIES_LOADING,
@@ -26,6 +31,7 @@ import { excludeEntityFromRelease } from '../common/utils';
 import { createReleaseJob, fetchReleaseJobs, cancelReleaseJob } from '../releasesService';
 import ReleaseWorkBenchContent from './ReleaseWorkBenchContent';
 import ReleaseWorkBenchSideBar from './ReleaseWorkBenchSideBar';
+import ValidateReleaseDialog from './ValidateReleaseDialog';
 import { styles } from './styles';
 
 const ReleaseDetailPage = ({ releaseId, defaultLocale, isMasterEnvironment }) => {
@@ -36,10 +42,15 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale, isMasterEnvironment }) =>
   const [entityRefreshKey, setEntityRefreshKey] = useState(null);
   const [entitiesLayout, setEntitiesLayout] = useState(localStorage.get('defaultView') || 'view');
   const [showScheduledActionsDialog, setShowScheduleActionDialog] = useState(false);
+  const [showValidateReleaseDialog, setshowValidateReleaseDialog] = useState(false);
   const [isCreatingJob, setIsCreatingJob] = useState(false);
   const [jobs, setJobs] = useState([]);
   const {
-    state: { selectedTab, processingAction },
+    state: {
+      selectedTab,
+      processingAction,
+      entities: { entries, assets },
+    },
     dispatch,
   } = useContext(ReleasesContext);
 
@@ -147,6 +158,14 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale, isMasterEnvironment }) =>
     }
   };
 
+  const handleShowingScheduleActionDialog = () => {
+    if (unpublishedEntities(entries) || unpublishedEntities(assets)) {
+      setshowValidateReleaseDialog(true);
+    } else {
+      setShowScheduleActionDialog(true);
+    }
+  };
+
   const handleValidation = () => {
     dispatch({ type: SET_RELEASE_VALIDATIONS, value: [] });
     dispatch({ type: SET_RELEASE_PROCESSING_ACTION, value: 'Validating' });
@@ -205,7 +224,6 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale, isMasterEnvironment }) =>
   }, [fetchJobs]);
 
   const pendingJobs = jobs.filter((job) => job.sys.status === 'scheduled');
-  const hasScheduledActions = pendingJobs.length > 0;
 
   return (
     <div>
@@ -233,13 +251,24 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale, isMasterEnvironment }) =>
           <ReleaseWorkBenchSideBar
             isJobsLoading={isJobsLoading}
             error={error}
-            hasScheduledActions={hasScheduledActions}
             pendingJobs={pendingJobs}
+            lastJob={jobs[0]}
             handlePublication={handlePublication}
             handleValidation={handleValidation}
             handleScheduleCancel={handleScheduleCancel}
-            setShowScheduleActionDialog={setShowScheduleActionDialog}
+            handleShowingScheduleActionDialog={handleShowingScheduleActionDialog}
             isMasterEnvironment={isMasterEnvironment}
+          />
+          <ValidateReleaseDialog
+            onConfirm={() => {
+              handleValidation();
+              setshowValidateReleaseDialog(false);
+            }}
+            onCancel={() => {
+              setShowScheduleActionDialog(true);
+              setshowValidateReleaseDialog(false);
+            }}
+            isShown={showValidateReleaseDialog}
           />
           {showScheduledActionsDialog ? (
             <ReleaseActionJobDialog

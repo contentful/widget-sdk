@@ -37,6 +37,7 @@ import {
 } from '../Analytics/ScheduledActionsAnalytics';
 
 import { showUnpublishedReferencesWarning } from 'app/entity_editor/UnpublishedReferencesWarning';
+import { DateTime } from 'app/ScheduledActions/FormattedDateAndTime';
 
 const styles = {
   jobsSkeleton: css({
@@ -221,6 +222,14 @@ export default function ScheduledActionsWidget({
     }
   }, [showToast]);
 
+  const failedScheduleNote = (scheduledAt) => {
+    return (
+      <>
+        Due to validation errors this entry failed to {lastJob.action} on{' '}
+        <DateTime date={scheduledAt} />. Please check individual fields and try your action again.
+      </>
+    );
+  };
   return (
     <ErrorHandler>
       <StatusWidget
@@ -268,7 +277,9 @@ export default function ScheduledActionsWidget({
       )}
       {!isLoading && !error && (
         <>
-          {shouldShowErrorNote(lastJob, entity) && <FailedScheduleNote job={lastJob} />}
+          {shouldShowErrorNote(lastJob, entity) && (
+            <FailedScheduleNote job={lastJob} failedScheduleNote={failedScheduleNote} />
+          )}
           {hasScheduledActions && (
             <ScheduledActionsTimeline
               isMasterEnvironment={isMasterEnvironment}
