@@ -5,10 +5,10 @@ import { css } from 'emotion';
 import {
   Heading,
   Paragraph,
-  Typography,
   Spinner,
   Button,
   Subheading,
+  Typography,
 } from '@contentful/forma-36-react-components';
 
 import CheckmarkIcon from 'svg/checkmark.svg';
@@ -16,6 +16,7 @@ import ContentTypeIcon from 'svg/page-ct.svg';
 import ContentIcon from 'svg/page-content.svg';
 import MediaIcon from 'svg/page-media.svg';
 import APIsIcon from 'svg/page-apis.svg';
+import tokens from '@contentful/forma-36-tokens';
 
 const styles = {
   checkmarkIcon: css({
@@ -26,6 +27,7 @@ const styles = {
   }),
   center: css({
     textAlign: 'center',
+    marginBottom: tokens.spacingL,
   }),
 };
 
@@ -60,7 +62,7 @@ export default function ProgressScreen(props) {
   const { done, onConfirm } = props;
 
   return (
-    <Typography>
+    <div>
       <div className={styles.center}>
         <div className={styles.loadingIndicator}>
           {!done && <Spinner testId="create-template-progress" size="large" />}
@@ -70,7 +72,9 @@ export default function ProgressScreen(props) {
             </div>
           )}
         </div>
-        <Heading>Hang on, we’re preparing your space</Heading>
+        <Typography>
+          <Heading>Hang on, we’re preparing your space</Heading>
+        </Typography>
         <Paragraph>
           In the meantime, let us quickly explain the kind of things you’ll find in your space
         </Paragraph>
@@ -93,7 +97,7 @@ export default function ProgressScreen(props) {
           Get started
         </Button>
       </div>
-    </Typography>
+    </div>
   );
 }
 

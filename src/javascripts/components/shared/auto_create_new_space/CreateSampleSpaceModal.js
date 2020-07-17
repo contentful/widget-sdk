@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { css } from 'emotion';
 import PropTypes from 'prop-types';
 import { Modal } from '@contentful/forma-36-react-components';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
@@ -7,6 +8,12 @@ import ProgressScreen from 'app/SpaceWizards/shared/ProgressScreen';
 import { createSpaceWithTemplate, FREE_SPACE_IDENTIFIER } from 'app/SpaceWizards/shared/utils';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getSpaceRatePlans } from 'account/pricing/PricingDataProvider';
+
+const styles = {
+  modal: css({
+    maxHeight: 'none',
+  }),
+};
 
 export function CreateSampleSpaceModal({ isShown, onClose, organization, onFail, onSuccess }) {
   const [isCreatingSpace, setIsCreatingSpace] = useState(true);
@@ -32,7 +39,6 @@ export function CreateSampleSpaceModal({ isShown, onClose, organization, onFail,
           plan: freeSpaceRatePlan,
           onTemplateCreationStarted: () => setIsCreatingSpace(true),
         });
-
         onSuccess(newSpace);
       } catch (err) {
         logger.logException(err, {
@@ -44,7 +50,6 @@ export function CreateSampleSpaceModal({ isShown, onClose, organization, onFail,
           },
           groupingHash: 'Failed sample space creation',
         });
-
         onFail(err);
       } finally {
         setIsCreatingSpace(false);
@@ -70,9 +75,11 @@ export function CreateSampleSpaceModal({ isShown, onClose, organization, onFail,
       isShown={isShown}
       onClose={onClose}
       size="large"
+      position="top"
       shouldCloseOnEscapePress={false}
       shouldCloseOnOverlayClick={false}
-      testId="create-sample-space-modal">
+      testId="create-sample-space-modal"
+      className={styles.modal}>
       <ProgressScreen onConfirm={onClose} done={!isCreatingSpace} />
     </Modal>
   );
