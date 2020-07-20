@@ -17,7 +17,8 @@ import makePageExtensionHandlers from './makePageExtensionHandlers';
 import makeExtensionAccessHandlers from './makeExtensionAccessHandlers';
 import checkDependencies from './checkDependencies';
 import { makeShareJSError, makePermissionError } from 'app/widgets/NewWidgetApi/createFieldApi';
-import { LOCATION_ENTRY_FIELD, LOCATION_ENTRY_FIELD_SIDEBAR } from '../WidgetLocations';
+import { LOCATION_ENTRY_FIELD } from '../WidgetLocations';
+import { WidgetLocation } from 'features/widget-renderer';
 
 const ERROR_MESSAGES = {
   MFAILUPDATE: 'Could not update entry field',
@@ -54,7 +55,7 @@ export default function createExtensionBridge(dependencies) {
   let unsubscribeFunctions = [];
 
   const isFieldLevelExtension =
-    location === LOCATION_ENTRY_FIELD || location === LOCATION_ENTRY_FIELD_SIDEBAR;
+    location === LOCATION_ENTRY_FIELD || location === WidgetLocation.ENTRY_FIELD_SIDEBAR;
 
   return {
     getData,

@@ -20,7 +20,7 @@ export function getWidgetTrackingContexts({
 function getExtensionTrackingContexts({ fieldControls, sidebarExtensions, editorsExtensions }) {
   const extensionsByLocation = {
     [WidgetLocations.LOCATION_ENTRY_FIELD]: getExtensions(fieldControls, ['form']),
-    [WidgetLocations.LOCATION_ENTRY_FIELD_SIDEBAR]: getExtensions(fieldControls, ['sidebar']),
+    [WidgetLocation.ENTRY_FIELD_SIDEBAR]: getExtensions(fieldControls, ['sidebar']),
     [WidgetLocation.ENTRY_SIDEBAR]: getExtensions(sidebarExtensions),
     [WidgetLocation.ENTRY_EDITOR]: getExtensions(editorsExtensions),
   };
