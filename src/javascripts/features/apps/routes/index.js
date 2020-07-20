@@ -14,7 +14,7 @@ import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { shouldHide, Action } from 'access_control/AccessChecker';
 import * as TokenStore from 'services/TokenStore';
 import { isOwnerOrAdmin, isDeveloper } from 'services/OrganizationRoles';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetLocation, WidgetNamespace } from 'features/widget-renderer';
 import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIFrameRenderer';
 
 const BASIC_APPS_FEATURE_KEY = 'basic_apps';
@@ -210,7 +210,8 @@ export const appRoute = {
       onEnter: [
         'widget',
         (widget) => {
-          const pageLocation = widget && widget.locations.find((l) => l.location === 'page');
+          const pageLocation =
+            widget && widget.locations.find((l) => l.location === WidgetLocation.PAGE);
 
           if (!pageLocation) {
             throw new Error('This app has not defined a page location!');
