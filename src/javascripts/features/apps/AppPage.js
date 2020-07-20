@@ -27,10 +27,9 @@ import { UninstallModal } from './UninstallModal';
 import { ModalLauncher } from 'core/components/ModalLauncher';
 import * as AppLifecycleTracking from './AppLifecycleTracking';
 import { isUsageExceededErrorResponse, USAGE_EXCEEDED_MESSAGE } from './isUsageExceeded';
-import { LOCATION_APP_CONFIG } from 'widgets/WidgetLocations';
 import { AppIcon } from './AppIcon';
 import { styles } from './AppPageStyles';
-import { buildAppDefinitionWidget } from 'features/widget-renderer';
+import { buildAppDefinitionWidget, WidgetLocation } from 'features/widget-renderer';
 import { getMarketplaceDataProvider } from 'widgets/CustomWidgetLoaderInstance';
 
 const BUSY_STATE_INSTALLATION = 'installation';
@@ -108,7 +107,7 @@ export class AppRoute extends Component {
     const definition = appDefinition || this.state.appDefinition;
     const locations = get(definition, ['locations'], []);
 
-    return locations.some((l) => l.location === LOCATION_APP_CONFIG);
+    return locations.some((l) => l.location === WidgetLocation.APP_CONFIG);
   };
 
   initialize = async () => {
