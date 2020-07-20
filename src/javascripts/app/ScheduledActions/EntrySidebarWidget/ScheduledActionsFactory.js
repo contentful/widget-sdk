@@ -3,7 +3,7 @@ export function create({ environmentId, entityId, action, scheduledAt, linkType 
     entity: {
       sys: {
         type: 'Link',
-        linkType: linkType,
+        linkType,
         id: entityId,
       },
     },

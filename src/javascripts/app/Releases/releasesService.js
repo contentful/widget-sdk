@@ -99,7 +99,7 @@ async function createReleaseJob({ releaseId, action, scheduledAt }) {
     createDto({
       environmentId: environmentId,
       entityId: releaseId,
-      action: action,
+      action,
       linkType: 'Release',
       scheduledAt,
     }),

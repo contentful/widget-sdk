@@ -121,13 +121,8 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale, isMasterEnvironment }) =>
       const job = await createReleaseJob({ releaseId, action, scheduledAt });
       return job;
     } catch (error) {
-      if (400 === error.status) {
-        Notification.error(
-          `Unable to schedule ${releaseTitle}. There is a limit of 200 scheduled entries at any one time.`
-        );
-      } else {
-        Notification.error(`${releaseTitle} failed to schedule`);
-      }
+      Notification.error(`${releaseTitle} failed to schedule`);
+      setShowScheduleActionDialog(false);
       setIsCreatingJob(false);
       logger.logError(`Release failed to schedule`, {
         error,
