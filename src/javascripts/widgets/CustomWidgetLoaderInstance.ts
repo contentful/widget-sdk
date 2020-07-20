@@ -5,6 +5,10 @@ import { createPlainClient } from 'contentful-management';
 import { getToken } from 'Authentication';
 import * as Config from 'Config';
 
+// Use one icon for all types of widgets.
+// TODO: Use separate ones once designed.
+const ICON = '//images.ctfassets.net/lpjm8d10rkpy/7gq7v5OtczqtbiyHiBYKZL/af36bf93daa60db54fe965b0715ef5c3/app-icon.svg'
+
 let marketplaceDataProvider: MarketplaceDataProvider;
 
 export function getMarketplaceDataProvider() {
@@ -13,9 +17,9 @@ export function getMarketplaceDataProvider() {
   }
 
   marketplaceDataProvider = new MarketplaceDataProvider(window.fetch.bind(window), {
-    defaultAppIconUrl: 'https://default-app-icon',
-    defaultExtensionIconUrl: 'https://default-extension-icon',
-    unknownWidgetTypeIconUrl: 'https://unknown-widget-type-icon',
+    defaultAppIconUrl: ICON,
+    defaultExtensionIconUrl: ICON,
+    unknownWidgetTypeIconUrl: ICON,
   });
 
   return marketplaceDataProvider;
