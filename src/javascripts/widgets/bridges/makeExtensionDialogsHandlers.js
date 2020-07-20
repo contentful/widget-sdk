@@ -80,8 +80,8 @@ export default function makeExtensionDialogsHandlers(dependencies) {
       instance: {},
       // Regular installation parameters.
       installation: applyDefaultValues(
-        widget.parameters.installation.definitions,
-        widget.parameters.installation.values
+        widget.parameters.definitions.installation,
+        widget.parameters.values.installation
       ),
       // Parameters passed directly to the dialog.
       invocation: options.parameters || {},
