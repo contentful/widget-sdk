@@ -188,7 +188,7 @@ const LOCATION_ORDER = [
   ['Entry field', WidgetLocations.LOCATION_ENTRY_FIELD],
   ['Entry sidebar', WidgetLocations.LOCATION_ENTRY_SIDEBAR],
   ['Entry editor', WidgetLocations.LOCATION_ENTRY_EDITOR],
-  ['Page', WidgetLocation.Page],
+  ['Page', WidgetLocation.PAGE],
   ['Dialog', WidgetLocations.LOCATION_DIALOG],
 ];
 
