@@ -201,10 +201,15 @@ export class WidgetLoader {
   }
 
   public async getInstalledApps(): Promise<Widget[]> {
-    const {
-      items: appInstallations,
-      includes: { AppDefinition: appDefinitions },
-    } = await this.client.raw.get(`${this.baseUrl}/app_installations`);
+    const [
+      {
+        items: appInstallations,
+        includes: { AppDefinition: appDefinitions },
+      },
+    ] = await Promise.all([
+      this.client.raw.get(`${this.baseUrl}/app_installations`),
+      this.marketplaceDataProvider.prefetch(),
+    ]);
 
     const widgetRefs: WidgetRef[] = appInstallations.map((i: AppInstallation) => ({
       widgetNamespace: WidgetNamespace.APP,
@@ -235,6 +240,7 @@ export class WidgetLoader {
       this.client.raw
         .get(`${this.baseUrl}/app_installations`)
         .catch(this.handleApiFailure('Failed to load apps for listing', [], EMPTY_APPS_RES)),
+      this.marketplaceDataProvider.prefetch(),
     ]);
 
     return appInstallations
