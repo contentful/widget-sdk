@@ -12,7 +12,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import { styles } from './styles';
 import PropTypes from 'prop-types';
-import { LOCATION_PAGE } from 'widgets/WidgetLocations';
+import { WidgetLocation } from 'features/widget-renderer';
 
 const makeRef = (ref, isMaster) => {
   if (isMaster) {
@@ -23,7 +23,7 @@ const makeRef = (ref, isMaster) => {
 };
 
 const getPageLocation = (widget) => {
-  return widget.locations.find((l) => l.location === LOCATION_PAGE);
+  return widget.locations.find((l) => l.location === WidgetLocation.PAGE);
 };
 
 const hasNavigationItem = (widget) => {

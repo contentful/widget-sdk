@@ -14,7 +14,7 @@ import {
   Tag,
   Card,
 } from '@contentful/forma-36-react-components';
-import * as WidgetLocations from 'widgets/WidgetLocations';
+import { WidgetLocation } from 'features/widget-renderer';
 import { toInternalFieldType, toApiFieldType } from 'widgets/FieldTypes';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
@@ -183,12 +183,12 @@ const styles = {
 };
 
 const LOCATION_ORDER = [
-  ['App configuration screen', WidgetLocations.LOCATION_APP_CONFIG],
-  ['Entry field', WidgetLocations.LOCATION_ENTRY_FIELD],
-  ['Entry sidebar', WidgetLocations.LOCATION_ENTRY_SIDEBAR],
-  ['Entry editor', WidgetLocations.LOCATION_ENTRY_EDITOR],
-  ['Page', WidgetLocations.LOCATION_PAGE],
-  ['Dialog', WidgetLocations.LOCATION_DIALOG],
+  ['App configuration screen', WidgetLocation.APP_CONFIG],
+  ['Entry field', WidgetLocation.ENTRY_FIELD],
+  ['Entry sidebar', WidgetLocation.ENTRY_SIDEBAR],
+  ['Entry editor', WidgetLocation.ENTRY_EDITOR],
+  ['Page', WidgetLocation.PAGE],
+  ['Dialog', WidgetLocation.DIALOG],
 ];
 
 const FIELD_TYPES_ORDER = [
@@ -242,7 +242,7 @@ export function AppEditor({ definition, onChange }) {
   };
 
   const getFieldTypeIndex = (internalFieldType) => {
-    const entryFieldLocation = getLocation(WidgetLocations.LOCATION_ENTRY_FIELD);
+    const entryFieldLocation = getLocation(WidgetLocation.ENTRY_FIELD);
     if (entryFieldLocation && Array.isArray(entryFieldLocation.fieldTypes)) {
       return entryFieldLocation.fieldTypes.map(toInternalFieldType).indexOf(internalFieldType);
     } else {
@@ -254,7 +254,7 @@ export function AppEditor({ definition, onChange }) {
 
   const toggleFieldType = (internalFieldType) => {
     const updated = cloneDeep(definition);
-    const locationIndex = getLocationIndex(WidgetLocations.LOCATION_ENTRY_FIELD);
+    const locationIndex = getLocationIndex(WidgetLocation.ENTRY_FIELD);
     const entryFieldLocation = updated.locations[locationIndex];
     const fieldTypeIndex = getFieldTypeIndex(internalFieldType);
 
@@ -272,7 +272,7 @@ export function AppEditor({ definition, onChange }) {
   };
 
   const getNavigationItemValue = (field) => {
-    const pageLocation = getLocation(WidgetLocations.LOCATION_PAGE);
+    const pageLocation = getLocation(WidgetLocation.PAGE);
 
     if (!pageLocation || !pageLocation.navigationItem) {
       return '';
@@ -283,7 +283,7 @@ export function AppEditor({ definition, onChange }) {
 
   const togglePageLocationData = () => {
     const updated = cloneDeep(definition);
-    const pageLocation = updated.locations[getLocationIndex(WidgetLocations.LOCATION_PAGE)];
+    const pageLocation = updated.locations[getLocationIndex(WidgetLocation.PAGE)];
 
     if (pageLocation.navigationItem) {
       delete pageLocation.navigationItem;
@@ -296,7 +296,7 @@ export function AppEditor({ definition, onChange }) {
 
   const updatePageLocation = ({ field, value }) => {
     const updated = cloneDeep(definition);
-    const pageLocation = updated.locations[getLocationIndex(WidgetLocations.LOCATION_PAGE)];
+    const pageLocation = updated.locations[getLocationIndex(WidgetLocation.PAGE)];
 
     if (field === 'path' && !value.startsWith('/')) {
       value = `/${value}`;
@@ -307,7 +307,7 @@ export function AppEditor({ definition, onChange }) {
     onChange(updated);
   };
 
-  const hasPageLocationNavigation = !!getLocation(WidgetLocations.LOCATION_PAGE)?.navigationItem;
+  const hasPageLocationNavigation = !!getLocation(WidgetLocation.PAGE)?.navigationItem;
 
   return (
     <>
@@ -356,7 +356,7 @@ export function AppEditor({ definition, onChange }) {
                     testId={`app-location-${locationValue}`}
                     className={styles.locationToggle}
                     isActive={hasLocation(locationValue)}
-                    isDisabled={locationValue === WidgetLocations.LOCATION_DIALOG}
+                    isDisabled={locationValue === WidgetLocation.DIALOG}
                     onClick={() => toggleLocation(locationValue)}>
                     <div className={styles.checkbox}>
                       <div>
@@ -366,8 +366,7 @@ export function AppEditor({ definition, onChange }) {
                           name={`location-check-${name}`}
                           type="checkbox"
                           checked={
-                            hasLocation(locationValue) ||
-                            locationValue === WidgetLocations.LOCATION_DIALOG
+                            hasLocation(locationValue) || locationValue === WidgetLocation.DIALOG
                           }
                         />
                       </div>
@@ -377,20 +376,20 @@ export function AppEditor({ definition, onChange }) {
                       <div>
                         <span>({locationValue})</span>
                       </div>
-                      {(locationValue === WidgetLocations.LOCATION_ENTRY_FIELD ||
-                        locationValue === WidgetLocations.LOCATION_PAGE) && (
+                      {(locationValue === WidgetLocation.ENTRY_FIELD ||
+                        locationValue === WidgetLocation.PAGE) && (
                         <div className={styles.checkboxInfoIcon}>
                           <Icon icon="ListBulleted" color="secondary" />
                         </div>
                       )}
-                      {locationValue === WidgetLocations.LOCATION_DIALOG && (
+                      {locationValue === WidgetLocation.DIALOG && (
                         <div className={styles.checkboxInfo}>
-                          All locations can open dialogs programatically
+                          All locations can open dialogs programmatically
                         </div>
                       )}
                     </div>
                   </ToggleButton>
-                  {locationValue === WidgetLocations.LOCATION_ENTRY_FIELD && (
+                  {locationValue === WidgetLocation.ENTRY_FIELD && (
                     <div
                       className={[styles.fieldTypes]
                         .concat(hasLocation(locationValue) ? styles.fieldTypesOpen() : [])
@@ -412,7 +411,7 @@ export function AppEditor({ definition, onChange }) {
                       </div>
                     </div>
                   )}
-                  {locationValue === WidgetLocations.LOCATION_PAGE && (
+                  {locationValue === WidgetLocation.PAGE && (
                     <div
                       className={[styles.fieldTypes]
                         .concat(hasLocation(locationValue) ? styles.fieldTypesOpen(false) : [])

@@ -1,6 +1,6 @@
 import createSnapshotExtensionBridge from './createSnapshotExtensionBridge';
-import { LOCATION_ENTRY_FIELD } from '../WidgetLocations';
 import { getModule } from 'core/NgRegistry';
+import { WidgetLocation } from 'features/widget-renderer';
 
 jest.mock('Authentication', () => ({ getToken: () => '<TOKEN>' }));
 jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
@@ -49,7 +49,7 @@ describe('createSnaphotExtensionBridge', () => {
       expect(bridge.getData()).toEqual({
         environmentId: 'environmentId',
         spaceId: 'spaceId',
-        location: LOCATION_ENTRY_FIELD,
+        location: WidgetLocation.ENTRY_FIELD,
         contentTypeData: { name: 'someContentType', sys: { id: '123' } },
         initialContentTypesData: [{ id: 'first-content-type' }, { id: 'second-content-type' }],
         current: { field: 'FIELD', locale: { code: 'pl' } },

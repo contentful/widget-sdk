@@ -7,7 +7,6 @@ import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIF
 import * as Dialogs from '../ExtensionDialogs';
 import { applyDefaultValues } from '../WidgetParametersUtils';
 import trackExtensionRender from '../TrackExtensionRender';
-import { LOCATION_DIALOG } from '../WidgetLocations';
 import * as entitySelector from 'search/EntitySelector/entitySelector';
 import {
   getCustomWidgetLoader,
@@ -19,6 +18,7 @@ import {
   WidgetNamespace,
   isCustomWidget,
   buildAppDefinitionWidget,
+  WidgetLocation,
 } from 'features/widget-renderer';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
 
@@ -87,7 +87,7 @@ export default function makeExtensionDialogsHandlers(dependencies) {
       invocation: options.parameters || {},
     };
 
-    trackExtensionRender(LOCATION_DIALOG, toLegacyWidget(widget));
+    trackExtensionRender(WidgetLocation.DIALOG, toLegacyWidget(widget));
 
     const dialogKey = Date.now().toString();
 

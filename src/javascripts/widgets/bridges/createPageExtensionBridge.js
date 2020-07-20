@@ -5,8 +5,8 @@ import makePageExtensionHandlers from './makePageExtensionHandlers';
 import makeExtensionDialogsHandler from './makeExtensionDialogsHandlers';
 import makeExtensionAccessHandlers from './makeExtensionAccessHandlers';
 import checkDependencies from './checkDependencies';
-import { LOCATION_PAGE } from '../WidgetLocations';
 import TheLocaleStore from 'services/localeStore';
+import { WidgetLocation } from 'features/widget-renderer';
 
 export default function createPageExtensionBridge(dependencies) {
   const { spaceContext } = checkDependencies('PageExtensionBridge', dependencies, [
@@ -26,7 +26,7 @@ export default function createPageExtensionBridge(dependencies) {
     return {
       spaceId: spaceContext.getId(),
       environmentId: spaceContext.getEnvironmentId(),
-      location: LOCATION_PAGE,
+      location: WidgetLocation.PAGE,
       spaceMember: spaceContext.space.data.spaceMember,
       current: null,
       locales: {

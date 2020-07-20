@@ -6,9 +6,8 @@ import { noop, defer } from 'lodash';
 import createExtensionBridge from 'widgets/bridges/createExtensionBridge';
 import WidgetRenderWarning from 'widgets/WidgetRenderWarning';
 import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIFrameRenderer';
-import * as WidgetLocations from 'widgets/WidgetLocations';
 import * as LoadEventTracker from 'app/entity_editor/LoadEventTracker';
-import { WidgetNamespace, isCustomWidget } from 'features/widget-renderer';
+import { WidgetNamespace, isCustomWidget, WidgetLocation } from 'features/widget-renderer';
 import { toRendererWidget } from 'widgets/WidgetCompat';
 
 const { createLinksRenderedEvent, createWidgetLinkRenderEventsHandler } = LoadEventTracker;
@@ -56,7 +55,7 @@ function WidgetRendererInternal(props) {
           $controller,
           currentWidgetId: widgetId,
           currentWidgetNamespace: widgetNamespace,
-          location: WidgetLocations.LOCATION_ENTRY_FIELD,
+          location: WidgetLocation.ENTRY_FIELD,
         })}
       />
     );

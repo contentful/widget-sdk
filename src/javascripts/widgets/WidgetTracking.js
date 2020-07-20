@@ -1,8 +1,7 @@
 import { get, identity } from 'lodash';
 import { getSchema } from 'analytics/Schemas';
-import * as WidgetLocations from './WidgetLocations';
 import { makeEventFromWidget } from './TrackExtensionRender';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetLocation, WidgetNamespace } from 'features/widget-renderer';
 
 // Arguments are expected to be produced in `app/entity_editor/DataLoader#loadEditorData()`.
 export function getWidgetTrackingContexts({
@@ -19,10 +18,10 @@ export function getWidgetTrackingContexts({
 
 function getExtensionTrackingContexts({ fieldControls, sidebarExtensions, editorsExtensions }) {
   const extensionsByLocation = {
-    [WidgetLocations.LOCATION_ENTRY_FIELD]: getExtensions(fieldControls, ['form']),
-    [WidgetLocations.LOCATION_ENTRY_FIELD_SIDEBAR]: getExtensions(fieldControls, ['sidebar']),
-    [WidgetLocations.LOCATION_ENTRY_SIDEBAR]: getExtensions(sidebarExtensions),
-    [WidgetLocations.LOCATION_ENTRY_EDITOR]: getExtensions(editorsExtensions),
+    [WidgetLocation.ENTRY_FIELD]: getExtensions(fieldControls, ['form']),
+    [WidgetLocation.ENTRY_FIELD_SIDEBAR]: getExtensions(fieldControls, ['sidebar']),
+    [WidgetLocation.ENTRY_SIDEBAR]: getExtensions(sidebarExtensions),
+    [WidgetLocation.ENTRY_EDITOR]: getExtensions(editorsExtensions),
   };
 
   return Object.keys(extensionsByLocation).reduce(

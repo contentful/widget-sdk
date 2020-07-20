@@ -3,6 +3,7 @@ import * as Auth from 'Authentication';
 import * as Config from 'Config';
 import { createOrganizationEndpoint } from 'data/Endpoint';
 import { getUser } from 'access_control/OrganizationMembershipRepository';
+import { WidgetLocation } from 'features/widget-renderer';
 
 export const VALIDATION_MESSAGE =
   'Validation failed. Please check that you have provided valid configuration options.';
@@ -38,9 +39,9 @@ export function save(definition) {
   const method = isPersisted ? 'PUT' : 'POST';
 
   const widgetConfig = { src: definition.src, locations: definition.locations || [] };
-  const dialogLocation = widgetConfig.locations.find((l) => l.location === 'dialog');
+  const dialogLocation = widgetConfig.locations.find((l) => l.location === WidgetLocation.DIALOG);
   if (!dialogLocation) {
-    widgetConfig.locations = [...widgetConfig.locations, { location: 'dialog' }];
+    widgetConfig.locations = [...widgetConfig.locations, { location: WidgetLocation.DIALOG }];
   }
 
   return orgEndpoint({

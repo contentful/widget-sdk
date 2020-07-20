@@ -5,11 +5,11 @@ import makePageExtensionHandlers from './makePageExtensionHandlers';
 import makeExtensionDialogsHandler from './makeExtensionDialogsHandlers';
 import makeExtensionAccessHandlers from './makeExtensionAccessHandlers';
 import checkDependencies from './checkDependencies';
-import { LOCATION_APP_CONFIG } from '../WidgetLocations';
 import * as Random from 'utils/Random';
 import TheLocaleStore from 'services/localeStore';
 
 import { APP_EVENTS_IN, APP_EVENTS_OUT } from 'features/apps-core';
+import { WidgetLocation } from 'features/widget-renderer';
 
 const STAGE_PRE_INSTALL = 'preInstall';
 const STAGE_POST_INSTALL = 'postInstall';
@@ -35,7 +35,7 @@ export default function createAppExtensionBridge(dependencies) {
     return {
       spaceId: spaceContext.getId(),
       environmentId: spaceContext.getEnvironmentId(),
-      location: LOCATION_APP_CONFIG,
+      location: WidgetLocation.APP_CONFIG,
       spaceMember: spaceContext.space.data.spaceMember,
       current: null,
       locales: {

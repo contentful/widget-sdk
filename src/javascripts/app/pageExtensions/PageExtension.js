@@ -5,8 +5,8 @@ import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIF
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { applyDefaultValues } from 'widgets/WidgetParametersUtils';
 import trackExtensionRender from 'widgets/TrackExtensionRender';
-import { LOCATION_PAGE } from 'widgets/WidgetLocations';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
+import { WidgetLocation } from 'features/widget-renderer';
 
 const styles = {
   root: css({
@@ -23,7 +23,7 @@ export default class PageExtension extends React.Component {
   };
 
   componentDidMount() {
-    trackExtensionRender(LOCATION_PAGE, toLegacyWidget(this.props.widget));
+    trackExtensionRender(WidgetLocation.PAGE, toLegacyWidget(this.props.widget));
   }
 
   render() {

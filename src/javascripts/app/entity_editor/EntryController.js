@@ -4,7 +4,6 @@ import { constant, keys } from 'lodash';
 import mitt from 'mitt';
 import createExtensionBridge from 'widgets/bridges/createExtensionBridge';
 import { user$ } from 'services/TokenStore';
-import * as WidgetLocations from 'widgets/WidgetLocations';
 import * as SlideInNavigator from 'navigation/SlideInNavigator';
 import * as Validator from './Validator';
 import * as Focus from './Focus';
@@ -32,6 +31,7 @@ import { getAllForEntry } from 'data/CMA/CommentsRepo';
 import initSidebarTogglesProps from 'app/entity_editor/entityEditorSidebarToggles';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 import { appendDuplicateIndexToEntryTitle, alignSlugWithEntryTitle } from './entityHelpers';
+import { WidgetLocation } from 'features/widget-renderer';
 
 /**
  * @ngdoc type
@@ -284,7 +284,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
         $controller,
         currentWidgetId,
         currentWidgetNamespace,
-        location: WidgetLocations.LOCATION_ENTRY_EDITOR,
+        location: WidgetLocation.ENTRY_EDITOR,
       }),
   };
 

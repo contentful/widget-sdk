@@ -5,8 +5,8 @@ import { getCurrentStateName } from 'states/Navigator';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes';
 import SidebarWidgetTypes from 'app/EntrySidebar/SidebarWidgetTypes';
 import createExtensionBridge from 'widgets/bridges/createExtensionBridge';
-import * as WidgetLocations from 'widgets/WidgetLocations';
 import TheLocaleStore from 'services/localeStore';
+import { WidgetLocation } from 'features/widget-renderer';
 
 export default ({ $scope, emitter }) => {
   const $controller = getModule('$controller');
@@ -248,7 +248,7 @@ export default ({ $scope, emitter }) => {
       $controller,
       currentWidgetId: widget.id,
       currentWidgetNamespace: widget.namespace,
-      location: WidgetLocations.LOCATION_ENTRY_FIELD_SIDEBAR,
+      location: WidgetLocation.ENTRY_FIELD_SIDEBAR,
     });
 
     return { bridge, widget };
@@ -262,7 +262,7 @@ export default ({ $scope, emitter }) => {
       $controller,
       currentWidgetId,
       currentWidgetNamespace,
-      location: WidgetLocations.LOCATION_ENTRY_SIDEBAR,
+      location: WidgetLocation.ENTRY_SIDEBAR,
     });
 
   return {

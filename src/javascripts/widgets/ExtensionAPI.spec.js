@@ -1,5 +1,5 @@
 import ExtensionAPI from './ExtensionAPI';
-import { LOCATION_ENTRY_FIELD } from './WidgetLocations';
+import { WidgetLocation } from 'features/widget-renderer';
 
 describe('ExtensionAPI', () => {
   const createAPI = (extraConfig) => {
@@ -9,7 +9,7 @@ describe('ExtensionAPI', () => {
       },
       spaceId: 'my-space-id',
       environmentId: 'master',
-      location: LOCATION_ENTRY_FIELD,
+      location: WidgetLocation.ENTRY_FIELD,
       channel: { connect: jest.fn(), destroy: jest.fn(), send: jest.fn(), handlers: {} },
       current: { field: {}, locale: {} },
       locales: { available: [], default: {} },
@@ -108,7 +108,7 @@ describe('ExtensionAPI', () => {
       expect(api.channel.connect).toBeCalledTimes(1);
       expect(api.channel.connect).toBeCalledWith(
         expect.objectContaining({
-          location: LOCATION_ENTRY_FIELD,
+          location: WidgetLocation.ENTRY_FIELD,
           user: expect.any(Object),
           field: {
             id: 'FID-public',

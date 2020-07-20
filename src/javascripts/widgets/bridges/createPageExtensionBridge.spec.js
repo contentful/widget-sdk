@@ -1,5 +1,5 @@
 import createPageExtensionBridge from './createPageExtensionBridge';
-import { LOCATION_PAGE } from '../WidgetLocations';
+import { WidgetLocation } from 'features/widget-renderer';
 
 jest.mock('Authentication', () => ({ getToken: () => '<TOKEN>' }));
 
@@ -56,7 +56,7 @@ describe('createPageExtensionBridge', () => {
       expect(bridge.getData()).toEqual({
         environmentId: 'environmentId',
         spaceId: 'spaceId',
-        location: LOCATION_PAGE,
+        location: WidgetLocation.PAGE,
         entryData: { fields: {}, sys: {} },
         locales: { available: [{ code: 'pl' }, { code: 'en' }], default: { code: 'pl' } },
         current: null,

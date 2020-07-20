@@ -1,13 +1,12 @@
 import createExtensionBridge from './createExtensionBridge';
 import { createBus } from 'core/utils/kefir';
-import { LOCATION_ENTRY_FIELD } from '../WidgetLocations';
 import * as entityCreator from 'components/app_container/entityCreator';
 import * as entitySelector from 'search/EntitySelector/entitySelector';
 import * as Navigator from 'states/Navigator';
 import * as SlideInNavigator from 'navigation/SlideInNavigator';
 import * as SlideInNavigatorWithPromise from 'navigation/SlideInNavigator/withPromise';
-import * as WidgetLocations from 'widgets/WidgetLocations';
 import * as AccessChecker from 'access_control/AccessChecker';
+import { WidgetLocation } from 'features/widget-renderer';
 
 function createMockProperty(initial) {
   const bus = createBus();
@@ -152,7 +151,7 @@ describe('createExtensionBridge', () => {
       }),
       currentWidgetId: 'test-id',
       currentWidgetNamespace: 'extension',
-      location: WidgetLocations.LOCATION_ENTRY_FIELD,
+      location: WidgetLocation.ENTRY_FIELD,
     });
 
     return [bridge, stubs];
@@ -173,7 +172,7 @@ describe('createExtensionBridge', () => {
       expect(bridge.getData()).toEqual({
         environmentId: 'eid',
         spaceId: 'sid',
-        location: LOCATION_ENTRY_FIELD,
+        location: WidgetLocation.ENTRY_FIELD,
         contentTypeData: 'CONTENT TYPE',
         initialContentTypesData: [{ id: 'first-content-type' }, { id: 'second-content-type' }],
         current: { field: 'FIELD', locale: { code: 'pl' } },
