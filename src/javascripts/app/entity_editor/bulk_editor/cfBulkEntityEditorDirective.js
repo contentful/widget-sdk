@@ -18,7 +18,7 @@ import * as Validator from 'app/entity_editor/Validator';
 import { buildFieldsApi } from 'app/entity_editor/dataFields';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 import createExtensionBridge from 'widgets/bridges/createExtensionBridge';
-import * as WidgetLocations from 'widgets/WidgetLocations';
+import { WidgetLocation } from 'features/widget-renderer';
 
 import bulkEntityEditorTemplate from './bulk_entity_editor.html';
 
@@ -185,7 +185,7 @@ export default function register() {
                     $controller,
                     currentWidgetId,
                     currentWidgetNamespace,
-                    location: WidgetLocations.LOCATION_ENTRY_EDITOR,
+                    location: WidgetLocation.ENTRY_EDITOR,
                   }),
               };
               $controller('InlineEditingController/editor', { $scope });

@@ -13,12 +13,11 @@ import {
   TextLink,
   Subheading,
 } from '@contentful/forma-36-react-components';
-import { LOCATION_ENTRY_EDITOR } from 'widgets/WidgetLocations';
 import EditorInstanceParametersConfigurationModal from './EditorInstanceParametersConfigurationModal';
 import { reducer, actions } from './EntryEditorAppearanceReducer';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { WidgetNamespace, isCustomWidget } from 'features/widget-renderer';
+import { WidgetNamespace, isCustomWidget, WidgetLocation } from 'features/widget-renderer';
 
 const Options = {
   default: 'default',
@@ -39,7 +38,7 @@ function canBeUsedAsEntryEditor(widget) {
     return true;
   }
 
-  return widget.locations.includes(LOCATION_ENTRY_EDITOR);
+  return widget.locations.includes(WidgetLocation.ENTRY_EDITOR);
 }
 
 function getInitialValues(configuration, widgets) {
