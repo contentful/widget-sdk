@@ -15,6 +15,7 @@ import {
   Card,
 } from '@contentful/forma-36-react-components';
 import * as WidgetLocations from 'widgets/WidgetLocations';
+import { WidgetLocation } from 'features/widget-renderer';
 import { toInternalFieldType, toApiFieldType } from 'widgets/FieldTypes';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
@@ -187,7 +188,7 @@ const LOCATION_ORDER = [
   ['Entry field', WidgetLocations.LOCATION_ENTRY_FIELD],
   ['Entry sidebar', WidgetLocations.LOCATION_ENTRY_SIDEBAR],
   ['Entry editor', WidgetLocations.LOCATION_ENTRY_EDITOR],
-  ['Page', WidgetLocations.LOCATION_PAGE],
+  ['Page', WidgetLocation.Page],
   ['Dialog', WidgetLocations.LOCATION_DIALOG],
 ];
 
@@ -272,7 +273,7 @@ export function AppEditor({ definition, onChange }) {
   };
 
   const getNavigationItemValue = (field) => {
-    const pageLocation = getLocation(WidgetLocations.LOCATION_PAGE);
+    const pageLocation = getLocation(WidgetLocation.PAGE);
 
     if (!pageLocation || !pageLocation.navigationItem) {
       return '';
@@ -283,7 +284,7 @@ export function AppEditor({ definition, onChange }) {
 
   const togglePageLocationData = () => {
     const updated = cloneDeep(definition);
-    const pageLocation = updated.locations[getLocationIndex(WidgetLocations.LOCATION_PAGE)];
+    const pageLocation = updated.locations[getLocationIndex(WidgetLocation.PAGE)];
 
     if (pageLocation.navigationItem) {
       delete pageLocation.navigationItem;
@@ -296,7 +297,7 @@ export function AppEditor({ definition, onChange }) {
 
   const updatePageLocation = ({ field, value }) => {
     const updated = cloneDeep(definition);
-    const pageLocation = updated.locations[getLocationIndex(WidgetLocations.LOCATION_PAGE)];
+    const pageLocation = updated.locations[getLocationIndex(WidgetLocation.PAGE)];
 
     if (field === 'path' && !value.startsWith('/')) {
       value = `/${value}`;
@@ -307,7 +308,7 @@ export function AppEditor({ definition, onChange }) {
     onChange(updated);
   };
 
-  const hasPageLocationNavigation = !!getLocation(WidgetLocations.LOCATION_PAGE)?.navigationItem;
+  const hasPageLocationNavigation = !!getLocation(WidgetLocation.PAGE)?.navigationItem;
 
   return (
     <>
@@ -378,7 +379,7 @@ export function AppEditor({ definition, onChange }) {
                         <span>({locationValue})</span>
                       </div>
                       {(locationValue === WidgetLocations.LOCATION_ENTRY_FIELD ||
-                        locationValue === WidgetLocations.LOCATION_PAGE) && (
+                        locationValue === WidgetLocation.PAGE) && (
                         <div className={styles.checkboxInfoIcon}>
                           <Icon icon="ListBulleted" color="secondary" />
                         </div>
@@ -412,7 +413,7 @@ export function AppEditor({ definition, onChange }) {
                       </div>
                     </div>
                   )}
-                  {locationValue === WidgetLocations.LOCATION_PAGE && (
+                  {locationValue === WidgetLocation.PAGE && (
                     <div
                       className={[styles.fieldTypes]
                         .concat(hasLocation(locationValue) ? styles.fieldTypesOpen(false) : [])
