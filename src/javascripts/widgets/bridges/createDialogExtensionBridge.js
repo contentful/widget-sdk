@@ -4,8 +4,8 @@ import makeExtensionNotificationHandlers from './makeExtensionNotificationHandle
 import makePageExtensionHandlers from './makePageExtensionHandlers';
 import makeExtensionAccessHandlers from './makeExtensionAccessHandlers';
 import checkDependencies from './checkDependencies';
-import { LOCATION_DIALOG } from '../WidgetLocations';
 import TheLocaleStore from 'services/localeStore';
+import { WidgetLocation } from 'features/widget-renderer';
 
 export default function createDialogExtensionBridge(dependencies, openDialog, onClose) {
   const { spaceContext } = checkDependencies('DialogExtensionBridge', dependencies, [
@@ -25,7 +25,7 @@ export default function createDialogExtensionBridge(dependencies, openDialog, on
     return {
       spaceId: spaceContext.getId(),
       environmentId: spaceContext.getEnvironmentId(),
-      location: LOCATION_DIALOG,
+      location: WidgetLocation.DIALOG,
       spaceMember: spaceContext.space.data.spaceMember,
       current: null,
       locales: {

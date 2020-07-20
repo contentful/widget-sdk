@@ -189,7 +189,7 @@ const LOCATION_ORDER = [
   ['Entry sidebar', WidgetLocations.LOCATION_ENTRY_SIDEBAR],
   ['Entry editor', WidgetLocation.ENTRY_EDITOR],
   ['Page', WidgetLocation.PAGE],
-  ['Dialog', WidgetLocations.LOCATION_DIALOG],
+  ['Dialog', WidgetLocation.DIALOG],
 ];
 
 const FIELD_TYPES_ORDER = [
@@ -357,7 +357,7 @@ export function AppEditor({ definition, onChange }) {
                     testId={`app-location-${locationValue}`}
                     className={styles.locationToggle}
                     isActive={hasLocation(locationValue)}
-                    isDisabled={locationValue === WidgetLocations.LOCATION_DIALOG}
+                    isDisabled={locationValue === WidgetLocation.DIALOG}
                     onClick={() => toggleLocation(locationValue)}>
                     <div className={styles.checkbox}>
                       <div>
@@ -367,8 +367,7 @@ export function AppEditor({ definition, onChange }) {
                           name={`location-check-${name}`}
                           type="checkbox"
                           checked={
-                            hasLocation(locationValue) ||
-                            locationValue === WidgetLocations.LOCATION_DIALOG
+                            hasLocation(locationValue) || locationValue === WidgetLocation.DIALOG
                           }
                         />
                       </div>
@@ -384,7 +383,7 @@ export function AppEditor({ definition, onChange }) {
                           <Icon icon="ListBulleted" color="secondary" />
                         </div>
                       )}
-                      {locationValue === WidgetLocations.LOCATION_DIALOG && (
+                      {locationValue === WidgetLocation.DIALOG && (
                         <div className={styles.checkboxInfo}>
                           All locations can open dialogs programatically
                         </div>
