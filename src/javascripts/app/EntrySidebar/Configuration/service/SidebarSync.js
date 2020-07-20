@@ -3,12 +3,8 @@ import { pick, difference, identity } from 'lodash';
 import { defaultWidgetsMap } from '../defaults';
 import { SidebarType } from '../constants';
 
-import {
-  NAMESPACE_SIDEBAR_BUILTIN,
-  NAMESPACE_EXTENSION,
-  NAMESPACE_APP,
-} from 'widgets/WidgetNamespaces';
 import { LOCATION_ENTRY_SIDEBAR } from 'widgets/WidgetLocations';
+import { WidgetNamespace, isCustomWidget } from 'features/widget-renderer';
 
 /**
  * Converts internal state of configuration reducer
@@ -21,7 +17,7 @@ export function convertInternalStateToConfiguration(state, initialItems) {
   }
 
   const selectedDefaultIds = state.items
-    .filter((widget) => widget.widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN)
+    .filter((widget) => widget.widgetNamespace === WidgetNamespace.SIDEBAR_BUILTIN)
     .map((widget) => widget.widgetId);
   const defaultIds = initialItems.map((widget) => widget.widgetId);
   const missingBuiltinIds = difference(defaultIds, selectedDefaultIds);
@@ -85,7 +81,7 @@ export function convertConfigurationToInternalState(configuration, widgets, init
   // Mark unavailable widgets with `problem: true`.
   let items = configuration
     .map((configItem) => {
-      if (configItem.widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN) {
+      if (configItem.widgetNamespace === WidgetNamespace.SIDEBAR_BUILTIN) {
         const found = defaultWidgetsMap[configItem.widgetId];
 
         return found
@@ -93,7 +89,7 @@ export function convertConfigurationToInternalState(configuration, widgets, init
           : { ...configItem, problem: true };
       }
 
-      if ([NAMESPACE_EXTENSION, NAMESPACE_APP].includes(configItem.widgetNamespace)) {
+      if (isCustomWidget(configItem.widgetNamespace)) {
         const found = widgets.find(
           (e) =>
             e.widgetNamespace === configItem.widgetNamespace && e.widgetId === configItem.widgetId

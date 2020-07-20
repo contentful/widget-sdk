@@ -4,11 +4,12 @@ import * as K from 'core/utils/kefir';
 import { getModule } from 'core/NgRegistry';
 import { noop, defer } from 'lodash';
 import createExtensionBridge from 'widgets/bridges/createExtensionBridge';
-import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION, NAMESPACE_APP } from 'widgets/WidgetNamespaces';
 import WidgetRenderWarning from 'widgets/WidgetRenderWarning';
 import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIFrameRenderer';
 import * as WidgetLocations from 'widgets/WidgetLocations';
 import * as LoadEventTracker from 'app/entity_editor/LoadEventTracker';
+import { WidgetNamespace, isCustomWidget } from 'features/widget-renderer';
+import { toRendererWidget } from 'widgets/WidgetCompat';
 
 const { createLinksRenderedEvent, createWidgetLinkRenderEventsHandler } = LoadEventTracker;
 
@@ -39,14 +40,14 @@ function WidgetRendererInternal(props) {
   if (problem) {
     trackLinksRendered();
     return <WidgetRenderWarning message={problem}></WidgetRenderWarning>;
-  } else if ([NAMESPACE_EXTENSION, NAMESPACE_APP].includes(widgetNamespace)) {
+  } else if (isCustomWidget(widgetNamespace)) {
     trackLinksRendered();
     const $rootScope = getModule('$rootScope');
     const spaceContext = getModule('spaceContext');
     const $controller = getModule('$controller');
     return (
       <ExtensionIFrameRendererWithLocalHostWarning
-        descriptor={descriptor}
+        widget={toRendererWidget(descriptor)}
         parameters={parameters}
         bridge={createExtensionBridge({
           $rootScope,
@@ -59,7 +60,7 @@ function WidgetRendererInternal(props) {
         })}
       />
     );
-  } else if (widgetNamespace === NAMESPACE_BUILTIN) {
+  } else if (widgetNamespace === WidgetNamespace.BUILTIN) {
     const widget = renderFieldEditor({
       $scope: props.scope,
       loadEvents: loadEvents || newNoopLoadEvents(),

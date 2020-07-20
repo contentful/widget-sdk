@@ -2,8 +2,8 @@ import React from 'react';
 import AngularComponent from 'ui/Framework/AngularComponent';
 import NoLocalizedFieldsAdvice from 'components/tabs/NoLocalizedFieldsAdvice';
 import EntryEditorWidgetTypes from 'app/entry_editor/EntryEditorWidgetTypes';
-import { NAMESPACE_EDITOR_BUILTIN } from 'widgets/WidgetNamespaces';
 import ReferencesTab from './EntryReferences';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 export default function renderDefaultEditor(
   widgetId,
@@ -33,7 +33,7 @@ export default function renderDefaultEditor(
           however, <AngularComponent> doesnt re-render on state change as it involves also
           angularJS. Instead, render it on initial load and conditionally render <ReferencesTab>
         */}
-        {selectedTab === `${NAMESPACE_EDITOR_BUILTIN}-${widgetId}` && (
+        {selectedTab === `${WidgetNamespace.EDITOR_BUILTIN}-${widgetId}` && (
           <ReferencesTab entity={editorData.entity.data} />
         )}
       </div>

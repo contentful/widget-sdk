@@ -1,5 +1,5 @@
 import { fromAPI, toAPI } from './EditorInterfaceTransformer';
-import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from './WidgetNamespaces';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 jest.mock('./BuiltinWidgets', () => ({ create: jest.fn(() => []) }));
 
@@ -21,13 +21,13 @@ describe('EditorInterfaceTransformer', () => {
         {
           fieldId: 'AAA',
           field: ct.fields[0],
-          widgetNamespace: NAMESPACE_BUILTIN,
+          widgetNamespace: WidgetNamespace.BUILTIN,
           widgetId: 'singleLine',
         },
         {
           fieldId: 'MISSING',
           field: ct.fields[1],
-          widgetNamespace: NAMESPACE_BUILTIN,
+          widgetNamespace: WidgetNamespace.BUILTIN,
           widgetId: 'boolean',
         },
       ]);
@@ -54,7 +54,7 @@ describe('EditorInterfaceTransformer', () => {
           field: { apiName: 'AAA' },
           fieldId: 'AAA',
           widgetId: 'singleLine',
-          widgetNamespace: NAMESPACE_BUILTIN,
+          widgetNamespace: WidgetNamespace.BUILTIN,
         },
       ]);
     });
@@ -64,7 +64,7 @@ describe('EditorInterfaceTransformer', () => {
       const ei = { controls: [{ fieldId: 'test', widgetId: 'foo', widgetNamespace: 'bar' }] };
 
       const { controls } = fromAPI(ct, ei);
-      expect(controls[0].widgetNamespace).toEqual(NAMESPACE_BUILTIN);
+      expect(controls[0].widgetNamespace).toEqual(WidgetNamespace.BUILTIN);
       expect(controls[0].widgetId).toEqual('singleLine');
     });
 
@@ -77,7 +77,7 @@ describe('EditorInterfaceTransformer', () => {
 
       const { controls } = fromAPI(ct, ei);
 
-      expect(controls[0].widgetNamespace).toEqual(NAMESPACE_BUILTIN);
+      expect(controls[0].widgetNamespace).toEqual(WidgetNamespace.BUILTIN);
       expect(controls[0].widgetId).toEqual('foo');
     });
 
@@ -90,7 +90,7 @@ describe('EditorInterfaceTransformer', () => {
 
       const { controls } = fromAPI(ct, ei);
 
-      expect(controls[0].widgetNamespace).toEqual(NAMESPACE_EXTENSION);
+      expect(controls[0].widgetNamespace).toEqual(WidgetNamespace.EXTENSION);
       expect(controls[0].widgetId).toEqual('foo');
     });
 
@@ -197,7 +197,7 @@ describe('EditorInterfaceTransformer', () => {
       const control = {
         fieldId: 'test',
         widgetId: 'helloWorld',
-        widgetNamespace: NAMESPACE_BUILTIN,
+        widgetNamespace: WidgetNamespace.BUILTIN,
         settings: { test: true },
         field: { id: 'test' },
         unknown: 'test',
@@ -213,7 +213,7 @@ describe('EditorInterfaceTransformer', () => {
         {
           fieldId: 'test',
           widgetId: 'helloWorld',
-          widgetNamespace: NAMESPACE_BUILTIN,
+          widgetNamespace: WidgetNamespace.BUILTIN,
           settings: { test: true },
         },
       ]);
@@ -223,7 +223,7 @@ describe('EditorInterfaceTransformer', () => {
       const control = {
         fieldId: 'test',
         widgetId: 'helloWorld',
-        widgetNamespace: NAMESPACE_BUILTIN,
+        widgetNamespace: WidgetNamespace.BUILTIN,
         settings: {},
       };
       const ct = { sys: { id: 'CT' }, fields: [{ apiName: 'test' }] };
@@ -232,7 +232,7 @@ describe('EditorInterfaceTransformer', () => {
       const { controls } = toAPI(ct, ei);
 
       expect(controls).toEqual([
-        { fieldId: 'test', widgetId: 'helloWorld', widgetNamespace: NAMESPACE_BUILTIN },
+        { fieldId: 'test', widgetId: 'helloWorld', widgetNamespace: WidgetNamespace.BUILTIN },
       ]);
     });
 

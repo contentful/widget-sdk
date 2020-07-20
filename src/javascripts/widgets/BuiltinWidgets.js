@@ -3,7 +3,6 @@
 import { range } from 'lodash';
 import React from 'react';
 import * as Config from 'Config';
-import { NAMESPACE_BUILTIN, NAMESPACE_EDITOR_BUILTIN } from './WidgetNamespaces';
 import EmbedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
 import { renderRichTextEditor } from 'app/widgets/RichText';
 import { TagsEditor } from '@contentful/field-editor-tags';
@@ -30,6 +29,7 @@ import {
 } from 'app/widgets/ReferenceEditor';
 import { SlugEditor } from '@contentful/field-editor-slug';
 import EntryEditorTypes from 'app/entry_editor/EntryEditorWidgetTypes';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 const HELP_TEXT_PARAMETER = {
   id: 'helpText',
@@ -47,13 +47,13 @@ export function create() {
     const hasHelpText = !!widgetParameters.find(({ id }) => id === HELP_TEXT_PARAMETER.id);
     const parameters = (hasHelpText ? [] : [HELP_TEXT_PARAMETER]).concat(widgetParameters);
 
-    Object.assign(widgetDescriptor, { id, namespace: NAMESPACE_BUILTIN, parameters });
+    Object.assign(widgetDescriptor, { id, namespace: WidgetNamespace.BUILTIN, parameters });
     widgets.push(widgetDescriptor);
   };
 
   const registerEditorWidget = (editorDescriptor) => {
     const descriptor = {
-      namespace: NAMESPACE_EDITOR_BUILTIN,
+      namespace: WidgetNamespace.EDITOR_BUILTIN,
     };
     Object.assign(descriptor, editorDescriptor);
     widgets.push(descriptor);

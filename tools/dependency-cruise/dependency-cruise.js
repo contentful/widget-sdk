@@ -21,6 +21,8 @@ module.exports = {
       },
       to: {
         path: '^src/javascripts/features/.+',
+        // TODO: remove when widget renderer is moved to a library
+        pathNot: '^src/javascripts/features/widget-renderer/.+',
       },
     },
     {

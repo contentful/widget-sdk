@@ -12,38 +12,39 @@ import { toInternalFieldType } from 'widgets/FieldTypes';
 import { getExtensionParameterIds } from './getExtensionParameterIds';
 import * as Analytics from 'analytics/Analytics';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
-import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
 import { getModule } from 'core/NgRegistry';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 const SDK_URL = 'https://unpkg.com/contentful-ui-extensions-sdk@3';
 
-function install({ extension, type, url }) {
+async function install({ extension, type, url }) {
   const spaceContext = getModule('spaceContext');
   const $state = getModule('$state');
 
-  return spaceContext.cma
-    .createExtension({ extension })
-    .then((res) => {
-      const extensionId = res.sys.id;
-      getCustomWidgetLoader().evict([NAMESPACE_EXTENSION, extensionId]);
+  try {
+    const res = await spaceContext.cma.createExtension({ extension });
+    const loader = await getCustomWidgetLoader();
+    const extensionId = res.sys.id;
 
-      return $state.go('^.detail', { extensionId });
-    })
-    .then(() => {
-      Notification.success('Your new extension was successfully created.');
+    loader.evict({ widgetNamespace: WidgetNamespace.EXTENSION, id: extensionId });
 
-      if (type && url) {
-        Analytics.track('extension:install', {
-          type,
-          url,
-          name: extension.name,
-          src: extension.src,
-          fieldTypes: toInternalFieldType(extension.fieldTypes),
-          ...getExtensionParameterIds(extension),
-        });
-      }
-    })
-    .catch((err) => handleInstallError(err));
+    await $state.go('^.detail', { extensionId });
+
+    Notification.success('Your new extension was successfully created.');
+
+    if (type && url) {
+      Analytics.track('extension:install', {
+        type,
+        url,
+        name: extension.name,
+        src: extension.src,
+        fieldTypes: toInternalFieldType(extension.fieldTypes),
+        ...getExtensionParameterIds(extension),
+      });
+    }
+  } catch (err) {
+    return handleInstallError(err);
+  }
 }
 
 function handleInstallError(err) {

@@ -2,7 +2,7 @@ import PageExtensionRoute from './PageExtensionRoute';
 import createPageExtensionBridge from 'widgets/bridges/createPageExtensionBridge';
 import * as Navigator from 'states/Navigator';
 import * as SlideInNavigator from 'navigation/SlideInNavigator/index';
-import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 export default {
   name: 'pageExtensions',
@@ -21,7 +21,7 @@ export default {
           Navigator,
           SlideInNavigator,
           currentWidgetId: extensionId,
-          currentWidgetNamespace: NAMESPACE_EXTENSION,
+          currentWidgetNamespace: WidgetNamespace.EXTENSION,
         }),
         path: path.startsWith('/') ? path : '/' + path,
       };

@@ -4,7 +4,6 @@ import {
 } from './SidebarSync';
 import { flatten, uniq } from 'lodash';
 import { SidebarType } from '../constants';
-import { NAMESPACE_EXTENSION, NAMESPACE_SIDEBAR_BUILTIN } from 'widgets/WidgetNamespaces';
 import {
   EntryConfiguration,
   Publication as PublicationWidget,
@@ -16,6 +15,7 @@ import {
   Users as UsersWidget,
   Releases as ReleasesWidget,
 } from '../defaults';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 function getAllKeys(arr) {
   return uniq(flatten(arr.map((item) => Object.keys(item))));
@@ -41,11 +41,11 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
         VersionsWidget,
         {
           widgetId: 'some-custom-extension',
-          widgetNamespace: NAMESPACE_EXTENSION,
+          widgetNamespace: WidgetNamespace.EXTENSION,
         },
         {
           widgetId: 'some-problem-extension-that-was-deleted',
-          widgetNamespace: NAMESPACE_EXTENSION,
+          widgetNamespace: WidgetNamespace.EXTENSION,
           problem: true,
         },
       ];
@@ -112,28 +112,28 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
       const configuration = [
         {
           widgetId: PublicationWidget.widgetId,
-          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
+          widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
         },
         {
           widgetId: TasksWidget.widgetId,
-          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
+          widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
         },
         {
           widgetId: VersionsWidget.widgetId,
-          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
+          widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
         },
         {
           widgetId: 'some-extension-that-is-not-installed',
-          widgetNamespace: NAMESPACE_EXTENSION,
+          widgetNamespace: WidgetNamespace.EXTENSION,
         },
         {
           widgetId: UsersWidget.widgetId,
-          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
+          widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
           disabled: true,
         },
         {
           widgetId: 'looks-like-in-invalid-built-in',
-          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
+          widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
         },
       ];
 
@@ -148,12 +148,12 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
           VersionsWidget,
           {
             widgetId: 'some-extension-that-is-not-installed',
-            widgetNamespace: NAMESPACE_EXTENSION,
+            widgetNamespace: WidgetNamespace.EXTENSION,
             problem: true,
           },
           {
             widgetId: 'looks-like-in-invalid-built-in',
-            widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
+            widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
             problem: true,
           },
         ],
@@ -171,38 +171,38 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
       const configuration = [
         {
           widgetId: PublicationWidget.widgetId,
-          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
+          widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
         },
         {
           widgetId: TasksWidget.widgetId,
-          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
+          widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
         },
         {
           widgetId: VersionsWidget.widgetId,
-          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
+          widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
         },
         {
           widgetId: UsersWidget.widgetId,
-          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
+          widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
         },
         {
           widgetId: 'netlify-extension',
-          widgetNamespace: NAMESPACE_EXTENSION,
+          widgetNamespace: WidgetNamespace.EXTENSION,
           settings: {
             netlifyBuildHook: 'http://hook',
           },
         },
         {
           widgetId: LinksWidget.widgetId,
-          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
+          widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
         },
         {
           widgetId: ContentPreviewWidget.widgetId,
-          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
+          widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
         },
         {
           widgetId: TranslationWidget.widgetId,
-          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
+          widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
         },
       ];
 
@@ -211,7 +211,7 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
         [
           {
             id: 'netlify-extension',
-            namespace: NAMESPACE_EXTENSION,
+            namespace: WidgetNamespace.EXTENSION,
             name: 'Netlify Extension',
             parameters: [
               {
@@ -224,7 +224,7 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
           },
           {
             id: 'custom-publish-button',
-            namespace: NAMESPACE_EXTENSION,
+            namespace: WidgetNamespace.EXTENSION,
             name: 'Custom Publish button',
           },
         ],
@@ -242,7 +242,7 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
           {
             name: 'Netlify Extension',
             widgetId: 'netlify-extension',
-            widgetNamespace: NAMESPACE_EXTENSION,
+            widgetNamespace: WidgetNamespace.EXTENSION,
             settings: {
               netlifyBuildHook: 'http://hook',
             },
@@ -263,7 +263,7 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
           ReleasesWidget,
           {
             widgetId: 'custom-publish-button',
-            widgetNamespace: NAMESPACE_EXTENSION,
+            widgetNamespace: WidgetNamespace.EXTENSION,
             name: 'Custom Publish button',
           },
         ],

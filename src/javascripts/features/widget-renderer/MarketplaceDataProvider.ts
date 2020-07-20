@@ -43,7 +43,7 @@ const MARKETPLACE_SPACE_ID = 'lpjm8d10rkpy';
 const MARKETPLACE_SPACE_API_KEY = 'XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk';
 const MARKETPLACE_URL = `https://cdn.contentful.com/spaces/${MARKETPLACE_SPACE_ID}/entries`;
 const MARKETPLACE_APP_FIELDS = ['fields.slug', 'fields.appDefinitionId', 'fields.icon'].join(',');
-const MARKETPLACE_QUERY = `?content_type=app&include=2&select=${MARKETPLACE_APP_FIELDS}&locale=en=US`;
+const MARKETPLACE_QUERY = `?content_type=app&include=2&select=${MARKETPLACE_APP_FIELDS}&locale=en-US`;
 
 export class MarketplaceDataProvider {
   private fetch: FetchFn;

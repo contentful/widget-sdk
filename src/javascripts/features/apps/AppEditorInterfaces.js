@@ -3,8 +3,7 @@ import { get, isObject, identity, pick, isEqual, cloneDeep } from 'lodash';
 import * as SidebarDefaults from 'app/EntrySidebar/Configuration/defaults';
 
 import { isUnsignedInteger } from './validateTargetState';
-
-import { NAMESPACE_APP } from 'widgets/WidgetNamespaces';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 // Like `Promise.all` but rejecting input promises do not cause
 // the result promise to reject. They are simply omitted.
@@ -26,7 +25,7 @@ export async function getDefaultSidebar() {
 function isCurrentApp(widget, appInstallation) {
   const widgetId = get(appInstallation, ['sys', 'appDefinition', 'sys', 'id']);
 
-  return widget.widgetNamespace === NAMESPACE_APP && widget.widgetId === widgetId;
+  return widget.widgetNamespace === WidgetNamespace.APP && widget.widgetId === widgetId;
 }
 
 /**
@@ -79,7 +78,7 @@ function transformSingleEditorInterfaceToTargetState(
       const idx = (result.controls || []).findIndex((cur) => cur.fieldId === control.fieldId);
       result.controls[idx] = {
         fieldId: control.fieldId,
-        widgetNamespace: NAMESPACE_APP,
+        widgetNamespace: WidgetNamespace.APP,
         widgetId,
       };
     });
@@ -93,7 +92,7 @@ function transformSingleEditorInterfaceToTargetState(
     // If there is no sidebar stored use the default one.
     result.sidebar = Array.isArray(result.sidebar) ? result.sidebar : cloneDeep(defaultSidebar);
 
-    const widget = { widgetNamespace: NAMESPACE_APP, widgetId };
+    const widget = { widgetNamespace: WidgetNamespace.APP, widgetId };
 
     // If position is defined use it for insertion.
     if (isUnsignedInteger(targetSidebar.position)) {
@@ -106,7 +105,7 @@ function transformSingleEditorInterfaceToTargetState(
 
   // If editor target state is set to `true` we just use the widget.
   if (targetState.editor === true) {
-    result.editors = [{ widgetNamespace: NAMESPACE_APP, widgetId }];
+    result.editors = [{ widgetNamespace: WidgetNamespace.APP, widgetId }];
   }
 
   return result;

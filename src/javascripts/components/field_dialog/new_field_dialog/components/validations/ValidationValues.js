@@ -15,8 +15,8 @@ import { sortableContainer, sortableElement } from 'react-sortable-hoc';
 import arraySwap from 'utils/arraySwap';
 import { ValidationFieldType } from 'components/field_dialog/new_field_dialog/utils/PropTypes';
 import { toString, intersection } from 'lodash';
-import { NAMESPACE_BUILTIN } from 'widgets/WidgetNamespaces';
 import styles from './styles';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 // The maximum number of digits we can represent without rounding
 // errors.
@@ -34,11 +34,11 @@ const ERROR_MESSAGES = {
 };
 
 function shouldShowPrefferedValueHint(namespace, id, availableWidgets) {
-  const isBuiltin = namespace === NAMESPACE_BUILTIN;
+  const isBuiltin = namespace === WidgetNamespace.BUILTIN;
   const predefinedValueWidgetIds = ['radio', 'dropdown', 'checkbox'];
   const validWidgetSelected = isBuiltin && predefinedValueWidgetIds.includes(id);
   const availableWidgetIds = (availableWidgets || [])
-    .filter(({ namespace }) => namespace === NAMESPACE_BUILTIN)
+    .filter(({ namespace }) => namespace === WidgetNamespace.BUILTIN)
     .map(({ id }) => id);
   const validWidgetAvailable =
     intersection(availableWidgetIds, predefinedValueWidgetIds).length > 0;

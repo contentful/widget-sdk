@@ -1,12 +1,12 @@
 import { uniq } from 'lodash';
 import { create as createBuiltinWidgetList } from './BuiltinWidgets';
-import { NAMESPACE_EDITOR_BUILTIN } from './WidgetNamespaces';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 const CMA_ID_REGEXP = /^[a-zA-Z0-9][a-zA-Z0-9-_]{0,63}$/;
 const widgetList = createBuiltinWidgetList();
 const BUILTIN_WIDGETS_COUNT = widgetList.length;
 const EDITOR_WIDGETS_COUNT = widgetList.filter(
-  (widget) => widget.namespace == NAMESPACE_EDITOR_BUILTIN
+  (widget) => widget.namespace == WidgetNamespace.EDITOR_BUILTIN
 ).length;
 
 jest.mock('ui/Framework/AngularComponent', () => () => null);
@@ -22,11 +22,11 @@ describe('BuiltinWidgets', () => {
     it('returns a list of widget descriptors', () => {
       expect.assertions(BUILTIN_WIDGETS_COUNT * 2 - EDITOR_WIDGETS_COUNT);
       createBuiltinWidgetList().forEach((descriptor) => {
-        if (descriptor.namespace === NAMESPACE_EDITOR_BUILTIN) {
+        if (descriptor.namespace === WidgetNamespace.EDITOR_BUILTIN) {
           expect(descriptor).toMatchObject({
             id: expect.any(String),
             name: expect.any(String),
-            namespace: NAMESPACE_EDITOR_BUILTIN,
+            namespace: WidgetNamespace.EDITOR_BUILTIN,
           });
         } else {
           expect(descriptor).toMatchObject({

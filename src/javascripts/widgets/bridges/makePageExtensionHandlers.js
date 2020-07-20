@@ -1,13 +1,13 @@
 import checkDependencies from './checkDependencies';
 import * as Navigator from 'states/Navigator';
-import { NAMESPACE_EXTENSION, NAMESPACE_APP } from '../WidgetNamespaces';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 const SUPPORTED_WIDGET_NAMESPACE_ROUTES = {
-  [NAMESPACE_EXTENSION]: {
+  [WidgetNamespace.EXTENSION]: {
     path: ['pageExtensions'],
     paramId: 'extensionId',
   },
-  [NAMESPACE_APP]: {
+  [WidgetNamespace.APP]: {
     path: ['apps', 'page'],
     paramId: 'appId',
   },
@@ -25,8 +25,8 @@ export default function makePageExtensionHandlers(dependencies, isCurrentlyOnPag
   ]);
 
   return async function navigate(options = {}) {
-    const { id, path, type = NAMESPACE_EXTENSION } = options;
-    const isApp = type === NAMESPACE_APP;
+    const { id, path, type = WidgetNamespace.EXTENSION } = options;
+    const isApp = type === WidgetNamespace.APP;
 
     if (!id) {
       throw new Error('The `id` option is required!');

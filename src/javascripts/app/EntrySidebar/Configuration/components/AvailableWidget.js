@@ -3,11 +3,7 @@ import PropTypes from 'prop-types';
 import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { IconButton, Paragraph, Tag } from '@contentful/forma-36-react-components';
-import {
-  NAMESPACE_SIDEBAR_BUILTIN,
-  NAMESPACE_EXTENSION,
-  NAMESPACE_APP,
-} from 'widgets/WidgetNamespaces';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 const styles = {
   item: css({
@@ -65,9 +61,9 @@ export default function AvailableWidget({
           {availabilityStatus && renderAvailabilityStatus()}
         </Paragraph>
         <Paragraph>
-          {widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN && 'Built-in item'}
-          {widgetNamespace === NAMESPACE_EXTENSION && 'UI Extension'}
-          {widgetNamespace === NAMESPACE_APP && 'App'}
+          {widgetNamespace === WidgetNamespace.SIDEBAR_BUILTIN && 'Built-in item'}
+          {widgetNamespace === WidgetNamespace.EXTENSION && 'UI Extension'}
+          {widgetNamespace === WidgetNamespace.APP && 'App'}
         </Paragraph>
       </div>
       <div className={styles.actions}>

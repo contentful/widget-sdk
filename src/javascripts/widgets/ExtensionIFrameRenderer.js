@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { get } from 'lodash';
 
 import * as Config from 'Config';
 
 import ExtensionLocalDevelopmentWarning from './ExtensionLocalDevelopmentWarning';
 import ExtensionIFrameChannel from './ExtensionIFrameChannel';
 import ExtensionAPI from './ExtensionAPI';
+import { WidgetNamespace, HostingType } from 'features/widget-renderer';
 
 const SANDBOX = [
   'allow-scripts',
@@ -35,12 +35,13 @@ const sharedPropTypes = {
     install: PropTypes.func.isRequired,
     uninstall: PropTypes.func,
   }).isRequired,
-  descriptor: PropTypes.shape({
-    id: PropTypes.string.isRequired,
+  widget: PropTypes.shape({
     namespace: PropTypes.string.isRequired,
-    appDefinitionId: PropTypes.string,
-    src: PropTypes.string.isRequired,
-    srcdoc: PropTypes.string,
+    id: PropTypes.string.isRequired,
+    hosting: PropTypes.shape({
+      type: PropTypes.string.isRequired,
+      value: PropTypes.string.isRequired,
+    }).isRequired,
   }).isRequired,
   parameters: PropTypes.shape({
     instance: PropTypes.object.isRequired,
@@ -98,8 +99,8 @@ export default class ExtensionIFrameRenderer extends React.Component {
       return;
     }
 
-    const { bridge, descriptor } = this.props;
-    const { src, srcdoc, id, appDefinitionId } = descriptor;
+    const { bridge, widget } = this.props;
+    const { namespace, id, hosting } = widget;
 
     // Cherry-pick only valid parameter types.
     const parameters = {
@@ -119,7 +120,7 @@ export default class ExtensionIFrameRenderer extends React.Component {
     const bridgeData = bridge.getData();
 
     this.extensionApi = new ExtensionAPI({
-      descriptor,
+      widget,
       channel,
       parameters,
       ...bridgeData,
@@ -135,23 +136,23 @@ export default class ExtensionIFrameRenderer extends React.Component {
     iframe.dataset.extensionId = id;
     iframe.dataset.location = bridgeData.location;
 
-    if (appDefinitionId) {
-      iframe.dataset.appDefinitionId = appDefinitionId;
+    if (namespace === WidgetNamespace.APP) {
+      iframe.dataset.appDefinitionId = id;
     }
 
-    if (src && !isAppDomain(src)) {
+    if (hosting.type === HostingType.SRC && !isAppDomain(hosting.value)) {
       iframe.sandbox = `${SANDBOX} allow-same-origin`;
-      iframe.src = src;
-    } else if (srcdoc) {
+      iframe.src = hosting.value;
+    } else if (hosting.type === HostingType.SRCDOC) {
       iframe.sandbox = SANDBOX;
-      iframe.srcdoc = srcdoc;
+      iframe.srcdoc = hosting.value;
     }
   };
 }
 
 export function ExtensionIFrameRendererWithLocalHostWarning(props) {
-  const src = get(props, ['descriptor', 'src'], '');
-  const isDevMode = src.startsWith('http://localhost');
+  const isSrc = props.widget.hosting === HostingType.SRC;
+  const isDevMode = isSrc && props.widget.hosting.value.startsWith('http://localhost');
   return (
     <>
       <ExtensionLocalDevelopmentWarning developmentMode={isDevMode}>

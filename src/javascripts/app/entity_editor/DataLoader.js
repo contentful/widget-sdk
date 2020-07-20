@@ -10,12 +10,13 @@ import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer'
 import { create as createBuiltinWidgetList } from 'widgets/BuiltinWidgets';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { getWidgetTrackingContexts } from 'widgets/WidgetTracking';
-import { NAMESPACE_EXTENSION, NAMESPACE_APP } from 'widgets/WidgetNamespaces';
 import {
   buildRenderables,
   buildSidebarRenderables,
   buildEditorsRenderables,
 } from 'widgets/WidgetRenderable';
+import { isCustomWidget } from 'features/widget-renderer';
+import { toLegacyWidget } from 'widgets/WidgetCompat';
 
 const assetEditorInterface = EditorInterfaceTransformer.fromAPI(
   assetContentType.data,
@@ -127,10 +128,16 @@ async function loadEditorData(loader, id) {
   const entity = await loader.getEntity(id);
   const contentTypeId = get(entity, ['data', 'sys', 'contentType', 'sys', 'id']);
 
-  const [contentType, apiEditorInterface, hasAdvancedExtensibility] = await Promise.all([
+  const [
+    contentType,
+    apiEditorInterface,
+    hasAdvancedExtensibility,
+    customWidgetLoader,
+  ] = await Promise.all([
     loader.getContentType(contentTypeId),
     loader.getEditorInterface(contentTypeId),
     loader.hasAdvancedExtensibility(),
+    getCustomWidgetLoader(),
   ]);
 
   const editorInterface = EditorInterfaceTransformer.fromAPI(contentType.data, apiEditorInterface);
@@ -146,15 +153,13 @@ async function loadEditorData(loader, id) {
 
   const widgets = [
     ...createBuiltinWidgetList(),
-    ...(await getCustomWidgetLoader().getForEditor(editorInterface)),
+    ...(await customWidgetLoader.getWithEditorInterface(editorInterface)).map(toLegacyWidget),
   ];
 
   const fieldControls = buildRenderables(controls, widgets);
   const sidebarExtensions = buildSidebarRenderables(sidebarConfig || [], widgets);
   const editorsExtensions = buildEditorsRenderables(editorsConfig || [], widgets);
-  const customEditor = editorsExtensions.find((editor) => {
-    return [NAMESPACE_EXTENSION, NAMESPACE_APP].includes(editor.widgetNamespace);
-  });
+  const customEditor = editorsExtensions.find((e) => isCustomWidget(e.widgetNamespace));
 
   const entityInfo = makeEntityInfo(entity, contentType);
   const openDoc = loader.getOpenDoc(entity, contentType);

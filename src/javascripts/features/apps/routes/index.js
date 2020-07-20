@@ -1,8 +1,9 @@
 /* eslint-disable rulesdir/allow-only-import-export-in-index, import/no-default-export */
+import React from 'react';
 import { get } from 'lodash';
+import { css } from 'emotion';
 import { AppsListPage } from '../AppsListPage';
 import { AppRoute } from '../AppPage';
-import { AppPageLocation } from '../AppPageLocation';
 import { makeAppHookBus, getAppsRepo } from 'features/apps-core';
 import createAppExtensionBridge from 'widgets/bridges/createAppExtensionBridge';
 import createPageExtensionBridge from 'widgets/bridges/createPageExtensionBridge';
@@ -10,10 +11,11 @@ import * as Navigator from 'states/Navigator';
 import * as SlideInNavigator from 'navigation/SlideInNavigator/index';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
-import { NAMESPACE_APP } from 'widgets/WidgetNamespaces';
 import { shouldHide, Action } from 'access_control/AccessChecker';
 import * as TokenStore from 'services/TokenStore';
 import { isOwnerOrAdmin, isDeveloper } from 'services/OrganizationRoles';
+import { WidgetNamespace } from 'features/widget-renderer';
+import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIFrameRenderer';
 
 const BASIC_APPS_FEATURE_KEY = 'basic_apps';
 const DEFAULT_FEATURE_STATUS = true; // Fail open
@@ -151,7 +153,7 @@ export const appRoute = {
             SlideInNavigator,
             appDefinition: app.appDefinition,
             currentWidgetId: app.appDefinition.sys.id,
-            currentWidgetNamespace: NAMESPACE_APP,
+            currentWidgetNamespace: WidgetNamespace.APP,
           });
 
           return {
@@ -160,10 +162,13 @@ export const appRoute = {
             bridge,
             appHookBus,
             cma: spaceContext.cma,
-            evictWidget: (appInstallation) => {
-              const widgetId = get(appInstallation, ['sys', 'appDefinition', 'sys', 'id']);
+            evictWidget: async (appInstallation) => {
+              const loader = await getCustomWidgetLoader();
 
-              getCustomWidgetLoader().evict([NAMESPACE_APP, widgetId]);
+              loader.evict({
+                widgetNamespace: WidgetNamespace.APP,
+                widgetId: get(appInstallation, ['sys', 'appDefinition', 'sys', 'id']),
+              });
             },
             canManageThisApp,
           };
@@ -173,18 +178,41 @@ export const appRoute = {
     {
       name: 'page',
       url: '/app_installations/:appId{path:PathSuffix}',
-      component: AppPageLocation,
+      component: (props) => (
+        <div
+          className={css({
+            display: 'flex',
+            flexDirection: 'column',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            overflowX: 'hidden',
+          })}>
+          <ExtensionIFrameRendererWithLocalHostWarning {...props} isFullSize />
+        </div>
+      ),
       resolve: {
         app: ['$stateParams', 'spaceContext', ({ appId }) => getAppsRepo().getApp(appId)],
+        widget: [
+          'app',
+          async ({ appDefinition }) => {
+            const loader = await getCustomWidgetLoader();
+
+            return loader.getOne({
+              widgetNamespace: WidgetNamespace.APP,
+              widgetId: appDefinition.sys.id,
+            });
+          },
+        ],
       },
       onEnter: [
-        'app',
-        (app) => {
-          const noPageLocationDefined = !app.appDefinition.locations.find(
-            (l) => l.location === 'page'
-          );
+        'widget',
+        (widget) => {
+          const pageLocation = widget && widget.locations.find((l) => l.location === 'page');
 
-          if (noPageLocationDefined) {
+          if (!pageLocation) {
             throw new Error('This app has not defined a page location!');
           }
         },
@@ -193,21 +221,25 @@ export const appRoute = {
         '$stateParams',
         'spaceContext',
         'app',
-        ({ path = '' }, spaceContext, app) => {
+        'widget',
+        ({ path = '' }, spaceContext, { appDefinition }, widget) => {
           const bridge = createPageExtensionBridge({
             spaceContext,
             Navigator,
             SlideInNavigator,
-            appDefinition: app.appDefinition,
-            currentWidgetId: app.id,
-            currentWidgetNamespace: NAMESPACE_APP,
+            appDefinition,
+            currentWidgetId: widget.id,
+            currentWidgetNamespace: widget.namespace,
           });
 
           return {
-            path: path.startsWith('/') ? path : `/${path}`,
-            app,
+            widget,
             bridge,
-            cma: spaceContext.cma,
+            parameters: {
+              instance: {},
+              invocation: { path: path.startsWith('/') ? path : `/${path}` },
+              installation: widget.parameters.values.installation,
+            },
           };
         },
       ],

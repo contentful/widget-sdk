@@ -1,11 +1,11 @@
 import { migrateControl } from './ControlMigrations';
-import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from './WidgetNamespaces';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 describe('ControlMigrations', () => {
   it('migrates widget regardless of type', () => {
     const control = {
       fieldId: 'FID',
-      widgetNamespace: NAMESPACE_BUILTIN,
+      widgetNamespace: WidgetNamespace.BUILTIN,
       widgetId: 'oldWidget',
       field: {},
     };
@@ -23,7 +23,7 @@ describe('ControlMigrations', () => {
   it('migrates widget if field type matches', () => {
     const control = {
       fieldId: 'FID',
-      widgetNamespace: NAMESPACE_BUILTIN,
+      widgetNamespace: WidgetNamespace.BUILTIN,
       widgetId: 'oldWidget',
       field: { apiName: 'apiName', type: 'ft1' },
     };
@@ -42,7 +42,7 @@ describe('ControlMigrations', () => {
   it('does not migrate widget if field type does not match', () => {
     const control = {
       fieldId: 'FID',
-      widgetNamespace: NAMESPACE_BUILTIN,
+      widgetNamespace: WidgetNamespace.BUILTIN,
       widgetId: 'oldWidget',
       field: { apiName: 'apiName', type: 'ft1' },
     };
@@ -61,7 +61,7 @@ describe('ControlMigrations', () => {
   it('does not migrate widget if is not a builtin', () => {
     const control = {
       fieldId: 'FID',
-      widgetNamespace: NAMESPACE_EXTENSION,
+      widgetNamespace: WidgetNamespace.EXTENSION,
       widgetId: 'oldWidget',
       field: { apiName: 'apiName', type: 'ft1' },
     };

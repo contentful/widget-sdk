@@ -1,13 +1,13 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import getDefaultWidgetId from 'widgets/DefaultWidget';
-import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
 import FieldDialogAppearanceTab from 'components/field_dialog/appearance/FieldDialogAppearanceTab';
+import { WidgetNamespace, isCustomWidget } from 'features/widget-renderer';
 
 const getDefaultWidget = (ctField, contentType, availableWidgets) => {
   const defaultWidgetId = getDefaultWidgetId(ctField, contentType.data.displayField);
   return availableWidgets.find((w) => {
-    return w.namespace === NAMESPACE_BUILTIN && w.id === defaultWidgetId;
+    return w.namespace === WidgetNamespace.BUILTIN && w.id === defaultWidgetId;
   });
 };
 
@@ -28,7 +28,7 @@ const AppearanceTabComponent = ({
 
   const isAdmin = !!spaceContext.getData('spaceMember.admin', false);
   const hasCustomEditor =
-    editorInterface.editor && editorInterface.editor.widgetNamespace === NAMESPACE_EXTENSION;
+    editorInterface.editor && isCustomWidget(editorInterface.editor.widgetNamespace);
 
   const onSelect = ({ id, namespace }) => {
     setWidgetSettings({ ...widgetSettings, id, namespace });

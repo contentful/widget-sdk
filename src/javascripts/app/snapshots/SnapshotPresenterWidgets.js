@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
 import { isRtlLocale } from 'utils/locales';
-import { NAMESPACE_EXTENSION, NAMESPACE_APP } from 'widgets/WidgetNamespaces';
 import SnapshotPresenterArraySymbol from './SnapshotPresenterArraySymbol';
 import SnapshotPresenterBoolean from './SnapshotPresenterBoolean';
 import SnapshotPresenterDate from './SnapshotPresenterDate';
@@ -14,6 +13,7 @@ import SnapshotPresenterLocation from './SnapshotPresenterLocation';
 import SnapshotPresenterMarkdown from './SnapshotPresenterMarkdown';
 import SnapshotPresenterRichText from './SnapshotPresenterRichText';
 import SnapshotPresenterStandard from './SnapshotPresenterStandard';
+import { isCustomWidget } from 'features/widget-renderer';
 
 const styles = {
   rtl: css({
@@ -32,7 +32,7 @@ const SnapshotPresenterWidgets = ({
 }) => {
   const { field, widgetNamespace, descriptor, parameters, settings } = widget;
 
-  if ([NAMESPACE_EXTENSION, NAMESPACE_APP].includes(widgetNamespace)) {
+  if (isCustomWidget(widgetNamespace)) {
     return (
       <SnapshotPresenterExtension
         descriptor={descriptor}

@@ -1,25 +1,25 @@
 import SidebarWidgetTypes from '../SidebarWidgetTypes';
-import { NAMESPACE_SIDEBAR_BUILTIN } from 'widgets/WidgetNamespaces';
 import * as FeatureFlagKey from 'featureFlags';
 import { getCurrentSpaceFeature } from 'data/CMA/ProductCatalog';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 export const Publication = {
   widgetId: SidebarWidgetTypes.PUBLICATION,
-  widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
+  widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
   name: 'Publish & Status',
   description: 'Built-in - View entry status, publish, etc.',
 };
 
 export const Releases = {
   widgetId: SidebarWidgetTypes.RELEASES,
-  widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
+  widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
   name: 'Release',
   description: 'Built-in - View release, add to it, etc.',
 };
 
 export const Tasks = {
   widgetId: SidebarWidgetTypes.TASKS,
-  widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
+  widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
   name: 'Tasks',
   description:
     'Built-in - Assign tasks to be completed before publishing. Currently only supported for master environment.',
@@ -27,28 +27,28 @@ export const Tasks = {
 
 export const ContentPreview = {
   widgetId: SidebarWidgetTypes.CONTENT_PREVIEW,
-  widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
+  widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
   name: 'Preview',
   description: 'Built-in - Displays preview functionality.',
 };
 
 export const Links = {
   widgetId: SidebarWidgetTypes.INCOMING_LINKS,
-  widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
+  widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
   name: 'Links',
   description: 'Built-in - Shows where an entry is linked.',
 };
 
 export const Translation = {
   widgetId: SidebarWidgetTypes.TRANSLATION,
-  widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
+  widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
   name: 'Translation',
   description: 'Built-in - Manage which translations are visible.',
 };
 
 export const Versions = {
   widgetId: SidebarWidgetTypes.VERSIONS,
-  widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
+  widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
   name: 'Versions',
   description:
     'Built-in - View previously published versions. Available only for master environment.',
@@ -56,7 +56,7 @@ export const Versions = {
 
 export const Users = {
   widgetId: SidebarWidgetTypes.USERS,
-  widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
+  widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
   name: 'Users',
   description: 'Built-in - Displays users on the same entry.',
 };

@@ -40,6 +40,16 @@ export const buildAppWidget = (
   };
 };
 
+// Creates a widget only using the AppDefinition entity.
+// Used when rendering the configuration screen since
+// AppInstallation may not exist at the moment.
+export const buildAppDefinitionWidget = (
+  definition: AppDefinition,
+  marketplaceDataProvider: MarketplaceDataProvider
+): Widget => {
+  return buildAppWidget({} as AppInstallation, definition, marketplaceDataProvider);
+};
+
 export const buildExtensionWidget = (
   extension: Extension,
   marketplaceDataProvider: MarketplaceDataProvider

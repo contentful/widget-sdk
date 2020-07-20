@@ -2,82 +2,86 @@ import { getUser, getApp, getActionPerformer } from './utils';
 import { getModule } from 'core/NgRegistry';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { mockUser } from './__mocks__/mockUser';
-import { appDefinitionsMock } from './__mocks__/appDefinition';
+import { appWidgetMock } from './__mocks__/appWidget';
 
 jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
 jest.mock('widgets/CustomWidgetLoaderInstance', () => ({ getCustomWidgetLoader: jest.fn() }));
 
-getModule.mockReturnValue({
-  users: {
-    get: () => Promise.resolve(mockUser),
-  },
-  user: mockUser,
-});
-
-getCustomWidgetLoader.mockReturnValue({
-  getByKeys: () => Promise.resolve(appDefinitionsMock),
-});
-
-describe('getUser', () => {
-  it('should fetch the current user specified by id', async () => {
-    expect(await getUser('some-id')).toBe(mockUser);
-  });
-
-  it('should fail when there is no user found unter the given id ', async () => {
-    getModule.mockReturnValueOnce({
+describe('utils', () => {
+  beforeEach(() => {
+    getModule.mockReturnValue({
       users: {
-        get: () => Promise.resolve(null),
+        get: () => Promise.resolve(mockUser),
       },
-    });
-    expect(await getUser('i-do-not-exist')).toBe('');
-  });
-});
-
-describe('getApp', () => {
-  it('should fetch the app definition for specific id', async () => {
-    expect(await getApp('app-id')).toBe(appDefinitionsMock[0]);
-  });
-
-  it('should return undefined when there is no app', async () => {
-    getCustomWidgetLoader.mockReturnValueOnce({
-      getByKeys: () => Promise.resolve([]),
+      user: mockUser,
     });
 
-    expect(await getApp('i-do-not-exists')).toBe('');
-  });
-});
-
-describe('getActionPerformer', () => {
-  const mockedAppDefinitionSys = {
-    sys: {
-      linkType: 'AppDefinition',
-      id: 'someId',
-    },
-  };
-
-  const mockedUserSys = {
-    sys: {
-      linkType: 'User',
-      id: 'someId',
-    },
-  };
-
-  const defaultSys = {
-    sys: {
-      linkType: 'I do not exist',
-      id: 'someId',
-    },
-  };
-
-  it('should return the user entity', async () => {
-    expect(await getActionPerformer(mockedUserSys)).toBe(mockUser);
+    getCustomWidgetLoader.mockResolvedValue({
+      getOne: () => Promise.resolve(appWidgetMock),
+    });
   });
 
-  it('should return the app definiton entity', async () => {
-    expect(await getActionPerformer(mockedAppDefinitionSys)).toBe(appDefinitionsMock[0]);
+  describe('getUser', () => {
+    it('should fetch the current user specified by id', async () => {
+      expect(await getUser('some-id')).toBe(mockUser);
+    });
+
+    it('should fail when there is no user found unter the given id ', async () => {
+      getModule.mockReturnValueOnce({
+        users: {
+          get: () => Promise.resolve(null),
+        },
+      });
+      expect(await getUser('i-do-not-exist')).toBe('');
+    });
   });
 
-  it('should return the user entity in the default case', async () => {
-    expect(await getActionPerformer(defaultSys)).toBe(mockUser);
+  describe('getApp', () => {
+    it('should fetch the app widget for specific id', async () => {
+      expect(await getApp('app-id')).toBe(appWidgetMock);
+    });
+
+    it('should return undefined when there is no app', async () => {
+      getCustomWidgetLoader.mockResolvedValue({
+        getOne: () => Promise.resolve(null),
+      });
+
+      expect(await getApp('i-do-not-exists')).toBe('');
+    });
+  });
+
+  describe('getActionPerformer', () => {
+    const mockedAppDefinitionSys = {
+      sys: {
+        linkType: 'AppDefinition',
+        id: 'someId',
+      },
+    };
+
+    const mockedUserSys = {
+      sys: {
+        linkType: 'User',
+        id: 'someId',
+      },
+    };
+
+    const defaultSys = {
+      sys: {
+        linkType: 'I do not exist',
+        id: 'someId',
+      },
+    };
+
+    it('should return the user entity', async () => {
+      expect(await getActionPerformer(mockedUserSys)).toBe(mockUser);
+    });
+
+    it('should return the app widget', async () => {
+      expect(await getActionPerformer(mockedAppDefinitionSys)).toBe(appWidgetMock);
+    });
+
+    it('should return the user entity in the default case', async () => {
+      expect(await getActionPerformer(defaultSys)).toBe(mockUser);
+    });
   });
 });

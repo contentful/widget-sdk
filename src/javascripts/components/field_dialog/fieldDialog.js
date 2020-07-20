@@ -6,12 +6,12 @@ import { toInternalFieldType } from 'widgets/FieldTypes';
 import { Notification } from '@contentful/forma-36-react-components';
 import getDefaultWidgetId from 'widgets/DefaultWidget';
 import * as fieldFactory from 'services/fieldFactory';
-import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
 import fieldDecorator from 'components/field_dialog/fieldDecorator';
 import validationDecorator from 'components/field_dialog/validationDecorator';
 import fieldErrorMessageBuilder from 'services/errorMessageBuilder/fieldErrorMessageBuilder';
 import TheLocaleStore from 'services/localeStore';
 import { create as createBuiltinWidgetList } from 'widgets/BuiltinWidgets';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 // TODO: This dialog should be completely rewritten!
 
@@ -309,12 +309,12 @@ export default function register() {
       $scope.$watchGroup(
         ['widgetSettings.namespace', 'widgetSettings.id', 'availableWidgets'],
         ([namespace, id, available]) => {
-          const isBuiltin = namespace === NAMESPACE_BUILTIN;
+          const isBuiltin = namespace === WidgetNamespace.BUILTIN;
           const predefinedValueWidgetIds = ['radio', 'dropdown', 'checkbox'];
           const validWidgetSelected = isBuiltin && predefinedValueWidgetIds.includes(id);
 
           const availableWidgetIds = (available || [])
-            .filter(({ namespace }) => namespace === NAMESPACE_BUILTIN)
+            .filter(({ namespace }) => namespace === WidgetNamespace.BUILTIN)
             .map(({ id }) => id);
 
           const validWidgetAvailable =
@@ -350,7 +350,7 @@ export default function register() {
 
       const hasCustomEditor =
         $scope.editorInterface.editor &&
-        $scope.editorInterface.editor.widgetNamespace === NAMESPACE_EXTENSION;
+        $scope.editorInterface.editor.widgetNamespace === WidgetNamespace.EXTENSION;
 
       const defaultWidgetId = getDefaultWidgetId(
         $scope.field,
@@ -358,7 +358,7 @@ export default function register() {
       );
 
       const defaultWidget = $scope.availableWidgets.find((w) => {
-        return w.namespace === NAMESPACE_BUILTIN && w.id === defaultWidgetId;
+        return w.namespace === WidgetNamespace.BUILTIN && w.id === defaultWidgetId;
       });
 
       function updateProps() {

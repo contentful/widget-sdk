@@ -6,11 +6,6 @@ import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { Note, Tabs, Tab, TabPanel } from '@contentful/forma-36-react-components';
 import { AssetConfiguration, EntryConfiguration } from 'app/EntrySidebar/Configuration/defaults';
-import {
-  NAMESPACE_SIDEBAR_BUILTIN,
-  NAMESPACE_EXTENSION,
-  NAMESPACE_APP,
-} from 'widgets/WidgetNamespaces';
 
 import PublicationWidgetContainer from './PublicationWidget/PublicationWidgetContainer';
 import ReleasesWidgetContainer from '../Releases/ReleasesWidget/ReleasesWidgetContainer';
@@ -25,6 +20,8 @@ import SidebarWidgetTypes from './SidebarWidgetTypes';
 import EntryInfoPanelContainer from './EntryInfoPanel/EntryInfoPanelContainer';
 import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIFrameRenderer';
 import CommentsPanelContainer from './CommentsPanel/CommentsPanelContainer';
+import { WidgetNamespace, isCustomWidget } from 'features/widget-renderer';
+import { toRendererWidget } from 'widgets/WidgetCompat';
 
 const styles = {
   activity: css({
@@ -217,7 +214,7 @@ export default class EntrySidebar extends Component {
             item.widgetId,
             item.widgetNamespace
           )}
-          descriptor={item.descriptor}
+          widget={toRendererWidget(item.descriptor)}
           parameters={item.parameters}
         />
       </EntrySidebarWidget>
@@ -226,10 +223,10 @@ export default class EntrySidebar extends Component {
 
   renderWidgets = (sidebarItems = []) => {
     return sidebarItems.map((item) => {
-      if (item.widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN) {
+      if (item.widgetNamespace === WidgetNamespace.SIDEBAR_BUILTIN) {
         return this.renderBuiltinWidget(item);
       }
-      if ([NAMESPACE_EXTENSION, NAMESPACE_APP].includes(item.widgetNamespace)) {
+      if (isCustomWidget(item.widgetNamespace)) {
         return this.renderExtensionWidget(item);
       }
       return null;
@@ -241,7 +238,7 @@ export default class EntrySidebar extends Component {
       <EntrySidebarWidget title={widget.field.name} key={widget.field.id}>
         <ExtensionIFrameRendererWithLocalHostWarning
           bridge={bridge}
-          descriptor={widget.descriptor}
+          widget={toRendererWidget(widget.descriptor)}
           parameters={widget.parameters}
         />
       </EntrySidebarWidget>

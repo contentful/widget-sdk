@@ -9,9 +9,10 @@ import {
 } from './interfaces';
 import { MarketplaceDataProvider } from './MarketplaceDataProvider';
 import { createPlainClient } from 'contentful-management';
-import DataLoader, { BatchLoadFn } from 'dataloader';
+import DataLoader from 'dataloader';
 import { uniqBy, noop } from 'lodash';
 import { buildExtensionWidget, buildAppWidget } from './buildWidgets';
+import { isCustomWidget } from './utils';
 
 interface WidgetRef {
   widgetNamespace: WidgetNamespace;
@@ -31,7 +32,6 @@ type WarningCallbackFn = (warning: WidgetLoadWarning) => void;
 
 const EMPTY_EXTENSIONS_RES = { items: [] };
 const EMPTY_APPS_RES = { items: [], includes: { AppDefinition: [] } };
-const CUSTOM_NAMESPACES = [WidgetNamespace.APP, WidgetNamespace.EXTENSION];
 
 const cacheKeyFn = ({ widgetNamespace, widgetId }: WidgetRef): string => {
   return [widgetNamespace, widgetId].join(',');
@@ -51,22 +51,20 @@ export class WidgetLoader {
   private client: ClientAPI;
   private marketplaceDataProvider: MarketplaceDataProvider;
   private baseUrl: string;
-  private loader: DataLoader<WidgetRef, CacheValue, string>;
+  private loader: DataLoader<WidgetRef, CacheValue>;
   private onWarning: WarningCallbackFn;
 
   constructor(
     client: ClientAPI,
     marketplaceDataProvider: MarketplaceDataProvider,
     spaceId: string,
-    envId: string,
+    envId?: string,
     onWarning?: WarningCallbackFn
   ) {
     this.client = client;
     this.marketplaceDataProvider = marketplaceDataProvider;
-    this.baseUrl = `/spaces/${spaceId}/environments/${envId}`;
-    this.loader = new DataLoader(this.load.bind(this), {
-      cacheKeyFn,
-    });
+    this.baseUrl = envId ? `/spaces/${spaceId}/environments/${envId}` : `/spaces/${spaceId}`;
+    this.loader = new DataLoader(this.load, { cacheKeyFn });
     this.onWarning = onWarning || noop;
   }
 
@@ -77,7 +75,7 @@ export class WidgetLoader {
     };
   };
 
-  private load: BatchLoadFn<WidgetRef, CacheValue> = async (widgetRefs) => {
+  private load = async (widgetRefs: readonly WidgetRef[]): Promise<CacheValue[]> => {
     if (widgetRefs.length < 1) {
       return [];
     }
@@ -115,27 +113,35 @@ export class WidgetLoader {
 
     return widgetRefs.map(({ widgetId, widgetNamespace }) => {
       if (widgetNamespace === WidgetNamespace.APP) {
-        const installation = appInstallations.find(
-          (i: AppInstallation) => i.sys.appDefinition.sys.id === widgetId
-        );
-        const definition = appDefinitions.find((d: AppDefinition) => d.sys.id === widgetId);
-
-        if (installation && definition && definition.src) {
-          return buildAppWidget(installation, definition, this.marketplaceDataProvider);
-        } else {
-          return null;
-        }
+        return this.buildAppWidget(appInstallations, appDefinitions, widgetId);
+      } else if (widgetNamespace === WidgetNamespace.EXTENSION) {
+        return this.buildExtensionWidget(extensions, widgetId);
+      } else {
+        return null;
       }
-
-      if (widgetNamespace === WidgetNamespace.EXTENSION) {
-        const extension = extensions.find((e: Extension) => e.sys.id === widgetId);
-
-        return extension ? buildExtensionWidget(extension, this.marketplaceDataProvider) : null;
-      }
-
-      return null;
     });
   };
+
+  private buildAppWidget(
+    appInstallations: AppInstallation[],
+    appDefinitions: AppDefinition[],
+    widgetId: string
+  ): Widget | null {
+    const installation = appInstallations.find((i) => i.sys.appDefinition.sys.id === widgetId);
+    const definition = appDefinitions.find((d) => d.sys.id === widgetId);
+
+    if (installation && definition && definition.src) {
+      return buildAppWidget(installation, definition, this.marketplaceDataProvider);
+    } else {
+      return null;
+    }
+  }
+
+  private buildExtensionWidget(extensions: Extension[], widgetId: string): Widget | null {
+    const extension = extensions.find((e: Extension) => e.sys.id === widgetId);
+
+    return extension ? buildExtensionWidget(extension, this.marketplaceDataProvider) : null;
+  }
 
   private getControlWidgetRefs(controls: Control[] = []): WidgetRef[] {
     return controls
@@ -143,7 +149,7 @@ export class WidgetLoader {
       .reduce((acc: WidgetRef[], control: Control) => {
         if (!control.widgetId) {
           return acc;
-        } else if (control.widgetNamespace && CUSTOM_NAMESPACES.includes(control.widgetNamespace)) {
+        } else if (control.widgetNamespace && isCustomWidget(control.widgetNamespace)) {
           return acc.concat([
             { widgetNamespace: control.widgetNamespace, widgetId: control.widgetId },
           ]);
@@ -163,7 +169,7 @@ export class WidgetLoader {
       ...(ei.editors || []),
       ...this.getControlWidgetRefs(ei.controls),
     ]
-      .filter((ref) => CUSTOM_NAMESPACES.includes(ref.widgetNamespace))
+      .filter((ref) => isCustomWidget(ref.widgetNamespace))
       .filter((ref) => ref.widgetId)
       .map(({ widgetNamespace, widgetId }) => ({ widgetNamespace, widgetId }));
   }
@@ -192,6 +198,51 @@ export class WidgetLoader {
     const widgets = await this.loader.loadMany(uniqBy(widgetRefs, cacheKeyFn));
 
     return widgets.filter(isWidget);
+  }
+
+  public async getInstalledApps(): Promise<Widget[]> {
+    const {
+      items: appInstallations,
+      includes: { AppDefinition: appDefinitions },
+    } = await this.client.raw.get(`${this.baseUrl}/app_installations`);
+
+    const widgetRefs: WidgetRef[] = appInstallations.map((i: AppInstallation) => ({
+      widgetNamespace: WidgetNamespace.APP,
+      widgetId: i.sys.appDefinition.sys.id,
+    }));
+
+    widgetRefs.forEach((ref) => {
+      const widget = this.buildAppWidget(appInstallations, appDefinitions, ref.widgetId);
+      this.loader.prime(ref, widget);
+    });
+
+    return this.getMultiple(widgetRefs);
+  }
+
+  public async getUncachedForListing(): Promise<Widget> {
+    const [
+      { items: extensions },
+      {
+        items: appInstallations,
+        includes: { AppDefinition: appDefinitions },
+      },
+    ] = await Promise.all([
+      this.client.raw
+        .get(`${this.baseUrl}/extensions`, { params: { stripSrcdoc: 'true' } })
+        .catch(
+          this.handleApiFailure('Failed to load extensions for listing', [], EMPTY_EXTENSIONS_RES)
+        ),
+      this.client.raw
+        .get(`${this.baseUrl}/app_installations`)
+        .catch(this.handleApiFailure('Failed to load apps for listing', [], EMPTY_APPS_RES)),
+    ]);
+
+    return appInstallations
+      .map((i: AppInstallation) =>
+        this.buildAppWidget(appInstallations, appDefinitions, i.sys.appDefinition.sys.id)
+      )
+      .concat(extensions.map((e: Extension) => this.buildExtensionWidget(extensions, e.sys.id)))
+      .filter(isWidget);
   }
 
   public evict(widgetRef: WidgetRef): void {

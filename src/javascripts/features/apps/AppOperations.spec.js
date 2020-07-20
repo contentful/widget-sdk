@@ -1,10 +1,5 @@
 import * as AppOperations from './AppOperations';
-
-import {
-  NAMESPACE_BUILTIN,
-  NAMESPACE_SIDEBAR_BUILTIN,
-  NAMESPACE_APP,
-} from 'widgets/WidgetNamespaces';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 jest.mock('data/CMA/ProductCatalog', () => ({ getCurrentSpaceFeature: () => true }));
 
@@ -58,7 +53,7 @@ describe('AppOperations', () => {
         }),
         getEditorInterfaces: jest.fn(() => Promise.resolve({ items: [] })),
       };
-      const evictWidget = jest.fn();
+      const evictWidget = jest.fn().mockResolvedValue();
       const checkAppStatus = jest.fn(() => Promise.resolve(status));
 
       await AppOperations.installOrUpdate(cma, evictWidget, checkAppStatus, {
@@ -78,7 +73,7 @@ describe('AppOperations', () => {
       const cma = {
         updateAppInstallation: jest.fn(() => Promise.reject('unprocessable')),
       };
-      const evictWidget = jest.fn();
+      const evictWidget = jest.fn().mockResolvedValue();
       const checkAppStatus = jest.fn(() => Promise.resolve(status));
 
       expect.assertions(3);
@@ -101,7 +96,11 @@ describe('AppOperations', () => {
               {
                 sys: { contentType: { sys: { id: 'CT1' } } },
                 controls: [
-                  { fieldId: 'xxx', widgetNamespace: NAMESPACE_BUILTIN, widgetId: 'markdown' },
+                  {
+                    fieldId: 'xxx',
+                    widgetNamespace: WidgetNamespace.BUILTIN,
+                    widgetId: 'markdown',
+                  },
                 ],
               },
             ],
@@ -109,7 +108,7 @@ describe('AppOperations', () => {
         }),
         updateEditorInterface: jest.fn((ext) => Promise.resolve(ext)),
       };
-      const evictWidget = jest.fn();
+      const evictWidget = jest.fn().mockResolvedValue();
       const checkAppStatus = jest.fn(() => Promise.resolve(status));
 
       await AppOperations.installOrUpdate(cma, evictWidget, checkAppStatus, {
@@ -128,7 +127,7 @@ describe('AppOperations', () => {
 
       expect(cma.updateEditorInterface).toBeCalledWith({
         sys: { contentType: { sys: { id: 'CT1' } } },
-        controls: [{ fieldId: 'xxx', widgetNamespace: NAMESPACE_APP, widgetId: 'some-app' }],
+        controls: [{ fieldId: 'xxx', widgetNamespace: WidgetNamespace.APP, widgetId: 'some-app' }],
       });
 
       expect(evictWidget).toBeCalledTimes(1);
@@ -145,16 +144,23 @@ describe('AppOperations', () => {
               {
                 sys: { contentType: { sys: { id: 'CT1' } } },
                 controls: [
-                  { fieldId: 'title', widgetNamespace: NAMESPACE_BUILTIN, widgetId: APP_ID },
-                  { fieldId: 'content', widgetNamespace: NAMESPACE_BUILTIN, widgetId: 'markdown' },
-                  { fieldId: 'author', widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
+                  { fieldId: 'title', widgetNamespace: WidgetNamespace.BUILTIN, widgetId: APP_ID },
+                  {
+                    fieldId: 'content',
+                    widgetNamespace: WidgetNamespace.BUILTIN,
+                    widgetId: 'markdown',
+                  },
+                  { fieldId: 'author', widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID },
                 ],
                 sidebar: [
-                  { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'publication-widget' },
-                  { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
+                  {
+                    widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
+                    widgetId: 'publication-widget',
+                  },
+                  { widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID },
                 ],
                 editor: {
-                  widgetNamespace: NAMESPACE_APP,
+                  widgetNamespace: WidgetNamespace.APP,
                   widgetId: APP_ID,
                 },
               },
@@ -164,7 +170,7 @@ describe('AppOperations', () => {
         updateEditorInterface: jest.fn((ei) => Promise.resolve(ei)),
         deleteAppInstallation: jest.fn(() => Promise.resolve()),
       };
-      const evictWidget = jest.fn();
+      const evictWidget = jest.fn().mockResolvedValue();
       const checkAppStatus = jest.fn(() => Promise.resolve(status));
 
       await AppOperations.uninstall(cma, evictWidget, checkAppStatus);
@@ -175,11 +181,13 @@ describe('AppOperations', () => {
       expect(cma.updateEditorInterface).toBeCalledWith({
         sys: { contentType: { sys: { id: 'CT1' } } },
         controls: [
-          { fieldId: 'title', widgetNamespace: NAMESPACE_BUILTIN, widgetId: APP_ID },
-          { fieldId: 'content', widgetNamespace: NAMESPACE_BUILTIN, widgetId: 'markdown' },
+          { fieldId: 'title', widgetNamespace: WidgetNamespace.BUILTIN, widgetId: APP_ID },
+          { fieldId: 'content', widgetNamespace: WidgetNamespace.BUILTIN, widgetId: 'markdown' },
           { fieldId: 'author' },
         ],
-        sidebar: [{ widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'publication-widget' }],
+        sidebar: [
+          { widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN, widgetId: 'publication-widget' },
+        ],
       });
 
       expect(evictWidget).toBeCalledTimes(1);
@@ -191,7 +199,7 @@ describe('AppOperations', () => {
         getEditorInterfaces: jest.fn(() => Promise.resolve({ items: [] })),
         deleteAppInstallation: jest.fn(() => Promise.resolve()),
       };
-      const evictWidget = jest.fn();
+      const evictWidget = jest.fn().mockResolvedValue();
       const checkAppStatus = jest.fn(() => Promise.resolve(status));
 
       await AppOperations.uninstall(cma, evictWidget, checkAppStatus);
@@ -208,7 +216,7 @@ describe('AppOperations', () => {
         getEditorInterfaces: jest.fn(() => Promise.resolve({ items: [] })),
         deleteAppInstallation: jest.fn(() => Promise.reject('unauthorized')),
       };
-      const evictWidget = jest.fn();
+      const evictWidget = jest.fn().mockResolvedValue();
       const checkAppStatus = jest.fn(() => Promise.resolve(status));
 
       expect.assertions(3);

@@ -2,10 +2,13 @@ import { get, cloneDeep } from 'lodash';
 import { deepFreeze } from 'utils/Freeze';
 import { applyDefaultValues } from './WidgetParametersUtils';
 import { toInternalFieldType } from './FieldTypes';
-import { NAMESPACE_EXTENSION, NAMESPACE_APP, NAMESPACE_EDITOR_BUILTIN } from './WidgetNamespaces';
+import { WidgetNamespace, isCustomWidget } from 'features/widget-renderer';
 
-const CUSTOM_NAMESPACES = [NAMESPACE_EXTENSION, NAMESPACE_APP];
-const EDITOR_NAMESPACES = [NAMESPACE_EDITOR_BUILTIN, ...CUSTOM_NAMESPACES];
+const EDITOR_NAMESPACES = [
+  WidgetNamespace.EDITOR_BUILTIN,
+  WidgetNamespace.EXTENSION,
+  WidgetNamespace.APP,
+];
 
 // Given EditorInterface controls and a list of all widgets in a space
 // builds an array of "renderables". A "renderable" is a data structure
@@ -104,14 +107,14 @@ function convertToRenderable(item, widgets) {
 
 export function buildSidebarRenderables(sidebar, widgets) {
   return sidebar
-    .filter((item) => CUSTOM_NAMESPACES.includes(item.widgetNamespace))
+    .filter((item) => isCustomWidget(item.widgetNamespace))
     .map((item) => convertToRenderable(item, widgets));
 }
 
 export function buildEditorsRenderables(editors, widgets) {
   const filtered = editors.filter((item) => EDITOR_NAMESPACES.includes(item.widgetNamespace));
   const defaultEditors = widgets
-    .filter((widget) => widget.namespace === NAMESPACE_EDITOR_BUILTIN)
+    .filter((widget) => widget.namespace === WidgetNamespace.EDITOR_BUILTIN)
     .map((widget) => ({
       widgetId: widget.id,
       widgetNamespace: widget.namespace,
