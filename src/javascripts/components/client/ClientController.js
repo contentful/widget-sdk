@@ -29,8 +29,10 @@ export default function register() {
       let initEnvAliasChangeHandler;
       let initOsano;
       let openPricing2020Warning;
+      let pubSubClientRef;
 
       // TODO remove this eventually. All components should access it as a service
+
       $scope.spaceContext = spaceContext;
       // end TODO
 
@@ -141,15 +143,14 @@ export default function register() {
 
         const pubsubClient = spaceContext.pubsubClient;
 
-        if (pubsubClient && pubsubSubscribed) {
-          // when switching spaces or accessing org settings
-          // the previous spaceId listeners have to be removed
-          pubsubClient.off(ENVIRONMENT_ALIAS_CHANGED_EVENT);
+        if (pubSubClientRef && pubSubClientRef !== pubsubClient) {
+          pubSubClientRef.off(ENVIRONMENT_ALIAS_CHANGED_EVENT);
           pubsubSubscribed = false;
         }
 
+        pubSubClientRef = pubsubClient;
+
         if (pubsubClient && !pubsubSubscribed && spaceId) {
-          // listen for backend events
           pubsubSubscribed = true;
           const environmentAliasChangedHandler = initEnvAliasChangeHandler(
             spaceContext.getEnvironmentId()
