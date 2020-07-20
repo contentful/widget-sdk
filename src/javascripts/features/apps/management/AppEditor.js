@@ -385,7 +385,7 @@ export function AppEditor({ definition, onChange }) {
                       )}
                       {locationValue === WidgetLocation.DIALOG && (
                         <div className={styles.checkboxInfo}>
-                          All locations can open dialogs programatically
+                          All locations can open dialogs programmatically
                         </div>
                       )}
                     </div>
