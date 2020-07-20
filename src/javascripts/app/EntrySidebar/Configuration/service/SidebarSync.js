@@ -3,8 +3,7 @@ import { pick, difference, identity } from 'lodash';
 import { defaultWidgetsMap } from '../defaults';
 import { SidebarType } from '../constants';
 
-import { LOCATION_ENTRY_SIDEBAR } from 'widgets/WidgetLocations';
-import { WidgetNamespace, isCustomWidget } from 'features/widget-renderer';
+import { WidgetNamespace, isCustomWidget, WidgetLocation } from 'features/widget-renderer';
 
 /**
  * Converts internal state of configuration reducer
@@ -58,7 +57,7 @@ function canBeUsedInSidebar(widget) {
   }
 
   // Otherwise we check for entry sidebar location.
-  return widget.locations.includes(LOCATION_ENTRY_SIDEBAR);
+  return widget.locations.includes(WidgetLocation.ENTRY_SIDEBAR);
 }
 
 /**

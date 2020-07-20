@@ -186,7 +186,7 @@ const styles = {
 const LOCATION_ORDER = [
   ['App configuration screen', WidgetLocation.APP_CONFIG],
   ['Entry field', WidgetLocations.LOCATION_ENTRY_FIELD],
-  ['Entry sidebar', WidgetLocations.LOCATION_ENTRY_SIDEBAR],
+  ['Entry sidebar', WidgetLocation.ENTRY_SIDEBAR],
   ['Entry editor', WidgetLocation.ENTRY_EDITOR],
   ['Page', WidgetLocation.PAGE],
   ['Dialog', WidgetLocation.DIALOG],
