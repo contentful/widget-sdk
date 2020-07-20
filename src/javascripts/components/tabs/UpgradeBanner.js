@@ -74,7 +74,7 @@ export default function UpgradeBanner() {
       };
     }
 
-    const [resource, { nextSpacePlan }] = await Promise.all([
+    const [resource, nextSpacePlan] = await Promise.all([
       createResourceService(space.sys.id).get('record'),
       PricingService.nextSpacePlanForResource(
         space.organization.sys.id,

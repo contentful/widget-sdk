@@ -80,9 +80,7 @@ describe('UpgradeBanner', () => {
     spaceContextMocked.getSpace.mockReturnValue(SPACE);
     spaceContextMocked.isMasterEnvironment = true;
 
-    jest.spyOn(PricingService, 'nextSpacePlanForResource').mockResolvedValue({
-      nextSpacePlan: null,
-    });
+    jest.spyOn(PricingService, 'nextSpacePlanForResource').mockResolvedValue(null);
   });
 
   afterEach(() => {
@@ -132,9 +130,7 @@ describe('UpgradeBanner', () => {
 
   it('should render the link to upgrade the current space when there is a next space plan available', async () => {
     PricingService.nextSpacePlanForResource.mockResolvedValueOnce({
-      nextSpacePlan: {
-        name: 'Large',
-      },
+      name: 'Large',
     });
 
     await build();

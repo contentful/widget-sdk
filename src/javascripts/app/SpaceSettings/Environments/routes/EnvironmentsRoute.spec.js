@@ -78,7 +78,7 @@ describe('EnvironmentsRoute', () => {
   };
 
   beforeEach(() => {
-    jest.spyOn(PricingService, 'nextSpacePlanForResource').mockImplementation(async () => {});
+    jest.spyOn(PricingService, 'nextSpacePlanForResource').mockImplementation(async () => null);
   });
 
   afterEach(() => {
@@ -275,9 +275,7 @@ describe('EnvironmentsRoute', () => {
     });
 
     it('should render upgrade space button when user is admin and there is an available next space plan', async () => {
-      PricingService.nextSpacePlanForResource.mockResolvedValueOnce({
-        nextSpacePlan: mockSpacePlan,
-      });
+      PricingService.nextSpacePlanForResource.mockResolvedValueOnce(mockSpacePlan);
       defaultProps.canUpgradeSpace = true;
 
       await renderEnvironmentsComponent({
@@ -303,9 +301,7 @@ describe('EnvironmentsRoute', () => {
     });
 
     it('should render talk to us button when user is admin/owner and there is no available next space plan', async () => {
-      PricingService.nextSpacePlanForResource.mockResolvedValueOnce({
-        nextSpacePlan: null,
-      });
+      PricingService.nextSpacePlanForResource.mockResolvedValueOnce(null);
 
       defaultProps.canUpgradeSpace = true;
 

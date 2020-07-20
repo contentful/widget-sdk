@@ -187,12 +187,13 @@ export function recommendationReasonText(resources) {
  */
 export async function nextSpacePlanForResource(orgId, spaceId, resourceType) {
   const spaceResources = await createResourceService(spaceId, 'space').getAll();
-
-  const endpoint = createOrganizationEndpoint(orgId);
-
   const validSpaceRatePlans = await getValidSpacePlans(orgId, spaceId, spaceResources);
 
-  // We now get the current rate plan for the space, and determine if
+  if (validSpaceRatePlans.length === 0) {
+    return null;
+  }
+
+  const endpoint = createOrganizationEndpoint(orgId);
   const currentSpaceRatePlan = await getSingleSpacePlan(endpoint, spaceId);
 
   const currentRatePlanCharge = getRatePlanChargeFor(
@@ -203,12 +204,6 @@ export async function nextSpacePlanForResource(orgId, spaceId, resourceType) {
 
   // This happens here, so that we get a consistent shape for the result of this function
   // rather than potentially missing `currentPlanLimit`
-  if (validSpaceRatePlans.length === 0) {
-    return {
-      currentPlanLimit,
-      nextSpacePlan: null,
-    };
-  }
 
   const nextSpacePlan = validSpaceRatePlans.find((plan) => {
     const planCharge = getRatePlanChargeFor(plan.productRatePlanCharges, resourceType);
@@ -217,8 +212,5 @@ export async function nextSpacePlanForResource(orgId, spaceId, resourceType) {
     return limit > currentPlanLimit;
   });
 
-  return {
-    currentPlanLimit,
-    nextSpacePlan: nextSpacePlan || null,
-  };
+  return nextSpacePlan || null;
 }

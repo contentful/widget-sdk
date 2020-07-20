@@ -88,9 +88,7 @@ describe('ContentTypeList Page', () => {
   beforeEach(() => {
     createResourceService().get.mockResolvedValue({ usage: 1, limits: { maximum: 1 } });
 
-    jest.spyOn(PricingService, 'nextSpacePlanForResource').mockResolvedValue({
-      nextSpacePlan: null,
-    });
+    jest.spyOn(PricingService, 'nextSpacePlanForResource').mockResolvedValue(null);
   });
 
   afterEach(() => {
@@ -186,9 +184,7 @@ describe('ContentTypeList Page', () => {
     describe('with next available space plan', () => {
       beforeEach(() => {
         PricingService.nextSpacePlanForResource.mockResolvedValueOnce({
-          nextSpacePlan: {
-            name: 'Some space plan',
-          },
+          name: 'Some space plan',
         });
       });
 

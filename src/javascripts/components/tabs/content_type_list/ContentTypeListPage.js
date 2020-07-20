@@ -111,7 +111,7 @@ export class ContentTypesPage extends React.Component {
 
     // If there is communityBannerData then the user isOrgAdminOrOwner, so we can then determine if we should show the CTA to upgrade to enterprise.
     if (communityBannerData !== undefined) {
-      const [{ nextSpacePlan }, resource] = communityBannerData;
+      const [nextSpacePlan, resource] = communityBannerData;
       const usage = resource.usage;
       const limit = getResourceLimits(resource).maximum;
 

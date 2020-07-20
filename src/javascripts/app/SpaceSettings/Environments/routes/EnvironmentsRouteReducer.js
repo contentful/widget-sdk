@@ -203,7 +203,7 @@ export const useEnvironmentsRouteState = (props) => {
     });
 
     if (canUpgradeSpace && isNewPricingReleased) {
-      const { nextSpacePlan } = await PricingService.nextSpacePlanForResource(
+      const nextSpacePlan = await PricingService.nextSpacePlanForResource(
         organizationId,
         spaceId,
         PricingService.SPACE_PLAN_RESOURCE_TYPES.ENVIRONMENT

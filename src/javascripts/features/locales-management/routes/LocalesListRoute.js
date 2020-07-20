@@ -55,10 +55,10 @@ const fetch = async () => {
     allowedToEnforceLimits,
     subscriptionPlanName,
     // Conditional Promises:
-    nextSpacePlanData,
+    nextSpacePlan,
   ] = await Promise.all(promisesArray);
 
-  const hasNextSpacePlan = !!nextSpacePlanData.nextSpacePlan;
+  const hasNextSpacePlan = !!nextSpacePlan;
 
   return {
     locales,
