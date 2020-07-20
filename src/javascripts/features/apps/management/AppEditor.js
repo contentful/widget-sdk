@@ -14,7 +14,6 @@ import {
   Tag,
   Card,
 } from '@contentful/forma-36-react-components';
-import * as WidgetLocations from 'widgets/WidgetLocations';
 import { WidgetLocation } from 'features/widget-renderer';
 import { toInternalFieldType, toApiFieldType } from 'widgets/FieldTypes';
 import { css } from 'emotion';
@@ -185,7 +184,7 @@ const styles = {
 
 const LOCATION_ORDER = [
   ['App configuration screen', WidgetLocation.APP_CONFIG],
-  ['Entry field', WidgetLocations.LOCATION_ENTRY_FIELD],
+  ['Entry field', WidgetLocation.ENTRY_FIELD],
   ['Entry sidebar', WidgetLocation.ENTRY_SIDEBAR],
   ['Entry editor', WidgetLocation.ENTRY_EDITOR],
   ['Page', WidgetLocation.PAGE],
@@ -243,7 +242,7 @@ export function AppEditor({ definition, onChange }) {
   };
 
   const getFieldTypeIndex = (internalFieldType) => {
-    const entryFieldLocation = getLocation(WidgetLocations.LOCATION_ENTRY_FIELD);
+    const entryFieldLocation = getLocation(WidgetLocation.ENTRY_FIELD);
     if (entryFieldLocation && Array.isArray(entryFieldLocation.fieldTypes)) {
       return entryFieldLocation.fieldTypes.map(toInternalFieldType).indexOf(internalFieldType);
     } else {
@@ -255,7 +254,7 @@ export function AppEditor({ definition, onChange }) {
 
   const toggleFieldType = (internalFieldType) => {
     const updated = cloneDeep(definition);
-    const locationIndex = getLocationIndex(WidgetLocations.LOCATION_ENTRY_FIELD);
+    const locationIndex = getLocationIndex(WidgetLocation.ENTRY_FIELD);
     const entryFieldLocation = updated.locations[locationIndex];
     const fieldTypeIndex = getFieldTypeIndex(internalFieldType);
 
@@ -377,7 +376,7 @@ export function AppEditor({ definition, onChange }) {
                       <div>
                         <span>({locationValue})</span>
                       </div>
-                      {(locationValue === WidgetLocations.LOCATION_ENTRY_FIELD ||
+                      {(locationValue === WidgetLocation.ENTRY_FIELD ||
                         locationValue === WidgetLocation.PAGE) && (
                         <div className={styles.checkboxInfoIcon}>
                           <Icon icon="ListBulleted" color="secondary" />
@@ -390,7 +389,7 @@ export function AppEditor({ definition, onChange }) {
                       )}
                     </div>
                   </ToggleButton>
-                  {locationValue === WidgetLocations.LOCATION_ENTRY_FIELD && (
+                  {locationValue === WidgetLocation.ENTRY_FIELD && (
                     <div
                       className={[styles.fieldTypes]
                         .concat(hasLocation(locationValue) ? styles.fieldTypesOpen() : [])

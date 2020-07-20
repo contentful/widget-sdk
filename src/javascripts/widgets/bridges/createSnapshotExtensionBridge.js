@@ -1,9 +1,9 @@
 import makeExtensionSpaceMethodsHandlers from './makeExtensionSpaceMethodsHandlers';
 import makeExtensionAccessHandlers from './makeExtensionAccessHandlers';
 import checkDependencies from './checkDependencies';
-import { LOCATION_ENTRY_FIELD } from '../WidgetLocations';
 import TheLocaleStore from 'services/localeStore';
 import { getModule } from 'core/NgRegistry';
+import { WidgetLocation } from 'features/widget-renderer';
 
 // This is a UI Extension bridge to be used in the version
 // comparison view. It provides static initial data,
@@ -28,7 +28,7 @@ export default function createSnapshotExtensionBridge(dependencies) {
     return {
       spaceId: spaceContext.getId(),
       environmentId: spaceContext.getEnvironmentId(),
-      location: LOCATION_ENTRY_FIELD,
+      location: WidgetLocation.ENTRY_FIELD,
       spaceMember: spaceContext.space.data.spaceMember,
       current: { field, locale },
       locales: {

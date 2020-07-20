@@ -17,7 +17,6 @@ import makePageExtensionHandlers from './makePageExtensionHandlers';
 import makeExtensionAccessHandlers from './makeExtensionAccessHandlers';
 import checkDependencies from './checkDependencies';
 import { makeShareJSError, makePermissionError } from 'app/widgets/NewWidgetApi/createFieldApi';
-import { LOCATION_ENTRY_FIELD } from '../WidgetLocations';
 import { WidgetLocation } from 'features/widget-renderer';
 
 const ERROR_MESSAGES = {
@@ -55,7 +54,7 @@ export default function createExtensionBridge(dependencies) {
   let unsubscribeFunctions = [];
 
   const isFieldLevelExtension =
-    location === LOCATION_ENTRY_FIELD || location === WidgetLocation.ENTRY_FIELD_SIDEBAR;
+    location === WidgetLocation.ENTRY_FIELD || location === WidgetLocation.ENTRY_FIELD_SIDEBAR;
 
   return {
     getData,
