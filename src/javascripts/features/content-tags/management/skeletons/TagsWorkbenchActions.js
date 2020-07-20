@@ -7,6 +7,7 @@ import { useReadTags } from 'features/content-tags/core/hooks';
 import PropTypes from 'prop-types';
 import { TagsFeedbackLink } from 'features/content-tags/core/components/TagsFeedbackLink';
 import { TAGS_PER_SPACE } from 'features/content-tags/core/limits';
+import { ConditionalWrapper } from 'features/content-tags/core/components/ConditionalWrapper';
 
 const styles = {
   search: css({
@@ -47,28 +48,27 @@ function TagsWorkbenchActions({ hasData, onCreate }) {
   );
 
   const createButton = useMemo(() => {
-    const button = (
-      <Button
-        onClick={onCreate}
-        disabled={total >= TAGS_PER_SPACE}
-        buttonType="primary"
-        testId="tags.add">
-        Create Tag
-      </Button>
+    return (
+      <ConditionalWrapper
+        condition={total >= TAGS_PER_SPACE}
+        wrapper={(children) => (
+          <Tooltip
+            content="You've reached the limit for the number of tags in this space"
+            id="createTip"
+            maxWidth={180}
+            place="top">
+            {children}
+          </Tooltip>
+        )}>
+        <Button
+          onClick={onCreate}
+          disabled={total >= TAGS_PER_SPACE}
+          buttonType="primary"
+          testId="tags.add">
+          Create Tag
+        </Button>
+      </ConditionalWrapper>
     );
-
-    if (total >= TAGS_PER_SPACE) {
-      return (
-        <Tooltip
-          content="You've reached the limit for the number of tags in this space"
-          id="createTip"
-          maxWidth={180}
-          place="top">
-          {button}
-        </Tooltip>
-      );
-    }
-    return button;
   }, [total, onCreate]);
 
   return (

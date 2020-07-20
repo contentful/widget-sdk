@@ -1,4 +1,5 @@
 import {
+  Paragraph,
   SkeletonBodyText,
   SkeletonContainer,
   Table,
@@ -89,9 +90,9 @@ function TagsList({ tags, isLoading, total }) {
       {deleteTagComponent}
       <div className={styles.flexContainer}>
         {limitNote}
-        <p className={styles.tagLimits}>
+        <Paragraph className={styles.tagLimits}>
           {total} / {TAGS_PER_SPACE}
-        </p>
+        </Paragraph>
       </div>
       <Table
         testId="tags-list-table"

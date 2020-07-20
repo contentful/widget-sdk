@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import * as React from 'react';
 import { useCallback, useEffect, useMemo } from 'react';
-import { Paragraph } from '@contentful/forma-36-react-components';
+import { Paragraph, Tooltip } from '@contentful/forma-36-react-components';
 import { TagsAutocomplete } from 'features/content-tags/editor/components/TagsAutocomplete';
 import {
   useCanManageTags,
@@ -20,14 +20,28 @@ import { css } from 'emotion';
 import FeedbackButton from 'app/common/FeedbackButton';
 import { EntityTags } from 'features/content-tags/editor/components/EntityTags';
 import { useAllTagsGroups } from 'features/content-tags/core/hooks/useAllTagsGroups';
+import { TAGS_PER_ENTITY } from 'features/content-tags/core/limits';
+import tokens from '@contentful/forma-36-tokens';
+import { ConditionalWrapper } from 'features/content-tags/core/components/ConditionalWrapper';
 
 const styles = {
   wrapper: css({
     display: 'flex',
+    justifyContent: 'space-between',
+  }),
+  innerWrapper: css({
+    display: 'flex',
+    justifyContent: 'flex-end',
   }),
   iconWrapper: css({
-    marginLeft: 'auto',
+    marginLeft: tokens.spacingL,
     order: '2',
+  }),
+  tagLimits: css({
+    marginLeft: 'auto',
+  }),
+  tooltipWrapper: css({
+    width: '100%',
   }),
 };
 
@@ -36,6 +50,9 @@ const TagsSelection = ({ showEmpty, onAdd, onRemove, selectedTags = [] }) => {
   const isInitialLoad = useIsInitialLoadingOfTags();
   const spaceContext = useSpaceContext();
   const tagGroups = useAllTagsGroups();
+
+  const totalSelected = selectedTags.length;
+  const disabled = totalSelected >= TAGS_PER_ENTITY;
 
   useEffect(() => {
     setLimit(1000);
@@ -86,20 +103,48 @@ const TagsSelection = ({ showEmpty, onAdd, onRemove, selectedTags = [] }) => {
         {userListModal}
         <div className={styles.wrapper}>
           <Paragraph>Tags</Paragraph>
-          <div className={styles.iconWrapper}>
-            <FeedbackButton about="Tags" target="devWorkflows" label="Give feedback" />
-          </div>
+          <Paragraph className={styles.tagLimits}>
+            {totalSelected} / {TAGS_PER_ENTITY}
+            <span className={styles.iconWrapper}>
+              <FeedbackButton about="Tags" target="devWorkflows" label="Give feedback" />
+            </span>
+          </Paragraph>
         </div>
-        <TagsAutocomplete
-          tags={filteredTags}
-          isLoading={isLoading}
-          onChange={onAdd}
-          onQueryChange={onSearch}
-        />
+        <ConditionalWrapper
+          condition={disabled}
+          wrapper={(children) => (
+            <Tooltip
+              targetWrapperClassName={styles.tooltipWrapper}
+              containerElement={'div'}
+              content={`You can only add up to ${TAGS_PER_ENTITY} tags per entry or asset`}
+              id="limitTip"
+              place="top">
+              {children}
+            </Tooltip>
+          )}>
+          <TagsAutocomplete
+            tags={filteredTags}
+            isLoading={isLoading}
+            onChange={onAdd}
+            disabled={disabled}
+            onQueryChange={onSearch}
+          />
+        </ConditionalWrapper>
         <EntityTags tags={selectedTags} onRemove={onRemove} tagGroups={tagGroups} />
       </FieldFocus>
     );
-  }, [filteredTags, selectedTags, isLoading, onAdd, onSearch, onRemove, userListModal, tagGroups]);
+  }, [
+    filteredTags,
+    selectedTags,
+    isLoading,
+    onAdd,
+    onSearch,
+    onRemove,
+    userListModal,
+    tagGroups,
+    disabled,
+    totalSelected,
+  ]);
 
   if (isInitialLoad) {
     return null;
