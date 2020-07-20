@@ -3,7 +3,7 @@ import { render, fireEvent, wait } from '@testing-library/react';
 import { Notification } from '@contentful/forma-36-react-components';
 
 import * as DateMocks from './__mocks__/DateMocks';
-import ScheduledActionDialog from '.';
+import ScheduledActionDialog from './ScheduledActionWidgetJobDialog';
 import moment from 'moment';
 
 import * as ScheduledActionsAnalytics from 'app/ScheduledActions/Analytics/ScheduledActionsAnalytics';

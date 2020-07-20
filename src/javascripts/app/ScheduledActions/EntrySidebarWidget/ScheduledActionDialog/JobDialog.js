@@ -9,12 +9,9 @@ import {
   FieldGroup,
   Form,
   Note,
-  Notification,
   RadioButtonField,
   FormLabel,
 } from '@contentful/forma-36-react-components';
-import * as EndpointFactory from 'data/EndpointFactory';
-import APIClient from 'data/APIClient';
 
 import {
   createDialogClose,
@@ -26,6 +23,7 @@ import DatePicker from './DatePicker';
 import TimePicker from './TimePicker';
 import ScheduledAction, { actionToLabelText } from 'app/ScheduledActions/ScheduledActionAction';
 import TimezonePicker from './TimezonePicker';
+import { formatScheduledAtDate } from './utils';
 
 const styles = {
   timezoneNote: css({
@@ -64,23 +62,14 @@ TimezoneNote.propTypes = {
   timezone: PropTypes.string,
 };
 
-function formatScheduledAtDate({ date, time, timezone }) {
-  const scheduledDate = moment(`${date} ${time}`, 'YYYY-MM-DD HH:mm');
-  const scheduledOffset = moment.tz(scheduledDate, timezone).utcOffset();
-  return scheduledDate.utcOffset(scheduledOffset, true).toISOString(true);
-}
-
 function JobDialog({
-  onCreate,
+  showUnpublish,
+  handleSubmit,
   onCancel,
   isSubmitting,
-  entity,
-  validator,
-  entryTitle,
-  spaceId,
-  environmentId,
   pendingJobs,
   isMasterEnvironment,
+  linkType,
 }) {
   const now = moment(Date.now());
   const currentTimezone = moment.tz.guess();
@@ -88,9 +77,9 @@ function JobDialog({
   const [date, setDate] = useState(suggestedDate.format('YYYY-MM-DD'));
   const [time, setTime] = useState(suggestedDate.format('HH:mm'));
   const [action, setAction] = useState(ScheduledAction.Publish);
+  const [timezone, setTimezone] = useState(currentTimezone);
   const [isSubmitDisabled, setSubmitDisabled] = useState(isSubmitting);
   const [formError, setFormError] = useState('');
-  const [timezone, setTimezone] = useState(currentTimezone);
 
   useEffect(() => {
     createDialogOpen();
@@ -131,42 +120,10 @@ function JobDialog({
     [time, timezone, date, pendingJobs]
   );
 
-  const endpoint = EndpointFactory.createSpaceEndpoint(spaceId, environmentId);
-  const client = new APIClient(endpoint);
-
   function getSuggestedDate() {
     return pendingJobs && pendingJobs.length !== 0
       ? moment(pendingJobs[0].scheduledFor.datetime).add(1, 'hours').startOf('hour')
       : now.add(1, 'hours').startOf('hour');
-  }
-
-  function handleSubmit() {
-    const truncationLength = 60;
-    const truncatedTitle =
-      entryTitle.length > truncationLength
-        ? `${entryTitle.slice(0, truncationLength)}...`
-        : entryTitle;
-    setSubmitDisabled(true);
-    validateForm(async () => {
-      if (action === ScheduledAction.Publish) {
-        try {
-          await client.validateEntry(entity);
-        } catch (e) {
-          validator.setApiResponseErrors(e);
-          Notification.error(
-            `Error scheduling ${truncatedTitle}: Validation failed. Please check the individual fields for errors.`
-          );
-          return;
-        }
-      }
-      onCreate(
-        {
-          scheduledAt: formatScheduledAtDate({ date, time, timezone }),
-          action,
-        },
-        timezone
-      );
-    });
   }
 
   return (
@@ -188,6 +145,7 @@ function JobDialog({
                 jobs={pendingJobs}
                 isMasterEnvironment={isMasterEnvironment}
                 showAllScheduleLink={false}
+                linkType={linkType}
                 isReadOnly
               />
             )}
@@ -203,13 +161,15 @@ function JobDialog({
                   checked={action === ScheduledAction.Publish}
                   labelIsLight={action !== ScheduledAction.Publish}
                 />
-                <RadioButtonField
-                  id="action-unpublish"
-                  labelText="Unpublish"
-                  onClick={() => setAction(ScheduledAction.Unpublish)}
-                  checked={action === ScheduledAction.Unpublish}
-                  labelIsLight={action !== ScheduledAction.Unpublish}
-                />
+                {showUnpublish ? (
+                  <RadioButtonField
+                    id="action-unpublish"
+                    labelText="Unpublish"
+                    onClick={() => setAction(ScheduledAction.Unpublish)}
+                    checked={action === ScheduledAction.Unpublish}
+                    labelIsLight={action !== ScheduledAction.Unpublish}
+                  />
+                ) : null}
               </FieldGroup>
               <FieldGroup row>
                 <DatePicker
@@ -258,7 +218,10 @@ function JobDialog({
               type="submit"
               loading={isSubmitting}
               disabled={isSubmitDisabled}
-              onClick={handleSubmit}>
+              onClick={() => {
+                setSubmitDisabled(true);
+                handleSubmit({ validateForm, action, date, time, timezone });
+              }}>
               Schedule
             </Button>
             <Button buttonType="muted" data-test-id="cancel" onClick={() => onCancel()}>
@@ -272,19 +235,13 @@ function JobDialog({
 }
 
 JobDialog.propTypes = {
-  spaceId: PropTypes.string.isRequired,
-  environmentId: PropTypes.string.isRequired,
-  entity: PropTypes.object.isRequired,
-  validator: PropTypes.shape({
-    run: PropTypes.func,
-    setApiResponseErrors: PropTypes.func,
-  }).isRequired,
-  entryTitle: PropTypes.string.isRequired,
-  onCreate: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
   isSubmitting: PropTypes.bool.isRequired,
   pendingJobs: PropTypes.array,
+  showUnpublish: PropTypes.bool,
   isMasterEnvironment: PropTypes.bool,
+  linkType: PropTypes.string.isRequired,
 };
 
 export default JobDialog;

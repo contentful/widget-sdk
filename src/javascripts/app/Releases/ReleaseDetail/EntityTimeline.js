@@ -59,7 +59,7 @@ const EntityTimeline = ({
         testId="release-entity-timeline"
         className={cx(styles.list, { [styles.assetList]: entityType === 'Asset' })}>
         {groupedEntities.map((entity, index) => (
-          <li key={`release-${index}`} testId="release-entity-list">
+          <li key={`release-${index}`} data-test-id="release-entity-list">
             <CardType
               handleEntityDelete={handleEntityDelete}
               entity={entity}

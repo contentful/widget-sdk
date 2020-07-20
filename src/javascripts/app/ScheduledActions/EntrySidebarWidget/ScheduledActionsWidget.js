@@ -18,7 +18,7 @@ import {
 import tokens from '@contentful/forma-36-tokens';
 
 import StatusWidget from './StatusWidget';
-import ScheduledActionDialog from './ScheduledActionDialog';
+import ScheduledActionDialog from './ScheduledActionDialog/ScheduledActionWidgetJobDialog';
 
 import * as EndpointFactory from 'data/EndpointFactory';
 
@@ -37,6 +37,7 @@ import {
 } from '../Analytics/ScheduledActionsAnalytics';
 
 import { showUnpublishedReferencesWarning } from 'app/entity_editor/UnpublishedReferencesWarning';
+import { DateTime } from 'app/ScheduledActions/FormattedDateAndTime';
 
 const styles = {
   jobsSkeleton: css({
@@ -161,6 +162,7 @@ export default function ScheduledActionsWidget({
           environmentId,
           entityId: entity.sys.id,
           action: action,
+          linkType: 'Entry',
           scheduledAt,
         }),
         { 'environment.sys.id': environmentId }
@@ -220,6 +222,14 @@ export default function ScheduledActionsWidget({
     }
   }, [showToast]);
 
+  const failedScheduleNote = (scheduledAt) => {
+    return (
+      <>
+        Due to validation errors this entry failed to {lastJob.action} on{' '}
+        <DateTime date={scheduledAt} />. Please check individual fields and try your action again.
+      </>
+    );
+  };
   return (
     <ErrorHandler>
       <StatusWidget
@@ -267,13 +277,16 @@ export default function ScheduledActionsWidget({
       )}
       {!isLoading && !error && (
         <>
-          {shouldShowErrorNote(lastJob, entity) && <FailedScheduleNote job={lastJob} />}
+          {shouldShowErrorNote(lastJob, entity) && (
+            <FailedScheduleNote job={lastJob} failedScheduleNote={failedScheduleNote} />
+          )}
           {hasScheduledActions && (
             <ScheduledActionsTimeline
               isMasterEnvironment={isMasterEnvironment}
               jobs={pendingJobs}
               onCancel={handleCancel}
               isReadOnly={primary.isDisabled()}
+              linkType="entry"
             />
           )}
         </>

@@ -1,20 +1,8 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { css, cx } from 'emotion';
-import tokens from '@contentful/forma-36-tokens';
-import {
-  Workbench,
-  Icon,
-  Note,
-  Button,
-  Notification,
-  Subheading,
-} from '@contentful/forma-36-react-components';
+import { Workbench, Icon, Note, Notification } from '@contentful/forma-36-react-components';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
-import FilterPill from 'app/ContentList/Search/FilterPill';
-import ValueInput from 'app/ContentList/Search/FilterValueInputs';
 import { ReleasesProvider, ReleasesContext } from '../ReleasesWidget/ReleasesContext';
-import ReleasesEmptyStateMessage from '../ReleasesPage/ReleasesEmptyStateMessage';
 import {
   getReleaseById,
   replaceReleaseById,
@@ -22,12 +10,13 @@ import {
   validateReleaseAction,
 } from '../releasesService';
 import { newForLocale } from 'app/entity_editor/entityHelpers';
+import * as logger from 'services/logger';
+import { useAsyncFn } from 'core/hooks';
 import {
   getEntities,
   waitForReleaseAction,
   switchToErroredTab,
-  VIEW_LABELS,
-  pluralize,
+  unpublishedEntities,
 } from './utils';
 import {
   SET_RELEASE_ENTITIES,
@@ -37,92 +26,30 @@ import {
   SET_RELEASE_PROCESSING_ACTION,
 } from '../state/actions';
 import LoadingOverlay from 'app/common/LoadingOverlay';
-import ListView from './ListView';
-import CardView from './CardView';
+import ReleaseActionJobDialog from './ReleaseScheduledActionDialog';
 import { excludeEntityFromRelease } from '../common/utils';
+import { createReleaseJob, fetchReleaseJobs, cancelReleaseJob } from '../releasesService';
+import ReleaseWorkBenchContent from './ReleaseWorkBenchContent';
+import ReleaseWorkBenchSideBar from './ReleaseWorkBenchSideBar';
+import ValidateReleaseDialog from './ValidateReleaseDialog';
+import { styles } from './styles';
 
-const styles = {
-  mainContent: css({
-    padding: 0,
-    '& > div': {
-      height: '100%',
-      minHeight: '100%',
-      maxWidth: '100%',
-    },
-  }),
-  mainContentListView: css({
-    '& > div': {
-      overflowY: 'hidden',
-    },
-  }),
-  sidebar: css({
-    boxShadow: '1px 0 4px 0 rgba(0, 0, 0, 0.9)',
-    width: '360px',
-    padding: tokens.spacingM,
-  }),
-  buttons: css({
-    marginTop: tokens.spacingM,
-    marginBottom: tokens.spacingM,
-  }),
-  errorNote: css({
-    display: 'flex',
-    justifyContent: 'center',
-    width: '50%',
-    margin: 'auto',
-    marginTop: tokens.spacing4Xl,
-  }),
-  layoutPillsWrapper: css({
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    cursor: 'pointer',
-    width: '70%',
-    margin: 'auto',
-    marginTop: tokens.spacingXl,
-    marginBottom: tokens.spacingM,
-  }),
-  layoutPills: css({
-    pointerEvents: 'none',
-    ':focus, :hover': {
-      boxShadow: 'none',
-    },
-    '& select': css({
-      width: 'auto !important',
-      textAlign: 'center',
-      pointerEvents: 'all',
-    }),
-  }),
-  layoutList: css({
-    width: '91%',
-  }),
-  activePill: css({
-    backgroundColor: tokens.colorElementDark,
-  }),
-  header: css({
-    display: 'flex',
-    alignItems: 'baseline',
-    '& h2': css({
-      marginRight: tokens.spacingXs,
-    }),
-  }),
-  hideDisplay: css({
-    display: 'none',
-  }),
-};
-
-const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
+const ReleaseDetailPage = ({ releaseId, defaultLocale, isMasterEnvironment }) => {
   const localStorage = getBrowserStorage('local');
 
   const [release, setRelease] = useState(null);
   const [hasError, setHasError] = useState(false);
   const [entityRefreshKey, setEntityRefreshKey] = useState(null);
   const [entitiesLayout, setEntitiesLayout] = useState(localStorage.get('defaultView') || 'view');
+  const [showScheduledActionsDialog, setShowScheduleActionDialog] = useState(false);
+  const [showValidateReleaseDialog, setshowValidateReleaseDialog] = useState(false);
+  const [isCreatingJob, setIsCreatingJob] = useState(false);
+  const [jobs, setJobs] = useState([]);
   const {
     state: {
-      entities: { entries, assets },
       selectedTab,
       processingAction,
-      loading: isLoading,
+      entities: { entries, assets },
     },
     dispatch,
   } = useContext(ReleasesContext);
@@ -188,6 +115,52 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
     Notification.error('Some entities did not pass validation');
   };
 
+  const createJob = async ({ action, scheduledAt }) => {
+    const releaseTitle = release.title;
+    try {
+      const job = await createReleaseJob({ releaseId, action, scheduledAt });
+      return job;
+    } catch (error) {
+      Notification.error(`${releaseTitle} failed to schedule`);
+      setShowScheduleActionDialog(false);
+      setIsCreatingJob(false);
+      logger.logError(`Release failed to schedule`, {
+        error,
+        message: error.message,
+      });
+    }
+  };
+
+  const handleScheduleCreate = async ({ scheduledAt, action }) => {
+    setIsCreatingJob(true);
+    const job = await createJob({ scheduledAt, action });
+    if (job && job.sys) {
+      Notification.success(`${release.title} was scheduled successfully`);
+      setIsCreatingJob(false);
+      setShowScheduleActionDialog(false);
+      setJobs([job, ...jobs]);
+    }
+  };
+
+  const handleScheduleCancel = async (jobId) => {
+    try {
+      await cancelReleaseJob(jobId);
+      const job = jobs.find((j) => j.sys.id === jobId);
+      setJobs(jobs.filter((j) => j !== job));
+      Notification.success('Schedule canceled');
+    } catch (error) {
+      Notification.success('Failed to cancel schedule');
+    }
+  };
+
+  const handleShowingScheduleActionDialog = () => {
+    if (unpublishedEntities(entries) || unpublishedEntities(assets)) {
+      setshowValidateReleaseDialog(true);
+    } else {
+      setShowScheduleActionDialog(true);
+    }
+  };
+
   const handleValidation = () => {
     dispatch({ type: SET_RELEASE_VALIDATIONS, value: [] });
     dispatch({ type: SET_RELEASE_PROCESSING_ACTION, value: 'Validating' });
@@ -231,6 +204,22 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
 
   const activeLayout = (layout) => entitiesLayout === layout;
 
+  const [{ isJobsLoading, error }, fetchJobs] = useAsyncFn(
+    useCallback(async () => {
+      const jobCollection = await fetchReleaseJobs(releaseId);
+      setJobs(jobCollection);
+
+      return jobCollection;
+    }, [releaseId]),
+    true
+  );
+
+  useEffect(() => {
+    fetchJobs();
+  }, [fetchJobs]);
+
+  const pendingJobs = jobs.filter((job) => job.sys.status === 'scheduled');
+
   return (
     <div>
       {processingAction && <LoadingOverlay message={`${processingAction} ${release.title}`} />}
@@ -246,71 +235,48 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
             title={release ? release.title : 'Untitled'}
             icon={<Icon icon="Release" size="large" color="positive" />}
           />
-          <Workbench.Content
-            className={cx(styles.mainContent, {
-              [styles.mainContentListView]: activeLayout('list'),
-            })}>
-            {!isLoading && !release.entities.items.length ? (
-              <ReleasesEmptyStateMessage testId="detail" title="No entities in this release" />
-            ) : (
-              <>
-                <div
-                  className={cx(styles.layoutPillsWrapper, {
-                    [styles.layoutList]: activeLayout('list'),
-                  })}>
-                  <div className={styles.header}>
-                    <Subheading element="h2">Content</Subheading>
-                    <span className={cx({ [styles.hideDisplay]: activeLayout('list') })}>
-                      {entries.length} {pluralize(entries.length, 'entry')} and {assets.length}{' '}
-                      {pluralize(assets.length, 'asset')}
-                    </span>
-                  </div>
-                  <FilterPill
-                    className={styles.layoutPills}
-                    filter={{
-                      label: 'View',
-                      valueInput: ValueInput.Select(
-                        Object.keys(VIEW_LABELS).map((key) => [key, VIEW_LABELS[key]])
-                      ),
-                    }}
-                    value={entitiesLayout}
-                    onChange={setEntitiesLayout}
-                  />
-                </div>
-
-                {activeLayout('list') ? (
-                  <ListView defaultLocale={defaultLocale} handleEntityDelete={handleEntityDelete} />
-                ) : (
-                  <CardView handleEntityDelete={handleEntityDelete} defaultLocale={defaultLocale} />
-                )}
-              </>
-            )}
-          </Workbench.Content>
-          <Workbench.Sidebar
-            className={styles.sidebar}
-            position="right"
-            testId="cf-ui-workbench-sidebar">
-            <div className={styles.buttons}>
-              <Button
-                testId="publish-release"
-                buttonType="positive"
-                className=""
-                isFullWidth
-                disabled={!entries.length && !assets.length}
-                onClick={handlePublication}>
-                Publish now
-              </Button>
-              <Button
-                testId="validate-release"
-                buttonType="muted"
-                className={styles.buttons}
-                isFullWidth
-                disabled={!entries.length && !assets.length}
-                onClick={handleValidation}>
-                Validate
-              </Button>
-            </div>
-          </Workbench.Sidebar>
+          <ReleaseWorkBenchContent
+            activeLayout={activeLayout}
+            release={release}
+            entitiesLayout={entitiesLayout}
+            setEntitiesLayout={setEntitiesLayout}
+            handleEntityDelete={handleEntityDelete}
+            defaultLocale={defaultLocale}
+          />
+          <ReleaseWorkBenchSideBar
+            isJobsLoading={isJobsLoading}
+            error={error}
+            pendingJobs={pendingJobs}
+            lastJob={jobs[0]}
+            handlePublication={handlePublication}
+            handleValidation={handleValidation}
+            handleScheduleCancel={handleScheduleCancel}
+            handleShowingScheduleActionDialog={handleShowingScheduleActionDialog}
+            isMasterEnvironment={isMasterEnvironment}
+          />
+          <ValidateReleaseDialog
+            onConfirm={() => {
+              handleValidation();
+              setshowValidateReleaseDialog(false);
+            }}
+            onCancel={() => {
+              setShowScheduleActionDialog(true);
+              setshowValidateReleaseDialog(false);
+            }}
+            isShown={showValidateReleaseDialog}
+          />
+          {showScheduledActionsDialog ? (
+            <ReleaseActionJobDialog
+              onCancel={() => setShowScheduleActionDialog(false)}
+              isSubmitting={isCreatingJob}
+              pendingJobs={pendingJobs}
+              onCreate={(newJob, timezone) => {
+                handleScheduleCreate(newJob, timezone);
+              }}
+              isMasterEnvironment={isMasterEnvironment}
+              linkType="release"
+            />
+          ) : null}
         </Workbench>
       )}
     </div>
@@ -320,6 +286,7 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale }) => {
 ReleaseDetailPage.propTypes = {
   defaultLocale: PropTypes.object.isRequired,
   releaseId: PropTypes.string.isRequired,
+  isMasterEnvironment: PropTypes.bool.isRequired,
 };
 
 const ReleaseDetailPageContainer = (props) => (

@@ -1,6 +1,7 @@
 import { getModule } from 'core/NgRegistry';
 import { go } from 'states/Navigator';
 import * as EntityResolver from 'data/CMA/EntityResolver';
+import { stateName, getState } from 'data/CMA/EntityState';
 import { getReleaseAction } from '../releasesService';
 import { newForLocale } from 'app/entity_editor/entityHelpers';
 
@@ -172,6 +173,14 @@ async function getEntityTitle(entity, defaultLocale, func) {
   return func(fetchedEntityTitle);
 }
 
+function unpublishedEntities(entities) {
+  const unpublishedEntities = entities
+    .map((entity) => stateName(getState(entity.sys)))
+    .find((label) => label !== 'published');
+
+  return unpublishedEntities;
+}
+
 export {
   releaseDetailNavigation,
   getEntities,
@@ -185,4 +194,5 @@ export {
   getEntityFile,
   getEntityTitle,
   entityNavigation,
+  unpublishedEntities,
 };
