@@ -14,6 +14,7 @@ import * as stringUtils from 'utils/StringUtils';
 import { useCreateTag, useReadTags } from 'features/content-tags/core/hooks';
 import { TAGS_PER_SPACE } from 'features/content-tags/core/limits';
 import { LimitsReachedNote } from 'features/content-tags/management/components/LimitsReachedNote';
+import { GroupingHint } from 'features/content-tags/management/components/GroupingHint';
 
 const styles = {
   controlsPanel: css({ display: 'flex' }),
@@ -159,6 +160,7 @@ function CreateTagModal({ isShown, onClose }) {
           }}
           onChange={onNameChange}
         />
+        <GroupingHint tagName={name} />
         <TextField
           required
           id={'id'}

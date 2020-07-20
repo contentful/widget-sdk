@@ -33,13 +33,13 @@ export function tagLink(id) {
 
 /* fancy grouping stuff */
 
-const GROUP_DELIMITERS = ['.', ':', '_', '-', '#'];
+export const GROUP_DELIMITERS = ['.', ':', '_', '-', '#'];
 export const DEFAULT_GROUP = 'Uncategorized';
 
 export const getFirstDelimiterIndex = (value, delimiters) =>
   min(delimiters.map((delimiter) => value.indexOf(delimiter)).filter((index) => index >= 0));
 
-const groupForLabel = (label, delimiters) => {
+export const groupForLabel = (label, delimiters) => {
   const delimiterIndex = getFirstDelimiterIndex(label, delimiters);
   if (!delimiterIndex || delimiterIndex <= 0) {
     return DEFAULT_GROUP;
