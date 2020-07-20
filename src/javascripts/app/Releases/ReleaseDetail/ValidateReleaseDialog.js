@@ -9,7 +9,7 @@ const ValidateReleaseDialog = ({ onConfirm, onCancel, isShown }) => {
     <ModalConfirm
       isShown={isShown}
       testId="validate-release-confirmation-dialog"
-      intent="negative"
+      intent="primary"
       title="Validate release?"
       onConfirm={onConfirm}
       confirmLabel="Validate now"

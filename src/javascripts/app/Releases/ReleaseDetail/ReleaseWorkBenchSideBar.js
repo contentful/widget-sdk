@@ -81,15 +81,6 @@ const ReleaseWorkBenchSideBar = ({
           Publish now
         </Button>
         <Button
-          testId="validate-release"
-          buttonType="muted"
-          className={styles.buttons}
-          isFullWidth
-          disabled={!entries.length && !assets.length}
-          onClick={handleValidation}>
-          Validate
-        </Button>
-        <Button
           testId="schedule-release"
           buttonType="muted"
           className={styles.buttons}
@@ -97,6 +88,15 @@ const ReleaseWorkBenchSideBar = ({
           disabled={!entries.length && !assets.length}
           onClick={handleShowingScheduleActionDialog}>
           Schedule
+        </Button>
+        <Button
+          testId="validate-release"
+          buttonType="muted"
+          className={styles.buttons}
+          isFullWidth
+          disabled={!entries.length && !assets.length}
+          onClick={handleValidation}>
+          Validate
         </Button>
       </div>
     </Workbench.Sidebar>
