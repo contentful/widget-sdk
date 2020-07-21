@@ -1,14 +1,12 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import * as K from 'core/utils/kefir';
-import { getModule } from 'core/NgRegistry';
 import { noop, defer } from 'lodash';
-import createExtensionBridge from 'widgets/bridges/createExtensionBridge';
 import WidgetRenderWarning from 'widgets/WidgetRenderWarning';
-import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIFrameRenderer';
 import * as LoadEventTracker from 'app/entity_editor/LoadEventTracker';
 import { WidgetNamespace, isCustomWidget, WidgetLocation } from 'features/widget-renderer';
 import { toRendererWidget } from 'widgets/WidgetCompat';
+import { WidgetRenderer as WidgetRenederExternal } from 'features/widget-renderer/WidgetRenderer';
 
 const { createLinksRenderedEvent, createWidgetLinkRenderEventsHandler } = LoadEventTracker;
 
@@ -19,8 +17,8 @@ function newNoopLoadEvents() {
 }
 
 function WidgetRendererInternal(props) {
-  const { widget, locale, editorData, loadEvents, scope } = props;
-  const { problem, widgetNamespace, widgetId, renderFieldEditor, descriptor, parameters } = widget;
+  const { widget, locale, editorData, loadEvents } = props;
+  const { problem, widgetNamespace, renderFieldEditor } = widget;
 
   let trackLinksRendered = noop;
   let handleWidgetLinkRenderEvents = noop;
@@ -41,22 +39,20 @@ function WidgetRendererInternal(props) {
     return <WidgetRenderWarning message={problem}></WidgetRenderWarning>;
   } else if (isCustomWidget(widgetNamespace)) {
     trackLinksRendered();
-    const $rootScope = getModule('$rootScope');
-    const spaceContext = getModule('spaceContext');
-    const $controller = getModule('$controller');
     return (
-      <ExtensionIFrameRendererWithLocalHostWarning
-        widget={toRendererWidget(descriptor)}
-        parameters={parameters}
-        bridge={createExtensionBridge({
-          $rootScope,
-          $scope: scope,
-          spaceContext,
-          $controller,
-          currentWidgetId: widgetId,
-          currentWidgetNamespace: widgetNamespace,
-          location: WidgetLocation.ENTRY_FIELD,
-        })}
+      <WidgetRenederExternal
+        location={WidgetLocation.ENTRY_FIELD}
+        widget={toRendererWidget(widget.descriptor)}
+        parameters={{
+          values: {
+            // TODO: this comes from legacy "WidgetRenderable"
+            // and has defaults applied on top of API values
+            // Consider moving "applyDefaultValues" to the renderer
+            // library too.
+            instance: widget.parameters.instance,
+          },
+        }}
+        apis={{}}
       />
     );
   } else if (widgetNamespace === WidgetNamespace.BUILTIN) {
