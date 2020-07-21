@@ -17,7 +17,7 @@ export function createReadOnlyEntryApi({ contentType, locale, entry }) {
   });
 
   return {
-    getSys: () => {},
+    getSys: () => entry.sys,
     onSysChanged: noop,
     fields: reduceFields(fields),
   };
@@ -42,6 +42,7 @@ export function createEntryApi({ contentType, locale, otDoc }) {
       return K.onValue(otDoc.sysProperty, cb);
     },
     fields: reduceFields(fields),
+    metadata: otDoc.getValueAt(['metadata']),
   };
 }
 

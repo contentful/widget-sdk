@@ -8,6 +8,7 @@ import {
   WidgetNamespace,
   HostingType,
 } from './interfaces';
+import { PostMessageChannel } from './PostMessageChannel';
 
 const DISALLOWED_DOMAINS = ['app.contentful.com', 'creator.contentful.com'];
 
@@ -28,7 +29,52 @@ interface Props {
       invocation?: AppParameterValues;
     };
   };
-  apis: {};
+  apis: {
+    locales: any;
+    user: any;
+    space: {
+      getCachedContentTypes: () => any[];
+    };
+    ids: any;
+    contentType?: {
+      sys: {
+        type: 'ContentType';
+        id: string;
+      };
+      fields: any[];
+    };
+    editorInterface?: {
+      sys: {
+        type: 'EditorInteface';
+        contentType: {
+          sys: {
+            id: string;
+            type: 'Link';
+            linkType: 'ContentType';
+          };
+        };
+      };
+    };
+    entry?: {
+      getSys: () => { id: string };
+      fields: Record<
+        string,
+        {
+          getValue: () => any;
+        }
+      >;
+      metadata?: Record<string, any>;
+    };
+    field?: {
+      id: string;
+      locale: string;
+      type: string;
+      required: boolean;
+      validations: any[];
+      items: any;
+      getValue: () => any;
+    };
+  };
   disallowedDomains?: string[];
   isFullSize?: boolean;
 }
@@ -37,6 +83,9 @@ export class WidgetRenderer extends React.Component<Props, unknown> {
   static defaultProps = {
     disallowedDomains: DISALLOWED_DOMAINS,
   };
+
+  private channel?: PostMessageChannel;
+  private parameters: Record<string, AppParameterValues> = {};
 
   // There's no need to update. Once the iframe is loaded
   // it's only communicating with the renderer over `postMessage`.
@@ -47,7 +96,7 @@ export class WidgetRenderer extends React.Component<Props, unknown> {
   }
 
   public componentWillUnmount() {
-    // TODO: cleanup all the things
+    this.channel?.destroy();
   }
 
   public render() {
@@ -79,8 +128,56 @@ export class WidgetRenderer extends React.Component<Props, unknown> {
   // We want to connect in all these cases. If we would only connnect
   // on the initial page load the consecutive page loads would render
   // the HTML page but the `sdk.init(cb)` callback wouldn't be called).
-  private onLoad = (...args) => {
-    console.log('onLoad', args);
+  private onLoad = () => {
+    // Internal format for "connect" message
+    const connectMessage = {
+      location: this.props.location,
+      parameters: this.parameters,
+      locales: this.props.apis.locales,
+      user: this.props.apis.user,
+      contentType: this.props.apis.contentType || { sys: {}, fields: [] },
+      initialContentTypes: this.props.apis.space.getCachedContentTypes(),
+      editorInterface: this.props.apis.editorInterface,
+      ids: {
+        ...this.props.apis.ids,
+        // Results in `{ app: 'some-app-id' }` or `{ extension: 'some-ext-id' }`.
+        [this.props.widget.namespace]: this.props.widget.id,
+      },
+      entry: this.props.apis.entry
+        ? {
+            sys: this.props.apis.entry.getSys(),
+            metadata: this.props.apis.entry.metadata,
+          }
+        : { sys: {} },
+      fieldInfo:
+        this.props.apis.contentType?.fields.map((field) => {
+          return {
+            localized: field.localized,
+            locales: field.localized
+              ? this.props.apis.locales.available
+              : [this.props.apis.locales.default],
+            values: this.props.apis.entry?.fields[field.id].getValue() ?? {},
+            id: field.apiName || field.id,
+            required: !!field.required,
+            type: field.type,
+            validations: field.validations,
+            items: field.items,
+          };
+        }) ?? [],
+      field: this.props.apis.field
+        ? {
+            locale: this.props.apis.field.locale,
+            value: this.props.apis.field.getValue(),
+            id: this.props.apis.field.id,
+            type: this.props.apis.field.type,
+            required: this.props.apis.field.required,
+            validations: this.props.apis.field.validations,
+            items: this.props.apis.field.items,
+          }
+        : undefined,
+    };
+
+    this.channel?.connect(connectMessage);
   };
 
   private initialize = (iframe: HTMLIFrameElement) => {
@@ -92,16 +189,15 @@ export class WidgetRenderer extends React.Component<Props, unknown> {
     const { namespace, id, hosting } = widget;
 
     // Compute all parameters.
-    const parameters: Record<string, AppParameterValues> = {};
-    parameters.installation = widget.parameters.values.installation;
+    this.parameters.installation = widget.parameters.values.installation;
 
     // Default instance parameters to an empty object (backwards compat).
-    parameters.instance = this.props.parameters.values.instance || {};
+    this.parameters.instance = this.props.parameters.values.instance || {};
 
     // Only add invocation parameters when defined.
     const { invocation } = this.props.parameters.values;
     if (invocation) {
-      parameters.invocation = invocation;
+      this.parameters.invocation = invocation;
     }
 
     // Fullscreen is allowed.
@@ -115,6 +211,9 @@ export class WidgetRenderer extends React.Component<Props, unknown> {
     if (namespace === WidgetNamespace.APP) {
       iframe.dataset.appDefinitionId = id;
     }
+
+    // Create a communication channel.
+    this.channel = new PostMessageChannel(iframe, window);
 
     // Render the iframe content
     if (this.isSrc(widget)) {

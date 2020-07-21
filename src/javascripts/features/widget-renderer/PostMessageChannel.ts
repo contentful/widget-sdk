@@ -1,34 +1,34 @@
 interface IncomingMessage {
   data: {
-    source: string,
-    method: string,
-    id: string,
-    params: any[]
-  }
+    source: string;
+    method: string;
+    id: string;
+    params: any[];
+  };
 }
 
 interface OutgoingResultMessage {
-  id: string,
-  result: any
+  id: string;
+  result: any;
 }
 
 interface OutgoingErrorMessage {
-  id: string,
+  id: string;
   error: {
-    code?: string | number
-    message?: string
-    data?: any
-  }
+    code?: string | number;
+    message?: string;
+    data?: any;
+  };
 }
 
 interface OutgoingMethodCallMessage {
-  method: string,
-  params: any[]
+  method: string;
+  params: any[];
 }
 
-type OutgoingMessage = OutgoingResultMessage | OutgoingErrorMessage | OutgoingMethodCallMessage
+type OutgoingMessage = OutgoingResultMessage | OutgoingErrorMessage | OutgoingMethodCallMessage;
 
-type Handler = (...args: any[]) => any | Promise<any>
+type Handler = (...args: any[]) => any | Promise<any>;
 
 /**
  * This module is a communication channel between custom widgets
@@ -39,19 +39,19 @@ type Handler = (...args: any[]) => any | Promise<any>
  *  a widget and the `window` of the host respectivly.
  */
 export class PostMessageChannel {
-  private iframe: HTMLIFrameElement | null
-  private win: Window
-  private id: string
-  private messageQueue: OutgoingMethodCallMessage[] = []
-  private handlers: Record<string, Handler> = {}
+  private iframe: HTMLIFrameElement | null;
+  private win: Window;
+  private id: string;
+  private messageQueue: OutgoingMethodCallMessage[] = [];
+  private handlers: Record<string, Handler> = {};
 
-  private destroyed = false
-  private connected = false
+  private destroyed = false;
+  private connected = false;
 
   constructor(iframe: HTMLIFrameElement, win: Window) {
     this.iframe = iframe;
     this.win = win;
-    this.id = `${Date.now()},${Math.round(Math.random()*9999999)}`
+    this.id = `${Date.now()},${Math.round(Math.random() * 9999999)}`;
 
     this.win.addEventListener('message', this.messageListener);
   }
@@ -88,7 +88,7 @@ export class PostMessageChannel {
       throw new Error('`params` is expected to be an array');
     }
 
-    const message: OutgoingMethodCallMessage = { method, params }
+    const message: OutgoingMethodCallMessage = { method, params };
 
     if (this.connected) {
       this.postMessage(message);
@@ -100,8 +100,8 @@ export class PostMessageChannel {
   public connect(data: Record<string, unknown>) {
     const message: OutgoingMethodCallMessage = {
       method: 'connect',
-      params: [{ id: this.id, ...data }, this.messageQueue]
-    }
+      params: [{ id: this.id, ...data }, this.messageQueue],
+    };
 
     this.postMessage(message);
 
@@ -145,7 +145,7 @@ export class PostMessageChannel {
           message: err.message,
           data: err.data,
         },
-      }
+      };
       this.postMessage(errMessage);
     }
   }

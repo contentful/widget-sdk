@@ -52,7 +52,7 @@ function WidgetRendererInternal(props) {
             instance: widget.parameters.instance,
           },
         }}
-        apis={{}}
+        apis={props.widgetApi}
       />
     );
   } else if (widgetNamespace === WidgetNamespace.BUILTIN) {

@@ -51,11 +51,21 @@ export default function createNewWidgetApi(dependencies) {
   const { cma } = spaceContext;
   const { locale, widget, otDoc } = $scope;
   const { contentType } = $scope.entityInfo;
+  const { editorInterface } = $scope.editorData;
   const contentTypeApi = createContentTypeApi({ contentType });
   const environmentIds = [spaceContext.getEnvironmentId(), ...spaceContext.getAliasesIds()];
 
   const entry = createEntryApi({ contentType, locale, otDoc });
   const field = createFieldApi({ $scope }); // TODO: Get rid of $scope here, pass actual dependencies.
+  const user = createUserObject(spaceContext.space.data.spaceMember);
+  const ids = createIdsObject(
+    spaceContext.getId(),
+    environmentIds[0],
+    contentTypeApi,
+    entry,
+    field,
+    user
+  );
 
   const parameters = {
     installation: {},
@@ -70,12 +80,17 @@ export default function createNewWidgetApi(dependencies) {
       environmentIds,
     }),
     contentType: contentTypeApi,
+    editorInterface,
     entry,
     field,
     parameters,
+    user,
+    ids,
   };
 }
 
+// TODO: sync with regular API and make sure it's really read only,
+// including CMA operations via the space API
 export function createNewReadOnlyWidgetApi({
   field,
   fieldValue,
@@ -138,5 +153,40 @@ function createSpaceScopedWidgetApi({
         return Promise.resolve(result);
       },
     },
+  };
+}
+
+function createUserObject(spaceMember) {
+  return {
+    sys: {
+      type: 'User',
+      id: spaceMember.sys.user.sys.id,
+    },
+    firstName: spaceMember.sys.user.firstName,
+    lastName: spaceMember.sys.user.lastName,
+    email: spaceMember.sys.user.email,
+    avatarUrl: spaceMember.sys.user.avatarUrl,
+    spaceMembership: {
+      sys: {
+        type: 'SpaceMembership',
+        id: spaceMember.sys.id,
+      },
+      admin: !!spaceMember.admin,
+      roles: spaceMember.roles.map((role) => ({
+        name: role.name,
+        description: role.description,
+      })),
+    },
+  };
+}
+
+function createIdsObject(spaceId, envId, contentTypeApi, entry, field, user) {
+  return {
+    space: spaceId,
+    environment: envId,
+    contentType: contentTypeApi.sys.id,
+    entry: entry.getSys().id,
+    field: field.id,
+    user: user.sys.id,
   };
 }
