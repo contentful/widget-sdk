@@ -15,7 +15,8 @@ import tokens from '@contentful/forma-36-tokens';
 
 import * as Config from 'Config';
 import ExternalTextLink from 'app/common/ExternalTextLink';
-import { trackCTAClick } from 'analytics/targetedCTA';
+import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
+import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 
 const ENV_DOC_SIDEBAR_UTM_PARAMS =
   '?utm_source=webapp&utm_medium=environments-sidebar&utm_campaign=in-app-help';
@@ -59,14 +60,14 @@ export default function EnvironmentsSidebar({
   const shouldShowAliasDefinition = canManageAliases || hasOptedInEnv;
 
   const upgradeToEnterpriseOnClick = () => {
-    trackCTAClick('upgrade_to_enterprise', {
+    trackTargetedCTAClick(CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
       spaceId,
       organizationId,
     });
   };
 
   const upgradeOnDemandOnClick = () => {
-    trackCTAClick('upgrade_space_plan', { organizationId, spaceId });
+    trackTargetedCTAClick(CTA_EVENTS.UPGRADE_SPACE_PLAN, { organizationId, spaceId });
     OpenUpgradeSpaceDialog();
   };
 
@@ -104,13 +105,17 @@ export default function EnvironmentsSidebar({
 
       {/** We need to wait for the spacePlan or the button will jump from 'Upgrade space' to 'Talk to us' */}
       {!canCreateEnv && !isLegacyOrganization && canUpgradeSpace && !!spacePlan && (
-        <>
+        <TrackTargetedCTAImpression
+          impressionType={
+            spacePlanIsLarge ? CTA_EVENTS.UPGRADE_TO_ENTERPRISE : CTA_EVENTS.UPGRADE_SPACE_PLAN
+          }
+          meta={{ organizationId, spaceId }}>
           {spacePlanIsLarge ? (
             <UpgradeToEnterpriseButton handleOnClick={upgradeToEnterpriseOnClick} />
           ) : (
             <UpgradeOnDemandButton handleOnClick={upgradeOnDemandOnClick} />
           )}
-        </>
+        </TrackTargetedCTAImpression>
       )}
 
       <Heading element="h2" className="entity-sidebar__heading">

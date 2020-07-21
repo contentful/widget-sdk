@@ -8,7 +8,7 @@ import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceServic
 import { getSingleSpacePlan, isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
-import { trackCTAClick } from 'analytics/targetedCTA';
+import * as trackCTA from 'analytics/trackCTA';
 import userEvent from '@testing-library/user-event';
 import * as spaceContextMocked from 'ng/spaceContext';
 
@@ -26,7 +26,6 @@ jest.mock('account/pricing/PricingDataProvider', () => ({
 jest.mock('services/ChangeSpaceService', () => ({
   showDialog: jest.fn(),
   showUpgradeSpaceDialog: jest.fn(),
-  trackCTAClick: jest.fn(),
 }));
 
 jest.mock('utils/ResourceUtils', () => ({
@@ -54,9 +53,7 @@ jest.mock('data/EndpointFactory', () => ({
   createOrganizationEndpoint: jest.fn(),
 }));
 
-jest.mock('analytics/targetedCTA', () => ({
-  trackCTAClick: jest.fn(),
-}));
+const trackTargetedCTAClick = jest.spyOn(trackCTA, 'trackTargetedCTAClick');
 
 async function build(shouldWait = true) {
   render(<UpgradeBanner />);
@@ -117,14 +114,14 @@ describe('UpgradeBanner', () => {
     userEvent.click(enterpriseLink);
 
     await waitFor(() => {
-      expect(trackCTAClick).toBeCalledWith('upgrade_to_enterprise', {
+      expect(trackTargetedCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
         organizationId: SPACE.organization.sys.id,
         spaceId: SPACE.sys.id,
       });
     });
   });
 
-  it('should render the link to upgrade the currnent space when it is not a large space', async () => {
+  it('should render the link to upgrade the current space when it is not a large space', async () => {
     getSingleSpacePlan.mockResolvedValue({ name: 'notLarge' });
     await build();
 
@@ -139,7 +136,7 @@ describe('UpgradeBanner', () => {
     userEvent.click(upgradeSpaceLink);
 
     await waitFor(() => {
-      expect(trackCTAClick).toBeCalledWith('upgrade_space_plan', {
+      expect(trackTargetedCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.UPGRADE_SPACE_PLAN, {
         organizationId: SPACE.organization.sys.id,
         spaceId: SPACE.sys.id,
       });

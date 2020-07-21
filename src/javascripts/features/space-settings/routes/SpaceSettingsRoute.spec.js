@@ -9,7 +9,7 @@ import {
   getNotificationMessage,
 } from 'services/ChangeSpaceService';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
-import { trackCTAClick } from 'analytics/targetedCTA';
+import * as trackCTA from 'analytics/trackCTA';
 
 import { openDeleteSpaceDialog } from '../services/DeleteSpace';
 import { getRatePlans, getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
@@ -42,9 +42,7 @@ jest.mock('account/pricing/PricingDataProvider', () => ({
   getRatePlans: jest.fn(),
 }));
 
-jest.mock('analytics/targetedCTA', () => ({
-  trackCTAClick: jest.fn(),
-}));
+const trackCTAClick = jest.spyOn(trackCTA, 'trackCTAClick');
 
 const build = async (shouldWait = true) => {
   const renderedComponent = render(<SpaceSettingsRoute />);
@@ -115,7 +113,7 @@ describe('SpaceSettingsRoute', () => {
 
     await waitFor(() => expect(showChangeSpaceModal).toBeCalled());
 
-    expect(trackCTAClick).toBeCalledWith('upgrade_space_plan', {
+    expect(trackCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.UPGRADE_SPACE_PLAN, {
       organizationId: testOrganization.sys.id,
       spaceId: testSpace.sys.id,
     });

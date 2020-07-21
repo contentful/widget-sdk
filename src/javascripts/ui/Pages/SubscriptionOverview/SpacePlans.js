@@ -20,7 +20,8 @@ import {
 import ExternalTextLink from 'app/common/ExternalTextLink';
 import { websiteUrl } from 'Config';
 import tokens from '@contentful/forma-36-tokens';
-import { trackCTAClick } from 'analytics/targetedCTA';
+import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
+import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 
 import { calculatePlansCost } from 'utils/SubscriptionUtils';
 import { Pluralized, Price } from 'core/components/formatting';
@@ -79,7 +80,7 @@ function SpacePlans({
   );
 
   const handleSupportRedirct = () => {
-    trackCTAClick('purchase_micro_small_via_support', {
+    trackTargetedCTAClick(CTA_EVENTS.PURCHASE_MICRO_SMALL_VIA_SUPPORT, {
       organizationId,
     });
   };
@@ -120,14 +121,18 @@ function SpacePlans({
             </ExternalTextLink>
             {'.'}
           </Paragraph>
-          <ExternalTextLink
-            onClick={() => {
-              handleSupportRedirct();
-            }}
-            testId="subscription-page.support-request-link"
-            href={linkToSupportPage}>
-            Submit a support request
-          </ExternalTextLink>{' '}
+          <TrackTargetedCTAImpression
+            impressionType={CTA_EVENTS.PURCHASE_MICRO_SMALL_VIA_SUPPORT}
+            meta={{ organizationId }}>
+            <ExternalTextLink
+              onClick={() => {
+                handleSupportRedirct();
+              }}
+              testId="subscription-page.support-request-link"
+              href={linkToSupportPage}>
+              Submit a support request
+            </ExternalTextLink>
+          </TrackTargetedCTAImpression>
         </Card>
       )}
 

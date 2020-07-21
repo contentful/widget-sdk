@@ -1,4 +1,9 @@
-import { trackCTAClick } from './targetedCTA';
+import {
+  trackCTAClick,
+  trackTargetedCTAClick,
+  trackTargetedCTAImpression,
+  CTA_EVENTS,
+} from './trackCTA';
 import { track } from './Analytics';
 import { getCurrentStateName } from 'states/Navigator';
 
@@ -10,32 +15,36 @@ jest.mock('states/Navigator', () => ({
   getCurrentStateName: jest.fn().mockReturnValue('current.state.name'),
 }));
 
-describe('targetedCTA', () => {
-  describe('trackCTAClick', () => {
+describe.each([
+  [trackCTAClick, 'cta_clicked:upgrade_space_plan'],
+  [trackTargetedCTAClick, 'targeted_cta_clicked:upgrade_space_plan'],
+  [trackTargetedCTAImpression, 'targeted_cta_impression:upgrade_space_plan'],
+])('trackCTA', (func, eventName) => {
+  describe(func, () => {
     it('should throw if given an invalid intent', () => {
-      expect(() => trackCTAClick('something')).toThrow();
-      expect(() => trackCTAClick('upgrade_space_plan')).not.toThrow();
+      expect(() => func('something')).toThrow();
+      expect(() => func(CTA_EVENTS.UPGRADE_SPACE_PLAN)).not.toThrow();
     });
 
     it('should throw if given an invalid metadata key', () => {
       expect(() =>
-        trackCTAClick('upgrade_space_plan', {
+        func(CTA_EVENTS.UPGRADE_SPACE_PLAN, {
           orgId: 'org_1234',
         })
       ).toThrow();
       expect(() =>
-        trackCTAClick('upgrade_space_plan', {
+        func(CTA_EVENTS.UPGRADE_SPACE_PLAN, {
           organizationId: 'org_1234',
         })
       ).not.toThrow();
     });
 
     it('should track the correct event', () => {
-      trackCTAClick('upgrade_space_plan', {
+      func(CTA_EVENTS.UPGRADE_SPACE_PLAN, {
         organizationId: 'org_1234',
       });
 
-      expect(track).toBeCalledWith('targeted_cta_clicked:upgrade_space_plan', {
+      expect(track).toBeCalledWith(eventName, {
         ctaLocation: getCurrentStateName(),
         meta: {
           organizationId: 'org_1234',

@@ -13,7 +13,7 @@ import { canCreate } from 'utils/ResourceUtils';
 import { createPaginationEndpoint } from '__mocks__/data/EndpointFactory';
 import { getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
 import * as Fake from 'test/helpers/fakeFactory';
-import { trackCTAClick } from 'analytics/targetedCTA';
+import * as trackCTA from 'analytics/trackCTA';
 
 jest.mock('services/ResourceService', () => ({
   __esModule: true, // this property makes it work
@@ -51,9 +51,7 @@ jest.mock('services/ChangeSpaceService', () => ({
   showUpgradeSpaceDialog: jest.fn(),
 }));
 
-jest.mock('analytics/targetedCTA', () => ({
-  trackCTAClick: jest.fn(),
-}));
+const trackTargetedCTAClick = jest.spyOn(trackCTA, 'trackTargetedCTAClick');
 
 jest.mock('../DeleteDialog', () => ({
   openDeleteEnvironmentDialog: jest.fn(),
@@ -291,7 +289,10 @@ describe('EnvironmentsRoute', () => {
       expect(screen.getByTestId('openUpgradeDialog').textContent).toEqual('Upgrade space');
 
       userEvent.click(screen.getByTestId('openUpgradeDialog'));
-      expect(trackCTAClick).toBeCalled();
+      expect(trackTargetedCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.UPGRADE_SPACE_PLAN, {
+        organizationId: defaultProps.organizationId,
+        spaceId: defaultProps.spaceId,
+      });
       expect(showUpgradeSpaceDialog).toBeCalled();
 
       expect(screen.queryByTestId('subscriptionLink')).toBeNull();
@@ -314,7 +315,7 @@ describe('EnvironmentsRoute', () => {
       expect(screen.getByTestId('upgradeToEnterpriseButton').textContent).toEqual('Talk to us');
       userEvent.click(screen.getByTestId('upgradeToEnterpriseButton'));
 
-      expect(trackCTAClick).toBeCalledWith('upgrade_to_enterprise', {
+      expect(trackTargetedCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
         organizationId: defaultProps.organizationId,
         spaceId: defaultProps.spaceId,
       });

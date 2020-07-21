@@ -9,17 +9,35 @@ import { isOwner } from 'services/OrganizationRoles';
 import { go } from 'states/Navigator';
 import { billing } from './links';
 
+import * as trackCTA from 'analytics/trackCTA';
+
+import { showDialog as showCreateSpaceModal } from 'services/CreateSpace';
+import { showDialog as showChangeSpaceModal } from 'services/ChangeSpaceService';
+
+jest.mock('services/CreateSpace', () => ({
+  showDialog: jest.fn(),
+}));
+
+jest.mock('services/ChangeSpaceService', () => ({
+  showDialog: jest.fn(),
+}));
+
 jest.mock('services/OrganizationRoles', () => ({
   isOwner: jest.fn(),
 }));
+
 jest.mock('./links', () => ({
   billing: jest.fn(),
   memberships: jest.fn().mockReturnValue({ path: 'not-important-path' }),
 }));
+
 jest.mock('states/Navigator', () => ({
   go: jest.fn(),
   href: jest.fn(),
+  getCurrentStateName: jest.fn(),
 }));
+
+const trackCTAClick = jest.spyOn(trackCTA, 'trackCTAClick');
 
 const mockOrganization = Fake.Organization();
 const mockBasePlan = Fake.Plan({ name: 'My cool base plan' });
@@ -114,6 +132,34 @@ describe('SubscriptionPage', () => {
     userEvent.click(screen.getByTestId('subscription-page.add-billing-button'));
     expect(billing).toHaveBeenCalledWith(nonBillableOrganization.sys.id);
     expect(go).toHaveBeenCalledWith(navigatorObject);
+  });
+
+  it('should track a click and open the CreateSpaceModal when onCreateSpace is clicked', () => {
+    build();
+
+    userEvent.click(screen.getByTestId('subscription-page.create-space'));
+    expect(trackCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.CREATE_SPACE, {
+      organizationId: mockOrganization.sys.id,
+    });
+    expect(showCreateSpaceModal).toBeCalledWith(mockOrganization.sys.id);
+  });
+
+  it('should track a click and open change space model when onChangeSpace is clicked', () => {
+    build({ spacePlans: mockSpacePlans });
+
+    // Click on the first space plan's upgrade link
+    userEvent.click(screen.getAllByTestId('subscription-page.spaces-list.upgrade-plan-link')[0]);
+    expect(trackCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.UPGRADE_SPACE_PLAN, {
+      organizationId: mockOrganization.sys.id,
+      spaceId: mockSpacePlans[0].space.sys.id,
+    });
+    expect(showChangeSpaceModal).toBeCalledWith({
+      action: 'change',
+      organizationId: mockOrganization.sys.id,
+      scope: 'organization',
+      space: mockSpacePlans[0].space,
+      onSubmit: expect.any(Function),
+    });
   });
 
   it('should show CTA to talk to support', () => {

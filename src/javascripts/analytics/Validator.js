@@ -1,5 +1,14 @@
 import { isString, includes } from 'lodash';
 
+// Note these names should be kept up to date with same CTA_EVENTS in trackCTA.js, defined here to avoid
+// circular dependency until a better solution for constants is determined.
+const CTA_EVENTS = [
+  'upgrade_to_enterprise',
+  'upgrade_space_plan',
+  'create_space',
+  'purchase_micro_small_via_support',
+];
+
 export const validEvents = {
   global: [
     'app_loaded',
@@ -155,12 +164,9 @@ export const validEvents = {
   tracking: ['invalid_event'],
   sharejs: ['cma_entity_version_mismatch'],
   feedback: ['give'],
-  targeted_cta_clicked: [
-    'upgrade_to_enterprise',
-    'upgrade_space_plan',
-    'create_space',
-    'purchase_micro_small_via_support',
-  ],
+  cta_clicked: CTA_EVENTS,
+  targeted_cta_clicked: CTA_EVENTS,
+  targeted_cta_impression: CTA_EVENTS,
   pricing_update: ['communication_seen'],
 };
 

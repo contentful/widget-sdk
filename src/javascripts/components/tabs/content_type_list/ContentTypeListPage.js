@@ -29,7 +29,8 @@ import { getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { PRICING_2020_RELEASED } from 'featureFlags';
 import { getVariation } from 'LaunchDarkly';
-import { trackCTAClick } from 'analytics/targetedCTA';
+import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
+import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 
 import { websiteUrl } from 'Config';
 import { getModule } from 'core/NgRegistry';
@@ -137,7 +138,7 @@ export class ContentTypesPage extends React.Component {
     const spaceContext = getModule('spaceContext');
     const organizationId = spaceContext.organization.sys.id;
 
-    trackCTAClick('upgrade_to_enterprise', {
+    trackTargetedCTAClick(CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
       spaceId,
       organizationId,
     });
@@ -177,6 +178,10 @@ export class ContentTypesPage extends React.Component {
       searchTerm,
       status,
     });
+
+    const { spaceId } = this.props;
+    const spaceContext = getModule('spaceContext');
+    const organizationId = spaceContext.organization.sys.id;
 
     return (
       <React.Fragment>
@@ -237,13 +242,17 @@ export class ContentTypesPage extends React.Component {
                     </Paragraph>
                     <Paragraph>
                       To increase the limit,{' '}
-                      <ExternalTextLink
-                        testId="link-to-sales"
-                        href={websiteUrl('contact/sales/')}
-                        onClick={() => this.handleBannerClickCTA()}>
-                        talk to us
-                      </ExternalTextLink>{' '}
-                      about upgrading to the enterprise tier .
+                      <TrackTargetedCTAImpression
+                        impressionType={CTA_EVENTS.UPGRADE_TO_ENTERPRISE}
+                        meta={{ spaceId, organizationId }}>
+                        <ExternalTextLink
+                          testId="link-to-sales"
+                          href={websiteUrl('contact/sales/')}
+                          onClick={() => this.handleBannerClickCTA()}>
+                          talk to us
+                        </ExternalTextLink>{' '}
+                      </TrackTargetedCTAImpression>
+                      about upgrading to the enterprise tier.
                     </Paragraph>
                   </Note>
                 )}

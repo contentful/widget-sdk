@@ -176,10 +176,20 @@ registerSSOSelfConfigurationEvent('sso:connection_test_result');
 registerSSOSelfConfigurationEvent('sso:contact_support');
 registerSSOSelfConfigurationEvent('sso:enable');
 
+registerGenericEvent('cta_clicked:upgrade_space_plan');
+registerGenericEvent('cta_clicked:create_space');
+registerGenericEvent('cta_clicked:upgrade_to_enterprise');
+registerGenericEvent('cta_clicked:purchase_micro_small_via_support');
+
 registerGenericEvent('targeted_cta_clicked:upgrade_to_enterprise');
 registerGenericEvent('targeted_cta_clicked:upgrade_space_plan');
 registerGenericEvent('targeted_cta_clicked:create_space');
 registerGenericEvent('targeted_cta_clicked:purchase_micro_small_via_support');
+
+registerGenericEvent('targeted_cta_impression:upgrade_to_enterprise');
+registerGenericEvent('targeted_cta_impression:upgrade_space_plan');
+registerGenericEvent('targeted_cta_impression:create_space');
+registerGenericEvent('targeted_cta_impression:purchase_micro_small_via_support');
 
 registerEvent('global:app_loaded', 'app_open', AppOpen);
 

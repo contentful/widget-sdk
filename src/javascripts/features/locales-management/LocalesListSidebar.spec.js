@@ -6,11 +6,9 @@ import * as $stateMocked from 'ng/$state';
 import * as spaceContextMocked from 'ng/spaceContext';
 import userEvent from '@testing-library/user-event';
 
-import { trackCTAClick } from 'analytics/targetedCTA';
+import * as trackCTA from 'analytics/trackCTA';
 
-jest.mock('analytics/targetedCTA', () => ({
-  trackCTAClick: jest.fn(),
-}));
+const trackTargetedCTAClick = jest.spyOn(trackCTA, 'trackTargetedCTAClick');
 
 describe('features/locales-management/LocalesListSidebar', () => {
   spaceContextMocked.getId.mockReturnValue(321);
@@ -140,7 +138,7 @@ describe('features/locales-management/LocalesListSidebar', () => {
 
         userEvent.click(screen.getByTestId('link-to-sales-button'));
 
-        expect(trackCTAClick).toBeCalledWith('upgrade_to_enterprise', {
+        expect(trackTargetedCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
           organizationId: 'org',
           spaceId: 321,
         });

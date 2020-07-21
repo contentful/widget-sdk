@@ -11,7 +11,8 @@ import ExternalTextLink from 'app/common/ExternalTextLink';
 import { developerDocsUrl } from 'Config';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { websiteUrl } from 'Config';
-import { trackCTAClick } from 'analytics/targetedCTA';
+import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
+import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 import { getModule } from 'core/NgRegistry';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
@@ -122,24 +123,32 @@ export class LocalesListSidebar extends React.Component {
 const handleTalkToUsClickCTA = () => {
   const spaceContext = getModule('spaceContext');
 
-  trackCTAClick('upgrade_to_enterprise', {
+  trackTargetedCTAClick(CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
     spaceId: spaceContext.getId(),
     organizationId: spaceContext.organization.sys.id,
   });
 };
 
 const UpgradeToEnterprise = () => {
+  const spaceContext = getModule('spaceContext');
+  const spaceId = spaceContext.getId();
+  const organizationId = spaceContext.organization.sys.id;
+
   return (
-    <Button
-      isFullWidth
-      buttonType="primary"
-      testId="link-to-sales-button"
-      href={websiteUrl('contact/sales/')}
-      target="_blank"
-      rel="noopener noreferrer"
-      onClick={() => handleTalkToUsClickCTA()}>
-      Talk to us
-    </Button>
+    <TrackTargetedCTAImpression
+      impressionType={CTA_EVENTS.UPGRADE_TO_ENTERPRISE}
+      meta={{ spaceId, organizationId }}>
+      <Button
+        isFullWidth
+        buttonType="primary"
+        testId="link-to-sales-button"
+        href={websiteUrl('contact/sales/')}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={() => handleTalkToUsClickCTA()}>
+        Talk to us
+      </Button>
+    </TrackTargetedCTAImpression>
   );
 };
 

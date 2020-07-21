@@ -7,7 +7,7 @@ import { showDialog as showChangeSpaceModal } from 'services/ChangeSpaceService'
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import { isOwner } from 'services/OrganizationRoles';
 import FileSizeLimitWarning from './FileSizeLimitWarning';
-import { trackCTAClick } from 'analytics/targetedCTA';
+import * as trackCTA from 'analytics/trackCTA';
 
 const mockOrganization = Fake.Organization();
 const mockSpace = Fake.Space();
@@ -30,9 +30,7 @@ jest.mock('services/ChangeSpaceService', () => ({
   showDialog: jest.fn(),
 }));
 
-jest.mock('analytics/targetedCTA', () => ({
-  trackCTAClick: jest.fn(),
-}));
+const trackTargetedCTAClick = jest.spyOn(trackCTA, 'trackTargetedCTAClick');
 
 describe('FileSizeLimitWarning', () => {
   it('should not render the warning note for a user that has the unlimited_asset_file_size feature', async () => {
@@ -73,7 +71,7 @@ describe('FileSizeLimitWarning', () => {
 
     userEvent.click(screen.getByTestId('asset-limit-upgrade-link'));
 
-    expect(trackCTAClick).toBeCalledWith('upgrade_space_plan', {
+    expect(trackTargetedCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.UPGRADE_SPACE_PLAN, {
       organizationId: mockOrganization.sys.id,
       spaceId: mockSpace.sys.id,
     });

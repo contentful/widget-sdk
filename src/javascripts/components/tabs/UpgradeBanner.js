@@ -13,7 +13,8 @@ import ExternalTextLink from 'app/common/ExternalTextLink';
 import createResourceService from 'services/ResourceService';
 import { Note, Paragraph, TextLink } from '@contentful/forma-36-react-components';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
-import { trackCTAClick } from 'analytics/targetedCTA';
+import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
+import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 import { getModule } from 'core/NgRegistry';
 
 const WARNING_THRESHOLD = 0.9;
@@ -38,7 +39,7 @@ const fetchRecordsResource = (spaceId) => {
 };
 
 const handleOnUpgradeClick = (space, updateResource) => {
-  trackCTAClick('upgrade_space_plan', {
+  trackTargetedCTAClick(CTA_EVENTS.UPGRADE_SPACE_PLAN, {
     organizationId: space.organization.sys.id,
     spaceId: space.sys.id,
   });
@@ -46,7 +47,7 @@ const handleOnUpgradeClick = (space, updateResource) => {
   openUpgradeModal(space, updateResource);
 };
 const handleUpgradeToEnterpriseClick = (space) => {
-  trackCTAClick('upgrade_to_enterprise', {
+  trackTargetedCTAClick(CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
     spaceId: space.sys.id,
     organizationId: space.organization.sys.id,
   });
@@ -112,25 +113,31 @@ export default function UpgradeBanner() {
       </Paragraph>
       <Paragraph testId="upgrade-banner.action-text">
         To increase your limit,{' '}
-        {isLargeSpace ? (
-          <>
-            <ExternalTextLink
-              testId="upgrade-banner.upgrade-to-enterprise-link"
-              href={websiteUrl('contact/sales/')}
-              onClick={() => {
-                handleUpgradeToEnterpriseClick(space);
-              }}>
-              talk to us
-            </ExternalTextLink>{' '}
-            about upgrading to the enterprise tier
-          </>
-        ) : (
-          <TextLink
-            testId="upgrade-banner.upgrade-space-link"
-            onClick={() => handleOnUpgradeClick(space, updateResource)}>
-            upgrade space
-          </TextLink>
-        )}
+        <TrackTargetedCTAImpression
+          impressionType={
+            isLargeSpace ? CTA_EVENTS.UPGRADE_TO_ENTERPRISE : CTA_EVENTS.UPGRADE_SPACE_PLAN
+          }
+          meta={{ spaceId: space.sys.id, organizationId: space.organization.sys.id }}>
+          {isLargeSpace ? (
+            <>
+              <ExternalTextLink
+                testId="upgrade-banner.upgrade-to-enterprise-link"
+                href={websiteUrl('contact/sales/')}
+                onClick={() => {
+                  handleUpgradeToEnterpriseClick(space);
+                }}>
+                talk to us
+              </ExternalTextLink>{' '}
+              about upgrading to the enterprise tier
+            </>
+          ) : (
+            <TextLink
+              testId="upgrade-banner.upgrade-space-link"
+              onClick={() => handleOnUpgradeClick(space, updateResource)}>
+              upgrade space
+            </TextLink>
+          )}
+        </TrackTargetedCTAImpression>
         .
       </Paragraph>
     </Note>

@@ -19,7 +19,7 @@ import createResourceService from 'services/ResourceService';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import * as fake from 'test/helpers/fakeFactory';
 import userEvent from '@testing-library/user-event';
-import { trackCTAClick } from 'analytics/targetedCTA';
+import * as trackCTA from 'analytics/trackCTA';
 
 jest.mock('lodash/debounce', () => (fn) => fn);
 
@@ -31,9 +31,7 @@ jest.mock('services/OrganizationRoles', () => ({
   isOwnerOrAdmin: jest.fn(),
 }));
 
-jest.mock('analytics/targetedCTA', () => ({
-  trackCTAClick: jest.fn(),
-}));
+const trackTargetedCTAClick = jest.spyOn(trackCTA, 'trackTargetedCTAClick');
 
 jest.mock('account/pricing/PricingDataProvider', () => ({
   getSingleSpacePlan: jest.fn().mockResolvedValue({ name: 'Medium' }),
@@ -268,7 +266,7 @@ describe('ContentTypeList Page', () => {
       expect(screen.queryByTestId('content-type-limit-banner')).toBeVisible();
       userEvent.click(screen.getByTestId('link-to-sales'));
 
-      expect(trackCTAClick).toBeCalledWith('upgrade_to_enterprise', {
+      expect(trackTargetedCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
         organizationId: mockOrganization.sys.id,
         spaceId: fakeSpaceId,
       });
