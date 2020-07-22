@@ -14,7 +14,8 @@ import * as PricingService from 'services/PricingService';
 
 import UpgradeBanner from './UpgradeBanner';
 
-const SPACE = fake.Space();
+const mockSpace = fake.Space();
+const mockOrganization = fake.Organization();
 
 jest.mock('analytics/Analytics', () => ({
   track: jest.fn(),
@@ -77,8 +78,16 @@ describe('UpgradeBanner', () => {
     isOwnerOrAdmin.mockReturnValue(true);
     isLegacyOrganization.mockReturnValue(false);
     isEnterprisePlan.mockReturnValue(false);
-    spaceContextMocked.getSpace.mockReturnValue(SPACE);
-    spaceContextMocked.isMasterEnvironment = true;
+    spaceContextMocked.isMasterEnvironment.mockReturnValue(true);
+
+    spaceContextMocked.getSpace.mockReturnValue({ data: mockSpace });
+    spaceContextMocked.getData.mockImplementation((key) => {
+      if (key === 'organization') {
+        return mockOrganization;
+      } else {
+        throw new Error('Invalid getData key');
+      }
+    });
 
     jest.spyOn(PricingService, 'nextSpacePlanForResource').mockResolvedValue(null);
   });
@@ -122,8 +131,8 @@ describe('UpgradeBanner', () => {
 
     await waitFor(() => {
       expect(trackTargetedCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
-        organizationId: SPACE.organization.sys.id,
-        spaceId: SPACE.sys.id,
+        organizationId: mockOrganization.sys.id,
+        spaceId: mockSpace.sys.id,
       });
     });
   });
@@ -147,12 +156,12 @@ describe('UpgradeBanner', () => {
 
     await waitFor(() => {
       expect(trackTargetedCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.UPGRADE_SPACE_PLAN, {
-        organizationId: SPACE.organization.sys.id,
-        spaceId: SPACE.sys.id,
+        organizationId: mockOrganization.sys.id,
+        spaceId: mockSpace.sys.id,
       });
       expect(showUpgradeSpaceDialog).toBeCalledWith({
-        organizationId: SPACE.organization.sys.id,
-        space: SPACE,
+        organizationId: mockOrganization.sys.id,
+        space: mockSpace,
         onSubmit: expect.any(Function),
       });
     });
@@ -181,7 +190,8 @@ describe('UpgradeBanner', () => {
     });
 
     it('when it is not a master environment', async () => {
-      spaceContextMocked.isMasterEnvironment = false;
+      spaceContextMocked.isMasterEnvironment.mockReturnValue(false);
+
       await build();
 
       expect(screen.queryByTestId('upgrade-banner.container')).toBeNull();

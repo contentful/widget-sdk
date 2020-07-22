@@ -26,51 +26,55 @@ const styles = {
   }),
 };
 
-const openUpgradeModal = (space, onSubmit) =>
+const openUpgradeModal = (organization, space, onSubmit) =>
   showUpgradeSpaceDialog({
-    organizationId: space.organization.sys.id,
+    organizationId: organization.sys.id,
     space,
     onSubmit,
   });
 
-const handleOnUpgradeClick = (space, updateResource) => {
+const handleOnUpgradeClick = (organization, space, updateResource) => {
   trackTargetedCTAClick(CTA_EVENTS.UPGRADE_SPACE_PLAN, {
-    organizationId: space.organization.sys.id,
+    organizationId: organization.sys.id,
     spaceId: space.sys.id,
   });
 
-  openUpgradeModal(space, updateResource);
+  openUpgradeModal(organization, space, updateResource);
 };
-const handleUpgradeToEnterpriseClick = (space) => {
+const handleUpgradeToEnterpriseClick = (organization, space) => {
   trackTargetedCTAClick(CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
     spaceId: space.sys.id,
-    organizationId: space.organization.sys.id,
+    organizationId: organization.sys.id,
   });
 };
 
 export default function UpgradeBanner() {
   const spaceContext = getModule('spaceContext');
-  const space = spaceContext.getSpace();
+  const space = spaceContext.getSpace().data;
+  const organization = spaceContext.getData('organization');
+  const isMasterEnvironment = spaceContext.isMasterEnvironment();
 
   const updateResource = useCallback(async () => {
     // We only want to make these fetches if the user is an owner or admin && the organization is v2+
     // && it's the master environment
     if (
-      !isOwnerOrAdmin(space.organization) ||
-      isLegacyOrganization(space.organization) ||
-      !spaceContext.isMasterEnvironment
+      !isOwnerOrAdmin(organization) ||
+      isLegacyOrganization(organization) ||
+      !isMasterEnvironment
     ) {
-      return null;
+      return {
+        shouldShow: false,
+      };
     }
 
-    const endpoint = createOrganizationEndpoint(space.organization.sys.id);
+    const endpoint = createOrganizationEndpoint(organization.sys.id);
     const basePlan = getBasePlan(endpoint);
     const basePlanIsEnterprise = isEnterprisePlan(basePlan);
 
     // We don't want to trigger this for enterprise users
     if (basePlanIsEnterprise) {
       return {
-        basePlanIsEnterprise,
+        shouldShow: false,
       };
     }
 
@@ -85,8 +89,8 @@ export default function UpgradeBanner() {
 
     const hasNextSpacePlan = !!nextSpacePlan;
 
-    return { resource, hasNextSpacePlan, basePlanIsEnterprise };
-  }, [space, spaceContext.isMasterEnvironment]);
+    return { shouldShow: true, resource, hasNextSpacePlan, basePlanIsEnterprise };
+  }, [space, organization, isMasterEnvironment]);
 
   const { isLoading, error, data } = useAsync(updateResource);
 
@@ -95,7 +99,7 @@ export default function UpgradeBanner() {
   }
 
   // This is only rendered for non-enterprise customers
-  if (error || data?.basePlanIsEnterprise) {
+  if (error || !data.shouldShow) {
     return null;
   }
 
@@ -104,8 +108,7 @@ export default function UpgradeBanner() {
   const usage = get(resource, 'usage');
   const limit = getResourceLimits(resource).maximum;
 
-  const usagePercentage = usage / limit;
-  const shouldRenderBanner = usagePercentage >= WARNING_THRESHOLD;
+  const shouldRenderBanner = usage / limit >= WARNING_THRESHOLD;
 
   if (!shouldRenderBanner) {
     return null;
@@ -122,11 +125,11 @@ export default function UpgradeBanner() {
           impressionType={
             hasNextSpacePlan ? CTA_EVENTS.UPGRADE_SPACE_PLAN : CTA_EVENTS.UPGRADE_TO_ENTERPRISE
           }
-          meta={{ spaceId: space.sys.id, organizationId: space.organization.sys.id }}>
+          meta={{ spaceId: space.sys.id, organizationId: organization.sys.id }}>
           {hasNextSpacePlan ? (
             <TextLink
               testId="upgrade-banner.upgrade-space-link"
-              onClick={() => handleOnUpgradeClick(space, updateResource)}>
+              onClick={() => handleOnUpgradeClick(organization, space, updateResource)}>
               upgrade space
             </TextLink>
           ) : (
@@ -135,7 +138,7 @@ export default function UpgradeBanner() {
                 testId="upgrade-banner.upgrade-to-enterprise-link"
                 href={websiteUrl('contact/sales/')}
                 onClick={() => {
-                  handleUpgradeToEnterpriseClick(space);
+                  handleUpgradeToEnterpriseClick(organization, space);
                 }}>
                 talk to us
               </ExternalTextLink>{' '}

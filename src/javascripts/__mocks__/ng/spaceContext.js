@@ -52,8 +52,11 @@ export const getEnvironmentId = jest.fn();
 export const space = {
   getId: jest.fn(),
   endpoint: jest.fn(),
+  data: {},
 };
 
 export const memberships = {
   invite: jest.fn().mockResolvedValue({}),
 };
+
+export const isMasterEnvironment = jest.fn().mockReturnValue(true);
