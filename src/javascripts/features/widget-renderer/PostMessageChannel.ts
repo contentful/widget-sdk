@@ -1,3 +1,5 @@
+import { ChannelMethod } from './WidgetRenderer';
+
 interface IncomingMessage {
   data: {
     source: string;
@@ -106,9 +108,9 @@ export class PostMessageChannel {
     this.win.removeEventListener('message', this.messageListener);
   }
 
-  public registerHandler(method: string, handler: Handler) {
+  public registerHandler(method: ChannelMethod, handler: Handler) {
     if (this.handlers[method]) {
-      throw new RangeError(`Handler for ${method} already exists`)
+      throw new RangeError(`Handler for ${method} already exists`);
     }
 
     this.handlers[method] = handler;

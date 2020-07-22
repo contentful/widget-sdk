@@ -9,6 +9,7 @@ import {
   HostingType,
 } from './interfaces';
 import { PostMessageChannel } from './PostMessageChannel';
+import { makeCallSpaceMethodHandler } from './CallSpaceMethodHandler';
 
 const DISALLOWED_DOMAINS = ['app.contentful.com', 'creator.contentful.com'];
 
@@ -20,7 +21,7 @@ const SANDBOX = [
   'allow-downloads',
 ].join(' ');
 
-interface Props {
+export interface WidgetRendererProps {
   location: WidgetLocation;
   widget: Widget;
   parameters: {
@@ -79,7 +80,12 @@ interface Props {
   isFullSize?: boolean;
 }
 
-export class WidgetRenderer extends React.Component<Props, unknown> {
+export enum ChannelMethod {
+  CallSpaceMethod = 'callSpaceMethod',
+  SetHeight = 'setHeight',
+}
+
+export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown> {
   static defaultProps = {
     disallowedDomains: DISALLOWED_DOMAINS,
   };
@@ -210,11 +216,16 @@ export class WidgetRenderer extends React.Component<Props, unknown> {
     // Create a communication channel.
     this.channel = new PostMessageChannel(iframe, window);
 
-    this.channel.registerHandler('setHeight', (height) => {
+    this.channel.registerHandler(ChannelMethod.SetHeight, (height) => {
       if (!this.props.isFullSize) {
         iframe.setAttribute('height', height);
       }
-    })
+    });
+
+    this.channel.registerHandler(
+      ChannelMethod.CallSpaceMethod,
+      makeCallSpaceMethodHandler(this.props.apis.space)
+    );
 
     // Render the iframe content
     if (this.isSrc(widget)) {

@@ -10,6 +10,7 @@ import { createSpaceApi } from './createSpaceApi';
 import { createContentTypeApi } from './createContentTypeApi';
 import checkDependencies from 'widgets/bridges/checkDependencies';
 import makeExtensionAccessHandlers from 'widgets/bridges/makeExtensionAccessHandlers';
+import { createTagsRepo } from 'features/content-tags';
 
 /**
  * @typedef { import("contentful-ui-extensions-sdk").FieldAPI } FieldAPI
@@ -54,6 +55,7 @@ export default function createNewWidgetApi(dependencies) {
   const { editorInterface } = $scope.editorData;
   const contentTypeApi = createContentTypeApi({ contentType });
   const environmentIds = [spaceContext.getEnvironmentId(), ...spaceContext.getAliasesIds()];
+  const tagsRepo = createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId());
 
   const entry = createEntryApi({ contentType, locale, otDoc });
   const field = createFieldApi({ $scope }); // TODO: Get rid of $scope here, pass actual dependencies.
@@ -78,6 +80,9 @@ export default function createNewWidgetApi(dependencies) {
       initialContentTypes: spaceContext.publishedCTs.getAllBare(),
       pubSubClient: spaceContext.pubsubClient,
       environmentIds,
+      tagsRepo,
+      usersRepo: spaceContext.users,
+      spaceId: spaceContext.getId(),
     }),
     contentType: contentTypeApi,
     editorInterface,
@@ -117,9 +122,20 @@ function createSpaceScopedWidgetApi({
   initialContentTypes,
   pubSubClient,
   environmentIds,
+  tagsRepo,
+  usersRepo,
+  spaceId,
 }) {
   const cma = getBatchingApiClient(cmaOrBatchingApiClient);
-  const space = createSpaceApi({ cma, initialContentTypes, pubSubClient, environmentIds });
+  const space = createSpaceApi({
+    cma,
+    initialContentTypes,
+    pubSubClient,
+    environmentIds,
+    spaceId,
+    tagsRepo,
+    usersRepo,
+  });
   const navigator = createNavigatorApi({ cma });
   const locales = createLocalesApi();
   const dialogs = createDialogsApi();
