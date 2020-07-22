@@ -9,7 +9,7 @@ import {
   HostingType,
 } from './interfaces';
 import { PostMessageChannel } from './PostMessageChannel';
-import { makeCallSpaceMethodHandler } from './CallSpaceMethodHandler';
+import { makeCallSpaceMethodHandler, makeNotifyHandler } from './handlers';
 
 const DISALLOWED_DOMAINS = ['app.contentful.com', 'creator.contentful.com'];
 
@@ -83,6 +83,7 @@ export interface WidgetRendererProps {
 export enum ChannelMethod {
   CallSpaceMethod = 'callSpaceMethod',
   SetHeight = 'setHeight',
+  Notify = 'notify'
 }
 
 export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown> {
@@ -226,6 +227,11 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
       ChannelMethod.CallSpaceMethod,
       makeCallSpaceMethodHandler(this.props.apis.space)
     );
+
+    this.channel.registerHandler(
+      ChannelMethod.Notify,
+      makeNotifyHandler()
+    )
 
     // Render the iframe content
     if (this.isSrc(widget)) {

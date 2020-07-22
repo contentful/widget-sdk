@@ -1,4 +1,4 @@
-import { WidgetRendererProps } from './WidgetRenderer';
+import { WidgetRendererProps } from '../WidgetRenderer';
 
 export const makeCallSpaceMethodHandler = (
   spaceApi: WidgetRendererProps['apis']['space'],
