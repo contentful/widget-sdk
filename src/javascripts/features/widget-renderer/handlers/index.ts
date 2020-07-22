@@ -1,2 +1,2 @@
-export {makeCallSpaceMethodHandler} from './CallSpaceMethodHandler'
-export {makeNotifyHandler} from './NotifyHandler'
+export { makeCallSpaceMethodHandler } from './CallSpaceMethodHandler';
+export { makeNotifyHandler } from './NotifyHandler';
