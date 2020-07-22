@@ -102,11 +102,6 @@ export class WidgetRenderer extends React.Component<Props, unknown> {
   public render() {
     const style: Record<string, string> = { width: '100%' };
     if (this.props.isFullSize) {
-      // TODO: specific to iframe channel implementation, test when rewritten
-      // Setting `height` inline style overrides `height` element attribute
-      // which is used by the Extension IFrame Channel to handle height changes.
-      // For this reason we only define the property if in full size mode
-      // (impossible to resize the IFrame or use autoresizer in the SDK).
       style.height = '100%';
     }
 
@@ -214,6 +209,12 @@ export class WidgetRenderer extends React.Component<Props, unknown> {
 
     // Create a communication channel.
     this.channel = new PostMessageChannel(iframe, window);
+
+    this.channel.registerHandler('setHeight', (height) => {
+      if (!this.props.isFullSize) {
+        iframe.setAttribute('height', height);
+      }
+    })
 
     // Render the iframe content
     if (this.isSrc(widget)) {

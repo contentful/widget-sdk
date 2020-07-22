@@ -58,20 +58,9 @@ export class PostMessageChannel {
 
   private messageListener = ({ data }: IncomingMessage) => {
     // Make sure the message comes from the same channel.
-    if (data.source !== this.id) {
-      return;
+    if (data.source === this.id) {
+      this.handleIncomingMessage(data.method, data.id, data.params);
     }
-
-    // `setHeight` method acts directly on the `<iframe>` element
-    // of the widget being rendered. We can handle the message
-    // without a handler.
-    if (data.method === 'setHeight' && !this.destroyed && this.iframe) {
-      this.iframe.setAttribute('height', data.params[0]);
-      return;
-    }
-
-    // Finally, dispatch all the other messages to be handled.
-    this.dispatch(data.method, data.id, data.params);
   };
 
   /**
@@ -117,6 +106,14 @@ export class PostMessageChannel {
     this.win.removeEventListener('message', this.messageListener);
   }
 
+  public registerHandler(method: string, handler: Handler) {
+    if (this.handlers[method]) {
+      throw new RangeError(`Handler for ${method} already exists`)
+    }
+
+    this.handlers[method] = handler;
+  }
+
   private postMessage(message: OutgoingMessage) {
     if (this.destroyed) {
       return;
@@ -125,7 +122,7 @@ export class PostMessageChannel {
     this.iframe?.contentWindow?.postMessage(message, '*');
   }
 
-  private async dispatch(method: string, callId: string, args: any[] = []) {
+  private async handleIncomingMessage(method: string, callId: string, args: any[] = []) {
     const handler = this.handlers[method];
 
     if (!handler) {
