@@ -16,7 +16,7 @@ const ReleaseWorkBenchSideBar = ({
   handlePublication,
   handleValidation,
   handleScheduleCancel,
-  handleShowingScheduleActionDialog,
+  setShowScheduleActionDialog,
   isMasterEnvironment,
 }) => {
   const {
@@ -86,7 +86,7 @@ const ReleaseWorkBenchSideBar = ({
           className={styles.buttons}
           isFullWidth
           disabled={!entries.length && !assets.length}
-          onClick={handleShowingScheduleActionDialog}>
+          onClick={() => setShowScheduleActionDialog(true)}>
           Schedule
         </Button>
         <Button
@@ -111,7 +111,7 @@ ReleaseWorkBenchSideBar.propTypes = {
   handlePublication: PropTypes.func.isRequired,
   handleValidation: PropTypes.func.isRequired,
   handleScheduleCancel: PropTypes.func.isRequired,
-  handleShowingScheduleActionDialog: PropTypes.func.isRequired,
+  setShowScheduleActionDialog: PropTypes.func.isRequired,
   isMasterEnvironment: PropTypes.bool.isRequired,
 };
 
