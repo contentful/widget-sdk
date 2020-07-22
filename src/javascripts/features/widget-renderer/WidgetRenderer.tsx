@@ -9,7 +9,14 @@ import {
   HostingType,
 } from './interfaces';
 import { PostMessageChannel } from './PostMessageChannel';
-import { makeCallSpaceMethodHandler, makeNotifyHandler, DialogsAPI, makeOpenDialogHandler, makeNavigateToBulkEditorHandler } from './handlers';
+import {
+  makeCallSpaceMethodHandler,
+  makeNotifyHandler,
+  DialogsAPI,
+  makeOpenDialogHandler,
+  makeNavigateToBulkEditorHandler,
+  makeNavigateToContentEntityHandler, NavigatorAPI,
+} from './handlers';
 
 const DISALLOWED_DOMAINS = ['app.contentful.com', 'creator.contentful.com'];
 
@@ -76,7 +83,7 @@ export interface WidgetRendererProps {
       getValue: () => any;
     };
     dialogs?: DialogsAPI;
-    navigator?: any;
+    navigator?: NavigatorAPI;
   };
   disallowedDomains?: string[];
   isFullSize?: boolean;
@@ -87,7 +94,8 @@ export enum ChannelMethod {
   SetHeight = 'setHeight',
   Notify = 'notify',
   NavigateToBulkEditor = 'navigateToBulkEditor',
-  OpenDialog = 'openDialog'
+  NavigateToContentEntity = 'navigateToContentEntity',
+  OpenDialog = 'openDialog',
 }
 
 export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown> {
@@ -242,7 +250,12 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
     this.channel.registerHandler(
       ChannelMethod.NavigateToBulkEditor,
       makeNavigateToBulkEditorHandler(this.props.apis.navigator)
-    )
+    );
+
+    this.channel.registerHandler(
+      ChannelMethod.NavigateToContentEntity,
+      makeNavigateToContentEntityHandler(this.props.apis.navigator)
+    );
 
     // Render the iframe content
     if (this.isSrc(widget)) {
