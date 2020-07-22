@@ -4,6 +4,9 @@ import createResourceService from './ResourceService';
 import { resourceHumanNameMap, getResourceLimits } from 'utils/ResourceUtils';
 import { joinWithAnd } from 'utils/StringUtils';
 
+// The four resource types that we care about with respect to this service.
+//
+// We don't care about roles, users, etc.
 export const SPACE_PLAN_RESOURCE_TYPES = {
   ENVIRONMENT: 'environment',
   CONTENT_TYPE: 'content_type',
@@ -17,6 +20,12 @@ const ERROR_THRESHOLD = 1;
 // Threshold for usage limit displaying a warning (90% usage, e.g. near limit)
 export const WARNING_THRESHOLD = 0.9;
 
+/**
+ * Given all rate plan charges for a rate plan or product rate plan, return the plan charge given by `resourceType`
+ * @param  {Array[RatePlanCharge]} ratePlanCharges The rate plan, or product rate plan, charges
+ * @param  {String} resourceType    One of SPACE_PLAN_RESOURCE_TYPES
+ * @return {RatePlanCharge}
+ */
 function getRatePlanChargeFor(ratePlanCharges, resourceType) {
   // We currently have to look at the name of the rate plan charge, as there's no "internal name"
   // for us to use. Since the name may be capitalized differently, we lowercase it here (and in the
@@ -29,72 +38,92 @@ function getRatePlanChargeFor(ratePlanCharges, resourceType) {
   return planCharge;
 }
 
+/**
+ * Determines which product rate plans for the current organization are considered valid.
+ *
+ * A product rate plan is considered valid if it meets the following criteria:
+ * 1. It has no `unavailabilityReasons`
+ * 2. The plan limits for each SPACE_PLAN_RESOURCE_TYPE are higher than the current usage
+ * @param  {String} orgId
+ * @param  {String} spaceId
+ * @param  {Array[SpaceResource]} spaceResources
+ * @return {Array[ProductRatePlan]}                Array of possible rate plans
+ */
 async function getValidSpacePlans(orgId, spaceId, spaceResources) {
   const endpoint = createOrganizationEndpoint(orgId);
 
   const spaceRatePlans = await getSpaceRatePlans(endpoint, spaceId);
 
   const validSpaceRatePlans = spaceRatePlans.filter((plan) => {
-    // Filter out any plans that have unavailability reasons
+    // If a plan has any unavailability reasons, it is not valid
     if (plan.unavailabilityReasons && plan.unavailabilityReasons.length > 0) {
       return false;
     }
 
-    // Filter out any plans for which the resource usage is >= to the limits of the plan resource
     const { productRatePlanCharges } = plan;
 
-    const validViaUsage = Object.values(SPACE_PLAN_RESOURCE_TYPES).reduce((memo, type) => {
+    // If a plan has any limit that's less than the current usage, it's not valid
+    return Object.values(SPACE_PLAN_RESOURCE_TYPES).reduce((memo, type) => {
+      // If it's already invalid, then no reason to check anything else
       if (memo === false) {
         return false;
       }
 
       const spaceResource = spaceResources.find((r) => r.sys.id === type);
 
-      // If we somehow didn't get the resource on the API, then we can assume this
+      // If we somehow didn't get the resource on the API, ignore and continue
       if (!spaceResource) {
         return memo;
       }
 
       const planCharge = getRatePlanChargeFor(productRatePlanCharges, type);
 
+      // If the plan charge couldn't be found, ignore and continue
       if (!planCharge) {
         return memo;
       }
 
-      // These resources don't have tiers, so we get the first tier's ending unit to see what the
-      // actual limit would be
+      // Charges are fundamentally based on tiers, but for these resources, we don't need to
+      // worry about it. Instead, we can simply look at the first tier's endingUnit (the end
+      // value of the tier) to get what the new limit would be.
       const planResourceLimit = planCharge.tiers[0].endingUnit;
       const spaceResourceUsage = spaceResource.usage;
 
-      // A plan is also not valid unless its new limit is greater (not gt equal) to the current space usage
+      // Note: This is *NOT* >= on purpose. Plans are only valid if the new limit would be greater than, not greater
+      // than or equal, to the current resource usage
       return planResourceLimit > spaceResourceUsage;
     }, true);
-
-    if (!validViaUsage) {
-      return false;
-    }
-
-    return true;
   });
 
   return validSpaceRatePlans;
 }
 
+/**
+ * Determines if a given space resource usage is above the error threshold
+ * @param  {SpaceResource} resource
+ * @return {Boolean}
+ */
 function usageAtErrorThreshold(resource) {
   return resource.usage / getResourceLimits(resource).maximum >= ERROR_THRESHOLD;
 }
 
+/**
+ * Determines if a given space resource usage is above the warning threshold
+ * @param  {SpaceResource} resource
+ * @return {Boolean}
+ */
 function usageAtWarningThreshold(resource) {
   return resource.usage / getResourceLimits(resource).maximum >= WARNING_THRESHOLD;
 }
 
+/**
+ * Given a set of resources, determines if a space plan should be recommended.
+ * @param  {Array[SpaceResource]} resources
+ * @return {Boolean}           If we should recommend a plan based on current resource usage
+ */
 function shouldRecommendPlan(resources) {
-  // We shouldn't recommend a plan if the user isn't 'near' (also hasn't reached) their limits
-  return Object.values(SPACE_PLAN_RESOURCE_TYPES).reduce((shouldRecommend, type) => {
-    if (shouldRecommend) {
-      return true;
-    }
-
+  // We should only recommend a plan if there are any resources near or reached the limit
+  return !!Object.values(SPACE_PLAN_RESOURCE_TYPES).find((type) => {
     const resource = resources.find((r) => r.sys.id === type);
 
     if (!resource) {
@@ -103,16 +132,16 @@ function shouldRecommendPlan(resources) {
     }
 
     return usageAtErrorThreshold(resource) || usageAtWarningThreshold(resource);
-  }, false);
+  });
 }
 
-/*
-  Returns the next "possible" space plan that a given space (`spaceId`) could change into.
-
-  In this case, "possible" means that the space plan that is available via the API, as well
-  as having limits that are >= various resource usages.
+/**
+ * Get the current recommended space plan for the given space, based on its resource usage
+ *
+ * @param  {String} orgId
+ * @param  {String} spaceId
+ * @return {ProductRatePlan?}         Recommended product rate plan, or null
  */
-
 export async function recommendedSpacePlan(orgId, spaceId) {
   const spaceResources = await createResourceService(spaceId, 'space').getAll();
 
@@ -130,13 +159,20 @@ export async function recommendedSpacePlan(orgId, spaceId) {
   return validSpaceRatePlans[0];
 }
 
+/**
+ * Return a text explanation why a space plan is being recommended, based on the current
+ * space resource usage.
+ *
+ * @param  {Array[Resource]} resources All space resources
+ * @return {String?}         The reason, or null
+ */
 export function recommendationReasonText(resources) {
   // TODO: This function takes resources, but as a user of this service, you don't really need to
   // "interface" with resources. For now this is ok (the only consumer of this service is the space
   // wizard, which inherently has the current space resources already when recommending) but if this
   // becomes problematic we can refactor the interface of this/these functions, or service in general.
   if (!shouldRecommendPlan(resources)) {
-    return '';
+    return null;
   }
 
   const resourcesDetails = Object.values(SPACE_PLAN_RESOURCE_TYPES).reduce(
@@ -181,9 +217,14 @@ export function recommendationReasonText(resources) {
   return resultText;
 }
 
-/*
-  In addition to the "possible" plans needing to be valid, they must also have greater
-  plan limits for given resource types than the current space rate plan.
+/**
+ * Return the next valid space plan that additionally has limits for the given `resourceType`
+ * that are greater than the current space plan limits.
+ *
+ * @param  {String} orgId
+ * @param  {String} spaceId
+ * @param  {Enum} resourceType One of `SPACE_PLAN_RESOURCE_TYPE`
+ * @return {ProductRatePlan?}   Next product rate plan, or null
  */
 export async function nextSpacePlanForResource(orgId, spaceId, resourceType) {
   const spaceResources = await createResourceService(spaceId, 'space').getAll();
@@ -204,11 +245,12 @@ export async function nextSpacePlanForResource(orgId, spaceId, resourceType) {
 
   // This happens here, so that we get a consistent shape for the result of this function
   // rather than potentially missing `currentPlanLimit`
-
   const nextSpacePlan = validSpaceRatePlans.find((plan) => {
     const planCharge = getRatePlanChargeFor(plan.productRatePlanCharges, resourceType);
     const limit = planCharge?.tiers?.[0]?.endingUnit || 0;
 
+    // Similar to `getValidSpacePlans`, the limit must be greater than, not greater than or equal,
+    // to the current plan limit.
     return limit > currentPlanLimit;
   });
 

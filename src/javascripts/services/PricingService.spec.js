@@ -172,6 +172,15 @@ describe('PricingService', () => {
   });
 
   describe('explanationReasonText', () => {
+    it('should return null if no resources are near or reached their limit', () => {
+      const resources = [
+        Fake.SpaceResource(1, 20, PricingService.SPACE_PLAN_RESOURCE_TYPES.RECORD),
+        Fake.SpaceResource(2, 20, PricingService.SPACE_PLAN_RESOURCE_TYPES.LOCALE),
+      ];
+
+      expect(PricingService.recommendationReasonText(resources)).toBeNull();
+    });
+
     it('should return copy when all given resources have reached their limit', () => {
       const resources = [
         Fake.SpaceResource(20, 20, PricingService.SPACE_PLAN_RESOURCE_TYPES.RECORD),

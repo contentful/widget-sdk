@@ -88,13 +88,14 @@ export default function UpgradeBanner() {
     return { resource, hasNextSpacePlan, basePlanIsEnterprise };
   }, [space, spaceContext.isMasterEnvironment]);
 
-  const { isLoading, data } = useAsync(updateResource);
+  const { isLoading, error, data } = useAsync(updateResource);
 
   if (isLoading) {
     return <div data-test-id="upgrade-banner.is-loading"></div>;
   }
 
-  if (!data || data?.basePlanIsEnterprise) {
+  // This is only rendered for non-enterprise customers
+  if (error || data?.basePlanIsEnterprise) {
     return null;
   }
 

@@ -8,7 +8,7 @@ import { Note } from '@contentful/forma-36-react-components';
 export default function ExplainRecommendation({ recommendedPlan, resources }) {
   const explanation = recommendationReasonText(resources);
 
-  if (explanation === '') {
+  if (!explanation) {
     return null;
   }
 
