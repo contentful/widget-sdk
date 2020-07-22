@@ -9,8 +9,7 @@ import {
   HostingType,
 } from './interfaces';
 import { PostMessageChannel } from './PostMessageChannel';
-import { makeCallSpaceMethodHandler, makeNotifyHandler } from './handlers';
-import { makeOpenDialogHandler, DialogsAPI } from './handlers/OpenDialogHandler';
+import { makeCallSpaceMethodHandler, makeNotifyHandler, DialogsAPI, makeOpenDialogHandler, makeNavigateToBulkEditorHandler } from './handlers';
 
 const DISALLOWED_DOMAINS = ['app.contentful.com', 'creator.contentful.com'];
 
@@ -77,6 +76,7 @@ export interface WidgetRendererProps {
       getValue: () => any;
     };
     dialogs?: DialogsAPI;
+    navigator?: any;
   };
   disallowedDomains?: string[];
   isFullSize?: boolean;
@@ -86,7 +86,8 @@ export enum ChannelMethod {
   CallSpaceMethod = 'callSpaceMethod',
   SetHeight = 'setHeight',
   Notify = 'notify',
-  OpenDialog = 'openDialog',
+  NavigateToBulkEditor = 'navigateToBulkEditor',
+  OpenDialog = 'openDialog'
 }
 
 export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown> {
@@ -237,6 +238,11 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
       ChannelMethod.OpenDialog,
       makeOpenDialogHandler(this.props.apis.dialogs)
     );
+
+    this.channel.registerHandler(
+      ChannelMethod.NavigateToBulkEditor,
+      makeNavigateToBulkEditorHandler(this.props.apis.navigator)
+    )
 
     // Render the iframe content
     if (this.isSrc(widget)) {
