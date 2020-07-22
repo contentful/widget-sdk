@@ -20,7 +20,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import StateLink from 'app/common/StateLink';
-import { formatQuery } from './QueryBuilder';
+import { formatQuery, formatFilterValues } from './QueryBuilder';
 import ResolveLinks from 'data/LinkResolver';
 import { UserListFilters } from './UserListFilters';
 import Pagination from 'app/common/Pagination';
@@ -126,8 +126,9 @@ export function UsersList({ orgId, spaceRoles, teams, spaces, hasSsoEnabled, has
   const fetchUsers = useCallback(async () => {
     const orgEndpoint = createOrganizationEndpoint(orgId);
     const includePaths = ['sys.user'];
+    const filterQuery = formatFilterValues(filterValues);
     const query = {
-      ...filterValues,
+      ...filterQuery,
       query: searchTerm,
       include: includePaths,
       skip: pagination.skip,

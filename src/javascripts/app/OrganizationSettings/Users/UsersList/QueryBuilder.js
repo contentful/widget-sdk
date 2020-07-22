@@ -1,4 +1,4 @@
-import { isNil } from 'lodash';
+import { isNil, isObject } from 'lodash';
 
 /**
  * Transforms a list of filter objects into a query string
@@ -25,4 +25,18 @@ export function formatQuery(filters = []) {
 
       return memo;
     }, {});
+}
+
+export function formatFilterValues(filterValues) {
+  const filterQuery = {};
+  Object.keys(filterValues).forEach((key) => {
+    const value = filterValues[key];
+    if (isObject(value)) {
+      const operator = Object.keys(value)[0];
+      filterQuery[`${key}[${operator}]`] = value[operator];
+    } else {
+      filterQuery[key] = value;
+    }
+  });
+  return filterQuery;
 }

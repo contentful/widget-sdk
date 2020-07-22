@@ -1,5 +1,5 @@
 import { orgRoles } from 'utils/MembershipUtils';
-import { set, cloneDeep, omit, isEmpty } from 'lodash';
+import { set, cloneDeep, omit, isEmpty, isObject } from 'lodash';
 import {
   getRoleOptions,
   getSpaceRoleOptions,
@@ -87,7 +87,7 @@ const normalizeFilterValues = (filterValues) => {
     const [id] = Object.entries(idMap).find(([_, filterKeys]) => filterKeys.includes(key)) || [];
     if (id) {
       set(memo, [id, 'key'], key);
-      set(memo, [id, 'value'], value);
+      set(memo, [id, 'value'], isObject(value) ? Object.values(value)[0] : value);
     }
 
     return memo;

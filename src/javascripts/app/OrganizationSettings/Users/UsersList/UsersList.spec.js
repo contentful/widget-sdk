@@ -8,7 +8,7 @@ import cleanupNotifications from 'test/helpers/cleanupNotifications';
 import { removeMembership, getMemberships } from 'access_control/OrganizationMembershipRepository';
 import { LocationStateContext, LocationDispatchContext } from 'core/services/LocationContext';
 
-const filters = generateFilterDefinitions({});
+const filters = generateFilterDefinitions({ hasSsoEnabled: true });
 
 const mockOrg = fake.Organization();
 const user1 = fake.User({
@@ -59,6 +59,9 @@ jest.mock('account/pricing/PricingDataProvider', () => {
 jest.useFakeTimers();
 
 const locationValueWithSearch = { search: '?order=-sys.createdAt&sys.status=pending' };
+const locationValueWithSSO = {
+  search: '?order=-sys.createdAt&sys.sso.lastSignInAt%5Bexists%5D=true',
+};
 const updateLocation = jest.fn();
 
 async function build(locationValue = {}) {
@@ -70,7 +73,7 @@ async function build(locationValue = {}) {
           spaceRoles={[spaceRoleOne, spaceRoleTwo]}
           spaces={[spaceOne, spaceTwo]}
           teams={[]}
-          hasSsoEnabled={false}
+          hasSsoEnabled={true}
           hasTeamsFeature={false}
         />
       </LocationDispatchContext.Provider>
@@ -125,6 +128,33 @@ describe('UsersList', () => {
     expect(getMemberships).toHaveBeenCalledWith(mockOrgEndpoint, {
       order: '-sys.createdAt',
       'sys.status': 'pending',
+      query: '',
+      include: ['sys.user'],
+      skip: 0,
+      limit: 10,
+    });
+    await screen.findAllByTestId('organization-membership-list-row');
+  });
+
+  it('should call updateLocation and getMemberships with correct args when filters with operator change', async () => {
+    await build(locationValueWithSSO);
+
+    //user sets SSO filter to Has logged in
+    const selectEl = screen.getAllByTestId('search-filter.options');
+    fireEvent.change(selectEl[5], {
+      target: {
+        value: 'true',
+      },
+    });
+
+    expect(updateLocation).toHaveBeenCalledWith({
+      order: '-sys.createdAt',
+      'sys.sso.lastSignInAt[exists]': 'true',
+    });
+
+    expect(getMemberships).toHaveBeenCalledWith(mockOrgEndpoint, {
+      order: '-sys.createdAt',
+      'sys.sso.lastSignInAt[exists]': 'true',
       query: '',
       include: ['sys.user'],
       skip: 0,
