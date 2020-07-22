@@ -1,8 +1,8 @@
-import {Notification} from "@contentful/forma-36-react-components";
+import { Notification } from '@contentful/forma-36-react-components';
 
 interface NotifyPayload {
-  type: 'success' | 'error',
-  message: string
+  type: 'success' | 'error';
+  message: string;
 }
 
 export const makeNotifyHandler = () => {
@@ -13,4 +13,4 @@ export const makeNotifyHandler = () => {
       throw new Error('Invalid notification type.');
     }
   };
-}
+};
