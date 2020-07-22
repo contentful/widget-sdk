@@ -155,6 +155,7 @@ describe('Retry', () => {
         endpoint: 'bar/foo',
         status: 200,
         method: 'POST',
+        version: 1,
       });
     });
 
@@ -168,6 +169,7 @@ describe('Retry', () => {
         endpoint: 'foo/foo',
         status: 404,
         method: 'DELETE',
+        version: 1,
       });
     });
 
@@ -178,6 +180,7 @@ describe('Retry', () => {
         endpoint: 'bar/foo',
         status: 200,
         method: 'POST',
+        version: 1,
       });
     });
 
@@ -191,6 +194,7 @@ describe('Retry', () => {
         endpoint: 'foo/foo',
         status: 404,
         method: 'DELETE',
+        version: 1,
       });
     });
   });
