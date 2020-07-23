@@ -7,7 +7,7 @@ export {
   makeNavigateToPageHandler,
 } from './NavigateToHandler';
 export { makeCheckAccessHandler } from './CheckAccessHandler';
-export { makeSetValueHandler, makeRemoveValueHandler } from './FieldHandler';
+export { makeSetValueHandler, makeRemoveValueHandler, makeSetInvalidHandler } from './FieldHandler';
 
 export type DialogsAPI = import('./OpenDialogHandler').DialogsAPI;
 export type NavigatorAPI = import('./NavigateToHandler').NavigatorAPI;

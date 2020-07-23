@@ -31,3 +31,13 @@ export const makeRemoveValueHandler = (fieldApi: WidgetRendererProps['apis']['fi
     throw Object.assign(new TypeError('Unmatched (id, locale) pair'), { data: { id, locale } });
   };
 };
+
+export const makeSetInvalidHandler = (fieldApi: WidgetRendererProps['apis']['field']) => {
+  return async function (isInvalid: boolean, locale: string) {
+    if (locale === fieldApi?.locale) {
+      return fieldApi?.setInvalid(isInvalid);
+    }
+
+    throw Object.assign(new TypeError('Unmatched locale'), { data: { locale } });
+  };
+};

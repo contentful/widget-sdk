@@ -13,6 +13,7 @@ import {
   AccessAPI,
   DialogsAPI,
   NavigatorAPI,
+  FieldAPI,
   makeCallSpaceMethodHandler,
   makeCheckAccessHandler,
   makeNavigateToBulkEditorHandler,
@@ -20,9 +21,9 @@ import {
   makeNavigateToPageHandler,
   makeNotifyHandler,
   makeOpenDialogHandler,
-  FieldAPI,
-  makeSetValueHandler,
   makeRemoveValueHandler,
+  makeSetInvalidHandler,
+  makeSetValueHandler,
 } from './handlers';
 
 const DISALLOWED_DOMAINS = ['app.contentful.com', 'creator.contentful.com'];
@@ -101,6 +102,7 @@ export enum ChannelMethod {
   CheckAccess = 'checkAccess',
   SetValue = 'setValue',
   RemoveValue = 'removeValue',
+  SetInvalid = 'setInvalid',
 }
 
 export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown> {
@@ -288,6 +290,11 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
     this.channel.registerHandler(
       ChannelMethod.RemoveValue,
       makeRemoveValueHandler(this.props.apis.field)
+    );
+
+    this.channel.registerHandler(
+      ChannelMethod.SetInvalid,
+      makeSetInvalidHandler(this.props.apis.field)
     );
 
     // Render the iframe content
