@@ -15,6 +15,7 @@ import EntitiesView from '../EntitiesView';
 import useListView from 'app/ContentList/Search/useListView';
 import { getModule } from 'core/NgRegistry';
 import FileSizeLimitWarning from './FileSizeLimitWarning';
+import { shouldHide } from 'access_control/AccessChecker';
 
 const trackEnforcedButtonClick = (err) => {
   // If we get reason(s), that means an enforcement is present
@@ -82,16 +83,19 @@ const Assets = ({ goTo }) => {
           spaceId={spaceContext.space.data.sys.id}
         />
       )}
-      renderAddEntityActions={({ updateEntities }, className) => (
-        <AddAssetButton
-          className={className}
-          testId="add-asset-menu-trigger"
-          canUploadMultipleAssets={canUploadMultipleAssets}
-          createMultipleAssets={createMultipleAssets(updateEntities)}
-          newAsset={newAsset(goTo)}
-          disabled={shouldDisable(Action.CREATE, entityType)}
-        />
-      )}
+      renderAddEntityActions={({ updateEntities }, className) => {
+        if (shouldHide('create', entityType)) return null;
+        return (
+          <AddAssetButton
+            className={className}
+            testId="add-asset-menu-trigger"
+            canUploadMultipleAssets={canUploadMultipleAssets}
+            createMultipleAssets={createMultipleAssets(updateEntities)}
+            newAsset={newAsset(goTo)}
+            disabled={shouldDisable(Action.CREATE, entityType)}
+          />
+        );
+      }}
       renderEmptyState={({ updateEntities }, className) => (
         <AssetsEmptyState
           className={className}

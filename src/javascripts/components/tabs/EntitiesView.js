@@ -8,7 +8,6 @@ import Search from 'app/ContentList/Search/View';
 import SavedViewsSidebar from 'app/ContentList/SavedViews/Sidebar';
 import { css } from 'emotion';
 import useSearchController from 'app/ContentList/Search/useSearchController';
-import { shouldHide } from 'access_control/AccessChecker';
 import usePaginator from 'app/ContentList/Search/usePaginator';
 import { Paginator } from 'core/components/Paginator';
 import RecordsResourceUsage from 'components/RecordsResourceUsage';
@@ -164,9 +163,7 @@ const EntitiesView = ({
                   users={users}
                 />
                 <div id="saved-views-link-portal-entry" />
-                {!showNoEntitiesAdvice &&
-                  !shouldHide('create', entityType) &&
-                  renderAddEntityActions(renderPropArgs, styles.addButton)}
+                {!showNoEntitiesAdvice && renderAddEntityActions(renderPropArgs, styles.addButton)}
               </div>
             }
           />
