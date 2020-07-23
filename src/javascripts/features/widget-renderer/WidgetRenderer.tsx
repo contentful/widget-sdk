@@ -96,6 +96,7 @@ export enum ChannelMethod {
   SetHeight = 'setHeight',
   Notify = 'notify',
   NavigateToPage = 'navigateToPage',
+  NavigateToPageExtension = 'navigateToPageExtension',
   NavigateToBulkEditor = 'navigateToBulkEditor',
   NavigateToContentEntity = 'navigateToContentEntity',
   OpenDialog = 'openDialog',
@@ -262,6 +263,14 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
 
     this.channel.registerHandler(
       ChannelMethod.NavigateToPage,
+      makeNavigateToPageHandler(this.props.apis.navigator)
+    );
+
+    // This is not a mistake. NavigateToPage and NavigateToPageExtension have the same handler
+    // who understands internally what to do. Reason for this is that UIE SDK uses for both the
+    // events the same 'navigateToPage', but in the bridge we cater for these two different events
+    this.channel.registerHandler(
+      ChannelMethod.NavigateToPageExtension,
       makeNavigateToPageHandler(this.props.apis.navigator)
     );
 
