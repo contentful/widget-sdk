@@ -2,6 +2,7 @@
 
 import makeRequest from './Request';
 import wrapWithAuth from 'data/Request/Auth';
+import { tracingHeaders } from 'i13n/BackendTracing';
 
 const mockAuth = {};
 const mockWithAuth = (_, fn) => (...args) => fn(...args);
@@ -12,6 +13,7 @@ jest.mock('data/Request/Utils', () => ({
   getEndpoint: jest.fn(),
   getCurrentState: jest.fn(),
 }));
+jest.mock('i13n/BackendTracing', () => ({ tracingHeaders: jest.fn() }));
 
 wrapWithAuth.mockImplementation(mockWithAuth);
 
@@ -60,6 +62,22 @@ describe('Request', () => {
           Accept: 'application/json, text/plain, */*',
           'Content-Type': 'application/vnd.contentful.management.v1+json',
           'X-Contentful-User-Agent': expect.any(String),
+        },
+      })
+    );
+  });
+
+  it('sends tracing headers when present', async () => {
+    tracingHeaders.mockReturnValue({ 'cf-trace': 'zd-1234' });
+    await request({ url: 'http://foo.com' });
+    expect(window.fetch).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        headers: {
+          Accept: 'application/json, text/plain, */*',
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+          'X-Contentful-User-Agent': expect.any(String),
+          'cf-trace': 'zd-1234',
         },
       })
     );
