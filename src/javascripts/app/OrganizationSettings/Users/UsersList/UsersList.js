@@ -98,12 +98,6 @@ export function UsersList({ orgId, spaceRoles, teams, spaces, hasSsoEnabled, has
   const [searchTerm, setSearchTerm] = useState('');
   const [filterValues, setFilterValues] = useState(defaultFilterValues);
 
-  useEffect(() => {
-    const queryValues = locationValue.search ? qs.parse(locationValue.search.slice(1)) : {};
-    setFilterValues(getFilterValuesFromQuery(queryValues));
-    setSearchTerm(getSearchTermFromQuery(queryValues));
-  }, [locationValue]);
-
   const filters = generateFilterDefinitions({
     spaceRoles,
     spaces,
@@ -122,6 +116,19 @@ export function UsersList({ orgId, spaceRoles, teams, spaces, hasSsoEnabled, has
   };
 
   const [{ users, pagination }, dispatch] = useReducer(reducer, initialState);
+
+  useEffect(() => {
+    const queryValues = locationValue.search ? qs.parse(locationValue.search.slice(1)) : {};
+    setFilterValues(getFilterValuesFromQuery(queryValues));
+    setSearchTerm(getSearchTermFromQuery(queryValues));
+    dispatch({
+      type: 'PAGINATION_CHANGED',
+      payload: {
+        skip: 0,
+        limit: 10,
+      },
+    });
+  }, [locationValue, dispatch]);
 
   const fetchUsers = useCallback(async () => {
     const orgEndpoint = createOrganizationEndpoint(orgId);
