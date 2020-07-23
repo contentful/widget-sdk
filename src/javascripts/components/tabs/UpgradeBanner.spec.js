@@ -1,18 +1,21 @@
 import React from 'react';
 import { render, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
-import UpgradeBanner from './UpgradeBanner';
+import userEvent from '@testing-library/user-event';
 import * as fake from 'test/helpers/fakeFactory';
 
 import { getResourceLimits, isLegacyOrganization } from 'utils/ResourceUtils';
 import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService';
-import { getSingleSpacePlan, isEnterprisePlan } from 'account/pricing/PricingDataProvider';
+import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import * as trackCTA from 'analytics/trackCTA';
-import userEvent from '@testing-library/user-event';
 import * as spaceContextMocked from 'ng/spaceContext';
+import * as PricingService from 'services/PricingService';
 
-const SPACE = fake.Space();
+import UpgradeBanner from './UpgradeBanner';
+
+const mockSpace = fake.Space();
+const mockOrganization = fake.Organization();
 
 jest.mock('analytics/Analytics', () => ({
   track: jest.fn(),
@@ -20,7 +23,7 @@ jest.mock('analytics/Analytics', () => ({
 
 jest.mock('account/pricing/PricingDataProvider', () => ({
   isEnterprisePlan: jest.fn(),
-  getSingleSpacePlan: jest.fn(),
+  getBasePlan: jest.fn(),
 }));
 
 jest.mock('services/ChangeSpaceService', () => ({
@@ -75,9 +78,22 @@ describe('UpgradeBanner', () => {
     isOwnerOrAdmin.mockReturnValue(true);
     isLegacyOrganization.mockReturnValue(false);
     isEnterprisePlan.mockReturnValue(false);
-    getSingleSpacePlan.mockResolvedValue({ name: 'Large' });
-    spaceContextMocked.getSpace.mockReturnValue(SPACE);
-    spaceContextMocked.isMasterEnvironment = true;
+    spaceContextMocked.isMasterEnvironment.mockReturnValue(true);
+
+    spaceContextMocked.getSpace.mockReturnValue({ data: mockSpace });
+    spaceContextMocked.getData.mockImplementation((key) => {
+      if (key === 'organization') {
+        return mockOrganization;
+      } else {
+        throw new Error('Invalid getData key');
+      }
+    });
+
+    jest.spyOn(PricingService, 'nextSpacePlanForResource').mockResolvedValue(null);
+  });
+
+  afterEach(() => {
+    PricingService.nextSpacePlanForResource.mockRestore();
   });
 
   it('should load an empty div when fetching initial data', async () => {
@@ -99,7 +115,7 @@ describe('UpgradeBanner', () => {
     );
   });
 
-  it('should render the link to contact sales about upgrading to enterprise when a large space', async () => {
+  it('should render the link to contact sales about upgrading to enterprise when there are no more plans', async () => {
     await build();
 
     expect(screen.queryByTestId('upgrade-banner.upgrade-space-link')).toBeNull();
@@ -115,14 +131,17 @@ describe('UpgradeBanner', () => {
 
     await waitFor(() => {
       expect(trackTargetedCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
-        organizationId: SPACE.organization.sys.id,
-        spaceId: SPACE.sys.id,
+        organizationId: mockOrganization.sys.id,
+        spaceId: mockSpace.sys.id,
       });
     });
   });
 
-  it('should render the link to upgrade the current space when it is not a large space', async () => {
-    getSingleSpacePlan.mockResolvedValue({ name: 'notLarge' });
+  it('should render the link to upgrade the current space when there is a next space plan available', async () => {
+    PricingService.nextSpacePlanForResource.mockResolvedValueOnce({
+      name: 'Large',
+    });
+
     await build();
 
     expect(screen.queryByTestId('upgrade-banner.upgrade-to-enterprise-link')).toBeNull();
@@ -137,12 +156,12 @@ describe('UpgradeBanner', () => {
 
     await waitFor(() => {
       expect(trackTargetedCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.UPGRADE_SPACE_PLAN, {
-        organizationId: SPACE.organization.sys.id,
-        spaceId: SPACE.sys.id,
+        organizationId: mockOrganization.sys.id,
+        spaceId: mockSpace.sys.id,
       });
       expect(showUpgradeSpaceDialog).toBeCalledWith({
-        organizationId: SPACE.organization.sys.id,
-        space: SPACE,
+        organizationId: mockOrganization.sys.id,
+        space: mockSpace,
         onSubmit: expect.any(Function),
       });
     });
@@ -171,7 +190,8 @@ describe('UpgradeBanner', () => {
     });
 
     it('when it is not a master environment', async () => {
-      spaceContextMocked.isMasterEnvironment = false;
+      spaceContextMocked.isMasterEnvironment.mockReturnValue(false);
+
       await build();
 
       expect(screen.queryByTestId('upgrade-banner.container')).toBeNull();

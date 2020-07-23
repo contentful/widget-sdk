@@ -90,6 +90,7 @@ describe('features/locales-management/LocalesListSidebar', () => {
           allowedToEnforceLimits: true,
           insideMasterEnv: false,
           isOrgOwnerOrAdmin: true,
+          hasNextSpacePlan: true,
           localeResource: {
             usage: 2,
             limits: {
@@ -107,7 +108,7 @@ describe('features/locales-management/LocalesListSidebar', () => {
         expect(usagesSection).toHaveTextContent('Upgrade the space to add more.');
       });
 
-      it('shows CTA button to talk to support about upgrading to enterprise when a large plan and limit is reached', () => {
+      it('shows CTA button to talk to support about upgrading to enterprise when there are no more space plans and limit is reached', () => {
         const {
           documentationSection,
           addLocaleButton,
@@ -117,7 +118,7 @@ describe('features/locales-management/LocalesListSidebar', () => {
           allowedToEnforceLimits: true,
           insideMasterEnv: false,
           isOrgOwnerOrAdmin: true,
-          isLargePlan: true,
+          hasNextSpacePlan: false,
           localeResource: {
             usage: 2,
             limits: {
@@ -186,6 +187,7 @@ describe('features/locales-management/LocalesListSidebar', () => {
         const { documentationSection, addLocaleButton, usagesSection } = renderComponent({
           insideMasterEnv: true,
           isOrgOwnerOrAdmin: true,
+          hasNextSpacePlan: true,
           localeResource: {
             usage: 2,
             limits: {
@@ -207,6 +209,7 @@ describe('features/locales-management/LocalesListSidebar', () => {
         const { documentationSection, addLocaleButton, usagesSection } = renderComponent({
           insideMasterEnv: true,
           isOrgOwnerOrAdmin: true,
+          hasNextSpacePlan: true,
           localeResource: {
             usage: 1,
             limits: {

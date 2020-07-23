@@ -23,14 +23,13 @@ import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { css } from 'emotion';
 import ExternalTextLink from 'app/common/ExternalTextLink';
-import createResourceService from 'services/ResourceService';
-import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
-import { isLegacyOrganization } from 'utils/ResourceUtils';
+import { isLegacyOrganization, getResourceLimits } from 'utils/ResourceUtils';
 import { PRICING_2020_RELEASED } from 'featureFlags';
 import { getVariation } from 'LaunchDarkly';
 import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
+import * as PricingService from 'services/PricingService';
+import createResourceService from 'services/ResourceService';
 
 import { websiteUrl } from 'Config';
 import { getModule } from 'core/NgRegistry';
@@ -68,7 +67,6 @@ export class ContentTypesPage extends React.Component {
   async componentDidMount() {
     const spaceContext = getModule('spaceContext');
     const { spaceId } = this.props;
-    const endpoint = createOrganizationEndpoint(spaceContext.organization.sys.id);
 
     // This is written so that the important data (contentTypes) only would wait for a max of 2 seconds for the
     // less important banner information to load. Having them load together prevents the page jumping when the
@@ -89,8 +87,12 @@ export class ContentTypesPage extends React.Component {
       promisesArray.push(
         Promise.race([
           Promise.all([
-            getSingleSpacePlan(endpoint, spaceId),
-            createResourceService(spaceId).get('Content type', spaceContext.getEnvironmentId()),
+            PricingService.nextSpacePlanForResource(
+              spaceContext.organization.sys.id,
+              spaceId,
+              PricingService.SPACE_PLAN_RESOURCE_TYPES.CONTENT_TYPE
+            ),
+            createResourceService(spaceId).get('contentType'),
           ]),
           new Promise((resolve) => setTimeout(resolve, 2 * 1000)),
         ])
@@ -104,24 +106,19 @@ export class ContentTypesPage extends React.Component {
       isLoading: false,
       showContentTypeLimitBanner: false,
       usage: 0,
-      maximum: 0,
+      limit: 0,
     };
 
     // If there is communityBannerData then the user isOrgAdminOrOwner, so we can then determine if we should show the CTA to upgrade to enterprise.
     if (communityBannerData) {
-      const [
-        plan,
-        {
-          usage,
-          limits: { maximum },
-        },
-      ] = communityBannerData;
+      const [nextSpacePlan, resource] = communityBannerData;
+      const usage = resource.usage;
+      const limit = getResourceLimits(resource).maximum;
 
-      const isMediumOrLargePlan = plan.name === 'Large' || plan.name === 'Medium';
+      const showContentTypeLimitBanner =
+        !nextSpacePlan && usage / limit >= PricingService.WARNING_THRESHOLD;
 
-      const showContentTypeLimitBanner = isMediumOrLargePlan && usage / maximum > 0.9;
-
-      state = { ...state, showContentTypeLimitBanner, usage, maximum };
+      state = { ...state, showContentTypeLimitBanner, usage, limit };
     }
 
     if (!this.componentIsUnmounted) {
@@ -172,7 +169,7 @@ export class ContentTypesPage extends React.Component {
       status,
       showContentTypeLimitBanner,
       usage,
-      maximum,
+      limit,
     } = this.state;
     const filteredContentTypes = service.filterContentTypes(contentTypes, {
       searchTerm,
@@ -238,7 +235,7 @@ export class ContentTypesPage extends React.Component {
                     className={styles.banner}
                     testId="content-type-limit-banner">
                     <Paragraph>
-                      You have used {usage} of {maximum} content types.
+                      You’ve used {usage} of {limit} content types.
                     </Paragraph>
                     <Paragraph>
                       To increase the limit,{' '}

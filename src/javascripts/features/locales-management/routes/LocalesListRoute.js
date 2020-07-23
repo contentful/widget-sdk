@@ -18,14 +18,12 @@ import { useAsync } from 'core/hooks';
 
 import * as OrganizationRoles from 'services/OrganizationRoles';
 import createResourceService from 'services/ResourceService';
-import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
+import * as PricingService from 'services/PricingService';
 
 const fetch = async () => {
   const spaceContext = getModule('spaceContext');
   const isOrgOwnerOrAdmin = OrganizationRoles.isOwnerOrAdmin(spaceContext.organization);
 
-  const endpoint = createOrganizationEndpoint(spaceContext.organization.sys.id);
   const orgIsLegacy = isLegacyOrganization(spaceContext.organization);
 
   const promisesArray = [
@@ -39,7 +37,13 @@ const fetch = async () => {
 
   if (!orgIsLegacy && isOrgOwnerOrAdmin) {
     // This fetch only works when user is an owner or admin.
-    promisesArray.push(getSingleSpacePlan(endpoint, spaceContext.getId()));
+    promisesArray.push(
+      PricingService.nextSpacePlanForResource(
+        spaceContext.organization.sys.id,
+        spaceContext.getId(),
+        PricingService.SPACE_PLAN_RESOURCE_TYPES.LOCALE
+      )
+    );
   }
 
   const [
@@ -51,10 +55,10 @@ const fetch = async () => {
     allowedToEnforceLimits,
     subscriptionPlanName,
     // Conditional Promises:
-    spacePlan,
+    nextSpacePlan,
   ] = await Promise.all(promisesArray);
 
-  const isLargePlan = spacePlan?.name === 'Large';
+  const hasNextSpacePlan = !!nextSpacePlan;
 
   return {
     locales,
@@ -65,7 +69,7 @@ const fetch = async () => {
     allowedToEnforceLimits,
     subscriptionPlanName,
     isOrgOwnerOrAdmin,
-    isLargePlan,
+    hasNextSpacePlan,
   };
 };
 
@@ -92,7 +96,7 @@ export const LocalesListRoute = ({
     insideMasterEnv,
     allowedToEnforceLimits,
     subscriptionPlanName,
-    isLargePlan,
+    hasNextSpacePlan,
   } = data;
 
   return (
@@ -125,7 +129,7 @@ export const LocalesListRoute = ({
               onSubmit: () => fetch(),
             })
           }
-          isLargePlan={isLargePlan}
+          hasNextSpacePlan={hasNextSpacePlan}
         />
       )}
     </>

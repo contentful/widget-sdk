@@ -8,6 +8,29 @@ enum States {
   SEVERAL = 'resources/several',
 }
 
+export const getResources = {
+  willReturnSeveral() {
+    cy.addInteraction({
+      provider: 'resources',
+      state: States.SEVERAL,
+      uponReceiving: `a request to get resources of space "${defaultSpaceId}"`,
+      withRequest: {
+        method: 'GET',
+        path: `/spaces/${defaultSpaceId}/resources`,
+        headers: {
+          Accept: 'application/json, text/plain, */*',
+        },
+      },
+      willRespondWith: {
+        status: 200,
+        body: resources,
+      },
+    }).as('getResources');
+
+    return '@getResources';
+  },
+};
+
 export const getResourcesWithLimitsReached = {
   willReturnSeveral() {
     cy.addInteraction({

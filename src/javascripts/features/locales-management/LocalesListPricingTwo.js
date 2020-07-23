@@ -15,7 +15,7 @@ export class LocalesListPricingTwo extends React.Component {
     insideMasterEnv: PropTypes.bool.isRequired,
     subscriptionState: PropTypes.object.isRequired,
     upgradeSpace: PropTypes.func.isRequired,
-    isLargePlan: PropTypes.bool,
+    hasNextSpacePlan: PropTypes.bool,
   };
 
   renderTitle() {
@@ -47,7 +47,7 @@ export class LocalesListPricingTwo extends React.Component {
             isOrgOwnerOrAdmin={this.props.isOrgOwnerOrAdmin}
             subscriptionState={this.props.subscriptionState}
             upgradeSpace={this.props.upgradeSpace}
-            isLargePlan={this.props.isLargePlan}
+            hasNextSpacePlan={this.props.hasNextSpacePlan}
           />
         </Workbench.Sidebar>
       </Workbench>
