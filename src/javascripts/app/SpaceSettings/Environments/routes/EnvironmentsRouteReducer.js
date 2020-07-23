@@ -63,7 +63,7 @@ export const useEnvironmentsRouteState = (props) => {
     isLegacyOrganization: props.isLegacyOrganization,
     organizationId: props.organizationId,
     spaceId: props.spaceId,
-    spacePlan: undefined,
+    hasNextSpacePlan: undefined,
     pubsubClient: props.pubsubClient,
   };
 
@@ -208,6 +208,7 @@ export const useEnvironmentsRouteState = (props) => {
         spaceId,
         PricingService.SPACE_PLAN_RESOURCE_TYPES.ENVIRONMENT
       );
+
       dispatch({ type: SET_HAS_NEXT_SPACE_PLAN, hasNextSpacePlan: !!nextSpacePlan });
     }
   };

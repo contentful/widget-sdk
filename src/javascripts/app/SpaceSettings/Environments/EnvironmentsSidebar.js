@@ -103,7 +103,7 @@ export default function EnvironmentsSidebar({
         </Button>
       )}
 
-      {/** We need to wait for the spacePlan or the button will jump from 'Upgrade space' to 'Talk to us' */}
+      {/* We wait until we explicitly get a value for `hasNextSpacePlan` before rendering the CTA */}
       {!canCreateEnv && !isLegacyOrganization && canUpgradeSpace && hasNextSpacePlan !== undefined && (
         <TrackTargetedCTAImpression
           impressionType={
