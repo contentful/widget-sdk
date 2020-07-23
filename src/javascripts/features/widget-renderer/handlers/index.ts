@@ -7,7 +7,9 @@ export {
   makeNavigateToPageHandler,
 } from './NavigateToHandler';
 export { makeCheckAccessHandler } from './CheckAccessHandler';
+export { makeSetValueHandler } from './FieldHandler';
 
 export type DialogsAPI = import('./OpenDialogHandler').DialogsAPI;
 export type NavigatorAPI = import('./NavigateToHandler').NavigatorAPI;
 export type AccessAPI = import('./CheckAccessHandler').AccessAPI;
+export type FieldAPI = import('./FieldHandler').FieldAPI;

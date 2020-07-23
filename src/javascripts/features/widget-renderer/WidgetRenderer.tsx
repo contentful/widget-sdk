@@ -20,6 +20,8 @@ import {
   makeNavigateToPageHandler,
   makeNotifyHandler,
   makeOpenDialogHandler,
+  FieldAPI,
+  makeSetValueHandler,
 } from './handlers';
 
 const DISALLOWED_DOMAINS = ['app.contentful.com', 'creator.contentful.com'];
@@ -57,7 +59,7 @@ export interface WidgetRendererProps {
     };
     editorInterface?: {
       sys: {
-        type: 'EditorInteface';
+        type: 'EditorInterface';
         contentType: {
           sys: {
             id: string;
@@ -77,15 +79,7 @@ export interface WidgetRendererProps {
       >;
       metadata?: Record<string, any>;
     };
-    field?: {
-      id: string;
-      locale: string;
-      type: string;
-      required: boolean;
-      validations: any[];
-      items: any;
-      getValue: () => any;
-    };
+    field?: FieldAPI;
     dialogs?: DialogsAPI;
     navigator?: NavigatorAPI;
     access?: AccessAPI;
@@ -104,6 +98,7 @@ export enum ChannelMethod {
   NavigateToContentEntity = 'navigateToContentEntity',
   OpenDialog = 'openDialog',
   CheckAccess = 'checkAccess',
+  SetValue = 'setValue',
 }
 
 export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown> {
@@ -281,6 +276,11 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
     this.channel.registerHandler(
       ChannelMethod.CheckAccess,
       makeCheckAccessHandler(this.props.apis.access)
+    );
+
+    this.channel.registerHandler(
+      ChannelMethod.SetValue,
+      makeSetValueHandler(this.props.apis.field)
     );
 
     // Render the iframe content
