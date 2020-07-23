@@ -10,14 +10,16 @@ import {
 } from './interfaces';
 import { PostMessageChannel } from './PostMessageChannel';
 import {
+  AccessAPI,
   DialogsAPI,
   NavigatorAPI,
   makeCallSpaceMethodHandler,
-  makeNotifyHandler,
-  makeOpenDialogHandler,
+  makeCheckAccessHandler,
   makeNavigateToBulkEditorHandler,
   makeNavigateToContentEntityHandler,
   makeNavigateToPageHandler,
+  makeNotifyHandler,
+  makeOpenDialogHandler,
 } from './handlers';
 
 const DISALLOWED_DOMAINS = ['app.contentful.com', 'creator.contentful.com'];
@@ -86,6 +88,7 @@ export interface WidgetRendererProps {
     };
     dialogs?: DialogsAPI;
     navigator?: NavigatorAPI;
+    access?: AccessAPI;
   };
   disallowedDomains?: string[];
   isFullSize?: boolean;
@@ -100,6 +103,7 @@ export enum ChannelMethod {
   NavigateToBulkEditor = 'navigateToBulkEditor',
   NavigateToContentEntity = 'navigateToContentEntity',
   OpenDialog = 'openDialog',
+  CheckAccess = 'checkAccess',
 }
 
 export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown> {
@@ -272,6 +276,11 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
     this.channel.registerHandler(
       ChannelMethod.NavigateToPageExtension,
       makeNavigateToPageHandler(this.props.apis.navigator)
+    );
+
+    this.channel.registerHandler(
+      ChannelMethod.CheckAccess,
+      makeCheckAccessHandler(this.props.apis.access)
     );
 
     // Render the iframe content

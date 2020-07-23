@@ -6,6 +6,8 @@ export {
   makeNavigateToContentEntityHandler,
   makeNavigateToPageHandler,
 } from './NavigateToHandler';
+export { makeCheckAccessHandler } from './CheckAccessHandler';
 
 export type DialogsAPI = import('./OpenDialogHandler').DialogsAPI;
 export type NavigatorAPI = import('./NavigateToHandler').NavigatorAPI;
+export type AccessAPI = import('./CheckAccessHandler').AccessAPI;
