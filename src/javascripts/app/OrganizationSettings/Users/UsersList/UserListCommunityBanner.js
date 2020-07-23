@@ -86,7 +86,7 @@ export function UserListCommunityBanner({ orgId, spaces }) {
             impressionType={
               spaceToUpgrade ? CTA_EVENTS.UPGRADE_SPACE_PLAN : CTA_EVENTS.CREATE_SPACE
             }
-            meta={{ organizationId: orgId, spaceId: spaceToUpgrade.sys.id }}>
+            meta={{ organizationId: orgId, spaceId: spaceToUpgrade?.sys.id }}>
             <TextLink
               onClick={spaceToUpgrade ? changeSpace : createSpace}
               testId="upgrade-space-plan">
