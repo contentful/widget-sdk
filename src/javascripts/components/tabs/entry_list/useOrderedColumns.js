@@ -1,4 +1,6 @@
-export const useOrderedColumns = ({ viewPersistor, updateEntities }) => {
+import { get } from 'lodash';
+
+export const useOrderedColumns = ({ listViewContext, updateEntities }) => {
   const SORTABLE_TYPES = ['Boolean', 'Date', 'Integer', 'Number', 'Symbol', 'Location'];
 
   const switchOrderDirection = (direction) => {
@@ -6,7 +8,7 @@ export const useOrderedColumns = ({ viewPersistor, updateEntities }) => {
   };
 
   const isOrderField = ({ id }) => {
-    const fieldId = viewPersistor.readKey('order.fieldId');
+    const fieldId = get(listViewContext.getView(), 'order.fieldId');
     return fieldId === id;
   };
 
@@ -18,16 +20,14 @@ export const useOrderedColumns = ({ viewPersistor, updateEntities }) => {
 
   const orderColumnBy = (field) => {
     if (!fieldIsSortable(field)) return;
-    const view = viewPersistor.read();
+    const direction = get(listViewContext.getView(), 'order.direction');
     const newOrder = {
       fieldId: field.id,
-      direction: switchOrderDirection(view.order.direction),
+      direction: switchOrderDirection(direction),
     };
-    viewPersistor.save({
-      ...view,
-      order: newOrder,
+    listViewContext.setViewKey('order', newOrder, () => {
+      updateEntities();
     });
-    updateEntities();
   };
 
   return [{ orderColumnBy, isOrderField, fieldIsSortable }];

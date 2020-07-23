@@ -61,6 +61,11 @@ export default function register() {
       $scope.onUpdate = (view) => onSearchChange(view);
       $scope.initialState = getInitialState();
       $scope.getContentTypes = () => getContentTypes($scope.initialState.contentTypeId);
+      $scope.users = [];
+      spaceContext.users.getAll().then((users) => {
+        $scope.users = users;
+        $scope.$applyAsync;
+      });
 
       Object.assign($scope, MODES, {
         onChange: $scope.onChange || _.noop,

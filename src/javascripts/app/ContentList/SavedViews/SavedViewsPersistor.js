@@ -138,7 +138,7 @@ export default ({ entityType, viewType, onUpdate = noop }) => {
   };
 
   const deleteScopedFolderView = async (view) => {
-    const folders = await getPreparedScopedFolders(viewType);
+    const folders = await getPreparedScopedFolders();
     const foundFolder = await findContainingFolderByView(view);
     if (foundFolder) {
       const views = foundFolder.views.filter(({ id }) => id !== view.id);

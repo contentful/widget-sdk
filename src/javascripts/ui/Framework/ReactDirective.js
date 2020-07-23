@@ -29,7 +29,6 @@ import * as componentsTabsPluralizeEntityMessageEs6 from 'components/tabs/Plural
 import * as componentsRecordsResourceUsageIndexEs6 from 'components/RecordsResourceUsage';
 import { Paginator } from 'core/components/Paginator';
 import * as componentsTabsNoSearchResultsAdviceEs6 from 'components/tabs/NoSearchResultsAdvice';
-import * as componentsTabsAssetListAssetsEmptyStateEs6 from 'components/tabs/asset_list/AssetsEmptyState';
 import * as appScheduledActionsPageLinkEs6 from 'app/ScheduledActions/ScheduledActionsPageLink';
 import * as appReleasesPageLinkEs6 from 'app/Releases/ReleasesPage/ReleasesPageLink';
 import * as componentsTabsEntryListEntryListEs6 from 'components/tabs/entry_list/EntryList';
@@ -53,13 +52,10 @@ import * as ProhibitRegExpValidation from 'components/field_dialog/validations/P
 import * as AssetLink from 'app/widgets/link/AssetLink';
 import * as EntryLink from 'app/widgets/link/EntryLink';
 import * as DateRangeValidation from 'components/field_dialog/validations/DateRangeValidation';
-import * as AssetList from 'components/tabs/asset_list/AssetList';
 import * as EntryEditorWorkbench from 'app/entry_editor/EntryEditorWorkbench';
 import * as AssetEditorWorkbench from 'app/asset_editor/AssetEditorWorkbench';
 import * as ContentTagsField from 'app/asset_editor/ContentTagsField';
-import * as SavedViewsAdapter from 'app/ContentList/SavedViews/Sidebar';
-import * as SavedViewsLink from 'app/ContentList/SavedViews/Link';
-import * as Search from 'app/ContentList/Search/View';
+import * as EntitySelectorAdapter from 'search/EntitySelector/EntitySelectorAdapter';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container, store) {
@@ -275,7 +271,6 @@ function getModule(name) {
     'components/RecordsResourceUsage': componentsRecordsResourceUsageIndexEs6,
     'core/components/Paginator': { default: Paginator },
     'components/tabs/NoSearchResultsAdvice': componentsTabsNoSearchResultsAdviceEs6,
-    'components/tabs/asset_list/AssetsEmptyState': componentsTabsAssetListAssetsEmptyStateEs6,
     'app/ScheduledActions/ScheduledActionsPageLink': appScheduledActionsPageLinkEs6,
     'app/Releases/ReleasesPageLink': appReleasesPageLinkEs6,
     'components/tabs/entry_list/EntryList': componentsTabsEntryListEntryListEs6,
@@ -299,15 +294,12 @@ function getModule(name) {
     'app/widgets/link/AssetLink': AssetLink,
     'app/widgets/link/EntryLink': EntryLink,
     'components/field_dialog/validations/DateRangeValidation': DateRangeValidation,
-    'components/tabs/asset_list/AssetList': AssetList,
     'app/entry_editor/EntryEditorWorkbench': EntryEditorWorkbench,
     'app/asset_editor/AssetEditorWorkbench': AssetEditorWorkbench,
     'app/asset_editor/ContentTagsField': ContentTagsField,
-    'app/ContentList/SavedViews/Sidebar': SavedViewsAdapter,
-    'app/ContentList/SavedViews/Link': SavedViewsLink,
-    'app/ContentList/Search/View': Search,
     'app/entity_editor/EntityField/EntityFieldHeading': { default: EntityFieldHeading },
     'app/entity_editor/EntityField/EntityFieldControl': { default: EntityFieldControl },
+    'search/EntitySelector/EntitySelectorAdapter': EntitySelectorAdapter,
   };
 
   return get(allowedModules, name, null);

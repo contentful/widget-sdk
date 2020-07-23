@@ -1,37 +1,35 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { onEntryEvent } from './eventTracker';
-
 import EntityList from '../EntityList';
 import ViewCustomizer from './ViewCustomizer';
 import DisplayField, { DisplayFieldWithTagsEnabled } from './DisplayField';
-import createViewPersistor from 'data/ListViewPersistor';
 import { useDisplayFields } from './useDisplayFields';
 import { useOrderedColumns } from './useOrderedColumns';
 import { useTagsFeatureEnabled } from 'features/content-tags';
 import { METADATA_TAGS_ID } from 'data/MetadataFields';
 
 export default function EntryList({
-  isSearching,
+  isLoading,
   displayFieldForFilteredContentType,
   entries = [],
   entryCache,
   assetCache,
+  listViewContext,
   updateEntries,
   jobs = [],
   pageIndex = 0,
 }) {
   const entityType = 'entry';
-  const viewPersistor = useMemo(() => createViewPersistor({ entityType }), [entityType]);
   const [{ displayedFields, hiddenFields }, displayFieldsActions] = useDisplayFields({
-    viewPersistor,
+    listViewContext,
     updateEntities: updateEntries,
   });
   const [{ fieldIsSortable, isOrderField, orderColumnBy }] = useOrderedColumns({
-    viewPersistor,
+    listViewContext,
     updateEntities: updateEntries,
   });
-  const { contentTypeId, order = {} } = viewPersistor.readKeys(['contentTypeId', 'order']);
+  const { contentTypeId, order } = listViewContext.getView();
 
   const hasContentTypeSelected = !!contentTypeId;
 
@@ -76,7 +74,7 @@ export default function EntryList({
       jobs={jobs}
       onBulkActionComplete={onEntryEvent}
       updateEntities={updateEntries}
-      isLoading={isSearching}
+      isLoading={isLoading}
       pageIndex={pageIndex}
       renderDisplayField={(props) => {
         if (props.tagsEnabled) {
@@ -106,7 +104,7 @@ export default function EntryList({
 }
 
 EntryList.propTypes = {
-  isSearching: PropTypes.bool,
+  isLoading: PropTypes.bool,
   displayFieldForFilteredContentType: PropTypes.func.isRequired,
   entries: PropTypes.array,
   updateEntries: PropTypes.func.isRequired,
@@ -115,4 +113,7 @@ EntryList.propTypes = {
   jobs: PropTypes.array,
   pageIndex: PropTypes.number,
   tagsEnabled: PropTypes.bool,
+  listViewContext: PropTypes.shape({
+    getView: PropTypes.func.isRequired,
+  }).isRequired,
 };

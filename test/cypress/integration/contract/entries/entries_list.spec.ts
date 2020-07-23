@@ -31,10 +31,6 @@ const nonArchivedQuery = {
   skip: '0',
   'sys.archivedAt[exists]': 'false',
 };
-const archivedCountQuery = {
-  limit: '0',
-  'sys.archivedAt[exists]': 'true',
-};
 describe('Entries list page', () => {
   beforeEach(() => {
     cy.resetAllFakeServers();
@@ -62,29 +58,16 @@ describe('Entries list page', () => {
           body: empty,
         },
       }).as('queryNonArchivedEntries');
-      // TODO: Move this to interactions/entries
-      cy.addInteraction({
-        provider: 'entries',
-        state: 'noArchivedEntries',
-        uponReceiving: `a query for the number of archived entries in "${defaultSpaceId}"`,
-        withRequest: getEntries(defaultSpaceId, archivedCountQuery),
-        willRespondWith: {
-          status: 200,
-          body: empty,
-        },
-      }).as('queryArchivedEntriesCount');
 
       const interactions = [
-        '@queryArchivedEntriesCount',
-        '@queryNonArchivedEntries',
         ...defaultRequestsMock({}),
         queryFirst100UsersInDefaultSpace.willFindSeveral(),
         queryPendingJobsForDefaultSpaceWithoutLimit.willFindSeveral(),
         queryForTasksInDefaultSpace.willFindFeatureEnabled(),
-        queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled(),
+        '@queryNonArchivedEntries',
+        queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
         queryForEnvironmentUsageInDefaultSpace.willFindFeatureEnabled(),
         queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
-        queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);
@@ -110,28 +93,15 @@ describe('Entries list page', () => {
           body: empty,
         },
       }).as('queryNonArchivedEntries');
-      // TODO: Move this to interactions/entries
-      cy.addInteraction({
-        provider: 'entries',
-        state: 'noArchivedEntries',
-        uponReceiving: `a query for the number of archived entries in "${defaultSpaceId}"`,
-        withRequest: getEntries(defaultSpaceId, archivedCountQuery),
-        willRespondWith: {
-          status: 200,
-          body: empty,
-        },
-      }).as('queryArchivedEntriesCount');
 
       const interactions = [
         '@queryNonArchivedEntries',
-        '@queryArchivedEntriesCount',
         ...defaultRequestsMock({
           publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne,
         }),
         queryFirst100UsersInDefaultSpace.willFindSeveral(),
         queryPendingJobsForDefaultSpaceWithoutLimit.willFindSeveral(),
         queryForTasksInDefaultSpace.willFindFeatureEnabled(),
-        queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled(),
         queryForEnvironmentUsageInDefaultSpace.willFindFeatureEnabled(),
         queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
         queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
@@ -144,10 +114,8 @@ describe('Entries list page', () => {
 
     it('renders entries page correctly', () => {
       cy.findByTestId('no-entries-advice').should('be.visible');
-      cy.findByTestId('create-entry-button-menu-trigger')
-        .should('be.visible')
-        .find('button')
-        .should('be.enabled');
+      cy.findByTestId('create-entry-button-menu-trigger').should('be.visible');
+      cy.findByTestId('create-entry-button-menu-trigger').find('button').should('be.enabled');
     });
 
     it('redirects to the entry page after click on create button', () => {
@@ -156,10 +124,11 @@ describe('Entries list page', () => {
         getDefaultEntry.willReturnIt(),
         queryLinksToDefaultEntry.willReturnNone(),
         getFirst7SnapshotsOfDefaultEntry.willReturnNone(),
+        queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled(),
         getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
         queryAllScheduledJobsForDefaultEntry.willFindOnePendingJob(),
       ];
-
+      cy.findByTestId('create-entry-button-menu-trigger').find('button').should('be.enabled');
       cy.findByTestId('create-entry-button-menu-trigger').click();
 
       cy.wait(interactions);

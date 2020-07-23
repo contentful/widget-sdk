@@ -269,7 +269,7 @@ const EntityList = ({
           <col className={styles.statusColumn} />
           {/* status column */}
         </colgroup>
-        <TableHead offsetTop={isEdge() ? '0px' : '-20px'} isSticky className={styles.tableHead}>
+        <TableHead offsetTop={isEdge() ? '0px' : '-24px'} isSticky className={styles.tableHead}>
           <TableRow testId="column-names">
             <CheckboxCell
               visible

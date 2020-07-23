@@ -1,6 +1,5 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { match } from 'utils/TaggedValues';
-import { getModule } from 'core/NgRegistry';
 import {
   contentTypeFilter as getContentTypeFilter,
   sanitizeSearchFilters,
@@ -16,33 +15,25 @@ import { track } from 'analytics/Analytics';
 const useSearchContext = ({
   entityType,
   onUpdate,
-  view,
-  setView,
   getContentTypes,
+  users,
+  listViewContext,
   withMetadata,
 }) => {
-  const [users, setUsers] = useState([]);
+  const { getView, setViewKey, setViewAssigned } = listViewContext;
+  const { searchFilters, contentTypeId, searchText: initialSearchText } = getView();
+
   const [isTyping, setIsTyping] = useState(false);
+  const [searchText, setSearch] = useState(initialSearchText);
+  const contentTypes = getContentTypes();
 
   const [isSuggestionOpen, setIsSuggestionOpen] = useState(false);
+
   const hideSuggestions = () => setIsSuggestionOpen(false);
   const showSuggestions = () => setIsSuggestionOpen(true);
   const toggleSuggestions = () => setIsSuggestionOpen(!isSuggestionOpen);
 
-  const contentTypes = getContentTypes();
-
-  const spaceContext = useMemo(() => getModule('spaceContext'), []);
-  useEffect(() => {
-    const init = async () => {
-      const result = await spaceContext.users.getAll();
-      setUsers(result);
-    };
-    init();
-  }, [spaceContext]);
-
-  const hasLoaded = users.length > 0;
   const withAssets = entityType === 'asset';
-  const { searchFilters = [], contentTypeId = '', searchText = '' } = view;
 
   const sanitizedFilters = useMemo(
     () =>
@@ -70,7 +61,7 @@ const useSearchContext = ({
 
   const contentTypeFilter = useMemo(() => getContentTypeFilter(contentTypes), [contentTypes]);
 
-  const callbackSetView = useCallback(setView, []);
+  const callbackSetView = useCallback(setViewKey, []);
 
   const setViewWithUpdate = useCallback(
     (key, value) => {
@@ -81,9 +72,9 @@ const useSearchContext = ({
   );
 
   const onSetSearchText = useCallback(
-    (view) => {
-      track('search:query_changed', { search_query: view.searchText });
-      onUpdate(view);
+    (searchText) => {
+      track('search:query_changed', { search_query: searchText });
+      onUpdate({ searchText });
       setIsTyping(false);
     },
     [onUpdate]
@@ -97,7 +88,9 @@ const useSearchContext = ({
       return;
     }
     setIsTyping(true);
-    setView('searchText', searchTextInput, debouncedSetSearchText);
+    setSearch(searchTextInput);
+    setViewKey('searchText', searchTextInput);
+    debouncedSetSearchText(searchTextInput);
     setIsSuggestionOpen(!!searchTextInput);
   };
 
@@ -121,13 +114,10 @@ const useSearchContext = ({
     setSearchFilters(updated);
   };
 
-  const onSetFilterValue = useCallback(
-    (view) => {
-      onUpdate(view);
-      setIsTyping(false);
-    },
-    [onUpdate]
-  );
+  const onSetFilterValue = useCallback(() => {
+    onUpdate();
+    setIsTyping(false);
+  }, [onUpdate]);
 
   const debouncedSetFilterValue = useCallback(debounce(onSetFilterValue, 1000), [onSetFilterValue]);
 
@@ -135,13 +125,14 @@ const useSearchContext = ({
     setIsTyping(true);
     const updated = cloneDeep(searchFilters);
     updated[index][2] = newValue;
-    setView('searchFilters', updated, debouncedSetFilterValue);
+    setViewKey('searchFilters', updated);
+    debouncedSetFilterValue();
   };
 
   const selectFilterSuggestion = (filter) => {
     let contentType;
     if (filter.contentType) {
-      setView('contentTypeId', filter.contentType.id);
+      setViewKey('contentTypeId', filter.contentType.id);
       contentType = getContentTypeById(contentTypes, filter.contentType.id);
     }
 
@@ -153,18 +144,18 @@ const useSearchContext = ({
     );
 
     const value = tryGetValue(filterField);
+    setSearch('');
     const updatedFilters = [...searchFilters, [filter.queryKey, filter.operators[0][0], value]];
-    setView('searchFilters', updatedFilters);
-    setView('searchText', '', onUpdate);
+    setViewAssigned({ searchFilters: updatedFilters, searchText: '' });
+    onUpdate();
     setIsSuggestionOpen(false);
   };
 
   const context = {
-    hasLoaded,
     suggestions,
     contentTypeId,
     contentTypeFilter,
-    searchText: searchText || '',
+    searchText,
     filters,
     isTyping,
     isSuggestionOpen,

@@ -3,13 +3,24 @@ import base from 'states/Base';
 import createEntityPageController from 'app/entity_editor/EntityPageController';
 import entityPageTemplate from 'app/entity_editor/entity_page.html';
 import snapshotsRoute from 'app/snapshots';
+import Entries from 'components/tabs/entry_list/EntryView';
 
-const list = base({
+const list = {
   name: 'list',
   url: '',
-  loadingText: 'Loading content…',
-  template: '<div cf-entry-list class="workbench entry-list entity-list"></div>',
-});
+  mapInjectedToProps: [
+    '$state',
+    ($state) => {
+      return {
+        goTo: (entryId) => {
+          // X.list -> X.detail
+          $state.go('^.detail', { entryId });
+        },
+      };
+    },
+  ],
+  component: Entries,
+};
 
 export default {
   withSnapshots: entriesBaseState(true),

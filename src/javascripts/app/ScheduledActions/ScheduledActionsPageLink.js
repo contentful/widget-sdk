@@ -12,7 +12,6 @@ const styles = {
     borderBottom: `1px solid ${tokens.colorElementMid}`,
     padding: tokens.spacingL,
     backgroundColor: tokens.colorElementLightest,
-    borderRight: `1px solid ${tokens.colorElementDarkest}`,
     boxShadow: '1px 0 2px 0 rgba(0,0,0,0.09)',
   }),
   jobsAlphaTag: css({

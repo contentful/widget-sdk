@@ -1,6 +1,5 @@
 import React from 'react';
 import { render, wait, fireEvent } from '@testing-library/react';
-import createListViewPersistor from 'data/ListViewPersistor';
 
 import Tree, {
   deflattenFolders,
@@ -10,10 +9,12 @@ import Tree, {
   sanitizeFolders,
 } from './Tree';
 
-jest.mock('data/ListViewPersistor', () => jest.fn());
-
-const save = jest.fn();
-createListViewPersistor.mockReturnValue({ readKey: () => 'id', save });
+const listViewContext = {
+  getView: jest.fn().mockReturnValue({ id: 'id' }),
+  setView: jest.fn(),
+  setViewKey: jest.fn(),
+  setViewAssigned: jest.fn(),
+};
 
 const onSelectSavedView = jest.fn();
 const folders = [
@@ -67,9 +68,12 @@ const savedViewsActions = {
   createScopedFolder: jest.fn(),
   getDefaultScopedFolder: jest.fn(),
   createScopedFolderView: jest.fn(),
+  fetchFolders: jest.fn(),
+  setFolders: jest.fn(),
 };
 
 const defaultProps = {
+  listViewContext,
   onSelectSavedView,
   entityType: 'entry',
   folders,
@@ -106,7 +110,7 @@ describe('Tree.js', () => {
       fireEvent.click(queryByTestId('draggable-view-view1'));
       await wait();
       expect(onSelectSavedView).toHaveBeenLastCalledWith(flattenedFolders[1]);
-      expect(save).toHaveBeenLastCalledWith(flattenedFolders[1]);
+      expect(listViewContext.setView).toHaveBeenLastCalledWith(flattenedFolders[1]);
     });
   });
   describe('reordering', () => {

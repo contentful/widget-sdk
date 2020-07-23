@@ -7,6 +7,7 @@ import Keys from './Keys';
 import tokens from '@contentful/forma-36-tokens';
 import { ReadTagsProvider, TagsRepoProvider, useTagsFeatureEnabled } from 'features/content-tags';
 
+import cn from 'classnames';
 import FilterPill from './FilterPill';
 import SuggestionsBox from './SuggestionsBox';
 import pluralize from 'pluralize';
@@ -14,7 +15,6 @@ import pluralize from 'pluralize';
 import { track as analyticsTrack } from 'analytics/Analytics';
 import useFocus from './useFocus';
 import useSearchContext from './useSearchContext';
-import useView from './useView';
 import noop from 'lodash/noop';
 
 const track = (e, data) => analyticsTrack('search:' + e, data);
@@ -136,30 +136,24 @@ export default function ConditionalView(props) {
 }
 
 function View({
+  className,
   isLoading,
+  listViewContext,
   onUpdate,
   entityType,
   getContentTypes,
-  initialState,
-  isPersisted = true,
   withMetadata,
+  users,
 }) {
-  const [view, setView] = useView({
-    entityType,
-    initialState,
-    isPersisted,
-  });
-
   const [
     {
       contentTypeFilter,
       contentTypeId,
       filters,
-      hasLoaded,
       isSuggestionOpen,
       isTyping,
-      searchText,
       suggestions,
+      searchText,
     },
     {
       hideSuggestions,
@@ -172,7 +166,14 @@ function View({
       showSuggestions,
       toggleSuggestions,
     },
-  ] = useSearchContext({ entityType, onUpdate, view, setView, getContentTypes, withMetadata });
+  ] = useSearchContext({
+    entityType,
+    onUpdate,
+    listViewContext,
+    getContentTypes,
+    users,
+    withMetadata,
+  });
 
   const [
     { focus, inputRef },
@@ -189,15 +190,11 @@ function View({
     },
   ] = useFocus({ suggestions, filters });
 
-  if (!hasLoaded) {
-    return <div data-test-id="loader" />;
-  }
-
   const hideSpinner = !isLoading && !isTyping;
   const placeholder = filters.length > 0 ? '' : `Type to search for ${pluralize(entityType)}`;
 
   return (
-    <div className={styles.wrapper}>
+    <div className={cn(styles.wrapper, className)}>
       <div
         className={classNames(styles.inputWrapper, {
           [styles.focused]: isSuggestionOpen,
@@ -319,17 +316,20 @@ function View({
 }
 
 View.propTypes = {
+  className: PropTypes.string,
   getContentTypes: PropTypes.func.isRequired,
   entityType: PropTypes.oneOf(['entry', 'asset']).isRequired,
-  initialState: PropTypes.object,
   isLoading: PropTypes.bool,
-  isPersisted: PropTypes.bool.isRequired,
   withMetadata: PropTypes.bool.isRequired,
   onUpdate: PropTypes.func.isRequired,
+  listViewContext: PropTypes.shape({
+    getView: PropTypes.func.isRequired,
+    setView: PropTypes.func.isRequired,
+  }).isRequired,
+  users: PropTypes.array.isRequired,
 };
 
 View.defaultProps = {
-  isPersisted: true,
   withMetadata: false,
   onUpdate: noop,
 };

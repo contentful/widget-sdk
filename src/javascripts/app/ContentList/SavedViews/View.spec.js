@@ -5,6 +5,7 @@ import * as random from 'utils/Random';
 
 import View from './View';
 
+jest.mock('components/tabs/Portal', () => () => <div data-test-id="portal"></div>);
 jest.mock('./Tree', () => (props) => <div data-test-id="child">{JSON.stringify(props)}</div>);
 jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
 jest.mock('utils/Random', () => ({ id: jest.fn() }));
@@ -15,12 +16,22 @@ jest.mock('app/InputDialogComponent', () => ({
 let id;
 random.id.mockImplementation(() => `${id++}`);
 
+const listViewContext = {
+  getView: jest.fn().mockReturnValue({ id: 'id' }),
+  setView: jest.fn(),
+  setViewKey: jest.fn(),
+  setViewAssigned: jest.fn(),
+};
+
+const setSelectedView = jest.fn();
 const onSelectSavedView = jest.fn();
 const defaultProps = {
+  listViewContext,
   onSelectSavedView,
   entityType: 'entry',
   viewType: 'shared',
   savedViewsUpdated: 0,
+  setSelectedView,
 };
 
 const folders = [{ id: '0', views: [], title: 'Directory' }];
@@ -93,18 +104,6 @@ describe('View.js', () => {
     const { queryByTestId } = build();
     await wait();
     expect(queryByTestId('child')).toBeInTheDocument();
-  });
-
-  it('should reload the folders on savedViewsUpdated', async () => {
-    const { queryByTestId, rerender } = build();
-    await wait();
-    expect(queryByTestId('child')).toBeInTheDocument();
-    scopedApi.get.mockResolvedValue([]);
-    rerender(<View {...defaultProps} savedViewsUpdated={1} />);
-    expect(queryByTestId('view-loading')).toBeInTheDocument();
-    await wait();
-    expect(queryByTestId('empty-state')).toBeInTheDocument();
-    expect(queryByTestId('child')).not.toBeInTheDocument();
   });
 
   it('should be able to create a new folder', async () => {

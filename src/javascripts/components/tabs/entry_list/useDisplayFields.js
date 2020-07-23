@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { sortBy } from 'lodash';
+import { useState, useEffect } from 'react';
+import { sortBy, pick } from 'lodash';
 import { getModule } from 'core/NgRegistry';
 import * as SystemFields from 'data/SystemFields';
 import * as MetadataFields from 'data/MetadataFields';
@@ -19,11 +19,13 @@ const getAvailableFields = (contentTypeId) => {
 
 const VIEW_KEYS = ['displayedFieldIds', 'contentTypeId'];
 
-export const useDisplayFields = ({ viewPersistor, updateEntities }) => {
+export const useDisplayFields = ({ listViewContext, updateEntities }) => {
   const [hiddenFields, setHiddenFields] = useState([]);
   const [displayedFields, setDisplayedFields] = useState([]);
 
-  const contentTypeId = viewPersistor.readKey('contentTypeId');
+  const view = listViewContext.getView();
+  const { contentTypeId, displayedFieldIds } = view;
+  const readViewKeys = () => pick(view, VIEW_KEYS);
 
   const refreshDisplayFields = ({ displayedFieldIds = [], contentTypeId }) => {
     const fields = getAvailableFields(contentTypeId);
@@ -34,7 +36,7 @@ export const useDisplayFields = ({ viewPersistor, updateEntities }) => {
     const hiddenFields = fields.filter(({ id }) => !displayedFieldIds.includes(id));
     setHiddenFields(sortBy(hiddenFields, 'name'));
     setDisplayedFields(displayedFields);
-    viewPersistor.saveKey(
+    listViewContext.setViewKey(
       'displayedFieldIds',
       displayedFields.map(({ id }) => id)
     );
@@ -42,28 +44,25 @@ export const useDisplayFields = ({ viewPersistor, updateEntities }) => {
   };
 
   useEffect(() => {
-    const view = viewPersistor.readKeys(VIEW_KEYS);
-    refreshDisplayFields(view);
+    refreshDisplayFields(readViewKeys());
   }, [contentTypeId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const addDisplayField = (field) => {
-    const view = viewPersistor.readKeys(VIEW_KEYS);
     refreshDisplayFields({
-      ...view,
-      displayedFieldIds: [...view.displayedFieldIds, field.id],
+      ...readViewKeys(),
+      displayedFieldIds: [...displayedFieldIds, field.id],
     });
   };
 
   const removeDisplayField = (field) => {
-    const view = viewPersistor.readKeys(VIEW_KEYS);
     refreshDisplayFields({
-      ...view,
-      displayedFieldIds: view.displayedFieldIds.filter((id) => id !== field.id),
+      ...readViewKeys(),
+      displayedFieldIds: displayedFieldIds.filter((id) => id !== field.id),
     });
   };
 
   const updateFieldOrder = (fields) => {
-    viewPersistor.saveKey(
+    listViewContext.setViewKey(
       'displayedFieldIds',
       fields.map(({ id }) => id)
     );

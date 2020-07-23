@@ -2,33 +2,34 @@ import createSavedViewsPersistor from './SavedViewsPersistor';
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
 
-const useSavedViews = ({ entityType, viewType, savedViewsUpdated }) => {
+const useSavedViews = ({ entityType, viewType }) => {
   const [state, setState] = useState({ isLoading: true, hasError: false, folders: [] });
   const setAssignState = (state) => setState((prev) => ({ ...prev, ...state }));
 
-  const onUpdate = useCallback((folders) => setAssignState({ folders }), []);
+  const setFolders = useCallback((folders) => setAssignState({ folders }), []);
   const savedViewsPersistor = useMemo(() => {
     return createSavedViewsPersistor({
       viewType,
       entityType,
-      onUpdate,
+      onUpdate: setFolders,
     });
-  }, [viewType, entityType, onUpdate]);
+  }, [viewType, entityType, setFolders]);
+
+  const fetchFolders = useCallback(async () => {
+    setAssignState({ isLoading: true });
+    try {
+      const folders = await savedViewsPersistor.getPreparedScopedFolders();
+      setAssignState({ isLoading: false, folders });
+    } catch (error) {
+      setAssignState({ hasError: true, isLoading: false });
+    }
+  }, [savedViewsPersistor]);
 
   useEffect(() => {
-    setAssignState({ isLoading: true });
-    const loadFolders = async () => {
-      try {
-        const folders = await savedViewsPersistor.getPreparedScopedFolders();
-        setAssignState({ isLoading: false, folders });
-      } catch (error) {
-        setAssignState({ hasError: true, isLoading: false });
-      }
-    };
-    loadFolders();
-  }, [savedViewsPersistor, savedViewsUpdated]);
+    fetchFolders();
+  }, [fetchFolders]);
 
-  return [state, savedViewsPersistor];
+  return [state, { ...savedViewsPersistor, fetchFolders, setFolders }];
 };
 
 export default useSavedViews;
@@ -47,4 +48,6 @@ export const savedViewsActionsPropTypes = PropTypes.shape({
   updateScopedFolderView: PropTypes.func.isRequired,
   deleteScopedFolderView: PropTypes.func.isRequired,
   saveScopedFolders: PropTypes.func.isRequired,
+  fetchFolders: PropTypes.func.isRequired,
+  setFolders: PropTypes.func.isRequired,
 });

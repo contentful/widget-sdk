@@ -4,8 +4,8 @@
 
 import { renderHook, act } from '@testing-library/react-hooks';
 import { useDisplayFields } from './useDisplayFields';
-import createViewPersistor from 'data/ListViewPersistor';
 import { getModule } from 'core/NgRegistry';
+import { getBlankEntryView } from 'data/UiConfig/Blanks';
 
 jest.mock('features/content-tags/core/hooks/useTagsFeatureEnabled', () => ({
   useTagsFeatureEnabled: jest.fn().mockReturnValue({ tagsEnabled: true }),
@@ -30,14 +30,20 @@ getModule.mockReturnValue({
   },
 });
 
+let mockView = getBlankEntryView();
+
 const updateEntities = jest.fn();
 const initHook = (contentTypeId) => {
-  const entityType = 'entry';
-  const viewPersistor = createViewPersistor({ entityType });
+  const listViewContext = {
+    getView: jest.fn().mockImplementation(() => mockView),
+    setView: jest.fn().mockImplementation((view) => (mockView = view)),
+    setViewKey: jest.fn().mockImplementation((key, value) => (mockView[key] = value)),
+    setViewAssigned: jest.fn().mockImplementation((view) => ({ ...mockView, ...view })),
+  };
   if (contentTypeId) {
-    viewPersistor.saveKey('contentTypeId', contentTypeId);
+    mockView.contentTypeId = contentTypeId;
   }
-  return renderHook(() => useDisplayFields({ viewPersistor, updateEntities }));
+  return renderHook(() => useDisplayFields({ listViewContext, updateEntities }));
 };
 
 describe('useSelectedEntities with tags pc enabled', () => {

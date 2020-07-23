@@ -6,12 +6,12 @@ export const VIEWS_PRIVATE = 'private';
 
 export const viewPropTypes = PropTypes.oneOf([VIEWS_SHARED, VIEWS_PRIVATE]);
 
-const useView = (initialView, savedViewsUpdated) => {
+const useView = (initialView) => {
   const [selectedView, setSelectedView] = useState(initialView);
 
   useEffect(() => {
     setSelectedView(initialView);
-  }, [initialView, savedViewsUpdated]);
+  }, [initialView]);
 
   const setSharedViewSelected = () => {
     setSelectedView(VIEWS_SHARED);
@@ -21,7 +21,7 @@ const useView = (initialView, savedViewsUpdated) => {
     setSelectedView(VIEWS_PRIVATE);
   };
 
-  return [selectedView, { setSharedViewSelected, setPrivateViewSelected }];
+  return [selectedView, { setSharedViewSelected, setPrivateViewSelected, setSelectedView }];
 };
 
 export default useView;

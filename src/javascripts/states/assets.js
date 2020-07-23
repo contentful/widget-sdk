@@ -1,13 +1,23 @@
-import base from 'states/Base';
 import createEntityPageController from 'app/entity_editor/EntityPageController';
 import entityPageTemplate from 'app/entity_editor/entity_page.html';
+import Assets from 'components/tabs/asset_list/AssetView';
 
-const list = base({
+const list = {
   name: 'list',
   url: '',
-  loadingText: 'Loading media…',
-  template: '<div cf-asset-list class="workbench asset-list entity-list"></div>',
-});
+  mapInjectedToProps: [
+    '$state',
+    ($state) => {
+      return {
+        goTo: (assetId) => {
+          // X.list -> X.detail
+          $state.go('^.detail', { assetId });
+        },
+      };
+    },
+  ],
+  component: Assets,
+};
 
 const detail = {
   name: 'detail',
