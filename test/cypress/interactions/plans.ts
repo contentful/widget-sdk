@@ -7,6 +7,7 @@ const empty = require('../fixtures/responses/empty.json');
 const getBasePlanInteraction = 'query_base_plan';
 const getPlansInteraction = 'get_plans';
 const getProductRatePlansInteraction = 'get_product_rate_plans';
+const getProductRatePlansWithSpaceInteraction = 'get_product_rate_plans_with_space';
 
 function queryPlans(): RequestOptions {
   return {
@@ -255,5 +256,85 @@ export const getProductRatePlans = {
     }).as(getProductRatePlansInteraction);
 
     return `@${getProductRatePlansInteraction}`;
+  },
+};
+
+export const getProductRatePlansWithSpace = {
+  willReturnDefault() {
+    cy.addInteraction({
+      provider: 'plans',
+      state: 'default rate plans',
+      uponReceiving: 'a request to get the product rate plans with a space key',
+      withRequest: {
+        method: 'GET',
+        path: `/organizations/${defaultOrgId}/product_rate_plans`,
+        headers: {
+          ...defaultHeader,
+          'x-contentful-enable-alpha-feature': 'subscriptions-api',
+        },
+        query: {
+          plan_type: 'space',
+          space_id: defaultSpaceId,
+        },
+      },
+      willRespondWith: {
+        status: 200,
+        body: {
+          total: 3,
+          sys: {
+            type: 'Array',
+          },
+          items: [
+            {
+              sys: {
+                type: 'ProductRatePlan',
+                id: 'free',
+              },
+              name: 'Community',
+              price: 0.0,
+              internalName: 'free_space',
+              productPlanType: 'free_space',
+              productType: 'on_demand',
+              productRatePlanCharges: [],
+              roleSet: {
+                id: 'basic_v2',
+                roles: ['Editor'],
+              },
+              committed: false,
+              customerType: 'Self-service',
+              unavailabilityReasons: [
+                {
+                  type: 'freeSpacesMaximumLimitReached',
+                  maximumLimit: 1,
+                  usage: 1,
+                  additionalInfo: 'Free spaces',
+                },
+              ],
+            },
+            {
+              sys: {
+                type: 'ProductRatePlan',
+                id: 'free',
+              },
+              name: 'Medium',
+              price: 489.0,
+              internalName: 'space_size_1',
+              productPlanType: 'on_demand',
+              productType: 'on_demand',
+              productRatePlanCharges: [],
+              roleSet: {
+                id: 'basic_v2',
+                roles: ['Editor'],
+              },
+              committed: false,
+              customerType: 'Self-service',
+              unavailabilityReasons: [],
+            },
+          ],
+        },
+      },
+    }).as(getProductRatePlansWithSpaceInteraction);
+
+    return `@${getProductRatePlansWithSpaceInteraction}`;
   },
 };

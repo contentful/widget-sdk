@@ -58,6 +58,7 @@ export default function EnvironmentsSidebar({
   const usage = resource.usage + 1;
   const limit = get(resource, 'limits.maximum', -1) + 1;
   const shouldShowAliasDefinition = canManageAliases || hasOptedInEnv;
+  const loadedHasNextSpacePlan = hasNextSpacePlan !== undefined;
 
   const upgradeToEnterpriseOnClick = () => {
     trackTargetedCTAClick(CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
@@ -89,7 +90,7 @@ export default function EnvironmentsSidebar({
             {!canUpgradeSpace &&
               'Ask the administrator of your organization to upgrade the space plan.'}
             {canUpgradeSpace &&
-              hasNextSpacePlan !== undefined &&
+              loadedHasNextSpacePlan &&
               (hasNextSpacePlan
                 ? 'Upgrade the space to add more.'
                 : 'Talk to us about upgrading to an enterprise space plan.')}
@@ -103,8 +104,7 @@ export default function EnvironmentsSidebar({
         </Button>
       )}
 
-      {/* We wait until we explicitly get a value for `hasNextSpacePlan` before rendering the CTA */}
-      {!canCreateEnv && !isLegacyOrganization && canUpgradeSpace && hasNextSpacePlan !== undefined && (
+      {!canCreateEnv && !isLegacyOrganization && canUpgradeSpace && loadedHasNextSpacePlan && (
         <TrackTargetedCTAImpression
           impressionType={
             hasNextSpacePlan ? CTA_EVENTS.UPGRADE_SPACE_PLAN : CTA_EVENTS.UPGRADE_TO_ENTERPRISE
