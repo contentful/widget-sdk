@@ -142,14 +142,12 @@ function createSpaceScopedWidgetApi({
   });
   const navigator = createNavigatorApi({ cma, spaceContext, widget });
   const locales = createLocalesApi();
-  const dialogs = createDialogsApi();
   const canAccess = makeExtensionAccessHandlers();
 
-  return {
+  const apis = {
     space,
     navigator,
     locales,
-    dialogs,
     window: {
       updateHeight: noop,
       startAutoResizer: noop,
@@ -174,6 +172,14 @@ function createSpaceScopedWidgetApi({
       },
     },
   };
+
+  // Not a mistake
+  // We want to manipulate the apis object (passed as reference) so that DialogsAPI can self reference
+  // and we can open/close a dialog from a dialog (INCEPTION HORN)
+  const dialogs = createDialogsApi(apis);
+  apis.dialogs = dialogs;
+
+  return apis;
 }
 
 function createUserObject(spaceMember) {

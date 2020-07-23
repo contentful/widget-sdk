@@ -1,6 +1,6 @@
 export { makeCallSpaceMethodHandler } from './CallSpaceMethodHandler';
 export { makeNotifyHandler } from './NotifyHandler';
-export { makeOpenDialogHandler } from './OpenDialogHandler';
+export { makeOpenDialogHandler, makeCloseDialogHandler } from './DialogHandler';
 export {
   makeNavigateToBulkEditorHandler,
   makeNavigateToContentEntityHandler,
@@ -9,7 +9,8 @@ export {
 export { makeCheckAccessHandler } from './CheckAccessHandler';
 export { makeSetValueHandler, makeRemoveValueHandler, makeSetInvalidHandler } from './FieldHandler';
 
-export type DialogsAPI = import('./OpenDialogHandler').DialogsAPI;
+export type DialogsAPI = import('./DialogHandler').DialogsAPI;
+export type OnClose = import('./DialogHandler').OnClose;
 export type NavigatorAPI = import('./NavigateToHandler').NavigatorAPI;
 export type AccessAPI = import('./CheckAccessHandler').AccessAPI;
 export type FieldAPI = import('./FieldHandler').FieldAPI;

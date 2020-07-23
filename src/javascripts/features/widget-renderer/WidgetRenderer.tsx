@@ -14,6 +14,7 @@ import {
   DialogsAPI,
   NavigatorAPI,
   FieldAPI,
+  OnClose,
   makeCallSpaceMethodHandler,
   makeCheckAccessHandler,
   makeNavigateToBulkEditorHandler,
@@ -24,6 +25,7 @@ import {
   makeRemoveValueHandler,
   makeSetInvalidHandler,
   makeSetValueHandler,
+  makeCloseDialogHandler,
 } from './handlers';
 
 const DISALLOWED_DOMAINS = ['app.contentful.com', 'creator.contentful.com'];
@@ -82,9 +84,10 @@ export interface WidgetRendererProps {
       metadata?: Record<string, any>;
     };
     field?: FieldAPI;
-    dialogs?: DialogsAPI;
-    navigator?: NavigatorAPI;
-    access?: AccessAPI;
+    dialogs: DialogsAPI;
+    navigator: NavigatorAPI;
+    access: AccessAPI;
+    close?: OnClose;
   };
   disallowedDomains?: string[];
   isFullSize?: boolean;
@@ -99,6 +102,7 @@ export enum ChannelMethod {
   NavigateToBulkEditor = 'navigateToBulkEditor',
   NavigateToContentEntity = 'navigateToContentEntity',
   OpenDialog = 'openDialog',
+  CloseDialog = 'closeDialog',
   CheckAccess = 'checkAccess',
   SetValue = 'setValue',
   RemoveValue = 'removeValue',
@@ -295,6 +299,11 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
     this.channel.registerHandler(
       ChannelMethod.SetInvalid,
       makeSetInvalidHandler(this.props.apis.field)
+    );
+
+    this.channel.registerHandler(
+      ChannelMethod.CloseDialog,
+      makeCloseDialogHandler(this.props.apis.close)
     );
 
     // Render the iframe content

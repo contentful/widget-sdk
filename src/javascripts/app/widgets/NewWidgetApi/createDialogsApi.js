@@ -17,7 +17,7 @@ import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 /**
  * @return {DialogsAPI}
  */
-export function createDialogsApi() {
+export function createDialogsApi(apis) {
   return {
     openAlert: ExtensionDialogs.openAlert,
     openConfirm: ExtensionDialogs.openConfirm,
@@ -54,10 +54,10 @@ export function createDialogsApi() {
       throw new Error('Not implemented yet');
     },
     openCurrentApp: (opts) => {
-      return openCustomDialog(WidgetNamespace.APP, opts);
+      return openCustomDialog(WidgetNamespace.APP, opts, apis);
     },
     openExtension: (opts) => {
-      return openCustomDialog(WidgetNamespace.EXTENSION, opts);
+      return openCustomDialog(WidgetNamespace.EXTENSION, opts, apis);
     },
   };
 }
@@ -72,7 +72,7 @@ async function findWidget(widgetNamespace, widgetId) {
     return widget;
   }
 
-  // TODO: how do I get the dependencies here?
+  // TODO: how do I get the dependencies here? (worst case fetch)
   // If there is no widget found but we may be in the installation
   // process, create an artificial widget out of AppDefinition.
   // const { appDefinition } = dependencies;
@@ -83,7 +83,7 @@ async function findWidget(widgetNamespace, widgetId) {
   throw new Error(`No widget with ID "${widgetId}" found in "${widgetNamespace}" namespace.`);
 }
 
-async function openCustomDialog(namespace, options) {
+async function openCustomDialog(namespace, options, apis) {
   if (!options.id) {
     throw new Error('No ID provided.');
   }
@@ -113,6 +113,8 @@ async function openCustomDialog(namespace, options) {
 
     const size = Number.isInteger(options.width) ? `${options.width}px` : options.width;
 
+    const childApis = { ...apis, close: onClose };
+
     return (
       <Modal
         key={dialogKey}
@@ -128,10 +130,9 @@ async function openCustomDialog(namespace, options) {
             {options.title && <Modal.Header title={options.title} onClose={onCloseHandler} />}
             {/* eslint-disable-next-line rulesdir/restrict-inline-styles */}
             <div style={{ minHeight: options.minHeight || 'auto' }}>
-              {/* TODO: do we need to do this now? If so, how do we capture the dependencies? */}
               <WidgetRenderer
                 location={WidgetLocation.DIALOG}
-                apis={{}}
+                apis={childApis}
                 widget={widget}
                 parameters={parameters}
               />

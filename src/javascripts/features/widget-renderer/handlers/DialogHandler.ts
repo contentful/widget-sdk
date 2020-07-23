@@ -7,8 +7,8 @@ import {
 } from 'contentful-ui-extensions-sdk';
 import { WidgetNamespace } from '../interfaces';
 
-// TODO: not really sure if this needs to live here
 export type DialogsAPI = _DialogsAPI;
+export type OnClose = (data?: any) => Promise<void>;
 
 interface OpenEntitySelectorOptions {
   locale: string;
@@ -61,3 +61,9 @@ export const makeOpenDialogHandler = (dialogApi: WidgetRendererProps['apis']['di
     }
   };
 };
+
+export const makeCloseDialogHandler = (onClose?: OnClose) => {
+  return async function(data: any) {
+    return onClose ? onClose(data) : undefined;
+  }
+}
