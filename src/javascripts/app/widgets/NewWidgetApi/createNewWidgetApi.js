@@ -83,6 +83,8 @@ export default function createNewWidgetApi(dependencies) {
       tagsRepo,
       usersRepo: spaceContext.users,
       spaceId: spaceContext.getId(),
+      spaceContext,
+      widget,
     }),
     contentType: contentTypeApi,
     editorInterface,
@@ -125,6 +127,8 @@ function createSpaceScopedWidgetApi({
   tagsRepo,
   usersRepo,
   spaceId,
+  spaceContext,
+  widget,
 }) {
   const cma = getBatchingApiClient(cmaOrBatchingApiClient);
   const space = createSpaceApi({
@@ -136,7 +140,7 @@ function createSpaceScopedWidgetApi({
     tagsRepo,
     usersRepo,
   });
-  const navigator = createNavigatorApi({ cma });
+  const navigator = createNavigatorApi({ cma, spaceContext, widget });
   const locales = createLocalesApi();
   const dialogs = createDialogsApi();
   const canAccess = makeExtensionAccessHandlers();

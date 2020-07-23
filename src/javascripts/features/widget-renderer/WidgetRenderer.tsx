@@ -10,12 +10,14 @@ import {
 } from './interfaces';
 import { PostMessageChannel } from './PostMessageChannel';
 import {
+  DialogsAPI,
+  NavigatorAPI,
   makeCallSpaceMethodHandler,
   makeNotifyHandler,
-  DialogsAPI,
   makeOpenDialogHandler,
   makeNavigateToBulkEditorHandler,
-  makeNavigateToContentEntityHandler, NavigatorAPI,
+  makeNavigateToContentEntityHandler,
+  makeNavigateToPageHandler,
 } from './handlers';
 
 const DISALLOWED_DOMAINS = ['app.contentful.com', 'creator.contentful.com'];
@@ -93,6 +95,7 @@ export enum ChannelMethod {
   CallSpaceMethod = 'callSpaceMethod',
   SetHeight = 'setHeight',
   Notify = 'notify',
+  NavigateToPage = 'navigateToPage',
   NavigateToBulkEditor = 'navigateToBulkEditor',
   NavigateToContentEntity = 'navigateToContentEntity',
   OpenDialog = 'openDialog',
@@ -255,6 +258,11 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
     this.channel.registerHandler(
       ChannelMethod.NavigateToContentEntity,
       makeNavigateToContentEntityHandler(this.props.apis.navigator)
+    );
+
+    this.channel.registerHandler(
+      ChannelMethod.NavigateToPage,
+      makeNavigateToPageHandler(this.props.apis.navigator)
     );
 
     // Render the iframe content
