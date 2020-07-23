@@ -22,6 +22,7 @@ import {
   makeOpenDialogHandler,
   FieldAPI,
   makeSetValueHandler,
+  makeRemoveValueHandler,
 } from './handlers';
 
 const DISALLOWED_DOMAINS = ['app.contentful.com', 'creator.contentful.com'];
@@ -99,6 +100,7 @@ export enum ChannelMethod {
   OpenDialog = 'openDialog',
   CheckAccess = 'checkAccess',
   SetValue = 'setValue',
+  RemoveValue = 'removeValue',
 }
 
 export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown> {
@@ -281,6 +283,11 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
     this.channel.registerHandler(
       ChannelMethod.SetValue,
       makeSetValueHandler(this.props.apis.field)
+    );
+
+    this.channel.registerHandler(
+      ChannelMethod.RemoveValue,
+      makeRemoveValueHandler(this.props.apis.field)
     );
 
     // Render the iframe content
