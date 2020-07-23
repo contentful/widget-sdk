@@ -70,6 +70,7 @@ export const styles = {
     marginLeft: tokens.spacingS,
   }),
   noConfigContainer: css({
+    height: '100%',
     width: '100%',
     backgroundColor: tokens.colorElementLightest,
     '> div:nth-child(3)': {

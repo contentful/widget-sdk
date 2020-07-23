@@ -17,11 +17,13 @@ import {
   Card,
   Paragraph,
   Workbench,
+  Icon,
 } from '@contentful/forma-36-react-components';
 
 import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 import DocumentTitle from 'components/shared/DocumentTitle';
+import StateLink from 'app/common/StateLink';
 import { ModalLauncher } from 'core/components/ModalLauncher';
 import FeedbackButton from 'app/common/FeedbackButton';
 
@@ -43,7 +45,7 @@ const styles = {
   }),
   appListCard: css({
     position: 'relative',
-    marginBottom: tokens.spacingL,
+    marginBottom: tokens.spacingM,
   }),
   overlay: css({
     position: 'absolute',
@@ -55,7 +57,23 @@ const styles = {
     backgroundColor: tokens.colorWhite,
     opacity: 0.8,
   }),
-  installedList: css({
+  heading: css({
+    marginBottom: tokens.spacingM,
+  }),
+  feedbackNote: css({
+    marginBottom: tokens.spacingXl,
+  }),
+  externalLink: css({
+    '& svg': css({
+      verticalAlign: 'sub',
+      marginLeft: tokens.spacing2Xs,
+    }),
+    '&:hover svg': css({
+      fill: tokens.colorContrastMid,
+      transition: `fill ${tokens.transitionDurationShort} ${tokens.transitionEasingDefault}`,
+    }),
+  }),
+  footer: css({
     marginBottom: tokens.spacing2Xl,
   }),
 };
@@ -65,11 +83,27 @@ const externalLinkProps = {
   rel: 'noopener noreferrer',
 };
 
-const withInAppHelpUtmParams = buildUrlWithUtmParams({
+const withInAppHelpUtmParamsPricing = buildUrlWithUtmParams({
   source: 'webapp',
   medium: 'pricing-info',
   campaign: 'in-app-help',
 });
+
+const withInAppHelpUtmBuildApps = buildUrlWithUtmParams({
+  source: 'webapp',
+  medium: 'build-apps',
+  campaign: 'in-app-help',
+});
+
+const sortPrivateAppsFirst = (listOfApps, canManageApps) => {
+  // only sort private apps first if user can manage them
+  if (!canManageApps) {
+    return listOfApps;
+  }
+
+  const [privApps, pubApps] = partition(listOfApps, (a) => !!a.isPrivateApp);
+  return [...privApps, ...pubApps];
+};
 
 const openDetailModal = ({ spaceInformation, usageExceeded, canManageApps }) => (app) => {
   AppLifecycleTracking.detailsOpened(app.id);
@@ -97,13 +131,13 @@ const PricingInfo = () => (
     <Paragraph>
       To access this feature, you need to move to the latest version of Spaces. Submit a{' '}
       <TextLink
-        href={withInAppHelpUtmParams(websiteUrl('/support/?upgrade-pricing=true'))}
+        href={withInAppHelpUtmParamsPricing(websiteUrl('/support/?upgrade-pricing=true'))}
         {...externalLinkProps}>
         support request
       </TextLink>{' '}
       to get started, or learn more about our{' '}
       <TextLink
-        href={withInAppHelpUtmParams(
+        href={withInAppHelpUtmParamsPricing(
           websiteUrl(
             '/pricing/?faq_category=payments-subscriptions&faq=what-type-of-spaces-can-i-have'
           )
@@ -121,24 +155,25 @@ const AppsListShell = (props) => (
     <Workbench.Header
       title={<Header />}
       icon={<NavigationIcon icon="Apps" size="large" />}
-      actions={<FeedbackButton target="extensibility" about="Apps" label="Give your feedback" />}
+      actions={
+        <StateLink path="account.organizations.apps.list" params={{ orgId: props.organizationId }}>
+          Manage private apps
+        </StateLink>
+      }
     />
     <Workbench.Content type="text">
-      <AppsFrameworkIntroBanner canManageApps={props.canManageApps} />
       {props.appsFeatureDisabled && <PricingInfo />}
-      <Card padding="large" className={styles.appListCard}>
-        {props.appsFeatureDisabled && (
-          <div className={styles.overlay} data-test-id="disabled-beta-apps" />
-        )}
-        <div>{props.children}</div>
-      </Card>
+      {props.appsFeatureDisabled && (
+        <div className={styles.overlay} data-test-id="disabled-beta-apps" />
+      )}
+      <div>{props.children}</div>
     </Workbench.Content>
   </Workbench>
 );
 
 AppsListShell.propTypes = {
   appsFeatureDisabled: PropTypes.bool,
-  canManageApps: PropTypes.bool,
+  organizationId: PropTypes.string.isRequired,
 };
 
 const ItemSkeleton = (props) => (
@@ -154,14 +189,18 @@ ItemSkeleton.propTypes = {
 
 const AppsListPageLoading = () => {
   return (
-    <AppsListShell>
-      <SkeletonContainer svgWidth={600} svgHeight={200} ariaLabel="Loading apps list...">
+    <>
+      <SkeletonContainer svgWidth={600} svgHeight={40} ariaLabel="Loading apps list...">
         <SkeletonDisplayText />
-        <ItemSkeleton baseTop={60} />
-        <ItemSkeleton baseTop={110} />
-        <ItemSkeleton baseTop={160} />
       </SkeletonContainer>
-    </AppsListShell>
+      <Card padding="large" className={styles.appListCard}>
+        <SkeletonContainer svgWidth={600} svgHeight={150} ariaLabel="Loading apps list...">
+          <ItemSkeleton baseTop={0} />
+          <ItemSkeleton baseTop={55} />
+          <ItemSkeleton baseTop={110} />
+        </SkeletonContainer>
+      </Card>
+    </>
   );
 };
 
@@ -232,60 +271,95 @@ export class AppsListPage extends React.Component {
   }
 
   render() {
+    const { organizationId, spaceInformation, userId, hasAppsFeature, canManageApps } = this.props;
+    const { installedApps, availableApps } = this.state;
+    let content = <AppsListPageLoading />;
+
+    if (this.state.ready) {
+      const hasInstalledApps = installedApps.length > 0;
+      content = (
+        <>
+          {hasInstalledApps ? (
+            <>
+              <Heading element="h2" className={styles.heading}>
+                Installed
+              </Heading>
+              <Card padding="none" className={styles.appListCard}>
+                <div data-test-id="installed-list">
+                  {sortPrivateAppsFirst(installedApps, canManageApps).map((app) => (
+                    <AppListItem
+                      key={app.id}
+                      app={app}
+                      canManageApps={canManageApps}
+                      openDetailModal={openDetailModal({ spaceInformation, canManageApps })}
+                      orgId={organizationId}
+                    />
+                  ))}
+                </div>
+              </Card>
+            </>
+          ) : (
+            <AppsFrameworkIntroBanner canManageApps={canManageApps} />
+          )}
+          {hasInstalledApps && (
+            <Note className={styles.feedbackNote}>
+              <FeedbackButton target="extensibility" about="Apps" label="Give us feedback!" /> Help
+              us improve your experience with our apps and the App Framework.
+            </Note>
+          )}
+          {availableApps.length > 0 && (
+            <>
+              <Heading element="h2" className={styles.heading}>
+                Available
+              </Heading>
+              <Card padding="none" className={styles.appListCard}>
+                <div>
+                  {sortPrivateAppsFirst(availableApps, canManageApps).map((app) => (
+                    <AppListItem
+                      key={app.id}
+                      app={app}
+                      canManageApps={canManageApps}
+                      openDetailModal={openDetailModal({
+                        spaceInformation,
+                        usageExceeded: isUsageExceeded(installedApps),
+                        canManageApps,
+                      })}
+                      orgId={organizationId}
+                    />
+                  ))}
+                </div>
+              </Card>
+            </>
+          )}
+          <Paragraph className={styles.footer}>
+            Can&rsquo;t find what you&rsquo;re looking for?{' '}
+            <TextLink
+              href={withInAppHelpUtmBuildApps(
+                'https://www.contentful.com/developers/docs/extensibility/app-framework/tutorial/'
+              )}
+              target="_blank"
+              className={styles.externalLink}
+              rel="noopener noreferrer">
+              Build your own app
+              <Icon icon="ExternalLink" />
+            </TextLink>
+          </Paragraph>
+        </>
+      );
+    }
+
     return (
       <>
         <DocumentTitle title="Apps" />
-        {this.state.ready ? this.renderList() : <AppsListPageLoading />}
+        <AppsListShell
+          organizationId={organizationId}
+          spaceInformation={spaceInformation}
+          userId={userId}
+          canManageApps={canManageApps}
+          appsFeatureDisabled={!hasAppsFeature}>
+          {content}
+        </AppsListShell>
       </>
-    );
-  }
-
-  renderList() {
-    const { organizationId, spaceInformation, userId, hasAppsFeature, canManageApps } = this.props;
-    const { installedApps, availableApps } = this.state;
-    const { spaceId } = spaceInformation;
-    const usageExceeded = isUsageExceeded(installedApps);
-
-    return (
-      <AppsListShell
-        organizationId={organizationId}
-        spaceId={spaceId}
-        userId={userId}
-        canManageApps={canManageApps}
-        appsFeatureDisabled={!hasAppsFeature}>
-        {installedApps.length > 0 && (
-          <>
-            <Heading element="h2">Installed</Heading>
-            <div data-test-id="installed-list" className={styles.installedList}>
-              {installedApps.map((app) => (
-                <AppListItem
-                  key={app.id}
-                  app={app}
-                  canManageApps={canManageApps}
-                  openDetailModal={openDetailModal({ spaceInformation, canManageApps })}
-                />
-              ))}
-            </div>
-          </>
-        )}
-        <Heading element="h2">Available</Heading>
-        {availableApps.length > 0 && (
-          <div>
-            {availableApps.map((app) => (
-              <AppListItem
-                key={app.id}
-                app={app}
-                canManageApps={canManageApps}
-                openDetailModal={openDetailModal({
-                  spaceInformation,
-                  usageExceeded,
-                  canManageApps,
-                })}
-              />
-            ))}
-          </div>
-        )}
-      </AppsListShell>
     );
   }
 }
