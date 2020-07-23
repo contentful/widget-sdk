@@ -9,12 +9,14 @@ const EntitySelectorAdapter = (props) => {
     initialState: props.initialState,
     isPersisted: false,
   });
-  return <Search {...props} listViewContext={listViewContext} />;
+  const onUpdate = () => props.onUpdate(listViewContext.getView());
+  return <Search {...props} onUpdate={onUpdate} listViewContext={listViewContext} />;
 };
 
 EntitySelectorAdapter.propTypes = {
   entityType: PropTypes.oneOf(['asset', 'entry']).isRequired,
   initialState: PropTypes.object,
+  onUpdate: PropTypes.func.isRequired,
 };
 
 export default EntitySelectorAdapter;
