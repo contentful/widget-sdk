@@ -41,6 +41,7 @@ export const getFirstDelimiterIndex = (value, delimiters) =>
 
 export const groupForLabel = (label, delimiters) => {
   const delimiterIndex = getFirstDelimiterIndex(label, delimiters);
+
   if (!delimiterIndex || delimiterIndex <= 0) {
     return DEFAULT_GROUP;
   } else {
@@ -51,30 +52,38 @@ export const groupForLabel = (label, delimiters) => {
 export const groupByField = (tags, field, delimiters) =>
   groupBy(tags, (tag) => groupForLabel(tag[field], delimiters));
 
-export const applyMinimumGroupSize = (groups, minGroupLength = 1) => {
+export const applyMinimumGroupSize = (groups, minGroupLength = 2) => {
   if (!Array.isArray(groups[DEFAULT_GROUP])) {
     groups[DEFAULT_GROUP] = [];
   }
+
+  const result = {};
+
   Object.keys(groups).forEach((groupName) => {
     if (groups[groupName].length < minGroupLength && groupName !== DEFAULT_GROUP) {
-      groups[DEFAULT_GROUP] = orderByLabel([...groups[DEFAULT_GROUP], ...groups[groupName]]);
-      delete groups[groupName];
+      result[DEFAULT_GROUP] = orderByLabel([...groups[DEFAULT_GROUP], ...groups[groupName]]);
+    } else {
+      result[groupName] = groups[groupName];
     }
   });
-  return groups;
+
+  return result;
 };
 
 export const applyGroups = (tags, groups) => {
   const result = {};
+
   tags.forEach((tag) => {
-    const group = groupForLabel(tag.label, GROUP_DELIMITERS);
-    if (groups.includes(group)) {
-      if (!result[group]) {
-        result[group] = [];
-      }
-      result[group].push(tag);
+    let group = groupForLabel(tag.label, GROUP_DELIMITERS);
+    group = groups.includes(group) ? group : DEFAULT_GROUP;
+
+    if (!result[group]) {
+      result[group] = [];
     }
+
+    result[group].push(tag);
   });
+
   return result;
 };
 
