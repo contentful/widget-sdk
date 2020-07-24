@@ -238,6 +238,9 @@ angular
         /* webpackMode: "eager" */
         'components/shared/auto_create_new_space'
       );
+      const { init: initBackendTracing } = await import(
+        /* webpackMode: "eager" */ 'i13n/BackendTracing'
+      );
       const Telemetry = await import(/* webpackMode: "eager" */ 'i13n/Telemetry');
       const { loadAll: loadAllStates } = await import(/* webpackMode: "eager" */ 'states/states');
       const { go } = await import(/* webpackMode: "eager" */ 'states/Navigator');
@@ -265,6 +268,7 @@ angular
 
       loadAllStates();
       initDebug(window);
+      initBackendTracing();
       initAuthentication();
       initTokenStore();
       initLD();
