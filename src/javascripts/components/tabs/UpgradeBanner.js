@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { get } from 'lodash';
 import { useAsync } from 'core/hooks';
 import { css } from 'emotion';
@@ -49,8 +49,6 @@ const handleUpgradeToEnterpriseClick = (organization, space) => {
 };
 
 export default function UpgradeBanner() {
-  const [shouldShow, setShouldShow] = useState(false);
-
   const spaceContext = getModule('spaceContext');
   const space = spaceContext.getSpace().data;
   const organization = spaceContext.getData('organization');
@@ -64,7 +62,9 @@ export default function UpgradeBanner() {
       isLegacyOrganization(organization) ||
       !isMasterEnvironment
     ) {
-      return;
+      return {
+        shouldShow: false,
+      };
     }
 
     const endpoint = createOrganizationEndpoint(organization.sys.id);
@@ -73,7 +73,9 @@ export default function UpgradeBanner() {
 
     // We don't want to trigger this for enterprise users
     if (basePlanIsEnterprise) {
-      return;
+      return {
+        shouldShow: false,
+      };
     }
 
     const [resource, nextSpacePlan] = await Promise.all([
@@ -87,9 +89,7 @@ export default function UpgradeBanner() {
 
     const hasNextSpacePlan = !!nextSpacePlan;
 
-    setShouldShow(true);
-
-    return { resource, hasNextSpacePlan, basePlanIsEnterprise };
+    return { shouldShow: true, resource, hasNextSpacePlan, basePlanIsEnterprise };
   }, [space, organization, isMasterEnvironment]);
 
   const { isLoading, error, data } = useAsync(updateResource);
@@ -99,7 +99,7 @@ export default function UpgradeBanner() {
   }
 
   // This is only rendered for non-enterprise customers
-  if (error || !shouldShow) {
+  if (error || !data?.shouldShow) {
     return null;
   }
 
