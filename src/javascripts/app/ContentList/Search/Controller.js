@@ -66,8 +66,8 @@ const createSearchController = ({
         cache.entry.setDisplayedFieldIds(displayedFieldIds);
       }
       if (cache.asset) {
-        cache.asset.setDisplayedFieldIds(displayedFieldIds);
         cache.asset.resolveLinkedEntities(entities);
+        cache.asset.setDisplayedFieldIds(displayedFieldIds);
       }
     }
   };

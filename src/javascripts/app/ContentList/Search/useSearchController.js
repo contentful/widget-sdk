@@ -1,13 +1,21 @@
 import { useMemo, useState, useEffect } from 'react';
 import createSearchController from './Controller';
 
-const useSearchController = ({ fetchEntities, listViewContext, getListQuery, paginator, keys }) => {
+const useSearchController = ({
+  fetchEntities,
+  cache,
+  listViewContext,
+  getListQuery,
+  paginator,
+  keys,
+}) => {
   const [entities, setEntities] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const controller = useMemo(
     () =>
       createSearchController({
+        cache,
         fetchEntities,
         getListQuery,
         keys,
@@ -16,7 +24,7 @@ const useSearchController = ({ fetchEntities, listViewContext, getListQuery, pag
         onLoading: setIsLoading,
         listViewContext,
       }),
-    [fetchEntities, getListQuery, keys, paginator, listViewContext]
+    [fetchEntities, getListQuery, keys, paginator, listViewContext, cache]
   );
 
   useEffect(() => {

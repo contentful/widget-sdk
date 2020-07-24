@@ -87,6 +87,7 @@ const EntitiesView = ({
   getContentTypes,
   spaceContext,
   title,
+  cache,
 }) => {
   const paginator = usePaginator();
   const [isInitialized, setIsInitialized] = useState(false);
@@ -96,6 +97,7 @@ const EntitiesView = ({
     { isLoading, entities, hasEntities, hasNoSearchResults, showNoEntitiesAdvice },
     { updateEntities },
   ] = useSearchController({
+    cache,
     listViewContext,
     paginator,
     fetchEntities,
@@ -235,6 +237,10 @@ EntitiesView.propTypes = {
     getView: PropTypes.func.isRequired,
     setView: PropTypes.func.isRequired,
   }).isRequired,
+  cache: PropTypes.shape({
+    entry: PropTypes.object,
+    asset: PropTypes.object,
+  }),
   searchControllerProps: PropTypes.shape({
     searchKeys: PropTypes.arrayOf(PropTypes.string).isRequired,
     queryKeys: PropTypes.arrayOf(PropTypes.string).isRequired,

@@ -127,6 +127,7 @@ const Entries = ({ goTo }) => {
   return (
     <EntitiesView
       title="Content"
+      cache={cache}
       listViewContext={listViewContext}
       entityType={entityType}
       spaceContext={spaceContext}
