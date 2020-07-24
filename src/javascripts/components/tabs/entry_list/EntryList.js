@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { onEntryEvent } from './eventTracker';
 import EntityList from '../EntityList';
@@ -35,11 +35,18 @@ export default function EntryList({
 
   const { tagsEnabled } = useTagsFeatureEnabled();
 
+  const fieldsWithoutTags = useCallback(
+    (fields) => fields.filter((field) => field.id !== METADATA_TAGS_ID),
+    []
+  );
+
   const filteredDisplayFields = useMemo(() => {
-    return tagsEnabled
-      ? displayedFields
-      : displayedFields.filter((field) => field.id !== METADATA_TAGS_ID);
-  }, [tagsEnabled, displayedFields]);
+    return tagsEnabled ? displayedFields : fieldsWithoutTags(displayedFields);
+  }, [tagsEnabled, displayedFields, fieldsWithoutTags]);
+
+  const filteredHiddenFields = useMemo(() => {
+    return tagsEnabled ? hiddenFields : fieldsWithoutTags(hiddenFields);
+  }, [tagsEnabled, hiddenFields, fieldsWithoutTags]);
 
   // can be undefined
   const displayFieldName = displayFieldForFilteredContentType() || {};
@@ -93,7 +100,7 @@ export default function EntryList({
         return (
           <ViewCustomizer
             displayedFields={filteredDisplayFields}
-            hiddenFields={hiddenFields}
+            hiddenFields={filteredHiddenFields}
             {...displayFieldsActions}
             {...props}
           />
