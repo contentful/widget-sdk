@@ -11,6 +11,7 @@ import { createContentTypeApi } from './createContentTypeApi';
 import checkDependencies from 'widgets/bridges/checkDependencies';
 import makeExtensionAccessHandlers from 'widgets/bridges/makeExtensionAccessHandlers';
 import { createTagsRepo } from 'features/content-tags';
+import { getAppsRepo } from 'features/apps-core';
 
 /**
  * @typedef { import("contentful-ui-extensions-sdk").FieldAPI } FieldAPI
@@ -56,6 +57,7 @@ export default function createNewWidgetApi(dependencies) {
   const contentTypeApi = createContentTypeApi({ contentType });
   const environmentIds = [spaceContext.getEnvironmentId(), ...spaceContext.getAliasesIds()];
   const tagsRepo = createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId());
+  const appsRepo = getAppsRepo();
 
   const entry = createEntryApi({ contentType, locale, otDoc });
   const field = createFieldApi({ $scope }); // TODO: Get rid of $scope here, pass actual dependencies.
@@ -85,6 +87,7 @@ export default function createNewWidgetApi(dependencies) {
       spaceId: spaceContext.getId(),
       spaceContext,
       widget,
+      appsRepo,
     }),
     contentType: contentTypeApi,
     editorInterface,
@@ -129,6 +132,7 @@ function createSpaceScopedWidgetApi({
   spaceId,
   spaceContext,
   widget,
+  appsRepo,
 }) {
   const cma = getBatchingApiClient(cmaOrBatchingApiClient);
   const space = createSpaceApi({
@@ -176,7 +180,7 @@ function createSpaceScopedWidgetApi({
   // Not a mistake
   // We want to manipulate the apis object (passed as reference) so that DialogsAPI can self reference
   // and we can open/close a dialog from a dialog (INCEPTION HORN)
-  const dialogs = createDialogsApi(apis);
+  const dialogs = createDialogsApi(apis, appsRepo);
   apis.dialogs = dialogs;
 
   return apis;

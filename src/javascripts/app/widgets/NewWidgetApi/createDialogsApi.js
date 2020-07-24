@@ -3,12 +3,20 @@ import { Modal } from '@contentful/forma-36-react-components';
 
 import * as entitySelector from 'search/EntitySelector/entitySelector';
 import { ModalLauncher } from 'core/components/ModalLauncher';
-import { WidgetRenderer, WidgetLocation, WidgetNamespace } from 'features/widget-renderer';
+import {
+  buildAppDefinitionWidget,
+  WidgetRenderer,
+  WidgetLocation,
+  WidgetNamespace,
+} from 'features/widget-renderer';
 import * as ExtensionDialogs from 'widgets/ExtensionDialogs';
 import { applyDefaultValues } from 'widgets/WidgetParametersUtils';
 import trackExtensionRender from 'widgets/TrackExtensionRender';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
-import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
+import {
+  getCustomWidgetLoader,
+  getMarketplaceDataProvider,
+} from 'widgets/CustomWidgetLoaderInstance';
 
 /**
  * @typedef { import("contentful-ui-extensions-sdk").DialogsAPI } DialogsAPI
@@ -17,7 +25,7 @@ import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 /**
  * @return {DialogsAPI}
  */
-export function createDialogsApi(apis) {
+export function createDialogsApi(apis, appsRepo) {
   return {
     openAlert: ExtensionDialogs.openAlert,
     openConfirm: ExtensionDialogs.openConfirm,
@@ -54,15 +62,15 @@ export function createDialogsApi(apis) {
       throw new Error('Not implemented yet');
     },
     openCurrentApp: (opts) => {
-      return openCustomDialog(WidgetNamespace.APP, opts, apis);
+      return openCustomDialog(WidgetNamespace.APP, opts, apis, appsRepo);
     },
     openExtension: (opts) => {
-      return openCustomDialog(WidgetNamespace.EXTENSION, opts, apis);
+      return openCustomDialog(WidgetNamespace.EXTENSION, opts, apis, appsRepo);
     },
   };
 }
 
-async function findWidget(widgetNamespace, widgetId) {
+async function findWidget(widgetNamespace, widgetId, appsRepo) {
   const loader = await getCustomWidgetLoader();
   const widget = await loader.getOne({ widgetNamespace, widgetId });
 
@@ -72,23 +80,24 @@ async function findWidget(widgetNamespace, widgetId) {
     return widget;
   }
 
-  // TODO: how do I get the dependencies here? (worst case fetch)
   // If there is no widget found but we may be in the installation
   // process, create an artificial widget out of AppDefinition.
-  // const { appDefinition } = dependencies;
-  // if (widgetNamespace === WidgetNamespace.APP && appDefinition) {
-  //   return buildAppDefinitionWidget(appDefinition, getMarketplaceDataProvider());
-  // }
-
-  throw new Error(`No widget with ID "${widgetId}" found in "${widgetNamespace}" namespace.`);
+  try {
+    const { appDefinition } = await appsRepo.getApp(widgetId);
+    if (widgetNamespace === WidgetNamespace.APP && appDefinition) {
+      return buildAppDefinitionWidget(appDefinition, getMarketplaceDataProvider());
+    }
+  } catch (_e) {
+    throw new Error(`No widget with ID "${widgetId}" found in "${widgetNamespace}" namespace.`);
+  }
 }
 
-async function openCustomDialog(namespace, options, apis) {
+async function openCustomDialog(namespace, options, apis, appsRepo) {
   if (!options.id) {
     throw new Error('No ID provided.');
   }
 
-  const widget = await findWidget(namespace, options.id);
+  const widget = await findWidget(namespace, options.id, appsRepo);
 
   const parameters = {
     // No instance parameters for dialogs.
@@ -113,6 +122,7 @@ async function openCustomDialog(namespace, options, apis) {
 
     const size = Number.isInteger(options.width) ? `${options.width}px` : options.width;
 
+    // Pass onClose in order to allow child modal to close
     const childApis = { ...apis, close: onClose };
 
     return (
