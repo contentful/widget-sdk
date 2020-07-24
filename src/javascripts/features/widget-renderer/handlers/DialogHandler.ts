@@ -33,29 +33,29 @@ export const makeOpenDialogHandler = (dialogApi: WidgetRendererProps['apis']['di
   return async function (type: DialogType, options: OpenDialogHandlerOptions) {
     switch (type) {
       case SimpleDialogs.Alert:
-        return dialogApi?.openAlert(options as OpenAlertOptions);
+        return dialogApi.openAlert(options as OpenAlertOptions);
       case SimpleDialogs.Confirm:
-        return dialogApi?.openConfirm(options as OpenAlertOptions);
+        return dialogApi.openConfirm(options as OpenAlertOptions);
       case SimpleDialogs.Prompt:
-        return dialogApi?.openPrompt(options as OpenAlertOptions);
+        return dialogApi.openPrompt(options as OpenAlertOptions);
       case 'entitySelector':
         const opt = options as OpenEntitySelectorOptions;
 
         if (opt.entityType === 'Entry') {
           return opt.multiple
-            ? dialogApi?.selectMultipleEntries(opt)
-            : dialogApi?.selectSingleEntry(opt);
+            ? dialogApi.selectMultipleEntries(opt)
+            : dialogApi.selectSingleEntry(opt);
         } else if (opt.entityType == 'Asset') {
           return opt.multiple
-            ? dialogApi?.selectMultipleAssets(opt)
-            : dialogApi?.selectSingleAsset(opt);
+            ? dialogApi.selectMultipleAssets(opt)
+            : dialogApi.selectSingleAsset(opt);
         } else {
           throw new TypeError(`Unknown content type ${opt.entityType}`);
         }
       case WidgetNamespace.APP:
-        return dialogApi?.openCurrentApp(options as OpenCustomWidgetOptions);
+        return dialogApi.openCurrentApp(options as OpenCustomWidgetOptions);
       case WidgetNamespace.EXTENSION:
-        return dialogApi?.openExtension(options as OpenCustomWidgetOptions);
+        return dialogApi.openExtension(options as OpenCustomWidgetOptions);
       default:
         throw new Error('Unknown dialog type.');
     }

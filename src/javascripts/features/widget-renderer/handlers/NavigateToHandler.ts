@@ -22,7 +22,7 @@ export function makeNavigateToBulkEditorHandler(
   navigatorApi: WidgetRendererProps['apis']['navigator']
 ) {
   return async function ({ entryId, fieldId, locale, index }: NavigateToBulkEditorOptions) {
-    return navigatorApi?.openBulkEditor(entryId, { fieldId, locale, index });
+    return navigatorApi.openBulkEditor(entryId, { fieldId, locale, index });
   };
 }
 
@@ -34,20 +34,20 @@ export function makeNavigateToContentEntityHandler(
 
     if (options.entityType === 'Entry') {
       if (isExisting) {
-        return navigatorApi?.openEntry(options.id!, options);
+        return navigatorApi.openEntry(options.id!, options);
       }
 
       if (options.contentTypeId) {
-        return navigatorApi?.openNewEntry(options.contentTypeId, options);
+        return navigatorApi.openNewEntry(options.contentTypeId, options);
       }
 
       throw new RangeError(`Unknown Entry and Content Type`);
     } else if (options.entityType === 'Asset') {
       if (isExisting) {
-        return navigatorApi?.openAsset(options.id!, options);
+        return navigatorApi.openAsset(options.id!, options);
       }
 
-      return navigatorApi?.openNewAsset(options);
+      return navigatorApi.openNewAsset(options);
     }
 
     throw new RangeError(`Unknown Entity Type ${options.entityType}`);
@@ -65,7 +65,7 @@ export const makeNavigateToPageHandler = (
 ) => {
   return async function (options: NavigateToPageHandlerOptions) {
     return options.type === WidgetNamespace.APP
-      ? navigatorApi?.openCurrentAppPage(options)
-      : navigatorApi?.openPageExtension(options);
+      ? navigatorApi.openCurrentAppPage(options)
+      : navigatorApi.openPageExtension(options);
   };
 };
