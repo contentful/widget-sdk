@@ -25,7 +25,7 @@ import {
   makeRemoveValueHandler,
   makeSetInvalidHandler,
   makeSetValueHandler,
-  makeCloseDialogHandler,
+  makeCloseDialogHandler, NotifierAPI,
 } from './handlers';
 
 const DISALLOWED_DOMAINS = ['app.contentful.com', 'creator.contentful.com'];
@@ -88,6 +88,7 @@ export interface WidgetRendererProps {
     navigator: NavigatorAPI;
     access: AccessAPI;
     close?: OnClose;
+    notifier: NotifierAPI;
   };
   disallowedDomains?: string[];
   isFullSize?: boolean;
@@ -251,7 +252,10 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
       makeCallSpaceMethodHandler(this.props.apis.space)
     );
 
-    this.channel.registerHandler(ChannelMethod.Notify, makeNotifyHandler());
+    this.channel.registerHandler(
+      ChannelMethod.Notify,
+      makeNotifyHandler(this.props.apis.notifier)
+    );
 
     this.channel.registerHandler(
       ChannelMethod.OpenDialog,

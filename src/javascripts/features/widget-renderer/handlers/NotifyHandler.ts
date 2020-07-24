@@ -1,16 +1,22 @@
-import { Notification } from '@contentful/forma-36-react-components';
+export interface NotifierAPI {
+  success: (message: string) => void
+  error: (message: string) => void
+}
 
 interface NotifyPayload {
   type: 'success' | 'error';
   message: string;
 }
 
-export const makeNotifyHandler = () => {
+export const makeNotifyHandler = (notifierAPI: NotifierAPI) => {
   return async function ({ type, message }: NotifyPayload) {
-    if (['success', 'error'].includes(type) && typeof message === 'string') {
-      Notification[type](message);
-    } else {
-      throw new Error('Invalid notification type.');
+    switch (type) {
+      case "error":
+        return notifierAPI.error(message)
+      case "success":
+        return notifierAPI.success(message)
+      default:
+        throw new RangeError(`Unknown notification type ${type}`)
     }
   };
 };

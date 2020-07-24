@@ -14,3 +14,4 @@ export type OnClose = import('./DialogHandler').OnClose;
 export type NavigatorAPI = import('./NavigateToHandler').NavigatorAPI;
 export type AccessAPI = import('./CheckAccessHandler').AccessAPI;
 export type FieldAPI = import('./FieldHandler').FieldAPI;
+export type NotifierAPI = import('./NotifyHandler').NotifierAPI
