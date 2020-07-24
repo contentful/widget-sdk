@@ -17,8 +17,9 @@ const ERROR_MESSAGES = {
 };
 
 /**
- * @param {API.ContentType} internal ContentType
+ * @param {API.ContentType} contentType
  * @param {API.Locale} locale
+ * @param {API.Entry} entry
  * @return {EntryAPI}
  */
 export function createReadOnlyEntryApi({ contentType, locale, entry }) {
@@ -35,9 +36,9 @@ export function createReadOnlyEntryApi({ contentType, locale, entry }) {
 }
 
 /**
- * @param {API.ContentType} internal ContentType
- * @param {API.Locale} locale
+ * @param {API.ContentType} contentType
  * @param {Document} otDoc
+ * @param $scope
  * @return {EntryAPI}
  */
 export function createEntryApi({ contentType, otDoc, $scope }) {
@@ -95,85 +96,159 @@ function getLocaleCodeAndCallback(args) {
   throw new TypeError('Unexpected arity for callback');
 }
 
-function createInternalEntryFieldApi({ field, otDoc, $scope, contentType }) {
+/**
+ * @param field
+ * @param getValue
+ * @return {FieldAPI}
+ */
+export function createReadOnlyInternalEntryFieldApi({ field, getValue }) {
+  const id = field.apiName ?? field.id;
+  const locales = field.localized
+    ? localeStore.getActiveLocales().map((locale) => locale.code)
+    : [localeStore.getDefaultLocale().code];
+  const type = field.type;
+  const required = !!field.required;
+  const validations = field.validations ?? [];
+  const items = field.items ?? { validations: [] };
+
   return {
-    id: field.apiName || field.id,
-    locales: field.localized
-      ? localeStore.getActiveLocales().map((locale) => locale.code)
-      : [localeStore.getDefaultLocale().code],
-    type: field.type,
-    required: !!field.required,
-    validations: field.validations || [],
-    items: field.items || {
-      validations: [],
+    id,
+    locales,
+    type,
+    required,
+    validations,
+    items,
+    getValue,
+    setValue: noop,
+    removeValue: noop,
+    onValueChanged: noop,
+    onIsDisabledChanged: noop,
+    getForLocale(localeCode) {
+      return {
+        id,
+        locale: localeCode,
+        type,
+        required,
+        validations,
+        items,
+        getValue: () => getValue(localeCode),
+        setValue: noop,
+        removeValue: noop,
+        onValueChanged: noop,
+        onIsDisabledChanged: noop,
+      };
     },
-    getValue: (localeCode) => {
-      const currentPath = getCurrentPath(field, localeCode);
+  };
+}
 
-      return get(otDoc.getValueAt([]), currentPath);
-    },
-    setValue: async (value, localeCode) => {
-      if (!canEdit(otDoc, field, localeCode)) {
-        throw makePermissionError();
+/**
+ * @param field
+ * @param otDoc
+ * @param $scope
+ * @param contentType
+ * @return {FieldAPI}
+ */
+export function createInternalEntryFieldApi({ field, otDoc, $scope, contentType }) {
+  const getValue = (localeCode) => {
+    const currentPath = getCurrentPath(field, localeCode);
+
+    return get(otDoc.getValueAt([]), currentPath);
+  };
+
+  const setValue = async (value, localeCode) => {
+    if (!canEdit(otDoc, field, localeCode)) {
+      throw makePermissionError();
+    }
+
+    const currentPath = getCurrentPath(field, localeCode);
+
+    try {
+      await otDoc.setValueAt(currentPath, value);
+      return value;
+    } catch (err) {
+      throw makeShareJSError(err, ERROR_MESSAGES.MFAILUPDATE);
+    }
+  };
+
+  const removeValue = async (localeCode) => {
+    if (!canEdit(otDoc, field, localeCode)) {
+      throw makePermissionError();
+    }
+
+    const currentPath = getCurrentPath(field, localeCode);
+
+    try {
+      await otDoc.removeValueAt(currentPath);
+    } catch (err) {
+      throw makeShareJSError(err, ERROR_MESSAGES.MFAILREMOVAL);
+    }
+  };
+
+  const onValueChanged = (...args) => {
+    const { cb, localeCode } = getLocaleCodeAndCallback(args);
+    const trackingPath = getCurrentPath(field, localeCode);
+
+    return K.onValueWhile(
+      otDoc.changes,
+      otDoc.changes.filter((path) => PathUtils.isAffecting(path, trackingPath)),
+      () => {
+        cb(get(otDoc.getValueAt([]), trackingPath));
       }
+    );
+  };
 
-      const currentPath = getCurrentPath(field, localeCode);
+  const onIsDisabledChanged = (...args) => {
+    const { cb, localeCode } = getLocaleCodeAndCallback(args);
 
-      try {
-        await otDoc.setValueAt(currentPath, value);
-        return value;
-      } catch (err) {
-        throw makeShareJSError(err, ERROR_MESSAGES.MFAILUPDATE);
-      }
+    const fieldLocalesControllers = getAllFieldLocales(
+      $scope,
+      getModule('$controller'),
+      contentType
+    );
+    const fieldLocale = fieldLocalesControllers.find(
+      (i) => i.fieldId === field.apiName && i.localeCode === localeCode
+    );
+
+    if (!fieldLocale) {
+      throw new RangeError(`Unknown locale code ${localeCode}`);
+    }
+
+    return K.onValueScope($scope, fieldLocale.fieldLocale.access$, (access) => {
+      cb(!!access.disabled);
+    });
+  };
+
+  const { id, locales, type, required, validations, items } = createReadOnlyInternalEntryFieldApi({
+    field,
+    getValue,
+  });
+
+  return {
+    id,
+    locales,
+    type,
+    required,
+    validations,
+    items,
+    getValue,
+    setValue,
+    removeValue,
+    onValueChanged,
+    onIsDisabledChanged,
+    getForLocale(localeCode) {
+      return {
+        id,
+        locale: localeCode,
+        type,
+        required,
+        validations,
+        items,
+        getValue: () => getValue(localeCode),
+        setValue: (value) => setValue(value, localeCode),
+        removeValue: () => removeValue(localeCode),
+        onValueChanged: (cb) => onValueChanged(localeCode, cb),
+        onIsDisabledChanged: (cb) => onIsDisabledChanged(localeCode, cb),
+      };
     },
-    removeValue: async (localeCode) => {
-      if (!canEdit(otDoc, field, localeCode)) {
-        throw makePermissionError();
-      }
-
-      const currentPath = getCurrentPath(field, localeCode);
-
-      try {
-        await otDoc.removeValueAt(currentPath);
-      } catch (err) {
-        throw makeShareJSError(err, ERROR_MESSAGES.MFAILREMOVAL);
-      }
-    },
-    /*
-      can be: onValueChanged(cb) or onValueChanged(locale, cb)
-    */
-    onValueChanged: (...args) => {
-      const { cb, localeCode } = getLocaleCodeAndCallback(args);
-      const trackingPath = getCurrentPath(field, localeCode);
-
-      return K.onValueWhile(
-        otDoc.changes,
-        otDoc.changes.filter((path) => PathUtils.isAffecting(path, trackingPath)),
-        () => {
-          cb(get(otDoc.getValueAt([]), trackingPath));
-        }
-      );
-    },
-    onIsDisabledChanged: (...args) => {
-      const { cb, localeCode } = getLocaleCodeAndCallback(args);
-
-      const fieldLocalesControllers = getAllFieldLocales(
-        $scope,
-        getModule('$controller'),
-        contentType
-      );
-      const fieldLocale = fieldLocalesControllers.find(
-        (i) => i.fieldId === field.apiName && i.localeCode === localeCode
-      );
-
-      if (!fieldLocale) {
-        throw new RangeError(`Unknown locale code ${localeCode}`);
-      }
-
-      return K.onValueScope($scope, fieldLocale.fieldLocale.access$, (access) => {
-        cb(!!access.disabled);
-      });
-    },
-    getForLocale: noop,
   };
 }

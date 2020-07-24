@@ -1,7 +1,6 @@
 import * as K from 'core/utils/kefir';
-import * as PathUtils from 'utils/Path';
-import localeStore from 'services/localeStore';
-import { get, noop } from 'lodash';
+import { noop } from 'lodash';
+import { createInternalEntryFieldApi, createReadOnlyInternalEntryFieldApi } from './createEntryApi';
 
 /**
  * @typedef { import("contentful-ui-extensions-sdk").FieldAPI } FieldAPI
@@ -37,96 +36,24 @@ export function makeShareJSError(shareJSError, message) {
  * @return {FieldAPI}
  */
 export function createReadOnlyFieldApi({ field, locale, getValue = noop }) {
-  return {
-    locale: locale.code,
-    id: field.apiName || field.id,
-    type: field.type,
-    required: !!field.required,
-    validations: field.validations || [],
-    items: field.items || {
-      validations: [],
-    },
-    getValue,
-    setValue: noop,
-    removeValue: noop,
-    onValueChanged: noop,
-    setInvalid: noop,
-    onIsDisabledChanged: noop,
-    onSchemaErrorsChanged: noop,
-  };
-}
+  const readOnlyInternalEntryFieldApi = createReadOnlyInternalEntryFieldApi({ field, getValue });
 
-export function createInternalFieldApi({ field, locale, otDoc }) {
-  const currentPath = ['fields', field.id, locale.internal_code];
-
-  const canEdit = otDoc.permissions.canEditFieldLocale(field.apiName, locale.code);
-
-  return {
-    ...createReadOnlyFieldApi({ locale, field }),
-
-    getValue: () => {
-      return get(otDoc.getValueAt([]), currentPath);
-    },
-    setValue: async function setValue(value) {
-      if (!canEdit) {
-        throw makePermissionError();
-      }
-      try {
-        await otDoc.setValueAt(currentPath, value);
-        return value;
-      } catch (err) {
-        throw makeShareJSError(err, ERROR_MESSAGES.MFAILUPDATE);
-      }
-    },
-    removeValue: async function removeValue() {
-      if (!canEdit) {
-        throw makePermissionError();
-      }
-      try {
-        await otDoc.removeValueAt(currentPath);
-      } catch (err) {
-        throw makeShareJSError(err, ERROR_MESSAGES.MFAILREMOVAL);
-      }
-    },
-    /*
-      can be: onValueChanged(cb) or onValueChanged(locale, cb)
-    */
-    onValueChanged: (...args) => {
-      let cb;
-      let trackingPath = currentPath;
-
-      if (args.length === 1) {
-        cb = args[0];
-      } else if (args.length === 2) {
-        trackingPath = ['fields', field.id, localeStore.toInternalCode(args[0]) || args[0]];
-        cb = args[1];
-      }
-
-      return K.onValueWhile(
-        otDoc.changes,
-        otDoc.changes.filter((path) => PathUtils.isAffecting(path, trackingPath)),
-        () => {
-          cb(get(otDoc.getValueAt([]), trackingPath));
-        }
-      );
-    },
-  };
+  return readOnlyInternalEntryFieldApi.getForLocale(locale.code);
 }
 
 /**
  * @param {{ $scope: Object }}
  * @return {FieldAPI}
  */
-export function createFieldApi({ $scope }) {
+export function createFieldApi({ $scope, contentType }) {
   const field = $scope.widget.field;
   const { locale, otDoc } = $scope;
 
+  const internalEntryFieldApi = createInternalEntryFieldApi({ field, otDoc, $scope, contentType });
+  const internalFieldApi = internalEntryFieldApi.getForLocale(locale.code);
+
   return {
-    ...createInternalFieldApi({
-      locale,
-      field,
-      otDoc,
-    }),
+    ...internalFieldApi,
     setInvalid: (isInvalid) => {
       $scope.fieldController.setInvalid(locale.code, isInvalid);
     },

@@ -58,7 +58,7 @@ export default function createNewWidgetApi(dependencies) {
   const tagsRepo = createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId());
 
   const entry = createEntryApi({ contentType, otDoc, $scope });
-  const field = createFieldApi({ $scope }); // TODO: Get rid of $scope here, pass actual dependencies.
+  const field = createFieldApi({ $scope, contentType }); // TODO: Get rid of $scope here, pass actual dependencies.
   const user = createUserObject(spaceContext.space.data.spaceMember);
   const ids = createIdsObject(
     spaceContext.getId(),
