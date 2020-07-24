@@ -12,6 +12,8 @@ export const CTA_EVENTS = {
   UPGRADE_SPACE_PLAN: 'upgrade_space_plan',
   CREATE_SPACE: 'create_space',
   PURCHASE_MICRO_SMALL_VIA_SUPPORT: 'purchase_micro_small_via_support',
+  UPGRADE_TO_TEAM: 'upgrade_to_team',
+  REQUEST_TEAM_USER_LIMIT: 'increase_team_user_limit_via_support',
 };
 
 function ifValidThenTrack(action, intent, meta) {

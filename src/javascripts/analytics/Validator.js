@@ -7,6 +7,8 @@ const CTA_EVENTS = [
   'upgrade_space_plan',
   'create_space',
   'purchase_micro_small_via_support',
+  'upgrade_to_team',
+  'increase_team_user_limit_via_support',
 ];
 
 export const validEvents = {

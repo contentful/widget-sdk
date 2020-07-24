@@ -35,7 +35,11 @@ import BasePlan from './BasePlan';
 import UsersForPlan from './UsersForPlan';
 import SpacePlans from './SpacePlans';
 import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
-import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
+import {
+  isEnterprisePlan,
+  isFreePlan,
+  isEnterpriseTrialPlan,
+} from 'account/pricing/PricingDataProvider';
 import ContactUsButton from 'ui/Components/ContactUsButton';
 
 const styles = {
@@ -215,6 +219,10 @@ export default function SubscriptionPage({
                 numberFreeUsers={usersMeta && usersMeta.numFree}
                 numberPaidUsers={usersMeta && usersMeta.numPaid}
                 costOfUsers={usersMeta && usersMeta.cost}
+                unitPrice={usersMeta && usersMeta.unitPrice}
+                hardLimit={usersMeta && usersMeta.hardLimit}
+                isFreePlan={isFreePlan(basePlan)}
+                isOnEnterpriseTrial={isEnterpriseTrialPlan(basePlan)}
               />
             )}
           </div>
@@ -232,6 +240,10 @@ export default function SubscriptionPage({
                     numberFreeUsers={usersMeta && usersMeta.numFree}
                     numberPaidUsers={usersMeta && usersMeta.numPaid}
                     costOfUsers={usersMeta && usersMeta.cost}
+                    unitPrice={usersMeta && usersMeta.unitPrice}
+                    hardLimit={usersMeta && usersMeta.hardLimit}
+                    isFreePlan={isFreePlan(basePlan)}
+                    isOnEnterpriseTrial={isEnterpriseTrialPlan(basePlan)}
                   />
                 )}
                 {showPayingOnDemandCopy && <PayingOnDemandOrgCopy grandTotal={grandTotal} />}

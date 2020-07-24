@@ -7,7 +7,8 @@ export const SELF_SERVICE = 'Self-service';
 export const ENTERPRISE = 'Enterprise';
 const ENTERPRISE_TRIAL = 'Enterprise Trial';
 export const ENTERPRISE_HIGH_DEMAND = 'Enterprise High Demand';
-const FREE = 'Free';
+export const FREE = 'Free';
+export const ENTERPRISE_TRIAL_BASE_PLAN_NAME = 'Professional Trial';
 
 export const customerTypes = {
   free: [FREE],
@@ -29,6 +30,10 @@ export function isFreePlan(plan) {
 
 export function isHighDemandEnterprisePlan(plan) {
   return plan.customerType === ENTERPRISE_HIGH_DEMAND;
+}
+
+export function isEnterpriseTrialPlan(plan) {
+  return plan.name === ENTERPRISE_TRIAL_BASE_PLAN_NAME;
 }
 
 export function isFreeSpacePlan(plan) {

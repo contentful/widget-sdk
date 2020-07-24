@@ -43,12 +43,18 @@ export function calcUsersMeta({ basePlan, numMemberships }) {
 
   // Should only be one free tier
   const freeTier = tiers.find((tier) => tier.price === 0);
-  const freeTierUsers = freeTier.endingUnit - freeTier.startingUnit;
+  // Enterprise trial has no users limit
+  const freeTierUsers =
+    freeTier.endingUnit === null ? numMemberships : freeTier.endingUnit - freeTier.startingUnit;
   const numFree = numMemberships > freeTierUsers ? freeTierUsers : numMemberships;
   const numPaid = numMemberships > freeTierUsers ? numMemberships - freeTierUsers : 0;
   const cost = calculateUsersCost({ basePlan, numMemberships });
+  const hardLimit = tiers[tiers.length - 1].endingUnit;
+  // Should only be one paying tier
+  const perUnitTier = tiers.find((tier) => tier.priceFormat === 'PerUnit');
+  const unitPrice = perUnitTier ? perUnitTier.price : undefined;
 
-  return { numFree, numPaid, cost };
+  return { numFree, numPaid, cost, hardLimit, unitPrice };
 }
 
 /**

@@ -13,6 +13,11 @@ import * as trackCTA from 'analytics/trackCTA';
 
 import { showDialog as showCreateSpaceModal } from 'services/CreateSpace';
 import { showDialog as showChangeSpaceModal } from 'services/ChangeSpaceService';
+import {
+  FREE,
+  SELF_SERVICE,
+  ENTERPRISE_TRIAL_BASE_PLAN_NAME,
+} from 'account/pricing/PricingDataProvider';
 
 jest.mock('services/CreateSpace', () => ({
   showDialog: jest.fn(),
@@ -38,9 +43,14 @@ jest.mock('states/Navigator', () => ({
 }));
 
 const trackCTAClick = jest.spyOn(trackCTA, 'trackCTAClick');
+const trackTargetedCTAClick = jest.spyOn(trackCTA, 'trackTargetedCTAClick');
 
 const mockOrganization = Fake.Organization();
 const mockBasePlan = Fake.Plan({ name: 'My cool base plan' });
+const mockFreeBasePlan = Fake.Plan({ customerType: FREE });
+const mockTeamBasePlan = Fake.Plan({ customerType: SELF_SERVICE });
+const mockEnterpriseTrialPlan = Fake.Plan({ name: ENTERPRISE_TRIAL_BASE_PLAN_NAME });
+
 const mockSpacePlans = [
   Fake.Plan({
     space: Fake.Space(),
@@ -84,17 +94,94 @@ describe('SubscriptionPage', () => {
       numFree: 7,
       numPaid: 10,
       cost: 1000000,
+      unitPrice: 100,
+      hardLimit: 25,
     };
 
     build({ usersMeta });
 
     expect(screen.getByTestId('users-for-plan')).toHaveTextContent(
-      `Your organization has ${
-        usersMeta.numFree + usersMeta.numPaid
-      } users. You are exceeding the limit of ${usersMeta.numFree} free users by ${
-        usersMeta.numPaid
-      } users.That is $${usersMeta.cost} per month.`
+      `Your organization has ${usersMeta.numFree + usersMeta.numPaid} users. ${
+        usersMeta.numFree
+      } users are included free with your subscription. ` +
+        `You will be charged an additional $${usersMeta.unitPrice}/month per user for ${usersMeta.numPaid} users. That is $${usersMeta.cost} per month.`
     );
+
+    expect(screen.getByTestId('subscription-page.org-memberships-link')).toBeVisible();
+  });
+
+  it('should show user details and CTA to upgrade for the Community customers', () => {
+    const navigatorObject = { test: true };
+    billing.mockReturnValue(navigatorObject);
+
+    const usersMeta = {
+      numFree: 5,
+      numPaid: 2,
+      hardLimit: 5,
+    };
+
+    build({ usersMeta, basePlan: mockFreeBasePlan });
+
+    expect(screen.getByTestId('users-for-plan')).toHaveTextContent(
+      `Your organization has ${usersMeta.numFree + usersMeta.numPaid} users. ${
+        usersMeta.hardLimit
+      } users are included free with your subscription.`
+    );
+
+    expect(screen.getByTestId('subscription-page.org-memberships-link')).toBeVisible();
+
+    const ctaLink = screen.getByTestId('subscription-page.upgrade-to-team-link');
+    expect(ctaLink).toBeVisible();
+
+    userEvent.click(ctaLink);
+    expect(trackTargetedCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.UPGRADE_TO_TEAM, {
+      organizationId: mockOrganization.sys.id,
+    });
+
+    expect(billing).toHaveBeenCalledWith(mockOrganization.sys.id);
+    expect(go).toHaveBeenCalledWith(navigatorObject);
+  });
+
+  it('should show user details and CAT to contact support for the Team users', () => {
+    const usersMeta = {
+      numFree: 10,
+      numPaid: 17,
+      hardLimit: 25,
+    };
+
+    build({ usersMeta, basePlan: mockTeamBasePlan });
+
+    expect(screen.getByTestId('users-for-plan')).toHaveTextContent(
+      `Your organization has ${usersMeta.numFree + usersMeta.numPaid} users. ${
+        usersMeta.hardLimit
+      } users are included with your subscription.`
+    );
+
+    expect(screen.getByTestId('subscription-page.org-memberships-link')).toBeVisible();
+
+    const ctaLink = screen.getByTestId('subscription-page.contact-support-link');
+    expect(ctaLink).toBeVisible();
+
+    userEvent.click(ctaLink);
+    expect(trackTargetedCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.REQUEST_TEAM_USER_LIMIT, {
+      organizationId: mockOrganization.sys.id,
+    });
+  });
+
+  it('should show user details correctly for the Enterprise trial customers', () => {
+    const usersMeta = {
+      numFree: 100,
+      hardLimit: null,
+    };
+
+    build({ usersMeta, basePlan: mockEnterpriseTrialPlan });
+
+    expect(screen.getByTestId('users-for-plan')).toHaveTextContent(
+      `Your organization has ${usersMeta.numFree} users. 10 users are included free with Enterprise tier. ` +
+        `Customers on the Enterprise tier can purchase addtional users for $15/month per user.`
+    );
+
+    expect(screen.getByTestId('subscription-page.org-memberships-link')).toBeVisible();
   });
 
   it('should show the monthly cost for on demand users', () => {
