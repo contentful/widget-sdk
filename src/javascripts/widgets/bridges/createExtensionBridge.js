@@ -178,15 +178,17 @@ export default function createExtensionBridge(dependencies) {
       api.send('localeSettingsChanged', [getLocaleSettings()]);
     });
 
-    makeListOfFieldLocales($scope, $controller).forEach(({ fieldId, localeCode, fieldLocale }) => {
-      K.onValueScope($scope, fieldLocale.access$, (access) => {
-        api.send('isDisabledChangedForFieldLocale', [fieldId, localeCode, !!access.disabled]);
-      });
+    makeListOfFieldLocales($scope, $controller, $scope.entityInfo.contentType).forEach(
+      ({ fieldId, localeCode, fieldLocale }) => {
+        K.onValueScope($scope, fieldLocale.access$, (access) => {
+          api.send('isDisabledChangedForFieldLocale', [fieldId, localeCode, !!access.disabled]);
+        });
 
-      K.onValueScope($scope, fieldLocale.errors$.skipDuplicates(isEqual), (errors = []) => {
-        api.send('schemaErrorsChangedForFieldLocale', [fieldId, localeCode, errors]);
-      });
-    });
+        K.onValueScope($scope, fieldLocale.errors$.skipDuplicates(isEqual), (errors = []) => {
+          api.send('schemaErrorsChangedForFieldLocale', [fieldId, localeCode, errors]);
+        });
+      }
+    );
 
     // Available for field-level extensions only:
     if (isFieldLevelExtension) {

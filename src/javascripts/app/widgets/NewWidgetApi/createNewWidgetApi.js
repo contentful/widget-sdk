@@ -50,14 +50,14 @@ export default function createNewWidgetApi(dependencies) {
   checkDependencies('createNewWidgetApi', dependencies, ['$scope', 'spaceContext']);
   const { spaceContext, $scope } = dependencies;
   const { cma } = spaceContext;
-  const { locale, widget, otDoc } = $scope;
+  const { widget, otDoc } = $scope;
   const { contentType } = $scope.entityInfo;
   const { editorInterface } = $scope.editorData;
   const contentTypeApi = createContentTypeApi({ contentType });
   const environmentIds = [spaceContext.getEnvironmentId(), ...spaceContext.getAliasesIds()];
   const tagsRepo = createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId());
 
-  const entry = createEntryApi({ contentType, locale, otDoc });
+  const entry = createEntryApi({ contentType, otDoc, $scope });
   const field = createFieldApi({ $scope }); // TODO: Get rid of $scope here, pass actual dependencies.
   const user = createUserObject(spaceContext.space.data.spaceMember);
   const ids = createIdsObject(

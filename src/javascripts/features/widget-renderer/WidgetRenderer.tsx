@@ -27,6 +27,8 @@ import {
   makeSetValueHandler,
   makeCloseDialogHandler, NotifierAPI,
 } from './handlers';
+import {Field} from "../../app/entity_editor/EntityField/types";
+import {EntryAPI, EntryFieldAPI} from "contentful-ui-extensions-sdk";
 
 const DISALLOWED_DOMAINS = ['app.contentful.com', 'creator.contentful.com'];
 
@@ -73,16 +75,7 @@ export interface WidgetRendererProps {
         };
       };
     };
-    entry?: {
-      getSys: () => { id: string };
-      fields: Record<
-        string,
-        {
-          getValue: () => any;
-        }
-      >;
-      metadata?: Record<string, any>;
-    };
+    entry?: EntryAPI;
     field?: FieldAPI;
     dialogs: DialogsAPI;
     navigator: NavigatorAPI;
@@ -309,6 +302,18 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
       ChannelMethod.CloseDialog,
       makeCloseDialogHandler(this.props.apis.close)
     );
+
+    /////
+
+    const fields = this.props.apis.entry?.fields ?? {}
+
+    Object.values(fields).forEach((field: EntryFieldAPI) => {
+      field.locales.forEach((localeCode: string)  => {
+        this.props.apis.entry?.fields[field.id].onIsDisabledChanged(localeCode, (isDisabled: boolean) => {
+          this.channel?.send('isDisabledChangedForFieldLocale', [field.id, localeCode, isDisabled ])
+        })
+      })
+    })
 
     // Render the iframe content
     if (this.isSrc(widget)) {
