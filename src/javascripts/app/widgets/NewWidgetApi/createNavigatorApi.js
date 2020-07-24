@@ -23,6 +23,8 @@ export function createNavigatorApi({ cma, spaceContext, widget }) {
   // TODO:
   //  Consider replacing spaceContext with the computed values (spaceId, environmentId, isMaster) if we don't need
   //  to compute this on the fly. In that case, we should also be replacing it in the create*ExtensionBridge files
+  //  Also, if we eliminate the usage of makePageExtensionHandlers from everywhere else than here, we should
+  //  consider merging this with it
   const navigateToPage = makePageExtensionHandlers({
     spaceContext,
     currentWidgetId: widget.widgetId,

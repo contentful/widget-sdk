@@ -3,20 +3,12 @@ import { Modal } from '@contentful/forma-36-react-components';
 
 import * as entitySelector from 'search/EntitySelector/entitySelector';
 import { ModalLauncher } from 'core/components/ModalLauncher';
-import {
-  buildAppDefinitionWidget,
-  WidgetRenderer,
-  WidgetLocation,
-  WidgetNamespace,
-} from 'features/widget-renderer';
+import { WidgetRenderer, WidgetLocation, WidgetNamespace } from 'features/widget-renderer';
 import * as ExtensionDialogs from 'widgets/ExtensionDialogs';
 import { applyDefaultValues } from 'widgets/WidgetParametersUtils';
 import trackExtensionRender from 'widgets/TrackExtensionRender';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
-import {
-  getCustomWidgetLoader,
-  getMarketplaceDataProvider,
-} from 'widgets/CustomWidgetLoaderInstance';
+import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 
 /**
  * @typedef { import("contentful-ui-extensions-sdk").DialogsAPI } DialogsAPI
@@ -25,7 +17,7 @@ import {
 /**
  * @return {DialogsAPI}
  */
-export function createDialogsApi(apis, appsRepo) {
+export function createDialogsApi(apis) {
   return {
     openAlert: ExtensionDialogs.openAlert,
     openConfirm: ExtensionDialogs.openConfirm,
@@ -62,15 +54,15 @@ export function createDialogsApi(apis, appsRepo) {
       throw new Error('Not implemented yet');
     },
     openCurrentApp: (opts) => {
-      return openCustomDialog(WidgetNamespace.APP, opts, apis, appsRepo);
+      return openCustomDialog(WidgetNamespace.APP, opts, apis);
     },
     openExtension: (opts) => {
-      return openCustomDialog(WidgetNamespace.EXTENSION, opts, apis, appsRepo);
+      return openCustomDialog(WidgetNamespace.EXTENSION, opts, apis);
     },
   };
 }
 
-async function findWidget(widgetNamespace, widgetId, appsRepo) {
+async function findWidget(widgetNamespace, widgetId) {
   const loader = await getCustomWidgetLoader();
   const widget = await loader.getOne({ widgetNamespace, widgetId });
 
@@ -80,16 +72,18 @@ async function findWidget(widgetNamespace, widgetId, appsRepo) {
     return widget;
   }
 
+  // TODO:
+  //   Handle this piece of logic whenever we use WidgetRenderer in the AppConfig screen.
+  //   Please note: presence of appDefinition below just means it's during the installation flow
+  //   hence outside of said flow, that will be undefined.
   // If there is no widget found but we may be in the installation
   // process, create an artificial widget out of AppDefinition.
-  try {
-    const { appDefinition } = await appsRepo.getApp(widgetId);
-    if (widgetNamespace === WidgetNamespace.APP && appDefinition) {
-      return buildAppDefinitionWidget(appDefinition, getMarketplaceDataProvider());
-    }
-  } catch (_e) {
-    throw new Error(`No widget with ID "${widgetId}" found in "${widgetNamespace}" namespace.`);
-  }
+  // const { appDefinition } = dependencies;
+  // if (widgetNamespace === WidgetNamespace.APP && appDefinition) {
+  //   return buildAppDefinitionWidget(appDefinition, getMarketplaceDataProvider());
+  // }
+
+  throw new Error(`No widget with ID "${widgetId}" found in "${widgetNamespace}" namespace.`);
 }
 
 async function openCustomDialog(namespace, options, apis, appsRepo) {
@@ -118,8 +112,6 @@ async function openCustomDialog(namespace, options, apis, appsRepo) {
   const dialogKey = Date.now().toString();
 
   return ModalLauncher.open(({ isShown, onClose }) => {
-    const onCloseHandler = () => onClose();
-
     const size = Number.isInteger(options.width) ? `${options.width}px` : options.width;
 
     // Pass onClose in order to allow child modal to close
@@ -133,11 +125,11 @@ async function openCustomDialog(namespace, options, apis, appsRepo) {
         allowHeightOverflow={options.allowHeightOverflow || false}
         position={options.position || 'center'}
         isShown={isShown}
-        onClose={onCloseHandler}
+        onClose={() => onClose()}
         size={size || '700px'}>
         {() => (
           <>
-            {options.title && <Modal.Header title={options.title} onClose={onCloseHandler} />}
+            {options.title && <Modal.Header title={options.title} onClose={() => onClose()} />}
             {/* eslint-disable-next-line rulesdir/restrict-inline-styles */}
             <div style={{ minHeight: options.minHeight || 'auto' }}>
               <WidgetRenderer
