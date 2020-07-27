@@ -1,4 +1,3 @@
-import { Notification } from '@contentful/forma-36-react-components';
 import accountState from './account';
 import spacesState from 'states/Spaces';
 import homeState from 'states/Home';
@@ -6,6 +5,8 @@ import DeeplinkPage from 'states/deeplink/DeeplinkPage';
 import { getMarketplaceApps } from 'states/deeplink/utils';
 import userInvitationState from 'states/UserInvitationState';
 import { getQueryString, getLocationHref } from 'utils/location';
+import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
+import ErrorPage from './ErrorPage';
 
 import { getModule } from 'core/NgRegistry';
 
@@ -55,22 +56,15 @@ export function loadAll() {
     deeplinkState,
     userInvitationState,
     {
+      name: 'error',
+      url: '/error',
+      navComponent: EmptyNavigationBar,
+      component: ErrorPage,
+    },
+    {
       name: '_other',
       url: '/*path',
       redirectTo: 'home',
-    },
-    {
-      name: 'error',
-      url: 'error',
-      controller: function () {
-        Notification.error(
-          'We were unable to process your request. ' +
-            'If this problem persists, please contact support',
-          {
-            id: 'load-all-error-notification',
-          }
-        );
-      },
     },
   ]);
 }
