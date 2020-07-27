@@ -19,6 +19,7 @@ export class AppListItem extends Component {
         },
       }),
       isPrivateApp: PropTypes.bool,
+      isEarlyAccess: PropTypes.bool.isRequired,
     }).isRequired,
     openDetailModal: PropTypes.func.isRequired,
     canManageApps: PropTypes.bool,
@@ -52,6 +53,11 @@ export class AppListItem extends Component {
                   <AppIcon icon={app.icon} />
                   <div>
                     {app.title}
+                    {app.isEarlyAccess && (
+                      <Tag tagType="warning" className={styles.earlyAccessTag}>
+                        EARLY ACCESS
+                      </Tag>
+                    )}
                     {app.tagLine && <div className={styles.tagLine}>{app.tagLine}</div>}
                   </div>
                   {app.isPrivateApp && <Tag className={styles.tag}>Private</Tag>}

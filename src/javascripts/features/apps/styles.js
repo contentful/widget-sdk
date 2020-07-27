@@ -61,6 +61,9 @@ export const styles = {
     alignItems: 'center',
     cursor: 'pointer',
   }),
+  earlyAccessTag: css({
+    marginLeft: tokens.spacingXs,
+  }),
   tag: css({
     marginTop: '3px',
     marginLeft: tokens.spacingXs,

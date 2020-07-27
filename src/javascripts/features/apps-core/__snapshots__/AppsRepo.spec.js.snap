@@ -77,6 +77,7 @@ See build status in real-time, track progress and view recent changes all from w
 ![Netlify sidebar](//images.ctfassets.net/lpjm8d10rkpy/RrSqXTcdlpfkPt7sJzkEb/57172d0fd3eaa36a5ab90e7d183ed171/apps-netlify-sidebar.0ffd73e12b.png) ",
     "icon": "//images.ctfassets.net/lpjm8d10rkpy/2dYQ3x6VMNZJgDXYmMzLBx/b338ad4b50cd0ff31e7157671b801b4d/logomark.svg",
     "id": "netlify",
+    "isEarlyAccess": false,
     "isListed": true,
     "legal": Object {
       "eula": "https://github.com/contentful/apps/blob/master/apps/netlify/LICENSE",
@@ -114,6 +115,7 @@ See build status in real-time, track progress and view recent changes all from w
     },
     "appInstallation": undefined,
     "id": "app-definition-id",
+    "isEarlyAccess": false,
     "isPrivateApp": true,
     "title": "My app",
   },

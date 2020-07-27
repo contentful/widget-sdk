@@ -85,6 +85,9 @@ export const styles = {
   noConfigHelpText: css({
     marginTop: tokens.spacingL,
   }),
+  earlyAccessTag: css({
+    marginLeft: tokens.spacingXs,
+  }),
   divider: css({
     height: '1px',
     maxHeight: '1px',

@@ -101,6 +101,7 @@ export function createAppsRepo(cma, appDefinitionLoader) {
       appDefinition,
       appInstallation,
       isPrivateApp: true,
+      isEarlyAccess: false, // private apps can never be early access
     };
   }
 
