@@ -18,6 +18,7 @@ import * as K from 'core/utils/kefir';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 import * as ScheduledActionsService from 'app/ScheduledActions/DataManagement/ScheduledActionsService';
 import { getModule } from 'core/NgRegistry';
+import getAccessibleCTs from 'data/ContentTypeRepo/accessibleCTs';
 
 const trackEnforcedButtonClick = (err) => {
   // If we get reason(s), that means an enforcement is present
@@ -132,7 +133,7 @@ const Entries = ({ goTo }) => {
       entityType={entityType}
       spaceContext={spaceContext}
       fetchEntities={fetchEntries}
-      getContentTypes={() => accessibleCTs}
+      getContentTypes={() => getAccessibleCTs(spaceContext.publishedCTs, contentTypeId)}
       searchControllerProps={{
         searchKeys: ['searchText', 'searchFilters', 'contentTypeId', 'id'],
         queryKeys: ['searchText', 'searchFilters', 'contentTypeId'],
