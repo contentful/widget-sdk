@@ -2,7 +2,6 @@
 export const WALK_FOR_ME = 'feature-fe-10-2017-walkme-integration-eli-lilly';
 export const ENVIRONMENTS_FLAG = 'feature-dv-11-2017-environments';
 export const ENTRY_COMMENTS = 'feature-04-2019-entry-comments';
-export const TEAMS_IN_SPACES = 'feature-bv-04-2019-teams-iteration-2';
 export const ENTITY_EDITOR_CMA_EXPERIMENT =
   'feature-pen-07-2019-fake-cma-calls-experiment-to-replace-sharejs';
 export const ACCESS_TOOLS = 'feature-ogg-02-2020-access-tools';
