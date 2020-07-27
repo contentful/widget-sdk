@@ -1,11 +1,9 @@
 import React from 'react';
 import { Card } from '@contentful/forma-36-react-components';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
-import { getCurrentVariation } from 'utils/LaunchDarkly';
 import Icon from 'ui/Components/Icon';
 import { websiteUrl } from 'Config';
 import isLegacyEnterprise from 'data/isLegacyEnterprise';
-import { UPGRADE_PRICING_FLAG } from 'featureFlags';
 import { getModule } from 'core/NgRegistry';
 import { trackClickCTA } from './tracking';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
@@ -17,7 +15,10 @@ const withInAppHelpUtmParams = buildUrlWithUtmParams({
 });
 
 export default class UpgradePricing extends React.Component {
-  state = {};
+  state = {
+    show: false,
+  };
+
   async shouldShow(org) {
     if (!org) {
       return false;
@@ -37,15 +38,14 @@ export default class UpgradePricing extends React.Component {
 
     return true;
   }
+
   async componentDidMount() {
     const spaceContext = getModule('spaceContext');
 
     const org = spaceContext.getData('organization');
     const showUpgrade = await this.shouldShow(org);
 
-    const variation = await getCurrentVariation(UPGRADE_PRICING_FLAG);
     this.setState({
-      flag: variation,
       show: showUpgrade,
     });
   }
@@ -57,9 +57,9 @@ export default class UpgradePricing extends React.Component {
   }
 
   render() {
-    const { show, flag } = this.state;
+    const { show } = this.state;
 
-    if (!show || !flag) {
+    if (!show) {
       return null;
     }
 
