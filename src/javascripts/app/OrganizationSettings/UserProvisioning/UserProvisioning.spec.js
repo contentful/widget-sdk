@@ -1,7 +1,6 @@
 import React from 'react';
 import { render, waitFor, screen } from '@testing-library/react';
 import UserProvisioning from './UserProvisioning';
-import { getVariation } from 'LaunchDarkly';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import * as fake from 'test/helpers/fakeFactory';
@@ -36,12 +35,5 @@ describe('UserProvisioning', () => {
     getOrgFeature.mockResolvedValue(false);
     await renderComponent();
     expect(screen.getByTestId('get-in-touch-btn')).toBeInTheDocument();
-  });
-
-  it('should render forbidden flow if accessTools and scim feature not enabled', async () => {
-    getOrgFeature.mockResolvedValue(false);
-    getVariation.mockResolvedValue(false);
-    await renderComponent();
-    expect(screen.getByText('Access forbidden (403)')).toBeInTheDocument();
   });
 });
