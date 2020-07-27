@@ -315,6 +315,7 @@ export class AppRoute extends Component {
         )}
         {(appLoaded || loadingError) && isInstalled && (
           <Button
+            testId={'app-uninstall-button'}
             buttonType="muted"
             onClick={this.uninstall}
             loading={busyWith === BUSY_STATE_UNINSTALLATION}

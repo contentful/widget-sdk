@@ -1,10 +1,4 @@
-import {
-  defaultSpaceId,
-  defaultHeader,
-  defaultOrgId,
-  defaultUserId,
-  defaultAppId,
-} from '../util/requests';
+import { defaultSpaceId, defaultHeader, defaultOrgId, defaultAppId } from '../util/requests';
 import { dropboxAppInstallation } from '../fixtures/responses/app_installations/app-installation';
 import { appInstallationsMarketPlace } from '../fixtures/responses/app_installations/app_installations';
 
@@ -15,8 +9,8 @@ const appDefinitionsPublic = require('../fixtures/responses/app_definitions/app-
 
 enum State {
   APPS_MARKETPLACE = 'apps/marketplace',
-  APP_INSTALLATION_NONE = 'app_intallations/none',
-  APP_INSTALLATION_SOME = 'app_intallations/some',
+  APP_INSTALLATION_NONE = 'app_installations/none',
+  APP_INSTALLATION_SOME = 'app_installations/some',
   APP_DEFINITIONS_NONE = 'app_definitions/none',
   APP_DEFINITIONS_PUBLIC = 'app_definitions/public',
   GET_APP_INSTALLATION = 'app_installation/some',
@@ -137,7 +131,7 @@ export const deleteAppInstallation = {
       },
     }).as('deleteAppInstallation');
 
-    return '@deleteAppInstalation';
+    return '@deleteAppInstallation';
   },
 };
 
