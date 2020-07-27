@@ -2,7 +2,7 @@ import { useReducer } from 'react';
 import { createImmerReducer } from 'core/utils/createImmerReducer';
 import createResourceService from 'services/ResourceService';
 import * as accessChecker from 'access_control/AccessChecker';
-import * as LD from 'utils/LaunchDarkly';
+import { getVariation } from 'LaunchDarkly';
 import { getOrgFeature, getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { canCreate } from 'utils/ResourceUtils';
 import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService';
@@ -81,7 +81,7 @@ export const useEnvironmentsRouteState = (props) => {
     if (!hasAccess) goToSpaceDetail();
 
     const [environmentsEnabled, canSelectSource, aliasesEnabled] = await Promise.all([
-      LD.getCurrentVariation(ENVIRONMENTS_FLAG),
+      getVariation(ENVIRONMENTS_FLAG, { spaceId, organizationId }),
       getOrgFeature(organizationId, 'environment_branching'),
       getSpaceFeature(spaceId, 'environment_aliasing'),
     ]);
@@ -198,7 +198,7 @@ export const useEnvironmentsRouteState = (props) => {
 
   const FetchNextSpacePlan = async () => {
     const { organizationId, spaceId, canUpgradeSpace } = props;
-    const isNewPricingReleased = await LD.getCurrentVariation(PRICING_2020_RELEASED, {
+    const isNewPricingReleased = await getVariation(PRICING_2020_RELEASED, {
       organizationId,
     });
 

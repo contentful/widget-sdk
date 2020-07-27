@@ -88,29 +88,6 @@ async function stubFilestack(system) {
 }
 
 async function stubLaunchDarklyUtil(system) {
-  const flags = {};
-
-  const mockedUtil = {
-    init: sinon.spy(),
-
-    getCurrentVariation(flag) {
-      // We need to use `$q` because otherwise the tests do not execute
-      // correctly.
-      return Promise.resolve(flags[flag]);
-    },
-
-    // TODO implement when needed
-    onFeatureFlag: sinon.spy(),
-
-    // This does not exist on the actual client it is there for the
-    // tests to control the client behavior.
-    _setFlag(flag, value) {
-      flags[flag] = value;
-    },
-  };
-
-  await system.set('utils/LaunchDarkly', mockedUtil);
-
   await system.set('LaunchDarkly', {
     getVariation: sinon.stub().resolves(false),
   });

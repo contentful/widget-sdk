@@ -83,9 +83,6 @@ describe('Access Checker', () => {
     this.system.set('data/CMA/ProductCatalog', {
       getSpaceFeature: getSpaceFeature,
     });
-    this.system.set('utils/LaunchDarkly', {
-      getCurrentVariation: sinon.stub().resolves(false),
-    });
     this.system.set('services/LegacyFeatureService', {
       default: () => {
         return {

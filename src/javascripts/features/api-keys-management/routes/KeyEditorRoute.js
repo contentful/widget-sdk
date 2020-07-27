@@ -6,11 +6,16 @@ import createFetcherComponent from 'app/common/createFetcherComponent';
 import * as accessChecker from 'access_control/AccessChecker';
 import { KeyEditorWorkbench } from '../api-key-editor/KeyEditorWorkbench';
 import { KeyEditor } from '../api-key-editor/KeyEditor';
-import { getCurrentVariation } from 'utils/LaunchDarkly';
+import { getVariation } from 'LaunchDarkly';
+import { getModule } from 'core/NgRegistry';
 
 import { ENVIRONMENTS_FLAG } from 'featureFlags';
 
 const ApiKeyFetcher = createFetcherComponent(async ({ apiKeyId, spaceEnvironmentsRepo }) => {
+  const spaceContext = getModule('spaceContext');
+  const spaceId = spaceContext.getId();
+  const organizationId = spaceContext.organization.sys.id;
+
   const [
     apiKey,
     canEdit,
@@ -21,7 +26,7 @@ const ApiKeyFetcher = createFetcherComponent(async ({ apiKeyId, spaceEnvironment
     getApiKeyRepo().get(apiKeyId),
     accessChecker.canModifyApiKeys(),
     accessChecker.shouldDisable('create', 'apiKey'),
-    getCurrentVariation(ENVIRONMENTS_FLAG),
+    getVariation(ENVIRONMENTS_FLAG, { spaceId, organizationId }),
     spaceEnvironmentsRepo.getAll(),
   ]);
   return {

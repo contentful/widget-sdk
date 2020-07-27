@@ -17,8 +17,6 @@ import {
 
 import { getReleases, getReleasesExcludingEntity } from '../../Releases/releasesService';
 
-import { getCurrentVariation } from 'utils/LaunchDarkly';
-
 import {
   entity,
   entityWithNoRefs,
@@ -54,12 +52,6 @@ jest.mock('../../Releases/releasesService', function () {
   };
 });
 
-jest.mock('utils/LaunchDarkly', function () {
-  return {
-    getCurrentVariation: jest.fn(),
-  };
-});
-
 describe('ReferencesTree component', () => {
   afterEach(cleanup);
 
@@ -74,7 +66,6 @@ describe('ReferencesTree component', () => {
       resolved: cfResolveResponse(simpleReferences),
       response: simpleReferences,
     });
-    getCurrentVariation.mockResolvedValue(true);
     getEntityTitle.mockResolvedValue('Title');
   });
 

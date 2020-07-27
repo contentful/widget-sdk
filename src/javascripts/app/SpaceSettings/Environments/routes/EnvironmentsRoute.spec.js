@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 
 import EnvironmentsRoute from './EnvironmentsRoute';
 import * as accessChecker from 'access_control/AccessChecker';
-import * as LD from 'utils/LaunchDarkly';
+import { getVariation } from 'LaunchDarkly';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { openDeleteEnvironmentDialog } from '../DeleteDialog';
 import createResourceService from 'services/ResourceService';
@@ -33,8 +33,8 @@ jest.mock('access_control/AccessChecker', () => ({
   can: jest.fn().mockReturnValue(true),
 }));
 
-jest.mock('utils/LaunchDarkly', () => ({
-  getCurrentVariation: jest.fn().mockResolvedValue(true), // environmentsEnabled
+jest.mock('LaunchDarkly', () => ({
+  getVariation: jest.fn().mockResolvedValue(true), // environmentsEnabled
 }));
 
 jest.mock('data/CMA/ProductCatalog', () => ({
@@ -117,7 +117,7 @@ describe('EnvironmentsRoute', () => {
     });
 
     it('redirects if space has environments disabled', async () => {
-      LD.getCurrentVariation.mockResolvedValueOnce(false);
+      getVariation.mockResolvedValueOnce(false);
       render(<EnvironmentsRoute {...defaultProps} />);
       await wait();
       expect(defaultProps.goToSpaceDetail).toHaveBeenCalled();
