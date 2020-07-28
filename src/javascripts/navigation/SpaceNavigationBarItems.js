@@ -12,7 +12,6 @@ export function getSpaceNavigationItems({
   canNavigateTo,
   usageEnabled,
   hasOrgTeamFeature,
-  teamsInSpacesFF,
   useSpaceEnvironment,
   isMasterEnvironment,
   contentTagsEnabled,
@@ -55,7 +54,7 @@ export function getSpaceNavigationItems({
       title: 'Users',
     },
     teams: {
-      if: teamsInSpacesFF && hasOrgTeamFeature && canNavigateTo('teams'),
+      if: hasOrgTeamFeature && canNavigateTo('teams'),
       sref: makeRef('settings.teams.list', isMasterEnvironment),
       rootSref: makeRef('settings.teams', isMasterEnvironment),
       dataViewType: 'spaces-settings-teams',

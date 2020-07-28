@@ -9,8 +9,6 @@ import {
   Paragraph,
   Workbench,
 } from '@contentful/forma-36-react-components';
-import { ACCESS_TOOLS } from 'featureFlags';
-import { getVariation } from 'LaunchDarkly';
 import { FetcherLoading } from 'app/common/createFetcherComponent';
 import IDPSetupForm from './IDPSetupForm';
 import SSOEnabled from './SSOEnabled';
@@ -82,18 +80,25 @@ export class SSOSetup extends React.Component {
     const { organization } = this.props;
 
     const featureEnabled = await getOrgFeature(organization.sys.id, 'self_configure_sso');
-    const accessToolsEnabled = await getVariation(ACCESS_TOOLS, {
-      organizationId: organization.sys.id,
-    });
     const hasPerms = isOwnerOrAdmin(organization);
 
-    if (!featureEnabled || !hasPerms) {
+    if (!featureEnabled) {
+      if (hasPerms) {
+        this.setState({
+          showUpsellState: true,
+          isLoading: false,
+        });
+      } else {
+        this.setState({
+          isLoading: false,
+        });
+      }
+
+      return;
+    } else if (!hasPerms) {
       this.setState({
-        isAllowed: false,
-        showUpsellState: accessToolsEnabled,
         isLoading: false,
       });
-
       return;
     }
 

@@ -1,13 +1,9 @@
 // Launch Darkly Feature Flags
 export const WALK_FOR_ME = 'feature-fe-10-2017-walkme-integration-eli-lilly';
-export const CONTACT_US_SPACE_HOME = 'feature-ps-10-2017-contact-us-space-home';
 export const ENVIRONMENTS_FLAG = 'feature-dv-11-2017-environments';
-export const UPGRADE_PRICING_FLAG = 'feature-dl-09-2018-upgrade-pricing-space-home';
 export const ENTRY_COMMENTS = 'feature-04-2019-entry-comments';
-export const TEAMS_IN_SPACES = 'feature-bv-04-2019-teams-iteration-2';
 export const ENTITY_EDITOR_CMA_EXPERIMENT =
   'feature-pen-07-2019-fake-cma-calls-experiment-to-replace-sharejs';
-export const ACCESS_TOOLS = 'feature-ogg-02-2020-access-tools';
 export const APP_MANAGEMENT_VIEWS = 'feature-ext-04-2020-app-backends';
 export const PRICING_2020_RELEASED = 'feature-ogg-06-2020-enable-pricing-2020-features';
 export const PAYING_PREV_V2_ORG = 'feature-ogg-06-2020-v2-team-user';
