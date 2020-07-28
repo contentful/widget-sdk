@@ -16,8 +16,11 @@ import { getOrganization, getSpace, getUser, getSpacesByOrganization } from 'ser
 import isLegacyEnterprise from 'data/isLegacyEnterprise';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 
-let client;
+let client = null;
 let cache = {};
+
+let initializationPromise = null;
+let initialized = false;
 
 export const FLAGS = {
   WALK_FOR_ME: 'feature-fe-10-2017-walkme-integration-eli-lilly',
@@ -35,6 +38,30 @@ export const FLAGS = {
   PRICING_2020_WARNING: 'feature-hejo-06-2020-pricing-2020-in-app-communication',
   NEW_FIELD_DIALOG: 'react-migration-new-content-type-field-dialog',
   ENTITY_SELECTOR_MIGRATION: 'feature-pulitzer-07-2020-entity-selector-migration',
+
+  // So that we can test the fallback mechanism without needing to rely on an actual
+  // flag above, we use this special flag. This doesn't exist in LD.
+  __FLAG_FOR_UNIT_TESTS__: 'test-flag',
+};
+
+const FALLBACK_VALUES = {
+  [FLAGS.WALK_FOR_ME]: null,
+  [FLAGS.ENVIRONMENTS_FLAG]: true,
+  [FLAGS.ENTRY_COMMENTS]: true,
+  [FLAGS.ENTITY_EDITOR_CMA_EXPERIMENT]: undefined,
+  [FLAGS.APP_MANAGEMENT_VIEWS]: false,
+  [FLAGS.PRICING_2020_RELEASED]: true,
+  [FLAGS.PAYING_PREV_V2_ORG]: false,
+  [FLAGS.TEST_IF_LD_IS_WORKING]: true,
+  [FLAGS.ALL_REFERENCES_DIALOG]: false,
+  [FLAGS.NEW_STATUS_SWITCH]: false,
+  [FLAGS.ADD_TO_RELEASE]: false,
+  [FLAGS.SHAREJS_REMOVAL]: { Asset: false, Entry: false },
+  [FLAGS.PRICING_2020_WARNING]: true,
+  [FLAGS.NEW_FIELD_DIALOG]: false,
+  [FLAGS.ENTITY_SELECTOR_MIGRATION]: false,
+
+  [FLAGS.__FLAG_FOR_UNIT_TESTS__]: 'fallback-value',
 };
 
 /*
@@ -49,6 +76,8 @@ export function clearCache() {
   if (process.env.NODE_ENV === 'test') {
     client = null;
     cache = {};
+    initializationPromise = null;
+    initialized = false;
   } else {
     throw new Error('Clearing LaunchDarkly client cache is only available in testing.');
   }
@@ -205,6 +234,25 @@ export async function getVariation(flagName, { organizationId, spaceId, environm
     client = LDClient.initialize(config.launchDarkly.envId, clientUser);
   }
 
+  if (!initialized) {
+    if (!initializationPromise) {
+      initializationPromise = client.waitForInitialization();
+    }
+
+    try {
+      await initializationPromise;
+
+      initialized = true;
+    } catch {
+      // LaunchDarkly couldn't initialize. Return whatever the fallback value is
+      // for the flag and reset the state so we can try to initialize later
+      initializationPromise = null;
+      client = null;
+
+      return FALLBACK_VALUES[flagName];
+    }
+  }
+
   // The cache key will look like this:
   //
   // Only org ID:
@@ -252,9 +300,6 @@ export async function getVariation(flagName, { organizationId, spaceId, environm
   or undefined
  */
 async function createFlagsPromise({ user, organizationId, spaceId, environmentId }) {
-  // Get the user data that will be used for LD client variation data
-  await client.waitForInitialization();
-
   let org;
   let space;
 
@@ -322,4 +367,23 @@ async function createFlagsPromise({ user, organizationId, spaceId, environmentId
 
     return variation;
   };
+}
+
+export function ensureFlagsHaveFallback() {
+  const flagNames = Object.values(FLAGS);
+  const missing = [];
+
+  for (const flagName of flagNames) {
+    if (!(flagName in FALLBACK_VALUES)) {
+      missing.push(flagName);
+    }
+  }
+
+  if (missing.length > 0) {
+    throw new Error(
+      `Feature flag(s) are missing fallback values. Add fallback values for the following flag(s): ${missing.join(
+        ', '
+      )}`
+    );
+  }
 }

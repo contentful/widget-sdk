@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import ldClient from 'ldclient-js';
-import { getVariation, clearCache } from './LaunchDarkly';
+import { getVariation, clearCache, FLAGS } from './LaunchDarkly';
 import { getOrganization, getSpace, getUser } from 'services/TokenStore';
 import { launchDarkly } from 'Config';
 import { logError } from 'services/logger';
@@ -111,6 +111,7 @@ describe('LaunchDarkly', () => {
     beforeEach(() => {
       variations['FLAG'] = '"flag_value"';
       variations['OTHER_FLAG'] = '"other_flag_value"';
+      variations[FLAGS.__FLAG_FOR_UNIT_TESTS__] = '"test-flag-variation"';
     });
 
     it('should return the overridden flag variation and not initialize if flag has override', async () => {
@@ -122,6 +123,29 @@ describe('LaunchDarkly', () => {
       expect(ldClient.initialize).not.toHaveBeenCalled();
       expect(isFlagOverridden).toHaveBeenCalledTimes(1);
       expect(variation).toBe('override-value');
+    });
+
+    it('should only initialize once', async () => {
+      await getVariation('FLAG', { organizationId: 'org_1234' });
+      expect(ldClient.initialize).toHaveBeenCalledTimes(1);
+
+      await getVariation('FLAG', { spaceId: 'space_1234' });
+      expect(ldClient.initialize).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return the fallback value if waitForInitialization throws', async () => {
+      client.waitForInitialization.mockRejectedValueOnce();
+
+      // First time throws, we get the fallback value
+      expect(await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__)).toBe('fallback-value');
+
+      // Second time passes, we get the actual variation
+      expect(await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__)).toBe('test-flag-variation');
+    });
+
+    it('should be able to get two different flag values', async () => {
+      expect(await getVariation('FLAG')).toBe('flag_value');
+      expect(await getVariation('OTHER_FLAG')).toBe('other_flag_value');
     });
 
     it('should attempt to get the organization if provided org id', async () => {
@@ -181,19 +205,6 @@ describe('LaunchDarkly', () => {
 
       expect(variation).toBeUndefined();
       expect(logError).toHaveBeenCalledTimes(2);
-    });
-
-    it('should only initialize once', async () => {
-      await getVariation('FLAG', { organizationId: 'org_1234' });
-      expect(ldClient.initialize).toHaveBeenCalledTimes(1);
-
-      await getVariation('FLAG', { spaceId: 'space_1234' });
-      expect(ldClient.initialize).toHaveBeenCalledTimes(1);
-    });
-
-    it('should be able to get two different flag values', async () => {
-      expect(await getVariation('FLAG')).toBe('flag_value');
-      expect(await getVariation('OTHER_FLAG')).toBe('other_flag_value');
     });
 
     it('should only identify once per orgId/spaceId combo', async () => {

@@ -260,6 +260,8 @@ angular
         /* webpackMode: "eager" */ 'navigation/stateChangeHandlers'
       );
 
+      const { ensureFlagsHaveFallback } = await import(/* webpackMode: "eager" */ 'LaunchDarkly');
+
       if (Config.env === 'development') {
         Error.stackTraceLimit = 100;
       } else {
@@ -277,6 +279,8 @@ angular
 
       initDialogsController();
       setupStateChangeHandlers();
+
+      ensureFlagsHaveFallback();
 
       // Start telemetry and expose it as a global.
       // It can be used by E2E or Puppeteer scripts.
