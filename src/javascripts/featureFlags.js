@@ -11,6 +11,7 @@ export const ACCESS_TOOLS = 'feature-ogg-02-2020-access-tools';
 export const APP_MANAGEMENT_VIEWS = 'feature-ext-04-2020-app-backends';
 export const PRICING_2020_RELEASED = 'feature-ogg-06-2020-enable-pricing-2020-features';
 export const PAYING_PREV_V2_ORG = 'feature-ogg-06-2020-v2-team-user';
+export const TEST_IF_LD_IS_WORKING = 'test-if-launch-darkly-is-working';
 
 // Gatekeeper Product Catalog Flags
 export const ENVIRONMENT_USAGE_ENFORCEMENT = 'environment_usage_enforcements';
