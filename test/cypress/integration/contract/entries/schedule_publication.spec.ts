@@ -107,7 +107,8 @@ describe('Schedule Publication', () => {
         .click();
 
       cy.wait(interaction);
-
+      // not always visible because right sidebar is scrolled to bottom
+      cy.findByTestId('change-state-menu-trigger').scrollIntoView();
       cy.findByTestId('change-state-menu-trigger').should('be.visible');
       cy.findByTestId('change-state-published').should('be.enabled');
     });
