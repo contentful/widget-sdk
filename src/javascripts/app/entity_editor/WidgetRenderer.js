@@ -6,7 +6,7 @@ import WidgetRenderWarning from 'widgets/WidgetRenderWarning';
 import * as LoadEventTracker from 'app/entity_editor/LoadEventTracker';
 import { WidgetNamespace, isCustomWidget, WidgetLocation } from 'features/widget-renderer';
 import { toRendererWidget } from 'widgets/WidgetCompat';
-import { WidgetRenderer as WidgetRenederExternal } from 'features/widget-renderer/WidgetRenderer';
+import { WidgetRenderer as WidgetRenederExternal } from 'features/widget-renderer';
 
 const { createLinksRenderedEvent, createWidgetLinkRenderEventsHandler } = LoadEventTracker;
 

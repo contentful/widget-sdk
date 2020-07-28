@@ -1,14 +1,11 @@
-import { WidgetRendererProps } from '../WidgetRenderer';
 import {
-  DialogsAPI as _DialogsAPI,
+  DialogsAPI,
   OpenAlertOptions,
   OpenConfirmOptions,
   OpenCustomWidgetOptions,
+  DialogExtensionSDK,
 } from 'contentful-ui-extensions-sdk';
 import { WidgetNamespace } from '../interfaces';
-
-export type DialogsAPI = _DialogsAPI;
-export type OnClose = (data?: any) => Promise<void>;
 
 interface OpenEntitySelectorOptions {
   locale: string;
@@ -26,10 +23,14 @@ enum SimpleDialogs {
   Prompt = 'prompt',
 }
 
-type DialogType = SimpleDialogs | 'entitySelector' | WidgetNamespace;
+type DialogType =
+  | SimpleDialogs
+  | 'entitySelector'
+  | WidgetNamespace.APP
+  | WidgetNamespace.EXTENSION;
 type OpenDialogHandlerOptions = OpenAlertOptions | OpenConfirmOptions | OpenEntitySelectorOptions;
 
-export const makeOpenDialogHandler = (dialogApi: WidgetRendererProps['apis']['dialogs']) => {
+export const makeOpenDialogHandler = (dialogApi: DialogsAPI) => {
   return async function (type: DialogType, options: OpenDialogHandlerOptions) {
     switch (type) {
       case SimpleDialogs.Alert:
@@ -62,8 +63,8 @@ export const makeOpenDialogHandler = (dialogApi: WidgetRendererProps['apis']['di
   };
 };
 
-export const makeCloseDialogHandler = (onClose?: OnClose) => {
-  return async function(data: any) {
+export const makeCloseDialogHandler = (onClose?: DialogExtensionSDK['close']) => {
+  return async function (data: any) {
     return onClose ? onClose(data) : undefined;
-  }
-}
+  };
+};

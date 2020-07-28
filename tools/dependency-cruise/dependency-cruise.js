@@ -111,7 +111,8 @@ module.exports = {
         from.pathNot re of the not-to-dev-dep rule in the dependency-cruiser configuration`,
       from: {
         path: '^(src)',
-        pathNot: '__tests__|\\.spec\\.(js|ts|tsx)$',
+        // TODO: remove widget renderer once extracted to a library
+        pathNot: 'features/widget-renderer|__tests__|\\.spec\\.(js|ts|tsx)$',
       },
       to: {
         dependencyTypes: ['npm-dev'],

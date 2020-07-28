@@ -1,7 +1,7 @@
-import { WidgetRendererProps } from '../WidgetRenderer';
+import { SpaceAPI } from 'contentful-ui-extensions-sdk';
 
 export const makeCallSpaceMethodHandler = (
-  spaceApi: WidgetRendererProps['apis']['space'],
+  spaceApi: SpaceAPI,
   handlerOptions: { readOnly?: boolean } = {}
 ) =>
   async function (methodName, args = []) {

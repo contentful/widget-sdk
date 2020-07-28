@@ -1,4 +1,18 @@
-import { ChannelMethod } from './WidgetRenderer';
+export enum ChannelMethod {
+  CallSpaceMethod = 'callSpaceMethod',
+  SetHeight = 'setHeight',
+  Notify = 'notify',
+  NavigateToPage = 'navigateToPage',
+  NavigateToPageExtension = 'navigateToPageExtension',
+  NavigateToBulkEditor = 'navigateToBulkEditor',
+  NavigateToContentEntity = 'navigateToContentEntity',
+  OpenDialog = 'openDialog',
+  CloseDialog = 'closeDialog',
+  CheckAccess = 'checkAccess',
+  SetValue = 'setValue',
+  RemoveValue = 'removeValue',
+  SetInvalid = 'setInvalid',
+}
 
 interface IncomingMessage {
   data: {

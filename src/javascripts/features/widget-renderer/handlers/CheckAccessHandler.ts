@@ -1,11 +1,3 @@
-import { WidgetRendererProps } from '../WidgetRenderer';
+import { AccessAPI } from 'contentful-ui-extensions-sdk';
 
-export interface AccessAPI {
-  can: (action: string, entityType: string) => Promise<boolean>;
-}
-
-export const makeCheckAccessHandler = (accessApi: WidgetRendererProps['apis']['access']) => {
-  return async function (action: string, entityType: string) {
-    return accessApi.can(action, entityType);
-  };
-};
+export const makeCheckAccessHandler = (accessApi: AccessAPI) => accessApi.can;

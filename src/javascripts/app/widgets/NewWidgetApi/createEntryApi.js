@@ -4,7 +4,7 @@ import { createReadOnlyFieldApi, makePermissionError, makeShareJSError } from '.
 import localeStore from 'services/localeStore';
 import * as PathUtils from 'utils/Path';
 import { getModule } from 'core/NgRegistry';
-import getAllFieldLocales from 'widgets/bridges/makeListOfFieldLocales';
+import makeListOfFieldLocales from 'widgets/bridges/makeListOfFieldLocales';
 
 /**
  * @typedef { import("contentful-ui-extensions-sdk").EntryAPI } EntryAPI
@@ -200,7 +200,7 @@ export function createInternalEntryFieldApi({ field, otDoc, $scope, contentType 
   const onIsDisabledChanged = (...args) => {
     const { cb, localeCode } = getLocaleCodeAndCallback(args);
 
-    const fieldLocalesControllers = getAllFieldLocales(
+    const fieldLocalesControllers = makeListOfFieldLocales(
       $scope,
       getModule('$controller'),
       contentType

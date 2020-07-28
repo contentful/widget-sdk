@@ -1,4 +1,10 @@
 import React from 'react';
+import {
+  EntryFieldAPI,
+  KnownSDK,
+  DialogExtensionSDK,
+  FieldExtensionSDK,
+} from 'contentful-ui-extensions-sdk';
 
 import {
   Widget,
@@ -8,13 +14,8 @@ import {
   WidgetNamespace,
   HostingType,
 } from './interfaces';
-import { PostMessageChannel } from './PostMessageChannel';
+import { PostMessageChannel, ChannelMethod } from './PostMessageChannel';
 import {
-  AccessAPI,
-  DialogsAPI,
-  NavigatorAPI,
-  FieldAPI,
-  OnClose,
   makeCallSpaceMethodHandler,
   makeCheckAccessHandler,
   makeNavigateToBulkEditorHandler,
@@ -25,10 +26,9 @@ import {
   makeRemoveValueHandler,
   makeSetInvalidHandler,
   makeSetValueHandler,
-  makeCloseDialogHandler, NotifierAPI,
+  makeCloseDialogHandler,
 } from './handlers';
-import {Field} from "../../app/entity_editor/EntityField/types";
-import {EntryAPI, EntryFieldAPI} from "contentful-ui-extensions-sdk";
+import { makeConnectMessage } from './makeConnectMessage';
 
 const DISALLOWED_DOMAINS = ['app.contentful.com', 'creator.contentful.com'];
 
@@ -40,7 +40,7 @@ const SANDBOX = [
   'allow-downloads',
 ].join(' ');
 
-export interface WidgetRendererProps {
+interface WidgetRendererProps {
   location: WidgetLocation;
   widget: Widget;
   parameters: {
@@ -49,58 +49,9 @@ export interface WidgetRendererProps {
       invocation?: AppParameterValues;
     };
   };
-  apis: {
-    locales: any;
-    user: any;
-    space: {
-      getCachedContentTypes: () => any[];
-    };
-    ids: any;
-    contentType?: {
-      sys: {
-        type: 'ContentType';
-        id: string;
-      };
-      fields: any[];
-    };
-    editorInterface?: {
-      sys: {
-        type: 'EditorInterface';
-        contentType: {
-          sys: {
-            id: string;
-            type: 'Link';
-            linkType: 'ContentType';
-          };
-        };
-      };
-    };
-    entry?: EntryAPI;
-    field?: FieldAPI;
-    dialogs: DialogsAPI;
-    navigator: NavigatorAPI;
-    access: AccessAPI;
-    close?: OnClose;
-    notifier: NotifierAPI;
-  };
+  apis: KnownSDK;
   disallowedDomains?: string[];
   isFullSize?: boolean;
-}
-
-export enum ChannelMethod {
-  CallSpaceMethod = 'callSpaceMethod',
-  SetHeight = 'setHeight',
-  Notify = 'notify',
-  NavigateToPage = 'navigateToPage',
-  NavigateToPageExtension = 'navigateToPageExtension',
-  NavigateToBulkEditor = 'navigateToBulkEditor',
-  NavigateToContentEntity = 'navigateToContentEntity',
-  OpenDialog = 'openDialog',
-  CloseDialog = 'closeDialog',
-  CheckAccess = 'checkAccess',
-  SetValue = 'setValue',
-  RemoveValue = 'removeValue',
-  SetInvalid = 'setInvalid',
 }
 
 export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown> {
@@ -148,59 +99,13 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
   // on the initial page load the consecutive page loads would render
   // the HTML page but the `sdk.init(cb)` callback wouldn't be called).
   private onLoad = () => {
-    // Internal format for "connect" message
-    const connectMessage = {
-      location: this.props.location,
-      parameters: this.parameters,
-      locales: this.props.apis.locales,
-      user: this.props.apis.user,
-      contentType: this.props.apis.contentType || { sys: {}, fields: [] },
-      initialContentTypes: this.props.apis.space.getCachedContentTypes(),
-      editorInterface: this.props.apis.editorInterface,
-      ids: {
-        ...this.props.apis.ids,
-        // Results in `{ app: 'some-app-id' }` or `{ extension: 'some-ext-id' }`.
-        [this.props.widget.namespace]: this.props.widget.id,
-      },
-      entry: this.props.apis.entry
-        ? {
-            sys: this.props.apis.entry.getSys(),
-            metadata: this.props.apis.entry.metadata,
-          }
-        : { sys: {} },
-      fieldInfo:
-        this.props.apis.contentType?.fields.map((field) => {
-          return {
-            localized: field.localized,
-            locales: field.localized
-              ? this.props.apis.locales.available
-              : [this.props.apis.locales.default],
-            values: this.props.apis.entry?.fields[field.id].getValue() ?? {},
-            id: field.apiName || field.id,
-            required: !!field.required,
-            type: field.type,
-            validations: field.validations,
-            items: field.items,
-          };
-        }) ?? [],
-      field: this.props.apis.field
-        ? {
-            locale: this.props.apis.field.locale,
-            value: this.props.apis.field.getValue(),
-            id: this.props.apis.field.id,
-            type: this.props.apis.field.type,
-            required: this.props.apis.field.required,
-            validations: this.props.apis.field.validations,
-            items: this.props.apis.field.items,
-          }
-        : undefined,
-    };
-
-    this.channel?.connect(connectMessage);
+    this.channel?.connect(
+      makeConnectMessage(this.props.apis, this.props.location, this.props.widget, this.parameters)
+    );
   };
 
   private initialize = (iframe: HTMLIFrameElement) => {
-    if (!iframe) {
+    if (!iframe || this.channel) {
       return;
     }
 
@@ -245,10 +150,7 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
       makeCallSpaceMethodHandler(this.props.apis.space)
     );
 
-    this.channel.registerHandler(
-      ChannelMethod.Notify,
-      makeNotifyHandler(this.props.apis.notifier)
-    );
+    this.channel.registerHandler(ChannelMethod.Notify, makeNotifyHandler(this.props.apis.notifier));
 
     this.channel.registerHandler(
       ChannelMethod.OpenDialog,
@@ -283,37 +185,41 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
       makeCheckAccessHandler(this.props.apis.access)
     );
 
-    this.channel.registerHandler(
-      ChannelMethod.SetValue,
-      makeSetValueHandler(this.props.apis.field)
-    );
+    if (
+      [WidgetLocation.ENTRY_FIELD, WidgetLocation.ENTRY_FIELD_SIDEBAR].includes(this.props.location)
+    ) {
+      const { field } = this.props.apis as FieldExtensionSDK;
 
-    this.channel.registerHandler(
-      ChannelMethod.RemoveValue,
-      makeRemoveValueHandler(this.props.apis.field)
-    );
+      this.channel.registerHandler(ChannelMethod.SetValue, makeSetValueHandler(field));
 
-    this.channel.registerHandler(
-      ChannelMethod.SetInvalid,
-      makeSetInvalidHandler(this.props.apis.field)
-    );
+      this.channel.registerHandler(ChannelMethod.RemoveValue, makeRemoveValueHandler(field));
 
-    this.channel.registerHandler(
-      ChannelMethod.CloseDialog,
-      makeCloseDialogHandler(this.props.apis.close)
-    );
+      this.channel.registerHandler(ChannelMethod.SetInvalid, makeSetInvalidHandler(field));
+    }
+
+    if (this.props.location === WidgetLocation.DIALOG) {
+      const { close } = this.props.apis as DialogExtensionSDK;
+      this.channel.registerHandler(ChannelMethod.CloseDialog, makeCloseDialogHandler(close));
+    }
 
     /////
 
-    const fields = this.props.apis.entry?.fields ?? {}
+    const fields = this.props.apis.entry?.fields ?? {};
 
     Object.values(fields).forEach((field: EntryFieldAPI) => {
-      field.locales.forEach((localeCode: string)  => {
-        this.props.apis.entry?.fields[field.id].onIsDisabledChanged(localeCode, (isDisabled: boolean) => {
-          this.channel?.send('isDisabledChangedForFieldLocale', [field.id, localeCode, isDisabled ])
-        })
-      })
-    })
+      field.locales.forEach((localeCode: string) => {
+        this.props.apis.entry?.fields[field.id].onIsDisabledChanged(
+          localeCode,
+          (isDisabled: boolean) => {
+            this.channel?.send('isDisabledChangedForFieldLocale', [
+              field.id,
+              localeCode,
+              isDisabled,
+            ]);
+          }
+        );
+      });
+    });
 
     // Render the iframe content
     if (this.isSrc(widget)) {

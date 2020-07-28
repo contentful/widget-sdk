@@ -1,5 +1,4 @@
-import { WidgetRendererProps } from '../WidgetRenderer';
-import { NavigatorAPI as _NavigatorAPI } from 'contentful-ui-extensions-sdk';
+import { NavigatorAPI } from 'contentful-ui-extensions-sdk';
 import { WidgetNamespace } from '../interfaces';
 
 interface NavigateToBulkEditorOptions {
@@ -16,20 +15,14 @@ type NavigateToContentEntityOptions = Partial<{
   contentTypeId: string;
 }>;
 
-export type NavigatorAPI = _NavigatorAPI;
-
-export function makeNavigateToBulkEditorHandler(
-  navigatorApi: WidgetRendererProps['apis']['navigator']
-) {
-  return async function ({ entryId, fieldId, locale, index }: NavigateToBulkEditorOptions) {
+export function makeNavigateToBulkEditorHandler(navigatorApi: NavigatorAPI) {
+  return function ({ entryId, fieldId, locale, index }: NavigateToBulkEditorOptions) {
     return navigatorApi.openBulkEditor(entryId, { fieldId, locale, index });
   };
 }
 
-export function makeNavigateToContentEntityHandler(
-  navigatorApi: WidgetRendererProps['apis']['navigator']
-) {
-  return async function (options: NavigateToContentEntityOptions) {
+export function makeNavigateToContentEntityHandler(navigatorApi: NavigatorAPI) {
+  return function (options: NavigateToContentEntityOptions) {
     const isExisting = typeof options.id === 'string';
 
     if (options.entityType === 'Entry') {
@@ -60,10 +53,8 @@ interface NavigateToPageHandlerOptions {
   type: WidgetNamespace;
 }
 
-export const makeNavigateToPageHandler = (
-  navigatorApi: WidgetRendererProps['apis']['navigator']
-) => {
-  return async function (options: NavigateToPageHandlerOptions) {
+export const makeNavigateToPageHandler = (navigatorApi: NavigatorAPI) => {
+  return function (options: NavigateToPageHandlerOptions) {
     return options.type === WidgetNamespace.APP
       ? navigatorApi.openCurrentAppPage(options)
       : navigatorApi.openPageExtension(options);

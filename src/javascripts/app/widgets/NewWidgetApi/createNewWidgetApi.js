@@ -87,7 +87,9 @@ export default function createNewWidgetApi(dependencies) {
       widget,
     }),
     contentType: contentTypeApi,
-    editorInterface,
+    editor: {
+      editorInterface,
+    },
     entry,
     field,
     parameters,
