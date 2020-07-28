@@ -70,6 +70,7 @@ export const styles = {
     marginLeft: tokens.spacingS,
   }),
   noConfigContainer: css({
+    height: '100%',
     width: '100%',
     backgroundColor: tokens.colorElementLightest,
     '> div:nth-child(3)': {
@@ -83,6 +84,9 @@ export const styles = {
   }),
   noConfigHelpText: css({
     marginTop: tokens.spacingL,
+  }),
+  earlyAccessTag: css({
+    marginLeft: tokens.spacingXs,
   }),
   divider: css({
     height: '1px',

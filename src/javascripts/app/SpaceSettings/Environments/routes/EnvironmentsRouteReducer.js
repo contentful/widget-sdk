@@ -2,7 +2,7 @@ import { useReducer } from 'react';
 import { createImmerReducer } from 'core/utils/createImmerReducer';
 import createResourceService from 'services/ResourceService';
 import * as accessChecker from 'access_control/AccessChecker';
-import * as LD from 'utils/LaunchDarkly';
+import { getVariation } from 'LaunchDarkly';
 import { getOrgFeature, getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { canCreate } from 'utils/ResourceUtils';
 import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService';
@@ -10,8 +10,7 @@ import * as SpaceEnvironmentsRepo from 'data/CMA/SpaceEnvironmentsRepo';
 import { openCreateEnvDialog } from '../CreateEnvDialog';
 import { openDeleteEnvironmentDialog } from '../DeleteDialog';
 import { ENVIRONMENTS_FLAG, PRICING_2020_RELEASED } from 'featureFlags';
-import { getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
-import { createOrganizationEndpoint } from 'data/EndpointFactory';
+import * as PricingService from 'services/PricingService';
 
 /**
  * Actions
@@ -20,7 +19,7 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory';
 const SET_PERMISSIONS = 'SET_PERMISSIONS';
 const SET_ENVIRONMENTS = 'SET_ENVIRONMENTS';
 const SET_IS_LOADING = 'SET_IS_LOADING';
-const SET_SPACE_PLAN = 'SET_SPACE_PAN';
+const SET_HAS_NEXT_SPACE_PLAN = 'SET_HAS_NEXT_SPACE_PLAN';
 
 /**
  * Reducer
@@ -45,8 +44,8 @@ export const createEnvReducer = createImmerReducer({
   [SET_IS_LOADING]: (state, { value }) => {
     state.isLoading = value;
   },
-  [SET_SPACE_PLAN]: (state, { spacePlan }) => {
-    state.spacePlan = spacePlan;
+  [SET_HAS_NEXT_SPACE_PLAN]: (state, { hasNextSpacePlan }) => {
+    state.hasNextSpacePlan = hasNextSpacePlan;
   },
 });
 
@@ -64,7 +63,7 @@ export const useEnvironmentsRouteState = (props) => {
     isLegacyOrganization: props.isLegacyOrganization,
     organizationId: props.organizationId,
     spaceId: props.spaceId,
-    spacePlan: undefined,
+    hasNextSpacePlan: undefined,
     pubsubClient: props.pubsubClient,
   };
 
@@ -82,7 +81,7 @@ export const useEnvironmentsRouteState = (props) => {
     if (!hasAccess) goToSpaceDetail();
 
     const [environmentsEnabled, canSelectSource, aliasesEnabled] = await Promise.all([
-      LD.getCurrentVariation(ENVIRONMENTS_FLAG),
+      getVariation(ENVIRONMENTS_FLAG, { spaceId, organizationId }),
       getOrgFeature(organizationId, 'environment_branching'),
       getSpaceFeature(spaceId, 'environment_aliasing'),
     ]);
@@ -197,23 +196,27 @@ export const useEnvironmentsRouteState = (props) => {
     });
   };
 
-  const FetchSpacePlan = async () => {
+  const FetchNextSpacePlan = async () => {
     const { organizationId, spaceId, canUpgradeSpace } = props;
-    const isNewPricingReleased = await LD.getCurrentVariation(PRICING_2020_RELEASED, {
+    const isNewPricingReleased = await getVariation(PRICING_2020_RELEASED, {
       organizationId,
     });
 
     if (canUpgradeSpace && isNewPricingReleased) {
-      const organizationEndpoint = createOrganizationEndpoint(organizationId);
-      const spacePlan = await getSingleSpacePlan(organizationEndpoint, spaceId);
-      dispatch({ type: SET_SPACE_PLAN, spacePlan });
+      const nextSpacePlan = await PricingService.nextSpacePlanForResource(
+        organizationId,
+        spaceId,
+        PricingService.SPACE_PLAN_RESOURCE_TYPES.ENVIRONMENT
+      );
+
+      dispatch({ type: SET_HAS_NEXT_SPACE_PLAN, hasNextSpacePlan: !!nextSpacePlan });
     }
   };
 
   const actions = {
     FetchPermissions,
     FetchEnvironments,
-    FetchSpacePlan,
+    FetchNextSpacePlan,
     RefetchEnvironments,
     OpenCreateDialog,
     OpenDeleteDialog,

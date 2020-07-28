@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { cloneDeep, omit } from 'lodash';
 import { Folder, View } from './TreeItems';
 import { SortableContainer as Container, SortableElement as Element } from 'react-sortable-hoc';
-import createListViewPersistor from 'data/ListViewPersistor';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import useFolder from './useFolder';
@@ -76,13 +75,12 @@ const getVisibleViews = (views = [], roleAssignment) => {
 
 const Items = ({
   items,
-  entityType,
   onSelectSavedView: onSelectView,
   isDragging,
+  listViewContext,
   savedViewsActions,
 }) => {
-  const listViewPersistor = createListViewPersistor({ entityType });
-  const [currentViewId, setCurrentViewId] = useState(listViewPersistor.readKey('id'));
+  const [currentViewId, setCurrentViewId] = useState(listViewContext.getView().id);
   const [isSortingFolders, setIsSortingFolders] = useState(false);
   const [{ isClosed }, { toggleClosed }] = useFolder();
 
@@ -90,7 +88,7 @@ const Items = ({
   const setSortingFolders = () => !isDragging && setIsSortingFolders(true);
 
   const onSelectSavedView = (view) => {
-    listViewPersistor.save(view);
+    listViewContext.setView(view);
     onSelectView(view);
     setCurrentViewId(view.id);
   };
@@ -204,7 +202,6 @@ Items.propTypes = {
   items: PropTypes.array.isRequired,
   isDragging: PropTypes.bool,
   savedViewsActions: savedViewsActionsPropTypes.isRequired,
-  entityType: PropTypes.oneOf(['entry', 'asset']).isRequired,
   onSelectSavedView: PropTypes.func.isRequired,
 };
 
@@ -263,7 +260,7 @@ export const initReorder = ({ getPreparedScopedFolders, saveScopedFolders }) => 
   },
 });
 
-const SortableTree = ({ folders, entityType, savedViewsActions, onSelectSavedView }) => {
+const SortableTree = ({ folders, savedViewsActions, listViewContext, onSelectSavedView }) => {
   const [isDragging, setIsDragging] = useState(false);
 
   const items = flattenFolders(folders);
@@ -291,8 +288,8 @@ const SortableTree = ({ folders, entityType, savedViewsActions, onSelectSavedVie
         items={items}
         isDragging={isDragging}
         savedViewsActions={savedViewsActions}
-        entityType={entityType}
         onSelectSavedView={onSelectSavedView}
+        listViewContext={listViewContext}
       />
     </SortableContainer>
   );
@@ -301,8 +298,11 @@ const SortableTree = ({ folders, entityType, savedViewsActions, onSelectSavedVie
 SortableTree.propTypes = {
   savedViewsActions: savedViewsActionsPropTypes.isRequired,
   folders: PropTypes.array.isRequired,
-  entityType: PropTypes.oneOf(['entry', 'asset']).isRequired,
   onSelectSavedView: PropTypes.func.isRequired,
+  listViewContext: PropTypes.shape({
+    getView: PropTypes.func.isRequired,
+    setView: PropTypes.func.isRequired,
+  }).isRequired,
 };
 
 export default SortableTree;

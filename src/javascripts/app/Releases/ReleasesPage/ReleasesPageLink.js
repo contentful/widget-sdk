@@ -12,7 +12,6 @@ const styles = {
     borderBottom: `1px solid ${tokens.colorElementMid}`,
     padding: tokens.spacingL,
     backgroundColor: tokens.colorElementLightest,
-    borderRight: `1px solid ${tokens.colorElementDarkest}`,
     boxShadow: tokens.boxShadowDefault,
   }),
 };

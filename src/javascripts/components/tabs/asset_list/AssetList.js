@@ -13,18 +13,7 @@ const styles = {
   }),
 };
 
-// Adapter react/angular
-const AssetListAdapter = ({ getAssets, ...props }) => {
-  const assets = getAssets();
-  return <AssetList {...props} assets={assets} />;
-};
-
-AssetListAdapter.propTypes = {
-  getAssets: PropTypes.func.isRequired,
-};
-export default AssetListAdapter;
-
-function AssetList({ context, assets = [], updateAssets }) {
+function AssetList({ isLoading, assets = [], updateAssets }) {
   const displayedFields = [
     {
       id: 'file',
@@ -60,7 +49,7 @@ function AssetList({ context, assets = [], updateAssets }) {
       displayedFields={displayedFields}
       entities={assets}
       entityType="asset"
-      isLoading={context.isLoading}
+      isLoading={isLoading}
       renderDisplayField={(props) => <DisplayField {...props} />}
       updateEntities={updateAssets}
     />
@@ -68,7 +57,9 @@ function AssetList({ context, assets = [], updateAssets }) {
 }
 
 AssetList.propTypes = {
-  context: PropTypes.object.isRequired,
+  isLoading: PropTypes.bool.isRequired,
   assets: PropTypes.array,
   updateAssets: PropTypes.func.isRequired,
 };
+
+export default AssetList;

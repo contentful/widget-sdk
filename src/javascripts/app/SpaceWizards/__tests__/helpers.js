@@ -18,7 +18,7 @@ export const FULFILLMENT_STATUSES = {
     locale: FULFILLMENT_STATUSES.NEAR
   }
  */
-export function createResourcesForPlan(plan, resourceStatuses) {
+export function createResourcesForPlan(plan, resourceStatuses = {}) {
   return plan.productRatePlanCharges.reduce((resources, charge) => {
     // Some product rate plan charges have no tiers, so we can't make resources from those
     if (!charge.tiers) {

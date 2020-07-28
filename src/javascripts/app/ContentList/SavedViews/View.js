@@ -10,6 +10,8 @@ import { openInputDialog } from 'app/InputDialogComponent';
 import useSavedViews from './useSavedViews';
 import SortableTree from './Tree';
 import { viewPropTypes } from './useView';
+import Portal from 'components/tabs/Portal';
+import SavedViewsLink from './Link';
 
 const styles = {
   wrapper: css({
@@ -112,11 +114,10 @@ const onAddFolderClick = (createScopedFolder) => async () => {
   }
 };
 
-const View = ({ entityType, viewType, savedViewsUpdated, onSelectSavedView }) => {
+const View = ({ entityType, viewType, listViewContext, onSelectSavedView, setSelectedView }) => {
   const [{ isLoading, hasError, folders }, savedViewsActions] = useSavedViews({
     entityType,
     viewType,
-    savedViewsUpdated,
   });
 
   if (hasError) {
@@ -137,7 +138,12 @@ const View = ({ entityType, viewType, savedViewsUpdated, onSelectSavedView }) =>
     );
   }
 
-  const { resetScopedFolders, createScopedFolder, canEditScopedFolders } = savedViewsActions;
+  const {
+    resetScopedFolders,
+    createScopedFolder,
+    canEditScopedFolders,
+    fetchFolders,
+  } = savedViewsActions;
 
   const canEdit = canEditScopedFolders();
 
@@ -154,8 +160,8 @@ const View = ({ entityType, viewType, savedViewsUpdated, onSelectSavedView }) =>
           ) : (
             <SortableTree
               folders={folders}
+              listViewContext={listViewContext}
               savedViewsActions={savedViewsActions}
-              entityType={entityType}
               onSelectSavedView={onSelectSavedView}
             />
           )}
@@ -171,6 +177,20 @@ const View = ({ entityType, viewType, savedViewsUpdated, onSelectSavedView }) =>
           </div>
         )}
       </div>
+      <Portal id="saved-views-link-portal-entry">
+        <SavedViewsLink
+          entityType={entityType}
+          listViewContext={listViewContext}
+          onViewSaved={(view, newViewType) => {
+            onSelectSavedView(view);
+            if (newViewType !== viewType) {
+              setSelectedView(newViewType);
+            } else {
+              fetchFolders();
+            }
+          }}
+        />
+      </Portal>
     </div>
   );
 };
@@ -178,8 +198,12 @@ const View = ({ entityType, viewType, savedViewsUpdated, onSelectSavedView }) =>
 View.propTypes = {
   entityType: PropTypes.oneOf(['entry', 'asset']).isRequired,
   onSelectSavedView: PropTypes.func.isRequired,
-  savedViewsUpdated: PropTypes.number.isRequired, // TODO remove as soon as a state that is spanning the full entity view is in place
   viewType: viewPropTypes.isRequired,
+  listViewContext: PropTypes.shape({
+    getView: PropTypes.func.isRequired,
+    setView: PropTypes.func.isRequired,
+  }).isRequired,
+  setSelectedView: PropTypes.func.isRequired,
 };
 
 export default View;

@@ -122,13 +122,6 @@ function SpacePlanRow({ plan, onChangeSpace, onDeleteSpace, hasUpgraded, enterpr
           }}
           data-test-id="subscription-page.spaces-list.dropdown-menu">
           <DropdownList>
-            {enterprisePlan && (
-              <DropdownListItem
-                onClick={onChangeSpace(space)}
-                testId="subscription-page.spaces-list.change-space-link">
-                Change space type
-              </DropdownListItem>
-            )}
             <DropdownListItem
               onClick={onViewSpace}
               isDisabled={Boolean(space && !space.isAccessible)}
@@ -140,6 +133,11 @@ function SpacePlanRow({ plan, onChangeSpace, onDeleteSpace, hasUpgraded, enterpr
               isDisabled={Boolean(space && !space.isAccessible)}
               testId="subscription-page.spaces-list.space-usage-link">
               Usage
+            </DropdownListItem>
+            <DropdownListItem
+              onClick={onChangeSpace(space)}
+              testId="subscription-page.spaces-list.change-space-link">
+              Change space type
             </DropdownListItem>
             <DropdownListItem
               onClick={onDeleteSpace(space, plan)}

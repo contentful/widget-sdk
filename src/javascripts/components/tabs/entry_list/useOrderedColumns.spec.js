@@ -1,4 +1,3 @@
-import createViewPersistor from 'data/ListViewPersistor';
 import { getModule } from 'core/NgRegistry';
 import { useOrderedColumns as orderedColumns } from './useOrderedColumns';
 
@@ -10,22 +9,26 @@ getModule.mockReturnValue({
   replace: jest.fn(),
 });
 
-let spy;
+const listViewContext = {
+  getView: jest.fn().mockReturnValue({ order: { fieldId: 123 } }),
+  setView: jest.fn(),
+  setViewKey: jest.fn(),
+  setViewAssigned: jest.fn(),
+};
+
 const updateEntities = jest.fn();
 const init = () => {
-  const entityType = 'entry';
-  const viewPersistor = createViewPersistor({ entityType });
-  viewPersistor.saveKey('order.fieldId', 123);
-  spy = jest.spyOn(viewPersistor, 'save');
-  return orderedColumns({ viewPersistor, updateEntities });
+  return orderedColumns({ listViewContext, updateEntities });
 };
 
 describe('useSelectedEntities', () => {
+  beforeEach(() => {
+    listViewContext.setViewKey.mockClear();
+  });
   it('should check if it is order field', () => {
     const [result] = init();
     expect(result.isOrderField({ id: 123 })).toBe(true);
     expect(result.isOrderField({ id: 321 })).toBe(false);
-    expect(updateEntities).toHaveBeenCalledTimes(0);
   });
 
   it('should check if it is a sortable field', () => {
@@ -33,29 +36,28 @@ describe('useSelectedEntities', () => {
     expect(result.fieldIsSortable({ type: 'Date' })).toBe(true);
     expect(result.fieldIsSortable({ type: 'RichText' })).toBe(false);
     expect(result.fieldIsSortable({ id: 'author', type: 'Date' })).toBe(false);
-    expect(updateEntities).toHaveBeenCalledTimes(0);
   });
 
   it('should not order column by invalid field', () => {
     const [result] = init();
     result.orderColumnBy({ type: 'RichText', id: 'date' });
-    expect(spy).not.toHaveBeenCalled();
-    expect(updateEntities).not.toHaveBeenCalled();
+    expect(listViewContext.setViewKey).not.toHaveBeenCalled();
   });
 
   it('should order column by field', () => {
     const [result] = init();
     result.orderColumnBy({ type: 'Date', id: 'date' });
-    expect(spy).toHaveBeenCalled();
-    expect(spy.mock.calls[0][0].order).toEqual({
+    expect(listViewContext.setViewKey).toHaveBeenCalled();
+    expect(listViewContext.setViewKey.mock.calls[0][0]).toEqual('order');
+    expect(listViewContext.setViewKey.mock.calls[0][1]).toEqual({
       fieldId: 'date',
       direction: 'ascending',
     });
     result.orderColumnBy({ type: 'Date', id: 'date' });
-    expect(spy.mock.calls[1][0].order).toEqual({
+    expect(listViewContext.setViewKey.mock.calls[1][0]).toEqual('order');
+    expect(listViewContext.setViewKey.mock.calls[1][1]).toEqual({
       fieldId: 'date',
-      direction: 'descending',
+      direction: 'ascending',
     });
-    expect(updateEntities).toHaveBeenCalledTimes(2);
   });
 });

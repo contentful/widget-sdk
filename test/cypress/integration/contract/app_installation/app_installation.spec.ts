@@ -78,7 +78,7 @@ describe('App Installation', () => {
         cy.wait(interactions);
       });
 
-      describe('Loads marketpalce and uninstalls the Dropbox app', () => {
+      describe('Loads marketplace and uninstalls the Dropbox app', () => {
         it('should uninstall', () => {
           cy.findByTestId('installed-list').should('be.visible');
           cy.get('span').contains('Configure').click();
@@ -88,13 +88,13 @@ describe('App Installation', () => {
             getAllContentTypesInDefaultSpace.willReturnOne(),
             queryForEditorInterfaces.willReturnSeveral(),
           ];
-
           cy.wait(loadAppConfigurationScreenInteraction);
 
-          cy.findAllByTestId('cf-ui-button').should('contain', 'Uninstall');
-          cy.get('span').contains('Uninstall').click();
+          const deleteInteraction = deleteAppInstallation.willSucceed();
+          cy.findAllByTestId('app-uninstall-button').should('contain', 'Uninstall');
+          cy.findByTestId('app-uninstall-button').click();
           cy.findByTestId('uninstall-button').click();
-          deleteAppInstallation.willSucceed();
+          cy.wait(deleteInteraction);
         });
       });
     });

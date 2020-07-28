@@ -14,7 +14,7 @@ import {
 } from 'services/ChangeSpaceService';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
-import { trackCTAClick } from 'analytics/targetedCTA';
+import { trackCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 
@@ -95,7 +95,7 @@ export class SpaceSettingsRoute extends React.Component {
     const organizationId = spaceContext.organization.sys.id;
     const space = await TokenStore.getSpace(spaceContext.space.data.sys.id);
 
-    trackCTAClick('upgrade_space_plan', {
+    trackCTAClick(CTA_EVENTS.UPGRADE_SPACE_PLAN, {
       organizationId,
       spaceId: space.sys.id,
     });

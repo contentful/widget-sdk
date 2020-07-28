@@ -78,9 +78,6 @@ describe('spaceContext', () => {
       }),
     });
 
-    this.LD = await this.system.import('utils/LaunchDarkly');
-    this.LD._setFlag('feature-dv-11-2017-environments', true);
-
     await $initialize(this.system);
 
     this.spaceContext = $inject('spaceContext');
@@ -263,11 +260,9 @@ describe('spaceContext', () => {
     });
 
     it('always returns an array for the `environments` property even if there are no environments', function () {
-      this.LD._setFlag('feature-dv-11-2017-environments', false);
       Object.assign(this.mockSpaceEndpoint.stores.environments, null);
       return this.spaceContext.resetWithSpace(this.makeSpaceData('spaceid')).then(() => {
         expect(this.spaceContext.environments).toEqual([]);
-        this.LD._setFlag('feature-dv-11-2017-environments', true);
         Object.assign(this.mockSpaceEndpoint.stores.environments, []);
         return this.spaceContext.resetWithSpace(this.makeSpaceData('spaceid'));
       });

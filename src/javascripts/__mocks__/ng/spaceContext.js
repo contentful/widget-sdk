@@ -42,7 +42,6 @@ export const contentPreview = {
 
 export const getData = jest.fn();
 export const getId = jest.fn();
-export const getSpace = jest.fn();
 export const hasOptedIntoAliases = jest.fn();
 
 export const endpoint = jest.fn();
@@ -52,8 +51,13 @@ export const getEnvironmentId = jest.fn();
 export const space = {
   getId: jest.fn(),
   endpoint: jest.fn(),
+  data: {},
 };
+
+export const getSpace = jest.fn().mockReturnValue(space);
 
 export const memberships = {
   invite: jest.fn().mockResolvedValue({}),
 };
+
+export const isMasterEnvironment = jest.fn().mockReturnValue(true);

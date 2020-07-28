@@ -13,10 +13,17 @@ export class AppListItem extends Component {
       tagLine: PropTypes.string,
       icon: PropTypes.string,
       appInstallation: PropTypes.object,
+      appDefinition: PropTypes.shape({
+        sys: {
+          id: PropTypes.string.isRequired,
+        },
+      }),
       isPrivateApp: PropTypes.bool,
+      isEarlyAccess: PropTypes.bool.isRequired,
     }).isRequired,
     openDetailModal: PropTypes.func.isRequired,
     canManageApps: PropTypes.bool,
+    orgId: PropTypes.string.isRequired,
   };
 
   determineOnClick = (onClick, openDetailsFunc, canManageApps) => {
@@ -29,7 +36,7 @@ export class AppListItem extends Component {
   };
 
   render() {
-    const { app, openDetailModal, canManageApps } = this.props;
+    const { app, openDetailModal, canManageApps, orgId } = this.props;
 
     const openDetailsFunc = () => openDetailModal(app);
 
@@ -46,6 +53,11 @@ export class AppListItem extends Component {
                   <AppIcon icon={app.icon} />
                   <div>
                     {app.title}
+                    {app.isEarlyAccess && (
+                      <Tag tagType="warning" className={styles.earlyAccessTag}>
+                        EARLY ACCESS
+                      </Tag>
+                    )}
                     {app.tagLine && <div className={styles.tagLine}>{app.tagLine}</div>}
                   </div>
                   {app.isPrivateApp && <Tag className={styles.tag}>Private</Tag>}
@@ -68,6 +80,17 @@ export class AppListItem extends Component {
             <TextLink onClick={openDetailsFunc} linkType="primary">
               About
             </TextLink>
+          )}
+          {canManageApps && app.isPrivateApp && (
+            <StateLink
+              path="account.organizations.apps.definitions"
+              params={{ orgId, definitionId: app.appDefinition.sys.id }}>
+              {({ onClick }) => (
+                <TextLink onClick={onClick} linkType="primary">
+                  Edit app definition
+                </TextLink>
+              )}
+            </StateLink>
           )}
         </div>
       </div>

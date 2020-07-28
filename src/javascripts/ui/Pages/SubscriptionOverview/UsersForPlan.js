@@ -2,13 +2,111 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { Paragraph, TextLink, Heading } from '@contentful/forma-36-react-components';
-
-import { memberships as orgMemberships } from './links';
-import { Pluralized } from 'core/components/formatting';
+import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
+import { memberships as orgMemberships, billing } from './links';
+import { Pluralized, Price } from 'core/components/formatting';
 import StateLink from 'app/common/StateLink';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+import * as Config from 'Config';
+import { go } from 'states/Navigator';
+import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 
-function UsersForPlan({ organizationId, numberFreeUsers, numberPaidUsers, costOfUsers }) {
+const ENTERPRISE_FREE_USER_COUNT = 10;
+const ENTERPRISE_ADDITIONAL_USER_COST = 15;
+
+const withInAppHelpUtmParams = buildUrlWithUtmParams({
+  source: 'webapp',
+  medium: 'team_userlimit_request',
+  campaign: 'in-app-help',
+});
+
+const AboveHardLimitWarning = ({ isFreePlan, hardLimit, organizationId }) => {
+  const onUpgradeToTeam = () => {
+    trackTargetedCTAClick(CTA_EVENTS.UPGRADE_TO_TEAM, {
+      organizationId: organizationId,
+    });
+
+    go(billing(organizationId));
+  };
+
+  const onContactSupport = () => {
+    trackTargetedCTAClick(CTA_EVENTS.REQUEST_TEAM_USER_LIMIT, {
+      organizationId: organizationId,
+    });
+  };
+
+  return (
+    <>
+      <Pluralized text="user" count={hardLimit} /> are included {isFreePlan ? 'free' : null} with
+      your subscription.{' '}
+      <StateLink
+        {...orgMemberships(organizationId)}
+        component={TextLink}
+        testId="subscription-page.org-memberships-link">
+        Manage users
+      </StateLink>{' '}
+      or{' '}
+      {isFreePlan ? (
+        <TrackTargetedCTAImpression
+          impressionType={CTA_EVENTS.UPGRADE_TO_TEAM}
+          meta={{ organizationId: organizationId }}>
+          <TextLink onClick={onUpgradeToTeam} testId="subscription-page.upgrade-to-team-link">
+            Upgrade to Team tier
+          </TextLink>
+        </TrackTargetedCTAImpression>
+      ) : (
+        <TrackTargetedCTAImpression
+          impressionType={CTA_EVENTS.REQUEST_TEAM_USER_LIMIT}
+          meta={{ organizationId: organizationId }}>
+          <TextLink
+            onClick={onContactSupport}
+            testId="subscription-page.contact-support-link"
+            href={withInAppHelpUtmParams(Config.supportUrl)}
+            target="_blank"
+            rel="noopener noreferrer">
+            Contact support
+          </TextLink>
+        </TrackTargetedCTAImpression>
+      )}
+    </>
+  );
+};
+
+AboveHardLimitWarning.propTypes = {
+  organizationId: PropTypes.string.isRequired,
+  hardLimit: PropTypes.number,
+  isFreePlan: PropTypes.bool,
+};
+
+const EnterpriseTrialWarning = ({ numberUsers }) => {
+  return (
+    numberUsers > ENTERPRISE_FREE_USER_COUNT && (
+      <>
+        <Pluralized text="user" count={ENTERPRISE_FREE_USER_COUNT} /> are included free with
+        Enterprise tier. Customers on the Enterprise tier can purchase addtional users for{' '}
+        <Price value={ENTERPRISE_ADDITIONAL_USER_COST} unit="month" /> per user.{' '}
+      </>
+    )
+  );
+};
+
+EnterpriseTrialWarning.propTypes = {
+  numberUsers: PropTypes.number,
+};
+
+function UsersForPlan({
+  organizationId,
+  numberFreeUsers,
+  numberPaidUsers,
+  costOfUsers,
+  hardLimit,
+  unitPrice,
+  isFreePlan,
+  isOnEnterpriseTrial,
+}) {
   const totalOfUsers = numberFreeUsers + numberPaidUsers;
+  const isAboveHardLimit = hardLimit && totalOfUsers > hardLimit;
+  const isBetweenFreeAndHardLimit = !isAboveHardLimit && numberPaidUsers > 0;
 
   return (
     <div data-test-id="users-for-plan">
@@ -19,24 +117,30 @@ function UsersForPlan({ organizationId, numberFreeUsers, numberPaidUsers, costOf
           <Pluralized text="user" count={totalOfUsers} />
         </b>
         .{' '}
-        {numberPaidUsers > 0 && (
+        {isAboveHardLimit && (
+          <AboveHardLimitWarning
+            isFreePlan={isFreePlan}
+            hardLimit={hardLimit}
+            organizationId={organizationId}
+          />
+        )}
+        {isBetweenFreeAndHardLimit && (
           <>
-            <br />
-            You are exceeding the limit of <Pluralized
-              text="free user"
-              count={numberFreeUsers}
-            />{' '}
-            by <Pluralized text="user" count={numberPaidUsers} />.
-            <br />
-            That is <strong>${costOfUsers}</strong> per month.{' '}
+            <Pluralized text="user" count={numberFreeUsers} /> are included free with your
+            subscription. You will be charged an additional <Price value={unitPrice} unit="month" />{' '}
+            per user for <Pluralized text="user" count={numberPaidUsers} />. That is{' '}
+            <strong>${costOfUsers}</strong> per month.{' '}
           </>
         )}
-        <StateLink
-          {...orgMemberships(organizationId)}
-          component={TextLink}
-          testId="subscription-page.org-memberships-link">
-          Manage users
-        </StateLink>
+        {isOnEnterpriseTrial && <EnterpriseTrialWarning numberUsers={numberFreeUsers} />}
+        {!isAboveHardLimit && (
+          <StateLink
+            {...orgMemberships(organizationId)}
+            component={TextLink}
+            testId="subscription-page.org-memberships-link">
+            Manage users
+          </StateLink>
+        )}
       </Paragraph>
     </div>
   );
@@ -47,6 +151,10 @@ UsersForPlan.propTypes = {
   numberFreeUsers: PropTypes.number,
   numberPaidUsers: PropTypes.number,
   costOfUsers: PropTypes.number,
+  hardLimit: PropTypes.number,
+  unitPrice: PropTypes.number,
+  isFreePlan: PropTypes.bool,
+  isOnEnterpriseTrial: PropTypes.bool,
 };
 
 UsersForPlan.defaultProps = {

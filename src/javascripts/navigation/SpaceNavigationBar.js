@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { getModule } from 'core/NgRegistry';
 import * as accessChecker from 'access_control/AccessChecker';
 import { getCurrentSpaceFeature, getOrgFeature } from 'data/CMA/ProductCatalog';
-import { PC_CONTENT_TAGS, ENVIRONMENTS_FLAG, TEAMS_IN_SPACES } from 'featureFlags';
+import { PC_CONTENT_TAGS, ENVIRONMENTS_FLAG } from 'featureFlags';
 import NavBar from './NavBar/NavBar';
 import { getVariation } from 'LaunchDarkly';
 import { getSpaceNavigationItems } from './SpaceNavigationBarItems';
@@ -51,14 +51,8 @@ export default class SpaceNavigationBar extends React.Component {
     const spaceId = spaceContext.getId();
     const organizationId = organization.sys.id;
 
-    const [
-      environmentsEnabled,
-      teamsInSpacesFF,
-      hasOrgTeamFeature,
-      contentTagsEnabled,
-    ] = await Promise.all([
+    const [environmentsEnabled, hasOrgTeamFeature, contentTagsEnabled] = await Promise.all([
       getVariation(ENVIRONMENTS_FLAG, { organizationId, spaceId }),
-      getVariation(TEAMS_IN_SPACES, { organizationId, spaceId }),
       getOrgFeature(organizationId, 'teams'),
       getCurrentSpaceFeature(PC_CONTENT_TAGS),
     ]);
@@ -86,7 +80,6 @@ export default class SpaceNavigationBar extends React.Component {
       canNavigateTo,
       usageEnabled,
       hasOrgTeamFeature,
-      teamsInSpacesFF,
       useSpaceEnvironment: canManageEnvironments && environmentsEnabled,
       isMasterEnvironment,
       contentTagsEnabled,

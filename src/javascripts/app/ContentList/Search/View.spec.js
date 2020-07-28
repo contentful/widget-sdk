@@ -4,26 +4,28 @@ import View from './View';
 import { contentTypes, brand } from './__tests__/helpers';
 import keycodes from 'utils/keycodes';
 import { getModule } from 'core/NgRegistry';
-import createViewPersistor from 'data/ListViewPersistor';
 
 jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
-jest.mock('data/ListViewPersistor', () => jest.fn());
-
-const mockedViewPersistor = {
-  read: jest.fn().mockImplementation((initialState = {}) => initialState),
-  saveKey: jest.fn(),
-};
-
-createViewPersistor.mockReturnValue(mockedViewPersistor);
 
 getModule.mockReturnValue({
-  users: { getAll: jest.fn().mockResolvedValue([{ sys: { id: '1' } }]) },
   space: { getId: jest.fn().mockReturnValue(1) },
 });
 
 const onUpdate = jest.fn();
 
 const searchFilters = [['sys.createdAt', 'op', 'value']];
+
+const listViewContext = {
+  getView: jest.fn().mockReturnValue({
+    searchFilters: [],
+    contentTypeId: '',
+    searchText: '',
+    order: {},
+  }),
+  setView: jest.fn(),
+  setViewKey: jest.fn(),
+  setViewAssigned: jest.fn(),
+};
 
 const render = (props = {}) => {
   const getContentTypes = jest.fn().mockReturnValue(contentTypes);
@@ -32,8 +34,10 @@ const render = (props = {}) => {
     isLoading: false,
     onUpdate,
     entityType: 'entry',
+    users: [{ sys: { id: '1' } }],
     getContentTypes,
     initialState: { searchFilters },
+    listViewContext,
     ...props,
   };
 
@@ -50,16 +54,14 @@ const renderWithInitialWait = async (props) => {
 
 describe('app/ContentList/Search/View', () => {
   beforeEach(() => {
-    createViewPersistor.mockClear();
+    listViewContext.getView = jest
+      .fn()
+      .mockReturnValue({ searchFilters: [], contentTypeId: '', searchText: '', order: {} });
+    listViewContext.setView.mockClear();
+    listViewContext.setViewKey.mockClear();
+    listViewContext.setViewAssigned.mockClear();
     onUpdate.mockClear();
     document.body.setAttribute('tabindex', '0');
-  });
-  describe('without initial data', () => {
-    it('renders loader', async () => {
-      const { wrapper } = render({});
-      expect(wrapper.queryByTestId('loader')).toBeInTheDocument();
-      await waitFor(() => expect(wrapper.queryByTestId('loader')).not.toBeInTheDocument());
-    });
   });
 
   describe('key events', () => {
@@ -76,9 +78,13 @@ describe('app/ContentList/Search/View', () => {
     });
 
     it('selects the last pill on backspace', async () => {
-      const { wrapper } = await renderWithInitialWait({
-        initialState: { searchFilters, contentTypeId: brand.name },
+      listViewContext.getView.mockReturnValue({
+        searchText: '',
+        order: {},
+        searchFilters,
+        contentTypeId: brand.name,
       });
+      const { wrapper } = await renderWithInitialWait();
       const queryInput = await wrapper.findByTestId('queryInput');
       fireEvent.keyDown(queryInput, { keyCode: keycodes.BACKSPACE });
       await waitFor(() =>
@@ -114,12 +120,11 @@ describe('app/ContentList/Search/View', () => {
         target: { value: query },
       });
       expect(wrapper.queryByTestId('suggestions')).toBeInTheDocument();
-      expect(mockedViewPersistor.saveKey).toHaveBeenNthCalledWith(1, 'searchText', query);
+      expect(listViewContext.setViewKey).toHaveBeenNthCalledWith(1, 'searchText', query);
       // onUpdate should be debounced
       expect(onUpdate).not.toHaveBeenCalled();
       await waitFor(() =>
         expect(onUpdate).toHaveBeenCalledWith({
-          searchFilters,
           searchText: query,
         })
       );
@@ -135,11 +140,10 @@ describe('app/ContentList/Search/View', () => {
 
       fireEvent.keyDown(document.activeElement, { keyCode: keycodes.ENTER });
       expect(wrapper.queryByTestId('suggestions')).not.toBeInTheDocument();
-      expect(mockedViewPersistor.saveKey).toHaveBeenNthCalledWith(1, 'searchFilters', [
-        ...searchFilters,
-        ['sys.updatedAt', '', undefined],
-      ]);
-      expect(mockedViewPersistor.saveKey).toHaveBeenNthCalledWith(2, 'searchText', '');
+      expect(listViewContext.setViewAssigned).toHaveBeenNthCalledWith(1, {
+        searchFilters: [['sys.updatedAt', '', undefined]],
+        searchText: '',
+      });
     });
 
     it('selects a text filter', async () => {
@@ -152,10 +156,10 @@ describe('app/ContentList/Search/View', () => {
       fireEvent.keyDown(wrapper.queryByTestId(`none::${fieldId}`), {
         keyCode: keycodes.ENTER,
       });
-      expect(mockedViewPersistor.saveKey).toHaveBeenNthCalledWith(1, 'searchFilters', [
-        ...searchFilters,
-        [fieldId, 'match', undefined],
-      ]);
+      expect(listViewContext.setViewAssigned).toHaveBeenNthCalledWith(1, {
+        searchFilters: [['sys.id', 'match', undefined]],
+        searchText: '',
+      });
     });
 
     it('selects a contentType field filter', async () => {
@@ -168,11 +172,11 @@ describe('app/ContentList/Search/View', () => {
       fireEvent.keyDown(wrapper.queryByTestId(`TEST_CT_ID::${fieldId}`), {
         keyCode: keycodes.ENTER,
       });
-      expect(mockedViewPersistor.saveKey).toHaveBeenNthCalledWith(1, 'contentTypeId', 'TEST_CT_ID');
-      expect(mockedViewPersistor.saveKey).toHaveBeenNthCalledWith(2, 'searchFilters', [
-        ...searchFilters,
-        [fieldId, '', undefined],
-      ]);
+      expect(listViewContext.setViewKey).toHaveBeenNthCalledWith(1, 'contentTypeId', 'TEST_CT_ID');
+      expect(listViewContext.setViewAssigned).toHaveBeenNthCalledWith(1, {
+        searchFilters: [[fieldId, '', undefined]],
+        searchText: '',
+      });
     });
   });
 });

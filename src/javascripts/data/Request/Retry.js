@@ -12,6 +12,12 @@ const DEFAULT_TTL = 5;
 
 const REPORTING_TIMEOUT = 60 * 1000;
 
+/*
+  To better differentiate clients sending events we can manually
+  increment this version number if needed.
+*/
+const CLIENT_VERSION = 1;
+
 export default function withRetry(requestFn) {
   const queue = [];
   let inFlight = 0;
@@ -120,6 +126,7 @@ function recordResponseTime({ status }, startTime, { url, method } = {}) {
         endpoint: getEndpoint(url),
         status,
         method,
+        version: CLIENT_VERSION,
       });
     }
   } catch {
@@ -135,6 +142,7 @@ function recordQueueTime({ status }, queuedAt, { url, method } = {}) {
         endpoint: getEndpoint(url),
         status,
         method,
+        version: CLIENT_VERSION,
       });
     }
   } catch {

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import NavBar from './NavBar/NavBar';
 import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
-import { ACCESS_TOOLS, PRICING_2020_WARNING } from 'featureFlags';
+import { PRICING_2020_WARNING } from 'featureFlags';
 import { getOrgFeature } from '../data/CMA/ProductCatalog';
 import SidepanelContainer from './Sidepanel/SidepanelContainer';
 import createLegacyFeatureService from 'services/LegacyFeatureService';
@@ -13,7 +13,7 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getBasePlan, isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 
 function getItems(params, { orgId }) {
-  const shouldDisplayAccessTools = params.accessToolsFeatureEnabled && params.isOwnerOrAdmin;
+  const shouldDisplayAccessTools = params.isOwnerOrAdmin;
   const accessToolsDropdownItems = [
     {
       title: 'Single Sign-On (SSO)',
@@ -144,18 +144,6 @@ function getItems(params, { orgId }) {
       children: accessToolsDropdownItems,
     },
     {
-      if: !params.accessToolsFeatureEnabled && params.ssoEnabled && params.isOwnerOrAdmin,
-      title: 'SSO',
-      sref: 'account.organizations.sso',
-      srefParams: { orgId },
-      rootSref: 'account.organizations.sso',
-      srefOptions: {
-        inherit: false,
-      },
-      navIcon: 'Sso',
-      dataViewType: 'organization-sso',
-    },
-    {
       if: params.pricingVersion == 'pricing_version_1' && params.isOwnerOrAdmin,
       title: 'Spaces',
       sref: 'account.organizations.spaces',
@@ -213,9 +201,6 @@ export default class OrganizationNavigationBar extends React.Component {
     let promises = [
       getOrgFeature(orgId, 'self_configure_sso'),
       getOrgFeature(orgId, 'scim'),
-      getVariation(ACCESS_TOOLS, {
-        organizationId: orgId,
-      }),
       FeatureService.get('offsiteBackup'),
       AdvancedExtensibilityFeature.isEnabled(),
     ];
@@ -232,7 +217,6 @@ export default class OrganizationNavigationBar extends React.Component {
     const [
       ssoFeatureEnabled,
       scimFeatureEnabled,
-      accessToolsFeatureEnabled,
       hasOffsiteBackup,
       hasAdvancedExtensibility,
       newPricingFeatureDisplayed,
@@ -242,7 +226,6 @@ export default class OrganizationNavigationBar extends React.Component {
     const params = {
       ssoEnabled: ssoFeatureEnabled,
       userProvisioningEnabled: scimFeatureEnabled,
-      accessToolsFeatureEnabled: accessToolsFeatureEnabled,
       pricingVersion: organization.pricingVersion,
       isOwnerOrAdmin: isOwnerOrAdmin(organization),
       hasAdvancedExtensibility,

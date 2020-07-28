@@ -18,8 +18,8 @@
   </div>
   <div class="entity-selector__search" ng-if="supportsAdvancedSearch">
     <react-component
-      name="app/ContentList/Search/View"
-      props="{ entityType, isLoading, onUpdate, isPersisted: false, initialState, getContentTypes }"
+      name="search/EntitySelector/EntitySelectorAdapter"
+      props="{ entityType, isLoading, onUpdate, initialState, getContentTypes, users }"
     ></react-component>
   </div>
   <div class="entity-selector__search" ng-if="!supportsAdvancedSearch">

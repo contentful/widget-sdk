@@ -165,7 +165,7 @@ export const View = ({
       <Paragraph testId={testId} onClick={() => onSelectSavedView(view)} title={view.title}>
         {view.title}
       </Paragraph>
-      <CardActions className={styles.actions} isDisabled={!canEdit}>
+      <CardActions className={styles.actions} isDisabled={!canEdit} isAutoalignmentEnabled>
         <DropdownList>
           <ShareItem
             view={view}

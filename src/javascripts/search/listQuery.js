@@ -15,7 +15,7 @@ import { buildQuery as buildQueryFromUISearch } from 'app/ContentList/Search/Que
  * @param {Paginator} opts.paginator
  * @returns {object}
  */
-export function getForEntries(opts) {
+export async function getForEntries(opts) {
   const spaceContext = getModule('spaceContext');
   if (opts.contentTypeId) {
     return spaceContext.publishedCTs
@@ -34,7 +34,7 @@ export function getForEntries(opts) {
  * @param {Paginator} opts.paginator
  * @returns {object}
  */
-export function getForAssets(opts) {
+export async function getForAssets(opts) {
   return prepareEntityListQuery(assetContentType, opts);
 }
 /**
@@ -44,7 +44,7 @@ export function getForAssets(opts) {
  * @param {Paginator} opts.paginator
  * @returns {object}
  */
-export function getForUsers(opts) {
+export async function getForUsers(opts) {
   const userContentType = {
     data: {},
     getId: _.constant(undefined),
@@ -53,7 +53,6 @@ export function getForUsers(opts) {
 }
 
 function prepareEntityListQuery(contentType, opts) {
-  const $q = getModule('$q');
   const queryObject = {
     order: getOrderQuery(opts.order, contentType),
     limit: opts.paginator.getPerPage(),
@@ -64,8 +63,7 @@ function prepareEntityListQuery(contentType, opts) {
     contentType: _.get(contentType, 'data'),
     search: opts,
   });
-  // TODO: Lets not return a promise here.
-  return $q.resolve(_.assign(queryObject, searchQuery));
+  return _.assign(queryObject, searchQuery);
 }
 
 function getOrderQuery(order, contentType) {

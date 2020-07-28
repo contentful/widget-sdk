@@ -2,6 +2,7 @@ import wrapWithRetry from 'data/Request/Retry';
 import wrapWithAuth from 'data/Request/Auth';
 import { getEndpoint, getCurrentState } from 'data/Request/Utils';
 import * as Telemetry from 'i13n/Telemetry';
+import * as BackendTracing from 'i13n/BackendTracing';
 import queryString from 'query-string';
 import { gitRevision, env } from 'Config';
 import { fromPairs } from 'lodash';
@@ -110,6 +111,7 @@ function getDefaultHeaders() {
     Accept: 'application/json, text/plain, */*',
     'X-Contentful-User-Agent': userAgentParts.join('; '),
     'Content-Type': 'application/vnd.contentful.management.v1+json',
+    ...BackendTracing.tracingHeaders(),
   };
 }
 

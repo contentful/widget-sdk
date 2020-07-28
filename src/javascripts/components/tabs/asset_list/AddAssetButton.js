@@ -9,6 +9,7 @@ import {
 
 class AddAssetButton extends React.Component {
   static propTypes = {
+    className: PropTypes.string,
     canUploadMultipleAssets: PropTypes.func.isRequired,
     createMultipleAssets: PropTypes.func.isRequired,
     newAsset: PropTypes.func.isRequired,
@@ -32,9 +33,10 @@ class AddAssetButton extends React.Component {
 
   render() {
     const { isDropdownOpen } = this.state;
-    const { canUploadMultipleAssets, createMultipleAssets, newAsset } = this.props;
+    const { canUploadMultipleAssets, createMultipleAssets, newAsset, className } = this.props;
     return (
       <Dropdown
+        className={className}
         isOpen={isDropdownOpen}
         toggleElement={this.addAssetButton}
         onClose={() => this.setOpen(false)}

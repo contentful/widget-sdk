@@ -8,7 +8,6 @@ import SSOEnabled from './SSOEnabled';
 import { track } from 'analytics/Analytics';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
-import { getVariation } from 'LaunchDarkly';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import SSOUpsellState from './SSOUpsellState';
 import * as fake from 'test/helpers/fakeFactory';
@@ -84,14 +83,11 @@ describe('SSOSetup', () => {
     expect(rendered.find(IDPSetupForm)).toHaveLength(0);
   });
 
-  /*
-    Should call `getOrgStatus`, should show ForbiddenPage, should not call `retrieveIdp`
-   */
-  it('should go through the forbidden flow if the sso and access tools features are not enabled', async () => {
+  it('should go through the forbidden flow if the sso feature is not enabled and the user is not org admin/owner', async () => {
     const retrieveIdp = jest.fn();
 
     getOrgFeature.mockResolvedValueOnce(false);
-    getVariation.mockResolvedValue(false);
+    isOwnerOrAdmin.mockReturnValueOnce(false);
 
     const rendered = await render({ organization, retrieveIdp });
 
@@ -100,11 +96,10 @@ describe('SSOSetup', () => {
     expect(retrieveIdp.mock.calls).toHaveLength(0);
   });
 
-  it('should show the SSO upsell state if the sso feature is not enabled and the access tools feature is enabled', async () => {
+  it('should show the SSO upsell state if the sso feature is not enabled and the user is an org admin/oener', async () => {
     const retrieveIdp = jest.fn();
 
     getOrgFeature.mockResolvedValueOnce(false);
-    getVariation.mockResolvedValue(true);
 
     const rendered = await render({ organization, retrieveIdp });
 
@@ -117,7 +112,6 @@ describe('SSOSetup', () => {
     const retrieveIdp = jest.fn();
 
     isOwnerOrAdmin.mockReturnValueOnce(false);
-    getVariation.mockResolvedValue(false);
 
     const rendered = await render({ organization, retrieveIdp });
 

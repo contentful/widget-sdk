@@ -24,7 +24,7 @@ const fetchRecordsResource = (spaceId, environmentId) => {
   return resourceService.get('record', environmentId);
 };
 
-export function RecordsResourceUsage({ space, environmentId, isMasterEnvironment }) {
+function RecordsResourceUsage({ className, space, environmentId, isMasterEnvironment }) {
   const [resource, setResource] = useState();
 
   const updateResource = useCallback(async () => {
@@ -48,7 +48,7 @@ export function RecordsResourceUsage({ space, environmentId, isMasterEnvironment
   return (
     <div
       data-test-id="container"
-      className={classnames('resource-usage', {
+      className={classnames('resource-usage', className, {
         'resource-usage--warn':
           usagePercentage >= WARN_THRESHOLD && usagePercentage < ERROR_THRESHOLD,
         'resource-usage--danger': usagePercentage >= ERROR_THRESHOLD,
@@ -69,6 +69,7 @@ export function RecordsResourceUsage({ space, environmentId, isMasterEnvironment
 }
 
 RecordsResourceUsage.propTypes = {
+  className: PropTypes.string,
   space: PropTypes.object,
   environmentId: PropTypes.string,
   isMasterEnvironment: PropTypes.bool,

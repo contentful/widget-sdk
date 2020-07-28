@@ -25,8 +25,6 @@ jest.mock('data/User', () => ({
   getUserSpaceRoles: jest.fn().mockReturnValue(['editor', 'translator3']),
 }));
 
-jest.mock('utils/ShallowObjectDiff', () => jest.fn().mockReturnValue({}));
-
 jest.mock('debug/EnforceFlags', () => ({
   isFlagOverridden: jest.fn().mockReturnValue(false),
   getFlagOverride: jest.fn(),

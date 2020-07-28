@@ -7,18 +7,25 @@ import { HelpText } from '@contentful/forma-36-react-components';
  * Consider using Intl and PluralRules in future.
  *
  */
-export default function PluralizeEntityMessage({ entityType, count, testId, restOfTheMsg }) {
+export default function PluralizeEntityMessage({
+  className,
+  entityType,
+  count,
+  testId,
+  restOfTheMsg,
+}) {
   const endsWithY = !!entityType.match(/(y|Y)$/);
   const plural = endsWithY ? entityType.replace(/(.*)(y|Y)$/, '$1ies') : `${entityType}s`;
 
   return (
-    <HelpText testId={testId}>
+    <HelpText className={className} testId={testId}>
       {count} {count === 1 ? entityType : plural} {restOfTheMsg}
     </HelpText>
   );
 }
 
 PluralizeEntityMessage.propTypes = {
+  className: PropTypes.string,
   testId: PropTypes.string,
   entityType: PropTypes.string,
   count: PropTypes.number,

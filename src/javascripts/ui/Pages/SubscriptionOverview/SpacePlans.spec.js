@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SpacePlans from './SpacePlans';
-import { trackCTAClick } from 'analytics/targetedCTA';
+import * as trackCTA from 'analytics/trackCTA';
 
 import * as fake from 'test/helpers/fakeFactory';
 
@@ -24,9 +24,7 @@ const mockPlanTwo = {
 
 const mockPlans = [mockPlanOne, mockPlanTwo];
 
-jest.mock('analytics/targetedCTA', () => ({
-  trackCTAClick: jest.fn(),
-}));
+const trackTargetedCTAClick = jest.spyOn(trackCTA, 'trackTargetedCTAClick');
 
 jest.mock('utils/SubscriptionUtils', () => ({
   calculatePlansCost: jest.fn().mockReturnValue(123),
@@ -135,9 +133,12 @@ describe('Space Plan', () => {
 
       userEvent.click(screen.getByTestId('subscription-page.support-request-link'));
 
-      expect(trackCTAClick).toBeCalledWith('purchase_micro_small_via_support', {
-        organizationId: '123',
-      });
+      expect(trackTargetedCTAClick).toBeCalledWith(
+        trackCTA.CTA_EVENTS.PURCHASE_MICRO_SMALL_VIA_SUPPORT,
+        {
+          organizationId: '123',
+        }
+      );
     });
   });
 });

@@ -29,13 +29,17 @@ import {
 import { openDeleteSpaceDialog } from 'features/space-settings';
 import { isOwner } from 'services/OrganizationRoles';
 import { Price } from 'core/components/formatting';
-import { trackCTAClick } from 'analytics/targetedCTA';
+import { trackCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 
 import BasePlan from './BasePlan';
 import UsersForPlan from './UsersForPlan';
 import SpacePlans from './SpacePlans';
 import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
-import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
+import {
+  isEnterprisePlan,
+  isFreePlan,
+  isEnterpriseTrialPlan,
+} from 'account/pricing/PricingDataProvider';
 import ContactUsButton from 'ui/Components/ContactUsButton';
 
 const styles = {
@@ -115,6 +119,8 @@ export default function SubscriptionPage({
   }, [changedSpaceId]);
 
   const createSpace = () => {
+    trackCTAClick(CTA_EVENTS.CREATE_SPACE, { organizationId });
+
     showCreateSpaceModal(organizationId);
   };
 
@@ -136,7 +142,7 @@ export default function SubscriptionPage({
 
   const changeSpace = (space) => {
     return () => {
-      trackCTAClick('upgrade_space_plan', { organizationId, spaceId: space.sys.id });
+      trackCTAClick(CTA_EVENTS.UPGRADE_SPACE_PLAN, { organizationId, spaceId: space.sys.id });
 
       showChangeSpaceModal({
         action: 'change',
@@ -213,6 +219,10 @@ export default function SubscriptionPage({
                 numberFreeUsers={usersMeta && usersMeta.numFree}
                 numberPaidUsers={usersMeta && usersMeta.numPaid}
                 costOfUsers={usersMeta && usersMeta.cost}
+                unitPrice={usersMeta && usersMeta.unitPrice}
+                hardLimit={usersMeta && usersMeta.hardLimit}
+                isFreePlan={isFreePlan(basePlan)}
+                isOnEnterpriseTrial={isEnterpriseTrialPlan(basePlan)}
               />
             )}
           </div>
@@ -230,6 +240,10 @@ export default function SubscriptionPage({
                     numberFreeUsers={usersMeta && usersMeta.numFree}
                     numberPaidUsers={usersMeta && usersMeta.numPaid}
                     costOfUsers={usersMeta && usersMeta.cost}
+                    unitPrice={usersMeta && usersMeta.unitPrice}
+                    hardLimit={usersMeta && usersMeta.hardLimit}
+                    isFreePlan={isFreePlan(basePlan)}
+                    isOnEnterpriseTrial={isEnterpriseTrialPlan(basePlan)}
                   />
                 )}
                 {showPayingOnDemandCopy && <PayingOnDemandOrgCopy grandTotal={grandTotal} />}

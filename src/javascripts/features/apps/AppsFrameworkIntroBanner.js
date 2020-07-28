@@ -45,7 +45,7 @@ export const AppsFrameworkIntroBanner = ({ canManageApps }) => {
   return (
     <Card className={styles.flexContainer} padding="large">
       <div>
-        <Heading className={styles.heading}>Introducing Contentful apps</Heading>
+        <Heading className={styles.heading}>Getting started with Contentful apps</Heading>
         <Paragraph className={styles.description}>
           Contentful apps extend the capabilities of the Contentful web app and the editors who use
           it. Apps empower you to integrate third-party services, build efficient workflows and

@@ -138,6 +138,9 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale, isMasterEnvironment }) =>
       Notification.success(`${release.title} was scheduled successfully`);
       setIsCreatingJob(false);
       setShowScheduleActionDialog(false);
+      if (unpublishedEntities(entries) || unpublishedEntities(assets)) {
+        setshowValidateReleaseDialog(true);
+      }
       setJobs([job, ...jobs]);
     }
   };
@@ -150,14 +153,6 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale, isMasterEnvironment }) =>
       Notification.success('Schedule canceled');
     } catch (error) {
       Notification.success('Failed to cancel schedule');
-    }
-  };
-
-  const handleShowingScheduleActionDialog = () => {
-    if (unpublishedEntities(entries) || unpublishedEntities(assets)) {
-      setshowValidateReleaseDialog(true);
-    } else {
-      setShowScheduleActionDialog(true);
     }
   };
 
@@ -251,7 +246,7 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale, isMasterEnvironment }) =>
             handlePublication={handlePublication}
             handleValidation={handleValidation}
             handleScheduleCancel={handleScheduleCancel}
-            handleShowingScheduleActionDialog={handleShowingScheduleActionDialog}
+            setShowScheduleActionDialog={setShowScheduleActionDialog}
             isMasterEnvironment={isMasterEnvironment}
           />
           <ValidateReleaseDialog
@@ -259,10 +254,7 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale, isMasterEnvironment }) =>
               handleValidation();
               setshowValidateReleaseDialog(false);
             }}
-            onCancel={() => {
-              setShowScheduleActionDialog(true);
-              setshowValidateReleaseDialog(false);
-            }}
+            onCancel={() => setshowValidateReleaseDialog(false)}
             isShown={showValidateReleaseDialog}
           />
           {showScheduledActionsDialog ? (

@@ -11,7 +11,8 @@ import ExternalTextLink from 'app/common/ExternalTextLink';
 import { developerDocsUrl } from 'Config';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { websiteUrl } from 'Config';
-import { trackCTAClick } from 'analytics/targetedCTA';
+import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
+import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 import { getModule } from 'core/NgRegistry';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
@@ -50,7 +51,7 @@ export class LocalesListSidebar extends React.Component {
     insideMasterEnv: PropTypes.bool.isRequired,
     isOrgOwnerOrAdmin: PropTypes.bool.isRequired,
     upgradeSpace: PropTypes.func.isRequired,
-    isLargePlan: PropTypes.bool,
+    hasNextSpacePlan: PropTypes.bool,
   };
 
   constructor(props) {
@@ -58,14 +59,14 @@ export class LocalesListSidebar extends React.Component {
   }
 
   renderChangeSpace() {
-    const { localeResource, isOrgOwnerOrAdmin, isLargePlan } = this.props;
+    const { localeResource, isOrgOwnerOrAdmin, hasNextSpacePlan } = this.props;
 
     let instruction = '';
     if (localeResource.limits.maximum > 1) {
       if (isOrgOwnerOrAdmin) {
-        instruction = isLargePlan
-          ? 'Talk to us about upgrading to an enterprise space plan.'
-          : 'Upgrade the space to add more.';
+        instruction = hasNextSpacePlan
+          ? 'Upgrade the space to add more.'
+          : 'Talk to us about upgrading to an enterprise space plan.';
       } else {
         instruction = `Ask the administrator of your organization to upgrade the space to add more locales.`;
       }
@@ -84,10 +85,10 @@ export class LocalesListSidebar extends React.Component {
           <Paragraph>{instruction}</Paragraph>
         </Typography>
         {isOrgOwnerOrAdmin &&
-          (isLargePlan ? (
-            <UpgradeToEnterprise />
-          ) : (
+          (hasNextSpacePlan ? (
             <UpgradeOnDemand upgradeSpace={this.props.upgradeSpace} />
+          ) : (
+            <UpgradeToEnterprise />
           ))}
       </div>
     );
@@ -122,24 +123,32 @@ export class LocalesListSidebar extends React.Component {
 const handleTalkToUsClickCTA = () => {
   const spaceContext = getModule('spaceContext');
 
-  trackCTAClick('upgrade_to_enterprise', {
+  trackTargetedCTAClick(CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
     spaceId: spaceContext.getId(),
     organizationId: spaceContext.organization.sys.id,
   });
 };
 
 const UpgradeToEnterprise = () => {
+  const spaceContext = getModule('spaceContext');
+  const spaceId = spaceContext.getId();
+  const organizationId = spaceContext.organization.sys.id;
+
   return (
-    <Button
-      isFullWidth
-      buttonType="primary"
-      testId="link-to-sales-button"
-      href={websiteUrl('contact/sales/')}
-      target="_blank"
-      rel="noopener noreferrer"
-      onClick={() => handleTalkToUsClickCTA()}>
-      Talk to us
-    </Button>
+    <TrackTargetedCTAImpression
+      impressionType={CTA_EVENTS.UPGRADE_TO_ENTERPRISE}
+      meta={{ spaceId, organizationId }}>
+      <Button
+        isFullWidth
+        buttonType="primary"
+        testId="link-to-sales-button"
+        href={websiteUrl('contact/sales/')}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={() => handleTalkToUsClickCTA()}>
+        Talk to us
+      </Button>
+    </TrackTargetedCTAImpression>
   );
 };
 

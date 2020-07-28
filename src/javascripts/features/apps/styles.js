@@ -11,11 +11,10 @@ export const styles = {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    padding: `${tokens.spacingM} 0`,
+    padding: `${tokens.spacingM}`,
     borderBottom: `1px solid ${tokens.colorElementLight}`,
     '&:last-child': {
       borderBottom: 'none',
-      paddingBottom: '0',
     },
   }),
   title: css({
@@ -61,6 +60,9 @@ export const styles = {
     display: 'flex',
     alignItems: 'center',
     cursor: 'pointer',
+  }),
+  earlyAccessTag: css({
+    marginLeft: tokens.spacingXs,
   }),
   tag: css({
     marginTop: '3px',

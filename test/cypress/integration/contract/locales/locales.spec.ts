@@ -3,6 +3,7 @@ import { defaultRequestsMock } from '../../../util/factories';
 import {
   getResourcesForEnvironmentWithLocale,
   getResourcesWithLocale,
+  getResources,
 } from '../../../interactions/resources';
 import { getFeaturesWithCustomRoles } from '../../../interactions/features';
 import {
@@ -11,7 +12,7 @@ import {
   putLocaleForSpace,
   queryFirst100LocalesOfDefaultSpace,
 } from '../../../interactions/locales';
-import { getSpacePlan } from '../../../interactions/plans';
+import { getProductRatePlansWithSpace, getSpacePlan } from '../../../interactions/plans';
 
 describe('Locales Management', () => {
   let interactions: string[];
@@ -43,6 +44,8 @@ describe('Locales Management', () => {
         getResourcesWithLocale.willReturnSeveral(),
         getResourcesForEnvironmentWithLocale.willReturnSeveral(),
         getFeaturesWithCustomRoles.willReturnSeveral(),
+        getProductRatePlansWithSpace.willReturnDefault(),
+        getResources.willReturnSeveral(),
         getSpacePlan.willReturnDefault(),
       ];
       cy.visit(`/spaces/${defaultSpaceId}/settings/locales`);
@@ -101,6 +104,8 @@ describe('Locales Management', () => {
         getResourcesWithLocale.willReturnSeveral(),
         getResourcesForEnvironmentWithLocale.willReturnSeveral(),
         getFeaturesWithCustomRoles.willReturnSeveral(),
+        getProductRatePlansWithSpace.willReturnDefault(),
+        getResources.willReturnSeveral(),
         getSpacePlan.willReturnDefault(),
       ];
       cy.visit(`/spaces/${defaultSpaceId}/settings/locales`);

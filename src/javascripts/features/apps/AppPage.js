@@ -294,6 +294,11 @@ export class AppRoute extends Component {
       <Component className={styles.heading}>
         <AppIcon icon={this.state.appIcon} />
         {this.state.title}
+        {this.props.app.isEarlyAccess && (
+          <Tag tagType="warning" className={styles.earlyAccessTag}>
+            EARLY ACCESS
+          </Tag>
+        )}
         {this.props.app.isPrivateApp && <Tag className={styles.tag}>Private</Tag>}
       </Component>
     );
@@ -315,6 +320,7 @@ export class AppRoute extends Component {
         )}
         {(appLoaded || loadingError) && isInstalled && (
           <Button
+            testId={'app-uninstall-button'}
             buttonType="muted"
             onClick={this.uninstall}
             loading={busyWith === BUSY_STATE_UNINSTALLATION}

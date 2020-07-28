@@ -86,6 +86,7 @@ describe('AppsRepo', () => {
           id: 'app-definition-id',
           title: 'My app',
           isPrivateApp: true,
+          isEarlyAccess: false,
         },
       ]);
     });
@@ -107,6 +108,7 @@ describe('AppsRepo', () => {
           id: 'app-definition-id',
           title: 'My app',
           isPrivateApp: true,
+          isEarlyAccess: false,
         },
       ]);
     });

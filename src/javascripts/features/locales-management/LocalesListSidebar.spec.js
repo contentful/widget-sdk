@@ -6,11 +6,9 @@ import * as $stateMocked from 'ng/$state';
 import * as spaceContextMocked from 'ng/spaceContext';
 import userEvent from '@testing-library/user-event';
 
-import { trackCTAClick } from 'analytics/targetedCTA';
+import * as trackCTA from 'analytics/trackCTA';
 
-jest.mock('analytics/targetedCTA', () => ({
-  trackCTAClick: jest.fn(),
-}));
+const trackTargetedCTAClick = jest.spyOn(trackCTA, 'trackTargetedCTAClick');
 
 describe('features/locales-management/LocalesListSidebar', () => {
   spaceContextMocked.getId.mockReturnValue(321);
@@ -92,6 +90,7 @@ describe('features/locales-management/LocalesListSidebar', () => {
           allowedToEnforceLimits: true,
           insideMasterEnv: false,
           isOrgOwnerOrAdmin: true,
+          hasNextSpacePlan: true,
           localeResource: {
             usage: 2,
             limits: {
@@ -109,7 +108,7 @@ describe('features/locales-management/LocalesListSidebar', () => {
         expect(usagesSection).toHaveTextContent('Upgrade the space to add more.');
       });
 
-      it('shows CTA button to talk to support about upgrading to enterprise when a large plan and limit is reached', () => {
+      it('shows CTA button to talk to support about upgrading to enterprise when there are no more space plans and limit is reached', () => {
         const {
           documentationSection,
           addLocaleButton,
@@ -119,7 +118,7 @@ describe('features/locales-management/LocalesListSidebar', () => {
           allowedToEnforceLimits: true,
           insideMasterEnv: false,
           isOrgOwnerOrAdmin: true,
-          isLargePlan: true,
+          hasNextSpacePlan: false,
           localeResource: {
             usage: 2,
             limits: {
@@ -140,7 +139,7 @@ describe('features/locales-management/LocalesListSidebar', () => {
 
         userEvent.click(screen.getByTestId('link-to-sales-button'));
 
-        expect(trackCTAClick).toBeCalledWith('upgrade_to_enterprise', {
+        expect(trackTargetedCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
           organizationId: 'org',
           spaceId: 321,
         });
@@ -188,6 +187,7 @@ describe('features/locales-management/LocalesListSidebar', () => {
         const { documentationSection, addLocaleButton, usagesSection } = renderComponent({
           insideMasterEnv: true,
           isOrgOwnerOrAdmin: true,
+          hasNextSpacePlan: true,
           localeResource: {
             usage: 2,
             limits: {
@@ -209,6 +209,7 @@ describe('features/locales-management/LocalesListSidebar', () => {
         const { documentationSection, addLocaleButton, usagesSection } = renderComponent({
           insideMasterEnv: true,
           isOrgOwnerOrAdmin: true,
+          hasNextSpacePlan: true,
           localeResource: {
             usage: 1,
             limits: {

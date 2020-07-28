@@ -1,4 +1,3 @@
-import { getModule } from 'core/NgRegistry';
 import _ from 'lodash';
 import * as logger from 'services/logger';
 import TheLocaleStore from 'services/localeStore';
@@ -33,47 +32,42 @@ EntityListCache.prototype = {
     this.displayedFieldIds = displayedFieldIds;
   },
 
-  resolveLinkedEntities: function (entities, linkResolver) {
-    const $q = getModule('$q');
-
-    linkResolver = linkResolver || $q.defer();
+  resolveLinkedEntities: async function (entities, linkResolver) {
+    linkResolver = linkResolver || Promise.resolve();
     if (this.inProgress) {
       this.queue.push({
         linkResolver: linkResolver,
         entities: entities,
       });
-      return linkResolver.promise;
+      return linkResolver;
     }
 
     const self = this;
     this.inProgress = true;
-    this.getLinkedEntities(entities).then(() => {
-      linkResolver.resolve();
-      self.inProgress = false;
-      if (self.queue.length > 0) {
-        const nextRequest = self.queue.splice(0, 1)[0];
-        self.resolveLinkedEntities(nextRequest.entities, nextRequest.linkResolver);
-      }
-    });
+    await this.getLinkedEntities(entities);
 
-    return linkResolver.promise;
+    await linkResolver;
+    self.inProgress = false;
+    if (self.queue.length > 0) {
+      const nextRequest = self.queue.splice(0, 1)[0];
+      self.resolveLinkedEntities(nextRequest.entities, nextRequest.linkResolver);
+    }
+
+    return linkResolver;
   },
 
-  getLinkedEntities: function (entities) {
-    const $q = getModule('$q');
+  getLinkedEntities: async function (entities) {
     const self = this;
     this.determineMissingEntityIds(entities);
 
     if (this.missingIds.length) {
-      return this.params.space[this.fetchMethod]({
+      const linkedEntities = await this.params.space[this.fetchMethod]({
         'sys.id[in]': this.missingIds.join(','),
         limit: 250,
-      }).then((linkedEntities) => {
-        self.missingIds = [];
-        _.forEach(linkedEntities, self.save.bind(self));
       });
-    } else {
-      return $q.resolve();
+
+      self.missingIds = [];
+      _.forEach(linkedEntities, self.save.bind(self));
     }
   },
 

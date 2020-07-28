@@ -12,14 +12,13 @@ const ValidateReleaseDialog = ({ onConfirm, onCancel, isShown }) => {
       intent="primary"
       title="Validate release?"
       onConfirm={onConfirm}
-      confirmLabel="Validate now"
+      confirmLabel="Validate"
       confirmTestId="confirm"
       cancelLabel="Not now"
       onCancel={onCancel}
       cancelTestId="cancel">
       <div>
-        Do you want to check the content of your release to make sure it passes all content
-        validations? This may take a minute.
+        <b>Your release was scheduled successfully.</b>
       </div>
       <div className={styles.validateReleaseDialogText}>
         If you are continuing to make changes to your content, we recommend running a validation

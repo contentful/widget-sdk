@@ -32,6 +32,7 @@ describe('Schedule Publication', () => {
   let interactions: string[];
   beforeEach(() => {
     cy.enableFeatureFlags([FeatureFlag.SCHEDULED_PUBLICATION]);
+    cy.disableFeatureFlags([FeatureFlag.NEW_STATUS_SWITCH]);
     interactions = basicServerSetUp();
   });
 
@@ -107,7 +108,8 @@ describe('Schedule Publication', () => {
         .click();
 
       cy.wait(interaction);
-
+      // not always visible because right sidebar is scrolled to bottom
+      cy.findByTestId('change-state-menu-trigger').scrollIntoView();
       cy.findByTestId('change-state-menu-trigger').should('be.visible');
       cy.findByTestId('change-state-published').should('be.enabled');
     });

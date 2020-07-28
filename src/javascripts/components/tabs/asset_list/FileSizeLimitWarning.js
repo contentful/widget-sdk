@@ -8,7 +8,8 @@ import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import { useAsync } from 'core/hooks';
 import { showDialog as showChangeSpaceModal } from 'services/ChangeSpaceService';
 import { isOwner } from 'services/OrganizationRoles';
-import { trackCTAClick } from 'analytics/targetedCTA';
+import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
+import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 
 const styles = {
   marginBottom: css({
@@ -40,7 +41,7 @@ function FileSizeLimitWarning({ organizationId, spaceId }) {
   const { space, organization } = data;
 
   const onUpgradeSpace = () => {
-    trackCTAClick('upgrade_space_plan', {
+    trackTargetedCTAClick(CTA_EVENTS.UPGRADE_SPACE_PLAN, {
       organizationId,
       spaceId,
     });
@@ -57,12 +58,14 @@ function FileSizeLimitWarning({ organizationId, spaceId }) {
       <Paragraph>
         To increase your limit,{' '}
         {isOwner(organization) ? (
-          <>
+          <TrackTargetedCTAImpression
+            impressionType={CTA_EVENTS.UPGRADE_SPACE_PLAN}
+            meta={{ organizationId, spaceId }}>
             <TextLink onClick={onUpgradeSpace} testId="asset-limit-upgrade-link">
               upgrade this space
             </TextLink>
             .
-          </>
+          </TrackTargetedCTAImpression>
         ) : (
           <>the organization admin must upgrade this space.</>
         )}

@@ -5,7 +5,7 @@ import { Tabs, Tab, TabPanel } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
 import View from './View';
-import useView, { VIEWS_PRIVATE, VIEWS_SHARED, viewPropTypes } from './useView';
+import useView, { VIEWS_PRIVATE, VIEWS_SHARED } from './useView';
 
 const styles = {
   tabPanel: css({
@@ -25,25 +25,15 @@ const styles = {
     display: 'flex',
     flexGrow: 1,
     flexDirection: 'column',
-    boxOrient: 'vertical',
-    boxDirection: 'normal',
     overflowY: 'hidden',
-    boxShadow: tokens.boxShadowDefault,
-    borderRight: `1px solid ${tokens.colorElementDarkest}`,
-    backgroundColor: tokens.colorElementLightest,
   }),
 };
 
-const Sidebar = ({
-  entityType,
-  initialTab = VIEWS_SHARED,
-  onSelectSavedView,
-  savedViewsUpdated,
-}) => {
-  const [selectedView, { setSharedViewSelected, setPrivateViewSelected }] = useView(
-    initialTab,
-    savedViewsUpdated
-  );
+const Sidebar = ({ entityType, onSelectSavedView, listViewContext }) => {
+  const [
+    selectedView,
+    { setSharedViewSelected, setPrivateViewSelected, setSelectedView },
+  ] = useView(VIEWS_SHARED);
 
   return (
     <div className={styles.wrapper}>
@@ -69,8 +59,9 @@ const Sidebar = ({
         <View
           entityType={entityType}
           onSelectSavedView={onSelectSavedView}
-          savedViewsUpdated={savedViewsUpdated}
+          listViewContext={listViewContext}
           viewType={selectedView}
+          setSelectedView={setSelectedView}
         />
       </TabPanel>
     </div>
@@ -79,9 +70,11 @@ const Sidebar = ({
 
 Sidebar.propTypes = {
   entityType: PropTypes.oneOf(['entry', 'asset']).isRequired,
-  initialTab: viewPropTypes,
   onSelectSavedView: PropTypes.func.isRequired,
-  savedViewsUpdated: PropTypes.number.isRequired, // TODO remove as soon as a state that is spanning the full entity view is in place
+  listViewContext: PropTypes.shape({
+    getView: PropTypes.func.isRequired,
+    setView: PropTypes.func.isRequired,
+  }).isRequired,
 };
 
 export default Sidebar;

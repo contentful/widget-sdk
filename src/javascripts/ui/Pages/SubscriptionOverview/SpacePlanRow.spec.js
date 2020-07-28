@@ -182,15 +182,6 @@ describe('Space Plan Row', () => {
       expect(mockOnChangeSpace).toHaveBeenCalled();
     });
 
-    it('should hide change-space-link if user is not EnterprisePlan', async () => {
-      await build();
-      fireEvent.click(screen.getByTestId('subscription-page.spaces-list.dropdown-menu.trigger'));
-
-      expect(() => {
-        screen.getByTestId('subscription-page.spaces-list.change-space-link');
-      }).toThrow();
-    });
-
     it('the view space button should be disabled when it is not accessible', async () => {
       await build();
       fireEvent.click(screen.getByTestId('subscription-page.spaces-list.dropdown-menu.trigger'));

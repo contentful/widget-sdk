@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import * as BackendTracing from 'i13n/BackendTracing';
 
 /**
  * Immutable representation of the path, method, payload, and headers
@@ -26,6 +27,8 @@ Request.prototype.send = function send(method) {
   if (method === 'PUT' && this._params.putHeaders) {
     params.headers = _.extend(params.headers || {}, this._params.putHeaders);
   }
+
+  params.headers = _.extend(params.headers || {}, BackendTracing.tracingHeaders());
 
   if (_.isEmpty(params.headers)) {
     delete params.headers;

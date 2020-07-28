@@ -127,18 +127,82 @@ describe('utils/SubscriptionUtils', () => {
         numFree: 3,
         numPaid: 0,
         cost: 0,
+        unitPrice: 10,
+        hardLimit: null,
       });
 
       expect(SubscriptionUtils.calcUsersMeta({ basePlan, numMemberships: 8 })).toEqual({
         numFree: 8,
         numPaid: 0,
         cost: 0,
+        unitPrice: 10,
+        hardLimit: null,
       });
 
       expect(SubscriptionUtils.calcUsersMeta({ basePlan, numMemberships: 17 })).toEqual({
         numFree: 10,
         numPaid: 7,
         cost: 70,
+        unitPrice: 10,
+        hardLimit: null,
+      });
+    });
+
+    it('should handle a hard cap on the free tier', () => {
+      const basePlanWithHardLimit = {
+        ...basePlan,
+        ratePlanCharges: [
+          {
+            name: 'Users',
+            tiers: [
+              {
+                price: 0,
+                startingUnit: 0,
+                endingUnit: 10,
+                priceFormat: 'FlatFee',
+              },
+            ],
+          },
+        ],
+      };
+
+      expect(
+        SubscriptionUtils.calcUsersMeta({ basePlan: basePlanWithHardLimit, numMemberships: 17 })
+      ).toEqual({
+        numFree: 10,
+        numPaid: 7,
+        cost: 0,
+        unitPrice: undefined,
+        hardLimit: 10,
+      });
+    });
+
+    it('should handle an unlimited free tier', () => {
+      const basePlanWithNoCap = {
+        ...basePlan,
+        ratePlanCharges: [
+          {
+            name: 'Users',
+            tiers: [
+              {
+                price: 0,
+                startingUnit: 0,
+                endingUnit: null,
+                priceFormat: 'FlatFee',
+              },
+            ],
+          },
+        ],
+      };
+
+      expect(
+        SubscriptionUtils.calcUsersMeta({ basePlan: basePlanWithNoCap, numMemberships: 17 })
+      ).toEqual({
+        numFree: 17,
+        numPaid: 0,
+        cost: 0,
+        unitPrice: undefined,
+        hardLimit: null,
       });
     });
   });

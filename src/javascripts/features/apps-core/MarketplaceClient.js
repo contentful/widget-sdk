@@ -73,6 +73,7 @@ async function tryPreviewRequest(query, preview = false) {
 
 function createAppObject(entry, isListed) {
   const definitionId = get(entry, ['fields', 'appDefinitionId']);
+  const isEarlyAccess = get(entry, ['fields', 'isEarlyAccess'], false);
   const title = get(entry, ['fields', 'title'], '');
 
   return {
@@ -97,6 +98,7 @@ function createAppObject(entry, isListed) {
     },
     tagLine: get(entry, ['fields', 'tagLine'], ''),
     actionList: get(entry, ['fields', 'uninstallMessages'], []).map((msg) => msg.fields),
+    isEarlyAccess,
   };
 }
 

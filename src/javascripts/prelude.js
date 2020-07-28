@@ -233,10 +233,13 @@ angular
       const { init: initTokenStore } = await import(
         /* webpackMode: "eager" */ 'services/TokenStore'
       );
-      const { init: initLD } = await import(/* webpackMode: "eager" */ 'utils/LaunchDarkly');
+
       const { init: initAutoCreateNewSpace } = await import(
         /* webpackMode: "eager" */
         'components/shared/auto_create_new_space'
+      );
+      const { init: initBackendTracing } = await import(
+        /* webpackMode: "eager" */ 'i13n/BackendTracing'
       );
       const Telemetry = await import(/* webpackMode: "eager" */ 'i13n/Telemetry');
       const { loadAll: loadAllStates } = await import(/* webpackMode: "eager" */ 'states/states');
@@ -265,9 +268,9 @@ angular
 
       loadAllStates();
       initDebug(window);
+      initBackendTracing();
       initAuthentication();
       initTokenStore();
-      initLD();
       initAutoCreateNewSpace();
       initExtentionActivationTracking();
       initRolesForWalkMe();

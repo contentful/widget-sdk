@@ -2,10 +2,6 @@ import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import StatusWidget from './StatusWidget';
 
-jest.mock('utils/LaunchDarkly', () => ({
-  getCurrentVariation: jest.fn().mockResolvedValue(false), // Reference Dialog disabled
-}));
-
 const createCommand = (props) => ({
   isDisabled: () => false,
   isAvailable: () => true,

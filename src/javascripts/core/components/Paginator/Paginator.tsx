@@ -1,5 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
+import cn from 'classnames';
 
 // Number of pages to display in the paginator on either side of the
 // current page.
@@ -20,9 +21,10 @@ type PaginatorProps = {
   select?: Function;
   page?: number;
   pageCount?: number;
+  className?: string;
 };
 
-export function Paginator({ select = _.noop, page = 0, pageCount = 0 }: PaginatorProps) {
+export function Paginator({ className, select = _.noop, page = 0, pageCount = 0 }: PaginatorProps) {
   if (pageCount < 2) {
     return null;
   }
@@ -35,7 +37,7 @@ export function Paginator({ select = _.noop, page = 0, pageCount = 0 }: Paginato
   // page when it is disabled. For now we check `!atFirst` in the
   // event handler.
   return (
-    <div className="search-results-paginator" data-test-id="paginator">
+    <div className={cn('search-results-paginator', className)} data-test-id="paginator">
       <span
         aria-disabled={atFirst ? 'true' : 'false'}
         data-test-id="paginator.prev"

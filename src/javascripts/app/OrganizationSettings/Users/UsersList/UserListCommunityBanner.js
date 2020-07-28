@@ -12,7 +12,8 @@ import { Space as SpacePropType } from 'app/OrganizationSettings/PropTypes';
 import { getBasePlan, isFreePlan } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
-import { trackCTAClick } from 'analytics/targetedCTA';
+import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
+import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 
 UserListCommunityBanner.propTypes = {
   orgId: PropTypes.string.isRequired,
@@ -52,7 +53,7 @@ export function UserListCommunityBanner({ orgId, spaces }) {
   }, [orgId]);
 
   const changeSpace = () => {
-    trackCTAClick('upgrade_space_plan', {
+    trackTargetedCTAClick(CTA_EVENTS.UPGRADE_SPACE_PLAN, {
       organizationId: orgId,
       spaceId: spaceToUpgrade.sys.id,
     });
@@ -65,7 +66,7 @@ export function UserListCommunityBanner({ orgId, spaces }) {
   };
 
   const createSpace = () => {
-    trackCTAClick('create_space', {
+    trackTargetedCTAClick(CTA_EVENTS.CREATE_SPACE, {
       organizationId: orgId,
     });
     showCreateSpaceModal(orgId);
@@ -81,11 +82,17 @@ export function UserListCommunityBanner({ orgId, spaces }) {
       <Paragraph>
         To increase the limit,{' '}
         {userIsOwner ? (
-          <TextLink
-            onClick={spaceToUpgrade ? changeSpace : createSpace}
-            testId="upgrade-space-plan">
-            {spaceToUpgrade ? 'upgrade your free space' : 'purchase a space'}
-          </TextLink>
+          <TrackTargetedCTAImpression
+            impressionType={
+              spaceToUpgrade ? CTA_EVENTS.UPGRADE_SPACE_PLAN : CTA_EVENTS.CREATE_SPACE
+            }
+            meta={{ organizationId: orgId, spaceId: spaceToUpgrade?.sys.id }}>
+            <TextLink
+              onClick={spaceToUpgrade ? changeSpace : createSpace}
+              testId="upgrade-space-plan">
+              {spaceToUpgrade ? 'upgrade your free space' : 'purchase a space'}
+            </TextLink>
+          </TrackTargetedCTAImpression>
         ) : (
           'the organization owner must upgrade your tier by purchasing or upgrading a space'
         )}
