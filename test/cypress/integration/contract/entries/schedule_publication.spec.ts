@@ -32,6 +32,7 @@ describe('Schedule Publication', () => {
   let interactions: string[];
   beforeEach(() => {
     cy.enableFeatureFlags([FeatureFlag.SCHEDULED_PUBLICATION]);
+    cy.disableFeatureFlags([FeatureFlag.NEW_STATUS_SWITCH]);
     interactions = basicServerSetUp();
   });
 

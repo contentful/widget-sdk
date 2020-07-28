@@ -233,7 +233,7 @@ angular
       const { init: initTokenStore } = await import(
         /* webpackMode: "eager" */ 'services/TokenStore'
       );
-      const { init: initLD } = await import(/* webpackMode: "eager" */ 'utils/LaunchDarkly');
+
       const { init: initAutoCreateNewSpace } = await import(
         /* webpackMode: "eager" */
         'components/shared/auto_create_new_space'
@@ -271,7 +271,6 @@ angular
       initBackendTracing();
       initAuthentication();
       initTokenStore();
-      initLD();
       initAutoCreateNewSpace();
       initExtentionActivationTracking();
       initRolesForWalkMe();

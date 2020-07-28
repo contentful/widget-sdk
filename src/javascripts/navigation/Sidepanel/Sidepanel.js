@@ -13,7 +13,7 @@ import * as K from 'core/utils/kefir';
 import * as TokenStore from 'services/TokenStore';
 import * as accessChecker from 'access_control/AccessChecker/index';
 import * as logger from 'services/logger';
-import * as LD from 'utils/LaunchDarkly';
+import { getVariation } from 'LaunchDarkly';
 import { ENVIRONMENTS_FLAG } from 'featureFlags';
 import { navState$ } from 'navigation/NavState';
 
@@ -44,16 +44,21 @@ export default class Sidepanel extends React.Component {
   }
 
   async initializeSidebar() {
-    const [orgs, spacesByOrg, navState, environmentsEnabled] = await Promise.all([
+    const [orgs, spacesByOrg, navState] = await Promise.all([
       K.getValue(TokenStore.organizations$),
       K.getValue(TokenStore.spacesByOrganization$),
       K.getValue(navState$),
-      LD.getCurrentVariation(ENVIRONMENTS_FLAG),
     ]);
 
     const currentSpaceId = get(navState, ['space', 'sys', 'id']);
     const currentEnvId = get(navState, ['env', 'sys', 'id'], 'master');
     const org = navState.org || orgs[0];
+    const currentOrgId = get(org, ['sys', 'id']);
+
+    const environmentsEnabled = await getVariation(ENVIRONMENTS_FLAG, {
+      spaceId: currentSpaceId,
+      organizationId: currentOrgId,
+    });
 
     this.setState(
       {
