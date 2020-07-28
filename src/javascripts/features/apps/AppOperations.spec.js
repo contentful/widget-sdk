@@ -1,8 +1,6 @@
 import * as AppOperations from './AppOperations';
 import { WidgetNamespace } from 'features/widget-renderer';
 
-jest.mock('data/CMA/ProductCatalog', () => ({ getCurrentSpaceFeature: () => true }));
-
 const APP_ID = 'some-app';
 
 const status = {

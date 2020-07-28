@@ -1,13 +1,16 @@
 import React from 'react';
 import { render, wait } from '@testing-library/react';
-
-import * as FeatureFlagKey from 'featureFlags';
 import TasksWidgetContainer from './TasksWidgetContainer';
 
 import { trackIsTasksAlphaEligible } from './analytics';
 import * as ProductCatalog from 'data/CMA/ProductCatalog';
 
-jest.mock('data/CMA/ProductCatalog', () => ({ getCurrentSpaceFeature: jest.fn() }));
+jest.mock('data/CMA/ProductCatalog', () => ({
+  getCurrentSpaceFeature: jest.fn(),
+  FEATURES: {
+    TASKS: 'test-tasks',
+  },
+}));
 jest.mock('./analytics');
 
 describe('<TasksWidgetContainer />', () => {
@@ -22,7 +25,7 @@ describe('<TasksWidgetContainer />', () => {
         off: jest.fn(),
         emit: jest.fn(),
       },
-      featureFlagKey: FeatureFlagKey.TASKS,
+      featureFlagKey: ProductCatalog.FEATURES.TASKS,
       children: jest.fn().mockReturnValue(null),
     };
     return { rendered: render(<TasksWidgetContainer {...props} />) };

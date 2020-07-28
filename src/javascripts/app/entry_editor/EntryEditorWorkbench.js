@@ -11,8 +11,7 @@ import EntrySidebar from 'app/EntrySidebar/EntrySidebar';
 import WorkbenchTitle from 'components/shared/WorkbenchTitle';
 import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
 import { track } from 'analytics/Analytics';
-import { getVariation } from 'LaunchDarkly';
-import { ALL_REFERENCES_DIALOG, SHAREJS_REMOVAL } from 'featureFlags';
+import { getVariation, FLAGS } from 'LaunchDarkly';
 import { ContentTagsTab } from './EntryContentTags/ContentTagsTab';
 import { useTagsFeatureEnabled } from 'features/content-tags';
 import * as Config from 'Config';
@@ -105,7 +104,7 @@ const EntryEditorWorkbench = (props) => {
     async function getFeatureFlagVariation() {
       const { data: spaceData, environment } = getSpace();
 
-      const isFeatureEnabled = await getVariation(ALL_REFERENCES_DIALOG, {
+      const isFeatureEnabled = await getVariation(FLAGS.ALL_REFERENCES_DIALOG, {
         organizationId: spaceData.organization.sys.id,
         spaceId: spaceData.sys.id,
         environmentId: environment.sys.id,
@@ -179,7 +178,7 @@ const EntryEditorWorkbench = (props) => {
       tabs.push(tagsTab);
     } else if (Config.env !== 'production') {
       // eslint-disable-next-line
-      console.log(`enable "${SHAREJS_REMOVAL}" feature flag to show content tags`);
+      console.log(`enable "${FLAGS.SHAREJS_REMOVAL}" feature flag to show content tags`);
     }
   }
 

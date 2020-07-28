@@ -24,8 +24,7 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { css } from 'emotion';
 import ExternalTextLink from 'app/common/ExternalTextLink';
 import { isLegacyOrganization, getResourceLimits } from 'utils/ResourceUtils';
-import { PRICING_2020_RELEASED } from 'featureFlags';
-import { getVariation } from 'LaunchDarkly';
+import { getVariation, FLAGS } from 'LaunchDarkly';
 import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 import * as PricingService from 'services/PricingService';
@@ -75,7 +74,7 @@ export class ContentTypesPage extends React.Component {
 
     const promisesArray = [service.fetchContentTypes()];
 
-    const isNewPricingReleased = await getVariation(PRICING_2020_RELEASED, {
+    const isNewPricingReleased = await getVariation(FLAGS.PRICING_2020_RELEASED, {
       organizationId: spaceContext.organization.sys.id,
     });
 

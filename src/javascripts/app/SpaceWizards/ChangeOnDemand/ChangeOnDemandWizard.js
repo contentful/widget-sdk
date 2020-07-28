@@ -1,8 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import { getVariation } from 'LaunchDarkly';
-import { PRICING_2020_RELEASED, PAYING_PREV_V2_ORG } from 'featureFlags';
+import { getVariation, FLAGS } from 'LaunchDarkly';
 import SpacePlanSelector from '../shared/SpacePlanSelector';
 import ConfirmScreen from './ConfirmScreen';
 import * as PricingService from 'services/PricingService';
@@ -72,8 +71,8 @@ const initialFetch = (organization, space, basePlan) => async () => {
     getSubscriptionPlans(orgEndpoint),
     getSpaceRatePlans(orgEndpoint, space.sys.id),
     PricingService.recommendedSpacePlan(organizationId, space.sys.id),
-    getVariation(PRICING_2020_RELEASED, { organizationId }),
-    getVariation(PAYING_PREV_V2_ORG, { organizationId }),
+    getVariation(FLAGS.PRICING_2020_RELEASED, { organizationId }),
+    getVariation(FLAGS.PAYING_PREV_V2_ORG, { organizationId }),
   ]);
 
   const spaceRatePlans = transformSpaceRatePlans({

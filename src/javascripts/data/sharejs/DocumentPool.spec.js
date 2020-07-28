@@ -20,10 +20,6 @@ jest.mock('services/logger', () => ({
   logError: jest.fn(),
 }));
 
-jest.mock('LaunchDarkly', () => ({
-  getVariation: jest.fn(),
-}));
-
 const mockEntityRepo = { entityRepo: true };
 jest.mock('data/CMA/EntityRepo', () => ({
   create: jest.fn(() => mockEntityRepo),

@@ -1,11 +1,11 @@
-import { PC_CONTENT_TAGS } from 'featureFlags';
+import { FEATURES } from 'data/CMA/ProductCatalog';
 import { useCurrentSpaceFeature } from 'features/content-tags/core/hooks/useCurrentSpaceFeature';
 
 function useTagsFeatureEnabled() {
   const {
     spaceFeatureEnabled: tagsEnabled,
     isSpaceFeatureLoading: isTagsEnabledLoading,
-  } = useCurrentSpaceFeature(PC_CONTENT_TAGS, false);
+  } = useCurrentSpaceFeature(FEATURES.PC_CONTENT_TAGS, false);
   return { tagsEnabled, isTagsEnabledLoading };
 }
 
