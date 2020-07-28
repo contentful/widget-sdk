@@ -3,6 +3,7 @@ import { queryFirst100UsersInDefaultSpace } from '../../../interactions/users';
 import { defaultSpaceId, defaultAssetId } from '../../../util/requests';
 import { getDefaultAssetInDefaultSpace } from '../../../interactions/assets';
 import { queryLinksToDefaultAsset } from '../../../interactions/entries';
+import { FeatureFlag } from '../../../util/featureFlag';
 
 describe('Asset Page', () => {
   before(() => {
@@ -19,6 +20,8 @@ describe('Asset Page', () => {
   context('asset with empty fields', () => {
     beforeEach(() => {
       cy.resetAllFakeServers();
+
+      cy.disableFeatureFlags([FeatureFlag.NEW_STATUS_SWITCH]);
 
       const interactions = [
         ...defaultRequestsMock(),

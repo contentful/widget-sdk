@@ -22,6 +22,7 @@ import {
   queryForBasicAppsInDefaultSpace,
   queryForContentTagsInDefaultSpace,
 } from '../../../interactions/product_catalog_features';
+import { FeatureFlag } from '../../../util/featureFlag';
 
 const empty = require('../../../fixtures/responses/empty.json');
 const severalEntriesResponse = require('../../../fixtures/responses/entries-several.json');
@@ -34,6 +35,7 @@ const nonArchivedQuery = {
 describe('Entries list page', () => {
   beforeEach(() => {
     cy.resetAllFakeServers();
+    cy.disableFeatureFlags([FeatureFlag.NEW_STATUS_SWITCH]);
     // TODO: Move this to a before block
     cy.startFakeServers({
       consumer: 'user_interface',
