@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  EntryFieldAPI,
-  KnownSDK,
-  DialogExtensionSDK,
-  FieldExtensionSDK,
-} from 'contentful-ui-extensions-sdk';
+import { KnownSDK } from 'contentful-ui-extensions-sdk';
 
 import {
   Widget,
@@ -14,20 +9,9 @@ import {
   WidgetNamespace,
   HostingType,
 } from './interfaces';
+
 import { PostMessageChannel, ChannelMethod } from './PostMessageChannel';
-import {
-  makeCallSpaceMethodHandler,
-  makeCheckAccessHandler,
-  makeNavigateToBulkEditorHandler,
-  makeNavigateToContentEntityHandler,
-  makeNavigateToPageHandler,
-  makeNotifyHandler,
-  makeOpenDialogHandler,
-  makeRemoveValueHandler,
-  makeSetInvalidHandler,
-  makeSetValueHandler,
-  makeCloseDialogHandler,
-} from './handlers';
+import { setupHandlers } from './handlers';
 import { makeConnectMessage } from './makeConnectMessage';
 
 const DISALLOWED_DOMAINS = ['app.contentful.com', 'creator.contentful.com'];
@@ -139,74 +123,21 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
     // Create a communication channel.
     this.channel = new PostMessageChannel(iframe, window);
 
+    // Handle changes to the <iframe> element.
     this.channel.registerHandler(ChannelMethod.SetHeight, (height) => {
       if (!this.props.isFullSize) {
         iframe.setAttribute('height', height);
       }
     });
 
-    this.channel.registerHandler(
-      ChannelMethod.CallSpaceMethod,
-      makeCallSpaceMethodHandler(this.props.apis.space)
-    );
+    // Register all the other handlers.
+    setupHandlers(this.channel, this.props.apis, this.props.location);
 
-    this.channel.registerHandler(ChannelMethod.Notify, makeNotifyHandler(this.props.apis.notifier));
-
-    this.channel.registerHandler(
-      ChannelMethod.OpenDialog,
-      makeOpenDialogHandler(this.props.apis.dialogs)
-    );
-
-    this.channel.registerHandler(
-      ChannelMethod.NavigateToBulkEditor,
-      makeNavigateToBulkEditorHandler(this.props.apis.navigator)
-    );
-
-    this.channel.registerHandler(
-      ChannelMethod.NavigateToContentEntity,
-      makeNavigateToContentEntityHandler(this.props.apis.navigator)
-    );
-
-    this.channel.registerHandler(
-      ChannelMethod.NavigateToPage,
-      makeNavigateToPageHandler(this.props.apis.navigator)
-    );
-
-    // This is not a mistake. NavigateToPage and NavigateToPageExtension have the same handler
-    // who understands internally what to do. Reason for this is that UIE SDK uses for both the
-    // events the same 'navigateToPage', but in the bridge we cater for these two different events
-    this.channel.registerHandler(
-      ChannelMethod.NavigateToPageExtension,
-      makeNavigateToPageHandler(this.props.apis.navigator)
-    );
-
-    this.channel.registerHandler(
-      ChannelMethod.CheckAccess,
-      makeCheckAccessHandler(this.props.apis.access)
-    );
-
-    if (
-      [WidgetLocation.ENTRY_FIELD, WidgetLocation.ENTRY_FIELD_SIDEBAR].includes(this.props.location)
-    ) {
-      const { field } = this.props.apis as FieldExtensionSDK;
-
-      this.channel.registerHandler(ChannelMethod.SetValue, makeSetValueHandler(field));
-
-      this.channel.registerHandler(ChannelMethod.RemoveValue, makeRemoveValueHandler(field));
-
-      this.channel.registerHandler(ChannelMethod.SetInvalid, makeSetInvalidHandler(field));
-    }
-
-    if (this.props.location === WidgetLocation.DIALOG) {
-      const { close } = this.props.apis as DialogExtensionSDK;
-      this.channel.registerHandler(ChannelMethod.CloseDialog, makeCloseDialogHandler(close));
-    }
-
-    /////
-
+    // TODO: extract listeners to events in the web app propagating changes
+    // to the custom code of UIE or APP.
     const fields = this.props.apis.entry?.fields ?? {};
 
-    Object.values(fields).forEach((field: EntryFieldAPI) => {
+    Object.values(fields).forEach((field) => {
       field.locales.forEach((localeCode: string) => {
         this.props.apis.entry?.fields[field.id].onIsDisabledChanged(
           localeCode,
@@ -220,6 +151,7 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
         );
       });
     });
+    // END TODO
 
     // Render the iframe content
     if (this.isSrc(widget)) {
