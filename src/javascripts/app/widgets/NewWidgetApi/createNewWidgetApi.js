@@ -11,6 +11,8 @@ import { createContentTypeApi } from './createContentTypeApi';
 import checkDependencies from 'widgets/bridges/checkDependencies';
 import makeExtensionAccessHandlers from 'widgets/bridges/makeExtensionAccessHandlers';
 import { createTagsRepo } from 'features/content-tags';
+import { createUserApi } from './createUserApi';
+import { createIdsApi } from './createIdsApi';
 
 /**
  * @typedef { import("contentful-ui-extensions-sdk").FieldAPI } FieldAPI
@@ -53,14 +55,14 @@ export default function createNewWidgetApi(dependencies) {
   const { widget, otDoc } = $scope;
   const { contentType } = $scope.entityInfo;
   const { editorInterface } = $scope.editorData;
-  const contentTypeApi = createContentTypeApi({ contentType });
+  const contentTypeApi = createContentTypeApi(contentType);
   const environmentIds = [spaceContext.getEnvironmentId(), ...spaceContext.getAliasesIds()];
   const tagsRepo = createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId());
 
   const entry = createEntryApi({ contentType, otDoc, $scope });
   const field = createFieldApi({ $scope, contentType }); // TODO: Get rid of $scope here, pass actual dependencies.
-  const user = createUserObject(spaceContext.space.data.spaceMember);
-  const ids = createIdsObject(
+  const user = createUserApi(spaceContext.space.data.spaceMember);
+  const ids = createIdsApi(
     spaceContext.getId(),
     environmentIds[0],
     contentTypeApi,
@@ -182,39 +184,4 @@ function createSpaceScopedWidgetApi({
   apis.dialogs = dialogs;
 
   return apis;
-}
-
-function createUserObject(spaceMember) {
-  return {
-    sys: {
-      type: 'User',
-      id: spaceMember.sys.user.sys.id,
-    },
-    firstName: spaceMember.sys.user.firstName,
-    lastName: spaceMember.sys.user.lastName,
-    email: spaceMember.sys.user.email,
-    avatarUrl: spaceMember.sys.user.avatarUrl,
-    spaceMembership: {
-      sys: {
-        type: 'SpaceMembership',
-        id: spaceMember.sys.id,
-      },
-      admin: !!spaceMember.admin,
-      roles: spaceMember.roles.map((role) => ({
-        name: role.name,
-        description: role.description,
-      })),
-    },
-  };
-}
-
-function createIdsObject(spaceId, envId, contentTypeApi, entry, field, user) {
-  return {
-    space: spaceId,
-    environment: envId,
-    contentType: contentTypeApi.sys.id,
-    entry: entry.getSys().id,
-    field: field.id,
-    user: user.sys.id,
-  };
 }
