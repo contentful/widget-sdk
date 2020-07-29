@@ -9,7 +9,7 @@ import {
   isAutomationTestUser,
   getUserSpaceRoles,
 } from 'data/User';
-import { get } from 'lodash';
+import { get, isEqual } from 'lodash';
 import * as config from 'Config';
 import * as logger from 'services/logger';
 import { isFlagOverridden, getFlagOverride } from 'debug/EnforceFlags';
@@ -20,8 +20,9 @@ import { getOrgFeature } from 'data/CMA/ProductCatalog';
 const MISSING_VARIATION_VALUE = '__missing_variation_value__';
 const FLAG_PROMISE_ERRED = '__flag_promised_erred__';
 
+let identityCache = {};
 let client = null;
-let cache = {};
+let variationCache = {};
 
 let initializationPromise = null;
 let initialized = false;
@@ -79,10 +80,11 @@ const FALLBACK_VALUES = {
 
   TODO: Turn this into a class/singleton
  */
-export function clearCache() {
+export function reset() {
   if (process.env.NODE_ENV === 'test') {
     client = null;
-    cache = {};
+    identityCache = {};
+    variationCache = {};
     initializationPromise = null;
     initialized = false;
   } else {
@@ -207,16 +209,11 @@ async function ldUser({ user, org, space, environmentId }) {
  *   1. The promise returned will resolve to the overridden value of the flag
  *
  * 2. If the flag is NOT overridden
- *   1. The promise will settle only when LD is ready for the given context
- *      where context is a combination of current user, and given org and space IDs.
- *   2. The promise will resolve with the variation for the provided flag name
- *      if it receives a variation from it from LD.
- *   3. The promise will resolve with `undefined` if an error occurs, such as the flag
- *      not existing in LaunchDarkly.
- *
- *      NOTE: this can also happen in rare cases even if a flag does exist (e.g. LD
- *      service is down) and you should keep it in mind if your default value is not
- *      falsy.
+ *   1. If LaunchDarkly is not available, the predefined fallback value for the given
+ *      flag will be resolved
+ *   2. If an error occurs while getting the variation, such as `getSpace` is given an
+ *      invalid spaceId, the fallback value will be resolved
+ *   3. Otherwise, the variation for the given flag and context data will be resolved.
  *
  * @param {String} flagName
  * @returns {Promise<Variation>}
@@ -246,6 +243,7 @@ export async function getVariation(flagName, { organizationId, spaceId, environm
   // If the client doesn't exist, initialize with a basic LD user
   // object (no additional data besides the user)
   if (!client) {
+    // Since this is a basic user, we don't set it as the current identified user above
     const clientUser = await ldUser({ user });
 
     client = LDClient.initialize(config.launchDarkly.envId, clientUser);
@@ -290,7 +288,7 @@ export async function getVariation(flagName, { organizationId, spaceId, environm
     environmentId ? environmentId : ''
   }`;
 
-  let variationPromise = _.get(cache, key, null);
+  let variationPromise = _.get(variationCache, key, null);
 
   if (!variationPromise) {
     variationPromise = createFlagPromise(flagName, {
@@ -319,7 +317,7 @@ export async function getVariation(flagName, { organizationId, spaceId, environm
         // - the given org ID or space ID is invalid or not available in the token
         // - the variation is missing or the variation is not valid JSON
         if (value === FLAG_PROMISE_ERRED) {
-          _.set(cache, key, undefined);
+          _.set(variationCache, key, undefined);
 
           return FALLBACK_VALUES[flagName];
         }
@@ -327,7 +325,7 @@ export async function getVariation(flagName, { organizationId, spaceId, environm
         return value;
       });
 
-    _.set(cache, key, variationPromise);
+    _.set(variationCache, key, variationPromise);
   }
 
   const flagValue = await variationPromise;
@@ -369,16 +367,30 @@ async function createFlagPromise(flagName, { user, organizationId, spaceId, envi
     return FLAG_PROMISE_ERRED;
   }
 
-  const clientUser = await ldUser({ user, org, space, environmentId });
-
-  // The current identified user data is cached inside of the LD client, so we need to
-  // reidentify here
   let flags;
 
-  try {
-    flags = await client.identify(clientUser);
-  } catch {
-    return FLAG_PROMISE_ERRED;
+  const currentUser = await ldUser({ user, org, space, environmentId });
+
+  // Check to see if the LD user for this variation is the same as the current
+  // cached LD user. If they're the same, just set the flags, which lets us bypass
+  // making an unnecessary `client.identify` network call.
+  if (identityCache.user) {
+    if (isEqual(currentUser, identityCache.user)) {
+      flags = identityCache.flags;
+    }
+  }
+
+  if (!flags) {
+    try {
+      flags = await client.identify(currentUser);
+
+      Object.assign(identityCache, {
+        user: currentUser,
+        flags,
+      });
+    } catch {
+      return FLAG_PROMISE_ERRED;
+    }
   }
 
   const variation = get(flags, flagName, MISSING_VARIATION_VALUE);

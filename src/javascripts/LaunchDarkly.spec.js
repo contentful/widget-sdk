@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import ldClient from 'ldclient-js';
-import { getVariation, clearCache, FLAGS } from './LaunchDarkly';
+import { getVariation, reset, FLAGS } from './LaunchDarkly';
 import { getOrganization, getSpace, getUser } from 'services/TokenStore';
 import { launchDarkly } from 'Config';
 import { logError } from 'services/logger';
@@ -93,6 +93,8 @@ describe('LaunchDarkly', () => {
     };
 
     getUser.mockResolvedValue(user);
+    getOrganization.mockResolvedValue(organization);
+    getSpace.mockResolvedValue(space);
   });
 
   afterEach(() => {
@@ -104,7 +106,7 @@ describe('LaunchDarkly', () => {
     isFlagOverridden.mockReset();
     getFlagOverride.mockReset();
 
-    clearCache();
+    reset();
   });
 
   describe('#getVariation', () => {
@@ -217,6 +219,20 @@ describe('LaunchDarkly', () => {
         spaceId: 'space_1234',
       });
       expect(client.identify).toHaveBeenCalledTimes(5);
+    });
+
+    it('should only identify if the current user has changed', async () => {
+      await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { organizationId: 'org_1234' });
+      expect(client.identify).toHaveBeenCalledTimes(1);
+
+      await getVariation(FLAGS.__SECOND_FLAG_FOR_UNIT_TEST__, { organizationId: 'org_1234' });
+      expect(client.identify).toHaveBeenCalledTimes(1);
+
+      await getVariation(FLAGS.__SECOND_FLAG_FOR_UNIT_TEST__, { spaceId: 'space_1234' });
+      expect(client.identify).toHaveBeenCalledTimes(2);
+
+      await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { spaceId: 'space_1234' });
+      expect(client.identify).toHaveBeenCalledTimes(2);
     });
 
     it('should log and return the fallback if given invalid org or space id', async () => {
