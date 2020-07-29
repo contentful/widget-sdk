@@ -73,11 +73,11 @@ describe('LaunchDarkly', () => {
     // This is a mock implementation of the LaunchDarkly client
     // library
     client = {
-      waitForInitialization: jest.fn().mockResolvedValue(true),
-      identify: jest.fn(),
-      allFlags: jest.fn().mockImplementation(() => {
+      waitForInitialization: jest.fn().mockResolvedValue(),
+      identify: jest.fn().mockImplementation(async () => {
         return variations;
       }),
+      variation: jest.fn(),
     };
 
     ldClient.initialize.mockReturnValue(client);
@@ -109,16 +109,15 @@ describe('LaunchDarkly', () => {
 
   describe('#getVariation', () => {
     beforeEach(() => {
-      variations['FLAG'] = '"flag_value"';
-      variations['OTHER_FLAG'] = '"other_flag_value"';
-      variations[FLAGS.__FLAG_FOR_UNIT_TESTS__] = '"test-flag-variation"';
+      variations[FLAGS.__FLAG_FOR_UNIT_TESTS__] = '"test_flag_variation"';
+      variations[FLAGS.__SECOND_FLAG_FOR_UNIT_TEST__] = '"test_flag_variation_2"';
     });
 
-    it('should return the overridden flag variation and not initialize if flag has override', async () => {
+    it('should return the overridden flag variation and not initialize if flag has an override', async () => {
       isFlagOverridden.mockReturnValueOnce(true);
       getFlagOverride.mockReturnValueOnce('override-value');
 
-      const variation = await getVariation('FLAG');
+      const variation = await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__);
 
       expect(ldClient.initialize).not.toHaveBeenCalled();
       expect(isFlagOverridden).toHaveBeenCalledTimes(1);
@@ -126,125 +125,129 @@ describe('LaunchDarkly', () => {
     });
 
     it('should only initialize once', async () => {
-      await getVariation('FLAG', { organizationId: 'org_1234' });
+      await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { organizationId: 'org_1234' });
       expect(ldClient.initialize).toHaveBeenCalledTimes(1);
 
-      await getVariation('FLAG', { spaceId: 'space_1234' });
+      await getVariation(FLAGS.__SECOND_FLAG_FOR_UNIT_TEST__, { spaceId: 'space_1234' });
       expect(ldClient.initialize).toHaveBeenCalledTimes(1);
     });
 
-    it('should return the fallback value if waitForInitialization throws', async () => {
-      client.waitForInitialization.mockRejectedValueOnce();
-
-      // First time throws, we get the fallback value
-      expect(await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__)).toBe('fallback-value');
-
-      // Second time passes, we get the actual variation
-      expect(await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__)).toBe('test-flag-variation');
-    });
-
-    it('should be able to get two different flag values', async () => {
-      expect(await getVariation('FLAG')).toBe('flag_value');
-      expect(await getVariation('OTHER_FLAG')).toBe('other_flag_value');
-    });
-
-    it('should attempt to get the organization if provided org id', async () => {
-      await getVariation('FLAG', { organizationId: 'org_1234' });
-
-      expect(getOrganization).toHaveBeenCalledTimes(1);
-      expect(getOrganization).toHaveBeenNthCalledWith(1, 'org_1234');
-    });
-
-    it('should attempt to get the space if provided spaceId', async () => {
-      await getVariation('FLAG', { spaceId: 'space_1234' });
-
-      expect(getSpace).toHaveBeenCalledTimes(1);
-      expect(getSpace).toHaveBeenNthCalledWith(1, 'space_1234');
-    });
-
-    it('should add the environment to the custom data if envId is provided', async () => {
-      await getVariation('FLAG', { environmentId: 'env_id_1234' });
-
-      expect(ldClient.initialize).toHaveBeenNthCalledWith(1, launchDarkly.envId, {
-        key: 'user-id-1',
-        custom: {
-          currentUserSignInCount: 10,
-          currentUserSpaceRole: [],
-          currentSpaceEnvironmentId: 'env_id_1234',
-          isAutomationTestUser: true,
-          currentUserOwnsAtleastOneOrg: true,
-          currentUserAge: 7,
-          currentUserCreationDate: userCreationDate.getTime(),
-        },
-      });
-    });
-
-    it('should attempt to get both org and space if provided both ids', async () => {
-      await getVariation('FLAG', { organizationId: 'org_1234', spaceId: 'space_1234' });
-
-      expect(getOrganization).toHaveBeenCalledTimes(1);
-      expect(getOrganization).toHaveBeenNthCalledWith(1, 'org_1234');
-
-      expect(getSpace).toHaveBeenCalledTimes(1);
-      expect(getSpace).toHaveBeenNthCalledWith(1, 'space_1234');
-    });
-
-    it('should log and return undefined if given invalid org or space id', async () => {
-      let variation;
-
-      getOrganization.mockRejectedValueOnce(false);
-
-      variation = await getVariation('FLAG', { organizationId: 'org_1234' });
-
-      expect(variation).toBeUndefined();
-      expect(logError).toHaveBeenCalledTimes(1);
-
-      getSpace.mockRejectedValueOnce(false);
-
-      variation = await getVariation('FLAG', { spaceId: 'space_1234' });
-
-      expect(variation).toBeUndefined();
-      expect(logError).toHaveBeenCalledTimes(2);
-    });
-
-    it('should only identify once per orgId/spaceId combo', async () => {
-      await getVariation('FLAG', { organizationId: 'org_1234' });
-      expect(client.identify).toHaveBeenCalledTimes(1);
-
-      await getVariation('FLAG', { organizationId: 'org_1234' });
-      expect(client.identify).toHaveBeenCalledTimes(1);
-
-      await getVariation('FLAG', { spaceId: 'space_1234' });
-      expect(client.identify).toHaveBeenCalledTimes(2);
-
-      await getVariation('FLAG', { spaceId: 'space_1234' });
-      expect(client.identify).toHaveBeenCalledTimes(2);
-
-      await getVariation('FLAG', { spaceId: 'space_1234', organizationId: 'org_1234' });
-      expect(client.identify).toHaveBeenCalledTimes(3);
-
-      await getVariation('FLAG', { spaceId: 'space_1234', organizationId: 'org_1234' });
-      expect(client.identify).toHaveBeenCalledTimes(3);
-    });
-
-    it('should return undefined if the flag does not have a variation/does not exist', async () => {
+    it('should log and return undefined if the flag does not exist in the map', async () => {
       const variation = await getVariation('UNKNOWN_FLAG');
 
       expect(variation).toBeUndefined();
       expect(logError).toHaveBeenCalledTimes(1);
     });
 
-    it('should return undefined if the flag variation is invalid JSON', async () => {
-      variations['FLAG'] = '{invalid_json"';
+    it('should return the fallback value if waitForInitialization throws', async () => {
+      client.waitForInitialization.mockRejectedValueOnce();
 
-      const variation = await getVariation('FLAG');
+      // First time rejects, we get the fallback value
+      expect(await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__)).toBe('fallback-value');
 
-      expect(variation).toBeUndefined();
+      // Second time resolves, we get the actual variation
+      expect(await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__)).toBe('test_flag_variation');
+    });
+
+    it('should be able to get two different flag values', async () => {
+      expect(await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__)).toBe('test_flag_variation');
+      expect(await getVariation(FLAGS.__SECOND_FLAG_FOR_UNIT_TEST__)).toBe('test_flag_variation_2');
+    });
+
+    it('should attempt to get the organization if provided org id', async () => {
+      await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { organizationId: 'org_1234' });
+
+      expect(getOrganization).toHaveBeenCalledTimes(1);
+      expect(getOrganization).toHaveBeenNthCalledWith(1, 'org_1234');
+    });
+
+    it('should attempt to get the space if provided space id', async () => {
+      await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { spaceId: 'space_1234' });
+
+      expect(getSpace).toHaveBeenCalledTimes(1);
+      expect(getSpace).toHaveBeenNthCalledWith(1, 'space_1234');
+    });
+
+    it('should attempt to get both org and space if provided both ids', async () => {
+      await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, {
+        organizationId: 'org_1234',
+        spaceId: 'space_1234',
+      });
+
+      expect(getOrganization).toHaveBeenCalledTimes(1);
+      expect(getOrganization).toHaveBeenNthCalledWith(1, 'org_1234');
+
+      expect(getSpace).toHaveBeenCalledTimes(1);
+      expect(getSpace).toHaveBeenNthCalledWith(1, 'space_1234');
+    });
+
+    it('should only identify once per flag/orgId/spaceId combo', async () => {
+      await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { organizationId: 'org_1234' });
+      expect(client.identify).toHaveBeenCalledTimes(1);
+
+      await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { organizationId: 'org_1234' });
+      expect(client.identify).toHaveBeenCalledTimes(1);
+
+      await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { spaceId: 'space_1234' });
+      expect(client.identify).toHaveBeenCalledTimes(2);
+
+      await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { spaceId: 'space_1234' });
+      expect(client.identify).toHaveBeenCalledTimes(2);
+
+      await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, {
+        spaceId: 'space_1234',
+        organizationId: 'org_1234',
+      });
+      expect(client.identify).toHaveBeenCalledTimes(3);
+
+      await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, {
+        spaceId: 'space_1234',
+        organizationId: 'org_1234',
+      });
+      expect(client.identify).toHaveBeenCalledTimes(3);
+
+      await getVariation(FLAGS.__SECOND_FLAG_FOR_UNIT_TEST__, { organizationId: 'org_1234' });
+      expect(client.identify).toHaveBeenCalledTimes(4);
+
+      await getVariation(FLAGS.__SECOND_FLAG_FOR_UNIT_TEST__, { organizationId: 'org_1234' });
+      expect(client.identify).toHaveBeenCalledTimes(4);
+
+      await getVariation(FLAGS.__SECOND_FLAG_FOR_UNIT_TEST__, {
+        organizationId: 'org_1234',
+        spaceId: 'space_1234',
+      });
+      expect(client.identify).toHaveBeenCalledTimes(5);
+    });
+
+    it('should log and return the fallback if given invalid org or space id', async () => {
+      let variation;
+
+      getOrganization.mockRejectedValueOnce(false);
+
+      variation = await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { organizationId: 'org_1234' });
+
+      expect(variation).toBe('fallback-value');
+      expect(logError).toHaveBeenCalledTimes(1);
+
+      getSpace.mockRejectedValueOnce(false);
+
+      variation = await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { spaceId: 'space_1234' });
+
+      expect(variation).toBe('fallback-value');
+      expect(logError).toHaveBeenCalledTimes(2);
+    });
+
+    it('should log and return the fallback value if the flag variation is invalid JSON', async () => {
+      variations[FLAGS.__FLAG_FOR_UNIT_TESTS__] = '{invalid_json"';
+
+      const variation = await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__);
+
+      expect(variation).toBe('fallback-value');
       expect(logError).toHaveBeenCalledTimes(1);
     });
 
     it('should initially include user data in ldUser value', async () => {
-      await getVariation('FLAG');
+      await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__);
 
       expect(ldClient.initialize).toHaveBeenCalledTimes(1);
       expect(ldClient.initialize).toHaveBeenNthCalledWith(1, launchDarkly.envId, {
@@ -263,7 +266,7 @@ describe('LaunchDarkly', () => {
     it('should provide org data if given valid orgId', async () => {
       getOrganization.mockResolvedValueOnce(organization);
 
-      await getVariation('FLAG', { organizationId: 'org_5678' });
+      await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { organizationId: 'org_5678' });
 
       // Note a lot of this data is provided from functions in
       // data/User/index
@@ -298,7 +301,7 @@ describe('LaunchDarkly', () => {
     it('should provide space data if given valid spaceId', async () => {
       getSpace.mockResolvedValueOnce(space);
 
-      await getVariation('FLAG', { spaceId: 'space_5678' });
+      await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { spaceId: 'space_5678' });
 
       // Note a lot of this data is provided from functions in
       // data/User/index
@@ -324,7 +327,10 @@ describe('LaunchDarkly', () => {
       getOrganization.mockResolvedValueOnce(organization);
       getSpace.mockResolvedValueOnce(space);
 
-      await getVariation('FLAG', { organizationId: 'org_5678', spaceId: 'space_5678' });
+      await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, {
+        organizationId: 'org_5678',
+        spaceId: 'space_5678',
+      });
 
       expect(client.identify).toHaveBeenCalledTimes(1);
       expect(client.identify).toHaveBeenNthCalledWith(1, {
@@ -351,6 +357,24 @@ describe('LaunchDarkly', () => {
 
           currentSpaceId: 'abcd_space',
           currentUserSpaceRole: ['editor', 'translator3'],
+        },
+      });
+    });
+
+    it('should add the environment to the custom data if envId is provided', async () => {
+      await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { environmentId: 'env_id_1234' });
+
+      expect(client.identify).toHaveBeenCalledTimes(1);
+      expect(client.identify).toHaveBeenNthCalledWith(1, {
+        key: 'user-id-1',
+        custom: {
+          currentUserSignInCount: 10,
+          currentUserSpaceRole: [],
+          currentSpaceEnvironmentId: 'env_id_1234',
+          isAutomationTestUser: true,
+          currentUserOwnsAtleastOneOrg: true,
+          currentUserAge: 7,
+          currentUserCreationDate: userCreationDate.getTime(),
         },
       });
     });

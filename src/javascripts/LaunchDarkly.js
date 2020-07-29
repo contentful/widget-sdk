@@ -9,12 +9,16 @@ import {
   isAutomationTestUser,
   getUserSpaceRoles,
 } from 'data/User';
+import { get } from 'lodash';
 import * as config from 'Config';
 import * as logger from 'services/logger';
 import { isFlagOverridden, getFlagOverride } from 'debug/EnforceFlags';
 import { getOrganization, getSpace, getUser, getSpacesByOrganization } from 'services/TokenStore';
 import isLegacyEnterprise from 'data/isLegacyEnterprise';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
+
+const MISSING_VARIATION_VALUE = '__missing_variation_value__';
+const FLAG_PROMISE_ERRED = '__flag_promised_erred__';
 
 let client = null;
 let cache = {};
@@ -40,8 +44,9 @@ export const FLAGS = {
   ENTITY_SELECTOR_MIGRATION: 'feature-pulitzer-07-2020-entity-selector-migration',
 
   // So that we can test the fallback mechanism without needing to rely on an actual
-  // flag above, we use this special flag. This doesn't exist in LD.
+  // flag above, we use these special flags.
   __FLAG_FOR_UNIT_TESTS__: 'test-flag',
+  __SECOND_FLAG_FOR_UNIT_TEST__: 'test-flag-2',
 };
 
 const FALLBACK_VALUES = {
@@ -61,7 +66,9 @@ const FALLBACK_VALUES = {
   [FLAGS.NEW_FIELD_DIALOG]: false,
   [FLAGS.ENTITY_SELECTOR_MIGRATION]: false,
 
+  // See above
   [FLAGS.__FLAG_FOR_UNIT_TESTS__]: 'fallback-value',
+  [FLAGS.__SECOND_FLAG_FOR_UNIT_TEST__]: 'fallback-value-2',
 };
 
 /*
@@ -224,12 +231,22 @@ export async function getVariation(flagName, { organizationId, spaceId, environm
     return getFlagOverride(flagName);
   }
 
+  // Since there isn't a fallback value, simply return undefined
+  if (!Object.values(FLAGS).includes(flagName)) {
+    logger.logError(`LD flag ${flagName} was not defined in the app FLAGS map`, {
+      groupingHash: 'UndefinedAppLDFlag',
+      data: { flagName, organizationId, spaceId, environmentId },
+    });
+
+    return undefined;
+  }
+
   const user = await getUser();
 
   // If the client doesn't exist, initialize with a basic LD user
-  // object (no org or space data)
+  // object (no additional data besides the user)
   if (!client) {
-    const clientUser = await ldUser({ user, environmentId });
+    const clientUser = await ldUser({ user });
 
     client = LDClient.initialize(config.launchDarkly.envId, clientUser);
   }
@@ -244,7 +261,7 @@ export async function getVariation(flagName, { organizationId, spaceId, environm
 
       initialized = true;
     } catch {
-      // LaunchDarkly couldn't initialize. Return whatever the fallback value is
+      // If LaunchDarkly couldn't initialize, return whatever the fallback value is
       // for the flag and reset the state so we can try to initialize later
       initializationPromise = null;
       client = null;
@@ -256,50 +273,73 @@ export async function getVariation(flagName, { organizationId, spaceId, environm
   // The cache key will look like this:
   //
   // Only org ID:
-  // `org_abcd1234:`
+  // `<flagName>:org_abcd1234::`
   //
   // Only space ID:
-  // `:space_abcd1234`
+  // `<flagName>::space_abcd1234:`
   //
   // Org and space ID:
-  // `org_abcd1234:space_abcd1234`
+  // `<flagName>:org_abcd1234:space_abcd1234:`
   //
-  // No ID:
-  // `:`
-  const key = `${organizationId ? organizationId : ''}:${spaceId ? spaceId : ''}${
+  // Org, space, and env ID
+  // `<flagName>:org_abcd1234:space_abcd1234:env_abcd1234`
+  //
+  // No IDs:
+  // `<flagName>:::`
+  const key = `${flagName}:${organizationId ? organizationId : ''}:${spaceId ? spaceId : ''}:${
     environmentId ? environmentId : ''
   }`;
 
-  let flagsPromise = _.get(cache, key, null);
+  let variationPromise = _.get(cache, key, null);
 
-  if (!flagsPromise) {
-    flagsPromise = createFlagsPromise({ user, organizationId, spaceId, environmentId });
+  if (!variationPromise) {
+    variationPromise = createFlagPromise(flagName, {
+      user,
+      organizationId,
+      spaceId,
+      environmentId,
+    })
+      .catch((error) => {
+        // This shouldn't happen, but in case there is some error thrown by
+        // `createFlagPromise`, log it and return the fallback value
+        logger.logError(`Unexpected error occurred while getting variation for ${flagName}`, {
+          groupingHash: 'UnexpectedFlagPromiseError',
+          error,
+          data: { flagName, organizationId, spaceId, environmentId },
+        });
 
-    // Set the initial flags promise
-    _.set(cache, key, flagsPromise);
+        return FLAG_PROMISE_ERRED;
+      })
+      .then((value) => {
+        // If the flag promise errs in some way, unset the cached promise
+        // and resolve with the fallback value.
+        //
+        // Possible error cases include:
+        // - client.identify throws
+        // - the given org ID or space ID is invalid or not available in the token
+        // - the variation is missing or the variation is not valid JSON
+        if (value === FLAG_PROMISE_ERRED) {
+          _.set(cache, key, undefined);
 
-    // Await for the promise, in case the org/space doesn't exist
-    const initialPromiseValue = await flagsPromise;
+          return FALLBACK_VALUES[flagName];
+        }
 
-    // If the initial promise value is undefined, unset the promise in the
-    // cache
-    if (initialPromiseValue === undefined) {
-      _.set(cache, key, undefined);
+        return value;
+      });
 
-      return undefined;
-    }
+    _.set(cache, key, variationPromise);
   }
 
-  const getFlagValue = await flagsPromise;
+  const flagValue = await variationPromise;
 
-  return getFlagValue(flagName);
+  return flagValue;
 }
 
 /*
   Creates a promise that returns either the value of the flag in LaunchDarkly
   or undefined
  */
-async function createFlagsPromise({ user, organizationId, spaceId, environmentId }) {
+async function createFlagPromise(flagName, { user, organizationId, spaceId, environmentId }) {
   let org;
   let space;
 
@@ -312,10 +352,10 @@ async function createFlagsPromise({ user, organizationId, spaceId, environmentId
   } catch (e) {
     logger.logError(`Invalid org ID ${organizationId} given to LD`, {
       groupingHash: 'InvalidLDOrgId',
-      data: { organizationId },
+      data: { flagName, organizationId, spaceId, environmentId },
     });
 
-    return undefined;
+    return FLAG_PROMISE_ERRED;
   }
 
   try {
@@ -323,50 +363,65 @@ async function createFlagsPromise({ user, organizationId, spaceId, environmentId
   } catch (e) {
     logger.logError(`Invalid space ID ${spaceId} given to LD`, {
       groupingHash: 'InvalidLDSpaceId',
-      data: { spaceId },
+      data: { flagName, organizationId, spaceId, environmentId },
     });
 
-    return undefined;
+    return FLAG_PROMISE_ERRED;
   }
 
   const clientUser = await ldUser({ user, org, space, environmentId });
-  await client.identify(clientUser);
 
-  // Get and save the flags to the cache
-  const flags = client.allFlags();
+  // The current identified user data is cached inside of the LD client, so we need to
+  // reidentify here
+  let flags;
 
-  // Now that we have all the flags for this identified user, return
-  // a function that returns the given flagName variation
-  return (flagName) => {
-    const variation = _.get(flags, flagName, undefined);
+  try {
+    flags = await client.identify(clientUser);
+  } catch {
+    return FLAG_PROMISE_ERRED;
+  }
 
-    // LD could not find a flag with given name, log error and return undefined
-    if (variation === undefined) {
-      logger.logError(`Invalid flag ${flagName}`, {
-        groupingHash: 'InvalidLDFlag',
-        data: { flagName },
+  const variation = get(flags, flagName, MISSING_VARIATION_VALUE);
+
+  // Since we have the flags above, we're calling `client.variation` here simply
+  // so that we can track which flags are being called as this functionality isn't
+  // exposed directly via the LD client.
+  //
+  // Note that this is a synchronous call (it won't result in a rejection)
+  client.variation(flagName);
+
+  if (variation === MISSING_VARIATION_VALUE) {
+    // All flags are available once `client.idenfity` is finished, so we can
+    // see which flags the user actually had access to at this point.
+    //
+    // This should realistically only happen in two cases: 1. the flag was archived
+    // in LD; 2. LD has some error and returns faulty data
+    const availableFlagNames = Object.keys(flags);
+
+    logger.logError(`Flag ${flagName} invalid or missing variation data`, {
+      groupingHash: 'InvalidLDFlag',
+      data: { flagName, availableFlagNames, organizationId, spaceId, environmentId },
+    });
+
+    return FLAG_PROMISE_ERRED;
+  }
+
+  if (typeof variation === 'string') {
+    try {
+      return JSON.parse(variation);
+    } catch (e) {
+      // Should never happen, but if the variation data could not be parsed
+      // log the error and return undefined
+      logger.logError(`Invalid variation JSON for ${flagName}`, {
+        groupingHash: 'InvalidLDVariationJSON',
+        data: { variation, organizationId, spaceId, environmentId },
       });
 
-      return undefined;
+      return FLAG_PROMISE_ERRED;
     }
+  }
 
-    if (typeof variation === 'string') {
-      try {
-        return JSON.parse(variation);
-      } catch (e) {
-        // Should never happen, but if the variation data could not be parsed
-        // log the error and return undefined
-        logger.logError(`Invalid variation JSON for ${flagName}`, {
-          groupingHash: 'InvalidLDVariationJSON',
-          data: { variation },
-        });
-
-        return undefined;
-      }
-    }
-
-    return variation;
-  };
+  return variation;
 }
 
 export function ensureFlagsHaveFallback() {
