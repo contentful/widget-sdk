@@ -1,4 +1,8 @@
-import { PostMessageChannel, ChannelMethod } from '../PostMessageChannel';
+import { KnownSDK, FieldExtensionSDK, DialogExtensionSDK } from 'contentful-ui-extensions-sdk';
+
+import { PostMessageChannel } from '../PostMessageChannel';
+import { ChannelMethod } from '../channelTypes';
+import { WidgetLocation } from '../interfaces';
 
 import { makeCallSpaceMethodHandler } from './CallSpaceMethodHandler';
 import { makeNotifyHandler } from './NotifyHandler';
@@ -10,8 +14,6 @@ import {
 } from './NavigateToHandler';
 import { makeCheckAccessHandler } from './CheckAccessHandler';
 import { makeSetValueHandler, makeRemoveValueHandler, makeSetInvalidHandler } from './FieldHandler';
-import { KnownSDK, FieldExtensionSDK, DialogExtensionSDK } from 'contentful-ui-extensions-sdk';
-import { WidgetLocation } from '../interfaces';
 
 export function setupHandlers(
   channel: PostMessageChannel,

@@ -10,7 +10,8 @@ import {
   HostingType,
 } from './interfaces';
 
-import { PostMessageChannel, ChannelMethod } from './PostMessageChannel';
+import { PostMessageChannel } from './PostMessageChannel';
+import { ChannelMethod } from './channelTypes'
 import { setupHandlers } from './handlers';
 import { makeConnectMessage } from './makeConnectMessage';
 import { setupEventForwarders } from './setupEventForwarders';
