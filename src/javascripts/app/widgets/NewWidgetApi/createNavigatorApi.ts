@@ -4,19 +4,18 @@ import {
 } from 'widgets/bridges/makeExtensionNavigationHandlers';
 import makePageExtensionHandlers from 'widgets/bridges/makePageExtensionHandlers';
 import { onSlideInNavigation } from 'navigation/SlideInNavigator/index';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace, Widget } from 'features/widget-renderer';
+import { SpaceContext } from '@contentful/worf';
+import APIClient from 'data/APIClient';
+import { NavigatorAPI } from 'contentful-ui-extensions-sdk';
 
-/**
- * @typedef { import("contentful-ui-extensions-sdk").NavigatorAPI } NavigatorAPI
- */
+interface NavigatorProps {
+  widget: Widget;
+  spaceContext: SpaceContext;
+  cma: APIClient;
+}
 
-/**
- * @param {APIClient} cma
- * @param {SpaceContext} spaceContext
- * @param {Widget} widget
- * @return {NavigatorAPI}
- */
-export function createNavigatorApi({ cma, spaceContext, widget }) {
+export function createNavigatorApi({ cma, spaceContext, widget }: NavigatorProps): NavigatorAPI {
   const navigateToContentEntity = makeExtensionNavigationHandlers({ cma });
   const navigateToBulkEditor = makeExtensionBulkNavigationHandlers();
 
@@ -27,8 +26,8 @@ export function createNavigatorApi({ cma, spaceContext, widget }) {
   //  consider merging this with it
   const navigateToPage = makePageExtensionHandlers({
     spaceContext,
-    currentWidgetId: widget.widgetId,
-    currentWidgetNamespace: widget.widgetNamespace,
+    currentWidgetId: widget.id,
+    currentWidgetNamespace: widget.namespace,
   });
 
   return {
