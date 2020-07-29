@@ -49,8 +49,13 @@ import { createIdsApi } from './createIdsApi';
  * }}
  */
 export default function createNewWidgetApi(dependencies) {
-  checkDependencies('createNewWidgetApi', dependencies, ['$scope', 'spaceContext']);
-  const { spaceContext, $scope } = dependencies;
+  checkDependencies('createNewWidgetApi', dependencies, [
+    '$scope',
+    'spaceContext',
+    'widgetNamespace',
+    'widgetId',
+  ]);
+  const { spaceContext, $scope, widgetNamespace, widgetId } = dependencies;
   const { cma } = spaceContext;
   const { widget, otDoc } = $scope;
   const { contentType } = $scope.entityInfo;
@@ -68,7 +73,9 @@ export default function createNewWidgetApi(dependencies) {
     contentTypeApi,
     entry,
     field,
-    user
+    user,
+    widgetNamespace,
+    widgetId
   );
 
   const parameters = {

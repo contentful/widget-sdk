@@ -1,6 +1,7 @@
 import * as K from 'core/utils/kefir';
 import { noop } from 'lodash';
 import { createInternalEntryFieldApi, createReadOnlyInternalEntryFieldApi } from './createEntryApi';
+import { FieldAPI } from './createNewWidgetApi';
 
 /**
  * @typedef { import("contentful-ui-extensions-sdk").FieldAPI } FieldAPI
@@ -22,30 +23,20 @@ export function makePermissionError() {
   return Object.assign(error, { code: ERROR_CODES.NO_PERMISSIONS });
 }
 
-export function makeShareJSError(shareJSError, message) {
-  const data = {};
-  if (shareJSError && shareJSError.message) {
-    data.shareJSCode = shareJSError.message;
-  }
+export function makeShareJSError(shareJSError: { message: any }, message: string | undefined) {
+  const data = shareJSError && shareJSError.message ? { shareJSCode: shareJSError.message } : {};
 
   const error = new Error(message);
   return Object.assign(error, { code: ERROR_CODES.BADUPDATE, data });
 }
 
-/**
- * @return {FieldAPI}
- */
-export function createReadOnlyFieldApi({ field, locale, getValue = noop }) {
+export function createReadOnlyFieldApi({ field, locale, getValue = noop }): FieldAPI {
   const readOnlyInternalEntryFieldApi = createReadOnlyInternalEntryFieldApi({ field, getValue });
 
   return readOnlyInternalEntryFieldApi.getForLocale(locale.code);
 }
 
-/**
- * @param {{ $scope: Object }}
- * @return {FieldAPI}
- */
-export function createFieldApi({ $scope, contentType }) {
+export function createFieldApi({ $scope, contentType }): FieldAPI {
   const field = $scope.widget.field;
   const { locale, otDoc } = $scope;
 
@@ -58,7 +49,8 @@ export function createFieldApi({ $scope, contentType }) {
       $scope.fieldController.setInvalid(locale.code, isInvalid);
     },
     onIsDisabledChanged: (cb) => {
-      return K.onValueScope($scope, $scope.fieldLocale.access$, (access) => {
+      return K.onValueScope($scope, $scope.fieldLocale.access$, (access: unknown) => {
+        // @ts-ignore: TODO: can we type this better?
         cb(!!access.disabled);
       });
     },

@@ -5,28 +5,24 @@ import * as entitySelector from 'search/EntitySelector/entitySelector';
 import { ModalLauncher } from 'core/components/ModalLauncher';
 import { WidgetRenderer, WidgetLocation, WidgetNamespace } from 'features/widget-renderer';
 import * as ExtensionDialogs from 'widgets/ExtensionDialogs';
-import { applyDefaultValues } from 'widgets/WidgetParametersUtils';
 import trackExtensionRender from 'widgets/TrackExtensionRender';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
+import {
+  DialogsAPI,
+  OpenCustomWidgetOptions,
+  DialogExtensionSDK,
+} from 'contentful-ui-extensions-sdk';
 
-/**
- * @typedef { import("contentful-ui-extensions-sdk").DialogsAPI } DialogsAPI
- */
-
-/**
- * @return {DialogsAPI}
- */
-export function createDialogsApi(apis) {
+export function createDialogsApi(apis: DialogExtensionSDK): DialogsAPI {
   return {
     openAlert: ExtensionDialogs.openAlert,
     openConfirm: ExtensionDialogs.openConfirm,
     openPrompt: ExtensionDialogs.openPrompt,
     selectSingleEntry: (opts) => {
-      return entitySelector.openFromExtension({
+      return entitySelector.openFromExtensionSingle({
         ...opts,
         entityType: 'Entry',
-        multiple: false,
       });
     },
     selectMultipleEntries: (opts) => {
@@ -37,10 +33,9 @@ export function createDialogsApi(apis) {
       });
     },
     selectSingleAsset: (opts) => {
-      return entitySelector.openFromExtension({
+      return entitySelector.openFromExtensionSingle({
         ...opts,
         entityType: 'Asset',
-        multiple: false,
       });
     },
     selectMultipleAssets: (opts) => {
@@ -50,11 +45,19 @@ export function createDialogsApi(apis) {
         multiple: true,
       });
     },
-    openCurrent: () => {
-      throw new Error('Not implemented yet');
+    openCurrent: function (opts) {
+      if (apis.ids.app) {
+        return this.openCurrentApp(opts);
+      } else {
+        return this.openExtension({
+          ...opts,
+          id: apis.ids.extension,
+        });
+      }
     },
     openCurrentApp: (opts) => {
-      return openCustomDialog(WidgetNamespace.APP, opts, apis);
+      const options = { ...opts, id: apis.ids.app };
+      return openCustomDialog(WidgetNamespace.APP, options, apis);
     },
     openExtension: (opts) => {
       return openCustomDialog(WidgetNamespace.EXTENSION, opts, apis);
@@ -62,7 +65,7 @@ export function createDialogsApi(apis) {
   };
 }
 
-async function findWidget(widgetNamespace, widgetId) {
+async function findWidget(widgetNamespace: WidgetNamespace, widgetId: string) {
   const loader = await getCustomWidgetLoader();
   const widget = await loader.getOne({ widgetNamespace, widgetId });
 
@@ -86,25 +89,24 @@ async function findWidget(widgetNamespace, widgetId) {
   throw new Error(`No widget with ID "${widgetId}" found in "${widgetNamespace}" namespace.`);
 }
 
-async function openCustomDialog(namespace, options, apis, appsRepo) {
+async function openCustomDialog(
+  namespace: WidgetNamespace,
+  options: OpenCustomWidgetOptions,
+  apis: DialogExtensionSDK
+) {
   if (!options.id) {
     throw new Error('No ID provided.');
   }
 
-  const widget = await findWidget(namespace, options.id, appsRepo);
+  const widget = await findWidget(namespace, options.id);
 
   const parameters = {
-    // No instance parameters for dialogs.
-    instance: {},
     values: {
-      // Regular installation parameters.
-      installation: applyDefaultValues(
-        widget.parameters.definitions.installation,
-        widget.parameters.values.installation
-      ),
+      // No instance parameters for dialogs.
+      instance: {},
+      // Parameters passed directly to the dialog.
+      invocation: options.parameters || {},
     },
-    // Parameters passed directly to the dialog.
-    invocation: options.parameters || {},
   };
 
   trackExtensionRender(WidgetLocation.DIALOG, toLegacyWidget(widget));
@@ -112,7 +114,10 @@ async function openCustomDialog(namespace, options, apis, appsRepo) {
   const dialogKey = Date.now().toString();
 
   return ModalLauncher.open(({ isShown, onClose }) => {
-    const size = Number.isInteger(options.width) ? `${options.width}px` : options.width;
+    const size =
+      typeof options.width === 'number' && Number.isInteger(options.width)
+        ? `${options.width}px`
+        : (options.width as string | undefined);
 
     // Pass onClose in order to allow child modal to close
     const childApis = { ...apis, close: onClose };

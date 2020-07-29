@@ -127,6 +127,19 @@ export function openFromExtension(options) {
   );
 }
 
+export function openFromExtensionSingle(options) {
+  const config = newConfigFromExtension(options);
+
+  return open(config).then(
+    (selected) => selected[0],
+    (
+      err // resolve with `null` if a user skipped selection,
+    ) =>
+      // reject with an error otherwise
+      err ? Promise.reject(err) : null
+  );
+}
+
 /**
  * @param {string}   options.entityType    "Entry" or "Asset"
  */
