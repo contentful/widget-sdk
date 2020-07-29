@@ -91,6 +91,8 @@ export default function createNewWidgetApi(dependencies) {
     contentType: contentTypeApi,
     editor: {
       editorInterface,
+      onLocaleSettingsChanged: noop,
+      onShowDisabledFieldsChanged: noop,
     },
     entry,
     field,

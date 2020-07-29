@@ -248,6 +248,7 @@ export function createInternalEntryFieldApi({ field, otDoc, $scope, contentType 
         removeValue: () => removeValue(localeCode),
         onValueChanged: (cb) => onValueChanged(localeCode, cb),
         onIsDisabledChanged: (cb) => onIsDisabledChanged(localeCode, cb),
+        onSchemaErrorsChanged: noop,
       };
     },
   };

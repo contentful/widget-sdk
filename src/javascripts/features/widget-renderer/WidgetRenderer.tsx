@@ -13,6 +13,7 @@ import {
 import { PostMessageChannel, ChannelMethod } from './PostMessageChannel';
 import { setupHandlers } from './handlers';
 import { makeConnectMessage } from './makeConnectMessage';
+import { setupEventForwarders } from './setupEventForwarders';
 
 const DISALLOWED_DOMAINS = ['app.contentful.com', 'creator.contentful.com'];
 
@@ -44,8 +45,9 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
   };
 
   private channel?: PostMessageChannel;
+  private cleanup = () => {}
   private parameters: Record<string, AppParameterValues> = {};
-
+  
   // There's no need to update. Once the iframe is loaded
   // it's only communicating with the renderer over `postMessage`.
   // We could incidentally remove or refresh the iframe if we update
@@ -56,6 +58,7 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
 
   public componentWillUnmount() {
     this.channel?.destroy();
+    this.cleanup();
   }
 
   public render() {
@@ -133,25 +136,8 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
     // Register all the other handlers.
     setupHandlers(this.channel, this.props.apis, this.props.location);
 
-    // TODO: extract listeners to events in the web app propagating changes
-    // to the custom code of UIE or APP.
-    const fields = this.props.apis.entry?.fields ?? {};
-
-    Object.values(fields).forEach((field) => {
-      field.locales.forEach((localeCode: string) => {
-        this.props.apis.entry?.fields[field.id].onIsDisabledChanged(
-          localeCode,
-          (isDisabled: boolean) => {
-            this.channel?.send('isDisabledChangedForFieldLocale', [
-              field.id,
-              localeCode,
-              isDisabled,
-            ]);
-          }
-        );
-      });
-    });
-    // END TODO
+    // Listen to changes in the host and forward events to the channel.
+    this.cleanup = setupEventForwarders(this.channel, this.props.apis, this.props.location);
 
     // Render the iframe content
     if (this.isSrc(widget)) {
