@@ -14,10 +14,21 @@ export enum ChannelMethod {
   SetInvalid = 'setInvalid',
 }
 
+export enum ChannelEvent {
+  Connect = 'connect',
+  SysChanged = 'sysChanged',
+  LocaleSettingsChanged = 'localeSettingsChanged',
+  ShowDisabledFieldsChanged = 'showDisabledFieldsChanged',
+  OnSlideInNavigation = 'onSlideInNavigation',
+  ValueChanged = 'valueChanged',
+  IsDisabledChangedForFieldLocale = 'isDisabledChangedForFieldLocale',
+  SchemaErrorsChangedForFieldLocale = 'schemaErrorsChangedForFieldLocale',
+}
+
 export interface IncomingMessage {
   data: {
     source: string;
-    method: string;
+    method: ChannelMethod;
     id: string;
     params: any[];
   };
@@ -38,10 +49,13 @@ export interface OutgoingErrorMessage {
 }
 
 export interface OutgoingMethodCallMessage {
-  method: string;
+  method: ChannelEvent;
   params: any[];
 }
 
-export type OutgoingMessage = OutgoingResultMessage | OutgoingErrorMessage | OutgoingMethodCallMessage;
+export type OutgoingMessage =
+  | OutgoingResultMessage
+  | OutgoingErrorMessage
+  | OutgoingMethodCallMessage;
 
 export type Handler = (...args: any[]) => any | Promise<any>;

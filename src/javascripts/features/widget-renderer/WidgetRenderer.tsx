@@ -11,7 +11,7 @@ import {
 } from './interfaces';
 
 import { PostMessageChannel } from './PostMessageChannel';
-import { ChannelMethod } from './channelTypes'
+import { ChannelMethod } from './channelTypes';
 import { setupHandlers } from './handlers';
 import { makeConnectMessage } from './makeConnectMessage';
 import { setupEventForwarders } from './setupEventForwarders';
@@ -46,9 +46,9 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
   };
 
   private channel?: PostMessageChannel;
-  private cleanup = () => {}
+  private cleanup = () => {};
   private parameters: Record<string, AppParameterValues> = {};
-  
+
   // There's no need to update. Once the iframe is loaded
   // it's only communicating with the renderer over `postMessage`.
   // We could incidentally remove or refresh the iframe if we update

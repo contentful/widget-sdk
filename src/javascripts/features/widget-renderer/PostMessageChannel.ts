@@ -1,4 +1,13 @@
-import { OutgoingMethodCallMessage, Handler, IncomingMessage, ChannelMethod, OutgoingMessage, OutgoingResultMessage, OutgoingErrorMessage } from "./channelTypes";
+import {
+  OutgoingMethodCallMessage,
+  Handler,
+  IncomingMessage,
+  ChannelMethod,
+  OutgoingMessage,
+  OutgoingResultMessage,
+  OutgoingErrorMessage,
+  ChannelEvent,
+} from './channelTypes';
 
 /**
  * This module is a communication channel between custom widgets
@@ -42,12 +51,12 @@ export class PostMessageChannel {
    * be pushed into the queue and will be sent with the first
    * `connect()` call.
    */
-  public send(method: string, params: any[]) {
+  public send(event: ChannelEvent, params: any[]) {
     if (!Array.isArray(params)) {
       throw new Error('`params` is expected to be an array');
     }
 
-    const message: OutgoingMethodCallMessage = { method, params };
+    const message: OutgoingMethodCallMessage = { method: event, params };
 
     if (this.connected) {
       this.postMessage(message);
@@ -58,7 +67,7 @@ export class PostMessageChannel {
 
   public connect(data: Record<string, unknown>) {
     const message: OutgoingMethodCallMessage = {
-      method: 'connect',
+      method: ChannelEvent.Connect,
       params: [{ id: this.id, ...data }, this.messageQueue],
     };
 
