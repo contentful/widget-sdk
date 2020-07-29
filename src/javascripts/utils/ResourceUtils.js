@@ -110,13 +110,7 @@ export function getAccumulatedUsage(resource) {
   is legacy matters.
  */
 export function isLegacyOrganization(organization) {
-  const pricingVersion = organization.pricingVersion;
-
-  if (pricingVersion === 'pricing_version_2') {
-    return false;
-  }
-
-  return true;
+  return organization.pricingVersion !== 'pricing_version_2';
 }
 
 export function resourceIncludedLimitReached(resource) {

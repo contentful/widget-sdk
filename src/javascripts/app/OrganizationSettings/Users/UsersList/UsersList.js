@@ -40,14 +40,11 @@ import { Space as SpacePropType, Team as TeamPropType } from 'app/OrganizationSe
 import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { useAsyncFn } from 'core/hooks';
 import { createImmerReducer } from 'core/utils/createImmerReducer';
-import { UserListCommunityBanner } from './UserListCommunityBanner';
+import { UserLimitBanner } from './UserLimitBanner';
 import { LocationStateContext, LocationDispatchContext } from 'core/services/LocationContext';
 import qs from 'qs';
 
 const styles = {
-  filters: css({
-    padding: '1em 2em 2em',
-  }),
   search: css({
     maxWidth: '1100px',
     marginLeft: 'auto',
@@ -156,7 +153,7 @@ export function UsersList({ orgId, spaceRoles, teams, spaces, hasSsoEnabled, has
   const getLinkToInvitation = () => {
     return {
       path: ['account', 'organizations', 'users', 'new'],
-      params: { orgId: orgId },
+      params: { orgId },
     };
   };
 
@@ -255,8 +252,8 @@ export function UsersList({ orgId, spaceRoles, teams, spaces, hasSsoEnabled, has
         }
       />
       <Workbench.Content>
-        <UserListCommunityBanner orgId={orgId} spaces={spaces} />
-        <section className={styles.filters}>
+        <UserLimitBanner orgId={orgId} spaces={spaces} usersCount={users?.items?.length} />
+        <section>
           <UserListFilters
             queryTotal={users.queryTotal}
             spaceRoles={spaceRoles}
