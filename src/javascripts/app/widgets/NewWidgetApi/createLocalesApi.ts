@@ -3,13 +3,19 @@ import { isRtlLocale } from 'utils/locales';
 import { LocalesAPI } from 'contentful-ui-extensions-sdk';
 
 interface Locale {
-  name: string,
-  code: string,
-  fallbackCode?: string
-  optional?: boolean
+  name: string;
+  code: string;
+  fallbackCode?: string;
+  optional?: boolean;
 }
 
-export function getLocalesObject({ availableLocales, defaultLocale }: { availableLocales: Locale[], defaultLocale: Locale}): LocalesAPI {
+export function getLocalesObject({
+  availableLocales,
+  defaultLocale,
+}: {
+  availableLocales: Locale[];
+  defaultLocale: Locale;
+}): LocalesAPI {
   return {
     available: availableLocales.map((locale) => locale.code),
     default: defaultLocale.code,
