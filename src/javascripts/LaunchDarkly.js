@@ -19,6 +19,23 @@ import { getOrgFeature } from 'data/CMA/ProductCatalog';
 let client;
 let cache = {};
 
+export const FLAGS = {
+  WALK_FOR_ME: 'feature-fe-10-2017-walkme-integration-eli-lilly',
+  ENVIRONMENTS_FLAG: 'feature-dv-11-2017-environments',
+  ENTRY_COMMENTS: 'feature-04-2019-entry-comments',
+  ENTITY_EDITOR_CMA_EXPERIMENT: 'feature-pen-07-2019-fake-cma-calls-experiment-to-replace-sharejs',
+  APP_MANAGEMENT_VIEWS: 'feature-ext-04-2020-app-backends',
+  PRICING_2020_RELEASED: 'feature-ogg-06-2020-enable-pricing-2020-features',
+  PAYING_PREV_V2_ORG: 'feature-ogg-06-2020-v2-team-user',
+  TEST_IF_LD_IS_WORKING: 'test-if-launch-darkly-is-working',
+  ALL_REFERENCES_DIALOG: 'feature-pulitzer-02-2020-all-reference-dialog',
+  NEW_STATUS_SWITCH: 'feature-pulitzer-03-2020-new-status-switch',
+  ADD_TO_RELEASE: 'feature-pulitzer-05-2020-add-to-release',
+  SHAREJS_REMOVAL: 'feature-pen-04-2020-sharejs-removal-multi',
+  PRICING_2020_WARNING: 'feature-hejo-06-2020-pricing-2020-in-app-communication',
+  NEW_FIELD_DIALOG: 'react-migration-new-content-type-field-dialog',
+};
+
 /*
   During testing, allows for clearing the flags cache.
 

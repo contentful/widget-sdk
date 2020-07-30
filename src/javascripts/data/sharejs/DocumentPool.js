@@ -1,7 +1,6 @@
 import { createOtDoc, createCmaDoc } from 'app/entity_editor/Document';
 import { noop, isObject, find, includes, isString, get as getAtPath, times } from 'lodash';
-import { SHAREJS_REMOVAL } from 'featureFlags';
-import { getVariation } from 'LaunchDarkly';
+import { getVariation, FLAGS } from 'LaunchDarkly';
 import { create as createEntityRepo } from 'data/CMA/EntityRepo';
 import * as logger from 'services/logger';
 
@@ -19,7 +18,10 @@ import * as logger from 'services/logger';
 
 export async function create(docConnection, spaceEndpoint, pubSubClient, organizationId, spaceId) {
   const instances = {};
-  const isCmaDocumentEnabled = await getVariation(SHAREJS_REMOVAL, { organizationId, spaceId });
+  const isCmaDocumentEnabled = await getVariation(FLAGS.SHAREJS_REMOVAL, {
+    organizationId,
+    spaceId,
+  });
 
   return { get, destroy };
 

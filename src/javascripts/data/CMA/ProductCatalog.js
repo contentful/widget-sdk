@@ -5,6 +5,15 @@ import * as Config from 'Config';
 
 import { createOrganizationEndpoint, createSpaceEndpoint } from '../EndpointFactory';
 
+// Gatekeeper Product Catalog features
+export const FEATURES = {
+  ENVIRONMENT_USAGE_ENFORCEMENT: 'environment_usage_enforcements',
+  ENVIRONMENT_ALIASING: 'environment_aliasing',
+  CONTENT_WORKFLOW_TASKS: 'tasks',
+  SCHEDULED_PUBLISHING: 'scheduled_publishing',
+  PC_CONTENT_TAGS: 'content_tags',
+};
+
 // Features used commonly: we fetch them (using the same request)
 // together with the first feature directly requested from the API.
 // There is no prefetching! Just doing carpooling for HTTP.

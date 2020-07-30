@@ -2,10 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { getModule } from 'core/NgRegistry';
 import * as accessChecker from 'access_control/AccessChecker';
-import { getCurrentSpaceFeature, getOrgFeature } from 'data/CMA/ProductCatalog';
-import { PC_CONTENT_TAGS, ENVIRONMENTS_FLAG } from 'featureFlags';
+import { getCurrentSpaceFeature, getOrgFeature, FEATURES } from 'data/CMA/ProductCatalog';
 import NavBar from './NavBar/NavBar';
-import { getVariation } from 'LaunchDarkly';
+import { getVariation, FLAGS } from 'LaunchDarkly';
 import { getSpaceNavigationItems } from './SpaceNavigationBarItems';
 import SidepanelContainer from './Sidepanel/SidepanelContainer';
 
@@ -52,9 +51,9 @@ export default class SpaceNavigationBar extends React.Component {
     const organizationId = organization.sys.id;
 
     const [environmentsEnabled, hasOrgTeamFeature, contentTagsEnabled] = await Promise.all([
-      getVariation(ENVIRONMENTS_FLAG, { organizationId, spaceId }),
+      getVariation(FLAGS.ENVIRONMENTS_FLAG, { organizationId, spaceId }),
       getOrgFeature(organizationId, 'teams'),
-      getCurrentSpaceFeature(PC_CONTENT_TAGS),
+      getCurrentSpaceFeature(FEATURES.PC_CONTENT_TAGS),
     ]);
 
     const canManageEnvironments = accessChecker.can('manage', 'Environments');

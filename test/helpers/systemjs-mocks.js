@@ -90,6 +90,7 @@ async function stubFilestack(system) {
 async function stubLaunchDarklyUtil(system) {
   await system.set('LaunchDarkly', {
     getVariation: sinon.stub().resolves(false),
+    FLAGS: {},
   });
 }
 

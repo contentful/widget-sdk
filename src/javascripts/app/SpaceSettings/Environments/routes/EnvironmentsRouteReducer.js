@@ -2,14 +2,13 @@ import { useReducer } from 'react';
 import { createImmerReducer } from 'core/utils/createImmerReducer';
 import createResourceService from 'services/ResourceService';
 import * as accessChecker from 'access_control/AccessChecker';
-import { getVariation } from 'LaunchDarkly';
+import { getVariation, FLAGS } from 'LaunchDarkly';
 import { getOrgFeature, getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { canCreate } from 'utils/ResourceUtils';
 import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService';
 import * as SpaceEnvironmentsRepo from 'data/CMA/SpaceEnvironmentsRepo';
 import { openCreateEnvDialog } from '../CreateEnvDialog';
 import { openDeleteEnvironmentDialog } from '../DeleteDialog';
-import { ENVIRONMENTS_FLAG, PRICING_2020_RELEASED } from 'featureFlags';
 import * as PricingService from 'services/PricingService';
 
 /**
@@ -81,7 +80,7 @@ export const useEnvironmentsRouteState = (props) => {
     if (!hasAccess) goToSpaceDetail();
 
     const [environmentsEnabled, canSelectSource, aliasesEnabled] = await Promise.all([
-      getVariation(ENVIRONMENTS_FLAG, { spaceId, organizationId }),
+      getVariation(FLAGS.ENVIRONMENTS_FLAG, { spaceId, organizationId }),
       getOrgFeature(organizationId, 'environment_branching'),
       getSpaceFeature(spaceId, 'environment_aliasing'),
     ]);
@@ -198,7 +197,7 @@ export const useEnvironmentsRouteState = (props) => {
 
   const FetchNextSpacePlan = async () => {
     const { organizationId, spaceId, canUpgradeSpace } = props;
-    const isNewPricingReleased = await getVariation(PRICING_2020_RELEASED, {
+    const isNewPricingReleased = await getVariation(FLAGS.PRICING_2020_RELEASED, {
       organizationId,
     });
 

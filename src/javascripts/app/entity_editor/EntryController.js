@@ -17,8 +17,7 @@ import { valuePropertyAt } from 'app/entity_editor/Document';
 import { getModule } from 'core/NgRegistry';
 import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge';
 import * as logger from 'services/logger';
-import { getVariation } from 'LaunchDarkly';
-import { ENTRY_COMMENTS } from 'featureFlags';
+import { getVariation, FLAGS } from 'LaunchDarkly';
 import TheLocaleStore from 'services/localeStore';
 import { buildFieldsApi } from 'app/entity_editor/dataFields';
 import setupNoShareJsCmaFakeRequestsExperiment from './NoShareJsCmaFakeRequestsExperiment';
@@ -257,7 +256,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
     return localeCodes.length === 1 && localeCodes[0] === focusedLocale.internal_code;
   }
 
-  getVariation(ENTRY_COMMENTS, {
+  getVariation(FLAGS.ENTRY_COMMENTS, {
     organizationId: spaceContext.getData('organization.sys.id'),
     spaceId,
   }).then((isEnabled) => {

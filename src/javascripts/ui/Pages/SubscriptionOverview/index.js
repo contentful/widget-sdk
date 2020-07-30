@@ -11,8 +11,7 @@ import { getSpaces } from 'services/TokenStore';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { calcUsersMeta, calculateTotalPrice } from 'utils/SubscriptionUtils';
 import { getOrganization } from 'services/TokenStore';
-import { getVariation } from 'LaunchDarkly';
-import { PRICING_2020_RELEASED, PAYING_PREV_V2_ORG } from 'featureFlags';
+import { getVariation, FLAGS } from 'LaunchDarkly';
 import { isSelfServicePlan } from 'account/pricing/PricingDataProvider';
 
 import DocumentTitle from 'components/shared/DocumentTitle';
@@ -79,11 +78,11 @@ const fetch = (organizationId, { setSpacePlans, setGrandTotal }) => async () => 
   const spacePlans = getSpacePlans(plans, accessibleSpaces);
   const usersMeta = calcUsersMeta({ basePlan, numMemberships });
 
-  const isCommunityPlanEnabled = await getVariation(PRICING_2020_RELEASED, {
+  const isCommunityPlanEnabled = await getVariation(FLAGS.PRICING_2020_RELEASED, {
     organizationId,
   });
 
-  const isOrgCreatedBeforeV2Pricing = await getVariation(PAYING_PREV_V2_ORG, {
+  const isOrgCreatedBeforeV2Pricing = await getVariation(FLAGS.PAYING_PREV_V2_ORG, {
     organizationId,
   });
 

@@ -6,11 +6,10 @@ import SidebarWidgetTypes from '../SidebarWidgetTypes';
 import PublicationWidget from './PublicationWidget';
 import { ScheduledActionsWidget } from 'app/ScheduledActions';
 import ScheduledActionsFeatureFlag from 'app/ScheduledActions/ScheduledActionsFeatureFlag';
-import { NEW_STATUS_SWITCH } from 'featureFlags';
 import { getEntityTitle } from 'app/entry_editor/EntryReferences/referencesService';
 import { getReleasesFeatureVariation as releasesFeatureFlagVariation } from 'app/Releases/ReleasesFeatureFlag';
 import { getModule } from 'core/NgRegistry';
-import { getVariation } from 'LaunchDarkly';
+import { getVariation, FLAGS } from 'LaunchDarkly';
 
 export default class PublicationWidgetContainer extends Component {
   static propTypes = {
@@ -34,7 +33,7 @@ export default class PublicationWidgetContainer extends Component {
 
   async componentDidMount() {
     const spaceContext = getModule('spaceContext');
-    const statusSwitchEnabled = await getVariation(NEW_STATUS_SWITCH, {
+    const statusSwitchEnabled = await getVariation(FLAGS.NEW_STATUS_SWITCH, {
       spaceId: spaceContext.getId(),
       organizationId: spaceContext.organization.sys.id,
     });

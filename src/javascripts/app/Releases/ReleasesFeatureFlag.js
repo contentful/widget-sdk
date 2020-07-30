@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
-import * as FeatureFlagKey from 'featureFlags';
-import { getVariation } from 'LaunchDarkly';
+import { getVariation, FLAGS } from 'LaunchDarkly';
 import { getModule } from 'core/NgRegistry';
 
 export async function getReleasesFeatureVariation() {
   try {
     const spaceContext = getModule('spaceContext');
-    const flag = await getVariation(FeatureFlagKey.ADD_TO_RELEASE, {
+    const flag = await getVariation(FLAGS.ADD_TO_RELEASE, {
       spaceId: spaceContext.getId(),
       environmentId: spaceContext.getEnvironmentId(),
       organizationId: spaceContext.getData(['organization', 'sys', 'id']),

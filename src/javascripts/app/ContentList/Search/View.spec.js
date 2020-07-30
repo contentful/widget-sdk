@@ -3,13 +3,7 @@ import { render as renderReact, wait, fireEvent, waitFor } from '@testing-librar
 import View from './View';
 import { contentTypes, brand } from './__tests__/helpers';
 import keycodes from 'utils/keycodes';
-import { getModule } from 'core/NgRegistry';
-
-jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
-
-getModule.mockReturnValue({
-  space: { getId: jest.fn().mockReturnValue(1) },
-});
+import { getCurrentSpaceFeature } from 'data/CMA/ProductCatalog';
 
 const onUpdate = jest.fn();
 
@@ -54,6 +48,8 @@ const renderWithInitialWait = async (props) => {
 
 describe('app/ContentList/Search/View', () => {
   beforeEach(() => {
+    getCurrentSpaceFeature.mockResolvedValue(false);
+
     listViewContext.getView = jest
       .fn()
       .mockReturnValue({ searchFilters: [], contentTypeId: '', searchText: '', order: {} });

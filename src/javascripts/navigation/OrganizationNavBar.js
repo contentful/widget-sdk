@@ -3,11 +3,10 @@ import PropTypes from 'prop-types';
 import NavBar from './NavBar/NavBar';
 import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
-import { PRICING_2020_WARNING } from 'featureFlags';
 import { getOrgFeature } from '../data/CMA/ProductCatalog';
 import SidepanelContainer from './Sidepanel/SidepanelContainer';
 import createLegacyFeatureService from 'services/LegacyFeatureService';
-import { getVariation } from 'LaunchDarkly';
+import { getVariation, FLAGS } from 'LaunchDarkly';
 import { AdvancedExtensibilityFeature } from 'features/extensions-management';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getBasePlan, isEnterprisePlan } from 'account/pricing/PricingDataProvider';
@@ -207,7 +206,7 @@ export default class OrganizationNavigationBar extends React.Component {
 
     if (organization.pricingVersion !== 'pricing_version_1') {
       promises = promises.concat([
-        getVariation(PRICING_2020_WARNING, {
+        getVariation(FLAGS.PRICING_2020_WARNING, {
           organizationId: orgId,
         }),
         getBasePlan(endpoint).then((basePlan) => isEnterprisePlan(basePlan)),

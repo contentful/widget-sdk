@@ -16,7 +16,7 @@ import {
 import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 import { css } from 'emotion';
-import { getVariation } from 'LaunchDarkly';
+import { getVariation, FLAGS } from 'LaunchDarkly';
 import { AppEditor } from './AppEditor';
 import * as ManagementApiClient from './ManagementApiClient';
 import { ModalLauncher } from 'core/components/ModalLauncher';
@@ -26,7 +26,6 @@ import { SaveConfirmModal } from './SaveConfirmModal';
 import { KeyListing } from './keys/KeyListing';
 import { AppEvents } from './events';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import { APP_MANAGEMENT_VIEWS } from 'featureFlags';
 
 const TabPaths = {
   GENERAL: '',
@@ -138,7 +137,7 @@ export class AppDetails extends React.Component {
 
     let creator = userNameCache[definition.sys.id];
 
-    const appManagementViewsEnabled = await getVariation(APP_MANAGEMENT_VIEWS, {
+    const appManagementViewsEnabled = await getVariation(FLAGS.APP_MANAGEMENT_VIEWS, {
       organizationId: definition.sys.organization.sys.id,
     });
 

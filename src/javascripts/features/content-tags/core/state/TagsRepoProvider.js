@@ -9,6 +9,8 @@ function TagsRepoProvider({ children }) {
   const [tagsRepo, setTagsRepo] = useState({});
   const spaceContext = useSpaceContext();
 
+  console.log(spaceContext);
+
   useEffect(() => {
     const spaceId = spaceContext.getId();
     const environmentId = spaceContext.getEnvironmentId();

@@ -1,8 +1,7 @@
 import { getModule } from 'core/NgRegistry';
-import { WALK_FOR_ME as WALK_FOR_ME_FLAG } from 'featureFlags';
 import _ from 'lodash';
 import * as LazyLoader from 'utils/LazyLoader';
-import { getVariation } from 'LaunchDarkly';
+import { getVariation, FLAGS } from 'LaunchDarkly';
 
 const IS_ADMIN_ATTR = 'data-space-role-is-admin';
 const ROLE_NAMES_ATTR = 'data-space-role-names';
@@ -27,7 +26,7 @@ export const init = () => {
 
     const spaceId = spaceContext.space.data.sys.id;
 
-    getVariation(WALK_FOR_ME_FLAG, { spaceId }).then((variation) => {
+    getVariation(FLAGS.WALK_FOR_ME, { spaceId }).then((variation) => {
       // Don't do anything if last and current variation are both null
       if (lastVariation === null && variation === null) {
         return;

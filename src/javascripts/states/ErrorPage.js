@@ -14,8 +14,7 @@ import BrokenPencil from 'svg/broken-pencil.svg';
 import ContactUsButton from 'ui/Components/ContactUsButton';
 import { go } from 'states/Navigator';
 
-import { getVariation } from 'LaunchDarkly';
-import { TEST_IF_LD_IS_WORKING } from 'featureFlags';
+import { getVariation, FLAGS } from 'LaunchDarkly';
 
 const styles = {
   container: css({
@@ -39,7 +38,7 @@ export default function ErrorPage() {
   useEffect(() => {
     async function main() {
       try {
-        await getVariation(TEST_IF_LD_IS_WORKING);
+        await getVariation(FLAGS.TEST_IF_LD_IS_WORKING);
       } catch {
         setShowModal(true);
       }
