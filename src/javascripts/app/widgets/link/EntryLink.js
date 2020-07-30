@@ -4,9 +4,7 @@ import { get } from 'lodash';
 import WrappedEntityCard from 'app/widgets/shared/FetchedEntityCard/WrappedEntityCard';
 import { getState, stateName } from 'data/CMA/EntityState';
 
-// TODO: Pass onClick from entitySelectorController here as a prop
-
-const EntryLink = ({ entry, entityHelpers, getContentType, isSelected, size }) => {
+const EntryLink = ({ entry, entityHelpers, getContentType, onClick, isSelected, size }) => {
   const state = entry ? getState(entry.sys) : undefined;
   const entityStatus = state ? stateName(state) : undefined;
   const [{ title, description, contentTypeName, file }, setEntityInfo] = useState({});
@@ -14,25 +12,27 @@ const EntryLink = ({ entry, entityHelpers, getContentType, isSelected, size }) =
 
   useEffect(() => {
     const fetchEntityInfo = async () => {
-      if (entry) {
-        let contentType;
-        if (getContentType) {
-          contentType = await getContentType(entry);
-        }
-        const title = await entityHelpers.entityTitle(entry);
-        const file = await entityHelpers.entityFile(entry);
-        const description = await entityHelpers.entityDescription(entry);
-        setEntityInfo({
-          title,
-          description,
-          contentTypeName: get(contentType, 'data.name'),
-          file,
-        });
-        setLoading(false);
+      let contentType;
+      if (getContentType) {
+        contentType = await getContentType(entry);
       }
+      const [title, file, description] = await Promise.all([
+        entityHelpers.entityTitle(entry),
+        entityHelpers.entityFile(entry),
+        entityHelpers.entityDescription(entry),
+      ]);
+      setEntityInfo({
+        title,
+        description,
+        contentTypeName: get(contentType, 'data.name'),
+        file,
+      });
+      setLoading(false);
     };
 
-    fetchEntityInfo();
+    if (entry) {
+      fetchEntityInfo();
+    }
   }, [entry, entityHelpers, getContentType]);
 
   const getEntryTitle = () => {
@@ -59,6 +59,7 @@ const EntryLink = ({ entry, entityHelpers, getContentType, isSelected, size }) =
       size={cardSize}
       readOnly={true}
       selected={isSelected}
+      onClick={onClick}
     />
   ) : null;
 };
@@ -78,6 +79,7 @@ EntryLink.propTypes = {
   getContentType: PropTypes.func,
   isSelected: PropTypes.bool,
   size: PropTypes.oneOf(['default', 'small']),
+  onClick: PropTypes.func,
 };
 
 EntryLink.defaultProps = {

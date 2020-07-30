@@ -17,6 +17,9 @@ jest.mock('ng/spaceContext', () => ({
   publishedCTs: {
     fetch: jest.fn(),
   },
+  getData: jest.fn().mockReturnValue('org-id'),
+  getEnvironmentId: jest.fn().mockReturnValue('env-id'),
+  getId: jest.fn().mockReturnValue('space-id'),
 }));
 
 describe('entitySelector', () => {

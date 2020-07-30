@@ -274,7 +274,10 @@ function View({
           className={classNames(styles.filterWrapper, {
             [styles.filterActive]: isSuggestionOpen,
           })}
-          onClick={() => {
+          onClick={(e) => {
+            // otherwise, it triggered setFocusOnQueryInput as onClick in the parent div
+            // and that reset focus back to input when Filter button was clicked
+            e.stopPropagation();
             toggleSuggestions();
             resetFocus();
           }}>

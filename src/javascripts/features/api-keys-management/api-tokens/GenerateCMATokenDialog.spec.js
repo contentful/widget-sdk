@@ -21,7 +21,7 @@ describe('features/api-keys-management/api-tokens/GenerateCMATokenDialog', () =>
     );
 
     const tokenInput = screen.getByLabelText('Token name', { exact: false });
-    const generateBtn = screen.getByText('Generate');
+    const generateBtn = screen.getByTestId('pat.create.generate');
 
     expect(tokenInput).toHaveFocus();
     expect(generateBtn).toBeDisabled();

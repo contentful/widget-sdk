@@ -34,6 +34,7 @@ export const FLAGS = {
   SHAREJS_REMOVAL: 'feature-pen-04-2020-sharejs-removal-multi',
   PRICING_2020_WARNING: 'feature-hejo-06-2020-pricing-2020-in-app-communication',
   NEW_FIELD_DIALOG: 'react-migration-new-content-type-field-dialog',
+  ENTITY_SELECTOR_MIGRATION: 'feature-pulitzer-07-2020-entity-selector-migration',
 };
 
 /*
