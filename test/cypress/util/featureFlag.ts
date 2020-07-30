@@ -18,4 +18,5 @@ export enum FeatureFlag {
   PRICING_2020_RELEASED = 'feature-ogg-06-2020-enable-pricing-2020-features',
   NEW_USAGE_PAGE = 'feature-moi-06-2020-organization-usage-page',
   NEW_STATUS_SWITCH = 'feature-pulitzer-03-2020-new-status-switch',
+  PRICING_IN_APP_COMMS = 'feature-hejo-06-2020-pricing-2020-in-app-communication',
 }
