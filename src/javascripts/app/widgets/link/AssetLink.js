@@ -3,9 +3,7 @@ import PropTypes from 'prop-types';
 import WrappedAssetCard from 'app/widgets/shared/FetchedEntityCard/WrappedAssetCard';
 import { getState, stateName } from 'data/CMA/EntityState';
 
-// TODO: Pass onClick from entitySelectorController here as a prop
-
-const AssetLink = ({ asset, entityHelpers, size }) => {
+const AssetLink = ({ asset, entityHelpers, isSelected, size, onClick }) => {
   const state = asset ? getState(asset.sys) : undefined;
   const entityState = state ? stateName(state) : undefined;
   const [{ title, file }, setEntityInfo] = useState({});
@@ -14,8 +12,10 @@ const AssetLink = ({ asset, entityHelpers, size }) => {
   useEffect(() => {
     const fetchEntityInfo = async () => {
       if (asset) {
-        const title = await entityHelpers.entityTitle(asset);
-        const file = await entityHelpers.assetFile(asset);
+        const [title, file] = await Promise.all([
+          entityHelpers.entityTitle(asset),
+          entityHelpers.assetFile(asset),
+        ]);
         setEntityInfo({ title, file });
         setLoading(false);
       }
@@ -39,6 +39,8 @@ const AssetLink = ({ asset, entityHelpers, size }) => {
       isLoading={isLoading}
       readOnly={true}
       size={size}
+      selected={isSelected}
+      onClick={onClick}
     />
   ) : null;
 };
@@ -54,11 +56,14 @@ AssetLink.propTypes = {
     entityTitle: PropTypes.func.isRequired,
     assetFile: PropTypes.func.isRequired,
   }).isRequired,
+  isSelected: PropTypes.bool,
   size: PropTypes.oneOf(['default', 'small']),
+  onClick: PropTypes.func,
 };
 
 AssetLink.defaultProps = {
   size: 'small',
+  isSelected: false,
 };
 
 export default AssetLink;

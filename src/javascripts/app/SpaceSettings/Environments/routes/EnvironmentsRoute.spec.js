@@ -33,10 +33,6 @@ jest.mock('access_control/AccessChecker', () => ({
   can: jest.fn().mockReturnValue(true),
 }));
 
-jest.mock('LaunchDarkly', () => ({
-  getVariation: jest.fn().mockResolvedValue(true), // environmentsEnabled
-}));
-
 jest.mock('data/CMA/ProductCatalog', () => ({
   getOrgFeature: jest.fn().mockResolvedValue(true), // canSelectSource
   getSpaceFeature: jest.fn().mockResolvedValue(true), // aliasesEnabled

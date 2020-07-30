@@ -10,10 +10,47 @@ import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { NewTag } from 'components/shared/NewTag';
 import { css } from 'emotion';
 import { METADATA_TAGS_ID } from 'data/MetadataFields';
-
+import { Paragraph, TextLink } from '@contentful/forma-36-react-components';
 const styles = {
   tag: css({
     marginLeft: tokens.spacingS,
+  }),
+  label: css({
+    flex: '0 0 30%',
+  }),
+  contentType: css({
+    color: tokens.colorTextLightest,
+    flex: '0 0 30%',
+  }),
+  description: css({
+    color: tokens.colorTextLight,
+    flex: '0 0 30%',
+  }),
+  searchHelpBanner: css({
+    display: 'flex',
+    alignItems: 'center',
+    background: tokens.colorIceMid,
+    borderTop: '1px solid ' + tokens.colorElementLight,
+    padding: '15px 20px',
+  }),
+  searchHelpBannerParagraph: css({
+    color: tokens.colorTextLight,
+    margin: '0',
+    marginLeft: '10px',
+  }),
+  underlinedLink: css({
+    textDecoration: 'underline',
+  }),
+  suggestions: css({
+    zIndex: tokens.zIndexDefault,
+    border: `solid ${tokens.colorBlueMid}`,
+    borderWidth: '0 1px 1px 1px',
+    background: tokens.colorWhite,
+  }),
+  suggestionsContent: css({
+    maxHeight: '50vh',
+    overflowX: 'hidden',
+    overflowY: 'auto',
   }),
 };
 
@@ -62,24 +99,14 @@ export default function SuggestionsBox({
             onKeyDown(e);
           }
         }}>
-        <div data-test-id="label" style={{ flex: '0 0 30%' }}>
+        <div data-test-id="label" className={styles.label}>
           <div className="__filter-pill">{field.displayName || field.name}</div>
-          {field.name === METADATA_TAGS_ID && <NewTag className={styles.tag} />}
+          {field.name === METADATA_TAGS_ID ? <NewTag className={styles.tag} /> : null}
         </div>
-        <div
-          data-test-id="contentType"
-          style={{
-            color: tokens.colorTextLightest,
-            flex: '0 0 30%',
-          }}>
+        <div data-test-id="contentType" className={styles.contentType}>
           {field.contentType ? field.contentType.name : 'All content types'}
         </div>
-        <div
-          data-test-id="description"
-          style={{
-            flex: '0 0 30%',
-            color: tokens.colorTextLight,
-          }}>
+        <div data-test-id="description" className={styles.description}>
           {field.description}
         </div>
       </div>
@@ -90,6 +117,7 @@ export default function SuggestionsBox({
     <SuggestionsList
       key={searchTerm}
       hasSuggestions={suggestions.length > 0}
+      onAutoHide={hideSuggestions}
       searchTerm={searchTerm}>
       {suggestions}
     </SuggestionsList>
@@ -113,32 +141,18 @@ const withInAppHelpUtmParams = buildUrlWithUtmParams({
 });
 
 const SearchHelpBanner = () => (
-  <div
-    onMouseDown={(e) => e.preventDefault()}
-    style={{
-      display: 'flex',
-      alignItems: 'center',
-      background: tokens.colorIceMid,
-      borderTop: '1px solid ' + tokens.colorElementLight,
-      height: '56px',
-      padding: '15px 20px',
-    }}>
+  <div onMouseDown={(e) => e.preventDefault()} className={styles.searchHelpBanner}>
     <InfoIcon />
-    <p
-      style={{
-        color: tokens.colorTextLight,
-        margin: '0',
-        marginLeft: '10px',
-      }}>
+    <Paragraph className={styles.searchHelpBannerParagraph}>
       Get more out of search. Here’s{' '}
-      <a
-        style={{ textDecoration: 'underline' }}
+      <TextLink
+        className={styles.underlinedLink}
         href={withInAppHelpUtmParams('https://www.contentful.com/help/content-search/')}
         target="_blank"
         rel="noopener noreferrer">
         how search works
-      </a>
-    </p>
+      </TextLink>
+    </Paragraph>
   </div>
 );
 
@@ -147,6 +161,7 @@ class AutoHide extends React.Component {
 
   static propTypes = {
     ms: PropTypes.number.isRequired,
+    onHide: PropTypes.func,
   };
 
   state = {
@@ -170,6 +185,9 @@ class AutoHide extends React.Component {
         ...previousState,
         isHidden: true,
       }));
+      if (this.props.onHide) {
+        this.props.onHide();
+      }
     }
   };
 
@@ -183,27 +201,15 @@ class SuggestionsList extends React.Component {
     searchTerm: PropTypes.string,
     hasSuggestions: PropTypes.bool.isRequired,
     children: PropTypes.node,
+    onAutoHide: PropTypes.func,
   };
 
   renderContent() {
     const { children, searchTerm, hasSuggestions } = this.props;
     return (
-      <div
-        data-test-id="suggestions"
-        style={{
-          zIndex: 1,
-          border: `solid ${tokens.colorBlueMid}`,
-          borderWidth: '0 1px 1px 1px',
-          background: 'white',
-        }}>
+      <div data-test-id="suggestions" className={styles.suggestions}>
         {hasSuggestions ? (
-          <div
-            onMouseDown={(e) => e.preventDefault()}
-            style={{
-              maxHeight: '50vh',
-              overflowX: 'hidden',
-              overflowY: 'auto',
-            }}>
+          <div onMouseDown={(e) => e.preventDefault()} className={styles.suggestionsContent}>
             <div className="search-next__suggestions-header">
               <div className="search-next__suggestions__column">Field</div>
               <div className="search-next__suggestions__column">Content type</div>
@@ -225,7 +231,9 @@ class SuggestionsList extends React.Component {
     return this.props.hasSuggestions ? (
       this.renderContent()
     ) : (
-      <AutoHide ms={1000}>{this.renderContent()}</AutoHide>
+      <AutoHide ms={1000} onHide={this.props.onAutoHide}>
+        {this.renderContent()}
+      </AutoHide>
     );
   }
 }

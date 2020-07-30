@@ -18,11 +18,11 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     color: tokens.colorTextLight,
+    marginBottom: tokens.spacingM,
   }),
   sort: css({
     display: 'flex',
     flexGrow: '1',
-    marginBottom: '30px',
     minWidth: '165px',
     marginRight: tokens.spacing4Xl,
   }),
@@ -35,7 +35,7 @@ const styles = {
     color: tokens.colorTextLight,
     display: 'flex',
     justifyContent: 'space-between',
-    marginBottom: tokens.spacingS,
+    marginBottom: tokens.spacingXs,
   }),
 };
 

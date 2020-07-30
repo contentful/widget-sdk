@@ -13,7 +13,7 @@ const styles = {
     height: '30px',
     borderRadius: '3px',
     backgroundColor: tokens.colorElementMid,
-    margin: `0 0 ${tokens.spacingS} ${tokens.spacingS}`,
+    marginLeft: tokens.spacingXs,
 
     '&:hover': css({
       boxShadow: 'none',

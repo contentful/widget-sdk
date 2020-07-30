@@ -46,11 +46,6 @@ jest.mock('core/NgRegistry', () => ({
 jest.mock('app/Releases/releasesService', () => ({
   getReleases: jest.fn().mockResolvedValue({ items: [] }),
 }));
-jest.mock('LaunchDarkly', function () {
-  return {
-    getVariation: jest.fn().mockResolvedValue(true),
-  };
-});
 
 const performer = {
   archive: jest.fn().mockResolvedValue('success'),

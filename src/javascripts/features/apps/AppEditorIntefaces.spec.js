@@ -16,8 +16,6 @@ const installation = {
   },
 };
 
-jest.mock('data/CMA/ProductCatalog', () => ({ getCurrentSpaceFeature: () => true }));
-
 describe('AppEditorInterfaces', () => {
   let cma, transform, remove;
 

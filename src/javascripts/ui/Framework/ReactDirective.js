@@ -55,6 +55,7 @@ import * as DateRangeValidation from 'components/field_dialog/validations/DateRa
 import * as EntryEditorWorkbench from 'app/entry_editor/EntryEditorWorkbench';
 import * as AssetEditorWorkbench from 'app/asset_editor/AssetEditorWorkbench';
 import * as ContentTagsField from 'app/asset_editor/ContentTagsField';
+import * as EntitySelectorForm from 'search/EntitySelector/EntitySelectorForm';
 import * as EntitySelectorAdapter from 'search/EntitySelector/EntitySelectorAdapter';
 
 // TODO refactor this function (6 arguments is too much)
@@ -299,6 +300,7 @@ function getModule(name) {
     'app/asset_editor/ContentTagsField': ContentTagsField,
     'app/entity_editor/EntityField/EntityFieldHeading': { default: EntityFieldHeading },
     'app/entity_editor/EntityField/EntityFieldControl': { default: EntityFieldControl },
+    'search/EntitySelector/EntitySelectorForm': EntitySelectorForm,
     'search/EntitySelector/EntitySelectorAdapter': EntitySelectorAdapter,
   };
 

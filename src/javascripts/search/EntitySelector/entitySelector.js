@@ -1,6 +1,7 @@
 import { getModule } from 'core/NgRegistry';
 import _ from 'lodash';
 import * as entitySelectorConfig from 'search/EntitySelector/Config';
+import { getVariation, FLAGS } from 'LaunchDarkly';
 
 import entitySelectorDialogTemplate from './entity_selector_dialog.html';
 
@@ -40,45 +41,75 @@ const {
  */
 export function open(options) {
   const modalDialog = getModule('modalDialog');
+  const spaceContext = getModule('spaceContext');
 
   const config = _.omit(options, 'scope', 'labels');
   const labels = _.extend(getLabels(options), options.labels);
-  const entitySelectorProps = {
-    config,
-    labels,
-    listHeight: calculateIdealListHeight(350),
-    onChange,
-    onNoEntities,
+  const ldOptions = {
+    organizationId: spaceContext.getData('organization.sys.id'),
+    environmentId: spaceContext.getEnvironmentId(),
+    spaceId: spaceContext.getId(),
   };
-  const scopeData = {
-    entitySelector: entitySelectorProps,
-    selected: [],
-    showCustomEmptyMessage: false,
-  };
-  const dialog = modalDialog.open({
-    attachTo: 'body',
-    template: entitySelectorDialogTemplate,
-    backgroundClose: true,
-    ignoreEsc: false,
-    noNewScope: true,
-    scopeData,
-  });
-  return dialog.promise;
 
-  function onChange(entities) {
-    if (!config.multiple) {
-      dialog.confirm(entities);
-    } else {
-      dialog.scope.selected = entities;
+  return getVariation(FLAGS.ENTITY_SELECTOR_MIGRATION, ldOptions).then(
+    (entitySelectorMigrationFeatureEnabled) => {
+      const entitySelectorProps = {
+        config,
+        labels,
+        listHeight: calculateIdealListHeight(350),
+        onChange,
+        onNoEntities,
+      };
+
+      const entitySelectorFormProps = {
+        fetch: config.fetch,
+        pagination: !config.noPagination,
+        locale: config.locale,
+        withCreate: config.withCreate,
+        multiple: config.multiple,
+        entityType: config.entityType,
+        linkedContentTypeIds: config.linkedContentTypeIds,
+        labels: labels,
+        listHeight: entitySelectorProps.listHeight,
+        onChange: onChange,
+        onNoEntities: onNoEntities,
+      };
+
+      const scopeData = {
+        entitySelector: entitySelectorProps,
+        entitySelectorFormProps,
+        selected: [],
+        showCustomEmptyMessage: false,
+        entitySelectorMigrationFeatureEnabled,
+      };
+      const dialog = modalDialog.open({
+        attachTo: 'body',
+        template: entitySelectorDialogTemplate,
+        backgroundClose: true,
+        ignoreEsc: false,
+        noNewScope: true,
+        scopeData,
+      });
+
+      function onChange(entities) {
+        if (!config.multiple) {
+          dialog.confirm(entities);
+        } else {
+          dialog.scope.selected = entities;
+        }
+        dialog.scope.$apply();
+      }
+      function onNoEntities() {
+        if (labels.noEntitiesCustomHtml) {
+          dialog.scope.showCustomEmptyMessage = true;
+          // hacky way to recenter the modal once it's resized
+          setTimeout((_) => dialog._centerOnBackground(), 0);
+        }
+      }
+
+      return dialog.promise;
     }
-  }
-  function onNoEntities() {
-    if (labels.noEntitiesCustomHtml) {
-      dialog.scope.showCustomEmptyMessage = true;
-      // hacky way to recenter the modal once it's resized
-      setTimeout((_) => dialog._centerOnBackground(), 0);
-    }
-  }
+  );
 }
 
 /**

@@ -5,8 +5,6 @@ import { pick, isObject } from 'lodash';
 // Do not add imports here, or else it may affect Karma tests. You need to import
 // everything using the async method below. See `initialize`.
 
-import { ENVIRONMENT_USAGE_ENFORCEMENT } from 'featureFlags';
-
 export default function register() {
   registerController('ClientController', [
     '$scope',
@@ -15,6 +13,7 @@ export default function register() {
     '$rootScope',
     function ClientController($scope, $state, spaceContext, $rootScope) {
       let logger;
+      let FEATURES;
       let getSpaceFeature;
       let store;
       let EnforcementsService;
@@ -123,7 +122,7 @@ export default function register() {
         if (shouldCheckUsageForCurrentLocation()) {
           const allowNewUsageCheck = await getSpaceFeature(
             spaceId,
-            ENVIRONMENT_USAGE_ENFORCEMENT,
+            FEATURES.ENVIRONMENT_USAGE_ENFORCEMENT,
             false
           );
 
@@ -186,7 +185,7 @@ export default function register() {
       async function initialize() {
         [
           logger,
-          { getSpaceFeature },
+          { getSpaceFeature, FEATURES },
           { default: store },
           EnforcementsService,
           NavState,

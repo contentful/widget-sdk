@@ -2,8 +2,7 @@ import React, { useCallback, useReducer } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import moment from 'moment';
-import { getVariation } from 'LaunchDarkly';
-import { PRICING_2020_RELEASED, PAYING_PREV_V2_ORG } from 'featureFlags';
+import { getVariation, FLAGS } from 'LaunchDarkly';
 import SpaceDetails from './SpaceDetails';
 import ConfirmScreenNormal from './ConfirmScreenNormal';
 import SpacePlanSelector from '../shared/SpacePlanSelector';
@@ -76,8 +75,8 @@ const initialFetch = (organization, basePlan) => async () => {
     getSpaceRatePlans(endpoint),
     getTemplatesList(),
     getSubscriptionPlans(endpoint),
-    getVariation(PRICING_2020_RELEASED, { organizationId }),
-    getVariation(PAYING_PREV_V2_ORG, { organizationId }),
+    getVariation(FLAGS.PRICING_2020_RELEASED, { organizationId }),
+    getVariation(FLAGS.PAYING_PREV_V2_ORG, { organizationId }),
   ]);
 
   const currentSubscriptionPrice = calculateTotalPrice(subscriptionPlans.items);

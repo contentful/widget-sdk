@@ -332,8 +332,6 @@ describe('CmaDocument - conflict resolution', () => {
       });
 
       it('tracks the conflict, applies remote changes locally and updates remote entity', async (done) => {
-        expect.assertions(8);
-
         doc.changes.bufferWithCount(2).onValue((paths) => {
           expect(paths).toIncludeSameMembers([fieldPath, otherFieldPath]);
           done();
@@ -373,6 +371,8 @@ describe('CmaDocument - conflict resolution', () => {
             },
           },
         ]);
+
+        expect.assertions(8);
       });
     });
   });

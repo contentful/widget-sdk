@@ -12,8 +12,7 @@ import { getSectionVisibility } from 'access_control/AccessChecker';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { getSubscriptionState } from './utils/getSubscriptionState';
-import { getSpaceFeature } from 'data/CMA/ProductCatalog';
-import { ENVIRONMENT_USAGE_ENFORCEMENT } from 'featureFlags';
+import { getSpaceFeature, FEATURES } from 'data/CMA/ProductCatalog';
 import { useAsync } from 'core/hooks';
 
 import * as OrganizationRoles from 'services/OrganizationRoles';
@@ -31,7 +30,7 @@ const fetch = async () => {
     createResourceService(spaceContext.getId()).get('locale', spaceContext.getEnvironmentId()),
     createLegacyFeatureService(spaceContext.getId()).get('multipleLocales'),
     spaceContext.isMasterEnvironment(),
-    getSpaceFeature(spaceContext.getId(), ENVIRONMENT_USAGE_ENFORCEMENT),
+    getSpaceFeature(spaceContext.getId(), FEATURES.ENVIRONMENT_USAGE_ENFORCEMENT),
     _.get(spaceContext.organization, ['subscriptionPlan', 'name']),
   ];
 

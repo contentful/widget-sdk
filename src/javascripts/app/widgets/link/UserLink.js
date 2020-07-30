@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { cx, css } from 'emotion';
 import { Tooltip } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
@@ -39,7 +40,7 @@ const styles = {
   }),
 };
 
-const UserLink = ({ user }) => {
+const UserLink = ({ user, onClick }) => {
   const unconfirmedUserMessage = (condition) => {
     const tooltipMessage = user.activated
       ? 'This user hasn’t confirmed their email address yet. Therefore  we can’t guarantee the identity of the user'
@@ -57,7 +58,10 @@ const UserLink = ({ user }) => {
   };
 
   return (
-    <div className={cx(styles.userLink, 'user-link')} data-user-email={user.email}>
+    <div
+      className={cx(styles.userLink, 'user-link')}
+      onClick={onClick}
+      data-user-email={user.email}>
       <img className={styles.entityLinkImage} src={user.avatarUrl} />
       <div className={styles.entityTextLink}>
         {(user.firstName || user.lastName) && (
@@ -79,6 +83,7 @@ const UserLink = ({ user }) => {
 
 UserLink.propTypes = {
   user: User,
+  onClick: PropTypes.func,
 };
 
 export default UserLink;

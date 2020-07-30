@@ -1,7 +1,6 @@
 import { noop } from 'lodash';
 import * as K from 'core/utils/kefir';
-import { getVariation } from 'LaunchDarkly';
-import { ENTITY_EDITOR_CMA_EXPERIMENT } from 'featureFlags';
+import { getVariation, FLAGS } from 'LaunchDarkly';
 import { localFieldChanges } from './Document';
 
 const PATH = {
@@ -18,7 +17,7 @@ const PATH = {
  * @param {Object} entityInfo Expects an `id` and `type`.
  */
 export default async function create({ $scope, spaceContext, entityInfo }) {
-  const variation = await getVariation(ENTITY_EDITOR_CMA_EXPERIMENT, {
+  const variation = await getVariation(FLAGS.ENTITY_EDITOR_CMA_EXPERIMENT, {
     organizationId: spaceContext.getData('organization.sys.id'),
     spaceId: spaceContext.space.getId(),
   });

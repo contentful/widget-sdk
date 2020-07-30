@@ -17,6 +17,9 @@ EntitySelectorAdapter.propTypes = {
   entityType: PropTypes.oneOf(['asset', 'entry']).isRequired,
   initialState: PropTypes.object,
   onUpdate: PropTypes.func.isRequired,
+  isLoading: PropTypes.bool,
+  getContentTypes: PropTypes.func.isRequired,
+  users: PropTypes.array.isRequired,
 };
 
 export default EntitySelectorAdapter;

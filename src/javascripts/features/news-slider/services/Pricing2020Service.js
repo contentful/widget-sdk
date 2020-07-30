@@ -3,8 +3,7 @@ import { getSubscriptionPlans } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
-import { getVariation } from 'LaunchDarkly';
-import { PRICING_2020_WARNING } from 'featureFlags';
+import { getVariation, FLAGS } from 'LaunchDarkly';
 import { SelfService, Free } from '../components/Pricing2020';
 import { ModalLauncher } from 'core/components/ModalLauncher';
 import { createClientStorage } from 'core/services/BrowserStorage/ClientStorage';
@@ -75,7 +74,7 @@ async function shouldDisplay(org) {
   if (!org) return false;
   if (hasSeen(org.sys.id)) return false;
 
-  const isEnabled = await getVariation(PRICING_2020_WARNING, { organizationId: org.sys.id });
+  const isEnabled = await getVariation(FLAGS.PRICING_2020_WARNING, { organizationId: org.sys.id });
   const isTargetUser = isOwnerOrAdmin(org);
 
   return isEnabled && isTargetUser;

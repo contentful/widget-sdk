@@ -4,7 +4,6 @@ import SidebarEventTypes from '../SidebarEventTypes';
 import SidebarWidgetTypes from '../SidebarWidgetTypes';
 import EntrySidebarWidget from '../EntrySidebarWidget';
 import ErrorHandler from 'components/shared/ErrorHandlerComponent';
-import * as FeatureFlagKey from 'featureFlags';
 import { createTaskListViewData } from './ViewData/TaskViewData';
 import { createTasksStoreForEntry } from './TasksStore';
 import { createTasksStoreInteractor } from './TasksInteractor';
@@ -15,14 +14,14 @@ import createTaskPermissionChecker, {
 import { onStoreFetchingStatusChange, onPromiseFetchingStatusChange } from './util';
 import TaskList from './View/TaskList';
 import { trackIsTasksAlphaEligible } from './analytics';
-import { getCurrentSpaceFeature } from 'data/CMA/ProductCatalog';
+import { getCurrentSpaceFeature, FEATURES } from 'data/CMA/ProductCatalog';
 
 export default function TasksWidgetContainerWithFeatureFlag(props) {
   const [isEnabled, setIsEnabled] = useState(false);
 
   useEffect(() => {
     async function fetchFeatureFlag() {
-      const isEnabled = await getCurrentSpaceFeature(FeatureFlagKey.CONTENT_WORKFLOW_TASKS, false);
+      const isEnabled = await getCurrentSpaceFeature(FEATURES.CONTENT_WORKFLOW_TASKS, false);
       setIsEnabled(isEnabled);
       if (isEnabled) {
         trackIsTasksAlphaEligible();

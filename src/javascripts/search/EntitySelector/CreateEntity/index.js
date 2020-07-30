@@ -49,6 +49,7 @@ function CreateEntry(props) {
   return (
     allowedContentTypes.length > 0 && (
       <CreateEntryLinkButton
+        testId="create-entry"
         contentTypes={allowedContentTypes}
         onSelect={(contentTypeId) => onSelectHandler(contentTypeId, props.onSelect)}
         text={text}

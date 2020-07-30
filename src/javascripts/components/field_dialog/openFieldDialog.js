@@ -9,8 +9,7 @@ import {
   getEnabledRichTextOptions,
   groupValidations,
 } from 'components/field_dialog/new_field_dialog/utils/helpers';
-import { getVariation } from 'LaunchDarkly';
-import { NEW_FIELD_DIALOG } from 'featureFlags';
+import { getVariation, FLAGS } from 'LaunchDarkly';
 
 export async function openFieldDialog($scope, field, widget) {
   const modalDialog = getModule('modalDialog');
@@ -91,7 +90,7 @@ export async function openFieldDialog($scope, field, widget) {
     });
   };
 
-  const shouldShouwNewDialog = await getVariation(NEW_FIELD_DIALOG, {
+  const shouldShouwNewDialog = await getVariation(FLAGS.NEW_FIELD_DIALOG, {
     organizationId: spaceContext.organization.sys.id,
   });
   // to avoid major bugs for payed accounts, we are using a feature flag

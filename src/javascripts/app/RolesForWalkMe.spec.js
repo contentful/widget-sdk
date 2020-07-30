@@ -4,8 +4,7 @@ import { init as initService } from './RolesForWalkMe';
 import * as spaceContext from 'ng/spaceContext';
 import * as $rootScope from 'ng/$rootScope';
 import * as fake from 'test/helpers/fakeFactory';
-import { getVariation } from 'LaunchDarkly';
-import { WALK_FOR_ME as WALK_FOR_ME_FLAG } from 'featureFlags';
+import { getVariation, FLAGS } from 'LaunchDarkly';
 import * as LazyLoader from 'utils/LazyLoader';
 
 const mockSpace = fake.Space({
@@ -72,10 +71,6 @@ jest.mock(
   { virtual: true }
 );
 
-jest.mock('LaunchDarkly', () => ({
-  getVariation: jest.fn().mockResolvedValue(null),
-}));
-
 jest.mock('utils/LazyLoader', () => ({
   get: jest.fn(),
 }));
@@ -107,6 +102,10 @@ describe('RolesForWalkMe handler', () => {
 
   beforeEach(renderAppContainer);
 
+  beforeEach(() => {
+    getVariation.mockClear().mockResolvedValue(null);
+  });
+
   it('should not call LaunchDarkly if spaceContext does not have space', () => {
     spaceContext.__setSpace(null);
 
@@ -122,7 +121,7 @@ describe('RolesForWalkMe handler', () => {
 
     $rootScope.__trigger$on('$stateChangeSuccess');
 
-    expect(getVariation).toBeCalledWith(WALK_FOR_ME_FLAG, { spaceId: mockSpace.sys.id });
+    expect(getVariation).toBeCalledWith(FLAGS.WALK_FOR_ME_FLAG, { spaceId: mockSpace.sys.id });
   });
 
   it('should add various attributes on the app container and window, and get from LazyLoader if the variation is not null', async () => {

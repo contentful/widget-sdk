@@ -412,7 +412,7 @@ APIClient.prototype.unpublishContentType = function (data) {
 };
 
 APIClient.prototype.unpublishAsset = function (data) {
-  return this._unsetResourceFlag('content_types', data, 'published');
+  return this._unsetResourceFlag('assets', data, 'published');
 };
 
 APIClient.prototype.archiveEntry = function (data, version) {
@@ -436,7 +436,7 @@ APIClient.prototype.unarchiveContentType = function (data) {
 };
 
 APIClient.prototype.unarchiveAsset = function (data) {
-  return this._unsetResourceFlag('content_types', data, 'archived');
+  return this._unsetResourceFlag('assets', data, 'archived');
 };
 
 APIClient.prototype._deleteResource = async function (name, data) {

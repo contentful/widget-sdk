@@ -4,15 +4,13 @@ import StateRedirect from 'app/common/StateRedirect';
 import { RolesWorkbenchSkeleton } from '../skeletons/RolesWorkbenchSkeleton';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import createResourceService from 'services/ResourceService';
-import { ENVIRONMENT_ALIASING } from 'featureFlags';
 import { Notification } from '@contentful/forma-36-react-components';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as ResourceUtils from 'utils/ResourceUtils';
 import { RoleEditor } from '../role_editor/RoleEditor';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import { getCurrentSpaceFeature } from 'data/CMA/ProductCatalog';
-import { PC_CONTENT_TAGS } from 'featureFlags';
+import { getCurrentSpaceFeature, FEATURES } from 'data/CMA/ProductCatalog';
 
 const RoleEditorFetcher = createFetcherComponent(
   async ({ spaceId, getContentTypes, getEntities, isNew }) => {
@@ -25,9 +23,9 @@ const RoleEditorFetcher = createFetcherComponent(
       entities,
     ] = await Promise.all([
       getContentTypes(),
-      getSpaceFeature(spaceId, ENVIRONMENT_ALIASING),
+      getSpaceFeature(spaceId, FEATURES.ENVIRONMENT_ALIASING),
       accessChecker.canModifyRoles(),
-      getCurrentSpaceFeature(PC_CONTENT_TAGS, false),
+      getCurrentSpaceFeature(FEATURES.PC_CONTENT_TAGS, false),
       createResourceService(spaceId).get('role'),
       getEntities(),
     ]);
