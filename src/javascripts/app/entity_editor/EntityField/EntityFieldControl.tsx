@@ -3,7 +3,7 @@ import { ValidationErrors } from '@contentful/field-editor-validation-errors';
 import { WidgetRenderer } from 'app/entity_editor/WidgetRenderer';
 import Collaborators from 'app/entity_editor/Collaborators';
 import { isRtlLocale } from 'utils/locales';
-import { createFieldWidgetSDK } from 'app/widgets/NewWidgetApi/createNewWidgetApi';
+import { createFieldWidgetSDK } from 'app/widgets/NewWidgetApi';
 import { getModule } from 'core/NgRegistry';
 import { getEntityLink } from 'app/common/EntityStateLink';
 
