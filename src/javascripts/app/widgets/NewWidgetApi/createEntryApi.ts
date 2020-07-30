@@ -3,9 +3,9 @@ import { createEntryFieldApi } from './createEntryFieldApi';
 import * as K from 'core/utils/kefir';
 import { EntryAPI, EntryFieldAPI } from 'contentful-ui-extensions-sdk';
 
-export function createEntryApi({ contentType, otDoc, $scope }): EntryAPI {
-  const fields = contentType.fields.map((field: any) => {
-    return createEntryFieldApi({ field, otDoc, $scope, contentType });
+export function createEntryApi({ internalContentType, otDoc, $scope }): EntryAPI {
+  const fields = internalContentType.fields.map((field: any) => {
+    return createEntryFieldApi({ field, otDoc, $scope, internalContentType });
   });
 
   return {

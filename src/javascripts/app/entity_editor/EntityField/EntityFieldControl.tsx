@@ -3,7 +3,7 @@ import { ValidationErrors } from '@contentful/field-editor-validation-errors';
 import { WidgetRenderer } from 'app/entity_editor/WidgetRenderer';
 import Collaborators from 'app/entity_editor/Collaborators';
 import { isRtlLocale } from 'utils/locales';
-import createNewWidgetApi from 'app/widgets/NewWidgetApi/createNewWidgetApi';
+import { createFieldWidgetSDK } from 'app/widgets/NewWidgetApi/createNewWidgetApi';
 import { getModule } from 'core/NgRegistry';
 import { getEntityLink } from 'app/common/EntityStateLink';
 
@@ -13,7 +13,7 @@ export function EntityFieldControl(props: { scope: any; hasInitialFocus: boolean
 
   const widgetApi = React.useMemo(() => {
     const spaceContext = getModule('spaceContext');
-    return createNewWidgetApi({
+    return createFieldWidgetSDK({
       $scope: props.scope,
       spaceContext,
       widgetNamespace,

@@ -61,7 +61,7 @@ function getLocaleCodeAndCallback(args: any[]) {
   throw new TypeError('expected either callback, or locale code and callback');
 }
 
-export function createEntryFieldApi({ field, otDoc, $scope, contentType }): EntryFieldAPI {
+export function createEntryFieldApi({ field, otDoc, $scope, internalContentType }): EntryFieldAPI {
   const getValue = (localeCode?: string) => {
     const currentPath = getCurrentPath(field, localeCode);
 
@@ -123,7 +123,7 @@ export function createEntryFieldApi({ field, otDoc, $scope, contentType }): Entr
     const fieldLocalesControllers = makeListOfFieldLocales(
       $scope,
       getModule('$controller'),
-      contentType
+      internalContentType
     );
     const controller = fieldLocalesControllers.find(
       (c: { fieldId: string; localeCode: string }) =>
