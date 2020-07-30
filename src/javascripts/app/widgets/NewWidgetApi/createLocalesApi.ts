@@ -1,7 +1,15 @@
-import TheLocaleStore from 'services/localeStore';
+import localeStore from 'services/localeStore';
 import { isRtlLocale } from 'utils/locales';
+import { LocalesAPI } from 'contentful-ui-extensions-sdk';
 
-export function getLocalesObject({ availableLocales, defaultLocale }) {
+interface Locale {
+  name: string,
+  code: string,
+  fallbackCode?: string
+  optional?: boolean
+}
+
+export function getLocalesObject({ availableLocales, defaultLocale }: { availableLocales: Locale[], defaultLocale: Locale}): LocalesAPI {
   return {
     available: availableLocales.map((locale) => locale.code),
     default: defaultLocale.code,
@@ -20,17 +28,9 @@ export function getLocalesObject({ availableLocales, defaultLocale }) {
   };
 }
 
-/**
- * @typedef { import("contentful-ui-extensions-sdk").LocalesApi } LocalesApi
- */
-
-/**
- * @param {{ spaceContext: Object }}
- * @return {LocalesApi}
- */
-export function createLocalesApi() {
+export function createLocalesApi(): LocalesAPI {
   return getLocalesObject({
-    availableLocales: TheLocaleStore.getPrivateLocales(),
-    defaultLocale: TheLocaleStore.getDefaultLocale(),
+    availableLocales: localeStore.getPrivateLocales(),
+    defaultLocale: localeStore.getDefaultLocale(),
   });
 }

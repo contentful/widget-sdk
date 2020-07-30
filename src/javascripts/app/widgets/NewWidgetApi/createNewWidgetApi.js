@@ -14,17 +14,6 @@ import { createIdsApi } from './createIdsApi';
 import { createEntryApi } from './createEntryApi';
 
 /**
- * @typedef { import("contentful-ui-extensions-sdk").FieldAPI } FieldAPI
- * @typedef { import("contentful-ui-extensions-sdk").WindowAPI } WindowAPI
- * @typedef { import("contentful-ui-extensions-sdk").ParametersAPI } ParametersAPI
- * @typedef { import("contentful-ui-extensions-sdk").NotifierAPI } NotifierAPI
- * @typedef { import("contentful-ui-extensions-sdk").NavigatorAPI } NavigatorAPI
- * @typedef { import("contentful-ui-extensions-sdk").LocalesAPI } LocalesAPI
- * @typedef { import("contentful-ui-extensions-sdk").EntryAPI } EntryAPI
- * @typedef { import("contentful-ui-extensions-sdk").ContentType } ContentType
- * @typedef { import("contentful-ui-extensions-sdk").AccessAPI } AccessAPI
- */
-/**
  * This widgetApi implementation is a partial map with actual `ui-extension-sdk` API, so all components that are using this API
  * can be developed as extensions first and then moved to the webapp without any changes.
  *
