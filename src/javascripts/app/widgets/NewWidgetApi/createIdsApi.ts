@@ -1,4 +1,5 @@
 import { ContentType, FieldAPI, IdsAPI, User, EntryAPI } from 'contentful-ui-extensions-sdk';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 export const createIdsApi = (
   spaceId: string,
@@ -6,7 +7,9 @@ export const createIdsApi = (
   contentType: ContentType,
   entry: EntryAPI,
   field: FieldAPI,
-  user: User
+  user: User,
+  widgetNamespace: WidgetNamespace,
+  widgetId: string
 ): IdsAPI => {
   return {
     space: spaceId,
@@ -15,6 +18,7 @@ export const createIdsApi = (
     entry: entry.getSys().id,
     field: field.id,
     user: user.sys.id,
-    extension: '', // TODO: should be optional in types
+    // Results in `{ app: 'some-app-id' }` or `{ extension: 'some-ext-id' }`.
+    [widgetNamespace]: widgetId,
   };
 };

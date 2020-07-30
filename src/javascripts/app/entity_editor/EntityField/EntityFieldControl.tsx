@@ -8,13 +8,18 @@ import { getModule } from 'core/NgRegistry';
 import { getEntityLink } from 'app/common/EntityStateLink';
 
 export function EntityFieldControl(props: { scope: any; hasInitialFocus: boolean }) {
+  const { widget } = props.scope;
+  const { widgetNamespace, widgetId } = widget;
+
   const widgetApi = React.useMemo(() => {
     const spaceContext = getModule('spaceContext');
     return createNewWidgetApi({
       $scope: props.scope,
       spaceContext,
+      widgetNamespace,
+      widgetId,
     });
-  }, [props.scope]);
+  }, [props.scope, widgetNamespace, widgetId]);
 
   return (
     <>
