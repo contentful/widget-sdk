@@ -9,7 +9,7 @@ jest.mock('states/Navigator', () => ({
 
 describe('ErrorPage', () => {
   it('should match the snapshot', () => {
-    expect(build()).toMatchSnapshot();
+    expect(build().baseElement).toMatchSnapshot();
   });
 
   it('should go to the home path when the "home" button is clicked', () => {
@@ -24,5 +24,5 @@ describe('ErrorPage', () => {
 });
 
 function build() {
-  render(<ErrorPage />);
+  return render(<ErrorPage />);
 }

@@ -5,6 +5,7 @@ import { getOrganization, getSpace, getUser } from 'services/TokenStore';
 import { launchDarkly } from 'Config';
 import { logError } from 'services/logger';
 import { isFlagOverridden, getFlagOverride } from 'debug/EnforceFlags';
+import * as DegradedAppPerformance from 'core/services/DegradedAppPerformance';
 
 jest.mock('ldclient-js', () => ({
   initialize: jest.fn(),
@@ -95,6 +96,8 @@ describe('LaunchDarkly', () => {
     getUser.mockResolvedValue(user);
     getOrganization.mockResolvedValue(organization);
     getSpace.mockResolvedValue(space);
+
+    jest.spyOn(DegradedAppPerformance, 'trigger').mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -105,6 +108,8 @@ describe('LaunchDarkly', () => {
     logError.mockReset();
     isFlagOverridden.mockReset();
     getFlagOverride.mockReset();
+
+    DegradedAppPerformance.trigger.mockRestore();
 
     reset();
   });
@@ -149,6 +154,15 @@ describe('LaunchDarkly', () => {
 
       // Second time resolves, we get the actual variation
       expect(await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__)).toBe('test_flag_variation');
+    });
+
+    it('should trigger the DegradedAppPerformance service if waitForInitialization throws', async () => {
+      client.waitForInitialization.mockRejectedValueOnce();
+
+      await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__);
+
+      expect(logError).toHaveBeenCalledTimes(1);
+      expect(DegradedAppPerformance.trigger).toBeCalled();
     });
 
     it('should be able to get two different flag values', async () => {
@@ -235,6 +249,17 @@ describe('LaunchDarkly', () => {
       expect(client.identify).toHaveBeenCalledTimes(2);
     });
 
+    it('should log and return the fallback if identify rejects', async () => {
+      client.identify.mockRejectedValueOnce();
+
+      const variation = await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, {
+        organizationId: 'org_1234',
+      });
+
+      expect(variation).toBe('fallback-value');
+      expect(logError).toHaveBeenCalledTimes(1);
+    });
+
     it('should log and return the fallback if given invalid org or space id', async () => {
       let variation;
 
@@ -260,6 +285,39 @@ describe('LaunchDarkly', () => {
 
       expect(variation).toBe('fallback-value');
       expect(logError).toHaveBeenCalledTimes(1);
+    });
+
+    it('should trigger the DegradedAppPerformance service if the variation throws', async () => {
+      client.identify.mockRejectedValueOnce();
+
+      await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { organizationId: 'org_1234' });
+
+      expect(DegradedAppPerformance.trigger).toHaveBeenCalledTimes(1);
+
+      await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { organizationId: 'org_1234' });
+      expect(DegradedAppPerformance.trigger).toHaveBeenCalledTimes(1);
+
+      reset(); // reset cache
+
+      getOrganization.mockRejectedValueOnce(false);
+
+      await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { organizationId: 'org_1234' });
+      expect(DegradedAppPerformance.trigger).toHaveBeenCalledTimes(2);
+
+      await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { organizationId: 'org_1234' });
+      expect(DegradedAppPerformance.trigger).toHaveBeenCalledTimes(2);
+
+      reset(); // reset cache
+
+      variations[FLAGS.__FLAG_FOR_UNIT_TESTS__] = '{invalid_json"';
+
+      await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { organizationId: 'org_1234' });
+      expect(DegradedAppPerformance.trigger).toHaveBeenCalledTimes(3);
+
+      variations[FLAGS.__FLAG_FOR_UNIT_TESTS__] = '"hello world"';
+
+      await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { organizationId: 'org_1234' });
+      expect(DegradedAppPerformance.trigger).toHaveBeenCalledTimes(3);
     });
 
     it('should initially include user data in ldUser value', async () => {

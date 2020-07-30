@@ -261,6 +261,9 @@ angular
       );
 
       const { ensureFlagsHaveFallback } = await import(/* webpackMode: "eager" */ 'LaunchDarkly');
+      const { init: initDegradedAppPerformance } = await import(
+        /* webpackMode: "eager" */ 'core/services/DegradedAppPerformance'
+      );
 
       if (Config.env === 'development') {
         Error.stackTraceLimit = 100;
@@ -276,6 +279,7 @@ angular
       initAutoCreateNewSpace();
       initExtentionActivationTracking();
       initRolesForWalkMe();
+      initDegradedAppPerformance();
 
       initDialogsController();
       setupStateChangeHandlers();
