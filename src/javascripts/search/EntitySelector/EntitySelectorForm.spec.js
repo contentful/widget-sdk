@@ -446,20 +446,21 @@ describe('EntitySelectorForm', () => {
     );
     await findAllByTestId('cf-ui-entry-card');
 
-    const searchbar = getByTestId('queryInput');
-
     act(() => {
-      userEvent.type(searchbar, 'How to learn C++ in 20 days');
+      userEvent.type(getByTestId('queryInput'), 'How to learn C++ in 20 days');
     });
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+
+    await waitFor(() => expect(getAllByTestId('cf-ui-entry-card')).toHaveLength(20));
+    expect(fetchMock).toHaveBeenCalledTimes(2);
 
     expect(fetchMock).toHaveBeenCalledWith(
       expect.objectContaining({ searchText: 'How to learn C++ in 20 days' })
     );
 
+    const cards = getAllByTestId('cf-ui-entry-card');
+    expect(cards).toHaveLength(20);
+
     act(() => {
-      const cards = getAllByTestId('cf-ui-entry-card');
-      expect(cards).toHaveLength(20);
       cards[0].click();
     });
 
@@ -469,11 +470,17 @@ describe('EntitySelectorForm', () => {
     expect(props.onChange).toHaveBeenCalledWith([entitiesBatches[1].items[0]]);
 
     act(() => {
-      fireEvent.change(searchbar, { target: { value: '' } });
+      fireEvent.change(getByTestId('queryInput'), {
+        target: { value: '' },
+        stopPropagation: () => {},
+      });
     });
 
-    await waitFor(() =>
-      expect(getAllByTestId('cf-ui-entry-card')).toHaveLength(ITEMS_PER_PAGE + 1)
+    await waitFor(
+      () => expect(getAllByTestId('cf-ui-entry-card')).toHaveLength(ITEMS_PER_PAGE + 1),
+      {
+        timeout: 2000, // because the search bar onChange is debounced with 1 second delay
+      }
     );
 
     expect(fetchMock).toHaveBeenCalledTimes(2);
