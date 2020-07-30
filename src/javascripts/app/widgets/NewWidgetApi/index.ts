@@ -13,14 +13,26 @@ import { createIdsApi } from './createIdsApi';
 import { createEntryApi } from './createEntryApi';
 import { FieldExtensionSDK, DialogExtensionSDK, DialogsAPI } from 'contentful-ui-extensions-sdk';
 import { createEditorApi } from './createEditorApi';
+import { WidgetNamespace } from 'features/widget-renderer';
 
 export function createFieldWidgetSDK({
-  spaceContext,
-  $scope,
+  fieldId,
+  localeCode,
   widgetNamespace,
   widgetId,
+  editorInterfaceSettings = {},
+  spaceContext,
+  $scope,
+}: {
+  fieldId: string;
+  localeCode: string;
+  widgetNamespace: WidgetNamespace;
+  widgetId: string;
+  editorInterfaceSettings?: Record<string, any>;
+  spaceContext: any;
+  $scope: any;
 }): FieldExtensionSDK {
-  const { widget, otDoc, locale } = $scope;
+  const { otDoc } = $scope;
   const { contentType: internalContentType } = $scope.entityInfo;
   const { editorInterface } = $scope.editorData;
   const contentType = createContentTypeApi(internalContentType);
@@ -28,7 +40,7 @@ export function createFieldWidgetSDK({
   const tagsRepo = createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId());
 
   const entry = createEntryApi({ internalContentType, otDoc, $scope });
-  const field = entry.fields[widget.fieldId].getForLocale(locale.code);
+  const field = entry.fields[fieldId].getForLocale(localeCode);
   const editor = createEditorApi({ editorInterface, $scope });
   const user = createUserApi(spaceContext.space.data.spaceMember);
   const ids = createIdsApi(
@@ -44,7 +56,7 @@ export function createFieldWidgetSDK({
 
   const parameters = {
     installation: {},
-    instance: widget.settings || {},
+    instance: editorInterfaceSettings,
   };
 
   const cma = getBatchingApiClient(spaceContext.cma);
@@ -57,7 +69,8 @@ export function createFieldWidgetSDK({
     tagsRepo,
     usersRepo: spaceContext.users,
   });
-  const navigator = createNavigatorApi({ cma, spaceContext, widget });
+
+  const navigator = createNavigatorApi({ cma, spaceContext, widgetNamespace, widgetId });
   const locales = createLocalesApi();
   const canAccess = makeExtensionAccessHandlers();
 

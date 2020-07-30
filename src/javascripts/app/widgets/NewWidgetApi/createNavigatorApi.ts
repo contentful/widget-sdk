@@ -4,18 +4,23 @@ import {
 } from 'widgets/bridges/makeExtensionNavigationHandlers';
 import makePageExtensionHandlers from 'widgets/bridges/makePageExtensionHandlers';
 import { onSlideInNavigation } from 'navigation/SlideInNavigator/index';
-import { WidgetNamespace, Widget } from 'features/widget-renderer';
-import { SpaceContext } from '@contentful/worf';
+import { WidgetNamespace } from 'features/widget-renderer';
 import APIClient from 'data/APIClient';
 import { NavigatorAPI } from 'contentful-ui-extensions-sdk';
 
 interface NavigatorProps {
-  widget: Widget;
-  spaceContext: SpaceContext;
   cma: APIClient;
+  spaceContext: any;
+  widgetNamespace: WidgetNamespace;
+  widgetId: string;
 }
 
-export function createNavigatorApi({ cma, spaceContext, widget }: NavigatorProps): NavigatorAPI {
+export function createNavigatorApi({
+  cma,
+  spaceContext,
+  widgetNamespace,
+  widgetId,
+}: NavigatorProps): NavigatorAPI {
   const navigateToContentEntity = makeExtensionNavigationHandlers({ cma });
   const navigateToBulkEditor = makeExtensionBulkNavigationHandlers();
 
@@ -26,8 +31,8 @@ export function createNavigatorApi({ cma, spaceContext, widget }: NavigatorProps
   //  consider merging this with it
   const navigateToPage = makePageExtensionHandlers({
     spaceContext,
-    currentWidgetId: widget.id,
-    currentWidgetNamespace: widget.namespace,
+    currentWidgetId: widgetId,
+    currentWidgetNamespace: widgetNamespace,
   });
 
   return {

@@ -8,18 +8,21 @@ import { getModule } from 'core/NgRegistry';
 import { getEntityLink } from 'app/common/EntityStateLink';
 
 export function EntityFieldControl(props: { scope: any; hasInitialFocus: boolean }) {
-  const { widget } = props.scope;
-  const { widgetNamespace, widgetId } = widget;
-
   const widgetApi = React.useMemo(() => {
     const spaceContext = getModule('spaceContext');
+    const { widget, locale } = props.scope;
+    const { widgetNamespace, widgetId, fieldId, settings } = widget;
+
     return createFieldWidgetSDK({
-      $scope: props.scope,
-      spaceContext,
+      fieldId,
+      localeCode: locale.code,
       widgetNamespace,
       widgetId,
+      editorInterfaceSettings: settings,
+      $scope: props.scope,
+      spaceContext,
     });
-  }, [props.scope, widgetNamespace, widgetId]);
+  }, [props.scope]);
 
   return (
     <>
