@@ -12,6 +12,7 @@ import { createUserApi } from './createUserApi';
 import { createIdsApi } from './createIdsApi';
 import { createEntryApi } from './createEntryApi';
 import { FieldExtensionSDK, DialogExtensionSDK, DialogsAPI } from 'contentful-ui-extensions-sdk';
+import { createEditorApi } from './createEditorApi';
 
 export function createFieldWidgetSDK({
   spaceContext,
@@ -28,6 +29,7 @@ export function createFieldWidgetSDK({
 
   const entry = createEntryApi({ internalContentType, otDoc, $scope });
   const field = entry.fields[widget.fieldId].getForLocale(locale.code);
+  const editor = createEditorApi({ editorInterface, $scope });
   const user = createUserApi(spaceContext.space.data.spaceMember);
   const ids = createIdsApi(
     spaceContext.getId(),
@@ -64,13 +66,15 @@ export function createFieldWidgetSDK({
     navigator,
     locales,
     entry,
+    editor,
     field,
     user,
     ids,
     parameters,
     contentType,
     location: {
-      is: (_type: string) => true, // TODO: figure out how to determine current location here
+      // TODO: hardcoded! Use current location instead of "entry-field"
+      is: (type: string) => type === 'entry-field',
     },
     window: {
       // There are no iframes in the internal API so any methods related
@@ -91,13 +95,6 @@ export function createFieldWidgetSDK({
       can: (action: string, entity: any) => {
         return Promise.resolve(canAccess(action, entity));
       },
-    },
-
-    // TODO: extract to a module and implement!
-    editor: {
-      editorInterface,
-      onLocaleSettingsChanged: () => () => {},
-      onShowDisabledFieldsChanged: () => () => {},
     },
 
     // Hack starts here
