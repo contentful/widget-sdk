@@ -32,14 +32,13 @@ export function createFieldWidgetSDK({
   spaceContext: any;
   $scope: any;
 }): FieldExtensionSDK {
-  const { otDoc } = $scope;
   const { contentType: internalContentType } = $scope.entityInfo;
   const { editorInterface } = $scope.editorData;
   const contentType = createContentTypeApi(internalContentType);
   const environmentIds = [spaceContext.getEnvironmentId(), ...spaceContext.getAliasesIds()];
   const tagsRepo = createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId());
 
-  const entry = createEntryApi({ internalContentType, otDoc, $scope });
+  const entry = createEntryApi({ internalContentType, $scope });
   const field = entry.fields[fieldId].getForLocale(localeCode);
   const editor = createEditorApi({ editorInterface, $scope });
   const user = createUserApi(spaceContext.space.data.spaceMember);

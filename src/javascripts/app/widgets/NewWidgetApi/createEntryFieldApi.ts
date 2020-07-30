@@ -61,22 +61,22 @@ function getLocaleCodeAndCallback(args: any[]) {
   throw new TypeError('expected either callback, or locale code and callback');
 }
 
-export function createEntryFieldApi({ field, otDoc, $scope, internalContentType }): EntryFieldAPI {
+export function createEntryFieldApi({ field, $scope, internalContentType }): EntryFieldAPI {
   const getValue = (localeCode?: string) => {
     const currentPath = getCurrentPath(field, localeCode);
 
-    return get(otDoc.getValueAt([]), currentPath);
+    return get($scope.otDoc.getValueAt([]), currentPath);
   };
 
   const setValue = async (value: any, localeCode?: string) => {
-    if (!canEdit(otDoc, field, localeCode)) {
+    if (!canEdit($scope.otDoc, field, localeCode)) {
       throw makePermissionError();
     }
 
     const currentPath = getCurrentPath(field, localeCode);
 
     try {
-      await otDoc.setValueAt(currentPath, value);
+      await $scope.otDoc.setValueAt(currentPath, value);
       return value;
     } catch (err) {
       throw makeShareJSError(err, ERROR_MESSAGES.MFAILUPDATE);
@@ -84,14 +84,14 @@ export function createEntryFieldApi({ field, otDoc, $scope, internalContentType 
   };
 
   const removeValue = async (localeCode?: string) => {
-    if (!canEdit(otDoc, field, localeCode)) {
+    if (!canEdit($scope.otDoc, field, localeCode)) {
       throw makePermissionError();
     }
 
     const currentPath = getCurrentPath(field, localeCode);
 
     try {
-      await otDoc.removeValueAt(currentPath);
+      await $scope.otDoc.removeValueAt(currentPath);
     } catch (err) {
       throw makeShareJSError(err, ERROR_MESSAGES.MFAILREMOVAL);
     }
@@ -104,10 +104,10 @@ export function createEntryFieldApi({ field, otDoc, $scope, internalContentType 
     const path = getCurrentPath(field, localeCode);
 
     return K.onValueWhile(
-      otDoc.changes,
-      otDoc.changes.filter((changedPath: any) => PathUtils.isAffecting(changedPath, path)),
+      $scope.otDoc.changes,
+      $scope.otDoc.changes.filter((changedPath: any) => PathUtils.isAffecting(changedPath, path)),
       () => {
-        cb(get(otDoc.getValueAt([]), path));
+        cb(get($scope.otDoc.getValueAt([]), path));
       }
     );
   }
