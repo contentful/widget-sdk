@@ -30,7 +30,10 @@ module.exports = (resolve, rootDir, srcRoots, coverageDirectory) => {
     moduleFileExtensions: ['web.js', 'js', 'json', 'web.jsx', 'jsx', 'node', 'mjs', 'ts', 'tsx'],
     coverageReporters: ['lcov', 'clover'],
     snapshotSerializers: ['jest-emotion'],
-    reporters: ['default', 'jest-junit'],
+    reporters: [
+      'default',
+      ['jest-junit', { outputDirectory: 'reports/jest', outputName: 'jest-junit-results.xml' }],
+    ],
   };
   if (rootDir) {
     config.rootDir = rootDir;
