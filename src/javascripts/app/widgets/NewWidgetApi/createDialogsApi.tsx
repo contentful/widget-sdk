@@ -93,7 +93,7 @@ async function findWidget(widgetNamespace: WidgetNamespace, widgetId: string) {
 async function openCustomDialog(
   namespace: WidgetNamespace,
   options: OpenCustomWidgetOptions,
-  _apis: DialogExtensionSDK
+  _sdk: DialogExtensionSDK
 ) {
   if (!options.id) {
     throw new Error('No ID provided.');
