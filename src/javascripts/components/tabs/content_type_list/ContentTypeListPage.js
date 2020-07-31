@@ -24,7 +24,6 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { css } from 'emotion';
 import ExternalTextLink from 'app/common/ExternalTextLink';
 import { isLegacyOrganization, getResourceLimits } from 'utils/ResourceUtils';
-import { getVariation, FLAGS } from 'LaunchDarkly';
 import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 import * as PricingService from 'services/PricingService';
@@ -73,16 +72,11 @@ export class ContentTypesPage extends React.Component {
     // it's more important that we allow the user to use the page than wait longer for this less important information.
 
     const promisesArray = [service.fetchContentTypes()];
-
-    const isNewPricingReleased = await getVariation(FLAGS.PRICING_2020_RELEASED, {
-      organizationId: spaceContext.organization.sys.id,
-    });
-
     const isOrgAdminOrOwner = isOwnerOrAdmin(spaceContext.organization);
     const orgIsLegacy = isLegacyOrganization(spaceContext.organization);
 
     // Only want to make this fetch if isNewPricingReleased.
-    if (isNewPricingReleased && !orgIsLegacy && isOrgAdminOrOwner) {
+    if (!orgIsLegacy && isOrgAdminOrOwner) {
       promisesArray.push(
         Promise.race([
           Promise.all([

@@ -78,18 +78,13 @@ const fetch = (organizationId, { setSpacePlans, setGrandTotal }) => async () => 
   const spacePlans = getSpacePlans(plans, accessibleSpaces);
   const usersMeta = calcUsersMeta({ basePlan, numMemberships });
 
-  const isCommunityPlanEnabled = await getVariation(FLAGS.PRICING_2020_RELEASED, {
-    organizationId,
-  });
-
   const isOrgCreatedBeforeV2Pricing = await getVariation(FLAGS.PAYING_PREV_V2_ORG, {
     organizationId,
   });
 
   // We only want to show this support card for self-service on-demand users who originally had access
   // to these types of spaces and have since been migrated to the community plan.
-  const showMicroSmallSupportCard =
-    isSelfServicePlan(basePlan) && isCommunityPlanEnabled && isOrgCreatedBeforeV2Pricing;
+  const showMicroSmallSupportCard = isSelfServicePlan(basePlan) && isOrgCreatedBeforeV2Pricing;
 
   setSpacePlans(spacePlans);
   setGrandTotal(
