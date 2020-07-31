@@ -46,6 +46,7 @@ before(() => {
 beforeEach(() => {
   cy.setAuthTokenToLocalStorage();
   cy.disableConsentManager();
+  cy.disableDegradedAppPerformance();
 
   // set default feature flags enabled on LaunchDarkly
   cy.enableFeatureFlags([FeatureFlag.DEFAULT]);

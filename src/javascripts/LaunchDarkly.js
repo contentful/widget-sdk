@@ -16,6 +16,7 @@ import { isFlagOverridden, getFlagOverride } from 'debug/EnforceFlags';
 import { getOrganization, getSpace, getUser, getSpacesByOrganization } from 'services/TokenStore';
 import isLegacyEnterprise from 'data/isLegacyEnterprise';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
+import * as DegradedAppPerformance from 'core/services/DegradedAppPerformance';
 
 const MISSING_VARIATION_VALUE = '__missing_variation_value__';
 const FLAG_PROMISE_ERRED = '__flag_promised_erred__';
@@ -35,7 +36,6 @@ export const FLAGS = {
   APP_MANAGEMENT_VIEWS: 'feature-ext-04-2020-app-backends',
   PRICING_2020_RELEASED: 'feature-ogg-06-2020-enable-pricing-2020-features',
   PAYING_PREV_V2_ORG: 'feature-ogg-06-2020-v2-team-user',
-  TEST_IF_LD_IS_WORKING: 'test-if-launch-darkly-is-working',
   ALL_REFERENCES_DIALOG: 'feature-pulitzer-02-2020-all-reference-dialog',
   NEW_STATUS_SWITCH: 'feature-pulitzer-03-2020-new-status-switch',
   ADD_TO_RELEASE: 'feature-pulitzer-05-2020-add-to-release',
@@ -58,7 +58,6 @@ const FALLBACK_VALUES = {
   [FLAGS.APP_MANAGEMENT_VIEWS]: false,
   [FLAGS.PRICING_2020_RELEASED]: true,
   [FLAGS.PAYING_PREV_V2_ORG]: false,
-  [FLAGS.TEST_IF_LD_IS_WORKING]: true,
   [FLAGS.ALL_REFERENCES_DIALOG]: false,
   [FLAGS.NEW_STATUS_SWITCH]: false,
   [FLAGS.ADD_TO_RELEASE]: false,
@@ -264,6 +263,13 @@ export async function getVariation(flagName, { organizationId, spaceId, environm
       initializationPromise = null;
       client = null;
 
+      logger.logError(`LaunchDarkly initialization failed`, {
+        groupingHash: 'LDInitFailed',
+        data: { flagName, organizationId, spaceId, environmentId },
+      });
+
+      DegradedAppPerformance.trigger('LaunchDarkly');
+
       return FALLBACK_VALUES[flagName];
     }
   }
@@ -318,6 +324,8 @@ export async function getVariation(flagName, { organizationId, spaceId, environm
         // - the variation is missing or the variation is not valid JSON
         if (value === FLAG_PROMISE_ERRED) {
           _.set(variationCache, key, undefined);
+
+          DegradedAppPerformance.trigger('LaunchDarkly');
 
           return FALLBACK_VALUES[flagName];
         }
@@ -389,6 +397,11 @@ async function createFlagPromise(flagName, { user, organizationId, spaceId, envi
         flags,
       });
     } catch {
+      logger.logError(`LaunchDarkly identify failed for ${flagName}`, {
+        groupingHash: 'LDIdentifyFailed',
+        data: { flagName, organizationId, spaceId, environmentId },
+      });
+
       return FLAG_PROMISE_ERRED;
     }
   }
