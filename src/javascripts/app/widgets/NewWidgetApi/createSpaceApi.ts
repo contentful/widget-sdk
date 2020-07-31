@@ -4,7 +4,7 @@ import { getToken } from 'Authentication';
 import { uploadApiUrl } from 'Config';
 import { SpaceAPI, ContentType, User } from 'contentful-ui-extensions-sdk';
 import { createContentTypeApi } from './createContentTypeApi';
-import { get } from 'lodash';
+import { get, noop } from 'lodash';
 
 const ASSET_PROCESSING_POLL_MS = 500;
 
@@ -174,7 +174,7 @@ export function createSpaceApi({
       throw new Error('Invalid entity type');
     }
     if (!pubSubClient) {
-      return () => {};
+      return noop;
     }
     const getEntity = entityType === 'Entry' ? cma.getEntry : cma.getAsset;
     const handler = (msg: { environmentId: string; entityType: string; entityId: string }) => {
