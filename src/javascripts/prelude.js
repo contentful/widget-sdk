@@ -260,6 +260,11 @@ angular
         /* webpackMode: "eager" */ 'navigation/stateChangeHandlers'
       );
 
+      const { ensureFlagsHaveFallback } = await import(/* webpackMode: "eager" */ 'LaunchDarkly');
+      const { init: initDegradedAppPerformance } = await import(
+        /* webpackMode: "eager" */ 'core/services/DegradedAppPerformance'
+      );
+
       if (Config.env === 'development') {
         Error.stackTraceLimit = 100;
       } else {
@@ -274,9 +279,12 @@ angular
       initAutoCreateNewSpace();
       initExtentionActivationTracking();
       initRolesForWalkMe();
+      initDegradedAppPerformance();
 
       initDialogsController();
       setupStateChangeHandlers();
+
+      ensureFlagsHaveFallback();
 
       // Start telemetry and expose it as a global.
       // It can be used by E2E or Puppeteer scripts.

@@ -1,3 +1,129 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ErrorPage should match the snapshot 1`] = `undefined`;
+exports[`ErrorPage should match the snapshot 1`] = `
+.emotion-3 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.emotion-2 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.emotion-0 {
+  max-width: 32rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.emotion-4 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  height: calc(100vh - 70px);
+}
+
+<body>
+  <div>
+    <div
+      class="emotion-4"
+    >
+      <div
+        class="emotion-3"
+        data-test-id="cf-ui-error-state"
+      >
+        <div
+          class="emotion-2"
+        >
+          <div
+            class="emotion-0"
+          >
+            <broken-pencil.svg
+              classname="css-18u17ky-defaultSVGStyle"
+            />
+          </div>
+          <div
+            class="emotion-0"
+          >
+            <div
+              class="Typography__Typography___1ZUfE"
+              data-test-id="cf-ui-text-container"
+            >
+              <h1
+                class="Heading__Heading___83D3K f36-margin-bottom--m"
+                data-test-id="cf-ui-heading"
+              >
+                Oh snap! Something went wrong…
+              </h1>
+              <p
+                class="Paragraph__Paragraph___2aO-9 f36-margin-bottom--m"
+                data-test-id="cf-ui-paragraph"
+              >
+                Sorry, that was unexpected. Head back to your space or
+                 
+                <button
+                  class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                  data-test-id="cf-contact-us-button"
+                  type="button"
+                >
+                  <span
+                    class="TabFocusTrap__TabFocusTrap___39Vty"
+                    tabindex="-1"
+                  >
+                    talk to support
+                  </span>
+                </button>
+                 
+                if this keeps happening.
+              </p>
+              <button
+                class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--primary___JImeO"
+                data-test-id="home-button"
+                type="button"
+              >
+                <span
+                  class="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
+                  tabindex="-1"
+                >
+                  <span
+                    class="Button__Button__label___3tcOj"
+                  >
+                    Go to space home
+                  </span>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
