@@ -162,7 +162,7 @@ describe('LaunchDarkly', () => {
       await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__);
 
       expect(logError).toHaveBeenCalledTimes(1);
-      expect(DegradedAppPerformance.trigger).toBeCalled();
+      expect(DegradedAppPerformance.trigger).toHaveBeenCalledWith('LaunchDarkly');
     });
 
     it('should be able to get two different flag values', async () => {
@@ -293,6 +293,7 @@ describe('LaunchDarkly', () => {
       await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { organizationId: 'org_1234' });
 
       expect(DegradedAppPerformance.trigger).toHaveBeenCalledTimes(1);
+      expect(DegradedAppPerformance.trigger).toHaveBeenNthCalledWith(1, 'LaunchDarkly');
 
       await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { organizationId: 'org_1234' });
       expect(DegradedAppPerformance.trigger).toHaveBeenCalledTimes(1);
@@ -303,6 +304,7 @@ describe('LaunchDarkly', () => {
 
       await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { organizationId: 'org_1234' });
       expect(DegradedAppPerformance.trigger).toHaveBeenCalledTimes(2);
+      expect(DegradedAppPerformance.trigger).toHaveBeenNthCalledWith(1, 'LaunchDarkly');
 
       await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { organizationId: 'org_1234' });
       expect(DegradedAppPerformance.trigger).toHaveBeenCalledTimes(2);
@@ -313,6 +315,7 @@ describe('LaunchDarkly', () => {
 
       await getVariation(FLAGS.__FLAG_FOR_UNIT_TESTS__, { organizationId: 'org_1234' });
       expect(DegradedAppPerformance.trigger).toHaveBeenCalledTimes(3);
+      expect(DegradedAppPerformance.trigger).toHaveBeenNthCalledWith(1, 'LaunchDarkly');
 
       variations[FLAGS.__FLAG_FOR_UNIT_TESTS__] = '"hello world"';
 

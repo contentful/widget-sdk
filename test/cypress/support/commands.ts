@@ -36,6 +36,10 @@ export function disableConsentManager() {
   window.localStorage.setItem('__disable_consentmanager', 'true');
 }
 
+export function disableDegradedAppPerformance() {
+  window.localStorage.setItem('__disable_degraded_app_performance', 'true');
+}
+
 /**
  * Enable app feature flag
  *
@@ -65,6 +69,7 @@ export function verifyNotification(type: 'success' | 'error', message: string) {
 
 Cypress.Commands.add('setAuthTokenToLocalStorage', setAuthTokenToLocalStorage);
 Cypress.Commands.add('disableConsentManager', disableConsentManager);
+Cypress.Commands.add('disableDegradedAppPerformance', disableDegradedAppPerformance);
 Cypress.Commands.add('enableFeatureFlags', enableFeatureFlags);
 Cypress.Commands.add('disableFeatureFlags', disableFeatureFlags);
 Cypress.Commands.add('verifyNotification', verifyNotification);

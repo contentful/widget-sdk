@@ -295,6 +295,8 @@ registerGenericEvent('entry_references:publish');
 registerGenericEvent('entry_references:validate');
 registerGenericEvent('editor_workbench:tab_open');
 
+registerGenericEvent('degraded_app_performance:modal_shown');
+
 /**
  * Registers an event to be tracked by snowplow.
  * @param {string} event

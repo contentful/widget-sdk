@@ -2,6 +2,9 @@ import React from 'react';
 import { Modal, Typography, Paragraph, Button } from '@contentful/forma-36-react-components';
 import { ModalLauncher } from 'core/components/ModalLauncher';
 import ContactUsButton from 'ui/Components/ContactUsButton';
+import * as Telemetry from 'i13n/Telemetry';
+import * as Analytics from 'analytics/Analytics';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 
 let modalTriggered;
 
@@ -9,12 +12,24 @@ export function init() {
   modalTriggered = false;
 }
 
-export function trigger() {
-  if (modalTriggered) {
+export function trigger(reason) {
+  const store = getBrowserStorage();
+
+  // Many contract tests fail because they don't disable/mock flags, and LaunchDarly will trigger this
+  // in those cases. This isn't a great solution but it's a good temporary fix while a longer term
+  // solution is brainstormed.
+  if (modalTriggered || store.get('__disable_degraded_app_performance')) {
     return;
   }
 
   modalTriggered = true;
+
+  Telemetry.count('degraded-app-performance-modal-shown', {
+    reason,
+  });
+  Analytics.track('degraded_app_performance:modal_shown', {
+    reason,
+  });
 
   ModalLauncher.open(({ isShown, onClose }) => (
     <Modal

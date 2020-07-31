@@ -268,7 +268,7 @@ export async function getVariation(flagName, { organizationId, spaceId, environm
         data: { flagName, organizationId, spaceId, environmentId },
       });
 
-      DegradedAppPerformance.trigger();
+      DegradedAppPerformance.trigger('LaunchDarkly');
 
       return FALLBACK_VALUES[flagName];
     }
@@ -325,7 +325,7 @@ export async function getVariation(flagName, { organizationId, spaceId, environm
         if (value === FLAG_PROMISE_ERRED) {
           _.set(variationCache, key, undefined);
 
-          DegradedAppPerformance.trigger();
+          DegradedAppPerformance.trigger('LaunchDarkly');
 
           return FALLBACK_VALUES[flagName];
         }
