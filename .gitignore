@@ -36,3 +36,6 @@ reports/
 # PACT
 logs/
 pacts/
+
+# VS Code
+*.code-workspace
