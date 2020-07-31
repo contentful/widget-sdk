@@ -1,0 +1,14 @@
+{
+  "name": "Content type",
+  "usage": 0,
+  "limits": {
+    "included": 70,
+    "maximum": 70
+  },
+  "parent": null,
+  "kind": "permanent",
+  "sys": {
+    "type": "SpaceResource",
+    "id": "content_type"
+  }
+}

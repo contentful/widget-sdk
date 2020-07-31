@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { TextLink, Note, Paragraph } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { getVariation, FLAGS } from 'LaunchDarkly';
 import ExternalTextLink from 'app/common/ExternalTextLink';
 import { websiteUrl } from 'Config';
 
@@ -50,8 +49,7 @@ export function UserLimitBanner({ orgId, spaces, usersCount }) {
         basePlan = await getBasePlan(endpoint);
 
         if (isFreePlan(basePlan)) {
-          const variation = getVariation(FLAGS.PRICING_2020_RELEASED, { organizationId: orgId });
-          setShouldShowCommunityBanner(variation);
+          setShouldShowCommunityBanner(true);
         } else if (
           isSelfServicePlan(basePlan) &&
           usersCount >= THRESHOLD_NUMBER_TO_DISPLAY_BANNER
