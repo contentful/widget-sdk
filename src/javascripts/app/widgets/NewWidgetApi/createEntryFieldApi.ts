@@ -1,22 +1,41 @@
 import { get } from 'lodash';
 import * as K from 'core/utils/kefir';
 import * as PathUtils from 'utils/Path';
-import { getModule } from 'core/NgRegistry';
 import localeStore from 'services/localeStore';
-import makeListOfFieldLocales from 'widgets/bridges/makeListOfFieldLocales';
 import { EntryFieldAPI } from 'contentful-ui-extensions-sdk';
+import { getModule } from 'core/NgRegistry';
 
 const ERROR_CODES = {
   BADUPDATE: 'ENTRY UPDATE FAILED',
   NO_PERMISSIONS: 'NOT ENOUGH PERMISSIONS',
 };
-11;
 
 const ERROR_MESSAGES = {
   MFAILUPDATE: 'Could not update entry field',
   MFAILREMOVAL: 'Could not remove value for field',
   MFAILPERMISSIONS: 'Could not update entry field',
 };
+
+export type FieldLocaleEventListenerFn = (
+  field: any,
+  locale: any,
+  extractFieldLocaleProperty: (fieldLocale: any) => any,
+  cb: (value: any) => void
+) => () => void;
+
+export function makeFieldLocaleEventListener($scope: any): FieldLocaleEventListenerFn {
+  return (field, locale, extractFieldLocaleProperty, cb) => {
+    const fieldLocaleScope = $scope.$new(false);
+    fieldLocaleScope.widget = { field };
+    fieldLocaleScope.locale = locale;
+
+    const fieldLocale = getModule('$controller')('FieldLocaleController', {
+      $scope: fieldLocaleScope,
+    });
+
+    return K.onValueScope($scope, extractFieldLocaleProperty(fieldLocale), cb);
+  };
+}
 
 export function makePermissionError() {
   const error = new Error(ERROR_MESSAGES.MFAILPERMISSIONS);
@@ -45,38 +64,56 @@ function canEdit(otDoc: any, field: { apiName: string }, localeCode?: string) {
   return otDoc.permissions.canEditFieldLocale(field.apiName, externalLocaleCode);
 }
 
-function getLocaleCodeAndCallback(args: any[]) {
+function getLocaleAndCallback(args: any[]) {
   if (args.length === 1) {
     return {
       cb: args[0],
-      localeCode: localeStore.getDefaultLocale().code,
+      locale: localeStore.getDefaultLocale(),
     };
-  } else if (args.length === 2) {
+  }
+
+  if (args.length === 2) {
+    const localeCode = args[0];
+    const locale = localeStore.getPrivateLocales().find((l) => l.code === localeCode);
+    if (!locale) {
+      throw new RangeError(`Unknown locale "${localeCode}".`);
+    }
+
     return {
       cb: args[1],
-      localeCode: args[0],
+      locale,
     };
   }
 
   throw new TypeError('expected either callback, or locale code and callback');
 }
 
-export function createEntryFieldApi({ field, $scope, internalContentType }): EntryFieldAPI {
+export function createEntryFieldApi({
+  field,
+  otDoc,
+  setInvalid,
+  listenToFieldLocaleEvent,
+}: {
+  field: any;
+  otDoc: any;
+  setInvalid: (localeCode: string, value: boolean) => void;
+  listenToFieldLocaleEvent: FieldLocaleEventListenerFn;
+}): EntryFieldAPI {
   const getValue = (localeCode?: string) => {
     const currentPath = getCurrentPath(field, localeCode);
 
-    return get($scope.otDoc.getValueAt([]), currentPath);
+    return get(otDoc.getValueAt([]), currentPath);
   };
 
   const setValue = async (value: any, localeCode?: string) => {
-    if (!canEdit($scope.otDoc, field, localeCode)) {
+    if (!canEdit(otDoc, field, localeCode)) {
       throw makePermissionError();
     }
 
     const currentPath = getCurrentPath(field, localeCode);
 
     try {
-      await $scope.otDoc.setValueAt(currentPath, value);
+      await otDoc.setValueAt(currentPath, value);
       return value;
     } catch (err) {
       throw makeShareJSError(err, ERROR_MESSAGES.MFAILUPDATE);
@@ -84,14 +121,14 @@ export function createEntryFieldApi({ field, $scope, internalContentType }): Ent
   };
 
   const removeValue = async (localeCode?: string) => {
-    if (!canEdit($scope.otDoc, field, localeCode)) {
+    if (!canEdit(otDoc, field, localeCode)) {
       throw makePermissionError();
     }
 
     const currentPath = getCurrentPath(field, localeCode);
 
     try {
-      await $scope.otDoc.removeValueAt(currentPath);
+      await otDoc.removeValueAt(currentPath);
     } catch (err) {
       throw makeShareJSError(err, ERROR_MESSAGES.MFAILREMOVAL);
     }
@@ -100,14 +137,14 @@ export function createEntryFieldApi({ field, $scope, internalContentType }): Ent
   function onValueChanged(callback: (value: any) => void): () => () => void;
   function onValueChanged(locale: string, callback: (value: any) => void): () => () => void;
   function onValueChanged(...args: any[]) {
-    const { cb, localeCode } = getLocaleCodeAndCallback(args);
-    const path = getCurrentPath(field, localeCode);
+    const { cb, locale } = getLocaleAndCallback(args);
+    const path = getCurrentPath(field, locale.code);
 
     return K.onValueWhile(
-      $scope.otDoc.changes,
-      $scope.otDoc.changes.filter((changedPath: any) => PathUtils.isAffecting(changedPath, path)),
+      otDoc.changes,
+      otDoc.changes.filter((changedPath: any) => PathUtils.isAffecting(changedPath, path)),
       () => {
-        cb(get($scope.otDoc.getValueAt([]), path));
+        cb(get(otDoc.getValueAt([]), path));
       }
     );
   }
@@ -118,25 +155,25 @@ export function createEntryFieldApi({ field, $scope, internalContentType }): Ent
     callback: (isDisabled: boolean) => void
   ): () => () => void;
   function onIsDisabledChanged(...args: any[]) {
-    const { cb, localeCode } = getLocaleCodeAndCallback(args);
-
-    const fieldLocalesControllers = makeListOfFieldLocales(
-      $scope,
-      getModule('$controller'),
-      internalContentType
+    const { cb, locale } = getLocaleAndCallback(args);
+    return listenToFieldLocaleEvent(
+      field,
+      locale,
+      (fieldLocale) => fieldLocale.access$,
+      (access: any) => cb(!!access.disabled)
     );
-    const controller = fieldLocalesControllers.find(
-      (c: { fieldId: string; localeCode: string }) =>
-        c.fieldId === field.apiName && c.localeCode === localeCode
+  }
+
+  function onSchemaErrorsChanged(callback: (errors: any) => void): () => () => void;
+  function onSchemaErrorsChanged(locale: string, callback: (errors: any) => void): () => () => void;
+  function onSchemaErrorsChanged(...args: any[]) {
+    const { cb, locale } = getLocaleAndCallback(args);
+    return listenToFieldLocaleEvent(
+      field,
+      locale,
+      (fieldLocale) => fieldLocale.errors$,
+      (errors: any) => cb(errors || [])
     );
-
-    if (!controller) {
-      throw new RangeError(`Unknown locale code ${localeCode}`);
-    }
-
-    return K.onValueScope($scope, controller.fieldLocale.access$, (access: any) => {
-      cb(!!access.disabled);
-    });
   }
 
   const id = field.apiName ?? field.id;
@@ -174,14 +211,9 @@ export function createEntryFieldApi({ field, $scope, internalContentType }): Ent
         onValueChanged: (cb) => onValueChanged(localeCode, cb),
         onIsDisabledChanged: (cb) =>
           onIsDisabledChanged(localeCode, cb as (isDisabled: boolean) => void),
-        onSchemaErrorsChanged: (cb) => {
-          return K.onValueScope($scope, $scope.fieldLocale.errors$, (errors) => {
-            cb(errors || []);
-          });
-        },
-        setInvalid: (isInvalid) => {
-          $scope.fieldController.setInvalid(localeCode, isInvalid);
-        },
+        onSchemaErrorsChanged: (cb) =>
+          onSchemaErrorsChanged(localeCode, cb as (errors: any) => void),
+        setInvalid: (isInvalid) => setInvalid(localeCode, isInvalid),
       };
     },
   };

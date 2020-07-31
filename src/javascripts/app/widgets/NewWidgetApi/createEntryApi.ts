@@ -1,22 +1,37 @@
-import { createEntryFieldApi } from './createEntryFieldApi';
+import { createEntryFieldApi, FieldLocaleEventListenerFn } from './createEntryFieldApi';
 
 import * as K from 'core/utils/kefir';
-import { EntryAPI, EntryFieldAPI } from 'contentful-ui-extensions-sdk';
+import { EntryAPI, EntryFieldAPI, ContentType } from 'contentful-ui-extensions-sdk';
 
-export function createEntryApi({ internalContentType, $scope }): EntryAPI {
+export function createEntryApi({
+  internalContentType,
+  otDoc,
+  setInvalid,
+  listenToFieldLocaleEvent,
+}: {
+  internalContentType: ContentType;
+  otDoc: any;
+  setInvalid: (localeCode: string, value: boolean) => void;
+  listenToFieldLocaleEvent: FieldLocaleEventListenerFn;
+}): EntryAPI {
   const fields = internalContentType.fields.map((field: any) => {
-    return createEntryFieldApi({ field, $scope, internalContentType });
+    return createEntryFieldApi({
+      field,
+      otDoc,
+      setInvalid,
+      listenToFieldLocaleEvent,
+    });
   });
 
   return {
     getSys: () => {
-      return K.getValue($scope.otDoc.sysProperty);
+      return K.getValue(otDoc.sysProperty);
     },
     onSysChanged: (cb) => {
-      return K.onValue($scope.otDoc.sysProperty, cb as (value: unknown) => void);
+      return K.onValue(otDoc.sysProperty, cb as (value: unknown) => void);
     },
     fields: reduceFields(fields),
-    metadata: $scope.otDoc.getValueAt(['metadata']),
+    metadata: otDoc.getValueAt(['metadata']),
   };
 }
 

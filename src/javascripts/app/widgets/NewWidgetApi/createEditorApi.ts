@@ -1,34 +1,58 @@
 import { EditorInterface, SharedEditorSDK } from 'contentful-ui-extensions-sdk';
 
 type Callback = (value: any) => any;
+type UnsubscribeFn = () => void;
+type ValueGetterFn = () => any;
+
+interface Locale {
+  code: string;
+}
+
+interface LocaleData {
+  activeLocales?: Locale[];
+  isSingleLocaleModeOn?: boolean;
+  focusedLocale?: Locale;
+}
+
+interface Preferences {
+  showDisabledFields?: boolean;
+}
 
 export function createEditorApi({
   editorInterface,
-  $scope,
+  getLocaleData,
+  getPreferences,
+  watch,
 }: {
   editorInterface: EditorInterface;
-  $scope: any;
+  getLocaleData: () => LocaleData;
+  getPreferences: () => Preferences;
+  watch: (watchFn: ValueGetterFn, cb: Callback) => UnsubscribeFn;
 }): SharedEditorSDK['editor'] {
   return {
     editorInterface,
     onLocaleSettingsChanged: makeHandler(
-      ['localeData.activeLocales', 'localeData.isSingleLocaleModeOn', 'localeData.focusedLocale'],
+      [
+        () => getLocaleData().activeLocales,
+        () => getLocaleData().isSingleLocaleModeOn,
+        () => getLocaleData().focusedLocale,
+      ],
       getLocaleSettings
     ),
     onShowDisabledFieldsChanged: makeHandler(
-      ['preferences.showDisabledFields'],
-      () => $scope.preferences.showDisabledFields
+      [() => getPreferences().showDisabledFields],
+      () => !!getPreferences().showDisabledFields
     ),
   };
 
-  function makeHandler(watchExpressions: string[], getCallbackValue: () => any) {
+  function makeHandler(watchFns: ValueGetterFn[], getCallbackValue: ValueGetterFn) {
     const handlers: Callback[] = [];
-    let unsubscribe: null | (() => void) = null;
+    let unsubscribe: UnsubscribeFn | null = null;
 
     const subscribeOrUnsubscribe = () => {
       if (!unsubscribe && handlers.length > 0) {
-        const unsubscribeFns = watchExpressions.map((exp) => {
-          return $scope.$watch(exp, () => {
+        const unsubscribeFns = watchFns.map((watchFn) => {
+          return watch(watchFn, () => {
             handlers.forEach((cb) => cb(getCallbackValue()));
           });
         });
@@ -53,15 +77,18 @@ export function createEditorApi({
   }
 
   function getLocaleSettings() {
-    const mode = $scope.localeData.isSingleLocaleModeOn ? 'single' : 'multi';
+    const localeData = getLocaleData();
+    const mode = localeData.isSingleLocaleModeOn ? 'single' : 'multi';
+
     if (mode === 'single') {
-      const focusedLocale = $scope.localeData.focusedLocale;
+      const { focusedLocale } = localeData;
       return {
         mode,
         focused: focusedLocale ? focusedLocale.code : undefined,
       };
     }
-    const activeLocales = $scope.localeData.activeLocales || [];
+
+    const activeLocales = localeData.activeLocales || [];
     return {
       mode,
       active: activeLocales.map((locale) => locale.code).filter((code) => code),

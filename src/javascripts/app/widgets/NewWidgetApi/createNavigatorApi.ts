@@ -5,23 +5,20 @@ import {
 import makePageExtensionHandlers from 'widgets/bridges/makePageExtensionHandlers';
 import { onSlideInNavigation } from 'navigation/SlideInNavigator/index';
 import { WidgetNamespace } from 'features/widget-renderer';
-import APIClient from 'data/APIClient';
 import { NavigatorAPI } from 'contentful-ui-extensions-sdk';
 
 interface NavigatorProps {
-  cma: APIClient;
   spaceContext: any;
   widgetNamespace: WidgetNamespace;
   widgetId: string;
 }
 
 export function createNavigatorApi({
-  cma,
   spaceContext,
   widgetNamespace,
   widgetId,
 }: NavigatorProps): NavigatorAPI {
-  const navigateToContentEntity = makeExtensionNavigationHandlers({ cma });
+  const navigateToContentEntity = makeExtensionNavigationHandlers({ cma: spaceContext.cma });
   const navigateToBulkEditor = makeExtensionBulkNavigationHandlers();
 
   // TODO:

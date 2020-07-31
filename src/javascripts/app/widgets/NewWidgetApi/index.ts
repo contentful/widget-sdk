@@ -6,7 +6,6 @@ import { createLocalesApi } from './createLocalesApi';
 import { createDialogsApi } from './createDialogsApi';
 import { createSpaceApi } from './createSpaceApi';
 import { createContentTypeApi } from './createContentTypeApi';
-import makeExtensionAccessHandlers from 'widgets/bridges/makeExtensionAccessHandlers';
 import { createTagsRepo } from 'features/content-tags';
 import { createUserApi } from './createUserApi';
 import { createIdsApi } from './createIdsApi';
@@ -14,6 +13,8 @@ import { createEntryApi } from './createEntryApi';
 import { FieldExtensionSDK, DialogExtensionSDK, DialogsAPI } from 'contentful-ui-extensions-sdk';
 import { createEditorApi } from './createEditorApi';
 import { WidgetNamespace } from 'features/widget-renderer';
+import { createAccessApi } from './createAccessApi';
+import { makeFieldLocaleEventListener } from './createEntryFieldApi';
 
 export function createFieldWidgetSDK({
   fieldId,
@@ -33,18 +34,43 @@ export function createFieldWidgetSDK({
   $scope: any;
 }): FieldExtensionSDK {
   const { contentType: internalContentType } = $scope.entityInfo;
-  const { editorInterface } = $scope.editorData;
-  const contentType = createContentTypeApi(internalContentType);
-  const environmentIds = [spaceContext.getEnvironmentId(), ...spaceContext.getAliasesIds()];
-  const tagsRepo = createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId());
 
-  const entry = createEntryApi({ internalContentType, $scope });
+  // "Editing" APIs
+  const editor = createEditorApi({
+    editorInterface: $scope.editorData.editorInterface,
+    getLocaleData: () => $scope.localeData,
+    getPreferences: () => $scope.preferences,
+    watch: (watchFn, cb) => $scope.$watch(watchFn, cb),
+  });
+  const contentType = createContentTypeApi(internalContentType);
+  const entry = createEntryApi({
+    internalContentType,
+    otDoc: $scope.otDoc,
+    // TODO: `setInvalid` is only available on `fieldController`. The SDK can only
+    // mark the current field as invalid. We could consider moving `setInvalid` to
+    // the field-locale level.
+    setInvalid: (localeCode, isInvalid) => $scope.fieldController.setInvalid(localeCode, isInvalid),
+    listenToFieldLocaleEvent: makeFieldLocaleEventListener($scope),
+  });
   const field = entry.fields[fieldId].getForLocale(localeCode);
-  const editor = createEditorApi({ editorInterface, $scope });
+
+  // "Space-level" APIs
+  const locales = createLocalesApi();
+  const space = createSpaceApi({
+    cma: getBatchingApiClient(spaceContext.cma),
+    initialContentTypes: spaceContext.publishedCTs.getAllBare(),
+    pubSubClient: spaceContext.pubsubClient,
+    environmentIds: [spaceContext.getEnvironmentId(), ...spaceContext.getAliasesIds()],
+    spaceId: spaceContext.getId(),
+    tagsRepo: createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId()),
+    usersRepo: spaceContext.users,
+  });
+
+  // "Static data" APIs
   const user = createUserApi(spaceContext.space.data.spaceMember);
   const ids = createIdsApi(
     spaceContext.getId(),
-    environmentIds[0],
+    spaceContext.getEnvironmentId(),
     contentType,
     entry,
     field,
@@ -52,75 +78,67 @@ export function createFieldWidgetSDK({
     widgetNamespace,
     widgetId
   );
-
   const parameters = {
     installation: {},
     instance: editorInterfaceSettings,
   };
 
-  const cma = getBatchingApiClient(spaceContext.cma);
-  const space = createSpaceApi({
-    cma,
-    initialContentTypes: spaceContext.publishedCTs.getAllBare(),
-    pubSubClient: spaceContext.pubsubClient,
-    environmentIds,
-    spaceId: spaceContext.getId(),
-    tagsRepo,
-    usersRepo: spaceContext.users,
-  });
+  // "Utility" APIs
+  const navigator = createNavigatorApi({ spaceContext, widgetNamespace, widgetId });
+  const notifier = Notification;
+  const access = createAccessApi();
 
-  const navigator = createNavigatorApi({ cma, spaceContext, widgetNamespace, widgetId });
-  const locales = createLocalesApi();
-  const canAccess = makeExtensionAccessHandlers();
+  const location = {
+    // TODO: hardcoded! Use current location instead of "entry-field"
+    is: (type: string) => type === 'entry-field',
+  };
 
-  const apis: FieldExtensionSDK = {
-    space,
-    navigator,
-    locales,
-    entry,
+  const window = {
+    // There are no iframes in the internal API so any methods related
+    // to <iframe> height can be safely ignored.
+    updateHeight: noop,
+    startAutoResizer: noop,
+    stopAutoResizer: noop,
+  };
+
+  const sdkWithoutDialogs: Omit<FieldExtensionSDK, 'dialogs'> = {
     editor,
+    contentType,
+    entry,
     field,
+    locales,
+    space,
     user,
     ids,
     parameters,
-    contentType,
-    location: {
-      // TODO: hardcoded! Use current location instead of "entry-field"
-      is: (type: string) => type === 'entry-field',
-    },
-    window: {
-      // There are no iframes in the internal API so any methods related
-      // to <iframe> height can be safely ignored.
-      updateHeight: noop,
-      startAutoResizer: noop,
-      stopAutoResizer: noop,
-    },
-    notifier: {
-      success: (text) => {
-        Notification.success(text);
-      },
-      error: (text) => {
-        Notification.error(text);
-      },
-    },
-    access: {
-      can: (action: string, entity: any) => {
-        return Promise.resolve(canAccess(action, entity));
-      },
-    },
-
-    // Hack starts here
-    dialogs: ({} as unknown) as DialogsAPI,
+    navigator,
+    notifier,
+    access,
+    location,
+    window,
   };
 
-  // Not a mistake
-  // We want to manipulate the apis object (passed as reference) so that DialogsAPI can self reference
-  // and we can open/close a dialog from a dialog (INCEPTION HORN)
-  const dialogs = createDialogsApi((apis as unknown) as DialogExtensionSDK);
-  apis.dialogs = dialogs;
-  // Hack ends here
+  const sdkForDialogs: DialogExtensionSDK = {
+    ...sdkWithoutDialogs,
+    // We cannot create dialogs API w/o full SDK including dialog methods.
+    // The reason is that we can open dialogs from dialogs. Empty "dialogs"
+    // namespace is replaced once the APIs are created with the same instance
+    // of the SDK. See passing `sdkForDialogs` by reference and assignment to
+    // the "dialogs" namespace later on.
+    dialogs: ({} as unknown) as DialogsAPI,
+    // Again, we cannot determine what closing a dialog means in this context.
+    // Implementation needs to be provided closer to the `ModalLauncher`.
+    close: () => {
+      throw new Error('close() implementation needs to be provided in createDialogsApi');
+    },
+  };
+  const dialogs = createDialogsApi(sdkForDialogs);
+  sdkForDialogs.dialogs = dialogs;
 
-  return apis;
+  return {
+    ...sdkWithoutDialogs,
+    dialogs,
+  };
 }
 
 // TODO: sync with regular API and make sure it's really read only,
