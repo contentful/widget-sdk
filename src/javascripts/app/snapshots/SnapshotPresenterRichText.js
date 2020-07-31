@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { ReadOnlyRichTextEditor } from 'app/widgets/RichText';
-import { createNewReadOnlyWidgetApi } from 'app/widgets/NewWidgetApi/createNewWidgetApi';
+import { createReadonlyFieldWidgetSDK } from 'app/widgets/NewWidgetApi';
 import { getModule } from 'core/NgRegistry';
 
 const SnapshotPresenterRichText = ({ className, value, contentType, entity, field, locale }) => {
   const [sdk, setSdk] = useState(null);
   useEffect(() => {
     const spaceContext = getModule('spaceContext');
-    const readOnlyWidgetApi = createNewReadOnlyWidgetApi({
+    const readOnlyWidgetApi = createReadonlyFieldWidgetSDK({
       field,
       locale,
       fieldValue: value,
