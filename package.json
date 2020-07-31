@@ -138,7 +138,7 @@
     "@commitlint/cli": "8.3.5",
     "@commitlint/config-conventional": "8.3.4",
     "@contentful/cypress-pact": "3.2.1",
-    "@contentful/segment-test-reporter": "0.0.1",
+    "@contentful/segment-test-reporter": "0.0.2",
     "@dr.pogodin/babel-preset-svgr": "^1.0.10",
     "@pact-foundation/pact": "9.11.0",
     "@pact-foundation/pact-web": "9.10.0",
