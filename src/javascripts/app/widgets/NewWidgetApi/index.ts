@@ -143,14 +143,6 @@ export function createFieldWidgetSDK({
 
 // TODO: sync with regular API and make sure it's really read only,
 // including CMA operations via the space API
-export function createReadonlyFieldWidgetSDK({
-  _field,
-  _fieldValue,
-  _locale,
-  _entry,
-  _contentType,
-  _cma,
-  _initialContentTypes,
-}) {
+export function createReadonlyFieldWidgetSDK() {
   return {};
 }

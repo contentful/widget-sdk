@@ -70,20 +70,21 @@ async function findWidget(widgetNamespace: WidgetNamespace, widgetId: string) {
   const widget = await loader.getOne({ widgetNamespace, widgetId });
 
   // If a widget was found, meaning that an app or an extension
-  // are already installed, just return it.
+  // is already installed, just return it.
   if (widget) {
     return widget;
   }
 
-  // TODO:
-  //   Handle this piece of logic whenever we use WidgetRenderer in the AppConfig screen.
-  //   Please note: presence of appDefinition below just means it's during the installation flow
-  //   hence outside of said flow, that will be undefined.
-  // If there is no widget found but we may be in the installation
-  // process, create an artificial widget out of AppDefinition.
-  // const { appDefinition } = dependencies;
-  // if (widgetNamespace === WidgetNamespace.APP && appDefinition) {
-  //   return buildAppDefinitionWidget(appDefinition, getMarketplaceDataProvider());
+  // TODO: We will need to handle one more case when we'll start using SDK in the App Config view.
+  // It is possible to open dialogs when installing an app, even before the app is installed.
+  // Before it's installed, there is no AppInstallation entity, so the result of loader call
+  // above will be empty. In this case we need to create an artificial widget instance out
+  // of AppDefinition.
+  //
+  // Pseudocode:
+  //
+  // if (widgetNamespace === WidgetNamespace.APP && isInAppConfigView() {
+  //   return buildArtificialAppDefinitionWidget(widgetId);
   // }
 
   throw new Error(`No widget with ID "${widgetId}" found in "${widgetNamespace}" namespace.`);

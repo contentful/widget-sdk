@@ -2,7 +2,7 @@ import ScheduledActionsRepo from 'app/ScheduledActions/DataManagement/ScheduledA
 import { CONTENT_ENTITY_UPDATED_EVENT, PubSubClient } from 'services/PubSubService';
 import { getToken } from 'Authentication';
 import { uploadApiUrl } from 'Config';
-import { SpaceAPI, ContentType } from 'contentful-ui-extensions-sdk';
+import { SpaceAPI, ContentType, User } from 'contentful-ui-extensions-sdk';
 import { createContentTypeApi } from './createContentTypeApi';
 import { get } from 'lodash';
 
@@ -43,13 +43,13 @@ export function createSpaceApi({
   tagsRepo,
   usersRepo,
 }: {
-  cma: any; // TODO: type/convert API client
+  cma: any;
   initialContentTypes: ContentType[];
   pubSubClient?: PubSubClient;
   environmentIds: string[];
   spaceId: string;
-  tagsRepo: any; // TODO: type/convert Tags repo
-  usersRepo: any; // TODO: type/covert Users repo
+  tagsRepo: any;
+  usersRepo: any;
 }): InternalSpaceAPI {
   return {
     // Proxy directly to the CMA client:
@@ -107,7 +107,7 @@ export function createSpaceApi({
     return initialContentTypes.map(createContentTypeApi);
   }
 
-  async function createUpload(base64Data) {
+  async function createUpload(base64Data: string) {
     // Convert raw Base64 string to Uint8Array so we can post the binary to upload API
     const raw = window.atob(base64Data);
     const rawLength = raw.length;
@@ -140,7 +140,7 @@ export function createSpaceApi({
       total: users.length,
       skip: 0,
       limit: users.length,
-      items: users.map((user) => ({
+      items: users.map((user: User) => ({
         sys: { type: 'User', id: user.sys.id },
         firstName: user.firstName,
         lastName: user.lastName,

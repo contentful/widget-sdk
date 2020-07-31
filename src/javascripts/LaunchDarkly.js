@@ -425,7 +425,14 @@ async function createFlagPromise(flagName, { user, organizationId, spaceId, envi
 
     logger.logError(`Flag ${flagName} invalid or missing variation data`, {
       groupingHash: 'InvalidLDFlag',
-      data: { flagName, availableFlagNames, organizationId, spaceId, environmentId },
+      data: {
+        flagName,
+        availableFlagNames:
+          availableFlagNames.length > 0 ? availableFlagNames.join(', ') : 'No flags',
+        organizationId,
+        spaceId,
+        environmentId,
+      },
     });
 
     return FLAG_PROMISE_ERRED;
