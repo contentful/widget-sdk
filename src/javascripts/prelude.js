@@ -248,9 +248,6 @@ angular
         /* webpackMode: "eager" */
         'widgets/ExtensionActivationTracking'
       );
-      const { init: initRolesForWalkMe } = await import(
-        /* webpackMode: "eager" */ 'app/RolesForWalkMe'
-      );
 
       const { initDialogsController } = await import(
         /* webpackMode: "eager" */ 'components/client/dialogsInitController'
@@ -278,7 +275,6 @@ angular
       initTokenStore();
       initAutoCreateNewSpace();
       initExtentionActivationTracking();
-      initRolesForWalkMe();
       initDegradedAppPerformance();
 
       initDialogsController();

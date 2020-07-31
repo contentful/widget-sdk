@@ -29,7 +29,6 @@ let initializationPromise = null;
 let initialized = false;
 
 export const FLAGS = {
-  WALK_FOR_ME: 'feature-fe-10-2017-walkme-integration-eli-lilly',
   ENVIRONMENTS_FLAG: 'feature-dv-11-2017-environments',
   ENTRY_COMMENTS: 'feature-04-2019-entry-comments',
   ENTITY_EDITOR_CMA_EXPERIMENT: 'feature-pen-07-2019-fake-cma-calls-experiment-to-replace-sharejs',
@@ -51,7 +50,6 @@ export const FLAGS = {
 };
 
 const FALLBACK_VALUES = {
-  [FLAGS.WALK_FOR_ME]: null,
   [FLAGS.ENVIRONMENTS_FLAG]: true,
   [FLAGS.ENTRY_COMMENTS]: true,
   [FLAGS.ENTITY_EDITOR_CMA_EXPERIMENT]: undefined,
