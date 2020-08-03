@@ -3,6 +3,7 @@ import * as CallBuffer from 'utils/CallBuffer';
 import * as LazyLoader from 'utils/LazyLoader';
 import * as logger from 'services/logger';
 import * as Config from 'Config';
+import * as Intercom from 'services/intercom';
 import { window } from 'core/services/window';
 
 /**
@@ -103,6 +104,14 @@ function install(loadOptions) {
 
   analytics.load = _.noop;
   analytics._loadOptions = loadOptions;
+  analytics.ready(() => {
+    // Only enable Intercom if the user actually enabled it
+    //
+    // Note: Intercom is capitalized on purpose here
+    if (loadOptions?.integrations?.Intercom) {
+      Intercom.enable();
+    }
+  });
 
   return LazyLoader.get('segment');
 }
