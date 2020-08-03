@@ -12,11 +12,21 @@ import {
   TextLink,
   Icon,
 } from '@contentful/forma-36-react-components';
-import { Grid, GridItem } from '@contentful/forma-36-react-components/dist/alpha';
+import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
 
 const styles = {
-  grid: css({ alignItems: 'center' }),
-  content: css({ marginLeft: '40px' }),
+  grid: css({
+    alignItems: 'center',
+    height: '100%',
+    '@media screen and (min-width: 769px)': {
+      gap: `0 ${tokens.spacing3Xl}`,
+    },
+  }),
+  content: css({
+    '@media screen and (min-width: 769px)': {
+      marginLeft: '40px',
+    },
+  }),
   list: css({
     color: tokens.colorTextMid,
     marginTop: tokens.spacing2Xl,
@@ -50,39 +60,35 @@ const styles = {
 };
 
 export const PricingNewFeatures = ({ onNext }) => (
-  <Grid columns={2} rows={1} columnGap="spacing3Xl" flow="row" className={styles.grid}>
-    <GridItem>
-      <div className={styles.content}>
-        <DisplayText size="large">Create more complex digital products with</DisplayText>
-        <List className={styles.list}>
-          <ListItem className={styles.listItem}>access to GraphQL</ListItem>
-          <ListItem className={styles.listItem}>48 content types (twice as many!)</ListItem>
-          <ListItem className={styles.listItem}>25,000 assets and entries</ListItem>
-          <ListItem className={styles.listItem}>an additional role</ListItem>
-          <ListItem className={styles.listItem}>4 environments</ListItem>
-        </List>
-        {onNext ? (
-          <Button size="large" onClick={onNext}>
-            <span className={styles.alignedButtonLabel}>
-              How does this affect me
-              <Icon icon="ChevronRight" color="white" size="medium" />
-            </span>
-          </Button>
-        ) : (
-          <TextLink
-            href="https://www.contentful.com/pricing/?utm_medium=webapp&utm_source=product&utm_campaign=20q3-community-edition-launch"
-            rel="noopener noreferrer"
-            target="_blank"
-            icon="ExternalLink"
-            className={styles.link}>
-            Learn more
-          </TextLink>
-        )}
-      </div>
-    </GridItem>
-    <GridItem>
-      <NewFeaturesImage />
-    </GridItem>
+  <Grid columns={2} rows={1} columnGap="spacingXl" flow="row" className={styles.grid}>
+    <div className={styles.content}>
+      <DisplayText size="large">Create more complex digital products with</DisplayText>
+      <List className={styles.list}>
+        <ListItem className={styles.listItem}>access to GraphQL</ListItem>
+        <ListItem className={styles.listItem}>48 content types (twice as many!)</ListItem>
+        <ListItem className={styles.listItem}>25,000 assets and entries</ListItem>
+        <ListItem className={styles.listItem}>an additional role</ListItem>
+        <ListItem className={styles.listItem}>4 environments</ListItem>
+      </List>
+      {onNext ? (
+        <Button size="large" onClick={onNext}>
+          <span className={styles.alignedButtonLabel}>
+            How does this affect me
+            <Icon icon="ChevronRight" color="white" size="medium" />
+          </span>
+        </Button>
+      ) : (
+        <TextLink
+          href="https://www.contentful.com/pricing/?utm_medium=webapp&utm_source=product&utm_campaign=20q3-community-edition-launch"
+          rel="noopener noreferrer"
+          target="_blank"
+          icon="ExternalLink"
+          className={styles.link}>
+          Learn more
+        </TextLink>
+      )}
+    </div>
+    <NewFeaturesImage />
   </Grid>
 );
 

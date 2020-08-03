@@ -9859,7 +9859,7 @@ pre,
     background: var(--color-element-lightest);
   }
   .modern-stack-onboarding--wrapper {
-    margin: 15px auto;
+    margin: 0 auto;
     max-width: 1500px;
   }
   .modern-stack-onboarding--header {
