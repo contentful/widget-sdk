@@ -136,6 +136,7 @@ const EntitiesView = ({
   };
 
   const onSelectSavedView = () => onSelect();
+  const onUpdateSearch = () => onSelect();
 
   return (
     <Fragment>
@@ -160,7 +161,7 @@ const EntitiesView = ({
                   entityType={entityType}
                   isLoading={isLoading}
                   listViewContext={listViewContext}
-                  onUpdate={() => updateEntities()}
+                  onUpdate={onUpdateSearch}
                   getContentTypes={getContentTypes}
                   users={users}
                 />
