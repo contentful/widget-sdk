@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, wait } from '@testing-library/react';
+import { render, screen, waitForElementToBeRemoved } from '@testing-library/react';
 
 import { getOrganization } from 'services/TokenStore';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
@@ -27,13 +27,12 @@ describe('NewUserRoute', () => {
       custom
     );
 
-    return render(<NewUserRoute {...props} />);
+    render(<NewUserRoute {...props} />);
+    return waitForElementToBeRemoved(() => screen.getByTestId('cf-ui-loading-state'));
   };
 
   it('requests the organization and teams org feature', async () => {
-    build();
-
-    await wait();
+    await build();
 
     expect(getOrganization).toBeCalledWith('org_1234');
     expect(getOrgFeature).toBeCalledWith('org_1234', 'teams');
@@ -42,21 +41,9 @@ describe('NewUserRoute', () => {
   it('shows the error page if any of the requests err', async () => {
     getOrganization.mockRejectedValueOnce(new Error('Unknown organization'));
 
-    const { queryByTestId } = build();
+    await build();
 
-    await wait();
-
-    expect(queryByTestId('cf-ui-error-state')).toBeVisible();
-  });
-
-  it('shows the loading state while the requests are pending', async () => {
-    const { queryByTestId } = build();
-
-    expect(queryByTestId('cf-ui-loading-state')).toBeVisible();
-
-    await wait();
-
-    expect(queryByTestId('cf-ui-loading-state')).toBeNull();
+    expect(screen.queryByTestId('cf-ui-error-state')).toBeVisible();
   });
 
   it('shows the NewUser invitation form when requests finish and are successful', async () => {
@@ -64,10 +51,8 @@ describe('NewUserRoute', () => {
       hasSsoFeature: true,
     });
 
-    const { queryByTestId } = build();
+    await build();
 
-    await wait();
-
-    expect(queryByTestId('new-user-invitation-form')).toBeVisible();
+    expect(screen.queryByTestId('new-user-invitation-form')).toBeVisible();
   });
 });
