@@ -14,7 +14,7 @@ import {
   DialogExtensionSDK,
 } from 'contentful-ui-extensions-sdk';
 
-export function createDialogsApi(apis: DialogExtensionSDK): DialogsAPI {
+export function createDialogsApi(sdk: DialogExtensionSDK): DialogsAPI {
   return {
     openAlert: ExtensionDialogs.openAlert,
     openConfirm: ExtensionDialogs.openConfirm,
@@ -46,21 +46,21 @@ export function createDialogsApi(apis: DialogExtensionSDK): DialogsAPI {
       });
     },
     openCurrent: function (opts) {
-      if (apis.ids.app) {
+      if (sdk.ids.app) {
         return this.openCurrentApp(opts);
       } else {
         return this.openExtension({
           ...opts,
-          id: apis.ids.extension,
+          id: sdk.ids.extension,
         });
       }
     },
     openCurrentApp: (opts) => {
-      const options = { ...opts, id: apis.ids.app };
-      return openCustomDialog(WidgetNamespace.APP, options, apis);
+      const options = { ...opts, id: sdk.ids.app };
+      return openCustomDialog(WidgetNamespace.APP, options, sdk);
     },
     openExtension: (opts) => {
-      return openCustomDialog(WidgetNamespace.EXTENSION, opts, apis);
+      return openCustomDialog(WidgetNamespace.EXTENSION, opts, sdk);
     },
   };
 }
@@ -122,7 +122,7 @@ async function openCustomDialog(
         : (options.width as string | undefined);
 
     // Pass onClose in order to allow child modal to close
-    // const childApis = { ...apis, close: onClose };
+    // const childApis = { ...sdk, close: onClose };
 
     return (
       <Modal
