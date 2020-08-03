@@ -33,7 +33,7 @@ export const createUserApi = (spaceMember: SpaceMember): User => {
         id: spaceMember.sys.id,
       },
       admin: !!spaceMember.admin,
-      roles: spaceMember.roles.map(role => ({
+      roles: spaceMember.roles.map((role) => ({
         name: role.name,
         description: role.description,
       })),

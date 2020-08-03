@@ -10,7 +10,12 @@ import { createTagsRepo } from 'features/content-tags';
 import { createUserApi } from './createUserApi';
 import { createIdsApi } from './createIdsApi';
 import { createEntryApi } from './createEntryApi';
-import { FieldExtensionSDK, DialogExtensionSDK, DialogsAPI } from 'contentful-ui-extensions-sdk';
+import {
+  FieldExtensionSDK,
+  DialogExtensionSDK,
+  DialogsAPI,
+  ContentType,
+} from 'contentful-ui-extensions-sdk';
 import { createEditorApi } from './createEditorApi';
 import { WidgetNamespace } from 'features/widget-renderer';
 import { createAccessApi } from './createAccessApi';
@@ -24,6 +29,7 @@ export function createFieldWidgetSDK({
   editorInterfaceSettings = {},
   spaceContext,
   $scope,
+  internalContentType,
 }: {
   fieldId: string;
   localeCode: string;
@@ -32,9 +38,8 @@ export function createFieldWidgetSDK({
   editorInterfaceSettings?: Record<string, any>;
   spaceContext: any;
   $scope: any;
+  internalContentType: ContentType;
 }): FieldExtensionSDK {
-  const { contentType: internalContentType } = $scope.entityInfo;
-
   // "Editing" APIs
   const editor = createEditorApi({
     editorInterface: $scope.editorData.editorInterface,

@@ -21,6 +21,7 @@ export function EntityFieldControl(props: { scope: any; hasInitialFocus: boolean
       editorInterfaceSettings: settings,
       $scope: props.scope,
       spaceContext,
+      internalContentType: props.scope.entityInfo.contentType,
     });
   }, [props.scope]);
 
