@@ -2,7 +2,7 @@ import { get } from 'lodash';
 import * as K from 'core/utils/kefir';
 import * as PathUtils from 'utils/Path';
 import localeStore from 'services/localeStore';
-import { EntryFieldAPI } from 'contentful-ui-extensions-sdk';
+import { EntryFieldAPI, Items } from 'contentful-ui-extensions-sdk';
 import { getModule } from 'core/NgRegistry';
 
 const ERROR_CODES = {
@@ -17,7 +17,7 @@ const ERROR_MESSAGES = {
 };
 
 export type FieldLocaleEventListenerFn = (
-  field: any,
+  internalField: InternalField,
   locale: any,
   extractFieldLocaleProperty: (fieldLocale: any) => any,
   cb: (value: any) => void
@@ -49,19 +49,19 @@ export function makeShareJSError(shareJSError: { message: any }, message: string
   return Object.assign(error, { code: ERROR_CODES.BADUPDATE, data });
 }
 
-function getCurrentPath(field: { id: string }, localeCode?: string) {
+function getCurrentPath(internalField: InternalField, publicLocaleCode?: string) {
   let internalLocaleCode = localeStore.getDefaultLocale().internal_code;
 
-  if (localeCode) {
-    internalLocaleCode = localeStore.toInternalCode(localeCode) ?? internalLocaleCode;
+  if (publicLocaleCode) {
+    internalLocaleCode = localeStore.toInternalCode(publicLocaleCode) ?? internalLocaleCode;
   }
 
-  return ['fields', field.id, internalLocaleCode];
+  return ['fields', internalField.id, internalLocaleCode];
 }
 
-function canEdit(otDoc: any, field: { apiName: string }, localeCode?: string) {
-  const externalLocaleCode = localeCode ?? localeStore.getDefaultLocale().code;
-  return otDoc.permissions.canEditFieldLocale(field.apiName, externalLocaleCode);
+function canEdit(otDoc: any, publicFieldId: string, publicLocaleCode?: string) {
+  const externalLocaleCode = publicLocaleCode ?? localeStore.getDefaultLocale().code;
+  return otDoc.permissions.canEditFieldLocale(publicFieldId, externalLocaleCode);
 }
 
 function getLocaleAndCallback(args: any[]) {
@@ -73,10 +73,10 @@ function getLocaleAndCallback(args: any[]) {
   }
 
   if (args.length === 2) {
-    const localeCode = args[0];
-    const locale = localeStore.getPrivateLocales().find((l) => l.code === localeCode);
+    const publicLocaleCode = args[0];
+    const locale = localeStore.getPrivateLocales().find(l => l.code === publicLocaleCode);
     if (!locale) {
-      throw new RangeError(`Unknown locale "${localeCode}".`);
+      throw new RangeError(`Unknown locale "${publicLocaleCode}".`);
     }
 
     return {
@@ -88,29 +88,39 @@ function getLocaleAndCallback(args: any[]) {
   throw new TypeError('expected either callback, or locale code and callback');
 }
 
+export interface InternalField {
+  apiName?: string;
+  id: string;
+  localized: boolean;
+  required: boolean;
+  validations: Record<string, any>[]
+  items: Items;
+  type: string;
+}
+
 export function createEntryFieldApi({
-  field,
+  internalField,
   otDoc,
   setInvalid,
   listenToFieldLocaleEvent,
 }: {
-  field: any;
+  internalField: InternalField;
   otDoc: any;
-  setInvalid: (localeCode: string, value: boolean) => void;
+  setInvalid: (publicLocaleCode: string, value: boolean) => void;
   listenToFieldLocaleEvent: FieldLocaleEventListenerFn;
 }): EntryFieldAPI {
-  const getValue = (localeCode?: string) => {
-    const currentPath = getCurrentPath(field, localeCode);
+  const getValue = (publicLocaleCode?: string) => {
+    const currentPath = getCurrentPath(internalField, publicLocaleCode);
 
     return get(otDoc.getValueAt([]), currentPath);
   };
 
-  const setValue = async (value: any, localeCode?: string) => {
-    if (!canEdit(otDoc, field, localeCode)) {
+  const setValue = async (value: any, publicLocaleCode?: string) => {
+    if (!canEdit(otDoc, internalField.apiName, publicLocaleCode)) {
       throw makePermissionError();
     }
 
-    const currentPath = getCurrentPath(field, localeCode);
+    const currentPath = getCurrentPath(internalField, publicLocaleCode);
 
     try {
       await otDoc.setValueAt(currentPath, value);
@@ -120,12 +130,12 @@ export function createEntryFieldApi({
     }
   };
 
-  const removeValue = async (localeCode?: string) => {
-    if (!canEdit(otDoc, field, localeCode)) {
+  const removeValue = async (publicLocaleCode?: string) => {
+    if (!canEdit(otDoc, internalField.apiName, publicLocaleCode)) {
       throw makePermissionError();
     }
 
-    const currentPath = getCurrentPath(field, localeCode);
+    const currentPath = getCurrentPath(internalField, publicLocaleCode);
 
     try {
       await otDoc.removeValueAt(currentPath);
@@ -135,10 +145,13 @@ export function createEntryFieldApi({
   };
 
   function onValueChanged(callback: (value: any) => void): () => () => void;
-  function onValueChanged(locale: string, callback: (value: any) => void): () => () => void;
+  function onValueChanged(
+    publicLocaleCode: string,
+    callback: (value: any) => void
+  ): () => () => void;
   function onValueChanged(...args: any[]) {
     const { cb, locale } = getLocaleAndCallback(args);
-    const path = getCurrentPath(field, locale.code);
+    const path = getCurrentPath(internalField, locale.code);
 
     return K.onValueWhile(
       otDoc.changes,
@@ -151,39 +164,45 @@ export function createEntryFieldApi({
 
   function onIsDisabledChanged(callback: (isDisabled: boolean) => void): () => () => void;
   function onIsDisabledChanged(
-    locale: string,
+    publicLocaleCode: string,
     callback: (isDisabled: boolean) => void
   ): () => () => void;
   function onIsDisabledChanged(...args: any[]) {
     const { cb, locale } = getLocaleAndCallback(args);
     return listenToFieldLocaleEvent(
-      field,
+      internalField,
       locale,
-      (fieldLocale) => fieldLocale.access$,
+      fieldLocale => fieldLocale.access$,
       (access: any) => cb(!!access.disabled)
     );
   }
 
   function onSchemaErrorsChanged(callback: (errors: any) => void): () => () => void;
-  function onSchemaErrorsChanged(locale: string, callback: (errors: any) => void): () => () => void;
+  function onSchemaErrorsChanged(
+    publicLocaleCode: string,
+    callback: (errors: any) => void
+  ): () => () => void;
   function onSchemaErrorsChanged(...args: any[]) {
     const { cb, locale } = getLocaleAndCallback(args);
     return listenToFieldLocaleEvent(
-      field,
+      internalField,
       locale,
-      (fieldLocale) => fieldLocale.errors$,
+      fieldLocale => fieldLocale.errors$,
       (errors: any) => cb(errors || [])
     );
   }
 
-  const id = field.apiName ?? field.id;
-  const locales = field.localized
-    ? localeStore.getPrivateLocales().map((locale) => locale.code)
+  const id = internalField.apiName ?? internalField.id; 
+  // We fall back to `internalField.id` because some old fields don't have an
+  // apiName / public ID
+  
+  const locales = internalField.localized
+    ? localeStore.getPrivateLocales().map(locale => locale.code)
     : [localeStore.getDefaultLocale().code];
-  const type = field.type;
-  const required = !!field.required;
-  const validations = field.validations ?? [];
-  const items = field.items ?? { validations: [] };
+  const type = internalField.type;
+  const required = !!internalField.required;
+  const validations = internalField.validations ?? [];
+  const items = internalField.items ?? { validations: [] };
 
   return {
     id,
@@ -197,23 +216,23 @@ export function createEntryFieldApi({
     removeValue,
     onValueChanged,
     onIsDisabledChanged,
-    getForLocale(localeCode) {
+    getForLocale(publicLocaleCode) {
       return {
         id,
-        locale: localeCode,
+        locale: publicLocaleCode,
         type,
         required,
         validations,
         items,
-        getValue: () => getValue(localeCode),
-        setValue: (value) => setValue(value, localeCode),
-        removeValue: () => removeValue(localeCode),
-        onValueChanged: (cb) => onValueChanged(localeCode, cb),
-        onIsDisabledChanged: (cb) =>
-          onIsDisabledChanged(localeCode, cb as (isDisabled: boolean) => void),
-        onSchemaErrorsChanged: (cb) =>
-          onSchemaErrorsChanged(localeCode, cb as (errors: any) => void),
-        setInvalid: (isInvalid) => setInvalid(localeCode, isInvalid),
+        getValue: () => getValue(publicLocaleCode),
+        setValue: value => setValue(value, publicLocaleCode),
+        removeValue: () => removeValue(publicLocaleCode),
+        onValueChanged: cb => onValueChanged(publicLocaleCode, cb),
+        onIsDisabledChanged: cb =>
+          onIsDisabledChanged(publicLocaleCode, cb as (isDisabled: boolean) => void),
+        onSchemaErrorsChanged: cb =>
+          onSchemaErrorsChanged(publicLocaleCode, cb as (errors: any) => void),
+        setInvalid: isInvalid => setInvalid(publicLocaleCode, isInvalid),
       };
     },
   };
