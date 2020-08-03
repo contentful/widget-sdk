@@ -31,7 +31,7 @@ export function createEntryApi({
     getSys: () => {
       return K.getValue(otDoc.sysProperty);
     },
-    onSysChanged: cb => {
+    onSysChanged: (cb) => {
       return K.onValue(otDoc.sysProperty, cb as (value: unknown) => void);
     },
     fields: reduceFields(fields),

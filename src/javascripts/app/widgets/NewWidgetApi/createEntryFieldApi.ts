@@ -74,7 +74,7 @@ function getLocaleAndCallback(args: any[]) {
 
   if (args.length === 2) {
     const publicLocaleCode = args[0];
-    const locale = localeStore.getPrivateLocales().find(l => l.code === publicLocaleCode);
+    const locale = localeStore.getPrivateLocales().find((l) => l.code === publicLocaleCode);
     if (!locale) {
       throw new RangeError(`Unknown locale "${publicLocaleCode}".`);
     }
@@ -109,6 +109,10 @@ export function createEntryFieldApi({
   setInvalid: (publicLocaleCode: string, value: boolean) => void;
   listenToFieldLocaleEvent: FieldLocaleEventListenerFn;
 }): EntryFieldAPI {
+  const id = internalField.apiName ?? internalField.id;
+  // We fall back to `internalField.id` because some old fields don't have an
+  // apiName / public ID
+
   const getValue = (publicLocaleCode?: string) => {
     const currentPath = getCurrentPath(internalField, publicLocaleCode);
 
@@ -116,7 +120,7 @@ export function createEntryFieldApi({
   };
 
   const setValue = async (value: any, publicLocaleCode?: string) => {
-    if (!canEdit(otDoc, internalField.apiName, publicLocaleCode)) {
+    if (!canEdit(otDoc, id, publicLocaleCode)) {
       throw makePermissionError();
     }
 
@@ -131,7 +135,7 @@ export function createEntryFieldApi({
   };
 
   const removeValue = async (publicLocaleCode?: string) => {
-    if (!canEdit(otDoc, internalField.apiName, publicLocaleCode)) {
+    if (!canEdit(otDoc, id, publicLocaleCode)) {
       throw makePermissionError();
     }
 
@@ -172,7 +176,7 @@ export function createEntryFieldApi({
     return listenToFieldLocaleEvent(
       internalField,
       locale,
-      fieldLocale => fieldLocale.access$,
+      (fieldLocale) => fieldLocale.access$,
       (access: any) => cb(!!access.disabled)
     );
   }
@@ -187,17 +191,13 @@ export function createEntryFieldApi({
     return listenToFieldLocaleEvent(
       internalField,
       locale,
-      fieldLocale => fieldLocale.errors$,
+      (fieldLocale) => fieldLocale.errors$,
       (errors: any) => cb(errors || [])
     );
   }
 
-  const id = internalField.apiName ?? internalField.id;
-  // We fall back to `internalField.id` because some old fields don't have an
-  // apiName / public ID
-
   const locales = internalField.localized
-    ? localeStore.getPrivateLocales().map(locale => locale.code)
+    ? localeStore.getPrivateLocales().map((locale) => locale.code)
     : [localeStore.getDefaultLocale().code];
   const type = internalField.type;
   const required = !!internalField.required;
@@ -225,14 +225,14 @@ export function createEntryFieldApi({
         validations,
         items,
         getValue: () => getValue(publicLocaleCode),
-        setValue: value => setValue(value, publicLocaleCode),
+        setValue: (value) => setValue(value, publicLocaleCode),
         removeValue: () => removeValue(publicLocaleCode),
-        onValueChanged: cb => onValueChanged(publicLocaleCode, cb),
-        onIsDisabledChanged: cb =>
+        onValueChanged: (cb) => onValueChanged(publicLocaleCode, cb),
+        onIsDisabledChanged: (cb) =>
           onIsDisabledChanged(publicLocaleCode, cb as (isDisabled: boolean) => void),
-        onSchemaErrorsChanged: cb =>
+        onSchemaErrorsChanged: (cb) =>
           onSchemaErrorsChanged(publicLocaleCode, cb as (errors: any) => void),
-        setInvalid: isInvalid => setInvalid(publicLocaleCode, isInvalid),
+        setInvalid: (isInvalid) => setInvalid(publicLocaleCode, isInvalid),
       };
     },
   };
