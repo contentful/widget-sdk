@@ -1,12 +1,9 @@
 import { EditorInterface, SharedEditorSDK } from 'contentful-ui-extensions-sdk';
+import { Locale } from './createLocalesApi';
 
 type Callback = (value: any) => any;
 type UnsubscribeFn = () => void;
 type ValueGetterFn = () => any;
-
-interface Locale {
-  code: string;
-}
 
 interface LocaleData {
   activeLocales?: Locale[];
