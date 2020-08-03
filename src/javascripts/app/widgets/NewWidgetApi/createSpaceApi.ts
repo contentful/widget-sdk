@@ -88,8 +88,8 @@ export function createSpaceApi({
     createUpload,
     getUsers,
     waitUntilAssetProcessed,
-    getEntityScheduledActions,
-    getAllScheduledActions,
+    getEntityScheduledActions: ScheduledActionsRepo.getEntityScheduledActions,
+    getAllScheduledActions: ScheduledActionsRepo.getAllScheduledActions,
 
     // Only in internal SDK, not implemented in the public one
     getEntryReferences: cma.getEntryReferences,
@@ -159,14 +159,6 @@ export function createSpaceApi({
 
     await new Promise((resolve) => setTimeout(resolve, ASSET_PROCESSING_POLL_MS));
     return waitUntilAssetProcessed(assetId, localeCode);
-  }
-
-  function getEntityScheduledActions(entityType: string, entityId: string) {
-    return ScheduledActionsRepo.getEntityScheduledActions(entityType, entityId);
-  }
-
-  function getAllScheduledActions() {
-    return ScheduledActionsRepo.getAllScheduledActions();
   }
 
   function onEntityChanged(entityType: string, entityId: string, callback: (value: any) => void) {
