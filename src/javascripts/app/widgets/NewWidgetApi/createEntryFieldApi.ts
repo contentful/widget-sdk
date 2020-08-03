@@ -93,8 +93,8 @@ export interface InternalField {
   id: string;
   localized: boolean;
   required: boolean;
-  validations: Record<string, any>[]
-  items: Items;
+  validations: Record<string, any>[];
+  items?: Items | undefined;
   type: string;
 }
 
@@ -192,17 +192,17 @@ export function createEntryFieldApi({
     );
   }
 
-  const id = internalField.apiName ?? internalField.id; 
+  const id = internalField.apiName ?? internalField.id;
   // We fall back to `internalField.id` because some old fields don't have an
   // apiName / public ID
-  
+
   const locales = internalField.localized
     ? localeStore.getPrivateLocales().map(locale => locale.code)
     : [localeStore.getDefaultLocale().code];
   const type = internalField.type;
   const required = !!internalField.required;
   const validations = internalField.validations ?? [];
-  const items = internalField.items ?? { validations: [] };
+  const items = internalField.items;
 
   return {
     id,
