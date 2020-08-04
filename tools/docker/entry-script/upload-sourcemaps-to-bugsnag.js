@@ -9,7 +9,6 @@ const { upload } = require('bugsnag-sourcemaps');
 const apiKey = 'b253f10d5d0184a99e1773cec7b726e8';
 
 const projectDir = path.resolve(__dirname, '..', '..', '..');
-const sourcemapsDir = path.join(projectDir, 'public', 'sourcemaps');
 const appDir = path.join(projectDir, 'public', 'app');
 
 module.exports = async function uploadSourcemapsToBugsnag({ gitSha }) {
@@ -24,7 +23,7 @@ module.exports = async function uploadSourcemapsToBugsnag({ gitSha }) {
       const sourcemapFilename = `${file.name}.map`;
 
       const sourcePath = path.join(appDir, sourceFilename);
-      const sourcemapPath = path.join(sourcemapsDir, sourcemapFilename);
+      const sourcemapPath = path.join(appDir, sourcemapFilename);
 
       promises.push(
         uploadSourcemap({

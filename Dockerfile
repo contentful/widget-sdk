@@ -4,7 +4,7 @@ WORKDIR /app
 
 ENV NPM_CONFIG_LOGLEVEL=warn CYPRESS_INSTALL_BINARY=0 NODE_ENV=development BLUEBIRD_DEBUG=0
 
-RUN apk add --update --no-cache openssh build-base python bash git && rm -rf /var/cache/apk/*
+RUN apk add --update --no-cache openssh build-base python bash git curl && rm -rf /var/cache/apk/*
 
 COPY package.json package-lock.json ./
 
@@ -29,9 +29,18 @@ RUN NODE_ENV=production node --max_old_space_size=4096 ./tools/bin/build-app.js
 
 ARG CIRCLE_BRANCH
 ARG CIRCLE_SHA1
-RUN bin/docker-entry upload-sourcemaps-to-bugsnag --git-sha "${CIRCLE_SHA1}"
-RUN bin/docker-entry configure-file-dist --branch-name "${CIRCLE_BRANCH}" --git-sha "${CIRCLE_SHA1}"
 
+RUN bin/docker-entry upload-sourcemaps-to-bugsnag --git-sha "${CIRCLE_SHA1}"
+
+ENV SENTRY_ORG=contentful SENTRY_PROJECT=user-interface
+ARG SENTRY_AUTH_TOKEN
+RUN curl -sL https://sentry.io/get-cli/ | bash && \
+    bin/create-sentry-release $CIRCLE_SHA1 $CIRCLE_BRANCH
+
+# Remove any sourcemaps now that they are uploaded to Sentry/Bugsnag
+RUN rm ./public/app/*.map
+
+RUN bin/docker-entry configure-file-dist --branch-name "${CIRCLE_BRANCH}" --git-sha "${CIRCLE_SHA1}"
 #--
 
 FROM nginx:1.10-alpine as production

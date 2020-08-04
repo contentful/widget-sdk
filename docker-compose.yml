@@ -13,7 +13,7 @@ services:
       - /app/node_modules
       - .:/app
     ports:
-      - "3001:3001"
+      - '3001:3001'
 
   generate-assets:
     image: contentful/user_interface-built
@@ -26,6 +26,7 @@ services:
         - SSH_KEY
         - CIRCLE_SHA1
         - CIRCLE_BRANCH
+        - SENTRY_AUTH_TOKEN
 
   production:
     image: ${DOCKER_IMAGE-user_interface-local-prod}
@@ -38,3 +39,4 @@ services:
         - CIRCLE_SHA1
         - CIRCLE_BRANCH
         - CF_VERSION=${CIRCLE_SHA1}
+        - SENTRY_AUTH_TOKEN

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+COMMIT_SHA=$1
+
+sentry-cli releases new $COMMIT_SHA
+sentry-cli releases files $COMMIT_SHA upload-sourcemaps ./public/app --url-prefix '~/app'
+
+latest_tag_commit=$(git describe --tags $(git rev-list --tags --max-count=1))
+
+sentry-cli releases set-commits $COMMIT_SHA --commit "contentful/user_interface@${latest_tag_commit}..${COMMIT_SHA}"
+sentry-cli releases finalize $COMMIT_SHA
+
