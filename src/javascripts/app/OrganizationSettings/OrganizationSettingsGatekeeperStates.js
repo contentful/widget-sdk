@@ -35,7 +35,7 @@ const offsitebackup = {
 };
 
 const billing = {
-  name: 'billing',
+  name: 'billing-iframe',
   title: 'Billing',
   url: '/z_billing{pathSuffix:PathSuffix}',
 };

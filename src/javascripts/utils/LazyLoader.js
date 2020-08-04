@@ -70,6 +70,10 @@ const RESOURCES = {
     ])}/osano.js`,
     globalObject: ['Osano'],
   },
+  Zuora: {
+    url: 'https://static.zuora.com/Resources/libs/hosted/1.3.1/zuora-min.js',
+    globalObject: ['Z'],
+  },
 };
 
 Object.keys(RESOURCES).forEach((key) => {
