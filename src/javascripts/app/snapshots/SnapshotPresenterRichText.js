@@ -4,20 +4,22 @@ import { ReadOnlyRichTextEditor } from 'app/widgets/RichText';
 import { createReadonlyFieldWidgetSDK } from 'app/widgets/NewWidgetApi';
 import { getModule } from 'core/NgRegistry';
 
-const SnapshotPresenterRichText = ({ className, value, contentType, entity, field, locale }) => {
+const SnapshotPresenterRichText = ({ className, value, entity, editorData, field, locale }) => {
   const [sdk, setSdk] = useState(null);
   useEffect(() => {
     const spaceContext = getModule('spaceContext');
+
     createReadonlyFieldWidgetSDK({
       field,
       locale,
       fieldValue: value,
-      internalContentType: contentType,
+      internalContentType: editorData.contentType.data,
+      internalEditorInterface: editorData.editorInterface,
       entry: entity,
       initialContentTypes: spaceContext.publishedCTs.getAllBare(),
       cma: spaceContext.cma,
     }).then(setSdk);
-  }, [contentType, entity, field, locale, value]);
+  }, [editorData.contentType.data, editorData.editorInterface, entity, field, locale, value]);
 
   return (
     <div className={className} data-test-id="snapshot-presenter-richtext">
@@ -29,7 +31,10 @@ const SnapshotPresenterRichText = ({ className, value, contentType, entity, fiel
 SnapshotPresenterRichText.propTypes = {
   className: PropTypes.string,
   value: PropTypes.object.isRequired,
-  contentType: PropTypes.shape({ data: PropTypes.object }),
+  editorData: PropTypes.shape({
+    contentType: { data: PropTypes.object },
+    editorInterface: PropTypes.object,
+  }),
   entity: PropTypes.object.isRequired,
   field: PropTypes.oneOfType([
     PropTypes.shape({

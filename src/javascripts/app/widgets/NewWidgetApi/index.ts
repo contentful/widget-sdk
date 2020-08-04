@@ -27,10 +27,11 @@ import { Entry } from 'contentful-management/dist/typings/entities/entry';
 
 import { Document } from 'app/entity_editor/Document/typesDocument';
 import localeStore from 'services/localeStore';
-import { create } from '../../entity_editor/Document/CmaDocument';
+import { create } from 'app/entity_editor/Document/CmaDocument';
 import { Entity } from 'app/entity_editor/Document/types';
 import { create as createEntityRepo } from '../../../data/CMA/EntityRepo';
 import { PubSubClient } from '../../../services/PubSubService';
+import { EditorInterface } from '../../../features/widget-renderer/interfaces';
 
 // TODO: split in read-only + write
 export function createFieldWidgetSDK({
@@ -165,6 +166,7 @@ interface CreateReadOnlyFieldWidgetSDKOptions {
   locale: Locale;
   fieldValue: any;
   internalContentType: ContentType;
+  internalEditorInterface: EditorInterface;
   entry: Entry;
   initialContentTypes: ContentType[];
   cma: any;
@@ -175,6 +177,7 @@ export async function createReadonlyFieldWidgetSDK({
   locale, // TODO: should this be replaced by the code?
   fieldValue,
   internalContentType,
+  internalEditorInterface,
   entry,
   initialContentTypes,
   cma,
@@ -200,7 +203,6 @@ export async function createReadonlyFieldWidgetSDK({
     true
   );
   /// STUBS
-  const contentTypeApi = createContentTypeApi(internalContentType);
   const publicFieldId = field.apiName ?? field.id;
   const publicLocaleCode = locale.code;
   const spaceContext = {
@@ -213,6 +215,7 @@ export async function createReadonlyFieldWidgetSDK({
 
   /// END STUBS
 
+  const contentTypeApi = createContentTypeApi(internalContentType);
   const entryApi = createEntryApi({
     internalContentType: internalContentType,
     otDoc,
@@ -253,8 +256,7 @@ export async function createReadonlyFieldWidgetSDK({
   });
   // "Editing" APIs
   const editorApi = createEditorApi({
-    // TODO: try to not fetch this
-    editorInterface: await cma.getEditorInterface(),
+    editorInterface: internalEditorInterface,
     getLocaleData: () => {
       return {
         // TODO: cannot use locale api, because it returns locale code, not locale object
@@ -265,9 +267,10 @@ export async function createReadonlyFieldWidgetSDK({
         isLocaleActive: localeStore.isLocaleActive,
       };
     },
-    getPreferences: () => {
-      return {};
-    },
+    // TODO: the value of preferences.showDisabledFields doesn't seem to affect the snapshot view.
+    //  Also, preferences.showDisabledFields is the only preference which seems to be used in the
+    //  Editor API. Is it safe to assume this is useless and can be nooped?
+    getPreferences: () => ({ showDisabledFields: true }),
     watch: (_watchFn, _cb) => noop,
   });
 
