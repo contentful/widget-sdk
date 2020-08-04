@@ -30,7 +30,8 @@ export function create(
   initialEntity: { data: Entity; setDeleted: { (): void } },
   contentType: any,
   entityRepo: EntityRepo,
-  saveThrottleMs: number = THROTTLE_TIME
+  saveThrottleMs: number = THROTTLE_TIME,
+  readOnly = false
 ): Document {
   // A single source of Truth, properties like sys$ and data$ reflect the state of this variable.
   const entity: Entity = cloneDeep(initialEntity.data);
@@ -280,6 +281,9 @@ export function create(
       hasChanges: noop,
       revert: noop,
     },
+
+    // Used by NewWidgetAPI to assess whether mutating operations are allowed
+    readOnly,
   };
 
   /**

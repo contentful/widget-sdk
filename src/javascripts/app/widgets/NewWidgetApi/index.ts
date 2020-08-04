@@ -27,6 +27,10 @@ import { Entry } from 'contentful-management/dist/typings/entities/entry';
 
 import { Document } from 'app/entity_editor/Document/typesDocument';
 import localeStore from 'services/localeStore';
+import { create } from '../../entity_editor/Document/CmaDocument';
+import { Entity } from 'app/entity_editor/Document/types';
+import { create as createEntityRepo } from '../../../data/CMA/EntityRepo';
+import { PubSubClient } from '../../../services/PubSubService';
 
 // TODO: split in read-only + write
 export function createFieldWidgetSDK({
@@ -70,12 +74,12 @@ export function createFieldWidgetSDK({
   // "Space-level" APIs
   const locales = createLocalesApi();
   const space = createSpaceApi({
-    cma: getBatchingApiClient(spaceContext.cma),
+    cma: getBatchingApiClient(spaceContext.cma), ///// ro
     initialContentTypes: spaceContext.publishedCTs.getAllBare(),
-    pubSubClient: spaceContext.pubsubClient,
+    pubSubClient: spaceContext.pubsubClient, ////
     environmentIds: [spaceContext.getEnvironmentId(), ...spaceContext.getAliasesIds()],
     spaceId: spaceContext.getId(),
-    tagsRepo: createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId()),
+    tagsRepo: createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId()), ///// ro
     usersRepo: spaceContext.users,
   });
 
@@ -156,49 +160,6 @@ export function createFieldWidgetSDK({
 
 // TODO: sync with regular API and make sure it's really read only,
 // including CMA operations via the space API
-// export async function createReadonlyFieldWidgetSDK(opts: any) {
-//   const { cma, locale, initialContentTypes, entry } = opts;
-//
-//   const parameters = await cma.getExtension();
-//
-//   // TODO: should we get this from the outside?
-//   const currentContentType = initialContentTypes.find(
-//     (i) => i.sys.id === entry.sys.contentType.sys.id
-//   );
-//
-//   const contentType = createContentTypeApi(currentContentType);
-//   const locales = createLocalesApi();
-//
-//   // "Editing" APIs
-//   const editor = createEditorApi({
-//     editorInterface: await cma.getEditorInterface(),
-//     getLocaleData: (): LocaleData => {
-//       return {
-//         // TODO: cannot use locale api, because it returns locale code, not locale object
-//         defaultLocale: localeStore.getDefaultLocale(),
-//         privateLocales: localeStore.getPrivateLocales(),
-//         focusedLocale: localeStore.getFocusedLocale(),
-//         isSingleLocaleModeOn: localeStore.isSingleLocaleModeOn(),
-//         isLocaleActive: localeStore.isLocaleActive,
-//       };
-//     },
-//     getPreferences: () => {
-//       return {};
-//     },
-//     watch: (_watchFn, _cb) => noop,
-//   });
-//
-//   return {
-//     parameters: {},
-//     contentType,
-//     editor,
-//     locales,
-//     dialogs: {},
-//     field: {},
-//     space: {},
-//   };
-// }
-
 interface CreateReadOnlyFieldWidgetSDKOptions {
   field: Field;
   locale: Locale;
@@ -218,55 +179,27 @@ export async function createReadonlyFieldWidgetSDK({
   initialContentTypes,
   cma,
 }: CreateReadOnlyFieldWidgetSDKOptions): Promise<FieldExtensionSDK> {
+  const readOnlyEntityRepo = createEntityRepo(
+    cma._endpoint, // TODO: should this be used at all?
+    { on: noop } as PubSubClient,
+    noop,
+    {
+      skipDraftValidation: true,
+      skipTransformation: true,
+      indicateAutoSave: false,
+    }
+  );
+  const otDoc: Document = create(
+    {
+      data: (entry as unknown) as Entity, // TODO: wtf
+      setDeleted: noop,
+    },
+    internalContentType,
+    readOnlyEntityRepo,
+    5000,
+    true
+  );
   /// STUBS
-  const otDoc: Document = {
-    changes: undefined,
-    data$: undefined,
-    permissions: {
-      can: function (p1: string) {
-        return false;
-      },
-      canEditFieldLocale: function (p1: string, p2: string) {
-        return false;
-      },
-    },
-    presence: {
-      collaborators: undefined,
-      collaboratorsFor: function () {
-        return undefined;
-      },
-      destroy: function () {},
-      focus: function (p1: string, p2: string) {},
-      leave: function () {},
-    },
-    resourceState: undefined,
-    state: {
-      canEdit$: undefined,
-      error$: undefined,
-      isConnected$: undefined,
-      isDirty$: undefined,
-      isSaving$: undefined,
-      loaded$: undefined,
-    },
-    sysProperty: undefined,
-    destroy(): void {},
-    getValueAt(path: Path): any {},
-    getVersion(): number {
-      return 0;
-    },
-    insertValueAt(path: Path, i: number, value: any): Promise<Entity> {
-      return Promise.resolve(undefined);
-    },
-    pushValueAt(path: Path, value: any): Promise<Entity> {
-      return Promise.resolve(undefined);
-    },
-    removeValueAt(path: Path): Promise<void> {
-      return Promise.resolve(undefined);
-    },
-    setValueAt(path: Path, value: any): Promise<Entity> {
-      return Promise.resolve(undefined);
-    },
-  }; // Todo: implement readonly otDoc
   const contentTypeApi = createContentTypeApi(internalContentType);
   const publicFieldId = field.apiName ?? field.id;
   const publicLocaleCode = locale.code;
