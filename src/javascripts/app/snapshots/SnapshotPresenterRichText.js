@@ -8,16 +8,15 @@ const SnapshotPresenterRichText = ({ className, value, contentType, entity, fiel
   const [sdk, setSdk] = useState(null);
   useEffect(() => {
     const spaceContext = getModule('spaceContext');
-    const readOnlyWidgetApi = createReadonlyFieldWidgetSDK({
+    createReadonlyFieldWidgetSDK({
       field,
       locale,
       fieldValue: value,
-      contentType,
+      internalContentType: contentType,
       entry: entity,
       initialContentTypes: spaceContext.publishedCTs.getAllBare(),
       cma: spaceContext.cma,
-    });
-    setSdk(readOnlyWidgetApi);
+    }).then(setSdk);
   }, [contentType, entity, field, locale, value]);
 
   return (
