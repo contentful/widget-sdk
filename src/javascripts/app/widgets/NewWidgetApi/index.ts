@@ -32,6 +32,7 @@ import { Entity } from 'app/entity_editor/Document/types';
 import { create as createEntityRepo } from '../../../data/CMA/EntityRepo';
 import { PubSubClient } from '../../../services/PubSubService';
 import { EditorInterface } from '../../../features/widget-renderer/interfaces';
+import { SpaceEndpoint } from '../../../data/CMA/types';
 
 // TODO: split in read-only + write
 export function createFieldWidgetSDK({
@@ -170,28 +171,37 @@ interface CreateReadOnlyFieldWidgetSDKOptions {
   entry: Entry;
   initialContentTypes: ContentType[];
   cma: any;
+  spaceMember: SpaceMember;
+  usersRepo: any;
+  spaceId: string;
+  environmentIds: string[];
+  endpoint: SpaceEndpoint;
+  tagsRepo: any;
 }
 
 export async function createReadonlyFieldWidgetSDK({
   field, // TODO: should this be replaced with publicFieldId?
   locale, // TODO: should this be replaced by the code?
-  fieldValue,
   internalContentType,
   internalEditorInterface,
   entry,
   initialContentTypes,
   cma,
+  spaceMember,
+  usersRepo,
+  spaceId,
+  environmentIds,
+  endpoint,
+  tagsRepo,
 }: CreateReadOnlyFieldWidgetSDKOptions): Promise<FieldExtensionSDK> {
-  const readOnlyEntityRepo = createEntityRepo(
-    cma._endpoint, // TODO: should this be used at all?
-    { on: noop } as PubSubClient,
-    noop,
-    {
-      skipDraftValidation: true,
-      skipTransformation: true,
-      indicateAutoSave: false,
-    }
-  );
+  const pubSubClient = { on: noop } as PubSubClient;
+  const [environmentId] = environmentIds;
+
+  const readOnlyEntityRepo = createEntityRepo(endpoint, pubSubClient, noop, {
+    skipDraftValidation: true,
+    skipTransformation: true,
+    indicateAutoSave: false,
+  });
   const otDoc: Document = create(
     {
       data: (entry as unknown) as Entity, // TODO: wtf
@@ -205,14 +215,6 @@ export async function createReadonlyFieldWidgetSDK({
   /// STUBS
   const publicFieldId = field.apiName ?? field.id;
   const publicLocaleCode = locale.code;
-  const spaceContext = {
-    space: {
-      data: {
-        spaceMember: {} as SpaceMember,
-      },
-    },
-  }; // TODO: implement read only space context
-
   /// END STUBS
 
   const contentTypeApi = createContentTypeApi(internalContentType);
@@ -226,11 +228,20 @@ export async function createReadonlyFieldWidgetSDK({
   const accessApi = createAccessApi();
   const notifierApi = Notification;
   const localesApi = createLocalesApi();
-  const spaceApi = {} as SpaceAPI; //TODO: implement after read only space context
-  const userApi = createUserApi(spaceContext.space.data.spaceMember);
+  const spaceApi = createSpaceApi({
+    cma: getBatchingApiClient(cma),
+    initialContentTypes,
+    pubSubClient,
+    environmentIds,
+    spaceId,
+    tagsRepo,
+    usersRepo,
+    readOnly: true,
+  });
+  const userApi = createUserApi(spaceMember);
   const idsApi = createIdsApi(
-    cma.spaceId,
-    cma.envId,
+    spaceId,
+    environmentId,
     internalContentType,
     entryApi,
     fieldApi,
@@ -249,17 +260,18 @@ export async function createReadonlyFieldWidgetSDK({
     startAutoResizer: noop,
     stopAutoResizer: noop,
   };
+  //TODO: this needs to get boundaries
   const navigatorApi = createNavigatorApi({
     spaceContext,
     widgetNamespace: WidgetNamespace.BUILTIN,
     widgetId: '',
   });
+
   // "Editing" APIs
   const editorApi = createEditorApi({
     editorInterface: internalEditorInterface,
     getLocaleData: () => {
       return {
-        // TODO: cannot use locale api, because it returns locale code, not locale object
         defaultLocale: localeStore.getDefaultLocale(),
         privateLocales: localeStore.getPrivateLocales(),
         focusedLocale: localeStore.getFocusedLocale(),
