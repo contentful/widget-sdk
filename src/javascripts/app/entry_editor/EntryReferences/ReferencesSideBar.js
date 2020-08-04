@@ -58,7 +58,7 @@ const mapEntities = (entities) =>
 
 const ReferencesSideBar = ({ entityTitle, entity }) => {
   const { state: referencesState, dispatch } = useContext(ReferencesContext);
-  const { references, selectedEntities } = referencesState;
+  const { references, selectedEntities, isTooComplex } = referencesState;
   const [processingAction, setProcessingAction] = useState(null);
   const [isRelaseDialogShown, setRelaseDialogShown] = useState(false);
   const [isAddToReleaseEnabled, setisAddToReleaseEnabled] = useState(false);
@@ -174,6 +174,8 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
     .filter((str) => str)
     .join(' and ');
 
+  const disableButton = !showPublishButtons || isTooComplex;
+
   return (
     <div className={styles.sideBarWrapper}>
       {processingAction && <LoadingOverlay message={`${processingAction} ${referenceText}`} />}
@@ -181,19 +183,21 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
         <Subheading className="entity-sidebar__heading">References</Subheading>
       </header>
       <div>Apply actions to all selected references</div>
-      {selectedEntities.length ? (
-        <Paragraph className={styles.paragraph}>
-          {createCountMessage({ entityTitle, selectedEntities, root: references[0] })}
-        </Paragraph>
-      ) : (
-        <HelpText>None selected</HelpText>
-      )}
+      {!isTooComplex ? (
+        selectedEntities.length ? (
+          <Paragraph className={styles.paragraph}>
+            {createCountMessage({ entityTitle, selectedEntities, root: references[0] })}
+          </Paragraph>
+        ) : (
+          <HelpText>None selected</HelpText>
+        )
+      ) : null}
       <Button
         testId="publish-release"
         buttonType="positive"
         className={styles.buttons}
         isFullWidth
-        disabled={!showPublishButtons}
+        disabled={disableButton}
         onClick={handlePublication}>
         Publish all
       </Button>
@@ -202,7 +206,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
         buttonType="muted"
         className={styles.buttons}
         isFullWidth
-        disabled={!showPublishButtons}
+        disabled={disableButton}
         onClick={handleValidation}>
         Validate all
       </Button>
@@ -212,7 +216,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
           buttonType="muted"
           className={styles.buttons}
           isFullWidth
-          disabled={!showPublishButtons}
+          disabled={disableButton}
           onClick={handleAddToRelease}>
           Add to a release
         </Button>

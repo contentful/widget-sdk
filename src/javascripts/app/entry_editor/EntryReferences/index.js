@@ -24,6 +24,7 @@ import {
   SET_LINKS_COUNTER,
   SET_MAX_DEPTH_REACHED,
   SET_REFERENCE_TREE_KEY,
+  SET_IS_TOO_COMPLEX,
 } from './state/actions';
 
 const MAX_LEVEL = 10;
@@ -83,7 +84,6 @@ export const hasLinks = (obj) => {
 };
 
 const ReferencesTab = ({ entity }) => {
-  const [isTooComplex, setIsTooComplex] = useState(false);
   const [allReferencesSelected, setAllReferencesSelected] = useState(true);
   const [entityTitle, setEntityTitle] = useState(null);
   const { state: referencesState, dispatch } = useContext(ReferencesContext);
@@ -93,6 +93,7 @@ const ReferencesTab = ({ entity }) => {
     isTreeMaxDepthReached,
     initialReferencesAmount,
     referenceTreeKey,
+    isTooComplex,
   } = referencesState;
 
   const defaultLocale = getDefaultLocale().code;
@@ -118,7 +119,7 @@ const ReferencesTab = ({ entity }) => {
         const entryTitle = await getEntityTitle(fetchedRefs[0]);
         setEntityTitle(entryTitle);
       } catch {
-        setIsTooComplex(true);
+        dispatch({ type: SET_IS_TOO_COMPLEX, value: true });
       }
     }
 
