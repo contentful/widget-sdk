@@ -46,6 +46,7 @@
     "@contentful/sharejs": "^2.15.0",
     "@contentful/validation": "^12.8.0",
     "@contentful/worf": "^4.3.0",
+    "@sentry/browser": "^5.20.1",
     "ajv": "^5.5.2",
     "angular": "~1.8.0",
     "angular-animate": "~1.8.0",

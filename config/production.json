@@ -62,5 +62,8 @@
   },
   "osano": {
     "cdnKey": "df209177-f155-4111-ab30-1333c3de0a17"
+  },
+  "sentry": {
+    "dsn": "https://d7f94d499ede45c08126413ec4f09b29@o2239.ingest.sentry.io/8049"
   }
 }

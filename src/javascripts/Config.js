@@ -217,6 +217,7 @@ export const services = {
   embedly: settings.embedly,
   getstream_io: settings.getstream_io,
   osano: settings.osano,
+  sentry: settings.sentry,
 };
 
 function ensureLeadingSlash(x = '') {
