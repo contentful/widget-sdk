@@ -153,7 +153,7 @@ const EntitySelector = ({
 
   const loadMore = useCallback(
     async (isSearching) => {
-      if (!pagination || !isLoading) {
+      if (!pagination || isLoading) {
         return;
       }
       const params = { more: true };
