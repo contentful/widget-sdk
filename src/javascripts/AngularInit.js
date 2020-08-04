@@ -26,7 +26,6 @@ export const angularInitRun = [
       import(/* webpackMode: "eager" */ 'analytics/analyticsConsoleDirective'),
       import(/* webpackMode: "eager" */ 'services/modalDialogService'),
       import(/* webpackMode: "eager" */ 'utils/command/commandDirective'),
-      import(/* webpackMode: "eager" */ 'components/field_dialog/fieldDialog'),
       import(/* webpackMode: "eager" */ 'app/ContentModel/Editor/contentTypeEditorController'),
       import(/* webpackMode: "eager" */ 'app/asset_editor/cfAssetEditorDirective'),
       import(/* webpackMode: "eager" */ 'app/entity_editor/bulk_editor/cfBulkEditorDirective'),
@@ -38,9 +37,6 @@ export const angularInitRun = [
       import(/* webpackMode: "eager" */ 'app/entity_editor/stateController'),
       import(/* webpackMode: "eager" */ 'app/entry_editor/cfEntryEditorDirective'),
       import(/* webpackMode: "eager" */ 'app/entry_editor/formWidgetsController'),
-      import(/* webpackMode: "eager" */ 'components/field_dialog/cfValidationSettingsDirective'),
-      import(/* webpackMode: "eager" */ 'components/field_dialog/validationAssetTypesController'),
-      import(/* webpackMode: "eager" */ 'components/field_dialog/validationLinkTypeController'),
       import(/* webpackMode: "eager" */ 'components/shared/cfSelectionDirective'),
       import(/* webpackMode: "eager" */ 'components/shared/endlessContainerDirective'),
       import(/* webpackMode: "eager" */ 'components/shared/viewStateController'),
@@ -58,7 +54,6 @@ export const angularInitRun = [
       import(/* webpackMode: "eager" */ 'states/cfSrefDirective'),
       import(/* webpackMode: "eager" */ 'ui/Framework/ReactDirective'),
       import(/* webpackMode: "eager" */ 'directives/cfIconDirective'),
-      import(/* webpackMode: "eager" */ 'directives/cfUiTab'),
     ]);
     modules.forEach((module) => module.default());
 
