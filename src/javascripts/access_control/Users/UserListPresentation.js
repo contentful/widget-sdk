@@ -10,8 +10,8 @@ import { map } from 'lodash';
 import { List } from '@contentful/forma-36-react-components';
 import { SpaceMember as SpaceMemberPropType } from 'app/OrganizationSettings/PropTypes';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import FilterPill from 'app/ContentList/Search/FilterPill';
-import ValueInput from 'app/ContentList/Search/FilterValueInputs';
+import { FilterPill } from 'features/entity-search';
+import { FilterValueInputs as ValueInput } from 'core/services/ContentQuery';
 import UserListRow from './UserListRow';
 
 import AddUsersToSpaceNote from './AddUsersToSpaceNote';

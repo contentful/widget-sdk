@@ -10,30 +10,16 @@ import * as Forma36Components from '@contentful/forma-36-react-components';
 
 import store from 'redux/store';
 
-import * as componentsSharedKnowledgeBaseIconKnowledgeBaseEs6 from 'components/shared/knowledge_base_icon/KnowledgeBase';
-import * as uiComponentsNavigationIcon from 'ui/Components/NavigationIcon';
 import * as uiComponentsIconEs6 from 'ui/Components/Icon';
 import * as componentsSharedDocumentTitleEs6 from 'components/shared/DocumentTitle';
-import * as componentsSharedWorkbenchTitleEs6 from 'components/shared/WorkbenchTitle';
 import * as appEntityEditorComponentsBackNavIndexEs6 from 'app/entity_editor/Components/BackNav';
 import * as appEntityEditorStatusNotificationEs6 from 'app/entity_editor/StatusNotification';
-import * as appEntrySidebarEntrySidebarEs6 from 'app/EntrySidebar/EntrySidebar';
 import { EntityFieldHeading } from 'app/entity_editor/EntityField/EntityFieldHeading';
 import { EntityFieldControl } from 'app/entity_editor/EntityField/EntityFieldControl';
 import * as appEntryEditorCustomEditorExtensionRendererEs6 from 'app/entry_editor/CustomEditorExtensionRenderer';
 import * as appHomeSpaceHomePageEs6 from 'app/home/SpaceHomePage';
 import * as componentsFieldDialogValidationValuesEs6 from 'components/field_dialog/ValidationValues';
 import * as componentsFieldDialogAppearanceFieldDialogAppearanceTabEs6 from 'components/field_dialog/appearance/FieldDialogAppearanceTab';
-import * as componentsTabsAssetListAddAssetButtonEs6 from 'components/tabs/asset_list/AddAssetButton';
-import * as componentsTabsPluralizeEntityMessageEs6 from 'components/tabs/PluralizeEntityMessage';
-import * as componentsRecordsResourceUsageIndexEs6 from 'components/RecordsResourceUsage';
-import { Paginator } from 'core/components/Paginator';
-import * as componentsTabsNoSearchResultsAdviceEs6 from 'components/tabs/NoSearchResultsAdvice';
-import * as appScheduledActionsPageLinkEs6 from 'app/ScheduledActions/ScheduledActionsPageLink';
-import * as appReleasesPageLinkEs6 from 'app/Releases/ReleasesPage/ReleasesPageLink';
-import * as componentsTabsEntryListEntryListEs6 from 'components/tabs/entry_list/EntryList';
-import * as componentsTabsEntryListUpgradeBannerEs6 from 'components/tabs/UpgradeBanner';
-import * as componentsTabsEntryListEmptyStatesIndexEs6 from 'components/tabs/entry_list/EmptyStates';
 import * as searchEntitySelectorCreateEntityIndexEs6 from 'search/EntitySelector/CreateEntity';
 import * as appEntityEditorBulkEditorTitleEs6 from 'app/entity_editor/bulk_editor/BulkEditorTitle';
 import * as appEntityEditorBulkEntityEditorActionsDropdownEs6 from 'app/entity_editor/bulk_editor/BulkEntityEditorActionsDropdown';
@@ -255,28 +241,14 @@ export default function register() {
 
 function getModule(name) {
   const allowedModules = {
-    'components/shared/knowledge_base_icon/KnowledgeBase': componentsSharedKnowledgeBaseIconKnowledgeBaseEs6,
-    'ui/Components/NavigationIcon': uiComponentsNavigationIcon,
     'ui/Components/Icon': uiComponentsIconEs6,
     'components/shared/DocumentTitle': componentsSharedDocumentTitleEs6,
-    'components/shared/WorkbenchTitle': componentsSharedWorkbenchTitleEs6,
     'app/entity_editor/Components/BackNav': appEntityEditorComponentsBackNavIndexEs6,
     'app/entity_editor/StatusNotification': appEntityEditorStatusNotificationEs6,
-    'app/EntrySidebar/EntrySidebar': appEntrySidebarEntrySidebarEs6,
     'app/entry_editor/CustomEditorExtensionRenderer': appEntryEditorCustomEditorExtensionRendererEs6,
     'app/home/SpaceHomePage': appHomeSpaceHomePageEs6,
     'components/field_dialog/ValidationValues': componentsFieldDialogValidationValuesEs6,
     'components/field_dialog/appearance/FieldDialogAppearanceTab': componentsFieldDialogAppearanceFieldDialogAppearanceTabEs6,
-    'components/tabs/asset_list/AddAssetButton': componentsTabsAssetListAddAssetButtonEs6,
-    'components/tabs/PluralizeEntityMessage': componentsTabsPluralizeEntityMessageEs6,
-    'components/RecordsResourceUsage': componentsRecordsResourceUsageIndexEs6,
-    'core/components/Paginator': { default: Paginator },
-    'components/tabs/NoSearchResultsAdvice': componentsTabsNoSearchResultsAdviceEs6,
-    'app/ScheduledActions/ScheduledActionsPageLink': appScheduledActionsPageLinkEs6,
-    'app/Releases/ReleasesPageLink': appReleasesPageLinkEs6,
-    'components/tabs/entry_list/EntryList': componentsTabsEntryListEntryListEs6,
-    'components/tabs/UpgradeBanner': componentsTabsEntryListUpgradeBannerEs6,
-    'components/tabs/entry_list/EmptyStates': componentsTabsEntryListEmptyStatesIndexEs6,
     'search/EntitySelector/CreateEntity': searchEntitySelectorCreateEntityIndexEs6,
     'app/entity_editor/bulk_editor/BulkEditorTitle': appEntityEditorBulkEditorTitleEs6,
     'app/entity_editor/bulk_editor/BulkEntityEditorActionsDropdown': appEntityEditorBulkEntityEditorActionsDropdownEs6,

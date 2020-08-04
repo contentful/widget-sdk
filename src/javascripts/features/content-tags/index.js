@@ -28,5 +28,6 @@ export {
   tagsPayloadToValues,
   orderByLabel,
 } from 'features/content-tags/editor/utils';
-export { useBulkSaveTags } from 'features/content-tags/editor/hooks/useBulkSaveTags';
+export { TagsBulkAction } from 'features/content-tags/editor/components/TagsBulkAction';
 export { useComputeTags } from 'features/content-tags/editor/hooks/useComputeTags';
+export { useBulkSaveTags } from 'features/content-tags/editor/hooks/useBulkSaveTags';

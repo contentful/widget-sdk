@@ -1,7 +1,7 @@
 import { useRef, useState, useMemo, useCallback } from 'react';
 import { getModule } from 'core/NgRegistry';
 import Paginator from 'classes/Paginator';
-import { Operator } from 'app/ContentList/Search/Operators';
+import { Operator } from 'core/services/ContentQuery';
 import { id } from 'utils/Random';
 
 export const ITEMS_PER_PAGE = 40;

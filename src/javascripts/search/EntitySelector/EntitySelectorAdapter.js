@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import useListView from 'app/ContentList/Search/useListView';
-import Search from 'app/ContentList/Search/View';
+import { Search, useListView } from 'features/entity-search';
 
 const EntitySelectorAdapter = (props) => {
   const listViewContext = useListView({

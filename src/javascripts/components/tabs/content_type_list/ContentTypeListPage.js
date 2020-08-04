@@ -11,8 +11,8 @@ import {
   Paragraph,
 } from '@contentful/forma-36-react-components';
 import ContentTypeList from './ContentTypeList';
-import NoSearchResultsAdvice from 'components/tabs/NoSearchResultsAdvice';
-import NoContentTypeAdvice from 'components/tabs/NoContentTypeAdvice';
+import { NoSearchResultsAdvice } from 'core/components/NoSearchResultsAdvice';
+import { NoContentTypeAdvice } from 'core/components/NoContentTypeAdvice';
 import CreateContentTypeCta from 'components/tabs/CreateContentTypeCta';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 import ContentTypeListSearch from './ContentTypeListSearch';
