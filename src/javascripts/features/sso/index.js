@@ -1,1 +1,1 @@
-export { retrieveIdp, createIdp, updateFieldValue, enable } from './services/SsoService';
+export { retrieveIdp, createIdp, updateFieldValue, enable } from './services/SSOService';
