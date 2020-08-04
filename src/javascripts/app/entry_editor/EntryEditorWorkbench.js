@@ -19,6 +19,8 @@ import renderDefaultEditor from './DefaultEntryEditor';
 import EntryEditorWidgetTypes from 'app/entry_editor/EntryEditorWidgetTypes';
 import { hasLinks } from './EntryReferences';
 import { WidgetNamespace } from 'features/widget-renderer';
+import ReferencesSideBar from 'app/entry_editor/EntryReferences/ReferencesSideBar';
+import { ReferencesProvider } from 'app/entry_editor/EntryReferences/ReferencesContext';
 
 const styles = {
   mainContent: css({
@@ -90,6 +92,7 @@ const EntryEditorWorkbench = (props) => {
     entrySidebarProps,
     sidebarToggleProps,
   } = props;
+
   const editorData = getEditorData();
   const otDoc = getOtDoc();
   const enabledTabs = editorData.editorsExtensions.filter((editor) => !editor.disabled);
@@ -242,10 +245,14 @@ const EntryEditorWorkbench = (props) => {
             ))}
         </Workbench.Content>
         <Workbench.Sidebar position="right" className={styles.sidebar}>
-          <EntrySidebar
-            entrySidebarProps={entrySidebarProps}
-            sidebarToggleProps={sidebarToggleProps}
-          />
+          {selectedTab.includes(EntryEditorWidgetTypes.REFERENCE_TREE.id) ? (
+            <ReferencesSideBar entity={editorData.entity.data} entityTitle={title} />
+          ) : (
+            <EntrySidebar
+              entrySidebarProps={entrySidebarProps}
+              sidebarToggleProps={sidebarToggleProps}
+            />
+          )}
         </Workbench.Sidebar>
       </Workbench>
     </div>
@@ -286,4 +293,10 @@ EntryEditorWorkbench.propTypes = {
   loadEvents: PropTypes.object,
 };
 
-export default EntryEditorWorkbench;
+const EntryEditorWorkbenchWithProvider = (props) => (
+  <ReferencesProvider>
+    <EntryEditorWorkbench {...props} />
+  </ReferencesProvider>
+);
+
+export default EntryEditorWorkbenchWithProvider;

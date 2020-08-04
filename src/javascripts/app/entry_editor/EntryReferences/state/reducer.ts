@@ -1,3 +1,4 @@
+import { uniqueId } from 'lodash';
 import {
   SET_REFERENCES,
   SET_LINKS_COUNTER,
@@ -6,6 +7,7 @@ import {
   SET_MAX_DEPTH_REACHED,
   SET_ACTIONS_DISABLED,
   SET_INITIAL_REFERENCES_AMOUNT,
+  SET_REFERENCE_TREE_KEY,
 } from './actions';
 
 type ReferencesState = {
@@ -16,6 +18,7 @@ type ReferencesState = {
   isTreeMaxDepthReached: boolean;
   isActionsDisabled: boolean;
   initialReferencesAmount: number;
+  referenceTreeKey: string;
 };
 
 type Action = {
@@ -26,7 +29,8 @@ type Action = {
     | typeof SET_VALIDATIONS
     | typeof SET_MAX_DEPTH_REACHED
     | typeof SET_ACTIONS_DISABLED
-    | typeof SET_INITIAL_REFERENCES_AMOUNT;
+    | typeof SET_INITIAL_REFERENCES_AMOUNT
+    | typeof SET_REFERENCE_TREE_KEY;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any;
 };
@@ -39,6 +43,7 @@ export const initialState: ReferencesState = {
   isTreeMaxDepthReached: false,
   isActionsDisabled: false,
   initialReferencesAmount: 0,
+  referenceTreeKey: uniqueId('id_'),
 };
 
 export function reducer(state: ReferencesState, action: Action): ReferencesState {
@@ -57,6 +62,8 @@ export function reducer(state: ReferencesState, action: Action): ReferencesState
       return { ...state, isActionsDisabled: action.value };
     case SET_INITIAL_REFERENCES_AMOUNT:
       return { ...state, initialReferencesAmount: action.value };
+    case SET_REFERENCE_TREE_KEY:
+      return { ...state, referenceTreeKey: action.value };
     default:
       return state;
   }

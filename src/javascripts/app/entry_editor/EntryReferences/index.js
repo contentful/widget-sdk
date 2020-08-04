@@ -1,51 +1,29 @@
 import React, { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import { isEqual, uniqWith, uniqueId, get, isObject } from 'lodash';
+import { uniqueId, get, isObject } from 'lodash';
 import {
   Button,
   Note,
-  Notification,
   Checkbox,
-  Dropdown,
-  DropdownList,
-  DropdownListItem,
   SkeletonContainer,
   SkeletonText,
   Paragraph,
-  HelpText,
 } from '@contentful/forma-36-react-components';
-import { track } from 'analytics/Analytics';
 import tokens from '@contentful/forma-36-tokens';
 import ErrorHandler from 'components/shared/ErrorHandlerComponent.js';
 import { create } from 'access_control/EntityPermissions';
 import { goToSlideInEntity, slideInStackEmitter } from 'navigation/SlideInNavigator';
 import ReferencesTree from './ReferencesTree';
-import LoadingOverlay from 'app/common/LoadingOverlay';
-import {
-  getReferencesForEntryId,
-  getEntityTitle,
-  getDefaultLocale,
-  validateEntities,
-  publishEntities,
-} from './referencesService';
-import {
-  createSuccessMessage,
-  createErrorMessage,
-  doesContainRoot,
-  pluralize,
-  createCountMessage,
-  createAddToReleaseDialogContent,
-} from './utils';
-import ReleasesWidgetDialog from 'app/Releases/ReleasesWidget/ReleasesWidgetDialog';
-import { getReleasesFeatureVariation as releasesFeatureFlagVariation } from 'app/Releases/ReleasesFeatureFlag';
+import { getReferencesForEntryId, getEntityTitle, getDefaultLocale } from './referencesService';
+import { pluralize } from './utils';
 
-import { ReferencesContext, ReferencesProvider } from './ReferencesContext';
+import { ReferencesContext } from './ReferencesContext';
 import {
   SET_REFERENCES,
   SET_LINKS_COUNTER,
-  SET_VALIDATIONS,
   SET_MAX_DEPTH_REACHED,
+  SET_REFERENCE_TREE_KEY,
 } from './state/actions';
 
 const MAX_LEVEL = 10;
@@ -82,23 +60,6 @@ const styles = {
   }),
 };
 
-const trackingEvents = {
-  publish: 'entry_references:publish',
-  validate: 'entry_references:validate',
-};
-
-const mapEntities = (entities) =>
-  uniqWith(
-    entities.map((entity) => ({
-      sys: {
-        id: entity.sys.id,
-        linkType: entity.sys.type,
-        type: 'Link',
-      },
-    })),
-    isEqual
-  );
-
 export const hasLinks = (obj) => {
   let linksFound = false;
   Object.keys(obj).forEach((key) => {
@@ -122,22 +83,16 @@ export const hasLinks = (obj) => {
 };
 
 const ReferencesTab = ({ entity }) => {
-  const [isDropdownOpen, setDropdownOpen] = useState(false);
-  const [processingAction, setProcessingAction] = useState(null);
   const [isTooComplex, setIsTooComplex] = useState(false);
   const [allReferencesSelected, setAllReferencesSelected] = useState(true);
   const [entityTitle, setEntityTitle] = useState(null);
-  const [referenceTreeKey, setReferenceTreeKey] = useState(uniqueId('id_'));
-  const [isRelaseDialogShown, setRelaseDialogShown] = useState(false);
-  const [isAddToReleaseEnabled, setisAddToReleaseEnabled] = useState(false);
   const { state: referencesState, dispatch } = useContext(ReferencesContext);
   const {
     references,
-    selectedEntities,
     validations,
     isTreeMaxDepthReached,
-    isActionsDisabled,
     initialReferencesAmount,
+    referenceTreeKey,
   } = referencesState;
 
   const defaultLocale = getDefaultLocale().code;
@@ -167,18 +122,12 @@ const ReferencesTab = ({ entity }) => {
       }
     }
 
-    async function addToReleaseEnabled() {
-      const isAddToReleaseEnabled = await releasesFeatureFlagVariation();
-      setisAddToReleaseEnabled(isAddToReleaseEnabled);
-    }
-
     fetchReferencesAndTitle();
-    addToReleaseEnabled();
 
     slideInStackEmitter.on('changed', ({ newSlideLevel }) => {
       if (newSlideLevel === 0) {
         fetchReferencesAndTitle().then(() => {
-          setReferenceTreeKey(uniqueId('id_'));
+          dispatch({ type: SET_REFERENCE_TREE_KEY, value: uniqueId('id_') });
         });
       }
     });
@@ -192,111 +141,7 @@ const ReferencesTab = ({ entity }) => {
     goToSlideInEntity({ type: entity.sys.type, id: entity.sys.id });
   };
 
-  const displayValidation = (validationResponse) => {
-    dispatch({ type: SET_VALIDATIONS, value: validationResponse });
-    setReferenceTreeKey(uniqueId('id_'));
-
-    validationResponse.errored.length
-      ? Notification.error('Some references did not pass validation')
-      : Notification.success('All references passed validation');
-  };
-
-  const handleValidation = () => {
-    setDropdownOpen(false);
-    setProcessingAction('Validating');
-
-    track(trackingEvents.validate, {
-      entity_id: entity.sys.id,
-      references_count: selectedEntities.length,
-    });
-
-    const entitiesToValidate = mapEntities(selectedEntities);
-
-    validateEntities({ entities: entitiesToValidate, action: 'publish' })
-      .then((validationResponse) => {
-        setProcessingAction(null);
-        displayValidation(validationResponse);
-      })
-      .catch((_error) => {
-        setProcessingAction(null);
-        Notification.error('References validation failed');
-      });
-  };
-
-  const handlePublication = () => {
-    setDropdownOpen(false);
-    dispatch({ type: SET_VALIDATIONS, value: null });
-    setProcessingAction('Publishing');
-
-    track(trackingEvents.publish, {
-      entity_id: entity.sys.id,
-      references_count: selectedEntities.length,
-    });
-
-    const entitiesToPublish = mapEntities(selectedEntities);
-
-    publishEntities({ entities: entitiesToPublish, action: 'publish' })
-      .then(() => {
-        setProcessingAction(null);
-        getReferencesForEntryId(entity.sys.id)
-          .then(({ resolved: fetchedRefs }) =>
-            dispatch({ type: SET_REFERENCES, value: fetchedRefs })
-          )
-          .then(() => {
-            setReferenceTreeKey(uniqueId('id_'));
-
-            Notification.success(
-              createSuccessMessage({
-                selectedEntities,
-                root: references[0],
-                entityTitle,
-              })
-            );
-          });
-      })
-      .catch((error) => {
-        setProcessingAction(null);
-        /**
-         * Separate validation resonse from failure response.
-         * Permisson errors have a different shape (without sys).
-         */
-        if (error.statusCode && error.statusCode === 422) {
-          const errored = error.data.details.errors;
-          if (errored.length && errored[0].sys) {
-            return displayValidation({ errored });
-          }
-        }
-        Notification.error(
-          createErrorMessage({
-            selectedEntities,
-            root: references[0],
-            entityTitle,
-            action: 'publish',
-          })
-        );
-      });
-  };
-
-  const handleAddToRelease = () => {
-    setRelaseDialogShown(true);
-    setDropdownOpen(false);
-  };
-
   const showPublishButtons = !!references.length && create(references[0].sys).can('publish');
-
-  const referencesAmount = doesContainRoot(selectedEntities, references[0])
-    ? selectedEntities.length - 1
-    : selectedEntities.length;
-
-  const renderReferenceAmount = (referencesAmount) =>
-    referencesAmount ? `${referencesAmount} ${pluralize(referencesAmount, 'reference')}` : null;
-
-  const referenceText = [
-    doesContainRoot(selectedEntities, references[0]) ? entityTitle : null,
-    renderReferenceAmount(referencesAmount),
-  ]
-    .filter((str) => str)
-    .join(' and ');
 
   return (
     <>
@@ -306,7 +151,6 @@ const ReferencesTab = ({ entity }) => {
             Sorry, we are unable to show the references for this entry at this time
           </Note>
         }>
-        {processingAction && <LoadingOverlay message={`${processingAction} ${referenceText}`} />}
         <div>
           {!!references.length && (
             <>
@@ -331,7 +175,7 @@ const ReferencesTab = ({ entity }) => {
                 className={styles.selectAll}
                 onClick={() => {
                   setAllReferencesSelected(!allReferencesSelected);
-                  setReferenceTreeKey(uniqueId('id_'));
+                  dispatch({ type: SET_REFERENCE_TREE_KEY, value: uniqueId('id_') });
                 }}>
                 <Checkbox
                   className={styles.selectAllCB}
@@ -342,45 +186,6 @@ const ReferencesTab = ({ entity }) => {
                 />
                 Select all
               </Button>
-              {selectedEntities.length ? (
-                <Paragraph>
-                  {createCountMessage({ selectedEntities, root: references[0] })}
-                </Paragraph>
-              ) : (
-                <HelpText>None selected</HelpText>
-              )}
-              <Dropdown
-                isOpen={isDropdownOpen}
-                className={styles.actionsButton}
-                onClose={() => setDropdownOpen(false)}
-                position="bottom-right"
-                toggleElement={
-                  <Button
-                    size="small"
-                    indicateDropdown
-                    testId="referencesActionDropdown"
-                    disabled={isActionsDisabled}
-                    buttonType="primary"
-                    onClick={() => setDropdownOpen(!isDropdownOpen)}>
-                    Actions
-                  </Button>
-                }>
-                <DropdownList>
-                  <DropdownListItem testId="publishReferencesBtn" onClick={handlePublication}>
-                    Publish
-                  </DropdownListItem>
-                  <DropdownListItem testId="validateReferencesBtn" onClick={handleValidation}>
-                    Validate
-                  </DropdownListItem>
-                  {isAddToReleaseEnabled && (
-                    <DropdownListItem
-                      testId="addReferencesToReleaseBtn"
-                      onClick={handleAddToRelease}>
-                      Add selected entities to Release
-                    </DropdownListItem>
-                  )}
-                </DropdownList>
-              </Dropdown>
             </div>
           )}
 
@@ -421,18 +226,6 @@ const ReferencesTab = ({ entity }) => {
             </SkeletonContainer>
           )}
         </div>
-        {isRelaseDialogShown && (
-          <ReleasesWidgetDialog
-            rootEntity={entity}
-            selectedEntities={selectedEntities}
-            releaseContentTitle={createAddToReleaseDialogContent(
-              entityTitle,
-              selectedEntities,
-              references[0]
-            )}
-            onCancel={() => setRelaseDialogShown(false)}
-          />
-        )}
       </ErrorHandler>
     </>
   );
@@ -442,10 +235,4 @@ ReferencesTab.propTypes = {
   entity: PropTypes.object.isRequired,
 };
 
-const ReferencesTabWithProvider = (props) => (
-  <ReferencesProvider>
-    <ReferencesTab {...props} />
-  </ReferencesProvider>
-);
-
-export default ReferencesTabWithProvider;
+export default ReferencesTab;

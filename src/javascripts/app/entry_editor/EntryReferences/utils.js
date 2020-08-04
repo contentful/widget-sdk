@@ -67,12 +67,12 @@ export const createErrorMessage = ({
   )}`;
 };
 
-export const createCountMessage = ({ selectedEntities, root }) => {
+export const createCountMessage = ({ entityTitle, selectedEntities, root }) => {
   const doesContainRootEntry = doesContainRoot(selectedEntities, root);
   const referencesAmount = selectedEntities.length;
 
   if (doesContainRootEntry) {
-    return `This entry and ${referencesAmount - 1} ${pluralize(
+    return `${entityTitle} and ${referencesAmount - 1} ${pluralize(
       referencesAmount - 1,
       'reference'
     )} ${pluralize(referencesAmount - 1, 'is')} selected.`;
