@@ -25,7 +25,6 @@ export const angularInitRun = [
     const modules = await Promise.all([
       import(/* webpackMode: "eager" */ 'analytics/analyticsConsoleDirective'),
       import(/* webpackMode: "eager" */ 'services/modalDialogService'),
-      import(/* webpackMode: "eager" */ 'utils/command/commandDirective'),
       import(/* webpackMode: "eager" */ 'app/ContentModel/Editor/contentTypeEditorController'),
       import(/* webpackMode: "eager" */ 'app/asset_editor/cfAssetEditorDirective'),
       import(/* webpackMode: "eager" */ 'app/entity_editor/bulk_editor/cfBulkEditorDirective'),
