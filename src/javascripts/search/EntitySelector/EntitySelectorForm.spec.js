@@ -376,6 +376,22 @@ describe('EntitySelectorForm', () => {
     expect(findByText(error.data.message)).toBeDefined();
   });
 
+  it('should reset search and refetch when error is invalid or forbidden query', async () => {
+    const error = {
+      data: {
+        message: 'Invalid query',
+      },
+      status: 422,
+    };
+    const fetchMock = jest.fn().mockRejectedValueOnce(error).mockResolvedValue({
+      items: entries,
+      total: entries.length,
+    });
+    const props = getDefaultProps({ fetch: fetchMock });
+    render(<EntitySelectorForm {...props} />);
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+  });
+
   it('doesnt attempt to fetch after search state becomes empty', async () => {
     const totalExpectedEntities = ITEMS_PER_PAGE + 20;
     const entitiesBatches = [

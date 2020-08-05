@@ -236,6 +236,24 @@ const EntitySelector = ({
     [onNoEntities, load]
   );
 
+  useEffect(() => {
+    const status = error?.status;
+    const isInvalidQuery = status === 400 || status === 422;
+    const isForbiddenQuery = status === 403 || status === 404;
+    if (isInvalidQuery || isForbiddenQuery) {
+      const reset = async () => {
+        const { data: entities, hasMore } = await load({ reset: true, retry: true });
+        const result = { entities, hasMore };
+        setState(result);
+        setSearch({
+          state: { contentTypeId: null },
+          searchResult: result,
+        });
+      };
+      reset();
+    }
+  }, [error, load]);
+
   const getContentTypesForSearch = useCallback(() => {
     const accessibleContentTypes = getAccessibleCTs(spaceContext.publishedCTs, singleContentTypeId);
     return getValidContentTypes(linkedContentTypeIds, accessibleContentTypes);
