@@ -1,6 +1,7 @@
 import React from 'react';
 import { getModule } from 'core/NgRegistry';
 import { cloneDeep, map, get } from 'lodash';
+import validation from '@contentful/validation';
 import { ModalConfirm, Paragraph } from '@contentful/forma-36-react-components';
 import { ModalLauncher } from 'core/components/ModalLauncher';
 import ReloadNotification from 'app/common/ReloadNotification';
@@ -15,6 +16,8 @@ import DeleteContentTypeDialog from './Dialogs/DeleteContentTypeDialog';
 import { openDuplicateContentTypeDialog } from './Dialogs';
 import { getContentPreview } from 'features/content-preview';
 import { createCommand } from 'utils/command/command';
+
+import errorMessageBuilder from 'services/errorMessageBuilder/errorMessageBuilder';
 
 /**
  * @description
@@ -218,9 +221,14 @@ export default function create($scope, contentTypeIds) {
   function save(redirect) {
     assureDisplayField($scope.contentType.data);
 
-    if (!$scope.validate()) {
+    const buildMessage = errorMessageBuilder.forContentType;
+    const schema = validation.schemas.ContentType;
+
+    if (!schema.validate($scope.contentType.data)) {
       const fieldNames = map($scope.contentType.data.fields, 'name');
-      notify.invalidAccordingToScope($scope.validationResult.errors, fieldNames);
+      const errors = schema.errors($scope.contentType.data);
+      const errorsWithMessages = errors.map((error) => buildMessage(error));
+      notify.invalidAccordingToScope(errorsWithMessages, fieldNames);
       return $q.reject();
     }
 
