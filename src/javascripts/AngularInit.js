@@ -38,7 +38,6 @@ export const angularInitRun = [
       import(/* webpackMode: "eager" */ 'app/entry_editor/cfEntryEditorDirective'),
       import(/* webpackMode: "eager" */ 'app/entry_editor/formWidgetsController'),
       import(/* webpackMode: "eager" */ 'components/shared/endlessContainerDirective'),
-      import(/* webpackMode: "eager" */ 'components/shared/viewStateController'),
       import(/* webpackMode: "eager" */ 'directives/bindHtmlCompileDirective'),
       import(/* webpackMode: "eager" */ 'directives/watchersTogglerDirective'),
       import(/* webpackMode: "eager" */ 'filters'),
