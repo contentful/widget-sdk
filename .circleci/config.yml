@@ -348,6 +348,7 @@ jobs:
             JUNIT_REPORT_NAME: karma-test-results.xml
       - run:
           name: Report to Segment
+          when: always
           command: npm run report:test
       - store_test_results:
           path: reports
@@ -424,6 +425,24 @@ jobs:
             if [[ "$CIRCLE_NODE_INDEX" == "0" ]]; then
               $COMPONENTS_ROOT/user_interface/bin/trigger-sniffer-ci-stats-build
             fi
+      - run:
+          name: Report build results to Segment
+          when: always
+          command: |
+            # nvm isn't loaded in the container (it doesn't source bashrc)
+            # so we enable it here instead
+            export NVM_DIR="/opt/circleci/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm install v12.18.3
+            nvm use v12.18.3
+            echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+            npm i -g @contentful/segment-test-reporter
+
+            # If we stay inside of components/lab the reporting is wrong
+            cd ~/components/user_interface
+            segment-test-reporter \
+              --path=/home/circleci/components/lab/artifacts/test-results/pytest/*.xml \
+              --name=e2e-tests
       - store_artifacts:
           path: ~/components/lab/artifacts
       - store_test_results:
@@ -472,6 +491,7 @@ workflows:
                 path: cypress/reports
             - run:
                 name: Report to Segment
+                when: always
                 command: npm run report:cypress
             - persist_to_workspace:
                 root: ~/project
@@ -530,6 +550,10 @@ workflows:
           post-steps:
             - store_test_results:
                 path: cypress/reports
+            - run:
+                name: Report to Segment
+                when: always
+                command: npm run report:cypress
             - persist_to_workspace:
                 root: ~/project
                 paths:
