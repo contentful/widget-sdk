@@ -14,7 +14,34 @@ import {
   DialogExtensionSDK,
 } from 'contentful-ui-extensions-sdk';
 
-export function createDialogsApi(sdk: DialogExtensionSDK): DialogsAPI {
+const denyDialog = () => {
+  throw new Error('Cannot open dialog in Read Only mode');
+};
+
+const readOnlyDialogsApi: DialogsAPI = {
+  openAlert: denyDialog,
+  openConfirm: denyDialog,
+  openCurrent: denyDialog,
+  openCurrentApp: denyDialog,
+  openExtension: denyDialog,
+  openPrompt: denyDialog,
+  selectMultipleAssets: denyDialog,
+  selectMultipleEntries: denyDialog,
+  selectSingleAsset: denyDialog,
+  selectSingleEntry: denyDialog,
+};
+
+export function createDialogsApi({
+  dialogExtensionSDK,
+  readOnly = false,
+}: {
+  dialogExtensionSDK: DialogExtensionSDK;
+  readOnly?: boolean;
+}): DialogsAPI {
+  if (readOnly) {
+    return readOnlyDialogsApi;
+  }
+
   return {
     openAlert: ExtensionDialogs.openAlert,
     openConfirm: ExtensionDialogs.openConfirm,
@@ -46,21 +73,21 @@ export function createDialogsApi(sdk: DialogExtensionSDK): DialogsAPI {
       });
     },
     openCurrent: function (opts) {
-      if (sdk.ids.app) {
+      if (dialogExtensionSDK.ids.app) {
         return this.openCurrentApp(opts);
       } else {
         return this.openExtension({
           ...opts,
-          id: sdk.ids.extension,
+          id: dialogExtensionSDK.ids.extension,
         });
       }
     },
     openCurrentApp: (opts) => {
-      const options = { ...opts, id: sdk.ids.app };
-      return openCustomDialog(WidgetNamespace.APP, options, sdk);
+      const options = { ...opts, id: dialogExtensionSDK.ids.app };
+      return openCustomDialog(WidgetNamespace.APP, options, dialogExtensionSDK);
     },
     openExtension: (opts) => {
-      return openCustomDialog(WidgetNamespace.EXTENSION, opts, sdk);
+      return openCustomDialog(WidgetNamespace.EXTENSION, opts, dialogExtensionSDK);
     },
   };
 }
