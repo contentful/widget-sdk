@@ -8,7 +8,7 @@ jest.mock('services/localeStore', () => {
   const originalModule = jest.requireActual('services/localeStore');
 
   return {
-    ...originalModule,
+    ...originalModule.default,
     getDefaultLocale: () => ({ internal_code: 'internalCode', code: 'en-US' }),
   };
 });
