@@ -11,13 +11,34 @@ interface NavigatorProps {
   spaceContext: any;
   widgetNamespace: WidgetNamespace;
   widgetId: string;
+  readOnly?: boolean;
 }
+
+const denyNavigate = () => {
+  throw new Error('Cannot navigate in Read Only mode');
+};
+
+const readOnlyNavigatorApi: NavigatorAPI = {
+  onSlideInNavigation: denyNavigate,
+  openAsset: denyNavigate,
+  openBulkEditor: denyNavigate,
+  openCurrentAppPage: denyNavigate,
+  openEntry: denyNavigate,
+  openNewAsset: denyNavigate,
+  openNewEntry: denyNavigate,
+  openPageExtension: denyNavigate,
+};
 
 export function createNavigatorApi({
   spaceContext,
   widgetNamespace,
   widgetId,
+  readOnly = false,
 }: NavigatorProps): NavigatorAPI {
+  if (readOnly) {
+    return readOnlyNavigatorApi;
+  }
+
   const navigateToContentEntity = makeExtensionNavigationHandlers({ cma: spaceContext.cma });
   const navigateToBulkEditor = makeExtensionBulkNavigationHandlers();
 

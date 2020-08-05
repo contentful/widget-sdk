@@ -15,7 +15,6 @@ import {
   DialogExtensionSDK,
   DialogsAPI,
   FieldExtensionSDK,
-  SpaceAPI,
 } from 'contentful-ui-extensions-sdk';
 import { createEditorApi } from './createEditorApi';
 import { WidgetNamespace } from 'features/widget-renderer';
@@ -160,8 +159,6 @@ export function createFieldWidgetSDK({
   };
 }
 
-// TODO: sync with regular API and make sure it's really read only,
-// including CMA operations via the space API
 interface CreateReadOnlyFieldWidgetSDKOptions {
   field: Field;
   locale: Locale;
@@ -177,6 +174,8 @@ interface CreateReadOnlyFieldWidgetSDKOptions {
   environmentIds: string[];
   endpoint: SpaceEndpoint;
   tagsRepo: any;
+  widgetNamespace: WidgetNamespace;
+  widgetId: string;
 }
 
 export async function createReadonlyFieldWidgetSDK({
@@ -193,6 +192,8 @@ export async function createReadonlyFieldWidgetSDK({
   environmentIds,
   endpoint,
   tagsRepo,
+  widgetNamespace,
+  widgetId,
 }: CreateReadOnlyFieldWidgetSDKOptions): Promise<FieldExtensionSDK> {
   const pubSubClient = { on: noop } as PubSubClient;
   const [environmentId] = environmentIds;
@@ -246,8 +247,8 @@ export async function createReadonlyFieldWidgetSDK({
     entryApi,
     fieldApi,
     userApi,
-    WidgetNamespace.BUILTIN, // WidgetNamespace
-    '' // widgetId
+    widgetNamespace,
+    widgetId
   );
   const locationApi = {
     // TODO: hardcoded! Use current location instead of "entry-field"
@@ -260,11 +261,12 @@ export async function createReadonlyFieldWidgetSDK({
     startAutoResizer: noop,
     stopAutoResizer: noop,
   };
-  //TODO: this needs to get boundaries
+
   const navigatorApi = createNavigatorApi({
-    spaceContext,
-    widgetNamespace: WidgetNamespace.BUILTIN,
-    widgetId: '',
+    spaceContext: null,
+    widgetNamespace,
+    widgetId,
+    readOnly: true,
   });
 
   // "Editing" APIs

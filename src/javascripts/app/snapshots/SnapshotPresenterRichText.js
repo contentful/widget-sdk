@@ -5,7 +5,15 @@ import { createReadonlyFieldWidgetSDK } from 'app/widgets/NewWidgetApi';
 import { getModule } from 'core/NgRegistry';
 import { createTagsRepo } from 'features/content-tags';
 
-const SnapshotPresenterRichText = ({ className, value, entity, editorData, field, locale }) => {
+const SnapshotPresenterRichText = ({
+  className,
+  value,
+  entity,
+  editorData,
+  field,
+  locale,
+  widget,
+}) => {
   const [sdk, setSdk] = useState(null);
   useEffect(() => {
     const spaceContext = getModule('spaceContext');
@@ -24,8 +32,18 @@ const SnapshotPresenterRichText = ({ className, value, entity, editorData, field
       spaceId: spaceContext.getId(),
       tagsRepo: createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId()),
       spaceMember: spaceContext.space.data.spaceMember,
+      widgetId: widget.id,
+      widgetNamespace: widget.namespace,
     }).then(setSdk);
-  }, [editorData.contentType.data, editorData.editorInterface, entity, field, locale, value]);
+  }, [
+    editorData.contentType.data,
+    editorData.editorInterface,
+    widget,
+    entity,
+    field,
+    locale,
+    value,
+  ]);
 
   return (
     <div className={className} data-test-id="snapshot-presenter-richtext">
@@ -58,6 +76,10 @@ SnapshotPresenterRichText.propTypes = {
   locale: PropTypes.shape({
     code: PropTypes.string,
     internal_code: PropTypes.string,
+  }),
+  widget: PropTypes.shape({
+    id: PropTypes.string,
+    namespace: PropTypes.string,
   }),
 };
 
