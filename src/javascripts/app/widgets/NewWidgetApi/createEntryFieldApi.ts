@@ -4,6 +4,7 @@ import * as PathUtils from 'utils/Path';
 import localeStore from 'services/localeStore';
 import { EntryFieldAPI, Items } from 'contentful-ui-extensions-sdk';
 import { getModule } from 'core/NgRegistry';
+import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 
 const ERROR_CODES = {
   BADUPDATE: 'ENTRY UPDATE FAILED',
@@ -98,16 +99,22 @@ export interface InternalField {
   type: string;
 }
 
+const denyEntryAction = () => {
+  throw makeReadOnlyApiError(ReadOnlyApi.EntryField);
+};
+
 export function createEntryFieldApi({
   internalField,
   otDoc,
   setInvalid,
   listenToFieldLocaleEvent,
+  readOnly,
 }: {
   internalField: InternalField;
   otDoc: any;
   setInvalid: (publicLocaleCode: string, value: boolean) => void;
   listenToFieldLocaleEvent: FieldLocaleEventListenerFn;
+  readOnly?: boolean;
 }): EntryFieldAPI {
   const id = internalField.apiName ?? internalField.id;
   // We fall back to `internalField.id` because some old fields don't have an
@@ -119,34 +126,38 @@ export function createEntryFieldApi({
     return get(otDoc.getValueAt([]), currentPath);
   };
 
-  const setValue = async (value: any, publicLocaleCode?: string) => {
-    if (!canEdit(otDoc, id, publicLocaleCode)) {
-      throw makePermissionError();
-    }
+  const setValue = readOnly
+    ? denyEntryAction
+    : async (value: any, publicLocaleCode?: string) => {
+        if (!canEdit(otDoc, id, publicLocaleCode)) {
+          throw makePermissionError();
+        }
 
-    const currentPath = getCurrentPath(internalField, publicLocaleCode);
+        const currentPath = getCurrentPath(internalField, publicLocaleCode);
 
-    try {
-      await otDoc.setValueAt(currentPath, value);
-      return value;
-    } catch (err) {
-      throw makeShareJSError(err, ERROR_MESSAGES.MFAILUPDATE);
-    }
-  };
+        try {
+          await otDoc.setValueAt(currentPath, value);
+          return value;
+        } catch (err) {
+          throw makeShareJSError(err, ERROR_MESSAGES.MFAILUPDATE);
+        }
+      };
 
-  const removeValue = async (publicLocaleCode?: string) => {
-    if (!canEdit(otDoc, id, publicLocaleCode)) {
-      throw makePermissionError();
-    }
+  const removeValue = readOnly
+    ? denyEntryAction
+    : async (publicLocaleCode?: string) => {
+        if (!canEdit(otDoc, id, publicLocaleCode)) {
+          throw makePermissionError();
+        }
 
-    const currentPath = getCurrentPath(internalField, publicLocaleCode);
+        const currentPath = getCurrentPath(internalField, publicLocaleCode);
 
-    try {
-      await otDoc.removeValueAt(currentPath);
-    } catch (err) {
-      throw makeShareJSError(err, ERROR_MESSAGES.MFAILREMOVAL);
-    }
-  };
+        try {
+          await otDoc.removeValueAt(currentPath);
+        } catch (err) {
+          throw makeShareJSError(err, ERROR_MESSAGES.MFAILREMOVAL);
+        }
+      };
 
   function onValueChanged(callback: (value: any) => void): () => () => void;
   function onValueChanged(
@@ -232,7 +243,9 @@ export function createEntryFieldApi({
           onIsDisabledChanged(publicLocaleCode, cb as (isDisabled: boolean) => void),
         onSchemaErrorsChanged: (cb) =>
           onSchemaErrorsChanged(publicLocaleCode, cb as (errors: any) => void),
-        setInvalid: (isInvalid) => setInvalid(publicLocaleCode, isInvalid),
+        setInvalid: readOnly
+          ? denyEntryAction
+          : (isInvalid) => setInvalid(publicLocaleCode, isInvalid),
       };
     },
   };

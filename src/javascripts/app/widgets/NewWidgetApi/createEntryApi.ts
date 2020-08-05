@@ -7,23 +7,28 @@ import {
 import * as K from 'core/utils/kefir';
 import { EntryAPI, EntryFieldAPI, ContentType } from 'contentful-ui-extensions-sdk';
 
+interface CreateEntryApiOptions {
+  internalContentType: ContentType;
+  otDoc: any;
+  setInvalid: (localeCode: string, value: boolean) => void;
+  listenToFieldLocaleEvent: FieldLocaleEventListenerFn;
+  readOnly?: boolean;
+}
+
 export function createEntryApi({
   internalContentType,
   otDoc,
   setInvalid,
   listenToFieldLocaleEvent,
-}: {
-  internalContentType: ContentType;
-  otDoc: any;
-  setInvalid: (localeCode: string, value: boolean) => void;
-  listenToFieldLocaleEvent: FieldLocaleEventListenerFn;
-}): EntryAPI {
+  readOnly = false,
+}: CreateEntryApiOptions): EntryAPI {
   const fields = internalContentType.fields.map((internalField: InternalField) => {
     return createEntryFieldApi({
       internalField,
       otDoc,
       setInvalid,
       listenToFieldLocaleEvent,
+      readOnly,
     });
   });
 
