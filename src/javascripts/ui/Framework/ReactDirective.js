@@ -12,7 +12,6 @@ import store from 'redux/store';
 
 import * as uiComponentsIconEs6 from 'ui/Components/Icon';
 import * as componentsSharedDocumentTitleEs6 from 'components/shared/DocumentTitle';
-import * as appEntityEditorComponentsBackNavIndexEs6 from 'app/entity_editor/Components/BackNav';
 import * as appEntityEditorStatusNotificationEs6 from 'app/entity_editor/StatusNotification';
 import { EntityFieldHeading } from 'app/entity_editor/EntityField/EntityFieldHeading';
 import { EntityFieldControl } from 'app/entity_editor/EntityField/EntityFieldControl';
@@ -37,6 +36,7 @@ import * as AssetEditorWorkbench from 'app/asset_editor/AssetEditorWorkbench';
 import * as ContentTagsField from 'app/asset_editor/ContentTagsField';
 import * as EntitySelectorForm from 'search/EntitySelector/EntitySelectorForm';
 import * as EntitySelectorAdapter from 'search/EntitySelector/EntitySelectorAdapter';
+import { BulkEditorHeader } from 'app/entity_editor/bulk_editor/BulkEditorHeader';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container, store) {
@@ -237,7 +237,7 @@ function getModule(name) {
   const allowedModules = {
     'ui/Components/Icon': uiComponentsIconEs6,
     'components/shared/DocumentTitle': componentsSharedDocumentTitleEs6,
-    'app/entity_editor/Components/BackNav': appEntityEditorComponentsBackNavIndexEs6,
+    'app/entity_editor/bulk_editor/BulkEditorHeader': { default: BulkEditorHeader },
     'app/entity_editor/StatusNotification': appEntityEditorStatusNotificationEs6,
     'app/entry_editor/CustomEditorExtensionRenderer': appEntryEditorCustomEditorExtensionRendererEs6,
     'app/home/SpaceHomePage': appHomeSpaceHomePageEs6,

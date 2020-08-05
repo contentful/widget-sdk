@@ -1,18 +1,8 @@
 <div class="workbench sticky-parent">
-  <header class="workbench-header">
-    <react-component
-      name="app/entity_editor/Components/BackNav"
-      props="{onClose: newCloseWithReason('arrow_back')}"
-    ></react-component>
-    <h1 class="workbench-header__title">
-      Entries linked in <em>{{ referenceContext.field.name }}</em> ({{ data.linkCount }})
-    </h1>
-    <div class="workbench-header__actions">
-      <button class="btn-secondary-action" ng-click="newCloseWithReason('bulk_editor_close')()">
-        Close
-      </button>
-    </div>
-  </header>
+  <react-component
+    name="app/entity_editor/bulk_editor/BulkEditorHeader"
+    props="{fieldName: referenceContext.field.name, linkCount: data.linkCount, onClose: newCloseWithReason('bulk_editor_close'), onBack: newCloseWithReason('arrow_back')}"
+  ></react-component>
   <div class="workbench-main">
     <div class="workbench-main__content" ng-show="!data.loaded" style="padding-top: 0;">
       <react-component
