@@ -6,6 +6,7 @@ import makePageExtensionHandlers from 'widgets/bridges/makePageExtensionHandlers
 import { onSlideInNavigation } from 'navigation/SlideInNavigator/index';
 import { WidgetNamespace } from 'features/widget-renderer';
 import { NavigatorAPI } from 'contentful-ui-extensions-sdk';
+import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 
 interface NavigatorProps {
   spaceContext: any;
@@ -15,7 +16,7 @@ interface NavigatorProps {
 }
 
 const denyNavigate = () => {
-  throw new Error('Cannot navigate in Read Only mode');
+  throw makeReadOnlyApiError(ReadOnlyApi.Navigate);
 };
 
 const readOnlyNavigatorApi: NavigatorAPI = {

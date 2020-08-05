@@ -223,6 +223,7 @@ export async function createReadonlyFieldWidgetSDK({
     otDoc,
     setInvalid: noop,
     listenToFieldLocaleEvent: (_internalField, _locale, _extractFieldLocaleProperty, _cb) => noop,
+    readOnly: true,
   });
   const fieldApi = entryApi.fields[publicFieldId].getForLocale(publicLocaleCode);
   const accessApi = createAccessApi();

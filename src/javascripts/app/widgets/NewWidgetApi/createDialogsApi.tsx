@@ -9,13 +9,14 @@ import trackExtensionRender from 'widgets/TrackExtensionRender';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import {
+  DialogExtensionSDK,
   DialogsAPI,
   OpenCustomWidgetOptions,
-  DialogExtensionSDK,
 } from 'contentful-ui-extensions-sdk';
+import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 
 const denyDialog = () => {
-  throw new Error('Cannot open dialog in Read Only mode');
+  throw makeReadOnlyApiError(ReadOnlyApi.Dialog);
 };
 
 const readOnlyDialogsApi: DialogsAPI = {
