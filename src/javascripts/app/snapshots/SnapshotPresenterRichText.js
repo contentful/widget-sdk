@@ -23,7 +23,7 @@ const SnapshotPresenterRichText = ({
       locale,
       fieldValue: value,
       internalContentType: editorData.contentType.data,
-      internalEditorInterface: editorData.editorInterface,
+      editorInterface: editorData.editorInterface,
       entry: entity,
       initialContentTypes: spaceContext.publishedCTs.getAllBare(),
       cma: spaceContext.cma,

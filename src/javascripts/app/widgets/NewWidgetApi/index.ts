@@ -164,7 +164,7 @@ interface CreateReadOnlyFieldWidgetSDKOptions {
   locale: Locale;
   fieldValue: any;
   internalContentType: ContentType;
-  internalEditorInterface: EditorInterface;
+  editorInterface: EditorInterface;
   entry: Entry;
   initialContentTypes: ContentType[];
   cma: any;
@@ -182,7 +182,7 @@ export async function createReadonlyFieldWidgetSDK({
   field, // TODO: should this be replaced with publicFieldId?
   locale, // TODO: should this be replaced by the code?
   internalContentType,
-  internalEditorInterface,
+  editorInterface,
   entry,
   initialContentTypes,
   cma,
@@ -210,7 +210,7 @@ export async function createReadonlyFieldWidgetSDK({
     },
     internalContentType,
     readOnlyEntityRepo,
-    5000,
+    5000
   );
   /// STUBS
   const publicFieldId = field.apiName ?? field.id;
@@ -270,7 +270,7 @@ export async function createReadonlyFieldWidgetSDK({
 
   // "Editing" APIs
   const editorApi = createEditorApi({
-    editorInterface: internalEditorInterface,
+    editorInterface: editorInterface,
     getLocaleData: () => {
       return {
         defaultLocale: localeStore.getDefaultLocale(),
