@@ -211,7 +211,6 @@ export async function createReadonlyFieldWidgetSDK({
     internalContentType,
     readOnlyEntityRepo,
     5000,
-    true
   );
   /// STUBS
   const publicFieldId = field.apiName ?? field.id;
