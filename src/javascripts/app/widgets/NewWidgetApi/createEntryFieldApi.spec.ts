@@ -90,7 +90,7 @@ describe('createEntryFieldApi', () => {
   });
 
   describe('type', () => {
-    it('is the internal fields type', () => {
+    it('is set to items from the internal field', () => {
       const type = 'example';
       const entryFieldApi = createEntryFieldApi({
         internalField: { ...internalField, type },
@@ -100,7 +100,7 @@ describe('createEntryFieldApi', () => {
   });
 
   describe('required', () => {
-    it('is the internal fields required', () => {
+    it('is set to items from the internal field', () => {
       const required = false;
       const entryFieldApi = createEntryFieldApi({
         internalField: { ...internalField, required },
@@ -176,7 +176,7 @@ describe('createEntryFieldApi', () => {
       });
 
       describe('when the value can be edited', () => {
-        it('sets the value or something', async () => {
+        it('changes the value', async () => {
           otDoc.permissions.canEditFieldLocale.mockReturnValue(true);
 
           const entryFieldApi = createEntryFieldApi({
@@ -209,7 +209,7 @@ describe('createEntryFieldApi', () => {
       });
 
       describe('when the value can be edited', () => {
-        it('sets the value or something', async () => {
+        it('sets the value', async () => {
           otDoc.permissions.canEditFieldLocale.mockReturnValue(true);
 
           const entryFieldApi = createEntryFieldApi({
