@@ -486,3 +486,65 @@ describe('EntitySelectorForm', () => {
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 });
+
+describe('EntitySelectorForm hacking bottom hit trigger', () => {
+  afterEach(cleanup);
+
+  it('should trigger loadMore on entity selector container bottom hit and ignore next calls while isLoading: true', async () => {
+    const totalExpectedEntities = ITEMS_PER_PAGE * 2 + 20;
+    const entitiesBatches = [
+      {
+        items: new Array(ITEMS_PER_PAGE).fill().map((_, id) => entity('Entry', `id-${id}`)),
+        hasMore: true,
+        total: totalExpectedEntities,
+      },
+      {
+        items: new Array(ITEMS_PER_PAGE)
+          .fill()
+          .map((_, id) => entity('Entry', `next-page-id-${id}`)),
+        hasMore: true,
+        total: totalExpectedEntities,
+      },
+      {
+        items: new Array(20).fill().map((_, id) => entity('Entry', `next-page-id-${id}`)),
+        hasMore: false,
+        total: totalExpectedEntities,
+      },
+    ];
+    const fetchMock = jest
+      .fn()
+      // initial
+      .mockResolvedValueOnce(entitiesBatches[0])
+      // loadMore
+      .mockImplementationOnce(
+        () => new Promise((resolve) => setTimeout(() => resolve(entitiesBatches[1]), 1000))
+      )
+      .mockResolvedValueOnce(entitiesBatches[2]);
+
+    const props = getDefaultProps({ fetch: fetchMock, pagination: true });
+    const { getByTestId, findAllByTestId } = render(<EntitySelectorForm {...props} />);
+    await findAllByTestId('cf-ui-entry-card');
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+
+    const entitySelectorList = getByTestId('entity-selector-list');
+    // these are read only, but we need to overwrite their values to make sure we simulate bottom hit event
+    jest.spyOn(entitySelectorList, 'offsetHeight', 'get').mockImplementation(() => 200);
+    jest.spyOn(entitySelectorList, 'scrollHeight', 'get').mockImplementation(() => 200);
+    jest.spyOn(entitySelectorList, 'scrollTop', 'get').mockImplementation(() => 200);
+    jest.spyOn(entitySelectorList, 'clientHeight', 'get').mockImplementation(() => 200);
+
+    act(() => {
+      fireEvent.scroll(entitySelectorList);
+      fireEvent.scroll(entitySelectorList);
+      fireEvent.scroll(entitySelectorList);
+    });
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+
+    act(() => {
+      fireEvent.scroll(entitySelectorList);
+    });
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(3));
+  });
+});
