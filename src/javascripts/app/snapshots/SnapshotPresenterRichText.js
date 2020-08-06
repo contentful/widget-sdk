@@ -56,7 +56,7 @@ SnapshotPresenterRichText.propTypes = {
   className: PropTypes.string,
   value: PropTypes.object.isRequired,
   editorData: PropTypes.shape({
-    contentType: { data: PropTypes.object },
+    contentType: PropTypes.shape({ data: PropTypes.object }),
     editorInterface: PropTypes.object,
   }),
   entity: PropTypes.object.isRequired,

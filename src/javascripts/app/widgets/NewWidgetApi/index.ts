@@ -195,7 +195,7 @@ export async function createReadonlyFieldWidgetSDK({
   widgetNamespace,
   widgetId,
 }: CreateReadOnlyFieldWidgetSDKOptions): Promise<FieldExtensionSDK> {
-  const pubSubClient = { on: noop } as PubSubClient;
+  const pubSubClient = { on: noop, off: noop } as PubSubClient;
   const [environmentId] = environmentIds;
 
   const readOnlyEntityRepo = createEntityRepo(endpoint, pubSubClient, noop, {

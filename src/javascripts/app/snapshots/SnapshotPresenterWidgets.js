@@ -14,7 +14,6 @@ import SnapshotPresenterMarkdown from './SnapshotPresenterMarkdown';
 import SnapshotPresenterRichText from './SnapshotPresenterRichText';
 import SnapshotPresenterStandard from './SnapshotPresenterStandard';
 import { isCustomWidget } from 'features/widget-renderer';
-import { toRendererWidget } from 'widgets/WidgetCompat';
 
 const styles = {
   rtl: css({
@@ -67,7 +66,7 @@ const SnapshotPresenterWidgets = ({
           entity={entity}
           field={field}
           locale={locale}
-          widget={toRendererWidget(descriptor)}
+          widget={descriptor}
         />
       );
     case 'Text':
