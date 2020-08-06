@@ -1,3 +1,4 @@
+import { noop } from 'lodash';
 import {
   makeExtensionNavigationHandlers,
   makeExtensionBulkNavigationHandlers,
@@ -20,7 +21,7 @@ const denyNavigate = () => {
 };
 
 const readOnlyNavigatorApi: NavigatorAPI = {
-  onSlideInNavigation: denyNavigate,
+  onSlideInNavigation: () => noop,
   openAsset: denyNavigate,
   openBulkEditor: denyNavigate,
   openCurrentAppPage: denyNavigate,
