@@ -7,7 +7,7 @@ describe('createAccessApi', () => {
     describe('when allowed', () => {
       it('resolves to true', async () => {
         const canAccess = jest.fn(() => true);
-        makeExtensionAccessHandlers.mockReturnValueOnce(canAccess);
+        (makeExtensionAccessHandlers as jest.Mock).mockReturnValueOnce(canAccess);
         const accessApi = createAccessApi();
         const result = await accessApi.can('do something', 'to this');
         expect(result).toEqual(true);
@@ -16,7 +16,7 @@ describe('createAccessApi', () => {
     describe('when not allowed', () => {
       it('resolves to false', async () => {
         const canAccess = jest.fn(() => false);
-        makeExtensionAccessHandlers.mockReturnValueOnce(canAccess);
+        (makeExtensionAccessHandlers as jest.Mock).mockReturnValueOnce(canAccess);
         const accessApi = createAccessApi();
         const result = await accessApi.can('do something', 'to this');
         expect(result).toEqual(false);

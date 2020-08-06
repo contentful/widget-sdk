@@ -1,15 +1,16 @@
 import localeStore from 'services/localeStore';
 jest.mock('services/localeStore');
+import { LocalesAPI } from 'contentful-ui-extensions-sdk';
 import { createLocalesApi } from './createLocalesApi';
 
 describe('createLocalesApi', () => {
-  let localesApi;
+  let localesApi: LocalesAPI;
   beforeEach(() => {
-    localeStore.getDefaultLocale.mockReturnValueOnce({
+    (localeStore.getDefaultLocale as jest.Mock).mockReturnValueOnce({
       code: 'en-US',
       internal_code: 'internalCode',
     });
-    localeStore.getPrivateLocales.mockReturnValueOnce([
+    (localeStore.getPrivateLocales as jest.Mock).mockReturnValueOnce([
       { name: 'English', code: 'en-US' },
       { name: 'French', code: 'fr', fallbackCode: 'en-US', optional: true },
       { name: 'Hebrew', code: 'he', fallbackCode: 'en-US', optional: false },

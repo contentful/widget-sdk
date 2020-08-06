@@ -54,7 +54,7 @@ describe('createEditorApi', () => {
     it('allows the passed in watch function to be called on changes', () => {
       const watcher = jest.fn();
       editorApi.onLocaleSettingsChanged(watcher);
-      watchers.forEach(fn => fn());
+      watchers.forEach((fn) => fn());
       expect(watcher).toHaveBeenCalledWith({ focused: 'en-US', mode: 'single' });
     });
   });
@@ -76,7 +76,7 @@ describe('createEditorApi', () => {
     it('allows the passed in watch function to be called on changes', () => {
       const watcher = jest.fn();
       editorApi.onShowDisabledFieldsChanged(watcher);
-      watchers.forEach(fn => fn());
+      watchers.forEach((fn) => fn());
       expect(watcher).toHaveBeenCalledWith(showDisabledFields);
     });
   });

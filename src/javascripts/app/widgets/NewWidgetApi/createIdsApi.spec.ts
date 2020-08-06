@@ -1,12 +1,13 @@
 import { createIdsApi } from './createIdsApi';
 import { WidgetNamespace } from 'features/widget-renderer';
+import { EntryAPI, FieldAPI, User } from 'contentful-ui-extensions-sdk';
 
 describe('createIdsApi', () => {
   const spaceId = 'space_id';
   const envId = 'env_id';
-  const entry = {
+  const entry = ({
     getSys: jest.fn(() => ({ id: 'entry_id' })),
-  };
+  } as unknown) as EntryAPI;
   const fieldId = 'field_id';
   const user = {
     sys: {
@@ -33,8 +34,8 @@ describe('createIdsApi', () => {
         envId,
         contentType,
         entry,
-        { id: fieldId },
-        user,
+        ({ id: fieldId } as unknown) as FieldAPI,
+        user as User,
         WidgetNamespace.APP,
         widgetId
       );
@@ -58,8 +59,8 @@ describe('createIdsApi', () => {
         envId,
         contentType,
         entry,
-        { id: fieldId },
-        user,
+        { id: fieldId } as FieldAPI,
+        user as User,
         WidgetNamespace.EXTENSION,
         widgetId
       );
