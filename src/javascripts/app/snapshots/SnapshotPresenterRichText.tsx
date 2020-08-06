@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { ReadOnlyRichTextEditor } from 'app/widgets/RichText';
-import { createReadonlyFieldWidgetSDK } from 'app/widgets/NewWidgetApi';
+
+import { FieldExtensionSDK } from 'contentful-ui-extensions-sdk';
 import { getModule } from 'core/NgRegistry';
+import { createReadonlyFieldWidgetSDK } from 'app/widgets/NewWidgetApi';
+import { ReadOnlyRichTextEditor } from 'app/widgets/RichText';
 import { createTagsRepo } from 'features/content-tags';
 
 const SnapshotPresenterRichText = ({
@@ -14,36 +16,28 @@ const SnapshotPresenterRichText = ({
   locale,
   widget,
 }) => {
-  const [sdk, setSdk] = useState(null);
-  useEffect(() => {
+  const sdk: FieldExtensionSDK = useMemo(() => {
     const spaceContext = getModule('spaceContext');
 
-    createReadonlyFieldWidgetSDK({
-      field,
-      locale,
-      fieldValue: value,
-      internalContentType: editorData.contentType.data,
-      editorInterface: editorData.editorInterface,
-      entry: entity,
-      initialContentTypes: spaceContext.publishedCTs.getAllBare(),
+    return createReadonlyFieldWidgetSDK({
       cma: spaceContext.cma,
-      users: spaceContext.users,
+      editorInterface: editorData.editorInterface,
+      endpoint: spaceContext.endpoint,
+      entry: entity,
       environmentIds: [spaceContext.getEnvironmentId(), ...spaceContext.getAliasesIds()],
+      field,
+      fieldValue: value,
+      initialContentTypes: spaceContext.publishedCTs.getAllBare(),
+      internalContentType: editorData.contentType.data,
+      locale,
       spaceId: spaceContext.getId(),
-      tagsRepo: createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId()),
       spaceMember: spaceContext.space.data.spaceMember,
+      tagsRepo: createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId()),
+      usersRepo: spaceContext.users,
       widgetId: widget.id,
       widgetNamespace: widget.namespace,
-    }).then(setSdk);
-  }, [
-    editorData.contentType.data,
-    editorData.editorInterface,
-    widget,
-    entity,
-    field,
-    locale,
-    value,
-  ]);
+    });
+  }, [field, locale, entity, editorData]);
 
   return (
     <div className={className} data-test-id="snapshot-presenter-richtext">

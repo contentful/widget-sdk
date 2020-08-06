@@ -61,11 +61,11 @@ const SnapshotPresenterWidgets = ({
       return (
         <SnapshotPresenterRichText
           className={rtlClassName}
-          value={value}
           editorData={editorData}
           entity={entity}
           field={field}
           locale={locale}
+          value={value}
           widget={descriptor}
         />
       );
