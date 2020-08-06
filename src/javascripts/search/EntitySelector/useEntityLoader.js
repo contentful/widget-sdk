@@ -57,6 +57,14 @@ const useEntityLoader = ({ entityType, fetch, contentTypeId }) => {
         }, []);
       }
 
+      const getEmptyResponse = () => {
+        return {
+          data: [],
+          hasMore: !paginator.current.isAtLast(),
+          total: paginator.current.getTotal(),
+        };
+      };
+
       const getOrder = () => {
         const ct = contentTypeId && spaceContext.publishedCTs.get(contentTypeId);
         if (ct) {
@@ -86,50 +94,50 @@ const useEntityLoader = ({ entityType, fetch, contentTypeId }) => {
 
       try {
         const res = await fetch(params);
-        if (lastRequestId.current === requestId) {
-          paginator.current.setTotal(res.total);
-          const loadedItems = getLoadedItems(res);
-          setError(undefined);
-          setLoading(false);
-          return {
-            data: loadedItems,
-            hasMore: !paginator.current.isAtLast(),
-            total: res.total,
-          };
+        if (lastRequestId.current !== requestId) {
+          return getEmptyResponse();
         }
-      } catch (error) {
-        if (lastRequestId.current === requestId) {
-          // going one page back, because due to error this page stays empty
-          // FYI, the page gets incremented at the beginning of the load function
-          // if we wouldn't do that, we would end up with one empty page
-          if (more) {
-            paginator.current.prev();
-          }
 
-          if (
-            error.status === 400 &&
-            error?.data.message.toLowerCase().startsWith('response size too big') &&
-            (!pageSize || batchSize > 1)
-          ) {
-            /**
-             * Load items trying with smaller and smaller batches if "Response is too big" error occurs.
-             * The current page pointer is adjusted respectively.
-             */
-            const halfTheBatchSize = Math.floor(batchSize / 2);
-            return load({
-              ...options,
-              retry: true,
-              pageSize: halfTheBatchSize,
-            });
-          }
-          setError(error);
-          setLoading(false);
-          return {
-            data: [],
-            hasMore: !paginator.current.isAtLast(),
-            total: paginator.current.getTotal(),
-          };
+        paginator.current.setTotal(res.total);
+        const loadedItems = getLoadedItems(res);
+        setError(undefined);
+        setLoading(false);
+        return {
+          data: loadedItems,
+          hasMore: !paginator.current.isAtLast(),
+          total: res.total,
+        };
+      } catch (error) {
+        if (lastRequestId.current !== requestId) {
+          return getEmptyResponse();
         }
+
+        // going one page back, because due to error this page stays empty
+        // FYI, the page gets incremented at the beginning of the load function
+        // if we wouldn't do that, we would end up with one empty page
+        if (more) {
+          paginator.current.prev();
+        }
+
+        if (
+          error.status === 400 &&
+          error?.data.message.toLowerCase().startsWith('response size too big') &&
+          (!pageSize || batchSize > 1)
+        ) {
+          /**
+           * Load items trying with smaller and smaller batches if "Response is too big" error occurs.
+           * The current page pointer is adjusted respectively.
+           */
+          const halfTheBatchSize = Math.floor(batchSize / 2);
+          return load({
+            ...options,
+            retry: true,
+            pageSize: halfTheBatchSize,
+          });
+        }
+        setError(error);
+        setLoading(false);
+        return getEmptyResponse();
       }
     },
     [entityType, fetch, contentTypeId, spaceContext]
