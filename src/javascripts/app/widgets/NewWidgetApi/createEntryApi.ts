@@ -5,11 +5,12 @@ import {
 } from './createEntryFieldApi';
 
 import * as K from 'core/utils/kefir';
-import { EntryAPI, EntryFieldAPI, ContentType } from 'contentful-ui-extensions-sdk';
+import { EntryAPI, EntrySys, EntryFieldAPI, ContentType } from 'contentful-ui-extensions-sdk';
+import { Document } from 'app/entity_editor/Document/typesDocument';
 
 interface CreateEntryApiOptions {
   internalContentType: ContentType;
-  otDoc: any;
+  otDoc: Document;
   setInvalid: (localeCode: string, value: boolean) => void;
   listenToFieldLocaleEvent: FieldLocaleEventListenerFn;
   readOnly?: boolean;
@@ -34,7 +35,8 @@ export function createEntryApi({
 
   return {
     getSys: () => {
-      return K.getValue(otDoc.sysProperty);
+      // TODO: the EntitySys type in otDoc doesn't match EntrySys from UIESDK
+      return (K.getValue(otDoc.sysProperty) as unknown) as EntrySys;
     },
     onSysChanged: (cb) => {
       return K.onValue(otDoc.sysProperty, cb as (value: unknown) => void);

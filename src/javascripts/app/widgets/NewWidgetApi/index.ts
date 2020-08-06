@@ -20,6 +20,7 @@ import { createEditorApi } from './createEditorApi';
 import { WidgetNamespace } from 'features/widget-renderer';
 import { createAccessApi } from './createAccessApi';
 import { makeFieldLocaleEventListener } from './createEntryFieldApi';
+import { Document } from 'app/entity_editor/Document/typesDocument';
 
 import { Field, Locale } from 'app/entity_editor/EntityField/types';
 import { Entry } from 'contentful-management/dist/typings/entities/entry';
@@ -42,6 +43,7 @@ export function createFieldWidgetSDK({
   editorInterfaceSettings = {},
   spaceContext,
   $scope,
+  otDoc,
   internalContentType,
 }: {
   fieldId: string;
@@ -51,6 +53,7 @@ export function createFieldWidgetSDK({
   editorInterfaceSettings?: Record<string, any>;
   spaceContext: any;
   $scope: any;
+  otDoc: Document;
   internalContentType: ContentType;
 }): FieldExtensionSDK {
   // "Editing" APIs
@@ -63,7 +66,7 @@ export function createFieldWidgetSDK({
   const contentType = createContentTypeApi(internalContentType);
   const entry = createEntryApi({
     internalContentType,
-    otDoc: $scope.otDoc,
+    otDoc,
     // TODO: `setInvalid` is only available on `fieldController`. The SDK can only
     // mark the current field as invalid. We could consider moving `setInvalid` to
     // the field-locale level.

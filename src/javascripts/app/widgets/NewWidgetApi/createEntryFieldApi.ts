@@ -5,6 +5,7 @@ import localeStore from 'services/localeStore';
 import { EntryFieldAPI, Items } from 'contentful-ui-extensions-sdk';
 import { getModule } from 'core/NgRegistry';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
+import { Document } from 'app/entity_editor/Document/typesDocument';
 
 const ERROR_CODES = {
   BADUPDATE: 'ENTRY UPDATE FAILED',
@@ -60,7 +61,7 @@ function getCurrentPath(internalField: InternalField, publicLocaleCode?: string)
   return ['fields', internalField.id, internalLocaleCode];
 }
 
-function canEdit(otDoc: any, publicFieldId: string, publicLocaleCode?: string) {
+function canEdit(otDoc: Document, publicFieldId: string, publicLocaleCode?: string) {
   const externalLocaleCode = publicLocaleCode ?? localeStore.getDefaultLocale().code;
   return otDoc.permissions.canEditFieldLocale(publicFieldId, externalLocaleCode);
 }
@@ -111,7 +112,7 @@ export function createEntryFieldApi({
   readOnly,
 }: {
   internalField: InternalField;
-  otDoc: any;
+  otDoc: Document;
   setInvalid: (publicLocaleCode: string, value: boolean) => void;
   listenToFieldLocaleEvent: FieldLocaleEventListenerFn;
   readOnly?: boolean;
