@@ -52,6 +52,7 @@ describe('createEntryApi', () => {
   } as unknown) as Document;
   const setInvalid = jest.fn();
   const listenToFieldLocaleEvent = jest.fn();
+
   beforeEach(() => {
     entryApi = createEntryApi({
       internalContentType,
@@ -62,14 +63,14 @@ describe('createEntryApi', () => {
   });
 
   describe('getSys', () => {
-    it('returns sys from otdoc', () => {
+    it('returns sys from otDoc', () => {
       const result = entryApi.getSys();
       expect(result).toEqual({ id: 'example' });
     });
   });
 
   describe('onSysChange', () => {
-    it('cals Kefir onvalue with the callback', () => {
+    it('calls Kefir onvalue with the callback', () => {
       const callback = jest.fn();
       entryApi.onSysChanged(callback);
       expect(onValue).toHaveBeenCalledWith(otDoc.sysProperty, callback);

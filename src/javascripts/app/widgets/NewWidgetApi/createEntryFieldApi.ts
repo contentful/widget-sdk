@@ -104,19 +104,21 @@ const denyEntryAction = () => {
   throw makeReadOnlyApiError(ReadOnlyApi.EntryField);
 };
 
+export interface CreateEntryFieldApiProps {
+  internalField: InternalField;
+  otDoc: Document;
+  setInvalid: (publicLocaleCode: string, value: boolean) => void;
+  listenToFieldLocaleEvent: FieldLocaleEventListenerFn;
+  readOnly?: boolean;
+}
+
 export function createEntryFieldApi({
   internalField,
   otDoc,
   setInvalid,
   listenToFieldLocaleEvent,
   readOnly,
-}: {
-  internalField: InternalField;
-  otDoc: Document;
-  setInvalid: (publicLocaleCode: string, value: boolean) => void;
-  listenToFieldLocaleEvent: FieldLocaleEventListenerFn;
-  readOnly?: boolean;
-}): EntryFieldAPI {
+}: CreateEntryFieldApiProps): EntryFieldAPI {
   const id = internalField.apiName ?? internalField.id;
   // We fall back to `internalField.id` because some old fields don't have an
   // apiName / public ID
