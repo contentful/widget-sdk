@@ -6,6 +6,7 @@ import {
 } from './createEntryFieldApi';
 import { onValueWhile } from 'core/utils/kefir';
 import { Document } from 'app/entity_editor/Document/typesDocument';
+import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 
 jest.mock('core/utils/kefir', () => {
   const originalModule = jest.requireActual('core/utils/kefir');
@@ -29,7 +30,16 @@ jest.mock('services/localeStore', () => {
   };
 });
 
-const getCreateEntryFieldApiProps = (props) => (props as unknown) as CreateEntryFieldApiProps;
+const getCreateEntryFieldApiProps = (props): CreateEntryFieldApiProps => {
+  return {
+    internalField: {},
+    listenToFieldLocaleEvent: () => jest.fn(),
+    otDoc: {},
+    setInvalid: jest.fn(),
+    readOnly: false,
+    ...props,
+  };
+};
 
 describe('createEntryFieldApi', () => {
   const otDoc = ({
@@ -226,6 +236,16 @@ describe('createEntryFieldApi', () => {
         );
       });
     });
+
+    describe('when api is read-only', () => {
+      it('throws a ReadOnlyEntryFieldAPI exception', () => {
+        const entryFieldApi = createEntryFieldApi(getCreateEntryFieldApiProps({ readOnly: true }));
+
+        expect(() => entryFieldApi.setValue('whatever')).toThrowError(
+          makeReadOnlyApiError(ReadOnlyApi.EntryField)
+        );
+      });
+    });
   });
 
   describe('removeValue', () => {
@@ -258,6 +278,16 @@ describe('createEntryFieldApi', () => {
         await entryFieldApi.removeValue();
 
         expect(otDoc.removeValueAt).toHaveBeenCalledWith(['fields', 'internal_id', 'internalCode']);
+      });
+    });
+
+    describe('when api is read-only', () => {
+      it('throws a ReadOnlyEntryFieldAPI exception', () => {
+        const entryFieldApi = createEntryFieldApi(getCreateEntryFieldApiProps({ readOnly: true }));
+
+        expect(() => entryFieldApi.removeValue()).toThrowError(
+          makeReadOnlyApiError(ReadOnlyApi.EntryField)
+        );
       });
     });
   });
@@ -352,6 +382,18 @@ describe('createEntryFieldApi', () => {
         onIsDisabledChanged: expect.any(Function),
         onSchemaErrorsChanged: expect.any(Function),
         setInvalid: expect.any(Function),
+      });
+    });
+  });
+
+  describe('setInvalid', () => {
+    describe('when api is read-only', () => {
+      it('throws a ReadOnlyEntryFieldAPI exception', () => {
+        const entryFieldApi = createEntryFieldApi(getCreateEntryFieldApiProps({ readOnly: true }));
+
+        expect(() => entryFieldApi.getForLocale('en').setInvalid(false)).toThrowError(
+          makeReadOnlyApiError(ReadOnlyApi.EntryField)
+        );
       });
     });
   });
