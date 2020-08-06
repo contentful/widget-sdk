@@ -6,14 +6,14 @@ import { Note } from '@contentful/forma-36-react-components';
 import EmbedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
 import { logError } from 'services/logger';
 
-const SnapshotPresenterMarkdown = ({ className, value }) => {
+const SnapshotPresenterMarkdown = ({ className, value, direction }) => {
   return (
     <div className={className} data-test-id="snapshot-presenter-markdown">
       <ErrorBoundary>
         <MarkdownPreview
           value={value}
           mode="zen"
-          direction="ltr"
+          direction={direction}
           previewComponents={{
             // eslint-disable-next-line
             embedly: ({ url }) => <EmbedlyPreview previewUrl={url} delay={100} />,
@@ -27,6 +27,7 @@ const SnapshotPresenterMarkdown = ({ className, value }) => {
 SnapshotPresenterMarkdown.propTypes = {
   className: PropTypes.string,
   value: PropTypes.string.isRequired,
+  direction: PropTypes.string,
 };
 
 SnapshotPresenterMarkdown.defaultProps = {

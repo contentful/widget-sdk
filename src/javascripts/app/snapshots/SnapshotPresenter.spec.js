@@ -38,6 +38,7 @@ const getProps = (args = {}) => {
       internal_code: 'en-US',
     },
     widget: {
+      widgetId: '',
       settings: {},
       field: {
         linkType: 'Entry',
@@ -83,14 +84,14 @@ describe('SnapshotPresenter', () => {
       const { getByTestId } = render(<SnapshotPresenter {...getProps({ entity: empty })} />);
       const presenter = getByTestId('snapshot-presenter');
       expect(presenter).toBeInTheDocument();
-      expect(presenter).toBeEmpty();
+      expect(presenter).toBeEmptyDOMElement();
     });
   });
 
   [
     ['Boolean', false, 'boolean'],
     ['Array<Symbol>', ['foo'], 'arraysymbol'],
-    ['Text', 'Text', 'markdown'],
+    ['Text', 'Text', 'standard'],
     ['Symbol', 'Symbol', 'standard'],
     ['Object', { foo: 'bar' }, 'default'],
     ['Integer', 1, 'standard'],
@@ -100,6 +101,7 @@ describe('SnapshotPresenter', () => {
   ].forEach(([type, value, testIdSuffix]) => {
     const widget = {
       settings: {},
+      widgetId: '',
       field: {
         linkType: 'Entry',
         id: 'fieldId',
@@ -123,7 +125,7 @@ describe('SnapshotPresenter', () => {
       );
       const presenter = getByTestId(`snapshot-presenter-${testIdSuffix}`);
       expect(presenter).toBeInTheDocument();
-      expect(presenter).not.toBeEmpty();
+      expect(presenter).not.toBeEmptyDOMElement();
     });
   });
 });
