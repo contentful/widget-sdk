@@ -25,7 +25,6 @@ import { Document } from 'app/entity_editor/Document/typesDocument';
 import { Field, Locale } from 'app/entity_editor/EntityField/types';
 import { Entry } from 'contentful-management/dist/typings/entities/entry';
 
-import { Document } from 'app/entity_editor/Document/typesDocument';
 import localeStore from 'services/localeStore';
 import { create } from 'app/entity_editor/Document/CmaDocument';
 import { Entity } from 'app/entity_editor/Document/types';
@@ -163,41 +162,41 @@ export function createFieldWidgetSDK({
 }
 
 interface CreateReadOnlyFieldWidgetSDKOptions {
-  field: Field;
-  locale: Locale;
-  fieldValue: any;
-  internalContentType: ContentType;
-  editorInterface: EditorInterface;
-  entry: Entry;
-  initialContentTypes: ContentType[];
   cma: any;
-  spaceMember: SpaceMember;
-  usersRepo: any;
-  spaceId: string;
-  environmentIds: string[];
+  editorInterface: EditorInterface;
   endpoint: SpaceEndpoint;
+  entry: Entry;
+  environmentIds: string[];
+  field: Field;
+  fieldValue: any;
+  initialContentTypes: ContentType[];
+  internalContentType: ContentType;
+  locale: Locale;
+  spaceId: string;
+  spaceMember: SpaceMember;
   tagsRepo: any;
-  widgetNamespace: WidgetNamespace;
+  usersRepo: any;
   widgetId: string;
+  widgetNamespace: WidgetNamespace;
 }
 
-export async function createReadonlyFieldWidgetSDK({
-  field, // TODO: should this be replaced with publicFieldId?
-  locale, // TODO: should this be replaced by the code?
-  internalContentType,
-  editorInterface,
-  entry,
-  initialContentTypes,
+export function createReadonlyFieldWidgetSDK({
   cma,
-  spaceMember,
-  usersRepo,
-  spaceId,
-  environmentIds,
+  editorInterface,
   endpoint,
+  entry,
+  environmentIds,
+  field, // TODO: should this be replaced with publicFieldId?
+  initialContentTypes,
+  internalContentType,
+  locale, // TODO: should this be replaced by the code?
+  spaceId,
+  spaceMember,
   tagsRepo,
-  widgetNamespace,
+  usersRepo,
   widgetId,
-}: CreateReadOnlyFieldWidgetSDKOptions): Promise<FieldExtensionSDK> {
+  widgetNamespace,
+}: CreateReadOnlyFieldWidgetSDKOptions): FieldExtensionSDK {
   const pubSubClient = { on: noop, off: noop } as PubSubClient;
   const [environmentId] = environmentIds;
 
