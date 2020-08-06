@@ -132,7 +132,7 @@ describe('createEntryFieldApi', () => {
   });
 
   describe('items', () => {
-    it('is the internal fields items', () => {
+    it('is set to items from internal field', () => {
       const items = [{ type: 'Symbol' }];
       const entryFieldApi = createEntryFieldApi({
         internalField: { ...internalField, items },
@@ -176,7 +176,7 @@ describe('createEntryFieldApi', () => {
       });
 
       describe('when the value can be edited', () => {
-        it('changes the value', async () => {
+        it('sets the value', async () => {
           otDoc.permissions.canEditFieldLocale.mockReturnValue(true);
 
           const entryFieldApi = createEntryFieldApi({
