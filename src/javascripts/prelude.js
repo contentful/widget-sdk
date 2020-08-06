@@ -13,6 +13,7 @@ window.sharejs = {
 };
 
 import '@babel/polyfill';
+import 'core-js/features/promise/finally';
 
 import angular from 'angular';
 import AngularInit from 'AngularInit';
