@@ -97,3 +97,21 @@ export const createAddToReleaseDialogContent = (entityTitle, selectedEntities, r
 
   return `${referencesAmount} ${pluralize(referencesAmount, 'reference')}`;
 };
+
+export const referenceText = (selectedEntities, references, entityTitle) => {
+  const referencesAmount = doesContainRoot(selectedEntities, references[0])
+    ? selectedEntities.length - 1
+    : selectedEntities.length;
+
+  const renderReferenceAmount = (referencesAmount) =>
+    referencesAmount ? `${referencesAmount} ${pluralize(referencesAmount, 'reference')}` : null;
+
+  const referenceText = [
+    doesContainRoot(selectedEntities, references[0]) ? entityTitle : null,
+    renderReferenceAmount(referencesAmount),
+  ]
+    .filter((str) => str)
+    .join(' and ');
+
+  return referenceText;
+};

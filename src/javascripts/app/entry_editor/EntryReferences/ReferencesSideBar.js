@@ -12,19 +12,21 @@ import {
 } from '@contentful/forma-36-react-components';
 import { create } from 'access_control/EntityPermissions';
 import { track } from 'analytics/Analytics';
-import LoadingOverlay from 'app/common/LoadingOverlay';
 import { ReferencesContext } from 'app/entry_editor/EntryReferences/ReferencesContext';
 import ReleasesWidgetDialog from 'app/Releases/ReleasesWidget/ReleasesWidgetDialog';
 import { getReleasesFeatureVariation as releasesFeatureFlagVariation } from 'app/Releases/ReleasesFeatureFlag';
 import {
   createSuccessMessage,
   createErrorMessage,
-  doesContainRoot,
-  pluralize,
   createCountMessage,
   createAddToReleaseDialogContent,
 } from './utils';
-import { SET_REFERENCES, SET_VALIDATIONS, SET_REFERENCE_TREE_KEY } from './state/actions';
+import {
+  SET_REFERENCES,
+  SET_VALIDATIONS,
+  SET_REFERENCE_TREE_KEY,
+  SET_PROCESSING_ACTION,
+} from './state/actions';
 import { getReferencesForEntryId, validateEntities, publishEntities } from './referencesService';
 
 const styles = {
@@ -59,7 +61,6 @@ const mapEntities = (entities) =>
 const ReferencesSideBar = ({ entityTitle, entity }) => {
   const { state: referencesState, dispatch } = useContext(ReferencesContext);
   const { references, selectedEntities, isTooComplex } = referencesState;
-  const [processingAction, setProcessingAction] = useState(null);
   const [isRelaseDialogShown, setRelaseDialogShown] = useState(false);
   const [isAddToReleaseEnabled, setisAddToReleaseEnabled] = useState(false);
 
@@ -82,7 +83,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
   };
 
   const handleValidation = () => {
-    setProcessingAction('Validating');
+    dispatch({ type: SET_PROCESSING_ACTION, value: 'Validating' });
 
     track(trackingEvents.validate, {
       entity_id: entity.sys.id,
@@ -93,18 +94,18 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
 
     validateEntities({ entities: entitiesToValidate, action: 'publish' })
       .then((validationResponse) => {
-        setProcessingAction(null);
+        dispatch({ type: SET_PROCESSING_ACTION, value: null });
         displayValidation(validationResponse);
       })
       .catch((_error) => {
-        setProcessingAction(null);
+        dispatch({ type: SET_PROCESSING_ACTION, value: null });
         Notification.error('References validation failed');
       });
   };
 
   const handlePublication = () => {
     dispatch({ type: SET_VALIDATIONS, value: null });
-    setProcessingAction('Publishing');
+    dispatch({ type: SET_PROCESSING_ACTION, value: 'Publishing' });
     track(trackingEvents.publish, {
       entity_id: entity.sys.id,
       references_count: selectedEntities.length,
@@ -114,7 +115,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
 
     publishEntities({ entities: entitiesToPublish, action: 'publish' })
       .then(() => {
-        setProcessingAction(null);
+        dispatch({ type: SET_PROCESSING_ACTION, value: null });
         getReferencesForEntryId(entity.sys.id)
           .then(({ resolved: fetchedRefs }) =>
             dispatch({ type: SET_REFERENCES, value: fetchedRefs })
@@ -132,7 +133,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
           });
       })
       .catch((error) => {
-        setProcessingAction(null);
+        dispatch({ type: SET_PROCESSING_ACTION, value: null });
         /**
          * Separate validation resonse from failure response.
          * Permisson errors have a different shape (without sys).
@@ -160,25 +161,10 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
 
   const showPublishButtons = !!references.length && create(references[0].sys).can('publish');
 
-  const referencesAmount = doesContainRoot(selectedEntities, references[0])
-    ? selectedEntities.length - 1
-    : selectedEntities.length;
-
-  const renderReferenceAmount = (referencesAmount) =>
-    referencesAmount ? `${referencesAmount} ${pluralize(referencesAmount, 'reference')}` : null;
-
-  const referenceText = [
-    doesContainRoot(selectedEntities, references[0]) ? entityTitle : null,
-    renderReferenceAmount(referencesAmount),
-  ]
-    .filter((str) => str)
-    .join(' and ');
-
   const disableButton = !showPublishButtons || isTooComplex;
 
   return (
     <div className={styles.sideBarWrapper}>
-      {processingAction && <LoadingOverlay message={`${processingAction} ${referenceText}`} />}
       <header className="entity-sidebar__header">
         <Subheading className="entity-sidebar__heading">References</Subheading>
       </header>
@@ -193,7 +179,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
         )
       ) : null}
       <Button
-        testId="publish-release"
+        testId="publishReferencesBtn"
         buttonType="positive"
         className={styles.buttons}
         isFullWidth
@@ -202,7 +188,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
         Publish all
       </Button>
       <Button
-        testId="schedule-release"
+        testId="validateReferencesBtn"
         buttonType="muted"
         className={styles.buttons}
         isFullWidth
@@ -212,7 +198,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
       </Button>
       {isAddToReleaseEnabled && (
         <Button
-          testId="validate-release"
+          testId="add-to-release"
           buttonType="muted"
           className={styles.buttons}
           isFullWidth

@@ -1,14 +1,20 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useContext } from 'react';
 import PropTypes from 'prop-types';
-import { css, cx } from 'emotion';
+import { cx } from 'emotion';
 import { Icon, Tab, TabPanel, Tabs, Tag, Workbench } from '@contentful/forma-36-react-components';
-import tokens from '@contentful/forma-36-tokens';
 import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import EntrySecondaryActions from 'app/entry_editor/EntryTitlebar/EntrySecondaryActions/EntrySecondaryActions';
 import StatusNotification from 'app/entity_editor/StatusNotification';
 import CustomEditorExtensionRenderer from 'app/entry_editor/CustomEditorExtensionRenderer';
 import EntrySidebar from 'app/EntrySidebar/EntrySidebar';
 import WorkbenchTitle from 'components/shared/WorkbenchTitle';
+import ReferencesSideBar from 'app/entry_editor/EntryReferences/ReferencesSideBar';
+import {
+  ReferencesProvider,
+  ReferencesContext,
+} from 'app/entry_editor/EntryReferences/ReferencesContext';
+import LoadingOverlay from 'app/common/LoadingOverlay';
+import { referenceText } from 'app/entry_editor/EntryReferences/utils';
 import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
 import { track } from 'analytics/Analytics';
 import { getVariation, FLAGS } from 'LaunchDarkly';
@@ -19,57 +25,7 @@ import renderDefaultEditor from './DefaultEntryEditor';
 import EntryEditorWidgetTypes from 'app/entry_editor/EntryEditorWidgetTypes';
 import { hasLinks } from './EntryReferences';
 import { WidgetNamespace } from 'features/widget-renderer';
-import ReferencesSideBar from 'app/entry_editor/EntryReferences/ReferencesSideBar';
-import { ReferencesProvider } from 'app/entry_editor/EntryReferences/ReferencesContext';
-
-const styles = {
-  mainContent: css({
-    padding: 0,
-    '& > div': {
-      height: '100%',
-      minHeight: '100%',
-      maxWidth: '100%',
-    },
-  }),
-  sidebar: css({
-    boxShadow: '1px 0 4px 0 rgba(0, 0, 0, 0.9)',
-    padding: '0',
-  }),
-  tabs: css({
-    display: 'flex',
-    paddingLeft: tokens.spacing2Xl,
-  }),
-  tab: css({
-    alignItems: 'center',
-    display: 'flex',
-    textAlign: 'center',
-  }),
-  tabIcon: css({
-    marginRight: tokens.spacing2Xs,
-    marginLeft: tokens.spacing2Xs,
-  }),
-  tabPanel: css({
-    display: 'none',
-    height: '100%',
-    maxHeight: 'calc(100% - 56px)',
-    overflowY: 'scroll',
-  }),
-  isVisible: css({
-    display: 'block',
-  }),
-  promotionTag: css({
-    padding: '3px 5px',
-    fontSize: '10px',
-    lineHeight: '10px',
-    letterSpacing: '0.5px',
-    fontWeight: tokens.fontWeightMedium,
-    borderRadius: '3px',
-    backgroundColor: tokens.colorBlueDark,
-    marginLeft: tokens.spacingXs,
-    color: `${tokens.colorWhite} !important`,
-    textTransform: 'uppercase',
-  }),
-};
+import { styles } from './styles';
 
 const trackTabOpen = (tab) =>
   track('editor_workbench:tab_open', {
@@ -92,6 +48,8 @@ const EntryEditorWorkbench = (props) => {
     entrySidebarProps,
     sidebarToggleProps,
   } = props;
+  const { state: referencesState } = useContext(ReferencesContext);
+  const { processingAction, references, selectedEntities } = referencesState;
 
   const editorData = getEditorData();
   const otDoc = getOtDoc();
@@ -185,6 +143,8 @@ const EntryEditorWorkbench = (props) => {
     }
   }
 
+  const referencesTab = selectedTab.includes(EntryEditorWidgetTypes.REFERENCE_TREE.id);
+
   return (
     <div className="entry-editor">
       <Workbench>
@@ -214,6 +174,11 @@ const EntryEditorWorkbench = (props) => {
         <Workbench.Content
           type={editorData.customEditor ? 'full' : 'default'}
           className={styles.mainContent}>
+          {processingAction && (
+            <LoadingOverlay
+              message={`${processingAction} ${referenceText(selectedEntities, references, title)}`}
+            />
+          )}
           <Tabs className={styles.tabs} withDivider>
             {tabs
               .filter((tab) => tab.isVisible)
@@ -244,16 +209,26 @@ const EntryEditorWorkbench = (props) => {
               </TabPanel>
             ))}
         </Workbench.Content>
-        <Workbench.Sidebar position="right" className={styles.sidebar}>
-          {selectedTab.includes(EntryEditorWidgetTypes.REFERENCE_TREE.id) ? (
+        <div>
+          <Workbench.Sidebar
+            position="right"
+            className={cx(styles.sidebar, styles.referenceSideBar, {
+              [styles.sidebarSlideIn]: referencesTab,
+              [styles.sideBarSlideOut]: !referencesTab,
+            })}>
             <ReferencesSideBar entity={editorData.entity.data} entityTitle={title} />
-          ) : (
+          </Workbench.Sidebar>
+          <Workbench.Sidebar
+            position="right"
+            className={cx(styles.sidebar, {
+              [styles.entrySideBar]: referencesTab,
+            })}>
             <EntrySidebar
               entrySidebarProps={entrySidebarProps}
               sidebarToggleProps={sidebarToggleProps}
             />
-          )}
-        </Workbench.Sidebar>
+          </Workbench.Sidebar>
+        </div>
       </Workbench>
     </div>
   );

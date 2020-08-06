@@ -9,6 +9,7 @@ import {
   SET_INITIAL_REFERENCES_AMOUNT,
   SET_REFERENCE_TREE_KEY,
   SET_IS_TOO_COMPLEX,
+  SET_PROCESSING_ACTION,
 } from './actions';
 
 type ReferencesState = {
@@ -21,6 +22,7 @@ type ReferencesState = {
   initialReferencesAmount: number;
   referenceTreeKey: string;
   isTooComplex: boolean;
+  processingAction: string | null;
 };
 
 type Action = {
@@ -33,7 +35,8 @@ type Action = {
     | typeof SET_ACTIONS_DISABLED
     | typeof SET_INITIAL_REFERENCES_AMOUNT
     | typeof SET_REFERENCE_TREE_KEY
-    | typeof SET_IS_TOO_COMPLEX;
+    | typeof SET_IS_TOO_COMPLEX
+    | typeof SET_PROCESSING_ACTION;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any;
 };
@@ -48,6 +51,7 @@ export const initialState: ReferencesState = {
   initialReferencesAmount: 0,
   referenceTreeKey: uniqueId('id_'),
   isTooComplex: false,
+  processingAction: null,
 };
 
 export function reducer(state: ReferencesState, action: Action): ReferencesState {
@@ -70,6 +74,8 @@ export function reducer(state: ReferencesState, action: Action): ReferencesState
       return { ...state, referenceTreeKey: action.value };
     case SET_IS_TOO_COMPLEX:
       return { ...state, isTooComplex: action.value };
+    case SET_PROCESSING_ACTION:
+      return { ...state, processingAction: action.value };
     default:
       return state;
   }
