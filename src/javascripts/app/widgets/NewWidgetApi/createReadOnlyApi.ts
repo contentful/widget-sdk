@@ -23,26 +23,22 @@ enum ReadOnlyErrorMessage {
 export const makeReadOnlyApiError = (api: ReadOnlyApi, details?: string) => {
   switch (api) {
     case ReadOnlyApi.Dialog:
-      return {
-        ...new Error(ReadOnlyErrorMessage.CannotOpenDialog),
+      return Object.assign(new Error(ReadOnlyErrorMessage.CannotOpenDialog), {
         code: ReadOnlyErrorCode.CannotOpenDialog,
-      };
+      });
     case ReadOnlyApi.Navigate:
-      return {
-        ...new Error(ReadOnlyErrorMessage.CannotNavigate),
+      return Object.assign(new Error(ReadOnlyErrorMessage.CannotNavigate), {
         code: ReadOnlyErrorCode.CannotNavigate,
-      };
+      });
     case ReadOnlyApi.Entry:
     case ReadOnlyApi.EntryField:
-      return {
-        ...new Error(ReadOnlyErrorMessage.CannotModifyEntry),
+      return Object.assign(new Error(ReadOnlyErrorMessage.CannotModifyEntry), {
         code: ReadOnlyErrorCode.CannotModifyEntry,
-      };
+      });
     case ReadOnlyApi.Space:
-      return {
-        ...new Error(ReadOnlyErrorMessage.CannotInvokeMethod),
+      return Object.assign(new Error(ReadOnlyErrorMessage.CannotInvokeMethod), {
         code: ReadOnlyErrorCode.CannotInvokeMethod,
         details,
-      };
+      });
   }
 };
