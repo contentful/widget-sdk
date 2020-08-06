@@ -46,7 +46,7 @@ describe('bulk editor', () => {
     };
   });
 
-  it('closes editor when clicking back button', function () {
+  xit('closes editor when clicking back button', function () {
     const el = this.compile();
     el.find('[data-test-id="workbench-back-btn"]').click();
     sinon.assert.calledOnce(el.referenceContext.close);

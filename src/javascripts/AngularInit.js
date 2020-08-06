@@ -44,7 +44,6 @@ export const angularInitRun = [
       import(/* webpackMode: "eager" */ 'search/EntitySelector/entitySelectorDirective'),
       import(/* webpackMode: "eager" */ 'services/exceptionHandler'),
       import(/* webpackMode: "eager" */ 'ui/Framework/ReactDirective'),
-      import(/* webpackMode: "eager" */ 'directives/cfIconDirective'),
     ]);
     modules.forEach((module) => module.default());
 
