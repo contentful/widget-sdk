@@ -1,20 +1,28 @@
 import TheLocaleStore from 'services/localeStore';
 
-const getAllFieldLocales = ($scope, $controller, contentType) => {
-  return (contentType.fields ?? []).reduce((acc, field) => {
-    const locales = field.localized
-      ? TheLocaleStore.getPrivateLocales()
-      : [TheLocaleStore.getDefaultLocale()];
+const getAllFieldLocales = ($scope, $controller) =>
+  Object.values($scope.fields).reduce((acc, field) => {
+    const widget = $scope.widgets.find((w) => w.fieldId === field.id);
 
-    const fieldLocales = locales
-      .map((locale) => {
+    if (!widget) {
+      return acc;
+    }
+
+    const fieldLocales = field.locales
+      .map((localeCode) => {
+        const locale = TheLocaleStore.getPrivateLocales().find((l) => l.code == localeCode);
+
+        if (!locale) {
+          return;
+        }
+
         const fieldLocaleScope = $scope.$new(false);
-        fieldLocaleScope.widget = { field };
+        fieldLocaleScope.widget = widget;
         fieldLocaleScope.locale = locale;
 
         return {
-          fieldId: field.apiName,
-          localeCode: locale.code,
+          fieldId: field.id,
+          localeCode,
           fieldLocale: $controller('FieldLocaleController', {
             $scope: fieldLocaleScope,
           }),
@@ -24,6 +32,5 @@ const getAllFieldLocales = ($scope, $controller, contentType) => {
 
     return acc.concat(fieldLocales);
   }, []);
-};
 
 export default getAllFieldLocales;
