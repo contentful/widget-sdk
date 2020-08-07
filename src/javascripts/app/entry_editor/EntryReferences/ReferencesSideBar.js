@@ -168,7 +168,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
 
   const showPublishButtons = !!references.length && create(references[0].sys).can('publish');
 
-  const disableButton = !showPublishButtons || isTooComplex;
+  const disableButton = !showPublishButtons || isTooComplex || !selectedEntities.length;
 
   return (
     <div className={styles.sideBarWrapper}>
@@ -207,7 +207,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
       </Button>
       {isAddToReleaseEnabled && (
         <Button
-          testId="add-to-release"
+          testId="addReferencesToReleaseBtn"
           buttonType="muted"
           className={styles.buttons}
           isFullWidth
