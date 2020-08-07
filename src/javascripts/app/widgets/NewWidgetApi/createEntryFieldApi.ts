@@ -100,8 +100,16 @@ export interface InternalField {
   type: string;
 }
 
-const denyEntryAction = () => {
-  throw makeReadOnlyApiError(ReadOnlyApi.EntryField);
+/**
+ * Makes a method throw an Exception when the API is read0only
+ * This has been implemented with generics to not lose type inference, even though it's ugly
+ */
+const makeReadOnlyGuardedMethod = <T extends Function>(readOnly: boolean, method: T) => {
+  return readOnly
+    ? () => {
+        throw makeReadOnlyApiError(ReadOnlyApi.EntryField);
+      }
+    : method;
 };
 
 export interface CreateEntryFieldApiProps {
@@ -129,38 +137,37 @@ export function createEntryFieldApi({
     return get(otDoc.getValueAt([]), currentPath);
   };
 
-  const setValue = readOnly
-    ? denyEntryAction
-    : async (value: any, publicLocaleCode?: string) => {
-        if (!canEdit(otDoc, id, publicLocaleCode)) {
-          throw makePermissionError();
-        }
+  const setValue = makeReadOnlyGuardedMethod(
+    !!readOnly,
+    async (value: any, publicLocaleCode?: string) => {
+      if (!canEdit(otDoc, id, publicLocaleCode)) {
+        throw makePermissionError();
+      }
 
-        const currentPath = getCurrentPath(internalField, publicLocaleCode);
+      const currentPath = getCurrentPath(internalField, publicLocaleCode);
 
-        try {
-          await otDoc.setValueAt(currentPath, value);
-          return value;
-        } catch (err) {
-          throw makeShareJSError(err, ERROR_MESSAGES.MFAILUPDATE);
-        }
-      };
+      try {
+        await otDoc.setValueAt(currentPath, value);
+        return value;
+      } catch (err) {
+        throw makeShareJSError(err, ERROR_MESSAGES.MFAILUPDATE);
+      }
+    }
+  );
 
-  const removeValue = readOnly
-    ? denyEntryAction
-    : async (publicLocaleCode?: string) => {
-        if (!canEdit(otDoc, id, publicLocaleCode)) {
-          throw makePermissionError();
-        }
+  const removeValue = makeReadOnlyGuardedMethod(!!readOnly, async (publicLocaleCode?: string) => {
+    if (!canEdit(otDoc, id, publicLocaleCode)) {
+      throw makePermissionError();
+    }
 
-        const currentPath = getCurrentPath(internalField, publicLocaleCode);
+    const currentPath = getCurrentPath(internalField, publicLocaleCode);
 
-        try {
-          await otDoc.removeValueAt(currentPath);
-        } catch (err) {
-          throw makeShareJSError(err, ERROR_MESSAGES.MFAILREMOVAL);
-        }
-      };
+    try {
+      await otDoc.removeValueAt(currentPath);
+    } catch (err) {
+      throw makeShareJSError(err, ERROR_MESSAGES.MFAILREMOVAL);
+    }
+  });
 
   function onValueChanged(callback: (value: any) => void): () => () => void;
   function onValueChanged(
@@ -246,9 +253,9 @@ export function createEntryFieldApi({
           onIsDisabledChanged(publicLocaleCode, cb as (isDisabled: boolean) => void),
         onSchemaErrorsChanged: (cb) =>
           onSchemaErrorsChanged(publicLocaleCode, cb as (errors: any) => void),
-        setInvalid: readOnly
-          ? denyEntryAction
-          : (isInvalid) => setInvalid(publicLocaleCode, isInvalid),
+        setInvalid: makeReadOnlyGuardedMethod(!!readOnly, (isInvalid) =>
+          setInvalid(publicLocaleCode, isInvalid)
+        ),
       };
     },
   };
