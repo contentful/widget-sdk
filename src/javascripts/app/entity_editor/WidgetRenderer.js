@@ -6,7 +6,7 @@ import WidgetRenderWarning from 'widgets/WidgetRenderWarning';
 import * as LoadEventTracker from 'app/entity_editor/LoadEventTracker';
 import { WidgetNamespace, isCustomWidget, WidgetLocation } from 'features/widget-renderer';
 import { toRendererWidget } from 'widgets/WidgetCompat';
-import { WidgetRenderer as WidgetRenederExternal } from 'features/widget-renderer';
+import { WidgetRenderer as WidgetRendererExternal } from 'features/widget-renderer';
 
 const { createLinksRenderedEvent, createWidgetLinkRenderEventsHandler } = LoadEventTracker;
 
@@ -40,9 +40,10 @@ function WidgetRendererInternal(props) {
   } else if (isCustomWidget(widgetNamespace)) {
     trackLinksRendered();
     return (
-      <WidgetRenederExternal
+      <WidgetRendererExternal
         location={WidgetLocation.ENTRY_FIELD}
         widget={toRendererWidget(widget.descriptor)}
+        sdk={props.widgetApi}
         parameters={{
           values: {
             // TODO: this comes from legacy "WidgetRenderable"
@@ -52,7 +53,6 @@ function WidgetRendererInternal(props) {
             instance: widget.parameters.instance,
           },
         }}
-        apis={props.widgetApi}
       />
     );
   } else if (widgetNamespace === WidgetNamespace.BUILTIN) {

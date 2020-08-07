@@ -140,7 +140,7 @@ async function openCustomDialog(
             <div style={{ minHeight: options.minHeight || 'auto' }}>
               <WidgetRenderer
                 location={WidgetLocation.DIALOG}
-                apis={childSdk}
+                sdk={childSdk}
                 widget={widget}
                 parameters={parameters}
               />

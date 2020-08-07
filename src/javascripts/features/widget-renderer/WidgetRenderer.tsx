@@ -35,7 +35,7 @@ interface WidgetRendererProps {
       invocation?: AppParameterValues;
     };
   };
-  apis: KnownSDK;
+  sdk: KnownSDK;
   disallowedDomains?: string[];
   isFullSize?: boolean;
 }
@@ -88,7 +88,7 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
   // the HTML page but the `sdk.init(cb)` callback wouldn't be called).
   private onLoad = () => {
     this.channel?.connect(
-      makeConnectMessage(this.props.apis, this.props.location, this.parameters)
+      makeConnectMessage(this.props.sdk, this.props.location, this.parameters)
     );
   };
 
@@ -135,10 +135,10 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
     });
 
     // Register all the other handlers.
-    setupHandlers(this.channel, this.props.apis, this.props.location);
+    setupHandlers(this.channel, this.props.sdk, this.props.location);
 
     // Listen to changes in the host and forward events to the channel.
-    this.cleanup = setupEventForwarders(this.channel, this.props.apis, this.props.location);
+    this.cleanup = setupEventForwarders(this.channel, this.props.sdk, this.props.location);
 
     // Render the iframe content
     if (this.isSrc(widget)) {
