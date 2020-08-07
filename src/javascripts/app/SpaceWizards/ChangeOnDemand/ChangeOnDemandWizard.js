@@ -63,7 +63,6 @@ const initialFetch = (organization, space, basePlan) => async () => {
     subscriptionPlans,
     rawSpaceRatePlans,
     recommendedPlan,
-    isCommunityPlanEnabled,
     isPayingPreviousToV2,
   ] = await Promise.all([
     spaceResourceService.getAll(),
@@ -71,7 +70,6 @@ const initialFetch = (organization, space, basePlan) => async () => {
     getSubscriptionPlans(orgEndpoint),
     getSpaceRatePlans(orgEndpoint, space.sys.id),
     PricingService.recommendedSpacePlan(organizationId, space.sys.id),
-    getVariation(FLAGS.PRICING_2020_RELEASED, { organizationId }),
     getVariation(FLAGS.PAYING_PREV_V2_ORG, { organizationId }),
   ]);
 
@@ -86,8 +84,7 @@ const initialFetch = (organization, space, basePlan) => async () => {
   );
   const currentSubscriptionPrice = calculateTotalPrice(subscriptionPlans.items);
 
-  const shouldShowMicroSmallCTA =
-    isCommunityPlanEnabled && isPayingPreviousToV2 && isSelfServicePlan(basePlan);
+  const shouldShowMicroSmallCTA = isPayingPreviousToV2 && isSelfServicePlan(basePlan);
 
   return {
     spaceResources,
@@ -96,7 +93,6 @@ const initialFetch = (organization, space, basePlan) => async () => {
     currentSubscriptionPrice,
     currentSpaceSubscriptionPlan,
     freeSpaceResource,
-    isCommunityPlanEnabled,
     isPayingPreviousToV2,
     shouldShowMicroSmallCTA,
   };
@@ -199,7 +195,6 @@ export default function Wizard(props) {
                 goToBillingPage(organization, WIZARD_INTENT.CHANGE, sessionId, onClose)
               }
               spaceResources={data.spaceResources}
-              isCommunityPlanEnabled={data.isCommunityPlanEnabled}
               shouldShowMicroSmallCTA={data.shouldShowMicroSmallCTA}
               recommendedPlan={data.recommendedPlan}
               isChanging

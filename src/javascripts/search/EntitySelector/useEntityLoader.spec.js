@@ -613,4 +613,39 @@ describe('useEntityLoader', () => {
       })
     );
   });
+
+  it('should return empty response from the interrupted request and should respond with the full response in the most recent request', async () => {
+    const expectedBatch = {
+      items: [entity(Entities.Entry), entity(Entities.Entry)],
+      total: 2,
+    };
+    const fetch = jest.fn().mockResolvedValue(expectedBatch);
+
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useEntityLoader({
+        entityType: Entities.Entry,
+        fetch,
+      })
+    );
+
+    const [, load] = result.current;
+    let responses;
+    act(() => {
+      Promise.all([load(), load(), load(), load()]).then((resolvedResponses) => {
+        responses = resolvedResponses;
+      });
+    });
+
+    await waitForNextUpdate();
+    expect(responses.pop()).toEqual({
+      data: expectedBatch.items,
+      hasMore: false,
+      total: expectedBatch.total,
+    });
+    responses.forEach((response) =>
+      expect(response).toEqual({ data: [], hasMore: false, total: 0 })
+    );
+
+    expect(fetch).toHaveBeenCalledTimes(4);
+  });
 });

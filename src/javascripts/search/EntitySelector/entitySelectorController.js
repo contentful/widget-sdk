@@ -1,6 +1,6 @@
 import { registerController } from 'core/NgRegistry';
 import _ from 'lodash';
-import { Operator } from 'app/ContentList/Search/Operators';
+import { Operator } from 'core/services/ContentQuery';
 import Paginator from 'classes/Paginator';
 import * as EntityHelpers from 'app/entity_editor/entityHelpers';
 import getAccessibleCTs from 'data/ContentTypeRepo/accessibleCTs';

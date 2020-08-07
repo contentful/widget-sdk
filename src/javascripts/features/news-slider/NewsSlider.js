@@ -58,6 +58,9 @@ const reducer = (state, action) => {
 
 export const NewsSliderContext = React.createContext([initialState, () => {}]);
 
+// 148px is the size of the slider's header + its margin + padding around slide container
+const sliderHeaderHeight = '148px';
+
 const styles = {
   slider: css({
     display: 'flex',
@@ -67,6 +70,10 @@ const styles = {
     display: 'flex',
     overflow: 'hidden',
     scrollBehavior: 'smooth',
+    height: `calc(100vh - ${sliderHeaderHeight})`,
+    '@media screen and (max-height: 700px)': {
+      height: 'auto',
+    },
   }),
   slide: css({
     width: '100%',

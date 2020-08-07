@@ -1,18 +1,8 @@
 <div class="workbench sticky-parent">
-  <header class="workbench-header">
-    <react-component
-      name="app/entity_editor/Components/BackNav"
-      props="{onClose: newCloseWithReason('arrow_back')}"
-    ></react-component>
-    <h1 class="workbench-header__title">
-      Entries linked in <em>{{ referenceContext.field.name }}</em> ({{ data.linkCount }})
-    </h1>
-    <div class="workbench-header__actions">
-      <button class="btn-secondary-action" ng-click="newCloseWithReason('bulk_editor_close')()">
-        Close
-      </button>
-    </div>
-  </header>
+  <react-component
+    name="app/entity_editor/bulk_editor/BulkEditorHeader"
+    props="{fieldName: referenceContext.field.name, linkCount: data.linkCount, onClose: newCloseWithReason('bulk_editor_close'), onBack: newCloseWithReason('arrow_back')}"
+  ></react-component>
   <div class="workbench-main">
     <div class="workbench-main__content" ng-show="!data.loaded" style="padding-top: 0;">
       <react-component
@@ -39,33 +29,10 @@
       </div>
     </div>
     <div class="workbench-main__sidebar f36-padding--m">
-      <div class="entity-sidebar">
-        <h2 class="entity-sidebar__heading">Entries</h2>
-        <div class="entity-sidebar__help-text" ng-if="data.linkCount &gt; 1">
-          There are {{ data.linkCount }} linked entries in
-          <em>{{ referenceContext.field.name }}</em>.
-        </div>
-        <div class="entity-sidebar__help-text" ng-if="data.linkCount == 1">
-          There is 1 linked entry in <em>{{ referenceContext.field.name }}</em>.
-        </div>
-        <div class="entity-sidebar__help-text">
-          <react-component
-            name="components/CreateEntryButton/CreateEntryLinkButton"
-            props="{contentTypes: actions.allowedCTs, onSelect: actions.addNewEntry, text: 'Create new entry and link', hasPlusIcon: true}"
-          ></react-component>
-        </div>
-        <div class="entity-sidebar__help-text">
-          <button
-            class="btn-link"
-            data-test-id="add-existing-entry"
-            ng-click="actions.addExistingEntries()"
-            type="button"
-          >
-            <cf-icon class="btn-link__icon" name="link"></cf-icon
-            ><span>Link an existing entry</span>
-          </button>
-        </div>
-      </div>
+      <react-component
+        name="app/entity_editor/bulk_editor/BulkEditorSidebar"
+        props="{ linkCount: data.linkCount, field, addLinks, track, getCurrentSize }"
+      ></react-component>
     </div>
   </div>
 </div>

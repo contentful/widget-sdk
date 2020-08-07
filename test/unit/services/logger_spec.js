@@ -156,8 +156,8 @@ describe('logger service', () => {
         lastName: 'Wurst',
         sys: { id: 'h4nswur5t' },
         organizationMemberships: [
-          { organization: { name: 'Conglom-O' } },
-          { organization: { name: 'ACME' } },
+          { organization: { name: 'Conglom-O', sys: { id: 'org_1234' } } },
+          { organization: { name: 'ACME', sys: { id: 'org_1234' } } },
         ],
       });
     });

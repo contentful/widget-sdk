@@ -32,7 +32,7 @@ import { websiteUrl } from 'Config';
 import { AppListItem } from './AppListItem';
 import { AppDetailsModal } from './AppDetailsModal';
 import * as AppLifecycleTracking from './AppLifecycleTracking';
-import { isUsageExceeded } from './isUsageExceeded';
+import { isUsageExceeded, APP_INSTALLATION_LIMIT } from './isUsageExceeded';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 
 const styles = {
@@ -57,8 +57,16 @@ const styles = {
     backgroundColor: tokens.colorWhite,
     opacity: 0.8,
   }),
+  headingWrapper: css({
+    display: 'flex',
+    alignItems: 'baseline',
+  }),
   heading: css({
     marginBottom: tokens.spacingM,
+    flexGrow: 1,
+  }),
+  counter: css({
+    color: tokens.colorTextLight,
   }),
   feedbackNote: css({
     marginBottom: tokens.spacingXl,
@@ -281,9 +289,14 @@ export class AppsListPage extends React.Component {
         <>
           {hasInstalledApps ? (
             <>
-              <Heading element="h2" className={styles.heading}>
-                Installed
-              </Heading>
+              <div className={styles.headingWrapper}>
+                <Heading element="h2" className={styles.heading}>
+                  Installed
+                </Heading>
+                <div className={styles.counter}>
+                  Usage: {installedApps.length} / {APP_INSTALLATION_LIMIT} apps installed
+                </div>
+              </div>
               <Card padding="none" className={styles.appListCard}>
                 <div data-test-id="installed-list">
                   {sortPrivateAppsFirst(installedApps, canManageApps).map((app) => (

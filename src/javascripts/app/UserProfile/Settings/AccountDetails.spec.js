@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, wait } from '@testing-library/react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
 import AccountDetails from './AccountDetails';
 import { ModalLauncher } from 'core/components/ModalLauncher';
 
@@ -66,9 +66,7 @@ describe('AccountDetails', () => {
 
     fireEvent.click(queryByTestId('edit-user-account-details'));
 
-    await wait();
-
-    expect(onEdit).not.toHaveBeenCalled();
+    await waitFor(() => expect(onEdit).not.toHaveBeenCalled());
   });
 
   it('should call onEdit if the UserEditModal is confirmed', async () => {
@@ -88,9 +86,7 @@ describe('AccountDetails', () => {
 
     fireEvent.click(queryByTestId('edit-user-account-details'));
 
-    await wait();
-
-    expect(onEdit).toHaveBeenCalled();
+    await waitFor(() => expect(onEdit).toHaveBeenCalled());
   });
 
   it('should not call onChangePassword if the ChangePasswordModal result is false', async () => {
@@ -107,9 +103,7 @@ describe('AccountDetails', () => {
 
     fireEvent.click(queryByTestId('add-password-cta'));
 
-    await wait();
-
-    expect(onChangePassword).not.toHaveBeenCalled();
+    await waitFor(() => expect(onChangePassword).not.toHaveBeenCalled());
   });
 
   it('should call onChangePassword if the ChangePasswordModal result is not false', async () => {
@@ -130,9 +124,7 @@ describe('AccountDetails', () => {
 
     fireEvent.click(queryByTestId('add-password-cta'));
 
-    await wait();
-
-    expect(onChangePassword).toHaveBeenCalled();
+    await waitFor(() => expect(onChangePassword).toHaveBeenCalled());
   });
 
   it('should show the unconfirmed email if one is present', () => {

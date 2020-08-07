@@ -36,17 +36,11 @@ export default function makeFetchWithAuth(auth) {
         return resolveTokenLinks(response.data);
       } else {
         logError('Obtained /token info without `data`', response);
-        throw newError();
+        throw new Error();
       }
-    } catch (error) {
-      // true if the request was rejected in preflight. Auth token is invalid
-      const isPreflightError = error.status === -1;
-
-      if (!isPreflightError) {
-        logError('Could not obtain /token info', error);
-      }
-
-      throw newError();
+    } catch {
+      // Throw a consistent error, rather than the possible error from `doFetch`
+      throw new Error('Could not obtain token info');
     }
   };
 
@@ -55,8 +49,4 @@ export default function makeFetchWithAuth(auth) {
     const error = { request, data, status, statusText };
     logger.logServerError(message, { error });
   }
-}
-
-function newError() {
-  return new Error('Could not obtain token info');
 }

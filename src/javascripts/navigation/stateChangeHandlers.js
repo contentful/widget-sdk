@@ -67,7 +67,6 @@ function stateChangeSuccessHandler(_event, toState, toStateParams, fromState, fr
 
 function stateChangeStartHandler(event, toState, toStateParams, fromState, fromStateParams) {
   const $state = getModule('$state');
-  const modalDialog = getModule('modalDialog');
 
   if (onlyAddToContextParamChanged(toState, toStateParams, fromState, fromStateParams)) {
     event.preventDefault();
@@ -118,9 +117,6 @@ function stateChangeStartHandler(event, toState, toStateParams, fromState, fromS
     );
     return;
   }
-
-  // Close all modals which have persistOnNavigation = false
-  modalDialog.closeAll();
 
   // Redirect if redirectTo is set
   if (toState.redirectTo) {
