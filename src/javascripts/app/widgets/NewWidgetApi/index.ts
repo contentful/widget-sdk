@@ -14,7 +14,12 @@ import {
   ContentType,
   DialogExtensionSDK,
   DialogsAPI,
+  EntryAPI,
+  FieldAPI,
   FieldExtensionSDK,
+  NavigatorAPI,
+  SharedEditorSDK,
+  SpaceAPI,
 } from 'contentful-ui-extensions-sdk';
 import { createEditorApi } from './createEditorApi';
 import { WidgetNamespace } from 'features/widget-renderer';
@@ -33,7 +38,6 @@ import { PubSubClient } from '../../../services/PubSubService';
 import { EditorInterface } from '../../../features/widget-renderer/interfaces';
 import { SpaceEndpoint } from '../../../data/CMA/types';
 
-// TODO: split in read-only + write
 export function createFieldWidgetSDK({
   fieldId,
   localeCode,
@@ -55,15 +59,14 @@ export function createFieldWidgetSDK({
   otDoc: Document;
   internalContentType: ContentType;
 }): FieldExtensionSDK {
-  // "Editing" APIs
-  const editor = createEditorApi({
+  const editorApi = createEditorApi({
     editorInterface: $scope.editorData.editorInterface,
     getLocaleData: () => $scope.localeData,
     getPreferences: () => $scope.preferences,
     watch: (watchFn, cb) => $scope.$watch(watchFn, cb),
   });
-  const contentType = createContentTypeApi(internalContentType);
-  const entry = createEntryApi({
+
+  const entryApi = createEntryApi({
     internalContentType,
     otDoc,
     // TODO: `setInvalid` is only available on `fieldController`. The SDK can only
@@ -72,11 +75,8 @@ export function createFieldWidgetSDK({
     setInvalid: (localeCode, isInvalid) => $scope.fieldController.setInvalid(localeCode, isInvalid),
     listenToFieldLocaleEvent: makeFieldLocaleEventListener($scope),
   });
-  const field = entry.fields[fieldId].getForLocale(localeCode);
 
-  // "Space-level" APIs
-  const locales = createLocalesApi();
-  const space = createSpaceApi({
+  const spaceApi = createSpaceApi({
     cma: getBatchingApiClient(spaceContext.cma),
     initialContentTypes: spaceContext.publishedCTs.getAllBare(),
     pubSubClient: spaceContext.pubsubClient,
@@ -86,57 +86,33 @@ export function createFieldWidgetSDK({
     usersRepo: spaceContext.users,
   });
 
-  // "Static data" APIs
-  const user = createUserApi(spaceContext.space.data.spaceMember);
-  const ids = createIdsApi(
-    spaceContext.getId(),
-    spaceContext.getEnvironmentId(),
-    contentType,
-    entry,
-    field,
-    user,
-    widgetNamespace,
-    widgetId
-  );
+  const navigatorApi = createNavigatorApi({ spaceContext, widgetNamespace, widgetId });
+
+  // This is needed to allow the dialog inception as per end of this function
+  const mockDialogsApi = ({} as unknown) as DialogsAPI;
+
   const parameters = {
     installation: {},
     instance: editorInterfaceSettings,
   };
 
-  // "Utility" APIs
-  const navigator = createNavigatorApi({ spaceContext, widgetNamespace, widgetId });
-  const notifier = Notification;
-  const access = createAccessApi();
+  const sdkWithoutDialogs = createSharedFieldWidgetSDK({
+    editorApi,
+    entryApi,
+    spaceApi,
+    navigatorApi,
+    dialogsApi: mockDialogsApi,
 
-  const location = {
-    // TODO: hardcoded! Use current location instead of "entry-field"
-    is: (type: string) => type === 'entry-field',
-  };
-
-  const window = {
-    // There are no iframes in the internal API so any methods related
-    // to <iframe> height can be safely ignored.
-    updateHeight: noop,
-    startAutoResizer: noop,
-    stopAutoResizer: noop,
-  };
-
-  const sdkWithoutDialogs: Omit<FieldExtensionSDK, 'dialogs'> = {
-    editor,
-    contentType,
-    entry,
-    field,
-    locales,
-    space,
-    user,
-    ids,
+    environmentIds: [spaceContext.getEnvironmentId(), ...spaceContext.getAliasesIds()],
+    publicFieldId: fieldId,
+    internalContentType,
+    publicLocaleCode: localeCode,
+    spaceId: spaceContext.getId(),
+    spaceMember: spaceContext.space.data.spaceMember,
+    widgetId,
+    widgetNamespace,
     parameters,
-    navigator,
-    notifier,
-    access,
-    location,
-    window,
-  };
+  });
 
   const sdkForDialogs: DialogExtensionSDK = {
     ...sdkWithoutDialogs,
@@ -159,6 +135,14 @@ export function createFieldWidgetSDK({
     ...sdkWithoutDialogs,
     dialogs,
   };
+}
+
+interface NonReadOnlyApis {
+  editorApi: SharedEditorSDK['editor'];
+  entryApi: EntryAPI;
+  fieldApi: FieldAPI;
+  spaceApi: SpaceAPI;
+  navigatorApi: NavigatorAPI;
 }
 
 interface CreateReadOnlyFieldWidgetSDKOptions {
@@ -198,8 +182,6 @@ export function createReadonlyFieldWidgetSDK({
   widgetNamespace,
 }: CreateReadOnlyFieldWidgetSDKOptions): FieldExtensionSDK {
   const pubSubClient = { on: noop, off: noop } as PubSubClient;
-  const [environmentId] = environmentIds;
-
   const readOnlyEntityRepo = createEntityRepo(endpoint, pubSubClient, noop, {
     skipDraftValidation: true,
     skipTransformation: true,
@@ -214,12 +196,24 @@ export function createReadonlyFieldWidgetSDK({
     readOnlyEntityRepo,
     5000
   );
-  /// STUBS
-  const publicFieldId = field.apiName ?? field.id;
-  const publicLocaleCode = locale.code;
-  /// END STUBS
 
-  const contentTypeApi = createContentTypeApi(internalContentType);
+  const editorApi = createEditorApi({
+    editorInterface: editorInterface,
+    getLocaleData: () => {
+      return {
+        defaultLocale: localeStore.getDefaultLocale(),
+        privateLocales: localeStore.getPrivateLocales(),
+        focusedLocale: localeStore.getFocusedLocale(),
+        isSingleLocaleModeOn: localeStore.isSingleLocaleModeOn(),
+        isLocaleActive: localeStore.isLocaleActive,
+      };
+    },
+    // TODO: the value of preferences.showDisabledFields doesn't seem to affect the snapshot view.
+    //  Also, preferences.showDisabledFields is the only preference which seems to be used in the
+    //  Editor API. Is it safe to assume this is useless and can be nooped?
+    getPreferences: () => ({ showDisabledFields: true }),
+    watch: (_watchFn, _cb) => noop,
+  });
   const entryApi = createEntryApi({
     internalContentType: internalContentType,
     otDoc,
@@ -227,10 +221,6 @@ export function createReadonlyFieldWidgetSDK({
     listenToFieldLocaleEvent: (_internalField, _locale, _extractFieldLocaleProperty, _cb) => noop,
     readOnly: true,
   });
-  const fieldApi = entryApi.fields[publicFieldId].getForLocale(publicLocaleCode);
-  const accessApi = createAccessApi();
-  const notifierApi = Notification;
-  const localesApi = createLocalesApi();
   const spaceApi = createSpaceApi({
     cma: getBatchingApiClient(cma),
     initialContentTypes,
@@ -241,6 +231,57 @@ export function createReadonlyFieldWidgetSDK({
     usersRepo,
     readOnly: true,
   });
+  const navigatorApi = createReadOnlyNavigatorApi();
+  const dialogsApi = createReadOnlyDialogsApi();
+
+  return createSharedFieldWidgetSDK({
+    editorApi,
+    entryApi,
+    spaceApi,
+    navigatorApi,
+    dialogsApi,
+
+    environmentIds,
+    publicFieldId: field.apiName ?? field.id,
+    internalContentType,
+    publicLocaleCode: locale.code,
+    spaceId,
+    spaceMember,
+    widgetId,
+    widgetNamespace,
+    parameters: {
+      installation: {},
+      instance: {},
+    },
+  });
+}
+
+function createSharedFieldWidgetSDK({
+  editorApi,
+  entryApi,
+  spaceApi,
+  navigatorApi,
+  dialogsApi,
+
+  environmentIds,
+  publicFieldId, // TODO: should this be replaced with publicFieldId?
+  internalContentType,
+  publicLocaleCode, // TODO: should this be replaced by the code?
+  spaceId,
+  spaceMember,
+  widgetId,
+  widgetNamespace,
+  parameters,
+}: any): FieldExtensionSDK {
+  const [environmentId] = environmentIds;
+
+  const contentTypeApi = createContentTypeApi(internalContentType);
+
+  const fieldApi = entryApi.fields[publicFieldId].getForLocale(publicLocaleCode);
+  const accessApi = createAccessApi();
+  const notifierApi = Notification;
+  const localesApi = createLocalesApi();
+
   const userApi = createUserApi(spaceMember);
   const idsApi = createIdsApi(
     spaceId,
@@ -264,35 +305,11 @@ export function createReadonlyFieldWidgetSDK({
     stopAutoResizer: noop,
   };
 
-  const navigatorApi = createReadOnlyNavigatorApi();
-
-  // "Editing" APIs
-  const editorApi = createEditorApi({
-    editorInterface: editorInterface,
-    getLocaleData: () => {
-      return {
-        defaultLocale: localeStore.getDefaultLocale(),
-        privateLocales: localeStore.getPrivateLocales(),
-        focusedLocale: localeStore.getFocusedLocale(),
-        isSingleLocaleModeOn: localeStore.isSingleLocaleModeOn(),
-        isLocaleActive: localeStore.isLocaleActive,
-      };
-    },
-    // TODO: the value of preferences.showDisabledFields doesn't seem to affect the snapshot view.
-    //  Also, preferences.showDisabledFields is the only preference which seems to be used in the
-    //  Editor API. Is it safe to assume this is useless and can be nooped?
-    getPreferences: () => ({ showDisabledFields: true }),
-    watch: (_watchFn, _cb) => noop,
-  });
-
-  const sdkWithoutDialogs = {
+  return {
     contentType: contentTypeApi,
     entry: entryApi,
     field: fieldApi,
-    parameters: {
-      installation: {},
-      instance: {},
-    },
+    parameters,
     access: accessApi,
     locales: localesApi,
     space: spaceApi,
@@ -303,27 +320,6 @@ export function createReadonlyFieldWidgetSDK({
     window: windowApi,
     navigator: navigatorApi,
     editor: editorApi,
-  };
-
-  const sdkForDialogs: DialogExtensionSDK = {
-    ...sdkWithoutDialogs,
-    // We cannot create dialogs API w/o full SDK including dialog methods.
-    // The reason is that we can open dialogs from dialogs. Empty "dialogs"
-    // namespace is replaced once the APIs are created with the same instance
-    // of the SDK. See passing `sdkForDialogs` by reference and assignment to
-    // the "dialogs" namespace later on.
-    dialogs: ({} as unknown) as DialogsAPI,
-    // Again, we cannot determine what closing a dialog means in this context.
-    // Implementation needs to be provided closer to the `ModalLauncher`.
-    close: () => {
-      throw new Error('close() implementation needs to be provided in createDialogsApi');
-    },
-  };
-  const dialogs = createReadOnlyDialogsApi();
-  sdkForDialogs.dialogs = dialogs;
-
-  return {
-    ...sdkWithoutDialogs,
-    dialogs,
+    dialogs: dialogsApi,
   };
 }
