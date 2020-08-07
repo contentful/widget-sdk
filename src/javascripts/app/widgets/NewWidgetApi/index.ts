@@ -77,12 +77,12 @@ export function createFieldWidgetSDK({
   // "Space-level" APIs
   const locales = createLocalesApi();
   const space = createSpaceApi({
-    cma: getBatchingApiClient(spaceContext.cma), ///// ro
+    cma: getBatchingApiClient(spaceContext.cma),
     initialContentTypes: spaceContext.publishedCTs.getAllBare(),
-    pubSubClient: spaceContext.pubsubClient, ////
+    pubSubClient: spaceContext.pubsubClient,
     environmentIds: [spaceContext.getEnvironmentId(), ...spaceContext.getAliasesIds()],
     spaceId: spaceContext.getId(),
-    tagsRepo: createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId()), ///// ro
+    tagsRepo: createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId()),
     usersRepo: spaceContext.users,
   });
 
