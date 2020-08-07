@@ -40,19 +40,7 @@ export const makeOpenDialogHandler = (dialogApi: DialogsAPI) => {
       case SimpleDialogs.Prompt:
         return dialogApi.openPrompt(options as OpenAlertOptions);
       case 'entitySelector':
-        const opt = options as OpenEntitySelectorOptions;
-
-        if (opt.entityType === 'Entry') {
-          return opt.multiple
-            ? dialogApi.selectMultipleEntries(opt)
-            : dialogApi.selectSingleEntry(opt);
-        } else if (opt.entityType == 'Asset') {
-          return opt.multiple
-            ? dialogApi.selectMultipleAssets(opt)
-            : dialogApi.selectSingleAsset(opt);
-        } else {
-          throw new Error(`Unsupported entity type "${opt.entityType}".`);
-        }
+        return openEntitySelector(options as OpenEntitySelectorOptions);
       case WidgetNamespace.APP:
         return dialogApi.openCurrentApp(options as OpenCustomWidgetOptions);
       case WidgetNamespace.EXTENSION:
@@ -61,4 +49,18 @@ export const makeOpenDialogHandler = (dialogApi: DialogsAPI) => {
         throw new Error('Unknown dialog type.');
     }
   };
+
+  function openEntitySelector(options: OpenEntitySelectorOptions) {
+    if (options.entityType === 'Entry') {
+      return options.multiple
+        ? dialogApi.selectMultipleEntries(options)
+        : dialogApi.selectSingleEntry(options);
+    } else if (options.entityType == 'Asset') {
+      return options.multiple
+        ? dialogApi.selectMultipleAssets(options)
+        : dialogApi.selectSingleAsset(options);
+    } else {
+      throw new Error(`Unsupported entity type "${options.entityType}".`);
+    }
+  }
 };

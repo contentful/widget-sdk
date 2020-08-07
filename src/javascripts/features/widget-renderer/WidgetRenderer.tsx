@@ -1,4 +1,5 @@
 import React from 'react';
+import { noop } from 'lodash';
 import { KnownSDK } from 'contentful-ui-extensions-sdk';
 
 import {
@@ -41,7 +42,7 @@ interface WidgetRendererProps {
 
 export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown> {
   private channel?: PostMessageChannel;
-  private cleanup = () => {};
+  private cleanup = noop;
 
   // There's no need to update. Once the iframe is loaded
   // it's only communicating with the renderer over `postMessage`.
