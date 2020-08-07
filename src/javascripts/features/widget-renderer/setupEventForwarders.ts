@@ -2,6 +2,7 @@ import { EditorExtensionSDK, KnownSDK, FieldExtensionSDK } from 'contentful-ui-e
 import { PostMessageChannel } from './PostMessageChannel';
 import { WidgetLocation } from './interfaces';
 import { ChannelEvent } from './channelTypes';
+import { isEntryEditingLocation, isFieldEditingLocation } from './utils';
 
 export function setupEventForwarders(
   channel: PostMessageChannel,
@@ -10,14 +11,7 @@ export function setupEventForwarders(
 ) {
   const cleanupTasks: Function[] = [];
 
-  if (
-    [
-      WidgetLocation.ENTRY_FIELD,
-      WidgetLocation.ENTRY_SIDEBAR,
-      WidgetLocation.ENTRY_FIELD_SIDEBAR,
-      WidgetLocation.ENTRY_EDITOR,
-    ].includes(location)
-  ) {
+  if (isEntryEditingLocation(location)) {
     const specificSdk = sdk as EditorExtensionSDK;
 
     const off1 = sdk.entry.onSysChanged((sys) => {
@@ -39,7 +33,7 @@ export function setupEventForwarders(
     cleanupTasks.push(off1, off2, off3, off4);
   }
 
-  if ([WidgetLocation.ENTRY_FIELD, WidgetLocation.ENTRY_FIELD_SIDEBAR].includes(location)) {
+  if (isFieldEditingLocation(location)) {
     const specificSdk = sdk as FieldExtensionSDK;
 
     Object.values(specificSdk.entry.fields).forEach((field) => {

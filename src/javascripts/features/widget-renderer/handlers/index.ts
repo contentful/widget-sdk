@@ -13,6 +13,7 @@ import {
   makeNavigateToPageHandler,
 } from './NavigateToHandler';
 import { makeSetValueHandler, makeRemoveValueHandler, makeSetInvalidHandler } from './FieldHandler';
+import { isFieldEditingLocation } from '../utils';
 
 export function setupHandlers(
   channel: PostMessageChannel,
@@ -45,7 +46,7 @@ export function setupHandlers(
   );
 
   // Handlers specific to field editing.
-  if ([WidgetLocation.ENTRY_FIELD, WidgetLocation.ENTRY_FIELD_SIDEBAR].includes(location)) {
+  if (isFieldEditingLocation(location)) {
     const { field } = sdk as FieldExtensionSDK;
     channel.registerHandler(ChannelMethod.SetValue, makeSetValueHandler(field));
     channel.registerHandler(ChannelMethod.RemoveValue, makeRemoveValueHandler(field));

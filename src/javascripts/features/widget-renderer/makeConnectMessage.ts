@@ -1,5 +1,6 @@
 import { KnownSDK, EditorExtensionSDK, FieldExtensionSDK } from 'contentful-ui-extensions-sdk';
 import { WidgetLocation, AppParameterValues } from './interfaces';
+import { isEntryEditingLocation, isFieldEditingLocation } from './utils';
 
 export const makeConnectMessage = (
   sdk: KnownSDK,
@@ -15,14 +16,7 @@ export const makeConnectMessage = (
     ids: sdk.ids,
   };
 
-  if (
-    [
-      WidgetLocation.ENTRY_EDITOR,
-      WidgetLocation.ENTRY_SIDEBAR,
-      WidgetLocation.ENTRY_FIELD,
-      WidgetLocation.ENTRY_FIELD_SIDEBAR,
-    ].includes(location)
-  ) {
+  if (isEntryEditingLocation(location)) {
     const specificSdk = sdk as EditorExtensionSDK;
 
     connectMessage.contentType = specificSdk.contentType;
@@ -38,7 +32,7 @@ export const makeConnectMessage = (
     connectMessage.entry = { sys: {} };
   }
 
-  if ([WidgetLocation.ENTRY_FIELD, WidgetLocation.ENTRY_FIELD_SIDEBAR].includes(location)) {
+  if (isFieldEditingLocation(location)) {
     const specificSdk = sdk as FieldExtensionSDK;
 
     connectMessage.fieldInfo = specificSdk.contentType.fields.map((field) => ({
