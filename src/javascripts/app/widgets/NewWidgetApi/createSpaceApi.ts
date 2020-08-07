@@ -16,7 +16,7 @@ const ASSET_PROCESSING_POLL_MS = 500;
 const makeReadOnlyGuardedMethod = <T extends Function>(readOnly: boolean, method: T) => {
   return readOnly
     ? () => {
-        throw makeReadOnlyApiError(ReadOnlyApi.Space, method.name ?? method.toString());
+        throw makeReadOnlyApiError(ReadOnlyApi.Space, method?.name ?? method.toString());
       }
     : method;
 };
