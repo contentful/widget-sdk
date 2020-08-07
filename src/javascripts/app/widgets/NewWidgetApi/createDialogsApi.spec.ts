@@ -19,7 +19,7 @@ describe('createDialogsApi', () => {
 
   describe('when creating non-read-only API', () => {
     beforeEach(() => {
-      dialogsApi = createDialogsApi({ dialogExtensionSDK: dialogSdk });
+      dialogsApi = createDialogsApi({ sdk: dialogSdk });
     });
 
     describe('openAlert', () => {
@@ -102,7 +102,7 @@ describe('createDialogsApi', () => {
       describe('when sdk contains an app id', () => {
         beforeEach(() => {
           dialogsApi = createDialogsApi({
-            dialogExtensionSDK: {
+            sdk: {
               ...dialogSdk,
               ids: { app: 'app_id' },
             } as DialogExtensionSDK,
@@ -120,7 +120,7 @@ describe('createDialogsApi', () => {
       describe('when sdk does not contain an app id', () => {
         beforeEach(() => {
           dialogsApi = createDialogsApi({
-            dialogExtensionSDK: {
+            sdk: {
               ...dialogSdk,
               ids: {},
             } as DialogExtensionSDK,
@@ -155,7 +155,7 @@ describe('createDialogsApi', () => {
           })),
         });
         dialogsApi = createDialogsApi({
-          dialogExtensionSDK: {
+          sdk: {
             ...dialogSdk,
             ids: { app: 'app_id' },
           } as DialogExtensionSDK,
@@ -187,7 +187,7 @@ describe('createDialogsApi', () => {
           })),
         });
         dialogsApi = createDialogsApi({
-          dialogExtensionSDK: {
+          sdk: {
             ...dialogSdk,
             ids: {},
           } as DialogExtensionSDK,
@@ -204,7 +204,7 @@ describe('createDialogsApi', () => {
   describe('when creating read-only API', () => {
     let allMethods;
     beforeEach(() => {
-      dialogsApi = createDialogsApi({ dialogExtensionSDK: dialogSdk, readOnly: true });
+      dialogsApi = createDialogsApi({ sdk: dialogSdk, readOnly: true });
       allMethods = Object.getOwnPropertyNames(dialogsApi).filter(
         (prop) => typeof dialogsApi[prop] === 'function'
       );

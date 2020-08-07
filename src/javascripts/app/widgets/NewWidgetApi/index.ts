@@ -152,7 +152,7 @@ export function createFieldWidgetSDK({
       throw new Error('close() implementation needs to be provided in createDialogsApi');
     },
   };
-  const dialogs = createDialogsApi({ dialogExtensionSDK: sdkForDialogs });
+  const dialogs = createDialogsApi({ sdk: sdkForDialogs });
   sdkForDialogs.dialogs = dialogs;
 
   return {
@@ -324,7 +324,7 @@ export function createReadonlyFieldWidgetSDK({
       throw new Error('close() implementation needs to be provided in createDialogsApi');
     },
   };
-  const dialogs = createDialogsApi({ dialogExtensionSDK: sdkForDialogs, readOnly: true });
+  const dialogs = createDialogsApi({ sdk: sdkForDialogs, readOnly: true });
   sdkForDialogs.dialogs = dialogs;
 
   return {

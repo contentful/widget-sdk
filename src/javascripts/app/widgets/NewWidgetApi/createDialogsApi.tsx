@@ -33,10 +33,10 @@ const readOnlyDialogsApi: DialogsAPI = {
 };
 
 export function createDialogsApi({
-  dialogExtensionSDK,
+  sdk,
   readOnly = false,
 }: {
-  dialogExtensionSDK: DialogExtensionSDK;
+  sdk: DialogExtensionSDK;
   readOnly?: boolean;
 }): DialogsAPI {
   if (readOnly) {
@@ -74,21 +74,21 @@ export function createDialogsApi({
       });
     },
     openCurrent: function (opts) {
-      if (dialogExtensionSDK.ids.app) {
+      if (sdk.ids.app) {
         return this.openCurrentApp(opts);
       } else {
         return this.openExtension({
           ...opts,
-          id: dialogExtensionSDK.ids.extension,
+          id: sdk.ids.extension,
         });
       }
     },
     openCurrentApp: (opts) => {
-      const options = { ...opts, id: dialogExtensionSDK.ids.app };
-      return openCustomDialog(WidgetNamespace.APP, options, dialogExtensionSDK);
+      const options = { ...opts, id: sdk.ids.app };
+      return openCustomDialog(WidgetNamespace.APP, options, sdk);
     },
     openExtension: (opts) => {
-      return openCustomDialog(WidgetNamespace.EXTENSION, opts, dialogExtensionSDK);
+      return openCustomDialog(WidgetNamespace.EXTENSION, opts, sdk);
     },
   };
 }
