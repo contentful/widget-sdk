@@ -1,10 +1,9 @@
 import { KnownSDK, EditorExtensionSDK, FieldExtensionSDK } from 'contentful-ui-extensions-sdk';
-import { WidgetLocation, Widget, AppParameterValues } from './interfaces';
+import { WidgetLocation, AppParameterValues } from './interfaces';
 
 export const makeConnectMessage = (
   sdk: KnownSDK,
   location: WidgetLocation,
-  widget: Widget,
   parameters: Record<string, AppParameterValues>
 ) => {
   const connectMessage: Record<string, any> = {
@@ -13,11 +12,7 @@ export const makeConnectMessage = (
     locales: sdk.locales,
     user: sdk.user,
     initialContentTypes: sdk.space.getCachedContentTypes(),
-    ids: {
-      ...sdk.ids,
-      // Results in `{ app: 'some-app-id' }` or `{ extension: 'some-ext-id' }`.
-      [widget.namespace]: widget.id,
-    },
+    ids: sdk.ids,
   };
 
   if (

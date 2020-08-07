@@ -88,7 +88,7 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
   // the HTML page but the `sdk.init(cb)` callback wouldn't be called).
   private onLoad = () => {
     this.channel?.connect(
-      makeConnectMessage(this.props.apis, this.props.location, this.props.widget, this.parameters)
+      makeConnectMessage(this.props.apis, this.props.location, this.parameters)
     );
   };
 
