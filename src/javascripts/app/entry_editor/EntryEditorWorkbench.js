@@ -50,6 +50,7 @@ const EntryEditorWorkbench = (props) => {
   } = props;
   const { state: referencesState } = useContext(ReferencesContext);
   const { processingAction, references, selectedEntities } = referencesState;
+  const [hasReferenceTabBeenClicked, setHasReferenceTabBeenClicked] = useState(false);
 
   const editorData = getEditorData();
   const otDoc = getOtDoc();
@@ -105,6 +106,8 @@ const EntryEditorWorkbench = (props) => {
       onClick(selectedTab) {
         setSelectedTab(selectedTab);
         trackTabOpen(selectedTab);
+        selectedTab.includes(EntryEditorWidgetTypes.REFERENCE_TREE.id) &&
+          setHasReferenceTabBeenClicked(true);
       },
     };
   });
@@ -214,7 +217,7 @@ const EntryEditorWorkbench = (props) => {
             position="right"
             className={cx(styles.sidebar, styles.referenceSideBar, {
               [styles.sidebarSlideIn]: referencesTab,
-              [styles.sideBarSlideOut]: !referencesTab,
+              [styles.sideBarSlideOut]: !referencesTab && hasReferenceTabBeenClicked,
             })}>
             <ReferencesSideBar entity={editorData.entity.data} entityTitle={title} />
           </Workbench.Sidebar>

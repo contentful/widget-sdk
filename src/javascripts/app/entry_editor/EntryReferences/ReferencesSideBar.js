@@ -32,12 +32,19 @@ import { getReferencesForEntryId, validateEntities, publishEntities } from './re
 const styles = {
   sideBarWrapper: css({
     padding: tokens.spacingM,
+    paddingTop: 0,
   }),
   buttons: css({
     marginTop: tokens.spacingM,
   }),
   paragraph: css({
     marginTop: tokens.spacingM,
+  }),
+  subHeading: css({
+    marginTop: 0,
+    height: '56px',
+    display: 'flex',
+    alignItems: 'flex-end',
   }),
 };
 
@@ -166,7 +173,9 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
   return (
     <div className={styles.sideBarWrapper}>
       <header className="entity-sidebar__header">
-        <Subheading className="entity-sidebar__heading">References</Subheading>
+        <Subheading className={`entity-sidebar__heading ${styles.subHeading}`}>
+          References
+        </Subheading>
       </header>
       <div>Apply actions to all selected references</div>
       {!isTooComplex ? (

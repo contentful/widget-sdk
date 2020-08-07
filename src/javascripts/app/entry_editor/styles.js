@@ -62,6 +62,9 @@ export const styles = {
     position: 'absolute',
     zIndex: '1',
     height: '100%',
+    width: '0',
+    minWidth: '0',
+    visibility: 'hidden',
   }),
   entrySideBar: css({
     height: '100%',
@@ -71,12 +74,14 @@ export const styles = {
     overflow: 'auto',
     width: '360px',
     minWidth: '360px',
+    visibility: 'visible',
   }),
   sideBarSlideOut: css({
     animation: `500ms ease-in-out ${slideOutToRight}, 200ms ease-in-out ${fadeOut}`,
     width: '0',
     minWidth: '0',
     overflow: 'hidden',
+    visibility: 'visible',
   }),
   tabs: css({
     display: 'flex',
