@@ -20,7 +20,7 @@ export function setupHandlers(
   sdk: KnownSDK,
   location: WidgetLocation
 ) {
-  // Shared handlers for all locations:
+  // Shared handlers for all locations.
   channel.registerHandler(ChannelMethod.CallSpaceMethod, makeCallSpaceMethodHandler(sdk.space));
   channel.registerHandler(ChannelMethod.Notify, makeNotifyHandler(sdk.notifier));
   channel.registerHandler(ChannelMethod.OpenDialog, makeOpenDialogHandler(sdk.dialogs));
@@ -36,14 +36,11 @@ export function setupHandlers(
     makeNavigateToContentEntityHandler(sdk.navigator)
   );
 
-  // This is not a mistake. NavigateToPage and NavigateToPageExtension have the same handler
-  // who understands internally what to do. Reason for this is that UIE SDK uses for both the
-  // events the same 'navigateToPage', but in the bridge we cater for these two different events
-  channel.registerHandler(ChannelMethod.NavigateToPage, makeNavigateToPageHandler(sdk.navigator));
-  channel.registerHandler(
-    ChannelMethod.NavigateToPageExtension,
-    makeNavigateToPageHandler(sdk.navigator)
-  );
+  // This is not a mistake. `NavigateToPage` and `NavigateToPageExtension` have
+  // the same handler which understands internally what to do.
+  const handlePageNavigation = makeNavigateToPageHandler(sdk.navigator);
+  channel.registerHandler(ChannelMethod.NavigateToPage, handlePageNavigation);
+  channel.registerHandler(ChannelMethod.NavigateToPageExtension, handlePageNavigation);
 
   // Handlers specific to field editing.
   if (isFieldEditingLocation(location)) {

@@ -3,7 +3,6 @@ import { SpaceAPI } from 'contentful-ui-extensions-sdk';
 export const makeCallSpaceMethodHandler = (spaceApi: SpaceAPI) => {
   return async function (methodName: string, args: any[] = []) {
     const method = spaceApi[methodName];
-
     if (!method) {
       throw new Error(`Unknown method "${methodName}".`);
     }

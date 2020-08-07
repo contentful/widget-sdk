@@ -18,7 +18,7 @@ import {
  *  a widget and the `window` of the host respectivly.
  */
 export class PostMessageChannel {
-  private iframe: HTMLIFrameElement | null;
+  private iframe: HTMLIFrameElement;
   private win: Window;
   private id: string;
   private messageQueue: OutgoingMethodCallMessage[] = [];
@@ -77,24 +77,21 @@ export class PostMessageChannel {
 
   public destroy() {
     this.destroyed = true;
-    this.iframe = null;
     this.win.removeEventListener('message', this.messageListener);
   }
 
   public registerHandler(method: ChannelMethod, handler: Handler) {
     if (this.handlers[method]) {
-      throw new Error(`Handler for "${method}" already exists`);
+      throw new Error(`Handler for "${method}" was already registered.`);
+    } else {
+      this.handlers[method] = handler;
     }
-
-    this.handlers[method] = handler;
   }
 
   private postMessage(message: OutgoingMessage) {
-    if (this.destroyed) {
-      return;
+    if (!this.destroyed) {
+      this.iframe.contentWindow?.postMessage(message, '*');
     }
-
-    this.iframe?.contentWindow?.postMessage(message, '*');
   }
 
   private async handleIncomingMessage(method: string, callId: string, args: any[] = []) {

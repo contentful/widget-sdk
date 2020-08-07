@@ -41,37 +41,34 @@ export function setupEventForwarders(
         const fieldLocale = field.getForLocale(localeCode);
         const makeParams = (value: any) => [field.id, localeCode, value];
 
-        // Value changes
         const off1 = fieldLocale.onValueChanged((fieldValue) => {
           channel.send(ChannelEvent.ValueChanged, makeParams(fieldValue));
         });
 
-        // Disabled state changes
         const off2 = fieldLocale.onIsDisabledChanged((isDisabled: boolean) => {
           channel.send(ChannelEvent.IsDisabledChangedForFieldLocale, makeParams(isDisabled));
         });
 
-        // Error changes
         const off3 = fieldLocale.onSchemaErrorsChanged((errors: any) => {
           channel.send(ChannelEvent.SchemaErrorsChangedForFieldLocale, makeParams(errors));
         });
 
         cleanupTasks.push(off1, off2, off3);
       });
-
-      // Legacy events, scoped to the current field. New versions of the SDK
-      // don't listen to them, they use field-locale information included
-      // in events broadcasted above.
-      const off1 = specificSdk.field.onIsDisabledChanged((isDisabled: boolean) => {
-        channel.send(ChannelEvent.LegacyIsDisabledChanged, [isDisabled]);
-      });
-
-      const off2 = specificSdk.field.onSchemaErrorsChanged((errors: any) => {
-        channel.send(ChannelEvent.LegacySchemaErrorsChanged, [errors]);
-      });
-
-      cleanupTasks.push(off1, off2);
     });
+
+    // Legacy events, scoped to the current field. New versions of the SDK
+    // don't listen to them, they use field-locale information included
+    // in events broadcasted above.
+    const off1 = specificSdk.field.onIsDisabledChanged((isDisabled: boolean) => {
+      channel.send(ChannelEvent.LegacyIsDisabledChanged, [isDisabled]);
+    });
+
+    const off2 = specificSdk.field.onSchemaErrorsChanged((errors: any) => {
+      channel.send(ChannelEvent.LegacySchemaErrorsChanged, [errors]);
+    });
+
+    cleanupTasks.push(off1, off2);
   }
 
   return () => cleanupTasks.forEach((off) => off());
