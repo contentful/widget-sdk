@@ -3,7 +3,7 @@ import { getBatchingApiClient } from '../WidgetApi/BatchingApiClient';
 import { Notification } from '@contentful/forma-36-react-components';
 import { createNavigatorApi } from './createNavigatorApi';
 import { createLocalesApi } from './createLocalesApi';
-import { createDialogsApi } from './createDialogsApi';
+import { createDialogsApi, createReadOnlyDialogsApi } from './createDialogsApi';
 import { createSpaceApi } from './createSpaceApi';
 import { createContentTypeApi } from './createContentTypeApi';
 import { createTagsRepo } from 'features/content-tags';
@@ -324,7 +324,7 @@ export function createReadonlyFieldWidgetSDK({
       throw new Error('close() implementation needs to be provided in createDialogsApi');
     },
   };
-  const dialogs = createDialogsApi({ sdk: sdkForDialogs, readOnly: true });
+  const dialogs = createReadOnlyDialogsApi();
   sdkForDialogs.dialogs = dialogs;
 
   return {

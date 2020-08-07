@@ -19,30 +19,22 @@ const denyDialog = () => {
   throw makeReadOnlyApiError(ReadOnlyApi.Dialog);
 };
 
-const readOnlyDialogsApi: DialogsAPI = {
-  openAlert: denyDialog,
-  openConfirm: denyDialog,
-  openCurrent: denyDialog,
-  openCurrentApp: denyDialog,
-  openExtension: denyDialog,
-  openPrompt: denyDialog,
-  selectMultipleAssets: denyDialog,
-  selectMultipleEntries: denyDialog,
-  selectSingleAsset: denyDialog,
-  selectSingleEntry: denyDialog,
-};
+export function createReadOnlyDialogsApi() {
+  return {
+    openAlert: denyDialog,
+    openConfirm: denyDialog,
+    openCurrent: denyDialog,
+    openCurrentApp: denyDialog,
+    openExtension: denyDialog,
+    openPrompt: denyDialog,
+    selectMultipleAssets: denyDialog,
+    selectMultipleEntries: denyDialog,
+    selectSingleAsset: denyDialog,
+    selectSingleEntry: denyDialog,
+  };
+}
 
-export function createDialogsApi({
-  sdk,
-  readOnly = false,
-}: {
-  sdk: DialogExtensionSDK;
-  readOnly?: boolean;
-}): DialogsAPI {
-  if (readOnly) {
-    return readOnlyDialogsApi;
-  }
-
+export function createDialogsApi({ sdk }: { sdk: DialogExtensionSDK }): DialogsAPI {
   return {
     openAlert: ExtensionDialogs.openAlert,
     openConfirm: ExtensionDialogs.openConfirm,

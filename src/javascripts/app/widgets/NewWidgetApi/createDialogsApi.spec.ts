@@ -1,4 +1,4 @@
-import { createDialogsApi } from './createDialogsApi';
+import { createDialogsApi, createReadOnlyDialogsApi } from './createDialogsApi';
 import { DialogExtensionSDK } from 'contentful-ui-extensions-sdk';
 import * as ExtensionDialogs from 'widgets/ExtensionDialogs';
 import * as entitySelector from 'search/EntitySelector/entitySelector';
@@ -204,7 +204,7 @@ describe('createDialogsApi', () => {
   describe('when creating read-only API', () => {
     let allMethods;
     beforeEach(() => {
-      dialogsApi = createDialogsApi({ sdk: dialogSdk, readOnly: true });
+      dialogsApi = createReadOnlyDialogsApi();
       allMethods = Object.getOwnPropertyNames(dialogsApi).filter(
         (prop) => typeof dialogsApi[prop] === 'function'
       );
