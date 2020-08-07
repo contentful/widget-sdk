@@ -20,27 +20,24 @@ const denyNavigate = () => {
   throw makeReadOnlyApiError(ReadOnlyApi.Navigate);
 };
 
-const readOnlyNavigatorApi: NavigatorAPI = {
-  onSlideInNavigation: () => noop,
-  openAsset: denyNavigate,
-  openBulkEditor: denyNavigate,
-  openCurrentAppPage: denyNavigate,
-  openEntry: denyNavigate,
-  openNewAsset: denyNavigate,
-  openNewEntry: denyNavigate,
-  openPageExtension: denyNavigate,
-};
+export function createReadOnlyNavigatorApi() {
+  return {
+    onSlideInNavigation: () => noop,
+    openAsset: denyNavigate,
+    openBulkEditor: denyNavigate,
+    openCurrentAppPage: denyNavigate,
+    openEntry: denyNavigate,
+    openNewAsset: denyNavigate,
+    openNewEntry: denyNavigate,
+    openPageExtension: denyNavigate,
+  };
+}
 
 export function createNavigatorApi({
   spaceContext,
   widgetNamespace,
   widgetId,
-  readOnly = false,
 }: NavigatorProps): NavigatorAPI {
-  if (readOnly) {
-    return readOnlyNavigatorApi;
-  }
-
   const navigateToContentEntity = makeExtensionNavigationHandlers({ cma: spaceContext.cma });
   const navigateToBulkEditor = makeExtensionBulkNavigationHandlers();
 

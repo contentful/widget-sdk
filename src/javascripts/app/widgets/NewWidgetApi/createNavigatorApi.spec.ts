@@ -1,4 +1,4 @@
-import { createNavigatorApi } from './createNavigatorApi';
+import { createNavigatorApi, createReadOnlyNavigatorApi } from './createNavigatorApi';
 import { onSlideInNavigation } from 'navigation/SlideInNavigator/index';
 import { WidgetNamespace } from 'features/widget-renderer';
 import makePageExtensionHandlers from 'widgets/bridges/makePageExtensionHandlers';
@@ -17,12 +17,7 @@ describe('createNavigatorApi', () => {
   describe('when creating read-only API', () => {
     let allNonHandlerMethods, allMethods, allHandlerMethods;
     beforeEach(() => {
-      navigatorApi = createNavigatorApi({
-        spaceContext: {},
-        widgetId: 'id',
-        widgetNamespace: WidgetNamespace.APP,
-        readOnly: true,
-      });
+      navigatorApi = createReadOnlyNavigatorApi();
       allMethods = Object.getOwnPropertyNames(navigatorApi).filter(
         (prop) => typeof navigatorApi[prop] === 'function'
       );

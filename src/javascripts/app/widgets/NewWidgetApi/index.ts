@@ -1,7 +1,7 @@
 import { noop } from 'lodash';
 import { getBatchingApiClient } from '../WidgetApi/BatchingApiClient';
 import { Notification } from '@contentful/forma-36-react-components';
-import { createNavigatorApi } from './createNavigatorApi';
+import { createNavigatorApi, createReadOnlyNavigatorApi } from './createNavigatorApi';
 import { createLocalesApi } from './createLocalesApi';
 import { createDialogsApi, createReadOnlyDialogsApi } from './createDialogsApi';
 import { createSpaceApi } from './createSpaceApi';
@@ -264,12 +264,7 @@ export function createReadonlyFieldWidgetSDK({
     stopAutoResizer: noop,
   };
 
-  const navigatorApi = createNavigatorApi({
-    spaceContext: null,
-    widgetNamespace,
-    widgetId,
-    readOnly: true,
-  });
+  const navigatorApi = createReadOnlyNavigatorApi();
 
   // "Editing" APIs
   const editorApi = createEditorApi({
