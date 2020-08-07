@@ -2,7 +2,7 @@ import localeStore from 'services/localeStore';
 import { isRtlLocale } from 'utils/locales';
 import { LocalesAPI } from 'contentful-ui-extensions-sdk';
 
-interface Locale {
+export interface Locale {
   name: string;
   code: string;
   fallbackCode?: string;

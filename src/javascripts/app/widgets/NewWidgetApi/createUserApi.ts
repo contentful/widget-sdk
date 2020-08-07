@@ -1,6 +1,23 @@
 import { User } from 'contentful-ui-extensions-sdk';
 
-export const createUserApi = (spaceMember: any): User => {
+interface SpaceMember {
+  admin: boolean;
+  roles: { name: string; description: string }[];
+  sys: {
+    id: string;
+    user: {
+      sys: {
+        id: string;
+      };
+      firstName: string;
+      lastName: string;
+      email: string;
+      avatarUrl: string;
+    };
+  };
+}
+
+export const createUserApi = (spaceMember: SpaceMember): User => {
   return {
     sys: {
       type: 'User',

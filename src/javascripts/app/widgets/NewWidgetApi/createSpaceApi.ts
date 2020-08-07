@@ -4,7 +4,7 @@ import { getToken } from 'Authentication';
 import { uploadApiUrl } from 'Config';
 import { SpaceAPI, ContentType, User } from 'contentful-ui-extensions-sdk';
 import { createContentTypeApi } from './createContentTypeApi';
-import { get } from 'lodash';
+import { get, noop } from 'lodash';
 
 const ASSET_PROCESSING_POLL_MS = 500;
 
@@ -88,8 +88,8 @@ export function createSpaceApi({
     createUpload,
     getUsers,
     waitUntilAssetProcessed,
-    getEntityScheduledActions,
-    getAllScheduledActions,
+    getEntityScheduledActions: ScheduledActionsRepo.getEntityScheduledActions,
+    getAllScheduledActions: ScheduledActionsRepo.getAllScheduledActions,
 
     // Only in internal SDK, not implemented in the public one
     getEntryReferences: cma.getEntryReferences,
@@ -161,20 +161,12 @@ export function createSpaceApi({
     return waitUntilAssetProcessed(assetId, localeCode);
   }
 
-  function getEntityScheduledActions(entityType: string, entityId: string) {
-    return ScheduledActionsRepo.getEntityScheduledActions(entityType, entityId);
-  }
-
-  function getAllScheduledActions() {
-    return ScheduledActionsRepo.getAllScheduledActions();
-  }
-
   function onEntityChanged(entityType: string, entityId: string, callback: (value: any) => void) {
     if (!['Entry', 'Asset'].includes(entityType)) {
       throw new Error('Invalid entity type');
     }
     if (!pubSubClient) {
-      return () => {};
+      return noop;
     }
     const getEntity = entityType === 'Entry' ? cma.getEntry : cma.getAsset;
     const handler = (msg: { environmentId: string; entityType: string; entityId: string }) => {
