@@ -52,10 +52,6 @@ export class PostMessageChannel {
    * `connect()` call.
    */
   public send(event: ChannelEvent, params: any[]) {
-    if (!Array.isArray(params)) {
-      throw new Error('`params` is expected to be an array');
-    }
-
     const message: OutgoingMethodCallMessage = { method: event, params };
 
     if (this.connected) {
@@ -87,7 +83,7 @@ export class PostMessageChannel {
 
   public registerHandler(method: ChannelMethod, handler: Handler) {
     if (this.handlers[method]) {
-      throw new RangeError(`Handler for ${method} already exists`);
+      throw new Error(`Handler for "${method}" already exists`);
     }
 
     this.handlers[method] = handler;
@@ -103,7 +99,6 @@ export class PostMessageChannel {
 
   private async handleIncomingMessage(method: string, callId: string, args: any[] = []) {
     const handler = this.handlers[method];
-
     if (!handler) {
       return;
     }

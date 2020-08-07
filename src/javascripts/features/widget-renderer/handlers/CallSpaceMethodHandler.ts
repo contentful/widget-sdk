@@ -5,7 +5,7 @@ export const makeCallSpaceMethodHandler = (spaceApi: SpaceAPI) => {
     const method = spaceApi[methodName];
 
     if (!method) {
-      throw new RangeError(`Unknown method "${methodName}".`);
+      throw new Error(`Unknown method "${methodName}".`);
     }
 
     try {

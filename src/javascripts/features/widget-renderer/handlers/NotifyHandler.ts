@@ -13,7 +13,7 @@ export const makeNotifyHandler = (notifierAPI: NotifierAPI) => {
       case 'success':
         return notifierAPI.success(message);
       default:
-        throw new RangeError(`Unknown notification "${type}".`);
+        throw new Error(`Unknown notification "${type}".`);
     }
   };
 };

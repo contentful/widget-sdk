@@ -63,7 +63,7 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
   }
 
   public render() {
-    const style: Record<string, string> = { width: '100%' };
+    const style: Record<string, string> = { display: 'block', width: '100%' };
     if (this.props.isFullSize) {
       style.height = '100%';
     }
@@ -87,9 +87,7 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
   // on the initial page load the consecutive page loads would render
   // the HTML page but the `sdk.init(cb)` callback wouldn't be called).
   private onLoad = () => {
-    this.channel?.connect(
-      makeConnectMessage(this.props.sdk, this.props.location, this.parameters)
-    );
+    this.channel?.connect(makeConnectMessage(this.props.sdk, this.props.location, this.parameters));
   };
 
   private initialize = (iframe: HTMLIFrameElement) => {
@@ -115,9 +113,9 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
     // Fullscreen is allowed.
     iframe.allowFullscreen = true;
     iframe.allow = 'fullscreen';
-    iframe.style.display = 'block';
 
     // Used in analytics:
+    // TODO: refactor tracking of custom widgets
     iframe.dataset.extensionId = id; // Named "extensionId" for backwards compat.
     iframe.dataset.location = this.props.location;
     if (namespace === WidgetNamespace.APP) {
@@ -130,7 +128,7 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
     // Handle changes to the <iframe> element.
     this.channel.registerHandler(ChannelMethod.SetHeight, (height) => {
       if (!this.props.isFullSize) {
-        iframe.setAttribute('height', height);
+        iframe.style.height = height;
       }
     });
 
@@ -146,8 +144,7 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
     } else if (this.isSrcdoc(widget)) {
       iframe.srcdoc = hosting.value;
     } else {
-      // todo: better messaging
-      throw new Error('x');
+      throw new Error('Unsupported widget type.');
     }
   };
 

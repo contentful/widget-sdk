@@ -51,7 +51,7 @@ export const makeOpenDialogHandler = (dialogApi: DialogsAPI) => {
             ? dialogApi.selectMultipleAssets(opt)
             : dialogApi.selectSingleAsset(opt);
         } else {
-          throw new TypeError(`Unsupported entity type "${opt.entityType}".`);
+          throw new Error(`Unsupported entity type "${opt.entityType}".`);
         }
       case WidgetNamespace.APP:
         return dialogApi.openCurrentApp(options as OpenCustomWidgetOptions);

@@ -23,29 +23,25 @@ export const makeNavigateToBulkEditorHandler = (navigatorApi: NavigatorAPI) => {
 
 export const makeNavigateToContentEntityHandler = (navigatorApi: NavigatorAPI) => {
   return function (options: NavigateToContentEntityOptions) {
-    const isExisting = typeof options.id === 'string';
+    const navigateToExisting = typeof options.id === 'string';
 
     if (options.entityType === 'Entry') {
-      if (isExisting) {
+      if (navigateToExisting) {
         return navigatorApi.openEntry(options.id!, options);
-      }
-
-      if (options.contentTypeId) {
+      } else if (options.contentTypeId) {
         return navigatorApi.openNewEntry(options.contentTypeId, options);
+      } else {
+        throw new Error('One of entry ID or content type ID is required.');
       }
-
-      throw new RangeError(`Entry ID or Content Type ID is required.`);
-    }
-
-    if (options.entityType === 'Asset') {
-      if (isExisting) {
+    } else if (options.entityType === 'Asset') {
+      if (navigateToExisting) {
         return navigatorApi.openAsset(options.id!, options);
+      } else {
+        return navigatorApi.openNewAsset(options);
       }
-
-      return navigatorApi.openNewAsset(options);
+    } else {
+      throw new Error(`Unsupported entity type "${options.entityType}".`);
     }
-
-    throw new RangeError(`Unsupported entity type "${options.entityType}".`);
   };
 };
 
