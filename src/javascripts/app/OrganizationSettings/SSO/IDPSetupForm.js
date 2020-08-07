@@ -28,15 +28,14 @@ import * as ssoSelectors from 'redux/selectors/sso';
 import { track } from 'analytics/Analytics';
 import { connect } from 'react-redux';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
-// eslint-disable-next-line
-import { updateFieldValue } from 'features/sso';
+import { IDPDetailsForm } from 'features/sso';
+import { getVariation, FLAGS } from 'LaunchDarkly';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
   source: 'webapp',
   medium: 'idp-setup-form',
   campaign: 'in-app-help',
 });
-
 export class IDPSetupForm extends React.Component {
   static propTypes = {
     organization: OrganizationPropType,
@@ -49,6 +48,17 @@ export class IDPSetupForm extends React.Component {
     connectionTestCancel: PropTypes.func.isRequired,
     enable: PropTypes.func.isRequired,
   };
+
+  state = {
+    noReduxEnabled: false,
+  };
+
+  async componentDidMount() {
+    const noReduxEnabled = await getVariation(FLAGS.SSO_SETUP_NO_REDUX, {
+      organizationId: this.props.organization.sys.id,
+    });
+    this.setState({ noReduxEnabled });
+  }
 
   debouncedUpdateValue = _.debounce(async function (fieldName, value) {
     const { organization, updateFieldValue } = this.props;
@@ -252,75 +262,80 @@ export class IDPSetupForm extends React.Component {
           </Note>
         </section>
 
-        <section className="f36-margin-top--3xl">
-          <Heading element="h2" className="f36-margin-bottom--l">
-            Your SSO provider details
-          </Heading>
-          <FormLabel htmlFor="ssoProvider">SSO provider</FormLabel>
-          <div>
-            <Select
-              name="ssoProvider"
-              id="ssoProvider"
-              testId="ssoProvider"
-              width="medium"
-              className="f36-margin-bottom--l f36-margin-right--m sso-setup__select"
-              value={idpNameSelectValue}
-              onChange={this.updateField('idpName', true)}>
-              <Option value="">Select provider</Option>
-              {Object.keys(SSO_PROVIDERS_MAP).map((name) => {
-                return (
-                  <Option key={name} value={name}>
-                    {name}
-                  </Option>
-                );
-              })}
-            </Select>
-            {fields.idpName.isPending && <Spinner />}
-          </div>
-          <div className="sso-setup__field-container">
-            <div className="sso-setup__field-input sso-setup__field-input--full">
-              <TextField
-                labelText="Single Sign-On Redirect URL"
-                className="sso-setup__field f36-margin-right--m f36-margin-bottom--l"
-                id="idpSsoTargetUrl"
-                helpText="Sometimes called the SSO Login URL"
-                name="idpSsoTargetUrl"
-                onChange={this.updateField('idpSsoTargetUrl')}
-                onBlur={this.updateField('idpSsoTargetUrl', true)}
-                value={fields.idpSsoTargetUrl.value}
-                validationMessage={fields.idpSsoTargetUrl.error}
-              />
+        {this.state.noReduxEnabled && (
+          <IDPDetailsForm orgId={orgId} orgName={orgName} identityProvider={identityProvider} />
+        )}
+        {!this.state.noReduxEnabled && (
+          <section className="f36-margin-top--3xl">
+            <Heading element="h2" className="f36-margin-bottom--l">
+              Your SSO provider details
+            </Heading>
+            <FormLabel htmlFor="ssoProvider">SSO provider</FormLabel>
+            <div>
+              <Select
+                name="ssoProvider"
+                id="ssoProvider"
+                testId="ssoProvider"
+                width="medium"
+                className="f36-margin-bottom--l f36-margin-right--m sso-setup__select"
+                value={idpNameSelectValue}
+                onChange={this.updateField('idpName', true)}>
+                <Option value="">Select provider</Option>
+                {Object.keys(SSO_PROVIDERS_MAP).map((name) => {
+                  return (
+                    <Option key={name} value={name}>
+                      {name}
+                    </Option>
+                  );
+                })}
+              </Select>
+              {fields.idpName.isPending && <Spinner />}
             </div>
-            {fields.idpSsoTargetUrl.isPending && (
-              <div className="sso-setup__field-spinner">
-                <Spinner />
+            <div className="sso-setup__field-container">
+              <div className="sso-setup__field-input sso-setup__field-input--full">
+                <TextField
+                  labelText="Single Sign-On Redirect URL"
+                  className="sso-setup__field f36-margin-right--m f36-margin-bottom--l"
+                  id="idpSsoTargetUrl"
+                  helpText="Sometimes called the SSO Login URL"
+                  name="idpSsoTargetUrl"
+                  onChange={this.updateField('idpSsoTargetUrl')}
+                  onBlur={this.updateField('idpSsoTargetUrl', true)}
+                  value={fields.idpSsoTargetUrl.value}
+                  validationMessage={fields.idpSsoTargetUrl.error}
+                />
               </div>
-            )}
-          </div>
-          <div className="sso-setup__field-container">
-            <div className="sso-setup__field-input sso-setup__field-input--full">
-              <TextField
-                labelText="X.509 Certificate"
-                textarea
-                id="idpCert"
-                name="idpCert"
-                className="f36-margin-right--m"
-                textInputProps={{
-                  rows: 8,
-                }}
-                value={fields.idpCert.value}
-                onChange={this.updateField('idpCert')}
-                onBlur={this.updateField('idpCert', true)}
-                validationMessage={fields.idpCert.error}
-              />
+              {fields.idpSsoTargetUrl.isPending && (
+                <div className="sso-setup__field-spinner">
+                  <Spinner />
+                </div>
+              )}
             </div>
-            {fields.idpCert.isPending && (
-              <div className="sso-setup__field-spinner">
-                <Spinner />
+            <div className="sso-setup__field-container">
+              <div className="sso-setup__field-input sso-setup__field-input--full">
+                <TextField
+                  labelText="X.509 Certificate"
+                  textarea
+                  id="idpCert"
+                  name="idpCert"
+                  className="f36-margin-right--m"
+                  textInputProps={{
+                    rows: 8,
+                  }}
+                  value={fields.idpCert.value}
+                  onChange={this.updateField('idpCert')}
+                  onBlur={this.updateField('idpCert', true)}
+                  validationMessage={fields.idpCert.error}
+                />
               </div>
-            )}
-          </div>
-        </section>
+              {fields.idpCert.isPending && (
+                <div className="sso-setup__field-spinner">
+                  <Spinner />
+                </div>
+              )}
+            </div>
+          </section>
+        )}
 
         <section className="f36-margin-top--3xl">
           <Heading element="h2" className="f36-margin-bottom--xs">
@@ -388,42 +403,46 @@ export class IDPSetupForm extends React.Component {
         </section>
 
         <section className="f36-margin-top--3xl">
-          <Heading element="h2" className="f36-margin-bottom--xs">
-            SSO name
-          </Heading>
-          <HelpText className="f36-margin-bottom--l">
-            Users will have to type the SSO name if they log in via{' '}
-            <TextLink href="https://be.contentful.com/login/sso">
-              Contentful&apos;s SSO login
-            </TextLink>
-            .
-          </HelpText>
+          {!this.state.noReduxEnabled && (
+            <>
+              <Heading element="h2" className="f36-margin-bottom--xs">
+                SSO name
+              </Heading>
+              <HelpText className="f36-margin-bottom--l">
+                Users will have to type the SSO name if they log in via{' '}
+                <TextLink href="https://be.contentful.com/login/sso">
+                  Contentful&apos;s SSO login
+                </TextLink>
+                .
+              </HelpText>
 
-          <div className="sso-setup__field-container">
-            <div className="sso-setup__field-input">
-              <TextField
-                labelText="SSO name"
-                id="ssoName"
-                name="ssoName"
-                testId="ssoName"
-                helpText="Letters, numbers, periods, hyphens, and underscores are allowed."
-                textInputProps={{
-                  width: 'large',
-                  placeholder: `E.g. ${_.kebabCase(orgName)}-sso`,
-                }}
-                className="f36-margin-right--m"
-                value={fields.ssoName.value}
-                onChange={this.updateField('ssoName')}
-                onBlur={this.updateField('ssoName', true)}
-                validationMessage={fields.ssoName.error}
-              />
-            </div>
-            {fields.ssoName.isPending && (
-              <div className="sso-setup__field-spinner">
-                <Spinner />
+              <div className="sso-setup__field-container">
+                <div className="sso-setup__field-input">
+                  <TextField
+                    labelText="SSO name"
+                    id="ssoName"
+                    name="ssoName"
+                    testId="ssoName"
+                    helpText="Letters, numbers, periods, hyphens, and underscores are allowed."
+                    textInputProps={{
+                      width: 'large',
+                      placeholder: `E.g. ${_.kebabCase(orgName)}-sso`,
+                    }}
+                    className="f36-margin-right--m"
+                    value={fields.ssoName.value}
+                    onChange={this.updateField('ssoName')}
+                    onBlur={this.updateField('ssoName', true)}
+                    validationMessage={fields.ssoName.error}
+                  />
+                </div>
+                {fields.ssoName.isPending && (
+                  <div className="sso-setup__field-spinner">
+                    <Spinner />
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+            </>
+          )}
 
           <Note className="f36-margin-top--3xl">
             To enable SSO in{' '}
