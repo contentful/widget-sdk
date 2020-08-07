@@ -39,7 +39,7 @@ describe('createEntryApi', () => {
       id: 'someid',
     },
     fields: [
-      { ...mockField, id: 'field_one', name: 'the first field' },
+      { ...mockField, id: 'field_one', apiName: 'first_field', name: 'the first field' },
       { ...mockField, id: 'field_two', name: 'the second field' },
     ],
     name: 'content_type',
@@ -81,8 +81,8 @@ describe('createEntryApi', () => {
     it('returns an object of with fields keyed by field-ids', () => {
       const result = entryApi.fields;
       expect(result).toMatchObject({
-        field_one: {
-          id: 'field_one',
+        first_field: {
+          id: 'first_field',
           locales: ['en-US'],
           required: false,
           type: 'Symbol',

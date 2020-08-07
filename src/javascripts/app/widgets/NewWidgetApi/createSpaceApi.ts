@@ -217,7 +217,7 @@ export function createSpaceApi({
         msg.entityType === entityType &&
         msg.entityId === entityId
       ) {
-        getEntity(entityId).then(callback);
+        return getEntity(entityId).then(callback);
       }
     };
     pubSubClient.on(CONTENT_ENTITY_UPDATED_EVENT, handler);

@@ -1,9 +1,5 @@
 import { EntryFieldAPI } from 'contentful-ui-extensions-sdk';
-import {
-  createEntryFieldApi,
-  CreateEntryFieldApiProps,
-  InternalField,
-} from './createEntryFieldApi';
+import { createEntryFieldApi, InternalField } from './createEntryFieldApi';
 import { onValueWhile } from 'core/utils/kefir';
 import { Document } from 'app/entity_editor/Document/typesDocument';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
@@ -30,62 +26,59 @@ jest.mock('services/localeStore', () => {
   };
 });
 
-const getCreateEntryFieldApiProps = (props): CreateEntryFieldApiProps => {
-  return {
-    internalField: {},
-    listenToFieldLocaleEvent: () => jest.fn(),
-    otDoc: {},
-    setInvalid: jest.fn(),
-    readOnly: false,
-    ...props,
-  };
+const defaultOtDoc = ({
+  changes: {
+    filter: jest.fn(),
+  },
+  getValueAt: jest.fn(),
+  setValueAt: jest.fn(),
+  removeValueAt: jest.fn(),
+  permissions: {
+    canEditFieldLocale: jest.fn(),
+  },
+} as unknown) as jest.Mocked<Document>;
+
+const defaultInternalField = ({
+  apiName: 'apiname',
+  id: 'internal_id',
+  localized: false,
+  required: false,
+  validations: [],
+  type: 'Symbol',
+} as unknown) as InternalField;
+
+const buildEntryFieldApi = ({
+  internalField = defaultInternalField,
+  readOnly = false,
+  otDoc = defaultOtDoc,
+  setInvalid = jest.fn(),
+  listenToFieldLocaleEvent = jest.fn(),
+  ...rest
+}: any = {}) => {
+  return createEntryFieldApi({
+    internalField,
+    otDoc,
+    setInvalid,
+    listenToFieldLocaleEvent,
+    readOnly,
+    ...rest,
+  });
 };
 
 describe('createEntryFieldApi', () => {
-  const otDoc = ({
-    changes: {
-      filter: jest.fn(),
-    },
-    getValueAt: jest.fn(),
-    setValueAt: jest.fn(),
-    removeValueAt: jest.fn(),
-    permissions: {
-      canEditFieldLocale: jest.fn(),
-    },
-  } as unknown) as jest.Mocked<Document>;
-
-  const listenToFieldLocaleEvent = jest.fn();
-
-  const internalField = {
-    apiName: 'apiname',
-    id: 'internal_id',
-    localized: false,
-    required: false,
-    validations: [],
-    type: 'Symbol',
-  };
-
   describe('id', () => {
     describe('When apiName is present', () => {
       it('is apiName', () => {
-        const entryFieldApi = createEntryFieldApi(
-          getCreateEntryFieldApiProps({
-            internalField,
-          })
-        );
-        expect(entryFieldApi.id).toEqual(internalField.apiName);
+        const entryFieldApi = buildEntryFieldApi();
+        expect(entryFieldApi.id).toEqual(defaultInternalField.apiName);
       });
     });
 
     describe('When apiName is missing', () => {
       it('is internalId', () => {
-        const { apiName, ...rest } = internalField;
-        const entryFieldApi = createEntryFieldApi(
-          getCreateEntryFieldApiProps({
-            internalField: rest,
-          })
-        );
-        expect(entryFieldApi.id).toEqual(internalField.id);
+        const { apiName, ...rest } = defaultInternalField;
+        const entryFieldApi = buildEntryFieldApi({ internalField: rest });
+        expect(entryFieldApi.id).toEqual(defaultInternalField.id);
       });
     });
   });
@@ -93,22 +86,16 @@ describe('createEntryFieldApi', () => {
   describe('locales', () => {
     describe('when the internal field is localized', () => {
       it('returns all locale codes', () => {
-        const entryFieldApi = createEntryFieldApi(
-          getCreateEntryFieldApiProps({
-            internalField: { ...internalField, localized: true },
-          })
-        );
+        const entryFieldApi = buildEntryFieldApi({
+          internalField: { ...defaultInternalField, localized: true },
+        });
         expect(entryFieldApi.locales).toEqual(['en-US', 'en-GB']);
       });
     });
 
     describe('when the internal field is not localized', () => {
       it('returns the default locale code', () => {
-        const entryFieldApi = createEntryFieldApi(
-          getCreateEntryFieldApiProps({
-            internalField: { ...internalField, localized: false },
-          })
-        );
+        const entryFieldApi = buildEntryFieldApi({ ...defaultInternalField, localized: false });
         expect(entryFieldApi.locales).toEqual(['en-US']);
       });
     });
@@ -117,11 +104,9 @@ describe('createEntryFieldApi', () => {
   describe('type', () => {
     it('is set to items from the internal field', () => {
       const type = 'example';
-      const entryFieldApi = createEntryFieldApi(
-        getCreateEntryFieldApiProps({
-          internalField: { ...internalField, type },
-        })
-      );
+      const entryFieldApi = buildEntryFieldApi({
+        internalField: { ...defaultInternalField, type },
+      });
       expect(entryFieldApi.type).toEqual(type);
     });
   });
@@ -129,13 +114,7 @@ describe('createEntryFieldApi', () => {
   describe('required', () => {
     it('is set to items from the internal field', () => {
       const required = false;
-      const entryFieldApi = createEntryFieldApi(
-        getCreateEntryFieldApiProps(
-          getCreateEntryFieldApiProps({
-            internalField: { ...internalField, required },
-          })
-        )
-      );
+      const entryFieldApi = buildEntryFieldApi({ ...defaultInternalField, required });
       expect(entryFieldApi.required).toEqual(required);
     });
   });
@@ -144,36 +123,28 @@ describe('createEntryFieldApi', () => {
     describe('when internalField has validations', () => {
       it('are equal', () => {
         const validations = [{ example: 'validation' }];
-        const entryFieldApi = createEntryFieldApi(
-          getCreateEntryFieldApiProps({
-            internalField: { ...internalField, validations },
-          })
-        );
+        const entryFieldApi = buildEntryFieldApi({
+          internalField: { ...defaultInternalField, validations },
+        });
         expect(entryFieldApi.validations).toEqual(validations);
       });
     });
 
     describe('when internalField is missing validations', () => {
       it('an empty array is return', () => {
-        const { validations, ...rest } = internalField;
-        const entryFieldApi = createEntryFieldApi(
-          getCreateEntryFieldApiProps({
-            internalField: rest as InternalField,
-          })
-        );
+        const { validations, ...rest } = defaultInternalField;
+        const entryFieldApi = buildEntryFieldApi(rest as InternalField);
         expect(entryFieldApi.validations).toEqual([]);
       });
     });
   });
 
   describe('items', () => {
-    it('is the internal fields items', () => {
-      const items = [{ type: 'Symbol' }];
-      const entryFieldApi = createEntryFieldApi(
-        getCreateEntryFieldApiProps({
-          internalField: { ...internalField, items },
-        })
-      );
+    it('is set to items from internal field', () => {
+      const items = { type: 'Symbol' };
+      const entryFieldApi = buildEntryFieldApi({
+        internalField: { ...defaultInternalField, items },
+      });
       expect(entryFieldApi.items).toEqual(items);
     });
   });
@@ -181,7 +152,7 @@ describe('createEntryFieldApi', () => {
   describe('getValue', () => {
     it('returns the current value', () => {
       const currentValue = 'this is the current value';
-      otDoc.getValueAt.mockReturnValueOnce({
+      (defaultOtDoc.getValueAt as jest.Mock).mockReturnValueOnce({
         fields: {
           internal_id: {
             internalCode: currentValue,
@@ -189,12 +160,7 @@ describe('createEntryFieldApi', () => {
         },
       });
 
-      const entryFieldApi = createEntryFieldApi(
-        getCreateEntryFieldApiProps({
-          internalField,
-          otDoc,
-        })
-      );
+      const entryFieldApi = buildEntryFieldApi();
 
       const result = entryFieldApi.getValue();
       expect(result).toEqual(currentValue);
@@ -204,14 +170,11 @@ describe('createEntryFieldApi', () => {
   describe('setValue', () => {
     describe('when the value cannot be edited', () => {
       it('throws', () => {
-        (otDoc.permissions.canEditFieldLocale as jest.MockedFunction<any>).mockReturnValue(false);
-
-        const entryFieldApi = createEntryFieldApi(
-          getCreateEntryFieldApiProps({
-            internalField,
-            otDoc,
-          })
+        (defaultOtDoc.permissions.canEditFieldLocale as jest.MockedFunction<any>).mockReturnValue(
+          false
         );
+
+        const entryFieldApi = buildEntryFieldApi();
 
         expect(entryFieldApi.setValue('a new value')).rejects.toThrow();
       });
@@ -219,18 +182,15 @@ describe('createEntryFieldApi', () => {
 
     describe('when the value can be edited', () => {
       it('changes the value', async () => {
-        (otDoc.permissions.canEditFieldLocale as jest.MockedFunction<any>).mockReturnValue(true);
-
-        const entryFieldApi = createEntryFieldApi(
-          getCreateEntryFieldApiProps({
-            internalField,
-            otDoc,
-          })
+        (defaultOtDoc.permissions.canEditFieldLocale as jest.MockedFunction<any>).mockReturnValue(
+          true
         );
+
+        const entryFieldApi = buildEntryFieldApi();
 
         await entryFieldApi.setValue('a new value');
 
-        expect(otDoc.setValueAt).toHaveBeenCalledWith(
+        expect(defaultOtDoc.setValueAt).toHaveBeenCalledWith(
           ['fields', 'internal_id', 'internalCode'],
           'a new value'
         );
@@ -239,7 +199,7 @@ describe('createEntryFieldApi', () => {
 
     describe('when api is read-only', () => {
       it('throws a ReadOnlyEntryFieldAPI exception', () => {
-        const entryFieldApi = createEntryFieldApi(getCreateEntryFieldApiProps({ readOnly: true }));
+        const entryFieldApi = buildEntryFieldApi({ readOnly: true });
 
         expect(() => entryFieldApi.setValue('whatever')).toThrowError(
           makeReadOnlyApiError(ReadOnlyApi.EntryField)
@@ -251,14 +211,11 @@ describe('createEntryFieldApi', () => {
   describe('removeValue', () => {
     describe('when the value cannot be edited', () => {
       it('throws', () => {
-        (otDoc.permissions.canEditFieldLocale as jest.MockedFunction<any>).mockReturnValue(false);
-
-        const entryFieldApi = createEntryFieldApi(
-          getCreateEntryFieldApiProps({
-            internalField,
-            otDoc,
-          })
+        (defaultOtDoc.permissions.canEditFieldLocale as jest.MockedFunction<any>).mockReturnValue(
+          false
         );
+
+        const entryFieldApi = buildEntryFieldApi();
 
         expect(entryFieldApi.removeValue('a new value')).rejects.toThrow();
       });
@@ -266,24 +223,25 @@ describe('createEntryFieldApi', () => {
 
     describe('when the value can be edited', () => {
       it('sets the value', async () => {
-        (otDoc.permissions.canEditFieldLocale as jest.MockedFunction<any>).mockReturnValue(true);
-
-        const entryFieldApi = createEntryFieldApi(
-          getCreateEntryFieldApiProps({
-            internalField,
-            otDoc,
-          })
+        (defaultOtDoc.permissions.canEditFieldLocale as jest.MockedFunction<any>).mockReturnValue(
+          true
         );
+
+        const entryFieldApi = buildEntryFieldApi();
 
         await entryFieldApi.removeValue();
 
-        expect(otDoc.removeValueAt).toHaveBeenCalledWith(['fields', 'internal_id', 'internalCode']);
+        expect(defaultOtDoc.removeValueAt).toHaveBeenCalledWith([
+          'fields',
+          'internal_id',
+          'internalCode',
+        ]);
       });
     });
 
     describe('when api is read-only', () => {
       it('throws a ReadOnlyEntryFieldAPI exception', () => {
-        const entryFieldApi = createEntryFieldApi(getCreateEntryFieldApiProps({ readOnly: true }));
+        const entryFieldApi = buildEntryFieldApi({ readOnly: true });
 
         expect(() => entryFieldApi.removeValue()).toThrowError(
           makeReadOnlyApiError(ReadOnlyApi.EntryField)
@@ -295,7 +253,7 @@ describe('createEntryFieldApi', () => {
   describe('onValueChanged', () => {
     it('passed callback will be called on changes', () => {
       const currentValue = 'value';
-      otDoc.getValueAt.mockReturnValueOnce({
+      (defaultOtDoc.getValueAt as jest.Mock).mockReturnValueOnce({
         fields: {
           internal_id: {
             internalCode: currentValue,
@@ -303,12 +261,10 @@ describe('createEntryFieldApi', () => {
         },
       });
 
-      const entryFieldApi = createEntryFieldApi(
-        getCreateEntryFieldApiProps({
-          internalField,
-          otDoc,
-        })
-      );
+      const entryFieldApi = buildEntryFieldApi({
+        internalField: defaultInternalField,
+        otDoc: defaultOtDoc,
+      });
 
       const callback = jest.fn();
 
@@ -323,14 +279,12 @@ describe('createEntryFieldApi', () => {
     describe('passed callback and field data to listenToFieldLocaleEvent', () => {
       let entryFieldApi: EntryFieldAPI;
       let callback: jest.Mock;
+      let listenToFieldLocaleEvent = jest.fn();
+
       beforeEach(() => {
-        entryFieldApi = createEntryFieldApi(
-          getCreateEntryFieldApiProps({
-            internalField,
-            otDoc,
-            listenToFieldLocaleEvent,
-          })
-        );
+        entryFieldApi = buildEntryFieldApi({
+          listenToFieldLocaleEvent,
+        });
 
         callback = jest.fn();
 
@@ -338,7 +292,7 @@ describe('createEntryFieldApi', () => {
       });
 
       it('calls listenToFieldLocaleEvent with internal field and locale', () => {
-        expect(listenToFieldLocaleEvent.mock.calls[0][0]).toEqual(internalField);
+        expect(listenToFieldLocaleEvent.mock.calls[0][0]).toEqual(defaultInternalField);
         expect(listenToFieldLocaleEvent.mock.calls[0][1]).toEqual({
           internal_code: 'internalCode',
           code: 'en-US',
@@ -358,13 +312,7 @@ describe('createEntryFieldApi', () => {
 
   describe('getForLocale', () => {
     it('returns a FieldAPI for a specific locale', () => {
-      const entryFieldApi = createEntryFieldApi(
-        getCreateEntryFieldApiProps({
-          internalField,
-          otDoc,
-          listenToFieldLocaleEvent,
-        })
-      );
+      const entryFieldApi = buildEntryFieldApi();
 
       const fieldAPI = entryFieldApi.getForLocale('en-US');
 
@@ -389,7 +337,7 @@ describe('createEntryFieldApi', () => {
   describe('setInvalid', () => {
     describe('when api is read-only', () => {
       it('throws a ReadOnlyEntryFieldAPI exception', () => {
-        const entryFieldApi = createEntryFieldApi(getCreateEntryFieldApiProps({ readOnly: true }));
+        const entryFieldApi = buildEntryFieldApi({ readOnly: true });
 
         expect(() => entryFieldApi.getForLocale('en').setInvalid(false)).toThrowError(
           makeReadOnlyApiError(ReadOnlyApi.EntryField)
