@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDebounce } from 'use-debounce';
 import * as LazyLoader from 'utils/LazyLoader';
-import { isValidUrl } from 'utils/StringUtils';
+import { maybeSanitizeUrl } from 'utils/StringUtils';
 
 function PreviewRenderer(props) {
   const ref = useRef(null);
@@ -50,12 +50,15 @@ export default function EmbedlyPreview(props) {
     });
   }, []);
 
-  if (isReady && isValidUrl(url)) {
-    const safeUrl = encodeURI(decodeURI(url));
-    return <PreviewRenderer key={safeUrl} url={safeUrl} onLoad={props.onLoad}></PreviewRenderer>;
+  if (!isReady) {
+    return null;
+  }
+  const safeUrl = maybeSanitizeUrl(url);
+  if (!safeUrl) {
+    return null;
   }
 
-  return null;
+  return <PreviewRenderer key={safeUrl} url={safeUrl} onLoad={props.onLoad}></PreviewRenderer>;
 }
 
 EmbedlyPreview.propTypes = {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, wait, within, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor, within, fireEvent } from '@testing-library/react';
 import SpacesRoute from './SpacesRoute';
 import moment from 'moment';
 import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
@@ -56,7 +56,7 @@ jest.mock('states/Navigator', () => ({
 const build = async () => {
   render(<SpacesRoute />);
 
-  return wait();
+  return waitFor(() => expect(getAllSpaces).toHaveBeenCalled());
 };
 
 describe('SpacesRoute', () => {

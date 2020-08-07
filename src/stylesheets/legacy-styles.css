@@ -196,28 +196,6 @@ pre,
   .ctf-ui-cursor--pointer {
     cursor: pointer;
   }
-  cf-icon,
-  .cf-icon {
-    display: block;
-  }
-  cf-icon > svg,
-  .cf-icon > svg {
-    display: block;
-  }
-  cf-icon[name="plus"] circle,
-  .cf-icon.cf-icon--plus circle {
-    fill: var(--color-blue-mid);
-  }
-  cf-icon[name="plus"].inverted circle,
-  .cf-icon.cf-icon--plus.inverted circle {
-    fill: var(--color-white);
-  }
-  cf-icon[name="plus"].inverted path,
-  .cf-icon.cf-icon--plus.inverted path {
-    stroke: var(--color-blue-mid);
-  }
-  .is-disabled:hover cf-icon[name^="nav"] path,
-  .is-disabled cf-icon[name^="nav"] path,
   .is-disabled .icon-component[data-icon-name^='nav'] path,
   .is-disabled:hover .icon-component[data-icon-name^='nav'] path {
     fill: var(--color-text-lightest);
@@ -859,16 +837,6 @@ pre,
     background-color: var(--color-element-lightest);
     border-color: var(--color-element-dark);
   }
-  .btn-secondary-action > cf-icon[name="plus"] circle,
-  .btn-secondary-action--large > cf-icon[name="plus"] circle,
-  .btn--secondary > cf-icon[name="plus"] circle {
-    fill: var(--color-text-base);
-  }
-  .btn-secondary-action > cf-icon[name="plus"] path,
-  .btn-secondary-action--large > cf-icon[name="plus"] path,
-  .btn--secondary > cf-icon[name="plus"] path {
-    stroke: var(--color-element-light);
-  }
   .btn-secondary-action--large {
     font-size: 1.15rem;
     padding: 0.875rem 1.25rem;
@@ -1090,11 +1058,6 @@ pre,
   }
   .btn-action--large-popout-icon > .btn-icon {
     height: 0.8em;
-  }
-  .btn-action--large-popout-icon cf-icon {
-    position: absolute;
-    left: 1rem;
-    top: -0.5rem;
   }
   .btn-dropdown-icon {
     float: right;
@@ -2363,10 +2326,6 @@ pre,
     display: flex;
     flex-direction: column;
     margin-right: auto;
-  }
-  .workbench-main__left-sidebar > react-component[name="app/ContentList/SavedViews/Sidebar"] {
-    height: 100%;
-    overflow-y: hidden;
   }
   @media (max-width: 1279px) {
     .workbench-main__left-sidebar {
@@ -4511,15 +4470,9 @@ pre,
   li.app-top-bar__action:last-child {
     padding-right: 16px;
   }
-  .app-top-bar__action > a > cf-icon {
-    margin-right: 10px;
-  }
   @media (max-width: 1279px) {
     .app-top-bar__action {
       padding: 0px;
-    }
-    .app-top-bar__action > a > .nav-bar__list-label > cf-icon {
-      display: none;
     }
   }
   .app-top-bar__action a:hover {
@@ -5116,10 +5069,6 @@ pre,
     border-top: 1px solid var(--color-element-lightest);
     border-bottom: 1px solid var(--color-element-lightest);
   }
-  .create-new-space__templates cf-icon[name="arrow-up"] {
-    position: absolute;
-    left: 38px;
-  }
   .create-new-space__templates path {
     fill: var(--color-element-lightest);
   }
@@ -5653,15 +5602,6 @@ pre,
     text-overflow: ellipsis;
     overflow: hidden;
     color: var(--color-text-dark);
-  }
-  .breadcrumbs-container .breadcrumbs-ancestor-container .breadcrumbs-ancestor-list__items li a cf-icon {
-    display: inline;
-    margin-right: 5px;
-    position: relative;
-    top: 3px;
-  }
-  .breadcrumbs-container .breadcrumbs-ancestor-container .breadcrumbs-ancestor-list__items li a cf-icon svg {
-    display: inline;
   }
   .cfnext-form__field,
   .tab-iframe .formtastic .input {
@@ -7093,19 +7033,6 @@ pre,
   .entry-editor__input-group > input[size] {
     width: auto;
   }
-  .entry-editor__input-group > cf-icon {
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    width: 18px;
-    cursor: default;
-  }
-  .entry-editor__input-group > cf-icon svg {
-    position: relative;
-    top: 8px;
-    right: 2px;
-  }
   .entry-editor__input-spinner {
     position: absolute;
     top: 9px;
@@ -7248,12 +7175,6 @@ pre,
     margin-left: auto;
     cursor: pointer;
   }
-  .entity-editor__field-heading label div.inline-toggle cf-icon {
-    display: inline-block;
-    position: relative;
-    right: 5px;
-    top: 5px;
-  }
   .entity-editor__field-heading label div.inline-toggle span.banner {
     color: var(--color-blue-mid);
     font-size: 0.9em;
@@ -7264,13 +7185,6 @@ pre,
   .entity-editor__no-permission-info {
     margin-left: auto;
     white-space: nowrap;
-  }
-  .entity-editor__no-permission-info > cf-icon {
-    display: inline-block;
-    margin-right: 0.5em;
-  }
-  .entity-editor__no-permission-info > cf-icon path {
-    fill: var(--color-text-lightest);
   }
   .entity-editor__control-group {
     display: block;
@@ -8579,27 +8493,8 @@ pre,
     cursor: pointer;
     padding: 12px 0;
   }
-  .api-cm-list__item__toggle cf-icon[name="dd-arrow-down"] {
-    -webkit-transition: -webkit-transform 0.2s ease-in-out;
-    transition: -webkit-transform 0.2s ease-in-out;
-    transition: transform 0.2s ease-in-out;
-    transition: transform 0.2s ease-in-out, -webkit-transform 0.2s ease-in-out;
-    margin-left: 8px;
-    margin-top: 4px;
-    margin-bottom: 8px;
-  }
-  .api-cm-list__item__toggle cf-icon[name="dd-arrow-down"] path {
-    fill: var(--color-blue-base);
-  }
-  .api-cm-list__item__toggle:hover cf-icon[name="dd-arrow-down"] path {
-    fill: var(--color-blue-dark);
-  }
   .api-cm-list__item.x--open {
     background-color: var(--color-white);
-  }
-  .api-cm-list__item.x--open cf-icon[name="dd-arrow-down"] {
-    -webkit-transform: rotate(-180deg);
-    transform: rotate(-180deg);
   }
   .api-cm-list .table .tooltip {
     white-space: normal;
@@ -9859,7 +9754,7 @@ pre,
     background: var(--color-element-lightest);
   }
   .modern-stack-onboarding--wrapper {
-    margin: 15px auto;
+    margin: 0 auto;
     max-width: 1500px;
   }
   .modern-stack-onboarding--header {

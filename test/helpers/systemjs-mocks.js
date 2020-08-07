@@ -26,6 +26,7 @@ async function stubConfig(system) {
       contentful: {},
       embedly: {},
       getstream_io: {},
+      sentry: {},
     },
     readInjectedConfig: () => ({ config: {} }),
   };

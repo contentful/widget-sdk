@@ -13,7 +13,7 @@ import {
   SkeletonRow,
 } from '@contentful/forma-36-react-components';
 import { isEdge } from 'utils/browser';
-import useSelectedEntities from 'components/tabs/useSelectedEntities';
+import { useSelectedEntities } from 'core/hooks';
 import SecretiveLink from 'components/shared/SecretiveLink';
 import StateLink from 'app/common/StateLink';
 import ReleaseDisplayField from './ReleaseDisplayField';

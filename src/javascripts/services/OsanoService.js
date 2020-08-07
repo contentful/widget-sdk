@@ -10,7 +10,6 @@ import * as LazyLoader from 'utils/LazyLoader';
 import isAnalyticsAllowed from 'analytics/isAnalyticsAllowed';
 import * as Analytics from 'analytics/Analytics';
 import segment from 'analytics/segment';
-import * as Intercom from 'services/intercom';
 import { Notification } from '@contentful/forma-36-react-components';
 import { getUserSync } from 'services/TokenStore';
 import { updateUserData } from 'app/UserProfile/Settings/AccountRepository';
@@ -63,10 +62,6 @@ export async function handleInitialize() {
     segment.enable(segmentLoadOptions);
   }
 
-  if (personalizationAllowed) {
-    Intercom.enable();
-  }
-
   initialized = true;
 }
 
@@ -99,7 +94,6 @@ export async function init() {
     const segmentLoadOptions = await generateSegmentLoadOptions(true, true);
 
     Analytics.enable(user, segmentLoadOptions);
-    Intercom.enable();
 
     return;
   }

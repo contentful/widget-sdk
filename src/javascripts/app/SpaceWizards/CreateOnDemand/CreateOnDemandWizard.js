@@ -68,14 +68,12 @@ const initialFetch = (organization, basePlan) => async () => {
     rawSpaceRatePlans,
     templates,
     subscriptionPlans,
-    isCommunityPlanEnabled,
     isPayingPreviousToV2,
   ] = await Promise.all([
     orgResources.get(FREE_SPACE_IDENTIFIER),
     getSpaceRatePlans(endpoint),
     getTemplatesList(),
     getSubscriptionPlans(endpoint),
-    getVariation(FLAGS.PRICING_2020_RELEASED, { organizationId }),
     getVariation(FLAGS.PAYING_PREV_V2_ORG, { organizationId }),
   ]);
 
@@ -87,15 +85,13 @@ const initialFetch = (organization, basePlan) => async () => {
   });
 
   const basePlanIsSelfService = isSelfServicePlan(basePlan);
-  const shouldShowMicroSmallCTA =
-    isCommunityPlanEnabled && isPayingPreviousToV2 && basePlanIsSelfService;
+  const shouldShowMicroSmallCTA = isPayingPreviousToV2 && basePlanIsSelfService;
 
   return {
     freeSpaceResource,
     spaceRatePlans,
     templates,
     currentSubscriptionPrice,
-    isCommunityPlanEnabled,
     isPayingPreviousToV2,
     shouldShowMicroSmallCTA,
   };
@@ -309,7 +305,6 @@ export default function CreateOnDemandWizard(props) {
                   goToBillingPage={() =>
                     goToBillingPage(organization, WIZARD_INTENT.CREATE, sessionId, onClose)
                   }
-                  isCommunityPlanEnabled={data.isCommunityPlanEnabled}
                   shouldShowMicroSmallCTA={data.shouldShowMicroSmallCTA}
                 />
               </TabPanel>

@@ -10,53 +10,28 @@ import * as Forma36Components from '@contentful/forma-36-react-components';
 
 import store from 'redux/store';
 
-import * as componentsSharedKnowledgeBaseIconKnowledgeBaseEs6 from 'components/shared/knowledge_base_icon/KnowledgeBase';
-import * as uiComponentsNavigationIcon from 'ui/Components/NavigationIcon';
 import * as uiComponentsIconEs6 from 'ui/Components/Icon';
 import * as componentsSharedDocumentTitleEs6 from 'components/shared/DocumentTitle';
-import * as componentsSharedWorkbenchTitleEs6 from 'components/shared/WorkbenchTitle';
-import * as appEntityEditorComponentsBackNavIndexEs6 from 'app/entity_editor/Components/BackNav';
-import * as appEntityEditorStatusNotificationEs6 from 'app/entity_editor/StatusNotification';
-import * as appEntrySidebarEntrySidebarEs6 from 'app/EntrySidebar/EntrySidebar';
 import { EntityFieldHeading } from 'app/entity_editor/EntityField/EntityFieldHeading';
 import { EntityFieldControl } from 'app/entity_editor/EntityField/EntityFieldControl';
 import * as appEntryEditorCustomEditorExtensionRendererEs6 from 'app/entry_editor/CustomEditorExtensionRenderer';
 import * as appHomeSpaceHomePageEs6 from 'app/home/SpaceHomePage';
-import * as componentsFieldDialogValidationValuesEs6 from 'components/field_dialog/ValidationValues';
-import * as componentsFieldDialogAppearanceFieldDialogAppearanceTabEs6 from 'components/field_dialog/appearance/FieldDialogAppearanceTab';
-import * as componentsTabsAssetListAddAssetButtonEs6 from 'components/tabs/asset_list/AddAssetButton';
-import * as componentsTabsPluralizeEntityMessageEs6 from 'components/tabs/PluralizeEntityMessage';
-import * as componentsRecordsResourceUsageIndexEs6 from 'components/RecordsResourceUsage';
 import { Paginator } from 'core/components/Paginator';
-import * as componentsTabsNoSearchResultsAdviceEs6 from 'components/tabs/NoSearchResultsAdvice';
 import * as appScheduledActionsPageLinkEs6 from 'app/ScheduledActions/ScheduledActionsPageLink';
-import * as appReleasesPageLinkEs6 from 'app/Releases/ReleasesPage/ReleasesPageLink';
-import * as componentsTabsEntryListEntryListEs6 from 'components/tabs/entry_list/EntryList';
-import * as componentsTabsEntryListUpgradeBannerEs6 from 'components/tabs/UpgradeBanner';
-import * as componentsTabsEntryListEmptyStatesIndexEs6 from 'components/tabs/entry_list/EmptyStates';
 import * as searchEntitySelectorCreateEntityIndexEs6 from 'search/EntitySelector/CreateEntity';
 import * as appEntityEditorBulkEditorTitleEs6 from 'app/entity_editor/bulk_editor/BulkEditorTitle';
 import * as appEntityEditorBulkEntityEditorActionsDropdownEs6 from 'app/entity_editor/bulk_editor/BulkEntityEditorActionsDropdown';
 import * as appEntityEditorBulkEntityEditorStatusDropdownEs6 from 'app/entity_editor/bulk_editor/BulkEntityEditorStatusDropdown';
-import * as FieldDialogSettingsComponent from 'components/field_dialog/components/FieldDialogSettingsComponent';
-import * as SizeValidation from 'components/field_dialog/validations/SizeValidation';
-import * as LinkedEntitiesValidation from 'components/field_dialog/validations/LinkedEntitiesValidation';
-import * as CreateEntryButton from 'components/CreateEntryButton/CreateEntryButton';
-import * as CreateEntryLinkButton from 'components/CreateEntryButton/CreateEntryLinkButton';
-import * as AssetFileSizeValidation from 'components/field_dialog/validations/AssetFileSizeValidation';
-import * as AssetImageDimensionsValidations from 'components/field_dialog/validations/AssetImageDimensionsValidations';
 import * as Loader from 'ui/Loader';
-import * as RegExpValidation from 'components/field_dialog/validations/RegExpValidation';
 import * as UserLink from 'app/widgets/link/UserLink';
-import * as ProhibitRegExpValidation from 'components/field_dialog/validations/ProhibitRegExpValidation';
 import * as AssetLink from 'app/widgets/link/AssetLink';
 import * as EntryLink from 'app/widgets/link/EntryLink';
-import * as DateRangeValidation from 'components/field_dialog/validations/DateRangeValidation';
 import * as EntryEditorWorkbench from 'app/entry_editor/EntryEditorWorkbench';
 import * as AssetEditorWorkbench from 'app/asset_editor/AssetEditorWorkbench';
-import * as ContentTagsField from 'app/asset_editor/ContentTagsField';
 import * as EntitySelectorForm from 'search/EntitySelector/EntitySelectorForm';
 import * as EntitySelectorAdapter from 'search/EntitySelector/EntitySelectorAdapter';
+import { BulkEditorHeader } from 'app/entity_editor/bulk_editor/BulkEditorHeader';
+import { BulkEditorSidebar } from 'app/entity_editor/bulk_editor/BulkEditorSidebar';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container, store) {
@@ -255,49 +230,24 @@ export default function register() {
 
 function getModule(name) {
   const allowedModules = {
-    'components/shared/knowledge_base_icon/KnowledgeBase': componentsSharedKnowledgeBaseIconKnowledgeBaseEs6,
-    'ui/Components/NavigationIcon': uiComponentsNavigationIcon,
     'ui/Components/Icon': uiComponentsIconEs6,
     'components/shared/DocumentTitle': componentsSharedDocumentTitleEs6,
-    'components/shared/WorkbenchTitle': componentsSharedWorkbenchTitleEs6,
-    'app/entity_editor/Components/BackNav': appEntityEditorComponentsBackNavIndexEs6,
-    'app/entity_editor/StatusNotification': appEntityEditorStatusNotificationEs6,
-    'app/EntrySidebar/EntrySidebar': appEntrySidebarEntrySidebarEs6,
+    'app/entity_editor/bulk_editor/BulkEditorHeader': { default: BulkEditorHeader },
+    'app/entity_editor/bulk_editor/BulkEditorSidebar': { default: BulkEditorSidebar },
     'app/entry_editor/CustomEditorExtensionRenderer': appEntryEditorCustomEditorExtensionRendererEs6,
     'app/home/SpaceHomePage': appHomeSpaceHomePageEs6,
-    'components/field_dialog/ValidationValues': componentsFieldDialogValidationValuesEs6,
-    'components/field_dialog/appearance/FieldDialogAppearanceTab': componentsFieldDialogAppearanceFieldDialogAppearanceTabEs6,
-    'components/tabs/asset_list/AddAssetButton': componentsTabsAssetListAddAssetButtonEs6,
-    'components/tabs/PluralizeEntityMessage': componentsTabsPluralizeEntityMessageEs6,
-    'components/RecordsResourceUsage': componentsRecordsResourceUsageIndexEs6,
     'core/components/Paginator': { default: Paginator },
-    'components/tabs/NoSearchResultsAdvice': componentsTabsNoSearchResultsAdviceEs6,
     'app/ScheduledActions/ScheduledActionsPageLink': appScheduledActionsPageLinkEs6,
-    'app/Releases/ReleasesPageLink': appReleasesPageLinkEs6,
-    'components/tabs/entry_list/EntryList': componentsTabsEntryListEntryListEs6,
-    'components/tabs/UpgradeBanner': componentsTabsEntryListUpgradeBannerEs6,
-    'components/tabs/entry_list/EmptyStates': componentsTabsEntryListEmptyStatesIndexEs6,
     'search/EntitySelector/CreateEntity': searchEntitySelectorCreateEntityIndexEs6,
     'app/entity_editor/bulk_editor/BulkEditorTitle': appEntityEditorBulkEditorTitleEs6,
     'app/entity_editor/bulk_editor/BulkEntityEditorActionsDropdown': appEntityEditorBulkEntityEditorActionsDropdownEs6,
     'app/entity_editor/bulk_editor/BulkEntityEditorStatusDropdown': appEntityEditorBulkEntityEditorStatusDropdownEs6,
-    'components/field_dialog/components/FieldDialogSettingsComponent': FieldDialogSettingsComponent,
-    'components/field_dialog/validations/SizeValidation': SizeValidation,
-    'components/field_dialog/validations/LinkedEntitiesValidation': LinkedEntitiesValidation,
-    'components/CreateEntryButton/CreateEntryButton': CreateEntryButton,
-    'components/CreateEntryButton/CreateEntryLinkButton': CreateEntryLinkButton,
-    'components/field_dialog/validations/AssetFileSizeValidation': AssetFileSizeValidation,
-    'components/field_dialog/validations/AssetImageDimensionsValidations': AssetImageDimensionsValidations,
     'ui/Loader': Loader,
-    'components/field_dialog/validations/RegExpValidation': RegExpValidation,
     'app/widgets/link/UserLink': UserLink,
-    'components/field_dialog/validations/ProhibitRegExpValidation': ProhibitRegExpValidation,
     'app/widgets/link/AssetLink': AssetLink,
     'app/widgets/link/EntryLink': EntryLink,
-    'components/field_dialog/validations/DateRangeValidation': DateRangeValidation,
     'app/entry_editor/EntryEditorWorkbench': EntryEditorWorkbench,
     'app/asset_editor/AssetEditorWorkbench': AssetEditorWorkbench,
-    'app/asset_editor/ContentTagsField': ContentTagsField,
     'app/entity_editor/EntityField/EntityFieldHeading': { default: EntityFieldHeading },
     'app/entity_editor/EntityField/EntityFieldControl': { default: EntityFieldControl },
     'search/EntitySelector/EntitySelectorForm': EntitySelectorForm,

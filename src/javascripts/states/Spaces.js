@@ -9,8 +9,7 @@ import * as TokenStore from 'services/TokenStore';
 import contentTypes from './contentTypes';
 import { appRoute as apps } from 'features/apps';
 import { apiKeysState } from './settingsApiKeys';
-import entries from './entries';
-import assets from './assets';
+import { assetViewState, entryViewState } from 'features/entity-views';
 import home from './spaceHome';
 import stackOnboarding from './stackOnboarding';
 import settings from './settings';
@@ -67,8 +66,8 @@ const spaceEnvironment = {
   ],
   children: [
     contentTypes,
-    entries.withoutSnapshots,
-    assets,
+    entryViewState.withoutSnapshots,
+    assetViewState,
     apiKeysState,
     apps,
     // Some of the settings states are not children of environments
@@ -123,8 +122,8 @@ const spaceDetail = {
   children: [
     hibernation,
     contentTypes,
-    entries.withSnapshots,
-    assets,
+    entryViewState.withSnapshots,
+    assetViewState,
     apiKeysState,
     settings,
     home,

@@ -18,6 +18,7 @@ const styles = {
 };
 
 const CreateEntryLinkButton = ({
+  className,
   contentTypes,
   onSelect,
   text,
@@ -50,6 +51,7 @@ const CreateEntryLinkButton = ({
           {isSelecting && <Spinner size="small" key="spinner" className={styles.spinnerMargin} />}
           <TextLink
             key="textLink"
+            className={className}
             onClick={openMenu}
             disabled={disabled || isSelecting || (contentTypes && contentTypes.length === 0)}
             icon={isSelecting || !hasPlusIcon ? null : 'Plus'}
@@ -71,6 +73,7 @@ const CreateEntryLinkButton = ({
 };
 
 CreateEntryLinkButton.propTypes = {
+  className: PropTypes.string,
   contentTypes: PropTypes.array.isRequired,
   suggestedContentTypeId: PropTypes.string,
   onSelect: PropTypes.func.isRequired,

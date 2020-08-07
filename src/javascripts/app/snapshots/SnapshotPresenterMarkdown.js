@@ -1,24 +1,30 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
+import isHtml from 'is-html';
 import { MarkdownPreview } from '@contentful/field-editor-markdown';
 import { Note } from '@contentful/forma-36-react-components';
 import EmbedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
 import { logError } from 'services/logger';
 
-const SnapshotPresenterMarkdown = ({ className, value }) => {
+const SnapshotPresenterMarkdown = ({ className, value, direction }) => {
+  const hasHtmlTags = isHtml(value);
+
   return (
     <div className={className} data-test-id="snapshot-presenter-markdown">
       <ErrorBoundary>
-        <MarkdownPreview
-          value={value}
-          mode="zen"
-          direction="ltr"
-          previewComponents={{
-            // eslint-disable-next-line
-            embedly: ({ url }) => <EmbedlyPreview previewUrl={url} delay={100} />,
-          }}
-        />
+        {hasHtmlTags ? (
+          <div>{value}</div>
+        ) : (
+          <MarkdownPreview
+            value={value}
+            mode="zen"
+            direction={direction}
+            previewComponents={{
+              // eslint-disable-next-line
+              embedly: ({ url }) => <EmbedlyPreview previewUrl={url} delay={100} />,
+            }}
+          />
+        )}
       </ErrorBoundary>
     </div>
   );
@@ -27,6 +33,7 @@ const SnapshotPresenterMarkdown = ({ className, value }) => {
 SnapshotPresenterMarkdown.propTypes = {
   className: PropTypes.string,
   value: PropTypes.string.isRequired,
+  direction: PropTypes.string,
 };
 
 SnapshotPresenterMarkdown.defaultProps = {

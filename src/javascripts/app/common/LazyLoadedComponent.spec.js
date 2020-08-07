@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, wait } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import StateRedirect from 'app/common/StateRedirect';
 
 import LazyLoadedComponent from './LazyLoadedComponent';
@@ -43,9 +43,7 @@ describe('LazyLoadedComponent', () => {
 
     expect(StateRedirect).toBeCalledTimes(0);
 
-    await wait();
-
-    expect(StateRedirect).toBeCalledTimes(1);
+    await waitFor(() => expect(StateRedirect).toBeCalledTimes(1));
   });
 
   it('should render the component returned by importer', async () => {
@@ -53,8 +51,6 @@ describe('LazyLoadedComponent', () => {
 
     const { queryByTestId } = build({ importer });
 
-    await wait();
-
-    expect(queryByTestId('lazy-component')).toBeVisible();
+    await waitFor(() => expect(queryByTestId('lazy-component')).toBeVisible());
   });
 });

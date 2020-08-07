@@ -197,11 +197,8 @@ export const useEnvironmentsRouteState = (props) => {
 
   const FetchNextSpacePlan = async () => {
     const { organizationId, spaceId, canUpgradeSpace } = props;
-    const isNewPricingReleased = await getVariation(FLAGS.PRICING_2020_RELEASED, {
-      organizationId,
-    });
 
-    if (canUpgradeSpace && isNewPricingReleased) {
+    if (canUpgradeSpace) {
       const nextSpacePlan = await PricingService.nextSpacePlanForResource(
         organizationId,
         spaceId,

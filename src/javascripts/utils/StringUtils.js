@@ -252,6 +252,24 @@ export function isValidUrl(value) {
 }
 
 /**
+ * Attempts to sanitize the URL and returns null if invalid or decoding failure
+ *
+ * @param {string} value
+ * @returns {string|null} null if invalid url
+ */
+export function maybeSanitizeUrl(value) {
+  if (!isValidUrl(value)) {
+    return null;
+  }
+
+  try {
+    return encodeURI(decodeURI(value));
+  } catch (e) {
+    return null;
+  }
+}
+
+/**
  * When users copy email addresses they often come in a a format like
  * "John Doe <john.doe@example.com>, jane.doe@example.com".
  * This extracts only the email addresses and joins them back into a string

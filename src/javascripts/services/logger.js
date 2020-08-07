@@ -2,6 +2,7 @@ import _ from 'lodash';
 import stringifySafe from 'json-stringify-safe';
 import { env } from 'Config';
 import * as Bugsnag from 'analytics/Bugsnag';
+import * as Sentry from 'analytics/Sentry';
 
 /**
  * Log errors and exceptions to Bugsnag or the console.
@@ -125,6 +126,7 @@ export function findActualServerError(errOrErrContainer) {
  */
 export function enable(user) {
   Bugsnag.enable(user);
+  Sentry.enable(user);
 }
 
 /**
@@ -151,6 +153,7 @@ export function logException(exception, metaData) {
     console.error(exception, augmentedMetadata);
   }
   Bugsnag.notifyException(exception, null, augmentedMetadata, 'error');
+  Sentry.logException(exception, augmentedMetadata);
 }
 
 /**
@@ -295,6 +298,10 @@ function _log(type, severity, message, metadata) {
   }
 
   Bugsnag.notify(type, message, augmentedMetadata, severity);
+  Sentry.logMessage(message, severity, {
+    ...augmentedMetadata,
+    type,
+  });
 }
 
 /**

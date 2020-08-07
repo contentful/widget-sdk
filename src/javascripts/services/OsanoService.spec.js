@@ -2,7 +2,6 @@ import * as LazyLoader from 'utils/LazyLoader';
 import * as service from './OsanoService';
 import isAnalyticsAllowed from 'analytics/isAnalyticsAllowed';
 import * as Analytics from 'analytics/Analytics';
-import * as Intercom from 'services/intercom';
 import * as Segment from 'analytics/segment';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { Notification } from '@contentful/forma-36-react-components';
@@ -85,10 +84,6 @@ jest.mock('app/UserProfile/Settings/AccountRepository', () => ({
   updateUserData: jest.fn().mockResolvedValue(true),
 }));
 
-jest.mock('services/intercom', () => ({
-  enable: jest.fn(),
-}));
-
 jest.mock('analytics/segment', () => ({
   enable: jest.fn(),
   getIntegrations: jest.fn().mockResolvedValue([]),
@@ -123,7 +118,7 @@ describe('OsanoService', () => {
   };
 
   describe('initialization', () => {
-    it('should enable analytics with all Segment integrations and Intercom if analytics and personalization is allowed', async () => {
+    it('should enable analytics with all Segment integrations if analytics and personalization is allowed', async () => {
       await setupService();
 
       callHandleInitialize();
@@ -142,8 +137,6 @@ describe('OsanoService', () => {
           Wootric: true,
         },
       });
-
-      expect(Intercom.enable).toHaveBeenCalledTimes(1);
     });
 
     it('should do nothing if LazyLoader returned nothing', async () => {
@@ -192,8 +185,6 @@ describe('OsanoService', () => {
           Wootric: false,
         },
       });
-
-      expect(Intercom.enable).not.toHaveBeenCalled();
     });
 
     it('should respect isAnalyticsAllowed', async () => {
@@ -207,7 +198,7 @@ describe('OsanoService', () => {
       expect(Analytics.enable).not.toHaveBeenCalled();
     });
 
-    it('should only enable Intercom (along with Segment) if analytics is denied but personalization is allowed', async () => {
+    it('should only enable Intercom and Wootric (via Segment) if analytics is denied but personalization is allowed', async () => {
       await setupService(generateConsentOptions(false, true));
 
       callHandleInitialize();
@@ -227,10 +218,9 @@ describe('OsanoService', () => {
           Wootric: true,
         },
       });
-      expect(Intercom.enable).toHaveBeenCalledTimes(1);
     });
 
-    it('should not enable analytics or Intercom is neither is allowed', async () => {
+    it('should not enable analytics is neither is allowed', async () => {
       await setupService(generateConsentOptions(false, false));
 
       callHandleInitialize();
@@ -238,7 +228,6 @@ describe('OsanoService', () => {
 
       expect(Analytics.enable).not.toHaveBeenCalled();
       expect(Segment.enable).not.toHaveBeenCalled();
-      expect(Intercom.enable).not.toHaveBeenCalled();
     });
 
     it('should set local consent from Gatekeeper consent if present', async () => {
@@ -327,7 +316,6 @@ describe('OsanoService', () => {
       await wait();
 
       expect(Analytics.enable).not.toHaveBeenCalled();
-      expect(Intercom.enable).not.toHaveBeenCalled();
 
       cm.storage.getExpDate.mockReset().mockReturnValue(12);
       callHandleConsentChanged();
@@ -336,7 +324,6 @@ describe('OsanoService', () => {
 
       expect(Analytics.enable).toHaveBeenCalled();
 
-      expect(Intercom.enable).toHaveBeenCalledTimes(1);
       cm.storage.getExpDate.mockReset().mockReturnValue(0);
     });
   });

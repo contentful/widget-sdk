@@ -157,8 +157,7 @@ function editorBase(options, isNew) {
         $scope.hasAdvancedExtensibility = hasAdvancedExtensibility;
       },
     ],
-    template:
-      '<div cf-content-type-editor class="workbench" cf-validate="contentType.data" cf-content-type-schema></div>',
+    template: '<div cf-content-type-editor class="workbench"></div>',
     ...options,
   };
 }

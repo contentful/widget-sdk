@@ -1,18 +1,14 @@
 import { getModule } from 'core/NgRegistry';
-import fieldDialogTemplate from './field_dialog.html';
-// new_field_dialog - temporal folder to contain the refactored component
-import openFieldModalDialog from './new_field_dialog/FieldModalDialog';
-import { extend, isEmpty } from 'lodash';
-import validationDecorator from './validationDecorator';
 import {
+  openFieldModalDialog,
+  extractFieldValidations,
   extractRichTextNodesValidations,
   getEnabledRichTextOptions,
   groupValidations,
-} from 'components/field_dialog/new_field_dialog/utils/helpers';
-import { getVariation, FLAGS } from 'LaunchDarkly';
+} from 'features/content-model-editor';
+import { extend, isEmpty } from 'lodash';
 
 export async function openFieldDialog($scope, field, widget) {
-  const modalDialog = getModule('modalDialog');
   const spaceContext = getModule('spaceContext');
 
   const updateFieldOnScope = (
@@ -43,7 +39,7 @@ export async function openFieldDialog($scope, field, widget) {
 
     const isRichText = field.type === 'RichText';
 
-    let fieldValidations = [...validationDecorator.extractFieldValidations(baseValidations)];
+    let fieldValidations = [...extractFieldValidations(baseValidations)];
 
     // only add RichText node validations to a RichText field
     if (isRichText) {
@@ -62,7 +58,7 @@ export async function openFieldDialog($scope, field, widget) {
     }
 
     if (!isEmpty(itemValidations)) {
-      field.items.validations = [...validationDecorator.extractFieldValidations(itemValidations)];
+      field.items.validations = [...extractFieldValidations(itemValidations)];
     }
 
     // update field on scope with data from React component
@@ -90,28 +86,13 @@ export async function openFieldDialog($scope, field, widget) {
     });
   };
 
-  const shouldShouwNewDialog = await getVariation(FLAGS.NEW_FIELD_DIALOG, {
-    organizationId: spaceContext.organization.sys.id,
-  });
-  // to avoid major bugs for payed accounts, we are using a feature flag
-  if (shouldShouwNewDialog) {
-    return openFieldModalDialog(
-      field,
-      widget,
-      spaceContext,
-      $scope.contentType,
-      updateFieldOnScope,
-      $scope.editorInterface,
-      $scope.customWidgets
-    );
-  } else {
-    const scope = extend($scope.$new(), {
-      field: field,
-      widget: widget,
-    });
-    return modalDialog.open({
-      scope: scope,
-      template: fieldDialogTemplate,
-    }).promise;
-  }
+  return openFieldModalDialog(
+    field,
+    widget,
+    spaceContext,
+    $scope.contentType,
+    updateFieldOnScope,
+    $scope.editorInterface,
+    $scope.customWidgets
+  );
 }
