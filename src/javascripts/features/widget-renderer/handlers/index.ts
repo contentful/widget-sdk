@@ -6,13 +6,12 @@ import { WidgetLocation } from '../interfaces';
 
 import { makeCallSpaceMethodHandler } from './CallSpaceMethodHandler';
 import { makeNotifyHandler } from './NotifyHandler';
-import { makeOpenDialogHandler, makeCloseDialogHandler } from './DialogHandler';
+import { makeOpenDialogHandler } from './DialogHandler';
 import {
   makeNavigateToBulkEditorHandler,
   makeNavigateToContentEntityHandler,
   makeNavigateToPageHandler,
 } from './NavigateToHandler';
-import { makeCheckAccessHandler } from './CheckAccessHandler';
 import { makeSetValueHandler, makeRemoveValueHandler, makeSetInvalidHandler } from './FieldHandler';
 
 export function setupHandlers(
@@ -47,7 +46,7 @@ export function setupHandlers(
     makeNavigateToPageHandler(sdk.navigator)
   );
 
-  channel.registerHandler(ChannelMethod.CheckAccess, makeCheckAccessHandler(sdk.access));
+  channel.registerHandler(ChannelMethod.CheckAccess, sdk.access.can);
 
   // Handlers specific to field editing.
   if ([WidgetLocation.ENTRY_FIELD, WidgetLocation.ENTRY_FIELD_SIDEBAR].includes(location)) {
@@ -60,6 +59,6 @@ export function setupHandlers(
   // Handlers specific to dialogs.
   if (location === WidgetLocation.DIALOG) {
     const { close } = sdk as DialogExtensionSDK;
-    channel.registerHandler(ChannelMethod.CloseDialog, makeCloseDialogHandler(close));
+    channel.registerHandler(ChannelMethod.CloseDialog, (data?: any) => close(data));
   }
 }

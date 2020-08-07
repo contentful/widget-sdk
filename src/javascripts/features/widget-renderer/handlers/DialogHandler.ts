@@ -3,7 +3,6 @@ import {
   OpenAlertOptions,
   OpenConfirmOptions,
   OpenCustomWidgetOptions,
-  DialogExtensionSDK,
 } from 'contentful-ui-extensions-sdk';
 import { WidgetNamespace } from '../interfaces';
 
@@ -28,10 +27,11 @@ type DialogType =
   | 'entitySelector'
   | WidgetNamespace.APP
   | WidgetNamespace.EXTENSION;
+
 type OpenDialogHandlerOptions = OpenAlertOptions | OpenConfirmOptions | OpenEntitySelectorOptions;
 
 export const makeOpenDialogHandler = (dialogApi: DialogsAPI) => {
-  return async function (type: DialogType, options: OpenDialogHandlerOptions) {
+  return function (type: DialogType, options: OpenDialogHandlerOptions) {
     switch (type) {
       case SimpleDialogs.Alert:
         return dialogApi.openAlert(options as OpenAlertOptions);
@@ -51,7 +51,7 @@ export const makeOpenDialogHandler = (dialogApi: DialogsAPI) => {
             ? dialogApi.selectMultipleAssets(opt)
             : dialogApi.selectSingleAsset(opt);
         } else {
-          throw new TypeError(`Unknown content type ${opt.entityType}`);
+          throw new TypeError(`Unsupported entity type "${opt.entityType}".`);
         }
       case WidgetNamespace.APP:
         return dialogApi.openCurrentApp(options as OpenCustomWidgetOptions);
@@ -60,11 +60,5 @@ export const makeOpenDialogHandler = (dialogApi: DialogsAPI) => {
       default:
         throw new Error('Unknown dialog type.');
     }
-  };
-};
-
-export const makeCloseDialogHandler = (onClose?: DialogExtensionSDK['close']) => {
-  return async function (data: any) {
-    return onClose ? onClose(data) : undefined;
   };
 };

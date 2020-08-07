@@ -15,13 +15,13 @@ type NavigateToContentEntityOptions = Partial<{
   contentTypeId: string;
 }>;
 
-export function makeNavigateToBulkEditorHandler(navigatorApi: NavigatorAPI) {
+export const makeNavigateToBulkEditorHandler = (navigatorApi: NavigatorAPI) => {
   return function ({ entryId, fieldId, locale, index }: NavigateToBulkEditorOptions) {
     return navigatorApi.openBulkEditor(entryId, { fieldId, locale, index });
   };
-}
+};
 
-export function makeNavigateToContentEntityHandler(navigatorApi: NavigatorAPI) {
+export const makeNavigateToContentEntityHandler = (navigatorApi: NavigatorAPI) => {
   return function (options: NavigateToContentEntityOptions) {
     const isExisting = typeof options.id === 'string';
 
@@ -34,8 +34,10 @@ export function makeNavigateToContentEntityHandler(navigatorApi: NavigatorAPI) {
         return navigatorApi.openNewEntry(options.contentTypeId, options);
       }
 
-      throw new RangeError(`Unknown Entry and Content Type`);
-    } else if (options.entityType === 'Asset') {
+      throw new RangeError(`Entry ID or Content Type ID is required.`);
+    }
+
+    if (options.entityType === 'Asset') {
       if (isExisting) {
         return navigatorApi.openAsset(options.id!, options);
       }
@@ -43,9 +45,9 @@ export function makeNavigateToContentEntityHandler(navigatorApi: NavigatorAPI) {
       return navigatorApi.openNewAsset(options);
     }
 
-    throw new RangeError(`Unknown Entity Type ${options.entityType}`);
+    throw new RangeError(`Unsupported entity type "${options.entityType}".`);
   };
-}
+};
 
 interface NavigateToPageHandlerOptions {
   id: string;

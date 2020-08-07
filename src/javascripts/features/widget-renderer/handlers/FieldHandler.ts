@@ -1,38 +1,25 @@
 import { FieldAPI } from 'contentful-ui-extensions-sdk';
 
-const makeIsCorrectEntryLocalePair = (fieldApi: FieldAPI) => (id: string, locale: string) =>
-  id === fieldApi.id && locale === fieldApi.locale;
-
-export const makeSetValueHandler = (fieldApi: FieldAPI) => {
-  const isCorrectEntryLocalePair = makeIsCorrectEntryLocalePair(fieldApi);
-
-  return async function (id: string, locale: string, value: any) {
-    if (isCorrectEntryLocalePair(id, locale)) {
-      return fieldApi.setValue(value);
+export const makeSetValueHandler = (field: FieldAPI) => {
+  return function (fieldId: string, localeCode: string, value: any) {
+    if (field.id === fieldId && field.locale === localeCode) {
+      return field.setValue(value);
     }
-
-    throw Object.assign(new TypeError('Unmatched (id, locale) pair'), { data: { id, locale } });
   };
 };
 
-export const makeRemoveValueHandler = (fieldApi: FieldAPI) => {
-  const isCorrectEntryLocalePair = makeIsCorrectEntryLocalePair(fieldApi);
-
-  return async function (id: string, locale: string) {
-    if (isCorrectEntryLocalePair(id, locale)) {
-      return fieldApi.removeValue();
+export const makeRemoveValueHandler = (field: FieldAPI) => {
+  return function (fieldId: string, localeCode: string) {
+    if (field.id === fieldId && field.locale === localeCode) {
+      return field.removeValue();
     }
-
-    throw Object.assign(new TypeError('Unmatched (id, locale) pair'), { data: { id, locale } });
   };
 };
 
-export const makeSetInvalidHandler = (fieldApi: FieldAPI) => {
-  return async function (isInvalid: boolean, locale: string) {
-    if (locale === fieldApi.locale) {
-      return fieldApi.setInvalid(isInvalid);
+export const makeSetInvalidHandler = (field: FieldAPI) => {
+  return function (isInvalid: boolean, localeCode: string) {
+    if (field.locale === localeCode) {
+      return field.setInvalid(isInvalid);
     }
-
-    throw Object.assign(new TypeError('Unmatched locale'), { data: { locale } });
   };
 };
