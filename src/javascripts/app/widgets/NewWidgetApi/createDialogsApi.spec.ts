@@ -2,14 +2,19 @@ import { createDialogsApi } from './createDialogsApi';
 import { DialogExtensionSDK } from 'contentful-ui-extensions-sdk';
 import * as ExtensionDialogs from 'widgets/ExtensionDialogs';
 import * as entitySelector from 'search/EntitySelector/entitySelector';
+import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
+import { ModalLauncher } from 'core/components/ModalLauncher';
+import { DialogsAPI } from 'contentful-ui-extensions-sdk';
 
+jest.mock('core/components/ModalLauncher');
 jest.mock('widgets/ExtensionDialogs');
 jest.mock('search/EntitySelector/entitySelector');
+jest.mock('widgets/CustomWidgetLoaderInstance');
 
 const dialogSdk = {} as DialogExtensionSDK;
 
 describe('createDialogsApi', () => {
-  let dialogsApi;
+  let dialogsApi: DialogsAPI;
 
   beforeEach(() => {
     dialogsApi = createDialogsApi(dialogSdk);
@@ -17,22 +22,31 @@ describe('createDialogsApi', () => {
 
   describe('openAlert', () => {
     it('calls the ExtensionDialogs method', () => {
-      dialogsApi.openAlert();
-      expect(ExtensionDialogs.openAlert).toHaveBeenCalled();
+      dialogsApi.openAlert({ title: 'alert', message: 'message' });
+      expect(ExtensionDialogs.openAlert).toHaveBeenCalledWith({
+        title: 'alert',
+        message: 'message',
+      });
     });
   });
 
   describe('openConfirm', () => {
     it('calls the ExtensionDialogs method', () => {
-      dialogsApi.openConfirm();
-      expect(ExtensionDialogs.openConfirm).toHaveBeenCalled();
+      dialogsApi.openConfirm({ title: 'alert', message: 'message' });
+      expect(ExtensionDialogs.openConfirm).toHaveBeenCalledWith({
+        title: 'alert',
+        message: 'message',
+      });
     });
   });
 
   describe('openPrompt', () => {
     it('calls the ExtensionDialogs method', () => {
-      dialogsApi.openPrompt();
-      expect(ExtensionDialogs.openPrompt).toHaveBeenCalled();
+      dialogsApi.openPrompt({ title: 'alert', message: 'message' });
+      expect(ExtensionDialogs.openPrompt).toHaveBeenCalledWith({
+        title: 'alert',
+        message: 'message',
+      });
     });
   });
 
@@ -116,24 +130,63 @@ describe('createDialogsApi', () => {
     });
   });
 
-  // TODO: finish this case
-  // describe('openCurrentApp', () => {
-  //   beforeEach(() => {
-  //     jest.mock('Authentication', () => ({ getToken: () => '<TOKEN>' }));
-  //     jest.mock('widgets/CustomWidgetLoaderInstance', () => ({
-  //       getCustomWidgetLoader: jest.fn(() => ({
-  //         getOne: jest.fn(),
-  //       })),
-  //     }));
+  describe('openCurrentApp', () => {
+    beforeEach(() => {
+      (getCustomWidgetLoader as jest.Mock).mockReturnValueOnce({
+        getOne: jest.fn(() => ({
+          locations: [],
+          hosting: {
+            type: 'src',
+          },
+          parameters: {
+            definitions: {
+              installation: {},
+            },
+            values: {
+              installation: {},
+            },
+          },
+        })),
+      });
+      dialogsApi = createDialogsApi({
+        ...dialogSdk,
+        ids: { app: 'app_id' },
+      } as DialogExtensionSDK);
+    });
 
-  //     dialogsApi = createDialogsApi({
-  //       ...dialogSdk,
-  //       ids: { app: 'app_id' },
-  //     } as DialogExtensionSDK);
-  //   });
-  //   it('returns a modal launcher...', async () => {
-  //     const modalLauncher = await dialogsApi.openCurrentApp({});
-  //     console.log(modalLauncher);
-  //   });
-  // });
+    it('Launches a modal', async () => {
+      await dialogsApi.openCurrentApp({});
+      expect(ModalLauncher.open).toHaveBeenCalled();
+    });
+  });
+
+  describe('openExtension', () => {
+    beforeEach(() => {
+      (getCustomWidgetLoader as jest.Mock).mockReturnValueOnce({
+        getOne: jest.fn(() => ({
+          locations: [],
+          hosting: {
+            type: 'src',
+          },
+          parameters: {
+            definitions: {
+              installation: {},
+            },
+            values: {
+              installation: {},
+            },
+          },
+        })),
+      });
+      dialogsApi = createDialogsApi({
+        ...dialogSdk,
+        ids: { app: 'app_id' },
+      } as DialogExtensionSDK);
+    });
+
+    it('Launches a modal', async () => {
+      await dialogsApi.openExtension({ id: 'my_extension' });
+      expect(ModalLauncher.open).toHaveBeenCalled();
+    });
+  });
 });

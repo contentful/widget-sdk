@@ -120,11 +120,9 @@ describe('createSpaceApi', () => {
     });
   });
   describe('createUpload', () => {
-    it('calls fetch and returns the json response', async () => {
-      const initialContentTypes = [];
-
-      const spaceApi = buildApi(initialContentTypes);
-
+    let originalFetch: any;
+    beforeEach(() => {
+      originalFetch = window.fetch;
       // @ts-ignore
       window.fetch = jest.fn(async () => ({
         ok: true,
@@ -132,6 +130,15 @@ describe('createSpaceApi', () => {
         statusText: 'OK',
         json: jest.fn(async () => ({ foo: 'bar' })),
       }));
+    });
+    afterEach(() => {
+      window.fetch = originalFetch;
+    });
+
+    it('calls fetch and returns the json response', async () => {
+      const initialContentTypes = [];
+
+      const spaceApi = buildApi(initialContentTypes);
 
       // TODO: this function doesn't match the type defined here https://github.com/contentful/ui-extensions-sdk/blob/b0b7931e034362185728f0afeeb3adb96a5e83fb/lib/types.ts#L257
       const result = await spaceApi.createUpload('example data');

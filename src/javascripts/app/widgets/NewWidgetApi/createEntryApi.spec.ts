@@ -3,6 +3,7 @@ import { Document } from 'app/entity_editor/Document/typesDocument';
 import { EntryAPI } from 'contentful-ui-extensions-sdk';
 import { constant } from 'kefir';
 import { onValue } from 'core/utils/kefir';
+import { noop } from 'lodash';
 
 jest.mock('services/localeStore', () => {
   const originalModule = jest.requireActual('services/localeStore');
@@ -35,7 +36,7 @@ describe('createEntryApi', () => {
   let entryApi: EntryAPI;
   const internalContentType = {
     sys: {
-      type: 'something',
+      type: 'ContentType',
       id: 'someid',
     },
     fields: [
@@ -50,8 +51,8 @@ describe('createEntryApi', () => {
     getValueAt: jest.fn(),
     sysProperty: constant({ id: 'example' }),
   } as unknown) as Document;
-  const setInvalid = jest.fn();
-  const listenToFieldLocaleEvent = jest.fn();
+  const setInvalid = noop;
+  const listenToFieldLocaleEvent = noop;
   beforeEach(() => {
     entryApi = createEntryApi({
       internalContentType,
@@ -79,18 +80,7 @@ describe('createEntryApi', () => {
   describe('fields', () => {
     it('returns an object of with fields keyed by field-ids', () => {
       const result = entryApi.fields;
-      expect(result).toMatchObject({
-        first_field: {
-          id: 'first_field',
-          locales: ['en-US'],
-          required: false,
-          type: 'Symbol',
-          validations: [],
-        },
-        field_two: {
-          id: 'field_two',
-        },
-      });
+      expect(result).toMatchSnapshot();
     });
   });
 });

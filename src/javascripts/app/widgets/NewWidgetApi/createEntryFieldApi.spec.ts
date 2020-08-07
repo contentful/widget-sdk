@@ -188,7 +188,7 @@ describe('createEntryFieldApi', () => {
       });
 
       describe('when the value can be edited', () => {
-        it('sets the value', async () => {
+        it('removes the value', async () => {
           (otDoc.permissions.canEditFieldLocale as jest.Mock).mockReturnValue(true);
 
           const entryFieldApi = buildApi(internalField);
