@@ -123,6 +123,7 @@ describe('createSpaceApi', () => {
     let originalFetch: any;
     beforeEach(() => {
       originalFetch = window.fetch;
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
       // @ts-ignore
       window.fetch = jest.fn(async () => ({
         ok: true,

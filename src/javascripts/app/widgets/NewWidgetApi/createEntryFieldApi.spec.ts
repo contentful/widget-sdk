@@ -17,10 +17,10 @@ jest.mock('services/localeStore', () => {
 
   return {
     ...originalModule.default,
-    getDefaultLocale: jest.fn(() => ({ internal_code: 'internalCode', code: 'en-US' })),
+    getDefaultLocale: jest.fn(() => ({ internal_code: 'internalCode', code: 'en-US' })), // eslint-disable-line @typescript-eslint/camelcase
     getPrivateLocales: jest.fn(() => [
-      { internal_code: 'internalCode', code: 'en-US' },
-      { internal_code: 'anotherInternalCode', code: 'en-GB' },
+      { internal_code: 'internalCode', code: 'en-US' }, // eslint-disable-line @typescript-eslint/camelcase
+      { internal_code: 'anotherInternalCode', code: 'en-GB' }, // eslint-disable-line @typescript-eslint/camelcase
     ]),
   };
 });
@@ -137,6 +137,7 @@ describe('createEntryFieldApi', () => {
       const currentValue = 'this is the current value';
       (otDoc.getValueAt as jest.Mock).mockReturnValueOnce({
         fields: {
+          // eslint-disable-next-line @typescript-eslint/camelcase
           internal_id: {
             internalCode: currentValue,
           },
@@ -156,7 +157,7 @@ describe('createEntryFieldApi', () => {
 
           const entryFieldApi = buildApi(internalField);
 
-          expect(entryFieldApi.setValue('a new value')).rejects.toThrow();
+          return expect(entryFieldApi.setValue('a new value')).rejects.toThrow();
         });
       });
 
@@ -183,7 +184,7 @@ describe('createEntryFieldApi', () => {
 
           const entryFieldApi = buildApi(internalField);
 
-          expect(entryFieldApi.removeValue('a new value')).rejects.toThrow();
+          return expect(entryFieldApi.removeValue('a new value')).rejects.toThrow();
         });
       });
 
@@ -210,6 +211,7 @@ describe('createEntryFieldApi', () => {
       const currentValue = 'value';
       (otDoc.getValueAt as jest.Mock).mockReturnValueOnce({
         fields: {
+          // eslint-disable-next-line @typescript-eslint/camelcase
           internal_id: {
             internalCode: currentValue,
           },
@@ -242,7 +244,7 @@ describe('createEntryFieldApi', () => {
       it('calls listenToFieldLocaleEvent with internal field and locale', () => {
         expect(listenToFieldLocaleEvent.mock.calls[0][0]).toEqual(internalField);
         expect(listenToFieldLocaleEvent.mock.calls[0][1]).toEqual({
-          internal_code: 'internalCode',
+          internal_code: 'internalCode', // eslint-disable-line @typescript-eslint/camelcase
           code: 'en-US',
         });
       });
