@@ -23,6 +23,8 @@ export enum ChannelEvent {
   ValueChanged = 'valueChanged',
   IsDisabledChangedForFieldLocale = 'isDisabledChangedForFieldLocale',
   SchemaErrorsChangedForFieldLocale = 'schemaErrorsChangedForFieldLocale',
+  LegacyIsDisabledChanged = 'isDisabledChanged',
+  LegacySchemaErrorsChanged = 'schemaErrorsChanged',
 }
 
 export interface IncomingMessage {

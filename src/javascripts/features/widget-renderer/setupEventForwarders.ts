@@ -64,6 +64,19 @@ export function setupEventForwarders(
 
         cleanupTasks.push(off1, off2, off3);
       });
+
+      // Legacy events, scoped to the current field. New versions of the SDK
+      // don't listen to them, they use field-locale information included
+      // in events broadcasted above.
+      const off1 = specificSdk.field.onIsDisabledChanged((isDisabled: boolean) => {
+        channel.send(ChannelEvent.LegacyIsDisabledChanged, [isDisabled]);
+      });
+
+      const off2 = specificSdk.field.onSchemaErrorsChanged((errors: any) => {
+        channel.send(ChannelEvent.LegacySchemaErrorsChanged, [errors]);
+      });
+
+      cleanupTasks.push(off1, off2);
     });
   }
 
