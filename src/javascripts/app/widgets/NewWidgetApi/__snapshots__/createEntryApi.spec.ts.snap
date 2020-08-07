@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createEntryApi fields returns an object of with fields keyed by field-ids 1`] = `
+Object {
+  "field_two": Object {
+    "getForLocale": [Function],
+    "getValue": [Function],
+    "id": "field_two",
+    "items": undefined,
+    "locales": Array [
+      "en-US",
+    ],
+    "onIsDisabledChanged": [Function],
+    "onValueChanged": [Function],
+    "removeValue": [Function],
+    "required": false,
+    "setValue": [Function],
+    "type": "Symbol",
+    "validations": Array [],
+  },
+  "first_field": Object {
+    "getForLocale": [Function],
+    "getValue": [Function],
+    "id": "first_field",
+    "items": undefined,
+    "locales": Array [
+      "en-US",
+    ],
+    "onIsDisabledChanged": [Function],
+    "onValueChanged": [Function],
+    "removeValue": [Function],
+    "required": false,
+    "setValue": [Function],
+    "type": "Symbol",
+    "validations": Array [],
+  },
+}
+`;

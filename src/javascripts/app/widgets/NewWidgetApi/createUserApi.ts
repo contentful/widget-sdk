@@ -1,6 +1,6 @@
 import { User } from 'contentful-ui-extensions-sdk';
 
-interface SpaceMember {
+export interface SpaceMember {
   admin: boolean;
   roles: { name: string; description: string }[];
   sys: {
