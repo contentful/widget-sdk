@@ -8,7 +8,7 @@ describe('createLocalesApi', () => {
   beforeEach(() => {
     (localeStore.getDefaultLocale as jest.Mock).mockReturnValueOnce({
       code: 'en-US',
-      internal_code: 'internalCode',
+      internal_code: 'internalCode', // eslint-disable-line @typescript-eslint/camelcase
     });
     (localeStore.getPrivateLocales as jest.Mock).mockReturnValueOnce([
       { name: 'English', code: 'en-US' },
