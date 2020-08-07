@@ -1,11 +1,11 @@
 import { KnownSDK, EditorExtensionSDK, FieldExtensionSDK } from 'contentful-ui-extensions-sdk';
-import { WidgetLocation, AppParameterValues } from './interfaces';
+import { WidgetLocation, ParameterValues } from './interfaces';
 import { isEntryEditingLocation, isFieldEditingLocation } from './utils';
 
 export const makeConnectMessage = (
   sdk: KnownSDK,
   location: WidgetLocation,
-  parameters: Record<string, AppParameterValues>
+  parameters: Record<string, ParameterValues>
 ) => {
   const connectMessage: Record<string, any> = {
     location,

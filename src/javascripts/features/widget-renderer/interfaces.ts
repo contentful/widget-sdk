@@ -78,6 +78,7 @@ export type Location =
 
 export type ExtensionParameterValues = Record<string, string | number | boolean>;
 export type AppParameterValues = Record<string, any> | Array<any> | number | string | boolean;
+export type ParameterValues = ExtensionParameterValues | AppParameterValues;
 
 export interface Widget {
   namespace: WidgetNamespace;
@@ -95,7 +96,7 @@ export interface Widget {
       installation: ParameterDefinition[];
     };
     values: {
-      installation: ExtensionParameterValues | AppParameterValues;
+      installation: ParameterValues;
     };
   };
   locations: Location[];

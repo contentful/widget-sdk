@@ -61,7 +61,7 @@ export class PostMessageChannel {
     }
   }
 
-  public connect(data: Record<string, unknown>) {
+  public connect(data: Record<string, any>) {
     const message: OutgoingMethodCallMessage = {
       method: ChannelEvent.Connect,
       params: [{ id: this.id, ...data }, this.messageQueue],

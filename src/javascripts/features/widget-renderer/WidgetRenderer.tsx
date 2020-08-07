@@ -16,15 +16,15 @@ import { setupHandlers } from './handlers';
 import { makeConnectMessage } from './makeConnectMessage';
 import { setupEventForwarders } from './setupEventForwarders';
 
-const DISALLOWED_DOMAINS = ['app.contentful.com', 'creator.contentful.com'];
-
-const SANDBOX = [
+const DEFAULT_SANDBOX = [
   'allow-scripts',
   'allow-popups',
   'allow-popups-to-escape-sandbox',
   'allow-forms',
   'allow-downloads',
 ].join(' ');
+
+const SRC_SANDBOX = `${DEFAULT_SANDBOX} allow-same-origin`;
 
 interface WidgetRendererProps {
   location: WidgetLocation;
@@ -36,18 +36,12 @@ interface WidgetRendererProps {
     };
   };
   sdk: KnownSDK;
-  disallowedDomains?: string[];
   isFullSize?: boolean;
 }
 
 export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown> {
-  static defaultProps = {
-    disallowedDomains: DISALLOWED_DOMAINS,
-  };
-
   private channel?: PostMessageChannel;
   private cleanup = () => {};
-  private parameters: Record<string, AppParameterValues> = {};
 
   // There's no need to update. Once the iframe is loaded
   // it's only communicating with the renderer over `postMessage`.
@@ -63,17 +57,19 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
   }
 
   public render() {
-    const style: Record<string, string> = { display: 'block', width: '100%' };
-    if (this.props.isFullSize) {
-      style.height = '100%';
-    }
+    const { isFullSize, widget } = this.props;
+    const heightStyle = isFullSize ? { height: '100%' } : {};
+    const style = { display: 'block', width: '100%', ...heightStyle };
+    const sandbox = widget.hosting.type === HostingType.SRC ? SRC_SANDBOX : DEFAULT_SANDBOX;
 
     return (
       <iframe
         style={style}
+        sandbox={sandbox}
+        allowFullScreen={true}
+        allow="fullscreen"
         ref={this.initialize}
         onLoad={this.onLoad}
-        sandbox={this.getSandbox(this.props.widget)}
       />
     );
   }
@@ -87,7 +83,20 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
   // on the initial page load the consecutive page loads would render
   // the HTML page but the `sdk.init(cb)` callback wouldn't be called).
   private onLoad = () => {
-    this.channel?.connect(makeConnectMessage(this.props.sdk, this.props.location, this.parameters));
+    const { sdk, location, widget, parameters } = this.props;
+
+    const mergedParameterValues = {
+      // Guaranteed to be defined.
+      installation: widget.parameters.values.installation,
+      // Default instance parameters to an empty object (backwards compat).
+      instance: parameters.values.instance || {},
+      // Use invocation parameters only if present.
+      ...(parameters.values.instance ? { invocation: parameters.values.instance } : {}),
+    };
+
+    const connectMessage = makeConnectMessage(sdk, location, mergedParameterValues);
+
+    this.channel?.connect(connectMessage);
   };
 
   private initialize = (iframe: HTMLIFrameElement) => {
@@ -96,26 +105,9 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
     }
 
     const { widget } = this.props;
-    const { namespace, id, hosting } = widget;
+    const { namespace, id } = widget;
 
-    // Compute all parameters.
-    this.parameters.installation = widget.parameters.values.installation;
-
-    // Default instance parameters to an empty object (backwards compat).
-    this.parameters.instance = this.props.parameters.values.instance || {};
-
-    // Only add invocation parameters when defined.
-    const { invocation } = this.props.parameters.values;
-    if (invocation) {
-      this.parameters.invocation = invocation;
-    }
-
-    // Fullscreen is allowed.
-    iframe.allowFullscreen = true;
-    iframe.allow = 'fullscreen';
-
-    // Used in analytics:
-    // TODO: refactor tracking of custom widgets
+    // TODO: Used in legacy analytics, refactor tracking of custom widgets.
     iframe.dataset.extensionId = id; // Named "extensionId" for backwards compat.
     iframe.dataset.location = this.props.location;
     if (namespace === WidgetNamespace.APP) {
@@ -138,39 +130,7 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
     // Listen to changes in the host and forward events to the channel.
     this.cleanup = setupEventForwarders(this.channel, this.props.sdk, this.props.location);
 
-    // Render the iframe content
-    if (this.isSrc(widget)) {
-      iframe.src = hosting.value;
-    } else if (this.isSrcdoc(widget)) {
-      iframe.srcdoc = hosting.value;
-    } else {
-      throw new Error('Unsupported widget type.');
-    }
+    // Render the iframe content.
+    iframe[widget.hosting.type] = widget.hosting.value;
   };
-
-  private isSrc({ hosting }: Widget) {
-    return hosting.type === HostingType.SRC && !this.isDisallowedDomain(hosting.value);
-  }
-
-  private isSrcdoc({ hosting }: Widget) {
-    return hosting.type === HostingType.SRCDOC;
-  }
-
-  private isDisallowedDomain(url: string) {
-    const protocol = ['//', 'http://', 'https://'].find((p) => url.startsWith(p));
-
-    if (protocol) {
-      const [domain] = url.slice(protocol.length).split('/');
-
-      return (this.props.disallowedDomains as string[]).some((testedDomain) => {
-        return domain === testedDomain || domain.endsWith(`.${testedDomain}`);
-      });
-    } else {
-      return false;
-    }
-  }
-
-  private getSandbox(widget: Widget) {
-    return this.isSrc(widget) ? `${SANDBOX} allow-same-origin` : SANDBOX;
-  }
 }
