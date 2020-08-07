@@ -2,12 +2,6 @@ import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 
 describe('createReadOnlyApi', () => {
   describe('makeReadOnlyApiError', () => {
-    ReadOnlyApi.Dialog;
-    ReadOnlyApi.Navigate;
-    ReadOnlyApi.EntryField;
-    ReadOnlyApi.Entry;
-    ReadOnlyApi.Space;
-
     it('returns the right exception for ReadOnlyApi.Dialog', () => {
       const error = makeReadOnlyApiError(ReadOnlyApi.Dialog);
 
