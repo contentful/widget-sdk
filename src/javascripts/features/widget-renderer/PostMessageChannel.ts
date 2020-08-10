@@ -8,6 +8,7 @@ import {
   OutgoingErrorMessage,
   ChannelEvent,
 } from './channelTypes';
+import { ConnectMessage } from './makeConnectMessage';
 
 /**
  * This module is a communication channel between custom widgets
@@ -61,7 +62,7 @@ export class PostMessageChannel {
     }
   }
 
-  public connect(data: Record<string, any>) {
+  public connect(data: ConnectMessage) {
     const message: OutgoingMethodCallMessage = {
       method: ChannelEvent.Connect,
       params: [{ id: this.id, ...data }, this.messageQueue],

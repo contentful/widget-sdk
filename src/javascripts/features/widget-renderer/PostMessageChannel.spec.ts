@@ -1,7 +1,10 @@
 import { PostMessageChannel } from './PostMessageChannel';
 import { ChannelMethod, ChannelEvent, IncomingMessage } from './channelTypes';
+import { ConnectMessage } from './makeConnectMessage';
 
 const flushImmediatePromises = () => new Promise((resolve) => setTimeout(resolve, 1));
+
+const CONNECT_MSG = ({ test: true } as unknown) as ConnectMessage;
 
 describe('PostMessageChannel', () => {
   let postMessage: jest.Mock;
@@ -23,7 +26,7 @@ describe('PostMessageChannel', () => {
 
   describe('.connect() and .send()', () => {
     it('sends initial message', () => {
-      channel.connect({ test: true });
+      channel.connect(CONNECT_MSG);
 
       expect(postMessage).toHaveBeenCalledTimes(1);
       expect(postMessage).toHaveBeenCalledWith(
@@ -39,7 +42,7 @@ describe('PostMessageChannel', () => {
       channel.send(ChannelEvent.ValueChanged, ['EVENT1']);
       channel.send(ChannelEvent.IsDisabledChangedForFieldLocale, ['EVENT2']);
 
-      channel.connect({ test: true });
+      channel.connect(CONNECT_MSG);
 
       channel.send(ChannelEvent.LocaleSettingsChanged, ['EVENT3']);
 
@@ -96,7 +99,7 @@ describe('PostMessageChannel', () => {
 
     it('ignores incoming message if belongs to a different channel or a handler was not registered', () => {
       // Grab channel ID from the connect message
-      channel.connect({ test: true });
+      channel.connect(CONNECT_MSG);
       const channelId = postMessage.mock.calls[0][0].params[0].id;
       expect(typeof channelId).toBe('string');
 
@@ -141,7 +144,7 @@ describe('PostMessageChannel', () => {
 
     it('handles incoming message and produces result/error response', async () => {
       // Grab channel ID from the connect message
-      channel.connect({ test: true });
+      channel.connect(CONNECT_MSG);
       const channelId = postMessage.mock.calls[0][0].params[0].id;
       expect(typeof channelId).toBe('string');
 
