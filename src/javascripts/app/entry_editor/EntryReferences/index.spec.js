@@ -1,33 +1,24 @@
 import React from 'react';
-import { render, within, cleanup, wait, fireEvent } from '@testing-library/react';
+import { render, cleanup, wait } from '@testing-library/react';
 import cfResolveResponse from 'contentful-resolve-response';
-import { Notification } from '@contentful/forma-36-react-components';
 
 import '@testing-library/jest-dom/extend-expect';
 
+import { ReferencesContext } from './ReferencesContext';
 import ReferencesTree, { hasLinks } from './index';
 
 import {
   validateEntities,
-  publishEntities,
   getDefaultLocale,
   getReferencesForEntryId,
   getEntityTitle,
 } from './referencesService';
 
-import { getReleases, getReleasesExcludingEntity } from '../../Releases/releasesService';
-
 import {
-  entity,
   entityWithNoRefs,
-  simpleReferencesValidationErrorResponse,
-  simpleReferencesValidationSuccessResponse,
-  simpleReferencesPublicationSuccessResponse,
-  simpleReferencesPublicationInvalidErrorResponse,
   simpleReferences,
+  simpleReferencesValidationErrorResponse,
 } from './__fixtures__';
-
-import { releases } from '../../Releases/__fixtures__';
 
 jest.mock('access_control/EntityPermissions', () => ({
   create: () => ({
@@ -52,15 +43,20 @@ jest.mock('../../Releases/releasesService', function () {
   };
 });
 
+const MockPovider = ({ children, dispatch }) => (
+  <ReferencesContext.Provider value={{ state: {}, dispatch }}>
+    {children}
+  </ReferencesContext.Provider>
+);
+
+MockPovider.defaultProps = {
+  dispatch: () => {},
+};
+
 describe('ReferencesTree component', () => {
   afterEach(cleanup);
 
   beforeEach(async () => {
-    jest.spyOn(Notification, 'success').mockImplementation(() => {});
-    jest.spyOn(Notification, 'error').mockImplementation(() => {});
-
-    getReleases.mockResolvedValue({ items: releases });
-    getReleasesExcludingEntity.mockResolvedValue({ items: [] });
     getDefaultLocale.mockReturnValue('en-US');
     getReferencesForEntryId.mockResolvedValue({
       resolved: cfResolveResponse(simpleReferences),
@@ -69,151 +65,16 @@ describe('ReferencesTree component', () => {
     getEntityTitle.mockResolvedValue('Title');
   });
 
-  it('should not render the references button if there are no references', async () => {
+  it('should not render the references tree if there are no references', async () => {
     validateEntities.mockResolvedValue(simpleReferencesValidationErrorResponse);
-    const renderResult = render(<ReferencesTree entity={entityWithNoRefs} />);
+    const renderResult = render(
+      <MockPovider>
+        <ReferencesTree entity={entityWithNoRefs} />
+      </MockPovider>
+    );
     await wait();
     expect(renderResult).not.toBeNull();
   });
-
-  it('should render the error notification with valiation error', async () => {
-    validateEntities.mockResolvedValue(simpleReferencesValidationErrorResponse);
-    const { getByTestId } = render(<ReferencesTree entity={entity} />);
-    await wait();
-
-    fireEvent.click(getByTestId('referencesActionDropdown'));
-    await wait();
-
-    fireEvent.click(
-      within(getByTestId('validateReferencesBtn')).getByTestId('cf-ui-dropdown-list-item-button')
-    );
-    await wait();
-
-    expect(Notification.error).toHaveBeenCalledWith('Some references did not pass validation');
-  });
-
-  it('should render the success notification without valiation error', async () => {
-    validateEntities.mockResolvedValue(simpleReferencesValidationSuccessResponse);
-    const { getByTestId } = render(<ReferencesTree entity={entity} />);
-
-    await wait();
-
-    fireEvent.click(getByTestId('referencesActionDropdown'));
-    await wait();
-
-    fireEvent.click(
-      within(getByTestId('validateReferencesBtn')).getByTestId('cf-ui-dropdown-list-item-button')
-    );
-    await wait();
-
-    expect(Notification.success).toHaveBeenCalledWith('All references passed validation');
-  });
-
-  it('should render the success notification after publication', async () => {
-    publishEntities.mockResolvedValue(simpleReferencesPublicationSuccessResponse);
-
-    const { getByTestId } = render(<ReferencesTree entity={entity} />);
-    await wait();
-
-    fireEvent.click(getByTestId('referencesActionDropdown'));
-    await wait();
-
-    fireEvent.click(
-      within(getByTestId('publishReferencesBtn')).getByTestId('cf-ui-dropdown-list-item-button')
-    );
-    await wait();
-
-    expect(Notification.success).toHaveBeenCalledWith('Title was published successfully');
-  });
-
-  it('should render the failed notification after failed publication', async () => {
-    publishEntities.mockRejectedValue({ statusCode: 400 });
-
-    const { getByTestId } = render(<ReferencesTree entity={entity} />);
-
-    await wait();
-
-    fireEvent.click(getByTestId('referencesActionDropdown'));
-    await wait();
-
-    fireEvent.click(
-      within(getByTestId('publishReferencesBtn')).getByTestId('cf-ui-dropdown-list-item-button')
-    );
-    await wait();
-
-    expect(Notification.error).toHaveBeenCalledWith('We were unable to publish Title');
-  });
-
-  it('should render the validation toast after pubshing invalid state', async () => {
-    publishEntities.mockRejectedValue({
-      statusCode: 422,
-      data: simpleReferencesPublicationInvalidErrorResponse,
-    });
-
-    const { getByTestId } = render(<ReferencesTree entity={entity} />);
-
-    await wait();
-
-    fireEvent.click(getByTestId('referencesActionDropdown'));
-    await wait();
-
-    fireEvent.click(
-      within(getByTestId('publishReferencesBtn')).getByTestId('cf-ui-dropdown-list-item-button')
-    );
-    await wait();
-
-    expect(Notification.error).toHaveBeenCalledWith('Some references did not pass validation');
-  });
-
-  it('should unselect all references and disable the actions', async () => {
-    publishEntities.mockResolvedValue(simpleReferencesPublicationSuccessResponse);
-    const { getByTestId } = render(<ReferencesTree entity={entity} />);
-    await wait();
-
-    fireEvent.click(getByTestId('selectAllReferences'));
-    await wait();
-
-    expect(getByTestId('referencesActionDropdown')).toBeDisabled();
-  });
-
-  it('should unselect all then select the first entry and publish it', async () => {
-    publishEntities.mockResolvedValue(simpleReferencesPublicationSuccessResponse);
-    const { getByTestId } = render(<ReferencesTree entity={entity} />);
-    await wait();
-
-    fireEvent.click(getByTestId('selectAllReferences'));
-    await wait();
-
-    fireEvent.click(within(getByTestId('referenceTreeList')).getByTestId('ctf-ui-checkbox'));
-    await wait();
-
-    expect(getByTestId('referencesActionDropdown')).toBeEnabled();
-
-    fireEvent.click(getByTestId('referencesActionDropdown'));
-    await wait();
-
-    fireEvent.click(
-      within(getByTestId('publishReferencesBtn')).getByTestId('cf-ui-dropdown-list-item-button')
-    );
-    await wait();
-
-    expect(Notification.success).toHaveBeenCalledWith('Title was published successfully');
-  });
-});
-
-it('should render the release dialog when add to release button is clicked', async () => {
-  const { getByTestId } = render(<ReferencesTree entity={entity} />);
-  await wait();
-
-  fireEvent.click(getByTestId('referencesActionDropdown'));
-  await wait();
-
-  fireEvent.click(
-    within(getByTestId('addReferencesToReleaseBtn')).getByTestId('cf-ui-dropdown-list-item-button')
-  );
-  await wait();
-
-  expect(getByTestId('content-release-modal')).toBeInTheDocument();
 });
 
 describe('validating hasLinks', () => {
