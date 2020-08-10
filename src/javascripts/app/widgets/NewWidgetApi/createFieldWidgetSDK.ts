@@ -1,11 +1,7 @@
-import {
-  ContentType,
-  DialogExtensionSDK,
-  DialogsAPI,
-  FieldExtensionSDK,
-} from 'contentful-ui-extensions-sdk';
+import { DialogExtensionSDK, DialogsAPI, FieldExtensionSDK } from 'contentful-ui-extensions-sdk';
 
 import { Document } from 'app/entity_editor/Document/typesDocument';
+import { InternalContentType } from './createContentTypeApi';
 import { WidgetNamespace } from 'features/widget-renderer';
 import { createTagsRepo } from 'features/content-tags';
 import { getBatchingApiClient } from '../WidgetApi/BatchingApiClient';
@@ -25,7 +21,7 @@ export function createFieldWidgetSDK({
   editorInterfaceSettings = {},
   spaceContext,
   $scope,
-  otDoc,
+  doc,
   internalContentType,
 }: {
   fieldId: string;
@@ -35,8 +31,8 @@ export function createFieldWidgetSDK({
   editorInterfaceSettings?: Record<string, any>;
   spaceContext: any;
   $scope: any;
-  otDoc: Document;
-  internalContentType: ContentType;
+  doc: Document;
+  internalContentType: InternalContentType;
 }): FieldExtensionSDK {
   const editorApi = createEditorApi({
     editorInterface: $scope.editorData.editorInterface,
@@ -47,7 +43,7 @@ export function createFieldWidgetSDK({
 
   const entryApi = createEntryApi({
     internalContentType,
-    otDoc,
+    doc,
     // TODO: `setInvalid` is only available on `fieldController`. The SDK can only
     //   mark the current field as invalid. We could consider moving `setInvalid` to
     //   the field-locale level.

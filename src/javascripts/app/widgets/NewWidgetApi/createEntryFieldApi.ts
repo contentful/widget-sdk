@@ -2,10 +2,11 @@ import { get } from 'lodash';
 import * as K from 'core/utils/kefir';
 import * as PathUtils from 'utils/Path';
 import localeStore from 'services/localeStore';
-import { EntryFieldAPI, Items } from 'contentful-ui-extensions-sdk';
+import { EntryFieldAPI } from 'contentful-ui-extensions-sdk';
 import { getModule } from 'core/NgRegistry';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 import { Document } from 'app/entity_editor/Document/typesDocument';
+import { InternalContentTypeField } from './createContentTypeApi';
 
 const ERROR_CODES = {
   BADUPDATE: 'ENTRY UPDATE FAILED',
@@ -19,7 +20,7 @@ const ERROR_MESSAGES = {
 };
 
 export type FieldLocaleEventListenerFn = (
-  internalField: InternalField,
+  internalField: InternalContentTypeField,
   locale: any,
   extractFieldLocaleProperty: (fieldLocale: any) => any,
   cb: (value: any) => void
@@ -51,19 +52,19 @@ export function makeShareJSError(shareJSError: { message: any }, message: string
   return Object.assign(error, { code: ERROR_CODES.BADUPDATE, data });
 }
 
-function getCurrentPath(internalField: InternalField, publicLocaleCode?: string) {
+function getCurrentPath(internalFieldId: string, publicLocaleCode?: string) {
   let internalLocaleCode = localeStore.getDefaultLocale().internal_code;
 
   if (publicLocaleCode) {
     internalLocaleCode = localeStore.toInternalCode(publicLocaleCode) ?? internalLocaleCode;
   }
 
-  return ['fields', internalField.id, internalLocaleCode];
+  return ['fields', internalFieldId, internalLocaleCode];
 }
 
-function canEdit(otDoc: Document, publicFieldId: string, publicLocaleCode?: string) {
+function canEdit(doc: Document, publicFieldId: string, publicLocaleCode?: string) {
   const externalLocaleCode = publicLocaleCode ?? localeStore.getDefaultLocale().code;
-  return otDoc.permissions.canEditFieldLocale(publicFieldId, externalLocaleCode);
+  return doc.permissions.canEditFieldLocale(publicFieldId, externalLocaleCode);
 }
 
 function getLocaleAndCallback(args: any[]) {
@@ -90,16 +91,6 @@ function getLocaleAndCallback(args: any[]) {
   throw new TypeError('expected either callback, or locale code and callback');
 }
 
-export interface InternalField {
-  apiName?: string;
-  id: string;
-  localized: boolean;
-  required: boolean;
-  validations: Record<string, any>[];
-  items?: Items | undefined;
-  type: string;
-}
-
 /**
  * Makes a method throw an Exception when the API is read0only
  * This has been implemented with generics to not lose type inference, even though it's ugly
@@ -113,8 +104,8 @@ const makeReadOnlyGuardedMethod = <T extends Function>(readOnly: boolean, method
 };
 
 export interface CreateEntryFieldApiProps {
-  internalField: InternalField;
-  otDoc: Document;
+  internalField: InternalContentTypeField;
+  doc: Document;
   setInvalid: (publicLocaleCode: string, value: boolean) => void;
   listenToFieldLocaleEvent: FieldLocaleEventListenerFn;
   readOnly?: boolean;
@@ -122,32 +113,32 @@ export interface CreateEntryFieldApiProps {
 
 export function createEntryFieldApi({
   internalField,
-  otDoc,
+  doc,
   setInvalid,
   listenToFieldLocaleEvent,
   readOnly,
 }: CreateEntryFieldApiProps): EntryFieldAPI {
-  const id = internalField.apiName ?? internalField.id;
+  const publicFieldId = internalField.apiName ?? internalField.id;
   // We fall back to `internalField.id` because some old fields don't have an
   // apiName / public ID
 
   const getValue = (publicLocaleCode?: string) => {
-    const currentPath = getCurrentPath(internalField, publicLocaleCode);
+    const currentPath = getCurrentPath(internalField.id, publicLocaleCode);
 
-    return get(otDoc.getValueAt([]), currentPath);
+    return get(doc.getValueAt([]), currentPath);
   };
 
   const setValue = makeReadOnlyGuardedMethod(
     !!readOnly,
     async (value: any, publicLocaleCode?: string) => {
-      if (!canEdit(otDoc, id, publicLocaleCode)) {
+      if (!canEdit(doc, publicFieldId, publicLocaleCode)) {
         throw makePermissionError();
       }
 
-      const currentPath = getCurrentPath(internalField, publicLocaleCode);
+      const currentPath = getCurrentPath(internalField.id, publicLocaleCode);
 
       try {
-        await otDoc.setValueAt(currentPath, value);
+        await doc.setValueAt(currentPath, value);
         return value;
       } catch (err) {
         throw makeShareJSError(err, ERROR_MESSAGES.MFAILUPDATE);
@@ -156,14 +147,14 @@ export function createEntryFieldApi({
   );
 
   const removeValue = makeReadOnlyGuardedMethod(!!readOnly, async (publicLocaleCode?: string) => {
-    if (!canEdit(otDoc, id, publicLocaleCode)) {
+    if (!canEdit(doc, publicFieldId, publicLocaleCode)) {
       throw makePermissionError();
     }
 
-    const currentPath = getCurrentPath(internalField, publicLocaleCode);
+    const currentPath = getCurrentPath(internalField.id, publicLocaleCode);
 
     try {
-      await otDoc.removeValueAt(currentPath);
+      await doc.removeValueAt(currentPath);
     } catch (err) {
       throw makeShareJSError(err, ERROR_MESSAGES.MFAILREMOVAL);
     }
@@ -176,13 +167,13 @@ export function createEntryFieldApi({
   ): () => () => void;
   function onValueChanged(...args: any[]) {
     const { cb, locale } = getLocaleAndCallback(args);
-    const path = getCurrentPath(internalField, locale.code);
+    const path = getCurrentPath(internalField.id, locale.code);
 
     return K.onValueWhile(
-      otDoc.changes,
-      otDoc.changes.filter((changedPath: any) => PathUtils.isAffecting(changedPath, path)),
+      doc.changes,
+      doc.changes.filter((changedPath: any) => PathUtils.isAffecting(changedPath, path)),
       () => {
-        cb(get(otDoc.getValueAt([]), path));
+        cb(get(doc.getValueAt([]), path));
       }
     );
   }
@@ -226,7 +217,7 @@ export function createEntryFieldApi({
   const items = internalField.items;
 
   return {
-    id,
+    id: publicFieldId,
     locales,
     type,
     required,
@@ -239,7 +230,7 @@ export function createEntryFieldApi({
     onIsDisabledChanged,
     getForLocale(publicLocaleCode) {
       return {
-        id,
+        id: publicFieldId,
         locale: publicLocaleCode,
         type,
         required,

@@ -1,4 +1,4 @@
-import { ContentType, FieldExtensionSDK } from 'contentful-ui-extensions-sdk';
+import { FieldExtensionSDK } from 'contentful-ui-extensions-sdk';
 import { noop } from 'lodash';
 
 import { EditorInterface, WidgetNamespace } from 'features/widget-renderer';
@@ -19,6 +19,7 @@ import { createReadOnlyNavigatorApi } from './createNavigatorApi';
 import { createReadOnlyDialogsApi } from './createDialogsApi';
 import { SpaceMember } from './createUserApi';
 import { createSharedFieldWidgetSDK } from './utils';
+import { InternalContentType } from './createContentTypeApi';
 
 interface CreateReadOnlyFieldWidgetSDKOptions {
   cma: any;
@@ -28,8 +29,8 @@ interface CreateReadOnlyFieldWidgetSDKOptions {
   environmentIds: string[];
   publicFieldId: Field['id'] | Field['apiName'];
   fieldValue: any;
-  initialContentTypes: ContentType[];
-  internalContentType: ContentType;
+  initialContentTypes: InternalContentType[];
+  internalContentType: InternalContentType;
   publicLocaleCode: Locale['code'];
   spaceId: string;
   spaceMember: SpaceMember;
@@ -62,7 +63,7 @@ export function createReadonlyFieldWidgetSDK({
     skipTransformation: true,
     indicateAutoSave: false,
   });
-  const otDoc: Document = create(
+  const doc: Document = create(
     {
       data: entry,
       setDeleted: noop,
@@ -91,7 +92,7 @@ export function createReadonlyFieldWidgetSDK({
   });
   const entryApi = createEntryApi({
     internalContentType: internalContentType,
-    otDoc,
+    doc,
     setInvalid: noop,
     listenToFieldLocaleEvent: (_internalField, _locale, _extractFieldLocaleProperty, _cb) => noop,
     readOnly: true,

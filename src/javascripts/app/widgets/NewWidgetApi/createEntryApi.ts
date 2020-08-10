@@ -1,16 +1,13 @@
-import {
-  createEntryFieldApi,
-  FieldLocaleEventListenerFn,
-  InternalField,
-} from './createEntryFieldApi';
+import { createEntryFieldApi, FieldLocaleEventListenerFn } from './createEntryFieldApi';
+import { InternalContentTypeField, InternalContentType } from './createContentTypeApi';
 
 import * as K from 'core/utils/kefir';
-import { EntryAPI, EntrySys, EntryFieldAPI, ContentType } from 'contentful-ui-extensions-sdk';
+import { EntryAPI, EntrySys, EntryFieldAPI } from 'contentful-ui-extensions-sdk';
 import { Document } from 'app/entity_editor/Document/typesDocument';
 
 interface CreateEntryApiOptions {
-  internalContentType: ContentType;
-  otDoc: Document;
+  internalContentType: InternalContentType;
+  doc: Document;
   setInvalid: (localeCode: string, value: boolean) => void;
   listenToFieldLocaleEvent: FieldLocaleEventListenerFn;
   readOnly?: boolean;
@@ -18,15 +15,15 @@ interface CreateEntryApiOptions {
 
 export function createEntryApi({
   internalContentType,
-  otDoc,
+  doc,
   setInvalid,
   listenToFieldLocaleEvent,
   readOnly = false,
 }: CreateEntryApiOptions): EntryAPI {
-  const fields = internalContentType.fields.map((internalField: InternalField) => {
+  const fields = internalContentType.fields.map((internalField: InternalContentTypeField) => {
     return createEntryFieldApi({
       internalField,
-      otDoc,
+      doc,
       setInvalid,
       listenToFieldLocaleEvent,
       readOnly,
@@ -35,14 +32,14 @@ export function createEntryApi({
 
   return {
     getSys: () => {
-      // TODO: the EntitySys type in otDoc doesn't match EntrySys from UIESDK
-      return (K.getValue(otDoc.sysProperty) as unknown) as EntrySys;
+      // TODO: the EntitySys type in doc doesn't match EntrySys from UIESDK
+      return (K.getValue(doc.sysProperty) as unknown) as EntrySys;
     },
     onSysChanged: (cb) => {
-      return K.onValue(otDoc.sysProperty, cb as (value: unknown) => void);
+      return K.onValue(doc.sysProperty, cb as (value: unknown) => void);
     },
     fields: reduceFields(fields),
-    metadata: otDoc.getValueAt(['metadata']),
+    metadata: doc.getValueAt(['metadata']),
   };
 }
 

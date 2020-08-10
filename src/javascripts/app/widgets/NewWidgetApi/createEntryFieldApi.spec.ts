@@ -1,5 +1,6 @@
 import { EntryFieldAPI } from 'contentful-ui-extensions-sdk';
-import { createEntryFieldApi, InternalField } from './createEntryFieldApi';
+import { createEntryFieldApi } from './createEntryFieldApi';
+import { InternalContentTypeField } from './createContentTypeApi';
 import { onValueWhile } from 'core/utils/kefir';
 import { Document } from 'app/entity_editor/Document/typesDocument';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
@@ -26,7 +27,7 @@ jest.mock('services/localeStore', () => {
   };
 });
 
-const defaultOtDoc = ({
+const defaultDoc = ({
   changes: {
     filter: jest.fn(),
   },
@@ -45,19 +46,19 @@ const defaultInternalField = ({
   required: false,
   validations: [],
   type: 'Symbol',
-} as unknown) as InternalField;
+} as unknown) as InternalContentTypeField;
 
 const buildEntryFieldApi = ({
   internalField = defaultInternalField,
   readOnly = false,
-  otDoc = defaultOtDoc,
+  doc = defaultDoc,
   setInvalid = jest.fn(),
   listenToFieldLocaleEvent = jest.fn(),
   ...rest
 }: any = {}) => {
   return createEntryFieldApi({
     internalField,
-    otDoc,
+    doc,
     setInvalid,
     listenToFieldLocaleEvent,
     readOnly,
@@ -133,7 +134,9 @@ describe('createEntryFieldApi', () => {
     describe('when internalField is missing validations', () => {
       it('an empty array is return', () => {
         const { validations, ...rest } = defaultInternalField;
-        const entryFieldApi = buildEntryFieldApi(rest as InternalField);
+        const entryFieldApi = buildEntryFieldApi({
+          defaultInternalField: rest as InternalContentTypeField,
+        });
         expect(entryFieldApi.validations).toEqual([]);
       });
     });
@@ -152,7 +155,7 @@ describe('createEntryFieldApi', () => {
   describe('getValue', () => {
     it('returns the current value', () => {
       const currentValue = 'this is the current value';
-      (defaultOtDoc.getValueAt as jest.Mock).mockReturnValueOnce({
+      (defaultDoc.getValueAt as jest.Mock).mockReturnValueOnce({
         fields: {
           // eslint-disable-next-line @typescript-eslint/camelcase
           internal_id: {
@@ -171,7 +174,7 @@ describe('createEntryFieldApi', () => {
   describe('setValue', () => {
     describe('when the value cannot be edited', () => {
       it('throws', () => {
-        (defaultOtDoc.permissions.canEditFieldLocale as jest.MockedFunction<any>).mockReturnValue(
+        (defaultDoc.permissions.canEditFieldLocale as jest.MockedFunction<any>).mockReturnValue(
           false
         );
 
@@ -183,7 +186,7 @@ describe('createEntryFieldApi', () => {
 
     describe('when the value can be edited', () => {
       it('sets the value', async () => {
-        (defaultOtDoc.permissions.canEditFieldLocale as jest.MockedFunction<any>).mockReturnValue(
+        (defaultDoc.permissions.canEditFieldLocale as jest.MockedFunction<any>).mockReturnValue(
           true
         );
 
@@ -191,7 +194,7 @@ describe('createEntryFieldApi', () => {
 
         await entryFieldApi.setValue('a new value');
 
-        expect(defaultOtDoc.setValueAt).toHaveBeenCalledWith(
+        expect(defaultDoc.setValueAt).toHaveBeenCalledWith(
           ['fields', 'internal_id', 'internalCode'],
           'a new value'
         );
@@ -212,7 +215,7 @@ describe('createEntryFieldApi', () => {
   describe('removeValue', () => {
     describe('when the value cannot be edited', () => {
       it('throws', () => {
-        (defaultOtDoc.permissions.canEditFieldLocale as jest.MockedFunction<any>).mockReturnValue(
+        (defaultDoc.permissions.canEditFieldLocale as jest.MockedFunction<any>).mockReturnValue(
           false
         );
 
@@ -224,7 +227,7 @@ describe('createEntryFieldApi', () => {
 
     describe('when the value can be edited', () => {
       it('removes the value', async () => {
-        (defaultOtDoc.permissions.canEditFieldLocale as jest.MockedFunction<any>).mockReturnValue(
+        (defaultDoc.permissions.canEditFieldLocale as jest.MockedFunction<any>).mockReturnValue(
           true
         );
 
@@ -232,7 +235,7 @@ describe('createEntryFieldApi', () => {
 
         await entryFieldApi.removeValue();
 
-        expect(defaultOtDoc.removeValueAt).toHaveBeenCalledWith([
+        expect(defaultDoc.removeValueAt).toHaveBeenCalledWith([
           'fields',
           'internal_id',
           'internalCode',
@@ -254,7 +257,7 @@ describe('createEntryFieldApi', () => {
   describe('onValueChanged', () => {
     it('passed callback will be called on changes', () => {
       const currentValue = 'value';
-      (defaultOtDoc.getValueAt as jest.Mock).mockReturnValueOnce({
+      (defaultDoc.getValueAt as jest.Mock).mockReturnValueOnce({
         fields: {
           // eslint-disable-next-line @typescript-eslint/camelcase
           internal_id: {
@@ -265,7 +268,7 @@ describe('createEntryFieldApi', () => {
 
       const entryFieldApi = buildEntryFieldApi({
         internalField: defaultInternalField,
-        otDoc: defaultOtDoc,
+        doc: defaultDoc,
       });
 
       const callback = jest.fn();

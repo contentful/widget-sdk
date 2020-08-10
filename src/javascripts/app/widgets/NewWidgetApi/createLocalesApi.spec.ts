@@ -47,8 +47,6 @@ describe('createLocalesApi', () => {
       fr: true,
       he: false,
       'en-US': undefined,
-      // TODO should it be possible for this value to be undefined?
-      // types from UIE suggest no
     });
   });
 
