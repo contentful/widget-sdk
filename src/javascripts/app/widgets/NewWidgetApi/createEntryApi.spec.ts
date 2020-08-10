@@ -85,4 +85,24 @@ describe('createEntryApi', () => {
       expect(result).toMatchSnapshot();
     });
   });
+
+  describe('metaData', () => {
+    const metadata = {
+      example: 'metadata',
+    };
+    beforeEach(() => {
+      (otDoc.getValueAt as jest.Mock).mockReturnValueOnce(metadata);
+
+      entryApi = createEntryApi({
+        internalContentType,
+        otDoc,
+        setInvalid,
+        listenToFieldLocaleEvent,
+      });
+    });
+    it('returns the metaData from otDoc', () => {
+      const result = entryApi.metadata;
+      expect(result).toEqual(metadata);
+    });
+  });
 });
