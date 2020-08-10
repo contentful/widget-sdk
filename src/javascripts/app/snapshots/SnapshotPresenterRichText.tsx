@@ -25,7 +25,7 @@ const SnapshotPresenterRichText = ({
       endpoint: spaceContext.endpoint,
       entry: entity,
       environmentIds: [spaceContext.getEnvironmentId(), ...spaceContext.getAliasesIds()],
-      publicFieldId: field.id ?? field.apiName,
+      publicFieldId: field.apiName ?? field.id,
       fieldValue: value,
       initialContentTypes: spaceContext.publishedCTs.getAllBare(),
       internalContentType: editorData.contentType.data,
