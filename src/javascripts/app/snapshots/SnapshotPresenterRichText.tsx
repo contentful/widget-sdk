@@ -37,7 +37,7 @@ const SnapshotPresenterRichText = ({
       widgetId: widget.id,
       widgetNamespace: widget.namespace,
     });
-  }, [field, locale, entity, editorData]);
+  }, [field, locale, entity, editorData, value, widget]);
 
   return (
     <div className={className} data-test-id="snapshot-presenter-richtext">
@@ -69,6 +69,7 @@ SnapshotPresenterRichText.propTypes = {
   ]),
   locale: PropTypes.shape({
     code: PropTypes.string,
+    // eslint-disable-next-line @typescript-eslint/camelcase
     internal_code: PropTypes.string,
   }),
   widget: PropTypes.shape({

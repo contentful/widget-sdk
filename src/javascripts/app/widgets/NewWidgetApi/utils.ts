@@ -15,8 +15,8 @@ import { createLocalesApi } from './createLocalesApi';
 import { createUserApi, SpaceMember } from './createUserApi';
 import { createIdsApi } from './createIdsApi';
 import { noop } from 'lodash';
-import { Field, Locale } from '../../entity_editor/EntityField/types';
-import { Widget, WidgetNamespace } from '../../../features/widget-renderer';
+import { Field, Locale } from 'app/entity_editor/EntityField/types';
+import { Widget, WidgetNamespace } from 'features/widget-renderer';
 
 interface NonReadOnlyApis {
   editorApi: SharedEditorSDK['editor'];

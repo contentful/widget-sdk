@@ -149,7 +149,9 @@ describe('createNavigatorApi', () => {
     describe('openBulkEditor', () => {
       it('calls navigateToBulkEditor with the correct arguments', () => {
         const navigateToBulkEditor = jest.fn();
-        (makeExtensionBulkNavigationHandlers as jest.Mock).mockReturnValueOnce(navigateToBulkEditor);
+        (makeExtensionBulkNavigationHandlers as jest.Mock).mockReturnValueOnce(
+          navigateToBulkEditor
+        );
 
         const navigatorApi = buildApi();
         navigatorApi.openBulkEditor('entry_id', { fieldId: 'field_id', locale: 'fr', index: 3 });
