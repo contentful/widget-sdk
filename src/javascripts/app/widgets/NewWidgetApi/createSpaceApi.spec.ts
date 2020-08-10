@@ -2,6 +2,7 @@ import { createSpaceApi } from './createSpaceApi';
 import { createContentTypeApi } from './createContentTypeApi';
 import { CONTENT_ENTITY_UPDATED_EVENT } from 'services/PubSubService';
 import { InternalContentType } from './createContentTypeApi';
+import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 
 jest.mock('Config', () => ({
   uploadApiUrl: jest.fn(() => 'example_url'),
@@ -13,6 +14,11 @@ jest.mock('services/PubSubService', () => ({
 
 jest.mock('Authentication', () => ({
   getToken: jest.fn(() => 'fake_key'),
+}));
+
+jest.mock('app/ScheduledActions/DataManagement/ScheduledActionsRepo', () => ({
+  getAllScheduledActions: jest.fn(),
+  getEntityScheduledActions: jest.fn(),
 }));
 
 const pubSubClient = {
@@ -52,6 +58,9 @@ const cma = {
   updateAsset: jest.fn(),
   updateContentType: jest.fn(),
   updateEntry: jest.fn(),
+  validateEntry: jest.fn(),
+  validateRelease: jest.fn(),
+  executeRelease: jest.fn(),
 };
 
 const tagsRepo = {
@@ -66,8 +75,12 @@ const usersRepo = {
 };
 const spaceId = 'space_id';
 
-const buildApi = (initialContentTypes: InternalContentType[]) =>
-  createSpaceApi({
+const buildSpaceApi = (
+  initialContentTypes: InternalContentType[],
+  onEntityChanged?,
+  readOnly = false
+) => {
+  const api = createSpaceApi({
     cma,
     tagsRepo,
     usersRepo,
@@ -75,17 +88,22 @@ const buildApi = (initialContentTypes: InternalContentType[]) =>
     initialContentTypes,
     pubSubClient,
     environmentIds,
+    readOnly,
   });
+
+  // onEntityChanged is built internally, so we need to monkey patch to mock it
+  return onEntityChanged ? { ...api, onEntityChanged } : api;
+};
 
 describe('createSpaceApi', () => {
   describe('getCachedContentTypes', () => {
     describe('with no initial content types', () => {
       it('returns an empty array', () => {
-        const spaceApi = buildApi([]);
+        const spaceApi = buildSpaceApi([]);
 
         const result = spaceApi.getCachedContentTypes();
 
-        expect(result.length).toEqual(0);
+        expect(result).toHaveLength(0);
       });
     });
 
@@ -111,7 +129,7 @@ describe('createSpaceApi', () => {
           },
         ];
 
-        const spaceApi = buildApi(initialContentTypes);
+        const spaceApi = buildSpaceApi(initialContentTypes);
 
         const result = spaceApi.getCachedContentTypes();
 
@@ -139,7 +157,7 @@ describe('createSpaceApi', () => {
     it('calls fetch and returns the json response', async () => {
       const initialContentTypes = [];
 
-      const spaceApi = buildApi(initialContentTypes);
+      const spaceApi = buildSpaceApi(initialContentTypes);
 
       // TODO: this function doesn't match the type defined here https://github.com/contentful/ui-extensions-sdk/blob/b0b7931e034362185728f0afeeb3adb96a5e83fb/lib/types.ts#L257
       const result = await spaceApi.createUpload('example data');
@@ -174,7 +192,7 @@ describe('createSpaceApi', () => {
         },
       ]);
 
-      const spaceApi = buildApi(initialContentTypes);
+      const spaceApi = buildSpaceApi(initialContentTypes);
 
       expect(await spaceApi.getUsers()).toEqual({
         items: [
@@ -212,7 +230,7 @@ describe('createSpaceApi', () => {
   describe('waitUntilAssetProcessed', () => {
     it('returns the asset when cma.getAsset resolves', async () => {
       const initialContentTypes = [];
-      const spaceApi = buildApi(initialContentTypes);
+      const spaceApi = buildSpaceApi(initialContentTypes);
 
       const promise = spaceApi.waitUntilAssetProcessed('asset_id', 'en');
 
@@ -243,7 +261,7 @@ describe('createSpaceApi', () => {
   describe('onEntityChanged', () => {
     it('registers a handler with the pubsubclient', () => {
       const initialContentTypes = [];
-      const spaceApi = buildApi(initialContentTypes);
+      const spaceApi = buildSpaceApi(initialContentTypes);
 
       const callback = jest.fn();
       spaceApi.onEntityChanged('Entry', 'my_entity', callback);
@@ -257,7 +275,7 @@ describe('createSpaceApi', () => {
     describe('when the handler is called', () => {
       it('the callback is called with the result of getEntity', async () => {
         const initialContentTypes = [];
-        const spaceApi = buildApi(initialContentTypes);
+        const spaceApi = buildSpaceApi(initialContentTypes);
 
         const callback = jest.fn();
         spaceApi.onEntityChanged('Entry', 'my_entity', callback);
@@ -271,6 +289,46 @@ describe('createSpaceApi', () => {
 
         expect(callback).toHaveBeenCalledWith('data');
       });
+    });
+  });
+
+  describe('when creating read-only API', () => {
+    let allMethods, readMethods, handlerMethods, otherMethods, spaceApi;
+    beforeEach(() => {
+      // Methods whose behaviour is read-only, but they are not getters
+      const readOnlyWhiteList = ['readTags', 'waitUntilAssetProcessed'];
+
+      spaceApi = buildSpaceApi([], jest.fn(), true);
+      allMethods = Object.getOwnPropertyNames(spaceApi).filter(
+        (prop) => typeof spaceApi[prop] === 'function'
+      );
+      readMethods = allMethods.filter(
+        (method) => method.startsWith('get') || readOnlyWhiteList.includes(method)
+      );
+      handlerMethods = allMethods.filter((method) => method.startsWith('on'));
+      otherMethods = allMethods.filter(
+        (method) => !handlerMethods.includes(method) && !readMethods.includes(method)
+      );
+    });
+
+    it(`does not throw on read methods`, async () => {
+      for (const method of readMethods) {
+        expect(() => spaceApi[method]()).not.toThrow();
+      }
+    });
+
+    it(`does not throw on handler methods`, async () => {
+      for (const method of handlerMethods) {
+        expect(() => spaceApi[method]()).not.toThrow();
+      }
+    });
+
+    it(`throws a ReadOnlyNavigatorAPI error on non-read methods`, () => {
+      for (const method of otherMethods) {
+        expect(() => spaceApi[method]()).toThrowError(
+          makeReadOnlyApiError(ReadOnlyApi.Space, method)
+        );
+      }
     });
   });
 });

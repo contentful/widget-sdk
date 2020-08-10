@@ -5,23 +5,28 @@ import * as K from 'core/utils/kefir';
 import { EntryAPI, EntrySys, EntryFieldAPI } from 'contentful-ui-extensions-sdk';
 import { Document } from 'app/entity_editor/Document/typesDocument';
 
+interface CreateEntryApiOptions {
+  internalContentType: InternalContentType;
+  doc: Document;
+  setInvalid: (localeCode: string, value: boolean) => void;
+  listenToFieldLocaleEvent: FieldLocaleEventListenerFn;
+  readOnly?: boolean;
+}
+
 export function createEntryApi({
   internalContentType,
   doc,
   setInvalid,
   listenToFieldLocaleEvent,
-}: {
-  internalContentType: InternalContentType;
-  doc: Document;
-  setInvalid: (localeCode: string, value: boolean) => void;
-  listenToFieldLocaleEvent: FieldLocaleEventListenerFn;
-}): EntryAPI {
+  readOnly = false,
+}: CreateEntryApiOptions): EntryAPI {
   const fields = internalContentType.fields.map((internalField: InternalContentTypeField) => {
     return createEntryFieldApi({
       internalField,
       doc,
       setInvalid,
       listenToFieldLocaleEvent,
+      readOnly,
     });
   });
 

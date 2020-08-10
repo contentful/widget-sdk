@@ -5,8 +5,21 @@ import { uploadApiUrl } from 'Config';
 import { SpaceAPI, User } from 'contentful-ui-extensions-sdk';
 import { InternalContentType, createContentTypeApi } from './createContentTypeApi';
 import { get, noop } from 'lodash';
+import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 
 const ASSET_PROCESSING_POLL_MS = 500;
+
+/**
+ * Makes a method throw an Exception when the API is read0only
+ * This has been implemented with generics to not lose type inference, even though it's ugly
+ */
+const makeReadOnlyGuardedMethod = <T extends Function>(readOnly: boolean, method: T) => {
+  return readOnly
+    ? () => {
+        throw makeReadOnlyApiError(ReadOnlyApi.Space, method?.name ?? method.toString());
+      }
+    : method;
+};
 
 interface EntityLink {
   sys: {
@@ -42,6 +55,7 @@ export function createSpaceApi({
   spaceId,
   tagsRepo,
   usersRepo,
+  readOnly = false,
 }: {
   cma: any;
   initialContentTypes: InternalContentType[];
@@ -50,17 +64,24 @@ export function createSpaceApi({
   spaceId: string;
   tagsRepo: any;
   usersRepo: any;
+  readOnly?: boolean;
 }): InternalSpaceAPI {
   return {
     // Proxy directly to the CMA client:
-    archiveEntry: cma.archiveEntry,
-    archiveAsset: cma.archiveAsset,
-    createContentType: cma.createContentType,
-    createEntry: cma.createEntry,
-    createAsset: cma.createAsset,
-    deleteAsset: cma.deleteAsset,
-    deleteContentType: cma.deleteContentType,
-    deleteEntry: cma.deleteEntry,
+    archiveEntry: makeReadOnlyGuardedMethod<typeof cma.archiveEntry>(readOnly, cma.archiveEntry),
+    archiveAsset: makeReadOnlyGuardedMethod<typeof cma.archiveAsset>(readOnly, cma.archiveAsset),
+    createContentType: makeReadOnlyGuardedMethod<typeof cma.createContentType>(
+      readOnly,
+      cma.createContentType
+    ),
+    createEntry: makeReadOnlyGuardedMethod<typeof cma.createEntry>(readOnly, cma.createEntry),
+    createAsset: makeReadOnlyGuardedMethod<typeof cma.createAsset>(readOnly, cma.createAsset),
+    deleteAsset: makeReadOnlyGuardedMethod<typeof cma.deleteAsset>(readOnly, cma.deleteAsset),
+    deleteContentType: makeReadOnlyGuardedMethod<typeof cma.deleteContentType>(
+      readOnly,
+      cma.deleteContentType
+    ),
+    deleteEntry: makeReadOnlyGuardedMethod<typeof cma.deleteEntry>(readOnly, cma.deleteEntry),
     getAsset: cma.getAsset,
     getAssets: cma.getAssets,
     getEditorInterface: cma.getEditorInterface,
@@ -72,20 +93,35 @@ export function createSpaceApi({
     getContentTypes: cma.getContentTypes,
     getPublishedEntries: cma.getPublishedEntries,
     getPublishedAssets: cma.getPublishedAssets,
-    processAsset: cma.processAsset,
-    publishAsset: cma.publishAsset,
-    publishEntry: cma.publishEntry,
-    unarchiveAsset: cma.unarchiveAsset,
-    unarchiveEntry: cma.unarchiveEntry,
-    unpublishAsset: cma.unpublishAsset,
-    unpublishEntry: cma.unpublishEntry,
-    updateAsset: cma.updateAsset,
-    updateContentType: cma.updateContentType,
-    updateEntry: cma.updateEntry,
+    processAsset: makeReadOnlyGuardedMethod<typeof cma.processAsset>(readOnly, cma.processAsset),
+    publishAsset: makeReadOnlyGuardedMethod<typeof cma.publishAsset>(readOnly, cma.publishAsset),
+    publishEntry: makeReadOnlyGuardedMethod<typeof cma.publishEntry>(readOnly, cma.publishEntry),
+    unarchiveAsset: makeReadOnlyGuardedMethod<typeof cma.unarchiveAsset>(
+      readOnly,
+      cma.unarchiveAsset
+    ),
+    unarchiveEntry: makeReadOnlyGuardedMethod<typeof cma.unarchiveEntry>(
+      readOnly,
+      cma.unarchiveEntry
+    ),
+    unpublishAsset: makeReadOnlyGuardedMethod<typeof cma.unpublishAsset>(
+      readOnly,
+      cma.unpublishAsset
+    ),
+    unpublishEntry: makeReadOnlyGuardedMethod<typeof cma.unpublishEntry>(
+      readOnly,
+      cma.unpublishEntry
+    ),
+    updateAsset: makeReadOnlyGuardedMethod<typeof cma.updateAsset>(readOnly, cma.updateAsset),
+    updateContentType: makeReadOnlyGuardedMethod<typeof cma.updateContentType>(
+      readOnly,
+      cma.updateContentType
+    ),
+    updateEntry: makeReadOnlyGuardedMethod<typeof cma.updateEntry>(readOnly, cma.updateEntry),
 
     // Implementation in this module:
     getCachedContentTypes,
-    createUpload,
+    createUpload: makeReadOnlyGuardedMethod<typeof createUpload>(readOnly, createUpload),
     getUsers,
     waitUntilAssetProcessed,
     getEntityScheduledActions: ScheduledActionsRepo.getEntityScheduledActions,
@@ -93,13 +129,19 @@ export function createSpaceApi({
 
     // Only in internal SDK, not implemented in the public one
     getEntryReferences: cma.getEntryReferences,
-    executeRelease: cma.executeRelease,
-    validateRelease: cma.validateRelease,
-    validateEntry: cma.validateEntry,
+    executeRelease: makeReadOnlyGuardedMethod<typeof cma.executeRelease>(
+      readOnly,
+      cma.executeRelease
+    ),
+    validateRelease: makeReadOnlyGuardedMethod<typeof cma.validateRelease>(
+      readOnly,
+      cma.validateRelease
+    ),
+    validateEntry: makeReadOnlyGuardedMethod<typeof cma.validateEntry>(readOnly, cma.validateEntry),
     readTags: tagsRepo.readTags,
-    createTag: tagsRepo.createTag,
-    deleteTag: tagsRepo.deleteTag,
-    updateTag: tagsRepo.updateTag,
+    createTag: makeReadOnlyGuardedMethod<typeof tagsRepo.createTag>(readOnly, tagsRepo.createTag),
+    deleteTag: makeReadOnlyGuardedMethod<typeof tagsRepo.deleteTag>(readOnly, tagsRepo.deleteTag),
+    updateTag: makeReadOnlyGuardedMethod<typeof tagsRepo.updateTag>(readOnly, tagsRepo.updateTag),
     onEntityChanged,
   };
 

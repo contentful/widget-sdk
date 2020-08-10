@@ -63,11 +63,12 @@ const SnapshotPresenterWidgets = ({
       return (
         <SnapshotPresenterRichText
           className={rtlClassName}
-          value={value}
-          contentType={editorData.contentType.data}
+          editorData={editorData}
           entity={entity}
           field={field}
           locale={locale}
+          value={value}
+          widget={descriptor}
         />
       );
     case 'Text':

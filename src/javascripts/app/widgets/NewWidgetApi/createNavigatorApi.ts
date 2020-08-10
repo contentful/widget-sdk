@@ -1,3 +1,4 @@
+import { noop } from 'lodash';
 import {
   makeExtensionNavigationHandlers,
   makeExtensionBulkNavigationHandlers,
@@ -6,11 +7,30 @@ import makePageExtensionHandlers from 'widgets/bridges/makePageExtensionHandlers
 import { onSlideInNavigation } from 'navigation/SlideInNavigator/index';
 import { WidgetNamespace } from 'features/widget-renderer';
 import { NavigatorAPI } from 'contentful-ui-extensions-sdk';
+import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 
 interface NavigatorProps {
   spaceContext: any;
   widgetNamespace: WidgetNamespace;
   widgetId: string;
+  readOnly?: boolean;
+}
+
+const denyNavigate = () => {
+  throw makeReadOnlyApiError(ReadOnlyApi.Navigate);
+};
+
+export function createReadOnlyNavigatorApi() {
+  return {
+    onSlideInNavigation: () => noop,
+    openAsset: denyNavigate,
+    openBulkEditor: denyNavigate,
+    openCurrentAppPage: denyNavigate,
+    openEntry: denyNavigate,
+    openNewAsset: denyNavigate,
+    openNewEntry: denyNavigate,
+    openPageExtension: denyNavigate,
+  };
 }
 
 export function createNavigatorApi({

@@ -72,7 +72,7 @@ describe('createEntryApi', () => {
   });
 
   describe('onSysChange', () => {
-    it('cals Kefir onvalue with the callback', () => {
+    it('calls Kefir onvalue with the callback', () => {
       const callback = jest.fn();
       entryApi.onSysChanged(callback);
       expect(onValue).toHaveBeenCalledWith(doc.sysProperty, callback);

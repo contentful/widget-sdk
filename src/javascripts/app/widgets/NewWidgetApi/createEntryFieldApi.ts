@@ -4,6 +4,7 @@ import * as PathUtils from 'utils/Path';
 import localeStore from 'services/localeStore';
 import { EntryFieldAPI } from 'contentful-ui-extensions-sdk';
 import { getModule } from 'core/NgRegistry';
+import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 import { Document } from 'app/entity_editor/Document/typesDocument';
 import { InternalContentTypeField } from './createContentTypeApi';
 
@@ -90,17 +91,33 @@ function getLocaleAndCallback(args: any[]) {
   throw new TypeError('expected either callback, or locale code and callback');
 }
 
+/**
+ * Makes a method throw an Exception when the API is read0only
+ * This has been implemented with generics to not lose type inference, even though it's ugly
+ */
+const makeReadOnlyGuardedMethod = <T extends Function>(readOnly: boolean, method: T) => {
+  return readOnly
+    ? () => {
+        throw makeReadOnlyApiError(ReadOnlyApi.EntryField);
+      }
+    : method;
+};
+
+export interface CreateEntryFieldApiProps {
+  internalField: InternalContentTypeField;
+  doc: Document;
+  setInvalid: (publicLocaleCode: string, value: boolean) => void;
+  listenToFieldLocaleEvent: FieldLocaleEventListenerFn;
+  readOnly?: boolean;
+}
+
 export function createEntryFieldApi({
   internalField,
   doc,
   setInvalid,
   listenToFieldLocaleEvent,
-}: {
-  internalField: InternalContentTypeField;
-  doc: Document;
-  setInvalid: (publicLocaleCode: string, value: boolean) => void;
-  listenToFieldLocaleEvent: FieldLocaleEventListenerFn;
-}): EntryFieldAPI {
+  readOnly,
+}: CreateEntryFieldApiProps): EntryFieldAPI {
   const publicFieldId = internalField.apiName ?? internalField.id;
   // We fall back to `internalField.id` because some old fields don't have an
   // apiName / public ID
@@ -111,22 +128,25 @@ export function createEntryFieldApi({
     return get(doc.getValueAt([]), currentPath);
   };
 
-  const setValue = async (value: any, publicLocaleCode?: string) => {
-    if (!canEdit(doc, publicFieldId, publicLocaleCode)) {
-      throw makePermissionError();
+  const setValue = makeReadOnlyGuardedMethod(
+    !!readOnly,
+    async (value: any, publicLocaleCode?: string) => {
+      if (!canEdit(doc, publicFieldId, publicLocaleCode)) {
+        throw makePermissionError();
+      }
+
+      const currentPath = getCurrentPath(internalField.id, publicLocaleCode);
+
+      try {
+        await doc.setValueAt(currentPath, value);
+        return value;
+      } catch (err) {
+        throw makeShareJSError(err, ERROR_MESSAGES.MFAILUPDATE);
+      }
     }
+  );
 
-    const currentPath = getCurrentPath(internalField.id, publicLocaleCode);
-
-    try {
-      await doc.setValueAt(currentPath, value);
-      return value;
-    } catch (err) {
-      throw makeShareJSError(err, ERROR_MESSAGES.MFAILUPDATE);
-    }
-  };
-
-  const removeValue = async (publicLocaleCode?: string) => {
+  const removeValue = makeReadOnlyGuardedMethod(!!readOnly, async (publicLocaleCode?: string) => {
     if (!canEdit(doc, publicFieldId, publicLocaleCode)) {
       throw makePermissionError();
     }
@@ -138,7 +158,7 @@ export function createEntryFieldApi({
     } catch (err) {
       throw makeShareJSError(err, ERROR_MESSAGES.MFAILREMOVAL);
     }
-  };
+  });
 
   function onValueChanged(callback: (value: any) => void): () => () => void;
   function onValueChanged(
@@ -224,7 +244,9 @@ export function createEntryFieldApi({
           onIsDisabledChanged(publicLocaleCode, cb as (isDisabled: boolean) => void),
         onSchemaErrorsChanged: (cb) =>
           onSchemaErrorsChanged(publicLocaleCode, cb as (errors: any) => void),
-        setInvalid: (isInvalid) => setInvalid(publicLocaleCode, isInvalid),
+        setInvalid: makeReadOnlyGuardedMethod(!!readOnly, (isInvalid) =>
+          setInvalid(publicLocaleCode, isInvalid)
+        ),
       };
     },
   };
