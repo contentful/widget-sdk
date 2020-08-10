@@ -1,4 +1,3 @@
-import { Entry } from 'contentful-management/dist/typings/entities/entry';
 import { ContentType, FieldExtensionSDK } from 'contentful-ui-extensions-sdk';
 import { noop } from 'lodash';
 
@@ -25,7 +24,7 @@ interface CreateReadOnlyFieldWidgetSDKOptions {
   cma: any;
   editorInterface: EditorInterface;
   endpoint: SpaceEndpoint;
-  entry: Entry;
+  entry: Entity;
   environmentIds: string[];
   publicFieldId: Field['id'] | Field['apiName'];
   fieldValue: any;
@@ -65,7 +64,7 @@ export function createReadonlyFieldWidgetSDK({
   });
   const otDoc: Document = create(
     {
-      data: (entry as unknown) as Entity, // TODO: wtf
+      data: entry,
       setDeleted: noop,
     },
     internalContentType,
