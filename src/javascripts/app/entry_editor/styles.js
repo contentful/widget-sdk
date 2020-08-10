@@ -27,24 +27,6 @@ const slideOutToRight = keyframes({
   },
 });
 
-const fadeIn = keyframes({
-  from: {
-    filter: 'alpha(opacity=0)',
-  },
-  to: {
-    filter: 'none',
-  },
-});
-
-const fadeOut = keyframes({
-  from: {
-    filter: 'none',
-  },
-  to: {
-    filter: 'alpha(opacity=0)',
-  },
-});
-
 export const styles = {
   mainContent: css({
     padding: 0,
@@ -70,14 +52,14 @@ export const styles = {
     height: '100%',
   }),
   sidebarSlideIn: css({
-    animation: `500ms ease-in-out ${slideInFromRight}, 200ms ease-in-out ${fadeIn}`,
+    animation: `500ms ease-in-out ${slideInFromRight}`,
     overflow: 'auto',
     width: '360px',
     minWidth: '360px',
     visibility: 'visible',
   }),
   sideBarSlideOut: css({
-    animation: `500ms ease-in-out ${slideOutToRight}, 200ms ease-in-out ${fadeOut}`,
+    animation: `500ms ease-in-out ${slideOutToRight}`,
     width: '0',
     minWidth: '0',
     overflow: 'hidden',

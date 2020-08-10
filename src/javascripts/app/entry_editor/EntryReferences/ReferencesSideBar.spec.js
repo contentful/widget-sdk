@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, cleanup, wait, fireEvent } from '@testing-library/react';
+import { render, cleanup, waitFor, fireEvent, act } from '@testing-library/react';
 import cfResolveResponse from 'contentful-resolve-response';
 import { Notification } from '@contentful/forma-36-react-components';
 
@@ -79,12 +79,16 @@ describe('ReferencesSideBar component', () => {
         <ReferencesSideBar entityTitle="Title" entity={entity} />
       </MockPovider>
     );
-    await wait();
 
-    fireEvent.click(getByTestId('validateReferencesBtn'));
-    await wait();
+    await waitFor(() => getByTestId);
 
-    expect(Notification.error).toHaveBeenCalledWith('Some references did not pass validation');
+    act(() => {
+      fireEvent.click(getByTestId('validateReferencesBtn'));
+    });
+
+    await waitFor(() => {
+      expect(Notification.error).toHaveBeenCalledWith('Some references did not pass validation');
+    });
   });
 
   it('should render the success notification without validation error', async () => {
@@ -97,12 +101,15 @@ describe('ReferencesSideBar component', () => {
       </MockPovider>
     );
 
-    await wait();
+    await waitFor(() => getByTestId);
 
-    fireEvent.click(getByTestId('validateReferencesBtn'));
-    await wait();
+    act(() => {
+      fireEvent.click(getByTestId('validateReferencesBtn'));
+    });
 
-    expect(Notification.success).toHaveBeenCalledWith('All references passed validation');
+    await waitFor(() => {
+      expect(Notification.success).toHaveBeenCalledWith('All references passed validation');
+    });
   });
 
   it('should render the success notification after publication', async () => {
@@ -116,13 +123,15 @@ describe('ReferencesSideBar component', () => {
       </MockPovider>
     );
 
-    await wait();
+    await waitFor(() => getByTestId);
 
-    fireEvent.click(getByTestId('publishReferencesBtn'));
+    act(() => {
+      fireEvent.click(getByTestId('publishReferencesBtn'));
+    });
 
-    await wait();
-
-    expect(Notification.success).toHaveBeenCalledWith('Title was published successfully');
+    await waitFor(() => {
+      expect(Notification.success).toHaveBeenCalledWith('Title was published successfully');
+    });
   });
 
   it('should render the failed notification after failed publication', async () => {
@@ -136,12 +145,15 @@ describe('ReferencesSideBar component', () => {
       </MockPovider>
     );
 
-    await wait();
+    await waitFor(() => getByTestId);
 
-    fireEvent.click(getByTestId('publishReferencesBtn'));
-    await wait();
+    act(() => {
+      fireEvent.click(getByTestId('publishReferencesBtn'));
+    });
 
-    expect(Notification.error).toHaveBeenCalledWith('We were unable to publish Title');
+    await waitFor(() => {
+      expect(Notification.error).toHaveBeenCalledWith('We were unable to publish Title');
+    });
   });
 
   it('should render the validation toast after publishing invalid state', async () => {
@@ -158,12 +170,15 @@ describe('ReferencesSideBar component', () => {
       </MockPovider>
     );
 
-    await wait();
+    await waitFor(() => getByTestId);
 
-    fireEvent.click(getByTestId('publishReferencesBtn'));
-    await wait();
+    act(() => {
+      fireEvent.click(getByTestId('publishReferencesBtn'));
+    });
 
-    expect(Notification.error).toHaveBeenCalledWith('Some references did not pass validation');
+    await waitFor(() => {
+      expect(Notification.error).toHaveBeenCalledWith('Some references did not pass validation');
+    });
   });
 
   it('should disable the buttons when there are no references', async () => {
@@ -173,11 +188,13 @@ describe('ReferencesSideBar component', () => {
       </MockPovider>
     );
 
-    await wait();
+    await waitFor(() => getByTestId);
 
-    expect(getByTestId('publishReferencesBtn')).toBeDisabled();
-    expect(getByTestId('validateReferencesBtn')).toBeDisabled();
-    expect(getByTestId('addReferencesToReleaseBtn')).toBeDisabled();
+    await waitFor(() => {
+      expect(getByTestId('publishReferencesBtn')).toBeDisabled();
+      expect(getByTestId('validateReferencesBtn')).toBeDisabled();
+      expect(getByTestId('addReferencesToReleaseBtn')).toBeDisabled();
+    });
   });
 
   it('should disable the buttons when there are no selected entities', async () => {
@@ -188,26 +205,33 @@ describe('ReferencesSideBar component', () => {
       </MockPovider>
     );
 
-    await wait();
+    await waitFor(() => getByTestId);
 
-    expect(getByTestId('publishReferencesBtn')).toBeDisabled();
-    expect(getByTestId('validateReferencesBtn')).toBeDisabled();
-    expect(getByTestId('addReferencesToReleaseBtn')).toBeDisabled();
+    await waitFor(() => {
+      expect(getByTestId('publishReferencesBtn')).toBeDisabled();
+      expect(getByTestId('validateReferencesBtn')).toBeDisabled();
+      expect(getByTestId('addReferencesToReleaseBtn')).toBeDisabled();
+    });
   });
-});
 
-it('should render the release dialog when add to release button is clicked', async () => {
-  const response = cfResolveResponse(simpleReferences);
-  const selectedEntities = cfResolveResponse(arrayOfReferences);
-  const { getByTestId } = render(
-    <MockPovider references={response} selectedEntities={selectedEntities}>
-      <ReferencesSideBar entityTitle="Title" entity={entity} />
-    </MockPovider>
-  );
-  await wait();
+  it('should render the release dialog when add to release button is clicked', async () => {
+    const response = cfResolveResponse(simpleReferences);
+    const selectedEntities = cfResolveResponse(arrayOfReferences);
 
-  fireEvent.click(getByTestId('addReferencesToReleaseBtn'));
-  await wait();
+    const { getByTestId } = render(
+      <MockPovider references={response} selectedEntities={selectedEntities}>
+        <ReferencesSideBar entityTitle="Title" entity={entity} />
+      </MockPovider>
+    );
 
-  expect(getByTestId('content-release-modal')).toBeInTheDocument();
+    await waitFor(() => getByTestId);
+
+    act(() => {
+      fireEvent.click(getByTestId('addReferencesToReleaseBtn'));
+    });
+
+    await waitFor(() => {
+      expect(getByTestId('content-release-modal')).toBeInTheDocument();
+    });
+  });
 });

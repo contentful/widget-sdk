@@ -142,7 +142,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
       .catch((error) => {
         dispatch({ type: SET_PROCESSING_ACTION, value: null });
         /**
-         * Separate validation resonse from failure response.
+         * Separate validation response from failure response.
          * Permisson errors have a different shape (without sys).
          */
         if (error.statusCode && error.statusCode === 422) {
