@@ -27,11 +27,11 @@ interface CreateReadOnlyFieldWidgetSDKOptions {
   endpoint: SpaceEndpoint;
   entry: Entry;
   environmentIds: string[];
-  field: Field;
+  publicFieldId: Field['id'] | Field['apiName'];
   fieldValue: any;
   initialContentTypes: ContentType[];
   internalContentType: ContentType;
-  locale: Locale;
+  publicLocaleCode: Locale['code'];
   spaceId: string;
   spaceMember: SpaceMember;
   tagsRepo: any;
@@ -46,10 +46,10 @@ export function createReadonlyFieldWidgetSDK({
   endpoint,
   entry,
   environmentIds,
-  field, // TODO: should this be replaced with publicFieldId?
+  publicFieldId,
   initialContentTypes,
   internalContentType,
-  locale, // TODO: should this be replaced by the code?
+  publicLocaleCode,
   spaceId,
   spaceMember,
   tagsRepo,
@@ -123,9 +123,9 @@ export function createReadonlyFieldWidgetSDK({
       },
     },
     environmentIds,
-    publicFieldId: field.apiName ?? field.id,
+    publicFieldId,
     internalContentType,
-    publicLocaleCode: locale.code,
+    publicLocaleCode,
     spaceId,
     spaceMember,
     widgetId,
