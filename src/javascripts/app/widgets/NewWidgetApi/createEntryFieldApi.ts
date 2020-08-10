@@ -101,7 +101,7 @@ export function createEntryFieldApi({
   setInvalid: (publicLocaleCode: string, value: boolean) => void;
   listenToFieldLocaleEvent: FieldLocaleEventListenerFn;
 }): EntryFieldAPI {
-  const id = internalField.apiName ?? internalField.id;
+  const publicFieldId = internalField.apiName ?? internalField.id;
   // We fall back to `internalField.id` because some old fields don't have an
   // apiName / public ID
 
@@ -112,7 +112,7 @@ export function createEntryFieldApi({
   };
 
   const setValue = async (value: any, publicLocaleCode?: string) => {
-    if (!canEdit(otDoc, id, publicLocaleCode)) {
+    if (!canEdit(otDoc, publicFieldId, publicLocaleCode)) {
       throw makePermissionError();
     }
 
@@ -127,7 +127,7 @@ export function createEntryFieldApi({
   };
 
   const removeValue = async (publicLocaleCode?: string) => {
-    if (!canEdit(otDoc, id, publicLocaleCode)) {
+    if (!canEdit(otDoc, publicFieldId, publicLocaleCode)) {
       throw makePermissionError();
     }
 
@@ -197,7 +197,7 @@ export function createEntryFieldApi({
   const items = internalField.items;
 
   return {
-    id,
+    id: publicFieldId,
     locales,
     type,
     required,
@@ -210,7 +210,7 @@ export function createEntryFieldApi({
     onIsDisabledChanged,
     getForLocale(publicLocaleCode) {
       return {
-        id,
+        id: publicFieldId,
         locale: publicLocaleCode,
         type,
         required,
