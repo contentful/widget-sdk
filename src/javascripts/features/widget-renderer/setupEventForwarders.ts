@@ -36,6 +36,20 @@ export function setupEventForwarders(
   if (isFieldEditingLocation(location)) {
     const specificSdk = sdk as FieldExtensionSDK;
 
+    // Legacy events, scoped to the current field. New versions of the SDK
+    // don't listen to them, they use field-locale information included
+    // in events broadcasted above.
+    const off1 = specificSdk.field.onIsDisabledChanged((isDisabled: boolean) => {
+      channel.send(ChannelEvent.LegacyIsDisabledChanged, [isDisabled]);
+    });
+
+    const off2 = specificSdk.field.onSchemaErrorsChanged((errors: any) => {
+      channel.send(ChannelEvent.LegacySchemaErrorsChanged, [errors]);
+    });
+
+    cleanupTasks.push(off1, off2);
+
+    // Currently supported events, always scoped to a field-locale.
     Object.values(specificSdk.entry.fields).forEach((field) => {
       field.locales.forEach((localeCode: string) => {
         const fieldLocale = field.getForLocale(localeCode);
@@ -56,19 +70,6 @@ export function setupEventForwarders(
         cleanupTasks.push(off1, off2, off3);
       });
     });
-
-    // Legacy events, scoped to the current field. New versions of the SDK
-    // don't listen to them, they use field-locale information included
-    // in events broadcasted above.
-    const off1 = specificSdk.field.onIsDisabledChanged((isDisabled: boolean) => {
-      channel.send(ChannelEvent.LegacyIsDisabledChanged, [isDisabled]);
-    });
-
-    const off2 = specificSdk.field.onSchemaErrorsChanged((errors: any) => {
-      channel.send(ChannelEvent.LegacySchemaErrorsChanged, [errors]);
-    });
-
-    cleanupTasks.push(off1, off2);
   }
 
   return () => cleanupTasks.forEach((off) => off());
