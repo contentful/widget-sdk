@@ -5,17 +5,12 @@ import { createNavigatorApi } from './createNavigatorApi';
 import { createLocalesApi } from './createLocalesApi';
 import { createDialogsApi } from './createDialogsApi';
 import { createSpaceApi } from './createSpaceApi';
-import { createContentTypeApi } from './createContentTypeApi';
+import { InternalContentType, createContentTypeApi } from './createContentTypeApi';
 import { createTagsRepo } from 'features/content-tags';
 import { createUserApi } from './createUserApi';
 import { createIdsApi } from './createIdsApi';
 import { createEntryApi } from './createEntryApi';
-import {
-  FieldExtensionSDK,
-  DialogExtensionSDK,
-  DialogsAPI,
-  ContentType,
-} from 'contentful-ui-extensions-sdk';
+import { FieldExtensionSDK, DialogExtensionSDK, DialogsAPI } from 'contentful-ui-extensions-sdk';
 import { createEditorApi } from './createEditorApi';
 import { WidgetNamespace } from 'features/widget-renderer';
 import { createAccessApi } from './createAccessApi';
@@ -41,7 +36,7 @@ export function createFieldWidgetSDK({
   spaceContext: any;
   $scope: any;
   otDoc: Document;
-  internalContentType: ContentType;
+  internalContentType: InternalContentType;
 }): FieldExtensionSDK {
   // "Editing" APIs
   const editor = createEditorApi({

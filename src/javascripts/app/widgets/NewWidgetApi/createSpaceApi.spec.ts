@@ -1,7 +1,7 @@
 import { createSpaceApi } from './createSpaceApi';
 import { createContentTypeApi } from './createContentTypeApi';
 import { CONTENT_ENTITY_UPDATED_EVENT } from 'services/PubSubService';
-import { ContentType } from 'contentful-ui-extensions-sdk';
+import { InternalContentType } from './createContentTypeApi';
 
 jest.mock('Config', () => ({
   uploadApiUrl: jest.fn(() => 'example_url'),
@@ -66,7 +66,7 @@ const usersRepo = {
 };
 const spaceId = 'space_id';
 
-const buildApi = (initialContentTypes: ContentType[]) =>
+const buildApi = (initialContentTypes: InternalContentType[]) =>
   createSpaceApi({
     cma,
     tagsRepo,

@@ -2,8 +2,8 @@ import ScheduledActionsRepo from 'app/ScheduledActions/DataManagement/ScheduledA
 import { CONTENT_ENTITY_UPDATED_EVENT, PubSubClient } from 'services/PubSubService';
 import { getToken } from 'Authentication';
 import { uploadApiUrl } from 'Config';
-import { SpaceAPI, ContentType, User } from 'contentful-ui-extensions-sdk';
-import { createContentTypeApi } from './createContentTypeApi';
+import { SpaceAPI, User } from 'contentful-ui-extensions-sdk';
+import { InternalContentType, createContentTypeApi } from './createContentTypeApi';
 import { get, noop } from 'lodash';
 
 const ASSET_PROCESSING_POLL_MS = 500;
@@ -44,7 +44,7 @@ export function createSpaceApi({
   usersRepo,
 }: {
   cma: any;
-  initialContentTypes: ContentType[];
+  initialContentTypes: InternalContentType[];
   pubSubClient?: PubSubClient;
   environmentIds: string[];
   spaceId: string;

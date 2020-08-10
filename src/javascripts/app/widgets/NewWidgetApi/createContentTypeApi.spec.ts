@@ -1,24 +1,39 @@
 import { createContentTypeApi } from './createContentTypeApi';
+import { ContentType } from 'contentful-ui-extensions-sdk';
 
 describe('createContentTypeApi', () => {
   describe('when passed an internal content type', () => {
     const internalContentType = {
       name: 'content type',
       description: 'a type of content',
-      sys: { id: 'something' },
+      sys: { id: 'something', type: 'ContentType' },
       displayField: 'title',
       fields: [
         {
           id: 'internalId',
           apiName: 'externalId',
+          disabled: false,
+          localized: false,
+          name: 'first_field',
+          omitted: false,
+          required: false,
+          type: 'Symbol',
+          validations: [{}],
         },
         {
           id: 'title',
           apiName: 'title',
+          disabled: false,
+          localized: false,
+          name: 'second_field',
+          omitted: false,
+          required: false,
+          type: 'Symbol',
+          validations: [{}],
         },
       ],
     };
-    let result;
+    let result: ContentType;
     beforeAll(() => {
       result = createContentTypeApi(internalContentType);
     });
