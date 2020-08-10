@@ -221,11 +221,7 @@ const EntryEditorWorkbench = (props) => {
             })}>
             <ReferencesSideBar entity={editorData.entity.data} entityTitle={title} />
           </Workbench.Sidebar>
-          <Workbench.Sidebar
-            position="right"
-            className={cx(styles.sidebar, {
-              [styles.entrySideBar]: referencesTab,
-            })}>
+          <Workbench.Sidebar position="right" className={styles.sidebar}>
             <EntrySidebar
               entrySidebarProps={entrySidebarProps}
               sidebarToggleProps={sidebarToggleProps}

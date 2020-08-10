@@ -39,17 +39,14 @@ export const styles = {
   sidebar: css({
     boxShadow: '1px 0 4px 0 rgba(0, 0, 0, 0.9)',
     padding: '0',
+    height: '100%',
   }),
   referenceSideBar: css({
     position: 'absolute',
     zIndex: '1',
-    height: '100%',
     width: '0',
     minWidth: '0',
     visibility: 'hidden',
-  }),
-  entrySideBar: css({
-    height: '100%',
   }),
   sidebarSlideIn: css({
     animation: `500ms ease-in-out ${slideInFromRight}`,

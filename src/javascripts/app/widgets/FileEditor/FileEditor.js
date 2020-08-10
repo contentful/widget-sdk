@@ -111,24 +111,24 @@ export default function FileEditor(props) {
 
   if (disabled) {
     const downloadButtonProps = { ...props, disabled: false };
-    if (file.url || isUnprocessed) {
+    if (!file.url || isUnprocessed) {
       return (
         <div className="file-info">
           <FileEditorLoading />
         </div>
       );
-    } else {
-      return (
-        <>
-          <div className="file-info">
-            <FileEditorPreview file={file} />
-          </div>
-          <div className={styles.root}>
-            <DownloadButton {...downloadButtonProps} />
-          </div>
-        </>
-      );
     }
+
+    return (
+      <>
+        <div className="file-info">
+          <FileEditorPreview file={file} />
+        </div>
+        <div className={styles.root}>
+          <DownloadButton {...downloadButtonProps} />
+        </div>
+      </>
+    );
   }
 
   return (
