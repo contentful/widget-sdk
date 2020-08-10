@@ -112,6 +112,9 @@ function integrations() {
     osano: strictObject({
       cdnKey: { type: 'string' },
     }),
+    sentry: strictObject({
+      dsn: { type: 'string' },
+    }),
   };
 }
 

@@ -99,7 +99,7 @@ describe('createSpaceApi', () => {
 
         const result = spaceApi.getCachedContentTypes();
 
-        expect(result.length).toEqual(0);
+        expect(result).toHaveLength(0);
       });
     });
 

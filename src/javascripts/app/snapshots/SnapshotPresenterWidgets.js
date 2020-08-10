@@ -45,7 +45,9 @@ const SnapshotPresenterWidgets = ({
     );
   }
 
-  const rtlClassName = isRtlLocale(locale.code) ? styles.rtl : '';
+  const isRtl = isRtlLocale(locale.code);
+  const rtlClassName = isRtl ? styles.rtl : '';
+
   switch (type) {
     case 'Array<Symbol>':
       return <SnapshotPresenterArraySymbol className={rtlClassName} value={value} />;
@@ -70,7 +72,11 @@ const SnapshotPresenterWidgets = ({
         />
       );
     case 'Text':
-      return <SnapshotPresenterMarkdown className={rtlClassName} value={value} />;
+      return widget.widgetId === 'markdown' ? (
+        <SnapshotPresenterMarkdown direction={isRtl ? 'rtl' : 'ltr'} value={value} />
+      ) : (
+        <SnapshotPresenterStandard className={rtlClassName} value={value} />
+      );
     case 'Integer':
       return <SnapshotPresenterStandard value={value} />;
     case 'Number':
@@ -91,6 +97,7 @@ SnapshotPresenterWidgets.propTypes = {
   value: PropTypes.any.isRequired,
   type: PropTypes.string.isRequired,
   widget: PropTypes.shape({
+    widgetId: PropTypes.string.isRequired,
     field: PropTypes.oneOfType([
       PropTypes.shape({
         type: PropTypes.string,

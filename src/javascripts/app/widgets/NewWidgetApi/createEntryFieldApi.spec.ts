@@ -182,7 +182,7 @@ describe('createEntryFieldApi', () => {
     });
 
     describe('when the value can be edited', () => {
-      it('changes the value', async () => {
+      it('sets the value', async () => {
         (defaultOtDoc.permissions.canEditFieldLocale as jest.MockedFunction<any>).mockReturnValue(
           true
         );
@@ -281,7 +281,7 @@ describe('createEntryFieldApi', () => {
     describe('passed callback and field data to listenToFieldLocaleEvent', () => {
       let entryFieldApi: EntryFieldAPI;
       let callback: jest.Mock;
-      let listenToFieldLocaleEvent = jest.fn();
+      const listenToFieldLocaleEvent = jest.fn();
 
       beforeEach(() => {
         entryFieldApi = buildEntryFieldApi({

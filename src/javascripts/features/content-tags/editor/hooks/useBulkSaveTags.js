@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import useBulkActions from 'components/tabs/useBulkActions';
+import { useBulkActions } from 'core/hooks';
 import LoadingOverlay from 'app/common/LoadingOverlay';
 
 const useBulkSaveTags = (onClose, updateEntities) => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, wait } from '@testing-library/react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
 import { Notification } from '@contentful/forma-36-react-components';
 import DeleteUserModal from './DeleteUserModal';
 import { deleteUserAccount } from './AccountRepository';
@@ -52,12 +52,12 @@ describe('DeleteUser', () => {
 
     fireEvent.click(queryByTestId('confirm-delete-account-button'));
 
-    await wait();
-
-    expect(deleteUserAccount).toHaveBeenCalledWith({
-      reason: 'not_useful',
-      description: '',
-    });
+    await waitFor(() =>
+      expect(deleteUserAccount).toHaveBeenCalledWith({
+        reason: 'not_useful',
+        description: '',
+      })
+    );
   });
 
   it('should submit the API request with the reason key and details if details are given', async () => {
@@ -69,12 +69,12 @@ describe('DeleteUser', () => {
     });
     fireEvent.click(queryByTestId('confirm-delete-account-button'));
 
-    await wait();
-
-    expect(deleteUserAccount).toHaveBeenCalledWith({
-      reason: 'dont_understand',
-      description: 'This is too complicated!!!!',
-    });
+    await waitFor(() =>
+      expect(deleteUserAccount).toHaveBeenCalledWith({
+        reason: 'dont_understand',
+        description: 'This is too complicated!!!!',
+      })
+    );
   });
 
   it('should call onConfirm if the API request was successful', async () => {
@@ -84,9 +84,7 @@ describe('DeleteUser', () => {
 
     fireEvent.click(queryByTestId('confirm-delete-account-button'));
 
-    await wait();
-
-    expect(onConfirm).toHaveBeenCalled();
+    await waitFor(() => expect(onConfirm).toHaveBeenCalled());
   });
 
   it('should show a notification if there was an error while deleting the user from the API', async () => {
@@ -99,9 +97,7 @@ describe('DeleteUser', () => {
 
     fireEvent.click(queryByTestId('confirm-delete-account-button'));
 
-    await wait();
-
-    expect(Notification.error).toHaveBeenCalled();
+    await waitFor(() => expect(Notification.error).toHaveBeenCalled());
     expect(onConfirm).not.toHaveBeenCalled();
   });
 

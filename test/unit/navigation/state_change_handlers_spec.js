@@ -4,11 +4,10 @@ import { $initialize, $inject } from 'test/utils/ng';
 
 describe('navigation/stateChangeHandlers', () => {
   let $rootScope;
-  let modalCloseStub;
 
   afterEach(() => {
     // Avoid memory leak
-    $rootScope = modalCloseStub = null;
+    $rootScope = null;
   });
 
   beforeEach(async function () {
@@ -25,7 +24,6 @@ describe('navigation/stateChangeHandlers', () => {
       logServerError: sinon.stub(),
       leaveBreadcrumb: () => {},
     };
-    modalCloseStub = sinon.stub();
 
     this.system.set('services/TokenStore', this.tokenStore);
 
@@ -40,7 +38,6 @@ describe('navigation/stateChangeHandlers', () => {
     await $initialize(this.system, ($provide) => {
       $provide.value('$state', this.state);
       $provide.constant('spaceContext', this.spaceContext);
-      $provide.constant('modalDialog', { closeAll: modalCloseStub });
     });
 
     $rootScope = $inject('$rootScope');
@@ -48,18 +45,7 @@ describe('navigation/stateChangeHandlers', () => {
     setupStateChangeHandlers();
   });
 
-  describe('state change', () => {
-    it('closes opened modal dialog', () => {
-      $rootScope.$emit('$stateChangeStart', { name: 'page1' }, {}, { name: 'page2' }, {});
-      sinon.assert.calledOnce(modalCloseStub);
-    });
-  });
-
   describe('redirections', () => {
-    it('does not close modals', () => {
-      sinon.assert.notCalled(modalCloseStub);
-    });
-
     it('redirects if `redirectTo` property is provided', function () {
       this.state.go.returns();
       const to = { name: 'spaces.detail.entries', redirectTo: 'spaces.detail.content_types' };

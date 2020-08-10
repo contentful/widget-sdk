@@ -5,11 +5,8 @@ import { deepFreeze } from 'utils/Freeze';
 import * as List from 'utils/List';
 
 import * as localeData from 'app/entity_editor/setLocaleData';
-import * as accessChecker from 'access_control/AccessChecker';
-import * as Analytics from 'analytics/Analytics';
 import * as DataLoader from 'app/entity_editor/DataLoader';
 import * as Tracking from 'app/entity_editor/bulk_editor/Tracking';
-import * as entitySelector from 'search/EntitySelector/entitySelector';
 
 import bulkEditorTemplate from './bulk_editor.html';
 
@@ -91,13 +88,10 @@ export default function register() {
           loadEditorData,
         };
 
-        $scope.actions = makeActions(
-          referenceContext.field,
-          addLinks,
-          referenceContext.links$,
-          track
-        );
-
+        $scope.field = referenceContext.field;
+        $scope.addLinks = addLinks;
+        $scope.getCurrentSize = () => K.getValue(referenceContext.links$).length;
+        $scope.track = track;
         $scope.newCloseWithReason = (reason) => () => {
           referenceContext.close(reason);
         };
@@ -126,92 +120,6 @@ export default function register() {
           }
           nextFocusIndex = null;
         }
-      }
-
-      /**
-       * Returns the actions for creating new entries and adding existing entries.
-       */
-      function makeActions(field, addLinks, links$, track) {
-        // TODO necessary for entitySelector change it
-        const extendedField = _.extend({}, field, {
-          itemLinkType: _.get(field, ['items', 'linkType']),
-          itemValidations: _.get(field, ['items', 'validations'], []),
-        });
-        const allowedCTs = getAllowedCTs(extendedField);
-        const accessibleCTs = allowedCTs.map((ct) => ({
-          id: ct.sys.id,
-          name: ct.name,
-        }));
-
-        return {
-          allowedCTs: allowedCTs, // For new "Add entry" button behind feature flag.
-          accessibleCTs: accessibleCTs, // For legacy "Add entry" button.
-          addNewEntry: addNewEntry,
-          addExistingEntries: addExistingEntries,
-        };
-
-        function addNewEntry(ctOrCtId) {
-          const contentType = _.isObject(ctOrCtId)
-            ? ctOrCtId
-            : spaceContext.publishedCTs.get(ctOrCtId);
-          return spaceContext.cma.createEntry(contentType.getId(), {}).then((entry) => {
-            Analytics.track('entry:create', {
-              eventOrigin: 'bulk-editor',
-              contentType: contentType.data,
-              response: entry.data,
-            });
-            track.addNew();
-            return addLinks([linkEntity(entry)]);
-          });
-        }
-
-        function addExistingEntries() {
-          const currentSize = K.getValue(links$).length;
-          entitySelector.openFromField(extendedField, currentSize).then((entities) => {
-            track.addExisting(entities.length);
-            addLinks(entities.map(linkEntity));
-          });
-        }
-      }
-
-      /**
-       * Returns a list of content types that the user can add to this field.
-       *
-       * This takes into account the content types users can create entries for and
-       * the content type validation on the field.
-       */
-      function getAllowedCTs(field) {
-        const itemValidations = _.get(field, ['items', 'validations']);
-
-        const contentTypeValidation = _.find(
-          itemValidations,
-          (validation) => !!validation.linkContentType
-        );
-
-        const validCtIds = contentTypeValidation
-          ? contentTypeValidation.linkContentType
-          : getAllContentTypeIds();
-
-        const validCTs = _.uniq(validCtIds).map((ctId) => spaceContext.publishedCTs.get(ctId));
-
-        return _.filter(
-          validCTs,
-          (ct) => ct && accessChecker.canPerformActionOnEntryOfType('create', ct.getId())
-        ).map((ct) => ct.data);
-      }
-
-      function getAllContentTypeIds() {
-        return spaceContext.publishedCTs.getAllBare().map((ct) => ct.sys.id);
-      }
-
-      function linkEntity(entity) {
-        return {
-          sys: {
-            id: entity.sys.id,
-            linkType: entity.sys.type,
-            type: 'Link',
-          },
-        };
       }
     },
   ]);

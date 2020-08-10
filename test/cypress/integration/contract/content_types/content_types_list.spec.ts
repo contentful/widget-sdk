@@ -4,13 +4,21 @@ import {
   getAllContentTypesInDefaultSpace,
   getFirst1000ContentTypesInDefaultSpaceOrderedByName,
 } from '../../../interactions/content_types';
-import { FeatureFlag } from '../../../util/featureFlag';
+import { getResources, getContentTypeResource } from '../../../interactions/resources';
+import { getProductRatePlansWithSpace, getSpacePlan } from '../../../interactions/plans';
 const severalContentTypes = require('../../../fixtures/responses/content-types-several.json');
 
 describe('Content types list page', () => {
   beforeEach(() => {
+    cy.startFakeServers({
+      consumer: 'user_interface',
+      providers: ['users', 'resources', 'plans', 'content_types'],
+      cors: true,
+      pactfileWriteMode: 'merge',
+      dir: Cypress.env('pactDir'),
+      spec: 2,
+    });
     cy.resetAllFakeServers();
-    cy.disableFeatureFlags([FeatureFlag.PRICING_2020_RELEASED]);
   });
 
   context('with no content types', () => {
@@ -18,6 +26,10 @@ describe('Content types list page', () => {
       const interactions = [
         ...defaultRequestsMock(),
         getFirst1000ContentTypesInDefaultSpaceOrderedByName.willReturnNone(),
+        getProductRatePlansWithSpace.willReturnDefault(),
+        getResources.willReturnSeveral(),
+        getContentTypeResource.willReturnDefault(),
+        getSpacePlan.willReturnDefault(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/content_types`);
@@ -49,6 +61,10 @@ describe('Content types list page', () => {
       const interactions = [
         ...defaultRequestsMock(),
         getFirst1000ContentTypesInDefaultSpaceOrderedByName.willReturnSeveral(),
+        getProductRatePlansWithSpace.willReturnDefault(),
+        getResources.willReturnSeveral(),
+        getContentTypeResource.willReturnDefault(),
+        getSpacePlan.willReturnDefault(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/content_types`);

@@ -28,6 +28,8 @@ import * as ssoSelectors from 'redux/selectors/sso';
 import { track } from 'analytics/Analytics';
 import { connect } from 'react-redux';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+// eslint-disable-next-line
+import { updateFieldValue } from 'features/sso';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
   source: 'webapp',

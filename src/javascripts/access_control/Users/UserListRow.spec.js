@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, wait, fireEvent, within } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import UserListRow from './UserListRow';
 
 import * as fake from 'test/helpers/fakeFactory';
@@ -38,9 +38,7 @@ describe('User List Row', () => {
       custom
     );
 
-    render(<UserListRow {...props} />);
-
-    return wait();
+    return render(<UserListRow {...props} />);
   };
 
   describe('renders correctly', () => {

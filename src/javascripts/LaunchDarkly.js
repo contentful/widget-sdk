@@ -29,12 +29,10 @@ let initializationPromise = null;
 let initialized = false;
 
 export const FLAGS = {
-  WALK_FOR_ME: 'feature-fe-10-2017-walkme-integration-eli-lilly',
   ENVIRONMENTS_FLAG: 'feature-dv-11-2017-environments',
   ENTRY_COMMENTS: 'feature-04-2019-entry-comments',
   ENTITY_EDITOR_CMA_EXPERIMENT: 'feature-pen-07-2019-fake-cma-calls-experiment-to-replace-sharejs',
   APP_MANAGEMENT_VIEWS: 'feature-ext-04-2020-app-backends',
-  PRICING_2020_RELEASED: 'feature-ogg-06-2020-enable-pricing-2020-features',
   PAYING_PREV_V2_ORG: 'feature-ogg-06-2020-v2-team-user',
   ALL_REFERENCES_DIALOG: 'feature-pulitzer-02-2020-all-reference-dialog',
   NEW_STATUS_SWITCH: 'feature-pulitzer-03-2020-new-status-switch',
@@ -43,6 +41,7 @@ export const FLAGS = {
   PRICING_2020_WARNING: 'feature-hejo-06-2020-pricing-2020-in-app-communication',
   NEW_FIELD_DIALOG: 'react-migration-new-content-type-field-dialog',
   ENTITY_SELECTOR_MIGRATION: 'feature-pulitzer-07-2020-entity-selector-migration',
+  NEW_PURCHASE_FLOW: 'feature-ogg-08-2020-enable-space-purchase-flow',
 
   // So that we can test the fallback mechanism without needing to rely on an actual
   // flag above, we use these special flags.
@@ -51,12 +50,10 @@ export const FLAGS = {
 };
 
 const FALLBACK_VALUES = {
-  [FLAGS.WALK_FOR_ME]: null,
   [FLAGS.ENVIRONMENTS_FLAG]: true,
   [FLAGS.ENTRY_COMMENTS]: true,
   [FLAGS.ENTITY_EDITOR_CMA_EXPERIMENT]: undefined,
   [FLAGS.APP_MANAGEMENT_VIEWS]: false,
-  [FLAGS.PRICING_2020_RELEASED]: true,
   [FLAGS.PAYING_PREV_V2_ORG]: false,
   [FLAGS.ALL_REFERENCES_DIALOG]: false,
   [FLAGS.NEW_STATUS_SWITCH]: false,
@@ -65,6 +62,7 @@ const FALLBACK_VALUES = {
   [FLAGS.PRICING_2020_WARNING]: true,
   [FLAGS.NEW_FIELD_DIALOG]: false,
   [FLAGS.ENTITY_SELECTOR_MIGRATION]: false,
+  [FLAGS.NEW_PURCHASE_FLOW]: false,
 
   // See above
   [FLAGS.__FLAG_FOR_UNIT_TESTS__]: 'fallback-value',
