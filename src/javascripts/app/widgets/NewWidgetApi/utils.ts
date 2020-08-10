@@ -1,5 +1,4 @@
 import {
-  ContentType,
   DialogsAPI,
   EntryAPI,
   FieldExtensionSDK,
@@ -8,7 +7,7 @@ import {
   SharedEditorSDK,
   SpaceAPI,
 } from 'contentful-ui-extensions-sdk';
-import { createContentTypeApi } from './createContentTypeApi';
+import { createContentTypeApi, InternalContentType } from './createContentTypeApi';
 import { createAccessApi } from './createAccessApi';
 import { Notification } from '@contentful/forma-36-react-components';
 import { createLocalesApi } from './createLocalesApi';
@@ -31,7 +30,7 @@ interface CreateSharedFieldWidgetSDKOptions {
   nonReadOnlyApis: NonReadOnlyApis;
   environmentIds: string[];
   publicFieldId: Field['id'] | Field['apiName'];
-  internalContentType: ContentType;
+  internalContentType: InternalContentType;
   publicLocaleCode: Locale['code'];
   spaceId: string;
   spaceMember: SpaceMember;

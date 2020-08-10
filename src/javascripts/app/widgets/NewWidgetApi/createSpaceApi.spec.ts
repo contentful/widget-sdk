@@ -1,7 +1,7 @@
 import { createSpaceApi } from './createSpaceApi';
 import { createContentTypeApi } from './createContentTypeApi';
 import { CONTENT_ENTITY_UPDATED_EVENT } from 'services/PubSubService';
-import { ContentType } from 'contentful-ui-extensions-sdk';
+import { InternalContentType } from './createContentTypeApi';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 
 jest.mock('Config', () => ({
@@ -75,7 +75,11 @@ const usersRepo = {
 };
 const spaceId = 'space_id';
 
-const buildSpaceApi = (initialContentTypes: ContentType[], onEntityChanged?, readOnly = false) => {
+const buildSpaceApi = (
+  initialContentTypes: InternalContentType[],
+  onEntityChanged?,
+  readOnly = false
+) => {
   const api = createSpaceApi({
     cma,
     tagsRepo,
