@@ -25,7 +25,7 @@ export function createFieldWidgetSDK({
   editorInterfaceSettings = {},
   spaceContext,
   $scope,
-  otDoc,
+  doc,
   internalContentType,
 }: {
   fieldId: string;
@@ -35,7 +35,7 @@ export function createFieldWidgetSDK({
   editorInterfaceSettings?: Record<string, any>;
   spaceContext: any;
   $scope: any;
-  otDoc: Document;
+  doc: Document;
   internalContentType: InternalContentType;
 }): FieldExtensionSDK {
   // "Editing" APIs
@@ -48,7 +48,7 @@ export function createFieldWidgetSDK({
   const contentType = createContentTypeApi(internalContentType);
   const entry = createEntryApi({
     internalContentType,
-    otDoc,
+    doc,
     // TODO: `setInvalid` is only available on `fieldController`. The SDK can only
     // mark the current field as invalid. We could consider moving `setInvalid` to
     // the field-locale level.

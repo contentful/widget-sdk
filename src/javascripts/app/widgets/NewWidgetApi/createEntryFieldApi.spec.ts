@@ -27,7 +27,7 @@ jest.mock('services/localeStore', () => {
 });
 
 describe('createEntryFieldApi', () => {
-  const otDoc = ({
+  const doc = ({
     changes: {
       filter: jest.fn(),
     },
@@ -53,7 +53,7 @@ describe('createEntryFieldApi', () => {
   const buildApi = (internalField: InternalContentTypeField) =>
     createEntryFieldApi({
       internalField,
-      otDoc,
+      doc,
       setInvalid: jest.fn(),
       listenToFieldLocaleEvent,
     });
@@ -136,7 +136,7 @@ describe('createEntryFieldApi', () => {
   describe('getValue', () => {
     it('returns the current value', () => {
       const currentValue = 'this is the current value';
-      (otDoc.getValueAt as jest.Mock).mockReturnValueOnce({
+      (doc.getValueAt as jest.Mock).mockReturnValueOnce({
         fields: {
           // eslint-disable-next-line @typescript-eslint/camelcase
           internal_id: {
@@ -154,7 +154,7 @@ describe('createEntryFieldApi', () => {
     describe('setValue', () => {
       describe('when the value cannot be edited', () => {
         it('throws', () => {
-          (otDoc.permissions.canEditFieldLocale as jest.Mock).mockReturnValue(false);
+          (doc.permissions.canEditFieldLocale as jest.Mock).mockReturnValue(false);
 
           const entryFieldApi = buildApi(internalField);
 
@@ -164,13 +164,13 @@ describe('createEntryFieldApi', () => {
 
       describe('when the value can be edited', () => {
         it('sets the value', async () => {
-          (otDoc.permissions.canEditFieldLocale as jest.Mock).mockReturnValue(true);
+          (doc.permissions.canEditFieldLocale as jest.Mock).mockReturnValue(true);
 
           const entryFieldApi = buildApi(internalField);
 
           await entryFieldApi.setValue('a new value');
 
-          expect(otDoc.setValueAt).toHaveBeenCalledWith(
+          expect(doc.setValueAt).toHaveBeenCalledWith(
             ['fields', 'internal_id', 'internalCode'],
             'a new value'
           );
@@ -181,7 +181,7 @@ describe('createEntryFieldApi', () => {
     describe('removeValue', () => {
       describe('when the value cannot be edited', () => {
         it('throws', () => {
-          (otDoc.permissions.canEditFieldLocale as jest.Mock).mockReturnValue(false);
+          (doc.permissions.canEditFieldLocale as jest.Mock).mockReturnValue(false);
 
           const entryFieldApi = buildApi(internalField);
 
@@ -191,17 +191,13 @@ describe('createEntryFieldApi', () => {
 
       describe('when the value can be edited', () => {
         it('removes the value', async () => {
-          (otDoc.permissions.canEditFieldLocale as jest.Mock).mockReturnValue(true);
+          (doc.permissions.canEditFieldLocale as jest.Mock).mockReturnValue(true);
 
           const entryFieldApi = buildApi(internalField);
 
           await entryFieldApi.removeValue();
 
-          expect(otDoc.removeValueAt).toHaveBeenCalledWith([
-            'fields',
-            'internal_id',
-            'internalCode',
-          ]);
+          expect(doc.removeValueAt).toHaveBeenCalledWith(['fields', 'internal_id', 'internalCode']);
         });
       });
     });
@@ -210,7 +206,7 @@ describe('createEntryFieldApi', () => {
   describe('onValueChanged', () => {
     it('passed callback will be called on changes', () => {
       const currentValue = 'value';
-      (otDoc.getValueAt as jest.Mock).mockReturnValueOnce({
+      (doc.getValueAt as jest.Mock).mockReturnValueOnce({
         fields: {
           // eslint-disable-next-line @typescript-eslint/camelcase
           internal_id: {

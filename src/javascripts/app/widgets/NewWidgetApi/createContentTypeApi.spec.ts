@@ -39,7 +39,7 @@ describe('createContentTypeApi', () => {
     });
 
     it('hides internal ids', () => {
-      expect(result.fields[0]).toEqual({ id: 'externalId' });
+      expect(result.fields[0].id).toEqual('externalId');
     });
 
     it('preserves the sys, name, description, and displayfield properties', () => {

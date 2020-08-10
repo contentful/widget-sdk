@@ -61,9 +61,9 @@ function getCurrentPath(internalFieldId: string, publicLocaleCode?: string) {
   return ['fields', internalFieldId, internalLocaleCode];
 }
 
-function canEdit(otDoc: Document, publicFieldId: string, publicLocaleCode?: string) {
+function canEdit(doc: Document, publicFieldId: string, publicLocaleCode?: string) {
   const externalLocaleCode = publicLocaleCode ?? localeStore.getDefaultLocale().code;
-  return otDoc.permissions.canEditFieldLocale(publicFieldId, externalLocaleCode);
+  return doc.permissions.canEditFieldLocale(publicFieldId, externalLocaleCode);
 }
 
 function getLocaleAndCallback(args: any[]) {
@@ -92,12 +92,12 @@ function getLocaleAndCallback(args: any[]) {
 
 export function createEntryFieldApi({
   internalField,
-  otDoc,
+  doc,
   setInvalid,
   listenToFieldLocaleEvent,
 }: {
   internalField: InternalContentTypeField;
-  otDoc: Document;
+  doc: Document;
   setInvalid: (publicLocaleCode: string, value: boolean) => void;
   listenToFieldLocaleEvent: FieldLocaleEventListenerFn;
 }): EntryFieldAPI {
@@ -108,18 +108,18 @@ export function createEntryFieldApi({
   const getValue = (publicLocaleCode?: string) => {
     const currentPath = getCurrentPath(internalField.id, publicLocaleCode);
 
-    return get(otDoc.getValueAt([]), currentPath);
+    return get(doc.getValueAt([]), currentPath);
   };
 
   const setValue = async (value: any, publicLocaleCode?: string) => {
-    if (!canEdit(otDoc, publicFieldId, publicLocaleCode)) {
+    if (!canEdit(doc, publicFieldId, publicLocaleCode)) {
       throw makePermissionError();
     }
 
     const currentPath = getCurrentPath(internalField.id, publicLocaleCode);
 
     try {
-      await otDoc.setValueAt(currentPath, value);
+      await doc.setValueAt(currentPath, value);
       return value;
     } catch (err) {
       throw makeShareJSError(err, ERROR_MESSAGES.MFAILUPDATE);
@@ -127,14 +127,14 @@ export function createEntryFieldApi({
   };
 
   const removeValue = async (publicLocaleCode?: string) => {
-    if (!canEdit(otDoc, publicFieldId, publicLocaleCode)) {
+    if (!canEdit(doc, publicFieldId, publicLocaleCode)) {
       throw makePermissionError();
     }
 
     const currentPath = getCurrentPath(internalField.id, publicLocaleCode);
 
     try {
-      await otDoc.removeValueAt(currentPath);
+      await doc.removeValueAt(currentPath);
     } catch (err) {
       throw makeShareJSError(err, ERROR_MESSAGES.MFAILREMOVAL);
     }
@@ -150,10 +150,10 @@ export function createEntryFieldApi({
     const path = getCurrentPath(internalField.id, locale.code);
 
     return K.onValueWhile(
-      otDoc.changes,
-      otDoc.changes.filter((changedPath: any) => PathUtils.isAffecting(changedPath, path)),
+      doc.changes,
+      doc.changes.filter((changedPath: any) => PathUtils.isAffecting(changedPath, path)),
       () => {
-        cb(get(otDoc.getValueAt([]), path));
+        cb(get(doc.getValueAt([]), path));
       }
     );
   }

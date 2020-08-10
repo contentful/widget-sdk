@@ -7,19 +7,19 @@ import { Document } from 'app/entity_editor/Document/typesDocument';
 
 export function createEntryApi({
   internalContentType,
-  otDoc,
+  doc,
   setInvalid,
   listenToFieldLocaleEvent,
 }: {
   internalContentType: InternalContentType;
-  otDoc: Document;
+  doc: Document;
   setInvalid: (localeCode: string, value: boolean) => void;
   listenToFieldLocaleEvent: FieldLocaleEventListenerFn;
 }): EntryAPI {
   const fields = internalContentType.fields.map((internalField: InternalContentTypeField) => {
     return createEntryFieldApi({
       internalField,
-      otDoc,
+      doc,
       setInvalid,
       listenToFieldLocaleEvent,
     });
@@ -27,14 +27,14 @@ export function createEntryApi({
 
   return {
     getSys: () => {
-      // TODO: the EntitySys type in otDoc doesn't match EntrySys from UIESDK
-      return (K.getValue(otDoc.sysProperty) as unknown) as EntrySys;
+      // TODO: the EntitySys type in doc doesn't match EntrySys from UIESDK
+      return (K.getValue(doc.sysProperty) as unknown) as EntrySys;
     },
     onSysChanged: (cb) => {
-      return K.onValue(otDoc.sysProperty, cb as (value: unknown) => void);
+      return K.onValue(doc.sysProperty, cb as (value: unknown) => void);
     },
     fields: reduceFields(fields),
-    metadata: otDoc.getValueAt(['metadata']),
+    metadata: doc.getValueAt(['metadata']),
   };
 }
 

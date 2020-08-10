@@ -49,7 +49,7 @@ describe('createEntryApi', () => {
     description: 'a content type',
     displayField: '',
   } as InternalContentType;
-  const otDoc = ({
+  const doc = ({
     getValueAt: jest.fn(),
     sysProperty: constant({ id: 'example' }),
   } as unknown) as Document;
@@ -58,14 +58,14 @@ describe('createEntryApi', () => {
   beforeEach(() => {
     entryApi = createEntryApi({
       internalContentType,
-      otDoc,
+      doc,
       setInvalid,
       listenToFieldLocaleEvent,
     });
   });
 
   describe('getSys', () => {
-    it('returns sys from otdoc', () => {
+    it('returns sys from doc', () => {
       const result = entryApi.getSys();
       expect(result).toEqual({ id: 'example' });
     });
@@ -75,7 +75,7 @@ describe('createEntryApi', () => {
     it('cals Kefir onvalue with the callback', () => {
       const callback = jest.fn();
       entryApi.onSysChanged(callback);
-      expect(onValue).toHaveBeenCalledWith(otDoc.sysProperty, callback);
+      expect(onValue).toHaveBeenCalledWith(doc.sysProperty, callback);
     });
   });
 
@@ -91,16 +91,16 @@ describe('createEntryApi', () => {
       example: 'metadata',
     };
     beforeEach(() => {
-      (otDoc.getValueAt as jest.Mock).mockReturnValueOnce(metadata);
+      (doc.getValueAt as jest.Mock).mockReturnValueOnce(metadata);
 
       entryApi = createEntryApi({
         internalContentType,
-        otDoc,
+        doc,
         setInvalid,
         listenToFieldLocaleEvent,
       });
     });
-    it('returns the metaData from otDoc', () => {
+    it('returns the metaData from doc', () => {
       const result = entryApi.metadata;
       expect(result).toEqual(metadata);
     });
