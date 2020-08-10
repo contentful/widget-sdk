@@ -9,12 +9,32 @@ import trackExtensionRender from 'widgets/TrackExtensionRender';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import {
+  DialogExtensionSDK,
   DialogsAPI,
   OpenCustomWidgetOptions,
-  DialogExtensionSDK,
 } from 'contentful-ui-extensions-sdk';
+import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 
-export function createDialogsApi(sdk: DialogExtensionSDK): DialogsAPI {
+const denyDialog = () => {
+  throw makeReadOnlyApiError(ReadOnlyApi.Dialog);
+};
+
+export function createReadOnlyDialogsApi() {
+  return {
+    openAlert: denyDialog,
+    openConfirm: denyDialog,
+    openCurrent: denyDialog,
+    openCurrentApp: denyDialog,
+    openExtension: denyDialog,
+    openPrompt: denyDialog,
+    selectMultipleAssets: denyDialog,
+    selectMultipleEntries: denyDialog,
+    selectSingleAsset: denyDialog,
+    selectSingleEntry: denyDialog,
+  };
+}
+
+export function createDialogsApi({ sdk }: { sdk: DialogExtensionSDK }): DialogsAPI {
   return {
     openAlert: ExtensionDialogs.openAlert,
     openConfirm: ExtensionDialogs.openConfirm,

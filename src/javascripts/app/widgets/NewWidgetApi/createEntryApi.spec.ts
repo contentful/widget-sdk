@@ -1,4 +1,5 @@
 import { createEntryApi } from './createEntryApi';
+import { InternalContentType } from './createContentTypeApi';
 import { FieldLocaleEventListenerFn } from './createEntryFieldApi';
 import { Document } from 'app/entity_editor/Document/typesDocument';
 import { EntryAPI } from 'contentful-ui-extensions-sdk';
@@ -47,8 +48,8 @@ describe('createEntryApi', () => {
     name: 'content_type',
     description: 'a content type',
     displayField: '',
-  };
-  const otDoc = ({
+  } as InternalContentType;
+  const doc = ({
     getValueAt: jest.fn(),
     sysProperty: constant({ id: 'example' }),
   } as unknown) as Document;
@@ -57,24 +58,24 @@ describe('createEntryApi', () => {
   beforeEach(() => {
     entryApi = createEntryApi({
       internalContentType,
-      otDoc,
+      doc,
       setInvalid,
       listenToFieldLocaleEvent,
     });
   });
 
   describe('getSys', () => {
-    it('returns sys from otdoc', () => {
+    it('returns sys from doc', () => {
       const result = entryApi.getSys();
       expect(result).toEqual({ id: 'example' });
     });
   });
 
   describe('onSysChange', () => {
-    it('cals Kefir onvalue with the callback', () => {
+    it('calls Kefir onvalue with the callback', () => {
       const callback = jest.fn();
       entryApi.onSysChanged(callback);
-      expect(onValue).toHaveBeenCalledWith(otDoc.sysProperty, callback);
+      expect(onValue).toHaveBeenCalledWith(doc.sysProperty, callback);
     });
   });
 
@@ -82,6 +83,26 @@ describe('createEntryApi', () => {
     it('returns an object of with fields keyed by field-ids', () => {
       const result = entryApi.fields;
       expect(result).toMatchSnapshot();
+    });
+  });
+
+  describe('metaData', () => {
+    const metadata = {
+      example: 'metadata',
+    };
+    beforeEach(() => {
+      (doc.getValueAt as jest.Mock).mockReturnValueOnce(metadata);
+
+      entryApi = createEntryApi({
+        internalContentType,
+        doc,
+        setInvalid,
+        listenToFieldLocaleEvent,
+      });
+    });
+    it('returns the metaData from doc', () => {
+      const result = entryApi.metadata;
+      expect(result).toEqual(metadata);
     });
   });
 });
