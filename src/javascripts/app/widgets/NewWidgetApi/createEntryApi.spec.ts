@@ -1,4 +1,5 @@
 import { createEntryApi } from './createEntryApi';
+import { InternalContentType } from './createContentTypeApi';
 import { FieldLocaleEventListenerFn } from './createEntryFieldApi';
 import { Document } from 'app/entity_editor/Document/typesDocument';
 import { EntryAPI } from 'contentful-ui-extensions-sdk';
@@ -47,7 +48,7 @@ describe('createEntryApi', () => {
     name: 'content_type',
     description: 'a content type',
     displayField: '',
-  };
+  } as InternalContentType;
   const otDoc = ({
     getValueAt: jest.fn(),
     sysProperty: constant({ id: 'example' }),

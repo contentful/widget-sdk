@@ -2,9 +2,10 @@ import { get } from 'lodash';
 import * as K from 'core/utils/kefir';
 import * as PathUtils from 'utils/Path';
 import localeStore from 'services/localeStore';
-import { EntryFieldAPI, Items } from 'contentful-ui-extensions-sdk';
+import { EntryFieldAPI } from 'contentful-ui-extensions-sdk';
 import { getModule } from 'core/NgRegistry';
 import { Document } from 'app/entity_editor/Document/typesDocument';
+import { InternalContentTypeField } from './createContentTypeApi';
 
 const ERROR_CODES = {
   BADUPDATE: 'ENTRY UPDATE FAILED',
@@ -18,7 +19,7 @@ const ERROR_MESSAGES = {
 };
 
 export type FieldLocaleEventListenerFn = (
-  internalField: InternalField,
+  internalField: InternalContentTypeField,
   locale: any,
   extractFieldLocaleProperty: (fieldLocale: any) => any,
   cb: (value: any) => void
@@ -50,14 +51,14 @@ export function makeShareJSError(shareJSError: { message: any }, message: string
   return Object.assign(error, { code: ERROR_CODES.BADUPDATE, data });
 }
 
-function getCurrentPath(internalField: InternalField, publicLocaleCode?: string) {
+function getCurrentPath(internalFieldId: string, publicLocaleCode?: string) {
   let internalLocaleCode = localeStore.getDefaultLocale().internal_code;
 
   if (publicLocaleCode) {
     internalLocaleCode = localeStore.toInternalCode(publicLocaleCode) ?? internalLocaleCode;
   }
 
-  return ['fields', internalField.id, internalLocaleCode];
+  return ['fields', internalFieldId, internalLocaleCode];
 }
 
 function canEdit(otDoc: Document, publicFieldId: string, publicLocaleCode?: string) {
@@ -89,23 +90,13 @@ function getLocaleAndCallback(args: any[]) {
   throw new TypeError('expected either callback, or locale code and callback');
 }
 
-export interface InternalField {
-  apiName?: string;
-  id: string;
-  localized: boolean;
-  required: boolean;
-  validations: Record<string, any>[];
-  items?: Items | undefined;
-  type: string;
-}
-
 export function createEntryFieldApi({
   internalField,
   otDoc,
   setInvalid,
   listenToFieldLocaleEvent,
 }: {
-  internalField: InternalField;
+  internalField: InternalContentTypeField;
   otDoc: Document;
   setInvalid: (publicLocaleCode: string, value: boolean) => void;
   listenToFieldLocaleEvent: FieldLocaleEventListenerFn;
@@ -115,7 +106,7 @@ export function createEntryFieldApi({
   // apiName / public ID
 
   const getValue = (publicLocaleCode?: string) => {
-    const currentPath = getCurrentPath(internalField, publicLocaleCode);
+    const currentPath = getCurrentPath(internalField.id, publicLocaleCode);
 
     return get(otDoc.getValueAt([]), currentPath);
   };
@@ -125,7 +116,7 @@ export function createEntryFieldApi({
       throw makePermissionError();
     }
 
-    const currentPath = getCurrentPath(internalField, publicLocaleCode);
+    const currentPath = getCurrentPath(internalField.id, publicLocaleCode);
 
     try {
       await otDoc.setValueAt(currentPath, value);
@@ -140,7 +131,7 @@ export function createEntryFieldApi({
       throw makePermissionError();
     }
 
-    const currentPath = getCurrentPath(internalField, publicLocaleCode);
+    const currentPath = getCurrentPath(internalField.id, publicLocaleCode);
 
     try {
       await otDoc.removeValueAt(currentPath);
@@ -156,7 +147,7 @@ export function createEntryFieldApi({
   ): () => () => void;
   function onValueChanged(...args: any[]) {
     const { cb, locale } = getLocaleAndCallback(args);
-    const path = getCurrentPath(internalField, locale.code);
+    const path = getCurrentPath(internalField.id, locale.code);
 
     return K.onValueWhile(
       otDoc.changes,

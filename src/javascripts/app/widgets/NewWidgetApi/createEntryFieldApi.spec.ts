@@ -1,5 +1,6 @@
 import { EntryFieldAPI } from 'contentful-ui-extensions-sdk';
-import { createEntryFieldApi, InternalField } from './createEntryFieldApi';
+import { createEntryFieldApi } from './createEntryFieldApi';
+import { InternalContentTypeField } from './createContentTypeApi';
 import { onValueWhile } from 'core/utils/kefir';
 import { Document } from 'app/entity_editor/Document/typesDocument';
 
@@ -47,9 +48,9 @@ describe('createEntryFieldApi', () => {
     required: false,
     validations: [],
     type: 'Symbol',
-  } as unknown) as InternalField;
+  } as unknown) as InternalContentTypeField;
 
-  const buildApi = (internalField: InternalField) =>
+  const buildApi = (internalField: InternalContentTypeField) =>
     createEntryFieldApi({
       internalField,
       otDoc,
@@ -68,7 +69,7 @@ describe('createEntryFieldApi', () => {
     describe('When apiName is missing', () => {
       it('is internalId', () => {
         const { apiName, ...rest } = internalField;
-        const entryFieldApi = buildApi(rest);
+        const entryFieldApi = buildApi(rest as InternalContentTypeField);
         expect(entryFieldApi.id).toEqual(internalField.id);
       });
     });
@@ -118,7 +119,7 @@ describe('createEntryFieldApi', () => {
     describe('when internalField is missing validations', () => {
       it('an empty array is return', () => {
         const { validations, ...rest } = internalField;
-        const entryFieldApi = buildApi(rest as InternalField);
+        const entryFieldApi = buildApi(rest as InternalContentTypeField);
         expect(entryFieldApi.validations).toEqual([]);
       });
     });

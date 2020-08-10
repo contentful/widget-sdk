@@ -1,7 +1,7 @@
 import * as PublicContentType from 'widgets/PublicContentType';
 import { ContentType, ContentTypeField } from 'contentful-ui-extensions-sdk';
 
-interface InternalContentTypeField extends ContentTypeField {
+export interface InternalContentTypeField extends ContentTypeField {
   apiName: string; // the external id of an internal Content Type field
 }
 
