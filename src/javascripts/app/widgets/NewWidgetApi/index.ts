@@ -15,14 +15,14 @@ import {
   DialogExtensionSDK,
   DialogsAPI,
   EntryAPI,
-  FieldAPI,
   FieldExtensionSDK,
   NavigatorAPI,
+  ParametersAPI,
   SharedEditorSDK,
   SpaceAPI,
 } from 'contentful-ui-extensions-sdk';
 import { createEditorApi } from './createEditorApi';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { Widget, WidgetNamespace } from 'features/widget-renderer';
 import { createAccessApi } from './createAccessApi';
 import { makeFieldLocaleEventListener } from './createEntryFieldApi';
 import { Document } from 'app/entity_editor/Document/typesDocument';
@@ -37,6 +37,46 @@ import { create as createEntityRepo } from '../../../data/CMA/EntityRepo';
 import { PubSubClient } from '../../../services/PubSubService';
 import { EditorInterface } from '../../../features/widget-renderer/interfaces';
 import { SpaceEndpoint } from '../../../data/CMA/types';
+
+interface NonReadOnlyApis {
+  editorApi: SharedEditorSDK['editor'];
+  entryApi: EntryAPI;
+  spaceApi: SpaceAPI;
+  navigatorApi: NavigatorAPI;
+  dialogsApi: DialogsAPI;
+  parametersApi: ParametersAPI;
+}
+
+interface CreateSharedFieldWidgetSDKOptions {
+  nonReadOnlyApis: NonReadOnlyApis;
+  environmentIds: string[];
+  publicFieldId: Field['id'] | Field['apiName'];
+  internalContentType: ContentType;
+  publicLocaleCode: Locale['code'];
+  spaceId: string;
+  spaceMember: SpaceMember;
+  widgetId: Widget['id'];
+  widgetNamespace: WidgetNamespace;
+}
+
+interface CreateReadOnlyFieldWidgetSDKOptions {
+  cma: any;
+  editorInterface: EditorInterface;
+  endpoint: SpaceEndpoint;
+  entry: Entry;
+  environmentIds: string[];
+  field: Field;
+  fieldValue: any;
+  initialContentTypes: ContentType[];
+  internalContentType: ContentType;
+  locale: Locale;
+  spaceId: string;
+  spaceMember: SpaceMember;
+  tagsRepo: any;
+  usersRepo: any;
+  widgetId: string;
+  widgetNamespace: WidgetNamespace;
+}
 
 export function createFieldWidgetSDK({
   fieldId,
@@ -70,8 +110,8 @@ export function createFieldWidgetSDK({
     internalContentType,
     otDoc,
     // TODO: `setInvalid` is only available on `fieldController`. The SDK can only
-    // mark the current field as invalid. We could consider moving `setInvalid` to
-    // the field-locale level.
+    //   mark the current field as invalid. We could consider moving `setInvalid` to
+    //   the field-locale level.
     setInvalid: (localeCode, isInvalid) => $scope.fieldController.setInvalid(localeCode, isInvalid),
     listenToFieldLocaleEvent: makeFieldLocaleEventListener($scope),
   });
@@ -88,21 +128,25 @@ export function createFieldWidgetSDK({
 
   const navigatorApi = createNavigatorApi({ spaceContext, widgetNamespace, widgetId });
 
-  // This is needed to allow the dialog inception as per end of this function
-  const mockDialogsApi = ({} as unknown) as DialogsAPI;
-
-  const parameters = {
-    installation: {},
-    instance: editorInterfaceSettings,
-  };
+  // We cannot create dialogs API w/o full SDK including dialog methods.
+  // The reason is that we can open dialogs from dialogs. Empty "dialogs"
+  // namespace is replaced once the APIs are created with the same instance
+  // of the SDK. See passing `sdkForDialogs` by reference and assignment to
+  // the "dialogs" namespace later on.
+  const dialogsApi = ({} as unknown) as DialogsAPI;
 
   const sdkWithoutDialogs = createSharedFieldWidgetSDK({
-    editorApi,
-    entryApi,
-    spaceApi,
-    navigatorApi,
-    dialogsApi: mockDialogsApi,
-
+    nonReadOnlyApis: {
+      editorApi,
+      entryApi,
+      spaceApi,
+      navigatorApi,
+      dialogsApi,
+      parametersApi: {
+        installation: {},
+        instance: editorInterfaceSettings,
+      },
+    },
     environmentIds: [spaceContext.getEnvironmentId(), ...spaceContext.getAliasesIds()],
     publicFieldId: fieldId,
     internalContentType,
@@ -111,17 +155,10 @@ export function createFieldWidgetSDK({
     spaceMember: spaceContext.space.data.spaceMember,
     widgetId,
     widgetNamespace,
-    parameters,
   });
 
   const sdkForDialogs: DialogExtensionSDK = {
     ...sdkWithoutDialogs,
-    // We cannot create dialogs API w/o full SDK including dialog methods.
-    // The reason is that we can open dialogs from dialogs. Empty "dialogs"
-    // namespace is replaced once the APIs are created with the same instance
-    // of the SDK. See passing `sdkForDialogs` by reference and assignment to
-    // the "dialogs" namespace later on.
-    dialogs: ({} as unknown) as DialogsAPI,
     // Again, we cannot determine what closing a dialog means in this context.
     // Implementation needs to be provided closer to the `ModalLauncher`.
     close: () => {
@@ -135,33 +172,6 @@ export function createFieldWidgetSDK({
     ...sdkWithoutDialogs,
     dialogs,
   };
-}
-
-interface NonReadOnlyApis {
-  editorApi: SharedEditorSDK['editor'];
-  entryApi: EntryAPI;
-  fieldApi: FieldAPI;
-  spaceApi: SpaceAPI;
-  navigatorApi: NavigatorAPI;
-}
-
-interface CreateReadOnlyFieldWidgetSDKOptions {
-  cma: any;
-  editorInterface: EditorInterface;
-  endpoint: SpaceEndpoint;
-  entry: Entry;
-  environmentIds: string[];
-  field: Field;
-  fieldValue: any;
-  initialContentTypes: ContentType[];
-  internalContentType: ContentType;
-  locale: Locale;
-  spaceId: string;
-  spaceMember: SpaceMember;
-  tagsRepo: any;
-  usersRepo: any;
-  widgetId: string;
-  widgetNamespace: WidgetNamespace;
 }
 
 export function createReadonlyFieldWidgetSDK({
@@ -235,12 +245,17 @@ export function createReadonlyFieldWidgetSDK({
   const dialogsApi = createReadOnlyDialogsApi();
 
   return createSharedFieldWidgetSDK({
-    editorApi,
-    entryApi,
-    spaceApi,
-    navigatorApi,
-    dialogsApi,
-
+    nonReadOnlyApis: {
+      editorApi,
+      entryApi,
+      spaceApi,
+      navigatorApi,
+      dialogsApi,
+      parametersApi: {
+        installation: {},
+        instance: {},
+      },
+    },
     environmentIds,
     publicFieldId: field.apiName ?? field.id,
     internalContentType,
@@ -249,31 +264,29 @@ export function createReadonlyFieldWidgetSDK({
     spaceMember,
     widgetId,
     widgetNamespace,
-    parameters: {
-      installation: {},
-      instance: {},
-    },
   });
 }
 
 function createSharedFieldWidgetSDK({
-  editorApi,
-  entryApi,
-  spaceApi,
-  navigatorApi,
-  dialogsApi,
-
+  nonReadOnlyApis,
   environmentIds,
-  publicFieldId, // TODO: should this be replaced with publicFieldId?
+  publicFieldId,
   internalContentType,
-  publicLocaleCode, // TODO: should this be replaced by the code?
+  publicLocaleCode,
   spaceId,
   spaceMember,
   widgetId,
   widgetNamespace,
-  parameters,
-}: any): FieldExtensionSDK {
+}: CreateSharedFieldWidgetSDKOptions): FieldExtensionSDK {
   const [environmentId] = environmentIds;
+  const {
+    editorApi,
+    entryApi,
+    spaceApi,
+    navigatorApi,
+    dialogsApi,
+    parametersApi,
+  } = nonReadOnlyApis;
 
   const contentTypeApi = createContentTypeApi(internalContentType);
 
@@ -309,7 +322,7 @@ function createSharedFieldWidgetSDK({
     contentType: contentTypeApi,
     entry: entryApi,
     field: fieldApi,
-    parameters,
+    parameters: parametersApi,
     access: accessApi,
     locales: localesApi,
     space: spaceApi,
