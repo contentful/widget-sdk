@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { get, find } from 'lodash';
 import PropTypes from 'prop-types';
 import { Notification } from '@contentful/forma-36-react-components';
-import { FileEditorActions } from './FileEditorActions';
+import { FileEditorActions, DownloadButton, styles } from './FileEditorActions';
 import { FileEditorArchived } from './FileEditorArchived';
 import { FileEditorLoading } from './FileEditorLoading';
 import { FileEditorMetadata } from './FileEditorMetadata';
@@ -110,10 +110,16 @@ export default function FileEditor(props) {
   }
 
   if (disabled) {
+    const downloadButtonProps = { ...props, disabled: false };
     return (
-      <div className="file-info">
-        {!file.url || isUnprocessed ? <FileEditorLoading /> : <FileEditorPreview file={file} />}
-      </div>
+      <>
+        <div className="file-info">
+          {!file.url || isUnprocessed ? <FileEditorLoading /> : <FileEditorPreview file={file} />}
+        </div>
+        <div className={styles.root}>
+          <DownloadButton {...downloadButtonProps} />
+        </div>
+      </>
     );
   }
 
