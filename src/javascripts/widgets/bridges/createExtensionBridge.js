@@ -19,7 +19,7 @@ import checkDependencies from './checkDependencies';
 import {
   makeShareJSError,
   makePermissionError,
-} from 'app/widgets/NewWidgetApi/createEntryFieldApi';
+} from 'app/widgets/createFieldWidgetSDK/createEntryFieldApi';
 import { WidgetLocation } from 'features/widget-renderer';
 
 const ERROR_MESSAGES = {
