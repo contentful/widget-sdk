@@ -60,7 +60,8 @@ const aliasOptInStyles = {
 };
 
 export default function OptIn({ step, setStep, spaceId, testId }) {
-  const [newEnvironmentId, setNewEnvironmentId] = useState('');
+  const defaultEnvId = `master-${moment().format('YYYY-MM-DD')}`;
+  const [newEnvironmentId, setNewEnvironmentId] = useState(defaultEnvId);
   const [loading, setLoading] = useState(false);
 
   const isValidEnvironmentId = () => {
@@ -180,7 +181,7 @@ export default function OptIn({ step, setStep, spaceId, testId }) {
                             </Paragraph>
                             <Paragraph className={aliasOptInStyles.paragraph}>
                               For example <code>prod-1</code> or
-                              <code>master-{moment().format('YYYY-MM-DD')}</code>.
+                              <code>{defaultEnvId}</code>.
                             </Paragraph>
                             <Paragraph>
                               This helps you to keep track of the environment used in production –
