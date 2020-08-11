@@ -1,7 +1,7 @@
 import { toApiFieldType } from 'widgets/FieldTypes';
-import parseGithubUrl from 'parse-github-url';
+import gitUrlParse from 'git-url-parse';
 
-const GITHUB_URL_PROPS = ['host', 'repo', 'branch', 'filepath'];
+const GITHUB_URL_PROPS = ['resource', 'full_name', 'ref', 'filepath'];
 
 const ERRORS = {
   DESCRIPTOR: 'Could not fetch the descriptor file. Please check the URL and try again.',
@@ -19,12 +19,12 @@ function isValidContentfulExtsUrl(url) {
   return /https:\/\/[^.\s]+\.contentfulexts\.com\/extension\.json/.test(url);
 }
 
-function getDescriptorUrl(url) {
+export function getDescriptorUrl(url) {
   if (isValidGHUserContentUrl(url) || isValidContentfulExtsUrl(url)) {
     return url;
   } else {
-    const { repo, branch, filepath } = parseGithubUrl(url) || {};
-    return `https://raw.githubusercontent.com/${repo}/${branch}/${filepath}`;
+    const { full_name, ref, filepath } = gitUrlParse(url) || {};
+    return `https://raw.githubusercontent.com/${full_name}/${ref}/${filepath}`;
   }
 }
 
@@ -35,11 +35,11 @@ export function isValidSource(url) {
     return true;
   }
 
-  const parsed = parseGithubUrl(url) || {};
+  const parsed = gitUrlParse(url) || {};
   const onlyNonEmptyStrings = GITHUB_URL_PROPS.every((prop) => nonEmptyString(parsed[prop]));
 
   if (onlyNonEmptyStrings) {
-    return parsed.host.endsWith('github.com') && parsed.filepath.endsWith('extension.json');
+    return parsed.resource.endsWith('github.com') && parsed.filepath.endsWith('extension.json');
   } else {
     return false;
   }

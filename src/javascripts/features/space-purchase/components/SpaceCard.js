@@ -15,6 +15,9 @@ import {
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
+const MEDIUM_PLAN_COLOR = '#14D997';
+const LARGE_PLAN_COLOR = '#0BAA75';
+
 const styles = {
   cardTitle: css({
     fontWeight: tokens.fontWeightNormal,
@@ -34,6 +37,7 @@ const styles = {
     position: 'relative',
     padding: `${tokens.spacingXl} ${tokens.spacingL}`,
     overflow: 'hidden',
+    borderRadius: '3px',
     '&:before': {
       content: '""',
       position: 'absolute',
@@ -44,8 +48,8 @@ const styles = {
     },
   }),
   spaceColor: {
-    medium: getPlanBGColor(tokens.colorGreenLight),
-    large: getPlanBGColor(tokens.colorGreenMid),
+    medium: getPlanBGColor(MEDIUM_PLAN_COLOR),
+    large: getPlanBGColor(LARGE_PLAN_COLOR),
     enterprise: getPlanBGColor(tokens.colorBlueMid),
   },
   price: css({
@@ -72,8 +76,8 @@ const styles = {
     flexShrink: 0, // necessary to avoid icon being shrank by the text
   }),
   checkColor: {
-    medium: css({ fill: tokens.colorGreenLight }),
-    large: css({ fill: tokens.colorGreenMid }),
+    medium: css({ fill: MEDIUM_PLAN_COLOR }),
+    large: css({ fill: LARGE_PLAN_COLOR }),
     enterprise: css({ fill: tokens.colorBlueMid }),
   },
 };

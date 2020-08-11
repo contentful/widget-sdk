@@ -41,6 +41,7 @@ export const FLAGS = {
   PRICING_2020_WARNING: 'feature-hejo-06-2020-pricing-2020-in-app-communication',
   NEW_FIELD_DIALOG: 'react-migration-new-content-type-field-dialog',
   ENTITY_SELECTOR_MIGRATION: 'feature-pulitzer-07-2020-entity-selector-migration',
+  SSO_SETUP_NO_REDUX: 'feature-hejo-08-2020-sso-setup-no-redux',
   NEW_PURCHASE_FLOW: 'feature-ogg-08-2020-enable-space-purchase-flow',
 
   // So that we can test the fallback mechanism without needing to rely on an actual
@@ -62,6 +63,7 @@ const FALLBACK_VALUES = {
   [FLAGS.PRICING_2020_WARNING]: true,
   [FLAGS.NEW_FIELD_DIALOG]: false,
   [FLAGS.ENTITY_SELECTOR_MIGRATION]: false,
+  [FLAGS.SSO_SETUP_NO_REDUX]: false,
   [FLAGS.NEW_PURCHASE_FLOW]: false,
 
   // See above
