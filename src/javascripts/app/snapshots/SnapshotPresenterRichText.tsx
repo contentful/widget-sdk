@@ -1,11 +1,14 @@
 import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
-
 import { FieldExtensionSDK } from 'contentful-ui-extensions-sdk';
+
 import { getModule } from 'core/NgRegistry';
 import { createReadonlyFieldWidgetSDK } from 'app/widgets/NewWidgetApi';
 import { ReadOnlyRichTextEditor } from 'app/widgets/RichText';
+import { Entity } from 'app/entity_editor/Document/types';
+import { Field, Locale } from 'app/entity_editor/EntityField/types';
+import { InternalContentType } from 'app/widgets/NewWidgetApi/createContentTypeApi';
 import { createTagsRepo } from 'features/content-tags';
+import { EditorInterface, WidgetNamespace } from 'features/widget-renderer';
 
 const SnapshotPresenterRichText = ({
   className,
@@ -15,7 +18,7 @@ const SnapshotPresenterRichText = ({
   field,
   locale,
   widget,
-}) => {
+}: SnapshotPresenterRichTextProps) => {
   const sdk: FieldExtensionSDK = useMemo(() => {
     const spaceContext = getModule('spaceContext');
 
@@ -46,37 +49,21 @@ const SnapshotPresenterRichText = ({
   );
 };
 
-SnapshotPresenterRichText.propTypes = {
-  className: PropTypes.string,
-  value: PropTypes.object.isRequired,
-  editorData: PropTypes.shape({
-    contentType: PropTypes.shape({ data: PropTypes.object }),
-    editorInterface: PropTypes.object,
-  }),
-  entity: PropTypes.object.isRequired,
-  field: PropTypes.oneOfType([
-    PropTypes.shape({
-      type: PropTypes.string,
-      linkType: PropTypes.string,
-    }),
-    PropTypes.shape({
-      type: PropTypes.string,
-      items: PropTypes.shape({
-        type: PropTypes.string,
-        linkType: PropTypes.string,
-      }),
-    }),
-  ]),
-  locale: PropTypes.shape({
-    code: PropTypes.string,
-    // eslint-disable-next-line @typescript-eslint/camelcase
-    internal_code: PropTypes.string,
-  }),
-  widget: PropTypes.shape({
-    id: PropTypes.string,
-    namespace: PropTypes.string,
-  }),
-};
+interface SnapshotPresenterRichTextProps {
+  className: string;
+  value: any;
+  editorData: {
+    contentType: { data: InternalContentType };
+    editorInterface: EditorInterface;
+  };
+  entity: Entity;
+  field: Field;
+  locale: Locale;
+  widget: {
+    id: string;
+    namespace: WidgetNamespace;
+  };
+}
 
 SnapshotPresenterRichText.defaultProps = {
   className: '',
