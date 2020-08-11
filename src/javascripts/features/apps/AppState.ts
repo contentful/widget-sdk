@@ -1,5 +1,5 @@
 import { get, isObject, set } from 'lodash';
-import { Control } from 'features/widget-renderer/interfaces';
+import { Control } from 'features/widget-renderer';
 
 export const getCurrentState = async (spaceContext, appId) => {
   const { items: editorInterfaces } = await spaceContext.cma.getEditorInterfaces();
@@ -94,7 +94,7 @@ export function validateState(targetState) {
   });
 }
 
-const isIncludedInEditors = (appId, editorInterface): Boolean => {
+const isIncludedInEditors = (appId, editorInterface): boolean => {
   if (editorInterface.editor) {
     return appId === editorInterface.editor.widgetId;
   } else if (editorInterface.editors) {
