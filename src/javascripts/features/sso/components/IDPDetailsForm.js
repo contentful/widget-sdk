@@ -17,6 +17,7 @@ import { IdentityProviderPropType } from 'app/OrganizationSettings/SSO/PropTypes
 import { useForm } from 'core/hooks';
 import { updateFieldValue } from '../services/SSOService';
 import { css } from 'emotion';
+import { TestConnection } from './TestConnection';
 
 const styles = {
   header: css({
@@ -172,6 +173,14 @@ export function IDPDetailsForm({ orgId, orgName, identityProvider }) {
             </div>
           )}
         </div>
+      </section>
+      <section>
+        <TestConnection
+          orgId={orgId}
+          disabled={false}
+          ssoConfig={identityProvider.data}
+          onComplete={() => {}}
+        />
       </section>
       <section>
         <Heading element="h2" className={styles.header}>
