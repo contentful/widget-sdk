@@ -20,6 +20,9 @@ const styles = {
       marginLeft: tokens.spacingM,
     },
   }),
+  breadcrumbTitle: css({
+    fontWeight: '600',
+  }),
   isActive: css({
     color: tokens.colorGreenMid,
   }),
@@ -47,7 +50,9 @@ Breadcrumb.propTypes = {
 function BreadcrumbItem({ children, isActive = false, hasIcon = false }) {
   return (
     <ListItem className={styles.listItem}>
-      <SectionHeading className={cn({ [styles.isActive]: isActive })}>{children}</SectionHeading>
+      <SectionHeading className={cn({ [styles.isActive]: isActive }, styles.breadcrumbTitle)}>
+        {children}
+      </SectionHeading>
       {hasIcon && <Icon icon="ChevronRight" />}
     </ListItem>
   );

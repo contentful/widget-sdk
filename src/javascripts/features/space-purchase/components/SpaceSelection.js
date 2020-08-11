@@ -17,6 +17,7 @@ const styles = {
   }),
   sectionHeading: css({
     marginBottom: tokens.spacingM,
+    fontWeight: '600',
   }),
   normalWeight: css({
     fontWeight: tokens.fontWeightNormal,
