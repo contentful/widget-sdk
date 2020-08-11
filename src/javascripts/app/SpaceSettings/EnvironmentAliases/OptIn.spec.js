@@ -27,7 +27,7 @@ describe('OptIn', () => {
     const component = getComponent({ step: STEPS.SECOND_RENAMING });
     const { getByTestId } = render(component);
     const btn = getByTestId('button.to-third-step');
-    expect(btn).toBeDisabled();
+    expect(btn).not.toBeDisabled();
     fireEvent.change(getByTestId('input'), { target: { value: 'master' } });
     expect(btn).toBeDisabled();
     fireEvent.change(getByTestId('input'), { target: { value: 'new environmentid' } });
