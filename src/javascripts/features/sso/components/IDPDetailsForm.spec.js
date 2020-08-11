@@ -1,13 +1,17 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { IDPDetailsForm } from './IDPDetailsForm';
 import * as Fake from 'test/helpers/fakeFactory';
-// import { updateFieldValue } from '../services/SSOService';
+import { updateFieldValue } from '../services/SSOService';
+import { validate } from '../utils/utils';
+import userEvent from '@testing-library/user-event';
 
 const mockIdentityProvider = Fake.IdentityProvider();
 const mockOrg = Fake.Organization();
 
-jest.mock('lodash/debounce', () => (fn) => fn);
+jest.mock('features/sso/utils/utils', () => ({
+  validate: jest.fn(),
+}));
 
 jest.mock('features/sso/services/SSOService', () => ({
   updateFieldValue: jest.fn(async () => mockIdentityProvider),
@@ -32,72 +36,66 @@ describe('IDPDetailsForm', () => {
     expect(screen.getByTestId('sso-name')).toBeVisible();
   });
 
-  // it('should update identity provider name on change', async () => {
-  //   build();
-  //   fireEvent.change(screen.getByTestId('sso-provider'), {
-  //     target: {
-  //       value: 'OneLogin',
-  //     },
-  //   });
-  //   await waitFor(() =>
-  //     expect(updateFieldValue).toHaveBeenCalledWith(
-  //       'idpName',
-  //       'OneLogin',
-  //       mockIdentityProvider.data.sys.version,
-  //       mockOrg.sys.id
-  //     )
-  //   );
-  // });
+  it('should update identity provider name on change', async () => {
+    build();
+    userEvent.selectOptions(screen.getByTestId('sso-provider'), ['OneLogin']);
+    await waitFor(() =>
+      expect(updateFieldValue).toHaveBeenCalledWith(
+        'idpName',
+        'OneLogin',
+        mockIdentityProvider.data.sys.version,
+        mockOrg.sys.id
+      )
+    );
+  });
 
-  // it('should update idp target url on change', async () => {
-  //   build();
-  //   const input = screen.getByLabelText('Single Sign-On Redirect URL');
-  //   fireEvent.change(input, {
-  //     target: {
-  //       value: 'https://contentful-app-dev.onelogin.com/trust/saml2/http-post/sso/1234',
-  //     },
-  //   });
-  //   await waitFor(() => expect(updateFieldValue).toHaveBeenCalled());
-  // });
+  it('should update idp target url on change', async () => {
+    build();
+    const input = screen.getByLabelText('Single Sign-On Redirect URL');
+    userEvent.type(input, 'https://contentful-app-dev.onelogin.com/trust/saml2/http-post/sso/123');
+    await waitFor(() =>
+      expect(validate).toHaveBeenCalledWith(
+        'idpSsoTargetUrl',
+        'https://contentful-app-dev.onelogin.com/trust/saml2/http-post/sso/123'
+      )
+    );
+    expect(updateFieldValue).toHaveBeenCalledWith(
+      'idpSsoTargetUrl',
+      'https://contentful-app-dev.onelogin.com/trust/saml2/http-post/sso/123',
+      mockIdentityProvider.data.sys.version,
+      mockOrg.sys.id
+    );
+  });
 
-  // it('should show error for invalid idp target url on change', async () => {
-  //   build();
-  //   const input = screen.getByLabelText('Single Sign-On Redirect URL');
-  //   fireEvent.change(input, {
-  //     target: {
-  //       value: 'contentful',
-  //     },
-  //   });
-  //   expect(screen.findByText('URL is not valid')).toBeVisible();
-  // });
+  it('should update idp cert on change', async () => {
+    build();
+    const mockCert = `
+        -----BEGIN CERTIFICATE-----
+        MIIEHTCCAwWgAwIBAgIURpeRQfkW81lZeIepYruVOSshzsgwDQYJKoZIhvcNAQEF
+        -----END CERTIFICATE-----
+      `;
 
-  // it('should show error for invalid idp cert on change', async () => {
-  //   build();
-  //   const invalidCert = 'test';
-  //   const input = screen.getByLabelText('X.509 Certificate');
-  //   await fireEvent.change(input, {
-  //     target: {
-  //       value: invalidCert,
-  //     },
-  //   });
-  //   expect(screen.findByText('X.509 certificate format is not correct')).toBeVisible();
-  // });
+    const input = screen.getByLabelText('X.509 Certificate');
+    userEvent.type(input, mockCert);
+    await waitFor(() => expect(validate).toHaveBeenCalledWith('idpCert', mockCert));
+    expect(updateFieldValue).toHaveBeenCalledWith(
+      'idpCert',
+      mockCert,
+      mockIdentityProvider.data.sys.version,
+      mockOrg.sys.id
+    );
+  });
 
-  // it('should update sso name on change', async () => {
-  //   build();
-  //   const input = screen.getByLabelText('SSO name');
-  //   fireEvent.change(input, {
-  //     target: {
-  //       value: 'test-app',
-  //     },
-  //   });
-  //   await waitFor(() =>
-  //     expect(updateFieldValue).toHaveBeenCalledWith(
-  //       'ssoName',
-  //       'test-app',
-  //       mockIdentityProvider.data.sys.version,
-  //       mockOrg.sys.id
-  //     )
-  //   );
-  // });
+  it('should update sso name on change', async () => {
+    build();
+    const input = screen.getByLabelText('SSO name');
+    userEvent.type(input, 'test-app');
+    await waitFor(() => expect(validate).toHaveBeenCalledWith('ssoName', 'test-app'));
+    expect(updateFieldValue).toHaveBeenCalledWith(
+      'ssoName',
+      'test-app',
+      mockIdentityProvider.data.sys.version,
+      mockOrg.sys.id
+    );
+  });
 });
