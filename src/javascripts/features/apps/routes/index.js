@@ -16,6 +16,7 @@ import * as TokenStore from 'services/TokenStore';
 import { isOwnerOrAdmin, isDeveloper } from 'services/OrganizationRoles';
 import { WidgetLocation, WidgetNamespace } from 'features/widget-renderer';
 import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIFrameRenderer';
+import { getCurrentState } from 'features/apps/AppState';
 
 const BASIC_APPS_FEATURE_KEY = 'basic_apps';
 const DEFAULT_FEATURE_STATUS = true; // Fail open
@@ -154,72 +155,7 @@ export const appRoute = {
             appDefinition: app.appDefinition,
             currentWidgetId: app.appDefinition.sys.id,
             currentWidgetNamespace: WidgetNamespace.APP,
-            // TODO: this does not feel like the right place
-            getCurrentState: async () => {
-              const { items: editorInterfaces } = await spaceContext.cma.getEditorInterfaces();
-              const appId = app.appDefinition.sys.id;
-
-              const isIncludedInEditors = (appId, editorInterface) => {
-                if (editorInterface.editor) {
-                  return appId === editorInterface.editor.widgetId;
-                } else if (editorInterface.editors) {
-                  return editorInterface.editors.some(({ widgetId }) => widgetId === appId);
-                }
-
-                return false;
-              };
-
-              const isIncludedInControls = (appId, editorInterface) => {
-                if (editorInterface.controls) {
-                  return editorInterface.controls.filter(({ widgetId }) => widgetId === appId);
-                }
-                return [];
-              };
-
-              const isIncludedInSidebar = (appId, editorInterface) => {
-                if (editorInterface.sidebar) {
-                  return editorInterface.sidebar.findIndex(({ widgetId }) => widgetId === appId);
-                }
-                return -1;
-              };
-
-              const CurrentState = { EditorInterface: {} };
-
-              for (const editorInterface of editorInterfaces) {
-                const contentTypeId = editorInterface.sys?.contentType?.sys?.id;
-
-                if (!contentTypeId) {
-                  continue;
-                }
-
-                const eis = isIncludedInControls(appId, editorInterface);
-                const sidebarIndex = isIncludedInSidebar(appId, editorInterface);
-
-                if (isIncludedInEditors(appId, editorInterface)) {
-                  CurrentState.EditorInterface[contentTypeId] =
-                    CurrentState.EditorInterface[contentTypeId] ?? {};
-                  CurrentState.EditorInterface[contentTypeId].editor = true;
-                }
-
-                if (eis.length) {
-                  CurrentState.EditorInterface[contentTypeId] =
-                    CurrentState.EditorInterface[contentTypeId] ?? {};
-                  CurrentState.EditorInterface[contentTypeId].controls =
-                    CurrentState.EditorInterface[contentTypeId].controls ?? [];
-                  CurrentState.EditorInterface[contentTypeId].controls.push(
-                    ...eis.map((ei) => ({ fieldId: ei.fieldId }))
-                  );
-                }
-
-                if (sidebarIndex > -1) {
-                  CurrentState.EditorInterface[contentTypeId] =
-                    CurrentState.EditorInterface[contentTypeId] ?? {};
-                  CurrentState.EditorInterface[contentTypeId].sidebar = { position: sidebarIndex };
-                }
-              }
-
-              return CurrentState;
-            },
+            getCurrentState,
           });
 
           return {

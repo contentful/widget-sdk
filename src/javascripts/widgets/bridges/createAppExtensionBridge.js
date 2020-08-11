@@ -15,11 +15,18 @@ const STAGE_PRE_INSTALL = 'preInstall';
 const STAGE_POST_INSTALL = 'postInstall';
 
 export default function createAppExtensionBridge(dependencies) {
-  const { spaceContext, appHookBus, getCurrentState } = checkDependencies(
-    'AppExtensionBridge',
-    dependencies,
-    ['spaceContext', 'appHookBus', 'currentWidgetId', 'currentWidgetNamespace', 'getCurrentState']
-  );
+  const {
+    spaceContext,
+    appHookBus,
+    currentWidgetId,
+    getCurrentState,
+  } = checkDependencies('AppExtensionBridge', dependencies, [
+    'spaceContext',
+    'appHookBus',
+    'currentWidgetId',
+    'currentWidgetNamespace',
+    'getCurrentState',
+  ]);
 
   let currentInstallationRequestId = null;
 
@@ -63,8 +70,8 @@ export default function createAppExtensionBridge(dependencies) {
         return appHookBus.emit(APP_EVENTS_IN.MARKED_AS_READY);
       } else if (methodName === 'isInstalled') {
         return isInstalled;
-      } else if (methodName === 'getCurrentState') {
-        return getCurrentState();
+      } else if (methodName === 'getCurrentState' && isInstalled) {
+        return getCurrentState(spaceContext, currentWidgetId);
       } else if (methodName === 'getParameters' && isInstalled) {
         return installation.parameters;
       } else {
