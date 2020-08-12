@@ -27,41 +27,41 @@ const widget: Widget = {
   },
 };
 
-const noop = () => () => {};
+const mockMethod = jest.fn().mockReturnValue(jest.fn())
 const sdk = ({
   field: {
     getValue: () => 'test',
-    onIsDisabledChanged: noop,
-    onSchemaErrorsChanged: noop,
+    onIsDisabledChanged: mockMethod,
+    onSchemaErrorsChanged: mockMethod,
   },
   contentType: { fields: [] },
   entry: {
     getSys: () => ({ id: 'test' }),
-    onSysChanged: noop,
+    onSysChanged: mockMethod,
     fields: {
       hello: {
         id: 'hello',
         locales: ['en'],
         getForLocale: () => ({
-          onValueChanged: noop,
-          onIsDisabledChanged: noop,
-          onSchemaErrorsChanged: noop,
+          onValueChanged: mockMethod,
+          onIsDisabledChanged: mockMethod,
+          onSchemaErrorsChanged: mockMethod,
         }),
       },
     },
   },
   editor: {
-    onLocaleSettingsChanged: noop,
-    onShowDisabledFieldsChanged: noop,
+    onLocaleSettingsChanged: mockMethod,
+    onShowDisabledFieldsChanged: mockMethod,
   },
   navigator: {
-    onSlideInNavigation: noop,
+    onSlideInNavigation: mockMethod,
   },
   space: {
     getCachedContentTypes: () => [],
   },
   access: {
-    can: noop,
+    can: mockMethod,
   },
 } as unknown) as KnownSDK;
 
