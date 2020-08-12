@@ -21,6 +21,7 @@ import createExtensionBridge from 'widgets/bridges/createExtensionBridge';
 import { WidgetLocation } from 'features/widget-renderer';
 
 import bulkEntityEditorTemplate from './bulk_entity_editor.html';
+import { initStateController } from '../stateController';
 
 export default function register() {
   /**
@@ -237,12 +238,19 @@ export default function register() {
         localeStore.getPrivateLocales()
       );
 
-      $scope.state = $controller('entityEditor/StateController', {
-        $scope: $scope,
+      initStateController({
         entity: editorData.entity,
-        notify: notify,
+        notify,
         validator: this.validator,
         otDoc: $scope.otDoc,
+        bulkEditorContext: $scope.bulkEditorContext,
+        entityInfo: $scope.entityInfo,
+        editorData: $scope.editorData,
+        spaceContext,
+        onUpdate: (state) => {
+          $scope.state = state;
+          $scope.$applyAsync();
+        },
       });
 
       const { track } = $scope.bulkEditorContext;

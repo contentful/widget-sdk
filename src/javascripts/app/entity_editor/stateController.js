@@ -1,9 +1,8 @@
-import { registerController } from 'core/NgRegistry';
 import React from 'react';
 import _ from 'lodash';
 import * as K from 'core/utils/kefir';
 import { caseofEq as caseof, otherwise } from 'sum-types';
-import { State, Action } from 'data/CMA/EntityState';
+import { State, Action, stateName } from 'data/CMA/EntityState';
 import { Notification } from 'app/entity_editor/Notifications';
 
 import * as trackVersioning from 'analytics/events/versioning';
@@ -16,303 +15,302 @@ import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
 import * as Analytics from 'analytics/Analytics';
 import { createCommand } from 'utils/command/command';
 
-export default function register() {
-  registerController('entityEditor/StateController', [
-    '$scope',
-    'notify',
-    'validator',
-    'otDoc',
-    'spaceContext',
-    function EntityEditorStateController($scope, notify, validator, otDoc, spaceContext) {
-      const controller = this;
-      const permissions = otDoc.permissions;
-      const reverter = otDoc.reverter;
-      const docStateManager = otDoc.resourceState;
+export const state = {
+  ARCHIVED: stateName(State.Archived()),
+  CHANGED: stateName(State.Changed()),
+  DELETED: stateName(State.Deleted()),
+};
 
-      // Is set to 'true' when the entity has been deleted by another user.
-      let isDeleted = false;
+export const initStateController = ({
+  bulkEditorContext,
+  entityInfo,
+  editorData,
+  notify,
+  otDoc,
+  validator,
+  spaceContext,
+  onUpdate,
+}) => {
+  const { permissions, reverter, resourceState: docStateManager } = otDoc;
 
-      K.onValueScope($scope, docStateManager.inProgress$, (inProgress) => {
-        controller.inProgress = inProgress;
-      });
+  const controller = {
+    inProgress: false,
+    hidePrimary: false,
+    isDeleted: false, // Is set to 'true' when the entity has been deleted by another user.
+  };
 
-      const noop = createCommand(() => {});
-
-      const archive = createCommand(
-        () => applyActionWithConfirmation(Action.Archive()),
-        {
-          disabled: checkDisallowed(Action.Archive()),
-          restricted: checkRestricted(Action.Archive()),
-        },
-        {
-          label: 'Archive',
-          status: 'Archived',
-          targetStateId: 'archived',
-        }
-      );
-
-      const unarchive = createCommand(
-        () => applyAction(Action.Unarchive()),
-        {
-          disabled: checkDisallowed(Action.Unarchive()),
-          restricted: checkRestricted(Action.Unarchive()),
-        },
-        {
-          label: 'Unarchive',
-          status: 'Draft',
-          targetStateId: 'draft',
-        }
-      );
-
-      const unpublish = createCommand(
-        () => applyActionWithConfirmation(Action.Unpublish()),
-        {
-          disabled: checkDisallowed(Action.Unpublish()),
-          restricted: checkRestricted(Action.Unpublish()),
-        },
-        {
-          label: 'Unpublish',
-          status: 'Draft',
-          targetStateId: 'draft',
-        }
-      );
-
-      const publishChanges = createCommand(
-        publishEntity,
-        {
-          disabled: checkDisallowed(Action.Publish()),
-          restricted: checkRestricted(Action.Publish()),
-        },
-        {
-          label: 'Publish changes',
-          targetStateId: 'published',
-        }
-      );
-
-      const publish = createCommand(
-        publishEntity,
-        {
-          disabled: checkDisallowed(Action.Publish()),
-          restricted: checkRestricted(Action.Publish()),
-        },
-        {
-          label: 'Publish',
-          status: 'Published',
-          targetStateId: 'published',
-        }
-      );
-
-      K.onValueScope($scope, docStateManager.state$, (state) => {
-        caseof(state, [
-          [
-            State.Archived(),
-            () => {
-              controller.current = 'archived';
-              controller.primary = unarchive;
-              controller.secondary = [publish];
-              controller.allActions = [unarchive, publish];
-            },
-          ],
-          [
-            State.Draft(),
-            () => {
-              controller.current = 'draft';
-              controller.primary = publish;
-              controller.secondary = [archive];
-              controller.allActions = [publish, archive];
-            },
-          ],
-          [
-            State.Published(),
-            () => {
-              controller.current = 'published';
-              controller.primary = noop;
-              controller.secondary = [unpublish, archive];
-              controller.allActions = [unpublish, archive];
-            },
-          ],
-          [
-            State.Changed(),
-            () => {
-              controller.current = 'changes';
-              controller.primary = publishChanges;
-              controller.secondary = [unpublish, archive];
-              controller.allActions = [publishChanges, unpublish, archive];
-            },
-          ],
-          [
-            State.Deleted(),
-            () => {
-              isDeleted = true;
-            },
-          ],
-        ]);
-
-        controller.currentLabel = getStateLabel(state);
-
-        controller.hidePrimary = state === State.Published();
-      });
-
-      $scope.$watch(
-        () =>
-          _.every(controller.secondary, (
-            cmd // TODO this uses the private API
-          ) => cmd._isDisabled()),
-        (secondaryActionsDisabled) => {
-          controller.secondaryActionsDisabled = secondaryActionsDisabled;
-        }
-      );
-
-      function publishEntity() {
-        return showUnpublishedReferencesWarning({
-          entity: K.getValue(otDoc.data$),
-          spaceId: spaceContext.getId(),
-          environmentId: spaceContext.getEnvironmentId(),
-        })
-          .then(() => {
-            if (validator.run()) {
-              return applyAction(Action.Publish()).then(
-                ({ entity }) => {
-                  const entityInfo = $scope.entityInfo;
-                  let contentType;
-                  if (entityInfo.type === 'Entry') {
-                    contentType = spaceContext.publishedCTs.get(entityInfo.contentTypeId).data;
-                  }
-                  if (contentType) {
-                    let eventOrigin = 'entry-editor';
-
-                    if ($scope.bulkEditorContext) {
-                      eventOrigin = 'bulk-editor';
-                    }
-
-                    const widgetTrackingContexts = _.get(
-                      $scope,
-                      ['editorData', 'widgetTrackingContexts'],
-                      []
-                    );
-                    Analytics.track('entry:publish', {
-                      eventOrigin,
-                      widgetTrackingContexts,
-                      contentType: contentType,
-                      response: entity,
-                    });
-                  }
-                  trackVersioning.publishedRestored(entity);
-                },
-                (error) => {
-                  validator.setApiResponseErrors(error);
-                }
-              );
-            } else {
-              notify(Notification.ValidationError());
-              return Promise.reject();
-            }
-          })
-          .catch(() => {});
-      }
-
-      controller.delete = createCommand(
-        () =>
-          applyActionWithConfirmation(Action.Delete()).then(({ action }) => {
-            if (action !== Action.Archive()) {
-              goToPreviousSlideOrExit('delete');
-            }
-          }),
-        {
-          disabled: function () {
-            const canDelete = permissions.can('delete');
-            const canMoveToDraft = caseof(controller.current, [
-              ['archived', _.constant(permissions.can('unarchive'))],
-              ['changes', 'published', _.constant(permissions.can('unpublish'))],
-              [otherwise, _.constant(true)],
-            ]);
-
-            return isDeleted || !canDelete || !canMoveToDraft;
-          },
-        }
-      );
-
-      controller.revertToPrevious = createCommand(
-        () => {
-          reverter
-            .revert()
-            .then(
-              () => {
-                notify(Notification.Success('revert'));
-              },
-              (err) => {
-                notify(Notification.Error('revert', err));
-              }
-            )
-            .then(() => {
-              Analytics.track('entity_state:revert', {
-                id: $scope.entityInfo.id,
-                type: $scope.entityInfo.type,
-              });
-            });
-        },
-        {
-          available: function () {
-            const canEdit = K.getValue(otDoc.state.canEdit$);
-            return canEdit && reverter.hasChanges();
-          },
-        }
-      );
-
-      function getStateLabel(state) {
-        return caseof(state, [
-          [State.Archived(), _.constant('archived')],
-          [State.Draft(), _.constant('draft')],
-          [State.Published(), _.constant('published')],
-          [State.Changed(), _.constant('changed')],
-          [State.Deleted(), _.constant('deleted')],
-        ]);
-      }
-
-      function applyAction(action) {
-        return docStateManager.apply(action).then(
-          (data) => {
-            notify(Notification.Success(action));
-            return { action, entity: data };
-          },
-          (err) => {
-            notify(Notification.Error(action, err));
-            return Promise.reject(err);
-          }
-        );
-      }
-
-      function applyActionWithConfirmation(action) {
-        return showConfirmationMessage({ action }).then((payload) =>
-          applyAction(_.get(payload, 'action', action))
-        );
-      }
-
-      // TODO Move these checks into the document resource manager
-      function checkDisallowed(action) {
-        return () => isDeleted || !permissions.can(action);
-      }
-
-      function checkRestricted(action) {
-        return () => !permissions.can(action);
-      }
-
-      function showConfirmationMessage(props) {
-        return ModalLauncher.open(({ isShown, onClose }) => (
-          <StateChangeConfirmationDialog
-            dialogSessionId={random.id()}
-            isShown={isShown}
-            action={props.action}
-            entityInfo={$scope.entityInfo}
-            onConfirm={() => onClose({ action: props.action })}
-            onCancel={() => onClose({ action: null })}
-            onArchive={() => onClose({ action: Action.Archive() })}
-          />
-        )).then((result) => {
-          if (result.action) return result;
-          return Promise.reject();
-        });
+  controller.delete = createCommand(
+    async () => {
+      const { action } = await applyActionWithConfirmation(Action.Delete());
+      if (action !== Action.Archive()) {
+        goToPreviousSlideOrExit('delete');
       }
     },
-  ]);
-}
+    {
+      disabled: function () {
+        const canDelete = permissions.can('delete');
+        const canMoveToDraft = caseof(controller.current, [
+          [state.ARCHIVED, _.constant(permissions.can('unarchive'))],
+          [state.CHANGED, state.PUBLISHED, _.constant(permissions.can('unpublish'))],
+          [otherwise, _.constant(true)],
+        ]);
+
+        return controller.isDeleted || !canDelete || !canMoveToDraft;
+      },
+    }
+  );
+
+  controller.revertToPrevious = createCommand(
+    async () => {
+      try {
+        await reverter.revert();
+        notify(Notification.Success('revert'));
+        Analytics.track('entity_state:revert', {
+          id: entityInfo.id,
+          type: entityInfo.type,
+        });
+      } catch (error) {
+        notify(Notification.Error('revert', error));
+      }
+    },
+    {
+      available: function () {
+        const canEdit = K.getValue(otDoc.state.canEdit$);
+        return canEdit && reverter.hasChanges();
+      },
+    }
+  );
+
+  const onUpdateState = ({
+    current = controller.current,
+    primary = controller.primary,
+    secondary = controller.secondary,
+    allActions = controller.allActions,
+    isDeleted = controller.isDeleted || false,
+    hidePrimary = controller.hidePrimary || false,
+  }) => {
+    controller.current = current;
+    controller.primary = primary;
+    controller.secondary = secondary;
+    controller.allActions = allActions;
+    controller.isDeleted = isDeleted;
+    controller.hidePrimary = hidePrimary;
+
+    const secondaryActionsDisabled = _.every(controller.secondary, (
+      cmd // TODO this uses the private API
+    ) => cmd._isDisabled());
+    controller.secondaryActionsDisabled = secondaryActionsDisabled;
+
+    onUpdate(controller);
+  };
+
+  K.onValue(docStateManager.inProgress$, (inProgress) => {
+    controller.inProgress = inProgress;
+    onUpdate(controller);
+  });
+
+  const noop = createCommand(() => {});
+
+  const archive = createCommand(
+    () => applyActionWithConfirmation(Action.Archive()),
+    {
+      disabled: checkDisallowed(Action.Archive()),
+      restricted: checkRestricted(Action.Archive()),
+    },
+    {
+      label: 'Archive',
+      status: 'Archived',
+      targetStateId: 'archived',
+    }
+  );
+
+  const unarchive = createCommand(
+    () => applyAction(Action.Unarchive()),
+    {
+      disabled: checkDisallowed(Action.Unarchive()),
+      restricted: checkRestricted(Action.Unarchive()),
+    },
+    {
+      label: 'Unarchive',
+      status: 'Draft',
+      targetStateId: 'draft',
+    }
+  );
+
+  const unpublish = createCommand(
+    () => applyActionWithConfirmation(Action.Unpublish()),
+    {
+      disabled: checkDisallowed(Action.Unpublish()),
+      restricted: checkRestricted(Action.Unpublish()),
+    },
+    {
+      label: 'Unpublish',
+      status: 'Draft',
+      targetStateId: 'draft',
+    }
+  );
+
+  const publishChanges = createCommand(
+    publishEntity,
+    {
+      disabled: checkDisallowed(Action.Publish()),
+      restricted: checkRestricted(Action.Publish()),
+    },
+    {
+      label: 'Publish changes',
+      targetStateId: 'published',
+    }
+  );
+
+  const publish = createCommand(
+    publishEntity,
+    {
+      disabled: checkDisallowed(Action.Publish()),
+      restricted: checkRestricted(Action.Publish()),
+    },
+    {
+      label: 'Publish',
+      status: 'Published',
+      targetStateId: 'published',
+    }
+  );
+
+  K.onValue(docStateManager.state$, (stateValue) => {
+    caseof(stateValue, [
+      [
+        State.Archived(),
+        (s) =>
+          onUpdateState({
+            current: stateName(s),
+            primary: unarchive,
+            secondary: [publish],
+            allActions: [unarchive, publish],
+          }),
+      ],
+      [
+        State.Draft(),
+        (s) =>
+          onUpdateState({
+            current: stateName(s),
+            primary: publish,
+            secondary: [archive],
+            allActions: [publish, archive],
+          }),
+      ],
+      [
+        State.Published(),
+        (s) =>
+          onUpdateState({
+            current: stateName(s),
+            primary: noop,
+            secondary: [unpublish, archive],
+            allActions: [unpublish, archive],
+            hidePrimary: true,
+          }),
+      ],
+      [
+        State.Changed(),
+        (s) =>
+          onUpdateState({
+            current: stateName(s),
+            primary: publishChanges,
+            secondary: [unpublish, archive],
+            allActions: [publishChanges, unpublish, archive],
+          }),
+      ],
+      [
+        State.Deleted(),
+        (s) =>
+          onUpdateState({
+            current: stateName(s),
+            isDeleted: true,
+          }),
+      ],
+    ]);
+  });
+
+  async function publishEntity() {
+    try {
+      await showUnpublishedReferencesWarning({
+        entity: K.getValue(otDoc.data$),
+        spaceId: spaceContext.getId(),
+        environmentId: spaceContext.getEnvironmentId(),
+      });
+
+      if (validator.run()) {
+        try {
+          const { entity } = await applyAction(Action.Publish());
+
+          let contentType;
+          if (entityInfo.type === 'Entry') {
+            contentType = spaceContext.publishedCTs.get(entityInfo.contentTypeId).data;
+          }
+          if (contentType) {
+            let eventOrigin = 'entry-editor';
+
+            if (bulkEditorContext) {
+              eventOrigin = 'bulk-editor';
+            }
+
+            const widgetTrackingContexts = _.get(editorData, ['widgetTrackingContexts'], []);
+            Analytics.track('entry:publish', {
+              eventOrigin,
+              widgetTrackingContexts,
+              contentType: contentType,
+              response: entity,
+            });
+          }
+          trackVersioning.publishedRestored(entity);
+        } catch (error) {
+          validator.setApiResponseErrors(error);
+        }
+      } else {
+        notify(Notification.ValidationError());
+      }
+    } catch (err) {
+      // ignore errors
+    }
+  }
+
+  // TODO Move these checks into the document resource manager
+  function checkDisallowed(action) {
+    return () => controller.isDeleted || !permissions.can(action);
+  }
+
+  function checkRestricted(action) {
+    return () => !permissions.can(action);
+  }
+
+  async function applyAction(action) {
+    try {
+      const data = await docStateManager.apply(action);
+      notify(Notification.Success(action));
+      return { action, entity: data };
+    } catch (error) {
+      notify(Notification.Error(action, error));
+      throw error;
+    }
+  }
+
+  async function applyActionWithConfirmation(action) {
+    const payload = await showConfirmationMessage({ action });
+    return applyAction(_.get(payload, 'action', action));
+  }
+
+  async function showConfirmationMessage(props) {
+    const result = await ModalLauncher.open(({ isShown, onClose }) => (
+      <StateChangeConfirmationDialog
+        dialogSessionId={random.id()}
+        isShown={isShown}
+        action={props.action}
+        entityInfo={entityInfo}
+        onConfirm={() => onClose({ action: props.action })}
+        onCancel={() => onClose({ action: null })}
+        onArchive={() => onClose({ action: Action.Archive() })}
+      />
+    ));
+
+    if (result.action) return result;
+    throw new Error();
+  }
+};

@@ -16,6 +16,7 @@ import initSidebarTogglesProps from 'app/entity_editor/entityEditorSidebarToggle
 import { getModule } from 'core/NgRegistry';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 import { valuePropertyAt } from './Document';
+import { initStateController } from './stateController';
 
 /**
  * @param {Object} $scope
@@ -52,12 +53,19 @@ export default async function create($scope, editorData, preferences) {
 
   editorContext.focus = Focus.create();
 
-  $scope.state = $controller('entityEditor/StateController', {
-    $scope,
+  initStateController({
     entity: editorData.entity,
     notify,
     validator: editorContext.validator,
     otDoc: $scope.otDoc,
+    bulkEditorContext: $scope.bulkEditorContext,
+    entityInfo: $scope.entityInfo,
+    editorData: $scope.editorData,
+    spaceContext,
+    onUpdate: (state) => {
+      $scope.state = state;
+      $scope.$applyAsync();
+    },
   });
 
   K.onValueScope($scope, valuePropertyAt($scope.otDoc, []), (data) => {
