@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import { Grid, NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { Workbench } from '@contentful/forma-36-react-components';
@@ -13,7 +14,7 @@ const NEW_SPACE_STEPS = [
   { text: '3.Confirmation', isActive: false },
 ];
 
-export const NewSpacePage = () => {
+export const NewSpacePage = ({ organizationId }) => {
   return (
     <Workbench>
       <Workbench.Header
@@ -23,10 +24,14 @@ export const NewSpacePage = () => {
       <Workbench.Content>
         <Grid columns={1} rows="repeat(3, 'auto')" columnGap="none" rowGap="spacingM">
           <Breadcrumb items={NEW_SPACE_STEPS} />
-          <SpaceSelection />
+          <SpaceSelection organizationId={organizationId} />
           <NewSpaceFAQ />
         </Grid>
       </Workbench.Content>
     </Workbench>
   );
+};
+
+NewSpacePage.propTypes = {
+  organizationId: PropTypes.string,
 };

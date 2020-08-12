@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import PropTypes from 'prop-types';
 
 import { Spinner } from '@contentful/forma-36-react-components';
 
@@ -17,7 +18,7 @@ const initialFetch = () => async () => {
   };
 };
 
-export const NewSpaceRoute = () => {
+export const NewSpaceRoute = ({ orgId }) => {
   const { isLoading, data } = useAsync(useCallback(initialFetch(), []));
 
   if (isLoading) {
@@ -35,7 +36,11 @@ export const NewSpaceRoute = () => {
   return (
     <>
       <DocumentTitle title="Space purchase" />
-      <NewSpacePage />
+      <NewSpacePage organizationId={orgId} />
     </>
   );
+};
+
+NewSpaceRoute.propTypes = {
+  orgId: PropTypes.string,
 };

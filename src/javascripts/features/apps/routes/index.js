@@ -16,6 +16,7 @@ import * as TokenStore from 'services/TokenStore';
 import { isOwnerOrAdmin, isDeveloper } from 'services/OrganizationRoles';
 import { WidgetLocation, WidgetNamespace } from 'features/widget-renderer';
 import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIFrameRenderer';
+import { getCurrentState } from 'features/apps/AppState';
 
 const BASIC_APPS_FEATURE_KEY = 'basic_apps';
 const DEFAULT_FEATURE_STATUS = true; // Fail open
@@ -154,6 +155,7 @@ export const appRoute = {
             appDefinition: app.appDefinition,
             currentWidgetId: app.appDefinition.sys.id,
             currentWidgetNamespace: WidgetNamespace.APP,
+            getCurrentState,
           });
 
           return {

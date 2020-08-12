@@ -1,8 +1,14 @@
 import React from 'react';
 
+export const SPACE_PURCHASE_TYPES = {
+  MEDIUM: 'medium',
+  LARGE: 'large',
+  ENTERPRISE: 'enterprise',
+};
+
 export const SPACE_PURCHASE_CONTENT = [
   {
-    type: 'medium',
+    type: SPACE_PURCHASE_TYPES.MEDIUM,
     title: (
       <>
         <b>Team</b> Medium
@@ -28,7 +34,7 @@ export const SPACE_PURCHASE_CONTENT = [
     ],
   },
   {
-    type: 'large',
+    type: SPACE_PURCHASE_TYPES.LARGE,
     title: (
       <>
         <b>Team</b> Large
@@ -54,7 +60,7 @@ export const SPACE_PURCHASE_CONTENT = [
     ],
   },
   {
-    type: 'enterprise',
+    type: SPACE_PURCHASE_TYPES.ENTERPRISE,
     title: <b>Enterprise</b>,
     description:
       'Organizations that require customization, training and fewer limitations to power one — or hundreds — of digital experiences.',

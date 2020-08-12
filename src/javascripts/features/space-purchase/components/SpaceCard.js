@@ -13,6 +13,8 @@ import {
   Paragraph,
   Typography,
 } from '@contentful/forma-36-react-components';
+import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
+import { websiteUrl } from 'Config';
 import tokens from '@contentful/forma-36-tokens';
 
 const MEDIUM_PLAN_COLOR = '#14D997';
@@ -83,8 +85,10 @@ const styles = {
 };
 
 export const SpaceCard = ({ content, handleSelect }) => {
+  const isEnterpriseCard = content.type === SPACE_PURCHASE_TYPES.ENTERPRISE;
+
   return (
-    <Card className={cn(styles.card, styles.spaceColor[content.type])}>
+    <Card className={cn(styles.card, styles.spaceColor[content.type])} testId="space-card">
       <Typography className={styles.centered}>
         <Heading element="h3" className={styles.cardTitle} testId="space-heading">
           {content.title}
@@ -97,9 +101,20 @@ export const SpaceCard = ({ content, handleSelect }) => {
         <Paragraph className={styles.price} testId="space-price">
           {content.price}
         </Paragraph>
-        <Button onClick={handleSelect} testId="space-cta">
-          {content.callToAction}
-        </Button>
+        {isEnterpriseCard ? (
+          <Button
+            href={websiteUrl('contact/sales/')}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={handleSelect}
+            testId="space-cta">
+            {content.callToAction}
+          </Button>
+        ) : (
+          <Button onClick={handleSelect} testId="space-cta">
+            {content.callToAction}
+          </Button>
+        )}
       </Typography>
 
       <div className={styles.limitsSection}>

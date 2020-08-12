@@ -1,6 +1,7 @@
 import React from 'react';
 import cn from 'classnames';
 import { css } from 'emotion';
+import PropTypes from 'prop-types';
 
 import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import { Card, Heading, Paragraph } from '@contentful/forma-36-react-components';
@@ -8,8 +9,9 @@ import tokens from '@contentful/forma-36-tokens';
 
 import { websiteUrl } from 'Config';
 import ExternalTextLink from 'app/common/ExternalTextLink';
+import { trackCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import { SpaceCard } from './SpaceCard';
-import { SPACE_PURCHASE_CONTENT } from '../utils/spacePurchaseContent';
+import { SPACE_PURCHASE_CONTENT, SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
 
 const styles = {
   fullRow: css({
@@ -42,24 +44,45 @@ const styles = {
     },
   }),
 };
+const handleUpgradeToEnterpriseClick = (organizationId) => {
+  trackCTAClick(CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
+    organizationId,
+  });
+};
 
-export const SpaceSelection = () => {
+export const SpaceSelection = ({ organizationId }) => {
+  const getSelectHandler = (type) => {
+    switch (type) {
+      case SPACE_PURCHASE_TYPES.ENTERPRISE:
+        return () => {
+          handleUpgradeToEnterpriseClick(organizationId);
+        };
+      default:
+        return () => {};
+    }
+  };
+
   return (
     <section aria-labelledby="section-label">
       <Grid columns={3} rows="repeat(3, 'auto')" columnGap="spacingL" rowGap="spacingM">
         <Heading
           id="section-label"
           element="h2"
-          className={cn(styles.fullRow, styles.sectionHeading)}>
+          className={cn(styles.fullRow, styles.sectionHeading)}
+          testId="space-selection.heading">
           Choose the space that’s right for your project
         </Heading>
 
         {SPACE_PURCHASE_CONTENT.map((spaceContent, idx) => (
-          <SpaceCard key={idx} content={spaceContent} handleSelect={() => {}} /> // TODO: pass here the function to select space for purchase
+          <SpaceCard
+            key={idx}
+            content={spaceContent}
+            handleSelect={getSelectHandler(spaceContent.type)}
+          />
         ))}
 
         <div className={cn(styles.fullRow, styles.communitySection)}>
-          <Card className={styles.card}>
+          <Card className={styles.card} testId="space-selection.community-card">
             <Heading element="h3" className={styles.normalWeight}>
               Community
             </Heading>
@@ -72,4 +95,8 @@ export const SpaceSelection = () => {
       </Grid>
     </section>
   );
+};
+
+SpaceSelection.propTypes = {
+  organizationId: PropTypes.string,
 };

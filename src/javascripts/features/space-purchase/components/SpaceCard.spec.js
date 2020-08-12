@@ -1,10 +1,30 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
 
 import { SpaceCard } from './SpaceCard';
 
 const mockLimits = ['limit 1', 'limit 2', 'limit 3'];
+const mockEnterpriseContent = {
+  type: SPACE_PURCHASE_TYPES.ENTERPRISE,
+  title: (
+    <>
+      <b>Enterprise</b>
+    </>
+  ),
+  description: 'Enterprise description',
+  price: (
+    <>
+      <b>Custom</b>
+      <br />
+      to your needs
+    </>
+  ),
+  callToAction: 'Talk to us',
+  limitsTitle: 'All the Team features, plus:',
+  limits: mockLimits,
+};
 
 describe('SpaceCard', () => {
   it('should show a heading', () => {
@@ -41,12 +61,20 @@ describe('SpaceCard', () => {
 
     expect(handleSelect).toBeCalled();
   });
+
+  it('should render a button with an href to sales if it is an enterprise card', () => {
+    build({ content: mockEnterpriseContent });
+
+    const enterpriseButton = screen.getByTestId('space-cta');
+    expect(enterpriseButton).toHaveTextContent('Talk to us');
+    expect(enterpriseButton.href).toEqual('https://www.contentful.comcontact/sales/');
+  });
 });
 
 function build(customProps) {
   const props = {
     content: {
-      type: 'medium',
+      type: SPACE_PURCHASE_TYPES.MEDIUM,
       title: (
         <>
           <b>Team</b> Medium

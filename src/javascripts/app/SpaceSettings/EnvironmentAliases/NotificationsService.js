@@ -23,6 +23,12 @@ export const triggerNotifications = async ({ currentEnvironmentId, update }) => 
   const currentPageIsNotEnvironmentRelated =
     !isAContentSpecificPage() && !isAnEnvironmentAwarePage();
 
+  const isInitialSetup = oldTarget === null;
+  if (isInitialSetup) {
+    // hack to avoid refresh if opting-in to aliases for first time
+    return;
+  }
+
   const shouldSimplyReload =
     aliasTargetIsUnrelatedToCurrentEnv || currentPageIsNotEnvironmentRelated;
 
