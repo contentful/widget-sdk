@@ -1,7 +1,11 @@
 import { get, isObject, set } from 'lodash';
-import { Control } from 'features/widget-renderer';
+import { Control, SidebarItem, WidgetNamespace, Editor } from 'features/widget-renderer';
 
-export const getCurrentState = async (spaceContext, appId) => {
+export const getCurrentState = async (
+  spaceContext: any,
+  widgetId: string,
+  widgetNamespace: WidgetNamespace
+) => {
   const { items: editorInterfaces } = await spaceContext.cma.getEditorInterfaces();
 
   const CurrentState = { EditorInterface: {} };
@@ -13,13 +17,13 @@ export const getCurrentState = async (spaceContext, appId) => {
       continue;
     }
 
-    const controlsUsingApp = getControlsUsingApp(appId, editorInterface);
+    const controlsUsingApp = getControlsUsingApp({ widgetId, widgetNamespace }, editorInterface);
     const isIncludedInControls = controlsUsingApp.length > 0;
 
-    const positionInSidebar = getPositionInSidebar(appId, editorInterface);
+    const positionInSidebar = getPositionInSidebar({ widgetId, widgetNamespace }, editorInterface);
     const isIncludedInSidebar = positionInSidebar > -1;
 
-    if (isIncludedInEditors(appId, editorInterface)) {
+    if (isIncludedInEditors({ widgetId, widgetNamespace }, editorInterface)) {
       set(CurrentState.EditorInterface, [contentTypeId, 'editor'], true);
     }
 
@@ -94,26 +98,37 @@ export function validateState(targetState) {
   });
 }
 
-const isIncludedInEditors = (appId, editorInterface): boolean => {
+const isIncludedInEditors = (app, editorInterface): boolean => {
   if (editorInterface.editor) {
-    return appId === editorInterface.editor.widgetId;
+    return areSameApp(editorInterface.editor, app);
   } else if (editorInterface.editors) {
-    return editorInterface.editors.some(({ widgetId }) => widgetId === appId);
+    return editorInterface.editors.some((editor) => areSameApp(editor, app));
   }
 
   return false;
 };
 
-const getControlsUsingApp = (appId, editorInterface): Array<Control> => {
+const getControlsUsingApp = (app, editorInterface): Array<Control> => {
   if (editorInterface.controls) {
-    return editorInterface.controls.filter(({ widgetId }) => widgetId === appId);
+    return editorInterface.controls.filter((control) => areSameApp(control, app));
   }
   return [];
 };
 
-const getPositionInSidebar = (appId, editorInterface) => {
+const getPositionInSidebar = (app, editorInterface) => {
   if (editorInterface.sidebar) {
-    return editorInterface.sidebar.findIndex(({ widgetId }) => widgetId === appId);
+    return editorInterface.sidebar.findIndex((sidebarItem) => areSameApp(sidebarItem, app));
   }
   return -1;
+};
+
+const areSameApp = (
+  widgetOne: Editor | SidebarItem | Control,
+  widgetTwo: Editor | SidebarItem | Control
+): boolean => {
+  return (
+    widgetOne.widgetId === widgetTwo.widgetId &&
+    widgetOne.widgetNamespace === WidgetNamespace.APP &&
+    widgetTwo.widgetNamespace === WidgetNamespace.APP
+  );
 };

@@ -2,6 +2,7 @@ import { getCurrentState, validateState } from './AppState';
 import { Control, Editor, SidebarItem, WidgetNamespace } from 'features/widget-renderer';
 
 const DEFAULT_WIDGET_ID = 'widgetId';
+const DEFAULT_WIDGET_NAMESPACE = WidgetNamespace.APP;
 
 const makeEditor = (widgetId = DEFAULT_WIDGET_ID): Editor => {
   return {
@@ -121,7 +122,11 @@ describe('AppState', () => {
       );
       const spaceContext = createSpaceContext(editorInterfaceResponse);
 
-      const result = await getCurrentState(spaceContext, DEFAULT_WIDGET_ID);
+      const result = await getCurrentState(
+        spaceContext,
+        DEFAULT_WIDGET_ID,
+        DEFAULT_WIDGET_NAMESPACE
+      );
 
       expect(result).toEqual({
         EditorInterface: {
@@ -144,7 +149,11 @@ describe('AppState', () => {
       );
       const spaceContext = createSpaceContext(editorInterfaceResponse);
 
-      const result = await getCurrentState(spaceContext, DEFAULT_WIDGET_ID);
+      const result = await getCurrentState(
+        spaceContext,
+        DEFAULT_WIDGET_ID,
+        DEFAULT_WIDGET_NAMESPACE
+      );
 
       expect(result).toEqual({
         EditorInterface: {
@@ -169,7 +178,11 @@ describe('AppState', () => {
       );
       const spaceContext = createSpaceContext(editorInterfaceResponse);
 
-      const result = await getCurrentState(spaceContext, DEFAULT_WIDGET_ID);
+      const result = await getCurrentState(
+        spaceContext,
+        DEFAULT_WIDGET_ID,
+        DEFAULT_WIDGET_NAMESPACE
+      );
 
       expect(result).toEqual({
         EditorInterface: {
@@ -200,7 +213,11 @@ describe('AppState', () => {
       );
       const spaceContext = createSpaceContext(editorInterfaceResponse);
 
-      const result = await getCurrentState(spaceContext, DEFAULT_WIDGET_ID);
+      const result = await getCurrentState(
+        spaceContext,
+        DEFAULT_WIDGET_ID,
+        DEFAULT_WIDGET_NAMESPACE
+      );
 
       expect(result).toEqual({
         EditorInterface: {
@@ -217,7 +234,11 @@ describe('AppState', () => {
       const editorInterfaceResponse = createEditorInterfaceResponse([]);
       const spaceContext = createSpaceContext(editorInterfaceResponse);
 
-      const result = await getCurrentState(spaceContext, DEFAULT_WIDGET_ID);
+      const result = await getCurrentState(
+        spaceContext,
+        DEFAULT_WIDGET_ID,
+        DEFAULT_WIDGET_NAMESPACE
+      );
 
       expect(result).toEqual({
         EditorInterface: {},
@@ -240,7 +261,11 @@ describe('AppState', () => {
       );
       const spaceContext = createSpaceContext(editorInterfaceResponse);
 
-      const result = await getCurrentState(spaceContext, DEFAULT_WIDGET_ID);
+      const result = await getCurrentState(
+        spaceContext,
+        DEFAULT_WIDGET_ID,
+        DEFAULT_WIDGET_NAMESPACE
+      );
 
       expect(result).toEqual({
         EditorInterface: {
@@ -268,7 +293,11 @@ describe('AppState', () => {
       );
       const spaceContext = createSpaceContext(editorInterfaceResponse);
 
-      const result = await getCurrentState(spaceContext, DEFAULT_WIDGET_ID);
+      const result = await getCurrentState(
+        spaceContext,
+        DEFAULT_WIDGET_ID,
+        DEFAULT_WIDGET_NAMESPACE
+      );
 
       expect(result).toEqual({
         EditorInterface: {},

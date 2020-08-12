@@ -19,6 +19,7 @@ export default function createAppExtensionBridge(dependencies) {
     spaceContext,
     appHookBus,
     currentWidgetId,
+    currentWidgetNamespace,
     getCurrentState,
   } = checkDependencies('AppExtensionBridge', dependencies, [
     'spaceContext',
@@ -71,7 +72,7 @@ export default function createAppExtensionBridge(dependencies) {
       } else if (methodName === 'isInstalled') {
         return isInstalled;
       } else if (methodName === 'getCurrentState' && isInstalled) {
-        return getCurrentState(spaceContext, currentWidgetId);
+        return getCurrentState(spaceContext, currentWidgetId, currentWidgetNamespace);
       } else if (methodName === 'getParameters' && isInstalled) {
         return installation.parameters;
       } else {
