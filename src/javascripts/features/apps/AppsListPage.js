@@ -38,6 +38,7 @@ import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 const styles = {
   pricingInfo: css({
     marginBottom: tokens.spacingL,
+    position: 'relative', // position relative is used to ensure that z-index is applied
     zIndex: 3,
   }),
   workbench: css({

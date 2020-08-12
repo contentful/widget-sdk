@@ -9,6 +9,7 @@ export type {
   Location,
   PageLocation,
   EntryFieldLocation,
+  EditorInterface,
 } from './interfaces';
 export { buildAppDefinitionWidget } from './buildWidgets';
 export { isCustomWidget } from './utils';

@@ -41,7 +41,7 @@ export async function updateFieldValue(fieldName, value, version, orgId) {
       },
     });
   } catch (e) {
-    throw new Error(fieldErrorMessage(fieldName, { api: true }));
+    throw new Error(fieldErrorMessage(fieldName, e.status));
   }
 }
 

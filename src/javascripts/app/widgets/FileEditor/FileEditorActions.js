@@ -14,7 +14,7 @@ import {
   DropdownListItem,
 } from '@contentful/forma-36-react-components';
 
-const styles = {
+export const styles = {
   root: css({
     marginTop: tokens.spacingM,
     'button, a': {
@@ -26,7 +26,7 @@ const styles = {
   }),
 };
 
-function DownloadButton(props) {
+export function DownloadButton(props) {
   const href = AssetUrlService.transformHostname(props.file.url);
   return (
     <Tooltip content="Download file" disabled={props.disabled}>
