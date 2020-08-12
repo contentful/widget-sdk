@@ -28,8 +28,6 @@ import * as ssoSelectors from 'redux/selectors/sso';
 import { track } from 'analytics/Analytics';
 import { connect } from 'react-redux';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
-import { IDPSetupForm as NewIdpSetupForm } from 'features/sso';
-import { getVariation, FLAGS } from 'LaunchDarkly';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
   source: 'webapp',
@@ -48,17 +46,6 @@ export class IDPSetupForm extends React.Component {
     connectionTestCancel: PropTypes.func.isRequired,
     enable: PropTypes.func.isRequired,
   };
-
-  state = {
-    noReduxEnabled: false,
-  };
-
-  async componentDidMount() {
-    const noReduxEnabled = await getVariation(FLAGS.SSO_SETUP_NO_REDUX, {
-      organizationId: this.props.organization.sys.id,
-    });
-    this.setState({ noReduxEnabled });
-  }
 
   debouncedUpdateValue = _.debounce(async function (fieldName, value) {
     const { organization, updateFieldValue } = this.props;
@@ -164,15 +151,6 @@ export class IDPSetupForm extends React.Component {
     const idpNameSelectValue = _.findKey(SSO_PROVIDERS_MAP, (names) =>
       names.includes(fields.idpName.value)
     );
-
-    if (this.state.noReduxEnabled) {
-      return (
-        <NewIdpSetupForm
-          organization={this.props.organization}
-          identityProvider={identityProvider}
-        />
-      );
-    }
 
     return (
       <React.Fragment>
