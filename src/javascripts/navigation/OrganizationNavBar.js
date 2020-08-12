@@ -75,9 +75,9 @@ function getItems(params, { orgId }) {
     {
       if: params.hasBillingTab,
       title: 'Billing',
-      sref: 'account.organizations.billing-iframe',
+      sref: 'account.organizations.billing-gatekeeper',
       srefParams: { orgId },
-      rootSref: 'account.organizations.billing-iframe',
+      rootSref: 'account.organizations.billing-gatekeeper',
       srefOptions: {
         inherit: false,
       },

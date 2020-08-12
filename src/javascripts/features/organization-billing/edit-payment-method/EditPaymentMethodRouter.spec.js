@@ -46,7 +46,7 @@ describe('EditPaymentMethodRouter', () => {
     await waitFor(() => expect(getVariation).toBeCalled());
 
     expect(go).toHaveBeenCalledWith({
-      path: ['account', 'organizations', 'billing-iframe'],
+      path: ['account', 'organizations', 'billing-gatekeeper'],
     });
 
     expect(LazyLoader.get).not.toBeCalled();

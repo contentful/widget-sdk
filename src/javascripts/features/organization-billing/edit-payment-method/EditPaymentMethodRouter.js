@@ -40,7 +40,7 @@ const fetch = (organizationId) => async () => {
 
   if (!shouldShowPage) {
     go({
-      path: ['account', 'organizations', 'billing-iframe'],
+      path: ['account', 'organizations', 'billing-gatekeeper'],
     });
 
     return;
@@ -79,7 +79,7 @@ export function EditPaymentMethodRouter({ orgId: organizationId }) {
       <DocumentTitle title="Edit credit card" />
       <Workbench>
         <Workbench.Header
-          title={`Edit credit card`}
+          title={'Edit credit card'}
           icon={<NavigationIcon icon="Billing" size="large" />}
         />
         <Workbench.Content>
