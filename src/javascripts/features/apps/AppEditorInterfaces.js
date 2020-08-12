@@ -2,8 +2,8 @@ import { get, isObject, identity, pick, isEqual, cloneDeep } from 'lodash';
 
 import * as SidebarDefaults from 'app/EntrySidebar/Configuration/defaults';
 
-import { isUnsignedInteger } from './validateTargetState';
 import { WidgetNamespace } from 'features/widget-renderer';
+import { isUnsignedInteger } from './AppState';
 
 // Like `Promise.all` but rejecting input promises do not cause
 // the result promise to reject. They are simply omitted.

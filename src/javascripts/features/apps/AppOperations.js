@@ -1,10 +1,10 @@
 import { get } from 'lodash';
 
-import { validateTargetState } from './validateTargetState';
 import {
   transformEditorInterfacesToTargetState,
   removeAllEditorInterfaceReferences,
 } from './AppEditorInterfaces';
+import { validateState } from './AppState';
 
 export async function installOrUpdate(
   cma,
@@ -12,7 +12,7 @@ export async function installOrUpdate(
   checkAppStatus,
   { parameters, targetState } = {}
 ) {
-  validateTargetState(targetState);
+  validateState(targetState);
 
   const { appDefinition, isMarketplaceInstallation } = await checkAppStatus();
 
