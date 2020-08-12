@@ -33,22 +33,26 @@ const styles = {
     alignItems: 'center',
     textAlign: 'center',
   }),
+  cardContainer: css({
+    display: 'grid',
+    position: 'relative',
+  }),
   card: css({
     display: 'grid',
     gridTemplateRows: '1fr auto auto',
-    position: 'relative',
     padding: `${tokens.spacingXl} ${tokens.spacingL}`,
-    overflow: 'hidden',
     borderRadius: '3px',
-    '&:before': {
-      content: '""',
-      position: 'absolute',
-      width: '100%',
-      height: tokens.spacingXs,
-      top: 0,
-      left: 0,
-    },
   }),
+  coloredBar: css({
+    position: 'absolute',
+    width: '100%',
+    height: tokens.spacingXs,
+    top: 0,
+    left: 0,
+    borderTopLeftRadius: '3px',
+    borderTopRightRadius: '3px',
+  }),
+
   spaceColor: {
     medium: getPlanBGColor(MEDIUM_PLAN_COLOR),
     large: getPlanBGColor(LARGE_PLAN_COLOR),
@@ -88,52 +92,55 @@ export const SpaceCard = ({ content, handleSelect }) => {
   const isEnterpriseCard = content.type === SPACE_PURCHASE_TYPES.ENTERPRISE;
 
   return (
-    <Card className={cn(styles.card, styles.spaceColor[content.type])} testId="space-card">
-      <Typography className={styles.centered}>
-        <Heading element="h3" className={styles.cardTitle} testId="space-heading">
-          {content.title}
-        </Heading>
+    <div className={styles.cardContainer}>
+      <div className={cn(styles.coloredBar, styles.spaceColor[content.type])}></div>
+      <Card className={styles.card} testId="space-card">
+        <Typography className={styles.centered}>
+          <Heading element="h3" className={styles.cardTitle} testId="space-heading">
+            {content.title}
+          </Heading>
 
-        <Paragraph testId="space-description">{content.description}</Paragraph>
-      </Typography>
-
-      <Typography className={styles.centered}>
-        <Paragraph className={styles.price} testId="space-price">
-          {content.price}
-        </Paragraph>
-        {isEnterpriseCard ? (
-          <Button
-            href={websiteUrl('contact/sales/')}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={handleSelect}
-            testId="space-cta">
-            {content.callToAction}
-          </Button>
-        ) : (
-          <Button onClick={handleSelect} testId="space-cta">
-            {content.callToAction}
-          </Button>
-        )}
-      </Typography>
-
-      <div className={styles.limitsSection}>
-        <Typography>
-          <Paragraph>{content.limitsTitle}</Paragraph>
+          <Paragraph testId="space-description">{content.description}</Paragraph>
         </Typography>
-        <List testId="space-limits">
-          {content.limits.map((limit, idx) => (
-            <ListItem key={idx} className={styles.limit}>
-              <Icon
-                icon="CheckCircle"
-                className={cn(styles.check, styles.checkColor[content.type])}
-              />
-              <Paragraph>{limit}</Paragraph>
-            </ListItem>
-          ))}
-        </List>
-      </div>
-    </Card>
+
+        <Typography className={styles.centered}>
+          <Paragraph className={styles.price} testId="space-price">
+            {content.price}
+          </Paragraph>
+          {isEnterpriseCard ? (
+            <Button
+              href={websiteUrl('contact/sales/')}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={handleSelect}
+              testId="space-cta">
+              {content.callToAction}
+            </Button>
+          ) : (
+            <Button onClick={handleSelect} testId="space-cta">
+              {content.callToAction}
+            </Button>
+          )}
+        </Typography>
+
+        <div className={styles.limitsSection}>
+          <Typography>
+            <Paragraph>{content.limitsTitle}</Paragraph>
+          </Typography>
+          <List testId="space-limits">
+            {content.limits.map((limit, idx) => (
+              <ListItem key={idx} className={styles.limit}>
+                <Icon
+                  icon="CheckCircle"
+                  className={cn(styles.check, styles.checkColor[content.type])}
+                />
+                <Paragraph>{limit}</Paragraph>
+              </ListItem>
+            ))}
+          </List>
+        </div>
+      </Card>
+    </div>
   );
 };
 SpaceCard.propTypes = {
@@ -151,8 +158,6 @@ SpaceCard.propTypes = {
 
 function getPlanBGColor(backgroundColor) {
   return css({
-    '&:before': {
-      backgroundColor,
-    },
+    backgroundColor,
   });
 }
