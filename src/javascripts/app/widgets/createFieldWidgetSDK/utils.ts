@@ -1,12 +1,4 @@
-import {
-  DialogsAPI,
-  EntryAPI,
-  FieldExtensionSDK,
-  NavigatorAPI,
-  ParametersAPI,
-  SharedEditorSDK,
-  SpaceAPI,
-} from 'contentful-ui-extensions-sdk';
+import { FieldExtensionSDK, EntryAPI } from 'contentful-ui-extensions-sdk';
 import { createContentTypeApi, InternalContentType } from './createContentTypeApi';
 import { createAccessApi } from './createAccessApi';
 import { Notification } from '@contentful/forma-36-react-components';
@@ -15,19 +7,10 @@ import { createUserApi, SpaceMember } from './createUserApi';
 import { createIdsApi } from './createIdsApi';
 import { noop } from 'lodash';
 import { Field, Locale } from 'app/entity_editor/EntityField/types';
-import { Widget, WidgetNamespace } from 'features/widget-renderer';
-
-interface NonReadOnlyApis {
-  editorApi: SharedEditorSDK['editor'];
-  entryApi: EntryAPI;
-  spaceApi: SpaceAPI;
-  navigatorApi: NavigatorAPI;
-  dialogsApi: DialogsAPI;
-  parametersApi: ParametersAPI;
-}
+import { Widget, WidgetNamespace, WidgetLocation } from 'features/widget-renderer';
 
 interface CreateSharedFieldWidgetSDKOptions {
-  nonReadOnlyApis: NonReadOnlyApis;
+  entryApi: EntryAPI;
   environmentIds: string[];
   publicFieldId: Field['id'] | Field['apiName'];
   internalContentType: InternalContentType;
@@ -36,10 +19,11 @@ interface CreateSharedFieldWidgetSDKOptions {
   spaceMember: SpaceMember;
   widgetId: Widget['id'];
   widgetNamespace: WidgetNamespace;
+  editorInterfaceSettings: Record<string, any>;
 }
 
 export function createSharedFieldWidgetSDK({
-  nonReadOnlyApis,
+  entryApi,
   environmentIds,
   publicFieldId,
   internalContentType,
@@ -48,19 +32,13 @@ export function createSharedFieldWidgetSDK({
   spaceMember,
   widgetId,
   widgetNamespace,
-}: CreateSharedFieldWidgetSDKOptions): FieldExtensionSDK {
+  editorInterfaceSettings,
+}: CreateSharedFieldWidgetSDKOptions): Omit<
+  FieldExtensionSDK,
+  'editor' | 'space' | 'navigator' | 'dialogs'
+> {
   const [environmentId] = environmentIds;
-  const {
-    editorApi,
-    entryApi,
-    spaceApi,
-    navigatorApi,
-    dialogsApi,
-    parametersApi,
-  } = nonReadOnlyApis;
-
   const contentTypeApi = createContentTypeApi(internalContentType);
-
   const fieldApi = entryApi.fields[publicFieldId].getForLocale(publicLocaleCode);
   const accessApi = createAccessApi();
   const notifierApi = Notification;
@@ -77,9 +55,12 @@ export function createSharedFieldWidgetSDK({
     widgetNamespace,
     widgetId
   );
+  const parametersApi = {
+    installation: {},
+    instance: editorInterfaceSettings,
+  };
   const locationApi = {
-    // TODO: hardcoded! Use current location instead of "entry-field"
-    is: (type: string) => type === 'entry-field',
+    is: (location: string) => location === WidgetLocation.ENTRY_FIELD,
   };
   const windowApi = {
     // There are no iframes in the internal API so any methods related
@@ -96,14 +77,10 @@ export function createSharedFieldWidgetSDK({
     parameters: parametersApi,
     access: accessApi,
     locales: localesApi,
-    space: spaceApi,
     notifier: notifierApi,
     user: userApi,
     ids: idsApi,
     location: locationApi,
     window: windowApi,
-    navigator: navigatorApi,
-    editor: editorApi,
-    dialogs: dialogsApi,
   };
 }
