@@ -92,7 +92,7 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
       // Default instance parameters to an empty object (backwards compat).
       instance: parameters.values.instance || {},
       // Use invocation parameters only if present.
-      ...(parameters.values.instance ? { invocation: parameters.values.instance } : {}),
+      ...(parameters.values.invocation ? { invocation: parameters.values.invocation } : {}),
     };
 
     const connectMessage = makeConnectMessage(sdk, location, mergedParameterValues);
