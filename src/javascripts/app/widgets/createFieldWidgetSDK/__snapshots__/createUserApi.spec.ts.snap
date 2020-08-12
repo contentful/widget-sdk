@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createUserApi formats the spacemember correctly 1`] = `
+Object {
+  "avatarUrl": "www.example.com",
+  "email": "bob@bob.com",
+  "firstName": "bob",
+  "lastName": "cratchit",
+  "spaceMembership": Object {
+    "admin": false,
+    "roles": Array [
+      Object {
+        "description": "thing",
+        "name": "dev",
+      },
+    ],
+    "sys": Object {
+      "id": "member_id",
+      "type": "SpaceMembership",
+    },
+  },
+  "sys": Object {
+    "id": "user_id",
+    "type": "User",
+  },
+}
+`;

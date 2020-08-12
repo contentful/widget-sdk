@@ -2,7 +2,7 @@ import { pick, get, difference } from 'lodash';
 import createIDMap from './IDMap';
 import * as PublicContentType from './PublicContentType';
 import * as Analytics from 'analytics/Analytics';
-import { getLocalesObject } from 'app/widgets/NewWidgetApi/createLocalesApi';
+import { getLocalesObject } from 'app/widgets/createFieldWidgetSDK/createLocalesApi';
 import { WidgetNamespace } from 'features/widget-renderer';
 
 const sharedFieldProps = (field) => ({

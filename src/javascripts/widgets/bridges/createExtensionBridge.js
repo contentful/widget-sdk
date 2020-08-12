@@ -16,7 +16,10 @@ import makeExtensionNotificationHandlers from './makeExtensionNotificationHandle
 import makePageExtensionHandlers from './makePageExtensionHandlers';
 import makeExtensionAccessHandlers from './makeExtensionAccessHandlers';
 import checkDependencies from './checkDependencies';
-import { makeShareJSError, makePermissionError } from 'app/widgets/NewWidgetApi/createFieldApi';
+import {
+  makeShareJSError,
+  makePermissionError,
+} from 'app/widgets/createFieldWidgetSDK/createEntryFieldApi';
 import { WidgetLocation } from 'features/widget-renderer';
 
 const ERROR_MESSAGES = {
