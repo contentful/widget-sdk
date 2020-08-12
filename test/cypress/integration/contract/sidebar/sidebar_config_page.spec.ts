@@ -26,15 +26,7 @@ describe('Sidebar configuration', () => {
     cy.wait(interactions);
   });
 
-  const widgetNames = [
-    'Publish & Status',
-    'Release',
-    'Preview',
-    'Links',
-    'Translation',
-    'Versions',
-    'Users',
-  ];
+  const widgetNames = ['Publish & Status', 'Preview', 'Links', 'Translation', 'Versions', 'Users'];
 
   describe('Opening the page with no configuration saved', () => {
     it('displays sidebar options correctly', () => {
@@ -68,7 +60,6 @@ describe('Sidebar configuration', () => {
       const arrowDown: number = 40;
       const widgetsReordered = [
         'Publish & Status',
-        'Release',
         'Preview',
         'Links',
         'Versions',
