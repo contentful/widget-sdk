@@ -11,6 +11,7 @@ import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import SSOUpsellState from './SSOUpsellState';
 import * as fake from 'test/helpers/fakeFactory';
+import { getVariation } from 'LaunchDarkly';
 
 jest.mock('services/OrganizationRoles', () => ({
   isOwnerOrAdmin: jest.fn().mockReturnValue(true),
@@ -47,6 +48,10 @@ describe('SSOSetup', () => {
 
   afterEach(() => {
     track.mockClear();
+  });
+
+  beforeEach(() => {
+    getVariation.mockResolvedValue(false);
   });
 
   it('should call retrieveIdp when the component is mounted if org is present', async () => {

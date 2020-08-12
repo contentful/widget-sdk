@@ -9,6 +9,7 @@ import accessToolsState from './AccessToolsState';
 import ssoRoutingState from './SSO/SSOSetupRoutingState';
 import gatekeeperStates from './OrganizationSettingsGatekeeperStates';
 import { newSpaceState } from 'features/space-purchase';
+import { billingRoutingState } from 'features/organization-billing';
 import OrganizationNavBar from 'navigation/OrganizationNavBar';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
 import { managementRoute as appsState } from 'features/apps';
@@ -79,6 +80,7 @@ export default [
       appsState,
       ssoRoutingState,
       accessToolsState,
+      billingRoutingState,
       ...gatekeeperStates,
     ],
   }),
