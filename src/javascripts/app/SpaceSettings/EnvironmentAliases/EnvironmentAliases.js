@@ -130,6 +130,8 @@ const aliasesStyles = {
   illustration: css({
     flexShrink: '4',
     marginLeft: tokens.spacingM,
+    width: '100%',
+    height: '100%',
   }),
   buttonBar: css({
     marginTop: 'auto',
