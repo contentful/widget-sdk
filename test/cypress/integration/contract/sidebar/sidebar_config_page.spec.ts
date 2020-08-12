@@ -67,8 +67,12 @@ describe('Sidebar configuration', () => {
         'Users',
       ];
 
+      // Pick up and move Translation from slot 4 to slot 5
+      // NOTE: Publish & Status is not draggable
+      const originalTranslationDraggableIdx = 3;
+
       cy.findAllByTestId('sidebar-widget-item-draggable')
-        .eq(4)
+        .eq(originalTranslationDraggableIdx)
         .focus()
         .wait(0.2 * 1000)
         .trigger('keydown', { keyCode: space, force: true })
