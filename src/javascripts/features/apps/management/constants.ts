@@ -1,5 +1,4 @@
-export const LEARN_MORE_URL =
-  'https://www.contentful.com/developers/docs/extensibility/app-framework/app-identities-and-events/';
+export const LEARN_MORE_URL = 'https://ctfl.io/app-identities-events-eap';
 
 export const KEY_GEN_GUIDE_URL =
-  'https://www.contentful.com/developers/docs/references/content-management-api/#/reference/app-keys';
+  'https://ctf-doc-app-branch-release-backend-for-apps.netlify.app/developers/docs/references/content-management-api/#/reference/app-keys';
