@@ -121,7 +121,7 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
     // Handle changes to the <iframe> element.
     this.channel.registerHandler(ChannelMethod.SetHeight, (height) => {
       if (!this.props.isFullSize) {
-        iframe.style.height = height;
+        iframe.style.height = `${height}px`;
       }
     });
 
