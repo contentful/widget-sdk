@@ -248,7 +248,7 @@ export function AppListing({ definitions, canManageApps }) {
             <TableRow>
               <TableCell>Name</TableCell>
               <TableCell>ID</TableCell>
-              <TableCell>App URL host</TableCell>
+              <TableCell>App URL</TableCell>
               <TableCell></TableCell>
             </TableRow>
           </TableHead>
