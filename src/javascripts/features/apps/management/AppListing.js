@@ -161,6 +161,17 @@ function CreateAppButton({ orgId, disabled, onClick }) {
   return <Button onClick={onClick}>Create app</Button>;
 }
 
+function buildRenderedAppURL(url) {
+  if (!url) {
+    return '';
+  }
+
+  const urlObj = new URL(url);
+  const path = urlObj.pathname !== '/' ? urlObj.pathname : '';
+  const port = urlObj.port ? `:${urlObj.port}` : '';
+  return `${urlObj.hostname}${port}${path}`;
+}
+
 export function AppListing({ definitions, canManageApps }) {
   const definitionsLimitExceeded = definitions.length >= MAX_DEFINITIONS_ALLOWED;
   const orgId = get(definitions, [0, 'sys', 'organization', 'sys', 'id'], '');
@@ -254,7 +265,7 @@ export function AppListing({ definitions, canManageApps }) {
           </TableHead>
           <TableBody>
             {definitions.map((def) => {
-              const appHostURL = def.src ? new URL(def.src).origin : '';
+              const formattedAppURL = buildRenderedAppURL(def.src);
 
               return (
                 <TableRow key={def.sys.id}>
@@ -276,7 +287,7 @@ export function AppListing({ definitions, canManageApps }) {
                   </TableCell>
                   <TableCell>
                     <div className={styles.cell}>
-                      <span className={idStyle}>{appHostURL} </span>
+                      <span>{formattedAppURL}</span>
                     </div>
                   </TableCell>
                   <TableCell className={styles.appActions} align="right">

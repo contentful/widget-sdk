@@ -3,7 +3,7 @@
 exports[`AppListing should render the app listing when definitions are present 1`] = `
 Object {
   "asFragment": [Function],
-  "baseElement": .emotion-8 {
+  "baseElement": .emotion-7 {
   vertical-align: middle;
 }
 
@@ -28,7 +28,7 @@ Object {
   transform: translateX(0);
 }
 
-.emotion-27 {
+.emotion-24 {
   color: #b4c3ca;
   border-bottom: 1px solid #d3dce0;
   font-weight: 400;
@@ -63,7 +63,7 @@ Object {
   vertical-align: sub;
 }
 
-.emotion-7 {
+.emotion-6 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -75,7 +75,7 @@ Object {
   height: 20px;
 }
 
-.emotion-7 div {
+.emotion-6 div {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -328,22 +328,19 @@ Object {
                       <div
                         class="emotion-1"
                       >
-                        <span
-                          class="emotion-2"
-                        >
-                          http://localhost:1234
-                           
+                        <span>
+                          localhost:1234
                         </span>
                       </div>
                     </td>
                     <td
                       align="right"
-                      class="TableCell__TableCell___Wou8a emotion-8"
+                      class="TableCell__TableCell___Wou8a emotion-7"
                       data-test-id="cf-ui-table-cell"
                       style="top: 0px;"
                     >
                       <div
-                        class="emotion-7"
+                        class="emotion-6"
                       >
                         <div
                           class="Dropdown__Dropdown___nAsJ-"
@@ -499,22 +496,19 @@ Object {
                       <div
                         class="emotion-1"
                       >
-                        <span
-                          class="emotion-2"
-                        >
-                          http://localhost:1234
-                           
+                        <span>
+                          localhost:1234
                         </span>
                       </div>
                     </td>
                     <td
                       align="right"
-                      class="TableCell__TableCell___Wou8a emotion-8"
+                      class="TableCell__TableCell___Wou8a emotion-7"
                       data-test-id="cf-ui-table-cell"
                       style="top: 0px;"
                     >
                       <div
-                        class="emotion-7"
+                        class="emotion-6"
                       >
                         <div
                           class="Dropdown__Dropdown___nAsJ-"
@@ -670,22 +664,19 @@ Object {
                       <div
                         class="emotion-1"
                       >
-                        <span
-                          class="emotion-2"
-                        >
-                          http://localhost:8080
-                           
+                        <span>
+                          localhost:8080/frontend
                         </span>
                       </div>
                     </td>
                     <td
                       align="right"
-                      class="TableCell__TableCell___Wou8a emotion-8"
+                      class="TableCell__TableCell___Wou8a emotion-7"
                       data-test-id="cf-ui-table-cell"
                       style="top: 0px;"
                     >
                       <div
-                        class="emotion-7"
+                        class="emotion-6"
                       >
                         <div
                           class="Dropdown__Dropdown___nAsJ-"
@@ -743,7 +734,7 @@ Object {
               data-test-id="cf-ui-text-container"
             >
               <h3
-                class="SectionHeading__SectionHeading___39J6j emotion-27 f36-margin-bottom--l"
+                class="SectionHeading__SectionHeading___39J6j emotion-24 f36-margin-bottom--l"
                 data-test-id="cf-ui-section-heading"
               >
                 About Apps
@@ -798,7 +789,7 @@ Object {
     <div />
     <div />
   </body>,
-  "container": .emotion-8 {
+  "container": .emotion-7 {
   vertical-align: middle;
 }
 
@@ -823,7 +814,7 @@ Object {
   transform: translateX(0);
 }
 
-.emotion-27 {
+.emotion-24 {
   color: #b4c3ca;
   border-bottom: 1px solid #d3dce0;
   font-weight: 400;
@@ -858,7 +849,7 @@ Object {
   vertical-align: sub;
 }
 
-.emotion-7 {
+.emotion-6 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -870,7 +861,7 @@ Object {
   height: 20px;
 }
 
-.emotion-7 div {
+.emotion-6 div {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -1122,22 +1113,19 @@ Object {
                     <div
                       class="emotion-1"
                     >
-                      <span
-                        class="emotion-2"
-                      >
-                        http://localhost:1234
-                         
+                      <span>
+                        localhost:1234
                       </span>
                     </div>
                   </td>
                   <td
                     align="right"
-                    class="TableCell__TableCell___Wou8a emotion-8"
+                    class="TableCell__TableCell___Wou8a emotion-7"
                     data-test-id="cf-ui-table-cell"
                     style="top: 0px;"
                   >
                     <div
-                      class="emotion-7"
+                      class="emotion-6"
                     >
                       <div
                         class="Dropdown__Dropdown___nAsJ-"
@@ -1293,22 +1281,19 @@ Object {
                     <div
                       class="emotion-1"
                     >
-                      <span
-                        class="emotion-2"
-                      >
-                        http://localhost:1234
-                         
+                      <span>
+                        localhost:1234
                       </span>
                     </div>
                   </td>
                   <td
                     align="right"
-                    class="TableCell__TableCell___Wou8a emotion-8"
+                    class="TableCell__TableCell___Wou8a emotion-7"
                     data-test-id="cf-ui-table-cell"
                     style="top: 0px;"
                   >
                     <div
-                      class="emotion-7"
+                      class="emotion-6"
                     >
                       <div
                         class="Dropdown__Dropdown___nAsJ-"
@@ -1464,22 +1449,19 @@ Object {
                     <div
                       class="emotion-1"
                     >
-                      <span
-                        class="emotion-2"
-                      >
-                        http://localhost:8080
-                         
+                      <span>
+                        localhost:8080/frontend
                       </span>
                     </div>
                   </td>
                   <td
                     align="right"
-                    class="TableCell__TableCell___Wou8a emotion-8"
+                    class="TableCell__TableCell___Wou8a emotion-7"
                     data-test-id="cf-ui-table-cell"
                     style="top: 0px;"
                   >
                     <div
-                      class="emotion-7"
+                      class="emotion-6"
                     >
                       <div
                         class="Dropdown__Dropdown___nAsJ-"
@@ -1537,7 +1519,7 @@ Object {
             data-test-id="cf-ui-text-container"
           >
             <h3
-              class="SectionHeading__SectionHeading___39J6j emotion-27 f36-margin-bottom--l"
+              class="SectionHeading__SectionHeading___39J6j emotion-24 f36-margin-bottom--l"
               data-test-id="cf-ui-section-heading"
             >
               About Apps
