@@ -27,7 +27,7 @@ const widget: Widget = {
   },
 };
 
-const mockMethod = jest.fn().mockReturnValue(jest.fn())
+const mockMethod = jest.fn().mockReturnValue(jest.fn());
 const sdk = ({
   field: {
     getValue: () => 'test',
