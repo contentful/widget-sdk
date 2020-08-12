@@ -1,6 +1,7 @@
 import { Notification } from '@contentful/forma-36-react-components';
 import { track } from 'analytics/Analytics';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
+import { fieldErrorMessage } from 'features/sso/utils/utils';
 
 export async function retrieveIdp(orgId) {
   const endpoint = createOrganizationEndpoint(orgId);
@@ -28,16 +29,20 @@ export async function createIdp(orgId) {
   Notification.success('SSO was set up successfully!');
 }
 
-export async function updateFieldValue({ fieldName, value, version, orgId }) {
+export async function updateFieldValue(fieldName, value, version, orgId) {
   const endpoint = createOrganizationEndpoint(orgId);
-  return endpoint({
-    method: 'PUT',
-    path: ['identity_provider'],
-    version,
-    data: {
-      [fieldName]: value,
-    },
-  });
+  try {
+    await endpoint({
+      method: 'PUT',
+      path: ['identity_provider'],
+      version,
+      data: {
+        [fieldName]: value,
+      },
+    });
+  } catch (e) {
+    throw new Error(fieldErrorMessage(fieldName, e.status));
+  }
 }
 
 export async function enable(orgId) {

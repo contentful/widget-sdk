@@ -43,7 +43,6 @@ describe('Entry references', () => {
       cy.findByTestId('test-id-editor-builtin-reference-tree').click();
       cy.wait(getEntryReferencesInteraction);
 
-      cy.findByTestId('referencesActionDropdown').click();
       cy.findByTestId('validateReferencesBtn').click();
       cy.wait(validateEntryTreeInteraction);
 
@@ -60,7 +59,6 @@ describe('Entry references', () => {
       cy.findByTestId('test-id-editor-builtin-reference-tree').click();
       cy.wait(getEntryReferencesInteraction);
 
-      cy.findByTestId('referencesActionDropdown').click();
       cy.findByTestId('validateReferencesBtn').click();
       cy.wait(validateEntryTreeInteraction);
 
@@ -85,7 +83,6 @@ describe('Entry references', () => {
       cy.findByTestId('test-id-editor-builtin-reference-tree').click();
       cy.wait(getEntryReferencesInteraction);
 
-      cy.findByTestId('referencesActionDropdown').click();
       cy.findByTestId('publishReferencesBtn').click();
       cy.wait(publishEntryTreeInteraction);
       cy.wait(getEntryReferencesInteraction);
@@ -93,7 +90,7 @@ describe('Entry references', () => {
       cy.findByTestId('cf-ui-notification')
         .click({ timeout: 5000 })
         .should('be.visible')
-        .should('contain', 'Untitled and 2 references were published successfully');
+        .should('contain', 'one and 2 references were published successfully');
     });
 
     it('publishes release returns validation errors', () => {
@@ -103,7 +100,6 @@ describe('Entry references', () => {
       cy.findByTestId('test-id-editor-builtin-reference-tree').click();
       cy.wait(getEntryReferencesInteraction);
 
-      cy.findByTestId('referencesActionDropdown').click();
       cy.findByTestId('publishReferencesBtn').click();
       cy.wait(publishEntryTreeInteraction);
 
@@ -120,14 +116,13 @@ describe('Entry references', () => {
       cy.findByTestId('test-id-editor-builtin-reference-tree').click();
       cy.wait(getEntryReferencesInteraction);
 
-      cy.findByTestId('referencesActionDropdown').click();
       cy.findByTestId('publishReferencesBtn').click();
       cy.wait(publishEntryTreeInteraction);
 
       cy.findByTestId('cf-ui-notification')
         .click({ timeout: 5000 })
         .should('be.visible')
-        .should('contain', 'We were unable to publish Untitled and 2 references');
+        .should('contain', 'We were unable to publish one and 2 references');
     });
   });
 });

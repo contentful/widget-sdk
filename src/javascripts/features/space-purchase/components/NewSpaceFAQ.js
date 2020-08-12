@@ -7,6 +7,15 @@ import ExternalTextLink from 'app/common/ExternalTextLink';
 import { Accordion, AccordionItem } from './Accordion';
 import { SpaceLimitsTable } from './SpaceLimitsTable';
 import { TierComparisonTable } from './TierComparisonTable';
+import { css } from 'emotion';
+
+const styles = {
+  accordionItemTitles: css({
+    button: {
+      fontWeight: 600,
+    },
+  }),
+};
 
 export const NewSpaceFAQ = () => {
   return (
@@ -17,7 +26,7 @@ export const NewSpaceFAQ = () => {
         </Heading>
       </Typography>
 
-      <Accordion>
+      <Accordion className={styles.accordionItemTitles}>
         <AccordionItem title="What are the differences between the Community, Team and Enterprise tiers?">
           <Typography>
             <Paragraph>

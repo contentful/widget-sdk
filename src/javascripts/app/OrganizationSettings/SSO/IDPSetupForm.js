@@ -28,15 +28,14 @@ import * as ssoSelectors from 'redux/selectors/sso';
 import { track } from 'analytics/Analytics';
 import { connect } from 'react-redux';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
-// eslint-disable-next-line
-import { updateFieldValue } from 'features/sso';
+import { IDPSetupForm as NewIdpSetupForm } from 'features/sso';
+import { getVariation, FLAGS } from 'LaunchDarkly';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
   source: 'webapp',
   medium: 'idp-setup-form',
   campaign: 'in-app-help',
 });
-
 export class IDPSetupForm extends React.Component {
   static propTypes = {
     organization: OrganizationPropType,
@@ -49,6 +48,17 @@ export class IDPSetupForm extends React.Component {
     connectionTestCancel: PropTypes.func.isRequired,
     enable: PropTypes.func.isRequired,
   };
+
+  state = {
+    noReduxEnabled: false,
+  };
+
+  async componentDidMount() {
+    const noReduxEnabled = await getVariation(FLAGS.SSO_SETUP_NO_REDUX, {
+      organizationId: this.props.organization.sys.id,
+    });
+    this.setState({ noReduxEnabled });
+  }
 
   debouncedUpdateValue = _.debounce(async function (fieldName, value) {
     const { organization, updateFieldValue } = this.props;
@@ -155,6 +165,15 @@ export class IDPSetupForm extends React.Component {
       names.includes(fields.idpName.value)
     );
 
+    if (this.state.noReduxEnabled) {
+      return (
+        <NewIdpSetupForm
+          organization={this.props.organization}
+          identityProvider={identityProvider}
+        />
+      );
+    }
+
     return (
       <React.Fragment>
         <section className="f36-margin-top--xl">
@@ -251,7 +270,6 @@ export class IDPSetupForm extends React.Component {
             .
           </Note>
         </section>
-
         <section className="f36-margin-top--3xl">
           <Heading element="h2" className="f36-margin-bottom--l">
             Your SSO provider details
@@ -388,43 +406,44 @@ export class IDPSetupForm extends React.Component {
         </section>
 
         <section className="f36-margin-top--3xl">
-          <Heading element="h2" className="f36-margin-bottom--xs">
-            SSO name
-          </Heading>
-          <HelpText className="f36-margin-bottom--l">
-            Users will have to type the SSO name if they log in via{' '}
-            <TextLink href="https://be.contentful.com/login/sso">
-              Contentful&apos;s SSO login
-            </TextLink>
-            .
-          </HelpText>
+          <>
+            <Heading element="h2" className="f36-margin-bottom--xs">
+              SSO name
+            </Heading>
+            <HelpText className="f36-margin-bottom--l">
+              Users will have to type the SSO name if they log in via{' '}
+              <TextLink href="https://be.contentful.com/login/sso">
+                Contentful&apos;s SSO login
+              </TextLink>
+              .
+            </HelpText>
 
-          <div className="sso-setup__field-container">
-            <div className="sso-setup__field-input">
-              <TextField
-                labelText="SSO name"
-                id="ssoName"
-                name="ssoName"
-                testId="ssoName"
-                helpText="Letters, numbers, periods, hyphens, and underscores are allowed."
-                textInputProps={{
-                  width: 'large',
-                  placeholder: `E.g. ${_.kebabCase(orgName)}-sso`,
-                }}
-                className="f36-margin-right--m"
-                value={fields.ssoName.value}
-                onChange={this.updateField('ssoName')}
-                onBlur={this.updateField('ssoName', true)}
-                validationMessage={fields.ssoName.error}
-              />
-            </div>
-            {fields.ssoName.isPending && (
-              <div className="sso-setup__field-spinner">
-                <Spinner />
+            <div className="sso-setup__field-container">
+              <div className="sso-setup__field-input">
+                <TextField
+                  labelText="SSO name"
+                  id="ssoName"
+                  name="ssoName"
+                  testId="ssoName"
+                  helpText="Letters, numbers, periods, hyphens, and underscores are allowed."
+                  textInputProps={{
+                    width: 'large',
+                    placeholder: `E.g. ${_.kebabCase(orgName)}-sso`,
+                  }}
+                  className="f36-margin-right--m"
+                  value={fields.ssoName.value}
+                  onChange={this.updateField('ssoName')}
+                  onBlur={this.updateField('ssoName', true)}
+                  validationMessage={fields.ssoName.error}
+                />
               </div>
-            )}
-          </div>
-
+              {fields.ssoName.isPending && (
+                <div className="sso-setup__field-spinner">
+                  <Spinner />
+                </div>
+              )}
+            </div>
+          </>
           <Note className="f36-margin-top--3xl">
             To enable SSO in{' '}
             <TextLink
@@ -442,7 +461,6 @@ export class IDPSetupForm extends React.Component {
             </TextLink>
             .
           </Note>
-
           <div className="f36-margin-top--l">
             <Button
               buttonType="positive"

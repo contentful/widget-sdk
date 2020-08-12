@@ -18,7 +18,7 @@ export const SPACE_PURCHASE_CONTENT = [
       </>
     ),
     callToAction: 'Select',
-    limitsTitle: 'What’s the space limits',
+    limitsTitle: 'What are the space limits:',
     limits: [
       '7 locales',
       '2 role types (Admin & Editor)',
@@ -44,7 +44,7 @@ export const SPACE_PURCHASE_CONTENT = [
       </>
     ),
     callToAction: 'Select',
-    limitsTitle: 'What’s the space limits',
+    limitsTitle: 'What are the space limits:',
     limits: [
       '10 locales',
       '4 role types (Admin, Editor, Author & Translators)',

@@ -9,7 +9,7 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 import StateRedirect from 'app/common/StateRedirect';
 
-const initialFetch = async () => {
+const initialFetch = () => async () => {
   const newPurchaseFlowIsEnabled = await getVariation(FLAGS.NEW_PURCHASE_FLOW);
 
   return {

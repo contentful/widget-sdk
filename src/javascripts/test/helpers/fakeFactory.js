@@ -229,3 +229,21 @@ export function SpaceResource(usage, limit, id) {
 export function OrganizationResource(usage, limit, id) {
   return BaseResource('OrganizationResource', usage, limit, id);
 }
+
+export function IdentityProvider() {
+  return {
+    isPending: false,
+    data: {
+      sys: { type: 'IdentityProvider', id: '2y6J2E3UVEzi5RFhI6xvPl', version: 8 },
+      enabled: false,
+      idpCert: '',
+      idpName: '',
+      idpSsoTargetUrl: '',
+      restrictedMode: false,
+      ssoName: '',
+      testConnectionAt: null,
+      testConnectionErrors: null,
+      testConnectionResult: null,
+    },
+  };
+}
