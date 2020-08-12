@@ -3,7 +3,7 @@
 exports[`AppListing should render the app listing when definitions are present 1`] = `
 Object {
   "asFragment": [Function],
-  "baseElement": .emotion-6 {
+  "baseElement": .emotion-7 {
   vertical-align: middle;
 }
 
@@ -28,7 +28,7 @@ Object {
   transform: translateX(0);
 }
 
-.emotion-21 {
+.emotion-24 {
   color: #b4c3ca;
   border-bottom: 1px solid #d3dce0;
   font-weight: 400;
@@ -43,6 +43,7 @@ Object {
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
+  min-width: 200px;
 }
 
 .emotion-0 {
@@ -62,7 +63,7 @@ Object {
   vertical-align: sub;
 }
 
-.emotion-5 {
+.emotion-6 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -74,7 +75,7 @@ Object {
   height: 20px;
 }
 
-.emotion-5 div {
+.emotion-6 div {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -202,6 +203,14 @@ Object {
                       class="TableCell__TableCell___Wou8a TableCell__TableCell--head___1HhvZ"
                       data-test-id="cf-ui-table-cell"
                       style="top: 0px;"
+                    >
+                      App URL
+                    </th>
+                    <th
+                      align="left"
+                      class="TableCell__TableCell___Wou8a TableCell__TableCell--head___1HhvZ"
+                      data-test-id="cf-ui-table-cell"
+                      style="top: 0px;"
                     />
                   </tr>
                 </thead>
@@ -311,13 +320,27 @@ Object {
                       </div>
                     </td>
                     <td
-                      align="right"
-                      class="TableCell__TableCell___Wou8a emotion-6"
+                      align="left"
+                      class="TableCell__TableCell___Wou8a"
                       data-test-id="cf-ui-table-cell"
                       style="top: 0px;"
                     >
                       <div
-                        class="emotion-5"
+                        class="emotion-1"
+                      >
+                        <span>
+                          localhost:1234
+                        </span>
+                      </div>
+                    </td>
+                    <td
+                      align="right"
+                      class="TableCell__TableCell___Wou8a emotion-7"
+                      data-test-id="cf-ui-table-cell"
+                      style="top: 0px;"
+                    >
+                      <div
+                        class="emotion-6"
                       >
                         <div
                           class="Dropdown__Dropdown___nAsJ-"
@@ -465,13 +488,27 @@ Object {
                       </div>
                     </td>
                     <td
-                      align="right"
-                      class="TableCell__TableCell___Wou8a emotion-6"
+                      align="left"
+                      class="TableCell__TableCell___Wou8a"
                       data-test-id="cf-ui-table-cell"
                       style="top: 0px;"
                     >
                       <div
-                        class="emotion-5"
+                        class="emotion-1"
+                      >
+                        <span>
+                          localhost:1234
+                        </span>
+                      </div>
+                    </td>
+                    <td
+                      align="right"
+                      class="TableCell__TableCell___Wou8a emotion-7"
+                      data-test-id="cf-ui-table-cell"
+                      style="top: 0px;"
+                    >
+                      <div
+                        class="emotion-6"
                       >
                         <div
                           class="Dropdown__Dropdown___nAsJ-"
@@ -619,13 +656,27 @@ Object {
                       </div>
                     </td>
                     <td
-                      align="right"
-                      class="TableCell__TableCell___Wou8a emotion-6"
+                      align="left"
+                      class="TableCell__TableCell___Wou8a"
                       data-test-id="cf-ui-table-cell"
                       style="top: 0px;"
                     >
                       <div
-                        class="emotion-5"
+                        class="emotion-1"
+                      >
+                        <span>
+                          localhost:8080/frontend
+                        </span>
+                      </div>
+                    </td>
+                    <td
+                      align="right"
+                      class="TableCell__TableCell___Wou8a emotion-7"
+                      data-test-id="cf-ui-table-cell"
+                      style="top: 0px;"
+                    >
+                      <div
+                        class="emotion-6"
                       >
                         <div
                           class="Dropdown__Dropdown___nAsJ-"
@@ -683,7 +734,7 @@ Object {
               data-test-id="cf-ui-text-container"
             >
               <h3
-                class="SectionHeading__SectionHeading___39J6j emotion-21 f36-margin-bottom--l"
+                class="SectionHeading__SectionHeading___39J6j emotion-24 f36-margin-bottom--l"
                 data-test-id="cf-ui-section-heading"
               >
                 About Apps
@@ -738,7 +789,7 @@ Object {
     <div />
     <div />
   </body>,
-  "container": .emotion-6 {
+  "container": .emotion-7 {
   vertical-align: middle;
 }
 
@@ -763,7 +814,7 @@ Object {
   transform: translateX(0);
 }
 
-.emotion-21 {
+.emotion-24 {
   color: #b4c3ca;
   border-bottom: 1px solid #d3dce0;
   font-weight: 400;
@@ -778,6 +829,7 @@ Object {
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
+  min-width: 200px;
 }
 
 .emotion-0 {
@@ -797,7 +849,7 @@ Object {
   vertical-align: sub;
 }
 
-.emotion-5 {
+.emotion-6 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -809,7 +861,7 @@ Object {
   height: 20px;
 }
 
-.emotion-5 div {
+.emotion-6 div {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -936,6 +988,14 @@ Object {
                     class="TableCell__TableCell___Wou8a TableCell__TableCell--head___1HhvZ"
                     data-test-id="cf-ui-table-cell"
                     style="top: 0px;"
+                  >
+                    App URL
+                  </th>
+                  <th
+                    align="left"
+                    class="TableCell__TableCell___Wou8a TableCell__TableCell--head___1HhvZ"
+                    data-test-id="cf-ui-table-cell"
+                    style="top: 0px;"
                   />
                 </tr>
               </thead>
@@ -1045,13 +1105,27 @@ Object {
                     </div>
                   </td>
                   <td
-                    align="right"
-                    class="TableCell__TableCell___Wou8a emotion-6"
+                    align="left"
+                    class="TableCell__TableCell___Wou8a"
                     data-test-id="cf-ui-table-cell"
                     style="top: 0px;"
                   >
                     <div
-                      class="emotion-5"
+                      class="emotion-1"
+                    >
+                      <span>
+                        localhost:1234
+                      </span>
+                    </div>
+                  </td>
+                  <td
+                    align="right"
+                    class="TableCell__TableCell___Wou8a emotion-7"
+                    data-test-id="cf-ui-table-cell"
+                    style="top: 0px;"
+                  >
+                    <div
+                      class="emotion-6"
                     >
                       <div
                         class="Dropdown__Dropdown___nAsJ-"
@@ -1199,13 +1273,27 @@ Object {
                     </div>
                   </td>
                   <td
-                    align="right"
-                    class="TableCell__TableCell___Wou8a emotion-6"
+                    align="left"
+                    class="TableCell__TableCell___Wou8a"
                     data-test-id="cf-ui-table-cell"
                     style="top: 0px;"
                   >
                     <div
-                      class="emotion-5"
+                      class="emotion-1"
+                    >
+                      <span>
+                        localhost:1234
+                      </span>
+                    </div>
+                  </td>
+                  <td
+                    align="right"
+                    class="TableCell__TableCell___Wou8a emotion-7"
+                    data-test-id="cf-ui-table-cell"
+                    style="top: 0px;"
+                  >
+                    <div
+                      class="emotion-6"
                     >
                       <div
                         class="Dropdown__Dropdown___nAsJ-"
@@ -1353,13 +1441,27 @@ Object {
                     </div>
                   </td>
                   <td
-                    align="right"
-                    class="TableCell__TableCell___Wou8a emotion-6"
+                    align="left"
+                    class="TableCell__TableCell___Wou8a"
                     data-test-id="cf-ui-table-cell"
                     style="top: 0px;"
                   >
                     <div
-                      class="emotion-5"
+                      class="emotion-1"
+                    >
+                      <span>
+                        localhost:8080/frontend
+                      </span>
+                    </div>
+                  </td>
+                  <td
+                    align="right"
+                    class="TableCell__TableCell___Wou8a emotion-7"
+                    data-test-id="cf-ui-table-cell"
+                    style="top: 0px;"
+                  >
+                    <div
+                      class="emotion-6"
                     >
                       <div
                         class="Dropdown__Dropdown___nAsJ-"
@@ -1417,7 +1519,7 @@ Object {
             data-test-id="cf-ui-text-container"
           >
             <h3
-              class="SectionHeading__SectionHeading___39J6j emotion-21 f36-margin-bottom--l"
+              class="SectionHeading__SectionHeading___39J6j emotion-24 f36-margin-bottom--l"
               data-test-id="cf-ui-section-heading"
             >
               About Apps
