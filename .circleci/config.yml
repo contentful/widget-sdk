@@ -201,6 +201,19 @@ parameters:
   with-e2e:
     type: boolean
     default: false
+  # Required for microbackends side contract verification
+  contract_url:
+    type: string
+    default: ''
+  consumer_name:
+    type: string
+    default: 'all'
+  consumer_version:
+    type: string
+    default: 'all'
+  provider_version:
+    type: string
+    default: ''
 
 run_only_on_master_branch: &run_only_on_master_branch
   filters:
@@ -461,6 +474,28 @@ jobs:
             PACT_FILES=$(circleci tests glob "/pact/user_interface/pacts/**/*.json")
             /pact/entrypoint.sh publish $PACT_FILES --consumer-app-version=$CIRCLE_SHA1 --tag=$CIRCLE_BRANCH
 
+  verify-contracts: &verify-contracts
+    machine:
+      docker_layer_caching: true
+    environment:
+      CONTRACT_URL: << pipeline.parameters.contract_url >>
+      CONSUMER_NAME: << pipeline.parameters.consumer_name >>
+      CONSUMER_VERSION: << pipeline.parameters.consumer_version >>
+      PROVIDER_SHA: << pipeline.parameters.provider_version >>
+    steps:
+      - checkout
+      - when:
+          condition: << pipeline.parameters.provider_version >>
+          steps:
+            - run: git checkout << pipeline.parameters.provider_version >>
+      - run:
+          name: Verify contracts
+          command: |
+            echo "Not yet implemented"
+
+  verify-all-contracts:
+    <<: *verify-contracts
+
 workflows:
   push:
     when: << pipeline.parameters.push >>
@@ -585,3 +620,7 @@ workflows:
           browser: 'firefox'
           requires:
             - copy-assets-to-s3
+  verify-contract:
+    when: << pipeline.parameters.contract_url >>
+    jobs:
+      - verify-contracts
