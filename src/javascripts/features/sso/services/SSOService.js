@@ -1,7 +1,7 @@
 import { Notification } from '@contentful/forma-36-react-components';
 import { track } from 'analytics/Analytics';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { fieldErrorMessage } from 'features/sso/utils/utils';
+import { fieldErrorMessage } from '../utils/utils';
 
 export async function retrieveIdp(orgId) {
   const endpoint = createOrganizationEndpoint(orgId);

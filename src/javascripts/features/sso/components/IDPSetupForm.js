@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { css } from 'emotion';
 import {
@@ -52,6 +53,7 @@ export class IDPSetupForm extends React.Component {
   static propTypes = {
     organization: OrganizationPropType,
     identityProvider: IdentityProviderPropType,
+    onUpdate: PropTypes.func,
   };
 
   trackSupportClick = () => {
@@ -65,6 +67,7 @@ export class IDPSetupForm extends React.Component {
         name: orgName,
         sys: { id: orgId },
       },
+      onUpdate,
     } = this.props;
 
     const metadataUrl = authUrl(`/sso/${orgId}/metadata.xml`);
@@ -167,7 +170,12 @@ export class IDPSetupForm extends React.Component {
             .
           </Note>
         </section>
-        <IDPDetailsForm orgId={orgId} orgName={orgName} identityProvider={identityProvider} />
+        <IDPDetailsForm
+          orgId={orgId}
+          orgName={orgName}
+          identityProvider={identityProvider}
+          onUpdate={onUpdate}
+        />
       </>
     );
   }

@@ -10,7 +10,6 @@ import {
 import { IDPSetupForm } from './IDPSetupForm';
 import SSOEnabled from 'app/OrganizationSettings/SSO/SSOEnabled';
 import { track } from 'analytics/Analytics';
-import { useAsync } from 'core/hooks';
 import _ from 'lodash';
 
 import { css } from 'emotion';
@@ -39,14 +38,14 @@ export function SSOPage({ organization }) {
   const [identityProvider, setIdentityProvider] = useState({});
 
   const retrieve = useCallback(async () => {
-    return retrieveIdp(organization.sys.id);
+    const idp = await retrieveIdp(organization.sys.id);
+    setIdentityProvider({ data: idp });
+    return;
   }, [organization.sys.id]);
 
-  const { data } = useAsync(retrieve);
-
   useEffect(() => {
-    data && setIdentityProvider({ data });
-  }, [data]);
+    retrieve();
+  }, [retrieve]);
 
   const handleCreateIdp = () => {
     createIdp(organization.sys.id);
@@ -98,7 +97,11 @@ export function SSOPage({ organization }) {
             </Button>
           )}
           {idpData && !isEnabled && (
-            <IDPSetupForm organization={organization} identityProvider={identityProvider} />
+            <IDPSetupForm
+              organization={organization}
+              identityProvider={identityProvider}
+              onUpdate={retrieve}
+            />
           )}
           {idpData && isEnabled && (
             <SSOEnabled

@@ -1,14 +1,14 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { TestConnection } from './TestConnection';
-import { formatConnectionTestErrors } from 'app/OrganizationSettings/SSO/utils';
+import { formatConnectionTestErrors } from '../utils/utils';
 
 const orgId = '123';
 const onCompleteCb = jest.fn();
 
 jest.useFakeTimers('modern');
 
-jest.mock('app/OrganizationSettings/SSO/utils', () => ({
+jest.mock('features/sso/utils/utils', () => ({
   formatConnectionTestErrors: jest.fn(() => ['foo', 'bar']),
 }));
 
@@ -83,7 +83,7 @@ describe('TestConnection', () => {
   it('displays failure message', () => {
     const config = {
       testConnectionResult: 'failure',
-      errors: ['foo, bar'],
+      testConnectionErrors: ['foo, bar'],
     };
     render(
       <TestConnection orgId={orgId} disabled={false} onComplete={onCompleteCb} ssoConfig={config} />
@@ -92,6 +92,6 @@ describe('TestConnection', () => {
     const submitBtn = screen.getByTestId('test-idp-connection.submit');
     expect(submitBtn.textContent).toMatch(/Test connection/);
     expect(screen.getByTestId('test-idp-connection.result.failure')).toBeVisible();
-    expect(formatConnectionTestErrors).toHaveBeenCalledWith(config.errors);
+    expect(formatConnectionTestErrors).toHaveBeenCalledWith(config.testConnectionErrors);
   });
 });

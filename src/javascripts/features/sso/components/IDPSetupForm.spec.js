@@ -5,10 +5,17 @@ import * as Fake from 'test/helpers/fakeFactory';
 
 const mockIdentityProvider = Fake.IdentityProvider();
 const mockOrg = Fake.Organization();
+const onUpdateMock = jest.fn();
 
 describe('IDPSetupForm', () => {
   const build = () => {
-    return render(<IDPSetupForm organization={mockOrg} identityProvider={mockIdentityProvider} />);
+    return render(
+      <IDPSetupForm
+        organization={mockOrg}
+        identityProvider={mockIdentityProvider}
+        onUpdate={onUpdateMock}
+      />
+    );
   };
 
   it('should show correct Audience URI', async () => {

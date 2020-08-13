@@ -8,9 +8,11 @@ import userEvent from '@testing-library/user-event';
 
 const mockIdentityProvider = Fake.IdentityProvider();
 const mockOrg = Fake.Organization();
+const onUpdateMock = jest.fn();
 
 jest.mock('features/sso/utils/utils', () => ({
   validate: jest.fn(),
+  connectionTestingAllowed: jest.fn(() => false),
 }));
 
 jest.mock('features/sso/services/SSOService', () => ({
@@ -24,6 +26,7 @@ describe('IDPDetailsForm', () => {
         orgId={mockOrg.sys.id}
         orgName={mockOrg.name}
         identityProvider={mockIdentityProvider}
+        onUpdate={onUpdateMock}
       />
     );
   };
@@ -47,6 +50,7 @@ describe('IDPDetailsForm', () => {
         mockOrg.sys.id
       )
     );
+    expect(onUpdateMock).toHaveBeenCalled();
   });
 
   it('should update idp target url on change', async () => {
@@ -65,6 +69,7 @@ describe('IDPDetailsForm', () => {
       mockIdentityProvider.data.sys.version,
       mockOrg.sys.id
     );
+    expect(onUpdateMock).toHaveBeenCalled();
   });
 
   it('should update idp cert on change', async () => {
@@ -84,6 +89,7 @@ describe('IDPDetailsForm', () => {
       mockIdentityProvider.data.sys.version,
       mockOrg.sys.id
     );
+    expect(onUpdateMock).toHaveBeenCalled();
   });
 
   it('should update sso name on change', async () => {
@@ -97,5 +103,6 @@ describe('IDPDetailsForm', () => {
       mockIdentityProvider.data.sys.version,
       mockOrg.sys.id
     );
+    expect(onUpdateMock).toHaveBeenCalled();
   });
 });

@@ -14,7 +14,7 @@ export function validate(fieldName, value) {
   return '';
 }
 
-export function connectionTestingAllowed(fields, connectionTest) {
+export function connectionTestingAllowed(fields) {
   // Do not allow testing the connection if any of the conditions are true:
   //
   // 1. the idpCert field has no value
@@ -26,8 +26,7 @@ export function connectionTestingAllowed(fields, connectionTest) {
     !fields.idpCert.value ||
     fields.idpCert.error ||
     !fields.idpSsoTargetUrl.value ||
-    fields.idpSsoTargetUrl.error ||
-    connectionTest.isPending
+    fields.idpSsoTargetUrl.error
   );
 }
 

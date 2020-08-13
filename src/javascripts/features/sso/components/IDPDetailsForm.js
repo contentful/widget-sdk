@@ -1,6 +1,8 @@
 import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
+import { IdentityProviderPropType } from 'app/OrganizationSettings/SSO/PropTypes';
 import { findKey, kebabCase, debounce } from 'lodash';
+import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import {
   Heading,
@@ -12,11 +14,9 @@ import {
   TextLink,
   Spinner,
 } from '@contentful/forma-36-react-components';
-import { SSO_PROVIDERS_MAP, validate } from 'features/sso/utils';
-import { IdentityProviderPropType } from 'app/OrganizationSettings/SSO/PropTypes';
 import { useForm } from 'core/hooks';
+import { SSO_PROVIDERS_MAP, validate, connectionTestingAllowed } from 'features/sso/utils';
 import { updateFieldValue } from '../services/SSOService';
-import { css } from 'emotion';
 import { TestConnection } from './TestConnection';
 
 const styles = {
@@ -45,10 +45,10 @@ const styles = {
   }),
 };
 
-export function IDPDetailsForm({ orgId, orgName, identityProvider }) {
+export function IDPDetailsForm({ orgId, orgName, identityProvider, onUpdate }) {
   const [updatingField, setUpdatingField] = useState('');
 
-  const submitForm = async (values, fieldName) => {
+  const submitForm = async (values, fieldName, identityProvider) => {
     setUpdatingField(fieldName);
     try {
       await updateFieldValue(
@@ -64,6 +64,7 @@ export function IDPDetailsForm({ orgId, orgName, identityProvider }) {
       return errors;
     }
     setUpdatingField('');
+    await onUpdate();
     return;
   };
 
@@ -95,12 +96,14 @@ export function IDPDetailsForm({ orgId, orgName, identityProvider }) {
   const debouncedUpdate = useCallback(
     debounce((fieldName, value) => {
       onChange(fieldName, value);
-      onSubmit(fieldName);
+      onSubmit(fieldName, identityProvider);
     }, 500),
-    []
+    [identityProvider]
   );
 
   const handleInputChange = (e) => debouncedUpdate('idpSsoTargetUrl', e.target.value);
+
+  const allowConnectionTest = connectionTestingAllowed(fields);
 
   return (
     <>
@@ -119,7 +122,7 @@ export function IDPDetailsForm({ orgId, orgName, identityProvider }) {
             value={idpNameSelectValue}
             onChange={(e) => {
               onChange('idpName', e.target.value);
-              onSubmit('idpName');
+              onSubmit('idpName', identityProvider);
             }}>
             <Option value="">Select provider</Option>
             {Object.keys(SSO_PROVIDERS_MAP).map((name) => {
@@ -177,9 +180,9 @@ export function IDPDetailsForm({ orgId, orgName, identityProvider }) {
       <section>
         <TestConnection
           orgId={orgId}
-          disabled={false}
+          disabled={!allowConnectionTest}
           ssoConfig={identityProvider.data}
-          onComplete={() => {}}
+          onComplete={onUpdate}
         />
       </section>
       <section>
@@ -226,4 +229,5 @@ IDPDetailsForm.propTypes = {
   orgId: PropTypes.string.isRequired,
   orgName: PropTypes.string.isRequired,
   identityProvider: IdentityProviderPropType,
+  onUpdate: PropTypes.func,
 };

@@ -9,7 +9,7 @@ import {
   Paragraph,
 } from '@contentful/forma-36-react-components';
 import { useSsoConnectionTest } from '../services/useSsoConnectionTest';
-import { formatConnectionTestErrors } from 'app/OrganizationSettings/SSO/utils';
+import { formatConnectionTestErrors } from '../utils/utils';
 
 export function TestConnection({ orgId, disabled = true, ssoConfig = {}, onComplete }) {
   const [state, runTest, cancelTest] = useSsoConnectionTest(orgId);
@@ -78,7 +78,7 @@ export function TestConnection({ orgId, disabled = true, ssoConfig = {}, onCompl
               rows: 5,
             }}
             testId="errors"
-            value={formatConnectionTestErrors(ssoConfig.errors).join('\n')}
+            value={formatConnectionTestErrors(ssoConfig.testConnectionErrors).join('\n')}
           />
         </div>
       )}
@@ -91,8 +91,8 @@ TestConnection.propTypes = {
   disabled: PropTypes.bool.isRequired,
   onComplete: PropTypes.func.isRequired,
   ssoConfig: PropTypes.shape({
-    result: PropTypes.string,
-    timestamp: PropTypes.string,
-    errors: PropTypes.array,
+    testConnectionResult: PropTypes.string,
+    testConnectionAt: PropTypes.string,
+    testConnectionErrors: PropTypes.array,
   }),
 };

@@ -29,7 +29,6 @@ describe('SSO utils', () => {
 
   describe('#connectionTestingAllowed', () => {
     let fields;
-    let connectionTest;
 
     beforeEach(() => {
       fields = {
@@ -42,43 +41,33 @@ describe('SSO utils', () => {
           error: null,
         },
       };
-
-      connectionTest = {
-        isPending: false,
-      };
     });
 
     it('should not allow testing if idpCert field has no value', () => {
       fields.idpCert.value = null;
 
-      expect(utils.connectionTestingAllowed(fields, connectionTest)).toBe(false);
+      expect(utils.connectionTestingAllowed(fields)).toBe(false);
     });
 
     it('should not allow testing if idpCert field has an error', () => {
       fields.idpCert.error = 'Bad certificate';
 
-      expect(utils.connectionTestingAllowed(fields, connectionTest)).toBe(false);
+      expect(utils.connectionTestingAllowed(fields)).toBe(false);
     });
 
     it('should not allow testing if idpSsoTargetUrl field has no value', () => {
       fields.idpSsoTargetUrl.value = null;
-      expect(utils.connectionTestingAllowed(fields, connectionTest)).toBe(false);
+      expect(utils.connectionTestingAllowed(fields)).toBe(false);
     });
 
     it('should not allow testing if idpSsoTargetUrl field has an error', () => {
       fields.idpSsoTargetUrl.error = 'Bad target url';
 
-      expect(utils.connectionTestingAllowed(fields, connectionTest)).toBe(false);
-    });
-
-    it('should not allow testing if the connection is currently being tested', () => {
-      connectionTest.isPending = true;
-
-      expect(utils.connectionTestingAllowed(fields, connectionTest)).toBe(false);
+      expect(utils.connectionTestingAllowed(fields)).toBe(false);
     });
 
     it('should be allowed if all cases pass', () => {
-      expect(utils.connectionTestingAllowed(fields, connectionTest)).toBe(true);
+      expect(utils.connectionTestingAllowed(fields)).toBe(true);
     });
   });
 

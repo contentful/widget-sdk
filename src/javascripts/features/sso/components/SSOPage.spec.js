@@ -1,34 +1,36 @@
 import React from 'react';
-import { render, fireEvent, screen } from '@testing-library/react';
+import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { SSOPage } from 'features/sso';
 import * as fake from 'test/helpers/fakeFactory';
+import { retrieveIdp, createIdp } from 'features/sso/services/SSOService';
 
 const mockIdentityProvider = fake.IdentityProvider();
 const mockOrg = fake.Organization();
 
 jest.mock('features/sso/services/SSOService', () => ({
-  retrieveIdp: () => mockIdentityProvider,
-  createIdp: () => mockIdentityProvider,
+  retrieveIdp: jest.fn(() => {}),
+  createIdp: jest.fn(() => mockIdentityProvider),
 }));
 
 describe('SSOPage', () => {
-  const renderComponent = async () => {
-    await render(<SSOPage organization={mockOrg} />);
+  const renderComponent = () => {
+    return render(<SSOPage organization={mockOrg} />);
   };
 
   it('should have create-idp button present', async () => {
-    await renderComponent();
+    renderComponent();
 
-    expect(screen.getByTestId('create-idp')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByTestId('create-idp')).toBeInTheDocument());
   });
 
   it('should show form afer create-idp button was clicked', async () => {
-    await renderComponent();
+    renderComponent();
+    await waitFor(() => expect(retrieveIdp).toHaveBeenCalled());
 
     const createButton = screen.getByTestId('create-idp');
     fireEvent.click(createButton);
 
-    expect(screen.getByTestId('sso-provider')).toBeInTheDocument();
+    await waitFor(() => expect(createIdp).toHaveBeenCalled());
   });
 });
