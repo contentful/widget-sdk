@@ -38,7 +38,6 @@ export const angularInitRun = [
       import(/* webpackMode: "eager" */ 'components/shared/endlessContainerDirective'),
       import(/* webpackMode: "eager" */ 'directives/bindHtmlCompileDirective'),
       import(/* webpackMode: "eager" */ 'directives/watchersTogglerDirective'),
-      import(/* webpackMode: "eager" */ 'filters'),
       import(/* webpackMode: "eager" */ 'search/EntitySelector/entitySelectorController'),
       import(/* webpackMode: "eager" */ 'search/EntitySelector/entitySelectorDirective'),
       import(/* webpackMode: "eager" */ 'services/exceptionHandler'),
