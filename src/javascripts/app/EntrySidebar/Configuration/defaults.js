@@ -1,6 +1,7 @@
 import SidebarWidgetTypes from '../SidebarWidgetTypes';
 import { getCurrentSpaceFeature, FEATURES } from 'data/CMA/ProductCatalog';
 import { WidgetNamespace } from 'features/widget-renderer';
+import { getReleasesFeatureVariation } from 'app/Releases/ReleasesFeatureFlag';
 
 export const Publication = {
   widgetId: SidebarWidgetTypes.PUBLICATION,
@@ -86,7 +87,7 @@ export const AssetConfiguration = [Publication, Releases, Links, Translation, Us
 
 const availabilityMap = {
   [Publication.widgetId]: true,
-  [Releases.widgetId]: true,
+  [Releases.widgetId]: () => getReleasesFeatureVariation(),
   [Tasks.widgetId]: () => getCurrentSpaceFeature(FEATURES.CONTENT_WORKFLOW_TASKS, false),
   [ContentPreview.widgetId]: true,
   [Links.widgetId]: true,

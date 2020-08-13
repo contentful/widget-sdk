@@ -17,7 +17,7 @@ describe('BulkEntityEditorStatusDropdown', () => {
     const states = [
       { state: 'published', stateLabel: 'published' },
       { state: 'draft', stateLabel: 'draft' },
-      { state: 'changes', stateLabel: 'changed' },
+      { state: 'changed', stateLabel: 'changed' },
       { state: 'archived', stateLabel: 'archived' },
     ];
     states.map(({ state, stateLabel }) => {

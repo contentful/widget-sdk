@@ -34,7 +34,7 @@ export async function openFieldDialog($scope, field, widget) {
     const { itemValidations, baseValidations } = groupValidations(validationFields);
 
     if (isTitle) {
-      $scope.contentType.data.displayField = apiName;
+      $scope.contentType.data.displayField = field.id;
     }
 
     const isRichText = field.type === 'RichText';

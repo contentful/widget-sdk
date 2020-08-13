@@ -83,6 +83,7 @@ export const styles = {
   cell: css({
     display: 'flex',
     alignItems: 'center',
+    minWidth: '200px',
   }),
   miniIcon: css({
     display: 'inline-flex',
@@ -158,6 +159,17 @@ function CreateAppButton({ orgId, disabled, onClick }) {
   }
 
   return <Button onClick={onClick}>Create app</Button>;
+}
+
+function buildRenderedAppURL(url) {
+  if (!url) {
+    return '';
+  }
+
+  const urlObj = new URL(url);
+  const path = urlObj.pathname !== '/' ? urlObj.pathname : '';
+  const port = urlObj.port ? `:${urlObj.port}` : '';
+  return `${urlObj.hostname}${port}${path}`;
 }
 
 export function AppListing({ definitions, canManageApps }) {
@@ -247,11 +259,14 @@ export function AppListing({ definitions, canManageApps }) {
             <TableRow>
               <TableCell>Name</TableCell>
               <TableCell>ID</TableCell>
+              <TableCell>App URL</TableCell>
               <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {definitions.map((def) => {
+              const formattedAppURL = buildRenderedAppURL(def.src);
+
               return (
                 <TableRow key={def.sys.id}>
                   <TableCell>
@@ -268,6 +283,11 @@ export function AppListing({ definitions, canManageApps }) {
                     <div className={styles.cell}>
                       <span className={idStyle}>{def.sys.id} </span>
                       <CopyButton className={styles.copyButton} copyValue={def.sys.id} />
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className={styles.cell}>
+                      <span>{formattedAppURL}</span>
                     </div>
                   </TableCell>
                   <TableCell className={styles.appActions} align="right">

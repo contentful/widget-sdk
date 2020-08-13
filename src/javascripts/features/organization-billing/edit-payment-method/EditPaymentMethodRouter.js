@@ -1,12 +1,12 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { css, cx } from 'emotion';
-import { Workbench } from '@contentful/forma-36-react-components';
+import { Workbench, Notification } from '@contentful/forma-36-react-components';
 
 import { useAsync } from 'core/hooks/useAsync';
 import * as LazyLoader from 'utils/LazyLoader';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import { getHostedPaymentParams } from '../services/PaymentMethodService';
+import { getHostedPaymentParams, setDefaultPaymentMethod } from '../services/PaymentMethodService';
 import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import LoadingState from 'app/common/LoadingState';
 import { getVariation, FLAGS } from 'LaunchDarkly';
@@ -57,6 +57,21 @@ const fetch = (organizationId) => async () => {
   };
 };
 
+const handleSuccess = async (organizationId, paymentMethodRefId) => {
+  try {
+    await setDefaultPaymentMethod(organizationId, paymentMethodRefId);
+  } catch {
+    Notification.error("Oops, your payment method couldn't be updated. Try again.");
+    return;
+  }
+
+  // There is currently no general billing page, so for now we redirect to the
+  // iframe
+  go({
+    path: ['account', 'organizations', 'billing-gatekeeper'],
+  });
+};
+
 export function EditPaymentMethodRouter({ orgId: organizationId }) {
   const [loading, setLoading] = useState(true);
 
@@ -70,9 +85,14 @@ export function EditPaymentMethodRouter({ orgId: organizationId }) {
     const { Zuora, hostedPaymentParams } = data;
 
     // Gets rendered into #zuora_payment below
-    Zuora.render(hostedPaymentParams, {}, () => {});
-    Zuora.runAfterRender(() => setLoading(false));
-  }, [data]);
+    Zuora.render(hostedPaymentParams, {}, ({ refId: paymentMethodRefId }) => {
+      handleSuccess(organizationId, paymentMethodRefId);
+    });
+
+    Zuora.runAfterRender(() => {
+      setLoading(false);
+    });
+  }, [organizationId, data]);
 
   return (
     <>

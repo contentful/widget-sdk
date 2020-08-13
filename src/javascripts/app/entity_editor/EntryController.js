@@ -31,6 +31,7 @@ import initSidebarTogglesProps from 'app/entity_editor/entityEditorSidebarToggle
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 import { appendDuplicateIndexToEntryTitle, alignSlugWithEntryTitle } from './entityHelpers';
 import { WidgetLocation } from 'features/widget-renderer';
+import { initStateController } from './stateController';
 
 /**
  * @ngdoc type
@@ -118,12 +119,19 @@ export default async function create($scope, editorData, preferences, trackLoadE
 
   $scope.getSpace = () => spaceContext.getSpace();
 
-  $scope.state = $controller('entityEditor/StateController', {
-    $scope,
+  initStateController({
     entity: editorData.entity,
     notify,
     validator: editorContext.validator,
     otDoc: $scope.otDoc,
+    bulkEditorContext: $scope.bulkEditorContext,
+    entityInfo: $scope.entityInfo,
+    editorData: $scope.editorData,
+    spaceContext,
+    onUpdate: (state) => {
+      $scope.state = state;
+      $scope.$applyAsync();
+    },
   });
 
   $scope.entryActions = {

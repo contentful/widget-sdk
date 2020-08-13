@@ -27,11 +27,11 @@ const styles = {
 const stateColours = {
   published: 'positive',
   draft: 'warning',
-  changes: 'primary',
+  changed: 'primary',
   archived: 'negative',
 };
 
-const BulkEntityEditorStatusDropdown = ({ stateLabel, state, inProgress, allActions }) => {
+const BulkEntityEditorStatusDropdown = ({ state, inProgress, allActions }) => {
   const [isOpen, setOpen] = useState(false);
 
   const color = get(stateColours, state, 'positive');
@@ -48,7 +48,7 @@ const BulkEntityEditorStatusDropdown = ({ stateLabel, state, inProgress, allActi
           testId="bulk-entity-editor-status-dropdown-trigger"
           onClick={() => setOpen(!isOpen)}>
           <Tag aria-busy={inProgress} tagType={color}>
-            {stateLabel}
+            {state}
           </Tag>
           {inProgress ? (
             <Spinner size="small" className={styles.icon} />
@@ -78,7 +78,6 @@ const BulkEntityEditorStatusDropdown = ({ stateLabel, state, inProgress, allActi
 BulkEntityEditorStatusDropdown.propTypes = {
   inProgress: PropTypes.bool.isRequired,
   state: PropTypes.string.isRequired,
-  stateLabel: PropTypes.string.isRequired,
   allActions: PropTypes.arrayOf(
     PropTypes.shape({
       execute: PropTypes.func.isRequired,
