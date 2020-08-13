@@ -95,9 +95,9 @@ describe('app/EntrySidebar/PublicationWidget', () => {
     itCanRenderSecondaryActions(props);
   });
 
-  describe('with "changes" status', () => {
+  describe('with "changed" status', () => {
     const props = {
-      status: 'changes',
+      status: 'changed',
     };
 
     itRendersStatus(props, {

@@ -86,7 +86,7 @@ describe('<StatusWidget />', () => {
       onPublishClick: jest.fn(),
     };
     const { renderResult } = renderWidget({
-      status: 'changes',
+      status: 'changed',
       updatedAt: '2018-01-14T15:15:49.230Z',
       primary: createCommand({
         isRestricted: () => false,

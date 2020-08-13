@@ -38,7 +38,7 @@ const statusMap = {
     tagType: 'positive',
     title: 'Published',
   },
-  changes: {
+  changed: {
     tagType: 'primary',
     title: 'Changed',
   },

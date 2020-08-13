@@ -102,7 +102,7 @@ class StatusWidget extends React.PureComponent {
   };
 
   canSchedule = () => {
-    return this.props.status === 'draft' || this.props.status === 'changes';
+    return this.props.status === 'draft' || this.props.status === 'changed';
   };
 
   render() {

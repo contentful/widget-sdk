@@ -79,7 +79,7 @@ const statusSwitchPropsByEntityStatus = {
     backgroundHover: tokens.colorGreenDark,
     title: 'Published',
   },
-  changes: {
+  changed: {
     tagType: 'primaryAction',
     background: tokens.colorBlueBase,
     backgroundHover: tokens.colorBlueDark,
