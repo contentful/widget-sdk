@@ -13,3 +13,4 @@ export type {
 } from './interfaces';
 export { buildAppDefinitionWidget } from './buildWidgets';
 export { isCustomWidget } from './utils';
+export { WidgetRenderer } from './WidgetRenderer';

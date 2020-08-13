@@ -110,25 +110,26 @@ export function createReadonlyFieldWidgetSDK({
   const navigatorApi = createReadOnlyNavigatorApi();
   const dialogsApi = createReadOnlyDialogsApi();
 
-  return createSharedFieldWidgetSDK({
-    nonReadOnlyApis: {
-      editorApi,
+  return {
+    ...createSharedFieldWidgetSDK({
       entryApi,
-      spaceApi,
-      navigatorApi,
-      dialogsApi,
-      parametersApi: {
-        installation: {},
-        instance: {},
-      },
-    },
-    environmentIds,
-    publicFieldId,
-    internalContentType,
-    publicLocaleCode,
-    spaceId,
-    spaceMember,
-    widgetId,
-    widgetNamespace,
-  });
+      environmentIds,
+      publicFieldId,
+      internalContentType,
+      publicLocaleCode,
+      spaceId,
+      spaceMember,
+      widgetId,
+      widgetNamespace,
+      // TODO:
+      // actual value from EditorInterface should be provided
+      // when we use this read only SDK for something different
+      // from RichText comparator.
+      editorInterfaceSettings: {},
+    }),
+    editor: editorApi,
+    space: spaceApi,
+    navigator: navigatorApi,
+    dialogs: dialogsApi,
+  };
 }

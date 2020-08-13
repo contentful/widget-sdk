@@ -3,7 +3,7 @@ import { Modal } from '@contentful/forma-36-react-components';
 
 import * as entitySelector from 'search/EntitySelector/entitySelector';
 import { ModalLauncher } from 'core/components/ModalLauncher';
-import { WidgetLocation, WidgetNamespace } from 'features/widget-renderer';
+import { WidgetRenderer, WidgetLocation, WidgetNamespace } from 'features/widget-renderer';
 import * as ExtensionDialogs from 'widgets/ExtensionDialogs';
 import trackExtensionRender from 'widgets/TrackExtensionRender';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
@@ -113,7 +113,7 @@ async function findWidget(widgetNamespace: WidgetNamespace, widgetId: string) {
 async function openCustomDialog(
   namespace: WidgetNamespace,
   options: OpenCustomWidgetOptions,
-  _sdk: DialogExtensionSDK
+  sdk: DialogExtensionSDK
 ) {
   if (!options.id) {
     throw new Error('No ID provided.');
@@ -121,15 +121,14 @@ async function openCustomDialog(
 
   const widget = await findWidget(namespace, options.id);
 
-  // TODO: uncomment parameters and childApis once we've got the renderer
-  // const parameters = {
-  //   values: {
-  //     // No instance parameters for dialogs.
-  //     instance: {},
-  //     // Parameters passed directly to the dialog.
-  //     invocation: options.parameters || {},
-  //   },
-  // };
+  const parameters = {
+    values: {
+      // No instance parameters for dialogs.
+      instance: {},
+      // Parameters passed directly to the dialog.
+      invocation: options.parameters || {},
+    },
+  };
 
   trackExtensionRender(WidgetLocation.DIALOG, toLegacyWidget(widget));
 
@@ -142,7 +141,7 @@ async function openCustomDialog(
         : (options.width as string | undefined);
 
     // Pass onClose in order to allow child modal to close
-    // const childApis = { ...sdk, close: onClose };
+    const childSdk = { ...sdk, close: onClose };
 
     return (
       <Modal
@@ -159,12 +158,12 @@ async function openCustomDialog(
             {options.title && <Modal.Header title={options.title} onClose={() => onClose()} />}
             {/* eslint-disable-next-line rulesdir/restrict-inline-styles */}
             <div style={{ minHeight: options.minHeight || 'auto' }}>
-              {/* TODO use WidgetRenderer <WidgetRenderer
+              <WidgetRenderer
                 location={WidgetLocation.DIALOG}
-                apis={childApis}
+                sdk={childSdk}
                 widget={widget}
                 parameters={parameters}
-              /> */}
+              />
             </div>
           </>
         )}

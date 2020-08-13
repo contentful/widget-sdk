@@ -128,6 +128,7 @@ describe('app/entity_editor/DataLoader', () => {
         'sidebarExtensions',
         'editorsExtensions',
         'customEditor',
+        'useNewWidgetRenderer',
       ]);
     });
 
@@ -229,6 +230,7 @@ describe('app/entity_editor/DataLoader', () => {
         'sidebarExtensions',
         'editorsExtensions',
         'customEditor',
+        'useNewWidgetRenderer',
       ]);
     });
   });

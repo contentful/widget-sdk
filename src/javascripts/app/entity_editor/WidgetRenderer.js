@@ -9,6 +9,7 @@ import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIF
 import * as LoadEventTracker from 'app/entity_editor/LoadEventTracker';
 import { WidgetNamespace, isCustomWidget, WidgetLocation } from 'features/widget-renderer';
 import { toRendererWidget } from 'widgets/WidgetCompat';
+import { WidgetRenderer as NewWidgetRenderer } from 'features/widget-renderer';
 
 const { createLinksRenderedEvent, createWidgetLinkRenderEventsHandler } = LoadEventTracker;
 
@@ -19,8 +20,8 @@ function newNoopLoadEvents() {
 }
 
 function WidgetRendererInternal(props) {
-  const { widget, locale, editorData, loadEvents, scope } = props;
-  const { problem, widgetNamespace, widgetId, renderFieldEditor, descriptor, parameters } = widget;
+  const { widget, locale, editorData, loadEvents } = props;
+  const { problem, renderFieldEditor } = widget;
 
   let trackLinksRendered = noop;
   let handleWidgetLinkRenderEvents = noop;
@@ -39,27 +40,44 @@ function WidgetRendererInternal(props) {
   if (problem) {
     trackLinksRendered();
     return <WidgetRenderWarning message={problem}></WidgetRenderWarning>;
-  } else if (isCustomWidget(widgetNamespace)) {
+  } else if (isCustomWidget(widget.widgetNamespace)) {
     trackLinksRendered();
-    const $rootScope = getModule('$rootScope');
-    const spaceContext = getModule('spaceContext');
-    const $controller = getModule('$controller');
-    return (
-      <ExtensionIFrameRendererWithLocalHostWarning
-        widget={toRendererWidget(descriptor)}
-        parameters={parameters}
-        bridge={createExtensionBridge({
-          $rootScope,
-          $scope: scope,
-          spaceContext,
-          $controller,
-          currentWidgetId: widgetId,
-          currentWidgetNamespace: widgetNamespace,
-          location: WidgetLocation.ENTRY_FIELD,
-        })}
-      />
-    );
-  } else if (widgetNamespace === WidgetNamespace.BUILTIN) {
+
+    if (editorData.useNewWidgetRenderer) {
+      return (
+        <NewWidgetRenderer
+          location={WidgetLocation.ENTRY_FIELD}
+          widget={toRendererWidget(widget.descriptor)}
+          sdk={props.widgetApi}
+          parameters={{
+            values: {
+              // TODO: this comes from legacy "WidgetRenderable"
+              // and has defaults applied on top of API values
+              // Consider moving "applyDefaultValues" to the renderer
+              // library too.
+              instance: widget.parameters.instance,
+            },
+          }}
+        />
+      );
+    } else {
+      return (
+        <ExtensionIFrameRendererWithLocalHostWarning
+          widget={toRendererWidget(widget.descriptor)}
+          parameters={widget.parameters}
+          bridge={createExtensionBridge({
+            $rootScope: getModule('$rootScope'),
+            $scope: props.scope,
+            spaceContext: getModule('spaceContext'),
+            $controller: getModule('$controller'),
+            currentWidgetId: widget.widgetId,
+            currentWidgetNamespace: widget.widgetNamespace,
+            location: WidgetLocation.ENTRY_FIELD,
+          })}
+        />
+      );
+    }
+  } else if (widget.widgetNamespace === WidgetNamespace.BUILTIN) {
     const widget = renderFieldEditor({
       $scope: props.scope,
       loadEvents: loadEvents || newNoopLoadEvents(),
