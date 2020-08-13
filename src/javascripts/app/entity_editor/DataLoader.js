@@ -128,7 +128,7 @@ export function makePrefetchEntryLoader(spaceContext, ids$) {
 async function loadEditorData(loader, id) {
   const entity = await loader.getEntity(id);
   const contentTypeId = get(entity, ['data', 'sys', 'contentType', 'sys', 'id']);
-  const spaceId = get(entity, ['sys', 'space', 'sys', 'id']);
+  const spaceId = get(entity, ['data', 'sys', 'space', 'sys', 'id']);
 
   const [
     contentType,
