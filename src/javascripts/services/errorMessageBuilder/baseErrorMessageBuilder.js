@@ -28,7 +28,12 @@ const messages = {
   },
 
   in: function (error) {
-    return 'Must be one of ' + error.expected.join(', ') + '.';
+    return (
+      'Must be one of ' +
+      error.expected.join(', ') +
+      '.' +
+      ' Any invalid options need to be removed'
+    );
   },
 
   required: function (error) {
