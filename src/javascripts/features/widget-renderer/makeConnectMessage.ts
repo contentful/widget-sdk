@@ -12,6 +12,25 @@ import {
 import { WidgetLocation, ParameterValues } from './interfaces';
 import { isEntryEditingLocation, isFieldEditingLocation } from './utils';
 
+interface FieldBase {
+  id: string;
+  required: boolean;
+  type: string;
+  validations?: any[];
+  items?: any;
+}
+
+interface FieldInfo extends FieldBase {
+  localized: boolean;
+  locales: string[];
+  values: Record<string, any>;
+}
+
+interface Field extends FieldBase {
+  locale: string;
+  value: any;
+}
+
 export interface ConnectMessage {
   location: WidgetLocation;
   parameters: Record<string, ParameterValues>;
@@ -25,16 +44,8 @@ export interface ConnectMessage {
     sys: EntrySys;
     metadata?: any;
   };
-  fieldInfo: any[];
-  field?: {
-    locale: string;
-    value: any;
-    id: string;
-    type: string;
-    required: boolean;
-    validations?: any[];
-    items?: any;
-  };
+  fieldInfo: FieldInfo[];
+  field?: Field;
 }
 
 export const makeConnectMessage = (
@@ -83,7 +94,7 @@ export const makeConnectMessage = (
           locales,
           values,
           id: field.id,
-          required: !!field.required,
+          required: field.required,
           type: field.type,
           validations: field.validations,
           items: field.items,
