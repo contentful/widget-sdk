@@ -70,16 +70,25 @@ export const makeConnectMessage = (
     const specificSdk = sdk as FieldExtensionSDK;
 
     fieldData = {
-      fieldInfo: specificSdk.contentType.fields.map((field) => ({
-        localized: field.localized,
-        locales: field.localized ? specificSdk.locales.available : [specificSdk.locales.default],
-        values: specificSdk.entry.fields[field.id].getValue() || {},
-        id: field.id,
-        required: !!field.required,
-        type: field.type,
-        validations: field.validations,
-        items: field.items,
-      })),
+      fieldInfo: specificSdk.contentType.fields.map((field) => {
+        const locales = field.localized
+          ? specificSdk.locales.available
+          : [specificSdk.locales.default];
+        const values = locales.reduce((acc, localeCode) => {
+          return { ...acc, [localeCode]: specificSdk.entry.fields[field.id].getValue(localeCode) };
+        }, {});
+
+        return {
+          localized: field.localized,
+          locales,
+          values,
+          id: field.id,
+          required: !!field.required,
+          type: field.type,
+          validations: field.validations,
+          items: field.items,
+        };
+      }),
       field: {
         locale: specificSdk.field.locale,
         value: specificSdk.field.getValue(),
