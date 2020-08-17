@@ -1,18 +1,27 @@
 import { getSlideInEntities, goToSlideInEntity } from '.';
 
-import $location from 'ng/$location';
 import $state from 'ng/$state';
 
 jest.mock('analytics/Analytics', () => ({}));
-jest.mock('ng/$location', () => ({ search: jest.fn() }));
 jest.mock('ng/$state', () => ({ params: {}, go: jest.fn() }));
 
 describe('SlideInNavigator', () => {
+  const { location } = window;
+
+  beforeAll(() => {
+    delete window.location;
+    window.location = {};
+  });
+
+  afterAll(() => {
+    window.location = location;
+  });
+
   describe('getSlideInEntities()', () => {
-    function testFn(message, { params = {}, search = {} }, expectedOutput) {
+    function testFn(message, { params = {}, search = '' }, expectedOutput) {
       it(message, () => {
         $state.params = params;
-        $location.search.mockReturnValue(search);
+        window.location.search = search;
 
         const entities = getSlideInEntities();
         expect(entities).toEqual(expectedOutput);
@@ -146,7 +155,7 @@ describe('SlideInNavigator', () => {
     function testRedirect(message, { params, search, goToEntity }, expectedStateGoArgs) {
       it(message, () => {
         $state.params = params;
-        $location.search.mockReturnValue(search);
+        window.location.search = search;
 
         const result = goToSlideInEntity(goToEntity);
 

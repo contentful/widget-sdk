@@ -1,4 +1,4 @@
-import { get, isEqual, uniqWith } from 'lodash';
+import { isEqual, uniqWith } from 'lodash';
 import { track } from 'analytics/Analytics';
 import slideHelper from './slideHelper';
 import { getModule } from 'core/NgRegistry';
@@ -95,10 +95,8 @@ export function goToPreviousSlideOrExit(eventLabel, onExit) {
 }
 
 function deserializeQS() {
-  const $location = getModule('$location');
-
-  const searchObject = $location.search();
-  const serializedEntities = get(searchObject, SLIDES_BELOW_QS, '')
+  const params = new URLSearchParams(window.location.search);
+  const serializedEntities = (params.get(SLIDES_BELOW_QS) ?? '')
     .split(',')
     .filter((v, i, self) => v !== '' && self.indexOf(v) === i);
   return serializedEntities.map((id) => slideHelper.newFromQS(id));
