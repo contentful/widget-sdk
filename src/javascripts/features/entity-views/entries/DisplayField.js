@@ -187,26 +187,46 @@ export function DisplayField({ entity, field, entryCache, assetCache }) {
   let result;
   switch (displayType(field)) {
     case 'updatedAt':
-      result = entity.getUpdatedAt() && <RelativeDateFieldValue value={entity.getUpdatedAt()} />;
+      result = entity.getUpdatedAt() && (
+        <span title={entity.getUpdatedAt().toString()}>
+          <RelativeDateFieldValue value={entity.getUpdatedAt()} />
+        </span>
+      );
       break;
     case 'createdAt':
-      result = entity.getCreatedAt() && <RelativeDateFieldValue value={entity.getCreatedAt()} />;
+      result = entity.getCreatedAt() && (
+        <span title={entity.getCreatedAt().toString()}>
+          <RelativeDateFieldValue value={entity.getCreatedAt()} />
+        </span>
+      );
       break;
     case 'publishedAt':
       result = entity.getPublishedAt() && (
-        <RelativeDateFieldValue value={entity.getPublishedAt()} />
+        <span title={entity.getPublishedAt()}>
+          <RelativeDateFieldValue value={entity.getPublishedAt()} />
+        </span>
       );
       break;
     case 'Date': {
       const value = dataForField(entity, field);
-      result = value && <AbsoluteDateFieldValue value={value} />;
+      result = value && (
+        <span title={value}>
+          <AbsoluteDateFieldValue value={value} />
+        </span>
+      );
       break;
     }
     case 'ContentType': {
       const contentTypeId = entity.getContentTypeId();
       const contentType = EntityFieldValueSpaceContext.getContentTypeById(contentTypeId);
+
       if (contentType) {
-        result = <span className={styles.textOverflow}>{contentType.getName()}</span>;
+        const contentTypeName = contentType.getName();
+        result = (
+          <span className={styles.textOverflow} title={contentTypeName}>
+            {contentTypeName}
+          </span>
+        );
       }
       break;
     }
@@ -247,7 +267,7 @@ export function DisplayField({ entity, field, entryCache, assetCache }) {
       if (title.length > length) {
         title = truncate(title, length);
       }
-      result = <span>{title}</span>;
+      result = <span title={title}>{title}</span>;
       break;
     }
     case 'Asset':
