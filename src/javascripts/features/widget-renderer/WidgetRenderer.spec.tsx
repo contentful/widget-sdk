@@ -63,16 +63,15 @@ const sdk = ({
   access: {
     can: mockMethod,
   },
+  parameters: {
+    installation: { test: 'installation' },
+    instance: { test: 'instance' },
+  },
 } as unknown) as KnownSDK;
 
 function renderRenderer(widget: Widget) {
   const { container } = render(
-    <WidgetRenderer
-      widget={widget}
-      sdk={sdk}
-      location={WidgetLocation.ENTRY_FIELD}
-      parameters={{ values: { instance: { test: 'instance' } } }}
-    />
+    <WidgetRenderer widget={widget} sdk={sdk} location={WidgetLocation.ENTRY_FIELD} />
   );
 
   return container.firstChild as HTMLIFrameElement;

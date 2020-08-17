@@ -8,8 +8,9 @@ import {
   IdsAPI,
   EditorInterface,
   EntrySys,
+  ParametersAPI,
 } from 'contentful-ui-extensions-sdk';
-import { WidgetLocation, ParameterValues } from './interfaces';
+import { WidgetLocation } from './interfaces';
 import { isEntryEditingLocation, isFieldEditingLocation } from './utils';
 
 interface FieldBase {
@@ -33,7 +34,7 @@ interface Field extends FieldBase {
 
 export interface ConnectMessage {
   location: WidgetLocation;
-  parameters: Record<string, ParameterValues>;
+  parameters: ParametersAPI;
   locales: LocalesAPI;
   user: User;
   initialContentTypes: ContentType[];
@@ -48,11 +49,7 @@ export interface ConnectMessage {
   field?: Field;
 }
 
-export const makeConnectMessage = (
-  sdk: KnownSDK,
-  location: WidgetLocation,
-  parameters: Record<string, ParameterValues>
-): ConnectMessage => {
+export const makeConnectMessage = (sdk: KnownSDK, location: WidgetLocation): ConnectMessage => {
   let entryData = {
     contentType: ({ sys: {}, fields: [] } as unknown) as ContentType,
     editorInterface: undefined,
@@ -114,7 +111,7 @@ export const makeConnectMessage = (
 
   return {
     location,
-    parameters,
+    parameters: sdk.parameters,
     locales: sdk.locales,
     user: sdk.user,
     initialContentTypes: sdk.space.getCachedContentTypes(),

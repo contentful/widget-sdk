@@ -49,15 +49,6 @@ function WidgetRendererInternal(props) {
           location={WidgetLocation.ENTRY_FIELD}
           widget={toRendererWidget(widget.descriptor)}
           sdk={props.widgetApi}
-          parameters={{
-            values: {
-              // TODO: this comes from legacy "WidgetRenderable"
-              // and has defaults applied on top of API values
-              // Consider moving "applyDefaultValues" to the renderer
-              // library too.
-              instance: widget.parameters.instance,
-            },
-          }}
         />
       );
     } else {
