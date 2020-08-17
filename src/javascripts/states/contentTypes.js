@@ -34,6 +34,14 @@ const sidebarConfiguration = {
   },
 };
 
+const entryEditorConfiguration = {
+  name: 'entry_editor_configuration',
+  url: '/entry_editor_configuration',
+  params: {
+    ignoreLeaveConfirmation: true,
+  },
+};
+
 const widgetResolvers = {
   customWidgets: [
     // Define dependency on spaceContext so we get custom widgets
@@ -130,7 +138,7 @@ export default {
 function editorBase(options, isNew) {
   return {
     redirectTo: '.fields',
-    children: [fields, preview, sidebarConfiguration],
+    children: [fields, preview, sidebarConfiguration, entryEditorConfiguration],
     controller: [
       '$scope',
       'contentType',

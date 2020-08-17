@@ -43,6 +43,17 @@ export default function EditorFieldTabs(props) {
             Sidebar
           </Tab>
         )}
+        {props.hasAdvancedExtensibility && (
+          <Tab
+            id="entry_editor_configuration"
+            selected={props.currentTab === 'entry_editor_configuration'}
+            onSelect={() => {
+              go({ path: '^.entry_editor_configuration' });
+            }}
+            testId="entry-editor-config-tab">
+            Tabs
+          </Tab>
+        )}
       </Tabs>
     </div>
   );

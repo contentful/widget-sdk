@@ -7,7 +7,7 @@ import {
   convertInternalStateToConfiguration,
   convertConfigurationToInternalState,
 } from './service/SidebarSync';
-import WidgetsConfiguration from './WidgetsConfiguration';
+import WidgetsConfiguration from 'app/ContentModel/Editor/WidgetsConfiguration';
 import { getEntryConfiguration } from './defaults';
 import WidgetParametersConfiguration from './WidgetParametersConfiguration';
 

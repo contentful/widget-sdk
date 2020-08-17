@@ -89,6 +89,16 @@ export default function ContentTypesPage(props) {
               </div>
             </>
           )}
+          {props.hasAdvancedExtensibility && props.currentTab === 'entry_editor_configuration' && (
+            <>
+              <DocumentTitle
+                title={['Tabs', props.contentTypeData.name, 'Content Model']}
+              />
+              <div>
+                Hi, edit me
+              </div>
+            </>
+          )}
         </form>
       </Workbench.Content>
       {showSidebar && (
@@ -99,13 +109,6 @@ export default function ContentTypesPage(props) {
               showNewFieldDialog={props.actions.showNewFieldDialog}
               fieldsUsed={props.contentTypeData.fields.length}
             />
-            {props.hasAdvancedExtensibility && (
-              <EntryEditorAppearanceSection
-                widgets={props.extensions}
-                editorConfiguration={props.editorConfiguration}
-                updateEditorConfiguration={props.actions.updateEditorConfiguration}
-              />
-            )}
             <ContentTypeIdSection contentTypeId={props.contentTypeData.sys.id} />
             <DocumentationSection />
           </div>

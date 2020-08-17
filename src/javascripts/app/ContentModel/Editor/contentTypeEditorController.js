@@ -302,6 +302,8 @@ export default function register() {
           return 'preview';
         } else if ($state.is('^.sidebar_configuration')) {
           return 'sidebar_configuration';
+        } else if ($state.is('^.entry_editor_configuration')) {
+          return 'entry_editor_configuration';
         }
         return 'fields';
       }

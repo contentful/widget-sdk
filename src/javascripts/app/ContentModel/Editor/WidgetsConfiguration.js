@@ -8,8 +8,8 @@ import {
   changeItemPosition,
   addItemToSidebar,
   openWidgetConfiguration,
-} from './SidebarConfigurationReducer';
-import { SidebarType } from './constants';
+} from 'app/EntrySidebar/Configuration/SidebarConfigurationReducer';
+import { SidebarType } from 'app/EntrySidebar/Configuration/constants';
 import {
   Heading,
   Paragraph,
@@ -18,9 +18,9 @@ import {
   Note,
 } from '@contentful/forma-36-react-components';
 import FeedbackButton from 'app/common/FeedbackButton';
-import DefaultSidebar from './components/DefaultSidebar';
-import CustomSidebar from './components/CustomSidebar';
-import AvailableWidgets from './components/AvailableWidgets';
+import DefaultSidebar from 'app/EntrySidebar/Configuration/components/DefaultSidebar';
+import CustomSidebar from 'app/EntrySidebar/Configuration/components/CustomSidebar';
+import AvailableWidgets from 'app/EntrySidebar/Configuration/components/AvailableWidgets';
 
 const styles = {
   options: css({
