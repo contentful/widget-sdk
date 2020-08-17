@@ -17,6 +17,12 @@ const styles = {
   parameterConfigLink: css({
     marginBottom: tokens.spacingS,
   }),
+  header: css({
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    width: '100%',
+  }),
 };
 
 function WidgetItem({ widget, onRemoveClick, onConfigureClick, index }) {
@@ -62,10 +68,21 @@ WidgetItem.propTypes = {
 
 const SortableContainer = sortableContainer(({ children }) => <div>{children}</div>);
 
-export default function CustomSidebar({ items, onChangePosition, onRemoveItem, onConfigureItem }) {
+export default function CustomSidebar({
+  items,
+  onChangePosition,
+  onRemoveItem,
+  onConfigureItem,
+  onResetClick,
+}) {
   return (
     <>
-      <Subheading className={styles.customSidebarTitle}>Custom sidebar</Subheading>
+      <span className={styles.header}>
+        <Subheading className={styles.customSidebarTitle}>Custom sidebar</Subheading>
+        <TextLink type="button" onClick={onResetClick}>
+          Reset to default
+        </TextLink>
+      </span>
       {items.length !== 0 && (
         <SortableContainer
           distance={10}
@@ -110,4 +127,5 @@ CustomSidebar.propTypes = {
   onRemoveItem: PropTypes.func.isRequired,
   onConfigureItem: PropTypes.func.isRequired,
   onChangePosition: PropTypes.func.isRequired,
+  onResetClick: PropTypes.func.isRequired,
 };

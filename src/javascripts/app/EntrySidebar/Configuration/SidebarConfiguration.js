@@ -37,6 +37,10 @@ function SidebarConfiguration(props) {
           state={state}
           dispatch={dispatch}
           defaultAvailableItems={defaultAvailableItems}
+          configuration={{
+            location: 'Sidebar',
+            description: 'Configure the sidebar for this content type.',
+          }}
         />
       )}
       {state.configurableWidget !== null && (
