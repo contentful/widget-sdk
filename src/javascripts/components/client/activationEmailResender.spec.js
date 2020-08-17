@@ -1,8 +1,25 @@
 import { resendActivationEmail } from './activationEmailResender';
-import $httpMocked from 'ng/$http';
 import * as loggerMocked from 'services/logger';
 
+global.fetch = jest.fn();
+
 describe('activationEmailResender', () => {
+  beforeEach(() => {
+    global.fetch.mockResolvedValue({
+      json: jest.fn(),
+      ok: true,
+    });
+  });
+
+  afterEach(() => {
+    global.fetch.mockReset();
+  });
+
+  afterAll(() => {
+    global.fetch.mockClear();
+    delete global.fetch;
+  });
+
   describe('.resend() without email', () => {
     it('throws an error since no email is given', async () => {
       let message = '';
@@ -19,21 +36,22 @@ describe('activationEmailResender', () => {
     it('sends data as expected by Gatekeeper', async () => {
       await resendActivationEmail('user@example.com');
 
-      expect($httpMocked).toBeCalledWith({
-        data: 'user%5Bemail%5D=user%40example.com',
+      expect(global.fetch).toBeCalledWith('https://be.contentful.com/confirmation', {
+        body: 'user%5Bemail%5D=user%40example.com',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         method: 'POST',
-        url: 'https://be.contentful.com/confirmation',
       });
     });
   });
 
   describe('error logging on rejection via `logger.logError()`', () => {
     it('includes the right message and data', async function () {
-      $httpMocked.mockRejectedValue({
+      global.fetch.mockResolvedValue({
+        ok: false,
         status: 418,
-        data: 'tea',
+        body: jest.fn(),
         statusText: "I'm a teapot",
+        json: jest.fn(async () => 'tea'),
       });
 
       try {

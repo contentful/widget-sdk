@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import * as K from 'core/utils/kefir';
 import { createMVar, createExclusiveTask } from 'utils/Concurrent';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
@@ -254,11 +253,11 @@ function fetchNewToken() {
     {
       // We include the cookies from the Gatekeeper domain in the
       // request. This is used to authenticate and give us a new token.
-      withCredentials: true,
+      credentials: 'include',
     }
   )
     .then((response) => {
-      return get(response, 'data.access_token');
+      return response?.access_token;
     })
     .catch(() => {
       return null;
