@@ -2,7 +2,6 @@ import { getModule } from 'core/NgRegistry';
 import _ from 'lodash';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import * as ScheduledActionsService from 'app/ScheduledActions/DataManagement/ScheduledActionsService';
-import * as logger from 'services/logger';
 import { filterRelevantJobsForEntity, sortJobsByRelevance } from 'app/ScheduledActions/utils';
 import { getScheduledActionsFeatureVariation } from '../ScheduledActionsFeatureFlag';
 
@@ -52,9 +51,6 @@ export default {
     try {
       jobs = await getPendingScheduledActions();
     } catch (err) {
-      logger.logError('Failed to fetch pending jobs for entry editor', {
-        err,
-      });
       jobs = [];
     }
     const relevantJobs = filterRelevantJobsForEntity(jobs, entityType, entityId);

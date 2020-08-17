@@ -1,7 +1,6 @@
 import { getModule } from 'core/NgRegistry';
 import _ from 'lodash';
 import { Notification } from '@contentful/forma-36-react-components';
-import * as logger from 'services/logger';
 
 import * as enforcements from 'access_control/Enforcements';
 
@@ -33,7 +32,6 @@ function makeEntityErrorHandler(entityType) {
       }
     }
 
-    logger.logServerWarn(message, { error: err });
     Notification.error(message);
 
     return $q.reject(err);
