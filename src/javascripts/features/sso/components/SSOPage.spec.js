@@ -24,13 +24,21 @@ describe('SSOPage', () => {
     await waitFor(() => expect(screen.getByTestId('create-idp')).toBeInTheDocument());
   });
 
-  it('should show form afer create-idp button was clicked', async () => {
+  it('should call create afer create-idp button was clicked', async () => {
     renderComponent();
     await waitFor(() => expect(retrieveIdp).toHaveBeenCalled());
 
     const createButton = screen.getByTestId('create-idp');
     fireEvent.click(createButton);
 
-    await waitFor(() => expect(createIdp).toHaveBeenCalled());
+    expect(createIdp).toHaveBeenCalledTimes(1);
+  });
+
+  it('should show form afer create-idp button was clicked', async () => {
+    renderComponent();
+    const createButton = screen.getByTestId('create-idp');
+    fireEvent.click(createButton);
+
+    await waitFor(() => expect(screen.getByTestId('audience-uri')).toBeInTheDocument());
   });
 });

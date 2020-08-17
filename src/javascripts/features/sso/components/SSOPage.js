@@ -36,6 +36,7 @@ const styles = {
 
 export function SSOPage({ organization }) {
   const [identityProvider, setIdentityProvider] = useState({});
+  const [idpLoading, setIdpLoading] = useState(false);
 
   const retrieve = useCallback(async () => {
     const idp = await retrieveIdp(organization.sys.id);
@@ -48,16 +49,18 @@ export function SSOPage({ organization }) {
   }, [retrieve]);
 
   const handleCreateIdp = () => {
-    createIdp(organization.sys.id);
+    setIdpLoading(true);
+    const data = createIdp(organization.sys.id);
+    setIdentityProvider({ data });
+    setIdpLoading(false);
   };
 
   const trackSupportClick = () => {
     track('sso:contact_support');
   };
 
-  const idpData = _.get(identityProvider, ['data'], false);
-  const isEnabled = _.get(idpData, ['enabled'], false);
-  const restrictedModeEnabled = _.get(idpData, ['restrictedMode'], false);
+  const isEnabled = identityProvider?.data?.enabled ?? false;
+  const restrictedModeEnabled = identityProvider?.data?.restrictedMode ?? false;
 
   return (
     <Workbench className="sso-setup">
@@ -92,21 +95,22 @@ export function SSOPage({ organization }) {
               buttonType="primary"
               isFullWidth={false}
               testId="create-idp"
+              loading={idpLoading}
               onClick={handleCreateIdp}>
               Set up SSO
             </Button>
           )}
-          {idpData && !isEnabled && (
+          {identityProvider.data && !isEnabled && (
             <IDPSetupForm
               organization={organization}
               identityProvider={identityProvider}
               onUpdate={retrieve}
             />
           )}
-          {idpData && isEnabled && (
+          {identityProvider.data && isEnabled && (
             <SSOEnabled
               organization={organization}
-              ssoName={idpData.ssoName}
+              ssoName={identityProvider.data.ssoName}
               restrictedModeEnabled={restrictedModeEnabled}
             />
           )}

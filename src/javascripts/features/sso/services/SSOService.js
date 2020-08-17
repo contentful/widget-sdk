@@ -13,6 +13,7 @@ export async function retrieveIdp(orgId) {
 
 export async function createIdp(orgId) {
   const endpoint = createOrganizationEndpoint(orgId);
+
   try {
     await endpoint({
       method: 'POST',
