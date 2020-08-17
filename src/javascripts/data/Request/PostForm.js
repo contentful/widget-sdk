@@ -1,6 +1,4 @@
-import qs from 'qs';
-import { assign } from 'lodash';
-import { getModule } from 'core/NgRegistry';
+import { stringify } from 'qs';
 
 /**
  * @description
@@ -8,19 +6,25 @@ import { getModule } from 'core/NgRegistry';
  *
  * @param {string} url
  * @param {object} data
- * @param {object?} config  Additional configuration passed to the
- *   `$http` request method
+ * @param {object?} config  Additional configuration
  * @returns {Promise<Response>}
  */
 export default function postForm(url, data, config = {}) {
-  const $http = getModule('$http');
+  const options = {
+    ...config,
+    method: 'POST',
+    body: stringify(data),
+    headers: {
+      ...config?.headers,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+  };
 
-  config.method = 'POST';
-  config.url = url;
-  config.data = qs.stringify(data);
-  const headers = assign({}, config.headers, {
-    'Content-Type': 'application/x-www-form-urlencoded',
+  return window.fetch(url, options).then((res) => {
+    if (!res.ok) {
+      return Promise.reject(res);
+    }
+
+    return res.json();
   });
-  config.headers = headers;
-  return $http(config);
 }
