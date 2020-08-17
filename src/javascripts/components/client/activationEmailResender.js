@@ -20,16 +20,10 @@ export async function resendActivationEmail(email) {
   try {
     await postForm(ENDPOINT, data);
   } catch (error) {
-    const errorJson = await error.json();
-
     logger.logError('Failed activation email resend attempt', {
       data: {
         email: email,
-        response: {
-          status: error.status,
-          statusText: error.statusText,
-          data: errorJson,
-        },
+        response: _.pick(error, ['status', 'statusText', 'data']),
       },
     });
     new Error('The email could not be sent');

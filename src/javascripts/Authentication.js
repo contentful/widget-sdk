@@ -254,7 +254,7 @@ function fetchNewToken() {
     {
       // We include the cookies from the Gatekeeper domain in the
       // request. This is used to authenticate and give us a new token.
-      credentials: 'include',
+      withCredentials: true,
     }
   )
     .then((response) => {
