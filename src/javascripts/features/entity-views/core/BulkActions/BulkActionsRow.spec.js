@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, wait, fireEvent, act } from '@testing-library/react';
+import { render, wait, fireEvent, act, waitFor } from '@testing-library/react';
 import { upperFirst } from 'lodash';
 import { BulkActionsRow } from './BulkActionsRow';
 import * as batchPerformer from 'core/hooks/useBulkActions/batchPerformer';
@@ -91,6 +91,9 @@ const renderComponent = (props = {}) => {
   return { updateEntities, onActionComplete, ...result };
 };
 
+const waitForVariationToHaveBeenEvaluatedOnce = async () =>
+  waitFor(() => expect(getVariation).toHaveBeenCalledTimes(1));
+
 describe('BulkActionsRow', () => {
   beforeEach(() => {
     accessChecker.canPerformActionOnEntity.mockReturnValue(true);
@@ -134,7 +137,7 @@ describe('BulkActionsRow', () => {
   describe('render action links', () => {
     it('should show all action links', async () => {
       const { getByTestId } = renderComponent({ selectedEntities: generateEntities(1, false) });
-      await wait(); // for feature flag
+      await waitForVariationToHaveBeenEvaluatedOnce();
       expect(getByTestId('duplicate')).toBeInTheDocument();
       expect(getByTestId('archive')).toBeInTheDocument();
       expect(getByTestId('unarchive')).toBeInTheDocument();
@@ -168,7 +171,7 @@ describe('BulkActionsRow', () => {
         selectedEntities: generateEntities(1, false),
         entityType: 'asset',
       });
-      await wait(); // for feature flag
+      await waitForVariationToHaveBeenEvaluatedOnce();
       expect(queryByTestId('duplicate')).not.toBeInTheDocument();
       expect(queryByTestId('archive')).not.toBeInTheDocument();
       expect(queryByTestId('unarchive')).not.toBeInTheDocument();
@@ -202,7 +205,7 @@ describe('BulkActionsRow', () => {
       const { getByTestId, queryByTestId } = renderComponent({
         selectedEntities: generateEntities(1, false),
       });
-      await wait(); // for feature flag
+      await waitForVariationToHaveBeenEvaluatedOnce();
       expect(getByTestId('duplicate')).toBeInTheDocument();
       expect(getByTestId('archive')).toBeInTheDocument();
       expect(getByTestId('unarchive')).toBeInTheDocument();
@@ -243,7 +246,7 @@ describe('BulkActionsRow', () => {
           selectedEntities: generateEntities(1, false),
         });
         const link = getByTestId(action);
-        act(() => {
+        await act(() => {
           link.click();
         });
         await wait();
@@ -257,7 +260,9 @@ describe('BulkActionsRow', () => {
         selectedEntities: generateEntities(1, false),
       });
       const link = getByTestId('delete');
-      link.click();
+      await act(() => {
+        link.click();
+      });
       expect(performer.delete).not.toHaveBeenCalled();
       getByTestId('delete-entry-confirm').click();
       await wait();
@@ -271,7 +276,9 @@ describe('BulkActionsRow', () => {
         selectedEntities: generateEntities(1, false),
       });
       const link = getByTestId('delete');
-      link.click();
+      await act(() => {
+        link.click();
+      });
       expect(performer.delete).not.toHaveBeenCalled();
       getByTestId('delete-entry-secondary').click();
       await wait();
@@ -286,7 +293,9 @@ describe('BulkActionsRow', () => {
         selectedEntities: generateEntities(1, false),
       });
       const link = getByTestId('delete');
-      link.click();
+      await act(() => {
+        link.click();
+      });
       expect(performer.delete).not.toHaveBeenCalled();
       getByTestId('delete-entry-cancel').click();
       expect(performer.delete).not.toHaveBeenCalled();
@@ -299,9 +308,13 @@ describe('BulkActionsRow', () => {
       const { getByTestId } = renderComponent({
         selectedEntities: generateEntities(5, false),
       });
-      await wait(); // for feature flag
+
+      await waitForVariationToHaveBeenEvaluatedOnce();
       const link = getByTestId('add to release');
-      fireEvent.click(link);
+
+      await act(() => {
+        fireEvent.click(link);
+      });
       expect(getByTestId('content-release-modal')).toBeInTheDocument();
     });
   });
