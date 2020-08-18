@@ -84,23 +84,8 @@ export function createFieldWidgetSDK({
     navigator: navigatorApi,
   };
 
-  const sdkForDialogs = {
-    ...sdkWithoutDialogs,
-    location: {
-      is: (location: string) => location === WidgetLocation.DIALOG,
-    },
-    // These will be overriden later:
-    dialogs: {} as DialogsAPI,
-    close: () => {
-      throw new Error('close() implementation needs to be provided in createDialogsApi');
-    },
-  };
-
-  const dialogs = createDialogsApi({ sdk: sdkForDialogs });
-  sdkForDialogs.dialogs = dialogs;
-
   return {
     ...sdkWithoutDialogs,
-    dialogs,
+    dialogs: createDialogsApi(sdkWithoutDialogs),
   };
 }

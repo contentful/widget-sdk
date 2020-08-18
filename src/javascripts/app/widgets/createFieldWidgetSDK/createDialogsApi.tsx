@@ -1,5 +1,12 @@
 import React from 'react';
 import { Modal } from '@contentful/forma-36-react-components';
+import {
+  DialogExtensionSDK,
+  DialogsAPI,
+  OpenCustomWidgetOptions,
+  FieldExtensionSDK,
+} from 'contentful-ui-extensions-sdk';
+import { omit } from 'lodash';
 
 import * as entitySelector from 'search/EntitySelector/entitySelector';
 import { ModalLauncher } from 'core/components/ModalLauncher';
@@ -8,12 +15,9 @@ import * as ExtensionDialogs from 'widgets/ExtensionDialogs';
 import trackExtensionRender from 'widgets/TrackExtensionRender';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
-import {
-  DialogExtensionSDK,
-  DialogsAPI,
-  OpenCustomWidgetOptions,
-} from 'contentful-ui-extensions-sdk';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
+
+type FieldSDKWithoutDialogs = Omit<FieldExtensionSDK, 'dialogs'>;
 
 const denyDialog = () => {
   throw makeReadOnlyApiError(ReadOnlyApi.Dialog);
@@ -34,7 +38,7 @@ export function createReadOnlyDialogsApi() {
   };
 }
 
-export function createDialogsApi({ sdk }: { sdk: DialogExtensionSDK }): DialogsAPI {
+export function createDialogsApi(sdk: FieldSDKWithoutDialogs): DialogsAPI {
   return {
     openAlert: ExtensionDialogs.openAlert,
     openConfirm: ExtensionDialogs.openConfirm,
@@ -110,10 +114,36 @@ async function findWidget(widgetNamespace: WidgetNamespace, widgetId: string) {
   throw new Error(`No widget with ID "${widgetId}" found in "${widgetNamespace}" namespace.`);
 }
 
+function createDialogSDK(
+  sdk: FieldSDKWithoutDialogs,
+  onClose: (data?: any) => void,
+  invocationParameters: Object
+): DialogExtensionSDK {
+  return {
+    ...sdk,
+    dialogs: createDialogsApi(sdk),
+    location: {
+      is: (location: string) => location === WidgetLocation.DIALOG,
+    },
+    parameters: {
+      // Use installation parameters as they are.
+      installation: sdk.parameters.installation,
+      // No instance parameters for dialogs.
+      instance: {},
+      // Parameters passed directly to the dialog.
+      invocation: invocationParameters,
+    },
+    // Do not leak entry- or field-specific IDs.
+    ids: omit(sdk.ids, ['field', 'entry', 'contentType']),
+    // Pass onClose in order to allow child modal to close.
+    close: onClose,
+  };
+}
+
 async function openCustomDialog(
   namespace: WidgetNamespace,
   options: OpenCustomWidgetOptions,
-  sdk: DialogExtensionSDK
+  sdk: FieldSDKWithoutDialogs
 ) {
   if (!options.id) {
     throw new Error('No ID provided.');
@@ -128,19 +158,7 @@ async function openCustomDialog(
         : (options.width as string | undefined);
     const minHeightStyle = { minHeight: options.minHeight || 'auto' };
 
-    const childSdk = {
-      ...sdk,
-      parameters: {
-        // Use installation parameters as they are.
-        installation: sdk.parameters.installation,
-        // No instance parameters for dialogs.
-        instance: {},
-        // Parameters passed directly to the dialog.
-        invocation: options.parameters || {},
-      },
-      // Pass onClose in order to allow child modal to close
-      close: onClose,
-    };
+    const dialogSdk = createDialogSDK(sdk, onClose, options.parameters || {});
 
     return (
       <Modal
@@ -158,7 +176,7 @@ async function openCustomDialog(
             <div style={minHeightStyle}>
               <WidgetRenderer
                 location={WidgetLocation.DIALOG}
-                sdk={childSdk}
+                sdk={dialogSdk}
                 widget={widget}
                 onRender={(widget, location) =>
                   trackExtensionRender(location, toLegacyWidget(widget))
