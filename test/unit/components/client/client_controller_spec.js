@@ -88,10 +88,14 @@ describe('Client Controller', () => {
     });
 
     this.ENVIRONMENT_ALIAS_CHANGED_EVENT = 'ENVIRONMENT_ALIAS_CHANGED_EVENT';
+    this.ENVIRONMENT_ALIAS_CREATED_EVENT = 'ENVIRONMENT_ALIAS_CREATED_EVENT';
+    this.ENVIRONMENT_ALIAS_DELETED_EVENT = 'ENVIRONMENT_ALIAS_DELETED_EVENT';
 
     this.system.set('services/PubSubService', {
       createPubSubClientForSpace: this.stubs.createPubSubClientForSpace,
       ENVIRONMENT_ALIAS_CHANGED_EVENT: this.ENVIRONMENT_ALIAS_CHANGED_EVENT,
+      ENVIRONMENT_ALIAS_CREATED_EVENT: this.ENVIRONMENT_ALIAS_CREATED_EVENT,
+      ENVIRONMENT_ALIAS_DELETED_EVENT: this.ENVIRONMENT_ALIAS_DELETED_EVENT,
     });
 
     this.system.set('app/SpaceSettings/EnvironmentAliases/NotificationsService', {
@@ -256,9 +260,19 @@ describe('Client Controller', () => {
       sinon.assert.notCalled(this.pubSubOn);
     });
 
-    it('subscribes if spaceId', async function () {
+    it('subscribes to alias changed event if spaceId', async function () {
       await $applyAsync();
       sinon.assert.calledWith(this.pubSubOn, this.ENVIRONMENT_ALIAS_CHANGED_EVENT, sinon.match.any);
+    });
+
+    it('subscribes to alias created event if spaceId', async function () {
+      await $applyAsync();
+      sinon.assert.calledWith(this.pubSubOn, this.ENVIRONMENT_ALIAS_CREATED_EVENT, sinon.match.any);
+    });
+
+    it('subscribes to alias deleted event if spaceId', async function () {
+      await $applyAsync();
+      sinon.assert.calledWith(this.pubSubOn, this.ENVIRONMENT_ALIAS_DELETED_EVENT, sinon.match.any);
     });
   });
 });

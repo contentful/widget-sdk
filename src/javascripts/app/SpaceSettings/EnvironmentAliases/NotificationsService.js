@@ -5,16 +5,32 @@ import { window } from 'core/services/window';
 import * as Navigator from 'states/Navigator';
 import * as logger from 'services/logger';
 import * as accessChecker from 'access_control/AccessChecker';
-import { notificationEnvironmentAliasChanged } from 'analytics/events/EnvironmentAliases';
-import { FromTo, InfoModal, ChoiceModal } from './Notifications';
-import { isAContentSpecificPage, isAnEnvironmentAwarePage } from './Utils';
+import {
+  notificationEnvironmentAliasChanged,
+  notificationEnvironmentAliasCreated,
+  notificationEnvironmentAliasDeleted,
+} from 'analytics/events/EnvironmentAliases';
+import {
+  FromTo,
+  AliasChangedInfoModal,
+  AliasChangedChoiceModal,
+  AliasCreatedOrDeletedInfoModal,
+} from './Notifications';
+import { isAContentSpecificPage, isAnEnvironmentAwarePage, ACTION } from './Utils';
+
+import { getModule } from 'core/NgRegistry';
 
 let aliasChangedToastVisible = false;
-export const triggerNotifications = async ({ currentEnvironmentId, update }) => {
+export const triggerAliasChangedNotifications = async ({
+  update,
+  modalLauncher = ModalLauncher,
+}) => {
   if (aliasChangedToastVisible) return;
   notificationEnvironmentAliasChanged({ update });
   const { newTarget, oldTarget } = update;
 
+  const spaceContext = getModule('spaceContext');
+  const currentEnvironmentId = spaceContext.getEnvironmentId();
   const newAliasTargetIsCurrentEnv = currentEnvironmentId === newTarget;
   const newAliasTargetNotCurrentEnv = currentEnvironmentId === oldTarget;
 
@@ -40,10 +56,10 @@ export const triggerNotifications = async ({ currentEnvironmentId, update }) => 
   }
 
   const canManageEnvironments = accessChecker.can('manage', 'Environments');
-  await ModalLauncher.open(({ onClose, isShown }) =>
+  await modalLauncher.open(({ onClose, isShown }) =>
     newAliasTargetNotCurrentEnv && canManageEnvironments ? (
       // ask for user input
-      <ChoiceModal
+      <AliasChangedChoiceModal
         onClose={onClose}
         isShown={isShown}
         currentEnvironmentId={currentEnvironmentId}
@@ -51,7 +67,7 @@ export const triggerNotifications = async ({ currentEnvironmentId, update }) => 
       />
     ) : (
       // ask for user confirmation
-      <InfoModal
+      <AliasChangedInfoModal
         canManageEnvironments={canManageEnvironments}
         onClose={onClose}
         isShown={isShown}
@@ -95,11 +111,77 @@ export const triggerAliasChangedToast = async (handleChangeEnvironment, update) 
   }, 6000);
 };
 
-export default (currentEnvironmentId) => {
+export const triggerAliasCreatedOrDeletedNotifications = async ({
+  update,
+  modalLauncher = ModalLauncher,
+}) => {
+  if (update.action === ACTION.CREATE) {
+    notificationEnvironmentAliasCreated({ update });
+  } else if (update.action === ACTION.DELETE) {
+    notificationEnvironmentAliasDeleted({ update });
+  }
+
+  const spaceContext = getModule('spaceContext');
+  const currentEnvironmentId = spaceContext.getEnvironmentId();
+
+  const { target } = update;
+  const targetIsCurrentEnv = currentEnvironmentId === target;
+  const currentPageIsNotEnvironmentRelated =
+    !isAContentSpecificPage() && !isAnEnvironmentAwarePage();
+
+  const shouldSimplyReload = !targetIsCurrentEnv || currentPageIsNotEnvironmentRelated;
+
+  if (shouldSimplyReload) {
+    // changes not related to current environment
+    Notification.warning('Your space admin has made changes to your space');
+    await Navigator.reload();
+    return;
+  }
+
+  const canManageEnvironments = accessChecker.can('manage', 'Environments');
+  return modalLauncher.open(({ onClose, isShown }) => (
+    // ask for user confirmation
+    <AliasCreatedOrDeletedInfoModal
+      canManageEnvironments={canManageEnvironments}
+      onClose={onClose}
+      isShown={isShown}
+      currentEnvironmentId={currentEnvironmentId}
+      {...update}
+    />
+  ));
+};
+
+export const initEnvAliasCreateHandler = (modalLauncher) => {
+  const action = ACTION.CREATE;
   return (update) => {
     if (window.location.pathname.startsWith('/spaces')) {
-      triggerNotifications({
-        currentEnvironmentId,
+      triggerAliasCreatedOrDeletedNotifications({
+        modalLauncher,
+        update: { ...update, action },
+      });
+    }
+  };
+};
+
+export const initEnvAliasDeleteHandler = (modalLauncher) => {
+  const action = ACTION.DELETE;
+  return (update) => {
+    if (window.location.pathname.startsWith('/spaces')) {
+      triggerAliasCreatedOrDeletedNotifications({
+        modalLauncher,
+        update: { ...update, action },
+      });
+    }
+  };
+};
+
+export default (modalLauncher) => {
+  // TODO: Should we add an action = Action.Change here in order to be
+  // consistent?
+  return (update) => {
+    if (window.location.pathname.startsWith('/spaces')) {
+      triggerAliasChangedNotifications({
+        modalLauncher,
         update,
       });
     }

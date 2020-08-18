@@ -77,11 +77,14 @@ export async function reloadWithEnvironment(environmentId) {
   if (name.includes('spaces.detail')) {
     let path = name;
     try {
-      if (environmentId && !name.includes('.environment')) {
-        // add environment param and path
-        const newPath = name.split('.');
-        newPath.splice(2, 0, 'environment');
-        path = newPath.join('.');
+      if (environmentId) {
+        if (!name.includes('.environment')) {
+          // add environment path
+          const newPath = name.split('.');
+          newPath.splice(2, 0, 'environment');
+          path = newPath.join('.');
+        }
+        // and param
         params.environmentId = environmentId;
       } else if (!environmentId && name.includes('.environment')) {
         // remove environment param and path

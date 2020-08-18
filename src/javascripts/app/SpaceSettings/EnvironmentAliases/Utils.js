@@ -31,3 +31,8 @@ export const isAContentSpecificPage = () =>
 // environment aware pages
 export const isAnEnvironmentAwarePage = () =>
   ['/locales', '/extensions', '/usage'].some((path) => window.location.pathname.includes(path));
+
+export const ACTION = {
+  CREATE: 'create',
+  DELETE: 'delete',
+};

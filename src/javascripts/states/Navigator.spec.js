@@ -104,5 +104,28 @@ describe('Navigator', () => {
         name: 'spaces.detail.environment',
       });
     });
+
+    it('should trigger state change for spaces.detail.environment with env id given', async () => {
+      current = { name: 'spaces.detail.environment' };
+      when(getModule)
+        .calledWith('$state')
+        .mockReturnValue({ go: goMock, reload: reloadMock, current, params: {} });
+      await reloadWithEnvironment('123');
+      expect(goMock).toHaveBeenCalledWith(
+        'spaces.detail.environment',
+        { environmentId: '123' },
+        {
+          inherit: false,
+          reload: true,
+        }
+      );
+      expect(broadcastMock).toHaveBeenCalledWith('$locationChangeSuccess');
+      expect(broadcastMock).toHaveBeenCalledWith('$stateChangeSuccess', {
+        name: 'spaces.detail.environment',
+      });
+      expect(getModule('$state').params).toEqual({
+        environmentId: '123',
+      });
+    });
   });
 });
