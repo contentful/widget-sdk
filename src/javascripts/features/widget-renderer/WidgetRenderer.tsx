@@ -1,5 +1,4 @@
 import React from 'react';
-import { noop } from 'lodash';
 import { KnownSDK } from 'contentful-ui-extensions-sdk';
 
 import { Widget, WidgetLocation, WidgetNamespace, HostingType } from './interfaces';
@@ -19,16 +18,22 @@ const DEFAULT_SANDBOX = [
 
 const SRC_SANDBOX = `${DEFAULT_SANDBOX} allow-same-origin`;
 
+type WidgetLifecycleListener = (widget: Widget, location: WidgetLocation) => void;
+
 interface WidgetRendererProps {
   location: WidgetLocation;
   widget: Widget;
   sdk: KnownSDK;
   isFullSize?: boolean;
+  onRender?: WidgetLifecycleListener;
+  onFocus?: WidgetLifecycleListener;
+  onBlur?: WidgetLifecycleListener;
+  onDestroy?: WidgetLifecycleListener;
 }
 
 export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown> {
   private channel?: PostMessageChannel;
-  private cleanup = noop;
+  private cleanUpForwarders?: () => void;
 
   // There's no need to update. Once the iframe is loaded
   // it's only communicating with the renderer over `postMessage`.
@@ -40,7 +45,8 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
 
   public componentWillUnmount() {
     this.channel?.destroy();
-    this.cleanup();
+    this.cleanUpForwarders?.();
+    this.props.onDestroy?.(this.props.widget, this.props.location);
   }
 
   public render() {
@@ -81,12 +87,12 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
       return;
     }
 
-    const { widget } = this.props;
+    const { sdk, widget, location } = this.props;
     const { namespace, id } = widget;
 
     // TODO: Used in legacy analytics, refactor tracking of custom widgets.
     iframe.dataset.extensionId = id; // Named "extensionId" for backwards compat.
-    iframe.dataset.location = this.props.location;
+    iframe.dataset.location = location;
     if (namespace === WidgetNamespace.APP) {
       iframe.dataset.appDefinitionId = id;
     }
@@ -94,20 +100,32 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
     // Create a communication channel.
     this.channel = new PostMessageChannel(iframe, window);
 
-    // Handle changes to the <iframe> element.
+    // Handle height changes of the <iframe> element.
     this.channel.registerHandler(ChannelMethod.SetHeight, (height) => {
       if (!this.props.isFullSize) {
         iframe.style.height = `${height}px`;
       }
     });
 
+    // Handle focus/blur events by calling listeners.
+    this.channel.registerHandler(ChannelMethod.SetActive, (isActive) => {
+      if (isActive) {
+        this.props.onFocus?.(widget, location);
+      } else {
+        this.props.onBlur?.(widget, location);
+      }
+    });
+
     // Register all the other handlers.
-    setupHandlers(this.channel, this.props.sdk, this.props.location);
+    setupHandlers(this.channel, sdk, location);
 
     // Listen to changes in the host and forward events to the channel.
-    this.cleanup = setupEventForwarders(this.channel, this.props.sdk, this.props.location);
+    this.cleanUpForwarders = setupEventForwarders(this.channel, sdk, location);
 
     // Render the iframe content.
     iframe[widget.hosting.type] = widget.hosting.value;
+
+    // Notify the listener.
+    this.props.onRender?.(widget, location);
   };
 }
