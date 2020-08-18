@@ -49,6 +49,8 @@ function WidgetRendererInternal(props) {
           location={WidgetLocation.ENTRY_FIELD}
           widget={toRendererWidget(widget.descriptor)}
           sdk={props.widgetApi}
+          onFocus={() => props.scope.fieldLocale.setActive(true)}
+          onBlur={() => props.scope.fieldLocale.setActive(false)}
         />
       );
     } else {
