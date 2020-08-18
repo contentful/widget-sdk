@@ -15,13 +15,7 @@
         list-height="entitySelector.listHeight"
         on-change="entitySelector.onChange"
         on-no-entities="entitySelector.onNoEntities"
-        ng-if="!entitySelectorMigrationFeatureEnabled"
       ></cf-entity-selector>
-      <react-component
-        name="search/EntitySelector/EntitySelectorForm"
-        props="entitySelectorFormProps"
-        ng-if="entitySelectorMigrationFeatureEnabled"
-      ></react-component>
     </div>
     <div class="modal-dialog__content" ng-if="showCustomEmptyMessage">
       <div

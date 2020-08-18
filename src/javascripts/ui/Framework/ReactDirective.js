@@ -28,7 +28,6 @@ import * as AssetLink from 'app/widgets/link/AssetLink';
 import * as EntryLink from 'app/widgets/link/EntryLink';
 import * as EntryEditorWorkbench from 'app/entry_editor/EntryEditorWorkbench';
 import * as AssetEditorWorkbench from 'app/asset_editor/AssetEditorWorkbench';
-import * as EntitySelectorForm from 'search/EntitySelector/EntitySelectorForm';
 import * as EntitySelectorAdapter from 'search/EntitySelector/EntitySelectorAdapter';
 import { BulkEditorHeader } from 'app/entity_editor/bulk_editor/BulkEditorHeader';
 import { BulkEditorSidebar } from 'app/entity_editor/bulk_editor/BulkEditorSidebar';
@@ -250,7 +249,6 @@ function getModule(name) {
     'app/asset_editor/AssetEditorWorkbench': AssetEditorWorkbench,
     'app/entity_editor/EntityField/EntityFieldHeading': { default: EntityFieldHeading },
     'app/entity_editor/EntityField/EntityFieldControl': { default: EntityFieldControl },
-    'search/EntitySelector/EntitySelectorForm': EntitySelectorForm,
     'search/EntitySelector/EntitySelectorAdapter': EntitySelectorAdapter,
   };
 
