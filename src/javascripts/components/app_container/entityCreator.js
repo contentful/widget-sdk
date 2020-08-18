@@ -16,8 +16,8 @@ export function newAsset() {
 }
 
 function makeEntityErrorHandler(entityType) {
-  const $q = getModule('$q');
   const spaceContext = getModule('spaceContext');
+
   return (err) => {
     let message = 'Could not create ' + entityType;
 
@@ -34,6 +34,6 @@ function makeEntityErrorHandler(entityType) {
 
     Notification.error(message);
 
-    return $q.reject(err);
+    throw err;
   };
 }
