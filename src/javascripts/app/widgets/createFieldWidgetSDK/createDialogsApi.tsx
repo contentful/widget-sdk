@@ -121,15 +121,12 @@ async function openCustomDialog(
 
   const widget = await findWidget(namespace, options.id);
 
-  trackExtensionRender(WidgetLocation.DIALOG, toLegacyWidget(widget));
-
-  const dialogKey = Date.now().toString();
-
   return ModalLauncher.open(({ isShown, onClose }) => {
     const size =
       typeof options.width === 'number' && Number.isInteger(options.width)
         ? `${options.width}px`
         : (options.width as string | undefined);
+    const minHeightStyle = { minHeight: options.minHeight || 'auto' };
 
     const childSdk = {
       ...sdk,
@@ -147,7 +144,7 @@ async function openCustomDialog(
 
     return (
       <Modal
-        key={dialogKey}
+        key={`${Date.now()}`}
         shouldCloseOnOverlayClick={options.shouldCloseOnOverlayClick || false}
         shouldCloseOnEscapePress={options.shouldCloseOnEscapePress || false}
         allowHeightOverflow={options.allowHeightOverflow || false}
@@ -158,9 +155,15 @@ async function openCustomDialog(
         {() => (
           <>
             {options.title && <Modal.Header title={options.title} onClose={() => onClose()} />}
-            {/* eslint-disable-next-line rulesdir/restrict-inline-styles */}
-            <div style={{ minHeight: options.minHeight || 'auto' }}>
-              <WidgetRenderer location={WidgetLocation.DIALOG} sdk={childSdk} widget={widget} />
+            <div style={minHeightStyle}>
+              <WidgetRenderer
+                location={WidgetLocation.DIALOG}
+                sdk={childSdk}
+                widget={widget}
+                onRender={(widget, location) =>
+                  trackExtensionRender(location, toLegacyWidget(widget))
+                }
+              />
             </div>
           </>
         )}

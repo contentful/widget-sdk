@@ -12,6 +12,7 @@ export enum ChannelMethod {
   SetValue = 'setValue',
   RemoveValue = 'removeValue',
   SetInvalid = 'setInvalid',
+  SetActive = 'setActive',
 }
 
 export enum ChannelEvent {
