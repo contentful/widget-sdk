@@ -748,40 +748,6 @@ describe('Access Checker', () => {
         expect(ac.canCreateOrganization()).toEqual(false);
       });
     });
-
-    describe('#wasForbidden', () => {
-      it('returns callback function', () => {
-        expect(_.isFunction(ac.wasForbidden)).toBe(true);
-      });
-
-      it('sets "forbidden" flag on provided context if response is 404/3', () => {
-        [200, 404, 403].forEach((status) => {
-          const context = {};
-          const cb1 = ac.wasForbidden(context);
-          cb1({ statusCode: status });
-          expect(context.forbidden).toBe(status === 200 ? undefined : true);
-        });
-      });
-
-      it('returns resolved promise with context if was forbidden', () => {
-        const ctx = {};
-        const cb1 = ac.wasForbidden(ctx);
-
-        return cb1({ statusCode: 404 }).then((ctx2) => {
-          expect(ctx === ctx2).toBe(true);
-          expect(ctx2.forbidden).toBe(true);
-        });
-      });
-
-      it('returns rejected promise with response if was not forbidden', () => {
-        const cb = ac.wasForbidden({});
-        const res = { statusCode: 400 };
-
-        return cb(res).then(_.noop, (res2) => {
-          expect(res === res2);
-        });
-      });
-    });
   });
 });
 

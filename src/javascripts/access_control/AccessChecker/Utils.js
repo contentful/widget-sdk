@@ -1,34 +1,8 @@
 import * as TokenStore from 'services/TokenStore';
 import * as K from 'core/utils/kefir';
 import { get, isString } from 'lodash';
-import { getModule } from 'core/NgRegistry';
 
 import _ from 'lodash';
-
-/**
- * TODO move from access checker or get rid of it entirely
- *
- * @description
- * Returns function that will check a status code of response.
- * If it's 403/4, it'll set "forbidden" key on a provided context object.
- *
- * @param {object} context
- * @returns {function}
- */
-export function wasForbidden(context) {
-  const $q = getModule('$q');
-
-  return (res) => {
-    if ([403, 404].includes(parseInt(get(res, 'statusCode'), 10))) {
-      context.forbidden = true;
-      // Using $q instead of native promises because it should update context
-      // and trgger Angular digest circle.
-      return $q.resolve(context);
-    } else {
-      return $q.reject(res);
-    }
-  };
-}
 
 export function toType(entity) {
   if (isString(entity)) {
