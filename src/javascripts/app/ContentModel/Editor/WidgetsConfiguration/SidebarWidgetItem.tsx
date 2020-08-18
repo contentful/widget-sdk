@@ -2,7 +2,7 @@ import React from 'react';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';
-import { sortableElement } from 'react-sortable-hoc';
+import { SortableElement } from 'react-sortable-hoc';
 import { IconButton, Icon, Note, Tag } from '@contentful/forma-36-react-components';
 
 const styles = {
@@ -12,9 +12,9 @@ const styles = {
   }),
   itemHeader: css({
     display: 'flex',
-    flexGrow: '1',
+    flexGrow: 1,
     fontSize: tokens.fontSizeS,
-    fontWeight: tokens.fontWeightNormal,
+    fontWeight: parseInt(tokens.fontWeightNormal, 10), // TODO: change to a number in forma
     textTransform: 'uppercase',
     color: tokens.colorTextLight,
     lineHeight: '2',
@@ -61,8 +61,8 @@ const styles = {
   }),
 };
 
-const SortableItem = sortableElement(({ children }) => (
-  <div data-test-id="sidebar-widget-item-draggable" tabIndex="0" className={styles.draggable}>
+const SortableItem = SortableElement(({ children }) => (
+  <div data-test-id="sidebar-widget-item-draggable" tabIndex={0} className={styles.draggable}>
     {children}
   </div>
 ));

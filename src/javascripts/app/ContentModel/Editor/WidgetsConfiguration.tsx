@@ -13,7 +13,7 @@ import { SidebarType } from 'app/EntrySidebar/Configuration/constants';
 import { Heading, Paragraph } from '@contentful/forma-36-react-components';
 import CustomConfiguration from './WidgetsConfiguration/CustomConfiguration';
 import AvailableWidgets from './WidgetsConfiguration/AvailableWidgets';
-import { WidgetNamespace, Location } from 'features/widget-renderer';
+import { ConfigurationItem } from './WidgetsConfiguration/interfaces';
 
 const styles = {
   container: css({
@@ -49,15 +49,6 @@ const styles = {
   }),
 };
 
-interface ConfigurationItem {
-  widgetId: string;
-  widgetNamespace: WidgetNamespace;
-  name: string;
-  description?: string;
-  locations?: Location[];
-  parameters?: any;
-}
-
 interface WidgetsConfigurationProps {
   state: {
     availableItems: ConfigurationItem[];
@@ -72,6 +63,8 @@ interface WidgetsConfigurationProps {
     description: string;
   };
 }
+
+// TODO: resetting doesn't work as it shoul
 
 const WidgetsConfiguration: React.FC<WidgetsConfigurationProps> = ({
   state,

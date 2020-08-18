@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+'default' | 'custom';
 import PropTypes from 'prop-types';
 import EntrySidebarWidget from './EntrySidebarWidget';
 import { isArray } from 'lodash';

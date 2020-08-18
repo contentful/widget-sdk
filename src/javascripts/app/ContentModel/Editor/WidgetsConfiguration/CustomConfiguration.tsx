@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { sortableContainer } from 'react-sortable-hoc';
+import * as Sortable from 'react-sortable-hoc';
 import { Subheading, Paragraph, TextLink } from '@contentful/forma-36-react-components';
 import SidebarWidgetItem from './SidebarWidgetItem';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { WidgetNamespace, isCustomWidget } from 'features/widget-renderer';
+import { ConfigurationItem } from './interfaces';
 
 const styles = {
   customSidebarTitle: css({
@@ -66,7 +67,7 @@ WidgetItem.propTypes = {
   index: PropTypes.number,
 };
 
-const SortableContainer = sortableContainer(({ children }) => <div>{children}</div>);
+const SortableContainer = Sortable.SortableContainer(({ children }) => <div>{children}</div>);
 
 export default function CustomConfiguration({
   items,
@@ -89,7 +90,7 @@ export default function CustomConfiguration({
           onSortEnd={({ oldIndex, newIndex }) => {
             onChangePosition(oldIndex, newIndex);
           }}>
-          {items.map((item, index: number) => {
+          {items.map((item: ConfigurationItem, index: number) => {
             const key = `${item.widgetNamespace},${item.widgetId}`;
             return (
               <WidgetItem
