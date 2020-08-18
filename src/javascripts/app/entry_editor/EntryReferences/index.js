@@ -83,7 +83,7 @@ export const hasLinks = (obj) => {
   return linksFound;
 };
 
-const ReferencesTab = ({ entity }) => {
+const ReferencesTab = ({ entity, onRootReferenceCardClick }) => {
   const [allReferencesSelected, setAllReferencesSelected] = useState(true);
   const [entityTitle, setEntityTitle] = useState(null);
   const { state: referencesState, dispatch } = useContext(ReferencesContext);
@@ -205,6 +205,7 @@ const ReferencesTab = ({ entity }) => {
               validations={validations}
               maxLevel={MAX_LEVEL}
               allReferencesSelected={allReferencesSelected}
+              onRootReferenceCardClick={onRootReferenceCardClick}
               onReferenceCardClick={handleReferenceCardClick}
               setIsTreeMaxDepthReached={(value) => {
                 dispatch({ type: SET_MAX_DEPTH_REACHED, value });
@@ -234,6 +235,7 @@ const ReferencesTab = ({ entity }) => {
 
 ReferencesTab.propTypes = {
   entity: PropTypes.object.isRequired,
+  onRootReferenceCardClick: PropTypes.func,
 };
 
 export default ReferencesTab;
