@@ -13,7 +13,7 @@ import tokens from '@contentful/forma-36-tokens';
 import pluralize from 'pluralize';
 import { css } from 'emotion';
 import StateLink from 'app/common/StateLink';
-import { isForbidden } from 'utils/ServerErrorUtils';
+import { isForbidden, isRateLimit } from 'utils/ServerErrorUtils';
 
 const noteStyle = css({
   marginBottom: tokens.spacingS,
@@ -102,23 +102,31 @@ NewUserSuccess.propTypes = {
 };
 
 function NewUserFailures({ failures = [] }) {
-  const { planLimitHit, alreadyIn } = failures.reduce(
+  const { rateLimit, planLimitHit, alreadyIn } = failures.reduce(
     (result, failure) => {
       const { error, email } = failure;
-      const { planLimitHit, alreadyIn } = result;
+      const { rateLimit, planLimitHit, alreadyIn } = result;
 
-      if (isForbidden(error)) {
+      if (isRateLimit(error)) {
+        rateLimit.push(email);
+      } else if (isForbidden(error)) {
         planLimitHit.push(email);
       } else {
         alreadyIn.push(email);
       }
       return result;
     },
-    { planLimitHit: [], alreadyIn: [] }
+    { rateLimit: [], planLimitHit: [], alreadyIn: [] }
   );
 
   return (
     <>
+      {rateLimit.length > 0 && (
+        <div data-test-id="new-user.done.failed.rateLimit">
+          <Paragraph>{`The following users have been invited too many times in a short period of time`}</Paragraph>
+          <Textarea disabled className={failedEmailsStyle} value={rateLimit.join('\n')} />
+        </div>
+      )}
       {alreadyIn.length > 0 && (
         <div data-test-id="new-user.done.failed.alreadyIn">
           <Paragraph>{`Existing users or users that are already invited`}</Paragraph>

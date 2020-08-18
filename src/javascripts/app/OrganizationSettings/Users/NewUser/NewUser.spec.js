@@ -231,6 +231,28 @@ describe('NewUser', () => {
         await wait();
       });
 
+      it('shows a rate limit failure message', async () => {
+        const rateLimitError = new Error();
+        rateLimitError.data = { sys: { id: 'RateLimitExceeded' } };
+
+        invite.mockRejectedValueOnce(rateLimitError);
+
+        build();
+
+        await wait();
+
+        await submitForm(['john.doe@enterprise.com'], 'Owner');
+        await wait(() => screen.getByTestId('new-user.done'));
+        const rateLimitErrorMessage = screen.getByTestId('new-user.done.failed.rateLimit');
+        const alreadyInErrorMessage = screen.queryByTestId('new-user.done.failed.alreadyIn');
+        const planLimitErrorMessage = screen.queryByTestId('new-user.done.failed.planLimitHit');
+
+        expect(rateLimitErrorMessage).toBeVisible();
+        expect(alreadyInErrorMessage).toBeNull();
+        expect(planLimitErrorMessage).toBeNull();
+        await wait();
+      });
+
       it('shows a plan limit failure message', async () => {
         invite.mockRejectedValueOnce(forbiddenError);
 
