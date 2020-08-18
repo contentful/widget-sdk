@@ -125,7 +125,10 @@ export function createReadonlyFieldWidgetSDK({
       // actual value from EditorInterface should be provided
       // when we use this read only SDK for something different
       // from RichText comparator.
-      editorInterfaceSettings: {},
+      parameters: {
+        installation: {},
+        instance: {},
+      },
     }),
     editor: editorApi,
     space: spaceApi,

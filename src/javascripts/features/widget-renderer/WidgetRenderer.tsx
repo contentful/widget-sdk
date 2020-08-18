@@ -2,15 +2,7 @@ import React from 'react';
 import { noop } from 'lodash';
 import { KnownSDK } from 'contentful-ui-extensions-sdk';
 
-import {
-  Widget,
-  ExtensionParameterValues,
-  AppParameterValues,
-  WidgetLocation,
-  WidgetNamespace,
-  HostingType,
-} from './interfaces';
-
+import { Widget, WidgetLocation, WidgetNamespace, HostingType } from './interfaces';
 import { PostMessageChannel } from './PostMessageChannel';
 import { ChannelMethod } from './channelTypes';
 import { setupHandlers } from './handlers';
@@ -30,12 +22,6 @@ const SRC_SANDBOX = `${DEFAULT_SANDBOX} allow-same-origin`;
 interface WidgetRendererProps {
   location: WidgetLocation;
   widget: Widget;
-  parameters: {
-    values: {
-      instance?: ExtensionParameterValues;
-      invocation?: AppParameterValues;
-    };
-  };
   sdk: KnownSDK;
   isFullSize?: boolean;
 }
@@ -84,18 +70,8 @@ export class WidgetRenderer extends React.Component<WidgetRendererProps, unknown
   // on the initial page load the consecutive page loads would render
   // the HTML page but the `sdk.init(cb)` callback wouldn't be called).
   private onLoad = () => {
-    const { sdk, location, widget, parameters } = this.props;
-
-    const mergedParameterValues = {
-      // Guaranteed to be defined.
-      installation: widget.parameters.values.installation,
-      // Default instance parameters to an empty object (backwards compat).
-      instance: parameters.values.instance || {},
-      // Use invocation parameters only if present.
-      ...(parameters.values.invocation ? { invocation: parameters.values.invocation } : {}),
-    };
-
-    const connectMessage = makeConnectMessage(sdk, location, mergedParameterValues);
+    const { sdk, location } = this.props;
+    const connectMessage = makeConnectMessage(sdk, location);
 
     this.channel?.connect(connectMessage);
   };

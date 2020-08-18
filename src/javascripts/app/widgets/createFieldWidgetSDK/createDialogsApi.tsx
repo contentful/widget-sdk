@@ -121,15 +121,6 @@ async function openCustomDialog(
 
   const widget = await findWidget(namespace, options.id);
 
-  const parameters = {
-    values: {
-      // No instance parameters for dialogs.
-      instance: {},
-      // Parameters passed directly to the dialog.
-      invocation: options.parameters || {},
-    },
-  };
-
   trackExtensionRender(WidgetLocation.DIALOG, toLegacyWidget(widget));
 
   const dialogKey = Date.now().toString();
@@ -140,8 +131,19 @@ async function openCustomDialog(
         ? `${options.width}px`
         : (options.width as string | undefined);
 
-    // Pass onClose in order to allow child modal to close
-    const childSdk = { ...sdk, close: onClose };
+    const childSdk = {
+      ...sdk,
+      parameters: {
+        // Use installation parameters as they are.
+        installation: sdk.parameters.installation,
+        // No instance parameters for dialogs.
+        instance: {},
+        // Parameters passed directly to the dialog.
+        invocation: options.parameters || {},
+      },
+      // Pass onClose in order to allow child modal to close
+      close: onClose,
+    };
 
     return (
       <Modal
@@ -158,12 +160,7 @@ async function openCustomDialog(
             {options.title && <Modal.Header title={options.title} onClose={() => onClose()} />}
             {/* eslint-disable-next-line rulesdir/restrict-inline-styles */}
             <div style={{ minHeight: options.minHeight || 'auto' }}>
-              <WidgetRenderer
-                location={WidgetLocation.DIALOG}
-                sdk={childSdk}
-                widget={widget}
-                parameters={parameters}
-              />
+              <WidgetRenderer location={WidgetLocation.DIALOG} sdk={childSdk} widget={widget} />
             </div>
           </>
         )}

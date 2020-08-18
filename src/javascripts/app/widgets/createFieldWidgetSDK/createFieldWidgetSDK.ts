@@ -18,21 +18,24 @@ export function createFieldWidgetSDK({
   localeCode,
   widgetNamespace,
   widgetId,
-  editorInterfaceSettings = {},
   spaceContext,
   $scope,
   doc,
   internalContentType,
+  parameters,
 }: {
   fieldId: string;
   localeCode: string;
   widgetNamespace: WidgetNamespace;
   widgetId: string;
-  editorInterfaceSettings?: Record<string, any>;
   spaceContext: any;
   $scope: any;
   doc: Document;
   internalContentType: InternalContentType;
+  parameters: {
+    instance: Record<string, any>;
+    installation: Record<string, any>;
+  };
 }): FieldExtensionSDK {
   const editorApi = createEditorApi({
     editorInterface: $scope.editorData.editorInterface,
@@ -74,7 +77,7 @@ export function createFieldWidgetSDK({
       spaceMember: spaceContext.space.data.spaceMember,
       widgetId,
       widgetNamespace,
-      editorInterfaceSettings,
+      parameters,
     }),
     editor: editorApi,
     space: spaceApi,
