@@ -10,10 +10,10 @@ import {
   openWidgetConfiguration,
 } from 'app/EntrySidebar/Configuration/SidebarConfigurationReducer';
 import { SidebarType } from 'app/EntrySidebar/Configuration/constants';
-import { Heading, Paragraph, Note } from '@contentful/forma-36-react-components';
-import FeedbackButton from 'app/common/FeedbackButton';
-import CustomSidebar from './WidgetsConfiguration/CustomSidebar';
+import { Heading, Paragraph } from '@contentful/forma-36-react-components';
+import CustomConfiguration from './WidgetsConfiguration/CustomConfiguration';
 import AvailableWidgets from './WidgetsConfiguration/AvailableWidgets';
+import { WidgetNamespace, Location } from 'features/widget-renderer';
 
 const styles = {
   container: css({
@@ -33,7 +33,6 @@ const styles = {
     minWidth: '384px',
     width: '384px',
     minHeight: '500px',
-    // padding: `${tokens.spacingM} ${tokens.spacingL} ${tokens.spacingL}`,
     paddingRight: tokens.spacingL,
   }),
   heading: css({
@@ -50,10 +49,24 @@ const styles = {
   }),
 };
 
+interface ConfigurationItem {
+  widgetId: string;
+  widgetNamespace: WidgetNamespace;
+  name: string;
+  description?: string;
+  locations?: Location[];
+  parameters?: any;
+}
+
 interface WidgetsConfigurationProps {
-  state: any;
+  state: {
+    availableItems: ConfigurationItem[];
+    configurableWidget: any; // what is this?
+    items: ConfigurationItem[];
+    sidebarType: SidebarType;
+  };
   dispatch: Function;
-  defaultAvailableItems: any;
+  defaultAvailableItems: ConfigurationItem[];
   configuration: {
     location: string;
     description: string;
@@ -66,8 +79,6 @@ const WidgetsConfiguration: React.FC<WidgetsConfigurationProps> = ({
   defaultAvailableItems,
   configuration,
 }) => {
-  console.log(defaultAvailableItems);
-  console.log(state);
   return (
     <React.Fragment>
       <Heading className={styles.heading}>{configuration.location} configuration</Heading>
@@ -77,18 +88,22 @@ const WidgetsConfiguration: React.FC<WidgetsConfigurationProps> = ({
           <div className={styles.additionalColumn} data-test-id="available-sidebar-items">
             <AvailableWidgets
               items={state.availableItems}
-              onAddItem={(item: any) => {
+              onAddItem={(item: ConfigurationItem) => {
+                if (state.sidebarType === SidebarType.default) {
+                  dispatch(selectSidebarType(SidebarType.custom));
+                }
                 dispatch(addItemToSidebar(item));
               }}
             />
           </div>
           <div className={styles.mainColumn} data-test-id="custom-sidebar-column">
-            <CustomSidebar
+            <CustomConfiguration
+              title={configuration.location}
               onResetClick={() => dispatch(selectSidebarType(SidebarType.default))}
               items={
                 state.sidebarType === SidebarType.default ? defaultAvailableItems : state.items
               }
-              onRemoveItem={(widget: any) => {
+              onRemoveItem={(widget: ConfigurationItem) => {
                 if (state.sidebarType === SidebarType.default) {
                   dispatch(selectSidebarType(SidebarType.custom));
                 }
@@ -100,7 +115,7 @@ const WidgetsConfiguration: React.FC<WidgetsConfigurationProps> = ({
                 }
                 dispatch(changeItemPosition(sourceIndex, destinationIndex));
               }}
-              onConfigureItem={(widget: any) => {
+              onConfigureItem={(widget: ConfigurationItem) => {
                 if (state.sidebarType === SidebarType.default) {
                   dispatch(selectSidebarType(SidebarType.custom));
                 }
@@ -110,14 +125,6 @@ const WidgetsConfiguration: React.FC<WidgetsConfigurationProps> = ({
           </div>
         </React.Fragment>
       </div>
-      <Note className={styles.note}>
-        <FeedbackButton
-          target="extensibility"
-          about="Sidebar configuration"
-          label="Send feedback"
-        />{' '}
-        and let us know how we can improve the sidebar configuration.
-      </Note>
     </React.Fragment>
   );
 };

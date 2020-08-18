@@ -68,20 +68,19 @@ WidgetItem.propTypes = {
 
 const SortableContainer = sortableContainer(({ children }) => <div>{children}</div>);
 
-export default function CustomSidebar({
+export default function CustomConfiguration({
   items,
   onChangePosition,
   onRemoveItem,
   onConfigureItem,
   onResetClick,
+  title,
 }) {
   return (
     <>
       <span className={styles.header}>
-        <Subheading className={styles.customSidebarTitle}>Custom sidebar</Subheading>
-        <TextLink type="button" onClick={onResetClick}>
-          Reset to default
-        </TextLink>
+        <Subheading className={styles.customSidebarTitle}>{title}</Subheading>
+        <TextLink onClick={onResetClick}>Reset to default</TextLink>
       </span>
       {items.length !== 0 && (
         <SortableContainer
@@ -90,7 +89,7 @@ export default function CustomSidebar({
           onSortEnd={({ oldIndex, newIndex }) => {
             onChangePosition(oldIndex, newIndex);
           }}>
-          {items.map((item, index) => {
+          {items.map((item, index: number) => {
             const key = `${item.widgetNamespace},${item.widgetId}`;
             return (
               <WidgetItem
@@ -118,14 +117,15 @@ export default function CustomSidebar({
   );
 }
 
-CustomSidebar.defaultProps = {
+CustomConfiguration.defaultProps = {
   items: [],
 };
 
-CustomSidebar.propTypes = {
+CustomConfiguration.propTypes = {
   items: PropTypes.array.isRequired,
   onRemoveItem: PropTypes.func.isRequired,
   onConfigureItem: PropTypes.func.isRequired,
   onChangePosition: PropTypes.func.isRequired,
   onResetClick: PropTypes.func.isRequired,
+  title: PropTypes.string.isRequired,
 };

@@ -62,14 +62,14 @@ export default function AvailableItems(props) {
         </div>
       )}
       <Paragraph>
-        Learn{' '}
+        Learn more about{' '}
         <TextLink
           href={withInAppHelpUtmParams(
             'https://www.contentful.com/developers/docs/extensibility/app-framework/tutorial/?utm_campaign=in-app-help'
           )}
           target="_blank"
           rel="noopener noreferrer">
-          how to build your first app
+          UI Extensions
         </TextLink>
       </Paragraph>
     </div>
