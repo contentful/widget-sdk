@@ -1,7 +1,6 @@
 import { pick, difference, identity } from 'lodash';
 
 import { defaultWidgetsMap } from '../defaults';
-import { SidebarType } from '../constants';
 
 import { WidgetNamespace, isCustomWidget, WidgetLocation } from 'features/widget-renderer';
 
@@ -11,7 +10,7 @@ import { WidgetNamespace, isCustomWidget, WidgetLocation } from 'features/widget
  * for saving configuration.
  */
 export function convertInternalStateToConfiguration(state: any, initialItems: any) {
-  if (state.sidebarType === SidebarType.default) {
+  if (state.items === initialItems) {
     return undefined;
   }
 
@@ -72,7 +71,6 @@ export function convertConfigurationToInternalState(
 ) {
   if (!Array.isArray(configuration)) {
     return {
-      sidebarType: SidebarType.default,
       items: initialItems,
       availableItems: widgets.filter(canBeUsedInSidebar).map(convertToWidgetConfiguration),
       configurableWidget: null,
@@ -148,7 +146,6 @@ export function convertConfigurationToInternalState(
     });
 
   return {
-    sidebarType: SidebarType.custom,
     items,
     availableItems,
     configurableWidget: null,

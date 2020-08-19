@@ -72,9 +72,9 @@ const WidgetsConfiguration: React.FC<WidgetsConfigurationProps> = ({
   defaultAvailableItems,
   configuration,
 }) => {
-  const unusedAvailableItems = state.availableItems.filter(
-    (item) => !state.items.find((selectedItem) => isSameWidget(item, selectedItem))
-  );
+  const unusedAvailableItems = defaultAvailableItems
+    .concat(state.availableItems)
+    .filter((item) => !state.items.find((selectedItem) => isSameWidget(item, selectedItem)));
 
   return (
     <React.Fragment>

@@ -21,7 +21,6 @@ const styles = {
 function SidebarConfiguration(props) {
   const { onUpdateConfiguration, defaultAvailableItems, extensions, configuration } = props;
 
-  console.log(configuration, extensions, defaultAvailableItems);
   const [state, dispatch] = useReducer(
     reducer,
     convertConfigurationToInternalState(configuration, extensions, defaultAvailableItems)

@@ -17,7 +17,7 @@ export const resetWidgetConfiguration = (defaultAvailableItems: ConfigurationIte
 
 const REMOVE_ITEM_FROM_SIDEBAR = 'sidebar/REMOVE_ITEM_FROM_SIDEBAR';
 
-export const removeItemFromSidebar = (item) => ({
+export const removeItemFromSidebar = (item: ConfigurationItem) => ({
   type: REMOVE_ITEM_FROM_SIDEBAR,
   payload: {
     item,
@@ -25,7 +25,7 @@ export const removeItemFromSidebar = (item) => ({
 });
 
 const ADD_ITEM_TO_SIDEBAR = 'sidebar/ADD_ITEM_TO_SIDEBAR';
-export const addItemToSidebar = (item) => ({
+export const addItemToSidebar = (item: ConfigurationItem) => ({
   type: ADD_ITEM_TO_SIDEBAR,
   payload: {
     item,
@@ -34,7 +34,7 @@ export const addItemToSidebar = (item) => ({
 
 const CHANGE_ITEM_POSITION = 'sidebar/CHANGE_ITEM_POSITION';
 
-export const changeItemPosition = (sourceIndex, destIndex) => ({
+export const changeItemPosition = (sourceIndex: number, destIndex: number) => ({
   type: CHANGE_ITEM_POSITION,
   payload: {
     sourceIndex,
@@ -56,7 +56,7 @@ export const closeWidgetConfiguration = () => ({
 });
 
 const UPDATE_WIDGET_SETTINGS = 'sidebar/UPDATE_WIDGET_SETTINGS';
-export const updateWidgetSettings = (widget, settings) => ({
+export const updateWidgetSettings = (widget: any, settings: any) => ({
   type: UPDATE_WIDGET_SETTINGS,
   payload: {
     widget,
@@ -64,7 +64,8 @@ export const updateWidgetSettings = (widget, settings) => ({
   },
 });
 
-const areWidgetsSame = (widget1, widget2) =>
+// TODO: extract this, it's re-used in another file
+const areWidgetsSame = (widget1: ConfigurationItem, widget2: ConfigurationItem) =>
   widget1.widgetId === widget2.widgetId && widget1.widgetNamespace === widget2.widgetNamespace;
 
 export const reducer = createImmerReducer({
@@ -85,14 +86,7 @@ export const reducer = createImmerReducer({
     state.items.splice(removeIndex, 1);
   },
   [ADD_ITEM_TO_SIDEBAR]: (state: State, action) => {
-    const index = state.availableItems.findIndex((item) =>
-      areWidgetsSame(item, action.payload.item)
-    );
-    if (index === -1) {
-      return;
-    }
-    const added = state.availableItems[index];
-    state.items = [added, ...state.items];
+    state.items = [action.payload.item, ...state.items];
   },
   [CHANGE_ITEM_POSITION]: (state: State, action) => {
     const [removed] = state.items.splice(action.payload.sourceIndex, 1);
