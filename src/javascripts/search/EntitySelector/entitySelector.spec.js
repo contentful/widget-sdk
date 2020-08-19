@@ -1,16 +1,21 @@
 import _ from 'lodash';
 import * as entitySelector from './entitySelector';
-import * as modalDialogMocked from 'ng/modalDialog';
 import * as spaceContextMocked from 'ng/spaceContext';
+import { ModalLauncher } from '__mocks__/core/components/ModalLauncher';
+
+let config;
+let labels;
+
+const resolveProps = (func) => {
+  const { props } = func({ isShown: true, onClose: () => {} });
+  config = props.config;
+  labels = props.labels;
+};
+
+ModalLauncher.open.mockImplementation(resolveProps);
 
 jest.mock('services/localeStore', () => ({
   getDefaultLocale: () => ({ code: 'de-DE' }),
-}));
-
-jest.mock('ng/modalDialog', () => ({
-  open: jest.fn(() => ({
-    promise: Promise.resolve(),
-  })),
 }));
 
 jest.mock('ng/spaceContext', () => ({
@@ -23,25 +28,8 @@ jest.mock('ng/spaceContext', () => ({
 }));
 
 describe('entitySelector', () => {
-  beforeEach(() => {
-    modalDialogMocked.open.mockClear();
-  });
-
   function open(...args) {
     return entitySelector.openFromField(...args);
-  }
-
-  function getScope() {
-    const numOfCalls = modalDialogMocked.open.mock.calls.length;
-    return modalDialogMocked.open.mock.calls[numOfCalls - 1][0].scopeData;
-  }
-
-  function getConfig() {
-    return getScope().entitySelector.config;
-  }
-
-  function getLabels() {
-    return getScope().entitySelector.labels;
   }
 
   it('throws error if invalid entity type is provided', function () {
@@ -51,55 +39,54 @@ describe('entitySelector', () => {
   describe('config preparation', () => {
     it('sets type of linked entity', async function () {
       await open({ linkType: 'Entry' });
-      expect(getConfig().entityType).toBe('Entry');
+      expect(config.entityType).toBe('Entry');
       await open({ linkType: 'Asset' });
-      expect(getConfig().entityType).toBe('Asset');
+      expect(config.entityType).toBe('Asset');
     });
 
     describe('setting min/max number of linked entities', () => {
       it('do not limit by default', async function () {
         await open({ linkType: 'Entry' });
-        expect(getConfig().min).toBe(1);
-        expect(getConfig().max).toBe(Infinity);
+        expect(config.min).toBe(1);
+        expect(config.max).toBe(Infinity);
       });
 
       it('respects field items size constraint', async function () {
         await open({ linkType: 'Entry', itemValidations: [size(6, 12)] });
-        expect(getConfig().min).toBe(6);
-        expect(getConfig().max).toBe(12);
+        expect(config.min).toBe(6);
+        expect(config.max).toBe(12);
       });
 
       it('substracts current link count from limits', async function () {
         await open({ linkType: 'Entry', itemValidations: [size(3, 6)] }, 2);
-        expect(getConfig().min).toBe(1);
-        expect(getConfig().max).toBe(4);
+        expect(config.min).toBe(1);
+        expect(config.max).toBe(4);
       });
 
       it('uses 1 as minimal lower bound', async function () {
         await open({ linkType: 'Entry', itemValidations: [size(2, 6)] }, 2);
-        expect(getConfig().min).toBe(1);
-        expect(getConfig().max).toBe(4);
+        expect(config.min).toBe(1);
+        expect(config.max).toBe(4);
       });
     });
 
     describe('differentiating between single link and array of links', () => {
       it('checks for "Array" field type', async function () {
         await open({ linkType: 'Entry', type: 'Array' });
-        expect(getConfig().multiple).toBe(true);
+        expect(config.multiple).toBe(true);
         await open({ linkType: 'Entry', type: 'Link' });
-        expect(getConfig().multiple).toBe(false);
+        expect(config.multiple).toBe(false);
       });
 
       it('treats as a single link when only one entity can be selected', async function () {
         await open({ linkType: 'Entry', type: 'Array', itemValidations: [size(2, 2)] });
-        expect(getConfig().multiple).toBe(false);
+        expect(config.multiple).toBe(false);
       });
     });
 
     describe('processing validations', () => {
       it('defaults to an appropriate (empty) data structure', async function () {
         await open({ linkType: 'Entry' });
-        const config = getConfig();
         expect(config.linkedContentTypeIds).toEqual([]);
         expect(config.linkedMimetypeGroups).toEqual([]);
       });
@@ -107,26 +94,26 @@ describe('entitySelector', () => {
       it('extracts allowed linked entry content type IDs', async function () {
         const validation = { linkContentType: ['ctid1', 'ctid2'] };
         await open({ linkType: 'Entry', itemValidations: [validation] });
-        expect(getConfig().linkedContentTypeIds).toEqual(['ctid1', 'ctid2']);
+        expect(config.linkedContentTypeIds).toEqual(['ctid1', 'ctid2']);
       });
 
       it('extracts allowed asset MIMEtype groups', async function () {
         const validation = { linkMimetypeGroup: ['group1', 'group2'] };
         await open({ linkType: 'Asset', itemValidations: [validation] });
-        expect(getConfig().linkedMimetypeGroups).toEqual(['group1', 'group2']);
+        expect(config.linkedMimetypeGroups).toEqual(['group1', 'group2']);
       });
     });
   });
 
   it('sets lables', async function () {
     await open({ linkType: 'Entry' });
-    expect(getLabels().title).toBe('Insert existing entry');
+    expect(labels.title).toBe('Insert existing entry');
     await open({ linkType: 'Entry', type: 'Array' });
-    expect(getLabels().title).toBe('Insert existing entries');
+    expect(labels.title).toBe('Insert existing entries');
     await open({ linkType: 'Asset' });
-    expect(getLabels().title).toBe('Insert existing asset');
+    expect(labels.title).toBe('Insert existing asset');
     await open({ linkType: 'Asset', type: 'Array' });
-    expect(getLabels().title).toBe('Insert existing assets');
+    expect(labels.title).toBe('Insert existing assets');
   });
 
   describe('opening from an extension', () => {
@@ -135,21 +122,23 @@ describe('entitySelector', () => {
     }
 
     function resolveWith(value) {
-      modalDialogMocked.open.mockReturnValue({
-        promise: Promise.resolve(value),
+      ModalLauncher.open.mockImplementation(async (func) => {
+        resolveProps(func);
+        return value;
       });
     }
 
     function rejectWith(err) {
-      modalDialogMocked.open.mockReturnValue({
-        promise: Promise.reject(err),
+      ModalLauncher.open.mockImplementation(async (func) => {
+        resolveProps(func);
+        throw err;
       });
     }
 
     it('selecting a single entity', async function () {
       resolveWith([{ test: true }]);
       const entry = await openFromExt({ entityType: 'Entry', multiple: false });
-      expect(getConfig().multiple).toBe(false);
+      expect(config.multiple).toBe(false);
       expect(entry).toEqual({ test: true });
     });
 
@@ -157,7 +146,7 @@ describe('entitySelector', () => {
       const selected = [{ multiple: 1 }, { multiple: 2 }];
       resolveWith(selected);
       const entries = await openFromExt({ entityType: 'Entry', multiple: true });
-      expect(getConfig().multiple).toBe(true);
+      expect(config.multiple).toBe(true);
       expect(entries).toEqual(selected);
     });
 
@@ -179,12 +168,11 @@ describe('entitySelector', () => {
         spaceContextMocked.publishedCTs.fetch.mockResolvedValue({});
         const ids = ['blogpost', 'cat'];
         await openFromExt({ entityType: 'Entry', contentTypes: ids });
-        expect(getConfig().linkedContentTypeIds).toEqual(ids);
+        expect(config.linkedContentTypeIds).toEqual(ids);
       });
       it('"mix" and "max" options converted to validation', async function () {
         resolveWith([{ test: true }]);
         await openFromExt({ entityType: 'Entry', multiple: true, min: 2, max: 4 });
-        const config = getConfig();
         expect(config.min).toBe(2);
         expect(config.max).toBe(4);
       });
@@ -194,13 +182,13 @@ describe('entitySelector', () => {
       it('uses provided locale', async function () {
         resolveWith([{ test: true }]);
         await openFromExt({ entityType: 'Entry', locale: 'co-DE' });
-        expect(getConfig().locale).toBe('co-DE');
+        expect(config.locale).toBe('co-DE');
       });
 
       it('uses default space locale if not provided', async function () {
         resolveWith([{ test: true }]);
         await openFromExt({ entityType: 'Entry' });
-        expect(getConfig().locale).toBe('de-DE');
+        expect(config.locale).toBe('de-DE');
       });
     });
   });

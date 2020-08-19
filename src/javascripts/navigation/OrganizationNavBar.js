@@ -136,7 +136,6 @@ function getItems(params, { orgId }) {
     {
       if: shouldDisplayAccessTools,
       title: 'Access Tools',
-      tagLabel: 'new',
       rootSref: 'account.organizations.access-tools',
       navIcon: 'Sso',
       dataViewType: 'organization-access-tools',

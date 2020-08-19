@@ -47,16 +47,13 @@ const getDefaultProps = (props = {}) => {
       searchPlaceholder: 'Search %total% entries',
       ...labels,
     },
-    onNoEntities: jest.fn(),
     onChange: jest.fn(),
-    listHeight: 20,
     locale: 'en-US',
     withCreate: false,
     multiple: true,
     entityType: 'Entry',
     linkedContentTypeIds: [],
     fetch: fetchMock,
-    pagination: false,
     ...rest,
   };
 };
@@ -186,7 +183,6 @@ describe('EntitySelectorForm', () => {
     const { queryAllByText, findByText } = render(<EntitySelectorForm {...props} />);
     await findByText('Create new Test-content-type');
     expect(queryAllByText('cf-ui-entry-card')).toHaveLength(0);
-    expect(props.onNoEntities).toHaveBeenCalled();
   });
 
   it('[multiple: false] should toggle selection', async () => {
@@ -537,7 +533,7 @@ describe('EntitySelectorForm hacking bottom hit trigger', () => {
       )
       .mockResolvedValueOnce(entitiesBatches[2]);
 
-    const props = getDefaultProps({ fetch: fetchMock, pagination: true });
+    const props = getDefaultProps({ fetch: fetchMock });
     const { getByTestId, findAllByTestId } = render(<EntitySelectorForm {...props} />);
     await findAllByTestId('cf-ui-entry-card');
     expect(fetchMock).toHaveBeenCalledTimes(1);

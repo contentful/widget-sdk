@@ -49,18 +49,15 @@ const styles = {
   Although they can contain duplicates, the logic of the component became
   more straightforward. Eventually both are joined into a selection map, avoiding duplication
 */
-const EntitySelector = ({
+export const EntitySelector = ({
   labels,
-  onNoEntities,
   onChange,
-  listHeight,
   locale,
   withCreate,
   multiple,
   entityType,
   linkedContentTypeIds,
   fetch,
-  pagination,
 }) => {
   const [showingSelected, setShowSelected] = useState(false);
   const [state, setState] = useState({
@@ -143,17 +140,13 @@ const EntitySelector = ({
         entities: loadedEntities,
         hasMore,
       });
-
-      if (!loadedEntities.length) {
-        onNoEntities();
-      }
     }
     loadData();
-  }, [load, onNoEntities]);
+  }, [load]);
 
   const loadMore = useCallback(
     async (isSearching) => {
-      if (!pagination || isLoading) {
+      if (isLoading) {
         return;
       }
       const params = { more: true };
@@ -188,12 +181,8 @@ const EntitySelector = ({
           hasMore,
         });
       }
-
-      if (!itemsCombined.length) {
-        onNoEntities();
-      }
     },
-    [pagination, isLoading, load, entities, onNoEntities, search]
+    [isLoading, load, entities, search]
   );
 
   const onBottomHit = useCallback(() => {
@@ -229,11 +218,8 @@ const EntitySelector = ({
           hasMore,
         },
       });
-      if (!loadedBatch.length) {
-        onNoEntities();
-      }
     },
-    [onNoEntities, load]
+    [load]
   );
 
   useEffect(() => {
@@ -399,7 +385,6 @@ const EntitySelector = ({
             : entityType === 'Asset',
           'entity-selector__item-list--empty': !showingSelected && !entities.length,
         })}
-        style={{ height: listHeight }} // eslint-disable-line
         data-test-id="entity-selector-list"
         ref={entitySelectorRef}>
         {renderEmptyStateMessage()}
@@ -431,19 +416,14 @@ EntitySelector.propTypes = {
   entityType: PropTypes.oneOf(['Entry', 'Asset']).isRequired,
   linkedContentTypeIds: PropTypes.array,
   fetch: PropTypes.func.isRequired,
-  pagination: PropTypes.bool,
-  onNoEntities: PropTypes.func,
   onChange: PropTypes.func,
-  listHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 };
 
 EntitySelector.defaultProps = {
-  onNoEntities: noop,
   onChange: noop,
   withCreate: false,
   multiple: false,
   linkedContentTypeIds: [],
-  pagination: false,
 };
 
 export default EntitySelector;

@@ -124,7 +124,7 @@ module.exports = {
         'This dependency is part of a circular relationship. You might want to revise ' +
         'your solution (i.e. use dependency inversion, make sure the modules have a ' +
         'single responsibility) ',
-      severity: 'error',
+      severity: 'warn',
       from: {},
       to: {
         circular: true,

@@ -1,16 +1,47 @@
+import React from 'react';
 import { getModule } from 'core/NgRegistry';
 import _ from 'lodash';
-import * as entitySelectorConfig from 'search/EntitySelector/Config';
-import { getVariation, FLAGS } from 'LaunchDarkly';
-
-import entitySelectorDialogTemplate from './entity_selector_dialog.html';
-
-const {
+import {
   getLabels,
   newConfigFromField,
   newConfigFromExtension,
   calculateIdealListHeight,
-} = entitySelectorConfig;
+} from 'search/EntitySelector/Config';
+import { getVariation, FLAGS } from 'LaunchDarkly';
+
+import entitySelectorDialogTemplate from './entity_selector_dialog.html';
+import { ModalLauncher } from 'core/components/ModalLauncher';
+import { EntitySelectorDialog } from './EntitySelectorDialog';
+
+export const openByFlag = async (options) => {
+  const spaceContext = getModule('spaceContext');
+
+  const entitySelectorMigrationFeatureEnabled = await getVariation(
+    FLAGS.ENTITY_SELECTOR_MIGRATION,
+    {
+      organizationId: spaceContext.getData('organization.sys.id'),
+      environmentId: spaceContext.getEnvironmentId(),
+      spaceId: spaceContext.getId(),
+    }
+  );
+
+  if (entitySelectorMigrationFeatureEnabled) {
+    return openEntitySelector(options);
+  } else {
+    return openLegacyEntitySelector(options);
+  }
+};
+
+export function openEntitySelector(options) {
+  return ModalLauncher.open(({ isShown, onClose }) => (
+    <EntitySelectorDialog
+      isShown={isShown}
+      onClose={onClose}
+      config={_.omit(options, 'scope', 'labels')}
+      labels={_.extend(getLabels(options), options.labels)}
+    />
+  ));
+}
 
 /**
  * @param {Object} options
@@ -30,7 +61,6 @@ const {
  *     infoHtml: {String?}, // for multiple=false, can be used instead of `.info`
  *     selected: {String}, // for multiple=true
  *     empty: {String},
- *     noEntitiesCustomHtml: {String?} // custom html for the whole dialog when there are no entities
  *     insert: {String},
  *     searchPlaceholder: {String}
  *   }
@@ -39,77 +69,51 @@ const {
  * @description
  * Opens a modal for the provided custom config object
  */
-export function open(options) {
+export function openLegacyEntitySelector(options) {
   const modalDialog = getModule('modalDialog');
-  const spaceContext = getModule('spaceContext');
 
   const config = _.omit(options, 'scope', 'labels');
   const labels = _.extend(getLabels(options), options.labels);
-  const ldOptions = {
-    organizationId: spaceContext.getData('organization.sys.id'),
-    environmentId: spaceContext.getEnvironmentId(),
-    spaceId: spaceContext.getId(),
+
+  const entitySelectorProps = {
+    config,
+    labels,
+    listHeight: calculateIdealListHeight(350),
+    onChange,
+    onNoEntities,
   };
 
-  return getVariation(FLAGS.ENTITY_SELECTOR_MIGRATION, ldOptions).then(
-    (entitySelectorMigrationFeatureEnabled) => {
-      const entitySelectorProps = {
-        config,
-        labels,
-        listHeight: calculateIdealListHeight(350),
-        onChange,
-        onNoEntities,
-      };
+  const scopeData = {
+    entitySelector: entitySelectorProps,
+    selected: [],
+    showCustomEmptyMessage: false,
+  };
+  const dialog = modalDialog.open({
+    attachTo: 'body',
+    template: entitySelectorDialogTemplate,
+    backgroundClose: true,
+    ignoreEsc: false,
+    noNewScope: true,
+    scopeData,
+  });
 
-      const entitySelectorFormProps = {
-        fetch: config.fetch,
-        pagination: !config.noPagination,
-        locale: config.locale,
-        withCreate: config.withCreate,
-        multiple: config.multiple,
-        entityType: config.entityType,
-        linkedContentTypeIds: config.linkedContentTypeIds,
-        labels: labels,
-        listHeight: entitySelectorProps.listHeight,
-        onChange: onChange,
-        onNoEntities: onNoEntities,
-      };
-
-      const scopeData = {
-        entitySelector: entitySelectorProps,
-        entitySelectorFormProps,
-        selected: [],
-        showCustomEmptyMessage: false,
-        entitySelectorMigrationFeatureEnabled,
-      };
-      const dialog = modalDialog.open({
-        attachTo: 'body',
-        template: entitySelectorDialogTemplate,
-        backgroundClose: true,
-        ignoreEsc: false,
-        noNewScope: true,
-        scopeData,
-      });
-
-      function onChange(entities) {
-        if (!config.multiple) {
-          dialog.confirm(entities);
-        } else {
-          dialog.scope.selected = entities;
-        }
-        dialog.scope.$apply();
-      }
-      function onNoEntities() {
-        if (labels.noEntitiesCustomHtml) {
-          dialog.scope.showCustomEmptyMessage = true;
-          // hacky way to recenter the modal once it's resized
-          setTimeout((_) => dialog._centerOnBackground(), 0);
-        }
-      }
-
-      return dialog.promise;
+  function onChange(entities) {
+    if (!config.multiple) {
+      dialog.confirm(entities);
+    } else {
+      dialog.scope.selected = entities;
     }
-  );
+    dialog.scope.$apply();
+  }
+  function onNoEntities() {
+    if (labels.noEntitiesCustomHtml) {
+      dialog.scope.showCustomEmptyMessage = true;
+      // hacky way to recenter the modal once it's resized
+      setTimeout((_) => dialog._centerOnBackground(), 0);
+    }
+  }
+
+  return dialog.promise;
 }
 
 /**
@@ -125,7 +129,7 @@ export function open(options) {
  */
 export function openFromField(field, currentSize) {
   const config = newConfigFromField(field, currentSize || 0);
-  return open(config);
+  return openByFlag(config);
 }
 
 /**
@@ -144,7 +148,7 @@ export function openFromField(field, currentSize) {
  */
 export function openFromExtension(options) {
   const config = newConfigFromExtension(options);
-  return open(config).then(
+  return openByFlag(config).then(
     (
       selected // resolve with a single object if selecting only
     ) =>
@@ -161,7 +165,7 @@ export function openFromExtension(options) {
 export function openFromExtensionSingle(options) {
   const config = newConfigFromExtension(options);
 
-  return open(config).then(
+  return openByFlag(config).then(
     (selected) => selected[0],
     (
       err // resolve with `null` if a user skipped selection,
@@ -176,5 +180,5 @@ export function openFromExtensionSingle(options) {
  */
 export function openFromRolesAndPermissions(entityType) {
   const config = newConfigFromExtension({ entityType, multiple: false });
-  return open(config).then((selected) => selected[0]);
+  return openByFlag(config).then((selected) => selected[0]);
 }
