@@ -1,6 +1,6 @@
 export default {
   DEFAULT_EDITOR: {
-    name: 'Editor',
+    name: 'Default Editor',
     id: 'default-editor',
     icon: 'Entry',
   },

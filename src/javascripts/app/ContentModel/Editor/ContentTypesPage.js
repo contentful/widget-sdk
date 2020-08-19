@@ -13,6 +13,7 @@ import EditorFieldTabs from './EditorFieldTabs';
 import FieldsList from './FieldsTab/FieldsList';
 import ContentTypePreview from './PreviewTab/ContentTypePreview';
 import SidebarConfiguration from 'app/EntrySidebar/Configuration/SidebarConfiguration';
+import EntryEditorConfiguration from './EntryEditorConfigurationTab/EntryEditorConfig';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
@@ -95,7 +96,11 @@ export default function ContentTypesPage(props) {
                 title={['Tabs', props.contentTypeData.name, 'Content Model']}
               />
               <div>
-                Hi, edit me
+                <EntryEditorConfiguration
+                  configuration={props.editorConfiguration}
+                  customWidgets={props.extensions}
+                  onUpdateConfiguration={props.actions.updateEditorConfiguration}
+                />
               </div>
             </>
           )}
@@ -144,7 +149,7 @@ ContentTypesPage.propTypes = {
   }).isRequired,
   hasAdvancedExtensibility: PropTypes.bool.isRequired,
   sidebarConfiguration: PropTypes.array,
-  editorConfiguration: PropTypes.object,
+  editorConfiguration: PropTypes.array,
   // TODO: rename to "widgets". Make sure it "isRequired".
   extensions: PropTypes.array,
 };
