@@ -7,8 +7,7 @@ import {
 } from 'app/EntrySidebar/Configuration/service/SidebarSync'; // Replace
 import WidgetsConfiguration from 'app/ContentModel/Editor/WidgetsConfiguration';
 import { create } from 'widgets/BuiltinWidgets';
-import { WidgetNamespace } from 'features/widget-renderer';
-import { Editor } from 'features/widget-renderer/interfaces'
+import { WidgetNamespace, Editor } from 'features/widget-renderer';
 import WidgetParametersConfiguration from 'app/EntrySidebar/Configuration/WidgetParametersConfiguration'; // Replace
 
 const styles = {
