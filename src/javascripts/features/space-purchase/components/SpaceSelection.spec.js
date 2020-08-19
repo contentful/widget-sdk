@@ -4,9 +4,11 @@ import userEvent from '@testing-library/user-event';
 import * as trackCTA from 'analytics/trackCTA';
 import * as FakeFactory from 'test/helpers/fakeFactory';
 import { SpaceSelection } from './SpaceSelection';
+import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
 
 const mockOrganization = FakeFactory.Organization();
 const trackCTAClick = jest.spyOn(trackCTA, 'trackCTAClick');
+const mockSelectPlan = jest.fn();
 
 describe('SpaceSelection', () => {
   it('should show a heading', () => {
@@ -36,11 +38,20 @@ describe('SpaceSelection', () => {
       organizationId: mockOrganization.sys.id,
     });
   });
+
+  it('should call selectPlan when the medium or large space is selected', () => {
+    build();
+
+    userEvent.click(screen.getAllByTestId('space-cta')[0]);
+
+    expect(mockSelectPlan).toBeCalledWith(SPACE_PURCHASE_TYPES.MEDIUM);
+  });
 });
 
 function build(customProps) {
   const props = {
     organizationId: mockOrganization.sys.id,
+    selectPlan: mockSelectPlan,
     ...customProps,
   };
 

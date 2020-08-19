@@ -9,12 +9,15 @@ import { useAsync } from 'core/hooks/useAsync';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 import StateRedirect from 'app/common/StateRedirect';
+import { getTemplatesList } from 'services/SpaceTemplateLoader';
 
 const initialFetch = () => async () => {
   const newPurchaseFlowIsEnabled = await getVariation(FLAGS.NEW_PURCHASE_FLOW);
+  const templatesList = await getTemplatesList();
 
   return {
     newPurchaseFlowIsEnabled,
+    templatesList,
   };
 };
 
@@ -36,7 +39,7 @@ export const NewSpaceRoute = ({ orgId }) => {
   return (
     <>
       <DocumentTitle title="Space purchase" />
-      <NewSpacePage organizationId={orgId} />
+      <NewSpacePage organizationId={orgId} templatesList={data.templatesList} />
     </>
   );
 };
