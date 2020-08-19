@@ -3,13 +3,12 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import {
-  selectSidebarType,
+  resetWidgetConfiguration,
   removeItemFromSidebar,
   changeItemPosition,
   addItemToSidebar,
   openWidgetConfiguration,
 } from 'app/EntrySidebar/Configuration/SidebarConfigurationReducer';
-import { SidebarType } from 'app/EntrySidebar/Configuration/constants';
 import { Heading, Paragraph } from '@contentful/forma-36-react-components';
 import CustomConfiguration from './WidgetsConfiguration/CustomConfiguration';
 import AvailableWidgets from './WidgetsConfiguration/AvailableWidgets';
@@ -54,7 +53,6 @@ interface WidgetsConfigurationProps {
     availableItems: ConfigurationItem[];
     configurableWidget: any; // what is this?
     items: ConfigurationItem[];
-    sidebarType: SidebarType;
   };
   dispatch: Function;
   defaultAvailableItems: ConfigurationItem[];
@@ -63,8 +61,6 @@ interface WidgetsConfigurationProps {
     description: string;
   };
 }
-
-// TODO: resetting doesn't work as it shoul
 
 const WidgetsConfiguration: React.FC<WidgetsConfigurationProps> = ({
   state,
@@ -82,9 +78,6 @@ const WidgetsConfiguration: React.FC<WidgetsConfigurationProps> = ({
             <AvailableWidgets
               items={state.availableItems}
               onAddItem={(item: ConfigurationItem) => {
-                if (state.sidebarType === SidebarType.default) {
-                  dispatch(selectSidebarType(SidebarType.custom));
-                }
                 dispatch(addItemToSidebar(item));
               }}
             />
@@ -92,26 +85,15 @@ const WidgetsConfiguration: React.FC<WidgetsConfigurationProps> = ({
           <div className={styles.mainColumn} data-test-id="custom-sidebar-column">
             <CustomConfiguration
               title={configuration.location}
-              onResetClick={() => dispatch(selectSidebarType(SidebarType.default))}
-              items={
-                state.sidebarType === SidebarType.default ? defaultAvailableItems : state.items
-              }
+              onResetClick={() => dispatch(resetWidgetConfiguration(defaultAvailableItems))}
+              items={state.items}
               onRemoveItem={(widget: ConfigurationItem) => {
-                if (state.sidebarType === SidebarType.default) {
-                  dispatch(selectSidebarType(SidebarType.custom));
-                }
                 dispatch(removeItemFromSidebar(widget));
               }}
               onChangePosition={(sourceIndex: number, destinationIndex: number) => {
-                if (state.sidebarType === SidebarType.default) {
-                  dispatch(selectSidebarType(SidebarType.custom));
-                }
                 dispatch(changeItemPosition(sourceIndex, destinationIndex));
               }}
               onConfigureItem={(widget: ConfigurationItem) => {
-                if (state.sidebarType === SidebarType.default) {
-                  dispatch(selectSidebarType(SidebarType.custom));
-                }
                 dispatch(openWidgetConfiguration(widget));
               }}
             />

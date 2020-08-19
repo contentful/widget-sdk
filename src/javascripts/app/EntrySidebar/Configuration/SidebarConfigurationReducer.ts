@@ -1,12 +1,17 @@
 import { createImmerReducer } from 'core/utils/createImmerReducer';
+import { ConfigurationItem } from 'app/ContentModel/Editor/WidgetsConfiguration/interfaces';
 
-/* Actions */
-const SELECT_SIDEBAR_TYPE = 'sidebar/SELECT_SIDEBAR_TYPE';
+interface State {
+  items: ConfigurationItem[];
+  availableItems: ConfigurationItem[];
+  configurableWidget: any;
+}
 
-export const selectSidebarType = (sidebarType) => ({
-  type: SELECT_SIDEBAR_TYPE,
+const RESET_WIDGET_CONFIGURATION = 'RESET_WIDGET_CONFIGURATION';
+export const resetWidgetConfiguration = (defaultAvailableItems: ConfigurationItem[]) => ({
+  type: RESET_WIDGET_CONFIGURATION,
   payload: {
-    sidebarType,
+    defaultAvailableItems,
   },
 });
 
@@ -63,27 +68,23 @@ const areWidgetsSame = (widget1, widget2) =>
   widget1.widgetId === widget2.widgetId && widget1.widgetNamespace === widget2.widgetNamespace;
 
 export const reducer = createImmerReducer({
-  [OPEN_WIDGET_CONFIGURATION]: (state, action) => {
+  [OPEN_WIDGET_CONFIGURATION]: (state: State, action) => {
     state.configurableWidget = action.payload.widget;
   },
-  [CLOSE_WIDGET_CONFIGURATION]: (state) => {
+  [CLOSE_WIDGET_CONFIGURATION]: (state: State) => {
     state.configurableWidget = null;
   },
-  [SELECT_SIDEBAR_TYPE]: (state, action) => {
-    state.sidebarType = action.payload.sidebarType;
+  [RESET_WIDGET_CONFIGURATION]: (state: State, action) => {
+    state.items = action.payload.defaultAvailableItems;
   },
-  [REMOVE_ITEM_FROM_SIDEBAR]: (state, action) => {
+  [REMOVE_ITEM_FROM_SIDEBAR]: (state: State, action) => {
     const removeIndex = state.items.findIndex((item) => areWidgetsSame(item, action.payload.item));
     if (removeIndex === -1) {
       return;
     }
-    const removed = state.items[removeIndex];
     state.items.splice(removeIndex, 1);
-    if (!removed.problem) {
-      state.availableItems.push(removed);
-    }
   },
-  [ADD_ITEM_TO_SIDEBAR]: (state, action) => {
+  [ADD_ITEM_TO_SIDEBAR]: (state: State, action) => {
     const index = state.availableItems.findIndex((item) =>
       areWidgetsSame(item, action.payload.item)
     );
@@ -91,10 +92,9 @@ export const reducer = createImmerReducer({
       return;
     }
     const added = state.availableItems[index];
-    state.availableItems.splice(index, 1);
     state.items = [added, ...state.items];
   },
-  [CHANGE_ITEM_POSITION]: (state, action) => {
+  [CHANGE_ITEM_POSITION]: (state: State, action) => {
     const [removed] = state.items.splice(action.payload.sourceIndex, 1);
     state.items.splice(action.payload.destIndex, 0, removed);
   },
