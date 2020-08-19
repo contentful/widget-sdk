@@ -10,28 +10,28 @@ import { WidgetNamespace, isCustomWidget, WidgetLocation } from 'features/widget
  * to data that can be used in API calls to `/editor_inteface`
  * for saving configuration.
  */
-export function convertInternalStateToConfiguration(state, initialItems) {
+export function convertInternalStateToConfiguration(state: any, initialItems: any) {
   if (state.sidebarType === SidebarType.default) {
     return undefined;
   }
 
   const selectedDefaultIds = state.items
-    .filter((widget) => widget.widgetNamespace === WidgetNamespace.SIDEBAR_BUILTIN)
-    .map((widget) => widget.widgetId);
-  const defaultIds = initialItems.map((widget) => widget.widgetId);
+    .filter((widget: any) => widget.widgetNamespace === WidgetNamespace.SIDEBAR_BUILTIN)
+    .map((widget: any) => widget.widgetId);
+  const defaultIds = initialItems.map((widget: any) => widget.widgetId);
   const missingBuiltinIds = difference(defaultIds, selectedDefaultIds);
 
   const selectedItems = state.items
-    .filter((widget) => widget.problem !== true)
-    .map((widget) => ({
+    .filter((widget: any) => widget.problem !== true)
+    .map((widget: any) => ({
       widgetId: widget.widgetId,
       widgetNamespace: widget.widgetNamespace,
       settings: widget.settings || {},
     }));
 
   const missingItems = initialItems
-    .filter((widget) => missingBuiltinIds.includes(widget.widgetId))
-    .map((widget) => ({
+    .filter((widget: any) => missingBuiltinIds.includes(widget.widgetId))
+    .map((widget: any) => ({
       widgetId: widget.widgetId,
       widgetNamespace: widget.widgetNamespace,
       disabled: true,
@@ -40,7 +40,7 @@ export function convertInternalStateToConfiguration(state, initialItems) {
   return [...selectedItems, ...missingItems];
 }
 
-function convertToWidgetConfiguration(widget) {
+function convertToWidgetConfiguration(widget: any) {
   return {
     widgetId: widget.id,
     widgetNamespace: widget.namespace,
@@ -48,7 +48,7 @@ function convertToWidgetConfiguration(widget) {
   };
 }
 
-function canBeUsedInSidebar(widget) {
+function canBeUsedInSidebar(widget: any) {
   // If a widget does not declare locations it can
   // be used in the sidebar. In general it's true
   // for Extensions.
@@ -65,7 +65,11 @@ function canBeUsedInSidebar(widget) {
  * to initial state of configuration reducer, enriches saved configuration
  * with additional data needed to render UI.
  */
-export function convertConfigurationToInternalState(configuration, widgets, initialItems) {
+export function convertConfigurationToInternalState(
+  configuration: any,
+  widgets: any,
+  initialItems: any
+) {
   if (!Array.isArray(configuration)) {
     return {
       sidebarType: SidebarType.default,
@@ -90,7 +94,7 @@ export function convertConfigurationToInternalState(configuration, widgets, init
 
       if (isCustomWidget(configItem.widgetNamespace)) {
         const found = widgets.find(
-          (e) =>
+          (e: any) =>
             e.widgetNamespace === configItem.widgetNamespace && e.widgetId === configItem.widgetId
         );
 
@@ -108,15 +112,15 @@ export function convertConfigurationToInternalState(configuration, widgets, init
     })
     .filter(identity);
 
-  const availableItems = [];
-  const validWidgetMatcher = (widget) => (item) =>
+  const availableItems: any[] = [];
+  const validWidgetMatcher = (widget: any) => (item: any) =>
     item.widgetNamespace === widget.widgetNamespace &&
     item.widgetId === widget.widgetId &&
     item.problem !== true;
 
   // Add all disabled and missing built-in widgets to the list
   // of available items.
-  initialItems.forEach((buildInWidget) => {
+  initialItems.forEach((buildInWidget: any) => {
     const found = items.find(validWidgetMatcher(buildInWidget));
 
     if (!found || found.disabled === true) {
@@ -126,7 +130,7 @@ export function convertConfigurationToInternalState(configuration, widgets, init
 
   // Add all custom widgets that are not selected to the list
   // of available items.
-  widgets.forEach((widget) => {
+  widgets.forEach((widget: any) => {
     const found = items.find(validWidgetMatcher(widget));
 
     if (!found && canBeUsedInSidebar(widget)) {

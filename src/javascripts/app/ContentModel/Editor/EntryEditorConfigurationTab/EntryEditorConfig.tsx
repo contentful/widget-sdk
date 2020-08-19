@@ -43,6 +43,10 @@ function EntryEditorConfiguration(props: EditorConfigProps) {
           state={state}
           dispatch={dispatch}
           defaultAvailableItems={[...defaultWidgets]}
+          configuration={{
+            location: 'Tabs',
+            description: 'Configure the tabs of the entry editor for this content type.',
+          }}
         />
       )}
       {state.configurableWidget !== null && (
@@ -52,14 +56,15 @@ function EntryEditorConfiguration(props: EditorConfigProps) {
   );
 }
 
-export default (props) => {
-  const defaultEditors = create().filter(editor => editor.namespace === WidgetNamespace.EDITOR_BUILTIN);
-  const defaultWidgets = defaultEditors.map(editor => ({
+export default (props: Omit<EditorConfigProps, 'defaultWidgets'>) => {
+  const defaultEditors = create().filter(
+    (editor) => editor.namespace === WidgetNamespace.EDITOR_BUILTIN
+  );
+  const defaultWidgets = defaultEditors.map((editor) => ({
     widgetId: editor.id,
     widgetNamespace: editor.namespace,
-    ...editor
+    ...editor,
   }));
 
   return <EntryEditorConfiguration {...props} defaultWidgets={defaultWidgets} />;
 };
-
