@@ -62,12 +62,20 @@ interface WidgetsConfigurationProps {
   };
 }
 
+const isSameWidget = (widgetOne, widgetTwo) =>
+  widgetOne.widgetId === widgetTwo.widgetId &&
+  widgetOne.widgetNamespace === widgetTwo.widgetNamespace;
+
 const WidgetsConfiguration: React.FC<WidgetsConfigurationProps> = ({
   state,
   dispatch,
   defaultAvailableItems,
   configuration,
 }) => {
+  const unusedAvailableItems = state.availableItems.filter(
+    (item) => !state.items.find((selectedItem) => isSameWidget(item, selectedItem))
+  );
+
   return (
     <React.Fragment>
       <Heading className={styles.heading}>{configuration.location} configuration</Heading>
@@ -76,7 +84,7 @@ const WidgetsConfiguration: React.FC<WidgetsConfigurationProps> = ({
         <React.Fragment>
           <div className={styles.additionalColumn} data-test-id="available-sidebar-items">
             <AvailableWidgets
-              items={state.availableItems}
+              items={unusedAvailableItems}
               onAddItem={(item: ConfigurationItem) => {
                 dispatch(addItemToSidebar(item));
               }}
