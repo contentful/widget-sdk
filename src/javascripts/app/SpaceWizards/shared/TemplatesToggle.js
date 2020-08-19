@@ -21,11 +21,12 @@ const styles = {
       boxShadow: tokens.boxShadowDefault,
       border: `1px solid ${tokens.colorElementDark}`,
       borderRadius: '2px',
+      color: tokens.colorTextMid,
       marginRight: tokens.spacingM,
       fontWeight: tokens.fontWeightNormal,
       '&:hover': css({
-        backgroundColor: tokens.colorBlueMid,
-        color: tokens.colorWhite,
+        border: `1px solid ${tokens.colorBlueDark}`,
+        cursor: 'pointer',
       }),
     },
     input: {
@@ -34,8 +35,8 @@ const styles = {
       width: 0,
       '&:checked + div': css({
         label: {
-          backgroundColor: tokens.colorBlueMid,
-          color: tokens.colorWhite,
+          color: tokens.colorTextDark,
+          border: `1px solid ${tokens.colorBlueDark}`,
         },
       }),
     },
@@ -57,6 +58,7 @@ export default function TemplatesToggle(props) {
           Start from scratch or with an example to see how things work?
         </FormLabel>
       )}
+
       <div
         className={classnames({
           [styles.newSpacePurchaseFlow]: isNewSpacePurchaseFlow,
