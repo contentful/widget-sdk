@@ -32,7 +32,7 @@ describe('SpaceSelection', () => {
   it('should track the click and open the sales form in a new tab when the enterprise select button is clicked', () => {
     build();
 
-    userEvent.click(screen.getAllByTestId('space-cta')[2]);
+    userEvent.click(screen.getAllByTestId('select-space-cta')[2]);
 
     expect(trackCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
       organizationId: mockOrganization.sys.id,
@@ -42,7 +42,7 @@ describe('SpaceSelection', () => {
   it('should call selectPlan when the medium or large space is selected', () => {
     build();
 
-    userEvent.click(screen.getAllByTestId('space-cta')[0]);
+    userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
 
     expect(mockSelectPlan).toBeCalledWith(SPACE_PURCHASE_TYPES.MEDIUM);
   });

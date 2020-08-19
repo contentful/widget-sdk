@@ -57,7 +57,7 @@ describe('SpaceCard', () => {
 
     build({ handleSelect });
 
-    userEvent.click(screen.getByTestId('space-cta'));
+    userEvent.click(screen.getByTestId('select-space-cta'));
 
     expect(handleSelect).toBeCalled();
   });
@@ -65,7 +65,7 @@ describe('SpaceCard', () => {
   it('should render a button with an href to sales if it is an enterprise card', () => {
     build({ content: mockEnterpriseContent });
 
-    const enterpriseButton = screen.getByTestId('space-cta');
+    const enterpriseButton = screen.getByTestId('select-space-cta');
     expect(enterpriseButton).toHaveTextContent('Talk to us');
     expect(enterpriseButton.href).toEqual('https://www.contentful.comcontact/sales/');
   });

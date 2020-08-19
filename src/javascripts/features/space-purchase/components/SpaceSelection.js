@@ -67,7 +67,7 @@ export const SpaceSelection = ({ organizationId, selectPlan }) => {
   };
 
   return (
-    <section aria-labelledby="space-selection-section">
+    <section aria-labelledby="space-selection-section" data-test-id="space-selection-section">
       <Grid columns={3} rows="repeat(3, 'auto')" columnGap="spacingL" rowGap="spacingM">
         <Heading
           id="space-selection-heading"

@@ -39,7 +39,7 @@ export const NewSpaceDetailsPage = ({
   onSubmit,
 }) => {
   return (
-    <section aria-labelledby="new-space-details-section">
+    <section aria-labelledby="new-space-details-section" data-test-id="new-space-details-section">
       <Grid columns={1} rows="repeat(2, 'auto')" columnGap="spacingL" rowGap="spacingM">
         <Heading
           id="new-space-details-section-heading"
@@ -57,10 +57,10 @@ export const NewSpaceDetailsPage = ({
 
             <Form onSubmit={onSubmit}>
               <TextField
-                labelText="Name your space"
+                labelText="space name"
                 placeholder="Name your space"
-                name="name"
-                id="name"
+                name="space-name"
+                id="space-name"
                 testId="space-name"
                 autoFocus
                 value={spaceName}
