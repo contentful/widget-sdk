@@ -1,8 +1,8 @@
-import { DialogsAPI, FieldExtensionSDK } from 'contentful-ui-extensions-sdk';
+import { FieldExtensionSDK } from 'contentful-ui-extensions-sdk';
 
 import { Document } from 'app/entity_editor/Document/typesDocument';
 import { InternalContentType } from './createContentTypeApi';
-import { WidgetNamespace, WidgetLocation } from 'features/widget-renderer';
+import { WidgetNamespace } from 'features/widget-renderer';
 import { createTagsRepo } from 'features/content-tags';
 import { getBatchingApiClient } from '../WidgetApi/BatchingApiClient';
 import { createEditorApi } from './createEditorApi';
@@ -84,23 +84,8 @@ export function createFieldWidgetSDK({
     navigator: navigatorApi,
   };
 
-  const sdkForDialogs = {
-    ...sdkWithoutDialogs,
-    location: {
-      is: (location: string) => location === WidgetLocation.DIALOG,
-    },
-    // These will be overriden later:
-    dialogs: {} as DialogsAPI,
-    close: () => {
-      throw new Error('close() implementation needs to be provided in createDialogsApi');
-    },
-  };
-
-  const dialogs = createDialogsApi({ sdk: sdkForDialogs });
-  sdkForDialogs.dialogs = dialogs;
-
   return {
     ...sdkWithoutDialogs,
-    dialogs,
+    dialogs: createDialogsApi(sdkWithoutDialogs),
   };
 }
