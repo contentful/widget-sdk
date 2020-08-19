@@ -1,6 +1,8 @@
 import { get, isObject, set } from 'lodash';
 import { Control, SidebarItem, WidgetNamespace, Editor } from 'features/widget-renderer';
 
+export type AppStateEditorInterfaceItem = boolean | {position: number}
+
 export const getCurrentState = async (
   spaceContext: any,
   widgetId: string,
@@ -46,7 +48,7 @@ export const getCurrentState = async (
   return CurrentState;
 };
 
-export const isUnsignedInteger = (n) => Number.isInteger(n) && n >= 0;
+export const isUnsignedInteger = (n): n is number => Number.isInteger(n) && n >= 0;
 
 export function validateState(targetState) {
   const keys = Object.keys(targetState || {});
@@ -79,23 +81,24 @@ export function validateState(targetState) {
       }
     });
 
-    const validSidebar = !ei.sidebar || ei.sidebar === true || isObject(ei.sidebar);
-    if (!validSidebar) {
-      throw new Error(`Invalid target sidebar declared for EditorInterface ${ctId}.`);
-    }
+    validatePositionalInterface(ei.sidebar, ctId, 'sidebar')
 
-    if (isObject(ei.sidebar)) {
-      const validPosition = !ei.sidebar.position || isUnsignedInteger(ei.sidebar.position);
-      if (!validPosition) {
-        throw new Error(`Invalid target sidebar declared for EditorInterface ${ctId}.`);
-      }
-    }
-
-    const validEditor = !ei.editor || ei.editor === true;
-    if (!validEditor) {
-      throw new Error(`Invalid target editor declared for EditorInterface ${ctId}`);
-    }
+    validatePositionalInterface(ei.editor, ctId, 'editor')
   });
+}
+
+const validatePositionalInterface = (editorInterface: AppStateEditorInterfaceItem, ctId: string, name: string) => {
+  const validInterface = !editorInterface || editorInterface === true || isObject(editorInterface);
+  if (!validInterface) {
+    throw new Error(`Invalid target ${name} declared for EditorInterface ${ctId}.`);
+  }
+
+  if (isObject(editorInterface)) {
+    const validPosition = !editorInterface.position || isUnsignedInteger(editorInterface.position);
+    if (!validPosition) {
+      throw new Error(`Invalid target ${name} declared for EditorInterface ${ctId}.`);
+    }
+  }
 }
 
 const isIncludedInEditors = (app, editorInterface): boolean => {

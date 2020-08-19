@@ -427,6 +427,21 @@ describe('AppState', () => {
         });
       });
 
+      it('accepts position for multiple CTs', () => {
+        expect(() => {
+          validateState({
+            EditorInterface: {
+              someCtId: {
+                editor: { position: 1 },
+              },
+              otherCt: {
+                editor: { position: 7 },
+              },
+            },
+          });
+        }).not.toThrow();
+      })
+
       it('accepts editor set to true', () => {
         expect(() => {
           validateState({
@@ -438,15 +453,22 @@ describe('AppState', () => {
       });
 
       it('reject invalid editor', () => {
-        expect(() => {
-          validateState({
-            EditorInterface: {
-              someCtId: { editor: 'BOOM' },
-            },
-          });
-        }).toThrow();
+        [
+          { position: 'TEST' }, // position is not a number
+          { position: 1.23 }, // position is not an integer
+          { position: -1 }, // position is a negative number,
+        ].forEach((editor) => {
+          expect(() => {
+            validateState({
+              EditorInterface: {
+                someCtId: { editor },
+              },
+            });
+          }).toThrow();
+        });
       });
     });
+    
     it('allows to define all properties on multiple CTs', () => {
       expect(() => {
         validateState({
@@ -471,3 +493,4 @@ describe('AppState', () => {
     });
   });
 });
+
