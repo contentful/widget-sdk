@@ -117,7 +117,7 @@ async function findWidget(widgetNamespace: WidgetNamespace, widgetId: string) {
 function createDialogSDK(
   sdk: FieldSDKWithoutDialogs,
   onClose: (data?: any) => void,
-  invocationParameters: Object
+  invocationParameters: Record<string, any>
 ): DialogExtensionSDK {
   return {
     ...sdk,
