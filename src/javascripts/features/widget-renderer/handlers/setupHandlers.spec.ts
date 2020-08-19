@@ -18,14 +18,17 @@ const sharedMethods = [
   ChannelMethod.NavigateToPageExtension,
 ];
 
-const fieldMethods = [ChannelMethod.SetValue, ChannelMethod.RemoveValue, ChannelMethod.SetInvalid];
-
 const fieldEditingLocations = [WidgetLocation.ENTRY_FIELD, WidgetLocation.ENTRY_FIELD_SIDEBAR];
+const entryEditingLocations = [WidgetLocation.ENTRY_SIDEBAR, WidgetLocation.ENTRY_EDITOR].concat(
+  fieldEditingLocations
+);
 
-const allLocationsBut = (exceptions: WidgetLocation[]) =>
+const allLocationsBut = (exceptions: WidgetLocation[]): WidgetLocation[] =>
   Object.keys(WidgetLocation)
     .map((k) => WidgetLocation[k])
     .filter((l) => !exceptions.includes(l));
+
+const allLocations = allLocationsBut([]);
 
 describe('setupHandlers', () => {
   let registerHandler: jest.Mock;
@@ -37,8 +40,8 @@ describe('setupHandlers', () => {
   });
 
   it('registers shared handlers', () => {
-    Object.keys(WidgetLocation).forEach((k) => {
-      setupHandlers(channel, sdk, WidgetLocation[k]);
+    allLocations.forEach((location) => {
+      setupHandlers(channel, sdk, location);
 
       sharedMethods.forEach((method) => {
         expect(registerHandler).toHaveBeenCalledWith(method, expect.any(Function));
@@ -46,29 +49,53 @@ describe('setupHandlers', () => {
     });
   });
 
-  describe('field handlers', () => {
-    it('registers field handlers when editing a field', () => {
-      fieldEditingLocations.forEach((location) => {
+  describe('entry editing - field value handlers', () => {
+    const methods = [ChannelMethod.SetValue, ChannelMethod.RemoveValue];
+
+    it('registers field handlers when editing an entry', () => {
+      entryEditingLocations.forEach((location) => {
         setupHandlers(channel, sdk, location);
 
-        fieldMethods.forEach((method) => {
+        methods.forEach((method) => {
           expect(registerHandler).toHaveBeenCalledWith(method, expect.any(Function));
         });
       });
     });
 
-    it('does not register field handlers when not editing a field', () => {
-      allLocationsBut(fieldEditingLocations).forEach((location) => {
+    it('does not register field handlers when not editing an entry', () => {
+      allLocationsBut(entryEditingLocations).forEach((location) => {
         setupHandlers(channel, sdk, location);
 
-        fieldMethods.forEach((method) => {
+        methods.forEach((method) => {
           expect(registerHandler).not.toHaveBeenCalledWith(method, expect.any(Function));
         });
       });
     });
   });
 
-  describe('dialog close handler', () => {
+  describe('field editing - mark invalid handler', () => {
+    it('registers mark invalid handler when editing a field', () => {
+      fieldEditingLocations.forEach((location) => {
+        setupHandlers(channel, sdk, location);
+        expect(registerHandler).toHaveBeenCalledWith(
+          ChannelMethod.SetInvalid,
+          expect.any(Function)
+        );
+      });
+    });
+
+    it('does not register mark invalid handler when not editing a field', () => {
+      allLocationsBut(fieldEditingLocations).forEach((location) => {
+        setupHandlers(channel, sdk, location);
+        expect(registerHandler).not.toHaveBeenCalledWith(
+          ChannelMethod.SetInvalid,
+          expect.any(Function)
+        );
+      });
+    });
+  });
+
+  describe('dialog - close handler', () => {
     it('registers close handler in the dialog location', () => {
       const close = jest.fn();
 

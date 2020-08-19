@@ -1,4 +1,9 @@
-import { KnownSDK, FieldExtensionSDK, DialogExtensionSDK } from 'contentful-ui-extensions-sdk';
+import {
+  KnownSDK,
+  FieldExtensionSDK,
+  DialogExtensionSDK,
+  EditorExtensionSDK,
+} from 'contentful-ui-extensions-sdk';
 
 import { PostMessageChannel } from '../PostMessageChannel';
 import { ChannelMethod } from '../channelTypes';
@@ -13,7 +18,7 @@ import {
   makeNavigateToPageHandler,
 } from './NavigateToHandler';
 import { makeSetValueHandler, makeRemoveValueHandler, makeSetInvalidHandler } from './FieldHandler';
-import { isFieldEditingLocation } from '../utils';
+import { isFieldEditingLocation, isEntryEditingLocation } from '../utils';
 
 export function setupHandlers(
   channel: PostMessageChannel,
@@ -42,11 +47,19 @@ export function setupHandlers(
   channel.registerHandler(ChannelMethod.NavigateToPage, handlePageNavigation);
   channel.registerHandler(ChannelMethod.NavigateToPageExtension, handlePageNavigation);
 
+  // Handlers specific to entry editing.
+  if (isEntryEditingLocation(location)) {
+    const { entry } = sdk as EditorExtensionSDK;
+    channel.registerHandler(ChannelMethod.SetValue, makeSetValueHandler(entry));
+    channel.registerHandler(ChannelMethod.RemoveValue, makeRemoveValueHandler(entry));
+  }
+
   // Handlers specific to field editing.
   if (isFieldEditingLocation(location)) {
     const { field } = sdk as FieldExtensionSDK;
-    channel.registerHandler(ChannelMethod.SetValue, makeSetValueHandler(field));
-    channel.registerHandler(ChannelMethod.RemoveValue, makeRemoveValueHandler(field));
+    // TODO: it should be possible to set a field as invalid from a different
+    // field or a sidebar widget, but the Web App implementation allows us to do
+    // it only on the current field.
     channel.registerHandler(ChannelMethod.SetInvalid, makeSetInvalidHandler(field));
   }
 
