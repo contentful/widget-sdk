@@ -19,7 +19,7 @@ export const NewSpacePage = ({ organizationId }) => {
     <Workbench>
       <Workbench.Header
         title="Space purchase"
-        icon={<NavigationIcon icon="Subscription" size="large" />}
+        icon={<NavigationIcon icon="Purchase" size="large" />}
       />
       <Workbench.Content>
         <Grid columns={1} rows="repeat(3, 'auto')" columnGap="none" rowGap="spacingM">

@@ -18,6 +18,7 @@ const styles = {
     },
     '& svg': {
       marginLeft: tokens.spacingM,
+      fill: tokens.colorTextDark,
     },
   }),
   breadcrumbTitle: css({
