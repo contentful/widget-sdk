@@ -2,7 +2,7 @@ import { cloneDeep } from 'lodash';
 import { migrateControl, WIDGET_MIGRATIONS } from './ControlMigrations';
 import getDefaultWidgetId from './DefaultWidget';
 import { create as createBuiltinWidgetList } from './BuiltinWidgets';
-import EntryEditorTypes from 'app/entry_editor/EntryEditorWidgetTypes';
+import EntryEditorTypes, { DEFAULT_EDITOR_ID } from 'app/entry_editor/EntryEditorWidgetTypes';
 import { WidgetNamespace } from 'features/widget-renderer';
 
 const NAMESPACES = [WidgetNamespace.BUILTIN, WidgetNamespace.EXTENSION, WidgetNamespace.APP];
@@ -69,17 +69,14 @@ function determineNamespace({ widgetNamespace, widgetId }) {
 // editor and editors are mutually exclusive properties
 // lets treat them as one to avoid null checkings
 function convertEditorToEditors(editor, editors = []) {
-  // old editor need to be ignore rendering default editors
+  // old editor need to be ignore rendering main default editor
+  const defaultEditor = defaultEditors.find((editor) => editor.widgetId === DEFAULT_EDITOR_ID);
   if (editor) {
-    return [editor, ...defaultEditors];
+    return [editor, { ...defaultEditor, disabled: true }];
   }
-  // if no editors provided - enable default editors
-  return editors.length
-    ? editors
-    : defaultEditors.map((editor) => ({
-        ...editor,
-        disabled: false,
-      }));
+
+  // if no editors provided
+  return editors;
 }
 
 // Given an API editor interface entity convert it to our

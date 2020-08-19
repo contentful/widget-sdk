@@ -9,6 +9,7 @@ import WidgetsConfiguration from 'app/ContentModel/Editor/WidgetsConfiguration';
 import { create } from 'widgets/BuiltinWidgets';
 import { WidgetNamespace, Editor } from 'features/widget-renderer';
 import WidgetParametersConfiguration from 'app/EntrySidebar/Configuration/WidgetParametersConfiguration'; // Replace
+import { defaultWidgetsMap } from 'app/EntrySidebar/Configuration/defaults';
 
 const styles = {
   container: css({
@@ -29,8 +30,13 @@ function EntryEditorConfiguration(props: EditorConfigProps) {
 
   const [state, dispatch] = useReducer(
     reducer,
-    convertConfigurationToInternalState(configuration, customWidgets, defaultWidgets)
+    {
+      items: (configuration.length ? configuration :  defaultWidgets),
+      availableItems: customWidgets,
+      configurableWidget: null
+    }
   );
+ console.log(state)
 
   useEffect(() => {
     onUpdateConfiguration(convertInternalStateToConfiguration(state, defaultWidgets));
