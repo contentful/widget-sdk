@@ -83,7 +83,7 @@ export function validateState(targetState) {
 
     validatePositionalPartialTargetState(ei.sidebar, ctId, 'sidebar');
 
-    validatePositionalPartialTargetState(ei.editors, ctId, 'editor');
+    validatePositionalPartialTargetState(ei.editors, ctId, 'editors');
 
     const validEditor = !ei.editor || ei.editor === true;
     if (!validEditor) {
