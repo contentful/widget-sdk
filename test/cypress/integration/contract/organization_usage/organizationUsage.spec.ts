@@ -1,6 +1,5 @@
 import { defaultOrgId } from '../../../util/requests';
 import { getPlans, getProductRatePlans, getBasePlan } from '../../../interactions/plans';
-import { FeatureFlag } from '../../../util/featureFlag';
 import {
   getUsagePeriods,
   getResourcesForApiRequest,
@@ -41,7 +40,6 @@ describe('Organization Usage page', () => {
   });
 
   beforeEach(() => {
-    cy.enableFeatureFlags([FeatureFlag.NEW_USAGE_PAGE]);
     cy.resetAllFakeServers();
   });
 

@@ -171,6 +171,7 @@ export const validEvents = {
   targeted_cta_impression: CTA_EVENTS,
   pricing_update: ['communication_seen'],
   degraded_app_performance: ['modal_shown'],
+  trial: ['trial_tag_clicked'],
 };
 
 export const validateEvent = (eventName) => {

@@ -111,6 +111,8 @@ registerGenericEvent('pricing_update:communication_seen');
 
 registerGenericEvent('quick_navigation:opened_by_shortcut');
 
+registerGenericEvent('trial:trial_tag_clicked');
+
 registerBulkEditorEvent('bulk_editor:add');
 registerBulkEditorEvent('bulk_editor:unlink');
 registerBulkEditorEvent('bulk_editor:navigate');
