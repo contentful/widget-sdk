@@ -1,5 +1,6 @@
 import * as TokenStore from 'services/TokenStore';
 import * as HostnameTransformer from '@contentful/hostname-transformer';
+import { isSecureAssetUrl } from 'utils/AssetUrl';
 
 /*
  * Checks whether the passed content type matches one of our valid MIME types
@@ -34,6 +35,9 @@ export function isValidImage(fileContentType) {
  * @returns {string}
  */
 export function getExternalImageUrl(url) {
+  if (isSecureAssetUrl(url)) {
+    return url;
+  }
   const domains = TokenStore.getDomains();
   const internalUrl = HostnameTransformer.toInternal(url, domains);
   domains.assets = domains.images;
