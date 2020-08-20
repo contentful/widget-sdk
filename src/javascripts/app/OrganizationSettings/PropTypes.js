@@ -126,3 +126,33 @@ export const TeamSpaceMembershipPlaceholder = PropTypes.shape({
     id: PropTypes.oneOf(['placeholder']).isRequired,
   }).isRequired,
 });
+
+export const Plan = PropTypes.shape({
+  committed: PropTypes.bool,
+  customerType: PropTypes.string,
+  gatekeeperKey: PropTypes.string,
+  name: PropTypes.string,
+  planType: PropTypes.oneOf(['base', 'space', 'free_space']),
+  price: PropTypes.number,
+  productName: PropTypes.string,
+  productRatePlanId: PropTypes.string,
+  ratePlanCharges: PropTypes.array,
+  sys: PropTypes.shape({
+    id: PropTypes.string,
+  }),
+});
+
+const ResourceShape = {
+  limits: PropTypes.shape({ included: PropTypes.number, maximum: PropTypes.number }),
+  name: PropTypes.string,
+  period: PropTypes.string,
+  sys: PropTypes.shape({
+    type: PropTypes.oneOf(['OrganizationResource', 'SpaceResource']),
+    id: PropTypes.string.isRequired,
+  }),
+  unitOfMeasure: PropTypes.string,
+  usage: PropTypes.number.isRequired,
+};
+ResourceShape.parent = PropTypes.shape(ResourceShape);
+
+export const Resource = PropTypes.shape(ResourceShape);

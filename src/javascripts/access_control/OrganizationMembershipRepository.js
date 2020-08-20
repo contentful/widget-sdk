@@ -100,6 +100,14 @@ export function getSpaces(endpoint, params) {
   });
 }
 
+export function getSpace(spaceEndpoint, params) {
+  return spaceEndpoint({
+    method: 'GET',
+    path: [],
+    query: params,
+  });
+}
+
 export function getAllSpaces(endpoint, params) {
   return fetchAll(endpoint, ['spaces'], BATCH_LIMIT, params);
 }

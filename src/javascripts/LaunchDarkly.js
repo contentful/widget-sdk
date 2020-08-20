@@ -43,6 +43,7 @@ export const FLAGS = {
   ENTITY_SELECTOR_MIGRATION: 'feature-pulitzer-07-2020-entity-selector-migration',
   SSO_SETUP_NO_REDUX: 'feature-hejo-08-2020-sso-setup-no-redux',
   NEW_PURCHASE_FLOW: 'feature-ogg-08-2020-enable-space-purchase-flow',
+  SPACE_PLAN_ASSIGNMENT: 'feature-hejo-08-2020-space-plan-assignment',
 
   // So that we can test the fallback mechanism without needing to rely on an actual
   // flag above, we use these special flags.
@@ -65,6 +66,7 @@ const FALLBACK_VALUES = {
   [FLAGS.ENTITY_SELECTOR_MIGRATION]: false,
   [FLAGS.SSO_SETUP_NO_REDUX]: false,
   [FLAGS.NEW_PURCHASE_FLOW]: false,
+  [FLAGS.SPACE_PLAN_ASSIGNMENT]: false,
 
   // See above
   [FLAGS.__FLAG_FOR_UNIT_TESTS__]: 'fallback-value',
