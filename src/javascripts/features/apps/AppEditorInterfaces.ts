@@ -71,8 +71,6 @@ export async function transformEditorInterfacesToTargetState(cma, targetState, a
   await promiseAllSafe(updatePromises);
 }
 
-type EditorInterfaceConfiguration = { widgetNamespace: string | WidgetNamespace; widgetId: string };
-
 /**
  * Elements in targetState can come in either as boolean or with a position.
  * The expected behavior is:
@@ -83,10 +81,10 @@ type EditorInterfaceConfiguration = { widgetNamespace: string | WidgetNamespace;
  */
 function handlePositionalEditorInterface(
   targetStateItem: boolean | { position?: number },
-  defaultItem: EditorInterfaceConfiguration[],
+  defaultItem: any[],
   widgetId: string,
-  currentItem?: EditorInterfaceConfiguration[]
-): EditorInterfaceConfiguration[] {
+  currentItem?: any[]
+): any[] {
   // If there is no item stored use the default one.
   const result = Array.isArray(currentItem) ? currentItem : cloneDeep(defaultItem);
 
