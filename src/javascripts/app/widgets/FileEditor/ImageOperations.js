@@ -4,6 +4,7 @@ import * as Filestack from 'services/Filestack';
 import { openInputDialog } from 'app/InputDialogComponent';
 import * as TokenStore from 'services/TokenStore';
 import * as HostnameTransformer from '@contentful/hostname-transformer';
+import { isSecureAssetUrl } from 'utils/AssetUrl';
 
 const ratio = (file) => `${file.details.image.width}:${file.details.image.height}`;
 const ratioNumber = (file) => file.details.image.width / file.details.image.height;
@@ -136,6 +137,9 @@ function isValidImage(file = {}) {
 // Normalizes image URL to internal Contentful Images API URL.
 // Transforms to external domain configured for oganization.
 function externalImageUrl(url) {
+  if (isSecureAssetUrl(url)) {
+    return url;
+  }
   const domains = TokenStore.getDomains();
   const internalUrl = HostnameTransformer.toInternal(url, domains);
 
