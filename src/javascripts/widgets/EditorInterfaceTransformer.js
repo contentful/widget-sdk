@@ -94,10 +94,7 @@ export function fromAPI(ct, ei) {
 // prepares it to be stored in the API.
 export function toAPI(ct, ei) {
   const convertedEditors = convertEditorToEditors(ei.editor, ei.editors);
-  const filteredEnabledDefaultEditors = convertedEditors.filter((editor) => {
-    return editor.widgetNamespace !== WidgetNamespace.EDITOR_BUILTIN || editor.disabled;
-  });
-  const editors = filteredEnabledDefaultEditors.length ? filteredEnabledDefaultEditors : undefined;
+  const editors = convertedEditors.length ? convertedEditors : undefined;
   return {
     sys: makeSys(ct, ei),
     controls: syncControls(ct, ei.controls).map((c) => prepareAPIControl(c)),
