@@ -97,13 +97,15 @@ const validatePositionalPartialTargetState = (
   ctId: string,
   name: string
 ) => {
-  const validInterface = !partialTargetState || partialTargetState === true || isObject(partialTargetState);
-  if (!validInterface) {
+  const isValidPartialTargetState =
+    !partialTargetState || partialTargetState === true || isObject(partialTargetState);
+  if (!isValidPartialTargetState) {
     throw new Error(`Invalid target ${name} declared for EditorInterface ${ctId}.`);
   }
 
   if (isObject(partialTargetState)) {
-    const validPosition = !partialTargetState.position || isUnsignedInteger(partialTargetState.position);
+    const validPosition =
+      !partialTargetState.position || isUnsignedInteger(partialTargetState.position);
     if (!validPosition) {
       throw new Error(`Invalid target ${name} declared for EditorInterface ${ctId}.`);
     }
