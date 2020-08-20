@@ -79,25 +79,25 @@ export async function transformEditorInterfacesToTargetState(cma, targetState, a
  *
  * If current list is missing or has a wrong shape, it gets replaced by the default list
  */
-function handlePositionalEditorInterface(
-  targetStateItem: boolean | { position?: number },
-  defaultItem: any[],
+function transformPartialTargetState(
+  partialTargetState: boolean | { position?: number },
+  defaultWidgets: any[],
   widgetId: string,
-  currentItem?: any[]
+  existingWidgets?: any[]
 ): any[] {
   // If there is no item stored use the default one.
-  const result = Array.isArray(currentItem) ? currentItem : cloneDeep(defaultItem);
+  const result = Array.isArray(existingWidgets) ? existingWidgets : cloneDeep(defaultWidgets);
 
   const widget = { widgetNamespace: WidgetNamespace.APP, widgetId };
 
-  if (targetStateItem === true) {
+  if (partialTargetState === true) {
     return [...result, widget];
   }
 
-  if (isObject(targetStateItem)) {
+  if (isObject(partialTargetState)) {
     // If position is defined use it for insertion.
-    if (isUnsignedInteger(targetStateItem.position)) {
-      result.splice(targetStateItem.position, 0, widget);
+    if (isUnsignedInteger(partialTargetState.position)) {
+      result.splice(partialTargetState.position, 0, widget);
       return result;
     } else {
       // Put it at the bottom if the position is not defined.
@@ -139,7 +139,7 @@ function transformSingleEditorInterfaceToTargetState(
   }
 
   if (targetState.sidebar) {
-    result.sidebar = handlePositionalEditorInterface(
+    result.sidebar = transformPartialTargetState(
       targetState.sidebar,
       defaultSidebar,
       widgetId,
@@ -155,7 +155,7 @@ function transformSingleEditorInterfaceToTargetState(
   }
   // As opposed to when we get `editors` (plural), in which case we behave like sidebars
   else if (targetState.editors) {
-    result.editors = handlePositionalEditorInterface(
+    result.editors = transformPartialTargetState(
       targetState.editors,
       defaultEditors,
       widgetId,

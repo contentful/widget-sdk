@@ -1,7 +1,7 @@
 import { get, isObject, set } from 'lodash';
 import { Control, SidebarItem, WidgetNamespace, Editor } from 'features/widget-renderer';
 
-export type AppStateEditorInterfaceItem = boolean | { position: number };
+export type PartialTargetState = boolean | { position: number };
 
 export const getCurrentState = async (
   spaceContext: any,
@@ -81,9 +81,9 @@ export function validateState(targetState) {
       }
     });
 
-    validatePositionalInterface(ei.sidebar, ctId, 'sidebar');
+    validatePositionalPartialTargetState(ei.sidebar, ctId, 'sidebar');
 
-    validatePositionalInterface(ei.editors, ctId, 'editor');
+    validatePositionalPartialTargetState(ei.editors, ctId, 'editor');
 
     const validEditor = !ei.editor || ei.editor === true;
     if (!validEditor) {
@@ -92,18 +92,18 @@ export function validateState(targetState) {
   });
 }
 
-const validatePositionalInterface = (
-  editorInterface: AppStateEditorInterfaceItem,
+const validatePositionalPartialTargetState = (
+  partialTargetState: PartialTargetState,
   ctId: string,
   name: string
 ) => {
-  const validInterface = !editorInterface || editorInterface === true || isObject(editorInterface);
+  const validInterface = !partialTargetState || partialTargetState === true || isObject(partialTargetState);
   if (!validInterface) {
     throw new Error(`Invalid target ${name} declared for EditorInterface ${ctId}.`);
   }
 
-  if (isObject(editorInterface)) {
-    const validPosition = !editorInterface.position || isUnsignedInteger(editorInterface.position);
+  if (isObject(partialTargetState)) {
+    const validPosition = !partialTargetState.position || isUnsignedInteger(partialTargetState.position);
     if (!validPosition) {
       throw new Error(`Invalid target ${name} declared for EditorInterface ${ctId}.`);
     }
