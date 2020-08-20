@@ -8,7 +8,7 @@ import {
   Workbench,
 } from '@contentful/forma-36-react-components';
 import { IDPSetupForm } from './IDPSetupForm';
-import SSOEnabled from 'app/OrganizationSettings/SSO/SSOEnabled';
+import { SSOEnabled } from './SSOEnabled';
 import { track } from 'analytics/Analytics';
 import _ from 'lodash';
 
@@ -110,9 +110,10 @@ export function SSOPage({ organization }) {
           )}
           {identityProvider.data && isEnabled && (
             <SSOEnabled
-              organization={organization}
+              orgId={organization.sys.id}
               ssoName={identityProvider.data.ssoName}
               restrictedModeEnabled={restrictedModeEnabled}
+              onTrackSupportClick={trackSupportClick}
             />
           )}
         </div>
