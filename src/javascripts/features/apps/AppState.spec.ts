@@ -427,21 +427,6 @@ describe('AppState', () => {
         });
       });
 
-      it('accepts position for multiple CTs', () => {
-        expect(() => {
-          validateState({
-            EditorInterface: {
-              someCtId: {
-                editor: { position: 1 },
-              },
-              otherCt: {
-                editor: { position: 7 },
-              },
-            },
-          });
-        }).not.toThrow();
-      })
-
       it('accepts editor set to true', () => {
         expect(() => {
           validateState({
@@ -453,11 +438,7 @@ describe('AppState', () => {
       });
 
       it('reject invalid editor', () => {
-        [
-          { position: 'TEST' }, // position is not a number
-          { position: 1.23 }, // position is not an integer
-          { position: -1 }, // position is a negative number,
-        ].forEach((editor) => {
+        ['string', 1023].forEach((editor) => {
           expect(() => {
             validateState({
               EditorInterface: {
@@ -468,7 +449,61 @@ describe('AppState', () => {
         });
       });
     });
-    
+    describe('editors validation', () => {
+      it('accepts empty editors', () => {
+        [null, undefined].forEach((editors) => {
+          expect(() => {
+            validateState({
+              EditorInterface: {
+                someCtId: { editors },
+              },
+            });
+          }).not.toThrow();
+        });
+      });
+
+      it('accepts position for multiple CTs', () => {
+        expect(() => {
+          validateState({
+            EditorInterface: {
+              someCtId: {
+                editors: { position: 1 },
+              },
+              otherCt: {
+                editors: { position: 7 },
+              },
+            },
+          });
+        }).not.toThrow();
+      });
+
+      it('accepts editor set to true', () => {
+        expect(() => {
+          validateState({
+            EditorInterface: {
+              someCtId: { editors: true },
+            },
+          });
+        }).not.toThrow();
+      });
+
+      it('reject invalid editor', () => {
+        [
+          { position: 'TEST' }, // position is not a number
+          { position: 1.23 }, // position is not an integer
+          { position: -1 }, // position is a negative number,
+        ].forEach((editors) => {
+          expect(() => {
+            validateState({
+              EditorInterface: {
+                someCtId: { editors },
+              },
+            });
+          }).toThrow();
+        });
+      });
+    });
+
     it('allows to define all properties on multiple CTs', () => {
       expect(() => {
         validateState({
@@ -493,4 +528,3 @@ describe('AppState', () => {
     });
   });
 });
-

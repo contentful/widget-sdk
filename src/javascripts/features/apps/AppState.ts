@@ -1,7 +1,7 @@
 import { get, isObject, set } from 'lodash';
 import { Control, SidebarItem, WidgetNamespace, Editor } from 'features/widget-renderer';
 
-export type AppStateEditorInterfaceItem = boolean | {position: number}
+export type AppStateEditorInterfaceItem = boolean | { position: number };
 
 export const getCurrentState = async (
   spaceContext: any,
@@ -81,13 +81,22 @@ export function validateState(targetState) {
       }
     });
 
-    validatePositionalInterface(ei.sidebar, ctId, 'sidebar')
+    validatePositionalInterface(ei.sidebar, ctId, 'sidebar');
 
-    validatePositionalInterface(ei.editor, ctId, 'editor')
+    validatePositionalInterface(ei.editors, ctId, 'editor');
+
+    const validEditor = !ei.editor || ei.editor === true;
+    if (!validEditor) {
+      throw new Error(`Invalid target editor declared for EditorInterface ${ctId}`);
+    }
   });
 }
 
-const validatePositionalInterface = (editorInterface: AppStateEditorInterfaceItem, ctId: string, name: string) => {
+const validatePositionalInterface = (
+  editorInterface: AppStateEditorInterfaceItem,
+  ctId: string,
+  name: string
+) => {
   const validInterface = !editorInterface || editorInterface === true || isObject(editorInterface);
   if (!validInterface) {
     throw new Error(`Invalid target ${name} declared for EditorInterface ${ctId}.`);
@@ -99,7 +108,7 @@ const validatePositionalInterface = (editorInterface: AppStateEditorInterfaceIte
       throw new Error(`Invalid target ${name} declared for EditorInterface ${ctId}.`);
     }
   }
-}
+};
 
 const isIncludedInEditors = (app, editorInterface): boolean => {
   if (editorInterface.editor) {
