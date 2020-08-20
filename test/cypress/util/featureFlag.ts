@@ -16,7 +16,6 @@ export enum FeatureFlag {
   SHAREJS_REMOVAL = 'feature-pen-04-2020-sharejs-removal-multi',
   ADD_TO_RELEASE = 'feature-pulitzer-05-2020-add-to-release',
   PRICING_2020_RELEASED = 'feature-ogg-06-2020-enable-pricing-2020-features',
-  NEW_USAGE_PAGE = 'feature-moi-06-2020-organization-usage-page',
   NEW_STATUS_SWITCH = 'feature-pulitzer-03-2020-new-status-switch',
   PRICING_IN_APP_COMMS = 'feature-hejo-06-2020-pricing-2020-in-app-communication',
 }
