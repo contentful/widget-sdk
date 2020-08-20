@@ -83,7 +83,7 @@ export function validateState(targetState) {
 
     validatePositionalInterface(ei.sidebar, ctId, 'sidebar');
 
-    validatePositionalInterface(ei.editors, ctId, 'editor');
+    validatePositionalInterface(ei.editors, ctId, 'editors');
 
     const validEditor = !ei.editor || ei.editor === true;
     if (!validEditor) {
