@@ -7,7 +7,6 @@ import {
   ContentTypeIdSection,
   DocumentationSection,
 } from './Sidebar/ContentModelSidebar';
-import EntryEditorAppearanceSection from './Sidebar/EntryEditorAppearanceSection';
 import PropTypes from 'prop-types';
 import EditorFieldTabs from './EditorFieldTabs';
 import FieldsList from './FieldsTab/FieldsList';
@@ -92,9 +91,7 @@ export default function ContentTypesPage(props) {
           )}
           {props.hasAdvancedExtensibility && props.currentTab === 'entry_editor_configuration' && (
             <>
-              <DocumentTitle
-                title={['Tabs', props.contentTypeData.name, 'Content Model']}
-              />
+              <DocumentTitle title={['Tabs', props.contentTypeData.name, 'Content Model']} />
               <div>
                 <EntryEditorConfiguration
                   configuration={props.editorConfiguration}

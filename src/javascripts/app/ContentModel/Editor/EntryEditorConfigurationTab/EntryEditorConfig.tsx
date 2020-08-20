@@ -16,36 +16,42 @@ const styles = {
 };
 
 interface EditorConfigProps {
-  onUpdateConfiguration: () => void,
-  defaultWidgets: Editor[],
-  customWidgets: Editor[],
-  configuration: Object
+  onUpdateConfiguration: () => void;
+  defaultWidgets: Editor[];
+  customWidgets: Editor[];
+  configuration: Object;
 }
 
 const convertToWidgetConfiguration = (widget) => ({
   widgetId: widget.id || widget.widgetId,
   widgetNamespace: widget.namespace || widget.widgetNamespace,
-  ...pick(widget, ['name', 'locations', 'parameters'])
-})
+  ...pick(widget, ['name', 'locations', 'parameters']),
+});
 
 function createStateFromConfiguration(configuration, defaultWidgets, customWidgets): State {
   if (configuration.length === 0) {
     return {
       items: defaultWidgets.map(convertToWidgetConfiguration),
       availableItems: customWidgets.map(convertToWidgetConfiguration),
-      configurableWidget: null
-    }
+      configurableWidget: null,
+    };
   }
 
-  const items = configuration.filter(item => !item.disabled).map(item => item.widgetNamespace === WidgetNamespace.EDITOR_BUILTIN ? defaultWidgets.find(widget => item.widgetId === widget.widgetId) : customWidgets.find(widget => item.id === widget.widgetId)).filter(item => !!item);
+  const items = configuration
+    .filter((item) => !item.disabled)
+    .map((item) =>
+      item.widgetNamespace === WidgetNamespace.EDITOR_BUILTIN
+        ? defaultWidgets.find((widget) => item.widgetId === widget.widgetId)
+        : customWidgets.find((widget) => item.id === widget.widgetId)
+    )
+    .filter((item) => !!item);
 
   return {
     items: items.map(convertToWidgetConfiguration),
     availableItems: customWidgets.map(convertToWidgetConfiguration),
-    configurableWidget: null
+    configurableWidget: null,
   };
 }
-
 
 function convertInternalStateToConfiguration(state: any, initialItems: any) {
   if (state.items === initialItems) {
