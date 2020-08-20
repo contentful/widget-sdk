@@ -14,7 +14,12 @@ import ContentTypePreview from './PreviewTab/ContentTypePreview';
 import SidebarConfiguration from 'app/EntrySidebar/Configuration/SidebarConfiguration';
 import EntryEditorConfiguration from './EntryEditorConfigurationTab/EntryEditorConfig';
 import DocumentTitle from 'components/shared/DocumentTitle';
+import { WidgetLocation } from 'features/widget-renderer';
 import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+
+function isEntryEditorWidget(widget) {
+  return widget.locations?.includes(WidgetLocation.ENTRY_EDITOR);
+}
 
 export default function ContentTypesPage(props) {
   const showSidebar = props.currentTab === 'fields' || props.currentTab === 'preview';
@@ -95,7 +100,7 @@ export default function ContentTypesPage(props) {
               <div>
                 <EntryEditorConfiguration
                   configuration={props.editorConfiguration}
-                  customWidgets={props.extensions}
+                  customWidgets={props.extensions.filter(isEntryEditorWidget)}
                   onUpdateConfiguration={props.actions.updateEditorConfiguration}
                 />
               </div>
