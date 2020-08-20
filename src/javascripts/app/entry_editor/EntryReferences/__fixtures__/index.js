@@ -2515,6 +2515,38 @@ export const simpleReferencesValidationErrorResponse = {
   ],
 };
 
+export const rootReferencesValidationErrorResponse = {
+  sys: {
+    type: 'ReleaseValidation',
+    id: 'immediate',
+  },
+  errored: [
+    {
+      sys: {
+        type: 'Link',
+        linkType: 'Entry',
+        id: '4zaYBA8hYIxwRHsKfyJOVN',
+      },
+      error: {
+        sys: {
+          type: 'Error',
+          id: 'InvalidEntry',
+        },
+        message: 'Validation error message',
+        details: {
+          errors: [
+            {
+              name: 'required',
+              path: ['fields', 'requiredText'],
+              details: 'The property "requiredText" is required here',
+            },
+          ],
+        },
+      },
+    },
+  ],
+};
+
 export const simpleReferencesValidationSuccessResponse = {
   sys: {
     type: 'ReleaseValidation',

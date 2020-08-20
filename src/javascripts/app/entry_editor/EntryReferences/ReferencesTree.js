@@ -350,7 +350,7 @@ const ReferencesTree = ({
         isReferenceSelected={allReferencesSelected}
         onReferenceCheckboxClick={(checked, entity) => handleSelect(checked, entity)}
         onClick={onRootReferenceCardClick}
-        validationError={findValidationErrorForEntity(root.sys.id)}
+        validationError={findValidationErrorForEntity(root.sys.id, validations)}
       />
       {MemoizedReferencesCards}
     </List>
