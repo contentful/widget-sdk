@@ -1,11 +1,8 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import * as K from 'core/utils/kefir';
-import { getModule } from 'core/NgRegistry';
 import { noop, defer } from 'lodash';
-import createExtensionBridge from 'widgets/bridges/createExtensionBridge';
 import WidgetRenderWarning from 'widgets/WidgetRenderWarning';
-import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIFrameRenderer';
 import * as LoadEventTracker from 'app/entity_editor/LoadEventTracker';
 import { WidgetNamespace, isCustomWidget, WidgetLocation } from 'features/widget-renderer';
 import { toRendererWidget } from 'widgets/WidgetCompat';
@@ -43,33 +40,15 @@ function WidgetRendererInternal(props) {
   } else if (isCustomWidget(widget.widgetNamespace)) {
     trackLinksRendered();
 
-    if (editorData.useNewWidgetRenderer) {
-      return (
-        <NewWidgetRenderer
-          location={WidgetLocation.ENTRY_FIELD}
-          widget={toRendererWidget(widget.descriptor)}
-          sdk={props.widgetApi}
-          onFocus={() => props.scope.fieldLocale.setActive(true)}
-          onBlur={() => props.scope.fieldLocale.setActive(false)}
-        />
-      );
-    } else {
-      return (
-        <ExtensionIFrameRendererWithLocalHostWarning
-          widget={toRendererWidget(widget.descriptor)}
-          parameters={widget.parameters}
-          bridge={createExtensionBridge({
-            $rootScope: getModule('$rootScope'),
-            $scope: props.scope,
-            spaceContext: getModule('spaceContext'),
-            $controller: getModule('$controller'),
-            currentWidgetId: widget.widgetId,
-            currentWidgetNamespace: widget.widgetNamespace,
-            location: WidgetLocation.ENTRY_FIELD,
-          })}
-        />
-      );
-    }
+    return (
+      <NewWidgetRenderer
+        location={WidgetLocation.ENTRY_FIELD}
+        widget={toRendererWidget(widget.descriptor)}
+        sdk={props.widgetApi}
+        onFocus={() => props.scope.fieldLocale.setActive(true)}
+        onBlur={() => props.scope.fieldLocale.setActive(false)}
+      />
+    );
   } else if (widget.widgetNamespace === WidgetNamespace.BUILTIN) {
     const widget = renderFieldEditor({
       $scope: props.scope,
