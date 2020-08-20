@@ -1,9 +1,11 @@
-import { get, isObject, identity, pick, isEqual, cloneDeep } from 'lodash';
+import { get, isObject, identity, pick, isEqual, cloneDeep, isEmpty } from 'lodash';
 
 import * as SidebarDefaults from 'app/EntrySidebar/Configuration/defaults';
+import * as EntryEditorDefaults from 'app/entry_editor/DefaultConfiguration';
 
 import { WidgetNamespace } from 'features/widget-renderer';
 import { isUnsignedInteger } from './AppState';
+import { EditorInterface } from 'contentful-ui-extensions-sdk';
 
 // Like `Promise.all` but rejecting input promises do not cause
 // the result promise to reject. They are simply omitted.
@@ -20,6 +22,11 @@ async function promiseAllSafe(promises) {
 export async function getDefaultSidebar() {
   const defaultEntrySidebar = await SidebarDefaults.getEntryConfiguration();
   return defaultEntrySidebar.map((item) => pick(item, ['widgetNamespace', 'widgetId']));
+}
+
+export async function getDefaultEditors() {
+  const defaultEntryEditors = await EntryEditorDefaults.getEntryConfiguration();
+  return defaultEntryEditors.map((item) => pick(item, ['widgetNamespace', 'widgetId']));
 }
 
 function isCurrentApp(widget, appInstallation) {
@@ -44,12 +51,14 @@ function isCurrentApp(widget, appInstallation) {
 export async function transformEditorInterfacesToTargetState(cma, targetState, appInstallation) {
   const { items: editorInterfaces } = await cma.getEditorInterfaces();
   const defaultSidebar = await getDefaultSidebar();
+  const defaultEditors = await getDefaultEditors();
 
   const updatePromises = editorInterfaces
     .map((ei) => {
       return transformSingleEditorInterfaceToTargetState(
         ei,
         defaultSidebar,
+        defaultEditors,
         targetState[ei.sys.contentType.sys.id] || {},
         appInstallation
       );
@@ -60,52 +69,102 @@ export async function transformEditorInterfacesToTargetState(cma, targetState, a
   await promiseAllSafe(updatePromises);
 }
 
+type EditorInterfaceConfiguration = { widgetNamespace: string | WidgetNamespace; widgetId: string };
+
+/**
+ * Elements in targetState can come in either as boolean or with a position.
+ * The expected behavior is:
+ *  - `true` -> element is pushed at the end of the list
+ *  - position: n -> element is positioned at the nth position in current list
+ *
+ * If current list is missing or has a wrong shape, it gets replaced by the default list
+ */
+function handlePositionalEditorInterface(
+  targetStateItem: boolean | { position?: number },
+  currentItem: EditorInterfaceConfiguration[],
+  defaultItem: EditorInterfaceConfiguration[],
+  widgetId: string
+): EditorInterfaceConfiguration[] {
+  // If there is no item stored use the default one.
+  const result = Array.isArray(currentItem) ? currentItem : cloneDeep(defaultItem);
+
+  const widget = { widgetNamespace: WidgetNamespace.APP, widgetId };
+
+  if (targetStateItem === true) {
+    return [...result, widget];
+  }
+
+  if (isObject(targetStateItem)) {
+    // If position is defined use it for insertion.
+    if (isUnsignedInteger(targetStateItem.position)) {
+      result.splice(targetStateItem.position, 0, widget);
+      return result;
+    } else {
+      // Put it at the bottom if the position is not defined.
+      return [...result, widget];
+    }
+  }
+
+  return result;
+}
+
 function transformSingleEditorInterfaceToTargetState(
   ei,
   defaultSidebar,
+  defaultEditors,
   targetState,
   appInstallation
-) {
+): EditorInterface {
   // Start by removing all references, only those declared in the target
   // state will be recreated.
-  const result = removeSingleEditorInterfaceReferences(ei, appInstallation);
+  const editorInterface = removeSingleEditorInterfaceReferences(ei, appInstallation);
+  const result: EditorInterface = { sys: editorInterface.sys };
 
   const widgetId = get(appInstallation, ['sys', 'appDefinition', 'sys', 'id']);
 
   // Target state object for controls: `{ fieldId }`
   if (Array.isArray(targetState.controls)) {
+    const controls = editorInterface.controls ?? [];
+
     targetState.controls.forEach((control) => {
-      const idx = (result.controls || []).findIndex((cur) => cur.fieldId === control.fieldId);
-      result.controls[idx] = {
+      const idx = controls.findIndex((cur) => cur.fieldId === control.fieldId);
+      controls[idx] = {
         fieldId: control.fieldId,
         widgetNamespace: WidgetNamespace.APP,
         widgetId,
       };
     });
+
+    result.controls = controls;
   }
 
-  // Target state object for sidebar: `{ position? }`.
-  // It can also be `true` (it'll be put at the bottom of the sidebar).
-  if (targetState.sidebar === true || isObject(targetState.sidebar)) {
-    const targetSidebar = isObject(targetState.sidebar) ? targetState.sidebar : {};
+  if (targetState.sidebar) {
+    const existingSidebar = editorInterface.sidebar as EditorInterfaceConfiguration[];
 
-    // If there is no sidebar stored use the default one.
-    result.sidebar = Array.isArray(result.sidebar) ? result.sidebar : cloneDeep(defaultSidebar);
-
-    const widget = { widgetNamespace: WidgetNamespace.APP, widgetId };
-
-    // If position is defined use it for insertion.
-    if (isUnsignedInteger(targetSidebar.position)) {
-      result.sidebar.splice(targetSidebar.position, 0, widget);
-    } else {
-      // Put it at the bottom if the position is not defined.
-      result.sidebar.push(widget);
-    }
+    result.sidebar = handlePositionalEditorInterface(
+      targetState.sidebar,
+      existingSidebar,
+      defaultSidebar,
+      widgetId
+    );
   }
 
-  // If editor target state is set to `true` we just use the widget.
+  // When we get `editor` (singular) with boolean value, fallback
+  // to legacy behavior: widget replaces default editor and there
+  // is no list of editors
   if (targetState.editor === true) {
-    result.editors = [{ widgetNamespace: WidgetNamespace.APP, widgetId }];
+    result.editor = { widgetNamespace: WidgetNamespace.APP, widgetId };
+  }
+  // As opposed to when we get `editors` (plural), in which case we behave like sidebars
+  else if (targetState.editors) {
+    const existingEditors = editorInterface.editors as EditorInterfaceConfiguration[];
+
+    result.editors = handlePositionalEditorInterface(
+      targetState.editors,
+      existingEditors,
+      defaultEditors,
+      widgetId
+    );
   }
 
   return result;
@@ -117,14 +176,17 @@ export async function removeAllEditorInterfaceReferences(cma, appInstallation) {
   const updatePromises = editorInterfaces
     .map((ei) => removeSingleEditorInterfaceReferences(ei, appInstallation))
     .filter((ei, i) => !isEqual(ei, editorInterfaces[i]))
+    // We always want at least the default editor, hence we remove
+    // empty list to fallback to default editors
+    .map(({ editors, ...ei }) => (isEmpty(editors) ? ei : { ...ei, editors }))
     .map((ei) => cma.updateEditorInterface(ei));
 
   await promiseAllSafe(updatePromises);
 }
 
-function removeSingleEditorInterfaceReferences(ei, appInstallation) {
+function removeSingleEditorInterfaceReferences(ei, appInstallation): EditorInterface {
   ei = cloneDeep(ei);
-  const result = { sys: ei.sys };
+  const result: EditorInterface = { sys: ei.sys };
 
   if (Array.isArray(ei.controls)) {
     // If the app is used in `controls`, reset it to the default.
@@ -140,11 +202,11 @@ function removeSingleEditorInterfaceReferences(ei, appInstallation) {
 
   if (Array.isArray(ei.editors)) {
     // If the app is used as `editor`, remove it from the list.
-    const otherEditors = ei.editors.filter((widget) => !isCurrentApp(widget, appInstallation));
+    result.editors = ei.editors.filter((widget) => !isCurrentApp(widget, appInstallation));
+  }
 
-    if (otherEditors.length > 0) {
-      result.editors = otherEditors;
-    }
+  if (isObject(ei.editor) && !isCurrentApp(ei.editor, appInstallation)) {
+    result.editor = ei.editor;
   }
 
   return result;

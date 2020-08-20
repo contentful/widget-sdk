@@ -1,9 +1,13 @@
 import {
-  getDefaultSidebar,
-  transformEditorInterfacesToTargetState,
   removeAllEditorInterfaceReferences,
+  transformEditorInterfacesToTargetState,
 } from './AppEditorInterfaces';
 import { WidgetNamespace } from 'features/widget-renderer';
+import {
+  makeGetDefaultByType,
+  PositionalEditorInterface,
+  positionalEditorInterfaceFixtures,
+} from './__mocks__/positional-editor-interfaces';
 
 const APP_ID = 'appid';
 
@@ -57,6 +61,12 @@ describe('AppEditorInterfaces', () => {
                 },
                 { widgetNamespace: WidgetNamespace.EXTENSION, widgetId: 'some-extension' },
               ],
+              editors: [
+                {
+                  widgetNamespace: WidgetNamespace.EDITOR_BUILTIN,
+                  widgetId: 'default-editor',
+                },
+              ],
             },
             {
               sys: { contentType: { sys: { id: 'CT2' } } },
@@ -79,6 +89,7 @@ describe('AppEditorInterfaces', () => {
         CT1: {
           controls: [{ fieldId: 'test' }, { fieldId: 'test2' }],
           sidebar: { position: 1 },
+          editors: { position: 0 },
         },
         CT2: {
           editor: true,
@@ -88,7 +99,7 @@ describe('AppEditorInterfaces', () => {
 
       expect(cma.updateEditorInterface).toBeCalledTimes(2);
 
-      expect(cma.updateEditorInterface).toBeCalledWith({
+      expect(cma.updateEditorInterface).toHaveBeenNthCalledWith(1, {
         sys: { contentType: { sys: { id: 'CT1' } } },
         controls: [
           {
@@ -106,15 +117,19 @@ describe('AppEditorInterfaces', () => {
           },
           { widgetNamespace: WidgetNamespace.EXTENSION, widgetId: 'some-extension' },
         ],
+        editors: [
+          { widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID },
+          { widgetNamespace: WidgetNamespace.EDITOR_BUILTIN, widgetId: 'default-editor' },
+        ],
       });
 
-      expect(cma.updateEditorInterface).toBeCalledWith({
+      expect(cma.updateEditorInterface).toHaveBeenNthCalledWith(2, {
         sys: { contentType: { sys: { id: 'CT2' } } },
-        editors: [{ widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID }],
         sidebar: [
           { widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN, widgetId: 'versions-widget' },
           { widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID },
         ],
+        editor: { widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID },
       });
     });
 
@@ -146,116 +161,172 @@ describe('AppEditorInterfaces', () => {
       });
     });
 
-    it('updates widget position in the sidebar', async () => {
-      cma.getEditorInterfaces.mockImplementationOnce(() =>
-        Promise.resolve({
-          items: [
-            {
-              sys: { contentType: { sys: { id: 'CT1' } } },
-              controls: [
+    describe('positional editor interfaces', () => {
+      for (const ei of Object.values(PositionalEditorInterface)) {
+        it(`updates widget position in ${ei}`, async () => {
+          const mockValues = positionalEditorInterfaceFixtures[ei];
+          const position = 1;
+
+          cma.getEditorInterfaces.mockImplementationOnce(() =>
+            Promise.resolve({
+              items: [
                 {
-                  fieldId: 'test',
-                  widgetNamespace: WidgetNamespace.APP,
-                  widgetId: APP_ID,
+                  sys: { contentType: { sys: { id: 'CT1' } } },
+                  controls: [
+                    {
+                      fieldId: 'test',
+                      widgetNamespace: WidgetNamespace.APP,
+                      widgetId: APP_ID,
+                    },
+                  ],
+                  [ei]: [...mockValues, { widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID }],
                 },
               ],
-              sidebar: [
-                {
-                  widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
-                  widgetId: 'publication-widget',
-                },
-                { widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN, widgetId: 'versions-widget' },
-                { widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID },
-              ],
+            })
+          );
+
+          await transform({
+            CT1: {
+              controls: [{ fieldId: 'test' }],
+              [ei]: { position },
             },
-          ],
-        })
-      );
+          });
 
-      await transform({
-        CT1: {
-          controls: [{ fieldId: 'test' }],
-          sidebar: { position: 1 },
-        },
-      });
+          expect(cma.updateEditorInterface).toBeCalledTimes(1);
 
-      expect(cma.updateEditorInterface).toBeCalledTimes(1);
-
-      expect(cma.updateEditorInterface).toBeCalledWith({
-        sys: { contentType: { sys: { id: 'CT1' } } },
-        controls: [
-          {
-            fieldId: 'test',
-            widgetNamespace: WidgetNamespace.APP,
-            widgetId: APP_ID,
-          },
-        ],
-        sidebar: [
-          { widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN, widgetId: 'publication-widget' },
-          { widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID },
-          { widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN, widgetId: 'versions-widget' },
-        ],
-      });
-    });
-
-    it('inserts the widget to the default sidebar (if none is set)', async () => {
-      cma.getEditorInterfaces.mockImplementationOnce(() =>
-        Promise.resolve({
-          items: [
-            { sys: { contentType: { sys: { id: 'CT1' } } } },
-            { sys: { contentType: { sys: { id: 'CT2' } } } },
-          ],
-        })
-      );
-
-      await transform({
-        CT1: { sidebar: { position: 3 } },
-        CT2: { sidebar: { position: 2 } },
-      });
-
-      expect(cma.updateEditorInterface).toBeCalledTimes(2);
-
-      const defaultSidebar = await getDefaultSidebar();
-
-      expect(cma.updateEditorInterface).toBeCalledWith({
-        sys: { contentType: { sys: { id: 'CT1' } } },
-        sidebar: [
-          ...defaultSidebar.slice(0, 3),
-          { widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID },
-          ...defaultSidebar.slice(3),
-        ],
-      });
-
-      expect(cma.updateEditorInterface).toBeCalledWith({
-        sys: { contentType: { sys: { id: 'CT2' } } },
-        sidebar: [
-          ...defaultSidebar.slice(0, 2),
-          { widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID },
-          ...defaultSidebar.slice(2),
-        ],
-      });
-    });
-
-    it('only does HTTP if editor interface was modified', async () => {
-      cma.getEditorInterfaces.mockImplementationOnce(() => {
-        return Promise.resolve({
-          items: [
-            {
-              sys: { contentType: { sys: { id: 'CT1' } } },
-              editors: [{ widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID }],
-            },
-          ],
+          expect(cma.updateEditorInterface).toBeCalledWith({
+            sys: { contentType: { sys: { id: 'CT1' } } },
+            controls: [
+              {
+                fieldId: 'test',
+                widgetNamespace: WidgetNamespace.APP,
+                widgetId: APP_ID,
+              },
+            ],
+            [ei]: [
+              ...mockValues.slice(0, position),
+              { widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID },
+              ...mockValues.slice(position),
+            ],
+          });
         });
+
+        it(`inserts the widget to the default ${ei} (if none is set)`, async () => {
+          const getDefault = makeGetDefaultByType[ei];
+          const defaultValue = await getDefault();
+
+          cma.getEditorInterfaces.mockImplementationOnce(() =>
+            Promise.resolve({
+              items: [
+                { sys: { contentType: { sys: { id: 'CT1' } } } },
+                { sys: { contentType: { sys: { id: 'CT2' } } } },
+              ],
+            })
+          );
+
+          await transform({
+            CT1: { [ei]: { position: 3 } },
+            CT2: { [ei]: { position: 2 } },
+          });
+
+          expect(cma.updateEditorInterface).toBeCalledTimes(2);
+
+          expect(cma.updateEditorInterface).toHaveBeenNthCalledWith(1, {
+            sys: { contentType: { sys: { id: 'CT1' } } },
+            [ei]: [
+              ...defaultValue.slice(0, 3),
+              { widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID },
+              ...defaultValue.slice(3),
+            ],
+          });
+
+          expect(cma.updateEditorInterface).toHaveBeenNthCalledWith(2, {
+            sys: { contentType: { sys: { id: 'CT2' } } },
+            [ei]: [
+              ...defaultValue.slice(0, 2),
+              { widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID },
+              ...defaultValue.slice(2),
+            ],
+          });
+        });
+      }
+    });
+
+    describe('when updating editor interfaces', () => {
+      it('does not call if `editors` was not modified', async () => {
+        cma.getEditorInterfaces.mockImplementationOnce(() => {
+          return Promise.resolve({
+            items: [
+              {
+                sys: { contentType: { sys: { id: 'CT1' } } },
+                editors: [{ widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID }],
+              },
+            ],
+          });
+        });
+
+        await transform({ CT1: { editors: { position: 0 } } });
+
+        expect(cma.updateEditorInterface).not.toBeCalled();
       });
 
-      await transform({ CT1: { editor: true } });
+      it('does not call if `editor` was not modified', async () => {
+        cma.getEditorInterfaces.mockImplementationOnce(() => {
+          return Promise.resolve({
+            items: [
+              {
+                sys: { contentType: { sys: { id: 'CT1' } } },
+                editor: { widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID },
+              },
+            ],
+          });
+        });
 
-      expect(cma.updateEditorInterface).not.toBeCalled();
+        await transform({ CT1: { editor: true } });
+
+        expect(cma.updateEditorInterface).not.toBeCalled();
+      });
+
+      it('does not call if `sidebar` was not modified', async () => {
+        cma.getEditorInterfaces.mockImplementationOnce(() => {
+          return Promise.resolve({
+            items: [
+              {
+                sys: { contentType: { sys: { id: 'CT1' } } },
+                sidebar: [{ widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID }],
+              },
+            ],
+          });
+        });
+
+        await transform({ CT1: { sidebar: { position: 0 } } });
+
+        expect(cma.updateEditorInterface).not.toBeCalled();
+      });
+
+      it('does not call if `controls` was not modified', async () => {
+        cma.getEditorInterfaces.mockImplementationOnce(() => {
+          return Promise.resolve({
+            items: [
+              {
+                sys: { contentType: { sys: { id: 'CT1' } } },
+                controls: [
+                  { widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID, fieldId: 'fieldId' },
+                ],
+              },
+            ],
+          });
+        });
+
+        await transform({ CT1: { controls: [{ fieldId: 'fieldId' }] } });
+
+        expect(cma.updateEditorInterface).not.toBeCalled();
+      });
     });
   });
 
   describe('removeAllEditorInterfaceReferences', () => {
-    it('removes references from controls, sidebar and editor', async () => {
+    it('removes references from controls, sidebar, editors and editor', async () => {
       cma.getEditorInterfaces.mockImplementationOnce(() =>
         Promise.resolve({
           items: [
@@ -282,7 +353,7 @@ describe('AppEditorInterfaces', () => {
                 { fieldId: 'lead', widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID },
                 { fieldId: 'content', widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID },
               ],
-              editors: [{ widgetNamespace: WidgetNamespace.APP, widgetId: 'some-other-editor' }],
+              editor: { widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID },
             },
           ],
         })
@@ -292,7 +363,7 @@ describe('AppEditorInterfaces', () => {
 
       expect(cma.updateEditorInterface).toBeCalledTimes(2);
 
-      expect(cma.updateEditorInterface).toBeCalledWith({
+      expect(cma.updateEditorInterface).toHaveBeenNthCalledWith(1, {
         sys: { contentType: { sys: { id: 'CT1' } } },
         sidebar: [
           { widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN, widgetId: APP_ID },
@@ -301,7 +372,7 @@ describe('AppEditorInterfaces', () => {
         ],
       });
 
-      expect(cma.updateEditorInterface).toBeCalledWith({
+      expect(cma.updateEditorInterface).toHaveBeenNthCalledWith(2, {
         sys: { contentType: { sys: { id: 'CT2' } } },
         controls: [
           { fieldId: 'title' },
@@ -310,7 +381,6 @@ describe('AppEditorInterfaces', () => {
           { fieldId: 'lead' },
           { fieldId: 'content' },
         ],
-        editors: [{ widgetNamespace: WidgetNamespace.APP, widgetId: 'some-other-editor' }],
       });
     });
 
@@ -374,7 +444,7 @@ describe('AppEditorInterfaces', () => {
       });
     });
 
-    it('removes all references from editor and does not send empty editors list', async () => {
+    it('removes all references from editors and does not send empty editors list', async () => {
       cma.getEditorInterfaces.mockImplementationOnce(() =>
         Promise.resolve({
           items: [
@@ -392,6 +462,38 @@ describe('AppEditorInterfaces', () => {
       expect(cma.updateEditorInterface).toBeCalledWith({
         sys: { contentType: { sys: { id: 'CT1' } } },
         sidebar: [{ widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN, widgetId: APP_ID }],
+      });
+    });
+
+    it('removes only current editor and does not touch others', async () => {
+      cma.getEditorInterfaces.mockImplementationOnce(() =>
+        Promise.resolve({
+          items: [
+            {
+              sys: { contentType: { sys: { id: 'CT1' } } },
+              editor: { widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID },
+              sidebar: [{ widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN, widgetId: APP_ID }],
+            },
+            {
+              sys: { contentType: { sys: { id: 'CT2' } } },
+              editor: { widgetNamespace: WidgetNamespace.APP, widgetId: 'another-widget' },
+              sidebar: [{ widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID }],
+            },
+          ],
+        })
+      );
+
+      await remove();
+
+      expect(cma.updateEditorInterface).toHaveBeenNthCalledWith(1, {
+        sys: { contentType: { sys: { id: 'CT1' } } },
+        sidebar: [{ widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN, widgetId: APP_ID }],
+      });
+
+      expect(cma.updateEditorInterface).toHaveBeenNthCalledWith(2, {
+        sys: { contentType: { sys: { id: 'CT2' } } },
+        sidebar: [],
+        editor: { widgetNamespace: WidgetNamespace.APP, widgetId: 'another-widget' },
       });
     });
 
