@@ -26,3 +26,10 @@ export async function trackEvent(eventName, metadata) {
     return Intercom('trackEvent', eventName, metadata);
   }
 }
+
+export async function startTour(tourId) {
+  if (enabled) {
+    const Intercom = await LazyLoader.getFromGlobal('Intercom');
+    return Intercom('startTour', tourId);
+  }
+}
