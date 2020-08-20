@@ -20,7 +20,7 @@ export enum ChannelEvent {
   SysChanged = 'sysChanged',
   LocaleSettingsChanged = 'localeSettingsChanged',
   ShowDisabledFieldsChanged = 'showDisabledFieldsChanged',
-  OnSlideInNavigation = 'onSlideInNavigation',
+  OnSlideInNavigation = 'navigateSlideIn',
   ValueChanged = 'valueChanged',
   IsDisabledChangedForFieldLocale = 'isDisabledChangedForFieldLocale',
   SchemaErrorsChangedForFieldLocale = 'schemaErrorsChangedForFieldLocale',
