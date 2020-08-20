@@ -50,8 +50,10 @@ function isCurrentApp(widget, appInstallation) {
  */
 export async function transformEditorInterfacesToTargetState(cma, targetState, appInstallation) {
   const { items: editorInterfaces } = await cma.getEditorInterfaces();
-  const defaultSidebar = await getDefaultSidebar();
-  const defaultEditors = await getDefaultEditors();
+  const [defaultSidebar, defaultEditors] = await Promise.all([
+    getDefaultSidebar(),
+    getDefaultEditors(),
+  ]);
 
   const updatePromises = editorInterfaces
     .map((ei) => {
@@ -81,9 +83,9 @@ type EditorInterfaceConfiguration = { widgetNamespace: string | WidgetNamespace;
  */
 function handlePositionalEditorInterface(
   targetStateItem: boolean | { position?: number },
-  currentItem: EditorInterfaceConfiguration[],
   defaultItem: EditorInterfaceConfiguration[],
-  widgetId: string
+  widgetId: string,
+  currentItem?: EditorInterfaceConfiguration[]
 ): EditorInterfaceConfiguration[] {
   // If there is no item stored use the default one.
   const result = Array.isArray(currentItem) ? currentItem : cloneDeep(defaultItem);
@@ -139,13 +141,11 @@ function transformSingleEditorInterfaceToTargetState(
   }
 
   if (targetState.sidebar) {
-    const existingSidebar = editorInterface.sidebar as EditorInterfaceConfiguration[];
-
     result.sidebar = handlePositionalEditorInterface(
       targetState.sidebar,
-      existingSidebar,
       defaultSidebar,
-      widgetId
+      widgetId,
+      editorInterface.sidebar
     );
   }
 
@@ -157,13 +157,11 @@ function transformSingleEditorInterfaceToTargetState(
   }
   // As opposed to when we get `editors` (plural), in which case we behave like sidebars
   else if (targetState.editors) {
-    const existingEditors = editorInterface.editors as EditorInterfaceConfiguration[];
-
     result.editors = handlePositionalEditorInterface(
       targetState.editors,
-      existingEditors,
       defaultEditors,
-      widgetId
+      widgetId,
+      editorInterface.editors
     );
   }
 

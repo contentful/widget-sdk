@@ -39,10 +39,5 @@ export async function getEntryConfiguration() {
     })
   );
 
-  return EntryConfiguration.filter((item, index) => {
-    if (availability[index]) {
-      return item;
-    }
-    return null;
-  }).filter((item) => item !== null);
+  return EntryConfiguration.filter((item, index) => availability[index] && item);
 }
