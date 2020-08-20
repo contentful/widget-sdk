@@ -203,7 +203,7 @@ export default class OrganizationNavigationBar extends React.Component {
       AdvancedExtensibilityFeature.isEnabled(),
     ];
 
-    if (organization.pricingVersion !== 'pricing_version_1') {
+    if (organization.pricingVersion !== 'pricing_version_1' && isOwnerOrAdmin(organization)) {
       promises = promises.concat([
         getVariation(FLAGS.PRICING_2020_WARNING, {
           organizationId: orgId,
