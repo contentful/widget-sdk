@@ -14,7 +14,7 @@ const styles = {
     display: 'flex',
     flexGrow: 1,
     fontSize: tokens.fontSizeS,
-    fontWeight: parseInt(tokens.fontWeightNormal, 10), // TODO: change to a number in forma
+    fontWeight: tokens.fontWeightNormal,
     textTransform: 'uppercase',
     color: tokens.colorTextLight,
     lineHeight: '2',
