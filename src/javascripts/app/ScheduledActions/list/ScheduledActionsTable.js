@@ -140,7 +140,7 @@ function ScheduledActionWithExsitingEntryRow({
             }
           }}>
           <TableCell>
-            {moment.utc(job.scheduledAt).local().format('ddd, MMM Do, YYYY - hh:mm A')}
+            {moment.utc(job.scheduledFor.datetime).local().format('ddd, MMM Do, YYYY - hh:mm A')}
           </TableCell>
           <TableCell>
             {' '}
@@ -172,7 +172,7 @@ function ScheduledActionWithMissingEntryRow({ job, user }) {
   return (
     <TableRow data-test-id="scheduled-job">
       <TableCell>
-        {moment.utc(job.scheduledAt).local().format('ddd, MMM Do, YYYY - hh:mm A')}
+        {moment.utc(job.scheduledFor.datetime).local().format('ddd, MMM Do, YYYY - hh:mm A')}
       </TableCell>
       <TableCell>Entry missing or inaccessible</TableCell>
       <TableCell />
