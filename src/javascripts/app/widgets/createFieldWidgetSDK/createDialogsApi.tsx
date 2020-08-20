@@ -147,8 +147,12 @@ function createDialogSDK(
       // Parameters passed directly to the dialog.
       invocation: invocationParameters,
     },
-    // Do not leak entry- or field-specific IDs.
-    ids: omit(sdk.ids, ['field', 'entry', 'contentType']),
+    ids: {
+      // Do not leak entry- or field-specific IDs nor widget ID.
+      ...omit(sdk.ids, ['field', 'entry', 'contentType', 'app', 'extension']),
+      // Expose widget ID (can be the same when doing `openCurrent`).
+      [widget.namespace]: widget.id,
+    },
     // Pass onClose in order to allow child modal to close.
     close: onClose,
   };
