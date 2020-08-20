@@ -128,6 +128,7 @@ describe('Entries list page', () => {
         getFirst7SnapshotsOfDefaultEntry.willReturnNone(),
         queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled(),
         getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
+        queryAllScheduledJobsForDefaultEntry.willFindOnePendingJob(),
       ];
       cy.findByTestId('create-entry-button-menu-trigger').find('button').should('be.enabled');
       cy.findByTestId('create-entry-button-menu-trigger').click();

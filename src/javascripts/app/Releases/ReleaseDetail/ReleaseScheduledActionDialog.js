@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ScheduledActionModalDialog from 'app/ScheduledActions/EntrySidebarWidget/ScheduledActionDialog/ScheduledActionModalDialog';
+import JobDialog from 'app/ScheduledActions/EntrySidebarWidget/ScheduledActionDialog/JobDialog';
 
 import { formatScheduledAtDate } from 'app/ScheduledActions/EntrySidebarWidget/ScheduledActionDialog/utils.js';
 
@@ -24,7 +24,7 @@ function ReleaseActionJobDialog({
   }
 
   return (
-    <ScheduledActionModalDialog
+    <JobDialog
       handleSubmit={handleSubmit}
       onCancel={onCancel}
       isSubmitting={isSubmitting}

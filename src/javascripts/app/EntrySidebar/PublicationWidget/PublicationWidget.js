@@ -18,7 +18,6 @@ import CommandPropType from 'app/entity_editor/CommandPropType';
 import StatusBadge from './StatusBadge';
 import StatusSwitchPortal from 'app/ScheduledActions/EntrySidebarWidget/StatusSwitchPortal';
 import StatusSwitch from 'app/ScheduledActions/EntrySidebarWidget/StatusSwitch';
-import ErrorHandler from 'components/shared/ErrorHandlerComponent';
 
 const styles = {
   actionRestrictionNote: css({
@@ -107,93 +106,91 @@ export default class PublicationWidget extends React.PureComponent {
     }
 
     return (
-      <ErrorHandler>
-        <EntrySidebarWidget title="Status">
-          <StatusBadge status={status} />
-          <div className="entity-sidebar__state-select">
-            <div className="publish-buttons-row">
-              {status !== 'published' && primary && (
-                <Button
-                  isFullWidth
-                  buttonType="positive"
-                  disabled={primary.isDisabled() || isPrimaryPublishBlocked}
-                  loading={primary.inProgress()}
-                  testId={`change-state-${primary.targetStateId}`}
-                  onClick={() => {
-                    primary.execute();
-                  }}
-                  className="primary-publish-button">
-                  {primary.label}
-                </Button>
-              )}
-              <Dropdown
-                className="secondary-publish-button-wrapper"
-                position="bottom-right"
-                isOpen={this.state.isOpenDropdown}
-                onClose={() => {
-                  this.setState({ isOpenDropdown: false });
+      <EntrySidebarWidget title="Status">
+        <StatusBadge status={status} />
+        <div className="entity-sidebar__state-select">
+          <div className="publish-buttons-row">
+            {status !== 'published' && primary && (
+              <Button
+                isFullWidth
+                buttonType="positive"
+                disabled={primary.isDisabled() || isPrimaryPublishBlocked}
+                loading={primary.inProgress()}
+                testId={`change-state-${primary.targetStateId}`}
+                onClick={() => {
+                  primary.execute();
                 }}
-                toggleElement={
-                  <Button
-                    className="secondary-publish-button"
-                    isFullWidth
-                    disabled={secondaryActionsDisabled}
-                    testId="change-state-menu-trigger"
-                    buttonType="positive"
-                    indicateDropdown
-                    onClick={() => {
-                      this.setState((state) => ({ isOpenDropdown: !state.isOpenDropdown }));
-                    }}>
-                    {status === 'published' ? 'Change status' : ''}
-                  </Button>
-                }>
-                <DropdownList testId="change-state-menu">
-                  <DropdownListItem isTitle>Change status to</DropdownListItem>
-                  {secondary &&
-                    secondary.map(
-                      (action) =>
-                        action.isAvailable() && (
-                          <DropdownListItem
-                            key={action.label}
-                            testId={`change-state-${action.targetStateId}`}
-                            onClick={() => {
-                              action.execute();
-                              this.setState({ isOpenDropdown: false });
-                            }}
-                            isDisabled={action.isDisabled()}>
-                            {action.isRestricted() ? (
-                              <RestrictedAction actionName={action.label} />
-                            ) : (
-                              action.label
-                            )}
-                          </DropdownListItem>
-                        )
-                    )}
-                </DropdownList>
-              </Dropdown>
+                className="primary-publish-button">
+                {primary.label}
+              </Button>
+            )}
+            <Dropdown
+              className="secondary-publish-button-wrapper"
+              position="bottom-right"
+              isOpen={this.state.isOpenDropdown}
+              onClose={() => {
+                this.setState({ isOpenDropdown: false });
+              }}
+              toggleElement={
+                <Button
+                  className="secondary-publish-button"
+                  isFullWidth
+                  disabled={secondaryActionsDisabled}
+                  testId="change-state-menu-trigger"
+                  buttonType="positive"
+                  indicateDropdown
+                  onClick={() => {
+                    this.setState((state) => ({ isOpenDropdown: !state.isOpenDropdown }));
+                  }}>
+                  {status === 'published' ? 'Change status' : ''}
+                </Button>
+              }>
+              <DropdownList testId="change-state-menu">
+                <DropdownListItem isTitle>Change status to</DropdownListItem>
+                {secondary &&
+                  secondary.map(
+                    (action) =>
+                      action.isAvailable() && (
+                        <DropdownListItem
+                          key={action.label}
+                          testId={`change-state-${action.targetStateId}`}
+                          onClick={() => {
+                            action.execute();
+                            this.setState({ isOpenDropdown: false });
+                          }}
+                          isDisabled={action.isDisabled()}>
+                          {action.isRestricted() ? (
+                            <RestrictedAction actionName={action.label} />
+                          ) : (
+                            action.label
+                          )}
+                        </DropdownListItem>
+                      )
+                  )}
+              </DropdownList>
+            </Dropdown>
+          </div>
+          {primary && primary.isRestricted() ? (
+            <ActionRestrictedNote actionName={primary.label} />
+          ) : (
+            isPrimaryPublishBlocked && <ActionRestrictedNote reason={publicationBlockedReason} />
+          )}
+        </div>
+        <div className="entity-sidebar__status-more">
+          {updatedAt && (
+            <div className="entity-sidebar__save-status">
+              <i
+                className={classNames('entity-sidebar__saving-spinner', {
+                  'x--active': isSaving,
+                })}
+              />
+              <span className="entity-sidebar__last-saved" data-test-id="last-saved">
+                Last saved <RelativeTimeData value={updatedAt} />
+              </span>
             </div>
-            {primary && primary.isRestricted() ? (
-              <ActionRestrictedNote actionName={primary.label} />
-            ) : (
-              isPrimaryPublishBlocked && <ActionRestrictedNote reason={publicationBlockedReason} />
-            )}
-          </div>
-          <div className="entity-sidebar__status-more">
-            {updatedAt && (
-              <div className="entity-sidebar__save-status">
-                <i
-                  className={classNames('entity-sidebar__saving-spinner', {
-                    'x--active': isSaving,
-                  })}
-                />
-                <span className="entity-sidebar__last-saved" data-test-id="last-saved">
-                  Last saved <RelativeTimeData value={updatedAt} />
-                </span>
-              </div>
-            )}
-          </div>
-        </EntrySidebarWidget>
-      </ErrorHandler>
+          )}
+        </div>
+      </EntrySidebarWidget>
     );
   }
 }

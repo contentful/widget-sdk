@@ -13,7 +13,6 @@ import {
   Links as LinksWidget,
   Translation as TranslationWidget,
   Users as UsersWidget,
-  Schedule as ScheduleWidget,
   Releases as ReleasesWidget,
 } from '../defaults';
 import { WidgetNamespace } from 'features/widget-renderer';
@@ -116,10 +115,6 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
           widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
         },
         {
-          widgetId: ScheduleWidget.widgetId,
-          widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
-        },
-        {
           widgetId: TasksWidget.widgetId,
           widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
         },
@@ -149,7 +144,6 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
         configurableWidget: null,
         items: [
           PublicationWidget,
-          ScheduleWidget,
           TasksWidget,
           VersionsWidget,
           {
@@ -177,10 +171,6 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
       const configuration = [
         {
           widgetId: PublicationWidget.widgetId,
-          widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
-        },
-        {
-          widgetId: ScheduleWidget.widgetId,
           widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
         },
         {
@@ -246,7 +236,6 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
         configurableWidget: null,
         items: [
           PublicationWidget,
-          ScheduleWidget,
           TasksWidget,
           VersionsWidget,
           UsersWidget,

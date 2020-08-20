@@ -62,19 +62,18 @@ TimezoneNote.propTypes = {
   timezone: PropTypes.string,
 };
 
-function ScheduledActionModalDialog({
+function JobDialog({
   showUnpublish,
   handleSubmit,
   onCancel,
   isSubmitting,
-  mostRecentlyScheduledAction,
   pendingJobs,
   isMasterEnvironment,
   linkType,
 }) {
   const now = moment(Date.now());
   const currentTimezone = moment.tz.guess();
-  const suggestedDate = getSuggestedDate();
+  const suggestedDate = getSuggestedDate(pendingJobs, now);
   const [date, setDate] = useState(suggestedDate.format('YYYY-MM-DD'));
   const [time, setTime] = useState(suggestedDate.format('HH:mm'));
   const [action, setAction] = useState(ScheduledAction.Publish);
@@ -122,15 +121,7 @@ function ScheduledActionModalDialog({
   );
 
   function getSuggestedDate() {
-    if (mostRecentlyScheduledAction) {
-      return moment(mostRecentlyScheduledAction.scheduledFor.datetime)
-        .add(1, 'hours')
-        .startOf('hour');
-    }
-    // TODO: Refactor it.
-    // it expects pendingJobs by default in DESC sorting, so the first job is scheduled the farthest in future
-    // then when new jobs are created, it expects them to be appended to the array, so the first job is expected to be THE MOST RECENTLY SCHEDULED ONE
-    return pendingJobs?.length
+    return pendingJobs && pendingJobs.length !== 0
       ? moment(pendingJobs[0].scheduledFor.datetime).add(1, 'hours').startOf('hour')
       : now.add(1, 'hours').startOf('hour');
   }
@@ -243,15 +234,14 @@ function ScheduledActionModalDialog({
   );
 }
 
-ScheduledActionModalDialog.propTypes = {
+JobDialog.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
   isSubmitting: PropTypes.bool.isRequired,
   pendingJobs: PropTypes.array,
-  mostRecentlyScheduledAction: PropTypes.object,
   showUnpublish: PropTypes.bool,
   isMasterEnvironment: PropTypes.bool,
   linkType: PropTypes.string.isRequired,
 };
 
-export default ScheduledActionModalDialog;
+export default JobDialog;

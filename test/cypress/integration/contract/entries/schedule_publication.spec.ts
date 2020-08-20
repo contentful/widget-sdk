@@ -50,7 +50,8 @@ describe('Schedule Publication', () => {
       const validateAnEntryInteraction = validateAnEntryValidResponse.willSucceed();
       const scheduledPubinteraction = createScheduledPublicationForDefaultSpace.willSucceed();
 
-      cy.findByTestId('schedule-entity-button').click();
+      cy.findByTestId('change-state-menu-trigger').click();
+      cy.findByTestId('schedule-publication').click();
 
       cy.findByTestId('schedule-publication-modal')
         .should('be.visible')
@@ -60,13 +61,14 @@ describe('Schedule Publication', () => {
 
       cy.wait(validateAnEntryInteraction);
       cy.wait(scheduledPubinteraction);
-      cy.findByTestId('scheduled-action-card').should('have.length', 1);
+      cy.findByTestId('scheduled-item').should('have.length', 1);
     });
     it('cannot create more jobs than the set limit', () => {
       const validateAnEntryInteraction = validateAnEntryValidResponse.willSucceed();
       const scheduledPubinteraction = createScheduledPublicationForDefaultSpace.willFailWithMaxPendingJobsError();
 
-      cy.findByTestId('schedule-entity-button').click();
+      cy.findByTestId('change-state-menu-trigger').click();
+      cy.findByTestId('schedule-publication').click();
 
       cy.findByTestId('schedule-publication-modal')
         .should('be.visible')
@@ -77,7 +79,7 @@ describe('Schedule Publication', () => {
       cy.wait(validateAnEntryInteraction);
       cy.wait(scheduledPubinteraction);
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(700); // extra wait for notification animation 700ms
+      cy.wait(500); // extra wait for notification animation 500ms
       cy.findAllByTestId('cf-ui-notification')
         // .should('be.visible') // This is hidden by the modal
         .should('contain', 'There is a limit of 200 scheduled entries');
@@ -97,11 +99,11 @@ describe('Schedule Publication', () => {
 
       const interaction = cancelDefaultJobInDefaultSpace.willSucceed();
 
-      cy.findByTestId('cancel-scheduled-action-ddl').click();
-      cy.findByTestId('cancel-scheduled-action').click();
-      cy.findByTestId('scheduled-action-cancellation-modal')
+      cy.findByTestId('cancel-job-ddl').click();
+      cy.findByTestId('cancel-job').click();
+      cy.findByTestId('job-cancellation-modal')
         .should('be.visible')
-        .find('[data-test-id="confirm-scheduled-action-cancellation"]')
+        .find('[data-test-id="confirm-job-cancellation"]')
         .first()
         .click();
 
@@ -113,13 +115,23 @@ describe('Schedule Publication', () => {
     });
   });
   describe('error states', () => {
+    it('renders error note if the last job is failed', () => {
+      interactions.push(queryAllScheduledJobsForDefaultEntry.willFindOneFailedJob());
+
+      cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
+      cy.wait(interactions, { timeout: 10000 });
+
+      cy.findByTestId('failed-job-note').should('be.visible').should('contain', 'failed');
+      cy.findByTestId('change-state-published').should('be.enabled');
+    });
+
     it('renders error note if jobs endpoint returns 500', () => {
       interactions.push(queryAllScheduledJobsForDefaultEntry.willFailWithAnInternalServerError());
 
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
       cy.wait(interactions, { timeout: 10000 });
 
-      cy.findByTestId('scheduled-actions-error').should('be.visible').should('contain', 'refresh');
+      cy.findByTestId('cf-ui-note').should('be.visible').should('contain', 'refresh');
       cy.findByTestId('change-state-published').should('be.enabled');
     });
   });

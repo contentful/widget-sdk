@@ -5,7 +5,6 @@ export default {
   INCOMING_LINKS: 'incoming-links-widget',
   PUBLICATION: 'publication-widget',
   RELEASES: 'releases-widget',
-  SCHEDULE: 'schedule-widget',
   VERSIONS: 'versions-widget',
   INFO_PANEL: 'info-panel',
   JOBS: 'jobs-widget',
