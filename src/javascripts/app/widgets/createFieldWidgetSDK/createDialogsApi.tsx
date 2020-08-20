@@ -16,6 +16,8 @@ import trackExtensionRender from 'widgets/TrackExtensionRender';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
+import { Widget } from 'features/widget-renderer';
+import { applyDefaultValues } from 'widgets/WidgetParametersUtils';
 
 type FieldSDKWithoutDialogs = Omit<FieldExtensionSDK, 'dialogs'>;
 
@@ -116,9 +118,22 @@ async function findWidget(widgetNamespace: WidgetNamespace, widgetId: string) {
 
 function createDialogSDK(
   sdk: FieldSDKWithoutDialogs,
+  widget: Widget,
   onClose: (data?: any) => void,
   invocationParameters: Record<string, any>
 ): DialogExtensionSDK {
+  // Use installation parameters as they are.
+  let installationParameters = widget.parameters.values.installation;
+  // Extensions can declare defaults for parameters, we need to apply them.
+  if (widget.namespace === WidgetNamespace.EXTENSION) {
+    // TODO: eventually move `applyDefaultValues` to the renderer library
+    // and integrate with the loader class so defaults are auto-applied.
+    installationParameters = applyDefaultValues(
+      widget.parameters.definitions.installation,
+      installationParameters
+    );
+  }
+
   return {
     ...sdk,
     dialogs: createDialogsApi(sdk),
@@ -126,8 +141,7 @@ function createDialogSDK(
       is: (location: string) => location === WidgetLocation.DIALOG,
     },
     parameters: {
-      // Use installation parameters as they are.
-      installation: sdk.parameters.installation,
+      installation: installationParameters,
       // No instance parameters for dialogs.
       instance: {},
       // Parameters passed directly to the dialog.
@@ -158,7 +172,7 @@ async function openCustomDialog(
         : (options.width as string | undefined);
     const minHeightStyle = { minHeight: options.minHeight || 'auto' };
 
-    const dialogSdk = createDialogSDK(sdk, onClose, options.parameters || {});
+    const dialogSdk = createDialogSDK(sdk, widget, onClose, options.parameters || {});
 
     return (
       <Modal
