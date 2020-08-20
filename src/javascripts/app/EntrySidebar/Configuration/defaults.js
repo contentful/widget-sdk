@@ -17,6 +17,13 @@ export const Releases = {
   description: 'Built-in - View release, add to it, etc.',
 };
 
+export const Schedule = {
+  widgetId: SidebarWidgetTypes.SCHEDULE,
+  widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
+  name: 'Schedule',
+  description: 'Built-in - View schedule for entities.',
+};
+
 export const Tasks = {
   widgetId: SidebarWidgetTypes.TASKS,
   widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
@@ -63,6 +70,7 @@ export const Users = {
 
 export const defaultWidgetsMap = {
   [Publication.widgetId]: Publication,
+  [Schedule.widgetId]: Schedule,
   [Releases.widgetId]: Releases,
   [Tasks.widgetId]: Tasks,
   [ContentPreview.widgetId]: ContentPreview,
@@ -74,6 +82,7 @@ export const defaultWidgetsMap = {
 
 export const EntryConfiguration = [
   Publication,
+  Schedule,
   Releases,
   Tasks,
   ContentPreview,
@@ -83,10 +92,11 @@ export const EntryConfiguration = [
   Users,
 ];
 
-export const AssetConfiguration = [Publication, Releases, Links, Translation, Users];
+export const AssetConfiguration = [Publication, Schedule, Releases, Links, Translation, Users];
 
 const availabilityMap = {
   [Publication.widgetId]: true,
+  [Schedule.widgetId]: () => getCurrentSpaceFeature(FEATURES.SCHEDULED_PUBLISHING, false),
   [Releases.widgetId]: () => getReleasesFeatureVariation(),
   [Tasks.widgetId]: () => getCurrentSpaceFeature(FEATURES.CONTENT_WORKFLOW_TASKS, false),
   [ContentPreview.widgetId]: true,

@@ -5,10 +5,10 @@ import * as EndpointFactory from 'data/EndpointFactory';
 import APIClient from 'data/APIClient';
 
 import ScheduledAction from 'app/ScheduledActions/ScheduledActionAction';
-import JobDialog from './JobDialog';
+import ScheduledActionModalDialog from './ScheduledActionModalDialog';
 import { formatScheduledAtDate } from './utils';
 
-function ScheduledActionWidgetJobDialog({
+function ScheduledActionModal({
   onCreate,
   onCancel,
   isSubmitting,
@@ -17,6 +17,7 @@ function ScheduledActionWidgetJobDialog({
   entryTitle,
   spaceId,
   environmentId,
+  mostRecentlyScheduledAction,
   pendingJobs,
   isMasterEnvironment,
 }) {
@@ -52,19 +53,20 @@ function ScheduledActionWidgetJobDialog({
   }
 
   return (
-    <JobDialog
+    <ScheduledActionModalDialog
       handleSubmit={handleSubmit}
       onCancel={onCancel}
       isSubmitting={isSubmitting}
       pendingJobs={pendingJobs}
       showUnpublish={true}
+      mostRecentlyScheduledAction={mostRecentlyScheduledAction}
       isMasterEnvironment={isMasterEnvironment}
       linkType="entry"
     />
   );
 }
 
-ScheduledActionWidgetJobDialog.propTypes = {
+ScheduledActionModal.propTypes = {
   spaceId: PropTypes.string.isRequired,
   environmentId: PropTypes.string.isRequired,
   entity: PropTypes.object.isRequired,
@@ -78,6 +80,7 @@ ScheduledActionWidgetJobDialog.propTypes = {
   isSubmitting: PropTypes.bool.isRequired,
   pendingJobs: PropTypes.array,
   isMasterEnvironment: PropTypes.bool,
+  mostRecentlyScheduledAction: PropTypes.object,
 };
 
-export default ScheduledActionWidgetJobDialog;
+export default ScheduledActionModal;

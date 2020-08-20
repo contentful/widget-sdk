@@ -127,6 +127,43 @@ export default ({ $scope, emitter }) => {
     });
   });
 
+  const initializeSchedule = once(() => {
+    const notifyUpdate = () => {
+      const entity = K.getValue($scope.otDoc.data$);
+      emitter.emit(SidebarEventTypes.UPDATED_SCHEDULE_WIDGET, {
+        entityInfo: $scope.entityInfo,
+        entity: entity && { ...entity },
+        isMasterEnvironment: spaceContext.isMasterEnvironment(),
+        spaceId: spaceContext.getId(),
+        environmentId: spaceContext.getEnvironmentId(),
+        validator: $scope.editorContext.validator,
+        readOnlyScheduledActions: $scope.state.primary.isDisabled(),
+      });
+    };
+
+    notifyUpdate();
+
+    K.onValueScope($scope, $scope.otDoc.sysProperty, () => {
+      notifyUpdate();
+    });
+
+    // Listen for state updates, specifically "published" -> "changed" on pending local changes,
+    // which might be triggered before the auto-save request is fired changing the sys property.
+    K.onValueScope($scope, $scope.otDoc.resourceState.state$, () => {
+      notifyUpdate();
+    });
+
+    let setNotSavingTimeout;
+    K.onValueScope($scope, $scope.otDoc.state.isSaving$, (isSaving) => {
+      clearTimeout(setNotSavingTimeout);
+      if (!isSaving) {
+        setNotSavingTimeout = setTimeout(() => {
+          notifyUpdate();
+        }, 1000);
+      }
+    });
+  });
+
   const initializeTasksWidget = once(() => {
     const notifyUpdate = (update) => {
       emitter.emit(SidebarEventTypes.UPDATED_TASKS_WIDGET, {
@@ -212,6 +249,9 @@ export default ({ $scope, emitter }) => {
         break;
       case SidebarWidgetTypes.RELEASES:
         initializeReleases();
+        break;
+      case SidebarWidgetTypes.SCHEDULE:
+        initializeSchedule();
         break;
       case SidebarWidgetTypes.TASKS:
         initializeTasksWidget();

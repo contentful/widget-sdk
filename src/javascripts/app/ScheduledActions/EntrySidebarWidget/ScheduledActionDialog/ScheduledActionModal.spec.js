@@ -3,7 +3,7 @@ import { render, fireEvent, wait } from '@testing-library/react';
 import { Notification } from '@contentful/forma-36-react-components';
 
 import * as DateMocks from './__mocks__/DateMocks';
-import ScheduledActionDialog from './ScheduledActionWidgetJobDialog';
+import ScheduledActionModal from './ScheduledActionModal';
 import moment from 'moment';
 
 import * as ScheduledActionsAnalytics from 'app/ScheduledActions/Analytics/ScheduledActionsAnalytics';
@@ -13,7 +13,7 @@ jest.mock('data/APIClient', () =>
   jest.fn().mockImplementation(() => ({ validateEntry: jest.fn().mockReturnValue() }))
 );
 
-describe('ScheduledActionDialog', () => {
+describe('ScheduledActionModal', () => {
   let dateNowSpy;
   beforeAll(() => {
     dateNowSpy = DateMocks.spyOnDateNow();
@@ -31,7 +31,7 @@ describe('ScheduledActionDialog', () => {
       onCancel: jest.fn(),
       isSubmitting: false,
     };
-    return [render(<ScheduledActionDialog {...props} />), props];
+    return [render(<ScheduledActionModal {...props} />), props];
   };
 
   it('renders scheduling dialog', () => {

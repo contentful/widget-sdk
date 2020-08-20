@@ -9,6 +9,7 @@ import { AssetConfiguration, EntryConfiguration } from 'app/EntrySidebar/Configu
 
 import PublicationWidgetContainer from './PublicationWidget/PublicationWidgetContainer';
 import ReleasesWidgetContainer from '../Releases/ReleasesWidget/ReleasesWidgetContainer';
+import ScheduleWidgetContainer from './ScheduleWidget/ScheduleWidgetContainer';
 
 import TasksWidgetContainer from './TasksWidget/TasksWidgetContainer';
 import ContentPreviewWidget from './ContentPreviewWidget/ContentPreviewWidget';
@@ -61,6 +62,7 @@ const styles = {
 
 const ComponentsMap = {
   [SidebarWidgetTypes.PUBLICATION]: PublicationWidgetContainer,
+  [SidebarWidgetTypes.SCHEDULE]: ScheduleWidgetContainer,
   [SidebarWidgetTypes.RELEASES]: ReleasesWidgetContainer,
   [SidebarWidgetTypes.TASKS]: TasksWidgetContainer,
   [SidebarWidgetTypes.CONTENT_PREVIEW]: ContentPreviewWidget,

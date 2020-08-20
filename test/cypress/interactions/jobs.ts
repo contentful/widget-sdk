@@ -41,11 +41,6 @@ const failedJobsQuery = {
   order: '-scheduledFor.datetime',
   'sys.status': 'failed',
 };
-const entryIdQuery = {
-  'entity.sys.id': defaultEntryId,
-  'environment.sys.id': 'master',
-  order: '-scheduledFor.datetime',
-};
 
 enum States {
   NO_JOBS_FOR_DEFAULT_SPACE = 'jobs/no-jobs-for-default-space',
@@ -239,7 +234,7 @@ export const queryAllScheduledJobsForDefaultEntry = {
       provider: 'jobs',
       state: States.NO_JOBS_FOR_DEFAULT_SPACE,
       uponReceiving: `a query for all scheduled jobs of entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
-      withRequest: queryJobsForDefaultSpaceRequest(entryIdQuery),
+      withRequest: queryJobsForDefaultSpaceRequest(pendingJobsQueryWithoutLimit),
       willRespondWith: {
         status: 200,
         body: empty,
@@ -253,7 +248,7 @@ export const queryAllScheduledJobsForDefaultEntry = {
       provider: 'jobs',
       state: States.ONE_PENDING_JOB_SCHEDULED_FOR_DEFAULT_ENTRY,
       uponReceiving: `a query for all scheduled jobs of entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
-      withRequest: queryJobsForDefaultSpaceRequest(entryIdQuery),
+      withRequest: queryJobsForDefaultSpaceRequest(pendingJobsQueryWithoutLimit),
       willRespondWith: {
         status: 200,
         body: onePendingJobResponse,
@@ -267,7 +262,7 @@ export const queryAllScheduledJobsForDefaultEntry = {
       provider: 'jobs',
       state: States.JOB_EXECUTION_FAILED,
       uponReceiving: `a query for all scheduled jobs of entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
-      withRequest: queryJobsForDefaultSpaceRequest(entryIdQuery),
+      withRequest: queryJobsForDefaultSpaceRequest(pendingJobsQueryWithoutLimit),
       willRespondWith: {
         status: 200,
         body: oneFailedJobResponse,
@@ -281,7 +276,7 @@ export const queryAllScheduledJobsForDefaultEntry = {
       provider: 'jobs',
       state: States.INTERNAL_SERVER_ERROR,
       uponReceiving: `a query for all scheduled jobs of entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
-      withRequest: queryJobsForDefaultSpaceRequest(entryIdQuery),
+      withRequest: queryJobsForDefaultSpaceRequest(pendingJobsQueryWithoutLimit),
       willRespondWith: {
         status: 500,
         body: serverErrorResponse,

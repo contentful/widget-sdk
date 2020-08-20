@@ -19,14 +19,15 @@ import CancellationModal from './CancellationModal';
 import { DateTime } from 'app/ScheduledActions/FormattedDateAndTime';
 import { ActionPerformerName } from 'core/components/ActionPerformerName';
 import ScheduledActionAction from 'app/ScheduledActions/ScheduledActionAction';
+import { ScheduledActionsStateLink } from 'app/ScheduledActions/ScheduledActionsPageLink';
 
 const tagTypeForAction = {
   [ScheduledActionAction.Publish]: 'positive',
   [ScheduledActionAction.Unpublish]: 'secondary',
 };
 
-export function ScheduledByDropdownList({ job, border }) {
-  const userId = _.get(job, 'sys.createdBy.sys.id');
+export function ScheduledByDropdownList({ scheduledAction, border }) {
+  const userId = _.get(scheduledAction, 'sys.createdBy.sys.id');
 
   if (!userId) {
     return null;
@@ -37,7 +38,7 @@ export function ScheduledByDropdownList({ job, border }) {
       <DropdownListItem className={styles.scheduleDropdownScheduledBy} testId="scheduled-by">
         <span>
           <ActionPerformerName
-            link={_.get(job, 'sys.createdBy')}
+            link={_.get(scheduledAction, 'sys.createdBy')}
             formatName={(name) => `Scheduled by ${name === 'Me' ? name.toLowerCase() : name}`}
             loadingComponent={
               <SkeletonContainer>
@@ -52,11 +53,11 @@ export function ScheduledByDropdownList({ job, border }) {
 }
 
 ScheduledByDropdownList.propTypes = {
-  job: PropTypes.object,
+  scheduledAction: PropTypes.object,
   border: PropTypes.string,
 };
 
-class Job extends Component {
+class ScheduledAction extends Component {
   state = {
     isDropdownOpen: false,
     isCancellationDialogOpen: false,
@@ -70,23 +71,32 @@ class Job extends Component {
   };
 
   renderDropdown = () => {
-    const { size, isReadOnly, job, onCancel } = this.props;
+    const {
+      size,
+      isReadOnly,
+      scheduledAction,
+      onCancel,
+      isMasterEnvironment,
+      showLinkToSchedulesView,
+    } = this.props;
     const {
       sys: { id },
       action,
       scheduledFor: { datetime: scheduledAt },
-    } = job;
+    } = scheduledAction;
 
     // Do not render the dropdown for the read only small view (e.g. in the Schedule Action dialog)
     if (isReadOnly && size === 'small') {
       return null;
     }
 
-    const showDropdown = !isReadOnly || job.sys.createdBy;
+    const showDropdown = !isReadOnly || scheduledAction.sys.createdBy;
 
     if (!showDropdown) {
       return null;
     }
+
+    const shouldHaveDropdown = !isReadOnly || (isMasterEnvironment && showLinkToSchedulesView);
 
     return (
       <>
@@ -97,19 +107,35 @@ class Job extends Component {
             <Button
               className={styles.scheduleDropdownToggle}
               buttonType="naked"
-              data-test-id="cancel-job-ddl"
+              testId="cancel-scheduled-action-ddl"
               icon="MoreHorizontal"
               onClick={() => this.setState({ isDropdownOpen: !this.state.isDropdownOpen })}
             />
           }>
-          {!isReadOnly && (
+          {shouldHaveDropdown && (
             <DropdownList>
-              <DropdownListItem testId="cancel-job" onClick={this.toggleCancelDialog}>
-                Cancel Schedule
-              </DropdownListItem>
+              {!isReadOnly && (
+                <DropdownListItem
+                  testId="cancel-scheduled-action"
+                  onClick={this.toggleCancelDialog}>
+                  Cancel schedule
+                </DropdownListItem>
+              )}
+              {isMasterEnvironment && showLinkToSchedulesView && (
+                <ScheduledActionsStateLink isMasterEnvironment={isMasterEnvironment}>
+                  {({ getHref, onClick }) => (
+                    <DropdownListItem
+                      testId="view-all-schedules"
+                      href={getHref()}
+                      onClick={onClick}>
+                      View schedule
+                    </DropdownListItem>
+                  )}
+                </ScheduledActionsStateLink>
+              )}
             </DropdownList>
           )}
-          <ScheduledByDropdownList job={job} border="top" />
+          <ScheduledByDropdownList scheduledAction={scheduledAction} border="top" />
         </Dropdown>
 
         {!isReadOnly && (
@@ -130,21 +156,23 @@ class Job extends Component {
   };
 
   render() {
-    const { job, size } = this.props;
+    const { scheduledAction, size } = this.props;
     const {
       action,
       scheduledFor: { datetime: scheduledAt },
-    } = job;
+    } = scheduledAction;
 
     return (
-      <Card className={cn(styles.schedule, size === 'small' ? styles.scheduleSmall : '')}>
+      <Card
+        testId="scheduled-action-card"
+        className={cn(styles.schedule, size === 'small' ? styles.scheduleSmall : '')}>
         <div
           className={cn(styles.scheduleHeader, size === 'small' ? styles.scheduleHeaderSmall : '')}>
           <Icon icon="Clock" color="secondary" className={styles.scheduleIcon} />
           <Tag
             className={styles.actionType}
             tagType={tagTypeForAction[action]}
-            testId="scheduled-item">
+            testId="scheduled-action">
             {action}
           </Tag>
           {this.renderDropdown()}
@@ -160,12 +188,14 @@ class Job extends Component {
 }
 
 export const propTypes = {
-  job: PropTypes.object.isRequired,
+  scheduledAction: PropTypes.object.isRequired,
   onCancel: PropTypes.func.isRequired,
   isReadOnly: PropTypes.bool.isRequired,
   size: PropTypes.oneOf(['default', 'small']).isRequired,
   linkType: PropTypes.string.isRequired,
+  isMasterEnvironment: PropTypes.bool,
+  showLinkToSchedulesView: PropTypes.bool,
 };
-Job.propTypes = propTypes;
+ScheduledAction.propTypes = propTypes;
 
-export default Job;
+export default ScheduledAction;
