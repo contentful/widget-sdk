@@ -1,7 +1,7 @@
 import { createImmerReducer } from 'core/utils/createImmerReducer';
 import { ConfigurationItem } from 'app/ContentModel/Editor/WidgetsConfiguration/interfaces';
 
-interface State {
+export interface State {
   items: ConfigurationItem[];
   availableItems: ConfigurationItem[];
   configurableWidget: any;
