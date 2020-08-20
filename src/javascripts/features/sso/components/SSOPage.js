@@ -105,6 +105,7 @@ export function SSOPage({ organization }) {
               organization={organization}
               identityProvider={identityProvider}
               onUpdate={retrieve}
+              onTrackSupportClick={trackSupportClick}
             />
           )}
           {identityProvider.data && isEnabled && (

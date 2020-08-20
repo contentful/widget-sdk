@@ -13,11 +13,20 @@ import {
   HelpText,
   TextLink,
   Spinner,
+  Note,
+  Button,
 } from '@contentful/forma-36-react-components';
 import { useForm } from 'core/hooks';
 import { SSO_PROVIDERS_MAP, validate, connectionTestingAllowed } from 'features/sso/utils';
-import { updateFieldValue } from '../services/SSOService';
+import { updateFieldValue, enable } from '../services/SSOService';
 import { TestConnection } from './TestConnection';
+import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+
+const withInAppHelpUtmParams = buildUrlWithUtmParams({
+  source: 'webapp',
+  medium: 'idp-setup-form',
+  campaign: 'in-app-help',
+});
 
 const styles = {
   header: css({
@@ -43,10 +52,23 @@ const styles = {
     width: '5%',
     marginTop: tokens.spacingXl,
   }),
+  buttonSpaced: css({
+    marginTop: tokens.spacingL,
+  }),
+  noteSpaced: css({
+    marginTop: tokens.spacingXl,
+  }),
 };
 
-export function IDPDetailsForm({ orgId, orgName, identityProvider, onUpdate }) {
+export function IDPDetailsForm({
+  orgId,
+  orgName,
+  identityProvider,
+  onUpdate,
+  onTrackSupportClick,
+}) {
   const [updatingField, setUpdatingField] = useState('');
+  const [enablePending, setEnablePending] = useState(false);
 
   const submitForm = async (values, fieldName, identityProvider) => {
     setUpdatingField(fieldName);
@@ -104,6 +126,18 @@ export function IDPDetailsForm({ orgId, orgName, identityProvider, onUpdate }) {
   const handleInputChange = (e) => debouncedUpdate('idpSsoTargetUrl', e.target.value);
 
   const allowConnectionTest = connectionTestingAllowed(fields);
+
+  const handleEnable = async () => {
+    setEnablePending(true);
+    try {
+      await enable(orgId);
+    } catch {
+      setEnablePending(false);
+      return;
+    }
+    await onUpdate();
+    setEnablePending(false);
+  };
 
   return (
     <>
@@ -220,6 +254,33 @@ export function IDPDetailsForm({ orgId, orgName, identityProvider, onUpdate }) {
             </div>
           )}
         </div>
+        <Note className={styles.noteSpaced}>
+          To enable SSO in{' '}
+          <TextLink
+            href={withInAppHelpUtmParams(
+              'https://www.contentful.com/faq/sso/#how-does-sso-restricted-mode-work'
+            )}>
+            Restricted mode
+          </TextLink>
+          , requiring users to sign in using SSO,{' '}
+          <TextLink
+            onClick={onTrackSupportClick}
+            testId="support-link"
+            href={withInAppHelpUtmParams('https://www.contentful.com/support/')}>
+            reach out to support
+          </TextLink>
+          .
+        </Note>
+        <div className={styles.buttonSpaced}>
+          <Button
+            buttonType="positive"
+            testId="enable-button"
+            onClick={handleEnable}
+            loading={enablePending}
+            disabled={identityProvider.data.testConnectionResult !== 'success'}>
+            Enable SSO
+          </Button>
+        </div>
       </section>
     </>
   );
@@ -230,4 +291,5 @@ IDPDetailsForm.propTypes = {
   orgName: PropTypes.string.isRequired,
   identityProvider: IdentityProviderPropType,
   onUpdate: PropTypes.func,
+  onTrackSupportClick: PropTypes.func,
 };
