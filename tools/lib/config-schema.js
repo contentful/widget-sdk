@@ -62,6 +62,7 @@ module.exports = strictObject(
   ),
   {
     clientId: hex(64),
+    secureAssetsUrl: urlSchema,
   }
 );
 
