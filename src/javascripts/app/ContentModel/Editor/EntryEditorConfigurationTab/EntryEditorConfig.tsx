@@ -28,6 +28,20 @@ const convertToWidgetConfiguration = (widget) => ({
   ...pick(widget, ['name', 'locations', 'parameters']),
 });
 
+const findUnusedDefaultWidgets = (defaultWidgets, configuration) => {
+  return defaultWidgets.filter(
+    widget => !configuration.find(
+      item => item.widgetNamespace === WidgetNamespace.EDITOR_BUILTIN && widget.widgetId === item.widgetId
+    )
+  )
+}
+
+const removeDisabledWidgets = widget => !widget.disabled;
+
+const enrichWidgetData = (defaultWidgets, customWidgets) => item => item.widgetNamespace === WidgetNamespace.EDITOR_BUILTIN ?
+                                    defaultWidgets.find((widget) => item.widgetId === widget.widgetId)
+                                    : customWidgets.find((widget) => item.id === widget.widgetId)
+
 function createStateFromConfiguration(configuration, defaultWidgets, customWidgets): State {
   if (configuration.length === 0) {
     return {
@@ -37,13 +51,12 @@ function createStateFromConfiguration(configuration, defaultWidgets, customWidge
     };
   }
 
+  const unusedDefaultEditors = findUnusedDefaultWidgets(defaultWidgets, configuration);
+
   const items = configuration
-    .filter((item) => !item.disabled)
-    .map((item) =>
-      item.widgetNamespace === WidgetNamespace.EDITOR_BUILTIN
-        ? defaultWidgets.find((widget) => item.widgetId === widget.widgetId)
-        : customWidgets.find((widget) => item.id === widget.widgetId)
-    )
+    .filter(removeDisabledWidgets)
+    .map(enrichWidgetData(defaultWidgets, customWidgets))
+    .concat(unusedDefaultEditors)
     .filter((item) => !!item);
 
   return {
