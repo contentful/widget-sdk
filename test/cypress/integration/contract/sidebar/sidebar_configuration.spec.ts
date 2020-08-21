@@ -53,7 +53,7 @@ describe('Sidebar configuration', () => {
   describe('Saving the content type with configured custom sidebar', () => {
     beforeEach(() => {
       cy.resetAllFakeServers();
-      cy.findByTestId('custom-sidebar-option').find('input').click();
+      cy.findByTestId('reset-widet-configuration').click();
     });
 
     it('checks that content type with a custom sidebar has been successfully saved', () => {

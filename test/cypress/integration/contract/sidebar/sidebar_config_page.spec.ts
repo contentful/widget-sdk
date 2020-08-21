@@ -29,15 +29,8 @@ describe('Sidebar configuration', () => {
   const widgetNames = ['Publish & Status', 'Preview', 'Links', 'Translation', 'Versions', 'Users'];
 
   describe('Opening the page with no configuration saved', () => {
-    it('displays sidebar options correctly', () => {
-      cy.findByTestId('default-sidebar-option').find('input').should('be.checked');
-      cy.findByTestId('custom-sidebar-option').find('input').should('not.be.checked');
-    });
-
-    it('renders the page with a sidebar with no configurations', () => {
-      cy.findByTestId('default-sidebar-column')
-        .should('be.visible')
-        .findAllByTestId('sidebar-widget-name')
+    it('renders the page with default configuration', () => {
+      cy.findAllByTestId('sidebar-widget-name')
         .should('have.length', widgetNames.length)
         .each(($widget, index) => {
           cy.wrap($widget).should('have.text', widgetNames[index]);
@@ -47,12 +40,7 @@ describe('Sidebar configuration', () => {
 
   describe('Enabling of a custom sidebar configuration option', () => {
     beforeEach(() => {
-      cy.findByTestId('custom-sidebar-option').find('input').click();
-    });
-
-    it('renders the page with custom sidebar configuration option enabled', () => {
-      cy.findByTestId('custom-sidebar-column').should('be.visible');
-      cy.findByTestId('available-sidebar-items').should('be.visible');
+      cy.findByTestId('reset-widet-configuration').click();
     });
 
     it('checks changing the order of widgets in custom sidebar', () => {
@@ -99,6 +87,30 @@ describe('Sidebar configuration', () => {
         .should('have.length', 1)
         .findByTestId('add-widget-to-sidebar')
         .click();
+      cy.findAllByTestId('sidebar-widget-name').should('have.length', widgetNames.length);
+    });
+
+    it('can reset configuration after adding and removing items', () => {
+      cy.findAllByTestId('sidebar-widget-item')
+        .eq(0)
+        .findAllByTestId('cf-ui-icon-button')
+        .eq(0)
+        .click();
+
+      cy.findAllByTestId('sidebar-widget-item')
+        .eq(0)
+        .findAllByTestId('cf-ui-icon-button')
+        .eq(0)
+        .click();
+
+      cy.findAllByTestId('sidebar-widget-name')
+        .should('have.length', widgetNames.length - 2)
+        .should('not.contain', 'Publish & Status');
+
+      cy.findAllByTestId('available-widget').should('have.length', 2);
+
+      cy.findByTestId('reset-widet-configuration').click();
+
       cy.findAllByTestId('sidebar-widget-name').should('have.length', widgetNames.length);
     });
   });

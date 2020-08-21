@@ -81,7 +81,9 @@ export default function CustomConfiguration({
     <>
       <span className={styles.header}>
         <Subheading className={styles.customTitle}>{title}</Subheading>
-        <TextLink onClick={onResetClick}>Reset to default</TextLink>
+        <TextLink testId="reset-widet-configuration" onClick={onResetClick}>
+          Reset to default
+        </TextLink>
       </span>
       {items.length !== 0 && (
         <SortableContainer
