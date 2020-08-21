@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { IconButton, Paragraph, Tag } from '@contentful/forma-36-react-components';
@@ -40,13 +39,23 @@ const styles = {
   }),
 };
 
+interface AvailableWidgetProps {
+  name: string;
+  widgetNamespace: string;
+  onClick: () => void;
+  index: number;
+  availabilityStatus: 'alpha' | 'beta';
+  location: string;
+}
+
 export default function AvailableWidget({
   name,
   onClick,
   widgetNamespace,
   index,
   availabilityStatus,
-}) {
+  location,
+}: AvailableWidgetProps) {
   const renderAvailabilityStatus = () => <Tag>{availabilityStatus}</Tag>;
 
   return (
@@ -72,18 +81,10 @@ export default function AvailableWidget({
           buttonType="muted"
           onClick={onClick}
           iconProps={{ icon: 'PlusCircle' }}
-          label={`Add ${name} to your sidebar`}
-          testId="add-widget-to-sidebar"
+          label={`Add ${name} to your ${location}`}
+          testId="add-widget-to-${location.toLowerCase()}"
         />
       </div>
     </div>
   );
 }
-
-AvailableWidget.propTypes = {
-  name: PropTypes.string.isRequired,
-  widgetNamespace: PropTypes.string.isRequired,
-  onClick: PropTypes.func.isRequired,
-  index: PropTypes.number.isRequired,
-  availabilityStatus: PropTypes.oneOf(['alpha', 'beta']),
-};

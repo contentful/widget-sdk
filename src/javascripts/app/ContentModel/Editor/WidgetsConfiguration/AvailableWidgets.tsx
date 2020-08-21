@@ -1,10 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Subheading, Paragraph, TextLink } from '@contentful/forma-36-react-components';
 import AvailableWidget from './AvailableWidget';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+import { ConfigurationItem } from './interfaces';
 
 const styles = {
   availableItemsTitle: css({
@@ -21,13 +21,21 @@ const styles = {
   }),
 };
 
-const withInAppHelpUtmParams = buildUrlWithUtmParams({
-  source: 'webapp',
-  medium: 'use-customer-sidebar-available-items',
-  campaign: 'in-app-help',
-});
+const withInAppHelpUtmParams = (medium: string) =>
+  buildUrlWithUtmParams({
+    source: 'webapp',
+    medium,
+    campaign: 'in-app-help',
+  });
 
-export default function AvailableItems(props) {
+interface AvailableWidgetsProps {
+  items: ConfigurationItem[]; // todo
+  onAddItem: (item: ConfigurationItem) => void;
+  location: string;
+  inAppHelpMedium: string;
+}
+
+export default function AvailableItems(props: AvailableWidgetsProps) {
   const { items } = props;
 
   return (
@@ -36,6 +44,7 @@ export default function AvailableItems(props) {
       <div className={styles.availableItemsList}>
         {items.map((item, index) => (
           <AvailableWidget
+            location={props.location}
             key={`${item.widgetNamespace},${item.widgetId}`}
             name={item.name}
             index={index}
@@ -64,7 +73,7 @@ export default function AvailableItems(props) {
       <Paragraph>
         Learn more about{' '}
         <TextLink
-          href={withInAppHelpUtmParams(
+          href={withInAppHelpUtmParams(inAppHelpMedium)(
             'https://www.contentful.com/developers/docs/extensibility/app-framework/tutorial/?utm_campaign=in-app-help'
           )}
           target="_blank"
@@ -75,8 +84,3 @@ export default function AvailableItems(props) {
     </div>
   );
 }
-
-AvailableItems.propTypes = {
-  items: PropTypes.array.isRequired,
-  onAddItem: PropTypes.func.isRequired,
-};
