@@ -36,7 +36,7 @@ interface AvailableWidgetsProps {
 }
 
 export default function AvailableItems(props: AvailableWidgetsProps) {
-  const { items } = props;
+  const { items, location, onAddItem, inAppHelpMedium } = props;
 
   console.log(items);
 
@@ -46,14 +46,14 @@ export default function AvailableItems(props: AvailableWidgetsProps) {
       <div className={styles.availableItemsList}>
         {items.map((item, index) => (
           <AvailableWidget
-            location={props.location}
+            location={location}
             key={`${item.widgetNamespace},${item.widgetId}`}
             name={item.name}
             index={index}
             widgetNamespace={item.widgetNamespace}
             availabilityStatus={item.availabilityStatus}
             onClick={() => {
-              props.onAddItem(item);
+              onAddItem(item);
             }}
           />
         ))}
@@ -75,7 +75,7 @@ export default function AvailableItems(props: AvailableWidgetsProps) {
       <Paragraph>
         Learn more about{' '}
         <TextLink
-          href={withInAppHelpUtmParams(props.inAppHelpMedium)(
+          href={withInAppHelpUtmParams(inAppHelpMedium)(
             'https://www.contentful.com/developers/docs/extensibility/app-framework/tutorial/?utm_campaign=in-app-help'
           )}
           target="_blank"
