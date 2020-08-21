@@ -1,18 +1,18 @@
 import { getDefaultEditors, getDefaultSidebar } from '../AppEditorInterfaces';
 import { WidgetNamespace } from 'features/widget-renderer';
 
-export enum PositionalEditorInterface {
+export enum PositionalWidget {
   Editors = 'editors',
   Sidebar = 'sidebar',
 }
 
 export const makeGetDefaultByType = {
-  [PositionalEditorInterface.Editors]: getDefaultEditors,
-  [PositionalEditorInterface.Sidebar]: getDefaultSidebar,
+  [PositionalWidget.Editors]: getDefaultEditors,
+  [PositionalWidget.Sidebar]: getDefaultSidebar,
 };
 
-export const positionalEditorInterfaceFixtures = {
-  [PositionalEditorInterface.Editors]: [
+export const positionalWidgetFixtures = {
+  [PositionalWidget.Editors]: [
     {
       widgetNameSpace: WidgetNamespace.EDITOR_BUILTIN,
       widgetId: 'default-editor',
@@ -22,7 +22,7 @@ export const positionalEditorInterfaceFixtures = {
       widgetId: 'reference-tree',
     },
   ],
-  [PositionalEditorInterface.Sidebar]: [
+  [PositionalWidget.Sidebar]: [
     {
       widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
       widgetId: 'publication-widget',

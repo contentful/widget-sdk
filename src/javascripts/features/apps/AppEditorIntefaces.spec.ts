@@ -5,9 +5,9 @@ import {
 import { WidgetNamespace } from 'features/widget-renderer';
 import {
   makeGetDefaultByType,
-  PositionalEditorInterface,
-  positionalEditorInterfaceFixtures,
-} from './__mocks__/positional-editor-interfaces';
+  PositionalWidget,
+  positionalWidgetFixtures,
+} from './__mocks__/positional-widget';
 
 const APP_ID = 'appid';
 
@@ -162,9 +162,9 @@ describe('AppEditorInterfaces', () => {
     });
 
     describe('positional editor interfaces', () => {
-      for (const ei of Object.values(PositionalEditorInterface)) {
+      for (const ei of Object.values(PositionalWidget)) {
         it(`updates widget position in ${ei}`, async () => {
-          const mockValues = positionalEditorInterfaceFixtures[ei];
+          const mockValues = positionalWidgetFixtures[ei];
           const position = 1;
 
           cma.getEditorInterfaces.mockImplementationOnce(() =>
