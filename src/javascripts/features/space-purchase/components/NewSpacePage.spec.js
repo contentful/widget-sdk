@@ -46,7 +46,9 @@ describe('NewSpacePage', () => {
 
       userEvent.click(screen.getByTestId('navigate-back'));
 
-      expect(screen.getByTestId('space-selection-section')).toBeVisible();
+      waitFor(() => {
+        expect(screen.getByTestId('space-selection-section')).toBeVisible();
+      });
     });
 
     it('should go back a step when browser back is clicked', () => {

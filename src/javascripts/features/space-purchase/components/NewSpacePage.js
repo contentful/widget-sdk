@@ -38,9 +38,10 @@ export const NewSpacePage = ({ organizationId, templatesList }) => {
   };
 
   const navigateToNextStep = () => {
-    if (currentStep < PURCHASE_FLOW_STEPS.length) {
+    if (currentStep + 1 < PURCHASE_FLOW_STEPS.length) {
       setCurrentStep(currentStep + 1);
-      window.history.pushState('does not matter', null, null);
+      // It does not matter what state is pushed to history, just that a state is pushed to mimic a new page load.
+      window.history.pushState('does not matter', null);
     }
   };
 
@@ -55,13 +56,13 @@ export const NewSpacePage = ({ organizationId, templatesList }) => {
 
   const navigateToPreviousStep = useCallback(
     (shouldRemovePushState = true) => {
-      // If the user clicks the browsers back button, window.history.back() is already called,
-      // so we only want to call it when the user clicks a back button in the space purchase flow.
+      // If the user clicks the browsers back button, window.history.back() is already called which removes the pushedState,
+      // so we only want to update the current step. However if the user clicks a navigateBack button, we also want to remove
+      // the pushedState, so we call window.history.back() to remove the pushedState, which also as a result calls this function again
+      // and properly updates the currentStep
       if (shouldRemovePushState) {
         window.history.back();
-      }
-
-      if (currentStep > 0) {
+      } else if (currentStep > 0) {
         setCurrentStep(currentStep - 1);
       }
     },
