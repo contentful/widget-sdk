@@ -105,6 +105,7 @@ function EntryEditorConfiguration(props: EditorConfigProps) {
           configuration={{
             location: 'Tabs',
             description: 'Configure the tabs of the entry editor for this content type.',
+            inAppHelpMedium: 'use-customer-editors-available-items',
           }}
         />
       )}

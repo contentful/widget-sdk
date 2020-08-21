@@ -59,10 +59,11 @@ interface WidgetsConfigurationProps {
   configuration: {
     location: string;
     description: string;
+    inAppHelpMedium: string; // used for the in app help in `AvailableWidgets.tsx`
   };
 }
 
-const isSameWidget = (widgetOne, widgetTwo) =>
+const isSameWidget = (widgetOne: ConfigurationItem, widgetTwo: ConfigurationItem) =>
   widgetOne.widgetId === widgetTwo.widgetId &&
   widgetOne.widgetNamespace === widgetTwo.widgetNamespace;
 
@@ -84,6 +85,8 @@ const WidgetsConfiguration: React.FC<WidgetsConfigurationProps> = ({
         <React.Fragment>
           <div className={styles.additionalColumn} data-test-id="available-sidebar-items">
             <AvailableWidgets
+              location={configuration.location}
+              inAppHelpMedium={configuration.inAppHelpMedium}
               items={unusedAvailableItems}
               onAddItem={(item: ConfigurationItem) => {
                 dispatch(addItemToSidebar(item));

@@ -40,6 +40,7 @@ function SidebarConfiguration(props) {
           configuration={{
             location: 'Sidebar',
             description: 'Configure the sidebar for this content type.',
+            inAppHelpMedium: 'use-customer-sidebar-available-items',
           }}
         />
       )}
