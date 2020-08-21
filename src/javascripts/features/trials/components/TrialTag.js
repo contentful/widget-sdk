@@ -10,7 +10,7 @@ import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import StateLink from 'app/common/StateLink';
 import { useAsync } from 'core/hooks';
-import { initTrialProductTour } from '../intercomProductTour';
+import { initTrialProductTour } from '../services/intercomProductTour';
 
 const styles = {
   tag: css({
