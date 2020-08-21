@@ -10,6 +10,7 @@ import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import StateLink from 'app/common/StateLink';
 import { useAsync } from 'core/hooks';
+import { initTrialProductTour } from '../services/intercomProductTour';
 
 const styles = {
   tag: css({
@@ -19,7 +20,6 @@ const styles = {
     borderRadius: tokens.spacing2Xs,
   }),
   link: css({
-    letterSpacing: '0.05rm',
     ':link': {
       whiteSpace: 'pre',
     },
@@ -56,7 +56,10 @@ export const TrialTag = () => {
     ? moment().isSameOrBefore(moment(platformTrialEndDate), 'date')
     : false;
 
-  if (!isOnPlatformTrial) {
+  if (isOnPlatformTrial) {
+    // Start intercom product tour
+    initTrialProductTour();
+  } else {
     return null;
   }
 

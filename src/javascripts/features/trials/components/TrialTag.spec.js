@@ -7,6 +7,7 @@ import { getCurrentOrg } from 'core/utils/getCurrentOrg';
 import { track } from 'analytics/Analytics';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { href } from 'states/Navigator';
+import { initTrialProductTour } from '../services/intercomProductTour';
 
 const trialEndsAt = '2020-10-10';
 const trialEndedAt = '2020-09-10';
@@ -53,6 +54,10 @@ jest.mock('states/Navigator', () => ({
   href: jest.fn(),
 }));
 
+jest.mock('../services/intercomProductTour', () => ({
+  initTrialProductTour: jest.fn(),
+}));
+
 describe('TrialTag', () => {
   beforeEach(() => {
     getVariation.mockClear().mockResolvedValue(true);
@@ -80,7 +85,7 @@ describe('TrialTag', () => {
 
   it('renders when the organization is on platform trial', async () => {
     build();
-
+    await waitFor(() => expect(initTrialProductTour).toBeCalled());
     await waitFor(() =>
       expect(screen.getByTestId('trial-tag')).toHaveTextContent(`TRIAL - ${daysLeft} DAYS`)
     );
