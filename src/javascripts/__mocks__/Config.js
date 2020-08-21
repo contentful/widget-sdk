@@ -7,6 +7,7 @@ export const supportUrl = `https://support.contentful.com/`;
 export const helpCenterUrl = 'https://www.contentful.com/help';
 export const developerDocsUrl = 'https://www.contentful.com/developers/docs/';
 export const developersChangelogUrl = 'https://www.contentful.com/developers/changelog/';
+export const secureAssetsUrl = 'https://secure.ctfassets.net';
 
 export const launchDarkly = {
   envId: 'jest',

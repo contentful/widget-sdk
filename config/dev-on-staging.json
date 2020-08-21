@@ -4,6 +4,7 @@
   "apiUrl": "https://api.flinkly.com",
   "uploadApiUrl": "https://upload.flinkly.com",
   "assetUrl": "http://localhost:3001",
+  "secureAssetsUrl": "https://secure.flinkly.com",
   "otUrl": [
     "https://ot.flinkly.com",
     "https://ot1.flinkly.com",

@@ -1,4 +1,5 @@
 import { stringify } from 'qs';
+import { window } from 'core/services/window';
 
 /**
  * @description

@@ -5,6 +5,7 @@ import * as Config from 'Config';
 import postForm from 'data/Request/PostForm';
 import { getModule } from 'core/NgRegistry';
 import { window } from 'core/services/window';
+import * as logger from 'services/logger';
 
 /**
  * @name Authentication
@@ -78,18 +79,22 @@ export const token$ = tokenBus.property;
  *
  * @returns {Promise<string>}
  */
-export const refreshToken = createExclusiveTask(() => {
+export const refreshToken = createExclusiveTask(async () => {
   tokenStore.remove();
   tokenMVar.empty();
-  return fetchNewToken().then((token) => {
-    if (token) {
-      tokenStore.set(token);
-      updateToken(token);
-      return token;
-    } else {
-      redirectToLogin();
+  const token = await fetchNewToken();
+  if (token) {
+    try {
+      await loginSecureAssets(token);
+    } catch (err) {
+      logger.logServerWarn('Error signing in to secure assets host', err);
     }
-  });
+    tokenStore.set(token);
+    updateToken(token);
+    return token;
+  } else {
+    redirectToLogin();
+  }
 }).call;
 
 /**
@@ -135,6 +140,7 @@ export function init() {
   } else if (!previousToken) {
     refreshAndRedirect();
   } else {
+    // XXX[tmw]: Might need to re-sign-in to secure assets here?
     updateToken(previousToken);
   }
 }
@@ -170,6 +176,11 @@ export async function logout() {
 
   try {
     await revokeToken(token);
+    try {
+      await logoutSecureAssets();
+    } catch (err) {
+      logger.logServerWarn('Error logging out of secure assets host', err);
+    }
   } finally {
     setLocation(Config.authUrl('logout'));
   }
@@ -262,6 +273,37 @@ function fetchNewToken() {
     .catch(() => {
       return null;
     });
+}
+
+async function loginSecureAssets(cmaToken) {
+  const host = Config.secureAssetsUrl;
+  if (!host) {
+    return;
+  }
+  // These return 204, empty content, which postForm doesn't support
+  const res = await window.fetch(`${host}/login`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${cmaToken}`,
+    },
+  });
+  if (!res.ok) {
+    throw new Error(res.text());
+  }
+}
+
+async function logoutSecureAssets() {
+  const host = Config.secureAssetsUrl;
+  if (!host) {
+    return;
+  }
+  // These return 204, empty content, which postForm doesn't support
+  const res = await window.fetch(`${host}/logout`, {
+    method: 'POST',
+  });
+  if (!res.ok) {
+    throw new Error(res.text());
+  }
 }
 
 function loadTokenFromHash() {

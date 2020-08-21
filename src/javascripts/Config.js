@@ -150,6 +150,11 @@ export const domain = settings.main_domain;
 export const appUrl = `https://app.${domain}`;
 
 /**
+ * Secure assets host url
+ */
+export const secureAssetsUrl = settings.secureAssetsUrl;
+
+/**
  * Snowplow config object
  */
 export const snowplow = settings.snowplow;
