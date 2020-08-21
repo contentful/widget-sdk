@@ -73,12 +73,7 @@ export function IDPDetailsForm({
   const submitForm = async (values, fieldName, identityProvider) => {
     setUpdatingField(fieldName);
     try {
-      await updateFieldValue(
-        fieldName,
-        values[fieldName],
-        identityProvider.data.sys.version,
-        orgId
-      );
+      await updateFieldValue(fieldName, values[fieldName], identityProvider.sys.version, orgId);
     } catch (e) {
       const errors = {
         [fieldName]: e.message,
@@ -93,18 +88,18 @@ export function IDPDetailsForm({
   const { onChange, onSubmit, fields, form } = useForm({
     fields: {
       idpName: {
-        value: identityProvider.data.idpName,
+        value: identityProvider.idpName,
       },
       idpSsoTargetUrl: {
-        value: identityProvider.data.idpSsoTargetUrl,
+        value: identityProvider.idpSsoTargetUrl,
         validator: validate.bind(null, 'idpSsoTargetUrl'),
       },
       idpCert: {
-        value: identityProvider.data.idpCert,
+        value: identityProvider.idpCert,
         validator: validate.bind(null, 'idpCert'),
       },
       ssoName: {
-        value: identityProvider.data.ssoName,
+        value: identityProvider.ssoName,
         validator: validate.bind(null, 'ssoName'),
       },
     },
@@ -178,7 +173,7 @@ export function IDPDetailsForm({
               name="idpSsoTargetUrl"
               testId="idp-sso-target-url"
               onChange={handleInputChange}
-              value={fields.idpSsoTargetUrl.value}
+              value={fields.idpSsoTargetUrl.value ? fields.idpSsoTargetUrl.value : ''}
               validationMessage={fields.idpSsoTargetUrl.error}
             />
           </div>
@@ -199,7 +194,7 @@ export function IDPDetailsForm({
               textInputProps={{
                 rows: 8,
               }}
-              value={fields.idpCert.value}
+              value={fields.idpCert.value ? fields.idpCert.value : ''}
               onChange={(e) => debouncedUpdate('idpCert', e.target.value)}
               validationMessage={fields.idpCert.error}
             />
@@ -215,7 +210,7 @@ export function IDPDetailsForm({
         <TestConnection
           orgId={orgId}
           disabled={!allowConnectionTest}
-          ssoConfig={identityProvider.data}
+          ssoConfig={identityProvider}
           onComplete={onUpdate}
         />
       </section>
@@ -243,7 +238,7 @@ export function IDPDetailsForm({
                 width: 'large',
                 placeholder: `E.g. ${kebabCase(orgName)}-sso`,
               }}
-              value={fields.ssoName.value}
+              value={fields.ssoName.value ? fields.ssoName.value : ''}
               onChange={(e) => debouncedUpdate('ssoName', e.target.value)}
               validationMessage={fields.ssoName.error}
             />
@@ -277,7 +272,7 @@ export function IDPDetailsForm({
             testId="enable-button"
             onClick={handleEnable}
             loading={enablePending}
-            disabled={identityProvider.data.testConnectionResult !== 'success'}>
+            disabled={identityProvider.testConnectionResult !== 'success'}>
             Enable SSO
           </Button>
         </div>

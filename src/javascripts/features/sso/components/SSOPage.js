@@ -35,12 +35,15 @@ const styles = {
 };
 
 export function SSOPage({ organization }) {
-  const [identityProvider, setIdentityProvider] = useState({});
+  const [identityProvider, setIdentityProvider] = useState(null);
   const [idpLoading, setIdpLoading] = useState(false);
+  const [loadingState, setLoadingState] = useState(false);
 
   const retrieve = useCallback(async () => {
+    setLoadingState(true);
     const idp = await retrieveIdp(organization.sys.id);
-    setIdentityProvider({ data: idp });
+    setIdentityProvider(idp);
+    setLoadingState(false);
     return;
   }, [organization.sys.id]);
 
@@ -59,8 +62,8 @@ export function SSOPage({ organization }) {
     track('sso:contact_support');
   };
 
-  const isEnabled = identityProvider?.data?.enabled ?? false;
-  const restrictedModeEnabled = identityProvider?.data?.restrictedMode ?? false;
+  const isEnabled = identityProvider?.enabled ?? false;
+  const restrictedModeEnabled = identityProvider?.restrictedMode ?? false;
 
   return (
     <Workbench className="sso-setup">
@@ -70,7 +73,7 @@ export function SSOPage({ organization }) {
       />
       <Workbench.Content>
         <div className="sso-setup__main">
-          {!isEnabled && (
+          {!isEnabled && !loadingState && !identityProvider && (
             <React.Fragment>
               <Heading element="h1" className={styles.heading}>
                 Set up Single Sign-On (SSO) SAML 2.0
@@ -88,19 +91,17 @@ export function SSOPage({ organization }) {
                   Talk to support
                 </TextLink>
               </Paragraph>
+              <Button
+                buttonType="primary"
+                isFullWidth={false}
+                testId="create-idp"
+                loading={idpLoading}
+                onClick={handleCreateIdp}>
+                Set up SSO
+              </Button>
             </React.Fragment>
           )}
-          {!identityProvider.data && (
-            <Button
-              buttonType="primary"
-              isFullWidth={false}
-              testId="create-idp"
-              loading={idpLoading}
-              onClick={handleCreateIdp}>
-              Set up SSO
-            </Button>
-          )}
-          {identityProvider.data && !isEnabled && (
+          {identityProvider && !isEnabled && (
             <IDPSetupForm
               organization={organization}
               identityProvider={identityProvider}
@@ -108,10 +109,10 @@ export function SSOPage({ organization }) {
               onTrackSupportClick={trackSupportClick}
             />
           )}
-          {identityProvider.data && isEnabled && (
+          {identityProvider && isEnabled && (
             <SSOEnabled
               orgId={organization.sys.id}
-              ssoName={identityProvider.data.ssoName}
+              ssoName={identityProvider.ssoName}
               restrictedModeEnabled={restrictedModeEnabled}
               onTrackSupportClick={trackSupportClick}
             />

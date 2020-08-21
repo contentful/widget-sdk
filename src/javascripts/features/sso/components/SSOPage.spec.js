@@ -36,6 +36,8 @@ describe('SSOPage', () => {
 
   it('should show form afer create-idp button was clicked', async () => {
     renderComponent();
+    await waitFor(() => expect(retrieveIdp).toHaveBeenCalled());
+
     const createButton = screen.getByTestId('create-idp');
     fireEvent.click(createButton);
 

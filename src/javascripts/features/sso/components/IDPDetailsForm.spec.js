@@ -8,19 +8,17 @@ import userEvent from '@testing-library/user-event';
 
 const mockIdentityProvider = Fake.IdentityProvider();
 const mockIdentityProviderEnabled = {
-  data: {
-    sys: { type: 'IdentityProvider', id: '2y6J2E3UVEzi5RFhI6xvPl', version: 8 },
-    enabled: true,
-    idpCert:
-      '-----BEGIN CERTIFICATE-----MIIEHTCCAwWgAwIBAgIURpeRQfkW81lZeIepYruVOSshzsgwDQYJKoZIhvcNAQEF-----END CERTIFICATE-----',
-    idpName: '',
-    idpSsoTargetUrl: '"https://contentful-test-app-dev.com"',
-    restrictedMode: false,
-    ssoName: 'ssoName',
-    testConnectionAt: null,
-    testConnectionErrors: null,
-    testConnectionResult: 'success',
-  },
+  sys: { type: 'IdentityProvider', id: '2y6J2E3UVEzi5RFhI6xvPl', version: 8 },
+  enabled: true,
+  idpCert:
+    '-----BEGIN CERTIFICATE-----MIIEHTCCAwWgAwIBAgIURpeRQfkW81lZeIepYruVOSshzsgwDQYJKoZIhvcNAQEF-----END CERTIFICATE-----',
+  idpName: '',
+  idpSsoTargetUrl: '"https://contentful-test-app-dev.com"',
+  restrictedMode: false,
+  ssoName: 'ssoName',
+  testConnectionAt: null,
+  testConnectionErrors: null,
+  testConnectionResult: 'success',
 };
 
 const mockOrg = Fake.Organization();
@@ -63,7 +61,7 @@ describe('IDPDetailsForm', () => {
       expect(updateFieldValue).toHaveBeenCalledWith(
         'idpName',
         'OneLogin',
-        mockIdentityProvider.data.sys.version,
+        mockIdentityProvider.sys.version,
         mockOrg.sys.id
       )
     );
@@ -83,7 +81,7 @@ describe('IDPDetailsForm', () => {
     expect(updateFieldValue).toHaveBeenCalledWith(
       'idpSsoTargetUrl',
       'https://contentful-app-dev.onelogin.com/trust/saml2/http-post/sso/123',
-      mockIdentityProvider.data.sys.version,
+      mockIdentityProvider.sys.version,
       mockOrg.sys.id
     );
     expect(onUpdateMock).toHaveBeenCalled();
@@ -103,7 +101,7 @@ describe('IDPDetailsForm', () => {
     expect(updateFieldValue).toHaveBeenCalledWith(
       'idpCert',
       mockCert,
-      mockIdentityProvider.data.sys.version,
+      mockIdentityProvider.sys.version,
       mockOrg.sys.id
     );
     expect(onUpdateMock).toHaveBeenCalled();
@@ -117,7 +115,7 @@ describe('IDPDetailsForm', () => {
     expect(updateFieldValue).toHaveBeenCalledWith(
       'ssoName',
       'test-app',
-      mockIdentityProvider.data.sys.version,
+      mockIdentityProvider.sys.version,
       mockOrg.sys.id
     );
     expect(onUpdateMock).toHaveBeenCalled();
@@ -125,18 +123,16 @@ describe('IDPDetailsForm', () => {
 
   it('should call enable on click', async () => {
     const mockIdentityProviderTestResultSuccess = {
-      data: {
-        sys: { type: 'IdentityProvider', id: '2y6J2E3UVEzi5RFhI6xvPl', version: 8 },
-        enabled: false,
-        idpCert: '',
-        idpName: '',
-        idpSsoTargetUrl: '',
-        restrictedMode: false,
-        ssoName: '',
-        testConnectionAt: null,
-        testConnectionErrors: null,
-        testConnectionResult: 'success',
-      },
+      sys: { type: 'IdentityProvider', id: '2y6J2E3UVEzi5RFhI6xvPl', version: 8 },
+      enabled: false,
+      idpCert: '',
+      idpName: '',
+      idpSsoTargetUrl: '',
+      restrictedMode: false,
+      ssoName: '',
+      testConnectionAt: null,
+      testConnectionErrors: null,
+      testConnectionResult: 'success',
     };
     build(mockIdentityProviderTestResultSuccess);
 
