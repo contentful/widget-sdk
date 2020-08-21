@@ -136,7 +136,6 @@ function convertInternalStateToConfiguration(
 function EntryEditorConfiguration(props: EditorConfigProps) {
   const { onUpdateConfiguration, defaultWidgets, customWidgets, configuration } = props;
 
-  console.log({ defaultWidgets, customWidgets, configuration });
   const [state, dispatch] = useReducer<React.Reducer<State, any>>(
     reducer,
     createStateFromConfiguration(configuration, defaultWidgets, customWidgets)

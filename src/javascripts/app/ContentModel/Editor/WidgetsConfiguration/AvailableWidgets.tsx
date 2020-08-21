@@ -38,8 +38,6 @@ interface AvailableWidgetsProps {
 export default function AvailableItems(props: AvailableWidgetsProps) {
   const { items, location, onAddItem, inAppHelpMedium } = props;
 
-  console.log(items);
-
   return (
     <div>
       <Subheading className={styles.availableItemsTitle}>Available items</Subheading>

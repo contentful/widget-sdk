@@ -62,7 +62,7 @@ const styles = {
 };
 
 const SortableItem = SortableElement(({ children }) => (
-  <div data-test-id="sidebar-widget-item-draggable" tabIndex={0} className={styles.draggable}>
+  <div data-test-id="selected-widget-item-draggable" tabIndex={0} className={styles.draggable}>
     {children}
   </div>
 ));
@@ -84,7 +84,8 @@ export function WidgetItem({
       buttonType="muted"
       className={styles.closeButton}
       onClick={onRemoveClick}
-      label={`Remove ${name} from your sidebar`}
+      label={`Remove ${name} from your selected options`}
+      data-test-id={"remove-selected-widget"}
     />
   );
 
@@ -103,10 +104,10 @@ export function WidgetItem({
   }
 
   const content = (
-    <div className={styles.item} data-test-id="sidebar-widget-item">
+    <div className={styles.item} data-test-id="selected-widget-item">
       {isDraggable && <Icon className={styles.itemDrag} icon="Drag" />}
       <div className={styles.itemHeader}>
-        <div className={styles.itemName} data-test-id="sidebar-widget-name">
+        <div className={styles.itemName} data-test-id="selected-widget-name">
           {name}
         </div>
         {availabilityStatus && renderAvailabilityStatus()}
