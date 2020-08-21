@@ -79,7 +79,7 @@ export async function transformEditorInterfacesToTargetState(cma, targetState, a
  *
  * If current list is missing or has a wrong shape, it gets replaced by the default list
  */
-function transformPartialTargetState(
+function transformWidgetList(
   partialTargetState: boolean | { position?: number },
   defaultWidgets: any[],
   widgetId: string,
@@ -139,7 +139,7 @@ function transformSingleEditorInterfaceToTargetState(
   }
 
   if (targetState.sidebar) {
-    result.sidebar = transformPartialTargetState(
+    result.sidebar = transformWidgetList(
       targetState.sidebar,
       defaultSidebar,
       widgetId,
@@ -155,7 +155,7 @@ function transformSingleEditorInterfaceToTargetState(
   }
   // As opposed to when we get `editors` (plural), in which case we behave like sidebars
   else if (targetState.editors) {
-    result.editors = transformPartialTargetState(
+    result.editors = transformWidgetList(
       targetState.editors,
       defaultEditors,
       widgetId,
