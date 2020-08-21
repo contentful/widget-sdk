@@ -49,8 +49,8 @@ function isCurrentApp(widget, appInstallation) {
  * }
  */
 export async function transformEditorInterfacesToTargetState(cma, targetState, appInstallation) {
-  const { items: editorInterfaces } = await cma.getEditorInterfaces();
-  const [defaultSidebar, defaultEditors] = await Promise.all([
+  const [{ items: editorInterfaces }, defaultSidebar, defaultEditors] = await Promise.all([
+    cma.getEditorInterfaces(),
     getDefaultSidebar(),
     getDefaultEditors(),
   ]);
@@ -171,10 +171,10 @@ export async function removeAllEditorInterfaceReferences(cma, appInstallation) {
 
   const updatePromises = editorInterfaces
     .map((ei) => removeSingleEditorInterfaceReferences(ei, appInstallation))
-    .filter((ei, i) => !isEqual(ei, editorInterfaces[i]))
     // We always want at least the default editor, hence we remove
     // empty list to fallback to default editors
     .map(({ editors, ...ei }) => (isEmpty(editors) ? ei : { ...ei, editors }))
+    .filter((ei, i) => !isEqual(ei, editorInterfaces[i]))
     .map((ei) => cma.updateEditorInterface(ei));
 
   await promiseAllSafe(updatePromises);
