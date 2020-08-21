@@ -5,7 +5,7 @@ import { reducer } from 'app/EntrySidebar/Configuration/SidebarConfigurationRedu
 import { State } from 'app/EntrySidebar/Configuration/SidebarConfigurationReducer';
 import WidgetsConfiguration from 'app/ContentModel/Editor/WidgetsConfiguration';
 import { create } from 'widgets/BuiltinWidgets';
-import { WidgetNamespace, Editor } from 'features/widget-renderer';
+import { WidgetNamespace } from 'features/widget-renderer';
 import WidgetParametersConfiguration from 'app/EntrySidebar/Configuration/WidgetParametersConfiguration'; // Replace
 
 const styles = {
@@ -15,34 +15,68 @@ const styles = {
   }),
 };
 
-interface EditorConfigProps {
-  onUpdateConfiguration: () => void;
-  defaultWidgets: Editor[];
-  customWidgets: Editor[];
-  configuration: Object;
+interface CustomWidget {
+  name: string;
+  namespace: WidgetNamespace;
+  id: string;
+  locations: Location[];
 }
 
+interface DefaultWidget {
+  widgetId: string;
+  widgetNamespace: WidgetNamespace;
+  name: string;
+}
+
+interface ConfigurationItem {
+  widgetId: string;
+  widgetNamespace: WidgetNamespace;
+  disabled?: boolean;
+  settings: Record<string, any>;
+}
+
+interface EditorConfigProps {
+  onUpdateConfiguration: (configuration: ConfigurationItem[] | undefined) => void;
+  defaultWidgets: DefaultWidget[];
+  customWidgets: CustomWidget[];
+  configuration: ConfigurationItem[];
+}
+
+// yikes
 const convertToWidgetConfiguration = (widget) => ({
   widgetId: widget.id || widget.widgetId,
   widgetNamespace: widget.namespace || widget.widgetNamespace,
   ...pick(widget, ['name', 'locations', 'parameters']),
 });
 
-const findUnusedDefaultWidgets = (defaultWidgets, configuration) => {
+const findUnusedDefaultWidgets = (
+  defaultWidgets: DefaultWidget[],
+  configuration: ConfigurationItem[]
+) => {
   return defaultWidgets.filter(
-    widget => !configuration.find(
-      item => item.widgetNamespace === WidgetNamespace.EDITOR_BUILTIN && widget.widgetId === item.widgetId
-    )
-  )
-}
+    (widget) =>
+      !configuration.find(
+        (item) =>
+          item.widgetNamespace === WidgetNamespace.EDITOR_BUILTIN &&
+          widget.widgetId === item.widgetId
+      )
+  );
+};
 
-const removeDisabledWidgets = widget => !widget.disabled;
+const removeDisabledWidgets = (widget: ConfigurationItem) => !widget.disabled;
 
-const enrichWidgetData = (defaultWidgets, customWidgets) => item => item.widgetNamespace === WidgetNamespace.EDITOR_BUILTIN ?
-                                    defaultWidgets.find((widget) => item.widgetId === widget.widgetId)
-                                    : customWidgets.find((widget) => item.id === widget.widgetId)
+const enrichWidgetData = (defaultWidgets: DefaultWidget[], customWidgets: CustomWidget[]) => (
+  item: ConfigurationItem
+) =>
+  item.widgetNamespace === WidgetNamespace.EDITOR_BUILTIN
+    ? defaultWidgets.find((widget) => item.widgetId === widget.widgetId)
+    : customWidgets.find((widget) => item.widgetId === widget.id);
 
-function createStateFromConfiguration(configuration, defaultWidgets, customWidgets): State {
+function createStateFromConfiguration(
+  configuration: ConfigurationItem[],
+  defaultWidgets: DefaultWidget[],
+  customWidgets: CustomWidget[]
+): State {
   if (configuration.length === 0) {
     return {
       items: defaultWidgets.map(convertToWidgetConfiguration),
@@ -66,7 +100,10 @@ function createStateFromConfiguration(configuration, defaultWidgets, customWidge
   };
 }
 
-function convertInternalStateToConfiguration(state: any, initialItems: any) {
+function convertInternalStateToConfiguration(
+  state: any,
+  initialItems: any
+): ConfigurationItem[] | undefined {
   if (state.items === initialItems) {
     return undefined;
   }
@@ -99,7 +136,8 @@ function convertInternalStateToConfiguration(state: any, initialItems: any) {
 function EntryEditorConfiguration(props: EditorConfigProps) {
   const { onUpdateConfiguration, defaultWidgets, customWidgets, configuration } = props;
 
-  const [state, dispatch] = useReducer(
+  console.log({ defaultWidgets, customWidgets, configuration });
+  const [state, dispatch] = useReducer<React.Reducer<State, any>>(
     reducer,
     createStateFromConfiguration(configuration, defaultWidgets, customWidgets)
   );

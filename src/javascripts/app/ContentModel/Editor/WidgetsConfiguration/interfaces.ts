@@ -8,4 +8,5 @@ export interface ConfigurationItem {
   locations?: Location[];
   parameters?: any;
   availabilityStatus?: AvailabilityStatus;
+  settings?: any;
 }

@@ -4,7 +4,7 @@ import { ConfigurationItem } from 'app/ContentModel/Editor/WidgetsConfiguration/
 export interface State {
   items: ConfigurationItem[];
   availableItems: ConfigurationItem[];
-  configurableWidget: any;
+  configurableWidget: any; // TODO: What type is this? A widget with settings?
 }
 
 const RESET_WIDGET_CONFIGURATION = 'RESET_WIDGET_CONFIGURATION';
@@ -68,7 +68,7 @@ export const updateWidgetSettings = (widget: any, settings: any) => ({
 const areWidgetsSame = (widget1: ConfigurationItem, widget2: ConfigurationItem) =>
   widget1.widgetId === widget2.widgetId && widget1.widgetNamespace === widget2.widgetNamespace;
 
-export const reducer = createImmerReducer({
+export const reducer = createImmerReducer<State, any>({
   [OPEN_WIDGET_CONFIGURATION]: (state: State, action) => {
     state.configurableWidget = action.payload.widget;
   },
