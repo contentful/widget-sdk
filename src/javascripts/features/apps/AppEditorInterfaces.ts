@@ -3,9 +3,10 @@ import { get, isObject, identity, pick, isEqual, cloneDeep, isEmpty } from 'loda
 import * as SidebarDefaults from 'app/EntrySidebar/Configuration/defaults';
 import * as EntryEditorDefaults from 'app/entry_editor/DefaultConfiguration';
 
-import { WidgetNamespace } from 'features/widget-renderer';
-import { isUnsignedInteger } from './AppState';
-import { EditorInterface } from 'contentful-ui-extensions-sdk';
+import { WidgetNamespace, AppInstallation } from 'features/widget-renderer';
+import { isUnsignedInteger, PartialTargetState } from './AppState';
+import { EditorInterface, ContentType } from 'contentful-ui-extensions-sdk';
+import APIClient from 'data/APIClient';
 
 // Like `Promise.all` but rejecting input promises do not cause
 // the result promise to reject. They are simply omitted.
@@ -19,17 +20,21 @@ async function promiseAllSafe(promises) {
   return results.filter(identity);
 }
 
-export async function getDefaultSidebar() {
+export async function getDefaultSidebar(): Promise<
+  { widgetId: string; widgetNamespace: WidgetNamespace }[]
+> {
   const defaultEntrySidebar = await SidebarDefaults.getEntryConfiguration();
   return defaultEntrySidebar.map((item) => pick(item, ['widgetNamespace', 'widgetId']));
 }
 
-export async function getDefaultEditors() {
+export async function getDefaultEditors(): Promise<
+  { widgetId: string; widgetNamespace: WidgetNamespace }[]
+> {
   const defaultEntryEditors = await EntryEditorDefaults.getEntryConfiguration();
   return defaultEntryEditors.map((item) => pick(item, ['widgetNamespace', 'widgetId']));
 }
 
-function isCurrentApp(widget, appInstallation) {
+function isCurrentApp(widget: any, appInstallation: AppInstallation): boolean {
   const widgetId = get(appInstallation, ['sys', 'appDefinition', 'sys', 'id']);
 
   return widget.widgetNamespace === WidgetNamespace.APP && widget.widgetId === widgetId;
@@ -48,7 +53,11 @@ function isCurrentApp(widget, appInstallation) {
  *   'some-other-ct-id': { editor: true }
  * }
  */
-export async function transformEditorInterfacesToTargetState(cma, targetState, appInstallation) {
+export async function transformEditorInterfacesToTargetState(
+  cma: APIClient,
+  targetState: Record<string, Record<string, PartialTargetState>>,
+  appInstallation: AppInstallation
+) {
   const [{ items: editorInterfaces }, defaultSidebar, defaultEditors] = await Promise.all([
     cma.getEditorInterfaces(),
     getDefaultSidebar(),
@@ -80,7 +89,7 @@ export async function transformEditorInterfacesToTargetState(cma, targetState, a
  * If current list is missing or has a wrong shape, it gets replaced by the default list
  */
 function transformWidgetList(
-  partialTargetState: boolean | { position?: number },
+  partialTargetState: PartialTargetState,
   defaultWidgets: any[],
   widgetId: string,
   existingWidgets?: any[]
@@ -109,11 +118,11 @@ function transformWidgetList(
 }
 
 function transformSingleEditorInterfaceToTargetState(
-  ei,
-  defaultSidebar,
-  defaultEditors,
-  targetState,
-  appInstallation
+  ei: EditorInterface,
+  defaultSidebar: { widgetId: string; widgetNamespace: WidgetNamespace }[],
+  defaultEditors: { widgetId: string; widgetNamespace: WidgetNamespace }[],
+  targetState: Record<ContentType['sys']['id'], PartialTargetState>,
+  appInstallation: AppInstallation
 ): EditorInterface {
   // Start by removing all references, only those declared in the target
   // state will be recreated.
@@ -166,7 +175,10 @@ function transformSingleEditorInterfaceToTargetState(
   return result;
 }
 
-export async function removeAllEditorInterfaceReferences(cma, appInstallation) {
+export async function removeAllEditorInterfaceReferences(
+  cma: APIClient,
+  appInstallation: AppInstallation
+) {
   const { items: editorInterfaces } = await cma.getEditorInterfaces();
 
   const updatePromises = editorInterfaces
@@ -180,7 +192,10 @@ export async function removeAllEditorInterfaceReferences(cma, appInstallation) {
   await promiseAllSafe(updatePromises);
 }
 
-function removeSingleEditorInterfaceReferences(ei, appInstallation): EditorInterface {
+function removeSingleEditorInterfaceReferences(
+  ei: EditorInterface,
+  appInstallation: AppInstallation
+): EditorInterface {
   ei = cloneDeep(ei);
   const result: EditorInterface = { sys: ei.sys };
 

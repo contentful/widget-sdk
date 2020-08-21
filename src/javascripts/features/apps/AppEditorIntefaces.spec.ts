@@ -2,7 +2,7 @@ import {
   removeAllEditorInterfaceReferences,
   transformEditorInterfacesToTargetState,
 } from './AppEditorInterfaces';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace, AppInstallation } from 'features/widget-renderer';
 import {
   makeGetDefaultByType,
   PositionalWidget,
@@ -11,7 +11,7 @@ import {
 
 const APP_ID = 'appid';
 
-const installation = {
+const installation: AppInstallation = {
   sys: {
     type: 'AppInstallation',
     appDefinition: {
