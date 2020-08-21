@@ -2,8 +2,6 @@ import { WidgetNamespace } from 'features/widget-renderer';
 import { getReleasesFeatureVariation } from 'app/Releases/ReleasesFeatureFlag';
 import EntryEditorWidgetTypes from './EntryEditorWidgetTypes';
 
-// TODO: this feels more general purpose and
-//  should probably be somewhere else
 interface EntryEditorWidget {
   widgetId: string;
   widgetNamespace: WidgetNamespace;
