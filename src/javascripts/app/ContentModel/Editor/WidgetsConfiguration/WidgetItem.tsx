@@ -67,7 +67,7 @@ const SortableItem = SortableElement(({ children }) => (
   </div>
 ));
 
-export function SidebarWidgetItem({
+export function WidgetItem({
   id,
   index,
   name,
@@ -123,7 +123,7 @@ export function SidebarWidgetItem({
   return content;
 }
 
-SidebarWidgetItem.propTypes = {
+WidgetItem.propTypes = {
   id: PropTypes.string.isRequired,
   name: PropTypes.string,
   isDraggable: PropTypes.bool.isRequired,
@@ -134,10 +134,10 @@ SidebarWidgetItem.propTypes = {
   availabilityStatus: PropTypes.oneOf(['alpha', 'beta']),
 };
 
-SidebarWidgetItem.defaultProps = {
+WidgetItem.defaultProps = {
   isDraggable: false,
   isRemovable: false,
   isProblem: false,
 };
 
-export default SidebarWidgetItem;
+export default WidgetItem;

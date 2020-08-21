@@ -38,6 +38,8 @@ interface AvailableWidgetsProps {
 export default function AvailableItems(props: AvailableWidgetsProps) {
   const { items } = props;
 
+  console.log(items);
+
   return (
     <div>
       <Subheading className={styles.availableItemsTitle}>Available items</Subheading>
@@ -73,7 +75,7 @@ export default function AvailableItems(props: AvailableWidgetsProps) {
       <Paragraph>
         Learn more about{' '}
         <TextLink
-          href={withInAppHelpUtmParams(inAppHelpMedium)(
+          href={withInAppHelpUtmParams(props.inAppHelpMedium)(
             'https://www.contentful.com/developers/docs/extensibility/app-framework/tutorial/?utm_campaign=in-app-help'
           )}
           target="_blank"

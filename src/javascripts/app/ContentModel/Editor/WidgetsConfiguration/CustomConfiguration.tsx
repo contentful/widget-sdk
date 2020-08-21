@@ -2,14 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import * as Sortable from 'react-sortable-hoc';
 import { Subheading, Paragraph, TextLink } from '@contentful/forma-36-react-components';
-import SidebarWidgetItem from './SidebarWidgetItem';
+import WidgetItem from './WidgetItem';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { WidgetNamespace, isCustomWidget } from 'features/widget-renderer';
 import { ConfigurationItem } from './interfaces';
 
 const styles = {
-  customSidebarTitle: css({
+  customTitle: css({
     marginBottom: tokens.spacingM,
   }),
   widgetType: css({
@@ -26,10 +26,10 @@ const styles = {
   }),
 };
 
-function WidgetItem({ widget, onRemoveClick, onConfigureClick, index }) {
+function WidgetListItem({ widget, onRemoveClick, onConfigureClick, index }) {
   const hasParams = widget.parameters && widget.parameters.length > 0;
   return (
-    <SidebarWidgetItem
+    <WidgetItem
       index={index}
       isDraggable
       isRemovable
@@ -56,11 +56,11 @@ function WidgetItem({ widget, onRemoveClick, onConfigureClick, index }) {
           )}
         </>
       )}
-    </SidebarWidgetItem>
+    </WidgetItem>
   );
 }
 
-WidgetItem.propTypes = {
+WidgetListItem.propTypes = {
   widget: PropTypes.object.isRequired,
   onRemoveClick: PropTypes.func.isRequired,
   onConfigureClick: PropTypes.func.isRequired,
@@ -80,7 +80,7 @@ export default function CustomConfiguration({
   return (
     <>
       <span className={styles.header}>
-        <Subheading className={styles.customSidebarTitle}>{title}</Subheading>
+        <Subheading className={styles.customTitle}>{title}</Subheading>
         <TextLink onClick={onResetClick}>Reset to default</TextLink>
       </span>
       {items.length !== 0 && (
@@ -93,7 +93,7 @@ export default function CustomConfiguration({
           {items.map((item: ConfigurationItem, index: number) => {
             const key = `${item.widgetNamespace},${item.widgetId}`;
             return (
-              <WidgetItem
+              <WidgetListItem
                 key={key}
                 index={index}
                 widget={item}

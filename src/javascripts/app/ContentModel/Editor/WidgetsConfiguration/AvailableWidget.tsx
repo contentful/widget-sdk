@@ -3,6 +3,7 @@ import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { IconButton, Paragraph, Tag } from '@contentful/forma-36-react-components';
 import { WidgetNamespace } from 'features/widget-renderer';
+import { AvailabilityStatus } from './interfaces';
 
 const styles = {
   item: css({
@@ -44,7 +45,7 @@ interface AvailableWidgetProps {
   widgetNamespace: string;
   onClick: () => void;
   index: number;
-  availabilityStatus: 'alpha' | 'beta';
+  availabilityStatus?: AvailabilityStatus;
   location: string;
 }
 
