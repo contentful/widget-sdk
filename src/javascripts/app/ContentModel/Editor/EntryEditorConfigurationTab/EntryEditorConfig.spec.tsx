@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, cleanup, wait, configure, fireEvent } from '@testing-library/react';
+import { render, configure, fireEvent } from '@testing-library/react';
 import EntryEditorConfig from './EntryEditorConfig';
 import { WidgetNamespace, WidgetLocation } from 'features/widget-renderer';
 import { noop } from 'lodash';
@@ -7,9 +7,8 @@ import { noop } from 'lodash';
 configure({ testIdAttribute: 'data-test-id' });
 
 describe('EntryEditorConfig', () => {
-  afterEach(cleanup);
 
-  it('Renders all default items on empty state', async () => {
+  it('Renders all default items on empty state', () => {
     const props = {
       onUpdateConfiguration: noop,
       configuration: [],
@@ -18,12 +17,11 @@ describe('EntryEditorConfig', () => {
     const DEFAULT_WIDGETS = 2;
 
     const { getAllByTestId } = render(<EntryEditorConfig {...props} />);
-    await wait();
 
     expect(getAllByTestId('selected-widget-item')).toHaveLength(DEFAULT_WIDGETS);
   });
 
-  it('renders all available items on empty state', async () => {
+  it('renders all available items on empty state', () => {
     const customWidgets = [
       {
         id: 'app-1',
@@ -48,12 +46,11 @@ describe('EntryEditorConfig', () => {
     const AVAILABLE_WIDGETS = customWidgets.length;
 
     const { getAllByTestId } = render(<EntryEditorConfig {...props} />);
-    await wait();
 
     expect(getAllByTestId('available-widget')).toHaveLength(AVAILABLE_WIDGETS);
   });
 
-  it('removing a selected item puts it back into the available column', async () => {
+  it('removing a selected item puts it back into the available column', () => {
     const props = {
       onUpdateConfiguration: noop,
       configuration: [],
@@ -62,7 +59,6 @@ describe('EntryEditorConfig', () => {
     const DEFAULT_WIDGETS = 2;
 
     const { getAllByTestId } = render(<EntryEditorConfig {...props} />);
-    await wait();
 
     fireEvent.click(getAllByTestId('remove-selected-widget')[0]);
 
@@ -70,7 +66,7 @@ describe('EntryEditorConfig', () => {
     expect(getAllByTestId('selected-widget-item')).toHaveLength(1);
   });
 
-  it('adding an available item puts it into the selected column and removes it from available column', async () => {
+  it('adding an available item puts it into the selected column and removes it from available column', () => {
     const props = {
       onUpdateConfiguration: noop,
       configuration: [],
@@ -87,7 +83,6 @@ describe('EntryEditorConfig', () => {
     const DEFAULT_WIDGETS = 2;
 
     const { getAllByTestId, getByTestId, queryByTestId } = render(<EntryEditorConfig {...props} />);
-    await wait();
 
     fireEvent.click(getByTestId('add-widget-to-selected'));
 
