@@ -7,7 +7,6 @@ import { noop } from 'lodash';
 configure({ testIdAttribute: 'data-test-id' });
 
 describe('EntryEditorConfig', () => {
-
   it('Renders all default items on empty state', () => {
     const props = {
       onUpdateConfiguration: noop,
