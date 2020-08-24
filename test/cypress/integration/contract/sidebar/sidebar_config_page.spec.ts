@@ -30,7 +30,7 @@ describe('Sidebar configuration', () => {
 
   describe('Opening the page with no configuration saved', () => {
     it('renders the page with default configuration', () => {
-      cy.findAllByTestId('sidebar-widget-name')
+      cy.findAllByTestId('selected-widget-name')
         .should('have.length', widgetNames.length)
         .each(($widget, index) => {
           cy.wrap($widget).should('have.text', widgetNames[index]);
@@ -40,7 +40,7 @@ describe('Sidebar configuration', () => {
 
   describe('Enabling of a custom sidebar configuration option', () => {
     beforeEach(() => {
-      cy.findByTestId('reset-widet-configuration').click();
+      cy.findByTestId('reset-widget-configuration').click();
     });
 
     it('checks changing the order of widgets in custom sidebar', () => {
@@ -69,49 +69,49 @@ describe('Sidebar configuration', () => {
         .wait(0.2 * 1000)
         .trigger('keydown', { keyCode: space, force: true });
       cy.findByTestId('custom-sidebar-column').should('be.visible');
-      cy.findAllByTestId('sidebar-widget-name').each(($widget, index) => {
+      cy.findAllByTestId('selected-widget-name').each(($widget, index) => {
         cy.wrap($widget).should('have.text', widgetsReordered[index]);
       });
     });
 
     it('moves widget from a custom sidebar to available items and vice versa', () => {
-      cy.findAllByTestId('sidebar-widget-item')
+      cy.findAllByTestId('selected-widget-item')
         .eq(0)
-        .findAllByTestId('cf-ui-icon-button')
+        .findAllByTestId('remove-selected-widget')
         .eq(0)
         .click();
-      cy.findAllByTestId('sidebar-widget-name')
+      cy.findAllByTestId('selected-widget-name')
         .should('have.length', widgetNames.length - 1)
         .should('not.contain', 'Publish & Status');
       cy.findAllByTestId('available-widget')
         .should('have.length', 1)
-        .findByTestId('add-widget-to-sidebar')
+        .findByTestId('add-widget-to-selected')
         .click();
-      cy.findAllByTestId('sidebar-widget-name').should('have.length', widgetNames.length);
+      cy.findAllByTestId('selected-widget-name').should('have.length', widgetNames.length);
     });
 
     it('can reset configuration after adding and removing items', () => {
-      cy.findAllByTestId('sidebar-widget-item')
+      cy.findAllByTestId('selected-widget-item')
         .eq(0)
-        .findAllByTestId('cf-ui-icon-button')
-        .eq(0)
-        .click();
-
-      cy.findAllByTestId('sidebar-widget-item')
-        .eq(0)
-        .findAllByTestId('cf-ui-icon-button')
+        .findAllByTestId('remove-selected-widget')
         .eq(0)
         .click();
 
-      cy.findAllByTestId('sidebar-widget-name')
+      cy.findAllByTestId('selected-widget-item')
+        .eq(0)
+        .findAllByTestId('remove-selected-widget')
+        .eq(0)
+        .click();
+
+      cy.findAllByTestId('selected-widget-name')
         .should('have.length', widgetNames.length - 2)
         .should('not.contain', 'Publish & Status');
 
       cy.findAllByTestId('available-widget').should('have.length', 2);
 
-      cy.findByTestId('reset-widet-configuration').click();
+      cy.findByTestId('reset-widget-configuration').click();
 
-      cy.findAllByTestId('sidebar-widget-name').should('have.length', widgetNames.length);
+      cy.findAllByTestId('selected-widget-name').should('have.length', widgetNames.length);
     });
   });
 });

@@ -30,7 +30,6 @@ function WidgetListItem({ location, widget, onRemoveClick, onConfigureClick, ind
   const hasParams = widget.parameters && widget.parameters.length > 0;
   return (
     <WidgetItem
-      location={location}
       index={index}
       isDraggable
       isRemovable
@@ -84,7 +83,7 @@ export default function CustomConfiguration({
     <>
       <span className={styles.header}>
         <Subheading className={styles.customTitle}>{title}</Subheading>
-        <TextLink testId="reset-widet-configuration" onClick={onResetClick}>
+        <TextLink testId="reset-widget-configuration" onClick={onResetClick}>
           Reset to default
         </TextLink>
       </span>

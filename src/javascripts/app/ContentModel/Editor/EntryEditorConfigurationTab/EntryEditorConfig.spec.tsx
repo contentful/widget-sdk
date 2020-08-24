@@ -12,7 +12,7 @@ describe('EntryEditorConfig', () => {
     const props = {
       onUpdateConfiguration() {},
       configuration: [],
-      customWidgets: []
+      customWidgets: [],
     };
     const DEFAULT_WIDGETS = 2;
 
@@ -23,23 +23,26 @@ describe('EntryEditorConfig', () => {
   });
 
   it('renders all available items on empty state', async () => {
-    const customWidgets = [{
-      id: 'app-1',
-      namespace: WidgetNamespace.APP,
-      settings: {},
-      locations: ['entry-editor'],
-      name: 'App 1'
-    }, {
-      id: 'ext-1',
-      namespace: WidgetNamespace.EXTENSION,
-      settings: {},
-      name: 'Ext 1',
-      locations: ['entry-editor']
-    }];
+    const customWidgets = [
+      {
+        id: 'app-1',
+        namespace: WidgetNamespace.APP,
+        settings: {},
+        locations: ['entry-editor'],
+        name: 'App 1',
+      },
+      {
+        id: 'ext-1',
+        namespace: WidgetNamespace.EXTENSION,
+        settings: {},
+        name: 'Ext 1',
+        locations: ['entry-editor'],
+      },
+    ];
     const props = {
       onUpdateConfiguration() {},
       configuration: [],
-      customWidgets
+      customWidgets,
     };
     const AVAILABLE_WIDGETS = customWidgets.length;
 
@@ -53,7 +56,7 @@ describe('EntryEditorConfig', () => {
     const props = {
       onUpdateConfiguration() {},
       configuration: [],
-      customWidgets: []
+      customWidgets: [],
     };
     const DEFAULT_WIDGETS = 2;
 
@@ -70,20 +73,22 @@ describe('EntryEditorConfig', () => {
     const props = {
       onUpdateConfiguration() {},
       configuration: [],
-      customWidgets: [{
-        id: 'ext-1',
-        namespace: WidgetNamespace.EXTENSION,
-        settings: {},
-        name: 'Ext 1',
-        locations: ['entry-editor']
-      }]
+      customWidgets: [
+        {
+          id: 'ext-1',
+          namespace: WidgetNamespace.EXTENSION,
+          settings: {},
+          name: 'Ext 1',
+          locations: ['entry-editor'],
+        },
+      ],
     };
     const DEFAULT_WIDGETS = 2;
 
     const { getAllByTestId, getByTestId, queryByTestId } = render(<EntryEditorConfig {...props} />);
     await wait();
 
-    await fireEvent.click(getByTestId('add-widget-to-tabs'));
+    await fireEvent.click(getByTestId('add-widget-to-selected'));
 
     expect(queryByTestId('available-widget')).toBeNull();
     expect(getAllByTestId('selected-widget-item')).toHaveLength(DEFAULT_WIDGETS + 1);
