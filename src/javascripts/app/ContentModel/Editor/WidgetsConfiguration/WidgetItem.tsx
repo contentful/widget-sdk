@@ -77,6 +77,7 @@ export function WidgetItem({
   onRemoveClick,
   children,
   availabilityStatus,
+  location,
 }) {
   const removeBtn = (
     <IconButton
@@ -84,8 +85,12 @@ export function WidgetItem({
       buttonType="muted"
       className={styles.closeButton}
       onClick={onRemoveClick}
+<<<<<<< HEAD
       label={`Remove ${name} from your selected options`}
       data-test-id={"remove-selected-widget"}
+=======
+      label={`Remove ${name} from your ${location.toLowerCase()}`}
+>>>>>>> test: add cypress tests for editor tabs config
     />
   );
 
@@ -104,10 +109,17 @@ export function WidgetItem({
   }
 
   const content = (
+<<<<<<< HEAD
     <div className={styles.item} data-test-id="selected-widget-item">
       {isDraggable && <Icon className={styles.itemDrag} icon="Drag" />}
       <div className={styles.itemHeader}>
         <div className={styles.itemName} data-test-id="selected-widget-name">
+=======
+    <div className={styles.item} data-test-id={`${location.toLowerCase()}-widget-item`}>
+      {isDraggable && <Icon className={styles.itemDrag} icon="Drag" />}
+      <div className={styles.itemHeader}>
+        <div className={styles.itemName} data-test-id={`${location.toLowerCase()}-widget-name`}>
+>>>>>>> test: add cypress tests for editor tabs config
           {name}
         </div>
         {availabilityStatus && renderAvailabilityStatus()}
@@ -118,7 +130,11 @@ export function WidgetItem({
   );
 
   if (isDraggable) {
-    return <SortableItem index={index}>{content}</SortableItem>;
+    return (
+      <SortableItem location={location} index={index}>
+        {content}
+      </SortableItem>
+    );
   }
 
   return content;
@@ -133,6 +149,7 @@ WidgetItem.propTypes = {
   onRemoveClick: PropTypes.func,
   index: PropTypes.number,
   availabilityStatus: PropTypes.oneOf(['alpha', 'beta']),
+  location: PropTypes.string.isRequired,
 };
 
 WidgetItem.defaultProps = {

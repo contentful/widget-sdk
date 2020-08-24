@@ -7,7 +7,7 @@ import {
 import { getEditorInterfaceForDefaultContentType } from '../../../interactions/content_types';
 import { defaultContentTypeId, defaultSpaceId } from '../../../util/requests';
 
-describe('Sidebar configuration', () => {
+describe('Editor tabs configuration', () => {
   beforeEach(() => {
     cy.resetAllFakeServers();
 
@@ -20,17 +20,17 @@ describe('Sidebar configuration', () => {
     ];
 
     cy.visit(
-      `/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}/sidebar_configuration`
+      `/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}/entry_editor_configuration`
     );
 
     cy.wait(interactions);
   });
 
-  const widgetNames = ['Publish & Status', 'Preview', 'Links', 'Translation', 'Versions', 'Users'];
+  const widgetNames = ['Default Editor', 'References'];
 
   describe('Opening the page with no configuration saved', () => {
     it('renders the page with default configuration', () => {
-      cy.findAllByTestId('sidebar-widget-name')
+      cy.findAllByTestId('tabs-widget-name')
         .should('have.length', widgetNames.length)
         .each(($widget, index) => {
           cy.wrap($widget).should('have.text', widgetNames[index]);
@@ -38,29 +38,20 @@ describe('Sidebar configuration', () => {
     });
   });
 
-  describe('Enabling of a custom sidebar configuration option', () => {
+  describe('Enabling of a custom editor tabs configuration', () => {
     beforeEach(() => {
       cy.findByTestId('reset-widet-configuration').click();
     });
 
-    it('checks changing the order of widgets in custom sidebar', () => {
+    it('checks changing the order of editor tabs', () => {
       const space: number = 32;
       const arrowDown: number = 40;
-      const widgetsReordered = [
-        'Publish & Status',
-        'Preview',
-        'Links',
-        'Versions',
-        'Translation',
-        'Users',
-      ];
+      const widgetsReordered = ['References', 'Default Editor'];
 
-      // Pick up and move Translation from slot 4 to slot 5
-      // NOTE: Publish & Status is not draggable
-      const originalTranslationDraggableIdx = 3;
+      const firstEditorIndex = 0;
 
       cy.findAllByTestId('selected-widget-item-draggable')
-        .eq(originalTranslationDraggableIdx)
+        .eq(firstEditorIndex)
         .focus()
         .wait(0.2 * 1000)
         .trigger('keydown', { keyCode: space, force: true })
@@ -68,42 +59,42 @@ describe('Sidebar configuration', () => {
         .trigger('keydown', { keyCode: arrowDown, force: true })
         .wait(0.2 * 1000)
         .trigger('keydown', { keyCode: space, force: true });
-      cy.findByTestId('custom-sidebar-column').should('be.visible');
-      cy.findAllByTestId('sidebar-widget-name').each(($widget, index) => {
+      cy.findByTestId('custom-tabs-column').should('be.visible');
+      cy.findAllByTestId('tabs-widget-name').each(($widget, index) => {
         cy.wrap($widget).should('have.text', widgetsReordered[index]);
       });
     });
 
-    it('moves widget from a custom sidebar to available items and vice versa', () => {
-      cy.findAllByTestId('sidebar-widget-item')
+    it('removes a default widget from the configuration, and adds it again', () => {
+      cy.findAllByTestId('tabs-widget-item')
         .eq(0)
         .findAllByTestId('cf-ui-icon-button')
         .eq(0)
         .click();
-      cy.findAllByTestId('sidebar-widget-name')
+      cy.findAllByTestId('tabs-widget-name')
         .should('have.length', widgetNames.length - 1)
         .should('not.contain', 'Publish & Status');
       cy.findAllByTestId('available-widget')
         .should('have.length', 1)
-        .findByTestId('add-widget-to-sidebar')
+        .findByTestId('add-widget-to-tabs')
         .click();
-      cy.findAllByTestId('sidebar-widget-name').should('have.length', widgetNames.length);
+      cy.findAllByTestId('tabs-widget-name').should('have.length', widgetNames.length);
     });
 
     it('can reset configuration after adding and removing items', () => {
-      cy.findAllByTestId('sidebar-widget-item')
+      cy.findAllByTestId('tabs-widget-item')
         .eq(0)
         .findAllByTestId('cf-ui-icon-button')
         .eq(0)
         .click();
 
-      cy.findAllByTestId('sidebar-widget-item')
+      cy.findAllByTestId('tabs-widget-item')
         .eq(0)
         .findAllByTestId('cf-ui-icon-button')
         .eq(0)
         .click();
 
-      cy.findAllByTestId('sidebar-widget-name')
+      cy.findAllByTestId('tabs-widget-name')
         .should('have.length', widgetNames.length - 2)
         .should('not.contain', 'Publish & Status');
 
@@ -111,7 +102,7 @@ describe('Sidebar configuration', () => {
 
       cy.findByTestId('reset-widet-configuration').click();
 
-      cy.findAllByTestId('sidebar-widget-name').should('have.length', widgetNames.length);
+      cy.findAllByTestId('tabs-widget-name').should('have.length', widgetNames.length);
     });
   });
 });

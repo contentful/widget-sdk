@@ -171,13 +171,13 @@ describe('Editor tabs configuration', () => {
     cy.wait(interactions);
   });
 
-  describe('Saving the content type with configured custom sidebar', () => {
+  describe('Saving the content type with configured custom tabs', () => {
     beforeEach(() => {
       cy.resetAllFakeServers();
       cy.findByTestId('reset-widet-configuration').click();
     });
 
-    it('checks that content type with a custom sidebar has been successfully saved', () => {
+    it('checks that content type with a custom tabs has been successfully saved', () => {
       const interactions = [
         saveDefaultContentTypeWithCustomSidebar.willSucceed(),
         publishDefaultContentType.willSucceed(),

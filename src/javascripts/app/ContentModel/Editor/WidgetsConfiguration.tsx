@@ -93,9 +93,12 @@ const WidgetsConfiguration: React.FC<WidgetsConfigurationProps> = ({
               }}
             />
           </div>
-          <div className={styles.mainColumn} data-test-id="custom-sidebar-column">
+          <div
+            className={styles.mainColumn}
+            data-test-id={`custom-${configuration.location.toLowerCase()}-column`}>
             <CustomConfiguration
               title={configuration.location}
+              location={configuration.location}
               onResetClick={() => dispatch(resetWidgetConfiguration(defaultAvailableItems))}
               items={state.items}
               onRemoveItem={(widget: ConfigurationItem) => {
