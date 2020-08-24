@@ -102,7 +102,6 @@ function createStateFromConfiguration(
     };
   }
 
-  console.log(configuration, defaultWidgets, customWidgets);
   const unusedDefaultEditors = findUnusedDefaultWidgets(defaultWidgets, configuration);
 
   const items = configuration

@@ -41,6 +41,9 @@ function WidgetListItem({ widget, onRemoveClick, onConfigureClick, index }) {
       {widget.widgetNamespace === WidgetNamespace.SIDEBAR_BUILTIN && (
         <Paragraph>{widget.description}</Paragraph>
       )}
+      {widget.widgetNamespace === WidgetNamespace.EDITOR_BUILTIN && (
+        <Paragraph>Built-in item</Paragraph>
+      )}
       {isCustomWidget(widget.widgetNamespace) && (
         <>
           {widget.widgetNamespace === WidgetNamespace.EXTENSION && (
