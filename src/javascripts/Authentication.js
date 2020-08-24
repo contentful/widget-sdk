@@ -39,14 +39,13 @@ const LOGOUT_KEY = 'loggedOut';
  */
 const tokenMVar = createMVar();
 
-const store = getBrowserStorage();
 const sessionStore = getBrowserStorage('session');
 const localStore = getBrowserStorage('local');
 
-const afterLoginPathStore = store.forKey('redirect_after_login');
+const afterLoginPathStore = localStore.forKey('redirect_after_login');
 
 const tokenStore =
-  Config.env === 'development' ? store.forKey('token') : sessionStore.forKey('token');
+  Config.env === 'development' ? localStore.forKey('token') : sessionStore.forKey('token');
 /**
  * @description
  * Get the current token.
@@ -131,17 +130,30 @@ export function init() {
 
   const previousToken = tokenStore.get();
 
-  if (previousToken && $location.url() === '/?login=1') {
+  if (!previousToken) {
+    refreshAndRedirect();
+    return;
+  }
+
+  if ($location.url() === '/?login=1') {
     // This path indicates that we are coming from gatekeeper and we have
     // a new gatekeeper session. In that case we throw away our current
     // token since it might belong to a different user
     revokeToken(previousToken);
     refreshAndRedirect();
-  } else if (!previousToken) {
-    refreshAndRedirect();
   } else {
-    // XXX[tmw]: Might need to re-sign-in to secure assets here?
     updateToken(previousToken);
+    if (Config.env === 'development') {
+      // In production we use a session-scoped localStorage, so if we've already
+      // logged in through usual means, the user should have already logged into
+      // the secure assets domain (which has a session-scoped cookie).
+      //
+      // In development, we use localStorage / login via url hash, which won't
+      // trigger the secure assets login unless we do the following:
+      loginSecureAssets(previousToken).catch((err) => {
+        logger.logServerWarn('Error signing in to secure assets host', err);
+      });
+    }
   }
 }
 
@@ -275,6 +287,10 @@ function fetchNewToken() {
     });
 }
 
+/**
+ * Logs the user in to the secure assets endpoint
+ * @param {string} cmaToken the cma token to use to log in
+ */
 async function loginSecureAssets(cmaToken) {
   const host = Config.secureAssetsUrl;
   if (!host) {
@@ -286,12 +302,17 @@ async function loginSecureAssets(cmaToken) {
     headers: {
       Authorization: `Bearer ${cmaToken}`,
     },
+    credentials: 'include',
   });
   if (!res.ok) {
     throw new Error(res.text());
   }
 }
 
+/**
+ * Logs out from the secure assets endpoint (should work regardless
+ * of whether the user is actually logged in.)
+ */
 async function logoutSecureAssets() {
   const host = Config.secureAssetsUrl;
   if (!host) {
@@ -300,6 +321,7 @@ async function logoutSecureAssets() {
   // These return 204, empty content, which postForm doesn't support
   const res = await window.fetch(`${host}/logout`, {
     method: 'POST',
+    credentials: 'include',
   });
   if (!res.ok) {
     throw new Error(res.text());
