@@ -107,7 +107,9 @@ Object {
                     />
                   </svg>
                 </div>
-                <div>
+                <div
+                  class="Note__Note__info___2m_-K"
+                >
                   <div>
                     This will remove the current event configuration
                   </div>

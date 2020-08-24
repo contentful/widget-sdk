@@ -1763,7 +1763,9 @@ Object {
                 />
               </svg>
             </div>
-            <div>
+            <div
+              class="Note__Note__info___2m_-K"
+            >
               <div>
                 To start building apps for this organization, ask your admin to upgrade your account to the
                  
@@ -1924,7 +1926,9 @@ Object {
               />
             </svg>
           </div>
-          <div>
+          <div
+            class="Note__Note__info___2m_-K"
+          >
             <div>
               To start building apps for this organization, ask your admin to upgrade your account to the
                
