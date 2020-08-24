@@ -22,6 +22,11 @@ interface CustomWidget {
   id: string;
   locations: WidgetLocation[];
 }
+function isCustomWidget(widget: CustomWidget | DefaultWidget): widget is CustomWidget {
+  return (
+    (widget as CustomWidget).id !== undefined && (widget as CustomWidget).namespace !== undefined
+  );
+}
 
 interface DefaultWidget {
   widgetId: string;
@@ -43,33 +48,32 @@ interface EditorConfigProps {
   configuration: SavedConfigItem[];
 }
 
-type ConvertToWidgetConfiguration = {
-  (widget: CustomWidget): ConfigurationItem;
-  (widget: DefaultWidget): ConfigurationItem;
-  (widget: SavedConfigItem): ConfigurationItem;
+const convertToWidgetConfiguration = (widget: CustomWidget | DefaultWidget): ConfigurationItem => {
+  if (isCustomWidget(widget)) {
+    return {
+      widgetId: widget.id,
+      widgetNamespace: widget.namespace,
+      name: widget.name,
+      ...pick(widget, ['description', 'locations', 'parameters', 'availabilityStatus', 'settings']),
+    };
+  } else {
+    return {
+      widgetId: widget.widgetId,
+      widgetNamespace: widget.widgetNamespace,
+      name: widget.name,
+      ...pick(widget, ['description', 'locations', 'parameters', 'availabilityStatus', 'settings']),
+    };
+  }
 };
-
-const convertToWidgetConfiguration: ConvertToWidgetConfiguration = (widget): ConfigurationItem => ({
-  widgetId: widget.id || widget.widgetId,
-  widgetNamespace: widget.namespace || widget.widgetNamespace,
-  ...pick(widget, [
-    'name',
-    'description',
-    'locations',
-    'parameters',
-    'availabilityStatus',
-    'settings',
-  ]),
-});
 
 const findUnusedDefaultWidgets = (
   defaultWidgets: DefaultWidget[],
   configuration: SavedConfigItem[]
 ) => {
   return defaultWidgets.filter(
-    widget =>
+    (widget) =>
       !configuration.find(
-        item =>
+        (item) =>
           item.widgetNamespace === WidgetNamespace.EDITOR_BUILTIN &&
           widget.widgetId === item.widgetId
       )
@@ -82,8 +86,8 @@ const enrichWidgetData = (defaultWidgets: DefaultWidget[], customWidgets: Custom
   item: SavedConfigItem
 ) =>
   item.widgetNamespace === WidgetNamespace.EDITOR_BUILTIN
-    ? defaultWidgets.find(widget => item.widgetId === widget.widgetId)
-    : customWidgets.find(widget => item.widgetId === widget.id);
+    ? defaultWidgets.find((widget) => item.widgetId === widget.widgetId)
+    : customWidgets.find((widget) => item.widgetId === widget.id);
 
 function createStateFromConfiguration(
   configuration: SavedConfigItem[],
@@ -98,13 +102,14 @@ function createStateFromConfiguration(
     };
   }
 
+  console.log(configuration, defaultWidgets, customWidgets);
   const unusedDefaultEditors = findUnusedDefaultWidgets(defaultWidgets, configuration);
 
   const items = configuration
     .filter(removeDisabledWidgets)
     .map(enrichWidgetData(defaultWidgets, customWidgets))
     .concat(unusedDefaultEditors)
-    .filter(item => !!item);
+    .filter((item) => !!item) as (CustomWidget | DefaultWidget)[];
 
   return {
     items: items.map(convertToWidgetConfiguration),
@@ -181,7 +186,7 @@ function EntryEditorConfiguration(props: EditorConfigProps) {
 
 export default (props: Omit<EditorConfigProps, 'defaultWidgets'>) => {
   const defaultEditors = create().filter(
-    editor => editor.namespace === WidgetNamespace.EDITOR_BUILTIN
+    (editor) => editor.namespace === WidgetNamespace.EDITOR_BUILTIN
   );
   const defaultWidgets = defaultEditors.map(convertToWidgetConfiguration);
 

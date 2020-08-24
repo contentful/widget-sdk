@@ -24,19 +24,22 @@ describe('EntryEditorConfig', () => {
   });
 
   it('renders all available items on empty state', async () => {
-    const customWidgets = [{
-      id: 'app-1',
-      namespace: WidgetNamespace.APP,
-      settings: {},
-      locations: [WidgetLocation.ENTRY_EDITOR],
-      name: 'App 1'
-    }, {
-      id: 'ext-1',
-      namespace: WidgetNamespace.EXTENSION,
-      settings: {},
-      name: 'Ext 1',
-      locations: [WidgetLocation.ENTRY_EDITOR]
-    }];
+    const customWidgets = [
+      {
+        id: 'app-1',
+        namespace: WidgetNamespace.APP,
+        settings: {},
+        locations: [WidgetLocation.ENTRY_EDITOR],
+        name: 'App 1',
+      },
+      {
+        id: 'ext-1',
+        namespace: WidgetNamespace.EXTENSION,
+        settings: {},
+        name: 'Ext 1',
+        locations: [WidgetLocation.ENTRY_EDITOR],
+      },
+    ];
     const props = {
       onUpdateConfiguration: noop,
       configuration: [],
