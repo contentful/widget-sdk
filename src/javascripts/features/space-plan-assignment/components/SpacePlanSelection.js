@@ -17,6 +17,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import { getResourceLimits } from 'utils/ResourceUtils';
 import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
+import StateLink from 'app/common/StateLink';
 
 const resourcesToDisplay = [
   { id: 'environment', name: 'Environments' },
@@ -61,9 +62,9 @@ export function SpacePlanSelection({ plans, space, spaceResources, selectedPlan,
       })}
 
       <Flex justifyContent="space-between" alignItems="center" marginTop="spacingL">
-        <Button buttonType="muted" onClick={() => {}}>
+        <StateLink component={Button} buttonType="muted" path={'^.subscription_new'}>
           Go back
-        </Button>
+        </StateLink>
         <Button buttonType="primary" onClick={() => {}}>
           Continue
         </Button>

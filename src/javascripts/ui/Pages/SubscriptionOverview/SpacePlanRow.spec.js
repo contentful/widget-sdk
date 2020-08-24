@@ -79,6 +79,11 @@ describe('Space Plan Row', () => {
         MOCK_CREATED_AT_TIME_DAY_MONTH_YEAR
       );
     });
+
+    it('should not show change-plan-link if showSpacePlanChangeBtn is false', async () => {
+      await build({ showSpacePlanChangeBtn: false });
+      expect(screen.queryByTestId('subscription-page.spaces-list.change-plan-link')).toBeNull();
+    });
   });
 
   describe('render variations', () => {
@@ -262,6 +267,7 @@ function build(input = {}) {
     committed: false,
     hasUpgraded: false,
     enterprisePlan: false,
+    showSpacePlanChangeBtn: false,
     ...input,
   };
 
@@ -282,6 +288,7 @@ function build(input = {}) {
           onDeleteSpace={mockOnDeleteSpace}
           hasUpgraded={options.hasUpgraded}
           enterprisePlan={options.enterprisePlan}
+          showSpacePlanChangeBtn={options.showSpacePlanChangeBtn}
         />
       </tbody>
     </table>

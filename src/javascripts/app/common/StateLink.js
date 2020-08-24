@@ -1,11 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import queryString from 'querystring';
 import * as Navigator from 'states/Navigator';
 import { track } from 'analytics/Analytics';
 
 const StateLink = ({
   path,
   params,
+  queryParams,
   options,
   children,
   onClick,
@@ -28,10 +30,8 @@ const StateLink = ({
       return;
     }
 
-    if (e.shiftKey || e.ctrlKey || e.metaKey || rest.target === '_blank') {
-      // allow to open in a new tab/window normally
-    } else {
-      // perform Angular UI router transition only
+    // if should allow to open in a new tab/window normally do not perform Angular UI router transition
+    if (!(e.shiftKey || e.ctrlKey || e.metaKey || rest.target === '_blank' || queryParams)) {
       e.preventDefault();
       Navigator.go({ path, params, options });
       if (onClick) {
@@ -49,8 +49,13 @@ const StateLink = ({
 
   const Component = component || 'a';
 
+  let href = Navigator.href({ path, params });
+  if (queryParams) {
+    href = `${href}?${queryString.stringify(queryParams)}`;
+  }
+
   return (
-    <Component {...rest} href={Navigator.href({ path, params })} onClick={onClickHandler}>
+    <Component {...rest} href={href} onClick={onClickHandler}>
       {children}
     </Component>
   );
@@ -59,6 +64,7 @@ const StateLink = ({
 StateLink.propTypes = {
   path: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]).isRequired,
   params: PropTypes.object,
+  queryParams: PropTypes.object,
   options: PropTypes.object,
   children: PropTypes.any,
   onClick: PropTypes.func,
