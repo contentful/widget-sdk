@@ -153,7 +153,7 @@ export function openFromExtension(options) {
       selected // resolve with a single object if selecting only
     ) =>
       // one entity, resolve with an array otherwise
-      options.multiple ? selected : selected[0],
+      options.multiple ? selected : selected?.[0] || null,
     (
       err // resolve with `null` if a user skipped selection,
     ) =>
@@ -166,7 +166,7 @@ export function openFromExtensionSingle(options) {
   const config = newConfigFromExtension(options);
 
   return openByFlag(config).then(
-    (selected) => selected[0],
+    (selected) => selected?.[0] || null,
     (
       err // resolve with `null` if a user skipped selection,
     ) =>
@@ -180,5 +180,5 @@ export function openFromExtensionSingle(options) {
  */
 export function openFromRolesAndPermissions(entityType) {
   const config = newConfigFromExtension({ entityType, multiple: false });
-  return openByFlag(config).then((selected) => selected[0]);
+  return openByFlag(config).then((selected) => selected?.[0] || null);
 }
