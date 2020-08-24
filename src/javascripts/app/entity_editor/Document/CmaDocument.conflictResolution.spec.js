@@ -5,6 +5,7 @@ import { newContentType, newEntry } from './Document.spec';
 import * as K from '../../../../../test/utils/kefir';
 import { Error as DocError } from '../../../data/document/Error';
 import { track } from 'analytics/Analytics';
+// TODO: Let's not import from a .spec file as this results in running those tests twice!
 import { expectDocError } from './CmaDocument.spec';
 import * as fake from 'test/helpers/fakeFactory';
 

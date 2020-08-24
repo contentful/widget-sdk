@@ -12,7 +12,7 @@ import { Entity, EntitySys } from './types';
 import * as StringField from 'data/document/StringFieldSetter';
 import { trackEditConflict, ConflictType } from './analytics';
 import { createNoopPresenceHub } from './PresenceHub';
-import { EntityRepo } from 'data/CMA/EntityRepo';
+import { EntityRepo, EntityRepoChangeInfo } from 'data/CMA/EntityRepo';
 import { changedEntityFieldPaths, changedEntityMetadataPaths } from './changedPaths';
 import { Document } from './typesDocument';
 import { getState, State } from 'data/CMA/EntityState';
@@ -104,7 +104,9 @@ export function create(
   cleanupTasks.push(resourceState.inProgressBus.end);
 
   // Setup pubsub subscriptions.
-  cleanupTasks.push(entityRepo.onContentEntityChanged(entity.sys, () => handleIncomingChange()));
+  cleanupTasks.push(
+    entityRepo.onContentEntityChanged(entity.sys, (...args) => handleIncomingChange(...args))
+  );
   cleanupTasks.push(entityRepo.onAssetFileProcessed(entity.sys, () => handleIncomingChange()));
 
   // Entities from the server might include removed locales or deleted fields which the UI can't handle.
@@ -428,16 +430,18 @@ export function create(
    * anyway would result in VersionMismatch if the client received an event
    * after the save process has started.
    */
-  async function handleIncomingChange() {
+  async function handleIncomingChange({ newVersion }: EntityRepoChangeInfo = {}) {
     // Wait for current ongoing update, then do the next one.
     if (K.getValue(isUpdating$)) {
       await afterUpdate$.changes().take(1).toPromise();
-      return handleIncomingChange();
+      return handleIncomingChange({ newVersion });
     }
 
-    isUpdatingBus.set(true);
-    await updateEntity();
-    isUpdatingBus.set(false);
+    if (!newVersion || newVersion > entity.sys.version) {
+      isUpdatingBus.set(true);
+      await updateEntity();
+      isUpdatingBus.set(false);
+    }
   }
 
   /**
