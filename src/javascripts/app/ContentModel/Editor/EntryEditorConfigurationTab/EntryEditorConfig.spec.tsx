@@ -1,7 +1,8 @@
 import React from 'react';
 import { render, cleanup, wait, configure, fireEvent } from '@testing-library/react';
 import EntryEditorConfig from './EntryEditorConfig';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace, WidgetLocation } from 'features/widget-renderer';
+import { noop } from 'lodash';
 
 configure({ testIdAttribute: 'data-test-id' });
 
@@ -10,7 +11,7 @@ describe('EntryEditorConfig', () => {
 
   it('Renders all default items on empty state', async () => {
     const props = {
-      onUpdateConfiguration() {},
+      onUpdateConfiguration: noop,
       configuration: [],
       customWidgets: [],
     };
@@ -28,7 +29,7 @@ describe('EntryEditorConfig', () => {
         id: 'app-1',
         namespace: WidgetNamespace.APP,
         settings: {},
-        locations: ['entry-editor'],
+        locations: [{ location: WidgetLocation.ENTRY_EDITOR }],
         name: 'App 1',
       },
       {
@@ -36,11 +37,11 @@ describe('EntryEditorConfig', () => {
         namespace: WidgetNamespace.EXTENSION,
         settings: {},
         name: 'Ext 1',
-        locations: ['entry-editor'],
+        locations: [{ location: WidgetLocation.ENTRY_EDITOR }],
       },
     ];
     const props = {
-      onUpdateConfiguration() {},
+      onUpdateConfiguration: noop,
       configuration: [],
       customWidgets,
     };
@@ -54,7 +55,7 @@ describe('EntryEditorConfig', () => {
 
   it('removing a selected item puts it back into the available column', async () => {
     const props = {
-      onUpdateConfiguration() {},
+      onUpdateConfiguration: noop,
       configuration: [],
       customWidgets: [],
     };
@@ -71,7 +72,7 @@ describe('EntryEditorConfig', () => {
 
   it('adding an available item puts it into the selected column and removes it from available column', async () => {
     const props = {
-      onUpdateConfiguration() {},
+      onUpdateConfiguration: noop,
       configuration: [],
       customWidgets: [
         {
@@ -79,7 +80,7 @@ describe('EntryEditorConfig', () => {
           namespace: WidgetNamespace.EXTENSION,
           settings: {},
           name: 'Ext 1',
-          locations: ['entry-editor'],
+          locations: [{ location: WidgetLocation.ENTRY_EDITOR }],
         },
       ],
     };

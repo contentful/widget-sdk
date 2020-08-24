@@ -26,7 +26,7 @@ const styles = {
   }),
 };
 
-function WidgetListItem({ location, widget, onRemoveClick, onConfigureClick, index }) {
+function WidgetListItem({ widget, onRemoveClick, onConfigureClick, index }) {
   const hasParams = widget.parameters && widget.parameters.length > 0;
   return (
     <WidgetItem
@@ -65,7 +65,6 @@ WidgetListItem.propTypes = {
   onRemoveClick: PropTypes.func.isRequired,
   onConfigureClick: PropTypes.func.isRequired,
   index: PropTypes.number,
-  location: PropTypes.string.isRequired,
 };
 
 const SortableContainer = Sortable.SortableContainer(({ children }) => <div>{children}</div>);
@@ -77,7 +76,6 @@ export default function CustomConfiguration({
   onConfigureItem,
   onResetClick,
   title,
-  location,
 }) {
   return (
     <>
@@ -98,7 +96,6 @@ export default function CustomConfiguration({
             const key = `${item.widgetNamespace},${item.widgetId}`;
             return (
               <WidgetListItem
-                location={location}
                 key={key}
                 index={index}
                 widget={item}
@@ -134,5 +131,4 @@ CustomConfiguration.propTypes = {
   onChangePosition: PropTypes.func.isRequired,
   onResetClick: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
-  location: PropTypes.string.isRequired,
 };

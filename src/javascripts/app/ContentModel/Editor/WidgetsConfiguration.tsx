@@ -98,7 +98,6 @@ const WidgetsConfiguration: React.FC<WidgetsConfigurationProps> = ({
             data-test-id={`custom-${configuration.location.toLowerCase()}-column`}>
             <CustomConfiguration
               title={configuration.location}
-              location={configuration.location}
               onResetClick={() => dispatch(resetWidgetConfiguration(defaultAvailableItems))}
               items={state.items}
               onRemoveItem={(widget: ConfigurationItem) => {

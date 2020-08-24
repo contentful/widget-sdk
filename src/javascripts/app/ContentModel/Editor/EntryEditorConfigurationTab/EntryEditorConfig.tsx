@@ -5,7 +5,7 @@ import { reducer } from 'app/EntrySidebar/Configuration/SidebarConfigurationRedu
 import { State } from 'app/EntrySidebar/Configuration/SidebarConfigurationReducer';
 import WidgetsConfiguration from 'app/ContentModel/Editor/WidgetsConfiguration';
 import { create } from 'widgets/BuiltinWidgets';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace, Location } from 'features/widget-renderer';
 import WidgetParametersConfiguration from 'app/EntrySidebar/Configuration/WidgetParametersConfiguration'; // Replace
 
 const styles = {
