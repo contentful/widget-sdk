@@ -185,7 +185,7 @@ describe('Editor tabs configuration', () => {
         saveDefaultContentTypeEditorInterfaceWithCustomEditors.willSucceed(),
       ];
 
-      cy.findAllByTestId('cf-ui-icon-button').first().click();
+      cy.findAllByTestId('remove-selected-widget').first().click();
 
       cy.findByTestId('save-content-type').click();
 
