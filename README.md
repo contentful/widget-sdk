@@ -103,7 +103,12 @@ Process:
    and probably doesn't work with CORS, which is why we recommend a
    `joistio.com` domain.
 
-3. Run the server with the cert/key file specified. You can launch the dev
+3. If you're using, for example, `app.joistio.com:3001` to access the app,
+   then lazy-loaded chunks from webpack will fail to load unless your
+   configuration's `assetUrl` is set to `https://app.joistio.com:3001/`. You
+   can modify, for example, the `config/dev-on-staging.json` to suit.
+
+4. Run the server with the cert/key file specified. You can launch the dev
    server and set the `HTTPS_KEY_FILE` and `HTTPS_CERT_FILE` environment
    variables to launch as an HTTPS (rather than HTTP) server. For example:
 
@@ -111,12 +116,13 @@ Process:
    # env HTTPS_KEY_FILE=./_wildcard.joistio.com-key.pem HTTPS_CERT_FILE=_wildcard.joistio.com.pem npm run dev-staging
    ```
 
-4. Visit `https://app.joistio.com:3001/#access_token=<your access token>`. This
+5. Visit `https://app.joistio.com:3001/#access_token=<your access token>`. This
    should resolve to your machine (127.0.0.1). You should be able to login per
    usual, and any features that require HTTPS security and CORS from an official
    Contentful domain should be functional.
 
-5. (Optional) If you always want to run the server in HTTPS mode, you can add
+
+6. (Optional) If you always want to run the server in HTTPS mode, you can add
    these options to a `.envrc` file and use [`direnv`](https://direnv.net/) to
    automatically set these environment variables when you're in the
    `user_interface` project.
