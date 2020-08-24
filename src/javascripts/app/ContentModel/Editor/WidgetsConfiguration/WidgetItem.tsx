@@ -85,7 +85,7 @@ export function WidgetItem({
       className={styles.closeButton}
       onClick={onRemoveClick}
       label={`Remove ${name} from your selected options`}
-      data-test-id={"remove-selected-widget"}
+      data-test-id={'remove-selected-widget'}
     />
   );
 

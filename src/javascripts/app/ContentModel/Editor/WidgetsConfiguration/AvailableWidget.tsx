@@ -83,7 +83,7 @@ export default function AvailableWidget({
           onClick={onClick}
           iconProps={{ icon: 'PlusCircle' }}
           label={`Add ${name} to your ${location}`}
-          testId={`add-widget-to-${location.toLowerCase()}`}
+          testId={`add-widget-to-selected`}
         />
       </div>
     </div>

@@ -4,6 +4,7 @@ import { css } from 'emotion';
 import { reducer } from 'app/EntrySidebar/Configuration/SidebarConfigurationReducer'; // Replace
 import { State } from 'app/EntrySidebar/Configuration/SidebarConfigurationReducer';
 import WidgetsConfiguration from 'app/ContentModel/Editor/WidgetsConfiguration';
+import { ConfigurationItem } from 'app/ContentModel/Editor/WidgetsConfiguration/interfaces';
 import { create } from 'widgets/BuiltinWidgets';
 import { WidgetNamespace, WidgetLocation } from 'features/widget-renderer';
 import WidgetParametersConfiguration from 'app/EntrySidebar/Configuration/WidgetParametersConfiguration'; // Replace
@@ -28,7 +29,7 @@ interface DefaultWidget {
   name: string;
 }
 
-interface ConfigurationItem {
+interface SavedConfigItem {
   widgetId: string;
   widgetNamespace: WidgetNamespace;
   disabled?: boolean;
@@ -36,44 +37,56 @@ interface ConfigurationItem {
 }
 
 interface EditorConfigProps {
-  onUpdateConfiguration: (configuration: ConfigurationItem[] | undefined) => void;
+  onUpdateConfiguration: (configuration: SavedConfigItem[] | undefined) => void;
   defaultWidgets: DefaultWidget[];
   customWidgets: CustomWidget[];
-  configuration: ConfigurationItem[];
+  configuration: SavedConfigItem[];
 }
 
-// yikes
-const convertToWidgetConfiguration = (widget) => ({
+type ConvertToWidgetConfiguration = {
+  (widget: CustomWidget): ConfigurationItem;
+  (widget: DefaultWidget): ConfigurationItem;
+  (widget: SavedConfigItem): ConfigurationItem;
+};
+
+const convertToWidgetConfiguration: ConvertToWidgetConfiguration = (widget): ConfigurationItem => ({
   widgetId: widget.id || widget.widgetId,
   widgetNamespace: widget.namespace || widget.widgetNamespace,
-  ...pick(widget, ['name', 'locations', 'parameters']),
+  ...pick(widget, [
+    'name',
+    'description',
+    'locations',
+    'parameters',
+    'availabilityStatus',
+    'settings',
+  ]),
 });
 
 const findUnusedDefaultWidgets = (
   defaultWidgets: DefaultWidget[],
-  configuration: ConfigurationItem[]
+  configuration: SavedConfigItem[]
 ) => {
   return defaultWidgets.filter(
-    (widget) =>
+    widget =>
       !configuration.find(
-        (item) =>
+        item =>
           item.widgetNamespace === WidgetNamespace.EDITOR_BUILTIN &&
           widget.widgetId === item.widgetId
       )
   );
 };
 
-const removeDisabledWidgets = (widget: ConfigurationItem) => !widget.disabled;
+const removeDisabledWidgets = (widget: SavedConfigItem) => !widget.disabled;
 
 const enrichWidgetData = (defaultWidgets: DefaultWidget[], customWidgets: CustomWidget[]) => (
-  item: ConfigurationItem
+  item: SavedConfigItem
 ) =>
   item.widgetNamespace === WidgetNamespace.EDITOR_BUILTIN
-    ? defaultWidgets.find((widget) => item.widgetId === widget.widgetId)
-    : customWidgets.find((widget) => item.widgetId === widget.id);
+    ? defaultWidgets.find(widget => item.widgetId === widget.widgetId)
+    : customWidgets.find(widget => item.widgetId === widget.id);
 
 function createStateFromConfiguration(
-  configuration: ConfigurationItem[],
+  configuration: SavedConfigItem[],
   defaultWidgets: DefaultWidget[],
   customWidgets: CustomWidget[]
 ): State {
@@ -91,7 +104,7 @@ function createStateFromConfiguration(
     .filter(removeDisabledWidgets)
     .map(enrichWidgetData(defaultWidgets, customWidgets))
     .concat(unusedDefaultEditors)
-    .filter((item) => !!item);
+    .filter(item => !!item);
 
   return {
     items: items.map(convertToWidgetConfiguration),
@@ -103,7 +116,7 @@ function createStateFromConfiguration(
 function convertInternalStateToConfiguration(
   state: any,
   initialItems: any
-): ConfigurationItem[] | undefined {
+): SavedConfigItem[] | undefined {
   if (state.items === initialItems) {
     return undefined;
   }
@@ -168,7 +181,7 @@ function EntryEditorConfiguration(props: EditorConfigProps) {
 
 export default (props: Omit<EditorConfigProps, 'defaultWidgets'>) => {
   const defaultEditors = create().filter(
-    (editor) => editor.namespace === WidgetNamespace.EDITOR_BUILTIN
+    editor => editor.namespace === WidgetNamespace.EDITOR_BUILTIN
   );
   const defaultWidgets = defaultEditors.map(convertToWidgetConfiguration);
 
