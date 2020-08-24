@@ -17,7 +17,6 @@ import ContentTypesPage from 'app/ContentModel/Editor/ContentTypesPage';
 
 import { AddFieldDialogModal } from './Dialogs/AddField';
 import { ModalLauncher } from 'core/components/ModalLauncher';
-import { WidgetNamespace } from 'features/widget-renderer';
 
 export default function register() {
   registerDirective('cfContentTypeEditor', [

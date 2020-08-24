@@ -9,7 +9,7 @@ export function createImmerReducer<State, Action extends ActionWithType>(
 ): (state: State, action: Action) => State {
   return (state, action) =>
     produce(state, (draft) => {
-      if (handlers.hasOwnProperty(action.type)) {
+      if (Object.prototype.hasOwnProperty.call(handlers, action.type)) {
         return handlers[action.type](draft, action);
       }
     });
