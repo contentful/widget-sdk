@@ -3,7 +3,6 @@ import {
   convertConfigurationToInternalState,
 } from './SidebarSync';
 import { flatten, uniq } from 'lodash';
-import { SidebarType } from '../constants';
 import {
   EntryConfiguration,
   Publication as PublicationWidget,
@@ -27,7 +26,6 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
       expect(
         convertInternalStateToConfiguration(
           {
-            sidebarType: SidebarType.default,
             items: EntryConfiguration,
           },
           EntryConfiguration
@@ -50,7 +48,6 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
         },
       ];
       const state = {
-        sidebarType: SidebarType.custom,
         items,
       };
       const configuration = convertInternalStateToConfiguration(state, EntryConfiguration);
@@ -71,7 +68,6 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
   describe('convertConfigurationToInternalState', () => {
     it('should return default state is configuration is not array', () => {
       const defaultState = {
-        sidebarType: SidebarType.default,
         configurableWidget: null,
         items: EntryConfiguration,
         availableItems: [],
@@ -95,7 +91,6 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
       }));
       const state = convertConfigurationToInternalState(allDisabled, [], EntryConfiguration);
       expect(state).toEqual({
-        sidebarType: SidebarType.custom,
         configurableWidget: null,
         items: [],
         availableItems: EntryConfiguration,
@@ -140,7 +135,6 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
       const state = convertConfigurationToInternalState(configuration, [], EntryConfiguration);
 
       expect(state).toEqual({
-        sidebarType: SidebarType.custom,
         configurableWidget: null,
         items: [
           PublicationWidget,
@@ -232,7 +226,6 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
       );
 
       expect(state).toEqual({
-        sidebarType: SidebarType.custom,
         configurableWidget: null,
         items: [
           PublicationWidget,

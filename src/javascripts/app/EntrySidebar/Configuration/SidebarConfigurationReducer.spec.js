@@ -1,24 +1,13 @@
 import {
   reducer,
-  selectSidebarType,
   openWidgetConfiguration,
   closeWidgetConfiguration,
   removeItemFromSidebar,
   addItemToSidebar,
   changeItemPosition,
 } from './SidebarConfigurationReducer';
-import { SidebarType } from './constants';
 
 describe('EntrySidebar/Configuration/SidebarConfigurationReducer', () => {
-  it('should change sidebar type from default to custom', () => {
-    const nextState = reducer(
-      {
-        sidebarType: SidebarType.default,
-      },
-      selectSidebarType(SidebarType.custom)
-    );
-    expect(nextState.sidebarType).toEqual(SidebarType.custom);
-  });
   it('should open and close widget configuration', () => {
     let nextState = reducer(
       {
@@ -31,7 +20,7 @@ describe('EntrySidebar/Configuration/SidebarConfigurationReducer', () => {
     expect(nextState.configurableWidget).toBeNull();
   });
 
-  it('should remove item from sidebar', () => {
+  it('should remove item from items list on sidebar but not add it to availableItems', () => {
     const initialState = {
       items: [
         { widgetId: '1', widgetNamespace: 'first' },
@@ -53,7 +42,7 @@ describe('EntrySidebar/Configuration/SidebarConfigurationReducer', () => {
         { widgetId: '2', widgetNamespace: 'second' },
         { widgetId: '3', widgetNamespace: 'first', problem: true },
       ],
-      availableItems: [{ widgetId: '1', widgetNamespace: 'first' }],
+      availableItems: [],
     });
 
     nextState = reducer(
@@ -66,7 +55,7 @@ describe('EntrySidebar/Configuration/SidebarConfigurationReducer', () => {
 
     expect(nextState).toEqual({
       items: [{ widgetId: '2', widgetNamespace: 'second' }],
-      availableItems: [{ widgetId: '1', widgetNamespace: 'first' }],
+      availableItems: [],
     });
   });
 
@@ -96,20 +85,13 @@ describe('EntrySidebar/Configuration/SidebarConfigurationReducer', () => {
         { widgetId: '1', widgetNamespace: 'first' },
         { widgetId: '3', widgetNamespace: 'second' },
       ],
-      availableItems: [{ widgetId: '2', widgetNamespace: 'second' }],
+      availableItems: [
+        { widgetId: '1', widgetNamespace: 'first' },
+        { widgetId: '2', widgetNamespace: 'second' },
+      ],
     };
 
     expect(nextState).toEqual(expectedState);
-
-    expect(
-      reducer(
-        nextState,
-        addItemToSidebar({
-          widgetId: 'some-other-item',
-          widgetNamespace: 'third',
-        })
-      )
-    ).toEqual(expectedState);
   });
 
   it('should swap items', () => {

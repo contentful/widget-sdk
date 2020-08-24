@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, cleanup, wait, configure, fireEvent } from '@testing-library/react';
 import EntryEditorConfig from './EntryEditorConfig';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace, WidgetLocation } from 'features/widget-renderer';
 
 configure({ testIdAttribute: 'data-test-id' });
 
@@ -27,14 +27,14 @@ describe('EntryEditorConfig', () => {
       id: 'app-1',
       namespace: WidgetNamespace.APP,
       settings: {},
-      locations: ['entry-editor'],
+      locations: [WidgetLocation.ENTRY_EDITOR],
       name: 'App 1'
     }, {
       id: 'ext-1',
       namespace: WidgetNamespace.EXTENSION,
       settings: {},
       name: 'Ext 1',
-      locations: ['entry-editor']
+      locations: [WidgetLocation.ENTRY_EDITOR]
     }];
     const props = {
       onUpdateConfiguration() {},
@@ -60,7 +60,7 @@ describe('EntryEditorConfig', () => {
     const { getAllByTestId } = render(<EntryEditorConfig {...props} />);
     await wait();
 
-    await fireEvent.click(getAllByTestId('remove-selected-widget')[0]);
+    fireEvent.click(getAllByTestId('remove-selected-widget')[0]);
 
     expect(getAllByTestId('available-widget')).toHaveLength(DEFAULT_WIDGETS - 1);
     expect(getAllByTestId('selected-widget-item')).toHaveLength(1);
@@ -75,7 +75,7 @@ describe('EntryEditorConfig', () => {
         namespace: WidgetNamespace.EXTENSION,
         settings: {},
         name: 'Ext 1',
-        locations: ['entry-editor']
+        locations: [WidgetLocation.ENTRY_EDITOR]
       }]
     };
     const DEFAULT_WIDGETS = 2;
@@ -83,7 +83,7 @@ describe('EntryEditorConfig', () => {
     const { getAllByTestId, getByTestId, queryByTestId } = render(<EntryEditorConfig {...props} />);
     await wait();
 
-    await fireEvent.click(getByTestId('add-widget-to-tabs'));
+    fireEvent.click(getByTestId('add-widget-to-tabs'));
 
     expect(queryByTestId('available-widget')).toBeNull();
     expect(getAllByTestId('selected-widget-item')).toHaveLength(DEFAULT_WIDGETS + 1);

@@ -5,7 +5,7 @@ import { reducer } from 'app/EntrySidebar/Configuration/SidebarConfigurationRedu
 import { State } from 'app/EntrySidebar/Configuration/SidebarConfigurationReducer';
 import WidgetsConfiguration from 'app/ContentModel/Editor/WidgetsConfiguration';
 import { create } from 'widgets/BuiltinWidgets';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace, WidgetLocation } from 'features/widget-renderer';
 import WidgetParametersConfiguration from 'app/EntrySidebar/Configuration/WidgetParametersConfiguration'; // Replace
 
 const styles = {
@@ -19,7 +19,7 @@ interface CustomWidget {
   name: string;
   namespace: WidgetNamespace;
   id: string;
-  locations: Location[];
+  locations: WidgetLocation[];
 }
 
 interface DefaultWidget {
