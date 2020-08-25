@@ -27,6 +27,8 @@ const styles = {
   }),
   itemName: css({
     flex: '1 1 auto',
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
   }),
   itemDrag: css({
     position: 'absolute',
