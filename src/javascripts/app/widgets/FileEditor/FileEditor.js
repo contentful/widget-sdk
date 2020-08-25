@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { get, find } from 'lodash';
 import PropTypes from 'prop-types';
 import { Notification } from '@contentful/forma-36-react-components';
+import { isSecureAssetUrl } from 'utils/AssetUrl';
 import { FileEditorActions, DownloadButton, styles } from './FileEditorActions';
 import { FileEditorArchived } from './FileEditorArchived';
 import { FileEditorLoading } from './FileEditorLoading';
@@ -43,7 +44,7 @@ function isUnprocessedFile(file) {
 }
 
 export default function FileEditor(props) {
-  const { file, disabled, archived, processAsset, setValue, maybeSetTitle } = props;
+  const { file, disabled, archived, processAsset, setValue, maybeSetTitle, signAssetUrl } = props;
   const [showMetaData, setShowMetaData] = useState(false);
   const [isBusy, setBusy] = useState(false);
 
@@ -80,11 +81,18 @@ export default function FileEditor(props) {
     }
   }
 
+  const signUrl = (url) => {
+    if (isSecureAssetUrl(url)) {
+      return signAssetUrl(url);
+    }
+    return url;
+  };
+
   const performImageOperation = async (fn, mode) => {
     setBusy(true);
 
     try {
-      const uploadUrl = await fn(mode, file);
+      const uploadUrl = await fn(mode, file, signUrl);
       if (uploadUrl) {
         updateFile({
           upload: uploadUrl,
@@ -153,7 +161,7 @@ export default function FileEditor(props) {
         onCrop={async (mode) => {
           setBusy(true);
           try {
-            const updatedFile = await ImageOperations.crop(mode, file);
+            const updatedFile = await ImageOperations.crop(mode, file, signUrl);
             if (updatedFile) {
               updateFile(updatedFile);
             }
@@ -180,6 +188,7 @@ FileEditor.propTypes = {
   }),
   setValue: PropTypes.func.isRequired,
   processAsset: PropTypes.func.isRequired,
+  signAssetUrl: PropTypes.func.isRequired,
   disabled: PropTypes.bool.isRequired,
   archived: PropTypes.bool,
   maybeSetTitle: PropTypes.func.isRequired,

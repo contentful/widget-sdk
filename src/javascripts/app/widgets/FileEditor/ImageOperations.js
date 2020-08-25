@@ -51,15 +51,15 @@ const RESIZE_MODES = {
   }),
 };
 
-export function rotateOrMirror(mode, file) {
+export async function rotateOrMirror(mode, file, signUrl) {
   if (!isValidImage(file)) {
     return Promise.reject(new Error('Expected an image.'));
   }
 
-  return Filestack.rotateOrMirrorImage(mode, url(file));
+  return Filestack.rotateOrMirrorImage(mode, await signUrl(url(file)));
 }
 
-export function resize(mode, file) {
+export function resize(mode, file, signUrl) {
   if (!isValidImage(file)) {
     return Promise.reject(new Error('Expected an image.'));
   }
@@ -84,24 +84,27 @@ export function resize(mode, file) {
     initialValue
   ).then((value) => {
     if (value) {
-      return valueToUrl(value);
+      return signUrl(valueToUrl(value));
     }
   });
 }
 
-export function crop(mode, file) {
+export async function crop(mode, file, signUrl) {
   if (!isValidImage(file)) {
     return Promise.reject(new Error('Expected an image.'));
   }
 
   if (mode === 'custom') {
-    return cropWithCustomAspectRatio(file);
+    return cropWithCustomAspectRatio(file, signUrl);
   } else {
-    return Filestack.cropImage(mode === 'original' ? ratioNumber(file) : mode, url(file));
+    return Filestack.cropImage(
+      mode === 'original' ? ratioNumber(file) : mode,
+      await signUrl(url(file))
+    );
   }
 }
 
-function cropWithCustomAspectRatio(file) {
+function cropWithCustomAspectRatio(file, signUrl) {
   return openInputDialog(
     {
       confirmLabel: 'Please provide desired aspect ratio',
@@ -119,11 +122,11 @@ function cropWithCustomAspectRatio(file) {
       ),
     },
     ratio(file)
-  ).then((ratio) => {
+  ).then(async (ratio) => {
     if (ratio) {
       const [w, h] = ratio.split(':');
       const parsedRatio = parseInt(w, 10) / parseInt(h, 10);
-      return Filestack.cropImage(parsedRatio, url(file));
+      return Filestack.cropImage(parsedRatio, await signUrl(url(file)));
     }
   });
 }

@@ -74,6 +74,70 @@ javascript:window.location.href=`http://localhost:3001${window.location.pathname
 - Click on the bookmark
 - Start developing!
 
+#### Setting up HTTPS (and handling CORS)
+
+Some features (such as secure assets) require that you're running your
+development environment as an HTTPS server. This is typically somewhat
+challenging, but there are tools that make this easier.
+
+Process:
+
+1. Install [`mkcert`](https://github.com/FiloSottile/mkcert#installation). This
+   tool will install a new root CA in your operating system, and then allow you
+   to create trusted certificates for any domain you'd like. Make sure you've
+   run `mkcert -install` after installing the tool itself.
+
+2. Create a new certificate pair for `*.joistio.com':
+
+   ```sh
+   # mkcert '*.joistio.com'
+   ```
+
+   This will create two files in your local directory:
+   _wildcard.joistio.com-key.pem and _wildcard.joistio.com.pem.
+
+   Note: `joistio.com` is a domain (with some subdomains, like `app.joistio.com`)
+   controlled by Contentful that simply points to localhost (127.0.0.1). When
+   we do CORS checks, this domain is typically whitelisted. You could also make
+   a cert just for `localhost`, but this might get trickier with subdomains,
+   and probably doesn't work with CORS, which is why we recommend a
+   `joistio.com` domain.
+
+3. If you're using, for example, `app.joistio.com:3001` to access the app,
+   then lazy-loaded chunks from webpack will fail to load unless your
+   configuration's `assetUrl` is set to `https://app.joistio.com:3001/`. You
+   can modify, for example, the `config/dev-on-staging.json` to suit.
+
+4. Run the server with the cert/key file specified. You can launch the dev
+   server and set the `HTTPS_KEY_FILE` and `HTTPS_CERT_FILE` environment
+   variables to launch as an HTTPS (rather than HTTP) server. For example:
+
+   ```sh
+   # env HTTPS_KEY_FILE=./_wildcard.joistio.com-key.pem HTTPS_CERT_FILE=_wildcard.joistio.com.pem npm run dev-staging
+   ```
+
+5. Visit `https://app.joistio.com:3001/#access_token=<your access token>`. This
+   should resolve to your machine (127.0.0.1). You should be able to login per
+   usual, and any features that require HTTPS security and CORS from an official
+   Contentful domain should be functional.
+
+
+6. (Optional) If you always want to run the server in HTTPS mode, you can add
+   these options to a `.envrc` file and use [`direnv`](https://direnv.net/) to
+   automatically set these environment variables when you're in the
+   `user_interface` project.
+
+   Example `.envrc`:
+
+   ```sh
+   export HTTPS_KEY_FILE="$PWD/_wildcard.joistio.com-key.pem"
+   export HTTPS_CERT_FILE="$PWD/_wildcard.joistio.com.pem"
+   ```
+
+   Don't forget to `direnv allow` after modifying your `.envrc` file!
+
+
+
 #### Notes and limitations
 
 - Note that you cannot login using the "normal" flow, e.g. by signing in locally. You
