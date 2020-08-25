@@ -27,7 +27,14 @@ const resourcesToDisplay = [
   { id: 'record', name: 'Records' },
 ];
 
-export function SpacePlanSelection({ plans, space, spaceResources, selectedPlan, onPlanSelected }) {
+export function SpacePlanSelection({
+  plans,
+  space,
+  spaceResources,
+  selectedPlan,
+  onPlanSelected,
+  handleNavigationNext,
+}) {
   return (
     <Typography>
       <Heading element="h2">Choose a new space type for {space.name}</Heading>
@@ -65,7 +72,7 @@ export function SpacePlanSelection({ plans, space, spaceResources, selectedPlan,
         <StateLink component={Button} buttonType="muted" path={'^.subscription_new'}>
           Go back
         </StateLink>
-        <Button buttonType="primary" onClick={() => {}}>
+        <Button buttonType="primary" onClick={() => handleNavigationNext()}>
           Continue
         </Button>
       </Flex>
@@ -79,6 +86,7 @@ SpacePlanSelection.propTypes = {
   spaceResources: PropTypes.objectOf(ResourcePropType),
   selectedPlan: PlanPropType,
   onPlanSelected: PropTypes.func.isRequired,
+  handleNavigationNext: PropTypes.func,
 };
 
 export function getIncludedResources(charges) {
