@@ -134,6 +134,7 @@ export default class ExtensionIFrameRenderer extends React.Component {
     iframe.style.display = 'block';
 
     iframe.dataset.extensionId = id;
+    iframe.dataset.environmentId = this.props.bridge.getData().environmentId;
     iframe.dataset.location = bridgeData.location;
 
     if (namespace === WidgetNamespace.APP) {

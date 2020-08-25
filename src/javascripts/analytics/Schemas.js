@@ -231,7 +231,7 @@ registerSchema({
 
 registerSchema({
   name: 'extension_render',
-  version: '2-0-1',
+  version: '2-1-0',
 });
 
 registerSchema({
@@ -241,7 +241,7 @@ registerSchema({
 
 registerSchema({
   name: 'extension_activate',
-  version: '1-0-0',
+  version: '1-1-0',
 });
 
 registerSchema({

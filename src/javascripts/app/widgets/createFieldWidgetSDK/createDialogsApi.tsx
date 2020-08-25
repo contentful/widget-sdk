@@ -197,7 +197,7 @@ async function openCustomDialog(
                 sdk={dialogSdk}
                 widget={widget}
                 onRender={(widget, location) =>
-                  trackExtensionRender(location, toLegacyWidget(widget))
+                  trackExtensionRender(location, toLegacyWidget(widget), sdk.ids.environment)
                 }
               />
             </div>

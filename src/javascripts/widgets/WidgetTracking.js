@@ -1,22 +1,26 @@
 import { get, identity } from 'lodash';
 import { getSchema } from 'analytics/Schemas';
 import { makeEventFromWidget } from './TrackExtensionRender';
-import { WidgetLocation, WidgetNamespace } from 'features/widget-renderer';
+import { WidgetLocation, isCustomWidget } from 'features/widget-renderer';
 
 // Arguments are expected to be produced in `app/entity_editor/DataLoader#loadEditorData()`.
-export function getWidgetTrackingContexts({
-  fieldControls,
-  sidebar,
-  sidebarExtensions,
-  editorsExtensions,
-}) {
+export function getWidgetTrackingContexts(
+  { fieldControls, sidebar, sidebarExtensions, editorsExtensions },
+  environmentId
+) {
   return [
-    ...getExtensionTrackingContexts({ fieldControls, sidebarExtensions, editorsExtensions }),
+    ...getExtensionTrackingContexts(
+      { fieldControls, sidebarExtensions, editorsExtensions },
+      environmentId
+    ),
     getSidebarTrackingContext({ fieldControls, sidebar }),
   ];
 }
 
-function getExtensionTrackingContexts({ fieldControls, sidebarExtensions, editorsExtensions }) {
+function getExtensionTrackingContexts(
+  { fieldControls, sidebarExtensions, editorsExtensions },
+  environmentId
+) {
   const extensionsByLocation = {
     [WidgetLocation.ENTRY_FIELD]: getExtensions(fieldControls, ['form']),
     [WidgetLocation.ENTRY_FIELD_SIDEBAR]: getExtensions(fieldControls, ['sidebar']),
@@ -28,7 +32,7 @@ function getExtensionTrackingContexts({ fieldControls, sidebarExtensions, editor
     (acc, location) => [
       ...acc,
       ...extensionsByLocation[location].reduce(
-        (acc, widget) => [...acc, makeExtensionEvent(location, widget)],
+        (acc, widget) => [...acc, makeExtensionEvent(location, widget, environmentId)],
         []
       ),
     ],
@@ -36,10 +40,10 @@ function getExtensionTrackingContexts({ fieldControls, sidebarExtensions, editor
   );
 }
 
-function makeExtensionEvent(location, widget) {
+function makeExtensionEvent(location, widget, environmentId) {
   return {
     schema: getSchema('extension_render').path,
-    data: makeEventFromWidget(location, widget),
+    data: makeEventFromWidget(location, widget, environmentId),
   };
 }
 
@@ -72,9 +76,7 @@ function getExtensions(container, path) {
   const locationWidgets = Array.isArray(path) ? get(container, path) : container;
 
   if (Array.isArray(locationWidgets)) {
-    return locationWidgets
-      .filter(identity)
-      .filter((w) => w.widgetNamespace === WidgetNamespace.EXTENSION);
+    return locationWidgets.filter(identity).filter((w) => isCustomWidget(w.widgetNamespace));
   } else {
     return [];
   }

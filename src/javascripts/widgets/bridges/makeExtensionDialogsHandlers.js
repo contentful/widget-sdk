@@ -87,7 +87,11 @@ export default function makeExtensionDialogsHandlers(dependencies) {
       invocation: options.parameters || {},
     };
 
-    trackExtensionRender(WidgetLocation.DIALOG, toLegacyWidget(widget));
+    trackExtensionRender(
+      WidgetLocation.DIALOG,
+      toLegacyWidget(widget),
+      dependencies.spaceContext.getEnvironmentId()
+    );
 
     const dialogKey = Date.now().toString();
 

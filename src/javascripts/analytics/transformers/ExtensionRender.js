@@ -20,6 +20,7 @@ export default addUserOrgSpace((_, segmentData) => {
           'src',
           'installation_params',
           'instance_params',
+          'environment_id',
         ]),
       },
     ],

@@ -29,7 +29,8 @@ export default class PageExtension extends React.Component {
   };
 
   componentDidMount() {
-    trackExtensionRender(WidgetLocation.PAGE, toLegacyWidget(this.props.widget));
+    const environmentId = this.props.bridge.getData().environmentId;
+    trackExtensionRender(WidgetLocation.PAGE, toLegacyWidget(this.props.widget), environmentId);
   }
 
   render() {
