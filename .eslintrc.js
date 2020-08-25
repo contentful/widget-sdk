@@ -74,7 +74,7 @@ module.exports = {
     {
       files: [
         'src/**/*.spec.{js,ts,tsx}',
-        'src/**/__test__/**/*.{js,ts,tsx}',
+        'src/**/__tests__/**/*.{js,ts,tsx}',
         'src/javascripts/**/__mocks__/**/*.{js,ts,tsx}',
       ],
       extends: [require.resolve('./tools/eslint-rules/jest.js')],

@@ -1,8 +1,10 @@
 import { cloneDeep, set } from 'lodash';
 import jestKefir from 'jest-kefir';
-import * as K from '../../../../../test/utils/kefir';
+import * as K from '../../../../../../test/utils/kefir';
 import * as Kefir from 'core/utils/kefir';
 import * as Permissions from 'access_control/EntityPermissions';
+
+import { initiallyLinkedTags, linkedTags, newEntry } from '../__fixtures__';
 
 const kefirHelpers = jestKefir(Kefir);
 const { value } = kefirHelpers;
@@ -13,62 +15,17 @@ jest.mock('services/localeStore', () => ({
   getPrivateLocales: () => [{ internal_code: 'en-US' }, { internal_code: 'de' }],
 }));
 
-export const linkedTags = [
-  { sys: { id: 'tagId1', type: 'Link', linkType: 'Tag' } },
-  { sys: { id: 'tagId2', type: 'Link', linkType: 'Tag' } },
-];
-
-export const initiallyLinkedTags = [{ sys: { id: 'tagId', type: 'Link', linkType: 'Tag' } }];
-
-export const newEntry = (fields, metadata) => ({
-  sys: {
-    type: 'Entry',
-    version: 1,
-    contentType: {
-      sys: { id: 'ctId' },
-    },
-    updatedAt: '2020-06-06T12:58:25.641Z',
-    updatedBy: {
-      sys: { id: 'userId' },
-    },
-  },
-  fields: fields || {
-    fieldA: { 'en-US': 'en' },
-    fieldB: { 'en-US': 'val-EN', de: 'val-DE' },
-    listField: { 'en-US': ['one'] },
-    symbolField: { 'en-US': 'symbol value' },
-    textField: { 'en-US': 'text value' },
-  },
-  ...metadata,
-});
-
-export const newAsset = (fields) => ({
-  sys: {
-    type: 'Asset',
-    version: 1,
-    updatedBy: {
-      sys: { id: 'userId' },
-    },
-  },
-  fields: fields || {
-    title: { 'en-US': 'foo' },
-    file: { 'en-US': { url: 'https://example.com/foo.jpg' } },
-  },
-});
-
-export const newContentType = (sys, fields) => ({
-  data: {
-    sys,
-    fields: fields || [
-      { id: 'fieldA' },
-      { id: 'fieldB' },
-      { id: 'unsetField' },
-      { id: 'listField', type: 'Array', items: { type: 'Symbol' } },
-      { id: 'symbolField', type: 'Symbol' },
-      { id: 'textField', type: 'Text' },
-    ],
-  },
-});
+export function expectDocError(docError$, docErrorOrConstructor) {
+  const docError = K.getValue(docError$);
+  if (docErrorOrConstructor === null) {
+    expect(docError).toBeNull();
+  } else if (typeof docErrorOrConstructor === 'function') {
+    expect(docError).toBeInstanceOf(docErrorOrConstructor);
+  } else {
+    expect(docError).toBeInstanceOf(docErrorOrConstructor.constructor);
+    expect(docError).toStrictEqual(docErrorOrConstructor);
+  }
+}
 
 export default (createDocument) => {
   describe('Document', () => {
@@ -427,7 +384,3 @@ export default (createDocument) => {
     });
   });
 };
-
-it('mock', () => {
-  expect(1).toEqual(1);
-});

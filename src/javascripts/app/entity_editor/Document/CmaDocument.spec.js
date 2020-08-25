@@ -3,7 +3,8 @@ import * as CmaDocument from './CmaDocument';
 import { THROTTLE_TIME } from './CmaDocument';
 import { Action } from 'data/CMA/EntityActions';
 import { State as EntityState } from 'data/CMA/EntityState';
-import testDocumentBasic, { linkedTags, newAsset, newContentType, newEntry } from './Document.spec';
+import { linkedTags, newAsset, newContentType, newEntry } from './__fixtures__';
+import testDocumentBasics, { expectDocError } from './__tests__/testDocument';
 import * as K from '../../../../../test/utils/kefir';
 import { Error as DocError } from '../../../data/document/Error';
 import { track } from 'analytics/Analytics';
@@ -72,7 +73,7 @@ function createCmaDocument(initialEntity, contentTypeFields, throttleMs) {
 }
 
 describe('CmaDocument', () => {
-  testDocumentBasic(createCmaDocument);
+  testDocumentBasics(createCmaDocument);
   const fieldPath = ['fields', 'fieldA', 'en-US'];
   const metadataPath = ['metadata', 'tags'];
   /**
@@ -847,16 +848,4 @@ function mockGetUpdatedEntity(entity, path, value) {
     updated.sys.version++;
     return set(updated, path, value);
   });
-}
-
-export function expectDocError(docError$, docErrorOrConstructor) {
-  const docError = K.getValue(docError$);
-  if (docErrorOrConstructor === null) {
-    expect(docError).toBeNull();
-  } else if (typeof docErrorOrConstructor === 'function') {
-    expect(docError).toBeInstanceOf(docErrorOrConstructor);
-  } else {
-    expect(docError).toBeInstanceOf(docErrorOrConstructor.constructor);
-    expect(docError).toStrictEqual(docErrorOrConstructor);
-  }
 }
