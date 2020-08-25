@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { isEqual } from 'lodash';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import {
@@ -106,6 +107,7 @@ const WidgetsConfiguration: React.FC<WidgetsConfigurationProps> = ({
               onConfigureItem={(widget: ConfigurationItem) => {
                 dispatch(openWidgetConfiguration(widget));
               }}
+              showResetButton={!isEqual(state.items, defaultAvailableItems)}
             />
           </div>
         </React.Fragment>

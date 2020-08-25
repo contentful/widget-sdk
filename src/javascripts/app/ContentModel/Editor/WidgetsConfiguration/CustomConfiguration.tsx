@@ -72,21 +72,34 @@ WidgetListItem.propTypes = {
 
 const SortableContainer = Sortable.SortableContainer(({ children }) => <div>{children}</div>);
 
+interface CustomConfigurationProps {
+  items?: ConfigurationItem[];
+  onRemoveItem: (item: ConfigurationItem) => void;
+  onConfigureItem: (item: ConfigurationItem) => void;
+  onChangePosition: (sourceIndex: number, destinationIndex: number) => void;
+  onResetClick: () => void;
+  title: string;
+  showResetButton: boolean;
+}
+
 export default function CustomConfiguration({
-  items,
+  items = [],
   onChangePosition,
   onRemoveItem,
   onConfigureItem,
   onResetClick,
   title,
-}) {
+  showResetButton,
+}: CustomConfigurationProps) {
   return (
     <>
       <span className={styles.header}>
         <Subheading className={styles.customTitle}>{title}</Subheading>
-        <TextLink testId="reset-widget-configuration" onClick={onResetClick}>
-          Reset to default
-        </TextLink>
+        {showResetButton && (
+          <TextLink testId="reset-widget-configuration" onClick={onResetClick}>
+            Reset to default
+          </TextLink>
+        )}
       </span>
       {items.length !== 0 && (
         <SortableContainer
@@ -122,16 +135,3 @@ export default function CustomConfiguration({
     </>
   );
 }
-
-CustomConfiguration.defaultProps = {
-  items: [],
-};
-
-CustomConfiguration.propTypes = {
-  items: PropTypes.array.isRequired,
-  onRemoveItem: PropTypes.func.isRequired,
-  onConfigureItem: PropTypes.func.isRequired,
-  onChangePosition: PropTypes.func.isRequired,
-  onResetClick: PropTypes.func.isRequired,
-  title: PropTypes.string.isRequired,
-};
