@@ -1,7 +1,8 @@
-import { pick, difference, identity } from 'lodash';
+import { pick, difference, identity, isEqual } from 'lodash';
 
 import { defaultWidgetsMap } from '../defaults';
 
+import { State } from '../SidebarConfigurationReducer';
 import { WidgetNamespace, isCustomWidget, WidgetLocation } from 'features/widget-renderer';
 import { isSameWidget } from 'app/ContentModel/Editor/WidgetsConfiguration/utils';
 
@@ -10,8 +11,8 @@ import { isSameWidget } from 'app/ContentModel/Editor/WidgetsConfiguration/utils
  * to data that can be used in API calls to `/editor_inteface`
  * for saving configuration.
  */
-export function convertInternalStateToConfiguration(state: any, initialItems: any) {
-  if (state.items === initialItems) {
+export function convertInternalStateToConfiguration(state: State, initialItems: any) {
+  if (isEqual(state.items, initialItems)) {
     return undefined;
   }
 
@@ -69,7 +70,7 @@ export function convertConfigurationToInternalState(
   configuration: any,
   widgets: any,
   initialItems: any
-) {
+): State {
   if (!Array.isArray(configuration)) {
     return {
       items: initialItems,
