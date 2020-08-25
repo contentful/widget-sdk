@@ -118,8 +118,6 @@ export function IDPDetailsForm({
     [identityProvider]
   );
 
-  const handleInputChange = (e) => debouncedUpdate('idpSsoTargetUrl', e.target.value);
-
   const allowConnectionTest = connectionTestingAllowed(fields);
 
   const handleEnable = async () => {
@@ -172,8 +170,8 @@ export function IDPDetailsForm({
               helpText="Sometimes called the SSO Login URL"
               name="idpSsoTargetUrl"
               testId="idp-sso-target-url"
-              onChange={handleInputChange}
-              value={fields.idpSsoTargetUrl.value ? fields.idpSsoTargetUrl.value : ''}
+              onChange={(e) => debouncedUpdate('idpSsoTargetUrl', e.target.value)}
+              value={fields.idpSsoTargetUrl.value}
               validationMessage={fields.idpSsoTargetUrl.error}
             />
           </div>
@@ -194,7 +192,7 @@ export function IDPDetailsForm({
               textInputProps={{
                 rows: 8,
               }}
-              value={fields.idpCert.value ? fields.idpCert.value : ''}
+              value={fields.idpCert.value}
               onChange={(e) => debouncedUpdate('idpCert', e.target.value)}
               validationMessage={fields.idpCert.error}
             />
@@ -238,7 +236,7 @@ export function IDPDetailsForm({
                 width: 'large',
                 placeholder: `E.g. ${kebabCase(orgName)}-sso`,
               }}
-              value={fields.ssoName.value ? fields.ssoName.value : ''}
+              value={fields.ssoName.value}
               onChange={(e) => debouncedUpdate('ssoName', e.target.value)}
               validationMessage={fields.ssoName.error}
             />
