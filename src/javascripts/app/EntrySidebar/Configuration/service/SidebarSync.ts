@@ -81,15 +81,12 @@ export function convertConfigurationToInternalState(
 
   widgets = widgets.map(convertToWidgetConfiguration);
 
-  // Mark unavailable widgets with `problem: true`.
-  let items = configuration
+  const items = configuration
     .map((configItem) => {
       if (configItem.widgetNamespace === WidgetNamespace.SIDEBAR_BUILTIN) {
         const found = defaultWidgetsMap[configItem.widgetId];
 
-        return found
-          ? { ...configItem, name: found.name, description: found.description }
-          : { ...configItem, problem: true };
+        return found ? { ...configItem, name: found.name, description: found.description } : null;
       }
 
       if (isCustomWidget(configItem.widgetNamespace)) {
@@ -97,48 +94,19 @@ export function convertConfigurationToInternalState(
 
         // Settings have to be copied to the widget for
         // the updating of instance parameters to work
-        const widget = found
-          ? { ...found, ...pick(configItem, ['settings']) }
-          : // Mark as problem true if the widget wasn't found in the list of valid widgets
-            { ...configItem, problem: true };
-
-        return widget;
+        return found ? { ...found, ...pick(configItem, ['settings']) } : null;
       }
-
-      return null;
     })
-    .filter(identity);
+    .filter(identity)
+    .filter((item) => item.disabled !== true);
 
-  const availableItems: any[] = [];
-  const validWidgetMatcher = (widget: any) => (item: any) =>
-    isSameWidget(item, widget) && item.problem !== true;
-
-  // Add all disabled and missing built-in widgets to the list
-  // of available items.
-  initialItems.forEach((buildInWidget: any) => {
-    const found = items.find(validWidgetMatcher(buildInWidget));
-
-    if (!found || found.disabled === true) {
-      availableItems.push(buildInWidget);
+  const availableItems = widgets.reduce((acc, widget) => {
+    if (canBeUsedInSidebar(widget)) {
+      acc.push(widget);
     }
-  });
 
-  // Add all custom widgets that are not selected to the list
-  // of available items.
-  widgets.forEach((widget: any) => {
-    const found = items.find(validWidgetMatcher(widget));
-
-    if (!found && canBeUsedInSidebar(widget)) {
-      availableItems.push(widget);
-    }
-  });
-
-  items = items
-    .filter((widget) => widget.disabled !== true)
-    .filter((widget) => {
-      // Filter out all items that are present in the list of available items.
-      return !availableItems.find((item) => isSameWidget(item, widget));
-    });
+    return acc;
+  }, []);
 
   return {
     items,

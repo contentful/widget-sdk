@@ -12,7 +12,6 @@ import {
   Links as LinksWidget,
   Translation as TranslationWidget,
   Users as UsersWidget,
-  Releases as ReleasesWidget,
 } from '../defaults';
 import { WidgetNamespace } from 'features/widget-renderer';
 
@@ -66,7 +65,7 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
   });
 
   describe('convertConfigurationToInternalState', () => {
-    it('should return default state is configuration is not array', () => {
+    it('should return default state if configuration is not array', () => {
       const defaultState = {
         configurableWidget: null,
         items: EntryConfiguration,
@@ -83,7 +82,45 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
       );
     });
 
-    it('should split configuration to items and availableItems', () => {
+    it('should exclude customs items in configuraiton that are missing from widgets', () => {
+      const configuration = [
+        {
+          widgetId: 'netlify-extension',
+          widgetNamespace: WidgetNamespace.EXTENSION,
+          settings: {
+            netlifyBuildHook: 'http://hook',
+          },
+        },
+        {
+          widgetId: 'custom-publish-button',
+          widgetNamespace: WidgetNamespace.EXTENSION,
+        },
+      ];
+
+      const customWidgets = [
+        {
+          id: 'custom-publish-button',
+          namespace: WidgetNamespace.EXTENSION,
+          name: 'Custom Publish button',
+        },
+      ];
+
+      const state = convertConfigurationToInternalState(
+        configuration,
+        customWidgets,
+        EntryConfiguration
+      );
+
+      expect(state.items).toEqual([
+        {
+          widgetId: 'custom-publish-button',
+          widgetNamespace: WidgetNamespace.EXTENSION,
+          name: 'Custom Publish button',
+        },
+      ]);
+    });
+
+    it('should exclude disabled items from item state', () => {
       const allDisabled = EntryConfiguration.map((widget) => ({
         widgetId: widget.widgetId,
         widgetNamespace: widget.widgetNamespace,
@@ -93,75 +130,11 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
       expect(state).toEqual({
         configurableWidget: null,
         items: [],
-        availableItems: EntryConfiguration,
-      });
-      expect(getAllKeys(state.availableItems)).toEqual([
-        'widgetId',
-        'widgetNamespace',
-        'name',
-        'description',
-      ]);
-    });
-
-    it('should mark as problem non-existent builtin items and all extensions that are not installed in space', () => {
-      const configuration = [
-        {
-          widgetId: PublicationWidget.widgetId,
-          widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
-        },
-        {
-          widgetId: TasksWidget.widgetId,
-          widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
-        },
-        {
-          widgetId: VersionsWidget.widgetId,
-          widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
-        },
-        {
-          widgetId: 'some-extension-that-is-not-installed',
-          widgetNamespace: WidgetNamespace.EXTENSION,
-        },
-        {
-          widgetId: UsersWidget.widgetId,
-          widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
-          disabled: true,
-        },
-        {
-          widgetId: 'looks-like-in-invalid-built-in',
-          widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
-        },
-      ];
-
-      const state = convertConfigurationToInternalState(configuration, [], EntryConfiguration);
-
-      expect(state).toEqual({
-        configurableWidget: null,
-        items: [
-          PublicationWidget,
-          TasksWidget,
-          VersionsWidget,
-          {
-            widgetId: 'some-extension-that-is-not-installed',
-            widgetNamespace: WidgetNamespace.EXTENSION,
-            problem: true,
-          },
-          {
-            widgetId: 'looks-like-in-invalid-built-in',
-            widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
-            problem: true,
-          },
-        ],
-        availableItems: [
-          ReleasesWidget,
-          ContentPreviewWidget,
-          LinksWidget,
-          TranslationWidget,
-          UsersWidget,
-        ],
+        availableItems: [],
       });
     });
 
-    it('should push to available only those extension that are not installed', () => {
+    it('available should contain all available custom widgets', () => {
       const configuration = [
         {
           widgetId: PublicationWidget.widgetId,
@@ -200,28 +173,30 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
         },
       ];
 
+      const customWidgets = [
+        {
+          id: 'netlify-extension',
+          namespace: WidgetNamespace.EXTENSION,
+          name: 'Netlify Extension',
+          parameters: [
+            {
+              id: 'netlifyBuildHook',
+              name: 'Netlify build hook',
+              required: true,
+              type: 'Symbol',
+            },
+          ],
+        },
+        {
+          id: 'custom-publish-button',
+          namespace: WidgetNamespace.EXTENSION,
+          name: 'Custom Publish button',
+        },
+      ];
+
       const state = convertConfigurationToInternalState(
         configuration,
-        [
-          {
-            id: 'netlify-extension',
-            namespace: WidgetNamespace.EXTENSION,
-            name: 'Netlify Extension',
-            parameters: [
-              {
-                id: 'netlifyBuildHook',
-                name: 'Netlify build hook',
-                required: true,
-                type: 'Symbol',
-              },
-            ],
-          },
-          {
-            id: 'custom-publish-button',
-            namespace: WidgetNamespace.EXTENSION,
-            name: 'Custom Publish button',
-          },
-        ],
+        customWidgets,
         EntryConfiguration
       );
 
@@ -253,7 +228,19 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
           TranslationWidget,
         ],
         availableItems: [
-          ReleasesWidget,
+          {
+            widgetId: 'netlify-extension',
+            widgetNamespace: WidgetNamespace.EXTENSION,
+            name: 'Netlify Extension',
+            parameters: [
+              {
+                id: 'netlifyBuildHook',
+                name: 'Netlify build hook',
+                required: true,
+                type: 'Symbol',
+              },
+            ],
+          },
           {
             widgetId: 'custom-publish-button',
             widgetNamespace: WidgetNamespace.EXTENSION,
