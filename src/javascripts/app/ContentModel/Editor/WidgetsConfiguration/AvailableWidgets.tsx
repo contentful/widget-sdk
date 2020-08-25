@@ -29,7 +29,7 @@ const withInAppHelpUtmParams = (medium: string) =>
   });
 
 interface AvailableWidgetsProps {
-  items: ConfigurationItem[]; // todo
+  items: ConfigurationItem[];
   onAddItem: (item: ConfigurationItem) => void;
   location: string;
   inAppHelpMedium: string;
