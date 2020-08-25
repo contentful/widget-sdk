@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { get } from 'lodash';
+import { css } from 'emotion';
 import {
   Space as SpacePropType,
   Plan as PlanPropType,
@@ -10,22 +10,19 @@ import {
   Typography,
   Heading,
   Card,
-  List,
-  ListItem,
   Button,
   RadioButton,
+  Tag,
 } from '@contentful/forma-36-react-components';
-import { getResourceLimits } from 'utils/ResourceUtils';
 import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
+import tokens from '@contentful/forma-36-tokens';
 import StateLink from 'app/common/StateLink';
+import { SpacePlanComparison } from './SpacePlanComparison';
+import { groupBy } from 'lodash';
 
-const resourcesToDisplay = [
-  { id: 'environment', name: 'Environments' },
-  { id: 'role', name: 'Roles' },
-  { id: 'locale', name: 'Locales' },
-  { id: 'content_type', name: 'Content types' },
-  { id: 'record', name: 'Records' },
-];
+const styles = {
+  count: css({ color: tokens.colorGreenMid }),
+};
 
 export function SpacePlanSelection({
   plans,
@@ -35,35 +32,31 @@ export function SpacePlanSelection({
   onPlanSelected,
   handleNavigationNext,
 }) {
+  const groupedPlans = groupBy(plans, (p) => p.name);
   return (
     <Typography>
       <Heading element="h2">Choose a new space type for {space.name}</Heading>
-      {plans.map((plan) => {
-        // what's defined in the new plan
-        const planResources = getIncludedResources(plan.ratePlanCharges);
+      {Object.keys(groupedPlans).map((name) => {
+        const plan = groupedPlans[name][0];
+        const planCount = groupedPlans[name].length;
         return (
           <Card key={plan.sys.id}>
-            <Flex htmlTag="label" justifyContent="start" alignItems="center">
+            <Flex htmlTag="label" justifyContent="start" alignItems="baseline">
               <RadioButton
                 checked={plan === selectedPlan}
                 onChange={() => onPlanSelected(plan)}
                 labelText={plan.name}
               />
-              <Heading element="h3">{plan.name}</Heading>
+              <Flex
+                marginLeft={'spacingS'}
+                fullWidth={true}
+                justifyContent="space-between"
+                alignItems="baseline">
+                <Heading element="h3">{plan.name}</Heading>
+                <Tag className={styles.count}>{planCount} available</Tag>
+              </Flex>
             </Flex>
-            <List>
-              {resourcesToDisplay.map(({ id, name }) => {
-                // what's defined in the current plan + usage
-                const spaceResource = spaceResources[id];
-                const limit = getResourceLimits(spaceResource);
-                return (
-                  <ListItem key={id}>
-                    <strong>{name}:</strong> {spaceResource.usage}/{limit.maximum}{' '}
-                    <strong>New plan:</strong> {planResources[id]}
-                  </ListItem>
-                );
-              })}
-            </List>
+            <SpacePlanComparison plan={plan} spaceResources={spaceResources} />
           </Card>
         );
       })}
@@ -88,18 +81,3 @@ SpacePlanSelection.propTypes = {
   onPlanSelected: PropTypes.func.isRequired,
   handleNavigationNext: PropTypes.func,
 };
-
-export function getIncludedResources(charges) {
-  return Object.values(resourcesToDisplay).reduce((memo, { id, name }) => {
-    const charge = charges.find((charge) => charge.name === name);
-    let number = get(charge, 'tiers[0].endingUnit');
-
-    // Add "extra" environment and role to include `master` and `admin`
-    if (['Environments', 'Roles'].includes(name)) {
-      number = number + 1;
-    }
-
-    memo[id] = number;
-    return memo;
-  }, {});
-}
