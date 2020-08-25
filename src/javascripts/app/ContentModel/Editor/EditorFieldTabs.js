@@ -51,7 +51,7 @@ export default function EditorFieldTabs(props) {
               go({ path: '^.entry_editor_configuration' });
             }}
             testId="entry-editor-config-tab">
-            Tabs
+            Entry editors
           </Tab>
         )}
       </Tabs>

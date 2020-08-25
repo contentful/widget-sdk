@@ -96,7 +96,9 @@ export default function ContentTypesPage(props) {
           )}
           {props.hasAdvancedExtensibility && props.currentTab === 'entry_editor_configuration' && (
             <>
-              <DocumentTitle title={['Tabs', props.contentTypeData.name, 'Content Model']} />
+              <DocumentTitle
+                title={['Entry Editors', props.contentTypeData.name, 'Content Model']}
+              />
               <div>
                 <EntryEditorConfiguration
                   configuration={props.editorConfiguration}

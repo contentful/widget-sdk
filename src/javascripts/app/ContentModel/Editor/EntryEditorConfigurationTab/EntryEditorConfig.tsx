@@ -170,7 +170,7 @@ function EntryEditorConfiguration(props: EditorConfigProps) {
           dispatch={dispatch}
           defaultAvailableItems={defaultWidgets}
           configuration={{
-            location: 'Tabs',
+            location: 'Entry editors',
             description: 'Configure the tabs of the entry editor for this content type.',
             inAppHelpMedium: 'use-customer-editors-available-items',
           }}
