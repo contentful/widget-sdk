@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, cleanup, waitFor, act } from '@testing-library/react';
+import { render, fireEvent, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom/extend-expect';
 import * as entityHelpers from 'app/entity_editor/entityHelpers';
@@ -157,8 +157,6 @@ jest.mock('access_control/AccessChecker', () => {
 });
 
 describe('EntitySelectorForm', () => {
-  afterEach(cleanup);
-
   it('[multiple: false] should not allow the option to render selected entities', async () => {
     const props = getDefaultProps({ multiple: false });
     const { queryByTestId, findAllByTestId } = render(<EntitySelectorForm {...props} />);
@@ -500,8 +498,6 @@ describe('EntitySelectorForm', () => {
 });
 
 describe('EntitySelectorForm hacking bottom hit trigger', () => {
-  afterEach(cleanup);
-
   it('should trigger loadMore on entity selector container bottom hit and ignore next calls while isLoading: true', async () => {
     const totalExpectedEntities = ITEMS_PER_PAGE * 2 + 20;
     const entitiesBatches = [

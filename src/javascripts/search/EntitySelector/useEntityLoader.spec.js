@@ -1,4 +1,4 @@
-import { renderHook, cleanup, act } from '@testing-library/react-hooks';
+import { renderHook, act } from '@testing-library/react-hooks';
 import useEntityLoader, { ITEMS_PER_PAGE } from './useEntityLoader';
 import { id as randomId } from 'utils/Random';
 
@@ -49,8 +49,6 @@ const entity = (type, id = randomId()) => {
 };
 
 describe('useEntityLoader', () => {
-  afterEach(cleanup);
-
   it('should expose the loading api', () => {
     const fetch = jest.fn();
     const { result } = renderHook(() =>

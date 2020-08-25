@@ -1,12 +1,10 @@
 import React from 'react';
-import { render, cleanup } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 
 import Loader from './Loader';
 
 describe('components/ui/Loader', () => {
-  afterEach(cleanup);
-
   it('render the component', () => {
     const { getByTestId } = render(<Loader isShown={true} />);
     const loader = getByTestId('loading-indicator');

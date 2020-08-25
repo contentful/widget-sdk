@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, cleanup, wait } from '@testing-library/react';
+import { render, wait } from '@testing-library/react';
 import cfResolveResponse from 'contentful-resolve-response';
 
 import '@testing-library/jest-dom/extend-expect';
@@ -54,8 +54,6 @@ MockPovider.defaultProps = {
 };
 
 describe('ReferencesTree component', () => {
-  afterEach(cleanup);
-
   beforeEach(async () => {
     getDefaultLocale.mockReturnValue('en-US');
     getReferencesForEntryId.mockResolvedValue({

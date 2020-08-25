@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, cleanup, wait } from '@testing-library/react';
+import { render, wait } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import resolveResponse from 'contentful-resolve-response';
 import { ReferencesContext } from './ReferencesContext';
@@ -37,8 +37,6 @@ MockPovider.defaultProps = {
 };
 
 describe('ReferencesTree component', () => {
-  afterEach(cleanup);
-
   it('should render simple references', async () => {
     const onCardClick = jest.fn();
     const response = resolveResponse(simpleReferences);

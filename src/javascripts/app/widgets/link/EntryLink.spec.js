@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, cleanup, wait, waitForElement } from '@testing-library/react';
+import { render, wait, waitForElement } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 
 import EntryLink from './EntryLink';
@@ -27,8 +27,6 @@ describe('EntryLink component', () => {
       entityDescription: jest.fn().mockResolvedValue('Some lorem ipsum stuff'),
     },
   };
-
-  afterEach(cleanup);
 
   it('should render the entry card', async () => {
     const { getByTestId, getByText } = render(<EntryLink {...props} />);

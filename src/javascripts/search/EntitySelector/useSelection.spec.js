@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { renderHook, cleanup, act } from '@testing-library/react-hooks';
+import { renderHook, act } from '@testing-library/react-hooks';
 import { id as randomId } from 'utils/Random';
 import useSelection from './useSelection';
 
@@ -9,8 +9,6 @@ const entry = () => ({ sys: { type: 'Entry', id: randomId() } });
   For this test we rely on useMemo to avoid infinite re-renders
 */
 describe('useSelection hook', () => {
-  afterEach(cleanup);
-
   it('should expose the interface', () => {
     const entries = new Array(10).fill(0).map(() => entry());
     const { result } = renderHook(() => {

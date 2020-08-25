@@ -1,4 +1,4 @@
-import { renderHook, cleanup } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react-hooks';
 import useScrollToBottomTrigger from './useScrollToBottomTrigger';
 
 // because the event handler is throttled
@@ -8,8 +8,6 @@ const wait = () =>
   });
 
 describe('useScrollToBottomTrigger', () => {
-  afterEach(cleanup);
-
   it('should not trigger the handler if target is not withint the expected bounds', async () => {
     const map = {};
     const target = {
