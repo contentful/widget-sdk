@@ -12,6 +12,7 @@ import {
 import { Heading, Paragraph } from '@contentful/forma-36-react-components';
 import CustomConfiguration from './WidgetsConfiguration/CustomConfiguration';
 import AvailableWidgets from './WidgetsConfiguration/AvailableWidgets';
+import { isSameWidget } from './WidgetsConfiguration/utils';
 import { ConfigurationItem } from './WidgetsConfiguration/interfaces';
 
 const styles = {
@@ -62,10 +63,6 @@ interface WidgetsConfigurationProps {
     inAppHelpMedium: string; // used for the in app help in `AvailableWidgets.tsx`
   };
 }
-
-const isSameWidget = (widgetOne: ConfigurationItem, widgetTwo: ConfigurationItem) =>
-  widgetOne.widgetId === widgetTwo.widgetId &&
-  widgetOne.widgetNamespace === widgetTwo.widgetNamespace;
 
 const WidgetsConfiguration: React.FC<WidgetsConfigurationProps> = ({
   state,

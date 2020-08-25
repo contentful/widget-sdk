@@ -3,6 +3,7 @@ import { pick, difference, identity } from 'lodash';
 import { defaultWidgetsMap } from '../defaults';
 
 import { WidgetNamespace, isCustomWidget, WidgetLocation } from 'features/widget-renderer';
+import { isSameWidget } from 'app/ContentModel/Editor/WidgetsConfiguration/utils';
 
 /**
  * Converts internal state of configuration reducer
@@ -91,10 +92,7 @@ export function convertConfigurationToInternalState(
       }
 
       if (isCustomWidget(configItem.widgetNamespace)) {
-        const found = widgets.find(
-          (e: any) =>
-            e.widgetNamespace === configItem.widgetNamespace && e.widgetId === configItem.widgetId
-        );
+        const found = widgets.find((e: any) => isSameWidget(e, configItem));
 
         // Settings have to be copied to the widget for
         // the updating of instance parameters to work
@@ -112,9 +110,7 @@ export function convertConfigurationToInternalState(
 
   const availableItems: any[] = [];
   const validWidgetMatcher = (widget: any) => (item: any) =>
-    item.widgetNamespace === widget.widgetNamespace &&
-    item.widgetId === widget.widgetId &&
-    item.problem !== true;
+    isSameWidget(item, widget) && item.problem !== true;
 
   // Add all disabled and missing built-in widgets to the list
   // of available items.
@@ -140,9 +136,7 @@ export function convertConfigurationToInternalState(
     .filter((widget) => widget.disabled !== true)
     .filter((widget) => {
       // Filter out all items that are present in the list of available items.
-      return !availableItems.find((item) => {
-        return item.widgetNamespace === widget.widgetNamespace && item.widgetId === widget.widgetId;
-      });
+      return !availableItems.find((item) => isSameWidget(item, widget));
     });
 
   return {

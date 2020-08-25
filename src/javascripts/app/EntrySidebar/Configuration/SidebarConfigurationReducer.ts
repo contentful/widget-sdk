@@ -1,5 +1,6 @@
 import { createImmerReducer } from 'core/utils/createImmerReducer';
 import { ConfigurationItem } from 'app/ContentModel/Editor/WidgetsConfiguration/interfaces';
+import { isSameWidget } from 'app/ContentModel/Editor/WidgetsConfiguration/utils';
 
 export interface State {
   items: ConfigurationItem[];
@@ -64,10 +65,6 @@ export const updateWidgetSettings = (widget: any, settings: any) => ({
   },
 });
 
-// TODO: extract this, it's re-used in another file
-const areWidgetsSame = (widget1: ConfigurationItem, widget2: ConfigurationItem) =>
-  widget1.widgetId === widget2.widgetId && widget1.widgetNamespace === widget2.widgetNamespace;
-
 export const reducer = createImmerReducer<State, any>({
   [OPEN_WIDGET_CONFIGURATION]: (state: State, action) => {
     state.configurableWidget = action.payload.widget;
@@ -79,7 +76,7 @@ export const reducer = createImmerReducer<State, any>({
     state.items = action.payload.defaultAvailableItems;
   },
   [REMOVE_ITEM_FROM_SIDEBAR]: (state: State, action) => {
-    const removeIndex = state.items.findIndex((item) => areWidgetsSame(item, action.payload.item));
+    const removeIndex = state.items.findIndex((item) => isSameWidget(item, action.payload.item));
     if (removeIndex === -1) {
       return;
     }
@@ -94,7 +91,7 @@ export const reducer = createImmerReducer<State, any>({
   },
   [UPDATE_WIDGET_SETTINGS]: (state, action) => {
     const widget = action.payload.widget;
-    const index = state.items.findIndex((item) => areWidgetsSame(item, widget));
+    const index = state.items.findIndex((item) => isSameWidget(item, widget));
     if (index > -1) {
       state.items[index].settings = action.payload.settings;
     }
