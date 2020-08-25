@@ -8,9 +8,8 @@ import {
   ModalConfirm,
   Paragraph,
 } from '@contentful/forma-36-react-components';
-import tokens from '@contentful/forma-36-tokens';
+import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import pluralize from 'pluralize';
-import { cx, css } from 'emotion';
 import { truncate, map, intersection, isEmpty, filter, some } from 'lodash';
 import { joinWithAnd } from 'utils/StringUtils';
 import SpaceRoleEditor from 'app/OrganizationSettings/SpaceRoleEditor';
@@ -137,7 +136,6 @@ const MembershipRow = ({
       testId="confirm-change-role"
       buttonType="positive"
       onClick={onUpdate}
-      className={css({ marginRight: tokens.spacingM })}
       disabled={!haveRolesChanged || isEmpty(selectedRoleIds) || isPending}
       loading={isPending}>
       Change role
@@ -145,7 +143,7 @@ const MembershipRow = ({
   );
 
   return (
-    <TableRow key={membershipId} testId="membership-row" className={styles.row}>
+    <TableRow key={membershipId} testId="membership-row">
       <DowngradeLastAdminMembershipConfirmation
         isShown={showUpdateConfirmation}
         close={() => setShowUpdateConfirmation(false)}
@@ -179,27 +177,25 @@ const MembershipRow = ({
         cancelLabel="Cancel"
         title="Remove team from this space">
         <Paragraph>
-          Are you sure you want to remove {<strong className={styles.strong}>{name}</strong>} from
-          this space?
+          Are you sure you want to remove {<strong>{name}</strong>} from this space?
         </Paragraph>
       </ModalConfirm>
-      <TableCell className={styles.cell} testId="team-cell">
-        <div className={styles.teamNameCell} data-test-id="team.name">
+      <TableCell testId="team-cell">
+        <div className={styles.teamName} data-test-id="team.name">
           {name}
         </div>
         {/*This truncation is a fallback for IE and pre-68 FF, which don't support css line-clamp*/}
-        <div className={styles.teamDescriptionCell} data-test-id="team.description">
-          {truncate(description, { length: 130 })}
-        </div>
+        {description && (
+          <div className={styles.teamDescription} data-test-id="team.description">
+            {truncate(description, { length: 130 })}
+          </div>
+        )}
       </TableCell>
-      <TableCell className={styles.cell} testId="member-count-cell">
-        {pluralize('member', memberCount, true)}
-      </TableCell>
-      {isEditing ? (
-        <TableCell colSpan={2}>
-          <div className={styles.roleForm}>
+      <TableCell testId="member-count-cell">{pluralize('member', memberCount, true)}</TableCell>
+      <TableCell testId="roles-cell">
+        {isEditing ? (
+          <Grid columns="1fr auto auto" columnGap="spacingM">
             <SpaceRoleEditor
-              buttonProps={{ className: styles.roleEditorButton }}
               onChange={setSelectedRoles}
               options={availableRoles}
               value={selectedRoleIds}
@@ -218,18 +214,14 @@ const MembershipRow = ({
             <Button buttonType="muted" onClick={() => setEditing(false)}>
               Cancel
             </Button>
-          </div>
-        </TableCell>
-      ) : (
-        <>
-          <TableCell className={cx(styles.rolesCell, styles.cell)} testId="roles-cell">
-            {getRoleNames({ roles, admin })}
-          </TableCell>
-          <TableCell>
-            {!readOnly && <RowMenu setEditing={setEditing} onRemove={onRemove} />}
-          </TableCell>
-        </>
-      )}
+          </Grid>
+        ) : (
+          getRoleNames({ roles, admin })
+        )}
+      </TableCell>
+      <TableCell>
+        {!readOnly && !isEditing && <RowMenu setEditing={setEditing} onRemove={onRemove} />}
+      </TableCell>
     </TableRow>
   );
 };

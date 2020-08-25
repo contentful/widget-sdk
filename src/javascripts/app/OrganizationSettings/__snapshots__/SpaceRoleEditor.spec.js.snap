@@ -2,7 +2,19 @@
 
 exports[`SpaceRoleEditor renders the component 1`] = `
 .emotion-0 {
-  max-width: 100%;
+  width: 100%;
+  border: 1px solid #e5ebed;
+}
+
+.emotion-0> span {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
 }
 
 <SpaceRoleEditor
@@ -32,7 +44,6 @@ exports[`SpaceRoleEditor renders the component 1`] = `
   value={Array []}
 >
   <Dropdown
-    className="emotion-0"
     getContainerRef={[Function]}
     isAutoalignmentEnabled={true}
     isOpen={false}
@@ -42,7 +53,7 @@ exports[`SpaceRoleEditor renders the component 1`] = `
     toggleElement={
       <Button
         buttonType="naked"
-        className="select-button"
+        className="emotion-0"
         disabled={false}
         indicateDropdown={true}
         isFullWidth={false}
@@ -56,7 +67,7 @@ exports[`SpaceRoleEditor renders the component 1`] = `
     }
   >
     <div
-      className="Dropdown__Dropdown___nAsJ- emotion-0"
+      className="Dropdown__Dropdown___nAsJ-"
       data-test-id="cf-ui-dropdown"
       onClose={[Function]}
       position="bottom-left"
@@ -65,7 +76,7 @@ exports[`SpaceRoleEditor renders the component 1`] = `
         aria-expanded={false}
         aria-haspopup="menu"
         buttonType="naked"
-        className="select-button"
+        className="emotion-0"
         disabled={false}
         indicateDropdown={true}
         isFullWidth={false}
@@ -77,7 +88,7 @@ exports[`SpaceRoleEditor renders the component 1`] = `
         <button
           aria-expanded={false}
           aria-haspopup="menu"
-          className="Button__Button___1ZfFj a11y__focus-border--default___60AXp select-button Button__Button--naked___mB6LS"
+          className="Button__Button___1ZfFj a11y__focus-border--default___60AXp emotion-0 Button__Button--naked___mB6LS"
           data-test-id="space-role-editor.button"
           disabled={false}
           onBlur={[Function]}
@@ -168,31 +179,30 @@ exports[`SpaceRoleEditor renders the component 1`] = `
 `;
 
 exports[`SpaceRoleEditor shows a list of options 1`] = `
-.emotion-4 {
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.emotion-5 {
-  max-width: 100%;
-}
-
-.emotion-1 {
-  display: grid;
-  grid-template-columns: min-content auto;
-  grid-column-gap: 4px;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
+.emotion-3 {
   color: #192532;
 }
 
-.emotion-0 {
+.emotion-2 {
   color: #606C7C;
   grid-column-start: 2;
-  max-width: 200px;
   white-space: normal;
+}
+
+.emotion-0 {
+  width: 100%;
+  border: 1px solid #e5ebed;
+}
+
+.emotion-0> span {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
 }
 
 <SpaceRoleEditor
@@ -222,7 +232,6 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
   value={Array []}
 >
   <Dropdown
-    className="emotion-5"
     getContainerRef={[Function]}
     isAutoalignmentEnabled={true}
     isOpen={true}
@@ -232,7 +241,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
     toggleElement={
       <Button
         buttonType="naked"
-        className="select-button"
+        className="emotion-0"
         disabled={false}
         indicateDropdown={true}
         isFullWidth={false}
@@ -246,7 +255,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
     }
   >
     <div
-      className="Dropdown__Dropdown___nAsJ- emotion-5"
+      className="Dropdown__Dropdown___nAsJ-"
       data-test-id="cf-ui-dropdown"
       onClose={[Function]}
       position="bottom-left"
@@ -255,7 +264,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
         aria-expanded={true}
         aria-haspopup="menu"
         buttonType="naked"
-        className="select-button"
+        className="emotion-0"
         disabled={false}
         indicateDropdown={true}
         isFullWidth={false}
@@ -267,7 +276,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
         <button
           aria-expanded={true}
           aria-haspopup="menu"
-          className="Button__Button___1ZfFj a11y__focus-border--default___60AXp select-button Button__Button--naked___mB6LS"
+          className="Button__Button___1ZfFj a11y__focus-border--default___60AXp emotion-0 Button__Button--naked___mB6LS"
           data-test-id="space-role-editor.button"
           disabled={false}
           onBlur={[Function]}
@@ -363,18 +372,30 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
         }
         dropdownAnchor={
           .emotion-0 {
-  max-width: 100%;
+  width: 100%;
+  border: 1px solid #e5ebed;
+}
+
+.emotion-0> span {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
 }
 
 <div
-            class="Dropdown__Dropdown___nAsJ- emotion-0"
+            class="Dropdown__Dropdown___nAsJ-"
             data-test-id="cf-ui-dropdown"
             position="bottom-left"
           >
             <button
               aria-expanded="true"
               aria-haspopup="menu"
-              class="Button__Button___1ZfFj a11y__focus-border--default___60AXp select-button Button__Button--naked___mB6LS"
+              class="Button__Button___1ZfFj a11y__focus-border--default___60AXp emotion-0 Button__Button--naked___mB6LS"
               data-test-id="space-role-editor.button"
               type="button"
             >
@@ -417,26 +438,13 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
       >
         <Portal
           containerInfo={
-            .emotion-4 {
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.emotion-1 {
-  display: grid;
-  grid-template-columns: min-content auto;
-  grid-column-gap: 4px;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
+            .emotion-1 {
   color: #192532;
 }
 
 .emotion-0 {
   color: #606C7C;
   grid-column-start: 2;
-  max-width: 200px;
   white-space: normal;
 }
 
@@ -451,137 +459,139 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                   data-test-id="cf-ui-in-viewport"
                   offset="0"
                 >
-                  <div
-                    class="emotion-4"
+                  <ul
+                    class="DropdownList__DropdownList___2EMLM"
+                    data-test-id="space-role-editor.options"
+                    role="menu"
+                    style="max-height: auto; overflow-y: visible;"
                   >
-                    <ul
-                      class="DropdownList__DropdownList___2EMLM"
-                      data-test-id="space-role-editor.options"
-                      role="menu"
-                      style="max-height: auto; overflow-y: visible;"
+                    <li
+                      class="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
+                      data-test-id="space-role-editor.admin-option"
+                      role="menuitem"
                     >
-                      <li
-                        class="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
-                        data-test-id="space-role-editor.admin-option"
-                        role="menuitem"
+                      <button
+                        aria-disabled="false"
+                        class="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
+                        data-test-id="cf-ui-dropdown-list-item-button"
+                        type="button"
                       >
-                        <button
-                          aria-disabled="false"
-                          class="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
-                          data-test-id="cf-ui-dropdown-list-item-button"
-                          type="button"
+                        <span
+                          class="TabFocusTrap__TabFocusTrap___39Vty DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
+                          tabindex="-1"
                         >
-                          <span
-                            class="TabFocusTrap__TabFocusTrap___39Vty DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
-                            tabindex="-1"
+                          <div
+                            class="Grid__Grid___2_rpl emotion-1"
+                            data-test-id="cf-ui-grid"
+                            style="grid-template-columns: min-content auto; grid-template-rows: auto;"
                           >
-                            <div
-                              class="emotion-1"
-                            >
-                              <input
-                                aria-label="Admin"
-                                class="ControlledInput__ControlledInput___2XK3j"
-                                data-test-id="ctf-ui-checkbox"
-                                id="__cf_builtin_admin"
-                                type="checkbox"
-                                value=""
-                              />
-                              <div>
-                                Admin
-                              </div>
-                              <div
-                                class="emotion-0"
-                              >
-                                Can manage everything in the space
-                              </div>
+                            <input
+                              aria-label="Admin"
+                              class="ControlledInput__ControlledInput___2XK3j"
+                              data-test-id="ctf-ui-checkbox"
+                              id="__cf_builtin_admin"
+                              type="checkbox"
+                              value=""
+                            />
+                            <div>
+                              Admin
                             </div>
-                          </span>
-                        </button>
-                      </li>
-                    </ul>
-                    <ul
-                      class="DropdownList__DropdownList___2EMLM DropdownList__DropdownList--border-top___ojlyY"
-                      data-test-id="cf-ui-dropdown-list"
-                      role="menu"
-                      style="max-height: auto; overflow-y: visible;"
-                    >
-                      <li
-                        class="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem--title___CyVKB"
-                        data-test-id="cf-ui-dropdown-list-item"
-                        role="menuitem"
-                      >
-                        <span>
-                          other roles
+                            <div
+                              class="emotion-0"
+                            >
+                              Can manage everything in the space
+                            </div>
+                          </div>
                         </span>
-                      </li>
-                      <li
-                        class="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
-                        data-test-id="space-role-editor.role-option"
-                        role="menuitem"
+                      </button>
+                    </li>
+                  </ul>
+                  <ul
+                    class="DropdownList__DropdownList___2EMLM DropdownList__DropdownList--border-top___ojlyY"
+                    data-test-id="cf-ui-dropdown-list"
+                    role="menu"
+                    style="max-height: auto; overflow-y: visible;"
+                  >
+                    <li
+                      class="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem--title___CyVKB"
+                      data-test-id="cf-ui-dropdown-list-item"
+                      role="menuitem"
+                    >
+                      <span>
+                        other roles
+                      </span>
+                    </li>
+                    <li
+                      class="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
+                      data-test-id="space-role-editor.role-option"
+                      role="menuitem"
+                    >
+                      <button
+                        aria-disabled="false"
+                        class="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
+                        data-test-id="cf-ui-dropdown-list-item-button"
+                        type="button"
                       >
-                        <button
-                          aria-disabled="false"
-                          class="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
-                          data-test-id="cf-ui-dropdown-list-item-button"
-                          type="button"
+                        <span
+                          class="TabFocusTrap__TabFocusTrap___39Vty DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
+                          tabindex="-1"
                         >
-                          <span
-                            class="TabFocusTrap__TabFocusTrap___39Vty DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
-                            tabindex="-1"
+                          <div
+                            class="Grid__Grid___2_rpl emotion-1"
+                            data-test-id="cf-ui-grid"
+                            style="grid-template-columns: min-content auto; grid-template-rows: auto;"
                           >
-                            <div
-                              class="emotion-1"
-                            >
-                              <input
-                                aria-label="Police officer"
-                                class="ControlledInput__ControlledInput___2XK3j"
-                                data-test-id="ctf-ui-checkbox"
-                                id="police"
-                                type="checkbox"
-                                value=""
-                              />
-                              <div>
-                                Police officer
-                              </div>
+                            <input
+                              aria-label="Police officer"
+                              class="ControlledInput__ControlledInput___2XK3j"
+                              data-test-id="ctf-ui-checkbox"
+                              id="police"
+                              type="checkbox"
+                              value=""
+                            />
+                            <div>
+                              Police officer
                             </div>
-                          </span>
-                        </button>
-                      </li>
-                      <li
-                        class="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
-                        data-test-id="space-role-editor.role-option"
-                        role="menuitem"
+                          </div>
+                        </span>
+                      </button>
+                    </li>
+                    <li
+                      class="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
+                      data-test-id="space-role-editor.role-option"
+                      role="menuitem"
+                    >
+                      <button
+                        aria-disabled="false"
+                        class="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
+                        data-test-id="cf-ui-dropdown-list-item-button"
+                        type="button"
                       >
-                        <button
-                          aria-disabled="false"
-                          class="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
-                          data-test-id="cf-ui-dropdown-list-item-button"
-                          type="button"
+                        <span
+                          class="TabFocusTrap__TabFocusTrap___39Vty DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
+                          tabindex="-1"
                         >
-                          <span
-                            class="TabFocusTrap__TabFocusTrap___39Vty DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
-                            tabindex="-1"
+                          <div
+                            class="Grid__Grid___2_rpl emotion-1"
+                            data-test-id="cf-ui-grid"
+                            style="grid-template-columns: min-content auto; grid-template-rows: auto;"
                           >
-                            <div
-                              class="emotion-1"
-                            >
-                              <input
-                                aria-label="Thief"
-                                class="ControlledInput__ControlledInput___2XK3j"
-                                data-test-id="ctf-ui-checkbox"
-                                id="thief"
-                                type="checkbox"
-                                value=""
-                              />
-                              <div>
-                                Thief
-                              </div>
+                            <input
+                              aria-label="Thief"
+                              class="ControlledInput__ControlledInput___2XK3j"
+                              data-test-id="ctf-ui-checkbox"
+                              id="thief"
+                              type="checkbox"
+                              value=""
+                            />
+                            <div>
+                              Thief
                             </div>
-                          </span>
-                        </button>
-                      </li>
-                    </ul>
-                  </div>
+                          </div>
+                        </span>
+                      </button>
+                    </li>
+                  </ul>
                 </div>
               </div>
             </div>
@@ -613,53 +623,70 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                 data-test-id="cf-ui-in-viewport"
                 offset={0}
               >
-                <div
-                  className="emotion-4"
+                <DropdownList
+                  testId="space-role-editor.options"
                 >
-                  <DropdownList
-                    testId="space-role-editor.options"
-                  >
-                    <ul
-                      className="DropdownList__DropdownList___2EMLM"
-                      data-test-id="space-role-editor.options"
-                      role="menu"
-                      style={
-                        Object {
-                          "maxHeight": "auto",
-                          "overflowY": "visible",
-                        }
+                  <ul
+                    className="DropdownList__DropdownList___2EMLM"
+                    data-test-id="space-role-editor.options"
+                    role="menu"
+                    style={
+                      Object {
+                        "maxHeight": "auto",
+                        "overflowY": "visible",
                       }
+                    }
+                  >
+                    <DropdownListItem
+                      isActive={false}
+                      isDisabled={false}
+                      isTitle={false}
+                      onClick={[Function]}
+                      testId="space-role-editor.admin-option"
                     >
-                      <DropdownListItem
-                        isActive={false}
-                        isDisabled={false}
-                        isTitle={false}
-                        onClick={[Function]}
-                        testId="space-role-editor.admin-option"
+                      <li
+                        className="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
+                        data-test-id="space-role-editor.admin-option"
+                        role="menuitem"
                       >
-                        <li
-                          className="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
-                          data-test-id="space-role-editor.admin-option"
-                          role="menuitem"
+                        <button
+                          aria-disabled={false}
+                          className="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
+                          data-test-id="cf-ui-dropdown-list-item-button"
+                          disabled={false}
+                          onClick={[Function]}
+                          onMouseDown={[Function]}
+                          type="button"
                         >
-                          <button
-                            aria-disabled={false}
-                            className="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
-                            data-test-id="cf-ui-dropdown-list-item-button"
-                            disabled={false}
-                            onClick={[Function]}
-                            onMouseDown={[Function]}
-                            type="button"
+                          <TabFocusTrap
+                            className="DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
                           >
-                            <TabFocusTrap
-                              className="DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
+                            <span
+                              className="TabFocusTrap__TabFocusTrap___39Vty DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
+                              tabIndex={-1}
                             >
-                              <span
-                                className="TabFocusTrap__TabFocusTrap___39Vty DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
-                                tabIndex={-1}
+                              <Grid
+                                className="emotion-3"
+                                columnGap="spacingXs"
+                                columns="min-content auto"
+                                rowGap="none"
+                                rows="auto"
+                                testId="cf-ui-grid"
                               >
                                 <div
-                                  className="emotion-1"
+                                  className="Grid__Grid___2_rpl emotion-3"
+                                  data-test-id="cf-ui-grid"
+                                  style={
+                                    Object {
+                                      "alignContent": undefined,
+                                      "flow": undefined,
+                                      "gridColumnGap": "0.5rem",
+                                      "gridRowGap": 0,
+                                      "gridTemplateColumns": "min-content auto",
+                                      "gridTemplateRows": "auto",
+                                      "justifyContent": undefined,
+                                    }
+                                  }
                                 >
                                   <Checkbox
                                     checked={false}
@@ -701,80 +728,101 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                                     Admin
                                   </div>
                                   <div
-                                    className="emotion-0"
+                                    className="emotion-2"
                                   >
                                     Can manage everything in the space
                                   </div>
                                 </div>
-                              </span>
-                            </TabFocusTrap>
-                          </button>
-                        </li>
-                      </DropdownListItem>
-                    </ul>
-                  </DropdownList>
-                  <DropdownList
-                    border="top"
-                    testId="cf-ui-dropdown-list"
-                  >
-                    <ul
-                      className="DropdownList__DropdownList___2EMLM DropdownList__DropdownList--border-top___ojlyY"
-                      data-test-id="cf-ui-dropdown-list"
-                      role="menu"
-                      style={
-                        Object {
-                          "maxHeight": "auto",
-                          "overflowY": "visible",
-                        }
+                              </Grid>
+                            </span>
+                          </TabFocusTrap>
+                        </button>
+                      </li>
+                    </DropdownListItem>
+                  </ul>
+                </DropdownList>
+                <DropdownList
+                  border="top"
+                  testId="cf-ui-dropdown-list"
+                >
+                  <ul
+                    className="DropdownList__DropdownList___2EMLM DropdownList__DropdownList--border-top___ojlyY"
+                    data-test-id="cf-ui-dropdown-list"
+                    role="menu"
+                    style={
+                      Object {
+                        "maxHeight": "auto",
+                        "overflowY": "visible",
                       }
+                    }
+                  >
+                    <DropdownListItem
+                      isActive={false}
+                      isDisabled={false}
+                      isTitle={true}
+                      testId="cf-ui-dropdown-list-item"
                     >
-                      <DropdownListItem
-                        isActive={false}
-                        isDisabled={false}
-                        isTitle={true}
-                        testId="cf-ui-dropdown-list-item"
+                      <li
+                        className="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem--title___CyVKB"
+                        data-test-id="cf-ui-dropdown-list-item"
+                        role="menuitem"
                       >
-                        <li
-                          className="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem--title___CyVKB"
-                          data-test-id="cf-ui-dropdown-list-item"
-                          role="menuitem"
-                        >
-                          <span>
-                            other roles
-                          </span>
-                        </li>
-                      </DropdownListItem>
-                      <DropdownListItem
-                        isActive={false}
-                        isDisabled={false}
-                        isTitle={false}
-                        key="police"
-                        onClick={[Function]}
-                        testId="space-role-editor.role-option"
+                        <span>
+                          other roles
+                        </span>
+                      </li>
+                    </DropdownListItem>
+                    <DropdownListItem
+                      isActive={false}
+                      isDisabled={false}
+                      isTitle={false}
+                      key="police"
+                      onClick={[Function]}
+                      testId="space-role-editor.role-option"
+                    >
+                      <li
+                        className="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
+                        data-test-id="space-role-editor.role-option"
+                        role="menuitem"
                       >
-                        <li
-                          className="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
-                          data-test-id="space-role-editor.role-option"
-                          role="menuitem"
+                        <button
+                          aria-disabled={false}
+                          className="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
+                          data-test-id="cf-ui-dropdown-list-item-button"
+                          disabled={false}
+                          onClick={[Function]}
+                          onMouseDown={[Function]}
+                          type="button"
                         >
-                          <button
-                            aria-disabled={false}
-                            className="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
-                            data-test-id="cf-ui-dropdown-list-item-button"
-                            disabled={false}
-                            onClick={[Function]}
-                            onMouseDown={[Function]}
-                            type="button"
+                          <TabFocusTrap
+                            className="DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
                           >
-                            <TabFocusTrap
-                              className="DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
+                            <span
+                              className="TabFocusTrap__TabFocusTrap___39Vty DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
+                              tabIndex={-1}
                             >
-                              <span
-                                className="TabFocusTrap__TabFocusTrap___39Vty DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
-                                tabIndex={-1}
+                              <Grid
+                                className="emotion-3"
+                                columnGap="spacingXs"
+                                columns="min-content auto"
+                                rowGap="none"
+                                rows="auto"
+                                testId="cf-ui-grid"
                               >
                                 <div
-                                  className="emotion-1"
+                                  className="Grid__Grid___2_rpl emotion-3"
+                                  data-test-id="cf-ui-grid"
+                                  style={
+                                    Object {
+                                      "alignContent": undefined,
+                                      "flow": undefined,
+                                      "gridColumnGap": "0.5rem",
+                                      "gridRowGap": 0,
+                                      "gridTemplateColumns": "min-content auto",
+                                      "gridTemplateRows": "auto",
+                                      "justifyContent": undefined,
+                                    }
+                                  }
                                 >
                                   <Checkbox
                                     checked={false}
@@ -816,42 +864,63 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                                     Police officer
                                   </div>
                                 </div>
-                              </span>
-                            </TabFocusTrap>
-                          </button>
-                        </li>
-                      </DropdownListItem>
-                      <DropdownListItem
-                        isActive={false}
-                        isDisabled={false}
-                        isTitle={false}
-                        key="thief"
-                        onClick={[Function]}
-                        testId="space-role-editor.role-option"
+                              </Grid>
+                            </span>
+                          </TabFocusTrap>
+                        </button>
+                      </li>
+                    </DropdownListItem>
+                    <DropdownListItem
+                      isActive={false}
+                      isDisabled={false}
+                      isTitle={false}
+                      key="thief"
+                      onClick={[Function]}
+                      testId="space-role-editor.role-option"
+                    >
+                      <li
+                        className="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
+                        data-test-id="space-role-editor.role-option"
+                        role="menuitem"
                       >
-                        <li
-                          className="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
-                          data-test-id="space-role-editor.role-option"
-                          role="menuitem"
+                        <button
+                          aria-disabled={false}
+                          className="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
+                          data-test-id="cf-ui-dropdown-list-item-button"
+                          disabled={false}
+                          onClick={[Function]}
+                          onMouseDown={[Function]}
+                          type="button"
                         >
-                          <button
-                            aria-disabled={false}
-                            className="DropdownListItem__DropdownListItem__button___1Po6h a11y__focus-outline--default___2hwb1"
-                            data-test-id="cf-ui-dropdown-list-item-button"
-                            disabled={false}
-                            onClick={[Function]}
-                            onMouseDown={[Function]}
-                            type="button"
+                          <TabFocusTrap
+                            className="DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
                           >
-                            <TabFocusTrap
-                              className="DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
+                            <span
+                              className="TabFocusTrap__TabFocusTrap___39Vty DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
+                              tabIndex={-1}
                             >
-                              <span
-                                className="TabFocusTrap__TabFocusTrap___39Vty DropdownListItem__DropdownListItem__button__inner-wrapper___LFlkP"
-                                tabIndex={-1}
+                              <Grid
+                                className="emotion-3"
+                                columnGap="spacingXs"
+                                columns="min-content auto"
+                                rowGap="none"
+                                rows="auto"
+                                testId="cf-ui-grid"
                               >
                                 <div
-                                  className="emotion-1"
+                                  className="Grid__Grid___2_rpl emotion-3"
+                                  data-test-id="cf-ui-grid"
+                                  style={
+                                    Object {
+                                      "alignContent": undefined,
+                                      "flow": undefined,
+                                      "gridColumnGap": "0.5rem",
+                                      "gridRowGap": 0,
+                                      "gridTemplateColumns": "min-content auto",
+                                      "gridTemplateRows": "auto",
+                                      "justifyContent": undefined,
+                                    }
+                                  }
                                 >
                                   <Checkbox
                                     checked={false}
@@ -893,14 +962,14 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                                     Thief
                                   </div>
                                 </div>
-                              </span>
-                            </TabFocusTrap>
-                          </button>
-                        </li>
-                      </DropdownListItem>
-                    </ul>
-                  </DropdownList>
-                </div>
+                              </Grid>
+                            </span>
+                          </TabFocusTrap>
+                        </button>
+                      </li>
+                    </DropdownListItem>
+                  </ul>
+                </DropdownList>
               </div>
             </InViewport>
           </div>
