@@ -44,7 +44,7 @@ export function createForEntry(contentType, doc, publishedCTs, locales) {
  * @returns {entityEditor/Validator}
  */
 export function createForAsset(doc, locales) {
-  const schema = Schema.schemas.Asset(locales);
+  const schema = Schema.schemas.Asset(locales, { loose: true });
   const buildMessage = errorMessageBuilder.forAsset;
   return createBase(buildMessage, schema, doc);
 }
