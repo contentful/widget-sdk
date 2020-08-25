@@ -67,6 +67,7 @@ describe('Authentication', function () {
       });
       expect(window.fetch).toHaveBeenCalledWith('https://secure.ctfassets.net/login', {
         method: 'POST',
+        credentials: 'include',
         headers: {
           Authorization: 'Bearer NEW TOKEN',
         },
@@ -248,6 +249,7 @@ describe('Authentication', function () {
       });
       expect(window.fetch).toHaveBeenCalledWith('https://secure.ctfassets.net/logout', {
         method: 'POST',
+        credentials: 'include',
       });
       setMock.mockRestore();
       removeMock.mockRestore();
