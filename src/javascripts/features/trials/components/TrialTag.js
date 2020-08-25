@@ -1,5 +1,4 @@
 import React, { useState, useCallback } from 'react';
-import moment from 'moment';
 import { css } from 'emotion';
 import { Tag, TextLink } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
@@ -11,6 +10,8 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import StateLink from 'app/common/StateLink';
 import { useAsync } from 'core/hooks';
 import { initTrialProductTour } from '../services/intercomProductTour';
+import { calcTrialDaysLeft } from '../utils';
+import { isOrgOnPlatformTrial } from '../services/PlatformTrialService';
 
 const styles = {
   tag: css({
@@ -35,6 +36,11 @@ export const TrialTag = () => {
     const isPlatformTrialCommEnabled = await getVariation(FLAGS.PLATFORM_TRIAL_COMM, {
       organizationId: org.sys.id,
     });
+
+    if (isPlatformTrialCommEnabled && isOrgOnPlatformTrial(org)) {
+      initTrialProductTour();
+    }
+
     setIsPlatformTrialCommEnabled(isPlatformTrialCommEnabled);
     setOrganization(org);
   }, []);
@@ -46,24 +52,13 @@ export const TrialTag = () => {
     isLoading ||
     !organization ||
     isLegacyOrganization(organization) ||
-    !isPlatformTrialCommEnabled
+    !isPlatformTrialCommEnabled ||
+    !isOrgOnPlatformTrial(organization)
   ) {
     return null;
   }
 
-  const platformTrialEndDate = organization.trialPeriodEndsAt;
-  const isOnPlatformTrial = platformTrialEndDate
-    ? moment().isSameOrBefore(moment(platformTrialEndDate), 'date')
-    : false;
-
-  if (isOnPlatformTrial) {
-    // Start intercom product tour
-    initTrialProductTour();
-  } else {
-    return null;
-  }
-
-  const daysLeft = Math.abs(moment().startOf('day').diff(moment(platformTrialEndDate), 'days'));
+  const daysLeft = calcTrialDaysLeft(organization.trialPeriodEndsAt);
 
   const tracking = {
     trackingEvent: 'trial:trial_tag_clicked',
