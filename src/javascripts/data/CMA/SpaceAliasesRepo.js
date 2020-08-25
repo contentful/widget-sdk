@@ -2,15 +2,26 @@ import _ from 'lodash';
 
 const ALIASES_LIMIT = 101;
 
+// These are the response constructors for the values returned by
+// `create` and `update`.
+export const EnvironmentAliasUpdated = 'EnvironmentAliasUpdated';
+export const IdExistsError = 'IdExistsError';
+export const ServerError = 'ServerError';
+
 /**
  * Create a repository to manage space aliases through the CMA.
  *
  * The repo offers the following functions
  * - getAll()
+ * - get({id})
+ * - create({id, name})
+ * - update(environment)
+ * - remove(id)
+ * - optIn({env_id})
  */
 
 export function create(spaceEndpoint) {
-  return { getAll, get, update, optIn };
+  return { getAll, create, remove, update, get, optIn };
 
   /**
    * Returns a list of all environment aliases for the given space
@@ -43,6 +54,51 @@ export function create(spaceEndpoint) {
       }
       throw error;
     });
+  }
+
+  /**
+   * Create an alias
+   */
+  function create({ id, aliasedEnvironment }) {
+    return spaceEndpoint({
+      method: 'PUT',
+      path: ['environment_aliases', id],
+      data: {
+        environment: {
+          sys: {
+            id: aliasedEnvironment,
+            type: 'Link',
+            linkType: 'Environment',
+          },
+        },
+      },
+    }).then(
+      () => {
+        return { type: EnvironmentAliasUpdated };
+      },
+      function mapCreateError(error) {
+        if (error.status === 409) {
+          return { type: IdExistsError };
+        } else {
+          return { type: ServerError, error };
+        }
+      }
+    );
+  }
+
+  /**
+   * Remove the alias
+   */
+  function remove({ id, version }) {
+    return spaceEndpoint(
+      {
+        method: 'DELETE',
+        path: ['environment_aliases', id],
+      },
+      {
+        'X-Contentful-Version': version,
+      }
+    );
   }
 
   /**

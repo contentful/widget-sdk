@@ -196,8 +196,14 @@ const environmentTableStyles = {
     whiteSpace: 'nowrap',
     paddingLeft: tokens.spacingL,
     display: 'flex',
-    alignItems: 'center',
-    '& > svg': {
+    flexWrap: 'wrap',
+    '& span': {
+      display: 'flex',
+      flexWrap: 'wrap',
+      alignItems: 'center',
+      whiteSpace: 'nowrap',
+    },
+    '& span > svg': {
       margin: `0 ${tokens.spacingXs}`,
       fill: tokens.colorPositive,
     },
@@ -242,10 +248,14 @@ function EnvironmentTable({ environments }) {
                   <EnvironmentDetails
                     environmentId={environment.id}
                     isMaster={environment.isMaster}></EnvironmentDetails>
-                  {environment.isMaster && environment.aliases && environment.aliases[0] && (
+                  {environment.aliases && environment.aliases[0] && (
                     <span className={environmentTableStyles.aliasedTo}>
                       <span>Aliased to</span>
-                      <AliasIcon></AliasIcon> {environment.aliases[0]}
+                      {environment.aliases.map((alias) => (
+                        <span key={alias}>
+                          <AliasIcon></AliasIcon> {alias}
+                        </span>
+                      ))}
                     </span>
                   )}
                 </TableCell>

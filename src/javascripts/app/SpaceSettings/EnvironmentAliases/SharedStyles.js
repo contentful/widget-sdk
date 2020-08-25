@@ -21,6 +21,10 @@ export const aliasStyles = {
       backgroundColor: 'unset',
     },
   }),
+  cell: css({
+    display: 'flex',
+    justifyContent: 'space-between',
+  }),
   createdAt: css({
     marginLeft: 'auto',
   }),
@@ -41,5 +45,8 @@ export const aliasStyles = {
     display: 'block',
     marginRight: tokens.spacingS,
     fill: tokens.colorGreenLight,
+  }),
+  modalHeader: css({
+    marginBottom: tokens.spacingM,
   }),
 };

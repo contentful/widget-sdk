@@ -18,10 +18,10 @@ import tokens from '@contentful/forma-36-tokens';
 import AliasesIllustration from 'svg/illustrations/aliases-illustration.svg';
 import EnvironmentDetails from 'app/common/EnvironmentDetails';
 import ChangeEnvironmentModal from './ChangeEnvironmentModal';
+import DeleteEnvironmentAliasModal from './DeleteEnvironmentAliasModal';
 import OptIn from './OptIn';
 import { aliasStyles } from './SharedStyles';
 import { STEPS } from './Utils';
-import Feedback from './Feedback';
 import ExternalTextLink from 'app/common/ExternalTextLink';
 import { optInStep, optInStart, changeEnvironmentOpen } from 'analytics/events/EnvironmentAliases';
 
@@ -50,72 +50,114 @@ function EnvironmentAliasHeader() {
   );
 }
 
-function EnvironmentAlias({
-  environment: { aliases, id },
-  setModalOpen,
-  canChangeEnvironment,
-  children,
-  alias,
-}) {
-  const changeEnvironment = () => {
-    changeEnvironmentOpen();
-    setModalOpen(true);
-  };
-  const actionWidget = (
+function EnvironmentAlias({ environments, alias }) {
+  const targetEnv = environments.find(({ aliases }) => aliases.includes(alias.sys.id));
+  const spaceId = environments[0].payload.sys.space.sys.id;
+  const [changeModalOpen, setChangeModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const canChangeEnvironment = environments.length > 1;
+  const canDeleteAlias = alias.sys.id !== 'master';
+
+  const changeActionWidget = (
     <TextLink
-      testId="openChangeDialog"
-      onClick={changeEnvironment}
+      testId={`openChangeDialog.${alias.sys.id}`}
+      onClick={() => {
+        changeEnvironmentOpen();
+        setChangeModalOpen(true);
+      }}
       disabled={!canChangeEnvironment}>
       Change alias target
     </TextLink>
   );
 
+  const deleteActionWidget = (
+    <TextLink
+      testId={`openDeleteDialog.${alias.sys.id}`}
+      linkType="negative"
+      onClick={() => setDeleteModalOpen(true)}
+      disabled={!canDeleteAlias}>
+      Delete
+    </TextLink>
+  );
+
   return (
-    <Card className={aliasStyles.card} testId="environmentalias.wrapper">
-      <div className={aliasStyles.header}>
-        <EnvironmentDetails
-          environmentId={alias.sys.id}
-          showAliasedTo={false}
-          aliasId={id}
-          isMaster
-          isSelected
-          hasCopy={false}></EnvironmentDetails>
-        {canChangeEnvironment ? (
-          actionWidget
-        ) : (
-          <Tooltip content={children} place="top">
-            {actionWidget}
-          </Tooltip>
-        )}
-      </div>
-      <Table className={aliasStyles.body}>
-        <TableBody>
-          <TableRow className={aliasStyles.row}>
-            <TableCell>
-              <EnvironmentDetails
-                environmentId={id}
-                isSelected
-                isMaster={aliases.includes('master')}></EnvironmentDetails>
-            </TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-    </Card>
+    <>
+      <Card className={aliasStyles.card} testId={`environmentalias.wrapper.${alias.sys.id}`}>
+        <div className={aliasStyles.header}>
+          <EnvironmentDetails
+            environmentId={alias.sys.id}
+            showAliasedTo={false}
+            aliasId={alias.sys.id}
+            isMaster
+            isSelected
+            hasCopy={false}></EnvironmentDetails>
+          {canDeleteAlias ? (
+            deleteActionWidget
+          ) : (
+            <Tooltip content={<div>You cannot delete this alias.</div>} place="top">
+              {deleteActionWidget}
+            </Tooltip>
+          )}
+        </div>
+        <Table className={aliasStyles.body}>
+          <TableBody>
+            <TableRow className={aliasStyles.row}>
+              <TableCell className={aliasStyles.cell}>
+                <EnvironmentDetails
+                  environmentId={targetEnv.id}
+                  isSelected
+                  isMaster={targetEnv.aliases.includes('master')}></EnvironmentDetails>
+                {canChangeEnvironment ? (
+                  changeActionWidget
+                ) : (
+                  <Tooltip
+                    content={
+                      <div>
+                        You cannot change the alias target.
+                        <br />
+                        Create a new environment first.
+                      </div>
+                    }
+                    place="top">
+                    {changeActionWidget}
+                  </Tooltip>
+                )}
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </Card>
+      <ChangeEnvironmentModal
+        alias={alias}
+        environments={environments}
+        setModalOpen={setChangeModalOpen}
+        modalOpen={changeModalOpen}
+        spaceId={spaceId}
+        targetEnv={targetEnv}></ChangeEnvironmentModal>
+
+      <DeleteEnvironmentAliasModal
+        alias={alias}
+        setModalOpen={setDeleteModalOpen}
+        modalOpen={deleteModalOpen}
+        spaceId={spaceId}
+        targetEnv={targetEnv}></DeleteEnvironmentAliasModal>
+    </>
   );
 }
 
 EnvironmentAlias.propTypes = {
-  environment: PropTypes.shape({
-    aliases: PropTypes.arrayOf(PropTypes.string).isRequired,
-    id: PropTypes.string.isRequired,
-  }).isRequired,
+  environments: PropTypes.arrayOf(
+    PropTypes.shape({
+      aliases: PropTypes.arrayOf(PropTypes.string).isRequired,
+      id: PropTypes.string.isRequired,
+      payload: PropTypes.object.isRequired,
+    })
+  ).isRequired,
   alias: PropTypes.shape({
     sys: PropTypes.shape({
       id: PropTypes.string,
     }),
   }).isRequired,
-  setModalOpen: PropTypes.func.isRequired,
-  canChangeEnvironment: PropTypes.bool,
 };
 
 const aliasesStyles = {
@@ -154,49 +196,42 @@ const aliasesStyles = {
   }),
 };
 
-export default function EnvironmentAliases(props) {
-  const { items: environments, spaceId, testId, allSpaceAliases } = props;
+function sortAliases(aliases) {
+  return aliases
+    .reduce(
+      (acc, alias) => {
+        alias.sys.id === 'master' ? acc[0].push(alias) : acc[1].push(alias);
+        return acc;
+      },
+      [[], []]
+    )
+    .reduce(
+      (acc, aliasList) => acc.concat(aliasList.sort((a, b) => a.sys.id.localeCompare(b.sys.id))),
+      []
+    );
+}
 
+export default function EnvironmentAliases(props) {
+  const { items: environments, spaceId, allSpaceAliases } = props;
   const [step, setStep] = useState(STEPS.IDLE);
-  const [modalOpen, setModalOpen] = useState(false);
 
   if (environments.length === 0) {
     return null;
   }
 
-  const aliasComponents = allSpaceAliases
-    .map((alias) => {
-      const targetEnv = environments.find(({ aliases }) => aliases.includes(alias.sys.id));
-      if (targetEnv) {
-        return (
-          <span data-test-id={testId} key={alias.sys.id}>
-            <EnvironmentAliasHeader></EnvironmentAliasHeader>
-            <EnvironmentAlias
-              alias={alias}
-              environment={targetEnv}
-              setModalOpen={setModalOpen}
-              canChangeEnvironment={environments.some(({ aliases }) => aliases.length <= 0)}>
-              <div>
-                You cannot change the alias target.
-                <br />
-                Create a new environment first.
-              </div>
-            </EnvironmentAlias>
-            <Feedback></Feedback>
-            <ChangeEnvironmentModal
-              alias={alias}
-              environments={environments}
-              setModalOpen={setModalOpen}
-              modalOpen={modalOpen}
-              spaceId={spaceId}
-              targetEnv={targetEnv}></ChangeEnvironmentModal>
-          </span>
-        );
-      }
-    })
-    .filter(Boolean);
+  const aliasComponents = sortAliases(allSpaceAliases).map((alias) => (
+    <span data-test-id="environmentalias.span" key={alias.sys.id}>
+      <EnvironmentAlias alias={alias} environments={environments}></EnvironmentAlias>
+    </span>
+  ));
+
   if (aliasComponents.length > 0) {
-    return aliasComponents;
+    return (
+      <>
+        <EnvironmentAliasHeader></EnvironmentAliasHeader>
+        {aliasComponents}
+      </>
+    );
   }
 
   const trackedSetStep = (step, track = true) => {
@@ -211,7 +246,7 @@ export default function EnvironmentAliases(props) {
 
   if (step === STEPS.IDLE) {
     return (
-      <Card className={aliasesStyles.card} testId={testId}>
+      <Card className={aliasesStyles.card} testId="environmentalias.wrapper.optin">
         <div className={aliasesStyles.leftColumn}>
           <Heading className={aliasesStyles.header} element="h2">
             Introducing environment aliases
@@ -225,7 +260,7 @@ export default function EnvironmentAliases(props) {
           </Paragraph>
           <span className={aliasesStyles.buttonBar}>
             <Button
-              testId="environmentaliases.start-opt-in"
+              testId="environmentalias.start-opt-in"
               className={aliasesStyles.button}
               onClick={startOptIn}>
               Set up your first alias
@@ -241,10 +276,10 @@ export default function EnvironmentAliases(props) {
   }
 
   return (
-    <span data-test-id={testId}>
+    <span data-test-id="environmentaliases.span">
       <EnvironmentAliasHeader></EnvironmentAliasHeader>
       <OptIn
-        testId="environmentaliases.opt-in"
+        testId="environmentalias.opt-in"
         step={step}
         setStep={trackedSetStep}
         spaceId={spaceId}></OptIn>
@@ -253,13 +288,11 @@ export default function EnvironmentAliases(props) {
 }
 
 EnvironmentAliases.propTypes = {
-  testId: PropTypes.string,
   items: PropTypes.array.isRequired,
   spaceId: PropTypes.string.isRequired,
-  allSpaceAliases: PropTypes.arrayOf(PropTypes.object),
+  allSpaceAliases: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 EnvironmentAliases.defaultProps = {
-  testId: 'environmentaliases.wrapper',
   allSpaceAliases: [],
 };

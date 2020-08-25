@@ -126,7 +126,6 @@ export default function ChangeEnvironmentModal({
         setModalOpen(false);
       }}
       shouldCloseOnOverlayClick={false}
-      shouldCloseOnEscapePress={false}
       size="large"
       isShown={modalOpen}
       testId="changeenvironmentmodal.modal">
@@ -135,13 +134,13 @@ export default function ChangeEnvironmentModal({
           <Modal.Header title={title} onClose={onClose} />
           <Modal.Content testId="changeenvironmentmodal.content">
             <Card className={aliasStyles.card}>
-              <div className={changeEnvironmentModalStyles.header}>
+              <div className={aliasStyles.modalHeader}>
                 <EnvironmentDetails
                   testId="changeenvironmentmodal.current-alias"
                   environmentId={alias.sys.id}
                   isMaster
                   isSelected
-                  aliasId={oldTarget}
+                  aliasId={alias.sys.id}
                   showAliasedTo={false}
                   hasCopy={false}></EnvironmentDetails>
               </div>
@@ -181,7 +180,7 @@ export default function ChangeEnvironmentModal({
                   maxHeight={150}
                   className={changeEnvironmentModalStyles.list}>
                   {environments
-                    .filter(({ aliases }) => aliases.length <= 0)
+                    .filter(({ id }) => id !== oldTarget)
                     .map(({ id, payload }) => (
                       <DropdownListItem
                         testId={`changeenvironmentmodal.select-${id}`}

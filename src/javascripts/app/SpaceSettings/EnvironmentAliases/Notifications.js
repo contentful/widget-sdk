@@ -57,6 +57,16 @@ FromTo.propTypes = {
   message: PropTypes.string.isRequired,
 };
 
+export const Message = ({ message }) => (
+  <Paragraph className={styles.notification}>
+    <span>{message}</span>
+  </Paragraph>
+);
+
+Message.propTypes = {
+  message: PropTypes.string.isRequired,
+};
+
 const getTimestamp = () => moment().format('MMMM Do YYYY, h:mm:ss a');
 
 const UpdateParagraph = ({ aliasId, oldTarget, newTarget }) => (

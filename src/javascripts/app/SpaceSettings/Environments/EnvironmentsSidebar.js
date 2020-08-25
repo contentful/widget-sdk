@@ -41,17 +41,20 @@ const sidebarStyles = {
 };
 
 export default function EnvironmentsSidebar({
+  isLoading,
   canCreateEnv,
   resource,
   isLegacyOrganization,
   canUpgradeSpace,
   OpenCreateDialog,
+  OpenCreateAliasDialog,
   OpenUpgradeSpaceDialog,
-  aliasesEnabled,
+  customAliasesEnabled,
   canManageAliases,
   hasOptedInEnv,
   hasNextSpacePlan,
   spaceId,
+  allSpaceAliases,
   organizationId,
 }) {
   // Master is not included in the api, display +1 usage and limit
@@ -74,34 +77,73 @@ export default function EnvironmentsSidebar({
 
   return (
     <>
-      <Heading element="h2" className={`${css({ marginTop: 0 })} entity-sidebar__heading`}>
-        Usage
+      {hasOptedInEnv && (
+        <>
+          <Heading element="h2" className={`${css({ marginTop: 0 })} entity-sidebar__heading`}>
+            Environment Alias Usage
+          </Heading>
+
+          {!isLoading && (
+            <>
+              <Typography>
+                <Paragraph testId="environmentsAliasUsage">
+                  {customAliasesEnabled
+                    ? `You are using ${allSpaceAliases.length} out of 3 environment aliases available `
+                    : 'You have one environment alias available '}
+                  in this space.
+                </Paragraph>
+              </Typography>
+
+              {canManageAliases && customAliasesEnabled && allSpaceAliases.length < 3 && (
+                <Button
+                  isFullWidth
+                  testId="openCreateAliasDialog"
+                  buttonType="muted"
+                  onClick={OpenCreateAliasDialog}>
+                  Add environment alias
+                </Button>
+              )}
+            </>
+          )}
+        </>
+      )}
+
+      <Heading
+        element="h2"
+        className={`${
+          allSpaceAliases.length > 0 ? '' : css({ marginTop: 0 })
+        } entity-sidebar__heading`}>
+        Environment Usage
       </Heading>
 
-      <Typography>
-        <Paragraph testId="environmentsUsage">
-          You are using {usage}{' '}
-          {limit ? `out of ${limit} environments available ` : pluralize('environment', usage)} in
-          this space.
-          {!isLegacyOrganization && <UsageTooltip resource={resource} />}
-        </Paragraph>
-        {!canCreateEnv && !isLegacyOrganization && (
-          <Paragraph testId="upgradeMessage">
-            {!canUpgradeSpace &&
-              'Ask the administrator of your organization to upgrade the space plan.'}
-            {canUpgradeSpace &&
-              loadedHasNextSpacePlan &&
-              (hasNextSpacePlan
-                ? 'Upgrade the space to add more.'
-                : 'Talk to us about upgrading to an enterprise space plan.')}
-          </Paragraph>
-        )}
-      </Typography>
+      {!isLoading && (
+        <>
+          <Typography>
+            <Paragraph testId="environmentsUsage">
+              You are using {usage}{' '}
+              {limit ? `out of ${limit} environments available ` : pluralize('environment', usage)}{' '}
+              in this space.
+              {!isLegacyOrganization && <UsageTooltip resource={resource} />}
+            </Paragraph>
+            {!canCreateEnv && !isLegacyOrganization && (
+              <Paragraph testId="upgradeMessage">
+                {!canUpgradeSpace &&
+                  'Ask the administrator of your organization to upgrade the space plan.'}
+                {canUpgradeSpace &&
+                  loadedHasNextSpacePlan &&
+                  (hasNextSpacePlan
+                    ? 'Upgrade the space to add more.'
+                    : 'Talk to us about upgrading to an enterprise space plan.')}
+              </Paragraph>
+            )}
+          </Typography>
 
-      {canCreateEnv && (
-        <Button isFullWidth testId="openCreateDialog" onClick={OpenCreateDialog}>
-          Add environment
-        </Button>
+          {canCreateEnv && (
+            <Button isFullWidth testId="openCreateDialog" onClick={OpenCreateDialog}>
+              Add environment
+            </Button>
+          )}
+        </>
       )}
 
       {!canCreateEnv && !isLegacyOrganization && canUpgradeSpace && loadedHasNextSpacePlan && (
@@ -123,19 +165,9 @@ export default function EnvironmentsSidebar({
       </Heading>
 
       <Typography>
-        <Paragraph className={sidebarStyles.subHeaderFirst}>Environment</Paragraph>
-        <Paragraph>
-          Environments allow you to develop and test changes to data in isolation.
-          <br />
-          See the{' '}
-          <ExternalTextLink href={docLinks.domainModelConcepts}>
-            Contentful domain model
-          </ExternalTextLink>{' '}
-          for details.
-        </Paragraph>
-        {aliasesEnabled && shouldShowAliasDefinition && (
+        {shouldShowAliasDefinition && (
           <>
-            <Paragraph className={sidebarStyles.subHeader}>Environment Aliases</Paragraph>
+            <Paragraph className={sidebarStyles.subHeaderFirst}>Environment Aliases</Paragraph>
             <Paragraph>
               An environment alias allows you to access and modify the data of an environment
               through a different static identifier.
@@ -148,22 +180,40 @@ export default function EnvironmentsSidebar({
             </Paragraph>
           </>
         )}
+        <Paragraph
+          className={
+            shouldShowAliasDefinition ? sidebarStyles.subHeader : sidebarStyles.subHeaderFirst
+          }>
+          Environment
+        </Paragraph>
+        <Paragraph>
+          Environments allow you to develop and test changes to data in isolation.
+          <br />
+          See the{' '}
+          <ExternalTextLink href={docLinks.domainModelConcepts}>
+            Contentful domain model
+          </ExternalTextLink>{' '}
+          for details.
+        </Paragraph>
       </Typography>
     </>
   );
 }
 EnvironmentsSidebar.propTypes = {
   canCreateEnv: PropTypes.bool,
-  aliasesEnabled: PropTypes.bool,
   resource: PropTypes.object,
   isLegacyOrganization: PropTypes.bool,
+  customAliasesEnabled: PropTypes.bool,
+  isLoading: PropTypes.bool,
   canUpgradeSpace: PropTypes.bool,
   OpenCreateDialog: PropTypes.func.isRequired,
+  OpenCreateAliasDialog: PropTypes.func.isRequired,
   OpenUpgradeSpaceDialog: PropTypes.func.isRequired,
   canManageAliases: PropTypes.bool.isRequired,
   hasOptedInEnv: PropTypes.bool.isRequired,
   hasNextSpacePlan: PropTypes.bool,
   spaceId: PropTypes.string,
+  allSpaceAliases: PropTypes.arrayOf(PropTypes.object).isRequired,
   organizationId: PropTypes.string,
 };
 

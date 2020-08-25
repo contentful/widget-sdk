@@ -11,6 +11,7 @@ import {
   notificationEnvironmentAliasDeleted,
 } from 'analytics/events/EnvironmentAliases';
 import {
+  Message,
   FromTo,
   AliasChangedInfoModal,
   AliasChangedChoiceModal,
@@ -115,6 +116,7 @@ export const triggerAliasCreatedOrDeletedNotifications = async ({
   update,
   modalLauncher = ModalLauncher,
 }) => {
+  if (aliasChangedToastVisible) return;
   if (update.action === ACTION.CREATE) {
     notificationEnvironmentAliasCreated({ update });
   } else if (update.action === ACTION.DELETE) {
@@ -175,9 +177,36 @@ export const initEnvAliasDeleteHandler = (modalLauncher) => {
   };
 };
 
+export const temporarilyIgnoreAliasChangedToast = () => {
+  aliasChangedToastVisible = true;
+  setTimeout(() => {
+    // unlock after 6s default timeout of notification
+    aliasChangedToastVisible = false;
+  }, 6000);
+};
+
+export const triggerAliasDeletedToast = async (handleDeleteEnvironment, context) => {
+  const { spaceId, alias } = context;
+  const {
+    sys: { id: aliasId },
+  } = alias;
+
+  try {
+    await handleDeleteEnvironment(spaceId, alias);
+    Notification.success(<Message message={`Environment alias "${aliasId}" deleted`} />);
+    Navigator.reload();
+  } catch (err) {
+    logger.logError('Aliases - deleteEnvironment exception', err);
+    Notification.error(<Message message={`There was an error deleting the ${aliasId} alias`} />);
+  }
+};
+
+export const triggerAliasCreatedToast = async (id) => {
+  Notification.success(<Message message={`Environment alias ${id} created.`} />);
+  Navigator.reload();
+};
+
 export default (modalLauncher) => {
-  // TODO: Should we add an action = Action.Change here in order to be
-  // consistent?
   return (update) => {
     if (window.location.pathname.startsWith('/spaces')) {
       triggerAliasChangedNotifications({

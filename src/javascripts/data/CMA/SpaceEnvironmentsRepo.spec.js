@@ -5,9 +5,9 @@ import { createPaginationEndpoint } from '__mocks__/data/EndpointFactory';
 
 SpaceAliasesRepo.create = jest.fn().mockReturnValue({ getAll: jest.fn() });
 
-const generateEnvs = (length, optedIn) =>
+const generateEnvs = (length) =>
   new Array(length).fill(null).map((_, id) => ({
-    sys: { id, aliases: optedIn ? [] : undefined },
+    sys: { id, aliases: [] },
   }));
 
 const generateMockSpaceEndpoint = (envs) =>
@@ -18,7 +18,7 @@ describe('SpaceEnvironmentsRepo', () => {
     const envs = generateEnvs(1);
     const spaceEndpoint = generateMockSpaceEndpoint(envs);
     const res = await spaceEndpoint.getAll();
-    expect(res).toEqual({ environments: envs });
+    expect(res).toEqual({ environments: envs, aliases: [] });
   });
 
   it('fetches all environments, if opted in to environment aliases', async function () {

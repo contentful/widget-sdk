@@ -7,7 +7,9 @@ import { getOrgFeature, getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { canCreate } from 'utils/ResourceUtils';
 import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService';
 import * as SpaceEnvironmentsRepo from 'data/CMA/SpaceEnvironmentsRepo';
+import * as SpaceAliasesRepo from 'data/CMA/SpaceAliasesRepo';
 import { openCreateEnvDialog } from '../CreateEnvDialog';
+import { openCreateEnvAliasDialog } from '../CreateEnvAliasDialog';
 import { openDeleteEnvironmentDialog } from '../DeleteDialog';
 import * as PricingService from 'services/PricingService';
 
@@ -25,9 +27,13 @@ const SET_HAS_NEXT_SPACE_PLAN = 'SET_HAS_NEXT_SPACE_PLAN';
  */
 
 export const createEnvReducer = createImmerReducer({
-  [SET_PERMISSIONS]: (state, { canSelectSource, aliasesEnabled, canManageAliases }) => {
+  [SET_PERMISSIONS]: (
+    state,
+    { canSelectSource, aliasesEnabled, customAliasesEnabled, canManageAliases }
+  ) => {
     state.canSelectSource = canSelectSource;
     state.aliasesEnabled = aliasesEnabled;
+    state.customAliasesEnabled = customAliasesEnabled;
     state.canManageAliases = canManageAliases;
   },
   [SET_ENVIRONMENTS]: (
@@ -53,10 +59,12 @@ export const useEnvironmentsRouteState = (props) => {
     isLoading: true,
     canCreateEnv: false,
     aliasesEnabled: false,
+    customAliasesEnabled: false,
     canSelectSource: false,
     canManageAliases: false,
     hasOptedInEnv: false,
     items: [],
+    allSpaceAliases: [],
     resource: { usage: 0 },
     canUpgradeSpace: props.canUpgradeSpace,
     isLegacyOrganization: props.isLegacyOrganization,
@@ -71,6 +79,7 @@ export const useEnvironmentsRouteState = (props) => {
   const { endpoint, spaceId } = props;
 
   const resourceEndpoint = SpaceEnvironmentsRepo.create(endpoint);
+  const aliasEndpoint = SpaceAliasesRepo.create(endpoint);
   const resourceService = createResourceService(spaceId, 'space');
 
   const FetchPermissions = async () => {
@@ -79,10 +88,16 @@ export const useEnvironmentsRouteState = (props) => {
     const hasAccess = accessChecker.can('manage', 'Environments');
     if (!hasAccess) goToSpaceDetail();
 
-    const [environmentsEnabled, canSelectSource, aliasesEnabled] = await Promise.all([
+    const [
+      environmentsEnabled,
+      canSelectSource,
+      aliasesEnabled,
+      customAliasesEnabled,
+    ] = await Promise.all([
       getVariation(FLAGS.ENVIRONMENTS_FLAG, { spaceId, organizationId }),
       getOrgFeature(organizationId, 'environment_branching'),
       getSpaceFeature(spaceId, 'environment_aliasing'),
+      getSpaceFeature(spaceId, 'custom_environment_aliases'),
     ]);
 
     if (!environmentsEnabled) goToSpaceDetail();
@@ -93,6 +108,7 @@ export const useEnvironmentsRouteState = (props) => {
       canSelectSource,
       canManageAliases,
       aliasesEnabled,
+      customAliasesEnabled,
     });
   };
 
@@ -125,7 +141,7 @@ export const useEnvironmentsRouteState = (props) => {
       resource,
       items,
       canCreateEnv: isLegacyOrganization || canCreate(resource),
-      hasOptedInEnv: !!aliases,
+      hasOptedInEnv: aliases.length > 0,
       allSpaceAliases: aliases,
     });
     dispatch({ type: SET_IS_LOADING, value: false });
@@ -162,6 +178,21 @@ export const useEnvironmentsRouteState = (props) => {
       currentEnvironmentId,
       // Do not show env picker if there is only a single source environment
       canSelectSource && items.length > 1
+    );
+
+    if (created) {
+      await FetchEnvironments();
+    }
+  };
+
+  const OpenCreateAliasDialog = async () => {
+    const { currentEnvironmentId } = props;
+    const { items } = state;
+
+    const created = await openCreateEnvAliasDialog(
+      aliasEndpoint.create,
+      items,
+      currentEnvironmentId
     );
 
     if (created) {
@@ -215,6 +246,7 @@ export const useEnvironmentsRouteState = (props) => {
     FetchNextSpacePlan,
     RefetchEnvironments,
     OpenCreateDialog,
+    OpenCreateAliasDialog,
     OpenDeleteDialog,
     OpenUpgradeSpaceDialog,
   };
