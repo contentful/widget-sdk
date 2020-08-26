@@ -6,6 +6,7 @@ import {
   FieldsSection,
   ContentTypeIdSection,
   DocumentationSection,
+  EntryEditorSection,
 } from './Sidebar/ContentModelSidebar';
 import PropTypes from 'prop-types';
 import EditorFieldTabs from './EditorFieldTabs';
@@ -97,7 +98,7 @@ export default function ContentTypesPage(props) {
           {props.hasAdvancedExtensibility && props.currentTab === 'entry_editor_configuration' && (
             <>
               <DocumentTitle
-                title={['Entry Editors', props.contentTypeData.name, 'Content Model']}
+                title={['Entry editors', props.contentTypeData.name, 'Content Model']}
               />
               <div>
                 <EntryEditorConfiguration
@@ -118,6 +119,7 @@ export default function ContentTypesPage(props) {
               showNewFieldDialog={props.actions.showNewFieldDialog}
               fieldsUsed={props.contentTypeData.fields.length}
             />
+            <EntryEditorSection />
             <ContentTypeIdSection contentTypeId={props.contentTypeData.sys.id} />
             <DocumentationSection />
           </div>
