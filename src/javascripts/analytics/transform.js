@@ -210,6 +210,7 @@ registerGenericEvent('entity_state:revert');
 registerGenericEvent('entity_list:bulk_action_performed');
 registerGenericEvent('asset_list:add_asset_single');
 registerGenericEvent('asset_list:add_asset_multiple');
+registerGenericEvent('content_modelling:field_added');
 
 registerGenericEvent('teams_in_space:teams_added');
 registerGenericEvent('teams_in_space:users_added');

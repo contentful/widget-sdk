@@ -57,7 +57,7 @@ export const validEvents = {
     'filter_removed',
     'query_changed',
   ],
-  modelling: ['field_added'],
+  content_modelling: ['field_added'],
   experiment: ['start', 'interaction'],
   entry_editor: [
     'state_changed',
