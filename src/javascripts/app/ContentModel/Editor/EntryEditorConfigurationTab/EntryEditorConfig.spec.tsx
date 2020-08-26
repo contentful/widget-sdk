@@ -1,10 +1,10 @@
 import React from 'react';
-import { render, configure, fireEvent } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import EntryEditorConfig from './EntryEditorConfig';
 import { WidgetNamespace, WidgetLocation } from 'features/widget-renderer';
 import { noop } from 'lodash';
 
-configure({ testIdAttribute: 'data-test-id' });
+const NUMBER_OF_DEFAULT_WIDGETS = 2;
 
 describe('EntryEditorConfig', () => {
   it('Renders all default items on empty state', () => {
@@ -13,11 +13,10 @@ describe('EntryEditorConfig', () => {
       configuration: [],
       customWidgets: [],
     };
-    const DEFAULT_WIDGETS = 2;
 
     const { getAllByTestId } = render(<EntryEditorConfig {...props} />);
 
-    expect(getAllByTestId('selected-widget-item')).toHaveLength(DEFAULT_WIDGETS);
+    expect(getAllByTestId('selected-widget-item')).toHaveLength(NUMBER_OF_DEFAULT_WIDGETS);
   });
 
   it('renders all available items on empty state', () => {

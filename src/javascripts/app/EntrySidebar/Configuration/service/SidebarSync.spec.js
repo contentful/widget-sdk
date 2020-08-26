@@ -32,18 +32,13 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
       ).toBeUndefined();
     });
 
-    it('should return valid configuration with disabled defaults and ignore problem items', () => {
+    it('should return valid configuration with disabled defaults included', () => {
       const items = [
         PublicationWidget,
         VersionsWidget,
         {
           widgetId: 'some-custom-extension',
           widgetNamespace: WidgetNamespace.EXTENSION,
-        },
-        {
-          widgetId: 'some-problem-extension-that-was-deleted',
-          widgetNamespace: WidgetNamespace.EXTENSION,
-          problem: true,
         },
       ];
       const state = {

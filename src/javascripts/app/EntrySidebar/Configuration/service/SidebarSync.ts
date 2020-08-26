@@ -1,8 +1,13 @@
-import { pick, difference, identity, isEqual } from 'lodash';
+import { pick, difference, isEqual } from 'lodash';
 
 import { defaultWidgetsMap } from '../defaults';
 
 import { State } from '../SidebarConfigurationReducer';
+import {
+  ConfigurationItem,
+  DefaultWidget,
+  SavedConfigItem,
+} from 'app/ContentModel/Editor/WidgetsConfiguration/interfaces';
 import { WidgetNamespace, isCustomWidget, WidgetLocation } from 'features/widget-renderer';
 import { isSameWidget } from 'app/ContentModel/Editor/WidgetsConfiguration/utils';
 
@@ -11,28 +16,31 @@ import { isSameWidget } from 'app/ContentModel/Editor/WidgetsConfiguration/utils
  * to data that can be used in API calls to `/editor_inteface`
  * for saving configuration.
  */
-export function convertInternalStateToConfiguration(state: State, initialItems: any) {
+export function convertInternalStateToConfiguration(
+  state: State,
+  initialItems: ConfigurationItem[]
+) {
   if (isEqual(state.items, initialItems)) {
     return undefined;
   }
 
   const selectedDefaultIds = state.items
-    .filter((widget: any) => widget.widgetNamespace === WidgetNamespace.SIDEBAR_BUILTIN)
-    .map((widget: any) => widget.widgetId);
-  const defaultIds = initialItems.map((widget: any) => widget.widgetId);
+    .filter(
+      (widget: ConfigurationItem) => widget.widgetNamespace === WidgetNamespace.SIDEBAR_BUILTIN
+    )
+    .map((widget: ConfigurationItem) => widget.widgetId);
+  const defaultIds = initialItems.map((widget: ConfigurationItem) => widget.widgetId);
   const missingBuiltinIds = difference(defaultIds, selectedDefaultIds);
 
-  const selectedItems = state.items
-    .filter((widget: any) => widget.problem !== true)
-    .map((widget: any) => ({
-      widgetId: widget.widgetId,
-      widgetNamespace: widget.widgetNamespace,
-      settings: widget.settings || {},
-    }));
+  const selectedItems = state.items.map((widget: ConfigurationItem) => ({
+    widgetId: widget.widgetId,
+    widgetNamespace: widget.widgetNamespace,
+    settings: widget.settings || {},
+  }));
 
   const missingItems = initialItems
-    .filter((widget: any) => missingBuiltinIds.includes(widget.widgetId))
-    .map((widget: any) => ({
+    .filter((widget: ConfigurationItem) => missingBuiltinIds.includes(widget.widgetId))
+    .map((widget: ConfigurationItem) => ({
       widgetId: widget.widgetId,
       widgetNamespace: widget.widgetNamespace,
       disabled: true,
@@ -45,7 +53,7 @@ function convertToWidgetConfiguration(widget: any) {
   return {
     widgetId: widget.id,
     widgetNamespace: widget.namespace,
-    ...pick(widget, ['name', 'locations', 'parameters']),
+    ...pick(widget, ['name', 'locations', 'parameters', 'disabled']),
   };
 }
 
@@ -67,9 +75,9 @@ function canBeUsedInSidebar(widget: any) {
  * with additional data needed to render UI.
  */
 export function convertConfigurationToInternalState(
-  configuration: any,
-  widgets: any,
-  initialItems: any
+  configuration: SavedConfigItem[],
+  widgets: DefaultWidget[],
+  initialItems: ConfigurationItem[]
 ): State {
   if (!Array.isArray(configuration)) {
     return {
@@ -81,26 +89,33 @@ export function convertConfigurationToInternalState(
 
   widgets = widgets.map(convertToWidgetConfiguration);
 
-  const items = configuration
-    .map((configItem) => {
+  const items: ConfigurationItem[] = configuration
+    .reduce((acc: ConfigurationItem[], configItem) => {
       if (configItem.widgetNamespace === WidgetNamespace.SIDEBAR_BUILTIN) {
         const found = defaultWidgetsMap[configItem.widgetId];
 
-        return found ? { ...configItem, name: found.name, description: found.description } : null;
+        if (found) {
+          acc.push({ ...configItem, name: found.name, description: found.description });
+        }
+        return acc;
       }
 
       if (isCustomWidget(configItem.widgetNamespace)) {
         const found = widgets.find((e: any) => isSameWidget(e, configItem));
 
-        // Settings have to be copied to the widget for
-        // the updating of instance parameters to work
-        return found ? { ...found, ...pick(configItem, ['settings']) } : null;
+        if (found) {
+          // Settings have to be copied to the widget for
+          // the updating of instance parameters to work
+          acc.push({ ...found, ...pick(configItem, ['settings']) });
+        }
+        return acc;
       }
-    })
-    .filter(identity)
+
+      return acc;
+    }, [])
     .filter((item) => item.disabled !== true);
 
-  const availableItems = widgets.reduce((acc, widget) => {
+  const availableItems: ConfigurationItem[] = widgets.reduce((acc: ConfigurationItem[], widget) => {
     if (canBeUsedInSidebar(widget)) {
       acc.push(widget);
     }

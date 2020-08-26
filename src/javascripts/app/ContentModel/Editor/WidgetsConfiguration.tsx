@@ -14,7 +14,10 @@ import { Heading, Paragraph } from '@contentful/forma-36-react-components';
 import CustomConfiguration from './WidgetsConfiguration/CustomConfiguration';
 import AvailableWidgets from './WidgetsConfiguration/AvailableWidgets';
 import { isSameWidget } from './WidgetsConfiguration/utils';
-import { ConfigurationItem } from './WidgetsConfiguration/interfaces';
+import {
+  ConfigurationItem,
+  ConfigurableConfigurationItem,
+} from './WidgetsConfiguration/interfaces';
 
 const styles = {
   container: css({
@@ -53,7 +56,7 @@ const styles = {
 interface WidgetsConfigurationProps {
   state: {
     availableItems: ConfigurationItem[];
-    configurableWidget: any; // what is this?
+    configurableWidget: ConfigurableConfigurationItem;
     items: ConfigurationItem[];
   };
   dispatch: Function;

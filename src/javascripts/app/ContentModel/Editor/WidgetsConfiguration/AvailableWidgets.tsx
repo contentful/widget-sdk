@@ -69,7 +69,7 @@ export default function AvailableItems(props: AvailableWidgetsProps) {
             or{' '}
             <TextLink
               href={withInAppHelpUtmParams(inAppHelpMedium)(
-              'https://www.contentful.com/developers/docs/extensibility/app-framework/tutorial/?utm_campaign=in-app-help'
+                'https://www.contentful.com/developers/docs/extensibility/app-framework/tutorial/?utm_campaign=in-app-help'
               )}
               target="_blank"
               rel="noopener noreferrer">
@@ -81,4 +81,3 @@ export default function AvailableItems(props: AvailableWidgetsProps) {
     </div>
   );
 }
-
