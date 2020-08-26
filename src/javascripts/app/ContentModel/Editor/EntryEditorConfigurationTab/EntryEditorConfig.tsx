@@ -72,20 +72,18 @@ const findUnusedDefaultWidgets = (
 ) => {
   return defaultWidgets.filter(
     (widget) =>
-      !configuration.find(
-        (item) =>
-          item.widgetNamespace === WidgetNamespace.EDITOR_BUILTIN &&
-          widget.widgetId === item.widgetId
-      )
+      !configuration.find((item) => isWidgetBuiltIn(item) && widget.widgetId === item.widgetId)
   );
 };
 
-const removeDisabledWidgets = (widget: SavedConfigItem) => !widget.disabled;
+const isWidgetEnabled = (widget: SavedConfigItem) => !widget.disabled;
+const isWidgetBuiltIn = (widget: { widgetNamespace: WidgetNamespace }) =>
+  widget.widgetNamespace === WidgetNamespace.EDITOR_BUILTIN;
 
 const enrichWidgetData = (defaultWidgets: DefaultWidget[], customWidgets: CustomWidget[]) => (
   item: SavedConfigItem
 ) =>
-  item.widgetNamespace === WidgetNamespace.EDITOR_BUILTIN
+  isWidgetBuiltIn(item)
     ? defaultWidgets.find((widget) => item.widgetId === widget.widgetId)
     : customWidgets.find((widget) => item.widgetId === widget.id);
 
@@ -105,7 +103,7 @@ function createStateFromConfiguration(
   const unusedDefaultEditors = findUnusedDefaultWidgets(defaultWidgets, configuration);
 
   const items = configuration
-    .filter(removeDisabledWidgets)
+    .filter(isWidgetEnabled)
     .map(enrichWidgetData(defaultWidgets, customWidgets))
     .concat(unusedDefaultEditors)
     .filter((item) => !!item) as (CustomWidget | DefaultWidget)[];
@@ -126,7 +124,7 @@ function convertInternalStateToConfiguration(
   }
 
   const selectedDefaultIds = state.items
-    .filter((widget: any) => widget.widgetNamespace === WidgetNamespace.EDITOR_BUILTIN)
+    .filter(isWidgetBuiltIn)
     .map((widget: any) => widget.widgetId);
   const defaultIds = initialItems.map((widget: any) => widget.widgetId);
   const missingBuiltinIds = difference(defaultIds, selectedDefaultIds);
@@ -184,10 +182,7 @@ function EntryEditorConfiguration(props: EditorConfigProps) {
 }
 
 export default (props: Omit<EditorConfigProps, 'defaultWidgets'>) => {
-  const defaultEditors = create().filter(
-    (editor) => editor.namespace === WidgetNamespace.EDITOR_BUILTIN
-  );
-  const defaultWidgets = defaultEditors.map(convertToWidgetConfiguration);
+  const defaultWidgets = create().map(convertToWidgetConfiguration).filter(isWidgetBuiltIn);
 
   return <EntryEditorConfiguration {...props} defaultWidgets={defaultWidgets} />;
 };
