@@ -72,7 +72,7 @@ export default function AvailableWidget({
         </Paragraph>
         <Paragraph>
           {widgetNamespace === WidgetNamespace.SIDEBAR_BUILTIN && 'Built-in item'}
-          {widgetNamespace === WidgetNamespace.EDITOR_BUILTIN && 'Built-in item'}
+          {widgetNamespace === WidgetNamespace.EDITOR_BUILTIN && 'Built-in editor'}
           {widgetNamespace === WidgetNamespace.EXTENSION && 'UI Extension'}
           {widgetNamespace === WidgetNamespace.APP && 'App'}
         </Paragraph>
