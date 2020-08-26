@@ -5,11 +5,11 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import {
   resetWidgetConfiguration,
-  removeItemFromSidebar,
+  removeItem,
   changeItemPosition,
-  addItemToSidebar,
+  addItem,
   openWidgetConfiguration,
-} from 'app/EntrySidebar/Configuration/SidebarConfigurationReducer';
+} from 'app/ContentModel/Editor/WidgetsConfiguration/WidgetsConfigurationReducer';
 import { Heading, Paragraph } from '@contentful/forma-36-react-components';
 import CustomConfiguration from './WidgetsConfiguration/CustomConfiguration';
 import AvailableWidgets from './WidgetsConfiguration/AvailableWidgets';
@@ -87,7 +87,7 @@ const WidgetsConfiguration: React.FC<WidgetsConfigurationProps> = ({
               inAppHelpMedium={configuration.inAppHelpMedium}
               items={unusedAvailableItems}
               onAddItem={(item: ConfigurationItem) => {
-                dispatch(addItemToSidebar(item));
+                dispatch(addItem(item));
               }}
             />
           </div>
@@ -99,7 +99,7 @@ const WidgetsConfiguration: React.FC<WidgetsConfigurationProps> = ({
               onResetClick={() => dispatch(resetWidgetConfiguration(defaultAvailableItems))}
               items={state.items}
               onRemoveItem={(widget: ConfigurationItem) => {
-                dispatch(removeItemFromSidebar(widget));
+                dispatch(removeItem(widget));
               }}
               onChangePosition={(sourceIndex: number, destinationIndex: number) => {
                 dispatch(changeItemPosition(sourceIndex, destinationIndex));

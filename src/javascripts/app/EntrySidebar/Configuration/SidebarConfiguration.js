@@ -1,7 +1,7 @@
 import React, { useReducer, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import { reducer } from './SidebarConfigurationReducer';
+import { reducer } from 'app/ContentModel/Editor/WidgetsConfiguration/WidgetsConfigurationReducer';
 import { useAsync } from 'core/hooks';
 import {
   convertInternalStateToConfiguration,
@@ -9,7 +9,7 @@ import {
 } from './service/SidebarSync';
 import WidgetsConfiguration from 'app/ContentModel/Editor/WidgetsConfiguration';
 import { getEntryConfiguration } from './defaults';
-import WidgetParametersConfiguration from './WidgetParametersConfiguration';
+import WidgetParametersConfiguration from 'app/ContentModel/Editor/WidgetsConfiguration/WidgetParametersConfiguration';
 
 const styles = {
   container: css({

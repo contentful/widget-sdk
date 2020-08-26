@@ -1,13 +1,12 @@
 import React, { useReducer, useEffect } from 'react';
 import { pick, difference } from 'lodash';
 import { css } from 'emotion';
-import { reducer } from 'app/EntrySidebar/Configuration/SidebarConfigurationReducer'; // Replace
-import { State } from 'app/EntrySidebar/Configuration/SidebarConfigurationReducer';
+import { State, reducer } from 'app/ContentModel/Editor/WidgetsConfiguration/WidgetsConfigurationReducer';
 import WidgetsConfiguration from 'app/ContentModel/Editor/WidgetsConfiguration';
 import { ConfigurationItem } from 'app/ContentModel/Editor/WidgetsConfiguration/interfaces';
 import { create } from 'widgets/BuiltinWidgets';
 import { WidgetNamespace, WidgetLocation } from 'features/widget-renderer';
-import WidgetParametersConfiguration from 'app/EntrySidebar/Configuration/WidgetParametersConfiguration'; // Replace
+import WidgetParametersConfiguration from 'app/ContentModel/Editor/WidgetsConfiguration/WidgetParametersConfiguration';
 
 const styles = {
   container: css({

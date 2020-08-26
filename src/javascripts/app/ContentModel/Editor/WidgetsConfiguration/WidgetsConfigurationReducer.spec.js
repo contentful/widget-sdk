@@ -2,12 +2,12 @@ import {
   reducer,
   openWidgetConfiguration,
   closeWidgetConfiguration,
-  removeItemFromSidebar,
-  addItemToSidebar,
+  removeItem,
+  addItem,
   changeItemPosition,
-} from './SidebarConfigurationReducer';
+} from './WidgetsConfigurationReducer';
 
-describe('EntrySidebar/Configuration/SidebarConfigurationReducer', () => {
+describe('WidgetsConfiguration/WidgetsConfigurationReducer', () => {
   it('should open and close widget configuration', () => {
     let nextState = reducer(
       {
@@ -20,7 +20,7 @@ describe('EntrySidebar/Configuration/SidebarConfigurationReducer', () => {
     expect(nextState.configurableWidget).toBeNull();
   });
 
-  it('should remove item from items list on sidebar but not add it to availableItems', () => {
+  it('should remove item from items list of widgets but not add it to availableItems', () => {
     const initialState = {
       items: [
         { widgetId: '1', widgetNamespace: 'first' },
@@ -31,7 +31,7 @@ describe('EntrySidebar/Configuration/SidebarConfigurationReducer', () => {
     };
     let nextState = reducer(
       initialState,
-      removeItemFromSidebar({
+      removeItem({
         widgetId: '1',
         widgetNamespace: 'first',
       })
@@ -47,7 +47,7 @@ describe('EntrySidebar/Configuration/SidebarConfigurationReducer', () => {
 
     nextState = reducer(
       nextState,
-      removeItemFromSidebar({
+      removeItem({
         widgetId: '3',
         widgetNamespace: 'first',
       })
@@ -74,7 +74,7 @@ describe('EntrySidebar/Configuration/SidebarConfigurationReducer', () => {
     };
     const nextState = reducer(
       initialState,
-      addItemToSidebar({
+      addItem({
         widgetId: '1',
         widgetNamespace: 'first',
       })

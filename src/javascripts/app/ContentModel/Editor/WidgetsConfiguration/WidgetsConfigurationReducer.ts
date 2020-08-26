@@ -16,24 +16,24 @@ export const resetWidgetConfiguration = (defaultAvailableItems: ConfigurationIte
   },
 });
 
-const REMOVE_ITEM_FROM_SIDEBAR = 'sidebar/REMOVE_ITEM_FROM_SIDEBAR';
+const REMOVE_ITEM = 'widgets/REMOVE_ITEM';
 
-export const removeItemFromSidebar = (item: ConfigurationItem) => ({
-  type: REMOVE_ITEM_FROM_SIDEBAR,
+export const removeItem = (item: ConfigurationItem) => ({
+  type: REMOVE_ITEM,
   payload: {
     item,
   },
 });
 
-const ADD_ITEM_TO_SIDEBAR = 'sidebar/ADD_ITEM_TO_SIDEBAR';
-export const addItemToSidebar = (item: ConfigurationItem) => ({
-  type: ADD_ITEM_TO_SIDEBAR,
+const ADD_ITEM = 'widgets/ADD_ITEM';
+export const addItem = (item: ConfigurationItem) => ({
+  type: ADD_ITEM,
   payload: {
     item,
   },
 });
 
-const CHANGE_ITEM_POSITION = 'sidebar/CHANGE_ITEM_POSITION';
+const CHANGE_ITEM_POSITION = 'widgets/CHANGE_ITEM_POSITION';
 
 export const changeItemPosition = (sourceIndex: number, destIndex: number) => ({
   type: CHANGE_ITEM_POSITION,
@@ -43,7 +43,7 @@ export const changeItemPosition = (sourceIndex: number, destIndex: number) => ({
   },
 });
 
-const OPEN_WIDGET_CONFIGURATION = 'sidebar/OPEN_WIDGET_CONFIGURATION';
+const OPEN_WIDGET_CONFIGURATION = 'widgets/OPEN_WIDGET_CONFIGURATION';
 export const openWidgetConfiguration = (widget) => ({
   type: OPEN_WIDGET_CONFIGURATION,
   payload: {
@@ -51,12 +51,12 @@ export const openWidgetConfiguration = (widget) => ({
   },
 });
 
-const CLOSE_WIDGET_CONFIGURATION = 'sidebar/CLOSE_WIDGET_CONFIGURATION';
+const CLOSE_WIDGET_CONFIGURATION = 'widgets/CLOSE_WIDGET_CONFIGURATION';
 export const closeWidgetConfiguration = () => ({
   type: CLOSE_WIDGET_CONFIGURATION,
 });
 
-const UPDATE_WIDGET_SETTINGS = 'sidebar/UPDATE_WIDGET_SETTINGS';
+const UPDATE_WIDGET_SETTINGS = 'widgets/UPDATE_WIDGET_SETTINGS';
 export const updateWidgetSettings = (widget: any, settings: any) => ({
   type: UPDATE_WIDGET_SETTINGS,
   payload: {
@@ -75,14 +75,14 @@ export const reducer = createImmerReducer<State, any>({
   [RESET_WIDGET_CONFIGURATION]: (state: State, action) => {
     state.items = action.payload.defaultAvailableItems;
   },
-  [REMOVE_ITEM_FROM_SIDEBAR]: (state: State, action) => {
+  [REMOVE_ITEM]: (state: State, action) => {
     const removeIndex = state.items.findIndex((item) => isSameWidget(item, action.payload.item));
     if (removeIndex === -1) {
       return;
     }
     state.items.splice(removeIndex, 1);
   },
-  [ADD_ITEM_TO_SIDEBAR]: (state: State, action) => {
+  [ADD_ITEM]: (state: State, action) => {
     state.items = [action.payload.item, ...state.items];
   },
   [CHANGE_ITEM_POSITION]: (state: State, action) => {
