@@ -8,6 +8,7 @@ import { getOpenAssignedTasksAndEntries } from 'app/TasksPage/helpers';
 import * as Analytics from 'analytics/Analytics';
 import * as Authentication from 'Authentication';
 import * as Intercom from 'services/intercom';
+import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 jest.mock('analytics/Analytics', () => ({
   track: jest.fn(),
@@ -98,7 +99,11 @@ describe('AccountDropdown', () => {
 });
 
 async function build() {
-  render(<AccountDropdown />);
+  render(
+    <SpaceEnvContextProvider>
+      <AccountDropdown />
+    </SpaceEnvContextProvider>
+  );
 
   await waitForElement(() => screen.getByTestId('account-menu'));
 }

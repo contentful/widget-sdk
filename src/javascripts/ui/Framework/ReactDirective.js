@@ -29,6 +29,7 @@ import * as EntryEditorWorkbench from 'app/entry_editor/EntryEditorWorkbench';
 import * as AssetEditorWorkbench from 'app/asset_editor/AssetEditorWorkbench';
 import { BulkEditorHeader } from 'app/entity_editor/bulk_editor/BulkEditorHeader';
 import { BulkEditorSidebar } from 'app/entity_editor/bulk_editor/BulkEditorSidebar';
+import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container, store) {
@@ -37,7 +38,9 @@ function renderComponent(Component, props, scope, container, store) {
     // providers should be added here
     ReactDOM.render(
       <Provider store={store}>
-        <Component {...props} scope={scope} />
+        <SpaceEnvContextProvider>
+          <Component {...props} scope={scope} />
+        </SpaceEnvContextProvider>
       </Provider>,
       container
     );

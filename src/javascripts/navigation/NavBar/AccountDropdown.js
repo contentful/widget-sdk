@@ -9,7 +9,6 @@ import { getUser } from 'services/TokenStore';
 import { getCurrentStateName } from 'states/Navigator';
 import { getOpenAssignedTasksAndEntries } from 'app/TasksPage/helpers';
 import { getCurrentSpaceFeature, FEATURES } from 'data/CMA/ProductCatalog';
-import { getModule } from 'core/NgRegistry';
 import StateLink from 'app/common/StateLink';
 
 import {
@@ -20,6 +19,7 @@ import {
   TabFocusTrap,
 } from '@contentful/forma-36-react-components';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
   source: 'webapp',
@@ -119,8 +119,8 @@ const getPendingTasksCount = (tasks, entries) => {
   return taskCount;
 };
 
-const canDisplayTasksDashboard = async (spaceContext) =>
-  spaceContext.space ? getCurrentSpaceFeature(FEATURES.CONTENT_WORKFLOW_TASKS, false) : false;
+const canDisplayTasksDashboard = async (spaceId) =>
+  spaceId ? getCurrentSpaceFeature(FEATURES.CONTENT_WORKFLOW_TASKS, false) : false;
 
 export default class AccountDropdown extends Component {
   state = {
@@ -130,9 +130,11 @@ export default class AccountDropdown extends Component {
     shouldShowPendingTasks: false,
   };
 
+  static contextType = SpaceEnvContext;
+
   componentDidMount = async () => {
-    const spaceContext = getModule('spaceContext');
-    const shouldShowPendingTasksPromise = canDisplayTasksDashboard(spaceContext);
+    const { currentSpaceId, currentEnvironmentId } = this.context;
+    const shouldShowPendingTasksPromise = canDisplayTasksDashboard(currentSpaceId);
 
     const currentUser = await getUser();
     this.setState({
@@ -143,8 +145,8 @@ export default class AccountDropdown extends Component {
 
     if (currentUser && shouldShowPendingTasks) {
       const [tasks, entries] = await getOpenAssignedTasksAndEntries(
-        spaceContext.space.getId(),
-        spaceContext.getEnvironmentId(),
+        currentSpaceId,
+        currentEnvironmentId,
         currentUser.sys.id
       );
       const pendingTasksCount = getPendingTasksCount(tasks, entries);

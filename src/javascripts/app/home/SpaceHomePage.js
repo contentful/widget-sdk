@@ -15,7 +15,6 @@ import {
   isDevOnboardingSpace,
   isContentOnboardingSpace,
 } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
-import { getModule } from 'core/NgRegistry';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 import * as K from 'core/utils/kefir';
 import * as accessChecker from 'access_control/AccessChecker';
@@ -23,26 +22,39 @@ import { useAsync } from 'core/hooks';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import * as logger from 'services/logger';
 import { getApiKeyRepo } from 'features/api-keys-management';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import {
+  isAdmin,
+  getSpaceRoles,
+  isSpaceReadyOnly,
+  getOrganizationId,
+  getOrganizationName,
+  isOrganizationBillable,
+} from 'core/services/SpaceEnvContext/utils';
+import { getModule } from 'core/NgRegistry';
 
-const isTEASpace = () => {
-  const spaceContext = getModule('spaceContext');
-  const publishedCTs = K.getValue(spaceContext.publishedCTs.items$) || [];
+const isTEASpace = (publishedItems, currentSpace) => {
+  const publishedCTs = K.getValue(publishedItems) || [];
   return (
     publishedCTs.find((ct) => {
       return get(ct, ['sys', 'id']) === 'layoutHighlightedCourse';
-    }) || isContentOnboardingSpace(spaceContext.space)
+    }) || isContentOnboardingSpace(currentSpace)
   );
 };
 
-const fetchData = (setLoading, setState, isSpaceAdmin) => async () => {
-  const spaceContext = getModule('spaceContext');
+const fetchData = (
+  setLoading,
+  setState,
+  isSpaceAdmin,
+  isTEA,
+  currentSpace,
+  currentSpaceId
+) => async () => {
   setLoading(true);
 
-  const hasTeamsEnabled = await getOrgFeature(spaceContext.getId(), 'teams', false);
+  const hasTeamsEnabled = await getOrgFeature(currentSpaceId, 'teams', false);
 
-  const isTEA = isTEASpace();
-
-  if (!spaceContext.space || !isSpaceAdmin) {
+  if (!currentSpaceId || !isSpaceAdmin) {
     setLoading(false);
     return;
   }
@@ -70,7 +82,7 @@ const fetchData = (setLoading, setState, isSpaceAdmin) => async () => {
 
     return;
   } else {
-    if (isDevOnboardingSpace(get(spaceContext, 'space'))) {
+    if (isDevOnboardingSpace(currentSpace)) {
       const [credentials, personEntry] = await Promise.all([getCredentials(), getPerson()]);
       setState({
         hasTeamsEnabled,
@@ -89,41 +101,39 @@ const fetchData = (setLoading, setState, isSpaceAdmin) => async () => {
 
 // TODO should fix this template being used by both spaceHome and Home
 const SpaceHomePage = ({ spaceTemplateCreated, orgOwnerOrAdmin, orgId }) => {
-  const spaceContext = getModule('spaceContext');
-  const [isLoading, setLoading] = useState(true);
+  const spaceContext = getModule('spaceContext'); // TODO: Edge case, should be moved to a different service/provider
+  const { currentSpaceId, currentSpace, currentSpaceName } = useSpaceEnvContext();
   const [
     { managementToken, personEntry, cdaToken, cpaToken, hasTeamsEnabled },
     setState,
   ] = useState({});
+  const [isLoading, setLoading] = useState(true);
 
-  const currentSpace = spaceContext.space;
-
-  const isSpaceAdmin = get(currentSpace, ['data', 'spaceMember', 'admin']);
-
-  useAsync(useCallback(fetchData(setLoading, setState, isSpaceAdmin), [spaceTemplateCreated]));
-
-  const isAuthorOrEditor = accessChecker.isAuthorOrEditor(
-    spaceContext.getData('spaceMember.roles', false)
-  );
-
-  const readOnlySpace = Boolean(get(currentSpace, ['data', 'readOnlyAt']));
-
+  const spaceRoles = getSpaceRoles(currentSpace);
+  const organizationId = getOrganizationId(currentSpace);
+  const organizationName = getOrganizationName(currentSpace);
+  const isSpaceAdmin = isAdmin(currentSpace);
+  const readOnlySpace = isSpaceReadyOnly(currentSpace);
+  const isAuthorOrEditor = accessChecker.isAuthorOrEditor(spaceRoles ?? false);
+  const isSupportEnabled = isOrganizationBillable(currentSpace);
+  const isModernStack = isDevOnboardingSpace(currentSpace);
+  const isTEA = isTEASpace(spaceContext.publishedCTs.items$, currentSpace);
   const spaceHomeProps = {
-    spaceName: spaceContext.getData('name'),
-    orgName: spaceContext.getData('organization.name'),
-    orgId: spaceContext.getData('organization.sys.id'),
-    spaceId: spaceContext.getData('sys.id'),
+    orgId: organizationId,
+    orgName: organizationName,
+    spaceId: currentSpaceId,
+    spaceName: currentSpaceName,
   };
-
-  const isSupportEnabled = spaceContext.getData('organization.isBillable');
-
   let adminSpaceHomePage;
 
-  const isModernStack = isDevOnboardingSpace(currentSpace);
+  useAsync(
+    useCallback(
+      fetchData(setLoading, setState, isSpaceAdmin, isTEA, currentSpace, currentSpaceId),
+      [spaceTemplateCreated]
+    )
+  );
 
-  const isTEA = isTEASpace();
-
-  if (spaceContext.space && !isLoading && isSpaceAdmin) {
+  if (currentSpace && !isLoading && isSpaceAdmin) {
     if (isTEA && cdaToken && cpaToken) {
       adminSpaceHomePage = (
         <TEAAdminSpaceHome
@@ -163,7 +173,7 @@ const SpaceHomePage = ({ spaceTemplateCreated, orgOwnerOrAdmin, orgId }) => {
   return (
     <div className="home home-section" data-test-id="space-home-page-container">
       <DocumentTitle title="Space home" />
-      {!isLoading && !spaceContext.space && (
+      {!isLoading && !currentSpace && (
         <EmptySpaceHome orgId={orgId} orgOwnerOrAdmin={orgOwnerOrAdmin} />
       )}
       {isLoading && (

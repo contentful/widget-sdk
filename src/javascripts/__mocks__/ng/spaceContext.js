@@ -10,6 +10,7 @@ export const organization = {
   sys: {
     id: 'org',
   },
+  name: 'Contentful',
 };
 
 export const cma = {
@@ -51,7 +52,16 @@ export const getEnvironmentId = jest.fn();
 export const space = {
   getId: jest.fn(),
   endpoint: jest.fn(),
-  data: {},
+  data: {
+    name: 'Blog',
+    sys: {
+      id: 'fg5eidi9k2qp',
+    },
+    organization,
+    spaceMember: {
+      admin: true,
+    },
+  },
 };
 
 export const getSpace = jest.fn().mockReturnValue(space);

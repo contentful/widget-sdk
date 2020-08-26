@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import SidebarContentPreview from './SidebarContentPreview';
 import * as Analytics from 'analytics/Analytics';
-import { getModule } from 'core/NgRegistry';
 import TheLocaleStore from 'services/localeStore';
 import * as Entries from 'data/entries';
 import { getContentPreview } from 'features/content-preview';
+import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { isAdmin } from 'core/services/SpaceEnvContext/utils';
 
 const getEmptyContentPreview = () => ({
   compiledUrl: '',
@@ -23,6 +24,8 @@ export class SidebarContentPreviewContainer extends Component {
       entryId: PropTypes.string,
     }).isRequired,
   };
+
+  static contextType = SpaceEnvContext;
 
   state = {
     isInitialized: false,
@@ -119,15 +122,11 @@ export class SidebarContentPreviewContainer extends Component {
   };
 
   render() {
-    const spaceContext = getModule('spaceContext');
-
-    const isAdmin = spaceContext.getData('spaceMember.admin', false);
-
     return (
       <SidebarContentPreview
         isInitialized={this.state.isInitialized}
         isPreviewSetup={this.state.isPreviewSetup}
-        isAdmin={isAdmin}
+        isAdmin={isAdmin(this.context.currentSpace)}
         selectedContentPreview={this.state.selectedContentPreview}
         contentPreviews={this.state.contentPreviews}
         trackPreviewOpened={this.onTrackPreviewOpened}

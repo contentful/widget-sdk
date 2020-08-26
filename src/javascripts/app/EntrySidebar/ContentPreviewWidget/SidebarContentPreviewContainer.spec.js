@@ -4,6 +4,7 @@ import 'jest-enzyme';
 import * as mockedSpaceContext from 'ng/spaceContext';
 import SidebarContentPreviewContainer from './SidebarContentPreviewContainer';
 import flushPromises from 'test/helpers/flushPromises';
+import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 const mockContentPreview = {
   replaceVariablesInUrl: jest.fn(),
@@ -92,9 +93,15 @@ describe('entity_editor/Components/SidebarContentPreviewContainer', () => {
         locales: [],
       },
     };
-    const wrapper = mount(<SidebarContentPreviewContainer {...initialProps} />);
+    const Proxy = (props) => (
+      <SpaceEnvContextProvider>
+        <SidebarContentPreviewContainer {...props} />
+      </SpaceEnvContextProvider>
+    );
+    const wrapper = mount(<Proxy {...initialProps} />);
+    const el = wrapper.find(SidebarContentPreviewContainer);
 
-    await wrapper.instance().componentDidMount();
+    await el.instance().componentDidMount();
 
     expect(mockContentPreview.replaceVariablesInUrl).not.toHaveBeenCalled();
 
@@ -104,7 +111,7 @@ describe('entity_editor/Components/SidebarContentPreviewContainer', () => {
 
     expect(mockContentPreview.replaceVariablesInUrl).not.toHaveBeenCalled();
 
-    wrapper.find('[data-test-id="open-preview"]').simulate('click');
+    el.find('[data-test-id="open-preview"]').simulate('click');
     await flushPromises();
     wrapper.update();
 
