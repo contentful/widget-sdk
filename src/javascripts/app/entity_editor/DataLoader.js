@@ -17,6 +17,7 @@ import {
 } from 'widgets/WidgetRenderable';
 import { isCustomWidget } from '@contentful/widget-renderer';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
+import { getVariation, FLAGS } from 'LaunchDarkly';
 
 const assetEditorInterface = EditorInterfaceTransformer.fromAPI(
   assetContentType.data,
@@ -128,17 +129,20 @@ async function loadEditorData(loader, id) {
   const entity = await loader.getEntity(id);
   const contentTypeId = get(entity, ['data', 'sys', 'contentType', 'sys', 'id']);
   const environmentId = get(entity, ['data', 'sys', 'environment', 'sys', 'id']);
+  const spaceId = get(entity, ['data', 'sys', 'space', 'sys', 'id']);
 
   const [
     contentType,
     apiEditorInterface,
     hasAdvancedExtensibility,
     customWidgetLoader,
+    useNewWidgetRenderer,
   ] = await Promise.all([
     loader.getContentType(contentTypeId),
     loader.getEditorInterface(contentTypeId),
     loader.hasAdvancedExtensibility(),
     getCustomWidgetLoader(),
+    getVariation(FLAGS.NEW_WIDGET_RENDERER, { spaceId }),
   ]);
 
   const editorInterface = EditorInterfaceTransformer.fromAPI(contentType.data, apiEditorInterface);
@@ -183,6 +187,7 @@ async function loadEditorData(loader, id) {
     editorInterface,
     widgetTrackingContexts,
     ...widgetData,
+    useNewWidgetRenderer,
   });
 }
 
