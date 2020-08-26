@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { noop, memoize, uniqBy } from 'lodash';
-import { css, cx } from 'emotion';
+import { cx } from 'emotion';
 import EntryLink from 'app/widgets/link/EntryLink';
 import AssetLink from 'app/widgets/link/AssetLink';
 import { newForLocale } from 'app/entity_editor/entityHelpers';
-import { Paragraph, TextLink, Note, Spinner } from '@contentful/forma-36-react-components';
+import { Paragraph, TextLink, Note } from '@contentful/forma-36-react-components';
 import { getModule } from 'core/NgRegistry';
 import { useEntityLoader } from './useEntityLoader';
 import { useSelection } from './useSelection';
@@ -15,16 +15,6 @@ import { Wrapper } from './Wrapper';
 import { isSearchUsed, getValidContentTypes } from './utils';
 import { CreateEntity } from './CreateEntity';
 import getAccessibleCTs from 'data/ContentTypeRepo/accessibleCTs';
-import tokens from '@contentful/forma-36-tokens';
-
-const styles = {
-  loadingIndicator: css({
-    display: 'flex',
-    width: tokens.contentWidthFull,
-    justifyContent: 'center',
-    alignItems: 'center',
-  }),
-};
 
 /*
   The core of this component was split into 3 hooks:
@@ -389,11 +379,6 @@ export const EntitySelectorForm = ({
         ref={entitySelectorRef}>
         {renderEmptyStateMessage()}
         {showingSelected ? renderEntities(selectedEntities) : renderEntities(entities)}
-        {!showingSelected && isLoading ? (
-          <div className={styles.loadingIndicator}>
-            <Spinner />
-          </div>
-        ) : null}
       </div>
       {labels.info ? <Note noteType="primary">{labels.info}</Note> : null}
       {error ? <Note noteType="negative">{error.message || error.data.message}</Note> : null}
