@@ -41,7 +41,9 @@ export const SpacesListForMembers = ({ spaces }) => {
 
   return (
     <>
-      <Heading className="section-title">Spaces</Heading>
+      <Heading className="section-title" testId="subscription-page-trial-members.heading">
+        Spaces
+      </Heading>
       {spaces.length > 0 ? (
         <Table testId="subscription-page-trial-members.table">
           <colgroup>
@@ -51,27 +53,32 @@ export const SpacesListForMembers = ({ spaces }) => {
           </colgroup>
           <TableHead>
             <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Created on</TableCell>
+              <TableCell testId="subscription-page-trial-members.table-header.name">Name</TableCell>
+              <TableCell testId="subscription-page-trial-members.table-header.created-on">
+                Created on
+              </TableCell>
               <TableCell />
             </TableRow>
           </TableHead>
           <TableBody>
             {spaces.map((space) => {
               return (
-                <TableRow key={space.sys.id}>
-                  <TableCell>{space.name}</TableCell>
-                  <TableCell>{moment.utc(space.sys.createdAt).format('DD/MM/YYYY')}</TableCell>
+                <TableRow key={space.sys.id} testId="subscription-page-trial-members.table-row">
+                  <TableCell testId="subscription-page-trial-members.table-row.name">
+                    {space.name}
+                  </TableCell>
+                  <TableCell testId="subscription-page-trial-members.table-row.created-on">
+                    {moment.utc(space.sys.createdAt).format('DD/MM/YYYY')}
+                  </TableCell>
                   <TableCell className={styles.moreButton}>
                     <CardActions
                       iconButtonProps={{
-                        testId: 'subscription-page-trial-members.spaces-list.dropdown-menu.trigger',
-                      }}
-                      data-test-id="subscription-page-trial-members.spaces-list.dropdown-menu">
+                        testId: 'subscription-page-trial-members.dropdown-menu.trigger',
+                      }}>
                       <DropdownList>
                         <DropdownListItem
                           onClick={() => onViewSpace(space.sys.id)}
-                          testId="subscription-page-trial-members.spaces-list.space-link">
+                          testId="subscription-page-trial-members.dropdown-menu-item.space-link">
                           Go to space
                         </DropdownListItem>
                       </DropdownList>
@@ -83,7 +90,7 @@ export const SpacesListForMembers = ({ spaces }) => {
           </TableBody>
         </Table>
       ) : (
-        <Paragraph>
+        <Paragraph testId="subscription-page-trial-members.no-spaces-placeholder">
           You are not added to any spaces. To be added to a space, talk to your administrator.
         </Paragraph>
       )}

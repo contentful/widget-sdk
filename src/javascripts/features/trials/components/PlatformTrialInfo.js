@@ -13,7 +13,7 @@ export const PlatformTrialInfo = ({ organization }) => {
   const daysLeft = calcTrialDaysLeft(organization.trialPeriodEndsAt);
 
   return (
-    <Typography data-test-id="platform-trial-info">
+    <Typography testId="platform-trial-info">
       <Heading className="section-title">Trial</Heading>
       <Paragraph>
         {daysLeft === 0 ? (

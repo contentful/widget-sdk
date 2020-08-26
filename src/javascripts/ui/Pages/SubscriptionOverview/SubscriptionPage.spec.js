@@ -5,7 +5,7 @@ import * as Fake from 'test/helpers/fakeFactory';
 import SubscriptionPage from './SubscriptionPage';
 import { getVariation } from 'LaunchDarkly';
 
-import { isOwner } from 'services/OrganizationRoles';
+import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { go } from 'states/Navigator';
 import { billing } from './links';
 
@@ -29,6 +29,7 @@ jest.mock('services/ChangeSpaceService', () => ({
 
 jest.mock('services/OrganizationRoles', () => ({
   isOwner: jest.fn(),
+  isOwnerOrAdmin: jest.fn(),
 }));
 
 jest.mock('./links', () => ({
@@ -46,6 +47,9 @@ const trackCTAClick = jest.spyOn(trackCTA, 'trackCTAClick');
 const trackTargetedCTAClick = jest.spyOn(trackCTA, 'trackTargetedCTAClick');
 
 const mockOrganization = Fake.Organization();
+const mockTrialOrganization = Fake.Organization({
+  trialPeriodEndsAt: new Date(),
+});
 const mockBasePlan = Fake.Plan({ name: 'My cool base plan' });
 const mockFreeBasePlan = Fake.Plan({ customerType: FREE });
 const mockTeamBasePlan = Fake.Plan({ customerType: SELF_SERVICE });
@@ -253,6 +257,36 @@ describe('SubscriptionPage', () => {
     build();
 
     expect(screen.getByText('Get in touch with us')).toBeVisible();
+  });
+
+  describe('organization on platform trial', () => {
+    beforeEach(() => {
+      isOwnerOrAdmin.mockReturnValue(true);
+    });
+
+    it('should show trial info for admins and owners', () => {
+      build({
+        organization: mockTrialOrganization,
+        isPlatformTrialCommEnabled: true,
+      });
+
+      expect(screen.getByTestId('platform-trial-info')).toBeVisible();
+    });
+
+    it('should show trial info and spaces section for members', () => {
+      isOwnerOrAdmin.mockReturnValueOnce(false);
+      build({
+        organization: mockTrialOrganization,
+        isPlatformTrialCommEnabled: true,
+        memberAccessibleSpaces: [],
+      });
+
+      expect(screen.getByTestId('platform-trial-info')).toBeVisible();
+      expect(screen.getByTestId('subscription-page-trial-members.heading')).toBeVisible();
+      expect(
+        screen.getByTestId('subscription-page-trial-members.no-spaces-placeholder')
+      ).toBeVisible();
+    });
   });
 });
 
