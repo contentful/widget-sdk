@@ -9,6 +9,7 @@ import { isSecureAssetUrl } from 'utils/AssetUrl';
 const ratio = (file) => `${file.details.image.width}:${file.details.image.height}`;
 const ratioNumber = (file) => file.details.image.width / file.details.image.height;
 const url = (file, qs) => `https:${externalImageUrl(file.url)}${qs ? '?' + qs : ''}`;
+const defaultSignUrl = (value) => value;
 
 const NUMBER_REGEX = /^[1-9][0-9]{0,3}$/;
 const RATIO_REGEX = /^[1-9][0-9]{0,3}:[1-9][0-9]{0,3}$/;
@@ -51,7 +52,7 @@ const RESIZE_MODES = {
   }),
 };
 
-export async function rotateOrMirror(mode, file, signUrl) {
+export async function rotateOrMirror(mode, file, signUrl = defaultSignUrl) {
   if (!isValidImage(file)) {
     return Promise.reject(new Error('Expected an image.'));
   }
@@ -59,7 +60,7 @@ export async function rotateOrMirror(mode, file, signUrl) {
   return Filestack.rotateOrMirrorImage(mode, await signUrl(url(file)));
 }
 
-export function resize(mode, file, signUrl) {
+export function resize(mode, file, signUrl = defaultSignUrl) {
   if (!isValidImage(file)) {
     return Promise.reject(new Error('Expected an image.'));
   }
@@ -89,7 +90,7 @@ export function resize(mode, file, signUrl) {
   });
 }
 
-export async function crop(mode, file, signUrl) {
+export async function crop(mode, file, signUrl = defaultSignUrl) {
   if (!isValidImage(file)) {
     return Promise.reject(new Error('Expected an image.'));
   }
@@ -104,7 +105,7 @@ export async function crop(mode, file, signUrl) {
   }
 }
 
-function cropWithCustomAspectRatio(file, signUrl) {
+function cropWithCustomAspectRatio(file, signUrl = defaultSignUrl) {
   return openInputDialog(
     {
       confirmLabel: 'Please provide desired aspect ratio',
