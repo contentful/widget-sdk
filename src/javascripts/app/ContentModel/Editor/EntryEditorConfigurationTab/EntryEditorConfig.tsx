@@ -4,9 +4,15 @@ import { css } from 'emotion';
 import { reducer } from 'app/EntrySidebar/Configuration/SidebarConfigurationReducer'; // Replace
 import { State } from 'app/EntrySidebar/Configuration/SidebarConfigurationReducer';
 import WidgetsConfiguration from 'app/ContentModel/Editor/WidgetsConfiguration';
-import { ConfigurationItem } from 'app/ContentModel/Editor/WidgetsConfiguration/interfaces';
+import {
+  ConfigurationItem,
+  CustomWidget,
+  isCustomWidget,
+  DefaultWidget,
+  SavedConfigItem,
+} from 'app/ContentModel/Editor/WidgetsConfiguration/interfaces';
 import { create } from 'widgets/BuiltinWidgets';
-import { WidgetNamespace, WidgetLocation } from 'features/widget-renderer';
+import { WidgetNamespace } from 'features/widget-renderer';
 import WidgetParametersConfiguration from 'app/EntrySidebar/Configuration/WidgetParametersConfiguration'; // Replace
 
 const styles = {
@@ -15,31 +21,6 @@ const styles = {
     marginBottom: '60px',
   }),
 };
-
-interface CustomWidget {
-  name: string;
-  namespace: WidgetNamespace;
-  id: string;
-  locations: WidgetLocation[];
-}
-function isCustomWidget(widget: CustomWidget | DefaultWidget): widget is CustomWidget {
-  return (
-    (widget as CustomWidget).id !== undefined && (widget as CustomWidget).namespace !== undefined
-  );
-}
-
-interface DefaultWidget {
-  widgetId: string;
-  widgetNamespace: WidgetNamespace;
-  name: string;
-}
-
-interface SavedConfigItem {
-  widgetId: string;
-  widgetNamespace: WidgetNamespace;
-  disabled?: boolean;
-  settings: Record<string, any>;
-}
 
 interface EditorConfigProps {
   onUpdateConfiguration: (configuration: SavedConfigItem[] | undefined) => void;
