@@ -1,17 +1,18 @@
 import React, { useReducer, useEffect } from 'react';
 import { pick, difference } from 'lodash';
 import { css } from 'emotion';
-import { State, reducer } from 'app/ContentModel/Editor/WidgetsConfiguration/WidgetsConfigurationReducer';
+import {
+  State,
+  reducer,
+} from 'app/ContentModel/Editor/WidgetsConfiguration/WidgetsConfigurationReducer';
 import WidgetsConfiguration from 'app/ContentModel/Editor/WidgetsConfiguration';
 import {
-  ConfigurationItem,
   CustomWidget,
-  isCustomWidget,
   DefaultWidget,
   SavedConfigItem,
 } from 'app/ContentModel/Editor/WidgetsConfiguration/interfaces';
 import { create } from 'widgets/BuiltinWidgets';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace, WidgetLocation } from 'features/widget-renderer';
 import WidgetParametersConfiguration from 'app/ContentModel/Editor/WidgetsConfiguration/WidgetParametersConfiguration';
 
 const styles = {
@@ -21,30 +22,19 @@ const styles = {
   }),
 };
 
-interface EditorConfigProps {
-  onUpdateConfiguration: (configuration: SavedConfigItem[] | undefined) => void;
-  defaultWidgets: DefaultWidget[];
-  customWidgets: CustomWidget[];
-  configuration: SavedConfigItem[];
+interface Widget {
+  widgetId: string;
+  widgetNamespace: WidgetNamespace;
+  name: string;
+  locations?: WidgetLocation[];
 }
 
-const convertToWidgetConfiguration = (widget: CustomWidget | DefaultWidget): ConfigurationItem => {
-  if (isCustomWidget(widget)) {
-    return {
-      widgetId: widget.id,
-      widgetNamespace: widget.namespace,
-      name: widget.name,
-      ...pick(widget, ['description', 'locations', 'parameters', 'availabilityStatus', 'settings']),
-    };
-  } else {
-    return {
-      widgetId: widget.widgetId,
-      widgetNamespace: widget.widgetNamespace,
-      name: widget.name,
-      ...pick(widget, ['description', 'locations', 'parameters', 'availabilityStatus', 'settings']),
-    };
-  }
-};
+interface InternalEditorConfigProps {
+  onUpdateConfiguration: (configuration: SavedConfigItem[] | undefined) => void;
+  defaultWidgets: Widget[];
+  customWidgets: Widget[];
+  configuration: SavedConfigItem[];
+}
 
 const findUnusedDefaultWidgets = (
   defaultWidgets: DefaultWidget[],
@@ -60,22 +50,22 @@ const isWidgetEnabled = (widget: SavedConfigItem) => !widget.disabled;
 const isWidgetBuiltIn = (widget: { widgetNamespace: WidgetNamespace }) =>
   widget.widgetNamespace === WidgetNamespace.EDITOR_BUILTIN;
 
-const enrichWidgetData = (defaultWidgets: DefaultWidget[], customWidgets: CustomWidget[]) => (
+const enrichWidgetData = (defaultWidgets: Widget[], customWidgets: Widget[]) => (
   item: SavedConfigItem
 ) =>
   isWidgetBuiltIn(item)
     ? defaultWidgets.find((widget) => item.widgetId === widget.widgetId)
-    : customWidgets.find((widget) => item.widgetId === widget.id);
+    : customWidgets.find((widget) => item.widgetId === widget.widgetId);
 
 function createStateFromConfiguration(
   configuration: SavedConfigItem[],
-  defaultWidgets: DefaultWidget[],
-  customWidgets: CustomWidget[]
+  defaultWidgets: Widget[],
+  customWidgets: Widget[]
 ): State {
   if (configuration.length === 0) {
     return {
-      items: defaultWidgets.map(convertToWidgetConfiguration),
-      availableItems: customWidgets.map(convertToWidgetConfiguration),
+      items: defaultWidgets,
+      availableItems: customWidgets,
       configurableWidget: null,
     };
   }
@@ -86,11 +76,11 @@ function createStateFromConfiguration(
     .filter(isWidgetEnabled)
     .map(enrichWidgetData(defaultWidgets, customWidgets))
     .concat(unusedDefaultEditors)
-    .filter((item) => !!item) as (CustomWidget | DefaultWidget)[];
+    .filter((item) => !!item) as Widget[];
 
   return {
-    items: items.map(convertToWidgetConfiguration),
-    availableItems: customWidgets.map(convertToWidgetConfiguration),
+    items: items,
+    availableItems: customWidgets,
     configurableWidget: null,
   };
 }
@@ -128,7 +118,7 @@ function convertInternalStateToConfiguration(
   return [...selectedItems, ...missingItems];
 }
 
-function EntryEditorConfiguration(props: EditorConfigProps) {
+function EntryEditorConfiguration(props: InternalEditorConfigProps) {
   const { onUpdateConfiguration, defaultWidgets, customWidgets, configuration } = props;
 
   const [state, dispatch] = useReducer<React.Reducer<State, any>>(
@@ -161,8 +151,30 @@ function EntryEditorConfiguration(props: EditorConfigProps) {
   );
 }
 
-export default (props: Omit<EditorConfigProps, 'defaultWidgets'>) => {
-  const defaultWidgets = create().map(convertToWidgetConfiguration).filter(isWidgetBuiltIn);
+interface EditorConfigProps {
+  onUpdateConfiguration: (configuration: SavedConfigItem[] | undefined) => void;
+  customWidgets: CustomWidget[];
+  configuration: SavedConfigItem[];
+}
 
-  return <EntryEditorConfiguration {...props} defaultWidgets={defaultWidgets} />;
+const convertToWidgetConfiguration = (widget: any) => {
+  return {
+    name: widget.name,
+    widgetId: widget.id || widget.widgetId,
+    widgetNamespace: widget.namespace || widget.widgetNamespace,
+    ...pick(widget, ['description', 'locations', 'parameters', 'availabilityStatus', 'settings']),
+  };
+};
+
+export default (props: EditorConfigProps) => {
+  const defaultWidgets = create().map(convertToWidgetConfiguration).filter(isWidgetBuiltIn);
+  const customWidgets = props.customWidgets.map(convertToWidgetConfiguration);
+
+  return (
+    <EntryEditorConfiguration
+      {...props}
+      customWidgets={customWidgets}
+      defaultWidgets={defaultWidgets}
+    />
+  );
 };

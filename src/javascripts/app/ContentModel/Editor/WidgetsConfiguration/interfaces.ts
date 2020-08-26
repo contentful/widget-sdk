@@ -22,11 +22,6 @@ export interface CustomWidget {
   id: string;
   locations: WidgetLocation[];
 }
-export function isCustomWidget(widget: CustomWidget | DefaultWidget): widget is CustomWidget {
-  return (
-    (widget as CustomWidget).id !== undefined && (widget as CustomWidget).namespace !== undefined
-  );
-}
 
 export interface DefaultWidget {
   widgetId: string;
