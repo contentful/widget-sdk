@@ -1,7 +1,7 @@
 import createExtensionBridge from './createExtensionBridge';
 import { createBus } from 'core/utils/kefir';
 import * as entityCreator from 'components/app_container/entityCreator';
-import * as entitySelector from 'search/EntitySelector/entitySelector';
+import { entitySelector } from 'features/entity-search';
 import * as Navigator from 'states/Navigator';
 import * as SlideInNavigator from 'navigation/SlideInNavigator';
 import * as SlideInNavigatorWithPromise from 'navigation/SlideInNavigator/withPromise';
@@ -65,8 +65,10 @@ jest.mock('navigation/SlideInNavigator/withPromise', () => ({
   goToSlideInEntityWithPromise: jest.fn(),
 }));
 
-jest.mock('search/EntitySelector/entitySelector', () => ({
-  openFromExtension: jest.fn(() => Promise.resolve('DIALOG RESULT')),
+jest.mock('features/entity-search', () => ({
+  entitySelector: {
+    openFromExtension: jest.fn(() => Promise.resolve('DIALOG RESULT')),
+  },
 }));
 
 jest.mock('access_control/AccessChecker', () => ({

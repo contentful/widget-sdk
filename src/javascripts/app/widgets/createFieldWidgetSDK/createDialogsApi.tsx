@@ -8,7 +8,7 @@ import {
 } from 'contentful-ui-extensions-sdk';
 import { omit } from 'lodash';
 
-import * as entitySelector from 'search/EntitySelector/entitySelector';
+import { entitySelector } from 'features/entity-search';
 import { ModalLauncher } from 'core/components/ModalLauncher';
 import { WidgetRenderer, WidgetLocation, WidgetNamespace } from 'features/widget-renderer';
 import * as ExtensionDialogs from 'widgets/ExtensionDialogs';

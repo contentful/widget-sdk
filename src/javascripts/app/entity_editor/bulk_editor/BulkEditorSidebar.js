@@ -5,7 +5,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { Heading, TextLink, Paragraph } from '@contentful/forma-36-react-components';
 import CreateEntryLinkButton from 'components/CreateEntryButton/CreateEntryLinkButton';
 import * as Analytics from 'analytics/Analytics';
-import * as entitySelector from 'search/EntitySelector/entitySelector';
+import { entitySelector } from 'features/entity-search';
 import * as accessChecker from 'access_control/AccessChecker';
 import { get, uniq, isObject, extend } from 'lodash';
 import { getModule } from 'core/NgRegistry';

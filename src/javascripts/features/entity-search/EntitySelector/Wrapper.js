@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { cx } from 'emotion';
 
-const Wrapper = ({ entityType, children, showSelected, isLast }) => {
+export const Wrapper = ({ entityType, children, showSelected, isLast }) => {
   if (showSelected) {
     return (
       <div
@@ -37,5 +37,3 @@ Wrapper.defaultProps = {
   showSelected: false,
   isLast: false,
 };
-
-export default Wrapper;

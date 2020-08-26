@@ -1,7 +1,7 @@
 import { createDialogsApi, createReadOnlyDialogsApi } from './createDialogsApi';
 import { FieldExtensionSDK, IdsAPI } from 'contentful-ui-extensions-sdk';
 import * as ExtensionDialogs from 'widgets/ExtensionDialogs';
-import * as entitySelector from 'search/EntitySelector/entitySelector';
+import { entitySelector } from 'features/entity-search';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { ModalLauncher } from 'core/components/ModalLauncher';
 import { DialogsAPI } from 'contentful-ui-extensions-sdk';
@@ -9,7 +9,9 @@ import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 
 jest.mock('core/components/ModalLauncher');
 jest.mock('widgets/ExtensionDialogs');
-jest.mock('search/EntitySelector/entitySelector');
+jest.mock('features/entity-search', () => ({
+  entitySelector: { openFromExtensionSingle: jest.fn(), openFromExtension: jest.fn() },
+}));
 jest.mock('widgets/CustomWidgetLoaderInstance');
 
 const sdk = {} as Omit<FieldExtensionSDK, 'dialogs'>;

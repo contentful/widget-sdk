@@ -9,7 +9,7 @@ export const ITEMS_PER_PAGE = 40;
 /*
   Handles loading, pagination, errors for the entity selector.
 */
-const useEntityLoader = ({ entityType, fetch, contentTypeId }) => {
+export const useEntityLoader = ({ entityType, fetch, contentTypeId }) => {
   const paginator = useRef(Paginator.create(ITEMS_PER_PAGE));
   const lastRequestId = useRef();
   const [isLoading, setLoading] = useState(false);
@@ -150,5 +150,3 @@ const useEntityLoader = ({ entityType, fetch, contentTypeId }) => {
 
   return [state, load];
 };
-
-export default useEntityLoader;

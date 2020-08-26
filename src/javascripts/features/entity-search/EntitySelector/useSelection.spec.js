@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { renderHook, act } from '@testing-library/react-hooks';
 import { id as randomId } from 'utils/Random';
-import useSelection from './useSelection';
+import { useSelection } from './useSelection';
 
 const entry = () => ({ sys: { type: 'Entry', id: randomId() } });
 

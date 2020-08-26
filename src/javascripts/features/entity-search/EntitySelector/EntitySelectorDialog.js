@@ -1,7 +1,7 @@
 import React, { useState, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { Modal, Button } from '@contentful/forma-36-react-components';
-import { EntitySelector as EntitySelectorForm } from './EntitySelectorForm';
+import { EntitySelectorForm } from './EntitySelectorForm';
 
 export const EntitySelectorDialog = ({ isShown, onClose, config, labels }) => {
   const [selected, setSelected] = useState([]);

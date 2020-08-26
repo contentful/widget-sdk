@@ -19,7 +19,7 @@ export const entityTypes = {
  * and slidein redirection.
  */
 
-function CreateEntity(props) {
+export function CreateEntity(props) {
   const { type, ...otherProps } = props;
   if (type === entityTypes.Entry) {
     return <CreateEntry {...otherProps} />;
@@ -100,5 +100,3 @@ async function onSelectHandler(contentTypeId, cb) {
     logger.logError('Failed to create new entry from entity selector', { error });
   }
 }
-
-export default CreateEntity;

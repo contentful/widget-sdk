@@ -3,7 +3,7 @@ import { mount } from 'enzyme';
 import 'jest-enzyme';
 import * as slideInNavigator from 'navigation/SlideInNavigator';
 
-import CreateEntity, { entityTypes } from './CreateEntity';
+import { CreateEntity, entityTypes } from './CreateEntity';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as entityCreator from 'components/app_container/entityCreator';
 

@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Search, useListView } from 'features/entity-search';
+import { Search } from '../View';
+import { useListView } from '../useListView';
 
-const EntitySelectorAdapter = (props) => {
+export const EntitySelectorAdapter = (props) => {
   const listViewContext = useListView({
     entityType: props.entityType,
     initialState: props.initialState,
@@ -20,5 +21,3 @@ EntitySelectorAdapter.propTypes = {
   getContentTypes: PropTypes.func.isRequired,
   users: PropTypes.array.isRequired,
 };
-
-export default EntitySelectorAdapter;

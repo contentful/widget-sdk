@@ -6,7 +6,7 @@ import * as entityHelpers from 'app/entity_editor/entityHelpers';
 import { getCurrentSpaceFeature } from 'data/CMA/ProductCatalog';
 
 import { ITEMS_PER_PAGE } from './useEntityLoader';
-import EntitySelectorForm from './EntitySelectorForm';
+import { EntitySelectorForm } from './EntitySelectorForm';
 
 const entity = (type, id) => ({
   sys: {

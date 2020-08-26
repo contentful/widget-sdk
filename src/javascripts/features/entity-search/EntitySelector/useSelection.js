@@ -11,7 +11,7 @@ const Operations = {
   Keeps the state of a selection as a map of key-value tuples,
   where key is an entity id, while value is boolean, indicating if the entity was selected
 */
-const useSelection = ({ entities, multipleSelection }) => {
+export const useSelection = ({ entities, multipleSelection }) => {
   const [selectionMap, setSelectionMap] = useState(toSelectionMap(entities));
   const [lastToggled, setLastToggled] = useState({});
 
@@ -91,5 +91,3 @@ const useSelection = ({ entities, multipleSelection }) => {
     getSelectedEntities,
   };
 };
-
-export default useSelection;

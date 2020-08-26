@@ -7,13 +7,13 @@ import AssetLink from 'app/widgets/link/AssetLink';
 import { newForLocale } from 'app/entity_editor/entityHelpers';
 import { Paragraph, TextLink, Note, Spinner } from '@contentful/forma-36-react-components';
 import { getModule } from 'core/NgRegistry';
-import useEntityLoader from './useEntityLoader';
-import useSelection from './useSelection';
-import useScrollToBottomTrigger from './useScrollToBottomTrigger';
-import Search from './EntitySelectorAdapter';
-import Wrapper from './Wrapper';
+import { useEntityLoader } from './useEntityLoader';
+import { useSelection } from './useSelection';
+import { useScrollToBottomTrigger } from './useScrollToBottomTrigger';
+import { EntitySelectorAdapter as Search } from './EntitySelectorAdapter';
+import { Wrapper } from './Wrapper';
 import { isSearchUsed, getValidContentTypes } from './utils';
-import CreateEntity from './CreateEntity';
+import { CreateEntity } from './CreateEntity';
 import getAccessibleCTs from 'data/ContentTypeRepo/accessibleCTs';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -49,7 +49,7 @@ const styles = {
   Although they can contain duplicates, the logic of the component became
   more straightforward. Eventually both are joined into a selection map, avoiding duplication
 */
-export const EntitySelector = ({
+export const EntitySelectorForm = ({
   labels,
   onChange,
   locale,
@@ -401,7 +401,7 @@ export const EntitySelector = ({
   );
 };
 
-EntitySelector.propTypes = {
+EntitySelectorForm.propTypes = {
   labels: PropTypes.shape({
     input: PropTypes.string.isRequired,
     info: PropTypes.string,
@@ -419,11 +419,9 @@ EntitySelector.propTypes = {
   onChange: PropTypes.func,
 };
 
-EntitySelector.defaultProps = {
+EntitySelectorForm.defaultProps = {
   onChange: noop,
   withCreate: false,
   multiple: false,
   linkedContentTypeIds: [],
 };
-
-export default EntitySelector;

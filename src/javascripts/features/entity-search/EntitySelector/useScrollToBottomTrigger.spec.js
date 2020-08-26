@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react-hooks';
-import useScrollToBottomTrigger from './useScrollToBottomTrigger';
+import { useScrollToBottomTrigger } from './useScrollToBottomTrigger';
 
 // because the event handler is throttled
 const wait = () =>

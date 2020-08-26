@@ -40,7 +40,7 @@ import { RoleEditorSidebar } from './RoleEditorSidebar';
 import { RoleEditorActions } from './RoleEditorActions';
 import { createRoleRemover } from '../components/RoleRemover';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import * as entitySelector from 'search/EntitySelector/entitySelector';
+import { entitySelector } from 'features/entity-search';
 import * as EntityFieldValueHelpers from 'classes/EntityFieldValueHelpers';
 
 const PermissionPropType = PropTypes.shape({

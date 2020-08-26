@@ -7,7 +7,7 @@ import { $initialize, $inject } from 'test/utils/ng';
 
 xdescribe('connectToWidgetAPI', () => {
   beforeEach(async function () {
-    this.system.set('search/EntitySelector/Config', {});
+    this.system.set('search/entity-search', { Config: {} });
     this.system.set('navigation/SlideInNavigator', {
       goToSlideInEntity: () => {},
     });

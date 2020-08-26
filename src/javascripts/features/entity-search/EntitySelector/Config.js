@@ -193,23 +193,3 @@ function prepareQueryExtension(config) {
   //   }
   // }
 }
-
-/**
- * Returns an ideal `listHeight` that can be passed to the entity selector
- * directive.
- *
- * @param {number?} otherElementsHeight
- * @returns {number}
- */
-export function calculateIdealListHeight(otherElementsHeight = 0) {
-  const height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-  const listHeight = height - otherElementsHeight;
-
-  if (listHeight < 200) {
-    return 200;
-  } else if (listHeight > 500) {
-    return 500;
-  } else {
-    return listHeight;
-  }
-}

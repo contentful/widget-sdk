@@ -4,7 +4,7 @@ import { throttle } from 'lodash';
 /*
   Triggers a handler function once the user scrolled to the bottom of a viewport
 */
-const useScrollToBottomTrigger = ({ target, handler }) => {
+export const useScrollToBottomTrigger = ({ target, handler }) => {
   const threshold = 200;
 
   useEffect(() => {
@@ -37,5 +37,3 @@ const useScrollToBottomTrigger = ({ target, handler }) => {
     };
   }, [target, handler]);
 };
-
-export default useScrollToBottomTrigger;
