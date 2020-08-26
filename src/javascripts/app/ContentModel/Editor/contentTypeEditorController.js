@@ -238,9 +238,11 @@ export default function register() {
       };
 
       const updateEditorConfiguration = (updatedEditors) => {
-        $scope.editorInterface.editors = updatedEditors;
-        $scope.$applyAsync();
-        setDirty();
+        if (!_.isEqual($scope.editorInterface.editors, updatedEditors)) {
+          $scope.editorInterface.editors = updatedEditors;
+          $scope.$applyAsync();
+          setDirty();
+        }
       };
 
       function addField(newField) {

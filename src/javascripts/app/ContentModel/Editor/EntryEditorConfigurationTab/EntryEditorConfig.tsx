@@ -1,5 +1,5 @@
 import React, { useReducer, useEffect } from 'react';
-import { pick, difference } from 'lodash';
+import { pick, difference, isEqual } from 'lodash';
 import { css } from 'emotion';
 import { State, reducer } from 'app/ContentModel/Editor/WidgetsConfiguration/WidgetsConfigurationReducer';
 import WidgetsConfiguration from 'app/ContentModel/Editor/WidgetsConfiguration';
@@ -96,11 +96,11 @@ function createStateFromConfiguration(
 }
 
 function convertInternalStateToConfiguration(
-  state: any,
+  state: State,
   initialItems: any
-): SavedConfigItem[] | undefined {
-  if (state.items === initialItems) {
-    return undefined;
+): SavedConfigItem[] {
+  if (isEqual(state.items, initialItems)) {
+    return [];
   }
 
   const selectedDefaultIds = state.items

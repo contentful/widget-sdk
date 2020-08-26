@@ -2,7 +2,7 @@ import { pick, difference, isEqual } from 'lodash';
 
 import { defaultWidgetsMap } from '../defaults';
 
-import { State } from '../SidebarConfigurationReducer';
+import { State } from 'app/ContentModel/Editor/WidgetsConfiguration/WidgetsConfigurationReducer';
 import {
   ConfigurationItem,
   DefaultWidget,
