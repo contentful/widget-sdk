@@ -73,9 +73,9 @@ const createNewSpace = (
 ) => {
   if (!template) {
     template = { name: 'Blank' };
+  } else {
+    Analytics.track('space:template_selected', { templateName: template.name });
   }
-
-  Analytics.track('space:template_selected', { templateName: template.name });
 
   const selectedLocale = data.defaultLocale;
 
