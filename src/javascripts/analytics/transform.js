@@ -257,6 +257,8 @@ registerEvent('search:filter_removed', 'ui_click', SearchAndViewsWithSequence);
 registerEvent('search:query_changed', 'ui_click', SearchAndViewsWithSequence);
 
 registerEvent('entry_editor:view', 'entry_view', EntryViewTransform);
+registerGenericEvent('entry_editor:disabled_fields_visibility_toggled');
+registerGenericEvent('entry_editor:created_with_same_ct');
 
 registerEvent(
   'entity_editor:edit_conflict',
