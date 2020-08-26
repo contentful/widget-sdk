@@ -133,7 +133,7 @@ export class ContentPreviewFormPage extends Component {
         this.props.setDirty(false);
         Analytics.track('content_preview:deleted', {
           name: this.state.preview.name,
-          sys: { id: this.state.preview.id },
+          id: this.state.preview.id,
         });
         Navigator.go({ path: '^.list' });
       })
@@ -163,14 +163,14 @@ export class ContentPreviewFormPage extends Component {
 
         if (this.props.isNew) {
           Analytics.track('content_preview:created', {
-            envName: env.name,
-            envId: env.sys.id,
+            name: env.name,
+            id: env.sys.id,
             isDiscoveryApp: false,
           });
         } else {
           Analytics.track('content_preview:updated', {
-            envName: env.name,
-            envId: env.sys.id,
+            name: env.name,
+            id: env.sys.id,
           });
         }
 

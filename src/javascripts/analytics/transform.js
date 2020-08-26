@@ -220,6 +220,10 @@ registerGenericEvent('account_dropdown:pending_tasks_fetched');
 
 registerGenericEvent('sharejs:cma_entity_version_mismatch');
 
+registerGenericEvent('content_preview:created');
+registerGenericEvent('content_preview:updated');
+registerGenericEvent('content_preview:deleted');
+
 registerEvent('personal_access_token:action', 'personal_access_token', (_, data) => {
   return {
     data: {
