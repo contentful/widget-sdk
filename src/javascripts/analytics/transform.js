@@ -162,7 +162,6 @@ registerActionEvent('api_key:create', EntityAction);
 registerActionEvent('asset:create', EntityAction);
 
 registerActionEvent('space:create', SpaceCreate);
-registerGenericEvent('space:template_selected');
 
 registerSpaceWizardEvent('space_wizard:open');
 registerSpaceWizardEvent('space_wizard:cancel');
