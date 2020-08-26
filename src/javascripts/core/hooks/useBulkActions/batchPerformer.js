@@ -45,9 +45,11 @@ export function createBatchPerformer(config) {
     return Promise.all(actions).then(function handleResults(results) {
       results = groupBySuccess(results);
       notifyBatchResult(method, results);
-      Analytics.track('search:bulk_action_performed', {
+      Analytics.track('entity_list:bulk_action_performed', {
         entityType,
         action: method,
+        succeeded_count: results.succeeded.length,
+        failed_count: results.failed.length,
       });
       return results;
     });

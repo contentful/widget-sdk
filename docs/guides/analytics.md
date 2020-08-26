@@ -122,7 +122,7 @@ space/organization ID may not be available (organization/space not created
 yet).
 
 
-## List of events
+## List of events (OUTDATED)
 
 | namespace           | event name                            | payload
 |---------------------|---------------------------------------|---------
@@ -147,7 +147,6 @@ yet).
 | space_switcher      | space_switched                        | <code>targetSpaceId: id-string<br>targetSpaceName: string</code>
 | space               | template_selected                     | <code>templateName: string</code>
 | space               | create                                | <code>templateName: string</code>
-| search              | bulk_action_performed                 | <code>entityType: string (Entry, Asset)<br>method: string (publish, duplicate...)
 | search              | search_performed                      | TODO: link Snowplow schema when merged
 | search              | view_created                          | TODO: link Snowplow schema when merged
 | search              | view_edited                           | TODO: link Snowplow schema when merged
@@ -211,3 +210,4 @@ yet).
 | environment_aliases | notification_environment_alias_changed| <code>update: obj<br />newTarget: string<br />oldTarget: string<br />aliasId: string</code>
 | environment_aliases | notification_switch_to_alias          | -
 | environment_aliases | notification_continue_on_environment  | -
+| entity_list         | bulk_action_performed                 | <code>entityType: string (Entry, Asset)<br>method: string (publish, duplicate...)<br>succeeded_count: number<br>failed_count: number

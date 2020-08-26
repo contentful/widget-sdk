@@ -95,9 +95,11 @@ describe('Batch performer service', () => {
         it('creates analytics event', () => {
           return performer[action]().then(() => {
             expect(analytics.track).toHaveBeenCalledTimes(1);
-            expect(analytics.track).toHaveBeenCalledWith('search:bulk_action_performed', {
+            expect(analytics.track).toHaveBeenCalledWith('entity_list:bulk_action_performed', {
               action,
               entityType,
+              failed_count: 0,
+              succeeded_count: 3,
             });
           });
         });
@@ -156,9 +158,11 @@ describe('performing batch asset operations', () => {
       it('creates analytics event', () => {
         return performer[action]().then(() => {
           expect(analytics.track).toHaveBeenCalledTimes(1);
-          expect(analytics.track).toHaveBeenCalledWith('search:bulk_action_performed', {
+          expect(analytics.track).toHaveBeenCalledWith('entity_list:bulk_action_performed', {
             action,
             entityType,
+            failed_count: 0,
+            succeeded_count: 3,
           });
         });
       });
