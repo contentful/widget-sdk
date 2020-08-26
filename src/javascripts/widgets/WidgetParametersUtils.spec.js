@@ -1,5 +1,5 @@
 import * as Utils from './WidgetParametersUtils';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 
 describe('WidgetParametersUtils', () => {
   describe('.filterDefinitions', () => {

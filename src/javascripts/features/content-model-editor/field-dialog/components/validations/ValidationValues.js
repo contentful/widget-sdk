@@ -15,7 +15,7 @@ import { sortableContainer, sortableElement } from 'react-sortable-hoc';
 import arraySwap from 'utils/arraySwap';
 import { ValidationFieldType } from 'features/content-model-editor/field-dialog/utils/PropTypes';
 import { toString, intersection } from 'lodash';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 import { styles } from './styles';
 
 // The maximum number of digits we can represent without rounding

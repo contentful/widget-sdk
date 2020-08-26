@@ -1,6 +1,6 @@
 import SidebarWidgetTypes from '../SidebarWidgetTypes';
 import { getCurrentSpaceFeature, FEATURES } from 'data/CMA/ProductCatalog';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 import { getReleasesFeatureVariation } from 'app/Releases/ReleasesFeatureFlag';
 
 export const Publication = {

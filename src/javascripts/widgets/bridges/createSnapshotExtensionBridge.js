@@ -3,7 +3,7 @@ import makeExtensionAccessHandlers from './makeExtensionAccessHandlers';
 import checkDependencies from './checkDependencies';
 import TheLocaleStore from 'services/localeStore';
 import { getModule } from 'core/NgRegistry';
-import { WidgetLocation } from 'features/widget-renderer';
+import { WidgetLocation } from '@contentful/widget-renderer';
 
 // This is a UI Extension bridge to be used in the version
 // comparison view. It provides static initial data,

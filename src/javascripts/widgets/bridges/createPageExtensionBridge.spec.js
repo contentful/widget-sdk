@@ -1,5 +1,5 @@
 import createPageExtensionBridge from './createPageExtensionBridge';
-import { WidgetLocation } from 'features/widget-renderer';
+import { WidgetLocation } from '@contentful/widget-renderer';
 
 jest.mock('Authentication', () => ({ getToken: () => '<TOKEN>' }));
 

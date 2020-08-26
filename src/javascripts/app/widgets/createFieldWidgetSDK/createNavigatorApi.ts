@@ -5,7 +5,7 @@ import {
 } from 'widgets/bridges/makeExtensionNavigationHandlers';
 import makePageExtensionHandlers from 'widgets/bridges/makePageExtensionHandlers';
 import { onSlideInNavigation } from 'navigation/SlideInNavigator/index';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 import { NavigatorAPI } from 'contentful-ui-extensions-sdk';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 

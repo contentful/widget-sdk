@@ -1,5 +1,5 @@
 import { get, isObject, set } from 'lodash';
-import { Control, SidebarItem, WidgetNamespace, Editor } from 'features/widget-renderer';
+import { Control, SidebarItem, WidgetNamespace, Editor } from '@contentful/widget-renderer';
 
 export type PartialTargetState = boolean | { position: number };
 

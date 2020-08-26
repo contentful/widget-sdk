@@ -10,13 +10,17 @@ import { omit } from 'lodash';
 
 import { entitySelector } from 'features/entity-search';
 import { ModalLauncher } from 'core/components/ModalLauncher';
-import { WidgetRenderer, WidgetLocation, WidgetNamespace } from 'features/widget-renderer';
 import * as ExtensionDialogs from 'widgets/ExtensionDialogs';
 import trackExtensionRender from 'widgets/TrackExtensionRender';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
-import { Widget } from 'features/widget-renderer';
+import {
+  Widget,
+  WidgetRenderer,
+  WidgetLocation,
+  WidgetNamespace,
+} from '@contentful/widget-renderer';
 import { applyDefaultValues } from 'widgets/WidgetParametersUtils';
 
 type FieldSDKWithoutDialogs = Omit<FieldExtensionSDK, 'dialogs'>;

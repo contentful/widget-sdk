@@ -1,5 +1,5 @@
 import * as AppOperations from './AppOperations';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 
 const APP_ID = 'some-app';
 

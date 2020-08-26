@@ -6,7 +6,7 @@ import * as Config from 'Config';
 import ExtensionLocalDevelopmentWarning from './ExtensionLocalDevelopmentWarning';
 import ExtensionIFrameChannel from './ExtensionIFrameChannel';
 import ExtensionAPI from './ExtensionAPI';
-import { WidgetNamespace, HostingType } from 'features/widget-renderer';
+import { WidgetNamespace, HostingType } from '@contentful/widget-renderer';
 
 const SANDBOX = [
   'allow-scripts',

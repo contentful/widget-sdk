@@ -3,7 +3,7 @@ import { get, isObject, identity, pick, isEqual, cloneDeep, isEmpty } from 'loda
 import * as SidebarDefaults from 'app/EntrySidebar/Configuration/defaults';
 import * as EntryEditorDefaults from 'app/entry_editor/DefaultConfiguration';
 
-import { WidgetNamespace, AppInstallation } from 'features/widget-renderer';
+import { WidgetNamespace, AppInstallation } from '@contentful/widget-renderer';
 import { isUnsignedInteger, PartialTargetState } from './AppState';
 import { EditorInterface, ContentType } from 'contentful-ui-extensions-sdk';
 import APIClient from 'data/APIClient';

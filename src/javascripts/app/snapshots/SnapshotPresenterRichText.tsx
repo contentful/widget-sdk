@@ -8,7 +8,7 @@ import { Entity } from 'app/entity_editor/Document/types';
 import { Field, Locale } from 'app/entity_editor/EntityField/types';
 import { InternalContentType } from 'app/widgets/createFieldWidgetSDK/createContentTypeApi';
 import { createTagsRepo } from 'features/content-tags';
-import { EditorInterface, WidgetNamespace } from 'features/widget-renderer';
+import { EditorInterface, WidgetNamespace } from '@contentful/widget-renderer';
 
 const SnapshotPresenterRichText = ({
   className,

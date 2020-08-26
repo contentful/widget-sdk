@@ -2,7 +2,7 @@ import { FieldExtensionSDK } from 'contentful-ui-extensions-sdk';
 
 import { Document } from 'app/entity_editor/Document/typesDocument';
 import { InternalContentType } from './createContentTypeApi';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 import { createTagsRepo } from 'features/content-tags';
 import { getBatchingApiClient } from '../WidgetApi/BatchingApiClient';
 import { createEditorApi } from './createEditorApi';

@@ -9,7 +9,7 @@ import * as Random from 'utils/Random';
 import TheLocaleStore from 'services/localeStore';
 
 import { APP_EVENTS_IN, APP_EVENTS_OUT } from 'features/apps-core';
-import { WidgetLocation } from 'features/widget-renderer';
+import { WidgetLocation } from '@contentful/widget-renderer';
 
 const STAGE_PRE_INSTALL = 'preInstall';
 const STAGE_POST_INSTALL = 'postInstall';

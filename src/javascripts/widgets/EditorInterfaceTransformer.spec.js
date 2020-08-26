@@ -1,5 +1,5 @@
 import { fromAPI, toAPI } from './EditorInterfaceTransformer';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 
 jest.mock('./BuiltinWidgets', () => ({ create: jest.fn(() => []) }));
 

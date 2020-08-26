@@ -1,6 +1,6 @@
 import { buildRenderables, buildEditorsRenderables } from './WidgetRenderable';
 import { cloneDeep } from 'lodash';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 
 describe('WidgetRenderables', () => {
   describe('#buildRenderables()', () => {

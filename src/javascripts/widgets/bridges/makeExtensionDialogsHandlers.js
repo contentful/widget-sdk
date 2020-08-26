@@ -19,7 +19,7 @@ import {
   isCustomWidget,
   buildAppDefinitionWidget,
   WidgetLocation,
-} from 'features/widget-renderer';
+} from '@contentful/widget-renderer';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
 
 const SIMPLE_DIALOG_TYPE_TO_OPENER = {

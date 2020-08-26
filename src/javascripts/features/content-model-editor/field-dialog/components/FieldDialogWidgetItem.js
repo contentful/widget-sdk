@@ -8,7 +8,7 @@ import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha
 import tokens from '@contentful/forma-36-tokens';
 import StateLink from 'app/common/StateLink';
 import { css } from 'emotion';
-import { WidgetNamespace, isCustomWidget } from 'features/widget-renderer';
+import { WidgetNamespace, isCustomWidget } from '@contentful/widget-renderer';
 
 const styles = {
   appIcon: css({

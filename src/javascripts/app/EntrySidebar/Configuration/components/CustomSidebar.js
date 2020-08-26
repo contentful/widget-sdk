@@ -5,7 +5,7 @@ import { Subheading, Paragraph, TextLink } from '@contentful/forma-36-react-comp
 import SidebarWidgetItem from './SidebarWidgetItem';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
-import { WidgetNamespace, isCustomWidget } from 'features/widget-renderer';
+import { WidgetNamespace, isCustomWidget } from '@contentful/widget-renderer';
 
 const styles = {
   customSidebarTitle: css({

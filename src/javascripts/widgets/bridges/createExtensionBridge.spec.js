@@ -6,7 +6,7 @@ import * as Navigator from 'states/Navigator';
 import * as SlideInNavigator from 'navigation/SlideInNavigator';
 import * as SlideInNavigatorWithPromise from 'navigation/SlideInNavigator/withPromise';
 import * as AccessChecker from 'access_control/AccessChecker';
-import { WidgetLocation } from 'features/widget-renderer';
+import { WidgetLocation } from '@contentful/widget-renderer';
 
 function createMockProperty(initial) {
   const bus = createBus();

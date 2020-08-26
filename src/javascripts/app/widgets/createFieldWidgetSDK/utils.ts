@@ -7,7 +7,7 @@ import { createUserApi, SpaceMember } from './createUserApi';
 import { createIdsApi } from './createIdsApi';
 import { noop } from 'lodash';
 import { Field, Locale } from 'app/entity_editor/EntityField/types';
-import { Widget, WidgetNamespace, WidgetLocation } from 'features/widget-renderer';
+import { Widget, WidgetNamespace, WidgetLocation } from '@contentful/widget-renderer';
 
 interface CreateSharedFieldWidgetSDKOptions {
   entryApi: EntryAPI;

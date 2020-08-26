@@ -17,7 +17,7 @@ import EditorInstanceParametersConfigurationModal from './EditorInstanceParamete
 import { reducer, actions } from './EntryEditorAppearanceReducer';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { WidgetNamespace, isCustomWidget, WidgetLocation } from 'features/widget-renderer';
+import { WidgetNamespace, isCustomWidget, WidgetLocation } from '@contentful/widget-renderer';
 
 const Options = {
   default: 'default',

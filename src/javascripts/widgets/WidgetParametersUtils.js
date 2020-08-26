@@ -1,5 +1,5 @@
 import { clone } from 'lodash';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 
 // Built-in date picker conditionally renderes one of its parameters.
 // We could buit a generic dependency mechanism but for now we just

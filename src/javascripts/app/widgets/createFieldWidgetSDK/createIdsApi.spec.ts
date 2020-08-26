@@ -1,5 +1,5 @@
 import { createIdsApi } from './createIdsApi';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 import { EntryAPI, FieldAPI, User } from 'contentful-ui-extensions-sdk';
 
 describe('createIdsApi', () => {

@@ -1,7 +1,7 @@
 import { get, identity } from 'lodash';
 import { getSchema } from 'analytics/Schemas';
 import { makeEventFromWidget } from './TrackExtensionRender';
-import { WidgetLocation, isCustomWidget } from 'features/widget-renderer';
+import { WidgetLocation, isCustomWidget } from '@contentful/widget-renderer';
 
 // Arguments are expected to be produced in `app/entity_editor/DataLoader#loadEditorData()`.
 export function getWidgetTrackingContexts(

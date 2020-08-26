@@ -24,7 +24,7 @@ import * as Config from 'Config';
 import renderDefaultEditor from './DefaultEntryEditor';
 import EntryEditorWidgetTypes from 'app/entry_editor/EntryEditorWidgetTypes';
 import { hasLinks } from './EntryReferences';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 import { styles } from './styles';
 
 const trackTabOpen = (tab) =>

@@ -1,6 +1,6 @@
 import { getModule } from 'core/NgRegistry';
 import { get, set } from 'lodash';
-import { WidgetLoader, MarketplaceDataProvider } from 'features/widget-renderer';
+import { WidgetLoader, MarketplaceDataProvider } from '@contentful/widget-renderer';
 import { createPlainClient } from 'contentful-management';
 import { getToken } from 'Authentication';
 import * as Config from 'Config';

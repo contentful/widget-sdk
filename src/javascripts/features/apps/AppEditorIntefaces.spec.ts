@@ -2,7 +2,7 @@ import {
   removeAllEditorInterfaceReferences,
   transformEditorInterfacesToTargetState,
 } from './AppEditorInterfaces';
-import { WidgetNamespace, AppInstallation } from 'features/widget-renderer';
+import { WidgetNamespace, AppInstallation } from '@contentful/widget-renderer';
 import {
   makeGetDefaultByType,
   PositionalWidget,

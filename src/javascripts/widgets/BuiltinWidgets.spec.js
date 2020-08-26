@@ -1,6 +1,6 @@
 import { uniq } from 'lodash';
 import { create as createBuiltinWidgetList } from './BuiltinWidgets';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 
 const CMA_ID_REGEXP = /^[a-zA-Z0-9][a-zA-Z0-9-_]{0,63}$/;
 const widgetList = createBuiltinWidgetList();

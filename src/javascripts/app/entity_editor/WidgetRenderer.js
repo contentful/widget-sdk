@@ -4,9 +4,9 @@ import * as K from 'core/utils/kefir';
 import { noop, defer } from 'lodash';
 import WidgetRenderWarning from 'widgets/WidgetRenderWarning';
 import * as LoadEventTracker from 'app/entity_editor/LoadEventTracker';
-import { WidgetNamespace, isCustomWidget, WidgetLocation } from 'features/widget-renderer';
+import { WidgetNamespace, isCustomWidget, WidgetLocation } from '@contentful/widget-renderer';
 import { toRendererWidget } from 'widgets/WidgetCompat';
-import { WidgetRenderer as NewWidgetRenderer } from 'features/widget-renderer';
+import { WidgetRenderer as NewWidgetRenderer } from '@contentful/widget-renderer';
 
 const { createLinksRenderedEvent, createWidgetLinkRenderEventsHandler } = LoadEventTracker;
 

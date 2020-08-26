@@ -1,5 +1,5 @@
 import { getDefaultEditors, getDefaultSidebar } from '../AppEditorInterfaces';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 
 export enum PositionalWidget {
   Editors = 'editors',

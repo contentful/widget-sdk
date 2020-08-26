@@ -4,7 +4,7 @@ import {
   LOADING_TITLE,
   MANAGE_APPS_TITLE,
 } from './AppsNavigationItem';
-import { WidgetLocation } from 'features/widget-renderer';
+import { WidgetLocation } from '@contentful/widget-renderer';
 
 describe('AppsNavigationItem', () => {
   describe('building children', () => {

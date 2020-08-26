@@ -1,5 +1,5 @@
 import { getCurrentState, validateState } from './AppState';
-import { Control, Editor, SidebarItem, WidgetNamespace } from 'features/widget-renderer';
+import { Control, Editor, SidebarItem, WidgetNamespace } from '@contentful/widget-renderer';
 
 const DEFAULT_WIDGET_ID = 'widgetId';
 const DEFAULT_WIDGET_NAMESPACE = WidgetNamespace.APP;

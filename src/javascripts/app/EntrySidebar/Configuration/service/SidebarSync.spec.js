@@ -15,7 +15,7 @@ import {
   Users as UsersWidget,
   Releases as ReleasesWidget,
 } from '../defaults';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 
 function getAllKeys(arr) {
   return uniq(flatten(arr.map((item) => Object.keys(item))));

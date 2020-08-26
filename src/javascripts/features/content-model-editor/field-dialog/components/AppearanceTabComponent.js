@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import getDefaultWidgetId from 'widgets/DefaultWidget';
-import { WidgetNamespace, isCustomWidget } from 'features/widget-renderer';
+import { WidgetNamespace, isCustomWidget } from '@contentful/widget-renderer';
 import { FieldDialogAppearanceTab } from './FieldDialogAppearanceTab';
 
 const getDefaultWidget = (ctField, contentType, availableWidgets) => {

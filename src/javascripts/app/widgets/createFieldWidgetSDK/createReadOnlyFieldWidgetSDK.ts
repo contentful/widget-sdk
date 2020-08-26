@@ -1,7 +1,7 @@
 import { FieldExtensionSDK } from 'contentful-ui-extensions-sdk';
 import { noop } from 'lodash';
 
-import { EditorInterface, WidgetNamespace } from 'features/widget-renderer';
+import { EditorInterface, WidgetNamespace } from '@contentful/widget-renderer';
 import { SpaceEndpoint } from 'data/CMA/types';
 import { create as createEntityRepo } from 'data/CMA/EntityRepo';
 import { PubSubClient } from 'services/PubSubService';

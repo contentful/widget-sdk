@@ -3,7 +3,7 @@ import { pick, difference, identity } from 'lodash';
 import { defaultWidgetsMap } from '../defaults';
 import { SidebarType } from '../constants';
 
-import { WidgetNamespace, isCustomWidget, WidgetLocation } from 'features/widget-renderer';
+import { WidgetNamespace, isCustomWidget, WidgetLocation } from '@contentful/widget-renderer';
 
 /**
  * Converts internal state of configuration reducer

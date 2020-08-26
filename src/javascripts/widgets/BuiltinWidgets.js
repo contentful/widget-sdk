@@ -29,7 +29,7 @@ import {
 } from 'app/widgets/ReferenceEditor';
 import { SlugEditor } from '@contentful/field-editor-slug';
 import EntryEditorTypes from 'app/entry_editor/EntryEditorWidgetTypes';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 
 const HELP_TEXT_PARAMETER = {
   id: 'helpText',

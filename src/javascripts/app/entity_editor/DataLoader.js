@@ -15,7 +15,7 @@ import {
   buildSidebarRenderables,
   buildEditorsRenderables,
 } from 'widgets/WidgetRenderable';
-import { isCustomWidget } from 'features/widget-renderer';
+import { isCustomWidget } from '@contentful/widget-renderer';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
 
 const assetEditorInterface = EditorInterfaceTransformer.fromAPI(
