@@ -3,11 +3,28 @@ import { css } from 'emotion';
 import { go } from 'states/Navigator';
 import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
-import { Tabs, Tab } from '@contentful/forma-36-react-components';
+import { Tabs, Tab, Tag } from '@contentful/forma-36-react-components';
 
 const styles = {
   editorFieldTabs: css({
     marginBottom: tokens.spacingL,
+  }),
+  promotionTag: css({
+    padding: '3px 5px',
+    fontSize: '10px',
+    lineHeight: '10px',
+    letterSpacing: '0.5px',
+    fontWeight: tokens.fontWeightMedium,
+    borderRadius: '3px',
+    backgroundColor: tokens.colorBlueDark,
+    marginLeft: tokens.spacingXs,
+    color: `${tokens.colorWhite} !important`,
+    textTransform: 'uppercase',
+  }),
+  tabWithTag: css({
+    alignItems: 'center',
+    display: 'flex',
+    textAlign: 'center',
   }),
 };
 
@@ -50,8 +67,10 @@ export default function EditorFieldTabs(props) {
             onSelect={() => {
               go({ path: '^.entry_editor_configuration' });
             }}
+            className={styles.tabWithTag}
             testId="entry-editor-config-tab">
             Entry editors
+            <Tag className={styles.promotionTag}>new</Tag>
           </Tab>
         )}
       </Tabs>
