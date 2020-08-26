@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'emotion';
 import {
   Space as SpacePropType,
   Plan as PlanPropType,
@@ -15,14 +14,9 @@ import {
   Tag,
 } from '@contentful/forma-36-react-components';
 import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
-import tokens from '@contentful/forma-36-tokens';
 import StateLink from 'app/common/StateLink';
 import { SpacePlanComparison } from './SpacePlanComparison';
 import { groupBy } from 'lodash';
-
-const styles = {
-  count: css({ color: tokens.colorGreenMid }),
-};
 
 export function SpacePlanSelection({
   plans,
@@ -40,7 +34,7 @@ export function SpacePlanSelection({
         const plan = groupedPlans[name][0];
         const planCount = groupedPlans[name].length;
         return (
-          <Card key={plan.sys.id}>
+          <Card key={plan.sys.id} testId="space-plan-item">
             <Flex htmlTag="label" justifyContent="start" alignItems="baseline">
               <RadioButton
                 checked={plan === selectedPlan}
@@ -53,7 +47,7 @@ export function SpacePlanSelection({
                 justifyContent="space-between"
                 alignItems="baseline">
                 <Heading element="h3">{plan.name}</Heading>
-                <Tag className={styles.count}>{planCount} available</Tag>
+                <Tag tagType="positive">{planCount} available</Tag>
               </Flex>
             </Flex>
             <SpacePlanComparison plan={plan} spaceResources={spaceResources} />

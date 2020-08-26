@@ -198,6 +198,22 @@ export function Plan(options) {
   return { sys: sys({ id: uniqueId('Plan'), type: 'ProductRatePlan' }), ...options };
 }
 
+export function RatePlanCharge(options) {
+  return {
+    sys: sys({
+      type: 'ProductRatePlanCharge',
+      id: uniqueId('ProductRatePlanCharge'),
+    }),
+    name: options.name,
+    tiers: [
+      {
+        endingUnit: 5,
+      },
+    ],
+    ...options,
+  };
+}
+
 export function SpaceRole(name = '') {
   return {
     name: name,

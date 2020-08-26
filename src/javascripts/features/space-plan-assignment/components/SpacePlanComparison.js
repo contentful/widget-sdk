@@ -4,14 +4,22 @@ import {
   Plan as PlanPropType,
   Resource as ResourcePropType,
 } from 'app/OrganizationSettings/PropTypes';
+import { get } from 'lodash';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 import {
   Table,
   TableHead,
   TableBody,
   TableRow,
   TableCell,
+  Icon,
 } from '@contentful/forma-36-react-components';
-import { get } from 'lodash';
+import { getResourceLimits } from 'utils/ResourceUtils';
+
+const styles = {
+  warning: css({ color: tokens.colorWarning, display: 'flex', alignItems: 'center' }),
+};
 
 const resourcesToDisplay = [
   { id: 'environment', name: 'Environments' },
@@ -39,9 +47,16 @@ export function SpacePlanComparison({ plan, spaceResources }) {
       <TableBody>
         <TableRow key={'current'}>
           <TableCell>Current space usage</TableCell>
-          {resourcesToDisplay.map(({ id }) => (
-            <TableCell key={id}>{spaceResources[id].usage}</TableCell>
-          ))}
+          {resourcesToDisplay.map(({ id }) => {
+            const usage = spaceResources[id].usage;
+            const limit = getResourceLimits(spaceResources[id]);
+            const isOverLimit = usage > limit.maximum;
+            return (
+              <TableCell key={id} className={isOverLimit ? styles.warning : ''}>
+                {usage} {isOverLimit && <Icon icon="Warning" color="warning" />}
+              </TableCell>
+            );
+          })}
         </TableRow>
         <TableRow key={'new'}>
           <TableCell>{plan.name}</TableCell>

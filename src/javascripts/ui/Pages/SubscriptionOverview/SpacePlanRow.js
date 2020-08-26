@@ -154,11 +154,13 @@ function SpacePlanRow({
               testId="subscription-page.spaces-list.space-usage-link">
               Usage
             </DropdownListItem>
-            <DropdownListItem
-              onClick={onChangeSpace(space)}
-              testId="subscription-page.spaces-list.change-space-link">
-              Change space type
-            </DropdownListItem>
+            {!showSpacePlanChangeBtn && (
+              <DropdownListItem
+                onClick={onChangeSpace(space)}
+                testId="subscription-page.spaces-list.change-space-link">
+                Change space type
+              </DropdownListItem>
+            )}
             <DropdownListItem
               onClick={onDeleteSpace(space, plan)}
               testId="subscription-page.spaces-list.delete-space-link">
