@@ -1,6 +1,16 @@
 import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Workbench, Button, Notification } from '@contentful/forma-36-react-components';
+import {
+  Workbench,
+  Button,
+  SkeletonContainer,
+  SkeletonDisplayText,
+  SkeletonBodyText,
+  SkeletonText,
+  Card,
+  SkeletonImage,
+  Notification,
+} from '@contentful/forma-36-react-components';
 import { NavigationIcon, Grid, Flex } from '@contentful/forma-36-react-components/dist/alpha';
 import { useAsync } from 'core/hooks';
 import { getSubscriptionPlans, updateSpacePlan } from 'account/pricing/PricingDataProvider';
@@ -102,35 +112,62 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
         icon={<NavigationIcon icon="Subscription" size="large" />}
       />
       <Workbench.Content>
-        {isLoading && 'Loading'}
-        {!isLoading && data && (
-          <Grid columns={1} rows="repeat(3, 'auto')" columnGap="none" rowGap="spacingM">
-            <Breadcrumbs items={steps} isActive={steps} />
-            {steps.indexOf(currentStep) === 0 && (
-              <SpacePlanSelection
-                space={data.space}
-                spaceResources={data.spaceResources}
-                plans={data.plans}
-                selectedPlan={selectedPlan}
-                onPlanSelected={setSelectedPlan}
-                onNext={submit}
-              />
-            )}
-            {steps.indexOf(currentStep) === 1 && (
-              <>
-                <div>I will be a confirmation layer</div>
-                <Flex justifyContent="space-between" alignItems="center" marginTop="spacingL">
-                  <Button buttonType="muted" onClick={navigateToPreviousStep}>
-                    Go back
-                  </Button>
-                  <Button buttonType="primary" onClick={navigateToNextStep}>
-                    Continue
-                  </Button>
-                </Flex>
-              </>
-            )}
-          </Grid>
-        )}
+        <Grid columns={1} rows="repeat(3, 'auto')" columnGap="none" rowGap="spacingM">
+          <Breadcrumbs items={steps} isActive={steps} />
+          {isLoading && (
+            <>
+              <SkeletonContainer svgHeight={40}>
+                <SkeletonText width={300} offsetTop={10} />
+              </SkeletonContainer>
+              <Card>
+                <SkeletonContainer svgHeight={100}>
+                  <SkeletonImage
+                    width={16}
+                    height={16}
+                    radiusX={16}
+                    radiusY={16}
+                    offsetLeft={12}
+                    offsetTop={24}
+                  />
+                  <SkeletonDisplayText offsetTop={24} offsetLeft={40} width={80} />
+                  <SkeletonBodyText
+                    offsetTop={70}
+                    offsetLeft={40}
+                    lineHeight={12}
+                    numberOfLines={1}
+                  />
+                </SkeletonContainer>
+              </Card>
+            </>
+          )}
+          {!isLoading && data && (
+            <>
+              {steps.indexOf(currentStep) === 0 && (
+                <SpacePlanSelection
+                  space={data.space}
+                  spaceResources={data.spaceResources}
+                  plans={data.plans}
+                  selectedPlan={selectedPlan}
+                  onPlanSelected={setSelectedPlan}
+                  onNext={submit}
+                />
+              )}
+              {steps.indexOf(currentStep) === 1 && (
+                <>
+                  <div>I will be a confirmation layer</div>
+                  <Flex justifyContent="space-between" alignItems="center" marginTop="spacingL">
+                    <Button buttonType="muted" onClick={navigateToPreviousStep}>
+                      Go back
+                    </Button>
+                    <Button buttonType="primary" onClick={navigateToNextStep}>
+                      Continue
+                    </Button>
+                  </Flex>
+                </>
+              )}
+            </>
+          )}
+        </Grid>
       </Workbench.Content>
     </Workbench>
   );
