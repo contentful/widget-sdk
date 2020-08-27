@@ -39,10 +39,6 @@ describe('Sidebar configuration', () => {
   });
 
   describe('Enabling of a custom sidebar configuration option', () => {
-    beforeEach(() => {
-      cy.findByTestId('reset-widget-configuration').click();
-    });
-
     it('checks changing the order of widgets in custom sidebar', () => {
       const space: number = 32;
       const arrowDown: number = 40;
