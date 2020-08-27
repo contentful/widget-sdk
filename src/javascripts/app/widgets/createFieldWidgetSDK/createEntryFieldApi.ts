@@ -62,35 +62,6 @@ function getCurrentPath(internalFieldId: string, publicLocaleCode?: string) {
   return ['fields', internalFieldId, internalLocaleCode];
 }
 
-function canEdit(doc: Document, publicFieldId: string, publicLocaleCode?: string) {
-  const externalLocaleCode = publicLocaleCode ?? localeStore.getDefaultLocale().code;
-  return doc.permissions.canEditFieldLocale(publicFieldId, externalLocaleCode);
-}
-
-function getLocaleAndCallback(args: any[]) {
-  if (args.length === 1) {
-    return {
-      cb: args[0],
-      locale: localeStore.getDefaultLocale(),
-    };
-  }
-
-  if (args.length === 2) {
-    const publicLocaleCode = args[0];
-    const locale = localeStore.getPrivateLocales().find((l) => l.code === publicLocaleCode);
-    if (!locale) {
-      throw new RangeError(`Unknown locale "${publicLocaleCode}".`);
-    }
-
-    return {
-      cb: args[1],
-      locale,
-    };
-  }
-
-  throw new TypeError('expected either callback, or locale code and callback');
-}
-
 /**
  * Makes a method throw an Exception when the API is read0only
  * This has been implemented with generics to not lose type inference, even though it's ugly
@@ -118,9 +89,42 @@ export function createEntryFieldApi({
   listenToFieldLocaleEvent,
   readOnly,
 }: CreateEntryFieldApiProps): EntryFieldAPI {
-  const publicFieldId = internalField.apiName ?? internalField.id;
   // We fall back to `internalField.id` because some old fields don't have an
   // apiName / public ID
+  const publicFieldId = internalField.apiName ?? internalField.id;
+
+  const localeByPublicCode = localeStore.getPrivateLocales().reduce((acc, l) => {
+    return { ...acc, [l.code]: l };
+  }, {});
+
+  const getLocaleAndCallback = (args: any[]) => {
+    if (args.length === 1) {
+      return {
+        cb: args[0],
+        locale: localeStore.getDefaultLocale(),
+      };
+    }
+
+    if (args.length === 2) {
+      const publicLocaleCode = args[0];
+      const locale = localeByPublicCode[publicLocaleCode];
+      if (!locale) {
+        throw new RangeError(`Unknown locale "${publicLocaleCode}".`);
+      }
+
+      return {
+        cb: args[1],
+        locale,
+      };
+    }
+
+    throw new TypeError('expected either callback, or locale code and callback');
+  };
+
+  const canEdit = (publicLocaleCode?: string) => {
+    const externalLocaleCode = publicLocaleCode ?? localeStore.getDefaultLocale().code;
+    return doc.permissions.canEditFieldLocale(publicFieldId, externalLocaleCode);
+  };
 
   const getValue = (publicLocaleCode?: string) => {
     const currentPath = getCurrentPath(internalField.id, publicLocaleCode);
@@ -131,7 +135,7 @@ export function createEntryFieldApi({
   const setValue = makeReadOnlyGuardedMethod(
     !!readOnly,
     async (value: any, publicLocaleCode?: string) => {
-      if (!canEdit(doc, publicFieldId, publicLocaleCode)) {
+      if (!canEdit(publicLocaleCode)) {
         throw makePermissionError();
       }
 
@@ -147,7 +151,7 @@ export function createEntryFieldApi({
   );
 
   const removeValue = makeReadOnlyGuardedMethod(!!readOnly, async (publicLocaleCode?: string) => {
-    if (!canEdit(doc, publicFieldId, publicLocaleCode)) {
+    if (!canEdit(publicLocaleCode)) {
       throw makePermissionError();
     }
 
