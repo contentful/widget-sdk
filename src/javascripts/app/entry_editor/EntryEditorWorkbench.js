@@ -252,6 +252,10 @@ EntryEditorWorkbench.propTypes = {
   customExtensionProps: PropTypes.object,
   statusNotificationProps: PropTypes.object,
   widgets: PropTypes.array,
+  fieldLocaleListeners: PropTypes.shape({
+    flat: PropTypes.array,
+    lookup: PropTypes.object,
+  }),
   getOtDoc: PropTypes.func,
   shouldDisplayNoLocalizedFieldsAdvice: PropTypes.bool,
   noLocalizedFieldsAdviceProps: PropTypes.object,

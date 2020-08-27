@@ -30,6 +30,7 @@ const AssetEditorWorkbench = ({
   entrySidebarProps,
   fields,
   widgets,
+  fieldLocaleListeners,
   editorContext,
   getOtDoc,
   tagProps,
@@ -74,6 +75,7 @@ const AssetEditorWorkbench = ({
               template={`<cf-entity-field ng-repeat="widget in widgets track by widget.fieldId"></cf-entity-field>`}
               scope={{
                 widgets,
+                fieldLocaleListeners,
                 localeData,
                 editorContext,
                 fields,
@@ -116,6 +118,10 @@ AssetEditorWorkbench.propTypes = {
   entrySidebarProps: PropTypes.object,
   fields: PropTypes.object,
   widgets: PropTypes.array,
+  fieldLocaleListeners: PropTypes.shape({
+    flat: PropTypes.array,
+    lookup: PropTypes.object,
+  }),
   getOtDoc: PropTypes.func,
   editorContext: PropTypes.shape({
     entityInfo: PropTypes.object,
