@@ -1,4 +1,3 @@
-import localeStore from 'services/localeStore';
 import * as K from 'core/utils/kefir';
 import { set, isEqual } from 'lodash';
 
@@ -17,10 +16,10 @@ export const makeFieldLocaleListeners = (controls: any[], $scope: any, $controll
 
   controls.forEach((widget: any) => {
     const locales = widget.field.localized
-      ? localeStore.getPrivateLocales()
-      : [localeStore.getDefaultLocale()];
+      ? $scope.localeData.privateLocales
+      : [$scope.localeData.defaultLocale];
 
-    locales.forEach((locale) => {
+    locales.forEach((locale: any) => {
       const fieldLocaleScope = $scope.$new(false);
       fieldLocaleScope.widget = widget;
       fieldLocaleScope.locale = locale;
