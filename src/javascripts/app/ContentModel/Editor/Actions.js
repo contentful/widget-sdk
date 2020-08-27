@@ -300,10 +300,10 @@ export default function create($scope, contentTypeIds) {
 
   function triggerApiErrorNotification(errOrErrContainer) {
     const reasons = get(errOrErrContainer, 'data.details.errors', []);
-    const reason = reasons.find(({ name }) => name === 'size');
+    const sizeReason = reasons.find(({ name }) => name === 'size');
 
-    if (reason) {
-      notify.saveSizeError(errOrErrContainer, $scope.contentType, reason);
+    if (sizeReason) {
+      notify.saveSizeError(errOrErrContainer, $scope.contentType, sizeReason);
     } else {
       notify.saveFailure(errOrErrContainer, $scope.contentType);
     }
