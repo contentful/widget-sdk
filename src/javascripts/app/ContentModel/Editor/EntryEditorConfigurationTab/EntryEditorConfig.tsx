@@ -85,10 +85,7 @@ function createStateFromConfiguration(
   };
 }
 
-function convertInternalStateToConfiguration(
-  state: State,
-  initialItems: any
-): SavedConfigItem[] {
+function convertInternalStateToConfiguration(state: State, initialItems: any): SavedConfigItem[] {
   if (isEqual(state.items, initialItems)) {
     return [];
   }
@@ -131,7 +128,7 @@ function EntryEditorConfiguration(props: InternalEditorConfigProps) {
     if (!isEqual(draftState, configuration)) {
       onUpdateConfiguration(draftState);
     }
-  }, [state, onUpdateConfiguration, defaultWidgets]);
+  }, [state, onUpdateConfiguration, defaultWidgets, configuration]);
 
   return (
     <div className={styles.container}>

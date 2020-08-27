@@ -87,4 +87,29 @@ describe('EntryEditorConfig', () => {
     expect(queryByTestId('available-widget')).toBeNull();
     expect(getAllByTestId('selected-widget-item')).toHaveLength(DEFAULT_WIDGETS + 1);
   });
+
+  it('calls the update function only when configuration changes', () => {
+    const onUpdateConfiguration = jest.fn();
+    const props = {
+      onUpdateConfiguration,
+      configuration: [],
+      customWidgets: [
+        {
+          id: 'ext-1',
+          namespace: WidgetNamespace.EXTENSION,
+          settings: {},
+          name: 'Ext 1',
+          locations: [WidgetLocation.ENTRY_EDITOR],
+        },
+      ],
+    };
+
+    const { getByTestId } = render(<EntryEditorConfig {...props} />);
+
+    expect(onUpdateConfiguration.mock.calls.length).toBe(0);
+
+    fireEvent.click(getByTestId('add-widget-to-selected'));
+
+    expect(onUpdateConfiguration.mock.calls.length).toBe(1);
+  });
 });
