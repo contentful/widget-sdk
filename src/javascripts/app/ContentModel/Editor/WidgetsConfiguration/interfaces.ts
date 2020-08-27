@@ -33,5 +33,5 @@ export interface SavedConfigItem {
   widgetId: string;
   widgetNamespace: WidgetNamespace;
   disabled?: boolean;
-  settings: Record<string, any>;
+  settings?: Record<string, any>;
 }

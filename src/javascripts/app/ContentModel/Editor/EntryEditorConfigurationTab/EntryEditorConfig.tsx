@@ -85,7 +85,10 @@ function createStateFromConfiguration(
   };
 }
 
-function convertInternalStateToConfiguration(state: State, initialItems: any): SavedConfigItem[] {
+function convertInternalStateToConfiguration(
+  state: State,
+  initialItems: Widget[]
+): SavedConfigItem[] {
   if (isEqual(state.items, initialItems)) {
     return [];
   }
