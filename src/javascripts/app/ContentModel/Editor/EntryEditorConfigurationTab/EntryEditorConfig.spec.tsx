@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import EntryEditorConfig from './EntryEditorConfig';
-import { WidgetNamespace, WidgetLocation } from 'features/widget-renderer';
+import { WidgetNamespace, WidgetLocation } from '@contentful/widget-renderer';
 import { noop } from 'lodash';
 
 const NUMBER_OF_DEFAULT_WIDGETS = 2;

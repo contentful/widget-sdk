@@ -12,7 +12,7 @@ import {
   SavedConfigItem,
 } from 'app/ContentModel/Editor/WidgetsConfiguration/interfaces';
 import { create } from 'widgets/BuiltinWidgets';
-import { WidgetNamespace, WidgetLocation } from 'features/widget-renderer';
+import { WidgetNamespace, WidgetLocation } from '@contentful/widget-renderer';
 import WidgetParametersConfiguration from 'app/ContentModel/Editor/WidgetsConfiguration/WidgetParametersConfiguration';
 
 const styles = {

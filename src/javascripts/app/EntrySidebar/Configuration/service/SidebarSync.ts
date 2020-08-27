@@ -8,7 +8,7 @@ import {
   DefaultWidget,
   SavedConfigItem,
 } from 'app/ContentModel/Editor/WidgetsConfiguration/interfaces';
-import { WidgetNamespace, isCustomWidget, WidgetLocation } from 'features/widget-renderer';
+import { WidgetNamespace, isCustomWidget, WidgetLocation } from '@contentful/widget-renderer';
 import { isSameWidget } from 'app/ContentModel/Editor/WidgetsConfiguration/utils';
 
 /**

@@ -15,7 +15,7 @@ import ContentTypePreview from './PreviewTab/ContentTypePreview';
 import SidebarConfiguration from 'app/EntrySidebar/Configuration/SidebarConfiguration';
 import EntryEditorConfiguration from './EntryEditorConfigurationTab/EntryEditorConfig';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import { WidgetLocation } from 'features/widget-renderer';
+import { WidgetLocation } from '@contentful/widget-renderer';
 import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 function isEntryEditorWidget(widget) {

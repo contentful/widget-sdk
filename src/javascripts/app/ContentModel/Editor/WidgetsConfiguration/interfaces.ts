@@ -1,4 +1,4 @@
-import { WidgetNamespace, WidgetLocation } from 'features/widget-renderer';
+import { WidgetNamespace, WidgetLocation } from '@contentful/widget-renderer';
 export type AvailabilityStatus = 'alpha' | 'beta';
 export interface ConfigurationItem {
   widgetId: string;
