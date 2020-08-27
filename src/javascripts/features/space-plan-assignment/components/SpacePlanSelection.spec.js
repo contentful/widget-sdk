@@ -62,4 +62,34 @@ describe('SpacePlanSelection', () => {
     fireEvent.click(screen.getByLabelText(mockPerformance1xPlan.name));
     expect(mockOnPlanSelected).toHaveBeenCalled();
   });
+
+  it('should click on the first element and expand first layer', async () => {
+    build();
+    fireEvent.click(screen.getAllByTestId('cf-ui-expandable-panel-link')[0]);
+
+    expect(screen.getByTestId('cf-ui-expandable-element--0')).toBeVisible();
+    expect(screen.getByTestId('cf-ui-expandable-element--0')).toHaveAttribute(
+      'data-active',
+      'true'
+    );
+    expect(screen.getByTestId('cf-ui-expandable-element--1')).toHaveAttribute(
+      'data-active',
+      'false'
+    );
+  });
+
+  it('should expand and on the second click close the expanded layer', async () => {
+    build();
+    fireEvent.click(screen.getAllByTestId('cf-ui-expandable-panel-link')[0]);
+    expect(screen.getByTestId('cf-ui-expandable-element--0')).toHaveAttribute(
+      'data-active',
+      'true'
+    );
+
+    fireEvent.click(screen.getAllByTestId('cf-ui-expandable-panel-link')[0]);
+    expect(screen.getByTestId('cf-ui-expandable-element--0')).toHaveAttribute(
+      'data-active',
+      'false'
+    );
+  });
 });
