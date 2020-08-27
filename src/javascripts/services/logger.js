@@ -83,7 +83,7 @@ function flattenServerErrors(metaData) {
   const errOrResponse = metaData.error;
 
   if (errOrResponse) {
-    const err = findActualServerError(errOrResponse);
+    const err = _.cloneDeep(findActualServerError(errOrResponse));
 
     // Never send auth token.
     const headers = _.get(errOrResponse, 'request.headers');
