@@ -54,13 +54,12 @@ describe('EntryEditorConfig', () => {
       configuration: [],
       customWidgets: [],
     };
-    const DEFAULT_WIDGETS = 2;
 
     const { getAllByTestId } = render(<EntryEditorConfig {...props} />);
 
     fireEvent.click(getAllByTestId('remove-selected-widget')[0]);
 
-    expect(getAllByTestId('available-widget')).toHaveLength(DEFAULT_WIDGETS - 1);
+    expect(getAllByTestId('available-widget')).toHaveLength(NUMBER_OF_DEFAULT_WIDGETS - 1);
     expect(getAllByTestId('selected-widget-item')).toHaveLength(1);
   });
 
@@ -78,14 +77,13 @@ describe('EntryEditorConfig', () => {
         },
       ],
     };
-    const DEFAULT_WIDGETS = 2;
 
     const { getAllByTestId, getByTestId, queryByTestId } = render(<EntryEditorConfig {...props} />);
 
     fireEvent.click(getByTestId('add-widget-to-selected'));
 
     expect(queryByTestId('available-widget')).toBeNull();
-    expect(getAllByTestId('selected-widget-item')).toHaveLength(DEFAULT_WIDGETS + 1);
+    expect(getAllByTestId('selected-widget-item')).toHaveLength(NUMBER_OF_DEFAULT_WIDGETS + 1);
   });
 
   it('calls the update function only when configuration changes', () => {
@@ -106,10 +104,10 @@ describe('EntryEditorConfig', () => {
 
     const { getByTestId } = render(<EntryEditorConfig {...props} />);
 
-    expect(onUpdateConfiguration.mock.calls.length).toBe(0);
+    expect(onUpdateConfiguration).not.toHaveBeenCalled();
 
     fireEvent.click(getByTestId('add-widget-to-selected'));
 
-    expect(onUpdateConfiguration.mock.calls.length).toBe(1);
+    expect(onUpdateConfiguration).toHaveBeenCalledTimes(1);
   });
 });
