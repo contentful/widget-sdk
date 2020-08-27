@@ -170,6 +170,26 @@ export function changeSpacePlan(endpoint, productRatePlanId) {
 }
 
 /**
+ * Update a space plan with a new assigned space.
+ * The only required attributes are the `sys.id` and `gatekeeperKey`, `gatekeeperKey` being the space id.
+ * @param {object} orgEndpoint
+ * @param {object} plan a space plan object containing a `gatekeeperKey` property with a space id as the value
+ * @returns{Promise<object>} updated plan
+ */
+export function updateSpacePlan(orgEndpoint, plan) {
+  const planId = plan?.sys?.id;
+
+  return orgEndpoint(
+    {
+      method: 'PUT',
+      path: ['plans', planId],
+      data: plan,
+    },
+    alphaHeader
+  );
+}
+
+/**
  * Gets the list of enabled features for the org such as offsite backup.
  * @param {object} endpoint an organization endpoint
  * @returns {Promise<object[]>} array of features in {name, internal_name}

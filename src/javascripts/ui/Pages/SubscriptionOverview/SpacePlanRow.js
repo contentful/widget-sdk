@@ -110,7 +110,7 @@ function SpacePlanRow({
               testId="subscription-page.spaces-list.change-plan-link"
               component={TextLink}
               path="^.space_plans"
-              queryParams={{ spaceId: space.sys.id }}>
+              params={{ spaceId: space.sys.id }}>
               change
             </StateLink>
           </>

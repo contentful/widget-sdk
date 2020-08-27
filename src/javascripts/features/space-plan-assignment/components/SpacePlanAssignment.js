@@ -1,15 +1,16 @@
 import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Workbench, Button } from '@contentful/forma-36-react-components';
+import { Workbench, Button, Notification } from '@contentful/forma-36-react-components';
 import { NavigationIcon, Grid, Flex } from '@contentful/forma-36-react-components/dist/alpha';
 import { useAsync } from 'core/hooks';
-import { getSubscriptionPlans } from 'account/pricing/PricingDataProvider';
+import { getSubscriptionPlans, updateSpacePlan } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
 import { getSpace } from 'access_control/OrganizationMembershipRepository';
 import { SpacePlanSelection } from './SpacePlanSelection';
 import createResourceService from 'services/ResourceService';
-import { sortBy, keyBy } from 'lodash';
+import { sortBy, keyBy, filter } from 'lodash';
 import { Breadcrumbs } from 'features/breadcrumbs';
+import { go } from 'states/Navigator';
 
 const ASSIGNMENT_STEPS = [
   { text: '1.New space type', isActive: true },
@@ -34,7 +35,11 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
       ]);
 
       return {
-        plans: sortBy(plans.items, 'price'),
+        // filter plans that already have a space assigned (gatekeeperKey), and sort by price
+        plans: sortBy(
+          filter(plans.items, (plan) => !plan.gatekeeperKey),
+          'price'
+        ),
         space,
         spaceResources: keyBy(spaceResources, 'sys.id'),
       };
@@ -73,6 +78,23 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
     }
   };
 
+  const submit = async () => {
+    const orgEndpoint = createOrganizationEndpoint(orgId);
+
+    const updatedPlan = {
+      ...selectedPlan,
+      gatekeeperKey: spaceId,
+    };
+
+    try {
+      await updateSpacePlan(orgEndpoint, updatedPlan);
+      Notification.success(`${data.space.name} was successfully changed to ${selectedPlan.name}`);
+      go({ path: '^.subscription_new' });
+    } catch (e) {
+      Notification.error(e.message);
+    }
+  };
+
   return (
     <Workbench>
       <Workbench.Header
@@ -91,7 +113,7 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
                 plans={data.plans}
                 selectedPlan={selectedPlan}
                 onPlanSelected={setSelectedPlan}
-                handleNavigationNext={navigateToNextStep}
+                onNext={submit}
               />
             )}
             {steps.indexOf(currentStep) === 1 && (

@@ -36,15 +36,19 @@ export function SpacePlanSelection({
   spaceResources,
   selectedPlan,
   onPlanSelected,
-  handleNavigationNext,
+  onNext,
 }) {
-  const groupedPlans = groupBy(plans, (p) => p.name);
+  const groupedPlans = groupBy(plans, 'name');
 
   return (
     <Typography>
       <Heading element="h2">Choose a new space type for {space.name}</Heading>
       <List>
         {Object.keys(groupedPlans).map((name, index) => {
+          // We use the first in the group plan to display the limits
+          // Plans with the same name *should* be identical.
+          // In the future we may use the `quantity` attribute instead of
+          // multiple instances of the same plan.
           const plan = groupedPlans[name][0];
           const planCount = groupedPlans[name].length;
           return (
@@ -77,7 +81,7 @@ export function SpacePlanSelection({
         <StateLink component={Button} buttonType="muted" path={'^.subscription_new'}>
           Go back
         </StateLink>
-        <Button buttonType="primary" onClick={() => handleNavigationNext()}>
+        <Button buttonType="primary" onClick={onNext}>
           Continue
         </Button>
       </Flex>
@@ -91,5 +95,5 @@ SpacePlanSelection.propTypes = {
   spaceResources: PropTypes.objectOf(ResourcePropType),
   selectedPlan: PlanPropType,
   onPlanSelected: PropTypes.func.isRequired,
-  handleNavigationNext: PropTypes.func,
+  onNext: PropTypes.func,
 };

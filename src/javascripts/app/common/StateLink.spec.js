@@ -1,9 +1,8 @@
 import React from 'react';
-import { Button, TextLink } from '@contentful/forma-36-react-components';
-import { render, fireEvent, screen } from '@testing-library/react';
+import { Button } from '@contentful/forma-36-react-components';
+import { render, fireEvent } from '@testing-library/react';
 import StateLink from './StateLink';
 import * as $stateMocked from 'ng/$state';
-import userEvent from '@testing-library/user-event';
 
 describe('StateLink', () => {
   beforeEach(() => {
@@ -73,24 +72,5 @@ describe('StateLink', () => {
     fireEvent.click(container.querySelector('button'));
     expect($stateMocked.href).not.toHaveBeenCalled();
     expect($stateMocked.go).toHaveBeenCalledWith('home.list', { foo: 'bar' }, undefined);
-  });
-
-  it('can pass query parameters', () => {
-    render(
-      <StateLink
-        testId="link"
-        path="home.list"
-        queryParams={{ spaceId: '123' }}
-        component={TextLink}>
-        go to page for spaceId 123
-      </StateLink>
-    );
-    expect(screen.getByTestId('link')).toHaveAttribute(
-      'href',
-      expect.stringContaining('?spaceId=123')
-    );
-    userEvent.click(screen.getByText('go to page for spaceId 123'));
-    expect($stateMocked.go).not.toHaveBeenCalled();
-    expect($stateMocked.href).toHaveBeenCalledWith('home.list', undefined);
   });
 });
