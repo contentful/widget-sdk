@@ -39,10 +39,6 @@ describe('Editor tabs configuration', () => {
   });
 
   describe('Enabling of a custom editor tabs configuration', () => {
-    beforeEach(() => {
-      cy.findByTestId('reset-widget-configuration').click();
-    });
-
     it('checks changing the order of editor tabs', () => {
       const space: number = 32;
       const arrowDown: number = 40;
@@ -59,7 +55,7 @@ describe('Editor tabs configuration', () => {
         .trigger('keydown', { keyCode: arrowDown, force: true })
         .wait(0.2 * 1000)
         .trigger('keydown', { keyCode: space, force: true });
-      cy.findByTestId('custom-tabs-column').should('be.visible');
+
       cy.findAllByTestId('selected-widget-name').each(($widget, index) => {
         cy.wrap($widget).should('have.text', widgetsReordered[index]);
       });
