@@ -170,11 +170,7 @@ export function createEntryFieldApi({
     const { cb, locale } = getLocaleAndCallback(args);
     const fieldLocale = get(fieldLocaleListeners, [publicFieldId, locale.code]);
 
-    if (fieldLocale) {
-      return fieldLocale.onDisabledChanged(cb);
-    } else {
-      return noop;
-    }
+    return fieldLocale ? fieldLocale.onDisabledChanged(cb) : noop;
   }
 
   function onSchemaErrorsChanged(callback: (errors: any) => void): () => () => void;
@@ -186,11 +182,7 @@ export function createEntryFieldApi({
     const { cb, locale } = getLocaleAndCallback(args);
     const fieldLocale = get(fieldLocaleListeners, [publicFieldId, locale.code]);
 
-    if (fieldLocale) {
-      fieldLocale.onSchemaErrorsChanged(cb);
-    } else {
-      return noop;
-    }
+    return fieldLocale ? fieldLocale.onSchemaErrorsChanged(cb) : noop;
   }
 
   const locales = internalField.localized
