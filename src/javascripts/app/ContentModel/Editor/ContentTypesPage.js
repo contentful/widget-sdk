@@ -26,6 +26,9 @@ export default function ContentTypesPage(props) {
   const showSidebar = props.currentTab === 'fields' || props.currentTab === 'preview';
 
   const [sidebarConfiguration, updateSidebarConfiguration] = useState(props.sidebarConfiguration);
+  const [entryEditorConfiguration, updateEntryEditorConfiguration] = useState(
+    props.editorConfiguration
+  );
 
   const onUpdateConfiguration = useCallback(
     (configuration) => {
@@ -33,6 +36,14 @@ export default function ContentTypesPage(props) {
       props.actions.updateSidebarConfiguration(configuration);
     },
     [updateSidebarConfiguration, props.actions]
+  );
+
+  const onEntryEditorUpdateConfiguration = useCallback(
+    (configuration) => {
+      updateEntryEditorConfiguration(configuration);
+      props.actions.updateEditorConfiguration(configuration);
+    },
+    [updateEntryEditorConfiguration, props.actions]
   );
 
   return (
@@ -102,9 +113,9 @@ export default function ContentTypesPage(props) {
               />
               <div>
                 <EntryEditorConfiguration
-                  configuration={props.editorConfiguration}
+                  configuration={entryEditorConfiguration}
                   customWidgets={props.extensions.filter(isEntryEditorWidget)}
-                  onUpdateConfiguration={props.actions.updateEditorConfiguration}
+                  onUpdateConfiguration={onEntryEditorUpdateConfiguration}
                 />
               </div>
             </>

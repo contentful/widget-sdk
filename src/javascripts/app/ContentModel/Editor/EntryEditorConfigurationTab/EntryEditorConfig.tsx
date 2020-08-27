@@ -30,7 +30,7 @@ interface Widget {
 }
 
 interface InternalEditorConfigProps {
-  onUpdateConfiguration: (configuration: SavedConfigItem[] | undefined) => void;
+  onUpdateConfiguration: (configuration: SavedConfigItem[]) => void;
   defaultWidgets: Widget[];
   customWidgets: Widget[];
   configuration: SavedConfigItem[];
@@ -127,7 +127,10 @@ function EntryEditorConfiguration(props: InternalEditorConfigProps) {
   );
 
   useEffect(() => {
-    onUpdateConfiguration(convertInternalStateToConfiguration(state, defaultWidgets));
+    const draftState = convertInternalStateToConfiguration(state, defaultWidgets);
+    if (!isEqual(draftState, configuration)) {
+      onUpdateConfiguration(draftState);
+    }
   }, [state, onUpdateConfiguration, defaultWidgets]);
 
   return (
@@ -152,7 +155,7 @@ function EntryEditorConfiguration(props: InternalEditorConfigProps) {
 }
 
 interface EditorConfigProps {
-  onUpdateConfiguration: (configuration: SavedConfigItem[] | undefined) => void;
+  onUpdateConfiguration: (configuration: SavedConfigItem[]) => void;
   customWidgets: CustomWidget[];
   configuration: SavedConfigItem[];
 }
