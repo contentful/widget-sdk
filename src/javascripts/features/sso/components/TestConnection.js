@@ -8,6 +8,7 @@ import {
   Typography,
   Paragraph,
 } from '@contentful/forma-36-react-components';
+import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
 import { useSsoConnectionTest } from '../services/useSsoConnectionTest';
 import { formatConnectionTestErrors } from '../utils/utils';
 
@@ -29,23 +30,26 @@ export function TestConnection({ orgId, disabled = true, ssoConfig = {}, onCompl
         You need a user account in your SSO provider and permission to use the Contentful app in
         your SSO provider to test the connection.
       </Paragraph>
-
-      <Paragraph>
-        <Button
-          disabled={disabled}
-          onClick={handleSubmit}
-          loading={isLoading}
-          testId="test-idp-connection.submit">
-          {!isLoading && !isSuccess && `Test connection`}
-          {!isLoading && isSuccess && `Retest connection`}
-          {isLoading && `Testing connection`}
-        </Button>
-        {isLoading && (
-          <Button buttonType="negative" onClick={cancelTest} testId="test-idp-connection.cancel">
-            Cancel
+      <Flex justifyContent="flex-start" marginBottom="spacingM">
+        <Flex marginRight="spacingS">
+          <Button
+            disabled={disabled}
+            onClick={handleSubmit}
+            loading={isLoading}
+            testId="test-idp-connection.submit">
+            {!isLoading && !isSuccess && `Test connection`}
+            {!isLoading && isSuccess && `Retest connection`}
+            {isLoading && `Testing connection`}
           </Button>
+        </Flex>
+        {isLoading && (
+          <Flex>
+            <Button buttonType="negative" onClick={cancelTest} testId="test-idp-connection.cancel">
+              Cancel
+            </Button>
+          </Flex>
         )}
-      </Paragraph>
+      </Flex>
 
       {!isLoading && (
         <div>

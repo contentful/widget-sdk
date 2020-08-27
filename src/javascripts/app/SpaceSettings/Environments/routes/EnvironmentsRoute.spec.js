@@ -35,7 +35,7 @@ jest.mock('access_control/AccessChecker', () => ({
 
 jest.mock('data/CMA/ProductCatalog', () => ({
   getOrgFeature: jest.fn().mockResolvedValue(true), // canSelectSource
-  getSpaceFeature: jest.fn().mockResolvedValue(true), // aliasesEnabled
+  getSpaceFeature: jest.fn().mockResolvedValue(true), // aliasesEnabled, customAliasesEnabled
 }));
 
 jest.mock('utils/ResourceUtils', () => ({
@@ -84,11 +84,13 @@ describe('EnvironmentsRoute', () => {
   });
 
   const generateEnvironments = (...args) => {
-    return args.map(({ id, status, aliases }) => ({
+    return args.map(({ id, status, aliases, aliasedEnvironment, spaceId }) => ({
       sys: {
         id,
+        space: { sys: { id: spaceId } },
         status: { sys: { id: status } },
         aliases,
+        aliasedEnvironment,
       },
     }));
   };
@@ -122,9 +124,9 @@ describe('EnvironmentsRoute', () => {
 
   it('lists all environments with status', async () => {
     const { getByTestId } = await renderEnvironmentsComponent(
-      { id: 'e1', status: 'ready' },
-      { id: 'e2', status: 'queued' },
-      { id: 'e3', status: 'failed' }
+      { id: 'e1', status: 'ready', spaceId: defaultProps.spaceId },
+      { id: 'e2', status: 'queued', spaceId: defaultProps.spaceId },
+      { id: 'e3', status: 'failed', spaceId: defaultProps.spaceId }
     );
 
     const env1 = getByTestId('environment.e1');
@@ -147,8 +149,8 @@ describe('EnvironmentsRoute', () => {
       getSpaceFeature.mockReturnValueOnce(false);
 
       const { queryByTestId } = await renderEnvironmentsComponent(
-        { id: 'e1', status: 'ready' },
-        { id: 'e2', status: 'ready' }
+        { id: 'e1', status: 'ready', spaceId: defaultProps.spaceId },
+        { id: 'e2', status: 'ready', spaceId: defaultProps.spaceId }
       );
 
       expect(queryByTestId('environments.header')).toBeNull();
@@ -160,23 +162,35 @@ describe('EnvironmentsRoute', () => {
     describe('when user has the manage aliases permission', () => {
       it('shows the aliases opt-in', async () => {
         const { queryByTestId } = await renderEnvironmentsComponent(
-          { id: 'e1', status: 'ready' },
-          { id: 'e2', status: 'ready' }
+          { id: 'e1', status: 'ready', spaceId: defaultProps.spaceId },
+          { id: 'e2', status: 'ready', spaceId: defaultProps.spaceId }
         );
 
         expect(queryByTestId('environments.header')).toBeNull();
-        expect(queryByTestId('environmentaliases.card')).toBeInTheDocument();
+        expect(queryByTestId('environmentalias.wrapper.optin')).toBeInTheDocument();
       });
 
       it('shows the aliases', async () => {
         defaultProps.getAliasesIds.mockReturnValueOnce(['master']);
         const { getByTestId } = await renderEnvironmentsComponent(
-          { id: 'e1', status: 'ready', aliases: ['master'] },
-          { id: 'e2', status: 'ready' }
+          { id: 'e1', status: 'ready', aliases: ['master'], spaceId: defaultProps.spaceId },
+          { id: 'e2', status: 'ready', aliases: [], spaceId: defaultProps.spaceId },
+          {
+            id: 'master',
+            status: 'ready',
+            spaceId: defaultProps.spaceId,
+            aliasedEnvironment: {
+              sys: {
+                id: 'e1',
+                status: 'ready',
+                spaceId: defaultProps.spaceId,
+              },
+            },
+          }
         );
 
         expect(getByTestId('environments.header')).toBeInTheDocument();
-        expect(getByTestId('environmentaliases.card')).toBeInTheDocument();
+        expect(getByTestId('environmentalias.wrapper.master')).toBeInTheDocument();
       });
 
       it('cannot be deleted when environment has aliases', async () => {
@@ -186,6 +200,7 @@ describe('EnvironmentsRoute', () => {
           id: 'e1',
           status: 'ready',
           aliases: ['master'],
+          spaceId: defaultProps.spaceId,
         });
 
         const env1 = getByTestId('environment.e1');
@@ -202,7 +217,11 @@ describe('EnvironmentsRoute', () => {
       it('hides the aliases section', async () => {
         accessChecker.can.mockImplementation((_, type) => type !== 'EnvironmentAliases');
 
-        const { queryByTestId } = await renderEnvironmentsComponent({ id: 'e1', status: 'ready' });
+        const { queryByTestId } = await renderEnvironmentsComponent({
+          id: 'e1',
+          status: 'ready',
+          spaceId: defaultProps.spaceId,
+        });
 
         expect(queryByTestId('environments.header')).toBeNull();
         expect(queryByTestId('environmentaliases.card')).toBeNull();
@@ -221,16 +240,36 @@ describe('EnvironmentsRoute', () => {
 
       it('shows usage and limits', async () => {
         const { getByTestId } = await renderEnvironmentsComponent(
-          { id: 'e1', status: 'ready' },
-          { id: 'e2', status: 'ready' }
+          { id: 'e1', status: 'ready', aliases: ['master'], spaceId: defaultProps.spaceId },
+          { id: 'e2', status: 'ready', aliases: [], spaceId: defaultProps.spaceId },
+          {
+            id: 'master',
+            status: 'ready',
+            spaceId: defaultProps.spaceId,
+            aliasedEnvironment: {
+              sys: {
+                id: 'e1',
+                status: 'ready',
+                spaceId: defaultProps.spaceId,
+              },
+            },
+          }
         );
         expect(getByTestId('environmentsUsage').textContent).toContain(
           'You are using 2 out of 2 environments'
         );
+
+        expect(getByTestId('environmentsAliasUsage').textContent).toContain(
+          'You are using 1 out of 3 environment aliases'
+        );
       });
 
       it('shows tooltip ', async () => {
-        const { getByTestId } = await renderEnvironmentsComponent({ id: 'e1', status: 'ready' });
+        const { getByTestId } = await renderEnvironmentsComponent({
+          id: 'e1',
+          status: 'ready',
+          spaceId: defaultProps.spaceId,
+        });
         const envUsage = getByTestId('environmentsUsage');
         expect(envUsage.querySelector('[data-test-id="environments-usage-tooltip"]')).toBeVisible();
       });
@@ -242,14 +281,46 @@ describe('EnvironmentsRoute', () => {
       });
 
       it('shows usage without limits', async () => {
-        const { getByTestId } = await renderEnvironmentsComponent({ id: 'e1', status: 'ready' });
+        getSpaceFeature.mockImplementation((_, feature) =>
+          feature === 'custom_environment_aliases' ? false : true
+        );
+        const { getByTestId } = await renderEnvironmentsComponent(
+          {
+            id: 'e1',
+            status: 'ready',
+            aliases: ['master'],
+            spaceId: defaultProps.spaceId,
+          },
+          {
+            id: 'master',
+            status: 'ready',
+            spaceId: defaultProps.spaceId,
+            aliasedEnvironment: {
+              sys: {
+                id: 'e1',
+                status: 'ready',
+                spaceId: defaultProps.spaceId,
+              },
+            },
+          }
+        );
+        getSpaceFeature.mockResolvedValue(true);
+
         expect(getByTestId('environmentsUsage').textContent).toContain(
           'You are using 1 environment'
+        );
+
+        expect(getByTestId('environmentsAliasUsage').textContent).toContain(
+          'You have one environment alias'
         );
       });
 
       it('does not show tooltip ', async () => {
-        const { getByTestId } = await renderEnvironmentsComponent({ id: 'e1', status: 'ready' });
+        const { getByTestId } = await renderEnvironmentsComponent({
+          id: 'e1',
+          status: 'ready',
+          spaceId: defaultProps.spaceId,
+        });
         const envUsage = getByTestId('environmentsUsage');
         expect(envUsage.querySelector('[data-test-id="environments-usage-tooltip"]')).toBeNull();
       });
@@ -266,7 +337,11 @@ describe('EnvironmentsRoute', () => {
     });
 
     it('does not render create button', async () => {
-      const { queryByTestId } = await renderEnvironmentsComponent({ id: 'e1', status: 'ready' });
+      const { queryByTestId } = await renderEnvironmentsComponent({
+        id: 'e1',
+        status: 'ready',
+        spaceId: defaultProps.spaceId,
+      });
       expect(queryByTestId('openCreateDialog')).toBeNull();
     });
 
@@ -277,6 +352,7 @@ describe('EnvironmentsRoute', () => {
       await renderEnvironmentsComponent({
         id: 'e1',
         status: 'ready',
+        spaceId: defaultProps.spaceId,
       });
 
       expect(screen.getByTestId('upgradeMessage').textContent).toEqual(
@@ -304,6 +380,7 @@ describe('EnvironmentsRoute', () => {
       await renderEnvironmentsComponent({
         id: 'e1',
         status: 'ready',
+        spaceId: defaultProps.spaceId,
       });
 
       expect(screen.getByTestId('upgradeMessage').textContent).toEqual(
@@ -328,6 +405,7 @@ describe('EnvironmentsRoute', () => {
       const { getByTestId, queryByTestId } = await renderEnvironmentsComponent({
         id: 'e1',
         status: 'ready',
+        spaceId: defaultProps.spaceId,
       });
 
       expect(queryByTestId('openUpgradeDialog')).toBeNull();

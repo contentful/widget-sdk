@@ -3,7 +3,7 @@ import createIDMap from './IDMap';
 import * as PublicContentType from './PublicContentType';
 import * as Analytics from 'analytics/Analytics';
 import { getLocalesObject } from 'app/widgets/createFieldWidgetSDK/createLocalesApi';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 
 const sharedFieldProps = (field) => ({
   id: field.apiName || field.id,

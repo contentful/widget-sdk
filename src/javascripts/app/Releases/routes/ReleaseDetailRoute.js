@@ -1,28 +1,27 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import StateRedirect from 'app/common/StateRedirect';
-import ReleasesFeatureFlag from '../ReleasesFeatureFlag';
+import { useFeatureFlagAddToRelease } from '../ReleasesFeatureFlag';
 import ReleaseDetailPageContainer from '../ReleaseDetail/ReleaseDetailPageContainer';
 
-const ReleaseDetailRoute = ({ releaseId, defaultLocale, isMasterEnvironment }) => (
-  <ReleasesFeatureFlag>
-    {({ currentVariation }) => {
-      if (currentVariation === true) {
-        return (
-          <ReleaseDetailPageContainer
-            releaseId={releaseId}
-            defaultLocale={defaultLocale}
-            isMasterEnvironment={isMasterEnvironment}
-          />
-        );
-      } else if (currentVariation === false) {
-        return <StateRedirect path="spaces.detail.entries.list" />;
-      } else {
-        return null;
-      }
-    }}
-  </ReleasesFeatureFlag>
-);
+const ReleaseDetailRoute = ({ releaseId, defaultLocale, isMasterEnvironment }) => {
+  const { addToReleaseEnabled, isAddToReleaseLoading } = useFeatureFlagAddToRelease();
+
+  if (isAddToReleaseLoading) {
+    return null;
+  }
+  if (addToReleaseEnabled === true) {
+    return (
+      <ReleaseDetailPageContainer
+        releaseId={releaseId}
+        defaultLocale={defaultLocale}
+        isMasterEnvironment={isMasterEnvironment}
+      />
+    );
+  } else {
+    return <StateRedirect path="spaces.detail.entries.list" />;
+  }
+};
 
 ReleaseDetailRoute.propTypes = {
   defaultLocale: PropTypes.object.isRequired,

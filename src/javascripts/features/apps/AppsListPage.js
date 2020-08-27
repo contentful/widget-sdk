@@ -25,7 +25,6 @@ import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha
 import DocumentTitle from 'components/shared/DocumentTitle';
 import StateLink from 'app/common/StateLink';
 import { ModalLauncher } from 'core/components/ModalLauncher';
-import FeedbackButton from 'app/common/FeedbackButton';
 
 import { websiteUrl } from 'Config';
 
@@ -317,8 +316,13 @@ export class AppsListPage extends React.Component {
           )}
           {hasInstalledApps && (
             <Note className={styles.feedbackNote}>
-              <FeedbackButton target="extensibility" about="Apps" label="Give us feedback!" /> Help
-              us improve your experience with our apps and the App Framework.
+              <TextLink
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://ctfl.io/apps-feedback">
+                Give us feedback!
+              </TextLink>{' '}
+              Help us improve your experience with our apps and the App Framework.
             </Note>
           )}
           {availableApps.length > 0 && (

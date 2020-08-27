@@ -5,14 +5,19 @@ import { fieldErrorMessage } from '../utils/utils';
 
 export async function retrieveIdp(orgId) {
   const endpoint = createOrganizationEndpoint(orgId);
-  return await endpoint({
-    method: 'GET',
-    path: ['identity_provider'],
-  });
+  try {
+    return await endpoint({
+      method: 'GET',
+      path: ['identity_provider'],
+    });
+  } catch (e) {
+    return;
+  }
 }
 
 export async function createIdp(orgId) {
   const endpoint = createOrganizationEndpoint(orgId);
+
   try {
     await endpoint({
       method: 'POST',
@@ -26,7 +31,6 @@ export async function createIdp(orgId) {
     return;
   }
   track('sso:start_setup');
-  Notification.success('SSO was set up successfully!');
 }
 
 export async function updateFieldValue(fieldName, value, version, orgId) {

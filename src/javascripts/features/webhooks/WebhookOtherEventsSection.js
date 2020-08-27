@@ -22,8 +22,8 @@ export class WebhookOtherEventsSection extends React.Component {
           <br />
           <CheckboxField
             id="environment-alias-action"
-            labelText={'Environment Alias Target Change'}
-            helpText={'This event is triggered when an environment alias targets a new environment'}
+            labelText={'Environment Alias Events'}
+            helpText={'Triggered for all environment alias events'}
             checked={isActionChecked(values, otherEventEntityType, otherEventEntityAction)}
             onChange={(e) => {
               return onChange(

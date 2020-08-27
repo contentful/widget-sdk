@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, cleanup, wait } from '@testing-library/react';
+import { render, wait } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import resolveResponse from 'contentful-resolve-response';
 import { ReferencesContext } from './ReferencesContext';
@@ -21,6 +21,7 @@ import {
   depthLimit,
   unresolvedReferences,
   simpleReferencesValidationErrorResponse,
+  rootReferencesValidationErrorResponse,
 } from './__fixtures__';
 
 import ReferencesTree from './ReferencesTree';
@@ -36,8 +37,6 @@ MockPovider.defaultProps = {
 };
 
 describe('ReferencesTree component', () => {
-  afterEach(cleanup);
-
   it('should render simple references', async () => {
     const onCardClick = jest.fn();
     const response = resolveResponse(simpleReferences);
@@ -201,5 +200,22 @@ describe('ReferencesTree component', () => {
     expect(dispatchSpy).toHaveBeenCalledWith({ type: SET_SELECTED_ENTITIES, value: [] });
     expect(dispatchSpy).toHaveBeenCalledWith({ type: SET_ACTIONS_DISABLED, value: true });
     expect(dispatchSpy).toHaveBeenCalledWith({ type: SET_INITIAL_REFERENCES_AMOUNT, value: 4 });
+  });
+
+  it('should render root entry with validations error', async () => {
+    const onReferenceCardClick = jest.fn();
+    const response = resolveResponse(simpleReferences);
+    const dispatchSpy = jest.fn();
+    const { queryAllByTestId } = render(
+      <MockPovider references={response} dispatch={dispatchSpy}>
+        <ReferencesTree
+          defaultLocale="en-US"
+          maxLevel={5}
+          onReferenceCardClick={onReferenceCardClick}
+          validations={rootReferencesValidationErrorResponse}
+        />
+      </MockPovider>
+    );
+    expect(queryAllByTestId('validation-error')).toHaveLength(1);
   });
 });

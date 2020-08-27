@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, wait, cleanup, fireEvent } from '@testing-library/react';
+import { render, wait, fireEvent } from '@testing-library/react';
 import { AppInstallModal } from './AppInstallModal';
 import * as util from './util';
 import * as Navigator from 'states/Navigator';
@@ -37,8 +37,6 @@ util.getLastUsedSpace = jest.fn(() => 'my-space-123');
 
 describe('AppInstallModal', () => {
   beforeEach(() => {});
-
-  afterEach(cleanup);
 
   it('should render the last used space and first env on load and be able to install right away', async () => {
     const wrapper = render(

@@ -1,6 +1,6 @@
 import { createNavigatorApi, createReadOnlyNavigatorApi } from './createNavigatorApi';
 import { onSlideInNavigation } from 'navigation/SlideInNavigator/index';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 import makePageExtensionHandlers from 'widgets/bridges/makePageExtensionHandlers';
 import {
   makeExtensionNavigationHandlers,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, cleanup, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { DisableAppEventsModal } from './DisableAppEventsModal';
 
 const disableAppEvents = jest.fn(() => {});
@@ -12,8 +12,6 @@ describe('Disable App Events Modal', () => {
     onClose: closeFn,
     onDisableAppEvents: disableAppEvents,
   };
-
-  afterEach(cleanup);
 
   it('should render the modal', () => {
     const wrapper = render(<DisableAppEventsModal {...mockedProps} />);

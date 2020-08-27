@@ -6,7 +6,7 @@ import * as Config from 'Config';
 import ExtensionLocalDevelopmentWarning from './ExtensionLocalDevelopmentWarning';
 import ExtensionIFrameChannel from './ExtensionIFrameChannel';
 import ExtensionAPI from './ExtensionAPI';
-import { WidgetNamespace, HostingType } from 'features/widget-renderer';
+import { WidgetNamespace, HostingType } from '@contentful/widget-renderer';
 
 const SANDBOX = [
   'allow-scripts',
@@ -134,6 +134,7 @@ export default class ExtensionIFrameRenderer extends React.Component {
     iframe.style.display = 'block';
 
     iframe.dataset.extensionId = id;
+    iframe.dataset.environmentId = this.props.bridge.getData().environmentId;
     iframe.dataset.location = bridgeData.location;
 
     if (namespace === WidgetNamespace.APP) {

@@ -13,6 +13,7 @@ import { calcUsersMeta, calculateTotalPrice } from 'utils/SubscriptionUtils';
 import { getOrganization } from 'services/TokenStore';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { isSelfServicePlan } from 'account/pricing/PricingDataProvider';
+import { isOrgOnPlatformTrial } from 'features/trials';
 
 import DocumentTitle from 'components/shared/DocumentTitle';
 
@@ -20,6 +21,7 @@ import SubscriptionPage from './SubscriptionPage';
 
 import { useAsync } from 'core/hooks';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
+import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
 
 const getBasePlan = (plans) => plans.items.find(({ planType }) => planType === 'base');
 const getSpacePlans = (plans, accessibleSpaces) =>
@@ -55,11 +57,24 @@ async function fetchNumMemberships(organizationId) {
 const fetch = (organizationId, { setSpacePlans, setGrandTotal }) => async () => {
   const organization = await getOrganization(organizationId);
 
+  const endpoint = createOrganizationEndpoint(organizationId);
+
+  const isPlatformTrialCommEnabled = await getVariation(FLAGS.PLATFORM_TRIAL_COMM, {
+    organizationId: organization.sys.id,
+  });
+
   if (!isOwnerOrAdmin(organization)) {
+    if (isPlatformTrialCommEnabled && isOrgOnPlatformTrial(organization)) {
+      const spaces = await getAllSpaces(endpoint);
+      return {
+        organization,
+        memberAccessibleSpaces: spaces,
+        isPlatformTrialCommEnabled,
+      };
+    }
+
     throw new Error();
   }
-
-  const endpoint = createOrganizationEndpoint(organizationId);
 
   const [plans, productRatePlans, numMemberships] = await Promise.all([
     getPlansWithSpaces(endpoint),
@@ -101,6 +116,7 @@ const fetch = (organizationId, { setSpacePlans, setGrandTotal }) => async () => 
     organization,
     productRatePlans,
     showMicroSmallSupportCard,
+    isPlatformTrialCommEnabled,
   };
 };
 

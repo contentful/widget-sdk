@@ -176,6 +176,14 @@ APIClient.prototype.updateAsset = function (data) {
   return this._updateResource('assets', data);
 };
 
+APIClient.prototype.signAssetUrls = function (data) {
+  return this._request({
+    method: 'POST',
+    path: 'management/sign-url',
+    data,
+  });
+};
+
 APIClient.prototype.updateAppInstallation = function (
   appDefinitionId,
   parameters = {},

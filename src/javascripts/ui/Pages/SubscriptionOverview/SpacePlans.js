@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
@@ -15,7 +15,9 @@ import {
   Card,
   Tooltip,
   Icon,
+  Note,
 } from '@contentful/forma-36-react-components';
+import { getVariation, FLAGS } from 'LaunchDarkly';
 
 import ExternalTextLink from 'app/common/ExternalTextLink';
 import { websiteUrl } from 'Config';
@@ -58,6 +60,9 @@ const styles = {
     marginBottom: '-3px',
     marginLeft: tokens.spacingXs,
   }),
+  note: css({
+    marginBottom: tokens.spacingM,
+  }),
 };
 
 function SpacePlans({
@@ -74,6 +79,16 @@ function SpacePlans({
 }) {
   const numSpaces = spacePlans.length;
   const totalCost = calculatePlansCost({ plans: spacePlans });
+
+  const unassignedSpacePlans = spacePlans.filter((plan) => plan.gatekeeperKey === null);
+  const [showSpacePlanChangeBtn, setShowSpacePlanChangeBtn] = useState(false);
+  useEffect(() => {
+    async function fetch() {
+      const isFeatureEnabled = await getVariation(FLAGS.SPACE_PLAN_ASSIGNMENT);
+      setShowSpacePlanChangeBtn(isFeatureEnabled && enterprisePlan);
+    }
+    fetch();
+  }, [setShowSpacePlanChangeBtn, enterprisePlan]);
 
   const linkToSupportPage = websiteUrl(
     `support/?utm_source=webapp&utm_medium=account-menu&utm_campaign=in-app-help&purchase-micro-or-small-space=${organizationId}`
@@ -161,7 +176,11 @@ function SpacePlans({
           Create Space
         </TextLink>
       </Paragraph>
-
+      {showSpacePlanChangeBtn && unassignedSpacePlans.length > 0 && (
+        <Note className={styles.note}>
+          {`Click the "change" link next to the space type to change it.`}
+        </Note>
+      )}
       {(initialLoad || numSpaces > 0) && (
         <Table testId="subscription-page.table">
           <colgroup>
@@ -194,6 +213,7 @@ function SpacePlans({
                     onDeleteSpace={onDeleteSpace}
                     hasUpgraded={isUpgraded}
                     enterprisePlan={enterprisePlan}
+                    showSpacePlanChangeBtn={showSpacePlanChangeBtn}
                   />
                 );
               })

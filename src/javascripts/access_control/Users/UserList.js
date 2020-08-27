@@ -10,7 +10,6 @@ import { getAllUsers } from 'access_control/OrganizationMembershipRepository';
 import resolveLinks from 'data/LinkResolver';
 import { useAsync } from 'core/hooks';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
-import { getModule } from 'core/NgRegistry';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 
 import * as UserListActions from './UserListActions';
@@ -21,6 +20,9 @@ import { FetcherLoading } from 'app/common/createFetcherComponent';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import { ModalLauncher } from 'core/components/ModalLauncher';
 import AddUsers from 'app/SpaceSettings/Users/AddUsers/AddUsers';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { getOrganization, getOrganizationId } from 'core/services/SpaceEnvContext/utils';
+import { createSpaceEndpoint } from 'data/EndpointFactory';
 
 const fetch = (orgId, endpoint, space, setData) => async () => {
   const [members, spaceMemberships, roles, spaceUsers, hasTeamsFeature] = await Promise.all([
@@ -41,11 +43,13 @@ const fetch = (orgId, endpoint, space, setData) => async () => {
 };
 
 const UserList = ({ jumpToRole }) => {
-  const { endpoint, space, organization } = getModule('spaceContext');
-
+  const { currentSpace, currentSpaceId, currentEnvironmentId } = useSpaceEnvContext();
+  const organization = getOrganization(currentSpace);
+  const organizationId = getOrganizationId(currentSpace);
+  const endpoint = createSpaceEndpoint(currentSpaceId, currentEnvironmentId);
   const [selectedView, setSelectedView] = useState(jumpToRole ? VIEW_BY_ROLE : VIEW_BY_NAME);
   const [data, setData] = useState(null);
-  const boundFetch = fetch(organization.sys.id, endpoint, space, setData);
+  const boundFetch = fetch(organizationId, endpoint, currentSpace, setData);
   const { isLoading, error } = useAsync(useCallback(boundFetch, []));
 
   const resolvedMembers = get(data, 'resolvedMembers', []);
@@ -116,8 +120,8 @@ const UserList = ({ jumpToRole }) => {
       userGroups={userGroups}
       numberOfTeamMemberships={numberOfTeamMemberships}
       selectedView={selectedView}
-      orgId={organization.sys.id}
-      spaceId={space.getId()}
+      orgId={organizationId}
+      spaceId={currentSpaceId}
       jumpToRole={jumpToRole}
       canModifyUsers={canModifyUsers()}
       isOwnerOrAdmin={isOwnerOrAdmin(organization)}
@@ -143,7 +147,7 @@ const UserList = ({ jumpToRole }) => {
       <AddUsers
         isShown={isShown}
         onClose={onClose}
-        orgId={organization.sys.id}
+        orgId={organizationId}
         unavailableUserIds={unavailableUserIds}
       />
     ));

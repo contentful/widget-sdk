@@ -20,7 +20,7 @@ import {
   makeShareJSError,
   makePermissionError,
 } from 'app/widgets/createFieldWidgetSDK/createEntryFieldApi';
-import { WidgetLocation } from 'features/widget-renderer';
+import { WidgetLocation } from '@contentful/widget-renderer';
 
 const ERROR_MESSAGES = {
   MFAILUPDATE: 'Could not update entry field',

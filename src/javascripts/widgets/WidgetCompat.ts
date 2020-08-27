@@ -4,8 +4,10 @@ import {
   WidgetLocation,
   Widget,
   EntryFieldLocation,
-} from 'features/widget-renderer';
+} from '@contentful/widget-renderer';
 import { toInternalFieldType, toApiFieldType } from 'widgets/FieldTypes';
+
+export type LegacyWidget = ReturnType<typeof toLegacyWidget>;
 
 export const toLegacyWidget = (widget: Widget) => {
   const locations = widget.locations.map((l) => l.location);

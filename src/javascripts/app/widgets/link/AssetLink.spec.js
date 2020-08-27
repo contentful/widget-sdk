@@ -1,11 +1,9 @@
 import React from 'react';
-import { render, wait, waitForElement, cleanup } from '@testing-library/react';
+import { render, wait, waitForElement } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import AssetLink from './AssetLink';
 
 describe('AssetLink', () => {
-  afterEach(cleanup);
-
   const props = {
     asset: {
       sys: {

@@ -1,7 +1,7 @@
 import { createDialogsApi, createReadOnlyDialogsApi } from './createDialogsApi';
-import { DialogExtensionSDK } from 'contentful-ui-extensions-sdk';
+import { FieldExtensionSDK, IdsAPI } from 'contentful-ui-extensions-sdk';
 import * as ExtensionDialogs from 'widgets/ExtensionDialogs';
-import * as entitySelector from 'search/EntitySelector/entitySelector';
+import { entitySelector } from 'features/entity-search';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { ModalLauncher } from 'core/components/ModalLauncher';
 import { DialogsAPI } from 'contentful-ui-extensions-sdk';
@@ -9,17 +9,19 @@ import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 
 jest.mock('core/components/ModalLauncher');
 jest.mock('widgets/ExtensionDialogs');
-jest.mock('search/EntitySelector/entitySelector');
+jest.mock('features/entity-search', () => ({
+  entitySelector: { openFromExtensionSingle: jest.fn(), openFromExtension: jest.fn() },
+}));
 jest.mock('widgets/CustomWidgetLoaderInstance');
 
-const dialogSdk = {} as DialogExtensionSDK;
+const sdk = {} as Omit<FieldExtensionSDK, 'dialogs'>;
 
 describe('createDialogsApi', () => {
   let dialogsApi: DialogsAPI;
 
   describe('when creating non-read-only API', () => {
     beforeEach(() => {
-      dialogsApi = createDialogsApi({ sdk: dialogSdk });
+      dialogsApi = createDialogsApi(sdk);
     });
 
     describe('openAlert', () => {
@@ -102,10 +104,8 @@ describe('createDialogsApi', () => {
       describe('when sdk contains an app id', () => {
         beforeEach(() => {
           dialogsApi = createDialogsApi({
-            sdk: {
-              ...dialogSdk,
-              ids: { app: 'app_id' },
-            } as DialogExtensionSDK,
+            ...sdk,
+            ids: { app: 'app_id' } as IdsAPI,
           });
         });
 
@@ -120,10 +120,8 @@ describe('createDialogsApi', () => {
       describe('when sdk does not contain an app id', () => {
         beforeEach(() => {
           dialogsApi = createDialogsApi({
-            sdk: {
-              ...dialogSdk,
-              ids: {},
-            } as DialogExtensionSDK,
+            ...sdk,
+            ids: {} as IdsAPI,
           });
         });
 
@@ -155,10 +153,8 @@ describe('createDialogsApi', () => {
           })),
         });
         dialogsApi = createDialogsApi({
-          sdk: {
-            ...dialogSdk,
-            ids: { app: 'app_id' },
-          } as DialogExtensionSDK,
+          ...sdk,
+          ids: { app: 'app_id' } as IdsAPI,
         });
       });
 
@@ -187,10 +183,8 @@ describe('createDialogsApi', () => {
           })),
         });
         dialogsApi = createDialogsApi({
-          sdk: {
-            ...dialogSdk,
-            ids: {},
-          } as DialogExtensionSDK,
+          ...sdk,
+          ids: {} as IdsAPI,
         });
       });
 

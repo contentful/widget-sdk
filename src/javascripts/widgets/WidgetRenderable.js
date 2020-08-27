@@ -2,7 +2,7 @@ import { get, cloneDeep } from 'lodash';
 import { deepFreeze } from 'utils/Freeze';
 import { applyDefaultValues } from './WidgetParametersUtils';
 import { toInternalFieldType } from './FieldTypes';
-import { WidgetNamespace, isCustomWidget } from 'features/widget-renderer';
+import { WidgetNamespace, isCustomWidget } from '@contentful/widget-renderer';
 
 const EDITOR_NAMESPACES = [
   WidgetNamespace.EDITOR_BUILTIN,

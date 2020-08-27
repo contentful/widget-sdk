@@ -13,7 +13,7 @@ import {
   Translation as TranslationWidget,
   Users as UsersWidget,
 } from '../defaults';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 
 function getAllKeys(arr) {
   return uniq(flatten(arr.map((item) => Object.keys(item))));

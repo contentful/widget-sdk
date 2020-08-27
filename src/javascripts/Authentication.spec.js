@@ -1,11 +1,9 @@
 import * as K from 'core/utils/kefir';
 import * as Auth from './Authentication';
-import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { window } from 'core/services/window';
-import $httpMocked from 'ng/$http';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 import $locationMocked from 'ng/$location';
 
-jest.mock('ng/$http', () => jest.fn());
 jest.mock('ng/$location', () => ({
   url: jest.fn(),
 }));
@@ -13,6 +11,7 @@ jest.mock('ng/$location', () => ({
 jest.mock('core/services/window', () => ({
   window: {
     ...global.window,
+    fetch: jest.fn(),
     location: '',
   },
 }));
@@ -21,13 +20,30 @@ describe('Authentication', function () {
   let store;
 
   beforeEach(() => {
-    $httpMocked.mockResolvedValue({ data: { access_token: 'NEW TOKEN' } });
-
+    window.fetch.mockImplementation(async (uri) => {
+      if (uri.startsWith('https://secure.ctfassets.net')) {
+        return {
+          json() {
+            throw new Error('empty response');
+          },
+          ok: true,
+        };
+      } else {
+        return {
+          json: jest.fn(() => ({ access_token: 'NEW TOKEN' })),
+          ok: true,
+        };
+      }
+    });
     store = getBrowserStorage('session').forKey('token');
   });
 
   afterEach(() => {
-    $httpMocked.mockReset();
+    window.fetch.mockReset();
+  });
+
+  afterAll(() => {
+    window.fetch.mockClear();
   });
 
   describe('#refreshToken()', function () {
@@ -36,19 +52,25 @@ describe('Authentication', function () {
       Auth.init();
     });
 
-    it('sends a form encoded post request with credentials', function () {
-      Auth.refreshToken();
-      expect($httpMocked).toHaveBeenCalledWith({
+    it('sends a form encoded post request with credentials', async function () {
+      await Auth.refreshToken();
+      expect(window.fetch).toHaveBeenCalledWith('https://be.contentful.com/oauth/token', {
         method: 'POST',
-        url: 'https://be.contentful.com/oauth/token',
-        data:
+        body:
           'grant_type=password' +
           '&client_id=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' +
           '&scope=content_management_manage',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        withCredentials: true,
+        credentials: 'include',
+      });
+      expect(window.fetch).toHaveBeenCalledWith('https://secure.ctfassets.net/login', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          Authorization: 'Bearer NEW TOKEN',
+        },
       });
     });
 
@@ -68,10 +90,9 @@ describe('Authentication', function () {
       expect(await Auth.getToken()).toBe('NEW TOKEN');
     });
 
-    it('does not issue a second request when one is in progress', () => {
-      Auth.refreshToken();
-      Auth.refreshToken();
-      expect($httpMocked).toHaveBeenCalledTimes(1);
+    it('does not issue a second request when one is in progress', async () => {
+      await Promise.all([Auth.refreshToken(), Auth.refreshToken()]);
+      expect(window.fetch).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -84,7 +105,10 @@ describe('Authentication', function () {
     });
     it('sends authentication request without stored token', async function () {
       store.remove();
-      $httpMocked.mockResolvedValue({ data: { access_token: 'NEW TOKEN' } });
+      window.fetch.mockResolvedValue({
+        json: jest.fn(() => ({ access_token: 'NEW TOKEN' })),
+        ok: true,
+      });
       Auth.init();
       expect(await Auth.getToken()).toBe('NEW TOKEN');
       expect(K.getValue(Auth.token$)).toBe('NEW TOKEN');
@@ -162,16 +186,16 @@ describe('Authentication', function () {
         store.set('STORED_TOKEN');
         Auth.init();
         expect(store.get()).toBeNull();
-        expect($httpMocked.mock.calls[0]).toEqual([
+        expect(window.fetch.mock.calls[0]).toEqual([
+          'https://be.contentful.com/oauth/revoke',
           {
-            data:
+            body:
               'token=STORED_TOKEN&client_id=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
             headers: {
               Authorization: 'Bearer STORED_TOKEN',
               'Content-Type': 'application/x-www-form-urlencoded',
             },
             method: 'POST',
-            url: 'https://be.contentful.com/oauth/revoke',
           },
         ]);
       });
@@ -179,16 +203,16 @@ describe('Authentication', function () {
         store.set('STORED_TOKEN');
         Auth.init();
 
-        expect($httpMocked.mock.calls[1]).toEqual([
+        expect(window.fetch.mock.calls[1]).toEqual([
+          'https://be.contentful.com/oauth/token',
           {
-            data:
+            body:
               'grant_type=password&client_id=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&scope=content_management_manage',
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
             },
             method: 'POST',
-            url: 'https://be.contentful.com/oauth/token',
-            withCredentials: true,
+            credentials: 'include',
           },
         ]);
       });
@@ -214,15 +238,18 @@ describe('Authentication', function () {
       expect(store.get()).toBeNull();
       expect(removeMock).toHaveBeenCalledWith('token');
       expect(setMock).toHaveBeenCalledWith('loggedOut', 'true');
-      expect($httpMocked).toHaveBeenCalledWith({
-        data:
+      expect(window.fetch).toHaveBeenCalledWith('https://be.contentful.com/oauth/revoke', {
+        body:
           'token=NEW%20TOKEN&client_id=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
         headers: {
           Authorization: 'Bearer NEW TOKEN',
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         method: 'POST',
-        url: 'https://be.contentful.com/oauth/revoke',
+      });
+      expect(window.fetch).toHaveBeenCalledWith('https://secure.ctfassets.net/logout', {
+        method: 'POST',
+        credentials: 'include',
       });
       setMock.mockRestore();
       removeMock.mockRestore();
@@ -237,7 +264,7 @@ describe('Authentication', function () {
 
     it('redirects to the logout page if revokation fails', async function () {
       await Auth.init();
-      $httpMocked.mockRejectedValue();
+      window.fetch.mockRejectedValue();
       let caughtException = false;
       await Auth.logout().catch(function () {
         caughtException = true;

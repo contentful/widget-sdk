@@ -25,7 +25,11 @@ export default function register() {
       let authorization;
       let EntityFieldValueSpaceContext;
       let ENVIRONMENT_ALIAS_CHANGED_EVENT;
+      let ENVIRONMENT_ALIAS_CREATED_EVENT;
+      let ENVIRONMENT_ALIAS_DELETED_EVENT;
       let initEnvAliasChangeHandler;
+      let initEnvAliasCreateHandler;
+      let initEnvAliasDeleteHandler;
       let initOsano;
       let openPricing2020Warning;
       let pubSubClientRef;
@@ -144,6 +148,8 @@ export default function register() {
 
         if (pubSubClientRef && pubSubClientRef !== pubsubClient) {
           pubSubClientRef.off(ENVIRONMENT_ALIAS_CHANGED_EVENT);
+          pubSubClientRef.off(ENVIRONMENT_ALIAS_CREATED_EVENT);
+          pubSubClientRef.off(ENVIRONMENT_ALIAS_DELETED_EVENT);
           pubsubSubscribed = false;
         }
 
@@ -151,12 +157,22 @@ export default function register() {
 
         if (pubsubClient && !pubsubSubscribed && spaceId) {
           pubsubSubscribed = true;
-          const environmentAliasChangedHandler = initEnvAliasChangeHandler(
-            spaceContext.getEnvironmentId()
-          );
-          pubsubClient.on(ENVIRONMENT_ALIAS_CHANGED_EVENT, environmentAliasChangedHandler);
-        }
 
+          pubsubClient.on(ENVIRONMENT_ALIAS_CHANGED_EVENT, (payload) => {
+            const environmentAliasChangeHandler = initEnvAliasChangeHandler();
+            return environmentAliasChangeHandler(payload);
+          });
+
+          pubsubClient.on(ENVIRONMENT_ALIAS_CREATED_EVENT, (payload) => {
+            const environmentAliasCreatedHandler = initEnvAliasCreateHandler();
+            return environmentAliasCreatedHandler(payload);
+          });
+
+          pubsubClient.on(ENVIRONMENT_ALIAS_DELETED_EVENT, (payload) => {
+            const environmentAliasDeletedHandler = initEnvAliasDeleteHandler();
+            return environmentAliasDeletedHandler(payload);
+          });
+        }
         refreshNavState();
       }
 
@@ -193,8 +209,16 @@ export default function register() {
           TokenStore,
           { default: authorization },
           EntityFieldValueSpaceContext,
-          { ENVIRONMENT_ALIAS_CHANGED_EVENT },
-          { default: initEnvAliasChangeHandler },
+          {
+            ENVIRONMENT_ALIAS_CHANGED_EVENT,
+            ENVIRONMENT_ALIAS_CREATED_EVENT,
+            ENVIRONMENT_ALIAS_DELETED_EVENT,
+          },
+          {
+            default: initEnvAliasChangeHandler,
+            initEnvAliasCreateHandler,
+            initEnvAliasDeleteHandler,
+          },
           { init: initOsano },
           { openPricing2020Warning },
         ] = await Promise.all([

@@ -39,3 +39,6 @@ pacts/
 
 # VS Code
 *.code-workspace
+
+# Cert files
+*.pem

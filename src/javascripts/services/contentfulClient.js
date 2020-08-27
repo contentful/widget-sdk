@@ -1,4 +1,3 @@
-import { getModule } from 'core/NgRegistry';
 import _ from 'lodash';
 import qs from 'qs';
 
@@ -28,31 +27,29 @@ function Client(options) {
   });
 }
 
-Client.prototype.request = function (path, options) {
-  const $q = getModule('$q');
-  const $http = getModule('$http');
+Client.prototype.request = function (path, options = {}) {
+  const protocol = this.options.secure ? 'https' : 'http';
+  const [host] = this.options.host.split(':');
+  const port = this.options.secure ? '443' : '80';
+  const spaceOptions = this.options.space;
+  const params = _.isEmpty(options?.params) ? '' : `?${qs.stringify(options.params)}`;
+  const url = `${protocol}://${host}:${port}/spaces/${spaceOptions}${path}${params}`;
 
-  if (!options) options = {};
-  if (!options.headers) options.headers = {};
-  if (!options.params) options.params = {};
-  options.headers['Content-Type'] = 'application/vnd.contentful.delivery.v1+json';
-  options.headers['X-Contentful-Skip-Transformation'] = true;
-  options.headers['Authorization'] = 'Bearer ' + this.options.accessToken;
+  const config = {
+    ...options,
+    headers: {
+      ...options?.headers,
+      'Content-Type': 'application/vnd.contentful.delivery.v1+json',
+      'X-Contentful-Skip-Transformation': true,
+      Authorization: `Bearer ${this.options.accessToken}`,
+    },
+  };
 
-  options.url = [
-    this.options.secure ? 'https' : 'http',
-    '://',
-    _.first(this.options.host.split(':')),
-    ':',
-    this.options.secure ? '443' : '80',
-    '/spaces/',
-    this.options.space,
-    path,
-  ].join('');
+  return window.fetch(url, config).then((response) => {
+    const json = response.json();
 
-  return $http(options)
-    .then((response) => response.data)
-    .catch((error) => $q.reject(error.data));
+    return response.ok ? json : Promise.reject(json);
+  });
 };
 
 Client.prototype.asset = function (id) {

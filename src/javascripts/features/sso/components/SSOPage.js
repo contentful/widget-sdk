@@ -8,7 +8,7 @@ import {
   Workbench,
 } from '@contentful/forma-36-react-components';
 import { IDPSetupForm } from './IDPSetupForm';
-import SSOEnabled from 'app/OrganizationSettings/SSO/SSOEnabled';
+import { SSOEnabled } from './SSOEnabled';
 import { track } from 'analytics/Analytics';
 import _ from 'lodash';
 
@@ -35,11 +35,15 @@ const styles = {
 };
 
 export function SSOPage({ organization }) {
-  const [identityProvider, setIdentityProvider] = useState({});
+  const [identityProvider, setIdentityProvider] = useState(null);
+  const [idpLoading, setIdpLoading] = useState(false);
+  const [loadingState, setLoadingState] = useState(false);
 
   const retrieve = useCallback(async () => {
+    setLoadingState(true);
     const idp = await retrieveIdp(organization.sys.id);
-    setIdentityProvider({ data: idp });
+    setIdentityProvider(idp);
+    setLoadingState(false);
     return;
   }, [organization.sys.id]);
 
@@ -48,16 +52,18 @@ export function SSOPage({ organization }) {
   }, [retrieve]);
 
   const handleCreateIdp = () => {
-    createIdp(organization.sys.id);
+    setIdpLoading(true);
+    const data = createIdp(organization.sys.id);
+    setIdentityProvider({ data });
+    setIdpLoading(false);
   };
 
   const trackSupportClick = () => {
     track('sso:contact_support');
   };
 
-  const idpData = _.get(identityProvider, ['data'], false);
-  const isEnabled = _.get(idpData, ['enabled'], false);
-  const restrictedModeEnabled = _.get(idpData, ['restrictedMode'], false);
+  const isEnabled = identityProvider?.enabled ?? false;
+  const restrictedModeEnabled = identityProvider?.restrictedMode ?? false;
 
   return (
     <Workbench className="sso-setup">
@@ -67,7 +73,7 @@ export function SSOPage({ organization }) {
       />
       <Workbench.Content>
         <div className="sso-setup__main">
-          {!isEnabled && (
+          {!isEnabled && !loadingState && !identityProvider && (
             <React.Fragment>
               <Heading element="h1" className={styles.heading}>
                 Set up Single Sign-On (SSO) SAML 2.0
@@ -85,29 +91,30 @@ export function SSOPage({ organization }) {
                   Talk to support
                 </TextLink>
               </Paragraph>
+              <Button
+                buttonType="primary"
+                isFullWidth={false}
+                testId="create-idp"
+                loading={idpLoading}
+                onClick={handleCreateIdp}>
+                Set up SSO
+              </Button>
             </React.Fragment>
           )}
-          {!identityProvider.data && (
-            <Button
-              buttonType="primary"
-              isFullWidth={false}
-              testId="create-idp"
-              onClick={handleCreateIdp}>
-              Set up SSO
-            </Button>
-          )}
-          {idpData && !isEnabled && (
+          {identityProvider && !isEnabled && (
             <IDPSetupForm
               organization={organization}
               identityProvider={identityProvider}
               onUpdate={retrieve}
+              onTrackSupportClick={trackSupportClick}
             />
           )}
-          {idpData && isEnabled && (
+          {identityProvider && isEnabled && (
             <SSOEnabled
-              organization={organization}
-              ssoName={idpData.ssoName}
+              orgId={organization.sys.id}
+              ssoName={identityProvider.ssoName}
               restrictedModeEnabled={restrictedModeEnabled}
+              onTrackSupportClick={trackSupportClick}
             />
           )}
         </div>

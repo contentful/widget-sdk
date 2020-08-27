@@ -198,6 +198,22 @@ export function Plan(options) {
   return { sys: sys({ id: uniqueId('Plan'), type: 'ProductRatePlan' }), ...options };
 }
 
+export function RatePlanCharge(options) {
+  return {
+    sys: sys({
+      type: 'ProductRatePlanCharge',
+      id: uniqueId('ProductRatePlanCharge'),
+    }),
+    name: options.name,
+    tiers: [
+      {
+        endingUnit: 5,
+      },
+    ],
+    ...options,
+  };
+}
+
 export function SpaceRole(name = '') {
   return {
     name: name,
@@ -232,18 +248,15 @@ export function OrganizationResource(usage, limit, id) {
 
 export function IdentityProvider() {
   return {
-    isPending: false,
-    data: {
-      sys: { type: 'IdentityProvider', id: '2y6J2E3UVEzi5RFhI6xvPl', version: 8 },
-      enabled: false,
-      idpCert: '',
-      idpName: '',
-      idpSsoTargetUrl: '',
-      restrictedMode: false,
-      ssoName: '',
-      testConnectionAt: null,
-      testConnectionErrors: null,
-      testConnectionResult: null,
-    },
+    sys: { type: 'IdentityProvider', id: '2y6J2E3UVEzi5RFhI6xvPl', version: 8 },
+    enabled: false,
+    idpCert: '',
+    idpName: '',
+    idpSsoTargetUrl: '',
+    restrictedMode: false,
+    ssoName: '',
+    testConnectionAt: null,
+    testConnectionErrors: null,
+    testConnectionResult: null,
   };
 }

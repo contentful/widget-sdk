@@ -126,7 +126,7 @@ function gatherFiles(p) {
       (isJsFile && (resolved.endsWith('.spec.js') || resolved.endsWith('.spec.ts'))) ||
       resolved.endsWith('.spec.tsx');
     const isMocksDir = resolved.endsWith('__mocks__');
-    const isTestsDir = resolved.endsWith('__test__');
+    const isTestsDir = resolved.endsWith('__tests__');
 
     // Ignore .spec.js files
     if (isSpecFile || isMocksDir || isTestsDir) {

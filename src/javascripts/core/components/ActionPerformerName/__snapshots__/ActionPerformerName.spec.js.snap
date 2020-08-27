@@ -3,6 +3,7 @@
 exports[`ActionPerformerName should render a formatted variant of the name 1`] = `
 <span
   data-test-id="action-performer-name"
+  title="Published by me"
 >
   Published by me
 </span>
@@ -11,6 +12,7 @@ exports[`ActionPerformerName should render a formatted variant of the name 1`] =
 exports[`ActionPerformerName should render an empty string as a name when a format function is provided 1`] = `
 <span
   data-test-id="action-performer-name"
+  title="Published by "
 >
   Published by 
 </span>
@@ -19,12 +21,14 @@ exports[`ActionPerformerName should render an empty string as a name when a form
 exports[`ActionPerformerName should render an empty string when there is a broken sys 1`] = `
 <span
   data-test-id="action-performer-name"
+  title=""
 />
 `;
 
 exports[`ActionPerformerName should render the basic variant with required props after loading 1`] = `
 <span
   data-test-id="action-performer-name"
+  title="Me"
 >
   Me
 </span>
@@ -43,6 +47,7 @@ exports[`ActionPerformerName should render the loading component initially 1`] =
 exports[`ActionPerformerName should try to render a user when there is an invalid linkType 1`] = `
 <span
   data-test-id="action-performer-name"
+  title="Published by me"
 >
   Published by me
 </span>

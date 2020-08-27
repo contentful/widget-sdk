@@ -44,10 +44,6 @@ jest.mock('account/pricing/PricingDataProvider', () => ({
   getBasePlan: jest.fn(() => ({ customerType: 'Self-service' })),
 }));
 
-jest.mock('ng/modalDialog', () => ({
-  open: jest.fn().mockResolvedValue({}),
-}));
-
 // TODO: we'll be able to write much better tests if we migrate to Forma36 modals
 describe('CreateSpace', () => {
   beforeEach(() => {

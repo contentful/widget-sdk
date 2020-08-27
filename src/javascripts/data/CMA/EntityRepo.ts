@@ -20,11 +20,18 @@ const COLLECTION_ENDPOINTS = {
 
 export type EntityRepo = {
   get(entityType: string, entityId: string): Promise<Entity>;
-  onContentEntityChanged: (entitySys: { type: string; id: string }, callback: any) => () => any;
+  onContentEntityChanged: (
+    entitySys: { type: string; id: string },
+    callback: (info: EntityRepoChangeInfo) => {}
+  ) => () => any;
   onAssetFileProcessed: (entitySys: { type: string; id: string }, callback: any) => () => any;
   update: (entity: Entity) => Promise<Entity>;
   applyAction: (action: EntityAction, uiState: EntityState, data: Entity) => Entity;
 };
+
+export interface EntityRepoChangeInfo {
+  newVersion?: number;
+}
 
 interface EntityRepoOptions {
   skipDraftValidation?: boolean;
@@ -83,7 +90,7 @@ export function create(
         msg.entityId === entitySys.id &&
         msg.environmentId === envId
       ) {
-        callback();
+        callback({ newVersion: msg.version });
       }
     };
     pubSubClient.on(CONTENT_ENTITY_UPDATED_EVENT, handler);

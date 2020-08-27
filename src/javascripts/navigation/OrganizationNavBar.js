@@ -10,6 +10,7 @@ import { getVariation, FLAGS } from 'LaunchDarkly';
 import { AdvancedExtensibilityFeature } from 'features/extensions-management';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getBasePlan, isEnterprisePlan } from 'account/pricing/PricingDataProvider';
+import { isOrgOnPlatformTrial } from 'features/trials';
 
 function getItems(params, { orgId }) {
   const shouldDisplayAccessTools = params.isOwnerOrAdmin;
@@ -33,6 +34,11 @@ function getItems(params, { orgId }) {
       dataViewType: 'organization-user-provisioning',
     },
   ];
+
+  const shouldDisplayNewSubscriptionPage = params.platformTrialCommEnabled
+    ? params.pricingVersion == 'pricing_version_2' &&
+      (params.isOwnerOrAdmin || params.isOrgOnPlatformTrial)
+    : params.pricingVersion == 'pricing_version_2' && params.isOwnerOrAdmin;
 
   return [
     {
@@ -60,7 +66,7 @@ function getItems(params, { orgId }) {
       dataViewType: 'subscription',
     },
     {
-      if: params.pricingVersion == 'pricing_version_2' && params.isOwnerOrAdmin,
+      if: shouldDisplayNewSubscriptionPage,
       title: 'Subscription',
       sref: 'account.organizations.subscription_new',
       srefParams: { orgId },
@@ -71,7 +77,6 @@ function getItems(params, { orgId }) {
       navIcon: 'Subscription',
       dataViewType: 'subscription-new',
     },
-
     {
       if: params.hasBillingTab,
       title: 'Billing',
@@ -136,7 +141,6 @@ function getItems(params, { orgId }) {
     {
       if: shouldDisplayAccessTools,
       title: 'Access Tools',
-      tagLabel: 'new',
       rootSref: 'account.organizations.access-tools',
       navIcon: 'Sso',
       dataViewType: 'organization-access-tools',
@@ -202,9 +206,10 @@ export default class OrganizationNavigationBar extends React.Component {
       getOrgFeature(orgId, 'scim'),
       FeatureService.get('offsiteBackup'),
       AdvancedExtensibilityFeature.isEnabled(),
+      getVariation(FLAGS.PLATFORM_TRIAL_COMM, { organizationId: orgId }),
     ];
 
-    if (organization.pricingVersion !== 'pricing_version_1') {
+    if (organization.pricingVersion !== 'pricing_version_1' && isOwnerOrAdmin(organization)) {
       promises = promises.concat([
         getVariation(FLAGS.PRICING_2020_WARNING, {
           organizationId: orgId,
@@ -218,6 +223,7 @@ export default class OrganizationNavigationBar extends React.Component {
       scimFeatureEnabled,
       hasOffsiteBackup,
       hasAdvancedExtensibility,
+      platformTrialCommEnabled,
       newPricingFeatureDisplayed,
       basePlanIsEnterprise,
     ] = await Promise.all(promises);
@@ -232,6 +238,8 @@ export default class OrganizationNavigationBar extends React.Component {
       hasBillingTab: organization.isBillable && isOwner(organization),
       hasSettingsTab: isOwner(organization),
       showUsageNewLabel: newPricingFeatureDisplayed && !basePlanIsEnterprise,
+      platformTrialCommEnabled,
+      isOrgOnPlatformTrial: isOrgOnPlatformTrial(organization),
     };
 
     this.setState({ items: getItems(params, { orgId }) });

@@ -10,6 +10,7 @@ import OnboardingRelaunch from 'navigation/modernStackOnboardingRelaunch';
 import NavigationItem from './NavigationItem';
 import NavigationDropdown from './NavigationDropdown';
 import KnowledgeMenu from './KnowledgeMenu/KnowledgeMenu';
+import { TrialTag } from 'features/trials';
 
 const styles = {
   navBar: css({
@@ -63,6 +64,7 @@ export default class NavBar extends React.Component {
                     <OnboardingRelaunch />
                   </div>
                 )}
+                <TrialTag />
                 {this.props.showQuickNavigation && <QuickNavigation />}
                 <KnowledgeMenu />
               </div>

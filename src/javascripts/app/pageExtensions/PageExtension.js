@@ -6,7 +6,7 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import { applyDefaultValues } from 'widgets/WidgetParametersUtils';
 import trackExtensionRender from 'widgets/TrackExtensionRender';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
-import { WidgetLocation } from 'features/widget-renderer';
+import { WidgetLocation } from '@contentful/widget-renderer';
 
 const styles = {
   root: css({
@@ -29,7 +29,8 @@ export default class PageExtension extends React.Component {
   };
 
   componentDidMount() {
-    trackExtensionRender(WidgetLocation.PAGE, toLegacyWidget(this.props.widget));
+    const environmentId = this.props.bridge.getData().environmentId;
+    trackExtensionRender(WidgetLocation.PAGE, toLegacyWidget(this.props.widget), environmentId);
   }
 
   render() {

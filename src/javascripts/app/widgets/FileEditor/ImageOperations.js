@@ -4,10 +4,12 @@ import * as Filestack from 'services/Filestack';
 import { openInputDialog } from 'app/InputDialogComponent';
 import * as TokenStore from 'services/TokenStore';
 import * as HostnameTransformer from '@contentful/hostname-transformer';
+import { isSecureAssetUrl } from 'utils/AssetUrl';
 
 const ratio = (file) => `${file.details.image.width}:${file.details.image.height}`;
 const ratioNumber = (file) => file.details.image.width / file.details.image.height;
 const url = (file, qs) => `https:${externalImageUrl(file.url)}${qs ? '?' + qs : ''}`;
+const defaultSignUrl = (value) => value;
 
 const NUMBER_REGEX = /^[1-9][0-9]{0,3}$/;
 const RATIO_REGEX = /^[1-9][0-9]{0,3}:[1-9][0-9]{0,3}$/;
@@ -50,15 +52,15 @@ const RESIZE_MODES = {
   }),
 };
 
-export function rotateOrMirror(mode, file) {
+export async function rotateOrMirror(mode, file, signUrl = defaultSignUrl) {
   if (!isValidImage(file)) {
     return Promise.reject(new Error('Expected an image.'));
   }
 
-  return Filestack.rotateOrMirrorImage(mode, url(file));
+  return Filestack.rotateOrMirrorImage(mode, await signUrl(url(file)));
 }
 
-export function resize(mode, file) {
+export function resize(mode, file, signUrl = defaultSignUrl) {
   if (!isValidImage(file)) {
     return Promise.reject(new Error('Expected an image.'));
   }
@@ -83,24 +85,27 @@ export function resize(mode, file) {
     initialValue
   ).then((value) => {
     if (value) {
-      return valueToUrl(value);
+      return signUrl(valueToUrl(value));
     }
   });
 }
 
-export function crop(mode, file) {
+export async function crop(mode, file, signUrl = defaultSignUrl) {
   if (!isValidImage(file)) {
     return Promise.reject(new Error('Expected an image.'));
   }
 
   if (mode === 'custom') {
-    return cropWithCustomAspectRatio(file);
+    return cropWithCustomAspectRatio(file, signUrl);
   } else {
-    return Filestack.cropImage(mode === 'original' ? ratioNumber(file) : mode, url(file));
+    return Filestack.cropImage(
+      mode === 'original' ? ratioNumber(file) : mode,
+      await signUrl(url(file))
+    );
   }
 }
 
-function cropWithCustomAspectRatio(file) {
+function cropWithCustomAspectRatio(file, signUrl = defaultSignUrl) {
   return openInputDialog(
     {
       confirmLabel: 'Please provide desired aspect ratio',
@@ -118,11 +123,11 @@ function cropWithCustomAspectRatio(file) {
       ),
     },
     ratio(file)
-  ).then((ratio) => {
+  ).then(async (ratio) => {
     if (ratio) {
       const [w, h] = ratio.split(':');
       const parsedRatio = parseInt(w, 10) / parseInt(h, 10);
-      return Filestack.cropImage(parsedRatio, url(file));
+      return Filestack.cropImage(parsedRatio, await signUrl(url(file)));
     }
   });
 }
@@ -136,6 +141,9 @@ function isValidImage(file = {}) {
 // Normalizes image URL to internal Contentful Images API URL.
 // Transforms to external domain configured for oganization.
 function externalImageUrl(url) {
+  if (isSecureAssetUrl(url)) {
+    return url;
+  }
   const domains = TokenStore.getDomains();
   const internalUrl = HostnameTransformer.toInternal(url, domains);
 

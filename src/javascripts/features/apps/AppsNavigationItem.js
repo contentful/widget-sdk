@@ -12,7 +12,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import { styles } from './styles';
 import PropTypes from 'prop-types';
-import { WidgetLocation } from 'features/widget-renderer';
+import { WidgetLocation } from '@contentful/widget-renderer';
 
 const makeRef = (ref, isMaster) => {
   if (isMaster) {

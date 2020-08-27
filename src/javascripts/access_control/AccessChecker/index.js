@@ -11,8 +11,6 @@ import * as Enforcements from 'access_control/Enforcements';
 import * as logger from 'services/logger';
 import { showPersistentNotification } from 'components/shared/persistent-notification/service';
 
-export { wasForbidden } from './Utils';
-
 /**
  * @name accessChecker
  *

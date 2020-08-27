@@ -30,7 +30,7 @@ const indexPage = renderIndex(null, indexConfig, {
 
 // Server configuration
 
-const app = express();
+let app = express();
 const config = createWebpackConfig();
 
 const compiler = webpack(config);
@@ -68,6 +68,20 @@ app.get('*', async function (req, res, next) {
 app.use(function (_req, res) {
   res.sendStatus(404).end();
 });
+
+const keyFile = process.env.HTTPS_KEY_FILE;
+const certFile = process.env.HTTPS_CERT_FILE;
+if (keyFile && certFile) {
+  const fs = require('fs');
+  const https = require('https');
+
+  const opts = {
+    key: fs.readFileSync(keyFile),
+    cert: fs.readFileSync(certFile),
+  };
+
+  app = https.createServer(opts, app);
+}
 
 app.listen(PORT, (err) => {
   if (err) {

@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import * as K from 'core/utils/kefir';
 import { createMVar, createExclusiveTask } from 'utils/Concurrent';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
@@ -6,6 +5,7 @@ import * as Config from 'Config';
 import postForm from 'data/Request/PostForm';
 import { getModule } from 'core/NgRegistry';
 import { window } from 'core/services/window';
+import * as logger from 'services/logger';
 
 /**
  * @name Authentication
@@ -39,14 +39,13 @@ const LOGOUT_KEY = 'loggedOut';
  */
 const tokenMVar = createMVar();
 
-const store = getBrowserStorage();
 const sessionStore = getBrowserStorage('session');
 const localStore = getBrowserStorage('local');
 
-const afterLoginPathStore = store.forKey('redirect_after_login');
+const afterLoginPathStore = localStore.forKey('redirect_after_login');
 
 const tokenStore =
-  Config.env === 'development' ? store.forKey('token') : sessionStore.forKey('token');
+  Config.env === 'development' ? localStore.forKey('token') : sessionStore.forKey('token');
 /**
  * @description
  * Get the current token.
@@ -79,18 +78,22 @@ export const token$ = tokenBus.property;
  *
  * @returns {Promise<string>}
  */
-export const refreshToken = createExclusiveTask(() => {
+export const refreshToken = createExclusiveTask(async () => {
   tokenStore.remove();
   tokenMVar.empty();
-  return fetchNewToken().then((token) => {
-    if (token) {
-      tokenStore.set(token);
-      updateToken(token);
-      return token;
-    } else {
-      redirectToLogin();
+  const token = await fetchNewToken();
+  if (token) {
+    try {
+      await loginSecureAssets(token);
+    } catch (err) {
+      logger.logServerWarn('Error signing in to secure assets host', err);
     }
-  });
+    tokenStore.set(token);
+    updateToken(token);
+    return token;
+  } else {
+    redirectToLogin();
+  }
 }).call;
 
 /**
@@ -127,16 +130,30 @@ export function init() {
 
   const previousToken = tokenStore.get();
 
-  if (previousToken && $location.url() === '/?login=1') {
+  if (!previousToken) {
+    refreshAndRedirect();
+    return;
+  }
+
+  if ($location.url() === '/?login=1') {
     // This path indicates that we are coming from gatekeeper and we have
     // a new gatekeeper session. In that case we throw away our current
     // token since it might belong to a different user
     revokeToken(previousToken);
     refreshAndRedirect();
-  } else if (!previousToken) {
-    refreshAndRedirect();
   } else {
     updateToken(previousToken);
+    if (Config.env === 'development') {
+      // In production we use a session-scoped localStorage, so if we've already
+      // logged in through usual means, the user should have already logged into
+      // the secure assets domain (which has a session-scoped cookie).
+      //
+      // In development, we use localStorage / login via url hash, which won't
+      // trigger the secure assets login unless we do the following:
+      loginSecureAssets(previousToken).catch((err) => {
+        logger.logServerWarn('Error signing in to secure assets host', err);
+      });
+    }
   }
 }
 
@@ -171,6 +188,11 @@ export async function logout() {
 
   try {
     await revokeToken(token);
+    try {
+      await logoutSecureAssets();
+    } catch (err) {
+      logger.logServerWarn('Error logging out of secure assets host', err);
+    }
   } finally {
     setLocation(Config.authUrl('logout'));
   }
@@ -254,15 +276,56 @@ function fetchNewToken() {
     {
       // We include the cookies from the Gatekeeper domain in the
       // request. This is used to authenticate and give us a new token.
-      withCredentials: true,
+      credentials: 'include',
     }
   )
     .then((response) => {
-      return get(response, 'data.access_token');
+      return response?.access_token;
     })
     .catch(() => {
       return null;
     });
+}
+
+/**
+ * Logs the user in to the secure assets endpoint
+ * @param {string} cmaToken the cma token to use to log in
+ */
+async function loginSecureAssets(cmaToken) {
+  const host = Config.secureAssetsUrl;
+  if (!host) {
+    return;
+  }
+  // These return 204, empty content, which postForm doesn't support
+  const res = await window.fetch(`${host}/login`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${cmaToken}`,
+    },
+    credentials: 'include',
+  });
+  if (!res.ok) {
+    throw new Error(res.text());
+  }
+}
+
+/**
+ * Logs out from the secure assets endpoint (should work regardless
+ * of whether the user is actually logged in.)
+ */
+async function logoutSecureAssets() {
+  const host = Config.secureAssetsUrl;
+  if (!host) {
+    return;
+  }
+  // These return 204, empty content, which postForm doesn't support
+  const res = await window.fetch(`${host}/logout`, {
+    method: 'POST',
+    credentials: 'include',
+  });
+  if (!res.ok) {
+    throw new Error(res.text());
+  }
 }
 
 function loadTokenFromHash() {

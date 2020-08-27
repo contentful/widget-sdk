@@ -2,7 +2,7 @@ import PageExtensionRoute from './PageExtensionRoute';
 import createPageExtensionBridge from 'widgets/bridges/createPageExtensionBridge';
 import * as Navigator from 'states/Navigator';
 import * as SlideInNavigator from 'navigation/SlideInNavigator/index';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 
 export default {
   name: 'pageExtensions',

@@ -5,7 +5,7 @@ import { css } from 'emotion';
 import StateLink from 'app/common/StateLink';
 
 import tokens from '@contentful/forma-36-tokens';
-import ReleasesFeatureFlag from '../ReleasesFeatureFlag';
+import { useFeatureFlagAddToRelease } from '../ReleasesFeatureFlag';
 
 const styles = {
   linkContainer: css({
@@ -27,23 +27,18 @@ ReleasesStateLink.propTypes = {
 };
 
 export default function ReleasesPageLink({ isMasterEnvironment }) {
-  return (
-    <ReleasesFeatureFlag>
-      {({ currentVariation }) => {
-        return currentVariation ? (
-          <div className={styles.linkContainer}>
-            <ReleasesStateLink isMasterEnvironment={isMasterEnvironment}>
-              {({ getHref, onClick }) => (
-                <TextLink href={getHref()} onClick={onClick} icon="Release">
-                  Releases
-                </TextLink>
-              )}
-            </ReleasesStateLink>
-          </div>
-        ) : null;
-      }}
-    </ReleasesFeatureFlag>
-  );
+  const { addToReleaseEnabled } = useFeatureFlagAddToRelease();
+  return addToReleaseEnabled ? (
+    <div className={styles.linkContainer}>
+      <ReleasesStateLink isMasterEnvironment={isMasterEnvironment}>
+        {({ getHref, onClick }) => (
+          <TextLink href={getHref()} onClick={onClick} icon="Release">
+            Releases
+          </TextLink>
+        )}
+      </ReleasesStateLink>
+    </div>
+  ) : null;
 }
 
 ReleasesPageLink.propTypes = {

@@ -28,12 +28,12 @@ const StateLink = ({
       return;
     }
 
-    if (e.shiftKey || e.ctrlKey || e.metaKey || rest.target === '_blank') {
-      // allow to open in a new tab/window normally
-    } else {
-      // perform Angular UI router transition only
+    // if should allow to open in a new tab/window normally do not perform Angular UI router transition
+    if (!(e.shiftKey || e.ctrlKey || e.metaKey || rest.target === '_blank')) {
       e.preventDefault();
+
       Navigator.go({ path, params, options });
+
       if (onClick) {
         onClick(e);
       }
@@ -49,8 +49,10 @@ const StateLink = ({
 
   const Component = component || 'a';
 
+  const href = Navigator.href({ path, params });
+
   return (
-    <Component {...rest} href={Navigator.href({ path, params })} onClick={onClickHandler}>
+    <Component {...rest} href={href} onClick={onClickHandler}>
       {children}
     </Component>
   );

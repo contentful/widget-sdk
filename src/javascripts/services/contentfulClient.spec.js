@@ -1,11 +1,15 @@
 import newClient from './contentfulClient';
-import $httpMocked from 'ng/$http';
+
+global.fetch = jest.fn();
 
 describe('Contentful Client', () => {
   let client;
 
   beforeEach(() => {
-    $httpMocked.mockClear();
+    global.fetch.mockResolvedValue({
+      json: jest.fn(),
+      ok: true,
+    });
 
     client = newClient({
       host: 'api.contentful.com',
@@ -14,28 +18,42 @@ describe('Contentful Client', () => {
     });
   });
 
+  afterEach(() => {
+    global.fetch.mockReset();
+  });
+
+  afterAll(() => {
+    global.fetch.mockClear();
+    delete global.fetch;
+  });
+
   function getUrl(path) {
     return 'https://api.contentful.com:443/spaces/spaceid' + path;
   }
 
   function expectUrlPath(path) {
-    expect($httpMocked.mock.calls[0][0].url).toEqual(getUrl(path));
+    expect(global.fetch.mock.calls[0][0]).toEqual(getUrl(path));
   }
 
   async function failingTest(fn) {
-    $httpMocked.mockRejectedValue({ data: 'rejected message' });
+    global.fetch.mockResolvedValue({
+      json: jest.fn(() => 'rejected message'),
+      ok: false,
+    });
     const failMock = jest.fn();
     try {
       await fn();
     } catch (e) {
       failMock(e);
     }
-    expect(failMock).toHaveBeenCalled();
     expect(failMock).toHaveBeenCalledWith('rejected message');
   }
 
   it('gets a space', async () => {
-    $httpMocked.mockResolvedValue({ data: [] });
+    global.fetch.mockResolvedValue({
+      json: jest.fn(() => []),
+      ok: true,
+    });
     await client.space();
     expectUrlPath('');
   });
@@ -47,7 +65,10 @@ describe('Contentful Client', () => {
   });
 
   it('gets content types', async () => {
-    $httpMocked.mockResolvedValue({ data: [] });
+    global.fetch.mockResolvedValue({
+      json: jest.fn(() => []),
+      ok: true,
+    });
     await client.contentTypes();
     expectUrlPath('/content_types');
   });
@@ -59,7 +80,10 @@ describe('Contentful Client', () => {
   });
 
   it('gets a content type', async () => {
-    $httpMocked.mockResolvedValue({ data: { sys: {}, fields: [] } });
+    global.fetch.mockResolvedValue({
+      json: jest.fn(() => ({ sys: {}, fields: [] })),
+      ok: true,
+    });
 
     await client.contentType('123');
 
@@ -73,7 +97,10 @@ describe('Contentful Client', () => {
   });
 
   it('gets entries', async () => {
-    $httpMocked.mockResolvedValue({ data: {} });
+    global.fetch.mockResolvedValue({
+      json: jest.fn(() => ({})),
+      ok: true,
+    });
     await client.entries();
     expectUrlPath('/entries');
   });
@@ -85,7 +112,10 @@ describe('Contentful Client', () => {
   });
 
   it('gets an entry', async () => {
-    $httpMocked.mockResolvedValue({ data: { sys: {}, fields: {} } });
+    global.fetch.mockResolvedValue({
+      json: jest.fn(() => ({ sys: {}, fields: [] })),
+      ok: true,
+    });
     await client.entry('123');
     expectUrlPath('/entries/123');
   });
@@ -97,7 +127,10 @@ describe('Contentful Client', () => {
   });
 
   it('gets assets', async () => {
-    $httpMocked.mockResolvedValue({ data: {} });
+    global.fetch.mockResolvedValue({
+      json: jest.fn(() => ({})),
+      ok: true,
+    });
     await client.assets();
     expectUrlPath('/assets');
   });
@@ -109,7 +142,10 @@ describe('Contentful Client', () => {
   });
 
   it('gets an asset', async () => {
-    $httpMocked.mockResolvedValue({ data: { sys: {}, fields: {} } });
+    global.fetch.mockResolvedValue({
+      json: jest.fn(() => ({ sys: {}, fields: [] })),
+      ok: true,
+    });
     await client.asset('123');
     expectUrlPath('/assets/123');
   });

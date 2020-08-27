@@ -29,7 +29,7 @@ import { ExtensionListSkeleton } from './skeletons/ExtensionListSkeleton';
 import { DocsLink } from './ExtensionsSidebar';
 import { ExtensionsActions } from './ExtensionsActions';
 import { openGitHubInstaller } from './ExtensionsActions';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 
 const styles = {
   deleteDropdown: css({

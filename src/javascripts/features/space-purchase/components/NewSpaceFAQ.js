@@ -1,10 +1,10 @@
 import React from 'react';
 
+import { Accordion, AccordionItem } from '@contentful/forma-36-react-components/dist/alpha';
 import { Typography, Heading, Paragraph } from '@contentful/forma-36-react-components';
 
 import { websiteUrl } from 'Config';
 import ExternalTextLink from 'app/common/ExternalTextLink';
-import { Accordion, AccordionItem } from './Accordion';
 import { SpaceLimitsTable } from './SpaceLimitsTable';
 import { TierComparisonTable } from './TierComparisonTable';
 import { css } from 'emotion';

@@ -1,17 +1,17 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { noop } from 'lodash';
 import tokens from '@contentful/forma-36-tokens';
-import { TableRow, TableCell, Spinner } from '@contentful/forma-36-react-components';
+import { Spinner, TableCell, TableRow } from '@contentful/forma-36-react-components';
 import { canUserReadEntities } from 'access_control/AccessChecker';
 import { BulkActionLink } from './BulkActionsLink';
 import { PluralizeEntityMessage } from '../PluralizeEntityMessage';
 import { BulkActionDeleteConfirm } from './BulkActionsDeleteConfirm';
-import { useBulkActions } from 'core/hooks';
-import { useTagsFeatureEnabled, TagsBulkAction } from 'features/content-tags';
+import { TagsBulkAction, useTagsFeatureEnabled } from 'features/content-tags';
 import ReleaseDialog from 'app/Releases/ReleasesWidget/ReleasesWidgetDialog';
-import { getReleasesFeatureVariation as releasesFeatureFlagVariation } from 'app/Releases/ReleasesFeatureFlag';
+import { useFeatureFlagAddToRelease } from 'app/Releases/ReleasesFeatureFlag';
+import { useBulkActions } from 'core/hooks/useBulkActions';
 
 const styles = {
   /*
@@ -45,7 +45,6 @@ export const BulkActionsRow = ({
   onActionComplete,
   updateEntities,
 }) => {
-  const [isReleaseFeatureEnabled, setReleaseFeatureEnabled] = useState(false);
   const [pendingMessage, setPendingMessage] = useState(undefined);
   const [isReleaseDialogOpen, openReleaseDialog] = useState(false);
   const [{ actions }] = useBulkActions({
@@ -54,14 +53,7 @@ export const BulkActionsRow = ({
     updateEntities,
   });
 
-  useEffect(() => {
-    async function checkFeatureFlag() {
-      const isEnabled = await releasesFeatureFlagVariation();
-      setReleaseFeatureEnabled(isEnabled);
-    }
-
-    checkFeatureFlag();
-  }, []);
+  const { addToReleaseEnabled: isReleaseFeatureEnabled } = useFeatureFlagAddToRelease();
 
   const fireAction = async (actionLabel) => {
     let message;

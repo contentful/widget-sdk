@@ -27,7 +27,7 @@ import {
   getNotificationMessage,
 } from 'services/ChangeSpaceService';
 import { openDeleteSpaceDialog } from 'features/space-settings';
-import { isOwner } from 'services/OrganizationRoles';
+import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { Price } from 'core/components/formatting';
 import { trackCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 
@@ -41,6 +41,7 @@ import {
   isEnterpriseTrialPlan,
 } from 'account/pricing/PricingDataProvider';
 import ContactUsButton from 'ui/Components/ContactUsButton';
+import { PlatformTrialInfo, isOrgOnPlatformTrial, SpacesListForMembers } from 'features/trials';
 
 const styles = {
   sidebar: css({
@@ -72,7 +73,7 @@ const styles = {
       marginTop: tokens.spacingXl,
     },
 
-    gridRowStart: 2,
+    gridRowStart: 3,
   }),
   rightSection: css({
     '& > div:not(:first-child)': {
@@ -80,12 +81,19 @@ const styles = {
     },
 
     gridColumnStart: 2,
-    gridRowStart: 2,
+    gridRowStart: 3,
   }),
   spacesSection: css({
     gridColumnEnd: 3,
     gridColumnStart: 1,
-    gridRowStart: 3,
+    gridRowStart: 4,
+  }),
+  trialSection: css({
+    '& > div': {
+      marginBottom: tokens.spacingXl,
+    },
+
+    gridRowStart: 2,
   }),
 };
 
@@ -103,6 +111,8 @@ export default function SubscriptionPage({
   initialLoad,
   spacePlans,
   onSpacePlansChange,
+  isPlatformTrialCommEnabled,
+  memberAccessibleSpaces,
 }) {
   const [changedSpaceId, setChangedSpaceId] = useState('');
 
@@ -177,6 +187,11 @@ export default function SubscriptionPage({
     };
   };
 
+  const isMemberOfTrialOrg =
+    isPlatformTrialCommEnabled &&
+    !isOwnerOrAdmin(organization) &&
+    isOrgOnPlatformTrial(organization);
+
   const enterprisePlan = basePlan && isEnterprisePlan(basePlan);
   const isOrgBillable = organization && organization.isBillable;
   const isOrgOwner = isOwner(organization);
@@ -204,66 +219,79 @@ export default function SubscriptionPage({
               <ContactUsButton isLink />
             )}
           </div>
-          <div className={styles.leftSection}>
-            {initialLoad ? (
-              <SkeletonContainer svgHeight={117}>
-                <SkeletonDisplayText />
-                <SkeletonBodyText numberOfLines={4} offsetTop={29} />
-              </SkeletonContainer>
+          <div className={styles.trialSection}>
+            {isPlatformTrialCommEnabled && <PlatformTrialInfo organization={organization} />}
+          </div>
+          {!isMemberOfTrialOrg && (
+            <div className={styles.leftSection}>
+              {initialLoad ? (
+                <SkeletonContainer svgHeight={117}>
+                  <SkeletonDisplayText />
+                  <SkeletonBodyText numberOfLines={4} offsetTop={29} />
+                </SkeletonContainer>
+              ) : (
+                <BasePlan basePlan={basePlan} organizationId={organizationId} />
+              )}
+              {rightColumnHasContent && (
+                <UsersForPlan
+                  organizationId={organizationId}
+                  numberFreeUsers={usersMeta && usersMeta.numFree}
+                  numberPaidUsers={usersMeta && usersMeta.numPaid}
+                  costOfUsers={usersMeta && usersMeta.cost}
+                  unitPrice={usersMeta && usersMeta.unitPrice}
+                  hardLimit={usersMeta && usersMeta.hardLimit}
+                  isFreePlan={isFreePlan(basePlan)}
+                  isOnEnterpriseTrial={isEnterpriseTrialPlan(basePlan)}
+                />
+              )}
+            </div>
+          )}
+          {!isMemberOfTrialOrg && (
+            <div className={styles.rightSection}>
+              {initialLoad ? (
+                <SkeletonContainer svgHeight={117}>
+                  <SkeletonDisplayText />
+                  <SkeletonBodyText numberOfLines={4} offsetTop={29} />
+                </SkeletonContainer>
+              ) : (
+                <>
+                  {!rightColumnHasContent && (
+                    <UsersForPlan
+                      organizationId={organizationId}
+                      numberFreeUsers={usersMeta && usersMeta.numFree}
+                      numberPaidUsers={usersMeta && usersMeta.numPaid}
+                      costOfUsers={usersMeta && usersMeta.cost}
+                      unitPrice={usersMeta && usersMeta.unitPrice}
+                      hardLimit={usersMeta && usersMeta.hardLimit}
+                      isFreePlan={isFreePlan(basePlan)}
+                      isOnEnterpriseTrial={isEnterpriseTrialPlan(basePlan)}
+                    />
+                  )}
+                  {showPayingOnDemandCopy && <PayingOnDemandOrgCopy grandTotal={grandTotal} />}
+                  {showAddBillingDetailsCopy && (
+                    <NonPayingOrgCopy organizationId={organizationId} />
+                  )}
+                </>
+              )}
+            </div>
+          )}
+          <div className={cx(styles.spacesSection, styles.marginTop)}>
+            {isMemberOfTrialOrg ? (
+              <SpacesListForMembers spaces={memberAccessibleSpaces} />
             ) : (
-              <BasePlan basePlan={basePlan} organizationId={organizationId} />
-            )}
-            {rightColumnHasContent && (
-              <UsersForPlan
+              <SpacePlans
+                initialLoad={initialLoad}
+                spacePlans={spacePlans}
+                upgradedSpaceId={changedSpaceId}
+                onCreateSpace={createSpace}
+                onChangeSpace={changeSpace}
                 organizationId={organizationId}
-                numberFreeUsers={usersMeta && usersMeta.numFree}
-                numberPaidUsers={usersMeta && usersMeta.numPaid}
-                costOfUsers={usersMeta && usersMeta.cost}
-                unitPrice={usersMeta && usersMeta.unitPrice}
-                hardLimit={usersMeta && usersMeta.hardLimit}
-                isFreePlan={isFreePlan(basePlan)}
-                isOnEnterpriseTrial={isEnterpriseTrialPlan(basePlan)}
+                showMicroSmallSupportCard={showMicroSmallSupportCard}
+                onDeleteSpace={deleteSpace}
+                enterprisePlan={enterprisePlan}
+                anySpacesInaccessible={anySpacesInaccessible}
               />
             )}
-          </div>
-          <div className={styles.rightSection}>
-            {initialLoad ? (
-              <SkeletonContainer svgHeight={117}>
-                <SkeletonDisplayText />
-                <SkeletonBodyText numberOfLines={4} offsetTop={29} />
-              </SkeletonContainer>
-            ) : (
-              <>
-                {!rightColumnHasContent && (
-                  <UsersForPlan
-                    organizationId={organizationId}
-                    numberFreeUsers={usersMeta && usersMeta.numFree}
-                    numberPaidUsers={usersMeta && usersMeta.numPaid}
-                    costOfUsers={usersMeta && usersMeta.cost}
-                    unitPrice={usersMeta && usersMeta.unitPrice}
-                    hardLimit={usersMeta && usersMeta.hardLimit}
-                    isFreePlan={isFreePlan(basePlan)}
-                    isOnEnterpriseTrial={isEnterpriseTrialPlan(basePlan)}
-                  />
-                )}
-                {showPayingOnDemandCopy && <PayingOnDemandOrgCopy grandTotal={grandTotal} />}
-                {showAddBillingDetailsCopy && <NonPayingOrgCopy organizationId={organizationId} />}
-              </>
-            )}
-          </div>
-          <div className={cx(styles.spacesSection, styles.marginTop)}>
-            <SpacePlans
-              initialLoad={initialLoad}
-              spacePlans={spacePlans}
-              upgradedSpaceId={changedSpaceId}
-              onCreateSpace={createSpace}
-              onChangeSpace={changeSpace}
-              organizationId={organizationId}
-              showMicroSmallSupportCard={showMicroSmallSupportCard}
-              onDeleteSpace={deleteSpace}
-              enterprisePlan={enterprisePlan}
-              anySpacesInaccessible={anySpacesInaccessible}
-            />
           </div>
         </Grid>
       </Workbench.Content>
@@ -281,6 +309,8 @@ SubscriptionPage.propTypes = {
   organization: PropTypes.object,
   showMicroSmallSupportCard: PropTypes.bool,
   onSpacePlansChange: PropTypes.func,
+  isPlatformTrialCommEnabled: PropTypes.bool,
+  memberAccessibleSpaces: PropTypes.array,
 };
 
 SubscriptionPage.defaultProps = {

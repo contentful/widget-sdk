@@ -15,7 +15,7 @@ import {
   buildSidebarRenderables,
   buildEditorsRenderables,
 } from 'widgets/WidgetRenderable';
-import { isCustomWidget } from 'features/widget-renderer';
+import { isCustomWidget } from '@contentful/widget-renderer';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 
@@ -128,6 +128,7 @@ export function makePrefetchEntryLoader(spaceContext, ids$) {
 async function loadEditorData(loader, id) {
   const entity = await loader.getEntity(id);
   const contentTypeId = get(entity, ['data', 'sys', 'contentType', 'sys', 'id']);
+  const environmentId = get(entity, ['data', 'sys', 'environment', 'sys', 'id']);
   const spaceId = get(entity, ['data', 'sys', 'space', 'sys', 'id']);
 
   const [
@@ -176,7 +177,7 @@ async function loadEditorData(loader, id) {
     customEditor,
   };
 
-  const widgetTrackingContexts = getWidgetTrackingContexts(widgetData);
+  const widgetTrackingContexts = getWidgetTrackingContexts(widgetData, environmentId);
 
   return Object.freeze({
     entity,

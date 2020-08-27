@@ -44,18 +44,22 @@ const styles = {
     },
   }),
 };
-const handleUpgradeToEnterpriseClick = (organizationId) => {
-  trackCTAClick(CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
-    organizationId,
-  });
-};
 
-export const SpaceSelection = ({ organizationId }) => {
-  const getSelectHandler = (type) => {
-    switch (type) {
+export const SpaceSelection = ({ organizationId, selectPlan }) => {
+  const getSelectHandler = (planType) => {
+    switch (planType) {
+      case SPACE_PURCHASE_TYPES.MEDIUM:
+      case SPACE_PURCHASE_TYPES.LARGE:
+        return () => {
+          // NOTE: Add SELECT_PLAN space wizard tracking here
+          selectPlan(planType);
+        };
+
       case SPACE_PURCHASE_TYPES.ENTERPRISE:
         return () => {
-          handleUpgradeToEnterpriseClick(organizationId);
+          trackCTAClick(CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
+            organizationId,
+          });
         };
       default:
         return () => {};
@@ -63,10 +67,10 @@ export const SpaceSelection = ({ organizationId }) => {
   };
 
   return (
-    <section aria-labelledby="section-label">
+    <section aria-labelledby="space-selection-section" data-test-id="space-selection-section">
       <Grid columns={3} rows="repeat(3, 'auto')" columnGap="spacingL" rowGap="spacingM">
         <Heading
-          id="section-label"
+          id="space-selection-heading"
           element="h2"
           className={cn(styles.fullRow, styles.sectionHeading)}
           testId="space-selection.heading">
@@ -99,4 +103,5 @@ export const SpaceSelection = ({ organizationId }) => {
 
 SpaceSelection.propTypes = {
   organizationId: PropTypes.string,
+  selectPlan: PropTypes.func,
 };

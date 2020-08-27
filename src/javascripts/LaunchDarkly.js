@@ -41,9 +41,10 @@ export const FLAGS = {
   SHAREJS_REMOVAL: 'feature-pen-04-2020-sharejs-removal-multi',
   PRICING_2020_WARNING: 'feature-hejo-06-2020-pricing-2020-in-app-communication',
   NEW_FIELD_DIALOG: 'react-migration-new-content-type-field-dialog',
-  ENTITY_SELECTOR_MIGRATION: 'feature-pulitzer-07-2020-entity-selector-migration',
   SSO_SETUP_NO_REDUX: 'feature-hejo-08-2020-sso-setup-no-redux',
   NEW_PURCHASE_FLOW: 'feature-ogg-08-2020-enable-space-purchase-flow',
+  PLATFORM_TRIAL_COMM: 'feature-moi-08-2020-end-of-platform-trial-communication',
+  SPACE_PLAN_ASSIGNMENT: 'feature-hejo-08-2020-space-plan-assignment',
 
   // So that we can test the fallback mechanism without needing to rely on an actual
   // flag above, we use these special flags.
@@ -64,9 +65,10 @@ const FALLBACK_VALUES = {
   [FLAGS.SHAREJS_REMOVAL]: { Asset: false, Entry: false },
   [FLAGS.PRICING_2020_WARNING]: true,
   [FLAGS.NEW_FIELD_DIALOG]: false,
-  [FLAGS.ENTITY_SELECTOR_MIGRATION]: false,
   [FLAGS.SSO_SETUP_NO_REDUX]: false,
   [FLAGS.NEW_PURCHASE_FLOW]: false,
+  [FLAGS.PLATFORM_TRIAL_COMM]: false,
+  [FLAGS.SPACE_PLAN_ASSIGNMENT]: false,
 
   // See above
   [FLAGS.__FLAG_FOR_UNIT_TESTS__]: 'fallback-value',

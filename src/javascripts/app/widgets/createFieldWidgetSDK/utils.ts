@@ -7,7 +7,7 @@ import { createUserApi, SpaceMember } from './createUserApi';
 import { createIdsApi } from './createIdsApi';
 import { noop } from 'lodash';
 import { Field, Locale } from 'app/entity_editor/EntityField/types';
-import { Widget, WidgetNamespace, WidgetLocation } from 'features/widget-renderer';
+import { Widget, WidgetNamespace, WidgetLocation } from '@contentful/widget-renderer';
 
 interface CreateSharedFieldWidgetSDKOptions {
   entryApi: EntryAPI;
@@ -19,7 +19,10 @@ interface CreateSharedFieldWidgetSDKOptions {
   spaceMember: SpaceMember;
   widgetId: Widget['id'];
   widgetNamespace: WidgetNamespace;
-  editorInterfaceSettings: Record<string, any>;
+  parameters: {
+    instance: Record<string, any>;
+    installation: Record<string, any>;
+  };
 }
 
 export function createSharedFieldWidgetSDK({
@@ -32,7 +35,7 @@ export function createSharedFieldWidgetSDK({
   spaceMember,
   widgetId,
   widgetNamespace,
-  editorInterfaceSettings,
+  parameters,
 }: CreateSharedFieldWidgetSDKOptions): Omit<
   FieldExtensionSDK,
   'editor' | 'space' | 'navigator' | 'dialogs'
@@ -55,10 +58,6 @@ export function createSharedFieldWidgetSDK({
     widgetNamespace,
     widgetId
   );
-  const parametersApi = {
-    installation: {},
-    instance: editorInterfaceSettings,
-  };
   const locationApi = {
     is: (location: string) => location === WidgetLocation.ENTRY_FIELD,
   };
@@ -74,7 +73,7 @@ export function createSharedFieldWidgetSDK({
     contentType: contentTypeApi,
     entry: entryApi,
     field: fieldApi,
-    parameters: parametersApi,
+    parameters,
     access: accessApi,
     locales: localesApi,
     notifier: notifierApi,

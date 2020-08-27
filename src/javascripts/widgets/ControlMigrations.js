@@ -1,4 +1,4 @@
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 
 /**
  * This service exposes a list of widget migration specifications that

@@ -1,6 +1,6 @@
 import createSnapshotExtensionBridge from './createSnapshotExtensionBridge';
 import { getModule } from 'core/NgRegistry';
-import { WidgetLocation } from 'features/widget-renderer';
+import { WidgetLocation } from '@contentful/widget-renderer';
 
 jest.mock('Authentication', () => ({ getToken: () => '<TOKEN>' }));
 jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));

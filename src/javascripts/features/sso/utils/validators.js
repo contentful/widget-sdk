@@ -5,7 +5,7 @@ export function ssoName(value) {
 }
 
 export function idpCert(value) {
-  if (value === '') {
+  if (value === '' || value === null) {
     return true;
   }
 
@@ -19,7 +19,7 @@ export function idpCert(value) {
 }
 
 export function idpSsoTargetUrl(value) {
-  if (value === '') {
+  if (value === '' || value === null) {
     return true;
   }
 

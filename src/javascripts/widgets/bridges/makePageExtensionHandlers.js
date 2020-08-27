@@ -1,6 +1,6 @@
 import checkDependencies from './checkDependencies';
 import * as Navigator from 'states/Navigator';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 
 const SUPPORTED_WIDGET_NAMESPACE_ROUTES = {
   [WidgetNamespace.EXTENSION]: {

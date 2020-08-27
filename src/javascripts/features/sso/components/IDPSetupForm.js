@@ -16,7 +16,6 @@ import tokens from '@contentful/forma-36-tokens';
 import { authUrl, appUrl, websiteUrl } from 'Config';
 import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes';
 import { IdentityProviderPropType } from 'app/OrganizationSettings/SSO/PropTypes';
-import { track } from 'analytics/Analytics';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { IDPDetailsForm } from './IDPDetailsForm';
 
@@ -54,10 +53,7 @@ export class IDPSetupForm extends React.Component {
     organization: OrganizationPropType,
     identityProvider: IdentityProviderPropType,
     onUpdate: PropTypes.func,
-  };
-
-  trackSupportClick = () => {
-    track('sso:contact_support');
+    onTrackSupportClick: PropTypes.func,
   };
 
   render() {
@@ -68,6 +64,7 @@ export class IDPSetupForm extends React.Component {
         sys: { id: orgId },
       },
       onUpdate,
+      onTrackSupportClick,
     } = this.props;
 
     const metadataUrl = authUrl(`/sso/${orgId}/metadata.xml`);
@@ -175,6 +172,7 @@ export class IDPSetupForm extends React.Component {
           orgName={orgName}
           identityProvider={identityProvider}
           onUpdate={onUpdate}
+          onTrackSupportClick={onTrackSupportClick}
         />
       </>
     );

@@ -3,7 +3,7 @@ import AngularComponent from 'ui/Framework/AngularComponent';
 import NoLocalizedFieldsAdvice from 'components/tabs/NoLocalizedFieldsAdvice';
 import EntryEditorWidgetTypes from 'app/entry_editor/EntryEditorWidgetTypes';
 import ReferencesTab from './EntryReferences';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 
 export default function renderDefaultEditor(
   widgetId,
@@ -20,6 +20,7 @@ export default function renderDefaultEditor(
     shouldDisplayNoLocalizedFieldsAdvice,
     noLocalizedFieldsAdviceProps,
     selectedTab,
+    onRootReferenceCardClick,
   }
 ) {
   const otDoc = getOtDoc();
@@ -34,7 +35,10 @@ export default function renderDefaultEditor(
           angularJS. Instead, render it on initial load and conditionally render <ReferencesTab>
         */}
         {selectedTab === `${WidgetNamespace.EDITOR_BUILTIN}-${widgetId}` && (
-          <ReferencesTab entity={editorData.entity.data} />
+          <ReferencesTab
+            entity={editorData.entity.data}
+            onRootReferenceCardClick={onRootReferenceCardClick}
+          />
         )}
       </div>
     );

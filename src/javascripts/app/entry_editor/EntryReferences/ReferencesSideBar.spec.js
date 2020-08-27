@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, cleanup, waitFor, fireEvent, act } from '@testing-library/react';
+import { render, waitFor, fireEvent, act } from '@testing-library/react';
 import cfResolveResponse from 'contentful-resolve-response';
 import { Notification } from '@contentful/forma-36-react-components';
 
@@ -56,8 +56,6 @@ MockPovider.defaultProps = {
 };
 
 describe('ReferencesSideBar component', () => {
-  afterEach(cleanup);
-
   beforeEach(async () => {
     jest.spyOn(Notification, 'success').mockImplementation(() => {});
     jest.spyOn(Notification, 'error').mockImplementation(() => {});

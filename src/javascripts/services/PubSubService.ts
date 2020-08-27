@@ -10,6 +10,8 @@ export type PubSubClient = {
 type Handler<T> = (ctx: T) => void;
 
 export const ENVIRONMENT_ALIAS_CHANGED_EVENT = 'environment-alias-changed';
+export const ENVIRONMENT_ALIAS_CREATED_EVENT = 'environment-alias-created';
+export const ENVIRONMENT_ALIAS_DELETED_EVENT = 'environment-alias-deleted';
 export const ENVIRONMENT_CREATION_COMPLETE_EVENT = 'environment-creation-complete';
 export const ASSET_PROCESSING_FINISHED_EVENT = 'asset-processing-finished';
 export const CONTENT_ENTITY_UPDATED_EVENT = 'content-entity-updated';

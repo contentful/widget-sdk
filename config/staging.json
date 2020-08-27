@@ -3,6 +3,7 @@
   "authUrl": "https://be.flinkly.com",
   "apiUrl": "https://api.flinkly.com",
   "uploadApiUrl": "https://upload.flinkly.com",
+  "secureAssetsUrl": "https://secure.flinkly.com",
   "otUrl": [
     "https://ot.flinkly.com",
     "https://ot1.flinkly.com",

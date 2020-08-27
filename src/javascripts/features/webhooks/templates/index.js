@@ -16,6 +16,7 @@ import { AwsLambdaWebhookTemplate } from './AwsLambdaWebhookTemplate';
 import { AwsS3WebhookTemplate } from './AwsS3WebhookTemplate';
 import { AwsSqsWebhookTemplate } from './AwsSqsWebhookTemplate';
 import { BitbucketWebhookTemplate } from './BitbucketWebhookTemplate';
+import { VercelWebhookTemplate } from './VercelWebhookTemplate';
 
 // eslint-disable-next-line rulesdir/allow-only-import-export-in-index
 export const WebhookTemplates = [
@@ -23,6 +24,7 @@ export const WebhookTemplates = [
   HerokuWebhookTemplate,
   TravisCIWebhookTemplate,
   CircleCIWebhookTemplate,
+  VercelWebhookTemplate,
   GitlabWebhookTemplate,
   BitbucketWebhookTemplate,
   AwsLambdaWebhookTemplate,

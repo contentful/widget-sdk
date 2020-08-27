@@ -2,7 +2,6 @@ import sinon from 'sinon';
 import * as K from 'test/utils/kefir';
 import createLocaleStoreMock from 'test/utils/createLocaleStoreMock';
 import _ from 'lodash';
-import $ from 'jquery';
 import APIClient from 'data/APIClient';
 import { $initialize, $inject, $compile, $apply } from 'test/utils/ng';
 import { it } from 'test/utils/dsl';
@@ -53,7 +52,7 @@ xdescribe('Extension SDK', () => {
     this.apiClient = {};
     spaceContext.cma = this.apiClient;
 
-    this.container = $('<div>').appendTo('body');
+    // this.container = $('<div>').appendTo('body');
 
     const field = {
       id: 'FID-internal',

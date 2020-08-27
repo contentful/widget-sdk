@@ -17,6 +17,7 @@ import {
   notificationContinueOnEnvironment,
   notificationSwitchToAlias,
 } from 'analytics/events/EnvironmentAliases';
+import { ACTION } from './Utils';
 
 const styles = {
   paragraph: css({
@@ -56,6 +57,16 @@ FromTo.propTypes = {
   message: PropTypes.string.isRequired,
 };
 
+export const Message = ({ message }) => (
+  <Paragraph className={styles.notification}>
+    <span>{message}</span>
+  </Paragraph>
+);
+
+Message.propTypes = {
+  message: PropTypes.string.isRequired,
+};
+
 const getTimestamp = () => moment().format('MMMM Do YYYY, h:mm:ss a');
 
 const UpdateParagraph = ({ aliasId, oldTarget, newTarget }) => (
@@ -71,7 +82,7 @@ UpdateParagraph.propTypes = {
   oldTarget: PropTypes.string.isRequired,
 };
 
-export const ChoiceModal = ({
+export const AliasChangedChoiceModal = ({
   currentEnvironmentId,
   oldTarget,
   newTarget,
@@ -95,7 +106,7 @@ export const ChoiceModal = ({
   };
   const reloadToUnScopedRoute = () => {
     notificationContinueOnEnvironment();
-    reloadTo();
+    reloadTo(newTarget);
   };
 
   return (
@@ -103,7 +114,8 @@ export const ChoiceModal = ({
       isShown={isShown}
       shouldCloseOnEscapePress={false}
       shouldCloseOnOverlayClick={false}
-      onClose={onClose}>
+      onClose={onClose}
+      testId="aliaschangedchoicemodal.modal">
       {() => (
         <React.Fragment>
           <Modal.Header title="Your space admin has made changes to your space" />
@@ -118,7 +130,11 @@ export const ChoiceModal = ({
               className={styles.tooltip}
               targetWrapperClassName={styles.tooltip}
               content={`Changes will not be reflected as part of the ${aliasId} alias.`}>
-              <Button buttonType="primary" onClick={reloadToScopedRoute} disabled={loading}>
+              <Button
+                testId="continueeditingonenvironment.button.aliaschangedchoicemodal.modal"
+                buttonType="primary"
+                onClick={reloadToScopedRoute}
+                disabled={loading}>
                 {`Continue editing on ${oldTarget}`}
               </Button>
             </Tooltip>
@@ -126,7 +142,11 @@ export const ChoiceModal = ({
               className={styles.tooltip}
               targetWrapperClassName={styles.tooltip}
               content={`Changes you've made on the current environment (${currentEnvironmentId}) may not be reflected as part of the ${aliasId} alias.`}>
-              <Button buttonType="naked" onClick={reloadToUnScopedRoute} disabled={loading}>
+              <Button
+                testId="switchtoaliasbutton.button.aliaschangedchoicemodal.modal"
+                buttonType="naked"
+                onClick={reloadToUnScopedRoute}
+                disabled={loading}>
                 {`Switch to ${aliasId}`}
               </Button>
             </Tooltip>
@@ -138,7 +158,7 @@ export const ChoiceModal = ({
   );
 };
 
-ChoiceModal.propTypes = {
+AliasChangedChoiceModal.propTypes = {
   currentEnvironmentId: PropTypes.string.isRequired,
   newTarget: PropTypes.string.isRequired,
   oldTarget: PropTypes.string.isRequired,
@@ -147,7 +167,7 @@ ChoiceModal.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
-export const InfoModal = ({
+export const AliasChangedInfoModal = ({
   canManageEnvironments,
   oldTarget,
   newTarget,
@@ -160,7 +180,7 @@ export const InfoModal = ({
   const reloadToUnScopedRoute = async () => {
     notificationSwitchToAlias();
     setLoading(true);
-    const error = await Navigator.reloadWithEnvironment();
+    const error = await Navigator.reloadWithEnvironment(newTarget);
     if (error) entityUnavailableNotification();
     setLoading(false);
     onClose();
@@ -171,7 +191,8 @@ export const InfoModal = ({
       isShown={isShown}
       shouldCloseOnEscapePress={false}
       shouldCloseOnOverlayClick={false}
-      onClose={onClose}>
+      onClose={onClose}
+      testId="aliaschangedinfomodal.modal">
       {() => (
         <React.Fragment>
           <Modal.Header title="Your space admin has made changes to your space" />
@@ -196,6 +217,7 @@ export const InfoModal = ({
           </Modal.Content>
           <Modal.Controls>
             <Button
+              testId="continueediting.button.aliaschangedinfomodal.modal"
               buttonType="primary"
               onClick={reloadToUnScopedRoute}
               disabled={loading}
@@ -209,11 +231,93 @@ export const InfoModal = ({
   );
 };
 
-InfoModal.propTypes = {
+AliasChangedInfoModal.propTypes = {
   canManageEnvironments: PropTypes.bool.isRequired,
   newTarget: PropTypes.string.isRequired,
   oldTarget: PropTypes.string.isRequired,
   aliasId: PropTypes.string.isRequired,
+  isShown: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+};
+
+const UpdateCreateOrDeleteParagraph = ({ aliasId, target, action }) => (
+  <Paragraph className={styles.paragraph}>
+    {action === ACTION.CREATE
+      ? `On ${getTimestamp()}, your space admin created the ${aliasId} alias on your current environment ${target}.`
+      : `On ${getTimestamp()}, your space admin deleted the ${aliasId} alias on your current environment ${target}.`}
+  </Paragraph>
+);
+
+UpdateCreateOrDeleteParagraph.propTypes = {
+  target: PropTypes.string.isRequired,
+  aliasId: PropTypes.string.isRequired,
+  action: PropTypes.oneOf(['create', 'delete']).isRequired,
+};
+
+export const AliasCreatedOrDeletedInfoModal = ({
+  canManageEnvironments,
+  target,
+  aliasId,
+  isShown,
+  action,
+  onClose,
+}) => {
+  const [loading, setLoading] = useState(false);
+
+  const reloadToUnScopedRoute = async () => {
+    notificationSwitchToAlias();
+    setLoading(true);
+    const error = await Navigator.reloadWithEnvironment(target);
+    if (error) entityUnavailableNotification();
+    setLoading(false);
+    onClose();
+  };
+
+  return (
+    <Modal
+      isShown={isShown}
+      shouldCloseOnEscapePress={false}
+      shouldCloseOnOverlayClick={false}
+      onClose={onClose}
+      testId="aliascreatedordeletedinfomodal.modal">
+      {() => (
+        <React.Fragment>
+          <Modal.Header title="Your space admin has made changes to your space" />
+          <Modal.Content>
+            {canManageEnvironments ? (
+              <UpdateCreateOrDeleteParagraph aliasId={aliasId} target={target} action={action} />
+            ) : (
+              <Fragment>
+                <Paragraph className={styles.paragraph}>
+                  {`You are now working on a different version of your space. Your work from ${getTimestamp()} has been saved, but is not available in this version.`}
+                </Paragraph>
+                <Paragraph className={styles.paragraph}>
+                  If you have questions, contact your administrator.
+                </Paragraph>
+              </Fragment>
+            )}
+          </Modal.Content>
+          <Modal.Controls>
+            <Button
+              testId="continueediting.button.aliascreatedordeletedinfomodal.modal"
+              buttonType="primary"
+              onClick={reloadToUnScopedRoute}
+              disabled={loading}
+              loading={loading}>
+              Continue editing
+            </Button>
+          </Modal.Controls>
+        </React.Fragment>
+      )}
+    </Modal>
+  );
+};
+
+AliasCreatedOrDeletedInfoModal.propTypes = {
+  canManageEnvironments: PropTypes.bool.isRequired,
+  target: PropTypes.string.isRequired,
+  aliasId: PropTypes.string.isRequired,
+  action: PropTypes.oneOf(['create', 'delete']).isRequired,
   isShown: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
 };

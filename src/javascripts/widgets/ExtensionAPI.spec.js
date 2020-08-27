@@ -1,5 +1,5 @@
 import ExtensionAPI from './ExtensionAPI';
-import { WidgetLocation } from 'features/widget-renderer';
+import { WidgetLocation } from '@contentful/widget-renderer';
 
 describe('ExtensionAPI', () => {
   const createAPI = (extraConfig) => {

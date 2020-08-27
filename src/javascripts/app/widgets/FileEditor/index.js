@@ -34,6 +34,14 @@ export default function FileEditorConnected(props) {
     await sdk.space.waitUntilAssetProcessed(assetSys.id, sdk.field.locale);
   };
 
+  const signAssetUrl = async (url, expiresIn = 60) => {
+    const result = await sdk.space.signAssetUrls({
+      urls: [url],
+      expiresIn,
+    });
+    return result.data[url].payload;
+  };
+
   return (
     <FieldConnector throttle={0} field={sdk.field} isInitiallyDisabled={props.isInitiallyDisabled}>
       {({ value, disabled, setValue }) => {
@@ -45,6 +53,7 @@ export default function FileEditorConnected(props) {
             disabled={disabled}
             archived={isArchived}
             processAsset={processAsset}
+            signAssetUrl={signAssetUrl}
           />
         );
       }}

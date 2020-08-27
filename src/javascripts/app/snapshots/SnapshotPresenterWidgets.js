@@ -13,7 +13,7 @@ import SnapshotPresenterLocation from './SnapshotPresenterLocation';
 import SnapshotPresenterMarkdown from './SnapshotPresenterMarkdown';
 import SnapshotPresenterRichText from './SnapshotPresenterRichText';
 import SnapshotPresenterStandard from './SnapshotPresenterStandard';
-import { isCustomWidget } from 'features/widget-renderer';
+import { isCustomWidget } from '@contentful/widget-renderer';
 
 const styles = {
   rtl: css({

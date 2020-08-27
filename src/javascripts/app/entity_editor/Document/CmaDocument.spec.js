@@ -3,7 +3,8 @@ import * as CmaDocument from './CmaDocument';
 import { THROTTLE_TIME } from './CmaDocument';
 import { Action } from 'data/CMA/EntityActions';
 import { State as EntityState } from 'data/CMA/EntityState';
-import testDocumentBasic, { linkedTags, newAsset, newContentType, newEntry } from './Document.spec';
+import { linkedTags, newAsset, newContentType, newEntry } from './__fixtures__';
+import testDocumentBasics, { expectDocError } from './__tests__/testDocument';
 import * as K from '../../../../../test/utils/kefir';
 import { Error as DocError } from '../../../data/document/Error';
 import { track } from 'analytics/Analytics';
@@ -72,7 +73,7 @@ function createCmaDocument(initialEntity, contentTypeFields, throttleMs) {
 }
 
 describe('CmaDocument', () => {
-  testDocumentBasic(createCmaDocument);
+  testDocumentBasics(createCmaDocument);
   const fieldPath = ['fields', 'fieldA', 'en-US'];
   const metadataPath = ['metadata', 'tags'];
   /**
@@ -683,7 +684,9 @@ describe('CmaDocument', () => {
 
     beforeEach(() => {
       entry = newEntry({ title: { 'en-US': 'foo' }, content: { 'en-US': 'bar' } });
+      entry.sys.version = 42;
 
+      entityRepo.onContentEntityChanged.mockClear(); // Reset call count from previous beforeEach()
       entityRepo.onContentEntityChanged.mockImplementation(({ type, id }, callback) => {
         expect(type).toBe('Entry');
         expect(id).toBe(entry.sys.id);
@@ -694,13 +697,27 @@ describe('CmaDocument', () => {
       ({ document: doc } = createCmaDocument(entry, [{ id: 'title' }, { id: 'content' }]));
     });
 
+    afterEach(() => {
+      // Sanity check as otherwise above mock implementation could be insufficient.
+      expect(entityRepo.onContentEntityChanged).toBeCalledTimes(1);
+    });
+
     it('should update doc', async () => {
       mockGetUpdatedEntity(entry, 'fields.content.en-US', 'test');
-      await handler();
+      const oldVersion = entry.sys.version;
+      await handler({ newVersion: oldVersion + 1 });
       expect(doc.getValueAt(['fields'])).toMatchObject({
         title: { 'en-US': 'foo' },
         content: { 'en-US': 'test' },
       });
+      expect(doc.getVersion()).toBe(oldVersion + 1);
+    });
+
+    it('should not update doc or make unnecessary requests if old entity version is reported', async () => {
+      const oldVersion = entry.sys.version;
+      await handler({ newVersion: oldVersion });
+      expect(entityRepo.get).not.toHaveBeenCalled(); // No unnecessary fetching!
+      expect(doc.getVersion()).toBe(oldVersion);
     });
 
     it('should not overwrite values outside the changed field-locale', async () => {
@@ -831,16 +848,4 @@ function mockGetUpdatedEntity(entity, path, value) {
     updated.sys.version++;
     return set(updated, path, value);
   });
-}
-
-export function expectDocError(docError$, docErrorOrConstructor) {
-  const docError = K.getValue(docError$);
-  if (docErrorOrConstructor === null) {
-    expect(docError).toBeNull();
-  } else if (typeof docErrorOrConstructor === 'function') {
-    expect(docError).toBeInstanceOf(docErrorOrConstructor);
-  } else {
-    expect(docError).toBeInstanceOf(docErrorOrConstructor.constructor);
-    expect(docError).toStrictEqual(docErrorOrConstructor);
-  }
 }

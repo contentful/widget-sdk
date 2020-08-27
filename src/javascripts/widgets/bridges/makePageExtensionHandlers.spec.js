@@ -1,6 +1,6 @@
 import makePageExtensionHandlers from './makePageExtensionHandlers';
 import * as Navigator from 'states/Navigator';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 
 jest.mock('states/Navigator', () => ({
   go: jest.fn((x) => Promise.resolve(x)),

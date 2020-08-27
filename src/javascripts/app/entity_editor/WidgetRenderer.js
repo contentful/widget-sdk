@@ -7,9 +7,9 @@ import createExtensionBridge from 'widgets/bridges/createExtensionBridge';
 import WidgetRenderWarning from 'widgets/WidgetRenderWarning';
 import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIFrameRenderer';
 import * as LoadEventTracker from 'app/entity_editor/LoadEventTracker';
-import { WidgetNamespace, isCustomWidget, WidgetLocation } from 'features/widget-renderer';
+import { WidgetNamespace, isCustomWidget, WidgetLocation } from '@contentful/widget-renderer';
 import { toRendererWidget } from 'widgets/WidgetCompat';
-import { WidgetRenderer as NewWidgetRenderer } from 'features/widget-renderer';
+import { WidgetRenderer as NewWidgetRenderer } from '@contentful/widget-renderer';
 
 const { createLinksRenderedEvent, createWidgetLinkRenderEventsHandler } = LoadEventTracker;
 
@@ -49,15 +49,8 @@ function WidgetRendererInternal(props) {
           location={WidgetLocation.ENTRY_FIELD}
           widget={toRendererWidget(widget.descriptor)}
           sdk={props.widgetApi}
-          parameters={{
-            values: {
-              // TODO: this comes from legacy "WidgetRenderable"
-              // and has defaults applied on top of API values
-              // Consider moving "applyDefaultValues" to the renderer
-              // library too.
-              instance: widget.parameters.instance,
-            },
-          }}
+          onFocus={() => props.scope.fieldLocale.setActive(true)}
+          onBlur={() => props.scope.fieldLocale.setActive(false)}
         />
       );
     } else {

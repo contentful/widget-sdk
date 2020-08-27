@@ -12,7 +12,7 @@ import { ExtensionForm } from './ExtensionForm';
 import * as Analytics from 'analytics/Analytics';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { ExtensionEditorSkeleton } from './skeletons/ExtensionEditorSkeleton';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 
 const styles = {
   actionButton: css({

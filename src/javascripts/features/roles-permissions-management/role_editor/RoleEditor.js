@@ -40,7 +40,7 @@ import { RoleEditorSidebar } from './RoleEditorSidebar';
 import { RoleEditorActions } from './RoleEditorActions';
 import { createRoleRemover } from '../components/RoleRemover';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import * as entitySelector from 'search/EntitySelector/entitySelector';
+import { entitySelector } from 'features/entity-search';
 import * as EntityFieldValueHelpers from 'classes/EntityFieldValueHelpers';
 
 const PermissionPropType = PropTypes.shape({
@@ -564,7 +564,7 @@ export class RoleEditor extends React.Component {
                 name="opt_manage_environments_access"
                 disabled={!canModifyRoles}
                 labelText="Can manage and use all environments for this space."
-                helpText="Content level permissions only apply to the master environment"
+                helpText="Content level permissions only apply to the master environment and will not have an effect in non-master environments"
                 labelIsLight
                 checked={internal.environments.manage}
                 onChange={this.updateRoleFromCheckbox('environments.manage')}

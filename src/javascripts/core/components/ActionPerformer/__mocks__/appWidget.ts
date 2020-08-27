@@ -1,4 +1,4 @@
-import { Widget, WidgetNamespace, HostingType, WidgetLocation } from 'features/widget-renderer';
+import { Widget, WidgetNamespace, HostingType, WidgetLocation } from '@contentful/widget-renderer';
 
 export const appWidgetMock: Widget = {
   namespace: WidgetNamespace.APP,

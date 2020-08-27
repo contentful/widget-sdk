@@ -3,7 +3,7 @@ import * as Auth from 'Authentication';
 import * as Config from 'Config';
 import { createOrganizationEndpoint } from 'data/Endpoint';
 import { getUser } from 'access_control/OrganizationMembershipRepository';
-import { WidgetLocation } from 'features/widget-renderer';
+import { WidgetLocation } from '@contentful/widget-renderer';
 
 export const VALIDATION_MESSAGE =
   'Validation failed. Please check that you have provided valid configuration options.';

@@ -29,7 +29,7 @@ import * as AppLifecycleTracking from './AppLifecycleTracking';
 import { isUsageExceededErrorResponse, USAGE_EXCEEDED_MESSAGE } from './isUsageExceeded';
 import { AppIcon } from './AppIcon';
 import { styles } from './AppPageStyles';
-import { buildAppDefinitionWidget, WidgetLocation } from 'features/widget-renderer';
+import { buildAppDefinitionWidget, WidgetLocation } from '@contentful/widget-renderer';
 import { getMarketplaceDataProvider } from 'widgets/CustomWidgetLoaderInstance';
 
 const BUSY_STATE_INSTALLATION = 'installation';

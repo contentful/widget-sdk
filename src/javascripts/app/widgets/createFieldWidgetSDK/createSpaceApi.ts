@@ -39,6 +39,7 @@ type InternalSpaceAPI = SpaceAPI & {
   createTag: (id: string, name: string, version: number) => Promise<any>;
   deleteTag: (id: string, version: number) => Promise<boolean>;
   updateTag: (id: string, name: string, version: number) => Promise<any>;
+  signAssetUrls: (data: any) => Promise<any>;
   onEntityChanged: (
     entityType: string,
     entityId: string,
@@ -77,6 +78,7 @@ export function createSpaceApi({
     deleteEntry: makeReadOnlyGuardedMethod(readOnly, cma.deleteEntry),
     getAsset: cma.getAsset,
     getAssets: cma.getAssets,
+    signAssetUrls: cma.signAssetUrls,
     getEditorInterface: cma.getEditorInterface,
     getEditorInterfaces: cma.getEditorInterfaces,
     getEntry: cma.getEntry,

@@ -14,7 +14,7 @@ import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { shouldHide, Action } from 'access_control/AccessChecker';
 import * as TokenStore from 'services/TokenStore';
 import { isOwnerOrAdmin, isDeveloper } from 'services/OrganizationRoles';
-import { WidgetLocation, WidgetNamespace } from 'features/widget-renderer';
+import { WidgetLocation, WidgetNamespace } from '@contentful/widget-renderer';
 import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIFrameRenderer';
 import { getCurrentState } from 'features/apps/AppState';
 

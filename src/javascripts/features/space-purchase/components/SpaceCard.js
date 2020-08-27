@@ -113,11 +113,11 @@ export const SpaceCard = ({ content, handleSelect }) => {
               target="_blank"
               rel="noopener noreferrer"
               onClick={handleSelect}
-              testId="space-cta">
+              testId="select-space-cta">
               {content.callToAction}
             </Button>
           ) : (
-            <Button onClick={handleSelect} testId="space-cta">
+            <Button onClick={handleSelect} testId="select-space-cta">
               {content.callToAction}
             </Button>
           )}

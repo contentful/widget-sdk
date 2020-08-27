@@ -5,7 +5,7 @@ import makePageExtensionHandlers from './makePageExtensionHandlers';
 import makeExtensionAccessHandlers from './makeExtensionAccessHandlers';
 import checkDependencies from './checkDependencies';
 import TheLocaleStore from 'services/localeStore';
-import { WidgetLocation } from 'features/widget-renderer';
+import { WidgetLocation } from '@contentful/widget-renderer';
 
 export default function createDialogExtensionBridge(dependencies, openDialog, onClose) {
   const { spaceContext } = checkDependencies('DialogExtensionBridge', dependencies, [

@@ -20,7 +20,7 @@ import SidebarWidgetTypes from './SidebarWidgetTypes';
 import EntryInfoPanelContainer from './EntryInfoPanel/EntryInfoPanelContainer';
 import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIFrameRenderer';
 import CommentsPanelContainer from './CommentsPanel/CommentsPanelContainer';
-import { WidgetNamespace, isCustomWidget } from 'features/widget-renderer';
+import { WidgetNamespace, isCustomWidget } from '@contentful/widget-renderer';
 import { toRendererWidget } from 'widgets/WidgetCompat';
 
 const styles = {

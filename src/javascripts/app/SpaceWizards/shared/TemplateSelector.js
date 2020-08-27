@@ -5,7 +5,7 @@ import TemplatesToggle from './TemplatesToggle';
 import TemplatesList from './TemplatesList';
 
 export default function TemplateSelector(props) {
-  const { onSelect, templates, formAlign, selectedTemplate } = props;
+  const { onSelect, templates, formAlign, selectedTemplate, isNewSpacePurchaseFlow } = props;
 
   const [templatesVisible, setTemplatesVisible] = useState(false);
 
@@ -25,13 +25,18 @@ export default function TemplateSelector(props) {
         isShowingTemplates={templatesVisible}
         onChange={(val) => setTemplatesVisible(val)}
         formAlign={formAlign}
+        isNewSpacePurchaseFlow={isNewSpacePurchaseFlow}
       />
       {templatesVisible && (
-        <div className="modal-dialog__slice create-new-space__templates">
+        <div
+          className={
+            isNewSpacePurchaseFlow ? '' : 'modal-dialog__slice create-new-space__templates'
+          }>
           <TemplatesList
             templates={templates}
             selectedTemplate={selectedTemplate}
             onSelect={(template) => onSelect(template)}
+            isNewSpacePurchaseFlow={isNewSpacePurchaseFlow}
           />
         </div>
       )}
@@ -44,4 +49,5 @@ TemplateSelector.propTypes = {
   templates: PropTypes.array.isRequired,
   formAlign: PropTypes.oneOf(['left', 'center']),
   selectedTemplate: PropTypes.object,
+  isNewSpacePurchaseFlow: PropTypes.bool,
 };

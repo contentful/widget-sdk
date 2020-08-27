@@ -30,7 +30,7 @@ import { getAllForEntry } from 'data/CMA/CommentsRepo';
 import initSidebarTogglesProps from 'app/entity_editor/entityEditorSidebarToggles';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 import { appendDuplicateIndexToEntryTitle, alignSlugWithEntryTitle } from './entityHelpers';
-import { WidgetLocation } from 'features/widget-renderer';
+import { WidgetLocation } from '@contentful/widget-renderer';
 import { initStateController } from './stateController';
 
 /**

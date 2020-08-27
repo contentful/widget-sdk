@@ -24,6 +24,15 @@ export async function handleChangeEnvironment(spaceId, alias, aliasedEnvironment
   return update({ id, version, aliasedEnvironment });
 }
 
+export async function handleDeleteEnvironment(spaceId, alias) {
+  const endpoint = createSpaceEndpoint(spaceId);
+  const { get, remove } = SpaceAliasesRepo.create(endpoint);
+  const {
+    sys: { id, version },
+  } = await get({ id: alias.sys.id });
+  return remove({ id, version });
+}
+
 // content specific pages
 export const isAContentSpecificPage = () =>
   ['/content_types', '/entries', '/assets'].some((path) => window.location.pathname.includes(path));
@@ -31,3 +40,8 @@ export const isAContentSpecificPage = () =>
 // environment aware pages
 export const isAnEnvironmentAwarePage = () =>
   ['/locales', '/extensions', '/usage'].some((path) => window.location.pathname.includes(path));
+
+export const ACTION = {
+  CREATE: 'create',
+  DELETE: 'delete',
+};

@@ -18,7 +18,6 @@ import * as appEntryEditorCustomEditorExtensionRendererEs6 from 'app/entry_edito
 import * as appHomeSpaceHomePageEs6 from 'app/home/SpaceHomePage';
 import { Paginator } from 'core/components/Paginator';
 import * as appScheduledActionsPageLinkEs6 from 'app/ScheduledActions/ScheduledActionsPageLink';
-import * as searchEntitySelectorCreateEntityIndexEs6 from 'search/EntitySelector/CreateEntity';
 import * as appEntityEditorBulkEditorTitleEs6 from 'app/entity_editor/bulk_editor/BulkEditorTitle';
 import * as appEntityEditorBulkEntityEditorActionsDropdownEs6 from 'app/entity_editor/bulk_editor/BulkEntityEditorActionsDropdown';
 import * as appEntityEditorBulkEntityEditorStatusDropdownEs6 from 'app/entity_editor/bulk_editor/BulkEntityEditorStatusDropdown';
@@ -28,10 +27,9 @@ import * as AssetLink from 'app/widgets/link/AssetLink';
 import * as EntryLink from 'app/widgets/link/EntryLink';
 import * as EntryEditorWorkbench from 'app/entry_editor/EntryEditorWorkbench';
 import * as AssetEditorWorkbench from 'app/asset_editor/AssetEditorWorkbench';
-import * as EntitySelectorForm from 'search/EntitySelector/EntitySelectorForm';
-import * as EntitySelectorAdapter from 'search/EntitySelector/EntitySelectorAdapter';
 import { BulkEditorHeader } from 'app/entity_editor/bulk_editor/BulkEditorHeader';
 import { BulkEditorSidebar } from 'app/entity_editor/bulk_editor/BulkEditorSidebar';
+import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container, store) {
@@ -40,7 +38,9 @@ function renderComponent(Component, props, scope, container, store) {
     // providers should be added here
     ReactDOM.render(
       <Provider store={store}>
-        <Component {...props} scope={scope} />
+        <SpaceEnvContextProvider>
+          <Component {...props} scope={scope} />
+        </SpaceEnvContextProvider>
       </Provider>,
       container
     );
@@ -238,7 +238,6 @@ function getModule(name) {
     'app/home/SpaceHomePage': appHomeSpaceHomePageEs6,
     'core/components/Paginator': { default: Paginator },
     'app/ScheduledActions/ScheduledActionsPageLink': appScheduledActionsPageLinkEs6,
-    'search/EntitySelector/CreateEntity': searchEntitySelectorCreateEntityIndexEs6,
     'app/entity_editor/bulk_editor/BulkEditorTitle': appEntityEditorBulkEditorTitleEs6,
     'app/entity_editor/bulk_editor/BulkEntityEditorActionsDropdown': appEntityEditorBulkEntityEditorActionsDropdownEs6,
     'app/entity_editor/bulk_editor/BulkEntityEditorStatusDropdown': appEntityEditorBulkEntityEditorStatusDropdownEs6,
@@ -250,8 +249,6 @@ function getModule(name) {
     'app/asset_editor/AssetEditorWorkbench': AssetEditorWorkbench,
     'app/entity_editor/EntityField/EntityFieldHeading': { default: EntityFieldHeading },
     'app/entity_editor/EntityField/EntityFieldControl': { default: EntityFieldControl },
-    'search/EntitySelector/EntitySelectorForm': EntitySelectorForm,
-    'search/EntitySelector/EntitySelectorAdapter': EntitySelectorAdapter,
   };
 
   return get(allowedModules, name, null);

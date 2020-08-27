@@ -3,7 +3,7 @@ import { migrateControl, WIDGET_MIGRATIONS } from './ControlMigrations';
 import getDefaultWidgetId from './DefaultWidget';
 import { create as createBuiltinWidgetList } from './BuiltinWidgets';
 import EntryEditorTypes, { DEFAULT_EDITOR_ID } from 'app/entry_editor/EntryEditorWidgetTypes';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 
 const NAMESPACES = [WidgetNamespace.BUILTIN, WidgetNamespace.EXTENSION, WidgetNamespace.APP];
 const defaultEditors = Object.values(EntryEditorTypes).map((editor) => {

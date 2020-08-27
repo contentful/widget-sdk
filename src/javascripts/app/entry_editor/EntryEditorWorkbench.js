@@ -24,7 +24,7 @@ import * as Config from 'Config';
 import renderDefaultEditor from './DefaultEntryEditor';
 import EntryEditorWidgetTypes from 'app/entry_editor/EntryEditorWidgetTypes';
 import { hasLinks } from './EntryReferences';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 import { styles } from './styles';
 
 const trackTabOpen = (tab) =>
@@ -77,6 +77,8 @@ const EntryEditorWorkbench = (props) => {
     getFeatureFlagVariation();
   }, [setTabVisible, getSpace]);
 
+  const onRootReferenceCardClick = () => setSelectedTab(defaultTabKey);
+
   const tabs = enabledTabs.map((currentTab) => {
     const isReferenceTab = currentTab.widgetId === EntryEditorWidgetTypes.REFERENCE_TREE.id;
     const isReferenceTabVisible = isReferenceTab && tabVisible.entryReferences;
@@ -93,7 +95,12 @@ const EntryEditorWorkbench = (props) => {
       isEnabled: () => isTabEnabled,
       render() {
         if (currentTab.widgetNamespace === WidgetNamespace.EDITOR_BUILTIN) {
-          return renderDefaultEditor(currentTab.widgetId, { tabVisible, selectedTab, ...props });
+          return renderDefaultEditor(currentTab.widgetId, {
+            tabVisible,
+            selectedTab,
+            onRootReferenceCardClick,
+            ...props,
+          });
         } else {
           return (
             <CustomEditorExtensionRenderer

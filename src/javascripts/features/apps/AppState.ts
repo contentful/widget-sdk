@@ -1,5 +1,7 @@
 import { get, isObject, set } from 'lodash';
-import { Control, SidebarItem, WidgetNamespace, Editor } from 'features/widget-renderer';
+import { Control, SidebarItem, WidgetNamespace, Editor } from '@contentful/widget-renderer';
+
+export type PartialTargetState = boolean | { position: number };
 
 export const getCurrentState = async (
   spaceContext: any,
@@ -46,7 +48,7 @@ export const getCurrentState = async (
   return CurrentState;
 };
 
-export const isUnsignedInteger = (n) => Number.isInteger(n) && n >= 0;
+export const isUnsignedInteger = (n): n is number => Number.isInteger(n) && n >= 0;
 
 export function validateState(targetState) {
   const keys = Object.keys(targetState || {});
@@ -79,17 +81,9 @@ export function validateState(targetState) {
       }
     });
 
-    const validSidebar = !ei.sidebar || ei.sidebar === true || isObject(ei.sidebar);
-    if (!validSidebar) {
-      throw new Error(`Invalid target sidebar declared for EditorInterface ${ctId}.`);
-    }
+    validatePositionalPartialTargetState(ei.sidebar, ctId, 'sidebar');
 
-    if (isObject(ei.sidebar)) {
-      const validPosition = !ei.sidebar.position || isUnsignedInteger(ei.sidebar.position);
-      if (!validPosition) {
-        throw new Error(`Invalid target sidebar declared for EditorInterface ${ctId}.`);
-      }
-    }
+    validatePositionalPartialTargetState(ei.editors, ctId, 'editors');
 
     const validEditor = !ei.editor || ei.editor === true;
     if (!validEditor) {
@@ -97,6 +91,26 @@ export function validateState(targetState) {
     }
   });
 }
+
+const validatePositionalPartialTargetState = (
+  partialTargetState: PartialTargetState,
+  ctId: string,
+  name: string
+) => {
+  const isValidPartialTargetState =
+    !partialTargetState || partialTargetState === true || isObject(partialTargetState);
+  if (!isValidPartialTargetState) {
+    throw new Error(`Invalid target ${name} declared for EditorInterface ${ctId}.`);
+  }
+
+  if (isObject(partialTargetState)) {
+    const validPosition =
+      !partialTargetState.position || isUnsignedInteger(partialTargetState.position);
+    if (!validPosition) {
+      throw new Error(`Invalid target ${name} declared for EditorInterface ${ctId}.`);
+    }
+  }
+};
 
 const isIncludedInEditors = (app, editorInterface): boolean => {
   if (editorInterface.editor) {

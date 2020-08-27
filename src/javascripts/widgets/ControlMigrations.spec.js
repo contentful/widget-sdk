@@ -1,5 +1,5 @@
 import { migrateControl } from './ControlMigrations';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 
 describe('ControlMigrations', () => {
   it('migrates widget regardless of type', () => {

@@ -42,9 +42,8 @@ export function create(spaceEndpoint) {
         aliasedEnvironment !== undefined || aliases !== undefined
     );
 
-    if (!hasOptedIntoEnvironmentAliases) return { environments: items };
+    if (!hasOptedIntoEnvironmentAliases) return { environments: items, aliases: [] };
 
-    // here we separate aliased environments from real environments
     return items.reduce(
       (envsAndAliases, env) => {
         if (env.sys.aliases !== undefined) {

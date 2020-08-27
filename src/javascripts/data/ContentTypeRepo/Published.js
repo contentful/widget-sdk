@@ -2,7 +2,6 @@ import { cloneDeep, get, sortBy } from 'lodash';
 import { Notification } from '@contentful/forma-36-react-components';
 import { deepFreeze } from 'utils/Freeze';
 import * as K from 'core/utils/kefir';
-import { getModule } from 'core/NgRegistry';
 import * as logger from 'services/logger';
 import * as Store from 'data/streamHashSet';
 
@@ -23,8 +22,6 @@ import * as Store from 'data/streamHashSet';
  * @param {Client.Space} space  Space instance from the client.
  */
 export function create(space) {
-  const $q = getModule('$q');
-
   const store = Store.create();
 
   /**
@@ -103,7 +100,7 @@ export function create(space) {
   function fetch(id) {
     const ct = store.get(id);
     if (ct) {
-      return $q.resolve(ct);
+      return Promise.resolve(ct);
     } else {
       if (!requesting[id]) {
         requesting[id] =
@@ -187,8 +184,6 @@ function removeDeleted(contentTypes) {
 }
 
 function handleReloadError(err) {
-  const $q = getModule('$q');
-
   const message = get(err, 'body.message');
   if (message) {
     Notification.error(message);
@@ -196,5 +191,5 @@ function handleReloadError(err) {
     Notification.error('Could not get published content types');
     logger.logServerError('Could not get published Content Types', { error: err });
   }
-  return $q.reject(err);
+  return Promise.reject(err);
 }

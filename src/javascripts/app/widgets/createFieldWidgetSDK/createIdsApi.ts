@@ -1,5 +1,5 @@
 import { ContentType, FieldAPI, IdsAPI, User, EntryAPI } from 'contentful-ui-extensions-sdk';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 
 export const createIdsApi = (
   spaceId: string,

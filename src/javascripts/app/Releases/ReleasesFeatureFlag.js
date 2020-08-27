@@ -1,8 +1,30 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
+import { useCallback } from 'react';
 
-import { getVariation, FLAGS } from 'LaunchDarkly';
 import { getModule } from 'core/NgRegistry';
+import { useAsync } from 'core/hooks';
+import { useSpaceContext } from 'features/content-tags';
+import { FLAGS, getVariation } from 'LaunchDarkly';
+
+const useFeatureFlagVariation = (featureFlag, defaultValue) => {
+  const spaceContext = useSpaceContext();
+  const load = useCallback(async () => {
+    return await getVariation(featureFlag, {
+      spaceId: spaceContext.getId(),
+      environmentId: spaceContext.getEnvironmentId(),
+      organizationId: spaceContext.getData(['organization', 'sys', 'id']),
+    });
+  }, [featureFlag, spaceContext]);
+  const { data, isLoading, error } = useAsync(load);
+  return { spaceFeatureEnabled: error ? defaultValue : !!data, isSpaceFeatureLoading: isLoading };
+};
+
+export function useFeatureFlagAddToRelease() {
+  const { spaceFeatureEnabled, isSpaceFeatureLoading } = useFeatureFlagVariation(
+    FLAGS.ADD_TO_RELEASE,
+    false
+  );
+  return { addToReleaseEnabled: spaceFeatureEnabled, isAddToReleaseLoading: isSpaceFeatureLoading };
+}
 
 export async function getReleasesFeatureVariation() {
   try {
@@ -18,26 +40,3 @@ export async function getReleasesFeatureVariation() {
     return false;
   }
 }
-
-/**
- * The facade for releases feature flag.
- * @param {Function} children
- */
-export default function ReleasesFeatureFlag({ children }) {
-  const [currentVariation, setCurrentVariation] = useState(undefined);
-
-  useEffect(() => {
-    async function fetchFlag() {
-      const flag = await getReleasesFeatureVariation();
-      setCurrentVariation(flag);
-    }
-
-    fetchFlag();
-  }, []);
-
-  return <>{children({ currentVariation })}</>;
-}
-
-ReleasesFeatureFlag.propTypes = {
-  children: PropTypes.func.isRequired,
-};

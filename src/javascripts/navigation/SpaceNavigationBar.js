@@ -1,12 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getModule } from 'core/NgRegistry';
 import * as accessChecker from 'access_control/AccessChecker';
 import { getCurrentSpaceFeature, getOrgFeature, FEATURES } from 'data/CMA/ProductCatalog';
 import NavBar from './NavBar/NavBar';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { getSpaceNavigationItems } from './SpaceNavigationBarItems';
 import SidepanelContainer from './Sidepanel/SidepanelContainer';
+import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import {
+  getOrganization,
+  getOrganizationId,
+  getSpaceEnforcements,
+  isCurrentEnvironmentMaster,
+} from 'core/services/SpaceEnvContext/utils';
 
 // We don't want to display the following sections within the context of
 // a sandbox space environment.
@@ -24,6 +30,8 @@ export default class SpaceNavigationBar extends React.Component {
   static propTypes = {
     navVersion: PropTypes.number,
   };
+
+  static contextType = SpaceEnvContext;
 
   constructor(props) {
     super(props);
@@ -43,21 +51,22 @@ export default class SpaceNavigationBar extends React.Component {
   }
 
   async getConfiguration() {
-    const spaceContext = getModule('spaceContext');
-
-    const { organization } = spaceContext;
-
-    const spaceId = spaceContext.getId();
-    const organizationId = organization.sys.id;
+    const { currentSpace, currentSpaceId, currentEnvironmentId } = this.context;
+    const organization = getOrganization(currentSpace);
+    const organizationId = getOrganizationId(currentSpace);
 
     const [environmentsEnabled, hasOrgTeamFeature, contentTagsEnabled] = await Promise.all([
-      getVariation(FLAGS.ENVIRONMENTS_FLAG, { organizationId, spaceId }),
+      getVariation(FLAGS.ENVIRONMENTS_FLAG, {
+        organizationId,
+        spaceId: currentSpaceId,
+        environmentId: currentEnvironmentId,
+      }),
       getOrgFeature(organizationId, 'teams'),
       getCurrentSpaceFeature(FEATURES.PC_CONTENT_TAGS),
     ]);
 
     const canManageEnvironments = accessChecker.can('manage', 'Environments');
-    const isMasterEnvironment = spaceContext.isMasterEnvironment();
+    const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
     const usageEnabled = organization.pricingVersion === 'pricing_version_2';
     const canManageSpace = accessChecker.canModifySpaceSettings();
 
@@ -69,10 +78,11 @@ export default class SpaceNavigationBar extends React.Component {
       }
 
       const sectionAvailable = accessChecker.getSectionVisibility()[section];
-      const enforcements = spaceContext.getData('enforcements') || [];
-      const isHibernated = enforcements.some((e) => e.reason === 'hibernated');
+      const isHibernated = getSpaceEnforcements(currentSpace).some(
+        (e) => e.reason === 'hibernated'
+      );
 
-      return spaceContext.space && !isHibernated && sectionAvailable;
+      return currentSpace && !isHibernated && sectionAvailable;
     }
 
     const items = getSpaceNavigationItems({

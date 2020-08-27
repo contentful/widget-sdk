@@ -2,7 +2,7 @@ import { cloneDeep } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import keycodes from 'utils/keycodes';
-import * as entitySelector from 'search/EntitySelector/entitySelector';
+import * as entitySelector from '../EntitySelector/entitySelector';
 
 export function FilterValueReference({
   ctField = {},

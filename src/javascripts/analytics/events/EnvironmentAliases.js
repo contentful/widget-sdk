@@ -37,6 +37,14 @@ export function notificationEnvironmentAliasChanged(data) {
   track('notification_environment_alias_changed', data);
 }
 
+export function notificationEnvironmentAliasCreated(data) {
+  track('notification_environment_alias_created', data);
+}
+
+export function notificationEnvironmentAliasDeleted(data) {
+  track('notification_environment_alias_deleted', data);
+}
+
 export function notificationSwitchToAlias(data) {
   track('notification_switch_to_alias', data);
 }

@@ -75,15 +75,21 @@ const SpaceTeamsPagePresentation = ({
           </Tooltip>
         }
       />
-      <Workbench.Content className={styles.content} type="default">
+      <Workbench.Content type="default">
         {empty && <EmptyStatePlaceholder />}
         {!empty && (
-          <Table testId="membership-table" className={styles.table}>
+          <Table testId="membership-table">
+            <colgroup>
+              <col className={styles.nameCol} />
+              <col className={styles.membersCol} />
+              <col className={styles.roleCol} />
+              <col className={styles.actionsCol} />
+            </colgroup>
             <TableHead>
               <TableRow>
-                <TableCell className={styles.teamColumn}>Team</TableCell>
-                <TableCell className={styles.membersColumn}>Members</TableCell>
-                <TableCell className={styles.rolesColumn}>Role</TableCell>
+                <TableCell>Team</TableCell>
+                <TableCell>Members</TableCell>
+                <TableCell>Role</TableCell>
                 <TableCell />
               </TableRow>
             </TableHead>

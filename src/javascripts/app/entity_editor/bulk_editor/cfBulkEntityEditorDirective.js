@@ -18,7 +18,7 @@ import * as Validator from 'app/entity_editor/Validator';
 import { buildFieldsApi } from 'app/entity_editor/dataFields';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 import createExtensionBridge from 'widgets/bridges/createExtensionBridge';
-import { WidgetLocation } from 'features/widget-renderer';
+import { WidgetLocation } from '@contentful/widget-renderer';
 
 import bulkEntityEditorTemplate from './bulk_entity_editor.html';
 import { initStateController } from '../stateController';

@@ -24,7 +24,6 @@ export const angularInitRun = [
 
     const modules = await Promise.all([
       import(/* webpackMode: "eager" */ 'analytics/analyticsConsoleDirective'),
-      import(/* webpackMode: "eager" */ 'services/modalDialogService'),
       import(/* webpackMode: "eager" */ 'app/ContentModel/Editor/contentTypeEditorController'),
       import(/* webpackMode: "eager" */ 'app/asset_editor/cfAssetEditorDirective'),
       import(/* webpackMode: "eager" */ 'app/entity_editor/bulk_editor/cfBulkEditorDirective'),
@@ -35,11 +34,7 @@ export const angularInitRun = [
       import(/* webpackMode: "eager" */ 'app/entity_editor/fieldLocaleController'),
       import(/* webpackMode: "eager" */ 'app/entry_editor/cfEntryEditorDirective'),
       import(/* webpackMode: "eager" */ 'app/entry_editor/formWidgetsController'),
-      import(/* webpackMode: "eager" */ 'components/shared/endlessContainerDirective'),
-      import(/* webpackMode: "eager" */ 'directives/bindHtmlCompileDirective'),
       import(/* webpackMode: "eager" */ 'directives/watchersTogglerDirective'),
-      import(/* webpackMode: "eager" */ 'search/EntitySelector/entitySelectorController'),
-      import(/* webpackMode: "eager" */ 'search/EntitySelector/entitySelectorDirective'),
       import(/* webpackMode: "eager" */ 'services/exceptionHandler'),
       import(/* webpackMode: "eager" */ 'ui/Framework/ReactDirective'),
     ]);

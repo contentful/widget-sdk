@@ -273,6 +273,7 @@ const ReferencesTree = ({
   maxLevel,
   onReferenceCardClick,
   defaultLocale,
+  onRootReferenceCardClick,
 }) => {
   const { state: referencesState, dispatch } = useContext(ReferencesContext);
   const root = referencesState.references[0];
@@ -348,7 +349,8 @@ const ReferencesTree = ({
         entity={root}
         isReferenceSelected={allReferencesSelected}
         onReferenceCheckboxClick={(checked, entity) => handleSelect(checked, entity)}
-        validationError={findValidationErrorForEntity(root.sys.id)}
+        onClick={onRootReferenceCardClick}
+        validationError={findValidationErrorForEntity(root.sys.id, validations)}
       />
       {MemoizedReferencesCards}
     </List>
@@ -376,6 +378,7 @@ ReferencesTree.propTypes = {
   onReferenceCardClick: PropTypes.func.isRequired,
   onSelectEntities: PropTypes.func,
   setIsTreeMaxDepthReached: PropTypes.func,
+  onRootReferenceCardClick: PropTypes.func,
 };
 
 ReferencesTree.defaultProps = {

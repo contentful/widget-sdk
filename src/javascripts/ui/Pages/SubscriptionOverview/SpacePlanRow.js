@@ -14,6 +14,7 @@ import {
   DropdownList,
   DropdownListItem,
 } from '@contentful/forma-36-react-components';
+import StateLink from 'app/common/StateLink';
 
 import { go } from 'states/Navigator';
 
@@ -41,7 +42,14 @@ const styles = {
   }),
 };
 
-function SpacePlanRow({ plan, onChangeSpace, onDeleteSpace, hasUpgraded, enterprisePlan }) {
+function SpacePlanRow({
+  plan,
+  onChangeSpace,
+  onDeleteSpace,
+  hasUpgraded,
+  enterprisePlan,
+  showSpacePlanChangeBtn,
+}) {
   const { space } = plan;
   const createdBy = space ? getUserName(space.sys.createdBy) : '';
   const createdAt = space ? moment.utc(space.sys.createdAt).format('DD/MM/YYYY') : '';
@@ -95,6 +103,18 @@ function SpacePlanRow({ plan, onChangeSpace, onDeleteSpace, hasUpgraded, enterpr
             />
           </Tooltip>
         )}
+        {showSpacePlanChangeBtn && space && (
+          <>
+            -{' '}
+            <StateLink
+              testId="subscription-page.spaces-list.change-plan-link"
+              component={TextLink}
+              path="^.space_plans"
+              params={{ spaceId: space.sys.id }}>
+              change
+            </StateLink>
+          </>
+        )}
         <br />
         {!enterprisePlan && (
           <>
@@ -134,11 +154,13 @@ function SpacePlanRow({ plan, onChangeSpace, onDeleteSpace, hasUpgraded, enterpr
               testId="subscription-page.spaces-list.space-usage-link">
               Usage
             </DropdownListItem>
-            <DropdownListItem
-              onClick={onChangeSpace(space)}
-              testId="subscription-page.spaces-list.change-space-link">
-              Change space type
-            </DropdownListItem>
+            {!showSpacePlanChangeBtn && (
+              <DropdownListItem
+                onClick={onChangeSpace(space)}
+                testId="subscription-page.spaces-list.change-space-link">
+                Change space type
+              </DropdownListItem>
+            )}
             <DropdownListItem
               onClick={onDeleteSpace(space, plan)}
               testId="subscription-page.spaces-list.delete-space-link">
@@ -157,11 +179,13 @@ SpacePlanRow.propTypes = {
   onDeleteSpace: PropTypes.func.isRequired,
   enterprisePlan: PropTypes.bool,
   hasUpgraded: PropTypes.bool,
+  showSpacePlanChangeBtn: PropTypes.bool,
 };
 
 SpacePlanRow.defaultProps = {
   enterprisePlan: false,
   hasUpgraded: false,
+  showSpacePlanChangeBtn: false,
 };
 
 export default SpacePlanRow;

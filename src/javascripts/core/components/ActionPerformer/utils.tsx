@@ -6,7 +6,7 @@ import { getModule } from 'core/NgRegistry';
 import { Tooltip } from '@contentful/forma-36-react-components';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { APP_DEFINITION_TYPE, USER_TYPE } from './constants';
-import { WidgetNamespace } from 'features/widget-renderer';
+import { WidgetNamespace } from '@contentful/widget-renderer';
 
 export async function getUser(id: string) {
   const spaceContext = getModule('spaceContext');
