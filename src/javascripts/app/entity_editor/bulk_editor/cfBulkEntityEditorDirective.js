@@ -15,7 +15,6 @@ import { localFieldChanges, valuePropertyAt } from 'app/entity_editor/Document';
 import setupNoShareJsCmaFakeRequestsExperiment from 'app/entity_editor/NoShareJsCmaFakeRequestsExperiment';
 import initDocErrorHandler from 'app/entity_editor/DocumentErrorHandler';
 import * as Validator from 'app/entity_editor/Validator';
-import { buildFieldsApi } from 'app/entity_editor/dataFields';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 import createExtensionBridge from 'widgets/bridges/createExtensionBridge';
 import { WidgetLocation } from '@contentful/widget-renderer';
@@ -284,15 +283,6 @@ export default function register() {
         $scope,
         controls: editorData.fieldControls.form,
       });
-
-      /**
-       * Build the `entry.fields` api of the widget-sdk at one
-       * place and put it on $scope so that we don't rebuild it
-       * for every widget. Instead, we share this version in every
-       * widgetApi instance.
-       */
-      const fields = entityInfo.contentType.fields;
-      $scope.fields = buildFieldsApi(fields, $scope.otDoc);
     },
   ]);
 }

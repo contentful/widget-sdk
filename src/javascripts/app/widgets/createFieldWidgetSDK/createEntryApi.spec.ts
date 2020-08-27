@@ -1,6 +1,5 @@
 import { createEntryApi } from './createEntryApi';
 import { InternalContentType } from './createContentTypeApi';
-import { FieldLocaleEventListenerFn } from './createEntryFieldApi';
 import { Document } from 'app/entity_editor/Document/typesDocument';
 import { EntryAPI } from 'contentful-ui-extensions-sdk';
 import { constant } from 'kefir';
@@ -54,13 +53,12 @@ describe('createEntryApi', () => {
     sysProperty: constant({ id: 'example' }),
   } as unknown) as Document;
   const setInvalid = noop;
-  const listenToFieldLocaleEvent = noop as FieldLocaleEventListenerFn;
   beforeEach(() => {
     entryApi = createEntryApi({
       internalContentType,
       doc,
       setInvalid,
-      listenToFieldLocaleEvent,
+      fieldLocaleListeners: {},
     });
   });
 
@@ -97,7 +95,7 @@ describe('createEntryApi', () => {
         internalContentType,
         doc,
         setInvalid,
-        listenToFieldLocaleEvent,
+        fieldLocaleListeners: {},
       });
     });
     it('returns the metaData from doc', () => {

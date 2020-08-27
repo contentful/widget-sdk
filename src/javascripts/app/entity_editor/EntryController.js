@@ -19,7 +19,6 @@ import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge';
 import * as logger from 'services/logger';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import TheLocaleStore from 'services/localeStore';
-import { buildFieldsApi } from 'app/entity_editor/dataFields';
 import setupNoShareJsCmaFakeRequestsExperiment from './NoShareJsCmaFakeRequestsExperiment';
 import * as Analytics from 'analytics/Analytics';
 
@@ -225,14 +224,6 @@ export default async function create($scope, editorData, preferences, trackLoadE
   K.onValueScope($scope, $scope.otDoc.state.isDirty$, (isDirty) => {
     $scope.context.dirty = isDirty;
   });
-
-  /**
-   * Build the `entry.fields` api of the widget-sdk at one
-   * place and put it on $scope so that we don't rebuild it
-   * for every widget. Instead, we share this version in every
-   * widgetApi instance.
-   */
-  $scope.fields = buildFieldsApi(entityInfo.contentType.fields, $scope.otDoc);
 
   $scope.localeData = {};
 

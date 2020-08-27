@@ -1,4 +1,3 @@
-import { EntryFieldAPI } from 'contentful-ui-extensions-sdk';
 import { createEntryFieldApi } from './createEntryFieldApi';
 import { InternalContentTypeField } from './createContentTypeApi';
 import { onValueWhile } from 'core/utils/kefir';
@@ -53,14 +52,14 @@ const buildEntryFieldApi = ({
   readOnly = false,
   doc = defaultDoc,
   setInvalid = jest.fn(),
-  listenToFieldLocaleEvent = jest.fn(),
+  fieldLocaleListeners = {},
   ...rest
 }: any = {}) => {
   return createEntryFieldApi({
     internalField,
     doc,
     setInvalid,
-    listenToFieldLocaleEvent,
+    fieldLocaleListeners,
     readOnly,
     ...rest,
   });
@@ -281,37 +280,19 @@ describe('createEntryFieldApi', () => {
   });
 
   describe('onIsDisabledChanged', () => {
-    describe('passed callback and field data to listenToFieldLocaleEvent', () => {
-      let entryFieldApi: EntryFieldAPI;
-      let callback: jest.Mock;
-      const listenToFieldLocaleEvent = jest.fn();
-
-      beforeEach(() => {
-        entryFieldApi = buildEntryFieldApi({
-          listenToFieldLocaleEvent,
-        });
-
-        callback = jest.fn();
-
-        entryFieldApi.onIsDisabledChanged(callback);
+    it('attaches passed callback to field locale listener', () => {
+      const onDisabledChanged = jest.fn();
+      const entryFieldApi = buildEntryFieldApi({
+        fieldLocaleListeners: { apiname: { 'en-US': { onDisabledChanged } } },
       });
 
-      it('calls listenToFieldLocaleEvent with internal field and locale', () => {
-        expect(listenToFieldLocaleEvent.mock.calls[0][0]).toEqual(defaultInternalField);
-        expect(listenToFieldLocaleEvent.mock.calls[0][1]).toEqual({
-          internal_code: 'internalCode', // eslint-disable-line @typescript-eslint/camelcase
-          code: 'en-US',
-        });
-      });
+      const callback = jest.fn();
 
-      it('calls listenToFieldLocaleEvent with a callback that returns fieldLocale.access', () => {
-        expect(listenToFieldLocaleEvent.mock.calls[0][2]({ access$: 'result' })).toEqual('result');
-      });
+      entryFieldApi.onIsDisabledChanged(callback);
 
-      it('calls listenToFieldLocaleEvent with a callback that calls the passed callback', () => {
-        listenToFieldLocaleEvent.mock.calls[0][3]({ disabled: false });
-        expect(callback).toHaveBeenCalledWith(false);
-      });
+      onDisabledChanged.mock.calls[0][0](false);
+
+      expect(callback).toHaveBeenCalledWith(false);
     });
   });
 

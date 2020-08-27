@@ -1,12 +1,12 @@
-import { get } from 'lodash';
+import { get, noop } from 'lodash';
 import * as K from 'core/utils/kefir';
 import * as PathUtils from 'utils/Path';
 import localeStore from 'services/localeStore';
 import { EntryFieldAPI } from 'contentful-ui-extensions-sdk';
-import { getModule } from 'core/NgRegistry';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 import { Document } from 'app/entity_editor/Document/typesDocument';
 import { InternalContentTypeField } from './createContentTypeApi';
+import { FieldLocaleLookup } from 'app/entry_editor/makeFieldLocaleListeners';
 
 const ERROR_CODES = {
   BADUPDATE: 'ENTRY UPDATE FAILED',
@@ -18,27 +18,6 @@ const ERROR_MESSAGES = {
   MFAILREMOVAL: 'Could not remove value for field',
   MFAILPERMISSIONS: 'Could not update entry field',
 };
-
-export type FieldLocaleEventListenerFn = (
-  internalField: InternalContentTypeField,
-  locale: any,
-  extractFieldLocaleProperty: (fieldLocale: any) => any,
-  cb: (value: any) => void
-) => () => void;
-
-export function makeFieldLocaleEventListener($scope: any): FieldLocaleEventListenerFn {
-  return (field, locale, extractFieldLocaleProperty, cb) => {
-    const fieldLocaleScope = $scope.$new(false);
-    fieldLocaleScope.widget = { field };
-    fieldLocaleScope.locale = locale;
-
-    const fieldLocale = getModule('$controller')('FieldLocaleController', {
-      $scope: fieldLocaleScope,
-    });
-
-    return K.onValueScope($scope, extractFieldLocaleProperty(fieldLocale), cb);
-  };
-}
 
 export function makePermissionError() {
   const error = new Error(ERROR_MESSAGES.MFAILPERMISSIONS);
@@ -78,7 +57,7 @@ export interface CreateEntryFieldApiProps {
   internalField: InternalContentTypeField;
   doc: Document;
   setInvalid: (publicLocaleCode: string, value: boolean) => void;
-  listenToFieldLocaleEvent: FieldLocaleEventListenerFn;
+  fieldLocaleListeners: FieldLocaleLookup;
   readOnly?: boolean;
 }
 
@@ -86,7 +65,7 @@ export function createEntryFieldApi({
   internalField,
   doc,
   setInvalid,
-  listenToFieldLocaleEvent,
+  fieldLocaleListeners,
   readOnly,
 }: CreateEntryFieldApiProps): EntryFieldAPI {
   // We fall back to `internalField.id` because some old fields don't have an
@@ -189,12 +168,13 @@ export function createEntryFieldApi({
   ): () => () => void;
   function onIsDisabledChanged(...args: any[]) {
     const { cb, locale } = getLocaleAndCallback(args);
-    return listenToFieldLocaleEvent(
-      internalField,
-      locale,
-      (fieldLocale) => fieldLocale.access$,
-      (access: any) => cb(!!access.disabled)
-    );
+    const fieldLocale = get(fieldLocaleListeners, [publicFieldId, locale.code]);
+
+    if (fieldLocale) {
+      return fieldLocale.onDisabledChanged(cb);
+    } else {
+      return noop;
+    }
   }
 
   function onSchemaErrorsChanged(callback: (errors: any) => void): () => () => void;
@@ -204,12 +184,13 @@ export function createEntryFieldApi({
   ): () => () => void;
   function onSchemaErrorsChanged(...args: any[]) {
     const { cb, locale } = getLocaleAndCallback(args);
-    return listenToFieldLocaleEvent(
-      internalField,
-      locale,
-      (fieldLocale) => fieldLocale.errors$,
-      (errors: any) => cb(errors || [])
-    );
+    const fieldLocale = get(fieldLocaleListeners, [publicFieldId, locale.code]);
+
+    if (fieldLocale) {
+      fieldLocale.onSchemaErrorsChanged(cb);
+    } else {
+      return noop;
+    }
   }
 
   const locales = internalField.localized
