@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { TextLink, Heading, Tag } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink';
 import { styles } from './styles';
+import { Notification } from '@contentful/forma-36-react-components';
 import { AppIcon } from './AppIcon';
 
 export class AppListItem extends Component {
@@ -26,10 +27,18 @@ export class AppListItem extends Component {
     orgId: PropTypes.string.isRequired,
   };
 
-  determineOnClick = (onClick, openDetailsFunc, canManageApps) => {
+  determineOnClick = (onClick, openDetailsFunc, showPermissionsErrorFunc, canManageApps) => {
     const { app } = this.props;
 
     const isInstalledOrPrivate = !!app.appInstallation || app.isPrivateApp;
+
+    // When clicking on a private app, we attempt to go straight to the install
+    // screen. In the case that the user cannot manage an app, we should instead
+    // show an error.
+    if (!canManageApps && app.isPrivateApp) {
+      return showPermissionsErrorFunc;
+    }
+
     const continueDirectlyToAppPage = canManageApps && isInstalledOrPrivate;
 
     return continueDirectlyToAppPage ? onClick : openDetailsFunc;
@@ -39,6 +48,8 @@ export class AppListItem extends Component {
     const { app, openDetailModal, canManageApps, orgId } = this.props;
 
     const openDetailsFunc = () => openDetailModal(app);
+    const showPermissionsErrorFunc = () =>
+      Notification.error("You don't have permission to manage apps. Ask your admin for help.");
 
     return (
       <div className={styles.item}>
@@ -47,7 +58,12 @@ export class AppListItem extends Component {
             <StateLink path="^.detail" params={{ appId: app.id }}>
               {({ onClick }) => (
                 <div
-                  onClick={this.determineOnClick(onClick, openDetailsFunc, canManageApps)}
+                  onClick={this.determineOnClick(
+                    onClick,
+                    openDetailsFunc,
+                    showPermissionsErrorFunc,
+                    canManageApps
+                  )}
                   className={styles.appLink}
                   data-test-id="app-details">
                   <AppIcon icon={app.icon} />
