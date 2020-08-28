@@ -11,7 +11,7 @@ import {
   DefaultWidget,
   SavedConfigItem,
 } from 'app/ContentModel/Editor/WidgetsConfiguration/interfaces';
-import { create } from 'widgets/BuiltinWidgets';
+import { useAsync } from 'core/hooks';
 import { WidgetNamespace, WidgetLocation } from '@contentful/widget-renderer';
 import WidgetParametersConfiguration from 'app/ContentModel/Editor/WidgetsConfiguration/WidgetParametersConfiguration';
 import { isSameWidget } from 'app/ContentModel/Editor/WidgetsConfiguration/utils';
@@ -156,6 +156,7 @@ function EntryEditorConfiguration(props: InternalEditorConfigProps) {
 
 interface EditorConfigProps {
   onUpdateConfiguration: (configuration: SavedConfigItem[]) => void;
+  getDefaultEntryEditorConfiguration: () => Promise<DefaultWidget[]>;
   customWidgets: CustomWidget[];
   configuration: SavedConfigItem[];
 }
@@ -169,15 +170,23 @@ const convertToWidgetConfiguration = (widget: any) => {
   };
 };
 
+interface DefaultEditorsConfigResult {
+  isLoading: boolean;
+  error: any;
+  data: any;
+}
+
 export default (props: EditorConfigProps) => {
-  const defaultWidgets = create().map(convertToWidgetConfiguration).filter(isWidgetBuiltIn);
+  const { isLoading, error, data } = useAsync(
+    props.getDefaultEntryEditorConfiguration
+  ) as DefaultEditorsConfigResult;
   const customWidgets = props.customWidgets.map(convertToWidgetConfiguration);
 
+  if (isLoading || error) {
+    return null;
+  }
+
   return (
-    <EntryEditorConfiguration
-      {...props}
-      customWidgets={customWidgets}
-      defaultWidgets={defaultWidgets}
-    />
+    <EntryEditorConfiguration {...props} customWidgets={customWidgets} defaultWidgets={data} />
   );
 };

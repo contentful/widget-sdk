@@ -14,6 +14,7 @@ import FieldsList from './FieldsTab/FieldsList';
 import ContentTypePreview from './PreviewTab/ContentTypePreview';
 import SidebarConfiguration from 'app/EntrySidebar/Configuration/SidebarConfiguration';
 import EntryEditorConfiguration from './EntryEditorConfigurationTab/EntryEditorConfig';
+import { getEntryConfiguration } from 'app/entry_editor/DefaultConfiguration';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { WidgetLocation } from '@contentful/widget-renderer';
 import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
@@ -115,6 +116,7 @@ export default function ContentTypesPage(props) {
                 <EntryEditorConfiguration
                   configuration={entryEditorConfiguration}
                   customWidgets={props.extensions.filter(isEntryEditorWidget)}
+                  getDefaultEntryEditorConfiguration={getEntryConfiguration}
                   onUpdateConfiguration={onEntryEditorUpdateConfiguration}
                 />
               </div>
