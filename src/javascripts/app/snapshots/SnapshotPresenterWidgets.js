@@ -14,6 +14,7 @@ import SnapshotPresenterMarkdown from './SnapshotPresenterMarkdown';
 import SnapshotPresenterRichText from './SnapshotPresenterRichText';
 import SnapshotPresenterStandard from './SnapshotPresenterStandard';
 import { isCustomWidget } from '@contentful/widget-renderer';
+import { toRendererWidget } from 'widgets/WidgetCompat';
 
 const styles = {
   rtl: css({
@@ -30,17 +31,17 @@ const SnapshotPresenterWidgets = ({
   value,
   widget,
 }) => {
-  const { field, widgetNamespace, descriptor, parameters, settings } = widget;
+  const { field, widgetNamespace, descriptor, settings } = widget;
 
   if (isCustomWidget(widgetNamespace)) {
     return (
       <SnapshotPresenterExtension
-        descriptor={descriptor}
         editorData={editorData}
         entity={entity}
         field={field}
         locale={locale}
-        parameters={parameters}
+        value={value}
+        widget={toRendererWidget(descriptor)}
       />
     );
   }
