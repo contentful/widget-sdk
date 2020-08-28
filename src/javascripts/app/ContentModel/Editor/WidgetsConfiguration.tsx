@@ -30,8 +30,7 @@ const styles = {
     width: '384px',
     backgroundColor: tokens.colorWhite,
     minHeight: '500px',
-    paddingLeft: tokens.spacingL,
-    paddingRight: tokens.spacingL,
+    paddingLeft: tokens.spacingL
   }),
   additionalColumn: css({
     minWidth: '384px',
