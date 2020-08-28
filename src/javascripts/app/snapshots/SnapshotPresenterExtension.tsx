@@ -11,12 +11,15 @@ import {
 } from '@contentful/widget-renderer';
 import { InternalContentType } from 'app/widgets/createFieldWidgetSDK/createContentTypeApi';
 import { createTagsRepo } from 'features/content-tags';
-import { Field, Locale } from 'app/entity_editor/EntityField/types';
+import { Locale } from 'app/entity_editor/EntityField/types';
 import { Entity } from 'app/entity_editor/Document/types';
 
 interface SnapshotPresenterExtensionProps {
   locale: Locale;
-  field: Field;
+  field: {
+    apiName?: string;
+    id: string;
+  };
   entity: Entity;
   editorData: {
     contentType: { data: InternalContentType };
