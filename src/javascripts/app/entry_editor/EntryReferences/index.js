@@ -94,7 +94,6 @@ const ReferencesTab = ({ entity, onRootReferenceCardClick }) => {
     initialReferencesAmount,
     referenceTreeKey,
     isTooComplex,
-    selectedEntities,
   } = referencesState;
 
   const defaultLocale = getDefaultLocale().code;
@@ -186,7 +185,7 @@ const ReferencesTab = ({ entity, onRootReferenceCardClick }) => {
                   }
                   checked={allReferencesSelected}
                 />
-                {selectedEntities.length ? 'Selected' : 'Select all'}
+                Select all
               </Button>
             </div>
           )}
