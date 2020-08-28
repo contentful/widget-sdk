@@ -4,7 +4,6 @@ import { useAsync } from 'core/hooks';
 import { css } from 'emotion';
 
 import { getResourceLimits, isLegacyOrganization } from 'utils/ResourceUtils';
-import { websiteUrl } from 'Config';
 import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService';
 import { isEnterprisePlan, getBasePlan } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
@@ -14,6 +13,7 @@ import createResourceService from 'services/ResourceService';
 import { Note, Paragraph, TextLink } from '@contentful/forma-36-react-components';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
+import { CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM } from 'analytics/utmLinks';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 import * as PricingService from 'services/PricingService';
 import { getModule } from 'core/NgRegistry';
@@ -136,7 +136,7 @@ export function UpgradeBanner() {
             <>
               <ExternalTextLink
                 testId="upgrade-banner.upgrade-to-enterprise-link"
-                href={websiteUrl('contact/sales/')}
+                href={CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM}
                 onClick={() => {
                   handleUpgradeToEnterpriseClick(organization, space);
                 }}>
