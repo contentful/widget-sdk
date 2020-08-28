@@ -42,8 +42,7 @@ const findUnusedDefaultWidgets = (
   configuration: SavedConfigItem[]
 ) => {
   return defaultWidgets.filter(
-    (widget) =>
-      !configuration.find((item) => isWidgetBuiltIn(item) && widget.widgetId === item.widgetId)
+    (widget) => !configuration.find((item) => isWidgetBuiltIn(item) && isSameWidget(widget, item))
   );
 };
 
