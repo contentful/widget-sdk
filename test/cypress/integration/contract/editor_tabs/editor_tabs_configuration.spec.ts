@@ -15,6 +15,7 @@ import {
   queryForScimInDefaultOrg,
 } from '../../../interactions/product_catalog_features';
 import { defaultHeader } from '../../../util/requests';
+import { FeatureFlag } from '../../../util/featureFlag';
 
 const editorInterfaceWithCustomEditorsRequestBody = {
   sys: {
@@ -139,6 +140,7 @@ const saveDefaultContentTypeEditorInterfaceWithCustomEditors = {
 
 describe('Editor tabs configuration', () => {
   beforeEach(() => {
+    cy.enableFeatureFlags([FeatureFlag.ADD_TO_RELEASE]);
     cy.resetAllFakeServers();
     // TODO: move this to a before block
     cy.startFakeServers({

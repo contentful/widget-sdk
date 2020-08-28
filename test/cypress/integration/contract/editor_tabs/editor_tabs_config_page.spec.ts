@@ -6,9 +6,11 @@ import {
 } from '../../../interactions/content_types';
 import { getEditorInterfaceForDefaultContentType } from '../../../interactions/content_types';
 import { defaultContentTypeId, defaultSpaceId } from '../../../util/requests';
+import { FeatureFlag } from '../../../util/featureFlag';
 
 describe('Editor tabs configuration', () => {
   beforeEach(() => {
+    cy.enableFeatureFlags([FeatureFlag.ADD_TO_RELEASE]);
     cy.resetAllFakeServers();
 
     const interactions = [
