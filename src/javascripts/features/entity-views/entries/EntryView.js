@@ -58,6 +58,7 @@ export const EntryView = ({ goTo }) => {
   const listViewContext = useListView({
     entityType,
     isPersisted: true,
+    onUpdate,
   });
   const fetchEntries = useCallback((query) => spaceContext.space.getEntries(query), [spaceContext]);
   const [jobs, setJobs] = useState([]);
@@ -65,6 +66,7 @@ export const EntryView = ({ goTo }) => {
   const [accessibleCTs, setAccessibleCTs] = useState([]);
 
   const { contentTypeId } = listViewContext.getView();
+  const [suggestedContentTypeId, setSuggestedContentTypeId] = useState(contentTypeId);
 
   const cache = useMemo(
     () => ({
@@ -126,6 +128,10 @@ export const EntryView = ({ goTo }) => {
   const displayFieldForFilteredContentType = () =>
     EntityFieldValueSpaceContext.displayFieldForType(contentTypeId);
 
+  function onUpdate({ contentTypeId }) {
+    setSuggestedContentTypeId(contentTypeId);
+  }
+
   return (
     <EntitiesView
       title="Content"
@@ -144,7 +150,7 @@ export const EntryView = ({ goTo }) => {
         <span className={className}>
           <CreateEntryButton
             contentTypes={accessibleCTs}
-            suggestedContentTypeId={contentTypeId}
+            suggestedContentTypeId={suggestedContentTypeId}
             onSelect={newEntry(goTo, spaceContext, showNoEntitiesAdvice, contentTypeId)}
           />
         </span>
