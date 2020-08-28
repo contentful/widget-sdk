@@ -303,7 +303,7 @@ export default function create($scope, contentTypeIds) {
     const sizeReason = reasons.find(({ name }) => name === 'size');
 
     if (sizeReason) {
-      notify.saveSizeError(errOrErrContainer, $scope.contentType, sizeReason);
+      notify.tooManyEditorsError(errOrErrContainer, $scope.contentType, sizeReason);
     } else {
       notify.saveFailure(errOrErrContainer, $scope.contentType);
     }

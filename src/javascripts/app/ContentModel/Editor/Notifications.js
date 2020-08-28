@@ -13,7 +13,7 @@ const messages = {
   save: {
     success: 'Content type saved successfully',
     invalid: saveError + 'Data is invalid',
-    size: (max) =>
+    tooManyEditors: (max) =>
       `You’ve reached the limit of ${max} active entry editors for this content type. To fix this, remove an entry editor or contact support.`,
     outdated: saveError + 'Your version is outdated. Please reload and try again',
     nofields: 'At least one field is required to save a content type.',
@@ -89,10 +89,10 @@ export function saveInvalidError(error, contentType) {
   });
 }
 
-export function saveSizeError(error, contentType, reason) {
+export function tooManyEditorsError(error, contentType, reason) {
   const max = get(reason, 'max', 10);
 
-  Notification.error(messages.save.size(max), { title: 'Unable to save content type' });
+  Notification.error(messages.save.tooManyEditors(max), { title: 'Unable to save content type' });
   logger.logServerWarn('Error saving invalid Content Type', {
     error,
     contentType: contentType.data,
