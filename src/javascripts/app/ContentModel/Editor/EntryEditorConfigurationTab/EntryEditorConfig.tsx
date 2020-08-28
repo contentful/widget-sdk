@@ -14,6 +14,7 @@ import {
 import { create } from 'widgets/BuiltinWidgets';
 import { WidgetNamespace, WidgetLocation } from '@contentful/widget-renderer';
 import WidgetParametersConfiguration from 'app/ContentModel/Editor/WidgetsConfiguration/WidgetParametersConfiguration';
+import { isSameWidget } from 'app/ContentModel/Editor/WidgetsConfiguration/utils';
 
 const styles = {
   container: css({
@@ -54,8 +55,8 @@ const enrichWidgetData = (defaultWidgets: Widget[], customWidgets: Widget[]) => 
   item: SavedConfigItem
 ) =>
   isWidgetBuiltIn(item)
-    ? defaultWidgets.find((widget) => item.widgetId === widget.widgetId)
-    : customWidgets.find((widget) => item.widgetId === widget.widgetId);
+    ? defaultWidgets.find((widget) => isSameWidget(item, widget))
+    : customWidgets.find((widget) => isSameWidget(item, widget));
 
 function createStateFromConfiguration(
   configuration: SavedConfigItem[],
