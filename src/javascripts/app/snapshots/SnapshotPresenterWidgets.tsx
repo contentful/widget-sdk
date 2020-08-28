@@ -30,9 +30,9 @@ interface SnapshotPresenterWidgetsProps {
     editorInterface: EditorInterface;
   };
   entity: Entity;
-  linkType: string;
+  linkType?: string;
   value: any;
-  type: string;
+  type?: string;
   widget: {
     descriptor: LegacyWidget;
     field: Field;
