@@ -24,10 +24,7 @@ import getAccessibleCTs from 'data/ContentTypeRepo/accessibleCTs';
   useScrollToBottomTrigger - handles the loadMore as a result of reaching the bottom of the viewport
 
   useSelection
-    has a map of selection: a { key: value } tuple,
-    where a key is an entity id and the value is a boolean
-    Omits duplicates. On loadMore, extends the map with tuples for only new entities,
-    keeping the previous selection snapshot untouched
+    has an array of selection
 
   useScrollToBottomTrigger
     triggers a loadMore call for the current state (search or not search)

@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { selectionMapToEntities, extendSelectionMap, toSelectionMap } from './utils';
+import { intersection, difference, uniqBy } from 'lodash';
 
 const Operations = {
   SELECT: 'select',
@@ -8,16 +8,14 @@ const Operations = {
 
 /*
   Handles exposes an api for the entity selection
-  Keeps the state of a selection as a map of key-value tuples,
-  where key is an entity id, while value is boolean, indicating if the entity was selected
 */
 export const useSelection = ({ entities, multipleSelection }) => {
-  const [selectionMap, setSelectionMap] = useState(toSelectionMap(entities));
+  const [selectedEntities, setSelectedEntities] = useState([]);
   const [lastToggled, setLastToggled] = useState({});
 
   useEffect(() => {
-    setSelectionMap((currentSelectionMap) =>
-      extendSelectionMap(currentSelectionMap, toSelectionMap(entities))
+    setSelectedEntities((currentSelectedEntities) =>
+      intersection(currentSelectedEntities, entities)
     );
   }, [entities]);
 
@@ -26,41 +24,40 @@ export const useSelection = ({ entities, multipleSelection }) => {
       if (!entity?.sys?.id) {
         return false;
       }
-      return Boolean(selectionMap[entity.sys.id]);
+      return Boolean(
+        selectedEntities.find((selectedEntity) => selectedEntity.sys.id === entity.sys.id)
+      );
     },
-    [selectionMap]
+    [selectedEntities]
   );
 
-  const getSelectedEntities = useCallback(() => selectionMapToEntities(selectionMap, entities), [
-    selectionMap,
-    entities,
-  ]);
+  const getSelectedEntities = useCallback(() => selectedEntities, [selectedEntities]);
 
   const toggle = useCallback(
     (entity, operation) => {
       const batchOfEntities = Array.isArray(entity) ? entity : [entity];
       const shouldBeSelected = operation === Operations.SELECT ? true : false;
-      const toggledSubsetForBatch = batchOfEntities.reduce(
-        (acc, e) => ({ ...acc, [e.sys.id]: shouldBeSelected }),
-        {}
-      );
 
-      const updatedSelectionMap = { ...selectionMap, ...toggledSubsetForBatch };
-      setSelectionMap(updatedSelectionMap);
-      return updatedSelectionMap;
+      const updatedArrayOfSelectedEntities = shouldBeSelected
+        ? uniqBy([...selectedEntities, ...batchOfEntities], (entity) => entity.sys.id)
+        : difference(selectedEntities, batchOfEntities);
+
+      setSelectedEntities(updatedArrayOfSelectedEntities);
+
+      return updatedArrayOfSelectedEntities;
     },
-    [selectionMap]
+    [selectedEntities]
   );
 
   const toggleSelection = useCallback(
     (entity, entityIndex) => {
-      let updatedSelectionMap;
+      let updatedArrayOfSelectedEntities;
 
       if (!multipleSelection) {
         if (Array.isArray(entity)) {
           throw new Error('Attempted to select multiple entities with multiSelection: false');
         }
-        updatedSelectionMap = toggle(
+        updatedArrayOfSelectedEntities = toggle(
           entity,
           isSelected(entity) ? Operations.DESELECT : Operations.SELECT
         );
@@ -68,20 +65,20 @@ export const useSelection = ({ entities, multipleSelection }) => {
         let operation;
         if (Array.isArray(entity)) {
           operation = lastToggled.operation || Operations.SELECT;
-          updatedSelectionMap = toggle(entity, operation);
+          updatedArrayOfSelectedEntities = toggle(entity, operation);
           // mainly for tests
           if (document?.getSelection) {
             document.getSelection().removeAllRanges();
           }
         } else {
           operation = isSelected(entity) ? Operations.DESELECT : Operations.SELECT;
-          updatedSelectionMap = toggle(entity, operation);
+          updatedArrayOfSelectedEntities = toggle(entity, operation);
         }
         setLastToggled({ entity, operation, index: entityIndex });
       }
-      return selectionMapToEntities(updatedSelectionMap, entities);
+      return updatedArrayOfSelectedEntities;
     },
-    [lastToggled, toggle, multipleSelection, isSelected, entities]
+    [lastToggled, toggle, multipleSelection, isSelected]
   );
 
   return {

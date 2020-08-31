@@ -169,6 +169,112 @@ describe('useSelection hook', () => {
         expect(result.current.isSelected(entries[3])).toBe(true);
       });
     });
+
+    it('should keep the order in which the items were selected', () => {
+      const entries = [entry(), entry(), entry(), entry()];
+      const { result } = renderHook(() => {
+        const entities = useMemo(() => entries, []);
+        return useSelection({
+          entities,
+          multipleSelection: true,
+        });
+      });
+
+      // selecting last item
+      act(() => {
+        const { toggle } = result.current;
+        const selectedEntities = toggle(entries[entries.length - 1], entries.length - 1);
+        expect(selectedEntities).toEqual([entries[entries.length - 1]]);
+      });
+
+      expect(result.current.getSelectedEntities()).toEqual([entries[entries.length - 1]]);
+
+      // batch selecting items 1, 2
+      act(() => {
+        const { toggle } = result.current;
+        const selectedEntities = toggle(entries.slice(1, 3), 1);
+        expect(selectedEntities).toEqual([entries[entries.length - 1], entries[1], entries[2]]);
+      });
+
+      expect(result.current.getSelectedEntities()).toEqual([
+        entries[entries.length - 1],
+        entries[1],
+        entries[2],
+      ]);
+
+      // selecting item 0
+      act(() => {
+        const { toggle } = result.current;
+        const selectedEntities = toggle(entries[0], 0);
+        expect(selectedEntities).toEqual([
+          entries[entries.length - 1],
+          entries[1],
+          entries[2],
+          entries[0],
+        ]);
+      });
+
+      expect(result.current.getSelectedEntities()).toEqual([
+        entries[entries.length - 1],
+        entries[1],
+        entries[2],
+        entries[0],
+      ]);
+
+      // deselecting item 2
+      act(() => {
+        const { toggle } = result.current;
+        const selectedEntities = toggle(entries[2], 2);
+        expect(selectedEntities).toEqual([entries[entries.length - 1], entries[1], entries[0]]);
+      });
+
+      expect(result.current.getSelectedEntities()).toEqual([
+        entries[entries.length - 1],
+        entries[1],
+        entries[0],
+      ]);
+
+      // batch selecting items 2 and checking that it's added to the end of the selected array
+      act(() => {
+        const { toggle } = result.current;
+        const selectedEntities = toggle(entries[2], 2);
+        expect(selectedEntities).toEqual([
+          entries[entries.length - 1],
+          entries[1],
+          entries[0],
+          entries[2],
+        ]);
+      });
+
+      expect(result.current.getSelectedEntities()).toEqual([
+        entries[entries.length - 1],
+        entries[1],
+        entries[0],
+        entries[2],
+      ]);
+
+      // deselecting item 2 to switch into DESELECT mode
+      act(() => {
+        const { toggle } = result.current;
+        const selectedEntities = toggle(entries[2], 2);
+        expect(selectedEntities).toEqual([entries[entries.length - 1], entries[1], entries[0]]);
+      });
+
+      expect(result.current.getSelectedEntities()).toEqual([
+        entries[entries.length - 1],
+        entries[1],
+        entries[0],
+      ]);
+
+      // batch deselecting items 0, 1, 2
+      act(() => {
+        const { toggle } = result.current;
+        const selectedEntities = toggle(entries.slice(0, 3), 0);
+        expect(selectedEntities).toEqual([entries[entries.length - 1]]);
+      });
+
+      expect(result.current.getSelectedEntities()).toEqual([entries[entries.length - 1]]);
+    });
   });
 
   describe('isSelected', () => {
