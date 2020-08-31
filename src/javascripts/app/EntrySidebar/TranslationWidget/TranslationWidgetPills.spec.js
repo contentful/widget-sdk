@@ -3,7 +3,7 @@ import Enzyme from 'enzyme';
 import 'jest-enzyme';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes';
 import TranslationWidgetPills from './TranslationWidgetPills';
-import { ModalLauncher as ModalLauncherMocked } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { TextLink, Pill } from '@contentful/forma-36-react-components';
 import { track } from 'analytics/Analytics';
 
@@ -30,7 +30,7 @@ describe('EntrySidebar/TranslationWidgetPills', () => {
 
   beforeEach(() => {
     props.emitter.emit.mockClear();
-    ModalLauncherMocked.open = jest.fn();
+    jest.spyOn(ModalLauncher, 'open').mockImplementation(() => Promise.resolve(true));
   });
 
   it('should match snapshot', () => {
@@ -61,7 +61,7 @@ describe('EntrySidebar/TranslationWidgetPills', () => {
   describe('on change', () => {
     beforeEach(async () => {
       await render().find(TextLink).prop('onClick')();
-      const [[callback]] = ModalLauncherMocked.open.mock.calls;
+      const [[callback]] = ModalLauncher.open.mock.calls;
       const localeSelectDialog = callback({});
       const {
         props: { onUpdate },

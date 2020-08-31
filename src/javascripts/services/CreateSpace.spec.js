@@ -1,4 +1,4 @@
-import { ModalLauncher as ModalLauncherMocked } from '@contentful/forma-36-react-components/dist/alpha';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 
 import { showDialog } from './CreateSpace';
 import { canCreateSpaceInOrganization } from 'access_control/AccessChecker';
@@ -46,26 +46,24 @@ jest.mock('account/pricing/PricingDataProvider', () => ({
 
 // TODO: we'll be able to write much better tests if we migrate to Forma36 modals
 describe('CreateSpace', () => {
-  const modalLauncherOpen = jest.fn();
-
   beforeEach(() => {
-    ModalLauncherMocked.open = modalLauncherOpen;
+    jest.spyOn(ModalLauncher, 'open').mockImplementation(() => Promise.resolve(true));
   });
 
   afterEach(() => {
-    modalLauncherOpen.mockClear();
+    ModalLauncher.open.mockClear();
   });
 
   describe('#showDialog', () => {
     it('opens old dialog with v1 org id', async function () {
       await showDialog('v1');
-      expect(ModalLauncherMocked.open).toHaveBeenCalledTimes(1);
+      expect(ModalLauncher.open).toHaveBeenCalledTimes(1);
     });
 
     it('opens wizard with v2 org id', async function () {
       await showDialog('v2');
       getOrganization.mockResolvedValueOnce(mockV2Org);
-      expect(ModalLauncherMocked.open).toHaveBeenCalledTimes(1);
+      expect(ModalLauncher.open).toHaveBeenCalledTimes(1);
     });
 
     it('throws if no org id is passed', async function () {
@@ -89,7 +87,7 @@ describe('CreateSpace', () => {
       isEnterprisePlan.mockReturnValueOnce(true);
       await showDialog('v2');
       getOrganization.mockResolvedValueOnce(mockV2Org);
-      expect(ModalLauncherMocked.open).toHaveBeenCalledTimes(1);
+      expect(ModalLauncher.open).toHaveBeenCalledTimes(1);
     });
   });
 });
