@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ChangeSpaceWarning, { open, MODAL_TYPES } from './ChangeSpaceWarning';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 
 // Needed for ContactUsButton
 global.open = () => {};
@@ -58,8 +58,8 @@ describe('ChangeSpaceWarning', () => {
     });
 
     it('should call ModalLauncher.open', () => {
+      jest.spyOn(ModalLauncher, 'open').mockImplementation(() => Promise.resolve(true));
       open(MODAL_TYPES.COMMITTED);
-
       expect(ModalLauncher.open).toBeCalled();
     });
   });

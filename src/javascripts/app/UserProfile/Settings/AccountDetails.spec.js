@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react';
 import AccountDetails from './AccountDetails';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 
 describe('AccountDetails', () => {
   const makeUser = (custom) => {
@@ -23,6 +23,10 @@ describe('AccountDetails', () => {
       <AccountDetails user={user} onEdit={onEdit} onChangePassword={onChangePassword} />
     );
   };
+
+  beforeEach(() => {
+    jest.spyOn(ModalLauncher, 'open').mockImplementation(() => Promise.resolve(true));
+  });
 
   it('should allow the user to change their password if the passowrd is set', () => {
     const user = makeUser({

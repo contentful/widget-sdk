@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import moment from 'moment';

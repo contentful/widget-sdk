@@ -3,7 +3,7 @@ import React from 'react';
 import pluralize from 'pluralize';
 import PropTypes from 'prop-types';
 import { Notification, ModalConfirm, Paragraph } from '@contentful/forma-36-react-components';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import ReloadNotification from 'app/common/ReloadNotification';
 import { getInstance } from 'access_control/RoleRepository';
 import { jumpToRole } from '../utils/jumpToRole';

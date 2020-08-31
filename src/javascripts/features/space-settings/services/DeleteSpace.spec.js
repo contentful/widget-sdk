@@ -1,7 +1,7 @@
 import React from 'react';
 import { screen, render, fireEvent, wait } from '@testing-library/react';
 import { openDeleteSpaceDialog, DeleteSpaceModal } from './DeleteSpace';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { isEnterprisePlan, isFreeSpacePlan } from 'account/pricing/PricingDataProvider';
 import { open as openChangeSpaceWarningModal } from 'app/SpaceWizards/ChangeSpaceWarning';
 import * as TokenStore from 'services/TokenStore';
@@ -56,7 +56,7 @@ describe('DeleteSpace service', () => {
     };
 
     beforeEach(() => {
-      ModalLauncher.open.mockResolvedValue(true);
+      jest.spyOn(ModalLauncher, 'open').mockImplementation(() => Promise.resolve(true));
       TokenStore.refresh.mockReturnValue({});
     });
 

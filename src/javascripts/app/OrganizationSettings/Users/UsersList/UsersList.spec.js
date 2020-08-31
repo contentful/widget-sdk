@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, waitFor, fireEvent, cleanup } from '@testing-library/react';
 import { generateFilterDefinitions } from './FilterDefinitions';
 import { UsersList } from './UsersList';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import * as fake from 'test/helpers/fakeFactory';
 import cleanupNotifications from 'test/helpers/cleanupNotifications';
 import { removeMembership, getMemberships } from 'access_control/OrganizationMembershipRepository';
@@ -81,6 +81,10 @@ async function build(locationValue = {}) {
 }
 
 describe('UsersList', () => {
+  beforeEach(() => {
+    jest.spyOn(ModalLauncher, 'open').mockImplementation(() => Promise.resolve(true));
+  });
+
   afterEach(() => {
     cleanup();
     cleanupNotifications();
@@ -179,7 +183,6 @@ describe('UsersList', () => {
     await build();
     const removeBtns = screen.getAllByText('Remove');
     await waitFor(() => fireEvent.click(removeBtns[0]));
-    ModalLauncher.open.mockResolvedValueOnce(true);
     expect(ModalLauncher.open).toHaveBeenCalled();
     expect(removeMembership).toHaveBeenCalled();
     expect(screen.getAllByTestId('organization-membership-list-row')).toHaveLength(

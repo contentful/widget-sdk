@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Modal } from '@contentful/forma-36-react-components';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { FieldModalDialogForm } from './FieldModalDialogForm';
 
 const FieldModalDialog = ({

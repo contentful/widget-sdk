@@ -5,7 +5,7 @@ import * as fake from 'test/helpers/fakeFactory';
 import * as FORMA_CONSTANTS from 'test/helpers/Forma36Constants';
 
 import OrganizationRow from './OrganizationRow';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { fetchCanLeaveOrg } from './OrganizationUtils';
 import { isOwnerOrAdmin, getOrganizationMembership } from 'services/OrganizationRoles';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
@@ -69,6 +69,8 @@ describe('OrganizationRow', () => {
     isOwnerOrAdmin.mockReturnValue(false);
     isLegacyOrganization.mockReturnValue(false);
     getOrganizationMembership.mockReturnValue(fakeOrgMemberhip);
+
+    jest.spyOn(ModalLauncher, 'open').mockImplementation(() => Promise.resolve(true));
   });
 
   describe('should render correctly', () => {
@@ -191,6 +193,7 @@ describe('OrganizationRow', () => {
     });
 
     it('should call removed them from the org and call onLeaveSuccess if they are can leave the org and click on the leave button', async () => {
+      ModalLauncher.open.mockResolvedValueOnce(true);
       await build();
       fireEvent.click(screen.getByTestId('organization-row.dropdown-menu.trigger'));
 
@@ -208,6 +211,7 @@ describe('OrganizationRow', () => {
     });
 
     it('should display an error if leaving the org request fails', async () => {
+      ModalLauncher.open.mockResolvedValueOnce(true);
       removeMembership.mockReset().mockRejectedValueOnce(new Error());
 
       await build();

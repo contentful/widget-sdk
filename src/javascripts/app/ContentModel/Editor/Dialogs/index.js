@@ -1,5 +1,5 @@
 import React from 'react';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { DuplicateContentTypeDialog } from './DuplicateContentTypeDialog';
 import { CreateContentTypeDialog } from './CreateContentTypeDialog';
 import EditContentTypeDialog from './EditContentTypeDialog';

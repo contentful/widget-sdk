@@ -16,7 +16,7 @@ import * as accessChecker from 'access_control/AccessChecker';
 import ContentTypesPage from 'app/ContentModel/Editor/ContentTypesPage';
 
 import { AddFieldDialogModal } from './Dialogs/AddField';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 
 export default function register() {

@@ -3,7 +3,7 @@ import { render, fireEvent, wait } from '@testing-library/react';
 import { Notification } from '@contentful/forma-36-react-components';
 import SecuritySection from './SecuritySection';
 import { window } from 'core/services/window';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { getUserTotp } from './AccountRepository';
 
 jest.mock('core/services/window', () => {
@@ -37,6 +37,10 @@ describe('SecuritySection', () => {
 
     return render(<SecuritySection {...props} />);
   };
+
+  beforeEach(() => {
+    jest.spyOn(ModalLauncher, 'open').mockImplementation(() => Promise.resolve(true));
+  });
 
   afterEach(() => {
     ModalLauncher.open.mockReset();

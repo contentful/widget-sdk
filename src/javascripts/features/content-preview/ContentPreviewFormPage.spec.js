@@ -6,7 +6,7 @@ import 'jest-enzyme';
 import { Notification } from '@contentful/forma-36-react-components';
 import * as Analytics from 'analytics/Analytics';
 import $state from 'ng/$state';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 
 const mockContentPreview = {
   create: jest.fn(),
