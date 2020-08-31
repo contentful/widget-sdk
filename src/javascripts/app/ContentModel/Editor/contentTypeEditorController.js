@@ -267,7 +267,7 @@ export default function register() {
       }
 
       function trackAddedField(contentType, field) {
-        Analytics.track('modelling:field_added', {
+        Analytics.track('content_modelling:field_added', {
           contentTypeId: contentType.getId(),
           contentTypeName: contentType.getName(),
           fieldId: field.id,

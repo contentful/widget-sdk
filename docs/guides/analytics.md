@@ -122,7 +122,7 @@ space/organization ID may not be available (organization/space not created
 yet).
 
 
-## List of events
+## List of events (OUTDATED)
 
 | namespace           | event name                            | payload
 |---------------------|---------------------------------------|---------
@@ -147,7 +147,6 @@ yet).
 | space_switcher      | space_switched                        | <code>targetSpaceId: id-string<br>targetSpaceName: string</code>
 | space               | template_selected                     | <code>templateName: string</code>
 | space               | create                                | <code>templateName: string</code>
-| search              | bulk_action_performed                 | <code>entityType: string (Entry, Asset)<br>method: string (publish, duplicate...)
 | search              | search_performed                      | TODO: link Snowplow schema when merged
 | search              | view_created                          | TODO: link Snowplow schema when merged
 | search              | view_edited                           | TODO: link Snowplow schema when merged
@@ -158,8 +157,7 @@ yet).
 | search              | filter_removed                        | TODO: link Snowplow schema when merged
 | search              | query_changed                         | TODO: link Snowplow schema when merged
 | search              | entry_clicked                         | TODO: link Snowplow schema when merged
-| modelling           | field_added                           | <code>contentTypeId: id-string<br>contentTypeName: string<br>fieldId: id-string<br>fieldName: string<br>fieldType: string<br>fieldItemType: string<br>fieldLocalized: bool<br>fieldRequired: bool</code>
-| modelling           | custom_extension_selected             | <code>extensionId: id-string<br>extensionName: string<br>fieldType: string (Text, Symbol...)<br>contentTypeId: id-string</code>
+| content_modelling   | field_added                           | <code>contentTypeId: id-string<br>contentTypeName: string<br>fieldId: id-string<br>fieldName: string<br>fieldType: string<br>fieldItemType: string<br>fieldLocalized: bool<br>fieldRequired: bool</code>
 | entry_editor        | state_changed                         | <code>entityType: string (Asset, Entry)<br>entityId: id-string<br>fromState: string (draft, published...)<br>toState: string</code>
 | entry_editor        | disabled_fields_visibility_toggled    | <code>entryId: id-string<br>show: bool</code>
 | entry_editor        | created_with_same_ct                  | <code>contentTypeId: id-string<br>entryId: id-string</code>
@@ -175,9 +173,9 @@ yet).
 | bulk_editor         | action                                | <code>parentEntryId: string<br>refCount: number<br>entryId: string<br>action: enum</code>
 | bulk_editor         | status                                | <code>parentEntryId: string<br>refCount: number<br>entryId: string<br>status: enum</code>
 | bulk_editor         | add                                   | <code>parentEntryId: string<br>refCount: number<br>exiting: bool/code>
-| content_preview     | created                               | <code>envName: string<br>envId: id-string<br>isDiscoveryApp: bool</code>
-| content_preview     | updated                               | <code>envName: string<br>envId: id-string</code>
-| content_preview     | deleted                               | <code>envName: string<br>envId: id-string</code>
+| content_preview     | created                               | <code>name: string<br>id: id-string<br>isDiscoveryApp: bool</code>
+| content_preview     | updated                               | <code>name: string<br>id: id-string</code>
+| content_preview     | deleted                               | <code>name: string<br>id: id-string</code>
 | content_type        | create                                | <code>actionData: obj<br>response: obj</code>
 | entry               | create                                | <code>actionData: obj<br>response: obj, eventOrigin: string</code>
 | asset               | create                                | <code>actionData: obj<br>response: obj</code>
@@ -211,3 +209,4 @@ yet).
 | environment_aliases | notification_environment_alias_changed| <code>update: obj<br />newTarget: string<br />oldTarget: string<br />aliasId: string</code>
 | environment_aliases | notification_switch_to_alias          | -
 | environment_aliases | notification_continue_on_environment  | -
+| entity_list         | bulk_action_performed                 | <code>entityType: string (Entry, Asset)<br>method: string (publish, duplicate...)<br>succeeded_count: number<br>failed_count: number
