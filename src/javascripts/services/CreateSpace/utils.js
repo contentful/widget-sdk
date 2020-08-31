@@ -75,8 +75,6 @@ const createNewSpace = (
     template = { name: 'Blank' };
   }
 
-  Analytics.track('space:template_selected', { templateName: template.name });
-
   const selectedLocale = data.defaultLocale;
 
   const dataWithUpdatedLocale = Object.assign({}, data, {
