@@ -3,6 +3,7 @@
   "authUrl": "https://be.contentful.com",
   "apiUrl": "https://api.contentful.com",
   "uploadApiUrl": "https://upload.contentful.com",
+  "secureAssetsUrl": "https://secure.ctfassets.net",
   "assetUrl": "http://localhost:3001",
   "otUrl": [
     "https://ot1.contentful.com",
