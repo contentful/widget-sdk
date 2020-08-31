@@ -78,43 +78,41 @@ const WidgetsConfiguration: React.FC<WidgetsConfigurationProps> = ({
     .filter((item) => !state.items.find((selectedItem) => isSameWidget(item, selectedItem)));
 
   return (
-    <React.Fragment>
+    <>
       <Heading className={styles.heading}>{configuration.location} configuration</Heading>
       <Paragraph className={styles.description}>{configuration.description}</Paragraph>
       <div className={styles.container}>
-        <React.Fragment>
-          <div className={styles.additionalColumn} data-test-id="available-sidebar-items">
-            <AvailableWidgets
-              location={configuration.location}
-              inAppHelpMedium={configuration.inAppHelpMedium}
-              items={unusedAvailableItems}
-              onAddItem={(item: ConfigurationItem) => {
-                dispatch(addItem(item));
-              }}
-            />
-          </div>
-          <div
-            className={styles.mainColumn}
-            data-test-id={`custom-${configuration.location.toLowerCase()}-column`}>
-            <CustomConfiguration
-              title={configuration.location}
-              onResetClick={() => dispatch(resetWidgetConfiguration(defaultAvailableItems))}
-              items={state.items}
-              onRemoveItem={(widget: ConfigurationItem) => {
-                dispatch(removeItem(widget));
-              }}
-              onChangePosition={(sourceIndex: number, destinationIndex: number) => {
-                dispatch(changeItemPosition(sourceIndex, destinationIndex));
-              }}
-              onConfigureItem={(widget: ConfigurationItem) => {
-                dispatch(openWidgetConfiguration(widget));
-              }}
-              showResetButton={!isEqual(state.items, defaultAvailableItems)}
-            />
-          </div>
-        </React.Fragment>
+        <div className={styles.additionalColumn} data-test-id="available-sidebar-items">
+          <AvailableWidgets
+            location={configuration.location}
+            inAppHelpMedium={configuration.inAppHelpMedium}
+            items={unusedAvailableItems}
+            onAddItem={(item: ConfigurationItem) => {
+              dispatch(addItem(item));
+            }}
+          />
+        </div>
+        <div
+          className={styles.mainColumn}
+          data-test-id={`custom-${configuration.location.toLowerCase()}-column`}>
+          <CustomConfiguration
+            title={configuration.location}
+            onResetClick={() => dispatch(resetWidgetConfiguration(defaultAvailableItems))}
+            items={state.items}
+            onRemoveItem={(widget: ConfigurationItem) => {
+              dispatch(removeItem(widget));
+            }}
+            onChangePosition={(sourceIndex: number, destinationIndex: number) => {
+              dispatch(changeItemPosition(sourceIndex, destinationIndex));
+            }}
+            onConfigureItem={(widget: ConfigurationItem) => {
+              dispatch(openWidgetConfiguration(widget));
+            }}
+            showResetButton={!isEqual(state.items, defaultAvailableItems)}
+          />
+        </div>
       </div>
-    </React.Fragment>
+    </>
   );
 };
 
