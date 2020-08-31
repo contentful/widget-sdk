@@ -11,68 +11,8 @@
       watchers-toggler="!isTopLayer($index) &amp;&amp; loaded"
       ng-mouseenter="initPeeking($index)"
     >
-      <div
-        ng-if="!slideState.viewProps &amp;&amp; slideState.slide.type === 'BulkEditor'"
-        style="height: 100%;"
-      >
-        <react-component
-          ng-if="!slideState.loadingError"
-          name="ui/Loader"
-          props="{isShown: true, message: 'Loading entry…'}"
-        ></react-component>
-        <div class="empty-state" ng-if="slideState.loadingError">
-          <div class="empty-state__title" ng-if="slideState.loadingError.statusCode === 404">
-            Entry missing or inaccessible
-          </div>
-          <div class="empty-state__title" ng-if="slideState.loadingError.statusCode !== 404">
-            Error loading entry with id&#32;<code>{{slideState.slide.path[0]}}</code>
-          </div>
-          <div class="empty-state__description" ng-if="slideState.loadingError.statusCode !== 404">
-            {{ slideState.loadingError.body.message }}
-          </div>
-        </div>
-      </div>
-      <div
-        ng-if="!slideState.viewProps &amp;&amp; slideState.slide.type === 'Entry'"
-        style="height: 100%;"
-      >
-        <react-component
-          ng-if="!slideState.loadingError"
-          name="ui/Loader"
-          props="{isShown: true, message: 'Loading entry…'}"
-        ></react-component>
-        <div class="empty-state" ng-if="slideState.loadingError">
-          <div class="empty-state__title" ng-if="slideState.loadingError.statusCode === 404">
-            Entry missing or inaccessible
-          </div>
-          <div class="empty-state__title" ng-if="slideState.loadingError.statusCode !== 404">
-            Error loading entry with id&#32;<code>{{slideState.slide.id}}</code>
-          </div>
-          <div class="empty-state__description" ng-if="slideState.loadingError.statusCode !== 404">
-            {{ slideState.loadingError.body.message }}
-          </div>
-        </div>
-      </div>
-      <div
-        ng-if="!slideState.viewProps &amp;&amp; slideState.slide.type === 'Asset'"
-        style="height: 100%;"
-      >
-        <react-component
-          ng-if="!slideState.loadingError"
-          name="ui/Loader"
-          props="{isShown: true, message: 'Loading asset…'}"
-        ></react-component>
-        <div class="empty-state" ng-if="slideState.loadingError">
-          <div class="empty-state__title" ng-if="slideState.loadingError.statusCode === 404">
-            Asset missing or inaccessible
-          </div>
-          <div class="empty-state__title" ng-if="slideState.loadingError.statusCode !== 404">
-            Error loading asset with id&#32;<code>{{slideState.slide.id}}</code>
-          </div>
-          <div class="empty-state__description" ng-if="slideState.loadingError.statusCode !== 404">
-            {{ slideState.loadingError.body.message }}
-          </div>
-        </div>
+      <div ng-if="!slideState.viewProps" style="height: 100%;">
+        <react-component name="app/entity_editor/EmptyState" props="{slideState}"></react-component>
       </div>
       <div ng-if="slideState.viewProps">
         <react-component
