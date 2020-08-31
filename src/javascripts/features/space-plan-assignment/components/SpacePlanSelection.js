@@ -23,13 +23,6 @@ import { groupBy } from 'lodash';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 
-const styles = {
-  cardItem: css({
-    borderLeft: `8px solid ${tokens.colorElementLight}`, // temporary, we would have it moved into the item to dinamically change color
-    marginBottom: tokens.spacingM,
-  }),
-};
-
 export function SpacePlanSelection({
   plans,
   space,
@@ -51,6 +44,20 @@ export function SpacePlanSelection({
           // multiple instances of the same plan.
           const plan = groupedPlans[name][0];
           const planCount = groupedPlans[name].length;
+          const setPlanColor =
+            name === 'Large'
+              ? tokens.colorGreenLight
+              : name === 'Performance 1x'
+              ? tokens.colorGreenMid
+              : tokens.colorBlueMid;
+
+          const styles = {
+            cardItem: css({
+              marginBottom: tokens.spacingM,
+              borderLeft: `8px solid ${setPlanColor}`,
+            }),
+          };
+
           return (
             <ListItem key={plan.sys.id} testId="space-plan-item">
               <Card padding="large" className={styles.cardItem}>

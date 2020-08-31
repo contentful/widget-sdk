@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import UserProvisioningConfiguration from './UserProvisioningConfiguration';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 
 jest.mock('features/api-keys-management', () => ({
   TokenResourceManager: {
@@ -27,6 +27,7 @@ describe('UserProvisioningConfiguration', () => {
   });
 
   it('should open generate personal access token modal on btn click', async () => {
+    jest.spyOn(ModalLauncher, 'open').mockImplementation(() => Promise.resolve(true));
     const { getByTestId } = renderComponent();
     fireEvent.click(getByTestId('generate-btn'));
     expect(ModalLauncher.open).toHaveBeenCalled();

@@ -18,18 +18,14 @@ import * as appEntryEditorCustomEditorExtensionRendererEs6 from 'app/entry_edito
 import * as appHomeSpaceHomePageEs6 from 'app/home/SpaceHomePage';
 import { Paginator } from 'core/components/Paginator';
 import * as appScheduledActionsPageLinkEs6 from 'app/ScheduledActions/ScheduledActionsPageLink';
-import * as appEntityEditorBulkEditorTitleEs6 from 'app/entity_editor/bulk_editor/BulkEditorTitle';
-import * as appEntityEditorBulkEntityEditorActionsDropdownEs6 from 'app/entity_editor/bulk_editor/BulkEntityEditorActionsDropdown';
-import * as appEntityEditorBulkEntityEditorStatusDropdownEs6 from 'app/entity_editor/bulk_editor/BulkEntityEditorStatusDropdown';
 import * as Loader from 'ui/Loader';
 import * as UserLink from 'app/widgets/link/UserLink';
 import * as AssetLink from 'app/widgets/link/AssetLink';
 import * as EntryLink from 'app/widgets/link/EntryLink';
 import * as EntryEditorWorkbench from 'app/entry_editor/EntryEditorWorkbench';
 import * as AssetEditorWorkbench from 'app/asset_editor/AssetEditorWorkbench';
-import { BulkEditorHeader } from 'app/entity_editor/bulk_editor/BulkEditorHeader';
-import { BulkEditorSidebar } from 'app/entity_editor/bulk_editor/BulkEditorSidebar';
 import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { BulkEditor } from 'app/entity_editor/bulk_editor/BulkEditor';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container, store) {
@@ -232,15 +228,11 @@ function getModule(name) {
   const allowedModules = {
     'ui/Components/Icon': uiComponentsIconEs6,
     'components/shared/DocumentTitle': componentsSharedDocumentTitleEs6,
-    'app/entity_editor/bulk_editor/BulkEditorHeader': { default: BulkEditorHeader },
-    'app/entity_editor/bulk_editor/BulkEditorSidebar': { default: BulkEditorSidebar },
     'app/entry_editor/CustomEditorExtensionRenderer': appEntryEditorCustomEditorExtensionRendererEs6,
     'app/home/SpaceHomePage': appHomeSpaceHomePageEs6,
     'core/components/Paginator': { default: Paginator },
     'app/ScheduledActions/ScheduledActionsPageLink': appScheduledActionsPageLinkEs6,
-    'app/entity_editor/bulk_editor/BulkEditorTitle': appEntityEditorBulkEditorTitleEs6,
-    'app/entity_editor/bulk_editor/BulkEntityEditorActionsDropdown': appEntityEditorBulkEntityEditorActionsDropdownEs6,
-    'app/entity_editor/bulk_editor/BulkEntityEditorStatusDropdown': appEntityEditorBulkEntityEditorStatusDropdownEs6,
+    'app/entity_editor/bulk_editor/BulkEditor': { default: BulkEditor },
     'ui/Loader': Loader,
     'app/widgets/link/UserLink': UserLink,
     'app/widgets/link/AssetLink': AssetLink,

@@ -54,9 +54,9 @@ const styles = {
   }),
 
   spaceColor: {
-    medium: getPlanBGColor(MEDIUM_PLAN_COLOR),
-    large: getPlanBGColor(LARGE_PLAN_COLOR),
-    enterprise: getPlanBGColor(tokens.colorBlueMid),
+    [SPACE_PURCHASE_TYPES.MEDIUM]: getPlanBGColor(MEDIUM_PLAN_COLOR),
+    [SPACE_PURCHASE_TYPES.LARGE]: getPlanBGColor(LARGE_PLAN_COLOR),
+    [SPACE_PURCHASE_TYPES.ENTERPRISE]: getPlanBGColor(tokens.colorBlueMid),
   },
   price: css({
     lineHeight: tokens.lineHeightCondensed,
@@ -82,9 +82,9 @@ const styles = {
     flexShrink: 0, // necessary to avoid icon being shrank by the text
   }),
   checkColor: {
-    medium: css({ fill: MEDIUM_PLAN_COLOR }),
-    large: css({ fill: LARGE_PLAN_COLOR }),
-    enterprise: css({ fill: tokens.colorBlueMid }),
+    [SPACE_PURCHASE_TYPES.MEDIUM]: css({ fill: MEDIUM_PLAN_COLOR }),
+    [SPACE_PURCHASE_TYPES.LARGE]: css({ fill: LARGE_PLAN_COLOR }),
+    [SPACE_PURCHASE_TYPES.ENTERPRISE]: css({ fill: tokens.colorBlueMid }),
   },
 };
 

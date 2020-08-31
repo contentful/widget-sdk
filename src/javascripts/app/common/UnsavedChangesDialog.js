@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { Modal, Button, Paragraph } from '@contentful/forma-36-react-components';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 
 export default function createUnsavedChangesDialogOpener(save) {
   return () =>

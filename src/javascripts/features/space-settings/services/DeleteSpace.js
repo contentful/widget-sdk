@@ -16,7 +16,7 @@ import {
 } from 'app/SpaceWizards/ChangeSpaceWarning';
 import APIClient from 'data/APIClient';
 import { isEnterprisePlan, isFreeSpacePlan } from 'account/pricing/PricingDataProvider';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { Space as SpacePropType } from 'app/OrganizationSettings/PropTypes';
 import ReloadNotification from 'app/common/ReloadNotification';
 

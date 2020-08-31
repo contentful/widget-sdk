@@ -3,7 +3,7 @@ import { Notification } from '@contentful/forma-36-react-components';
 import { getOrganization } from 'services/TokenStore';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { canCreateSpaceInOrganization } from 'access_control/AccessChecker';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { getModule } from 'core/NgRegistry';
 import LegacyNewSpaceModal from './CreateSpace/LegacyNewSpaceModal';
 

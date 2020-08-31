@@ -1,4 +1,4 @@
-import { ModalLauncher as ModalLauncherMocked } from 'core/components/ModalLauncher';
+import { ModalLauncher as ModalLauncherMocked } from '@contentful/forma-36-react-components/dist/alpha';
 
 import { showDialog } from './CreateSpace';
 import { canCreateSpaceInOrganization } from 'access_control/AccessChecker';
@@ -46,8 +46,14 @@ jest.mock('account/pricing/PricingDataProvider', () => ({
 
 // TODO: we'll be able to write much better tests if we migrate to Forma36 modals
 describe('CreateSpace', () => {
+  const modalLauncherOpen = jest.fn();
+
   beforeEach(() => {
-    ModalLauncherMocked.open.mockClear();
+    ModalLauncherMocked.open = modalLauncherOpen;
+  });
+
+  afterEach(() => {
+    modalLauncherOpen.mockClear();
   });
 
   describe('#showDialog', () => {

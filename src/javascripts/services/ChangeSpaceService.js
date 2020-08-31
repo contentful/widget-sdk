@@ -6,7 +6,7 @@ import {
 } from 'app/SpaceWizards/ChangeSpaceWarning';
 import { getSingleSpacePlan, isPOCSpacePlan } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import SpaceWizardsWrapper from 'app/SpaceWizards/SpaceWizardsWrapper';
 
 /**

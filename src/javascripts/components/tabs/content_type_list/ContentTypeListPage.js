@@ -25,11 +25,11 @@ import { css } from 'emotion';
 import ExternalTextLink from 'app/common/ExternalTextLink';
 import { isLegacyOrganization, getResourceLimits } from 'utils/ResourceUtils';
 import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
+import { CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM } from 'analytics/utmLinks';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 import * as PricingService from 'services/PricingService';
 import createResourceService from 'services/ResourceService';
 
-import { websiteUrl } from 'Config';
 import { getModule } from 'core/NgRegistry';
 
 const styles = {
@@ -237,7 +237,7 @@ export class ContentTypesPage extends React.Component {
                         meta={{ spaceId, organizationId }}>
                         <ExternalTextLink
                           testId="link-to-sales"
-                          href={websiteUrl('contact/sales/')}
+                          href={CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM}
                           onClick={() => this.handleBannerClickCTA()}>
                           talk to us
                         </ExternalTextLink>{' '}

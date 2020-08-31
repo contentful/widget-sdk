@@ -3,6 +3,7 @@ import initEnvAliasChangeHandler, {
   initEnvAliasDeleteHandler,
 } from './NotificationsService';
 
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { Notification } from '@contentful/forma-36-react-components';
 import * as Navigator from 'states/Navigator';
 import * as accessChecker from 'access_control/AccessChecker';
@@ -11,10 +12,6 @@ import { screen } from '@testing-library/react';
 import { when } from 'jest-when';
 
 import { getModule } from 'core/NgRegistry';
-
-// Global mock must be ignored.
-// Also, ModalLauncher must be an arg to the called function, so the same actual function is tested
-const { ModalLauncher } = jest.requireActual('core/components/ModalLauncher');
 
 jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
 

@@ -9,7 +9,7 @@ import {
   Typography,
   Paragraph,
 } from '@contentful/forma-36-react-components';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 

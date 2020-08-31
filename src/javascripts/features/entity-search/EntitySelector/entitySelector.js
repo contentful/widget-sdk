@@ -2,7 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 import { getLabels, newConfigFromField, newConfigFromExtension } from './Config';
 
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { EntitySelectorDialog } from './EntitySelectorDialog';
 
 export function openEntitySelector(options) {

@@ -6,7 +6,7 @@ import { State, Action, stateName } from 'data/CMA/EntityState';
 import { Notification } from 'app/entity_editor/Notifications';
 
 import * as trackVersioning from 'analytics/events/versioning';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import * as random from 'utils/Random';
 
 import StateChangeConfirmationDialog from 'app/entity_editor/Components/StateChangeConfirmationDialog';

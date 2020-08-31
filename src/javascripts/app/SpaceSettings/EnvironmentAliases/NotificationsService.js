@@ -1,6 +1,6 @@
 import React from 'react';
 import { Notification } from '@contentful/forma-36-react-components';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { window } from 'core/services/window';
 import * as Navigator from 'states/Navigator';
 import * as logger from 'services/logger';

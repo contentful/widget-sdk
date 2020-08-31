@@ -11,6 +11,7 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import * as trackCTA from 'analytics/trackCTA';
 import * as spaceContextMocked from 'ng/spaceContext';
 import * as PricingService from 'services/PricingService';
+import { CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM } from 'analytics/utmLinks';
 
 import { UpgradeBanner } from './UpgradeBanner';
 
@@ -125,7 +126,7 @@ describe('UpgradeBanner', () => {
 
     const enterpriseLink = screen.getByTestId('upgrade-banner.upgrade-to-enterprise-link');
     expect(enterpriseLink).toBeVisible();
-    expect(enterpriseLink.href).toEqual('https://www.contentful.comcontact/sales/');
+    expect(enterpriseLink.href).toMatch(CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM);
 
     userEvent.click(enterpriseLink);
 

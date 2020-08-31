@@ -2,13 +2,13 @@ import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 
 import { QuickNavigation } from './QuickNav';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 
 let wrapper;
 
 beforeEach(() => {
   wrapper = render(<QuickNavigation />);
-  ModalLauncher.open = jest.fn();
+  jest.spyOn(ModalLauncher, 'open').mockImplementation(() => Promise.resolve(true));
 });
 
 describe('shared/QuickNav', () => {

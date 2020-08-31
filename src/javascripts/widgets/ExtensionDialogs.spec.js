@@ -1,7 +1,11 @@
 import * as Dialogs from './ExtensionDialogs';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 
 describe('ExtensionDialogs', () => {
+  beforeEach(() => {
+    jest.spyOn(ModalLauncher, 'open').mockImplementation(() => Promise.resolve(true));
+  });
+
   describe('options validation', () => {
     it('requires options', async () => {
       expect.assertions(1);

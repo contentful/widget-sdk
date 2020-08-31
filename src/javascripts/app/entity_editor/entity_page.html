@@ -75,11 +75,12 @@
         </div>
       </div>
       <div ng-if="slideState.viewProps">
-        <cf-bulk-editor
+        <react-component
           ng-if="slideState.slide.type === 'BulkEditor'"
           data-test-id="bulk-editor-container"
-          reference-context="slideState.viewProps.referenceContext"
-        ></cf-bulk-editor>
+          name="app/entity_editor/bulk_editor/BulkEditor"
+          props="{getReferenceContext: getContext(slideState.viewProps.referenceContext)}"
+        ></react-component>
         <cf-entry-editor
           ng-if="slideState.slide.type === 'Entry'"
           slide-index="$index"

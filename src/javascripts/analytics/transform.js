@@ -99,6 +99,8 @@ registerEnvironmentAliasesEvent('environment_aliases:opt_in_abort_step_2');
 registerEnvironmentAliasesEvent('environment_aliases:change_environment_open');
 registerEnvironmentAliasesEvent('environment_aliases:change_environment_abort');
 registerEnvironmentAliasesEvent('environment_aliases:notification_environment_alias_changed');
+registerEnvironmentAliasesEvent('environment_aliases:notification_environment_alias_created');
+registerEnvironmentAliasesEvent('environment_aliases:notification_environment_alias_deleted');
 registerEnvironmentAliasesEvent('environment_aliases:notification_switch_to_alias');
 registerEnvironmentAliasesEvent('environment_aliases:notification_continue_on_environment');
 
@@ -207,8 +209,10 @@ registerGenericEvent('perf:first_contentful_paint');
 registerGenericEvent('perf:time_to_interactive');
 
 registerGenericEvent('entity_state:revert');
+registerGenericEvent('entity_list:bulk_action_performed');
 registerGenericEvent('asset_list:add_asset_single');
 registerGenericEvent('asset_list:add_asset_multiple');
+registerGenericEvent('content_modelling:field_added');
 
 registerGenericEvent('teams_in_space:teams_added');
 registerGenericEvent('teams_in_space:users_added');
@@ -217,6 +221,10 @@ registerGenericEvent('teams_in_space:users_to_teams_page_navigation');
 registerGenericEvent('account_dropdown:pending_tasks_fetched');
 
 registerGenericEvent('sharejs:cma_entity_version_mismatch');
+
+registerGenericEvent('content_preview:created');
+registerGenericEvent('content_preview:updated');
+registerGenericEvent('content_preview:deleted');
 
 registerEvent('personal_access_token:action', 'personal_access_token', (_, data) => {
   return {

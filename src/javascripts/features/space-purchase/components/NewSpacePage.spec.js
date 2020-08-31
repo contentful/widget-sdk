@@ -1,10 +1,12 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, within, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as FakeFactory from 'test/helpers/fakeFactory';
 import { NewSpacePage } from './NewSpacePage';
 
 const mockOrganization = FakeFactory.Organization();
+const mockProductRatePlanMedium = { name: 'Medium', price: 100 };
+const mockProductRatePlanLarge = { name: 'Large', price: 200 };
 
 describe('NewSpacePage', () => {
   it('should render SPACE_SELECTION page as a default', () => {
@@ -20,6 +22,33 @@ describe('NewSpacePage', () => {
 
     waitFor(() => {
       expect(screen.getByTestId('new-space-details-section')).toBeVisible();
+    });
+  });
+
+  it('should render BILLING_DETAILS when space details have been filled out with the selected space plan', async () => {
+    build();
+
+    userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('new-space-details-section')).toBeVisible();
+    });
+
+    userEvent.type(
+      within(screen.getByTestId('space-name')).getByTestId('cf-ui-text-input'),
+      'random space name'
+    );
+
+    userEvent.click(screen.getByTestId('next-step-new-details-page'));
+
+    waitFor(() => {
+      expect(screen.getByTestId('new-space-billing-details-section')).toBeVisible();
+      expect(screen.getByTestId('order-summary.selected-plan-name')).toHaveTextContent(
+        mockProductRatePlanMedium.name
+      );
+      expect(screen.getByTestId('order-summary.selected-plan-price')).toHaveTextContent(
+        mockProductRatePlanMedium.price
+      );
     });
   });
 
@@ -70,6 +99,7 @@ function build(customProps) {
   const props = {
     organizationId: mockOrganization.sys.id,
     templatesList: [],
+    productRatePlans: [mockProductRatePlanMedium, mockProductRatePlanLarge],
     ...customProps,
   };
 

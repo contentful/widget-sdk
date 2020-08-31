@@ -12,11 +12,11 @@ const PATH = {
  * The following weirdness is for analysing the viability of replacing ShareJS
  * with plain HTTP calls to the CMA.
  *
- * @param {Object} $scope entity editor scope. Expected to have a `otDoc` prop.
+ * @param {Object} otDoc
  * @param {Object} spaceContext
  * @param {Object} entityInfo Expects an `id` and `type`.
  */
-export default async function create({ $scope, spaceContext, entityInfo }) {
+export default async function create({ otDoc, spaceContext, entityInfo }) {
   const variation = await getVariation(FLAGS.ENTITY_EDITOR_CMA_EXPERIMENT, {
     organizationId: spaceContext.getData('organization.sys.id'),
     spaceId: spaceContext.space.getId(),
@@ -37,11 +37,11 @@ export default async function create({ $scope, spaceContext, entityInfo }) {
       },
     });
 
-    const throttledRelevantChanges$ = localFieldChanges($scope.otDoc).throttle(throttleMs, {
+    const throttledRelevantChanges$ = localFieldChanges(otDoc).throttle(throttleMs, {
       leading: false,
     });
 
-    K.onValueScope($scope, throttledRelevantChanges$, () => {
+    K.onValue(throttledRelevantChanges$, () => {
       spaceContext.endpoint(createRequest()).then(noop, noop);
     });
   }

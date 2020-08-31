@@ -14,7 +14,7 @@ import * as TokenStore from 'services/TokenStore';
 import * as Analytics from 'analytics/Analytics';
 import * as UrlSyncHelper from 'account/UrlSyncHelper';
 import * as createSpace from 'services/CreateSpace';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { go } from 'states/Navigator';
 
 export default function handleGatekeeperMessage(data) {

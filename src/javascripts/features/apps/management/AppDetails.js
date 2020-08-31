@@ -19,7 +19,7 @@ import { css } from 'emotion';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { AppEditor } from './AppEditor';
 import * as ManagementApiClient from './ManagementApiClient';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { AppInstallModal } from './AppInstallModal';
 import { DeleteAppDialog } from './DeleteAppDialog';
 import { SaveConfirmModal } from './SaveConfirmModal';

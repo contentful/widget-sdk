@@ -7,7 +7,7 @@ import {
   updateMembership,
   removeMembership,
 } from 'access_control/OrganizationMembershipRepository';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { Notification } from '@contentful/forma-36-react-components';
 import { go } from 'states/Navigator';
 
@@ -26,7 +26,10 @@ jest.mock('states/Navigator', () => ({
 }));
 
 describe('UserAttributes', () => {
-  beforeEach(Notification.closeAll);
+  beforeEach(() => {
+    jest.spyOn(ModalLauncher, 'open').mockImplementation(() => Promise.resolve(true));
+    Notification.closeAll();
+  });
 
   it('should display the list of options', () => {
     build();

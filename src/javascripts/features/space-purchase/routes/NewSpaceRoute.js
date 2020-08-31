@@ -10,19 +10,27 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 import StateRedirect from 'app/common/StateRedirect';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
+import { getRatePlans } from 'account/pricing/PricingDataProvider';
+import { createOrganizationEndpoint } from 'data/EndpointFactory';
 
-const initialFetch = () => async () => {
-  const newPurchaseFlowIsEnabled = await getVariation(FLAGS.NEW_PURCHASE_FLOW);
-  const templatesList = await getTemplatesList();
+const initialFetch = (orgId) => async () => {
+  const endpoint = createOrganizationEndpoint(orgId);
+
+  const [newPurchaseFlowIsEnabled, templatesList, productRatePlans] = await Promise.all([
+    getVariation(FLAGS.NEW_PURCHASE_FLOW),
+    getTemplatesList(),
+    getRatePlans(endpoint),
+  ]);
 
   return {
     newPurchaseFlowIsEnabled,
     templatesList,
+    productRatePlans,
   };
 };
 
 export const NewSpaceRoute = ({ orgId }) => {
-  const { isLoading, data } = useAsync(useCallback(initialFetch(), []));
+  const { isLoading, data } = useAsync(useCallback(initialFetch(orgId), []));
 
   if (isLoading) {
     return (
@@ -39,7 +47,11 @@ export const NewSpaceRoute = ({ orgId }) => {
   return (
     <>
       <DocumentTitle title="Space purchase" />
-      <NewSpacePage organizationId={orgId} templatesList={data.templatesList} />
+      <NewSpacePage
+        organizationId={orgId}
+        templatesList={data.templatesList}
+        productRatePlans={data.productRatePlans}
+      />
     </>
   );
 };

@@ -116,7 +116,7 @@ export default async function create($scope, editorData, preferences) {
     controls: editorData.fieldControls.form,
   });
 
-  setupNoShareJsCmaFakeRequestsExperiment({ $scope, spaceContext, entityInfo });
+  setupNoShareJsCmaFakeRequestsExperiment({ otDoc: $scope.otDoc, spaceContext, entityInfo });
 
   function defaultLocaleIsFocused() {
     if (!$scope.localeData.isSingleLocaleModeOn) {

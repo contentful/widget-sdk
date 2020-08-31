@@ -1,5 +1,5 @@
 import * as DegradedAppPerformance from './DegradedAppPerformance';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import * as Telemetry from 'i13n/Telemetry';
 import * as Analytics from 'analytics/Analytics';
 
@@ -8,6 +8,8 @@ describe('DegradedAppPerformance', () => {
     DegradedAppPerformance.init();
 
     jest.spyOn(Telemetry, 'count').mockImplementation(() => {});
+
+    jest.spyOn(ModalLauncher, 'open').mockImplementation(() => Promise.resolve(true));
   });
 
   afterEach(() => {

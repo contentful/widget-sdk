@@ -4,7 +4,7 @@ import { find, map, isEmpty } from 'lodash';
 
 import ReloadNotification from 'app/common/ReloadNotification';
 import { getModule } from 'core/NgRegistry';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import * as TokenStore from 'services/TokenStore';
 import { go } from 'states/Navigator';
 

@@ -3,25 +3,35 @@ import { caseof } from 'sum-types';
 import ReloadNotification from 'app/common/ReloadNotification';
 import { Error } from 'data/document/Error';
 
-export default function init($scope, docError$) {
-  const forbidden = docError$.filter((error) => {
+const getForbidden = (docError$) =>
+  docError$.filter((error) => {
     return caseof(error, [
       [[Error.OpenForbidden, Error.SetValueForbidden], () => true],
       [null, () => false],
     ]);
   });
-  K.onValueScope($scope, forbidden.take(1), ({ error }) => {
-    if (
-      error instanceof Error.ShareJsInternalServerError ||
-      error instanceof Error.CmaInternalServerError
-    ) {
-      ReloadNotification.trigger('Due to a server error, we could not process this document');
-    } else {
-      ReloadNotification.trigger(
-        'Due to an authentication error, we could not process this editing ' +
-          'operation. Please reload the application and try again',
-        'Editing denied'
-      );
-    }
-  });
+
+const onValue = ({ error }) => {
+  if (
+    error instanceof Error.ShareJsInternalServerError ||
+    error instanceof Error.CmaInternalServerError
+  ) {
+    ReloadNotification.trigger('Due to a server error, we could not process this document');
+  } else {
+    ReloadNotification.trigger(
+      'Due to an authentication error, we could not process this editing ' +
+        'operation. Please reload the application and try again',
+      'Editing denied'
+    );
+  }
+};
+
+export function initDocErrorHandlerWithoutScope(docError$) {
+  const forbidden = getForbidden(docError$);
+  K.onValue(forbidden.take(1), onValue);
+}
+
+export default function init($scope, docError$) {
+  const forbidden = getForbidden(docError$);
+  K.onValueScope($scope, forbidden.take(1), onValue);
 }

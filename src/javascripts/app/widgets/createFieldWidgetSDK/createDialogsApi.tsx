@@ -9,7 +9,7 @@ import {
 import { omit } from 'lodash';
 
 import { entitySelector } from 'features/entity-search';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import * as ExtensionDialogs from 'widgets/ExtensionDialogs';
 import trackExtensionRender from 'widgets/TrackExtensionRender';
 import { toLegacyWidget } from 'widgets/WidgetCompat';

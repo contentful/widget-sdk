@@ -12,7 +12,7 @@ export const BulkEditorHeader = ({ fieldName, linkCount, onBack, onClose }) => {
         </Heading>
       }
       actions={
-        <Button buttonType="muted" onClick={onClose}>
+        <Button testId="bulk-editor-close" buttonType="muted" onClick={onClose}>
           Close
         </Button>
       }

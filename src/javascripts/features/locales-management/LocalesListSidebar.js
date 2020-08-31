@@ -10,8 +10,8 @@ import WorkbenchSidebarItem from 'app/common/WorkbenchSidebarItem';
 import ExternalTextLink from 'app/common/ExternalTextLink';
 import { developerDocsUrl } from 'Config';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
-import { websiteUrl } from 'Config';
 import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
+import { CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM } from 'analytics/utmLinks';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 import { getModule } from 'core/NgRegistry';
 
@@ -142,7 +142,7 @@ const UpgradeToEnterprise = () => {
         isFullWidth
         buttonType="primary"
         testId="link-to-sales-button"
-        href={websiteUrl('contact/sales/')}
+        href={CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM}
         target="_blank"
         rel="noopener noreferrer"
         onClick={() => handleTalkToUsClickCTA()}>

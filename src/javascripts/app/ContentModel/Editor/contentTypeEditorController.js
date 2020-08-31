@@ -16,7 +16,7 @@ import * as accessChecker from 'access_control/AccessChecker';
 import ContentTypesPage from 'app/ContentModel/Editor/ContentTypesPage';
 
 import { AddFieldDialogModal } from './Dialogs/AddField';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 
 export default function register() {
   registerDirective('cfContentTypeEditor', [
@@ -254,7 +254,7 @@ export default function register() {
       }
 
       function trackAddedField(contentType, field) {
-        Analytics.track('modelling:field_added', {
+        Analytics.track('content_modelling:field_added', {
           contentTypeId: contentType.getId(),
           contentTypeName: contentType.getName(),
           fieldId: field.id,

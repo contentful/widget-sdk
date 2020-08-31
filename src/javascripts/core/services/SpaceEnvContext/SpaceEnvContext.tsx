@@ -8,19 +8,18 @@ import {
   getEnvironmentName,
   getSpaceData,
 } from './utils';
-
-// TODO: Should those methods be inside or outside the provider?
+import { SpaceEnv, SpaceEnvContextValue } from './types';
 
 // We can then also create methods such as `getSpaceId`, `getSpaceData`, `getSpaceOrganization`, etc
 function getAngularSpaceContext() {
   return getModule('spaceContext') ?? null;
 }
 
-export const SpaceEnvContext = createContext({});
+export const SpaceEnvContext = createContext<SpaceEnvContextValue>({});
 
-export function SpaceEnvContextProvider(props) {
+export const SpaceEnvContextProvider: React.FC<{}> = (props) => {
   const angularSpaceContext = useMemo(() => getAngularSpaceContext(), []);
-  const space = getSpace();
+  const space: SpaceEnv = getSpace();
 
   // TODO: Methods depending on the angular space context directly, they should be refactored
   function getSpace() {
@@ -39,4 +38,4 @@ export function SpaceEnvContextProvider(props) {
   };
 
   return <SpaceEnvContext.Provider value={value}>{props.children}</SpaceEnvContext.Provider>;
-}
+};

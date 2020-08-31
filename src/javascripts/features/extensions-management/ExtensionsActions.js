@@ -1,5 +1,5 @@
 import React from 'react';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import {
   Dropdown,
   Button,
