@@ -20,6 +20,7 @@ const styles = {
     marginRight: -tokens.spacing2Xs,
   }),
   dropdownSpacing: css({
+    display: 'flex',
     marginRight: tokens.spacingM,
   }),
 };

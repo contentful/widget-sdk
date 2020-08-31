@@ -26,10 +26,6 @@ export const angularInitRun = [
       import(/* webpackMode: "eager" */ 'analytics/analyticsConsoleDirective'),
       import(/* webpackMode: "eager" */ 'app/ContentModel/Editor/contentTypeEditorController'),
       import(/* webpackMode: "eager" */ 'app/asset_editor/cfAssetEditorDirective'),
-      import(/* webpackMode: "eager" */ 'app/entity_editor/bulk_editor/cfBulkEditorDirective'),
-      import(
-        /* webpackMode: "eager" */ 'app/entity_editor/bulk_editor/cfBulkEntityEditorDirective'
-      ),
       import(/* webpackMode: "eager" */ 'app/entity_editor/EntityField/cfEntityFieldDirective'),
       import(/* webpackMode: "eager" */ 'app/entity_editor/fieldLocaleController'),
       import(/* webpackMode: "eager" */ 'app/entry_editor/cfEntryEditorDirective'),

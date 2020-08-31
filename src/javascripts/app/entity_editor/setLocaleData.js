@@ -12,10 +12,9 @@ export default ($scope, { entityLabel, shouldHideLocaleErrors, emitter }) => {
   handleTopNavErrors($scope, entityLabel, shouldHideLocaleErrors);
 };
 
-export function setLocaleData($scope, { isBulkEditor = false } = {}) {
+export function assignLocaleData(localeData = {}, { isBulkEditor = false } = {}) {
   maybeResetFocusedLocale();
-  $scope.localeData = $scope.localeData || {};
-  Object.assign($scope.localeData, {
+  Object.assign(localeData, {
     defaultLocale: TheLocaleStore.getDefaultLocale(),
     privateLocales: TheLocaleStore.getPrivateLocales(),
     focusedLocale: TheLocaleStore.getFocusedLocale(),
@@ -24,6 +23,12 @@ export function setLocaleData($scope, { isBulkEditor = false } = {}) {
     isLocaleActive: TheLocaleStore.isLocaleActive,
     errors: {},
   });
+  return localeData;
+}
+
+export function setLocaleData($scope, options) {
+  const localeData = assignLocaleData($scope.localeData, options);
+  $scope.localeData = localeData;
 }
 
 function maybeResetFocusedLocale() {

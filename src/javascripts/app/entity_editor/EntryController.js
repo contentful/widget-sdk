@@ -275,7 +275,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
     }
   });
 
-  setupNoShareJsCmaFakeRequestsExperiment({ $scope, spaceContext, entityInfo });
+  setupNoShareJsCmaFakeRequestsExperiment({ otDoc: $scope.otDoc, spaceContext, entityInfo });
 
   /* Custom Extension */
 

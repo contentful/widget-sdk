@@ -1,6 +1,53 @@
 import { registerController } from 'core/NgRegistry';
 import * as K from 'core/utils/kefir';
 
+// Determines if the widget should be rendered, either visible
+// or hidden in the background, depending on `isVisible`.
+function shouldRender(widget) {
+  if (widget.isBackground) {
+    return true;
+  } else if (widget.sidebar) {
+    return false;
+  }
+  return widget.isVisible;
+}
+
+export const filterWidgets = (localeData, editorContext, controls, showDisabledFields) => {
+  // Adds `isVisible` property to a widget telling the editor
+  // if the widget should be visible.
+  function markVisibility(widget) {
+    const isNotDisabled = !widget.field.disabled;
+    const { focusedLocale, defaultLocale, isSingleLocaleModeOn } = localeData;
+
+    let isVisible;
+    if (isSingleLocaleModeOn) {
+      const hasFieldLocaleErrors = editorContext.validator.hasFieldLocaleError(
+        widget.field.id,
+        focusedLocale.internal_code
+      );
+      const isNonDefaultLocale = focusedLocale.internal_code !== defaultLocale.internal_code;
+
+      isVisible =
+        isNonDefaultLocale && !widget.field.localized
+          ? hasFieldLocaleErrors
+          : isNotDisabled || showDisabledFields || hasFieldLocaleErrors;
+    } else {
+      const hasFieldErrors = editorContext.validator.hasFieldError(widget.field.id);
+      isVisible = isNotDisabled || showDisabledFields || hasFieldErrors;
+    }
+
+    return {
+      ...widget,
+      isVisible,
+    };
+  }
+
+  const widgets = controls.map(markVisibility).filter(shouldRender);
+  const shouldDisplayNoLocalizedFieldsAdvice = widgets.every((w) => w.isVisible === false);
+
+  return { shouldDisplayNoLocalizedFieldsAdvice, widgets };
+};
+
 export default function register() {
   /**
    * @ngdoc type
@@ -32,49 +79,14 @@ export default function register() {
       K.onValueScope($scope, $scope.editorContext.validator.errors$, update);
 
       function update() {
-        $scope.widgets = controls.map(markVisibility).filter(shouldRender);
-        $scope.shouldDisplayNoLocalizedFieldsAdvice = $scope.widgets.every(
-          (w) => w.isVisible === false
+        const { widgets, shouldDisplayNoLocalizedFieldsAdvice } = filterWidgets(
+          $scope.localeData,
+          $scope.editorContext,
+          controls,
+          $scope.preferences.showDisabledFields
         );
-      }
-
-      // Adds `isVisible` property to a widget telling the editor
-      // if the widget should be visible.
-      function markVisibility(widget) {
-        const isNotDisabled = !widget.field.disabled;
-        const showingDisabled = $scope.preferences.showDisabledFields;
-        const { focusedLocale, defaultLocale, isSingleLocaleModeOn } = $scope.localeData;
-
-        let isVisible;
-        if (isSingleLocaleModeOn) {
-          const hasFieldLocaleErrors = $scope.editorContext.validator.hasFieldLocaleError(
-            widget.field.id,
-            focusedLocale.internal_code
-          );
-          const isNonDefaultLocale = focusedLocale.internal_code !== defaultLocale.internal_code;
-
-          isVisible =
-            isNonDefaultLocale && !widget.field.localized
-              ? hasFieldLocaleErrors
-              : isNotDisabled || showingDisabled || hasFieldLocaleErrors;
-        } else {
-          const hasFieldErrors = $scope.editorContext.validator.hasFieldError(widget.field.id);
-          isVisible = isNotDisabled || showingDisabled || hasFieldErrors;
-        }
-
-        return { ...widget, isVisible };
-      }
-
-      // Determines if the widget should be rendered, either visible
-      // or hidden in the background, depending on `isVisible`.
-      function shouldRender(widget) {
-        if (widget.isBackground) {
-          return true;
-        } else if (widget.sidebar) {
-          return false;
-        } else {
-          return widget.isVisible;
-        }
+        $scope.widgets = widgets;
+        $scope.shouldDisplayNoLocalizedFieldsAdvice = shouldDisplayNoLocalizedFieldsAdvice;
       }
     },
   ]);

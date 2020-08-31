@@ -21,7 +21,13 @@ export default class AngularComponent extends React.Component {
     template: PropTypes.string,
     tag: PropTypes.string,
     scope: PropTypes.object,
+    with$Apply: PropTypes.bool, // workaround to make reinitialisation possible
   };
+
+  static defaultProps = {
+    with$Apply: false,
+  };
+
   componentDidMount() {
     const $rootScope = getModule('$rootScope');
     const $compile = getModule('$compile');
@@ -30,6 +36,7 @@ export default class AngularComponent extends React.Component {
     this.scope = $rootScope.$new(true);
     this.enrichScope(this.props.scope);
     $compile(this.container)(this.scope);
+    this.props.with$Apply && this.scope.$applyAsync();
   }
   UNSAFE_componentWillReceiveProps(props) {
     this.enrichScope(props.scope);
