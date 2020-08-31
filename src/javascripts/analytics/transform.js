@@ -200,6 +200,7 @@ registerGenericEvent('targeted_cta_impression:upgrade_to_team');
 registerGenericEvent('targeted_cta_impression:increase_team_user_limit_via_support');
 
 registerEvent('global:app_loaded', 'app_open', AppOpen);
+registerGenericEvent('global:logout_clicked');
 
 registerEvent('invite_user:learn', 'generic', InviteUserExperiment);
 registerEvent('invite_user:create_space', 'generic', InviteUserExperiment);
