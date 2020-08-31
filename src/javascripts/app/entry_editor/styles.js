@@ -63,6 +63,7 @@ export const styles = {
     visibility: 'visible',
   }),
   tabs: css({
+    overflowX: 'auto',
     display: 'flex',
     paddingLeft: tokens.spacing2Xl,
   }),

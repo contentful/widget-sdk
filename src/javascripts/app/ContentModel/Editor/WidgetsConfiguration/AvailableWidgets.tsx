@@ -1,10 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Subheading, Paragraph, TextLink } from '@contentful/forma-36-react-components';
 import AvailableWidget from './AvailableWidget';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+import { ConfigurationItem } from './interfaces';
 
 const styles = {
   availableItemsTitle: css({
@@ -21,14 +21,22 @@ const styles = {
   }),
 };
 
-const withInAppHelpUtmParams = buildUrlWithUtmParams({
-  source: 'webapp',
-  medium: 'use-customer-sidebar-available-items',
-  campaign: 'in-app-help',
-});
+const withInAppHelpUtmParams = (medium: string) =>
+  buildUrlWithUtmParams({
+    source: 'webapp',
+    medium,
+    campaign: 'in-app-help',
+  });
 
-export default function AvailableItems(props) {
-  const { items } = props;
+interface AvailableWidgetsProps {
+  items: ConfigurationItem[];
+  onAddItem: (item: ConfigurationItem) => void;
+  location: string;
+  inAppHelpMedium: string;
+}
+
+export default function AvailableItems(props: AvailableWidgetsProps) {
+  const { items, location, onAddItem, inAppHelpMedium } = props;
 
   return (
     <div>
@@ -36,13 +44,14 @@ export default function AvailableItems(props) {
       <div className={styles.availableItemsList}>
         {items.map((item, index) => (
           <AvailableWidget
+            location={location}
             key={`${item.widgetNamespace},${item.widgetId}`}
             name={item.name}
             index={index}
             widgetNamespace={item.widgetNamespace}
             availabilityStatus={item.availabilityStatus}
             onClick={() => {
-              props.onAddItem(item);
+              onAddItem(item);
             }}
           />
         ))}
@@ -50,33 +59,25 @@ export default function AvailableItems(props) {
       {items.length === 0 && (
         <div className={styles.uiExtensionInfo}>
           <Paragraph className={styles.uiExtensionInfoTitle}>
-            Contentful apps extend and expand the capabilities of the Contentful web app.
+            Customize or extend the {location.toLowerCase()} by installing apps from the{' '}
+            <TextLink
+              href="https://www.contentful.com/marketplace/?utm_campaign=in-app-help"
+              target="_blank"
+              rel="noopener noreferrer">
+              Marketplace
+            </TextLink>{' '}
+            or{' '}
+            <TextLink
+              href={withInAppHelpUtmParams(inAppHelpMedium)(
+                'https://www.contentful.com/developers/docs/extensibility/app-framework/tutorial/?utm_campaign=in-app-help'
+              )}
+              target="_blank"
+              rel="noopener noreferrer">
+              building your own app
+            </TextLink>
           </Paragraph>
-          <TextLink
-            icon="ExternalLink"
-            href="https://www.contentful.com/marketplace/?utm_campaign=in-app-help"
-            target="_blank"
-            rel="noopener noreferrer">
-            Browse all apps
-          </TextLink>
         </div>
       )}
-      <Paragraph>
-        Learn{' '}
-        <TextLink
-          href={withInAppHelpUtmParams(
-            'https://www.contentful.com/developers/docs/extensibility/app-framework/tutorial/?utm_campaign=in-app-help'
-          )}
-          target="_blank"
-          rel="noopener noreferrer">
-          how to build your first app
-        </TextLink>
-      </Paragraph>
     </div>
   );
 }
-
-AvailableItems.propTypes = {
-  items: PropTypes.array.isRequired,
-  onAddItem: PropTypes.func.isRequired,
-};

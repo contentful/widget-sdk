@@ -299,7 +299,15 @@ export default function create($scope, contentTypeIds) {
   }
 
   function triggerApiErrorNotification(errOrErrContainer) {
-    notify.saveFailure(errOrErrContainer, $scope.contentType);
+    const reasons = get(errOrErrContainer, 'data.details.errors', []);
+    const sizeReason = reasons.find(({ name }) => name === 'size');
+
+    if (sizeReason) {
+      notify.tooManyEditorsError(errOrErrContainer, $scope.contentType, sizeReason);
+    } else {
+      notify.saveFailure(errOrErrContainer, $scope.contentType);
+    }
+
     return $q.reject(errOrErrContainer);
   }
 

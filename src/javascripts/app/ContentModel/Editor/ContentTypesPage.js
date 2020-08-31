@@ -6,20 +6,30 @@ import {
   FieldsSection,
   ContentTypeIdSection,
   DocumentationSection,
+  EntryEditorSection,
 } from './Sidebar/ContentModelSidebar';
-import EntryEditorAppearanceSection from './Sidebar/EntryEditorAppearanceSection';
 import PropTypes from 'prop-types';
 import EditorFieldTabs from './EditorFieldTabs';
 import FieldsList from './FieldsTab/FieldsList';
 import ContentTypePreview from './PreviewTab/ContentTypePreview';
 import SidebarConfiguration from 'app/EntrySidebar/Configuration/SidebarConfiguration';
+import EntryEditorConfiguration from './EntryEditorConfigurationTab/EntryEditorConfig';
+import { getEntryConfiguration } from 'app/entry_editor/DefaultConfiguration';
 import DocumentTitle from 'components/shared/DocumentTitle';
+import { WidgetLocation } from '@contentful/widget-renderer';
 import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+
+function isEntryEditorWidget(widget) {
+  return widget.locations?.includes(WidgetLocation.ENTRY_EDITOR);
+}
 
 export default function ContentTypesPage(props) {
   const showSidebar = props.currentTab === 'fields' || props.currentTab === 'preview';
 
   const [sidebarConfiguration, updateSidebarConfiguration] = useState(props.sidebarConfiguration);
+  const [entryEditorConfiguration, updateEntryEditorConfiguration] = useState(
+    props.editorConfiguration
+  );
 
   const onUpdateConfiguration = useCallback(
     (configuration) => {
@@ -27,6 +37,14 @@ export default function ContentTypesPage(props) {
       props.actions.updateSidebarConfiguration(configuration);
     },
     [updateSidebarConfiguration, props.actions]
+  );
+
+  const onEntryEditorUpdateConfiguration = useCallback(
+    (configuration) => {
+      updateEntryEditorConfiguration(configuration);
+      props.actions.updateEditorConfiguration(configuration);
+    },
+    [updateEntryEditorConfiguration, props.actions]
   );
 
   return (
@@ -89,6 +107,21 @@ export default function ContentTypesPage(props) {
               </div>
             </>
           )}
+          {props.hasAdvancedExtensibility && props.currentTab === 'entry_editor_configuration' && (
+            <>
+              <DocumentTitle
+                title={['Entry editors', props.contentTypeData.name, 'Content Model']}
+              />
+              <div>
+                <EntryEditorConfiguration
+                  configuration={entryEditorConfiguration}
+                  customWidgets={props.extensions.filter(isEntryEditorWidget)}
+                  getDefaultEntryEditorConfiguration={getEntryConfiguration}
+                  onUpdateConfiguration={onEntryEditorUpdateConfiguration}
+                />
+              </div>
+            </>
+          )}
         </form>
       </Workbench.Content>
       {showSidebar && (
@@ -99,13 +132,7 @@ export default function ContentTypesPage(props) {
               showNewFieldDialog={props.actions.showNewFieldDialog}
               fieldsUsed={props.contentTypeData.fields.length}
             />
-            {props.hasAdvancedExtensibility && (
-              <EntryEditorAppearanceSection
-                widgets={props.extensions}
-                editorConfiguration={props.editorConfiguration}
-                updateEditorConfiguration={props.actions.updateEditorConfiguration}
-              />
-            )}
+            <EntryEditorSection />
             <ContentTypeIdSection contentTypeId={props.contentTypeData.sys.id} />
             <DocumentationSection />
           </div>
@@ -141,7 +168,7 @@ ContentTypesPage.propTypes = {
   }).isRequired,
   hasAdvancedExtensibility: PropTypes.bool.isRequired,
   sidebarConfiguration: PropTypes.array,
-  editorConfiguration: PropTypes.object,
+  editorConfiguration: PropTypes.array,
   // TODO: rename to "widgets". Make sure it "isRequired".
   extensions: PropTypes.array,
 };

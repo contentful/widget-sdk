@@ -7,9 +7,11 @@ import {
   Paragraph,
   Subheading,
   Typography,
+  TextLink,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
+import { go } from 'states/Navigator';
 
 const styles = {
   addFieldButton: css({
@@ -95,5 +97,21 @@ export function DocumentationSection() {
         </Paragraph>
       </Typography>
     </React.Fragment>
+  );
+}
+
+export function EntryEditorSection() {
+  return (
+    <>
+      <Subheading className="entity-sidebar__heading">Entry Editor Appearance</Subheading>
+      <Typography>
+        <Paragraph>
+          Change the entry editor’s appearance for this content type in the{' '}
+          <TextLink onClick={() => go({ path: '^.entry_editor_configuration' })}>
+            Entry editor settings
+          </TextLink>
+        </Paragraph>
+      </Typography>
+    </>
   );
 }
