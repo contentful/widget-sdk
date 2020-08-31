@@ -16,6 +16,8 @@ import { Workbench } from '@contentful/forma-36-react-components';
 import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 
+const heightWithoutHeader = 'calc(100% - 71px)';
+
 const styles = {
   workbench: css({
     '& > div': {
@@ -26,14 +28,14 @@ const styles = {
   }),
   workbenchContent: css({
     padding: 0,
-    height: 'calc(100% - 71px)',
+    height: heightWithoutHeader,
     position: 'relative',
     '& > div': {
       height: '100%',
     },
   }),
   workbenchSidebar: css({
-    minHeight: '100%',
+    minHeight: heightWithoutHeader,
   }),
   bulkEntityEditorWrapper: css({
     overflowY: 'scroll',
