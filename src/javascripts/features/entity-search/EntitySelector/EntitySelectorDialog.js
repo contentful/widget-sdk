@@ -31,7 +31,7 @@ export const EntitySelectorDialog = ({ isShown, onClose, config, labels }) => {
           <Fragment>
             <Modal.Header title={title} onClose={onCancel} />
             <Modal.Content>
-              <EntitySelectorForm {...config} labels={labels} onChange={onChange} />
+              {isShown && <EntitySelectorForm {...config} labels={labels} onChange={onChange} />}
             </Modal.Content>
             {config.multiple && (
               <Modal.Controls>
