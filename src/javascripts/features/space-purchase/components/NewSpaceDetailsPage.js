@@ -64,29 +64,34 @@ export const NewSpaceDetailsPage = ({
                 testId="space-name"
                 autoFocus
                 value={spaceName}
+                countCharacters
+                textInputProps={{
+                  type: 'text',
+                  maxLength: 30,
+                }}
                 onChange={(e) => onChangeSpaceName(e.target.value)}
               />
+
+              <TemplateSelector
+                isNewSpacePurchaseFlow={true}
+                onSelect={onChangeSelectedTemplate}
+                templates={templatesList}
+                selectedTemplate={selectedTemplate}
+              />
+
+              <div className={styles.buttonsContainer}>
+                <Button onClick={navigateToPreviousStep} testId="navigate-back" buttonType="naked">
+                  Back
+                </Button>
+                <Button
+                  onClick={onSubmit}
+                  disabled={spaceName === ''}
+                  testId="next-step-new-details-page">
+                  Continue to pay
+                </Button>
+              </div>
             </Form>
           </Typography>
-
-          <TemplateSelector
-            isNewSpacePurchaseFlow={true}
-            onSelect={onChangeSelectedTemplate}
-            templates={templatesList}
-            selectedTemplate={selectedTemplate}
-          />
-
-          <div className={styles.buttonsContainer}>
-            <Button onClick={navigateToPreviousStep} testId="navigate-back" buttonType="naked">
-              Back
-            </Button>
-            <Button
-              onClick={onSubmit}
-              disabled={spaceName === ''}
-              testId="next-step-new-details-page">
-              Continue to pay
-            </Button>
-          </div>
         </Card>
       </Grid>
     </section>
