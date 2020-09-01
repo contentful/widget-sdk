@@ -13,7 +13,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import { NavigationIcon, Grid, Flex } from '@contentful/forma-36-react-components/dist/alpha';
 import { useAsync } from 'core/hooks';
-import { getSubscriptionPlans, updateSpacePlan } from 'account/pricing/PricingDataProvider';
+import { getSubscriptionPlans } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
 import { getSpace } from 'access_control/OrganizationMembershipRepository';
 import { SpacePlanSelection } from './SpacePlanSelection';
@@ -21,6 +21,7 @@ import createResourceService from 'services/ResourceService';
 import { sortBy, keyBy, filter } from 'lodash';
 import { Breadcrumbs } from 'features/breadcrumbs';
 import { go } from 'states/Navigator';
+import { changeSpacePlanAssignment } from '../services/SpacePlanAssignmentService';
 
 const ASSIGNMENT_STEPS = [
   { text: '1.New space type', isActive: true },
@@ -44,6 +45,8 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
         resourceService.getAll(),
       ]);
 
+      const currentPlan = plans.items.find((plan) => plan.gatekeeperKey === spaceId);
+
       return {
         // filter plans that already have a space assigned (gatekeeperKey), and sort by price
         plans: sortBy(
@@ -51,6 +54,7 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
           'price'
         ),
         space,
+        currentPlan,
         spaceResources: keyBy(spaceResources, 'sys.id'),
       };
     }, [orgId, spaceId])
@@ -89,15 +93,8 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
   };
 
   const submit = async () => {
-    const orgEndpoint = createOrganizationEndpoint(orgId);
-
-    const updatedPlan = {
-      ...selectedPlan,
-      gatekeeperKey: spaceId,
-    };
-
     try {
-      await updateSpacePlan(orgEndpoint, updatedPlan);
+      await changeSpacePlanAssignment(orgId, spaceId, selectedPlan, data.currentPlan);
       Notification.success(`${data.space.name} was successfully changed to ${selectedPlan.name}`);
       go({ path: '^.subscription_new' });
     } catch (e) {
