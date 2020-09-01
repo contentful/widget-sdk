@@ -129,20 +129,19 @@ async function loadEditorData(loader, id) {
   const entity = await loader.getEntity(id);
   const contentTypeId = get(entity, ['data', 'sys', 'contentType', 'sys', 'id']);
   const environmentId = get(entity, ['data', 'sys', 'environment', 'sys', 'id']);
-  const spaceId = get(entity, ['data', 'sys', 'space', 'sys', 'id']);
 
   const [
     contentType,
     apiEditorInterface,
     hasAdvancedExtensibility,
-    customWidgetLoader,
     useNewWidgetRenderer,
+    customWidgetLoader,
   ] = await Promise.all([
     loader.getContentType(contentTypeId),
     loader.getEditorInterface(contentTypeId),
     loader.hasAdvancedExtensibility(),
+    loader.useNewWidgetRenderer(),
     getCustomWidgetLoader(),
-    getVariation(FLAGS.NEW_WIDGET_RENDERER, { spaceId }),
   ]);
 
   const editorInterface = EditorInterfaceTransformer.fromAPI(contentType.data, apiEditorInterface);
@@ -209,6 +208,12 @@ function makeEntryLoader(spaceContext) {
     hasAdvancedExtensibility() {
       return AdvancedExtensibilityFeature.isEnabled(spaceContext.organization.sys.id);
     },
+    useNewWidgetRenderer() {
+      return getVariation(FLAGS.NEW_WIDGET_RENDERER, {
+        spaceId: spaceContext.getId(),
+        organizationId: spaceContext.organization.sys.id,
+      });
+    },
     getOpenDoc: makeDocOpener(spaceContext),
   };
 }
@@ -217,6 +222,7 @@ function makeAssetLoader(spaceContext) {
   return {
     getEntity: (id) => fetchEntity(spaceContext, 'Asset', id),
     hasAdvancedExtensibility: () => false,
+    useNewWidgetRenderer: () => false,
     getOpenDoc: makeDocOpener(spaceContext),
     // TODO: we return precomputed CT and EI for the Asset Editor.
     // If we would have an endpoint with this data
