@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import cn from 'classnames';
 import {
   Space as SpacePropType,
   Plan as PlanPropType,
@@ -34,8 +35,10 @@ export function SpacePlanSelection({
   const groupedPlans = groupBy(plans, 'name');
 
   return (
-    <Typography>
-      <Heading element="h2">Choose a new space type for {space.name}</Heading>
+    <>
+      <Typography>
+        <Heading element="h2">Choose a new space type for {space.name}</Heading>
+      </Typography>
       <List>
         {Object.keys(groupedPlans).map((name, index) => {
           // We use the first in the group plan to display the limits
@@ -45,33 +48,56 @@ export function SpacePlanSelection({
           const plan = groupedPlans[name][0];
           const planCount = groupedPlans[name].length;
           const setPlanColor =
-            name === 'Large'
-              ? tokens.colorGreenLight
-              : name === 'Performance 1x'
-              ? tokens.colorGreenMid
-              : tokens.colorBlueMid;
+            name === 'Large' || name === 'Medium' ? tokens.colorGreenLight : tokens.colorBlueMid;
 
           const styles = {
             cardItem: css({
               marginBottom: tokens.spacingM,
-              borderLeft: `8px solid ${setPlanColor}`,
+              position: 'relative',
+
+              '&:before': css({
+                content: '""',
+                position: 'absolute',
+                top: '0',
+                left: '0',
+                width: '8px',
+                height: '100%',
+                backgroundColor: `${setPlanColor}`,
+              }),
+            }),
+            cardItemActive: css({
+              outline: 'none',
+              border: `1px solid ${tokens.colorPrimary}`,
+              boxShadow: `${tokens.glowPrimary}`,
+            }),
+            radioButtonLarge: css({
+              // TODO: as soon as it goes to prod permanently, move large radio to F36
+              width: '18px', // basic size of icon
+              height: '18px', // basic size of icon
             }),
           };
 
           return (
             <ListItem key={plan.sys.id} testId="space-plan-item">
-              <Card padding="large" className={styles.cardItem}>
-                <Flex htmlTag="label" justifyContent="start" alignItems="baseline">
+              <Card
+                padding="large"
+                className={cn(styles.cardItem, { [styles.cardItemActive]: plan === selectedPlan })}>
+                <Flex
+                  htmlTag="label"
+                  justifyContent="start"
+                  alignItems="center"
+                  marginBottom="spacingM">
                   <RadioButton
                     checked={plan === selectedPlan}
                     onChange={() => onPlanSelected(plan)}
                     labelText={plan.name}
+                    className={styles.radioButtonLarge}
                   />
                   <Flex
                     marginLeft={'spacingS'}
                     fullWidth={true}
                     justifyContent="space-between"
-                    alignItems="baseline">
+                    alignItems="center">
                     <Heading element="h3">{plan.name}</Heading>
                     <Tag tagType="positive">{planCount} available</Tag>
                   </Flex>
@@ -85,14 +111,18 @@ export function SpacePlanSelection({
         })}
       </List>
       <Flex justifyContent="space-between" alignItems="center" marginTop="spacingL">
-        <StateLink component={Button} buttonType="muted" path={'^.subscription_new'}>
+        <StateLink
+          component={Button}
+          buttonType="muted"
+          path={'^.subscription_new'}
+          icon="ChevronLeft">
           Go back
         </StateLink>
         <Button buttonType="primary" onClick={onNext}>
           Continue
         </Button>
       </Flex>
-    </Typography>
+    </>
   );
 }
 

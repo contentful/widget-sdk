@@ -156,7 +156,7 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
                 <>
                   <div>I will be a confirmation layer</div>
                   <Flex justifyContent="space-between" alignItems="center" marginTop="spacingL">
-                    <Button buttonType="muted" onClick={navigateToPreviousStep}>
+                    <Button buttonType="muted" onClick={navigateToPreviousStep} icon="ChevronLeft">
                       Go back
                     </Button>
                     <Button buttonType="primary" onClick={navigateToNextStep}>

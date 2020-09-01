@@ -14,11 +14,13 @@ import {
   TableRow,
   TableCell,
   Icon,
+  Tooltip,
 } from '@contentful/forma-36-react-components';
+import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
 import { getResourceLimits } from 'utils/ResourceUtils';
 
 const styles = {
-  warning: css({ color: tokens.colorWarning, display: 'flex', alignItems: 'center' }),
+  warning: css({ color: tokens.colorWarning }),
 };
 
 const resourcesToDisplay = [
@@ -53,7 +55,12 @@ export function SpacePlanComparison({ plan, spaceResources }) {
             const isOverLimit = usage > limit.maximum;
             return (
               <TableCell key={id} className={isOverLimit ? styles.warning : ''}>
-                {usage} {isOverLimit && <Icon icon="Warning" color="warning" />}
+                <Tooltip place="top" content="Your current usage exceeds this plan's limit">
+                  <Flex justifyContent="center" alignItems="center">
+                    <Flex marginRight="spacing2xs">{usage}</Flex>
+                    {isOverLimit && <Icon icon="Warning" color="warning" />}
+                  </Flex>
+                </Tooltip>
               </TableCell>
             );
           })}
