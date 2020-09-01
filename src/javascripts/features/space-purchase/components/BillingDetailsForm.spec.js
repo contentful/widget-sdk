@@ -122,6 +122,27 @@ describe('BillingDetailsForm', () => {
           expect(mockOnSubmitBillingDetails).toBeCalled();
         });
       });
+
+      it('should accept an EU country with no vat number filled out', async () => {
+        const mockOnSubmitBillingDetails = jest.fn();
+
+        build({
+          savedBillingDetails: mockBillingDetailsWith({ vatNumber: '' }),
+          onSubmitBillingDetails: mockOnSubmitBillingDetails,
+        });
+
+        const countrySelect = within(screen.getByTestId('billing-details.country')).getByTestId(
+          'cf-ui-select'
+        );
+
+        userEvent.selectOptions(countrySelect, ['DE']);
+        userEvent.click(screen.getByTestId('next-step-billing-details-form'));
+
+        waitFor(() => {
+          expect(screen.queryByText('Not a valid VAT Number')).toBeNull();
+          expect(mockOnSubmitBillingDetails).toBeCalled();
+        });
+      });
     });
   });
 

@@ -65,7 +65,7 @@ export const BillingDetailsForm = ({
   const isAddingBillingDetails = isEmpty(savedBillingDetails);
   const billingDetails = Object.assign(DEFAULT_BILLING_DETAILS, savedBillingDetails);
 
-  const { onChange, onSubmit, fields } = useForm({
+  const { onChange, onBlur, onSubmit, fields } = useForm({
     fields: {
       firstName: {
         value: billingDetails.firstName,
@@ -80,7 +80,7 @@ export const BillingDetailsForm = ({
         required: true,
         validator: (value) => {
           //search for @ && .
-          if (!value.includes('@') && value.includes('.')) {
+          if (!value.includes('@') || !value.includes('.')) {
             return 'Not a valid email address';
           }
         },
@@ -117,7 +117,8 @@ export const BillingDetailsForm = ({
       const countryCode = fields.country.value;
       const vatNumber = fields.vatNumber.value;
 
-      if (getIsVatCountry(countryCode) && !isValidVat(vatNumber, countryCode)) {
+      // Only want to check if the VAT number is valid if a VAT number has been added.
+      if (vatNumber !== '' && getIsVatCountry(countryCode) && !isValidVat(vatNumber, countryCode)) {
         errors.vatNumber = 'Not a valid VAT Number';
       }
 
@@ -139,8 +140,9 @@ export const BillingDetailsForm = ({
     onChange('country', countryCode);
   };
 
-  // Get the input's name and call onChange for that input with the updated value.
+  // Get the input's name and call onChange/onBlur for that input with the updated value.
   const handleChange = (e) => onChange(e.target.getAttribute('name'), e.target.value);
+  const handleBlur = (e) => onBlur(e.target.getAttribute('name'), e.target.value);
 
   return (
     <Card testId="billing-details.card" className={styles.card}>
@@ -163,6 +165,7 @@ export const BillingDetailsForm = ({
             value={fields.firstName.value}
             validationMessage={fields.firstName.error}
             onChange={handleChange}
+            onBlur={handleBlur}
           />
 
           <TextField
@@ -175,6 +178,7 @@ export const BillingDetailsForm = ({
             value={fields.lastName.value}
             validationMessage={fields.lastName.error}
             onChange={handleChange}
+            onBlur={handleBlur}
           />
         </div>
 
@@ -188,6 +192,7 @@ export const BillingDetailsForm = ({
           value={fields.email.value}
           validationMessage={fields.email.error}
           onChange={handleChange}
+          onBlur={handleBlur}
         />
 
         <TextField
@@ -200,6 +205,7 @@ export const BillingDetailsForm = ({
           value={fields.address.value}
           validationMessage={fields.address.error}
           onChange={handleChange}
+          onBlur={handleBlur}
         />
 
         <TextField
@@ -211,6 +217,7 @@ export const BillingDetailsForm = ({
           value={fields.addressTwo.value}
           validationMessage={fields.addressTwo.error}
           onChange={handleChange}
+          onBlur={handleBlur}
         />
 
         <div className={styles.twoItemRow}>
@@ -225,6 +232,7 @@ export const BillingDetailsForm = ({
             value={fields.city.value}
             validationMessage={fields.city.error}
             onChange={handleChange}
+            onBlur={handleBlur}
           />
           <TextField
             name="postalCode"
@@ -236,6 +244,7 @@ export const BillingDetailsForm = ({
             value={fields.postalCode.value}
             validationMessage={fields.postalCode.error}
             onChange={handleChange}
+            onBlur={handleBlur}
           />
         </div>
         <SelectField
@@ -263,11 +272,11 @@ export const BillingDetailsForm = ({
             id="vatNumber"
             testId="billing-details.vatNumber"
             labelText="VAT Number"
-            required
             autoFocus
             value={fields.vatNumber.value}
             validationMessage={fields.vatNumber.error}
             onChange={handleChange}
+            onBlur={handleBlur}
           />
         )}
 
