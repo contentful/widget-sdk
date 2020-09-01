@@ -67,7 +67,7 @@ const mapEntities = (entities) =>
 
 const ReferencesSideBar = ({ entityTitle, entity }) => {
   const { state: referencesState, dispatch } = useContext(ReferencesContext);
-  const { references, selectedEntities, isTooComplex } = referencesState;
+  const { references, selectedEntities, isTooComplex, initialReferencesAmount } = referencesState;
   const [isRelaseDialogShown, setRelaseDialogShown] = useState(false);
   const [isAddToReleaseEnabled, setisAddToReleaseEnabled] = useState(false);
 
@@ -194,7 +194,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
         isFullWidth
         disabled={disableButton}
         onClick={handlePublication}>
-        Publish all
+        {selectedEntities.length !== initialReferencesAmount ? 'Publish selected' : 'Publish all'}
       </Button>
       <Button
         testId="validateReferencesBtn"
@@ -203,7 +203,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
         isFullWidth
         disabled={disableButton}
         onClick={handleValidation}>
-        Validate all
+        {selectedEntities.length !== initialReferencesAmount ? 'Validate selected' : 'Validate all'}
       </Button>
       {isAddToReleaseEnabled && (
         <Button
