@@ -191,8 +191,11 @@ export default function createExtensionBridge(dependencies) {
 
     // Available for field-level extensions only:
     if (isFieldLevelExtension) {
-      const fieldLocaleListener =
-        $scope.fieldLocaleListeners.lookup[$scope.widget.fieldId][$scope.locale.code];
+      const fieldLocaleListener = get($scope.fieldLocaleListeners.lookup, [
+        $scope.widget.fieldId,
+        $scope.locale.code,
+      ]);
+
       if (fieldLocaleListener) {
         fieldLocaleListener.onDisabledChanged((disabled) => {
           api.send('isDisabledChanged', [disabled]);

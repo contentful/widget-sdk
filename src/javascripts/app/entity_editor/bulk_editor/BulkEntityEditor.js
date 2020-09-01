@@ -29,6 +29,7 @@ import Loader from 'ui/Loader';
 import { css } from 'emotion';
 import { Workbench } from '@contentful/forma-36-react-components';
 import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { makeFieldLocaleListeners } from 'app/entry_editor/makeFieldLocaleListeners';
 
 const styles = {
   workbench: css({
@@ -237,6 +238,9 @@ export const BulkEntityEditor = ({
     entityInfo,
     localeData,
     otDoc,
+    makeFieldLocaleListeners: (currentScope) => {
+      return makeFieldLocaleListeners(widgets, currentScope, getModule('$controller'));
+    },
   };
 
   return (
@@ -277,7 +281,9 @@ export const BulkEntityEditor = ({
             ) : (
               <AngularComponent
                 with$Apply
-                template={`<cf-entity-field ng-repeat="widget in widgets track by widget.fieldId"></cf-entity-field>`}
+                template={`<div ng-init="fieldLocaleListeners = makeFieldLocaleListeners(this)">
+                  <cf-entity-field ng-repeat="widget in widgets track by widget.fieldId"></cf-entity-field>
+                </div>`}
                 scope={scope}
               />
             )}
