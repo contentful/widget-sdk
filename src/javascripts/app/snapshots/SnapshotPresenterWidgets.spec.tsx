@@ -8,8 +8,8 @@ import { InternalContentType } from '../widgets/createFieldWidgetSDK/createConte
 import { LegacyWidget } from '../../widgets/WidgetCompat';
 
 // This cannot be moved or replaced by a function because of how jest.mock works
-jest.mock('./SnapshotPresenterExtension', () => () => (
-  <div data-test-id="SnapshotPresenterExtension" />
+jest.mock('./SnapshotPresenterCustomWidget', () => () => (
+  <div data-test-id="SnapshotPresenterCustomWidget" />
 ));
 jest.mock('./SnapshotPresenterArraySymbol', () => () => (
   <div data-test-id="SnapshotPresenterArraySymbol" />
@@ -67,7 +67,7 @@ const getMockedProps = ({
 
 describe('SnapshotPresenterWidgets', () => {
   describe('when presenting custom widget', () => {
-    it('renders SnapshotPresenterExtension', () => {
+    it('renders SnapshotPresenterCustomWidget', () => {
       const { widget, editorData, entity, locale } = getMockedProps({
         widgetNamespace: WidgetNamespace.EXTENSION,
       });
@@ -82,7 +82,9 @@ describe('SnapshotPresenterWidgets', () => {
         />
       );
 
-      expect(snapshotPresenterWidgets.queryByTestId('SnapshotPresenterExtension')).not.toBeNull();
+      expect(
+        snapshotPresenterWidgets.queryByTestId('SnapshotPresenterCustomWidget')
+      ).not.toBeNull();
     });
   });
 
