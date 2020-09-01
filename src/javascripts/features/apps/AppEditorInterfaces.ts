@@ -126,25 +126,32 @@ function transformSingleEditorInterfaceToTargetState(
 ): EditorInterface {
   // Start by removing all references, only those declared in the target
   // state will be recreated.
-  const editorInterface = removeSingleEditorInterfaceReferences(ei, appInstallation);
-  const result: EditorInterface = { sys: editorInterface.sys };
+  const result = removeSingleEditorInterfaceReferences(ei, appInstallation);
 
   const widgetId = get(appInstallation, ['sys', 'appDefinition', 'sys', 'id']);
 
   // Target state object for controls: `{ fieldId }`
   if (Array.isArray(targetState.controls)) {
-    const controls = editorInterface.controls ?? [];
-
     targetState.controls.forEach((control) => {
+      const controls = Array.isArray(result.controls) ? [...result.controls] : [];
       const idx = controls.findIndex((cur) => cur.fieldId === control.fieldId);
-      controls[idx] = {
+
+      const item = {
         fieldId: control.fieldId,
         widgetNamespace: WidgetNamespace.APP,
         widgetId,
       };
-    });
 
-    result.controls = controls;
+      // Usually controls will be defined and field will be found by ID.
+      if (idx > -1) {
+        controls[idx] = item;
+      } else {
+        // But if not, we still need to populate the item.
+        controls.push(item);
+      }
+
+      result.controls = controls;
+    });
   }
 
   if (targetState.sidebar) {
@@ -152,7 +159,7 @@ function transformSingleEditorInterfaceToTargetState(
       targetState.sidebar,
       defaultSidebar,
       widgetId,
-      editorInterface.sidebar
+      result.sidebar
     );
   }
 
@@ -161,6 +168,7 @@ function transformSingleEditorInterfaceToTargetState(
   // is no list of editors
   if (targetState.editor === true) {
     result.editor = { widgetNamespace: WidgetNamespace.APP, widgetId };
+    delete result.editors;
   }
   // As opposed to when we get `editors` (plural), in which case we behave like sidebars
   else if (targetState.editors) {
@@ -168,8 +176,9 @@ function transformSingleEditorInterfaceToTargetState(
       targetState.editors,
       defaultEditors,
       widgetId,
-      editorInterface.editors
+      result.editors
     );
+    delete result.editor;
   }
 
   return result;

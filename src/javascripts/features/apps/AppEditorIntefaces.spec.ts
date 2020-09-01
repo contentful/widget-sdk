@@ -53,6 +53,16 @@ describe('AppEditorInterfaces', () => {
                   widgetId: 'date',
                   settings: { ampm: true },
                 },
+                {
+                  fieldId: 'test3',
+                  widgetNamespace: WidgetNamespace.APP,
+                  widgetId: 'some-different-app',
+                },
+                {
+                  fieldId: 'test4',
+                  widgetNamespace: WidgetNamespace.BUILTIN,
+                  widgetId: 'some-default-will-stay',
+                },
               ],
               sidebar: [
                 {
@@ -87,7 +97,7 @@ describe('AppEditorInterfaces', () => {
 
       await transform({
         CT1: {
-          controls: [{ fieldId: 'test' }, { fieldId: 'test2' }],
+          controls: [{ fieldId: 'test' }, { fieldId: 'test2' }, { fieldId: 'yolo' }],
           sidebar: { position: 1 },
           editors: { position: 0 },
         },
@@ -108,6 +118,17 @@ describe('AppEditorInterfaces', () => {
             widgetId: APP_ID,
           },
           { fieldId: 'test2', widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID },
+          {
+            fieldId: 'test3',
+            widgetNamespace: WidgetNamespace.APP,
+            widgetId: 'some-different-app',
+          },
+          {
+            fieldId: 'test4',
+            widgetNamespace: WidgetNamespace.BUILTIN,
+            widgetId: 'some-default-will-stay',
+          },
+          { fieldId: 'yolo', widgetNamespace: WidgetNamespace.APP, widgetId: APP_ID },
         ],
         sidebar: [
           { widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN, widgetId: 'publication-widget' },
