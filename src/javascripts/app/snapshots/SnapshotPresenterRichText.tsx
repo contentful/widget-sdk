@@ -18,6 +18,7 @@ const SnapshotPresenterRichText = ({
   field,
   locale,
   widget,
+  parameters,
 }: SnapshotPresenterRichTextProps) => {
   const sdk: FieldExtensionSDK = useMemo(() => {
     const spaceContext = getModule('spaceContext');
@@ -39,8 +40,9 @@ const SnapshotPresenterRichText = ({
       usersRepo: spaceContext.users,
       widgetId: widget.id,
       widgetNamespace: widget.namespace,
+      parameters,
     });
-  }, [field, locale, entity, editorData, value, widget]);
+  }, [field, locale, entity, editorData, value, widget, parameters]);
 
   return (
     <div className={className} data-test-id="snapshot-presenter-richtext">
@@ -62,6 +64,10 @@ interface SnapshotPresenterRichTextProps {
   widget: {
     id: string;
     namespace: WidgetNamespace;
+  };
+  parameters: {
+    instance: Record<string, any>;
+    installation: Record<string, any>;
   };
 }
 

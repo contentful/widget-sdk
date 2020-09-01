@@ -39,6 +39,10 @@ interface SnapshotPresenterWidgetsProps {
     settings: any;
     widgetNamespace: WidgetNamespace;
     widgetId: string;
+    parameters: {
+      instance: Record<string, any>;
+      installation: Record<string, any>;
+    };
   };
   locale: Locale;
 }
@@ -52,7 +56,7 @@ const SnapshotPresenterWidgets = ({
   value,
   widget,
 }: SnapshotPresenterWidgetsProps) => {
-  const { field, descriptor, widgetNamespace, settings } = widget;
+  const { field, descriptor, widgetNamespace, parameters, settings } = widget;
 
   if (isCustomWidget(widgetNamespace)) {
     return (
@@ -62,6 +66,7 @@ const SnapshotPresenterWidgets = ({
         field={field}
         locale={locale}
         value={value}
+        parameters={parameters}
         widget={toRendererWidget(descriptor)}
       />
     );
@@ -91,6 +96,7 @@ const SnapshotPresenterWidgets = ({
           locale={locale}
           value={value}
           widget={descriptor}
+          parameters={parameters}
         />
       );
     case 'Text':

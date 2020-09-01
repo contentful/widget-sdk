@@ -27,6 +27,10 @@ interface SnapshotPresenterExtensionProps {
   };
   value: any;
   widget: Widget;
+  parameters: {
+    instance: Record<string, any>;
+    installation: Record<string, any>;
+  };
 }
 
 const SnapshotPresenterCustomWidget = ({
@@ -36,6 +40,7 @@ const SnapshotPresenterCustomWidget = ({
   entity,
   locale,
   field,
+  parameters,
 }: SnapshotPresenterExtensionProps) => {
   const sdk: FieldExtensionSDK = useMemo(() => {
     const spaceContext = getModule('spaceContext');
@@ -57,8 +62,9 @@ const SnapshotPresenterCustomWidget = ({
       usersRepo: spaceContext.users,
       widgetId: widget.id,
       widgetNamespace: widget.namespace,
+      parameters,
     });
-  }, [field, locale, entity, editorData, widget, value]);
+  }, [field, locale, entity, editorData, widget, value, parameters]);
 
   return (
     <div data-test-id="snapshot-presenter-extension">

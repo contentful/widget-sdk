@@ -38,6 +38,10 @@ interface CreateReadOnlyFieldWidgetSDKOptions {
   usersRepo: any;
   widgetId: string;
   widgetNamespace: WidgetNamespace;
+  parameters: {
+    instance: Record<string, any>;
+    installation: Record<string, any>;
+  };
 }
 
 export function createReadonlyFieldWidgetSDK({
@@ -56,6 +60,7 @@ export function createReadonlyFieldWidgetSDK({
   usersRepo,
   widgetId,
   widgetNamespace,
+  parameters,
 }: CreateReadOnlyFieldWidgetSDKOptions): FieldExtensionSDK {
   const pubSubClient = { on: noop, off: noop } as PubSubClient;
   const readOnlyEntityRepo = createEntityRepo(endpoint, pubSubClient, noop, {
@@ -121,14 +126,7 @@ export function createReadonlyFieldWidgetSDK({
       spaceMember,
       widgetId,
       widgetNamespace,
-      // TODO:
-      // actual value from EditorInterface should be provided
-      // when we use this read only SDK for something different
-      // from RichText comparator.
-      parameters: {
-        installation: {},
-        instance: {},
-      },
+      parameters,
     }),
     editor: editorApi,
     space: spaceApi,

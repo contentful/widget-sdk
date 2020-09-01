@@ -51,6 +51,10 @@ const getMockedProps = ({
       field: {} as Field,
       settings: {},
       widgetId,
+      parameters: {
+        installation: {},
+        instance: {},
+      },
     },
     editorData: {
       contentType: { data: {} as InternalContentType },
