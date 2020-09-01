@@ -4,7 +4,7 @@ import { css } from 'emotion';
 
 import {
   Card,
-  Heading,
+  Subheading,
   Typography,
   Paragraph,
   List,
@@ -18,7 +18,6 @@ const BORDER = `1px solid ${tokens.colorElementMid}`;
 const styles = {
   card: css({
     padding: tokens.spacingL,
-    height: 'fit-content',
   }),
   list: css({
     borderBottom: BORDER,
@@ -38,9 +37,9 @@ export const OrderSummary = ({ selectedPlan }) => {
   return (
     <Card testId="order-summary.card" className={styles.card}>
       <Typography>
-        <Heading element="h3" testId="space-heading">
+        <Subheading element="h3" testId="space-heading">
           Order Summary
-        </Heading>
+        </Subheading>
         <Paragraph>
           Start using your new space today. You will be billed at the end of each month. You can
           cancel at anytime.

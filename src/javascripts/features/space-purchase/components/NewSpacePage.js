@@ -9,6 +9,7 @@ import { NewSpaceFAQ } from './NewSpaceFAQ';
 import { SpaceSelection } from './SpaceSelection';
 import { NewSpaceDetailsPage } from './NewSpaceDetailsPage';
 import { NewSpaceBillingDetailsPage } from './NewSpaceBillingDetailsPage';
+import { NewSpaceCardDetailsPage } from './NewSpaceCardDetailsPage';
 
 import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
 
@@ -27,8 +28,9 @@ const NEW_SPACE_STEPS_PAYMENT = [
 const SPACE_SELECTION = 0;
 const SPACE_DETAILS = 1;
 const BILLING_DETAILS = 2;
+const CARD_DETAILS = 3;
 
-const PURCHASE_FLOW_STEPS = [SPACE_SELECTION, SPACE_DETAILS, BILLING_DETAILS];
+const PURCHASE_FLOW_STEPS = [SPACE_SELECTION, SPACE_DETAILS, BILLING_DETAILS, CARD_DETAILS];
 
 export const NewSpacePage = ({ organizationId, templatesList, productRatePlans }) => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -132,6 +134,16 @@ export const NewSpacePage = ({ organizationId, templatesList, productRatePlans }
               navigateToPreviousStep={navigateToPreviousStep}
               billingDetails={billingDetails}
               onSubmitBillingDetails={onSubmitBillingDetails}
+              selectedPlan={selectedPlan}
+            />
+          </Grid>
+        );
+      case CARD_DETAILS:
+        return (
+          <Grid columns={1} rows="repeat(2, 'auto')" columnGap="none" rowGap="spacingM">
+            <Breadcrumb items={NEW_SPACE_STEPS_PAYMENT} />
+            <NewSpaceCardDetailsPage
+              navigateToPreviousStep={navigateToPreviousStep}
               selectedPlan={selectedPlan}
             />
           </Grid>

@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import {
   Button,
   Heading,
+  Subheading,
   Card,
   Typography,
   TextField,
@@ -21,11 +22,12 @@ const styles = {
     justifyContent: 'space-between',
   }),
   card: css({
-    width: '700px',
     padding: tokens.spacingL,
   }),
   sectionHeading: css({
     fontWeight: tokens.fontWeightMedium,
+    gridColumnStart: 1,
+    gridColumnEnd: 3,
   }),
 };
 
@@ -40,7 +42,7 @@ export const NewSpaceDetailsPage = ({
 }) => {
   return (
     <section aria-labelledby="new-space-details-section" data-test-id="new-space-details-section">
-      <Grid columns={1} rows="repeat(2, 'auto')" columnGap="spacingL" rowGap="spacingM">
+      <Grid columns="700px auto" rows="repeat(2, 'auto')" columnGap="spacingL" rowGap="spacingM">
         <Heading
           id="new-space-details-section-heading"
           element="h2"
@@ -51,9 +53,9 @@ export const NewSpaceDetailsPage = ({
 
         <Card testId="space-card" className={cn(styles.fullRow, styles.card)}>
           <Typography>
-            <Heading element="h3" testId="space-heading">
-              Enter your space details
-            </Heading>
+            <Subheading element="h3" testId="space-heading">
+              Enter your space details ✏️
+            </Subheading>
 
             <Form onSubmit={onSubmit}>
               <TextField

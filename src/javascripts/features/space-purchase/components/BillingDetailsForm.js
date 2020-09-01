@@ -8,8 +8,7 @@ import {
   SelectField,
   Button,
   Card,
-  Typography,
-  Heading,
+  Subheading,
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
@@ -31,6 +30,12 @@ const DEFAULT_BILLING_DETAILS = {
 };
 
 const styles = {
+  form: css({
+    marginTop: tokens.spacingM,
+    '& div:last-child': {
+      marginBottom: 0,
+    },
+  }),
   buttonsContainer: css({
     display: 'flex',
     justifyContent: 'space-between',
@@ -45,11 +50,6 @@ const styles = {
   }),
   fieldSpacing: css({
     marginRight: tokens.spacingM,
-  }),
-  heading: css({
-    fontWeight: tokens.fontWeightMedium,
-    fontSize: tokens.fontSizeXL,
-    marginBottom: tokens.spacingXL,
   }),
 };
 
@@ -146,13 +146,11 @@ export const BillingDetailsForm = ({
 
   return (
     <Card testId="billing-details.card" className={styles.card}>
-      <Typography>
-        <Heading element="h3" testId="billing-details.heading" className={styles.heading}>
-          {isAddingBillingDetails ? 'Add Billing Details' : 'Update Billing Details'}
-        </Heading>
-      </Typography>
+      <Subheading element="h3" testId="billing-details.heading">
+        {isAddingBillingDetails ? 'Add Billing Details' : 'Update Billing Details'} 📫
+      </Subheading>
 
-      <Form onSubmit={onSubmit}>
+      <Form className={styles.form} onSubmit={onSubmit}>
         <div className={styles.twoItemRow}>
           <TextField
             className={styles.fieldSpacing}
