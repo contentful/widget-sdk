@@ -1,12 +1,12 @@
-import { get } from 'lodash';
+import { get, noop } from 'lodash';
 import * as K from 'core/utils/kefir';
 import * as PathUtils from 'utils/Path';
 import localeStore from 'services/localeStore';
 import { EntryFieldAPI } from 'contentful-ui-extensions-sdk';
-import { getModule } from 'core/NgRegistry';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 import { Document } from 'app/entity_editor/Document/typesDocument';
 import { InternalContentTypeField } from './createContentTypeApi';
+import { FieldLocaleLookup } from 'app/entry_editor/makeFieldLocaleListeners';
 
 const ERROR_CODES = {
   BADUPDATE: 'ENTRY UPDATE FAILED',
@@ -18,27 +18,6 @@ const ERROR_MESSAGES = {
   MFAILREMOVAL: 'Could not remove value for field',
   MFAILPERMISSIONS: 'Could not update entry field',
 };
-
-export type FieldLocaleEventListenerFn = (
-  internalField: InternalContentTypeField,
-  locale: any,
-  extractFieldLocaleProperty: (fieldLocale: any) => any,
-  cb: (value: any) => void
-) => () => void;
-
-export function makeFieldLocaleEventListener($scope: any): FieldLocaleEventListenerFn {
-  return (field, locale, extractFieldLocaleProperty, cb) => {
-    const fieldLocaleScope = $scope.$new(false);
-    fieldLocaleScope.widget = { field };
-    fieldLocaleScope.locale = locale;
-
-    const fieldLocale = getModule('$controller')('FieldLocaleController', {
-      $scope: fieldLocaleScope,
-    });
-
-    return K.onValueScope($scope, extractFieldLocaleProperty(fieldLocale), cb);
-  };
-}
 
 export function makePermissionError() {
   const error = new Error(ERROR_MESSAGES.MFAILPERMISSIONS);
@@ -62,35 +41,6 @@ function getCurrentPath(internalFieldId: string, publicLocaleCode?: string) {
   return ['fields', internalFieldId, internalLocaleCode];
 }
 
-function canEdit(doc: Document, publicFieldId: string, publicLocaleCode?: string) {
-  const externalLocaleCode = publicLocaleCode ?? localeStore.getDefaultLocale().code;
-  return doc.permissions.canEditFieldLocale(publicFieldId, externalLocaleCode);
-}
-
-function getLocaleAndCallback(args: any[]) {
-  if (args.length === 1) {
-    return {
-      cb: args[0],
-      locale: localeStore.getDefaultLocale(),
-    };
-  }
-
-  if (args.length === 2) {
-    const publicLocaleCode = args[0];
-    const locale = localeStore.getPrivateLocales().find((l) => l.code === publicLocaleCode);
-    if (!locale) {
-      throw new RangeError(`Unknown locale "${publicLocaleCode}".`);
-    }
-
-    return {
-      cb: args[1],
-      locale,
-    };
-  }
-
-  throw new TypeError('expected either callback, or locale code and callback');
-}
-
 /**
  * Makes a method throw an Exception when the API is read0only
  * This has been implemented with generics to not lose type inference, even though it's ugly
@@ -107,7 +57,7 @@ export interface CreateEntryFieldApiProps {
   internalField: InternalContentTypeField;
   doc: Document;
   setInvalid: (publicLocaleCode: string, value: boolean) => void;
-  listenToFieldLocaleEvent: FieldLocaleEventListenerFn;
+  fieldLocaleListeners: FieldLocaleLookup;
   readOnly?: boolean;
 }
 
@@ -115,12 +65,45 @@ export function createEntryFieldApi({
   internalField,
   doc,
   setInvalid,
-  listenToFieldLocaleEvent,
+  fieldLocaleListeners,
   readOnly,
 }: CreateEntryFieldApiProps): EntryFieldAPI {
-  const publicFieldId = internalField.apiName ?? internalField.id;
   // We fall back to `internalField.id` because some old fields don't have an
   // apiName / public ID
+  const publicFieldId = internalField.apiName ?? internalField.id;
+
+  const localeByPublicCode = localeStore.getPrivateLocales().reduce((acc, l) => {
+    return { ...acc, [l.code]: l };
+  }, {});
+
+  const getLocaleAndCallback = (args: any[]) => {
+    if (args.length === 1) {
+      return {
+        cb: args[0],
+        locale: localeStore.getDefaultLocale(),
+      };
+    }
+
+    if (args.length === 2) {
+      const publicLocaleCode = args[0];
+      const locale = localeByPublicCode[publicLocaleCode];
+      if (!locale) {
+        throw new RangeError(`Unknown locale "${publicLocaleCode}".`);
+      }
+
+      return {
+        cb: args[1],
+        locale,
+      };
+    }
+
+    throw new TypeError('expected either callback, or locale code and callback');
+  };
+
+  const canEdit = (publicLocaleCode?: string) => {
+    const externalLocaleCode = publicLocaleCode ?? localeStore.getDefaultLocale().code;
+    return doc.permissions.canEditFieldLocale(publicFieldId, externalLocaleCode);
+  };
 
   const getValue = (publicLocaleCode?: string) => {
     const currentPath = getCurrentPath(internalField.id, publicLocaleCode);
@@ -131,7 +114,7 @@ export function createEntryFieldApi({
   const setValue = makeReadOnlyGuardedMethod(
     !!readOnly,
     async (value: any, publicLocaleCode?: string) => {
-      if (!canEdit(doc, publicFieldId, publicLocaleCode)) {
+      if (!canEdit(publicLocaleCode)) {
         throw makePermissionError();
       }
 
@@ -147,7 +130,7 @@ export function createEntryFieldApi({
   );
 
   const removeValue = makeReadOnlyGuardedMethod(!!readOnly, async (publicLocaleCode?: string) => {
-    if (!canEdit(doc, publicFieldId, publicLocaleCode)) {
+    if (!canEdit(publicLocaleCode)) {
       throw makePermissionError();
     }
 
@@ -185,12 +168,9 @@ export function createEntryFieldApi({
   ): () => () => void;
   function onIsDisabledChanged(...args: any[]) {
     const { cb, locale } = getLocaleAndCallback(args);
-    return listenToFieldLocaleEvent(
-      internalField,
-      locale,
-      (fieldLocale) => fieldLocale.access$,
-      (access: any) => cb(!!access.disabled)
-    );
+    const fieldLocale = get(fieldLocaleListeners, [publicFieldId, locale.code]);
+
+    return fieldLocale ? fieldLocale.onDisabledChanged(cb) : noop;
   }
 
   function onSchemaErrorsChanged(callback: (errors: any) => void): () => () => void;
@@ -200,12 +180,9 @@ export function createEntryFieldApi({
   ): () => () => void;
   function onSchemaErrorsChanged(...args: any[]) {
     const { cb, locale } = getLocaleAndCallback(args);
-    return listenToFieldLocaleEvent(
-      internalField,
-      locale,
-      (fieldLocale) => fieldLocale.errors$,
-      (errors: any) => cb(errors || [])
-    );
+    const fieldLocale = get(fieldLocaleListeners, [publicFieldId, locale.code]);
+
+    return fieldLocale ? fieldLocale.onSchemaErrorsChanged(cb) : noop;
   }
 
   const locales = internalField.localized

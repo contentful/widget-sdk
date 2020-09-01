@@ -94,7 +94,7 @@ export function createReadonlyFieldWidgetSDK({
     internalContentType: internalContentType,
     doc,
     setInvalid: noop,
-    listenToFieldLocaleEvent: (_internalField, _locale, _extractFieldLocaleProperty, _cb) => noop,
+    fieldLocaleListeners: {},
     readOnly: true,
   });
   const spaceApi = createSpaceApi({

@@ -1,5 +1,6 @@
-import { registerController } from 'core/NgRegistry';
+import { registerController, getModule } from 'core/NgRegistry';
 import * as K from 'core/utils/kefir';
+import { makeFieldLocaleListeners } from './makeFieldLocaleListeners';
 
 // Determines if the widget should be rendered, either visible
 // or hidden in the background, depending on `isVisible`.
@@ -77,6 +78,12 @@ export default function register() {
         update
       );
       K.onValueScope($scope, $scope.editorContext.validator.errors$, update);
+
+      $scope.fieldLocaleListeners = makeFieldLocaleListeners(
+        controls,
+        $scope,
+        getModule('$controller')
+      );
 
       function update() {
         const { widgets, shouldDisplayNoLocalizedFieldsAdvice } = filterWidgets(

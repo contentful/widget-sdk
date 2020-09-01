@@ -84,8 +84,6 @@ describe('createExtensionBridge', () => {
       apply: jest.fn(),
       sysProperty: createMockProperty({ id: 'test', initial: true }),
       changes: createMockProperty([]),
-      access: createMockProperty({ disabled: false }),
-      errors: createMockProperty([]),
       setValueAt: jest.fn((val) => Promise.resolve(val)),
       removeValueAt: jest.fn(() => Promise.resolve(undefined)),
       updateEntry: jest.fn(() => Promise.resolve('Entry updated')),
@@ -93,16 +91,20 @@ describe('createExtensionBridge', () => {
       setActive: jest.fn(),
       getEntry: jest.fn(),
       $watch: jest.fn(),
-      controllerErrors$: createMockProperty([]),
-      controllerAccess$: createMockProperty({ disconnected: false, disabled: false }),
+      onDisabledChanged: jest.fn(),
+      onSchemaErrorsChanged: jest.fn(),
     };
 
     const fieldLocale = {
       id: 'FIELD_ID',
-      access$: stubs.access,
-      errors$: stubs.errors,
       setActive: stubs.setActive,
       locales: ['pl'],
+    };
+    const fieldLocaleListener = {
+      fieldId: 'FIELD_ID',
+      localeCode: 'pl',
+      onDisabledChanged: stubs.onDisabledChanged,
+      onSchemaErrorsChanged: stubs.onSchemaErrorsChanged,
     };
     const $scope = {
       $on: () => {},
@@ -124,6 +126,10 @@ describe('createExtensionBridge', () => {
           controls: [],
           sidebar: [],
         },
+      },
+      fieldLocaleListeners: {
+        flat: [fieldLocaleListener],
+        lookup: { FIELD_ID: { pl: fieldLocaleListener } },
       },
       widget: { field: 'FIELD', fieldId: 'FIELD_ID' },
       widgets: [{ fieldId: 'FIELD_ID' }],
@@ -147,10 +153,6 @@ describe('createExtensionBridge', () => {
           getAllBare: () => [{ id: 'first-content-type' }, { id: 'second-content-type' }],
         },
       },
-      $controller: (_name, _$scope) => ({
-        access$: stubs.controllerAccess$,
-        errors$: stubs.controllerErrors$,
-      }),
       currentWidgetId: 'test-id',
       currentWidgetNamespace: 'extension',
       location: WidgetLocation.ENTRY_FIELD,
@@ -213,6 +215,10 @@ describe('createExtensionBridge', () => {
       const api = makeStubbedApi();
       bridge.install(api);
 
+      // set initial values for field locale listeners
+      stubs.onDisabledChanged.mock.calls.forEach(([cb]) => cb(false));
+      stubs.onSchemaErrorsChanged.mock.calls.forEach(([cb]) => cb([]));
+
       // initial values
       expect(api.send).toBeCalledWith('isDisabledChanged', [false]);
       expect(api.send).toBeCalledWith('isDisabledChangedForFieldLocale', ['FIELD_ID', 'pl', false]);
@@ -221,19 +227,15 @@ describe('createExtensionBridge', () => {
       expect(api.send).toBeCalledWith('schemaErrorsChanged', [[]]);
 
       // changes
-      stubs.access.set({ disabled: true });
+      stubs.onDisabledChanged.mock.calls.forEach(([cb]) => cb(true));
       expect(api.send).toBeCalledWith('isDisabledChanged', [true]);
-
-      stubs.controllerAccess$.set({ disabled: true });
       expect(api.send).toBeCalledWith('isDisabledChangedForFieldLocale', ['FIELD_ID', 'pl', true]);
 
       stubs.sysProperty.set({ id: 'test', initial: false });
       expect(api.send).toBeCalledWith('sysChanged', [{ id: 'test', initial: false }]);
 
-      stubs.errors.set([{ message: 'some error' }]);
+      stubs.onSchemaErrorsChanged.mock.calls.forEach(([cb]) => cb([{ message: 'some error' }]));
       expect(api.send).toBeCalledWith('schemaErrorsChanged', [[{ message: 'some error' }]]);
-
-      stubs.controllerErrors$.set([{ message: 'some error' }]);
       expect(api.send).toBeCalledWith('schemaErrorsChangedForFieldLocale', [
         'FIELD_ID',
         'pl',

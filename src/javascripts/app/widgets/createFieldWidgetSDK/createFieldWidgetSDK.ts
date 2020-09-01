@@ -7,7 +7,6 @@ import { createTagsRepo } from 'features/content-tags';
 import { getBatchingApiClient } from '../WidgetApi/BatchingApiClient';
 import { createEditorApi } from './createEditorApi';
 import { createEntryApi } from './createEntryApi';
-import { makeFieldLocaleEventListener } from './createEntryFieldApi';
 import { createSpaceApi } from './createSpaceApi';
 import { createNavigatorApi } from './createNavigatorApi';
 import { createDialogsApi } from './createDialogsApi';
@@ -47,11 +46,11 @@ export function createFieldWidgetSDK({
   const entryApi = createEntryApi({
     internalContentType,
     doc,
+    fieldLocaleListeners: $scope.fieldLocaleListeners.lookup,
     // TODO: `setInvalid` is only available on `fieldController`. The SDK can only
     //   mark the current field as invalid. We could consider moving `setInvalid` to
     //   the field-locale level.
     setInvalid: (localeCode, isInvalid) => $scope.fieldController.setInvalid(localeCode, isInvalid),
-    listenToFieldLocaleEvent: makeFieldLocaleEventListener($scope),
   });
 
   const spaceApi = createSpaceApi({

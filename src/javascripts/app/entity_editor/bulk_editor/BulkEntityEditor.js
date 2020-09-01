@@ -19,7 +19,6 @@ import { localFieldChanges, valuePropertyAt } from 'app/entity_editor/Document';
 import setupNoShareJsCmaFakeRequestsExperiment from 'app/entity_editor/NoShareJsCmaFakeRequestsExperiment';
 import { initDocErrorHandlerWithoutScope } from 'app/entity_editor/DocumentErrorHandler';
 import * as Validator from 'app/entity_editor/Validator';
-import { buildFieldsApi } from 'app/entity_editor/dataFields';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 
 import { initStateController } from '../stateController';
@@ -30,6 +29,7 @@ import Loader from 'ui/Loader';
 import { css } from 'emotion';
 import { Workbench } from '@contentful/forma-36-react-components';
 import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import { makeFieldLocaleListeners } from 'app/entry_editor/makeFieldLocaleListeners';
 
 const styles = {
   workbench: css({
@@ -230,16 +230,17 @@ export const BulkEntityEditor = ({
     onRemove();
   };
 
-  const fields = buildFieldsApi(entityInfo.contentType.fields, otDoc);
   const scope = {
     preferences,
     widgets,
     editorContext,
     editorData,
     entityInfo,
-    fields,
     localeData,
     otDoc,
+    makeFieldLocaleListeners: (currentScope) => {
+      return makeFieldLocaleListeners(widgets, currentScope, getModule('$controller'));
+    },
   };
 
   return (
@@ -280,7 +281,9 @@ export const BulkEntityEditor = ({
             ) : (
               <AngularComponent
                 with$Apply
-                template={`<cf-entity-field ng-repeat="widget in widgets track by widget.fieldId"></cf-entity-field>`}
+                template={`<div ng-init="fieldLocaleListeners = makeFieldLocaleListeners(this)">
+                  <cf-entity-field ng-repeat="widget in widgets track by widget.fieldId"></cf-entity-field>
+                </div>`}
                 scope={scope}
               />
             )}

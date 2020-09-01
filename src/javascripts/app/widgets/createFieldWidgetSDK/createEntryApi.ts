@@ -1,15 +1,16 @@
-import { createEntryFieldApi, FieldLocaleEventListenerFn } from './createEntryFieldApi';
+import { createEntryFieldApi } from './createEntryFieldApi';
 import { InternalContentTypeField, InternalContentType } from './createContentTypeApi';
 
 import * as K from 'core/utils/kefir';
 import { EntryAPI, EntrySys, EntryFieldAPI } from 'contentful-ui-extensions-sdk';
 import { Document } from 'app/entity_editor/Document/typesDocument';
+import { FieldLocaleLookup } from 'app/entry_editor/makeFieldLocaleListeners';
 
 interface CreateEntryApiOptions {
   internalContentType: InternalContentType;
   doc: Document;
   setInvalid: (localeCode: string, value: boolean) => void;
-  listenToFieldLocaleEvent: FieldLocaleEventListenerFn;
+  fieldLocaleListeners: FieldLocaleLookup;
   readOnly?: boolean;
 }
 
@@ -17,7 +18,7 @@ export function createEntryApi({
   internalContentType,
   doc,
   setInvalid,
-  listenToFieldLocaleEvent,
+  fieldLocaleListeners,
   readOnly = false,
 }: CreateEntryApiOptions): EntryAPI {
   const fields = internalContentType.fields.map((internalField: InternalContentTypeField) => {
@@ -25,7 +26,7 @@ export function createEntryApi({
       internalField,
       doc,
       setInvalid,
-      listenToFieldLocaleEvent,
+      fieldLocaleListeners,
       readOnly,
     });
   });

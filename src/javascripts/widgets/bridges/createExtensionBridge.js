@@ -1,13 +1,12 @@
 import * as K from 'core/utils/kefir';
 import * as PathUtils from 'utils/Path';
-import { get, isEqual } from 'lodash';
+import { get } from 'lodash';
 import TheLocaleStore from 'services/localeStore';
 import { onSlideInNavigation } from 'navigation/SlideInNavigator/index';
 import * as Analytics from 'analytics/Analytics';
 
 import makeExtensionDialogsHandler from './makeExtensionDialogsHandlers';
 import makeExtensionSpaceMethodsHandlers from './makeExtensionSpaceMethodsHandlers';
-import makeListOfFieldLocales from './makeListOfFieldLocales';
 import {
   makeExtensionNavigationHandlers,
   makeExtensionBulkNavigationHandlers,
@@ -38,21 +37,18 @@ const ERROR_MESSAGES = {
 // - `apply` takes a function to be executed in the Angular
 //   context (using `$rootScope.$apply`).
 export default function createExtensionBridge(dependencies) {
-  const {
-    $rootScope,
-    $scope,
-    spaceContext,
-    $controller,
-    location,
-  } = checkDependencies('ExtensionBridge', dependencies, [
-    '$rootScope',
-    '$scope',
-    'spaceContext',
-    '$controller',
-    'currentWidgetId',
-    'currentWidgetNamespace',
-    'location',
-  ]);
+  const { $rootScope, $scope, spaceContext, location } = checkDependencies(
+    'ExtensionBridge',
+    dependencies,
+    [
+      '$rootScope',
+      '$scope',
+      'spaceContext',
+      'currentWidgetId',
+      'currentWidgetNamespace',
+      'location',
+    ]
+  );
 
   let unsubscribeFunctions = [];
 
@@ -181,25 +177,34 @@ export default function createExtensionBridge(dependencies) {
       api.send('localeSettingsChanged', [getLocaleSettings()]);
     });
 
-    makeListOfFieldLocales($scope, $controller).forEach(({ fieldId, localeCode, fieldLocale }) => {
-      K.onValueScope($scope, fieldLocale.access$, (access) => {
-        api.send('isDisabledChangedForFieldLocale', [fieldId, localeCode, !!access.disabled]);
-      });
+    $scope.fieldLocaleListeners.flat.forEach(
+      ({ fieldId, localeCode, onDisabledChanged, onSchemaErrorsChanged }) => {
+        onDisabledChanged((disabled) => {
+          api.send('isDisabledChangedForFieldLocale', [fieldId, localeCode, disabled]);
+        });
 
-      K.onValueScope($scope, fieldLocale.errors$.skipDuplicates(isEqual), (errors = []) => {
-        api.send('schemaErrorsChangedForFieldLocale', [fieldId, localeCode, errors]);
-      });
-    });
+        onSchemaErrorsChanged((errors) => {
+          api.send('schemaErrorsChangedForFieldLocale', [fieldId, localeCode, errors]);
+        });
+      }
+    );
 
     // Available for field-level extensions only:
     if (isFieldLevelExtension) {
-      K.onValueScope($scope, $scope.fieldLocale.access$, (access) => {
-        api.send('isDisabledChanged', [!!access.disabled]);
-      });
+      const fieldLocaleListener = get($scope.fieldLocaleListeners.lookup, [
+        $scope.widget.fieldId,
+        $scope.locale.code,
+      ]);
 
-      K.onValueScope($scope, $scope.fieldLocale.errors$, (errors) => {
-        api.send('schemaErrorsChanged', [errors || []]);
-      });
+      if (fieldLocaleListener) {
+        fieldLocaleListener.onDisabledChanged((disabled) => {
+          api.send('isDisabledChanged', [disabled]);
+        });
+
+        fieldLocaleListener.onSchemaErrorsChanged((errors) => {
+          api.send('schemaErrorsChanged', [errors]);
+        });
+      }
 
       api.registerHandler('setInvalid', (isInvalid, localeCode) => {
         $scope.fieldController.setInvalid(localeCode, isInvalid);

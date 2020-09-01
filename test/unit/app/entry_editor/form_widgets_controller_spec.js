@@ -1,5 +1,7 @@
-import _ from 'lodash';
 import { $initialize, $inject, $apply } from 'test/utils/ng';
+
+const enLocale = { internal_code: 'en', code: 'en' };
+const deLocale = { internal_code: 'de', code: 'de' };
 
 describe('FormWidgetsController#widgets', () => {
   beforeEach(async function () {
@@ -9,12 +11,18 @@ describe('FormWidgetsController#widgets', () => {
     this.scope = $inject('$rootScope').$new();
 
     this.scope.editorContext = $inject('mocks/entityEditor/Context').create();
-    this.scope.contentType = { getId: _.constant('ctid') };
+    this.scope.contentType = { getId: () => 'ctid' };
     this.scope.preferences = {};
-    this.scope.localeData = {};
+    this.scope.otDoc = $inject('mocks/entityEditor/Document').create();
+    this.scope.localeData = {
+      defaultLocale: enLocale,
+      privateLocales: [enLocale, deLocale],
+    };
+
     this.field = {
       id: 'foo',
       apiName: 'foo',
+      localized: true,
     };
 
     const controls = [
@@ -37,6 +45,22 @@ describe('FormWidgetsController#widgets', () => {
     expect(this.scope.widgets.length).toBe(1);
   });
 
+  it('caches field locale listeners', function () {
+    this.createController();
+
+    const { flat, lookup } = this.scope.fieldLocaleListeners;
+
+    expect(flat.length).toBe(2);
+    expect(flat[0].fieldId).toBe(this.field.apiName);
+    expect(flat[0].localeCode).toBe(enLocale.code);
+    expect(flat[1].fieldId).toBe(this.field.apiName);
+    expect(flat[1].localeCode).toBe(deLocale.code);
+
+    expect(Object.keys(lookup[this.field.apiName]).sort()).toEqual(
+      [enLocale.code, deLocale.code].sort()
+    );
+  });
+
   describe('when the single-locale mode is on', function () {
     beforeEach(function () {
       this.scope.localeData.isSingleLocaleModeOn = true;
@@ -44,8 +68,7 @@ describe('FormWidgetsController#widgets', () => {
 
     describe('and the focused locale is the default locale', function () {
       beforeEach(function () {
-        this.scope.localeData.focusedLocale = { internal_code: 'en' };
-        this.scope.localeData.defaultLocale = { internal_code: 'en' };
+        this.scope.localeData.focusedLocale = enLocale;
       });
 
       describe('and the field is disabled', function () {
@@ -86,8 +109,7 @@ describe('FormWidgetsController#widgets', () => {
 
     describe('and the focused locale is not the default locale', function () {
       beforeEach(function () {
-        this.scope.localeData.defaultLocale = { internal_code: 'en' };
-        this.scope.localeData.focusedLocale = { internal_code: 'de' };
+        this.scope.localeData.focusedLocale = deLocale;
       });
 
       describe('and the field is not localized', function () {
