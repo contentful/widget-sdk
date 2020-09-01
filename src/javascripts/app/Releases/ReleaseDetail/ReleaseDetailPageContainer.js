@@ -2,6 +2,8 @@ import React, { useState, useEffect, useContext, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { Workbench, Icon, Note, Notification } from '@contentful/forma-36-react-components';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
+import DocumentTitle from 'components/shared/DocumentTitle';
+
 import { ReleasesProvider, ReleasesContext } from '../ReleasesWidget/ReleasesContext';
 import {
   getReleaseById,
@@ -32,6 +34,7 @@ import { createReleaseJob, fetchReleaseJobs, cancelReleaseJob } from '../release
 import ReleaseWorkBenchContent from './ReleaseWorkBenchContent';
 import ReleaseWorkBenchSideBar from './ReleaseWorkBenchSideBar';
 import ValidateReleaseDialog from './ValidateReleaseDialog';
+
 import { styles } from './styles';
 
 const ReleaseDetailPage = ({ releaseId, defaultLocale, isMasterEnvironment }) => {
@@ -215,6 +218,8 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale, isMasterEnvironment }) =>
 
   const pendingJobs = jobs.filter((job) => job.sys.status === 'scheduled');
 
+  const title = release ? release.title : 'Untitled';
+
   return (
     <div>
       {processingAction && <LoadingOverlay message={`${processingAction} ${release.title}`} />}
@@ -225,9 +230,10 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale, isMasterEnvironment }) =>
         </Note>
       ) : (
         <Workbench>
+          <DocumentTitle title={[title, 'Release']} />
           <Workbench.Header
             onBack={() => window.history.back()}
-            title={release ? release.title : 'Untitled'}
+            title={title}
             icon={<Icon icon="Release" size="large" color="positive" />}
           />
           <ReleaseWorkBenchContent
