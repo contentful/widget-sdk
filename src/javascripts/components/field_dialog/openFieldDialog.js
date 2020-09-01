@@ -6,7 +6,7 @@ import {
   getEnabledRichTextOptions,
   groupValidations,
 } from 'features/content-model-editor';
-import { extend, isEmpty } from 'lodash';
+import { extend, isEmpty, isEqual, clone } from 'lodash';
 
 export async function openFieldDialog($scope, field, widget) {
   const spaceContext = getModule('spaceContext');
@@ -32,12 +32,15 @@ export async function openFieldDialog($scope, field, widget) {
     widgetSettings
   ) => {
     const { itemValidations, baseValidations } = groupValidations(validationFields);
+    const clonedField = clone(field);
 
-    if (isTitle) {
-      $scope.contentType.data.displayField = field.id;
+    if (isTitle && !isEqual($scope.contentType.data.displayField, clonedField.id)) {
+      $scope.contentType.data.displayField = clonedField.id;
+      $scope.context.dirty = true;
+      $scope.$applyAsync();
     }
 
-    const isRichText = field.type === 'RichText';
+    const isRichText = clonedField.type === 'RichText';
 
     let fieldValidations = [...extractFieldValidations(baseValidations)];
 
@@ -58,12 +61,12 @@ export async function openFieldDialog($scope, field, widget) {
     }
 
     if (!isEmpty(itemValidations)) {
-      field.items.validations = [...extractFieldValidations(itemValidations)];
+      clonedField.items.validations = [...extractFieldValidations(itemValidations)];
     }
 
     // update field on scope with data from React component
     const updatedField = {
-      ...field,
+      ...clonedField,
       name,
       apiName,
       localized,
@@ -74,16 +77,20 @@ export async function openFieldDialog($scope, field, widget) {
     const updatedCTfields = $scope.contentType.data.fields.map((field) =>
       field.id === updatedField.id ? updatedField : field
     );
-    $scope.contentType.data.fields = updatedCTfields;
-    $scope.$applyAsync();
 
-    // update widget on scope with data from React component
-    extend(widget, {
-      widgetId: widgetSettings.id,
-      widgetNamespace: widgetSettings.namespace,
-      settings: widgetSettings.params,
-      fieldId: field.apiName,
-    });
+    if (!isEqual($scope.contentType.data.fields, updatedCTfields)) {
+      $scope.contentType.data.fields = updatedCTfields;
+      $scope.context.dirty = true;
+      $scope.$applyAsync();
+
+      // update widget on scope with data from React component
+      extend(widget, {
+        widgetId: widgetSettings.id,
+        widgetNamespace: widgetSettings.namespace,
+        settings: widgetSettings.params,
+        fieldId: clonedField.apiName,
+      });
+    }
   };
 
   return openFieldModalDialog(

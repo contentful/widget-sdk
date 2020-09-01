@@ -117,7 +117,7 @@ export default function register() {
           return control.fieldId === fieldId;
         });
 
-        return openFieldDialog($scope, field, control).then(setDirty);
+        return openFieldDialog($scope, field, control);
       };
 
       const setFieldAsTitle = (field) => {
