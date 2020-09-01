@@ -47,15 +47,16 @@ const UserList = ({ jumpToRole }) => {
   const organization = getOrganization(currentSpace);
   const organizationId = getOrganizationId(currentSpace);
   const endpoint = createSpaceEndpoint(currentSpaceId, currentEnvironmentId);
+  const memberships = createMembershipRepo(endpoint);
   const [selectedView, setSelectedView] = useState(jumpToRole ? VIEW_BY_ROLE : VIEW_BY_NAME);
   const [data, setData] = useState(null);
   const boundFetch = fetch(organizationId, endpoint, currentSpace, setData);
   const { isLoading, error } = useAsync(useCallback(boundFetch, []));
-
   const resolvedMembers = get(data, 'resolvedMembers', []);
   const roles = get(data, 'roles', []);
   const spaceUsers = get(data, 'spaceUsers', []);
   const hasTeamsFeature = get(data, 'hasTeamsFeature', false);
+  const actions = UserListActions.create(roles, memberships);
 
   const sortedMembers = useMemo(
     () =>
@@ -114,7 +115,6 @@ const UserList = ({ jumpToRole }) => {
 
   const spaceUsersCount = sortedMembers.length;
 
-  const actions = UserListActions.create(roles, spaceUsers);
   return (
     <UserListPresentation
       userGroups={userGroups}
