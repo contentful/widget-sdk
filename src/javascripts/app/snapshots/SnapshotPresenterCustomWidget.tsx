@@ -29,7 +29,7 @@ interface SnapshotPresenterExtensionProps {
   widget: Widget;
 }
 
-const SnapshotPresenterExtension = ({
+const SnapshotPresenterCustomWidget = ({
   widget,
   value,
   editorData,
@@ -67,8 +67,8 @@ const SnapshotPresenterExtension = ({
   );
 };
 
-SnapshotPresenterExtension.defaultProps = {
+SnapshotPresenterCustomWidget.defaultProps = {
   className: '',
 };
 
-export default SnapshotPresenterExtension;
+export default SnapshotPresenterCustomWidget;

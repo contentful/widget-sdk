@@ -6,7 +6,7 @@ import SnapshotPresenterArraySymbol from './SnapshotPresenterArraySymbol';
 import SnapshotPresenterBoolean from './SnapshotPresenterBoolean';
 import SnapshotPresenterDate from './SnapshotPresenterDate';
 import SnapshotPresenterDefault from './SnapshotPresenterDefault';
-import SnapshotPresenterExtension from './SnapshotPresenterExtension';
+import SnapshotPresenterCustomWidget from './SnapshotPresenterCustomWidget';
 import SnapshotPresenterLink from './SnapshotPresenterLink';
 import SnapshotPresenterLocation from './SnapshotPresenterLocation';
 import SnapshotPresenterMarkdown from './SnapshotPresenterMarkdown';
@@ -56,7 +56,7 @@ const SnapshotPresenterWidgets = ({
 
   if (isCustomWidget(widgetNamespace)) {
     return (
-      <SnapshotPresenterExtension
+      <SnapshotPresenterCustomWidget
         editorData={editorData}
         entity={entity}
         field={field}
