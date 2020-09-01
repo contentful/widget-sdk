@@ -3,7 +3,7 @@ import { getModule } from 'core/NgRegistry';
 import { cloneDeep, map, get } from 'lodash';
 import validation from '@contentful/validation';
 import { ModalConfirm, Paragraph } from '@contentful/forma-36-react-components';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import ReloadNotification from 'app/common/ReloadNotification';
 import * as notify from './Notifications';
 import * as Analytics from 'analytics/Analytics';
@@ -299,7 +299,15 @@ export default function create($scope, contentTypeIds) {
   }
 
   function triggerApiErrorNotification(errOrErrContainer) {
-    notify.saveFailure(errOrErrContainer, $scope.contentType);
+    const reasons = get(errOrErrContainer, 'data.details.errors', []);
+    const sizeReason = reasons.find(({ name }) => name === 'size');
+
+    if (sizeReason) {
+      notify.tooManyEditorsError(errOrErrContainer, $scope.contentType, sizeReason);
+    } else {
+      notify.saveFailure(errOrErrContainer, $scope.contentType);
+    }
+
     return $q.reject(errOrErrContainer);
   }
 

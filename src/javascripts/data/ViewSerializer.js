@@ -58,6 +58,17 @@ export function unserialize(serializedView) {
     // sense and should only happen when URL was manually edited. Prefer new format.
     delete view.searchTerm;
   }
+  if (view.order && typeof view.order === 'string') {
+    // `order` was previously defined in the format `order=-sys.createdAt`,
+    // it is migrated to an object containing the direction and fieldId
+    const [, directionChar, fieldId] = view.order.match(/^([+-]?)sys\.(\w+)$/i) || [];
+    if (!fieldId) {
+      delete view.order;
+    } else {
+      const direction = directionChar === '-' ? 'descending' : 'ascending';
+      view.order = { direction, fieldId };
+    }
+  }
   if (view.filters) {
     view.searchFilters = view.filters.map(({ key, op, val }) => {
       return [key || '', op || '', val || ''];

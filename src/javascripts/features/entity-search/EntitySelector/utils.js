@@ -1,5 +1,3 @@
-import { uniqBy } from 'lodash';
-
 function getValidContentTypes(linkedContentTypeIds, contentTypes) {
   const acceptsOnlySpecificContentType =
     Array.isArray(linkedContentTypeIds) && linkedContentTypeIds.length > 0;
@@ -10,29 +8,6 @@ function getValidContentTypes(linkedContentTypeIds, contentTypes) {
 
   return contentTypes;
 }
-
-const toSelectionMap = (entities) =>
-  entities.reduce((acc, entity) => ({ ...acc, [entity.sys.id]: false }), {});
-
-const extendSelectionMap = (selectionMap, extensionMap) => {
-  if (!selectionMap || !extensionMap) {
-    return selectionMap;
-  }
-
-  return { ...extensionMap, ...selectionMap };
-};
-
-const selectionMapToEntities = (mapOfSelection, entities) => {
-  const selectedIds = Object.entries(mapOfSelection)
-    .filter(([_key, value]) => value === true)
-    .map(([key]) => key);
-  const uniqueSelectedIds = Array.from(new Set(selectedIds).values());
-  const res = uniqBy(
-    entities.filter((entity) => uniqueSelectedIds.includes(entity.sys.id)),
-    'sys.id'
-  );
-  return res;
-};
 
 const isSearchUsed = (searchState) => {
   if (!searchState) {
@@ -48,10 +23,4 @@ const isSearchUsed = (searchState) => {
   return !!(contentTypeId || searchText);
 };
 
-export {
-  extendSelectionMap,
-  getValidContentTypes,
-  toSelectionMap,
-  selectionMapToEntities,
-  isSearchUsed,
-};
+export { getValidContentTypes, isSearchUsed };

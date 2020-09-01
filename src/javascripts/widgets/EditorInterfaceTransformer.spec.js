@@ -126,20 +126,6 @@ describe('EditorInterfaceTransformer', () => {
       expect(editors).toEqual([
         { settings: {}, widgetId: 'app-id', widgetNamespace: 'app' },
         { widgetId: 'default-editor', widgetNamespace: 'editor-builtin', disabled: true },
-        { widgetId: 'reference-tree', widgetNamespace: 'editor-builtin', disabled: true },
-      ]);
-    });
-
-    it('use default editors in case no editors are present', () => {
-      const ct = {
-        sys: { id: 'CT' },
-      };
-      const ei = { editors: [] };
-      const { editors } = fromAPI(ct, ei);
-
-      expect(editors).toEqual([
-        { widgetId: 'default-editor', widgetNamespace: 'editor-builtin', disabled: false },
-        { widgetId: 'reference-tree', widgetNamespace: 'editor-builtin', disabled: false },
       ]);
     });
 
@@ -268,11 +254,10 @@ describe('EditorInterfaceTransformer', () => {
       expect(editors).toEqual([
         { settings: {}, widgetId: 'app-id', widgetNamespace: 'app' },
         { widgetId: 'default-editor', widgetNamespace: 'editor-builtin', disabled: true },
-        { widgetId: 'reference-tree', widgetNamespace: 'editor-builtin', disabled: true },
       ]);
     });
 
-    it('never sends enabled default editors', () => {
+    it('send enabled default editors for editors order', () => {
       const ct = {
         sys: { id: 'CT' },
       };
@@ -284,7 +269,10 @@ describe('EditorInterfaceTransformer', () => {
       };
       const { editors } = toAPI(ct, ei);
 
-      expect(editors).toEqual([{ settings: {}, widgetId: 'app-id', widgetNamespace: 'app' }]);
+      expect(editors).toEqual([
+        { settings: {}, widgetId: 'app-id', widgetNamespace: 'app' },
+        { widgetId: 'default-editor', widgetNamespace: 'editor-builtin', disabled: false },
+      ]);
     });
   });
 });

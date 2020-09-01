@@ -6,9 +6,12 @@ import { create, remove } from 'access_control/SpaceMembershipRepository';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { go } from 'states/Navigator';
 import { getSpaces } from 'services/TokenStore';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import * as fake from 'test/helpers/fakeFactory';
 
 import SpaceMembershipsRouter from './SpaceMembershipsRouter';
+
+jest.spyOn(ModalLauncher, 'open').mockImplementation(() => Promise.resolve(true));
 
 jest.mock('services/TokenStore', () => ({
   getSpaces: jest.fn(),

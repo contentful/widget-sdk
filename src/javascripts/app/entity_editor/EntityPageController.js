@@ -41,6 +41,8 @@ export default ($scope, $state) => {
   $scope.editorsData = {};
   $scope.context.ready = true;
 
+  $scope.getContext = (context) => () => context; // helper for BulkEditor
+
   const isTopLayer = ($scope.isTopLayer = (index) => index + 1 === $scope.slideStates.length);
   const getSlideStates = () => $scope.slideStates;
   const slidesControllerUuid = random.id();

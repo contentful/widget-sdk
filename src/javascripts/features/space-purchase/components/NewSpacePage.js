@@ -8,6 +8,7 @@ import { Breadcrumb } from './Breadcrumb';
 import { NewSpaceFAQ } from './NewSpaceFAQ';
 import { SpaceSelection } from './SpaceSelection';
 import { NewSpaceDetailsPage } from './NewSpaceDetailsPage';
+import { NewSpaceBillingDetailsPage } from './NewSpaceBillingDetailsPage';
 
 import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
 
@@ -17,17 +18,25 @@ const NEW_SPACE_STEPS = [
   { text: '3.Confirmation', isActive: false },
 ];
 
+const NEW_SPACE_STEPS_PAYMENT = [
+  { text: '1.Spaces', isActive: false },
+  { text: '2.Payment', isActive: true },
+  { text: '3.Confirmation', isActive: false },
+];
+
 const SPACE_SELECTION = 0;
 const SPACE_DETAILS = 1;
+const BILLING_DETAILS = 2;
 
-const PURCHASE_FLOW_STEPS = [SPACE_SELECTION, SPACE_DETAILS];
+const PURCHASE_FLOW_STEPS = [SPACE_SELECTION, SPACE_DETAILS, BILLING_DETAILS];
 
-export const NewSpacePage = ({ organizationId, templatesList }) => {
+export const NewSpacePage = ({ organizationId, templatesList, productRatePlans }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [spaceName, setSpaceName] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   // eslint-disable-next-line no-unused-vars
   const [selectedPlan, setSelectedPlan] = useState(null);
+  const [billingDetails, setBillingDetails] = useState({});
 
   const onChangeSelectedTemplate = (changedTemplate) => {
     setSelectedTemplate(changedTemplate);
@@ -50,7 +59,11 @@ export const NewSpacePage = ({ organizationId, templatesList }) => {
       throw Error();
     }
 
-    setSelectedPlan(planType);
+    const selectedProductRatePlan = productRatePlans.find((productRatePlan) => {
+      return productRatePlan.name.toLowerCase() === planType.toLowerCase();
+    });
+
+    setSelectedPlan(selectedProductRatePlan);
     navigateToNextStep();
   };
 
@@ -87,6 +100,12 @@ export const NewSpacePage = ({ organizationId, templatesList }) => {
 
     navigateToNextStep();
   };
+  const onSubmitBillingDetails = (billingDetails) => {
+    // Add analytics here
+
+    setBillingDetails(billingDetails);
+    navigateToNextStep();
+  };
 
   const getComponentForStep = (currentStep) => {
     switch (currentStep) {
@@ -102,6 +121,18 @@ export const NewSpacePage = ({ organizationId, templatesList }) => {
               onChangeSelectedTemplate={onChangeSelectedTemplate}
               selectedTemplate={selectedTemplate}
               onSubmit={onSubmitSpaceDetails}
+            />
+          </Grid>
+        );
+      case BILLING_DETAILS:
+        return (
+          <Grid columns={1} rows="repeat(2, 'auto')" columnGap="none" rowGap="spacingM">
+            <Breadcrumb items={NEW_SPACE_STEPS_PAYMENT} />
+            <NewSpaceBillingDetailsPage
+              navigateToPreviousStep={navigateToPreviousStep}
+              billingDetails={billingDetails}
+              onSubmitBillingDetails={onSubmitBillingDetails}
+              selectedPlan={selectedPlan}
             />
           </Grid>
         );
@@ -131,4 +162,5 @@ export const NewSpacePage = ({ organizationId, templatesList }) => {
 NewSpacePage.propTypes = {
   organizationId: PropTypes.string,
   templatesList: PropTypes.array,
+  productRatePlans: PropTypes.array,
 };

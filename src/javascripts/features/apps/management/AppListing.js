@@ -10,7 +10,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import AppsPrivateFrameworkIllustration from 'svg/illustrations/apps-private-framework.svg';
 import tokens from '@contentful/forma-36-tokens';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 

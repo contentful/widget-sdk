@@ -10,30 +10,37 @@ const EntryLink = ({ entry, entityHelpers, getContentType, onClick, isSelected, 
   const [{ title, description, contentTypeName, file }, setEntityInfo] = useState({});
   const [isLoading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchEntityInfo = async () => {
-      let contentType;
-      if (getContentType) {
-        contentType = await getContentType(entry);
-      }
-      const [title, file, description] = await Promise.all([
-        entityHelpers.entityTitle(entry),
-        entityHelpers.entityFile(entry),
-        entityHelpers.entityDescription(entry),
-      ]);
-      setEntityInfo({
-        title,
-        description,
-        contentTypeName: get(contentType, 'data.name'),
-        file,
-      });
-      setLoading(false);
-    };
+  useEffect(
+    () => {
+      const fetchEntityInfo = async () => {
+        let contentType;
+        if (getContentType) {
+          contentType = await getContentType(entry);
+        }
+        const [title, file, description] = await Promise.all([
+          entityHelpers.entityTitle(entry),
+          entityHelpers.entityFile(entry),
+          entityHelpers.entityDescription(entry),
+        ]);
 
-    if (entry) {
-      fetchEntityInfo();
-    }
-  }, [entry, entityHelpers, getContentType]);
+        setEntityInfo({
+          title,
+          description,
+          contentTypeName: get(contentType, 'data.name'),
+          file,
+        });
+        setLoading(false);
+      };
+
+      if (entry) {
+        fetchEntityInfo();
+      }
+    },
+    // we want to fetch this information only once so we don't subscribe for dependnecies here
+    // it's a performance optimization to avoid refetching /assets/:id on every render
+    // eslint-disable-next-line
+    []
+  );
 
   const getEntryTitle = () => {
     if (!entry) {

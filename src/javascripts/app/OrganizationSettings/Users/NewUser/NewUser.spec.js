@@ -4,7 +4,7 @@ import { render, fireEvent, within, wait, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event';
 import * as fakeFactory from 'test/helpers/fakeFactory';
 import { invite } from 'access_control/OrganizationMembershipRepository';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { create as createSpaceMembershipRepo } from 'access_control/SpaceMembershipRepository';
 import { createTeamMembership } from 'access_control/TeamRepository';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
@@ -50,6 +50,10 @@ jest.mock('access_control/TeamRepository', () => ({
 }));
 
 describe('NewUser', () => {
+  beforeEach(() => {
+    jest.spyOn(ModalLauncher, 'open').mockImplementation(() => Promise.resolve(true));
+  });
+
   it('does not show the owner role as an option to non owners', async () => {
     build(false);
     await wait();

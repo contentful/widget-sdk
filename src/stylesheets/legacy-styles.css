@@ -8865,7 +8865,7 @@ pre,
     visibility: visible;
   }
   .nav-sidepanel__org-list {
-    max-height: 184px;
+    max-height: 170px;
     width: 100%;
     overflow: hidden;
     overflow-y: auto;

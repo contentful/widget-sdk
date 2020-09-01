@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { cloneDeep } from 'lodash';
 import PropTypes from 'prop-types';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { LocalesFormSkeleton } from '../skeletons/LocalesFormSkeleton';
 import { LocaleEditForm } from '../LocaleEditForm';
 import createFetcherComponent from 'app/common/createFetcherComponent';

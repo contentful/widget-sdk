@@ -13,7 +13,7 @@ import {
 import { authUrl } from 'Config';
 import { window } from 'core/services/window';
 import { joinWithAnd } from 'utils/StringUtils';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { useAsyncFn } from 'core/hooks';
 import { websiteUrl } from 'Config';
 import { getUserTotp, deleteUserTotp } from './AccountRepository';

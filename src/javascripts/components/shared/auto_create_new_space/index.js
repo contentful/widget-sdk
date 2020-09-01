@@ -13,7 +13,7 @@ import {
   isUserOrgCreator,
 } from 'data/User';
 import { create } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { CreateSampleSpaceModal } from './CreateSampleSpaceModal';
 
 const store = getBrowserStorage();

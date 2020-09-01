@@ -1,7 +1,7 @@
 import React from 'react';
 import { refresh } from 'services/TokenStore';
 import client from 'services/client';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import OnboardingModal from './OnboardingModal';
 import { go } from 'states/Navigator';
 

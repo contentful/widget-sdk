@@ -1,7 +1,9 @@
+export const DEFAULT_EDITOR_ID = 'default-editor';
+
 export default {
   DEFAULT_EDITOR: {
-    name: 'Editor',
-    id: 'default-editor',
+    name: 'Default Editor',
+    id: DEFAULT_EDITOR_ID,
     icon: 'Entry',
   },
   REFERENCE_TREE: {

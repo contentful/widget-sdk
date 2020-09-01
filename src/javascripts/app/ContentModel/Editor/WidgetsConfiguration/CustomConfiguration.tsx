@@ -1,14 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { sortableContainer } from 'react-sortable-hoc';
+import * as Sortable from 'react-sortable-hoc';
 import { Subheading, Paragraph, TextLink } from '@contentful/forma-36-react-components';
-import SidebarWidgetItem from './SidebarWidgetItem';
+import WidgetItem from './WidgetItem';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { WidgetNamespace, isCustomWidget } from '@contentful/widget-renderer';
+import { ConfigurationItem } from './interfaces';
 
 const styles = {
-  customSidebarTitle: css({
+  customTitle: css({
     marginBottom: tokens.spacingM,
   }),
   widgetType: css({
@@ -17,12 +18,18 @@ const styles = {
   parameterConfigLink: css({
     marginBottom: tokens.spacingS,
   }),
+  header: css({
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    width: '100%',
+  }),
 };
 
-function WidgetItem({ widget, onRemoveClick, onConfigureClick, index }) {
+function WidgetListItem({ widget, onRemoveClick, onConfigureClick, index }) {
   const hasParams = widget.parameters && widget.parameters.length > 0;
   return (
-    <SidebarWidgetItem
+    <WidgetItem
       index={index}
       isDraggable
       isRemovable
@@ -33,6 +40,9 @@ function WidgetItem({ widget, onRemoveClick, onConfigureClick, index }) {
       availabilityStatus={widget.availabilityStatus}>
       {widget.widgetNamespace === WidgetNamespace.SIDEBAR_BUILTIN && (
         <Paragraph>{widget.description}</Paragraph>
+      )}
+      {widget.widgetNamespace === WidgetNamespace.EDITOR_BUILTIN && (
+        <Paragraph>Built-in item</Paragraph>
       )}
       {isCustomWidget(widget.widgetNamespace) && (
         <>
@@ -49,23 +59,48 @@ function WidgetItem({ widget, onRemoveClick, onConfigureClick, index }) {
           )}
         </>
       )}
-    </SidebarWidgetItem>
+    </WidgetItem>
   );
 }
 
-WidgetItem.propTypes = {
+WidgetListItem.propTypes = {
   widget: PropTypes.object.isRequired,
   onRemoveClick: PropTypes.func.isRequired,
   onConfigureClick: PropTypes.func.isRequired,
   index: PropTypes.number,
 };
 
-const SortableContainer = sortableContainer(({ children }) => <div>{children}</div>);
+const SortableContainer = Sortable.SortableContainer(({ children }) => <div>{children}</div>);
 
-export default function CustomSidebar({ items, onChangePosition, onRemoveItem, onConfigureItem }) {
+interface CustomConfigurationProps {
+  items?: ConfigurationItem[];
+  onRemoveItem: (item: ConfigurationItem) => void;
+  onConfigureItem: (item: ConfigurationItem) => void;
+  onChangePosition: (sourceIndex: number, destinationIndex: number) => void;
+  onResetClick: () => void;
+  title: string;
+  showResetButton: boolean;
+}
+
+export default function CustomConfiguration({
+  items = [],
+  onChangePosition,
+  onRemoveItem,
+  onConfigureItem,
+  onResetClick,
+  title,
+  showResetButton,
+}: CustomConfigurationProps) {
   return (
     <>
-      <Subheading className={styles.customSidebarTitle}>Custom sidebar</Subheading>
+      <span className={styles.header}>
+        <Subheading className={styles.customTitle}>{title}</Subheading>
+        {showResetButton && (
+          <TextLink testId="reset-widget-configuration" onClick={onResetClick}>
+            Reset to default
+          </TextLink>
+        )}
+      </span>
       {items.length !== 0 && (
         <SortableContainer
           distance={10}
@@ -73,10 +108,10 @@ export default function CustomSidebar({ items, onChangePosition, onRemoveItem, o
           onSortEnd={({ oldIndex, newIndex }) => {
             onChangePosition(oldIndex, newIndex);
           }}>
-          {items.map((item, index) => {
+          {items.map((item: ConfigurationItem, index: number) => {
             const key = `${item.widgetNamespace},${item.widgetId}`;
             return (
-              <WidgetItem
+              <WidgetListItem
                 key={key}
                 index={index}
                 widget={item}
@@ -100,14 +135,3 @@ export default function CustomSidebar({ items, onChangePosition, onRemoveItem, o
     </>
   );
 }
-
-CustomSidebar.defaultProps = {
-  items: [],
-};
-
-CustomSidebar.propTypes = {
-  items: PropTypes.array.isRequired,
-  onRemoveItem: PropTypes.func.isRequired,
-  onConfigureItem: PropTypes.func.isRequired,
-  onChangePosition: PropTypes.func.isRequired,
-};

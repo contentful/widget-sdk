@@ -5,7 +5,7 @@ import { LocalesListSidebar } from './LocalesListSidebar';
 import * as $stateMocked from 'ng/$state';
 import * as spaceContextMocked from 'ng/spaceContext';
 import userEvent from '@testing-library/user-event';
-
+import { CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM } from 'analytics/utmLinks';
 import * as trackCTA from 'analytics/trackCTA';
 
 const trackTargetedCTAClick = jest.spyOn(trackCTA, 'trackTargetedCTAClick');
@@ -126,9 +126,10 @@ describe('features/locales-management/LocalesListSidebar', () => {
             },
           },
         });
-        expect(screen.getByTestId('link-to-sales-button')).toBeInTheDocument();
-        expect(screen.getByTestId('link-to-sales-button').getAttribute('href')).toEqual(
-          'https://www.contentful.comcontact/sales/'
+        const contactSalesButton = screen.getByTestId('link-to-sales-button');
+        expect(contactSalesButton).toBeInTheDocument();
+        expect(contactSalesButton.getAttribute('href')).toMatch(
+          CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM
         );
         expect(documentationSection).toBeInTheDocument();
         expect(addLocaleButton).not.toBeInTheDocument();
@@ -137,7 +138,7 @@ describe('features/locales-management/LocalesListSidebar', () => {
           'You are using 2 out of 2 locales available in this space.'
         );
 
-        userEvent.click(screen.getByTestId('link-to-sales-button'));
+        userEvent.click(contactSalesButton);
 
         expect(trackTargetedCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
           organizationId: 'org',

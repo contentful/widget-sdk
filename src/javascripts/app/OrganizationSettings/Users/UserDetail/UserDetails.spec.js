@@ -10,7 +10,7 @@ import {
 import UserDetails from './UserDetails';
 
 import * as fake from 'test/helpers/fakeFactory';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { getAllSpaceMemberships } from 'access_control/OrganizationMembershipRepository';
 import { getAllTeamMemberships, removeTeamMembership } from 'access_control/TeamRepository';
 
@@ -57,7 +57,9 @@ jest.mock('access_control/TeamRepository', () => ({
 }));
 
 describe('User Details', () => {
-  beforeEach(() => {});
+  beforeEach(() => {
+    jest.spyOn(ModalLauncher, 'open').mockImplementation(() => Promise.resolve(true));
+  });
 
   describe('basic user information', () => {
     describe('active and pending members', () => {

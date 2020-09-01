@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import * as entitySelector from './entitySelector';
 import * as spaceContextMocked from 'ng/spaceContext';
-import { ModalLauncher } from '__mocks__/core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 
 let config;
 let labels;
@@ -12,7 +12,11 @@ const resolveProps = (func) => {
   labels = props.labels;
 };
 
-ModalLauncher.open.mockImplementation(resolveProps);
+const modalLauncherOpen = jest
+  .spyOn(ModalLauncher, 'open')
+  .mockImplementation(() => Promise.resolve(true));
+
+modalLauncherOpen.mockImplementation(resolveProps);
 
 jest.mock('services/localeStore', () => ({
   getDefaultLocale: () => ({ code: 'de-DE' }),
@@ -122,14 +126,14 @@ describe('entitySelector', () => {
     }
 
     function resolveWith(value) {
-      ModalLauncher.open.mockImplementation(async (func) => {
+      modalLauncherOpen.mockImplementation(async (func) => {
         resolveProps(func);
         return value;
       });
     }
 
     function rejectWith(err) {
-      ModalLauncher.open.mockImplementation(async (func) => {
+      modalLauncherOpen.mockImplementation(async (func) => {
         resolveProps(func);
         throw err;
       });

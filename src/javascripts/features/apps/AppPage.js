@@ -24,7 +24,7 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import { installOrUpdate, uninstall } from './AppOperations';
 import UnknownErrorMessage from 'components/shared/UnknownErrorMessage';
 import { UninstallModal } from './UninstallModal';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import * as AppLifecycleTracking from './AppLifecycleTracking';
 import { isUsageExceededErrorResponse, USAGE_EXCEEDED_MESSAGE } from './isUsageExceeded';
 import { AppIcon } from './AppIcon';

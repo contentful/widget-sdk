@@ -1,9 +1,9 @@
 import React from 'react';
 
 export const SPACE_PURCHASE_TYPES = {
-  MEDIUM: 'medium',
-  LARGE: 'large',
-  ENTERPRISE: 'enterprise',
+  MEDIUM: 'Medium',
+  LARGE: 'Large',
+  ENTERPRISE: 'Enterprise',
 };
 
 export const SPACE_PURCHASE_CONTENT = [

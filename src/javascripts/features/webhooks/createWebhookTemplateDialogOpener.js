@@ -1,7 +1,7 @@
 import React from 'react';
 import { get } from 'lodash';
 import * as Navigator from 'states/Navigator';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import * as WebhookEditorActions from './WebhookEditorActions';
 import { WebhookTemplateDialog } from './WebhookTemplateDialog';
 import { WebhookTemplates } from './templates';

@@ -3,7 +3,7 @@ import Enzyme from 'enzyme';
 import 'jest-enzyme';
 import { IDPSetupForm } from './IDPSetupForm';
 import { TEST_RESULTS } from './constants';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { track } from 'analytics/Analytics';
 
 import { connectionTestingAllowed, formatConnectionTestErrors } from './utils';
@@ -69,6 +69,8 @@ describe('IDPSetupForm', () => {
       setInterval: jest.spyOn(global, 'setInterval'),
       clearInterval: jest.spyOn(global, 'clearInterval'),
     };
+
+    jest.spyOn(ModalLauncher, 'open').mockImplementation(() => Promise.resolve(true));
   });
 
   afterEach(() => {

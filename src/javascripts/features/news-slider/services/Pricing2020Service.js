@@ -5,7 +5,7 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { SelfService, Free } from '../components/Pricing2020';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { createClientStorage } from 'core/services/BrowserStorage/ClientStorage';
 import { track } from 'analytics/Analytics';
 import { getCurrentOrg } from 'core/utils/getCurrentOrg';

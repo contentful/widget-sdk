@@ -4,7 +4,6 @@ import { css } from 'emotion';
 import { TextLink, Note, Paragraph } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import ExternalTextLink from 'app/common/ExternalTextLink';
-import { websiteUrl } from 'Config';
 
 import { showDialog as showChangeSpaceModal } from 'services/ChangeSpaceService';
 import { showDialog as showCreateSpaceModal } from 'services/CreateSpace';
@@ -15,6 +14,7 @@ import { getBasePlan, isFreePlan, isSelfServicePlan } from 'account/pricing/Pric
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
+import { CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM } from 'analytics/utmLinks';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 
 const styles = {
@@ -137,7 +137,7 @@ export function UserLimitBanner({ orgId, spaces, usersCount }) {
                 meta={trackMeta}>
                 <ExternalTextLink
                   testId="link-to-sales"
-                  href={websiteUrl('contact/sales/')}
+                  href={CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM}
                   onClick={handleUpgradeToEnterpriseClick}>
                   talk to us
                 </ExternalTextLink>{' '}

@@ -1,6 +1,6 @@
 import { useMemo, useEffect, useRef, useCallback } from 'react';
 import { createListViewPersistor } from './ListViewPersistor';
-import { assign, cloneDeep, set, isEmpty } from 'lodash';
+import { assign, cloneDeep, set, isEmpty, noop } from 'lodash';
 
 const createDummyViewPersistor = () => ({
   read: (initialState = {}) => initialState,
@@ -8,7 +8,7 @@ const createDummyViewPersistor = () => ({
   save: () => {},
 });
 
-export const useListView = ({ entityType, initialState, isPersisted }) => {
+export const useListView = ({ entityType, initialState, isPersisted, onUpdate = noop }) => {
   const viewPersistor = useMemo(
     () =>
       isPersisted
@@ -20,9 +20,13 @@ export const useListView = ({ entityType, initialState, isPersisted }) => {
   const initial = viewPersistor.read(initialState);
 
   const ref = useRef(initial);
-  const setRef = useCallback((values) => {
-    ref.current = values;
-  }, []);
+  const setRef = useCallback(
+    (values) => {
+      ref.current = values;
+      onUpdate(values);
+    },
+    [onUpdate]
+  );
 
   useEffect(() => {
     !isEmpty(initialState) && setRef(initialState);

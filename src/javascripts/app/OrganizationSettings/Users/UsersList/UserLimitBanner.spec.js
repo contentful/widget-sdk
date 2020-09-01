@@ -10,6 +10,7 @@ import * as OrganizationRoles from 'services/OrganizationRoles';
 import * as PricingDataProvider from 'account/pricing/PricingDataProvider';
 import * as TokenStore from 'services/TokenStore';
 import * as trackCTA from 'analytics/trackCTA';
+import { CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM } from 'analytics/utmLinks';
 
 import UserLimitBanner, { THRESHOLD_NUMBER_TO_DISPLAY_BANNER } from './UserLimitBanner';
 
@@ -146,7 +147,11 @@ describe('UserLimitBanner', () => {
         `Your organization has ${usersCount} users. 10 users are included free on the Team tear with a maximum of 25 users.To increase the limit, talk to us about upgrading to enterprise.`
       );
 
-      userEvent.click(screen.getByTestId('link-to-sales'));
+      const linkToSales = screen.getByTestId('link-to-sales');
+      expect(linkToSales.href).toMatch(CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM);
+
+      userEvent.click(linkToSales);
+
       expect(trackTargetedCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
         organizationId: mockOrg.sys.id,
       });

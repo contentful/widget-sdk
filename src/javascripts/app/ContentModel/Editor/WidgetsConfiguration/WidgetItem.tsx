@@ -2,7 +2,7 @@ import React from 'react';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';
-import { sortableElement } from 'react-sortable-hoc';
+import { SortableElement } from 'react-sortable-hoc';
 import { IconButton, Icon, Note, Tag } from '@contentful/forma-36-react-components';
 
 const styles = {
@@ -12,7 +12,7 @@ const styles = {
   }),
   itemHeader: css({
     display: 'flex',
-    flexGrow: '1',
+    flexGrow: 1,
     fontSize: tokens.fontSizeS,
     fontWeight: tokens.fontWeightNormal,
     textTransform: 'uppercase',
@@ -27,6 +27,8 @@ const styles = {
   }),
   itemName: css({
     flex: '1 1 auto',
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
   }),
   itemDrag: css({
     position: 'absolute',
@@ -61,13 +63,13 @@ const styles = {
   }),
 };
 
-const SortableItem = sortableElement(({ children }) => (
-  <div data-test-id="sidebar-widget-item-draggable" tabIndex="0" className={styles.draggable}>
+const SortableItem = SortableElement(({ children }) => (
+  <div data-test-id="selected-widget-item-draggable" tabIndex={0} className={styles.draggable}>
     {children}
   </div>
 ));
 
-export function SidebarWidgetItem({
+export function WidgetItem({
   id,
   index,
   name,
@@ -84,7 +86,8 @@ export function SidebarWidgetItem({
       buttonType="muted"
       className={styles.closeButton}
       onClick={onRemoveClick}
-      label={`Remove ${name} from your sidebar`}
+      label={`Remove ${name} from your selected options`}
+      data-test-id={'remove-selected-widget'}
     />
   );
 
@@ -103,10 +106,10 @@ export function SidebarWidgetItem({
   }
 
   const content = (
-    <div className={styles.item} data-test-id="sidebar-widget-item">
+    <div className={styles.item} data-test-id="selected-widget-item">
       {isDraggable && <Icon className={styles.itemDrag} icon="Drag" />}
       <div className={styles.itemHeader}>
-        <div className={styles.itemName} data-test-id="sidebar-widget-name">
+        <div className={styles.itemName} data-test-id="selected-widget-name">
           {name}
         </div>
         {availabilityStatus && renderAvailabilityStatus()}
@@ -123,7 +126,7 @@ export function SidebarWidgetItem({
   return content;
 }
 
-SidebarWidgetItem.propTypes = {
+WidgetItem.propTypes = {
   id: PropTypes.string.isRequired,
   name: PropTypes.string,
   isDraggable: PropTypes.bool.isRequired,
@@ -134,10 +137,10 @@ SidebarWidgetItem.propTypes = {
   availabilityStatus: PropTypes.oneOf(['alpha', 'beta']),
 };
 
-SidebarWidgetItem.defaultProps = {
+WidgetItem.defaultProps = {
   isDraggable: false,
   isRemovable: false,
   isProblem: false,
 };
 
-export default SidebarWidgetItem;
+export default WidgetItem;

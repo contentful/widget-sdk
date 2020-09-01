@@ -3,8 +3,7 @@ import { Notification } from '@contentful/forma-36-react-components';
 import { find, map, isEmpty } from 'lodash';
 
 import ReloadNotification from 'app/common/ReloadNotification';
-import { getModule } from 'core/NgRegistry';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import * as TokenStore from 'services/TokenStore';
 import { go } from 'states/Navigator';
 
@@ -25,7 +24,7 @@ const isLastAdmin = (member, adminCount) => !!member.admin && adminCount === 1;
  * - `.openRemovalConfirmationDialog()` remove a user from space
  * - `.openRoleChangeDialog()` change user's role
  */
-export function create(availableRoles) {
+export function create(availableRoles, memberships) {
   return {
     openRemovalConfirmationDialog,
     openRoleChangeDialog,
@@ -36,6 +35,7 @@ export function create(availableRoles) {
    */
   function openRemovalConfirmationDialog(fetch) {
     return async (member, adminCount) => {
+      const currentUserId = TokenStore.getUserSync().sys.id;
       const ConfirmDialog = isLastAdmin(member, adminCount)
         ? LastAdminRemovalConfirmDialog
         : UserRemovalConfirmDialog;
@@ -48,13 +48,11 @@ export function create(availableRoles) {
       ));
 
       if (confirmed) {
-        const spaceContext = getModule('spaceContext');
-        const currentUserId = spaceContext.getData('spaceMember.sys.user.sys.id');
         const isCurrentUser = currentUserId === member.sys.user.sys.id;
         const spaceMembership = find(member.sys.relatedMemberships, {
           sys: { type: 'SpaceMembership' },
         });
-        return spaceContext.memberships
+        return memberships
           .remove(spaceMembership)
           .then(() => {
             Notification.success('User successfully removed from this space.');
@@ -97,8 +95,7 @@ export function create(availableRoles) {
       const spaceMembership = relatedMemberships.filter(
         ({ sys: { type } }) => type === 'SpaceMembership'
       )[0];
-      const spaceContext = getModule('spaceContext');
-      return spaceContext.memberships
+      return memberships
         .changeRoleTo(spaceMembership, isEmpty(selectedRoleIds) ? [ADMIN_ROLE_ID] : selectedRoleIds)
         .then(() => {
           Notification.success('User role successfully changed.');

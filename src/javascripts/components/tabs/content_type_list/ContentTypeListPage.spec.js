@@ -20,6 +20,7 @@ import createResourceService from 'services/ResourceService';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import * as fake from 'test/helpers/fakeFactory';
 import * as trackCTA from 'analytics/trackCTA';
+import { CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM } from 'analytics/utmLinks';
 
 jest.mock('lodash/debounce', () => (fn) => fn);
 
@@ -261,7 +262,10 @@ describe('ContentTypeList Page', () => {
         await waitForElementToBeRemoved(screen.getByTestId('content-loader'));
 
         expect(screen.queryByTestId('content-type-limit-banner')).toBeVisible();
-        userEvent.click(screen.getByTestId('link-to-sales'));
+
+        const linkToSales = screen.getByTestId('link-to-sales');
+        expect(linkToSales.href).toMatch(CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM);
+        userEvent.click(linkToSales);
 
         expect(trackTargetedCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
           organizationId: mockOrganization.sys.id,

@@ -1,7 +1,7 @@
 import { initStateController } from './stateController';
 
 import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { showUnpublishedReferencesWarning } from 'app/entity_editor/UnpublishedReferencesWarning';
 import * as Analytics from 'analytics/Analytics';
 import { Notification } from 'app/entity_editor/Notifications';
@@ -10,7 +10,6 @@ import { createDocumentMock } from '../../../../test/utils/createDocumentMock';
 import { waitFor } from '@testing-library/dom';
 
 jest.mock('navigation/SlideInNavigator', () => ({ goToPreviousSlideOrExit: jest.fn() }));
-jest.mock('core/components/ModalLauncher', () => ({ ModalLauncher: {} }));
 jest.mock('app/entity_editor/UnpublishedReferencesWarning', () => ({
   showUnpublishedReferencesWarning: jest.fn().mockResolvedValue(true),
 }));
@@ -38,7 +37,7 @@ describe('stateController', () => {
     spaceContext.getId = () => 'spaceid';
     spaceContext.getEnvironmentId = () => 'envid';
 
-    ModalLauncher.open = jest.fn();
+    jest.spyOn(ModalLauncher, 'open').mockImplementation(() => Promise.resolve(true));
 
     const createDocument = createDocumentMock().create;
 

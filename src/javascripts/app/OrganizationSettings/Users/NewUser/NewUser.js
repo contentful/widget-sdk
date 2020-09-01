@@ -21,7 +21,7 @@ import NewUserSuccess from './NewUserSuccess';
 import NewUserProgress from './NewUserProgress';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import AddToSpaces from '../common/AddToSpaces';
 import AddToTeams from '../common/AddToTeams';
 

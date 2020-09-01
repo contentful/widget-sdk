@@ -35,7 +35,7 @@ const linkEntity = (entity) => ({
   },
 });
 
-export const BulkEditorSidebar = ({ linkCount, getCurrentSize, field, addLinks, track }) => {
+export const BulkEditorSidebar = ({ linkCount, field, addLinks, track }) => {
   const spaceContext = useMemo(() => getModule('spaceContext'), []);
 
   // TODO necessary for entitySelector change it
@@ -65,15 +65,14 @@ export const BulkEditorSidebar = ({ linkCount, getCurrentSize, field, addLinks, 
   );
 
   const addExistingEntries = useCallback(async () => {
-    const currentSize = getCurrentSize();
     try {
-      const entities = await entitySelector.openFromField(extendedField, currentSize);
+      const entities = await entitySelector.openFromField(extendedField, linkCount);
       track.addExisting(entities.length);
       addLinks(entities.map(linkEntity));
     } catch (error) {
       // ignore closing of entity selector
     }
-  }, [getCurrentSize, extendedField, addLinks, track]);
+  }, [linkCount, extendedField, addLinks, track]);
 
   const getAllContentTypeIds = useCallback(
     () => spaceContext.publishedCTs.getAllBare().map((ct) => ct.sys.id),
@@ -143,7 +142,6 @@ export const BulkEditorSidebar = ({ linkCount, getCurrentSize, field, addLinks, 
 
 BulkEditorSidebar.propTypes = {
   linkCount: PropTypes.number.isRequired,
-  getCurrentSize: PropTypes.func.isRequired,
   addLinks: PropTypes.func.isRequired,
   field: PropTypes.object.isRequired,
   track: PropTypes.object.isRequired,

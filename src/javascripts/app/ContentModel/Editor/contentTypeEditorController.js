@@ -16,8 +16,7 @@ import * as accessChecker from 'access_control/AccessChecker';
 import ContentTypesPage from 'app/ContentModel/Editor/ContentTypesPage';
 
 import { AddFieldDialogModal } from './Dialogs/AddField';
-import { ModalLauncher } from 'core/components/ModalLauncher';
-import { WidgetNamespace } from '@contentful/widget-renderer';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 
 export default function register() {
   registerDirective('cfContentTypeEditor', [
@@ -238,22 +237,10 @@ export default function register() {
         }
       };
 
-      const updateEditorConfiguration = (updatedEditor) => {
-        const customEditor = $scope.editorInterface.editors.find(
-          (editor) => editor.widgetNamespace !== WidgetNamespace.EDITOR_BUILTIN
-        );
-        if (!_.isEqual(customEditor, updatedEditor)) {
-          if (updatedEditor) {
-            $scope.editorInterface.editors.push(updatedEditor);
-          } else {
-            // because we dont support editor mgmt UI yet, we empty the list
-            // this way it renders default editors by default
-            // and we avoid marking default editors as disabled
-            $scope.editorInterface.editors = [];
-          }
-          $scope.$applyAsync();
-          setDirty();
-        }
+      const updateEditorConfiguration = (updatedEditors) => {
+        $scope.editorInterface.editors = updatedEditors;
+        $scope.$applyAsync();
+        setDirty();
       };
 
       function addField(newField) {
@@ -267,7 +254,7 @@ export default function register() {
       }
 
       function trackAddedField(contentType, field) {
-        Analytics.track('modelling:field_added', {
+        Analytics.track('content_modelling:field_added', {
           contentTypeId: contentType.getId(),
           contentTypeName: contentType.getName(),
           fieldId: field.id,
@@ -302,6 +289,8 @@ export default function register() {
           return 'preview';
         } else if ($state.is('^.sidebar_configuration')) {
           return 'sidebar_configuration';
+        } else if ($state.is('^.entry_editor_configuration')) {
+          return 'entry_editor_configuration';
         }
         return 'fields';
       }
@@ -354,9 +343,7 @@ export default function register() {
         currentTab: getCurrentTab($state),
         canEdit: accessChecker.can('update', 'ContentType'),
         sidebarConfiguration: $scope.editorInterface.sidebar,
-        editorConfiguration: $scope.editorInterface.editors.find(
-          (editor) => editor.widgetNamespace !== WidgetNamespace.EDITOR_BUILTIN
-        ),
+        editorConfiguration: $scope.editorInterface.editors,
         extensions: $scope.customWidgets,
         actions: {
           showMetadataDialog,

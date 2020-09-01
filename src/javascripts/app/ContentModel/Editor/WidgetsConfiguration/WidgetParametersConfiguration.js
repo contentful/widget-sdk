@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { Typography, Heading, Button } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { closeWidgetConfiguration, updateWidgetSettings } from './SidebarConfigurationReducer';
+import { closeWidgetConfiguration, updateWidgetSettings } from './WidgetsConfigurationReducer';
 import WidgetParametersForm from 'widgets/WidgetParametersForm';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils';
 import { useFormState } from 'core/hooks';

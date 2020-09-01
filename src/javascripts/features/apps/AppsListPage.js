@@ -24,7 +24,7 @@ import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha
 
 import DocumentTitle from 'components/shared/DocumentTitle';
 import StateLink from 'app/common/StateLink';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 
 import { websiteUrl } from 'Config';
 

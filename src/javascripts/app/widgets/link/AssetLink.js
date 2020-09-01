@@ -9,20 +9,26 @@ const AssetLink = ({ asset, entityHelpers, isSelected, size, onClick }) => {
   const [{ title, file }, setEntityInfo] = useState({});
   const [isLoading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchEntityInfo = async () => {
-      if (asset) {
-        const [title, file] = await Promise.all([
-          entityHelpers.entityTitle(asset),
-          entityHelpers.assetFile(asset),
-        ]);
-        setEntityInfo({ title, file });
-        setLoading(false);
-      }
-    };
+  useEffect(
+    () => {
+      const fetchEntityInfo = async () => {
+        if (asset) {
+          const [title, file] = await Promise.all([
+            entityHelpers.entityTitle(asset),
+            entityHelpers.assetFile(asset),
+          ]);
+          setEntityInfo({ title, file });
+          setLoading(false);
+        }
+      };
 
-    fetchEntityInfo();
-  }, [asset, entityHelpers]);
+      fetchEntityInfo();
+    },
+    // we want to fetch this information only once so we don't subscribe for dependnecies here
+    // it's a performance optimization to avoid refetching /assets/:id on every render
+    // eslint-disable-next-line
+    []
+  );
 
   const getAssetTitle = () => {
     if (!asset) {

@@ -26,7 +26,7 @@ import { UserListFilters } from './UserListFilters';
 import Pagination from 'app/common/Pagination';
 import { getMemberships, removeMembership } from 'access_control/OrganizationMembershipRepository';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import RemoveOrgMemberDialog from '../RemoveUserDialog';
 import Placeholder from 'app/common/Placeholder';
 import { UserListRow } from './UserListRow';

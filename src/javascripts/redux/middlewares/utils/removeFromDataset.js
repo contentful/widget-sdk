@@ -1,7 +1,7 @@
 import { ModalConfirm, Notification } from '@contentful/forma-36-react-components';
 import React from 'react';
 import { getDatasets } from 'redux/selectors/datasets';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 
 // this is a rather aggressive way of making code DRY
 // and should only be used internally

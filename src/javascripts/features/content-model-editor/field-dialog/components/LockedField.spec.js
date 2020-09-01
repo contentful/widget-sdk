@@ -2,7 +2,7 @@ import React from 'react';
 import { render, fireEvent, wait } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { LockedField } from './LockedField';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 
 describe('Locked Field', () => {
   const constProps = {

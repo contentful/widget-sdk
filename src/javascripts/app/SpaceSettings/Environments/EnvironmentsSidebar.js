@@ -16,6 +16,7 @@ import tokens from '@contentful/forma-36-tokens';
 import * as Config from 'Config';
 import ExternalTextLink from 'app/common/ExternalTextLink';
 import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
+import { CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM } from 'analytics/utmLinks';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 
 const ENV_DOC_SIDEBAR_UTM_PARAMS =
@@ -268,7 +269,7 @@ function UpgradeToEnterpriseButton({ handleOnClick }) {
     <Button
       isFullWidth
       testId="upgradeToEnterpriseButton"
-      href={Config.websiteUrl('contact/sales/')}
+      href={CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM}
       onClick={handleOnClick}>
       Talk to us
     </Button>

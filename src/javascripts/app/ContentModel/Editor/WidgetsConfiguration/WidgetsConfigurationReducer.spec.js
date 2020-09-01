@@ -1,24 +1,13 @@
 import {
   reducer,
-  selectSidebarType,
   openWidgetConfiguration,
   closeWidgetConfiguration,
-  removeItemFromSidebar,
-  addItemToSidebar,
+  removeItem,
+  addItem,
   changeItemPosition,
-} from './SidebarConfigurationReducer';
-import { SidebarType } from './constants';
+} from './WidgetsConfigurationReducer';
 
-describe('EntrySidebar/Configuration/SidebarConfigurationReducer', () => {
-  it('should change sidebar type from default to custom', () => {
-    const nextState = reducer(
-      {
-        sidebarType: SidebarType.default,
-      },
-      selectSidebarType(SidebarType.custom)
-    );
-    expect(nextState.sidebarType).toEqual(SidebarType.custom);
-  });
+describe('WidgetsConfiguration/WidgetsConfigurationReducer', () => {
   it('should open and close widget configuration', () => {
     let nextState = reducer(
       {
@@ -31,7 +20,7 @@ describe('EntrySidebar/Configuration/SidebarConfigurationReducer', () => {
     expect(nextState.configurableWidget).toBeNull();
   });
 
-  it('should remove item from sidebar', () => {
+  it('should remove item from items list of widgets but not add it to availableItems', () => {
     const initialState = {
       items: [
         { widgetId: '1', widgetNamespace: 'first' },
@@ -42,7 +31,7 @@ describe('EntrySidebar/Configuration/SidebarConfigurationReducer', () => {
     };
     let nextState = reducer(
       initialState,
-      removeItemFromSidebar({
+      removeItem({
         widgetId: '1',
         widgetNamespace: 'first',
       })
@@ -53,12 +42,12 @@ describe('EntrySidebar/Configuration/SidebarConfigurationReducer', () => {
         { widgetId: '2', widgetNamespace: 'second' },
         { widgetId: '3', widgetNamespace: 'first', problem: true },
       ],
-      availableItems: [{ widgetId: '1', widgetNamespace: 'first' }],
+      availableItems: [],
     });
 
     nextState = reducer(
       nextState,
-      removeItemFromSidebar({
+      removeItem({
         widgetId: '3',
         widgetNamespace: 'first',
       })
@@ -66,7 +55,7 @@ describe('EntrySidebar/Configuration/SidebarConfigurationReducer', () => {
 
     expect(nextState).toEqual({
       items: [{ widgetId: '2', widgetNamespace: 'second' }],
-      availableItems: [{ widgetId: '1', widgetNamespace: 'first' }],
+      availableItems: [],
     });
   });
 
@@ -85,7 +74,7 @@ describe('EntrySidebar/Configuration/SidebarConfigurationReducer', () => {
     };
     const nextState = reducer(
       initialState,
-      addItemToSidebar({
+      addItem({
         widgetId: '1',
         widgetNamespace: 'first',
       })
@@ -96,20 +85,13 @@ describe('EntrySidebar/Configuration/SidebarConfigurationReducer', () => {
         { widgetId: '1', widgetNamespace: 'first' },
         { widgetId: '3', widgetNamespace: 'second' },
       ],
-      availableItems: [{ widgetId: '2', widgetNamespace: 'second' }],
+      availableItems: [
+        { widgetId: '1', widgetNamespace: 'first' },
+        { widgetId: '2', widgetNamespace: 'second' },
+      ],
     };
 
     expect(nextState).toEqual(expectedState);
-
-    expect(
-      reducer(
-        nextState,
-        addItemToSidebar({
-          widgetId: 'some-other-item',
-          widgetNamespace: 'third',
-        })
-      )
-    ).toEqual(expectedState);
   });
 
   it('should swap items', () => {

@@ -22,7 +22,7 @@ import { getAllTeams } from '../services/TeamRepository';
 import { NewTeamDialog } from './NewTeamDialog';
 import { TeamListRow } from './TeamListRow';
 import { TeamsEmptyState } from './TeamsEmptyState';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 
 const styles = {
   section: css({

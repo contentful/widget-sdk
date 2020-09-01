@@ -6,7 +6,7 @@ import 'jest-enzyme';
 import { Notification } from '@contentful/forma-36-react-components';
 import * as Analytics from 'analytics/Analytics';
 import $state from 'ng/$state';
-import { ModalLauncher } from 'core/components/ModalLauncher';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 
 const mockContentPreview = {
   create: jest.fn(),
@@ -225,8 +225,8 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
           'Content preview "preview name" saved successfully'
         );
         expect(Analytics.track).toHaveBeenCalledWith('content_preview:created', {
-          envName: resolvedObject.name,
-          envId: resolvedObject.sys.id,
+          name: resolvedObject.name,
+          id: resolvedObject.sys.id,
           isDiscoveryApp: false,
         });
 
@@ -364,7 +364,7 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
         expect(stubs.setDirty).toHaveBeenCalledWith(false);
         expect(Analytics.track).toHaveBeenCalledWith('content_preview:deleted', {
           name: initialValue.name,
-          sys: { id: initialValue.id },
+          id: initialValue.id,
         });
         expect($state.go).toHaveBeenCalledWith('^.list', undefined, undefined);
         done();
@@ -408,8 +408,8 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
           'Content preview "preview name new" saved successfully'
         );
         expect(Analytics.track).toHaveBeenCalledWith('content_preview:updated', {
-          envId: resolvedObject.sys.id,
-          envName: resolvedObject.name,
+          id: resolvedObject.sys.id,
+          name: resolvedObject.name,
         });
 
         expect($state.go).not.toHaveBeenCalled();
