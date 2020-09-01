@@ -1,25 +1,47 @@
 import React, { useMemo } from 'react';
-import { FieldExtensionSDK } from 'contentful-ui-extensions-sdk';
 
+import { FieldExtensionSDK } from 'contentful-ui-extensions-sdk';
 import { getModule } from 'core/NgRegistry';
 import { createReadonlyFieldWidgetSDK } from 'app/widgets/createFieldWidgetSDK';
-import { ReadOnlyRichTextEditor } from 'app/widgets/RichText';
-import { Entity } from 'app/entity_editor/Document/types';
-import { Field, Locale } from 'app/entity_editor/EntityField/types';
+import {
+  EditorInterface,
+  Widget,
+  WidgetLocation,
+  WidgetRenderer,
+} from '@contentful/widget-renderer';
 import { InternalContentType } from 'app/widgets/createFieldWidgetSDK/createContentTypeApi';
 import { createTagsRepo } from 'features/content-tags';
-import { EditorInterface, WidgetNamespace } from '@contentful/widget-renderer';
+import { Locale } from 'app/entity_editor/EntityField/types';
+import { Entity } from 'app/entity_editor/Document/types';
 
-const SnapshotPresenterRichText = ({
-  className,
-  value,
-  entity,
-  editorData,
-  field,
-  locale,
+interface SnapshotPresenterCustomWIdgetProps {
+  locale: Locale;
+  field: {
+    apiName?: string;
+    id: string;
+  };
+  entity: Entity;
+  editorData: {
+    contentType: { data: InternalContentType };
+    editorInterface: EditorInterface;
+  };
+  value: any;
+  widget: Widget;
+  parameters: {
+    instance: Record<string, any>;
+    installation: Record<string, any>;
+  };
+}
+
+const SnapshotPresenterCustomWidget = ({
   widget,
+  value,
+  editorData,
+  entity,
+  locale,
+  field,
   parameters,
-}: SnapshotPresenterRichTextProps) => {
+}: SnapshotPresenterCustomWIdgetProps) => {
   const sdk: FieldExtensionSDK = useMemo(() => {
     const spaceContext = getModule('spaceContext');
 
@@ -42,37 +64,17 @@ const SnapshotPresenterRichText = ({
       widgetNamespace: widget.namespace,
       parameters,
     });
-  }, [field, locale, entity, editorData, value, widget, parameters]);
+  }, [field, locale, entity, editorData, widget, value, parameters]);
 
   return (
-    <div className={className} data-test-id="snapshot-presenter-richtext">
-      {sdk && <ReadOnlyRichTextEditor value={value} sdk={sdk} />}
+    <div data-test-id="snapshot-presenter-extension">
+      <WidgetRenderer location={WidgetLocation.ENTRY_FIELD} sdk={sdk} widget={widget} />
     </div>
   );
 };
 
-interface SnapshotPresenterRichTextProps {
-  className: string;
-  value: any;
-  editorData: {
-    contentType: { data: InternalContentType };
-    editorInterface: EditorInterface;
-  };
-  entity: Entity;
-  field: Field;
-  locale: Locale;
-  widget: {
-    id: string;
-    namespace: WidgetNamespace;
-  };
-  parameters: {
-    instance: Record<string, any>;
-    installation: Record<string, any>;
-  };
-}
-
-SnapshotPresenterRichText.defaultProps = {
+SnapshotPresenterCustomWidget.defaultProps = {
   className: '',
 };
 
-export default SnapshotPresenterRichText;
+export default SnapshotPresenterCustomWidget;

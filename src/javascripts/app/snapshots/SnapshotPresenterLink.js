@@ -44,26 +44,30 @@ const SnapshotPresenterLink = ({ locale, value, linkType }) => {
     ({ sys }) => sys.id
   );
 
-  return models.map((model, i) => {
-    if (!model) {
-      return (
-        <div key={`missing_${i}`} data-test-id="snapshot-presenter-link">
-          <Card>Entry missing or inaccessible</Card>
-        </div>
-      );
-    }
-    const { entity } = model;
-    const key = `${entity.sys.id}_${i}`;
-    return entity.sys.type === 'Entry' ? (
-      <div key={key} data-test-id="snapshot-presenter-link">
-        <EntryLink entry={entity} entityHelpers={helper} getContentType={getContentType} />
-      </div>
-    ) : (
-      <div key={key} className={styles.assetLink} data-test-id="snapshot-presenter-link">
-        <AssetLink asset={entity} entityHelpers={helper} />
-      </div>
-    );
-  });
+  return (
+    <>
+      {models.map((model, i) => {
+        if (!model) {
+          return (
+            <div key={`missing_${i}`} data-test-id="snapshot-presenter-link">
+              <Card>Entry missing or inaccessible</Card>
+            </div>
+          );
+        }
+        const { entity } = model;
+        const key = `${entity.sys.id}_${i}`;
+        return entity.sys.type === 'Entry' ? (
+          <div key={key} data-test-id="snapshot-presenter-link">
+            <EntryLink entry={entity} entityHelpers={helper} getContentType={getContentType} />
+          </div>
+        ) : (
+          <div key={key} className={styles.assetLink} data-test-id="snapshot-presenter-link">
+            <AssetLink asset={entity} entityHelpers={helper} />
+          </div>
+        );
+      })}
+    </>
+  );
 };
 
 const entityProps = PropTypes.shape({
