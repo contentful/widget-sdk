@@ -14,7 +14,7 @@ import { createTagsRepo } from 'features/content-tags';
 import { Locale } from 'app/entity_editor/EntityField/types';
 import { Entity } from 'app/entity_editor/Document/types';
 
-interface SnapshotPresenterExtensionProps {
+interface SnapshotPresenterCustomWIdgetProps {
   locale: Locale;
   field: {
     apiName?: string;
@@ -41,7 +41,7 @@ const SnapshotPresenterCustomWidget = ({
   locale,
   field,
   parameters,
-}: SnapshotPresenterExtensionProps) => {
+}: SnapshotPresenterCustomWIdgetProps) => {
   const sdk: FieldExtensionSDK = useMemo(() => {
     const spaceContext = getModule('spaceContext');
 
