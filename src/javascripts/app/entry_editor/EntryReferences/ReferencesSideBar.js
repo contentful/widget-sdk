@@ -36,13 +36,7 @@ const styles = {
     padding: tokens.spacingM,
     paddingTop: 0,
   }),
-  buttons: css({
-    marginTop: tokens.spacingM,
-  }),
-  paragraph: css({
-    marginTop: tokens.spacingM,
-  }),
-  note: css({
+  spacingTop: css({
     marginTop: tokens.spacingM,
   }),
   subHeading: css({
@@ -185,7 +179,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
       <Paragraph>Apply actions to all selected references</Paragraph>
       {!isTooComplex ? (
         selectedEntities.length ? (
-          <Paragraph className={styles.paragraph}>
+          <Paragraph className={styles.spacingTop}>
             {createCountMessage({ entityTitle, selectedEntities, root: references[0] })}
           </Paragraph>
         ) : (
@@ -195,7 +189,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
       <Button
         testId="publishReferencesBtn"
         buttonType="positive"
-        className={styles.buttons}
+        className={styles.spacingTop}
         isFullWidth
         disabled={disableButton}
         onClick={handlePublication}>
@@ -204,7 +198,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
       <Button
         testId="validateReferencesBtn"
         buttonType="muted"
-        className={styles.buttons}
+        className={styles.spacingTop}
         isFullWidth
         disabled={disableButton}
         onClick={handleValidation}>
@@ -214,18 +208,23 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
         <Button
           testId="addReferencesToReleaseBtn"
           buttonType="muted"
-          className={styles.buttons}
+          className={styles.spacingTop}
           isFullWidth
           disabled={disableButton}
           onClick={handleAddToRelease}>
           Add to a release
         </Button>
       )}
-      <Note className={styles.note} testId="cf-ui-note-reference-docs">
+      <Note className={styles.spacingTop} testId="cf-ui-note-reference-docs">
         The reference view is a new feature that gathers every linked entry and asset for a
         particular entry in a single view allowing you to apply mass actions.
         <div>
-          <TextLink href="https://www.contentful.com/help/reference-view/">Find out more</TextLink>
+          <TextLink
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://www.contentful.com/help/reference-view/">
+            Find out more
+          </TextLink>
         </div>
       </Note>
       {isRelaseDialogShown && (
