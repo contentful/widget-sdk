@@ -1,2 +1,2 @@
-export { default as renderRichTextEditor } from './WebAppRichTextEditor';
+export { default as RenderRichTextEditor } from './WebAppRichTextEditor';
 export { default as ReadOnlyRichTextEditor } from './ReadOnlyRichTextEditor';

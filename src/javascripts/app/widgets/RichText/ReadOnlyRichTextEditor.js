@@ -3,27 +3,29 @@ import PropTypes from 'prop-types';
 import { ConnectedRichTextEditor } from '@contentful/field-editor-rich-text';
 import { EntityProvider } from '@contentful/field-editor-reference';
 import { rtSdkDecorator } from './rtSdkDecorator';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 
-export default class ReadOnlyRichTextEditor extends React.Component {
-  static propTypes = {
-    value: PropTypes.object.isRequired,
-    sdk: PropTypes.object.isRequired,
-  };
+export default function ReadOnlyRichTextEditor({ value, sdk }) {
+  const { currentSpace } = useSpaceEnvContext();
+  const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
+  const richTextSdk = rtSdkDecorator(sdk, isMasterEnvironment);
 
-  render() {
-    const { value, sdk } = this.props;
-    const richTextSdk = rtSdkDecorator(sdk);
-    return (
-      <EntityProvider sdk={sdk}>
-        <ConnectedRichTextEditor
-          value={value}
-          sdk={richTextSdk}
-          isToolbarHidden
-          actionsDisabled
-          readOnly
-          isDisabled
-        />
-      </EntityProvider>
-    );
-  }
+  return (
+    <EntityProvider sdk={sdk}>
+      <ConnectedRichTextEditor
+        value={value}
+        sdk={richTextSdk}
+        isToolbarHidden
+        actionsDisabled
+        readOnly
+        isDisabled
+      />
+    </EntityProvider>
+  );
 }
+
+ReadOnlyRichTextEditor.propTypes = {
+  value: PropTypes.object.isRequired,
+  sdk: PropTypes.object.isRequired,
+};

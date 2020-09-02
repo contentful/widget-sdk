@@ -3,6 +3,8 @@ import React from 'react';
 import { RichTextEditor } from '@contentful/field-editor-rich-text';
 import { rtSdkDecorator } from './rtSdkDecorator';
 import withTracking from './withTracking';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 
 const RichTextEditorWithTracking = withTracking(RichTextEditor);
 
@@ -13,10 +15,13 @@ const RichTextEditorWithTracking = withTracking(RichTextEditor);
  * @param {Object} loadEvents
  * @returns {React.Element}
  */
-export default function renderRichTextEditor({ sdk, loadEvents }) {
+export default function RenderRichTextEditor({ sdk, loadEvents }) {
+  const { currentSpace } = useSpaceEnvContext();
+  const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
   // RichTextEditor relies on some non-default widgetApi APIs that are not (yet) open sourced in
   // the ui-extensions-sdk.
-  const richTextSdk = rtSdkDecorator(sdk);
+  const richTextSdk = rtSdkDecorator(sdk, isMasterEnvironment);
+
   return (
     <RichTextEditorWithTracking
       sdk={richTextSdk}

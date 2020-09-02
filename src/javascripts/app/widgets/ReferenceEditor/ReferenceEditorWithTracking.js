@@ -6,6 +6,8 @@ import {
   MultipleEntryReferenceEditor,
 } from '@contentful/field-editor-reference';
 import { safeNonBlockingTrack, EditorWithTrackingProps } from './utils';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 
 export function getCtId(entry) {
   return get(entry, 'sys.contentType.sys.id');
@@ -65,6 +67,8 @@ const onEntryAction = (loadEvents, sdk) => {
 };
 
 export function SingleEntryReferenceEditorWithTracking(props) {
+  const { currentSpace } = useSpaceEnvContext();
+  const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
   const { loadEvents, viewType, sdk } = props;
 
   const onAction = onEntryAction(loadEvents, sdk);
@@ -73,7 +77,9 @@ export function SingleEntryReferenceEditorWithTracking(props) {
     <SingleEntryReferenceEditor
       viewType={viewType}
       sdk={sdk}
-      getEntityUrl={(entryId) => getEntityLink({ id: entryId, type: 'Entry' }).href}
+      getEntityUrl={(entryId) =>
+        getEntityLink({ id: entryId, type: 'Entry', isMasterEnvironment }).href
+      }
       parameters={{
         instance: {
           showCreateEntityAction: get(sdk, 'parameters.instance.showCreateEntityAction', true),
@@ -86,6 +92,8 @@ export function SingleEntryReferenceEditorWithTracking(props) {
 }
 
 export function MultipleEntryReferenceEditorWithTracking(props) {
+  const { currentSpace } = useSpaceEnvContext();
+  const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
   const { loadEvents, viewType, sdk } = props;
 
   const onAction = React.useMemo(() => onEntryAction(loadEvents, sdk), [loadEvents, sdk]);
@@ -94,7 +102,9 @@ export function MultipleEntryReferenceEditorWithTracking(props) {
     <MultipleEntryReferenceEditor
       viewType={viewType}
       sdk={sdk}
-      getEntityUrl={(entryId) => getEntityLink({ id: entryId, type: 'Entry' }).href}
+      getEntityUrl={(entryId) =>
+        getEntityLink({ id: entryId, type: 'Entry', isMasterEnvironment }).href
+      }
       parameters={{
         instance: {
           showCreateEntityAction: get(sdk, 'parameters.instance.showCreateEntityAction', true),

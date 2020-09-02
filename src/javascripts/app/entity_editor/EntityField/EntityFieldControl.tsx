@@ -6,8 +6,13 @@ import { isRtlLocale } from 'utils/locales';
 import { createFieldWidgetSDK } from 'app/widgets/createFieldWidgetSDK';
 import { getModule } from 'core/NgRegistry';
 import { getEntityLink } from 'app/common/EntityStateLink';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 
 export function EntityFieldControl(props: { scope: any; hasInitialFocus: boolean }) {
+  const { currentSpace } = useSpaceEnvContext();
+  const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
+
   const widgetApi = React.useMemo(() => {
     const spaceContext = getModule('spaceContext');
     const { widget, locale } = props.scope;
@@ -45,7 +50,7 @@ export function EntityFieldControl(props: { scope: any; hasInitialFocus: boolean
         locales={widgetApi.locales}
         space={widgetApi.space}
         getEntryURL={(entry) => {
-          return getEntityLink({ id: entry.sys.id, type: 'Entry' }).href;
+          return getEntityLink({ id: entry.sys.id, type: 'Entry', isMasterEnvironment }).href;
         }}
       />
     </>

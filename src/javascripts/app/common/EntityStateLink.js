@@ -2,12 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import StateLink from './StateLink';
 import { href } from 'states/Navigator';
-import { getModule } from 'core/NgRegistry';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 
-export function getEntityLink({ id, type }) {
-  const spaceContext = getModule('spaceContext');
+export function getEntityLink({ id, type, isMasterEnvironment = true }) {
   const path = ['spaces', 'detail', type === 'Entry' ? 'entries' : 'assets', 'detail'];
-  if (!spaceContext.isMasterEnvironment()) {
+  if (!isMasterEnvironment) {
     path.splice(2, 0, 'environment');
   }
   const params = { [type === 'Entry' ? 'entryId' : 'assetId']: id };
@@ -26,8 +26,9 @@ export function getEntityLink({ id, type }) {
 
 export default function EntityStateLink({ entity, children }) {
   const { id, type } = entity.sys;
-
-  const { path, params } = getEntityLink({ id, type });
+  const { currentSpace } = useSpaceEnvContext();
+  const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
+  const { path, params } = getEntityLink({ id, type, isMasterEnvironment });
 
   return (
     <StateLink path={path} params={params}>

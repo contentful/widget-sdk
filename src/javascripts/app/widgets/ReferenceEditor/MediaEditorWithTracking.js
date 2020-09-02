@@ -3,6 +3,8 @@ import { get } from 'lodash';
 import { getEntityLink } from 'app/common/EntityStateLink';
 import { SingleMediaEditor, MultipleMediaEditor } from '@contentful/field-editor-reference';
 import { safeNonBlockingTrack, EditorWithTrackingProps } from './utils';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 
 const onMediaAction = (loadEvents, sdk) => (action) => {
   switch (action.type) {
@@ -39,13 +41,17 @@ const onMediaAction = (loadEvents, sdk) => (action) => {
 };
 
 export function SingleMediaEditorWithTracking(props) {
+  const { currentSpace } = useSpaceEnvContext();
+  const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
   const { loadEvents, viewType, sdk } = props;
   const onAction = onMediaAction(loadEvents, sdk);
   return (
     <SingleMediaEditor
       viewType={viewType}
       sdk={sdk}
-      getEntityUrl={(assetId) => getEntityLink({ id: assetId, type: 'Asset' }).href}
+      getEntityUrl={(assetId) =>
+        getEntityLink({ id: assetId, type: 'Asset', isMasterEnvironment }).href
+      }
       parameters={{
         instance: {
           showCreateEntityAction: get(sdk, 'parameters.instance.showCreateEntityAction', true),
@@ -58,13 +64,17 @@ export function SingleMediaEditorWithTracking(props) {
 }
 
 export function MultipleMediaEditorWithTracking(props) {
+  const { currentSpace } = useSpaceEnvContext();
+  const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
   const { loadEvents, viewType, sdk } = props;
   const onAction = onMediaAction(loadEvents, sdk);
   return (
     <MultipleMediaEditor
       viewType={viewType}
       sdk={sdk}
-      getEntityUrl={(assetId) => getEntityLink({ id: assetId, type: 'Asset' }).href}
+      getEntityUrl={(assetId) =>
+        getEntityLink({ id: assetId, type: 'Asset', isMasterEnvironment }).href
+      }
       parameters={{
         instance: {
           showCreateEntityAction: get(sdk, 'parameters.instance.showCreateEntityAction', true),

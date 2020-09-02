@@ -4,7 +4,7 @@ import { range } from 'lodash';
 import React from 'react';
 import * as Config from 'Config';
 import EmbedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
-import { renderRichTextEditor } from 'app/widgets/RichText';
+import { RenderRichTextEditor } from 'app/widgets/RichText';
 import { TagsEditor } from '@contentful/field-editor-tags';
 import { SingleLineEditor } from '@contentful/field-editor-single-line';
 import { MultipleLineEditor } from '@contentful/field-editor-multiple-line';
@@ -238,8 +238,9 @@ export function create() {
     fieldTypes: ['RichText'],
     name: 'RichText',
     icon: 'wysiwig',
-    renderFieldEditor: ({ widgetApi, loadEvents }) =>
-      renderRichTextEditor({ sdk: widgetApi, loadEvents }),
+    renderFieldEditor: ({ widgetApi, loadEvents }) => (
+      <RenderRichTextEditor sdk={widgetApi} loadEvents={loadEvents} />
+    ),
   });
 
   registerWidget('tagEditor', {
