@@ -21,6 +21,7 @@ const styles = {
 
 export const NewSpaceBillingDetailsPage = ({
   navigateToPreviousStep,
+  savedBillingDetails,
   onSubmitBillingDetails,
   selectedPlan,
 }) => {
@@ -38,6 +39,7 @@ export const NewSpaceBillingDetailsPage = ({
       <Grid className={styles.grid} columns="60% auto" rows={1} columnGap="spacing2Xl">
         <BillingDetailsForm
           onSubmitBillingDetails={onSubmitBillingDetails}
+          savedBillingDetails={savedBillingDetails}
           navigateToPreviousStep={navigateToPreviousStep}
         />
         <OrderSummary selectedPlan={selectedPlan} />
@@ -48,6 +50,7 @@ export const NewSpaceBillingDetailsPage = ({
 
 NewSpaceBillingDetailsPage.propTypes = {
   navigateToPreviousStep: PropTypes.func.isRequired,
+  savedBillingDetails: PropTypes.object,
   onSubmitBillingDetails: PropTypes.func.isRequired,
   selectedPlan: PropTypes.object,
 };

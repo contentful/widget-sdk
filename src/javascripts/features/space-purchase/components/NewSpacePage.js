@@ -132,7 +132,7 @@ export const NewSpacePage = ({ organizationId, templatesList, productRatePlans }
             <Breadcrumb items={NEW_SPACE_STEPS_PAYMENT} />
             <NewSpaceBillingDetailsPage
               navigateToPreviousStep={navigateToPreviousStep}
-              billingDetails={billingDetails}
+              savedBillingDetails={billingDetails}
               onSubmitBillingDetails={onSubmitBillingDetails}
               selectedPlan={selectedPlan}
             />

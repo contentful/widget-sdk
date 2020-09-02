@@ -7,6 +7,16 @@ import { NewSpacePage } from './NewSpacePage';
 const mockOrganization = FakeFactory.Organization();
 const mockProductRatePlanMedium = { name: 'Medium', price: 100 };
 const mockProductRatePlanLarge = { name: 'Large', price: 200 };
+const mockBillingDetails = {
+  firstName: 'John',
+  lastName: 'Doe',
+  email: 'test@example.com',
+  address: '123 street ave',
+  addressTwo: 'apartment 321',
+  city: 'Berlin',
+  postalCode: '11111',
+  country: 'US',
+};
 
 describe('NewSpacePage', () => {
   it('should render SPACE_SELECTION page as a default', () => {
@@ -63,6 +73,52 @@ describe('NewSpacePage', () => {
       userEvent.type(input, 'test');
 
       expect(input.value).toEqual('test');
+    });
+  });
+
+  it('should display saved billing details when navigating back from Credit Card Page', async () => {
+    build();
+
+    // ------ Space select page------
+    userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
+
+    const input = screen.getByTestId('space-name').getElementsByTagName('input')[0];
+
+    // ------ Space Details page------
+    userEvent.type(input, 'test');
+
+    userEvent.click(screen.getByTestId('next-step-new-details-page'));
+
+    // ------ Billing Details page ------
+    waitFor(() => {
+      // Fill out all text fields
+      screen.getAllByTestId('cf-ui-text-input').forEach((textField) => {
+        userEvent.type(textField, mockBillingDetails[textField.getAttribute('name')]);
+      });
+    });
+
+    const countrySelect = within(screen.getByTestId('billing-details.country')).getByTestId(
+      'cf-ui-select'
+    );
+
+    userEvent.selectOptions(countrySelect, ['US']);
+
+    userEvent.click(screen.getByTestId('next-step-billing-details-form'));
+
+    // ------ Credit Card page------
+    await waitFor(() => {
+      expect(screen.getByTestId('new-space-card-details-section')).toBeVisible();
+      userEvent.click(screen.getByTestId('navigate-back'));
+    });
+
+    // ------ Billing Details page------
+    await waitFor(() => {
+      expect(screen.getByTestId('billing-details.card')).toBeVisible();
+
+      // Check all text fields
+      screen.getAllByTestId('cf-ui-text-input').forEach((textField) => {
+        expect(textField.value).toEqual(mockBillingDetails[textField.getAttribute('name')]);
+      });
     });
   });
 
