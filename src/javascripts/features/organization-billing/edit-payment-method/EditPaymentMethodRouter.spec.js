@@ -60,70 +60,25 @@ describe('EditPaymentMethodRouter', () => {
     );
   });
 
-  it('should get the Zuora JS and the hosted payment params', async () => {
-    build();
-
-    await waitFor(() => expect(LazyLoader.get).toBeCalled());
-
-    expect(LazyLoader.get).toHaveBeenCalledWith('Zuora');
-    expect(mockEndpoint).toHaveBeenCalledWith(
-      expect.objectContaining({ path: ['hosted_payment_params'] })
-    );
-  });
-
-  it('should render and set a runAfterRender callback', async () => {
-    build();
-
-    await waitFor(() => expect(LazyLoader.get).toBeCalled());
-
-    const { Zuora } = LazyLoader._results;
-    expect(Zuora.render).toBeCalledWith(mockHostedPaymentParams, {}, expect.any(Function));
-    expect(Zuora.runAfterRender).toBeCalledWith(expect.any(Function));
-  });
-
-  it('should show a loading state until the runAfterRender callback is called', async () => {
-    const { Zuora } = LazyLoader._results;
-
-    let runAfterRenderCb;
-
-    Zuora.runAfterRender.mockImplementationOnce((cb) => (runAfterRenderCb = cb));
-
-    build();
-
-    await waitFor(() => expect(Zuora.render).toBeCalled());
-
-    expect(screen.queryByTestId('cf-ui-loading-state')).toBeVisible();
-    expect(screen.getByTestId('zuora-payment-iframe')).not.toBeVisible();
-
-    await waitFor(() => runAfterRenderCb());
-
-    expect(screen.queryByTestId('cf-ui-loading-state')).toBeNull();
-    expect(screen.getByTestId('zuora-payment-iframe')).toBeVisible();
-  });
-
   describe('payment method successfully created', () => {
-    const successResult = { refId: 'ref_1234' };
     let successCb;
 
     beforeEach(async () => {
-      const { Zuora } = LazyLoader._results;
-
-      Zuora.render.mockImplementationOnce((_params, _prefilledFields, cb) => (successCb = cb));
-
       build();
-
-      await waitFor(() => expect(Zuora.render).toBeCalled());
+      successCb = await waitForZuoraToRender();
     });
 
     it('should set the default payment method and redirect when the success callback is called', async () => {
-      await waitFor(() => successCb(successResult));
+      const response = successCb();
+
+      await waitFor(() => expect(mockEndpoint).toBeCalled());
 
       expect(mockEndpoint).toHaveBeenCalledWith(
         expect.objectContaining({
           path: ['default_payment_method'],
           method: 'PUT',
           data: {
-            paymentMethodRefId: successResult.refId,
+            paymentMethodRefId: response.refId,
           },
         })
       );
@@ -135,7 +90,7 @@ describe('EditPaymentMethodRouter', () => {
     it('should show a notification if the default payment method request fails', async () => {
       mockEndpoint.mockRejectedValueOnce();
 
-      successCb(successResult);
+      successCb();
 
       await waitFor(() => screen.getByTestId('cf-ui-notification'));
 
@@ -147,4 +102,33 @@ describe('EditPaymentMethodRouter', () => {
 
 function build() {
   render(<EditPaymentMethodRouter orgId={mockOrganization.sys.id} />);
+}
+
+async function waitForZuoraToRender() {
+  const { Zuora } = LazyLoader._results;
+
+  let runAfterRenderCb;
+  let successCb;
+
+  Zuora.render.mockImplementationOnce(
+    (_params, _prefilledFields, cb) =>
+      (successCb = () => {
+        const response = { success: true, refId: 'ref_1234' };
+
+        cb(response);
+
+        // For simplified testing, return the response here as well
+        return response;
+      })
+  );
+
+  Zuora.runAfterRender.mockImplementationOnce((cb) => (runAfterRenderCb = cb));
+
+  await waitFor(() => expect(Zuora.render).toBeCalled());
+
+  await waitFor(runAfterRenderCb);
+
+  expect(screen.getByTestId('zuora-payment-iframe')).toBeVisible();
+
+  return successCb;
 }
