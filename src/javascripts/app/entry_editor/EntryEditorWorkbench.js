@@ -201,7 +201,9 @@ const EntryEditorWorkbench = (props) => {
                   testId={`test-id-${tab.key}`}
                   disabled={!tab.isEnabled()}
                   selected={selectedTab === tab.key}
-                  className={styles.tab}
+                  className={cx(styles.tab, {
+                    'reference-tab-enabled': tab.isEnabled() && tab.title === 'References',
+                  })}
                   onSelect={tab.onClick}>
                   <Icon icon={tab.icon} color="muted" className={styles.tabIcon} />
                   {tab.title}
