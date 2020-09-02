@@ -9,6 +9,8 @@ import {
   Paragraph,
   HelpText,
   Notification,
+  Note,
+  TextLink,
 } from '@contentful/forma-36-react-components';
 import { create } from 'access_control/EntityPermissions';
 import { track } from 'analytics/Analytics';
@@ -38,6 +40,9 @@ const styles = {
     marginTop: tokens.spacingM,
   }),
   paragraph: css({
+    marginTop: tokens.spacingM,
+  }),
+  note: css({
     marginTop: tokens.spacingM,
   }),
   subHeading: css({
@@ -177,7 +182,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
           References
         </Subheading>
       </header>
-      <div>Apply actions to all selected references</div>
+      <Paragraph>Apply actions to all selected references</Paragraph>
       {!isTooComplex ? (
         selectedEntities.length ? (
           <Paragraph className={styles.paragraph}>
@@ -216,6 +221,13 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
           Add to a release
         </Button>
       )}
+      <Note className={styles.note} testId="cf-ui-note-reference-docs">
+        The reference view is a new feature that gathers every linked entry and asset for a
+        particular entry in a single view allowing you to apply mass actions.
+        <div>
+          <TextLink href="https://www.contentful.com/help/reference-view/">Find out more</TextLink>
+        </div>
+      </Note>
       {isRelaseDialogShown && (
         <ReleasesWidgetDialog
           rootEntity={entity}
