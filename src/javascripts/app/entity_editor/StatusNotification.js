@@ -1,9 +1,9 @@
-import { useEffect, useRef } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import DocumentStatusCode from 'data/document/statusCode';
 import { sortBy } from 'lodash';
 import { joinWithAnd } from 'utils/StringUtils';
-import { Notification } from '@contentful/forma-36-react-components';
+import { Note, TextLink } from '@contentful/forma-36-react-components';
 
 /**
  * This component renders an alert depending on the document status.
@@ -29,100 +29,69 @@ const formatErroredLocales = (erroredLocales) => {
   return formatLocales(locales);
 };
 
-const messages = {
-  [DocumentStatusCode.EDIT_CONFLICT]: ({ entityLabel, entityHref }) =>
-    Notification.warning(
-      `A new version of this ${entityLabel} was created. To view or edit, refresh your browser or open the ${entityLabel} in a new tab. Your current changes may be lost.`,
-      {
-        title: `There is a new version of this ${entityLabel}`,
-        cta: {
-          label: `View ${entityLabel} in new tab`,
-          textLinkProps: { target: '_blank', href: entityHref },
-        },
-        duration: 0,
-      }
-    ),
-  [DocumentStatusCode.INTERNAL_SERVER_ERROR]: ({ entityLabel }) =>
-    Notification.error(
-      `Due to a server error, we could not process this ${entityLabel}. ` +
-        'The fields are temporarily locked so that you won’t lose any ' +
-        'important changes.',
-      {
-        title: 'Server error',
-        duration: 0,
-      }
-    ),
-  [DocumentStatusCode.CONNECTION_ERROR]: () =>
-    Notification.error(
-      'It appears that you aren’t connected to internet at the moment. ' +
-        'The fields are temporarily locked so that you won’t lose any ' +
-        'important changes.',
-      {
-        title: 'Connection error',
-        duration: 0,
-      }
-    ),
-  [DocumentStatusCode.ARCHIVED]: ({ entityLabel }) =>
-    Notification.warning('', {
-      title: `This ${entityLabel} is archived and cannot be modified. Please unarchive it to make any changes.`,
-      duration: 0,
-      // canClose: false, // TODO: preferably should be non-closeable, but requires adjusting e2e tests
-    }),
-  [DocumentStatusCode.DELETED]: ({ entityLabel }) =>
-    Notification.error('', {
-      title: `This ${entityLabel} has been deleted and cannot be modified anymore`,
-      duration: 0,
-    }),
-  [DocumentStatusCode.NOT_ALLOWED]: ({ entityLabel }) =>
-    Notification.warning('', {
-      title: `You have read-only access to this ${entityLabel}. If you need to edit it please contact your administrator.`,
-      duration: 0,
-    }),
-  [DocumentStatusCode.DEFAULT_LOCALE_FILE_ERROR]: () =>
-    Notification.error('', {
-      title: 'This asset is missing a file for the default locale',
-      duration: 0,
-    }),
-  [DocumentStatusCode.LOCALE_VALIDATION_ERRORS]: ({ erroredLocales }) =>
-    Notification.error(
-      `The following locales have fields with errors: ${formatErroredLocales(erroredLocales)}`,
-      {
-        title: 'Validation error',
-        duration: 0,
-      }
-    ),
-};
-
 const StatusCodeNotification = ({ status, entityLabel, erroredLocales, entityHref }) => {
-  const activeIdRef = useRef(null);
-
-  async function closeCurrent() {
-    if (activeIdRef.current) {
-      await Notification.close(activeIdRef.current);
-      activeIdRef.current = null;
-    }
+  switch (status) {
+    case DocumentStatusCode.EDIT_CONFLICT:
+      return (
+        <Note noteType="warning" title={`There is a new version of this ${entityLabel}`}>
+          A new version of this {entityLabel} was created. To view or edit, refresh your browser or
+          open the {entityLabel} in a new tab. Your current changes may be lost.
+          <div>
+            <TextLink href={entityHref} target="_blank" rel="noopener noreferrer">
+              View {entityLabel} in new tab
+            </TextLink>
+          </div>
+        </Note>
+      );
+    case DocumentStatusCode.INTERNAL_SERVER_ERROR:
+      return (
+        <Note noteType="negative" title="Server error">
+          Due to a server error, we could not process this {entityLabel}. The fields are temporarily
+          locked so that you won’t lose any important changes.
+        </Note>
+      );
+    case DocumentStatusCode.CONNECTION_ERROR:
+      return (
+        <Note noteType="negative" title="Connection error">
+          It appears that you aren’t connected to internet at the moment. The fields are temporarily
+          locked so that you won’t lose any important changes.
+        </Note>
+      );
+    case DocumentStatusCode.ARCHIVED:
+      return (
+        <Note noteType="warning" title="Archived">
+          This {entityLabel} is archived and cannot be modified. Please unarchive it to make any
+          changes.
+        </Note>
+      );
+    case DocumentStatusCode.DELETED:
+      return (
+        <Note noteType="negative" title="Deleted">
+          This {entityLabel} has been deleted and cannot be modified anymore
+        </Note>
+      );
+    case DocumentStatusCode.NOT_ALLOWED:
+      return (
+        <Note noteType="warning" title="Read-only">
+          You have read-only access to this {entityLabel}. If you need to edit it please contact
+          your administrator.
+        </Note>
+      );
+    case DocumentStatusCode.DEFAULT_LOCALE_FILE_ERROR:
+      return (
+        <Note noteType="negative" title="Asset missing">
+          This asset is missing a file for the default locale
+        </Note>
+      );
+    case DocumentStatusCode.LOCALE_VALIDATION_ERRORS:
+      return (
+        <Note noteType="negative" title="Validation error">
+          The following locales have fields with errors: {formatErroredLocales(erroredLocales)}
+        </Note>
+      );
+    default:
+      return null;
   }
-
-  // Close document related notification on unmounting.
-  useEffect(() => closeCurrent, []);
-
-  useEffect(() => {
-    const trigger = async () => {
-      await closeCurrent();
-      if (status in messages) {
-        const notification = await messages[status]({
-          entityLabel,
-          erroredLocales,
-          entityHref,
-        });
-        activeIdRef.current = notification.id;
-      }
-    };
-    // Render on the next tick to ensure it's displayed under other notifications.
-    setTimeout(trigger, 0);
-  }, [status, entityLabel, erroredLocales, entityHref]);
-
-  return null;
 };
 
 StatusCodeNotification.propTypes = {
