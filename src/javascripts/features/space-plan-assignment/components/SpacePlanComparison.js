@@ -4,7 +4,6 @@ import {
   Plan as PlanPropType,
   Resource as ResourcePropType,
 } from 'app/OrganizationSettings/PropTypes';
-import { get } from 'lodash';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import {
@@ -16,20 +15,12 @@ import {
   Icon,
   Tooltip,
 } from '@contentful/forma-36-react-components';
+import { resourcesToDisplay, getIncludedResources } from '../utils/utils';
 import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
-import { getResourceLimits } from 'utils/ResourceUtils';
 
 const styles = {
   warning: css({ color: tokens.colorWarning }),
 };
-
-const resourcesToDisplay = [
-  { id: 'environment', name: 'Environments' },
-  { id: 'role', name: 'Roles' },
-  { id: 'locale', name: 'Locales' },
-  { id: 'content_type', name: 'Content types' },
-  { id: 'record', name: 'Records' },
-];
 
 export function SpacePlanComparison({ plan, spaceResources }) {
   // what's defined in the new plan
@@ -50,9 +41,12 @@ export function SpacePlanComparison({ plan, spaceResources }) {
         <TableRow key={'current'}>
           <TableCell>Current space usage</TableCell>
           {resourcesToDisplay.map(({ id }) => {
-            const usage = spaceResources[id].usage;
-            const limit = getResourceLimits(spaceResources[id]);
-            const isOverLimit = usage > limit.maximum;
+            let usage = spaceResources[id].usage;
+            // Add "extra" environment and role to include `master` and `admin`
+            if (['environment', 'role'].includes(id)) {
+              usage = usage + 1;
+            }
+            const isOverLimit = usage > planResources[id];
             return (
               <TableCell key={id} className={isOverLimit ? styles.warning : ''}>
                 <Tooltip place="top" content="Your current usage exceeds this plan's limit">
@@ -80,18 +74,3 @@ SpacePlanComparison.propTypes = {
   plan: PlanPropType.isRequired,
   spaceResources: PropTypes.objectOf(ResourcePropType),
 };
-
-export function getIncludedResources(charges) {
-  return Object.values(resourcesToDisplay).reduce((memo, { id, name }) => {
-    const charge = charges.find((charge) => charge.name === name);
-    let number = get(charge, 'tiers[0].endingUnit');
-
-    // Add "extra" environment and role to include `master` and `admin`
-    if (['Environments', 'Roles'].includes(name)) {
-      number = number + 1;
-    }
-
-    memo[id] = number;
-    return memo;
-  }, {});
-}

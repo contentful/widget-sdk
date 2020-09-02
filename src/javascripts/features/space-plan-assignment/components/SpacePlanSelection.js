@@ -23,6 +23,7 @@ import { ExpandableElement } from './ExpandableElement';
 import { groupBy } from 'lodash';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
+import { canPlanBeAssigned } from '../utils/utils';
 
 export function SpacePlanSelection({
   plans,
@@ -75,19 +76,25 @@ export function SpacePlanSelection({
               width: '18px', // basic size of icon
               height: '18px', // basic size of icon
             }),
+            disabled: css({ opacity: 0.5 }),
           };
 
+          const isDisabled = !canPlanBeAssigned(plan, spaceResources);
           return (
             <ListItem key={plan.sys.id} testId="space-plan-item">
               <Card
                 padding="large"
-                className={cn(styles.cardItem, { [styles.cardItemActive]: plan === selectedPlan })}>
+                className={cn(styles.cardItem, {
+                  [styles.cardItemActive]: plan === selectedPlan,
+                  [styles.disabled]: isDisabled,
+                })}>
                 <Flex
                   htmlTag="label"
                   justifyContent="start"
                   alignItems="center"
                   marginBottom="spacingM">
                   <RadioButton
+                    disabled={isDisabled}
                     checked={plan === selectedPlan}
                     onChange={() => onPlanSelected(plan)}
                     labelText={plan.name}

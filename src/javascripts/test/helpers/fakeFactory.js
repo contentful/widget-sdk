@@ -198,19 +198,18 @@ export function Plan(options) {
   return { sys: sys({ id: uniqueId('Plan'), type: 'ProductRatePlan' }), ...options };
 }
 
-export function RatePlanCharge(options) {
+export function RatePlanCharge(name, unit) {
   return {
     sys: sys({
       type: 'ProductRatePlanCharge',
       id: uniqueId('ProductRatePlanCharge'),
     }),
-    name: options.name,
+    name: name,
     tiers: [
       {
-        endingUnit: 5,
+        endingUnit: unit,
       },
     ],
-    ...options,
   };
 }
 

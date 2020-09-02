@@ -76,19 +76,22 @@ function SpacePlans({
   organizationId,
   showMicroSmallSupportCard,
   anySpacesInaccessible,
+  isOrgOwner,
 }) {
   const numSpaces = spacePlans.length;
   const totalCost = calculatePlansCost({ plans: spacePlans });
 
-  const unassignedSpacePlans = spacePlans.filter((plan) => plan.gatekeeperKey === null);
   const [showSpacePlanChangeBtn, setShowSpacePlanChangeBtn] = useState(false);
   useEffect(() => {
     async function fetch() {
       const isFeatureEnabled = await getVariation(FLAGS.SPACE_PLAN_ASSIGNMENT);
-      setShowSpacePlanChangeBtn(isFeatureEnabled && enterprisePlan);
+      const unassignedSpacePlans = spacePlans.filter((plan) => plan.gatekeeperKey === null);
+      const shouldShowSpacePlanChangeBtn =
+        isFeatureEnabled && enterprisePlan && isOrgOwner && unassignedSpacePlans.length > 0;
+      setShowSpacePlanChangeBtn(shouldShowSpacePlanChangeBtn);
     }
     fetch();
-  }, [setShowSpacePlanChangeBtn, enterprisePlan]);
+  }, [setShowSpacePlanChangeBtn, enterprisePlan, isOrgOwner, spacePlans]);
 
   const linkToSupportPage = websiteUrl(
     `support/?utm_source=webapp&utm_medium=account-menu&utm_campaign=in-app-help&purchase-micro-or-small-space=${organizationId}`
@@ -176,7 +179,7 @@ function SpacePlans({
           Create Space
         </TextLink>
       </Paragraph>
-      {showSpacePlanChangeBtn && unassignedSpacePlans.length > 0 && (
+      {showSpacePlanChangeBtn && (
         <Note className={styles.note}>
           {`Click the "change" link next to the space type to change it.`}
         </Note>
@@ -236,6 +239,7 @@ SpacePlans.propTypes = {
   enterprisePlan: PropTypes.bool,
   upgradedSpaceId: PropTypes.string,
   anySpacesInaccessible: PropTypes.bool,
+  isOrgOwner: PropTypes.bool,
 };
 
 SpacePlans.defaultProps = {

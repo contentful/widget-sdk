@@ -290,6 +290,7 @@ export default function SubscriptionPage({
                 onDeleteSpace={deleteSpace}
                 enterprisePlan={enterprisePlan}
                 anySpacesInaccessible={anySpacesInaccessible}
+                isOrgOwner={isOrgOwner}
               />
             )}
           </div>
