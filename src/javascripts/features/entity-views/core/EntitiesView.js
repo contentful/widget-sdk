@@ -112,8 +112,10 @@ export const EntitiesView = ({
       setUsers(users);
       !isLoading && setIsInitialized(true);
     };
-    init();
-  }, [spaceContext, isLoading]);
+    if (!isInitialized) {
+      init();
+    }
+  }, [spaceContext, isLoading, isInitialized]);
 
   const pageCount = paginator.getPageCount();
   const isLegacyOrganization = ResourceUtils.isLegacyOrganization(spaceContext.organization);

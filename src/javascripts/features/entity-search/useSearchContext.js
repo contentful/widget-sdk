@@ -1,13 +1,13 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { match } from 'utils/TaggedValues';
 import {
-  FilterValueInputs as ValueInput,
+  buildFilterFieldByQueryKey,
   contentTypeFilter as getContentTypeFilter,
-  sanitizeSearchFilters,
+  FilterValueInputs as ValueInput,
+  getContentTypeById,
   getFiltersFromQueryKey,
   getMatchingFilters,
-  getContentTypeById,
-  buildFilterFieldByQueryKey,
+  sanitizeSearchFilters,
 } from 'core/services/ContentQuery';
 import { cloneDeep, debounce } from 'lodash';
 import { track } from 'analytics/Analytics';
@@ -26,6 +26,7 @@ export const useSearchContext = ({
   const [isTyping, setIsTyping] = useState(false);
   const [searchText, setSearch] = useState(initialSearchText);
   const contentTypes = getContentTypes();
+  const contentTypesDep = contentTypes.map((ct) => ct.sys.id + ct.sys.updatedAt).join(':');
 
   const [isSuggestionOpen, setIsSuggestionOpen] = useState(false);
 
@@ -38,7 +39,9 @@ export const useSearchContext = ({
   const sanitizedFilters = useMemo(
     () =>
       sanitizeSearchFilters(searchFilters, contentTypes, contentTypeId, withAssets, withMetadata),
-    [searchFilters, contentTypes, contentTypeId, withAssets, withMetadata]
+    // Use contentTypesDep because contentTypes is always a new instance
+    // eslint-disable-next-line
+    [searchFilters, contentTypesDep, contentTypeId, withAssets, withMetadata]
   );
 
   const filters = useMemo(
@@ -51,15 +54,24 @@ export const useSearchContext = ({
         withAssets,
         withMetadata,
       }),
-    [users, contentTypes, sanitizedFilters, contentTypeId, withAssets, withMetadata]
+    // Use contentTypesDep because contentTypes is always a new instance
+    // eslint-disable-next-line
+    [users, contentTypesDep, sanitizedFilters, contentTypeId, withAssets, withMetadata]
   );
 
   const suggestions = useMemo(
     () => getMatchingFilters(searchText, contentTypeId, contentTypes, withAssets, withMetadata),
-    [searchText, contentTypeId, contentTypes, withAssets, withMetadata]
+    // Use contentTypesDep because contentTypes is always a new instance
+    // eslint-disable-next-line
+    [searchText, contentTypeId, contentTypesDep, withAssets, withMetadata]
   );
 
-  const contentTypeFilter = useMemo(() => getContentTypeFilter(contentTypes), [contentTypes]);
+  const contentTypeFilter = useMemo(
+    () => getContentTypeFilter(contentTypes),
+    // Use contentTypesDep because contentTypes is always a new instance
+    // eslint-disable-next-line
+    [contentTypesDep]
+  );
 
   const callbackSetView = useCallback(setViewKey, []);
 
