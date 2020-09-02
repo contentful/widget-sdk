@@ -129,7 +129,8 @@ export default function CustomConfiguration({
 
       {items.length === 0 && (
         <Paragraph>
-          Add an item to customize what’s displayed on the sidebar for this content type.
+          Add an item to customize what’s displayed on the {title.toLowerCase()} for this content
+          type.
         </Paragraph>
       )}
     </>
