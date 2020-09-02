@@ -135,6 +135,113 @@ const formReducer = createImmerReducer({
   },
 });
 
+async function handleSubmit(state, dispatch) {
+  const { submitting } = state.form;
+
+  if (!submitting) {
+    return;
+  }
+
+  if (submitting) {
+    // Immediately set the submitting status to false, so that later dispatches
+    // do not trigger this effect
+    dispatch({ type: 'SET_FORM_SUBMITTING', payload: { submitting: false } });
+
+    const formInvalid = isFormInvalid(state);
+
+    if (formInvalid) {
+      return;
+    }
+
+    dispatch({ type: 'SET_FORM_PENDING', payload: { isPending: true } });
+
+    let result;
+
+    // Create a mapping of fieldNames and values
+    //
+    // E.g.
+    // {
+    //   firstName: 'John',
+    //   lastName: 'Smith'
+    // }
+    const mappedFields = Object.entries(state.fields).reduce((memo, [fieldName, { value }]) => {
+      memo[fieldName] = value;
+
+      return memo;
+    }, {});
+
+    try {
+      const { submitFnArgs } = state.form;
+
+      result = await state.submitFn(mappedFields, ...submitFnArgs);
+    } catch (e) {
+      const message = e.message;
+
+      dispatch({
+        type: 'SET_FORM_ERROR',
+        payload: {
+          message,
+        },
+      });
+
+      dispatch({
+        type: 'SET_FORM_PENDING',
+        payload: {
+          isPending: false,
+        },
+      });
+
+      return;
+    }
+
+    if (result !== undefined) {
+      // If the result is not `undefined`, but the result has no keys, then
+      // something seems to be wrong (the result is not formatted correctly).
+      if (Object.keys(result).length === 0) {
+        dispatch({
+          type: 'SET_FORM_ERROR',
+          payload: {
+            message: 'An error occurred.',
+          },
+        });
+      } else {
+        const formError = get(result, FORM_ERROR, '');
+
+        if (formError !== '') {
+          dispatch({
+            type: 'SET_FORM_ERROR',
+            payload: {
+              message: formError,
+            },
+          });
+        }
+
+        Object.entries(result).forEach(([fieldName, message]) => {
+          // Ignore errors that don't correspond to a field
+          if (!state.fields[fieldName]) {
+            return;
+          }
+
+          dispatch({
+            type: 'SET_FIELD_SUBMISSION_ERROR',
+            payload: {
+              fieldName,
+              message,
+            },
+          });
+        });
+      }
+    }
+
+    dispatch({
+      type: 'SET_FORM_PENDING',
+      payload: {
+        isPending: false,
+      },
+    });
+  }
+}
+
 /**
  * `useForm` is a hook that handles all form related logic and UX for UI forms. Specifically,
  * it handles changes, blurs, submissions, as well as encapsulating field and form related
@@ -260,115 +367,12 @@ export function useForm(initialValues) {
 
   // This effect handles if the form has been submitted
   useEffect(() => {
-    async function handleSubmit(state) {
-      const { submitting } = state.form;
+    handleSubmit(state, dispatch);
 
-      if (!submitting) {
-        return;
-      }
-
-      if (submitting) {
-        // Immediately set the submitting status to false, so that later dispatches
-        // do not trigger this effect
-        dispatch({ type: 'SET_FORM_SUBMITTING', payload: { submitting: false } });
-
-        const formInvalid = isFormInvalid(state);
-
-        if (formInvalid) {
-          return;
-        }
-
-        dispatch({ type: 'SET_FORM_PENDING', payload: { isPending: true } });
-
-        let result;
-
-        // Create a mapping of fieldNames and values
-        //
-        // E.g.
-        // {
-        //   firstName: 'John',
-        //   lastName: 'Smith'
-        // }
-        const mappedFields = Object.entries(state.fields).reduce((memo, [fieldName, { value }]) => {
-          memo[fieldName] = value;
-
-          return memo;
-        }, {});
-
-        try {
-          const { submitFnArgs } = state.form;
-
-          result = await state.submitFn(mappedFields, ...submitFnArgs);
-        } catch (e) {
-          const message = e.message;
-
-          dispatch({
-            type: 'SET_FORM_ERROR',
-            payload: {
-              message,
-            },
-          });
-
-          dispatch({
-            type: 'SET_FORM_PENDING',
-            payload: {
-              isPending: false,
-            },
-          });
-
-          return;
-        }
-
-        if (result !== undefined) {
-          // If the result is not `undefined`, but the result has no keys, then
-          // something seems to be wrong (the result is not formatted correctly).
-          if (Object.keys(result).length === 0) {
-            dispatch({
-              type: 'SET_FORM_ERROR',
-              payload: {
-                message: 'An error occurred.',
-              },
-            });
-          } else {
-            const formError = get(result, FORM_ERROR, '');
-
-            if (formError !== '') {
-              dispatch({
-                type: 'SET_FORM_ERROR',
-                payload: {
-                  message: formError,
-                },
-              });
-            }
-
-            Object.entries(result).forEach(([fieldName, message]) => {
-              // Ignore errors that don't correspond to a field
-              if (!state.fields[fieldName]) {
-                return;
-              }
-
-              dispatch({
-                type: 'SET_FIELD_SUBMISSION_ERROR',
-                payload: {
-                  fieldName,
-                  message,
-                },
-              });
-            });
-          }
-        }
-
-        dispatch({
-          type: 'SET_FORM_PENDING',
-          payload: {
-            isPending: false,
-          },
-        });
-      }
-    }
-
-    handleSubmit(state);
-  }, [state]);
+    // We only want to trigger this effect when the form has been submited, but need the whole state
+    // to process the form. If we pass the whole state here there is significant input lag in the form.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.form.submitting]);
 
   const onBlur = (fieldName) => {
     dispatch({ type: 'SET_FIELD_BLURRED', payload: { fieldName } });
