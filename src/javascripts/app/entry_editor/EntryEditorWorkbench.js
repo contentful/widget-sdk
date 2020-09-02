@@ -202,7 +202,8 @@ const EntryEditorWorkbench = (props) => {
                   disabled={!tab.isEnabled()}
                   selected={selectedTab === tab.key}
                   className={cx(styles.tab, {
-                    'reference-tab-enabled': tab.isEnabled() && tab.title === 'References',
+                    // the class name is to provide a hook to attach intercom product tours
+                    [`tab-${tab.key}--enabled`]: tab.isEnabled(),
                   })}
                   onSelect={tab.onClick}>
                   <Icon icon={tab.icon} color="muted" className={styles.tabIcon} />
