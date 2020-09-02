@@ -25,11 +25,17 @@ export const useSavedViews = ({ entityType, viewType }) => {
     }
   }, [savedViewsPersistor]);
 
+  const actions = useMemo(() => ({ ...savedViewsPersistor, fetchFolders, setFolders }), [
+    savedViewsPersistor,
+    fetchFolders,
+    setFolders,
+  ]);
+
   useEffect(() => {
     fetchFolders();
   }, [fetchFolders]);
 
-  return [state, { ...savedViewsPersistor, fetchFolders, setFolders }];
+  return [state, actions];
 };
 
 export const savedViewsActionsPropTypes = PropTypes.shape({

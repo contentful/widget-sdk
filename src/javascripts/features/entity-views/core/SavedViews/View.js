@@ -114,92 +114,88 @@ const onAddFolderClick = (createScopedFolder) => async () => {
   }
 };
 
-export const View = ({
-  entityType,
-  viewType,
-  listViewContext,
-  onSelectSavedView,
-  setSelectedView,
-}) => {
-  const [{ isLoading, hasError, folders }, savedViewsActions] = useSavedViews({
-    entityType,
-    viewType,
-  });
+export const View = React.memo(
+  ({ entityType, viewType, listViewContext, onSelectSavedView, setSelectedView }) => {
+    const [{ isLoading, hasError, folders }, savedViewsActions] = useSavedViews({
+      entityType,
+      viewType,
+    });
 
-  if (hasError) {
+    if (hasError) {
+      return (
+        <div data-test-id="view-error" className={cn(styles.stateWrapper, styles.errorWrapper)}>
+          <Note title="Failed to load views" noteType="warning">
+            Please refresh the page.
+          </Note>
+        </div>
+      );
+    }
+
+    if (isLoading) {
+      return (
+        <div data-test-id="view-loading" className={cn(styles.stateWrapper, styles.loadingWrapper)}>
+          Loading <Spinner />
+        </div>
+      );
+    }
+
+    const {
+      resetScopedFolders,
+      createScopedFolder,
+      canEditScopedFolders,
+      fetchFolders,
+    } = savedViewsActions;
+
+    const canEdit = canEditScopedFolders();
+
+    // The default folder is ensured (minimal length is 1):
+    const isEmpty =
+      getAtPath(folders, ['length']) === 1 && getAtPath(folders, [0, 'views', 'length']) === 0;
+
     return (
-      <div data-test-id="view-error" className={cn(styles.stateWrapper, styles.errorWrapper)}>
-        <Note title="Failed to load views" noteType="warning">
-          Please refresh the page.
-        </Note>
-      </div>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <div data-test-id="view-loading" className={cn(styles.stateWrapper, styles.loadingWrapper)}>
-        Loading <Spinner />
-      </div>
-    );
-  }
-
-  const {
-    resetScopedFolders,
-    createScopedFolder,
-    canEditScopedFolders,
-    fetchFolders,
-  } = savedViewsActions;
-
-  const canEdit = canEditScopedFolders();
-
-  // The default folder is ensured (minimal length is 1):
-  const isEmpty =
-    getAtPath(folders, ['length']) === 1 && getAtPath(folders, [0, 'views', 'length']) === 0;
-
-  return (
-    <div data-test-id="view-wrapper" className={styles.wrapper}>
-      <div className={styles.menu}>
-        <div className={styles.folders}>
-          {isEmpty ? (
-            <EmptyState canEdit={canEdit} restoreDefaultViews={resetScopedFolders} />
-          ) : (
-            <SortableTree
-              folders={folders}
-              listViewContext={listViewContext}
-              savedViewsActions={savedViewsActions}
-              onSelectSavedView={onSelectSavedView}
-            />
+      <div data-test-id="view-wrapper" className={styles.wrapper}>
+        <div className={styles.menu}>
+          <div className={styles.folders}>
+            {isEmpty ? (
+              <EmptyState canEdit={canEdit} restoreDefaultViews={resetScopedFolders} />
+            ) : (
+              <SortableTree
+                folders={folders}
+                listViewContext={listViewContext}
+                savedViewsActions={savedViewsActions}
+                onSelectSavedView={onSelectSavedView}
+              />
+            )}
+          </div>
+          {canEdit && (
+            <div className={styles.actions}>
+              <TextLink
+                testId="button-add-folder"
+                onClick={onAddFolderClick(createScopedFolder)}
+                icon="FolderCreate">
+                Add folder
+              </TextLink>
+            </div>
           )}
         </div>
-        {canEdit && (
-          <div className={styles.actions}>
-            <TextLink
-              testId="button-add-folder"
-              onClick={onAddFolderClick(createScopedFolder)}
-              icon="FolderCreate">
-              Add folder
-            </TextLink>
-          </div>
-        )}
+        <Portal id="saved-views-link-portal-entry">
+          <SavedViewsLink
+            entityType={entityType}
+            listViewContext={listViewContext}
+            onViewSaved={(view, newViewType) => {
+              onSelectSavedView(view);
+              if (newViewType !== viewType) {
+                setSelectedView(newViewType);
+              } else {
+                fetchFolders();
+              }
+            }}
+          />
+        </Portal>
       </div>
-      <Portal id="saved-views-link-portal-entry">
-        <SavedViewsLink
-          entityType={entityType}
-          listViewContext={listViewContext}
-          onViewSaved={(view, newViewType) => {
-            onSelectSavedView(view);
-            if (newViewType !== viewType) {
-              setSelectedView(newViewType);
-            } else {
-              fetchFolders();
-            }
-          }}
-        />
-      </Portal>
-    </div>
-  );
-};
+    );
+  }
+);
 
 View.propTypes = {
   entityType: PropTypes.oneOf(['entry', 'asset']).isRequired,

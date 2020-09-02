@@ -1,6 +1,6 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Workbench, Spinner } from '@contentful/forma-36-react-components';
+import { Spinner, Workbench } from '@contentful/forma-36-react-components';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
@@ -14,7 +14,7 @@ import { noop } from 'lodash';
 import { NoSearchResultsAdvice } from 'core/components/NoSearchResultsAdvice';
 import { UpgradeBanner } from './UpgradeBanner';
 import { PluralizeEntityMessage } from './PluralizeEntityMessage';
-import { usePaginator, useSearchController, Search } from 'features/entity-search';
+import { Search, usePaginator, useSearchController } from 'features/entity-search';
 
 const statusStyles = {
   padding: `0 ${tokens.spacingM} ${tokens.spacingS} ${tokens.spacingM}`,
@@ -130,13 +130,15 @@ export const EntitiesView = ({
     showNoEntitiesAdvice,
   };
 
-  const onSelect = (page = 0) => {
-    paginator.setPage(page);
-    updateEntities();
-  };
-
-  const onSelectSavedView = () => onSelect();
-  const onUpdateSearch = () => onSelect();
+  const onSelect = useCallback(
+    (page = 0) => {
+      paginator.setPage(page);
+      updateEntities();
+    },
+    [paginator, updateEntities]
+  );
+  const onSelectSavedView = useCallback(() => onSelect(), [onSelect]);
+  const onUpdateSearch = useCallback(() => onSelect(), [onSelect]);
 
   return (
     <Fragment>

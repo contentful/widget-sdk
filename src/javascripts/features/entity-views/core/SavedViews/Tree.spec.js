@@ -1,14 +1,14 @@
 import React from 'react';
 import { render, wait, fireEvent } from '@testing-library/react';
 
+import { SortableTree as Tree } from './Tree';
 import {
-  SortableTree as Tree,
   deflattenFolders,
   flattenFolders,
   initReorder,
   reorderArray,
   sanitizeFolders,
-} from './Tree';
+} from './helpers';
 
 const listViewContext = {
   getView: jest.fn().mockReturnValue({ id: 'id' }),
