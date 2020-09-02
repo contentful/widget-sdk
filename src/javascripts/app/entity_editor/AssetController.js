@@ -5,7 +5,6 @@ import { user$ } from 'services/TokenStore';
 import * as Validator from './Validator';
 import * as Focus from './Focus';
 import initDocErrorHandler from './DocumentErrorHandler';
-import { makeNotify } from './Notifications';
 import installTracking from './Tracking';
 import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge';
 import { keys } from 'lodash';
@@ -36,12 +35,11 @@ export default async function create($scope, editorData, preferences) {
   const editorContext = ($scope.editorContext = {});
   const entityInfo = (editorContext.entityInfo = editorData.entityInfo);
 
-  const notify = makeNotify('Asset', () => '“' + $scope.title + '”');
-
   $scope.entityInfo = entityInfo;
 
   // TODO rename the scope property
-  $scope.otDoc = editorData.openDoc(K.scopeLifeline($scope));
+  const doc = editorData.openDoc(K.scopeLifeline($scope));
+  $scope.otDoc = doc;
   initDocErrorHandler($scope, $scope.otDoc.state.error$);
 
   installTracking(entityInfo, $scope.otDoc, K.scopeLifeline($scope));
@@ -55,12 +53,11 @@ export default async function create($scope, editorData, preferences) {
 
   initStateController({
     entity: editorData.entity,
-    notify,
+    getTitle: () => $scope.title,
     validator: editorContext.validator,
-    otDoc: $scope.otDoc,
-    bulkEditorContext: $scope.bulkEditorContext,
-    entityInfo: $scope.entityInfo,
-    editorData: $scope.editorData,
+    doc,
+    entityInfo,
+    editorData,
     spaceContext,
     onUpdate: (state) => {
       $scope.state = state;
@@ -116,7 +113,7 @@ export default async function create($scope, editorData, preferences) {
     controls: editorData.fieldControls.form,
   });
 
-  setupNoShareJsCmaFakeRequestsExperiment({ otDoc: $scope.otDoc, spaceContext, entityInfo });
+  setupNoShareJsCmaFakeRequestsExperiment({ doc: $scope.otDoc, spaceContext, entityInfo });
 
   function defaultLocaleIsFocused() {
     if (!$scope.localeData.isSingleLocaleModeOn) {

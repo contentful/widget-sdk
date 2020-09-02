@@ -80,6 +80,7 @@ describe('Entry Editor Controller', function () {
       },
       entityInfo: {
         id: 'testEntryId',
+        type: 'Entry',
         contentType: {
           fields: {},
         },

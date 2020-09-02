@@ -1,25 +1,17 @@
 import * as K from 'core/utils/kefir';
-import { truncate } from 'utils/StringUtils';
-import { constant, keys } from 'lodash';
+import { keys } from 'lodash';
 import mitt from 'mitt';
 import createExtensionBridge from 'widgets/bridges/createExtensionBridge';
 import { user$ } from 'services/TokenStore';
 import * as SlideInNavigator from 'navigation/SlideInNavigator';
-import * as Validator from './Validator';
-import * as Focus from './Focus';
-import initDocErrorHandler from './DocumentErrorHandler';
-import { makeNotify } from './Notifications';
-import installTracking, { trackEntryView } from './Tracking';
+import installTracking from './Tracking';
 import { bootstrapEntryEditorLoadEvents } from 'app/entity_editor/LoadEventTracker';
 import setLocaleData from 'app/entity_editor/setLocaleData';
 import { valuePropertyAt } from 'app/entity_editor/Document';
 
 import { getModule } from 'core/NgRegistry';
 import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge';
-import * as logger from 'services/logger';
 import { getVariation, FLAGS } from 'LaunchDarkly';
-import TheLocaleStore from 'services/localeStore';
-import setupNoShareJsCmaFakeRequestsExperiment from './NoShareJsCmaFakeRequestsExperiment';
 import * as Analytics from 'analytics/Analytics';
 
 import * as Navigator from 'states/Navigator';
@@ -27,10 +19,9 @@ import { trackIsCommentsAlphaEligible } from '../EntrySidebar/CommentsPanel/anal
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes';
 import { getAllForEntry } from 'data/CMA/CommentsRepo';
 import initSidebarTogglesProps from 'app/entity_editor/entityEditorSidebarToggles';
-import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 import { appendDuplicateIndexToEntryTitle, alignSlugWithEntryTitle } from './entityHelpers';
 import { WidgetLocation } from '@contentful/widget-renderer';
-import { initStateController } from './stateController';
+import { getEditorState } from './editorState';
 
 /**
  * @ngdoc type
@@ -69,69 +60,68 @@ export default async function create($scope, editorData, preferences, trackLoadE
   $scope.editorData = editorData;
   $scope.loadEvents = K.createStreamBus($scope);
   $scope.sidebarToggleProps = initSidebarTogglesProps($rootScope, $scope);
+  const { entityInfo } = editorData;
+  $scope.entityInfo = entityInfo;
 
-  const editorContext = ($scope.editorContext = {});
-  const entityInfo = (editorContext.entityInfo = editorData.entityInfo);
+  $scope.getOtDoc = () => $scope.otDoc;
+  $scope.getEditorData = () => editorData;
+  $scope.getSpace = () => spaceContext.getSpace();
+
+  $scope.localeData = {};
+
   const contentType = {
     id: entityInfo.contentTypeId,
     type: spaceContext.publishedCTs.get(entityInfo.contentTypeId),
   };
 
-  const notify = makeNotify('Entry', () => '“' + $scope.title + '”');
+  /* Custom Extension */
 
-  $scope.entityInfo = entityInfo;
+  $scope.customExtensionProps = {
+    extension: editorData.customEditor,
+    // TODO replace with `createExtensionBridgeAdapter()` in component
+    createBridge: (currentWidgetId, currentWidgetNamespace) =>
+      createExtensionBridge({
+        $rootScope,
+        $scope,
+        spaceContext,
+        Navigator,
+        SlideInNavigator,
+        $controller,
+        currentWidgetId,
+        currentWidgetNamespace,
+        location: WidgetLocation.ENTRY_EDITOR,
+      }),
+  };
 
-  /**
-   * @type {EntityDocument}
-   */
-  const doc = editorData.openDoc(K.scopeLifeline($scope));
-
-  // TODO rename the scope property
-  /**
-   * @type {EntityDocument}
-   */
-  $scope.otDoc = doc;
-  bootstrapEntryEditorLoadEvents($scope, $scope.loadEvents, editorData, trackLoadEvent);
-
-  initDocErrorHandler($scope, doc.state.error$);
-
-  installTracking(entityInfo, doc, K.scopeLifeline($scope));
-  try {
-    const slideCount = keys($scope.slideStates).length;
-    trackEntryView({
-      editorData,
-      entityInfo,
-      currentSlideLevel: slideCount,
-      locale: TheLocaleStore.getDefaultLocale().internal_code,
-      editorType: slideCount > 1 ? 'slide_in_editor' : 'entry_editor',
-    });
-  } catch (error) {
-    logger.logError(error);
-  }
-
-  editorContext.validator = Validator.createForEntry(
-    entityInfo.contentType,
-    $scope.otDoc,
-    spaceContext.publishedCTs,
-    TheLocaleStore.getPrivateLocales()
-  );
-
-  $scope.getSpace = () => spaceContext.getSpace();
-
-  initStateController({
-    entity: editorData.entity,
-    notify,
-    validator: editorContext.validator,
-    otDoc: $scope.otDoc,
-    bulkEditorContext: $scope.bulkEditorContext,
-    entityInfo: $scope.entityInfo,
-    editorData: $scope.editorData,
+  const currentSlideLevel = Object.keys($scope.slideStates || {}).length;
+  const editorState = getEditorState({
+    editorData,
+    editorType: currentSlideLevel > 1 ? 'slide_in_editor' : 'entry_editor',
     spaceContext,
-    onUpdate: (state) => {
+    getTitle: () => $scope.title,
+    onStateUpdate: (state) => {
       $scope.state = state;
       $scope.$applyAsync();
     },
+    onTitleUpdate: ({ title, truncatedTitle }) => {
+      $scope.context.title = title;
+      $scope.title = truncatedTitle;
+    },
+    currentSlideLevel,
+    hasInitialFocus: preferences.hasInitialFocus,
   });
+
+  const { doc, editorContext } = editorState;
+
+  $scope.editorContext = editorContext;
+  $scope.otDoc = doc;
+
+  /**
+   * @type {EntityDocument}
+   */
+  bootstrapEntryEditorLoadEvents($scope, $scope.loadEvents, editorData, trackLoadEvent);
+
+  installTracking(entityInfo, doc, K.scopeLifeline($scope));
 
   $scope.entryActions = {
     onAdd: () => {
@@ -205,23 +195,9 @@ export default async function create($scope, editorData, preferences, trackLoadE
     },
   };
 
-  editorContext.focus = Focus.create();
-
-  // TODO Move this into a separate function
-  K.onValueScope($scope, valuePropertyAt(doc, []), (data) => {
-    const title = EntityFieldValueSpaceContext.entryTitle({
-      getContentTypeId: constant(entityInfo.contentTypeId),
-      data,
-    });
-    $scope.context.title = title;
-    $scope.title = truncate(title, 50);
-  });
-
   $scope.user = K.getValue(user$);
 
-  editorContext.hasInitialFocus = preferences.hasInitialFocus;
-
-  K.onValueScope($scope, $scope.otDoc.state.isDirty$, (isDirty) => {
+  K.onValueScope($scope, doc.state.isDirty$, (isDirty) => {
     $scope.context.dirty = isDirty;
   });
 
@@ -240,6 +216,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
     emitter: $scope.emitter,
   });
 
+  // TODO replace with `filterWidgets()` in component
   $controller('FormWidgetsController', {
     $scope,
     controls: editorData.fieldControls.form,
@@ -265,29 +242,6 @@ export default async function create($scope, editorData, preferences, trackLoadE
       initComments($scope, spaceContext.endpoint, entityInfo.id);
     }
   });
-
-  setupNoShareJsCmaFakeRequestsExperiment({ otDoc: $scope.otDoc, spaceContext, entityInfo });
-
-  /* Custom Extension */
-
-  $scope.customExtensionProps = {
-    extension: editorData.customEditor,
-    createBridge: (currentWidgetId, currentWidgetNamespace) =>
-      createExtensionBridge({
-        $rootScope,
-        $scope,
-        spaceContext,
-        Navigator,
-        SlideInNavigator,
-        $controller,
-        currentWidgetId,
-        currentWidgetNamespace,
-        location: WidgetLocation.ENTRY_EDITOR,
-      }),
-  };
-
-  $scope.getOtDoc = () => $scope.otDoc;
-  $scope.getEditorData = () => $scope.editorData;
 }
 
 function initComments($scope, endpoint, entityId) {

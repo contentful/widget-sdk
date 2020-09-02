@@ -16,7 +16,7 @@ const PATH = {
  * @param {Object} spaceContext
  * @param {Object} entityInfo Expects an `id` and `type`.
  */
-export default async function create({ otDoc, spaceContext, entityInfo }) {
+export default async function create({ doc, spaceContext, entityInfo }) {
   const variation = await getVariation(FLAGS.ENTITY_EDITOR_CMA_EXPERIMENT, {
     organizationId: spaceContext.getData('organization.sys.id'),
     spaceId: spaceContext.space.getId(),
@@ -37,7 +37,7 @@ export default async function create({ otDoc, spaceContext, entityInfo }) {
       },
     });
 
-    const throttledRelevantChanges$ = localFieldChanges(otDoc).throttle(throttleMs, {
+    const throttledRelevantChanges$ = localFieldChanges(doc).throttle(throttleMs, {
       leading: false,
     });
 

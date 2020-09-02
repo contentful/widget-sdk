@@ -155,6 +155,8 @@ const EntryEditorWorkbench = (props) => {
 
   const referencesTab = selectedTab.includes(EntryEditorWidgetTypes.REFERENCE_TREE.id);
 
+  if (!editorContext) return null;
+
   return (
     <div className="entry-editor">
       <Workbench>

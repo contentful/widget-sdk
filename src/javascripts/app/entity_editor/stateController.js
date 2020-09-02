@@ -3,7 +3,7 @@ import _ from 'lodash';
 import * as K from 'core/utils/kefir';
 import { caseofEq as caseof, otherwise } from 'sum-types';
 import { State, Action, stateName } from 'data/CMA/EntityState';
-import { Notification } from 'app/entity_editor/Notifications';
+import { Notification, makeNotify } from 'app/entity_editor/Notifications';
 
 import * as trackVersioning from 'analytics/events/versioning';
 import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
@@ -25,13 +25,14 @@ export const initStateController = ({
   bulkEditorContext,
   entityInfo,
   editorData,
-  notify,
-  otDoc,
+  getTitle,
+  doc,
   validator,
   spaceContext,
   onUpdate,
 }) => {
-  const { permissions, reverter, resourceState: docStateManager } = otDoc;
+  const { permissions, reverter, resourceState: docStateManager } = doc;
+  const notify = makeNotify(entityInfo.type, () => `“${getTitle()}”`);
 
   const controller = {
     inProgress: false,
@@ -75,7 +76,7 @@ export const initStateController = ({
     },
     {
       available: function () {
-        const canEdit = K.getValue(otDoc.state.canEdit$);
+        const canEdit = K.getValue(doc.state.canEdit$);
         return canEdit && reverter.hasChanges();
       },
     }
@@ -232,7 +233,7 @@ export const initStateController = ({
   async function publishEntity() {
     try {
       await showUnpublishedReferencesWarning({
-        entity: K.getValue(otDoc.data$),
+        entity: K.getValue(doc.data$),
         spaceId: spaceContext.getId(),
         environmentId: spaceContext.getEnvironmentId(),
       });

@@ -8,20 +8,8 @@ import CustomEditorExtensionRenderer from 'app/entry_editor/CustomEditorExtensio
 import _ from 'lodash';
 import * as K from 'core/utils/kefir';
 import * as Navigator from 'states/Navigator';
-import { makeNotify } from 'app/entity_editor/Notifications';
-import { truncate } from 'utils/StringUtils';
-import * as Focus from 'app/entity_editor/Focus';
 import * as logger from 'services/logger';
-import localeStore from 'services/localeStore';
-import { trackEntryView } from 'app/entity_editor/Tracking';
-import { localFieldChanges, valuePropertyAt } from 'app/entity_editor/Document';
-
-import setupNoShareJsCmaFakeRequestsExperiment from 'app/entity_editor/NoShareJsCmaFakeRequestsExperiment';
-import { initDocErrorHandlerWithoutScope } from 'app/entity_editor/DocumentErrorHandler';
-import * as Validator from 'app/entity_editor/Validator';
-import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
-
-import { initStateController } from '../stateController';
+import { localFieldChanges } from 'app/entity_editor/Document';
 import { getModule } from 'core/NgRegistry';
 import { filterWidgets } from 'app/entry_editor/formWidgetsController';
 import { createExtensionBridgeAdapter } from 'widgets/bridges/createExtensionBridgeAdapter';
@@ -30,6 +18,7 @@ import { css } from 'emotion';
 import { Workbench } from '@contentful/forma-36-react-components';
 import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { makeFieldLocaleListeners } from 'app/entry_editor/makeFieldLocaleListeners';
+import { getEditorState } from '../editorState';
 
 const styles = {
   workbench: css({
@@ -43,43 +32,6 @@ const styles = {
     justifyContent: 'center',
     position: 'relative',
   }),
-};
-
-const fetchEditorState = async (
-  bulkEditorContext,
-  entityContext,
-  spaceContext,
-  hasInitialFocus
-) => {
-  const editorData = await bulkEditorContext.loadEditorData(entityContext.id);
-
-  if (editorData) {
-    const otDoc = editorData.openDoc(K.createBus().stream);
-    // We wait for the document to be opened until we setup the editor
-    await new Promise((resolve) => {
-      otDoc.state.loaded$.onValue((loaded) => loaded && resolve());
-    });
-
-    const { entityInfo } = editorData;
-
-    const validator = Validator.createForEntry(
-      entityInfo.contentType,
-      otDoc,
-      spaceContext.publishedCTs,
-      localeStore.getPrivateLocales()
-    );
-
-    return {
-      editorData,
-      otDoc,
-      editorContext: {
-        entityInfo,
-        validator,
-        focus: Focus.create(),
-        hasInitialFocus: bulkEditorContext.editorSettings.hasInitialFocus || hasInitialFocus,
-      },
-    };
-  }
 };
 
 export const BulkEntityEditor = ({
@@ -124,62 +76,34 @@ export const BulkEntityEditor = ({
   useEffect(() => {
     const init = async () => {
       try {
-        const editorState = await fetchEditorState(
-          bulkEditorContext,
-          entityContext,
+        const editorData = await bulkEditorContext.loadEditorData(entityContext.id);
+
+        const editorState = getEditorState({
+          editorData,
+          editorType: 'bulk_editor',
           spaceContext,
-          hasInitialFocus
-        );
+          bulkEditorContext,
+          hasInitialFocus: bulkEditorContext.editorSettings.hasInitialFocus || hasInitialFocus,
+          getTitle: () => title,
+          onTitleUpdate: ({ truncatedTitle }) => setTitle(truncatedTitle),
+          onStateUpdate: (state) => setEditorStatus({ ...state }), // force state update
+        });
+
         if (editorState) {
-          const { editorData, editorContext, otDoc } = editorState;
-          const { entityInfo, entity } = editorData;
-          const { validator } = editorContext;
+          const { doc } = editorState;
+          const {
+            entityInfo: { id },
+          } = editorData;
 
-          initDocErrorHandlerWithoutScope(otDoc.state.error$);
-
-          initStateController({
-            bulkEditorContext,
-            editorData,
-            entity,
-            entityInfo,
-            notify: makeNotify('Entry', () => `“${title}”`),
-            onUpdate: (state) => setEditorStatus({ ...state }), // force state update
-            otDoc,
-            spaceContext,
-            validator,
+          K.onValue(doc.resourceState.stateChange$, (data) => {
+            track.changeStatus(id, data.to);
           });
 
-          K.onValue(otDoc.resourceState.stateChange$, (data) => {
-            track.changeStatus(entityInfo.id, data.to);
-          });
-
-          K.onValue(localFieldChanges(otDoc), () => {
-            track.edited(entityInfo.id);
-          });
-
-          K.onValue(valuePropertyAt(otDoc, []), (data) => {
-            const title = EntityFieldValueSpaceContext.entryTitle({
-              getContentTypeId: _.constant(entityInfo.contentTypeId),
-              data,
-            });
-            setTitle(truncate(title, 50));
-          });
-
-          setupNoShareJsCmaFakeRequestsExperiment({
-            spaceContext,
-            otDoc,
-            entityInfo,
+          K.onValue(localFieldChanges(doc), () => {
+            track.edited(id);
           });
 
           setEditorState(editorState);
-
-          trackEntryView({
-            editorData,
-            entityInfo,
-            currentSlideLevel: 0,
-            locale: localeStore.getDefaultLocale().internal_code,
-            editorType: 'bulk_editor',
-          });
         }
       } catch (error) {
         logger.logError(error);
@@ -203,7 +127,7 @@ export const BulkEntityEditor = ({
     return null;
   }
 
-  const { editorData, editorContext, otDoc } = editorState;
+  const { editorData, editorContext, doc } = editorState;
   const { entityInfo, fieldControls, customEditor } = editorData;
 
   const trackAction = track.actions(entityContext.id);
@@ -237,10 +161,10 @@ export const BulkEntityEditor = ({
     editorData,
     entityInfo,
     localeData,
-    otDoc,
     makeFieldLocaleListeners: (currentScope) => {
       return makeFieldLocaleListeners(widgets, currentScope, getModule('$controller'));
     },
+    otDoc: doc,
   };
 
   return (

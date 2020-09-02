@@ -4,10 +4,10 @@ import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
 import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { showUnpublishedReferencesWarning } from 'app/entity_editor/UnpublishedReferencesWarning';
 import * as Analytics from 'analytics/Analytics';
-import { Notification } from 'app/entity_editor/Notifications';
 import { createEditorContextMock } from '../../../../test/utils/createEditorContextMock';
 import { createDocumentMock } from '../../../../test/utils/createDocumentMock';
 import { waitFor } from '@testing-library/dom';
+import { makeNotify, Notification as MockedNotification } from 'app/entity_editor/Notifications';
 
 jest.mock('navigation/SlideInNavigator', () => ({ goToPreviousSlideOrExit: jest.fn() }));
 jest.mock('app/entity_editor/UnpublishedReferencesWarning', () => ({
@@ -19,6 +19,15 @@ jest.mock('access_control/AccessChecker', () => ({
   canPerformActionOnEntity: jest.fn().mockReturnValue(true),
 }));
 jest.mock('services/PubSubService', () => ({}));
+jest.mock('app/entity_editor/Notifications', () => ({
+  Notification: {},
+  makeNotify: jest.fn(),
+}));
+
+const { Notification } = jest.requireActual('app/entity_editor/Notifications');
+MockedNotification.Success = Notification.Success;
+MockedNotification.Error = Notification.Error;
+MockedNotification.ValidationError = Notification.ValidationError;
 
 describe('stateController', () => {
   const spaceContext = {};
@@ -28,7 +37,7 @@ describe('stateController', () => {
   let editorData;
   let notify;
   let entity;
-  let otDoc;
+  let doc;
   let spaceEndpoint;
   let validator;
   let bulkEditorContext;
@@ -46,6 +55,8 @@ describe('stateController', () => {
     editorData = { widgetTrackingContexts: [] };
 
     notify = jest.fn();
+    makeNotify.mockReturnValue(notify);
+
     validator = editorContext.validator;
     validator.run = jest.fn().mockReturnValue(true);
 
@@ -59,8 +70,8 @@ describe('stateController', () => {
       },
     };
 
-    otDoc = createDocument(entity, spaceEndpoint);
-    spaceEndpoint.mockResolvedValue(otDoc.getData());
+    doc = createDocument(entity, spaceEndpoint);
+    spaceEndpoint.mockResolvedValue(doc.getData());
   });
 
   const init = async (onUpdateCount = 2) => {
@@ -70,8 +81,8 @@ describe('stateController', () => {
       bulkEditorContext,
       editorData,
       entityInfo,
-      notify,
-      otDoc,
+      doc,
+      getTitle: () => 'title',
       spaceContext,
       validator,
       onUpdate: (state) => {
@@ -161,7 +172,7 @@ describe('stateController', () => {
 
   describe('in published state without changes', () => {
     beforeEach(async () => {
-      otDoc.setValueAt(['sys'], {
+      doc.setValueAt(['sys'], {
         id: 'EID',
         type: 'Entry',
         version: 42,
@@ -385,41 +396,41 @@ describe('stateController', () => {
 
   describe('#revertToPrevious command', () => {
     it('is available if document has changes and the document is editable', async () => {
-      otDoc.reverter.hasChanges.returns(true);
-      otDoc.state.canEdit$.set(true);
+      doc.reverter.hasChanges.returns(true);
+      doc.state.canEdit$.set(true);
       const controller = await init();
       expect(controller.revertToPrevious.isAvailable()).toBe(true);
 
-      otDoc.reverter.hasChanges.returns(true);
-      otDoc.state.canEdit$.set(false);
+      doc.reverter.hasChanges.returns(true);
+      doc.state.canEdit$.set(false);
       expect(controller.revertToPrevious.isAvailable()).toBe(false);
 
-      otDoc.reverter.hasChanges.returns(false);
-      otDoc.state.canEdit$.set(true);
+      doc.reverter.hasChanges.returns(false);
+      doc.state.canEdit$.set(true);
       expect(controller.revertToPrevious.isAvailable()).toBe(false);
     });
 
     it('calls notification for successful execution', async () => {
-      otDoc.reverter.revert = jest.fn().mockResolvedValue();
+      doc.reverter.revert = jest.fn().mockResolvedValue();
 
       ModalLauncher.open.mockResolvedValue({ action: 'revert' });
 
       const controller = await init();
       await controller.revertToPrevious.execute();
 
-      expect(otDoc.reverter.revert).toHaveBeenCalledTimes(1);
+      expect(doc.reverter.revert).toHaveBeenCalledTimes(1);
       assertSuccessNotification('revert');
     });
 
     it('calls notification for failed execution', async () => {
-      otDoc.reverter.revert = jest.fn().mockRejectedValue('ERROR');
+      doc.reverter.revert = jest.fn().mockRejectedValue('ERROR');
 
       ModalLauncher.open.mockResolvedValue({ action: 'revert' });
 
       const controller = await init();
       await controller.revertToPrevious.execute();
 
-      expect(otDoc.reverter.revert).toHaveBeenCalledTimes(1);
+      expect(doc.reverter.revert).toHaveBeenCalledTimes(1);
       assertErrorNotification('revert', 'ERROR');
     });
   });
