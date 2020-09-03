@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
 
 import { Heading } from '@contentful/forma-36-react-components';
-import { css } from 'emotion';
 import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
+
 import { OrderSummary } from './OrderSummary';
 import { BillingDetailsForm } from './BillingDetailsForm';
 
@@ -13,9 +14,8 @@ const styles = {
     alignItems: 'start',
   }),
   sectionHeading: css({
+    marginBottom: tokens.spacingXl,
     fontWeight: tokens.fontWeightMedium,
-    fontSize: tokens.fontSize2Xl,
-    marginBottom: tokens.spacingL,
   }),
 };
 

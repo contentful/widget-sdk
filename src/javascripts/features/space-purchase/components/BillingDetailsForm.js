@@ -8,6 +8,7 @@ import {
   SelectField,
   Button,
   Card,
+  Typography,
   Subheading,
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
@@ -31,18 +32,17 @@ const DEFAULT_BILLING_DETAILS = {
 
 const styles = {
   form: css({
-    marginTop: tokens.spacingM,
     '& div:last-child': {
       marginBottom: 0,
     },
+  }),
+  cardTitle: css({
+    marginBottom: tokens.spacingL,
   }),
   buttonsContainer: css({
     display: 'flex',
     justifyContent: 'space-between',
     marginTop: tokens.spacingL,
-  }),
-  card: css({
-    padding: tokens.spacingL,
   }),
   twoItemRow: css({
     display: 'flex',
@@ -145,12 +145,14 @@ export const BillingDetailsForm = ({
   const handleBlur = (e) => onBlur(e.target.getAttribute('name'), e.target.value);
 
   return (
-    <Card testId="billing-details.card" className={styles.card}>
-      <Subheading element="h3" testId="billing-details.heading">
-        {isAddingBillingDetails ? 'Add Billing Details' : 'Update Billing Details'} 📫
-      </Subheading>
+    <Card testId="billing-details.card">
+      <Typography>
+        <Subheading className={styles.cardTitle} element="h3" testId="billing-details.heading">
+          {isAddingBillingDetails ? 'Add Billing Details' : 'Update Billing Details'} 📫
+        </Subheading>
+      </Typography>
 
-      <Form className={styles.form} onSubmit={onSubmit}>
+      <Form className={styles.form} spacing="condensed" onSubmit={onSubmit}>
         <div className={styles.twoItemRow}>
           <TextField
             className={styles.fieldSpacing}
@@ -158,6 +160,9 @@ export const BillingDetailsForm = ({
             id="first_name"
             testId="billing-details.firstName"
             labelText="First Name"
+            textInputProps={{
+              placeholder: 'Archibald',
+            }}
             required
             autoFocus
             value={fields.firstName.value}
@@ -171,6 +176,9 @@ export const BillingDetailsForm = ({
             id="last_name"
             testId="billing-details.lastName"
             labelText="Last Name"
+            textInputProps={{
+              placeholder: 'Johannson',
+            }}
             required
             autoFocus
             value={fields.lastName.value}
@@ -185,6 +193,9 @@ export const BillingDetailsForm = ({
           id="email"
           testId="billing-details.email"
           labelText="Email"
+          textInputProps={{
+            placeholder: 'archibald.johannson@email.com',
+          }}
           required
           autoFocus
           value={fields.email.value}
@@ -198,6 +209,9 @@ export const BillingDetailsForm = ({
           id="address"
           testId="billing-details.address"
           labelText="Address"
+          textInputProps={{
+            placeholder: '19th Avenue North',
+          }}
           required
           autoFocus
           value={fields.address.value}
@@ -225,6 +239,9 @@ export const BillingDetailsForm = ({
             id="city"
             testId="billing-details.city"
             labelText="City"
+            textInputProps={{
+              placeholder: 'Fargo',
+            }}
             required
             autoFocus
             value={fields.city.value}
@@ -237,6 +254,9 @@ export const BillingDetailsForm = ({
             id="postalCode"
             testId="billing-details.postalCode"
             labelText="Postal Code"
+            textInputProps={{
+              placeholder: '58102',
+            }}
             required
             autoFocus
             value={fields.postalCode.value}
@@ -270,6 +290,9 @@ export const BillingDetailsForm = ({
             id="vatNumber"
             testId="billing-details.vatNumber"
             labelText="VAT Number"
+            textInputProps={{
+              placeholder: 'XX123456789',
+            }}
             autoFocus
             value={fields.vatNumber.value}
             validationMessage={fields.vatNumber.error}

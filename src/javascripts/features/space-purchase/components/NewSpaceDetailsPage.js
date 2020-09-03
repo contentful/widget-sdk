@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
 
 import {
   Button,
@@ -11,23 +12,29 @@ import {
   Form,
 } from '@contentful/forma-36-react-components';
 import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
-import { css } from 'emotion';
-import cn from 'classnames';
 import tokens from '@contentful/forma-36-tokens';
+
 import TemplateSelector from 'app/SpaceWizards/shared/TemplateSelector';
 
 const styles = {
+  form: css({
+    '& > div:last-child': {
+      marginBottom: 0,
+    },
+  }),
+  card: css({
+    maxWidth: '700px',
+  }),
+  cardTitle: css({
+    marginBottom: tokens.spacingL,
+  }),
   buttonsContainer: css({
     display: 'flex',
     justifyContent: 'space-between',
   }),
-  card: css({
-    padding: tokens.spacingL,
-  }),
   sectionHeading: css({
+    marginBottom: tokens.spacingM,
     fontWeight: tokens.fontWeightMedium,
-    gridColumnStart: 1,
-    gridColumnEnd: 3,
   }),
 };
 
@@ -42,7 +49,7 @@ export const NewSpaceDetailsPage = ({
 }) => {
   return (
     <section aria-labelledby="new-space-details-section" data-test-id="new-space-details-section">
-      <Grid columns="700px auto" rows="repeat(2, 'auto')" columnGap="spacingL" rowGap="spacingM">
+      <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
         <Heading
           id="new-space-details-section-heading"
           element="h2"
@@ -51,49 +58,48 @@ export const NewSpaceDetailsPage = ({
           Set up your new space
         </Heading>
 
-        <Card testId="space-card" className={cn(styles.fullRow, styles.card)}>
+        <Card testId="space-card" className={styles.card}>
           <Typography>
-            <Subheading element="h3" testId="space-heading">
+            <Subheading className={styles.cardTitle} element="h3" testId="space-heading">
               Enter your space details ✏️
             </Subheading>
-
-            <Form onSubmit={onSubmit}>
-              <TextField
-                labelText="space name"
-                placeholder="Name your space"
-                name="space-name"
-                id="space-name"
-                testId="space-name"
-                autoFocus
-                value={spaceName}
-                countCharacters
-                textInputProps={{
-                  type: 'text',
-                  maxLength: 30,
-                }}
-                onChange={(e) => onChangeSpaceName(e.target.value)}
-              />
-
-              <TemplateSelector
-                isNewSpacePurchaseFlow={true}
-                onSelect={onChangeSelectedTemplate}
-                templates={templatesList}
-                selectedTemplate={selectedTemplate}
-              />
-
-              <div className={styles.buttonsContainer}>
-                <Button onClick={navigateToPreviousStep} testId="navigate-back" buttonType="naked">
-                  Back
-                </Button>
-                <Button
-                  onClick={onSubmit}
-                  disabled={spaceName === ''}
-                  testId="next-step-new-details-page">
-                  Continue to pay
-                </Button>
-              </div>
-            </Form>
           </Typography>
+          <Form className={styles.form} spacing="condensed" onSubmit={onSubmit}>
+            <TextField
+              labelText="Name your space"
+              name="space-name"
+              id="space-name"
+              testId="space-name"
+              autoFocus
+              value={spaceName}
+              countCharacters
+              textInputProps={{
+                type: 'text',
+                placeholder: 'My space',
+                maxLength: 30,
+              }}
+              onChange={(e) => onChangeSpaceName(e.target.value)}
+            />
+
+            <TemplateSelector
+              isNewSpacePurchaseFlow={true}
+              onSelect={onChangeSelectedTemplate}
+              templates={templatesList}
+              selectedTemplate={selectedTemplate}
+            />
+
+            <div className={styles.buttonsContainer}>
+              <Button onClick={navigateToPreviousStep} testId="navigate-back" buttonType="naked">
+                Back
+              </Button>
+              <Button
+                onClick={onSubmit}
+                disabled={spaceName === ''}
+                testId="next-step-new-details-page">
+                Continue to pay
+              </Button>
+            </div>
+          </Form>
         </Card>
       </Grid>
     </section>

@@ -19,7 +19,7 @@ const styles = {
   }),
   sectionHeading: css({
     marginBottom: tokens.spacingM,
-    fontWeight: '600',
+    fontWeight: tokens.fontWeightMedium,
   }),
   normalWeight: css({
     fontWeight: tokens.fontWeightNormal,
@@ -29,7 +29,7 @@ const styles = {
     flexDirection: 'column',
     '& a': { margin: `${tokens.spacingM} auto 0` },
   }),
-  card: css({
+  communityCard: css({
     position: 'relative',
     padding: `${tokens.spacingXl} ${tokens.spacingL}`,
     overflow: 'hidden',
@@ -86,7 +86,7 @@ export const SpaceSelection = ({ organizationId, selectPlan }) => {
         ))}
 
         <div className={cn(styles.fullRow, styles.communitySection)}>
-          <Card className={styles.card} testId="space-selection.community-card">
+          <Card className={styles.communityCard} testId="space-selection.community-card">
             <Heading element="h3" className={styles.normalWeight}>
               Community
             </Heading>

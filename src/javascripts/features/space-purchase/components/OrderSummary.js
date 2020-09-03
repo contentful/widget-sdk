@@ -16,8 +16,13 @@ import tokens from '@contentful/forma-36-tokens';
 const BORDER = `1px solid ${tokens.colorElementMid}`;
 
 const styles = {
-  card: css({
-    padding: tokens.spacingL,
+  text: css({
+    '& > p:last-child': {
+      marginBottom: 0,
+    },
+  }),
+  cardTitle: css({
+    marginBottom: tokens.spacingL,
   }),
   list: css({
     borderBottom: BORDER,
@@ -35,9 +40,9 @@ const styles = {
 
 export const OrderSummary = ({ selectedPlan }) => {
   return (
-    <Card testId="order-summary.card" className={styles.card}>
-      <Typography>
-        <Subheading element="h3" testId="space-heading">
+    <Card testId="order-summary.card">
+      <Typography className={styles.text}>
+        <Subheading className={styles.cardTitle} element="h3" testId="space-heading">
           Order Summary
         </Subheading>
         <Paragraph>

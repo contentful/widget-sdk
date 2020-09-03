@@ -113,7 +113,7 @@ export const NewSpacePage = ({ organizationId, templatesList, productRatePlans }
     switch (currentStep) {
       case SPACE_DETAILS:
         return (
-          <Grid columns={1} rows="repeat(2, 'auto')" columnGap="none" rowGap="spacingM">
+          <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS} />
             <NewSpaceDetailsPage
               navigateToPreviousStep={navigateToPreviousStep}
@@ -128,7 +128,7 @@ export const NewSpacePage = ({ organizationId, templatesList, productRatePlans }
         );
       case BILLING_DETAILS:
         return (
-          <Grid columns={1} rows="repeat(2, 'auto')" columnGap="none" rowGap="spacingM">
+          <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS_PAYMENT} />
             <NewSpaceBillingDetailsPage
               navigateToPreviousStep={navigateToPreviousStep}
@@ -140,7 +140,7 @@ export const NewSpacePage = ({ organizationId, templatesList, productRatePlans }
         );
       case CARD_DETAILS:
         return (
-          <Grid columns={1} rows="repeat(2, 'auto')" columnGap="none" rowGap="spacingM">
+          <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS_PAYMENT} />
             <NewSpaceCardDetailsPage
               navigateToPreviousStep={navigateToPreviousStep}
@@ -151,7 +151,7 @@ export const NewSpacePage = ({ organizationId, templatesList, productRatePlans }
       default:
         // Return step 1: SPACE_SELECTION
         return (
-          <Grid columns={1} rows="repeat(3, 'auto')" columnGap="none" rowGap="spacingM">
+          <Grid columns={1} rows="repeat(3, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS} />
             <SpaceSelection organizationId={organizationId} selectPlan={selectPlan} />
             <NewSpaceFAQ />
