@@ -1,12 +1,20 @@
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 
-export function getHostedPaymentParams(organizationId) {
+export function getHostedPaymentParams(organizationId, countryCode) {
   const endpoint = createOrganizationEndpoint(organizationId);
 
-  return endpoint({
+  const requestData = {
     method: 'GET',
     path: ['hosted_payment_params'],
-  });
+  };
+
+  if (countryCode) {
+    requestData.query = {
+      country_code: countryCode,
+    };
+  }
+
+  return endpoint(requestData);
 }
 
 export function setDefaultPaymentMethod(organizationId, paymentMethodRefId) {

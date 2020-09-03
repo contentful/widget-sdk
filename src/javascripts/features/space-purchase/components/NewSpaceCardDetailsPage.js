@@ -25,6 +25,7 @@ const styles = {
 
 export const NewSpaceCardDetailsPage = ({
   organizationId,
+  billingCountryCode,
   navigateToPreviousStep,
   selectedPlan,
   onSuccess,
@@ -45,6 +46,7 @@ export const NewSpaceCardDetailsPage = ({
           <Subheading element="h3">Add your credit card 💳</Subheading>
           <ZuoraCreditCardIframe
             organizationId={organizationId}
+            countryCode={billingCountryCode}
             onSuccess={({ refId }) => {
               onSuccess(refId);
             }}
@@ -61,6 +63,7 @@ export const NewSpaceCardDetailsPage = ({
 
 NewSpaceCardDetailsPage.propTypes = {
   organizationId: PropTypes.string.isRequired,
+  billingCountryCode: PropTypes.string.isRequired,
   navigateToPreviousStep: PropTypes.func.isRequired,
   onSuccess: PropTypes.func.isRequired,
   selectedPlan: PropTypes.object,

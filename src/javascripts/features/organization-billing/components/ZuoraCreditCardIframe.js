@@ -29,10 +29,10 @@ const styles = {
   }),
 };
 
-const fetch = (organizationId) => async () => {
+const fetch = (organizationId, countryCode) => async () => {
   const [Zuora, hostedPaymentParams] = await Promise.all([
     LazyLoader.get('Zuora'),
-    getHostedPaymentParams(organizationId),
+    getHostedPaymentParams(organizationId, countryCode),
   ]);
 
   return {
@@ -41,10 +41,10 @@ const fetch = (organizationId) => async () => {
   };
 };
 
-export function ZuoraCreditCardIframe({ organizationId, onSuccess, onError }) {
+export function ZuoraCreditCardIframe({ organizationId, countryCode, onSuccess, onError }) {
   const [loading, setLoading] = useState(true);
 
-  const { data } = useAsync(useCallback(fetch(organizationId), []));
+  const { data } = useAsync(useCallback(fetch(organizationId, countryCode), []));
 
   useEffect(() => {
     if (!data) {
@@ -82,6 +82,7 @@ export function ZuoraCreditCardIframe({ organizationId, onSuccess, onError }) {
 
 ZuoraCreditCardIframe.propTypes = {
   organizationId: PropTypes.string.isRequired,
+  countryCode: PropTypes.string,
   onSuccess: PropTypes.func.isRequired,
   onError: PropTypes.func,
 };

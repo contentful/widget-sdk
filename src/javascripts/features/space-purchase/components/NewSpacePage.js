@@ -145,6 +145,7 @@ export const NewSpacePage = ({ organizationId, templatesList, productRatePlans }
             <NewSpaceCardDetailsPage
               organizationId={organizationId}
               navigateToPreviousStep={navigateToPreviousStep}
+              billingCountryCode={billingDetails.country}
               onSuccess={onSubmitPaymentMethod}
               selectedPlan={selectedPlan}
             />
