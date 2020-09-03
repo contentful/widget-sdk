@@ -75,7 +75,6 @@ export async function openFieldDialog($scope, field, widget) {
       field.id === updatedField.id ? updatedField : field
     );
     $scope.contentType.data.fields = updatedCTfields;
-    $scope.$applyAsync();
 
     // update widget on scope with data from React component
     extend(widget, {
@@ -84,6 +83,9 @@ export async function openFieldDialog($scope, field, widget) {
       settings: widgetSettings.params,
       fieldId: field.apiName,
     });
+
+    $scope.context.dirty = true;
+    $scope.$applyAsync();
   };
 
   return openFieldModalDialog(
