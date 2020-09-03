@@ -5,7 +5,6 @@ describe('data/document/Normalize#normalize', () => {
   let snapshot;
   let otDoc;
   let locales;
-  let contentType;
   let runNormalize;
 
   beforeEach(() => {
@@ -17,7 +16,7 @@ describe('data/document/Normalize#normalize', () => {
     };
     snapshot = {};
     locales = [];
-    runNormalize = () => normalize(otDoc, snapshot, contentType, locales);
+    runNormalize = (contentType = {}) => normalize(otDoc, snapshot, contentType, locales);
   });
 
   it('removes unknown locales', () => {
@@ -44,12 +43,12 @@ describe('data/document/Normalize#normalize', () => {
       deleted: {},
     };
     snapshot.fields = fields;
-    contentType = {
+    const contentType = {
       data: {
         fields: [{ id: 'A' }, { id: 'B' }],
       },
     };
-    runNormalize();
+    runNormalize(contentType);
     expect(fields).toEqual({
       A: { en: true },
       B: { en: true },
@@ -64,16 +63,22 @@ describe('data/document/Normalize#normalize', () => {
 
   it('removes empty fields', () => {
     locales = [{ internal_code: 'en' }, { internal_code: 'de' }];
+    const link = { sys: { type: 'Link', linkType: 'Entry', id: 'id' } };
     const fields = {
       A: { en: true, de: undefined },
       B: {},
       C: { fr: true },
       D: { en: undefined },
+      E: { en: [], de: [] },
+      F: { en: [link], de: [] },
+      G: { en: null }, // CMA keeps null for fields except multi-ref.
     };
     snapshot.fields = fields;
     runNormalize();
     expect(fields).toEqual({
       A: { en: true },
+      F: { en: [link] },
+      G: { en: null },
     });
   });
 });

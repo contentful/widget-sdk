@@ -88,7 +88,10 @@ function removeDeletedFields(snapshot, ctFields) {
 function removeEmptyFields(snapshot) {
   forEach(snapshot.fields, (value, fieldId) => {
     keys(value).forEach((locale) => {
-      if (value[locale] === undefined) {
+      if (
+        value[locale] === undefined ||
+        (value[locale] instanceof Array && !value[locale].length)
+      ) {
         delete snapshot.fields[fieldId][locale];
       }
     });
