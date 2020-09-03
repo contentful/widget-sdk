@@ -39,6 +39,7 @@ export const NewSpacePage = ({ organizationId, templatesList, productRatePlans }
   // eslint-disable-next-line no-unused-vars
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [billingDetails, setBillingDetails] = useState({});
+  const [_paymentMethodRefId, setPaymentMethodRefId] = useState(null);
 
   const onChangeSelectedTemplate = (changedTemplate) => {
     setSelectedTemplate(changedTemplate);
@@ -104,6 +105,10 @@ export const NewSpacePage = ({ organizationId, templatesList, productRatePlans }
     navigateToNextStep();
   };
 
+  const onSubmitPaymentMethod = (refId) => {
+    setPaymentMethodRefId(refId);
+  };
+
   const getComponentForStep = (currentStep) => {
     switch (currentStep) {
       case SPACE_DETAILS:
@@ -138,7 +143,9 @@ export const NewSpacePage = ({ organizationId, templatesList, productRatePlans }
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS_PAYMENT} />
             <NewSpaceCardDetailsPage
+              organizationId={organizationId}
               navigateToPreviousStep={navigateToPreviousStep}
+              onSuccess={onSubmitPaymentMethod}
               selectedPlan={selectedPlan}
             />
           </Grid>
