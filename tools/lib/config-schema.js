@@ -52,9 +52,12 @@ module.exports = strictObject(
         apiUrl: subdomainHostSchema,
         previewApiUrl: subdomainHostSchema,
         accessToken: hex(64),
-        space: alnumExact(12),
         previewAccessToken: hex(64),
+        webappAccessToken: token(43),
+        webappPreviewAccessToken: token(43),
+        space: alnumExact(12),
         TEASpaceId: alnumExact(12),
+        webappContentSpaceId: alnumExact(12),
       }),
     },
     hosts(),
@@ -153,5 +156,12 @@ function hex(length) {
   return {
     type: 'string',
     pattern: `^[0-9a-f]{${length}}$`,
+  };
+}
+
+function token(length) {
+  return {
+    type: 'string',
+    pattern: `^[a-zA-Z0-9_-]{${length}}$`,
   };
 }

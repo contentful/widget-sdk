@@ -37,6 +37,9 @@ export const services = {
     cdaApiUrl: 'cda-api-url',
     previewApiUrl: 'preview-api-url',
     spaceTemplateEntryContentTypeId: 'space-template-ct-id',
+    webappAccessToken: '5B_j6eppzmJk4Gr161h8dpnOx74o93e_3SWWo4f57Mw',
+    webappPreviewAccessToken: 'yrmSJInWjoWSX-0mqPWYZ-Qd9KYniXpNiOBaZ0RuB_A',
+    webappContentSpaceId: 'yr70aocgr4fw',
   },
   embedly: {},
 };
