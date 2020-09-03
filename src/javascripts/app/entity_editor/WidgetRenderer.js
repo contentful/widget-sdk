@@ -75,6 +75,7 @@ function WidgetRendererInternal(props) {
       $scope: props.scope,
       loadEvents: loadEvents || newNoopLoadEvents(),
       widgetApi: props.widgetApi,
+      entityType: editorData.entityInfo.type,
     });
 
     handleWidgetLinkRenderEvents();

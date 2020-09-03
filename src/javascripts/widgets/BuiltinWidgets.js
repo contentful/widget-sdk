@@ -65,8 +65,14 @@ export function create() {
     fieldTypes: ['Text', 'Symbol'],
     name: 'Single line',
     icon: 'singleline',
-    renderFieldEditor: ({ widgetApi }) => (
-      <SingleLineEditor field={widgetApi.field} locales={widgetApi.locales} />
+    renderFieldEditor: ({ widgetApi, entityType }) => (
+      <SingleLineEditor
+        field={widgetApi.field}
+        locales={widgetApi.locales}
+        // we don't want to show default validation for Asset title,
+        // because asset title can be more than 256 characters
+        withCharValidation={entityType !== 'Asset'}
+      />
     ),
   });
 
