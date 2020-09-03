@@ -1,39 +1,17 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { css, cx } from 'emotion';
 import { Workbench, Notification } from '@contentful/forma-36-react-components';
 
 import { useAsync } from 'core/hooks/useAsync';
-import * as LazyLoader from 'utils/LazyLoader';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import { getHostedPaymentParams, setDefaultPaymentMethod } from '../services/PaymentMethodService';
+import { setDefaultPaymentMethod } from '../services/PaymentMethodService';
 import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
-import LoadingState from 'app/common/LoadingState';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { go } from 'states/Navigator';
 
-/*
-  You can't add payment details in localhost development due to the restrictions
-  on the Zuora iframe. You will need to go to Quirely/Flinkly, or the Lab.
-*/
+import { ZuoraCreditCardIframe } from '../components/ZuoraCreditCardIframe';
 
-const styles = {
-  iframeContainer: css({
-    '> iframe': {
-      width: '100%',
-      height: '100%',
-    },
-    '> #z_hppm_iframe': {
-      backgroundColor: 'transparent',
-      minHeight: '500px',
-    },
-  }),
-  hide: css({
-    display: 'none',
-  }),
-};
-
-const fetch = (organizationId) => async () => {
+const fetch = () => async () => {
   // Do this here, so that the user is redirected much earlier (loading the HPM
   // params takes a while)
   const shouldShowPage = await getVariation(FLAGS.NEW_PURCHASE_FLOW);
@@ -43,18 +21,10 @@ const fetch = (organizationId) => async () => {
       path: ['account', 'organizations', 'billing-gatekeeper'],
     });
 
-    return;
+    return false;
   }
 
-  const [Zuora, hostedPaymentParams] = await Promise.all([
-    LazyLoader.get('Zuora'),
-    getHostedPaymentParams(organizationId),
-  ]);
-
-  return {
-    Zuora,
-    hostedPaymentParams,
-  };
+  return true;
 };
 
 const handleSuccess = async (organizationId, paymentMethodRefId) => {
@@ -73,26 +43,21 @@ const handleSuccess = async (organizationId, paymentMethodRefId) => {
 };
 
 export function EditPaymentMethodRouter({ orgId: organizationId }) {
-  const [loading, setLoading] = useState(true);
+  const [showZuoraIframe, setShowZuoraIframe] = useState(false);
 
-  const { data } = useAsync(useCallback(fetch(organizationId), []));
+  const { data: shouldShowZuoraIframe } = useAsync(useCallback(fetch(organizationId), []));
+
+  const onSuccess = useCallback(({ refId }) => handleSuccess(organizationId, refId), [
+    organizationId,
+  ]);
 
   useEffect(() => {
-    if (!data) {
+    if (!shouldShowZuoraIframe) {
       return;
     }
 
-    const { Zuora, hostedPaymentParams } = data;
-
-    // Gets rendered into #zuora_payment below
-    Zuora.render(hostedPaymentParams, {}, ({ refId: paymentMethodRefId }) => {
-      handleSuccess(organizationId, paymentMethodRefId);
-    });
-
-    Zuora.runAfterRender(() => {
-      setLoading(false);
-    });
-  }, [organizationId, data]);
+    setShowZuoraIframe(true);
+  }, [shouldShowZuoraIframe]);
 
   return (
     <>
@@ -103,11 +68,9 @@ export function EditPaymentMethodRouter({ orgId: organizationId }) {
           icon={<NavigationIcon icon="Billing" size="large" />}
         />
         <Workbench.Content>
-          {loading && <LoadingState />}
-          <div
-            id="zuora_payment"
-            data-test-id="zuora-payment-iframe"
-            className={cx(styles.iframeContainer, loading && styles.hide)}></div>
+          {showZuoraIframe && (
+            <ZuoraCreditCardIframe organizationId={organizationId} onSuccess={onSuccess} />
+          )}
         </Workbench.Content>
       </Workbench>
     </>
