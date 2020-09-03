@@ -50,7 +50,11 @@ export function createFieldWidgetSDK({
     // TODO: `setInvalid` is only available on `fieldController`. The SDK can only
     //   mark the current field as invalid. We could consider moving `setInvalid` to
     //   the field-locale level.
-    setInvalid: (localeCode, isInvalid) => $scope.fieldController.setInvalid(localeCode, isInvalid),
+    setInvalid: (localeCode, isInvalid) => {
+      if ($scope.fieldController) {
+        return $scope.fieldController.setInvalid(localeCode, isInvalid);
+      }
+    },
   });
 
   const spaceApi = createSpaceApi({
