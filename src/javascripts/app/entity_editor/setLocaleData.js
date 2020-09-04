@@ -106,7 +106,9 @@ function handleTopNavErrors($scope, entityLabel, shouldHideLocaleErrors) {
 
     const { privateLocales: locales } = $scope.localeData;
     const erroredKeys = keys(localesErrors);
-    const erroredLocales = erroredKeys.map((ic) => locales.find((l) => l.internal_code === ic));
+    const erroredLocales = erroredKeys.map((ic) =>
+      locales.find((l) => l.code === ic || l.internal_code === ic)
+    );
     const setNotificationProps = (status, locales = null) => {
       $scope.statusNotificationProps = {
         status,
