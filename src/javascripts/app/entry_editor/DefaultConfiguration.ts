@@ -1,5 +1,6 @@
 import { WidgetNamespace } from '@contentful/widget-renderer';
-import { getReleasesFeatureVariation } from 'app/Releases/ReleasesFeatureFlag';
+import { getModule } from 'core/NgRegistry';
+import { FLAGS, getVariation } from 'LaunchDarkly';
 import EntryEditorWidgetTypes from './EntryEditorWidgetTypes';
 
 interface EntryEditorWidget {
@@ -25,7 +26,14 @@ const EntryConfiguration = [DefaultEntryEditor, ReferencesEntryEditor];
 
 const availabilityMap = {
   [EntryEditorWidgetTypes.DEFAULT_EDITOR.id]: () => true,
-  [EntryEditorWidgetTypes.REFERENCE_TREE.id]: () => getReleasesFeatureVariation(),
+  [EntryEditorWidgetTypes.REFERENCE_TREE.id]: async () => {
+    const spaceContext = getModule('spaceContext');
+    return getVariation(FLAGS.ALL_REFERENCES_DIALOG, {
+      organizationId: spaceContext.getData(['organization', 'sys', 'id']),
+      spaceId: spaceContext.getId(),
+      environmentId: spaceContext.getEnvironmentId(),
+    });
+  },
 };
 
 export async function getEntryConfiguration() {
