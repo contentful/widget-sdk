@@ -29,6 +29,28 @@ const styles = {
   }),
 };
 
+const getEnvAliases = (env) => {
+  if (Array.isArray(env?.sys?.aliases)) {
+    return env.sys.aliases;
+  }
+
+  return [];
+};
+
+const isMasterAliasedToEnv = (env) => {
+  return getEnvAliases(env).some((a) => a.sys.id === 'master');
+};
+
+const formatEnvName = (env) => {
+  const aliases = getEnvAliases(env);
+
+  if (aliases.length) {
+    return `${aliases[0].sys.id} > ${env.name}`;
+  }
+
+  return env.name;
+};
+
 export function AppInstallModal({ isShown, definition, onClose }) {
   const [redirecting, setRedirecting] = useState(false);
   const [spaces, setSpaces] = useState([]);
@@ -65,7 +87,14 @@ export function AppInstallModal({ isShown, definition, onClose }) {
 
   const onContinue = () => {
     setRedirecting(true);
-    goToInstallation(selectedSpace, selectedEnv, definition.sys.id, onClose);
+    const env = spaceEnvs.find((e) => e.sys.id === selectedEnv);
+
+    goToInstallation(
+      selectedSpace,
+      isMasterAliasedToEnv(env) ? 'master' : selectedEnv,
+      definition.sys.id,
+      onClose
+    );
   };
 
   return (
@@ -101,7 +130,7 @@ export function AppInstallModal({ isShown, definition, onClose }) {
                 value={selectedEnv}>
                 {spaceEnvs.map((env) => (
                   <Option key={env.sys.id} value={env.sys.id}>
-                    {env.name}
+                    {formatEnvName(env)}
                   </Option>
                 ))}
               </SelectField>
