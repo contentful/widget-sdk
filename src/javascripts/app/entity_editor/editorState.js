@@ -19,11 +19,13 @@ export const getEditorState = ({
   getTitle,
   onStateUpdate,
   onTitleUpdate,
+  lifeline,
   currentSlideLevel = 0,
   hasInitialFocus = false,
 }) => {
   if (editorData) {
-    const doc = editorData.openDoc(K.createBus().stream);
+    // Lifeline is required to destroy a document on e.g. slide-in editor close
+    const doc = editorData.openDoc(lifeline);
 
     const { entityInfo, entity } = editorData;
 
