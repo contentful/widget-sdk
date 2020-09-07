@@ -1,5 +1,4 @@
 import { WidgetNamespace } from '@contentful/widget-renderer';
-import { getModule } from 'core/NgRegistry';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import EntryEditorWidgetTypes from './EntryEditorWidgetTypes';
 
@@ -26,14 +25,7 @@ const EntryConfiguration = [DefaultEntryEditor, ReferencesEntryEditor];
 
 const availabilityMap = {
   [EntryEditorWidgetTypes.DEFAULT_EDITOR.id]: () => true,
-  [EntryEditorWidgetTypes.REFERENCE_TREE.id]: async () => {
-    const spaceContext = getModule('spaceContext');
-    return getVariation(FLAGS.ALL_REFERENCES_DIALOG, {
-      organizationId: spaceContext.getData(['organization', 'sys', 'id']),
-      spaceId: spaceContext.getId(),
-      environmentId: spaceContext.getEnvironmentId(),
-    });
-  },
+  [EntryEditorWidgetTypes.REFERENCE_TREE.id]: async () => getVariation(FLAGS.ALL_REFERENCES_DIALOG),
 };
 
 export async function getEntryConfiguration() {
