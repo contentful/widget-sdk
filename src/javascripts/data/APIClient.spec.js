@@ -91,7 +91,7 @@ describe('APIClient', () => {
 
       assertRequestResponse('DATA', {
         method: 'PUT',
-        path: undefined,
+        path: [],
         data: { name: 'NEW NAME!!!' },
         version: 2,
       })(result);

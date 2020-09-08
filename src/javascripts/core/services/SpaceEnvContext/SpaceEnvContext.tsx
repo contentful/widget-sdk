@@ -1,4 +1,4 @@
-import React, { createContext, useMemo } from 'react';
+import React, { createContext, useMemo, useState, useEffect } from 'react';
 import { getModule } from 'core/NgRegistry';
 import {
   getSpaceId,
@@ -19,7 +19,15 @@ export const SpaceEnvContext = createContext<SpaceEnvContextValue>({});
 
 export const SpaceEnvContextProvider: React.FC<{}> = (props) => {
   const angularSpaceContext = useMemo(() => getAngularSpaceContext(), []);
-  const space: SpaceEnv = getSpace();
+  const [space, setSpace] = useState<SpaceEnv>(getSpace());
+
+  // TODO: This might be removed or improved when we find a refactoring solution for the `resetWithSpace` method
+  useEffect(() => {
+    const $rootScope = getModule('$rootScope');
+    const deregister = $rootScope.$on('spaceContextUpdated', () => setSpace(getSpace()));
+
+    return deregister;
+  });
 
   // TODO: Methods depending on the angular space context directly, they should be refactored
   function getSpace() {

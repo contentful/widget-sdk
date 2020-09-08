@@ -17,6 +17,7 @@ import { getRatePlans, getSingleSpacePlan } from 'account/pricing/PricingDataPro
 import { SpaceSettingsRoute } from './SpaceSettingsRoute';
 import * as fake from 'test/helpers/fakeFactory';
 import * as spaceContextMocked from 'ng/spaceContext';
+import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 jest.mock('services/ChangeSpaceService', () => ({
   showChangeSpaceModal: jest.fn(),
@@ -45,7 +46,11 @@ jest.mock('account/pricing/PricingDataProvider', () => ({
 const trackCTAClick = jest.spyOn(trackCTA, 'trackCTAClick');
 
 const build = async (shouldWait = true) => {
-  const renderedComponent = render(<SpaceSettingsRoute />);
+  const renderedComponent = render(
+    <SpaceEnvContextProvider>
+      <SpaceSettingsRoute />
+    </SpaceEnvContextProvider>
+  );
 
   if (shouldWait) {
     await waitFor(() => expect(screen.queryByTestId('loading-spinner')).not.toBeInTheDocument());
@@ -56,7 +61,6 @@ const build = async (shouldWait = true) => {
 
 describe('SpaceSettingsRoute', () => {
   const testSpace = fake.Space();
-  const testOrganization = fake.Organization();
   const mediumPlan = { name: 'firstPlan', price: 10, sys: { id: 1 } };
   const largePlan = { name: 'firstPlan', price: 99, sys: { id: 2 } };
   const notificationMessage = 'This is a notification';
@@ -68,9 +72,7 @@ describe('SpaceSettingsRoute', () => {
   getNotificationMessage.mockReturnValue(notificationMessage);
   isOwnerOrAdmin.mockReturnValue(false);
 
-  spaceContextMocked.organization = testOrganization;
-  spaceContextMocked.space.data = { name: 'test', sys: { id: 987 } };
-  spaceContextMocked.space.getId.mockReturnValue('spaceId123');
+  spaceContextMocked.space.data = testSpace;
 
   it('should with properly load with a spinner, then display the information', async () => {
     build(false);
@@ -114,12 +116,12 @@ describe('SpaceSettingsRoute', () => {
     await waitFor(() => expect(showChangeSpaceModal).toBeCalled());
 
     expect(trackCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.UPGRADE_SPACE_PLAN, {
-      organizationId: testOrganization.sys.id,
+      organizationId: testSpace.organization.sys.id,
       spaceId: testSpace.sys.id,
     });
 
     expect(showChangeSpaceModal).toBeCalledWith({
-      organizationId: testOrganization.sys.id,
+      organizationId: testSpace.organization.sys.id,
       space: testSpace,
       onSubmit: expect.any(Function),
     });
