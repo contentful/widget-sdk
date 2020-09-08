@@ -720,6 +720,21 @@ describe('CmaDocument', () => {
       expect(doc.getVersion()).toBe(oldVersion);
     });
 
+    it('should not update doc or make unnecessary requests if document is in VersionMismatch state', async () => {
+      // Setup error state
+      mockGetUpdatedEntity(entry, 'fields.content.en-US', 'test');
+      await doc.setValueAt(['fields', 'content', 'en-US'], '#yolo');
+      await handler();
+      K.assertCurrentValue(doc.state.error$, DocError.VersionMismatch());
+
+      entityRepo.get.mockClear();
+      const oldVersion = entry.sys.version;
+      mockGetUpdatedEntity(entry, 'fields.content.en-US', 'test');
+      await handler();
+      expect(entityRepo.get).not.toHaveBeenCalled();
+      expect(doc.getVersion()).toBe(oldVersion);
+    });
+
     it('should not overwrite values outside the changed field-locale', async () => {
       mockGetUpdatedEntity(entry, 'fields.content.de', 'gruss gott');
       await handler();
@@ -735,6 +750,12 @@ describe('CmaDocument', () => {
     it('should show VersionMismatch when there are local pending changes on the same field locale', async () => {
       mockGetUpdatedEntity(entry, 'fields.content.en-US', 'test');
       await doc.setValueAt(['fields', 'content', 'en-US'], '#yolo');
+      await handler();
+      K.assertCurrentValue(doc.state.error$, DocError.VersionMismatch());
+    });
+
+    it('should show VersionMismatch when remote entry has a new field because CT was changed', async () => {
+      mockGetUpdatedEntity(entry, 'fields.newField.en-US', 'test');
       await handler();
       K.assertCurrentValue(doc.state.error$, DocError.VersionMismatch());
     });

@@ -1,4 +1,4 @@
-import { normalize } from './Normalize';
+import { getDeletedFields, normalize } from './Normalize';
 import { get, set } from 'lodash';
 
 describe('data/document/Normalize#normalize', () => {
@@ -79,6 +79,24 @@ describe('data/document/Normalize#normalize', () => {
       A: { en: true },
       F: { en: [link] },
       G: { en: null },
+    });
+  });
+
+  describe('getDeletedFields', () => {
+    it('returns entry fields not listed in the content type', () => {
+      locales = [{ internal_code: 'en' }];
+      snapshot.fields = {
+        A: { en: true },
+        B: { en: true },
+        C: { en: true },
+        deleted: {},
+      };
+      const contentType = {
+        data: {
+          fields: [{ id: 'A' }, { id: 'B' }],
+        },
+      };
+      expect(getDeletedFields(snapshot, contentType)).toEqual(['C', 'deleted']);
     });
   });
 });

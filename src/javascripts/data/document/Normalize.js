@@ -1,4 +1,4 @@
-import { get, isObject, transform, map, forEach, keys, isEmpty } from 'lodash';
+import { forEach, get, isEmpty, isObject, keys, map, transform } from 'lodash';
 
 /**
  * Normalize an entry or asset document by removing unused fields.
@@ -20,13 +20,30 @@ import { get, isObject, transform, map, forEach, keys, isEmpty } from 'lodash';
  * @param {API.Locale[]} locales
  */
 export function normalize(otDoc, snapshot, contentType, locales) {
-  const ctFields = get(contentType, ['data', 'fields']);
   const localeMap = makeLocaleMap(locales);
   forceFieldObject(otDoc);
   forceMetadataObject(otDoc);
-  removeDeletedFields(snapshot, ctFields);
+  removeDeletedFields(snapshot, contentType);
   removeUnknownLocales(snapshot, localeMap);
   removeEmptyFields(snapshot);
+}
+
+/**
+ * Return a list of field ids not presented in the given content type.
+ * @param {Entry} snapshot
+ * @param {ContentType} contentType
+ * @return {string[]} content type field id
+ */
+export function getDeletedFields(snapshot, contentType) {
+  const ctFields = get(contentType, ['data', 'fields']);
+  if (!ctFields) {
+    return [];
+  }
+
+  const ctFieldIds = map(ctFields, (field) => field.id);
+  return Object.keys(snapshot.fields)
+    .map((fieldId) => (ctFieldIds.indexOf(fieldId) === -1 ? fieldId : null))
+    .filter(Boolean);
 }
 
 function forceFieldObject(otDoc) {
@@ -71,17 +88,9 @@ function removeUnknownLocales(data, localeMap) {
   return data;
 }
 
-function removeDeletedFields(snapshot, ctFields) {
-  if (!ctFields) {
-    return;
-  }
-
-  const ctFieldIds = map(ctFields, (field) => field.id);
-
-  forEach(snapshot.fields, (_fieldValue, fieldId) => {
-    if (ctFieldIds.indexOf(fieldId) < 0) {
-      delete snapshot.fields[fieldId];
-    }
+function removeDeletedFields(snapshot, contentType) {
+  getDeletedFields(snapshot, contentType).forEach((fieldId) => {
+    delete snapshot.fields[fieldId];
   });
 }
 
