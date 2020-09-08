@@ -6,14 +6,15 @@ import { deepFreeze } from 'utils/Freeze';
 import { cloneDeep } from 'lodash';
 import VersionsWidgetContainer, { PREVIEW_COUNT } from './VersionsWidgetContainer';
 import VersionsWidget from './VersionsWidget';
-import spaceContextMocked from 'ng/spaceContext';
 import SidebarEventTypes from '../SidebarEventTypes';
+import APIClient from 'data/APIClient';
 
-jest.mock('ng/spaceContext', () => ({
-  cma: {
-    getEntrySnapshots: jest.fn(),
-  },
-}));
+const mockGetEntrySnapshots = jest.fn();
+jest.mock('data/APIClient', () => {
+  return jest.fn().mockImplementation(() => {
+    return { getEntrySnapshots: mockGetEntrySnapshots };
+  });
+});
 
 const PUBLISHED_ENTRY_SYS = deepFreeze({
   id: 'SOME_ID_123',
@@ -40,7 +41,8 @@ describe('EntrySidebar/VersionsWidgetContainer', () => {
 
   beforeEach(() => {
     emitter = mitt();
-    spaceContextMocked.cma.getEntrySnapshots.mockReset();
+    APIClient.mockClear();
+    mockGetEntrySnapshots.mockClear();
   });
 
   it('renders VersionsWidget with isLoaded=false by default', () => {
@@ -54,7 +56,7 @@ describe('EntrySidebar/VersionsWidgetContainer', () => {
   });
 
   it('gets entry snapshots when UPDATED_VERSIONS_WIDGET was emitted for the first time', async () => {
-    spaceContextMocked.cma.getEntrySnapshots.mockResolvedValueOnce({
+    mockGetEntrySnapshots.mockResolvedValueOnce({
       items: [],
     });
 
@@ -62,10 +64,10 @@ describe('EntrySidebar/VersionsWidgetContainer', () => {
 
     await emitUpdatedVersionsWidgetEvent(PUBLISHED_ENTRY_SYS);
 
-    expect(spaceContextMocked.cma.getEntrySnapshots).toHaveBeenCalledWith(PUBLISHED_ENTRY_SYS.id, {
+    expect(mockGetEntrySnapshots).toHaveBeenCalledWith(PUBLISHED_ENTRY_SYS.id, {
       limit: PREVIEW_COUNT,
     });
-    expect(spaceContextMocked.cma.getEntrySnapshots).toHaveBeenCalledTimes(1);
+    expect(mockGetEntrySnapshots).toHaveBeenCalledTimes(1);
 
     await Promise.resolve();
     await wrapper.update();
@@ -79,7 +81,7 @@ describe('EntrySidebar/VersionsWidgetContainer', () => {
   });
 
   it('gets entry snapshots only when publishedVersion is changed', async () => {
-    spaceContextMocked.cma.getEntrySnapshots.mockResolvedValueOnce({
+    mockGetEntrySnapshots.mockResolvedValueOnce({
       items: [],
     });
 
@@ -89,13 +91,13 @@ describe('EntrySidebar/VersionsWidgetContainer', () => {
     await emitUpdatedVersionsWidgetEvent(sys1);
     await emitUpdatedVersionsWidgetEvent(sys2);
 
-    expect(spaceContextMocked.cma.getEntrySnapshots).toHaveBeenCalledWith(PUBLISHED_ENTRY_SYS.id, {
+    expect(mockGetEntrySnapshots).toHaveBeenCalledWith(PUBLISHED_ENTRY_SYS.id, {
       limit: PREVIEW_COUNT,
     });
-    expect(spaceContextMocked.cma.getEntrySnapshots).toHaveBeenCalledTimes(1);
+    expect(mockGetEntrySnapshots).toHaveBeenCalledTimes(1);
 
     const snapshots = [newSnapshotFromEntrySys(sys1), newSnapshotFromEntrySys(sys2)];
-    spaceContextMocked.cma.getEntrySnapshots.mockResolvedValueOnce({
+    mockGetEntrySnapshots.mockResolvedValueOnce({
       items: snapshots,
     });
 
@@ -106,7 +108,7 @@ describe('EntrySidebar/VersionsWidgetContainer', () => {
     };
     await emitUpdatedVersionsWidgetEvent(sys3);
 
-    expect(spaceContextMocked.cma.getEntrySnapshots).toHaveBeenCalledTimes(2);
+    expect(mockGetEntrySnapshots).toHaveBeenCalledTimes(2);
 
     expect(wrapper.find(VersionsWidget).props()).toEqual({
       entryId: sys3.id,
@@ -123,10 +125,11 @@ describe('EntrySidebar/VersionsWidgetContainer', () => {
     const sys2 = { ...sys1, version: nextVersion, publishedVersion: nextVersion };
     const snapshots = deepFreeze([newSnapshotFromEntrySys(sys1), newSnapshotFromEntrySys(sys2)]);
 
-    spaceContextMocked.cma.getEntrySnapshots.mockResolvedValueOnce({
+    mockGetEntrySnapshots.mockResolvedValueOnce({
       items: snapshots,
     });
     await emitUpdatedVersionsWidgetEvent(sys2);
+    await wrapper.update();
 
     const expectedSnapshots = cloneDeep(snapshots);
     expectedSnapshots[0].sys.isCurrent = false;
@@ -135,17 +138,19 @@ describe('EntrySidebar/VersionsWidgetContainer', () => {
   });
 
   it('keeps initial fetching error after a sys update without published version bump', async () => {
-    spaceContextMocked.cma.getEntrySnapshots.mockRejectedValueOnce({});
+    mockGetEntrySnapshots.mockRejectedValueOnce({});
 
     const { wrapper } = render();
-    const expectError = () =>
+    const expectError = async () => {
+      await wrapper.update();
       expect(wrapper.find(VersionsWidget).props().error).toEqual(expect.any(String));
+    };
 
     await emitUpdatedVersionsWidgetEvent({ ...PUBLISHED_ENTRY_SYS, version: 100 });
-    expectError();
+    await expectError();
 
     await emitUpdatedVersionsWidgetEvent({ ...PUBLISHED_ENTRY_SYS, version: 101 });
-    expectError();
+    await expectError();
   });
 });
 

@@ -128,7 +128,7 @@ export const getFirst7SnapshotsOfDefaultEntry = {
       uponReceiving: `a request to get the first 7 snapshots of entry "${defaultEntryId}" in space "${defaultSpaceId}"`,
       withRequest: {
         method: 'GET',
-        path: `/spaces/${defaultSpaceId}/entries/${defaultEntryId}/snapshots`,
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/entries/${defaultEntryId}/snapshots`,
         headers: defaultHeader,
         query: {
           limit: '7',
