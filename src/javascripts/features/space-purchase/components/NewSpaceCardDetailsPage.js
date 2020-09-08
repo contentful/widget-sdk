@@ -6,7 +6,7 @@ import { Heading, Card, Subheading, Button } from '@contentful/forma-36-react-co
 import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 
-import { OrderSummary } from './OrderSummary';
+import { PaymentSummary } from './PaymentSummary';
 
 const styles = {
   grid: css({
@@ -41,7 +41,7 @@ export const NewSpaceCardDetailsPage = ({ navigateToPreviousStep, selectedPlan }
             Back
           </Button>
         </Card>
-        <OrderSummary selectedPlan={selectedPlan} />
+        <PaymentSummary selectedPlan={selectedPlan} />
       </Grid>
     </section>
   );

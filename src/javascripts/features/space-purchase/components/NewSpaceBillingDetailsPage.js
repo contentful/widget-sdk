@@ -6,7 +6,7 @@ import { Heading } from '@contentful/forma-36-react-components';
 import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 
-import { OrderSummary } from './OrderSummary';
+import { PaymentSummary } from './PaymentSummary';
 import { BillingDetailsForm } from './BillingDetailsForm';
 
 const styles = {
@@ -42,7 +42,7 @@ export const NewSpaceBillingDetailsPage = ({
           savedBillingDetails={savedBillingDetails}
           navigateToPreviousStep={navigateToPreviousStep}
         />
-        <OrderSummary selectedPlan={selectedPlan} />
+        <PaymentSummary selectedPlan={selectedPlan} />
       </Grid>
     </section>
   );
