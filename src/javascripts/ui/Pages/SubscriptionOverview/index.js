@@ -13,7 +13,7 @@ import { calcUsersMeta, calculateTotalPrice } from 'utils/SubscriptionUtils';
 import { getOrganization } from 'services/TokenStore';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { isSelfServicePlan } from 'account/pricing/PricingDataProvider';
-import { isOrgOnPlatformTrial } from 'features/trials';
+import { isOrganizationOnTrial } from 'features/trials';
 
 import DocumentTitle from 'components/shared/DocumentTitle';
 
@@ -64,7 +64,7 @@ const fetch = (organizationId, { setSpacePlans, setGrandTotal }) => async () => 
   });
 
   if (!isOwnerOrAdmin(organization)) {
-    if (isPlatformTrialCommEnabled && isOrgOnPlatformTrial(organization)) {
+    if (isPlatformTrialCommEnabled && isOrganizationOnTrial(organization)) {
       const spaces = await getAllSpaces(endpoint);
       return {
         organization,

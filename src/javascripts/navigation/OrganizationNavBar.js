@@ -10,7 +10,7 @@ import { getVariation, FLAGS } from 'LaunchDarkly';
 import { AdvancedExtensibilityFeature } from 'features/extensions-management';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getBasePlan, isEnterprisePlan } from 'account/pricing/PricingDataProvider';
-import { isOrgOnPlatformTrial } from 'features/trials';
+import { isOrganizationOnTrial } from 'features/trials';
 
 function getItems(params, { orgId }) {
   const shouldDisplayAccessTools = params.isOwnerOrAdmin;
@@ -37,7 +37,7 @@ function getItems(params, { orgId }) {
 
   const shouldDisplayNewSubscriptionPage = params.platformTrialCommEnabled
     ? params.pricingVersion == 'pricing_version_2' &&
-      (params.isOwnerOrAdmin || params.isOrgOnPlatformTrial)
+      (params.isOwnerOrAdmin || params.isOrganizationOnTrial)
     : params.pricingVersion == 'pricing_version_2' && params.isOwnerOrAdmin;
 
   return [
@@ -239,7 +239,7 @@ export default class OrganizationNavigationBar extends React.Component {
       hasSettingsTab: isOwner(organization),
       showUsageNewLabel: newPricingFeatureDisplayed && !basePlanIsEnterprise,
       platformTrialCommEnabled,
-      isOrgOnPlatformTrial: isOrgOnPlatformTrial(organization),
+      isOrganizationOnTrial: isOrganizationOnTrial(organization),
     };
 
     this.setState({ items: getItems(params, { orgId }) });

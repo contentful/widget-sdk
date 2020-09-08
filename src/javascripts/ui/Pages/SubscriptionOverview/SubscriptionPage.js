@@ -41,7 +41,7 @@ import {
   isEnterpriseTrialPlan,
 } from 'account/pricing/PricingDataProvider';
 import ContactUsButton from 'ui/Components/ContactUsButton';
-import { PlatformTrialInfo, isOrgOnPlatformTrial, SpacesListForMembers } from 'features/trials';
+import { PlatformTrialInfo, isOrganizationOnTrial, SpacesListForMembers } from 'features/trials';
 
 const styles = {
   sidebar: css({
@@ -190,7 +190,7 @@ export default function SubscriptionPage({
   const isMemberOfTrialOrg =
     isPlatformTrialCommEnabled &&
     !isOwnerOrAdmin(organization) &&
-    isOrgOnPlatformTrial(organization);
+    isOrganizationOnTrial(organization);
 
   const enterprisePlan = basePlan && isEnterprisePlan(basePlan);
   const isOrgBillable = organization && organization.isBillable;
