@@ -28,7 +28,7 @@ describe('Editor tabs configuration', () => {
     cy.wait(interactions);
   });
 
-  const widgetNames = ['Default Editor', 'References'];
+  const widgetNames = ['Editor', 'References'];
 
   describe('Opening the page with no configuration saved', () => {
     it('renders the page with default configuration', () => {
@@ -44,7 +44,7 @@ describe('Editor tabs configuration', () => {
     it('checks changing the order of editor tabs', () => {
       const space: number = 32;
       const arrowDown: number = 40;
-      const widgetsReordered = ['References', 'Default Editor'];
+      const widgetsReordered = ['References', 'Editor'];
 
       const firstEditorIndex = 0;
 
