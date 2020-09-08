@@ -145,7 +145,7 @@ class SpaceRoleEditor extends React.Component {
           </DropdownListItem>
         </DropdownList>
         {sortedOptions.length > 0 && (
-          <DropdownList border="top">
+          <DropdownList border="top" maxHeight={200}>
             <DropdownListItem isTitle={true}>other roles</DropdownListItem>
             {sortedOptions.map(({ name, sys: { id } }) => (
               // Allow the whole list item to be clicked
