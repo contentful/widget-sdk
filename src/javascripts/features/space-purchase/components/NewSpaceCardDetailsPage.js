@@ -37,7 +37,7 @@ export const NewSpaceCardDetailsPage = ({ navigateToPreviousStep, selectedPlan }
       <Grid className={styles.grid} columns="60% auto" rows={1} columnGap="spacing2Xl">
         <Card className={styles.card}>
           <Subheading element="h3">Add your credit card 💳</Subheading>
-          <Button onClick={navigateToPreviousStep} testId="navigate-back" buttonType="naked">
+          <Button onClick={navigateToPreviousStep} testId="navigate-back" buttonType="muted">
             Back
           </Button>
         </Card>

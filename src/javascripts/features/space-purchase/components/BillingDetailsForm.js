@@ -302,7 +302,7 @@ export const BillingDetailsForm = ({
         )}
 
         <div className={styles.buttonsContainer}>
-          <Button onClick={navigateToPreviousStep} testId="navigate-back" buttonType="naked">
+          <Button onClick={navigateToPreviousStep} testId="navigate-back" buttonType="muted">
             Back
           </Button>
           <Button onClick={onSubmit} testId="next-step-billing-details-form">

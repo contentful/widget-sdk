@@ -89,7 +89,7 @@ export const NewSpaceDetailsPage = ({
             />
 
             <div className={styles.buttonsContainer}>
-              <Button onClick={navigateToPreviousStep} testId="navigate-back" buttonType="naked">
+              <Button onClick={navigateToPreviousStep} testId="navigate-back" buttonType="muted">
                 Back
               </Button>
               <Button
