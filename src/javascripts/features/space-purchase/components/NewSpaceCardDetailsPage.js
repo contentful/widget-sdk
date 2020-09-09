@@ -51,7 +51,7 @@ export const NewSpaceCardDetailsPage = ({
               onSuccess(refId);
             }}
           />
-          <Button onClick={navigateToPreviousStep} testId="navigate-back" buttonType="naked">
+          <Button onClick={navigateToPreviousStep} testId="navigate-back" buttonType="muted">
             Back
           </Button>
         </Card>

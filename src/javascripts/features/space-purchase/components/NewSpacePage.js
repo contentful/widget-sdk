@@ -107,6 +107,7 @@ export const NewSpacePage = ({ organizationId, templatesList, productRatePlans }
 
   const onSubmitPaymentMethod = (refId) => {
     setPaymentMethodRefId(refId);
+    navigateToNextStep();
   };
 
   const getComponentForStep = (currentStep) => {
