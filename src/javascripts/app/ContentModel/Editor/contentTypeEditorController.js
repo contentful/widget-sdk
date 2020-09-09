@@ -10,7 +10,6 @@ import { openCreateContentTypeDialog, openEditContentTypeDialog } from './Dialog
 import getContentTypePreview from './PreviewTab/getContentTypePreview';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
 import { createCommand } from 'utils/command/command';
-import { getModule } from 'core/NgRegistry';
 
 import createActions from 'app/ContentModel/Editor/Actions';
 import * as accessChecker from 'access_control/AccessChecker';
@@ -244,8 +243,6 @@ export default function register() {
         setDirty();
       };
 
-      const spaceContext = getModule('spaceContext');
-
       function addField(newField) {
         const data = $scope.contentType.data;
         data.fields = data.fields || [];
@@ -349,9 +346,9 @@ export default function register() {
         editorConfiguration: $scope.editorInterface.editors,
         extensions: $scope.customWidgets,
         spaceData: {
-          organizationId: spaceContext.getData(['organization', 'sys', 'id']),
-          spaceId: spaceContext.getId(),
-          environmentId: spaceContext.getEnvironmentId(),
+          organizationId: $scope.spaceContext.getData(['organization', 'sys', 'id']),
+          spaceId: $scope.spaceContext.getId(),
+          environmentId: $scope.spaceContext.getEnvironmentId(),
         },
         actions: {
           showMetadataDialog,

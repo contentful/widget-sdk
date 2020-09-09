@@ -237,7 +237,7 @@ describe('AppEditorInterfaces', () => {
           const defaultValue = await getDefault({
             spaceId: 'test',
             organizationId: 'test',
-            environmentId: 'master'
+            environmentId: 'master',
           });
 
           cma.getEditorInterfaces.mockImplementationOnce(() =>

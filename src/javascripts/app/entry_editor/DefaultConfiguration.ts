@@ -31,7 +31,8 @@ const EntryConfiguration = [DefaultEntryEditor, ReferencesEntryEditor];
 
 const availabilityMap = {
   [EntryEditorWidgetTypes.DEFAULT_EDITOR.id]: () => true,
-  [EntryEditorWidgetTypes.REFERENCE_TREE.id]: async (spaceData: SpaceData) => getVariation(FLAGS.ALL_REFERENCES_DIALOG, spaceData),
+  [EntryEditorWidgetTypes.REFERENCE_TREE.id]: async (spaceData: SpaceData) =>
+    getVariation(FLAGS.ALL_REFERENCES_DIALOG, spaceData),
 };
 
 export async function getEntryConfiguration(spaceData: SpaceData) {

@@ -28,9 +28,9 @@ export async function getDefaultSidebar(): Promise<
   return defaultEntrySidebar.map((item) => pick(item, ['widgetNamespace', 'widgetId']));
 }
 
-export async function getDefaultEditors(spaceData): Promise<
-  { widgetId: string; widgetNamespace: WidgetNamespace }[]
-> {
+export async function getDefaultEditors(
+  spaceData
+): Promise<{ widgetId: string; widgetNamespace: WidgetNamespace }[]> {
   const defaultEntryEditors = await EntryEditorDefaults.getEntryConfiguration(spaceData);
   return defaultEntryEditors.map((item) => pick(item, ['widgetNamespace', 'widgetId']));
 }
@@ -64,7 +64,7 @@ export async function transformEditorInterfacesToTargetState(
     organizationId: spaceContext.getData(['organization', 'sys', 'id']),
     spaceId: spaceContext.getId(),
     environmentId: spaceContext.getEnvironmentId(),
-  }
+  };
 
   const [{ items: editorInterfaces }, defaultSidebar, defaultEditors] = await Promise.all([
     cma.getEditorInterfaces(),
