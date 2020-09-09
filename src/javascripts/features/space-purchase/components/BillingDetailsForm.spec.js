@@ -11,7 +11,7 @@ const mockBillingDetails = {
   addressTwo: 'apartment 321',
   city: 'Berlin',
   postalCode: '11111',
-  country: 'US',
+  country: 'AR',
 };
 
 const mockBillingDetailsWith = (object) => {
@@ -52,6 +52,24 @@ describe('BillingDetailsForm', () => {
       userEvent.selectOptions(countrySelect, ['US']);
 
       expect(screen.queryByTestId('billing-details.vatNumber')).toBeNull();
+    });
+
+    it('should show a State field when the US country is selected, then hide when unselected', async () => {
+      build();
+
+      expect(screen.queryByTestId('billing-details.state')).toBeNull();
+
+      const countrySelect = within(screen.getByTestId('billing-details.country')).getByTestId(
+        'cf-ui-select'
+      );
+
+      userEvent.selectOptions(countrySelect, ['US']);
+
+      expect(screen.getByTestId('billing-details.state')).toBeVisible();
+
+      userEvent.selectOptions(countrySelect, ['DE']);
+
+      expect(screen.queryByTestId('billing-details.state')).toBeNull();
     });
   });
 
@@ -99,8 +117,14 @@ describe('BillingDetailsForm', () => {
     describe('fields validation', () => {
       it('should reject an improperly formatted vat for the selected country', async () => {
         build({
-          savedBillingDetails: mockBillingDetailsWith({ country: 'DE', vatNumber: '1234123' }),
+          savedBillingDetails: mockBillingDetailsWith({ vatNumber: '1234123' }),
         });
+
+        const countrySelect = within(screen.getByTestId('billing-details.country')).getByTestId(
+          'cf-ui-select'
+        );
+
+        userEvent.selectOptions(countrySelect, ['DE']);
 
         userEvent.click(screen.getByTestId('next-step-billing-details-form'));
 
@@ -140,6 +164,52 @@ describe('BillingDetailsForm', () => {
 
         waitFor(() => {
           expect(screen.queryByText('Not a valid VAT Number')).toBeNull();
+          expect(mockOnSubmitBillingDetails).toBeCalled();
+        });
+      });
+
+      it('should display an error if the US is selected but no state has been selected', async () => {
+        const mockOnSubmitBillingDetails = jest.fn();
+
+        build({
+          savedBillingDetails: mockBillingDetailsWith({ country: 'DE' }),
+          onSubmitBillingDetails: mockOnSubmitBillingDetails,
+        });
+
+        const countrySelect = within(screen.getByTestId('billing-details.country')).getByTestId(
+          'cf-ui-select'
+        );
+
+        userEvent.selectOptions(countrySelect, ['US']);
+        userEvent.click(screen.getByTestId('next-step-billing-details-form'));
+
+        expect(screen.getByText('Select a State')).toBeVisible();
+        expect(mockOnSubmitBillingDetails).not.toBeCalled();
+      });
+
+      it('should not display error and successfully submit if the US and a State are selected', async () => {
+        const mockOnSubmitBillingDetails = jest.fn();
+
+        build({
+          savedBillingDetails: mockBillingDetailsWith({ country: 'DE' }),
+          onSubmitBillingDetails: mockOnSubmitBillingDetails,
+        });
+
+        const countrySelect = within(screen.getByTestId('billing-details.country')).getByTestId(
+          'cf-ui-select'
+        );
+
+        userEvent.selectOptions(countrySelect, ['US']);
+
+        const stateSelect = within(screen.getByTestId('billing-details.state')).getByTestId(
+          'cf-ui-select'
+        );
+        userEvent.selectOptions(stateSelect, ['CA']);
+
+        userEvent.click(screen.getByTestId('next-step-billing-details-form'));
+
+        expect(screen.queryByText('Select a State')).toBeNull();
+        waitFor(() => {
           expect(mockOnSubmitBillingDetails).toBeCalled();
         });
       });

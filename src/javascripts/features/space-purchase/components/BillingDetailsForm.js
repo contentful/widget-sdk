@@ -17,6 +17,7 @@ import { useForm } from 'core/hooks/useForm';
 
 import { isValidVat, getIsVatCountry } from '../utils/VATVerification';
 import COUNTRIES_LIST from 'libs/countries_list.json';
+import US_STATES_LIST from 'libs/us_states_list.json';
 
 const DEFAULT_BILLING_DETAILS = {
   firstName: '',
@@ -26,6 +27,7 @@ const DEFAULT_BILLING_DETAILS = {
   addressTwo: '',
   city: '',
   postalCode: '',
+  state: '',
   country: '',
   vatNumber: '',
 };
@@ -59,6 +61,7 @@ export const BillingDetailsForm = ({
   navigateToPreviousStep,
 }) => {
   const [showVat, setShouldShowVat] = useState(false);
+  const [showUSState, setShouldShowUSState] = useState(false);
 
   // If there are no saved billing details, then the user is adding billing details.
   // otherwise they are  updating their billing details.
@@ -101,6 +104,10 @@ export const BillingDetailsForm = ({
         value: billingDetails.postalCode,
         required: true,
       },
+      state: {
+        value: billingDetails.state,
+        required: false,
+      },
       country: {
         value: billingDetails.country,
         required: true,
@@ -116,10 +123,15 @@ export const BillingDetailsForm = ({
 
       const countryCode = fields.country.value;
       const vatNumber = fields.vatNumber.value;
+      const state = fields.state.value;
 
       // Only want to check if the VAT number is valid if a VAT number has been added.
       if (vatNumber !== '' && getIsVatCountry(countryCode) && !isValidVat(vatNumber, countryCode)) {
         errors.vatNumber = 'Not a valid VAT Number';
+      }
+
+      if (countryCode === 'US' && state === '') {
+        errors.state = 'Select a State';
       }
 
       return errors;
@@ -129,12 +141,20 @@ export const BillingDetailsForm = ({
   const onChangeCountry = (e) => {
     const countryCode = e.target.value;
     const isVatCountry = getIsVatCountry(countryCode);
+    const isUnitedStates = countryCode === 'US';
 
     setShouldShowVat(isVatCountry);
     if (!isVatCountry) {
       // Reset VAT number in case they started filling this field out as we
       // don't want to submit/validate this field if it's not a VAT country.
       onChange('vatNumber', '');
+    }
+
+    setShouldShowUSState(isUnitedStates);
+    if (!isUnitedStates) {
+      // Reset state in case they started filling this field out as we
+      // don't want to submit/validate this field if it's not the US.
+      onChange('state', '');
     }
 
     onChange('country', countryCode);
@@ -265,6 +285,7 @@ export const BillingDetailsForm = ({
             onBlur={handleBlur}
           />
         </div>
+
         <SelectField
           className={styles.selectLocale}
           name="country"
@@ -283,6 +304,26 @@ export const BillingDetailsForm = ({
             </option>
           ))}
         </SelectField>
+
+        {showUSState && (
+          <SelectField
+            className={styles.selectLocale}
+            name="state"
+            id="newspace-language"
+            testId="billing-details.state"
+            labelText="State"
+            required
+            value={fields.state.value}
+            validationMessage={fields.state.error}
+            onChange={handleChange}>
+            <option value="" disabled></option>
+            {US_STATES_LIST.map((state) => (
+              <option key={state.name} value={state.code}>
+                {state.name}
+              </option>
+            ))}
+          </SelectField>
+        )}
 
         {showVat && (
           <TextField

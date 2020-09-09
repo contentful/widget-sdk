@@ -15,7 +15,7 @@ const mockBillingDetails = {
   addressTwo: 'apartment 321',
   city: 'Berlin',
   postalCode: '11111',
-  country: 'US',
+  country: 'DE',
 };
 
 describe('NewSpacePage', () => {
@@ -101,18 +101,18 @@ describe('NewSpacePage', () => {
       'cf-ui-select'
     );
 
-    userEvent.selectOptions(countrySelect, ['US']);
+    userEvent.selectOptions(countrySelect, ['AR']);
 
     userEvent.click(screen.getByTestId('next-step-billing-details-form'));
 
     // ------ Credit Card page------
-    await waitFor(() => {
+    waitFor(() => {
       expect(screen.getByTestId('new-space-card-details-section')).toBeVisible();
       userEvent.click(screen.getByTestId('navigate-back'));
     });
 
     // ------ Billing Details page------
-    await waitFor(() => {
+    waitFor(() => {
       expect(screen.getByTestId('billing-details.card')).toBeVisible();
 
       // Check all text fields
