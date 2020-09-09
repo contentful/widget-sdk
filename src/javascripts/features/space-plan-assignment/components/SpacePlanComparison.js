@@ -49,12 +49,18 @@ export function SpacePlanComparison({ plan, spaceResources }) {
             const isOverLimit = usage > planResources[id];
             return (
               <TableCell key={id} className={isOverLimit ? styles.warning : ''}>
-                <Tooltip place="top" content="Your current usage exceeds this plan's limit">
-                  <Flex justifyContent="center" alignItems="center">
+                {isOverLimit ? (
+                  <Tooltip place="top" content="Your current usage exceeds this plan's limit">
+                    <Flex justifyContent="left" alignItems="center">
+                      <Flex marginRight="spacing2xs">{usage}</Flex>
+                      <Icon icon="Warning" color="warning" />
+                    </Flex>
+                  </Tooltip>
+                ) : (
+                  <Flex justifyContent="left" alignItems="center">
                     <Flex marginRight="spacing2xs">{usage}</Flex>
-                    {isOverLimit && <Icon icon="Warning" color="warning" />}
                   </Flex>
-                </Tooltip>
+                )}
               </TableCell>
             );
           })}

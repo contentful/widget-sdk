@@ -7,12 +7,6 @@ import {
   Paragraph,
   Heading,
   TextLink,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  SkeletonRow,
   Card,
   Tooltip,
   Icon,
@@ -32,23 +26,12 @@ import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 import { calculatePlansCost } from 'utils/SubscriptionUtils';
 import { Pluralized, Price } from 'core/components/formatting';
 
-import SpacePlanRow from './SpacePlanRow';
+import { UnassignedPlansTable } from './components/UnassignedPlansTable';
+import { SpacePlansTable } from './components/SpacePlansTable';
 
 const styles = {
   total: css({
     marginBottom: '1.5em',
-  }),
-  nameCol: css({
-    width: '30%',
-  }),
-  typeCol: css({
-    width: '30%',
-  }),
-  createdByCol: css({
-    width: '20%',
-  }),
-  actionsCol: css({
-    width: '60px',
   }),
   planChangingCard: css({
     padding: '20px',
@@ -129,80 +112,6 @@ function SpacePlans({
     trackTargetedCTAClick(CTA_EVENTS.PURCHASE_MICRO_SMALL_VIA_SUPPORT, {
       organizationId,
     });
-  };
-  const renderUnassignedPlansTable = (plans) => {
-    return (
-      <Table testId="subscription-page.unassigned-plans-table">
-        <colgroup>
-          <col className={styles.nameCol} />
-        </colgroup>
-        <TableHead>
-          <TableRow>
-            <TableCell>Space type</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {initialLoad ? (
-            <SkeletonRow columnCount={1} rowCount={10} />
-          ) : (
-            plans.map((plan) => {
-              return (
-                <TableRow
-                  testId="subscription-page.spaces-list.unassigned-plans-table-row"
-                  key={plan.sys.id || (plan.space && plan.space.sys.id)}>
-                  <TableCell>
-                    <strong>{plan.name}</strong>&nbsp;
-                  </TableCell>
-                </TableRow>
-              );
-            })
-          )}
-        </TableBody>
-      </Table>
-    );
-  };
-
-  const renderSpacePlansTable = (plans) => {
-    return (
-      <Table testId="subscription-page.table">
-        <colgroup>
-          <col className={styles.nameCol} />
-          <col className={styles.typeCol} />
-          <col className={styles.createdByCol} />
-          <col className={styles.createdOnCol} />
-          <col className={styles.actionsCol} />
-        </colgroup>
-        <TableHead>
-          <TableRow>
-            <TableCell>Name</TableCell>
-            <TableCell>Space type</TableCell>
-            <TableCell>Created by</TableCell>
-            <TableCell>Created on</TableCell>
-            <TableCell />
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {initialLoad ? (
-            <SkeletonRow columnCount={5} rowCount={10} />
-          ) : (
-            plans.map((plan) => {
-              const isUpgraded = Boolean(plan.space && plan.space.sys.id === upgradedSpaceId);
-              return (
-                <SpacePlanRow
-                  key={plan.sys.id || (plan.space && plan.space.sys.id)}
-                  plan={plan}
-                  onChangeSpace={onChangeSpace}
-                  onDeleteSpace={onDeleteSpace}
-                  hasUpgraded={isUpgraded}
-                  enterprisePlan={enterprisePlan}
-                  showSpacePlanChangeBtn={showSpacePlanChangeBtn}
-                />
-              );
-            })
-          )}
-        </TableBody>
-      </Table>
-    );
   };
 
   return (
@@ -315,7 +224,15 @@ function SpacePlans({
               className={cn(styles.tabPanel, {
                 [styles.isVisible]: selectedTab === USED_SPACES,
               })}>
-              {renderSpacePlansTable(assignedSpacePlans)}
+              <SpacePlansTable
+                plans={assignedSpacePlans}
+                initialLoad={initialLoad}
+                upgradedSpaceId={upgradedSpaceId}
+                onChangeSpace={onChangeSpace}
+                onDeleteSpace={onDeleteSpace}
+                enterprisePlan={enterprisePlan}
+                showSpacePlanChangeBtn={showSpacePlanChangeBtn}
+              />
             </TabPanel>
             {unassignedSpacePlans.length > 0 && (
               <TabPanel
@@ -323,12 +240,22 @@ function SpacePlans({
                 className={cn(styles.tabPanel, {
                   [styles.isVisible]: selectedTab === UNUSED_SPACES,
                 })}>
-                {renderUnassignedPlansTable(unassignedSpacePlans)}
+                {unassignedSpacePlans && (
+                  <UnassignedPlansTable plans={unassignedSpacePlans} initialLoad={initialLoad} />
+                )}
               </TabPanel>
             )}
           </>
         ) : (
-          renderSpacePlansTable(spacePlans)
+          <SpacePlansTable
+            plans={spacePlans}
+            initialLoad={initialLoad}
+            upgradedSpaceId={upgradedSpaceId}
+            onChangeSpace={onChangeSpace}
+            onDeleteSpace={onDeleteSpace}
+            enterprisePlan={enterprisePlan}
+            showSpacePlanChangeBtn={showSpacePlanChangeBtn}
+          />
         ))}
     </>
   );
