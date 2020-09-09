@@ -66,5 +66,5 @@ NewSpaceCardDetailsPage.propTypes = {
   billingCountryCode: PropTypes.string.isRequired,
   navigateToPreviousStep: PropTypes.func.isRequired,
   onSuccess: PropTypes.func.isRequired,
-  selectedPlan: PropTypes.object,
+  selectedPlan: PropTypes.object.isRequired,
 };
