@@ -200,7 +200,8 @@ export default function register() {
                 self.endpoint,
                 self.pubsubClient,
                 self.organization.sys.id,
-                spaceId
+                spaceId,
+                uriEnvOrAliasId || MASTER_ENVIRONMENT_ID
               );
             })(),
           ]).then(() => {

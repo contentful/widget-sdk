@@ -9,7 +9,7 @@ import {
   isAutomationTestUser,
   getUserSpaceRoles,
 } from 'data/User';
-import { get } from 'lodash';
+import { get, isEqual } from 'lodash';
 import * as config from 'Config';
 import * as logger from 'services/logger';
 import { isFlagOverridden, getFlagOverride } from 'debug/EnforceFlags';
@@ -386,13 +386,9 @@ async function createFlagPromise(flagName, { user, organizationId, spaceId, envi
   // Check to see if the LD user for this variation is the same as the current
   // cached LD user. If they're the same, just set the flags, which lets us bypass
   // making an unnecessary `client.identify` network call.
-  if (identityCache.user) {
-    if (currentUser.key === identityCache.user.key) {
-      flags = identityCache.flags;
-    }
-  }
-
-  if (!flags) {
+  if (identityCache.user && isEqual(currentUser, identityCache.user)) {
+    flags = identityCache.flags;
+  } else {
     try {
       flags = await client.identify(currentUser);
 
