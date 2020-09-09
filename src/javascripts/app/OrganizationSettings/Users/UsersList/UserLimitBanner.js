@@ -16,6 +16,7 @@ import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import { CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM } from 'analytics/utmLinks';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
+import { getMemberships } from 'access_control/OrganizationMembershipRepository';
 
 const styles = {
   wrapper: css({
@@ -26,9 +27,10 @@ const styles = {
 // This is correspondent to 90% of the limit of users for Tier Team
 export const THRESHOLD_NUMBER_TO_DISPLAY_BANNER = 9;
 
-export function UserLimitBanner({ orgId, spaces, usersCount }) {
+export function UserLimitBanner({ orgId, spaces }) {
   const spaceToUpgrade = spaces?.length > 0 ? spaces[0] : null;
   const [userIsOwner, setUserIsOwner] = useState(false);
+  const [usersCount, setUsersCount] = useState(0);
   const [basePlan, setBasePlan] = useState(null);
   const [shouldShowCommunityBanner, setShouldShowCommunityBanner] = useState(false);
   const [shouldShowSelfServiceBanner, setShouldShowSelfServiceBanner] = useState(false);
@@ -39,6 +41,8 @@ export function UserLimitBanner({ orgId, spaces, usersCount }) {
       // just the free users so we don't need to tell them to upgrade
       const endpoint = createOrganizationEndpoint(orgId);
       const organization = await TokenStore.getOrganization(orgId);
+      const users = await getMemberships(endpoint);
+      setUsersCount(users.total);
 
       // If the base plan can't be fetched (for v1), we can just consider it
       // not free, since the community banner shouldn't show in this case
@@ -52,7 +56,7 @@ export function UserLimitBanner({ orgId, spaces, usersCount }) {
           setShouldShowCommunityBanner(true);
         } else if (
           isSelfServicePlan(basePlan) &&
-          usersCount >= THRESHOLD_NUMBER_TO_DISPLAY_BANNER
+          users.total >= THRESHOLD_NUMBER_TO_DISPLAY_BANNER
         ) {
           setShouldShowSelfServiceBanner(true);
         }
@@ -62,7 +66,7 @@ export function UserLimitBanner({ orgId, spaces, usersCount }) {
       setUserIsOwner(isOwner(organization));
     };
     fetch();
-  }, [usersCount, orgId]);
+  }, [orgId]);
 
   const trackMeta = {
     organizationId: orgId,
@@ -157,7 +161,6 @@ export function UserLimitBanner({ orgId, spaces, usersCount }) {
 UserLimitBanner.propTypes = {
   orgId: PropTypes.string.isRequired,
   spaces: PropTypes.arrayOf(SpacePropType),
-  usersCount: PropTypes.number,
 };
 
 export default UserLimitBanner;

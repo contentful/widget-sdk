@@ -9,6 +9,7 @@ import * as fake from 'test/helpers/fakeFactory';
 import * as OrganizationRoles from 'services/OrganizationRoles';
 import * as PricingDataProvider from 'account/pricing/PricingDataProvider';
 import * as TokenStore from 'services/TokenStore';
+import * as OrganizationMembershipRepository from 'access_control/OrganizationMembershipRepository';
 import * as trackCTA from 'analytics/trackCTA';
 import { CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM } from 'analytics/utmLinks';
 
@@ -17,33 +18,32 @@ import UserLimitBanner, { THRESHOLD_NUMBER_TO_DISPLAY_BANNER } from './UserLimit
 const mockOrg = fake.Organization({ pricingVersion: 'pricing_version_2' });
 const mockBasePlan = fake.Plan({ customerType: PricingDataProvider.FREE });
 const mockSpaces = Array.from(Array(3)).map((_, idx) => fake.Space(`Space ${idx}`));
+const mockUsersEmpty = { items: [], total: 0 };
 
 let mockOrgCall;
 let mockBasePlanCall;
 const trackTargetedCTAClick = jest.spyOn(trackCTA, 'trackTargetedCTAClick');
 jest.spyOn(EndpointFactory, 'createOrganizationEndpoint').mockImplementation(() => jest.fn());
 jest.spyOn(TokenStore, 'getOrganization').mockImplementation(() => mockOrg);
+jest
+  .spyOn(OrganizationMembershipRepository, 'getMemberships')
+  .mockImplementation(() => mockUsersEmpty);
 jest.spyOn(OrganizationRoles, 'isOwner').mockImplementation(() => false);
 jest.spyOn(CreateSpace, 'showDialog').mockImplementation(() => jest.fn());
 jest.spyOn(ChangeSpaceService, 'showDialog').mockImplementation(() => jest.fn());
 
-async function build(customProps, shouldWait = true) {
+async function build(customProps) {
   const props = {
     orgId: mockOrg.sys.id,
     spaces: mockSpaces,
-    usersCount: 1,
     ...customProps,
   };
 
   render(<UserLimitBanner {...props} />);
 
-  if (shouldWait) {
-    await waitFor(() => {
-      expect(mockOrgCall).toBeCalled();
-    });
-
-    expect(screen.getByTestId('users-limit-banner')).toBeVisible();
-  }
+  await waitFor(() => {
+    expect(mockOrgCall).toBeCalled();
+  });
 }
 
 describe('UserLimitBanner', () => {
@@ -63,7 +63,7 @@ describe('UserLimitBanner', () => {
     mockOrgCall.mockImplementation(() =>
       fake.Organization({ pricingVersion: 'pricing_version_1' })
     );
-    build({}, false);
+    build({});
 
     await waitFor(() => {
       expect(mockOrgCall).toBeCalled();
@@ -122,11 +122,15 @@ describe('UserLimitBanner', () => {
 
   describe('when the plan is Self-service', () => {
     const usersCount = THRESHOLD_NUMBER_TO_DISPLAY_BANNER;
+    const mockUsers = { total: usersCount };
 
     it('should render if the user reached the limit of users for the plan', async () => {
       mockBasePlanCall.mockImplementation(() =>
         fake.Plan({ customerType: PricingDataProvider.SELF_SERVICE })
       );
+      jest
+        .spyOn(OrganizationMembershipRepository, 'getMemberships')
+        .mockImplementation(() => mockUsers);
 
       await build({ usersCount });
 
@@ -158,11 +162,15 @@ describe('UserLimitBanner', () => {
     });
 
     it('should not render if the user is below the limit of users for the plan', async () => {
+      const mockUsers = { total: 8 };
+      jest
+        .spyOn(OrganizationMembershipRepository, 'getMemberships')
+        .mockImplementation(() => mockUsers);
       mockBasePlanCall.mockImplementation(() =>
         fake.Plan({ customerType: PricingDataProvider.SELF_SERVICE })
       );
 
-      build({}, false);
+      build({});
 
       await waitFor(() => {
         expect(mockOrgCall).toBeCalled();

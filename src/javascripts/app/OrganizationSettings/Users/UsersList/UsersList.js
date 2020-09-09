@@ -252,7 +252,7 @@ export function UsersList({ orgId, spaceRoles, teams, spaces, hasSsoEnabled, has
         }
       />
       <Workbench.Content>
-        <UserLimitBanner orgId={orgId} spaces={spaces} usersCount={users?.items?.length} />
+        <UserLimitBanner orgId={orgId} spaces={spaces} />
         <section>
           <UserListFilters
             queryTotal={users.queryTotal}
