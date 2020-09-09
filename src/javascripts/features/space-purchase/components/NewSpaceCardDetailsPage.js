@@ -6,7 +6,7 @@ import { Heading, Card, Subheading, Button } from '@contentful/forma-36-react-co
 import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 
-import { OrderSummary } from './OrderSummary';
+import { PaymentSummary } from './PaymentSummary';
 
 const styles = {
   grid: css({
@@ -37,11 +37,11 @@ export const NewSpaceCardDetailsPage = ({ navigateToPreviousStep, selectedPlan }
       <Grid className={styles.grid} columns="60% auto" rows={1} columnGap="spacing2Xl">
         <Card className={styles.card}>
           <Subheading element="h3">Add your credit card 💳</Subheading>
-          <Button onClick={navigateToPreviousStep} testId="navigate-back" buttonType="naked">
+          <Button onClick={navigateToPreviousStep} testId="navigate-back" buttonType="muted">
             Back
           </Button>
         </Card>
-        <OrderSummary selectedPlan={selectedPlan} />
+        <PaymentSummary selectedPlan={selectedPlan} />
       </Grid>
     </section>
   );

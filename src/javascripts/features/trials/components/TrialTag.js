@@ -3,15 +3,15 @@ import { css } from 'emotion';
 import { Tag, TextLink } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { getVariation, FLAGS } from 'LaunchDarkly';
-import { getCurrentOrg } from 'core/utils/getCurrentOrg';
 import { Pluralized } from 'core/components/formatting';
-import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import StateLink from 'app/common/StateLink';
 import { useAsync } from 'core/hooks';
 import { initTrialProductTour } from '../services/intercomProductTour';
 import { calcTrialDaysLeft } from '../utils';
-import { isOrgOnPlatformTrial } from '../services/PlatformTrialService';
+import { getModule } from 'core/NgRegistry';
+import { getOrganization, getSpace } from 'services/TokenStore';
+import { isOrganizationOnTrial, isSpaceOnTrial } from '../services/TrialService';
 
 const styles = {
   tag: css({
@@ -29,41 +29,62 @@ const styles = {
 
 export const TrialTag = () => {
   const [organization, setOrganization] = useState();
+  const [space, setSpace] = useState();
+
   const [isPlatformTrialCommEnabled, setIsPlatformTrialCommEnabled] = useState(false);
 
-  const fetchData = useCallback(async () => {
-    const org = await getCurrentOrg();
-    const isPlatformTrialCommEnabled = await getVariation(FLAGS.PLATFORM_TRIAL_COMM, {
-      organizationId: org.sys.id,
-    });
+  const { orgId, spaceId } = getModule('$stateParams');
 
-    if (isPlatformTrialCommEnabled && isOrgOnPlatformTrial(org)) {
+  const fetchData = useCallback(async () => {
+    const isPlatformTrialCommEnabled = await getVariation(FLAGS.PLATFORM_TRIAL_COMM, {
+      organizationId: orgId,
+      spaceId,
+    });
+    setIsPlatformTrialCommEnabled(isPlatformTrialCommEnabled);
+
+    if (!isPlatformTrialCommEnabled) {
+      return;
+    }
+
+    let org;
+    let space;
+
+    if (orgId) {
+      org = await getOrganization(orgId);
+    }
+
+    if (spaceId) {
+      space = await getSpace(spaceId);
+      org = space.organization;
+    }
+
+    if (isPlatformTrialCommEnabled && isOrganizationOnTrial(org)) {
       initTrialProductTour();
     }
 
-    setIsPlatformTrialCommEnabled(isPlatformTrialCommEnabled);
     setOrganization(org);
-  }, []);
+    setSpace(space);
+  }, [spaceId, orgId]);
 
   const { isLoading } = useAsync(fetchData);
 
-  // organization can be null if the current page is Account settings or Error Home
-  if (
-    isLoading ||
-    !organization ||
-    isLegacyOrganization(organization) ||
-    !isPlatformTrialCommEnabled ||
-    !isOrgOnPlatformTrial(organization)
-  ) {
+  const isEnterpriseTrial = organization && isOrganizationOnTrial(organization);
+  const isSpaceTrial = space && isSpaceOnTrial(space);
+
+  if (isLoading || !isPlatformTrialCommEnabled || (!isEnterpriseTrial && !isSpaceTrial)) {
     return null;
   }
 
-  const daysLeft = calcTrialDaysLeft(organization.trialPeriodEndsAt);
+  const daysLeft = isEnterpriseTrial
+    ? calcTrialDaysLeft(organization.trialPeriodEndsAt)
+    : calcTrialDaysLeft(space.trialPeriodEndsAt);
+
+  const trialType = isEnterpriseTrial ? 'platform' : 'space';
 
   const tracking = {
     trackingEvent: 'trial:trial_tag_clicked',
     trackParams: {
-      type: 'platform',
+      type: trialType,
       organization_id: organization.sys.id,
       numTrialDaysLeft: daysLeft,
       isOwnerOrAdmin: isOwnerOrAdmin(organization),
@@ -71,12 +92,12 @@ export const TrialTag = () => {
   };
 
   return (
-    <Tag className={styles.tag} testId="trial-tag">
+    <Tag className={styles.tag} testId={`${trialType}-trial-tag`}>
       <StateLink
         className={styles.link}
-        testId="trial-tag-link"
-        path="account.organizations.subscription_new"
-        params={{ orgId: organization.sys.id }}
+        testId={`${trialType}-trial-tag-link`}
+        path={isEnterpriseTrial ? 'account.organizations.subscription_new' : 'spaces.detail.home'}
+        params={{ orgId: organization.sys.id, spaceId: space && space.sys.id }}
         {...tracking}
         component={TextLink}
         linkType="white">

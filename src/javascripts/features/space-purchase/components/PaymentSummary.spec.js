@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { OrderSummary } from './OrderSummary';
+import { PaymentSummary } from './PaymentSummary';
 
 const mockSelectedPlan = { name: 'Medium', price: 123 };
 
-describe('OrderSummary', () => {
+describe('PaymentSummary', () => {
   it('should the plan name and price', () => {
     build();
 
@@ -23,5 +23,5 @@ function build(customProps) {
     ...customProps,
   };
 
-  render(<OrderSummary {...props} />);
+  render(<PaymentSummary {...props} />);
 }

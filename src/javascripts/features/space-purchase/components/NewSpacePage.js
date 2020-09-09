@@ -49,10 +49,12 @@ export const NewSpacePage = ({ organizationId, templatesList, productRatePlans }
   };
 
   const navigateToNextStep = () => {
-    if (currentStep + 1 < PURCHASE_FLOW_STEPS.length) {
-      setCurrentStep(currentStep + 1);
-      // It does not matter what state is pushed to history, just that a state is pushed to mimic a new page load.
-      window.history.pushState('does not matter', null);
+    const nextStep = currentStep + 1;
+
+    if (nextStep < PURCHASE_FLOW_STEPS.length) {
+      setCurrentStep(nextStep);
+      // Save the step in the history's state to use when the browser's forward or back button is clicked
+      window.history.pushState({ step: nextStep }, null);
     }
   };
 
@@ -69,33 +71,26 @@ export const NewSpacePage = ({ organizationId, templatesList, productRatePlans }
     navigateToNextStep();
   };
 
-  const navigateToPreviousStep = useCallback(
-    (shouldRemovePushState = true) => {
-      // If the user clicks the browsers back button, window.history.back() is already called which removes the pushedState,
-      // so we only want to update the current step. However if the user clicks a navigateBack button, we also want to remove
-      // the pushedState, so we call window.history.back() to remove the pushedState, which also as a result calls this function again
-      // and properly updates the currentStep
-      if (shouldRemovePushState) {
-        window.history.back();
-      } else if (currentStep > 0) {
-        setCurrentStep(currentStep - 1);
-      }
-    },
-    [currentStep]
-  );
+  const navigateToPreviousStep = () => {
+    // We use window's history's back function so that the history state is also correctly updated.
+    window.history.back();
+  };
 
-  const backButtonClickHandler = useCallback(() => {
-    navigateToPreviousStep(false);
-  }, [navigateToPreviousStep]);
+  const browserNavigationHandler = useCallback((e) => {
+    const { step } = e.state;
+
+    // If no step is set, it's the first step.
+    setCurrentStep(step ? step : 0);
+  }, []);
 
   useEffect(() => {
-    // Adds a listener for the back button page
-    window.addEventListener('popstate', backButtonClickHandler);
+    // Adds a listener for the back and forward browser button
+    window.addEventListener('popstate', browserNavigationHandler);
 
     return () => {
-      window.removeEventListener('popstate', backButtonClickHandler);
+      window.removeEventListener('popstate', browserNavigationHandler);
     };
-  }, [backButtonClickHandler]);
+  }, [browserNavigationHandler]);
 
   const onSubmitSpaceDetails = () => {
     // Add analytics here

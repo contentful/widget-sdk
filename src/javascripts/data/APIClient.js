@@ -493,6 +493,7 @@ APIClient.prototype.renameSpace = function (newName, version) {
     method: 'PUT',
     version,
     data: { name: newName },
+    path: [],
   });
 };
 

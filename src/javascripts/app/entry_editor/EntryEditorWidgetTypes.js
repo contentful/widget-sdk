@@ -2,7 +2,7 @@ export const DEFAULT_EDITOR_ID = 'default-editor';
 
 export default {
   DEFAULT_EDITOR: {
-    name: 'Default Editor',
+    name: 'Editor',
     id: DEFAULT_EDITOR_ID,
     icon: 'Entry',
   },

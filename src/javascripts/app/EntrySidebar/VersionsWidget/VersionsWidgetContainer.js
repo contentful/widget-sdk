@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { getModule } from 'core/NgRegistry';
 import SidebarEventTypes from '../SidebarEventTypes';
 import SidebarWidgetTypes from '../SidebarWidgetTypes';
 import VersionsWidget from './VersionsWidget';
 import * as SnapshotDecorator from 'app/snapshots/helpers/SnapshotDecorator';
+import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { createSpaceEndpoint } from 'data/EndpointFactory';
+import APIClient from 'data/APIClient';
 
 export const PREVIEW_COUNT = 7;
 
@@ -12,6 +14,8 @@ export default class VersionsWidgetContainer extends Component {
   static propTypes = {
     emitter: PropTypes.object.isRequired,
   };
+
+  static contextType = SpaceEnvContext;
 
   constructor(props) {
     super(props);
@@ -34,11 +38,12 @@ export default class VersionsWidgetContainer extends Component {
   }
 
   onUpdateVersionsWidget = ({ entrySys, publishedVersion }) => {
-    const spaceContext = getModule('spaceContext');
-
     if (this.state.publishedVersion !== publishedVersion) {
+      const { currentSpaceId, currentEnvironmentId } = this.context;
+      const cma = new APIClient(createSpaceEndpoint(currentSpaceId, currentEnvironmentId));
+
       this.setState({ publishedVersion });
-      spaceContext.cma
+      cma
         .getEntrySnapshots(entrySys.id, { limit: PREVIEW_COUNT })
         .then((res) => res.items)
         .then((versions) => {

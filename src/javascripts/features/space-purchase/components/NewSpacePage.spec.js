@@ -149,6 +149,41 @@ describe('NewSpacePage', () => {
       });
     });
   });
+  describe('browser forward button', () => {
+    it('should go forward a step when clicked after a back button has been clicked', () => {
+      build();
+
+      userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
+      expect(screen.getByTestId('new-space-details-section')).toBeVisible();
+
+      userEvent.click(screen.getByTestId('navigate-back'));
+
+      waitFor(() => {
+        expect(screen.getByTestId('space-selection-section')).toBeVisible();
+      });
+
+      window.history.forward();
+
+      expect(screen.getByTestId('new-space-details-section')).toBeVisible();
+    });
+
+    it('should go forward a step after the browser back button has been clicked', () => {
+      build();
+
+      userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
+      expect(screen.getByTestId('new-space-details-section')).toBeVisible();
+
+      window.history.back();
+
+      waitFor(() => {
+        expect(screen.getByTestId('space-selection-section')).toBeVisible();
+      });
+
+      window.history.forward();
+
+      expect(screen.getByTestId('new-space-details-section')).toBeVisible();
+    });
+  });
 });
 
 function build(customProps) {

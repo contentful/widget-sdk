@@ -1,16 +1,17 @@
-import { get, set, cloneDeep, noop, unset, isEqual, intersectionBy, once } from 'lodash';
+import { cloneDeep, get, intersectionBy, isEqual, noop, once, set, unset } from 'lodash';
+import type { Property, PropertyBus, Stream, StreamBus } from 'core/utils/kefir';
 import * as K from 'core/utils/kefir';
-import type { Stream, Property, PropertyBus, StreamBus } from 'core/utils/kefir';
 import * as ResourceStateManager from 'data/document/ResourceStateManager';
 import * as Permissions from 'access_control/EntityPermissions';
 import { valuePropertyAt } from './documentHelpers';
 import * as Normalizer from 'data/document/Normalize';
+import { getDeletedFields } from 'data/document/Normalize';
 import TheLocaleStore from 'services/localeStore';
 import * as PathUtils from 'utils/Path';
 import { Error as DocError } from 'data/document/Error';
 import { Entity, EntitySys } from './types';
 import * as StringField from 'data/document/StringFieldSetter';
-import { trackEditConflict, ConflictType } from './analytics';
+import { ConflictType, trackEditConflict } from './analytics';
 import { createNoopPresenceHub } from './PresenceHub';
 import { EntityRepo, EntityRepoChangeInfo } from 'data/CMA/EntityRepo';
 import { changedEntityFieldPaths, changedEntityMetadataPaths } from './changedPaths';
@@ -437,6 +438,11 @@ export function create(
       return handleIncomingChange({ newVersion });
     }
 
+    const lastError = K.getValue(errorBus.property);
+    if (lastError && lastError instanceof DocError.VersionMismatch) {
+      return;
+    }
+
     if (!newVersion || newVersion > entity.sys.version) {
       isUpdatingBus.set(true);
       await updateEntity();
@@ -464,6 +470,14 @@ export function create(
     // Local version shouldn't ever be higher than remote version.
     // They can be equal though, when multiple files in the same asset get processed.
     if (remoteEntity.sys.version <= entity.sys.version) {
+      return false;
+    }
+
+    // If the remote entity contains fields not listed in the local content type, it means that a field was added to the CT.
+    // We want to lock the editor and prevent normalizer to remove the added field and cause another auto-save call
+    // resetting the value for all other editors.
+    if (getDeletedFields(remoteEntity, contentType).length > 0) {
+      errorBus.set(DocError.VersionMismatch());
       return false;
     }
 

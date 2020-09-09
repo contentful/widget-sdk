@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Heading, Paragraph, Typography } from '@contentful/forma-36-react-components';
 import { Pluralized } from 'core/components/formatting';
-import { isOrgOnPlatformTrial } from '../services/PlatformTrialService';
+import { isOrganizationOnTrial } from '../services/TrialService';
 import { calcTrialDaysLeft } from '../utils';
 
 export const PlatformTrialInfo = ({ organization }) => {
-  if (!isOrgOnPlatformTrial(organization)) {
+  if (!isOrganizationOnTrial(organization)) {
     return null;
   }
 

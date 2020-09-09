@@ -12,16 +12,25 @@ import {
   showDialog as showChangeSpaceModal,
   getNotificationMessage,
 } from 'services/ChangeSpaceService';
-import { createOrganizationEndpoint } from 'data/EndpointFactory';
+import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
 import { getSingleSpacePlan } from 'account/pricing/PricingDataProvider';
 import { trackCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
+import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 
 import { Spinner } from '@contentful/forma-36-react-components';
+import {
+  getOrganizationId,
+  getSpaceVersion,
+  getOrganization,
+} from 'core/services/SpaceEnvContext/utils';
+import APIClient from 'data/APIClient';
 
 export class SpaceSettingsRoute extends React.Component {
   state = { plan: null, isLoading: true };
+
+  static contextType = SpaceEnvContext;
 
   async componentDidMount() {
     const plan = await this.getSpacePlan();
@@ -29,13 +38,12 @@ export class SpaceSettingsRoute extends React.Component {
   }
 
   getSpacePlan = async () => {
-    const spaceContext = getModule('spaceContext');
-
-    const orgId = spaceContext.organization.sys.id;
+    const { currentSpace, currentSpaceId } = this.context;
+    const orgId = getOrganizationId(currentSpace);
     const orgEndpoint = createOrganizationEndpoint(orgId);
     let plan;
     try {
-      plan = await getSingleSpacePlan(orgEndpoint, spaceContext.space.getId());
+      plan = await getSingleSpacePlan(orgEndpoint, currentSpaceId);
     } catch (e) {
       // await getSingleSpacePlan throws for spaces on the old pricing
       // because they don't have a space plan. We catch it, dialog can handle lack of plan
@@ -57,15 +65,16 @@ export class SpaceSettingsRoute extends React.Component {
   };
 
   save = (newName) => {
-    const spaceContext = getModule('spaceContext');
+    const { currentSpace, currentSpaceId, currentEnvironmentId } = this.context;
+    const currentSpaceVersion = getSpaceVersion(currentSpace);
+    const spaceEndpoint = createSpaceEndpoint(currentSpaceId, currentEnvironmentId);
+    const cma = new APIClient(spaceEndpoint);
+    const spaceContext = getModule('spaceContext'); // TODO: Only `resetWithSpace` needs it for now
 
-    const space = spaceContext.space;
-    return spaceContext.cma
-      .renameSpace(newName, space.data.sys.version)
-      .then(() => {
-        TokenStore.refresh();
-        return TokenStore.getSpace(spaceContext.space.data.sys.id);
-      })
+    return cma
+      .renameSpace(newName, currentSpaceVersion)
+      .then(() => TokenStore.refresh())
+      .then(() => TokenStore.getSpace(currentSpaceId))
       .then((newSpace) => spaceContext.resetWithSpace(newSpace))
       .then(() => {
         const $rootScope = getModule('$rootScope');
@@ -79,11 +88,10 @@ export class SpaceSettingsRoute extends React.Component {
 
   openRemovalDialog = () => {
     const $state = getModule('$state');
-    const spaceContext = getModule('spaceContext');
 
     this.getSpacePlan().then((plan) => {
       openDeleteSpaceDialog({
-        space: spaceContext.space.data,
+        space: this.context.currentSpaceData,
         plan,
         onSuccess: () => $state.go('home'),
       });
@@ -91,13 +99,13 @@ export class SpaceSettingsRoute extends React.Component {
   };
 
   changeSpaceDialog = async () => {
-    const spaceContext = getModule('spaceContext');
-    const organizationId = spaceContext.organization.sys.id;
-    const space = await TokenStore.getSpace(spaceContext.space.data.sys.id);
+    const { currentSpace, currentSpaceId } = this.context;
+    const organizationId = getOrganizationId(currentSpace);
+    const space = await TokenStore.getSpace(currentSpaceId);
 
     trackCTAClick(CTA_EVENTS.UPGRADE_SPACE_PLAN, {
       organizationId,
-      spaceId: space.sys.id,
+      spaceId: currentSpaceId,
     });
 
     showChangeSpaceModal({
@@ -111,7 +119,8 @@ export class SpaceSettingsRoute extends React.Component {
   };
 
   render() {
-    const spaceContext = getModule('spaceContext');
+    const { currentSpace, currentSpaceName, currentSpaceId } = this.context;
+    const organization = getOrganization(currentSpace);
 
     return (
       <React.Fragment>
@@ -126,11 +135,11 @@ export class SpaceSettingsRoute extends React.Component {
           <SpaceSettings
             save={this.save}
             onRemoveClick={this.openRemovalDialog}
-            spaceName={spaceContext.space.data.name}
+            spaceName={currentSpaceName}
             plan={this.state.plan}
             onChangeSpace={this.changeSpaceDialog}
-            spaceId={spaceContext.space.getId()}
-            showDeleteButton={isOwnerOrAdmin(spaceContext.organization)}
+            spaceId={currentSpaceId}
+            showDeleteButton={isOwnerOrAdmin(organization)}
           />
         )}
       </React.Fragment>

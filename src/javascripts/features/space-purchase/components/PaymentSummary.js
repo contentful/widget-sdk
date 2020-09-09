@@ -30,20 +30,21 @@ const styles = {
   }),
   listItem: css({
     display: 'flex',
-    padding: `${tokens.spacingS} 0`,
+    padding: `${tokens.spacingXs} 0`,
     color: tokens.colorTextMid,
     justifyContent: 'space-between',
     borderTop: BORDER,
     fontWeight: tokens.fontWeightDemiBold,
+    marginBottom: '0px',
   }),
 };
 
-export const OrderSummary = ({ selectedPlan }) => {
+export const PaymentSummary = ({ selectedPlan }) => {
   return (
     <Card testId="order-summary.card">
       <Typography className={styles.text}>
         <Subheading className={styles.cardTitle} element="h3" testId="space-heading">
-          Order Summary
+          Payment Summary
         </Subheading>
         <Paragraph>
           Start using your new space today. You will be billed at the end of each month. You can
@@ -63,6 +64,6 @@ export const OrderSummary = ({ selectedPlan }) => {
   );
 };
 
-OrderSummary.propTypes = {
+PaymentSummary.propTypes = {
   selectedPlan: PropTypes.object.isRequired,
 };

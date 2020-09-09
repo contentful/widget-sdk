@@ -1,11 +1,10 @@
-import React, { useMemo, useState, useEffect, Fragment } from 'react';
+import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import AngularComponent from 'ui/Framework/AngularComponent';
 import BulkEditorTitle from './BulkEditorTitle';
 import BulkEntityEditorActionsDropdown from './BulkEntityEditorActionsDropdown';
 import BulkEntityEditorStatusDropdown from './BulkEntityEditorStatusDropdown';
 import CustomEditorExtensionRenderer from 'app/entry_editor/CustomEditorExtensionRenderer';
-import _ from 'lodash';
 import * as K from 'core/utils/kefir';
 import * as Navigator from 'states/Navigator';
 import * as logger from 'services/logger';
@@ -74,6 +73,7 @@ export const BulkEntityEditor = ({
   const { editorSettings: preferences, track } = bulkEditorContext;
 
   useEffect(() => {
+    const lifeline = K.createBus();
     const init = async () => {
       try {
         const editorData = await bulkEditorContext.loadEditorData(entityContext.id);
@@ -87,6 +87,7 @@ export const BulkEntityEditor = ({
           getTitle: () => title,
           onTitleUpdate: ({ truncatedTitle }) => setTitle(truncatedTitle),
           onStateUpdate: (state) => setEditorStatus({ ...state }), // force state update
+          lifeline: lifeline.stream,
         });
 
         if (editorState) {
@@ -113,6 +114,10 @@ export const BulkEntityEditor = ({
       }
     };
     init();
+
+    return () => {
+      lifeline.end(); // make the doc destroy
+    };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (isLoading) {

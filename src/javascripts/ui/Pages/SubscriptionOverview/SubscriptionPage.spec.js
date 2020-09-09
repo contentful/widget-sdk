@@ -50,6 +50,7 @@ const mockOrganization = Fake.Organization();
 const mockTrialOrganization = Fake.Organization({
   trialPeriodEndsAt: new Date(),
 });
+
 const mockBasePlan = Fake.Plan({ name: 'My cool base plan' });
 const mockFreeBasePlan = Fake.Plan({ customerType: FREE });
 const mockTeamBasePlan = Fake.Plan({ customerType: SELF_SERVICE });

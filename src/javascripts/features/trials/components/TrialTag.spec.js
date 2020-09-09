@@ -3,7 +3,8 @@ import { render, waitFor, screen, fireEvent } from '@testing-library/react';
 import { getVariation } from 'LaunchDarkly';
 import { TrialTag } from './TrialTag';
 import * as fake from 'test/helpers/fakeFactory';
-import { getCurrentOrg } from 'core/utils/getCurrentOrg';
+import { getModule } from 'core/NgRegistry';
+import { getOrganization, getSpace } from 'services/TokenStore';
 import { track } from 'analytics/Analytics';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { href } from 'states/Navigator';
@@ -14,24 +15,29 @@ const trialEndedAt = '2020-09-10';
 const today = '2020-10-01T03:00:00.000Z';
 const daysLeft = 9;
 
-const mockOrganization = fake.Organization({
-  pricingVersion: 'pricing_version_2',
-  trialPeriodEndsAt: trialEndsAt,
-});
-
-const legacyOrganization = fake.Organization({
-  pricingVersion: 'pricing_version_1',
+const trialOrganization = fake.Organization({
   trialPeriodEndsAt: trialEndsAt,
 });
 
 const trialExpiredOrganization = fake.Organization({
-  pricingVersion: 'pricing_version_2',
   trialPeriodEndsAt: trialEndedAt,
 });
 
-const neverOnTrialOrganization = fake.Organization({
-  pricingVersion: 'pricing_version_2',
+const organizationNotOnTrial = fake.Organization();
+
+const trialSpace = fake.Space({
+  organization: organizationNotOnTrial,
+  trialPeriodEndsAt: trialEndsAt,
 });
+
+const trialExpiredSpace = fake.Space({
+  trialPeriodEndsAt: trialEndedAt,
+});
+
+const spaceNotOnTrial = (organization) =>
+  fake.Space({
+    organization,
+  });
 
 const build = () => {
   render(<TrialTag />);
@@ -45,9 +51,12 @@ jest.mock('services/OrganizationRoles', () => ({
   isOwnerOrAdmin: jest.fn(),
 }));
 
-jest.mock('core/utils/getCurrentOrg', () => ({
-  getCurrentOrg: jest.fn(async () => mockOrganization),
+jest.mock('services/TokenStore', () => ({
+  getOrganization: jest.fn(),
+  getSpace: jest.fn(),
 }));
+
+jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
 
 jest.mock('states/Navigator', () => ({
   go: jest.fn(),
@@ -61,69 +70,168 @@ jest.mock('../services/intercomProductTour', () => ({
 describe('TrialTag', () => {
   beforeEach(() => {
     getVariation.mockClear().mockResolvedValue(true);
-    isOwnerOrAdmin.mockReturnValue(false);
 
-    const now = new Date(today).valueOf();
-    jest.spyOn(Date, 'now').mockImplementation(() => now);
+    getOrganization.mockResolvedValue(trialOrganization);
+    getSpace.mockResolvedValue(trialSpace);
+
+    const mockedNow = new Date(today).valueOf();
+    jest.spyOn(Date, 'now').mockImplementation(() => mockedNow);
   });
 
-  it('does not render if the organization is legacy', async () => {
-    getCurrentOrg.mockResolvedValueOnce(legacyOrganization);
+  it('does not render the trial tag if AccountSettingNavbar or ErrorNavbar', async () => {
+    getModule.mockReturnValue({});
+
     build();
 
-    await waitFor(() => expect(getCurrentOrg).toBeCalled());
-    await waitFor(() => expect(screen.queryByTestId('trial-tag')).not.toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByTestId('platform-trial-tag')).not.toBeInTheDocument());
+    expect(screen.queryByTestId('space-trial-tag')).not.toBeInTheDocument();
   });
 
-  it('does not render if the feature flag is turned off', async () => {
-    getVariation.mockResolvedValueOnce(false);
-    build();
+  describe('Platform trial', () => {
+    beforeEach(() => {
+      getModule.mockReturnValue({ orgId: trialOrganization.sys.id });
+      isOwnerOrAdmin.mockReturnValue(false);
+    });
 
-    await waitFor(() => expect(getVariation).toBeCalled());
-    await waitFor(() => expect(screen.queryByTestId('trial-tag')).not.toBeInTheDocument());
-  });
+    it('does not render if the feature flag is turned off', async () => {
+      getVariation.mockResolvedValueOnce(false);
+      build();
 
-  it('renders when the organization is on platform trial', async () => {
-    build();
-    await waitFor(() => expect(initTrialProductTour).toBeCalled());
-    await waitFor(() =>
-      expect(screen.getByTestId('trial-tag')).toHaveTextContent(`TRIAL - ${daysLeft} DAYS`)
-    );
-  });
+      await waitFor(() => expect(getVariation).toBeCalledTimes(1));
 
-  it('navigates to the subscription page when clicked', async () => {
-    build();
+      expect(initTrialProductTour).toBeCalledTimes(0);
 
-    await waitFor(() => fireEvent.click(screen.queryByTestId('trial-tag-link')));
-    await waitFor(() =>
+      expect(screen.queryByTestId('platform-trial-tag')).not.toBeInTheDocument();
+    });
+
+    it('renders when the organization is on trial and the navbar is OrgSettingsNavbar', async () => {
+      build();
+
+      await waitFor(() => expect(initTrialProductTour).toBeCalled());
+
+      expect(screen.getByTestId('platform-trial-tag')).toHaveTextContent(
+        `TRIAL - ${daysLeft} DAYS`
+      );
+    });
+
+    it('navigates to the subscription page when clicked', async () => {
+      build();
+
+      await waitFor(() => fireEvent.click(screen.queryByTestId('platform-trial-tag-link')));
+
       expect(href).toHaveBeenCalledWith({
         path: 'account.organizations.subscription_new',
-        params: { orgId: mockOrganization.sys.id },
-      })
-    );
-    await waitFor(() =>
+        params: { orgId: trialOrganization.sys.id },
+      });
+
       expect(track).toHaveBeenCalledWith('trial:trial_tag_clicked', {
         type: 'platform',
-        organization_id: mockOrganization.sys.id,
+        organization_id: trialOrganization.sys.id,
         numTrialDaysLeft: daysLeft,
         isOwnerOrAdmin: false,
-      })
-    );
+      });
+    });
+
+    it('does not render if the trial has ended', async () => {
+      getOrganization.mockResolvedValue(trialExpiredOrganization);
+      getModule.mockReturnValue({ orgId: trialExpiredOrganization.sys.id });
+
+      build();
+
+      await waitFor(() => expect(initTrialProductTour).toBeCalledTimes(0));
+
+      expect(screen.queryByTestId('platform-trial-tag')).not.toBeInTheDocument();
+    });
+
+    it('does not render if the organization is not on trial', async () => {
+      getOrganization.mockResolvedValue(organizationNotOnTrial);
+      getModule.mockReturnValue({ orgId: organizationNotOnTrial.sys.id });
+
+      build();
+
+      await waitFor(() => expect(initTrialProductTour).toBeCalledTimes(0));
+
+      expect(screen.queryByTestId('platform-trial-tag')).not.toBeInTheDocument();
+    });
+
+    it('renders when the organization is on trial and the navbar is SpaceNabvar', async () => {
+      const space = spaceNotOnTrial(trialOrganization);
+      getModule.mockReturnValue({ spaceId: space.sys.id });
+      getSpace.mockResolvedValue(space);
+
+      build();
+
+      await waitFor(() => expect(initTrialProductTour).toBeCalled());
+
+      expect(screen.getByTestId('platform-trial-tag')).toBeInTheDocument();
+    });
   });
 
-  it('does not render if the platform trial has ended', async () => {
-    getCurrentOrg.mockResolvedValueOnce(trialExpiredOrganization);
+  describe('Space trial', () => {
+    beforeEach(() => {
+      getModule.mockReturnValue({ spaceId: trialSpace.sys.id });
+      isOwnerOrAdmin.mockReturnValue(false);
+    });
 
-    build();
+    it('does not render if the feature flag is turned off', async () => {
+      getVariation.mockResolvedValueOnce(false);
+      build();
 
-    await waitFor(() => expect(screen.queryByTestId('trial-tag')).not.toBeInTheDocument());
-  });
+      await waitFor(() => expect(getVariation).toBeCalledTimes(1));
 
-  it('does not render if the organization was never on platform trial', async () => {
-    getCurrentOrg.mockResolvedValueOnce(neverOnTrialOrganization);
+      expect(screen.queryByTestId('space-trial-tag')).not.toBeInTheDocument();
+    });
 
-    build();
+    it('renders when the space is on trial and the navbar is SpaceNabvar', async () => {
+      build();
 
-    await waitFor(() => expect(screen.queryByTestId('trial-tag')).not.toBeInTheDocument());
+      await waitFor(() =>
+        expect(screen.getByTestId('space-trial-tag')).toHaveTextContent(`TRIAL - ${daysLeft} DAYS`)
+      );
+    });
+
+    it('navigates to the space home when clicked', async () => {
+      build();
+
+      await waitFor(() => fireEvent.click(screen.queryByTestId('space-trial-tag-link')));
+      expect(href).toHaveBeenCalledWith({
+        path: 'spaces.detail.home',
+        params: { orgId: organizationNotOnTrial.sys.id, spaceId: trialSpace.sys.id },
+      });
+
+      expect(track).toHaveBeenCalledWith('trial:trial_tag_clicked', {
+        type: 'space',
+        organization_id: organizationNotOnTrial.sys.id,
+        numTrialDaysLeft: daysLeft,
+        isOwnerOrAdmin: false,
+      });
+    });
+
+    it('does not render if the space trial has ended', async () => {
+      getSpace.mockResolvedValue(trialExpiredSpace);
+      getModule.mockReturnValue({ spaceId: trialExpiredSpace.sys.id });
+
+      build();
+
+      await waitFor(() => expect(screen.queryByTestId('space-trial-tag')).not.toBeInTheDocument());
+    });
+
+    it('does not render if neither the space nor organization is on trial', async () => {
+      const mockSpace = spaceNotOnTrial(organizationNotOnTrial);
+      getSpace.mockResolvedValue(mockSpace);
+      getModule.mockReturnValue({ spaceId: mockSpace.sys.id });
+
+      build();
+
+      await waitFor(() => expect(screen.queryByTestId('space-trial-tag')).not.toBeInTheDocument());
+      expect(screen.queryByTestId('platform-trial-tag')).not.toBeInTheDocument();
+    });
+
+    it('does not render when the space is on trial but the navbar is OrgSettingsNabvar', async () => {
+      getModule.mockReturnValue({ orgId: organizationNotOnTrial.sys.id });
+      build();
+
+      await waitFor(() => expect(screen.queryByTestId('space-trial-tag')).not.toBeInTheDocument());
+    });
   });
 });

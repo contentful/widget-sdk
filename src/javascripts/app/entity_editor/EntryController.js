@@ -93,6 +93,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
       }),
   };
 
+  const scopeLifeline = K.scopeLifeline($scope);
   const currentSlideLevel = Object.keys($scope.slideStates || {}).length;
   const editorState = getEditorState({
     editorData,
@@ -107,6 +108,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
       $scope.context.title = title;
       $scope.title = truncatedTitle;
     },
+    lifeline: scopeLifeline,
     currentSlideLevel,
     hasInitialFocus: preferences.hasInitialFocus,
   });
@@ -121,7 +123,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
    */
   bootstrapEntryEditorLoadEvents($scope, $scope.loadEvents, editorData, trackLoadEvent);
 
-  installTracking(entityInfo, doc, K.scopeLifeline($scope));
+  installTracking(entityInfo, doc, scopeLifeline);
 
   $scope.entryActions = {
     onAdd: () => {

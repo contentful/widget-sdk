@@ -111,6 +111,11 @@ registerGenericEvent('usage:fair_use_policy_clicked');
 
 registerGenericEvent('pricing_update:communication_seen');
 
+registerGenericEvent('space_assignment:change');
+registerGenericEvent('space_assignment:continue');
+registerGenericEvent('space_assignment:confirm');
+registerGenericEvent('space_assignment:back');
+
 registerGenericEvent('quick_navigation:opened_by_shortcut');
 
 registerGenericEvent('trial:trial_tag_clicked');

@@ -22,6 +22,7 @@ import { sortBy, keyBy, filter } from 'lodash';
 import { Breadcrumbs } from 'features/breadcrumbs';
 import { go } from 'states/Navigator';
 import { changeSpacePlanAssignment } from '../services/SpacePlanAssignmentService';
+import { track } from 'analytics/Analytics';
 
 const ASSIGNMENT_STEPS = [
   { text: '1.New space type', isActive: true },
@@ -44,7 +45,6 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
         getSpace(spaceEndpoint),
         resourceService.getAll(),
       ]);
-
       const currentPlan = plans.items.find((plan) => plan.gatekeeperKey === spaceId);
 
       return {
@@ -75,9 +75,14 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
   const navigateToNextStep = () => {
     const currentStepIndex = steps.indexOf(currentStep);
     const nextStep = steps[currentStepIndex + 1];
-
     if (nextStep) {
       navigateToStep(nextStep);
+      track('space_assignment:continue', {
+        space_id: spaceId,
+        // TODO: to be adjusted as soon as we merge missing component
+        selected_plan_id: selectedPlan.sys.id,
+        selected_plan_name: selectedPlan.name,
+      });
       window.history.pushState('', null);
     }
   };
@@ -88,6 +93,9 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
 
     if (previousStep) {
       navigateToStep(previousStep);
+      track('space_assignment:back', {
+        space_id: spaceId,
+      });
       window.history.back();
     }
   };

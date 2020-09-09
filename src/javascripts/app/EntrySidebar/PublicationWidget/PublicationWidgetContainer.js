@@ -8,13 +8,16 @@ import { ScheduledActionsWidget } from 'app/ScheduledActions';
 import ScheduledActionsFeatureFlag from 'app/ScheduledActions/ScheduledActionsFeatureFlag';
 import { getEntityTitle } from 'app/entry_editor/EntryReferences/referencesService';
 import { getReleasesFeatureVariation as releasesFeatureFlagVariation } from 'app/Releases/ReleasesFeatureFlag';
-import { getModule } from 'core/NgRegistry';
 import { getVariation, FLAGS } from 'LaunchDarkly';
+import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { getOrganizationId } from 'core/services/SpaceEnvContext/utils';
 
 export default class PublicationWidgetContainer extends Component {
   static propTypes = {
     emitter: PropTypes.object.isRequired,
   };
+
+  static contextType = SpaceEnvContext;
 
   state = {
     status: '',
@@ -32,10 +35,11 @@ export default class PublicationWidgetContainer extends Component {
   };
 
   async componentDidMount() {
-    const spaceContext = getModule('spaceContext');
+    const { currentSpaceId, currentSpace } = this.context;
+    const organizationId = getOrganizationId(currentSpace);
     const statusSwitchEnabled = await getVariation(FLAGS.NEW_STATUS_SWITCH, {
-      spaceId: spaceContext.getId(),
-      organizationId: spaceContext.organization.sys.id,
+      spaceId: currentSpaceId,
+      organizationId: organizationId,
     });
     this.setState({ isStatusSwitch: statusSwitchEnabled });
 

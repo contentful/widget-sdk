@@ -117,7 +117,7 @@ export const EntryView = ({ goTo }) => {
   }, [spaceContext, updateAccessibleCTs]);
 
   useEffect(() => {
-    K.onValue(spaceContext.publishedCTs.items$, (cts) => {
+    return K.onValue(spaceContext.publishedCTs.items$, (cts) => {
       setHasContentType(cts.length > 0);
       updateAccessibleCTs();
     });

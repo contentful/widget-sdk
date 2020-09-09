@@ -510,7 +510,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                     class="DropdownList__DropdownList___2EMLM DropdownList__DropdownList--border-top___ojlyY"
                     data-test-id="cf-ui-dropdown-list"
                     role="menu"
-                    style="max-height: auto; overflow-y: visible;"
+                    style="max-height: 200px; overflow-y: auto;"
                   >
                     <li
                       class="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem--title___CyVKB"
@@ -743,6 +743,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                 </DropdownList>
                 <DropdownList
                   border="top"
+                  maxHeight={200}
                   testId="cf-ui-dropdown-list"
                 >
                   <ul
@@ -751,8 +752,8 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                     role="menu"
                     style={
                       Object {
-                        "maxHeight": "auto",
-                        "overflowY": "visible",
+                        "maxHeight": 200,
+                        "overflowY": "auto",
                       }
                     }
                   >

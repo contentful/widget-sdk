@@ -2,13 +2,13 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import * as fake from 'test/helpers/fakeFactory';
 import { PlatformTrialInfo } from './PlatformTrialInfo';
-import { isOrgOnPlatformTrial } from '../services/PlatformTrialService';
+import { isOrganizationOnTrial } from '../services/TrialService';
 import { calcTrialDaysLeft } from '../utils';
 
 const mockOrganization = fake.Organization();
 
-jest.mock('../services/PlatformTrialService', () => ({
-  isOrgOnPlatformTrial: jest.fn(),
+jest.mock('../services/TrialService', () => ({
+  isOrganizationOnTrial: jest.fn(),
 }));
 
 jest.mock('../utils', () => ({
@@ -21,12 +21,12 @@ const build = () => {
 
 describe('PlatformTrialInfo', () => {
   beforeEach(() => {
-    isOrgOnPlatformTrial.mockReturnValue(true);
+    isOrganizationOnTrial.mockReturnValue(true);
     calcTrialDaysLeft.mockReturnValue(3);
   });
 
   it('should render nothing if the organization is not on platform trial', () => {
-    isOrgOnPlatformTrial.mockReturnValueOnce(false);
+    isOrganizationOnTrial.mockReturnValueOnce(false);
     build();
 
     expect(screen.queryByTestId('platform-trial-info')).not.toBeInTheDocument();

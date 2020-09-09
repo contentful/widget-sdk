@@ -59,3 +59,7 @@ export function getEnvironmentId(space?: SpaceEnv) {
 export function getEnvironmentName(space?: SpaceEnv) {
   return getEnvironment(space)?.name;
 }
+
+export function getSpaceVersion(space?: SpaceEnv) {
+  return getSpaceData(space)?.sys.version;
+}
