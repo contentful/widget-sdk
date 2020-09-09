@@ -221,7 +221,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
   // TODO replace with `filterWidgets()` in component
   $controller('FormWidgetsController', {
     $scope,
-    controls: editorData.fieldControls.form,
+    controls: editorData.fieldControls,
   });
 
   $scope.$watch('localeData.focusedLocale.name', (localeName) => {

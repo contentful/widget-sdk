@@ -110,7 +110,7 @@ export default async function create($scope, editorData, preferences) {
 
   $controller('FormWidgetsController', {
     $scope,
-    controls: editorData.fieldControls.form,
+    controls: editorData.fieldControls,
   });
 
   setupNoShareJsCmaFakeRequestsExperiment({ doc: $scope.otDoc, spaceContext, entityInfo });
