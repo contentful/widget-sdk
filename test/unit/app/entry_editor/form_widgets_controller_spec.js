@@ -25,13 +25,26 @@ describe('FormWidgetsController#widgets', () => {
       localized: true,
     };
 
-    const controls = [
-      {
-        widgetId: 'foo',
-        fieldId: 'foo',
-        field: this.field,
-      },
-    ];
+    const controls = {
+      form: [
+        {
+          widgetId: 'foo',
+          fieldId: 'foo',
+          field: this.field,
+        },
+      ],
+      sidebar: [
+        {
+          widgetId: 'bar',
+          fieldId: 'bar',
+          field: {
+            id: 'bar',
+            apiName: 'bar',
+            localized: true,
+          },
+        },
+      ],
+    };
 
     this.createController = function () {
       const $controller = $inject('$controller');
@@ -50,15 +63,20 @@ describe('FormWidgetsController#widgets', () => {
 
     const { flat, lookup } = this.scope.fieldLocaleListeners;
 
-    expect(flat.length).toBe(2);
+    expect(flat.length).toBe(4);
     expect(flat[0].fieldId).toBe(this.field.apiName);
     expect(flat[0].localeCode).toBe(enLocale.code);
     expect(flat[1].fieldId).toBe(this.field.apiName);
     expect(flat[1].localeCode).toBe(deLocale.code);
+    expect(flat[2].fieldId).toBe('bar');
+    expect(flat[2].localeCode).toBe(enLocale.code);
+    expect(flat[3].fieldId).toBe('bar');
+    expect(flat[3].localeCode).toBe(deLocale.code);
 
     expect(Object.keys(lookup[this.field.apiName]).sort()).toEqual(
       [enLocale.code, deLocale.code].sort()
     );
+    expect(Object.keys(lookup.bar).sort()).toEqual([enLocale.code, deLocale.code].sort());
   });
 
   describe('when the single-locale mode is on', function () {
