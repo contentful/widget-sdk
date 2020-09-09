@@ -1,4 +1,4 @@
-import { once } from 'lodash';
+import { once, memoize } from 'lodash';
 import * as K from 'core/utils/kefir';
 import { getModule } from 'core/NgRegistry';
 import { getCurrentStateName } from 'states/Navigator';
@@ -229,21 +229,21 @@ export default ({ $scope, emitter }) => {
 
   // Construct a list of legacy sidebar extensions
   const legacyExtensions = $scope.editorData.fieldControls.sidebar.map((widget) => {
-    // Legacy sidebar extensions use field-bound SDK for the default locale.
-    const sdk = createFieldWidgetSDK({
-      fieldId: widget.field.id,
-      localeCode: TheLocaleStore.getDefaultLocale().code,
-      widgetNamespace: widget.namespace,
-      widgetId: widget.id,
-      spaceContext,
-      $scope,
-      doc: $scope.otDoc,
-      internalContentType: $scope.entityInfo.contentType,
-      parameters: widget.parameters,
-    });
-
     return {
-      sdk,
+      makeSdk: memoize(() =>
+        createFieldWidgetSDK({
+          // Legacy sidebar extensions use field-bound SDK for the default locale.
+          fieldId: widget.fieldId,
+          localeCode: TheLocaleStore.getDefaultLocale().code,
+          widgetNamespace: widget.widgetNamespace,
+          widgetId: widget.widgetId,
+          spaceContext,
+          $scope,
+          doc: $scope.otDoc,
+          internalContentType: $scope.entityInfo.contentType,
+          parameters: widget.parameters,
+        })
+      ),
       widget: toRendererWidget(widget.descriptor),
       field: widget.field,
     };

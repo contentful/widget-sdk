@@ -100,7 +100,7 @@ export default class EntrySidebar extends Component {
       buildSidebarExtensionsBridge: PropTypes.func.isRequired,
       legacySidebarExtensions: PropTypes.arrayOf(
         PropTypes.shape({
-          sdk: PropTypes.object.isRequired,
+          makeSdk: PropTypes.func.isRequired,
           widget: PropTypes.object.isRequired,
           field: PropTypes.object.isRequired,
         })
@@ -240,9 +240,13 @@ export default class EntrySidebar extends Component {
   };
 
   renderLegacyExtensions = (legacyExtensions) => {
-    return legacyExtensions.map(({ sdk, widget, field }) => (
+    return legacyExtensions.map(({ makeSdk, widget, field }) => (
       <EntrySidebarWidget title={field.name} key={field.id}>
-        <WidgetRenderer location={WidgetLocation.ENTRY_FIELD_SIDEBAR} sdk={sdk} widget={widget} />
+        <WidgetRenderer
+          location={WidgetLocation.ENTRY_FIELD_SIDEBAR}
+          sdk={makeSdk()}
+          widget={widget}
+        />
       </EntrySidebarWidget>
     ));
   };
