@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
+import cn from 'classnames';
 
 import {
   Paragraph,
@@ -16,6 +17,9 @@ import {
   Tooltip,
   Icon,
   Note,
+  Tabs,
+  Tab,
+  TabPanel,
 } from '@contentful/forma-36-react-components';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 
@@ -63,7 +67,17 @@ const styles = {
   note: css({
     marginBottom: tokens.spacingM,
   }),
+  tabPanel: css({
+    display: 'none',
+    height: '100%',
+  }),
+  isVisible: css({
+    display: 'block',
+    padding: `${tokens.spacingM} 0 0 0`,
+  }),
 };
+const USED_SPACES = 'usedSpaces';
+const UNUSED_SPACES = 'unusedSpaces';
 
 function SpacePlans({
   initialLoad,
@@ -82,12 +96,26 @@ function SpacePlans({
   const totalCost = calculatePlansCost({ plans: spacePlans });
 
   const [showSpacePlanChangeBtn, setShowSpacePlanChangeBtn] = useState(false);
+  const [unassignedSpacePlans, getUnassignedSpacePlans] = useState(null);
+  const [assignedSpacePlans, getAssignedSpacePlans] = useState(null);
+  const [selectedTab, setSelectedTab] = useState('usedSpaces');
+  const [spacePlanTabsEnabled, setSpacePlanTabsEnabled] = useState(null);
+
   useEffect(() => {
     async function fetch() {
       const isFeatureEnabled = await getVariation(FLAGS.SPACE_PLAN_ASSIGNMENT);
       const unassignedSpacePlans = spacePlans.filter((plan) => plan.gatekeeperKey === null);
+      const assignedSpacePlans = spacePlans.filter((plan) => plan.gatekeeperKey !== null);
+
+      getUnassignedSpacePlans(unassignedSpacePlans);
+      getAssignedSpacePlans(assignedSpacePlans);
+
+      //  TODO: shouldShowSpacePlanChangeBtn and shouldShowSpaceTabs should be merged into one canManageSpacePlans which can be used for change link and tabs
       const shouldShowSpacePlanChangeBtn =
         isFeatureEnabled && enterprisePlan && isOrgOwner && unassignedSpacePlans.length > 0;
+      const shouldShowSpaceTabs = isFeatureEnabled && enterprisePlan && isOrgOwner;
+
+      setSpacePlanTabsEnabled(shouldShowSpaceTabs);
       setShowSpacePlanChangeBtn(shouldShowSpacePlanChangeBtn);
     }
     fetch();
@@ -101,6 +129,80 @@ function SpacePlans({
     trackTargetedCTAClick(CTA_EVENTS.PURCHASE_MICRO_SMALL_VIA_SUPPORT, {
       organizationId,
     });
+  };
+  const renderUnassignedPlansTable = (plans) => {
+    return (
+      <Table testId="subscription-page.unassigned-plans-table">
+        <colgroup>
+          <col className={styles.nameCol} />
+        </colgroup>
+        <TableHead>
+          <TableRow>
+            <TableCell>Space type</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {initialLoad ? (
+            <SkeletonRow columnCount={1} rowCount={10} />
+          ) : (
+            plans.map((plan) => {
+              return (
+                <TableRow
+                  testId="subscription-page.spaces-list.unassigned-plans-table-row"
+                  key={plan.sys.id || (plan.space && plan.space.sys.id)}>
+                  <TableCell>
+                    <strong>{plan.name}</strong>&nbsp;
+                  </TableCell>
+                </TableRow>
+              );
+            })
+          )}
+        </TableBody>
+      </Table>
+    );
+  };
+
+  const renderSpacePlansTable = (plans) => {
+    return (
+      <Table testId="subscription-page.table">
+        <colgroup>
+          <col className={styles.nameCol} />
+          <col className={styles.typeCol} />
+          <col className={styles.createdByCol} />
+          <col className={styles.createdOnCol} />
+          <col className={styles.actionsCol} />
+        </colgroup>
+        <TableHead>
+          <TableRow>
+            <TableCell>Name</TableCell>
+            <TableCell>Space type</TableCell>
+            <TableCell>Created by</TableCell>
+            <TableCell>Created on</TableCell>
+            <TableCell />
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {initialLoad ? (
+            <SkeletonRow columnCount={5} rowCount={10} />
+          ) : (
+            plans.map((plan) => {
+              const isUpgraded = Boolean(plan.space && plan.space.sys.id === upgradedSpaceId);
+              return (
+                <SpacePlanRow
+                  key={plan.sys.id || (plan.space && plan.space.sys.id)}
+                  plan={plan}
+                  onChangeSpace={onChangeSpace}
+                  onDeleteSpace={onDeleteSpace}
+                  hasUpgraded={isUpgraded}
+                  enterprisePlan={enterprisePlan}
+                  showSpacePlanChangeBtn={showSpacePlanChangeBtn}
+                />
+              );
+            })
+          )}
+        </TableBody>
+      </Table>
+    );
   };
 
   return (
@@ -184,46 +286,50 @@ function SpacePlans({
           {`Click the "change" link next to the space type to change it.`}
         </Note>
       )}
-      {(initialLoad || numSpaces > 0) && (
-        <Table testId="subscription-page.table">
-          <colgroup>
-            <col className={styles.nameCol} />
-            <col className={styles.typeCol} />
-            <col className={styles.createdByCol} />
-            <col className={styles.createdOnCol} />
-            <col className={styles.actionsCol} />
-          </colgroup>
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Space type</TableCell>
-              <TableCell>Created by</TableCell>
-              <TableCell>Created on</TableCell>
-              <TableCell />
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {initialLoad ? (
-              <SkeletonRow columnCount={5} rowCount={10} />
-            ) : (
-              spacePlans.map((plan) => {
-                const isUpgraded = Boolean(plan.space && plan.space.sys.id === upgradedSpaceId);
-                return (
-                  <SpacePlanRow
-                    key={plan.sys.id || (plan.space && plan.space.sys.id)}
-                    plan={plan}
-                    onChangeSpace={onChangeSpace}
-                    onDeleteSpace={onDeleteSpace}
-                    hasUpgraded={isUpgraded}
-                    enterprisePlan={enterprisePlan}
-                    showSpacePlanChangeBtn={showSpacePlanChangeBtn}
-                  />
-                );
-              })
+      {(initialLoad || numSpaces > 0) &&
+        (spacePlanTabsEnabled ? (
+          <>
+            <Tabs className={styles.tabs} withDivider>
+              <Tab
+                key={USED_SPACES}
+                id={USED_SPACES}
+                testId={`tab-${USED_SPACES}`}
+                selected={selectedTab === USED_SPACES}
+                onSelect={() => setSelectedTab(USED_SPACES)}>
+                Used spaces
+              </Tab>
+              {unassignedSpacePlans.length > 0 && (
+                <Tab
+                  key={UNUSED_SPACES}
+                  id={UNUSED_SPACES}
+                  testId={`tab-${UNUSED_SPACES}`}
+                  selected={selectedTab === UNUSED_SPACES}
+                  onSelect={() => setSelectedTab(UNUSED_SPACES)}>
+                  Unused spaces{' '}
+                  {unassignedSpacePlans.length > 0 && `(${unassignedSpacePlans.length})`}
+                </Tab>
+              )}
+            </Tabs>
+            <TabPanel
+              id={USED_SPACES}
+              className={cn(styles.tabPanel, {
+                [styles.isVisible]: selectedTab === USED_SPACES,
+              })}>
+              {renderSpacePlansTable(assignedSpacePlans)}
+            </TabPanel>
+            {unassignedSpacePlans.length > 0 && (
+              <TabPanel
+                id={UNUSED_SPACES}
+                className={cn(styles.tabPanel, {
+                  [styles.isVisible]: selectedTab === UNUSED_SPACES,
+                })}>
+                {renderUnassignedPlansTable(unassignedSpacePlans)}
+              </TabPanel>
             )}
-          </TableBody>
-        </Table>
-      )}
+          </>
+        ) : (
+          renderSpacePlansTable(spacePlans)
+        ))}
     </>
   );
 }
