@@ -234,7 +234,11 @@ describe('AppEditorInterfaces', () => {
 
         it(`inserts the widget to the default ${ei} (if none is set)`, async () => {
           const getDefault = makeGetDefaultByType[ei];
-          const defaultValue = await getDefault();
+          const defaultValue = await getDefault({
+            spaceId: 'test',
+            organizationId: 'test',
+            environmentId: 'master'
+          });
 
           cma.getEditorInterfaces.mockImplementationOnce(() =>
             Promise.resolve({

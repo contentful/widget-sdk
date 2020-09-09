@@ -6,6 +6,7 @@ import * as EntryEditorDefaults from 'app/entry_editor/DefaultConfiguration';
 import { WidgetNamespace, AppInstallation } from '@contentful/widget-renderer';
 import { isUnsignedInteger, PartialTargetState } from './AppState';
 import { EditorInterface, ContentType } from 'contentful-ui-extensions-sdk';
+import { getModule } from 'core/NgRegistry';
 import APIClient from 'data/APIClient';
 
 // Like `Promise.all` but rejecting input promises do not cause
@@ -27,10 +28,10 @@ export async function getDefaultSidebar(): Promise<
   return defaultEntrySidebar.map((item) => pick(item, ['widgetNamespace', 'widgetId']));
 }
 
-export async function getDefaultEditors(): Promise<
+export async function getDefaultEditors(spaceData): Promise<
   { widgetId: string; widgetNamespace: WidgetNamespace }[]
 > {
-  const defaultEntryEditors = await EntryEditorDefaults.getEntryConfiguration();
+  const defaultEntryEditors = await EntryEditorDefaults.getEntryConfiguration(spaceData);
   return defaultEntryEditors.map((item) => pick(item, ['widgetNamespace', 'widgetId']));
 }
 
@@ -58,10 +59,17 @@ export async function transformEditorInterfacesToTargetState(
   targetState: Record<string, Record<string, PartialTargetState>>,
   appInstallation: AppInstallation
 ) {
+  const spaceContext = getModule('spaceContext');
+  const spaceData = {
+    organizationId: spaceContext.getData(['organization', 'sys', 'id']),
+    spaceId: spaceContext.getId(),
+    environmentId: spaceContext.getEnvironmentId(),
+  }
+
   const [{ items: editorInterfaces }, defaultSidebar, defaultEditors] = await Promise.all([
     cma.getEditorInterfaces(),
     getDefaultSidebar(),
-    getDefaultEditors(),
+    getDefaultEditors(spaceData),
   ]);
 
   const updatePromises = editorInterfaces
