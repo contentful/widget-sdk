@@ -20,12 +20,7 @@ import SidebarWidgetTypes from './SidebarWidgetTypes';
 import EntryInfoPanelContainer from './EntryInfoPanel/EntryInfoPanelContainer';
 import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIFrameRenderer';
 import CommentsPanelContainer from './CommentsPanel/CommentsPanelContainer';
-import {
-  WidgetNamespace,
-  isCustomWidget,
-  WidgetLocation,
-  WidgetRenderer,
-} from '@contentful/widget-renderer';
+import { WidgetNamespace, isCustomWidget } from '@contentful/widget-renderer';
 import { toRendererWidget } from 'widgets/WidgetCompat';
 
 const styles = {
@@ -100,9 +95,8 @@ export default class EntrySidebar extends Component {
       buildSidebarExtensionsBridge: PropTypes.func.isRequired,
       legacySidebarExtensions: PropTypes.arrayOf(
         PropTypes.shape({
-          sdk: PropTypes.object.isRequired,
+          bridge: PropTypes.object.isRequired,
           widget: PropTypes.object.isRequired,
-          field: PropTypes.object.isRequired,
         })
       ),
       localeData: PropTypes.object.isRequired,
@@ -240,9 +234,13 @@ export default class EntrySidebar extends Component {
   };
 
   renderLegacyExtensions = (legacyExtensions) => {
-    return legacyExtensions.map(({ sdk, widget, field }) => (
-      <EntrySidebarWidget title={field.name} key={field.id}>
-        <WidgetRenderer location={WidgetLocation.ENTRY_FIELD_SIDEBAR} sdk={sdk} widget={widget} />
+    return legacyExtensions.map(({ bridge, widget }) => (
+      <EntrySidebarWidget title={widget.field.name} key={widget.field.id}>
+        <ExtensionIFrameRendererWithLocalHostWarning
+          bridge={bridge}
+          widget={toRendererWidget(widget.descriptor)}
+          parameters={widget.parameters}
+        />
       </EntrySidebarWidget>
     ));
   };

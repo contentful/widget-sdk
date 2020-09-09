@@ -7,8 +7,6 @@ import SidebarWidgetTypes from 'app/EntrySidebar/SidebarWidgetTypes';
 import createExtensionBridge from 'widgets/bridges/createExtensionBridge';
 import TheLocaleStore from 'services/localeStore';
 import { WidgetLocation } from '@contentful/widget-renderer';
-import { createFieldWidgetSDK } from 'app/widgets/createFieldWidgetSDK';
-import { toRendererWidget } from 'widgets/WidgetCompat';
 
 export default ({ $scope, emitter }) => {
   const $controller = getModule('$controller');
@@ -229,24 +227,31 @@ export default ({ $scope, emitter }) => {
 
   // Construct a list of legacy sidebar extensions
   const legacyExtensions = $scope.editorData.fieldControls.sidebar.map((widget) => {
-    // Legacy sidebar extensions use field-bound SDK for the default locale.
-    const sdk = createFieldWidgetSDK({
-      fieldId: widget.field.id,
-      localeCode: TheLocaleStore.getDefaultLocale().code,
-      widgetNamespace: widget.namespace,
-      widgetId: widget.id,
-      spaceContext,
-      $scope,
-      doc: $scope.otDoc,
-      internalContentType: $scope.entityInfo.contentType,
-      parameters: widget.parameters,
+    // A fake field-locale scope to be used in the bridge:
+    const fieldLocaleScope = $scope.$new(false);
+    fieldLocaleScope.widget = widget;
+    // Legacy sidebar extensions work only with the default locale:
+    fieldLocaleScope.locale = TheLocaleStore.getDefaultLocale();
+    // There's no validity indicator for sidebar extensions.
+    // We just provide a noop for this SDK method here:
+    fieldLocaleScope.fieldController = {
+      setInvalid: () => {},
+    };
+    fieldLocaleScope.fieldLocale = $controller('FieldLocaleController', {
+      $scope: fieldLocaleScope,
     });
 
-    return {
-      sdk,
-      widget: toRendererWidget(widget.descriptor),
-      field: widget.field,
-    };
+    const bridge = createExtensionBridge({
+      $rootScope,
+      $scope: fieldLocaleScope,
+      spaceContext,
+      $controller,
+      currentWidgetId: widget.id,
+      currentWidgetNamespace: widget.namespace,
+      location: WidgetLocation.ENTRY_FIELD_SIDEBAR,
+    });
+
+    return { bridge, widget };
   });
 
   const buildSidebarExtensionsBridge = (currentWidgetId, currentWidgetNamespace) =>
