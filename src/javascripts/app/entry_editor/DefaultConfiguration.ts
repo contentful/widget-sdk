@@ -9,6 +9,12 @@ interface EntryEditorWidget {
   description?: string;
 }
 
+interface SpaceData {
+  spaceId: string;
+  environmentId: string;
+  organizationId: string;
+}
+
 const DefaultEntryEditor: EntryEditorWidget = {
   widgetId: EntryEditorWidgetTypes.DEFAULT_EDITOR.id,
   widgetNamespace: WidgetNamespace.EDITOR_BUILTIN,
@@ -25,15 +31,15 @@ const EntryConfiguration = [DefaultEntryEditor, ReferencesEntryEditor];
 
 const availabilityMap = {
   [EntryEditorWidgetTypes.DEFAULT_EDITOR.id]: () => true,
-  [EntryEditorWidgetTypes.REFERENCE_TREE.id]: async () => getVariation(FLAGS.ALL_REFERENCES_DIALOG),
+  [EntryEditorWidgetTypes.REFERENCE_TREE.id]: async (spaceData: SpaceData) => getVariation(FLAGS.ALL_REFERENCES_DIALOG, spaceData),
 };
 
-export async function getEntryConfiguration() {
+export async function getEntryConfiguration(spaceData: SpaceData) {
   const availability = await Promise.all(
     EntryConfiguration.map((widget) => {
       const isAvailable = availabilityMap[widget.widgetId];
 
-      return isAvailable();
+      return isAvailable(spaceData);
     })
   );
 
