@@ -176,6 +176,7 @@ describe('Editor tabs configuration', () => {
   describe('Saving the content type with configured custom tabs', () => {
     beforeEach(() => {
       cy.resetAllFakeServers();
+      cy.enableFeatureFlags([FeatureFlag.ALL_REFERENCES_DIALOG]);
     });
 
     it('checks that content type with a custom tabs has been successfully saved', () => {
