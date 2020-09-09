@@ -10,6 +10,7 @@ import { SpaceSelection } from './SpaceSelection';
 import { NewSpaceDetailsPage } from './NewSpaceDetailsPage';
 import { NewSpaceBillingDetailsPage } from './NewSpaceBillingDetailsPage';
 import { NewSpaceCardDetailsPage } from './NewSpaceCardDetailsPage';
+import { NewSpaceConfirmationPage } from './NewSpaceConfirmationPage';
 
 import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
 
@@ -25,12 +26,25 @@ const NEW_SPACE_STEPS_PAYMENT = [
   { text: '3.Confirmation', isActive: false },
 ];
 
+const NEW_SPACE_STEPS_CONFIRMATION = [
+  { text: '1.Spaces', isActive: false },
+  { text: '2.Payment', isActive: false },
+  { text: '3.Confirmation', isActive: true },
+];
+
 const SPACE_SELECTION = 0;
 const SPACE_DETAILS = 1;
 const BILLING_DETAILS = 2;
 const CARD_DETAILS = 3;
+const CONFIRMATION = 4;
 
-const PURCHASE_FLOW_STEPS = [SPACE_SELECTION, SPACE_DETAILS, BILLING_DETAILS, CARD_DETAILS];
+const PURCHASE_FLOW_STEPS = [
+  SPACE_SELECTION,
+  SPACE_DETAILS,
+  BILLING_DETAILS,
+  CARD_DETAILS,
+  CONFIRMATION,
+];
 
 export const NewSpacePage = ({ organizationId, templatesList, productRatePlans }) => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -107,6 +121,15 @@ export const NewSpacePage = ({ organizationId, templatesList, productRatePlans }
 
   const onSubmitPaymentMethod = (refId) => {
     setPaymentMethodRefId(refId);
+    // Add analytics here
+
+    navigateToNextStep();
+  };
+
+  const onConfirm = () => {
+    // Add analytics here
+    // Creating the zoura subscription goes here
+
     navigateToNextStep();
   };
 
@@ -149,6 +172,19 @@ export const NewSpacePage = ({ organizationId, templatesList, productRatePlans }
               billingCountryCode={billingDetails.country}
               onSuccess={onSubmitPaymentMethod}
               selectedPlan={selectedPlan}
+              navigateToNextStep={navigateToNextStep}
+            />
+          </Grid>
+        );
+      case CONFIRMATION:
+        return (
+          <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
+            <Breadcrumb items={NEW_SPACE_STEPS_CONFIRMATION} />
+            <NewSpaceConfirmationPage
+              navigateToPreviousStep={navigateToPreviousStep}
+              billingDetails={billingDetails}
+              selectedPlan={selectedPlan}
+              onConfirm={onConfirm}
             />
           </Grid>
         );
