@@ -25,6 +25,16 @@ describe('PaymentMethodService', () => {
         path: ['hosted_payment_params'],
       });
     });
+
+    it('should include a country_code query parameter if provide', () => {
+      PaymentMethodService.getHostedPaymentParams(mockOrganization.sys.id, 'CX');
+
+      expect(mockEndpoint).toHaveBeenNthCalledWith(1, {
+        method: 'GET',
+        path: ['hosted_payment_params'],
+        query: { country_code: 'CX' },
+      });
+    });
   });
   describe('setDefaultPaymentMethod', () => {
     it('should make a PUT request to the default_payment_method endpoint', () => {

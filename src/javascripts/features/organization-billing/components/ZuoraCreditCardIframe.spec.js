@@ -45,6 +45,16 @@ describe('ZuoraCreditCardIframe', () => {
     );
   });
 
+  it('should call the hosted payment params API with a country code is provided', async () => {
+    build({ countryCode: 'CX' });
+
+    await waitFor(() => expect(LazyLoader.get).toBeCalled());
+
+    expect(mockEndpoint).toHaveBeenCalledWith(
+      expect.objectContaining({ path: ['hosted_payment_params'], query: { country_code: 'CX' } })
+    );
+  });
+
   it('should render and set a runAfterRender callback', async () => {
     build();
 
