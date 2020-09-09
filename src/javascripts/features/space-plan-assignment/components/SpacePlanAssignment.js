@@ -2,7 +2,6 @@ import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Workbench,
-  Button,
   SkeletonContainer,
   SkeletonDisplayText,
   SkeletonBodyText,
@@ -11,9 +10,9 @@ import {
   SkeletonImage,
   Notification,
 } from '@contentful/forma-36-react-components';
-import { NavigationIcon, Grid, Flex } from '@contentful/forma-36-react-components/dist/alpha';
+import { NavigationIcon, Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import { useAsync } from 'core/hooks';
-import { getSubscriptionPlans } from 'account/pricing/PricingDataProvider';
+import { getSubscriptionPlans, getRatePlans } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
 import { getSpace } from 'access_control/OrganizationMembershipRepository';
 import { SpacePlanSelection } from './SpacePlanSelection';
@@ -23,6 +22,7 @@ import { Breadcrumbs } from 'features/breadcrumbs';
 import { go } from 'states/Navigator';
 import { changeSpacePlanAssignment } from '../services/SpacePlanAssignmentService';
 import { track } from 'analytics/Analytics';
+import { SpacePlanAssignmentConfirmation } from './SpacePlanAssignmentConfirmation';
 
 const ASSIGNMENT_STEPS = [
   { text: '1.New space type', isActive: true },
@@ -32,6 +32,8 @@ const ASSIGNMENT_STEPS = [
 export function SpacePlanAssignment({ orgId, spaceId }) {
   const [selectedPlan, setSelectedPlan] = useState();
   const [steps, setSteps] = useState(ASSIGNMENT_STEPS);
+  const [inProgress, setInProgress] = useState(false);
+
   const currentStep = steps.find((item) => item.isActive);
 
   const { isLoading, data } = useAsync(
@@ -40,11 +42,14 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
       const spaceEndpoint = createSpaceEndpoint(spaceId);
       const resourceService = createResourceService(spaceId, 'space');
 
-      const [plans, space, spaceResources] = await Promise.all([
+      const [plans, ratePlans, space, spaceResources] = await Promise.all([
         getSubscriptionPlans(orgEndpoint, { plan_type: 'space' }),
+        getRatePlans(orgEndpoint),
         getSpace(spaceEndpoint),
         resourceService.getAll(),
       ]);
+
+      const freePlan = ratePlans.find((plan) => plan.productPlanType === 'free_space');
       const currentPlan = plans.items.find((plan) => plan.gatekeeperKey === spaceId);
 
       return {
@@ -55,6 +60,7 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
         ),
         space,
         currentPlan,
+        freePlan,
         spaceResources: keyBy(spaceResources, 'sys.id'),
       };
     }, [orgId, spaceId])
@@ -102,11 +108,14 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
 
   const submit = async () => {
     try {
+      setInProgress(true);
       await changeSpacePlanAssignment(orgId, spaceId, selectedPlan, data.currentPlan);
       Notification.success(`${data.space.name} was successfully changed to ${selectedPlan.name}`);
       go({ path: '^.subscription_new' });
     } catch (e) {
       Notification.error(e.message);
+    } finally {
+      setInProgress(false);
     }
   };
 
@@ -154,21 +163,19 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
                   plans={data.plans}
                   selectedPlan={selectedPlan}
                   onPlanSelected={setSelectedPlan}
-                  onNext={submit}
+                  onNext={navigateToNextStep}
                 />
               )}
               {steps.indexOf(currentStep) === 1 && (
-                <>
-                  <div>I will be a confirmation layer</div>
-                  <Flex justifyContent="space-between" alignItems="center" marginTop="spacingL">
-                    <Button buttonType="muted" onClick={navigateToPreviousStep} icon="ChevronLeft">
-                      Go back
-                    </Button>
-                    <Button buttonType="primary" onClick={navigateToNextStep}>
-                      Continue
-                    </Button>
-                  </Flex>
-                </>
+                <SpacePlanAssignmentConfirmation
+                  currentPlan={data.currentPlan ?? data.freePlan}
+                  selectedPlan={selectedPlan}
+                  space={data.space}
+                  spaceResources={data.spaceResources}
+                  onPrev={navigateToPreviousStep}
+                  onNext={submit}
+                  inProgress={inProgress}
+                />
               )}
             </>
           )}
