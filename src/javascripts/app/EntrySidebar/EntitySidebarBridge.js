@@ -1,4 +1,4 @@
-import { once } from 'lodash';
+import { once, memoize } from 'lodash';
 import * as K from 'core/utils/kefir';
 import { getModule } from 'core/NgRegistry';
 import { getCurrentStateName } from 'states/Navigator';
@@ -7,6 +7,8 @@ import SidebarWidgetTypes from 'app/EntrySidebar/SidebarWidgetTypes';
 import createExtensionBridge from 'widgets/bridges/createExtensionBridge';
 import TheLocaleStore from 'services/localeStore';
 import { WidgetLocation } from '@contentful/widget-renderer';
+import { createFieldWidgetSDK } from 'app/widgets/createFieldWidgetSDK';
+import { toRendererWidget } from 'widgets/WidgetCompat';
 
 export default ({ $scope, emitter }) => {
   const $controller = getModule('$controller');
@@ -227,31 +229,24 @@ export default ({ $scope, emitter }) => {
 
   // Construct a list of legacy sidebar extensions
   const legacyExtensions = $scope.editorData.fieldControls.sidebar.map((widget) => {
-    // A fake field-locale scope to be used in the bridge:
-    const fieldLocaleScope = $scope.$new(false);
-    fieldLocaleScope.widget = widget;
-    // Legacy sidebar extensions work only with the default locale:
-    fieldLocaleScope.locale = TheLocaleStore.getDefaultLocale();
-    // There's no validity indicator for sidebar extensions.
-    // We just provide a noop for this SDK method here:
-    fieldLocaleScope.fieldController = {
-      setInvalid: () => {},
+    return {
+      makeSdk: memoize(() =>
+        createFieldWidgetSDK({
+          // Legacy sidebar extensions use field-bound SDK for the default locale.
+          fieldId: widget.fieldId,
+          localeCode: TheLocaleStore.getDefaultLocale().code,
+          widgetNamespace: widget.widgetNamespace,
+          widgetId: widget.widgetId,
+          spaceContext,
+          $scope,
+          doc: $scope.otDoc,
+          internalContentType: $scope.entityInfo.contentType,
+          parameters: widget.parameters,
+        })
+      ),
+      widget: toRendererWidget(widget.descriptor),
+      field: widget.field,
     };
-    fieldLocaleScope.fieldLocale = $controller('FieldLocaleController', {
-      $scope: fieldLocaleScope,
-    });
-
-    const bridge = createExtensionBridge({
-      $rootScope,
-      $scope: fieldLocaleScope,
-      spaceContext,
-      $controller,
-      currentWidgetId: widget.id,
-      currentWidgetNamespace: widget.namespace,
-      location: WidgetLocation.ENTRY_FIELD_SIDEBAR,
-    });
-
-    return { bridge, widget };
   });
 
   const buildSidebarExtensionsBridge = (currentWidgetId, currentWidgetNamespace) =>

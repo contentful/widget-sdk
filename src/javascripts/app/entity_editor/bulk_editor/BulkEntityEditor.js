@@ -166,9 +166,12 @@ export const BulkEntityEditor = ({
     editorData,
     entityInfo,
     localeData,
-    makeFieldLocaleListeners: (currentScope) => {
-      return makeFieldLocaleListeners(widgets, currentScope, getModule('$controller'));
-    },
+    makeFieldLocaleListeners: (currentScope) =>
+      makeFieldLocaleListeners(
+        fieldControls.form.concat(fieldControls.sidebar),
+        currentScope,
+        getModule('$controller')
+      ),
     otDoc: doc,
   };
 

@@ -80,7 +80,7 @@ export default function register() {
       K.onValueScope($scope, $scope.editorContext.validator.errors$, update);
 
       $scope.fieldLocaleListeners = makeFieldLocaleListeners(
-        controls,
+        controls.form.concat(controls.sidebar),
         $scope,
         getModule('$controller')
       );
@@ -89,7 +89,7 @@ export default function register() {
         const { widgets, shouldDisplayNoLocalizedFieldsAdvice } = filterWidgets(
           $scope.localeData,
           $scope.editorContext,
-          controls,
+          controls.form,
           $scope.preferences.showDisabledFields
         );
         $scope.widgets = widgets;
