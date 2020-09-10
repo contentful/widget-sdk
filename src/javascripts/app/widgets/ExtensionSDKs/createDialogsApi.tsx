@@ -4,9 +4,10 @@ import {
   DialogExtensionSDK,
   DialogsAPI,
   OpenCustomWidgetOptions,
-  FieldExtensionSDK,
+  BaseExtensionSDK,
+  IdsAPI,
 } from 'contentful-ui-extensions-sdk';
-import { omit } from 'lodash';
+import { omit, noop } from 'lodash';
 
 import { entitySelector } from 'features/entity-search';
 import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
@@ -23,7 +24,9 @@ import {
 } from '@contentful/widget-renderer';
 import { applyDefaultValues } from 'widgets/WidgetParametersUtils';
 
-type FieldSDKWithoutDialogs = Omit<FieldExtensionSDK, 'dialogs'>;
+type BaseExtensionSDKWithoutDialogs = Omit<BaseExtensionSDK, 'dialogs' | 'ids'> & {
+  ids: Omit<IdsAPI, 'field' | 'entry' | 'contentType'>;
+};
 
 const denyDialog = () => {
   throw makeReadOnlyApiError(ReadOnlyApi.Dialog);
@@ -44,7 +47,7 @@ export function createReadOnlyDialogsApi() {
   };
 }
 
-export function createDialogsApi(sdk: FieldSDKWithoutDialogs): DialogsAPI {
+export function createDialogsApi(sdk: BaseExtensionSDKWithoutDialogs): DialogsAPI {
   return {
     openAlert: ExtensionDialogs.openAlert,
     openConfirm: ExtensionDialogs.openConfirm,
@@ -121,7 +124,7 @@ async function findWidget(widgetNamespace: WidgetNamespace, widgetId: string) {
 }
 
 function createDialogSDK(
-  sdk: FieldSDKWithoutDialogs,
+  sdk: BaseExtensionSDKWithoutDialogs,
   widget: Widget,
   onClose: (data?: any) => void,
   invocationParameters: Record<string, any>
@@ -153,19 +156,26 @@ function createDialogSDK(
     },
     ids: {
       // Do not leak entry- or field-specific IDs nor widget ID.
-      ...omit(sdk.ids, ['field', 'entry', 'contentType', 'app', 'extension']),
+      ...omit(sdk.ids, ['app', 'extension']),
       // Expose widget ID (can be the same when doing `openCurrent`).
       [widget.namespace]: widget.id,
     },
     // Pass onClose in order to allow child modal to close.
     close: onClose,
+    window: {
+      // There are no iframes in the internal API so any methods related
+      // to <iframe> height can be safely ignored.
+      updateHeight: noop,
+      startAutoResizer: noop,
+      stopAutoResizer: noop,
+    },
   };
 }
 
 async function openCustomDialog(
   namespace: WidgetNamespace,
   options: OpenCustomWidgetOptions,
-  sdk: FieldSDKWithoutDialogs
+  sdk: BaseExtensionSDKWithoutDialogs
 ) {
   if (!options.id) {
     throw new Error('No ID provided.');

@@ -7,7 +7,7 @@ import SidebarWidgetTypes from 'app/EntrySidebar/SidebarWidgetTypes';
 import createExtensionBridge from 'widgets/bridges/createExtensionBridge';
 import TheLocaleStore from 'services/localeStore';
 import { WidgetLocation } from '@contentful/widget-renderer';
-import { createFieldWidgetSDK } from 'app/widgets/createFieldWidgetSDK';
+import { createFieldWidgetSDK } from 'app/widgets/ExtensionSDKs';
 import { toRendererWidget } from 'widgets/WidgetCompat';
 
 export default ({ $scope, emitter }) => {

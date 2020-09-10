@@ -2,14 +2,14 @@ import React, { useMemo } from 'react';
 
 import { FieldExtensionSDK } from 'contentful-ui-extensions-sdk';
 import { getModule } from 'core/NgRegistry';
-import { createReadonlyFieldWidgetSDK } from 'app/widgets/createFieldWidgetSDK';
+import { createReadonlyFieldWidgetSDK } from 'app/widgets/ExtensionSDKs';
 import {
   EditorInterface,
   Widget,
   WidgetLocation,
   WidgetRenderer,
 } from '@contentful/widget-renderer';
-import { InternalContentType } from 'app/widgets/createFieldWidgetSDK/createContentTypeApi';
+import { InternalContentType } from 'app/widgets/ExtensionSDKs/createContentTypeApi';
 import { createTagsRepo } from 'features/content-tags';
 import { Locale } from 'app/entity_editor/EntityField/types';
 import { Entity } from 'app/entity_editor/Document/types';

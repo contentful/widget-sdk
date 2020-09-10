@@ -16,7 +16,7 @@ import { EditorInterface, isCustomWidget, WidgetNamespace } from '@contentful/wi
 import { LegacyWidget, toRendererWidget } from 'widgets/WidgetCompat';
 import { Entity } from 'app/entity_editor/Document/types';
 import { Field, Locale } from 'app/entity_editor/EntityField/types';
-import { InternalContentType } from 'app/widgets/createFieldWidgetSDK/createContentTypeApi';
+import { InternalContentType } from 'app/widgets/ExtensionSDKs/createContentTypeApi';
 
 const styles = {
   rtl: css({

@@ -4,7 +4,7 @@ import SnapshotPresenterWidgets from './SnapshotPresenterWidgets';
 import { EditorInterface, WidgetNamespace } from '@contentful/widget-renderer';
 import { Entity } from '../entity_editor/Document/types';
 import { Field, Locale } from '../entity_editor/EntityField/types';
-import { InternalContentType } from '../widgets/createFieldWidgetSDK/createContentTypeApi';
+import { InternalContentType } from '../widgets/ExtensionSDKs/createContentTypeApi';
 import { LegacyWidget } from '../../widgets/WidgetCompat';
 
 // This cannot be moved or replaced by a function because of how jest.mock works

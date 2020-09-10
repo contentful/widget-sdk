@@ -18,7 +18,7 @@ import checkDependencies from './checkDependencies';
 import {
   makeShareJSError,
   makePermissionError,
-} from 'app/widgets/createFieldWidgetSDK/createEntryFieldApi';
+} from 'app/widgets/ExtensionSDKs/createEntryFieldApi';
 import { WidgetLocation } from '@contentful/widget-renderer';
 
 const ERROR_MESSAGES = {

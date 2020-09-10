@@ -1,6 +1,5 @@
 import { createEntryFieldApi } from './createEntryFieldApi';
 import { InternalContentTypeField, InternalContentType } from './createContentTypeApi';
-
 import * as K from 'core/utils/kefir';
 import { EntryAPI, EntrySys, EntryFieldAPI } from 'contentful-ui-extensions-sdk';
 import { Document } from 'app/entity_editor/Document/typesDocument';

@@ -1,7 +1,7 @@
 import { FieldExtensionSDK } from 'contentful-ui-extensions-sdk';
 import { noop } from 'lodash';
 
-import { EditorInterface, WidgetNamespace } from '@contentful/widget-renderer';
+import { EditorInterface, WidgetNamespace, WidgetLocation } from '@contentful/widget-renderer';
 import { SpaceEndpoint } from 'data/CMA/types';
 import { create as createEntityRepo } from 'data/CMA/EntityRepo';
 import { PubSubClient } from 'services/PubSubService';
@@ -11,15 +11,17 @@ import { Document } from 'app/entity_editor/Document/typesDocument';
 import { create } from 'app/entity_editor/Document/CmaDocument';
 import { Entity } from 'app/entity_editor/Document/types';
 
-import { getBatchingApiClient } from '../WidgetApi/BatchingApiClient';
-import { createEditorApi } from './createEditorApi';
-import { createEntryApi } from './createEntryApi';
-import { createSpaceApi } from './createSpaceApi';
-import { createReadOnlyNavigatorApi } from './createNavigatorApi';
-import { createReadOnlyDialogsApi } from './createDialogsApi';
-import { SpaceMember } from './createUserApi';
-import { createSharedFieldWidgetSDK } from './utils';
-import { InternalContentType } from './createContentTypeApi';
+import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
+import { createEditorApi } from '../createEditorApi';
+import { createEntryApi } from '../createEntryApi';
+import { createSpaceApi } from '../createSpaceApi';
+import { createReadOnlyNavigatorApi } from '../createNavigatorApi';
+import { createReadOnlyDialogsApi } from '../createDialogsApi';
+import { SpaceMember, createUserApi } from '../createUserApi';
+import { InternalContentType, createContentTypeApi } from '../createContentTypeApi';
+import { createIdsApi } from '../createIdsApi';
+import { createBaseExtensionSdk } from '../createBaseExtensionSdk';
+import { createSharedEditorSDK } from '../createSharedEditorSDK';
 
 interface CreateReadOnlyFieldWidgetSDKOptions {
   cma: any;
@@ -62,6 +64,7 @@ export function createReadonlyFieldWidgetSDK({
   widgetNamespace,
   parameters,
 }: CreateReadOnlyFieldWidgetSDKOptions): FieldExtensionSDK {
+  const [environmentId] = environmentIds;
   const pubSubClient = { on: noop, off: noop } as PubSubClient;
   const readOnlyEntityRepo = createEntityRepo(endpoint, pubSubClient, noop, {
     skipDraftValidation: true,
@@ -77,6 +80,8 @@ export function createReadonlyFieldWidgetSDK({
     readOnlyEntityRepo,
     5000
   );
+
+  const userApi = createUserApi(spaceMember);
 
   const editorApi = createEditorApi({
     editorInterface: editorInterface,
@@ -95,6 +100,7 @@ export function createReadonlyFieldWidgetSDK({
     getPreferences: () => ({ showDisabledFields: true }),
     watch: (_watchFn, _cb) => noop,
   });
+
   const entryApi = createEntryApi({
     internalContentType: internalContentType,
     doc,
@@ -102,6 +108,7 @@ export function createReadonlyFieldWidgetSDK({
     fieldLocaleListeners: {},
     readOnly: true,
   });
+
   const spaceApi = createSpaceApi({
     cma: getBatchingApiClient(cma),
     initialContentTypes,
@@ -112,25 +119,58 @@ export function createReadonlyFieldWidgetSDK({
     usersRepo,
     readOnly: true,
   });
+
+  const contentTypeApi = createContentTypeApi(internalContentType);
+
+  const locationApi = {
+    is: (location: string) => location === WidgetLocation.ENTRY_FIELD,
+  };
+
+  const windowApi = {
+    // There are no iframes in the internal API so any methods related
+    // to <iframe> height can be safely ignored.
+    updateHeight: noop,
+    startAutoResizer: noop,
+    stopAutoResizer: noop,
+  };
+
   const navigatorApi = createReadOnlyNavigatorApi();
+
   const dialogsApi = createReadOnlyDialogsApi();
 
+  const fieldApi = entryApi.fields[publicFieldId].getForLocale(publicLocaleCode);
+
+  const idsApi = createIdsApi(
+    spaceId,
+    environmentId,
+    internalContentType,
+    entryApi,
+    fieldApi,
+    userApi,
+    widgetNamespace,
+    widgetId
+  );
+
+  const baseSdkWithoutDialogs = createBaseExtensionSdk({
+    locationApi,
+    navigatorApi,
+    parametersApi: parameters,
+    spaceApi,
+    spaceMember,
+  });
+
+  const sharedEditorSDK = createSharedEditorSDK({
+    contentTypeApi,
+    entryApi,
+    editorApi,
+  });
+
   return {
-    ...createSharedFieldWidgetSDK({
-      entryApi,
-      environmentIds,
-      publicFieldId,
-      internalContentType,
-      publicLocaleCode,
-      spaceId,
-      spaceMember,
-      widgetId,
-      widgetNamespace,
-      parameters,
-    }),
-    editor: editorApi,
-    space: spaceApi,
-    navigator: navigatorApi,
+    ...baseSdkWithoutDialogs,
+    ...sharedEditorSDK,
     dialogs: dialogsApi,
+    ids: idsApi,
+    field: fieldApi,
+    window: windowApi,
   };
 }

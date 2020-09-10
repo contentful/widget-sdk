@@ -1,0 +1,1 @@
+export { createPageExtensionSDK } from './createPageExtensionSDK';

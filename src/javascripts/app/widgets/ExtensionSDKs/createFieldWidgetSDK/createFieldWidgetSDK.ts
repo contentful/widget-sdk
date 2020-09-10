@@ -1,16 +1,19 @@
 import { FieldExtensionSDK } from 'contentful-ui-extensions-sdk';
-
 import { Document } from 'app/entity_editor/Document/typesDocument';
-import { InternalContentType } from './createContentTypeApi';
-import { WidgetNamespace } from '@contentful/widget-renderer';
+import { InternalContentType, createContentTypeApi } from '../createContentTypeApi';
+import { WidgetNamespace, WidgetLocation } from '@contentful/widget-renderer';
 import { createTagsRepo } from 'features/content-tags';
-import { getBatchingApiClient } from '../WidgetApi/BatchingApiClient';
-import { createEditorApi } from './createEditorApi';
-import { createEntryApi } from './createEntryApi';
-import { createSpaceApi } from './createSpaceApi';
-import { createNavigatorApi } from './createNavigatorApi';
-import { createDialogsApi } from './createDialogsApi';
-import { createSharedFieldWidgetSDK } from './utils';
+import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
+import { createEditorApi } from '../createEditorApi';
+import { createEntryApi } from '../createEntryApi';
+import { createSpaceApi } from '../createSpaceApi';
+import { createNavigatorApi } from '../createNavigatorApi';
+import { createDialogsApi } from '../createDialogsApi';
+import { createIdsApi } from '../createIdsApi';
+import { createUserApi } from '../createUserApi';
+import { noop } from 'lodash';
+import { createBaseExtensionSdk } from '../createBaseExtensionSdk';
+import { createSharedEditorSDK } from '../createSharedEditorSDK';
 
 export function createFieldWidgetSDK({
   fieldId,
@@ -43,6 +46,8 @@ export function createFieldWidgetSDK({
     watch: (watchFn, cb) => $scope.$watch(watchFn, cb),
   });
 
+  const contentTypeApi = createContentTypeApi(internalContentType);
+
   const entryApi = createEntryApi({
     internalContentType,
     doc,
@@ -69,22 +74,53 @@ export function createFieldWidgetSDK({
 
   const navigatorApi = createNavigatorApi({ spaceContext, widgetNamespace, widgetId });
 
-  const sdkWithoutDialogs = {
-    ...createSharedFieldWidgetSDK({
-      entryApi,
-      environmentIds: [spaceContext.getEnvironmentId(), ...spaceContext.getAliasesIds()],
-      publicFieldId: fieldId,
-      internalContentType,
-      publicLocaleCode: localeCode,
-      spaceId: spaceContext.getId(),
-      spaceMember: spaceContext.space.data.spaceMember,
-      widgetId,
-      widgetNamespace,
-      parameters,
-    }),
-    editor: editorApi,
-    space: spaceApi,
-    navigator: navigatorApi,
+  const locationApi = {
+    is: (location: string) => location === WidgetLocation.ENTRY_FIELD,
+  };
+
+  const fieldApi = entryApi.fields[fieldId].getForLocale(localeCode);
+
+  const userApi = createUserApi(spaceContext.space.data.spaceMember);
+
+  const idsApi = createIdsApi(
+    spaceContext.getId(),
+    spaceContext.getEnvironmentId(),
+    internalContentType,
+    entryApi,
+    fieldApi,
+    userApi,
+    widgetNamespace,
+    widgetId
+  );
+
+  const windowApi = {
+    // There are no iframes in the internal API so any methods related
+    // to <iframe> height can be safely ignored.
+    updateHeight: noop,
+    startAutoResizer: noop,
+    stopAutoResizer: noop,
+  };
+
+  const baseSdk = createBaseExtensionSdk({
+    parametersApi: parameters,
+    spaceApi,
+    spaceMember: spaceContext.space.data.spaceMember,
+    locationApi,
+    navigatorApi,
+  });
+
+  const sharedEditorSDK = createSharedEditorSDK({
+    contentTypeApi,
+    entryApi,
+    editorApi,
+  });
+
+  const sdkWithoutDialogs: Omit<FieldExtensionSDK, 'dialogs'> = {
+    ...baseSdk,
+    ...sharedEditorSDK,
+    ids: idsApi,
+    field: fieldApi,
+    window: windowApi,
   };
 
   return {
