@@ -21,6 +21,7 @@ import { sortBy, keyBy, filter } from 'lodash';
 import { Breadcrumbs } from 'features/breadcrumbs';
 import { go } from 'states/Navigator';
 import { changeSpacePlanAssignment } from '../services/SpacePlanAssignmentService';
+import { formatError } from '../utils/errors';
 import { track } from 'analytics/Analytics';
 import { SpacePlanAssignmentConfirmation } from './SpacePlanAssignmentConfirmation';
 
@@ -120,7 +121,7 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
       Notification.success(`${data.space.name} was successfully changed to ${selectedPlan.name}`);
       go({ path: '^.subscription_new' });
     } catch (e) {
-      Notification.error(e.message);
+      Notification.error(formatError(e));
     } finally {
       setInProgress(false);
     }
