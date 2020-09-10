@@ -207,7 +207,12 @@ export interface Environment {
   sys: EnvironmentSys;
 }
 
+export interface Alias {
+  sys: LinkSys;
+}
+
 export interface EnvironmentSys extends Sys {
+  aliases: Alias[];
   space: {
     sys: LinkSys;
   };

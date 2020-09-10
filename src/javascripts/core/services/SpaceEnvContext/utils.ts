@@ -1,4 +1,4 @@
-import { SpaceEnv } from './types';
+import { SpaceEnv, Environment } from './types';
 
 export function getSpaceData(space?: SpaceEnv) {
   return space?.data;
@@ -48,6 +48,13 @@ export function isCurrentEnvironmentMaster(space?: SpaceEnv) {
   return space?.environmentMeta?.isMasterEnvironment ?? true;
 }
 
+export function isMasterEnvironment(environment?: Environment) {
+  return !!(
+    environment?.sys.id === 'master' ||
+    environment?.sys.aliases?.find((alias) => alias.sys.id === 'master')
+  );
+}
+
 export function getEnvironment(space?: SpaceEnv) {
   return space?.environment;
 }
@@ -62,4 +69,8 @@ export function getEnvironmentName(space?: SpaceEnv) {
 
 export function getSpaceVersion(space?: SpaceEnv) {
   return getSpaceData(space)?.sys.version;
+}
+
+export function getEnvironmentAliasesIds(environment?: Environment) {
+  return environment?.sys.aliases?.map(({ sys }) => sys.id) ?? [];
 }

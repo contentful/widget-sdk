@@ -7,8 +7,11 @@ import {
   getEnvironmentId,
   getEnvironmentName,
   getSpaceData,
+  getOrganizationId,
+  getOrganizationName,
+  getOrganization,
 } from './utils';
-import { SpaceEnv, SpaceEnvContextValue } from './types';
+import { SpaceEnv, SpaceEnvContextValue, Environment } from './types';
 
 // We can then also create methods such as `getSpaceId`, `getSpaceData`, `getSpaceOrganization`, etc
 function getAngularSpaceContext() {
@@ -30,19 +33,27 @@ export const SpaceEnvContextProvider: React.FC<{}> = (props) => {
   });
 
   // TODO: Methods depending on the angular space context directly, they should be refactored
-  function getSpace() {
-    return angularSpaceContext?.getSpace() ?? null;
+  function getSpace(): SpaceEnv {
+    return angularSpaceContext?.getSpace();
+  }
+
+  function getEnvironments(): Environment[] {
+    return angularSpaceContext?.environments ?? [];
   }
 
   // Most common values are exported as property values
   const value = {
-    currentSpace: space,
-    currentSpaceId: getSpaceId(space),
-    currentSpaceName: getSpaceName(space),
-    currentSpaceData: getSpaceData(space),
     currentEnvironment: getEnvironment(space),
     currentEnvironmentId: getEnvironmentId(space),
     currentEnvironmentName: getEnvironmentName(space),
+    currentOrganization: getOrganization(space),
+    currentOrganizationId: getOrganizationId(space),
+    currentOrganizationName: getOrganizationName(space),
+    currentSpace: space,
+    currentSpaceData: getSpaceData(space),
+    currentSpaceEnvironments: getEnvironments(),
+    currentSpaceId: getSpaceId(space),
+    currentSpaceName: getSpaceName(space),
   };
 
   return <SpaceEnvContext.Provider value={value}>{props.children}</SpaceEnvContext.Provider>;

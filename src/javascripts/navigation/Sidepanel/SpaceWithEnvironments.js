@@ -4,24 +4,23 @@ import AnimateHeight from 'react-animate-height';
 import FolderIcon from 'svg/folder.svg';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo';
-import { getModule } from 'core/NgRegistry';
 import EnvOrAliasLabel from 'app/common/EnvOrAliasLabel';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
+import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { isMasterEnvironment, getEnvironmentAliasesIds } from 'core/services/SpaceEnvContext/utils';
 
 function EnvironmentList({ environments = [], isCurrSpace, currentEnvId, goToSpace, space }) {
-  const spaceContext = getModule('spaceContext');
   return (
     <ul>
       {environments
-        .sort(
-          (envA, envB) =>
-            spaceContext.isMasterEnvironment(envB) - spaceContext.isMasterEnvironment(envA)
-        )
+        .sort((envA, envB) => {
+          return isMasterEnvironment(envB) - isMasterEnvironment(envA);
+        })
         .map((env) => {
           const envId = env.sys.id;
           const [alias] = env.sys.aliases || [];
-          const isMasterEnvironment = spaceContext.isMasterEnvironment(env);
+          const environmentIsMaster = isMasterEnvironment(env);
           const isSelected = isCurrSpace && envId === currentEnvId;
 
           const environmentClassNames = css({
@@ -46,11 +45,11 @@ function EnvironmentList({ environments = [], isCurrSpace, currentEnvId, goToSpa
               className={environmentClassNames}
               onClick={(e) => {
                 e.stopPropagation();
-                goToSpace(space.sys.id, envId, isMasterEnvironment);
+                goToSpace(space.sys.id, envId, environmentIsMaster);
               }}>
               <a
                 href={`/spaces/${space.sys.id}${
-                  isMasterEnvironment ? '' : `/environments/${envId}`
+                  environmentIsMaster ? '' : `/environments/${envId}`
                 }`}
                 onClick={(e) => {
                   if (e.shiftKey || e.ctrlKey || e.metaKey) {
@@ -64,7 +63,7 @@ function EnvironmentList({ environments = [], isCurrSpace, currentEnvId, goToSpa
                 <EnvOrAliasLabel
                   aliasId={alias && alias.sys.id}
                   environmentId={envId}
-                  isMaster={isMasterEnvironment}
+                  isMaster={environmentIsMaster}
                   isSelected={isSelected}
                 />
               </a>
@@ -96,6 +95,8 @@ export default class SpaceWithEnvironments extends React.Component {
     isCurrSpace: PropTypes.bool,
   };
 
+  static contextType = SpaceEnvContext;
+
   state = { loading: false, environments: undefined };
 
   componentDidMount() {
@@ -116,7 +117,7 @@ export default class SpaceWithEnvironments extends React.Component {
   };
 
   refreshEnvironmentsList = async () => {
-    const spaceContext = getModule('spaceContext');
+    const { currentSpaceId, currentSpaceEnvironments } = this.context;
     this.setState({ loading: true });
 
     const {
@@ -129,12 +130,10 @@ export default class SpaceWithEnvironments extends React.Component {
 
     const endpoint = createSpaceEndpoint(spaceId);
     const repo = SpaceEnvironmentRepo.create(endpoint);
-    let allEnvs;
+    let allEnvs = currentSpaceEnvironments;
 
-    if (spaceContext.environments && spaceContext.getId() === spaceId) {
-      // try to use environments from spacecontext
-      allEnvs = spaceContext.environments;
-    } else {
+    const isSameSpace = currentSpaceEnvironments.length && currentSpaceId === spaceId;
+    if (!isSameSpace) {
       try {
         const { environments } = await repo.getAll();
         allEnvs = environments;
@@ -144,24 +143,27 @@ export default class SpaceWithEnvironments extends React.Component {
       }
     }
 
-    const envs = allEnvs.filter((env) => env.sys.status.sys.id === 'ready');
-
+    const readyEnvironments = allEnvs.filter((env) => env.sys.status.sys.id === 'ready');
     const goToSpaceReset = (envId, isMasterEnv, isAliased) => {
       setOpenedSpaceId(null);
       goToSpace(spaceId, envId, isMasterEnv, isAliased);
     };
 
     this.setState({ loading: false });
-    if (envs.length === 0 || (envs.length === 1 && spaceContext.isMasterEnvironment(envs[0]))) {
+
+    if (
+      readyEnvironments.length === 0 ||
+      (readyEnvironments.length === 1 && isMasterEnvironment(readyEnvironments[0]))
+    ) {
       goToSpaceReset();
-    } else if (envs.length === 1) {
+    } else if (readyEnvironments.length === 1) {
       goToSpaceReset(
-        envs[0].sys.id,
-        spaceContext.isMasterEnvironment(envs[0]),
-        spaceContext.getAliasesIds(envs[0]).length > 0
+        readyEnvironments[0].sys.id,
+        isMasterEnvironment(readyEnvironments[0]),
+        getEnvironmentAliasesIds(readyEnvironments[0]).length > 0
       );
     } else {
-      this.setState({ environments: envs }, () => {
+      this.setState({ environments: readyEnvironments }, () => {
         setOpenedSpaceId(spaceId);
       });
     }

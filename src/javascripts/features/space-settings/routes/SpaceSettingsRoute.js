@@ -20,11 +20,7 @@ import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 
 import { Spinner } from '@contentful/forma-36-react-components';
-import {
-  getOrganizationId,
-  getSpaceVersion,
-  getOrganization,
-} from 'core/services/SpaceEnvContext/utils';
+import { getSpaceVersion, getOrganization } from 'core/services/SpaceEnvContext/utils';
 import APIClient from 'data/APIClient';
 
 export class SpaceSettingsRoute extends React.Component {
@@ -38,9 +34,8 @@ export class SpaceSettingsRoute extends React.Component {
   }
 
   getSpacePlan = async () => {
-    const { currentSpace, currentSpaceId } = this.context;
-    const orgId = getOrganizationId(currentSpace);
-    const orgEndpoint = createOrganizationEndpoint(orgId);
+    const { currentSpaceId, currentOrganizationId } = this.context;
+    const orgEndpoint = createOrganizationEndpoint(currentOrganizationId);
     let plan;
     try {
       plan = await getSingleSpacePlan(orgEndpoint, currentSpaceId);
@@ -99,17 +94,16 @@ export class SpaceSettingsRoute extends React.Component {
   };
 
   changeSpaceDialog = async () => {
-    const { currentSpace, currentSpaceId } = this.context;
-    const organizationId = getOrganizationId(currentSpace);
+    const { currentSpaceId, currentOrganizationId } = this.context;
     const space = await TokenStore.getSpace(currentSpaceId);
 
     trackCTAClick(CTA_EVENTS.UPGRADE_SPACE_PLAN, {
-      organizationId,
+      organizationId: currentOrganizationId,
       spaceId: currentSpaceId,
     });
 
     showChangeSpaceModal({
-      organizationId,
+      organizationId: currentOrganizationId,
       space,
       onSubmit: async (newProductRatePlan) => {
         Notification.success(getNotificationMessage(space, this.state.plan, newProductRatePlan));
