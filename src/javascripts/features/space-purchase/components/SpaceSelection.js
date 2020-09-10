@@ -3,8 +3,8 @@ import cn from 'classnames';
 import { css } from 'emotion';
 import PropTypes from 'prop-types';
 
-import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
-import { Card, Heading, Paragraph } from '@contentful/forma-36-react-components';
+import { Grid, Flex } from '@contentful/forma-36-react-components/dist/alpha';
+import { Card, Heading, Paragraph, Button, Tooltip } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
 import { websiteUrl } from 'Config';
@@ -45,7 +45,7 @@ const styles = {
   }),
 };
 
-export const SpaceSelection = ({ organizationId, selectPlan }) => {
+export const SpaceSelection = ({ organizationId, selectPlan, canCreateCommunityPlan }) => {
   const getSelectHandler = (planType) => {
     switch (planType) {
       case SPACE_PURCHASE_TYPES.MEDIUM:
@@ -87,10 +87,29 @@ export const SpaceSelection = ({ organizationId, selectPlan }) => {
 
         <div className={cn(styles.fullRow, styles.communitySection)}>
           <Card className={styles.communityCard} testId="space-selection.community-card">
-            <Heading element="h3" className={styles.normalWeight}>
-              Community
-            </Heading>
-            <Paragraph>Free space limited to 1 per organization.</Paragraph>
+            <Flex justifyContent="space-between" alignItems="center">
+              <div>
+                <Heading element="h3" className={styles.normalWeight}>
+                  Community
+                </Heading>
+                <Paragraph>Free space limited to 1 per organization.</Paragraph>
+              </div>
+
+              <Tooltip
+                testId="read-only-tooltip"
+                place="bottom"
+                content={
+                  !canCreateCommunityPlan
+                    ? "You've already used your free Community space. To add a new Community space, delete your existing one."
+                    : ''
+                }>
+                <Button
+                  testId="space-selection-community-select-button"
+                  disabled={!canCreateCommunityPlan}>
+                  Select
+                </Button>
+              </Tooltip>
+            </Flex>
           </Card>
           <ExternalTextLink href={websiteUrl('pricing/#feature-overview')}>
             See full feature list
@@ -104,4 +123,5 @@ export const SpaceSelection = ({ organizationId, selectPlan }) => {
 SpaceSelection.propTypes = {
   organizationId: PropTypes.string,
   selectPlan: PropTypes.func,
+  canCreateCommunityPlan: PropTypes.bool,
 };

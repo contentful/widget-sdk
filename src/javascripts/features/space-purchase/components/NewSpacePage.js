@@ -46,7 +46,12 @@ const PURCHASE_FLOW_STEPS = [
   CONFIRMATION,
 ];
 
-export const NewSpacePage = ({ organizationId, templatesList, productRatePlans }) => {
+export const NewSpacePage = ({
+  organizationId,
+  templatesList,
+  productRatePlans,
+  canCreateCommunityPlan,
+}) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [spaceName, setSpaceName] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState(null);
@@ -193,7 +198,11 @@ export const NewSpacePage = ({ organizationId, templatesList, productRatePlans }
         return (
           <Grid columns={1} rows="repeat(3, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS} />
-            <SpaceSelection organizationId={organizationId} selectPlan={selectPlan} />
+            <SpaceSelection
+              organizationId={organizationId}
+              selectPlan={selectPlan}
+              canCreateCommunityPlan={canCreateCommunityPlan}
+            />
             <NewSpaceFAQ />
           </Grid>
         );
@@ -215,4 +224,5 @@ NewSpacePage.propTypes = {
   organizationId: PropTypes.string,
   templatesList: PropTypes.array,
   productRatePlans: PropTypes.array,
+  canCreateCommunityPlan: PropTypes.bool,
 };

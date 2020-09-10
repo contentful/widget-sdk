@@ -12,20 +12,32 @@ import StateRedirect from 'app/common/StateRedirect';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
 import { getRatePlans } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
+import createResourceService from 'services/ResourceService';
+import { resourceIncludedLimitReached } from 'utils/ResourceUtils';
 
 const initialFetch = (orgId) => async () => {
   const endpoint = createOrganizationEndpoint(orgId);
 
-  const [newPurchaseFlowIsEnabled, templatesList, productRatePlans] = await Promise.all([
+  const [
+    newPurchaseFlowIsEnabled,
+    templatesList,
+    productRatePlans,
+    freeSpaceResource,
+  ] = await Promise.all([
     getVariation(FLAGS.NEW_PURCHASE_FLOW),
     getTemplatesList(),
     getRatePlans(endpoint),
+    createResourceService(orgId, 'organization').get('free_space'),
   ]);
+
+  // User can't create another community plan if they've already reached their limit
+  const canCreateCommunityPlan = !resourceIncludedLimitReached(freeSpaceResource);
 
   return {
     newPurchaseFlowIsEnabled,
     templatesList,
     productRatePlans,
+    canCreateCommunityPlan,
   };
 };
 
@@ -51,6 +63,7 @@ export const NewSpaceRoute = ({ orgId }) => {
         organizationId={orgId}
         templatesList={data.templatesList}
         productRatePlans={data.productRatePlans}
+        canCreateCommunityPlan={data.canCreateCommunityPlan}
       />
     </>
   );

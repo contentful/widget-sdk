@@ -190,6 +190,7 @@ function build(customProps) {
   const props = {
     organizationId: mockOrganization.sys.id,
     templatesList: [],
+    canCreateCommunityPlan: true,
     productRatePlans: [mockProductRatePlanMedium, mockProductRatePlanLarge],
     ...customProps,
   };

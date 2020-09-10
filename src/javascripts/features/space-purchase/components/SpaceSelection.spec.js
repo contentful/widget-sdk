@@ -46,12 +46,29 @@ describe('SpaceSelection', () => {
 
     expect(mockSelectPlan).toBeCalledWith(SPACE_PURCHASE_TYPES.MEDIUM);
   });
+
+  it('should enable the community plan button if the user can create a free space', () => {
+    build();
+
+    const communitySelectButton = screen.getByTestId('space-selection-community-select-button');
+
+    expect(communitySelectButton).toHaveProperty('disabled', false);
+  });
+
+  it('should disable the community plan button if the user cannot create a free space', () => {
+    build({ canCreateCommunityPlan: false });
+
+    const communitySelectButton = screen.getByTestId('space-selection-community-select-button');
+
+    expect(communitySelectButton).toHaveProperty('disabled', true);
+  });
 });
 
 function build(customProps) {
   const props = {
     organizationId: mockOrganization.sys.id,
     selectPlan: mockSelectPlan,
+    canCreateCommunityPlan: true,
     ...customProps,
   };
 
