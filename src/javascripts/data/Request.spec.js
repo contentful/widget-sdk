@@ -19,18 +19,21 @@ wrapWithAuth.mockImplementation(mockWithAuth);
 
 describe('Request', () => {
   let request;
+  let fetchResult;
 
   beforeAll(() => {
-    window.fetch = jest.fn(async () => ({
-      ok: true,
-      status: 200,
-      statusText: 'OK',
-      json: jest.fn(async () => ({ foo: 'bar' })),
-      headers: new Headers({ 'X-Contentful-Request-ID': 'reqid' }),
-    }));
+    window.fetch = jest.fn(async () => fetchResult);
   });
 
   beforeEach(() => {
+    fetchResult = {
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      arrayBuffer: jest.fn(async () => new TextEncoder().encode(JSON.stringify({ foo: 'bar' }))),
+      headers: new Headers({ 'X-Contentful-Request-ID': 'reqid' }),
+    };
+
     request = makeRequest(mockAuth);
   });
 
@@ -104,16 +107,9 @@ describe('Request', () => {
     });
   });
 
-  it('handles responses without a body', async () => {
-    window.fetch.mockResolvedValueOnce({
-      ok: true,
-      status: 200,
-      statusText: 'OK',
-      json: () => {
-        throw {};
-      },
-      headers: new Headers({ 'X-Contentful-Request-ID': 'reqid' }),
-    });
+  it('handles responses with an empty array buffer', async () => {
+    fetchResult.arrayBuffer.mockResolvedValueOnce();
+
     const response = await request({ url: 'http://foo.com' });
     expect(response).toEqual({
       config: { url: 'http://foo.com' },
@@ -124,14 +120,45 @@ describe('Request', () => {
     });
   });
 
+  it('handles when response.arrayBuffer throws', async () => {
+    fetchResult.arrayBuffer.mockRejectedValueOnce();
+
+    const response = await request({ url: 'http://foo.com' });
+    expect(response).toEqual({
+      config: { url: 'http://foo.com' },
+      data: null,
+      headers: { 'x-contentful-request-id': 'reqid' },
+      status: 200,
+      statusText: 'OK',
+    });
+  });
+
+  it('returns the array buffer directly if it is not JSON parseable', async () => {
+    const buffer = new TextEncoder().encode('{');
+
+    fetchResult.arrayBuffer.mockResolvedValueOnce(buffer);
+
+    const response = await request({ url: 'http://foo.com' });
+    expect(response).toEqual({
+      config: { url: 'http://foo.com' },
+      data: buffer,
+      headers: { 'x-contentful-request-id': 'reqid' },
+      status: 200,
+      statusText: 'OK',
+    });
+  });
+
   it('rejects with relevant data', async () => {
-    window.fetch.mockResolvedValueOnce({
+    Object.assign(fetchResult, {
       ok: false,
       status: 404,
       statusText: 'NOT FOUND',
-      json: () => ({ message: 'Not found' }),
-      headers: new Headers({ 'X-Contentful-Request-ID': 'reqid' }),
     });
+
+    fetchResult.arrayBuffer.mockResolvedValueOnce(
+      new TextEncoder().encode(JSON.stringify({ message: 'Not found' }))
+    );
+
     let response;
 
     try {
@@ -139,6 +166,7 @@ describe('Request', () => {
     } catch (e) {
       response = e;
     }
+
     expect(response).toBeInstanceOf(Error);
     expect(response.message).toBe('API request failed');
     expect({ ...response }).toEqual({

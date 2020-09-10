@@ -54,13 +54,31 @@ async function fetchFn(config) {
   }
 }
 
-// 204s (or any response without payload) and .json() don't work well.
-// we return null in those cases.
+/**
+ * Safely get the response data.
+ *
+ * If there is no response data (e.g. if the response is status 204), then
+ * this returns null. If there is response data, but it can't be parsed as
+ * JSON (like a PDF), this returns the raw ArrayBuffer. Otherwise, this returns
+ * the parsed JSON.
+ *
+ * @param  {Response} response       window.fetch response
+ * @return {<Object|ArrayBuffer>?}   Parsed JSON, ArrayBuffer, or null
+ */
 async function safelyGetResponseBody(response) {
+  let result;
+
   try {
-    return await response.json();
+    result = await response.arrayBuffer();
   } catch {
     return null;
+  }
+
+  try {
+    return JSON.parse(new TextDecoder().decode(result));
+  } catch {
+    // Guarantee we will always return null
+    return result ?? null;
   }
 }
 
