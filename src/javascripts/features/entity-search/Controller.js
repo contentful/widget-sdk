@@ -1,5 +1,4 @@
 import { pick, extend, get, isEmpty, range, flatten } from 'lodash';
-import ReloadNotification from 'app/common/ReloadNotification';
 import { Notification } from '@contentful/forma-36-react-components';
 import * as Tracking from 'analytics/events/SearchAndViews';
 import * as SystemFields from 'data/SystemFields';
@@ -11,6 +10,8 @@ const isInvalidQueryError = (err) => {
 const isForbiddenQueryError = (err) => {
   return err?.statusCode === 403 || err?.statusCode === 404;
 };
+
+const isServerError = (err) => err?.statusCode >= 500;
 
 const isUnknownContentTypeError = (err) => {
   const errors = get(err, ['body', 'details', 'errors'], []);
@@ -97,6 +98,8 @@ export const createSearchController = ({
       }
       listViewContext.setViewKey('contentTypeId', null);
       updateEntities();
+    } else if (isServerError(err)) {
+      Notification.error('Your search didn’t go through this time. Try again.');
     } else {
       Notification.error('We detected an invalid search query. Please try again.');
     }
@@ -159,7 +162,6 @@ export const createSearchController = ({
         const oldChunkSize = chunkSize === null ? query.limit : chunkSize;
         updateEntities(Math.floor(oldChunkSize / 2));
       } else {
-        ReloadNotification.apiErrorHandler(err);
         handleEntitiesError(err, query);
       }
     } finally {

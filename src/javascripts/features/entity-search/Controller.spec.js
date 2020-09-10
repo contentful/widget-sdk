@@ -3,9 +3,7 @@ import { ListQuery } from 'core/services/ContentQuery';
 import * as Paginator from 'classes/Paginator';
 import { waitFor } from '@testing-library/react';
 import Forma from '@contentful/forma-36-react-components';
-import ReloadNotification from 'app/common/ReloadNotification';
 
-jest.mock('app/common/ReloadNotification', () => ({}));
 jest.mock('@contentful/forma-36-react-components', () => ({}));
 
 jest.mock('core/NgRegistry', () => ({
@@ -17,7 +15,6 @@ jest.mock('core/NgRegistry', () => ({
 }));
 
 Forma.Notification = { error: jest.fn() };
-ReloadNotification.apiErrorHandler = jest.fn();
 
 const onLoading = jest.fn();
 const onUpdate = jest.fn();
@@ -213,7 +210,6 @@ describe('Controller', () => {
 
       await updateEntities();
 
-      expect(ReloadNotification.apiErrorHandler).toHaveBeenCalledWith(error);
       expect(listViewContext.setView).toHaveBeenCalledWith({});
 
       await waitFor(() => {
@@ -230,7 +226,6 @@ describe('Controller', () => {
 
       await updateEntities();
 
-      expect(ReloadNotification.apiErrorHandler).toHaveBeenCalledWith(error);
       expect(listViewContext.setView).toHaveBeenCalledWith({});
 
       await waitFor(() => {
@@ -250,7 +245,6 @@ describe('Controller', () => {
 
       await updateEntities();
 
-      expect(ReloadNotification.apiErrorHandler).toHaveBeenCalledWith(error);
       expect(Forma.Notification.error).toHaveBeenCalledWith(
         'Provided Content Type "ct-1" does not exist. The content type filter has been reset to "Any"'
       );
@@ -259,6 +253,20 @@ describe('Controller', () => {
       await waitFor(() => {
         expect(onUpdate).toHaveBeenCalledWith(entities);
       });
+    });
+
+    it('should be able to fetch entities with server error', async () => {
+      const error = { statusCode: 500 };
+      const entities = mockEntities();
+      fetchEntities.mockRejectedValueOnce(error).mockResolvedValue(entities);
+
+      const { updateEntities } = createSearch({});
+
+      await updateEntities();
+
+      expect(Forma.Notification.error).toHaveBeenCalledWith(
+        'Your search didn’t go through this time. Try again.'
+      );
     });
 
     it('should be able to fetch entities with unknown error', async () => {
@@ -270,7 +278,6 @@ describe('Controller', () => {
 
       await updateEntities();
 
-      expect(ReloadNotification.apiErrorHandler).toHaveBeenCalledWith(error);
       expect(Forma.Notification.error).toHaveBeenCalledWith(
         'We detected an invalid search query. Please try again.'
       );
