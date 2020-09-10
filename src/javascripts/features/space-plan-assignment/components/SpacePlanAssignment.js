@@ -85,9 +85,10 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
       navigateToStep(nextStep);
       track('space_assignment:continue', {
         space_id: spaceId,
-        // TODO: to be adjusted as soon as we merge missing component
-        selected_plan_id: selectedPlan.sys.id,
-        selected_plan_name: selectedPlan.name,
+        current_plan_id: data.currentPlan ? data.currentPlan.sys.id : data.freePlan.sys.id,
+        current_plan_name: data.currentPlan ? data.currentPlan.name : data.freePlan.name,
+        new_plan_id: selectedPlan.sys.id,
+        new_plan_name: selectedPlan.name,
       });
       window.history.pushState('', null);
     }
@@ -109,7 +110,13 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
   const submit = async () => {
     try {
       setInProgress(true);
-      await changeSpacePlanAssignment(orgId, spaceId, selectedPlan, data.currentPlan);
+      await changeSpacePlanAssignment(
+        orgId,
+        spaceId,
+        selectedPlan,
+        data.currentPlan,
+        data.freePlan
+      );
       Notification.success(`${data.space.name} was successfully changed to ${selectedPlan.name}`);
       go({ path: '^.subscription_new' });
     } catch (e) {

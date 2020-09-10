@@ -2,7 +2,7 @@ import { updateSpacePlan } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { track } from 'analytics/Analytics';
 
-export async function changeSpacePlanAssignment(orgId, spaceId, newPlan, oldPlan) {
+export async function changeSpacePlanAssignment(orgId, spaceId, newPlan, oldPlan, freePlan) {
   const endpoint = createOrganizationEndpoint(orgId);
 
   if (oldPlan) {
@@ -15,9 +15,10 @@ export async function changeSpacePlanAssignment(orgId, spaceId, newPlan, oldPlan
   try {
     track('space_assignment:confirm', {
       space_id: spaceId,
-      updated_plan_id: updatedPlan.sys.id,
-      updated_plan_name: updatedPlan.name,
-      // TODO: update event in a separate task as soon as it's clarified with data team
+      current_plan_id: oldPlan ? oldPlan.sys.id : freePlan.sys.id,
+      current_plan_name: oldPlan ? oldPlan.name : freePlan.name,
+      new_plan_id: updatedPlan.sys.id,
+      new_plan_name: updatedPlan.name,
     });
     return await updateSpacePlan(endpoint, updatedPlan);
   } catch (err) {

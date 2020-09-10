@@ -3,19 +3,25 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { updateSpacePlan } from 'account/pricing/PricingDataProvider';
 import { mockEndpoint } from '__mocks__/data/EndpointFactory';
 import * as fake from 'test/helpers/fakeFactory';
+import { track } from 'analytics/Analytics';
 
 const orgId = 'orgid';
 const spaceId = 'spaceid';
 const oldPlan = fake.Plan({ gatekeeperKey: spaceId });
 const newPlan = fake.Plan({ gatekeeperKey: null });
+const freePlan = fake.Plan({ gatekeeperKey: null });
 
 jest.mock('account/pricing/PricingDataProvider', () => ({
   updateSpacePlan: jest.fn(async () => {}),
 }));
 
+jest.mock('analytics/Analytics', () => ({
+  track: jest.fn(),
+}));
+
 describe('SpacePlanAssignmentService', () => {
   it('should assign a space to a plan', async () => {
-    await changeSpacePlanAssignment(orgId, spaceId, newPlan);
+    await changeSpacePlanAssignment(orgId, spaceId, newPlan, freePlan);
 
     expect(createOrganizationEndpoint).toHaveBeenCalledWith(orgId);
     expect(updateSpacePlan).toHaveBeenCalledWith(
@@ -25,6 +31,14 @@ describe('SpacePlanAssignmentService', () => {
         gatekeeperKey: spaceId,
       })
     );
+    expect(track).toHaveBeenCalledTimes(1);
+    await expect(track).toHaveBeenNthCalledWith(1, 'space_assignment:confirm', {
+      space_id: spaceId,
+      current_plan_id: freePlan.sys.id,
+      current_plan_name: freePlan.name,
+      new_plan_id: newPlan.sys.id,
+      new_plan_name: newPlan.name,
+    });
   });
 
   it('should swap spaces assigned to a plan', async () => {
@@ -85,5 +99,18 @@ describe('SpacePlanAssignmentService', () => {
         gatekeeperKey: spaceId,
       })
     );
+  });
+
+  it('should track confirm when swap with old plan', async () => {
+    await changeSpacePlanAssignment(orgId, spaceId, newPlan, oldPlan, freePlan);
+
+    expect(track).toHaveBeenCalledTimes(1);
+    await expect(track).toHaveBeenNthCalledWith(1, 'space_assignment:confirm', {
+      space_id: spaceId,
+      current_plan_id: oldPlan.sys.id,
+      current_plan_name: oldPlan.name,
+      new_plan_id: newPlan.sys.id,
+      new_plan_name: newPlan.name,
+    });
   });
 });
