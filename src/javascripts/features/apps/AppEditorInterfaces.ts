@@ -6,7 +6,6 @@ import * as EntryEditorDefaults from 'app/entry_editor/DefaultConfiguration';
 import { WidgetNamespace, AppInstallation } from '@contentful/widget-renderer';
 import { isUnsignedInteger, PartialTargetState } from './AppState';
 import { EditorInterface, ContentType } from 'contentful-ui-extensions-sdk';
-import { getModule } from 'core/NgRegistry';
 import APIClient from 'data/APIClient';
 
 // Like `Promise.all` but rejecting input promises do not cause
@@ -57,15 +56,9 @@ function isCurrentApp(widget: any, appInstallation: AppInstallation): boolean {
 export async function transformEditorInterfacesToTargetState(
   cma: APIClient,
   targetState: Record<string, Record<string, PartialTargetState>>,
-  appInstallation: AppInstallation
+  appInstallation: AppInstallation,
+  spaceData
 ) {
-  const spaceContext = getModule('spaceContext');
-  const spaceData = {
-    organizationId: spaceContext.getData(['organization', 'sys', 'id']),
-    spaceId: spaceContext.getId(),
-    environmentId: spaceContext.getEnvironmentId(),
-  };
-
   const [{ items: editorInterfaces }, defaultSidebar, defaultEditors] = await Promise.all([
     cma.getEditorInterfaces(),
     getDefaultSidebar(),

@@ -24,13 +24,19 @@ describe('AppEditorInterfaces', () => {
   let cma, transform, remove;
 
   beforeEach(() => {
+    const spaceData = {
+      spaceId: 'test',
+      organizationId: 'test',
+      environmentId: 'master',
+    };
+
     cma = {
       getEditorInterfaces: jest.fn(() => Promise.resolve({ items: [] })),
       updateEditorInterface: jest.fn(() => Promise.resolve()),
     };
 
     transform = (targetState) => {
-      return transformEditorInterfacesToTargetState(cma, targetState, installation);
+      return transformEditorInterfacesToTargetState(cma, targetState, installation, spaceData);
     };
 
     remove = () => {

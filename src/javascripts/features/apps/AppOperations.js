@@ -10,7 +10,8 @@ export async function installOrUpdate(
   cma,
   evictWidget,
   checkAppStatus,
-  { parameters, targetState } = {}
+  { parameters, targetState } = {},
+  spaceData
 ) {
   validateState(targetState);
 
@@ -25,7 +26,8 @@ export async function installOrUpdate(
   await transformEditorInterfacesToTargetState(
     cma,
     get(targetState, ['EditorInterface'], {}),
-    appInstallation
+    appInstallation,
+    spaceData
   );
 
   await evictWidget(appInstallation);
