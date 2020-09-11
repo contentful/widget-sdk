@@ -105,10 +105,8 @@ export const NewSpacePage = ({
   };
 
   const browserNavigationHandler = useCallback((e) => {
-    const { step } = e.state;
-
-    // If no step is set, it's the first step.
-    setCurrentStep(step ? step : 0);
+    // If no state/step is set, it's the first step.
+    setCurrentStep(e.state?.step ?? 0);
   }, []);
 
   useEffect(() => {
