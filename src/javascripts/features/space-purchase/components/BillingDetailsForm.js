@@ -60,13 +60,14 @@ export const BillingDetailsForm = ({
   savedBillingDetails = {},
   navigateToPreviousStep,
 }) => {
-  const [showVat, setShouldShowVat] = useState(false);
-  const [showUSState, setShouldShowUSState] = useState(false);
-
   // If there are no saved billing details, then the user is adding billing details.
   // otherwise they are  updating their billing details.
   const isAddingBillingDetails = isEmpty(savedBillingDetails);
   const billingDetails = Object.assign(DEFAULT_BILLING_DETAILS, savedBillingDetails);
+
+  // If these fields have already been filled out they should be shown on first render.
+  const [showVat, setShouldShowVat] = useState(billingDetails.vatNumber !== '');
+  const [showUSState, setShouldShowUSState] = useState(billingDetails.state !== '');
 
   const { onChange, onBlur, onSubmit, fields } = useForm({
     fields: {

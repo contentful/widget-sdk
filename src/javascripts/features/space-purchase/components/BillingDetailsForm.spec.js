@@ -248,6 +248,22 @@ describe('BillingDetailsForm', () => {
         expect(textField.value).toEqual(mockBillingDetails[textField.getAttribute('name')]);
       });
     });
+
+    it('should show vat field if its been filled out', () => {
+      build({
+        savedBillingDetails: mockBillingDetailsWith({ country: 'DE', vatNumber: 'DE123456789' }),
+      });
+
+      expect(screen.queryByTestId('billing-details.vatNumber')).toBeVisible();
+    });
+
+    it('should show state field if its been filled out', () => {
+      build({
+        savedBillingDetails: mockBillingDetailsWith({ country: 'US', state: 'CA' }),
+      });
+
+      expect(screen.queryByTestId('billing-details.state')).toBeVisible();
+    });
   });
 
   describe('navigational buttons', () => {
