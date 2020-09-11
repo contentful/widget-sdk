@@ -60,6 +60,11 @@ export class AppRoute extends Component {
     }).isRequired,
     evictWidget: PropTypes.func.isRequired,
     canManageThisApp: PropTypes.bool.isRequired,
+    spaceData: PropTypes.shape({
+      spaceId: PropTypes.string.isRequired,
+      environmentId: PropTypes.string.isRequired,
+      organizationId: PropTypes.string.isRequired,
+    }),
   };
 
   state = {
@@ -153,10 +158,10 @@ export class AppRoute extends Component {
   };
 
   onAppConfigured = async ({ installationRequestId, config }) => {
-    const { cma, evictWidget, appHookBus, app } = this.props;
+    const { cma, evictWidget, appHookBus, app, spaceData } = this.props;
 
     try {
-      await installOrUpdate(cma, evictWidget, this.checkAppStatus, config);
+      await installOrUpdate(cma, evictWidget, this.checkAppStatus, config, spaceData);
 
       // Verify if installation was completed.
       const { appInstallation } = await this.checkAppStatus();

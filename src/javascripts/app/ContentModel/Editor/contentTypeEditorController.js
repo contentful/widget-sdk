@@ -345,6 +345,11 @@ export default function register() {
         sidebarConfiguration: $scope.editorInterface.sidebar,
         editorConfiguration: $scope.editorInterface.editors,
         extensions: $scope.customWidgets,
+        spaceData: {
+          organizationId: $scope.spaceContext.getData(['organization', 'sys', 'id']),
+          spaceId: $scope.spaceContext.getId(),
+          environmentId: $scope.spaceContext.getEnvironmentId(),
+        },
         actions: {
           showMetadataDialog,
           showNewFieldDialog,

@@ -27,10 +27,10 @@ export async function getDefaultSidebar(): Promise<
   return defaultEntrySidebar.map((item) => pick(item, ['widgetNamespace', 'widgetId']));
 }
 
-export async function getDefaultEditors(): Promise<
-  { widgetId: string; widgetNamespace: WidgetNamespace }[]
-> {
-  const defaultEntryEditors = await EntryEditorDefaults.getEntryConfiguration();
+export async function getDefaultEditors(
+  spaceData
+): Promise<{ widgetId: string; widgetNamespace: WidgetNamespace }[]> {
+  const defaultEntryEditors = await EntryEditorDefaults.getEntryConfiguration(spaceData);
   return defaultEntryEditors.map((item) => pick(item, ['widgetNamespace', 'widgetId']));
 }
 
@@ -56,12 +56,13 @@ function isCurrentApp(widget: any, appInstallation: AppInstallation): boolean {
 export async function transformEditorInterfacesToTargetState(
   cma: APIClient,
   targetState: Record<string, Record<string, PartialTargetState>>,
-  appInstallation: AppInstallation
+  appInstallation: AppInstallation,
+  spaceData
 ) {
   const [{ items: editorInterfaces }, defaultSidebar, defaultEditors] = await Promise.all([
     cma.getEditorInterfaces(),
     getDefaultSidebar(),
-    getDefaultEditors(),
+    getDefaultEditors(spaceData),
   ]);
 
   const updatePromises = editorInterfaces

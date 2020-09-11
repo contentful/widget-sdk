@@ -24,13 +24,19 @@ describe('AppEditorInterfaces', () => {
   let cma, transform, remove;
 
   beforeEach(() => {
+    const spaceData = {
+      spaceId: 'test',
+      organizationId: 'test',
+      environmentId: 'master',
+    };
+
     cma = {
       getEditorInterfaces: jest.fn(() => Promise.resolve({ items: [] })),
       updateEditorInterface: jest.fn(() => Promise.resolve()),
     };
 
     transform = (targetState) => {
-      return transformEditorInterfacesToTargetState(cma, targetState, installation);
+      return transformEditorInterfacesToTargetState(cma, targetState, installation, spaceData);
     };
 
     remove = () => {
@@ -234,7 +240,11 @@ describe('AppEditorInterfaces', () => {
 
         it(`inserts the widget to the default ${ei} (if none is set)`, async () => {
           const getDefault = makeGetDefaultByType[ei];
-          const defaultValue = await getDefault();
+          const defaultValue = await getDefault({
+            spaceId: 'test',
+            organizationId: 'test',
+            environmentId: 'master',
+          });
 
           cma.getEditorInterfaces.mockImplementationOnce(() =>
             Promise.resolve({

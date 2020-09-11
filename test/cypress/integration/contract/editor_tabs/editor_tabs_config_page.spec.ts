@@ -10,7 +10,7 @@ import { FeatureFlag } from '../../../util/featureFlag';
 
 describe('Editor tabs configuration', () => {
   beforeEach(() => {
-    cy.enableFeatureFlags([FeatureFlag.ADD_TO_RELEASE]);
+    cy.enableFeatureFlags([FeatureFlag.ALL_REFERENCES_DIALOG]);
     cy.resetAllFakeServers();
 
     const interactions = [
@@ -68,7 +68,8 @@ describe('Editor tabs configuration', () => {
         .eq(0)
         .findAllByTestId('remove-selected-widget')
         .eq(0)
-        .click();
+        .click()
+        .wait(0.2 * 1000);
       cy.findAllByTestId('selected-widget-name')
         .should('have.length', widgetNames.length - 1)
         .should('not.contain', 'Publish & Status');
@@ -84,8 +85,8 @@ describe('Editor tabs configuration', () => {
         .eq(0)
         .findAllByTestId('remove-selected-widget')
         .eq(0)
-        .click();
-
+        .click()
+        .wait(0.2 * 1000);
       cy.findAllByTestId('selected-widget-item')
         .eq(0)
         .findAllByTestId('remove-selected-widget')

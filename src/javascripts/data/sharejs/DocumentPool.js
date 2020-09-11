@@ -16,11 +16,19 @@ import * as logger from 'services/logger';
  * @returns {DocumentPool}
  */
 
-export async function create(docConnection, spaceEndpoint, pubSubClient, organizationId, spaceId) {
+export async function create(
+  docConnection,
+  spaceEndpoint,
+  pubSubClient,
+  organizationId,
+  spaceId,
+  environmentId
+) {
   const instances = {};
   const isCmaDocumentEnabled = await getVariation(FLAGS.SHAREJS_REMOVAL, {
     organizationId,
     spaceId,
+    environmentId,
   });
 
   return { get, destroy };

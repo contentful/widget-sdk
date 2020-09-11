@@ -116,7 +116,10 @@ export default function ContentTypesPage(props) {
                 <EntryEditorConfiguration
                   configuration={entryEditorConfiguration}
                   customWidgets={props.extensions.filter(isEntryEditorWidget)}
-                  getDefaultEntryEditorConfiguration={getEntryConfiguration}
+                  getDefaultEntryEditorConfiguration={getEntryConfiguration.bind(
+                    null,
+                    props.spaceData
+                  )}
                   onUpdateConfiguration={onEntryEditorUpdateConfiguration}
                 />
               </div>
@@ -171,4 +174,9 @@ ContentTypesPage.propTypes = {
   editorConfiguration: PropTypes.array,
   // TODO: rename to "widgets". Make sure it "isRequired".
   extensions: PropTypes.array,
+  spaceData: PropTypes.shape({
+    spaceId: PropTypes.string.isRequired,
+    environmentId: PropTypes.string.isRequired,
+    organizationId: PropTypes.string.isRequired,
+  }),
 };

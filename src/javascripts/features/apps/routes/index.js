@@ -173,6 +173,11 @@ export const appRoute = {
               });
             },
             canManageThisApp,
+            spaceData: {
+              organizationId: spaceContext.organization.sys.id,
+              spaceId: spaceContext.getId(),
+              environmentId: spaceContext.getEnvironmentId(),
+            },
           };
         },
       ],
