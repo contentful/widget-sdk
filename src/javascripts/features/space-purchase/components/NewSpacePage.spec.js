@@ -192,6 +192,10 @@ function build(customProps) {
     templatesList: [],
     canCreateCommunityPlan: true,
     productRatePlans: [mockProductRatePlanMedium, mockProductRatePlanLarge],
+    pageContent: {
+      pageName: 'Space Purchase',
+      content: [],
+    },
     ...customProps,
   };
 

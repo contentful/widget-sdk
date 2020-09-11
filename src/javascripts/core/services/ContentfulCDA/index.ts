@@ -1,2 +1,2 @@
-export { initWebappContentCDAClient } from './initWebappContentCDAClient';
+export { initWebappContentCDAClient } from './CDAClients';
 export { ContentfulRichText } from './ContentfulRichText';

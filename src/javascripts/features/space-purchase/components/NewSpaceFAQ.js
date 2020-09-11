@@ -1,4 +1,5 @@
-import React, { useCallback } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
 import { Accordion, AccordionItem } from '@contentful/forma-36-react-components/dist/alpha';
@@ -11,9 +12,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
-import { useAsync } from 'core/hooks/useAsync';
 import { ContentfulRichText } from 'core/services/ContentfulCDA';
-import { fetchFaqEntries } from '../services/fetchFaqEntries';
 
 const styles = {
   accordionItemTitles: css({
@@ -23,10 +22,8 @@ const styles = {
   }),
 };
 
-export const NewSpaceFAQ = () => {
-  const { isLoading, data } = useAsync(useCallback(fetchFaqEntries, []));
-
-  if (isLoading) {
+export const NewSpaceFAQ = ({ faqEntries }) => {
+  if (!faqEntries) {
     return <FAQLoadingState />;
   }
 
@@ -39,7 +36,7 @@ export const NewSpaceFAQ = () => {
       </Typography>
       <Accordion className={styles.accordionItemTitles}>
         {/** FAQ using Contentful */}
-        {data.map((entry, idx) => {
+        {faqEntries.map((entry, idx) => {
           return (
             <AccordionItem key={idx} title={entry.fields.question}>
               <Typography>
@@ -51,6 +48,14 @@ export const NewSpaceFAQ = () => {
       </Accordion>
     </aside>
   );
+};
+NewSpaceFAQ.propTypes = {
+  faqEntries: PropTypes.arrayOf(
+    PropTypes.shape({
+      question: PropTypes.string,
+      answer: PropTypes.object,
+    })
+  ),
 };
 
 function FAQLoadingState() {

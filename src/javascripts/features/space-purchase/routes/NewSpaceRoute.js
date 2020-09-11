@@ -14,6 +14,7 @@ import { getRatePlans } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import createResourceService from 'services/ResourceService';
 import { resourceIncludedLimitReached } from 'utils/ResourceUtils';
+import { fetchSpacePurchaseContent } from '../services/fetchSpacePurchaseContent';
 
 const initialFetch = (orgId) => async () => {
   const endpoint = createOrganizationEndpoint(orgId);
@@ -23,11 +24,13 @@ const initialFetch = (orgId) => async () => {
     templatesList,
     productRatePlans,
     freeSpaceResource,
+    pageContent,
   ] = await Promise.all([
     getVariation(FLAGS.NEW_PURCHASE_FLOW),
     getTemplatesList(),
     getRatePlans(endpoint),
     createResourceService(orgId, 'organization').get('free_space'),
+    fetchSpacePurchaseContent(),
   ]);
 
   // User can't create another community plan if they've already reached their limit
@@ -38,6 +41,7 @@ const initialFetch = (orgId) => async () => {
     templatesList,
     productRatePlans,
     canCreateCommunityPlan,
+    pageContent,
   };
 };
 
@@ -64,6 +68,7 @@ export const NewSpaceRoute = ({ orgId }) => {
         templatesList={data.templatesList}
         productRatePlans={data.productRatePlans}
         canCreateCommunityPlan={data.canCreateCommunityPlan}
+        pageContent={data.pageContent}
       />
     </>
   );

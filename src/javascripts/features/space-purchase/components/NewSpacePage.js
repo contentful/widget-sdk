@@ -14,6 +14,7 @@ import { NewSpaceConfirmationPage } from './NewSpaceConfirmationPage';
 import { NewSpaceReceiptPage } from './NewSpaceReceiptPage';
 
 import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
+import { usePageContent } from '../hooks/usePageContent';
 
 const NEW_SPACE_STEPS = [
   { text: '1.Spaces', isActive: true },
@@ -54,6 +55,7 @@ export const NewSpacePage = ({
   templatesList,
   productRatePlans,
   canCreateCommunityPlan,
+  pageContent,
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [spaceName, setSpaceName] = useState('');
@@ -62,6 +64,9 @@ export const NewSpacePage = ({
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [billingDetails, setBillingDetails] = useState({});
   const [_paymentMethodRefId, setPaymentMethodRefId] = useState(null);
+
+  // Space Purchase content
+  const { faqEntries } = usePageContent(pageContent);
 
   const onChangeSelectedTemplate = (changedTemplate) => {
     setSelectedTemplate(changedTemplate);
@@ -213,7 +218,7 @@ export const NewSpacePage = ({
               selectPlan={selectPlan}
               canCreateCommunityPlan={canCreateCommunityPlan}
             />
-            <NewSpaceFAQ />
+            <NewSpaceFAQ faqEntries={faqEntries} />
           </Grid>
         );
     }
@@ -235,4 +240,13 @@ NewSpacePage.propTypes = {
   templatesList: PropTypes.array,
   productRatePlans: PropTypes.array,
   canCreateCommunityPlan: PropTypes.bool,
+  pageContent: PropTypes.shape({
+    pageName: PropTypes.string.isRequired,
+    content: PropTypes.arrayOf(
+      PropTypes.shape({
+        sys: PropTypes.object,
+        fields: PropTypes.object,
+      })
+    ).isRequired,
+  }),
 };
