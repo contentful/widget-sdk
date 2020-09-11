@@ -19,7 +19,11 @@ const styles = {
     marginBottom: tokens.spacingL,
   }),
   card: css({
-    padding: tokens.spacingL,
+    padding: tokens.spacingXl,
+    borderRadius: '4px',
+  }),
+  cardTitle: css({
+    marginBottom: tokens.spacingL,
   }),
 };
 
@@ -44,7 +48,12 @@ export const NewSpaceCardDetailsPage = ({
       </Heading>
       <Grid className={styles.grid} columns="60% auto" rows={1} columnGap="spacing2Xl">
         <Card className={styles.card}>
-          <Subheading element="h3">Add your credit card 💳</Subheading>
+          <Subheading className={styles.cardTitle} element="h3">
+            Add your credit card{' '}
+            <span role="img" aria-label="Credit card">
+              💳
+            </span>
+          </Subheading>
           <ZuoraCreditCardIframe
             organizationId={organizationId}
             countryCode={billingCountryCode}

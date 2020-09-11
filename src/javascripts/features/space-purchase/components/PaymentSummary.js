@@ -16,6 +16,10 @@ import tokens from '@contentful/forma-36-tokens';
 const BORDER = `1px solid ${tokens.colorElementMid}`;
 
 const styles = {
+  card: css({
+    padding: tokens.spacingXl,
+    borderRadius: '4px',
+  }),
   text: css({
     '& > p:last-child': {
       marginBottom: 0,
@@ -31,6 +35,7 @@ const styles = {
   listItem: css({
     display: 'flex',
     padding: `${tokens.spacingXs} 0`,
+    margin: 0,
     color: tokens.colorTextMid,
     justifyContent: 'space-between',
     borderTop: BORDER,
@@ -39,12 +44,12 @@ const styles = {
   }),
 };
 
-export const PaymentSummary = ({ selectedPlan }) => {
+export const PaymentSummary = ({ selectedPlan, isReceipt = false }) => {
   return (
-    <Card testId="order-summary.card">
+    <Card className={styles.card} testId="order-summary.card">
       <Typography className={styles.text}>
         <Subheading className={styles.cardTitle} element="h3" testId="space-heading">
-          Payment Summary
+          {isReceipt ? 'Receipt' : 'Payment Summary'}
         </Subheading>
         <Paragraph>
           Start using your new space today. You will be billed at the end of each month. You can
@@ -66,4 +71,5 @@ export const PaymentSummary = ({ selectedPlan }) => {
 
 PaymentSummary.propTypes = {
   selectedPlan: PropTypes.object.isRequired,
+  isReceipt: PropTypes.bool,
 };

@@ -27,7 +27,7 @@ const styles = {
     display: 'grid',
     gridTemplateRows: '1fr auto 2fr',
     padding: `${tokens.spacingXl} ${tokens.spacingL}`,
-    borderRadius: '3px',
+    borderRadius: '4px',
   }),
   spaceColor: {
     [SPACE_PURCHASE_TYPES.MEDIUM]: getSpaceColorCSS(MEDIUM_PLAN_COLOR),

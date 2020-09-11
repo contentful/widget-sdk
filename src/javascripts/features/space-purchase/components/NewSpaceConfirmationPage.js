@@ -27,10 +27,11 @@ const styles = {
     marginBottom: tokens.spacingL,
   }),
   card: css({
-    padding: tokens.spacingL,
+    padding: tokens.spacingXl,
+    borderRadius: '4px',
   }),
   cardTitle: css({
-    marginBottom: tokens.spacingM,
+    marginBottom: tokens.spacingL,
   }),
   agreementNote: css({
     marginBottom: tokens.spacingXl,
@@ -63,7 +64,10 @@ export const NewSpaceConfirmationPage = ({
       <Grid className={styles.grid} columns="60% auto" rows={1} columnGap="spacing2Xl">
         <Card className={styles.card}>
           <Subheading className={styles.cardTitle} element="h3">
-            Billing Details 💳
+            Billing Details{' '}
+            <span role="img" aria-label="Credit card">
+              💳
+            </span>
           </Subheading>
           <Grid className={styles.grid} columns="1fr 1fr" rows={1} columnGap="spacingXl">
             <CreditCardInformation creditCardinfo={mockCreditCardInfo}></CreditCardInformation>

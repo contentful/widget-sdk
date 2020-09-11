@@ -24,6 +24,8 @@ const styles = {
   }),
   card: css({
     maxWidth: '700px',
+    padding: tokens.spacingXl,
+    borderRadius: '4px',
   }),
   cardTitle: css({
     marginBottom: tokens.spacingL,
@@ -33,7 +35,7 @@ const styles = {
     justifyContent: 'space-between',
   }),
   sectionHeading: css({
-    marginBottom: tokens.spacingM,
+    marginBottom: tokens.spacingL,
     fontWeight: tokens.fontWeightMedium,
   }),
 };
@@ -49,7 +51,7 @@ export const NewSpaceDetailsPage = ({
 }) => {
   return (
     <section aria-labelledby="new-space-details-section" data-test-id="new-space-details-section">
-      <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
+      <Grid columns={1} rows="repeat(2, 'auto')">
         <Heading
           id="new-space-details-section-heading"
           element="h2"
@@ -61,7 +63,10 @@ export const NewSpaceDetailsPage = ({
         <Card testId="space-card" className={styles.card}>
           <Typography>
             <Subheading className={styles.cardTitle} element="h3" testId="space-heading">
-              Enter your space details ✏️
+              Enter your space details{' '}
+              <span role="img" aria-label="Pencil">
+                ✏️
+              </span>
             </Subheading>
           </Typography>
           <Form className={styles.form} spacing="condensed" onSubmit={onSubmit}>

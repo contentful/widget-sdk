@@ -14,7 +14,7 @@ const styles = {
     alignItems: 'start',
   }),
   sectionHeading: css({
-    marginBottom: tokens.spacingXl,
+    marginBottom: tokens.spacingL,
     fontWeight: tokens.fontWeightMedium,
   }),
 };

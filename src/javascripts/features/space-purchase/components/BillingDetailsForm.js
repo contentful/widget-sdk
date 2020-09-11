@@ -33,6 +33,10 @@ const DEFAULT_BILLING_DETAILS = {
 };
 
 const styles = {
+  card: css({
+    padding: tokens.spacingXl,
+    borderRadius: '4px',
+  }),
   form: css({
     '& div:last-child': {
       marginBottom: 0,
@@ -166,10 +170,13 @@ export const BillingDetailsForm = ({
   const handleBlur = (e) => onBlur(e.target.getAttribute('name'), e.target.value);
 
   return (
-    <Card testId="billing-details.card">
+    <Card className={styles.card} testId="billing-details.card">
       <Typography>
         <Subheading className={styles.cardTitle} element="h3" testId="billing-details.heading">
-          {isAddingBillingDetails ? 'Add Billing Details' : 'Update Billing Details'} 📫
+          {isAddingBillingDetails ? 'Add Billing Details' : 'Update Billing Details'}{' '}
+          <span role="img" aria-label="Mailbox closed">
+            📫
+          </span>
         </Subheading>
       </Typography>
 

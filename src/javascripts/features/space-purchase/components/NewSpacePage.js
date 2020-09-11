@@ -11,6 +11,7 @@ import { NewSpaceDetailsPage } from './NewSpaceDetailsPage';
 import { NewSpaceBillingDetailsPage } from './NewSpaceBillingDetailsPage';
 import { NewSpaceCardDetailsPage } from './NewSpaceCardDetailsPage';
 import { NewSpaceConfirmationPage } from './NewSpaceConfirmationPage';
+import { NewSpaceReceiptPage } from './NewSpaceReceiptPage';
 
 import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
 
@@ -37,6 +38,7 @@ const SPACE_DETAILS = 1;
 const BILLING_DETAILS = 2;
 const CARD_DETAILS = 3;
 const CONFIRMATION = 4;
+const RECEIPT = 5;
 
 const PURCHASE_FLOW_STEPS = [
   SPACE_SELECTION,
@@ -44,6 +46,7 @@ const PURCHASE_FLOW_STEPS = [
   BILLING_DETAILS,
   CARD_DETAILS,
   CONFIRMATION,
+  RECEIPT,
 ];
 
 export const NewSpacePage = ({
@@ -191,6 +194,13 @@ export const NewSpacePage = ({
               selectedPlan={selectedPlan}
               onConfirm={onConfirm}
             />
+          </Grid>
+        );
+      case RECEIPT:
+        return (
+          <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
+            <Breadcrumb items={NEW_SPACE_STEPS_CONFIRMATION} />
+            <NewSpaceReceiptPage selectedPlan={selectedPlan} spaceName={spaceName} />
           </Grid>
         );
       default:
