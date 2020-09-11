@@ -5,7 +5,6 @@ import * as logger from 'services/logger';
 import localeStore from 'services/localeStore';
 import { trackEntryView } from 'app/entity_editor/Tracking';
 import { valuePropertyAt } from 'app/entity_editor/Document';
-import setupNoShareJsCmaFakeRequestsExperiment from 'app/entity_editor/NoShareJsCmaFakeRequestsExperiment';
 import { initDocErrorHandlerWithoutScope } from 'app/entity_editor/DocumentErrorHandler';
 import * as Validator from 'app/entity_editor/Validator';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
@@ -48,12 +47,6 @@ export const getEditorState = ({
       doc,
       spaceContext,
       validator,
-    });
-
-    setupNoShareJsCmaFakeRequestsExperiment({
-      spaceContext,
-      doc,
-      entityInfo,
     });
 
     K.onValue(valuePropertyAt(doc, []), (data) => {

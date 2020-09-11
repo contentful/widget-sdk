@@ -55,14 +55,11 @@ function makeStableName(relevantSegments) {
 
   const getPath = (idx) => `/${chunks[idx][0]}`;
   const getId = (idx) => (chunks[idx][1] ? '/:id' : '');
-  // See app/entity_editor/NoShareJsCmaFakeRequestsExperiment.js for experiment info:
-  const getExperiment = (idx) =>
-    idx + 1 === chunks.length && getPath(idx).match(/\.php$/) ? getPath(idx) : '';
 
   if (chunks[1] && RELEVANT_ENTITY_PATHS.includes(getPath(1))) {
     return `/:entity/:id${getPath(1)}${getId(1)}`;
   } else {
-    return `${getPath(0)}${getId(0)}${getExperiment(1)}`;
+    return `${getPath(0)}${getId(0)}`;
   }
 }
 

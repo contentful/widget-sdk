@@ -32,16 +32,9 @@ describe('data/Request/Utils', () => {
         'https://api.flinkly.com/spaces/id/environments/id/entries/id',
         'https://api.flinkly.com/spaces/id/environments/id/entries/id/THIS-WILL-BE-IGNORED',
       ],
-      '/entries/:id/edit.php': [
-        'https://api.flinkly.com/spaces/space-id/entries/some-entry_ID/edit.php?throttle=1000',
-        'https://api.flinkly.com/spaces/id/environments/id/entries/id/edit.php',
-      ],
       '/assets/:id': [
         'https://api.flinkly.com/spaces/space-id/assets/some-asset_ID',
         'https://api.contentful.com/spaces/i-_.d/environments/i-_.d/assets/i-_.d',
-      ],
-      '/assets/:id/experiment.php': [
-        'https://api.flinkly.com/spaces/space-id/assets/some-asset_ID/experiment.php',
       ],
       '/:entity/:id/comments': ['https://api.flinkly.com/spaces/id/entries/id/comments'],
       '/:entity/:id/comments/:id': [
