@@ -9,12 +9,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import EmptyStateIllustration from 'svg/create-compelling-experiences.svg';
 import ReleasesTimeline from './ReleasesTimeline';
-import {
-  createRelease,
-  getReleases,
-  getReleasesExcludingEntity,
-  replaceReleaseById,
-} from '../releasesService';
+import { createRelease, getReleases, replaceReleaseById } from '../releasesService';
 import { ReleasesProvider } from './ReleasesContext';
 import { ReleasesDialog, CreateReleaseForm } from '../ReleasesDialog';
 import { ReleaseDetailStateLink } from '../ReleasesPage/ReleasesListDialog';
@@ -79,10 +74,17 @@ export default class ReleasesWidgetDialog extends Component {
   async componentDidMount() {
     const { rootEntity } = this.props;
     this.setState({ isFetchingReleases: true });
-    const fetchedReleases = rootEntity
-      ? await getReleasesExcludingEntity(rootEntity.sys.id, rootEntity.sys.type)
-      : await getReleases();
-    this.setState({ fetchedReleases: fetchedReleases.items, isFetchingReleases: false });
+    const fetchedReleases = await getReleases();
+    const releases = rootEntity
+      ? fetchedReleases.items.filter(
+          (release) =>
+            !release.entities.items.find(
+              (entity) =>
+                entity.sys.id === rootEntity.sys.id && entity.sys.linkType === rootEntity.sys.type
+            )
+        )
+      : fetchedReleases.items;
+    this.setState({ fetchedReleases: releases, isFetchingReleases: false });
   }
 
   handleCreateRelease(releaseName) {

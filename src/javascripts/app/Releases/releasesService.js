@@ -50,13 +50,6 @@ function getReleasesIncludingEntity(entityId, entityType) {
   });
 }
 
-function getReleasesExcludingEntity(entityId, entityType) {
-  return getReleases({
-    'entities.sys.linkType': entityType,
-    'entities.sys.id[nin]': entityId,
-  });
-}
-
 async function getReleaseById(releaseId) {
   const apiClient = new APIClient(createEndpoint());
   return await apiClient.getReleaseById(releaseId);
@@ -122,7 +115,6 @@ export {
   createRelease,
   getReleases,
   getReleasesIncludingEntity,
-  getReleasesExcludingEntity,
   deleteRelease,
   getReleaseById,
   replaceReleaseById,

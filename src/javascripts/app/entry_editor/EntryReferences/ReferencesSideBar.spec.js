@@ -10,7 +10,7 @@ import ReferencesSideBar from './ReferencesSideBar';
 
 import { validateEntities, publishEntities, getReferencesForEntryId } from './referencesService';
 
-import { getReleases, getReleasesExcludingEntity } from '../../Releases/releasesService';
+import { getReleases } from '../../Releases/releasesService';
 
 import {
   entity,
@@ -40,7 +40,6 @@ jest.mock('./referencesService', function () {
 
 jest.mock('../../Releases/releasesService', function () {
   return {
-    getReleasesExcludingEntity: jest.fn(),
     getReleases: jest.fn(),
   };
 });
@@ -61,7 +60,6 @@ describe('ReferencesSideBar component', () => {
     jest.spyOn(Notification, 'error').mockImplementation(() => {});
 
     getReleases.mockResolvedValue({ items: releases });
-    getReleasesExcludingEntity.mockResolvedValue({ items: [] });
     getReferencesForEntryId.mockResolvedValue({
       resolved: cfResolveResponse(simpleReferences),
       response: simpleReferences,

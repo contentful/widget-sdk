@@ -38,7 +38,6 @@ jest.mock('./referencesService', function () {
 
 jest.mock('../../Releases/releasesService', function () {
   return {
-    getReleasesExcludingEntity: jest.fn(),
     getReleases: jest.fn(),
   };
 });
