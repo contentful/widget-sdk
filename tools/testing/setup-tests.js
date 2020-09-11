@@ -5,11 +5,6 @@ require('@babel/polyfill');
 require('jest-extended');
 require('@testing-library/jest-dom/extend-expect');
 
-const util = require('util');
-
-global.TextEncoder = util.TextEncoder;
-global.TextDecoder = util.TextDecoder;
-
 // Setup enzyme's react adapter
 Enzyme.configure({ adapter: new EnzymeAdapter() });
 

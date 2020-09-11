@@ -57,28 +57,26 @@ async function fetchFn(config) {
 /**
  * Safely get the response data.
  *
- * If there is no response data (e.g. if the response is status 204), then
- * this returns null. If there is response data, but it can't be parsed as
- * JSON (like a PDF), this returns the raw ArrayBuffer. Otherwise, this returns
- * the parsed JSON.
+ * If the response content type is JSON-like (e.g. application/vnd.contentful.management.v1+json),
+ * the body will be parsed as JSON. Otherwise, it will be parsed as an array buffer. In both cases,
+ * if parsing fails, `null` will be returned.
  *
  * @param  {Response} response       window.fetch response
  * @return {<Object|ArrayBuffer>?}   Parsed JSON, ArrayBuffer, or null
  */
 async function safelyGetResponseBody(response) {
-  let result;
+  const contentType = response.headers.get('Content-Type');
 
-  try {
-    result = await response.arrayBuffer();
-  } catch {
-    return null;
+  let responseFn = 'json';
+
+  if (!contentType.match(/json/)) {
+    responseFn = 'arrayBuffer';
   }
 
   try {
-    return JSON.parse(new TextDecoder().decode(result));
+    return await response[responseFn]();
   } catch {
-    // Guarantee we will always return null
-    return result ?? null;
+    return null;
   }
 }
 

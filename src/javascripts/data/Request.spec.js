@@ -19,21 +19,21 @@ wrapWithAuth.mockImplementation(mockWithAuth);
 
 describe('Request', () => {
   let request;
-  let fetchResult;
 
   beforeAll(() => {
-    window.fetch = jest.fn(async () => fetchResult);
-  });
-
-  beforeEach(() => {
-    fetchResult = {
+    window.fetch = jest.fn(async () => ({
       ok: true,
       status: 200,
       statusText: 'OK',
-      arrayBuffer: jest.fn(async () => new TextEncoder().encode(JSON.stringify({ foo: 'bar' }))),
-      headers: new Headers({ 'X-Contentful-Request-ID': 'reqid' }),
-    };
+      json: jest.fn(async () => ({ foo: 'bar' })),
+      headers: new Headers({
+        'X-Contentful-Request-ID': 'reqid',
+        'Content-Type': 'application/vnd.contentful.management.v1+json',
+      }),
+    }));
+  });
 
+  beforeEach(() => {
     request = makeRequest(mockAuth);
   });
 
@@ -101,64 +101,52 @@ describe('Request', () => {
     expect(response).toEqual({
       config: { url: 'http://foo.com' },
       data: { foo: 'bar' },
-      headers: { 'x-contentful-request-id': 'reqid' },
+      headers: {
+        'x-contentful-request-id': 'reqid',
+        'content-type': 'application/vnd.contentful.management.v1+json',
+      },
       status: 200,
       statusText: 'OK',
     });
   });
 
-  it('handles responses with an empty array buffer', async () => {
-    fetchResult.arrayBuffer.mockResolvedValueOnce();
-
+  it('handles if the call to response.json throws', async () => {
+    window.fetch.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      json: () => {
+        throw {};
+      },
+      headers: new Headers({
+        'X-Contentful-Request-ID': 'reqid',
+        'Content-Type': 'application/vnd.contentful.management.v1+json',
+      }),
+    });
     const response = await request({ url: 'http://foo.com' });
     expect(response).toEqual({
       config: { url: 'http://foo.com' },
       data: null,
-      headers: { 'x-contentful-request-id': 'reqid' },
-      status: 200,
-      statusText: 'OK',
-    });
-  });
-
-  it('handles when response.arrayBuffer throws', async () => {
-    fetchResult.arrayBuffer.mockRejectedValueOnce();
-
-    const response = await request({ url: 'http://foo.com' });
-    expect(response).toEqual({
-      config: { url: 'http://foo.com' },
-      data: null,
-      headers: { 'x-contentful-request-id': 'reqid' },
-      status: 200,
-      statusText: 'OK',
-    });
-  });
-
-  it('returns the array buffer directly if it is not JSON parseable', async () => {
-    const buffer = new TextEncoder().encode('{');
-
-    fetchResult.arrayBuffer.mockResolvedValueOnce(buffer);
-
-    const response = await request({ url: 'http://foo.com' });
-    expect(response).toEqual({
-      config: { url: 'http://foo.com' },
-      data: buffer,
-      headers: { 'x-contentful-request-id': 'reqid' },
+      headers: {
+        'x-contentful-request-id': 'reqid',
+        'content-type': 'application/vnd.contentful.management.v1+json',
+      },
       status: 200,
       statusText: 'OK',
     });
   });
 
   it('rejects with relevant data', async () => {
-    Object.assign(fetchResult, {
+    window.fetch.mockResolvedValueOnce({
       ok: false,
       status: 404,
       statusText: 'NOT FOUND',
+      json: () => ({ message: 'Not found' }),
+      headers: new Headers({
+        'X-Contentful-Request-ID': 'reqid',
+        'Content-Type': 'application/vnd.contentful.management.v1+json',
+      }),
     });
-
-    fetchResult.arrayBuffer.mockResolvedValueOnce(
-      new TextEncoder().encode(JSON.stringify({ message: 'Not found' }))
-    );
-
     let response;
 
     try {
@@ -166,15 +154,70 @@ describe('Request', () => {
     } catch (e) {
       response = e;
     }
-
     expect(response).toBeInstanceOf(Error);
     expect(response.message).toBe('API request failed');
     expect({ ...response }).toEqual({
       config: { url: 'http://foo.com' },
       data: { message: 'Not found' },
-      headers: { 'x-contentful-request-id': 'reqid' },
+      headers: {
+        'x-contentful-request-id': 'reqid',
+        'content-type': 'application/vnd.contentful.management.v1+json',
+      },
       status: 404,
       statusText: 'NOT FOUND',
+    });
+  });
+
+  it('handles non-JSON responses', async () => {
+    const arrayBuffer = new ArrayBuffer([1, 2, 3, 4]);
+
+    window.fetch.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      arrayBuffer: () => arrayBuffer,
+      headers: new Headers({
+        'X-Contentful-Request-ID': 'reqid',
+        'Content-Type': 'application/pdf',
+      }),
+    });
+
+    const response = await request({ url: 'http://foo.com' });
+
+    expect(response).toEqual({
+      config: { url: 'http://foo.com' },
+      data: arrayBuffer,
+      headers: { 'x-contentful-request-id': 'reqid', 'content-type': 'application/pdf' },
+      status: 200,
+      statusText: 'OK',
+    });
+  });
+
+  it('handles if the call to response.arrayBuffer throws', async () => {
+    window.fetch.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      arrayBuffer: () => {
+        throw {};
+      },
+      headers: new Headers({
+        'X-Contentful-Request-ID': 'reqid',
+        'Content-Type': 'application/pdf',
+      }),
+    });
+
+    const response = await request({ url: 'http://foo.com' });
+
+    expect(response).toEqual({
+      config: { url: 'http://foo.com' },
+      data: null,
+      headers: {
+        'x-contentful-request-id': 'reqid',
+        'content-type': 'application/pdf',
+      },
+      status: 200,
+      statusText: 'OK',
     });
   });
 
