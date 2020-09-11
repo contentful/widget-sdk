@@ -10,7 +10,6 @@ import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge';
 import { keys } from 'lodash';
 import setLocaleData from 'app/entity_editor/setLocaleData';
 import TheLocaleStore from 'services/localeStore';
-import setupNoShareJsCmaFakeRequestsExperiment from './NoShareJsCmaFakeRequestsExperiment';
 import initSidebarTogglesProps from 'app/entity_editor/entityEditorSidebarToggles';
 import { getModule } from 'core/NgRegistry';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
@@ -112,8 +111,6 @@ export default async function create($scope, editorData, preferences) {
     $scope,
     controls: editorData.fieldControls,
   });
-
-  setupNoShareJsCmaFakeRequestsExperiment({ doc: $scope.otDoc, spaceContext, entityInfo });
 
   function defaultLocaleIsFocused() {
     if (!$scope.localeData.isSingleLocaleModeOn) {
