@@ -61,24 +61,70 @@ describe('data/document/Normalize#normalize', () => {
     expect(snapshot.fields).toEqual({});
   });
 
-  it('removes empty fields', () => {
-    locales = [{ internal_code: 'en' }, { internal_code: 'de' }];
-    const link = { sys: { type: 'Link', linkType: 'Entry', id: 'id' } };
-    const fields = {
-      A: { en: true, de: undefined },
-      B: {},
-      C: { fr: true },
-      D: { en: undefined },
-      E: { en: [], de: [] },
-      F: { en: [link], de: [] },
-      G: { en: null }, // CMA keeps null for fields except multi-ref.
-    };
-    snapshot.fields = fields;
-    runNormalize();
-    expect(fields).toEqual({
-      A: { en: true },
-      F: { en: [link] },
-      G: { en: null },
+  describe('removeEmptyFields', () => {
+    it('removes fields without values', () => {
+      locales = [{ internal_code: 'en' }, { internal_code: 'de' }];
+      const fields = {
+        A: {},
+      };
+      snapshot.fields = fields;
+      runNormalize();
+      expect(fields).toEqual({});
+    });
+
+    it('removes undefined values', () => {
+      locales = [{ internal_code: 'en' }, { internal_code: 'de' }];
+      const fields = {
+        A: { en: true, de: undefined },
+        B: {},
+        C: { en: undefined },
+        D: { en: null }, // CMA keeps null for fields except multi-ref.
+      };
+      snapshot.fields = fields;
+      runNormalize();
+      expect(fields).toEqual({
+        A: { en: true },
+        D: { en: null },
+      });
+    });
+
+    it('removes empty arrays for array fields', () => {
+      locales = [{ internal_code: 'en' }, { internal_code: 'de' }];
+      const link = { sys: { type: 'Link', linkType: 'Entry', id: 'id' } };
+      const fields = {
+        A: { en: [], de: [] },
+        B: { en: [link], de: [] },
+      };
+      snapshot.fields = fields;
+      const contentType = {
+        data: {
+          fields: [
+            { id: 'A', type: 'Array' },
+            { id: 'B', type: 'Array' },
+          ],
+        },
+      };
+      runNormalize(contentType);
+      expect(fields).toEqual({
+        B: { en: [link] },
+      });
+    });
+
+    it('does not remove empty arrays for non-array (e.g. JSON) fields', () => {
+      locales = [{ internal_code: 'en' }];
+      const fields = {
+        A: { en: [] },
+      };
+      snapshot.fields = fields;
+      const contentType = {
+        data: {
+          fields: [{ id: 'A', type: 'Object' }],
+        },
+      };
+      runNormalize(contentType);
+      expect(fields).toEqual({
+        A: { en: [] },
+      });
     });
   });
 

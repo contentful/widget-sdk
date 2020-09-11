@@ -1,4 +1,4 @@
-import { forEach, get, isEmpty, isObject, keys, map, transform } from 'lodash';
+import { forEach, get, isEmpty, isObject, keys, map, transform, keyBy } from 'lodash';
 
 /**
  * Normalize an entry or asset document by removing unused fields.
@@ -25,7 +25,7 @@ export function normalize(otDoc, snapshot, contentType, locales) {
   forceMetadataObject(otDoc);
   removeDeletedFields(snapshot, contentType);
   removeUnknownLocales(snapshot, localeMap);
-  removeEmptyFields(snapshot);
+  removeEmptyFields(snapshot, contentType);
 }
 
 /**
@@ -94,16 +94,24 @@ function removeDeletedFields(snapshot, contentType) {
   });
 }
 
-function removeEmptyFields(snapshot) {
-  forEach(snapshot.fields, (value, fieldId) => {
-    keys(value).forEach((locale) => {
-      if (
-        value[locale] === undefined ||
-        (value[locale] instanceof Array && !value[locale].length)
-      ) {
+function removeEmptyFields(snapshot, contentType) {
+  const ctFields = get(contentType, ['data', 'fields']);
+  const keyedFields = keyBy(ctFields, 'id');
+  const fields = Object.entries(snapshot.fields || {});
+  const fieldTypeIsArray = (fieldId) => get(keyedFields, [fieldId, 'type']) === 'Array';
+  const isEmptyArray = (value) => Array.isArray(value) && !value.length;
+
+  fields.forEach(([fieldId, fieldValue]) => {
+    const localisedValues = Object.entries(fieldValue);
+    const canBeRemoved = (value) =>
+      value === undefined || (fieldTypeIsArray(fieldId) && isEmptyArray(value));
+
+    localisedValues
+      .filter(([, localeValue]) => canBeRemoved(localeValue))
+      .forEach(([locale]) => {
         delete snapshot.fields[fieldId][locale];
-      }
-    });
+      });
+
     if (isEmpty(snapshot.fields[fieldId])) {
       delete snapshot.fields[fieldId];
     }
