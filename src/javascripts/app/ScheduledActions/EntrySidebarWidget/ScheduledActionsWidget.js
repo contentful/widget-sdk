@@ -294,8 +294,6 @@ export default function ScheduledActionsWidget({
       {isDialogShown && (
         <ScheduledActionDialog
           isMasterEnvironment={isMasterEnvironment}
-          spaceId={spaceId}
-          environmentId={environmentId}
           entity={entity}
           validator={validator}
           entryTitle={entryTitle}

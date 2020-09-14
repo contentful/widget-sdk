@@ -8,10 +8,8 @@ import moment from 'moment';
 
 import * as ScheduledActionsAnalytics from 'app/ScheduledActions/Analytics/ScheduledActionsAnalytics';
 import APIClient from 'data/APIClient';
-
-jest.mock('data/APIClient', () =>
-  jest.fn().mockImplementation(() => ({ validateEntry: jest.fn().mockReturnValue() }))
-);
+import { CurrentSpaceAPIClientProvider } from 'core/services/APIClient/CurrentSpaceAPIClientContext';
+import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 describe('ScheduledActionDialog', () => {
   let dateNowSpy;
@@ -31,7 +29,16 @@ describe('ScheduledActionDialog', () => {
       onCancel: jest.fn(),
       isSubmitting: false,
     };
-    return [render(<ScheduledActionDialog {...props} />), props];
+    return [
+      render(
+        <SpaceEnvContextProvider>
+          <CurrentSpaceAPIClientProvider>
+            <ScheduledActionDialog {...props} />
+          </CurrentSpaceAPIClientProvider>
+        </SpaceEnvContextProvider>
+      ),
+      props,
+    ];
   };
 
   it('renders scheduling dialog', () => {

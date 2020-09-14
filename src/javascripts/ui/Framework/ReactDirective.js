@@ -27,6 +27,7 @@ import * as AssetEditorWorkbench from 'app/asset_editor/AssetEditorWorkbench';
 import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { BulkEditor } from 'app/entity_editor/bulk_editor/BulkEditor';
 import { EmptyState } from 'app/entity_editor/EmptyState';
+import { CurrentSpaceAPIClientProvider } from 'core/services/APIClient/CurrentSpaceAPIClientContext';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container, store) {
@@ -36,7 +37,9 @@ function renderComponent(Component, props, scope, container, store) {
     ReactDOM.render(
       <Provider store={store}>
         <SpaceEnvContextProvider>
-          <Component {...props} scope={scope} />
+          <CurrentSpaceAPIClientProvider>
+            <Component {...props} scope={scope} />
+          </CurrentSpaceAPIClientProvider>
         </SpaceEnvContextProvider>
       </Provider>,
       container

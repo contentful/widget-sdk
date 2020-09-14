@@ -1,12 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Notification } from '@contentful/forma-36-react-components';
-import * as EndpointFactory from 'data/EndpointFactory';
-import APIClient from 'data/APIClient';
 
 import ScheduledAction from 'app/ScheduledActions/ScheduledActionAction';
 import JobDialog from './JobDialog';
 import { formatScheduledAtDate } from './utils';
+import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
 
 function ScheduledActionWidgetJobDialog({
   onCreate,
@@ -15,13 +14,10 @@ function ScheduledActionWidgetJobDialog({
   entity,
   validator,
   entryTitle,
-  spaceId,
-  environmentId,
   pendingJobs,
   isMasterEnvironment,
 }) {
-  const endpoint = EndpointFactory.createSpaceEndpoint(spaceId, environmentId);
-  const client = new APIClient(endpoint);
+  const client = useCurrentSpaceAPIClient();
 
   function handleSubmit({ validateForm, action, date, time, timezone }) {
     const truncationLength = 60;
@@ -65,8 +61,6 @@ function ScheduledActionWidgetJobDialog({
 }
 
 ScheduledActionWidgetJobDialog.propTypes = {
-  spaceId: PropTypes.string.isRequired,
-  environmentId: PropTypes.string.isRequired,
   entity: PropTypes.object.isRequired,
   validator: PropTypes.shape({
     run: PropTypes.func,

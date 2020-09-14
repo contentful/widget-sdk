@@ -9,6 +9,8 @@ import {
   cancelJob,
 } from '../DataManagement/ScheduledActionsService';
 import * as ScheduledActionsAnalytics from 'app/ScheduledActions/Analytics/ScheduledActionsAnalytics';
+import { CurrentSpaceAPIClientProvider } from 'core/services/APIClient/CurrentSpaceAPIClientContext';
+import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 const commandTemplate = {
   execute: () => {},
@@ -23,6 +25,7 @@ jest.mock('classes/EntityFieldValueSpaceContext', () => ({ entryTitle: () => 'Te
 jest.mock('app/entity_editor/UnpublishedReferencesWarning', () => ({
   showUnpublishedReferencesWarning: () => Promise.resolve(true),
 }));
+
 describe('<ScheduledActionsWidget />', () => {
   beforeEach(() => {
     jest.spyOn(Notification, 'success').mockImplementation(() => {});
@@ -57,6 +60,7 @@ describe('<ScheduledActionsWidget />', () => {
       entity: createEntry(),
       validator: {
         run: jest.fn().mockReturnValueOnce(true),
+        setApiResponseErrors: jest.fn(),
       },
       emitter: {
         emit: jest.fn(),
@@ -64,7 +68,16 @@ describe('<ScheduledActionsWidget />', () => {
       ...props,
     };
 
-    return [render(<ScheduledActionsWidget {...resultProps} />), resultProps];
+    return [
+      render(
+        <SpaceEnvContextProvider>
+          <CurrentSpaceAPIClientProvider>
+            <ScheduledActionsWidget {...resultProps} />
+          </CurrentSpaceAPIClientProvider>
+        </SpaceEnvContextProvider>
+      ),
+      resultProps,
+    ];
   };
 
   it('renders skeleton before <StatusButton />', async () => {
@@ -195,7 +208,11 @@ describe('<ScheduledActionsWidget />', () => {
       sys: { publishedAt: '2019-06-21T05:00:00.000Z' },
     });
     renderResult.rerender(
-      <ScheduledActionsWidget {...props} entity={publishedEntryWithSameDate} />
+      <SpaceEnvContextProvider>
+        <CurrentSpaceAPIClientProvider>
+          <ScheduledActionsWidget {...props} entity={publishedEntryWithSameDate} />
+        </CurrentSpaceAPIClientProvider>
+      </SpaceEnvContextProvider>
     );
     await wait();
 
@@ -211,7 +228,13 @@ describe('<ScheduledActionsWidget />', () => {
 
     getNotCanceledJobsForEntity.mockResolvedValueOnce([createPendingJob()]);
     const newPublishedEntry = createEntry({ sys: { publishedAt: '2019-06-21T06:00:00.000Z' } });
-    renderResult.rerender(<ScheduledActionsWidget {...props} entity={newPublishedEntry} />);
+    renderResult.rerender(
+      <SpaceEnvContextProvider>
+        <CurrentSpaceAPIClientProvider>
+          <ScheduledActionsWidget {...props} entity={newPublishedEntry} />
+        </CurrentSpaceAPIClientProvider>
+      </SpaceEnvContextProvider>
+    );
     await wait();
 
     expect(getNotCanceledJobsForEntity).toHaveBeenCalledTimes(2);
@@ -226,7 +249,13 @@ describe('<ScheduledActionsWidget />', () => {
 
     getNotCanceledJobsForEntity.mockResolvedValueOnce([createDoneJob()]);
     const newPublishedEntry = createEntry({ sys: { publishedAt: '2019-06-21T06:00:00.000Z' } });
-    renderResult.rerender(<ScheduledActionsWidget {...props} entity={newPublishedEntry} />);
+    renderResult.rerender(
+      <SpaceEnvContextProvider>
+        <CurrentSpaceAPIClientProvider>
+          <ScheduledActionsWidget {...props} entity={newPublishedEntry} />
+        </CurrentSpaceAPIClientProvider>
+      </SpaceEnvContextProvider>
+    );
     await wait();
 
     expect(getNotCanceledJobsForEntity).toHaveBeenCalledTimes(2);
