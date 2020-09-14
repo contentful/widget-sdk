@@ -8,7 +8,7 @@ import {
   isOnboardingComplete,
   getDeploymentProvider,
 } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
-import { getModule } from 'core/NgRegistry';
+import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 class DeploymentStrategies extends React.Component {
   constructor(props) {
@@ -22,14 +22,13 @@ class DeploymentStrategies extends React.Component {
     };
   }
 
-  async componentDidMount() {
-    const spaceContext = getModule('spaceContext');
+  static contextType = SpaceEnvContext;
 
-    const spaceId = spaceContext.space && spaceContext.space.getSys().id;
+  async componentDidMount() {
     const { deliveryToken } = await getCredentials();
 
     this.setState({
-      spaceId,
+      spaceId: this.context.currentSpaceId,
       deliveryToken,
     });
   }

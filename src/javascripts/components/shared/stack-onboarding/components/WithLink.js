@@ -7,6 +7,7 @@ import {
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { updateUserInSegment } from 'analytics/Analytics';
 import { getModule } from 'core/NgRegistry';
+import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 const store = getBrowserStorage();
 
@@ -18,13 +19,13 @@ export default class WithLink extends React.Component {
     children: PropTypes.func.isRequired,
   };
 
+  static contextType = SpaceEnvContext;
+
   render() {
-    const spaceContext = getModule('spaceContext');
     const { children, trackingElementId, intercomKey } = this.props;
     const getStateParams = () => {
       const { link } = this.props;
-      const spaceId = spaceContext.space && spaceContext.space.getId();
-      const params = { spaceId };
+      const params = { spaceId: this.context.currentSpaceId };
       let path;
 
       if (link === 'spaceHome') {
