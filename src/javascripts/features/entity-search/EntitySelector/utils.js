@@ -9,6 +9,22 @@ function getValidContentTypes(linkedContentTypeIds, contentTypes) {
   return contentTypes;
 }
 
+function getOrder(publishedCTs, singleContentTypeId) {
+  const ct = singleContentTypeId && publishedCTs.get(singleContentTypeId);
+  if (ct) {
+    const displayField = ct.data.fields.find(({ id }) => id === ct.data.displayField);
+    if (displayField && displayField.type === 'Symbol' && displayField.id) {
+      return {
+        order: {
+          fieldId: displayField.id,
+          direction: 'ascending',
+        },
+      };
+    }
+  }
+  return {};
+}
+
 const isSearchUsed = (searchState) => {
   if (!searchState) {
     return false;
@@ -23,4 +39,4 @@ const isSearchUsed = (searchState) => {
   return !!(contentTypeId || searchText);
 };
 
-export { getValidContentTypes, isSearchUsed };
+export { getValidContentTypes, isSearchUsed, getOrder };

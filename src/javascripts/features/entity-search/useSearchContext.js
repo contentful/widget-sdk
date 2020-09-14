@@ -86,10 +86,10 @@ export const useSearchContext = ({
   const onSetSearchText = useCallback(
     (searchText) => {
       track('search:query_changed', { search_query: searchText });
-      onUpdate({ searchText });
+      onUpdate({ ...getView(), searchText });
       setIsTyping(false);
     },
-    [onUpdate]
+    [onUpdate, getView]
   );
 
   const debouncedSetSearchText = useCallback(debounce(onSetSearchText, 1000), [onSetSearchText]);
@@ -127,9 +127,9 @@ export const useSearchContext = ({
   };
 
   const onSetFilterValue = useCallback(() => {
-    onUpdate();
+    onUpdate(getView());
     setIsTyping(false);
-  }, [onUpdate]);
+  }, [onUpdate, getView]);
 
   const debouncedSetFilterValue = useCallback(debounce(onSetFilterValue, 1000), [onSetFilterValue]);
 
@@ -158,8 +158,7 @@ export const useSearchContext = ({
     const value = tryGetValue(filterField);
     setSearch('');
     const updatedFilters = [...searchFilters, [filter.queryKey, filter.operators[0][0], value]];
-    setViewAssigned({ searchFilters: updatedFilters, searchText: '' });
-    onUpdate();
+    setViewAssigned({ searchFilters: updatedFilters, searchText: '' }, onUpdate);
     setIsSuggestionOpen(false);
   };
 

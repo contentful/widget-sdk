@@ -10,11 +10,12 @@ import { getModule } from 'core/NgRegistry';
 import { useEntityLoader } from './useEntityLoader';
 import { useSelection } from './useSelection';
 import { useScrollToBottomTrigger } from './useScrollToBottomTrigger';
-import { EntitySelectorAdapter as Search } from './EntitySelectorAdapter';
 import { Wrapper } from './Wrapper';
-import { isSearchUsed, getValidContentTypes } from './utils';
+import { isSearchUsed, getValidContentTypes, getOrder } from './utils';
 import { CreateEntity } from './CreateEntity';
 import getAccessibleCTs from 'data/ContentTypeRepo/accessibleCTs';
+import { Search } from '../View';
+import { useListView } from '../useListView';
 
 /*
   The core of this component was split into 3 hooks:
@@ -46,13 +47,21 @@ export const EntitySelectorForm = ({
   linkedContentTypeIds,
   fetch,
 }) => {
+  const spaceContext = useMemo(() => getModule('spaceContext'), []);
+  const singleContentTypeId =
+    Array.isArray(linkedContentTypeIds) && linkedContentTypeIds.length === 1
+      ? linkedContentTypeIds[0]
+      : null;
+
   const [showingSelected, setShowSelected] = useState(false);
   const [state, setState] = useState({
     entities: [],
     hasMore: false,
   });
   const [search, setSearch] = useState({
-    state: {},
+    state: {
+      ...getOrder(spaceContext.publishedCTs, singleContentTypeId),
+    },
     searchResult: {
       entities: [],
       hasMore: false,
@@ -60,6 +69,12 @@ export const EntitySelectorForm = ({
   });
   const [users, setUsers] = useState([]);
   const entitySelectorRef = useRef();
+
+  const listViewContext = useListView({
+    entityType,
+    initialState: search.state,
+    isPersisted: false,
+  });
 
   // if at least one property is not empty, then some filter or query is present
   const isSearching = isSearchUsed(search.state);
@@ -70,17 +85,12 @@ export const EntitySelectorForm = ({
     search.searchResult.entities,
   ]);
   const helpers = useMemo(() => newForLocale(locale), [locale]);
-  const spaceContext = useMemo(() => getModule('spaceContext'), []);
   // Returns a promise for the content type of the given entry.
   // We cache this by the entry id
   const getContentType = memoize(
     (entity) => spaceContext.publishedCTs.fetch(entity.sys.contentType.sys.id),
     (entity) => entity.sys.id
   );
-  const singleContentTypeId =
-    Array.isArray(linkedContentTypeIds) && linkedContentTypeIds.length === 1
-      ? linkedContentTypeIds[0]
-      : null;
 
   let createEntityProps;
   let createEntityInlineProps;
@@ -183,7 +193,7 @@ export const EntitySelectorForm = ({
     handler: onBottomHit,
   });
 
-  const onSearch = useCallback(
+  const onUpdate = useCallback(
     async (searchState) => {
       // no need to fetch anything since search is empty
       if (!isSearchUsed(searchState)) {
@@ -218,10 +228,10 @@ export const EntitySelectorForm = ({
         const { data: entities, hasMore } = await load({ reset: true, retry: true });
         const result = { entities, hasMore };
         setState(result);
-        setSearch({
-          state: { contentTypeId: null },
+        setSearch(({ state }) => ({
+          state: { ...state, contentTypeId: null },
           searchResult: result,
-        });
+        }));
       };
       reset();
     }
@@ -359,10 +369,10 @@ export const EntitySelectorForm = ({
         <Search
           entityType={entityType.toLowerCase()}
           isLoading={isLoading}
-          onUpdate={onSearch}
-          initialState={search.state}
+          onUpdate={onUpdate}
           users={users}
           getContentTypes={getContentTypesForSearch}
+          listViewContext={listViewContext}
         />
       </div>
       <div

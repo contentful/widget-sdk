@@ -121,6 +121,9 @@ describe('app/ContentList/Search/View', () => {
       expect(onUpdate).not.toHaveBeenCalled();
       await waitFor(() =>
         expect(onUpdate).toHaveBeenCalledWith({
+          contentTypeId: '',
+          order: {},
+          searchFilters: [],
           searchText: query,
         })
       );
@@ -136,10 +139,14 @@ describe('app/ContentList/Search/View', () => {
 
       fireEvent.keyDown(document.activeElement, { keyCode: keycodes.ENTER });
       expect(wrapper.queryByTestId('suggestions')).not.toBeInTheDocument();
-      expect(listViewContext.setViewAssigned).toHaveBeenNthCalledWith(1, {
-        searchFilters: [['sys.updatedAt', '', undefined]],
-        searchText: '',
-      });
+      expect(listViewContext.setViewAssigned).toHaveBeenNthCalledWith(
+        1,
+        {
+          searchFilters: [['sys.updatedAt', '', undefined]],
+          searchText: '',
+        },
+        expect.any(Function)
+      );
     });
 
     it('selects a text filter', async () => {
@@ -152,10 +159,14 @@ describe('app/ContentList/Search/View', () => {
       fireEvent.keyDown(wrapper.queryByTestId(`none::${fieldId}`), {
         keyCode: keycodes.ENTER,
       });
-      expect(listViewContext.setViewAssigned).toHaveBeenNthCalledWith(1, {
-        searchFilters: [['sys.id', 'match', undefined]],
-        searchText: '',
-      });
+      expect(listViewContext.setViewAssigned).toHaveBeenNthCalledWith(
+        1,
+        {
+          searchFilters: [['sys.id', 'match', undefined]],
+          searchText: '',
+        },
+        expect.any(Function)
+      );
     });
 
     it('selects a contentType field filter', async () => {
@@ -169,10 +180,14 @@ describe('app/ContentList/Search/View', () => {
         keyCode: keycodes.ENTER,
       });
       expect(listViewContext.setViewKey).toHaveBeenNthCalledWith(1, 'contentTypeId', 'TEST_CT_ID');
-      expect(listViewContext.setViewAssigned).toHaveBeenNthCalledWith(1, {
-        searchFilters: [[fieldId, '', undefined]],
-        searchText: '',
-      });
+      expect(listViewContext.setViewAssigned).toHaveBeenNthCalledWith(
+        1,
+        {
+          searchFilters: [[fieldId, '', undefined]],
+          searchText: '',
+        },
+        expect.any(Function)
+      );
     });
   });
 });

@@ -17,7 +17,7 @@ const getStoreKey = (entityKey, environmentId, spaceId) => {
   return [STORE_PREFIX, entityKey, environmentId, spaceId].join('_');
 };
 
-const getEntityKey = (entityType) => {
+export const getEntityKey = (entityType) => {
   const entityKey = { entry: 'entries', asset: 'assets' }[entityType.toLowerCase()];
 
   if (typeof entityKey === 'string') {
@@ -26,6 +26,9 @@ const getEntityKey = (entityType) => {
 
   throw new Error(`Cannot create a view persistor for ${entityType}.`);
 };
+
+export const getDefaults = (entityKey) =>
+  entityKey === 'assets' ? getBlankAssetView() : getBlankEntryView();
 
 const pickLegacyValue = (entityKey, spaceId) => {
   const legacyStoreKey = getLegacyStoreKey(entityKey, spaceId);
@@ -52,7 +55,7 @@ export function createListViewPersistor({ entityType, isNative }) {
   const entityKey = getEntityKey(entityType);
   const storeKey = getStoreKey(entityKey, environmentId, spaceId);
   const store = getBrowserStorage().forKey(storeKey);
-  const defaults = entityKey === 'assets' ? getBlankAssetView() : getBlankEntryView();
+  const defaults = getDefaults(entityKey);
 
   const legacyValue = pickLegacyValue(entityKey, spaceId);
   if (legacyValue) {

@@ -1,19 +1,22 @@
 import { useMemo, useEffect, useRef, useCallback } from 'react';
-import { createListViewPersistor } from './ListViewPersistor';
+import { createListViewPersistor, getEntityKey, getDefaults } from './ListViewPersistor';
 import { assign, cloneDeep, set, isEmpty, noop } from 'lodash';
 
-const createDummyViewPersistor = () => ({
-  read: (initialState = {}) => initialState,
-  saveKey: () => {},
-  save: () => {},
-});
+const createDummyViewPersistor = ({ entityType }) => {
+  const defaults = getDefaults(getEntityKey(entityType));
+  return {
+    read: (initialState = {}) => ({ ...defaults, ...initialState }),
+    saveKey: () => {},
+    save: () => {},
+  };
+};
 
 export const useListView = ({ entityType, initialState, isPersisted, onUpdate = noop }) => {
   const viewPersistor = useMemo(
     () =>
       isPersisted
         ? createListViewPersistor({ entityType, isNative: true })
-        : createDummyViewPersistor(),
+        : createDummyViewPersistor({ entityType }),
     [entityType, isPersisted]
   );
 
