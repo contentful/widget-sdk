@@ -5,7 +5,7 @@ import FolderIcon from 'svg/folder.svg';
 import SpaceWithEnvironments from './SpaceWithEnvironments';
 import { canAccessSpaceEnvironments } from 'access_control/AccessChecker';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
-import { Button, Heading, Paragraph } from '@contentful/forma-36-react-components';
+import { Button, Heading, Paragraph, TextLink, List } from '@contentful/forma-36-react-components';
 import EmptyStateAdminIllustration from 'svg/folder-illustration.svg';
 import EmptyStatePractitionerIllustration from 'svg/coffee-cup-illustration.svg';
 
@@ -14,14 +14,14 @@ const styles = { svgContainer: css({ width: '150px' }) };
 function OrgSpacesHeader({ canCreateSpaceInCurrOrg, showCreateSpaceModal }) {
   return (
     <div className="nav-sidepanel__spaces-header">
-      <p className="nav-sidepanel__spaces-header-heading">Spaces</p>
+      <Paragraph className="nav-sidepanel__spaces-header-heading">Spaces</Paragraph>
       {canCreateSpaceInCurrOrg && (
-        <a
+        <TextLink
           className="text-link"
           onClick={showCreateSpaceModal}
           data-test-id="sidepanel-add-space-link">
           + Create space
-        </a>
+        </TextLink>
       )}
     </div>
   );
@@ -36,6 +36,7 @@ function SpaceList(props) {
     spaces,
     currentSpaceId,
     currentEnvId,
+    currentAliasId,
     goToSpace,
     openedSpaceId,
     setOpenedSpaceId,
@@ -43,7 +44,7 @@ function SpaceList(props) {
   } = props;
 
   return (
-    <ul className="nav-sidepanel__space-list">
+    <List className="nav-sidepanel__space-list">
       {spaces.map((space, index) => {
         const isCurrSpace = space.sys.id === currentSpaceId;
 
@@ -55,6 +56,7 @@ function SpaceList(props) {
               space={space}
               isCurrSpace={isCurrSpace}
               currentEnvId={currentEnvId}
+              currentAliasId={currentAliasId}
               goToSpace={goToSpace}
               openedSpaceId={openedSpaceId}
               setOpenedSpaceId={setOpenedSpaceId}
@@ -86,7 +88,7 @@ function SpaceList(props) {
           </li>
         );
       })}
-    </ul>
+    </List>
   );
 }
 
@@ -94,6 +96,7 @@ SpaceList.propTypes = {
   spaces: PropTypes.arrayOf(PropTypes.object),
   currentSpaceId: PropTypes.string,
   currentEnvId: PropTypes.string,
+  currentAliasId: PropTypes.string,
   goToSpace: PropTypes.func,
   openedSpaceId: PropTypes.string,
   setOpenedSpaceId: PropTypes.func,

@@ -55,6 +55,13 @@ export function isMasterEnvironment(environment?: Environment) {
   );
 }
 
+export function isUnscopedRoute(space?: SpaceEnv) {
+  return (
+    space?.environmentMeta?.aliasId === 'master' ||
+    space?.environmentMeta?.environmentId === 'master'
+  );
+}
+
 export function getEnvironment(space?: SpaceEnv) {
   return space?.environment;
 }

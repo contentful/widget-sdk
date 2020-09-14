@@ -32,11 +32,11 @@ const hasNavigationItem = (widget) => {
   return pageLocation && pageLocation.navigationItem;
 };
 
-const buildAppListingChildren = (title) => ({ isMasterEnvironment }) => ({
+const buildAppListingChildren = (title) => ({ isUnscopedRoute }) => ({
   title,
   dataViewType: 'apps-listing',
-  sref: makeRef('apps.list', isMasterEnvironment),
-  rootSref: makeRef('apps', isMasterEnvironment),
+  sref: makeRef('apps.list', isUnscopedRoute),
+  rootSref: makeRef('apps', isUnscopedRoute),
 });
 
 export const EXPLORE_APPS_TITLE = 'Explore more apps';
@@ -56,12 +56,12 @@ const buildLoadingChildren = () => {
   ];
 };
 
-const buildAppChild = (widget, { isMasterEnvironment }) => {
+const buildAppChild = (widget, { isUnscopedRoute }) => {
   const { navigationItem } = getPageLocation(widget);
 
   return {
     dataViewType: `apps-${widget.id}`,
-    sref: makeRef(`apps.page`, isMasterEnvironment),
+    sref: makeRef(`apps.page`, isUnscopedRoute),
     srefParams: {
       appId: widget.slug,
       path: navigationItem.path,
@@ -179,7 +179,7 @@ AppsNavigationItem.propTypes = {
   item: NavigationItem.propTypes.item,
   context: PropTypes.shape({
     canManageSpace: PropTypes.bool.isRequired,
-    isMasterEnvironment: PropTypes.bool.isRequired,
+    isUnscopedRoute: PropTypes.bool.isRequired,
   }).isRequired,
 };
 

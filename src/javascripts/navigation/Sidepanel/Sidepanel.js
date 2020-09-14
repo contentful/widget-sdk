@@ -51,6 +51,7 @@ export default class Sidepanel extends React.Component {
 
     const currentSpaceId = get(navState, ['space', 'sys', 'id']);
     const currentEnvId = get(navState, ['env', 'sys', 'id'], 'master');
+    const currentAliasId = get(navState, ['environmentMeta', 'aliasId'], null);
     const org = navState.org || orgs[0];
     const currentOrgId = get(org, ['sys', 'id']);
 
@@ -65,6 +66,7 @@ export default class Sidepanel extends React.Component {
         spacesByOrg: spacesByOrg || {},
         currentSpaceId,
         currentEnvId,
+        currentAliasId,
         environmentsEnabled,
       },
       () => {
@@ -115,6 +117,7 @@ export default class Sidepanel extends React.Component {
     const path = ['spaces', 'detail'].concat(envId ? ['environment'] : []);
 
     this.props.closeSidePanel();
+
     Navigator.go({
       path,
       params: {

@@ -369,26 +369,33 @@ export default function register() {
             spaceContext.aliases = deepFreeze(aliases);
           })
           .then(() => {
-            let environment = spaceContext.environments.find(
+            spaceContext.space.environment = spaceContext.environments.find(
               ({ sys }) => sys.id === uriEnvOrAliasId
             );
 
-            if (!environment) {
+            if (!spaceContext.space.environment) {
               // the current environment is aliased
-              environment = spaceContext.environments.find(({ sys: { aliases = [] } }) =>
-                aliases.some(({ sys }) => sys.id === MASTER_ENVIRONMENT_ID)
+              spaceContext.space.environment = spaceContext.environments.find(
+                ({ sys: { aliases = [] } }) =>
+                  aliases.some(({ sys }) => sys.id === MASTER_ENVIRONMENT_ID)
               );
+              spaceContext.space.environmentMeta = {
+                environmentId: spaceContext.getEnvironmentId(),
+                isMasterEnvironment: spaceContext.isMasterEnvironment(
+                  spaceContext.space.environment
+                ),
+                optedIn: spaceContext.hasOptedIntoAliases(),
+                aliasId: uriEnvOrAliasId,
+              };
+            } else {
+              spaceContext.space.environmentMeta = {
+                environmentId: spaceContext.getEnvironmentId(),
+                isMasterEnvironment: spaceContext.isMasterEnvironment(
+                  spaceContext.space.environment
+                ),
+                optedIn: spaceContext.hasOptedIntoAliases(),
+              };
             }
-            spaceContext.space.environment = environment;
-          })
-          .then(() => {
-            const aliases = spaceContext.getAliasesIds(spaceContext.space.environment);
-            spaceContext.space.environmentMeta = {
-              environmentId: spaceContext.getEnvironmentId(),
-              isMasterEnvironment: spaceContext.isMasterEnvironment(spaceContext.space.environment),
-              aliasId: aliases[0], // for now we assume that there is only alias ('master')
-              optedIn: spaceContext.hasOptedIntoAliases(),
-            };
           });
       }
     },

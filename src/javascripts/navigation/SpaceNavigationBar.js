@@ -12,6 +12,7 @@ import {
   getOrganizationId,
   getSpaceEnforcements,
   isCurrentEnvironmentMaster,
+  isUnscopedRoute,
 } from 'core/services/SpaceEnvContext/utils';
 
 // We don't want to display the following sections within the context of
@@ -90,7 +91,7 @@ export default class SpaceNavigationBar extends React.Component {
       usageEnabled,
       hasOrgTeamFeature,
       useSpaceEnvironment: canManageEnvironments && environmentsEnabled,
-      isMasterEnvironment,
+      isUnscopedRoute: isUnscopedRoute(currentSpace),
       contentTagsEnabled,
       canManageSpace,
     });

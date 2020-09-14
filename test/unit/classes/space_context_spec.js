@@ -225,6 +225,12 @@ describe('spaceContext', () => {
 
       await this.reset();
 
+      expect(this.space.environmentMeta).toEqual({
+        environmentId: 'prod-1',
+        optedIn: true,
+        isMasterEnvironment: true,
+        aliasId: 'master',
+      });
       expect(this.spaceContext.aliases).toEqual([alias]);
     });
 
@@ -250,12 +256,13 @@ describe('spaceContext', () => {
       };
       const environments = { master, staging };
       Object.assign(this.mockSpaceEndpoint.stores.environments, environments);
-      await this.result;
+
+      await this.reset();
+
       expect(this.space.environmentMeta).toEqual({
         environmentId: 'master',
         optedIn: false,
         isMasterEnvironment: true,
-        aliasId: undefined,
       });
     });
 
@@ -285,11 +292,11 @@ describe('spaceContext', () => {
       const environments = { master, staging };
       Object.assign(this.mockSpaceEndpoint.stores.environments, environments);
       await this.result;
+      await this.reset();
       expect(this.space.environmentMeta).toEqual({
         environmentId: 'master',
         optedIn: false,
         isMasterEnvironment: true,
-        aliasId: undefined,
       });
     });
 

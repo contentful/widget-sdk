@@ -10,66 +10,108 @@ import { css } from 'emotion';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { isMasterEnvironment, getEnvironmentAliasesIds } from 'core/services/SpaceEnvContext/utils';
 
-function EnvironmentList({ environments = [], isCurrSpace, currentEnvId, goToSpace, space }) {
+function EnvironmentList({
+  environments = [],
+  isCurrSpace,
+  currentEnvId,
+  currentAliasId,
+  goToSpace,
+  space,
+}) {
+  const sortedEnvOrAliases = environments
+    .map((env) =>
+      env.sys.aliases
+        ? env.sys.aliases.map((alias) => ({
+            aliasId: alias.sys.id,
+            isMasterEnvironment: isMasterEnvironment(env),
+            environmentId: env.sys.id,
+            isSelected: isCurrSpace && alias.sys.id === currentAliasId,
+          }))
+        : []
+    )
+    .concat(
+      environments.map((env) => ({
+        aliasId: null,
+        isMasterEnvironment: isMasterEnvironment(env),
+        environmentId: env.sys.id,
+        isSelected: isCurrSpace && !currentAliasId && env.sys.id === currentEnvId,
+      }))
+    )
+    .reduce((acc, val) => acc.concat(val), [])
+    .sort((envOrAliasA, envOrAliasB) => {
+      // sort aliases higher than envs
+      if (envOrAliasA.aliasId && !envOrAliasB.aliasId) {
+        return -1;
+      } else if (envOrAliasB.aliasId && !envOrAliasA.aliasId) {
+        return 1;
+      }
+
+      // sort master highly
+      if ((envOrAliasA.aliasId || envOrAliasA.environmentId) === 'master') {
+        return -1;
+      } else if ((envOrAliasB.aliasId || envOrAliasB.environmentId) === 'master') {
+        return 1;
+      }
+
+      // sort by name
+      return (envOrAliasA.aliasId || envOrAliasA.environmentId).localeCompare(
+        envOrAliasB.aliasId || envOrAliasB.environmentId
+      );
+    });
+
   return (
     <ul>
-      {environments
-        .sort((envA, envB) => {
-          return isMasterEnvironment(envB) - isMasterEnvironment(envA);
-        })
-        .map((env) => {
-          const envId = env.sys.id;
-          const [alias] = env.sys.aliases || [];
-          const environmentIsMaster = isMasterEnvironment(env);
-          const isSelected = isCurrSpace && envId === currentEnvId;
+      {sortedEnvOrAliases.map((envOrAlias) => {
+        const environmentClassNames = css({
+          margin: 0,
+          padding: `${tokens.spacingXs} 0 ${tokens.spacingXs} ${tokens.spacing2Xl}`,
+          transition: 'background-color 0.1s ease-in-out',
+          display: 'flex',
+          alignEnvOrAliass: 'center',
+          backgroundColor: envOrAlias.isSelected ? tokens.colorElementMid : undefined,
+          '&:hover': {
+            backgroundColor: tokens.colorElementMid,
+          },
+          '& > a': {
+            color: tokens.colorTextMid,
+            maxWidth: '90%',
+          },
+        });
 
-          const environmentClassNames = css({
-            margin: 0,
-            padding: `${tokens.spacingXs} 0 ${tokens.spacingXs} ${tokens.spacing2Xl}`,
-            transition: 'background-color 0.1s ease-in-out',
-            display: 'flex',
-            alignItems: 'center',
-            backgroundColor: isSelected ? tokens.colorElementMid : undefined,
-            '&:hover': {
-              backgroundColor: tokens.colorElementMid,
-            },
-            '& > a': {
-              color: tokens.colorTextMid,
-              maxWidth: '90%',
-            },
-          });
-
-          return (
-            <li
-              key={envId}
-              className={environmentClassNames}
+        return (
+          <li
+            key={envOrAlias.aliasId || envOrAlias.environmentId}
+            className={environmentClassNames}
+            onClick={(e) => {
+              e.stopPropagation();
+              goToSpace(
+                space.sys.id,
+                envOrAlias.aliasId || envOrAlias.environmentId,
+                envOrAlias.aliasId === 'master' || envOrAlias.environmentId === 'master'
+                  ? true
+                  : false
+              );
+            }}>
+            <a
+              href={`/spaces/${space.sys.id}${
+                envOrAlias.aliasId === 'master' || envOrAlias.environmentId === 'master'
+                  ? ''
+                  : `/environments/${envOrAlias.aliasId || envOrAlias.environmentId}`
+              }`}
               onClick={(e) => {
-                e.stopPropagation();
-                goToSpace(space.sys.id, envId, environmentIsMaster);
+                if (e.shiftKey || e.ctrlKey || e.metaKey) {
+                  // allow to open in a new tab/window normally
+                  e.stopPropagation();
+                } else {
+                  // parent `li` click handler will navigate
+                  e.preventDefault();
+                }
               }}>
-              <a
-                href={`/spaces/${space.sys.id}${
-                  environmentIsMaster ? '' : `/environments/${envId}`
-                }`}
-                onClick={(e) => {
-                  if (e.shiftKey || e.ctrlKey || e.metaKey) {
-                    // allow to open in a new tab/window normally
-                    e.stopPropagation();
-                  } else {
-                    // parent `li` click handler will navigate
-                    e.preventDefault();
-                  }
-                }}>
-                <EnvOrAliasLabel
-                  aliasId={alias && alias.sys.id}
-                  environmentId={envId}
-                  isMaster={environmentIsMaster}
-                  isSelected={isSelected}
-                />
-              </a>
-            </li>
-          );
-        })}
+              <EnvOrAliasLabel {...envOrAlias} />
+            </a>
+          </li>
+        );
+      })}
     </ul>
   );
 }
@@ -78,6 +120,7 @@ EnvironmentList.propTypes = {
   environments: PropTypes.arrayOf(PropTypes.object),
   isCurrSpace: PropTypes.bool,
   currentEnvId: PropTypes.string,
+  currentAliasId: PropTypes.string,
   goToSpace: PropTypes.func.isRequired,
   space: PropTypes.object.isRequired,
 };
@@ -92,6 +135,7 @@ export default class SpaceWithEnvironments extends React.Component {
     goToSpace: PropTypes.func.isRequired,
     index: PropTypes.number.isRequired,
     currentEnvId: PropTypes.string,
+    currentAliasId: PropTypes.string,
     isCurrSpace: PropTypes.bool,
   };
 
@@ -170,7 +214,7 @@ export default class SpaceWithEnvironments extends React.Component {
   };
 
   render() {
-    const { index, space, currentEnvId, isCurrSpace, goToSpace } = this.props;
+    const { index, space, currentEnvId, currentAliasId, isCurrSpace, goToSpace } = this.props;
 
     const isOpened = this.isOpened();
     const containerClassNames = `
@@ -210,6 +254,7 @@ export default class SpaceWithEnvironments extends React.Component {
             goToSpace={goToSpace}
             isCurrSpace={isCurrSpace}
             currentEnvId={currentEnvId}
+            currentAliasId={currentAliasId}
             space={space}
           />
         </AnimateHeight>
