@@ -108,6 +108,7 @@ EnvironmentsRoute.propTypes = {
   spaceId: PropTypes.string.isRequired,
   organizationId: PropTypes.string.isRequired,
   currentEnvironmentId: PropTypes.string.isRequired,
+  currentAliasId: PropTypes.string,
   canUpgradeSpace: PropTypes.bool.isRequired,
   isLegacyOrganization: PropTypes.bool.isRequired,
   pubsubClient: PropTypes.object.isRequired,

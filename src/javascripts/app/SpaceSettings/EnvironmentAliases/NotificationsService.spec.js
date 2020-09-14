@@ -1,23 +1,20 @@
-import initEnvAliasChangeHandler, {
-  initEnvAliasCreateHandler,
-  initEnvAliasDeleteHandler,
-} from './NotificationsService';
-
+import ReactDOM from 'react-dom';
+import initEnvAliasChangeHandler from './NotificationsService';
 import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { Notification } from '@contentful/forma-36-react-components';
 import * as Navigator from 'states/Navigator';
-import * as accessChecker from 'access_control/AccessChecker';
 import { window } from 'core/services/window';
-import { screen } from '@testing-library/react';
+import { cleanup, screen } from '@testing-library/react';
 import { when } from 'jest-when';
-
+import * as accessChecker from 'access_control/AccessChecker';
 import { getModule } from 'core/NgRegistry';
+import { initEnvAliasDeleteHandler } from 'app/SpaceSettings/EnvironmentAliases/NotificationsService';
 
 jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
 
 jest.mock('core/services/window', () => ({
   window: {
-    location: {},
+    location: { pathname: '' },
   },
 }));
 
@@ -30,155 +27,103 @@ jest.mock('access_control/AccessChecker', () => ({
   can: jest.fn().mockReturnValue(false),
 }));
 
-const changedUpdate = {
-  newTarget: 'newTarget',
-  oldTarget: 'oldTarget',
-  aliasId: 'aliasId',
+const changeModalOnScreen = () => screen.queryByTestId('aliaschangedchoicemodal.modal');
+const infoModalOnScreen = () => screen.queryByTestId('aliaschangedinfomodal.modal');
+const deleteModalOnScreen = () => screen.queryByTestId('aliasdeletedinfomodal.modal');
+
+const mockSpaceContextWithEnv = (environment, alias) => {
+  when(getModule)
+    .calledWith('spaceContext')
+    .mockReturnValue({
+      isMasterEnvironmentById: jest.fn().mockReturnValue(true),
+      getEnvironmentId: jest.fn().mockReturnValue(environment),
+      space: { environmentMeta: { environmentId: environment, aliasId: alias } },
+    });
 };
 
-const createdOrDeletedUpdate = {
-  target: 'newTarget',
-  aliasId: 'aliasId',
+const mockEnvAccess = (canAccess) => {
+  when(accessChecker.can).calledWith('manage', 'Environments').mockReturnValue(canAccess);
 };
 
-describe('initEnvAliasChangeHandler', () => {
+const setupChangeHandler = (oldTarget, newTarget, aliasId) => {
+  initEnvAliasChangeHandler(ModalLauncher)({
+    newTarget: newTarget,
+    oldTarget: oldTarget,
+    aliasId: aliasId,
+  });
+};
+
+const setupDeleteHandler = (target, aliasId) => {
+  initEnvAliasDeleteHandler(ModalLauncher)({
+    target: target,
+    aliasId: aliasId,
+  });
+};
+
+const CONTENT_ROUTE = '/spaces/entries';
+
+const setupRoute = (route) => {
+  window.location.pathname = route;
+};
+
+describe('NotificationService', () => {
   beforeEach(() => {
     jest.spyOn(ModalLauncher, 'open');
     jest.spyOn(Notification, 'warning');
   });
 
-  it('triggers a notification and reload if changes not related', () => {
-    window.location.pathname = '/spaces/content_types';
-    when(getModule)
-      .calledWith('spaceContext')
-      .mockReturnValue({
-        getEnvironmentId: jest.fn().mockReturnValue('otherEnvironment'),
-      });
-    const environmentAliasChangedHandler = initEnvAliasChangeHandler(ModalLauncher);
-    environmentAliasChangedHandler(changedUpdate);
-    expect(Notification.warning).toHaveBeenCalledWith(
-      'Your space admin has made changes to your space'
-    );
-    expect(Navigator.reload).toHaveBeenCalledWith();
+  afterEach(async () => {
+    document.querySelectorAll('*[id^="modals-root"]').forEach((root) => {
+      ReactDOM.unmountComponentAtNode(root);
+      root.remove();
+      return cleanup();
+    });
   });
 
-  it('triggers a notification and reload if not a content specific / environment aware page', () => {
-    window.location.pathname = '/spaces/detail';
-    when(getModule)
-      .calledWith('spaceContext')
-      .mockReturnValue({
-        getEnvironmentId: jest.fn().mockReturnValue('newTarget'),
+  describe('with an initEnvAliasChangeHandler listening to alias target change event', () => {
+    describe('and can manage all environments', () => {
+      it('shows nothing when new alias has no old target', () => {
+        mockSpaceContextWithEnv('currentEnvironment', null);
+        setupChangeHandler(null, 'newEnvironment', 'currentAlias');
+        expect(changeModalOnScreen()).toBeNull();
+        expect(Notification.warning).not.toHaveBeenCalled();
+        expect(Navigator.reload).not.toHaveBeenCalledWith();
       });
-    const environmentAliasChangedHandler = initEnvAliasChangeHandler(ModalLauncher);
-    environmentAliasChangedHandler(changedUpdate);
-    expect(Notification.warning).toHaveBeenCalledWith(
-      'Your space admin has made changes to your space'
-    );
-    expect(Navigator.reload).toHaveBeenCalledWith();
+
+      it('shows modal to stay on alias or switch to target env when on content relevant route', () => {
+        setupRoute(CONTENT_ROUTE);
+        mockEnvAccess(true);
+        mockSpaceContextWithEnv('currentEnvironment', 'currentAlias');
+        setupChangeHandler('currentEnvironment', 'newEnvironment', 'currentAlias');
+        expect(changeModalOnScreen()).not.toBeNull();
+        expect(Notification.warning).not.toHaveBeenCalled();
+        expect(Navigator.reload).not.toHaveBeenCalledWith();
+      });
+    });
+
+    describe('and can not manage all environments', () => {
+      it('shows info modal when master alias target changes', () => {
+        mockEnvAccess(false);
+        mockSpaceContextWithEnv('currentEnvironment', 'master');
+        setupChangeHandler('currentEnvironment', 'newEnvironment', 'master');
+        expect(infoModalOnScreen()).not.toBeNull();
+        expect(Notification.warning).not.toHaveBeenCalled();
+        expect(Navigator.reload).not.toHaveBeenCalledWith();
+      });
+    });
   });
 
-  it('triggers a modal if cannot manage environments', async () => {
-    window.location.pathname = '/spaces/content_types';
-    when(getModule)
-      .calledWith('spaceContext')
-      .mockReturnValue({
-        getEnvironmentId: jest.fn().mockReturnValue('newTarget'),
+  describe('with an initEnvAliasDeleteHandler', () => {
+    describe('on alias delete', () => {
+      it('show info modal when alias deleted for current env and when on content relevant route', () => {
+        mockEnvAccess(true);
+        window.location.pathname = '/spaces/content_types';
+        mockSpaceContextWithEnv('currentEnvironment', 'currentAlias');
+        setupDeleteHandler('currentEnvironment', 'currentAlias');
+        expect(deleteModalOnScreen()).not.toBeNull();
+        expect(Notification.warning).not.toHaveBeenCalled();
+        expect(Navigator.reload).not.toHaveBeenCalledWith();
       });
-    const environmentAliasChangedHandler = initEnvAliasChangeHandler(ModalLauncher);
-    environmentAliasChangedHandler(changedUpdate);
-    const modal = screen.getByTestId('aliaschangedinfomodal.modal');
-    expect(modal).toBeDefined();
-    modal.remove();
-  });
-
-  it('triggers a modal if can manage environments', async () => {
-    window.location.pathname = '/spaces/content_types';
-    accessChecker.can.mockReturnValue(true);
-    when(getModule)
-      .calledWith('spaceContext')
-      .mockReturnValue({
-        getEnvironmentId: jest.fn().mockReturnValue('newTarget'),
-      });
-    const environmentAliasChangedHandler = initEnvAliasChangeHandler(ModalLauncher);
-    environmentAliasChangedHandler(changedUpdate);
-    const modal = screen.getByTestId('aliaschangedinfomodal.modal');
-    expect(modal).toBeDefined();
-    modal.remove();
-  });
-
-  it('triggers a modal if can manage environments and missing entity', async () => {
-    window.location.pathname = '/spaces/content_types';
-    accessChecker.can.mockReturnValue(true);
-    when(getModule)
-      .calledWith('spaceContext')
-      .mockReturnValue({
-        getEnvironmentId: jest.fn().mockReturnValue('newTarget'),
-      });
-    Navigator.reloadWithEnvironment.mockReturnValue('error');
-    const environmentAliasChangedHandler = initEnvAliasChangeHandler(ModalLauncher);
-    environmentAliasChangedHandler(changedUpdate);
-    const modal = screen.getByTestId('aliaschangedinfomodal.modal');
-    expect(modal).toBeDefined();
-    modal.remove();
-  });
-
-  it('triggers a notification and opens the changed info modal', async () => {
-    window.location.pathname = '/spaces/content_types';
-    accessChecker.can.mockReturnValue(true);
-    when(getModule)
-      .calledWith('spaceContext')
-      .mockReturnValue({
-        getEnvironmentId: jest.fn().mockReturnValue('newTarget'),
-      });
-    const environmentAliasChangedHandler = initEnvAliasChangeHandler(ModalLauncher);
-    environmentAliasChangedHandler(changedUpdate);
-    const modal = screen.getByTestId('aliaschangedinfomodal.modal');
-    expect(modal).toBeDefined();
-    modal.remove();
-  });
-
-  it('triggers a notification and opens the changed choice modal', async () => {
-    window.location.pathname = '/spaces/content_types';
-    when(getModule)
-      .calledWith('spaceContext')
-      .mockReturnValue({
-        getEnvironmentId: jest.fn().mockReturnValue('oldTarget'),
-      });
-    accessChecker.can.mockReturnValue(true);
-    const environmentAliasChangedHandler = initEnvAliasChangeHandler(ModalLauncher);
-    environmentAliasChangedHandler(changedUpdate);
-    const modal = screen.getByTestId('aliaschangedchoicemodal.modal');
-    expect(modal).toBeDefined();
-    modal.remove();
-  });
-
-  it('triggers a notification and opens info modal with create event', async () => {
-    window.location.pathname = '/spaces/content_types';
-    accessChecker.can.mockReturnValue(true);
-    when(getModule)
-      .calledWith('spaceContext')
-      .mockReturnValue({
-        getEnvironmentId: jest.fn().mockReturnValue('newTarget'),
-      });
-    const environmentAliasCreatedHandler = initEnvAliasCreateHandler(ModalLauncher);
-    environmentAliasCreatedHandler(createdOrDeletedUpdate);
-    const modal = screen.getByTestId('aliascreatedordeletedinfomodal.modal');
-    expect(modal).toBeDefined();
-    modal.remove();
-  });
-
-  it('triggers a notification and opens info modal with delete event', async () => {
-    window.location.pathname = '/spaces/content_types';
-    accessChecker.can.mockReturnValue(true);
-    when(getModule)
-      .calledWith('spaceContext')
-      .mockReturnValue({
-        getEnvironmentId: jest.fn().mockReturnValue('newTarget'),
-      });
-    const environmentAliasDeletedHandler = initEnvAliasDeleteHandler(ModalLauncher);
-    environmentAliasDeletedHandler(createdOrDeletedUpdate);
-    const modal = screen.getByTestId('aliascreatedordeletedinfomodal.modal');
-    expect(modal).toBeDefined();
-    modal.remove();
+    });
   });
 });

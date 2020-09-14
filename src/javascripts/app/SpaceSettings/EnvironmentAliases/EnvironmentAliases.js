@@ -50,14 +50,13 @@ function EnvironmentAliasHeader() {
   );
 }
 
-function EnvironmentAlias({ environments, alias }) {
+function EnvironmentAlias({ environments, currentAliasId, alias }) {
   const targetEnv = environments.find(({ aliases }) => aliases.includes(alias.sys.id));
   const spaceId = environments[0].payload.sys.space.sys.id;
   const [changeModalOpen, setChangeModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const canChangeEnvironment = environments.length > 1;
-  const canDeleteAlias = alias.sys.id !== 'master';
-
+  const canDelete = alias.sys.id !== 'master' && alias.sys.id !== currentAliasId;
   const changeActionWidget = (
     <TextLink
       testId={`openChangeDialog.${alias.sys.id}`}
@@ -75,7 +74,7 @@ function EnvironmentAlias({ environments, alias }) {
       testId={`openDeleteDialog.${alias.sys.id}`}
       linkType="negative"
       onClick={() => setDeleteModalOpen(true)}
-      disabled={!canDeleteAlias}>
+      disabled={!canDelete}>
       Delete
     </TextLink>
   );
@@ -91,7 +90,7 @@ function EnvironmentAlias({ environments, alias }) {
             isMaster
             isSelected
             hasCopy={false}></EnvironmentDetails>
-          {canDeleteAlias ? (
+          {canDelete ? (
             deleteActionWidget
           ) : (
             <Tooltip content={<div>You cannot delete this alias.</div>} place="top">
@@ -153,6 +152,7 @@ EnvironmentAlias.propTypes = {
       payload: PropTypes.object.isRequired,
     })
   ).isRequired,
+  currentAliasId: PropTypes.string,
   alias: PropTypes.shape({
     sys: PropTypes.shape({
       id: PropTypes.string,
@@ -212,7 +212,7 @@ function sortAliases(aliases) {
 }
 
 export default function EnvironmentAliases(props) {
-  const { items: environments, spaceId, allSpaceAliases } = props;
+  const { items: environments, spaceId, currentAliasId, allSpaceAliases } = props;
   const [step, setStep] = useState(STEPS.IDLE);
 
   if (environments.length === 0) {
@@ -221,7 +221,10 @@ export default function EnvironmentAliases(props) {
 
   const aliasComponents = sortAliases(allSpaceAliases).map((alias) => (
     <span data-test-id="environmentalias.span" key={alias.sys.id}>
-      <EnvironmentAlias alias={alias} environments={environments}></EnvironmentAlias>
+      <EnvironmentAlias
+        alias={alias}
+        currentAliasId={currentAliasId}
+        environments={environments}></EnvironmentAlias>
     </span>
   ));
 
@@ -290,6 +293,7 @@ export default function EnvironmentAliases(props) {
 EnvironmentAliases.propTypes = {
   items: PropTypes.array.isRequired,
   spaceId: PropTypes.string.isRequired,
+  currentAliasId: PropTypes.string,
   allSpaceAliases: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 

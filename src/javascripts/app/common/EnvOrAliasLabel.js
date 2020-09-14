@@ -22,6 +22,7 @@ const EnvOrAliasLabel = ({
   isMaster,
   colorizeFont,
   darkBackground,
+  overrideColor,
   testId,
 }) => {
   if (!environmentId) return null;
@@ -41,14 +42,14 @@ const EnvOrAliasLabel = ({
     marginRight: tokens.spacingS,
     minWidth: '16px',
     minHeight: '16px',
-    fill,
+    fill: overrideColor || fill,
   });
 
   const wrapperStyle = css({
     ...ellipsis,
     display: 'flex',
     alignItems: 'center',
-    color: colorizeFont ? fill : undefined,
+    color: overrideColor || (colorizeFont ? fill : undefined),
     fontFamily: tokens.fontStackMonospace,
     fontStyle: isMaster && aliasId ? 'italic' : 'normal',
   });
@@ -59,7 +60,7 @@ const EnvOrAliasLabel = ({
     alignItems: 'center',
     '& > svg': {
       flexShrink: 0,
-      fill: tokens.colorTextLightest,
+      fill: overrideColor || tokens.colorTextLightest,
     },
   });
 
@@ -105,6 +106,7 @@ EnvOrAliasLabel.propTypes = {
   // TODO: Refactor, abstract colors to icon components
   colorizeFont: PropTypes.bool,
   darkBackground: PropTypes.bool,
+  overrideColor: PropTypes.string,
   testId: PropTypes.string,
 };
 

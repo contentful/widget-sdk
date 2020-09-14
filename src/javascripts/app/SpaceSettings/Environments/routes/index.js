@@ -13,13 +13,14 @@ export default {
       const { organization, endpoint, space, pubsubClient } = spaceContext;
       const spaceId = spaceContext.getId();
       const currentEnvironmentId = spaceContext.getEnvironmentId();
+      const currentAliasId = spaceContext.getAliasId();
       const organizationId = organization.sys.id;
       const isMasterEnvironment = spaceContext.isMasterEnvironment;
       const getAliasesIds = spaceContext.getAliasesIds;
-
       return {
         spaceId,
         currentEnvironmentId,
+        currentAliasId,
         organizationId,
         isMasterEnvironment,
         pubsubClient,

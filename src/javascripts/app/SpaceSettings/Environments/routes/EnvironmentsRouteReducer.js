@@ -72,6 +72,7 @@ export const useEnvironmentsRouteState = (props) => {
     spaceId: props.spaceId,
     hasNextSpacePlan: undefined,
     pubsubClient: props.pubsubClient,
+    currentAliasId: props.currentAliasId,
   };
 
   const [state, dispatch] = useReducer(createEnvReducer, initialState);

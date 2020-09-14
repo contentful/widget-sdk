@@ -13,70 +13,94 @@ import {
 import {
   Message,
   FromTo,
-  AliasChangedInfoModal,
   AliasChangedChoiceModal,
-  AliasCreatedOrDeletedInfoModal,
+  AliasChangedInfoModal,
+  AliasDeletedInfoModal,
+  MasterAliasMovedModal,
 } from './Notifications';
 import { isAContentSpecificPage, isAnEnvironmentAwarePage, ACTION } from './Utils';
 
 import { getModule } from 'core/NgRegistry';
 
 let aliasChangedToastVisible = false;
-export const triggerAliasChangedNotifications = async ({
-  update,
+
+const notifyAliasChangeWithEnvironmentsAccess = ({
+  currentEnvironmentId,
+  currentAliasId,
+  aliasId,
+  oldTarget,
+  newTarget,
+  newTargetIsMaster,
   modalLauncher = ModalLauncher,
 }) => {
-  if (aliasChangedToastVisible) return;
-  notificationEnvironmentAliasChanged({ update });
-  const { newTarget, oldTarget } = update;
-
-  const spaceContext = getModule('spaceContext');
-  const currentEnvironmentId = spaceContext.getEnvironmentId();
-  const newAliasTargetIsCurrentEnv = currentEnvironmentId === newTarget;
-  const newAliasTargetNotCurrentEnv = currentEnvironmentId === oldTarget;
-
-  const aliasTargetIsUnrelatedToCurrentEnv =
-    !newAliasTargetIsCurrentEnv && !newAliasTargetNotCurrentEnv;
-  const currentPageIsNotEnvironmentRelated =
-    !isAContentSpecificPage() && !isAnEnvironmentAwarePage();
-
-  const isInitialSetup = oldTarget === null;
-  if (isInitialSetup) {
-    // hack to avoid refresh if opting-in to aliases for first time
-    return;
-  }
-
-  const shouldSimplyReload =
-    aliasTargetIsUnrelatedToCurrentEnv || currentPageIsNotEnvironmentRelated;
-
-  if (shouldSimplyReload) {
-    // changes not related to current environment
-    Notification.warning('Your space admin has made changes to your space');
-    await Navigator.reload();
-    return;
-  }
-
-  const canManageEnvironments = accessChecker.can('manage', 'Environments');
-  await modalLauncher.open(({ onClose, isShown }) =>
-    newAliasTargetNotCurrentEnv && canManageEnvironments ? (
-      // ask for user input
+  // Our alias now targets a new env, we must choose something:
+  if (currentAliasId && currentAliasId === aliasId) {
+    return modalLauncher.open(({ onClose, isShown }) => (
       <AliasChangedChoiceModal
         onClose={onClose}
         isShown={isShown}
         currentEnvironmentId={currentEnvironmentId}
-        {...update}
+        oldTarget={oldTarget}
+        newTarget={newTarget}
+        newTargetIsMaster={newTargetIsMaster}
+        aliasId={aliasId}
       />
-    ) : (
-      // ask for user confirmation
-      <AliasChangedInfoModal
-        canManageEnvironments={canManageEnvironments}
-        onClose={onClose}
-        isShown={isShown}
-        currentEnvironmentId={currentEnvironmentId}
-        {...update}
-      />
-    )
-  );
+    ));
+  }
+
+  // Master alias now targets this env
+  if (aliasId === 'master' && newTarget === currentEnvironmentId) {
+    return modalLauncher.open(({ onClose, isShown }) => (
+      <MasterAliasMovedModal onClose={onClose} isShown={isShown} isMaster={true} />
+    ));
+  }
+
+  // Master alias no longer targets this env
+  if (aliasId === 'master' && oldTarget === currentEnvironmentId) {
+    return modalLauncher.open(({ onClose, isShown }) => (
+      <MasterAliasMovedModal onClose={onClose} isShown={isShown} isMaster={false} />
+    ));
+  }
+};
+
+export const triggerAliasChangedNotifications = ({ update, modalLauncher = ModalLauncher }) => {
+  if (aliasChangedToastVisible) return;
+  const { newTarget, oldTarget, aliasId } = update;
+  const spaceContext = getModule('spaceContext');
+  const currentEnvironmentId = spaceContext.getEnvironmentId();
+  const currentAliasId = spaceContext.space.environmentMeta.aliasId;
+  if (oldTarget === null) {
+    // hack to avoid refresh if opting-in to aliases for first time
+    return;
+  }
+
+  // Check to see if we are now targeting the same env as the master alias
+  const newTargetIsMaster = spaceContext.isMasterEnvironmentById(newTarget);
+
+  notificationEnvironmentAliasChanged({ update });
+
+  if (!isAContentSpecificPage() && !isAnEnvironmentAwarePage()) {
+    return;
+  }
+
+  if (accessChecker.can('manage', 'Environments')) {
+    return notifyAliasChangeWithEnvironmentsAccess({
+      newTarget,
+      oldTarget,
+      aliasId,
+      currentAliasId,
+      currentEnvironmentId,
+      newTargetIsMaster,
+      modalLauncher,
+    });
+  }
+
+  // If non-env users are on master as an alias, and it changes, tell them the bad news:
+  if (currentAliasId === 'master' && aliasId === 'master') {
+    return modalLauncher.open(({ onClose, isShown }) => (
+      <AliasChangedInfoModal onClose={onClose} isShown={isShown} />
+    ));
+  }
 };
 
 export const triggerAliasChangedToast = async (handleChangeEnvironment, update) => {
@@ -117,43 +141,33 @@ export const triggerAliasCreatedOrDeletedNotifications = async ({
   modalLauncher = ModalLauncher,
 }) => {
   if (aliasChangedToastVisible) return;
+
   if (update.action === ACTION.CREATE) {
     notificationEnvironmentAliasCreated({ update });
   } else if (update.action === ACTION.DELETE) {
     notificationEnvironmentAliasDeleted({ update });
   }
 
-  const spaceContext = getModule('spaceContext');
-  const currentEnvironmentId = spaceContext.getEnvironmentId();
-
-  const { target } = update;
-  const targetIsCurrentEnv = currentEnvironmentId === target;
-  const currentPageIsNotEnvironmentRelated =
-    !isAContentSpecificPage() && !isAnEnvironmentAwarePage();
-
-  const shouldSimplyReload = !targetIsCurrentEnv || currentPageIsNotEnvironmentRelated;
-
-  if (shouldSimplyReload) {
-    // changes not related to current environment
-    Notification.warning('Your space admin has made changes to your space');
-    await Navigator.reload();
+  if (!accessChecker.can('manage', 'Environments')) {
     return;
   }
 
-  const canManageEnvironments = accessChecker.can('manage', 'Environments');
-  return modalLauncher.open(({ onClose, isShown }) => (
-    // ask for user confirmation
-    <AliasCreatedOrDeletedInfoModal
-      canManageEnvironments={canManageEnvironments}
-      onClose={onClose}
-      isShown={isShown}
-      currentEnvironmentId={currentEnvironmentId}
-      {...update}
-    />
-  ));
+  const { target, aliasId } = update;
+  const spaceContext = getModule('spaceContext');
+  if (update.action === ACTION.DELETE && aliasId === spaceContext.space.environmentMeta.aliasId) {
+    return modalLauncher.open(({ onClose, isShown }) => (
+      // reload to unscoped route, or move to the old target env
+      <AliasDeletedInfoModal
+        onClose={onClose}
+        isShown={isShown}
+        target={target}
+        aliasId={aliasId}
+      />
+    ));
+  }
 };
 
-export const initEnvAliasCreateHandler = (modalLauncher) => {
+export const initEnvAliasCreateHandler = (modalLauncher = ModalLauncher) => {
   const action = ACTION.CREATE;
   return (update) => {
     if (window.location.pathname.startsWith('/spaces')) {
@@ -165,15 +179,13 @@ export const initEnvAliasCreateHandler = (modalLauncher) => {
   };
 };
 
-export const initEnvAliasDeleteHandler = (modalLauncher) => {
+export const initEnvAliasDeleteHandler = (modalLauncher = ModalLauncher) => {
   const action = ACTION.DELETE;
   return (update) => {
-    if (window.location.pathname.startsWith('/spaces')) {
-      triggerAliasCreatedOrDeletedNotifications({
-        modalLauncher,
-        update: { ...update, action },
-      });
-    }
+    triggerAliasCreatedOrDeletedNotifications({
+      modalLauncher,
+      update: { ...update, action },
+    });
   };
 };
 
@@ -206,6 +218,7 @@ export const triggerAliasCreatedToast = async (id) => {
   Navigator.reload();
 };
 
+// change to named export initEnvAliasChangeHandler
 export default (modalLauncher) => {
   return (update) => {
     if (window.location.pathname.startsWith('/spaces')) {

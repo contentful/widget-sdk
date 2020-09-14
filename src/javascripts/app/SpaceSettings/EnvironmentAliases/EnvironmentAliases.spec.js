@@ -8,6 +8,7 @@ const spaceId = '123456';
 const getComponent = (props = {}) => {
   return (
     <EnvironmentAliases
+      currentAliasId="master"
       allSpaceAliases={[
         {
           sys: {

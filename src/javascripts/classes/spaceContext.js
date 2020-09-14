@@ -245,6 +245,18 @@ export default function register() {
         },
 
         /**
+         * @name spaceContext#getAliasId
+         * @description
+         * Returns the current alias ID, if the user is accessing an alias
+         * @returns string
+         */
+        getAliasId: function () {
+          if (this.space) {
+            return _.get(this, ['space', 'environmentMeta', 'aliasId'], null);
+          }
+        },
+
+        /**
          * @name spaceContext#isMasterEnvironment
          * @param {envOrAlias} Environment or Alias
          * @description
@@ -266,6 +278,14 @@ export default function register() {
           return false;
         },
 
+        isMasterEnvironmentById: function (envId) {
+          const envOrAlias = _.get(
+            this,
+            ['environments'],
+            [{ sys: { id: MASTER_ENVIRONMENT_ID } }]
+          ).find(({ sys }) => sys.id === envId);
+          return this.isMasterEnvironment(envOrAlias);
+        },
         /**
          * @name spaceContext#getAliasesIds
          * @description

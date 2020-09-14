@@ -71,3 +71,4 @@ export const memberships = {
 };
 
 export const isMasterEnvironment = jest.fn().mockReturnValue(true);
+export const isMasterEnvironmentById = jest.fn().mockReturnValue(true);
