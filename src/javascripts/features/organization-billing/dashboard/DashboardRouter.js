@@ -1,25 +1,25 @@
-import React, { useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Dashboard } from './Dashboard';
-import { useAsync } from 'core/hooks/useAsync';
+import { useAsync, useAsyncFn } from 'core/hooks/useAsync';
 import { getBillingDetails, getInvoices } from '../services/BillingDetailsService';
 import { getDefaultPaymentMethod } from '../services/PaymentMethodService';
 import { getBasePlan, isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 
-const fetch = (organizationId) => async () => {
+const fetchOrgDetails = (organizationId) => async () => {
   const endpoint = createOrganizationEndpoint(organizationId);
-
-  const [basePlan, invoices] = await Promise.all([
-    getBasePlan(endpoint),
-    getInvoices(organizationId),
-  ]);
-
+  const basePlan = await getBasePlan(endpoint);
   const orgIsEnterprise = isEnterprisePlan(basePlan);
+
+  return { orgIsEnterprise };
+};
+
+const fetchData = (organizationId, orgIsEnterprise) => async () => {
+  const invoices = await getInvoices(organizationId);
 
   const result = {
     invoices,
-    orgIsEnterprise,
   };
 
   if (!orgIsEnterprise) {
@@ -38,13 +38,37 @@ const fetch = (organizationId) => async () => {
 };
 
 export function DashboardRouter({ orgId: organizationId }) {
-  const { isLoading, data = {} } = useAsync(useCallback(fetch(organizationId), []));
+  const [loadingData, setLoadingData] = useState(true);
 
-  const { billingDetails, paymentDetails, invoices, orgIsEnterprise } = data;
+  const { isLoading: loadingOrgDetails, data: orgDetails = {} } = useAsync(
+    useCallback(fetchOrgDetails(organizationId), [])
+  );
+
+  const { orgIsEnterprise } = orgDetails;
+
+  const [{ data = {} }, doFetchData] = useAsyncFn(
+    useCallback(fetchData(organizationId, orgIsEnterprise), [orgIsEnterprise])
+  );
+
+  const { billingDetails, paymentDetails, invoices } = data;
+
+  useEffect(() => {
+    if (data.invoices) {
+      setLoadingData(false);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (!loadingOrgDetails) {
+      doFetchData();
+    }
+  }, [loadingOrgDetails, doFetchData]);
+
+  const loading = loadingOrgDetails || loadingData;
 
   return (
     <Dashboard
-      loading={isLoading}
+      loading={loading}
       organizationId={organizationId}
       billingDetails={billingDetails}
       paymentDetails={paymentDetails}

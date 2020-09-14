@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'emotion';
+import { css, cx } from 'emotion';
 import {
   Workbench,
   Heading,
@@ -36,6 +36,13 @@ const styles = {
   }),
   billingDetailsLoadingState: css({
     width: '200px',
+  }),
+  enterpriseOrgInvoiceCard: css({
+    gridColumnStart: 1,
+    gridColumnEnd: 3,
+  }),
+  noInvoices: css({
+    columnSpan: 'all',
   }),
 };
 
@@ -75,6 +82,8 @@ export function Dashboard({
   paymentDetails,
   invoices = [],
 }) {
+  const shouldShowBillingDetails = orgIsEnterprise != null && !orgIsEnterprise;
+
   return (
     <>
       <DocumentTitle title="Billing" />
@@ -82,7 +91,7 @@ export function Dashboard({
         <Workbench.Header title="Billing" icon={<NavigationIcon icon="Billing" size="large" />} />
         <Workbench.Content>
           <Grid columns={2} rows={1}>
-            {!orgIsEnterprise && (
+            {shouldShowBillingDetails && (
               <GridItem>
                 <Card>
                   <Typography>
@@ -125,10 +134,18 @@ export function Dashboard({
                 </Card>
               </GridItem>
             )}
-            <GridItem>
+            <div
+              className={cx({
+                [styles.enterpriseOrgInvoiceCard]: !shouldShowBillingDetails,
+              })}>
               <Card>
                 <Typography>
                   <Heading>Invoices</Heading>
+                  {!loading && orgIsEnterprise && (
+                    <Paragraph>
+                      To update your billing details contact your account executive.
+                    </Paragraph>
+                  )}
                   <Table>
                     <TableHead>
                       <TableCell width="37%">Date</TableCell>
@@ -137,7 +154,13 @@ export function Dashboard({
                     </TableHead>
                     <TableBody>
                       {loading && <InvoicesTableLoading />}
+                      {!loading && invoices.length === 0 && (
+                        <TableRow>
+                          <TableCell colspan="3">No invoices</TableCell>
+                        </TableRow>
+                      )}
                       {!loading &&
+                        invoices.length > 0 &&
                         invoices.map((invoice) => (
                           <TableRow key={invoice.sys.id}>
                             <TableCell>
@@ -157,7 +180,7 @@ export function Dashboard({
                   </Table>
                 </Typography>
               </Card>
-            </GridItem>
+            </div>
           </Grid>
         </Workbench.Content>
       </Workbench>
@@ -177,9 +200,9 @@ Dashboard.propTypes = {
 function BillingDetails({ billingDetails }) {
   return (
     <>
-      {billingDetails.first_name} {billingDetails.last_name}
+      {billingDetails.firstName} {billingDetails.lastName}
       <br />
-      {billingDetails.address.work_email}
+      {billingDetails.workEmail}
       <br />
       {billingDetails.address.address1}
       <br />
@@ -189,7 +212,7 @@ function BillingDetails({ billingDetails }) {
           <br />
         </>
       )}
-      {billingDetails.address.zip_code} {billingDetails.address.city}
+      {billingDetails.address.zipCode} {billingDetails.address.city}
       {billingDetails.vat && (
         <>
           <br />
