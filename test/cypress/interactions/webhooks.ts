@@ -61,6 +61,9 @@ export const queryFirst100WebhooksInDefaultSpace = {
       withRequest: queryFirst100WebhooksInDefaultSpaceRequest,
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: empty,
       },
     }).as('queryFirst100WebhooksInDefaultSpace');
@@ -75,6 +78,9 @@ export const queryFirst100WebhooksInDefaultSpace = {
       withRequest: queryFirst100WebhooksInDefaultSpaceRequest,
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: singleWebhookResponseBody,
       },
     }).as('queryFirst100WebhooksInDefaultSpace');
@@ -89,6 +95,9 @@ export const queryFirst100WebhooksInDefaultSpace = {
       withRequest: queryFirst100WebhooksInDefaultSpaceRequest,
       willRespondWith: {
         status: 500,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: empty,
       },
     }).as('queryFirst100WebhooksInDefaultSpace');
@@ -115,6 +124,9 @@ export const createDefaultWebhook = {
       withRequest: createWebhookInDefaultSpaceRequest(defaultWebhookRequestBody),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: defaultWebhookResponseBody,
       },
     }).as('createDefaultWebhook');
@@ -132,6 +144,9 @@ export const createCustomWebhookTriggeringContentTypeEvents = {
       withRequest: createWebhookInDefaultSpaceRequest(customWebhookContentTypeEventsRequestBody),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: customWebhookContentTypeEventsResponseBody,
       },
     }).as('createCustomWebhookTriggeringContentTypeEvents');
@@ -149,6 +164,9 @@ export const createCustomWebhookWithFilters = {
       withRequest: createWebhookInDefaultSpaceRequest(customWebhookFilterRequestBody),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: customWebhookFilterResponseBody,
       },
     }).as('createCustomWebhookWithFilters');
@@ -166,6 +184,9 @@ export const createCustomWebhookWithCustomHeader = {
       withRequest: createWebhookInDefaultSpaceRequest(customWebhookHeaderRequestBody),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: customWebhookHeaderResponseBody,
       },
     }).as('createCustomWebhookWithCustomHeader');
@@ -183,6 +204,9 @@ export const createCustomWebhookWithSecretHeader = {
       withRequest: createWebhookInDefaultSpaceRequest(customWebhookSecretHeaderRequestBody),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: customWebhookSecretHeaderResponseBody,
       },
     }).as('createCustomWebhookWithSecretHeader');
@@ -200,6 +224,9 @@ export const createCustomWebhookWithHTTPHeader = {
       withRequest: createWebhookInDefaultSpaceRequest(customWebhookHTTPRequestBody),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: customWebhookHTTPResponseBody,
       },
     }).as('createCustomWebhookWithHTTPHeader');
@@ -217,6 +244,9 @@ export const createCustomWebhookWithContentTypeHeader = {
       withRequest: createWebhookInDefaultSpaceRequest(customWebhookContentTypeHeaderRequestBody),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: customWebhookContentTypeHeaderResponseBody,
       },
     }).as('createCustomWebhookWithContentTypeHeader');
@@ -234,6 +264,9 @@ export const createCustomWebhookWithContentLengthHeader = {
       withRequest: createWebhookInDefaultSpaceRequest(customWebhookContentLengthHeaderRequestBody),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: customWebhookContentLengthHeaderResponseBody,
       },
     }).as('createCustomWebhookWithContentLengthHeader');
@@ -251,6 +284,9 @@ export const createCustomWebhookWithCustomPayload = {
       withRequest: createWebhookInDefaultSpaceRequest(customWebhookPayloadRequestBody),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: customWebhookPayloadResponseBody,
       },
     }).as('createCustomWebhookWithCustomPayload');
@@ -274,6 +310,9 @@ export const getDefaultWebhook = {
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: defaultWebhookResponseBody,
       },
     }).as('getDefaultWebhook');
@@ -288,6 +327,9 @@ export const getDefaultWebhook = {
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: customWebhookContentTypeEventsResponseBody,
       },
     }).as('getDefaultWebhook');
@@ -302,6 +344,9 @@ export const getDefaultWebhook = {
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: customWebhookFilterResponseBody,
       },
     }).as('getDefaultWebhook');
@@ -316,6 +361,9 @@ export const getDefaultWebhook = {
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: customWebhookHeaderResponseBody,
       },
     }).as('getDefaultWebhook');
@@ -330,6 +378,9 @@ export const getDefaultWebhook = {
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: customWebhookSecretHeaderResponseBody,
       },
     }).as('getDefaultWebhook');
@@ -344,6 +395,9 @@ export const getDefaultWebhook = {
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: customWebhookHTTPResponseBody,
       },
     }).as('getDefaultWebhook');
@@ -358,6 +412,9 @@ export const getDefaultWebhook = {
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: customWebhookContentTypeHeaderResponseBody,
       },
     }).as('getDefaultWebhook');
@@ -372,6 +429,9 @@ export const getDefaultWebhook = {
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: customWebhookContentLengthHeaderResponseBody,
       },
     }).as('getDefaultWebhook');
@@ -386,6 +446,9 @@ export const getDefaultWebhook = {
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: customWebhookPayloadResponseBody,
       },
     }).as('getDefaultWebhook');
@@ -400,6 +463,9 @@ export const getDefaultWebhook = {
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: webhookSingleEventResponseBody,
       },
     }).as('getDefaultWebhook');
@@ -414,6 +480,9 @@ export const getDefaultWebhook = {
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: webhookCustomAllSettingsResponseBody,
       },
     }).as('getDefaultWebhook');
@@ -440,6 +509,9 @@ export const queryFirst500DefaultWebhookCalls = {
       withRequest: queryFirst500DefaultWebhookCallsRequest,
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: empty,
       },
     }).as('queryFirst500DefaultWebhookCalls');
@@ -454,6 +526,9 @@ export const queryFirst500DefaultWebhookCalls = {
       withRequest: queryFirst500DefaultWebhookCallsRequest,
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: webhookSuccessfulCallResponseBody,
       },
     }).as('queryFirst500DefaultWebhookCalls');
@@ -475,6 +550,9 @@ export const getAllCallsForDefaultWebhook = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: noWebhookCallsResponseBody,
       },
     }).as('getAllCallsForDefaultWebhook');
@@ -498,6 +576,9 @@ export const deleteDefaultWebhook = {
       withRequest: deleteDefaultWebhookRequest,
       willRespondWith: {
         status: 204,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
       },
     }).as('deleteDefaultWebhook');
 
@@ -511,6 +592,9 @@ export const deleteDefaultWebhook = {
       withRequest: deleteDefaultWebhookRequest,
       willRespondWith: {
         status: 500,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
       },
     }).as('willFailWithAnInternalServerError');
 

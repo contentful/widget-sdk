@@ -46,6 +46,9 @@ export const getDefaultEntry = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: defaultEntry,
       },
     }).as('getDefaultEntry');
@@ -64,6 +67,9 @@ export const getDefaultEntry = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: entryWithApp,
       },
     }).as('getDefaultEntryWithApp');
@@ -88,6 +94,9 @@ export const queryLinksToDefaultEntry = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: empty,
       },
     }).as('queryLinksToDefaultEntry');
@@ -112,6 +121,9 @@ export const queryLinksToDefaultAsset = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: empty,
       },
     }).as('queryLinksToDefaultAsset');
@@ -136,6 +148,9 @@ export const getFirst7SnapshotsOfDefaultEntry = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: empty,
       },
     }).as('getFirst7SnapshotsOfDefaultEntry');
@@ -161,6 +176,9 @@ export const queryForDefaultEntryInsideEnvironment = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: severalEntriesResponseBody, // TODO: This looks wrong (the response contains three entries)
       },
     }).as('queryForDefaultEntryInsideEnvironment');
@@ -186,6 +204,9 @@ export const queryForDefaultEntryWithoutEnvironment = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: severalEntriesResponseBody, // TODO: This looks wrong (the response contains three entries)
       },
     }).as('queryForDefaultEntryWithoutEnvironment');
@@ -207,6 +228,9 @@ export const createAnEntryInDefaultSpace = {
       },
       willRespondWith: {
         status: 201,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: defaultEntry,
       },
     }).as('createAnEntryInDefaultSpace');
@@ -228,6 +252,9 @@ export const validateAnEntryValidResponse = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
       },
     }).as('createAnEntryInDefaultSpace');
 
@@ -248,6 +275,9 @@ export const getEntryReferences = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: severalEntryReferencesResponse,
       },
     }).as('getEntryReferences');
@@ -273,6 +303,9 @@ export const validateEntryReferencesResponse = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: {
           sys: {
             id: 'immediate',
@@ -302,6 +335,9 @@ export const validateEntryReferencesResponse = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: validateEntryReferencesSeveralErrorsResponse,
       },
     }).as('validateEntryReferencesResponse');
@@ -327,6 +363,9 @@ export const publishEntryReferencesResponse = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: publishEntryReferencesSeveralSuccessResponse,
       },
     }).as('publishEntryReferencesResponse');
@@ -350,6 +389,9 @@ export const publishEntryReferencesResponse = {
       },
       willRespondWith: {
         status: 422,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: publishEntryReferencesSeveralErrorsResponse,
       },
     }).as('publishEntryReferencesResponse');
@@ -373,6 +415,9 @@ export const publishEntryReferencesResponse = {
       },
       willRespondWith: {
         status: 400,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: {
           sys: {
             id: 'immediate',

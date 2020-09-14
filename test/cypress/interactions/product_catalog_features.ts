@@ -32,6 +32,9 @@ export const getAllProductCatalogFeaturesForDefaultOrg = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: productCatalogOrg,
       },
     }).as('getAllProductCatalogFeaturesForDefaultOrg');
@@ -66,6 +69,9 @@ export const getAllCatalogFeaturesForDefaultSpace = {
       withRequest: productCatalogFeaturesForDefaultSpaceRequest(),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: productCatalogSpace,
       },
     }).as('getAllCatalogFeaturesForDefaultSpace');
@@ -85,6 +91,9 @@ export const queryForScheduledPublishingInDefaultSpace = {
       ),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: productCatalogScheduledPublishing,
       },
     }).as('queryForScheduledPublishingInDefaultSpace');
@@ -104,6 +113,9 @@ export const queryForScheduledPublishingOnEntryPage = {
       ),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: productCatalogSpace,
       },
     }).as('queryForScheduledPublishingOnEntryPage');
@@ -123,6 +135,9 @@ export const queryForEnvironmentAliasingInDefaultSpace = {
       ),
       willRespondWith: {
         status: 404,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
       },
     }).as('queryForEnvironmentAliasingInDefaultSpace');
 
@@ -141,6 +156,9 @@ export const queryForEnvironmentUsageInDefaultSpace = {
       ),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
       },
     }).as('queryForEnvironmentUsageInDefaultSpace');
 
@@ -157,6 +175,9 @@ export const queryForBasicAppsInDefaultSpace = {
       withRequest: productCatalogFeaturesForDefaultSpaceRequest('sys.featureId[]=basic_apps'),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: productCatalogBasicApps,
       },
     }).as('queryForBasicAppsInDefaultSpace');
@@ -174,6 +195,9 @@ export const queryForTasksInDefaultSpace = {
       withRequest: productCatalogFeaturesForDefaultSpaceRequest('sys.featureId[]=tasks'),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: productCatalogTasks,
       },
     }).as('queryForTasksInDefaultSpace');
@@ -191,6 +215,9 @@ export const queryForContentTagsInDefaultSpace = {
       withRequest: productCatalogFeaturesForDefaultSpaceRequest('sys.featureId[]=content_tags'),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: productCatalogContentTags,
       },
     }).as('queryForContentTagsInDefaultSpace');
@@ -208,6 +235,9 @@ export const queryForCustomSidebarInDefaultOrg = {
       withRequest: productCatalogFeaturesForDefaultOrgRequest('sys.featureId[]=custom_sidebar'),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: productCatalogCustomSidebar,
       },
     }).as('queryForCustomSidebarInDefaultOrg');
@@ -225,6 +255,9 @@ export const queryForTeamsInDefaultOrg = {
       withRequest: productCatalogFeaturesForDefaultOrgRequest('sys.featureId[]=teams'),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: productCatalogTeams,
       },
     }).as('queryForTeamsInDefaultOrg');
@@ -242,6 +275,9 @@ export const queryForSelfConfigureSsoInDefaultOrg = {
       withRequest: productCatalogFeaturesForDefaultOrgRequest('sys.featureId[]=self_configure_sso'),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: productCatalogSelfConfigureSso,
       },
     }).as('queryForSelfConfigureSsoInDefaultOrg');
@@ -259,6 +295,9 @@ export const queryForScimInDefaultOrg = {
       withRequest: productCatalogFeaturesForDefaultOrgRequest('sys.featureId[]=scim'),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: productCatalogScim,
       },
     }).as('queryForScimInDefaultOrg');

@@ -72,6 +72,9 @@ export const queryFirst101EnvironmentsInDefaultSpace = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: environmentsResponse([environment('master')]),
         //        body: environments
       },
@@ -94,6 +97,9 @@ export const queryFirst101EnvironmentsInDefaultSpace = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: environmentsResponse([environment('master'), environment('123')]),
       },
     }).as('queryFirst101EnvironmentsInDefaultSpaceWithNewEnv');
@@ -115,6 +121,9 @@ export const putEnvironmentInDefaultSpace = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: environment(name),
       },
     }).as('createEnvironmentsInDefaultSpace');
@@ -136,6 +145,9 @@ export const deleteEnvironmentInDefaultSpace = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: '',
       },
     }).as('deleteEnvironmentInDefaultSpace');

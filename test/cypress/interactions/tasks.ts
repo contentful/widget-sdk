@@ -52,6 +52,9 @@ export const getAllTasksForDefaultEntry = {
       withRequest: getEntryTasksRequest,
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: empty,
       },
     }).as('getAllTasksForDefaultEntry');
@@ -66,6 +69,9 @@ export const getAllTasksForDefaultEntry = {
       withRequest: getEntryTasksRequest,
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: severalTasksDefinition,
       },
     }).as('getAllTasksForDefaultEntry');
@@ -80,6 +86,9 @@ export const getAllTasksForDefaultEntry = {
       withRequest: getEntryTasksRequest,
       willRespondWith: {
         status: 500,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: serverError,
       },
     }).as('getAllTasksForDefaultEntry');
@@ -124,6 +133,9 @@ export function createTask({ body, assigneeId }) {
         state: providerState(States.NONE),
         willRespondWith: {
           status: 201,
+          headers: {
+            'Content-Type': 'application/vnd.contentful.management.v1+json',
+          },
           body: {
             sys: newTaskSys,
             ...newTask,
@@ -191,6 +203,9 @@ function updateTask(taskId: string, change: string) {
           state: providerState(States.SEVERAL),
           willRespondWith: {
             status: 200,
+            headers: {
+              'Content-Type': 'application/vnd.contentful.management.v1+json',
+            },
             body: {
               ...updatedTask,
               sys: {
@@ -231,6 +246,9 @@ export function deleteTask() {
         state: providerState(States.SEVERAL),
         willRespondWith: {
           status: 204,
+          headers: {
+            'Content-Type': 'application/vnd.contentful.management.v1+json',
+          },
         },
       }).as(alias);
 
