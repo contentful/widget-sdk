@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
 import {
   Workbench,
   Heading,
   Card,
-  Subheading,
+  Typography,
   Paragraph,
   Table,
   TableHead,
@@ -12,14 +13,31 @@ import {
   TableBody,
   TableCell,
   TextLink,
+  SkeletonContainer,
+  SkeletonBodyText,
 } from '@contentful/forma-36-react-components';
 import { NavigationIcon, Grid, GridItem } from '@contentful/forma-36-react-components/dist/alpha';
+import * as tokens from '@contentful/forma-36-tokens';
 import moment from 'moment';
+import { times } from 'lodash';
 
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { getInvoice } from '../services/BillingDetailsService';
 import { pieces } from 'utils/StringUtils';
 import { toLocaleString } from 'utils/NumberUtils';
+import StateLink from 'app/common/StateLink';
+
+const styles = {
+  editLink: css({
+    marginLeft: tokens.spacingM,
+  }),
+  billingDetailsHeading: css({
+    marginBottom: tokens.spacingS,
+  }),
+  billingDetailsLoadingState: css({
+    width: '200px',
+  }),
+};
 
 const downloadInvoice = async (organizationId, invoiceId) => {
   const invoiceData = await getInvoice(organizationId, invoiceId);
@@ -67,58 +85,77 @@ export function Dashboard({
             {!orgIsEnterprise && (
               <GridItem>
                 <Card>
-                  <Heading>Billing details</Heading>
-                  <Grid columns={2} rows={1}>
-                    <GridItem>
-                      <Subheading>Credit card</Subheading>
-                      <Paragraph>
-                        {!loading && (
-                          <>
-                            {pieces(paymentDetails.number, 4).join(' ')}
-                            <br />
-                            {moment().month(paymentDetails.expirationDate.month).format('MMM')}
-                            {paymentDetails.expirationDate.year}
-                          </>
-                        )}
-                      </Paragraph>
-                    </GridItem>
-                    <GridItem>
-                      <Subheading>Billing address</Subheading>
-                      <Paragraph>
-                        {!loading && <BillingDetails billingDetails={billingDetails} />}
-                      </Paragraph>
-                    </GridItem>
-                  </Grid>
+                  <Typography>
+                    <Heading>Billing details</Heading>
+                    <Grid columns={2} rows={1}>
+                      <GridItem>
+                        <div className={styles.billingDetailsHeading}>
+                          <strong>Credit card</strong>
+                          <StateLink
+                            component={TextLink}
+                            path="account.organizations.billing.edit-payment-method"
+                            className={styles.editLink}
+                            disabled={loading}>
+                            Edit
+                          </StateLink>
+                        </div>
+                        <Paragraph>
+                          {loading && <CreditCardDetailsLoading />}
+                          {!loading && (
+                            <>
+                              {pieces(paymentDetails.number, 4).join(' ')}
+                              <br />
+                              {moment().month(paymentDetails.expirationDate.month).format('MM')}/
+                              {paymentDetails.expirationDate.year}
+                            </>
+                          )}
+                        </Paragraph>
+                      </GridItem>
+                      <GridItem>
+                        <div className={styles.billingDetailsHeading}>
+                          <strong>Billing address</strong>
+                        </div>
+                        <Paragraph>
+                          {loading && <BillingDetailsLoading />}
+                          {!loading && <BillingDetails billingDetails={billingDetails} />}
+                        </Paragraph>
+                      </GridItem>
+                    </Grid>
+                  </Typography>
                 </Card>
               </GridItem>
             )}
             <GridItem>
               <Card>
-                <Heading>Invoices</Heading>
-                <Table>
-                  <TableHead>
-                    <TableCell>Date</TableCell>
-                    <TableCell>Amount</TableCell>
-                    <TableCell></TableCell>
-                  </TableHead>
-                  <TableBody>
-                    {!loading &&
-                      invoices.map((invoice) => (
-                        <TableRow key={invoice.sys.id}>
-                          <TableCell>
-                            {moment(invoice.sys.invoiceDate, 'YYYY-MM-DD').format('MMM DD, YYYY')}
-                          </TableCell>
-                          <TableCell>${toLocaleString(invoice.amount)}</TableCell>
-                          <TableCell>
-                            <TextLink
-                              onClick={() => downloadInvoice(organizationId, invoice.sys.id)}>
-                              Download
-                            </TextLink>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
+                <Typography>
+                  <Heading>Invoices</Heading>
+                  <Table>
+                    <TableHead>
+                      <TableCell width="37%">Date</TableCell>
+                      <TableCell width="37%">Amount</TableCell>
+                      <TableCell width="26%"></TableCell>
+                    </TableHead>
+                    <TableBody>
+                      {loading && <InvoicesTableLoading />}
+                      {!loading &&
+                        invoices.map((invoice) => (
+                          <TableRow key={invoice.sys.id}>
+                            <TableCell>
+                              {moment(invoice.sys.invoiceDate, 'YYYY-MM-DD').format('MMM DD, YYYY')}
+                            </TableCell>
+                            <TableCell>${toLocaleString(invoice.amount)}</TableCell>
+                            <TableCell>
+                              <TextLink
+                                icon="Download"
+                                onClick={() => downloadInvoice(organizationId, invoice.sys.id)}>
+                                Download
+                              </TextLink>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                    </TableBody>
+                  </Table>
+                </Typography>
               </Card>
             </GridItem>
           </Grid>
@@ -166,3 +203,49 @@ function BillingDetails({ billingDetails }) {
 BillingDetails.propTypes = {
   billingDetails: PropTypes.object.isRequired,
 };
+
+function BillingDetailsLoading() {
+  return (
+    <div className={styles.billingDetailsLoadingState}>
+      <SkeletonContainer svgHeight={120} ariaLabel="Loading billing address...">
+        <SkeletonBodyText numberOfLines={5} />
+      </SkeletonContainer>
+    </div>
+  );
+}
+
+function CreditCardDetailsLoading() {
+  return (
+    <div className={styles.billingDetailsLoadingState}>
+      <SkeletonContainer svgHeight={40} ariaLabel="Loading credit card details...">
+        <SkeletonBodyText numberOfLines={2} />
+      </SkeletonContainer>
+    </div>
+  );
+}
+
+function InvoicesTableLoading() {
+  return (
+    <>
+      {times(3).map((i) => (
+        <TableRow key={i}>
+          <TableCell>
+            <SkeletonContainer svgHeight={20} ariaLabel="Loading invoices...">
+              <SkeletonBodyText numberOfLines={1} />
+            </SkeletonContainer>
+          </TableCell>
+          <TableCell>
+            <SkeletonContainer svgHeight={20} ariaLabel="Loading invoices...">
+              <SkeletonBodyText />
+            </SkeletonContainer>
+          </TableCell>
+          <TableCell>
+            <TextLink disabled icon="Download">
+              Download
+            </TextLink>
+          </TableCell>
+        </TableRow>
+      ))}
+    </>
+  );
+}
