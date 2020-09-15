@@ -56,7 +56,12 @@ export default class SpaceNavigationBar extends React.Component {
     const organization = getOrganization(currentSpace);
     const organizationId = getOrganizationId(currentSpace);
 
-    const [environmentsEnabled, hasOrgTeamFeature, contentTagsEnabled] = await Promise.all([
+    const [
+      environmentsEnabled,
+      hasOrgTeamFeature,
+      contentTagsEnabled,
+      isTrialCommEnabled,
+    ] = await Promise.all([
       getVariation(FLAGS.ENVIRONMENTS_FLAG, {
         organizationId,
         spaceId: currentSpaceId,
@@ -64,8 +69,12 @@ export default class SpaceNavigationBar extends React.Component {
       }),
       getOrgFeature(organizationId, 'teams'),
       getCurrentSpaceFeature(FEATURES.PC_CONTENT_TAGS),
+      getVariation(FLAGS.PLATFORM_TRIAL_COMM, {
+        spaceId: currentSpaceId,
+      }),
     ]);
 
+    accessChecker.setFeatureFlags({ isTrialCommEnabled });
     const canManageEnvironments = accessChecker.can('manage', 'Environments');
     const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
     const usageEnabled = organization.pricingVersion === 'pricing_version_2';
