@@ -79,7 +79,7 @@ export default class SpaceNavigationBar extends React.Component {
     const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
     const usageEnabled = organization.pricingVersion === 'pricing_version_2';
     const canManageSpace = accessChecker.canModifySpaceSettings();
-    const isSpaceTrial = isTrialCommEnabled && isSpaceOnTrial(currentSpace);
+    const isSpaceTrial = isTrialCommEnabled && isSpaceOnTrial(currentSpace.data);
 
     function canNavigateTo(section) {
       const isSpaceSettingsSection = SPACE_SETTINGS_SECTIONS.includes(section);
