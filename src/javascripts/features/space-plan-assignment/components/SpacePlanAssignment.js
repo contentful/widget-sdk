@@ -46,12 +46,14 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
       const freePlan = ratePlans.find((plan) => plan.productPlanType === 'free_space');
       const currentPlan = plans.items.find((plan) => plan.gatekeeperKey === spaceId);
 
+      // filter plans that already have a space assigned (gatekeeperKey) or are the same as the current plan
+      const availablePlans = filter(
+        plans.items,
+        (plan) => !plan.gatekeeperKey && (currentPlan ? plan.name !== currentPlan.name : true)
+      );
+
       return {
-        // filter plans that already have a space assigned (gatekeeperKey), and sort by price
-        plans: sortBy(
-          filter(plans.items, (plan) => !plan.gatekeeperKey),
-          'price'
-        ),
+        plans: sortBy(availablePlans, 'price'),
         space,
         currentPlan,
         freePlan,
