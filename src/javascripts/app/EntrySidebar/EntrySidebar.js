@@ -98,6 +98,7 @@ export default class EntrySidebar extends Component {
         })
       ),
       buildSidebarExtensionsBridge: PropTypes.func.isRequired,
+      makeSidebarWidgetSDK: PropTypes.func.isRequired,
       legacySidebarExtensions: PropTypes.arrayOf(
         PropTypes.shape({
           makeSdk: PropTypes.func.isRequired,
@@ -106,6 +107,7 @@ export default class EntrySidebar extends Component {
         })
       ),
       localeData: PropTypes.object.isRequired,
+      useNewWidgetRenderer: PropTypes.bool,
     }),
     sidebarToggleProps: PropTypes.shape({
       commentsToggle: PropTypes.shape({
@@ -169,12 +171,9 @@ export default class EntrySidebar extends Component {
   }
 
   renderBuiltinWidget = (sidebarItem) => {
-    const { emitter, localeData, buildSidebarExtensionsBridge } = this.props.entrySidebarProps;
+    const { emitter, localeData } = this.props.entrySidebarProps;
     const { widgetId, widgetNamespace } = sidebarItem;
-    const defaultProps = {
-      emitter,
-      bridge: buildSidebarExtensionsBridge(widgetId, widgetNamespace),
-    };
+    const defaultProps = { emitter };
 
     if (
       widgetId === SidebarWidgetTypes.VERSIONS &&
@@ -195,14 +194,19 @@ export default class EntrySidebar extends Component {
     return <Component {...props} key={`${widgetNamespace},${widgetId}`} />;
   };
 
-  renderExtensionWidget = (item) => {
+  renderCustomWidget = (item) => {
+    // Custom widgets are only supported for entries.
+    if (!this.props.entrySidebarProps.isEntry) {
+      return null;
+    }
+
     item = this.props.entrySidebarProps.sidebarExtensions.find((w) => {
       return w.widgetNamespace === w.widgetNamespace && w.widgetId === item.widgetId;
     });
 
     if (item.problem) {
       return (
-        <EntrySidebarWidget title="Missing extension">
+        <EntrySidebarWidget title="Missing widget">
           <Note noteType="warning" className={styles.noteClassName}>
             <code>{item.name || item.widgetId}</code> is saved in configuration, but not installed
             in this environment.
@@ -211,18 +215,39 @@ export default class EntrySidebar extends Component {
       );
     }
 
+    let Component;
+    const widget = toRendererWidget(item.descriptor);
+
+    if (this.props.entrySidebarProps.useNewWidgetRenderer) {
+      const sdk = this.props.entrySidebarProps.makeSidebarWidgetSDK(
+        item.widgetNamespace,
+        item.widgetId,
+        item.parameters
+      );
+
+      Component = () => (
+        <WidgetRenderer location={WidgetLocation.ENTRY_SIDEBAR} sdk={sdk} widget={widget} />
+      );
+    } else {
+      const bridge = this.props.entrySidebarProps.buildSidebarExtensionsBridge(
+        item.widgetId,
+        item.widgetNamespace
+      );
+
+      Component = () => (
+        <ExtensionIFrameRendererWithLocalHostWarning
+          bridge={bridge}
+          widget={widget}
+          parameters={item.parameters}
+        />
+      );
+    }
+
     return (
       <EntrySidebarWidget
         title={item.descriptor.name}
         key={`${item.widgetNamespace},${item.widgetId}`}>
-        <ExtensionIFrameRendererWithLocalHostWarning
-          bridge={this.props.entrySidebarProps.buildSidebarExtensionsBridge(
-            item.widgetId,
-            item.widgetNamespace
-          )}
-          widget={toRendererWidget(item.descriptor)}
-          parameters={item.parameters}
-        />
+        <Component />
       </EntrySidebarWidget>
     );
   };
@@ -233,7 +258,7 @@ export default class EntrySidebar extends Component {
         return this.renderBuiltinWidget(item);
       }
       if (isCustomWidget(item.widgetNamespace)) {
-        return this.renderExtensionWidget(item);
+        return this.renderCustomWidget(item);
       }
       return null;
     });
