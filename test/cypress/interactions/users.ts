@@ -32,6 +32,9 @@ export const queryFirst100UsersInDefaultSpace = {
       }),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: users,
       },
     }).as('queryFirst100UsersInDefaultSpace');
@@ -53,6 +56,9 @@ export const queryForDefaultUserDetails = {
       }),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: users, // TODO: this looks like a bug, there are two users here!
       },
     }).as('queryForDefaultUserDetails');
@@ -73,6 +79,9 @@ export const queryForUsers = {
       }),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: users,
       },
     }).as('queryForUsers');
@@ -95,6 +104,9 @@ export const getUsers = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: userResponse,
       },
     }).as(getUsersInteraction);

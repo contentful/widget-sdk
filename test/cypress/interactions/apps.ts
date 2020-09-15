@@ -32,6 +32,9 @@ export const queryForAllMarketplaceApps = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: appMarketplaceResponse,
       },
     }).as('queryForMarketplaceApps');
@@ -53,6 +56,9 @@ export const queryForAppInstallations = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: dropboxAppInstallation,
       },
     }).as('queryForOneAppInstallation');
@@ -71,6 +77,9 @@ export const queryForAppInstallations = {
       },
       willRespondWith: {
         status: 404,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: emptyAppInstallation,
       },
     }).as('queryForOneAppInstallation');
@@ -89,6 +98,9 @@ export const queryForAppInstallations = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: emptyAppInstallation,
       },
     }).as('queryForAppInstallations');
@@ -107,6 +119,9 @@ export const queryForAppInstallations = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: appInstallationsMarketPlace,
       },
     }).as('queryForAppInstallationsWithInstalledApps');
@@ -128,6 +143,9 @@ export const deleteAppInstallation = {
       },
       willRespondWith: {
         status: 204,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
       },
     }).as('deleteAppInstallation');
 
@@ -148,6 +166,9 @@ export const saveAppInstallation = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: dropboxAppInstallation,
       },
     }).as('saveAppInstallation');
@@ -169,6 +190,9 @@ export const queryForAppDefinitions = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: empty,
       },
     }).as('queryForAppDefinitions');
@@ -187,6 +211,9 @@ export const queryForAppDefinitions = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: appDefinitionsPublic,
       },
     }).as('queryForPublicAppDefinitions');

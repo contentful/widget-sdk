@@ -18,6 +18,9 @@ export const queryForEditorInterfaces = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: editorInterfacesResponse,
       },
     }).as('queryForEditorInterfaces');

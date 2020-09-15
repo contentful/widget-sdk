@@ -22,6 +22,9 @@ export const queryFirst100PreviewEnvironments = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: empty,
       },
     }).as('queryFirst100PreviewEnvironments');

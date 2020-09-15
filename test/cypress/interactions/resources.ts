@@ -25,6 +25,9 @@ export const getResources = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: resources,
       },
     }).as('getResources');
@@ -48,6 +51,9 @@ export const getResourcesWithLimitsReached = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: resourcesWithLimitsReached,
       },
     }).as('getResourcesWithLimitsReached');
@@ -71,6 +77,9 @@ export const getResourcesWithEnvironment = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: resources,
       },
     }).as('getResourcesWithEnvironment');
@@ -94,6 +103,9 @@ export const getResourcesWithLocale = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: resources,
       },
     }).as('getResourcesWithLocale');
@@ -117,6 +129,9 @@ export const getResourcesForEnvironmentWithLocale = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: {
           name: 'Locale',
           usage: 1,
@@ -149,6 +164,9 @@ export const getContentTypeResource = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: resourceContentType,
       },
     }).as('getContentTypeResource');

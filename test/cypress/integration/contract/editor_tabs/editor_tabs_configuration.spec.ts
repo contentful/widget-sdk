@@ -130,6 +130,9 @@ const saveDefaultContentTypeEditorInterfaceWithCustomEditors = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: editorInterfaceWithCustomEditorsResponseBody,
       },
     }).as('saveDefaultContentTypeEditorInterfaceWithCustomEditors');

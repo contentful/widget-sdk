@@ -37,6 +37,9 @@ export const getUserProfileData = {
       willRespondWith: {
         status: 200,
         body: defaultData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
     }).as('getDefaultUserProfileData');
 
@@ -51,6 +54,9 @@ export const getUserProfileData = {
       willRespondWith: {
         status: 200,
         body: identityLoginData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
     }).as('getIdentityLoginUserProfileData');
 
@@ -65,6 +71,9 @@ export const getUserProfileData = {
       willRespondWith: {
         status: 200,
         body: twoFAData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
     }).as('getTwoFAEnabledUserProfileData');
 
@@ -97,6 +106,9 @@ export const updateDefaultUserProfileData = {
       willRespondWith: {
         status: 200,
         body: updateDefaultData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
     }).as('updateSuccessDefaultUserProfileData');
 
@@ -117,6 +129,9 @@ export const updateDefaultUserProfileData = {
       willRespondWith: {
         status: 422,
         body: invalidCurrentPasswordData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
     }).as('updateWithErrorDefaultUserProfileData');
 
@@ -144,6 +159,9 @@ export const addPassword = {
       willRespondWith: {
         status: 200,
         body: updateIdentityLoginData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
     }).as('addPasswordSuccess');
 
@@ -160,6 +178,9 @@ export const addPassword = {
       willRespondWith: {
         status: 422,
         body: insecureNewPasswordData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
     }).as('addPasswordError');
 
@@ -180,6 +201,9 @@ export const changePassword = {
       willRespondWith: {
         status: 200,
         body: updatePasswordDefaultData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
     }).as('changePasswordSuccess');
 
@@ -197,6 +221,9 @@ export const changePassword = {
       willRespondWith: {
         status: 422,
         body: insecureNewPasswordData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
     }).as('changePasswordError');
 
@@ -221,6 +248,9 @@ export const deleteIdentity = {
       withRequest: queryIdentityDeleteRequest(),
       willRespondWith: {
         status: 204,
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
     }).as('deleteIdentity');
 
@@ -249,6 +279,9 @@ export const deleteUserAccount = {
       withRequest: queryDeleteUserAccount(),
       willRespondWith: {
         status: 201,
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
     }).as('deleteUserAccount');
 
@@ -279,6 +312,9 @@ export const getTwoFAData = {
       willRespondWith: {
         status: 201,
         body: {},
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
     }).as('deleteUserAccount');
 
@@ -309,6 +345,9 @@ export const verifyTwoFAData = {
       willRespondWith: {
         status: 200,
         body: verify2FASuccess,
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
     }).as('verifyTwoFASuccess');
 
@@ -323,6 +362,9 @@ export const verifyTwoFAData = {
       willRespondWith: {
         status: 422,
         body: verify2FAFail,
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
     }).as('verifyTwoFAFail');
 
@@ -350,6 +392,9 @@ export const deleteTwoFA = {
       withRequest: queryDeleteTwoFA(),
       willRespondWith: {
         status: 204,
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
     }).as('deleteTwoFA');
     return '@deleteTwoFA';

@@ -57,6 +57,9 @@ describe('Entries list page', () => {
         withRequest: getEntries(defaultSpaceId, nonArchivedQuery),
         willRespondWith: {
           status: 200,
+          headers: {
+            'Content-Type': 'application/vnd.contentful.management.v1+json',
+          },
           body: empty,
         },
       }).as('queryNonArchivedEntries');
@@ -92,6 +95,9 @@ describe('Entries list page', () => {
         withRequest: getEntries(defaultSpaceId, nonArchivedQuery),
         willRespondWith: {
           status: 200,
+          headers: {
+            'Content-Type': 'application/vnd.contentful.management.v1+json',
+          },
           body: empty,
         },
       }).as('queryNonArchivedEntries');
@@ -150,6 +156,9 @@ describe('Entries list page', () => {
         withRequest: getEntries(defaultSpaceId, nonArchivedQuery),
         willRespondWith: {
           status: 200,
+          headers: {
+            'Content-Type': 'application/vnd.contentful.management.v1+json',
+          },
           body: severalEntriesResponse,
         },
       }).as('queryNonArchivedEntries');
@@ -206,6 +215,9 @@ describe('Entries list page', () => {
         withRequest: getEntries(defaultSpaceId, nonArchivedQuery),
         willRespondWith: {
           status: 200,
+          headers: {
+            'Content-Type': 'application/vnd.contentful.management.v1+json',
+          },
           body: severalEntriesResponse,
         },
       }).as('queryNonArchivedEntries');

@@ -79,6 +79,9 @@ export const queryFirst100LocalesOfDefaultSpace = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: locales,
       },
     }).as('queryFirst100LocalesOfDefaultSpace');
@@ -101,6 +104,9 @@ export const queryFirst100LocalesOfDefaultSpace = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: localesSeveral,
       },
     }).as('queryFirst100LocalesOfDefaultSpace');
@@ -122,6 +128,9 @@ export const postLocaleForSpace = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: putResponse(name, code, id),
       },
     }).as('postLocaleForSpace');
@@ -143,6 +152,9 @@ export const putLocaleForSpace = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: putResponse(name, code, id),
       },
     }).as('putLocaleForSpace');
@@ -164,6 +176,9 @@ export const deleteLocaleForSpace = {
       },
       willRespondWith: {
         status: 204,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
       },
     }).as('deleteLocaleForSpace');
 

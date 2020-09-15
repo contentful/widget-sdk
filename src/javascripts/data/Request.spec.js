@@ -26,7 +26,10 @@ describe('Request', () => {
       status: 200,
       statusText: 'OK',
       json: jest.fn(async () => ({ foo: 'bar' })),
-      headers: new Headers({ 'X-Contentful-Request-ID': 'reqid' }),
+      headers: new Headers({
+        'X-Contentful-Request-ID': 'reqid',
+        'Content-Type': 'application/vnd.contentful.management.v1+json',
+      }),
     }));
   });
 
@@ -98,13 +101,16 @@ describe('Request', () => {
     expect(response).toEqual({
       config: { url: 'http://foo.com' },
       data: { foo: 'bar' },
-      headers: { 'x-contentful-request-id': 'reqid' },
+      headers: {
+        'x-contentful-request-id': 'reqid',
+        'content-type': 'application/vnd.contentful.management.v1+json',
+      },
       status: 200,
       statusText: 'OK',
     });
   });
 
-  it('handles responses without a body', async () => {
+  it('handles if the call to response.json throws', async () => {
     window.fetch.mockResolvedValueOnce({
       ok: true,
       status: 200,
@@ -112,13 +118,19 @@ describe('Request', () => {
       json: () => {
         throw {};
       },
-      headers: new Headers({ 'X-Contentful-Request-ID': 'reqid' }),
+      headers: new Headers({
+        'X-Contentful-Request-ID': 'reqid',
+        'Content-Type': 'application/vnd.contentful.management.v1+json',
+      }),
     });
     const response = await request({ url: 'http://foo.com' });
     expect(response).toEqual({
       config: { url: 'http://foo.com' },
       data: null,
-      headers: { 'x-contentful-request-id': 'reqid' },
+      headers: {
+        'x-contentful-request-id': 'reqid',
+        'content-type': 'application/vnd.contentful.management.v1+json',
+      },
       status: 200,
       statusText: 'OK',
     });
@@ -130,7 +142,10 @@ describe('Request', () => {
       status: 404,
       statusText: 'NOT FOUND',
       json: () => ({ message: 'Not found' }),
-      headers: new Headers({ 'X-Contentful-Request-ID': 'reqid' }),
+      headers: new Headers({
+        'X-Contentful-Request-ID': 'reqid',
+        'Content-Type': 'application/vnd.contentful.management.v1+json',
+      }),
     });
     let response;
 
@@ -144,9 +159,65 @@ describe('Request', () => {
     expect({ ...response }).toEqual({
       config: { url: 'http://foo.com' },
       data: { message: 'Not found' },
-      headers: { 'x-contentful-request-id': 'reqid' },
+      headers: {
+        'x-contentful-request-id': 'reqid',
+        'content-type': 'application/vnd.contentful.management.v1+json',
+      },
       status: 404,
       statusText: 'NOT FOUND',
+    });
+  });
+
+  it('handles non-JSON responses', async () => {
+    const arrayBuffer = new ArrayBuffer([1, 2, 3, 4]);
+
+    window.fetch.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      arrayBuffer: () => arrayBuffer,
+      headers: new Headers({
+        'X-Contentful-Request-ID': 'reqid',
+        'Content-Type': 'application/pdf',
+      }),
+    });
+
+    const response = await request({ url: 'http://foo.com' });
+
+    expect(response).toEqual({
+      config: { url: 'http://foo.com' },
+      data: arrayBuffer,
+      headers: { 'x-contentful-request-id': 'reqid', 'content-type': 'application/pdf' },
+      status: 200,
+      statusText: 'OK',
+    });
+  });
+
+  it('handles if the call to response.arrayBuffer throws', async () => {
+    window.fetch.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      arrayBuffer: () => {
+        throw {};
+      },
+      headers: new Headers({
+        'X-Contentful-Request-ID': 'reqid',
+        'Content-Type': 'application/pdf',
+      }),
+    });
+
+    const response = await request({ url: 'http://foo.com' });
+
+    expect(response).toEqual({
+      config: { url: 'http://foo.com' },
+      data: null,
+      headers: {
+        'x-contentful-request-id': 'reqid',
+        'content-type': 'application/pdf',
+      },
+      status: 200,
+      statusText: 'OK',
     });
   });
 

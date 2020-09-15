@@ -76,6 +76,9 @@ export const queryPendingJobsForDefaultSpaceWithoutLimit = {
       withRequest: queryJobsForDefaultSpaceRequest(pendingJobsQueryWithoutLimit),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: empty,
       },
     }).as('queryPendingJobsForDefaultSpace');
@@ -90,6 +93,9 @@ export const queryPendingJobsForDefaultSpaceWithoutLimit = {
       withRequest: queryJobsForDefaultSpaceRequest(pendingJobsQueryWithoutLimit),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: severalPendingJobsResponse(100), // Limit to 100
       },
     }).as('queryPendingJobsForDefaultSpace');
@@ -107,6 +113,9 @@ export const queryPendingJobsForDefaultSpace = {
       withRequest: queryJobsForDefaultSpaceRequest(pendingJobsQuery),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: empty,
       },
     }).as('queryPendingJobsForDefaultSpace');
@@ -121,6 +130,9 @@ export const queryPendingJobsForDefaultSpace = {
       withRequest: queryJobsForDefaultSpaceRequest(pendingJobsQuery),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: severalPendingJobsResponse(),
       },
     }).as('queryPendingJobsForDefaultSpace');
@@ -135,6 +147,9 @@ export const queryPendingJobsForDefaultSpace = {
       withRequest: queryJobsForDefaultSpaceRequest(pendingJobsQuery),
       willRespondWith: {
         status: 500,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: serverErrorResponse,
       },
     }).as('queryPendingJobsForDefaultSpace');
@@ -152,6 +167,9 @@ export const queryCompletedJobsForDefaultSpace = {
       withRequest: queryJobsForDefaultSpaceRequest(completedJobsQuery),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: empty,
       },
     }).as('queryCompletedJobsForDefaultSpace');
@@ -166,6 +184,9 @@ export const queryCompletedJobsForDefaultSpace = {
       withRequest: queryJobsForDefaultSpaceRequest(completedJobsQuery),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: severalCompletedJobsResponse,
       },
     }).as('queryCompletedJobsForDefaultSpace');
@@ -180,6 +201,9 @@ export const queryCompletedJobsForDefaultSpace = {
       withRequest: queryJobsForDefaultSpaceRequest(completedJobsQuery),
       willRespondWith: {
         status: 500,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: serverErrorResponse,
       },
     }).as('queryCompletedJobsForDefaultSpace');
@@ -197,6 +221,9 @@ export const queryFailedJobsForDefaultSpace = {
       withRequest: queryJobsForDefaultSpaceRequest(failedJobsQuery),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: empty,
       },
     }).as('queryFailedJobsForDefaultSpace');
@@ -211,6 +238,9 @@ export const queryFailedJobsForDefaultSpace = {
       withRequest: queryJobsForDefaultSpaceRequest(failedJobsQuery),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: severalFailedJobsResponse,
       },
     }).as('queryFailedJobsForDefaultSpace');
@@ -225,6 +255,9 @@ export const queryFailedJobsForDefaultSpace = {
       withRequest: queryJobsForDefaultSpaceRequest(failedJobsQuery),
       willRespondWith: {
         status: 500,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: serverErrorResponse,
       },
     }).as('queryFailedJobsForDefaultSpace');
@@ -242,6 +275,9 @@ export const queryAllScheduledJobsForDefaultEntry = {
       withRequest: queryJobsForDefaultSpaceRequest(entryIdQuery),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: empty,
       },
     }).as('queryAllScheduledJobsForDefaultEntry');
@@ -256,6 +292,9 @@ export const queryAllScheduledJobsForDefaultEntry = {
       withRequest: queryJobsForDefaultSpaceRequest(entryIdQuery),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: onePendingJobResponse,
       },
     }).as('queryAllScheduledJobsForDefaultEntry');
@@ -270,6 +309,9 @@ export const queryAllScheduledJobsForDefaultEntry = {
       withRequest: queryJobsForDefaultSpaceRequest(entryIdQuery),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: oneFailedJobResponse,
       },
     }).as('queryAllScheduledJobsForDefaultEntry');
@@ -284,6 +326,9 @@ export const queryAllScheduledJobsForDefaultEntry = {
       withRequest: queryJobsForDefaultSpaceRequest(entryIdQuery),
       willRespondWith: {
         status: 500,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: serverErrorResponse,
       },
     }).as('queryAllScheduledJobsForDefaultEntry');
@@ -310,6 +355,9 @@ export const cancelDefaultJobInDefaultSpace = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
       },
     }).as('cancelDefaultJobInDefaultSpace');
 
@@ -338,6 +386,9 @@ export const createScheduledPublicationForDefaultSpace = {
       },
       willRespondWith: {
         status: 201,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: createJobResponse,
       },
     }).as('createScheduledPublicationForDefaultSpace');
@@ -364,6 +415,9 @@ export const createScheduledPublicationForDefaultSpace = {
       },
       willRespondWith: {
         status: 400,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
       },
     }).as('createScheduledPublicationForDefaultSpace');
 
