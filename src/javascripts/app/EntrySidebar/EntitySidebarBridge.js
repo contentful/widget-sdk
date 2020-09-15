@@ -7,7 +7,7 @@ import SidebarWidgetTypes from 'app/EntrySidebar/SidebarWidgetTypes';
 import createExtensionBridge from 'widgets/bridges/createExtensionBridge';
 import TheLocaleStore from 'services/localeStore';
 import { WidgetLocation } from '@contentful/widget-renderer';
-import { createFieldWidgetSDK } from 'app/widgets/ExtensionSDKs';
+import { createFieldWidgetSDK, createSidebarWidgetSDK } from 'app/widgets/ExtensionSDKs';
 import { toRendererWidget } from 'widgets/WidgetCompat';
 
 export default ({ $scope, emitter }) => {
@@ -260,12 +260,24 @@ export default ({ $scope, emitter }) => {
       location: WidgetLocation.ENTRY_SIDEBAR,
     });
 
+  const makeSidebarWidgetSDK = (widgetNamespace, widgetId, parameters) =>
+    createSidebarWidgetSDK({
+      internalContentType: $scope.entityInfo.contentType,
+      $scope,
+      doc: $scope.otDoc,
+      parameters,
+      spaceContext,
+      widgetNamespace,
+      widgetId,
+    });
+
   return {
     legacySidebarExtensions: legacyExtensions,
     localeData: $scope.localeData,
     sidebar: $scope.editorData.sidebar,
     sidebarExtensions: $scope.editorData.sidebarExtensions,
     buildSidebarExtensionsBridge,
+    makeSidebarWidgetSDK,
     isEntry,
     isMasterEnvironment,
     emitter,

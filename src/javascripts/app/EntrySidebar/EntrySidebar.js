@@ -98,6 +98,7 @@ export default class EntrySidebar extends Component {
         })
       ),
       buildSidebarExtensionsBridge: PropTypes.func.isRequired,
+      makeSidebarWidgetSDK: PropTypes.func.isRequired,
       legacySidebarExtensions: PropTypes.arrayOf(
         PropTypes.shape({
           makeSdk: PropTypes.func.isRequired,
@@ -199,7 +200,7 @@ export default class EntrySidebar extends Component {
 
     if (item.problem) {
       return (
-        <EntrySidebarWidget title="Missing extension">
+        <EntrySidebarWidget title="Missing widget">
           <Note noteType="warning" className={styles.noteClassName}>
             <code>{item.name || item.widgetId}</code> is saved in configuration, but not installed
             in this environment.
@@ -208,18 +209,40 @@ export default class EntrySidebar extends Component {
       );
     }
 
+    let Component;
+    const widget = toRendererWidget(item.descriptor);
+    const useNewRenderer = true;
+
+    if (useNewRenderer) {
+      const sdk = this.props.entrySidebarProps.makeSidebarWidgetSDK(
+        item.widgetNamespace,
+        item.widgetId,
+        item.parameters
+      );
+
+      Component = () => (
+        <WidgetRenderer location={WidgetLocation.ENTRY_SIDEBAR} sdk={sdk} widget={widget} />
+      );
+    } else {
+      const bridge = this.props.entrySidebarProps.buildSidebarExtensionsBridge(
+        item.widgetId,
+        item.widgetNamespace
+      );
+
+      Component = () => (
+        <ExtensionIFrameRendererWithLocalHostWarning
+          bridge={bridge}
+          widget={widget}
+          parameters={item.parameters}
+        />
+      );
+    }
+
     return (
       <EntrySidebarWidget
         title={item.descriptor.name}
         key={`${item.widgetNamespace},${item.widgetId}`}>
-        <ExtensionIFrameRendererWithLocalHostWarning
-          bridge={this.props.entrySidebarProps.buildSidebarExtensionsBridge(
-            item.widgetId,
-            item.widgetNamespace
-          )}
-          widget={toRendererWidget(item.descriptor)}
-          parameters={item.parameters}
-        />
+        <Component />
       </EntrySidebarWidget>
     );
   };
