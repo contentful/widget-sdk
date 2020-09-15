@@ -193,7 +193,12 @@ export default class EntrySidebar extends Component {
     return <Component {...props} key={`${widgetNamespace},${widgetId}`} />;
   };
 
-  renderExtensionWidget = (item) => {
+  renderCustomWidget = (item) => {
+    // Custom widgets are only supported for entries.
+    if (!this.props.entrySidebarProps.isEntry) {
+      return null;
+    }
+
     item = this.props.entrySidebarProps.sidebarExtensions.find((w) => {
       return w.widgetNamespace === w.widgetNamespace && w.widgetId === item.widgetId;
     });
@@ -253,7 +258,7 @@ export default class EntrySidebar extends Component {
         return this.renderBuiltinWidget(item);
       }
       if (isCustomWidget(item.widgetNamespace)) {
-        return this.renderExtensionWidget(item);
+        return this.renderCustomWidget(item);
       }
       return null;
     });
