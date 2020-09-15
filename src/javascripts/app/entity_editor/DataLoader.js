@@ -208,11 +208,18 @@ function makeEntryLoader(spaceContext) {
     hasAdvancedExtensibility() {
       return AdvancedExtensibilityFeature.isEnabled(spaceContext.organization.sys.id);
     },
-    useNewWidgetRenderer() {
-      return getVariation(FLAGS.NEW_WIDGET_RENDERER, {
+    async useNewWidgetRenderer() {
+      const ctx = {
         spaceId: spaceContext.getId(),
         organizationId: spaceContext.organization.sys.id,
-      });
+      };
+
+      const [field, sidebar] = await Promise.all([
+        getVariation(FLAGS.NEW_WIDGET_RENDERER, ctx),
+        getVariation(FLAGS.NEW_WIDGET_RENDERER_SIDEBAR, ctx),
+      ]);
+
+      return { field, sidebar };
     },
     getOpenDoc: makeDocOpener(spaceContext),
   };
@@ -222,7 +229,7 @@ function makeAssetLoader(spaceContext) {
   return {
     getEntity: (id) => fetchEntity(spaceContext, 'Asset', id),
     hasAdvancedExtensibility: () => false,
-    useNewWidgetRenderer: () => false,
+    useNewWidgetRenderer: () => ({ field: false, sidebar: false }),
     getOpenDoc: makeDocOpener(spaceContext),
     // TODO: we return precomputed CT and EI for the Asset Editor.
     // If we would have an endpoint with this data

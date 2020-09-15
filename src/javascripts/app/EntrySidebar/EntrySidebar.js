@@ -107,6 +107,7 @@ export default class EntrySidebar extends Component {
         })
       ),
       localeData: PropTypes.object.isRequired,
+      useNewWidgetRenderer: PropTypes.bool,
     }),
     sidebarToggleProps: PropTypes.shape({
       commentsToggle: PropTypes.shape({
@@ -216,9 +217,8 @@ export default class EntrySidebar extends Component {
 
     let Component;
     const widget = toRendererWidget(item.descriptor);
-    const useNewRenderer = true;
 
-    if (useNewRenderer) {
+    if (this.props.entrySidebarProps.useNewWidgetRenderer) {
       const sdk = this.props.entrySidebarProps.makeSidebarWidgetSDK(
         item.widgetNamespace,
         item.widgetId,

@@ -43,7 +43,7 @@ function WidgetRendererInternal(props) {
   } else if (isCustomWidget(widget.widgetNamespace)) {
     trackLinksRendered();
 
-    if (editorData.useNewWidgetRenderer) {
+    if (editorData.useNewWidgetRenderer.field) {
       return (
         <NewWidgetRenderer
           location={WidgetLocation.ENTRY_FIELD}

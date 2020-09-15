@@ -281,5 +281,6 @@ export default ({ $scope, emitter }) => {
     isEntry,
     isMasterEnvironment,
     emitter,
+    useNewWidgetRenderer: $scope.editorData.useNewWidgetRenderer.sidebar,
   };
 };
