@@ -3,4 +3,4 @@ export { PlatformTrialInfo } from './components/PlatformTrialInfo';
 export { SpacesListForMembers } from './components/SpacesListForMembers';
 export { SpaceTrialWidget } from './components/SpaceTrialWidget';
 
-export { isOrganizationOnTrial } from './services/TrialService';
+export { isOrganizationOnTrial, isSpaceOnTrial } from './services/TrialService';

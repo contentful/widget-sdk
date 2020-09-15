@@ -14,6 +14,7 @@ import {
   isCurrentEnvironmentMaster,
   isUnscopedRoute,
 } from 'core/services/SpaceEnvContext/utils';
+import { isSpaceOnTrial } from 'features/trials';
 
 // We don't want to display the following sections within the context of
 // a sandbox space environment.
@@ -56,7 +57,12 @@ export default class SpaceNavigationBar extends React.Component {
     const organization = getOrganization(currentSpace);
     const organizationId = getOrganizationId(currentSpace);
 
-    const [environmentsEnabled, hasOrgTeamFeature, contentTagsEnabled] = await Promise.all([
+    const [
+      environmentsEnabled,
+      hasOrgTeamFeature,
+      contentTagsEnabled,
+      isTrialCommEnabled,
+    ] = await Promise.all([
       getVariation(FLAGS.ENVIRONMENTS_FLAG, {
         organizationId,
         spaceId: currentSpaceId,
@@ -64,12 +70,16 @@ export default class SpaceNavigationBar extends React.Component {
       }),
       getOrgFeature(organizationId, 'teams'),
       getCurrentSpaceFeature(FEATURES.PC_CONTENT_TAGS),
+      getVariation(FLAGS.PLATFORM_TRIAL_COMM, {
+        spaceId: currentSpaceId,
+      }),
     ]);
 
     const canManageEnvironments = accessChecker.can('manage', 'Environments');
     const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
     const usageEnabled = organization.pricingVersion === 'pricing_version_2';
     const canManageSpace = accessChecker.canModifySpaceSettings();
+    const isSpaceTrial = isTrialCommEnabled && isSpaceOnTrial(currentSpace);
 
     function canNavigateTo(section) {
       const isSpaceSettingsSection = SPACE_SETTINGS_SECTIONS.includes(section);
@@ -94,6 +104,7 @@ export default class SpaceNavigationBar extends React.Component {
       isUnscopedRoute: isUnscopedRoute(currentSpace),
       contentTagsEnabled,
       canManageSpace,
+      isSpaceTrial,
     });
 
     this.setState({ items });
