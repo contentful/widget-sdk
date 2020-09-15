@@ -132,7 +132,7 @@ export function SpacePlanAssignmentConfirmation({
             Go back
           </Button>
           <Button buttonType="positive" onClick={onNext} loading={inProgress}>
-            Continue
+            Confirm
           </Button>
         </Flex>
       </section>

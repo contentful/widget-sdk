@@ -5,7 +5,7 @@ import importer from 'app/OrganizationSettings/importer';
 
 export const spacePlanAssignmentState = organizationRoute({
   name: 'space_plans',
-  url: '/space_plans?spaceId',
+  url: '/space_plans?spaceId,planId',
   component: (props) => (
     <LazyLoadedComponent importer={importer}>
       {({ SpacePlanAssignmentRoute }) => {

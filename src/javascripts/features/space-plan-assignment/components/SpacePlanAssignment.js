@@ -1,15 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
-import {
-  Workbench,
-  SkeletonContainer,
-  SkeletonDisplayText,
-  SkeletonBodyText,
-  SkeletonText,
-  Card,
-  SkeletonImage,
-  Notification,
-} from '@contentful/forma-36-react-components';
+import { Workbench, Notification } from '@contentful/forma-36-react-components';
 import { NavigationIcon, Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import { useAsync } from 'core/hooks';
 import { getSubscriptionPlans, getRatePlans } from 'account/pricing/PricingDataProvider';
@@ -24,6 +15,7 @@ import { changeSpacePlanAssignment } from '../services/SpacePlanAssignmentServic
 import { formatError } from '../utils/errors';
 import { track } from 'analytics/Analytics';
 import { SpacePlanAssignmentConfirmation } from './SpacePlanAssignmentConfirmation';
+import { AssignmentLoadingCard } from './AssignmentLoadingCard';
 
 const ASSIGNMENT_STEPS = [
   { text: '1.New space type', isActive: true },
@@ -136,32 +128,8 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
       <Workbench.Content>
         <Grid columns={1} rows="repeat(3, 'auto')" columnGap="none" rowGap="spacingM">
           <Breadcrumbs items={steps} isActive={steps} />
-          {isLoading && (
-            <>
-              <SkeletonContainer svgHeight={40}>
-                <SkeletonText width={300} offsetTop={10} />
-              </SkeletonContainer>
-              <Card>
-                <SkeletonContainer svgHeight={100}>
-                  <SkeletonImage
-                    width={16}
-                    height={16}
-                    radiusX={16}
-                    radiusY={16}
-                    offsetLeft={12}
-                    offsetTop={24}
-                  />
-                  <SkeletonDisplayText offsetTop={24} offsetLeft={40} width={80} />
-                  <SkeletonBodyText
-                    offsetTop={70}
-                    offsetLeft={40}
-                    lineHeight={12}
-                    numberOfLines={1}
-                  />
-                </SkeletonContainer>
-              </Card>
-            </>
-          )}
+          {/* TODO - move it level up */}
+          {isLoading && <AssignmentLoadingCard />}
           {!isLoading && data && (
             <>
               {steps.indexOf(currentStep) === 0 && (

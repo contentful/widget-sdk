@@ -8,7 +8,9 @@ import {
   TableCell,
   TableBody,
   SkeletonRow,
+  TextLink,
 } from '@contentful/forma-36-react-components';
+import StateLink from 'app/common/StateLink';
 
 const styles = {
   nameCol: css({
@@ -38,6 +40,16 @@ export function UnassignedPlansTable({ plans, initialLoad }) {
                 key={plan.sys.id || (plan.space && plan.space.sys.id)}>
                 <TableCell>
                   <strong>{plan.name}</strong>&nbsp;
+                  <>
+                    -{' '}
+                    <StateLink
+                      testId="subscription-page.spaces-list.change-plan-link"
+                      component={TextLink}
+                      path="^.space_plans"
+                      params={{ planId: plan.sys.id }}>
+                      use space
+                    </StateLink>
+                  </>
                 </TableCell>
               </TableRow>
             );

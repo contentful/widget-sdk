@@ -241,7 +241,11 @@ function SpacePlans({
                   [styles.isVisible]: selectedTab === UNUSED_SPACES,
                 })}>
                 {unassignedSpacePlans && (
-                  <UnassignedPlansTable plans={unassignedSpacePlans} initialLoad={initialLoad} />
+                  <UnassignedPlansTable
+                    plans={unassignedSpacePlans}
+                    initialLoad={initialLoad}
+                    showSpacePlanChangeBtn={showSpacePlanChangeBtn}
+                  />
                 )}
               </TabPanel>
             )}
