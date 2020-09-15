@@ -21,14 +21,9 @@ jest.mock('access_control/AccessChecker', () => {
   };
 });
 
-jest.mock('features/trials', () => ({
-  isSpaceOnTrial: jest.fn(),
-}));
-
 jest.mock('core/hooks/useBulkActions/batchPerformer', () => ({
   createBatchPerformer: jest.fn(),
 }));
-
 jest.mock('core/NgRegistry', () => ({
   getModule: () => ({
     space: {
@@ -48,7 +43,6 @@ jest.mock('core/NgRegistry', () => ({
     getEnvironmentId: () => {},
   }),
 }));
-
 jest.mock('app/Releases/releasesService', () => ({
   getReleases: jest.fn().mockResolvedValue({ items: [] }),
 }));

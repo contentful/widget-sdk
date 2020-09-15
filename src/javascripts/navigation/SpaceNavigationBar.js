@@ -14,6 +14,7 @@ import {
   isCurrentEnvironmentMaster,
   isUnscopedRoute,
 } from 'core/services/SpaceEnvContext/utils';
+import { isSpaceOnTrial } from 'features/trials';
 
 // We don't want to display the following sections within the context of
 // a sandbox space environment.
@@ -74,11 +75,11 @@ export default class SpaceNavigationBar extends React.Component {
       }),
     ]);
 
-    accessChecker.setFeatureFlags({ isTrialCommEnabled });
     const canManageEnvironments = accessChecker.can('manage', 'Environments');
     const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
     const usageEnabled = organization.pricingVersion === 'pricing_version_2';
     const canManageSpace = accessChecker.canModifySpaceSettings();
+    const isSpaceTrial = isTrialCommEnabled && isSpaceOnTrial(currentSpace);
 
     function canNavigateTo(section) {
       const isSpaceSettingsSection = SPACE_SETTINGS_SECTIONS.includes(section);
@@ -103,6 +104,7 @@ export default class SpaceNavigationBar extends React.Component {
       isUnscopedRoute: isUnscopedRoute(currentSpace),
       contentTagsEnabled,
       canManageSpace,
+      isSpaceTrial,
     });
 
     this.setState({ items });
