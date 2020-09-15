@@ -78,11 +78,10 @@ function SpacePlans({
   const numSpaces = spacePlans.length;
   const totalCost = calculatePlansCost({ plans: spacePlans });
 
-  const [showSpacePlanChangeBtn, setShowSpacePlanChangeBtn] = useState(false);
+  const [canManageSpaces, setCanManageSpaces] = useState(false);
   const [unassignedSpacePlans, getUnassignedSpacePlans] = useState(null);
   const [assignedSpacePlans, getAssignedSpacePlans] = useState(null);
   const [selectedTab, setSelectedTab] = useState('usedSpaces');
-  const [spacePlanTabsEnabled, setSpacePlanTabsEnabled] = useState(null);
 
   useEffect(() => {
     async function fetch() {
@@ -93,16 +92,11 @@ function SpacePlans({
       getUnassignedSpacePlans(unassignedSpacePlans);
       getAssignedSpacePlans(assignedSpacePlans);
 
-      //  TODO: shouldShowSpacePlanChangeBtn and shouldShowSpaceTabs should be merged into one canManageSpacePlans which can be used for change link and tabs
-      const shouldShowSpacePlanChangeBtn =
-        isFeatureEnabled && enterprisePlan && isOrgOwner && unassignedSpacePlans.length > 0;
-      const shouldShowSpaceTabs = isFeatureEnabled && enterprisePlan && isOrgOwner;
-
-      setSpacePlanTabsEnabled(shouldShowSpaceTabs);
-      setShowSpacePlanChangeBtn(shouldShowSpacePlanChangeBtn);
+      const canManageSpaces = isFeatureEnabled && enterprisePlan && isOrgOwner;
+      setCanManageSpaces(canManageSpaces);
     }
     fetch();
-  }, [setShowSpacePlanChangeBtn, enterprisePlan, isOrgOwner, spacePlans]);
+  }, [setCanManageSpaces, enterprisePlan, isOrgOwner, spacePlans]);
 
   const linkToSupportPage = websiteUrl(
     `support/?utm_source=webapp&utm_medium=account-menu&utm_campaign=in-app-help&purchase-micro-or-small-space=${organizationId}`
@@ -190,13 +184,13 @@ function SpacePlans({
           Create Space
         </TextLink>
       </Paragraph>
-      {showSpacePlanChangeBtn && (
+      {canManageSpaces && (
         <Note className={styles.note}>
           {`Click the "change" link next to the space type to change it.`}
         </Note>
       )}
       {(initialLoad || numSpaces > 0) &&
-        (spacePlanTabsEnabled ? (
+        (canManageSpaces ? (
           <>
             <Tabs className={styles.tabs} withDivider>
               <Tab
@@ -231,7 +225,7 @@ function SpacePlans({
                 onChangeSpace={onChangeSpace}
                 onDeleteSpace={onDeleteSpace}
                 enterprisePlan={enterprisePlan}
-                showSpacePlanChangeBtn={showSpacePlanChangeBtn}
+                showSpacePlanChangeBtn={canManageSpaces}
               />
             </TabPanel>
             {unassignedSpacePlans.length > 0 && (
@@ -244,7 +238,7 @@ function SpacePlans({
                   <UnassignedPlansTable
                     plans={unassignedSpacePlans}
                     initialLoad={initialLoad}
-                    showSpacePlanChangeBtn={showSpacePlanChangeBtn}
+                    showSpacePlanChangeBtn={canManageSpaces}
                   />
                 )}
               </TabPanel>
@@ -258,7 +252,7 @@ function SpacePlans({
             onChangeSpace={onChangeSpace}
             onDeleteSpace={onDeleteSpace}
             enterprisePlan={enterprisePlan}
-            showSpacePlanChangeBtn={showSpacePlanChangeBtn}
+            showSpacePlanChangeBtn={canManageSpaces}
           />
         ))}
     </>

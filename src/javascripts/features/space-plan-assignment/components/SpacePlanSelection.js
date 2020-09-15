@@ -86,13 +86,15 @@ export function SpacePlanSelection({
                 padding="large"
                 className={cn(styles.cardItem, {
                   [styles.cardItemActive]: plan === selectedPlan,
-                  [styles.disabled]: isDisabled,
                 })}>
                 <Flex
                   htmlTag="label"
                   justifyContent="start"
                   alignItems="center"
-                  marginBottom="spacingM">
+                  marginBottom="spacingM"
+                  className={cn({
+                    [styles.disabled]: isDisabled,
+                  })}>
                   <RadioButton
                     disabled={isDisabled}
                     checked={plan === selectedPlan}

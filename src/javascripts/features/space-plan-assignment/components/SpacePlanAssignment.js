@@ -15,6 +15,7 @@ import { changeSpacePlanAssignment } from '../services/SpacePlanAssignmentServic
 import { formatError } from '../utils/errors';
 import { track } from 'analytics/Analytics';
 import { SpacePlanAssignmentConfirmation } from './SpacePlanAssignmentConfirmation';
+import { EmptyState } from './EmptyState';
 import { AssignmentLoadingCard } from './AssignmentLoadingCard';
 
 const ASSIGNMENT_STEPS = [
@@ -126,36 +127,34 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
         icon={<NavigationIcon icon="Subscription" size="large" />}
       />
       <Workbench.Content>
-        <Grid columns={1} rows="repeat(3, 'auto')" columnGap="none" rowGap="spacingM">
-          <Breadcrumbs items={steps} isActive={steps} />
-          {/* TODO - move it level up */}
-          {isLoading && <AssignmentLoadingCard />}
-          {!isLoading && data && (
-            <>
-              {steps.indexOf(currentStep) === 0 && (
-                <SpacePlanSelection
-                  space={data.space}
-                  spaceResources={data.spaceResources}
-                  plans={data.plans}
-                  selectedPlan={selectedPlan}
-                  onPlanSelected={setSelectedPlan}
-                  onNext={navigateToNextStep}
-                />
-              )}
-              {steps.indexOf(currentStep) === 1 && (
-                <SpacePlanAssignmentConfirmation
-                  currentPlan={data.currentPlan ?? data.freePlan}
-                  selectedPlan={selectedPlan}
-                  space={data.space}
-                  spaceResources={data.spaceResources}
-                  onPrev={navigateToPreviousStep}
-                  onNext={submit}
-                  inProgress={inProgress}
-                />
-              )}
-            </>
-          )}
-        </Grid>
+        {isLoading && <AssignmentLoadingCard />}
+        {!isLoading && data?.plans.length === 0 && <EmptyState />}
+        {!isLoading && data?.plans.length > 0 && (
+          <Grid columns={1} rows="repeat(3, 'auto')" columnGap="none" rowGap="spacingM">
+            <Breadcrumbs items={steps} isActive={steps} />
+            {steps.indexOf(currentStep) === 0 && (
+              <SpacePlanSelection
+                space={data.space}
+                spaceResources={data.spaceResources}
+                plans={data.plans}
+                selectedPlan={selectedPlan}
+                onPlanSelected={setSelectedPlan}
+                onNext={navigateToNextStep}
+              />
+            )}
+            {steps.indexOf(currentStep) === 1 && (
+              <SpacePlanAssignmentConfirmation
+                currentPlan={data.currentPlan ?? data.freePlan}
+                selectedPlan={selectedPlan}
+                space={data.space}
+                spaceResources={data.spaceResources}
+                onPrev={navigateToPreviousStep}
+                onNext={submit}
+                inProgress={inProgress}
+              />
+            )}
+          </Grid>
+        )}
       </Workbench.Content>
     </Workbench>
   );
