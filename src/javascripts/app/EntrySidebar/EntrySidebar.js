@@ -169,12 +169,9 @@ export default class EntrySidebar extends Component {
   }
 
   renderBuiltinWidget = (sidebarItem) => {
-    const { emitter, localeData, buildSidebarExtensionsBridge } = this.props.entrySidebarProps;
+    const { emitter, localeData } = this.props.entrySidebarProps;
     const { widgetId, widgetNamespace } = sidebarItem;
-    const defaultProps = {
-      emitter,
-      bridge: buildSidebarExtensionsBridge(widgetId, widgetNamespace),
-    };
+    const defaultProps = { emitter };
 
     if (
       widgetId === SidebarWidgetTypes.VERSIONS &&
