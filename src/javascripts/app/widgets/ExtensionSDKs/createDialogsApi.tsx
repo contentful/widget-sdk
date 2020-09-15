@@ -141,9 +141,8 @@ function createDialogSDK(
     );
   }
 
-  return {
+  const sdkWithoutDialogs = {
     ...sdk,
-    dialogs: createDialogsApi(sdk),
     location: {
       is: (location: string) => location === WidgetLocation.DIALOG,
     },
@@ -169,6 +168,11 @@ function createDialogSDK(
       startAutoResizer: noop,
       stopAutoResizer: noop,
     },
+  };
+
+  return {
+    ...sdkWithoutDialogs,
+    dialogs: createDialogsApi(sdkWithoutDialogs),
   };
 }
 
