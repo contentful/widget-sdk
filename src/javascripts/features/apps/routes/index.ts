@@ -1,7 +1,5 @@
 /* eslint-disable rulesdir/allow-only-import-export-in-index, import/no-default-export */
-import React from 'react';
 import { get } from 'lodash';
-import { css } from 'emotion';
 import { AppsListPage } from '../AppsListPage';
 import { AppRoute } from '../AppPage';
 import { makeAppHookBus, getAppsRepo } from 'features/apps-core';
@@ -15,8 +13,9 @@ import { shouldHide, Action } from 'access_control/AccessChecker';
 import * as TokenStore from 'services/TokenStore';
 import { isOwnerOrAdmin, isDeveloper } from 'services/OrganizationRoles';
 import { WidgetLocation, WidgetNamespace } from '@contentful/widget-renderer';
-import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIFrameRenderer';
 import { getCurrentState } from 'features/apps/AppState';
+import { createPageExtensionSDK } from 'app/widgets/ExtensionSDKs/createPageExtensionSDK';
+import { PageWidgetRenderer } from '../PageWidgetRenderer';
 
 const BASIC_APPS_FEATURE_KEY = 'basic_apps';
 const DEFAULT_FEATURE_STATUS = true; // Fail open
@@ -122,7 +121,9 @@ export const appRoute = {
             // When executing `onEnter` after a page refresh
             // the current state won't be initialized. For this reason
             // we need to compute params and an absolute path manually.
-            const params = { spaceId: spaceContext.getId() };
+            const params: { spaceId: string; appId?: string; environmentId?: string } = {
+              spaceId: spaceContext.getId(),
+            };
 
             if (hasAppsFeature) {
               // Passing this param will open the app dialog.
@@ -185,21 +186,7 @@ export const appRoute = {
     {
       name: 'page',
       url: '/app_installations/:appId{path:PathSuffix}',
-      component: (props) => (
-        <div
-          className={css({
-            display: 'flex',
-            flexDirection: 'column',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            bottom: 0,
-            right: 0,
-            overflowX: 'hidden',
-          })}>
-          <ExtensionIFrameRendererWithLocalHostWarning {...props} isFullSize />
-        </div>
-      ),
+      component: PageWidgetRenderer,
       resolve: {
         app: ['$stateParams', 'spaceContext', ({ appId }) => getAppsRepo().getApp(appId)],
         widget: [
@@ -213,6 +200,8 @@ export const appRoute = {
             });
           },
         ],
+        // TODO: use launch darkly
+        useNewWidgetLoaderInPageLocation: [() => Promise.resolve(true)],
       },
       onEnter: [
         'widget',
@@ -230,24 +219,39 @@ export const appRoute = {
         'spaceContext',
         'app',
         'widget',
-        ({ path = '' }, spaceContext, { appDefinition }, widget) => {
-          const bridge = createPageExtensionBridge({
-            spaceContext,
-            Navigator,
-            SlideInNavigator,
-            appDefinition,
-            currentWidgetId: widget.id,
-            currentWidgetNamespace: widget.namespace,
-          });
+        'useNewWidgetLoaderInPageLocation',
+        (
+          { path = '' },
+          spaceContext,
+          { appDefinition },
+          widget,
+          useNewWidgetLoaderInPageLocation
+        ) => {
+          const parameters = {
+            instance: {},
+            invocation: { path: path.startsWith('/') ? path : `/${path}` },
+            installation: widget.parameters.values.installation,
+          };
 
           return {
             widget,
-            bridge,
-            parameters: {
-              instance: {},
-              invocation: { path: path.startsWith('/') ? path : `/${path}` },
-              installation: widget.parameters.values.installation,
-            },
+            // TODO: remove me once we remove new widget renderer in app location flag
+            bridge: createPageExtensionBridge({
+              spaceContext,
+              Navigator,
+              SlideInNavigator,
+              appDefinition,
+              currentWidgetId: widget.id,
+              currentWidgetNamespace: widget.namespace,
+            }),
+            parameters,
+            useNewWidgetLoaderInPageLocation,
+            sdk: createPageExtensionSDK({
+              spaceContext,
+              widgetNamespace: widget.namespace,
+              widgetId: widget.id,
+              parameters,
+            }),
           };
         },
       ],

@@ -25,15 +25,13 @@ export const createPageExtensionSDK = ({
   widgetId,
   parameters,
 }: CreateEditorExtensionSDKOptions): PageExtensionSDK => {
-  AbortController;
-
   const userApi = createUserApi(spaceContext.space.data.spaceMember);
 
   const spaceApi = createSpaceApi({
     cma: getBatchingApiClient(spaceContext.cma),
     initialContentTypes: spaceContext.publishedCTs.getAllBare(),
     pubSubClient: spaceContext.pubsubClient,
-    environmentIds: [spaceContext.getEnvironmentId(), ...spaceContext.getAliasIds()],
+    environmentIds: [spaceContext.getEnvironmentId(), ...spaceContext.getAliasesIds()],
     spaceId: spaceContext.getId(),
     tagsRepo: createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId()),
     usersRepo: spaceContext.users,
