@@ -260,16 +260,20 @@ export default ({ $scope, emitter }) => {
       location: WidgetLocation.ENTRY_SIDEBAR,
     });
 
-  const makeSidebarWidgetSDK = (widgetNamespace, widgetId, parameters) =>
-    createSidebarWidgetSDK({
-      internalContentType: $scope.entityInfo.contentType,
-      $scope,
-      doc: $scope.otDoc,
-      parameters,
-      spaceContext,
-      widgetNamespace,
-      widgetId,
-    });
+  const makeSidebarWidgetSDK = memoize(
+    (widgetNamespace, widgetId, parameters) => {
+      return createSidebarWidgetSDK({
+        internalContentType: $scope.entityInfo.contentType,
+        $scope,
+        doc: $scope.otDoc,
+        parameters,
+        spaceContext,
+        widgetNamespace,
+        widgetId,
+      });
+    },
+    (ns, id, params) => [ns, id, JSON.stringify(params)].join(',')
+  );
 
   return {
     legacySidebarExtensions: legacyExtensions,
