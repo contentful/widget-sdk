@@ -47,6 +47,7 @@ export const FLAGS = {
   PLATFORM_TRIAL_COMM: 'feature-moi-08-2020-end-of-platform-trial-communication',
   SPACE_PLAN_ASSIGNMENT: 'feature-hejo-08-2020-space-plan-assignment',
   CONTENT_LEVEL_PERMISSIONS: 'feature-dev-workflows-09-2020-content-level-permissions',
+  WORKFLOWS_APP: 'ext-09-2020-enable-workflows',
 
   // So that we can test the fallback mechanism without needing to rely on an actual
   // flag above, we use these special flags.
@@ -73,6 +74,7 @@ const FALLBACK_VALUES = {
   [FLAGS.PLATFORM_TRIAL_COMM]: false,
   [FLAGS.SPACE_PLAN_ASSIGNMENT]: false,
   [FLAGS.CONTENT_LEVEL_PERMISSIONS]: false,
+  [FLAGS.WORKFLOWS_APP]: false,
 
   // See above
   [FLAGS.__FLAG_FOR_UNIT_TESTS__]: 'fallback-value',
