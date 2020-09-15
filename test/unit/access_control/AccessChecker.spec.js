@@ -15,8 +15,7 @@ describe('Access Checker', () => {
     mockSpaceEndpoint,
     isPermissionDeniedStub,
     feature,
-    getSpaceFeature,
-    isSpaceOnTrialStub;
+    getSpaceFeature;
 
   function init() {
     ac.setAuthContext({ authContext: {}, spaceAuthContext: mockSpaceAuthContext });
@@ -118,11 +117,6 @@ describe('Access Checker', () => {
     this.system.set('services/TokenStore', {
       organizations$: this.stubs.organizations$,
       user$: this.stubs.user$,
-    });
-
-    isSpaceOnTrialStub = sinon.stub();
-    this.system.set('features/trials', {
-      isSpaceOnTrial: isSpaceOnTrialStub,
     });
 
     enforcements = await this.system.import('access_control/Enforcements');
@@ -334,34 +328,21 @@ describe('Access Checker', () => {
         test('asset', true);
       });
 
-      describe('spaceHome visibility', () => {
-        beforeEach(() => {
-          ac.setFeatureFlags({ isTrialCommEnabled: false });
-          isSpaceOnTrialStub.returns(false);
-        });
-        it('should return "true" for spaceHome if user is admin', () => {
-          changeSpace({ hasFeature: true, isSpaceAdmin: true });
-          expect(ac.getSectionVisibility().spaceHome).toBe(true);
-        });
-        it('should return "true" for spaceHome if user is author', () => {
-          changeSpace({ hasFeature: true, isSpaceAdmin: false, userRoleName: 'Author' });
-          expect(ac.getSectionVisibility().spaceHome).toBe(true);
-        });
-        it('should return "true" for spaceHome if user is editor', () => {
-          changeSpace({ hasFeature: true, isSpaceAdmin: false, userRoleName: 'Editor' });
-          expect(ac.getSectionVisibility().spaceHome).toBe(true);
-        });
-        it('should return "true" for spaceHome if the feature flag is on and is space trial', () => {
-          ac.setFeatureFlags({ isTrialCommEnabled: true });
-          isSpaceOnTrialStub.returns(true);
-
-          changeSpace({ hasFeature: true, isSpaceAdmin: false });
-          expect(ac.getSectionVisibility().spaceHome).toBe(true);
-        });
-        it('should return "false" for spaceHome if user is not an admin, editor or author', () => {
-          changeSpace({ hasFeature: true, isSpaceAdmin: false });
-          expect(ac.getSectionVisibility().spaceHome).toBe(false);
-        });
+      it('should return "true" for spaceHome if user is admin', () => {
+        changeSpace({ hasFeature: true, isSpaceAdmin: true });
+        expect(ac.getSectionVisibility().spaceHome).toBe(true);
+      });
+      it('should return "true" for spaceHome if user is author', () => {
+        changeSpace({ hasFeature: true, isSpaceAdmin: false, userRoleName: 'Author' });
+        expect(ac.getSectionVisibility().spaceHome).toBe(true);
+      });
+      it('should return "true" for spaceHome if user is editor', () => {
+        changeSpace({ hasFeature: true, isSpaceAdmin: false, userRoleName: 'Editor' });
+        expect(ac.getSectionVisibility().spaceHome).toBe(true);
+      });
+      it('should return "false" for spaceHome if user is not an admin, editor or author', () => {
+        changeSpace({ hasFeature: true, isSpaceAdmin: false });
+        expect(ac.getSectionVisibility().spaceHome).toBe(false);
       });
     });
 
