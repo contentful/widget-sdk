@@ -6,13 +6,24 @@ export default class GreetingWidget extends React.Component {
     spaceName: PropTypes.string.isRequired,
     orgName: PropTypes.string.isRequired,
     walkthroughStarted: PropTypes.bool,
+    isTrialSpace: PropTypes.bool,
   };
   render() {
-    const { spaceName, orgName, walkthroughStarted } = this.props;
+    const { spaceName, orgName, walkthroughStarted, isTrialSpace } = this.props;
+
+    if (isTrialSpace) {
+      return (
+        <div className="greeting-widget__header">
+          Welcome to your <span className="greeting-widget__space-name">{spaceName}</span> space{' '}
+          (Trial Space)
+        </div>
+      );
+    }
+
     return (
       <div className="greeting-widget">
         <div className="greeting-widget__header">
-          Welcome to your <span className="greeting-widget__space-name">{spaceName}</span> Space.
+          Welcome to your <span className="greeting-widget__space-name">{spaceName}</span> space
         </div>
         <p className="greeting-widget__copy">
           Use this Space to create the content you want to appear on the{' '}

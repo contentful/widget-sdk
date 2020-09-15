@@ -10,6 +10,7 @@ import GetSdkSection from './components/GetSdkSection';
 import UpgradePricing from './UpgradePricing';
 import LearnAboutContentful from './components/LearnAboutContentful';
 import ExampleProjectOverview from './components/ExampleProjectOverview';
+import { SpaceTrialWidget } from 'features/trials';
 
 const TEAAdminSpaceHome = ({
   spaceName,
@@ -19,19 +20,23 @@ const TEAAdminSpaceHome = ({
   cpaToken,
   isSupportEnabled,
   hasTeamsEnabled,
+  isTrialSpace,
 }) => {
   return (
     <WidgetContainer>
       <WidgetContainer.Row>
         <WidgetContainer.Col>
           <Heading className={styles.header}>
-            Welcome to your <span className={styles.demiBold}>{spaceName}</span> space
+            Welcome to your <span className={styles.demiBold}>{spaceName}</span> space{' '}
+            {isTrialSpace ? '(Trial Space)' : null}
           </Heading>
-          <Subheading className={styles.description}>
-            Use this space to explore the sample content of an educational course catalog.
-            <br />
-            After viewing the existing content, try modifying an entry.
-          </Subheading>
+          {!isTrialSpace && (
+            <Subheading className={styles.description}>
+              Use this space to explore the sample content of an educational course catalog.
+              <br />
+              After viewing the existing content, try modifying an entry.
+            </Subheading>
+          )}
         </WidgetContainer.Col>
       </WidgetContainer.Row>
 
@@ -39,6 +44,10 @@ const TEAAdminSpaceHome = ({
         <WidgetContainer.Col>
           <UpgradePricing />
         </WidgetContainer.Col>
+      </WidgetContainer.Row>
+
+      <WidgetContainer.Row>
+        <SpaceTrialWidget spaceId={spaceId} />
       </WidgetContainer.Row>
 
       <WidgetContainer.Row>
@@ -96,6 +105,7 @@ TEAAdminSpaceHome.propTypes = {
   cpaToken: PropTypes.string.isRequired,
   isSupportEnabled: PropTypes.bool.isRequired,
   hasTeamsEnabled: PropTypes.bool.isRequired,
+  isTrialSpace: PropTypes.bool,
 };
 
 export default TEAAdminSpaceHome;

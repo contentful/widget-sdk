@@ -119,6 +119,8 @@ registerGenericEvent('space_assignment:back');
 registerGenericEvent('quick_navigation:opened_by_shortcut');
 
 registerGenericEvent('trial:trial_tag_clicked');
+registerGenericEvent('trial:fair_use_policy_clicked');
+registerGenericEvent('trial:get_in_touch_clicked');
 
 registerBulkEditorEvent('bulk_editor:add');
 registerBulkEditorEvent('bulk_editor:unlink');

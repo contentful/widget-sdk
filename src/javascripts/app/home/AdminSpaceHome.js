@@ -10,20 +10,31 @@ import LearnAboutContentful from './components/LearnAboutContentful';
 import ContactAnExpertCTA from './components/ContactAnExpertCTA';
 import AppsCTA from './components/AppsCTA';
 import AddCoworkerCTA from './components/AddCoworkerCTA';
+import { SpaceTrialWidget } from 'features/trials';
 
-const AdminSpaceHome = ({ spaceName, spaceId, orgId, isSupportEnabled, hasTeamsEnabled }) => {
+const AdminSpaceHome = ({
+  spaceName,
+  spaceId,
+  orgId,
+  isSupportEnabled,
+  hasTeamsEnabled,
+  isTrialSpace,
+}) => {
   return (
     <WidgetContainer>
       <WidgetContainer.Row>
         <WidgetContainer.Col>
           <Heading className={styles.header}>
-            Welcome to your <span className={styles.demiBold}>{spaceName}</span> space
+            Welcome to your <span className={styles.demiBold}>{spaceName}</span> space{' '}
+            {isTrialSpace ? '(Trial Space)' : null}
           </Heading>
-          <Subheading className={styles.description}>
-            Use this space to create and publish content with others from your organization.
-            <br />
-            Explore ways to get started below.
-          </Subheading>
+          {!isTrialSpace && (
+            <Subheading className={styles.description}>
+              Use this space to create and publish content with others from your organization.
+              <br />
+              Explore ways to get started below.
+            </Subheading>
+          )}
         </WidgetContainer.Col>
       </WidgetContainer.Row>
 
@@ -31,6 +42,10 @@ const AdminSpaceHome = ({ spaceName, spaceId, orgId, isSupportEnabled, hasTeamsE
         <WidgetContainer.Col>
           <UpgradePricing />
         </WidgetContainer.Col>
+      </WidgetContainer.Row>
+
+      <WidgetContainer.Row>
+        <SpaceTrialWidget spaceId={spaceId} />
       </WidgetContainer.Row>
 
       <WidgetContainer.Row>
@@ -80,6 +95,7 @@ AdminSpaceHome.propTypes = {
   orgId: PropTypes.string.isRequired,
   isSupportEnabled: PropTypes.bool.isRequired,
   hasTeamsEnabled: PropTypes.bool.isRequired,
+  isTrialSpace: PropTypes.bool,
 };
 
 export default AdminSpaceHome;

@@ -32,6 +32,9 @@ import {
   isOrganizationBillable,
 } from 'core/services/SpaceEnvContext/utils';
 import { getModule } from 'core/NgRegistry';
+import { isSpaceOnTrial } from 'features/trials';
+import { getVariation, FLAGS } from 'LaunchDarkly';
+import { TrialSpaceHome } from './TrialSpaceHome';
 
 const isTEASpace = (publishedItems, currentSpace) => {
   const publishedCTs = K.getValue(publishedItems) || [];
@@ -48,11 +51,15 @@ const fetchData = (
   isSpaceAdmin,
   isTEA,
   currentSpace,
-  currentSpaceId
+  currentSpaceId,
+  setIsTrialCommEnabled
 ) => async () => {
   setLoading(true);
 
   const hasTeamsEnabled = await getOrgFeature(currentSpaceId, 'teams', false);
+  getVariation(FLAGS.PLATFORM_TRIAL_COMM, { spaceId: currentSpaceId }).then((flag) =>
+    setIsTrialCommEnabled(flag)
+  );
 
   if (!currentSpaceId || !isSpaceAdmin) {
     setLoading(false);
@@ -108,6 +115,7 @@ const SpaceHomePage = ({ spaceTemplateCreated, orgOwnerOrAdmin, orgId }) => {
     setState,
   ] = useState({});
   const [isLoading, setLoading] = useState(true);
+  const [isTrialCommEnabled, setIsTrialCommEnabled] = useState(false);
 
   const spaceRoles = getSpaceRoles(currentSpace);
   const organizationId = getOrganizationId(currentSpace);
@@ -118,6 +126,7 @@ const SpaceHomePage = ({ spaceTemplateCreated, orgOwnerOrAdmin, orgId }) => {
   const isSupportEnabled = isOrganizationBillable(currentSpace);
   const isModernStack = isDevOnboardingSpace(currentSpace);
   const isTEA = isTEASpace(spaceContext.publishedCTs.items$, currentSpace);
+  const isTrialSpace = isTrialCommEnabled && isSpaceOnTrial(currentSpace.data);
   const spaceHomeProps = {
     orgId: organizationId,
     orgName: organizationName,
@@ -128,7 +137,15 @@ const SpaceHomePage = ({ spaceTemplateCreated, orgOwnerOrAdmin, orgId }) => {
 
   useAsync(
     useCallback(
-      fetchData(setLoading, setState, isSpaceAdmin, isTEA, currentSpace, currentSpaceId),
+      fetchData(
+        setLoading,
+        setState,
+        isSpaceAdmin,
+        isTEA,
+        currentSpace,
+        currentSpaceId,
+        setIsTrialCommEnabled
+      ),
       [spaceTemplateCreated]
     )
   );
@@ -144,6 +161,7 @@ const SpaceHomePage = ({ spaceTemplateCreated, orgOwnerOrAdmin, orgId }) => {
           cpaToken={cpaToken}
           isSupportEnabled={isSupportEnabled}
           hasTeamsEnabled={hasTeamsEnabled}
+          isTrialSpace={isTrialSpace}
         />
       );
     } else if (isModernStack) {
@@ -165,6 +183,7 @@ const SpaceHomePage = ({ spaceTemplateCreated, orgOwnerOrAdmin, orgId }) => {
           orgId={spaceHomeProps.orgId}
           isSupportEnabled={isSupportEnabled}
           hasTeamsEnabled={hasTeamsEnabled}
+          isTrialSpace={isTrialSpace}
         />
       );
     }
@@ -185,10 +204,15 @@ const SpaceHomePage = ({ spaceTemplateCreated, orgOwnerOrAdmin, orgId }) => {
         <AuthorEditorSpaceHome
           spaceName={spaceHomeProps.spaceName}
           orgName={spaceHomeProps.orgName}
+          spaceId={spaceHomeProps.spaceId}
+          isTrialSpace={isTrialSpace}
         />
       )}
       {!isLoading && isSpaceAdmin && !readOnlySpace && adminSpaceHomePage}
       {!isLoading && readOnlySpace && <ReadOnlySpaceHome isAdmin={isSpaceAdmin} />}
+      {!isLoading && !isSpaceAdmin && !isAuthorOrEditor && isTrialSpace && (
+        <TrialSpaceHome spaceName={spaceHomeProps.spaceName} spaceId={spaceHomeProps.spaceId} />
+      )}
     </div>
   );
 };
