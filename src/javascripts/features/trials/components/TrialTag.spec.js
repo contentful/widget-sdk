@@ -179,6 +179,8 @@ describe('TrialTag', () => {
 
       await waitFor(() => expect(getVariation).toBeCalledTimes(1));
 
+      expect(initTrialProductTour).toBeCalledTimes(0);
+
       expect(screen.queryByTestId('space-trial-tag')).not.toBeInTheDocument();
     });
 
