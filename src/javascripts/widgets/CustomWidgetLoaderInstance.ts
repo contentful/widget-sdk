@@ -8,7 +8,7 @@ import * as Config from 'Config';
 // Use one icon for all types of widgets.
 // TODO: Use separate ones once designed.
 const ICON =
-  '//images.ctfassets.net/lpjm8d10rkpy/7gq7v5OtczqtbiyHiBYKZL/af36bf93daa60db54fe965b0715ef5c3/app-icon.svg';
+  '//images.ctfassets.net/lpjm8d10rkpy/4zI9Kh5oRtahqJockE56KG/9948001e84714b7089a60457891b1722/app-icon.svg';
 
 let marketplaceDataProvider: MarketplaceDataProvider;
 
