@@ -31,6 +31,11 @@ const mockSpaceResourcesRolesOverLimit = {
   role: Fake.SpaceResource(7, 5, 'role'),
 };
 
+const mockSpaceResourcesRecordsOverLimit = {
+  ...mockSpaceResourcesUnderLimits,
+  record: Fake.SpaceResource(50001, 50000, 'record'),
+};
+
 describe('Space Plan Assignment utils', () => {
   describe('#canPlanBeAssigned', () => {
     it('should return true if all space usages are lower or equal to the plan limits', () => {
@@ -39,7 +44,13 @@ describe('Space Plan Assignment utils', () => {
     });
 
     it('should return false if at least one of the space usages are higher than the plan limits', () => {
-      expect(utils.canPlanBeAssigned(mockPlanLarge, mockSpaceResourcesRolesOverLimit)).toBe(false);
+      expect(utils.canPlanBeAssigned(mockPlanLarge, mockSpaceResourcesRecordsOverLimit)).toBe(
+        false
+      );
+    });
+
+    it('should ignore roles over the limit', () => {
+      expect(utils.canPlanBeAssigned(mockPlanLarge, mockSpaceResourcesRolesOverLimit)).toBe(true);
     });
   });
 });

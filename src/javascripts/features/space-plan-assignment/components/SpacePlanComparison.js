@@ -46,7 +46,8 @@ export function SpacePlanComparison({ plan, spaceResources }) {
             if (['environment', 'role'].includes(id)) {
               usage = usage + 1;
             }
-            const isOverLimit = usage > planResources[id];
+            // we don't warn about roles being over the limit
+            const isOverLimit = id !== 'role' && usage > planResources[id];
             return (
               <TableCell key={id} className={isOverLimit ? styles.warning : ''}>
                 {isOverLimit ? (

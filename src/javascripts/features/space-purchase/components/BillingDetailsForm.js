@@ -26,7 +26,7 @@ const DEFAULT_BILLING_DETAILS = {
   address: '',
   addressTwo: '',
   city: '',
-  postalCode: '',
+  postcode: '',
   state: '',
   country: '',
   vatNumber: '',
@@ -105,8 +105,8 @@ export const BillingDetailsForm = ({
         value: billingDetails.city,
         required: true,
       },
-      postalCode: {
-        value: billingDetails.postalCode,
+      postcode: {
+        value: billingDetails.postcode,
         required: true,
       },
       state: {
@@ -173,7 +173,7 @@ export const BillingDetailsForm = ({
     <Card className={styles.card} testId="billing-details.card">
       <Typography>
         <Subheading className={styles.cardTitle} element="h3" testId="billing-details.heading">
-          {isAddingBillingDetails ? 'Add Billing Details' : 'Update Billing Details'}{' '}
+          {isAddingBillingDetails ? 'Add your billing details' : 'Update your billing details'}{' '}
           <span role="img" aria-label="Mailbox closed">
             📫
           </span>
@@ -187,11 +187,10 @@ export const BillingDetailsForm = ({
             name="firstName"
             id="first_name"
             testId="billing-details.firstName"
-            labelText="First Name"
+            labelText="First name"
             textInputProps={{
               placeholder: 'Archibald',
             }}
-            required
             autoFocus
             value={fields.firstName.value}
             validationMessage={fields.firstName.error}
@@ -203,11 +202,10 @@ export const BillingDetailsForm = ({
             name="lastName"
             id="last_name"
             testId="billing-details.lastName"
-            labelText="Last Name"
+            labelText="Last name"
             textInputProps={{
               placeholder: 'Johannson',
             }}
-            required
             autoFocus
             value={fields.lastName.value}
             validationMessage={fields.lastName.error}
@@ -224,7 +222,6 @@ export const BillingDetailsForm = ({
           textInputProps={{
             placeholder: 'archibald.johannson@email.com',
           }}
-          required
           autoFocus
           value={fields.email.value}
           validationMessage={fields.email.error}
@@ -240,7 +237,6 @@ export const BillingDetailsForm = ({
           textInputProps={{
             placeholder: '19th Avenue North',
           }}
-          required
           autoFocus
           value={fields.address.value}
           validationMessage={fields.address.error}
@@ -252,7 +248,7 @@ export const BillingDetailsForm = ({
           name="addressTwo"
           id="addressTwo"
           testId="billing-details.addressTwo"
-          labelText="Address Line 2"
+          labelText="Address line 2 (optional)"
           autoFocus
           value={fields.addressTwo.value}
           validationMessage={fields.addressTwo.error}
@@ -270,7 +266,6 @@ export const BillingDetailsForm = ({
             textInputProps={{
               placeholder: 'Fargo',
             }}
-            required
             autoFocus
             value={fields.city.value}
             validationMessage={fields.city.error}
@@ -278,17 +273,16 @@ export const BillingDetailsForm = ({
             onBlur={handleBlur}
           />
           <TextField
-            name="postalCode"
-            id="postalCode"
-            testId="billing-details.postalCode"
-            labelText="Postal Code"
+            name="postcode"
+            id="postcode"
+            testId="billing-details.postcode"
+            labelText="Postcode"
             textInputProps={{
               placeholder: '58102',
             }}
-            required
             autoFocus
-            value={fields.postalCode.value}
-            validationMessage={fields.postalCode.error}
+            value={fields.postcode.value}
+            validationMessage={fields.postcode.error}
             onChange={handleChange}
             onBlur={handleBlur}
           />
@@ -300,7 +294,6 @@ export const BillingDetailsForm = ({
           id="newspace-language"
           testId="billing-details.country"
           labelText="Country"
-          required
           value={fields.country.value}
           onChange={onChangeCountry}>
           <option value="" disabled>
@@ -320,7 +313,6 @@ export const BillingDetailsForm = ({
             id="newspace-language"
             testId="billing-details.state"
             labelText="State"
-            required
             value={fields.state.value}
             validationMessage={fields.state.error}
             onChange={handleChange}>
@@ -338,7 +330,7 @@ export const BillingDetailsForm = ({
             name="vatNumber"
             id="vatNumber"
             testId="billing-details.vatNumber"
-            labelText="VAT Number"
+            labelText="VAT number"
             textInputProps={{
               placeholder: 'XX123456789',
             }}
@@ -355,7 +347,7 @@ export const BillingDetailsForm = ({
             Back
           </Button>
           <Button onClick={onSubmit} testId="next-step-billing-details-form">
-            {isAddingBillingDetails ? 'Add Credit Card Details' : 'Update Billing Details'}
+            {isAddingBillingDetails ? 'Continue' : 'Update billing details'}
           </Button>
         </div>
       </Form>

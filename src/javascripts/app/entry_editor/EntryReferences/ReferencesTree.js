@@ -253,14 +253,13 @@ function ReferenceCards({
     if (maxLevelReached) {
       setIsTreeMaxDepthReached(true);
     }
+    track(trackingEvents.dialogOpen, {
+      entity_id: root.sys.id,
+      references_depth: depth,
+      references_per_level: entitiesPerLevel,
+      circular_references_count: circularReferenceCount,
+    });
   }
-
-  track(trackingEvents.dialogOpen, {
-    entity_id: root.sys.id,
-    references_depth: depth,
-    references_per_level: entitiesPerLevel,
-    circular_references_count: circularReferenceCount,
-  });
 
   return referenceCards;
 }

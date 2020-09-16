@@ -49,7 +49,7 @@ export const PaymentSummary = ({ selectedPlan, isReceipt = false }) => {
     <Card className={styles.card} testId="order-summary.card">
       <Typography className={styles.text}>
         <Subheading className={styles.cardTitle} element="h3" testId="space-heading">
-          {isReceipt ? 'Receipt' : 'Payment Summary'}
+          {isReceipt ? 'Receipt' : 'Payment summary'}
         </Subheading>
         <Paragraph>
           Start using your new space today. You will be billed at the end of each month. You can
@@ -60,7 +60,7 @@ export const PaymentSummary = ({ selectedPlan, isReceipt = false }) => {
             <span>Space</span> <span>{selectedPlan.name}</span>
           </ListItem>
           <ListItem testId="order-summary.selected-plan-price" className={styles.listItem}>
-            <span>Monthly Total:</span> <Price value={selectedPlan.price} />
+            <span>Monthly total</span> <Price value={selectedPlan.price} />
           </ListItem>
         </List>
         <Paragraph>This price is not inclusive of sales tax, if applicable.</Paragraph>

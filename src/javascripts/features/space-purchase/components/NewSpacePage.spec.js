@@ -14,7 +14,7 @@ const mockBillingDetails = {
   address: '123 street ave',
   addressTwo: 'apartment 321',
   city: 'Berlin',
-  postalCode: '11111',
+  postcode: '11111',
   country: 'DE',
 };
 

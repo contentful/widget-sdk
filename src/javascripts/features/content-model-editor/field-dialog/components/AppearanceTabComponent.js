@@ -27,8 +27,9 @@ const AppearanceTabComponent = ({
   ]);
 
   const isAdmin = !!spaceContext.getData('spaceMember.admin', false);
-  const hasCustomEditor =
-    editorInterface.editor && isCustomWidget(editorInterface.editor.widgetNamespace);
+  const hasCustomEditor = (editorInterface.editors || []).some((editor) => {
+    return isCustomWidget(editor.widgetNamespace);
+  });
 
   const onSelect = ({ id, namespace }) => {
     setWidgetSettings({ ...widgetSettings, id, namespace });

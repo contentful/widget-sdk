@@ -24,7 +24,7 @@ export const BillingInformation = ({ billingInfo }) => {
         className={cn(styles.title, styles.fontColor)}
         element="h4"
         aria-labelledby="billing-address-information-review-section">
-        Billing Address
+        Billing address
       </Subheading>
       <Paragraph className={styles.fontColor}>
         {billingInfo.firstName} {billingInfo.lastName}
@@ -35,7 +35,7 @@ export const BillingInformation = ({ billingInfo }) => {
         <Paragraph className={styles.fontColor}>{billingInfo.addressTwo}</Paragraph>
       )}
       <Paragraph className={styles.fontColor}>
-        {billingInfo.city}, {billingInfo.postalCode}
+        {billingInfo.city}, {billingInfo.postcode}
       </Paragraph>
       <Paragraph className={styles.fontColor}>
         {getCountryNameFromCountryCode(billingInfo.country)}
