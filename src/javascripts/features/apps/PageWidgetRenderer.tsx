@@ -1,10 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { PageExtensionSDK } from 'contentful-ui-extensions-sdk';
-import {
-  Widget,
-  WidgetLocation,
-  WidgetRenderer as NewWidgetRenderer,
-} from '@contentful/widget-renderer';
+import { Widget, WidgetLocation, WidgetRenderer } from '@contentful/widget-renderer';
 import { css } from 'emotion';
 import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIFrameRenderer';
 import trackExtensionRender from 'widgets/TrackExtensionRender';
@@ -71,12 +67,7 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
     <div data-test-id="page-extension" className={styles.root}>
       <DocumentTitle title={props.widget.name} />
       {props.useNewWidgetRendererInPageLocation ? (
-        <NewWidgetRenderer
-          isFullSize
-          location={WidgetLocation.PAGE}
-          sdk={sdk}
-          widget={props.widget}
-        />
+        <WidgetRenderer isFullSize location={WidgetLocation.PAGE} sdk={sdk} widget={props.widget} />
       ) : (
         <ExtensionIFrameRendererWithLocalHostWarning
           bridge={bridge}
