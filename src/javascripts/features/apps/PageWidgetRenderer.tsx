@@ -3,7 +3,6 @@ import { PageExtensionSDK } from 'contentful-ui-extensions-sdk';
 import {
   Widget,
   WidgetLocation,
-  WidgetNamespace,
   WidgetRenderer as NewWidgetRenderer,
 } from '@contentful/widget-renderer';
 import { css } from 'emotion';
@@ -43,9 +42,7 @@ const styles = {
 
 export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
   useEffect(() => {
-    if (props.widget.namespace === WidgetNamespace.EXTENSION) {
-      trackExtensionRender(WidgetLocation.PAGE, toLegacyWidget(props.widget), props.environmentId);
-    }
+    trackExtensionRender(WidgetLocation.PAGE, toLegacyWidget(props.widget), props.environmentId);
   }, []);
 
   const parameters = useMemo(() => {
