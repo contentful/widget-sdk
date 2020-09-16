@@ -179,7 +179,7 @@ module.exports = () => {
           // These SVGs are turned into a React component automatically
           test: /.svg$/,
           issuer: {
-            test: /\.js$/,
+            test: /\.(js|ts)x?$/,
           },
           use: [
             {
