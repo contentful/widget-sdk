@@ -8,6 +8,11 @@ export const resourcesToDisplay = [
   { id: 'record', name: 'Records' },
 ];
 
+// we don't validate role limits when changing plans.
+// in the future we can check in the BE if the extra roles are being used but
+// it's also currently hard to know if there are any custom roles in the old plan
+export const resourcesToValidate = resourcesToDisplay.filter((r) => r.id !== 'role');
+
 export function getIncludedResources(charges) {
   return Object.values(resourcesToDisplay).reduce((memo, { id, name }) => {
     const charge = charges.find((charge) => charge.name === name);
@@ -24,12 +29,13 @@ export function getIncludedResources(charges) {
 }
 
 export function canPlanBeAssigned(plan, spaceResources) {
-  const planLimits = Object.values(resourcesToDisplay).reduce((memo, { id, name }) => {
+  const planLimits = Object.values(resourcesToValidate).reduce((memo, { id, name }) => {
     const charge = plan.ratePlanCharges.find((charge) => charge.name === name);
     memo[id] = get(charge, 'tiers[0].endingUnit');
     return memo;
   }, {});
-  const planIsTooSmall = resourcesToDisplay.some(
+
+  const planIsTooSmall = resourcesToValidate.some(
     ({ id }) => spaceResources[id].usage > planLimits[id]
   );
   return !planIsTooSmall;

@@ -23,11 +23,11 @@ const mockSpaceResources = {
   locale: Fake.SpaceResource(2, 10, PricingService.SPACE_PLAN_RESOURCE_TYPES.LOCALE),
 };
 
-const mockSpaceResourcesRolesOverLimit = {
-  role: Fake.SpaceResource(7, 5, 'role'),
+const mockSpaceResourcesRecordsOverLimit = {
+  role: Fake.SpaceResource(3, 5, 'role'),
   environment: Fake.SpaceResource(0, 6, PricingService.SPACE_PLAN_RESOURCE_TYPES.ENVIRONMENT),
   content_type: Fake.SpaceResource(25, 48, PricingService.SPACE_PLAN_RESOURCE_TYPES.CONTENT_TYPE),
-  record: Fake.SpaceResource(2000, 50000, PricingService.SPACE_PLAN_RESOURCE_TYPES.RECORD),
+  record: Fake.SpaceResource(50001, 50000, PricingService.SPACE_PLAN_RESOURCE_TYPES.RECORD),
   locale: Fake.SpaceResource(2, 10, PricingService.SPACE_PLAN_RESOURCE_TYPES.LOCALE),
 };
 
@@ -50,7 +50,7 @@ describe('SpacePlanComparison', () => {
   });
 
   it('should show warning icon if space roles usage is over limit', async () => {
-    build({ spaceResources: mockSpaceResourcesRolesOverLimit });
+    build({ spaceResources: mockSpaceResourcesRecordsOverLimit });
     expect(screen.getAllByTestId('cf-ui-icon')).toHaveLength(1);
   });
 
