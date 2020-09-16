@@ -18,7 +18,7 @@ const mockBillingDetailsWith = (object) => {
   return Object.assign(mockBillingDetails, object);
 };
 
-describe('BillingDetailsForm', () => {
+describe.skip('BillingDetailsForm', () => {
   describe('editing the form works as expected', () => {
     it('should update text values when inputs are typed in', async () => {
       build();
