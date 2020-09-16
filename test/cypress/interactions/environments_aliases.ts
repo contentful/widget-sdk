@@ -22,6 +22,9 @@ export const queryFirst101EnvironmentAliasesInDefaultSpace = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: environmentAliases,
       },
     }).as('queryFirst101EnvironmentAliasesInDefaultSpace');
@@ -44,6 +47,9 @@ export const queryFirst101EnvironmentAliasesInDefaultSpace = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: environmentAliases,
       },
     }).as('queryFirst101EnvironmentAliasesInDefaultSpace');

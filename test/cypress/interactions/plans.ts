@@ -33,6 +33,9 @@ export const getSpacePlan = {
       withRequest: queryPlans(),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: mediumSpacePlan,
       },
     }).as('getSpacePlan');
@@ -108,6 +111,9 @@ export const getBasePlan = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: freePlanResponse,
       },
     }).as(getBasePlanInteraction);
@@ -132,6 +138,9 @@ export const getBasePlan = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: enterprisePlanResponse,
       },
     }).as(getBasePlanInteraction);
@@ -157,6 +166,9 @@ export const getPlans = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: freePlanResponse,
       },
     }).as(getPlansInteraction);
@@ -179,6 +191,9 @@ export const getPlans = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: enterprisePlanResponse,
       },
     }).as(getPlansInteraction);
@@ -200,6 +215,9 @@ export const getProductRatePlans = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: empty,
       },
     }).as(getProductRatePlansInteraction);
@@ -218,6 +236,9 @@ export const getProductRatePlans = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: {
           total: 3,
           sys: {
@@ -279,6 +300,9 @@ export const getProductRatePlansWithSpace = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: {
           total: 3,
           sys: {

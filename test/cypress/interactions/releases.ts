@@ -50,6 +50,9 @@ export const getReleasesList = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: noReleases(),
       },
     }).as('willReturnNone');
@@ -73,6 +76,9 @@ export const getReleasesList = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: severalReleases(),
       },
     }).as('willReturnSeveral');
@@ -98,6 +104,9 @@ export const createEmptyRelease = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: emptyReleaseResponse(),
       },
     }).as('willReturnEmptyRelease');
@@ -122,6 +131,9 @@ export const getReleaseEntities = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: emptyReleaseResponse(),
       },
     }).as('willReturnNone');
@@ -144,6 +156,9 @@ export const getReleaseEntities = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: severalEntitiesReleaseResponse(),
       },
     }).as('willReturnSeveral');
@@ -169,6 +184,9 @@ export const deleteEntityFromRelease = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: deleteEntityBodyResponse(),
       },
     }).as('willSucceed');
@@ -193,6 +211,9 @@ export const deleteRelease = {
       },
       willRespondWith: {
         status: 204,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
       },
     }).as('willSucceed');
 
@@ -216,6 +237,9 @@ export const validateRelease = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: validateBodyResponse(),
       },
     }).as('willSucceed');
@@ -238,6 +262,9 @@ export const validateRelease = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: validateErrorResponse(),
       },
     }).as('willFail');
@@ -262,6 +289,9 @@ export const publishRelease = {
       },
       willRespondWith: {
         status: 202,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: releaseAction('created'),
       },
     }).as('willSucceed');
@@ -284,6 +314,9 @@ export const publishRelease = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: releaseAction('succeeded'),
       },
     }).as('willSucceed');
@@ -306,6 +339,9 @@ export const publishRelease = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: releaseAction('failed'),
       },
     }).as('willSucceed');
@@ -328,6 +364,9 @@ export const publishRelease = {
       },
       willRespondWith: {
         status: 422,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: publishValidationErrorResponse(),
       },
     }).as('willFailWithValidationErrors');

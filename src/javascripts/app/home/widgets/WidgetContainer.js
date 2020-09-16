@@ -19,6 +19,9 @@ const styles = {
     width: '100%',
     marginTop: tokens.spacingXl,
     '&>div:nth-of-type(n+2)': { marginLeft: tokens.spacingL },
+    '&:empty': {
+      marginTop: 0,
+    },
   }),
   col: css({ flex: 1, maxWidth: '100%' }),
 };

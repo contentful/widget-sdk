@@ -78,6 +78,9 @@ describe('Content Preview Page', () => {
         },
         willRespondWith: {
           status: 201,
+          headers: {
+            'Content-Type': 'application/vnd.contentful.management.v1+json',
+          },
           body: previewResponseBody,
         },
       }).as('preview_environments/add');

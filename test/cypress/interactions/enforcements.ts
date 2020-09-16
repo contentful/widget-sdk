@@ -19,6 +19,9 @@ export const getAllEnforcementsForDefaultSpace = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: empty,
       },
     }).as('getAllEnforcementsForDefaultSpace');

@@ -26,6 +26,9 @@ export const getUsagePeriods = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: {
           total: 1,
           sys: {
@@ -82,6 +85,9 @@ export const getResourcesForApiRequest = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: resourcesForApiRequestResponse(2000000),
       },
     }).as(getResourcesForApiRequestInteraction);
@@ -100,6 +106,9 @@ export const getResourcesForApiRequest = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: resourcesForApiRequestResponse(null),
       },
     }).as(getResourcesForApiRequestInteraction);
@@ -140,6 +149,9 @@ export const getResourcesForAssetBandwidth = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: generateResourcesForAssetBandwidthResponse(null),
       },
     }).as(getResourcesForAssetBandwidthInteraction);
@@ -158,6 +170,9 @@ export const getResourcesForAssetBandwidth = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: generateResourcesForAssetBandwidthResponse(1),
       },
     }).as(getResourcesForAssetBandwidthInteraction);
@@ -184,6 +199,9 @@ export const getOrganizationPeriodicUsages = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: organizationPeriodicUsagesResponse,
       },
     }).as(getOrganizationPeriodicUsagesInteraction);
@@ -272,6 +290,9 @@ export const getSpacePeriodicUsages = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: generateSpacePeriodicUsagesResponse('cma', 40),
       },
     }).as(getSpacePeriodicUsagesCmaInteraction);
@@ -291,6 +312,9 @@ export const getSpacePeriodicUsages = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: generateSpacePeriodicUsagesResponse('cda', 0),
       },
     }).as(getSpacePeriodicUsagesCdaInteraction);
@@ -310,6 +334,9 @@ export const getSpacePeriodicUsages = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: generateSpacePeriodicUsagesResponse('cpa', 0),
       },
     }).as(getSpacePeriodicUsagesCpaInteraction);
@@ -329,6 +356,9 @@ export const getSpacePeriodicUsages = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: generateSpacePeriodicUsagesResponse('gql', 0),
       },
     }).as(getSpacePeriodicUsagesGqlInteraction);
@@ -351,6 +381,9 @@ export const getAllSpaces = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: {
           total: 1,
           limit: 100,
@@ -410,6 +443,9 @@ export const getAllSpaces = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: empty,
       },
     }).as(getAllSpacesInteraction);

@@ -51,6 +51,9 @@ export const getAllPublicContentTypesInDefaultSpace = {
       withRequest: getAllPublicContentTypesInDefaultSpaceRequest,
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: empty,
       },
     }).as('getAllPublicContentTypesInDefaultSpace');
@@ -67,6 +70,9 @@ export const getAllPublicContentTypesInDefaultSpace = {
       withRequest: getAllPublicContentTypesInDefaultSpaceRequest,
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: contentTypeSingle,
       },
     }).as('getAllPublicContentTypesInDefaultSpace');
@@ -81,6 +87,9 @@ export const getAllPublicContentTypesInDefaultSpace = {
       withRequest: getAllPublicContentTypesInDefaultSpaceRequest,
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: severalPublicContentTypes,
       },
     }).as('getSeveralPublicContentTypesInDefaultSpace');
@@ -107,6 +116,9 @@ export const getAllContentTypesInDefaultSpace = {
       withRequest: getAllContentTypesInDefaultSpaceRequest(),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: empty,
       },
     }).as('getAllContentTypesInDefaultSpace');
@@ -123,6 +135,9 @@ export const getAllContentTypesInDefaultSpace = {
       withRequest: getAllContentTypesInDefaultSpaceRequest(),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: contentTypeSingle,
       },
     }).as('getAllContentTypesInDefaultSpace');
@@ -143,6 +158,9 @@ export const getFirst1000ContentTypesInDefaultSpaceOrderedByName = {
       }),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: empty,
       },
     }).as('getFirst1000ContentTypesInDefaultSpaceOrderedByName');
@@ -160,6 +178,9 @@ export const getFirst1000ContentTypesInDefaultSpaceOrderedByName = {
       }),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: severalContentTypes,
       },
     }).as('getFirst1000ContentTypesInDefaultSpaceOrderedByName');
@@ -183,6 +204,9 @@ export const getEditorInterfaceForDefaultContentType = {
       withRequest: getEditorInterfaceForDefaultContentTypeRequest,
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: editorInterfaceWithoutSidebarResponseBody,
       },
     }).as('getEditorInterfaceForDefaultContentType');
@@ -197,6 +221,9 @@ export const getEditorInterfaceForDefaultContentType = {
       withRequest: getEditorInterfaceForDefaultContentTypeRequest,
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: editorInterfaceWithSidebarResponseBody,
       },
     }).as('getEditorInterfaceForDefaultContentType');
@@ -215,6 +242,9 @@ export const getEditorInterfaceForDefaultContentType = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: editorInterfaceResponseWithApp,
       },
     }).as('getEditorInterfaceForContentTypeWithApp');
@@ -236,6 +266,9 @@ export const getDefaultContentType = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: defaultContentType,
       },
     }).as('getDefaultContentType');
@@ -257,6 +290,9 @@ export const getPublishedVersionOfDefaultContentType = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: defaultContentType,
       },
     }).as('getPublishedVersionOfDefaultContentType');
@@ -279,6 +315,9 @@ export const saveDefaultContentTypeWithCustomSidebar = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: defaultContentType,
       },
     }).as('saveDefaultContentTypeWithCustomSidebar');
@@ -300,6 +339,9 @@ export const publishDefaultContentType = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: defaultContentType,
       },
     }).as('publishDefaultContentType');
@@ -322,6 +364,9 @@ export const saveDefaultContentTypeEditorInterface = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: editorInterfaceWithCustomSidebarResponseBody,
       },
     }).as('saveDefaultContentTypeEditorInterface');

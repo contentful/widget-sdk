@@ -54,11 +54,27 @@ async function fetchFn(config) {
   }
 }
 
-// 204s (or any response without payload) and .json() don't work well.
-// we return null in those cases.
+/**
+ * Safely get the response data.
+ *
+ * If the response content type is JSON-like (e.g. application/vnd.contentful.management.v1+json),
+ * the body will be parsed as JSON. Otherwise, it will be parsed as an array buffer. In both cases,
+ * if parsing fails, `null` will be returned.
+ *
+ * @param  {Response} response       window.fetch response
+ * @return {<Object|ArrayBuffer>?}   Parsed JSON, ArrayBuffer, or null
+ */
 async function safelyGetResponseBody(response) {
+  const contentType = response.headers.get('Content-Type');
+
+  let responseFn = 'json';
+
+  if (!contentType.match(/json/)) {
+    responseFn = 'arrayBuffer';
+  }
+
   try {
-    return await response.json();
+    return await response[responseFn]();
   } catch {
     return null;
   }

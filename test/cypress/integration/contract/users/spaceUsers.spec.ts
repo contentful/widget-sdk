@@ -161,6 +161,9 @@ const loadPageWithUserState = ({ stateName, responseBody, message }) => {
     },
     willRespondWith: {
       status: 200,
+      headers: {
+        'Content-Type': 'application/vnd.contentful.management.v1+json',
+      },
       body: responseBody,
     },
   }).as(getSpaceMembersInteraction);
@@ -176,6 +179,9 @@ const loadPageWithUserState = ({ stateName, responseBody, message }) => {
     },
     willRespondWith: {
       status: 200,
+      headers: {
+        'Content-Type': 'application/vnd.contentful.management.v1+json',
+      },
       body: {
         total: 2,
         sys: {
@@ -197,6 +203,9 @@ const loadPageWithUserState = ({ stateName, responseBody, message }) => {
     },
     willRespondWith: {
       status: 200,
+      headers: {
+        'Content-Type': 'application/vnd.contentful.management.v1+json',
+      },
       body: {
         total: 2,
         sys: {
@@ -218,6 +227,9 @@ const loadPageWithUserState = ({ stateName, responseBody, message }) => {
     },
     willRespondWith: {
       status: 200,
+      headers: {
+        'Content-Type': 'application/vnd.contentful.management.v1+json',
+      },
       body: {
         total: spaceUsers.length,
         sys: {
@@ -309,6 +321,9 @@ describe('Users in space page', () => {
         },
         willRespondWith: {
           status: 200,
+          headers: {
+            'Content-Type': 'application/vnd.contentful.management.v1+json',
+          },
           body: {
             admin: false,
             roles: [roleLink],
@@ -342,6 +357,9 @@ describe('Users in space page', () => {
         },
         willRespondWith: {
           status: 204,
+          headers: {
+            'Content-Type': 'application/vnd.contentful.management.v1+json',
+          },
         },
       }).as(deleteMembership);
 

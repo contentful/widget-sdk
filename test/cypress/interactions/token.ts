@@ -21,6 +21,9 @@ export const getTokenForUser = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: token,
       },
     }).as('getTokenForUser');

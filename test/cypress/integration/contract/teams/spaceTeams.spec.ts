@@ -49,6 +49,9 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
     },
     willRespondWith: {
       status: 200,
+      headers: {
+        'Content-Type': 'application/vnd.contentful.management.v1+json',
+      },
       body: responseBody,
     },
   }).as(getMembershipsInteraction);
@@ -64,6 +67,9 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
     },
     willRespondWith: {
       status: 200,
+      headers: {
+        'Content-Type': 'application/vnd.contentful.management.v1+json',
+      },
       body: empty,
     },
   }).as(getSpaceMembershipsInteraction);
@@ -80,6 +86,9 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
     },
     willRespondWith: {
       status: 200,
+      headers: {
+        'Content-Type': 'application/vnd.contentful.management.v1+json',
+      },
       body: empty,
     },
   }).as(getTeamsInteraction);
@@ -96,6 +105,9 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
     },
     willRespondWith: {
       status: 200,
+      headers: {
+        'Content-Type': 'application/vnd.contentful.management.v1+json',
+      },
       body: {
         items: [
           role1,
@@ -290,6 +302,9 @@ describe('Teams in space page', () => {
           },
           willRespondWith: {
             status: 200,
+            headers: {
+              'Content-Type': 'application/vnd.contentful.management.v1+json',
+            },
             body: {
               ...membership1,
               sys: { version: 1, ...membership1.sys },
@@ -329,6 +344,9 @@ describe('Teams in space page', () => {
           },
           willRespondWith: {
             status: 204,
+            headers: {
+              'Content-Type': 'application/vnd.contentful.management.v1+json',
+            },
           },
         }).as(removeTeamInteraction);
 

@@ -10,7 +10,6 @@ import { chain, get, set, some, forEach, values, find, isArray } from 'lodash';
 import * as Enforcements from 'access_control/Enforcements';
 import * as logger from 'services/logger';
 import { showPersistentNotification } from 'components/shared/persistent-notification/service';
-import { isSpaceOnTrial } from 'features/trials';
 
 /**
  * @name accessChecker
@@ -77,7 +76,6 @@ let organization;
 let gkPermissionChecker;
 let responses = {};
 let sectionVisibility = {};
-let featureFlags = {};
 
 export const isInitialized$ = isInitializedBus.property.skipDuplicates();
 
@@ -475,10 +473,6 @@ export function canModifySpaceSettings() {
   );
 }
 
-export function setFeatureFlags(flags) {
-  featureFlags = flags;
-}
-
 function collectResponses() {
   const replacement = {};
 
@@ -512,10 +506,7 @@ function collectSectionVisibility() {
     usage: !shouldHide(Action.UPDATE, 'settings'),
     previews: !shouldHide(Action.UPDATE, 'settings'),
     webhooks: !shouldHide(Action.UPDATE, 'settings'),
-    spaceHome:
-      get(space, 'spaceMember.admin') ||
-      isAuthorOrEditor(get(space, 'spaceMember.roles')) ||
-      (featureFlags.isTrialCommEnabled && isSpaceOnTrial(space)),
+    spaceHome: get(space, 'spaceMember.admin') || isAuthorOrEditor(get(space, 'spaceMember.roles')),
   };
 }
 

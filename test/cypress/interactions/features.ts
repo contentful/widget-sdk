@@ -15,6 +15,9 @@ export const getFeaturesWithCustomRoles = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: {
           total: 1,
           sys: {

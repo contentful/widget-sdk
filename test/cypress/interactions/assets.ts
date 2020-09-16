@@ -40,6 +40,9 @@ export const queryForDefaultAssets = {
       withRequest: queryAllAssetsInTheDefaultSpaceRequest({ 'sys.id[in]': defaultAssetId }),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: severalAssetsBody,
       },
     }).as('queryForAssets');
@@ -57,6 +60,9 @@ export const queryAllNonArchivedAssetsInTheDefaultSpace = {
       withRequest: queryAllAssetsInTheDefaultSpaceRequest(nonArchivedAssetsQuery),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: empty,
       },
     }).as('queryAllNonArchivedAssetsInTheDefaultSpace');
@@ -71,6 +77,9 @@ export const queryAllNonArchivedAssetsInTheDefaultSpace = {
       withRequest: queryAllAssetsInTheDefaultSpaceRequest(nonArchivedAssetsQuery),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: severalAssetsBody,
       },
     }).as('queryAllNonArchivedAssetsInTheDefaultSpace');
@@ -88,6 +97,9 @@ export const queryAllArchivedAssetsInTheDefaultSpace = {
       withRequest: queryAllAssetsInTheDefaultSpaceRequest(archivedAssetsQuery),
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: empty,
       },
     }).as('queryAllArchivedAssetsInTheDefaultSpace');
@@ -109,6 +121,9 @@ export const getDefaultAssetInDefaultSpace = {
       },
       willRespondWith: {
         status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
         body: defaultAsset,
       },
     }).as('getDefaultAssetInDefaultSpace');

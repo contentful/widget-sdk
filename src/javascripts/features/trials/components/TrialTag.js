@@ -12,6 +12,7 @@ import { calcTrialDaysLeft } from '../utils';
 import { getModule } from 'core/NgRegistry';
 import { getOrganization, getSpace } from 'services/TokenStore';
 import { isOrganizationOnTrial, isSpaceOnTrial } from '../services/TrialService';
+import { logError } from 'services/logger';
 
 const styles = {
   tag: css({
@@ -58,8 +59,8 @@ export const TrialTag = () => {
       org = space.organization;
     }
 
-    if (isPlatformTrialCommEnabled && isOrganizationOnTrial(org)) {
-      initTrialProductTour();
+    if (isPlatformTrialCommEnabled) {
+      initTrialProductTour(space, org);
     }
 
     setOrganization(org);
@@ -70,6 +71,14 @@ export const TrialTag = () => {
 
   const isEnterpriseTrial = organization && isOrganizationOnTrial(organization);
   const isSpaceTrial = space && isSpaceOnTrial(space);
+
+  if (isEnterpriseTrial && isSpaceTrial) {
+    logError('Unexpected behaviour, both space and organization are on trial', {
+      organization,
+      space,
+    });
+    return null;
+  }
 
   if (isLoading || !isPlatformTrialCommEnabled || (!isEnterpriseTrial && !isSpaceTrial)) {
     return null;
