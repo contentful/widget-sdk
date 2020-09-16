@@ -3,22 +3,22 @@ import { render, screen, within, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BillingDetailsForm } from './BillingDetailsForm';
 
-const mockBillingDetails = {
-  firstName: 'John',
-  lastName: 'Doe',
-  email: 'test@example.com',
-  address: '123 street ave',
-  addressTwo: 'apartment 321',
-  city: 'Berlin',
-  postalCode: '11111',
-  country: 'AR',
-};
+describe('BillingDetailsForm', () => {
+  let mockBillingDetails;
 
-const mockBillingDetailsWith = (object) => {
-  return Object.assign(mockBillingDetails, object);
-};
+  beforeEach(() => {
+    mockBillingDetails = getMockBillingDetails({
+      firstName: 'John',
+      lastName: 'Doe',
+      email: 'test@example.com',
+      address: '123 street ave',
+      addressTwo: 'apartment 321',
+      city: 'Rio de Janeiro',
+      postalCode: '11111',
+      country: 'BR',
+    });
+  });
 
-describe.skip('BillingDetailsForm', () => {
   describe('editing the form works as expected', () => {
     it('should update text values when inputs are typed in', async () => {
       build();
@@ -77,24 +77,24 @@ describe.skip('BillingDetailsForm', () => {
     describe('email validation', () => {
       it('should reject an email missing .', async () => {
         build({
-          savedBillingDetails: mockBillingDetailsWith({ email: '@' }),
+          savedBillingDetails: getMockBillingDetails({ email: '@' }),
         });
 
         userEvent.click(screen.getByTestId('next-step-billing-details-form'));
 
-        waitFor(() => {
+        await waitFor(() => {
           expect(screen.getByText('Not a valid email address')).toBeVisible();
         });
       });
 
       it('should reject an email missing @', async () => {
         build({
-          savedBillingDetails: mockBillingDetailsWith({ email: '.' }),
+          savedBillingDetails: getMockBillingDetails({ email: '.' }),
         });
 
         userEvent.click(screen.getByTestId('next-step-billing-details-form'));
 
-        waitFor(() => {
+        await waitFor(() => {
           expect(screen.getByText('Not a valid email address')).toBeVisible();
         });
       });
@@ -102,13 +102,13 @@ describe.skip('BillingDetailsForm', () => {
       it('should accept an email containing both @ && .', async () => {
         const mockOnSubmitBillingDetails = jest.fn();
         build({
-          savedBillingDetails: mockBillingDetailsWith({ email: '@.' }),
+          savedBillingDetails: getMockBillingDetails({ email: '@.' }),
           onSubmitBillingDetails: mockOnSubmitBillingDetails,
         });
 
         userEvent.click(screen.getByTestId('next-step-billing-details-form'));
 
-        waitFor(() => {
+        await waitFor(() => {
           expect(mockOnSubmitBillingDetails).toBeCalled();
         });
       });
@@ -117,7 +117,7 @@ describe.skip('BillingDetailsForm', () => {
     describe('fields validation', () => {
       it('should reject an improperly formatted vat for the selected country', async () => {
         build({
-          savedBillingDetails: mockBillingDetailsWith({ vatNumber: '1234123' }),
+          savedBillingDetails: getMockBillingDetails({ country: 'DE', vatNumber: '1234123' }),
         });
 
         const countrySelect = within(screen.getByTestId('billing-details.country')).getByTestId(
@@ -125,10 +125,9 @@ describe.skip('BillingDetailsForm', () => {
         );
 
         userEvent.selectOptions(countrySelect, ['DE']);
-
         userEvent.click(screen.getByTestId('next-step-billing-details-form'));
 
-        waitFor(() => {
+        await waitFor(() => {
           expect(screen.getByText('Not a valid VAT Number')).toBeVisible();
         });
       });
@@ -136,13 +135,14 @@ describe.skip('BillingDetailsForm', () => {
       it('should accept a properly formatted vat for the selected country', async () => {
         const mockOnSubmitBillingDetails = jest.fn();
         build({
-          savedBillingDetails: mockBillingDetailsWith({ country: 'DE', vatNumber: 'DE 123456789' }),
+          savedBillingDetails: getMockBillingDetails({ country: 'DE', vatNumber: 'DE275148225' }),
           onSubmitBillingDetails: mockOnSubmitBillingDetails,
         });
 
         userEvent.click(screen.getByTestId('next-step-billing-details-form'));
 
-        waitFor(() => {
+        await waitFor(() => {
+          expect(screen.queryByText('Not a valid VAT Number')).toBeNull();
           expect(mockOnSubmitBillingDetails).toBeCalled();
         });
       });
@@ -151,7 +151,7 @@ describe.skip('BillingDetailsForm', () => {
         const mockOnSubmitBillingDetails = jest.fn();
 
         build({
-          savedBillingDetails: mockBillingDetailsWith({ vatNumber: '' }),
+          savedBillingDetails: mockBillingDetails,
           onSubmitBillingDetails: mockOnSubmitBillingDetails,
         });
 
@@ -162,7 +162,7 @@ describe.skip('BillingDetailsForm', () => {
         userEvent.selectOptions(countrySelect, ['DE']);
         userEvent.click(screen.getByTestId('next-step-billing-details-form'));
 
-        waitFor(() => {
+        await waitFor(() => {
           expect(screen.queryByText('Not a valid VAT Number')).toBeNull();
           expect(mockOnSubmitBillingDetails).toBeCalled();
         });
@@ -172,7 +172,7 @@ describe.skip('BillingDetailsForm', () => {
         const mockOnSubmitBillingDetails = jest.fn();
 
         build({
-          savedBillingDetails: mockBillingDetailsWith({ country: 'DE' }),
+          savedBillingDetails: getMockBillingDetails({ country: 'DE' }),
           onSubmitBillingDetails: mockOnSubmitBillingDetails,
         });
 
@@ -191,7 +191,7 @@ describe.skip('BillingDetailsForm', () => {
         const mockOnSubmitBillingDetails = jest.fn();
 
         build({
-          savedBillingDetails: mockBillingDetailsWith({ country: 'DE' }),
+          savedBillingDetails: getMockBillingDetails({ country: 'DE' }),
           onSubmitBillingDetails: mockOnSubmitBillingDetails,
         });
 
@@ -209,7 +209,7 @@ describe.skip('BillingDetailsForm', () => {
         userEvent.click(screen.getByTestId('next-step-billing-details-form'));
 
         expect(screen.queryByText('Select a State')).toBeNull();
-        waitFor(() => {
+        await waitFor(() => {
           expect(mockOnSubmitBillingDetails).toBeCalled();
         });
       });
@@ -232,7 +232,7 @@ describe.skip('BillingDetailsForm', () => {
     });
 
     it('should render a prefilled form when there are saved billing details', () => {
-      build({ savedBillingDetails: mockBillingDetails });
+      build({ savedBillingDetails: getMockBillingDetails({ vatNumber: '' }) });
 
       expect(screen.getByTestId('billing-details.card')).toBeVisible();
       expect(screen.getByTestId('billing-details.heading')).toHaveTextContent(
@@ -251,7 +251,7 @@ describe.skip('BillingDetailsForm', () => {
 
     it('should show vat field if its been filled out', () => {
       build({
-        savedBillingDetails: mockBillingDetailsWith({ country: 'DE', vatNumber: 'DE123456789' }),
+        savedBillingDetails: getMockBillingDetails({ country: 'DE', vatNumber: 'DE275148225' }),
       });
 
       expect(screen.queryByTestId('billing-details.vatNumber')).toBeVisible();
@@ -259,7 +259,7 @@ describe.skip('BillingDetailsForm', () => {
 
     it('should show state field if its been filled out', () => {
       build({
-        savedBillingDetails: mockBillingDetailsWith({ country: 'US', state: 'CA' }),
+        savedBillingDetails: getMockBillingDetails({ country: 'US', state: 'CA' }),
       });
 
       expect(screen.queryByTestId('billing-details.state')).toBeVisible();
@@ -274,7 +274,7 @@ describe.skip('BillingDetailsForm', () => {
       });
 
       userEvent.click(screen.getByTestId('navigate-back'));
-      waitFor(() => {
+      await waitFor(() => {
         expect(mockNavigateToPreviousStep).toBeCalled();
       });
     });
@@ -293,6 +293,20 @@ describe.skip('BillingDetailsForm', () => {
     });
   });
 });
+
+function getMockBillingDetails(customProps) {
+  return {
+    firstName: 'John',
+    lastName: 'Doe',
+    email: 'test@example.com',
+    address: '123 street ave',
+    addressTwo: 'apartment 321',
+    city: 'Rio de Janeiro',
+    postalCode: '11111',
+    country: 'BR',
+    ...customProps,
+  };
+}
 
 function build(customProps) {
   const props = {
