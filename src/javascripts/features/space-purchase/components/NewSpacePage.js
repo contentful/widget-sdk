@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import { Grid, NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { Workbench } from '@contentful/forma-36-react-components';
 
+import { isFreeProductPlan } from 'account/pricing/PricingDataProvider';
+
 import { Breadcrumb } from './Breadcrumb';
 import { NewSpaceFAQ } from './NewSpaceFAQ';
 import { SpaceSelection } from './SpaceSelection';
@@ -34,21 +36,14 @@ const NEW_SPACE_STEPS_CONFIRMATION = [
   { text: '3.Confirmation', isActive: true },
 ];
 
-const SPACE_SELECTION = 0;
-const SPACE_DETAILS = 1;
-const BILLING_DETAILS = 2;
-const CARD_DETAILS = 3;
-const CONFIRMATION = 4;
-const RECEIPT = 5;
-
-const PURCHASE_FLOW_STEPS = [
-  SPACE_SELECTION,
-  SPACE_DETAILS,
-  BILLING_DETAILS,
-  CARD_DETAILS,
-  CONFIRMATION,
-  RECEIPT,
-];
+const spacePurchaseSteps = {
+  SPACE_SELECTION: 0,
+  SPACE_DETAILS: 1,
+  BILLING_DETAILS: 2,
+  CARD_DETAILS: 3,
+  CONFIRMATION: 4,
+  RECEIPT: 5,
+};
 
 export const NewSpacePage = ({
   organizationId,
@@ -68,6 +63,8 @@ export const NewSpacePage = ({
   // Space Purchase content
   const { faqEntries } = usePageContent(pageContent);
 
+  const spaceIsFree = !!selectedPlan && isFreeProductPlan(selectedPlan);
+
   const onChangeSelectedTemplate = (changedTemplate) => {
     setSelectedTemplate(changedTemplate);
   };
@@ -76,14 +73,15 @@ export const NewSpacePage = ({
     setSpaceName(changedSpaceName);
   };
 
-  const navigateToNextStep = () => {
-    const nextStep = currentStep + 1;
+  const goToStep = (nextStep) => {
+    setCurrentStep(nextStep);
+    // Save the step in the history's state to use when the browser's forward or back button is clicked
+    window.history.pushState({ step: nextStep }, null);
+  };
 
-    if (nextStep < PURCHASE_FLOW_STEPS.length) {
-      setCurrentStep(nextStep);
-      // Save the step in the history's state to use when the browser's forward or back button is clicked
-      window.history.pushState({ step: nextStep }, null);
-    }
+  const navigateToPreviousStep = () => {
+    // We use window's history's back function so that the history state is also correctly updated.
+    window.history.back();
   };
 
   const selectPlan = (planType) => {
@@ -96,17 +94,42 @@ export const NewSpacePage = ({
     });
 
     setSelectedPlan(selectedProductRatePlan);
-    navigateToNextStep();
+    goToStep(spacePurchaseSteps.SPACE_DETAILS);
   };
 
-  const navigateToPreviousStep = () => {
-    // We use window's history's back function so that the history state is also correctly updated.
-    window.history.back();
+  const onSubmitSpaceDetails = () => {
+    // TODO: Add analytics here
+    if (spaceIsFree) {
+      goToStep(spacePurchaseSteps.RECEIPT);
+    } else {
+      goToStep(spacePurchaseSteps.BILLING_DETAILS);
+    }
+  };
+
+  const onSubmitBillingDetails = (billingDetails) => {
+    // Add analytics here
+
+    setBillingDetails(billingDetails);
+    goToStep(spacePurchaseSteps.CARD_DETAILS);
+  };
+
+  const onSubmitPaymentMethod = (refId) => {
+    setPaymentMethodRefId(refId);
+    // Add analytics here
+
+    goToStep(spacePurchaseSteps.CONFIRMATION);
+  };
+
+  const onConfirm = () => {
+    // Add analytics here
+    // Creating the zoura subscription goes here
+
+    goToStep(spacePurchaseSteps.RECEIPT);
   };
 
   const browserNavigationHandler = useCallback((e) => {
     // If no state/step is set, it's the first step.
-    setCurrentStep(e.state?.step ?? 0);
+    setCurrentStep(e.state?.step ?? spacePurchaseSteps.SPACE_SELECTION);
   }, []);
 
   useEffect(() => {
@@ -118,35 +141,9 @@ export const NewSpacePage = ({
     };
   }, [browserNavigationHandler]);
 
-  const onSubmitSpaceDetails = () => {
-    // Add analytics here
-
-    navigateToNextStep();
-  };
-  const onSubmitBillingDetails = (billingDetails) => {
-    // Add analytics here
-
-    setBillingDetails(billingDetails);
-    navigateToNextStep();
-  };
-
-  const onSubmitPaymentMethod = (refId) => {
-    setPaymentMethodRefId(refId);
-    // Add analytics here
-
-    navigateToNextStep();
-  };
-
-  const onConfirm = () => {
-    // Add analytics here
-    // Creating the zoura subscription goes here
-
-    navigateToNextStep();
-  };
-
   const getComponentForStep = (currentStep) => {
     switch (currentStep) {
-      case SPACE_DETAILS:
+      case spacePurchaseSteps.SPACE_DETAILS:
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS} />
@@ -158,10 +155,11 @@ export const NewSpacePage = ({
               onChangeSelectedTemplate={onChangeSelectedTemplate}
               selectedTemplate={selectedTemplate}
               onSubmit={onSubmitSpaceDetails}
+              spaceIsFree={spaceIsFree}
             />
           </Grid>
         );
-      case BILLING_DETAILS:
+      case spacePurchaseSteps.BILLING_DETAILS:
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS_PAYMENT} />
@@ -173,7 +171,7 @@ export const NewSpacePage = ({
             />
           </Grid>
         );
-      case CARD_DETAILS:
+      case spacePurchaseSteps.CARD_DETAILS:
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS_PAYMENT} />
@@ -183,11 +181,11 @@ export const NewSpacePage = ({
               billingCountryCode={billingDetails.country}
               onSuccess={onSubmitPaymentMethod}
               selectedPlan={selectedPlan}
-              navigateToNextStep={navigateToNextStep}
+              navigateToNextStep={() => goToStep(spacePurchaseSteps.CONFIRMATION)}
             />
           </Grid>
         );
-      case CONFIRMATION:
+      case spacePurchaseSteps.CONFIRMATION:
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS_CONFIRMATION} />
@@ -199,7 +197,7 @@ export const NewSpacePage = ({
             />
           </Grid>
         );
-      case RECEIPT:
+      case spacePurchaseSteps.RECEIPT:
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS_CONFIRMATION} />

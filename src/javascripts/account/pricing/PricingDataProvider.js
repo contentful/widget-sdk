@@ -49,6 +49,10 @@ export function isFreeSpacePlan(plan) {
   return plan.planType === 'free_space';
 }
 
+export function isFreeProductPlan(plan) {
+  return plan.productPlanType === 'free_space';
+}
+
 export function isPOCSpacePlan(plan) {
   return isEnterprisePlan(plan) && isFreeSpacePlan(plan);
 }
