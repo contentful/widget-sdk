@@ -6,7 +6,7 @@ import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIF
 import React from 'react';
 
 interface PageWidgetRendererProps {
-  useNewWidgetLoaderInPageLocation: boolean;
+  useNewWidgetRendererInPageLocation: boolean;
   sdk: PageExtensionSDK;
   widget: Widget;
   bridge: any;
@@ -30,7 +30,7 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
         right: 0,
         overflowX: 'hidden',
       })}>
-      {props.useNewWidgetLoaderInPageLocation ? (
+      {props.useNewWidgetRendererInPageLocation ? (
         <NewWidgetRenderer location={WidgetLocation.PAGE} sdk={props.sdk} widget={props.widget} />
       ) : (
         <ExtensionIFrameRendererWithLocalHostWarning

@@ -201,7 +201,16 @@ export const appRoute = {
             });
           },
         ],
-        useNewWidgetLoaderInPageLocation: [() => getVariation(FLAGS.NEW_WIDGET_RENDERER_PAGE)],
+        useNewWidgetRendererInPageLocation: [
+          'spaceContext',
+          (spaceContext) => {
+            return getVariation(FLAGS.NEW_WIDGET_RENDERER_PAGE, {
+              spaceId: spaceContext.getId(),
+              organizationId: spaceContext.organization.sys.id,
+              environmentId: spaceContext.getEnvironmentId(),
+            });
+          },
+        ],
       },
       onEnter: [
         'widget',
@@ -219,13 +228,13 @@ export const appRoute = {
         'spaceContext',
         'app',
         'widget',
-        'useNewWidgetLoaderInPageLocation',
+        'useNewWidgetRendererInPageLocation',
         (
           { path = '' },
           spaceContext,
           { appDefinition },
           widget,
-          useNewWidgetLoaderInPageLocation
+          useNewWidgetRendererInPageLocation
         ) => {
           const parameters = {
             instance: {},
@@ -245,7 +254,7 @@ export const appRoute = {
               currentWidgetNamespace: widget.namespace,
             }),
             parameters,
-            useNewWidgetLoaderInPageLocation,
+            useNewWidgetRendererInPageLocation,
             sdk: createPageExtensionSDK({
               spaceContext,
               widgetNamespace: widget.namespace,

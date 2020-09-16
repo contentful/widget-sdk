@@ -5,19 +5,29 @@ import * as SlideInNavigator from 'navigation/SlideInNavigator/index';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import { createPageExtensionSDK } from 'app/widgets/ExtensionSDKs/createPageExtensionSDK';
+import memoize from 'utils/memoize';
 
 export default {
   name: 'pageExtensions',
   url: '/extensions/:extensionId{path:PathSuffix}',
   component: PageExtensionRoute,
   resolve: {
-    useNewWidgetLoaderInPageLocation: [() => () => getVariation(FLAGS.NEW_WIDGET_RENDERER_PAGE)],
+    useNewWidgetRendererInPageLocation: [
+      'spaceContext',
+      (spaceContext) => {
+        return getVariation(FLAGS.NEW_WIDGET_RENDERER_PAGE, {
+          spaceId: spaceContext.getId(),
+          organizationId: spaceContext.organization.sys.id,
+          environmentId: spaceContext.getEnvironmentId(),
+        });
+      },
+    ],
   },
   mapInjectedToProps: [
     '$stateParams',
     'spaceContext',
-    'useNewWidgetLoaderInPageLocation',
-    ($stateParams, spaceContext, useNewWidgetLoaderInPageLocation) => {
+    'useNewWidgetRendererInPageLocation',
+    ($stateParams, spaceContext, useNewWidgetRendererInPageLocation) => {
       const { extensionId, path = '' } = $stateParams;
 
       return {
@@ -32,15 +42,16 @@ export default {
           currentWidgetNamespace: WidgetNamespace.EXTENSION,
         }),
         path: path.startsWith('/') ? path : '/' + path,
-        useNewWidgetLoaderInPageLocation,
+        useNewWidgetRendererInPageLocation,
         // Drilling spaceContext yields an angular "too much recursion" error
-        createPageExtensionSDK: ({ widget, parameters }) =>
+        createPageExtensionSDK: memoize(({ widget, parameters }) =>
           createPageExtensionSDK({
             spaceContext,
             widgetNamespace: widget.namespace,
             widgetId: widget.id,
             parameters,
-          }),
+          })
+        ),
       };
     },
   ],

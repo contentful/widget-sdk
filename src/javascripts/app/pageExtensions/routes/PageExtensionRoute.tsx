@@ -2,7 +2,6 @@ import React from 'react';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import createFetcherComponent from 'app/common/createFetcherComponent';
-import PageExtension from '../PageExtension';
 import { AdvancedExtensibilityFeature } from 'features/extensions-management';
 import {
   SkeletonContainer,
@@ -12,13 +11,9 @@ import {
 import Placeholder from 'app/common/Placeholder';
 import BinocularsIllustration from 'svg/illustrations/binoculars-illustration.svg';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
-import {
-  Widget,
-  WidgetLocation,
-  WidgetNamespace,
-  WidgetRenderer,
-} from '@contentful/widget-renderer';
+import { Widget, WidgetNamespace } from '@contentful/widget-renderer';
 import { PageExtensionSDK } from 'contentful-ui-extensions-sdk';
+import { PageWidgetRenderer } from 'features/apps/PageWidgetRenderer';
 
 const PageExtensionFetcher = createFetcherComponent(async ({ extensionId, orgId }) => {
   const loader = await getCustomWidgetLoader();
@@ -64,7 +59,7 @@ interface PageExtensionRouteProps {
   orgId: string;
   path: string;
   bridge: any;
-  useNewWidgetLoaderInPageLocation: boolean;
+  useNewWidgetRendererInPageLocation: boolean;
   createPageExtensionSDK: ({
     widget,
     parameters,
@@ -93,19 +88,21 @@ export default function PageExtensionRoute(props: PageExtensionRouteProps) {
           return <ErrorMessage />;
         }
 
-        if (props.useNewWidgetLoaderInPageLocation) {
-          const parameters = {
-            instance: {},
-            invocation: { path: props.path },
-            installation: widget.parameters.values.installation,
-          };
+        const parameters = {
+          instance: {},
+          invocation: { path: props.path },
+          installation: widget.parameters.values.installation,
+        };
 
-          const sdk = props.createPageExtensionSDK({ widget, parameters });
-
-          return <WidgetRenderer location={WidgetLocation.PAGE} sdk={sdk} widget={widget} />;
-        } else {
-          return <PageExtension bridge={props.bridge} widget={widget} path={props.path} />;
-        }
+        return (
+          <PageWidgetRenderer
+            useNewWidgetRendererInPageLocation={props.useNewWidgetRendererInPageLocation}
+            sdk={props.createPageExtensionSDK({ widget, parameters })}
+            widget={widget}
+            bridge={props.bridge}
+            parameters={parameters}
+          />
+        );
       }}
     </PageExtensionFetcher>
   );
