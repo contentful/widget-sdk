@@ -23,7 +23,7 @@ export const CreditCardInformation = ({ creditCardinfo }) => {
         className={cn(styles.title, styles.fontColor)}
         element="h4"
         aria-labelledby="credit-card-information-review-section">
-        Credit Card
+        Credit card
       </Subheading>
       <Paragraph className={styles.fontColor}>{creditCardinfo.number}</Paragraph>
       <Paragraph className={styles.fontColor}>{creditCardinfo.experationDate}</Paragraph>

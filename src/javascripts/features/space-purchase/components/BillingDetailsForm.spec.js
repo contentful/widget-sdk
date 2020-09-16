@@ -14,7 +14,7 @@ describe('BillingDetailsForm', () => {
       address: '123 street ave',
       addressTwo: 'apartment 321',
       city: 'Rio de Janeiro',
-      postalCode: '11111',
+      postcode: '11111',
       country: 'BR',
     });
   });
@@ -222,11 +222,9 @@ describe('BillingDetailsForm', () => {
 
       expect(screen.getByTestId('billing-details.card')).toBeVisible();
       expect(screen.getByTestId('billing-details.heading')).toHaveTextContent(
-        'Add Billing Details'
+        'Add your billing details 📫'
       );
-      expect(screen.getByTestId('next-step-billing-details-form')).toHaveTextContent(
-        'Add Credit Card Details'
-      );
+      expect(screen.getByTestId('next-step-billing-details-form')).toHaveTextContent('Continue');
 
       expect(screen.getAllByTestId('cf-ui-text-input').value).toBeUndefined();
     });
@@ -236,10 +234,10 @@ describe('BillingDetailsForm', () => {
 
       expect(screen.getByTestId('billing-details.card')).toBeVisible();
       expect(screen.getByTestId('billing-details.heading')).toHaveTextContent(
-        'Update Billing Details'
+        'Update your billing details 📫'
       );
       expect(screen.getByTestId('next-step-billing-details-form')).toHaveTextContent(
-        'Update Billing Details'
+        'Update billing details'
       );
 
       // Make sure all text fields are filled out
@@ -302,7 +300,7 @@ function getMockBillingDetails(customProps) {
     address: '123 street ave',
     addressTwo: 'apartment 321',
     city: 'Rio de Janeiro',
-    postalCode: '11111',
+    postcode: '11111',
     country: 'BR',
     ...customProps,
   };

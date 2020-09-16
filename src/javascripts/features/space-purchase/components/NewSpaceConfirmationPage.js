@@ -64,7 +64,7 @@ export const NewSpaceConfirmationPage = ({
       <Grid className={styles.grid} columns="60% auto" rows={1} columnGap="spacing2Xl">
         <Card className={styles.card}>
           <Subheading className={styles.cardTitle} element="h3">
-            Billing Details{' '}
+            Billing details{' '}
             <span role="img" aria-label="Credit card">
               💳
             </span>
@@ -84,7 +84,7 @@ export const NewSpaceConfirmationPage = ({
               Back
             </Button>
             <Button onClick={onConfirm} testId="confirm-purchase-button" buttonType="positive">
-              Complete Payment
+              Complete payment
             </Button>
           </Flex>
         </Card>
