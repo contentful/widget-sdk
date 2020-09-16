@@ -3,9 +3,10 @@ import PageExtensionRoute from './PageExtensionRoute';
 import createPageExtensionBridge from 'widgets/bridges/createPageExtensionBridge';
 import * as Navigator from 'states/Navigator';
 import * as SlideInNavigator from 'navigation/SlideInNavigator/index';
-import { WidgetNamespace } from '@contentful/widget-renderer';
+import { Widget, WidgetNamespace } from '@contentful/widget-renderer';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import { createPageExtensionSDK } from 'app/widgets/ExtensionSDKs/createPageExtensionSDK';
+import { PageWidgetParameters } from 'features/apps/PageWidgetRenderer';
 
 export default {
   name: 'pageExtensions',
@@ -46,8 +47,7 @@ export default {
         path: path.startsWith('/') ? path : `/${path}`,
         useNewWidgetRendererInPageLocation,
         environmentId: spaceContext.getEnvironmentId(),
-        // Drilling spaceContext yields an angular "too much recursion" error
-        createPageExtensionSDK: memoize((widget, parameters) =>
+        createPageExtensionSDK: memoize((widget: Widget, parameters: PageWidgetParameters) =>
           createPageExtensionSDK({
             spaceContext,
             widgetNamespace: widget.namespace,
