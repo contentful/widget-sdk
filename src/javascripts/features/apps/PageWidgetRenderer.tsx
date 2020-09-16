@@ -37,9 +37,11 @@ const styles = {
 };
 
 export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
+  const { widget, environmentId, path, createPageExtensionSDK, createPageExtensionBridge } = props;
+
   useEffect(() => {
-    trackExtensionRender(WidgetLocation.PAGE, toLegacyWidget(props.widget), props.environmentId);
-  }, []);
+    trackExtensionRender(WidgetLocation.PAGE, toLegacyWidget(widget), environmentId);
+  }, [widget, environmentId]);
 
   const parameters = useMemo(() => {
     return {
@@ -47,32 +49,32 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
       instance: {},
       // Regular installation parameters.
       installation: applyDefaultValues(
-        props.widget.parameters.definitions.installation,
-        props.widget.parameters.values.installation
+        widget.parameters.definitions.installation,
+        widget.parameters.values.installation
       ),
       // Current `path` is the only invocation parameter.
-      invocation: { path: props.path },
+      invocation: { path },
     };
-  }, [props.widget, props.path]);
+  }, [widget, path]);
 
   const sdk = useMemo(() => {
-    return props.createPageExtensionSDK(props.widget, parameters);
-  }, [props.widget, parameters]);
+    return createPageExtensionSDK(widget, parameters);
+  }, [createPageExtensionSDK, widget, parameters]);
 
   const bridge = useMemo(() => {
-    return props.createPageExtensionBridge(props.widget);
-  }, [props.widget]);
+    return createPageExtensionBridge(widget);
+  }, [createPageExtensionBridge, widget]);
 
   return (
     <div data-test-id="page-extension" className={styles.root}>
-      <DocumentTitle title={props.widget.name} />
+      <DocumentTitle title={widget.name} />
       {props.useNewWidgetRendererInPageLocation ? (
-        <WidgetRenderer isFullSize location={WidgetLocation.PAGE} sdk={sdk} widget={props.widget} />
+        <WidgetRenderer isFullSize location={WidgetLocation.PAGE} sdk={sdk} widget={widget} />
       ) : (
         <ExtensionIFrameRendererWithLocalHostWarning
           bridge={bridge}
           parameters={parameters}
-          widget={props.widget}
+          widget={widget}
           isFullSize
         />
       )}
