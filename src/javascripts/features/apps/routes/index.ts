@@ -1,5 +1,5 @@
 /* eslint-disable rulesdir/allow-only-import-export-in-index, import/no-default-export */
-import { get } from 'lodash';
+import { get, memoize } from 'lodash';
 import { AppsListPage } from '../AppsListPage';
 import { AppRoute } from '../AppPage';
 import { makeAppHookBus, getAppsRepo } from 'features/apps-core';
@@ -12,7 +12,7 @@ import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { shouldHide, Action } from 'access_control/AccessChecker';
 import * as TokenStore from 'services/TokenStore';
 import { isOwnerOrAdmin, isDeveloper } from 'services/OrganizationRoles';
-import { WidgetLocation, WidgetNamespace } from '@contentful/widget-renderer';
+import { Widget, WidgetLocation, WidgetNamespace } from '@contentful/widget-renderer';
 import { getCurrentState } from 'features/apps/AppState';
 import { createPageExtensionSDK } from 'app/widgets/ExtensionSDKs/createPageExtensionSDK';
 import { PageWidgetRenderer } from '../PageWidgetRenderer';
@@ -236,31 +236,30 @@ export const appRoute = {
           widget,
           useNewWidgetRendererInPageLocation
         ) => {
-          const parameters = {
-            instance: {},
-            invocation: { path: path.startsWith('/') ? path : `/${path}` },
-            installation: widget.parameters.values.installation,
-          };
-
           return {
             widget,
             // TODO: remove me once we remove new widget renderer in app location flag
-            bridge: createPageExtensionBridge({
-              spaceContext,
-              Navigator,
-              SlideInNavigator,
-              appDefinition,
-              currentWidgetId: widget.id,
-              currentWidgetNamespace: widget.namespace,
-            }),
-            parameters,
+            createPageExtensionBridge: memoize((widget: Widget) =>
+              createPageExtensionBridge({
+                spaceContext,
+                Navigator,
+                SlideInNavigator,
+                appDefinition,
+                currentWidgetId: widget.id,
+                currentWidgetNamespace: widget.namespace,
+              })
+            ),
             useNewWidgetRendererInPageLocation,
-            sdk: createPageExtensionSDK({
-              spaceContext,
-              widgetNamespace: widget.namespace,
-              widgetId: widget.id,
-              parameters,
-            }),
+            createPageExtensionSDK: memoize((widget, parameters) =>
+              createPageExtensionSDK({
+                spaceContext,
+                widgetNamespace: widget.namespace,
+                widgetId: widget.id,
+                parameters,
+              })
+            ),
+            path: path.startsWith('/') ? path : `/${path}`,
+            environmentId: spaceContext.getEnvironmentId(),
           };
         },
       ],

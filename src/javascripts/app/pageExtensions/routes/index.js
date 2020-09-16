@@ -1,3 +1,4 @@
+import { memoize } from 'lodash';
 import PageExtensionRoute from './PageExtensionRoute';
 import createPageExtensionBridge from 'widgets/bridges/createPageExtensionBridge';
 import * as Navigator from 'states/Navigator';
@@ -5,7 +6,6 @@ import * as SlideInNavigator from 'navigation/SlideInNavigator/index';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import { createPageExtensionSDK } from 'app/widgets/ExtensionSDKs/createPageExtensionSDK';
-import memoize from 'utils/memoize';
 
 export default {
   name: 'pageExtensions',
@@ -34,17 +34,20 @@ export default {
         extensionId,
         orgId: spaceContext.organization.sys.id,
         // TODO: remove me once we remove new widget renderer in app location flag
-        bridge: createPageExtensionBridge({
-          spaceContext,
-          Navigator,
-          SlideInNavigator,
-          currentWidgetId: extensionId,
-          currentWidgetNamespace: WidgetNamespace.EXTENSION,
-        }),
-        path: path.startsWith('/') ? path : '/' + path,
+        createPageExtensionBridge: memoize(() =>
+          createPageExtensionBridge({
+            spaceContext,
+            Navigator,
+            SlideInNavigator,
+            currentWidgetId: extensionId,
+            currentWidgetNamespace: WidgetNamespace.EXTENSION,
+          })
+        ),
+        path: path.startsWith('/') ? path : `/${path}`,
         useNewWidgetRendererInPageLocation,
+        environmentId: spaceContext.getEnvironmentId(),
         // Drilling spaceContext yields an angular "too much recursion" error
-        createPageExtensionSDK: memoize(({ widget, parameters }) =>
+        createPageExtensionSDK: memoize((widget, parameters) =>
           createPageExtensionSDK({
             spaceContext,
             widgetNamespace: widget.namespace,

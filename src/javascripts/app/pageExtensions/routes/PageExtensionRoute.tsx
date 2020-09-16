@@ -13,7 +13,7 @@ import BinocularsIllustration from 'svg/illustrations/binoculars-illustration.sv
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { Widget, WidgetNamespace } from '@contentful/widget-renderer';
 import { PageExtensionSDK } from 'contentful-ui-extensions-sdk';
-import { PageWidgetRenderer } from 'features/apps/PageWidgetRenderer';
+import { PageWidgetParameters, PageWidgetRenderer } from 'features/apps/PageWidgetRenderer';
 
 const PageExtensionFetcher = createFetcherComponent(async ({ extensionId, orgId }) => {
   const loader = await getCustomWidgetLoader();
@@ -58,15 +58,10 @@ interface PageExtensionRouteProps {
   extensionId: string;
   orgId: string;
   path: string;
-  bridge: any;
+  createPageExtensionBridge: (widget: Widget) => any;
   useNewWidgetRendererInPageLocation: boolean;
-  createPageExtensionSDK: ({
-    widget,
-    parameters,
-  }: {
-    widget: Widget;
-    parameters: any;
-  }) => PageExtensionSDK;
+  createPageExtensionSDK: (widget: Widget, parameters: PageWidgetParameters) => PageExtensionSDK;
+  environmentId: string;
 }
 
 export default function PageExtensionRoute(props: PageExtensionRouteProps) {
@@ -88,19 +83,14 @@ export default function PageExtensionRoute(props: PageExtensionRouteProps) {
           return <ErrorMessage />;
         }
 
-        const parameters = {
-          instance: {},
-          invocation: { path: props.path },
-          installation: widget.parameters.values.installation,
-        };
-
         return (
           <PageWidgetRenderer
             useNewWidgetRendererInPageLocation={props.useNewWidgetRendererInPageLocation}
-            sdk={props.createPageExtensionSDK({ widget, parameters })}
+            createPageExtensionSDK={props.createPageExtensionSDK}
             widget={widget}
-            bridge={props.bridge}
-            parameters={parameters}
+            createPageExtensionBridge={props.createPageExtensionBridge}
+            path={props.path}
+            environmentId={props.environmentId}
           />
         );
       }}
