@@ -6,7 +6,7 @@ import * as SlideInNavigator from 'navigation/SlideInNavigator/index';
 import { Widget, WidgetNamespace } from '@contentful/widget-renderer';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import { createPageExtensionSDK } from 'app/widgets/ExtensionSDKs/createPageExtensionSDK';
-import { PageWidgetParameters } from 'features/apps/PageWidgetRenderer';
+import { PageWidgetParameters } from 'features/apps';
 
 export default {
   name: 'pageExtensions',

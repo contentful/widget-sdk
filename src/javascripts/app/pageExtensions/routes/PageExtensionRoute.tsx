@@ -13,7 +13,7 @@ import BinocularsIllustration from 'svg/illustrations/binoculars-illustration.sv
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { Widget, WidgetNamespace } from '@contentful/widget-renderer';
 import { PageExtensionSDK } from 'contentful-ui-extensions-sdk';
-import { PageWidgetParameters, PageWidgetRenderer } from 'features/apps/PageWidgetRenderer';
+import { PageWidgetParameters, PageWidgetRenderer } from 'features/apps';
 
 const PageExtensionFetcher = createFetcherComponent(async ({ extensionId, orgId }) => {
   const loader = await getCustomWidgetLoader();
