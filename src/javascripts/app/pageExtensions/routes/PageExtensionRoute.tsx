@@ -12,8 +12,13 @@ import {
 import Placeholder from 'app/common/Placeholder';
 import BinocularsIllustration from 'svg/illustrations/binoculars-illustration.svg';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
-import { WidgetLocation, WidgetNamespace, WidgetRenderer } from '@contentful/widget-renderer';
-import { createPageExtensionSDK } from 'app/widgets/ExtensionSDKs/createPageExtensionSDK';
+import {
+  Widget,
+  WidgetLocation,
+  WidgetNamespace,
+  WidgetRenderer,
+} from '@contentful/widget-renderer';
+import { PageExtensionSDK } from 'contentful-ui-extensions-sdk';
 
 const PageExtensionFetcher = createFetcherComponent(async ({ extensionId, orgId }) => {
   const loader = await getCustomWidgetLoader();
@@ -59,14 +64,20 @@ interface PageExtensionRouteProps {
   orgId: string;
   path: string;
   bridge: any;
-  spaceContext: any;
   useNewWidgetLoaderInPageLocation: boolean;
+  createPageExtensionSDK: ({
+    widget,
+    parameters,
+  }: {
+    widget: Widget;
+    parameters: any;
+  }) => PageExtensionSDK;
 }
 
 export default function PageExtensionRoute(props: PageExtensionRouteProps) {
   return (
     <PageExtensionFetcher extensionId={props.extensionId} orgId={props.orgId}>
-      {({ isLoading, isError, data }) => {
+      {({ isLoading, isError, data: widget }) => {
         if (isLoading) {
           return (
             <div className={styles.loading}>
@@ -86,19 +97,14 @@ export default function PageExtensionRoute(props: PageExtensionRouteProps) {
           const parameters = {
             instance: {},
             invocation: { path: props.path },
-            installation: data.parameters.values.installation,
+            installation: widget.parameters.values.installation,
           };
 
-          const sdk = createPageExtensionSDK({
-            spaceContext: props.spaceContext,
-            widgetNamespace: data.namespace,
-            widgetId: data.id,
-            parameters,
-          });
+          const sdk = props.createPageExtensionSDK({ widget, parameters });
 
-          return <WidgetRenderer location={WidgetLocation.PAGE} sdk={sdk} widget={data} />;
+          return <WidgetRenderer location={WidgetLocation.PAGE} sdk={sdk} widget={widget} />;
         } else {
-          return <PageExtension bridge={props.bridge} widget={data} path={props.path} />;
+          return <PageExtension bridge={props.bridge} widget={widget} path={props.path} />;
         }
       }}
     </PageExtensionFetcher>

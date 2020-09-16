@@ -16,6 +16,7 @@ import { WidgetLocation, WidgetNamespace } from '@contentful/widget-renderer';
 import { getCurrentState } from 'features/apps/AppState';
 import { createPageExtensionSDK } from 'app/widgets/ExtensionSDKs/createPageExtensionSDK';
 import { PageWidgetRenderer } from '../PageWidgetRenderer';
+import { FLAGS, getVariation } from 'LaunchDarkly';
 
 const BASIC_APPS_FEATURE_KEY = 'basic_apps';
 const DEFAULT_FEATURE_STATUS = true; // Fail open
@@ -200,8 +201,7 @@ export const appRoute = {
             });
           },
         ],
-        // TODO: use launch darkly
-        useNewWidgetLoaderInPageLocation: [() => Promise.resolve(true)],
+        useNewWidgetLoaderInPageLocation: [() => getVariation(FLAGS.NEW_WIDGET_RENDERER_PAGE)],
       },
       onEnter: [
         'widget',
