@@ -48,7 +48,6 @@ const styles = {
 
 const downloadInvoice = async (organizationId, invoiceId) => {
   const invoiceData = await getInvoice(organizationId, invoiceId);
-
   const invoicePDF = new window.Blob([invoiceData], { type: 'application/pdf' });
 
   downloadBlob(invoicePDF, `invoice-${invoiceId}.pdf`);
@@ -60,7 +59,7 @@ function downloadBlob(blob, filename) {
   const a = document.createElement('a');
 
   a.href = url;
-  a.download = filename || 'download';
+  a.download = filename;
 
   // Without the setTimeout, the URL is revoked before the browser can download it
   const clickHandler = () => {
@@ -108,26 +107,23 @@ export function Dashboard({
                             Edit
                           </StateLink>
                         </div>
-                        <Paragraph>
-                          {loading && <CreditCardDetailsLoading />}
-                          {!loading && (
-                            <>
-                              {pieces(paymentDetails.number, 4).join(' ')}
-                              <br />
-                              {moment().month(paymentDetails.expirationDate.month).format('MM')}/
-                              {paymentDetails.expirationDate.year}
-                            </>
-                          )}
-                        </Paragraph>
+                        {loading && <CreditCardDetailsLoading />}
+                        {!loading && (
+                          <Paragraph testId="card-details">
+                            {pieces(paymentDetails.number, 4).join(' ')} <br />
+                            {moment()
+                              .month(paymentDetails.expirationDate.month - 1)
+                              .format('MM')}
+                            /{paymentDetails.expirationDate.year}
+                          </Paragraph>
+                        )}
                       </GridItem>
                       <GridItem>
                         <div className={styles.billingDetailsHeading}>
                           <strong>Billing address</strong>
                         </div>
-                        <Paragraph>
-                          {loading && <BillingDetailsLoading />}
-                          {!loading && <BillingDetails billingDetails={billingDetails} />}
-                        </Paragraph>
+                        {loading && <BillingDetailsLoading />}
+                        {!loading && <BillingDetails billingDetails={billingDetails} />}
                       </GridItem>
                     </Grid>
                   </Typography>
@@ -142,33 +138,39 @@ export function Dashboard({
                 <Typography>
                   <Heading>Invoices</Heading>
                   {!loading && orgIsEnterprise && (
-                    <Paragraph>
+                    <Paragraph testId="enterprise-ae">
                       To update your billing details contact your account executive.
                     </Paragraph>
                   )}
                   <Table>
                     <TableHead>
-                      <TableCell width="37%">Date</TableCell>
-                      <TableCell width="37%">Amount</TableCell>
-                      <TableCell width="26%"></TableCell>
+                      <TableRow>
+                        <TableCell width="37%">Date</TableCell>
+                        <TableCell width="38%">Amount</TableCell>
+                        <TableCell width="25%"></TableCell>
+                      </TableRow>
                     </TableHead>
-                    <TableBody>
-                      {loading && <InvoicesTableLoading />}
-                      {!loading && invoices.length === 0 && (
+                    {loading && <InvoicesTableLoading />}
+                    {!loading && invoices.length === 0 && (
+                      <TableBody testId="no-invoices">
                         <TableRow>
-                          <TableCell colspan="3">No invoices</TableCell>
+                          <TableCell colSpan="3">No invoices</TableCell>
                         </TableRow>
-                      )}
-                      {!loading &&
-                        invoices.length > 0 &&
-                        invoices.map((invoice) => (
-                          <TableRow key={invoice.sys.id}>
-                            <TableCell>
+                      </TableBody>
+                    )}
+                    {!loading && invoices.length > 0 && (
+                      <TableBody>
+                        {invoices.map((invoice) => (
+                          <TableRow key={invoice.sys.id} testId="invoice-row">
+                            <TableCell testId="invoice-date">
                               {moment(invoice.sys.invoiceDate, 'YYYY-MM-DD').format('MMM DD, YYYY')}
                             </TableCell>
-                            <TableCell>${toLocaleString(invoice.amount)}</TableCell>
+                            <TableCell testId="invoice-amount">
+                              ${toLocaleString(invoice.amount)}
+                            </TableCell>
                             <TableCell>
                               <TextLink
+                                testId="invoice-download-link"
                                 icon="Download"
                                 onClick={() => downloadInvoice(organizationId, invoice.sys.id)}>
                                 Download
@@ -176,7 +178,8 @@ export function Dashboard({
                             </TableCell>
                           </TableRow>
                         ))}
-                    </TableBody>
+                      </TableBody>
+                    )}
                   </Table>
                 </Typography>
               </Card>
@@ -208,7 +211,7 @@ function BillingDetails({ billingDetails }) {
       <br />
       {billingDetails.address.address2 && (
         <>
-          {billingDetails.address.address2}
+          <span data-test-id="address2">{billingDetails.address.address2}</span>
           <br />
         </>
       )}
@@ -216,7 +219,7 @@ function BillingDetails({ billingDetails }) {
       {billingDetails.vat && (
         <>
           <br />
-          {billingDetails.vat}
+          <span data-test-id="vat">{billingDetails.vat}</span>
         </>
       )}
     </>
@@ -229,7 +232,7 @@ BillingDetails.propTypes = {
 
 function BillingDetailsLoading() {
   return (
-    <div className={styles.billingDetailsLoadingState}>
+    <div data-test-id="billing-details-loading" className={styles.billingDetailsLoadingState}>
       <SkeletonContainer svgHeight={120} ariaLabel="Loading billing address...">
         <SkeletonBodyText numberOfLines={5} />
       </SkeletonContainer>
@@ -239,7 +242,7 @@ function BillingDetailsLoading() {
 
 function CreditCardDetailsLoading() {
   return (
-    <div className={styles.billingDetailsLoadingState}>
+    <div data-test-id="credit-card-details-loading" className={styles.billingDetailsLoadingState}>
       <SkeletonContainer svgHeight={40} ariaLabel="Loading credit card details...">
         <SkeletonBodyText numberOfLines={2} />
       </SkeletonContainer>
@@ -249,7 +252,7 @@ function CreditCardDetailsLoading() {
 
 function InvoicesTableLoading() {
   return (
-    <>
+    <TableBody testId="invoices-loading">
       {times(3).map((i) => (
         <TableRow key={i}>
           <TableCell>
@@ -269,6 +272,6 @@ function InvoicesTableLoading() {
           </TableCell>
         </TableRow>
       ))}
-    </>
+    </TableBody>
   );
 }
