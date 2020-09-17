@@ -239,4 +239,34 @@ describe('Request', () => {
       status: -1,
     });
   });
+
+  it('returns data as null if the status is 204', async () => {
+    const arrayBufferFn = jest.fn();
+    const jsonFn = jest.fn();
+
+    window.fetch.mockResolvedValueOnce({
+      ok: true,
+      status: 204,
+      statusText: 'OK',
+      arrayBuffer: arrayBufferFn,
+      json: jsonFn,
+      headers: new Headers({
+        'X-Contentful-Request-ID': 'reqid',
+      }),
+    });
+
+    const response = await request({ url: 'http://foo.com' });
+
+    expect(response).toEqual({
+      config: { url: 'http://foo.com' },
+      data: null,
+      headers: {
+        'x-contentful-request-id': 'reqid',
+      },
+      status: 204,
+      statusText: 'OK',
+    });
+    expect(arrayBufferFn).not.toBeCalled();
+    expect(jsonFn).not.toBeCalled();
+  });
 });
