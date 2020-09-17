@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { AppsFrameworkIntroBanner } from './AppsFrameworkIntroBanner';
+import { FLAGS, getVariation } from 'LaunchDarkly';
 import { css } from 'emotion';
 import { get, partition } from 'lodash';
 
@@ -111,6 +112,16 @@ const sortPrivateAppsFirst = (listOfApps, canManageApps) => {
 
   const [privApps, pubApps] = partition(listOfApps, (a) => !!a.isPrivateApp);
   return [...privApps, ...pubApps];
+};
+
+const getEnabledApps = async (apps, flagContext) => {
+  const appsFeatureFlagStatuses = await Promise.all(
+    apps.map((app) => {
+      const hasValidFlag = app.featureFlagName && FLAGS[app.featureFlagName];
+      return hasValidFlag ? getVariation(FLAGS[app.featureFlagName], flagContext) : true;
+    })
+  );
+  return apps.filter((_, index) => appsFeatureFlagStatuses[index]);
 };
 
 const openDetailModal = ({ spaceInformation, usageExceeded, canManageApps }) => (app) => {
@@ -238,7 +249,13 @@ export class AppsListPage extends React.Component {
   async componentDidMount() {
     try {
       const apps = await this.props.repo.getApps();
-      const [installedApps, availableApps] = partition(apps, (app) => !!app.appInstallation);
+      const enabledApps = await getEnabledApps(apps, {
+        spaceId: this.props.spaceInformation.spaceId,
+        environmentId: this.props.spaceInformation.envMeta.environmentId,
+        organizationId: this.props.organizationId,
+      });
+
+      const [installedApps, availableApps] = partition(enabledApps, (app) => !!app.appInstallation);
 
       this.setState({ ready: true, availableApps, installedApps }, () => {
         this.openDeeplinkedAppDetails();
