@@ -9,7 +9,7 @@ const mockBillingDetails = {
   address: '123 street ave',
   addressTwo: 'apartment 321',
   city: 'Rio de Janeiro',
-  postalCode: '11111',
+  postcode: '11111',
   country: 'BR',
 };
 
