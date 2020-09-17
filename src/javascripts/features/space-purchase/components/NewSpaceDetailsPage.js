@@ -48,6 +48,7 @@ export const NewSpaceDetailsPage = ({
   selectedTemplate,
   onChangeSelectedTemplate,
   onSubmit,
+  spaceIsFree,
 }) => {
   return (
     <section aria-labelledby="new-space-details-section" data-test-id="new-space-details-section">
@@ -101,7 +102,7 @@ export const NewSpaceDetailsPage = ({
                 onClick={onSubmit}
                 disabled={spaceName === ''}
                 testId="next-step-new-details-page">
-                Continue to pay
+                {spaceIsFree ? 'Create space' : 'Continue to pay'}
               </Button>
             </div>
           </Form>
@@ -119,4 +120,5 @@ NewSpaceDetailsPage.propTypes = {
   selectedTemplate: PropTypes.object,
   onChangeSelectedTemplate: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
+  spaceIsFree: PropTypes.bool,
 };

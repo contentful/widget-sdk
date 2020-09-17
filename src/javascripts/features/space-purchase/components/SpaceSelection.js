@@ -47,23 +47,18 @@ const styles = {
 
 export const SpaceSelection = ({ organizationId, selectPlan, canCreateCommunityPlan }) => {
   const getSelectHandler = (planType) => {
-    switch (planType) {
-      case SPACE_PURCHASE_TYPES.MEDIUM:
-      case SPACE_PURCHASE_TYPES.LARGE:
-        return () => {
-          // NOTE: Add SELECT_PLAN space wizard tracking here
-          selectPlan(planType);
-        };
-
-      case SPACE_PURCHASE_TYPES.ENTERPRISE:
-        return () => {
-          trackCTAClick(CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
-            organizationId,
-          });
-        };
-      default:
-        return () => {};
+    if (planType === SPACE_PURCHASE_TYPES.ENTERPRISE) {
+      return () => {
+        trackCTAClick(CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
+          organizationId,
+        });
+      };
     }
+
+    return () => {
+      // NOTE: Add SELECT_PLAN space wizard tracking here
+      selectPlan(planType);
+    };
   };
 
   return (
@@ -105,6 +100,7 @@ export const SpaceSelection = ({ organizationId, selectPlan, canCreateCommunityP
                 }>
                 <Button
                   testId="space-selection-community-select-button"
+                  onClick={getSelectHandler(SPACE_PURCHASE_TYPES.COMMUNITY)}
                   disabled={!canCreateCommunityPlan}>
                   Select
                 </Button>

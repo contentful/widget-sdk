@@ -1,6 +1,7 @@
 import React from 'react';
 
 export const SPACE_PURCHASE_TYPES = {
+  COMMUNITY: 'Community',
   MEDIUM: 'Medium',
   LARGE: 'Large',
   ENTERPRISE: 'Enterprise',
