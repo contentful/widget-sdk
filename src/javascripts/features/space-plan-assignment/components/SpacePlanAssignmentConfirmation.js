@@ -80,6 +80,11 @@ export function SpacePlanAssignmentConfirmation({
         <Paragraph>
           {`You are about to change the type of ${space.name}. Check one last time to make sure everything is in order, then confirm.`}
         </Paragraph>
+        {currentPlan.name === 'Proof of Concept' && (
+          <Paragraph>
+            <strong>This cannot be undone as it’s a Proof of Concept space.</strong>
+          </Paragraph>
+        )}
       </Typography>
 
       <section className={styles.content}>
@@ -128,7 +133,7 @@ export function SpacePlanAssignmentConfirmation({
           </Grid>
         </Card>
         <Flex justifyContent="space-between" alignItems="center" marginTop="spacingL">
-          <Button buttonType="muted" onClick={onPrev} disabled={inProgress}>
+          <Button buttonType="muted" onClick={onPrev} disabled={inProgress} icon="ChevronLeft">
             Go back
           </Button>
           <Button buttonType="positive" onClick={onNext} loading={inProgress}>
