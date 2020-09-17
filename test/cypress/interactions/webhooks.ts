@@ -576,9 +576,6 @@ export const deleteDefaultWebhook = {
       withRequest: deleteDefaultWebhookRequest,
       willRespondWith: {
         status: 204,
-        headers: {
-          'Content-Type': 'application/vnd.contentful.management.v1+json',
-        },
       },
     }).as('deleteDefaultWebhook');
 

@@ -246,9 +246,6 @@ export function deleteTask() {
         state: providerState(States.SEVERAL),
         willRespondWith: {
           status: 204,
-          headers: {
-            'Content-Type': 'application/vnd.contentful.management.v1+json',
-          },
         },
       }).as(alias);
 

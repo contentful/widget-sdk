@@ -248,9 +248,6 @@ export const deleteIdentity = {
       withRequest: queryIdentityDeleteRequest(),
       willRespondWith: {
         status: 204,
-        headers: {
-          'Content-Type': 'application/json',
-        },
       },
     }).as('deleteIdentity');
 
@@ -392,9 +389,6 @@ export const deleteTwoFA = {
       withRequest: queryDeleteTwoFA(),
       willRespondWith: {
         status: 204,
-        headers: {
-          'Content-Type': 'application/json',
-        },
       },
     }).as('deleteTwoFA');
     return '@deleteTwoFA';
