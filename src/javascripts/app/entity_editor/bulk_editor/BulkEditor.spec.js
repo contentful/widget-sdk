@@ -20,6 +20,9 @@ jest.mock('core/NgRegistry', () => ({ getModule: jest.fn() }));
 jest.mock('app/entity_editor/DataLoader', () => ({ makePrefetchEntryLoader: jest.fn() }));
 jest.mock('ui/Framework/AngularComponent', () => () => <div data-test-id="angular-component" />);
 jest.mock('features/entity-search', () => ({ entitySelector: { openFromField: jest.fn() } }));
+jest.mock('app/widgets/ExtensionSDKs', () => ({
+  createEditorExtensionSDK: jest.fn(),
+}));
 
 const contentType = { sys: { id: 'ct-1' }, getId: () => 'ct-1' };
 
