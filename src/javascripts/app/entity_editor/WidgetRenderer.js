@@ -6,7 +6,7 @@ import WidgetRenderWarning from 'widgets/WidgetRenderWarning';
 import * as LoadEventTracker from 'app/entity_editor/LoadEventTracker';
 import { WidgetNamespace, isCustomWidget, WidgetLocation } from '@contentful/widget-renderer';
 import { toRendererWidget } from 'widgets/WidgetCompat';
-import { WidgetRenderer as NewWidgetRenderer } from '@contentful/widget-renderer';
+import { WidgetRenderer as WidgetRendererExternal } from '@contentful/widget-renderer';
 
 const { createLinksRenderedEvent, createWidgetLinkRenderEventsHandler } = LoadEventTracker;
 
@@ -40,7 +40,7 @@ function WidgetRendererInternal(props) {
   } else if (isCustomWidget(widget.widgetNamespace)) {
     trackLinksRendered();
     return (
-      <NewWidgetRenderer
+      <WidgetRendererExternal
         location={WidgetLocation.ENTRY_FIELD}
         widget={toRendererWidget(widget.descriptor)}
         sdk={props.widgetApi}
