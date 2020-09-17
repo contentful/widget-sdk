@@ -52,7 +52,7 @@ export const createSidebarWidgetSDK = ({
     // TODO: `setInvalid` is only available on `fieldController` of a current
     // field, but in context of sidebar there is no current field. We should move
     // it to field-locale level in a long run.
-    setInvalid: noop
+    setInvalid: noop,
   });
 
   const userApi = createUserApi(spaceContext.space.data.spaceMember as SpaceMember);

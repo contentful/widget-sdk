@@ -55,7 +55,7 @@ export const createEditorExtensionSDK = ({
     // TODO: `setInvalid` is only available on `fieldController` of a current
     // field, but in context of editor there is no current field. We should move
     // it to field-locale level in a long run.
-    setInvalid: noop
+    setInvalid: noop,
   });
 
   const spaceApi = createSpaceApi({
