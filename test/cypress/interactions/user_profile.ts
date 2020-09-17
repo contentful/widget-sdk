@@ -38,7 +38,7 @@ export const getUserProfileData = {
         status: 200,
         body: defaultData,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
         },
       },
     }).as('getDefaultUserProfileData');
@@ -55,7 +55,7 @@ export const getUserProfileData = {
         status: 200,
         body: identityLoginData,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
         },
       },
     }).as('getIdentityLoginUserProfileData');
@@ -72,7 +72,7 @@ export const getUserProfileData = {
         status: 200,
         body: twoFAData,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
         },
       },
     }).as('getTwoFAEnabledUserProfileData');
@@ -107,7 +107,7 @@ export const updateDefaultUserProfileData = {
         status: 200,
         body: updateDefaultData,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
         },
       },
     }).as('updateSuccessDefaultUserProfileData');
@@ -130,7 +130,7 @@ export const updateDefaultUserProfileData = {
         status: 422,
         body: invalidCurrentPasswordData,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
         },
       },
     }).as('updateWithErrorDefaultUserProfileData');
@@ -160,7 +160,7 @@ export const addPassword = {
         status: 200,
         body: updateIdentityLoginData,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
         },
       },
     }).as('addPasswordSuccess');
@@ -179,7 +179,7 @@ export const addPassword = {
         status: 422,
         body: insecureNewPasswordData,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
         },
       },
     }).as('addPasswordError');
@@ -202,7 +202,7 @@ export const changePassword = {
         status: 200,
         body: updatePasswordDefaultData,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
         },
       },
     }).as('changePasswordSuccess');
@@ -222,7 +222,7 @@ export const changePassword = {
         status: 422,
         body: insecureNewPasswordData,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
         },
       },
     }).as('changePasswordError');
@@ -248,9 +248,6 @@ export const deleteIdentity = {
       withRequest: queryIdentityDeleteRequest(),
       willRespondWith: {
         status: 204,
-        headers: {
-          'Content-Type': 'application/json',
-        },
       },
     }).as('deleteIdentity');
 
@@ -280,7 +277,7 @@ export const deleteUserAccount = {
       willRespondWith: {
         status: 201,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
         },
       },
     }).as('deleteUserAccount');
@@ -313,7 +310,7 @@ export const getTwoFAData = {
         status: 201,
         body: {},
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
         },
       },
     }).as('deleteUserAccount');
@@ -346,7 +343,7 @@ export const verifyTwoFAData = {
         status: 200,
         body: verify2FASuccess,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
         },
       },
     }).as('verifyTwoFASuccess');
@@ -363,7 +360,7 @@ export const verifyTwoFAData = {
         status: 422,
         body: verify2FAFail,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
         },
       },
     }).as('verifyTwoFAFail');
@@ -392,9 +389,6 @@ export const deleteTwoFA = {
       withRequest: queryDeleteTwoFA(),
       willRespondWith: {
         status: 204,
-        headers: {
-          'Content-Type': 'application/json',
-        },
       },
     }).as('deleteTwoFA');
     return '@deleteTwoFA';

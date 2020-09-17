@@ -36,7 +36,13 @@ async function fetchFn(config) {
     throw Object.assign(new Error('API request failed'), { status: -1, config });
   }
 
-  const data = await safelyGetResponseBody(rawResponse);
+  let data = null;
+
+  // 204 statuses are empty, so don't attempt to get the response body
+  if (rawResponse.status !== 204) {
+    data = await safelyGetResponseBody(rawResponse);
+  }
+
   // matching AngularJS's $http response object
   // https://docs.angularjs.org/api/ng/service/$http#$http-returns
   const response = {

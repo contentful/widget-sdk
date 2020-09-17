@@ -176,9 +176,6 @@ export const deleteLocaleForSpace = {
       },
       willRespondWith: {
         status: 204,
-        headers: {
-          'Content-Type': 'application/vnd.contentful.management.v1+json',
-        },
       },
     }).as('deleteLocaleForSpace');
 
