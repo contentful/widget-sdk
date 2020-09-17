@@ -126,6 +126,7 @@ export default ({ $scope, emitter }) => {
     emitter.emit(SidebarEventTypes.UPDATED_RELEASES_WIDGET, {
       entityInfo: $scope.entityInfo,
       entity: entity && { ...entity },
+      contentType: $scope.entityInfo.contentType,
     });
   });
 

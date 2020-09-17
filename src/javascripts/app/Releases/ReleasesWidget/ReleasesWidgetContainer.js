@@ -14,6 +14,7 @@ import { replaceReleaseById } from '../releasesService';
 import { ReleasesProvider, ReleasesContext } from './ReleasesContext';
 import { releaseDetailNavigation } from '../ReleaseDetail/utils';
 import { excludeEntityFromRelease, fetchReleases } from '../common/utils';
+import * as Entries from 'data/entries';
 
 const styles = {
   textLink: css({
@@ -112,9 +113,10 @@ export default class ReleasesWidgetContainer extends Component {
     this.props.emitter.off(SidebarEventTypes.UPDATED_RELEASES_WIDGET, this.onUpdateReleasesWidget);
   }
 
-  async onUpdateReleasesWidget({ entityInfo, entity }) {
-    const entityTitle = await getEntityTitle(entity);
-    this.setState({ entityInfo, entity, entityTitle });
+  async onUpdateReleasesWidget({ entityInfo, entity, contentType }) {
+    const externalEntity = Entries.internalToExternal(entity, contentType);
+    const entityTitle = await getEntityTitle(externalEntity);
+    this.setState({ entityInfo, entity: externalEntity, entityTitle });
   }
 
   render() {

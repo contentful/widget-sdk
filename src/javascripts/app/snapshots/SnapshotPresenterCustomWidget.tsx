@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { FieldExtensionSDK } from 'contentful-ui-extensions-sdk';
+import { FieldExtensionSDK, KnownSDK } from 'contentful-ui-extensions-sdk';
 import { getModule } from 'core/NgRegistry';
 import { createReadonlyFieldWidgetSDK } from 'app/widgets/ExtensionSDKs';
 import {
@@ -68,7 +68,11 @@ const SnapshotPresenterCustomWidget = ({
 
   return (
     <div data-test-id="snapshot-presenter-extension">
-      <WidgetRenderer location={WidgetLocation.ENTRY_FIELD} sdk={sdk} widget={widget} />
+      <WidgetRenderer
+        location={WidgetLocation.ENTRY_FIELD}
+        sdk={(sdk as unknown) as KnownSDK}
+        widget={widget}
+      />
     </div>
   );
 };

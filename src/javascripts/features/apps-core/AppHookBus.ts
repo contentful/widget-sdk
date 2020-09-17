@@ -1,5 +1,6 @@
 import mitt from 'mitt';
 import { isObject } from 'lodash';
+import { AppParameterValues } from '@contentful/widget-renderer';
 
 /**
  * A communication bus to be used to realize App lifecycle hooks.
@@ -31,10 +32,17 @@ export const APP_EVENTS_IN = {
   MARKED_AS_READY: 'app-events-in-ready',
 };
 
-export function makeAppHookBus() {
+export interface AppHookBus {
+  on: (eventName: string, handler: mitt.Handler) => void;
+  emit: (eventName: string, data?: any) => void;
+  setInstallation: (value: { parameters: AppParameterValues }) => void;
+  getInstallation: () => Record<string, any> | null;
+}
+
+export function makeAppHookBus(): AppHookBus {
   const bus = mitt();
 
-  let installation = null;
+  let installation: null | { parameters: AppParameterValues } = null;
 
   return {
     on: (eventName, handler) => {

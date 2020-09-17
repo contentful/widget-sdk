@@ -185,7 +185,7 @@ describe('batch duplicate', () => {
   let resultFields;
   const slugFieldId = 'slug';
 
-  const mockSpace = (contentTypeFields, editorControls) => {
+  const mockSpace = (contentTypeFields, editorControls, noControls = false) => {
     const createEntry = (_id, { fields }) => {
       // because performer creates a batch of entries and the action is called on each of them
       resultFields.push(fields);
@@ -197,7 +197,9 @@ describe('batch duplicate', () => {
         get: jest.fn().mockReturnValue(contentTypeFields || defaultContentTypeFields),
       },
       cma: {
-        getEditorInterface: jest.fn().mockResolvedValue(editorControls || defaultEditorControls),
+        getEditorInterface: jest
+          .fn()
+          .mockResolvedValue(noControls ? null : editorControls || defaultEditorControls),
       },
       space: { createEntry },
     });
@@ -237,6 +239,39 @@ describe('batch duplicate', () => {
       ],
     };
     getModule.mockClear();
+  });
+
+  it('Should still work without contorls', async () => {
+    const contentTypeFields = {
+      data: {
+        displayField,
+        fields: [{ name: 'title', id: displayField, required: true, localized: true }],
+      },
+    };
+
+    mockSpace(contentTypeFields, null, true);
+
+    const data = {
+      fields: {
+        [displayField]: {
+          'en-US': 'Hello!',
+          de: 'Hallo!',
+        },
+      },
+    };
+
+    const [performer] = preparePerformer('Entry', makeEntry, data);
+
+    await performer.duplicate();
+
+    resultFields.forEach((fields) =>
+      expect(fields).toEqual({
+        [displayField]: {
+          'en-US': 'Hello! (1)',
+          de: 'Hallo! (1)',
+        },
+      })
+    );
   });
 
   it("should not break and add index to displayField if slugEditor field doesn't exist in contentType", async () => {
