@@ -98,6 +98,7 @@ function createAppObject(entry, isListed) {
     },
     tagLine: get(entry, ['fields', 'tagLine'], ''),
     actionList: get(entry, ['fields', 'uninstallMessages'], []).map((msg) => msg.fields),
+    featureFlagName: get(entry, ['fields', 'featureFlagName'], null),
     isEarlyAccess,
   };
 }
