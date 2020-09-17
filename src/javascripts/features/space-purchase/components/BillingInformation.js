@@ -43,6 +43,7 @@ export const BillingInformation = ({ billingInfo }) => {
       {billingInfo.vatNumber && (
         <Paragraph className={styles.fontColor}>{billingInfo.vatNumber}</Paragraph>
       )}
+      {billingInfo.state && <Paragraph className={styles.fontColor}>{billingInfo.state}</Paragraph>}
     </div>
   );
 };
