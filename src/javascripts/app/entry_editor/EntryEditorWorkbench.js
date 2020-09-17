@@ -26,6 +26,7 @@ import EntryEditorWidgetTypes from 'app/entry_editor/EntryEditorWidgetTypes';
 import { hasLinks } from './EntryReferences';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { styles } from './styles';
+import { createExtensionBridgeAdapter } from 'widgets/bridges/createExtensionBridgeAdapter';
 
 const trackTabOpen = (tab) =>
   track('editor_workbench:tab_open', {
@@ -43,10 +44,13 @@ const EntryEditorWorkbench = (props) => {
     statusNotificationProps,
     getOtDoc,
     getEditorData,
-    customExtensionProps,
     editorContext,
     entrySidebarProps,
     sidebarToggleProps,
+    preferences,
+    fields,
+    widgets,
+    fieldLocaleListeners,
   } = props;
   const { state: referencesState } = useContext(ReferencesContext);
   const { processingAction, references, selectedEntities } = referencesState;
@@ -102,11 +106,19 @@ const EntryEditorWorkbench = (props) => {
             ...props,
           });
         } else {
+          const createBridge = createExtensionBridgeAdapter({
+            editorData,
+            entityInfo,
+            otDoc,
+            localeData,
+            preferences,
+            fields,
+            widgets,
+            fieldLocaleListeners,
+          });
+
           return (
-            <CustomEditorExtensionRenderer
-              extension={currentTab}
-              createBridge={customExtensionProps.createBridge}
-            />
+            <CustomEditorExtensionRenderer extension={currentTab} createBridge={createBridge} />
           );
         }
       },
@@ -254,7 +266,6 @@ EntryEditorWorkbench.propTypes = {
     isSingleLocaleModeOn: PropTypes.bool,
   }),
   preferences: PropTypes.object,
-  customExtensionProps: PropTypes.object,
   statusNotificationProps: PropTypes.object,
   widgets: PropTypes.array,
   fieldLocaleListeners: PropTypes.shape({

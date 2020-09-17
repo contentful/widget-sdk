@@ -22,6 +22,7 @@ export const createExtensionBridgeAdapter = (scopeData) => (
     'preferences',
     'fields',
     'widgets',
+    'fieldLocaleListeners',
   ]);
 
   const $scope = extend($rootScope.$new(), data);
