@@ -45,8 +45,6 @@ export default class CustomEditorExtensionRenderer extends React.Component {
       parameters
     );
 
-    console.log(sdk, bridge, useNewWidgetRenderer);
-
     if (useNewWidgetRenderer) {
       return (
         <WidgetRenderer
