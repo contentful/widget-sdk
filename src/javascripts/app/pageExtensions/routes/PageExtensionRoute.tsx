@@ -1,9 +1,7 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import createFetcherComponent from 'app/common/createFetcherComponent';
-import PageExtension from '../PageExtension';
 import { AdvancedExtensibilityFeature } from 'features/extensions-management';
 import {
   SkeletonContainer,
@@ -13,7 +11,9 @@ import {
 import Placeholder from 'app/common/Placeholder';
 import BinocularsIllustration from 'svg/illustrations/binoculars-illustration.svg';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
-import { WidgetNamespace } from '@contentful/widget-renderer';
+import { Widget, WidgetNamespace } from '@contentful/widget-renderer';
+import { PageExtensionSDK } from 'contentful-ui-extensions-sdk';
+import { PageWidgetParameters, PageWidgetRenderer } from 'features/apps';
 
 const PageExtensionFetcher = createFetcherComponent(async ({ extensionId, orgId }) => {
   const loader = await getCustomWidgetLoader();
@@ -54,10 +54,20 @@ function ErrorMessage() {
   );
 }
 
-export default function PageExtensionRoute(props) {
+interface PageExtensionRouteProps {
+  extensionId: string;
+  orgId: string;
+  path: string;
+  createPageExtensionBridge: (widget: Widget) => any;
+  useNewWidgetRendererInPageLocation: boolean;
+  createPageExtensionSDK: (widget: Widget, parameters: PageWidgetParameters) => PageExtensionSDK;
+  environmentId: string;
+}
+
+export default function PageExtensionRoute(props: PageExtensionRouteProps) {
   return (
     <PageExtensionFetcher extensionId={props.extensionId} orgId={props.orgId}>
-      {({ isLoading, isError, data }) => {
+      {({ isLoading, isError, data: widget }) => {
         if (isLoading) {
           return (
             <div className={styles.loading}>
@@ -73,15 +83,17 @@ export default function PageExtensionRoute(props) {
           return <ErrorMessage />;
         }
 
-        return <PageExtension bridge={props.bridge} widget={data} path={props.path} />;
+        return (
+          <PageWidgetRenderer
+            useNewWidgetRendererInPageLocation={props.useNewWidgetRendererInPageLocation}
+            createPageExtensionSDK={props.createPageExtensionSDK}
+            widget={widget}
+            createPageExtensionBridge={props.createPageExtensionBridge}
+            path={props.path}
+            environmentId={props.environmentId}
+          />
+        );
       }}
     </PageExtensionFetcher>
   );
 }
-
-PageExtensionRoute.propTypes = {
-  extensionId: PropTypes.string.isRequired,
-  orgId: PropTypes.string.isRequired,
-  path: PropTypes.string.isRequired,
-  bridge: PropTypes.object.isRequired,
-};

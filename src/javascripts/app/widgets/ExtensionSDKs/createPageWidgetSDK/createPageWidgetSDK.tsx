@@ -9,7 +9,7 @@ import { createDialogsApi } from '../createDialogsApi';
 import { createIdsApi } from './utils';
 import { createBaseExtensionSdk } from '../createBaseExtensionSdk';
 
-interface CreateEditorExtensionSDKOptions {
+interface CreatePageWidgetSDKOptions {
   spaceContext: any;
   parameters: {
     instance: Record<string, any>;
@@ -19,19 +19,19 @@ interface CreateEditorExtensionSDKOptions {
   widgetId: string;
 }
 
-export const createPageExtensionSDK = ({
+export const createPageWidgetSDK = ({
   spaceContext,
   widgetNamespace,
   widgetId,
   parameters,
-}: CreateEditorExtensionSDKOptions): PageExtensionSDK => {
+}: CreatePageWidgetSDKOptions): PageExtensionSDK => {
   const userApi = createUserApi(spaceContext.space.data.spaceMember);
 
   const spaceApi = createSpaceApi({
     cma: getBatchingApiClient(spaceContext.cma),
     initialContentTypes: spaceContext.publishedCTs.getAllBare(),
     pubSubClient: spaceContext.pubsubClient,
-    environmentIds: [spaceContext.getEnvironmentId(), ...spaceContext.getAliasIds()],
+    environmentIds: [spaceContext.getEnvironmentId(), ...spaceContext.getAliasesIds()],
     spaceId: spaceContext.getId(),
     tagsRepo: createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId()),
     usersRepo: spaceContext.users,

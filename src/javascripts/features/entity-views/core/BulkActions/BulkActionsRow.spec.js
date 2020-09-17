@@ -43,8 +43,20 @@ jest.mock('core/NgRegistry', () => ({
     getEnvironmentId: () => {},
   }),
 }));
+
 jest.mock('app/Releases/releasesService', () => ({
   getReleases: jest.fn().mockResolvedValue({ items: [] }),
+}));
+
+jest.mock('detect-browser', () => ({
+  detect: jest.fn().mockReturnValue({ name: 'chrome' }),
+}));
+
+jest.mock('services/PubSubService', () => ({
+  createPubSubClientForSpace: jest.fn().mockReturnValue({
+    on: jest.fn(),
+    off: jest.fn(),
+  }),
 }));
 
 const performer = {

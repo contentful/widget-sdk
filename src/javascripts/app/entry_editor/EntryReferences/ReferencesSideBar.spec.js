@@ -44,6 +44,17 @@ jest.mock('../../Releases/releasesService', function () {
   };
 });
 
+jest.mock('detect-browser', () => ({
+  detect: jest.fn().mockReturnValue({ name: 'chrome' }),
+}));
+
+jest.mock('services/PubSubService', () => ({
+  createPubSubClientForSpace: jest.fn().mockReturnValue({
+    on: jest.fn(),
+    off: jest.fn(),
+  }),
+}));
+
 const MockPovider = ({ children, references, selectedEntities, dispatch }) => (
   <ReferencesContext.Provider value={{ state: { references, selectedEntities }, dispatch }}>
     {children}
