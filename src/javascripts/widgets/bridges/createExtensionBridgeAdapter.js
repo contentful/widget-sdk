@@ -38,5 +38,3 @@ export const createExtensionBridgeAdapter = (scopeData) => (
     location: WidgetLocation.ENTRY_EDITOR,
   });
 };
-
-export const useCreateExtensionBridgeAdapter = () => {};
