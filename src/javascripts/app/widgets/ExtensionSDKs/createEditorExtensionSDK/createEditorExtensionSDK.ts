@@ -13,6 +13,7 @@ import { createNavigatorApi } from '../createNavigatorApi';
 import { createDialogsApi } from '../createDialogsApi';
 import { createBaseExtensionSdk } from '../createBaseExtensionSdk';
 import { createSharedEditorSDK } from '../createSharedEditorSDK';
+import { noop } from 'lodash';
 
 interface CreateEditorExtensionSDKOptions {
   internalContentType: InternalContentType;
@@ -51,8 +52,10 @@ export const createEditorExtensionSDK = ({
     internalContentType,
     doc,
     fieldLocaleListeners: $scope.fieldLocaleListeners.lookup,
-    setInvalid: (localeCode: string, isInvalid: boolean) =>
-      $scope.fieldController.setInvalid(localeCode, isInvalid),
+    // TODO: `setInvalid` is only available on `fieldController` of a current
+    // field, but in context of editor there is no current field. We should move
+    // it to field-locale level in a long run.
+    setInvalid: noop
   });
 
   const spaceApi = createSpaceApi({
