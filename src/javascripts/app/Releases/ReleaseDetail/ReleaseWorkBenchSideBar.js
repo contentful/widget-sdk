@@ -1,12 +1,14 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { cx } from 'emotion';
+import moment from 'moment';
 import { Workbench, Button, Subheading } from '@contentful/forma-36-react-components';
 import { ReleasesContext } from '../ReleasesWidget/ReleasesContext';
 import { DateTime } from 'app/ScheduledActions/FormattedDateAndTime';
 import FailedScheduleNote from 'app/ScheduledActions/EntrySidebarWidget/FailedScheduleNote/index';
 import ScheduledActionsTimeline from 'app/ScheduledActions/EntrySidebarWidget/ScheduledActionsTimeline/index';
 import { styles } from './styles';
+import { getReleaseAction } from '../releasesService';
 
 const ReleaseWorkBenchSideBar = ({
   isJobsLoading,
@@ -18,21 +20,44 @@ const ReleaseWorkBenchSideBar = ({
   handleScheduleCancel,
   setShowScheduleActionDialog,
   isMasterEnvironment,
+  release,
 }) => {
+  const [shouldShowErrorNote, setShouldShowErrorNote] = useState(false);
   const {
     state: {
       entities: { entries, assets },
     },
   } = useContext(ReleasesContext);
-  const hasScheduledActions = pendingJobs.length > 0;
-  const shouldShowErrorNote = () => {
-    if (!lastJob) {
-      return false;
-    }
 
-    const isFailed = lastJob.sys.status === 'failed';
-    return isFailed;
-  };
+  const hasScheduledActions = pendingJobs.length > 0;
+
+  useEffect(() => {
+    const shouldShowErrorNote = async () => {
+      if (!lastJob) {
+        setShouldShowErrorNote(false);
+        return;
+      }
+
+      const { id: releaseId, lastAction } = release.sys;
+      const {
+        scheduledFor: { datetime },
+      } = lastJob;
+      const {
+        sys: { completedAt, status },
+        action,
+      } = await getReleaseAction(releaseId, lastAction?.sys.id);
+
+      if (moment(completedAt).isAfter(datetime) && status === 'succeeded' && action === 'publish') {
+        setShouldShowErrorNote(false);
+        return;
+      }
+
+      const isFailed = lastJob.sys.status === 'failed';
+      setShouldShowErrorNote(isFailed);
+    };
+
+    shouldShowErrorNote();
+  }, [release, lastJob]);
 
   const failedScheduleNote = (scheduledAt) => {
     return (
@@ -46,7 +71,7 @@ const ReleaseWorkBenchSideBar = ({
     <Workbench.Sidebar className={styles.sidebar} position="right" testId="cf-ui-workbench-sidebar">
       {!isJobsLoading && !error && (
         <>
-          {shouldShowErrorNote() && (
+          {shouldShowErrorNote && (
             <FailedScheduleNote job={lastJob} failedScheduleNote={failedScheduleNote} />
           )}
           {hasScheduledActions && (
@@ -113,6 +138,7 @@ ReleaseWorkBenchSideBar.propTypes = {
   handleScheduleCancel: PropTypes.func.isRequired,
   setShowScheduleActionDialog: PropTypes.func.isRequired,
   isMasterEnvironment: PropTypes.bool.isRequired,
+  release: PropTypes.object,
 };
 
 export default ReleaseWorkBenchSideBar;
