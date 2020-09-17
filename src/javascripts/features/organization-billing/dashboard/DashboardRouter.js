@@ -4,25 +4,33 @@ import { Dashboard } from './Dashboard';
 import { useAsync, useAsyncFn } from 'core/hooks/useAsync';
 import { getBillingDetails, getInvoices } from '../services/BillingDetailsService';
 import { getDefaultPaymentMethod } from '../services/PaymentMethodService';
-import { getBasePlan, isEnterprisePlan } from 'account/pricing/PricingDataProvider';
+import {
+  getBasePlan,
+  isSelfServicePlan,
+  isEnterprisePlan,
+} from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 
 const fetchOrgDetails = (organizationId) => async () => {
   const endpoint = createOrganizationEndpoint(organizationId);
   const basePlan = await getBasePlan(endpoint);
+
+  console.log(basePlan);
+
+  const orgIsSelfService = isSelfServicePlan(basePlan);
   const orgIsEnterprise = isEnterprisePlan(basePlan);
 
-  return { orgIsEnterprise };
+  return { orgIsSelfService, orgIsEnterprise };
 };
 
-const fetchData = (organizationId, orgIsEnterprise) => async () => {
+const fetchData = (organizationId, orgIsSelfService) => async () => {
   const invoices = await getInvoices(organizationId);
 
   const result = {
     invoices,
   };
 
-  if (!orgIsEnterprise) {
+  if (orgIsSelfService) {
     const [billingDetails, paymentDetails] = await Promise.all([
       getBillingDetails(organizationId),
       getDefaultPaymentMethod(organizationId),
@@ -44,10 +52,10 @@ export function DashboardRouter({ orgId: organizationId }) {
     useCallback(fetchOrgDetails(organizationId), [])
   );
 
-  const { orgIsEnterprise } = orgDetails;
+  const { orgIsSelfService, orgIsEnterprise } = orgDetails;
 
   const [{ data = {} }, doFetchData] = useAsyncFn(
-    useCallback(fetchData(organizationId, orgIsEnterprise), [orgIsEnterprise])
+    useCallback(fetchData(organizationId, orgIsSelfService), [orgIsSelfService])
   );
 
   const { billingDetails, paymentDetails, invoices } = data;
@@ -73,6 +81,7 @@ export function DashboardRouter({ orgId: organizationId }) {
       billingDetails={billingDetails}
       paymentDetails={paymentDetails}
       invoices={invoices}
+      orgIsSelfService={orgIsSelfService}
       orgIsEnterprise={orgIsEnterprise}
     />
   );

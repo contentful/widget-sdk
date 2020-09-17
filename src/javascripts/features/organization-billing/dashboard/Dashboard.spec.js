@@ -51,7 +51,8 @@ describe('Dashboard', () => {
   });
 
   describe('enterprise organization', () => {
-    const build = (custom) => renderDashboard({ orgIsEnterprise: true, ...custom });
+    const build = (custom) =>
+      renderDashboard({ orgIsEnterprise: true, orgIsSelfService: false, ...custom });
 
     it('should only show the invoices loading state when loading', () => {
       build({ loading: true });
@@ -65,6 +66,25 @@ describe('Dashboard', () => {
       build();
 
       expect(screen.getByTestId('enterprise-ae')).toBeVisible();
+    });
+  });
+
+  describe('other organization', () => {
+    const build = (custom) =>
+      renderDashboard({ orgIsEnterprise: false, orgIsSelfService: false, ...custom });
+
+    it('should only show the invoices loading state when loading', () => {
+      build({ loading: true });
+
+      expect(screen.getByTestId('invoices-loading')).toBeVisible();
+      expect(screen.queryByTestId('credit-card-details-loading')).toBeNull();
+      expect(screen.queryByTestId('billing-details-loading')).toBeNull();
+    });
+
+    it('should not show copy telling the user to contact their AE to update their billing details', () => {
+      build();
+
+      expect(screen.queryByTestId('enterprise-ae')).toBeNull();
     });
   });
 
@@ -161,6 +181,7 @@ function renderDashboard(custom) {
     {
       loading: false,
       organizationId: mockOrganization.sys.id,
+      orgIsSelfService: true,
       orgIsEnterprise: false,
       billingDetails: { address: {} },
       paymentDetails: { expirationDate: { month: 1 }, number: '' },

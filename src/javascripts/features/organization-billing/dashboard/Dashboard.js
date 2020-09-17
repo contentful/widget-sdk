@@ -77,11 +77,12 @@ export function Dashboard({
   loading,
   organizationId,
   orgIsEnterprise,
+  orgIsSelfService,
   billingDetails,
   paymentDetails,
   invoices = [],
 }) {
-  const shouldShowBillingDetails = orgIsEnterprise != null && !orgIsEnterprise;
+  const shouldShowBillingDetails = orgIsSelfService != null && orgIsSelfService;
 
   return (
     <>
@@ -197,6 +198,7 @@ Dashboard.propTypes = {
   billingDetails: PropTypes.object,
   paymentDetails: PropTypes.object,
   invoices: PropTypes.array,
+  orgIsSelfService: PropTypes.bool,
   orgIsEnterprise: PropTypes.bool,
 };
 

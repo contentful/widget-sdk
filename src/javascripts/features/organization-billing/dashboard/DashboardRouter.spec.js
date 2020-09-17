@@ -53,7 +53,7 @@ describe('DashboardRouter', () => {
     );
   });
 
-  it('should request the billing and payment details if the base plan is not enterprise', async () => {
+  it('should request the billing and payment details if the base plan is self-service', async () => {
     when(mockEndpoint)
       .calledWith(expect.objectContaining({ path: ['plans'] }))
       .mockResolvedValueOnce({ items: [mockBasePlanSelfService] });
