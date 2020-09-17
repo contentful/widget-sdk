@@ -215,7 +215,7 @@ export default class EntrySidebar extends Component {
       );
     }
 
-    let Component;
+    let child;
     const widget = toRendererWidget(item.descriptor);
 
     if (this.props.entrySidebarProps.useNewWidgetRenderer) {
@@ -225,16 +225,14 @@ export default class EntrySidebar extends Component {
         item.parameters
       );
 
-      Component = () => (
-        <WidgetRenderer location={WidgetLocation.ENTRY_SIDEBAR} sdk={sdk} widget={widget} />
-      );
+      child = <WidgetRenderer location={WidgetLocation.ENTRY_SIDEBAR} sdk={sdk} widget={widget} />;
     } else {
       const bridge = this.props.entrySidebarProps.buildSidebarExtensionsBridge(
         item.widgetId,
         item.widgetNamespace
       );
 
-      Component = () => (
+      child = (
         <ExtensionIFrameRendererWithLocalHostWarning
           bridge={bridge}
           widget={widget}
@@ -247,7 +245,7 @@ export default class EntrySidebar extends Component {
       <EntrySidebarWidget
         title={item.descriptor.name}
         key={`${item.widgetNamespace},${item.widgetId}`}>
-        <Component />
+        {child}
       </EntrySidebarWidget>
     );
   };
