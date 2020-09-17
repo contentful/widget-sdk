@@ -98,7 +98,10 @@ export function createBatchPerformer(config) {
         entity.data.fields,
         entryTitleId
       );
-      const slugControl = editorData.controls.find((control) => control.widgetId === 'slugEditor');
+
+      const slugControl =
+        editorData.controls &&
+        editorData.controls.find((control) => control.widgetId === 'slugEditor');
       // [PUL-809] We update the slug with the same index that was set on the displayField
       if (slugControl) {
         const slugField = contentType.data.fields.find((field) =>
