@@ -36,7 +36,6 @@ export const createEditorExtensionSDK = ({
   parameters,
   doc,
 }: CreateEditorExtensionSDKOptions): EditorExtensionSDK => {
-  AbortController;
   const contentTypeApi = createContentTypeApi(internalContentType);
 
   const editorApi = createEditorApi({

@@ -1,4 +1,4 @@
-import { PageExtensionSDK } from 'contentful-ui-extensions-sdk';
+import { AppExtensionSDK } from 'contentful-ui-extensions-sdk';
 import { WidgetNamespace, WidgetLocation } from '@contentful/widget-renderer';
 import { SpaceMember, createUserApi } from '../createUserApi';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
@@ -6,26 +6,32 @@ import { createTagsRepo } from 'features/content-tags';
 import { createSpaceApi } from '../createSpaceApi';
 import { createNavigatorApi } from '../createNavigatorApi';
 import { createDialogsApi } from '../createDialogsApi';
-import { createIdsApi } from './utils';
+import { createAppApi, AppHookListener } from '../createAppApi';
 import { createBaseExtensionSdk } from '../createBaseExtensionSdk';
+import { AppHookBus } from 'features/apps-core';
 
-interface CreateEditorExtensionSDKOptions {
+interface CreateAppExtensionSDKOptions {
   spaceContext: any;
   parameters: {
     instance: Record<string, any>;
     installation: Record<string, any>;
   };
+  $scope: any;
   widgetNamespace: WidgetNamespace;
   widgetId: string;
+  appHookBus: AppHookBus;
 }
 
-export const createPageExtensionSDK = ({
+export const createAppExtensionSDK = ({
   spaceContext,
   widgetNamespace,
   widgetId,
   parameters,
-}: CreateEditorExtensionSDKOptions): PageExtensionSDK => {
-  const userApi = createUserApi(spaceContext.space.data.spaceMember);
+  appHookBus,
+}: CreateAppExtensionSDKOptions): { sdk: AppExtensionSDK; onAppHook: AppHookListener } => {
+  const spaceMember: SpaceMember = spaceContext.space.data.spaceMember;
+
+  const userApi = createUserApi(spaceMember);
 
   const spaceApi = createSpaceApi({
     cma: getBatchingApiClient(spaceContext.cma),
@@ -37,35 +43,50 @@ export const createPageExtensionSDK = ({
     usersRepo: spaceContext.users,
   });
 
-  const idsApi = createIdsApi({
-    spaceId: spaceContext.getId(),
-    envId: spaceContext.getEnvironmentId(),
-    user: userApi,
-    widgetNamespace,
-    widgetId,
-  });
+  const idsApi = {
+    user: userApi.sys.id,
+    space: spaceContext.getId(),
+    environment: spaceContext.getEnvironmentId(),
+    app: widgetId,
+  };
 
   const locationApi = {
-    is: (location: string) => location === WidgetLocation.PAGE,
+    is: (location: string) => location === WidgetLocation.APP_CONFIG,
   };
 
   const navigatorApi = createNavigatorApi({ spaceContext, widgetNamespace, widgetId });
 
   const base = createBaseExtensionSdk({
     parametersApi: parameters,
-    spaceMember: spaceContext.space.data.spaceMember as SpaceMember,
+    spaceMember,
     locationApi,
     navigatorApi,
     spaceApi,
   });
 
-  const sdkWithoutDialogs: Omit<PageExtensionSDK, 'dialogs'> = {
+  const { appApi, onAppHook } = createAppApi({
+    spaceContext,
+    widgetId,
+    widgetNamespace,
+    appHookBus,
+  });
+
+  const sdkWithoutDialogs: Omit<AppExtensionSDK, 'dialogs'> = {
     ...base,
-    ids: idsApi,
+    ids: {
+      user: idsApi.user,
+      space: idsApi.space,
+      environment: idsApi.environment,
+      app: widgetId,
+    },
+    app: appApi,
   };
 
   return {
-    ...sdkWithoutDialogs,
-    dialogs: createDialogsApi(sdkWithoutDialogs),
+    sdk: {
+      ...sdkWithoutDialogs,
+      dialogs: createDialogsApi(sdkWithoutDialogs),
+    },
+    onAppHook,
   };
 };

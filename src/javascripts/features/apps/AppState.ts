@@ -1,5 +1,6 @@
 import { get, isObject, set } from 'lodash';
 import { Control, SidebarItem, WidgetNamespace, Editor } from '@contentful/widget-renderer';
+import { AppState } from 'contentful-ui-extensions-sdk';
 
 export type PartialTargetState = boolean | { position: number };
 
@@ -7,7 +8,7 @@ export const getCurrentState = async (
   spaceContext: any,
   widgetId: string,
   widgetNamespace: WidgetNamespace
-) => {
+): Promise<AppState> => {
   const { items: editorInterfaces } = await spaceContext.cma.getEditorInterfaces();
 
   const CurrentState = { EditorInterface: {} };
