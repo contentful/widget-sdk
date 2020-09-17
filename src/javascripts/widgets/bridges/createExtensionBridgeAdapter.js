@@ -5,10 +5,12 @@ import * as SlideInNavigator from 'navigation/SlideInNavigator';
 import { WidgetLocation } from '@contentful/widget-renderer';
 import checkDependencies from './checkDependencies';
 import { extend } from 'lodash';
+import { createEditorExtensionSDK } from 'app/widgets/ExtensionSDKs';
 
 export const createExtensionBridgeAdapter = (scopeData) => (
   currentWidgetId,
-  currentWidgetNamespace
+  currentWidgetNamespace,
+  parameters
 ) => {
   const $rootScope = getModule('$rootScope');
   const $controller = getModule('$controller');
@@ -27,7 +29,19 @@ export const createExtensionBridgeAdapter = (scopeData) => (
 
   const $scope = extend($rootScope.$new(), data);
 
-  return createExtensionBridge({
+  const sdk = createEditorExtensionSDK({
+    $scope,
+    spaceContext,
+    internalContentType: $scope.entityInfo.contentType,
+    widgetNamespace: currentWidgetNamespace,
+    widgetId: currentWidgetId,
+    parameters,
+    doc: $scope.otDoc,
+  });
+
+  // TODO: get rid of the whole "createExtensionBridge" once new renderer
+  // is used everywhere and feature flags are gone.
+  const bridge = createExtensionBridge({
     $rootScope,
     $controller,
     $scope,
@@ -38,4 +52,6 @@ export const createExtensionBridgeAdapter = (scopeData) => (
     currentWidgetNamespace,
     location: WidgetLocation.ENTRY_EDITOR,
   });
+
+  return { sdk, bridge, useNewWidgetRenderer: $scope.editorData.useNewWidgetRenderer.editor };
 };
