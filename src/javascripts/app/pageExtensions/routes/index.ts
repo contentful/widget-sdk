@@ -5,7 +5,7 @@ import * as Navigator from 'states/Navigator';
 import * as SlideInNavigator from 'navigation/SlideInNavigator/index';
 import { Widget, WidgetNamespace } from '@contentful/widget-renderer';
 import { FLAGS, getVariation } from 'LaunchDarkly';
-import { createPageExtensionSDK } from 'app/widgets/ExtensionSDKs/createPageExtensionSDK';
+import { createPageWidgetSDK } from 'app/widgets/ExtensionSDKs/createPageWidgetSDK';
 import { PageWidgetParameters } from 'features/apps';
 
 export default {
@@ -48,7 +48,7 @@ export default {
         useNewWidgetRendererInPageLocation,
         environmentId: spaceContext.getEnvironmentId(),
         createPageExtensionSDK: memoize((widget: Widget, parameters: PageWidgetParameters) =>
-          createPageExtensionSDK({
+          createPageWidgetSDK({
             spaceContext,
             widgetNamespace: widget.namespace,
             widgetId: widget.id,

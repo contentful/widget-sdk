@@ -14,7 +14,7 @@ import * as TokenStore from 'services/TokenStore';
 import { isOwnerOrAdmin, isDeveloper } from 'services/OrganizationRoles';
 import { Widget, WidgetLocation, WidgetNamespace } from '@contentful/widget-renderer';
 import { getCurrentState } from 'features/apps/AppState';
-import { createPageExtensionSDK } from 'app/widgets/ExtensionSDKs/createPageExtensionSDK';
+import { createPageWidgetSDK } from 'app/widgets/ExtensionSDKs/createPageWidgetSDK';
 import { PageWidgetRenderer } from '../PageWidgetRenderer';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 
@@ -251,7 +251,7 @@ export const appRoute = {
             ),
             useNewWidgetRendererInPageLocation,
             createPageExtensionSDK: memoize((widget, parameters) =>
-              createPageExtensionSDK({
+              createPageWidgetSDK({
                 spaceContext,
                 widgetNamespace: widget.namespace,
                 widgetId: widget.id,
