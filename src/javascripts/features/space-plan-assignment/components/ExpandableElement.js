@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import tokens from '@contentful/forma-36-tokens';
 import { ExpandablePanel } from './ExpandablePanel';
 import { TextLink } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
 
 const styles = {
-  toggleDetailsLink: css({ marginLeft: tokens.spacingXl }),
+  toggleDetailsLink: css({ marginLeft: `calc(${tokens.spacingXl} + ${tokens.spacingXs})` }),
 };
 
 export function ExpandableElement({ children, id }) {

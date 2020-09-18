@@ -26,6 +26,7 @@ import { canPlanBeAssigned } from '../utils/utils';
 export function SpaceSelection({
   spaces,
   plan,
+  plansBySpace,
   spaceResourcesBySpace,
   selectedSpace,
   onSpaceSelected,
@@ -38,6 +39,13 @@ export function SpaceSelection({
       </Typography>
       <List>
         {spaces.map((space, index) => {
+          const planName = plansBySpace[space.sys.id].name;
+
+          const setPlanColor =
+            planName === 'Large' || planName === 'Medium'
+              ? tokens.colorGreenLight
+              : tokens.colorBlueMid;
+
           const styles = {
             cardItem: css({
               marginBottom: tokens.spacingM,
@@ -50,6 +58,7 @@ export function SpaceSelection({
                 left: '0',
                 width: '8px',
                 height: '100%',
+                backgroundColor: `${setPlanColor}`,
               }),
             }),
             cardItemActive: css({
@@ -63,6 +72,10 @@ export function SpaceSelection({
               height: '18px', // basic size of icon
             }),
             disabled: css({ opacity: 0.5 }),
+            planName: css({
+              fontWeight: `${tokens.fontWeightNormal}`,
+              color: `${tokens.colorTextLightest}`,
+            }),
           };
 
           const isDisabled = !canPlanBeAssigned(plan, spaceResourcesBySpace[space.sys.id]);
@@ -93,7 +106,9 @@ export function SpaceSelection({
                     fullWidth={true}
                     justifyContent="space-between"
                     alignItems="center">
-                    <Heading element="h3">{space.name}</Heading>
+                    <Heading element="h3">
+                      {space.name} <span className={styles.planName}> ({planName})</span>
+                    </Heading>
                   </Flex>
                 </Flex>
                 <ExpandableElement id={index}>
@@ -126,7 +141,8 @@ export function SpaceSelection({
 SpaceSelection.propTypes = {
   plan: PlanPropType.isRequired,
   spaces: PropTypes.arrayOf(SpacePropType).isRequired,
-  spaceResourcesBySpace: PropTypes.objectOf(ResourcePropType),
+  plansBySpace: PropTypes.objectOf(PlanPropType).isRequired,
+  spaceResourcesBySpace: PropTypes.objectOf(PropTypes.objectOf(ResourcePropType)),
   selectedSpace: SpacePropType,
   onSpaceSelected: PropTypes.func.isRequired,
   onNext: PropTypes.func,

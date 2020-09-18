@@ -135,6 +135,7 @@ export function PlanSpaceAssignment({ orgId, planId }) {
               <SpaceSelection
                 spaces={data.spaces}
                 plan={data.plan}
+                plansBySpace={data.plansBySpace}
                 spaceResourcesBySpace={data.spaceResourcesBySpace}
                 selectedSpace={selectedSpace}
                 onSpaceSelected={setSelectedSpace}
