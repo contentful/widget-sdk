@@ -245,6 +245,7 @@ const ReleaseDetailPage = ({ releaseId, defaultLocale, isMasterEnvironment }) =>
             defaultLocale={defaultLocale}
           />
           <ReleaseWorkBenchSideBar
+            release={release}
             isJobsLoading={isJobsLoading}
             error={error}
             pendingJobs={pendingJobs}
