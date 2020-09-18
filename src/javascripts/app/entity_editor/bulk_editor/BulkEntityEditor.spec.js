@@ -37,6 +37,9 @@ jest.mock('app/entity_editor/Document', () => ({
   localFieldChanges: jest.fn(),
   valuePropertyAt: jest.fn(),
 }));
+jest.mock('app/widgets/ExtensionSDKs', () => ({
+  createEditorExtensionSDK: jest.fn(),
+}));
 
 localFieldChanges.mockReturnValue(K.createBus().stream);
 valuePropertyAt.mockReturnValue(K.createBus().stream);

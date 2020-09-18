@@ -214,12 +214,12 @@ function makeEntryLoader(spaceContext) {
         organizationId: spaceContext.organization.sys.id,
       };
 
-      const [sidebar] = await Promise.all([
+      const [sidebar, editor] = await Promise.all([
         getVariation(FLAGS.NEW_WIDGET_RENDERER_SIDEBAR, ctx),
-        // TODO: add a flag for editor
+        getVariation(FLAGS.NEW_WIDGET_RENDERER_EDITOR, ctx),
       ]);
 
-      return { sidebar };
+      return { sidebar, editor };
     },
     getOpenDoc: makeDocOpener(spaceContext),
   };
@@ -229,7 +229,7 @@ function makeAssetLoader(spaceContext) {
   return {
     getEntity: (id) => fetchEntity(spaceContext, 'Asset', id),
     hasAdvancedExtensibility: () => false,
-    useNewWidgetRenderer: () => ({ sidebar: false }),
+    useNewWidgetRenderer: () => ({ sidebar: false, editor: false }),
     getOpenDoc: makeDocOpener(spaceContext),
     // TODO: we return precomputed CT and EI for the Asset Editor.
     // If we would have an endpoint with this data

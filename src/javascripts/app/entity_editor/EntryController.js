@@ -1,9 +1,7 @@
 import * as K from 'core/utils/kefir';
 import { keys } from 'lodash';
 import mitt from 'mitt';
-import createExtensionBridge from 'widgets/bridges/createExtensionBridge';
 import { user$ } from 'services/TokenStore';
-import * as SlideInNavigator from 'navigation/SlideInNavigator';
 import installTracking from './Tracking';
 import { bootstrapEntryEditorLoadEvents } from 'app/entity_editor/LoadEventTracker';
 import setLocaleData from 'app/entity_editor/setLocaleData';
@@ -14,13 +12,11 @@ import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import * as Analytics from 'analytics/Analytics';
 
-import * as Navigator from 'states/Navigator';
 import { trackIsCommentsAlphaEligible } from '../EntrySidebar/CommentsPanel/analytics';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes';
 import { getAllForEntry } from 'data/CMA/CommentsRepo';
 import initSidebarTogglesProps from 'app/entity_editor/entityEditorSidebarToggles';
 import { appendDuplicateIndexToEntryTitle, alignSlugWithEntryTitle } from './entityHelpers';
-import { WidgetLocation } from '@contentful/widget-renderer';
 import { getEditorState } from './editorState';
 
 /**
@@ -72,25 +68,6 @@ export default async function create($scope, editorData, preferences, trackLoadE
   const contentType = {
     id: entityInfo.contentTypeId,
     type: spaceContext.publishedCTs.get(entityInfo.contentTypeId),
-  };
-
-  /* Custom Extension */
-
-  $scope.customExtensionProps = {
-    extension: editorData.customEditor,
-    // TODO replace with `createExtensionBridgeAdapter()` in component
-    createBridge: (currentWidgetId, currentWidgetNamespace) =>
-      createExtensionBridge({
-        $rootScope,
-        $scope,
-        spaceContext,
-        Navigator,
-        SlideInNavigator,
-        $controller,
-        currentWidgetId,
-        currentWidgetNamespace,
-        location: WidgetLocation.ENTRY_EDITOR,
-      }),
   };
 
   const scopeLifeline = K.scopeLifeline($scope);
