@@ -1,10 +1,18 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
-import { DisplayText, Button, Paragraph } from '@contentful/forma-36-react-components';
+import {
+  DisplayText,
+  Button,
+  Paragraph,
+  Notification,
+} from '@contentful/forma-36-react-components';
 import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
+import { useAsync } from 'core/hooks/useAsync';
+import { createSpace, createSpaceWithTemplate } from '../utils/spaceCreation';
+import { go } from 'states/Navigator';
 
 import { PaymentSummary } from './PaymentSummary';
 
@@ -25,7 +33,53 @@ const styles = {
   }),
 };
 
-export const NewSpaceReceiptPage = ({ spaceName, selectedPlan }) => {
+const createSpaceWith = (
+  organizationId,
+  selectedPlan,
+  spaceName,
+  selectedTemplate = null
+) => async () => {
+  try {
+    let newSpace;
+
+    if (selectedTemplate) {
+      newSpace = await createSpaceWithTemplate(
+        organizationId,
+        selectedPlan,
+        spaceName,
+        selectedTemplate
+      );
+    } else {
+      newSpace = await createSpace(organizationId, selectedPlan, spaceName);
+    }
+
+    return { newSpace };
+  } catch (e) {
+    // To be updated after design decision is made
+    Notification.error('Space could not be created, please try again.');
+  }
+};
+
+export const NewSpaceReceiptPage = ({
+  spaceName,
+  selectedPlan,
+  organizationId,
+  selectedTemplate,
+}) => {
+  const { isLoading, data } = useAsync(
+    useCallback(createSpaceWith(organizationId, selectedPlan, spaceName, selectedTemplate), [])
+  );
+
+  const goToCreatedSpace = async () => {
+    await go({
+      path: ['spaces', 'detail'],
+      params: { spaceId: data.newSpace.sys.id },
+    });
+  };
+
+  // Button should be disabled during loading && if creating the new space failed
+  const isButtonDisabled = isLoading || !data?.newSpace;
+
   return (
     <section
       aria-labelledby="new-space-receipt-section-heading"
@@ -44,8 +98,14 @@ export const NewSpaceReceiptPage = ({ spaceName, selectedPlan }) => {
         <Paragraph className={styles.successMsg} testId="new-space-receipt-success">
           You successfully purchased the {selectedPlan.name} space {spaceName}.
         </Paragraph>
-        {/* TODO: pass the function that takes the user to Space Home to this button */}
-        <Button className={styles.button}>Take me to {spaceName}</Button>
+        <Button
+          testId="receipt-page.redirect-to-new-space"
+          loading={isLoading}
+          disabled={isButtonDisabled}
+          onClick={goToCreatedSpace}
+          className={styles.button}>
+          Take me to {spaceName}
+        </Button>
         <PaymentSummary selectedPlan={selectedPlan} isReceipt />
       </Flex>
     </section>
@@ -55,4 +115,6 @@ export const NewSpaceReceiptPage = ({ spaceName, selectedPlan }) => {
 NewSpaceReceiptPage.propTypes = {
   spaceName: PropTypes.string.isRequired,
   selectedPlan: PropTypes.object.isRequired,
+  selectedTemplate: PropTypes.object,
+  organizationId: PropTypes.string.isRequired,
 };

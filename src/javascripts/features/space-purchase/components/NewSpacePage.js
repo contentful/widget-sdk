@@ -201,7 +201,12 @@ export const NewSpacePage = ({
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS_CONFIRMATION} />
-            <NewSpaceReceiptPage selectedPlan={selectedPlan} spaceName={spaceName} />
+            <NewSpaceReceiptPage
+              selectedPlan={selectedPlan}
+              spaceName={spaceName}
+              organizationId={organizationId}
+              selectedTemplate={selectedTemplate}
+            />
           </Grid>
         );
       default:
