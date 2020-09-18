@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { cx } from 'emotion';
-import moment from 'moment';
 import { Workbench, Button, Subheading } from '@contentful/forma-36-react-components';
 import { ReleasesContext } from '../ReleasesWidget/ReleasesContext';
 import { DateTime } from 'app/ScheduledActions/FormattedDateAndTime';
@@ -40,14 +39,11 @@ const ReleaseWorkBenchSideBar = ({
 
       const { id: releaseId, lastAction } = release.sys;
       const {
-        scheduledFor: { datetime },
-      } = lastJob;
-      const {
-        sys: { completedAt, status },
+        sys: { status },
         action,
       } = await getReleaseAction(releaseId, lastAction?.sys.id);
 
-      if (moment(completedAt).isAfter(datetime) && status === 'succeeded' && action === 'publish') {
+      if (status === 'succeeded' && action === 'publish') {
         setShouldShowErrorNote(false);
         return;
       }
