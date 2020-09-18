@@ -24,8 +24,15 @@ export async function openPricing2020Warning() {
 
   const endpoint = createOrganizationEndpoint(org.sys.id);
 
-  const { items: plans } = await getSubscriptionPlans(endpoint);
-  const spaces = await getAllSpaces(endpoint);
+  let plans;
+  let spaces;
+  try {
+    const result = await getSubscriptionPlans(endpoint);
+    spaces = await getAllSpaces(endpoint);
+    plans = result.items;
+  } catch {
+    return;
+  }
 
   const basePlan = plans.find((plan) => plan.planType === 'base');
   const spacePlans = plans.filter((plan) => plan.planType === 'space');
