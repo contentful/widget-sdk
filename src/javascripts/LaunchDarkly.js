@@ -47,6 +47,7 @@ export const FLAGS = {
   NEW_PURCHASE_FLOW: 'feature-ogg-08-2020-enable-space-purchase-flow',
   PLATFORM_TRIAL_COMM: 'feature-moi-08-2020-end-of-platform-trial-communication',
   SPACE_PLAN_ASSIGNMENT: 'feature-hejo-08-2020-space-plan-assignment',
+  SPACE_PLAN_ASSIGNMENT_EXPERIMENT: 'feature-hejo-09-2020-space-plan-assignment-experiment',
   CONTENT_LEVEL_PERMISSIONS: 'feature-dev-workflows-09-2020-content-level-permissions',
   WORKFLOWS_APP: 'ext-09-2020-enable-workflows',
 
@@ -75,6 +76,7 @@ const FALLBACK_VALUES = {
   [FLAGS.NEW_PURCHASE_FLOW]: false,
   [FLAGS.PLATFORM_TRIAL_COMM]: false,
   [FLAGS.SPACE_PLAN_ASSIGNMENT]: false,
+  [FLAGS.SPACE_PLAN_ASSIGNMENT_EXPERIMENT]: false,
   [FLAGS.CONTENT_LEVEL_PERMISSIONS]: false,
   [FLAGS.WORKFLOWS_APP]: false,
 

@@ -18,7 +18,7 @@ const styles = {
   }),
 };
 
-export function UnassignedPlansTable({ plans, initialLoad }) {
+export function UnassignedPlansTable({ plans, initialLoad, spaceAssignmentExperiment }) {
   return (
     <Table testId="subscription-page.unassigned-plans-table">
       <colgroup>
@@ -40,21 +40,23 @@ export function UnassignedPlansTable({ plans, initialLoad }) {
                 key={plan.sys.id || (plan.space && plan.space.sys.id)}>
                 <TableCell>
                   <strong>{plan.name}</strong>&nbsp;
-                  <>
-                    -{' '}
-                    <StateLink
-                      testId="subscription-page.spaces-list.change-plan-link"
-                      component={TextLink}
-                      path="^.space_plans"
-                      params={{ planId: plan.sys.id }}
-                      trackingEvent={'space_assignment:change'}
-                      trackParams={{
-                        plan_id: plan.sys.id,
-                        flow: 'assing_space_to_plan',
-                      }}>
-                      use space
-                    </StateLink>
-                  </>
+                  {spaceAssignmentExperiment && (
+                    <>
+                      -{' '}
+                      <StateLink
+                        testId="subscription-page.spaces-list.change-plan-link"
+                        component={TextLink}
+                        path="^.space_plans"
+                        params={{ planId: plan.sys.id }}
+                        trackingEvent={'space_assignment:change'}
+                        trackParams={{
+                          plan_id: plan.sys.id,
+                          flow: 'assing_space_to_plan',
+                        }}>
+                        use space
+                      </StateLink>
+                    </>
+                  )}
                 </TableCell>
               </TableRow>
             );
@@ -68,4 +70,5 @@ export function UnassignedPlansTable({ plans, initialLoad }) {
 UnassignedPlansTable.propTypes = {
   plans: PropTypes.array.isRequired,
   initialLoad: PropTypes.bool,
+  spaceAssignmentExperiment: PropTypes.bool,
 };

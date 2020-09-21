@@ -79,6 +79,9 @@ function SpacePlans({
   const totalCost = calculatePlansCost({ plans: spacePlans });
 
   const [canManageSpaces, setCanManageSpaces] = useState(false);
+  const [isSpaceAssignmentExperimentEnabled, setIsSpaceAssignmentExperimentEnabled] = useState(
+    false
+  );
   const [unassignedSpacePlans, getUnassignedSpacePlans] = useState(null);
   const [assignedSpacePlans, getAssignedSpacePlans] = useState(null);
   const [selectedTab, setSelectedTab] = useState('usedSpaces');
@@ -86,6 +89,9 @@ function SpacePlans({
   useEffect(() => {
     async function fetch() {
       const isFeatureEnabled = await getVariation(FLAGS.SPACE_PLAN_ASSIGNMENT);
+      const isExperimentFeatureFlagEnabled = await getVariation(
+        FLAGS.SPACE_PLAN_ASSIGNMENT_EXPERIMENT
+      );
       const unassignedSpacePlans = spacePlans.filter((plan) => plan.gatekeeperKey === null);
       const assignedSpacePlans = spacePlans.filter((plan) => plan.gatekeeperKey !== null);
 
@@ -94,6 +100,7 @@ function SpacePlans({
 
       const canManageSpaces = isFeatureEnabled && enterprisePlan && isOrgOwner;
       setCanManageSpaces(canManageSpaces);
+      setIsSpaceAssignmentExperimentEnabled(isExperimentFeatureFlagEnabled);
     }
     fetch();
   }, [setCanManageSpaces, enterprisePlan, isOrgOwner, spacePlans]);
@@ -239,6 +246,7 @@ function SpacePlans({
                     plans={unassignedSpacePlans}
                     initialLoad={initialLoad}
                     showSpacePlanChangeBtn={canManageSpaces}
+                    spaceAssignmentExperiment={isSpaceAssignmentExperimentEnabled}
                   />
                 )}
               </TabPanel>
