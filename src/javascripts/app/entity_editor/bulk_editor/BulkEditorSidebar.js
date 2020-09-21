@@ -9,6 +9,7 @@ import { entitySelector } from 'features/entity-search';
 import * as accessChecker from 'access_control/AccessChecker';
 import { get, uniq, isObject, extend } from 'lodash';
 import { getModule } from 'core/NgRegistry';
+import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
 
 const styles = {
   helpText: css({
@@ -36,7 +37,8 @@ const linkEntity = (entity) => ({
 });
 
 export const BulkEditorSidebar = ({ linkCount, field, addLinks, track }) => {
-  const spaceContext = useMemo(() => getModule('spaceContext'), []);
+  const spaceContext = useMemo(() => getModule('spaceContext'), []); // TODO: Remove after `publishedCTs` is refactored
+  const spaceApiClient = useCurrentSpaceAPIClient();
 
   // TODO necessary for entitySelector change it
   const extendedField = useMemo(
@@ -51,7 +53,7 @@ export const BulkEditorSidebar = ({ linkCount, field, addLinks, track }) => {
   const addNewEntry = useCallback(
     (ctOrCtId) => {
       const contentType = isObject(ctOrCtId) ? ctOrCtId : spaceContext.publishedCTs.get(ctOrCtId);
-      return spaceContext.cma.createEntry(contentType.getId(), {}).then((entry) => {
+      return spaceApiClient.createEntry(contentType.getId(), {}).then((entry) => {
         Analytics.track('entry:create', {
           eventOrigin: 'bulk-editor',
           contentType: contentType.data,
@@ -61,7 +63,7 @@ export const BulkEditorSidebar = ({ linkCount, field, addLinks, track }) => {
         return addLinks([linkEntity(entry)]);
       });
     },
-    [spaceContext, addLinks, track]
+    [spaceContext, spaceApiClient, addLinks, track]
   );
 
   const addExistingEntries = useCallback(async () => {
