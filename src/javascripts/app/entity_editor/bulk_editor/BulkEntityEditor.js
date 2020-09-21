@@ -18,6 +18,8 @@ import { Workbench } from '@contentful/forma-36-react-components';
 import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { makeFieldLocaleListeners } from 'app/entry_editor/makeFieldLocaleListeners';
 import { getEditorState } from '../editorState';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 
 const styles = {
   workbench: css({
@@ -41,7 +43,9 @@ export const BulkEntityEditor = ({
   onRemove,
   hasInitialFocus,
 }) => {
-  const spaceContext = useMemo(() => getModule('spaceContext'), []);
+  const spaceContext = useMemo(() => getModule('spaceContext'), []); // TODO: Remove after `publishedCTs` is refactored
+  const { currentEnvironmentId, currentSpace, currentSpaceId } = useSpaceEnvContext();
+  const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
 
   const [isExpanded, setIsExpanded] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
@@ -58,16 +62,16 @@ export const BulkEntityEditor = ({
           type: 'Entry',
           environment: {
             sys: {
-              id: spaceContext.getEnvironmentId(),
-              isMasterEnvironment: spaceContext.isMasterEnvironment(),
+              id: currentEnvironmentId,
+              isMasterEnvironment,
             },
           },
           space: {
-            sys: { id: spaceContext.getId() },
+            sys: { id: currentSpaceId },
           },
         },
       }),
-    [entityContext.id, spaceContext]
+    [entityContext.id, currentEnvironmentId, isMasterEnvironment, currentSpaceId]
   );
 
   const { editorSettings: preferences, track } = bulkEditorContext;
@@ -81,7 +85,9 @@ export const BulkEntityEditor = ({
         const editorState = getEditorState({
           editorData,
           editorType: 'bulk_editor',
-          spaceContext,
+          publishedCTs: spaceContext.publishedCTs,
+          spaceId: currentSpaceId,
+          environmentId: currentEnvironmentId,
           bulkEditorContext,
           hasInitialFocus: bulkEditorContext.editorSettings.hasInitialFocus || hasInitialFocus,
           getTitle: () => title,

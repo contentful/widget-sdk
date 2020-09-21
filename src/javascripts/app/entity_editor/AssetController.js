@@ -57,7 +57,9 @@ export default async function create($scope, editorData, preferences) {
     doc,
     entityInfo,
     editorData,
-    spaceContext,
+    spaceId: spaceContext.getId(),
+    environmentId: spaceContext.getEnvironmentId(),
+    publishedCTs: spaceContext.publishedCTs,
     onUpdate: (state) => {
       $scope.state = state;
       $scope.$applyAsync();

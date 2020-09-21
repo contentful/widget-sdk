@@ -13,7 +13,6 @@ import { initStateController } from './stateController';
 export const getEditorState = ({
   editorData,
   editorType,
-  spaceContext,
   bulkEditorContext,
   getTitle,
   onStateUpdate,
@@ -21,6 +20,9 @@ export const getEditorState = ({
   lifeline,
   currentSlideLevel = 0,
   hasInitialFocus = false,
+  spaceId,
+  environmentId,
+  publishedCTs,
 }) => {
   if (editorData) {
     // Lifeline is required to destroy a document on e.g. slide-in editor close
@@ -31,7 +33,7 @@ export const getEditorState = ({
     const validator = Validator.createForEntry(
       entityInfo.contentType,
       doc,
-      spaceContext.publishedCTs,
+      publishedCTs,
       localeStore.getPrivateLocales()
     );
 
@@ -45,8 +47,10 @@ export const getEditorState = ({
       getTitle,
       onUpdate: onStateUpdate,
       doc,
-      spaceContext,
       validator,
+      spaceId,
+      environmentId,
+      publishedCTs,
     });
 
     K.onValue(valuePropertyAt(doc, []), (data) => {

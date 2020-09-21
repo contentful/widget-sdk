@@ -83,7 +83,9 @@ describe('stateController', () => {
       entityInfo,
       doc,
       getTitle: () => 'title',
-      spaceContext,
+      spaceId: spaceContext.getId(),
+      environmentId: spaceContext.getEnvironmentId(),
+      publishedCTs: spaceContext.publishedCTs,
       validator,
       onUpdate: (state) => {
         controller = state;

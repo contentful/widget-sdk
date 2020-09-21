@@ -28,8 +28,10 @@ export const initStateController = ({
   getTitle,
   doc,
   validator,
-  spaceContext,
   onUpdate,
+  spaceId,
+  environmentId,
+  publishedCTs,
 }) => {
   const { permissions, reverter, resourceState: docStateManager } = doc;
   const notify = makeNotify(entityInfo.type, () => `“${getTitle()}”`);
@@ -234,8 +236,8 @@ export const initStateController = ({
     try {
       await showUnpublishedReferencesWarning({
         entity: K.getValue(doc.data$),
-        spaceId: spaceContext.getId(),
-        environmentId: spaceContext.getEnvironmentId(),
+        spaceId,
+        environmentId,
       });
 
       if (validator.run()) {
@@ -244,7 +246,7 @@ export const initStateController = ({
 
           let contentType;
           if (entityInfo.type === 'Entry') {
-            contentType = spaceContext.publishedCTs.get(entityInfo.contentTypeId).data;
+            contentType = publishedCTs.get(entityInfo.contentTypeId).data;
           }
           if (contentType) {
             let eventOrigin = 'entry-editor';
