@@ -1,4 +1,4 @@
-import { registerController, getModule } from 'core/NgRegistry';
+import { registerController } from 'core/NgRegistry';
 import * as K from 'core/utils/kefir';
 import { makeFieldLocaleListeners } from './makeFieldLocaleListeners';
 
@@ -81,8 +81,7 @@ export default function register() {
 
       $scope.fieldLocaleListeners = makeFieldLocaleListeners(
         controls.form.concat(controls.sidebar),
-        $scope,
-        getModule('$controller')
+        $scope
       );
 
       function update() {

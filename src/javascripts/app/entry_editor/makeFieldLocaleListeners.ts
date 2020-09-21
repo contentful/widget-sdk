@@ -1,3 +1,4 @@
+import { createFieldLocaleController } from 'app/entity_editor/fieldLocaleController';
 import * as K from 'core/utils/kefir';
 import { set, isEqual } from 'lodash';
 
@@ -10,7 +11,7 @@ interface FieldLocaleListener {
 
 export type FieldLocaleLookup = Record<string, Record<string, FieldLocaleListener>>;
 
-export const makeFieldLocaleListeners = (controls: any[], $scope: any, $controller: any) => {
+export const makeFieldLocaleListeners = (controls: any[], $scope: any) => {
   const lookup: FieldLocaleLookup = {};
   const flat: FieldLocaleListener[] = [];
 
@@ -20,14 +21,14 @@ export const makeFieldLocaleListeners = (controls: any[], $scope: any, $controll
       : [$scope.localeData.defaultLocale];
 
     locales.forEach((locale: any) => {
-      const fieldLocaleScope = $scope.$new(false);
-      fieldLocaleScope.widget = widget;
-      fieldLocaleScope.locale = locale;
-
       const fieldId = widget.fieldId;
       const localeCode = locale.code;
-      const { access$, errors$ } = $controller('FieldLocaleController', {
-        $scope: fieldLocaleScope,
+
+      const { access$, errors$ } = createFieldLocaleController({
+        widget,
+        locale,
+        otDoc: $scope.otDoc,
+        editorContext: $scope.editorContext,
       });
 
       const fieldLocale: FieldLocaleListener = {

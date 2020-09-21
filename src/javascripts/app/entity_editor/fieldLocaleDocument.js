@@ -6,14 +6,22 @@
 import { isEqual } from 'lodash';
 import { localFieldChanges, valuePropertyAt } from 'app/entity_editor/Document';
 
+import * as K from 'core/utils/kefir';
+
+import DocumentStatusCode from 'data/document/statusCode';
+import { statusProperty } from './Document';
+import { FieldAccess } from './EntityField/EntityFieldAccess';
+
 /**
  * @ngdoc method
  * @name app/entity_editor/FieldLocaleDocument#create
  * @param {OtDocument} doc
- * @param {string} fieldId  Internal field ID
+ * @param {Object} field
  * @param {string} localeCode  Internal locale code
  */
-export default function create(doc, fieldId, localeCode) {
+export const createFieldLocaleDocument = (doc, field, localeCode, canEditLocale) => {
+  const fieldId = field.id;
+
   const path = ['fields', fieldId, localeCode];
 
   const getValue = bindToPath('getValueAt');
@@ -68,6 +76,54 @@ export default function create(doc, fieldId, localeCode) {
     })
     .map(() => undefined);
 
+  const documentStatus$ = statusProperty(doc) || K.constant();
+
+  const collaborators = doc.presence.collaboratorsFor(fieldId, localeCode);
+
+  /**
+   * Holds information about the access to the current field locale.
+   *
+   * The object has a number of boolean properties that are set
+   * according to the connection state and editing permissions.
+   *
+   * - `disconnected` No ShareJS connection
+   * - `denied` The user does not have permission to edit the field
+   * - `editing_disabled` The field is disabled at the content type level
+   * - `disabled` Is true if one of the above is true
+   * - `editable` Is true if 'disabled' is false
+   */
+
+  const access$ = K.combine(
+    [documentStatus$, doc.state.isConnected$, collaborators],
+    (status, isConnected, collaborators) => {
+      if (field.disabled) {
+        return FieldAccess.EDITING_DISABLED;
+      } else if (!canEditLocale) {
+        return FieldAccess.DENIED;
+      } else if (
+        isCollaborativeEditingDisabledForFieldType(field.type) &&
+        collaborators &&
+        collaborators.length > 0
+      ) {
+        return FieldAccess.OCCUPIED;
+      } else if (isConnected) {
+        // CmaDocument is always "connected" by design (unless internet down)
+        // so we need to be more granular than in case of `OtDocument`.
+        return [
+          DocumentStatusCode.INTERNAL_SERVER_ERROR,
+          DocumentStatusCode.EDIT_CONFLICT,
+          DocumentStatusCode.ARCHIVED,
+          DocumentStatusCode.DELETED,
+          DocumentStatusCode.CONNECTION_ERROR,
+        ].includes(status)
+          ? FieldAccess.DISCONNECTED
+          : FieldAccess.EDITABLE;
+      } else {
+        return FieldAccess.DISCONNECTED;
+      }
+    }
+  ).toProperty();
+
   return {
     sys: doc.sysProperty,
     set,
@@ -78,9 +134,10 @@ export default function create(doc, fieldId, localeCode) {
     insert: bindToPath('insertValueAt'),
     value$,
     valueProperty,
-    collaborators: doc.presence.collaboratorsFor(fieldId, localeCode),
+    collaborators,
     notifyFocus: () => doc.presence.focus(fieldId, localeCode),
     localChanges$,
+    access$,
   };
 
   function set(value) {
@@ -98,4 +155,8 @@ export default function create(doc, fieldId, localeCode) {
   function bindToPath(method) {
     return doc[method].bind(null, path);
   }
+};
+
+function isCollaborativeEditingDisabledForFieldType(fieldType) {
+  return fieldType === 'RichText';
 }
