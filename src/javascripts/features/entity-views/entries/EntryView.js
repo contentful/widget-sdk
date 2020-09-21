@@ -20,6 +20,8 @@ import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceCont
 import * as ScheduledActionsService from 'app/ScheduledActions/DataManagement/ScheduledActionsService';
 import { getModule } from 'core/NgRegistry';
 import getAccessibleCTs from 'data/ContentTypeRepo/accessibleCTs';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 
 const trackEnforcedButtonClick = (err) => {
   // If we get reason(s), that means an enforcement is present
@@ -32,10 +34,10 @@ const trackEnforcedButtonClick = (err) => {
   });
 };
 
-const newEntry = (goTo, spaceContext, showNoEntitiesAdvice) => async (contentTypeId) => {
+const newEntry = (goTo, publishedCTs, showNoEntitiesAdvice) => async (contentTypeId) => {
   try {
     const entry = await entityCreator.newEntry(contentTypeId);
-    const { data } = spaceContext.publishedCTs.get(contentTypeId);
+    const { data } = publishedCTs.get(contentTypeId);
     const eventOriginFlag = showNoEntitiesAdvice ? '--empty' : '';
 
     Analytics.track('entry:create', {
@@ -55,12 +57,19 @@ const newEntry = (goTo, spaceContext, showNoEntitiesAdvice) => async (contentTyp
 export const EntryView = ({ goTo }) => {
   const entityType = 'entry';
   const spaceContext = useMemo(() => getModule('spaceContext'), []);
+  const {
+    currentEnvironmentId,
+    currentOrganization,
+    currentSpace,
+    currentSpaceData,
+    currentSpaceId,
+  } = useSpaceEnvContext();
   const listViewContext = useListView({
     entityType,
     isPersisted: true,
     onUpdate,
   });
-  const fetchEntries = useCallback((query) => spaceContext.space.getEntries(query), [spaceContext]);
+  const fetchEntries = useCallback((query) => currentSpace.getEntries(query), [currentSpace]);
   const [jobs, setJobs] = useState([]);
   const [hasContentType, setHasContentType] = useState(false);
   const [accessibleCTs, setAccessibleCTs] = useState([]);
@@ -71,17 +80,17 @@ export const EntryView = ({ goTo }) => {
   const cache = useMemo(
     () => ({
       entry: new EntityListCache({
-        space: spaceContext.space,
+        space: currentSpace,
         entityType: 'Entry',
         limit: 5,
       }),
       asset: new EntityListCache({
-        space: spaceContext.space,
+        space: currentSpace,
         entityType: 'Asset',
         limit: 3,
       }),
     }),
-    [spaceContext]
+    [currentSpace]
   );
 
   const updateAccessibleCTs = useCallback(() => {
@@ -98,14 +107,11 @@ export const EntryView = ({ goTo }) => {
   useEffect(() => {
     const init = async () => {
       try {
-        const spaceEndpoint = createSpaceEndpoint(
-          spaceContext.space.data.sys.id,
-          spaceContext.space.environment.sys.id
-        );
+        const spaceEndpoint = createSpaceEndpoint(currentSpaceId, currentEnvironmentId);
         const { items = [] } = await ScheduledActionsService.getJobs(spaceEndpoint, {
           order: 'scheduledFor.datetime',
           'sys.status': 'scheduled',
-          'environment.sys.id': spaceContext.space.environment.sys.id,
+          'environment.sys.id': currentEnvironmentId,
         });
         setJobs(items);
         updateAccessibleCTs();
@@ -114,7 +120,7 @@ export const EntryView = ({ goTo }) => {
       }
     };
     init();
-  }, [spaceContext, updateAccessibleCTs]);
+  }, [currentSpaceId, currentEnvironmentId, updateAccessibleCTs]);
 
   useEffect(() => {
     return K.onValue(spaceContext.publishedCTs.items$, (cts) => {
@@ -123,7 +129,7 @@ export const EntryView = ({ goTo }) => {
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const isMasterEnvironment = spaceContext.isMasterEnvironment();
+  const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
 
   const displayFieldForFilteredContentType = () =>
     EntityFieldValueSpaceContext.displayFieldForType(contentTypeId);
@@ -138,7 +144,11 @@ export const EntryView = ({ goTo }) => {
       cache={cache}
       listViewContext={listViewContext}
       entityType={entityType}
-      spaceContext={spaceContext}
+      environmentId={currentEnvironmentId}
+      spaceId={currentSpaceId}
+      space={currentSpaceData}
+      organization={currentOrganization}
+      isMasterEnvironment={isMasterEnvironment}
       fetchEntities={fetchEntries}
       getContentTypes={() => getAccessibleCTs(spaceContext.publishedCTs, contentTypeId)}
       searchControllerProps={{
@@ -151,7 +161,12 @@ export const EntryView = ({ goTo }) => {
           <CreateEntryButton
             contentTypes={accessibleCTs}
             suggestedContentTypeId={suggestedContentTypeId}
-            onSelect={newEntry(goTo, spaceContext, showNoEntitiesAdvice, contentTypeId)}
+            onSelect={newEntry(
+              goTo,
+              spaceContext.publishedCTs,
+              showNoEntitiesAdvice,
+              contentTypeId
+            )}
           />
         </span>
       )}
@@ -167,7 +182,7 @@ export const EntryView = ({ goTo }) => {
           hasContentType={hasContentType}
           contentTypes={accessibleCTs}
           suggestedContentTypeId={contentTypeId}
-          onCreate={newEntry(goTo, spaceContext, showNoEntitiesAdvice)}
+          onCreate={newEntry(goTo, spaceContext.publishedCTs, showNoEntitiesAdvice)}
         />
       )}
       renderEntityList={({ entities, isLoading, updateEntities }, className) => (

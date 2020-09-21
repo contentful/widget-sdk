@@ -15,15 +15,9 @@ jest.mock('features/entity-views/core/SavedViews/Sidebar', () => ({
   Sidebar: (props) => <div data-test-id="saved-views-sidebar">{JSON.stringify(props)}</div>,
 }));
 
-const spaceContext = {
-  organization,
-  space: { data: space },
-  getEnvironmentId: () => 'environment-id',
-  isMasterEnvironment: () => true,
-  users: {
-    getAll: jest.fn().mockResolvedValue([{ sys: { id: '1' } }]),
-  },
-};
+jest.mock('data/CMA/FetchAll', () => ({
+  fetchAll: jest.fn(() => Promise.resolve()),
+}));
 
 const listViewContext = {
   getView: jest.fn().mockReturnValue({}),
@@ -50,7 +44,11 @@ const renderComponent = (props = {}) => {
     title: 'Content',
     searchControllerProps,
     listViewContext,
-    spaceContext,
+    spaceId: space.sys.id,
+    environmentId: 'environment-id',
+    organization,
+    isMasterEnvironment: true,
+    space: { data: space },
     fetchEntities: jest.fn().mockResolvedValue([]),
     renderAddEntityActions: mockRenderProp('add-entity-action'),
     renderEmptyState: mockRenderProp('empty-state'),

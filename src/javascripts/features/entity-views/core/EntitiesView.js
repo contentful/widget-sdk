@@ -15,6 +15,8 @@ import { NoSearchResultsAdvice } from 'core/components/NoSearchResultsAdvice';
 import { UpgradeBanner } from './UpgradeBanner';
 import { PluralizeEntityMessage } from './PluralizeEntityMessage';
 import { Search, usePaginator, useSearchController } from 'features/entity-search';
+import createUserCache from 'data/userCache';
+import { createSpaceEndpoint } from 'data/EndpointFactory';
 
 const statusStyles = {
   padding: `0 ${tokens.spacingM} ${tokens.spacingS} ${tokens.spacingM}`,
@@ -83,9 +85,13 @@ export const EntitiesView = ({
   renderTopContent,
   searchControllerProps,
   getContentTypes,
-  spaceContext,
   title,
   cache,
+  spaceId,
+  environmentId,
+  organization,
+  isMasterEnvironment,
+  space,
 }) => {
   const paginator = usePaginator();
   const [isInitialized, setIsInitialized] = useState(false);
@@ -108,20 +114,19 @@ export const EntitiesView = ({
 
   useEffect(() => {
     const init = async () => {
-      const users = await spaceContext.users.getAll();
+      const spaceEndpoint = createSpaceEndpoint(spaceId, environmentId);
+      const userClient = createUserCache(spaceEndpoint);
+      const users = await userClient.getAll();
       setUsers(users);
       !isLoading && setIsInitialized(true);
     };
     if (!isInitialized) {
       init();
     }
-  }, [spaceContext, isLoading, isInitialized]);
+  }, [spaceId, environmentId, isLoading, isInitialized]);
 
   const pageCount = paginator.getPageCount();
-  const isLegacyOrganization = ResourceUtils.isLegacyOrganization(spaceContext.organization);
-  const environmentId = spaceContext.getEnvironmentId();
-  const isMasterEnvironment = spaceContext.isMasterEnvironment();
-  const space = spaceContext.space.data;
+  const isLegacyOrganization = ResourceUtils.isLegacyOrganization(organization);
 
   const renderPropArgs = {
     entities,
@@ -256,7 +261,11 @@ EntitiesView.propTypes = {
   renderSavedViewsActions: PropTypes.func.isRequired,
   renderTopContent: PropTypes.func.isRequired,
   getContentTypes: PropTypes.func.isRequired,
-  spaceContext: PropTypes.object.isRequired,
+  spaceId: PropTypes.string.isRequired,
+  environmentId: PropTypes.string.isRequired,
+  organization: PropTypes.object.isRequired,
+  isMasterEnvironment: PropTypes.bool.isRequired,
+  space: PropTypes.object.isRequired,
 };
 
 EntitiesView.defaultProps = {

@@ -16,6 +16,8 @@ import { EntitiesView } from '../core/EntitiesView';
 import { getModule } from 'core/NgRegistry';
 import { FileSizeLimitWarning } from './FileSizeLimitWarning';
 import { shouldHide } from 'access_control/AccessChecker';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 
 const trackEnforcedButtonClick = (err) => {
   // If we get reason(s), that means an enforcement is present
@@ -60,15 +62,28 @@ const createMultipleAssets = (updateEntities) => async () => {
 
 export const AssetView = ({ goTo }) => {
   const entityType = 'asset';
-  const spaceContext = useMemo(() => getModule('spaceContext'), []);
+  const spaceContext = useMemo(() => getModule('spaceContext'), []); // Being used only for `publishedCTs`
+  const {
+    currentEnvironmentId,
+    currentOrganization,
+    currentOrganizationId,
+    currentSpace,
+    currentSpaceData,
+    currentSpaceId,
+  } = useSpaceEnvContext();
+  const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
   const listViewContext = useListView({ entityType, isPersisted: true });
-  const fetchAssets = useCallback((query) => spaceContext.space.getAssets(query), [spaceContext]);
+  const fetchAssets = useCallback((query) => currentSpace.getAssets(query), [currentSpace]);
 
   return (
     <EntitiesView
       title="Media"
       entityType={entityType}
-      spaceContext={spaceContext}
+      environmentId={currentEnvironmentId}
+      spaceId={currentSpaceId}
+      space={currentSpaceData}
+      organization={currentOrganization}
+      isMasterEnvironment={isMasterEnvironment}
       fetchEntities={fetchAssets}
       listViewContext={listViewContext}
       getContentTypes={spaceContext.publishedCTs.getAllBare}
@@ -78,10 +93,7 @@ export const AssetView = ({ goTo }) => {
         getListQuery: ListQuery.getForAssets,
       }}
       renderTopContent={() => (
-        <FileSizeLimitWarning
-          organizationId={spaceContext.organization.sys.id}
-          spaceId={spaceContext.space.data.sys.id}
-        />
+        <FileSizeLimitWarning organizationId={currentOrganizationId} spaceId={currentSpaceId} />
       )}
       renderAddEntityActions={({ updateEntities }, className) => {
         if (shouldHide('create', entityType)) return null;
