@@ -47,7 +47,10 @@ export function createReadOnlyDialogsApi() {
   };
 }
 
-export function createDialogsApi(sdk: BaseExtensionSDKWithoutDialogs): DialogsAPI {
+export function createDialogsApi(
+  sdk: BaseExtensionSDKWithoutDialogs,
+  currentAppWidget?: Widget
+): DialogsAPI {
   return {
     openAlert: ExtensionDialogs.openAlert,
     openConfirm: ExtensionDialogs.openConfirm,
@@ -90,7 +93,7 @@ export function createDialogsApi(sdk: BaseExtensionSDKWithoutDialogs): DialogsAP
     },
     openCurrentApp: (opts) => {
       const options = { ...opts, id: sdk.ids.app };
-      return openCustomDialog(WidgetNamespace.APP, options, sdk);
+      return openCustomDialog(WidgetNamespace.APP, options, sdk, currentAppWidget);
     },
     openExtension: (opts) => {
       return openCustomDialog(WidgetNamespace.EXTENSION, opts, sdk);
@@ -98,7 +101,11 @@ export function createDialogsApi(sdk: BaseExtensionSDKWithoutDialogs): DialogsAP
   };
 }
 
-async function findWidget(widgetNamespace: WidgetNamespace, widgetId: string) {
+async function findWidget(
+  widgetNamespace: WidgetNamespace,
+  widgetId: string,
+  currentAppWidget?: Widget
+) {
   const loader = await getCustomWidgetLoader();
   const widget = await loader.getOne({ widgetNamespace, widgetId });
 
@@ -108,17 +115,13 @@ async function findWidget(widgetNamespace: WidgetNamespace, widgetId: string) {
     return widget;
   }
 
-  // TODO: We will need to handle one more case when we'll start using SDK in the App Config view.
   // It is possible to open dialogs when installing an app, even before the app is installed.
   // Before it's installed, there is no AppInstallation entity, so the result of loader call
-  // above will be empty. In this case we need to create an artificial widget instance out
-  // of AppDefinition.
-  //
-  // Pseudocode:
-  //
-  // if (widgetNamespace === WidgetNamespace.APP && isInAppConfigView() {
-  //   return buildArtificialAppDefinitionWidget(widgetId);
-  // }
+  // above will be empty. In this case we use the widget that is passed in.
+
+  if (widgetNamespace === WidgetNamespace.APP && currentAppWidget) {
+    return currentAppWidget;
+  }
 
   throw new Error(`No widget with ID "${widgetId}" found in "${widgetNamespace}" namespace.`);
 }
@@ -179,13 +182,14 @@ function createDialogSDK(
 async function openCustomDialog(
   namespace: WidgetNamespace,
   options: OpenCustomWidgetOptions,
-  sdk: BaseExtensionSDKWithoutDialogs
+  sdk: BaseExtensionSDKWithoutDialogs,
+  currentAppWidget?: Widget
 ) {
   if (!options.id) {
     throw new Error('No ID provided.');
   }
 
-  const widget = await findWidget(namespace, options.id);
+  const widget = await findWidget(namespace, options.id, currentAppWidget);
 
   return ModalLauncher.open(({ isShown, onClose }) => {
     const size =

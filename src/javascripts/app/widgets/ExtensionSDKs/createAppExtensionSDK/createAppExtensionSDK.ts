@@ -1,5 +1,5 @@
 import { AppExtensionSDK } from 'contentful-ui-extensions-sdk';
-import { WidgetNamespace, WidgetLocation } from '@contentful/widget-renderer';
+import { WidgetNamespace, WidgetLocation, Widget } from '@contentful/widget-renderer';
 import { SpaceMember, createUserApi } from '../createUserApi';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 import { createTagsRepo } from 'features/content-tags';
@@ -12,22 +12,19 @@ import { AppHookBus } from 'features/apps-core';
 
 interface CreateAppExtensionSDKOptions {
   spaceContext: any;
-  parameters: {
-    instance: Record<string, any>;
-    installation: Record<string, any>;
-  };
   $scope: any;
   widgetNamespace: WidgetNamespace;
   widgetId: string;
   appHookBus: AppHookBus;
+  currentAppWidget: Widget;
 }
 
 export const createAppExtensionSDK = ({
   spaceContext,
   widgetNamespace,
   widgetId,
-  parameters,
   appHookBus,
+  currentAppWidget,
 }: CreateAppExtensionSDKOptions): { sdk: AppExtensionSDK; onAppHook: AppHookListener } => {
   const spaceMember: SpaceMember = spaceContext.space.data.spaceMember;
 
@@ -37,7 +34,7 @@ export const createAppExtensionSDK = ({
     cma: getBatchingApiClient(spaceContext.cma),
     initialContentTypes: spaceContext.publishedCTs.getAllBare(),
     pubSubClient: spaceContext.pubsubClient,
-    environmentIds: [spaceContext.getEnvironmentId(), ...spaceContext.getAliasIds()],
+    environmentIds: [spaceContext.getEnvironmentId(), ...spaceContext.getAliasesIds()],
     spaceId: spaceContext.getId(),
     tagsRepo: createTagsRepo(spaceContext.endpoint, spaceContext.getEnvironmentId()),
     usersRepo: spaceContext.users,
@@ -57,7 +54,7 @@ export const createAppExtensionSDK = ({
   const navigatorApi = createNavigatorApi({ spaceContext, widgetNamespace, widgetId });
 
   const base = createBaseExtensionSdk({
-    parametersApi: parameters,
+    parametersApi: { installation: {}, instance: {} },
     spaceMember,
     locationApi,
     navigatorApi,
@@ -85,7 +82,7 @@ export const createAppExtensionSDK = ({
   return {
     sdk: {
       ...sdkWithoutDialogs,
-      dialogs: createDialogsApi(sdkWithoutDialogs),
+      dialogs: createDialogsApi(sdkWithoutDialogs, currentAppWidget),
     },
     onAppHook,
   };

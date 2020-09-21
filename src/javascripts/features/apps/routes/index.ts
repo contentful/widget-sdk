@@ -4,6 +4,7 @@ import { AppsListPage } from '../AppsListPage';
 import { AppRoute } from '../AppPage';
 import { makeAppHookBus, getAppsRepo } from 'features/apps-core';
 import createAppExtensionBridge from 'widgets/bridges/createAppExtensionBridge';
+import { createAppExtensionSDK } from 'app/widgets/ExtensionSDKs';
 import createPageExtensionBridge from 'widgets/bridges/createPageExtensionBridge';
 import * as Navigator from 'states/Navigator';
 import * as SlideInNavigator from 'navigation/SlideInNavigator/index';
@@ -99,6 +100,15 @@ export const appRoute = {
             return sameOrg && isDeveloperOrHigher;
           },
         ],
+        useNewWidgetRendererInConfigLocation: [
+          'spaceContext',
+          (spaceContext: any) =>
+            getVariation(FLAGS.NEW_WIDGET_RENDERER_APP_CONFIG, {
+              spaceId: spaceContext.getId(),
+              organizationId: spaceContext.organization.sys.id,
+              environmentId: spaceContext.getEnvironmentId(),
+            }),
+        ],
       },
       onEnter: [
         '$state',
@@ -144,26 +154,23 @@ export const appRoute = {
       mapInjectedToProps: [
         'spaceContext',
         '$state',
+        '$scope',
         'app',
         'canManageThisApp',
-        (spaceContext, $state, app, canManageThisApp) => {
+        'useNewWidgetRendererInConfigLocation',
+        (
+          spaceContext: any,
+          $state: any,
+          $scope: any,
+          app,
+          canManageThisApp: boolean,
+          useNewWidgetRendererInConfigLocation: boolean
+        ) => {
           const appHookBus = makeAppHookBus();
-
-          const bridge = createAppExtensionBridge({
-            spaceContext,
-            appHookBus,
-            Navigator,
-            SlideInNavigator,
-            appDefinition: app.appDefinition,
-            currentWidgetId: app.appDefinition.sys.id,
-            currentWidgetNamespace: WidgetNamespace.APP,
-            getCurrentState,
-          });
 
           return {
             goBackToList: () => $state.go('^.list'),
             app,
-            bridge,
             appHookBus,
             cma: spaceContext.cma,
             evictWidget: async (appInstallation) => {
@@ -180,6 +187,30 @@ export const appRoute = {
               spaceId: spaceContext.getId(),
               environmentId: spaceContext.getEnvironmentId(),
             },
+            useNewWidgetRendererInConfigLocation,
+            createSdk: memoize((currentAppWidget: Widget) =>
+              createAppExtensionSDK({
+                spaceContext,
+                $scope,
+                widgetNamespace: WidgetNamespace.APP,
+                widgetId: app.appDefinition.sys.id,
+                appHookBus,
+                currentAppWidget,
+              })
+            ),
+            createBridge: memoize(() =>
+              // TODO: ext-2164 - remove this along with feature flag
+              createAppExtensionBridge({
+                spaceContext,
+                appHookBus,
+                Navigator,
+                SlideInNavigator,
+                appDefinition: app.appDefinition,
+                currentWidgetId: app.appDefinition.sys.id,
+                currentWidgetNamespace: WidgetNamespace.APP,
+                getCurrentState,
+              })
+            ),
           };
         },
       ],

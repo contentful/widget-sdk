@@ -35,7 +35,7 @@ export const APP_EVENTS_IN = {
 export interface AppHookBus {
   on: (eventName: string, handler: mitt.Handler) => void;
   emit: (eventName: string, data?: any) => void;
-  setInstallation: (value: { parameters: AppParameterValues }) => void;
+  setInstallation: (value: { parameters: AppParameterValues } | null) => void;
   getInstallation: () => Record<string, any> | null;
 }
 
