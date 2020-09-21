@@ -45,7 +45,12 @@ const styles = {
   }),
 };
 
-export const SpaceSelection = ({ organizationId, selectPlan, canCreateCommunityPlan }) => {
+export const SpaceSelection = ({
+  organizationId,
+  selectPlan,
+  canCreateCommunityPlan,
+  canCreatePaidSpace,
+}) => {
   const getSelectHandler = (planType) => {
     if (planType === SPACE_PURCHASE_TYPES.ENTERPRISE) {
       return () => {
@@ -75,6 +80,7 @@ export const SpaceSelection = ({ organizationId, selectPlan, canCreateCommunityP
         {SPACE_PURCHASE_CONTENT.map((spaceContent, idx) => (
           <SpaceCard
             key={idx}
+            disabled={!canCreatePaidSpace}
             content={spaceContent}
             handleSelect={getSelectHandler(spaceContent.type)}
           />
@@ -120,4 +126,5 @@ SpaceSelection.propTypes = {
   organizationId: PropTypes.string,
   selectPlan: PropTypes.func,
   canCreateCommunityPlan: PropTypes.bool,
+  canCreatePaidSpace: PropTypes.bool.isRequired,
 };

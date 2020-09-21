@@ -15,17 +15,20 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import createResourceService from 'services/ResourceService';
 import { resourceIncludedLimitReached } from 'utils/ResourceUtils';
 import { fetchSpacePurchaseContent } from '../services/fetchSpacePurchaseContent';
+import * as TokenStore from 'services/TokenStore';
 
 const initialFetch = (orgId) => async () => {
   const endpoint = createOrganizationEndpoint(orgId);
 
   const [
+    organization,
     newPurchaseFlowIsEnabled,
     templatesList,
     productRatePlans,
     freeSpaceResource,
     pageContent,
   ] = await Promise.all([
+    TokenStore.getOrganization(orgId),
     getVariation(FLAGS.NEW_PURCHASE_FLOW),
     getTemplatesList(),
     getRatePlans(endpoint),
@@ -37,6 +40,7 @@ const initialFetch = (orgId) => async () => {
   const canCreateCommunityPlan = !resourceIncludedLimitReached(freeSpaceResource);
 
   return {
+    organization,
     newPurchaseFlowIsEnabled,
     templatesList,
     productRatePlans,
@@ -64,7 +68,7 @@ export const NewSpaceRoute = ({ orgId }) => {
     <>
       <DocumentTitle title="Space purchase" />
       <NewSpacePage
-        organizationId={orgId}
+        organization={data.organization}
         templatesList={data.templatesList}
         productRatePlans={data.productRatePlans}
         canCreateCommunityPlan={data.canCreateCommunityPlan}

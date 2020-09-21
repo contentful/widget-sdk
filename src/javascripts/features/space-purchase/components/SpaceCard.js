@@ -77,7 +77,7 @@ const styles = {
   },
 };
 
-export const SpaceCard = ({ content, handleSelect }) => {
+export const SpaceCard = ({ content, handleSelect, disabled = false }) => {
   const isEnterpriseCard = content.type === SPACE_PURCHASE_TYPES.ENTERPRISE;
 
   return (
@@ -100,11 +100,12 @@ export const SpaceCard = ({ content, handleSelect }) => {
             target="_blank"
             rel="noopener noreferrer"
             onClick={handleSelect}
-            testId="select-space-cta">
+            testId="select-space-cta"
+            disabled={disabled}>
             {content.callToAction}
           </Button>
         ) : (
-          <Button onClick={handleSelect} testId="select-space-cta">
+          <Button onClick={handleSelect} testId="select-space-cta" disabled={disabled}>
             {content.callToAction}
           </Button>
         )}
@@ -140,6 +141,7 @@ SpaceCard.propTypes = {
     limits: PropTypes.arrayOf(PropTypes.string),
   }).isRequired,
   handleSelect: PropTypes.func.isRequired,
+  disabled: PropTypes.bool,
 };
 
 function getSpaceColorCSS(backgroundColor) {
