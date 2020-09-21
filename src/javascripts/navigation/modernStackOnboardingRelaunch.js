@@ -13,6 +13,7 @@ import {
 } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import Icon from 'ui/Components/Icon';
 import { getModule } from 'core/NgRegistry';
+import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 const store = getBrowserStorage();
 const styles = {
@@ -45,6 +46,8 @@ const styles = {
 };
 
 export default class Relaunch extends React.Component {
+  static contextType = SpaceEnvContext;
+
   componentDidMount() {
     const $rootScope = getModule('$rootScope');
 
@@ -68,12 +71,13 @@ export default class Relaunch extends React.Component {
     this.unsubscribeFromSpaceContext && this.unsubscribeFromSpaceContext();
   }
   render() {
-    const spaceContext = getModule('spaceContext');
     const spaceAutoCreationFailed = store.get(getSpaceAutoCreatedKey(getUser(), 'failure'));
-    const currentSpace = spaceContext.space;
+    const { currentSpaceName, currentSpaceId } = this.context;
 
     const showRelaunch =
-      !spaceAutoCreationFailed && isDevOnboardingSpace(currentSpace) && isOnboardingComplete();
+      !spaceAutoCreationFailed &&
+      isDevOnboardingSpace(currentSpaceName, currentSpaceId) &&
+      isOnboardingComplete();
 
     if (showRelaunch) {
       return (

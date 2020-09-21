@@ -50,9 +50,10 @@ const fetchData = (
   setState,
   isSpaceAdmin,
   isTEA,
-  currentSpace,
+  isModernStack,
   currentSpaceId,
-  setIsTrialCommEnabled
+  setIsTrialCommEnabled,
+  currentSpace
 ) => async () => {
   setLoading(true);
 
@@ -89,8 +90,11 @@ const fetchData = (
 
     return;
   } else {
-    if (isDevOnboardingSpace(currentSpace)) {
-      const [credentials, personEntry] = await Promise.all([getCredentials(), getPerson()]);
+    if (isModernStack) {
+      const [credentials, personEntry] = await Promise.all([
+        getCredentials(),
+        getPerson(currentSpace),
+      ]);
       setState({
         hasTeamsEnabled,
         managementToken: credentials && credentials.managementToken,
@@ -124,7 +128,7 @@ const SpaceHomePage = ({ spaceTemplateCreated, orgOwnerOrAdmin, orgId }) => {
   const readOnlySpace = isSpaceReadyOnly(currentSpace);
   const isAuthorOrEditor = accessChecker.isAuthorOrEditor(spaceRoles ?? false);
   const isSupportEnabled = isOrganizationBillable(currentSpace);
-  const isModernStack = isDevOnboardingSpace(currentSpace);
+  const isModernStack = isDevOnboardingSpace(currentSpaceName, currentSpaceId);
   const isTEA = isTEASpace(spaceContext.publishedCTs.items$, currentSpace);
   const isTrialSpace = isTrialCommEnabled && isSpaceOnTrial(currentSpace.data);
   const spaceHomeProps = {
@@ -142,9 +146,10 @@ const SpaceHomePage = ({ spaceTemplateCreated, orgOwnerOrAdmin, orgId }) => {
         setState,
         isSpaceAdmin,
         isTEA,
-        currentSpace,
+        isModernStack,
         currentSpaceId,
-        setIsTrialCommEnabled
+        setIsTrialCommEnabled,
+        currentSpace
       ),
       [spaceTemplateCreated]
     )

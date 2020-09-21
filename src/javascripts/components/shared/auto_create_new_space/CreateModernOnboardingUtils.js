@@ -4,7 +4,6 @@ import { user$ } from 'services/TokenStore';
 import { TokenResourceManager, getApiKeyRepo } from 'features/api-keys-management';
 import * as auth from 'Authentication';
 import { getValue } from 'core/utils/kefir';
-import { getModule } from 'core/NgRegistry';
 import * as Entries from 'data/entries';
 import * as Analytics from 'analytics/Analytics';
 import { getCurrentStateName } from 'states/Navigator';
@@ -17,9 +16,7 @@ export const getUser = () => getValue(user$);
 export const getStoragePrefix = () => `ctfl:${getUser().sys.id}:modernStackOnboarding`;
 export const getDeploymentProvider = () => store.get(`${getStoragePrefix()}:deploymentProvider`);
 export const isOnboardingComplete = () => store.get(`${getStoragePrefix()}:completed`);
-export const isDevOnboardingSpace = (currentSpace) => {
-  const currentSpaceId = currentSpace && currentSpace.getSys().id;
-  const currentSpaceName = currentSpace && currentSpace.data.name;
+export const isDevOnboardingSpace = (currentSpaceName, currentSpaceId) => {
   const msDevChoiceSpace = store.get(`${getStoragePrefix()}:developerChoiceSpace`);
 
   if (!msDevChoiceSpace && currentSpaceName === MODERN_STACK_ONBOARDING_SPACE_NAME) {
@@ -27,7 +24,7 @@ export const isDevOnboardingSpace = (currentSpace) => {
   }
 
   return (
-    !!currentSpace &&
+    !!currentSpaceId &&
     (currentSpaceId === msDevChoiceSpace || currentSpaceName === MODERN_STACK_ONBOARDING_SPACE_NAME)
   );
 };
@@ -52,11 +49,10 @@ function getMSOnboardingSpaceKey() {
  *
  * @return {Promise<Entry>}
  */
-export const getPerson = async () => {
-  const spaceContext = getModule('spaceContext');
+export const getPerson = async (currentSpace) => {
   const person = 'person';
-  const personEntryPromise = spaceContext.space.getEntries({ content_type: person });
-  const personCTPromise = spaceContext.space.getContentType(person);
+  const personEntryPromise = currentSpace.getEntries({ content_type: person });
+  const personCTPromise = currentSpace.getContentType(person);
 
   try {
     const [personEntry, personCT] = await Promise.all([personEntryPromise, personCTPromise]);
