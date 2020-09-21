@@ -1,5 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
+import { track } from 'analytics/Analytics';
+
 import { Workbench, Notification } from '@contentful/forma-36-react-components';
 import { NavigationIcon, Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import { Breadcrumbs } from 'features/breadcrumbs';
@@ -86,6 +88,14 @@ export function PlanSpaceAssignment({ orgId, planId }) {
     const nextStep = steps[currentStepIndex + 1];
     if (nextStep) {
       navigateToStep(nextStep);
+      track('space_assignment:continue', {
+        new_plan_id: data.plan.sys.id,
+        new_plan_name: data.plan.name,
+        current_plan_id: data.plansBySpace[selectedSpace.sys.id].sys.id,
+        current_plan_name: data.plansBySpace[selectedSpace.sys.id].name,
+        selected_space_id: selectedSpace.sys.id,
+        flow: 'assing_space_to_plan',
+      });
       window.history.pushState('', null);
     }
   };
@@ -96,6 +106,10 @@ export function PlanSpaceAssignment({ orgId, planId }) {
 
     if (previousStep) {
       navigateToStep(previousStep);
+      track('space_assignment:back', {
+        new_plan_id: data.plan.sys.id,
+        new_plan_name: data.plan.name,
+      });
       window.history.back();
     }
   };

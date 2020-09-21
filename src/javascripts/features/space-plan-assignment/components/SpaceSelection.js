@@ -127,7 +127,12 @@ export function SpaceSelection({
           component={Button}
           buttonType="muted"
           path={'^.subscription_new'}
-          icon="ChevronLeft">
+          icon="ChevronLeft"
+          trackingEvent={'space_assignment:back'}
+          trackParams={{
+            plan_id: plan.sys.id,
+            flow: 'assing_space_to_plan',
+          }}>
           Go back
         </StateLink>
         <Button buttonType="primary" onClick={onNext}>

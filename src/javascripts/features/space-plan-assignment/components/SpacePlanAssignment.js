@@ -85,6 +85,7 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
         current_plan_name: data.currentPlan ? data.currentPlan.name : data.freePlan.name,
         new_plan_id: selectedPlan.sys.id,
         new_plan_name: selectedPlan.name,
+        flow: 'assing_plan_to_space',
       });
       window.history.pushState('', null);
     }

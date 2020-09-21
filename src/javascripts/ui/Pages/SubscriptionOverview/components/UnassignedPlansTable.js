@@ -46,7 +46,12 @@ export function UnassignedPlansTable({ plans, initialLoad }) {
                       testId="subscription-page.spaces-list.change-plan-link"
                       component={TextLink}
                       path="^.space_plans"
-                      params={{ planId: plan.sys.id }}>
+                      params={{ planId: plan.sys.id }}
+                      trackingEvent={'space_assignment:change'}
+                      trackParams={{
+                        plan_id: plan.sys.id,
+                        flow: 'assing_space_to_plan',
+                      }}>
                       use space
                     </StateLink>
                   </>
