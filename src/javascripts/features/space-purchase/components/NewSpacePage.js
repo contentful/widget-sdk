@@ -5,6 +5,12 @@ import { Grid, NavigationIcon } from '@contentful/forma-36-react-components/dist
 import { Workbench } from '@contentful/forma-36-react-components';
 
 import { isFreeProductPlan } from 'account/pricing/PricingDataProvider';
+import {
+  createBillingDetails,
+  setDefaultPaymentMethod,
+  getDefaultPaymentMethod,
+} from 'features/organization-billing';
+import * as logger from 'services/logger';
 
 import { Breadcrumb } from './Breadcrumb';
 import { NewSpaceFAQ } from './NewSpaceFAQ';
@@ -58,7 +64,7 @@ export const NewSpacePage = ({
   // eslint-disable-next-line no-unused-vars
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [billingDetails, setBillingDetails] = useState({});
-  const [_paymentMethodRefId, setPaymentMethodRefId] = useState(null);
+  const [paymentMethodInfo, setPaymentMethodInfo] = useState(null);
 
   // Space Purchase content
   const { faqEntries } = usePageContent(pageContent);
@@ -113,9 +119,42 @@ export const NewSpacePage = ({
     goToStep(spacePurchaseSteps.CARD_DETAILS);
   };
 
-  const onSubmitPaymentMethod = (refId) => {
-    setPaymentMethodRefId(refId);
-    // Add analytics here
+  const onSubmitPaymentMethod = async (refId) => {
+    const reconciledBillingDetails = {
+      refid: refId,
+      firstName: billingDetails.firstName,
+      lastName: billingDetails.lastName,
+      vat: billingDetails.vatNumber,
+      workEmail: billingDetails.email,
+      address1: billingDetails.address,
+      address2: billingDetails.addressTwo,
+      city: billingDetails.city,
+      state: billingDetails.state,
+      country: billingDetails.country,
+      zipCode: billingDetails.postcode,
+    };
+
+    let paymentMethod;
+    try {
+      await createBillingDetails(organizationId, reconciledBillingDetails);
+      await setDefaultPaymentMethod(organizationId, refId);
+      paymentMethod = await getDefaultPaymentMethod(organizationId);
+    } catch (error) {
+      logger.logError('SpaceWizardError', {
+        data: {
+          error,
+          organizationId,
+          reconciledBillingDetails,
+          refId,
+        },
+      });
+
+      throw error;
+    }
+
+    setPaymentMethodInfo(paymentMethod);
+
+    // TODO: Add analytics here
 
     goToStep(spacePurchaseSteps.CONFIRMATION);
   };
@@ -192,6 +231,7 @@ export const NewSpacePage = ({
             <NewSpaceConfirmationPage
               navigateToPreviousStep={navigateToPreviousStep}
               billingDetails={billingDetails}
+              paymentMethod={paymentMethodInfo}
               selectedPlan={selectedPlan}
               onConfirm={onConfirm}
             />

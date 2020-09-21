@@ -5,6 +5,8 @@ import { css } from 'emotion';
 import { Paragraph, Subheading } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import cn from 'classnames';
+import moment from 'moment';
+import _ from 'lodash';
 
 const styles = {
   title: css({
@@ -16,7 +18,7 @@ const styles = {
   }),
 };
 
-export const CreditCardInformation = ({ creditCardinfo }) => {
+export const CreditCardInformation = ({ creditCardInfo }) => {
   return (
     <div>
       <Subheading
@@ -25,12 +27,24 @@ export const CreditCardInformation = ({ creditCardinfo }) => {
         aria-labelledby="credit-card-information-review-section">
         Credit card
       </Subheading>
-      <Paragraph className={styles.fontColor}>{creditCardinfo.number}</Paragraph>
-      <Paragraph className={styles.fontColor}>{creditCardinfo.experationDate}</Paragraph>
+
+      <Paragraph testId="card-details">
+        {pieces(creditCardInfo.number, 4).join(' ')} <br />
+        {moment()
+          .month(creditCardInfo.expirationDate.month - 1)
+          .format('MM')}
+        /{creditCardInfo.expirationDate.year}
+      </Paragraph>
     </div>
   );
 };
 
 CreditCardInformation.propTypes = {
-  creditCardinfo: PropTypes.object.isRequired,
+  creditCardInfo: PropTypes.object.isRequired,
 };
+
+function pieces(string, pieceSize = Infinity) {
+  const chars = string.split('');
+
+  return _.chunk(chars, pieceSize).map((splitPiece) => splitPiece.join(''));
+}

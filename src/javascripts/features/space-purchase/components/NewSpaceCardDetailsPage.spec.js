@@ -44,6 +44,24 @@ describe('NewSpaceCardDetailsPage', () => {
 
     expect(onSuccess).toBeCalled();
   });
+
+  it('should notify the user something went wrong if onSuccess fails', async () => {
+    const onSuccess = jest.fn().mockRejectedValueOnce();
+
+    const responseCb = await build({ onSuccess });
+
+    expect(onSuccess).not.toBeCalled();
+
+    responseCb();
+
+    expect(onSuccess).toBeCalled();
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('Your credit card couldn’t be saved. Please try again.')
+      ).toBeVisible();
+    });
+  });
 });
 
 async function build(customProps) {

@@ -9,6 +9,16 @@ export function getBillingDetails(organizationId) {
   });
 }
 
+export function createBillingDetails(organizationId, billingDetails) {
+  const endpoint = createOrganizationEndpoint(organizationId);
+
+  return endpoint({
+    method: 'POST',
+    path: ['billing_details'],
+    data: billingDetails,
+  });
+}
+
 export async function getInvoices(organizationId) {
   const endpoint = createOrganizationEndpoint(organizationId);
 

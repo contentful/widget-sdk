@@ -2,7 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
-import { Heading, Card, Subheading, Button } from '@contentful/forma-36-react-components';
+import {
+  Heading,
+  Card,
+  Subheading,
+  Button,
+  Notification,
+} from '@contentful/forma-36-react-components';
 import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 import { ZuoraCreditCardIframe } from 'features/organization-billing';
@@ -57,8 +63,12 @@ export const NewSpaceCardDetailsPage = ({
           <ZuoraCreditCardIframe
             organizationId={organizationId}
             countryCode={billingCountryCode}
-            onSuccess={({ refId }) => {
-              onSuccess(refId);
+            onSuccess={async ({ refId }) => {
+              try {
+                await onSuccess(refId);
+              } catch {
+                Notification.error('Your credit card couldn’t be saved. Please try again.');
+              }
             }}
           />
           <Button onClick={navigateToPreviousStep} testId="navigate-back" buttonType="muted">

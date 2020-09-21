@@ -38,16 +38,11 @@ const styles = {
   }),
 };
 
-// Mock creditCard information for now, to be replaced with Payment method API fetching the card details from Zoura
-const mockCreditCardInfo = {
-  number: '**** **** **** 1111',
-  experationDate: '10/2030',
-};
-
 export const NewSpaceConfirmationPage = ({
   navigateToPreviousStep,
   selectedPlan,
   billingDetails,
+  paymentMethod,
   onConfirm,
 }) => {
   return (
@@ -70,7 +65,7 @@ export const NewSpaceConfirmationPage = ({
             </span>
           </Subheading>
           <Grid className={styles.grid} columns="1fr 1fr" rows={1} columnGap="spacingXl">
-            <CreditCardInformation creditCardinfo={mockCreditCardInfo}></CreditCardInformation>
+            <CreditCardInformation creditCardInfo={paymentMethod}></CreditCardInformation>
             <BillingInformation billingInfo={billingDetails}></BillingInformation>
           </Grid>
           <Paragraph className={styles.agreementNote}>
@@ -99,4 +94,5 @@ NewSpaceConfirmationPage.propTypes = {
   onConfirm: PropTypes.func.isRequired,
   selectedPlan: PropTypes.object,
   billingDetails: PropTypes.object,
+  paymentMethod: PropTypes.object,
 };
