@@ -28,3 +28,12 @@ export function setDefaultPaymentMethod(organizationId, paymentMethodRefId) {
     },
   });
 }
+
+export function getDefaultPaymentMethod(organizationId) {
+  const endpoint = createOrganizationEndpoint(organizationId);
+
+  return endpoint({
+    method: 'GET',
+    path: ['default_payment_method'],
+  });
+}

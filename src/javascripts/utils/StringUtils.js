@@ -319,3 +319,23 @@ export function joinWithAnd(items) {
     }
   }, '');
 }
+
+/**
+ * Splits a string into pieces, where each piece size is `pieceSize` in length.
+ *
+ * The last piece will be <= pieceSize. For example, if you have a string of length
+ * 10 and you want to split it into pieces of length 4, you will get 2 pieces of length
+ * 4 and 1 piece of length 2:
+ *
+ * const str = 'lengthten!';
+ * pieces(str, 4) // => ['leng', 'thte', 'n!']
+ *
+ * @param  {String} string
+ * @param  {Number} pieceSize
+ * @return {String[]}
+ */
+export function pieces(string, pieceSize = Infinity) {
+  const chars = string.split('');
+
+  return _.chunk(chars, pieceSize).map((splitPiece) => splitPiece.join(''));
+}

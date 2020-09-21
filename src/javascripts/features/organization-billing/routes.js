@@ -18,6 +18,12 @@ const editPaymentMethodRoute = organizationRoute({
 export const billingRoutingState = organizationRoute({
   name: 'billing',
   url: '/billing',
-  abstract: true,
+  component: (props) => (
+    <LazyLoadedComponent importer={importer}>
+      {({ DashboardRouter }) => {
+        return <DashboardRouter {...props} />;
+      }}
+    </LazyLoadedComponent>
+  ),
   children: [editPaymentMethodRoute],
 });
