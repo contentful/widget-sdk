@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as trackCTA from 'analytics/trackCTA';
 import * as FakeFactory from 'test/helpers/fakeFactory';
@@ -21,6 +21,16 @@ describe('SpaceSelection', () => {
     build();
 
     expect(screen.getAllByTestId('space-card')).toHaveLength(3);
+  });
+
+  it('should disable the paid space cards if canCreatePaidSpace is false', () => {
+    build({ canCreatePaidSpace: false });
+
+    const spaceCards = screen.getAllByTestId('space-card');
+
+    for (const spaceCard of spaceCards) {
+      expect(within(spaceCard).getByTestId('select-space-cta')).toHaveAttribute('disabled');
+    }
   });
 
   it('should show the community card', () => {
@@ -69,6 +79,7 @@ function build(customProps) {
     organizationId: mockOrganization.sys.id,
     selectPlan: mockSelectPlan,
     canCreateCommunityPlan: true,
+    canCreatePaidSpace: true,
     ...customProps,
   };
 

@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import * as FakeFactory from 'test/helpers/fakeFactory';
 import * as LazyLoader from 'utils/LazyLoader';
 import { NewSpacePage } from './NewSpacePage';
+import { isOwner } from 'services/OrganizationRoles';
 
 import {
   createBillingDetails,
@@ -30,6 +31,10 @@ const mockBillingDetails = {
   vatNumber: '',
 };
 const mockRefId = 'ref_1234';
+
+jest.mock('services/OrganizationRoles', () => ({
+  isOwner: jest.fn().mockReturnValue(true),
+}));
 
 jest.mock('utils/LazyLoader', () => {
   const results = {
@@ -93,6 +98,43 @@ describe('NewSpacePage', () => {
       expect(screen.getByTestId('order-summary.selected-plan-price')).toHaveTextContent(
         mockProductRatePlanMedium.price
       );
+    });
+  });
+
+  it('should allow any paid space plan to be selected if the user is org owner, even without billing details', () => {
+    build();
+
+    const spacePlanCards = screen.getAllByTestId('space-card');
+
+    spacePlanCards.forEach((ele) => {
+      expect(within(ele).getByTestId('select-space-cta')).not.toHaveAttribute('disabled');
+    });
+  });
+
+  it('should allow any paid space plan to be selected if the user is not org owner and the org has billing details', () => {
+    mockOrganization.isBillable = true;
+    isOwner.mockReturnValueOnce(false);
+
+    build();
+
+    const spacePlanCards = screen.getAllByTestId('space-card');
+
+    spacePlanCards.forEach((ele) => {
+      expect(within(ele).getByTestId('select-space-cta')).not.toHaveAttribute('disabled');
+    });
+
+    delete mockOrganization.isBillable;
+  });
+
+  it('should disable all paid space plans if the user is not org owner and the org does not have billing details', () => {
+    isOwner.mockReturnValueOnce(false);
+
+    build();
+
+    const spacePlanCards = screen.getAllByTestId('space-card');
+
+    spacePlanCards.forEach((ele) => {
+      expect(within(ele).getByTestId('select-space-cta')).toHaveAttribute('disabled');
     });
   });
 
@@ -244,6 +286,7 @@ describe('NewSpacePage', () => {
       });
     });
   });
+
   describe('browser forward button', () => {
     it('should go forward a step when clicked after a back button has been clicked', () => {
       build();
@@ -283,7 +326,7 @@ describe('NewSpacePage', () => {
 
 function build(customProps) {
   const props = {
-    organizationId: mockOrganization.sys.id,
+    organization: mockOrganization,
     templatesList: [],
     canCreateCommunityPlan: true,
     productRatePlans: [mockProductRatePlanMedium, mockProductRatePlanLarge],

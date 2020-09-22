@@ -11,6 +11,8 @@ import {
   getDefaultPaymentMethod,
 } from 'features/organization-billing';
 import * as logger from 'services/logger';
+import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes';
+import { isOwner as isOrgOwner } from 'services/OrganizationRoles';
 
 import { Breadcrumb } from './Breadcrumb';
 import { NewSpaceFAQ } from './NewSpaceFAQ';
@@ -52,7 +54,7 @@ const spacePurchaseSteps = {
 };
 
 export const NewSpacePage = ({
-  organizationId,
+  organization,
   templatesList,
   productRatePlans,
   canCreateCommunityPlan,
@@ -65,6 +67,8 @@ export const NewSpacePage = ({
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [billingDetails, setBillingDetails] = useState({});
   const [paymentMethodInfo, setPaymentMethodInfo] = useState(null);
+
+  const canCreatePaidSpace = isOrgOwner(organization) || !!organization.isBillable;
 
   // Space Purchase content
   const { faqEntries } = usePageContent(pageContent);
@@ -136,14 +140,14 @@ export const NewSpacePage = ({
 
     let paymentMethod;
     try {
-      await createBillingDetails(organizationId, reconciledBillingDetails);
-      await setDefaultPaymentMethod(organizationId, refId);
-      paymentMethod = await getDefaultPaymentMethod(organizationId);
+      await createBillingDetails(organization.sys.id, reconciledBillingDetails);
+      await setDefaultPaymentMethod(organization.sys.id, refId);
+      paymentMethod = await getDefaultPaymentMethod(organization.sys.id);
     } catch (error) {
       logger.logError('SpaceWizardError', {
         data: {
           error,
-          organizationId,
+          organizationId: organization.sys.id,
           reconciledBillingDetails,
           refId,
         },
@@ -215,7 +219,7 @@ export const NewSpacePage = ({
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS_PAYMENT} />
             <NewSpaceCardDetailsPage
-              organizationId={organizationId}
+              organizationId={organization.sys.id}
               navigateToPreviousStep={navigateToPreviousStep}
               billingCountryCode={billingDetails.country}
               onSuccess={onSubmitPaymentMethod}
@@ -244,7 +248,7 @@ export const NewSpacePage = ({
             <NewSpaceReceiptPage
               selectedPlan={selectedPlan}
               spaceName={spaceName}
-              organizationId={organizationId}
+              organizationId={organization.sys.id}
               selectedTemplate={selectedTemplate}
             />
           </Grid>
@@ -255,9 +259,10 @@ export const NewSpacePage = ({
           <Grid columns={1} rows="repeat(3, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS} />
             <SpaceSelection
-              organizationId={organizationId}
+              organizationId={organization.sys.id}
               selectPlan={selectPlan}
               canCreateCommunityPlan={canCreateCommunityPlan}
+              canCreatePaidSpace={canCreatePaidSpace}
             />
             <NewSpaceFAQ faqEntries={faqEntries} />
           </Grid>
@@ -277,7 +282,7 @@ export const NewSpacePage = ({
 };
 
 NewSpacePage.propTypes = {
-  organizationId: PropTypes.string,
+  organization: OrganizationPropType.isRequired,
   templatesList: PropTypes.array,
   productRatePlans: PropTypes.array,
   canCreateCommunityPlan: PropTypes.bool,
