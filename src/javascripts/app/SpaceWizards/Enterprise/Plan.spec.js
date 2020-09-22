@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import Plan from './Plan';
 
 describe('Plan', () => {
@@ -30,6 +30,20 @@ describe('Plan', () => {
       'space-plans-list__item--disabled'
     );
   });
+
+  it('should not show a help tooltip if the plan is not Trial Space', () => {
+    build();
+
+    expect(screen.queryByTestId('space-plan-tooltip-trigger')).not.toBeInTheDocument();
+  });
+
+  it('should show a help tooltip if the plan is Trial Space', () => {
+    build({ showTrialSpaceInfo: true });
+
+    fireEvent.mouseOver(screen.getByTestId('space-plan-tooltip-trigger'));
+
+    expect(screen.getByTestId('space-plan-tooltip')).toHaveTextContent('up to 5');
+  });
 });
 
 function build(custom = {}) {
@@ -42,6 +56,7 @@ function build(custom = {}) {
       disabled: false,
       reachedLimit: false,
       name: 'Enterprise plan',
+      showTrialSpaceInfo: false,
     },
     custom
   );

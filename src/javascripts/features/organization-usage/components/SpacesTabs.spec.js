@@ -63,9 +63,9 @@ const defaultData = {
       },
     },
   },
-  isPoC: {
-    cmaSpace: true,
-    cdaSpace: false,
+  spaceTypeLookup: {
+    cmaSpace: 'Proof of Concept',
+    cdaSpace: 'Trial Space',
   },
   selectedSpacesTab: 'cma',
   totalUsage: sum(ORG_USAGE),
@@ -125,7 +125,7 @@ describe('SpacesTabs', () => {
         const tags = getAllByText('POC');
         expect(tags).toHaveLength(1);
         fireEvent.mouseOver(tags[0]);
-        expect(getAllByText('Proof of concept')).toHaveLength(1);
+        expect(getAllByText('Proof of Concept')).toHaveLength(1);
       });
     });
 
@@ -164,13 +164,17 @@ describe('SpacesTabs', () => {
       expect(getByText('CDASpace')).toBeInTheDocument();
     });
 
-    it('does not show any PoC spaces', () => {
+    it('shows a Trial Space', () => {
       const updatedData = {
         ...defaultData,
         selectedSpacesTab: 'cda',
       };
 
-      const { queryByText } = renderComp(updatedData);
+      const { queryByText, queryByTestId } = renderComp(updatedData);
+
+      expect(queryByText('Trial Space')).toBeVisible();
+      expect(queryByTestId('api-usage-table-poc-tooltip')).toBeNull();
+
       expect(queryByText('POC')).toBeNull();
     });
 
@@ -205,7 +209,7 @@ describe('SpacesTabs', () => {
         },
         org: { usage: [] },
       },
-      isPoC: {},
+      spaceTypeLookup: {},
       selectedSpacesTab: 'cma',
     };
 

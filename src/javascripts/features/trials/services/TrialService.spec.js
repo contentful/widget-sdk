@@ -1,4 +1,4 @@
-import { isOrganizationOnTrial, isSpaceOnTrial } from './TrialService';
+import { isOrganizationOnTrial, isSpaceOnTrial, isTrialSpaceType } from './TrialService';
 import * as fake from 'test/helpers/fakeFactory';
 
 const today = '2019-10-01T03:00:00.000Z';
@@ -56,6 +56,16 @@ describe('TrialService', () => {
 
     it('should return False if the organization has never been on trial', () => {
       expect(isSpaceOnTrial(mockSpace)).toBe(false);
+    });
+  });
+
+  describe('isTrialSpaceType', () => {
+    it('should return false if the space is not Trial Space type', () => {
+      expect(isTrialSpaceType(mockSpace)).toBe(false);
+    });
+    it('should return true if the space has been on trial before or is on an active trial', () => {
+      expect(isTrialSpaceType(trialExpiredSpace)).toBe(true);
+      expect(isTrialSpaceType(mockTrialSpace)).toBe(true);
     });
   });
 });

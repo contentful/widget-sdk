@@ -1,17 +1,34 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
+import { Tooltip, Icon } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
 
+import { Pluralized } from 'core/components/formatting';
 import PlanFeatures from '../shared/PlanFeatures';
 
 const styles = {
   item: css({
     marginBottom: '30px',
   }),
+  helpIcon: css({
+    fill: tokens.colorElementDarkest,
+    marginBottom: '-3px',
+    marginLeft: tokens.spacingXs,
+  }),
 };
 
 export default function Plan(props) {
-  const { resources, roleSet, usage, limit, disabled, reachedLimit, name } = props;
+  const {
+    resources,
+    roleSet,
+    usage,
+    limit,
+    disabled,
+    reachedLimit,
+    name,
+    showTrialSpaceInfo,
+  } = props;
 
   return (
     <div
@@ -28,6 +45,22 @@ export default function Plan(props) {
           {' '}
           - {limit === 0 ? 'unavailable' : `${usage}/${limit} used`}
         </span>
+        {showTrialSpaceInfo && (
+          <Tooltip
+            testId="space-plan-tooltip"
+            content={
+              <>
+                You can have up to <Pluralized text="Trial Space" count={limit} />. If you have any
+                POC spaces, they are also included in this count.
+              </>
+            }>
+            <Icon
+              icon="HelpCircle"
+              className={styles.helpIcon}
+              testId="space-plan-tooltip-trigger"
+            />
+          </Tooltip>
+        )}
       </div>
       <PlanFeatures resources={resources} roleSet={roleSet} disabled={disabled} />
     </div>
@@ -42,4 +75,5 @@ Plan.propTypes = {
   disabled: PropTypes.bool.isRequired,
   reachedLimit: PropTypes.bool.isRequired,
   name: PropTypes.string.isRequired,
+  showTrialSpaceInfo: PropTypes.bool.isRequired,
 };

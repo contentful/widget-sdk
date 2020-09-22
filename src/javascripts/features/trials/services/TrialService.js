@@ -13,7 +13,7 @@ export const isOrganizationOnTrial = (organization) => {
 };
 
 /**
- * Return True if a space is on trial.
+ * Return True if a space is on active trial.
  *
  * @param  {object} space - Space object
  * @return {boolean}
@@ -21,4 +21,14 @@ export const isOrganizationOnTrial = (organization) => {
 export const isSpaceOnTrial = (space) => {
   const endDate = space.trialPeriodEndsAt;
   return endDate ? moment().isSameOrBefore(moment(endDate), 'date') : false;
+};
+
+/**
+ * Return True if a space is a Trial Space type (includes read-only)
+ *
+ * @param  {object} space - Space object
+ * @return {boolean}
+ */
+export const isTrialSpaceType = (space) => {
+  return 'trialPeriodEndsAt' in space;
 };

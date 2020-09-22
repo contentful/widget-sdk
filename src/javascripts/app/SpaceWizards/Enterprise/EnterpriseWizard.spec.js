@@ -7,6 +7,7 @@ import client from 'services/client';
 import { getTemplatesList, getTemplate } from 'services/SpaceTemplateLoader';
 import * as utils from '../shared/utils';
 import * as Fake from 'test/helpers/fakeFactory';
+import { getVariation } from 'LaunchDarkly';
 
 import EnterpriseWizard from './EnterpriseWizard';
 
@@ -84,6 +85,7 @@ describe('Enterprise Wizard', () => {
     getTemplatesList.mockResolvedValue([mockTemplate]);
     getTemplate.mockResolvedValue(mockTemplate);
     client.createSpace.mockResolvedValue(mockSpace);
+    getVariation.mockClear().mockResolvedValue(false);
 
     window.open = jest.fn();
   });

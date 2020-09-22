@@ -18,7 +18,11 @@ import createResourceService from 'services/ResourceService';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes';
 
-import { getSpaceRatePlans, isHighDemandEnterprisePlan } from 'account/pricing/PricingDataProvider';
+import {
+  getSpaceRatePlans,
+  isHighDemandEnterprisePlan,
+  isEnterpriseTrialPlan,
+} from 'account/pricing/PricingDataProvider';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
 
 import {
@@ -28,17 +32,28 @@ import {
   Button,
   Note,
   Typography,
+  FormLabel,
+  Paragraph,
 } from '@contentful/forma-36-react-components';
 
 import { useAsyncFn, useAsync } from 'core/hooks/useAsync';
+import { getVariation, FLAGS } from 'LaunchDarkly';
 
 const initialFetch = (organization, basePlan) => async () => {
   const endpoint = createOrganizationEndpoint(organization.sys.id);
   const orgResources = createResourceService(organization.sys.id, 'organization');
-  const [freeSpaceResource, spaceRatePlans, templates] = await Promise.all([
+  const [
+    freeSpaceResource,
+    spaceRatePlans,
+    templates,
+    isTrialCommFeatureFlagEnabled,
+  ] = await Promise.all([
     orgResources.get(FREE_SPACE_IDENTIFIER),
     getSpaceRatePlans(endpoint),
     getTemplatesList(),
+    getVariation(FLAGS.PLATFORM_TRIAL_COMM, {
+      organizationId: organization.sys.id,
+    }),
   ]);
 
   const freeSpaceRatePlan = spaceRatePlans.find(
@@ -46,12 +61,15 @@ const initialFetch = (organization, basePlan) => async () => {
   );
 
   const isHighDemand = isHighDemandEnterprisePlan(basePlan);
+  const isEnterpriseTrial = isEnterpriseTrialPlan(basePlan);
 
   return {
     isHighDemand,
+    isEnterpriseTrial,
     freeSpaceRatePlan,
     freeSpaceResource,
     templates,
+    isTrialCommFeatureFlagEnabled,
   };
 };
 
@@ -112,7 +130,14 @@ export default function EnterpriseWizard(props) {
     return <Loader />;
   }
 
-  const { isHighDemand, freeSpaceResource, freeSpaceRatePlan, templates } = data;
+  const {
+    isHighDemand,
+    isEnterpriseTrial,
+    freeSpaceResource,
+    freeSpaceRatePlan,
+    templates,
+    isTrialCommFeatureFlagEnabled,
+  } = data;
 
   const includedResources = getIncludedResources(freeSpaceRatePlan.productRatePlanCharges);
   const usage = freeSpaceResource.usage;
@@ -120,6 +145,7 @@ export default function EnterpriseWizard(props) {
   const reachedLimit = freeSpaceResource.usage >= freeSpaceResource.limits.maximum;
   const isFeatureDisabled = limit === 0;
   const showForm = !isFeatureDisabled && !reachedLimit;
+  const showTrialSpaceInfo = isTrialCommFeatureFlagEnabled && !isHighDemand && !isEnterpriseTrial;
 
   return (
     <>
@@ -133,7 +159,11 @@ export default function EnterpriseWizard(props) {
           <Modal.Header title="Create a space" onClose={isProcessing ? null : onClose} />
           <Modal.Content testId="enterprise-wizard-contents">
             <Typography>
-              {!isHighDemand && <POCInfo />}
+              <FormLabel htmlFor="spaceType">Space Type</FormLabel>
+              {showTrialSpaceInfo && (
+                <Paragraph>Use a Trial Space to test out new projects, free of charge</Paragraph>
+              )}
+              {!isTrialCommFeatureFlagEnabled && !isHighDemand && <POCInfo />}
               <POCPlan
                 resources={includedResources}
                 name={freeSpaceRatePlan.name}
@@ -142,6 +172,7 @@ export default function EnterpriseWizard(props) {
                 usage={usage}
                 limit={limit}
                 disabled={!showForm}
+                showTrialSpaceInfo={showTrialSpaceInfo}
               />
               {showForm && (
                 <Form onSubmit={handleSubmit}>
@@ -173,8 +204,11 @@ export default function EnterpriseWizard(props) {
                 <>
                   {reachedLimit && !isFeatureDisabled && (
                     <Note testId="reached-limit-note">
-                      You’ve created {limit} proof of concept spaces. Delete an existing one or talk
-                      to us if you need more.
+                      You’ve created {limit}{' '}
+                      {isTrialCommFeatureFlagEnabled
+                        ? 'Trial/Proof of Concept Spaces'
+                        : 'proof of concept spaces'}
+                      . Delete an existing one or talk to us if you need more.
                     </Note>
                   )}
                   {isFeatureDisabled && (

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { mapValues, flow, keyBy, get, eq } from 'lodash/fp';
+import { mapValues, flow, keyBy } from 'lodash/fp';
 import { css } from 'emotion';
 import { Spinner, Workbench } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification';
@@ -108,16 +108,13 @@ export const OrganizationUsage = () => {
 
         const periods = usagePeriods.items;
         const spaceNames = flow(keyBy('sys.id'), mapValues('name'))(spaces);
-        const isPoC = flow(
-          keyBy('space.sys.id'),
-          mapValues(flow(get('name'), eq('Proof of concept')))
-        )(plans.items);
+        const spaceTypeLookup = flow(keyBy('space.sys.id'), mapValues('name'))(plans.items);
 
         dispatch({
           type: 'SET_ORG_DATA',
           value: {
             spaceNames,
-            isPoC,
+            spaceTypeLookup,
             periods: periods,
             apiRequestIncludedLimit: apiRequestIncludedLimit ?? 0,
             hasSpaces: spaces.length !== 0,

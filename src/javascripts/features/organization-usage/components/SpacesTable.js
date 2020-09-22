@@ -16,20 +16,22 @@ import { calcRelativeSpaceUsage } from '../utils/calcRelativeSpaceUsage';
 import { useUsageState, colours } from '../hooks/usageContext';
 
 const SpaceRow = ({ spaceId, spaceUsage, color }) => {
-  const { spaceNames, totalUsage, isPoC } = useUsageState();
+  const { spaceNames, totalUsage, spaceTypeLookup } = useUsageState();
 
   const spaceName = spaceNames[spaceId];
+  const spaceType = spaceTypeLookup[spaceId];
 
   return (
     <TableRow data-test-id="api-usage-table-row">
       <TableCell>
         <div>{spaceName || 'Deleted space'}</div>
         <div>
-          {isPoC[spaceId] && (
-            <Tooltip content="Proof of concept">
+          {spaceType === 'Proof of Concept' && (
+            <Tooltip content={spaceType} testId="api-usage-table-poc-tooltip">
               <Tag tagType="muted">POC</Tag>
             </Tooltip>
           )}
+          {spaceType === 'Trial Space' && <Tag tagType="muted">{spaceType}</Tag>}
         </div>
       </TableCell>
       {/* eslint-disable-next-line */}
