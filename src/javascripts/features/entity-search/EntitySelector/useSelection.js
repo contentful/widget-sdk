@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { intersection, difference, uniqBy } from 'lodash';
+import { intersectionBy, difference, uniqBy } from 'lodash';
 
 const Operations = {
   SELECT: 'select',
@@ -15,7 +15,7 @@ export const useSelection = ({ entities, multipleSelection }) => {
 
   useEffect(() => {
     setSelectedEntities((currentSelectedEntities) =>
-      intersection(currentSelectedEntities, entities)
+      intersectionBy(currentSelectedEntities, entities, 'sys.id')
     );
   }, [entities]);
 
