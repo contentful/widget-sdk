@@ -75,7 +75,6 @@ export default async function create($scope, editorData, preferences, trackLoadE
   const editorState = getEditorState({
     editorData,
     editorType: currentSlideLevel > 1 ? 'slide_in_editor' : 'entry_editor',
-    spaceContext,
     getTitle: () => $scope.title,
     onStateUpdate: (state) => {
       $scope.state = state;
@@ -88,6 +87,9 @@ export default async function create($scope, editorData, preferences, trackLoadE
     lifeline: scopeLifeline,
     currentSlideLevel,
     hasInitialFocus: preferences.hasInitialFocus,
+    publishedCTs: spaceContext.publishedCTs,
+    spaceId: spaceContext.getId(),
+    environmentId: spaceContext.getEnvironmentId(),
   });
 
   const { doc, editorContext } = editorState;
