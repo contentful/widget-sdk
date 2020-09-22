@@ -1,142 +1,39 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { css } from 'emotion';
-import get from 'lodash/get';
 import {
+  Button,
   CardActions,
+  CopyButton,
   DropdownList,
   DropdownListItem,
-  Tooltip,
-} from '@contentful/forma-36-react-components';
-import AppsPrivateFrameworkIllustration from 'svg/illustrations/apps-private-framework.svg';
-import tokens from '@contentful/forma-36-tokens';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
-import DocumentTitle from 'components/shared/DocumentTitle';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
-
-import { MARKETPLACE_ORG_ID, MAX_DEFINITIONS_ALLOWED } from '../config';
-
-import {
   Heading,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  Button,
-  Paragraph,
-  TextLink,
-  Typography,
-  CopyButton,
-  SectionHeading,
-  Workbench,
   Note,
+  Paragraph,
+  SectionHeading,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TextLink,
+  Tooltip,
+  Typography,
+  Workbench,
 } from '@contentful/forma-36-react-components';
-
+import { ModalLauncher, NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import StateLink from 'app/common/StateLink';
-import { AppInstallModal } from './AppInstallModal';
+import DocumentTitle from 'components/shared/DocumentTitle';
+import get from 'lodash/get';
+import PropTypes from 'prop-types';
+import React from 'react';
+import AppsPrivateFrameworkIllustration from 'svg/illustrations/apps-private-framework.svg';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+import { MARKETPLACE_ORG_ID, MAX_DEFINITIONS_ALLOWED } from 'features/apps/config';
+import { AppInstallModal } from '../AppInstallModal';
+import { styles } from './styles';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
   source: 'webapp',
   medium: 'app-listing',
   campaign: 'in-app-help',
-});
-
-export const styles = {
-  headerActions: css({
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
-    marginLeft: tokens.spacingXs,
-  }),
-  headerInput: css({
-    maxWidth: '1100px',
-    width: '100%',
-    marginLeft: tokens.spacing4Xl,
-  }),
-  appActions: css({
-    verticalAlign: 'middle',
-  }),
-  copyButton: css({
-    button: css({
-      height: '20px',
-      border: 'none',
-      backgroundColor: 'transparent',
-      transform: 'translateX(-10px)',
-      opacity: '0',
-      transition: `all ${tokens.transitionDurationDefault} ${tokens.transitionEasingCubicBezier}`,
-      '&:hover': css({
-        backgroundColor: 'transparent',
-        border: 'none',
-        opacity: '1',
-        transform: 'translateX(0)',
-      }),
-    }),
-  }),
-  sidebarHeading: css({
-    color: tokens.colorElementDarkest,
-    borderBottom: `1px solid ${tokens.colorElementMid}`,
-    fontWeight: tokens.fontWeightNormal,
-  }),
-  cell: css({
-    display: 'flex',
-    alignItems: 'center',
-    minWidth: '200px',
-  }),
-  miniIcon: css({
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: tokens.spacingS,
-    verticalAlign: 'sub',
-  }),
-  learnMore: css({
-    maxWidth: '768px',
-    margin: '0 auto',
-    marginTop: '100px',
-    textAlign: 'center',
-  }),
-  emptyWorkbench: css({
-    '> div': css({
-      display: 'flex',
-      flexDirection: 'column',
-      height: '100%',
-      maxWidth: '768px',
-      margin: '0 auto',
-    }),
-  }),
-  emptyState: css({
-    maxWidth: '768px',
-    margin: '0 auto',
-    textAlign: 'center',
-    marginTop: tokens.spacingL,
-    marginBottom: tokens.spacingS,
-    '& svg': css({
-      width: '80%',
-    }),
-    button: css({
-      marginBottom: tokens.spacingL,
-    }),
-  }),
-  menuCell: css({
-    display: 'flex',
-    justifyContent: 'flex-end',
-    height: '20px',
-    div: css({
-      display: 'flex',
-      justifyContent: 'center',
-    }),
-  }),
-};
-
-const idStyle = css({
-  fontFamily: tokens.fontStackMonospace,
-  [`&:hover ~ .${styles.copyButton} button`]: css({
-    opacity: '1',
-    transform: 'translateX(0)',
-  }),
 });
 
 function openInstallModal(definition) {
@@ -281,7 +178,7 @@ export function AppListing({ definitions, canManageApps }) {
                   </TableCell>
                   <TableCell>
                     <div className={styles.cell}>
-                      <span className={idStyle}>{def.sys.id} </span>
+                      <span className={styles.id}>{def.sys.id} </span>
                       <CopyButton className={styles.copyButton} copyValue={def.sys.id} />
                     </div>
                   </TableCell>

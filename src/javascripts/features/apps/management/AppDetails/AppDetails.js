@@ -1,112 +1,29 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import tokens from '@contentful/forma-36-tokens';
 import {
-  TextLink,
-  Notification,
-  Heading,
   Button,
-  Paragraph,
   CopyButton,
-  Workbench,
-  Tabs,
+  Heading,
+  Notification,
+  Paragraph,
   Tab,
   TabPanel,
+  Tabs,
+  TextLink,
+  Workbench,
 } from '@contentful/forma-36-react-components';
-import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
-
-import { css } from 'emotion';
-import { getVariation, FLAGS } from 'LaunchDarkly';
-import { AppEditor } from './AppEditor';
-import * as ManagementApiClient from './ManagementApiClient';
-import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
-import { AppInstallModal } from './AppInstallModal';
-import { DeleteAppDialog } from './DeleteAppDialog';
-import { SaveConfirmModal } from './SaveConfirmModal';
-import { KeyListing } from './keys/KeyListing';
-import { AppEvents } from './events';
+import { ModalLauncher, NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import DocumentTitle from 'components/shared/DocumentTitle';
-
-const TabPaths = {
-  GENERAL: '',
-  KEY_PAIRS: 'key-pairs',
-  EVENTS: 'events',
-};
-
-const styles = {
-  title: css({
-    display: 'flex',
-    alignItems: 'center',
-    paddingBottom: tokens.spacingL,
-    borderBottom: `1px solid ${tokens.colorElementLight}`,
-    '& div:first-child': css({
-      marginRight: tokens.spacingL,
-    }),
-    '& div:last-child h1': css({
-      marginBottom: tokens.spacingXs,
-    }),
-  }),
-  workbenchContent: css({
-    maxWidth: '820px',
-    margin: 'auto',
-  }),
-  copyButton: css({
-    button: css({
-      height: '20px',
-      border: 'none',
-      backgroundColor: 'transparent',
-      transform: 'translateX(-10px)',
-      opacity: '0',
-      transition: `all ${tokens.transitionDurationDefault} ${tokens.transitionEasingCubicBezier}`,
-      '&:hover': css({
-        backgroundColor: 'transparent',
-        border: 'none',
-        opacity: '1',
-        transform: 'translateX(0)',
-      }),
-    }),
-  }),
-  info: css({
-    padding: `${tokens.spacingL} 0`,
-    '& p:first-child': css({
-      marginBottom: tokens.spacing2Xs,
-    }),
-    '& p b': css({
-      color: tokens.colorTextMid,
-      marginRight: tokens.spacing2Xs,
-    }),
-  }),
-  tabPanel: css({
-    padding: `${tokens.spacingL} 0`,
-    marginBottom: tokens.spacing4Xl,
-  }),
-  formActions: css({
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: tokens.spacing2Xl,
-  }),
-  creatorMissing: css({
-    opacity: 0,
-  }),
-  creator: css({
-    transition: 'opacity .2s ease',
-  }),
-};
-
-const sysIdStyle = css({
-  display: 'flex',
-  flexDirection: 'row',
-  '& p': css({
-    fontFamily: tokens.fontStackMonospace,
-    fontSize: tokens.fontSizeS,
-    color: tokens.colorTextMid,
-  }),
-  [`&:hover .${styles.copyButton} button`]: css({
-    opacity: '1',
-    transform: 'translateX(0)',
-  }),
-});
+import { FLAGS, getVariation } from 'LaunchDarkly';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { styles } from './styles';
+import { AppEditor } from '../AppEditor';
+import { AppInstallModal } from '../AppInstallModal';
+import { DeleteAppDialog } from '../DeleteAppDialog';
+import { AppEvents } from '../events';
+import { KeyListing } from '../keys/KeyListing';
+import * as ManagementApiClient from '../ManagementApiClient';
+import { SaveConfirmModal } from '../SaveConfirmModal';
+import { TAB_PATHS } from './constants';
 
 function formatDate(date) {
   return new Date(date).toLocaleString('en-US', {
@@ -148,8 +65,8 @@ export class AppDetails extends React.Component {
 
     this.setState({ creator, appManagementViewsEnabled });
 
-    if (!Object.values(TabPaths).includes(this.props.tab)) {
-      this.onTabSelect(TabPaths.GENERAL);
+    if (!Object.values(TAB_PATHS).includes(this.props.tab)) {
+      this.onTabSelect(TAB_PATHS.GENERAL);
     }
   }
 
@@ -239,7 +156,7 @@ export class AppDetails extends React.Component {
               <NavigationIcon icon="Apps" size="xlarge" />
               <div>
                 <Heading>{name}</Heading>
-                <div className={sysIdStyle}>
+                <div className={styles.sysId}>
                   <Paragraph>{definition.sys.id}</Paragraph>
                   <CopyButton className={styles.copyButton} copyValue={definition.sys.id} />
                 </div>
@@ -258,30 +175,30 @@ export class AppDetails extends React.Component {
             </div>
             <Tabs withDivider>
               <Tab
-                id={TabPaths.GENERAL}
-                selected={selectedTab === TabPaths.GENERAL}
+                id={TAB_PATHS.GENERAL}
+                selected={selectedTab === TAB_PATHS.GENERAL}
                 onSelect={this.onTabSelect}>
                 General
               </Tab>
               {appManagementViewsEnabled ? (
                 <>
                   <Tab
-                    id={TabPaths.KEY_PAIRS}
-                    selected={selectedTab === TabPaths.KEY_PAIRS}
+                    id={TAB_PATHS.KEY_PAIRS}
+                    selected={selectedTab === TAB_PATHS.KEY_PAIRS}
                     onSelect={this.onTabSelect}>
                     Key pairs
                   </Tab>
                   <Tab
-                    id={TabPaths.EVENTS}
-                    selected={selectedTab === TabPaths.EVENTS}
+                    id={TAB_PATHS.EVENTS}
+                    selected={selectedTab === TAB_PATHS.EVENTS}
                     onSelect={this.onTabSelect}>
                     Events
                   </Tab>
                 </>
               ) : null}
             </Tabs>
-            {selectedTab === TabPaths.GENERAL && (
-              <TabPanel id={TabPaths.GENERAL} className={styles.tabPanel}>
+            {selectedTab === TAB_PATHS.GENERAL && (
+              <TabPanel id={TAB_PATHS.GENERAL} className={styles.tabPanel}>
                 <div>
                   <AppEditor
                     definition={definition}
@@ -307,13 +224,13 @@ export class AppDetails extends React.Component {
                 </div>
               </TabPanel>
             )}
-            {selectedTab === TabPaths.KEY_PAIRS && (
-              <TabPanel id={TabPaths.KEY_PAIRS} className={styles.tabPanel}>
+            {selectedTab === TAB_PATHS.KEY_PAIRS && (
+              <TabPanel id={TAB_PATHS.KEY_PAIRS} className={styles.tabPanel}>
                 <KeyListing definition={definition} />
               </TabPanel>
             )}
-            {selectedTab === TabPaths.EVENTS && (
-              <TabPanel id={TabPaths.EVENTS} className={styles.tabPanel}>
+            {selectedTab === TAB_PATHS.EVENTS && (
+              <TabPanel id={TAB_PATHS.EVENTS} className={styles.tabPanel}>
                 <AppEvents definition={definition} />
               </TabPanel>
             )}

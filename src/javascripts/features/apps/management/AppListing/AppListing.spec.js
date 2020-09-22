@@ -1,9 +1,10 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { AppListing } from './AppListing';
-import * as util from './util';
-import mockDefinitions from './__mocks__/mockDefinitions.json';
-jest.mock('./util');
+import * as util from '../util';
+import mockDefinitions from '../__mocks__/mockDefinitions.json';
+
+jest.mock('../util');
 
 util.getOrgSpacesFor = jest.fn(() =>
   Promise.resolve([

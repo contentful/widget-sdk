@@ -1,9 +1,9 @@
 import React from 'react';
 import { render, wait } from '@testing-library/react';
 import { AppDetails } from './AppDetails';
-import mockDefinitions from './__mocks__/mockDefinitions.json';
+import mockDefinitions from '../__mocks__/mockDefinitions.json';
 
-jest.mock('./ManagementApiClient', () => ({
+jest.mock('../ManagementApiClient', () => ({
   getCreatorNameOf: jest.fn(() => Promise.resolve()),
 }));
 
