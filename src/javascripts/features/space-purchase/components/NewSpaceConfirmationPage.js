@@ -36,6 +36,9 @@ const styles = {
   agreementNote: css({
     marginBottom: tokens.spacingXl,
   }),
+  continueButton: css({
+    marginLeft: tokens.spacingM,
+  }),
 };
 
 export const NewSpaceConfirmationPage = ({
@@ -74,11 +77,15 @@ export const NewSpaceConfirmationPage = ({
               terms of service
             </ExternalTextLink>
           </Paragraph>
-          <Flex justifyContent="space-between">
+          <Flex justifyContent="flex-end">
             <Button onClick={navigateToPreviousStep} testId="navigate-back" buttonType="muted">
               Back
             </Button>
-            <Button onClick={onConfirm} testId="confirm-purchase-button" buttonType="positive">
+            <Button
+              className={styles.continueButton}
+              onClick={onConfirm}
+              testId="confirm-purchase-button"
+              buttonType="positive">
               Complete payment
             </Button>
           </Flex>

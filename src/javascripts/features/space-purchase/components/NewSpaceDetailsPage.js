@@ -32,7 +32,10 @@ const styles = {
   }),
   buttonsContainer: css({
     display: 'flex',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
+    '& button:last-child': {
+      marginLeft: tokens.spacingM,
+    },
   }),
   sectionHeading: css({
     marginBottom: tokens.spacingL,

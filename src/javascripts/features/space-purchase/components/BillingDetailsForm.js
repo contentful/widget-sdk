@@ -47,8 +47,11 @@ const styles = {
   }),
   buttonsContainer: css({
     display: 'flex',
-    justifyContent: 'space-between',
     marginTop: tokens.spacingL,
+    justifyContent: 'flex-end',
+    '& button:last-child': {
+      marginLeft: tokens.spacingM,
+    },
   }),
   twoItemRow: css({
     display: 'flex',
