@@ -11,8 +11,10 @@ import queryString from 'query-string';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 import StateRedirect from 'app/common/StateRedirect';
 
-const initialFetch = async () => {
-  const spaceAssignmentEnabled = await getVariation(FLAGS.SPACE_PLAN_ASSIGNMENT);
+const initialFetch = async (orgId) => {
+  const spaceAssignmentEnabled = await getVariation(FLAGS.SPACE_PLAN_ASSIGNMENT, {
+    organizationId: orgId,
+  });
   const qs = queryString.parse(window.location.search);
 
   return {
@@ -23,7 +25,7 @@ const initialFetch = async () => {
 };
 
 export const SpacePlanAssignmentRoute = ({ orgId }) => {
-  const { isLoading, data } = useAsync(useCallback(initialFetch, []));
+  const { isLoading, data } = useAsync(useCallback(() => initialFetch(orgId), [orgId]));
   if (isLoading) {
     return (
       <EmptyStateContainer>
