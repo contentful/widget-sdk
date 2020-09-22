@@ -94,7 +94,6 @@ export const TrialTag = () => {
     trackingEvent: 'trial:trial_tag_clicked',
     trackParams: {
       type: trialType,
-      organization_id: organization.sys.id,
       numTrialDaysLeft: daysLeft,
       isOwnerOrAdmin: isOwnerOrAdmin(organization),
     },

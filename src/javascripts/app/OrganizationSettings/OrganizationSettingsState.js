@@ -1,6 +1,6 @@
 import base from 'states/Base';
 import { iframeStateWrapper } from 'states/utils';
-
+import * as Analytics from 'analytics/Analytics';
 import subscriptionState from './Subscription/SubscriptionState';
 import { usageState } from 'features/organization-usage';
 import teamsState from './Teams/TeamsState';
@@ -18,6 +18,11 @@ import * as TokenStore from 'services/TokenStore';
 import { isDeveloper, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { go } from 'states/Navigator';
+
+const resolveOrganizationData = [
+  '$stateParams',
+  ($stateParams) => TokenStore.getOrganization($stateParams.orgId),
+];
 
 const usersAndInvitationsState = base({
   name: 'users',
@@ -71,6 +76,13 @@ export default [
     name: 'organizations',
     url: '/organizations/:orgId',
     abstract: true,
+    resolve: {
+      organizationData: resolveOrganizationData,
+    },
+    onEnter: [
+      'organizationData',
+      (organizationData) => Analytics.trackContextChange(undefined, organizationData),
+    ],
     navComponent: OrganizationNavBar,
     children: [
       usageState,

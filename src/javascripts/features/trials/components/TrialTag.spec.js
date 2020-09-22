@@ -126,7 +126,6 @@ describe('TrialTag', () => {
 
       expect(track).toHaveBeenCalledWith('trial:trial_tag_clicked', {
         type: 'platform',
-        organization_id: trialOrganization.sys.id,
         numTrialDaysLeft: daysLeft,
         isOwnerOrAdmin: false,
       });
@@ -203,7 +202,6 @@ describe('TrialTag', () => {
 
       expect(track).toHaveBeenCalledWith('trial:trial_tag_clicked', {
         type: 'space',
-        organization_id: organizationNotOnTrial.sys.id,
         numTrialDaysLeft: daysLeft,
         isOwnerOrAdmin: false,
       });
