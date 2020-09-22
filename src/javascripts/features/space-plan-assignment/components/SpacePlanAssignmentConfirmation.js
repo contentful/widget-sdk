@@ -97,7 +97,12 @@ export function SpacePlanAssignmentConfirmation({
               </header>
               <List>
                 {resourcesToDisplay.map(({ name, id }) => {
-                  const usage = spaceResources[id].usage;
+                  let usage = spaceResources[id].usage;
+                  // Add "extra" environment and role to include `master` and `admin`
+                  if (['environment', 'role'].includes(id)) {
+                    usage = usage + 1;
+                  }
+
                   return (
                     <ListItem key={id} className={styles.listItem}>
                       <Icon icon="CheckCircle" color="muted" />
