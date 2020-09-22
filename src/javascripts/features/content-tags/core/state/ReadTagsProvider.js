@@ -1,7 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ReadTagsContext } from 'features/content-tags/core/state/ReadTagsContext';
 import { useTagsRepo } from 'features/content-tags/core/hooks';
-import { useAsyncFn, useStateWithDebounce } from 'core/hooks';
+import { useAsyncFn } from 'core/hooks';
+import { tagsSorter } from 'features/content-tags/core/state/tags-sorting';
+import { createTagsFilter } from 'features/content-tags/core/state/tags-filter';
 
 function ReadTagsProvider({ children }) {
   const tagsRepo = useTagsRepo();
@@ -9,14 +11,10 @@ function ReadTagsProvider({ children }) {
   const [limit, setLimit] = useState(25);
   const [isLoading, setIsLoading] = useState(true);
   const [cachedData, setCachedData] = useState([]);
-
-  const {
-    value: search,
-    setValue: setSearch,
-    debouncedValue: debouncedSearch,
-  } = useStateWithDebounce('');
+  const [search, setSearch] = useState('');
 
   const [excludedTags, setExcludedTags] = useState([]);
+  const [sorting, setSorting] = useState('DESC');
 
   const [{ error, data }, fetchAll] = useAsyncFn(
     useCallback(async () => {
@@ -50,6 +48,8 @@ function ReadTagsProvider({ children }) {
     }
   }, [data, setCachedData, error, setIsLoading]);
 
+  const cachedTagsFilter = useMemo(() => createTagsFilter(cachedData), [cachedData]);
+
   const reset = useCallback(async () => {
     if (skip === 0) {
       await fetchAll();
@@ -60,27 +60,22 @@ function ReadTagsProvider({ children }) {
 
   const dataSize = Math.min(skip + limit, cachedData.length);
 
-  const currentData = useMemo(() => {
-    return cachedData
-      .filter((entry) => {
-        const match = debouncedSearch.toLowerCase();
+  const filteredAndSortedTags = useMemo(() => {
+    const tags = cachedTagsFilter({
+      match: search.toLowerCase(),
+      exclude: excludedTags,
+    });
+    return tagsSorter(tags, sorting);
+  }, [cachedTagsFilter, search, excludedTags, sorting]);
 
-        if (
-          excludedTags.includes(entry.name.toLowerCase()) ||
-          excludedTags.includes(entry.sys.id.toLowerCase())
-        ) {
-          return false;
-        }
-
-        return (
-          entry.name.toLowerCase().includes(match) || entry.sys.id.toLowerCase().includes(match)
-        );
-      })
-      .slice(skip, dataSize);
-  }, [cachedData, skip, dataSize, debouncedSearch, excludedTags]);
+  const currentData = useMemo(() => filteredAndSortedTags.slice(skip, dataSize), [
+    skip,
+    dataSize,
+    filteredAndSortedTags,
+  ]);
 
   const total = cachedData
-    ? debouncedSearch && debouncedSearch.length > 0
+    ? search && search.length > 0
       ? currentData.length
       : cachedData.length
     : 0;
@@ -111,13 +106,14 @@ function ReadTagsProvider({ children }) {
         setLimit,
         search,
         setSearch,
-        debouncedSearch,
         total,
         hasTags: cachedData.length > 0,
         nameExists,
         idExists,
         getTag,
         setExcludedTags,
+        setSorting,
+        sorting,
       }}>
       {children}
     </ReadTagsContext.Provider>
