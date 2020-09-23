@@ -71,7 +71,7 @@ export function getEnvironmentId(space?: SpaceEnv) {
 }
 
 export function getEnvironmentAliasId(space?: SpaceEnv): string | undefined {
-  return space?.environmentMeta?.aliasId
+  return space?.environmentMeta?.aliasId;
 }
 
 export function getEnvironmentName(space?: SpaceEnv) {
