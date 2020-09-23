@@ -161,7 +161,9 @@ export default function EnterpriseWizard(props) {
             <Typography>
               <FormLabel htmlFor="spaceType">Space Type</FormLabel>
               {showTrialSpaceInfo && (
-                <Paragraph>Use a Trial Space to test out new projects, free of charge</Paragraph>
+                <Paragraph>
+                  Use a Trial Space to test out new projects for 30 days, free of charge
+                </Paragraph>
               )}
               {!isTrialCommFeatureFlagEnabled && !isHighDemand && <POCInfo />}
               <POCPlan
