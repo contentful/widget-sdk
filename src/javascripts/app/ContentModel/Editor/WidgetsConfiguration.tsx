@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { isEqual } from 'lodash';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
@@ -114,12 +113,6 @@ const WidgetsConfiguration: React.FC<WidgetsConfigurationProps> = ({
       </div>
     </>
   );
-};
-
-WidgetsConfiguration.propTypes = {
-  state: PropTypes.object.isRequired,
-  dispatch: PropTypes.func.isRequired,
-  defaultAvailableItems: PropTypes.array.isRequired,
 };
 
 export default WidgetsConfiguration;

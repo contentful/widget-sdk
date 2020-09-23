@@ -85,7 +85,7 @@ const SnapshotPresenterWidgets = ({
     case 'Location':
       return <SnapshotPresenterLocation value={value} />;
     case 'Reference':
-      return <SnapshotPresenterLink value={value} linkType={linkType} locale={locale} />;
+      return <SnapshotPresenterLink value={value} linkType={linkType!} locale={locale} />;
     case 'RichText':
       return (
         <SnapshotPresenterRichText

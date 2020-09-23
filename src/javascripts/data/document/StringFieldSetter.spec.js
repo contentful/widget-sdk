@@ -15,7 +15,7 @@ describe('StringFieldSetter', () => {
 
   describe('isStringField', () => {
     function ctWithFields(fields) {
-      return { data: { fields } };
+      return { fields };
     }
 
     it('returns true for Symbol/Text field', function () {

@@ -52,7 +52,7 @@ export async function trackEditConflict({
     remoteEntityVersion: remoteEntity.sys.version,
     localEntityUpdatedAtTstamp: localEntity.sys.updatedAt,
     remoteEntityUpdatedAtTstamp: remoteEntity.sys.updatedAt,
-    remoteEntityUpdatedByUserId: remoteEntity.sys.updatedBy.sys.id,
+    remoteEntityUpdatedByUserId: remoteEntity.sys.updatedBy?.sys.id,
     localEntityLastFetchedAtTstamp: localEntityFetchedAt.toISOString(),
     isConflictAutoResolvable,
     // v1: Initial implementation without any conflict resolution.

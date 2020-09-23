@@ -1,11 +1,10 @@
 import { cloneDeep, get, intersectionBy, isEqual, noop, once, set, unset } from 'lodash';
+import { Normalizer } from '@contentful/editorial-primitives';
 import type { Property, PropertyBus, Stream, StreamBus } from 'core/utils/kefir';
 import * as K from 'core/utils/kefir';
 import * as ResourceStateManager from 'data/document/ResourceStateManager';
 import * as Permissions from 'access_control/EntityPermissions';
 import { valuePropertyAt } from './documentHelpers';
-import * as Normalizer from 'data/document/Normalize';
-import { getDeletedFields } from 'data/document/Normalize';
 import TheLocaleStore from 'services/localeStore';
 import * as PathUtils from 'utils/Path';
 import { Error as DocError } from 'data/document/Error';
@@ -17,6 +16,7 @@ import { EntityRepo, EntityRepoChangeInfo } from 'data/CMA/EntityRepo';
 import { changedEntityFieldPaths, changedEntityMetadataPaths } from './changedPaths';
 import { Document } from './typesDocument';
 import { getState, State } from 'data/CMA/EntityState';
+import type { ContentType } from 'contentful-ui-extensions-sdk';
 
 export const THROTTLE_TIME = 5000;
 const DISCONNECTED = Symbol('DISCONNECTED');
@@ -29,7 +29,7 @@ const ASSET_UPDATED = Symbol('ASSET_UPDATED');
  */
 export function create(
   initialEntity: { data: Entity; setDeleted: { (): void } },
-  contentType: any,
+  contentType: ContentType,
   entityRepo: EntityRepo,
   saveThrottleMs: number = THROTTLE_TIME
 ): Document {
@@ -39,6 +39,7 @@ export function create(
     Normalizer.normalize(
       { getValueAt, setValueAt },
       entity,
+      // @ts-expect-error types don't match between management SDK and extensions-sdk
       contentType,
       TheLocaleStore.getPrivateLocales()
     );
@@ -476,7 +477,8 @@ export function create(
     // If the remote entity contains fields not listed in the local content type, it means that a field was added to the CT.
     // We want to lock the editor and prevent normalizer to remove the added field and cause another auto-save call
     // resetting the value for all other editors.
-    if (getDeletedFields(remoteEntity, contentType).length > 0) {
+    // @ts-expect-error content type types don't match
+    if (Normalizer.getDeletedFields(remoteEntity, contentType).length > 0) {
       errorBus.set(DocError.VersionMismatch());
       return false;
     }

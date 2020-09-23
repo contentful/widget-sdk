@@ -1,11 +1,10 @@
-import { get, cloneDeep, isEqual, memoize } from 'lodash';
+import { cloneDeep, get, isEqual, memoize } from 'lodash';
 import * as K from 'core/utils/kefir';
 import { deepFreeze } from 'utils/Freeze';
 import * as PathUtils from 'utils/Path';
 import { caseof } from 'sum-types';
 import * as Permissions from 'access_control/EntityPermissions';
 import { Error as DocError } from 'data/document/Error';
-import * as Normalizer from 'data/document/Normalize';
 import * as ResourceStateManager from 'data/document/ResourceStateManager';
 import * as DocSetters from 'data/document/Setters';
 import DocumentStatusCode from 'data/document/statusCode';
@@ -16,6 +15,7 @@ import TheLocaleStore from 'services/localeStore';
 import * as ShareJS from 'data/sharejs/utils';
 import { valuePropertyAt } from './documentHelpers';
 import * as PresenceHub from './PresenceHub';
+import { Normalizer } from '@contentful/editorial-primitives';
 
 /**
  * @returns {Document}
@@ -189,7 +189,7 @@ export function create(docConnection, initialEntity, contentType, user, entityRe
       // There is no focus on reference field or the boolean's "clear" button
       // so we have to dispatcha a fake "blur" event to the changes bus.
       const fieldId = path[1];
-      const field = contentType.data.fields.find((field) => field.id === fieldId);
+      const field = contentType.fields.find((field) => field.id === fieldId);
       const isReferenceField = get(field, 'items.type') === 'Link' || get(field, 'type') === 'Link';
       const isBooleanField = get(field, 'type') === 'Boolean';
       if (isReferenceField || isBooleanField) {

@@ -1,18 +1,8 @@
 import { unionWith, xorWith, flatten, get, isEqual } from 'lodash';
+import { Entity, Link } from './types';
 
 type Field = any;
-
-type Tag = {
-  sys: {
-    type: 'Link';
-    linkType: 'Tag';
-    id: string;
-  };
-};
-
-type Metadata = {
-  tags?: Tag[];
-};
+type Metadata = Entity['metadata'];
 
 /**
  * Takes two entities' `entity.fields` and returns all paths that are
@@ -48,8 +38,8 @@ function isTheSamePath(path1: string[], path2: string[]) {
  * different i.e. changed, added or deleted.
  */
 export function changedEntityMetadataPaths(
-  metadata1: Metadata = {},
-  metadata2: Metadata = {}
+  metadata1: Metadata = { tags: [] },
+  metadata2: Metadata = { tags: [] }
 ): string[][] {
   // Same tags in different order are considered equal
   const hasEqualTags = !xorWith(metadata1.tags, metadata2.tags, isTheSameTag).length;
@@ -58,6 +48,6 @@ export function changedEntityMetadataPaths(
   return hasEqualTags ? [] : [['tags']];
 }
 
-function isTheSameTag(tag1: Tag, tag2: Tag) {
+function isTheSameTag(tag1: Link<'Tag'>, tag2: Link<'Tag'>) {
   return tag1.sys.id === tag2.sys.id;
 }

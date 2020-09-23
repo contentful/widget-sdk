@@ -42,15 +42,13 @@ export const newAsset = (fields) => ({
 });
 
 export const newContentType = (sys, fields) => ({
-  data: {
-    sys,
-    fields: fields || [
-      { id: 'fieldA' },
-      { id: 'fieldB' },
-      { id: 'unsetField' },
-      { id: 'listField', type: 'Array', items: { type: 'Symbol' } },
-      { id: 'symbolField', type: 'Symbol' },
-      { id: 'textField', type: 'Text' },
-    ],
-  },
+  sys,
+  fields: fields || [
+    { id: 'fieldA' },
+    { id: 'fieldB' },
+    { id: 'unsetField' },
+    { id: 'listField', type: 'Array', items: { type: 'Symbol' } },
+    { id: 'symbolField', type: 'Symbol' },
+    { id: 'textField', type: 'Text' },
+  ],
 });

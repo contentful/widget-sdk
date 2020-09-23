@@ -46,6 +46,7 @@ export async function create(
   function get(entity, contentType, user, lifeline$) {
     const key = prepareKey(getAtPath(entity, 'data.sys', {}));
     const instance = instances[key];
+    const contentTypeData = 'data' in contentType ? contentType.data : contentType;
     let doc;
 
     if (instance) {
@@ -85,7 +86,7 @@ export async function create(
           skipTransformation: true,
           indicateAutoSave: true,
         });
-        doc = createCmaDoc(entity, contentType, entityRepo);
+        doc = createCmaDoc(entity, contentTypeData, entityRepo);
         cleanup = () => doc.destroy().finally(destroyConnection);
       } else {
         const entityRepo = createEntityRepo(spaceEndpoint, pubSubClient, noop, {
@@ -93,7 +94,7 @@ export async function create(
           skipTransformation: true,
           indicateAutoSave: true,
         });
-        doc = createOtDoc(docConnection, entity, contentType, user, entityRepo);
+        doc = createOtDoc(docConnection, entity, contentTypeData, user, entityRepo);
         cleanup = () => doc.destroy();
       }
 

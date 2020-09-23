@@ -75,7 +75,7 @@ export function setAt(doc, path, newValue) {
 }
 
 export function isStringField(fieldId, contentType) {
-  const field = _.find(_.get(contentType, 'data.fields', []), (field) => field.id === fieldId);
+  const field = _.find(_.get(contentType, 'fields', []), (field) => field.id === fieldId);
 
   return _.includes(STRING_FIELD_TYPES, field && field.type);
 }
