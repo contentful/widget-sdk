@@ -88,9 +88,10 @@ function SpacePlans({
 
   useEffect(() => {
     async function fetch() {
-      const isFeatureEnabled = await getVariation(FLAGS.SPACE_PLAN_ASSIGNMENT);
+      const isFeatureEnabled = await getVariation(FLAGS.SPACE_PLAN_ASSIGNMENT, { organizationId });
       const isExperimentFeatureFlagEnabled = await getVariation(
-        FLAGS.SPACE_PLAN_ASSIGNMENT_EXPERIMENT
+        FLAGS.SPACE_PLAN_ASSIGNMENT_EXPERIMENT,
+        { organizationId }
       );
       const unassignedSpacePlans = spacePlans.filter((plan) => plan.gatekeeperKey === null);
       const assignedSpacePlans = spacePlans.filter((plan) => plan.gatekeeperKey !== null);
@@ -103,7 +104,7 @@ function SpacePlans({
       setIsSpaceAssignmentExperimentEnabled(isExperimentFeatureFlagEnabled);
     }
     fetch();
-  }, [setCanManageSpaces, enterprisePlan, isOrgOwner, spacePlans]);
+  }, [setCanManageSpaces, enterprisePlan, isOrgOwner, spacePlans, organizationId]);
 
   const linkToSupportPage = websiteUrl(
     `support/?utm_source=webapp&utm_medium=account-menu&utm_campaign=in-app-help&purchase-micro-or-small-space=${organizationId}`
