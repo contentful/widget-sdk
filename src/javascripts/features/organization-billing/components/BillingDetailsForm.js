@@ -15,22 +15,9 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { useForm } from 'core/hooks/useForm';
 
-import { isValidVat, getIsVatCountry } from '../utils/VATVerification';
+import { isValidVat, getIsVatCountry } from '../utils/vat';
 import COUNTRIES_LIST from 'libs/countries_list.json';
 import US_STATES_LIST from 'libs/us_states_list.json';
-
-const DEFAULT_BILLING_DETAILS = {
-  firstName: '',
-  lastName: '',
-  email: '',
-  address: '',
-  addressTwo: '',
-  city: '',
-  postcode: '',
-  state: '',
-  country: '',
-  vatNumber: '',
-};
 
 const styles = {
   card: css({
@@ -62,32 +49,28 @@ const styles = {
   }),
 };
 
-export const BillingDetailsForm = ({
-  onSubmitBillingDetails,
-  savedBillingDetails = {},
-  navigateToPreviousStep,
-}) => {
-  // If there are no saved billing details, then the user is adding billing details.
-  // otherwise they are  updating their billing details.
-  const isAddingBillingDetails = isEmpty(savedBillingDetails);
-  const billingDetails = Object.assign(DEFAULT_BILLING_DETAILS, savedBillingDetails);
+export function BillingDetailsForm({
+  onSubmit,
+  onCancel,
+  submitText = 'Update billing details',
+  cancelText = 'Cancel',
+  billingDetails = {},
+}) {
+  const [showVat, setShouldShowVat] = useState(!!billingDetails.vatNumber);
+  const [showUSState, setShouldShowUSState] = useState(!!billingDetails.state);
 
-  // If these fields have already been filled out they should be shown on first render.
-  const [showVat, setShouldShowVat] = useState(billingDetails.vatNumber !== '');
-  const [showUSState, setShouldShowUSState] = useState(billingDetails.state !== '');
-
-  const { onChange, onBlur, onSubmit, fields } = useForm({
+  const { onChange, onBlur, onSubmit: onFormSubmit, fields, form } = useForm({
     fields: {
       firstName: {
-        value: billingDetails.firstName,
+        value: billingDetails.firstName ?? '',
         required: true,
       },
       lastName: {
-        value: billingDetails.lastName,
+        value: billingDetails.lastName ?? '',
         required: true,
       },
       email: {
-        value: billingDetails.email,
+        value: billingDetails.email ?? '',
         required: true,
         validator: (value) => {
           //search for @ && .
@@ -97,35 +80,35 @@ export const BillingDetailsForm = ({
         },
       },
       address: {
-        value: billingDetails.address,
+        value: billingDetails.address ?? '',
         required: true,
       },
       addressTwo: {
-        value: billingDetails.addressTwo,
+        value: billingDetails.addressTwo ?? '',
         required: false,
       },
       city: {
-        value: billingDetails.city,
+        value: billingDetails.city ?? '',
         required: true,
       },
       postcode: {
-        value: billingDetails.postcode,
+        value: billingDetails.postcode ?? '',
         required: true,
       },
       state: {
-        value: billingDetails.state,
+        value: billingDetails.state ?? '',
         required: false,
       },
       country: {
-        value: billingDetails.country,
+        value: billingDetails.country ?? '',
         required: true,
       },
       vatNumber: {
-        value: billingDetails.vatNumber,
+        value: billingDetails.vatNumber ?? '',
         required: false,
       },
     },
-    submitFn: onSubmitBillingDetails,
+    submitFn: onSubmit,
     fieldsValidator: (fields) => {
       const errors = {};
 
@@ -176,14 +159,14 @@ export const BillingDetailsForm = ({
     <Card className={styles.card} testId="billing-details.card">
       <Typography>
         <Subheading className={styles.cardTitle} element="h3" testId="billing-details.heading">
-          {isAddingBillingDetails ? 'Add your billing details' : 'Update your billing details'}{' '}
+          {isEmpty(billingDetails) ? 'Add' : 'Update'} your billing details{' '}
           <span role="img" aria-label="Mailbox closed">
             📫
           </span>
         </Subheading>
       </Typography>
 
-      <Form className={styles.form} spacing="condensed" onSubmit={onSubmit}>
+      <Form className={styles.form} spacing="condensed" onSubmit={onFormSubmit}>
         <div className={styles.twoItemRow}>
           <TextField
             className={styles.fieldSpacing}
@@ -346,20 +329,30 @@ export const BillingDetailsForm = ({
         )}
 
         <div className={styles.buttonsContainer}>
-          <Button onClick={navigateToPreviousStep} testId="navigate-back" buttonType="muted">
-            Back
+          <Button
+            onClick={onCancel}
+            testId="billing-details.cancel"
+            buttonType="muted"
+            disabled={form.submitting}>
+            {cancelText}
           </Button>
-          <Button onClick={onSubmit} testId="next-step-billing-details-form">
-            {isAddingBillingDetails ? 'Continue' : 'Update billing details'}
+          <Button
+            onClick={onFormSubmit}
+            testId="billing-details.submit"
+            disabled={form.submitting}
+            loading={form.submitting}>
+            {submitText}
           </Button>
         </div>
       </Form>
     </Card>
   );
-};
+}
 
 BillingDetailsForm.propTypes = {
-  onSubmitBillingDetails: PropTypes.func.isRequired,
-  navigateToPreviousStep: PropTypes.func.isRequired,
-  savedBillingDetails: PropTypes.object,
+  onSubmit: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired,
+  submitText: PropTypes.string,
+  cancelText: PropTypes.string,
+  billingDetails: PropTypes.object,
 };

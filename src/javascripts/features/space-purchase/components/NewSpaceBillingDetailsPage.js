@@ -7,7 +7,7 @@ import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 
 import { PaymentSummary } from './PaymentSummary';
-import { BillingDetailsForm } from './BillingDetailsForm';
+import { BillingDetailsForm } from 'features/organization-billing';
 
 const styles = {
   grid: css({
@@ -38,9 +38,11 @@ export const NewSpaceBillingDetailsPage = ({
       </Heading>
       <Grid className={styles.grid} columns="60% auto" rows={1} columnGap="spacing2Xl">
         <BillingDetailsForm
-          onSubmitBillingDetails={onSubmitBillingDetails}
-          savedBillingDetails={savedBillingDetails}
-          navigateToPreviousStep={navigateToPreviousStep}
+          onSubmit={onSubmitBillingDetails}
+          onCancel={navigateToPreviousStep}
+          submitText="Continue"
+          cancelText="Back"
+          billingDetails={savedBillingDetails}
         />
         <PaymentSummary selectedPlan={selectedPlan} />
       </Grid>
