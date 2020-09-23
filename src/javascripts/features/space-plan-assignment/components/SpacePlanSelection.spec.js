@@ -14,11 +14,21 @@ const mockRatePlanCharges = [
 const mockLargePlan1 = Fake.Plan({
   name: 'Large',
   ratePlanCharges: mockRatePlanCharges,
+  roleSet: {
+    roles: [],
+  },
 });
-const mockLargePlan2 = Fake.Plan({ name: 'Large', ratePlanCharges: mockRatePlanCharges });
+const mockLargePlan2 = Fake.Plan({
+  name: 'Large',
+  ratePlanCharges: mockRatePlanCharges,
+  roleSet: { roles: [] },
+});
 const mockPerformance1xPlan = Fake.Plan({
   name: 'Performance 1x',
   ratePlanCharges: mockRatePlanCharges,
+  roleSet: {
+    roles: [],
+  },
 });
 const mockPlans = [mockLargePlan1, mockLargePlan2, mockPerformance1xPlan];
 

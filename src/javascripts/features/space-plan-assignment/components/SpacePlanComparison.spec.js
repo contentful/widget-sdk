@@ -14,6 +14,9 @@ const mockRatePlanCharges = [
 const mockPlanLarge = Fake.Plan({
   name: 'Large',
   ratePlanCharges: mockRatePlanCharges,
+  roleSet: {
+    roles: [],
+  },
 });
 const mockSpaceResources = {
   role: Fake.SpaceResource(2, 5, 'role'),

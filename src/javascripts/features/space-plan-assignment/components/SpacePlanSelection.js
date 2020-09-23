@@ -34,7 +34,6 @@ export function SpacePlanSelection({
   onNext,
 }) {
   const groupedPlans = groupBy(plans, 'name');
-
   return (
     <>
       <Typography>

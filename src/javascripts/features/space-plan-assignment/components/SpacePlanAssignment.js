@@ -52,8 +52,16 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
         (plan) => !plan.gatekeeperKey && (currentPlan ? plan.name !== currentPlan.name : true)
       );
 
+      // enhence plans with roleSet in order to display tooltip text for Roles
+      const enhancedPlans = availablePlans.map((plan) => {
+        return {
+          ...plan,
+          roleSet: ratePlans.find((ratePlan) => ratePlan.name === plan.name).roleSet,
+        };
+      });
+
       return {
-        plans: sortBy(availablePlans, 'price'),
+        plans: sortBy(enhancedPlans, 'price'),
         space,
         currentPlan,
         freePlan,

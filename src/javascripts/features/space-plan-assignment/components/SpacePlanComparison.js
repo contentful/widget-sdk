@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import {
   Plan as PlanPropType,
   Resource as ResourcePropType,
@@ -15,11 +16,13 @@ import {
   Icon,
   Tooltip,
 } from '@contentful/forma-36-react-components';
-import { resourcesToDisplay, getIncludedResources } from '../utils/utils';
+import { resourcesToDisplay, getIncludedResources, getTooltip } from '../utils/utils';
+import { getRolesTooltip } from 'utils/RoleTooltipCopy';
 import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
 
 const styles = {
   warning: css({ color: tokens.colorWarning }),
+  tooltipPointer: css({ cursor: 'pointer' }),
 };
 
 export function SpacePlanComparison({ plan, spaceResources }) {
@@ -68,9 +71,21 @@ export function SpacePlanComparison({ plan, spaceResources }) {
         </TableRow>
         <TableRow key={'new'}>
           <TableCell>{plan.name}</TableCell>
-          {resourcesToDisplay.map(({ id }) => (
-            <TableCell key={id}>{planResources[id]}</TableCell>
-          ))}
+          {resourcesToDisplay.map(({ id }) => {
+            let tooltipText = '';
+            // get tooltips texts for env, records and role
+            ['role'].includes(id)
+              ? (tooltipText = getRolesTooltip(planResources[id], plan.roleSet))
+              : (tooltipText = getTooltip(id, planResources[id]));
+
+            return (
+              <TableCell key={id}>
+                <Tooltip place="top" content={tooltipText}>
+                  <span className={tooltipText && styles.tooltipPointer}>{planResources[id]}</span>
+                </Tooltip>
+              </TableCell>
+            );
+          })}
         </TableRow>
       </TableBody>
     </Table>

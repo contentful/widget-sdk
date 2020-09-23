@@ -16,11 +16,13 @@ import {
   List,
   ListItem,
   Icon,
+  Tooltip,
 } from '@contentful/forma-36-react-components';
 import { Flex, Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { getIncludedResources, resourcesToDisplay } from '../utils/utils';
+import { getIncludedResources, resourcesToDisplay, getTooltip } from '../utils/utils';
+import { getRolesTooltip } from 'utils/RoleTooltipCopy';
 import { shorten } from 'utils/NumberUtils';
 
 const styles = {
@@ -57,6 +59,7 @@ const styles = {
     left: -9,
     background: 'white',
   }),
+  tooltipPointer: css({ cursor: 'pointer' }),
 };
 
 export function SpacePlanAssignmentConfirmation({
@@ -125,14 +128,27 @@ export function SpacePlanAssignmentConfirmation({
                 <Subheading>{selectedPlan.name}</Subheading>
               </header>
               <List>
-                {resourcesToDisplay.map(({ name, id }) => (
-                  <ListItem key={id} className={styles.listItem}>
-                    <Icon icon="CheckCircle" color="positive" className={styles.icon} />{' '}
-                    <span>
-                      {shorten(selectedPlanResources[id])} {name}
-                    </span>
-                  </ListItem>
-                ))}
+                {resourcesToDisplay.map(({ name, id }) => {
+                  let tooltipText = '';
+                  // get tooltips texts for env, records and role
+                  ['role'].includes(id)
+                    ? (tooltipText = getRolesTooltip(
+                        selectedPlanResources[id],
+                        selectedPlan.roleSet
+                      ))
+                    : (tooltipText = getTooltip(id, selectedPlanResources[id]));
+
+                  return (
+                    <ListItem key={id} className={styles.listItem}>
+                      <Icon icon="CheckCircle" color="positive" className={styles.icon} />{' '}
+                      <Tooltip place="top" content={tooltipText}>
+                        <span className={tooltipText && styles.tooltipPointer}>
+                          {shorten(selectedPlanResources[id])} {name}
+                        </span>
+                      </Tooltip>
+                    </ListItem>
+                  );
+                })}
               </List>
             </div>
           </Grid>

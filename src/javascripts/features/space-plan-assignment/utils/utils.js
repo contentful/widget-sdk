@@ -1,4 +1,5 @@
 import { get } from 'lodash';
+import pluralize from 'pluralize';
 
 export const resourcesToDisplay = [
   { id: 'environment', name: 'Environments' },
@@ -39,4 +40,17 @@ export function canPlanBeAssigned(plan, spaceResources) {
     ({ id }) => spaceResources[id].usage > planLimits[id]
   );
   return !planIsTooSmall;
+}
+
+export function getTooltip(id, limit) {
+  if (id === 'environment') {
+    return `This space type includes 1 master and ${pluralize(
+      'sandbox environment',
+      limit - 1,
+      true
+    )}.`;
+  } else if (id === 'record') {
+    return 'Records are entries and assets combined.';
+  }
+  return;
 }
