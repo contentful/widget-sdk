@@ -1,25 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import {
-  TextLink,
-  TextField,
-  FormLabel,
-  Paragraph,
   Button,
-  SkeletonContainer,
-  SkeletonBodyText,
+  FormLabel,
   Notification,
+  Paragraph,
+  SkeletonBodyText,
+  SkeletonContainer,
   Switch,
+  TextField,
+  TextLink,
 } from '@contentful/forma-36-react-components';
-import * as ManagementApiClient from '../ManagementApiClient';
 import tokens from '@contentful/forma-36-tokens';
-import { getAppDefinitionLoader } from 'features/apps-core';
 import { css } from 'emotion';
-import { TopicEventTable } from './TopicEventTable';
-import { transformMapToTopics, transformTopicsToMap } from './TopicEventMap';
-import { DisableAppEventsModal } from './DisableAppEventsModal';
+import { getAppDefinitionLoader } from 'features/apps-core';
+import { isEqual } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { useEffect, useState } from 'react';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
-import { LEARN_MORE_URL } from '../constants';
+import { HTTPS_REG_EXP, LEARN_MORE_URL } from '../constants';
+import * as ManagementApiClient from '../ManagementApiClient';
+import { DisableAppEventsModal } from './DisableAppEventsModal';
+import { transformMapToTopics, transformTopicsToMap } from './TopicEventMap';
+import { TopicEventTable } from './TopicEventTable';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
   source: 'webapp',
@@ -40,14 +41,12 @@ const styles = {
   }),
 };
 
-const httpsRegExp = /^https:\/\/.+$/;
-
 export function AppEvents({ definition }) {
   const appDefinitionId = definition.sys.id;
   const orgId = definition.sys.organization.sys.id;
   const [topicValues, setTopicValues] = useState(transformTopicsToMap([]));
   const [targetUrl, setTargetUrl] = useState('');
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState([]);
   const [hasEventSubscription, setHasEventSubscription] = useState(false);
   const [isModalShown, setIsModalShown] = useState(false);
   const [appEventToggle, setAppEventToggle] = useState(false);
@@ -55,8 +54,13 @@ export function AppEvents({ definition }) {
   const [isUpdating, setIsUpdating] = useState(false);
 
   const updateAppEvents = async () => {
-    if (!httpsRegExp.test(targetUrl)) {
-      setError('Please enter a valid URL.');
+    if (!HTTPS_REG_EXP.test(targetUrl)) {
+      setErrors([
+        {
+          details: 'Please enter a valid URL',
+          path: ['targetUrl'],
+        },
+      ]);
       return;
     }
     setIsUpdating(true);
@@ -67,7 +71,11 @@ export function AppEvents({ definition }) {
       });
       Notification.success('App Events successfully updated.');
       setHasEventSubscription(true);
-    } catch {
+    } catch (err) {
+      if (err.status === 422) {
+        setErrors(err.data.details.errors);
+      }
+
       Notification.error('Failed to update app events.');
     }
     setIsUpdating(false);
@@ -113,6 +121,10 @@ export function AppEvents({ definition }) {
     };
   }, [orgId, appDefinitionId]);
 
+  const clearErrorForField = (path) => {
+    setErrors((errors) => errors.filter((error) => !isEqual(error.path, path)));
+  };
+
   return (
     <div>
       <Paragraph className={styles.spacer}>
@@ -156,9 +168,11 @@ export function AppEvents({ definition }) {
                   disabled: isLoading,
                   placeholder: 'https://',
                 }}
-                validationMessage={error}
+                validationMessage={
+                  errors.find((error) => isEqual(error.path, ['targetUrl']))?.details
+                }
                 onChange={(event) => {
-                  setError('');
+                  clearErrorForField(['targetUrl']);
                   setTargetUrl(event.target.value.trim());
                 }}
                 name="url"

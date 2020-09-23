@@ -10,17 +10,19 @@ import {
   TextField,
   TextLink,
   ToggleButton,
+  ValidationMessage,
 } from '@contentful/forma-36-react-components';
 import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { WidgetLocation } from '@contentful/widget-renderer';
-import { cloneDeep } from 'lodash';
+import c from 'classnames';
+import { MARKETPLACE_ORG_ID } from 'features/apps/config';
+import { cloneDeep, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { toApiFieldType, toInternalFieldType } from 'widgets/FieldTypes';
-import { MARKETPLACE_ORG_ID } from 'features/apps/config';
+import { FIELD_TYPES_ORDER, LOCATION_ORDER } from './constants';
 import { styles } from './styles';
-import { LOCATION_ORDER, FIELD_TYPES_ORDER } from './constants';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
   source: 'webapp',
@@ -28,7 +30,7 @@ const withInAppHelpUtmParams = buildUrlWithUtmParams({
   campaign: 'in-app-help',
 });
 
-export function AppEditor({ definition, onChange }) {
+export function AppEditor({ definition, onChange, errors, clearErrorForField }) {
   definition.locations = definition.locations || [];
 
   const getLocationIndex = (locationValue) => {
@@ -140,7 +142,11 @@ export function AppEditor({ definition, onChange }) {
           labelText="Name"
           testId="app-name-input"
           value={definition.name || ''}
-          onChange={(e) => onChange({ ...definition, name: e.target.value.trim() })}
+          onChange={(e) => {
+            clearErrorForField(['name']);
+            onChange({ ...definition, name: e.target.value.trim() });
+          }}
+          validationMessage={errors.find((error) => isEqual(error.path, ['name']))?.details}
         />
         <TextField
           className={styles.input()}
@@ -150,7 +156,11 @@ export function AppEditor({ definition, onChange }) {
           testId="app-src-input"
           value={definition.src || ''}
           helpText="Only required if your app renders into locations within the Contentful web app. Public URLs must use HTTPS."
-          onChange={(e) => onChange({ ...definition, src: e.target.value.trim() })}
+          onChange={(e) => {
+            clearErrorForField(['src']);
+            onChange({ ...definition, src: e.target.value.trim() });
+          }}
+          validationMessage={errors.find((error) => isEqual(error.path, ['src']))?.details}
         />
         {definition.src && (
           <>
@@ -211,9 +221,13 @@ export function AppEditor({ definition, onChange }) {
                   </ToggleButton>
                   {locationValue === WidgetLocation.ENTRY_FIELD && (
                     <div
-                      className={[styles.fieldTypes]
-                        .concat(hasLocation(locationValue) ? styles.fieldTypesOpen() : [])
-                        .join(' ')}>
+                      className={c(
+                        styles.fieldTypes,
+                        styles.fieldTypesPadding(hasLocation(locationValue)),
+                        {
+                          [styles.fieldTypesOpen]: hasLocation(locationValue),
+                        }
+                      )}>
                       <Paragraph>Select the field types the app can be rendered in.</Paragraph>
                       <div className={styles.fieldTypeChecks}>
                         {FIELD_TYPES_ORDER.map(([label, internalFieldType]) => {
@@ -222,20 +236,34 @@ export function AppEditor({ definition, onChange }) {
                               className={styles.entryFieldCheck}
                               key={internalFieldType}
                               labelText={label}
-                              onChange={() => toggleFieldType(internalFieldType)}
+                              onChange={() => {
+                                clearErrorForField(['locations', 'entry-field', 'fieldTypes']);
+                                toggleFieldType(internalFieldType);
+                              }}
                               checked={hasFieldType(internalFieldType)}
                               id={`app-entry-field-type-${internalFieldType}`}
                             />
                           );
                         })}
                       </div>
+                      {errors.find((error) =>
+                        isEqual(error.path, ['locations', 'entry-field', 'fieldTypes'])
+                      ) && (
+                        <ValidationMessage className={styles.fieldTypesValidationMessage}>
+                          {
+                            errors.find((error) =>
+                              isEqual(error.path, ['locations', 'entry-field', 'fieldTypes'])
+                            ).details
+                          }
+                        </ValidationMessage>
+                      )}
                     </div>
                   )}
                   {locationValue === WidgetLocation.PAGE && (
                     <div
-                      className={[styles.fieldTypes]
-                        .concat(hasLocation(locationValue) ? styles.fieldTypesOpen(false) : [])
-                        .join(' ')}>
+                      className={c(styles.fieldTypes, {
+                        [styles.fieldTypesOpen]: hasLocation(locationValue),
+                      })}>
                       <div className={styles.pageSwitch}>
                         <Paragraph>
                           Optionally, you can show a link to the page location of your app in the
@@ -262,6 +290,7 @@ export function AppEditor({ definition, onChange }) {
                             required
                             textInputProps={{
                               maxLength: 40,
+                              placeholder: definition.name,
                             }}
                             name="page-link-name"
                             id="page-link-name"
@@ -269,8 +298,14 @@ export function AppEditor({ definition, onChange }) {
                             testId="page-link-name"
                             value={getNavigationItemValue('name')}
                             helpText="Maximum 40 characters."
-                            onChange={(e) =>
-                              updatePageLocation({ field: 'name', value: e.target.value })
+                            onChange={(e) => {
+                              clearErrorForField(['locations', 'page', 'navigationItem', 'name']);
+                              updatePageLocation({ field: 'name', value: e.target.value });
+                            }}
+                            validationMessage={
+                              errors.find((error) =>
+                                isEqual(error.path, ['locations', 'page', 'navigationItem', 'name'])
+                              )?.details
                             }
                           />
                           <TextField
@@ -278,6 +313,7 @@ export function AppEditor({ definition, onChange }) {
                             required
                             textInputProps={{
                               maxLength: 512,
+                              placeholder: '/',
                             }}
                             name="page-link-path"
                             id="page-link-path"
@@ -285,8 +321,14 @@ export function AppEditor({ definition, onChange }) {
                             testId="page-link-path"
                             helpText="Maximum 512 characters."
                             value={getNavigationItemValue('path')}
-                            onChange={(e) =>
-                              updatePageLocation({ field: 'path', value: e.target.value })
+                            onChange={(e) => {
+                              clearErrorForField(['locations', 'page', 'navigationItem', 'path']);
+                              updatePageLocation({ field: 'path', value: e.target.value });
+                            }}
+                            validationMessage={
+                              errors.find((error) =>
+                                isEqual(error.path, ['locations', 'page', 'navigationItem', 'path'])
+                              )?.details
                             }
                           />
                         </div>
@@ -303,7 +345,7 @@ export function AppEditor({ definition, onChange }) {
                               <span className={styles.navItemIcon}>
                                 <NavigationIcon icon="Apps" size="small" />{' '}
                               </span>
-                              <span>{getNavigationItemValue('name') || definition.name}</span>
+                              <span>{getNavigationItemValue('name')}</span>
                             </Card>
                           </div>
                         </div>
@@ -338,4 +380,6 @@ export function AppEditor({ definition, onChange }) {
 AppEditor.propTypes = {
   definition: PropTypes.object.isRequired,
   onChange: PropTypes.func.isRequired,
+  errors: PropTypes.array.isRequired,
+  clearErrorForField: PropTypes.func.isRequired,
 };
