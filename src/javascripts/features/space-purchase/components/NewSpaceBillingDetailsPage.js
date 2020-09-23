@@ -7,7 +7,7 @@ import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 
 import { PaymentSummary } from './PaymentSummary';
-import { BillingDetailsForm } from './BillingDetailsForm';
+import { BillingDetailsForm } from 'features/organization-billing';
 
 const styles = {
   grid: css({

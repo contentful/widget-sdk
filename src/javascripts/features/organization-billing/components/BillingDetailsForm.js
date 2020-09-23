@@ -15,7 +15,7 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { useForm } from 'core/hooks/useForm';
 
-import { isValidVat, getIsVatCountry } from '../utils/VATVerification';
+import { isValidVat, getIsVatCountry } from '../utils/vat';
 import COUNTRIES_LIST from 'libs/countries_list.json';
 import US_STATES_LIST from 'libs/us_states_list.json';
 
