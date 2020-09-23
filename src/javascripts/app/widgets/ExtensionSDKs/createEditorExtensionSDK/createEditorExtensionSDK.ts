@@ -42,7 +42,7 @@ export const createEditorExtensionSDK = ({
   const editorApi = createEditorApi({
     editorInterface: $scope.editorData.editorInterface,
     getLocaleData: () => $scope.localeData,
-    getPreferences: () => $scope.getPreferences,
+    getPreferences: () => $scope.preferences,
     watch: (watchFn, cb) => $scope.$watch(watchFn, cb),
   });
 
