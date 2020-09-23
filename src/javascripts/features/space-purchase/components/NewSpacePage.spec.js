@@ -57,6 +57,7 @@ jest.mock('features/organization-billing/index', () => ({
   getHostedPaymentParams: jest.fn().mockResolvedValue(),
   ZuoraCreditCardIframe: jest.requireActual('features/organization-billing/index')
     .ZuoraCreditCardIframe,
+  BillingDetailsForm: jest.requireActual('features/organization-billing/index').BillingDetailsForm,
 }));
 
 describe('NewSpacePage', () => {
@@ -193,7 +194,7 @@ describe('NewSpacePage', () => {
 
       userEvent.selectOptions(countrySelect, ['DE']);
 
-      userEvent.click(screen.getByTestId('next-step-billing-details-form'));
+      userEvent.click(screen.getByTestId('billing-details.submit'));
 
       // ------ Card Details page ------
       const successCb = await waitForZuoraToRender();
@@ -239,7 +240,7 @@ describe('NewSpacePage', () => {
 
     userEvent.selectOptions(countrySelect, ['AR']);
 
-    userEvent.click(screen.getByTestId('next-step-billing-details-form'));
+    userEvent.click(screen.getByTestId('billing-details.submit'));
 
     // ------ Credit Card page------
     await waitFor(() => {

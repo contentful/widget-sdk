@@ -7,16 +7,7 @@ describe('BillingDetailsForm', () => {
   let mockBillingDetails;
 
   beforeEach(() => {
-    mockBillingDetails = getMockBillingDetails({
-      firstName: 'John',
-      lastName: 'Doe',
-      email: 'test@example.com',
-      address: '123 street ave',
-      addressTwo: 'apartment 321',
-      city: 'Rio de Janeiro',
-      postcode: '11111',
-      country: 'BR',
-    });
+    mockBillingDetails = getMockBillingDetails();
   });
 
   describe('editing the form works as expected', () => {
@@ -77,10 +68,10 @@ describe('BillingDetailsForm', () => {
     describe('email validation', () => {
       it('should reject an email missing .', async () => {
         build({
-          savedBillingDetails: getMockBillingDetails({ email: '@' }),
+          billingDetails: getMockBillingDetails({ email: '@' }),
         });
 
-        userEvent.click(screen.getByTestId('next-step-billing-details-form'));
+        userEvent.click(screen.getByTestId('billing-details.submit'));
 
         await waitFor(() => {
           expect(screen.getByText('Not a valid email address')).toBeVisible();
@@ -89,10 +80,10 @@ describe('BillingDetailsForm', () => {
 
       it('should reject an email missing @', async () => {
         build({
-          savedBillingDetails: getMockBillingDetails({ email: '.' }),
+          billingDetails: getMockBillingDetails({ email: '.' }),
         });
 
-        userEvent.click(screen.getByTestId('next-step-billing-details-form'));
+        userEvent.click(screen.getByTestId('billing-details.submit'));
 
         await waitFor(() => {
           expect(screen.getByText('Not a valid email address')).toBeVisible();
@@ -100,16 +91,16 @@ describe('BillingDetailsForm', () => {
       });
 
       it('should accept an email containing both @ && .', async () => {
-        const mockOnSubmitBillingDetails = jest.fn();
+        const onSubmit = jest.fn();
         build({
-          savedBillingDetails: getMockBillingDetails({ email: '@.' }),
-          onSubmitBillingDetails: mockOnSubmitBillingDetails,
+          billingDetails: getMockBillingDetails({ email: '@.' }),
+          onSubmit,
         });
 
-        userEvent.click(screen.getByTestId('next-step-billing-details-form'));
+        userEvent.click(screen.getByTestId('billing-details.submit'));
 
         await waitFor(() => {
-          expect(mockOnSubmitBillingDetails).toBeCalled();
+          expect(onSubmit).toBeCalled();
         });
       });
     });
@@ -117,7 +108,7 @@ describe('BillingDetailsForm', () => {
     describe('fields validation', () => {
       it('should reject an improperly formatted vat for the selected country', async () => {
         build({
-          savedBillingDetails: getMockBillingDetails({ country: 'DE', vatNumber: '1234123' }),
+          billingDetails: getMockBillingDetails({ country: 'DE', vatNumber: '1234123' }),
         });
 
         const countrySelect = within(screen.getByTestId('billing-details.country')).getByTestId(
@@ -125,7 +116,7 @@ describe('BillingDetailsForm', () => {
         );
 
         userEvent.selectOptions(countrySelect, ['DE']);
-        userEvent.click(screen.getByTestId('next-step-billing-details-form'));
+        userEvent.click(screen.getByTestId('billing-details.submit'));
 
         await waitFor(() => {
           expect(screen.getByText('Not a valid VAT Number')).toBeVisible();
@@ -133,26 +124,26 @@ describe('BillingDetailsForm', () => {
       });
 
       it('should accept a properly formatted vat for the selected country', async () => {
-        const mockOnSubmitBillingDetails = jest.fn();
+        const onSubmit = jest.fn();
         build({
-          savedBillingDetails: getMockBillingDetails({ country: 'DE', vatNumber: 'DE275148225' }),
-          onSubmitBillingDetails: mockOnSubmitBillingDetails,
+          billingDetails: getMockBillingDetails({ country: 'DE', vatNumber: 'DE275148225' }),
+          onSubmit,
         });
 
-        userEvent.click(screen.getByTestId('next-step-billing-details-form'));
+        userEvent.click(screen.getByTestId('billing-details.submit'));
 
         await waitFor(() => {
           expect(screen.queryByText('Not a valid VAT Number')).toBeNull();
-          expect(mockOnSubmitBillingDetails).toBeCalled();
+          expect(onSubmit).toBeCalled();
         });
       });
 
       it('should accept an EU country with no vat number filled out', async () => {
-        const mockOnSubmitBillingDetails = jest.fn();
+        const onSubmit = jest.fn();
 
         build({
-          savedBillingDetails: mockBillingDetails,
-          onSubmitBillingDetails: mockOnSubmitBillingDetails,
+          billingDetails: mockBillingDetails,
+          onSubmit,
         });
 
         const countrySelect = within(screen.getByTestId('billing-details.country')).getByTestId(
@@ -160,20 +151,20 @@ describe('BillingDetailsForm', () => {
         );
 
         userEvent.selectOptions(countrySelect, ['DE']);
-        userEvent.click(screen.getByTestId('next-step-billing-details-form'));
+        userEvent.click(screen.getByTestId('billing-details.submit'));
 
         await waitFor(() => {
           expect(screen.queryByText('Not a valid VAT Number')).toBeNull();
-          expect(mockOnSubmitBillingDetails).toBeCalled();
+          expect(onSubmit).toBeCalled();
         });
       });
 
       it('should display an error if the US is selected but no state has been selected', async () => {
-        const mockOnSubmitBillingDetails = jest.fn();
+        const onSubmit = jest.fn();
 
         build({
-          savedBillingDetails: getMockBillingDetails({ country: 'DE' }),
-          onSubmitBillingDetails: mockOnSubmitBillingDetails,
+          billingDetails: getMockBillingDetails({ country: 'DE' }),
+          onSubmit,
         });
 
         const countrySelect = within(screen.getByTestId('billing-details.country')).getByTestId(
@@ -181,18 +172,18 @@ describe('BillingDetailsForm', () => {
         );
 
         userEvent.selectOptions(countrySelect, ['US']);
-        userEvent.click(screen.getByTestId('next-step-billing-details-form'));
+        userEvent.click(screen.getByTestId('billing-details.submit'));
 
         expect(screen.getByText('Select a State')).toBeVisible();
-        expect(mockOnSubmitBillingDetails).not.toBeCalled();
+        expect(onSubmit).not.toBeCalled();
       });
 
       it('should not display error and successfully submit if the US and a State are selected', async () => {
-        const mockOnSubmitBillingDetails = jest.fn();
+        const onSubmit = jest.fn();
 
         build({
-          savedBillingDetails: getMockBillingDetails({ country: 'DE' }),
-          onSubmitBillingDetails: mockOnSubmitBillingDetails,
+          billingDetails: getMockBillingDetails({ country: 'DE' }),
+          onSubmit,
         });
 
         const countrySelect = within(screen.getByTestId('billing-details.country')).getByTestId(
@@ -206,11 +197,11 @@ describe('BillingDetailsForm', () => {
         );
         userEvent.selectOptions(stateSelect, ['CA']);
 
-        userEvent.click(screen.getByTestId('next-step-billing-details-form'));
+        userEvent.click(screen.getByTestId('billing-details.submit'));
 
         expect(screen.queryByText('Select a State')).toBeNull();
         await waitFor(() => {
-          expect(mockOnSubmitBillingDetails).toBeCalled();
+          expect(onSubmit).toBeCalled();
         });
       });
     });
@@ -224,20 +215,16 @@ describe('BillingDetailsForm', () => {
       expect(screen.getByTestId('billing-details.heading')).toHaveTextContent(
         'Add your billing details 📫'
       );
-      expect(screen.getByTestId('next-step-billing-details-form')).toHaveTextContent('Continue');
 
       expect(screen.getAllByTestId('cf-ui-text-input').value).toBeUndefined();
     });
 
     it('should render a prefilled form when there are saved billing details', () => {
-      build({ savedBillingDetails: getMockBillingDetails({ vatNumber: '' }) });
+      build({ billingDetails: getMockBillingDetails({ vatNumber: '' }) });
 
       expect(screen.getByTestId('billing-details.card')).toBeVisible();
       expect(screen.getByTestId('billing-details.heading')).toHaveTextContent(
         'Update your billing details 📫'
-      );
-      expect(screen.getByTestId('next-step-billing-details-form')).toHaveTextContent(
-        'Update billing details'
       );
 
       // Make sure all text fields are filled out
@@ -249,7 +236,7 @@ describe('BillingDetailsForm', () => {
 
     it('should show vat field if its been filled out', () => {
       build({
-        savedBillingDetails: getMockBillingDetails({ country: 'DE', vatNumber: 'DE275148225' }),
+        billingDetails: getMockBillingDetails({ country: 'DE', vatNumber: 'DE275148225' }),
       });
 
       expect(screen.queryByTestId('billing-details.vatNumber')).toBeVisible();
@@ -257,7 +244,7 @@ describe('BillingDetailsForm', () => {
 
     it('should show state field if its been filled out', () => {
       build({
-        savedBillingDetails: getMockBillingDetails({ country: 'US', state: 'CA' }),
+        billingDetails: getMockBillingDetails({ country: 'US', state: 'CA' }),
       });
 
       expect(screen.queryByTestId('billing-details.state')).toBeVisible();
@@ -265,28 +252,30 @@ describe('BillingDetailsForm', () => {
   });
 
   describe('navigational buttons', () => {
-    it('calls navigateToPreviousStep when back button is clicked', async () => {
-      const mockNavigateToPreviousStep = jest.fn();
+    it('calls onCancel when the cancel button is clicked', async () => {
+      const onCancel = jest.fn();
       build({
-        navigateToPreviousStep: mockNavigateToPreviousStep,
+        onCancel,
       });
 
-      userEvent.click(screen.getByTestId('navigate-back'));
+      userEvent.click(screen.getByTestId('billing-details.cancel'));
+
       await waitFor(() => {
-        expect(mockNavigateToPreviousStep).toBeCalled();
+        expect(onCancel).toBeCalled();
       });
     });
 
-    it('calls onSubmitBillingDetails when continue button is clicked and form is correct', async () => {
-      const mockOnSubmitBillingDetails = jest.fn();
+    it('calls onSubmit when submit button is clicked and form is correct', async () => {
+      const onSubmit = jest.fn();
       build({
-        savedBillingDetails: mockBillingDetails,
-        onSubmitBillingDetails: mockOnSubmitBillingDetails,
+        billingDetails: mockBillingDetails,
+        onSubmit,
       });
 
-      userEvent.click(screen.getByTestId('next-step-billing-details-form'));
+      userEvent.click(screen.getByTestId('billing-details.submit'));
+
       waitFor(() => {
-        expect(mockOnSubmitBillingDetails).toBeCalled();
+        expect(onSubmit).toBeCalled();
       });
     });
   });
@@ -302,15 +291,15 @@ function getMockBillingDetails(customProps) {
     city: 'Rio de Janeiro',
     postcode: '11111',
     country: 'BR',
+    vatNumber: '',
     ...customProps,
   };
 }
 
 function build(customProps) {
   const props = {
-    navigateToPreviousStep: () => {},
-    onSubmitBillingDetails: () => {},
-    savedBillingDetails: {},
+    onSubmit: () => {},
+    onCancel: () => {},
     ...customProps,
   };
 
