@@ -5,6 +5,7 @@ import {
   getSpaceName,
   getEnvironment,
   getEnvironmentId,
+  getEnvironmentAliasId,
   getEnvironmentName,
   getSpaceData,
   getOrganizationId,
@@ -42,9 +43,10 @@ export const SpaceEnvContextProvider: React.FC<{}> = (props) => {
   }
 
   // Most common values are exported as property values
-  const value = {
+  const value: SpaceEnvContextValue = {
     currentEnvironment: getEnvironment(space),
     currentEnvironmentId: getEnvironmentId(space),
+    currentEnvironmentAliasId: getEnvironmentAliasId(space),
     currentEnvironmentName: getEnvironmentName(space),
     currentOrganization: getOrganization(space),
     currentOrganizationId: getOrganizationId(space),

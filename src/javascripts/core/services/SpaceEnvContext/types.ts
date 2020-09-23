@@ -1,11 +1,16 @@
 export interface SpaceEnvContextValue {
-  currentSpace?: SpaceEnv;
-  currentSpaceId?: string;
-  currentSpaceName?: string;
-  currentSpaceData?: SpaceData;
   currentEnvironment?: Environment;
+  currentEnvironmentAliasId?: string;
   currentEnvironmentId?: string;
   currentEnvironmentName?: string;
+  currentOrganization?: Organization;
+  currentOrganizationId?: string;
+  currentOrganizationName?: string;
+  currentSpace?: SpaceEnv;
+  currentSpaceData?: SpaceData;
+  currentSpaceEnvironments?: Environment[];
+  currentSpaceId?: string;
+  currentSpaceName?: string;
 }
 
 export interface SpaceEnv {
@@ -199,7 +204,7 @@ export interface EnvironmentMeta {
   environmentId: string;
   isMasterEnvironment: boolean;
   optedIn: boolean;
-  aliasId: unknown; // TODO: Confirm type
+  aliasId?: string;
 }
 
 export interface Environment {

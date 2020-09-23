@@ -70,6 +70,10 @@ export function getEnvironmentId(space?: SpaceEnv) {
   return getEnvironment(space)?.sys.id;
 }
 
+export function getEnvironmentAliasId(space?: SpaceEnv): string | undefined {
+  return space?.environmentMeta?.aliasId
+}
+
 export function getEnvironmentName(space?: SpaceEnv) {
   return getEnvironment(space)?.name;
 }
