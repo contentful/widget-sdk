@@ -16,6 +16,8 @@ export default ({ $scope, emitter }) => {
   const spaceContext = getModule('spaceContext');
 
   const isEntry = $scope.entityInfo.type === 'Entry';
+  const aliasId = spaceContext.getAliasId();
+  const environmentId = spaceContext.getEnvironmentId();
   const isMasterEnvironment = spaceContext.isMasterEnvironment();
 
   const initializeIncomingLinks = once(() => {
@@ -72,8 +74,8 @@ export default ({ $scope, emitter }) => {
         ...update,
         entity: entity && { ...entity }, // `undefined` after entity deletion.
         spaceId: spaceContext.space.getId(),
-        environmentId: spaceContext.getEnvironmentId(),
-        isMasterEnvironment: spaceContext.isMasterEnvironment(),
+        environmentId: aliasId || environmentId,
+        isMasterEnvironment,
         userId: spaceContext.user.sys.id,
         validator: $scope.editorContext.validator,
         commands: {

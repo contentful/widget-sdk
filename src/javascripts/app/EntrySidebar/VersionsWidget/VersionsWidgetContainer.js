@@ -39,8 +39,9 @@ export default class VersionsWidgetContainer extends Component {
 
   onUpdateVersionsWidget = ({ entrySys, publishedVersion }) => {
     if (this.state.publishedVersion !== publishedVersion) {
-      const { currentSpaceId, currentEnvironmentId } = this.context;
-      const cma = new APIClient(createSpaceEndpoint(currentSpaceId, currentEnvironmentId));
+      const { currentSpaceId, currentEnvironmentId, currentEnvironmentAliasId } = this.context;
+      const environmentId = currentEnvironmentAliasId || currentEnvironmentId;
+      const cma = new APIClient(createSpaceEndpoint(currentSpaceId, environmentId));
 
       this.setState({ publishedVersion });
       cma
