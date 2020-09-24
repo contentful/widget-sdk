@@ -153,6 +153,7 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
                 plans={data.plans}
                 ratePlans={data.ratePlans}
                 selectedPlan={selectedPlan}
+                currentPlanName={data.currentPlan ? data.currentPlan.name : data.freePlan.name}
                 onPlanSelected={setSelectedPlan}
                 onNext={navigateToNextStep}
               />

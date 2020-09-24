@@ -29,6 +29,7 @@ export function SpacePlanSelection({
   ratePlans,
   space,
   spaceResources,
+  currentPlanName,
   selectedPlan,
   onPlanSelected,
   onNext,
@@ -42,7 +43,9 @@ export function SpacePlanSelection({
   return (
     <>
       <Typography>
-        <Heading element="h2">Choose a new space type for {space.name}</Heading>
+        <Heading element="h2">
+          Choose a new space type for {space.name} ({currentPlanName})
+        </Heading>
       </Typography>
       <List>
         {orderedPlanKeys.map((key, index) => {
@@ -160,6 +163,7 @@ SpacePlanSelection.propTypes = {
   space: SpacePropType.isRequired,
   spaceResources: PropTypes.objectOf(ResourcePropType),
   selectedPlan: PlanPropType,
+  currentPlanName: PropTypes.string.isRequired,
   onPlanSelected: PropTypes.func.isRequired,
   onNext: PropTypes.func,
 };
