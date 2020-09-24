@@ -11,12 +11,11 @@ import {
   Workbench,
 } from '@contentful/forma-36-react-components';
 import { ModalLauncher, NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
-import { WidgetLocation } from '@contentful/widget-renderer';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { FLAGS, getVariation } from 'LaunchDarkly';
-import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { styles } from './styles';
 import { AppEditor } from '../AppEditor';
 import { AppInstallModal } from '../AppInstallModal';
 import { DeleteAppDialog } from '../DeleteAppDialog';
@@ -24,8 +23,7 @@ import { AppEvents } from '../events';
 import { KeyListing } from '../keys/KeyListing';
 import * as ManagementApiClient from '../ManagementApiClient';
 import { SaveConfirmModal } from '../SaveConfirmModal';
-import { SRC_REG_EXP, TAB_PATHS } from './constants';
-import { styles } from './styles';
+import { TAB_PATHS } from './constants';
 
 function formatDate(date) {
   return new Date(date).toLocaleString('en-US', {
@@ -33,53 +31,6 @@ function formatDate(date) {
     day: 'numeric',
     year: 'numeric',
   });
-}
-
-export function validate(definition) {
-  const errors = [];
-
-  if (definition.name === '') {
-    errors.push({
-      path: ['name'],
-      details: 'Please enter an app name',
-    });
-  }
-
-  if (definition.src !== '' && !SRC_REG_EXP.test(definition.src)) {
-    errors.push({
-      path: ['src'],
-      details: 'Please enter a valid URL',
-    });
-  }
-
-  const entryFieldLocation = definition.locations.find(
-    (l) => l.location === WidgetLocation.ENTRY_FIELD
-  );
-  if (entryFieldLocation && (entryFieldLocation.fieldTypes ?? []).length === 0) {
-    errors.push({
-      path: ['locations', 'entry-field', 'fieldTypes'],
-      details: 'Please select at least one field type',
-    });
-  }
-
-  const pageLocation = definition.locations.find((l) => l.location === WidgetLocation.PAGE);
-  if (pageLocation?.navigationItem) {
-    if (pageLocation.navigationItem.name === '') {
-      errors.push({
-        path: ['locations', 'page', 'navigationItem', 'name'],
-        details: 'Please enter a link name',
-      });
-    }
-
-    if (!pageLocation?.navigationItem.path.startsWith('/')) {
-      errors.push({
-        path: ['locations', 'page', 'navigationItem', 'path'],
-        details: 'Please enter a path starting with /',
-      });
-    }
-  }
-
-  return errors;
 }
 
 const userNameCache = {};
@@ -95,7 +46,6 @@ export class AppDetails extends React.Component {
       definition: props.definition,
       selectedTab: props.tab,
       creator: userNameCache[props.definition.sys.id] || '',
-      errors: [],
     };
   }
 
@@ -128,19 +78,7 @@ export class AppDetails extends React.Component {
       this.setState({ name: updated.name, definition: updated });
       Notification.success('App saved successfully.');
     } catch (err) {
-      if (err.status === 422) {
-        this.setState({
-          errors: err.data.details.errors.map((error) => {
-            if (error.path[0] === 'locations' && typeof error.path[1] === 'number') {
-              error.path[1] = this.state.definition.locations[error.path[1]].location;
-            }
-            return error;
-          }),
-        });
-        Notification.error(ManagementApiClient.VALIDATION_MESSAGE);
-      } else {
-        Notification.error("Something went wrong. Couldn't save app details.");
-      }
+      Notification.error(ManagementApiClient.VALIDATION_MESSAGE);
     }
 
     this.setState({ busy: false });
@@ -159,19 +97,7 @@ export class AppDetails extends React.Component {
     }
   };
 
-  clearErrorForField = (path) => {
-    this.setState((state) => ({
-      errors: state.errors.filter((error) => !isEqual(error.path, path)),
-    }));
-  };
-
   openSaveConfirmModal = () => {
-    const errors = validate(this.state.definition);
-    if (errors.length > 0) {
-      this.setState({ errors });
-      return;
-    }
-
     ModalLauncher.open(({ isShown, onClose }) => (
       <SaveConfirmModal
         isShown={isShown}
@@ -277,8 +203,6 @@ export class AppDetails extends React.Component {
                   <AppEditor
                     definition={definition}
                     onChange={(definition) => this.setState({ definition })}
-                    errors={this.state.errors}
-                    clearErrorForField={this.clearErrorForField}
                   />
                 </div>
                 <div className={styles.formActions}>

@@ -36,33 +36,27 @@ export const styles = {
   }),
   fieldTypes: css({
     opacity: '0',
-    height: 'min-content',
-    maxHeight: '0',
+    height: '0px',
     borderRadius: '2px',
     padding: '0',
     backgroundColor: tokens.colorElementLightest,
     border: `1px solid ${tokens.colorElementLight}`,
-    transitionDuration: tokens.transitionDurationDefault,
-    transitionTimingFunction: tokens.transitionEasingDefault,
-    transitionProperty: 'max-height, padding-top, padding-bottom, opacity',
+    transition: `all ${tokens.transitionDurationDefault} ${tokens.transitionEasingDefault}`,
     overflow: 'hidden',
+    p: css({
+      color: tokens.colorTextMid,
+    }),
   }),
-  fieldTypesOpen: css({
-    opacity: '1',
-    // do not specify height as it breaks transition
-    maxHeight: '500px', // value not relevant, must be greater than maximum min-content height
-    overflow: 'hidden',
-  }),
-  fieldTypesPadding: (open = false) =>
+  fieldTypesOpen: (hasPadding = true) =>
     css({
-      padding: `${open ? tokens.spacingS : 0} ${tokens.spacingS}`,
+      opacity: '1',
+      height: hasPadding ? '215px' : '341px',
+      padding: hasPadding ? tokens.spacingS : '0',
+      overflow: 'hidden',
     }),
   fieldTypeChecks: css({
     display: 'grid',
     gridTemplateColumns: '1fr 1fr 1fr',
-  }),
-  fieldTypesValidationMessage: css({
-    marginTop: tokens.spacingXs,
   }),
   entryFieldCheck: css({
     marginTop: tokens.spacingS,
