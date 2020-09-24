@@ -1,7 +1,7 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useCallback, useReducer } from 'react';
 import PropTypes from 'prop-types';
 import { Dashboard } from './Dashboard';
-import { useAsync, useAsyncFn } from 'core/hooks/useAsync';
+import { useAsync } from 'core/hooks/useAsync';
 import { getBillingDetails, getInvoices } from '../services/BillingDetailsService';
 import { getDefaultPaymentMethod } from '../services/PaymentMethodService';
 import {
@@ -10,25 +10,34 @@ import {
   isEnterprisePlan,
 } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
+import { createImmerReducer } from 'core/utils/createImmerReducer';
 
-const fetchOrgDetails = (organizationId) => async () => {
+const ACTIONS = {
+  SET_LOADING: 'SET_LOADING',
+  SET_ORG_DETAILS: 'SET_ORG_DETAILS',
+  SET_INVOICES: 'SET_INVOICES',
+  SET_BILLING_PAYMENT_DETAILS: 'SET_BILLING_PAYMENT_DETAILS',
+};
+
+const fetch = (organizationId, dispatch) => async () => {
   const endpoint = createOrganizationEndpoint(organizationId);
   const basePlan = await getBasePlan(endpoint);
-
-  console.log(basePlan);
 
   const orgIsSelfService = isSelfServicePlan(basePlan);
   const orgIsEnterprise = isEnterprisePlan(basePlan);
 
-  return { orgIsSelfService, orgIsEnterprise };
-};
+  dispatch({
+    type: ACTIONS.SET_ORG_DETAILS,
+    orgIsSelfService,
+    orgIsEnterprise,
+  });
 
-const fetchData = (organizationId, orgIsSelfService) => async () => {
   const invoices = await getInvoices(organizationId);
 
-  const result = {
+  dispatch({
+    type: ACTIONS.SET_INVOICES,
     invoices,
-  };
+  });
 
   if (orgIsSelfService) {
     const [billingDetails, paymentDetails] = await Promise.all([
@@ -36,43 +45,53 @@ const fetchData = (organizationId, orgIsSelfService) => async () => {
       getDefaultPaymentMethod(organizationId),
     ]);
 
-    Object.assign(result, {
+    dispatch({
+      type: ACTIONS.SET_BILLING_PAYMENT_DETAILS,
       billingDetails,
       paymentDetails,
     });
   }
 
-  return result;
+  dispatch({ type: ACTIONS.SET_LOADING, isLoading: false });
 };
 
+const reducer = createImmerReducer({
+  [ACTIONS.SET_LOADING]: (state, { isLoading }) => {
+    state.loading = isLoading;
+  },
+  [ACTIONS.SET_ORG_DETAILS]: (state, { orgIsSelfService, orgIsEnterprise }) => {
+    state.orgIsSelfService = orgIsSelfService;
+    state.orgIsEnterprise = orgIsEnterprise;
+  },
+  [ACTIONS.SET_INVOICES]: (state, { invoices }) => {
+    state.invoices = invoices;
+  },
+  [ACTIONS.SET_BILLING_PAYMENT_DETAILS]: (state, { billingDetails, paymentDetails }) => {
+    state.billingDetails = billingDetails;
+    state.paymentDetails = paymentDetails;
+  },
+});
+
 export function DashboardRouter({ orgId: organizationId }) {
-  const [loadingData, setLoadingData] = useState(true);
+  const [state, dispatch] = useReducer(reducer, {
+    loading: true,
+    orgIsSelfService: null,
+    orgIsEnterprise: null,
+    billingDetails: null,
+    paymentDetails: null,
+    invoices: null,
+  });
 
-  const { isLoading: loadingOrgDetails, data: orgDetails = {} } = useAsync(
-    useCallback(fetchOrgDetails(organizationId), [])
-  );
+  const {
+    loading,
+    orgIsSelfService,
+    orgIsEnterprise,
+    billingDetails,
+    paymentDetails,
+    invoices,
+  } = state;
 
-  const { orgIsSelfService, orgIsEnterprise } = orgDetails;
-
-  const [{ data = {} }, doFetchData] = useAsyncFn(
-    useCallback(fetchData(organizationId, orgIsSelfService), [orgIsSelfService])
-  );
-
-  const { billingDetails, paymentDetails, invoices } = data;
-
-  useEffect(() => {
-    if (data.invoices) {
-      setLoadingData(false);
-    }
-  }, [data]);
-
-  useEffect(() => {
-    if (!loadingOrgDetails) {
-      doFetchData();
-    }
-  }, [loadingOrgDetails, doFetchData]);
-
-  const loading = loadingOrgDetails || loadingData;
+  useAsync(useCallback(fetch(organizationId, dispatch), []));
 
   return (
     <Dashboard
