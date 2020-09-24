@@ -82,15 +82,16 @@ export function SpacePlanAssignmentConfirmation({
       <Typography className={styles.text}>
         <Heading>One more thing ☝️</Heading>
         <Paragraph>
-          {`You are about to change the type of ${space.name}. Check one last time to make sure everything is in order, then confirm.`}
+          {`You are about to change ${space.name} type. Check one last time to make sure everything is in order, then confirm.`}
+          {isFreeProductPlan(currentPlan) && (
+            <>
+              <br />
+              <strong>
+                This cannot be undone as {space.name} is a {currentPlan.name}
+              </strong>
+            </>
+          )}
         </Paragraph>
-        {isFreeProductPlan(currentPlan) && (
-          <Paragraph>
-            <strong>
-              This cannot be undone as {space.name} is a {currentPlan.name}.
-            </strong>
-          </Paragraph>
-        )}
       </Typography>
 
       <section className={styles.content}>
@@ -161,7 +162,7 @@ export function SpacePlanAssignmentConfirmation({
             Go back
           </Button>
           <Button buttonType="positive" onClick={onNext} loading={inProgress}>
-            Confirm
+            Confim and change
           </Button>
         </Flex>
       </section>

@@ -19,7 +19,7 @@ import { EmptyState } from './EmptyState';
 import { AssignmentLoadingCard } from './AssignmentLoadingCard';
 
 const ASSIGNMENT_STEPS = [
-  { text: '1.New space type', isActive: true },
+  { text: '1.Choose space type', isActive: true },
   { text: '2.Confirm', isActive: false },
 ];
 
