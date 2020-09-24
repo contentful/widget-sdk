@@ -5,7 +5,8 @@ import mimetype from '@contentful/mimetype';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 import RelativeDateTime from 'components/shared/RelativeDateTime';
 import { ActionPerformerName } from 'core/components/ActionPerformerName';
-import Thumbnail from 'components/Thumbnail/Thumbnail';
+import { Thumbnail } from '@contentful/field-editor-file';
+import { getExternalImageUrl } from 'utils/thumbnailHelpers';
 
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
@@ -68,9 +69,17 @@ export function DisplayField({ entity, field }) {
 
   let result;
   switch (id) {
-    case 'file':
-      result = <Thumbnail size="30" file={getAssetFile(entity)} />;
+    case 'file': {
+      const file = getAssetFile(entity);
+      result = file ? (
+        <Thumbnail
+          size="30"
+          file={getAssetFile(entity)}
+          getExternalImageUrl={getExternalImageUrl}
+        />
+      ) : null;
       break;
+    }
     case 'title': {
       const title = getAssetTitle(entity);
       result = (

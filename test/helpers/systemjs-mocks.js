@@ -79,15 +79,6 @@ async function stubPubSubSubscriber(system) {
   });
 }
 
-async function stubFilestack(system) {
-  await system.set('services/Filestack', {
-    makeDropPane: sinon.stub(),
-    pick: sinon.stub(),
-    pickMultiple: sinon.stub(),
-    store: sinon.stub(),
-  });
-}
-
 async function stubLaunchDarklyUtil(system) {
   await system.set('LaunchDarkly', {
     getVariation: sinon.stub().resolves(false),
@@ -100,6 +91,5 @@ beforeEach(async function () {
   await stubLaunchDarklyUtil(this.system);
   await stubShareJsLibClient(this.system);
   await stubPubSubSubscriber(this.system);
-  await stubFilestack(this.system);
   await stubConfig(this.system);
 });

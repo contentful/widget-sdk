@@ -7,7 +7,8 @@ import moment from 'moment';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 import RelativeDateTime from 'components/shared/RelativeDateTime';
 import { ActionPerformerName } from 'core/components/ActionPerformerName';
-import Thumbnail from 'components/Thumbnail/Thumbnail';
+import { Thumbnail } from '@contentful/field-editor-file';
+import { getExternalImageUrl } from 'utils/thumbnailHelpers';
 
 import { Pill, SkeletonText } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
@@ -270,18 +271,23 @@ export function DisplayField({ entity, field, entryCache, assetCache }) {
       result = <span title={title}>{title}</span>;
       break;
     }
-    case 'Asset':
+    case 'Asset': {
+      const file = dataForLinkedAsset(entity, field, assetCache);
       result = (
         <div className="file-preview linked-assets">
-          <Thumbnail
-            file={dataForLinkedAsset(entity, field, assetCache)}
-            size="30"
-            fit="thumb"
-            focus="faces"
-          />
+          {file && (
+            <Thumbnail
+              file={file}
+              size="30"
+              fit="thumb"
+              focus="faces"
+              getExternalImageUrl={getExternalImageUrl}
+            />
+          )}
         </div>
       );
       break;
+    }
     case 'Array': {
       const isEntries = isEntryArray(entity, field);
       const isAssets = isAssetArray(entity, field);
@@ -309,7 +315,13 @@ export function DisplayField({ entity, field, entryCache, assetCache }) {
                 return (
                   <li key={index}>
                     <div className="file-preview">
-                      <Thumbnail file={item} size="30" fit="thumb" focus="faces" />
+                      <Thumbnail
+                        file={item}
+                        size="30"
+                        fit="thumb"
+                        focus="faces"
+                        getExternalImageUrl={getExternalImageUrl}
+                      />
                     </div>
                   </li>
                 );

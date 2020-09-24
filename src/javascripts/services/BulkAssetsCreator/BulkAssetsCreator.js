@@ -1,5 +1,6 @@
 import { identity, isString } from 'lodash';
-import * as Filestack from 'services/Filestack';
+import { FilestackService } from '@contentful/field-editor-file';
+import * as Config from 'Config';
 import { Notification } from '@contentful/forma-36-react-components';
 import * as stringUtils from 'utils/StringUtils';
 import { getModule } from 'core/NgRegistry';
@@ -21,7 +22,15 @@ export function open(localeCode) {
     throw new TypeError('locale must be a string');
   }
 
-  return Filestack.pickMultiple().then(createAssetsForFiles, () => {
+  const { apiKey, policy, signature } = Config.services.filestack;
+
+  return FilestackService.pickMultiple({
+    config: {
+      apiKey,
+      policy,
+      signature,
+    },
+  }).then(createAssetsForFiles, () => {
     Notification.error(
       'An error occurred while uploading multiple assets. ' +
         'Please contact support if this problem persists.'

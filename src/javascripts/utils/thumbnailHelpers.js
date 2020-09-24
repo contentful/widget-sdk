@@ -1,30 +1,6 @@
 import * as TokenStore from 'services/TokenStore';
 import * as HostnameTransformer from '@contentful/hostname-transformer';
-import { isSecureAssetUrl } from 'utils/AssetUrl';
-
-/*
- * Checks whether the passed content type matches one of our valid MIME types
- *
- * @params {string} fileContentType
- * @returns {boolean}
- */
-export function isValidImage(fileContentType) {
-  const validMimeTypes = [
-    'image/bmp',
-    'image/x-windows-bmp',
-    'image/gif',
-    'image/webp',
-    // This is not a valid MIME type but we supported it in the past.
-    'image/jpg',
-    'image/jpeg',
-    'image/pjpeg',
-    'image/x-jps',
-    'image/png',
-    'image/svg+xml',
-  ];
-
-  return validMimeTypes.indexOf(fileContentType) > -1;
-}
+import { isSecureAssetUrl } from '@contentful/field-editor-file';
 
 /**
  * Given a URL on the 'assets.contentful.com' or
