@@ -118,7 +118,7 @@ describe('spaceContext', () => {
   describe('#resetWithSpace()', () => {
     beforeEach(function () {
       this.reset = async () => {
-        this.result = this.spaceContext.resetWithSpace(this.makeSpaceData());
+        this.result = await this.spaceContext.resetWithSpace(this.makeSpaceData());
         this.space = this.spaceContext.space;
         return this.result;
       };
@@ -140,12 +140,12 @@ describe('spaceContext', () => {
     });
 
     it('calls TheLocaleStore.init()', async function () {
-      await this.result;
       sinon.assert.calledOnceWith(this.localeStore.init, this.spaceContext.localeRepo);
     });
 
-    it('calls AccessChecker.setSpace with space data', function () {
-      sinon.assert.calledOnceWith(this.AccessChecker.setSpace, this.space.data);
+    it('calls AccessChecker.setSpace with space data', async function () {
+      await this.reset();
+      sinon.assert.calledWith(this.AccessChecker.setSpace, this.space.data);
     });
 
     it('creates the user cache', function () {
@@ -155,7 +155,7 @@ describe('spaceContext', () => {
     });
 
     it('updates publishedCTs repo from refreshed CT list', async function () {
-      await this.result;
+      await this.reset();
       expect(this.spaceContext.publishedCTs.getAllBare().map((ct) => ct.sys.id)).toEqual([
         'A',
         'B',
@@ -232,6 +232,37 @@ describe('spaceContext', () => {
         aliasId: 'master',
       });
       expect(this.spaceContext.aliases).toEqual([alias]);
+    });
+
+    it('sets `aliases` property for non master alias', async function () {
+      this.ProductCatalog.getSpaceFeature.resolves(true);
+      const prod1 = {
+        name: 'prod-1',
+        sys: {
+          id: 'prod-1',
+          aliases: [
+            {
+              sys: { id: 'aliasId' },
+            },
+          ],
+        },
+      };
+      const staging = {
+        name: 'staging',
+        sys: {
+          id: 'staging',
+          aliases: [],
+        },
+      };
+      const environments = { prod1, staging };
+      Object.assign(this.mockSpaceEndpoint.stores.environments, environments);
+      await this.spaceContext.resetWithSpace(this.makeSpaceData('withenv'), 'aliasId');
+      expect(this.space.environmentMeta).toEqual({
+        environmentId: 'prod-1',
+        optedIn: true,
+        isMasterEnvironment: false,
+        aliasId: 'aliasId',
+      });
     });
 
     it('sets `aliases` property to empty array if aliases are not enabled', async function () {
