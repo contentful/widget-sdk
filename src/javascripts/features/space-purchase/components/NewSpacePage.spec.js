@@ -22,14 +22,14 @@ const mockProductRatePlanLarge = { name: 'Large', price: 200 };
 const mockBillingDetails = {
   firstName: 'John',
   lastName: 'Doe',
-  email: 'test@example.com',
-  address: '123 street ave',
-  addressTwo: 'apartment 321',
+  workEmail: 'test@example.com',
+  address1: '123 street ave',
+  address2: 'apartment 321',
   city: 'Berlin',
-  postcode: '11111',
+  zipCode: '11111',
   country: 'DE',
   state: '',
-  vatNumber: '',
+  vat: '',
 };
 const mockRefId = 'ref_1234';
 
@@ -64,6 +64,10 @@ jest.mock('features/organization-billing/index', () => ({
     .BillingDetailsLoading,
   CreditCardDetailsLoading: jest.requireActual('features/organization-billing/index')
     .CreditCardDetailsLoading,
+  transformBillingDetails: jest.requireActual('features/organization-billing/index')
+    .transformBillingDetails,
+  BillingDetailsPropType: jest.requireActual('features/organization-billing/index')
+    .BillingDetailsPropType,
 }));
 
 describe('NewSpacePage', () => {
@@ -198,19 +202,6 @@ describe('NewSpacePage', () => {
     });
 
     it('should save billing information then fetch the payment method onSuccess of the Zoura iframe', async () => {
-      const reconciledBillingDetails = {
-        refid: mockRefId,
-        firstName: mockBillingDetails.firstName,
-        lastName: mockBillingDetails.lastName,
-        vat: mockBillingDetails.vatNumber,
-        workEmail: mockBillingDetails.email,
-        address1: mockBillingDetails.address,
-        address2: mockBillingDetails.addressTwo,
-        city: mockBillingDetails.city,
-        state: mockBillingDetails.state,
-        country: mockBillingDetails.country,
-        zipCode: mockBillingDetails.postcode,
-      };
       getDefaultPaymentMethod.mockResolvedValueOnce({
         number: '************1111',
         expirationDate: { month: 3, year: 2021 },
@@ -247,10 +238,10 @@ describe('NewSpacePage', () => {
       successCb({ success: true, refId: mockRefId });
 
       await waitFor(() => {
-        expect(createBillingDetails).toBeCalledWith(
-          mockOrganization.sys.id,
-          reconciledBillingDetails
-        );
+        expect(createBillingDetails).toBeCalledWith(mockOrganization.sys.id, {
+          ...mockBillingDetails,
+          refid: mockRefId,
+        });
         expect(setDefaultPaymentMethod).toBeCalledWith(mockOrganization.sys.id, mockRefId);
         expect(getDefaultPaymentMethod).toBeCalledWith(mockOrganization.sys.id);
       });

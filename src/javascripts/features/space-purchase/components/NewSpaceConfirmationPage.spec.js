@@ -10,14 +10,14 @@ const mockOrganization = Fake.Organization();
 const mockBillingDetails = {
   firstName: 'John',
   lastName: 'Doe',
-  email: 'test@example.com',
-  address: '123 street ave',
-  addressTwo: 'apartment 321',
+  workEmail: 'test@example.com',
+  address1: '123 street ave',
+  address2: 'apartment 321',
   city: 'Berlin',
-  postcode: '11111',
+  zipCode: '11111',
   country: 'DE',
   state: '',
-  vatNumber: '',
+  vat: '',
 };
 const mockPaymentMethod = {
   number: '************1111',

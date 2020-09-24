@@ -15,7 +15,11 @@ import tokens from '@contentful/forma-36-tokens';
 import ExternalTextLink from 'app/common/ExternalTextLink';
 import { go } from 'states/Navigator';
 
-import { BillingDetailsLoading, CreditCardDetailsLoading } from 'features/organization-billing';
+import {
+  BillingDetailsLoading,
+  CreditCardDetailsLoading,
+  BillingDetailsPropType,
+} from 'features/organization-billing';
 
 import { CreditCardInformation } from './CreditCardInformation';
 import { BillingInformation } from './BillingInformation';
@@ -105,7 +109,7 @@ export const NewSpaceConfirmationPage = ({
             {!isLoadingBillingDetails && (
               <>
                 <CreditCardInformation creditCardInfo={paymentMethod} />
-                <BillingInformation billingInfo={billingDetails} />
+                <BillingInformation billingDetails={billingDetails} />
               </>
             )}
           </Grid>
@@ -139,7 +143,7 @@ NewSpaceConfirmationPage.propTypes = {
   navigateToPreviousStep: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,
   selectedPlan: PropTypes.object,
-  billingDetails: PropTypes.object,
+  billingDetails: BillingDetailsPropType,
   paymentMethod: PropTypes.object,
   hasBillingInformation: PropTypes.bool.isRequired,
   isLoadingBillingDetails: PropTypes.bool.isRequired,

@@ -1,10 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
 import { Paragraph, Subheading } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { getCountryNameFromCountryCode, isCountryCode } from '../utils/countryHelper';
+import { BillingDetailsPropType } from 'features/organization-billing';
 
 const styles = {
   title: css({
@@ -13,11 +13,11 @@ const styles = {
   }),
 };
 
-export const BillingInformation = ({ billingInfo }) => {
-  // If the billingInfo is coming from the getBilling api call, then it's a country's name, otherwise it's from the billingForm and is a country code.
-  const country = isCountryCode(billingInfo.country)
-    ? getCountryNameFromCountryCode(billingInfo.country)
-    : billingInfo.country;
+export const BillingInformation = ({ billingDetails }) => {
+  // If the billingDetails is coming from the getBilling api call, then it's a country's name, otherwise it's from the billingForm and is a country code.
+  const country = isCountryCode(billingDetails.country)
+    ? getCountryNameFromCountryCode(billingDetails.country)
+    : billingDetails.country;
 
   return (
     <div>
@@ -28,21 +28,21 @@ export const BillingInformation = ({ billingInfo }) => {
         Billing address
       </Subheading>
       <Paragraph>
-        {billingInfo.firstName} {billingInfo.lastName}
+        {billingDetails.firstName} {billingDetails.lastName}
       </Paragraph>
-      <Paragraph>{billingInfo.email}</Paragraph>
-      <Paragraph>{billingInfo.address}</Paragraph>
-      {billingInfo.addressTwo && <Paragraph>{billingInfo.addressTwo}</Paragraph>}
+      <Paragraph>{billingDetails.workEmail}</Paragraph>
+      <Paragraph>{billingDetails.address1}</Paragraph>
+      {billingDetails.address2 && <Paragraph>{billingDetails.address2}</Paragraph>}
       <Paragraph>
-        {billingInfo.city}, {billingInfo.postcode}
+        {billingDetails.city}, {billingDetails.zipCode}
       </Paragraph>
       <Paragraph>{country}</Paragraph>
-      {billingInfo.vatNumber && <Paragraph>{billingInfo.vatNumber}</Paragraph>}
-      {billingInfo.state && <Paragraph>{billingInfo.state}</Paragraph>}
+      {billingDetails.vat && <Paragraph>{billingDetails.vat}</Paragraph>}
+      {billingDetails.state && <Paragraph>{billingDetails.state}</Paragraph>}
     </div>
   );
 };
 
 BillingInformation.propTypes = {
-  billingInfo: PropTypes.object.isRequired,
+  billingDetails: BillingDetailsPropType.isRequired,
 };

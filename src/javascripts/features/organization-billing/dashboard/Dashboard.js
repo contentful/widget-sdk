@@ -22,6 +22,7 @@ import moment from 'moment';
 import { times } from 'lodash';
 import { BillingDetailsLoading } from '../components/BillingDetailsLoading';
 import { CreditCardDetailsLoading } from '../components/CreditCardDetailsLoading';
+import { BillingDetailsPropType } from '../propTypes';
 
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { getInvoice } from '../services/BillingDetailsService';
@@ -197,7 +198,7 @@ export function Dashboard({
 Dashboard.propTypes = {
   loading: PropTypes.bool.isRequired,
   organizationId: PropTypes.string.isRequired,
-  billingDetails: PropTypes.object,
+  billingDetails: BillingDetailsPropType,
   paymentDetails: PropTypes.object,
   invoices: PropTypes.array,
   orgIsSelfService: PropTypes.bool,
@@ -211,15 +212,15 @@ function BillingDetails({ billingDetails }) {
       <br />
       {billingDetails.workEmail}
       <br />
-      {billingDetails.address.address1}
+      {billingDetails.address1}
       <br />
-      {billingDetails.address.address2 && (
+      {billingDetails.address2 && (
         <>
-          <span data-test-id="address2">{billingDetails.address.address2}</span>
+          <span data-test-id="address2">{billingDetails.address2}</span>
           <br />
         </>
       )}
-      {billingDetails.address.zipCode} {billingDetails.address.city}
+      {billingDetails.zipCode} {billingDetails.city}
       {billingDetails.vat && (
         <>
           <br />
@@ -231,7 +232,7 @@ function BillingDetails({ billingDetails }) {
 }
 
 BillingDetails.propTypes = {
-  billingDetails: PropTypes.object.isRequired,
+  billingDetails: BillingDetailsPropType.isRequired,
 };
 
 function InvoicesTableLoading() {

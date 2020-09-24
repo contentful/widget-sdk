@@ -30,7 +30,7 @@ describe('BillingDetailsForm', () => {
     it('should show a VAT field when a EU country is selected, then hide when unselected', async () => {
       build();
 
-      expect(screen.queryByTestId('billing-details.vatNumber')).toBeNull();
+      expect(screen.queryByTestId('billing-details.vat')).toBeNull();
 
       const countrySelect = within(screen.getByTestId('billing-details.country')).getByTestId(
         'cf-ui-select'
@@ -38,11 +38,11 @@ describe('BillingDetailsForm', () => {
 
       userEvent.selectOptions(countrySelect, ['DE']);
 
-      expect(screen.getByTestId('billing-details.vatNumber')).toBeVisible();
+      expect(screen.getByTestId('billing-details.vat')).toBeVisible();
 
       userEvent.selectOptions(countrySelect, ['US']);
 
-      expect(screen.queryByTestId('billing-details.vatNumber')).toBeNull();
+      expect(screen.queryByTestId('billing-details.vat')).toBeNull();
     });
 
     it('should show a State field when the US country is selected, then hide when unselected', async () => {
@@ -68,7 +68,7 @@ describe('BillingDetailsForm', () => {
     describe('email validation', () => {
       it('should reject an email missing .', async () => {
         build({
-          billingDetails: getMockBillingDetails({ email: '@' }),
+          billingDetails: getMockBillingDetails({ workEmail: '@' }),
         });
 
         userEvent.click(screen.getByTestId('billing-details.submit'));
@@ -80,7 +80,7 @@ describe('BillingDetailsForm', () => {
 
       it('should reject an email missing @', async () => {
         build({
-          billingDetails: getMockBillingDetails({ email: '.' }),
+          billingDetails: getMockBillingDetails({ workEmail: '.' }),
         });
 
         userEvent.click(screen.getByTestId('billing-details.submit'));
@@ -93,7 +93,7 @@ describe('BillingDetailsForm', () => {
       it('should accept an email containing both @ && .', async () => {
         const onSubmit = jest.fn();
         build({
-          billingDetails: getMockBillingDetails({ email: '@.' }),
+          billingDetails: getMockBillingDetails({ workEmail: '@.' }),
           onSubmit,
         });
 
@@ -108,7 +108,7 @@ describe('BillingDetailsForm', () => {
     describe('fields validation', () => {
       it('should reject an improperly formatted vat for the selected country', async () => {
         build({
-          billingDetails: getMockBillingDetails({ country: 'DE', vatNumber: '1234123' }),
+          billingDetails: getMockBillingDetails({ country: 'DE', vat: '1234123' }),
         });
 
         const countrySelect = within(screen.getByTestId('billing-details.country')).getByTestId(
@@ -126,7 +126,7 @@ describe('BillingDetailsForm', () => {
       it('should accept a properly formatted vat for the selected country', async () => {
         const onSubmit = jest.fn();
         build({
-          billingDetails: getMockBillingDetails({ country: 'DE', vatNumber: 'DE275148225' }),
+          billingDetails: getMockBillingDetails({ country: 'DE', vat: 'DE275148225' }),
           onSubmit,
         });
 
@@ -220,7 +220,7 @@ describe('BillingDetailsForm', () => {
     });
 
     it('should render a prefilled form when there are saved billing details', () => {
-      build({ billingDetails: getMockBillingDetails({ vatNumber: '' }) });
+      build({ billingDetails: getMockBillingDetails({ vat: '' }) });
 
       expect(screen.getByTestId('billing-details.card')).toBeVisible();
       expect(screen.getByTestId('billing-details.heading')).toHaveTextContent(
@@ -236,10 +236,10 @@ describe('BillingDetailsForm', () => {
 
     it('should show vat field if its been filled out', () => {
       build({
-        billingDetails: getMockBillingDetails({ country: 'DE', vatNumber: 'DE275148225' }),
+        billingDetails: getMockBillingDetails({ country: 'DE', vat: 'DE275148225' }),
       });
 
-      expect(screen.queryByTestId('billing-details.vatNumber')).toBeVisible();
+      expect(screen.queryByTestId('billing-details.vat')).toBeVisible();
     });
 
     it('should show state field if its been filled out', () => {
@@ -285,13 +285,13 @@ function getMockBillingDetails(customProps) {
   return {
     firstName: 'John',
     lastName: 'Doe',
-    email: 'test@example.com',
-    address: '123 street ave',
-    addressTwo: 'apartment 321',
+    workEmail: 'test@example.com',
+    address1: '123 street ave',
+    address2: 'apartment 321',
     city: 'Rio de Janeiro',
-    postcode: '11111',
+    zipCode: '11111',
     country: 'BR',
-    vatNumber: '',
+    vat: '',
     ...customProps,
   };
 }
