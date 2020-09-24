@@ -11,7 +11,7 @@ function TagsRepoProvider({ children }) {
 
   useEffect(() => {
     const spaceId = spaceContext.getId();
-    const environmentId = spaceContext.getEnvironmentId();
+    const environmentId = spaceContext.getAliasId() || spaceContext.getEnvironmentId();
     const endpoint = createSpaceEndpoint(spaceId, environmentId);
     setTagsRepo(TagsRepo.create(endpoint, environmentId));
   }, [spaceContext]);
