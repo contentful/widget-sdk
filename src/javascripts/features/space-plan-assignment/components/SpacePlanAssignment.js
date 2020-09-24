@@ -61,6 +61,7 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
       });
 
       return {
+        ratePlans,
         plans: sortBy(enhancedPlans, 'price'),
         space,
         currentPlan,
@@ -150,6 +151,7 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
                 space={data.space}
                 spaceResources={data.spaceResources}
                 plans={data.plans}
+                ratePlans={data.ratePlans}
                 selectedPlan={selectedPlan}
                 onPlanSelected={setSelectedPlan}
                 onNext={navigateToNextStep}

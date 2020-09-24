@@ -5,13 +5,13 @@ import * as Fake from 'test/helpers/fakeFactory';
 import * as PricingService from 'services/PricingService';
 
 const mockRatePlanCharges = [
-  Fake.RatePlanCharge({ name: 'Roles' }),
-  Fake.RatePlanCharge({ name: 'Content types' }),
-  Fake.RatePlanCharge({ name: 'Locales' }),
-  Fake.RatePlanCharge({ name: 'Environments' }),
-  Fake.RatePlanCharge({ name: 'Records' }),
+  Fake.RatePlanCharge('Environments', 5),
+  Fake.RatePlanCharge('Roles', 4),
+  Fake.RatePlanCharge('Locales', 10),
+  Fake.RatePlanCharge('Content types', 48),
+  Fake.RatePlanCharge('Records', 50000),
 ];
-const mockLargePlan1 = Fake.Plan({
+const mockLargePlan = Fake.Plan({
   name: 'Large',
   ratePlanCharges: mockRatePlanCharges,
   roleSet: {
@@ -23,6 +23,18 @@ const mockLargePlan2 = Fake.Plan({
   ratePlanCharges: mockRatePlanCharges,
   roleSet: { roles: [] },
 });
+
+const mockLargePlanCustom = Fake.Plan({
+  name: 'Large',
+  ratePlanCharges: [
+    Fake.RatePlanCharge('Environments', 5),
+    Fake.RatePlanCharge('Roles', 4),
+    Fake.RatePlanCharge('Locales', 20),
+    Fake.RatePlanCharge('Content types', 4800),
+    Fake.RatePlanCharge('Records', 50000),
+  ],
+  roleSet: { roles: [] },
+});
 const mockPerformance1xPlan = Fake.Plan({
   name: 'Performance 1x',
   ratePlanCharges: mockRatePlanCharges,
@@ -30,7 +42,18 @@ const mockPerformance1xPlan = Fake.Plan({
     roles: [],
   },
 });
-const mockPlans = [mockLargePlan1, mockLargePlan2, mockPerformance1xPlan];
+
+const mockPlans = [mockLargePlan, mockLargePlan2, mockLargePlanCustom, mockPerformance1xPlan];
+const mockRatePlans = [
+  Fake.Plan({
+    name: 'Large',
+    productRatePlanCharges: mockRatePlanCharges,
+  }),
+  Fake.Plan({
+    name: 'Performance 1x',
+    productRatePlanCharges: mockRatePlanCharges,
+  }),
+];
 
 const mockSpace = Fake.Space();
 const mockSpaceResources = {
@@ -49,9 +72,10 @@ describe('SpacePlanSelection', () => {
     return render(
       <SpacePlanSelection
         plans={mockPlans}
+        ratePlans={mockRatePlans}
         space={mockSpace}
         spaceResources={mockSpaceResources}
-        selectedPlan={mockLargePlan1}
+        selectedPlan={mockLargePlan}
         onPlanSelected={mockOnPlanSelected}
         handleNavigationNext={mockHandleNavigationNext}
         {...props}
@@ -61,14 +85,14 @@ describe('SpacePlanSelection', () => {
 
   it('should render available plans list grouped', async () => {
     build();
-    expect(screen.getAllByTestId('space-plan-item')).toHaveLength(2);
-    expect(screen.getAllByLabelText(mockLargePlan1.name)).toHaveLength(1);
+    expect(screen.getAllByTestId('space-plan-item')).toHaveLength(3);
+    expect(screen.getAllByLabelText(mockLargePlan.name)).toHaveLength(2);
     expect(screen.getAllByLabelText(mockPerformance1xPlan.name)).toHaveLength(1);
   });
 
   it('should be able to select a new plan', async () => {
     build();
-    expect(screen.getByLabelText(mockLargePlan1.name)).toBeChecked();
+    expect(screen.getAllByLabelText(mockLargePlan.name)[0]).toBeChecked();
     fireEvent.click(screen.getByLabelText(mockPerformance1xPlan.name));
     expect(mockOnPlanSelected).toHaveBeenCalled();
   });

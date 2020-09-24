@@ -20,35 +20,42 @@ import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
 import StateLink from 'app/common/StateLink';
 import { SpacePlanComparison } from './SpacePlanComparison';
 import { ExpandableElement } from './ExpandableElement';
-import { groupBy } from 'lodash';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { canPlanBeAssigned } from '../utils/utils';
+import { canPlanBeAssigned, groupPlans, buildPlanKey, orderPlanKeys } from '../utils/utils';
 
 export function SpacePlanSelection({
   plans,
+  ratePlans,
   space,
   spaceResources,
   selectedPlan,
   onPlanSelected,
   onNext,
 }) {
-  const groupedPlans = groupBy(plans, 'name');
+  const groupedPlans = groupPlans(plans);
+  const defaultRatePlanKeys = ratePlans.map((plan) =>
+    buildPlanKey(plan.name, plan.productRatePlanCharges)
+  );
+  const orderedPlanKeys = orderPlanKeys(groupedPlans, defaultRatePlanKeys);
+
   return (
     <>
       <Typography>
         <Heading element="h2">Choose a new space type for {space.name}</Heading>
       </Typography>
       <List>
-        {Object.keys(groupedPlans).map((name, index) => {
+        {orderedPlanKeys.map((key, index) => {
           // We use the first in the group plan to display the limits
           // Plans with the same name *should* be identical.
           // In the future we may use the `quantity` attribute instead of
           // multiple instances of the same plan.
-          const plan = groupedPlans[name][0];
-          const planCount = groupedPlans[name].length;
+          const plan = groupedPlans[key][0];
+          const planCount = groupedPlans[key].length;
           const setPlanColor =
-            name === 'Large' || name === 'Medium' ? tokens.colorGreenLight : tokens.colorBlueMid;
+            plan.name === 'Large' || plan.name === 'Medium'
+              ? tokens.colorGreenLight
+              : tokens.colorBlueMid;
 
           const styles = {
             cardItem: css({
@@ -76,9 +83,14 @@ export function SpacePlanSelection({
               height: '18px', // basic size of icon
             }),
             disabled: css({ opacity: 0.5 }),
+            custom: css({
+              fontWeight: `${tokens.fontWeightNormal}`,
+              color: `${tokens.colorTextLightest}`,
+            }),
           };
 
           const isDisabled = !canPlanBeAssigned(plan, spaceResources);
+          const isCustomPlan = !defaultRatePlanKeys.includes(key);
           return (
             <ListItem key={plan.sys.id} testId="space-plan-item">
               <Card
@@ -106,7 +118,10 @@ export function SpacePlanSelection({
                     fullWidth={true}
                     justifyContent="space-between"
                     alignItems="center">
-                    <Heading element="h3">{plan.name}</Heading>
+                    <Heading element="h3">
+                      {plan.name}{' '}
+                      {isCustomPlan && <span className={styles.custom}> (Customized)</span>}
+                    </Heading>
                     <Tag tagType="positive">{planCount} available</Tag>
                   </Flex>
                 </Flex>
@@ -141,6 +156,7 @@ export function SpacePlanSelection({
 
 SpacePlanSelection.propTypes = {
   plans: PropTypes.arrayOf(PlanPropType).isRequired,
+  ratePlans: PropTypes.arrayOf(PlanPropType).isRequired,
   space: SpacePropType.isRequired,
   spaceResources: PropTypes.objectOf(ResourcePropType),
   selectedPlan: PlanPropType,
