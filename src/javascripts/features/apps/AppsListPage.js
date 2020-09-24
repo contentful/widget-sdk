@@ -32,7 +32,11 @@ import { websiteUrl } from 'Config';
 import { AppListItem } from './AppListItem';
 import { AppDetailsModal } from './AppDetailsModal';
 import * as AppLifecycleTracking from './AppLifecycleTracking';
-import { isUsageExceeded, APP_INSTALLATION_LIMIT } from './isUsageExceeded';
+import {
+  isUsageExceeded,
+  APP_INSTALLATION_LIMIT,
+  ADVANCED_APPS_INSTALLATION_LIMIT,
+} from './isUsageExceeded';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 
 const styles = {
@@ -240,6 +244,7 @@ export class AppsListPage extends React.Component {
     }).isRequired,
     userId: PropTypes.string.isRequired,
     hasAppsFeature: PropTypes.bool.isRequired,
+    hasAdvancedAppsFeature: PropTypes.bool.isRequired,
     deeplinkAppId: PropTypes.string,
     canManageApps: PropTypes.bool,
   };
@@ -266,7 +271,13 @@ export class AppsListPage extends React.Component {
   }
 
   openDeeplinkedAppDetails() {
-    const { deeplinkAppId, hasAppsFeature, spaceInformation, canManageApps } = this.props;
+    const {
+      deeplinkAppId,
+      hasAppsFeature,
+      spaceInformation,
+      canManageApps,
+      hasAdvancedAppsFeature,
+    } = this.props;
 
     if (!hasAppsFeature || !deeplinkAppId) {
       return;
@@ -289,19 +300,29 @@ export class AppsListPage extends React.Component {
       // Use `this.props.deeplinkReferrer`.
       openDetailModal({
         spaceInformation,
-        usageExceeded: isUsageExceeded(installedApps),
+        usageExceeded: isUsageExceeded(installedApps, hasAdvancedAppsFeature),
         canManageApps,
       })(deeplinkedApp);
     }
   }
 
   render() {
-    const { organizationId, spaceInformation, userId, hasAppsFeature, canManageApps } = this.props;
+    const {
+      organizationId,
+      spaceInformation,
+      userId,
+      hasAppsFeature,
+      hasAdvancedAppsFeature,
+      canManageApps,
+    } = this.props;
     const { installedApps, availableApps } = this.state;
     let content = <AppsListPageLoading />;
 
     if (this.state.ready) {
       const hasInstalledApps = installedApps.length > 0;
+      const spaceInstallationLimit = hasAdvancedAppsFeature
+        ? ADVANCED_APPS_INSTALLATION_LIMIT
+        : APP_INSTALLATION_LIMIT;
       content = (
         <>
           {hasInstalledApps ? (
@@ -311,7 +332,7 @@ export class AppsListPage extends React.Component {
                   Installed
                 </Heading>
                 <div className={styles.counter}>
-                  Usage: {installedApps.length} / {APP_INSTALLATION_LIMIT} apps installed
+                  Usage: {installedApps.length} / {spaceInstallationLimit} apps installed
                 </div>
               </div>
               <Card padding="none" className={styles.appListCard}>
@@ -356,7 +377,7 @@ export class AppsListPage extends React.Component {
                       canManageApps={canManageApps}
                       openDetailModal={openDetailModal({
                         spaceInformation,
-                        usageExceeded: isUsageExceeded(installedApps),
+                        usageExceeded: isUsageExceeded(installedApps, hasAdvancedAppsFeature),
                         canManageApps,
                       })}
                       orgId={organizationId}

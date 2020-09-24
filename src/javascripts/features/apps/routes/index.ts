@@ -8,7 +8,7 @@ import { createAppExtensionSDK } from 'app/widgets/ExtensionSDKs';
 import createPageExtensionBridge from 'widgets/bridges/createPageExtensionBridge';
 import * as Navigator from 'states/Navigator';
 import * as SlideInNavigator from 'navigation/SlideInNavigator/index';
-import { getSpaceFeature } from 'data/CMA/ProductCatalog';
+import { getSpaceFeature, getOrgFeature } from 'data/CMA/ProductCatalog';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { shouldHide, Action } from 'access_control/AccessChecker';
 import * as TokenStore from 'services/TokenStore';
@@ -21,6 +21,8 @@ import { FLAGS, getVariation } from 'LaunchDarkly';
 
 const BASIC_APPS_FEATURE_KEY = 'basic_apps';
 const DEFAULT_FEATURE_STATUS = true; // Fail open
+const ADVANCED_APPS_FEATURE_KEY = 'advanced_apps';
+const DEFAULT_ADVANCED_APPS_STATUS = false;
 
 function canUserManageApps() {
   return !shouldHide(Action.UPDATE, 'settings');
@@ -37,6 +39,18 @@ const appsFeatureResolver = [
   },
 ];
 
+const advancedAppsFeatureResolver = [
+  'spaceContext',
+  async (spaceContext) => {
+    try {
+      const orgId = spaceContext.organization.sys.id;
+      return getOrgFeature(orgId, ADVANCED_APPS_FEATURE_KEY, DEFAULT_ADVANCED_APPS_STATUS);
+    } catch (err) {
+      return DEFAULT_ADVANCED_APPS_STATUS;
+    }
+  }
+]
+
 export const appRoute = {
   name: 'apps',
   url: '/apps',
@@ -51,6 +65,7 @@ export const appRoute = {
       },
       resolve: {
         hasAppsFeature: appsFeatureResolver,
+        hasAdvancedAppsFeature: advancedAppsFeatureResolver
       },
       component: AppsListPage,
       mapInjectedToProps: [
@@ -58,11 +73,13 @@ export const appRoute = {
         '$state',
         '$stateParams',
         'hasAppsFeature',
-        (spaceContext, $state, $stateParams, hasAppsFeature) => {
+        'hasAdvancedAppsFeature',
+        (spaceContext, $state, $stateParams, hasAppsFeature: boolean, hasAdvancedAppsFeature: boolean) => {
           return {
             goToContent: () => $state.go('^.^.entries.list'),
             repo: getAppsRepo(),
             hasAppsFeature,
+            hasAdvancedAppsFeature,
             organizationId: spaceContext.organization.sys.id,
             spaceInformation: {
               spaceId: spaceContext.space.data.sys.id,
