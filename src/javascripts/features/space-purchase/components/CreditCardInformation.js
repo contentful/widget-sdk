@@ -4,7 +4,6 @@ import { css } from 'emotion';
 
 import { Paragraph, Subheading } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import cn from 'classnames';
 import moment from 'moment';
 import _ from 'lodash';
 
@@ -13,16 +12,13 @@ const styles = {
     fontWeight: tokens.fontWeightMedium,
     fontSize: tokens.fontSizeM,
   }),
-  fontColor: css({
-    color: tokens.colorTextDark,
-  }),
 };
 
 export const CreditCardInformation = ({ creditCardInfo }) => {
   return (
     <div>
       <Subheading
-        className={cn(styles.title, styles.fontColor)}
+        className={styles.title}
         element="h4"
         aria-labelledby="credit-card-information-review-section">
         Credit card

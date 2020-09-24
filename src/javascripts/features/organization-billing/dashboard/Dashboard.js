@@ -20,6 +20,8 @@ import { NavigationIcon, Grid, GridItem } from '@contentful/forma-36-react-compo
 import * as tokens from '@contentful/forma-36-tokens';
 import moment from 'moment';
 import { times } from 'lodash';
+import { BillingDetailsLoading } from '../components/BillingDetailsLoading';
+import { CreditCardDetailsLoading } from '../components/CreditCardDetailsLoading';
 
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { getInvoice } from '../services/BillingDetailsService';
@@ -231,26 +233,6 @@ function BillingDetails({ billingDetails }) {
 BillingDetails.propTypes = {
   billingDetails: PropTypes.object.isRequired,
 };
-
-function BillingDetailsLoading() {
-  return (
-    <div data-test-id="billing-details-loading" className={styles.billingDetailsLoadingState}>
-      <SkeletonContainer svgHeight={120} ariaLabel="Loading billing address...">
-        <SkeletonBodyText numberOfLines={5} />
-      </SkeletonContainer>
-    </div>
-  );
-}
-
-function CreditCardDetailsLoading() {
-  return (
-    <div data-test-id="credit-card-details-loading" className={styles.billingDetailsLoadingState}>
-      <SkeletonContainer svgHeight={40} ariaLabel="Loading credit card details...">
-        <SkeletonBodyText numberOfLines={2} />
-      </SkeletonContainer>
-    </div>
-  );
-}
 
 function InvoicesTableLoading() {
   return (

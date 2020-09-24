@@ -39,6 +39,20 @@ describe('BillingInformation', () => {
 
     expect(screen.getByText('California')).toBeVisible();
   });
+
+  it('should display the country name if given a country code', () => {
+    const mockBillingDetailsWithState = { ...mockBillingDetails, country: 'BR' };
+    build({ billingInfo: mockBillingDetailsWithState });
+
+    expect(screen.getByText('Brazil')).toBeVisible();
+  });
+
+  it('should display the country name if given a country name', () => {
+    const mockBillingDetailsWithState = { ...mockBillingDetails, country: 'Brazil' };
+    build({ billingInfo: mockBillingDetailsWithState });
+
+    expect(screen.getByText('Brazil')).toBeVisible();
+  });
 });
 
 function build(customProps) {

@@ -8,10 +8,14 @@ import {
   Subheading,
   Button,
   Paragraph,
+  TextLink,
 } from '@contentful/forma-36-react-components';
 import { Grid, Flex } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 import ExternalTextLink from 'app/common/ExternalTextLink';
+import { go } from 'states/Navigator';
+
+import { BillingDetailsLoading, CreditCardDetailsLoading } from 'features/organization-billing';
 
 import { CreditCardInformation } from './CreditCardInformation';
 import { BillingInformation } from './BillingInformation';
@@ -41,12 +45,22 @@ const styles = {
   }),
 };
 
+const redirectToEditPayment = (orgId) => {
+  go({
+    path: ['account', 'organizations', 'billing'],
+    params: { orgId },
+  });
+};
+
 export const NewSpaceConfirmationPage = ({
+  organizationId,
   navigateToPreviousStep,
   selectedPlan,
   billingDetails,
   paymentMethod,
   onConfirm,
+  isLoadingBillingDetails,
+  hasBillingInformation,
 }) => {
   return (
     <section
@@ -61,15 +75,39 @@ export const NewSpaceConfirmationPage = ({
       </Heading>
       <Grid className={styles.grid} columns="60% auto" rows={1} columnGap="spacing2Xl">
         <Card className={styles.card}>
-          <Subheading className={styles.cardTitle} element="h3">
-            Billing details{' '}
-            <span role="img" aria-label="Credit card">
-              💳
-            </span>
-          </Subheading>
+          <Flex justifyContent="space-between">
+            <Subheading className={styles.cardTitle} element="h3">
+              Billing details{' '}
+              <span role="img" aria-label="Credit card">
+                💳
+              </span>
+            </Subheading>
+            {hasBillingInformation && (
+              <Paragraph>
+                <TextLink
+                  testId="confirmation-page.edit-billing-link"
+                  icon="ExternalLink"
+                  onClick={() => {
+                    redirectToEditPayment(organizationId);
+                  }}>
+                  Edit
+                </TextLink>
+              </Paragraph>
+            )}
+          </Flex>
           <Grid className={styles.grid} columns="1fr 1fr" rows={1} columnGap="spacingXl">
-            <CreditCardInformation creditCardInfo={paymentMethod} />
-            <BillingInformation billingInfo={billingDetails} />
+            {isLoadingBillingDetails && (
+              <>
+                <CreditCardDetailsLoading />
+                <BillingDetailsLoading />
+              </>
+            )}
+            {!isLoadingBillingDetails && (
+              <>
+                <CreditCardInformation creditCardInfo={paymentMethod} />
+                <BillingInformation billingInfo={billingDetails} />
+              </>
+            )}
           </Grid>
           <Paragraph className={styles.agreementNote}>
             By confirming you are agreeing to Contentful&apos;s{' '}
@@ -97,9 +135,12 @@ export const NewSpaceConfirmationPage = ({
 };
 
 NewSpaceConfirmationPage.propTypes = {
+  organizationId: PropTypes.string.isRequired,
   navigateToPreviousStep: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,
   selectedPlan: PropTypes.object,
   billingDetails: PropTypes.object,
   paymentMethod: PropTypes.object,
+  hasBillingInformation: PropTypes.bool.isRequired,
+  isLoadingBillingDetails: PropTypes.bool.isRequired,
 };

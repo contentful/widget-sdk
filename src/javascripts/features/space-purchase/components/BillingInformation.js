@@ -1,49 +1,44 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import cn from 'classnames';
 
 import { Paragraph, Subheading } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { getCountryNameFromCountryCode } from '../utils/countryHelper';
+import { getCountryNameFromCountryCode, isCountryCode } from '../utils/countryHelper';
 
 const styles = {
   title: css({
     fontWeight: tokens.fontWeightMedium,
     fontSize: tokens.fontSizeM,
   }),
-  fontColor: css({
-    color: tokens.colorTextDark,
-  }),
 };
 
 export const BillingInformation = ({ billingInfo }) => {
+  // If the billingInfo is coming from the getBilling api call, then it's a country's name, otherwise it's from the billingForm and is a country code.
+  const country = isCountryCode(billingInfo.country)
+    ? getCountryNameFromCountryCode(billingInfo.country)
+    : billingInfo.country;
+
   return (
     <div>
       <Subheading
-        className={cn(styles.title, styles.fontColor)}
+        className={styles.title}
         element="h4"
         aria-labelledby="billing-address-information-review-section">
         Billing address
       </Subheading>
-      <Paragraph className={styles.fontColor}>
+      <Paragraph>
         {billingInfo.firstName} {billingInfo.lastName}
       </Paragraph>
-      <Paragraph className={styles.fontColor}>{billingInfo.email}</Paragraph>
-      <Paragraph className={styles.fontColor}>{billingInfo.address}</Paragraph>
-      {billingInfo.addressTwo && (
-        <Paragraph className={styles.fontColor}>{billingInfo.addressTwo}</Paragraph>
-      )}
-      <Paragraph className={styles.fontColor}>
+      <Paragraph>{billingInfo.email}</Paragraph>
+      <Paragraph>{billingInfo.address}</Paragraph>
+      {billingInfo.addressTwo && <Paragraph>{billingInfo.addressTwo}</Paragraph>}
+      <Paragraph>
         {billingInfo.city}, {billingInfo.postcode}
       </Paragraph>
-      <Paragraph className={styles.fontColor}>
-        {getCountryNameFromCountryCode(billingInfo.country)}
-      </Paragraph>
-      {billingInfo.vatNumber && (
-        <Paragraph className={styles.fontColor}>{billingInfo.vatNumber}</Paragraph>
-      )}
-      {billingInfo.state && <Paragraph className={styles.fontColor}>{billingInfo.state}</Paragraph>}
+      <Paragraph>{country}</Paragraph>
+      {billingInfo.vatNumber && <Paragraph>{billingInfo.vatNumber}</Paragraph>}
+      {billingInfo.state && <Paragraph>{billingInfo.state}</Paragraph>}
     </div>
   );
 };

@@ -9,6 +9,7 @@ import {
   createBillingDetails,
   setDefaultPaymentMethod,
   getDefaultPaymentMethod,
+  getBillingDetails,
 } from 'features/organization-billing';
 import * as logger from 'services/logger';
 import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes';
@@ -22,8 +23,13 @@ import { NewSpaceBillingDetailsPage } from './NewSpaceBillingDetailsPage';
 import { NewSpaceCardDetailsPage } from './NewSpaceCardDetailsPage';
 import { NewSpaceConfirmationPage } from './NewSpaceConfirmationPage';
 import { NewSpaceReceiptPage } from './NewSpaceReceiptPage';
+import { useAsync } from 'core/hooks/useAsync';
 
 import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
+import {
+  createBillingDetailsForAPI,
+  convertBillingDetailsFromAPI,
+} from '../utils/convertBillingDetails';
 import { usePageContent } from '../hooks/usePageContent';
 
 const NEW_SPACE_STEPS = [
@@ -53,6 +59,27 @@ const spacePurchaseSteps = {
   RECEIPT: 5,
 };
 
+// Fetch billing and payment information if organziation already has billing information
+const initialFetch = (
+  organization,
+  setPaymentMethodInfo,
+  setBillingDetails,
+  setIsLoadingBillingDetails
+) => async () => {
+  if (organization.isBillable) {
+    setIsLoadingBillingDetails(true);
+
+    const [paymentMethod, billingDetailsResponse] = await Promise.all([
+      getDefaultPaymentMethod(organization.sys.id),
+      getBillingDetails(organization.sys.id),
+    ]);
+
+    setPaymentMethodInfo(paymentMethod);
+    setBillingDetails(convertBillingDetailsFromAPI(billingDetailsResponse));
+    setIsLoadingBillingDetails(false);
+  }
+};
+
 export const NewSpacePage = ({
   organization,
   templatesList,
@@ -63,12 +90,25 @@ export const NewSpacePage = ({
   const [currentStep, setCurrentStep] = useState(0);
   const [spaceName, setSpaceName] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState(null);
-  // eslint-disable-next-line no-unused-vars
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [billingDetails, setBillingDetails] = useState({});
-  const [paymentMethodInfo, setPaymentMethodInfo] = useState(null);
+  const [paymentMethodInfo, setPaymentMethodInfo] = useState({});
+  const [isLoadingBillingDetails, setIsLoadingBillingDetails] = useState(false);
 
-  const canCreatePaidSpace = isOrgOwner(organization) || !!organization.isBillable;
+  const hasBillingInformation = organization.isBillable;
+  const canCreatePaidSpace = isOrgOwner(organization) || hasBillingInformation;
+
+  useAsync(
+    useCallback(
+      initialFetch(
+        organization,
+        setPaymentMethodInfo,
+        setBillingDetails,
+        setIsLoadingBillingDetails
+      ),
+      []
+    )
+  );
 
   // Space Purchase content
   const { faqEntries } = usePageContent(pageContent);
@@ -110,7 +150,11 @@ export const NewSpacePage = ({
   const onSubmitSpaceDetails = () => {
     // TODO: Add analytics here
     if (spaceIsFree) {
+      // Since the space is free, they can immediately create the space (which happens on the receipt page)
       goToStep(spacePurchaseSteps.RECEIPT);
+    } else if (organization.isBillable) {
+      // Since they already have billing details, they can go straight to the confirmation page to confirm their purchase
+      goToStep(spacePurchaseSteps.CONFIRMATION);
     } else {
       goToStep(spacePurchaseSteps.BILLING_DETAILS);
     }
@@ -124,19 +168,7 @@ export const NewSpacePage = ({
   };
 
   const onSubmitPaymentMethod = async (refId) => {
-    const reconciledBillingDetails = {
-      refid: refId,
-      firstName: billingDetails.firstName,
-      lastName: billingDetails.lastName,
-      vat: billingDetails.vatNumber,
-      workEmail: billingDetails.email,
-      address1: billingDetails.address,
-      address2: billingDetails.addressTwo,
-      city: billingDetails.city,
-      state: billingDetails.state,
-      country: billingDetails.country,
-      zipCode: billingDetails.postcode,
-    };
+    const reconciledBillingDetails = createBillingDetailsForAPI(billingDetails, refId);
 
     let paymentMethod;
     try {
@@ -233,10 +265,13 @@ export const NewSpacePage = ({
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS_CONFIRMATION} />
             <NewSpaceConfirmationPage
+              organizationId={organization.sys.id}
               navigateToPreviousStep={navigateToPreviousStep}
               billingDetails={billingDetails}
               paymentMethod={paymentMethodInfo}
               selectedPlan={selectedPlan}
+              hasBillingInformation={hasBillingInformation}
+              isLoadingBillingDetails={isLoadingBillingDetails}
               onConfirm={onConfirm}
             />
           </Grid>
