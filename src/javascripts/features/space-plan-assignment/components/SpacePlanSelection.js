@@ -97,6 +97,7 @@ export function SpacePlanSelection({
           return (
             <ListItem key={plan.sys.id} testId="space-plan-item">
               <Card
+                testId={`space-plan-card-${index}`}
                 padding="large"
                 className={cn(styles.cardItem, {
                   [styles.cardItemActive]: plan === selectedPlan,
@@ -138,6 +139,7 @@ export function SpacePlanSelection({
       </List>
       <Flex justifyContent="space-between" alignItems="center" marginTop="spacingL">
         <StateLink
+          testId="go-back-btn"
           component={Button}
           buttonType="muted"
           path={'^.subscription_new'}
@@ -149,7 +151,11 @@ export function SpacePlanSelection({
           }}>
           Go back
         </StateLink>
-        <Button buttonType="primary" onClick={onNext}>
+        <Button
+          buttonType="primary"
+          onClick={onNext}
+          testId="continue-btn"
+          disabled={!selectedPlan}>
           Continue
         </Button>
       </Flex>

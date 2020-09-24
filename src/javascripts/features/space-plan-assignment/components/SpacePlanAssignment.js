@@ -101,8 +101,6 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
   };
 
   const navigateToPreviousStep = () => {
-    if (!selectedPlan) return;
-
     const currentStepIndex = steps.indexOf(currentStep);
     const previousStep = steps[currentStepIndex - 1];
 

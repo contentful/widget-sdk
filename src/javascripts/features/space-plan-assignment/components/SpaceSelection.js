@@ -80,7 +80,7 @@ export function SpaceSelection({
 
           const isDisabled = !canPlanBeAssigned(plan, spaceResourcesBySpace[space.sys.id]);
           return (
-            <ListItem key={space.sys.id} testId="space-plan-item">
+            <ListItem key={space.sys.id} testId="space-item">
               <Card
                 padding="large"
                 className={cn(styles.cardItem, {
