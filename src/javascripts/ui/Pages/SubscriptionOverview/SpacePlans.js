@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import cn from 'classnames';
+import { sortBy } from 'lodash';
 
 import {
   Paragraph,
@@ -95,8 +96,9 @@ function SpacePlans({
       );
       const unassignedSpacePlans = spacePlans.filter((plan) => plan.gatekeeperKey === null);
       const assignedSpacePlans = spacePlans.filter((plan) => plan.gatekeeperKey !== null);
+      const sortedUnassignedPlans = sortBy(unassignedSpacePlans, 'price');
 
-      getUnassignedSpacePlans(unassignedSpacePlans);
+      getUnassignedSpacePlans(sortedUnassignedPlans);
       getAssignedSpacePlans(assignedSpacePlans);
 
       const canManageSpaces = isFeatureEnabled && enterprisePlan && isOrgOwner;
