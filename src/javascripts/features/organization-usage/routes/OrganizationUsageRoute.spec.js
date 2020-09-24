@@ -29,11 +29,11 @@ jest.mock('app/common/ReloadNotification', () => ({
 }));
 
 jest.mock('../components/PeriodSelector', () => ({
-  PeriodSelector: jest.fn().mockReturnValue(<div data-test-id="period-selector"></div>),
+  PeriodSelector: jest.fn().mockReturnValue(<div data-test-id="period-selector" />),
 }));
 
 jest.mock('../components/OrganizationUsagePage', () => ({
-  OrganizationUsagePage: jest.fn().mockReturnValue(<div data-test-id="usage-page"></div>),
+  OrganizationUsagePage: jest.fn().mockReturnValue(<div data-test-id="usage-page" />),
 }));
 
 const DEFAULT_ORG = 'abcd';

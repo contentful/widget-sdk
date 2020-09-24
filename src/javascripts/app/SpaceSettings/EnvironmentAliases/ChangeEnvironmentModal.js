@@ -142,7 +142,8 @@ export default function ChangeEnvironmentModal({
                   isSelected
                   aliasId={alias.sys.id}
                   showAliasedTo={false}
-                  hasCopy={false}></EnvironmentDetails>
+                  hasCopy={false}
+                />
               </div>
               <Paragraph>Current environment:</Paragraph>
               <Table className={aliasStyles.body}>
@@ -154,7 +155,8 @@ export default function ChangeEnvironmentModal({
                         environmentId={oldTarget}
                         createdAt={payload.sys.createdAt}
                         isMaster={aliases.includes('master')}
-                        hasCopy={false}></EnvironmentDetails>
+                        hasCopy={false}
+                      />
                     </TableCell>
                   </TableRow>
                 </TableBody>
@@ -190,7 +192,8 @@ export default function ChangeEnvironmentModal({
                         <EnvironmentDetails
                           hasCopy={false}
                           environmentId={id}
-                          createdAt={payload.sys.createdAt}></EnvironmentDetails>
+                          createdAt={payload.sys.createdAt}
+                        />
                       </DropdownListItem>
                     ))}
                 </DropdownList>

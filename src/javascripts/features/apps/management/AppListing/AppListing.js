@@ -157,7 +157,7 @@ export function AppListing({ definitions, canManageApps }) {
               <TableCell>Name</TableCell>
               <TableCell>ID</TableCell>
               <TableCell>App URL</TableCell>
-              <TableCell></TableCell>
+              <TableCell />
             </TableRow>
           </TableHead>
           <TableBody>

@@ -47,7 +47,7 @@ describe('LazyLoadedComponent', () => {
   });
 
   it('should render the component returned by importer', async () => {
-    const importer = jest.fn().mockResolvedValue(() => <div data-test-id="lazy-component"></div>);
+    const importer = jest.fn().mockResolvedValue(() => <div data-test-id="lazy-component" />);
 
     const { queryByTestId } = build({ importer });
 

@@ -12,7 +12,7 @@ jest.mock('moment', () => ({
 }));
 
 const getComponent = (props = {}) => {
-  return <OptIn setStep={setStep} spaceId="123456" {...props}></OptIn>;
+  return <OptIn setStep={setStep} spaceId="123456" {...props} />;
 };
 
 describe('OptIn', () => {

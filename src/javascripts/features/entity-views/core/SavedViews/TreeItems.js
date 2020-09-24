@@ -214,7 +214,7 @@ export const Folder = ({
   // - all views in the folder were hidden from you
   // - AND you cannot drop a view to this folder
   if (isHidden) {
-    return <div></div>;
+    return <div />;
   }
 
   return (

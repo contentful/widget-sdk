@@ -89,7 +89,8 @@ function EnvironmentAlias({ environments, currentAliasId, alias }) {
             aliasId={alias.sys.id}
             isMaster
             isSelected
-            hasCopy={false}></EnvironmentDetails>
+            hasCopy={false}
+          />
           {canDelete ? (
             deleteActionWidget
           ) : (
@@ -105,7 +106,8 @@ function EnvironmentAlias({ environments, currentAliasId, alias }) {
                 <EnvironmentDetails
                   environmentId={targetEnv.id}
                   isSelected
-                  isMaster={targetEnv.aliases.includes('master')}></EnvironmentDetails>
+                  isMaster={targetEnv.aliases.includes('master')}
+                />
                 {canChangeEnvironment ? (
                   changeActionWidget
                 ) : (
@@ -132,14 +134,16 @@ function EnvironmentAlias({ environments, currentAliasId, alias }) {
         setModalOpen={setChangeModalOpen}
         modalOpen={changeModalOpen}
         spaceId={spaceId}
-        targetEnv={targetEnv}></ChangeEnvironmentModal>
+        targetEnv={targetEnv}
+      />
 
       <DeleteEnvironmentAliasModal
         alias={alias}
         setModalOpen={setDeleteModalOpen}
         modalOpen={deleteModalOpen}
         spaceId={spaceId}
-        targetEnv={targetEnv}></DeleteEnvironmentAliasModal>
+        targetEnv={targetEnv}
+      />
     </>
   );
 }
@@ -221,17 +225,14 @@ export default function EnvironmentAliases(props) {
 
   const aliasComponents = sortAliases(allSpaceAliases).map((alias) => (
     <span data-test-id="environmentalias.span" key={alias.sys.id}>
-      <EnvironmentAlias
-        alias={alias}
-        currentAliasId={currentAliasId}
-        environments={environments}></EnvironmentAlias>
+      <EnvironmentAlias alias={alias} currentAliasId={currentAliasId} environments={environments} />
     </span>
   ));
 
   if (aliasComponents.length > 0) {
     return (
       <>
-        <EnvironmentAliasHeader></EnvironmentAliasHeader>
+        <EnvironmentAliasHeader />
         {aliasComponents}
       </>
     );
@@ -280,12 +281,13 @@ export default function EnvironmentAliases(props) {
 
   return (
     <span data-test-id="environmentaliases.span">
-      <EnvironmentAliasHeader></EnvironmentAliasHeader>
+      <EnvironmentAliasHeader />
       <OptIn
         testId="environmentalias.opt-in"
         step={step}
         setStep={trackedSetStep}
-        spaceId={spaceId}></OptIn>
+        spaceId={spaceId}
+      />
     </span>
   );
 }

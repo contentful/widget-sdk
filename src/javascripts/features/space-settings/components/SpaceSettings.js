@@ -66,7 +66,8 @@ export class SpaceSettings extends React.Component {
       <Workbench>
         <Workbench.Header
           title="Space settings"
-          icon={<NavigationIcon icon="Settings" size="large" />}></Workbench.Header>
+          icon={<NavigationIcon icon="Settings" size="large" />}
+        />
         <Workbench.Content type="text">
           <Card className={styles.section} testId="space-information-card">
             <Typography>

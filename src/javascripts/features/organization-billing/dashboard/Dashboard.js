@@ -148,7 +148,7 @@ export function Dashboard({
                       <TableRow>
                         <TableCell width="37%">Date</TableCell>
                         <TableCell width="38%">Amount</TableCell>
-                        <TableCell width="25%"></TableCell>
+                        <TableCell width="25%" />
                       </TableRow>
                     </TableHead>
                     {loading && <InvoicesTableLoading />}

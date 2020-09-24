@@ -6,8 +6,8 @@ import OrgSliderIllustration from 'svg/org-slider-illustration.svg';
 import ContentTabIllustration from 'svg/content-tab-illustration.svg';
 
 // this is a workaround for the fact that we can't use `img` tag in js with our current build setup
-const MediaTabIllustration = () => <div className="media-tab-illustration"></div>;
-const SupportChatIllustration = () => <div className="support-chat-illustration"></div>;
+const MediaTabIllustration = () => <div className="media-tab-illustration" />;
+const SupportChatIllustration = () => <div className="support-chat-illustration" />;
 
 export default class WalkthroughComponent extends React.Component {
   static propTypes = {

@@ -36,7 +36,7 @@ function WidgetRendererInternal(props) {
 
   if (problem) {
     trackLinksRendered();
-    return <WidgetRenderWarning message={problem}></WidgetRenderWarning>;
+    return <WidgetRenderWarning message={problem} />;
   } else if (isCustomWidget(widget.widgetNamespace)) {
     trackLinksRendered();
     return (

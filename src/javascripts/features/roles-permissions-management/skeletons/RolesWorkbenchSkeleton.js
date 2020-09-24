@@ -27,7 +27,8 @@ export function RolesWorkbenchSkeleton(props) {
             </SkeletonContainer>
           )
         }
-        icon={<NavigationIcon icon="Settings" size="large" />}></Workbench.Header>
+        icon={<NavigationIcon icon="Settings" size="large" />}
+      />
       <Workbench.Content type="default">
         {props.children || (
           <SkeletonContainer

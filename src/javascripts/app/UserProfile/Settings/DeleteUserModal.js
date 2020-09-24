@@ -128,7 +128,8 @@ const DeleteUserModal = ({ singleOwnerOrganizations, onConfirm, onCancel, isShow
           id="cancellationDetails"
           testId="cancellation-details"
           value={details}
-          onChange={(e) => setDetails(e.target.value)}></Textarea>
+          onChange={(e) => setDetails(e.target.value)}
+        />
       </Typography>
       <div className={styles.buttons}>
         <Button

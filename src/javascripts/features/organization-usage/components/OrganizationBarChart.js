@@ -143,6 +143,7 @@ export const OrganizationBarChart = () => {
     <div
       ref={chartRef}
       className={styles.chartWrapper}
-      data-test-id="organization-usage-bar-chart"></div>
+      data-test-id="organization-usage-bar-chart"
+    />
   );
 };

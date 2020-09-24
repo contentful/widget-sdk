@@ -184,7 +184,7 @@ export default function NavigationDropdown({ item, onOpen: onDropdownOpen = noop
                   {subitem.render ? subitem.render(subitem) : subitem.label}
                   {subitem.tooltip && (
                     <Tooltip place="bottom" content={subitem.tooltip} className={styles.tooltip}>
-                      <i className={cn('fa', 'fa-question-circle', styles.question)}></i>
+                      <i className={cn('fa', 'fa-question-circle', styles.question)} />
                     </Tooltip>
                   )}
                 </DropdownListItem>

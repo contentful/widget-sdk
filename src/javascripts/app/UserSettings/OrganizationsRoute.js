@@ -95,7 +95,7 @@ const OrganizationsRoute = () => {
                     <TableCell testId="organizations-list.name-header">Name</TableCell>
                     <TableCell testId="organizations-list.invited-at-header">Invited at</TableCell>
                     <TableCell testId="organizations-list.role-header">Role</TableCell>
-                    <TableCell testId="organizations-list.action-header"></TableCell>
+                    <TableCell testId="organizations-list.action-header" />
                   </TableRow>
                 </TableHead>
                 <TableBody>

@@ -129,7 +129,7 @@ const TableWrapper = ({ children }) => {
           <TableCell>Public key fingerprint</TableCell>
           <TableCell>Added at</TableCell>
           <TableCell>Added by</TableCell>
-          <TableCell></TableCell>
+          <TableCell />
         </TableRow>
       </TableHead>
       <TableBody>{children}</TableBody>

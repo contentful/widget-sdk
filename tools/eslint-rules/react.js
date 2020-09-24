@@ -13,5 +13,6 @@ module.exports = {
     'react/prop-types': ['error', { ignore: ['children'] }],
     'react/no-unused-prop-types': 'error',
     'react/jsx-no-target-blank': ['error', { enforceDynamicLinks: 'always' }],
+    'react/self-closing-comp': 'warn',
   },
 };

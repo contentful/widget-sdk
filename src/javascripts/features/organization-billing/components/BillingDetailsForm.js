@@ -302,7 +302,7 @@ export function BillingDetailsForm({
             value={fields.state.value}
             validationMessage={fields.state.error}
             onChange={handleChange}>
-            <option value="" disabled></option>
+            <option value="" disabled />
             {US_STATES_LIST.map((state) => (
               <option key={state.name} value={state.code}>
                 {state.name}

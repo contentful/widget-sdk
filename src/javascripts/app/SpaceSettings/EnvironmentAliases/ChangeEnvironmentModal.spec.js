@@ -39,7 +39,8 @@ describe('ChangeEnvironmentModal', () => {
         }}
         modalOpen
         setModalOpen={setModalOpen}
-        {...props}></ChangeEnvironmentModal>
+        {...props}
+      />
     );
   };
 

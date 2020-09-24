@@ -129,7 +129,8 @@ export default function OptIn({ step, setStep, spaceId, testId }) {
               aliasId="exists"
               isSelected
               isMaster
-              hasCopy={false}></EnvironmentDetails>
+              hasCopy={false}
+            />
           </StaticDropdown>
           <StaticDropdown
             isVisible={step === STEPS.THIRD_CHANGE_ENV}
@@ -156,9 +157,7 @@ export default function OptIn({ step, setStep, spaceId, testId }) {
               <TableCell>
                 <div className={aliasStyles.wrapper}>
                   {step === STEPS.THIRD_CHANGE_ENV ? (
-                    <EnvironmentDetails
-                      environmentId={newEnvironmentId}
-                      isMaster></EnvironmentDetails>
+                    <EnvironmentDetails environmentId={newEnvironmentId} isMaster />
                   ) : (
                     <Fragment>
                       <EnvironmentIcon className={aliasStyles.icon} />
@@ -226,7 +225,7 @@ export default function OptIn({ step, setStep, spaceId, testId }) {
           </TableBody>
         </Table>
       </Card>
-      <div className={aliasOptInStyles.backDrop}></div>
+      <div className={aliasOptInStyles.backDrop} />
     </Fragment>
   );
 }

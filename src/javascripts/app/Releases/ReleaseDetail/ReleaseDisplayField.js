@@ -99,7 +99,7 @@ const ReleaseDisplayField = ({ entity, field, defaultLocale, validationError }) 
       return <EntityStatusTag statusLabel={statusLabel} />;
     }
     default:
-      return <span></span>;
+      return <span />;
   }
 };
 

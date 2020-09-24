@@ -233,7 +233,7 @@ function EnvironmentTable({ environments }) {
           <TableCell className={css({ width: '40%' })}>Environment ID</TableCell>
           <TableCell className={css({ width: '25%' })}>Created</TableCell>
           <TableCell className={css({ width: '20%' })}>Status</TableCell>
-          <TableCell className={css({ width: '5%' })}></TableCell>
+          <TableCell className={css({ width: '5%' })} />
         </TableRow>
       </TableHead>
       <TableBody>
@@ -248,13 +248,14 @@ function EnvironmentTable({ environments }) {
                 <TableCell className={environmentTableStyles.firstCell}>
                   <EnvironmentDetails
                     environmentId={environment.id}
-                    isMaster={environment.isMaster}></EnvironmentDetails>
+                    isMaster={environment.isMaster}
+                  />
                   {environment.aliases && environment.aliases[0] && (
                     <span className={environmentTableStyles.aliasedTo}>
                       <span>Aliased to</span>
                       {environment.aliases.map((alias) => (
                         <span key={alias}>
-                          <AliasIcon></AliasIcon> {alias}
+                          <AliasIcon /> {alias}
                         </span>
                       ))}
                     </span>

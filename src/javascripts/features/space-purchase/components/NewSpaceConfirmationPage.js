@@ -68,8 +68,8 @@ export const NewSpaceConfirmationPage = ({
             </span>
           </Subheading>
           <Grid className={styles.grid} columns="1fr 1fr" rows={1} columnGap="spacingXl">
-            <CreditCardInformation creditCardInfo={paymentMethod}></CreditCardInformation>
-            <BillingInformation billingInfo={billingDetails}></BillingInformation>
+            <CreditCardInformation creditCardInfo={paymentMethod} />
+            <BillingInformation billingInfo={billingDetails} />
           </Grid>
           <Paragraph className={styles.agreementNote}>
             By confirming you are agreeing to Contentful&apos;s{' '}
