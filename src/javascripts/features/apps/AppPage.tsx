@@ -525,6 +525,26 @@ export class AppRoute extends Component<Props, State> {
     );
   }
 
+  renderFeedbackButton() {
+    // Partial because Button's defaultProps are not optional
+    // ButtonProps is missing target and rel prop
+    const LinkButton = Button as React.ComponentType<
+      Partial<React.ComponentPropsWithoutRef<typeof Button>> &
+        React.AnchorHTMLAttributes<HTMLAnchorElement>
+    >;
+    return (
+      <LinkButton
+        buttonType="naked"
+        icon="ChatBubble"
+        className={styles.feedbackButton}
+        href={`http://ctfl.io/marketplace-app-feedback#appid=${this.props.app.appDefinition.sys.id}`}
+        target="_blank"
+        rel="noopener noreferrer">
+        Give feedback
+      </LinkButton>
+    );
+  }
+
   render() {
     if (!this.state.ready) {
       return this.renderLoading();
@@ -551,6 +571,10 @@ export class AppRoute extends Component<Props, State> {
                 : this.renderNoConfigLocation()}
             </ExtensionLocalDevelopmentWarning>
           </div>
+
+          {this.state.appLoaded &&
+            this.props.app.appDefinition.public &&
+            this.renderFeedbackButton()}
         </Workbench>
       </>
     );

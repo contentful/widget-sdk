@@ -1,9 +1,20 @@
 import { css, keyframes } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 
-const fadeIn = keyframes({
+const rendererFadeIn = keyframes({
   from: {
     transform: 'translateY(50px)',
+    opacity: '0',
+  },
+  to: {
+    transform: 'translateY(0)',
+    opacity: '1',
+  },
+});
+
+const feedbackButtonFadeIn = keyframes({
+  from: {
+    transform: 'translateY(75px)',
     opacity: '0',
   },
   to: {
@@ -15,7 +26,7 @@ const fadeIn = keyframes({
 export const styles = {
   renderer: css({
     padding: 0,
-    animation: `${fadeIn} 0.8s ease`,
+    animation: `${rendererFadeIn} 0.8s ease`,
     '> div': {
       height: '100%',
       width: '100%',
@@ -92,5 +103,14 @@ export const styles = {
     height: '1px',
     maxHeight: '1px',
     backgroundColor: tokens.colorElementLight,
+  }),
+  feedbackButton: css({
+    position: 'fixed',
+    right: '25px',
+    bottom: '25px',
+    backgroundColor: 'white',
+    boxShadow:
+      '0 0 0 1px rgba(0,0,0,.05), 0px 15px 35px rgba(0, 0, 0, 0.08), 0px 2px 15px rgba(0, 0, 0, 0.05)',
+    animation: `${feedbackButtonFadeIn} 0.2s ${tokens.transitionEasingCubicBezier} 2s backwards`,
   }),
 };
