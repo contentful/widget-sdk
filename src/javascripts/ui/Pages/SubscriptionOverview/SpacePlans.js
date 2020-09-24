@@ -74,7 +74,7 @@ function SpacePlans({
   organizationId,
   showMicroSmallSupportCard,
   anySpacesInaccessible,
-  isOrgOwner,
+  isOwnerOrAdmin,
 }) {
   const numSpaces = spacePlans.length;
   const totalCost = calculatePlansCost({ plans: spacePlans });
@@ -101,12 +101,12 @@ function SpacePlans({
       getUnassignedSpacePlans(sortedUnassignedPlans);
       getAssignedSpacePlans(assignedSpacePlans);
 
-      const canManageSpaces = isFeatureEnabled && enterprisePlan && isOrgOwner;
+      const canManageSpaces = isFeatureEnabled && enterprisePlan && isOwnerOrAdmin;
       setCanManageSpaces(canManageSpaces);
       setIsSpaceAssignmentExperimentEnabled(isExperimentFeatureFlagEnabled);
     }
     fetch();
-  }, [setCanManageSpaces, enterprisePlan, isOrgOwner, spacePlans, organizationId]);
+  }, [setCanManageSpaces, enterprisePlan, isOwnerOrAdmin, spacePlans, organizationId]);
 
   const linkToSupportPage = websiteUrl(
     `support/?utm_source=webapp&utm_medium=account-menu&utm_campaign=in-app-help&purchase-micro-or-small-space=${organizationId}`
@@ -281,7 +281,7 @@ SpacePlans.propTypes = {
   enterprisePlan: PropTypes.bool,
   upgradedSpaceId: PropTypes.string,
   anySpacesInaccessible: PropTypes.bool,
-  isOrgOwner: PropTypes.bool,
+  isOwnerOrAdmin: PropTypes.bool,
 };
 
 SpacePlans.defaultProps = {
