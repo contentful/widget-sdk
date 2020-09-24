@@ -4,6 +4,7 @@ export {
   useReadTags,
   useHistoryReducer,
   useSpaceContext,
+  useToggle,
 } from 'features/content-tags/core/hooks';
 export { TagPropType } from 'features/content-tags/core/TagPropType';
 export { create as createTagsRepo } from 'features/content-tags/core/state/TagsRepo';

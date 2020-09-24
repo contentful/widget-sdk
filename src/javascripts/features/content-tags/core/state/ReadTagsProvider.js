@@ -2,8 +2,9 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ReadTagsContext } from 'features/content-tags/core/state/ReadTagsContext';
 import { useTagsRepo } from 'features/content-tags/core/hooks';
 import { useAsyncFn } from 'core/hooks';
-import { tagsSorter } from 'features/content-tags/core/state/tags-sorting';
+import { ORDER_TAG, tagsSorter } from 'features/content-tags/core/state/tags-sorting';
 import { createTagsFilter } from 'features/content-tags/core/state/tags-filter';
+import { TagType, TagTypeAny } from 'features/content-tags/core/TagType';
 
 function ReadTagsProvider({ children }) {
   const tagsRepo = useTagsRepo();
@@ -14,7 +15,8 @@ function ReadTagsProvider({ children }) {
   const [search, setSearch] = useState('');
 
   const [excludedTags, setExcludedTags] = useState([]);
-  const [sorting, setSorting] = useState('DESC');
+  const [sorting, setSorting] = useState(ORDER_TAG.DESC);
+  const [typeFilter, setTypeFilter] = useState(TagTypeAny);
 
   const [{ error, data }, fetchAll] = useAsyncFn(
     useCallback(async () => {
@@ -24,7 +26,12 @@ function ReadTagsProvider({ children }) {
         if (result.total > length) {
           return [...result.items, ...(await getResult(length))];
         } else {
-          return result.items;
+          return result.items.map((item) => {
+            if (!item.sys.tagType) {
+              item.sys.tagType = TagType.Default;
+            }
+            return item;
+          });
         }
       };
       return getResult();
@@ -64,9 +71,10 @@ function ReadTagsProvider({ children }) {
     const tags = cachedTagsFilter({
       match: search.toLowerCase(),
       exclude: excludedTags,
+      tagType: typeFilter,
     });
     return tagsSorter(tags, sorting);
-  }, [cachedTagsFilter, search, excludedTags, sorting]);
+  }, [cachedTagsFilter, search, excludedTags, sorting, typeFilter]);
 
   const currentData = useMemo(() => filteredAndSortedTags.slice(skip, dataSize), [
     skip,
@@ -114,6 +122,8 @@ function ReadTagsProvider({ children }) {
         setExcludedTags,
         setSorting,
         sorting,
+        setTypeFilter,
+        typeFilter,
       }}>
       {children}
     </ReadTagsContext.Provider>

@@ -12,6 +12,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import RelativeDateTime from 'components/shared/RelativeDateTime';
 import { TagPropType } from 'features/content-tags/core/TagPropType';
+import { TagTypeLabel } from 'features/content-tags/core/components/TagTypeLabel';
 
 const styles = {
   delete: css({
@@ -60,12 +61,10 @@ TagActions.propTypes = {
   onDelete: PropTypes.func.isRequired,
 };
 
-function TagsListRow(tag) {
+function TagsListRow({ tag, onEdit, onDelete, contentLevelPermissionsEnabled }) {
   const {
     name,
-    sys: { id, createdAt },
-    onEdit,
-    onDelete,
+    sys: { id, createdAt, tagType },
   } = tag;
 
   const editTag = useCallback(async () => {
@@ -83,6 +82,11 @@ function TagsListRow(tag) {
   return (
     <TableRow>
       <TableCell className={styles.longText}>{name}</TableCell>
+      {contentLevelPermissionsEnabled && (
+        <TableCell>
+          <TagTypeLabel tagType={tagType} />
+        </TableCell>
+      )}
       <TableCell className={styles.longText}>
         <code>{id}</code>
         <CopyButton className={styles.copy} copyValue={id} testId="id.copy" />
@@ -95,6 +99,11 @@ function TagsListRow(tag) {
   );
 }
 
-TagsListRow.propTypes = TagPropType;
+TagsListRow.propTypes = {
+  tag: PropTypes.shape(TagPropType).isRequired,
+  onEdit: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
+  contentLevelPermissionsEnabled: PropTypes.bool.isRequired,
+};
 
 export { TagsListRow };

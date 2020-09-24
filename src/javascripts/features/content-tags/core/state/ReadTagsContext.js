@@ -13,7 +13,6 @@ const ReadTagsContext = React.createContext({
   setLimit: null,
   search: null,
   setSearch: null,
-  debouncedSearch: null,
   hasTags: false,
   nameExists: null,
   idExists: null,
@@ -21,6 +20,8 @@ const ReadTagsContext = React.createContext({
   setExcludedTags: null,
   setSorting: null,
   sorting: null,
+  setTypeFilter: null,
+  typeFilter: null,
 });
 
 export { ReadTagsContext };

@@ -1,14 +1,19 @@
+import { TagTypeAny } from '../TagType';
+
 type Tag = {
   name: string;
   sys: {
     id: string;
+    tagType: string;
   };
 };
 type MatchInput = string;
 type ExcludeInput = string[];
+type TagTypeInput = string;
 type TagsFilterOptions = {
   match?: MatchInput;
   exclude?: ExcludeInput;
+  tagType?: TagTypeInput;
 };
 type TagsFilter = (options: TagsFilterOptions) => Tag[];
 type FilterInputs = [string, string, Tag][];
@@ -20,10 +25,14 @@ function createTagsFilter(tags: Tag[]): TagsFilter {
   }
   return function (options: TagsFilterOptions) {
     const tagsResult: Tag[] = [];
-    const { match = '', exclude = [] } = options;
+    const { match = '', exclude = [], tagType = TagTypeAny } = options;
     const normalizedMatch = match.toLowerCase();
     const excludeSet = new Set(exclude);
     for (const [id, name, tag] of filterInputs) {
+      // If we filter by type, skip if not matching
+      if (tagType !== TagTypeAny && tag.sys.tagType !== tagType) {
+        continue;
+      }
       // If the tag isn't hit by a match, no need to check exclusion
       if (!(id.includes(normalizedMatch) || name.includes(normalizedMatch))) {
         continue;
