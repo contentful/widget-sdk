@@ -128,7 +128,12 @@ const getEnabledApps = async (apps, flagContext) => {
   return apps.filter((_, index) => appsFeatureFlagStatuses[index]);
 };
 
-const openDetailModal = ({ spaceInformation, usageExceeded, canManageApps }) => (app) => {
+const openDetailModal = ({
+  spaceInformation,
+  usageExceeded,
+  canManageApps,
+  hasAdvancedAppsFeature,
+}) => (app) => {
   AppLifecycleTracking.detailsOpened(app.id);
 
   ModalLauncher.open(({ isShown, onClose }) => (
@@ -138,6 +143,7 @@ const openDetailModal = ({ spaceInformation, usageExceeded, canManageApps }) => 
       app={app}
       spaceInformation={spaceInformation}
       usageExceeded={usageExceeded}
+      hasAdvancedAppsFeature={hasAdvancedAppsFeature}
       canManageApps={canManageApps}
     />
   ));
@@ -301,6 +307,7 @@ export class AppsListPage extends React.Component {
       openDetailModal({
         spaceInformation,
         usageExceeded: isUsageExceeded(installedApps, hasAdvancedAppsFeature),
+        hasAdvancedAppsFeature,
         canManageApps,
       })(deeplinkedApp);
     }
@@ -378,6 +385,7 @@ export class AppsListPage extends React.Component {
                       openDetailModal={openDetailModal({
                         spaceInformation,
                         usageExceeded: isUsageExceeded(installedApps, hasAdvancedAppsFeature),
+                        hasAdvancedAppsFeature,
                         canManageApps,
                       })}
                       orgId={organizationId}

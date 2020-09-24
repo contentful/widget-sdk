@@ -26,6 +26,7 @@ export function AppDetailsModal(props) {
         setShowPermissions={setShowPermissions}
         usageExceeded={props.usageExceeded}
         canManageApps={props.canManageApps}
+        hasAdvancedAppsFeature={props.hasAdvancedAppsFeature}
       />
     </Modal>
   );
@@ -43,4 +44,5 @@ AppDetailsModal.propTypes = {
   }),
   usageExceeded: PropTypes.bool,
   canManageApps: PropTypes.bool.isRequired,
+  hasAdvancedAppsFeature: PropTypes.bool,
 };

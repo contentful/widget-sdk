@@ -48,8 +48,8 @@ const advancedAppsFeatureResolver = [
     } catch (err) {
       return DEFAULT_ADVANCED_APPS_STATUS;
     }
-  }
-]
+  },
+];
 
 export const appRoute = {
   name: 'apps',
@@ -65,7 +65,7 @@ export const appRoute = {
       },
       resolve: {
         hasAppsFeature: appsFeatureResolver,
-        hasAdvancedAppsFeature: advancedAppsFeatureResolver
+        hasAdvancedAppsFeature: advancedAppsFeatureResolver,
       },
       component: AppsListPage,
       mapInjectedToProps: [
@@ -74,7 +74,13 @@ export const appRoute = {
         '$stateParams',
         'hasAppsFeature',
         'hasAdvancedAppsFeature',
-        (spaceContext, $state, $stateParams, hasAppsFeature: boolean, hasAdvancedAppsFeature: boolean) => {
+        (
+          spaceContext,
+          $state,
+          $stateParams,
+          hasAppsFeature: boolean,
+          hasAdvancedAppsFeature: boolean
+        ) => {
           return {
             goToContent: () => $state.go('^.^.entries.list'),
             repo: getAppsRepo(),
@@ -106,6 +112,7 @@ export const appRoute = {
         // only when the space is initialized.
         app: ['$stateParams', 'spaceContext', ({ appId }) => getAppsRepo().getApp(appId)],
         hasAppsFeature: appsFeatureResolver,
+        hasAdvancedAppsFeature: advancedAppsFeatureResolver,
         canManageThisApp: [
           'app',
           'spaceContext',

@@ -12,7 +12,7 @@ import MarkdownRenderer from 'app/common/MarkdownRenderer';
 import { AppPropType, externalLinkProps } from './shared';
 import { AppPermissionScreen } from './AppPermissionsScreen';
 import { AppHeader } from './AppHeader';
-import { USAGE_EXCEEDED_MESSAGE } from '../isUsageExceeded';
+import { getUsageExceededMessage } from '../isUsageExceeded';
 import tokens from '@contentful/forma-36-tokens';
 import cx from 'classnames';
 import { css } from 'emotion';
@@ -71,6 +71,7 @@ export function AppDetails(props) {
     spaceInformation,
     usageExceeded,
     canManageApps,
+    hasAdvancedAppsFeature,
   } = props;
 
   if (showPermissions) {
@@ -112,7 +113,7 @@ export function AppDetails(props) {
         {!installed && usageExceeded && canManageApps && (
           <>
             <div className={styles.sidebarSpacingM} />
-            <HelpText>{USAGE_EXCEEDED_MESSAGE}</HelpText>
+            <HelpText>{getUsageExceededMessage(hasAdvancedAppsFeature)}</HelpText>
           </>
         )}
         {!canManageApps && (
@@ -177,4 +178,5 @@ AppDetails.propTypes = {
   setShowPermissions: PropTypes.func,
   usageExceeded: PropTypes.bool,
   canManageApps: PropTypes.bool.isRequired,
+  hasAdvancedAppsFeature: PropTypes.bool,
 };
