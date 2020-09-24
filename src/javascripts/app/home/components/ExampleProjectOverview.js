@@ -10,7 +10,6 @@ import {
   Spinner,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { getModule } from 'core/NgRegistry';
 import { go } from 'states/Navigator';
 import { env } from 'Config';
 import qs from 'qs';
@@ -18,6 +17,8 @@ import { openDeleteSpaceDialog } from 'features/space-settings';
 import * as TokenStore from 'services/TokenStore';
 import { trackClickCTA } from '../tracking';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
 
 const styles = {
   flexContainer: css({ display: 'flex', flexWrap: 'nowrap', justifyContent: 'space-between' }),
@@ -41,9 +42,10 @@ const styles = {
 };
 
 const ExampleProjectOverview = ({ cdaToken, cpaToken }) => {
-  const spaceContext = getModule('spaceContext');
+  const { currentOrganization, currentSpaceId } = useSpaceEnvContext();
+  const apiClient = useCurrentSpaceAPIClient();
   const [isLoading, setLoading] = useState(false);
-  const deleteEnabled = isOwnerOrAdmin(spaceContext.organization);
+  const deleteEnabled = isOwnerOrAdmin(currentOrganization);
 
   const findCourse = (courses) => {
     const course = courses.find((lesson) => {
@@ -63,7 +65,7 @@ const ExampleProjectOverview = ({ cdaToken, cpaToken }) => {
     trackClickCTA('create_an_entry_button');
 
     // get all lesson entries
-    const courses = await spaceContext.cma.getEntries({
+    const courses = await apiClient.getEntries({
       content_type: 'course',
     });
 
@@ -95,7 +97,7 @@ const ExampleProjectOverview = ({ cdaToken, cpaToken }) => {
     const queryParams = {
       // next params allow to use user's space as a source for the app itself
       // so his changes will be refleced on the app's content
-      space_id: spaceContext.space.getId(),
+      space_id: currentSpaceId,
       delivery_token: cdaToken,
       preview_token: cpaToken,
       // user will be able to go back to the webapp from TEA using links
@@ -114,7 +116,7 @@ const ExampleProjectOverview = ({ cdaToken, cpaToken }) => {
   };
 
   const handleDeleteSpace = async () => {
-    const space = await TokenStore.getSpace(spaceContext.getId());
+    const space = await TokenStore.getSpace(currentSpaceId);
     trackClickCTA('example_app:delete_space');
 
     openDeleteSpaceDialog({
