@@ -13,7 +13,7 @@ import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import { CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM } from 'analytics/utmLinks';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
-import { getModule } from 'core/NgRegistry';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
   source: 'webapp',
@@ -120,24 +120,20 @@ export class LocalesListSidebar extends React.Component {
   }
 }
 
-const handleTalkToUsClickCTA = () => {
-  const spaceContext = getModule('spaceContext');
-
-  trackTargetedCTAClick(CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
-    spaceId: spaceContext.getId(),
-    organizationId: spaceContext.organization.sys.id,
-  });
-};
-
 const UpgradeToEnterprise = () => {
-  const spaceContext = getModule('spaceContext');
-  const spaceId = spaceContext.getId();
-  const organizationId = spaceContext.organization.sys.id;
+  const { currentSpaceId, currentOrganizationId } = useSpaceEnvContext();
+
+  function handleTalkToUsClickCTA() {
+    trackTargetedCTAClick(CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
+      spaceId: currentSpaceId,
+      organizationId: currentOrganizationId,
+    });
+  }
 
   return (
     <TrackTargetedCTAImpression
       impressionType={CTA_EVENTS.UPGRADE_TO_ENTERPRISE}
-      meta={{ spaceId, organizationId }}>
+      meta={{ spaceId: currentSpaceId, organizationId: currentOrganizationId }}>
       <Button
         isFullWidth
         buttonType="primary"
@@ -145,7 +141,7 @@ const UpgradeToEnterprise = () => {
         href={CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM}
         target="_blank"
         rel="noopener noreferrer"
-        onClick={() => handleTalkToUsClickCTA()}>
+        onClick={handleTalkToUsClickCTA}>
         Talk to us
       </Button>
     </TrackTargetedCTAImpression>
