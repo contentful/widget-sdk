@@ -21,10 +21,10 @@ import { ADMIN_ROLE_ID } from 'access_control/constants';
 import * as SpaceMembershipRepository from 'access_control/SpaceMembershipRepository';
 import DocumentTitle from 'components/shared/DocumentTitle';
 
-import { getModule } from 'core/NgRegistry';
-
 import styles from './styles';
 import SpaceTeamsPagePresentation from './SpaceTeamsPagePresentation';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { isAdmin, getSpaceMember } from 'core/services/SpaceEnvContext/utils';
 
 const initialState = {
   isPending: false,
@@ -185,11 +185,9 @@ const SpaceTeamsPage = ({ spaceId }) => {
   // TODO: Move this to mapInjectedToProps/a routing component
   //
   // This cannot be done yet due to spaceMember being an object which causes overflows
-  const spaceContext = getModule('spaceContext');
-
-  const organizationId = spaceContext.organization.sys.id;
-  const spaceMember = spaceContext.getData('spaceMember');
-  const readOnly = !spaceContext.getData('spaceMember.admin', false);
+  const { currentOrganizationId: organizationId, currentSpace } = useSpaceEnvContext();
+  const spaceMember = getSpaceMember(currentSpace);
+  const readOnly = !isAdmin(currentSpace);
 
   const [
     {

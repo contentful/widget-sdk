@@ -20,8 +20,12 @@ export function getOrganization(space?: SpaceEnv) {
   return getSpaceData(space)?.organization;
 }
 
+export function getSpaceMember(space?: SpaceEnv) {
+  return getSpaceData(space)?.spaceMember;
+}
+
 export function getSpaceRoles(space?: SpaceEnv) {
-  return getSpaceData(space)?.spaceMember.roles;
+  return getSpaceMember(space)?.roles ?? [];
 }
 
 export function getOrganizationId(space?: SpaceEnv) {
