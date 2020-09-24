@@ -21,6 +21,7 @@ import {
 import { Flex, Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
+import { isFreeProductPlan } from 'account/pricing/PricingDataProvider';
 import { getIncludedResources, resourcesToDisplay, getTooltip } from '../utils/utils';
 import { getRolesTooltip } from 'utils/RoleTooltipCopy';
 import { shorten } from 'utils/NumberUtils';
@@ -83,9 +84,11 @@ export function SpacePlanAssignmentConfirmation({
         <Paragraph>
           {`You are about to change the type of ${space.name}. Check one last time to make sure everything is in order, then confirm.`}
         </Paragraph>
-        {currentPlan.name === 'Proof of Concept' && (
+        {isFreeProductPlan(currentPlan) && (
           <Paragraph>
-            <strong>This cannot be undone as it’s a Proof of Concept space.</strong>
+            <strong>
+              This cannot be undone as {space.name} is a {currentPlan.name}.
+            </strong>
           </Paragraph>
         )}
       </Typography>
