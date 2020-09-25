@@ -2,10 +2,16 @@ import React from 'react';
 import { render, screen, within, fireEvent, waitFor } from '@testing-library/react';
 import { when } from 'jest-when';
 import * as Fake from 'test/helpers/fakeFactory';
+import { go } from 'states/Navigator';
+import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 
 // eslint-disable-next-line
 import { mockEndpoint } from 'data/EndpointFactory';
 import { Dashboard } from './Dashboard';
+
+jest.mock('states/Navigator', () => ({
+  go: jest.fn(),
+}));
 
 const mockOrganization = Fake.Organization();
 const mockInvoiceData = new ArrayBuffer([1, 2, 3, 4]);
@@ -16,6 +22,7 @@ when(mockEndpoint)
 
 describe('Dashboard', () => {
   beforeEach(() => {
+    jest.spyOn(ModalLauncher, 'open').mockImplementation(async () => {});
     jest.spyOn(window, 'Blob').mockImplementation(() => {});
 
     window.URL.createObjectURL = jest.fn(() => 'blob://blahblah');
@@ -23,16 +30,18 @@ describe('Dashboard', () => {
   });
 
   afterEach(() => {
+    ModalLauncher.open.mockRestore();
     window.Blob.mockRestore();
     delete window.URL.createObjectURL;
     delete window.URL.revokeObjectURL;
   });
 
   describe('self-service organization', () => {
-    const mockBillingDetails = {
-      address: {},
+    const mockBillingDetails = {};
+    const mockPaymentDetails = {
+      number: '',
+      expirationDate: {},
     };
-    const mockPaymentDetails = {};
 
     const build = (custom) =>
       renderDashboard({
@@ -47,6 +56,50 @@ describe('Dashboard', () => {
       expect(screen.getByTestId('invoices-loading')).toBeVisible();
       expect(screen.getByTestId('credit-card-details-loading')).toBeVisible();
       expect(screen.getByTestId('billing-details-loading')).toBeVisible();
+    });
+
+    it('should go to the payment method edit page if the credit card "Edit" link is clicked', () => {
+      build();
+
+      fireEvent.click(screen.getByTestId('edit-payment-method-link'));
+
+      expect(go).toBeCalledWith({
+        path: ['account', 'organizations', 'billing', 'edit-payment-method'],
+      });
+    });
+
+    it('should open a modal if the billing details "Edit" link is clicked', () => {
+      build();
+
+      fireEvent.click(screen.getByTestId('edit-billing-details-link'));
+
+      expect(ModalLauncher.open).toBeCalledWith(expect.any(Function));
+    });
+
+    it('should not call onEditBillingDetails if ModalLauncher.open returns something falsy', async () => {
+      const onEditBillingDetails = jest.fn();
+
+      build({ onEditBillingDetails });
+
+      fireEvent.click(screen.getByTestId('edit-billing-details-link'));
+
+      await waitFor(expect(ModalLauncher.open).toBeCalled);
+
+      expect(onEditBillingDetails).not.toBeCalled();
+    });
+
+    it('should call onEditBillingDetails with the result of ModalLauncher.open if it returns something truthy', async () => {
+      ModalLauncher.open.mockResolvedValueOnce('something');
+
+      const onEditBillingDetails = jest.fn();
+
+      build({ onEditBillingDetails });
+
+      fireEvent.click(screen.getByTestId('edit-billing-details-link'));
+
+      await waitFor(expect(ModalLauncher.open).toBeCalled);
+
+      expect(onEditBillingDetails).toBeCalledWith('something');
     });
   });
 
@@ -182,6 +235,7 @@ function renderDashboard(custom) {
       orgIsEnterprise: false,
       billingDetails: { address: {} },
       paymentDetails: { expirationDate: { month: 1 }, number: '' },
+      onEditBillingDetails: () => {},
     },
     custom
   );

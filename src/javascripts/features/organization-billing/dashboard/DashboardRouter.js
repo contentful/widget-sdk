@@ -16,7 +16,8 @@ const ACTIONS = {
   SET_LOADING: 'SET_LOADING',
   SET_ORG_DETAILS: 'SET_ORG_DETAILS',
   SET_INVOICES: 'SET_INVOICES',
-  SET_BILLING_PAYMENT_DETAILS: 'SET_BILLING_PAYMENT_DETAILS',
+  SET_BILLING_DETAILS: 'SET_BILLING_DETAILS',
+  SET_PAYMENT_DETAILS: 'SET_PAYMENT_DETAILS',
 };
 
 const fetch = (organizationId, dispatch) => async () => {
@@ -46,8 +47,12 @@ const fetch = (organizationId, dispatch) => async () => {
     ]);
 
     dispatch({
-      type: ACTIONS.SET_BILLING_PAYMENT_DETAILS,
+      type: ACTIONS.SET_BILLING_DETAILS,
       billingDetails,
+    });
+
+    dispatch({
+      type: ACTIONS.SET_PAYMENT_DETAILS,
       paymentDetails,
     });
   }
@@ -66,8 +71,10 @@ const reducer = createImmerReducer({
   [ACTIONS.SET_INVOICES]: (state, { invoices }) => {
     state.invoices = invoices;
   },
-  [ACTIONS.SET_BILLING_PAYMENT_DETAILS]: (state, { billingDetails, paymentDetails }) => {
+  [ACTIONS.SET_BILLING_DETAILS]: (state, { billingDetails }) => {
     state.billingDetails = billingDetails;
+  },
+  [ACTIONS.SET_PAYMENT_DETAILS]: (state, { paymentDetails }) => {
     state.paymentDetails = paymentDetails;
   },
 });
@@ -102,6 +109,9 @@ export function DashboardRouter({ orgId: organizationId }) {
       invoices={invoices}
       orgIsSelfService={orgIsSelfService}
       orgIsEnterprise={orgIsEnterprise}
+      onEditBillingDetails={(newBillingDetails) =>
+        dispatch({ type: ACTIONS.SET_BILLING_DETAILS, billingDetails: newBillingDetails })
+      }
     />
   );
 }

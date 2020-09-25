@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
+import { isEmpty } from 'lodash';
 
-import { Heading } from '@contentful/forma-36-react-components';
+import { Heading, Card, Typography, Subheading } from '@contentful/forma-36-react-components';
 import { Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -16,6 +17,10 @@ const styles = {
   sectionHeading: css({
     marginBottom: tokens.spacingL,
     fontWeight: tokens.fontWeightMedium,
+  }),
+  card: css({
+    padding: tokens.spacingXl,
+    borderRadius: '4px',
   }),
 };
 
@@ -37,14 +42,25 @@ export const NewSpaceBillingDetailsPage = ({
         Complete your payment
       </Heading>
       <Grid className={styles.grid} columns="60% auto" rows={1} columnGap="spacing2Xl">
-        <BillingDetailsForm
-          onSubmit={onSubmitBillingDetails}
-          onCancel={navigateToPreviousStep}
-          submitText="Continue"
-          cancelText="Back"
-          billingDetails={savedBillingDetails}
-        />
-        <PaymentSummary selectedPlan={selectedPlan} />
+        <Card className={styles.card} testId="billing-details.card">
+          <Typography>
+            <Subheading className={styles.cardTitle} element="h3" testId="billing-details.heading">
+              {isEmpty(savedBillingDetails) ? 'Add' : 'Update'} your billing details{' '}
+              <span role="img" aria-label="Mailbox closed">
+                📫
+              </span>
+            </Subheading>
+          </Typography>
+
+          <BillingDetailsForm
+            onSubmit={onSubmitBillingDetails}
+            onCancel={navigateToPreviousStep}
+            submitText="Continue"
+            cancelText="Back"
+            billingDetails={savedBillingDetails}
+          />
+          <PaymentSummary selectedPlan={selectedPlan} />
+        </Card>
       </Grid>
     </section>
   );

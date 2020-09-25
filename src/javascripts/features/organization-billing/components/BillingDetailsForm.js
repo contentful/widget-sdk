@@ -1,16 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import { isEmpty } from 'lodash';
-import {
-  TextField,
-  Form,
-  SelectField,
-  Button,
-  Card,
-  Typography,
-  Subheading,
-} from '@contentful/forma-36-react-components';
+import { TextField, Form, SelectField, Button } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { useForm } from 'core/hooks/useForm';
@@ -157,196 +148,189 @@ export function BillingDetailsForm({
   const handleBlur = (e) => onBlur(e.target.getAttribute('id'), e.target.value);
 
   return (
-    <Card className={styles.card} testId="billing-details.card">
-      <Typography>
-        <Subheading className={styles.cardTitle} element="h3" testId="billing-details.heading">
-          {isEmpty(billingDetails) ? 'Add' : 'Update'} your billing details{' '}
-          <span role="img" aria-label="Mailbox closed">
-            📫
-          </span>
-        </Subheading>
-      </Typography>
-
-      <Form className={styles.form} spacing="condensed" onSubmit={onFormSubmit}>
-        <div className={styles.twoItemRow}>
-          <TextField
-            className={styles.fieldSpacing}
-            name="first-name"
-            id="firstName"
-            testId="billing-details.firstName"
-            labelText="First name"
-            textInputProps={{
-              placeholder: 'Archibald',
-            }}
-            autoFocus
-            value={fields.firstName.value}
-            validationMessage={fields.firstName.error}
-            onChange={handleChange}
-            onBlur={handleBlur}
-          />
-
-          <TextField
-            name="last-name"
-            id="lastName"
-            testId="billing-details.lastName"
-            labelText="Last name"
-            textInputProps={{
-              placeholder: 'Johannson',
-            }}
-            autoFocus
-            value={fields.lastName.value}
-            validationMessage={fields.lastName.error}
-            onChange={handleChange}
-            onBlur={handleBlur}
-          />
-        </div>
-
+    <Form
+      testId="billing-details-form"
+      className={styles.form}
+      spacing="condensed"
+      onSubmit={onFormSubmit}>
+      <div className={styles.twoItemRow}>
         <TextField
-          name="email"
-          id="workEmail"
-          testId="billing-details.workEmail"
-          labelText="Email"
+          className={styles.fieldSpacing}
+          name="first-name"
+          id="firstName"
+          testId="billing-details.firstName"
+          labelText="First name"
           textInputProps={{
-            placeholder: 'archibald.johannson@email.com',
+            placeholder: 'Archibald',
           }}
           autoFocus
-          value={fields.workEmail.value}
-          validationMessage={fields.workEmail.error}
+          value={fields.firstName.value}
+          validationMessage={fields.firstName.error}
           onChange={handleChange}
           onBlur={handleBlur}
         />
 
         <TextField
-          name="address"
-          id="address1"
-          testId="billing-details.address1"
-          labelText="Address"
+          name="last-name"
+          id="lastName"
+          testId="billing-details.lastName"
+          labelText="Last name"
           textInputProps={{
-            placeholder: '19th Avenue North',
+            placeholder: 'Johannson',
           }}
           autoFocus
-          value={fields.address1.value}
-          validationMessage={fields.address1.error}
+          value={fields.lastName.value}
+          validationMessage={fields.lastName.error}
           onChange={handleChange}
           onBlur={handleBlur}
         />
+      </div>
 
+      <TextField
+        name="email"
+        id="workEmail"
+        testId="billing-details.workEmail"
+        labelText="Email"
+        textInputProps={{
+          placeholder: 'archibald.johannson@email.com',
+        }}
+        autoFocus
+        value={fields.workEmail.value}
+        validationMessage={fields.workEmail.error}
+        onChange={handleChange}
+        onBlur={handleBlur}
+      />
+
+      <TextField
+        name="address"
+        id="address1"
+        testId="billing-details.address1"
+        labelText="Address"
+        textInputProps={{
+          placeholder: '19th Avenue North',
+        }}
+        autoFocus
+        value={fields.address1.value}
+        validationMessage={fields.address1.error}
+        onChange={handleChange}
+        onBlur={handleBlur}
+      />
+
+      <TextField
+        name="address2"
+        id="address2"
+        testId="billing-details.address2"
+        labelText="Address line 2 (optional)"
+        autoFocus
+        value={fields.address2.value}
+        validationMessage={fields.address2.error}
+        onChange={handleChange}
+        onBlur={handleBlur}
+      />
+
+      <div className={styles.twoItemRow}>
         <TextField
-          name="address2"
-          id="address2"
-          testId="billing-details.address2"
-          labelText="Address line 2 (optional)"
+          className={styles.fieldSpacing}
+          name="city"
+          id="city"
+          testId="billing-details.city"
+          labelText="City"
+          textInputProps={{
+            placeholder: 'Fargo',
+          }}
           autoFocus
-          value={fields.address2.value}
-          validationMessage={fields.address2.error}
+          value={fields.city.value}
+          validationMessage={fields.city.error}
           onChange={handleChange}
           onBlur={handleBlur}
         />
+        <TextField
+          name="postal-code"
+          id="zipCode"
+          testId="billing-details.zipCode"
+          labelText="Postcode"
+          textInputProps={{
+            placeholder: '58102',
+          }}
+          autoFocus
+          value={fields.zipCode.value}
+          validationMessage={fields.zipCode.error}
+          onChange={handleChange}
+          onBlur={handleBlur}
+        />
+      </div>
 
-        <div className={styles.twoItemRow}>
-          <TextField
-            className={styles.fieldSpacing}
-            name="city"
-            id="city"
-            testId="billing-details.city"
-            labelText="City"
-            textInputProps={{
-              placeholder: 'Fargo',
-            }}
-            autoFocus
-            value={fields.city.value}
-            validationMessage={fields.city.error}
-            onChange={handleChange}
-            onBlur={handleBlur}
-          />
-          <TextField
-            name="postal-code"
-            id="zipCode"
-            testId="billing-details.zipCode"
-            labelText="Postcode"
-            textInputProps={{
-              placeholder: '58102',
-            }}
-            autoFocus
-            value={fields.zipCode.value}
-            validationMessage={fields.zipCode.error}
-            onChange={handleChange}
-            onBlur={handleBlur}
-          />
-        </div>
+      <SelectField
+        className={styles.selectLocale}
+        name="country"
+        id="country"
+        testId="billing-details.country"
+        labelText="Country"
+        value={fields.country.value}
+        onChange={onChangeCountry}>
+        <option value="" disabled>
+          Choose an option
+        </option>
+        {COUNTRIES_LIST.map((country) => (
+          <option key={country.name} value={country.code}>
+            {country.name}
+          </option>
+        ))}
+      </SelectField>
 
+      {showUSState && (
         <SelectField
           className={styles.selectLocale}
-          name="country"
-          id="country"
-          testId="billing-details.country"
-          labelText="Country"
-          value={fields.country.value}
-          onChange={onChangeCountry}>
-          <option value="" disabled>
-            Choose an option
-          </option>
-          {COUNTRIES_LIST.map((country) => (
-            <option key={country.name} value={country.code}>
-              {country.name}
+          name="state"
+          id="state"
+          testId="billing-details.state"
+          labelText="State"
+          value={fields.state.value}
+          validationMessage={fields.state.error}
+          onChange={handleChange}>
+          <option value="" disabled />
+          {US_STATES_LIST.map((state) => (
+            <option key={state.name} value={state.code}>
+              {state.name}
             </option>
           ))}
         </SelectField>
+      )}
 
-        {showUSState && (
-          <SelectField
-            className={styles.selectLocale}
-            name="state"
-            id="state"
-            testId="billing-details.state"
-            labelText="State"
-            value={fields.state.value}
-            validationMessage={fields.state.error}
-            onChange={handleChange}>
-            <option value="" disabled />
-            {US_STATES_LIST.map((state) => (
-              <option key={state.name} value={state.code}>
-                {state.name}
-              </option>
-            ))}
-          </SelectField>
-        )}
+      {showVat && (
+        <TextField
+          name="vat"
+          id="vat"
+          testId="billing-details.vat"
+          labelText="VAT number"
+          textInputProps={{
+            placeholder: 'XX123456789',
+          }}
+          autoFocus
+          value={fields.vat.value}
+          validationMessage={fields.vat.error}
+          onChange={handleChange}
+          onBlur={handleBlur}
+        />
+      )}
 
-        {showVat && (
-          <TextField
-            name="vat"
-            id="vat"
-            testId="billing-details.vat"
-            labelText="VAT number"
-            textInputProps={{
-              placeholder: 'XX123456789',
-            }}
-            autoFocus
-            value={fields.vat.value}
-            validationMessage={fields.vat.error}
-            onChange={handleChange}
-            onBlur={handleBlur}
-          />
-        )}
-
-        <div className={styles.buttonsContainer}>
-          <Button
-            onClick={onCancel}
-            testId="billing-details.cancel"
-            buttonType="muted"
-            disabled={form.submitting}>
-            {cancelText}
-          </Button>
-          <Button
-            onClick={onFormSubmit}
-            testId="billing-details.submit"
-            disabled={form.submitting}
-            loading={form.submitting}>
-            {submitText}
-          </Button>
-        </div>
-      </Form>
-    </Card>
+      <div className={styles.buttonsContainer}>
+        <Button
+          onClick={onCancel}
+          testId="billing-details.cancel"
+          buttonType="muted"
+          disabled={form.isPending}>
+          {cancelText}
+        </Button>
+        <Button
+          onClick={onFormSubmit}
+          testId="billing-details.submit"
+          disabled={form.isPending}
+          loading={form.isPending}>
+          {submitText}
+        </Button>
+      </div>
+    </Form>
   );
 }
 
