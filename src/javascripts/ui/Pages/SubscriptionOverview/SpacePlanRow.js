@@ -109,7 +109,7 @@ function SpacePlanRow({
             <StateLink
               testId="subscription-page.spaces-list.change-plan-link"
               component={TextLink}
-              path=".space_plans"
+              path="^.space_plans"
               params={{ spaceId: space.sys.id }}
               trackingEvent={'space_assignment:change'}
               trackParams={{
