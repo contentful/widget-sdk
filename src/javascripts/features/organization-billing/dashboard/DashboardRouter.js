@@ -11,8 +11,10 @@ import {
 } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { createImmerReducer } from 'core/utils/createImmerReducer';
+import { isOwner } from 'services/OrganizationRoles';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import { go } from 'states/Navigator';
+import * as TokenStore from 'services/TokenStore';
 
 const ACTIONS = {
   SET_LOADING: 'SET_LOADING',
@@ -28,6 +30,22 @@ const fetch = (organizationId, dispatch) => async () => {
   if (!isEnabled) {
     go({
       path: ['account', 'organizations', 'billing-gatekeeper'],
+    });
+
+    return;
+  }
+
+  let organization;
+
+  try {
+    organization = await TokenStore.getOrganization(organizationId);
+  } catch {
+    //
+  }
+
+  if (!organization || !isOwner(organization)) {
+    go({
+      path: ['home'],
     });
 
     return;

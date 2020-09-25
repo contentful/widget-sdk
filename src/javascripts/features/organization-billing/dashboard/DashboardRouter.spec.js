@@ -4,11 +4,21 @@ import { when } from 'jest-when';
 import { DashboardRouter } from './DashboardRouter';
 import * as Fake from 'test/helpers/fakeFactory';
 import { getVariation } from 'LaunchDarkly';
+import { isOwner } from 'services/OrganizationRoles';
+import * as TokenStore from 'services/TokenStore';
 
 import { go } from 'states/Navigator';
 
 // eslint-disable-next-line
 import { mockEndpoint } from 'data/EndpointFactory';
+
+jest.mock('services/TokenStore', () => ({
+  getOrganization: jest.fn().mockResolvedValue({}),
+}));
+
+jest.mock('services/OrganizationRoles', () => ({
+  isOwner: jest.fn().mockReturnValue(true),
+}));
 
 jest.mock('states/Navigator', () => ({
   go: jest.fn(),
@@ -46,6 +56,30 @@ describe('DashboardRouter', () => {
 
     expect(go).toBeCalledWith({
       path: ['account', 'organizations', 'billing-gatekeeper'],
+    });
+  });
+
+  it('should redirect to home if the user is not an org owner', async () => {
+    isOwner.mockReturnValueOnce(false);
+
+    build();
+
+    await waitFor(expect(isOwner).toBeCalled);
+
+    expect(go).toBeCalledWith({
+      path: ['home'],
+    });
+  });
+
+  it('should redirect to home if the organization is not in the token', async () => {
+    TokenStore.getOrganization.mockRejectedValueOnce();
+
+    build();
+
+    await waitFor(expect(go).toBeCalled);
+
+    expect(go).toHaveBeenCalledWith({
+      path: ['home'],
     });
   });
 

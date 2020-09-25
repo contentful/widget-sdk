@@ -8,10 +8,12 @@ import { setDefaultPaymentMethod } from '../services/PaymentMethodService';
 import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { go } from 'states/Navigator';
+import { isOwner } from 'services/OrganizationRoles';
+import * as TokenStore from 'services/TokenStore';
 
 import { ZuoraCreditCardIframe } from '../components/ZuoraCreditCardIframe';
 
-const fetch = () => async () => {
+const fetch = (organizationId) => async () => {
   // Do this here, so that the user is redirected much earlier (loading the HPM
   // params takes a while)
   const shouldShowPage = await getVariation(FLAGS.NEW_PURCHASE_FLOW);
@@ -19,6 +21,22 @@ const fetch = () => async () => {
   if (!shouldShowPage) {
     go({
       path: ['account', 'organizations', 'billing-gatekeeper'],
+    });
+
+    return false;
+  }
+
+  let organization;
+
+  try {
+    organization = await TokenStore.getOrganization(organizationId);
+  } catch {
+    //
+  }
+
+  if (!organization || !isOwner(organization)) {
+    go({
+      path: ['home'],
     });
 
     return false;
