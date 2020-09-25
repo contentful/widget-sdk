@@ -3,9 +3,16 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { when } from 'jest-when';
 import { DashboardRouter } from './DashboardRouter';
 import * as Fake from 'test/helpers/fakeFactory';
+import { getVariation } from 'LaunchDarkly';
+
+import { go } from 'states/Navigator';
 
 // eslint-disable-next-line
 import { mockEndpoint } from 'data/EndpointFactory';
+
+jest.mock('states/Navigator', () => ({
+  go: jest.fn(),
+}));
 
 const mockBasePlanSelfService = Fake.Plan({
   planType: 'base',
@@ -30,6 +37,18 @@ when(mockEndpoint)
 const mockOrganization = Fake.Organization();
 
 describe('DashboardRouter', () => {
+  it('should redirect to the old billing view if the flag is not enabled', async () => {
+    getVariation.mockResolvedValueOnce(false);
+
+    build();
+
+    await waitFor(() => expect(go).toBeCalled());
+
+    expect(go).toBeCalledWith({
+      path: ['account', 'organizations', 'billing-gatekeeper'],
+    });
+  });
+
   it('should request the org base plan and then invoices', async () => {
     build();
 

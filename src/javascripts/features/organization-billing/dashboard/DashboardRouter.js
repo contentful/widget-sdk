@@ -11,6 +11,8 @@ import {
 } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { createImmerReducer } from 'core/utils/createImmerReducer';
+import { FLAGS, getVariation } from 'LaunchDarkly';
+import { go } from 'states/Navigator';
 
 const ACTIONS = {
   SET_LOADING: 'SET_LOADING',
@@ -21,6 +23,16 @@ const ACTIONS = {
 };
 
 const fetch = (organizationId, dispatch) => async () => {
+  const isEnabled = await getVariation(FLAGS.NEW_PURCHASE_FLOW, { organizationId });
+
+  if (!isEnabled) {
+    go({
+      path: ['account', 'organizations', 'billing-gatekeeper'],
+    });
+
+    return;
+  }
+
   const endpoint = createOrganizationEndpoint(organizationId);
   const basePlan = await getBasePlan(endpoint);
 
