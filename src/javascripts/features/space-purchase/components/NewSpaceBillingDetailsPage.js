@@ -59,8 +59,8 @@ export const NewSpaceBillingDetailsPage = ({
             cancelText="Back"
             billingDetails={savedBillingDetails}
           />
-          <PaymentSummary selectedPlan={selectedPlan} />
         </Card>
+        <PaymentSummary selectedPlan={selectedPlan} />
       </Grid>
     </section>
   );

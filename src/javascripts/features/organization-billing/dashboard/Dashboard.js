@@ -272,6 +272,12 @@ function BillingDetails({ billingDetails }) {
         </>
       )}
       {billingDetails.zipCode} {billingDetails.city}
+      {billingDetails.state && (
+        <>
+          <br />
+          <span data-test-id="state">{billingDetails.state}</span>
+        </>
+      )}
       <br />
       {billingDetails.country}
       <br />

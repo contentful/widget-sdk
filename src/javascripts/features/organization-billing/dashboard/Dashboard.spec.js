@@ -211,6 +211,16 @@ describe('Dashboard', () => {
     expect(screen.getByTestId('address2').textContent).toBe(billingDetails.address2);
   });
 
+  it('should show the state if given in the billing details', () => {
+    const billingDetails = {
+      state: 'Florida',
+    };
+
+    renderDashboard({ billingDetails });
+
+    expect(screen.getByTestId('state').textContent).toBe(billingDetails.state);
+  });
+
   it('should format the payment details correctly', () => {
     const paymentDetails = {
       number: '************1234',
