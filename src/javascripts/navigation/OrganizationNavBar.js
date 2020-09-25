@@ -78,11 +78,23 @@ function getItems(params, { orgId }) {
       dataViewType: 'subscription-new',
     },
     {
-      if: params.hasBillingTab,
+      if: params.hasBillingTab && !params.newSpacePurchaseFlowEnabled,
       title: 'Billing',
       sref: 'account.organizations.billing-gatekeeper',
       srefParams: { orgId },
       rootSref: 'account.organizations.billing-gatekeeper',
+      srefOptions: {
+        inherit: false,
+      },
+      navIcon: 'Billing',
+      dataViewType: 'billing',
+    },
+    {
+      if: params.hasBillingTab && params.newSpacePurchaseFlowEnabled,
+      title: 'Billing',
+      sref: 'account.organizations.billing',
+      srefParams: { orgId },
+      rootSref: 'account.organizations.billing',
       srefOptions: {
         inherit: false,
       },
@@ -207,6 +219,7 @@ export default class OrganizationNavigationBar extends React.Component {
       FeatureService.get('offsiteBackup'),
       AdvancedExtensibilityFeature.isEnabled(),
       getVariation(FLAGS.PLATFORM_TRIAL_COMM, { organizationId: orgId }),
+      getVariation(FLAGS.NEW_PURCHASE_FLOW, { organizationId: orgId }),
     ];
 
     if (organization.pricingVersion !== 'pricing_version_1' && isOwnerOrAdmin(organization)) {
@@ -224,6 +237,7 @@ export default class OrganizationNavigationBar extends React.Component {
       hasOffsiteBackup,
       hasAdvancedExtensibility,
       platformTrialCommEnabled,
+      newSpacePurchaseFlowEnabled,
       newPricingFeatureDisplayed,
       basePlanIsEnterprise,
     ] = await Promise.all(promises);
@@ -239,6 +253,7 @@ export default class OrganizationNavigationBar extends React.Component {
       hasSettingsTab: isOwner(organization),
       showUsageNewLabel: newPricingFeatureDisplayed && !basePlanIsEnterprise,
       platformTrialCommEnabled,
+      newSpacePurchaseFlowEnabled,
       isOrganizationOnTrial: isOrganizationOnTrial(organization),
     };
 
