@@ -360,6 +360,15 @@ export class AppRoute extends Component<Props, State> {
     const { isInstalled, installationState, appLoaded, loadingError } = this.state;
     return (
       <>
+        {!this.props.app.isPrivateApp && this.props.app.documentationLink && (
+          <TextLink
+            className={styles.documentationLink}
+            href={this.props.app.documentationLink.url}
+            target="_blank"
+            rel="noopener noreferrer">
+            View this app’s documentation
+          </TextLink>
+        )}
         {appLoaded && !isInstalled && (
           <Button
             buttonType="primary"

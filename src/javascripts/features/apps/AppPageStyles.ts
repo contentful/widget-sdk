@@ -113,4 +113,7 @@ export const styles = {
       '0 0 0 1px rgba(0,0,0,.05), 0px 15px 35px rgba(0, 0, 0, 0.08), 0px 2px 15px rgba(0, 0, 0, 0.05)',
     animation: `${feedbackButtonFadeIn} 0.2s ${tokens.transitionEasingCubicBezier} 2s backwards`,
   }),
+  documentationLink: css({
+    alignSelf: 'center',
+  }),
 };

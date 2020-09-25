@@ -104,7 +104,8 @@ function TagsWorkbenchActions({ hasData, onCreate }) {
                   className="secondary-publish-button"
                   buttonType="primary"
                   indicateDropdown
-                  onClick={toggleDropDown}></Button>
+                  onClick={toggleDropDown}
+                />
               }>
               <DropdownList>
                 <DropdownListItem
