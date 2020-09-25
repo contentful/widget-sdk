@@ -153,8 +153,8 @@ export function BillingDetailsForm({
   };
 
   // Get the input's name and call onChange/onBlur for that input with the updated value.
-  const handleChange = (e) => onChange(e.target.getAttribute('name'), e.target.value);
-  const handleBlur = (e) => onBlur(e.target.getAttribute('name'), e.target.value);
+  const handleChange = (e) => onChange(e.target.getAttribute('id'), e.target.value);
+  const handleBlur = (e) => onBlur(e.target.getAttribute('id'), e.target.value);
 
   return (
     <Card className={styles.card} testId="billing-details.card">
@@ -171,8 +171,8 @@ export function BillingDetailsForm({
         <div className={styles.twoItemRow}>
           <TextField
             className={styles.fieldSpacing}
-            name="firstName"
-            id="first_name"
+            name="first-name"
+            id="firstName"
             testId="billing-details.firstName"
             labelText="First name"
             textInputProps={{
@@ -186,8 +186,8 @@ export function BillingDetailsForm({
           />
 
           <TextField
-            name="lastName"
-            id="last_name"
+            name="last-name"
+            id="lastName"
             testId="billing-details.lastName"
             labelText="Last name"
             textInputProps={{
@@ -202,7 +202,7 @@ export function BillingDetailsForm({
         </div>
 
         <TextField
-          name="workEmail"
+          name="email"
           id="workEmail"
           testId="billing-details.workEmail"
           labelText="Email"
@@ -217,7 +217,7 @@ export function BillingDetailsForm({
         />
 
         <TextField
-          name="address1"
+          name="address"
           id="address1"
           testId="billing-details.address1"
           labelText="Address"
@@ -260,7 +260,7 @@ export function BillingDetailsForm({
             onBlur={handleBlur}
           />
           <TextField
-            name="zipCode"
+            name="postal-code"
             id="zipCode"
             testId="billing-details.zipCode"
             labelText="Postcode"
@@ -278,7 +278,7 @@ export function BillingDetailsForm({
         <SelectField
           className={styles.selectLocale}
           name="country"
-          id="newspace-language"
+          id="country"
           testId="billing-details.country"
           labelText="Country"
           value={fields.country.value}
@@ -297,7 +297,7 @@ export function BillingDetailsForm({
           <SelectField
             className={styles.selectLocale}
             name="state"
-            id="newspace-language"
+            id="state"
             testId="billing-details.state"
             labelText="State"
             value={fields.state.value}

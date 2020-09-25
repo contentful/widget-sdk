@@ -16,14 +16,12 @@ describe('BillingDetailsForm', () => {
 
       const allTextFields = screen.getAllByTestId('cf-ui-text-input');
 
-      // Fill out all text fields
       allTextFields.forEach((textField) => {
-        userEvent.type(textField, mockBillingDetails[textField.getAttribute('name')]);
+        userEvent.type(textField, mockBillingDetails[textField.getAttribute('id')]);
       });
 
-      // Make sure all text fields are filled out
       allTextFields.forEach((textField) => {
-        expect(textField.value).toEqual(mockBillingDetails[textField.getAttribute('name')]);
+        expect(textField.value).toEqual(mockBillingDetails[textField.getAttribute('id')]);
       });
     });
 
@@ -230,7 +228,7 @@ describe('BillingDetailsForm', () => {
       // Make sure all text fields are filled out
       const allTextFields = screen.getAllByTestId('cf-ui-text-input');
       allTextFields.forEach((textField) => {
-        expect(textField.value).toEqual(mockBillingDetails[textField.getAttribute('name')]);
+        expect(textField.value).toEqual(mockBillingDetails[textField.getAttribute('id')]);
       });
     });
 

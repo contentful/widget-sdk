@@ -221,7 +221,7 @@ describe('NewSpacePage', () => {
       // ------ Billing Details page ------
       // Fill out all text fields
       screen.getAllByTestId('cf-ui-text-input').forEach((textField) => {
-        userEvent.type(textField, mockBillingDetails[textField.getAttribute('name')]);
+        userEvent.type(textField, mockBillingDetails[textField.getAttribute('id')]);
       });
 
       const countrySelect = within(screen.getByTestId('billing-details.country')).getByTestId(
@@ -267,7 +267,7 @@ describe('NewSpacePage', () => {
     // ------ Billing Details page ------
     // Fill out all text fields
     screen.getAllByTestId('cf-ui-text-input').forEach((textField) => {
-      userEvent.type(textField, mockBillingDetails[textField.getAttribute('name')]);
+      userEvent.type(textField, mockBillingDetails[textField.getAttribute('id')]);
     });
 
     const countrySelect = within(screen.getByTestId('billing-details.country')).getByTestId(
@@ -292,7 +292,7 @@ describe('NewSpacePage', () => {
 
     // Check all text fields
     screen.getAllByTestId('cf-ui-text-input').forEach((textField) => {
-      expect(textField.value).toEqual(mockBillingDetails[textField.getAttribute('name')]);
+      expect(textField.value).toEqual(mockBillingDetails[textField.getAttribute('id')]);
     });
   });
 
