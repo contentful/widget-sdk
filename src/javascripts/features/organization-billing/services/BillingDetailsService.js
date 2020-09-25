@@ -1,12 +1,15 @@
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
+import { transformBillingDetails } from '../utils/transformBillingDetails';
 
-export function getBillingDetails(organizationId) {
+export async function getBillingDetails(organizationId) {
   const endpoint = createOrganizationEndpoint(organizationId);
 
-  return endpoint({
+  const rawBillingDetails = await endpoint({
     method: 'GET',
     path: ['billing_details'],
   });
+
+  return transformBillingDetails(rawBillingDetails);
 }
 
 export function createBillingDetails(organizationId, billingDetails) {

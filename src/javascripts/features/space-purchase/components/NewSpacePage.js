@@ -26,10 +26,6 @@ import { NewSpaceReceiptPage } from './NewSpaceReceiptPage';
 import { useAsync } from 'core/hooks/useAsync';
 
 import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
-import {
-  createBillingDetailsForAPI,
-  convertBillingDetailsFromAPI,
-} from '../utils/convertBillingDetails';
 import { usePageContent } from '../hooks/usePageContent';
 
 const NEW_SPACE_STEPS = [
@@ -69,13 +65,13 @@ const initialFetch = (
   if (organization.isBillable) {
     setIsLoadingBillingDetails(true);
 
-    const [paymentMethod, billingDetailsResponse] = await Promise.all([
-      getDefaultPaymentMethod(organization.sys.id),
+    const [billingDetails, paymentMethod] = await Promise.all([
       getBillingDetails(organization.sys.id),
+      getDefaultPaymentMethod(organization.sys.id),
     ]);
 
     setPaymentMethodInfo(paymentMethod);
-    setBillingDetails(convertBillingDetailsFromAPI(billingDetailsResponse));
+    setBillingDetails(billingDetails);
     setIsLoadingBillingDetails(false);
   }
 };
@@ -168,11 +164,14 @@ export const NewSpacePage = ({
   };
 
   const onSubmitPaymentMethod = async (refId) => {
-    const reconciledBillingDetails = createBillingDetailsForAPI(billingDetails, refId);
+    const newBillingDetails = {
+      ...billingDetails,
+      refid: refId,
+    };
 
     let paymentMethod;
     try {
-      await createBillingDetails(organization.sys.id, reconciledBillingDetails);
+      await createBillingDetails(organization.sys.id, newBillingDetails);
       await setDefaultPaymentMethod(organization.sys.id, refId);
       paymentMethod = await getDefaultPaymentMethod(organization.sys.id);
     } catch (error) {
@@ -180,7 +179,7 @@ export const NewSpacePage = ({
         data: {
           error,
           organizationId: organization.sys.id,
-          reconciledBillingDetails,
+          newBillingDetails,
           refId,
         },
       });

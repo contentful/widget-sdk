@@ -5,15 +5,14 @@ import { BillingInformation } from './BillingInformation';
 const mockBillingDetails = {
   firstName: 'John',
   lastName: 'Doe',
-  email: 'test@example.com',
-  address: '123 street ave',
-  addressTwo: 'apartment 321',
+  workEmail: 'test@example.com',
+  address1: '123 street ave',
+  address2: 'apartment 321',
   city: 'Rio de Janeiro',
-  postcode: '11111',
+  zipCode: '11111',
   country: 'BR',
 };
 
-// Prevent from mutating mockBillingDetails
 Object.freeze(mockBillingDetails);
 
 describe('BillingInformation', () => {
@@ -27,29 +26,29 @@ describe('BillingInformation', () => {
   });
 
   it('should display VAT if there is a VAT', () => {
-    const mockBillingDetailsWithVAT = { ...mockBillingDetails, vatNumber: 'BR123456' };
-    build({ billingInfo: mockBillingDetailsWithVAT });
+    const mockBillingDetailsWithVAT = { ...mockBillingDetails, vat: 'BR123456' };
+    build({ billingDetails: mockBillingDetailsWithVAT });
 
     expect(screen.getByText('BR123456')).toBeVisible();
   });
 
   it('should display State if there is a State', () => {
     const mockBillingDetailsWithState = { ...mockBillingDetails, state: 'California' };
-    build({ billingInfo: mockBillingDetailsWithState });
+    build({ billingDetails: mockBillingDetailsWithState });
 
     expect(screen.getByText('California')).toBeVisible();
   });
 
   it('should display the country name if given a country code', () => {
     const mockBillingDetailsWithState = { ...mockBillingDetails, country: 'BR' };
-    build({ billingInfo: mockBillingDetailsWithState });
+    build({ billingDetails: mockBillingDetailsWithState });
 
     expect(screen.getByText('Brazil')).toBeVisible();
   });
 
   it('should display the country name if given a country name', () => {
     const mockBillingDetailsWithState = { ...mockBillingDetails, country: 'Brazil' };
-    build({ billingInfo: mockBillingDetailsWithState });
+    build({ billingDetails: mockBillingDetailsWithState });
 
     expect(screen.getByText('Brazil')).toBeVisible();
   });
@@ -57,7 +56,7 @@ describe('BillingInformation', () => {
 
 function build(customProps) {
   const props = {
-    billingInfo: mockBillingDetails,
+    billingDetails: mockBillingDetails,
     ...customProps,
   };
 
