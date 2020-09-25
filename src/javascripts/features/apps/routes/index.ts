@@ -32,7 +32,7 @@ const appsFeatureResolver = [
   'spaceContext',
   async (spaceContext) => {
     try {
-      return getSpaceFeature(spaceContext.getId(), BASIC_APPS_FEATURE_KEY, DEFAULT_FEATURE_STATUS);
+      return await getSpaceFeature(spaceContext.getId(), BASIC_APPS_FEATURE_KEY, DEFAULT_FEATURE_STATUS);
     } catch (err) {
       return DEFAULT_FEATURE_STATUS;
     }
@@ -44,7 +44,7 @@ const advancedAppsFeatureResolver = [
   async (spaceContext) => {
     try {
       const orgId = spaceContext.organization.sys.id;
-      return getOrgFeature(orgId, ADVANCED_APPS_FEATURE_KEY, DEFAULT_ADVANCED_APPS_STATUS);
+      return await getOrgFeature(orgId, ADVANCED_APPS_FEATURE_KEY, DEFAULT_ADVANCED_APPS_STATUS);
     } catch (err) {
       return DEFAULT_ADVANCED_APPS_STATUS;
     }
