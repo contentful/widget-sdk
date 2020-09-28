@@ -6,6 +6,7 @@ const productCatalogSpace = require('../fixtures/responses/product-catalog-space
 const productCatalogTasks = require('../fixtures/responses/product-catalog-tasks.json');
 const productCatalogScheduledPublishing = require('../fixtures/responses/product-catalog-scheduled-publishing.json');
 const productCatalogBasicApps = require('../fixtures/responses/product-catalog-basic-apps.json');
+const productCatalogAdvancedApps = require('../fixtures/responses/product-catalog-advanced-apps.json');
 const productCatalogContentTags = require('../fixtures/responses/product-catalog-content-tags.json');
 const productCatalogCustomSidebar = require('../fixtures/responses/product-catalog-custom-sidebar.json');
 const productCatalogTeams = require('../fixtures/responses/product-catalog-teams.json');
@@ -183,6 +184,26 @@ export const queryForBasicAppsInDefaultSpace = {
     }).as('queryForBasicAppsInDefaultSpace');
 
     return '@queryForBasicAppsInDefaultSpace';
+  },
+};
+
+export const queryForAdvancedAppsInDefaultOrg = {
+  willFindFeatureDisabled() {
+    cy.addInteraction({
+      provider: PROVIDER,
+      state: States.ORG_WITH_SEVERAL_FEATURES,
+      uponReceiving: `a query for the "advanced_apps" feature for org "${defaultOrgId}"`,
+      withRequest: productCatalogFeaturesForDefaultOrgRequest('sys.featureId[]=advanced_apps'),
+      willRespondWith: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
+        body: productCatalogAdvancedApps,
+      },
+    }).as('queryForAdvancedAppsInDefaultOrg');
+
+    return '@queryForAdvancedAppsInDefaultOrg';
   },
 };
 

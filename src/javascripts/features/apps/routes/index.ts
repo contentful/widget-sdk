@@ -4,7 +4,7 @@ import { AppsListPage } from '../AppsListPage';
 import { AppRoute } from '../AppPage';
 import { makeAppHookBus, getAppsRepo } from 'features/apps-core';
 import { createAppExtensionSDK } from 'app/widgets/ExtensionSDKs';
-import { getSpaceFeature } from 'data/CMA/ProductCatalog';
+import { getSpaceFeature, getOrgFeature } from 'data/CMA/ProductCatalog';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { shouldHide, Action } from 'access_control/AccessChecker';
 import * as TokenStore from 'services/TokenStore';
@@ -15,6 +15,8 @@ import { PageWidgetRenderer } from '../PageWidgetRenderer';
 
 const BASIC_APPS_FEATURE_KEY = 'basic_apps';
 const DEFAULT_FEATURE_STATUS = true; // Fail open
+const ADVANCED_APPS_FEATURE_KEY = 'advanced_apps';
+const DEFAULT_ADVANCED_APPS_STATUS = false;
 
 function canUserManageApps() {
   return !shouldHide(Action.UPDATE, 'settings');
@@ -24,9 +26,25 @@ const appsFeatureResolver = [
   'spaceContext',
   async (spaceContext) => {
     try {
-      return getSpaceFeature(spaceContext.getId(), BASIC_APPS_FEATURE_KEY, DEFAULT_FEATURE_STATUS);
+      return await getSpaceFeature(
+        spaceContext.getId(),
+        BASIC_APPS_FEATURE_KEY,
+        DEFAULT_FEATURE_STATUS
+      );
     } catch (err) {
       return DEFAULT_FEATURE_STATUS;
+    }
+  },
+];
+
+const advancedAppsFeatureResolver = [
+  'spaceContext',
+  async (spaceContext) => {
+    try {
+      const orgId = spaceContext.organization.sys.id;
+      return await getOrgFeature(orgId, ADVANCED_APPS_FEATURE_KEY, DEFAULT_ADVANCED_APPS_STATUS);
+    } catch (err) {
+      return DEFAULT_ADVANCED_APPS_STATUS;
     }
   },
 ];
@@ -45,6 +63,7 @@ export const appRoute = {
       },
       resolve: {
         hasAppsFeature: appsFeatureResolver,
+        hasAdvancedAppsFeature: advancedAppsFeatureResolver,
       },
       component: AppsListPage,
       mapInjectedToProps: [
@@ -52,11 +71,19 @@ export const appRoute = {
         '$state',
         '$stateParams',
         'hasAppsFeature',
-        (spaceContext, $state, $stateParams, hasAppsFeature) => {
+        'hasAdvancedAppsFeature',
+        (
+          spaceContext,
+          $state,
+          $stateParams,
+          hasAppsFeature: boolean,
+          hasAdvancedAppsFeature: boolean
+        ) => {
           return {
             goToContent: () => $state.go('^.^.entries.list'),
             repo: getAppsRepo(),
             hasAppsFeature,
+            hasAdvancedAppsFeature,
             organizationId: spaceContext.organization.sys.id,
             spaceInformation: {
               spaceId: spaceContext.space.data.sys.id,
@@ -83,6 +110,7 @@ export const appRoute = {
         // only when the space is initialized.
         app: ['$stateParams', 'spaceContext', ({ appId }) => getAppsRepo().getApp(appId)],
         hasAppsFeature: appsFeatureResolver,
+        hasAdvancedAppsFeature: advancedAppsFeatureResolver,
         canManageThisApp: [
           'app',
           'spaceContext',

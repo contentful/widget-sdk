@@ -26,7 +26,7 @@ import UnknownErrorMessage from 'components/shared/UnknownErrorMessage';
 import { UninstallModal } from './UninstallModal';
 import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import * as AppLifecycleTracking from './AppLifecycleTracking';
-import { isUsageExceededErrorResponse, USAGE_EXCEEDED_MESSAGE } from './isUsageExceeded';
+import { isUsageExceededErrorResponse, getUsageExceededMessage } from './isUsageExceeded';
 import { AppIcon } from './AppIcon';
 import { styles } from './AppPageStyles';
 import { getMarketplaceDataProvider } from 'widgets/CustomWidgetLoaderInstance';
@@ -71,6 +71,7 @@ interface Props {
     organizationId: string;
   };
   createSdk: (widget: Widget) => { sdk: AppExtensionSDK; onAppHook: any };
+  hasAdvancedAppsFeature: boolean;
 }
 
 interface AppDefinition {
@@ -194,7 +195,7 @@ export class AppRoute extends Component<Props, State> {
   };
 
   onAppConfigured = async ({ config }: { config: any }) => {
-    const { cma, evictWidget, appHookBus, app, spaceData } = this.props;
+    const { cma, evictWidget, appHookBus, app, spaceData, hasAdvancedAppsFeature } = this.props;
 
     try {
       await installOrUpdate(cma, evictWidget, this.checkAppStatus, config, spaceData);
@@ -220,7 +221,7 @@ export class AppRoute extends Component<Props, State> {
       appHookBus.emit(APP_EVENTS_OUT.SUCCEEDED);
     } catch (err) {
       if (isUsageExceededErrorResponse(err)) {
-        Notification.error(USAGE_EXCEEDED_MESSAGE);
+        Notification.error(getUsageExceededMessage(hasAdvancedAppsFeature));
         AppLifecycleTracking.installationFailed(app.id);
       } else if (this.state.installationState === InstallationState.Update) {
         Notification.error('Failed to update app configuration.');

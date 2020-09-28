@@ -38,6 +38,7 @@ describe('AppsListPage', () => {
         hasAppsFeature={true}
         spaceInformation={spaceInformation}
         canManageApps={true}
+        hasAdvancedAppsFeature={false}
       />
     );
 
@@ -59,6 +60,7 @@ describe('AppsListPage', () => {
         hasAppsFeature={true}
         spaceInformation={spaceInformation}
         canManageApps={true}
+        hasAdvancedAppsFeature={false}
       />
     );
 
@@ -80,6 +82,7 @@ describe('AppsListPage', () => {
         spaceId={spaceId}
         userId={userId}
         hasAppsFeature={true}
+        hasAdvancedAppsFeature={false}
         spaceInformation={spaceInformation}
         // limit the access
         canManageApps={false}
