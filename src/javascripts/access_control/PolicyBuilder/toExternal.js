@@ -3,7 +3,9 @@ import { PolicyBuilderConfig } from './PolicyBuilderConfig';
 import { capitalize } from 'utils/StringUtils';
 
 function translatePolicies(internal) {
-  if (!internal.uiCompatible) {
+  // TODO: remove when the new web ui to support metadata tag rules is implemented
+  // for now, metadata tag rules, parse the rule as JSON
+  if (!internal.uiCompatible || internal.metadataTagRuleExists) {
     try {
       return JSON.parse(internal.policyString);
     } catch (e) {

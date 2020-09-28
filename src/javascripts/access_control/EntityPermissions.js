@@ -28,18 +28,21 @@ const ACTIONS = ['update', 'delete', 'publish', 'unpublish', 'archive', 'unarchi
  * @param {API.EntitySys} sys
  * @returns {EntityPermissions}
  */
-export function create(entitySys) {
+export function create(entity) {
+  entity = { data: entity };
+
   return {
-    can: partial(canPerformAction, entitySys),
-    canEditFieldLocale: partial(canEditFieldLocale, entitySys),
+    can: partial(canPerformAction, entity),
+    canEditFieldLocale: partial(canEditFieldLocale, entity),
   };
 }
 
-function canPerformAction(sys, action) {
+function canPerformAction(entity, action) {
   if (ACTIONS.indexOf(action) < 0) {
     throw new Error(`Unknown entity action "${action}"`);
   }
-  const entity = { data: { sys } };
+  const sys = entity.data.sys;
+
   if (action === 'update') {
     if (sys.type === 'Entry') {
       return accessChecker.canUpdateEntry(entity);
@@ -53,11 +56,12 @@ function canPerformAction(sys, action) {
   }
 }
 
-function canEditFieldLocale(entitySys, fieldId, localeCode) {
-  if (!canPerformAction(entitySys, 'update')) {
+function canEditFieldLocale(entity, fieldId, localeCode) {
+  if (!canPerformAction(entity, 'update')) {
     return false;
   }
 
+  const entitySys = entity.data.sys;
   const field = { apiName: fieldId };
   const locale = { code: localeCode };
   if (field) {

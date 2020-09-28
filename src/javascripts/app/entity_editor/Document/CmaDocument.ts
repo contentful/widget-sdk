@@ -82,7 +82,8 @@ export function create(
   setLastSavedEntity(entity);
 
   // We assume that the permissions only depend on the immutable data like the ID the content type ID and the creator.
-  const permissions = Permissions.create(entity.sys);
+  // For entries and assets, permissions can also be based on the metadata data
+  const permissions = Permissions.create(entity);
   const resourceState = ResourceStateManager.create({
     sys$,
     setSys(newSys) {

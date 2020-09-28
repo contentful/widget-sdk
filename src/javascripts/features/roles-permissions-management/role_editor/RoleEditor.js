@@ -443,63 +443,66 @@ export class RoleEditor extends React.Component {
               />
             )}
           </FormSection>
-          {internal.uiCompatible ? (
-            <React.Fragment>
-              <FormSection title="Content">
-                <RuleList
-                  rules={internal.entries}
-                  onUpdateRuleAttribute={this.updateRuleAttribute('entries')}
-                  onAddRule={this.addRule('entry', 'entries')}
-                  onRemoveRule={this.removeRule('entries')}
-                  entity="entry"
-                  isDisabled={!canModifyRoles}
-                  privateLocales={TheLocaleStore.getPrivateLocales()}
-                  contentTypes={this.props.contentTypes}
-                  searchEntities={this.searchEntities}
-                  getEntityTitle={this.getEntityTitle}
-                />
+          {
+            // if metadata tag rules exist, force incompatibility here}
+            internal.uiCompatible && !internal.metadataTagRuleExists ? (
+              <React.Fragment>
+                <FormSection title="Content">
+                  <RuleList
+                    rules={internal.entries}
+                    onUpdateRuleAttribute={this.updateRuleAttribute('entries')}
+                    onAddRule={this.addRule('entry', 'entries')}
+                    onRemoveRule={this.removeRule('entries')}
+                    entity="entry"
+                    isDisabled={!canModifyRoles}
+                    privateLocales={TheLocaleStore.getPrivateLocales()}
+                    contentTypes={this.props.contentTypes}
+                    searchEntities={this.searchEntities}
+                    getEntityTitle={this.getEntityTitle}
+                  />
+                </FormSection>
+                <FormSection title="Media">
+                  <RuleList
+                    rules={internal.assets}
+                    onUpdateRuleAttribute={this.updateRuleAttribute('assets')}
+                    onAddRule={this.addRule('asset', 'assets')}
+                    onRemoveRule={this.removeRule('assets')}
+                    entity="asset"
+                    isDisabled={!canModifyRoles}
+                    privateLocales={TheLocaleStore.getPrivateLocales()}
+                    contentTypes={this.props.contentTypes}
+                    searchEntities={this.searchEntities}
+                    getEntityTitle={this.getEntityTitle}
+                  />
+                </FormSection>
+              </React.Fragment>
+            ) : (
+              <FormSection title="Policies">
+                <Heading element="h3">Policies</Heading>
+                <Paragraph>
+                  <span>The policy for this role cannot be represented visually.</span>
+                  {canModifyRoles && (
+                    <span>
+                      You can continue to edit the JSON directly, or{' '}
+                      <TextLink href="" onClick={this.resetPolicies}>
+                        clear the policy
+                      </TextLink>{' '}
+                      to define policy rules visually.
+                    </span>
+                  )}
+                </Paragraph>
+                <div className="cfnext-form-option">
+                  <Textarea
+                    className="cfnext-form__input--full-size"
+                    disabled={!canModifyRoles}
+                    value={internal.policyString || ''}
+                    onChange={this.updateRoleFromTextInput('policyString')}
+                    rows="10"
+                  />
+                </div>
               </FormSection>
-              <FormSection title="Media">
-                <RuleList
-                  rules={internal.assets}
-                  onUpdateRuleAttribute={this.updateRuleAttribute('assets')}
-                  onAddRule={this.addRule('asset', 'assets')}
-                  onRemoveRule={this.removeRule('assets')}
-                  entity="asset"
-                  isDisabled={!canModifyRoles}
-                  privateLocales={TheLocaleStore.getPrivateLocales()}
-                  contentTypes={this.props.contentTypes}
-                  searchEntities={this.searchEntities}
-                  getEntityTitle={this.getEntityTitle}
-                />
-              </FormSection>
-            </React.Fragment>
-          ) : (
-            <FormSection title="Policies">
-              <Heading element="h3">Policies</Heading>
-              <Paragraph>
-                <span>The policy for this role cannot be represented visually.</span>
-                {canModifyRoles && (
-                  <span>
-                    You can continue to edit the JSON directly, or{' '}
-                    <TextLink href="" onClick={this.resetPolicies}>
-                      clear the policy
-                    </TextLink>{' '}
-                    to define policy rules visually.
-                  </span>
-                )}
-              </Paragraph>
-              <div className="cfnext-form-option">
-                <Textarea
-                  className="cfnext-form__input--full-size"
-                  disabled={!canModifyRoles}
-                  value={internal.policyString || ''}
-                  onChange={this.updateRoleFromTextInput('policyString')}
-                  rows="10"
-                />
-              </div>
-            </FormSection>
-          )}
+            )
+          }
           <FormSection title="Content model">
             <div className="cfnext-form-option">
               <CheckboxField

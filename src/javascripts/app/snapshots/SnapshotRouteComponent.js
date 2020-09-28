@@ -96,8 +96,8 @@ const SnapshotComparator = ({
 
   const editorData = getEditorData();
   const entry = get(editorData, 'entity', {});
-  const dataSys = get(entry, ['data', 'sys'], {});
-  const permissions = Permissions.create(dataSys);
+  const entryData = get(entry, ['data'], {});
+  const permissions = Permissions.create(entryData);
 
   const title = EntityFieldValueSpaceContext.entryTitle(entry);
 

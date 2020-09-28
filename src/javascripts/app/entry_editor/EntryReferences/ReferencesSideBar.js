@@ -165,7 +165,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
     setRelaseDialogShown(true);
   };
 
-  const showPublishButtons = !!references.length && create(references[0].sys).can('publish');
+  const showPublishButtons = !!references.length && create(references[0]).can('publish');
 
   const disableButton = !showPublishButtons || isTooComplex || !selectedEntities.length;
 
