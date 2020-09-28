@@ -5,6 +5,8 @@ import { EditPaymentMethodRouter } from './EditPaymentMethodRouter';
 import * as Fake from 'test/helpers/fakeFactory';
 import { go } from 'states/Navigator';
 import { getVariation } from 'LaunchDarkly';
+import { isOwner } from 'services/OrganizationRoles';
+import * as TokenStore from 'services/TokenStore';
 import cleanupNotifications from 'test/helpers/cleanupNotifications';
 
 // eslint-disable-next-line
@@ -15,6 +17,14 @@ const mockOrganization = Fake.Organization();
 const mockHostedPaymentParams = {
   key: 'some-key',
 };
+
+jest.mock('services/TokenStore', () => ({
+  getOrganization: jest.fn().mockResolvedValue({}),
+}));
+
+jest.mock('services/OrganizationRoles', () => ({
+  isOwner: jest.fn().mockReturnValue(true),
+}));
 
 jest.mock('states/Navigator', () => ({
   go: jest.fn(),
@@ -43,7 +53,7 @@ jest.useFakeTimers();
 describe('EditPaymentMethodRouter', () => {
   afterEach(cleanupNotifications);
 
-  it('should first get the variation and redirect if it is false', async () => {
+  it('should first get the variation and redirect to the old billing flow if it is false', async () => {
     getVariation.mockResolvedValueOnce(false);
 
     build();
@@ -52,6 +62,40 @@ describe('EditPaymentMethodRouter', () => {
 
     expect(go).toHaveBeenCalledWith({
       path: ['account', 'organizations', 'billing-gatekeeper'],
+    });
+
+    expect(LazyLoader.get).not.toBeCalled();
+    expect(mockEndpoint).not.toHaveBeenCalledWith(
+      expect.objectContaining({ path: ['hosted_payment_params'] })
+    );
+  });
+
+  it('should redirect to home if the user is not an org owner', async () => {
+    isOwner.mockReturnValueOnce(false);
+
+    build();
+
+    await waitFor(expect(isOwner).toBeCalled);
+
+    expect(go).toHaveBeenCalledWith({
+      path: ['home'],
+    });
+
+    expect(LazyLoader.get).not.toBeCalled();
+    expect(mockEndpoint).not.toHaveBeenCalledWith(
+      expect.objectContaining({ path: ['hosted_payment_params'] })
+    );
+  });
+
+  it('should redirect to home if the organization is not in the token', async () => {
+    TokenStore.getOrganization.mockRejectedValueOnce();
+
+    build();
+
+    await waitFor(expect(go).toBeCalled);
+
+    expect(go).toHaveBeenCalledWith({
+      path: ['home'],
     });
 
     expect(LazyLoader.get).not.toBeCalled();
