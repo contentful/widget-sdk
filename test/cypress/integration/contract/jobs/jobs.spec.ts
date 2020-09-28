@@ -22,6 +22,7 @@ import {
   queryForScheduledPublishingInDefaultSpace,
   queryForTasksInDefaultSpace,
   queryForBasicAppsInDefaultSpace,
+  queryForAdvancedAppsInDefaultOrg,
   queryForContentTagsInDefaultSpace,
 } from '../../../interactions/product_catalog_features';
 
@@ -55,6 +56,7 @@ describe('Jobs page', () => {
         queryForTasksInDefaultSpace.willFindFeatureEnabled(),
         queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled(),
         queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
+        queryForAdvancedAppsInDefaultOrg.willFindFeatureDisabled(),
         queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
       ];
       const slowInteraction = queryPendingJobsForDefaultSpace.willFindNone();
@@ -110,6 +112,7 @@ describe('Jobs page', () => {
         queryForTasksInDefaultSpace.willFindFeatureEnabled(),
         queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled(),
         queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
+        queryForAdvancedAppsInDefaultOrg.willFindFeatureDisabled(),
         queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
 
         queryForCustomSidebarInDefaultOrg.willFindFeatureEnabled(),
@@ -162,6 +165,7 @@ describe('Jobs page', () => {
         queryForTasksInDefaultSpace.willFindFeatureEnabled(),
         queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled(),
         queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
+        queryForAdvancedAppsInDefaultOrg.willFindFeatureDisabled(),
         queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
 
         queryForCustomSidebarInDefaultOrg.willFindFeatureEnabled(),

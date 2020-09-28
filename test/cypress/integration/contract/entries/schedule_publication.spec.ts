@@ -20,6 +20,7 @@ import { FeatureFlag } from '../../../util/featureFlag';
 import {
   queryForTasksInDefaultSpace,
   queryForBasicAppsInDefaultSpace,
+  queryForAdvancedAppsInDefaultOrg,
   queryForScheduledPublishingOnEntryPage,
   queryForContentTagsInDefaultSpace,
   queryForCustomSidebarInDefaultOrg,
@@ -163,6 +164,7 @@ function basicServerSetUp(): string[] {
     getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
     queryForTasksInDefaultSpace.willFindFeatureEnabled(),
     queryForBasicAppsInDefaultSpace.willFindFeatureEnabled(),
+    queryForAdvancedAppsInDefaultOrg.willFindFeatureDisabled(),
     queryForScheduledPublishingOnEntryPage.willFindFeatureEnabled(),
     queryForContentTagsInDefaultSpace.willFindFeatureEnabled(),
     queryForCustomSidebarInDefaultOrg.willFindFeatureEnabled(),
