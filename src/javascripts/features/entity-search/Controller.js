@@ -64,14 +64,14 @@ export const createSearchController = ({
     if (contentTypeId && cache) {
       const requests = [];
       if (cache.entry) {
+        cache.entry.setDisplayedFieldIds(displayedFieldIds);
         const request = cache.entry.resolveLinkedEntities(entities);
         requests.push(request);
-        cache.entry.setDisplayedFieldIds(displayedFieldIds);
       }
       if (cache.asset) {
+        cache.asset.setDisplayedFieldIds(displayedFieldIds);
         const request = cache.asset.resolveLinkedEntities(entities);
         requests.push(request);
-        cache.asset.setDisplayedFieldIds(displayedFieldIds);
       }
       // Update result list with cached entities
       Promise.all(requests).finally(() => onUpdate([...entities]));
