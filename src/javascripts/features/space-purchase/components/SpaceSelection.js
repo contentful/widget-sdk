@@ -4,7 +4,14 @@ import { css } from 'emotion';
 import PropTypes from 'prop-types';
 
 import { Grid, Flex } from '@contentful/forma-36-react-components/dist/alpha';
-import { Card, Heading, Paragraph, Button, Tooltip } from '@contentful/forma-36-react-components';
+import {
+  Card,
+  Heading,
+  Paragraph,
+  Button,
+  Tooltip,
+  Note,
+} from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
 import { websiteUrl } from 'Config';
@@ -69,6 +76,15 @@ export const SpaceSelection = ({
   return (
     <section aria-labelledby="space-selection-section" data-test-id="space-selection-section">
       <Grid columns={3} rows="repeat(3, 'auto')" columnGap="spacingL" rowGap="spacingM">
+        {!canCreatePaidSpace && (
+          <Note
+            testId="payment-details-required"
+            className={styles.fullRow}
+            title="Payment details required">
+            There are no payment details added to your organization. Contact the organization owner
+            to add payment details and start purchasing spaces.
+          </Note>
+        )}
         <Heading
           id="space-selection-heading"
           element="h2"
@@ -101,7 +117,7 @@ export const SpaceSelection = ({
                 place="bottom"
                 content={
                   !canCreateCommunityPlan
-                    ? "You've already used your free Community space. To add a new Community space, delete your existing one."
+                    ? 'You’ve already used your free Community space. To add a new Community space, delete your existing one.'
                     : ''
                 }>
                 <Button

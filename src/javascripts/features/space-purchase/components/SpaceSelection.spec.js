@@ -33,6 +33,12 @@ describe('SpaceSelection', () => {
     }
   });
 
+  it('should show the payment details note if canCreatePaidSpace is false', () => {
+    build({ canCreatePaidSpace: false });
+
+    expect(screen.getByTestId('payment-details-required')).toBeVisible();
+  });
+
   it('should show the community card', () => {
     build();
 
