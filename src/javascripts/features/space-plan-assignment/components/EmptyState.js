@@ -20,11 +20,7 @@ export function EmptyState() {
         </Paragraph>
         <Flex alignItems="center" justifyContent="space-around">
           <Flex>
-            <StateLink
-              component={Button}
-              buttonType="muted"
-              path={'^.subscription_new'}
-              icon="ChevronLeft">
+            <StateLink component={Button} buttonType="muted" path={'^'} icon="ChevronLeft">
               Go back
             </StateLink>
           </Flex>

@@ -96,7 +96,6 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
         new_plan_name: selectedPlan.name,
         flow: 'assing_plan_to_space',
       });
-      window.history.pushState('', null);
     }
   };
 
@@ -109,7 +108,6 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
       track('space_assignment:back', {
         space_id: spaceId,
       });
-      window.history.back();
     }
   };
 
@@ -124,7 +122,7 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
         data.freePlan
       );
       Notification.success(`${data.space.name} was successfully changed to ${selectedPlan.name}`);
-      go({ path: '^.subscription_new' });
+      go({ path: '^' });
     } catch (e) {
       Notification.error(formatError(e));
     } finally {
