@@ -323,7 +323,7 @@ export function BillingDetailsForm({
           {cancelText}
         </Button>
         <Button
-          onClick={onFormSubmit}
+          type="submit"
           testId="billing-details.submit"
           disabled={form.isPending}
           loading={form.isPending}>
