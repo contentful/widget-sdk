@@ -6,9 +6,10 @@ import { stateName, getState } from 'data/CMA/EntityState';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 import RelativeDateTime from 'components/shared/RelativeDateTime';
 import { EntityStatusTag } from 'components/shared/EntityStatusTag';
-import Thumbnail from 'components/Thumbnail/Thumbnail';
+import { Thumbnail } from '@contentful/field-editor-file';
 import tokens from '@contentful/forma-36-tokens';
 import { getEntityFile, getEntityTitle } from './utils';
+import { getExternalImageUrl } from 'utils/thumbnailHelpers';
 
 const styles = {
   textOverflow: css({
@@ -61,8 +62,17 @@ const ReleaseDisplayField = ({ entity, field, defaultLocale, validationError }) 
         </div>
       );
     }
-    case 'preview':
-      return <Thumbnail file={fetchedEntityFile} size="30" fit="thumb" focus="faces" />;
+    case 'preview': {
+      return fetchedEntityFile ? (
+        <Thumbnail
+          file={fetchedEntityFile}
+          getExternalImageUrl={getExternalImageUrl}
+          size="30"
+          fit="thumb"
+          focus="faces"
+        />
+      ) : null;
+    }
     case 'contentType': {
       const contentTypeData = EntityFieldValueSpaceContext.getContentTypeById(
         entity.sys.contentType.sys.id
@@ -89,7 +99,7 @@ const ReleaseDisplayField = ({ entity, field, defaultLocale, validationError }) 
       return <EntityStatusTag statusLabel={statusLabel} />;
     }
     default:
-      return <span></span>;
+      return <span />;
   }
 };
 

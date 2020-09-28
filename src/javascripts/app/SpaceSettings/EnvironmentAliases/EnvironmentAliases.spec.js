@@ -36,7 +36,8 @@ const getComponent = (props = {}) => {
         },
       ]}
       spaceId={spaceId}
-      {...props}></EnvironmentAliases>
+      {...props}
+    />
   );
 };
 

@@ -142,7 +142,7 @@ const ReferencesTab = ({ entity, onRootReferenceCardClick }) => {
     goToSlideInEntity({ type: entity.sys.type, id: entity.sys.id });
   };
 
-  const showPublishButtons = !!references.length && create(references[0].sys).can('publish');
+  const showPublishButtons = !!references.length && create(references[0]).can('publish');
 
   return (
     <>

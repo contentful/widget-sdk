@@ -1,14 +1,25 @@
+import { orderBy } from 'lodash';
+
+const ORDER_TAG = {
+  DESC: 'DESC',
+  ASC: 'ASC',
+  nameDESC: 'nameDESC',
+  nameASC: 'nameASC',
+  idDESC: 'idDESC',
+  idASC: 'idASC',
+};
+
 const SORT_BY = {
-  DESC: (tag1, tag2) => tag1.sys.createdAt > tag2.sys.createdAt,
-  ASC: (tag1, tag2) => tag1.sys.createdAt < tag2.sys.createdAt,
-  nameDESC: (tag1, tag2) => tag1.name > tag2.name,
-  nameASC: (tag1, tag2) => tag1.name < tag2.name,
-  idDESC: (tag1, tag2) => tag1.sys.id > tag2.sys.id,
-  idASC: (tag1, tag2) => tag1.sys.id < tag2.sys.id,
+  [ORDER_TAG.DESC]: [['sys.createdAt'], ['desc']],
+  [ORDER_TAG.ASC]: [['sys.createdAt'], ['asc']],
+  [ORDER_TAG.nameDESC]: [['name'], ['desc']],
+  [ORDER_TAG.nameASC]: [['name'], ['asc']],
+  [ORDER_TAG.idDESC]: [['sys.id'], ['desc']],
+  [ORDER_TAG.idASC]: [['sys.id'], ['asc']],
 };
 
 const tagsSorter = (tags, sortType) => {
-  return tags.sort(SORT_BY[sortType]);
+  return orderBy(tags, ...SORT_BY[sortType]);
 };
 
-export { SORT_BY, tagsSorter };
+export { ORDER_TAG, tagsSorter };

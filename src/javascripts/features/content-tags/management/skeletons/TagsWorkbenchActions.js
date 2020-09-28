@@ -1,13 +1,26 @@
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
-import { Button, TextInput, Tooltip } from '@contentful/forma-36-react-components';
+import {
+  Button,
+  Dropdown,
+  DropdownList,
+  DropdownListItem,
+  Paragraph,
+  TextInput,
+  Tooltip,
+} from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { useReadTags } from 'features/content-tags/core/hooks';
+import {
+  useContentLevelPermissions,
+  useReadTags,
+  useToggle,
+} from 'features/content-tags/core/hooks';
 import PropTypes from 'prop-types';
 import { TagsFeedbackLink } from 'features/content-tags/core/components/TagsFeedbackLink';
 import { TAGS_PER_SPACE } from 'features/content-tags/core/limits';
 import { ConditionalWrapper } from 'features/content-tags/core/components/ConditionalWrapper';
+import { TagType } from 'features/content-tags/core/TagType';
 
 const styles = {
   search: css({
@@ -18,26 +31,35 @@ const styles = {
   actionsWrapper: css({
     width: '100%',
     display: 'flex',
+    justifyContent: 'space-between',
   }),
   ctaWrapper: css({
-    paddingLeft: tokens.spacingL,
-    marginLeft: 'auto',
     display: 'flex',
   }),
+  tagLimits: css({
+    alignItems: 'center',
+    height: '100%',
+    marginRight: tokens.spacingL,
+    width: 'auto',
+    display: 'flex',
+    flexGrow: '',
+  }),
   feedback: css({
+    alignSelf: 'flex-start',
     flexGrow: '',
     display: 'flex',
     height: '100%',
     alignItems: 'center',
-    justifyContent: 'center',
     marginRight: tokens.spacingXl,
-    marginLeft: tokens.spacing3Xl,
+    marginLeft: tokens.spacingXl,
     minWidth: '120px',
   }),
 };
 
 function TagsWorkbenchActions({ hasData, onCreate }) {
   const { search, setSearch, setSkip, total } = useReadTags();
+  const [isDropDownOpen, toggleDropDown] = useToggle();
+  const { contentLevelPermissionsEnabled } = useContentLevelPermissions();
 
   const onSearch = useCallback(
     (event) => {
@@ -60,16 +82,57 @@ function TagsWorkbenchActions({ hasData, onCreate }) {
             {children}
           </Tooltip>
         )}>
-        <Button
-          onClick={onCreate}
-          disabled={total >= TAGS_PER_SPACE}
-          buttonType="primary"
-          testId="tags.add">
-          Create Tag
-        </Button>
+        {contentLevelPermissionsEnabled ? (
+          <div className={'publish-buttons-row'}>
+            <Button
+              onClick={() => {
+                onCreate(TagType.Default);
+              }}
+              disabled={total >= TAGS_PER_SPACE}
+              buttonType="primary"
+              className={'primary-publish-button'}
+              testId="tags.add">
+              Create Tag
+            </Button>
+            <Dropdown
+              className="secondary-publish-button-wrapper"
+              position="bottom-right"
+              isOpen={isDropDownOpen}
+              onClose={toggleDropDown}
+              toggleElement={
+                <Button
+                  className="secondary-publish-button"
+                  buttonType="primary"
+                  indicateDropdown
+                  onClick={toggleDropDown}
+                />
+              }>
+              <DropdownList>
+                <DropdownListItem
+                  onClick={() => {
+                    onCreate(TagType.Access);
+                    toggleDropDown();
+                  }}
+                  disabled={total >= TAGS_PER_SPACE}>
+                  Create access tag
+                </DropdownListItem>
+              </DropdownList>
+            </Dropdown>
+          </div>
+        ) : (
+          <Button
+            onClick={() => {
+              onCreate(TagType.Default);
+            }}
+            disabled={total >= TAGS_PER_SPACE}
+            buttonType="primary"
+            testId="tags.add">
+            Create Tag
+          </Button>
+        )}
       </ConditionalWrapper>
     );
-  }, [total, onCreate]);
+  }, [total, onCreate, isDropDownOpen, toggleDropDown, contentLevelPermissionsEnabled]);
 
   return (
     <div className={styles.actionsWrapper}>
@@ -87,6 +150,9 @@ function TagsWorkbenchActions({ hasData, onCreate }) {
             <div className={styles.feedback}>
               <TagsFeedbackLink label="Give feedback" />
             </div>
+            <Paragraph className={styles.tagLimits}>
+              {total}&nbsp;/&nbsp;{TAGS_PER_SPACE}
+            </Paragraph>
             {createButton}
           </div>
         </>

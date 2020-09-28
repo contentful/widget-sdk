@@ -5,7 +5,7 @@ export default function SpaceHibernationAdvice() {
   return (
     <div className="advice advice-content-fallback">
       <div className="advice__frame">
-        <i className="fa fa-cloud-upload advice__icon advice__icon--giant"></i>
+        <i className="fa fa-cloud-upload advice__icon advice__icon--giant" />
         <Typography>
           <Heading>Hold on! We’re bringing your space back</Heading>
           <Paragraph>

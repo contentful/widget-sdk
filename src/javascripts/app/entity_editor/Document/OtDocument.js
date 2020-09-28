@@ -33,7 +33,8 @@ export function create(docConnection, initialEntity, contentType, user, entityRe
 
   // We assume that the permissions only depend on the immutable data
   // like the ID the content type ID and the creator.
-  const permissions = Permissions.create(entity.data.sys);
+  // For entries and assets, permissions can also be based on the metadata data
+  const permissions = Permissions.create(entity.data);
 
   // The stream for this bus contains all the events that come from the
   // raw ShareJS doc. The data in this stream has the shape

@@ -140,7 +140,6 @@ describe('Dashboard', () => {
 
   it('should show the VAT number if given in the billing details', () => {
     const billingDetails = {
-      address: {},
       vat: 'DE275148225',
     };
 
@@ -151,14 +150,12 @@ describe('Dashboard', () => {
 
   it('should show the second address if given in the billing details', () => {
     const billingDetails = {
-      address: {
-        address2: '1234 Teststr.',
-      },
+      address2: '1234 Teststr.',
     };
 
     renderDashboard({ billingDetails });
 
-    expect(screen.getByTestId('address2').textContent).toBe(billingDetails.address.address2);
+    expect(screen.getByTestId('address2').textContent).toBe(billingDetails.address2);
   });
 
   it('should format the payment details correctly', () => {

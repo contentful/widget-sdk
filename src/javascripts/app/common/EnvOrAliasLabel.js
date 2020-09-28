@@ -71,7 +71,7 @@ const EnvOrAliasLabel = ({
       title={showAliasedTo && aliasId ? `${aliasId} > ${environmentId}` : environmentId}>
       {aliasId ? (
         <Fragment>
-          <AliasIcon className={iconStyle} data-test-id="envoralias.aliasicon"></AliasIcon>
+          <AliasIcon className={iconStyle} data-test-id="envoralias.aliasicon" />
           <span className={aliasedToStyle} data-test-id="envoralias.label">
             {showAliasedTo ? (
               <Fragment>

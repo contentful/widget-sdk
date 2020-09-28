@@ -8,15 +8,21 @@ jest.mock('access_control/AccessChecker', () => ({
   canEditFieldLocale: jest.fn(),
 }));
 
-const entrySys = { type: 'Entry', id: 'some-entry-id' };
-const assetSys = { type: 'Asset', id: 'some-asset-id' };
-const emptyEntity = (sys) => ({ data: { sys } });
+const entry = {
+  sys: { type: 'Entry', id: 'some-entry-id' },
+  metadata: { tags: [] },
+};
+const asset = {
+  sys: { type: 'Asset', id: 'some-asset-id' },
+  metadata: { tags: [] },
+};
+const emptyEntity = (entity) => ({ data: { sys: entity.sys, metadata: entity.metadata } });
 
 describe('EntityPermissions', () => {
   let permissions;
 
   beforeEach(() => {
-    permissions = create(entrySys);
+    permissions = create(entry);
   });
 
   describe('#can()', () => {
@@ -30,7 +36,7 @@ describe('EntityPermissions', () => {
       expect(accessChecker.canPerformActionOnEntity).toHaveBeenCalledTimes(2);
       expect(accessChecker.canPerformActionOnEntity).toHaveBeenCalledWith(
         'publish',
-        emptyEntity(entrySys)
+        emptyEntity(entry)
       );
     });
 
@@ -42,11 +48,11 @@ describe('EntityPermissions', () => {
       expect(permissions.can('update')).toBe(false);
 
       expect(accessChecker.canUpdateEntry).toHaveBeenCalledTimes(2);
-      expect(accessChecker.canUpdateEntry).toHaveBeenCalledWith(emptyEntity(entrySys));
+      expect(accessChecker.canUpdateEntry).toHaveBeenCalledWith(emptyEntity(entry));
     });
 
     it('delegates "update" calls to `accessChecker.canUpdateAsset()`', () => {
-      permissions = create(assetSys);
+      permissions = create(asset);
 
       accessChecker.canUpdateAsset.mockReturnValue(true);
       expect(permissions.can('update')).toBe(true);
@@ -55,7 +61,7 @@ describe('EntityPermissions', () => {
       expect(permissions.can('update')).toBe(false);
 
       expect(accessChecker.canUpdateAsset).toHaveBeenCalledTimes(2);
-      expect(accessChecker.canUpdateAsset).toHaveBeenCalledWith(emptyEntity(assetSys));
+      expect(accessChecker.canUpdateAsset).toHaveBeenCalledWith(emptyEntity(asset));
     });
 
     it('throws when action is unknown', () => {
@@ -71,7 +77,7 @@ describe('EntityPermissions', () => {
 
       expect(permissions.canEditFieldLocale('FIELD', 'LOCALE')).toBe(false);
       expect(accessChecker.canUpdateEntry).toHaveBeenCalledTimes(1);
-      expect(accessChecker.canUpdateEntry).toHaveBeenCalledWith(emptyEntity(entrySys));
+      expect(accessChecker.canUpdateEntry).toHaveBeenCalledWith(emptyEntity(entry));
     });
 
     it('delegates to `policyAccessChecker`', () => {
@@ -85,7 +91,7 @@ describe('EntityPermissions', () => {
 
       expect(accessChecker.canEditFieldLocale).toHaveBeenCalledTimes(2);
       expect(accessChecker.canEditFieldLocale).toHaveBeenCalledWith(
-        entrySys,
+        entry.sys,
         { apiName: 'FIELD' },
         { code: 'LOCALE' }
       );

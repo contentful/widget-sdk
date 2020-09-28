@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { EntryCard } from '@contentful/forma-36-react-components';
+import { Thumbnail } from '@contentful/field-editor-file';
+import { getExternalImageUrl } from 'utils/thumbnailHelpers';
 
-import Thumbnail from './Thumbnail';
 import { EntryActions, AssetActions } from './CardActions';
 
 /**
@@ -76,7 +77,11 @@ export default class WrappedEntityCard extends React.Component {
         size={size}
         selected={selected}
         status={entityStatus}
-        thumbnailElement={entityFile && <Thumbnail thumbnail={entityFile} />}
+        thumbnailElement={
+          entityFile && (
+            <Thumbnail file={entityFile} size="70" getExternalImageUrl={getExternalImageUrl} />
+          )
+        }
         loading={isLoading}
         dropdownListElements={this.renderActions()}
         onClick={onClick}

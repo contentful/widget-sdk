@@ -9,7 +9,6 @@ import accessToolsState from './AccessToolsState';
 import ssoRoutingState from './SSO/SSOSetupRoutingState';
 import gatekeeperStates from './OrganizationSettingsGatekeeperStates';
 import { newSpaceState } from 'features/space-purchase';
-import { spacePlanAssignmentState } from 'features/space-plan-assignment';
 import { billingRoutingState } from 'features/organization-billing';
 import OrganizationNavBar from 'navigation/OrganizationNavBar';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
@@ -89,7 +88,6 @@ export default [
       usersAndInvitationsState,
       subscriptionState,
       newSpaceState,
-      spacePlanAssignmentState,
       teamsState,
       appsState,
       ssoRoutingState,

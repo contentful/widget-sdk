@@ -29,7 +29,8 @@ function PreviewRenderer(props) {
         rel="noopener noreferrer"
         data-card-controls={0}
         data-card-chrome={0}
-        data-card-align="left"></a>
+        data-card-align="left"
+      />
     </div>
   );
 }
@@ -58,7 +59,7 @@ export default function EmbedlyPreview(props) {
     return null;
   }
 
-  return <PreviewRenderer key={safeUrl} url={safeUrl} onLoad={props.onLoad}></PreviewRenderer>;
+  return <PreviewRenderer key={safeUrl} url={safeUrl} onLoad={props.onLoad} />;
 }
 
 EmbedlyPreview.propTypes = {

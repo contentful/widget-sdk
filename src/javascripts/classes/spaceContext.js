@@ -396,8 +396,7 @@ export default function register() {
             if (!spaceContext.space.environment) {
               // the current environment is aliased
               spaceContext.space.environment = spaceContext.environments.find(
-                ({ sys: { aliases = [] } }) =>
-                  aliases.some(({ sys }) => sys.id === MASTER_ENVIRONMENT_ID)
+                ({ sys: { aliases = [] } }) => aliases.some(({ sys }) => sys.id === uriEnvOrAliasId)
               );
               spaceContext.space.environmentMeta = {
                 environmentId: spaceContext.getEnvironmentId(),

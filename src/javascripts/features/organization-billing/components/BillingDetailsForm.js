@@ -14,6 +14,7 @@ import {
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { useForm } from 'core/hooks/useForm';
+import { BillingDetailsPropType } from '../propTypes';
 
 import { isValidVat, getIsVatCountry } from '../utils/vat';
 import COUNTRIES_LIST from 'libs/countries_list.json';
@@ -56,7 +57,7 @@ export function BillingDetailsForm({
   cancelText = 'Cancel',
   billingDetails = {},
 }) {
-  const [showVat, setShouldShowVat] = useState(!!billingDetails.vatNumber);
+  const [showVat, setShouldShowVat] = useState(!!billingDetails.vat);
   const [showUSState, setShouldShowUSState] = useState(!!billingDetails.state);
 
   const { onChange, onBlur, onSubmit: onFormSubmit, fields, form } = useForm({
@@ -69,8 +70,8 @@ export function BillingDetailsForm({
         value: billingDetails.lastName ?? '',
         required: true,
       },
-      email: {
-        value: billingDetails.email ?? '',
+      workEmail: {
+        value: billingDetails.workEmail ?? '',
         required: true,
         validator: (value) => {
           //search for @ && .
@@ -79,20 +80,20 @@ export function BillingDetailsForm({
           }
         },
       },
-      address: {
-        value: billingDetails.address ?? '',
+      address1: {
+        value: billingDetails.address1 ?? '',
         required: true,
       },
-      addressTwo: {
-        value: billingDetails.addressTwo ?? '',
+      address2: {
+        value: billingDetails.address2 ?? '',
         required: false,
       },
       city: {
         value: billingDetails.city ?? '',
         required: true,
       },
-      postcode: {
-        value: billingDetails.postcode ?? '',
+      zipCode: {
+        value: billingDetails.zipCode ?? '',
         required: true,
       },
       state: {
@@ -103,8 +104,8 @@ export function BillingDetailsForm({
         value: billingDetails.country ?? '',
         required: true,
       },
-      vatNumber: {
-        value: billingDetails.vatNumber ?? '',
+      vat: {
+        value: billingDetails.vat ?? '',
         required: false,
       },
     },
@@ -113,12 +114,12 @@ export function BillingDetailsForm({
       const errors = {};
 
       const countryCode = fields.country.value;
-      const vatNumber = fields.vatNumber.value;
+      const vat = fields.vat.value;
       const state = fields.state.value;
 
       // Only want to check if the VAT number is valid if a VAT number has been added.
-      if (vatNumber !== '' && getIsVatCountry(countryCode) && !isValidVat(vatNumber, countryCode)) {
-        errors.vatNumber = 'Not a valid VAT Number';
+      if (vat !== '' && getIsVatCountry(countryCode) && !isValidVat(vat, countryCode)) {
+        errors.vat = 'Not a valid VAT Number';
       }
 
       if (countryCode === 'US' && state === '') {
@@ -138,7 +139,7 @@ export function BillingDetailsForm({
     if (!isVatCountry) {
       // Reset VAT number in case they started filling this field out as we
       // don't want to submit/validate this field if it's not a VAT country.
-      onChange('vatNumber', '');
+      onChange('vat', '');
     }
 
     setShouldShowUSState(isUnitedStates);
@@ -152,8 +153,8 @@ export function BillingDetailsForm({
   };
 
   // Get the input's name and call onChange/onBlur for that input with the updated value.
-  const handleChange = (e) => onChange(e.target.getAttribute('name'), e.target.value);
-  const handleBlur = (e) => onBlur(e.target.getAttribute('name'), e.target.value);
+  const handleChange = (e) => onChange(e.target.getAttribute('id'), e.target.value);
+  const handleBlur = (e) => onBlur(e.target.getAttribute('id'), e.target.value);
 
   return (
     <Card className={styles.card} testId="billing-details.card">
@@ -170,8 +171,8 @@ export function BillingDetailsForm({
         <div className={styles.twoItemRow}>
           <TextField
             className={styles.fieldSpacing}
-            name="firstName"
-            id="first_name"
+            name="first-name"
+            id="firstName"
             testId="billing-details.firstName"
             labelText="First name"
             textInputProps={{
@@ -185,8 +186,8 @@ export function BillingDetailsForm({
           />
 
           <TextField
-            name="lastName"
-            id="last_name"
+            name="last-name"
+            id="lastName"
             testId="billing-details.lastName"
             labelText="Last name"
             textInputProps={{
@@ -202,42 +203,42 @@ export function BillingDetailsForm({
 
         <TextField
           name="email"
-          id="email"
-          testId="billing-details.email"
+          id="workEmail"
+          testId="billing-details.workEmail"
           labelText="Email"
           textInputProps={{
             placeholder: 'archibald.johannson@email.com',
           }}
           autoFocus
-          value={fields.email.value}
-          validationMessage={fields.email.error}
+          value={fields.workEmail.value}
+          validationMessage={fields.workEmail.error}
           onChange={handleChange}
           onBlur={handleBlur}
         />
 
         <TextField
           name="address"
-          id="address"
-          testId="billing-details.address"
+          id="address1"
+          testId="billing-details.address1"
           labelText="Address"
           textInputProps={{
             placeholder: '19th Avenue North',
           }}
           autoFocus
-          value={fields.address.value}
-          validationMessage={fields.address.error}
+          value={fields.address1.value}
+          validationMessage={fields.address1.error}
           onChange={handleChange}
           onBlur={handleBlur}
         />
 
         <TextField
-          name="addressTwo"
-          id="addressTwo"
-          testId="billing-details.addressTwo"
+          name="address2"
+          id="address2"
+          testId="billing-details.address2"
           labelText="Address line 2 (optional)"
           autoFocus
-          value={fields.addressTwo.value}
-          validationMessage={fields.addressTwo.error}
+          value={fields.address2.value}
+          validationMessage={fields.address2.error}
           onChange={handleChange}
           onBlur={handleBlur}
         />
@@ -259,16 +260,16 @@ export function BillingDetailsForm({
             onBlur={handleBlur}
           />
           <TextField
-            name="postcode"
-            id="postcode"
-            testId="billing-details.postcode"
+            name="postal-code"
+            id="zipCode"
+            testId="billing-details.zipCode"
             labelText="Postcode"
             textInputProps={{
               placeholder: '58102',
             }}
             autoFocus
-            value={fields.postcode.value}
-            validationMessage={fields.postcode.error}
+            value={fields.zipCode.value}
+            validationMessage={fields.zipCode.error}
             onChange={handleChange}
             onBlur={handleBlur}
           />
@@ -277,7 +278,7 @@ export function BillingDetailsForm({
         <SelectField
           className={styles.selectLocale}
           name="country"
-          id="newspace-language"
+          id="country"
           testId="billing-details.country"
           labelText="Country"
           value={fields.country.value}
@@ -296,13 +297,13 @@ export function BillingDetailsForm({
           <SelectField
             className={styles.selectLocale}
             name="state"
-            id="newspace-language"
+            id="state"
             testId="billing-details.state"
             labelText="State"
             value={fields.state.value}
             validationMessage={fields.state.error}
             onChange={handleChange}>
-            <option value="" disabled></option>
+            <option value="" disabled />
             {US_STATES_LIST.map((state) => (
               <option key={state.name} value={state.code}>
                 {state.name}
@@ -313,16 +314,16 @@ export function BillingDetailsForm({
 
         {showVat && (
           <TextField
-            name="vatNumber"
-            id="vatNumber"
-            testId="billing-details.vatNumber"
+            name="vat"
+            id="vat"
+            testId="billing-details.vat"
             labelText="VAT number"
             textInputProps={{
               placeholder: 'XX123456789',
             }}
             autoFocus
-            value={fields.vatNumber.value}
-            validationMessage={fields.vatNumber.error}
+            value={fields.vat.value}
+            validationMessage={fields.vat.error}
             onChange={handleChange}
             onBlur={handleBlur}
           />
@@ -354,5 +355,5 @@ BillingDetailsForm.propTypes = {
   onCancel: PropTypes.func.isRequired,
   submitText: PropTypes.string,
   cancelText: PropTypes.string,
-  billingDetails: PropTypes.object,
+  billingDetails: BillingDetailsPropType,
 };

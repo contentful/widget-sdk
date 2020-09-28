@@ -16,7 +16,7 @@ describe('TrackTargetedCTAImpression', () => {
       <TrackTargetedCTAImpression
         impressionType={trackCTA.CTA_EVENTS.UPGRADE_TO_ENTERPRISE}
         meta={{ spaceId: mockSpace.sys.id, organizationId: mockOrganization.sys.id }}>
-        <div data-test-id="test-div"></div>
+        <div data-test-id="test-div" />
       </TrackTargetedCTAImpression>
     );
 
@@ -33,7 +33,7 @@ describe('TrackTargetedCTAImpression', () => {
       <TrackTargetedCTAImpression
         impressionType={trackCTA.CTA_EVENTS.UPGRADE_TO_ENTERPRISE}
         meta={{ spaceId: mockSpace.sys.id, organizationId: mockOrganization.sys.id }}>
-        <div data-test-id="1337"></div>
+        <div data-test-id="1337" />
       </TrackTargetedCTAImpression>
     );
     expect(screen.getByTestId('1337')).toBeVisible();
@@ -51,10 +51,10 @@ describe('TrackTargetedCTAImpression', () => {
         impressionType={trackCTA.CTA_EVENTS.UPGRADE_TO_ENTERPRISE}
         meta={{ spaceId: mockSpace.sys.id, organizationId: mockOrganization.sys.id }}>
         <div data-test-id="test-div">
-          <div data-test-id="test-div-child"></div>
+          <div data-test-id="test-div-child" />
         </div>
-        <div data-test-id="test-div-2"></div>
-        <div data-test-id="test-div-3"></div>
+        <div data-test-id="test-div-2" />
+        <div data-test-id="test-div-3" />
       </TrackTargetedCTAImpression>
     );
 

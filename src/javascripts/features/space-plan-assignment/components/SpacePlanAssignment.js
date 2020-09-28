@@ -19,7 +19,7 @@ import { EmptyState } from './EmptyState';
 import { AssignmentLoadingCard } from './AssignmentLoadingCard';
 
 const ASSIGNMENT_STEPS = [
-  { text: '1.New space type', isActive: true },
+  { text: '1.Choose space type', isActive: true },
   { text: '2.Confirm', isActive: false },
 ];
 
@@ -101,8 +101,6 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
   };
 
   const navigateToPreviousStep = () => {
-    if (!selectedPlan) return;
-
     const currentStepIndex = steps.indexOf(currentStep);
     const previousStep = steps[currentStepIndex - 1];
 
@@ -153,6 +151,7 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
                 plans={data.plans}
                 ratePlans={data.ratePlans}
                 selectedPlan={selectedPlan}
+                currentPlanName={data.currentPlan ? data.currentPlan.name : data.freePlan.name}
                 onPlanSelected={setSelectedPlan}
                 onNext={navigateToNextStep}
               />

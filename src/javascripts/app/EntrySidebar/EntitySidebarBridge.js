@@ -4,15 +4,11 @@ import { getModule } from 'core/NgRegistry';
 import { getCurrentStateName } from 'states/Navigator';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes';
 import SidebarWidgetTypes from 'app/EntrySidebar/SidebarWidgetTypes';
-import createExtensionBridge from 'widgets/bridges/createExtensionBridge';
 import TheLocaleStore from 'services/localeStore';
-import { WidgetLocation } from '@contentful/widget-renderer';
 import { createFieldWidgetSDK, createSidebarWidgetSDK } from 'app/widgets/ExtensionSDKs';
 import { toRendererWidget } from 'widgets/WidgetCompat';
 
 export default ({ $scope, emitter }) => {
-  const $controller = getModule('$controller');
-  const $rootScope = getModule('$rootScope');
   const spaceContext = getModule('spaceContext');
 
   const isEntry = $scope.entityInfo.type === 'Entry';
@@ -252,17 +248,6 @@ export default ({ $scope, emitter }) => {
     };
   });
 
-  const buildSidebarExtensionsBridge = (currentWidgetId, currentWidgetNamespace) =>
-    createExtensionBridge({
-      $rootScope,
-      $scope,
-      spaceContext,
-      $controller,
-      currentWidgetId,
-      currentWidgetNamespace,
-      location: WidgetLocation.ENTRY_SIDEBAR,
-    });
-
   const makeSidebarWidgetSDK = memoize(
     (widgetNamespace, widgetId, parameters) => {
       return createSidebarWidgetSDK({
@@ -283,11 +268,9 @@ export default ({ $scope, emitter }) => {
     localeData: $scope.localeData,
     sidebar: $scope.editorData.sidebar,
     sidebarExtensions: $scope.editorData.sidebarExtensions,
-    buildSidebarExtensionsBridge,
     makeSidebarWidgetSDK,
     isEntry,
     isMasterEnvironment,
     emitter,
-    useNewWidgetRenderer: $scope.editorData.useNewWidgetRenderer.sidebar,
   };
 };

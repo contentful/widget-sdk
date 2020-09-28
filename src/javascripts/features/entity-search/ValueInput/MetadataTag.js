@@ -51,7 +51,8 @@ class MetadataTag extends React.Component {
         <fieldset
           className={`search__input-text ${css({
             minWidth: tokens.spacingS,
-          })}`}></fieldset>
+          })}`}
+        />
       );
     }
 

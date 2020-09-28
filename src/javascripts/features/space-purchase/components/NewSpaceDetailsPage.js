@@ -105,7 +105,7 @@ export const NewSpaceDetailsPage = ({
                 onClick={onSubmit}
                 disabled={spaceName === ''}
                 testId="next-step-new-details-page">
-                {spaceIsFree ? 'Create space' : 'Continue to pay'}
+                {spaceIsFree ? 'Create space' : 'Continue'}
               </Button>
             </div>
           </Form>

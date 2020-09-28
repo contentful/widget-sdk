@@ -6,8 +6,8 @@ function useCreateTag() {
   const tagsRepo = useTagsRepo();
 
   const createTagCallback = useCallback(
-    async (id, name) => {
-      return tagsRepo.createTag(id, name);
+    async (id, name, tagType) => {
+      return tagsRepo.createTag(id, name, tagType);
     },
     [tagsRepo]
   );

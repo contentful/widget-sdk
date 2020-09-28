@@ -71,7 +71,8 @@ export default function DeleteEnvironmentAliasModal({ modalOpen, spaceId, setMod
                   isSelected
                   aliasId={alias.sys.id}
                   showAliasedTo={false}
-                  hasCopy={false}></EnvironmentDetails>
+                  hasCopy={false}
+                />
               </div>
               <Paragraph>Current environment:</Paragraph>
               <Table className={aliasStyles.body}>
@@ -83,7 +84,8 @@ export default function DeleteEnvironmentAliasModal({ modalOpen, spaceId, setMod
                         environmentId={alias.sys.aliasedEnvironment.sys.id}
                         createdAt={alias.sys.createdAt}
                         isMaster={alias.sys.aliasedEnvironment.sys.id === 'master'}
-                        hasCopy={false}></EnvironmentDetails>
+                        hasCopy={false}
+                      />
                     </TableCell>
                   </TableRow>
                 </TableBody>

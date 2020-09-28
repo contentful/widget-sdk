@@ -186,7 +186,7 @@ export const AliasChangedChoiceModal = ({
                 Move to <code className={styles.envCodeStyle}>{oldTarget}</code>
               </Button>
             </Tooltip>
-            {loading && <Spinner></Spinner>}
+            {loading && <Spinner />}
           </Modal.Controls>
         </React.Fragment>
       )}

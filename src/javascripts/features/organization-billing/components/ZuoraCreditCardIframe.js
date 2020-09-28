@@ -75,7 +75,8 @@ export function ZuoraCreditCardIframe({ organizationId, countryCode, onSuccess, 
       <div
         id="zuora_payment"
         data-test-id="zuora-payment-iframe"
-        className={cx(styles.iframeContainer, loading && styles.hide)}></div>
+        className={cx(styles.iframeContainer, loading && styles.hide)}
+      />
     </>
   );
 }

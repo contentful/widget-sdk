@@ -82,7 +82,8 @@ export default function StaticDropdown({
           data-test-id="staticdropdown.dropdown">
           <div
             className={`${styles.arrowUp} ${dynamicArrowUp}`}
-            data-test-id="staticdropdown.arrow"></div>
+            data-test-id="staticdropdown.arrow"
+          />
           <div className={styles.title}>{title}</div>
           <div className={styles.body}>{body}</div>
         </div>

@@ -5,5 +5,9 @@ export function getCountryNameFromCountryCode(countryCode) {
     return country.code === countryCode;
   });
 
-  return countryObject.name;
+  return countryObject?.name;
+}
+
+export function isCountryCode(string) {
+  return string.length === 2;
 }

@@ -5,7 +5,7 @@ import * as random from 'utils/Random';
 
 import { View } from './View';
 
-jest.mock('core/components/Portal', () => ({ Portal: () => <div data-test-id="portal"></div> }));
+jest.mock('core/components/Portal', () => ({ Portal: () => <div data-test-id="portal" /> }));
 jest.mock('./Tree', () => ({
   SortableTree: (props) => <div data-test-id="child">{JSON.stringify(props)}</div>,
 }));

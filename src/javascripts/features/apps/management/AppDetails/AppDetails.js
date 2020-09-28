@@ -149,7 +149,8 @@ export class AppDetails extends React.Component {
               Install to space
             </Button>
           }
-          onBack={this.props.goToListView}></Workbench.Header>
+          onBack={this.props.goToListView}
+        />
         <Workbench.Content>
           <div className={styles.workbenchContent}>
             <div className={styles.title}>

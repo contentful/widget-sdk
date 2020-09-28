@@ -21,6 +21,7 @@ import {
 import { Flex, Grid } from '@contentful/forma-36-react-components/dist/alpha';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
+import { isFreeProductPlan } from 'account/pricing/PricingDataProvider';
 import { getIncludedResources, resourcesToDisplay, getTooltip } from '../utils/utils';
 import { getRolesTooltip } from 'utils/RoleTooltipCopy';
 import { shorten } from 'utils/NumberUtils';
@@ -81,13 +82,16 @@ export function SpacePlanAssignmentConfirmation({
       <Typography className={styles.text}>
         <Heading>One more thing ☝️</Heading>
         <Paragraph>
-          {`You are about to change the type of ${space.name}. Check one last time to make sure everything is in order, then confirm.`}
+          {`You are about to change ${space.name} type. Check one last time to make sure everything is in order, then confirm.`}
+          {isFreeProductPlan(currentPlan) && (
+            <>
+              <br />
+              <strong>
+                This cannot be undone as {space.name} is a {currentPlan.name}
+              </strong>
+            </>
+          )}
         </Paragraph>
-        {currentPlan.name === 'Proof of Concept' && (
-          <Paragraph>
-            <strong>This cannot be undone as it’s a Proof of Concept space.</strong>
-          </Paragraph>
-        )}
       </Typography>
 
       <section className={styles.content}>
@@ -154,11 +158,16 @@ export function SpacePlanAssignmentConfirmation({
           </Grid>
         </Card>
         <Flex justifyContent="space-between" alignItems="center" marginTop="spacingL">
-          <Button buttonType="muted" onClick={onPrev} disabled={inProgress} icon="ChevronLeft">
+          <Button
+            buttonType="muted"
+            onClick={onPrev}
+            disabled={inProgress}
+            icon="ChevronLeft"
+            testId="go-back-btn">
             Go back
           </Button>
-          <Button buttonType="positive" onClick={onNext} loading={inProgress}>
-            Confirm
+          <Button buttonType="positive" onClick={onNext} loading={inProgress} testId="confirm-btn">
+            Confim and change
           </Button>
         </Flex>
       </section>

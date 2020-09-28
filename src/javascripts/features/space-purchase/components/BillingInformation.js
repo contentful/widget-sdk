@@ -1,53 +1,48 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import cn from 'classnames';
 
 import { Paragraph, Subheading } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { getCountryNameFromCountryCode } from '../utils/countryHelper';
+import { getCountryNameFromCountryCode, isCountryCode } from '../utils/countryHelper';
+import { BillingDetailsPropType } from 'features/organization-billing';
 
 const styles = {
   title: css({
     fontWeight: tokens.fontWeightMedium,
     fontSize: tokens.fontSizeM,
   }),
-  fontColor: css({
-    color: tokens.colorTextDark,
-  }),
 };
 
-export const BillingInformation = ({ billingInfo }) => {
+export const BillingInformation = ({ billingDetails }) => {
+  // If the billingDetails is coming from the getBilling api call, then it's a country's name, otherwise it's from the billingForm and is a country code.
+  const country = isCountryCode(billingDetails.country)
+    ? getCountryNameFromCountryCode(billingDetails.country)
+    : billingDetails.country;
+
   return (
     <div>
       <Subheading
-        className={cn(styles.title, styles.fontColor)}
+        className={styles.title}
         element="h4"
         aria-labelledby="billing-address-information-review-section">
         Billing address
       </Subheading>
-      <Paragraph className={styles.fontColor}>
-        {billingInfo.firstName} {billingInfo.lastName}
+      <Paragraph>
+        {billingDetails.firstName} {billingDetails.lastName}
       </Paragraph>
-      <Paragraph className={styles.fontColor}>{billingInfo.email}</Paragraph>
-      <Paragraph className={styles.fontColor}>{billingInfo.address}</Paragraph>
-      {billingInfo.addressTwo && (
-        <Paragraph className={styles.fontColor}>{billingInfo.addressTwo}</Paragraph>
-      )}
-      <Paragraph className={styles.fontColor}>
-        {billingInfo.city}, {billingInfo.postcode}
+      <Paragraph>{billingDetails.workEmail}</Paragraph>
+      <Paragraph>{billingDetails.address1}</Paragraph>
+      {billingDetails.address2 && <Paragraph>{billingDetails.address2}</Paragraph>}
+      <Paragraph>
+        {billingDetails.city}, {billingDetails.zipCode}
       </Paragraph>
-      <Paragraph className={styles.fontColor}>
-        {getCountryNameFromCountryCode(billingInfo.country)}
-      </Paragraph>
-      {billingInfo.vatNumber && (
-        <Paragraph className={styles.fontColor}>{billingInfo.vatNumber}</Paragraph>
-      )}
-      {billingInfo.state && <Paragraph className={styles.fontColor}>{billingInfo.state}</Paragraph>}
+      <Paragraph>{country}</Paragraph>
+      {billingDetails.vat && <Paragraph>{billingDetails.vat}</Paragraph>}
+      {billingDetails.state && <Paragraph>{billingDetails.state}</Paragraph>}
     </div>
   );
 };
 
 BillingInformation.propTypes = {
-  billingInfo: PropTypes.object.isRequired,
+  billingDetails: BillingDetailsPropType.isRequired,
 };

@@ -150,7 +150,8 @@ export const OrganizationUsage = () => {
         <Workbench.Header
           title="Usage"
           icon={<NavigationIcon icon="Usage" size="large" />}
-          actions={<WorkbenchActions />}></Workbench.Header>
+          actions={<WorkbenchActions />}
+        />
         <Workbench.Content className={styles.content}>
           <WorkbenchContent />
         </Workbench.Content>

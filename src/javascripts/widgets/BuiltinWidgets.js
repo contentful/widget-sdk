@@ -20,7 +20,8 @@ import { JsonEditor } from '@contentful/field-editor-json';
 import { LocationEditor } from '@contentful/field-editor-location';
 import { DateEditor } from '@contentful/field-editor-date';
 import { MarkdownEditor, openMarkdownDialog } from '@contentful/field-editor-markdown';
-import FileEditor from 'app/widgets/FileEditor';
+import { FileEditor } from '@contentful/field-editor-file';
+import { getExternalImageUrl } from 'utils/thumbnailHelpers';
 import {
   SingleEntryReferenceEditorWithTracking,
   SingleMediaEditorWithTracking,
@@ -284,7 +285,22 @@ export function create() {
     fieldTypes: ['File'],
     name: 'File',
     renderFieldEditor: ({ widgetApi }) => {
-      return <FileEditor sdk={widgetApi} />;
+      const { apiKey, policy, signature } = Config.services.filestack;
+      return (
+        <FileEditor
+          sdk={widgetApi}
+          clientConfig={{ apiKey, policy, signature }}
+          getUploadUrl={(url) => url}
+          getExternalUrl={getExternalImageUrl}
+          signAssetUrl={async (url) => {
+            const result = await widgetApi.space.signAssetUrls({
+              urls: [url],
+              expiresIn: 60,
+            });
+            return result.data[url].payload;
+          }}
+        />
+      );
     },
   });
 

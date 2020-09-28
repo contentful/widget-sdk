@@ -9,7 +9,9 @@ import * as TokenStore from 'services/TokenStore';
 import { trackClickCTA } from '../tracking';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 
-import * as spaceContextMocked from 'ng/spaceContext';
+import { CurrentSpaceAPIClientProvider } from 'core/services/APIClient/CurrentSpaceAPIClientContext';
+import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { mockGetEntries } from '__mocks__/data/APIClient';
 
 const mockSpace = FakeFactory.Space();
 
@@ -34,7 +36,13 @@ jest.mock('services/TokenStore', () => ({
 }));
 
 const build = () => {
-  return render(<ExampleProjectOverview cdaToken={'tokenString123'} cpaToken={'tokenString789'} />);
+  return render(
+    <SpaceEnvContextProvider>
+      <CurrentSpaceAPIClientProvider>
+        <ExampleProjectOverview cdaToken={'tokenString123'} cpaToken={'tokenString789'} />
+      </CurrentSpaceAPIClientProvider>
+    </SpaceEnvContextProvider>
+  );
 };
 
 describe('ExampleProjectOverview', () => {
@@ -49,10 +57,6 @@ describe('ExampleProjectOverview', () => {
       },
     ],
   };
-  const getEntries = jest.fn().mockResolvedValue(courses);
-
-  spaceContextMocked.cma.getEntries = getEntries;
-  spaceContextMocked.space.getId.mockReturnValue('spaceId123');
 
   TokenStore.getSpace.mockResolvedValue(mockSpace);
 
@@ -89,7 +93,7 @@ describe('ExampleProjectOverview', () => {
       resolvePromise = resolve;
     });
 
-    getEntries.mockImplementation(async () => {
+    mockGetEntries.mockImplementation(async () => {
       await waitForTesting;
 
       return courses;
@@ -113,7 +117,7 @@ describe('ExampleProjectOverview', () => {
     build();
 
     userEvent.click(screen.getByTestId('example-project-card.edit-an-entry-button'));
-    expect(getEntries).toBeCalledWith({
+    expect(mockGetEntries).toBeCalledWith({
       content_type: 'course',
     });
 
@@ -128,12 +132,12 @@ describe('ExampleProjectOverview', () => {
   });
 
   it('should navigate to entries list page if it cannot find the default entry to edit', async () => {
-    getEntries.mockResolvedValue({ items: [] });
+    mockGetEntries.mockResolvedValue({ items: [] });
 
     build();
 
     userEvent.click(screen.getByTestId('example-project-card.edit-an-entry-button'));
-    expect(getEntries).toBeCalledWith({
+    expect(mockGetEntries).toBeCalledWith({
       content_type: 'course',
     });
 

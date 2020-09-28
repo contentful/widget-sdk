@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import getDefaultWidgetId from 'widgets/DefaultWidget';
 import { WidgetNamespace, isCustomWidget } from '@contentful/widget-renderer';
 import { FieldDialogAppearanceTab } from './FieldDialogAppearanceTab';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { isAdmin } from 'core/services/SpaceEnvContext/utils';
 
 const getDefaultWidget = (ctField, contentType, availableWidgets) => {
   const defaultWidgetId = getDefaultWidgetId(ctField, contentType.data.displayField);
@@ -13,7 +15,6 @@ const getDefaultWidget = (ctField, contentType, availableWidgets) => {
 
 const AppearanceTabComponent = ({
   ctField,
-  spaceContext,
   contentType,
   widgetSettings,
   setWidgetSettings,
@@ -25,8 +26,7 @@ const AppearanceTabComponent = ({
     contentType,
     availableWidgets,
   ]);
-
-  const isAdmin = !!spaceContext.getData('spaceMember.admin', false);
+  const { currentSpace } = useSpaceEnvContext();
   const hasCustomEditor = (editorInterface.editors || []).some((editor) => {
     return isCustomWidget(editor.widgetNamespace);
   });
@@ -41,7 +41,7 @@ const AppearanceTabComponent = ({
 
   return (
     <FieldDialogAppearanceTab
-      isAdmin={isAdmin}
+      isAdmin={isAdmin(currentSpace)}
       availableWidgets={availableWidgets}
       defaultWidget={defaultWidget}
       widgetSettings={widgetSettings}
@@ -55,7 +55,6 @@ const AppearanceTabComponent = ({
 AppearanceTabComponent.propTypes = {
   editorInterface: PropTypes.object.isRequired,
   ctField: PropTypes.object.isRequired,
-  spaceContext: PropTypes.object.isRequired,
   contentType: PropTypes.object.isRequired,
   widgetSettings: PropTypes.shape({
     namespace: PropTypes.string.isRequired,

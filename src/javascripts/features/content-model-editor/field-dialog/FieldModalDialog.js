@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { Modal } from '@contentful/forma-36-react-components';
 import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { FieldModalDialogForm } from './FieldModalDialogForm';
+import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { CurrentSpaceAPIClientProvider } from 'core/services/APIClient/CurrentSpaceAPIClientContext';
 
 const FieldModalDialog = ({
   isShown,
@@ -16,20 +18,24 @@ const FieldModalDialog = ({
   customWidgets,
 }) => {
   return (
-    <Modal isShown={isShown} onClose={onClose} size="60em" allowHeightOverflow>
-      {({ onClose }) => (
-        <FieldModalDialogForm
-          onClose={onClose}
-          ctField={ctField}
-          widget={widget}
-          spaceContext={spaceContext}
-          contentType={contentType}
-          updateFieldOnScope={updateFieldOnScope}
-          editorInterface={editorInterface}
-          customWidgets={customWidgets}
-        />
-      )}
-    </Modal>
+    <SpaceEnvContextProvider>
+      <CurrentSpaceAPIClientProvider>
+        <Modal isShown={isShown} onClose={onClose} size="60em" allowHeightOverflow>
+          {({ onClose }) => (
+            <FieldModalDialogForm
+              onClose={onClose}
+              ctField={ctField}
+              widget={widget}
+              spaceContext={spaceContext}
+              contentType={contentType}
+              updateFieldOnScope={updateFieldOnScope}
+              editorInterface={editorInterface}
+              customWidgets={customWidgets}
+            />
+          )}
+        </Modal>
+      </CurrentSpaceAPIClientProvider>
+    </SpaceEnvContextProvider>
   );
 };
 

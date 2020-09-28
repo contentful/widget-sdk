@@ -58,8 +58,6 @@ interface PageExtensionRouteProps {
   extensionId: string;
   orgId: string;
   path: string;
-  createPageExtensionBridge: (widget: Widget) => any;
-  useNewWidgetRendererInPageLocation: boolean;
   createPageExtensionSDK: (widget: Widget, parameters: PageWidgetParameters) => PageExtensionSDK;
   environmentId: string;
 }
@@ -85,10 +83,8 @@ export default function PageExtensionRoute(props: PageExtensionRouteProps) {
 
         return (
           <PageWidgetRenderer
-            useNewWidgetRendererInPageLocation={props.useNewWidgetRendererInPageLocation}
             createPageExtensionSDK={props.createPageExtensionSDK}
             widget={widget}
-            createPageExtensionBridge={props.createPageExtensionBridge}
             path={props.path}
             environmentId={props.environmentId}
           />

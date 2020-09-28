@@ -57,13 +57,13 @@ function StaffHint() {
   return (
     <WorkbenchSidebarItem title="A hint from our staff">
       <div className="staff-hint">
-        <i className="fa fa-quote-left"></i>
+        <i className="fa fa-quote-left" />
         <div className="staff-hint__quote">
           <div className="staff-hint__content">
             Create separate API keys if you have multiple platforms you need to deliver content to.
           </div>
           <div className="staff-hint__author">
-            <div className="staff-hint__author-photo x--herve"></div>
+            <div className="staff-hint__author-photo x--herve" />
             <div className="staff-hint__author-name">
               <strong>Herve Labas</strong>
               {/* eslint-disable-next-line rulesdir/restrict-non-f36-components */}

@@ -10,25 +10,26 @@ import {
   createBillingDetails,
   setDefaultPaymentMethod,
   getDefaultPaymentMethod,
+  getBillingDetails,
 } from 'features/organization-billing/index';
 
 // eslint-disable-next-line
 import { mockEndpoint } from 'data/EndpointFactory';
 
-const mockOrganization = FakeFactory.Organization();
+const mockOrganization = FakeFactory.Organization({ isBillable: false });
 const mockProductRatePlanMedium = { name: 'Medium', price: 100 };
 const mockProductRatePlanLarge = { name: 'Large', price: 200 };
 const mockBillingDetails = {
   firstName: 'John',
   lastName: 'Doe',
-  email: 'test@example.com',
-  address: '123 street ave',
-  addressTwo: 'apartment 321',
+  workEmail: 'test@example.com',
+  address1: '123 street ave',
+  address2: 'apartment 321',
   city: 'Berlin',
-  postcode: '11111',
+  zipCode: '11111',
   country: 'DE',
   state: '',
-  vatNumber: '',
+  vat: '',
 };
 const mockRefId = 'ref_1234';
 
@@ -54,13 +55,27 @@ jest.mock('features/organization-billing/index', () => ({
   createBillingDetails: jest.fn(),
   setDefaultPaymentMethod: jest.fn(),
   getDefaultPaymentMethod: jest.fn(),
+  getBillingDetails: jest.fn(),
   getHostedPaymentParams: jest.fn().mockResolvedValue(),
   ZuoraCreditCardIframe: jest.requireActual('features/organization-billing/index')
     .ZuoraCreditCardIframe,
   BillingDetailsForm: jest.requireActual('features/organization-billing/index').BillingDetailsForm,
+  BillingDetailsLoading: jest.requireActual('features/organization-billing/index')
+    .BillingDetailsLoading,
+  CreditCardDetailsLoading: jest.requireActual('features/organization-billing/index')
+    .CreditCardDetailsLoading,
+  transformBillingDetails: jest.requireActual('features/organization-billing/index')
+    .transformBillingDetails,
+  BillingDetailsPropType: jest.requireActual('features/organization-billing/index')
+    .BillingDetailsPropType,
 }));
 
 describe('NewSpacePage', () => {
+  beforeEach(() => {
+    isOwner.mockReturnValue(true);
+    mockOrganization.isBillable = false;
+  });
+
   it('should render SPACE_SELECTION page as a default', () => {
     build();
 
@@ -123,12 +138,46 @@ describe('NewSpacePage', () => {
     spacePlanCards.forEach((ele) => {
       expect(within(ele).getByTestId('select-space-cta')).not.toHaveAttribute('disabled');
     });
+  });
 
-    delete mockOrganization.isBillable;
+  it('should fetch and display billing details and skip credit card and billing details page if org has billing details', async () => {
+    mockOrganization.isBillable = true;
+    getBillingDetails.mockResolvedValueOnce({
+      firstName: 'John',
+      lastName: 'Doe',
+      workEmail: 'test@example.com',
+      vat: '',
+      address: {
+        address1: '123 street ave',
+        address2: 'apartment 321',
+        city: 'Berlin',
+        zipCode: '11111',
+        country: 'Germany',
+        state: '',
+      },
+    });
+
+    build();
+
+    // Space Selection Page
+    expect(getBillingDetails).toBeCalledWith(mockOrganization.sys.id);
+    expect(getDefaultPaymentMethod).toBeCalledWith(mockOrganization.sys.id);
+
+    userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
+
+    // Space Details Page
+    const input = screen.getByTestId('space-name').getElementsByTagName('input')[0];
+
+    userEvent.type(input, 'test');
+
+    userEvent.click(screen.getByTestId('next-step-new-details-page'));
+
+    // Confirmation Page
+    expect(screen.getByTestId('new-space-confirmation-section')).toBeVisible();
   });
 
   it('should disable all paid space plans if the user is not org owner and the org does not have billing details', () => {
-    isOwner.mockReturnValueOnce(false);
+    isOwner.mockReturnValue(false);
 
     build();
 
@@ -153,19 +202,6 @@ describe('NewSpacePage', () => {
     });
 
     it('should save billing information then fetch the payment method onSuccess of the Zoura iframe', async () => {
-      const reconciledBillingDetails = {
-        refid: mockRefId,
-        firstName: mockBillingDetails.firstName,
-        lastName: mockBillingDetails.lastName,
-        vat: mockBillingDetails.vatNumber,
-        workEmail: mockBillingDetails.email,
-        address1: mockBillingDetails.address,
-        address2: mockBillingDetails.addressTwo,
-        city: mockBillingDetails.city,
-        state: mockBillingDetails.state,
-        country: mockBillingDetails.country,
-        zipCode: mockBillingDetails.postcode,
-      };
       getDefaultPaymentMethod.mockResolvedValueOnce({
         number: '************1111',
         expirationDate: { month: 3, year: 2021 },
@@ -185,7 +221,7 @@ describe('NewSpacePage', () => {
       // ------ Billing Details page ------
       // Fill out all text fields
       screen.getAllByTestId('cf-ui-text-input').forEach((textField) => {
-        userEvent.type(textField, mockBillingDetails[textField.getAttribute('name')]);
+        userEvent.type(textField, mockBillingDetails[textField.getAttribute('id')]);
       });
 
       const countrySelect = within(screen.getByTestId('billing-details.country')).getByTestId(
@@ -202,10 +238,10 @@ describe('NewSpacePage', () => {
       successCb({ success: true, refId: mockRefId });
 
       await waitFor(() => {
-        expect(createBillingDetails).toBeCalledWith(
-          mockOrganization.sys.id,
-          reconciledBillingDetails
-        );
+        expect(createBillingDetails).toBeCalledWith(mockOrganization.sys.id, {
+          ...mockBillingDetails,
+          refid: mockRefId,
+        });
         expect(setDefaultPaymentMethod).toBeCalledWith(mockOrganization.sys.id, mockRefId);
         expect(getDefaultPaymentMethod).toBeCalledWith(mockOrganization.sys.id);
       });
@@ -231,7 +267,7 @@ describe('NewSpacePage', () => {
     // ------ Billing Details page ------
     // Fill out all text fields
     screen.getAllByTestId('cf-ui-text-input').forEach((textField) => {
-      userEvent.type(textField, mockBillingDetails[textField.getAttribute('name')]);
+      userEvent.type(textField, mockBillingDetails[textField.getAttribute('id')]);
     });
 
     const countrySelect = within(screen.getByTestId('billing-details.country')).getByTestId(
@@ -256,7 +292,7 @@ describe('NewSpacePage', () => {
 
     // Check all text fields
     screen.getAllByTestId('cf-ui-text-input').forEach((textField) => {
-      expect(textField.value).toEqual(mockBillingDetails[textField.getAttribute('name')]);
+      expect(textField.value).toEqual(mockBillingDetails[textField.getAttribute('id')]);
     });
   });
 

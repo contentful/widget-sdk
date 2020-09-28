@@ -15,6 +15,7 @@ function translatePolicies(external) {
     assets: { allowed: [], denied: [] },
     policyString,
     uiCompatible: true,
+    metadataTagRuleExists: false, // TODO: remove this flag when the new web ui for metadata tag rules is implemented
   };
 
   _(prepare(external)).map(extendPolicyWithRule).forEach(prepareExtension);
@@ -27,6 +28,11 @@ function translatePolicies(external) {
     } else {
       const rule = _.extend(p.rule, { action: p.action });
       extension[p.entityCollection][p.effectCollection].push(rule);
+
+      // TODO: remove this flag when the new web ui for metadata tag rules is implemented
+      if (rule.metadataTagRulesExist) {
+        extension.metadataTagRuleExists = true;
+      }
     }
   }
 }
@@ -65,7 +71,7 @@ function extractAction(policy) {
   return null;
 
   function isArrayOfLength(n) {
-    return _.isArray(as) && as.length === n;
+    return Array.isArray(as) && as.length === n;
   }
   function containsBoth(s1, s2) {
     return as.indexOf(s1) > -1 && as.indexOf(s2) > -1;
@@ -73,9 +79,9 @@ function extractAction(policy) {
 }
 
 function extractConstraints(policy) {
-  if (_.isArray(policy.constraint)) {
+  if (Array.isArray(policy.constraint)) {
     return policy.constraint;
-  } else if (_.isObject(policy.constraint) && _.isArray(policy.constraint.and)) {
+  } else if (_.isObject(policy.constraint) && Array.isArray(policy.constraint.and)) {
     return policy.constraint.and;
   }
 }
@@ -109,14 +115,32 @@ function createRule(policy) {
     rest.splice(idConstraint.index, 1);
   }
 
-  // 4. find scope
+  // 4. find matching metadata tag id
+  const metadataTagIdConstraint = findMetadataTagConstraint(rest, 'metadata.tags.sys.id');
+  if (metadataTagIdConstraint.value) {
+    rule.metadataTagRulesExist = true;
+    rule.metadataTagId = metadataTagIdConstraint.value; // value can be a list of tag ids or tag types
+    rule.scope = 'metadataTagId';
+    rest.splice(metadataTagIdConstraint.index, 1);
+  }
+
+  // 5. find matching metadata tag type
+  const metadataTagTypeConstraint = findMetadataTagConstraint(rest, 'metadata.tags.sys.tagType');
+  if (metadataTagTypeConstraint.value) {
+    rule.metadataTagRulesExist = true;
+    rule.metadataTagType = metadataTagTypeConstraint.value; // value can be a list of tag ids or tag types
+    rule.scope = 'metadataTagType';
+    rest.splice(metadataTagTypeConstraint.index, 1);
+  }
+
+  // 6. find scope
   const userConstraint = findUserConstraint(rest);
   if (userConstraint.value) {
     rule.scope = _.isString(userConstraint.value) ? 'user' : 'any';
     rest.splice(userConstraint.index, 1);
   }
 
-  // 5. find path
+  // 7. find path
   const pathConstraint = findPathConstraint(rest);
   if (pathConstraint.value) {
     rule.isPath = true;
@@ -141,42 +165,52 @@ function findEntityConstraint(cs) {
 function findAssetConstraint(cs) {
   return searchResult(
     cs,
-    _.findIndex(cs, (c) => docEq(c, 'sys.type') && _.includes(['Asset'], c.equals[1]))
+    cs.findIndex((c) => docEq(c, 'sys.type') && _.includes(['Asset'], c.equals[1]))
   );
 }
 
 function findEntryConstraint(cs) {
   return searchResult(
     cs,
-    _.findIndex(cs, (c) => docEq(c, 'sys.type') && _.includes(['Entry'], c.equals[1]))
+    cs.findIndex((c) => docEq(c, 'sys.type') && _.includes(['Entry'], c.equals[1]))
   );
 }
 
 function findContentTypeConstraint(cs) {
   return searchResult(
     cs,
-    _.findIndex(cs, (c) => docEq(c, 'sys.contentType.sys.id') && _.isString(c.equals[1]))
+    cs.findIndex((c) => docEq(c, 'sys.contentType.sys.id') && _.isString(c.equals[1]))
   );
 }
 
 function findIdConstraint(cs) {
   return searchResult(
     cs,
-    _.findIndex(cs, (c) => docEq(c, 'sys.id') && _.isString(c.equals[1]))
+    cs.findIndex((c) => docEq(c, 'sys.id') && _.isString(c.equals[1]))
+  );
+}
+
+function findMetadataTagConstraint(cs, doc) {
+  return searchResultCollection(
+    cs,
+    cs.findIndex((c) => {
+      // support more constraint types
+      const constraint = c.in || c.all || c.equals;
+      return docMatch(constraint, doc) && Array.isArray(constraint[1]);
+    })
   );
 }
 
 function findUserConstraint(cs) {
   return searchResult(
     cs,
-    _.findIndex(cs, (c) => docEq(c, 'sys.createdBy.sys.id') && _.isString(c.equals[1]))
+    cs.findIndex((c) => docEq(c, 'sys.createdBy.sys.id') && _.isString(c.equals[1]))
   );
 }
 
 function findPathConstraint(cs) {
-  const index = _.findIndex(
-    cs,
-    (c) => _.isArray(c.paths) && _.isObject(c.paths[0]) && _.isString(c.paths[0].doc)
+  const index = cs.findIndex(
+    (c) => Array.isArray(c.paths) && _.isObject(c.paths[0]) && _.isString(c.paths[0].doc)
   );
 
   return {
@@ -186,13 +220,31 @@ function findPathConstraint(cs) {
 }
 
 function docEq(c, val) {
-  return _.isArray(c.equals) && _.isObject(c.equals[0]) && c.equals[0].doc === val;
+  return Array.isArray(c.equals) && _.isObject(c.equals[0]) && c.equals[0].doc === val;
+}
+
+function docMatch(constraint, val) {
+  return Array.isArray(constraint) && _.isObject(constraint[0]) && constraint[0].doc === val;
 }
 
 function searchResult(cs, index) {
   return {
     index,
     value: index > -1 ? cs[index].equals[1] : null,
+  };
+}
+
+function searchResultCollection(cs, index) {
+  let value = null;
+
+  if (index > -1) {
+    // support more constraint types
+    value = (cs[index].in || cs[index].all || cs[index].equals)[1];
+  }
+
+  return {
+    index,
+    value,
   };
 }
 

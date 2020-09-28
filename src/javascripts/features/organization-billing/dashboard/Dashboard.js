@@ -20,6 +20,9 @@ import { NavigationIcon, Grid, GridItem } from '@contentful/forma-36-react-compo
 import * as tokens from '@contentful/forma-36-tokens';
 import moment from 'moment';
 import { times } from 'lodash';
+import { BillingDetailsLoading } from '../components/BillingDetailsLoading';
+import { CreditCardDetailsLoading } from '../components/CreditCardDetailsLoading';
+import { BillingDetailsPropType } from '../propTypes';
 
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { getInvoice } from '../services/BillingDetailsService';
@@ -148,7 +151,7 @@ export function Dashboard({
                       <TableRow>
                         <TableCell width="37%">Date</TableCell>
                         <TableCell width="38%">Amount</TableCell>
-                        <TableCell width="25%"></TableCell>
+                        <TableCell width="25%" />
                       </TableRow>
                     </TableHead>
                     {loading && <InvoicesTableLoading />}
@@ -195,7 +198,7 @@ export function Dashboard({
 Dashboard.propTypes = {
   loading: PropTypes.bool.isRequired,
   organizationId: PropTypes.string.isRequired,
-  billingDetails: PropTypes.object,
+  billingDetails: BillingDetailsPropType,
   paymentDetails: PropTypes.object,
   invoices: PropTypes.array,
   orgIsSelfService: PropTypes.bool,
@@ -209,15 +212,15 @@ function BillingDetails({ billingDetails }) {
       <br />
       {billingDetails.workEmail}
       <br />
-      {billingDetails.address.address1}
+      {billingDetails.address1}
       <br />
-      {billingDetails.address.address2 && (
+      {billingDetails.address2 && (
         <>
-          <span data-test-id="address2">{billingDetails.address.address2}</span>
+          <span data-test-id="address2">{billingDetails.address2}</span>
           <br />
         </>
       )}
-      {billingDetails.address.zipCode} {billingDetails.address.city}
+      {billingDetails.zipCode} {billingDetails.city}
       {billingDetails.vat && (
         <>
           <br />
@@ -229,28 +232,8 @@ function BillingDetails({ billingDetails }) {
 }
 
 BillingDetails.propTypes = {
-  billingDetails: PropTypes.object.isRequired,
+  billingDetails: BillingDetailsPropType.isRequired,
 };
-
-function BillingDetailsLoading() {
-  return (
-    <div data-test-id="billing-details-loading" className={styles.billingDetailsLoadingState}>
-      <SkeletonContainer svgHeight={120} ariaLabel="Loading billing address...">
-        <SkeletonBodyText numberOfLines={5} />
-      </SkeletonContainer>
-    </div>
-  );
-}
-
-function CreditCardDetailsLoading() {
-  return (
-    <div data-test-id="credit-card-details-loading" className={styles.billingDetailsLoadingState}>
-      <SkeletonContainer svgHeight={40} ariaLabel="Loading credit card details...">
-        <SkeletonBodyText numberOfLines={2} />
-      </SkeletonContainer>
-    </div>
-  );
-}
 
 function InvoicesTableLoading() {
   return (

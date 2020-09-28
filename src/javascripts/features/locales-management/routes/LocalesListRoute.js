@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { getModule } from 'core/NgRegistry';
 import { LocalesListSkeleton } from '../skeletons/LocalesListSkeleton';
 import { LocalesListPricingOne } from '../LocalesListPricingOne';
 import { LocalesListPricingTwo } from '../LocalesListPricingTwo';
@@ -14,32 +13,44 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import { getSubscriptionState } from './utils/getSubscriptionState';
 import { getSpaceFeature, FEATURES } from 'data/CMA/ProductCatalog';
 import { useAsync } from 'core/hooks';
-
+import { getModule } from 'core/NgRegistry';
 import * as OrganizationRoles from 'services/OrganizationRoles';
 import createResourceService from 'services/ResourceService';
 import * as PricingService from 'services/PricingService';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 
-const fetch = async () => {
+const fetch = async ({
+  organization,
+  organizationId,
+  spaceId,
+  environmentId,
+  isMasterEnvironment,
+}) => {
+  const isOrgOwnerOrAdmin = OrganizationRoles.isOwnerOrAdmin(organization);
+  const orgIsLegacy = isLegacyOrganization(organization);
+  /** TODO: Change it to a `localeRepo` instance
+   * We can create the `localeRepo` instance instead but this would break the contract tests
+   * because we would need to pass the environment ID and this would change the expected URL for Cypress
+   * while other parts of the app are still using it from the Angular spaceContext
+   **/
   const spaceContext = getModule('spaceContext');
-  const isOrgOwnerOrAdmin = OrganizationRoles.isOwnerOrAdmin(spaceContext.organization);
-
-  const orgIsLegacy = isLegacyOrganization(spaceContext.organization);
 
   const promisesArray = [
     spaceContext.localeRepo.getAll(),
-    createResourceService(spaceContext.getId()).get('locale', spaceContext.getEnvironmentId()),
-    createLegacyFeatureService(spaceContext.getId()).get('multipleLocales'),
-    spaceContext.isMasterEnvironment(),
-    getSpaceFeature(spaceContext.getId(), FEATURES.ENVIRONMENT_USAGE_ENFORCEMENT),
-    _.get(spaceContext.organization, ['subscriptionPlan', 'name']),
+    createResourceService(spaceId).get('locale', environmentId),
+    createLegacyFeatureService(spaceId).get('multipleLocales'),
+    isMasterEnvironment,
+    getSpaceFeature(spaceId, FEATURES.ENVIRONMENT_USAGE_ENFORCEMENT),
+    _.get(organization, ['subscriptionPlan', 'name']),
   ];
 
   if (!orgIsLegacy && isOrgOwnerOrAdmin) {
     // This fetch only works when user is an owner or admin.
     promisesArray.push(
       PricingService.nextSpacePlanForResource(
-        spaceContext.organization.sys.id,
-        spaceContext.getId(),
+        organizationId,
+        spaceId,
         PricingService.SPACE_PLAN_RESOURCE_TYPES.LOCALE
       )
     );
@@ -76,7 +87,33 @@ export const LocalesListRoute = ({
   showUpgradeSpaceDialog,
   getComputeLocalesUsageForOrganization,
 }) => {
-  const { isLoading, error, data = {} } = useAsync(useCallback(fetch, []));
+  const {
+    currentOrganization,
+    currentOrganizationId,
+    currentSpaceId,
+    currentEnvironmentId,
+    currentSpace,
+  } = useSpaceEnvContext();
+  const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
+  const { isLoading, error, data = {} } = useAsync(
+    useCallback(
+      () =>
+        fetch({
+          organization: currentOrganization,
+          organizationId: currentOrganizationId,
+          spaceId: currentSpaceId,
+          environmentId: currentEnvironmentId,
+          isMasterEnvironment,
+        }),
+      [
+        currentOrganization,
+        currentOrganizationId,
+        currentSpaceId,
+        currentEnvironmentId,
+        isMasterEnvironment,
+      ]
+    )
+  );
 
   if (!getSectionVisibility()['locales']) {
     return <ForbiddenPage />;

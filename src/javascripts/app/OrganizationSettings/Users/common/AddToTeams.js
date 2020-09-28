@@ -68,7 +68,8 @@ export default function AddToTeams({ orgId, onChange, inputWidth }) {
             key={team.sys.id}
             onRemove={() => handleTeamRemoved(team.sys.id)}
             team={team}
-            teamSpaceMemberships={teamSpaceMemberships[team.sys.id]}></TeamSelection>
+            teamSpaceMemberships={teamSpaceMemberships[team.sys.id]}
+          />
         ))}
       </div>
     </div>

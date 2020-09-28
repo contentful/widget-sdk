@@ -7,6 +7,7 @@ import * as spaceContextMocked from 'ng/spaceContext';
 import userEvent from '@testing-library/user-event';
 import { CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM } from 'analytics/utmLinks';
 import * as trackCTA from 'analytics/trackCTA';
+import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 const trackTargetedCTAClick = jest.spyOn(trackCTA, 'trackTargetedCTAClick');
 
@@ -18,16 +19,18 @@ describe('features/locales-management/LocalesListSidebar', () => {
       upgradeSpace: jest.fn(),
     };
     const { queryByTestId } = render(
-      <LocalesListSidebar
-        allowedToEnforceLimits={false}
-        upgradeSpace={stubs.upgradeSpace}
-        subscriptionState={{
-          path: ['account', 'organizations', 'subscription_new'],
-          params: { orgId: '34NUQUZd5pA4mKLzDKGBWy' },
-          options: { replace: true },
-        }}
-        {...props}
-      />
+      <SpaceEnvContextProvider>
+        <LocalesListSidebar
+          allowedToEnforceLimits={false}
+          upgradeSpace={stubs.upgradeSpace}
+          subscriptionState={{
+            path: ['account', 'organizations', 'subscription_new'],
+            params: { orgId: '34NUQUZd5pA4mKLzDKGBWy' },
+            options: { replace: true },
+          }}
+          {...props}
+        />
+      </SpaceEnvContextProvider>
     );
 
     return {
@@ -142,7 +145,7 @@ describe('features/locales-management/LocalesListSidebar', () => {
 
         expect(trackTargetedCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
           organizationId: 'org',
-          spaceId: 321,
+          spaceId: 'fg5eidi9k2qp',
         });
       });
     });

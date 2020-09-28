@@ -195,6 +195,7 @@ export default function SubscriptionPage({
   const enterprisePlan = basePlan && isEnterprisePlan(basePlan);
   const isOrgBillable = organization && organization.isBillable;
   const isOrgOwner = isOwner(organization);
+  const isOrgOwnerOrAdmin = isOwnerOrAdmin(organization);
 
   const showPayingOnDemandCopy = isOrgBillable && !enterprisePlan;
   const showAddBillingDetailsCopy = !isOrgBillable && isOrgOwner;
@@ -290,7 +291,7 @@ export default function SubscriptionPage({
                 onDeleteSpace={deleteSpace}
                 enterprisePlan={enterprisePlan}
                 anySpacesInaccessible={anySpacesInaccessible}
-                isOrgOwner={isOrgOwner}
+                isOwnerOrAdmin={isOrgOwnerOrAdmin}
               />
             )}
           </div>

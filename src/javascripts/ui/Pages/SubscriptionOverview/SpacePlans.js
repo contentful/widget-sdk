@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import cn from 'classnames';
+import { sortBy } from 'lodash';
 
 import {
   Paragraph,
@@ -73,7 +74,7 @@ function SpacePlans({
   organizationId,
   showMicroSmallSupportCard,
   anySpacesInaccessible,
-  isOrgOwner,
+  isOwnerOrAdmin,
 }) {
   const numSpaces = spacePlans.length;
   const totalCost = calculatePlansCost({ plans: spacePlans });
@@ -95,16 +96,17 @@ function SpacePlans({
       );
       const unassignedSpacePlans = spacePlans.filter((plan) => plan.gatekeeperKey === null);
       const assignedSpacePlans = spacePlans.filter((plan) => plan.gatekeeperKey !== null);
+      const sortedUnassignedPlans = sortBy(unassignedSpacePlans, 'price');
 
-      getUnassignedSpacePlans(unassignedSpacePlans);
+      getUnassignedSpacePlans(sortedUnassignedPlans);
       getAssignedSpacePlans(assignedSpacePlans);
 
-      const canManageSpaces = isFeatureEnabled && enterprisePlan && isOrgOwner;
+      const canManageSpaces = isFeatureEnabled && enterprisePlan && isOwnerOrAdmin;
       setCanManageSpaces(canManageSpaces);
       setIsSpaceAssignmentExperimentEnabled(isExperimentFeatureFlagEnabled);
     }
     fetch();
-  }, [setCanManageSpaces, enterprisePlan, isOrgOwner, spacePlans, organizationId]);
+  }, [setCanManageSpaces, enterprisePlan, isOwnerOrAdmin, spacePlans, organizationId]);
 
   const linkToSupportPage = websiteUrl(
     `support/?utm_source=webapp&utm_medium=account-menu&utm_campaign=in-app-help&purchase-micro-or-small-space=${organizationId}`
@@ -279,7 +281,7 @@ SpacePlans.propTypes = {
   enterprisePlan: PropTypes.bool,
   upgradedSpaceId: PropTypes.string,
   anySpacesInaccessible: PropTypes.bool,
-  isOrgOwner: PropTypes.bool,
+  isOwnerOrAdmin: PropTypes.bool,
 };
 
 SpacePlans.defaultProps = {

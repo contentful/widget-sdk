@@ -73,7 +73,8 @@ export class NewApp extends React.Component {
         <Workbench.Header
           title="Create app"
           onBack={this.props.goToListView}
-          icon={<NavigationIcon icon="Apps" size="large" />}></Workbench.Header>
+          icon={<NavigationIcon icon="Apps" size="large" />}
+        />
         <Workbench.Content type="text">
           <Note className={styles.spacerXl}>
             <Paragraph>

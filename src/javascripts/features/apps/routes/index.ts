@@ -3,21 +3,15 @@ import { get, memoize } from 'lodash';
 import { AppsListPage } from '../AppsListPage';
 import { AppRoute } from '../AppPage';
 import { makeAppHookBus, getAppsRepo } from 'features/apps-core';
-import createAppExtensionBridge from 'widgets/bridges/createAppExtensionBridge';
 import { createAppExtensionSDK } from 'app/widgets/ExtensionSDKs';
-import createPageExtensionBridge from 'widgets/bridges/createPageExtensionBridge';
-import * as Navigator from 'states/Navigator';
-import * as SlideInNavigator from 'navigation/SlideInNavigator/index';
 import { getSpaceFeature, getOrgFeature } from 'data/CMA/ProductCatalog';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { shouldHide, Action } from 'access_control/AccessChecker';
 import * as TokenStore from 'services/TokenStore';
 import { isOwnerOrAdmin, isDeveloper } from 'services/OrganizationRoles';
 import { Widget, WidgetLocation, WidgetNamespace } from '@contentful/widget-renderer';
-import { getCurrentState } from 'features/apps/AppState';
 import { createPageWidgetSDK } from 'app/widgets/ExtensionSDKs/createPageWidgetSDK';
 import { PageWidgetRenderer } from '../PageWidgetRenderer';
-import { FLAGS, getVariation } from 'LaunchDarkly';
 
 const BASIC_APPS_FEATURE_KEY = 'basic_apps';
 const DEFAULT_FEATURE_STATUS = true; // Fail open
@@ -32,7 +26,11 @@ const appsFeatureResolver = [
   'spaceContext',
   async (spaceContext) => {
     try {
-      return await getSpaceFeature(spaceContext.getId(), BASIC_APPS_FEATURE_KEY, DEFAULT_FEATURE_STATUS);
+      return await getSpaceFeature(
+        spaceContext.getId(),
+        BASIC_APPS_FEATURE_KEY,
+        DEFAULT_FEATURE_STATUS
+      );
     } catch (err) {
       return DEFAULT_FEATURE_STATUS;
     }
@@ -124,15 +122,6 @@ export const appRoute = {
             return sameOrg && isDeveloperOrHigher;
           },
         ],
-        useNewWidgetRendererInConfigLocation: [
-          'spaceContext',
-          (spaceContext: any) =>
-            getVariation(FLAGS.NEW_WIDGET_RENDERER_APP_CONFIG, {
-              spaceId: spaceContext.getId(),
-              organizationId: spaceContext.organization.sys.id,
-              environmentId: spaceContext.getEnvironmentId(),
-            }),
-        ],
       },
       onEnter: [
         '$state',
@@ -181,15 +170,7 @@ export const appRoute = {
         '$scope',
         'app',
         'canManageThisApp',
-        'useNewWidgetRendererInConfigLocation',
-        (
-          spaceContext: any,
-          $state: any,
-          $scope: any,
-          app,
-          canManageThisApp: boolean,
-          useNewWidgetRendererInConfigLocation: boolean
-        ) => {
+        (spaceContext: any, $state: any, $scope: any, app, canManageThisApp: boolean) => {
           const appHookBus = makeAppHookBus();
 
           return {
@@ -211,7 +192,6 @@ export const appRoute = {
               spaceId: spaceContext.getId(),
               environmentId: spaceContext.getEnvironmentId(),
             },
-            useNewWidgetRendererInConfigLocation,
             createSdk: memoize((currentAppWidget: Widget) =>
               createAppExtensionSDK({
                 spaceContext,
@@ -220,19 +200,6 @@ export const appRoute = {
                 widgetId: app.appDefinition.sys.id,
                 appHookBus,
                 currentAppWidget,
-              })
-            ),
-            createBridge: memoize(() =>
-              // TODO: ext-2164 - remove this along with feature flag
-              createAppExtensionBridge({
-                spaceContext,
-                appHookBus,
-                Navigator,
-                SlideInNavigator,
-                appDefinition: app.appDefinition,
-                currentWidgetId: app.appDefinition.sys.id,
-                currentWidgetNamespace: WidgetNamespace.APP,
-                getCurrentState,
               })
             ),
           };
@@ -256,16 +223,6 @@ export const appRoute = {
             });
           },
         ],
-        useNewWidgetRendererInPageLocation: [
-          'spaceContext',
-          (spaceContext) => {
-            return getVariation(FLAGS.NEW_WIDGET_RENDERER_PAGE, {
-              spaceId: spaceContext.getId(),
-              organizationId: spaceContext.organization.sys.id,
-              environmentId: spaceContext.getEnvironmentId(),
-            });
-          },
-        ],
       },
       onEnter: [
         'widget',
@@ -281,30 +238,10 @@ export const appRoute = {
       mapInjectedToProps: [
         '$stateParams',
         'spaceContext',
-        'app',
         'widget',
-        'useNewWidgetRendererInPageLocation',
-        (
-          { path = '' },
-          spaceContext,
-          { appDefinition },
-          widget,
-          useNewWidgetRendererInPageLocation
-        ) => {
+        ({ path = '' }, spaceContext, widget) => {
           return {
             widget,
-            // TODO: remove me once we remove new widget renderer in app location flag
-            createPageExtensionBridge: memoize((widget: Widget) =>
-              createPageExtensionBridge({
-                spaceContext,
-                Navigator,
-                SlideInNavigator,
-                appDefinition,
-                currentWidgetId: widget.id,
-                currentWidgetNamespace: widget.namespace,
-              })
-            ),
-            useNewWidgetRendererInPageLocation,
             createPageExtensionSDK: memoize((widget, parameters) =>
               createPageWidgetSDK({
                 spaceContext,

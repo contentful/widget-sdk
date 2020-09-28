@@ -29,6 +29,7 @@ export function SpacePlanSelection({
   ratePlans,
   space,
   spaceResources,
+  currentPlanName,
   selectedPlan,
   onPlanSelected,
   onNext,
@@ -42,7 +43,9 @@ export function SpacePlanSelection({
   return (
     <>
       <Typography>
-        <Heading element="h2">Choose a new space type for {space.name}</Heading>
+        <Heading element="h2">
+          Choose a new space type for {space.name} ({currentPlanName})
+        </Heading>
       </Typography>
       <List>
         {orderedPlanKeys.map((key, index) => {
@@ -94,6 +97,7 @@ export function SpacePlanSelection({
           return (
             <ListItem key={plan.sys.id} testId="space-plan-item">
               <Card
+                testId={`space-plan-card-${index}`}
                 padding="large"
                 className={cn(styles.cardItem, {
                   [styles.cardItemActive]: plan === selectedPlan,
@@ -135,9 +139,10 @@ export function SpacePlanSelection({
       </List>
       <Flex justifyContent="space-between" alignItems="center" marginTop="spacingL">
         <StateLink
+          testId="go-back-btn"
           component={Button}
           buttonType="muted"
-          path={'^.subscription_new'}
+          path={'^'}
           icon="ChevronLeft"
           trackingEvent={'space_assignment:back'}
           trackParams={{
@@ -146,7 +151,11 @@ export function SpacePlanSelection({
           }}>
           Go back
         </StateLink>
-        <Button buttonType="primary" onClick={onNext}>
+        <Button
+          buttonType="primary"
+          onClick={onNext}
+          testId="continue-btn"
+          disabled={!selectedPlan}>
           Continue
         </Button>
       </Flex>
@@ -160,6 +169,7 @@ SpacePlanSelection.propTypes = {
   space: SpacePropType.isRequired,
   spaceResources: PropTypes.objectOf(ResourcePropType),
   selectedPlan: PlanPropType,
+  currentPlanName: PropTypes.string.isRequired,
   onPlanSelected: PropTypes.func.isRequired,
   onNext: PropTypes.func,
 };

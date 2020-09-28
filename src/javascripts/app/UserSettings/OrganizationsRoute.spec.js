@@ -15,7 +15,7 @@ jest.mock('services/TokenStore', () => ({
   getOrganizations: jest.fn(),
 }));
 
-jest.mock('./OrganizationRow', () => () => <tr data-test-id="organization-row"></tr>);
+jest.mock('./OrganizationRow', () => () => <tr data-test-id="organization-row" />);
 
 const build = async (options = { withoutWaiting: false }) => {
   const renderedComponent = render(<OrganizationsRoute />);

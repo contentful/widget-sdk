@@ -187,7 +187,7 @@ describe('Space Plan', () => {
         enterprisePlan: true,
         spacePlans: mockedPlansLocal,
         initialLoad: false,
-        isOrgOwner: true,
+        isOwnerOrAdmin: true,
       });
 
       await waitFor(() => expect(screen.getByTestId('tab-usedSpaces')).toBeInTheDocument());
@@ -227,7 +227,7 @@ describe('Space Plan', () => {
         enterprisePlan: true,
         spacePlans: mockedPlansLocal,
         initialLoad: false,
-        isOrgOwner: true,
+        isOwnerOrAdmin: true,
       });
 
       await waitFor(() => expect(screen.getByTestId('tab-usedSpaces')).toBeInTheDocument());

@@ -3,8 +3,8 @@ import * as PolicyBuilder from 'access_control/PolicyBuilder';
 
 const policies = {
   entry: {
-    allowed: { flat: [], byContentType: {} },
-    denied: { flat: [], byContentType: {} },
+    allowed: { flat: [], byContentType: {}, byMetadataTagId: [], byMetadataTagType: [] },
+    denied: { flat: [], byContentType: {}, byMetadataTagId: [], byMetadataTagType: [] },
   },
   asset: { allowed: [], denied: [] },
 };
@@ -38,6 +38,10 @@ export function setMembership(membership, spaceAuthContext) {
   groupByContentType('denied');
   groupByEntityId('entry', 'allowed');
   groupByEntityId('entry', 'denied');
+  groupByMetadataTagId('entry', 'allowed');
+  groupByMetadataTagId('entry', 'denied');
+  groupByMetadataTagType('entry', 'allowed');
+  groupByMetadataTagType('entry', 'denied');
 }
 
 // TODO only pass field id and locale code
@@ -107,6 +111,16 @@ function groupByContentType(collectionName) {
       collection.byContentType[p.contentType].push(p);
     }
   });
+}
+
+function groupByMetadataTagId(type, collectionName) {
+  const collection = policies[type][collectionName];
+  collection.byMetadataTagId = collection.flat.filter((p) => Array.isArray(p.metadataTagId));
+}
+
+function groupByMetadataTagType(type, collectionName) {
+  const collection = policies[type][collectionName];
+  collection.byMetadataTagType = collection.flat.filter((p) => Array.isArray(p.metadataTagType));
 }
 
 function groupByEntityId(type, collectionName) {

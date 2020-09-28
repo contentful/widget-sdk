@@ -1,5 +1,4 @@
 import {
-  Paragraph,
   SkeletonBodyText,
   SkeletonContainer,
   Table,
@@ -16,25 +15,20 @@ import { css } from 'emotion';
 import { TagsListRow } from 'features/content-tags/management/components/TagsListRow';
 import { UpdateTagModal } from 'features/content-tags/management/components/UpdateTagModal';
 import { DeleteTagModal } from 'features/content-tags/management/components/DeleteTagModal';
-import { useF36Modal } from 'features/content-tags/core/hooks';
+import { useContentLevelPermissions, useF36Modal } from 'features/content-tags/core/hooks';
 import { TagPropType } from 'features/content-tags/core/TagPropType';
 import tokens from '@contentful/forma-36-tokens';
-import { TAGS_PER_SPACE } from 'features/content-tags/core/limits';
-import { LimitsReachedNote } from 'features/content-tags/management/components/LimitsReachedNote';
 
 const isEdgeBrowser = isEdge();
 
 const styles = {
   wideCell: css({
-    width: '40%',
+    width: '35%',
   }),
   tableHead: css({
     th: {
       zIndex: tokens.zIndexDefault,
     },
-  }),
-  tagLimits: css({
-    marginLeft: 'auto',
   }),
   flexContainer: css({
     display: 'flex',
@@ -44,7 +38,7 @@ const styles = {
   }),
 };
 
-function TagsList({ tags, isLoading, total }) {
+function TagsList({ tags, isLoading }) {
   const { modalComponent: deleteTagComponent, showModal: showDeleteModal } = useF36Modal(
     DeleteTagModal
   );
@@ -52,15 +46,10 @@ function TagsList({ tags, isLoading, total }) {
     UpdateTagModal
   );
 
+  const { contentLevelPermissionsEnabled } = useContentLevelPermissions();
+
   const onDelete = useCallback((tag) => showDeleteModal({ tag }), [showDeleteModal]);
   const onEdit = useCallback((tag) => showUpdateModal({ tag }), [showUpdateModal]);
-
-  const limitNote = useMemo(() => {
-    if (total >= TAGS_PER_SPACE) {
-      return <LimitsReachedNote />;
-    }
-    return null;
-  }, [total]);
 
   const renderNoTags = useMemo(() => {
     return (
@@ -80,20 +69,22 @@ function TagsList({ tags, isLoading, total }) {
 
   const renderTags = useMemo(() => {
     return tags.map((tag, index) => {
-      return <TagsListRow key={`tag-row-${index}`} onDelete={onDelete} onEdit={onEdit} {...tag} />;
+      return (
+        <TagsListRow
+          key={`tag-row-${index}`}
+          contentLevelPermissionsEnabled={contentLevelPermissionsEnabled}
+          onDelete={onDelete}
+          onEdit={onEdit}
+          tag={tag}
+        />
+      );
     });
-  }, [tags, onDelete, onEdit]);
+  }, [tags, onDelete, onEdit, contentLevelPermissionsEnabled]);
 
   return (
     <>
       {updateTagComponent}
       {deleteTagComponent}
-      <div className={styles.flexContainer}>
-        {limitNote}
-        <Paragraph className={styles.tagLimits}>
-          {total} / {TAGS_PER_SPACE}
-        </Paragraph>
-      </div>
       <Table
         testId="tags-list-table"
         className={classnames({
@@ -105,6 +96,7 @@ function TagsList({ tags, isLoading, total }) {
           isSticky>
           <TableRow>
             <TableCell className={styles.wideCell}>Tag name</TableCell>
+            {contentLevelPermissionsEnabled && <TableCell>Type</TableCell>}
             <TableCell className={styles.wideCell}>Tag ID</TableCell>
             <TableCell>Date added</TableCell>
             <TableCell />
@@ -119,7 +111,6 @@ function TagsList({ tags, isLoading, total }) {
 TagsList.propTypes = {
   tags: PropTypes.arrayOf(PropTypes.shape(TagPropType)),
   isLoading: PropTypes.bool,
-  total: PropTypes.number,
 };
 
 export { TagsList };

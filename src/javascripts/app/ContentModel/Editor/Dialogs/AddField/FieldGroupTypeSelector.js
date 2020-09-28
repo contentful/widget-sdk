@@ -52,7 +52,7 @@ const ReferenceGroupOptions = ({ setList, isList }) => {
           This is similar to one-to-one relationships between objects in a database. <br /> For
           example, a blog post can reference its only author
         </HelpText>
-        <div className={styles.fieldSplit}></div>
+        <div className={styles.fieldSplit} />
         <RadioButtonField
           labelText="Many references"
           labelIsLight
@@ -96,7 +96,7 @@ const MediaGroupOptions = ({ setList, isList }) => {
           Select this if there is only one thing to store. <br />
           For example, a single photo or one PDF file
         </HelpText>
-        <div className={styles.fieldSplit}></div>
+        <div className={styles.fieldSplit} />
         <RadioButtonField
           labelText="Many files"
           labelIsLight
@@ -136,7 +136,7 @@ const NumberGroupOptions = ({ selectNewFieldType, fieldType }) => {
           id="field-type-integer"
           helpText="1, 2, 3, 5, 8, 13, &hellip;"
         />
-        <div className={styles.fieldSplit}></div>
+        <div className={styles.fieldSplit} />
         <RadioButtonField
           labelText="Decimal"
           labelIsLight
@@ -186,7 +186,7 @@ const TextGroupOptions = ({ selectNewFieldType, fieldType, setList, isList }) =>
           <HelpText className={styles.hintSecondary}>
             Use for titles, names, tags, URLs, e-mail addresses
           </HelpText>
-          <div className={styles.fieldSplit}></div>
+          <div className={styles.fieldSplit} />
           <RadioButtonField
             id="field-type-long"
             name="Text"
@@ -206,7 +206,7 @@ const TextGroupOptions = ({ selectNewFieldType, fieldType, setList, isList }) =>
         </div>
         {fieldType.hasListVariant ? (
           <React.Fragment>
-            <div className={styles.divider}></div>
+            <div className={styles.divider} />
             <div className={css({ flexGrow: 0, flexBasis: '50%' })}>
               <CheckboxField
                 labelText="List"

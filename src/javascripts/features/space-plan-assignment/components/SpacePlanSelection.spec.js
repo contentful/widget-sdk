@@ -4,6 +4,15 @@ import { SpacePlanSelection } from './SpacePlanSelection';
 import * as Fake from 'test/helpers/fakeFactory';
 import * as PricingService from 'services/PricingService';
 
+const mockSpace = Fake.Space();
+const mockSpaceResources = {
+  environment: Fake.SpaceResource(0, 5, PricingService.SPACE_PLAN_RESOURCE_TYPES.ENVIRONMENT),
+  role: Fake.SpaceResource(2, 5, 'role'),
+  content_type: Fake.SpaceResource(25, 96, PricingService.SPACE_PLAN_RESOURCE_TYPES.CONTENT_TYPE),
+  record: Fake.SpaceResource(2000, 100000, PricingService.SPACE_PLAN_RESOURCE_TYPES.RECORD),
+  locale: Fake.SpaceResource(2, 30, PricingService.SPACE_PLAN_RESOURCE_TYPES.LOCALE),
+};
+
 const mockRatePlanCharges = [
   Fake.RatePlanCharge('Environments', 5),
   Fake.RatePlanCharge('Roles', 4),
@@ -38,6 +47,7 @@ const mockLargePlanCustom = Fake.Plan({
 const mockPerformance1xPlan = Fake.Plan({
   name: 'Performance 1x',
   ratePlanCharges: mockRatePlanCharges,
+  gatekeeperKey: mockSpace.sys.id,
   roleSet: {
     roles: [],
   },
@@ -55,15 +65,6 @@ const mockRatePlans = [
   }),
 ];
 
-const mockSpace = Fake.Space();
-const mockSpaceResources = {
-  environment: Fake.SpaceResource(0, 5, PricingService.SPACE_PLAN_RESOURCE_TYPES.ENVIRONMENT),
-  role: Fake.SpaceResource(2, 5, 'role'),
-  content_type: Fake.SpaceResource(25, 96, PricingService.SPACE_PLAN_RESOURCE_TYPES.CONTENT_TYPE),
-  record: Fake.SpaceResource(2000, 100000, PricingService.SPACE_PLAN_RESOURCE_TYPES.RECORD),
-  locale: Fake.SpaceResource(2, 30, PricingService.SPACE_PLAN_RESOURCE_TYPES.LOCALE),
-};
-
 const mockOnPlanSelected = jest.fn();
 const mockHandleNavigationNext = jest.fn();
 
@@ -76,6 +77,7 @@ describe('SpacePlanSelection', () => {
         space={mockSpace}
         spaceResources={mockSpaceResources}
         selectedPlan={mockLargePlan}
+        currentPlanName={mockPerformance1xPlan.name}
         onPlanSelected={mockOnPlanSelected}
         handleNavigationNext={mockHandleNavigationNext}
         {...props}

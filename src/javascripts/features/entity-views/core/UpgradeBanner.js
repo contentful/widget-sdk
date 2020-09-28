@@ -95,7 +95,7 @@ export function UpgradeBanner() {
   const { isLoading, error, data } = useAsync(updateResource);
 
   if (isLoading) {
-    return <div data-test-id="upgrade-banner.is-loading"></div>;
+    return <div data-test-id="upgrade-banner.is-loading" />;
   }
 
   // This is only rendered for non-enterprise customers

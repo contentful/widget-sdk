@@ -201,7 +201,7 @@ export default class TasksPage extends Component {
   render() {
     return (
       <Workbench>
-        <Workbench.Header title="Pending tasks"></Workbench.Header>
+        <Workbench.Header title="Pending tasks" />
         <Workbench.Content className={styles.workbenchContent}>
           {!!this.state.tasks.length && (
             <Note className={styles.note}>

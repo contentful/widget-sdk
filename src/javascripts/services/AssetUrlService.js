@@ -1,6 +1,6 @@
 import hostnameTransformer from '@contentful/hostname-transformer';
 import * as TokenStore from 'services/TokenStore';
-import { isSecureAssetUrl } from 'utils/AssetUrl';
+import { isSecureAssetUrl } from '@contentful/field-editor-file';
 
 /**
  * Asset URLs are always hardcoded to the host `TYPE.contentful.com`.

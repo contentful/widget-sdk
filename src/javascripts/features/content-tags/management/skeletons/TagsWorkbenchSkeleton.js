@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import {
   Heading,
-  Paragraph,
   SkeletonBodyText,
   SkeletonContainer,
   Typography,
@@ -14,6 +13,7 @@ import EmptyStateContainer, {
   defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import {
+  useContentLevelPermissions,
   useF36Modal,
   useIsInitialLoadingOfTags,
   useScrollToTop,
@@ -21,23 +21,29 @@ import {
 import { TagsWorkbenchActions } from './TagsWorkbenchActions';
 import { CreateTagModal } from 'features/content-tags/management/components/CreateTagModal';
 import { NoTagsContainer } from 'features/content-tags/core/components/NoTagsContainer';
+import { TagType } from 'features/content-tags/core/TagType';
+import { TagListHeader } from 'features/content-tags/management/components/TagListHeader';
 
-function TagsWorkbenchSkeleton(props) {
+function TagsWorkbenchSkeleton({ isLoading, hasTags, children, hasData, className }) {
   const scrollToTop = useScrollToTop('.tags-workbench-content');
   const { modalComponent: createTagComponent, showModal: showCreateTagModal } = useF36Modal(
     CreateTagModal
   );
   const isInitialLoad = useIsInitialLoadingOfTags();
+  const { contentLevelPermissionsEnabled } = useContentLevelPermissions();
 
-  const onCreate = useCallback(() => {
-    showCreateTagModal();
-  }, [showCreateTagModal]);
+  const onCreate = useCallback(
+    (tagType = TagType.Default) => {
+      showCreateTagModal({ tagType });
+    },
+    [showCreateTagModal]
+  );
 
   useEffect(() => {
-    if (!props.isLoading) {
+    if (!isLoading) {
       scrollToTop();
     }
-  }, [scrollToTop, props.isLoading]);
+  }, [scrollToTop, isLoading]);
 
   const renderDefaultContent = useCallback(() => {
     return (
@@ -61,7 +67,6 @@ function TagsWorkbenchSkeleton(props) {
         <BinocularsIllustration className={defaultSVGStyle} />
         <Typography>
           <Heading>No tags found</Heading>
-          <Paragraph>Check if your spelling is correct</Paragraph>
         </Typography>
       </EmptyStateContainer>
     );
@@ -70,34 +75,36 @@ function TagsWorkbenchSkeleton(props) {
   const content = useMemo(() => {
     if (isInitialLoad) {
       return renderDefaultContent();
-    } else if (props.hasTags && !props.isLoading && !props.hasData) {
+    } else if (hasTags && !isLoading && !hasData) {
       return renderNoResult();
-    } else if (!props.hasTags && !props.isLoading) {
+    } else if (!hasTags && !isLoading) {
       return renderNoTags();
     } else {
-      return props.children || renderDefaultContent();
+      return children || renderDefaultContent();
     }
   }, [
     isInitialLoad,
-    props.isLoading,
-    props.hasTags,
-    props.children,
-    props.hasData,
+    isLoading,
+    hasTags,
+    children,
+    hasData,
     renderDefaultContent,
     renderNoResult,
     renderNoTags,
   ]);
 
   return (
-    <Workbench className={props.className}>
+    <Workbench className={className}>
       {createTagComponent}
-      <div id={'content-tags-modal'} />
       <Workbench.Header
         title={'Tags'}
-        actions={<TagsWorkbenchActions hasData={props.hasTags} onCreate={onCreate} />}
-        icon={<NavigationIcon icon="Settings" size="large" />}
+        actions={<TagsWorkbenchActions hasData={hasTags} onCreate={onCreate} />}
+        icon={<NavigationIcon icon="Settings" size="large" tag={'span'} />}
       />
       <Workbench.Content type="default" className={'tags-workbench-content'}>
+        {hasTags && (
+          <TagListHeader contentLevelPermissionsEnabled={contentLevelPermissionsEnabled} />
+        )}
         <>{content}</>
       </Workbench.Content>
     </Workbench>

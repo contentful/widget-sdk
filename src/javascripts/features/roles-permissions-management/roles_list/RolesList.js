@@ -101,7 +101,7 @@ export function RolesList(props) {
             <TableCell>Role</TableCell>
             <TableCell>Description</TableCell>
             <TableCell>Members</TableCell>
-            <TableCell></TableCell>
+            <TableCell />
           </TableRow>
         </TableHead>
         <TableBody>

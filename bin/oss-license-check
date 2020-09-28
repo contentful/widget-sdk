@@ -16,6 +16,7 @@ PACKAGELIST=(
   jest-dom@4.0.0
   buffers@0.1.1
   pako@1.0.11
+  @filestack/loader@1.0.7
 )
 
 
