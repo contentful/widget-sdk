@@ -189,7 +189,6 @@ const FieldModalDialogForm = ({
                 availableWidgets={availableWidgets}
                 widgetSettings={widgetSettings}
                 setWidgetSettings={setWidgetSettings}
-                spaceContext={spaceContext}
                 contentType={contentType}
                 ctField={ctField}
                 widget={widget}
