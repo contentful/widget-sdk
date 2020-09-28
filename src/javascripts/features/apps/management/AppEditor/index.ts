@@ -1,1 +1,1 @@
-export { AppEditor } from './AppEditor';
+export { AppEditor, validate } from './AppEditor';

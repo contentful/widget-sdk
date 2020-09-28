@@ -1,7 +1,7 @@
-import React from 'react';
 import { render, wait } from '@testing-library/react';
-import { AppDetails } from './AppDetails';
+import React from 'react';
 import mockDefinitions from '../__mocks__/mockDefinitions.json';
+import { AppDetails } from './AppDetails';
 
 jest.mock('../ManagementApiClient', () => ({
   getCreatorNameOf: jest.fn(() => Promise.resolve()),
@@ -19,8 +19,6 @@ const props = {
 };
 
 describe('AppDetails', () => {
-  beforeEach(() => {});
-
   describe('When passed a tab that is implemented', () => {
     it('gos to the general tab', async () => {
       const localProps = { ...props, tab: 'events' };

@@ -1,20 +1,20 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { css } from 'emotion';
 import {
-  Notification,
   Button,
+  Note,
+  Notification,
   Paragraph,
   TextLink,
   Workbench,
-  Note,
 } from '@contentful/forma-36-react-components';
-import tokens from '@contentful/forma-36-tokens';
-import { AppEditor } from './AppEditor';
-import * as ManagementApiClient from './ManagementApiClient';
-import DocumentTitle from 'components/shared/DocumentTitle';
 import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
+import tokens from '@contentful/forma-36-tokens';
+import DocumentTitle from 'components/shared/DocumentTitle';
+import { css } from 'emotion';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+import { AppEditor, validate } from './AppEditor';
+import * as ManagementApiClient from './ManagementApiClient';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
   source: 'webapp',
@@ -47,10 +47,17 @@ export class NewApp extends React.Component {
     this.state = {
       busy: false,
       definition: ManagementApiClient.createDefinitionTemplateForOrg(props.orgId),
+      errors: [],
     };
   }
 
   save = async () => {
+    const errors = validate(this.state.definition);
+    if (errors.length > 0) {
+      this.setState({ errors });
+      return;
+    }
+
     this.setState({ busy: true });
 
     try {
@@ -58,7 +65,19 @@ export class NewApp extends React.Component {
       Notification.success('App created successfully.');
       this.props.goToDefinition(saved.sys.id);
     } catch (err) {
-      Notification.error(ManagementApiClient.VALIDATION_MESSAGE);
+      if (err.status === 422) {
+        this.setState({
+          errors: err.data.details.errors.map((error) => {
+            if (error.path[0] === 'locations' && typeof error.path[1] === 'number') {
+              error.path[1] = this.state.definition.locations[error.path[1]].location;
+            }
+            return error;
+          }),
+        });
+        Notification.error(ManagementApiClient.VALIDATION_MESSAGE);
+      } else {
+        Notification.error("Something went wrong. Couldn't create app.");
+      }
     }
 
     this.setState({ busy: false });
@@ -94,6 +113,8 @@ export class NewApp extends React.Component {
             <AppEditor
               definition={definition}
               onChange={(definition) => this.setState({ definition })}
+              errors={this.state.errors}
+              onErrorsChange={(errors) => this.setState({ errors })}
             />
           </div>
           <Button

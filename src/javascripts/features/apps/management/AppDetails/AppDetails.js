@@ -15,8 +15,7 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { styles } from './styles';
-import { AppEditor } from '../AppEditor';
+import { AppEditor, validate } from '../AppEditor';
 import { AppInstallModal } from '../AppInstallModal';
 import { DeleteAppDialog } from '../DeleteAppDialog';
 import { AppEvents } from '../events';
@@ -24,6 +23,7 @@ import { KeyListing } from '../keys/KeyListing';
 import * as ManagementApiClient from '../ManagementApiClient';
 import { SaveConfirmModal } from '../SaveConfirmModal';
 import { TAB_PATHS } from './constants';
+import { styles } from './styles';
 
 function formatDate(date) {
   return new Date(date).toLocaleString('en-US', {
@@ -46,6 +46,7 @@ export class AppDetails extends React.Component {
       definition: props.definition,
       selectedTab: props.tab,
       creator: userNameCache[props.definition.sys.id] || '',
+      errors: [],
     };
   }
 
@@ -78,7 +79,19 @@ export class AppDetails extends React.Component {
       this.setState({ name: updated.name, definition: updated });
       Notification.success('App saved successfully.');
     } catch (err) {
-      Notification.error(ManagementApiClient.VALIDATION_MESSAGE);
+      if (err.status === 422) {
+        this.setState({
+          errors: err.data.details.errors.map((error) => {
+            if (error.path[0] === 'locations' && typeof error.path[1] === 'number') {
+              error.path[1] = this.state.definition.locations[error.path[1]].location;
+            }
+            return error;
+          }),
+        });
+        Notification.error(ManagementApiClient.VALIDATION_MESSAGE);
+      } else {
+        Notification.error("Something went wrong. Couldn't save app details.");
+      }
     }
 
     this.setState({ busy: false });
@@ -98,6 +111,12 @@ export class AppDetails extends React.Component {
   };
 
   openSaveConfirmModal = () => {
+    const errors = validate(this.state.definition);
+    if (errors.length > 0) {
+      this.setState({ errors });
+      return;
+    }
+
     ModalLauncher.open(({ isShown, onClose }) => (
       <SaveConfirmModal
         isShown={isShown}
@@ -204,6 +223,8 @@ export class AppDetails extends React.Component {
                   <AppEditor
                     definition={definition}
                     onChange={(definition) => this.setState({ definition })}
+                    errors={this.state.errors}
+                    onErrorsChange={(errors) => this.setState({ errors })}
                   />
                 </div>
                 <div className={styles.formActions}>

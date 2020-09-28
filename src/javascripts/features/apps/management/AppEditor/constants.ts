@@ -31,3 +31,5 @@ export const LOCATION_ORDER: [string, string][] = [
   ['Page', WidgetLocation.PAGE],
   ['Dialog', WidgetLocation.DIALOG],
 ];
+
+export const SRC_REG_EXP = /(^https:\/\/)|(^http:\/\/localhost(:[0-9]+)?(\/|$))/;
