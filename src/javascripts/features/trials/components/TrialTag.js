@@ -37,16 +37,6 @@ export const TrialTag = () => {
   const { orgId, spaceId } = getModule('$stateParams');
 
   const fetchData = useCallback(async () => {
-    const isPlatformTrialCommEnabled = await getVariation(FLAGS.PLATFORM_TRIAL_COMM, {
-      organizationId: orgId,
-      spaceId,
-    });
-    setIsPlatformTrialCommEnabled(isPlatformTrialCommEnabled);
-
-    if (!isPlatformTrialCommEnabled) {
-      return;
-    }
-
     let org;
     let space;
 
@@ -55,14 +45,25 @@ export const TrialTag = () => {
     }
 
     if (spaceId) {
-      space = await getSpace(spaceId);
-      org = space.organization;
+      try {
+        space = await getSpace(spaceId);
+        org = space.organization;
+      } catch (err) {
+        // space is invalid or inaccessible
+        space = undefined;
+      }
     }
+
+    const isPlatformTrialCommEnabled = await getVariation(FLAGS.PLATFORM_TRIAL_COMM, {
+      organizationId: orgId,
+      spaceId: space?.sys.id,
+    });
 
     if (isPlatformTrialCommEnabled) {
       initTrialProductTour(space, org);
     }
 
+    setIsPlatformTrialCommEnabled(isPlatformTrialCommEnabled);
     setOrganization(org);
     setSpace(space);
   }, [spaceId, orgId]);

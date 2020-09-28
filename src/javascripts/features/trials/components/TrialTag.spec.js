@@ -87,6 +87,22 @@ describe('TrialTag', () => {
     expect(screen.queryByTestId('space-trial-tag')).not.toBeInTheDocument();
   });
 
+  it('does not pass an invalid spaceID to LD or try to render the tag if inaccessible space', async () => {
+    getModule.mockReturnValue({ spaceId: trialSpace.sys.id, orgId: organizationNotOnTrial.sys.id });
+    getOrganization.mockResolvedValue(organizationNotOnTrial);
+    getSpace.mockRejectedValue();
+
+    build();
+
+    await waitFor(() =>
+      expect(getVariation).toBeCalledWith(undefined, {
+        organizationId: organizationNotOnTrial.sys.id,
+        spaceId: undefined,
+      })
+    );
+    expect(screen.queryByTestId('space-trial-tag')).not.toBeInTheDocument();
+  });
+
   describe('Platform trial', () => {
     beforeEach(() => {
       getModule.mockReturnValue({ orgId: trialOrganization.sys.id });
