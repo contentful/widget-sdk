@@ -209,23 +209,12 @@ describe('BillingDetailsForm', () => {
     it('should render an empty form when there are no saved billing details', () => {
       build();
 
-      expect(screen.getByTestId('billing-details.card')).toBeVisible();
-      expect(screen.getByTestId('billing-details.heading')).toHaveTextContent(
-        'Add your billing details 📫'
-      );
-
       expect(screen.getAllByTestId('cf-ui-text-input').value).toBeUndefined();
     });
 
     it('should render a prefilled form when there are saved billing details', () => {
       build({ billingDetails: getMockBillingDetails({ vat: '' }) });
 
-      expect(screen.getByTestId('billing-details.card')).toBeVisible();
-      expect(screen.getByTestId('billing-details.heading')).toHaveTextContent(
-        'Update your billing details 📫'
-      );
-
-      // Make sure all text fields are filled out
       const allTextFields = screen.getAllByTestId('cf-ui-text-input');
       allTextFields.forEach((textField) => {
         expect(textField.value).toEqual(mockBillingDetails[textField.getAttribute('id')]);

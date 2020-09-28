@@ -22,6 +22,16 @@ export function createBillingDetails(organizationId, billingDetails) {
   });
 }
 
+export function updateBillingDetails(organizationId, billingDetails) {
+  const endpoint = createOrganizationEndpoint(organizationId);
+
+  return endpoint({
+    method: 'PUT',
+    path: ['billing_details'],
+    data: billingDetails,
+  });
+}
+
 export async function getInvoices(organizationId) {
   const endpoint = createOrganizationEndpoint(organizationId);
 

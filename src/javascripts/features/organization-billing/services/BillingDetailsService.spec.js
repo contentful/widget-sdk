@@ -27,7 +27,7 @@ when(mockEndpoint)
 
 describe('BillingDetailsService', () => {
   describe('createBillingDetails', () => {
-    it('should make a PUT request to the default_payment_method endpoint', () => {
+    it('should make a POST request to the billing_details endpoint', () => {
       const mockBillingDetails = { randomField: '123' };
 
       BillingDetailsService.createBillingDetails(mockOrganization.sys.id, mockBillingDetails);
@@ -36,6 +36,22 @@ describe('BillingDetailsService', () => {
       expect(mockEndpoint).toHaveBeenCalledTimes(1);
       expect(mockEndpoint).toHaveBeenNthCalledWith(1, {
         method: 'POST',
+        path: ['billing_details'],
+        data: mockBillingDetails,
+      });
+    });
+  });
+
+  describe('updateBillingDetails', () => {
+    it('should make a PUT request to the billing_details endpoint', () => {
+      const mockBillingDetails = { randomField: '123' };
+
+      BillingDetailsService.updateBillingDetails(mockOrganization.sys.id, mockBillingDetails);
+
+      expect(createOrganizationEndpoint).toHaveBeenCalledTimes(1);
+      expect(mockEndpoint).toHaveBeenCalledTimes(1);
+      expect(mockEndpoint).toHaveBeenNthCalledWith(1, {
+        method: 'PUT',
         path: ['billing_details'],
         data: mockBillingDetails,
       });

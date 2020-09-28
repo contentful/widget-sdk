@@ -16,7 +16,12 @@ import {
   SkeletonContainer,
   SkeletonBodyText,
 } from '@contentful/forma-36-react-components';
-import { NavigationIcon, Grid, GridItem } from '@contentful/forma-36-react-components/dist/alpha';
+import {
+  NavigationIcon,
+  Grid,
+  GridItem,
+  ModalLauncher,
+} from '@contentful/forma-36-react-components/dist/alpha';
 import * as tokens from '@contentful/forma-36-tokens';
 import moment from 'moment';
 import { times } from 'lodash';
@@ -28,7 +33,9 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import { getInvoice } from '../services/BillingDetailsService';
 import { pieces } from 'utils/StringUtils';
 import { toLocaleString } from 'utils/NumberUtils';
-import StateLink from 'app/common/StateLink';
+import { go } from 'states/Navigator';
+
+import { EditBillingDetailsModal } from '../components/EditBillingDetailsModal';
 
 const styles = {
   editLink: css({
@@ -76,6 +83,26 @@ function downloadBlob(blob, filename) {
   a.click();
 }
 
+async function openEditBillingDetailsModal(organizationId, billingDetails, onEditBillingDetails) {
+  const result = await ModalLauncher.open(({ isShown, onClose }) => {
+    return (
+      <EditBillingDetailsModal
+        organizationId={organizationId}
+        billingDetails={billingDetails}
+        onConfirm={onClose}
+        onCancel={() => onClose(false)}
+        isShown={isShown}
+      />
+    );
+  });
+
+  if (!result) {
+    return;
+  }
+
+  return onEditBillingDetails(result);
+}
+
 export function Dashboard({
   loading,
   organizationId,
@@ -83,6 +110,7 @@ export function Dashboard({
   orgIsSelfService,
   billingDetails,
   paymentDetails,
+  onEditBillingDetails,
   invoices = [],
 }) {
   const shouldShowBillingDetails = orgIsSelfService != null && orgIsSelfService;
@@ -103,13 +131,22 @@ export function Dashboard({
                       <GridItem>
                         <div className={styles.billingDetailsHeading}>
                           <strong>Credit card</strong>
-                          <StateLink
-                            component={TextLink}
-                            path="account.organizations.billing.edit-payment-method"
+                          <TextLink
+                            testId="edit-payment-method-link"
+                            onClick={() =>
+                              go({
+                                path: [
+                                  'account',
+                                  'organizations',
+                                  'billing',
+                                  'edit-payment-method',
+                                ],
+                              })
+                            }
                             className={styles.editLink}
                             disabled={loading}>
                             Edit
-                          </StateLink>
+                          </TextLink>
                         </div>
                         {loading && <CreditCardDetailsLoading />}
                         {!loading && (
@@ -125,6 +162,19 @@ export function Dashboard({
                       <GridItem>
                         <div className={styles.billingDetailsHeading}>
                           <strong>Billing address</strong>
+                          <TextLink
+                            testId="edit-billing-details-link"
+                            onClick={() =>
+                              openEditBillingDetailsModal(
+                                organizationId,
+                                billingDetails,
+                                onEditBillingDetails
+                              )
+                            }
+                            className={styles.editLink}
+                            disabled={loading}>
+                            Edit
+                          </TextLink>
                         </div>
                         {loading && <BillingDetailsLoading />}
                         {!loading && <BillingDetails billingDetails={billingDetails} />}
@@ -203,6 +253,7 @@ Dashboard.propTypes = {
   invoices: PropTypes.array,
   orgIsSelfService: PropTypes.bool,
   orgIsEnterprise: PropTypes.bool,
+  onEditBillingDetails: PropTypes.func.isRequired,
 };
 
 function BillingDetails({ billingDetails }) {
@@ -221,6 +272,15 @@ function BillingDetails({ billingDetails }) {
         </>
       )}
       {billingDetails.zipCode} {billingDetails.city}
+      {billingDetails.state && (
+        <>
+          <br />
+          <span data-test-id="state">{billingDetails.state}</span>
+        </>
+      )}
+      <br />
+      {billingDetails.country}
+      <br />
       {billingDetails.vat && (
         <>
           <br />
