@@ -67,6 +67,7 @@ const mockSpacePlans = [
 
 describe('SubscriptionPage', () => {
   beforeEach(() => {
+    isOwner.mockReturnValue(true);
     getVariation.mockClear().mockResolvedValue(false);
   });
 
@@ -147,7 +148,7 @@ describe('SubscriptionPage', () => {
     expect(go).toHaveBeenCalledWith(navigatorObject);
   });
 
-  it('should show user details and CAT to contact support for the Team users', () => {
+  it('should show user details and CTA to contact support for the Team users', () => {
     const usersMeta = {
       numFree: 10,
       numPaid: 17,
@@ -196,18 +197,48 @@ describe('SubscriptionPage', () => {
     expect(screen.getByTestId('on-demand-monthly-cost')).toHaveTextContent('$3,000');
   });
 
-  it('should show CTA to add billing copy if the org is free and user is org owner', () => {
-    isOwner.mockReturnValue(true);
+  it('should show the limitations copy if the org is nonpaying, user is org owner, and the new space purchase flow is enabled', () => {
     build({ organization: Fake.Organization({ isBillable: false }) });
 
-    expect(screen.getByTestId('subscription-page.billing-copy')).toBeVisible();
+    expect(screen.getByTestId('subscription-page.non-paying-org-limits')).toBeVisible();
   });
 
-  it('should not show the add billing copy if the org is free but the user is not org owner', () => {
+  it('should not show the limitations copy if the org is nonpaying, user is _not_ org owner, and the new space purchase flow is enabled', () => {
     isOwner.mockReturnValue(false);
     build({ organization: Fake.Organization({ isBillable: false }) });
 
     expect(screen.queryByTestId('subscription-page.billing-copy')).toBeNull();
+    expect(screen.queryByTestId('subscription-page.non-paying-org-limits')).toBeNull();
+  });
+
+  it('should open the create space dialog if the limitations create space CTA is clicked', () => {
+    isOwner.mockReturnValue(true);
+    build({ organization: Fake.Organization({ isBillable: false }) });
+
+    userEvent.click(screen.getByTestId('subscription-page.add-space-free-org-cta'));
+
+    expect(showCreateSpaceModal).toBeCalled();
+  });
+
+  it('should show the billing copy if the org is nonpaying, user is org owner, and the new space purchase flow is disabled', () => {
+    isOwner.mockReturnValue(true);
+    build({
+      organization: Fake.Organization({ isBillable: false }),
+      newSpacePurchaseEnabled: false,
+    });
+
+    expect(screen.getByTestId('subscription-page.billing-copy')).toBeVisible();
+  });
+
+  it('should not show the billing copy if the org is nonpaying, user is _not_ org owner, and the new space purchase flow is disabled', () => {
+    isOwner.mockReturnValue(false);
+    build({
+      organization: Fake.Organization({ isBillable: false }),
+      newSpacePurchaseEnabled: false,
+    });
+
+    expect(screen.queryByTestId('subscription-page.billing-copy')).toBeNull();
+    expect(screen.queryByTestId('subscription-page.non-paying-org-limits')).toBeNull();
   });
 
   it('should redirect to the billing page when the CTA add billing button is clicked', () => {
@@ -219,6 +250,7 @@ describe('SubscriptionPage', () => {
     build({
       organization: nonBillableOrganization,
       organizationId: nonBillableOrganization.sys.id,
+      newSpacePurchaseEnabled: false,
     });
 
     userEvent.click(screen.getByTestId('subscription-page.add-billing-button'));
@@ -303,6 +335,7 @@ function build(custom) {
       organization: null,
       showMicroSmallSupportCard: null,
       onSpacePlansChange: null,
+      newSpacePurchaseEnabled: true,
     },
     custom
   );

@@ -113,6 +113,7 @@ export default function SubscriptionPage({
   onSpacePlansChange,
   isPlatformTrialCommEnabled,
   memberAccessibleSpaces,
+  newSpacePurchaseEnabled,
 }) {
   const [changedSpaceId, setChangedSpaceId] = useState('');
 
@@ -198,10 +199,10 @@ export default function SubscriptionPage({
   const isOrgOwnerOrAdmin = isOwnerOrAdmin(organization);
 
   const showPayingOnDemandCopy = isOrgBillable && !enterprisePlan;
-  const showAddBillingDetailsCopy = !isOrgBillable && isOrgOwner;
+  const showNonPayingOrgCopy = !isOrgBillable && isOrgOwner;
   const anySpacesInaccessible = !!spacePlans && hasAnyInaccessibleSpaces(spacePlans);
 
-  const rightColumnHasContent = showPayingOnDemandCopy || showAddBillingDetailsCopy;
+  const rightColumnHasContent = showPayingOnDemandCopy || showNonPayingOrgCopy;
 
   return (
     <Workbench testId="subscription-page">
@@ -269,8 +270,11 @@ export default function SubscriptionPage({
                     />
                   )}
                   {showPayingOnDemandCopy && <PayingOnDemandOrgCopy grandTotal={grandTotal} />}
-                  {showAddBillingDetailsCopy && (
-                    <NonPayingOrgCopy organizationId={organizationId} />
+                  {showNonPayingOrgCopy && !newSpacePurchaseEnabled && (
+                    <NonPayingOrgCopyLegacy organizationId={organizationId} />
+                  )}
+                  {showNonPayingOrgCopy && newSpacePurchaseEnabled && (
+                    <NonPayingOrgCopy createSpace={createSpace} />
                   )}
                 </>
               )}
@@ -313,6 +317,7 @@ SubscriptionPage.propTypes = {
   onSpacePlansChange: PropTypes.func,
   isPlatformTrialCommEnabled: PropTypes.bool,
   memberAccessibleSpaces: PropTypes.array,
+  newSpacePurchaseEnabled: PropTypes.bool,
 };
 
 SubscriptionPage.defaultProps = {
@@ -348,7 +353,7 @@ PayingOnDemandOrgCopy.propTypes = {
   grandTotal: PropTypes.number.isRequired,
 };
 
-function NonPayingOrgCopy({ organizationId }) {
+function NonPayingOrgCopyLegacy({ organizationId }) {
   return (
     <Typography testId="subscription-page.billing-copy">
       <Heading className="section-title">Your payment details</Heading>
@@ -366,6 +371,28 @@ function NonPayingOrgCopy({ organizationId }) {
   );
 }
 
-NonPayingOrgCopy.propTypes = {
+NonPayingOrgCopyLegacy.propTypes = {
   organizationId: PropTypes.string.isRequired,
+};
+
+function NonPayingOrgCopy({ createSpace }) {
+  return (
+    <Typography testId="subscription-page.non-paying-org-limits">
+      <Heading className="section-title">Your organization limits</Heading>
+      <Paragraph>
+        Your organization is currently limited to 5 users, 50MB per asset in your space, and no API
+        overages. Add a paid space to remove these limits.
+      </Paragraph>
+      <TextLink
+        icon="PlusCircle"
+        testId="subscription-page.add-space-free-org-cta"
+        onClick={createSpace}>
+        Create a space
+      </TextLink>
+    </Typography>
+  );
+}
+
+NonPayingOrgCopy.propTypes = {
+  createSpace: PropTypes.func.isRequired,
 };
