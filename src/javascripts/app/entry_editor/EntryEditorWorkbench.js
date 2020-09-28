@@ -106,7 +106,7 @@ const EntryEditorWorkbench = (props) => {
             ...props,
           });
         } else {
-          const createBridge = createExtensionBridgeAdapter({
+          const createSdk = createExtensionBridgeAdapter({
             editorData,
             entityInfo,
             otDoc,
@@ -117,9 +117,7 @@ const EntryEditorWorkbench = (props) => {
             fieldLocaleListeners,
           });
 
-          return (
-            <CustomEditorExtensionRenderer extension={currentTab} createBridge={createBridge} />
-          );
+          return <CustomEditorExtensionRenderer extension={currentTab} createSdk={createSdk} />;
         }
       },
       onClick(selectedTab) {

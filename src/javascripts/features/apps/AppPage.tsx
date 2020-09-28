@@ -17,7 +17,6 @@ import {
 } from '@contentful/forma-36-react-components';
 import { get } from 'lodash';
 import { APP_EVENTS_IN, APP_EVENTS_OUT, AppHookBus } from 'features/apps-core';
-import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer';
 import trackExtensionRender from 'widgets/TrackExtensionRender';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
 import ExtensionLocalDevelopmentWarning from 'widgets/ExtensionLocalDevelopmentWarning';
@@ -71,9 +70,7 @@ interface Props {
     environmentId: string;
     organizationId: string;
   };
-  useNewWidgetRendererInConfigLocation: boolean;
   createSdk: (widget: Widget) => { sdk: AppExtensionSDK; onAppHook: any };
-  createBridge: () => any; // TODO: ext-2164 remove when feature flag is removed
 }
 
 interface AppDefinition {
@@ -196,13 +193,7 @@ export class AppRoute extends Component<Props, State> {
     }, APP_HAS_ERROR_TIMEOUT);
   };
 
-  onAppConfigured = async ({
-    installationRequestId,
-    config,
-  }: {
-    installationRequestId?: string;
-    config: any;
-  }) => {
+  onAppConfigured = async ({ config }: { config: any }) => {
     const { cma, evictWidget, appHookBus, app, spaceData } = this.props;
 
     try {
@@ -226,7 +217,7 @@ export class AppRoute extends Component<Props, State> {
       this.setState({ isInstalled: true, installationState: InstallationState.NotBusy });
 
       appHookBus.setInstallation(appInstallation);
-      appHookBus.emit(APP_EVENTS_OUT.SUCCEEDED, { installationRequestId }); // TODO: ext-2164 remove requestId when feature flag is removed
+      appHookBus.emit(APP_EVENTS_OUT.SUCCEEDED);
     } catch (err) {
       if (isUsageExceededErrorResponse(err)) {
         Notification.error(USAGE_EXCEEDED_MESSAGE);
@@ -246,7 +237,7 @@ export class AppRoute extends Component<Props, State> {
       });
 
       appHookBus.setInstallation(appInstallation);
-      appHookBus.emit(APP_EVENTS_OUT.FAILED, { installationRequestId }); // TODO: ext-2164 remove requestId when feature flag is removed
+      appHookBus.emit(APP_EVENTS_OUT.FAILED);
     }
   };
 
@@ -406,7 +397,6 @@ export class AppRoute extends Component<Props, State> {
 
   renderContent() {
     const { appDefinition, appLoaded } = this.state;
-    const { useNewWidgetRendererInConfigLocation } = this.props;
 
     const widget = buildAppDefinitionWidget(
       appDefinition as AppDefinition,
@@ -415,42 +405,24 @@ export class AppRoute extends Component<Props, State> {
       getMarketplaceDataProvider()
     );
 
-    if (useNewWidgetRendererInConfigLocation) {
-      const { sdk, onAppHook } = this.props.createSdk(widget);
+    const { sdk, onAppHook } = this.props.createSdk(widget);
 
-      return (
-        <Workbench.Content
-          type="full"
-          className={cx(styles.renderer, { [styles.hideRenderer]: !appLoaded })}>
-          <WidgetRenderer
-            isFullSize
-            location={WidgetLocation.APP_CONFIG}
-            sdk={sdk}
-            widget={widget}
-            onAppHook={onAppHook}
-            onRender={(widget, location) =>
-              trackExtensionRender(location, toLegacyWidget(widget), sdk.ids.environment)
-            }
-          />
-        </Workbench.Content>
-      );
-    } else {
-      // TODO: ext-2164 - remove this else block along with feature flag
-      const bridge = this.props.createBridge();
-
-      return (
-        <Workbench.Content
-          type="full"
-          className={cx(styles.renderer, { [styles.hideRenderer]: !appLoaded })}>
-          <ExtensionIFrameRenderer
-            bridge={bridge}
-            widget={widget}
-            parameters={this.parameters}
-            isFullSize
-          />
-        </Workbench.Content>
-      );
-    }
+    return (
+      <Workbench.Content
+        type="full"
+        className={cx(styles.renderer, { [styles.hideRenderer]: !appLoaded })}>
+        <WidgetRenderer
+          isFullSize
+          location={WidgetLocation.APP_CONFIG}
+          sdk={sdk}
+          widget={widget}
+          onAppHook={onAppHook}
+          onRender={(widget, location) =>
+            trackExtensionRender(location, toLegacyWidget(widget), sdk.ids.environment)
+          }
+        />
+      </Workbench.Content>
+    );
   }
 
   renderLoading(withoutWorkbench?: boolean) {

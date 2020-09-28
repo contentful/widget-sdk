@@ -18,7 +18,6 @@ import UsersWidgetContainer from './UsersWidget/UsersWidgetContainer';
 import VersionsWidgetContainer from './VersionsWidget/VersionsWidgetContainer';
 import SidebarWidgetTypes from './SidebarWidgetTypes';
 import EntryInfoPanelContainer from './EntryInfoPanel/EntryInfoPanelContainer';
-import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIFrameRenderer';
 import CommentsPanelContainer from './CommentsPanel/CommentsPanelContainer';
 import {
   WidgetNamespace,
@@ -97,7 +96,6 @@ export default class EntrySidebar extends Component {
           problem: PropTypes.string,
         })
       ),
-      buildSidebarExtensionsBridge: PropTypes.func.isRequired,
       makeSidebarWidgetSDK: PropTypes.func.isRequired,
       legacySidebarExtensions: PropTypes.arrayOf(
         PropTypes.shape({
@@ -107,7 +105,6 @@ export default class EntrySidebar extends Component {
         })
       ),
       localeData: PropTypes.object.isRequired,
-      useNewWidgetRenderer: PropTypes.bool,
     }),
     sidebarToggleProps: PropTypes.shape({
       commentsToggle: PropTypes.shape({
@@ -215,37 +212,19 @@ export default class EntrySidebar extends Component {
       );
     }
 
-    let child;
     const widget = toRendererWidget(item.descriptor);
 
-    if (this.props.entrySidebarProps.useNewWidgetRenderer) {
-      const sdk = this.props.entrySidebarProps.makeSidebarWidgetSDK(
-        item.widgetNamespace,
-        item.widgetId,
-        item.parameters
-      );
-
-      child = <WidgetRenderer location={WidgetLocation.ENTRY_SIDEBAR} sdk={sdk} widget={widget} />;
-    } else {
-      const bridge = this.props.entrySidebarProps.buildSidebarExtensionsBridge(
-        item.widgetId,
-        item.widgetNamespace
-      );
-
-      child = (
-        <ExtensionIFrameRendererWithLocalHostWarning
-          bridge={bridge}
-          widget={widget}
-          parameters={item.parameters}
-        />
-      );
-    }
+    const sdk = this.props.entrySidebarProps.makeSidebarWidgetSDK(
+      item.widgetNamespace,
+      item.widgetId,
+      item.parameters
+    );
 
     return (
       <EntrySidebarWidget
         title={item.descriptor.name}
         key={`${item.widgetNamespace},${item.widgetId}`}>
-        {child}
+        <WidgetRenderer location={WidgetLocation.ENTRY_SIDEBAR} sdk={sdk} widget={widget} />
       </EntrySidebarWidget>
     );
   };

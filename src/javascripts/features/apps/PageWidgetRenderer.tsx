@@ -2,7 +2,6 @@ import React, { useEffect, useMemo } from 'react';
 import { PageExtensionSDK } from 'contentful-ui-extensions-sdk';
 import { Widget, WidgetLocation, WidgetRenderer } from '@contentful/widget-renderer';
 import { css } from 'emotion';
-import { ExtensionIFrameRendererWithLocalHostWarning } from 'widgets/ExtensionIFrameRenderer';
 import trackExtensionRender from 'widgets/TrackExtensionRender';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
 import { applyDefaultValues } from 'widgets/WidgetParametersUtils';
@@ -15,10 +14,8 @@ export interface PageWidgetParameters {
 }
 
 interface PageWidgetRendererProps {
-  useNewWidgetRendererInPageLocation: boolean;
   createPageExtensionSDK: (widget: Widget, parameters: PageWidgetParameters) => PageExtensionSDK;
   widget: Widget;
-  createPageExtensionBridge: (widget: Widget) => any;
   environmentId: string;
   path: string;
 }
@@ -37,7 +34,7 @@ const styles = {
 };
 
 export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
-  const { widget, environmentId, path, createPageExtensionSDK, createPageExtensionBridge } = props;
+  const { widget, environmentId, path, createPageExtensionSDK } = props;
 
   useEffect(() => {
     trackExtensionRender(WidgetLocation.PAGE, toLegacyWidget(widget), environmentId);
@@ -61,23 +58,10 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
     return createPageExtensionSDK(widget, parameters);
   }, [createPageExtensionSDK, widget, parameters]);
 
-  const bridge = useMemo(() => {
-    return createPageExtensionBridge(widget);
-  }, [createPageExtensionBridge, widget]);
-
   return (
     <div data-test-id="page-extension" className={styles.root}>
       <DocumentTitle title={widget.name} />
-      {props.useNewWidgetRendererInPageLocation ? (
-        <WidgetRenderer isFullSize location={WidgetLocation.PAGE} sdk={sdk} widget={widget} />
-      ) : (
-        <ExtensionIFrameRendererWithLocalHostWarning
-          bridge={bridge}
-          parameters={parameters}
-          widget={widget}
-          isFullSize
-        />
-      )}
+      <WidgetRenderer isFullSize location={WidgetLocation.PAGE} sdk={sdk} widget={widget} />
     </div>
   );
 };

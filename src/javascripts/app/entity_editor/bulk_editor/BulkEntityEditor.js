@@ -210,7 +210,7 @@ export const BulkEntityEditor = ({
             {customEditor ? (
               <CustomEditorExtensionRenderer
                 extension={customEditor}
-                createBridge={createExtensionBridgeAdapter(scope)}
+                createSdk={createExtensionBridgeAdapter(scope)}
               />
             ) : (
               <AngularComponent

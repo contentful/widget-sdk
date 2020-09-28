@@ -17,7 +17,6 @@ import {
 } from 'widgets/WidgetRenderable';
 import { isCustomWidget } from '@contentful/widget-renderer';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
-import { getVariation, FLAGS } from 'LaunchDarkly';
 
 const assetEditorInterface = EditorInterfaceTransformer.fromAPI(
   assetContentType.data,
@@ -134,13 +133,11 @@ async function loadEditorData(loader, id) {
     contentType,
     apiEditorInterface,
     hasAdvancedExtensibility,
-    useNewWidgetRenderer,
     customWidgetLoader,
   ] = await Promise.all([
     loader.getContentType(contentTypeId),
     loader.getEditorInterface(contentTypeId),
     loader.hasAdvancedExtensibility(),
-    loader.useNewWidgetRenderer(),
     getCustomWidgetLoader(),
   ]);
 
@@ -186,7 +183,6 @@ async function loadEditorData(loader, id) {
     editorInterface,
     widgetTrackingContexts,
     ...widgetData,
-    useNewWidgetRenderer,
   });
 }
 
@@ -208,19 +204,6 @@ function makeEntryLoader(spaceContext) {
     hasAdvancedExtensibility() {
       return AdvancedExtensibilityFeature.isEnabled(spaceContext.organization.sys.id);
     },
-    async useNewWidgetRenderer() {
-      const ctx = {
-        spaceId: spaceContext.getId(),
-        organizationId: spaceContext.organization.sys.id,
-      };
-
-      const [sidebar, editor] = await Promise.all([
-        getVariation(FLAGS.NEW_WIDGET_RENDERER_SIDEBAR, ctx),
-        getVariation(FLAGS.NEW_WIDGET_RENDERER_EDITOR, ctx),
-      ]);
-
-      return { sidebar, editor };
-    },
     getOpenDoc: makeDocOpener(spaceContext),
   };
 }
@@ -229,7 +212,6 @@ function makeAssetLoader(spaceContext) {
   return {
     getEntity: (id) => fetchEntity(spaceContext, 'Asset', id),
     hasAdvancedExtensibility: () => false,
-    useNewWidgetRenderer: () => ({ sidebar: false, editor: false }),
     getOpenDoc: makeDocOpener(spaceContext),
     // TODO: we return precomputed CT and EI for the Asset Editor.
     // If we would have an endpoint with this data
