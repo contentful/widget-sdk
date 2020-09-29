@@ -36,6 +36,7 @@ function createEventMetadataFromData(data) {
 
 import { go } from 'states/Navigator';
 import ErrorState from 'app/common/ErrorState';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 
 const initialFetch = (orgId) => async () => {
   const endpoint = createOrganizationEndpoint(orgId);
@@ -60,11 +61,14 @@ const initialFetch = (orgId) => async () => {
     getOrganizationMembership(orgId),
   ]);
 
-  const organizationCanAccess = isSelfServicePlan(basePlan) || isFreePlan(basePlan);
+  const canAccess =
+    newPurchaseFlowIsEnabled &&
+    isOwnerOrAdmin(organization) &&
+    (isSelfServicePlan(basePlan) || isFreePlan(basePlan));
 
-  if (!newPurchaseFlowIsEnabled || !organizationCanAccess) {
+  if (!canAccess) {
     go({
-      path: ['account', 'organizations', 'subscription_new'],
+      path: ['account', 'organizations', 'subscription_new', 'overview'],
       params: { orgId },
     });
 
