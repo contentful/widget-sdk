@@ -34,6 +34,7 @@ const mockBillingDetails = {
 };
 const mockRefId = 'ref_1234';
 const mockSessionId = '987654321';
+const mockSessionMetadata = { organizationId: mockOrganization.sys.id, sessionId: mockSessionId };
 
 jest.mock('../utils/analyticsTracking', () => ({
   trackEvent: jest.fn().mockReturnValue(true),
@@ -192,6 +193,87 @@ describe('NewSpacePage', () => {
 
     spacePlanCards.forEach((ele) => {
       expect(within(ele).getByTestId('select-space-cta')).toHaveAttribute('disabled');
+    });
+  });
+
+  describe('analytics tracking', () => {
+    it('should track each event throughout the whole flow - no template', async () => {
+      getDefaultPaymentMethod.mockResolvedValueOnce({
+        number: '************1111',
+        expirationDate: { month: 3, year: 2021 },
+      });
+      build();
+
+      // ------ Space select page------
+      userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
+
+      expect(trackEvent).toHaveBeenCalledWith(EVENTS.SPACE_PLAN_SELECTED, mockSessionMetadata, {
+        selectedPlan: mockProductRatePlanMedium,
+      });
+      expect(trackEvent).toHaveBeenCalledWith(EVENTS.NAVIGATE, mockSessionMetadata, {
+        fromStep: 'SPACE_SELECTION',
+        toStep: 'SPACE_DETAILS',
+      });
+
+      // ------ Space Details page------
+      const input = screen.getByTestId('space-name').getElementsByTagName('input')[0];
+
+      userEvent.type(input, 'test');
+
+      userEvent.click(screen.getByTestId('next-step-new-details-page'));
+
+      expect(trackEvent).toHaveBeenCalledWith(EVENTS.SPACE_DETAILS_ENTERED, mockSessionMetadata);
+      expect(trackEvent).toHaveBeenCalledWith(EVENTS.NAVIGATE, mockSessionMetadata, {
+        fromStep: 'SPACE_DETAILS',
+        toStep: 'BILLING_DETAILS',
+      });
+
+      // ------ Billing Details page ------
+      // Fill out all text fields
+      screen.getAllByTestId('cf-ui-text-input').forEach((textField) => {
+        userEvent.type(textField, mockBillingDetails[textField.getAttribute('id')]);
+      });
+
+      const countrySelect = within(screen.getByTestId('billing-details.country')).getByTestId(
+        'cf-ui-select'
+      );
+
+      userEvent.selectOptions(countrySelect, ['DE']);
+
+      userEvent.click(screen.getByTestId('billing-details.submit'));
+
+      expect(trackEvent).toHaveBeenCalledWith(EVENTS.BILLING_DETAILS_ENTERED, mockSessionMetadata);
+      expect(trackEvent).toHaveBeenCalledWith(EVENTS.NAVIGATE, mockSessionMetadata, {
+        fromStep: 'BILLING_DETAILS',
+        toStep: 'CARD_DETAILS',
+      });
+
+      // ------ Card Details page ------
+      const successCb = await waitForZuoraToRender();
+
+      successCb({ success: true, refId: mockRefId });
+
+      expect(trackEvent).toHaveBeenCalledWith(EVENTS.PAYMENT_DETAILS_ENTERED, mockSessionMetadata);
+
+      // ------ Confirmation page ------
+      await waitFor(() => {
+        expect(screen.getByTestId('new-space-confirmation-section')).toBeVisible();
+      });
+
+      expect(trackEvent).toHaveBeenCalledWith(EVENTS.NAVIGATE, mockSessionMetadata, {
+        fromStep: 'CARD_DETAILS',
+        toStep: 'CONFIRMATION',
+      });
+
+      expect(trackEvent).toHaveBeenCalledWith(EVENTS.PAYMENT_METHOD_CREATED, mockSessionMetadata);
+
+      userEvent.click(screen.getByTestId('confirm-purchase-button'));
+
+      expect(trackEvent).toHaveBeenCalledWith(EVENTS.CONFIRM_PURCHASE, mockSessionMetadata);
+      expect(trackEvent).toHaveBeenCalledWith(EVENTS.NAVIGATE, mockSessionMetadata, {
+        fromStep: 'CONFIRMATION',
+        toStep: 'RECEIPT',
+      });
     });
   });
 
@@ -385,8 +467,7 @@ describe('NewSpacePage', () => {
 function build(customProps) {
   const props = {
     organization: mockOrganization,
-    sessionMetadata: { organizationId: mockOrganization.sys.id, sessionId: mockSessionId },
-
+    sessionMetadata: mockSessionMetadata,
     templatesList: [],
     canCreateCommunityPlan: true,
     productRatePlans: [mockProductRatePlanMedium, mockProductRatePlanLarge],

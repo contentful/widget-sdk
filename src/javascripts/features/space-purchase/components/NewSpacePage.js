@@ -134,6 +134,10 @@ export const NewSpacePage = ({
   const spaceIsFree = !!selectedPlan && isFreeProductPlan(selectedPlan);
 
   const onChangeSelectedTemplate = (changedTemplate) => {
+    trackEvent(EVENTS.SPACE_TEMPLATE_SELECTED, sessionMetadata, {
+      selectedTemplate: changedTemplate,
+    });
+
     setSelectedTemplate(changedTemplate);
   };
 
@@ -166,12 +170,17 @@ export const NewSpacePage = ({
       return productRatePlan.name.toLowerCase() === planType.toLowerCase();
     });
 
+    trackEvent(EVENTS.SPACE_PLAN_SELECTED, sessionMetadata, {
+      selectedPlan: selectedProductRatePlan,
+    });
+
     setSelectedPlan(selectedProductRatePlan);
     goToStep(SPACE_PURCHASE_STEPS.SPACE_DETAILS);
   };
 
   const onSubmitSpaceDetails = () => {
-    // TODO: Add analytics here
+    trackEvent(EVENTS.SPACE_DETAILS_ENTERED, sessionMetadata);
+
     if (spaceIsFree) {
       // Since the space is free, they can immediately create the space (which happens on the receipt page)
       goToStep(SPACE_PURCHASE_STEPS.RECEIPT);
@@ -184,13 +193,15 @@ export const NewSpacePage = ({
   };
 
   const onSubmitBillingDetails = (billingDetails) => {
-    // Add analytics here
+    trackEvent(EVENTS.BILLING_DETAILS_ENTERED, sessionMetadata);
 
     setBillingDetails(billingDetails);
     goToStep(SPACE_PURCHASE_STEPS.CARD_DETAILS);
   };
 
   const onSubmitPaymentMethod = async (refId) => {
+    trackEvent(EVENTS.PAYMENT_DETAILS_ENTERED, sessionMetadata);
+
     const newBillingDetails = {
       ...billingDetails,
       refid: refId,
@@ -206,8 +217,6 @@ export const NewSpacePage = ({
         data: {
           error,
           organizationId: organization.sys.id,
-          newBillingDetails,
-          refId,
         },
       });
 
@@ -216,14 +225,13 @@ export const NewSpacePage = ({
 
     setPaymentMethodInfo(paymentMethod);
 
-    // TODO: Add analytics here
+    trackEvent(EVENTS.PAYMENT_METHOD_CREATED, sessionMetadata);
 
     goToStep(SPACE_PURCHASE_STEPS.CONFIRMATION);
   };
 
   const onConfirm = () => {
-    // Add analytics here
-    // Creating the zoura subscription goes here
+    trackEvent(EVENTS.CONFIRM_PURCHASE, sessionMetadata);
 
     goToStep(SPACE_PURCHASE_STEPS.RECEIPT);
   };
@@ -310,6 +318,7 @@ export const NewSpacePage = ({
               selectedPlan={selectedPlan}
               spaceName={spaceName}
               organizationId={organization.sys.id}
+              sessionMetadata={sessionMetadata}
               selectedTemplate={selectedTemplate}
               monthlyTotal={monthlyTotal}
             />

@@ -10,7 +10,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
-
+import { trackEvent, EVENTS } from '../utils/analyticsTracking';
 import { createSpace, createSpaceWithTemplate } from '../utils/spaceCreation';
 import { go } from 'states/Navigator';
 import { useAsync } from 'core/hooks/useAsync';
@@ -36,6 +36,7 @@ const styles = {
 
 const createSpaceWith = (
   organizationId,
+  sessionMetadata,
   selectedPlan,
   spaceName,
   selectedTemplate = null
@@ -50,12 +51,25 @@ const createSpaceWith = (
         spaceName,
         selectedTemplate
       );
+
+      trackEvent(EVENTS.SPACE_TEMPLATE_CREATED, sessionMetadata, {
+        selectedTemplate,
+      });
     } else {
       newSpace = await createSpace(organizationId, selectedPlan, spaceName);
     }
 
+    trackEvent(EVENTS.SPACE_CREATED, sessionMetadata, {
+      selectedPlan,
+    });
+
     return { newSpace };
-  } catch (e) {
+  } catch (error) {
+    trackEvent(EVENTS.ERROR, sessionMetadata, {
+      location: 'NewSpaceReceiptPage',
+      error,
+    });
+
     // To be updated after design decision is made
     Notification.error('Space could not be created, please try again.');
   }
@@ -64,12 +78,16 @@ const createSpaceWith = (
 export const NewSpaceReceiptPage = ({
   spaceName,
   selectedPlan,
+  sessionMetadata,
   organizationId,
   selectedTemplate,
   monthlyTotal,
 }) => {
   const { isLoading, data } = useAsync(
-    useCallback(createSpaceWith(organizationId, selectedPlan, spaceName, selectedTemplate), [])
+    useCallback(
+      createSpaceWith(organizationId, sessionMetadata, selectedPlan, spaceName, selectedTemplate),
+      []
+    )
   );
 
   const goToCreatedSpace = async () => {
@@ -123,5 +141,6 @@ NewSpaceReceiptPage.propTypes = {
   selectedPlan: PropTypes.object.isRequired,
   selectedTemplate: PropTypes.object,
   organizationId: PropTypes.string.isRequired,
+  sessionMetadata: PropTypes.object.isRequired,
   monthlyTotal: PropTypes.number,
 };

@@ -17,7 +17,7 @@ export const EVENTS = {
   EXTERNAL_LINK_CLICKED: 'external_link_clicked',
   INTERNAL_LINK_CLICKED: 'internal_link_clicked',
   // API Events
-  BILLING_DETAILS_CREATED: 'billing_details_created',
+  PAYMENT_METHOD_CREATED: 'payment_method_created',
   SPACE_CREATED: 'space_created',
   SPACE_TEMPLATE_CREATED: 'space_template_created',
   SPACE_TYPE_CHANGE: 'space_type_change',
