@@ -48,7 +48,7 @@ export function BillingDetailsForm({
   cancelText = 'Cancel',
   billingDetails = {},
 }) {
-  const [showVat, setShouldShowVat] = useState(!!billingDetails.vat);
+  const [showVat, setShouldShowVat] = useState(getIsVatCountry(billingDetails?.country));
   const [showUSState, setShouldShowUSState] = useState(!!billingDetails.state);
 
   const { onChange, onBlur, onSubmit: onFormSubmit, fields, form } = useForm({

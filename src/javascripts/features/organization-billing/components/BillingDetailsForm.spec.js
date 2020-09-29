@@ -221,9 +221,9 @@ describe('BillingDetailsForm', () => {
       });
     });
 
-    it('should show vat field if its been filled out', () => {
+    it('should show vat field if country is a vat country', () => {
       build({
-        billingDetails: getMockBillingDetails({ country: 'DE', vat: 'DE275148225' }),
+        billingDetails: getMockBillingDetails({ country: 'DE' }),
       });
 
       expect(screen.queryByTestId('billing-details.vat')).toBeVisible();
