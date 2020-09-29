@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { css } from 'emotion';
@@ -6,6 +6,8 @@ import { Icon, Spinner, TextInput } from '@contentful/forma-36-react-components'
 import { Keys } from './Keys';
 import tokens from '@contentful/forma-36-tokens';
 import { ReadTagsProvider, TagsRepoProvider, useTagsFeatureEnabled } from 'features/content-tags';
+import createUserCache from 'data/userCache';
+import { createSpaceEndpoint } from 'data/EndpointFactory';
 
 import cn from 'classnames';
 import { FilterPill } from './FilterPill';
@@ -16,6 +18,8 @@ import { track as analyticsTrack } from 'analytics/Analytics';
 import { useFocus } from './useFocus';
 import { useSearchContext } from './useSearchContext';
 import noop from 'lodash/noop';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { contentTypeFilter as getContentTypeFilter } from 'core/services/ContentQuery';
 
 const track = (e, data) => analyticsTrack('search:' + e, data);
 
@@ -53,6 +57,28 @@ function PillsList({
     );
   });
 }
+
+function ContentTypeFilterPill({ contentTypeId, setContentType, readableContentTypes }) {
+  const contentTypeFilter = useMemo(() => getContentTypeFilter(readableContentTypes), [
+    readableContentTypes,
+  ]);
+
+  return (
+    <FilterPill
+      value={contentTypeId}
+      testId="contentTypeFilter"
+      isRemovable={false}
+      filter={contentTypeFilter}
+      onChange={setContentType}
+    />
+  );
+}
+
+ContentTypeFilterPill.propTypes = {
+  contentTypeId: PropTypes.string,
+  readableContentTypes: PropTypes.array.isRequired,
+  setContentType: PropTypes.func.isRequired,
+};
 
 const focus = {
   outline: 'none',
@@ -141,20 +167,14 @@ function View({
   listViewContext,
   onUpdate,
   entityType,
-  getContentTypes,
+  readableContentTypes,
   withMetadata,
-  users,
 }) {
+  const { currentSpaceId, currentEnvironmentId } = useSpaceEnvContext();
+  const [users, setUsers] = useState([]);
+
   const [
-    {
-      contentTypeFilter,
-      contentTypeId,
-      filters,
-      isSuggestionOpen,
-      isTyping,
-      suggestions,
-      searchText,
-    },
+    { contentTypeId, filters, isSuggestionOpen, isTyping, suggestions, searchText },
     {
       hideSuggestions,
       removeFilter,
@@ -165,12 +185,13 @@ function View({
       setSearchText,
       showSuggestions,
       toggleSuggestions,
+      setIsTyping,
     },
   ] = useSearchContext({
     entityType,
     onUpdate,
     listViewContext,
-    getContentTypes,
+    readableContentTypes,
     users,
     withMetadata,
   });
@@ -190,8 +211,18 @@ function View({
     },
   ] = useFocus({ suggestions, filters });
 
+  useEffect(() => {
+    const init = async () => {
+      const spaceEndpoint = createSpaceEndpoint(currentSpaceId, currentEnvironmentId);
+      const userClient = createUserCache(spaceEndpoint);
+      const users = (await userClient.getAll()) || [];
+      setUsers(users);
+      setIsTyping(false);
+    };
+    init();
+  }, [currentSpaceId, currentEnvironmentId, setIsTyping]);
+
   const hideSpinner = !isLoading && !isTyping;
-  const placeholder = filters.length > 0 ? '' : `Type to search for ${pluralize(entityType)}`;
 
   return (
     <div className={cn(styles.wrapper, className)}>
@@ -202,12 +233,10 @@ function View({
         onClick={setFocusOnQueryInput}>
         <div className={styles.pillsInput}>
           {entityType === 'entry' && (
-            <FilterPill
-              value={contentTypeId}
-              testId="contentTypeFilter"
-              isRemovable={false}
-              filter={contentTypeFilter}
-              onChange={setContentType}
+            <ContentTypeFilterPill
+              contentTypeId={contentTypeId}
+              readableContentTypes={readableContentTypes}
+              setContentType={setContentType}
             />
           )}
           <PillsList
@@ -233,7 +262,7 @@ function View({
             testId="queryInput"
             inputRef={inputRef}
             className={styles.input}
-            placeholder={placeholder}
+            placeholder={`Type to search for ${pluralize(entityType)}`}
             value={searchText}
             autoComplete="off"
             onChange={(evt) => {
@@ -320,7 +349,7 @@ function View({
 
 View.propTypes = {
   className: PropTypes.string,
-  getContentTypes: PropTypes.func.isRequired,
+  readableContentTypes: PropTypes.array.isRequired,
   entityType: PropTypes.oneOf(['entry', 'asset']).isRequired,
   isLoading: PropTypes.bool,
   withMetadata: PropTypes.bool.isRequired,
@@ -329,7 +358,6 @@ View.propTypes = {
     getView: PropTypes.func.isRequired,
     setView: PropTypes.func.isRequired,
   }).isRequired,
-  users: PropTypes.array.isRequired,
 };
 
 View.defaultProps = {

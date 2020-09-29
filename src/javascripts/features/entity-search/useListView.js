@@ -1,6 +1,6 @@
 import { useMemo, useEffect, useRef, useCallback } from 'react';
 import { createListViewPersistor, getEntityKey, getDefaults } from './ListViewPersistor';
-import { assign, cloneDeep, set, isEmpty, noop } from 'lodash';
+import { assign, isEmpty, noop } from 'lodash';
 
 const createDummyViewPersistor = ({ entityType }) => {
   const defaults = getDefaults(getEntityKey(entityType));
@@ -23,59 +23,40 @@ export const useListView = ({ entityType, initialState, isPersisted, onUpdate = 
   const initial = viewPersistor.read(initialState);
 
   const ref = useRef(initial);
-  const setRef = useCallback(
-    (values) => {
-      ref.current = values;
-      onUpdate(values);
+
+  const updateRef = useCallback(
+    (callback) => {
+      viewPersistor.save(ref.current);
+      callback?.(ref.current);
+      onUpdate?.(ref.current);
     },
-    [onUpdate]
+    [viewPersistor, onUpdate]
   );
 
   useEffect(() => {
-    !isEmpty(initialState) && setRef(initialState);
-  }, [initialState, setRef]);
+    if (!isEmpty(initialState)) {
+      ref.current = initialState;
+      onUpdate?.(initialState);
+    }
+  }, [initialState, onUpdate]);
 
-  const setViewKey = useCallback(
-    (key, value, callback) => {
-      viewPersistor.saveKey(key, value);
-      const newState = set({}, key.split('.'), value);
-      const updated = assign(cloneDeep(ref.current), newState);
-      setRef(updated);
-      callback?.(updated);
-    },
-    [viewPersistor, setRef]
-  );
-
-  const setViewAssigned = useCallback(
+  const assignView = useCallback(
     (view, callback) => {
-      const newView = assign({}, ref.current, view);
-      viewPersistor.save(newView);
-      setRef(newView);
-      callback?.(newView);
+      assign(ref.current, view);
+      updateRef(callback);
     },
-    [viewPersistor, setRef]
+    [updateRef]
   );
 
   const setView = useCallback(
     (view, callback) => {
-      viewPersistor.save(view);
-      setRef(view);
-      callback?.(view);
+      ref.current = view;
+      updateRef(callback);
     },
-    [viewPersistor, setRef]
+    [updateRef]
   );
 
-  const getDefaults = (view = {}) => {
-    const defaultView = {
-      searchFilters: [],
-      contentTypeId: '',
-      searchText: '',
-      order: {},
-    };
-    return assign(defaultView, view);
-  };
+  const getView = () => ref.current;
 
-  const getView = () => getDefaults(ref.current || initial);
-
-  return { setView, setViewAssigned, setViewKey, getView };
+  return { setView, assignView, getView };
 };

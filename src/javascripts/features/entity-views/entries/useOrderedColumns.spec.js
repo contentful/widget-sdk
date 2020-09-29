@@ -12,8 +12,7 @@ getModule.mockReturnValue({
 const listViewContext = {
   getView: jest.fn().mockReturnValue({ order: { fieldId: 123 } }),
   setView: jest.fn(),
-  setViewKey: jest.fn(),
-  setViewAssigned: jest.fn(),
+  assignView: jest.fn(),
 };
 
 const updateEntities = jest.fn();
@@ -23,7 +22,7 @@ const init = () => {
 
 describe('useSelectedEntities', () => {
   beforeEach(() => {
-    listViewContext.setViewKey.mockClear();
+    listViewContext.assignView.mockClear();
   });
   it('should check if it is order field', () => {
     const [result] = init();
@@ -41,23 +40,19 @@ describe('useSelectedEntities', () => {
   it('should not order column by invalid field', () => {
     const [result] = init();
     result.orderColumnBy({ type: 'RichText', id: 'date' });
-    expect(listViewContext.setViewKey).not.toHaveBeenCalled();
+    expect(listViewContext.assignView).not.toHaveBeenCalled();
   });
 
   it('should order column by field', () => {
     const [result] = init();
     result.orderColumnBy({ type: 'Date', id: 'date' });
-    expect(listViewContext.setViewKey).toHaveBeenCalled();
-    expect(listViewContext.setViewKey.mock.calls[0][0]).toEqual('order');
-    expect(listViewContext.setViewKey.mock.calls[0][1]).toEqual({
-      fieldId: 'date',
-      direction: 'ascending',
+    expect(listViewContext.assignView).toHaveBeenCalled();
+    expect(listViewContext.assignView.mock.calls[0][0]).toEqual({
+      order: { direction: 'ascending', fieldId: 'date' },
     });
     result.orderColumnBy({ type: 'Date', id: 'date' });
-    expect(listViewContext.setViewKey.mock.calls[1][0]).toEqual('order');
-    expect(listViewContext.setViewKey.mock.calls[1][1]).toEqual({
-      fieldId: 'date',
-      direction: 'ascending',
+    expect(listViewContext.assignView.mock.calls[1][0]).toEqual({
+      order: { direction: 'ascending', fieldId: 'date' },
     });
   });
 });

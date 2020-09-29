@@ -32,18 +32,16 @@ getModule.mockReturnValue({
 
 let mockView = getBlankEntryView();
 
-const updateEntities = jest.fn();
 const initHook = (contentTypeId) => {
   const listViewContext = {
     getView: jest.fn().mockImplementation(() => mockView),
     setView: jest.fn().mockImplementation((view) => (mockView = view)),
-    setViewKey: jest.fn().mockImplementation((key, value) => (mockView[key] = value)),
-    setViewAssigned: jest.fn().mockImplementation((view) => ({ ...mockView, ...view })),
+    assignView: jest.fn().mockImplementation((view) => ({ ...mockView, ...view })),
   };
   if (contentTypeId) {
     mockView.contentTypeId = contentTypeId;
   }
-  return renderHook(() => useDisplayFields({ listViewContext, updateEntities }));
+  return renderHook(() => useDisplayFields({ listViewContext, updateEntities: jest.fn() }));
 };
 
 describe('useSelectedEntities with tags pc enabled', () => {
@@ -59,7 +57,6 @@ describe('useSelectedEntities with tags pc enabled', () => {
         return field.id === 'metadata.tags' && field.name === 'Tags';
       })
     ).toBeTrue();
-    expect(updateEntities).toHaveBeenCalledTimes(1);
   });
 
   it('should be able to add tags as a displayfield ', () => {
@@ -75,7 +72,6 @@ describe('useSelectedEntities with tags pc enabled', () => {
         return field.id === 'metadata.tags' && field.name === 'Tags';
       })
     ).toBeFalse();
-    expect(updateEntities).toHaveBeenCalledTimes(2);
   });
 
   it('should be able to remove tags as a displayfield ', () => {
@@ -91,6 +87,5 @@ describe('useSelectedEntities with tags pc enabled', () => {
         return field.id === 'metadata.tags' && field.name === 'Tags';
       })
     ).toBeTrue();
-    expect(updateEntities).toHaveBeenCalledTimes(2);
   });
 });

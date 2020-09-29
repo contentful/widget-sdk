@@ -10,8 +10,7 @@ jest.mock('./View', () => ({
 const listViewContext = {
   getView: jest.fn().mockReturnValue({}),
   setView: jest.fn(),
-  setViewKey: jest.fn(),
-  setViewAssigned: jest.fn(),
+  assignView: jest.fn(),
 };
 
 const onSelectSavedView = jest.fn();

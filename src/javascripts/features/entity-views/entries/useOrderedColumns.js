@@ -25,7 +25,7 @@ export const useOrderedColumns = ({ listViewContext, updateEntities }) => {
       fieldId: field.id,
       direction: switchOrderDirection(direction),
     };
-    listViewContext.setViewKey('order', newOrder, () => {
+    listViewContext.assignView({ order: newOrder }, () => {
       updateEntities();
     });
   };

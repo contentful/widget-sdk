@@ -36,10 +36,7 @@ export const useDisplayFields = ({ listViewContext, updateEntities }) => {
     const hiddenFields = fields.filter(({ id }) => !displayedFieldIds.includes(id));
     setHiddenFields(sortBy(hiddenFields, 'name'));
     setDisplayedFields(displayedFields);
-    listViewContext.setViewKey(
-      'displayedFieldIds',
-      displayedFields.map(({ id }) => id)
-    );
+    listViewContext.assignView({ displayedFieldIds: displayedFields.map(({ id }) => id) });
     updateEntities();
   };
 
@@ -62,12 +59,8 @@ export const useDisplayFields = ({ listViewContext, updateEntities }) => {
   };
 
   const updateFieldOrder = (fields) => {
-    listViewContext.setViewKey(
-      'displayedFieldIds',
-      fields.map(({ id }) => id)
-    );
+    listViewContext.assignView({ displayedFieldIds: fields.map(({ id }) => id) });
     setDisplayedFields(fields);
-    updateEntities();
   };
 
   return [

@@ -8,13 +8,12 @@ import { useDisplayFields } from './useDisplayFields';
 import { useOrderedColumns } from './useOrderedColumns';
 import { useTagsFeatureEnabled } from 'features/content-tags';
 import { METADATA_TAGS_ID } from 'data/MetadataFields';
+import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 
 export function EntryList({
   isLoading,
-  displayFieldForFilteredContentType,
   entries = [],
-  entryCache,
-  assetCache,
+  searchControllerProps,
   listViewContext,
   updateEntries,
   jobs = [],
@@ -49,7 +48,7 @@ export function EntryList({
   }, [tagsEnabled, hiddenFields, fieldsWithoutTags]);
 
   // can be undefined
-  const displayFieldName = displayFieldForFilteredContentType() || {};
+  const displayFieldName = EntityFieldValueSpaceContext.displayFieldForType(contentTypeId) || {};
   const nameField = {
     ...displayFieldName,
     id: 'name',
@@ -72,6 +71,8 @@ export function EntryList({
       direction: order.direction,
     })),
   ];
+
+  const { asset: assetCache, entry: entryCache } = searchControllerProps.cache;
 
   return (
     <EntityList
@@ -112,10 +113,14 @@ export function EntryList({
 
 EntryList.propTypes = {
   isLoading: PropTypes.bool,
-  displayFieldForFilteredContentType: PropTypes.func.isRequired,
   entries: PropTypes.array,
   updateEntries: PropTypes.func.isRequired,
-  entryCache: PropTypes.object,
+  searchControllerProps: PropTypes.shape({
+    cache: PropTypes.shape({
+      entry: PropTypes.object.isRequired,
+      asset: PropTypes.object.isRequired,
+    }).isRequired,
+  }).isRequired,
   assetCache: PropTypes.object,
   jobs: PropTypes.array,
   pageIndex: PropTypes.number,

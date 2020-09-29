@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Spinner, Workbench } from '@contentful/forma-36-react-components';
 import DocumentTitle from 'components/shared/DocumentTitle';
@@ -15,8 +15,8 @@ import { NoSearchResultsAdvice } from 'core/components/NoSearchResultsAdvice';
 import { UpgradeBanner } from './UpgradeBanner';
 import { PluralizeEntityMessage } from './PluralizeEntityMessage';
 import { Search, usePaginator, useSearchController } from 'features/entity-search';
-import createUserCache from 'data/userCache';
-import { createSpaceEndpoint } from 'data/EndpointFactory';
+import { getCreatableContentTypes, getReadableContentTypes } from 'data/ContentTypeRepo/filter';
+import { getModule } from 'core/NgRegistry';
 
 const statusStyles = {
   padding: `0 ${tokens.spacingM} ${tokens.spacingS} ${tokens.spacingM}`,
@@ -84,10 +84,7 @@ export const EntitiesView = ({
   renderSavedViewsActions,
   renderTopContent,
   searchControllerProps,
-  getContentTypes,
   title,
-  cache,
-  spaceId,
   environmentId,
   organization,
   isMasterEnvironment,
@@ -95,45 +92,24 @@ export const EntitiesView = ({
 }) => {
   const paginator = usePaginator();
   const [isInitialized, setIsInitialized] = useState(false);
-  const [users, setUsers] = useState([]);
+  const { contentTypeId } = listViewContext.getView();
+
+  const spaceContext = useMemo(() => getModule('spaceContext'), []);
 
   const [
     { isLoading, entities, hasEntities, hasNoSearchResults, showNoEntitiesAdvice },
     { updateEntities },
   ] = useSearchController({
-    cache,
     listViewContext,
     paginator,
     fetchEntities,
+    cache: searchControllerProps.cache,
     getListQuery: searchControllerProps.getListQuery,
-    keys: {
-      search: searchControllerProps.searchKeys,
-      query: searchControllerProps.queryKeys,
-    },
+    keys: searchControllerProps.keys,
   });
-
-  useEffect(() => {
-    const init = async () => {
-      const spaceEndpoint = createSpaceEndpoint(spaceId, environmentId);
-      const userClient = createUserCache(spaceEndpoint);
-      const users = await userClient.getAll();
-      setUsers(users);
-      !isLoading && setIsInitialized(true);
-    };
-    if (!isInitialized) {
-      init();
-    }
-  }, [spaceId, environmentId, isLoading, isInitialized]);
 
   const pageCount = paginator.getPageCount();
   const isLegacyOrganization = ResourceUtils.isLegacyOrganization(organization);
-
-  const renderPropArgs = {
-    entities,
-    isLoading,
-    updateEntities,
-    showNoEntitiesAdvice,
-  };
 
   const onSelect = useCallback(
     (page = 0) => {
@@ -144,6 +120,29 @@ export const EntitiesView = ({
   );
   const onSelectSavedView = useCallback(() => onSelect(), [onSelect]);
   const onUpdateSearch = useCallback(() => onSelect(), [onSelect]);
+
+  useEffect(() => {
+    !isLoading && setIsInitialized(true);
+  }, [isLoading]);
+
+  const contentTypes = spaceContext.publishedCTs.getAllBare();
+  const { readableContentTypes, creatableContentTypes } = useMemo(
+    () => ({
+      readableContentTypes: getReadableContentTypes(contentTypes, contentTypeId),
+      creatableContentTypes: getCreatableContentTypes(contentTypes),
+    }),
+    [contentTypeId, contentTypes, isInitialized] // eslint-disable-line react-hooks/exhaustive-deps
+  );
+
+  const renderPropArgs = {
+    entities,
+    isLoading,
+    updateEntities,
+    showNoEntitiesAdvice,
+    contentTypes,
+    readableContentTypes,
+    creatableContentTypes,
+  };
 
   return (
     <Fragment>
@@ -169,8 +168,7 @@ export const EntitiesView = ({
                   isLoading={isLoading}
                   listViewContext={listViewContext}
                   onUpdate={onUpdateSearch}
-                  getContentTypes={getContentTypes}
-                  users={users}
+                  readableContentTypes={readableContentTypes}
                 />
                 <div id="saved-views-link-portal-entry" />
                 {!showNoEntitiesAdvice && renderAddEntityActions(renderPropArgs, styles.addButton)}
@@ -245,14 +243,16 @@ EntitiesView.propTypes = {
     getView: PropTypes.func.isRequired,
     setView: PropTypes.func.isRequired,
   }).isRequired,
-  cache: PropTypes.shape({
-    entry: PropTypes.object,
-    asset: PropTypes.object,
-  }),
   searchControllerProps: PropTypes.shape({
-    searchKeys: PropTypes.arrayOf(PropTypes.string).isRequired,
-    queryKeys: PropTypes.arrayOf(PropTypes.string).isRequired,
+    keys: PropTypes.shape({
+      search: PropTypes.arrayOf(PropTypes.string).isRequired,
+      query: PropTypes.arrayOf(PropTypes.string).isRequired,
+    }),
     getListQuery: PropTypes.func.isRequired,
+    cache: PropTypes.shape({
+      entry: PropTypes.object,
+      asset: PropTypes.object,
+    }),
   }).isRequired,
   fetchEntities: PropTypes.func.isRequired,
   renderAddEntityActions: PropTypes.func.isRequired,
@@ -260,8 +260,6 @@ EntitiesView.propTypes = {
   renderEntityList: PropTypes.func.isRequired,
   renderSavedViewsActions: PropTypes.func.isRequired,
   renderTopContent: PropTypes.func.isRequired,
-  getContentTypes: PropTypes.func.isRequired,
-  spaceId: PropTypes.string.isRequired,
   environmentId: PropTypes.string.isRequired,
   organization: PropTypes.object.isRequired,
   isMasterEnvironment: PropTypes.bool.isRequired,

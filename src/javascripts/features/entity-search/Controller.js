@@ -96,7 +96,7 @@ export const createSearchController = ({
           `Provided Content Type "${contentTypeId}" does not exist. The content type filter has been reset to "Any"`
         );
       }
-      listViewContext.setViewKey('contentTypeId', null);
+      listViewContext.assignView({ contentTypeId: null });
       updateEntities();
     } else if (isServerError(err)) {
       Notification.error('Your search didn’t go through this time. Try again.');

@@ -141,6 +141,18 @@ jest.mock('ng/spaceContext', () => {
   return spaceContextStub;
 });
 
+jest.mock('data/CMA/FetchAll', () => ({
+  fetchAll: jest.fn().mockResolvedValue([
+    {
+      sys: {
+        id: 'user-1',
+      },
+      firstName: 'Mr',
+      lastName: 'Test',
+    },
+  ]),
+}));
+
 jest.spyOn(entityHelpers, 'newForLocale').mockImplementation(() => ({
   assetFile: jest.fn().mockResolvedValue({ fileName: 'file.txt' }),
   entityTitle: jest.fn((entity) => Promise.resolve(entity.sys.type)),

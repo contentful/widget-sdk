@@ -13,7 +13,7 @@ import { useScrollToBottomTrigger } from './useScrollToBottomTrigger';
 import { Wrapper } from './Wrapper';
 import { isSearchUsed, getValidContentTypes, getOrder } from './utils';
 import { CreateEntity } from './CreateEntity';
-import getAccessibleCTs from 'data/ContentTypeRepo/accessibleCTs';
+import { getReadableContentTypes } from 'data/ContentTypeRepo/filter';
 import { Search } from '../View';
 import { useListView } from '../useListView';
 
@@ -67,7 +67,6 @@ export const EntitySelectorForm = ({
       hasMore: false,
     },
   });
-  const [users, setUsers] = useState([]);
   const entitySelectorRef = useRef();
 
   const listViewContext = useListView({
@@ -108,15 +107,6 @@ export const EntitySelectorForm = ({
 
     createEntityInlineProps = { ...createEntityProps, hasPlusIcon: false };
   }
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      const users = await spaceContext.users.getAll();
-      setUsers(users);
-    };
-
-    fetchUsers();
-  }, [spaceContext]);
 
   // hooks
   const [{ isLoading, error }, load] = useEntityLoader({
@@ -237,8 +227,11 @@ export const EntitySelectorForm = ({
     }
   }, [error, load]);
 
-  const getContentTypesForSearch = useCallback(() => {
-    const accessibleContentTypes = getAccessibleCTs(spaceContext.publishedCTs, singleContentTypeId);
+  const readableContentTypes = useMemo(() => {
+    const accessibleContentTypes = getReadableContentTypes(
+      spaceContext.publishedCTs.getAllBare(),
+      singleContentTypeId
+    );
     return getValidContentTypes(linkedContentTypeIds, accessibleContentTypes);
   }, [linkedContentTypeIds, singleContentTypeId, spaceContext]);
 
@@ -370,8 +363,7 @@ export const EntitySelectorForm = ({
           entityType={entityType.toLowerCase()}
           isLoading={isLoading}
           onUpdate={onUpdate}
-          users={users}
-          getContentTypes={getContentTypesForSearch}
+          readableContentTypes={readableContentTypes}
           listViewContext={listViewContext}
         />
       </div>

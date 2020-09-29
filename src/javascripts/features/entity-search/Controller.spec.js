@@ -24,7 +24,7 @@ const getListQuery = ListQuery.getForEntries;
 const listViewContext = {
   getView: jest.fn().mockReturnValue({}),
   setView: jest.fn(),
-  setViewKey: jest.fn(),
+  assignView: jest.fn(),
 };
 
 let paginator;
@@ -74,7 +74,7 @@ describe('Controller', () => {
     fetchEntities.mockClear();
     listViewContext.getView.mockClear();
     listViewContext.setView.mockClear();
-    listViewContext.setViewKey.mockClear();
+    listViewContext.assignView.mockClear();
     paginator = Paginator.create();
   });
 
@@ -248,7 +248,7 @@ describe('Controller', () => {
       expect(Forma.Notification.error).toHaveBeenCalledWith(
         'Provided Content Type "ct-1" does not exist. The content type filter has been reset to "Any"'
       );
-      expect(listViewContext.setViewKey).toHaveBeenCalledWith('contentTypeId', null);
+      expect(listViewContext.assignView).toHaveBeenCalledWith({ contentTypeId: null });
 
       await waitFor(() => {
         expect(onUpdate).toHaveBeenCalledWith(entities);

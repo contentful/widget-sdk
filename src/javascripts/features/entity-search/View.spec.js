@@ -9,6 +9,10 @@ const onUpdate = jest.fn();
 
 const searchFilters = [['sys.createdAt', 'op', 'value']];
 
+jest.mock('data/userCache', () =>
+  jest.fn().mockReturnValue({ getAll: jest.fn().mockReturnValue([{ sys: { id: '1' } }]) })
+);
+
 const listViewContext = {
   getView: jest.fn().mockReturnValue({
     searchFilters: [],
@@ -17,21 +21,17 @@ const listViewContext = {
     order: {},
   }),
   setView: jest.fn(),
-  setViewKey: jest.fn(),
-  setViewAssigned: jest.fn(),
+  assignView: jest.fn(),
 };
 
 const render = (props = {}) => {
-  const getContentTypes = jest.fn().mockReturnValue(contentTypes);
-
   const defaultProps = {
     isLoading: false,
     onUpdate,
     entityType: 'entry',
-    users: [{ sys: { id: '1' } }],
-    getContentTypes,
     initialState: { searchFilters },
     listViewContext,
+    readableContentTypes: contentTypes,
     ...props,
   };
 
@@ -54,8 +54,8 @@ describe('app/ContentList/Search/View', () => {
       .fn()
       .mockReturnValue({ searchFilters: [], contentTypeId: '', searchText: '', order: {} });
     listViewContext.setView.mockClear();
-    listViewContext.setViewKey.mockClear();
-    listViewContext.setViewAssigned.mockClear();
+    listViewContext.assignView.mockClear();
+    listViewContext.assignView.mockClear();
     onUpdate.mockClear();
     document.body.setAttribute('tabindex', '0');
   });
@@ -116,7 +116,7 @@ describe('app/ContentList/Search/View', () => {
         target: { value: query },
       });
       expect(wrapper.queryByTestId('suggestions')).toBeInTheDocument();
-      expect(listViewContext.setViewKey).toHaveBeenNthCalledWith(1, 'searchText', query);
+      expect(listViewContext.assignView).toHaveBeenNthCalledWith(1, { searchText: 'query' });
       // onUpdate should be debounced
       expect(onUpdate).not.toHaveBeenCalled();
       await waitFor(() =>
@@ -139,7 +139,7 @@ describe('app/ContentList/Search/View', () => {
 
       fireEvent.keyDown(document.activeElement, { keyCode: keycodes.ENTER });
       expect(wrapper.queryByTestId('suggestions')).not.toBeInTheDocument();
-      expect(listViewContext.setViewAssigned).toHaveBeenNthCalledWith(
+      expect(listViewContext.assignView).toHaveBeenNthCalledWith(
         1,
         {
           searchFilters: [['sys.updatedAt', '', undefined]],
@@ -159,7 +159,7 @@ describe('app/ContentList/Search/View', () => {
       fireEvent.keyDown(wrapper.queryByTestId(`none::${fieldId}`), {
         keyCode: keycodes.ENTER,
       });
-      expect(listViewContext.setViewAssigned).toHaveBeenNthCalledWith(
+      expect(listViewContext.assignView).toHaveBeenNthCalledWith(
         1,
         {
           searchFilters: [['sys.id', 'match', undefined]],
@@ -179,11 +179,11 @@ describe('app/ContentList/Search/View', () => {
       fireEvent.keyDown(wrapper.queryByTestId(`TEST_CT_ID::${fieldId}`), {
         keyCode: keycodes.ENTER,
       });
-      expect(listViewContext.setViewKey).toHaveBeenNthCalledWith(1, 'contentTypeId', 'TEST_CT_ID');
-      expect(listViewContext.setViewAssigned).toHaveBeenNthCalledWith(
+      expect(listViewContext.assignView).toHaveBeenNthCalledWith(
         1,
         {
-          searchFilters: [[fieldId, '', undefined]],
+          contentTypeId: 'TEST_CT_ID',
+          searchFilters: [['fields.symbol1', '', undefined]],
           searchText: '',
         },
         expect.any(Function)

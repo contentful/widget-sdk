@@ -1,21 +1,14 @@
-describe('data/ContentTypeRepo/accessibleCTs', () => {
-  let accessibleCTs;
-  const accessibleCTsIds = [1, 2, 3];
+const { getReadableContentTypes } = require('./filter');
 
-  beforeEach(async function () {
-    this.system.set('access_control/AccessChecker', {
-      canPerformActionOnEntryOfType: (_, id) => accessibleCTsIds.indexOf(id) > -1,
-      Action: {
-        READ: 'read',
-      },
-    });
+jest.mock('access_control/AccessChecker', () => ({
+  canPerformActionOnEntryOfType: (_, id) => [1, 2, 3].indexOf(id) > -1,
+  Action: {
+    READ: 'read',
+  },
+}));
 
-    accessibleCTs = await this.system.import('data/ContentTypeRepo/accessibleCTs');
-    accessibleCTs = accessibleCTs.default;
-  });
-
+describe('filter', () => {
   it('returns list of CTs that the user has READ access to or selected', () => {
-    const publishedCTs = {};
     const testData = [
       {
         selectedCtId: 5,
@@ -40,9 +33,9 @@ describe('data/ContentTypeRepo/accessibleCTs', () => {
     ];
 
     testData.forEach((testData) => {
-      publishedCTs.getAllBare = () => testData.bareCTs;
-
-      expect(accessibleCTs(publishedCTs, testData.selectedCtId)).toEqual(testData.expected);
+      expect(getReadableContentTypes(testData.bareCTs, testData.selectedCtId)).toEqual(
+        testData.expected
+      );
     });
   });
 

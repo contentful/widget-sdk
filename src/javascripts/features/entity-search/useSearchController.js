@@ -12,7 +12,6 @@ export const useSearchController = ({
   const [entities, setEntities] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const keysDep = JSON.stringify(keys);
   const controller = useMemo(
     () =>
       createSearchController({
@@ -25,9 +24,7 @@ export const useSearchController = ({
         onLoading: setIsLoading,
         listViewContext,
       }),
-    // Using keysDep instead of keys
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [fetchEntities, getListQuery, keysDep, paginator, listViewContext, cache]
+    [] // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   useEffect(() => {

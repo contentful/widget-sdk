@@ -2,7 +2,6 @@ import { useCallback, useMemo, useState } from 'react';
 import { match } from 'utils/TaggedValues';
 import {
   buildFilterFieldByQueryKey,
-  contentTypeFilter as getContentTypeFilter,
   FilterValueInputs as ValueInput,
   getContentTypeById,
   getFiltersFromQueryKey,
@@ -15,18 +14,16 @@ import { track } from 'analytics/Analytics';
 export const useSearchContext = ({
   entityType,
   onUpdate,
-  getContentTypes,
   users,
   listViewContext,
+  readableContentTypes,
   withMetadata,
 }) => {
-  const { getView, setViewKey, setViewAssigned } = listViewContext;
+  const { getView, assignView } = listViewContext;
   const { searchFilters, contentTypeId, searchText: initialSearchText } = getView();
 
-  const [isTyping, setIsTyping] = useState(false);
+  const [isTyping, setIsTyping] = useState(true);
   const [searchText, setSearch] = useState(initialSearchText);
-  const contentTypes = getContentTypes();
-  const contentTypesDep = contentTypes.map((ct) => ct.sys.id + ct.sys.updatedAt).join(':');
 
   const [isSuggestionOpen, setIsSuggestionOpen] = useState(false);
 
@@ -36,51 +33,37 @@ export const useSearchContext = ({
 
   const withAssets = entityType === 'asset';
 
-  const sanitizedFilters = useMemo(
-    () =>
-      sanitizeSearchFilters(searchFilters, contentTypes, contentTypeId, withAssets, withMetadata),
-    // Use contentTypesDep because contentTypes is always a new instance
-    // eslint-disable-next-line
-    [searchFilters, contentTypesDep, contentTypeId, withAssets, withMetadata]
-  );
+  const filters = useMemo(() => {
+    const sanitizedFilters = sanitizeSearchFilters(
+      searchFilters,
+      readableContentTypes,
+      contentTypeId,
+      withAssets,
+      withMetadata
+    );
 
-  const filters = useMemo(
-    () =>
-      getFiltersFromQueryKey({
-        users,
-        contentTypes,
-        searchFilters: sanitizedFilters,
-        contentTypeId,
-        withAssets,
-        withMetadata,
-      }),
-    // Use contentTypesDep because contentTypes is always a new instance
-    // eslint-disable-next-line
-    [users, contentTypesDep, sanitizedFilters, contentTypeId, withAssets, withMetadata]
-  );
+    return getFiltersFromQueryKey({
+      users,
+      contentTypes: readableContentTypes,
+      searchFilters: sanitizedFilters,
+      contentTypeId,
+      withAssets,
+      withMetadata,
+    });
+  }, [searchFilters, users, readableContentTypes, contentTypeId, withAssets, withMetadata]);
 
   const suggestions = useMemo(
-    () => getMatchingFilters(searchText, contentTypeId, contentTypes, withAssets, withMetadata),
-    // Use contentTypesDep because contentTypes is always a new instance
-    // eslint-disable-next-line
-    [searchText, contentTypeId, contentTypesDep, withAssets, withMetadata]
+    () =>
+      getMatchingFilters(searchText, contentTypeId, readableContentTypes, withAssets, withMetadata),
+    [searchText, contentTypeId, readableContentTypes, withAssets, withMetadata]
   );
-
-  const contentTypeFilter = useMemo(
-    () => getContentTypeFilter(contentTypes),
-    // Use contentTypesDep because contentTypes is always a new instance
-    // eslint-disable-next-line
-    [contentTypesDep]
-  );
-
-  const callbackSetView = useCallback(setViewKey, []);
 
   const setViewWithUpdate = useCallback(
     (key, value) => {
-      callbackSetView(key, value, onUpdate);
+      assignView({ [key]: value }, onUpdate);
       setIsTyping(false);
     },
-    [onUpdate, callbackSetView]
+    [onUpdate, assignView]
   );
 
   const onSetSearchText = useCallback(
@@ -101,13 +84,15 @@ export const useSearchContext = ({
     }
     setIsTyping(true);
     setSearch(searchTextInput);
-    setViewKey('searchText', searchTextInput);
+    assignView({ searchText: searchTextInput });
     debouncedSetSearchText(searchTextInput);
     setIsSuggestionOpen(!!searchTextInput);
   };
 
-  const setContentType = (selectedContentTypeId) =>
-    setViewWithUpdate('contentTypeId', selectedContentTypeId);
+  const setContentType = useCallback(
+    (selectedContentTypeId) => setViewWithUpdate('contentTypeId', selectedContentTypeId),
+    [setViewWithUpdate]
+  );
 
   const setSearchFilters = useCallback(
     (updatedFilters) => setViewWithUpdate('searchFilters', updatedFilters),
@@ -137,15 +122,16 @@ export const useSearchContext = ({
     setIsTyping(true);
     const updated = cloneDeep(searchFilters);
     updated[index][2] = newValue;
-    setViewKey('searchFilters', updated);
+    assignView({ searchFilters: updated });
     debouncedSetFilterValue();
   };
 
   const selectFilterSuggestion = (filter) => {
     let contentType;
+    const view = { searchText: '' };
     if (filter.contentType) {
-      setViewKey('contentTypeId', filter.contentType.id);
-      contentType = getContentTypeById(contentTypes, filter.contentType.id);
+      view.contentTypeId = filter.contentType.id;
+      contentType = getContentTypeById(readableContentTypes, filter.contentType.id);
     }
 
     const filterField = buildFilterFieldByQueryKey(
@@ -158,14 +144,13 @@ export const useSearchContext = ({
     const value = tryGetValue(filterField);
     setSearch('');
     const updatedFilters = [...searchFilters, [filter.queryKey, filter.operators[0][0], value]];
-    setViewAssigned({ searchFilters: updatedFilters, searchText: '' }, onUpdate);
+    assignView({ ...view, searchFilters: updatedFilters }, onUpdate);
     setIsSuggestionOpen(false);
   };
 
   const context = {
     suggestions,
     contentTypeId,
-    contentTypeFilter,
     searchText,
     filters,
     isTyping,
@@ -182,6 +167,7 @@ export const useSearchContext = ({
     hideSuggestions,
     showSuggestions,
     toggleSuggestions,
+    setIsTyping,
   };
 
   return [context, actions];

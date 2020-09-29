@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { AddAssetButton } from './AddAssetButton';
 import { AssetList } from './AssetList';
@@ -13,7 +13,6 @@ import * as BulkAssetsCreator from 'services/BulkAssetsCreator';
 import { AssetsEmptyState } from './AssetsEmptyState';
 import { delay, get } from 'lodash';
 import { EntitiesView } from '../core/EntitiesView';
-import { getModule } from 'core/NgRegistry';
 import { FileSizeLimitWarning } from './FileSizeLimitWarning';
 import { shouldHide } from 'access_control/AccessChecker';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
@@ -62,7 +61,6 @@ const createMultipleAssets = (updateEntities) => async () => {
 
 export const AssetView = ({ goTo }) => {
   const entityType = 'asset';
-  const spaceContext = useMemo(() => getModule('spaceContext'), []); // Being used only for `publishedCTs`
   const {
     currentEnvironmentId,
     currentOrganization,
@@ -75,23 +73,25 @@ export const AssetView = ({ goTo }) => {
   const listViewContext = useListView({ entityType, isPersisted: true });
   const fetchAssets = useCallback((query) => currentSpace.getAssets(query), [currentSpace]);
 
+  const searchControllerProps = {
+    keys: {
+      search: ['searchText', 'searchFilters'],
+      query: ['searchText', 'searchFilters'],
+    },
+    getListQuery: ListQuery.getForAssets,
+  };
+
   return (
     <EntitiesView
       title="Media"
       entityType={entityType}
       environmentId={currentEnvironmentId}
-      spaceId={currentSpaceId}
       space={currentSpaceData}
       organization={currentOrganization}
       isMasterEnvironment={isMasterEnvironment}
       fetchEntities={fetchAssets}
       listViewContext={listViewContext}
-      getContentTypes={spaceContext.publishedCTs.getAllBare}
-      searchControllerProps={{
-        searchKeys: ['searchText', 'searchFilters'],
-        queryKeys: ['searchText', 'searchFilters'],
-        getListQuery: ListQuery.getForAssets,
-      }}
+      searchControllerProps={searchControllerProps}
       renderTopContent={() => (
         <FileSizeLimitWarning organizationId={currentOrganizationId} spaceId={currentSpaceId} />
       )}

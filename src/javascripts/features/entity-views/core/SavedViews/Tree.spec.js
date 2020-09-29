@@ -13,8 +13,7 @@ import {
 const listViewContext = {
   getView: jest.fn().mockReturnValue({ id: 'id' }),
   setView: jest.fn(),
-  setViewKey: jest.fn(),
-  setViewAssigned: jest.fn(),
+  assignView: jest.fn(),
 };
 
 const onSelectSavedView = jest.fn();

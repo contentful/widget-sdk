@@ -22,11 +22,14 @@ jest.mock('data/CMA/FetchAll', () => ({
 const listViewContext = {
   getView: jest.fn().mockReturnValue({}),
   setView: jest.fn(),
+  assignView: jest.fn(),
 };
 
 const searchControllerProps = {
-  searchKeys: ['searchText', 'searchFilters', 'contentTypeId', 'id'],
-  queryKeys: ['searchText', 'searchFilters', 'contentTypeId'],
+  keys: {
+    search: ['searchText', 'searchFilters', 'contentTypeId', 'id'],
+    query: ['searchText', 'searchFilters', 'contentTypeId'],
+  },
   getListQuery: ListQuery.getForEntries,
 };
 
@@ -44,7 +47,6 @@ const renderComponent = (props = {}) => {
     title: 'Content',
     searchControllerProps,
     listViewContext,
-    spaceId: space.sys.id,
     environmentId: 'environment-id',
     organization,
     isMasterEnvironment: true,
@@ -55,7 +57,6 @@ const renderComponent = (props = {}) => {
     renderEntityList: mockRenderProp('entity-list'),
     renderSavedViewsActions: mockRenderProp('saved-views-actions'),
     renderTopContent: mockRenderProp('top-content'),
-    getContentTypes: jest.fn().mockReturnValue([]),
     ...props,
   };
   return render(<EntitiesView {...defaultProps} />);
@@ -64,7 +65,6 @@ const renderComponent = (props = {}) => {
 describe('EntitiesView', () => {
   it('should initialize and render the empty view', async () => {
     const { queryByTestId } = renderComponent();
-
     expect(queryByTestId('loading-spinner')).toBeInTheDocument();
     await waitFor(() => expect(queryByTestId('loading-spinner')).not.toBeInTheDocument());
     expect(queryByTestId('entry-view')).toBeInTheDocument();
@@ -76,14 +76,11 @@ describe('EntitiesView', () => {
     expect(queryByTestId('workbench-sidebar')).not.toBeInTheDocument();
     expect(queryByTestId('search')).toBeInTheDocument();
   });
-
   it('should render the entity list', async () => {
     const entities = [{ sys: { id: 'entry-id' }, isDeleted: () => false }];
     entities.total = 1;
     const fetchEntities = jest.fn().mockResolvedValue(entities);
-
     const { queryByTestId } = renderComponent({ fetchEntities });
-
     await waitFor(() => expect(queryByTestId('loading-spinner')).not.toBeInTheDocument());
     expect(queryByTestId('empty-state')).not.toBeInTheDocument();
     expect(defaultProps.renderEntityList.mock.calls[0][0].entities).toBeDefined();

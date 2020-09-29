@@ -24,13 +24,11 @@ getModule.mockReturnValue({
 
 let mockView = getBlankEntryView();
 
-const updateEntities = jest.fn();
 const initHook = (contentTypeId) => {
   const listViewContext = {
     getView: jest.fn().mockImplementation(() => mockView),
     setView: jest.fn().mockImplementation((view) => (mockView = view)),
-    setViewKey: jest.fn().mockImplementation((key, value) => (mockView[key] = value)),
-    setViewAssigned: jest.fn().mockImplementation((view) => ({ ...mockView, ...view })),
+    assignView: jest.fn().mockImplementation((view) => ({ ...mockView, ...view })),
   };
   if (contentTypeId) {
     mockView.contentTypeId = contentTypeId;
@@ -38,7 +36,7 @@ const initHook = (contentTypeId) => {
   return renderHook(() =>
     useDisplayFields({
       listViewContext,
-      updateEntities,
+      updateEntities: jest.fn(),
     })
   );
 };
@@ -89,7 +87,6 @@ describe('useSelectedEntities', () => {
         decoration: 'new',
       },
     ]);
-    expect(updateEntities).toHaveBeenCalledTimes(1);
   });
 
   it('should be able to add a displayfield ', () => {
@@ -122,7 +119,6 @@ describe('useSelectedEntities', () => {
         decoration: 'new',
       },
     ]);
-    expect(updateEntities).toHaveBeenCalledTimes(2);
   });
 
   it('should be able to remove a displayfield ', () => {
@@ -161,7 +157,6 @@ describe('useSelectedEntities', () => {
         decoration: 'new',
       },
     ]);
-    expect(updateEntities).toHaveBeenCalledTimes(2);
   });
 
   it('should be able to sort the displayfields', () => {
@@ -189,7 +184,6 @@ describe('useSelectedEntities', () => {
     act(() => result.current[1].updateFieldOrder(sortedFields));
 
     expect(result.current[0].displayedFields).toEqual(sortedFields);
-    expect(updateEntities).toHaveBeenCalledTimes(2);
   });
 
   it('should initialize the displayed and hidden fields with additional fields according to contentTypeId', () => {
@@ -221,6 +215,5 @@ describe('useSelectedEntities', () => {
       },
       { id: 2 },
     ]);
-    expect(updateEntities).toHaveBeenCalledTimes(1);
   });
 });

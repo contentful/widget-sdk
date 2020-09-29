@@ -2,6 +2,7 @@ import React, { useState, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { Modal, Button } from '@contentful/forma-36-react-components';
 import { EntitySelectorForm } from './EntitySelectorForm';
+import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 export const EntitySelectorDialog = ({ isShown, onClose, config, labels }) => {
   const [selected, setSelected] = useState([]);
@@ -31,7 +32,11 @@ export const EntitySelectorDialog = ({ isShown, onClose, config, labels }) => {
           <Fragment>
             <Modal.Header title={title} onClose={onCancel} />
             <Modal.Content>
-              {isShown && <EntitySelectorForm {...config} labels={labels} onChange={onChange} />}
+              {isShown && (
+                <SpaceEnvContextProvider>
+                  <EntitySelectorForm {...config} labels={labels} onChange={onChange} />
+                </SpaceEnvContextProvider>
+              )}
             </Modal.Content>
             {config.multiple && (
               <Modal.Controls>
