@@ -4,16 +4,21 @@ import PropTypes from 'prop-types';
 import { Grid, NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { Workbench } from '@contentful/forma-36-react-components';
 
-import { isFreeProductPlan } from 'account/pricing/PricingDataProvider';
+import { calculateTotalPrice } from 'utils/SubscriptionUtils';
 import {
   createBillingDetails,
   setDefaultPaymentMethod,
   getDefaultPaymentMethod,
   getBillingDetails,
 } from 'features/organization-billing';
-import * as logger from 'services/logger';
-import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes';
+import { createOrganizationEndpoint } from 'data/EndpointFactory';
+import { getPlansWithSpaces } from 'account/pricing/PricingDataProvider';
+import { isFreeProductPlan } from 'account/pricing/PricingDataProvider';
 import { isOwner as isOrgOwner } from 'services/OrganizationRoles';
+import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes';
+import { useAsync } from 'core/hooks/useAsync';
+import * as logger from 'services/logger';
+import createResourceService from 'services/ResourceService';
 
 import { Breadcrumb } from './Breadcrumb';
 import { NewSpaceFAQ } from './NewSpaceFAQ';
@@ -23,8 +28,6 @@ import { NewSpaceBillingDetailsPage } from './NewSpaceBillingDetailsPage';
 import { NewSpaceCardDetailsPage } from './NewSpaceCardDetailsPage';
 import { NewSpaceConfirmationPage } from './NewSpaceConfirmationPage';
 import { NewSpaceReceiptPage } from './NewSpaceReceiptPage';
-import { useAsync } from 'core/hooks/useAsync';
-
 import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
 import { usePageContent } from '../hooks/usePageContent';
 
@@ -60,7 +63,8 @@ const initialFetch = (
   organization,
   setPaymentMethodInfo,
   setBillingDetails,
-  setIsLoadingBillingDetails
+  setIsLoadingBillingDetails,
+  setMonthlyTotal
 ) => async () => {
   if (organization.isBillable) {
     setIsLoadingBillingDetails(true);
@@ -74,6 +78,19 @@ const initialFetch = (
     setBillingDetails(billingDetails);
     setIsLoadingBillingDetails(false);
   }
+
+  const organizationEndpoint = createOrganizationEndpoint(organization.sys.id);
+  const resources = createResourceService(organization.sys.id, 'organization');
+
+  const plans = await getPlansWithSpaces(organizationEndpoint);
+  const membershipsResource = await resources.get('organization_membership');
+
+  const totalPrice = calculateTotalPrice({
+    allPlans: plans.items,
+    numMemberships: membershipsResource.usage,
+  });
+
+  setMonthlyTotal(totalPrice);
 };
 
 export const NewSpacePage = ({
@@ -90,6 +107,7 @@ export const NewSpacePage = ({
   const [billingDetails, setBillingDetails] = useState({});
   const [paymentMethodInfo, setPaymentMethodInfo] = useState({});
   const [isLoadingBillingDetails, setIsLoadingBillingDetails] = useState(false);
+  const [monthlyTotal, setMonthlyTotal] = useState(0);
 
   const hasBillingInformation = organization.isBillable;
   const canCreatePaidSpace = isOrgOwner(organization) || hasBillingInformation;
@@ -100,7 +118,8 @@ export const NewSpacePage = ({
         organization,
         setPaymentMethodInfo,
         setBillingDetails,
-        setIsLoadingBillingDetails
+        setIsLoadingBillingDetails,
+        setMonthlyTotal
       ),
       []
     )
@@ -284,6 +303,7 @@ export const NewSpacePage = ({
               spaceName={spaceName}
               organizationId={organization.sys.id}
               selectedTemplate={selectedTemplate}
+              monthlyTotal={monthlyTotal}
             />
           </Grid>
         );

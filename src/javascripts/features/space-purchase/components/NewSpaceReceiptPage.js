@@ -10,9 +10,10 @@ import {
 } from '@contentful/forma-36-react-components';
 import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
-import { useAsync } from 'core/hooks/useAsync';
+
 import { createSpace, createSpaceWithTemplate } from '../utils/spaceCreation';
 import { go } from 'states/Navigator';
+import { useAsync } from 'core/hooks/useAsync';
 
 import { PaymentSummary } from './PaymentSummary';
 
@@ -65,6 +66,7 @@ export const NewSpaceReceiptPage = ({
   selectedPlan,
   organizationId,
   selectedTemplate,
+  monthlyTotal,
 }) => {
   const { isLoading, data } = useAsync(
     useCallback(createSpaceWith(organizationId, selectedPlan, spaceName, selectedTemplate), [])
@@ -106,7 +108,11 @@ export const NewSpaceReceiptPage = ({
           className={styles.button}>
           Take me to {spaceName}
         </Button>
-        <PaymentSummary selectedPlan={selectedPlan} isReceipt />
+        <PaymentSummary
+          selectedPlan={selectedPlan}
+          grandTotal={monthlyTotal + selectedPlan.price}
+          isReceipt
+        />
       </Flex>
     </section>
   );
@@ -117,4 +123,5 @@ NewSpaceReceiptPage.propTypes = {
   selectedPlan: PropTypes.object.isRequired,
   selectedTemplate: PropTypes.object,
   organizationId: PropTypes.string.isRequired,
+  monthlyTotal: PropTypes.number,
 };

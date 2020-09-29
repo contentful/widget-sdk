@@ -44,7 +44,7 @@ const styles = {
   }),
 };
 
-export const PaymentSummary = ({ selectedPlan, isReceipt = false }) => {
+export const PaymentSummary = ({ selectedPlan, grandTotal = 0, isReceipt = false }) => {
   return (
     <Card className={styles.card} testId="order-summary.card">
       <Typography className={styles.text}>
@@ -52,15 +52,15 @@ export const PaymentSummary = ({ selectedPlan, isReceipt = false }) => {
           {isReceipt ? 'Receipt' : 'Payment summary'}
         </Subheading>
         <Paragraph>
-          Start using your new space today. You will be billed at the end of each month. You can
-          cancel at anytime.
+          Start using your new space today. You will be charged monthly. You can cancel at anytime.
         </Paragraph>
         <List className={styles.list}>
           <ListItem testId="order-summary.selected-plan-name" className={styles.listItem}>
             <span>Space</span> <span>{selectedPlan.name}</span>
           </ListItem>
           <ListItem testId="order-summary.selected-plan-price" className={styles.listItem}>
-            <span>Monthly total</span> <Price value={selectedPlan.price} />
+            <span>Monthly {isReceipt ? 'total' : 'cost'}</span>{' '}
+            <Price value={isReceipt ? grandTotal : selectedPlan.price} />
           </ListItem>
         </List>
         <Paragraph>This price is not inclusive of sales tax, if applicable.</Paragraph>
@@ -71,5 +71,6 @@ export const PaymentSummary = ({ selectedPlan, isReceipt = false }) => {
 
 PaymentSummary.propTypes = {
   selectedPlan: PropTypes.object.isRequired,
+  grandTotal: PropTypes.number,
   isReceipt: PropTypes.bool,
 };
