@@ -28,6 +28,8 @@ import { NewSpaceBillingDetailsPage } from './NewSpaceBillingDetailsPage';
 import { NewSpaceCardDetailsPage } from './NewSpaceCardDetailsPage';
 import { NewSpaceConfirmationPage } from './NewSpaceConfirmationPage';
 import { NewSpaceReceiptPage } from './NewSpaceReceiptPage';
+import { trackEvent, EVENTS } from '../utils/analyticsTracking';
+
 import { SPACE_PURCHASE_TYPES } from '../utils/spacePurchaseContent';
 import { usePageContent } from '../hooks/usePageContent';
 
@@ -49,13 +51,13 @@ const NEW_SPACE_STEPS_CONFIRMATION = [
   { text: '3.Confirmation', isActive: true },
 ];
 
-const spacePurchaseSteps = {
-  SPACE_SELECTION: 0,
-  SPACE_DETAILS: 1,
-  BILLING_DETAILS: 2,
-  CARD_DETAILS: 3,
-  CONFIRMATION: 4,
-  RECEIPT: 5,
+const SPACE_PURCHASE_STEPS = {
+  SPACE_SELECTION: 'SPACE_SELECTION',
+  SPACE_DETAILS: 'SPACE_DETAILS',
+  BILLING_DETAILS: 'BILLING_DETAILS',
+  CARD_DETAILS: 'CARD_DETAILS',
+  CONFIRMATION: 'CONFIRMATION',
+  RECEIPT: 'RECEIPT',
 };
 
 // Fetch billing and payment information if organziation already has billing information
@@ -99,8 +101,9 @@ export const NewSpacePage = ({
   productRatePlans,
   canCreateCommunityPlan,
   pageContent,
+  sessionMetadata,
 }) => {
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(SPACE_PURCHASE_STEPS.SPACE_SELECTION);
   const [spaceName, setSpaceName] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -139,6 +142,11 @@ export const NewSpacePage = ({
   };
 
   const goToStep = (nextStep) => {
+    trackEvent(EVENTS.NAVIGATE, sessionMetadata, {
+      fromStep: SPACE_PURCHASE_STEPS[currentStep],
+      toStep: SPACE_PURCHASE_STEPS[nextStep],
+    });
+
     setCurrentStep(nextStep);
     // Save the step in the history's state to use when the browser's forward or back button is clicked
     window.history.pushState({ step: nextStep }, null);
@@ -159,19 +167,19 @@ export const NewSpacePage = ({
     });
 
     setSelectedPlan(selectedProductRatePlan);
-    goToStep(spacePurchaseSteps.SPACE_DETAILS);
+    goToStep(SPACE_PURCHASE_STEPS.SPACE_DETAILS);
   };
 
   const onSubmitSpaceDetails = () => {
     // TODO: Add analytics here
     if (spaceIsFree) {
       // Since the space is free, they can immediately create the space (which happens on the receipt page)
-      goToStep(spacePurchaseSteps.RECEIPT);
+      goToStep(SPACE_PURCHASE_STEPS.RECEIPT);
     } else if (organization.isBillable) {
       // Since they already have billing details, they can go straight to the confirmation page to confirm their purchase
-      goToStep(spacePurchaseSteps.CONFIRMATION);
+      goToStep(SPACE_PURCHASE_STEPS.CONFIRMATION);
     } else {
-      goToStep(spacePurchaseSteps.BILLING_DETAILS);
+      goToStep(SPACE_PURCHASE_STEPS.BILLING_DETAILS);
     }
   };
 
@@ -179,7 +187,7 @@ export const NewSpacePage = ({
     // Add analytics here
 
     setBillingDetails(billingDetails);
-    goToStep(spacePurchaseSteps.CARD_DETAILS);
+    goToStep(SPACE_PURCHASE_STEPS.CARD_DETAILS);
   };
 
   const onSubmitPaymentMethod = async (refId) => {
@@ -210,19 +218,19 @@ export const NewSpacePage = ({
 
     // TODO: Add analytics here
 
-    goToStep(spacePurchaseSteps.CONFIRMATION);
+    goToStep(SPACE_PURCHASE_STEPS.CONFIRMATION);
   };
 
   const onConfirm = () => {
     // Add analytics here
     // Creating the zoura subscription goes here
 
-    goToStep(spacePurchaseSteps.RECEIPT);
+    goToStep(SPACE_PURCHASE_STEPS.RECEIPT);
   };
 
   const browserNavigationHandler = useCallback((e) => {
     // If no state/step is set, it's the first step.
-    setCurrentStep(e.state?.step ?? spacePurchaseSteps.SPACE_SELECTION);
+    setCurrentStep(e.state?.step ?? SPACE_PURCHASE_STEPS.SPACE_SELECTION);
   }, []);
 
   useEffect(() => {
@@ -236,7 +244,7 @@ export const NewSpacePage = ({
 
   const getComponentForStep = (currentStep) => {
     switch (currentStep) {
-      case spacePurchaseSteps.SPACE_DETAILS:
+      case SPACE_PURCHASE_STEPS.SPACE_DETAILS:
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS} />
@@ -252,7 +260,7 @@ export const NewSpacePage = ({
             />
           </Grid>
         );
-      case spacePurchaseSteps.BILLING_DETAILS:
+      case SPACE_PURCHASE_STEPS.BILLING_DETAILS:
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS_PAYMENT} />
@@ -264,7 +272,7 @@ export const NewSpacePage = ({
             />
           </Grid>
         );
-      case spacePurchaseSteps.CARD_DETAILS:
+      case SPACE_PURCHASE_STEPS.CARD_DETAILS:
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS_PAYMENT} />
@@ -274,11 +282,11 @@ export const NewSpacePage = ({
               billingCountryCode={billingDetails.country}
               onSuccess={onSubmitPaymentMethod}
               selectedPlan={selectedPlan}
-              navigateToNextStep={() => goToStep(spacePurchaseSteps.CONFIRMATION)}
+              navigateToNextStep={() => goToStep(SPACE_PURCHASE_STEPS.CONFIRMATION)}
             />
           </Grid>
         );
-      case spacePurchaseSteps.CONFIRMATION:
+      case SPACE_PURCHASE_STEPS.CONFIRMATION:
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS_CONFIRMATION} />
@@ -294,7 +302,7 @@ export const NewSpacePage = ({
             />
           </Grid>
         );
-      case spacePurchaseSteps.RECEIPT:
+      case SPACE_PURCHASE_STEPS.RECEIPT:
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
             <Breadcrumb items={NEW_SPACE_STEPS_CONFIRMATION} />
@@ -336,6 +344,7 @@ export const NewSpacePage = ({
 };
 
 NewSpacePage.propTypes = {
+  sessionMetadata: PropTypes.object.isRequired,
   organization: OrganizationPropType.isRequired,
   templatesList: PropTypes.array,
   productRatePlans: PropTypes.array,

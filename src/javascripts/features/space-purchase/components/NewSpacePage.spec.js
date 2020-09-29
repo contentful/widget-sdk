@@ -5,6 +5,7 @@ import * as FakeFactory from 'test/helpers/fakeFactory';
 import * as LazyLoader from 'utils/LazyLoader';
 import { NewSpacePage } from './NewSpacePage';
 import { isOwner } from 'services/OrganizationRoles';
+import { trackEvent, EVENTS } from '../utils/analyticsTracking';
 
 import {
   createBillingDetails,
@@ -32,6 +33,12 @@ const mockBillingDetails = {
   vat: '',
 };
 const mockRefId = 'ref_1234';
+const mockSessionId = '987654321';
+
+jest.mock('../utils/analyticsTracking', () => ({
+  trackEvent: jest.fn().mockReturnValue(true),
+  EVENTS: jest.requireActual('../utils/analyticsTracking').EVENTS,
+}));
 
 jest.mock('services/OrganizationRoles', () => ({
   isOwner: jest.fn().mockReturnValue(true),
@@ -201,6 +208,20 @@ describe('NewSpacePage', () => {
       expect(input.value).toEqual('test');
     });
 
+    it('should track user navigation', () => {
+      build();
+
+      userEvent.click(screen.getAllByTestId('select-space-cta')[0]);
+      expect(trackEvent).toBeCalledWith(
+        EVENTS.NAVIGATE,
+        {
+          organizationId: mockOrganization.sys.id,
+          sessionId: mockSessionId,
+        },
+        { fromStep: 'SPACE_SELECTION', toStep: 'SPACE_DETAILS' }
+      );
+    });
+
     it('should save billing information then fetch the payment method onSuccess of the Zoura iframe', async () => {
       getDefaultPaymentMethod.mockResolvedValueOnce({
         number: '************1111',
@@ -364,6 +385,8 @@ describe('NewSpacePage', () => {
 function build(customProps) {
   const props = {
     organization: mockOrganization,
+    sessionMetadata: { organizationId: mockOrganization.sys.id, sessionId: mockSessionId },
+
     templatesList: [],
     canCreateCommunityPlan: true,
     productRatePlans: [mockProductRatePlanMedium, mockProductRatePlanLarge],
