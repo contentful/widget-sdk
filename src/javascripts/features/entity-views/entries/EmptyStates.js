@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Heading, Paragraph } from '@contentful/forma-36-react-components';
 import { can, Action } from 'access_control/AccessChecker';
-import { getModule } from 'core/NgRegistry';
 import CreateEntryButton from 'components/CreateEntryButton/CreateEntryButton';
 import FolderIllustration from 'svg/folder-illustration.svg';
 import PenIllustration from 'svg/illustrations/pen-illustration.svg';
@@ -11,12 +10,13 @@ import EmptyStateContainer, {
   defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import { NoContentTypeAdvice } from 'core/components/NoContentTypeAdvice';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { isAdmin } from 'core/services/SpaceEnvContext/utils';
 
 export const EmptyStates = ({ hasContentType, contentTypes, onCreate, suggestedContentTypeId }) => {
-  const spaceContext = getModule('spaceContext');
-
+  const { currentSpace } = useSpaceEnvContext();
   const canCreateCT = can(Action.CREATE, 'ContentType');
-  const userIsAdmin = spaceContext.getData('spaceMembership.admin', false);
+  const userIsAdmin = isAdmin(currentSpace);
 
   if (hasContentType) {
     return (
