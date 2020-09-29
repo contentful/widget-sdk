@@ -4,9 +4,9 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import Icon from 'ui/Components/Icon';
 import { websiteUrl } from 'Config';
 import isLegacyEnterprise from 'data/isLegacyEnterprise';
-import { getModule } from 'core/NgRegistry';
 import { trackClickCTA } from './tracking';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 const withInAppHelpUtmParams = buildUrlWithUtmParams({
   source: 'webapp',
@@ -18,6 +18,8 @@ export default class UpgradePricing extends React.Component {
   state = {
     show: false,
   };
+
+  static contextType = SpaceEnvContext;
 
   async shouldShow(org) {
     if (!org) {
@@ -40,9 +42,7 @@ export default class UpgradePricing extends React.Component {
   }
 
   async componentDidMount() {
-    const spaceContext = getModule('spaceContext');
-
-    const org = spaceContext.getData('organization');
+    const org = this.context.currentOrganization;
     const showUpgrade = await this.shouldShow(org);
 
     this.setState({
