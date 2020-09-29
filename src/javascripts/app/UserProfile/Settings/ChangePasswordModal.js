@@ -109,7 +109,7 @@ function handlePasswordChangeErrors(errorDetails, dispatch) {
 }
 
 function handleCurrentPasswordError(dispatch) {
-  let message = 'The password you entered is not valid';
+  const message = 'The password you entered is not valid';
   dispatch({
     type: 'SERVER_VALIDATION_FAILURE',
     payload: { field: 'currentPassword', value: message },
