@@ -62,6 +62,14 @@ export const space = {
       admin: true,
     },
   },
+  environmentMeta: {
+    isMasterEnvironment: true,
+  },
+  environment: {
+    sys: {
+      id: 'master',
+    },
+  },
 };
 
 export const getSpace = jest.fn().mockReturnValue(space);

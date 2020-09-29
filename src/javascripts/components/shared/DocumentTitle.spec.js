@@ -1,42 +1,71 @@
 import React from 'react';
-import Enzyme from 'enzyme';
-import 'jest-enzyme';
+import { render, waitFor } from '@testing-library/react';
 
 import DocumentTitle from './DocumentTitle';
 
-import * as spaceContextMocked from 'ng/spaceContext';
+import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { getSpace, space } from '__mocks__/ng/spaceContext';
 
 describe('Document Title', () => {
-  it('supports string titles', () => {
-    const wrapper = Enzyme.shallow(<DocumentTitle title="Custom Title" />);
-
-    assertTitle(wrapper, 'Custom Title — Contentful');
+  afterEach(() => {
+    getSpace.mockClear();
   });
 
-  it('supports array titles', () => {
-    const wrapper = Enzyme.shallow(<DocumentTitle title={['Custom Title', 'Media']} />);
+  it('supports string titles', async () => {
+    getSpace.mockReturnValueOnce(null);
 
-    assertTitle(wrapper, 'Custom Title — Media — Contentful');
+    render(
+      <SpaceEnvContextProvider>
+        <DocumentTitle title="Custom Title" />
+      </SpaceEnvContextProvider>
+    );
+
+    await waitFor(() => expect(document.title).toEqual('Custom Title — Contentful'));
   });
 
-  it('appends space name when in space context', () => {
-    spaceContextMocked.getData.mockReturnValueOnce('Space Name');
-    const wrapper = Enzyme.shallow(<DocumentTitle title="Custom Title" />);
+  it('supports array titles', async () => {
+    getSpace.mockReturnValueOnce(null);
 
-    assertTitle(wrapper, 'Custom Title — Space Name — Contentful');
+    render(
+      <SpaceEnvContextProvider>
+        <DocumentTitle title={['Custom Title', 'Media']} />
+      </SpaceEnvContextProvider>
+    );
+
+    await waitFor(() => expect(document.title).toEqual('Custom Title — Media — Contentful'));
   });
 
-  it('appends current environment id if multiple envs available', () => {
-    spaceContextMocked.environments = [{}, {}];
-    spaceContextMocked.getEnvironmentId.mockReturnValueOnce('master-1');
-    const wrapper = Enzyme.shallow(<DocumentTitle title="Custom Title" />);
+  it('appends space name when in space context', async () => {
+    render(
+      <SpaceEnvContextProvider>
+        <DocumentTitle title="Custom Title" />
+      </SpaceEnvContextProvider>
+    );
 
-    assertTitle(wrapper, 'Custom Title — master-1 — Contentful');
+    await waitFor(() => expect(document.title).toEqual('Custom Title — Blog — Contentful'));
+  });
 
-    spaceContextMocked.environments = undefined;
+  it('appends current environment id if not master environment', async () => {
+    getSpace.mockReturnValueOnce({
+      ...space,
+      environmentMeta: {
+        isMasterEnvironment: false,
+      },
+      environment: {
+        sys: {
+          id: 'primary-1',
+        },
+      },
+    });
+
+    render(
+      <SpaceEnvContextProvider>
+        <DocumentTitle title="Custom Title" />
+      </SpaceEnvContextProvider>
+    );
+
+    await waitFor(() =>
+      expect(document.title).toEqual('Custom Title — Blog — primary-1 — Contentful')
+    );
   });
 });
-
-function assertTitle(wrapper, titleText) {
-  expect(wrapper.find('title').text()).toBe(titleText);
-}

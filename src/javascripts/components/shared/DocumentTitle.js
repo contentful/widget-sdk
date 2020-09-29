@@ -2,8 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 import { isArray } from 'lodash';
-
-import { getModule } from 'core/NgRegistry';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import {
+  getEnvironmentAliasesIds,
+  isCurrentEnvironmentMaster,
+} from 'core/services/SpaceEnvContext/utils';
 
 /**
  * Component sets document title. The facade for react-helmet to make
@@ -11,14 +14,21 @@ import { getModule } from 'core/NgRegistry';
  *
  */
 export default function DocumentTitle({ title }) {
-  const spaceContext = getModule('spaceContext');
+  const {
+    currentSpaceName,
+    currentEnvironmentId,
+    currentEnvironment,
+    currentSpace,
+  } = useSpaceEnvContext();
+  const isMaster = isCurrentEnvironmentMaster(currentSpace);
+  const hasEnvironmentAliases = !!getEnvironmentAliasesIds(currentEnvironment).length;
+  const hasEnvironmentTitle = !isMaster || hasEnvironmentAliases;
+  const environmentId = hasEnvironmentTitle ? currentEnvironmentId : undefined;
 
   const titleSegments = isArray(title) ? title : [title];
-  const spaceName = getSpaceName(spaceContext);
-  const environmentId = getEnvironmentId(spaceContext);
 
   const docTitle = buildDocumentTitle({
-    spaceName,
+    spaceName: currentSpaceName,
     environmentId,
     titleSegments: titleSegments,
   });
@@ -41,30 +51,4 @@ DocumentTitle.propTypes = {
 function buildDocumentTitle({ titleSegments, spaceName, environmentId }) {
   const titleParts = [...titleSegments, spaceName, environmentId, 'Contentful'].filter(Boolean);
   return titleParts.join(' — ');
-}
-
-function getSpaceName(spaceContext) {
-  try {
-    return spaceContext.getData('name');
-  } catch (error) {
-    return undefined;
-  }
-}
-
-/**
- * Returns envirnment id if the user has more then one environment.
- *
- * @param {*} spaceContext
- * @returns
- */
-function getEnvironmentId(spaceContext) {
-  try {
-    if (spaceContext.environments.length > 1) {
-      return spaceContext.getEnvironmentId();
-    } else {
-      return undefined;
-    }
-  } catch (error) {
-    return undefined;
-  }
 }
