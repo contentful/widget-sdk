@@ -3,17 +3,21 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { AdminOnly } from './AdminOnly';
 
-import * as spaceContextMocked from 'ng/spaceContext';
 import * as $stateMocked from 'ng/$state';
+import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { space } from '__mocks__/ng/spaceContext';
 
 describe('AdminOnly', () => {
   beforeEach(() => {
     $stateMocked.go.mockClear();
-    spaceContextMocked.getData.mockReset();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   const setAdmin = (isAdmin) => {
-    spaceContextMocked.getData.mockReturnValue(isAdmin);
+    space.data.spaceMember.admin = isAdmin;
   };
 
   describe('if isAdmin is true', () => {
@@ -21,9 +25,11 @@ describe('AdminOnly', () => {
       expect.assertions(1);
       setAdmin(true);
       const { container } = render(
-        <AdminOnly>
-          <div data-test-id="visible-only-for-admin">This is visible only for admins</div>
-        </AdminOnly>
+        <SpaceEnvContextProvider>
+          <AdminOnly>
+            <div data-test-id="visible-only-for-admin">This is visible only for admins</div>
+          </AdminOnly>
+        </SpaceEnvContextProvider>
       );
       expect(container).toHaveTextContent('This is visible only for admins');
     });
@@ -34,9 +40,11 @@ describe('AdminOnly', () => {
       expect.assertions(2);
       setAdmin(false);
       const { container } = render(
-        <AdminOnly>
-          <div>This is visible only for admins</div>
-        </AdminOnly>
+        <SpaceEnvContextProvider>
+          <AdminOnly>
+            <div>This is visible only for admins</div>
+          </AdminOnly>
+        </SpaceEnvContextProvider>
       );
       expect(container).not.toHaveTextContent('This is visible only for admins');
       expect($stateMocked.go).toHaveBeenCalledWith(
@@ -50,9 +58,11 @@ describe('AdminOnly', () => {
       expect.assertions(2);
       setAdmin(false);
       const { container } = render(
-        <AdminOnly redirect="^.home">
-          <div>This is visible only for admins</div>
-        </AdminOnly>
+        <SpaceEnvContextProvider>
+          <AdminOnly redirect="^.home">
+            <div>This is visible only for admins</div>
+          </AdminOnly>
+        </SpaceEnvContextProvider>
       );
       expect(container).not.toHaveTextContent('This is visible only for admins');
       expect($stateMocked.go).toHaveBeenCalledWith('^.home', undefined, undefined);
@@ -62,9 +72,11 @@ describe('AdminOnly', () => {
       expect.assertions(3);
       setAdmin(false);
       const { container } = render(
-        <AdminOnly render={() => <div>You have no access to see this page</div>}>
-          <div>This is visible only for admins</div>
-        </AdminOnly>
+        <SpaceEnvContextProvider>
+          <AdminOnly render={() => <div>You have no access to see this page</div>}>
+            <div>This is visible only for admins</div>
+          </AdminOnly>
+        </SpaceEnvContextProvider>
       );
       expect(container).not.toHaveTextContent('This is visible only for admins');
       expect(container).toHaveTextContent('You have no access to see this page');
