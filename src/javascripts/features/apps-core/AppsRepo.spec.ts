@@ -1,9 +1,10 @@
 import { createAppsRepo } from './AppsRepo';
 import { window } from 'core/services/window';
-import appsListingEntryMock from './__mocks__/appsListingEntryMock.json';
-import allAppsMock from './__mocks__/appEntriesMock.json';
+import appsListingEntryMock from './__mocks__/appsListingEntryMock';
+import allAppsMock from './__mocks__/appEntriesMock';
 
 const NETLIFY_DEFINITION_ID = '1VchawWvbIClHuMIyxwR5m';
+const FIRST_PARTY_DEFINITION_ID = '4iIetqcwsR1GIZxaYI6fRm';
 
 jest.mock('core/services/window', () => ({
   window: {
@@ -35,6 +36,26 @@ describe('AppsRepo', () => {
     src: 'http://localhost:1234',
   };
 
+  const firstPartyInstallation = {
+    sys: {
+      type: 'AppInstallation',
+      appDefinition: {
+        sys: {
+          type: 'Link',
+          linkType: 'AppDefinition',
+          id: FIRST_PARTY_DEFINITION_ID,
+        },
+      },
+    },
+  };
+
+  const firstPartyDefinition = {
+    sys: { type: 'AppDefinition', id: FIRST_PARTY_DEFINITION_ID },
+    name: 'Workflows',
+    locations: ['app', 'entry-sidebar'],
+    src: 'http://localhost:1234',
+  };
+
   const privateDefinition = {
     sys: { type: 'AppDefinition', id: 'app-definition-id' },
     name: 'My app',
@@ -44,7 +65,10 @@ describe('AppsRepo', () => {
 
   const loader = {
     getByIds: jest.fn(() => {
-      return Promise.resolve({ [NETLIFY_DEFINITION_ID]: netlifyDefinition });
+      return Promise.resolve({
+        [NETLIFY_DEFINITION_ID]: netlifyDefinition,
+        [FIRST_PARTY_DEFINITION_ID]: firstPartyDefinition,
+      });
     }),
     getAllForCurrentOrganization: jest.fn(() => {
       return Promise.resolve([privateDefinition]);
@@ -53,13 +77,13 @@ describe('AppsRepo', () => {
 
   const cma = {
     getAppInstallations: jest.fn(() => {
-      return Promise.resolve({ items: [netlifyInstallation] });
+      return Promise.resolve({ items: [netlifyInstallation, firstPartyInstallation] });
     }),
   };
 
   describe('getApps', () => {
     it('should only return private apps if the marketplace endpoint returns no data', async () => {
-      window.fetch.mockImplementation(() => {
+      (window.fetch as jest.Mock).mockImplementation(() => {
         return Promise.resolve({ ok: false, json: () => Promise.resolve({}) });
       });
 
@@ -92,7 +116,7 @@ describe('AppsRepo', () => {
     });
 
     it('should only return private apps the marketplace endpoint returns bad data', async () => {
-      window.fetch.mockImplementation(() => {
+      (window.fetch as jest.Mock).mockImplementation(() => {
         return Promise.resolve({
           ok: true,
           json: () => Promise.resolve({ items: [], includes: { Assets: [] }, sys: {} }),
@@ -114,7 +138,7 @@ describe('AppsRepo', () => {
     });
 
     it('should return an array of apps when the marketplace endpoint returns good data', async () => {
-      window.fetch.mockImplementation((url) => {
+      (window.fetch as jest.Mock).mockImplementation((url) => {
         const jsonResponse = url.endsWith('2fPbSMx3baxlwZoCyXC7F1')
           ? appsListingEntryMock
           : allAppsMock;
@@ -144,7 +168,7 @@ describe('AppsRepo', () => {
 
   describe('getApp', () => {
     beforeEach(() => {
-      window.fetch.mockImplementation((url) => {
+      (window.fetch as jest.Mock).mockImplementation((url) => {
         const jsonResponse = url.endsWith('2fPbSMx3baxlwZoCyXC7F1')
           ? // listing
             appsListingEntryMock
@@ -167,6 +191,14 @@ describe('AppsRepo', () => {
       const app2 = await repo.getApp('netlify');
       expect(app2.appDefinition).toEqual(netlifyDefinition);
       expect(app2.appInstallation).toEqual(netlifyInstallation);
+
+      const app3 = await repo.getApp('workflows');
+      expect(app3.appDefinition).toEqual(firstPartyDefinition);
+      expect(app3.appInstallation).toEqual(firstPartyInstallation);
+
+      const app4 = await repo.getApp(FIRST_PARTY_DEFINITION_ID);
+      expect(app4.appDefinition).toEqual(firstPartyDefinition);
+      expect(app4.appInstallation).toEqual(firstPartyInstallation);
     });
 
     it('fails if an app is not present', async () => {
