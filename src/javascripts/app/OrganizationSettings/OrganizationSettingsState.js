@@ -1,14 +1,13 @@
-import React from 'react';
 import base from 'states/Base';
 import { iframeStateWrapper } from 'states/utils';
 import * as Analytics from 'analytics/Analytics';
+import subscriptionState from './Subscription/SubscriptionState';
 import { usageState } from 'features/organization-usage';
 import teamsState from './Teams/TeamsState';
 import { inviteUsersState, userDetailState, usersListState } from './Users/UsersState';
 import accessToolsState from './AccessToolsState';
 import { SSOSetupRoutingState } from 'features/sso';
 import gatekeeperStates from './OrganizationSettingsGatekeeperStates';
-import { newSpaceState } from 'features/space-purchase';
 import { billingRoutingState } from 'features/organization-billing';
 import OrganizationNavBar from 'navigation/OrganizationNavBar';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
@@ -17,11 +16,6 @@ import * as TokenStore from 'services/TokenStore';
 import { isDeveloper, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { go } from 'states/Navigator';
-
-import { organizationRoute } from 'states/utils';
-import { spacePlanAssignmentState } from 'features/space-plan-assignment';
-import LazyLoadedComponent from 'app/common/LazyLoadedComponent';
-import importer from './importer';
 
 const resolveOrganizationData = [
   '$stateParams',
@@ -35,19 +29,6 @@ const usersAndInvitationsState = base({
     orgId: '',
   },
   children: [inviteUsersState, userDetailState, usersListState],
-});
-
-const subscriptionPageState = organizationRoute({
-  name: 'subscription_new',
-  url: '/subscription_overview',
-  children: [spacePlanAssignmentState],
-  component: (props) => (
-    <LazyLoadedComponent importer={importer}>
-      {({ SubscriptionPageRoute }) => {
-        return <SubscriptionPageRoute {...props} />;
-      }}
-    </LazyLoadedComponent>
-  ),
 });
 
 // Psuedo route to handle which path a user should be redirected to when they click on "Go to Organization" in the account profile page.
@@ -104,8 +85,7 @@ export default [
     children: [
       usageState,
       usersAndInvitationsState,
-      subscriptionPageState,
-      newSpaceState,
+      subscriptionState,
       teamsState,
       appsState,
       SSOSetupRoutingState,
