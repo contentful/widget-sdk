@@ -1,7 +1,7 @@
 import { createAppsRepo } from './AppsRepo';
 import { window } from 'core/services/window';
-import appsListingEntryMock from './__mocks__/appsListingEntryMock';
-import allAppsMock from './__mocks__/appEntriesMock';
+import { appsListingEntryMock } from './__mocks__/appsListingEntryMock';
+import { appEntriesMock } from './__mocks__/appEntriesMock';
 
 const NETLIFY_DEFINITION_ID = '1VchawWvbIClHuMIyxwR5m';
 const FIRST_PARTY_DEFINITION_ID = '4iIetqcwsR1GIZxaYI6fRm';
@@ -141,7 +141,7 @@ describe('AppsRepo', () => {
       (window.fetch as jest.Mock).mockImplementation((url) => {
         const jsonResponse = url.endsWith('2fPbSMx3baxlwZoCyXC7F1')
           ? appsListingEntryMock
-          : allAppsMock;
+          : appEntriesMock;
         return Promise.resolve({ ok: true, json: () => Promise.resolve(jsonResponse) });
       });
 
@@ -173,7 +173,7 @@ describe('AppsRepo', () => {
           ? // listing
             appsListingEntryMock
           : // apps
-            allAppsMock;
+            appEntriesMock;
 
         return Promise.resolve({
           ok: true,

@@ -1,4 +1,4 @@
-export default {
+export const appsListingEntryMock = {
   sys: {
     type: 'Array',
   },
