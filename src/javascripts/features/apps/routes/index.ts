@@ -227,10 +227,9 @@ export const appRoute = {
       onEnter: [
         '$stateParams',
         '$state',
-        '$timeout',
         'app',
         'widget',
-        ($stateParams, $state, $timeout, app, widget) => {
+        ($stateParams, $state, app, widget) => {
           const pageLocation =
             widget && widget.locations.find((l) => l.location === WidgetLocation.PAGE);
 
@@ -251,10 +250,7 @@ export const appRoute = {
               ? 'spaces.detail.environment.apps.page'
               : 'spaces.detail.apps.page';
 
-            // Dirty hack to not get 'transition superseded' error
-            $timeout(() => {
-              $state.go(path, { ...$stateParams, appId: slug });
-            }, 0);
+            return $state.go(path, { ...$stateParams, appId: slug }, { replace: true });
           }
         },
       ],
