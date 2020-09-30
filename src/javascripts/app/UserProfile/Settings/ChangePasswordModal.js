@@ -108,6 +108,14 @@ function handlePasswordChangeErrors(errorDetails, dispatch) {
   });
 }
 
+function handleCurrentPasswordError(dispatch) {
+  const message = 'The password you entered is not valid';
+  dispatch({
+    type: 'SERVER_VALIDATION_FAILURE',
+    payload: { field: 'currentPassword', value: message },
+  });
+}
+
 export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown }) {
   const [formData, dispatch] = useReducer(reducer, user, initializeReducer);
 
@@ -132,7 +140,9 @@ export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown
     } catch (err) {
       const { data } = err;
 
-      if (get(data, ['sys', 'type']) === 'Error') {
+      if (get(data, ['sys', 'id']) === 'InvalidCurrentPassword') {
+        handleCurrentPasswordError(dispatch);
+      } else if (get(data, ['sys', 'type']) === 'Error') {
         handlePasswordChangeErrors(data.details.errors, dispatch);
       } else {
         Notification.error('Something went wrong. Try again.');
