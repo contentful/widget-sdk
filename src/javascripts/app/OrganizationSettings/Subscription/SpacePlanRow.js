@@ -22,6 +22,10 @@ import { getUserName } from 'app/OrganizationSettings/Users/UserUtils';
 import { joinAnd } from 'utils/StringUtils';
 import { getEnabledFeatures } from 'utils/SubscriptionUtils';
 import { Price } from 'core/components/formatting';
+import {
+  POC_FREE_SPACE_PLAN_NAME,
+  TRIAL_SPACE_FREE_SPACE_PLAN_NAME,
+} from 'account/pricing/PricingDataProvider';
 
 const styles = {
   star: css({
@@ -49,13 +53,22 @@ function SpacePlanRow({
   hasUpgraded,
   enterprisePlan,
   showSpacePlanChangeBtn,
+  showExpiresAtColumn,
+  isTrialCommEnabled,
 }) {
   const { space } = plan;
   const createdBy = space ? getUserName(space.sys.createdBy) : '';
   const createdAt = space ? moment.utc(space.sys.createdAt).format('DD/MM/YYYY') : '';
+  const expiresAt = space?.expiresAt ? moment(space.expiresAt).format('DD/MM/YYYY') : '';
+  const planName =
+    isTrialCommEnabled && plan.name === POC_FREE_SPACE_PLAN_NAME
+      ? TRIAL_SPACE_FREE_SPACE_PLAN_NAME
+      : plan.name;
 
   const enabledFeatures = getEnabledFeatures(plan);
   const includedFeatures = joinAnd(enabledFeatures.map(({ name }) => name));
+
+  const showPOCTooltip = isTrialCommEnabled && plan.name === POC_FREE_SPACE_PLAN_NAME;
 
   const onViewSpace = () =>
     go({
@@ -90,8 +103,8 @@ function SpacePlanRow({
         )}
       </TableCell>
       <TableCell testId="subscription-page.spaces-list.space-type">
-        <strong>{plan.name}</strong>&nbsp;
-        {enabledFeatures.length > 0 && (
+        <strong>{planName}</strong>&nbsp;
+        {!showPOCTooltip && enabledFeatures.length > 0 && (
           <Tooltip
             testId="subscription-page.spaces-list.features-tooltip"
             content={`This space includes ${includedFeatures}`}>
@@ -100,6 +113,18 @@ function SpacePlanRow({
               color="muted"
               className={styles.helpIcon}
               data-test-id="subscription-page.spaces-list.features-tooltip-trigger"
+            />
+          </Tooltip>
+        )}
+        {showPOCTooltip && (
+          <Tooltip
+            testId="subscription-page.spaces-list.poc-tooltip"
+            content={`Formerly known as ${POC_FREE_SPACE_PLAN_NAME}`}>
+            <Icon
+              icon="HelpCircle"
+              color="muted"
+              className={styles.helpIcon}
+              data-test-id="subscription-page.spaces-list.poc-tooltip-trigger"
             />
           </Tooltip>
         )}
@@ -141,6 +166,9 @@ function SpacePlanRow({
       </TableCell>
       <TableCell testId="subscription-page.spaces-list.created-by">{createdBy}</TableCell>
       <TableCell testId="subscription-page.spaces-list.created-on">{createdAt}</TableCell>
+      {showExpiresAtColumn && (
+        <TableCell testId="subscription-page.spaces-list.expires-at">{expiresAt}</TableCell>
+      )}
       <TableCell testId="subscription-page.spaces-list.option-dots" className={styles.moreButton}>
         <CardActions
           isAutoalignmentEnabled={true}
@@ -187,12 +215,16 @@ SpacePlanRow.propTypes = {
   enterprisePlan: PropTypes.bool,
   hasUpgraded: PropTypes.bool,
   showSpacePlanChangeBtn: PropTypes.bool,
+  showExpiresAtColumn: PropTypes.bool,
+  isTrialCommEnabled: PropTypes.bool,
 };
 
 SpacePlanRow.defaultProps = {
   enterprisePlan: false,
   hasUpgraded: false,
   showSpacePlanChangeBtn: false,
+  showExpiresAtColumn: false,
+  isTrialCommEnabled: false,
 };
 
 export default SpacePlanRow;

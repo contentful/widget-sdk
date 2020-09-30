@@ -1,5 +1,7 @@
 import moment from 'moment';
 
+export const TRIAL_SPACE_DATE_INTRODUCED_AT = '2020-10-01';
+
 /**
  * Return True if an organization is on trial.
  *

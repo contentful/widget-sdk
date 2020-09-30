@@ -1,7 +1,7 @@
 import React from 'react';
-import { render, fireEvent, within } from '@testing-library/react';
+import { render, fireEvent, within, waitFor } from '@testing-library/react';
 import * as echarts from 'echarts';
-
+import { getVariation } from 'LaunchDarkly';
 import { track } from 'analytics/Analytics';
 import { SpacesTabs } from './SpacesTabs';
 
@@ -120,12 +120,22 @@ describe('SpacesTabs', () => {
         expect(getByText('Deleted space')).toBeInTheDocument();
       });
 
-      it('shows one space as PoC', () => {
-        const { getAllByText } = renderComp(defaultData);
+      it('shows one space as trial space if the feature flag is on', async () => {
+        getVariation.mockClear().mockResolvedValueOnce(true);
+
+        const { getAllByText, getAllByTestId } = renderComp(defaultData);
+        const tags = await waitFor(() => getAllByText('Trial Space'));
+        expect(tags).toHaveLength(1);
+        fireEvent.mouseOver(tags[0]);
+        expect(getAllByTestId('api-usage-table-poc-tooltip')).toHaveLength(1);
+      });
+
+      it('shows one space as PoC if the feature flag is off', () => {
+        const { getAllByText, getAllByTestId } = renderComp(defaultData);
         const tags = getAllByText('POC');
         expect(tags).toHaveLength(1);
         fireEvent.mouseOver(tags[0]);
-        expect(getAllByText('Proof of Concept')).toHaveLength(1);
+        expect(getAllByTestId('api-usage-table-poc-tooltip')).toHaveLength(1);
       });
     });
 
@@ -174,8 +184,6 @@ describe('SpacesTabs', () => {
 
       expect(queryByText('Trial Space')).toBeVisible();
       expect(queryByTestId('api-usage-table-poc-tooltip')).toBeNull();
-
-      expect(queryByText('POC')).toBeNull();
     });
 
     it('renders a bar chart and initializes once', () => {

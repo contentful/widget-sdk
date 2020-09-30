@@ -12,6 +12,10 @@ import {
 } from '@contentful/forma-36-react-components';
 
 import SpacePlanRow from '../SpacePlanRow';
+import {
+  TRIAL_SPACE_FREE_SPACE_PLAN_NAME,
+  POC_FREE_SPACE_PLAN_NAME,
+} from 'account/pricing/PricingDataProvider';
 
 const styles = {
   nameCol: css({
@@ -36,7 +40,13 @@ export function SpacePlansTable({
   showSpacePlanChangeBtn,
   initialLoad,
   upgradedSpaceId,
+  isTrialCommEnabled,
 }) {
+  const showExpiresAtColumn =
+    isTrialCommEnabled &&
+    plans.some((plan) =>
+      [TRIAL_SPACE_FREE_SPACE_PLAN_NAME, POC_FREE_SPACE_PLAN_NAME].includes(plan.name)
+    );
   return (
     <Table testId="subscription-page.table">
       <colgroup>
@@ -52,6 +62,7 @@ export function SpacePlansTable({
           <TableCell>Space type</TableCell>
           <TableCell>Created by</TableCell>
           <TableCell>Created on</TableCell>
+          {showExpiresAtColumn && <TableCell>Expires at</TableCell>}
           <TableCell />
         </TableRow>
       </TableHead>
@@ -70,6 +81,8 @@ export function SpacePlansTable({
                 hasUpgraded={isUpgraded}
                 enterprisePlan={enterprisePlan}
                 showSpacePlanChangeBtn={showSpacePlanChangeBtn}
+                showExpiresAtColumn={showExpiresAtColumn}
+                isTrialCommEnabled={isTrialCommEnabled}
               />
             );
           })
@@ -87,4 +100,5 @@ SpacePlansTable.propTypes = {
   showSpacePlanChangeBtn: PropTypes.bool,
   initialLoad: PropTypes.bool,
   upgradedSpaceId: PropTypes.string,
+  isTrialCommEnabled: PropTypes.bool,
 };

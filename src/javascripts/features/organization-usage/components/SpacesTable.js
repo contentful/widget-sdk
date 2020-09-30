@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   Table,
   TableHead,
@@ -14,24 +14,51 @@ import { sum } from 'lodash';
 import { shorten } from 'utils/NumberUtils';
 import { calcRelativeSpaceUsage } from '../utils/calcRelativeSpaceUsage';
 import { useUsageState, colours } from '../hooks/usageContext';
+import {
+  TRIAL_SPACE_FREE_SPACE_PLAN_NAME,
+  POC_FREE_SPACE_PLAN_NAME,
+} from 'account/pricing/PricingDataProvider';
+
+import { getVariation, FLAGS } from 'LaunchDarkly';
+import { useAsync } from 'core/hooks';
 
 const SpaceRow = ({ spaceId, spaceUsage, color }) => {
-  const { spaceNames, totalUsage, spaceTypeLookup } = useUsageState();
+  const { spaceNames, totalUsage, spaceTypeLookup, orgId } = useUsageState();
+  const [isTrialCommEnabled, setIsTrialCommEnabled] = useState(false);
 
   const spaceName = spaceNames[spaceId];
   const spaceType = spaceTypeLookup[spaceId];
+
+  const fetchFlag = useCallback(async () => {
+    const isTrialCommEnabled = await getVariation(FLAGS.PLATFORM_TRIAL_COMM, {
+      organizationId: orgId,
+    });
+    setIsTrialCommEnabled(isTrialCommEnabled);
+  }, [orgId]);
+
+  useAsync(fetchFlag);
 
   return (
     <TableRow data-test-id="api-usage-table-row">
       <TableCell>
         <div>{spaceName || 'Deleted space'}</div>
         <div>
-          {spaceType === 'Proof of Concept' && (
-            <Tooltip content={spaceType} testId="api-usage-table-poc-tooltip">
-              <Tag tagType="muted">POC</Tag>
+          {spaceType === POC_FREE_SPACE_PLAN_NAME && (
+            <Tooltip
+              content={
+                isTrialCommEnabled
+                  ? `Formerly known as ${POC_FREE_SPACE_PLAN_NAME}`
+                  : POC_FREE_SPACE_PLAN_NAME
+              }
+              testId="api-usage-table-poc-tooltip">
+              <Tag tagType="muted">
+                {isTrialCommEnabled ? TRIAL_SPACE_FREE_SPACE_PLAN_NAME : 'POC'}
+              </Tag>
             </Tooltip>
           )}
-          {spaceType === 'Trial Space' && <Tag tagType="muted">{spaceType}</Tag>}
+          {spaceType === TRIAL_SPACE_FREE_SPACE_PLAN_NAME && (
+            <Tag tagType="muted">{TRIAL_SPACE_FREE_SPACE_PLAN_NAME}</Tag>
+          )}
         </div>
       </TableCell>
       {/* eslint-disable-next-line */}

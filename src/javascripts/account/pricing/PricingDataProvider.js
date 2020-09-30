@@ -3,7 +3,7 @@ import { getAllSpaces, getUsersByIds } from 'access_control/OrganizationMembersh
 import { SUBSCRIPTIONS_API, getAlphaHeader } from 'alphaHeaders.js';
 import { getSpaces } from 'services/TokenStore';
 import { getVariation, FLAGS } from 'LaunchDarkly';
-import { isTrialSpaceType } from 'features/trials';
+import { isTrialSpaceType, TRIAL_SPACE_DATE_INTRODUCED_AT } from 'features/trials';
 const alphaHeader = getAlphaHeader(SUBSCRIPTIONS_API);
 
 export const SELF_SERVICE = 'Self-service';
@@ -13,7 +13,8 @@ export const ENTERPRISE_HIGH_DEMAND = 'Enterprise High Demand';
 export const FREE = 'Free';
 export const ENTERPRISE_TRIAL_BASE_PLAN_NAME = 'Professional Trial';
 export const PARTNER_PLATFORM_BASE_PLAN_NAME = 'Partner Platform';
-const TRIAL_SPACE_DATE_INTRODUCED_AT = '2020-10-01';
+export const TRIAL_SPACE_FREE_SPACE_PLAN_NAME = 'Trial Space';
+export const POC_FREE_SPACE_PLAN_NAME = 'Proof of Concept';
 
 export const customerTypes = {
   free: [FREE],
@@ -121,10 +122,11 @@ export async function getPlansWithSpaces(endpoint) {
 
   const freeSpaceRatePlan = (space) => {
     const plan = ratePlans.find((plan) => plan.productPlanType === 'free_space');
-    if (isTrialCommFeatureFlagEnabled && plan.name === 'Trial Space') {
+    if (isTrialCommFeatureFlagEnabled && plan.name === TRIAL_SPACE_FREE_SPACE_PLAN_NAME) {
       // if we have access to the space, we can differenciate the PoC and Trial Space
       // and return the corresponding free space rate plan.
       // if the space is not accessible, use the createdAt date to differenciate the PoC and Trial Space
+      // TODO: remove the workaround when all the POCs are migrated to Trial Spaces
       const accessibleSpace = accessibleSpaces.find(({ sys }) => sys.id === space.sys.id);
       const isExistingPOCSpace = accessibleSpace
         ? !isTrialSpaceType(accessibleSpace)
@@ -133,7 +135,7 @@ export async function getPlansWithSpaces(endpoint) {
       if (isExistingPOCSpace) {
         return {
           ...plan,
-          name: 'Proof of Concept',
+          name: POC_FREE_SPACE_PLAN_NAME,
         };
       }
     }

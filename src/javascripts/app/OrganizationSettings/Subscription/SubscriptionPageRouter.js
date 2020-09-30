@@ -34,9 +34,11 @@ const getSpacePlans = (plans, accessibleSpaces) =>
     // Set space.isAccessible to check if current user can go to space details.
     .map((plan) => {
       if (plan.space) {
-        plan.space.isAccessible = !!accessibleSpaces.find(
+        const accessibleSpace = accessibleSpaces.find(
           (space) => space.sys.id === plan.space.sys.id
         );
+        plan.space.isAccessible = !!accessibleSpace;
+        plan.space.expiresAt = accessibleSpace && accessibleSpace.trialPeriodEndsAt;
       }
       // plan price is undefined for a free space
       // later on in the code, we use mathematical ops (like comparison)
