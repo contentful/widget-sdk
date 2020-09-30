@@ -1,14 +1,12 @@
 import { useState, useEffect } from 'react';
-import { getModule } from 'core/NgRegistry';
 import ReloadNotification from 'app/common/ReloadNotification';
 import createResourceService from 'services/ResourceService';
 import * as ResourceUtils from 'utils/ResourceUtils';
 import * as accessChecker from 'access_control/AccessChecker';
 import { getApiKeyRepo } from '../services/ApiKeyRepoInstance';
 
-async function getData() {
-  const spaceContext = getModule('spaceContext');
-  const resources = createResourceService(spaceContext.getId());
+async function getData({ spaceId, organization }) {
+  const resources = createResourceService(spaceId);
   const [apiKeys, resource] = await Promise.all([
     getApiKeyRepo().getAll(),
     resources.get('apiKey'),
@@ -20,7 +18,7 @@ async function getData() {
 
   return {
     canCreate,
-    isLegacyOrganization: ResourceUtils.isLegacyOrganization(spaceContext.organization),
+    isLegacyOrganization: ResourceUtils.isLegacyOrganization(organization),
     limits,
     reachedLimit: !canCreate,
     usage: resource.usage,
@@ -29,9 +27,7 @@ async function getData() {
   };
 }
 
-export function useApiKeysState() {
-  const spaceContext = getModule('spaceContext');
-
+export function useApiKeysState({ spaceId, spaceName, organization }) {
   const [loaded, setLoaded] = useState(false);
   const [data, setData] = useState({
     canCreate: false,
@@ -43,12 +39,11 @@ export function useApiKeysState() {
   });
 
   function createAPIKey() {
-    const spaceName = spaceContext.getData(['name']);
     return getApiKeyRepo().create(spaceName);
   }
 
   useEffect(() => {
-    getData()
+    getData({ spaceId, organization })
       .then((data) => {
         setData(data);
         setLoaded(true);
@@ -57,7 +52,7 @@ export function useApiKeysState() {
         setLoaded(true);
         ReloadNotification.apiErrorHandler(error);
       });
-  }, []);
+  }, [spaceId, organization]);
 
   return { ...data, loaded, createAPIKey };
 }

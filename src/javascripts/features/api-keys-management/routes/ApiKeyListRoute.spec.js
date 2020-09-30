@@ -3,6 +3,7 @@ import { ApiKeyListRoute } from './ApiKeyListRoute';
 import { render, waitForElement } from '@testing-library/react';
 
 import * as spaceContextMocked from 'ng/spaceContext';
+import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 let mockedResource;
 
@@ -32,18 +33,6 @@ jest.mock('../services/ApiKeyRepoInstance', () => ({
   getApiKeyRepo: () => mockApiKeyRepo,
 }));
 
-jest.mock('ng/spaceContext', () => ({
-  getId: () => 'space-id',
-  organization: {
-    pricingVersion: 'pricing_version_2',
-  },
-  getData: jest.fn().mockImplementation((type) => {
-    if (type === 'name') {
-      return 'currentSpaceName';
-    }
-  }),
-}));
-
 jest.mock('services/ResourceService', () => () => ({
   get: jest.fn().mockResolvedValue(mockedResource),
 }));
@@ -53,6 +42,12 @@ describe('ApiKeyListRoute', () => {
     mockApiKeyRepo.create.mockReset();
     mockApiKeyRepo.getAll.mockReset();
     spaceContextMocked.organization.pricingVersion = 'pricing_version_2';
+    spaceContextMocked.getId = () => 'space-id';
+    spaceContextMocked.getData = jest.fn().mockImplementation((type) => {
+      if (type === 'name') {
+        return 'currentSpaceName';
+      }
+    });
     mockedResource = {
       usage: 0,
       limits: {
@@ -62,10 +57,18 @@ describe('ApiKeyListRoute', () => {
     };
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should render empty list', async () => {
     mockApiKeyRepo.getAll.mockResolvedValue([]);
 
-    const { getByTestId, getByText } = render(<ApiKeyListRoute />);
+    const { getByTestId, getByText } = render(
+      <SpaceEnvContextProvider>
+        <ApiKeyListRoute />
+      </SpaceEnvContextProvider>
+    );
 
     await waitForElement(() => {
       return getByTestId('api-keys.empty');
@@ -79,7 +82,11 @@ describe('ApiKeyListRoute', () => {
     spaceContextMocked.organization.pricingVersion = 'pricing_version_1';
     mockApiKeyRepo.getAll.mockResolvedValue(mockKeyData);
 
-    const { getByTestId, getByText } = render(<ApiKeyListRoute />);
+    const { getByTestId, getByText } = render(
+      <SpaceEnvContextProvider>
+        <ApiKeyListRoute />
+      </SpaceEnvContextProvider>
+    );
 
     await waitForElement(() => {
       return getByTestId('api-key-list');
@@ -105,7 +112,11 @@ describe('ApiKeyListRoute', () => {
     it('should render non-empty list', async () => {
       mockApiKeyRepo.getAll.mockResolvedValue(mockKeyData);
 
-      const { getByTestId, getByText } = render(<ApiKeyListRoute />);
+      const { getByTestId, getByText } = render(
+        <SpaceEnvContextProvider>
+          <ApiKeyListRoute />
+        </SpaceEnvContextProvider>
+      );
 
       await waitForElement(() => {
         return getByTestId('api-key-table');
