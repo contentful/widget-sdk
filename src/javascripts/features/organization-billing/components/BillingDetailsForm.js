@@ -7,7 +7,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { useForm } from 'core/hooks/useForm';
 import { BillingDetailsPropType } from '../propTypes';
 
-import { isValidVat, getIsVatCountry } from '../utils/vat';
+import { isValidVATFormat, isCountryUsingVAT } from '../utils/vat';
 import COUNTRIES_LIST from 'libs/countries_list.json';
 import US_STATES_LIST from 'libs/us_states_list.json';
 
@@ -48,7 +48,7 @@ export function BillingDetailsForm({
   cancelText = 'Cancel',
   billingDetails = {},
 }) {
-  const [showVat, setShouldShowVat] = useState(getIsVatCountry(billingDetails?.country));
+  const [showVat, setShouldShowVat] = useState(isCountryUsingVAT(billingDetails?.country));
   const [showUSState, setShouldShowUSState] = useState(!!billingDetails.state);
 
   const { onChange, onBlur, onSubmit: onFormSubmit, fields, form } = useForm({
@@ -104,17 +104,21 @@ export function BillingDetailsForm({
     fieldsValidator: (fields) => {
       const errors = {};
 
-      const countryCode = fields.country.value;
-      const vat = fields.vat.value;
+      const countryName = fields.country.value;
+      const vatNumber = fields.vat.value;
       const state = fields.state.value;
 
       // Only want to check if the VAT number is valid if a VAT number has been added.
-      if (vat !== '' && getIsVatCountry(countryCode) && !isValidVat(vat, countryCode)) {
+      if (
+        vatNumber !== '' &&
+        isCountryUsingVAT(countryName) &&
+        !isValidVATFormat(countryName, vatNumber)
+      ) {
         errors.vat = 'Not a valid VAT Number';
       }
 
-      if (countryCode === 'US' && state === '') {
-        errors.state = 'Select a State';
+      if (countryName === 'United States' && state === '') {
+        errors.state = 'Select a state';
       }
 
       return errors;
@@ -122,25 +126,27 @@ export function BillingDetailsForm({
   });
 
   const onChangeCountry = (e) => {
-    const countryCode = e.target.value;
-    const isVatCountry = getIsVatCountry(countryCode);
-    const isUnitedStates = countryCode === 'US';
+    const countryName = e.target.value;
+    const isVatCountry = isCountryUsingVAT(countryName);
+    const countryIsUSA = countryName === 'United States';
 
     setShouldShowVat(isVatCountry);
+
     if (!isVatCountry) {
       // Reset VAT number in case they started filling this field out as we
       // don't want to submit/validate this field if it's not a VAT country.
       onChange('vat', '');
     }
 
-    setShouldShowUSState(isUnitedStates);
-    if (!isUnitedStates) {
+    setShouldShowUSState(countryIsUSA);
+
+    if (!countryIsUSA) {
       // Reset state in case they started filling this field out as we
       // don't want to submit/validate this field if it's not the US.
       onChange('state', '');
     }
 
-    onChange('country', countryCode);
+    onChange('country', countryName);
   };
 
   // Get the input's name and call onChange/onBlur for that input with the updated value.
@@ -272,7 +278,7 @@ export function BillingDetailsForm({
           Choose an option
         </option>
         {COUNTRIES_LIST.map((country) => (
-          <option key={country.name} value={country.code}>
+          <option key={country.name} value={country.name}>
             {country.name}
           </option>
         ))}
@@ -290,7 +296,7 @@ export function BillingDetailsForm({
           onChange={handleChange}>
           <option value="" disabled />
           {US_STATES_LIST.map((state) => (
-            <option key={state.name} value={state.code}>
+            <option key={state.name} value={state.name}>
               {state.name}
             </option>
           ))}

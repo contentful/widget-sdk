@@ -10,7 +10,7 @@ const mockBillingDetails = {
   address2: 'apartment 321',
   city: 'Rio de Janeiro',
   zipCode: '11111',
-  country: 'BR',
+  country: 'Brazil',
 };
 
 Object.freeze(mockBillingDetails);
@@ -25,32 +25,18 @@ describe('BillingInformation', () => {
     }
   });
 
-  it('should display VAT if there is a VAT', () => {
+  it('should display VAT if there is VAT in the billing details', () => {
     const mockBillingDetailsWithVAT = { ...mockBillingDetails, vat: 'BR123456' };
     build({ billingDetails: mockBillingDetailsWithVAT });
 
     expect(screen.getByText('BR123456')).toBeVisible();
   });
 
-  it('should display State if there is a State', () => {
+  it('should display state if the billing details has state', () => {
     const mockBillingDetailsWithState = { ...mockBillingDetails, state: 'California' };
     build({ billingDetails: mockBillingDetailsWithState });
 
     expect(screen.getByText('California')).toBeVisible();
-  });
-
-  it('should display the country name if given a country code', () => {
-    const mockBillingDetailsWithState = { ...mockBillingDetails, country: 'BR' };
-    build({ billingDetails: mockBillingDetailsWithState });
-
-    expect(screen.getByText('Brazil')).toBeVisible();
-  });
-
-  it('should display the country name if given a country name', () => {
-    const mockBillingDetailsWithState = { ...mockBillingDetails, country: 'Brazil' };
-    build({ billingDetails: mockBillingDetailsWithState });
-
-    expect(screen.getByText('Brazil')).toBeVisible();
   });
 });
 

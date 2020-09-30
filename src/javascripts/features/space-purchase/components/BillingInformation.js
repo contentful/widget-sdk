@@ -3,7 +3,6 @@ import { css } from 'emotion';
 
 import { Paragraph, Subheading } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { getCountryNameFromCountryCode, isCountryCode } from '../utils/countryHelper';
 import { BillingDetailsPropType } from 'features/organization-billing';
 
 const styles = {
@@ -14,11 +13,6 @@ const styles = {
 };
 
 export const BillingInformation = ({ billingDetails }) => {
-  // If the billingDetails is coming from the getBilling api call, then it's a country's name, otherwise it's from the billingForm and is a country code.
-  const country = isCountryCode(billingDetails.country)
-    ? getCountryNameFromCountryCode(billingDetails.country)
-    : billingDetails.country;
-
   return (
     <div>
       <Subheading
@@ -36,7 +30,7 @@ export const BillingInformation = ({ billingDetails }) => {
       <Paragraph>
         {billingDetails.city}, {billingDetails.zipCode}
       </Paragraph>
-      <Paragraph>{country}</Paragraph>
+      <Paragraph>{billingDetails.country}</Paragraph>
       {billingDetails.vat && <Paragraph>{billingDetails.vat}</Paragraph>}
       {billingDetails.state && <Paragraph>{billingDetails.state}</Paragraph>}
     </div>

@@ -28,7 +28,7 @@ const mockBillingDetails = {
   address2: 'apartment 321',
   city: 'Berlin',
   zipCode: '11111',
-  country: 'DE',
+  country: 'Germany',
   state: '',
   vat: '',
 };
@@ -249,7 +249,7 @@ describe('NewSpacePage', () => {
         'cf-ui-select'
       );
 
-      userEvent.selectOptions(countrySelect, ['DE']);
+      userEvent.selectOptions(countrySelect, ['Germany']);
 
       userEvent.click(screen.getByTestId('billing-details.submit'));
 
@@ -295,7 +295,7 @@ describe('NewSpacePage', () => {
       'cf-ui-select'
     );
 
-    userEvent.selectOptions(countrySelect, ['AR']);
+    userEvent.selectOptions(countrySelect, ['Armenia']);
 
     userEvent.click(screen.getByTestId('billing-details.submit'));
 
