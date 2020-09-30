@@ -21,7 +21,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { billing } from './links';
 import { go } from 'states/Navigator';
 
-import { showDialog as showCreateSpaceModal } from 'services/CreateSpace';
+import { beginSpaceCreation } from 'services/CreateSpace';
 import {
   showDialog as showChangeSpaceModal,
   getNotificationMessage,
@@ -132,7 +132,7 @@ export default function SubscriptionPage({
   const createSpace = () => {
     trackCTAClick(CTA_EVENTS.CREATE_SPACE, { organizationId });
 
-    showCreateSpaceModal(organizationId);
+    beginSpaceCreation(organizationId);
   };
 
   const deleteSpace = (space, plan) => {

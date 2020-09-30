@@ -28,7 +28,7 @@ export const NoSpacesPlaceholder = () => {
         </TextLink>
         .
       </Paragraph>
-      <Button onClick={() => CreateSpace.showDialog(orgId)}>Add a space</Button>
+      <Button onClick={() => CreateSpace.beginSpaceCreation(orgId)}>Add a space</Button>
     </EmptyStateContainer>
   );
 };

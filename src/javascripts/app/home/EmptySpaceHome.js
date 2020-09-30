@@ -14,7 +14,7 @@ const EmptySpaceHomePage = ({ orgId, orgOwnerOrAdmin }) => {
       <EmptyStateAdminIllustration className={defaultSVGStyle} />
       <Heading>Starting something new?</Heading>
       <Paragraph>A space is an area to manage and store content for a specific project.</Paragraph>
-      <Button onClick={() => CreateSpace.showDialog(orgId)}>Add a space</Button>
+      <Button onClick={() => CreateSpace.beginSpaceCreation(orgId)}>Add a space</Button>
     </EmptyStateContainer>
   ) : (
     <EmptyStateContainer data-test-id="cf-ui-empty-space">

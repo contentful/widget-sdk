@@ -1,10 +1,13 @@
 import React from 'react';
 import { Notification } from '@contentful/forma-36-react-components';
-import { getOrganization } from 'services/TokenStore';
-import { isLegacyOrganization } from 'utils/ResourceUtils';
-import { canCreateSpaceInOrganization } from 'access_control/AccessChecker';
 import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
+
+import { canCreateSpaceInOrganization } from 'access_control/AccessChecker';
 import { getModule } from 'core/NgRegistry';
+import { getOrganization } from 'services/TokenStore';
+import { go } from 'states/Navigator';
+import { isLegacyOrganization } from 'utils/ResourceUtils';
+import { isSpacePurchaseFlowAllowed } from 'features/space-purchase';
 import LegacyNewSpaceModal from './CreateSpace/LegacyNewSpaceModal';
 
 import SpaceWizardsWrapper from 'app/SpaceWizards/SpaceWizardsWrapper';
@@ -17,9 +20,7 @@ import SpaceWizardsWrapper from 'app/SpaceWizards/SpaceWizardsWrapper';
  *
  * @param {string} organizationId
  */
-export async function showDialog(organizationId) {
-  const spaceContext = getModule('spaceContext');
-
+export async function beginSpaceCreation(organizationId) {
   if (!organizationId) {
     throw new Error('organizationId not supplied for space creation');
   }
@@ -33,11 +34,13 @@ export async function showDialog(organizationId) {
     Notification.error(
       'You don’t have rights to create a space, plase contact your organization’s administrator.'
     );
-
     return;
   }
 
+  // if user is in a Legacy Org, they should go to LegacyWizard
   if (isLegacyOrganization(organization)) {
+    const spaceContext = getModule('spaceContext');
+
     ModalLauncher.open(({ isShown, onClose }) => {
       return (
         <LegacyNewSpaceModal
@@ -48,9 +51,23 @@ export async function showDialog(organizationId) {
         />
       );
     });
-  } else {
-    ModalLauncher.open(({ isShown, onClose }) => (
-      <SpaceWizardsWrapper isShown={isShown} onClose={onClose} organization={organization} />
-    ));
+    return;
   }
+
+  // if newSpacePurchase flag is on and org is OnDemand or Free, they should go to /new_space
+  const spacePurchaseFlowAllowed = await isSpacePurchaseFlowAllowed(organizationId);
+
+  if (spacePurchaseFlowAllowed) {
+    go({
+      path: ['account', 'organizations', 'new_space'],
+      params: { orgId: organizationId },
+      options: { reload: true },
+    });
+    return;
+  }
+
+  // other case, they should go to SpaceWizard
+  ModalLauncher.open(({ isShown, onClose }) => (
+    <SpaceWizardsWrapper isShown={isShown} onClose={onClose} organization={organization} />
+  ));
 }

@@ -26,7 +26,7 @@ export default function handleGatekeeperMessage(data) {
   if (match('create', 'UserCancellation')) {
     Authentication.cancelUser();
   } else if (match('new', 'space')) {
-    createSpace.showDialog(data.organizationId);
+    createSpace.beginSpaceCreation(data.organizationId);
   } else if (match('delete', 'space')) {
     TokenStore.refresh();
   } else if (data.type === 'analytics') {

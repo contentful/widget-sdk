@@ -7,7 +7,7 @@ describe('Gatekeeper Message Handler', () => {
       window: {
         location: '',
       },
-      showDialog: sinon.stub(),
+      beginSpaceCreation: sinon.stub(),
       refresh: sinon.spy(),
       track: sinon.stub(),
       $state: {},
@@ -28,7 +28,7 @@ describe('Gatekeeper Message Handler', () => {
     });
 
     await this.system.set('services/CreateSpace', {
-      showDialog: this.stubs.showDialog,
+      beginSpaceCreation: this.stubs.beginSpaceCreation,
     });
 
     await this.system.set('services/TokenStore', {
@@ -66,7 +66,7 @@ describe('Gatekeeper Message Handler', () => {
 
     it('opens the space creation dialog', function () {
       this.handle({ action: 'new', type: 'space', organizationId: 'orgId' });
-      sinon.assert.calledOnce(this.stubs.showDialog.withArgs('orgId'));
+      sinon.assert.calledOnce(this.stubs.beginSpaceCreation.withArgs('orgId'));
     });
 
     it('refreshes token when space is deleted', function () {

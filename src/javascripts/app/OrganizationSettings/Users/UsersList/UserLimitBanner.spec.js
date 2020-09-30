@@ -29,7 +29,7 @@ jest
   .spyOn(OrganizationMembershipRepository, 'getMemberships')
   .mockImplementation(() => mockUsersEmpty);
 jest.spyOn(OrganizationRoles, 'isOwner').mockImplementation(() => false);
-jest.spyOn(CreateSpace, 'showDialog').mockImplementation(() => jest.fn());
+jest.spyOn(CreateSpace, 'beginSpaceCreation').mockImplementation(() => jest.fn());
 jest.spyOn(ChangeSpaceService, 'showDialog').mockImplementation(() => jest.fn());
 
 async function build(customProps) {
@@ -116,7 +116,7 @@ describe('UserLimitBanner', () => {
       expect(trackTargetedCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.CREATE_SPACE, {
         organizationId: mockOrg.sys.id,
       });
-      expect(CreateSpace.showDialog).toBeCalledWith(mockOrg.sys.id);
+      expect(CreateSpace.beginSpaceCreation).toBeCalledWith(mockOrg.sys.id);
     });
   });
 

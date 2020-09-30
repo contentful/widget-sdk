@@ -6,7 +6,7 @@ import tokens from '@contentful/forma-36-tokens';
 import ExternalTextLink from 'app/common/ExternalTextLink';
 
 import { showDialog as showChangeSpaceModal } from 'services/ChangeSpaceService';
-import { showDialog as showCreateSpaceModal } from 'services/CreateSpace';
+import { beginSpaceCreation } from 'services/CreateSpace';
 import * as TokenStore from 'services/TokenStore';
 import { isOwner } from 'services/OrganizationRoles';
 import { Space as SpacePropType } from 'app/OrganizationSettings/PropTypes';
@@ -85,7 +85,7 @@ export function UserLimitBanner({ orgId, spaces }) {
 
   const createSpace = () => {
     trackTargetedCTAClick(CTA_EVENTS.CREATE_SPACE, trackMeta);
-    showCreateSpaceModal(orgId);
+    beginSpaceCreation(orgId);
   };
 
   const handleUpgradeToEnterpriseClick = () => {

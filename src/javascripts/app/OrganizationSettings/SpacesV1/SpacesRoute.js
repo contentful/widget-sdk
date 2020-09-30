@@ -19,7 +19,7 @@ import moment from 'moment';
 import { css } from 'emotion';
 import { keyBy } from 'lodash';
 import { go } from 'states/Navigator';
-import { showDialog } from 'services/CreateSpace';
+import { beginSpaceCreation } from 'services/CreateSpace';
 import EmptySpaceState from 'app/home/EmptySpaceHome';
 import LoadingState from 'app/common/LoadingState';
 import DocumentTitle from 'components/shared/DocumentTitle';
@@ -119,7 +119,7 @@ const SpacesRoute = ({ orgId }) => {
           actions={
             <Button
               buttonType="primary"
-              onClick={() => showDialog(orgId)}
+              onClick={() => beginSpaceCreation(orgId)}
               testId="v1-spaces-list.new-space-button"
               type="button">
               New space

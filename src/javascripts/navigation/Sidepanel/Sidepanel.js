@@ -142,7 +142,7 @@ export default class Sidepanel extends React.Component {
 
   showCreateSpaceModal = () => {
     this.props.closeSidePanel();
-    CreateSpace.showDialog(this.state.currOrg.sys.id);
+    CreateSpace.beginSpaceCreation(this.state.currOrg.sys.id);
   };
 
   setOpenedSpaceId = (spaceId) => {

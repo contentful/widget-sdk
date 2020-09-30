@@ -5,7 +5,7 @@ import moment from 'moment';
 import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
 import createResourceService from 'services/ResourceService';
 import { openDeleteSpaceDialog } from 'features/space-settings';
-import { showDialog } from 'services/CreateSpace';
+import { beginSpaceCreation } from 'services/CreateSpace';
 import { getSpaces } from 'services/TokenStore';
 import { go } from 'states/Navigator';
 import * as FORMA_CONSTANTS from 'test/helpers/Forma36Constants';
@@ -42,7 +42,7 @@ jest.mock('features/space-settings', () => ({
 }));
 
 jest.mock('services/CreateSpace', () => ({
-  showDialog: jest.fn(),
+  beginSpaceCreation: jest.fn(),
 }));
 
 jest.mock('services/TokenStore', () => ({
@@ -222,7 +222,7 @@ describe('SpacesRoute', () => {
 
       fireEvent.click(screen.getByTestId('v1-spaces-list.new-space-button'));
 
-      expect(showDialog).toHaveBeenCalled();
+      expect(beginSpaceCreation).toHaveBeenCalled();
     });
   });
 

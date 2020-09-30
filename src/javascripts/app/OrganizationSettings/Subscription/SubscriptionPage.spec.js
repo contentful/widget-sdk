@@ -11,7 +11,7 @@ import { billing } from './links';
 
 import * as trackCTA from 'analytics/trackCTA';
 
-import { showDialog as showCreateSpaceModal } from 'services/CreateSpace';
+import { beginSpaceCreation } from 'services/CreateSpace';
 import { showDialog as showChangeSpaceModal } from 'services/ChangeSpaceService';
 import {
   FREE,
@@ -20,7 +20,7 @@ import {
 } from 'account/pricing/PricingDataProvider';
 
 jest.mock('services/CreateSpace', () => ({
-  showDialog: jest.fn(),
+  beginSpaceCreation: jest.fn(),
 }));
 
 jest.mock('services/ChangeSpaceService', () => ({
@@ -217,7 +217,7 @@ describe('SubscriptionPage', () => {
 
     userEvent.click(screen.getByTestId('subscription-page.add-space-free-org-cta'));
 
-    expect(showCreateSpaceModal).toBeCalled();
+    expect(beginSpaceCreation).toBeCalled();
   });
 
   it('should show the billing copy if the org is nonpaying, user is org owner, and the new space purchase flow is disabled', () => {
@@ -265,7 +265,7 @@ describe('SubscriptionPage', () => {
     expect(trackCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.CREATE_SPACE, {
       organizationId: mockOrganization.sys.id,
     });
-    expect(showCreateSpaceModal).toBeCalledWith(mockOrganization.sys.id);
+    expect(beginSpaceCreation).toBeCalledWith(mockOrganization.sys.id);
   });
 
   it('should track a click and open change space model when onChangeSpace is clicked', () => {
