@@ -12,7 +12,6 @@ import {
 } from '@contentful/forma-36-react-components';
 import { Grid, Flex } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
-import ExternalTextLink from 'app/common/ExternalTextLink';
 import { go } from 'states/Navigator';
 
 import {
@@ -40,9 +39,6 @@ const styles = {
   }),
   cardTitle: css({
     marginBottom: tokens.spacingL,
-  }),
-  agreementNote: css({
-    marginBottom: tokens.spacingXl,
   }),
   continueButton: css({
     marginLeft: tokens.spacingM,
@@ -75,7 +71,10 @@ export const NewSpaceConfirmationPage = ({
         element="h2"
         testId="space-selection.heading"
         className={styles.sectionHeading}>
-        Complete your payment
+        Confirm payment to finish!{' '}
+        <span role="img" aria-label="Checkered flag">
+          🏁
+        </span>
       </Heading>
       <Grid className={styles.grid} columns="60% auto" rows={1} columnGap="spacing2Xl">
         <Card className={styles.card}>
@@ -113,12 +112,6 @@ export const NewSpaceConfirmationPage = ({
               </>
             )}
           </Grid>
-          <Paragraph className={styles.agreementNote}>
-            By confirming you are agreeing to Contentful&apos;s{' '}
-            <ExternalTextLink href="https://www.contentful.com/legal/de/marketplace-terms-of-service-customers/">
-              terms of service
-            </ExternalTextLink>
-          </Paragraph>
           <Flex justifyContent="flex-end">
             <Button onClick={navigateToPreviousStep} testId="navigate-back" buttonType="muted">
               Back
@@ -128,7 +121,7 @@ export const NewSpaceConfirmationPage = ({
               onClick={onConfirm}
               testId="confirm-purchase-button"
               buttonType="positive">
-              Complete payment
+              Confirm payment
             </Button>
           </Flex>
         </Card>
