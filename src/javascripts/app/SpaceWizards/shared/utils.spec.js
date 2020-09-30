@@ -452,32 +452,6 @@ describe('utils', () => {
     });
   });
 
-  describe('getRolesTooltip', () => {
-    it('should return text for a plan with the admin role only', () => {
-      const tooltip = utils.getRolesTooltip(1, { roles: [] });
-      expect(tooltip).toBe(`This space type includes the Admin role only`);
-    });
-
-    it('should return text for a plan with various roles', () => {
-      const tooltip = utils.getRolesTooltip(3, { roles: ['Editor', 'Translator'] });
-      expect(tooltip).toBe(`This space type includes the Admin, Editor, and Translator roles`);
-    });
-
-    it('should return text for a plan with multiple translator roles', () => {
-      const tooltip = utils.getRolesTooltip(5, {
-        roles: ['Editor', 'Translator', 'Translator 2', 'Translator3'],
-      });
-      expect(tooltip).toBe(`This space type includes the Admin, Editor, and 3 Translator roles`);
-    });
-
-    it('should return text for a plan with custom roles', () => {
-      const tooltip = utils.getRolesTooltip(10, { roles: ['Editor', 'Translator'] });
-      expect(tooltip).toBe(
-        `This space type includes the Admin, Editor, and Translator roles and an additional 7 custom roles`
-      );
-    });
-  });
-
   describe('goToBillingPage', () => {
     it('should navigate the user to the organization settings billing page', () => {
       utils.goToBillingPage(mockOrganization, utils.WIZARD_INTENT.CREATE, mockWizardSessionId);

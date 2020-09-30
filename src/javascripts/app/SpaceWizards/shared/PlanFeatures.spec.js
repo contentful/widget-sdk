@@ -2,13 +2,17 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import PlanFeatures from './PlanFeatures';
 
-import { getRolesTooltip, getTooltip } from './utils';
+import { getTooltip } from './utils';
+import { getRolesTooltip } from 'utils/RoleTooltipCopy';
+
+jest.mock('utils/RoleTooltipCopy', () => ({
+  getRolesTooltip: jest.fn(),
+}));
 
 jest.mock('./utils', () => ({
   SpaceResourceTypes: {
     Roles: 'Role',
   },
-  getRolesTooltip: jest.fn(),
   getTooltip: jest.fn(),
 }));
 

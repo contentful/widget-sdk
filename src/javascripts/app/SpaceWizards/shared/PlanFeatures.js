@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import { getTooltip, SpaceResourceTypes, getRolesTooltip } from './utils';
+import { getTooltip, SpaceResourceTypes } from './utils';
+import { getRolesTooltip } from 'utils/RoleTooltipCopy';
 import pluralize from 'pluralize';
 import { toLocaleString } from 'utils/NumberUtils';
 import { Tooltip, List, ListItem } from '@contentful/forma-36-react-components';
