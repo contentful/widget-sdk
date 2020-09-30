@@ -4,6 +4,7 @@ import NoLocalizedFieldsAdvice from 'components/tabs/NoLocalizedFieldsAdvice';
 import EntryEditorWidgetTypes from 'app/entry_editor/EntryEditorWidgetTypes';
 import ReferencesTab from './EntryReferences';
 import { WidgetNamespace } from '@contentful/widget-renderer';
+import { makeFieldLocaleListeners } from './makeFieldLocaleListeners';
 
 export default function renderDefaultEditor(
   widgetId,
@@ -16,7 +17,6 @@ export default function renderDefaultEditor(
     getEditorData,
     preferences,
     widgets,
-    fieldLocaleListeners,
     editorContext,
     shouldDisplayNoLocalizedFieldsAdvice,
     noLocalizedFieldsAdviceProps,
@@ -47,15 +47,25 @@ export default function renderDefaultEditor(
     return (
       <div className="entity-editor-form cf-workbench-content cf-workbench-content-type__text">
         <AngularComponent
-          template={'<cf-entity-field ng-repeat="widget in widgets track by widget.fieldId" />'}
+          template={`
+            <div ng-init="fieldLocaleListeners = makeFieldLocaleListeners(this)">
+              <cf-entity-field ng-repeat="widget in widgets track by widget.fieldId" />
+            </div>
+          `}
           scope={{
             widgets,
-            fieldLocaleListeners,
             editorContext,
             localeData,
             fields,
             loadEvents,
             editorData: getEditorData(),
+            makeFieldLocaleListeners: (currentScope) =>
+              makeFieldLocaleListeners(
+                editorData.fieldControls.all,
+                currentScope.editorContext,
+                currentScope.localeData,
+                currentScope.otDoc
+              ),
             otDoc,
             preferences,
             entityInfo,

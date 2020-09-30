@@ -38,10 +38,7 @@ describe('Entry Editor Controller', function () {
 
     await $initialize(this.system);
 
-    await $removeControllers(this.system, [
-      'entityEditor/StatusNotificationsController',
-      'FormWidgetsController',
-    ]);
+    await $removeControllers(this.system, ['entityEditor/StatusNotificationsController']);
 
     const createDocument = $inject('mocks/entityEditor/Document').create;
     const defaultContentType = {

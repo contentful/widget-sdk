@@ -46,7 +46,6 @@ import { getEditorState } from './editorState';
  *   Passed to FormWidgetsController to render field controls
  */
 export default async function create($scope, editorData, preferences, trackLoadEvent) {
-  const $controller = getModule('$controller');
   const spaceContext = getModule('spaceContext');
   const $rootScope = getModule('$rootScope');
   const spaceId = spaceContext.space.getId();
@@ -195,12 +194,6 @@ export default async function create($scope, editorData, preferences, trackLoadE
     entityLabel: 'entry',
     shouldHideLocaleErrors: onlyFocusedLocaleHasErrors,
     emitter: $scope.emitter,
-  });
-
-  // TODO replace with `filterWidgets()` in component
-  $controller('FormWidgetsController', {
-    $scope,
-    controls: editorData.fieldControls,
   });
 
   $scope.$watch('localeData.focusedLocale.name', (localeName) => {

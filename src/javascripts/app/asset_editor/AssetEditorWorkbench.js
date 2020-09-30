@@ -10,6 +10,8 @@ import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
 import EntrySidebar from 'app/EntrySidebar/EntrySidebar';
 import AngularComponent from 'ui/Framework/AngularComponent';
 import tokens from '@contentful/forma-36-tokens';
+import { makeFieldLocaleListeners } from 'app/entry_editor/makeFieldLocaleListeners';
+import { filterWidgets } from 'app/entry_editor/formWidgetsController';
 
 const styles = {
   sidebar: css({
@@ -29,8 +31,6 @@ const AssetEditorWorkbench = ({
   statusNotificationProps,
   entrySidebarProps,
   fields,
-  widgets,
-  fieldLocaleListeners,
   editorContext,
   getOtDoc,
   tagProps,
@@ -38,6 +38,9 @@ const AssetEditorWorkbench = ({
 }) => {
   const otDoc = getOtDoc();
   const editorData = getEditorData();
+
+  const { widgets } = filterWidgets(localeData, editorContext, editorData.fieldControls.form);
+
   return (
     <div className="asset-editor">
       <Workbench>
@@ -72,10 +75,20 @@ const AssetEditorWorkbench = ({
           <StatusNotification {...statusNotificationProps} />
           <div className="entity-editor-form">
             <AngularComponent
-              template={`<cf-entity-field ng-repeat="widget in widgets track by widget.fieldId"></cf-entity-field>`}
+              template={`
+                <div ng-init="fieldLocaleListeners = makeFieldLocaleListeners(this)">
+                  <cf-entity-field ng-repeat="widget in widgets track by widget.fieldId"></cf-entity-field>
+                </div>
+              `}
               scope={{
+                makeFieldLocaleListeners: (currentScope) =>
+                  makeFieldLocaleListeners(
+                    editorData.fieldControls.all,
+                    currentScope.editorContext,
+                    currentScope.localeData,
+                    currentScope.otDoc
+                  ),
                 widgets,
-                fieldLocaleListeners,
                 localeData,
                 editorContext,
                 fields,
@@ -117,11 +130,6 @@ AssetEditorWorkbench.propTypes = {
   statusNotificationProps: PropTypes.object,
   entrySidebarProps: PropTypes.object,
   fields: PropTypes.object,
-  widgets: PropTypes.array,
-  fieldLocaleListeners: PropTypes.shape({
-    flat: PropTypes.array,
-    lookup: PropTypes.object,
-  }),
   getOtDoc: PropTypes.func,
   editorContext: PropTypes.shape({
     entityInfo: PropTypes.object,

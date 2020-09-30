@@ -12,14 +12,14 @@ export const createExtensionBridgeAdapter = (scopeData) => (
   const spaceContext = getModule('spaceContext');
 
   const data = checkDependencies('createExtensionBridgeAdapter', scopeData, [
+    'editorContext',
     'editorData',
     'entityInfo',
-    'otDoc',
-    'localeData',
-    'preferences',
     'fields',
+    'localeData',
+    'otDoc',
+    'preferences',
     'widgets',
-    'fieldLocaleListeners',
   ]);
 
   const $scope = extend($rootScope.$new(), data);
