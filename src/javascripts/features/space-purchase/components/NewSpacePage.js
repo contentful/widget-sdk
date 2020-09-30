@@ -289,7 +289,7 @@ export const NewSpacePage = ({
       case SPACE_PURCHASE_STEPS.CONFIRMATION:
         return (
           <Grid columns={1} rows="repeat(2, 'auto')" rowGap="spacingM">
-            <Breadcrumb items={NEW_SPACE_STEPS_CONFIRMATION} />
+            <Breadcrumb items={NEW_SPACE_STEPS_PAYMENT} />
             <NewSpaceConfirmationPage
               organizationId={organization.sys.id}
               navigateToPreviousStep={navigateToPreviousStep}
