@@ -196,7 +196,6 @@ async function openCustomDialog(
       typeof options.width === 'number' && Number.isInteger(options.width)
         ? `${options.width}px`
         : (options.width as string | undefined);
-    const minHeightStyle = { minHeight: options.minHeight || 'auto' };
 
     const dialogSdk = createDialogSDK(sdk, widget, onClose, options.parameters || {});
 
@@ -213,16 +212,16 @@ async function openCustomDialog(
         {() => (
           <>
             {options.title && <Modal.Header title={options.title} onClose={() => onClose()} />}
-            <div style={minHeightStyle}>
-              <WidgetRenderer
-                location={WidgetLocation.DIALOG}
-                sdk={dialogSdk}
-                widget={widget}
-                onRender={(widget, location) =>
-                  trackExtensionRender(location, toLegacyWidget(widget), sdk.ids.environment)
-                }
-              />
-            </div>
+
+            <WidgetRenderer
+              location={WidgetLocation.DIALOG}
+              sdk={dialogSdk}
+              widget={widget}
+              minHeight={options.minHeight}
+              onRender={(widget, location) =>
+                trackExtensionRender(location, toLegacyWidget(widget), sdk.ids.environment)
+              }
+            />
           </>
         )}
       </Modal>
