@@ -1,13 +1,13 @@
 import * as vat from './vat';
 
 describe('vat utils', () => {
-  describe('isVATUsingCountry', () => {
+  describe('isCountryUsingVAT', () => {
     it('should return true if the country uses VAT', () => {
-      expect(vat.isVATUsingCountry('Germany')).toBeTruthy();
+      expect(vat.isCountryUsingVAT('Germany')).toBeTruthy();
     });
 
     it('should return false if the country does not use VAT', () => {
-      expect(vat.isVATUsingCountry('Qatar')).toBeFalsy();
+      expect(vat.isCountryUsingVAT('Qatar')).toBeFalsy();
     });
   });
 

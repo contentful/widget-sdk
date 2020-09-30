@@ -59,22 +59,12 @@ jest.mock('utils/LazyLoader', () => {
 });
 
 jest.mock('features/organization-billing/index', () => ({
+  ...jest.requireActual('features/organization-billing'),
   createBillingDetails: jest.fn(),
   setDefaultPaymentMethod: jest.fn(),
   getDefaultPaymentMethod: jest.fn(),
   getBillingDetails: jest.fn(),
   getHostedPaymentParams: jest.fn().mockResolvedValue(),
-  ZuoraCreditCardIframe: jest.requireActual('features/organization-billing/index')
-    .ZuoraCreditCardIframe,
-  BillingDetailsForm: jest.requireActual('features/organization-billing/index').BillingDetailsForm,
-  BillingDetailsLoading: jest.requireActual('features/organization-billing/index')
-    .BillingDetailsLoading,
-  CreditCardDetailsLoading: jest.requireActual('features/organization-billing/index')
-    .CreditCardDetailsLoading,
-  transformBillingDetails: jest.requireActual('features/organization-billing/index')
-    .transformBillingDetails,
-  BillingDetailsPropType: jest.requireActual('features/organization-billing/index')
-    .BillingDetailsPropType,
 }));
 
 describe('NewSpacePage', () => {
