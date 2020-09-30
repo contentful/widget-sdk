@@ -1,6 +1,5 @@
 import combineReducers from './combineReducers';
 
-import sso from './sso';
 import spaceWizard from './spaceWizard';
 import resources from './resources';
 import token from './token';
@@ -16,7 +15,6 @@ export default combineReducers({
   location,
   resources,
   spaceWizard,
-  sso,
   token,
   datasets,
   optimistic,

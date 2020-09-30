@@ -29,7 +29,7 @@ const styles = {
   topMargin: css({ marginTop: tokens.spacingL }),
 };
 
-function SSOUpsellState() {
+export function SSOUpsellState() {
   return (
     <>
       <DocumentTitle title="SSO" />
@@ -76,5 +76,3 @@ function SSOUpsellState() {
     </>
   );
 }
-
-export default SSOUpsellState;

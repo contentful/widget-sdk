@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import SSOUpsellState from './SSOUpsellState';
+import { SSOUpsellState } from './SSOUpsellState';
 
 const renderComponent = () => {
   const component = <SSOUpsellState />;

@@ -15,7 +15,7 @@ import {
 import tokens from '@contentful/forma-36-tokens';
 import { authUrl, appUrl, websiteUrl } from 'Config';
 import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes';
-import { IdentityProviderPropType } from 'app/OrganizationSettings/SSO/PropTypes';
+import { IdentityProviderPropType } from './PropTypes';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { IDPDetailsForm } from './IDPDetailsForm';
 

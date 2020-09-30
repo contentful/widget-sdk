@@ -3,7 +3,7 @@ import UserDetailsRoute from 'app/OrganizationSettings/Users/UserDetail/UserDeta
 import UserListRoute from 'app/OrganizationSettings/Users/UsersList/UserListRoute';
 import UserProvisioning from 'app/OrganizationSettings/UserProvisioning/UserProvisioning';
 import SubscriptionPageRoute from 'app/OrganizationSettings/Subscription/SubscriptionPageRouter';
-import SSOSetup from 'app/OrganizationSettings/SSO/SSOSetup';
+import { SSOSetup } from 'features/sso';
 import { SpacePlanAssignmentRoute } from 'features/space-plan-assignment';
 
 export {

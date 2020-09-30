@@ -3,7 +3,7 @@ import { organizationRoute } from 'states/utils';
 import LazyLoadedComponent from 'app/common/LazyLoadedComponent';
 import importer from 'app/OrganizationSettings/importer';
 
-export default organizationRoute({
+export const SSOSetupRoutingState = organizationRoute({
   name: 'sso',
   url: '/sso',
   component: (props) => (

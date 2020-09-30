@@ -3,7 +3,7 @@ import StateRedirect from 'app/common/StateRedirect';
 import { SSOPage } from '../components/SSOPage';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import SSOUpsellState from 'app/OrganizationSettings/SSO/SSOUpsellState';
+import { SSOUpsellState } from '../components/SSOUpsellState';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';

@@ -6,7 +6,7 @@ import { usageState } from 'features/organization-usage';
 import teamsState from './Teams/TeamsState';
 import { inviteUsersState, userDetailState, usersListState } from './Users/UsersState';
 import accessToolsState from './AccessToolsState';
-import ssoRoutingState from './SSO/SSOSetupRoutingState';
+import { SSOSetupRoutingState } from 'features/sso';
 import gatekeeperStates from './OrganizationSettingsGatekeeperStates';
 import { newSpaceState } from 'features/space-purchase';
 import { billingRoutingState } from 'features/organization-billing';
@@ -108,7 +108,7 @@ export default [
       newSpaceState,
       teamsState,
       appsState,
-      ssoRoutingState,
+      SSOSetupRoutingState,
       accessToolsState,
       billingRoutingState,
       ...gatekeeperStates,

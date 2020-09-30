@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
-import { IdentityProviderPropType } from 'app/OrganizationSettings/SSO/PropTypes';
+import { IdentityProviderPropType } from './PropTypes';
 import { findKey, kebabCase, debounce } from 'lodash';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
