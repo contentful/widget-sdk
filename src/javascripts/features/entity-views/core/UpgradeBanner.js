@@ -16,7 +16,8 @@ import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import { CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM } from 'analytics/utmLinks';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 import * as PricingService from 'services/PricingService';
-import { getModule } from 'core/NgRegistry';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 
 const WARNING_THRESHOLD = 0.9;
 
@@ -26,40 +27,44 @@ const styles = {
   }),
 };
 
-const openUpgradeModal = (organization, space, onSubmit) =>
+const openUpgradeModal = (organizationId, spaceData, onSubmit) =>
   showUpgradeSpaceDialog({
-    organizationId: organization.sys.id,
-    space,
+    organizationId,
+    space: spaceData,
     onSubmit,
   });
 
-const handleOnUpgradeClick = (organization, space, updateResource) => {
+const handleOnUpgradeClick = (organizationId, spaceId, updateResource, spaceData) => {
   trackTargetedCTAClick(CTA_EVENTS.UPGRADE_SPACE_PLAN, {
-    organizationId: organization.sys.id,
-    spaceId: space.sys.id,
+    organizationId,
+    spaceId,
   });
 
-  openUpgradeModal(organization, space, updateResource);
+  openUpgradeModal(organizationId, spaceData, updateResource);
 };
-const handleUpgradeToEnterpriseClick = (organization, space) => {
+const handleUpgradeToEnterpriseClick = (organizationId, spaceId) => {
   trackTargetedCTAClick(CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
-    spaceId: space.sys.id,
-    organizationId: organization.sys.id,
+    spaceId,
+    organizationId,
   });
 };
 
 export function UpgradeBanner() {
-  const spaceContext = getModule('spaceContext');
-  const space = spaceContext.getSpace().data;
-  const organization = spaceContext.getData('organization');
-  const isMasterEnvironment = spaceContext.isMasterEnvironment();
+  const {
+    currentSpaceData,
+    currentSpaceId,
+    currentOrganization,
+    currentSpace,
+    currentOrganizationId,
+  } = useSpaceEnvContext();
+  const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
 
   const updateResource = useCallback(async () => {
     // We only want to make these fetches if the user is an owner or admin && the organization is v2+
     // && it's the master environment
     if (
-      !isOwnerOrAdmin(organization) ||
-      isLegacyOrganization(organization) ||
+      !isOwnerOrAdmin(currentOrganization) ||
+      isLegacyOrganization(currentOrganization) ||
       !isMasterEnvironment
     ) {
       return {
@@ -67,7 +72,7 @@ export function UpgradeBanner() {
       };
     }
 
-    const endpoint = createOrganizationEndpoint(organization.sys.id);
+    const endpoint = createOrganizationEndpoint(currentOrganizationId);
     const basePlan = getBasePlan(endpoint);
     const basePlanIsEnterprise = isEnterprisePlan(basePlan);
 
@@ -79,10 +84,10 @@ export function UpgradeBanner() {
     }
 
     const [resource, nextSpacePlan] = await Promise.all([
-      createResourceService(space.sys.id).get('record'),
+      createResourceService(currentSpaceId).get('record'),
       PricingService.nextSpacePlanForResource(
-        space.organization.sys.id,
-        space.sys.id,
+        currentOrganizationId,
+        currentSpaceId,
         PricingService.SPACE_PLAN_RESOURCE_TYPES.RECORD
       ),
     ]);
@@ -90,7 +95,7 @@ export function UpgradeBanner() {
     const hasNextSpacePlan = !!nextSpacePlan;
 
     return { shouldShow: true, resource, hasNextSpacePlan, basePlanIsEnterprise };
-  }, [space, organization, isMasterEnvironment]);
+  }, [currentSpaceId, currentOrganizationId, isMasterEnvironment, currentOrganization]);
 
   const { isLoading, error, data } = useAsync(updateResource);
 
@@ -125,11 +130,18 @@ export function UpgradeBanner() {
           impressionType={
             hasNextSpacePlan ? CTA_EVENTS.UPGRADE_SPACE_PLAN : CTA_EVENTS.UPGRADE_TO_ENTERPRISE
           }
-          meta={{ spaceId: space.sys.id, organizationId: organization.sys.id }}>
+          meta={{ spaceId: currentSpaceId, organizationId: currentOrganizationId }}>
           {hasNextSpacePlan ? (
             <TextLink
               testId="upgrade-banner.upgrade-space-link"
-              onClick={() => handleOnUpgradeClick(organization, space, updateResource)}>
+              onClick={() =>
+                handleOnUpgradeClick(
+                  currentOrganizationId,
+                  currentSpaceId,
+                  updateResource,
+                  currentSpaceData
+                )
+              }>
               upgrade space
             </TextLink>
           ) : (
@@ -138,7 +150,7 @@ export function UpgradeBanner() {
                 testId="upgrade-banner.upgrade-to-enterprise-link"
                 href={CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM}
                 onClick={() => {
-                  handleUpgradeToEnterpriseClick(organization, space);
+                  handleUpgradeToEnterpriseClick(currentOrganizationId, currentSpaceId);
                 }}>
                 talk to us
               </ExternalTextLink>{' '}
