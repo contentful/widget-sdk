@@ -67,7 +67,7 @@ export default function TemplatesToggle(props) {
           <RadioButtonField
             name="isShowingTemplates"
             id="isShowingTemplates-false"
-            labelText={isNewSpacePurchaseFlow ? 'Empty Space' : 'Create an empty space.'}
+            labelText={isNewSpacePurchaseFlow ? 'Empty space' : 'Create an empty space.'}
             helpText={isNewSpacePurchaseFlow ? '' : 'I’ll fill it with my own content.'}
             onChange={() => onChange(false)}
             checked={!isShowingTemplates}
@@ -77,7 +77,7 @@ export default function TemplatesToggle(props) {
           <RadioButtonField
             name="isShowingTemplates"
             id="isShowingTemplates-true"
-            labelText={isNewSpacePurchaseFlow ? 'Example Space' : 'Create an example space.'}
+            labelText={isNewSpacePurchaseFlow ? 'Example space' : 'Create an example space.'}
             helpText={isNewSpacePurchaseFlow ? '' : 'I’d like to see how things work first.'}
             onChange={() => onChange(true)}
             checked={isShowingTemplates}
