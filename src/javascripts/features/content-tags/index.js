@@ -3,7 +3,6 @@ export {
   useTagsFeatureEnabled,
   useReadTags,
   useHistoryReducer,
-  useSpaceContext,
   useToggle,
 } from 'features/content-tags/core/hooks';
 export { TagPropType } from 'features/content-tags/core/TagPropType';

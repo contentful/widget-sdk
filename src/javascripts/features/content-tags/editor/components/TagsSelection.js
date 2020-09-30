@@ -8,7 +8,6 @@ import {
   useF36Modal,
   useIsInitialLoadingOfTags,
   useReadTags,
-  useSpaceContext,
 } from 'features/content-tags/core/hooks';
 import { NoTagsContainer } from 'features/content-tags/core/components/NoTagsContainer';
 import { AdminsOnlyModal } from 'features/content-tags/editor/components/AdminsOnlyModal';
@@ -23,6 +22,8 @@ import { useAllTagsGroups } from 'features/content-tags/core/hooks/useAllTagsGro
 import { TAGS_PER_ENTITY } from 'features/content-tags/core/limits';
 import tokens from '@contentful/forma-36-tokens';
 import { ConditionalWrapper } from 'features/content-tags/core/components/ConditionalWrapper';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { isMasterEnvironment } from 'core/services/SpaceEnvContext/utils';
 
 const styles = {
   wrapper: css({
@@ -48,7 +49,7 @@ const styles = {
 const TagsSelection = ({ showEmpty, onAdd, onRemove, selectedTags = [] }) => {
   const { data, isLoading, setSearch, setLimit, hasTags } = useReadTags();
   const isInitialLoad = useIsInitialLoadingOfTags();
-  const spaceContext = useSpaceContext();
+  const { currentEnvironment } = useSpaceEnvContext();
   const tagGroups = useAllTagsGroups();
 
   const totalSelected = selectedTags.length;
@@ -81,12 +82,12 @@ const TagsSelection = ({ showEmpty, onAdd, onRemove, selectedTags = [] }) => {
   const canManageTags = useCanManageTags();
   const onCreate = useCallback(() => {
     if (canManageTags) {
-      const isMaster = spaceContext.isMasterEnvironment();
+      const isMaster = isMasterEnvironment(currentEnvironment);
       Navigator.go({ path: `spaces.detail.${isMaster ? '' : 'environment.'}settings.tags` });
     } else {
       showUserListModal();
     }
-  }, [canManageTags, showUserListModal, spaceContext]);
+  }, [canManageTags, showUserListModal, currentEnvironment]);
 
   const renderNoTags = useMemo(() => {
     return (

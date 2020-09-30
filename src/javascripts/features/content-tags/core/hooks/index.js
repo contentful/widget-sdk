@@ -7,7 +7,6 @@ export { useScrollToTop } from 'features/content-tags/core/hooks/useScrollToTop'
 export { useTagsRepo } from 'features/content-tags/core/hooks/useTagsRepo';
 export { useCurrentSpaceFeature } from 'features/content-tags/core/hooks/useCurrentSpaceFeature';
 export { useTagsFeatureEnabled } from 'features/content-tags/core/hooks/useTagsFeatureEnabled';
-export { useSpaceContext } from 'features/content-tags/core/hooks/useSpaceContext';
 export { useIsAdmin } from 'features/content-tags/core/hooks/useIsAdmin';
 export { useIsInitialLoadingOfTags } from 'features/content-tags/core/hooks/useIsInitialLoadingOfTags';
 export { useHistoryReducer } from 'features/content-tags/core/hooks/useHistoryReducer';

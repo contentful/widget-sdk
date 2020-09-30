@@ -2,18 +2,20 @@ import { useCallback } from 'react';
 
 import { getModule } from 'core/NgRegistry';
 import { useAsync } from 'core/hooks';
-import { useSpaceContext } from 'features/content-tags';
 import { FLAGS, getVariation } from 'LaunchDarkly';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 const useFeatureFlagVariation = (featureFlag, defaultValue) => {
-  const spaceContext = useSpaceContext();
+  const { currentSpaceId, currentEnvironmentId, currentOrganizationId } = useSpaceEnvContext();
+
   const load = useCallback(async () => {
     return await getVariation(featureFlag, {
-      spaceId: spaceContext.getId(),
-      environmentId: spaceContext.getEnvironmentId(),
-      organizationId: spaceContext.getData(['organization', 'sys', 'id']),
+      spaceId: currentSpaceId,
+      environmentId: currentEnvironmentId,
+      organizationId: currentOrganizationId,
     });
-  }, [featureFlag, spaceContext]);
+  }, [featureFlag, currentSpaceId, currentEnvironmentId, currentOrganizationId]);
+
   const { data, isLoading, error } = useAsync(load);
   return { spaceFeatureEnabled: error ? defaultValue : !!data, isSpaceFeatureLoading: isLoading };
 };

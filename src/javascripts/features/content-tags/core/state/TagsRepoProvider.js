@@ -3,18 +3,16 @@ import { useEffect, useState } from 'react';
 import * as TagsRepo from 'features/content-tags/core/state/TagsRepo';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { TagsRepoContext } from 'features/content-tags/core/state/TagsRepoContext';
-import { useSpaceContext } from 'features/content-tags/core/hooks';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
 function TagsRepoProvider({ children }) {
   const [tagsRepo, setTagsRepo] = useState({});
-  const spaceContext = useSpaceContext();
+  const { currentEnvironmentId, currentSpaceId } = useSpaceEnvContext();
 
   useEffect(() => {
-    const spaceId = spaceContext.getId();
-    const environmentId = spaceContext.getAliasId() || spaceContext.getEnvironmentId();
-    const endpoint = createSpaceEndpoint(spaceId, environmentId);
-    setTagsRepo(TagsRepo.create(endpoint, environmentId));
-  }, [spaceContext]);
+    const endpoint = createSpaceEndpoint(currentSpaceId, currentEnvironmentId);
+    setTagsRepo(TagsRepo.create(endpoint, currentEnvironmentId));
+  }, [currentEnvironmentId, currentSpaceId]);
 
   if (!tagsRepo) {
     throw 'TagsRepo not initialized';

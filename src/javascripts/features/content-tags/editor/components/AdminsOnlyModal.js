@@ -9,14 +9,15 @@ import {
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { useSpaceContext } from 'features/content-tags/core/hooks';
 import createSpaceMembersRepo from 'data/CMA/SpaceMembersRepo';
 import { create as createMembershipRepo } from 'access_control/SpaceMembershipRepository';
-import RoleRepository from 'access_control/RoleRepository';
 import { getAllUsers } from 'access_control/OrganizationMembershipRepository';
 import resolveLinks from 'data/LinkResolver';
 import { useAsync } from 'core/hooks';
 import PropTypes from 'prop-types';
+import { createSpaceEndpoint } from 'data/EndpointFactory';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { getSpaceRoles } from 'core/services/SpaceEnvContext/utils';
 
 const styles = {
   subheading: css({
@@ -42,16 +43,16 @@ const styles = {
 };
 
 const useUserList = () => {
-  const { endpoint, space } = useSpaceContext();
+  const { currentSpaceId, currentEnvironmentId, currentSpace } = useSpaceEnvContext();
 
   const fetchAll = useCallback(async () => {
+    const endpoint = createSpaceEndpoint(currentSpaceId, currentEnvironmentId);
     const [members, spaceMemberships, roles, spaceUsers] = await Promise.all([
       createSpaceMembersRepo(endpoint).getAll(),
       createMembershipRepo(endpoint).getAll(),
-      RoleRepository.getInstance(space).getAll(),
+      getSpaceRoles(currentSpace),
       getAllUsers(endpoint),
     ]);
-
     const resolvedMembers = resolveLinks({
       paths: ['roles', 'sys.relatedMemberships', 'sys.user'],
       includes: { Role: roles, SpaceMembership: spaceMemberships, User: spaceUsers },
@@ -59,7 +60,7 @@ const useUserList = () => {
     });
 
     return { resolvedMembers, roles, spaceUsers };
-  }, [endpoint, space]);
+  }, [currentSpace, currentSpaceId, currentEnvironmentId]);
 
   return useAsync(fetchAll);
 };
