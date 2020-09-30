@@ -7,6 +7,7 @@ const twoFAData = require('../fixtures/responses/user_account/2fa-enabled-user-d
 const updateDefaultData = require('../fixtures/responses/user_account/udated-default-data.json');
 const updatePasswordDefaultData = require('../fixtures/responses/user_account/updated-password-default-data.json');
 const updateIdentityLoginData = require('../fixtures/responses/user_account/updated-password-identity-login.json');
+const currentPasswordValidationFailedData = require('../fixtures/responses/user_account/current-password-validation-failed-data.json');
 const invalidCurrentPasswordData = require('../fixtures/responses/user_account/invalid-current-password.json');
 const insecureNewPasswordData = require('../fixtures/responses/user_account/insecure-new-password.json');
 
@@ -128,7 +129,7 @@ export const updateDefaultUserProfileData = {
       }),
       willRespondWith: {
         status: 422,
-        body: invalidCurrentPasswordData,
+        body: currentPasswordValidationFailedData,
         headers: {
           'Content-Type': 'application/vnd.contentful.management.v1+json',
         },
