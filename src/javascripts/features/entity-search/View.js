@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { css } from 'emotion';
@@ -20,6 +20,7 @@ import { useSearchContext } from './useSearchContext';
 import noop from 'lodash/noop';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { contentTypeFilter as getContentTypeFilter } from 'core/services/ContentQuery';
+import { useAsync } from 'core/hooks';
 
 const track = (e, data) => analyticsTrack('search:' + e, data);
 
@@ -211,16 +212,18 @@ function View({
     },
   ] = useFocus({ suggestions, filters });
 
-  useEffect(() => {
-    const init = async () => {
+  const { data: allUsers } = useAsync(
+    useCallback(async () => {
       const spaceEndpoint = createSpaceEndpoint(currentSpaceId, currentEnvironmentId);
       const userClient = createUserCache(spaceEndpoint);
-      const users = (await userClient.getAll()) || [];
-      setUsers(users);
-      setIsTyping(false);
-    };
-    init();
-  }, [currentSpaceId, currentEnvironmentId, setIsTyping]);
+      return await userClient.getAll();
+    }, [currentSpaceId, currentEnvironmentId])
+  );
+
+  useEffect(() => {
+    setUsers(allUsers || []);
+    setIsTyping(false);
+  }, [setUsers, setIsTyping, allUsers]);
 
   const hideSpinner = !isLoading && !isTyping;
 
