@@ -31,6 +31,10 @@ let tokenInfo = null;
 // MVar that holds the token data
 const tokenInfoMVar = createMVar(null);
 
+const tokenUpdate = K.createStreamBus();
+
+export const tokenUpdate$ = tokenUpdate.stream;
+
 /**
  * @ngdoc property
  * @name TokenStore#user$
@@ -101,6 +105,7 @@ export function refresh() {
         userBus.set(user);
         organizationsBus.set(organizations);
         spacesBus.set(prepareSpaces(newTokenInfo.spaces));
+        tokenUpdate.emit();
       },
       () => {
         ReloadNotification.trigger('The application was unable to authenticate with the server');

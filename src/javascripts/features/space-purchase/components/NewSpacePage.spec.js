@@ -35,6 +35,11 @@ const mockBillingDetails = {
 const mockRefId = 'ref_1234';
 const mockSessionId = '987654321';
 
+jest.mock('services/TokenStore', () => ({
+  ...jest.requireActual('services/TokenStore'),
+  refresh: jest.fn().mockResolvedValue(),
+}));
+
 jest.mock('../utils/analyticsTracking', () => ({
   trackEvent: jest.fn().mockReturnValue(true),
   EVENTS: jest.requireActual('../utils/analyticsTracking').EVENTS,
