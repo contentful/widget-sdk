@@ -9,6 +9,7 @@ import { FieldFocus } from 'features/content-tags/core/components/FieldFocus';
 import { ReadTagsProvider } from 'features/content-tags/core/state/ReadTagsProvider';
 import { TagsRepoProvider } from 'features/content-tags/core/state/TagsRepoProvider';
 import { AddOrRemoveContentSection } from 'features/content-tags/editor/components/AddOrRemoveContentSection';
+import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 const styles = {
   wrapper: css({ padding: tokens.spacingL, width: '100%' }),
@@ -39,15 +40,17 @@ const AddOrRemoveTags = ({ selectedEntities: entities }) => {
       </Paragraph>
 
       <FieldFocus>
-        <TagsRepoProvider>
-          <ReadTagsProvider>
-            <AddOrRemoveContentSection
-              entityTags={entityTags}
-              entities={entities}
-              entityType={entityType}
-            />
-          </ReadTagsProvider>
-        </TagsRepoProvider>
+        <SpaceEnvContextProvider>
+          <TagsRepoProvider>
+            <ReadTagsProvider>
+              <AddOrRemoveContentSection
+                entityTags={entityTags}
+                entities={entities}
+                entityType={entityType}
+              />
+            </ReadTagsProvider>
+          </TagsRepoProvider>
+        </SpaceEnvContextProvider>
       </FieldFocus>
       {hasChanges && (
         <Note className={styles.entitiesCount}>
