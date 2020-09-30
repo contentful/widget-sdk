@@ -3,7 +3,7 @@ import { Typography, Heading, Paragraph, Button } from '@contentful/forma-36-rea
 import EmptyStateContainer, {
   defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
-import NoSpacesImage from 'svg/illustrations/empty-state-nospace.svg';
+import { EmptyStateIllu } from './EmptyStateIllu';
 import StateLink from 'app/common/StateLink';
 import { salesUrl } from 'Config';
 import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
@@ -11,7 +11,7 @@ import { Flex } from '@contentful/forma-36-react-components/dist/alpha';
 export function EmptyState() {
   return (
     <EmptyStateContainer data-test-id="cf-ui-empty-state">
-      <NoSpacesImage className={defaultSVGStyle} />
+      <EmptyStateIllu className={defaultSVGStyle} />
       <Typography>
         <Heading>No more room?</Heading>
         <Paragraph>
