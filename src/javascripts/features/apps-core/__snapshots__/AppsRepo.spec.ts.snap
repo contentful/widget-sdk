@@ -4,14 +4,8 @@ exports[`AppsRepo getApps should return an array of apps when the marketplace en
 Array [
   Object {
     "actionList": Array [
-      Object {
-        "info": "Build widget will be removed from sidebars of all content types",
-        "negative": true,
-      },
-      Object {
-        "info": "This will not modify your Netlify sites. You may want to remove unneeded deploy notifications and build hooks from your Netlify site.",
-        "negative": false,
-      },
+      undefined,
+      undefined,
     ],
     "appDefinition": Object {
       "locations": Array [
@@ -38,14 +32,11 @@ Array [
       },
     },
     "author": Object {
-      "icon": "//images.ctfassets.net/lpjm8d10rkpy/4DxiiBjixHZVjc69WpJX95/4708b0bdc8e713faf69a667f8266d190/472182",
-      "name": "Contentful",
-      "url": "https://www.contentful.com",
+      "icon": undefined,
+      "name": undefined,
+      "url": undefined,
     },
-    "categories": Array [
-      "Featured",
-      "Deployment & Delivery",
-    ],
+    "categories": Array [],
     "description": "### About the app
 
 The Netlify app makes creating and updating content on your site easier. The app removes the need to navigate between platforms, giving editors full control of everything from previewing to deploying changes. Content writers and editors can trigger Netlify builds with one click in the sidebar. 
@@ -77,7 +68,7 @@ See build status in real-time, track progress and view recent changes all from w
 ![Netlify sidebar](//images.ctfassets.net/lpjm8d10rkpy/RrSqXTcdlpfkPt7sJzkEb/57172d0fd3eaa36a5ab90e7d183ed171/apps-netlify-sidebar.0ffd73e12b.png) ",
     "documentationLink": null,
     "featureFlagName": null,
-    "icon": "//images.ctfassets.net/lpjm8d10rkpy/2dYQ3x6VMNZJgDXYmMzLBx/b338ad4b50cd0ff31e7157671b801b4d/logomark.svg",
+    "icon": "",
     "id": "netlify",
     "isEarlyAccess": false,
     "isListed": true,
@@ -86,21 +77,94 @@ See build status in real-time, track progress and view recent changes all from w
       "privacyPolicy": "https://www.contentful.com/legal/us/privacy/",
     },
     "links": Array [
-      Object {
-        "title": "Netlify Docs",
-        "url": "https://www.netlify.com/docs/",
-      },
-      Object {
-        "title": "Documentation for the Netlify app",
-        "url": "https://www.contentful.com/developers/docs/extensibility/apps/netlify/",
-      },
-      Object {
-        "title": "Netlify app source code on GitHub",
-        "url": "https://github.com/contentful/apps/tree/master/apps/netlify",
-      },
+      undefined,
+      undefined,
+      undefined,
     ],
     "tagLine": "Easily build and preview sites with the Netlify app ",
     "title": "Netlify",
+  },
+  Object {
+    "actionList": Array [
+      undefined,
+      undefined,
+    ],
+    "appDefinition": Object {
+      "locations": Array [
+        "app",
+        "entry-sidebar",
+      ],
+      "name": "Workflows",
+      "src": "http://localhost:1234",
+      "sys": Object {
+        "id": "4iIetqcwsR1GIZxaYI6fRm",
+        "type": "AppDefinition",
+      },
+    },
+    "appInstallation": Object {
+      "sys": Object {
+        "appDefinition": Object {
+          "sys": Object {
+            "id": "4iIetqcwsR1GIZxaYI6fRm",
+            "linkType": "AppDefinition",
+            "type": "Link",
+          },
+        },
+        "type": "AppInstallation",
+      },
+    },
+    "author": Object {
+      "icon": undefined,
+      "name": undefined,
+      "url": undefined,
+    },
+    "categories": Array [],
+    "description": "### About the app
+
+The Netlify app makes creating and updating content on your site easier. The app removes the need to navigate between platforms, giving editors full control of everything from previewing to deploying changes. Content writers and editors can trigger Netlify builds with one click in the sidebar. 
+
+See build status in real-time, track progress and view recent changes all from within the web app. 
+
+
+---
+
+### What you can do with the Netlify app: 
+
+- Trigger Netlify builds with one click in the sidebar
+- Display build status so editors don't preview outdated sites
+- Bring Netlify functionality into the Contentful web app
+- Configure on a per-content-type level 
+
+### Requirements:
+
+- A static site based on a static site generator such as Gatsby, Middleman or Hugo
+- Your site configured to load content from Contentful and its code pushed to a remote repository, such as GitHub or Gitlab
+- A Netlify setup where the site is connected to the remote repository and enabled for continuous deployment
+
+---
+
+### Screenshots
+
+![Netlify config](//images.ctfassets.net/lpjm8d10rkpy/4Rf8yoGPw4AQwdMboiVwhF/a0a9a8b8e73a5ace1fdf78adebc24a49/apps-netlify-site-setup.b4a24a69c0.png)
+
+![Netlify sidebar](//images.ctfassets.net/lpjm8d10rkpy/RrSqXTcdlpfkPt7sJzkEb/57172d0fd3eaa36a5ab90e7d183ed171/apps-netlify-sidebar.0ffd73e12b.png) ",
+    "documentationLink": null,
+    "featureFlagName": null,
+    "icon": "",
+    "id": "workflows",
+    "isEarlyAccess": false,
+    "isListed": true,
+    "legal": Object {
+      "eula": "https://github.com/contentful/apps/blob/master/apps/netlify/LICENSE",
+      "privacyPolicy": "https://www.contentful.com/legal/us/privacy/",
+    },
+    "links": Array [
+      undefined,
+      undefined,
+      undefined,
+    ],
+    "tagLine": "Easily build and preview sites with the Netlify app ",
+    "title": "Workflows",
   },
   Object {
     "appDefinition": Object {

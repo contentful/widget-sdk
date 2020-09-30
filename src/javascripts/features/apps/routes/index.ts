@@ -225,13 +225,32 @@ export const appRoute = {
         ],
       },
       onEnter: [
+        '$stateParams',
+        '$state',
+        'app',
         'widget',
-        (widget) => {
+        ($stateParams, $state, app, widget) => {
           const pageLocation =
             widget && widget.locations.find((l) => l.location === WidgetLocation.PAGE);
 
           if (!pageLocation) {
             throw new Error('This app has not defined a page location!');
+          }
+
+          // If the url includes the definition, we try to
+          // use the human readable slug (which is the app.id)
+          // for non private apps
+          const hasNicerSlug = !app.isPrivateApp && $stateParams.appId === app.appDefinition.sys.id;
+
+          if (hasNicerSlug) {
+            // If it has a nicer slug, that is the app.id
+            const slug = app.id;
+            // Add environment path portion if we're not on master
+            const path = $stateParams.environmentId
+              ? 'spaces.detail.environment.apps.page'
+              : 'spaces.detail.apps.page';
+
+            return $state.go(path, { ...$stateParams, appId: slug }, { replace: true });
           }
         },
       ],

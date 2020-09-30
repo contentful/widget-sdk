@@ -9,21 +9,22 @@ export function createAppsRepo(cma, appDefinitionLoader) {
     getOnlyInstalledApps,
   };
 
-  async function getApp(id) {
+  async function getApp(idOrSlug: string) {
     const apps = await getApps();
-    const app = apps.find((app) => app.id === id);
+
+    const app = apps.find((app) => app.id === idOrSlug || app.appDefinition.sys.id === idOrSlug);
 
     if (app) {
       return app;
     } else {
-      throw new Error(`Could not find an app with ID "${id}".`);
+      throw new Error(`Could not find an app with ID "${idOrSlug}".`);
     }
   }
 
   async function getApps() {
     const installationMap = await getAppDefinitionToInstallationMap();
     const [marketplaceApps, orgDefinitions] = await Promise.all([
-      fetchMarketplaceApps(installationMap),
+      fetchMarketplaceApps(),
       appDefinitionLoader.getAllForCurrentOrganization(),
     ]);
 
