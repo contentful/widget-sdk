@@ -5,6 +5,7 @@ import EmptyContentTags from 'svg/illustrations/empty-content-tags.svg';
 import { Button, Heading, Paragraph, Typography } from '@contentful/forma-36-react-components';
 import React from 'react';
 import PropTypes from 'prop-types';
+import { TagType } from 'features/content-tags/core/TagType';
 
 const NoTagsContainer = ({ onCreate, headline, body, buttonLabel }) => {
   return (
@@ -13,7 +14,7 @@ const NoTagsContainer = ({ onCreate, headline, body, buttonLabel }) => {
       <Typography>
         <Heading>{headline}</Heading>
         <Paragraph>{body}</Paragraph>
-        <Button buttonType="primary" onClick={onCreate}>
+        <Button buttonType="primary" onClick={() => onCreate(TagType.Default)}>
           {buttonLabel}
         </Button>
       </Typography>
