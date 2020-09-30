@@ -18,6 +18,7 @@ const defaultTopicMap = {
     delete: false,
     publish: false,
     save: false,
+    auto_save: false,
     unarchive: false,
     unpublish: false,
   },
@@ -27,6 +28,7 @@ const defaultTopicMap = {
     delete: false,
     publish: false,
     save: false,
+    auto_save: false,
     unarchive: false,
     unpublish: false,
   },
@@ -36,6 +38,7 @@ const defaultTopicMap = {
     delete: false,
     publish: false,
     save: false,
+    auto_save: false,
     unarchive: false,
     unpublish: false,
   },
@@ -60,7 +63,7 @@ describe('Entity Types and Actions', () => {
 });
 
 describe('Topic Map', () => {
-  it('should create an topic map based on the entity types and actions with all topics set to fals', () => {
+  it('should create an topic map based on the entity types and actions with all topics set to false', () => {
     expect(createMap(false)).toEqual(defaultTopicMap);
   });
 
@@ -77,6 +80,7 @@ describe('Topic Map', () => {
         delete: true,
         publish: true,
         save: true,
+        auto_save: true,
         unarchive: true,
         unpublish: true,
       },
@@ -94,6 +98,7 @@ describe('Topic Map', () => {
         delete: true,
         publish: true,
         save: true,
+        auto_save: true,
         unarchive: false,
         unpublish: true,
       },
@@ -162,6 +167,7 @@ describe('transformMapToTopics', () => {
         delete: true,
         publish: true,
         save: true,
+        auto_save: true,
         unarchive: true,
         unpublish: true,
       },
@@ -169,6 +175,7 @@ describe('transformMapToTopics', () => {
     const topicArray = [
       'Asset.create',
       'Asset.save',
+      'Asset.auto_save',
       'Asset.archive',
       'Asset.unarchive',
       'Asset.publish',

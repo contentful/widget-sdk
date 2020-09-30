@@ -2,7 +2,16 @@ import { cloneDeep } from 'lodash';
 
 export const ENTITY_TYPES = ['ContentType', 'Entry', 'Asset'];
 
-export const ACTIONS = ['create', 'save', 'archive', 'unarchive', 'publish', 'unpublish', 'delete'];
+export const ACTIONS = [
+  'create',
+  'save',
+  'auto_save',
+  'archive',
+  'unarchive',
+  'publish',
+  'unpublish',
+  'delete',
+];
 
 export const ACTION_LABELS = {
   create: 'Create',
@@ -17,8 +26,6 @@ export const ACTION_LABELS = {
 
 export const DISABLED_ACTIONS = {
   ContentType: ['archive', 'unarchive', 'auto_save'],
-  Asset: ['auto_save'],
-  Entry: ['auto_save'],
   AppInstallation: ACTIONS,
 };
 
