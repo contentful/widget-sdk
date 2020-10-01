@@ -74,6 +74,7 @@ export function DisplayField({ entity, field }) {
       result = file ? (
         <Thumbnail
           size="30"
+          fit="thumb"
           file={getAssetFile(entity)}
           getExternalImageUrl={getExternalImageUrl}
         />
