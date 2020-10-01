@@ -23,6 +23,9 @@ import { trackEvent, EVENTS } from '../utils/analyticsTracking';
 import { alnum } from 'utils/Random';
 import * as TokenStore from 'services/TokenStore';
 import { getOrganizationMembership } from 'services/OrganizationRoles';
+import { go } from 'states/Navigator';
+import ErrorState from 'app/common/ErrorState';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 
 function createEventMetadataFromData(data) {
   const { organizationMembership, basePlan, canCreateFreeSpace } = data;
@@ -33,10 +36,6 @@ function createEventMetadataFromData(data) {
     canCreateFreeSpace,
   };
 }
-
-import { go } from 'states/Navigator';
-import ErrorState from 'app/common/ErrorState';
-import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 
 const initialFetch = (orgId) => async () => {
   const endpoint = createOrganizationEndpoint(orgId);
@@ -106,16 +105,16 @@ export const NewSpaceRoute = ({ orgId }) => {
     }
   }, [isLoading, sessionMetadata, data]);
 
-  if (isLoading) {
+  if (error) {
+    return <ErrorState />;
+  }
+
+  if (isLoading || !data) {
     return (
       <EmptyStateContainer>
         <Spinner testId="space-route-loading" size="large" />
       </EmptyStateContainer>
     );
-  }
-
-  if (error) {
-    return <ErrorState />;
   }
 
   return (

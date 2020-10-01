@@ -7,7 +7,7 @@ import { getBasePlan, getRatePlans } from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
 import { fetchSpacePurchaseContent } from '../services/fetchSpacePurchaseContent';
 import { trackEvent, EVENTS } from '../utils/analyticsTracking';
-import { getOrganizationMembership } from 'services/OrganizationRoles';
+import { getOrganizationMembership, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { go } from 'states/Navigator';
 import * as TokenStore from 'services/TokenStore';
 import * as FakeFactory from 'test/helpers/fakeFactory';
@@ -27,11 +27,14 @@ jest.mock('services/SpaceTemplateLoader', () => ({
 
 jest.mock('services/OrganizationRoles', () => ({
   getOrganizationMembership: jest.fn(),
+  isOwnerOrAdmin: jest.fn().mockReturnValue(true),
 }));
 
 jest.mock('account/pricing/PricingDataProvider', () => ({
   getRatePlans: jest.fn(),
   getBasePlan: jest.fn(),
+  isSelfServicePlan: jest.requireActual('account/pricing/PricingDataProvider').isSelfServicePlan,
+  isFreePlan: jest.requireActual('account/pricing/PricingDataProvider').isFreePlan,
 }));
 
 jest.mock('../services/fetchSpacePurchaseContent', () => ({
@@ -82,7 +85,36 @@ describe('NewSpaceRoute', () => {
     build();
 
     await waitFor(() => {
-      expect(go).toBeCalledWith({ path: 'home' });
+      expect(go).toBeCalledWith({
+        path: ['account', 'organizations', 'subscription_new', 'overview'],
+        params: { orgId: mockOrganization.sys.id },
+      });
+    });
+  });
+
+  it('should redirect to space home if the user is not org admin or owner', async () => {
+    isOwnerOrAdmin.mockReturnValueOnce(false);
+
+    build();
+
+    await waitFor(() => {
+      expect(go).toBeCalledWith({
+        path: ['account', 'organizations', 'subscription_new', 'overview'],
+        params: { orgId: mockOrganization.sys.id },
+      });
+    });
+  });
+
+  it('should redirect to space home if the base plan is not self-service or free', async () => {
+    getBasePlan.mockReturnValueOnce({ customerType: 'Enterprise' });
+
+    build();
+
+    await waitFor(() => {
+      expect(go).toBeCalledWith({
+        path: ['account', 'organizations', 'subscription_new', 'overview'],
+        params: { orgId: mockOrganization.sys.id },
+      });
     });
   });
 
@@ -105,6 +137,16 @@ describe('NewSpaceRoute', () => {
         organizationPlatform: mockOrganizationPlatform,
       }
     );
+  });
+
+  it('should show an error page if the fetch fails', async () => {
+    TokenStore.getOrganization.mockRejectedValueOnce(new Error());
+
+    build();
+
+    await waitFor(() => {
+      expect(screen.getByTestId('cf-ui-error-state')).toBeVisible();
+    });
   });
 });
 
