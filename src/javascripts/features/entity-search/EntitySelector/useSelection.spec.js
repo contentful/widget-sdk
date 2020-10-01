@@ -19,21 +19,19 @@ describe('useSelection hook', () => {
       });
     });
 
-    const { lastToggledIndex, toggle, isSelected, getSelectedEntities } = result.current;
+    const { lastToggledIndex, toggle, isSelected, selectedEntities } = result.current;
 
     expect(lastToggledIndex).toBeUndefined();
     expect(typeof toggle).toBe('function');
     expect(typeof isSelected).toBe('function');
-    expect(typeof getSelectedEntities).toBe('function');
+    expect(typeof selectedEntities).toBe('object');
   });
 
   describe('toggle', () => {
     it('should toggle the given entity [single mode]', () => {
       const entries = [entry()];
       const { result } = renderHook(() => {
-        const entities = useMemo(() => entries, []);
         return useSelection({
-          entities,
           multipleSelection: false,
         });
       });
@@ -44,9 +42,9 @@ describe('useSelection hook', () => {
         expect(selectedEntities).toEqual(entries);
       });
 
-      const { getSelectedEntities, isSelected } = result.current;
+      const { selectedEntities, isSelected } = result.current;
 
-      expect(getSelectedEntities()).toEqual(entries);
+      expect(selectedEntities).toEqual(entries);
       expect(isSelected(entries[0])).toEqual(true);
 
       act(() => {
@@ -55,7 +53,7 @@ describe('useSelection hook', () => {
         expect(selectedEntities).toEqual([]);
       });
 
-      expect(result.current.getSelectedEntities()).toEqual([]);
+      expect(result.current.selectedEntities).toEqual([]);
       expect(result.current.isSelected(entries[0])).toEqual(false);
     });
 
@@ -63,19 +61,17 @@ describe('useSelection hook', () => {
       it('should throw if attempted to select multiple items', () => {
         const entries = [entry(), entry()];
         const { result } = renderHook(() => {
-          const entities = useMemo(() => entries, []);
           return useSelection({
-            entities,
             multipleSelection: false,
           });
         });
 
         act(() => {
-          const { toggle, isSelected, getSelectedEntities } = result.current;
+          const { toggle, isSelected, selectedEntities } = result.current;
           expect(() => {
             toggle(entries);
           }).toThrowError('Attempted to select multiple entities with multiSelection: false');
-          expect(getSelectedEntities()).toEqual([]);
+          expect(selectedEntities).toEqual([]);
           expect(isSelected(entries[0])).toBe(false);
           expect(isSelected(entries[1])).toBe(false);
         });
@@ -86,9 +82,7 @@ describe('useSelection hook', () => {
       it('should allow to toggle only one item', () => {
         const entries = [entry()];
         const { result } = renderHook(() => {
-          const entities = useMemo(() => entries, []);
           return useSelection({
-            entities,
             multipleSelection: true,
           });
         });
@@ -109,9 +103,7 @@ describe('useSelection hook', () => {
       it('should allow to select multiple items in batches', () => {
         const entries = [entry(), entry(), entry(), entry()];
         const { result } = renderHook(() => {
-          const entities = useMemo(() => entries, []);
           return useSelection({
-            entities,
             multipleSelection: true,
           });
         });
@@ -123,7 +115,7 @@ describe('useSelection hook', () => {
         });
 
         expect(result.current.lastToggledIndex).toBe(0);
-        expect(result.current.getSelectedEntities()).toEqual(entries.slice(0, 2));
+        expect(result.current.selectedEntities).toEqual(entries.slice(0, 2));
         expect(result.current.isSelected(entries[0])).toBe(true);
         expect(result.current.isSelected(entries[1])).toBe(true);
         expect(result.current.isSelected(entries[2])).toBe(false);
@@ -136,7 +128,7 @@ describe('useSelection hook', () => {
         });
 
         expect(result.current.lastToggledIndex).toBe(2);
-        expect(result.current.getSelectedEntities()).toEqual(entries);
+        expect(result.current.selectedEntities).toEqual(entries);
         expect(result.current.isSelected(entries[0])).toBe(true);
         expect(result.current.isSelected(entries[1])).toBe(true);
         expect(result.current.isSelected(entries[2])).toBe(true);
@@ -149,7 +141,7 @@ describe('useSelection hook', () => {
         });
 
         expect(result.current.lastToggledIndex).toBe(0);
-        expect(result.current.getSelectedEntities()).toEqual(entries.slice(1));
+        expect(result.current.selectedEntities).toEqual(entries.slice(1));
         expect(result.current.isSelected(entries[0])).toBe(false);
         expect(result.current.isSelected(entries[1])).toBe(true);
         expect(result.current.isSelected(entries[2])).toBe(true);
@@ -162,7 +154,7 @@ describe('useSelection hook', () => {
         });
 
         expect(result.current.lastToggledIndex).toBe(1);
-        expect(result.current.getSelectedEntities()).toEqual([entries[3]]);
+        expect(result.current.selectedEntities).toEqual([entries[3]]);
         expect(result.current.isSelected(entries[0])).toBe(false);
         expect(result.current.isSelected(entries[1])).toBe(false);
         expect(result.current.isSelected(entries[2])).toBe(false);
@@ -173,9 +165,7 @@ describe('useSelection hook', () => {
     it('should keep the order in which the items were selected', () => {
       const entries = [entry(), entry(), entry(), entry()];
       const { result } = renderHook(() => {
-        const entities = useMemo(() => entries, []);
         return useSelection({
-          entities,
           multipleSelection: true,
         });
       });
@@ -187,7 +177,7 @@ describe('useSelection hook', () => {
         expect(selectedEntities).toEqual([entries[entries.length - 1]]);
       });
 
-      expect(result.current.getSelectedEntities()).toEqual([entries[entries.length - 1]]);
+      expect(result.current.selectedEntities).toEqual([entries[entries.length - 1]]);
 
       // batch selecting items 1, 2
       act(() => {
@@ -196,7 +186,7 @@ describe('useSelection hook', () => {
         expect(selectedEntities).toEqual([entries[entries.length - 1], entries[1], entries[2]]);
       });
 
-      expect(result.current.getSelectedEntities()).toEqual([
+      expect(result.current.selectedEntities).toEqual([
         entries[entries.length - 1],
         entries[1],
         entries[2],
@@ -214,7 +204,7 @@ describe('useSelection hook', () => {
         ]);
       });
 
-      expect(result.current.getSelectedEntities()).toEqual([
+      expect(result.current.selectedEntities).toEqual([
         entries[entries.length - 1],
         entries[1],
         entries[2],
@@ -228,7 +218,7 @@ describe('useSelection hook', () => {
         expect(selectedEntities).toEqual([entries[entries.length - 1], entries[1], entries[0]]);
       });
 
-      expect(result.current.getSelectedEntities()).toEqual([
+      expect(result.current.selectedEntities).toEqual([
         entries[entries.length - 1],
         entries[1],
         entries[0],
@@ -246,7 +236,7 @@ describe('useSelection hook', () => {
         ]);
       });
 
-      expect(result.current.getSelectedEntities()).toEqual([
+      expect(result.current.selectedEntities).toEqual([
         entries[entries.length - 1],
         entries[1],
         entries[0],
@@ -260,7 +250,7 @@ describe('useSelection hook', () => {
         expect(selectedEntities).toEqual([entries[entries.length - 1], entries[1], entries[0]]);
       });
 
-      expect(result.current.getSelectedEntities()).toEqual([
+      expect(result.current.selectedEntities).toEqual([
         entries[entries.length - 1],
         entries[1],
         entries[0],
@@ -273,16 +263,14 @@ describe('useSelection hook', () => {
         expect(selectedEntities).toEqual([entries[entries.length - 1]]);
       });
 
-      expect(result.current.getSelectedEntities()).toEqual([entries[entries.length - 1]]);
+      expect(result.current.selectedEntities).toEqual([entries[entries.length - 1]]);
     });
   });
 
   describe('isSelected', () => {
     it('should return false if entity is not an entity', () => {
       const { result } = renderHook(() => {
-        const entities = useMemo(() => [], []);
         return useSelection({
-          entities,
           multipleSelection: true,
         });
       });

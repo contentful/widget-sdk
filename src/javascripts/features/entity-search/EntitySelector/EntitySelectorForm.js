@@ -19,7 +19,7 @@ import { useListView } from '../useListView';
 
 /*
   The core of this component was split into 3 hooks:
-  
+
   useLoader - handles the loading, handling errors
   useSelection - handles toggling, selection
   useScrollToBottomTrigger - handles the loadMore as a result of reaching the bottom of the viewport
@@ -79,10 +79,6 @@ export const EntitySelectorForm = ({
   const isSearching = isSearchUsed(search.state);
   const hasMore = isSearching ? search.searchResult.hasMore : state.hasMore;
   const entities = isSearching ? search.searchResult.entities : state.entities;
-  const allEntitiesLoaded = useMemo(() => state.entities.concat(search.searchResult.entities), [
-    state.entities,
-    search.searchResult.entities,
-  ]);
   const helpers = useMemo(() => newForLocale(locale), [locale]);
   // Returns a promise for the content type of the given entry.
   // We cache this by the entry id
@@ -114,11 +110,10 @@ export const EntitySelectorForm = ({
     fetch,
     contentTypeId: singleContentTypeId,
   });
-  const { lastToggledIndex, getSelectedEntities, isSelected, toggle } = useSelection({
-    entities: allEntitiesLoaded,
+
+  const { lastToggledIndex, selectedEntities, isSelected, toggle } = useSelection({
     multipleSelection: multiple,
   });
-  const selectedEntities = getSelectedEntities();
 
   useEffect(() => {
     async function loadData() {

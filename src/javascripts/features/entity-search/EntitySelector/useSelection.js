@@ -1,5 +1,5 @@
-import { useState, useCallback, useEffect } from 'react';
-import { intersectionBy, difference, uniqBy } from 'lodash';
+import { useState, useCallback } from 'react';
+import { uniqBy } from 'lodash';
 
 const Operations = {
   SELECT: 'select',
@@ -9,15 +9,9 @@ const Operations = {
 /*
   Handles exposes an api for the entity selection
 */
-export const useSelection = ({ entities, multipleSelection }) => {
+export const useSelection = ({ multipleSelection }) => {
   const [selectedEntities, setSelectedEntities] = useState([]);
   const [lastToggled, setLastToggled] = useState({});
-
-  useEffect(() => {
-    setSelectedEntities((currentSelectedEntities) =>
-      intersectionBy(currentSelectedEntities, entities, 'sys.id')
-    );
-  }, [entities]);
 
   const isSelected = useCallback(
     (entity) => {
@@ -31,16 +25,24 @@ export const useSelection = ({ entities, multipleSelection }) => {
     [selectedEntities]
   );
 
-  const getSelectedEntities = useCallback(() => selectedEntities, [selectedEntities]);
-
   const toggle = useCallback(
     (entity, operation) => {
       const batchOfEntities = Array.isArray(entity) ? entity : [entity];
       const shouldBeSelected = operation === Operations.SELECT ? true : false;
 
-      const updatedArrayOfSelectedEntities = shouldBeSelected
-        ? uniqBy([...selectedEntities, ...batchOfEntities], (entity) => entity.sys.id)
-        : difference(selectedEntities, batchOfEntities);
+      let updatedArrayOfSelectedEntities;
+
+      if (shouldBeSelected) {
+        updatedArrayOfSelectedEntities = uniqBy(
+          [...selectedEntities, ...batchOfEntities],
+          (entity) => entity.sys.id
+        );
+      } else {
+        const idsToDeselect = batchOfEntities.map((entity) => entity.sys.id);
+        updatedArrayOfSelectedEntities = selectedEntities.filter(
+          (entity) => !idsToDeselect.includes(entity.sys.id)
+        );
+      }
 
       setSelectedEntities(updatedArrayOfSelectedEntities);
 
@@ -85,6 +87,6 @@ export const useSelection = ({ entities, multipleSelection }) => {
     lastToggledIndex: lastToggled.index,
     toggle: toggleSelection,
     isSelected,
-    getSelectedEntities,
+    selectedEntities,
   };
 };
