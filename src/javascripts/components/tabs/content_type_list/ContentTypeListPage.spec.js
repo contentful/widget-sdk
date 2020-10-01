@@ -1,5 +1,4 @@
 import React from 'react';
-
 import {
   screen,
   render,
@@ -18,9 +17,9 @@ import * as PricingService from 'services/PricingService';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import createResourceService from 'services/ResourceService';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
-import * as fake from 'test/helpers/fakeFactory';
 import * as trackCTA from 'analytics/trackCTA';
 import { CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM } from 'analytics/utmLinks';
+import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 jest.mock('lodash/debounce', () => (fn) => fn);
 
@@ -71,16 +70,17 @@ const mockContentTypeList = [
   contentTypeFactory.createPublished(),
   contentTypeFactory.createPublished(),
 ];
-const mockOrganization = fake.Organization();
+// const mockOrganization = fake.Organization();
 
 function renderComponent({ props = {}, items = [] }) {
   const getStub = jest.fn().mockResolvedValue({ items });
-  const getEnvironmentId = jest.fn();
   spaceContextMocked.endpoint = getStub;
-  spaceContextMocked.organization = mockOrganization;
-  spaceContextMocked.getEnvironmentId = getEnvironmentId;
 
-  const wrapper = render(<Page {...props} />);
+  const wrapper = render(
+    <SpaceEnvContextProvider>
+      <Page {...props} />
+    </SpaceEnvContextProvider>
+  );
 
   return [wrapper, getStub];
 }
@@ -159,7 +159,7 @@ describe('ContentTypeList Page', () => {
       });
 
       expect(container.querySelector(selectors.contentTypeList).textContent).toMatchInlineSnapshot(
-        `"content-type-id14"`
+        `"content-type-id11"`
       );
     });
 
@@ -268,7 +268,7 @@ describe('ContentTypeList Page', () => {
         userEvent.click(linkToSales);
 
         expect(trackTargetedCTAClick).toBeCalledWith(trackCTA.CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
-          organizationId: mockOrganization.sys.id,
+          organizationId: spaceContextMocked.space.data.organization.sys.id,
           spaceId: fakeSpaceId,
         });
       });

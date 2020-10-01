@@ -29,8 +29,7 @@ import { CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM } from 'analytics/utmLinks';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 import * as PricingService from 'services/PricingService';
 import createResourceService from 'services/ResourceService';
-
-import { getModule } from 'core/NgRegistry';
+import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 const styles = {
   banner: css({
@@ -44,9 +43,12 @@ export class ContentTypesPage extends React.Component {
     spaceId: PropTypes.string,
     onSearchChange: PropTypes.func,
   };
+
   static defaultProps = {
     onSearchChange: () => {},
   };
+
+  static contextType = SpaceEnvContext;
 
   constructor(props) {
     super(props);
@@ -63,7 +65,7 @@ export class ContentTypesPage extends React.Component {
   }
 
   async componentDidMount() {
-    const spaceContext = getModule('spaceContext');
+    const { currentOrganization, currentOrganizationId } = this.context;
     const { spaceId } = this.props;
 
     // This is written so that the important data (contentTypes) only would wait for a max of 2 seconds for the
@@ -72,8 +74,8 @@ export class ContentTypesPage extends React.Component {
     // it's more important that we allow the user to use the page than wait longer for this less important information.
 
     const promisesArray = [service.fetchContentTypes()];
-    const isOrgAdminOrOwner = isOwnerOrAdmin(spaceContext.organization);
-    const orgIsLegacy = isLegacyOrganization(spaceContext.organization);
+    const isOrgAdminOrOwner = isOwnerOrAdmin(currentOrganization);
+    const orgIsLegacy = isLegacyOrganization(currentOrganization);
 
     // Only want to make this fetch if isNewPricingReleased.
     if (!orgIsLegacy && isOrgAdminOrOwner) {
@@ -81,7 +83,7 @@ export class ContentTypesPage extends React.Component {
         Promise.race([
           Promise.all([
             PricingService.nextSpacePlanForResource(
-              spaceContext.organization.sys.id,
+              currentOrganizationId,
               spaceId,
               PricingService.SPACE_PLAN_RESOURCE_TYPES.CONTENT_TYPE
             ),
@@ -125,12 +127,11 @@ export class ContentTypesPage extends React.Component {
 
   handleBannerClickCTA() {
     const { spaceId } = this.props;
-    const spaceContext = getModule('spaceContext');
-    const organizationId = spaceContext.organization.sys.id;
+    const { currentOrganizationId } = this.context;
 
     trackTargetedCTAClick(CTA_EVENTS.UPGRADE_TO_ENTERPRISE, {
       spaceId,
-      organizationId,
+      organizationId: currentOrganizationId,
     });
   }
 
@@ -170,8 +171,7 @@ export class ContentTypesPage extends React.Component {
     });
 
     const { spaceId } = this.props;
-    const spaceContext = getModule('spaceContext');
-    const organizationId = spaceContext.organization.sys.id;
+    const { currentOrganizationId } = this.context;
 
     return (
       <React.Fragment>
@@ -234,7 +234,7 @@ export class ContentTypesPage extends React.Component {
                       To increase the limit,{' '}
                       <TrackTargetedCTAImpression
                         impressionType={CTA_EVENTS.UPGRADE_TO_ENTERPRISE}
-                        meta={{ spaceId, organizationId }}>
+                        meta={{ spaceId, organizationId: currentOrganizationId }}>
                         <ExternalTextLink
                           testId="link-to-sales"
                           href={CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM}
