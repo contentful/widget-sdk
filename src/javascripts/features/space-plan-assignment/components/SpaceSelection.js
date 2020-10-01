@@ -126,7 +126,7 @@ export function SpaceSelection({
         <StateLink
           component={Button}
           buttonType="muted"
-          path={'^.subscription_new'}
+          path={'^'}
           icon="ChevronLeft"
           trackingEvent={'space_assignment:back'}
           trackParams={{

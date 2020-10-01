@@ -36,7 +36,7 @@ export const SpacePlanAssignmentRoute = ({ orgId }) => {
 
   // redirect when data, but flag is disabled or spaceId and planId is not in the queryString
   if (data && (!data.spaceAssignmentEnabled || (!data.spaceId && !data.planId))) {
-    return <StateRedirect path="^.subscription_new" />;
+    return <StateRedirect path="^" />;
   }
 
   // assign space to plan when flag is enabled and planId is present in the queryString

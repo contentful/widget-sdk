@@ -125,7 +125,7 @@ export function PlanSpaceAssignment({ orgId, planId }) {
         data.freePlan
       );
       Notification.success(`${selectedSpace.name} was successfully changed to ${data.plan.name}`);
-      go({ path: '^.subscription_new' });
+      go({ path: '^' });
     } catch (e) {
       Notification.error(formatError(e));
     } finally {
