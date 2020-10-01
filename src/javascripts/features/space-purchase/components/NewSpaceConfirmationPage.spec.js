@@ -15,7 +15,7 @@ const mockBillingDetails = {
   address2: 'apartment 321',
   city: 'Berlin',
   zipCode: '11111',
-  country: 'DE',
+  country: 'Germany',
   state: '',
   vat: '',
 };

@@ -11,3 +11,4 @@ export {
 } from './services/PaymentMethodService';
 export { transformBillingDetails } from './utils/transformBillingDetails';
 export { BillingDetailsPropType } from './propTypes';
+export { getCountryCodeFromName } from './utils/country';

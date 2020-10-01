@@ -23,7 +23,7 @@ const mockBillingDetails = {
   workEmail: 'david@davidattenborough.com',
   address1: 'Some Lane',
   city: 'Brighton',
-  country: 'UK',
+  country: 'United Kingdom',
   zipCode: '1AB30',
 };
 

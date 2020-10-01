@@ -10,6 +10,7 @@ import {
   setDefaultPaymentMethod,
   getDefaultPaymentMethod,
   getBillingDetails,
+  getCountryCodeFromName,
 } from 'features/organization-billing';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getPlansWithSpaces } from 'account/pricing/PricingDataProvider';
@@ -287,7 +288,7 @@ export const NewSpacePage = ({
             <NewSpaceCardDetailsPage
               organizationId={organization.sys.id}
               navigateToPreviousStep={navigateToPreviousStep}
-              billingCountryCode={billingDetails.country}
+              billingCountryCode={getCountryCodeFromName(billingDetails.country)}
               onSuccess={onSubmitPaymentMethod}
               selectedPlan={selectedPlan}
               navigateToNextStep={() => goToStep(SPACE_PURCHASE_STEPS.CONFIRMATION)}

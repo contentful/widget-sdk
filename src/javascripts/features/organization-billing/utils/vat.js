@@ -1,20 +1,42 @@
 import * as jsVAT from 'jsvat';
+import { getCountryCodeFromName } from './country';
 
-// Finds the country object from jsVAT based off the country code.
-function getVatCountryObject(countryCode) {
-  return jsVAT.countries.find((vatCountry) => {
-    return vatCountry.codes.includes(countryCode);
-  });
+/**
+ * Gets the jsVAT country object from the country name
+ * @param  {String} countryName The country name (e.g. United States)
+ * @return {Object?}
+ */
+function getVatCountryObject(countryName) {
+  const countryCode = getCountryCodeFromName(countryName);
+
+  return jsVAT.countries.find((vatCountry) => vatCountry.codes.includes(countryCode)) ?? null;
 }
 
-export function getIsVatCountry(countryCode) {
-  return getVatCountryObject(countryCode) !== undefined;
+/**
+ * Returns if the country given uses VAT, according to jsVAT.
+ *
+ * @param  {String} countryName
+ * @return {Boolean}
+ */
+export function isCountryUsingVAT(countryName) {
+  return !!getVatCountryObject(countryName);
 }
 
-// NOTE: This only checks the formatting of the VAT number based off the given country. It does not check
-// if the VAT number is a real VAT number.
-export function isValidVat(vatNumber, countryCode) {
-  const countryObject = getVatCountryObject(countryCode);
+/**
+ * Determines if the VAT given is of the correct format for a given country.
+ * @param  {String}  countryName
+ * @param  {String}  vatNumber
+ * @return {Boolean}
+ */
+export function isValidVATFormat(countryName, vatNumber) {
+  const countryObject = getVatCountryObject(countryName);
+
+  // If the given country name is not one that is in jsVAT, then by definition
+  // it is valid as it doesn't require VAT.
+  if (!countryObject) {
+    return true;
+  }
+
   const jsVatResult = jsVAT.checkVAT(vatNumber, [countryObject]);
 
   return jsVatResult.isValid;

@@ -28,7 +28,7 @@ const mockBillingDetails = {
   address2: 'apartment 321',
   city: 'Berlin',
   zipCode: '11111',
-  country: 'DE',
+  country: 'Germany',
   state: '',
   vat: '',
 };
@@ -60,22 +60,12 @@ jest.mock('utils/LazyLoader', () => {
 });
 
 jest.mock('features/organization-billing/index', () => ({
+  ...jest.requireActual('features/organization-billing'),
   createBillingDetails: jest.fn(),
   setDefaultPaymentMethod: jest.fn(),
   getDefaultPaymentMethod: jest.fn(),
   getBillingDetails: jest.fn(),
   getHostedPaymentParams: jest.fn().mockResolvedValue(),
-  ZuoraCreditCardIframe: jest.requireActual('features/organization-billing/index')
-    .ZuoraCreditCardIframe,
-  BillingDetailsForm: jest.requireActual('features/organization-billing/index').BillingDetailsForm,
-  BillingDetailsLoading: jest.requireActual('features/organization-billing/index')
-    .BillingDetailsLoading,
-  CreditCardDetailsLoading: jest.requireActual('features/organization-billing/index')
-    .CreditCardDetailsLoading,
-  transformBillingDetails: jest.requireActual('features/organization-billing/index')
-    .transformBillingDetails,
-  BillingDetailsPropType: jest.requireActual('features/organization-billing/index')
-    .BillingDetailsPropType,
 }));
 
 describe('NewSpacePage', () => {
@@ -331,7 +321,7 @@ describe('NewSpacePage', () => {
         'cf-ui-select'
       );
 
-      userEvent.selectOptions(countrySelect, ['DE']);
+      userEvent.selectOptions(countrySelect, ['Germany']);
 
       userEvent.click(screen.getByTestId('billing-details.submit'));
 
@@ -377,7 +367,7 @@ describe('NewSpacePage', () => {
       'cf-ui-select'
     );
 
-    userEvent.selectOptions(countrySelect, ['AR']);
+    userEvent.selectOptions(countrySelect, ['Armenia']);
 
     userEvent.click(screen.getByTestId('billing-details.submit'));
 

@@ -34,11 +34,11 @@ describe('BillingDetailsForm', () => {
         'cf-ui-select'
       );
 
-      userEvent.selectOptions(countrySelect, ['DE']);
+      userEvent.selectOptions(countrySelect, ['Germany']);
 
       expect(screen.getByTestId('billing-details.vat')).toBeVisible();
 
-      userEvent.selectOptions(countrySelect, ['US']);
+      userEvent.selectOptions(countrySelect, ['United States']);
 
       expect(screen.queryByTestId('billing-details.vat')).toBeNull();
     });
@@ -52,11 +52,11 @@ describe('BillingDetailsForm', () => {
         'cf-ui-select'
       );
 
-      userEvent.selectOptions(countrySelect, ['US']);
+      userEvent.selectOptions(countrySelect, ['United States']);
 
       expect(screen.getByTestId('billing-details.state')).toBeVisible();
 
-      userEvent.selectOptions(countrySelect, ['DE']);
+      userEvent.selectOptions(countrySelect, ['Germany']);
 
       expect(screen.queryByTestId('billing-details.state')).toBeNull();
     });
@@ -106,14 +106,14 @@ describe('BillingDetailsForm', () => {
     describe('fields validation', () => {
       it('should reject an improperly formatted vat for the selected country', async () => {
         build({
-          billingDetails: getMockBillingDetails({ country: 'DE', vat: '1234123' }),
+          billingDetails: getMockBillingDetails({ country: 'Germany', vat: '1234123' }),
         });
 
         const countrySelect = within(screen.getByTestId('billing-details.country')).getByTestId(
           'cf-ui-select'
         );
 
-        userEvent.selectOptions(countrySelect, ['DE']);
+        userEvent.selectOptions(countrySelect, ['Germany']);
         userEvent.click(screen.getByTestId('billing-details.submit'));
 
         await waitFor(() => {
@@ -124,7 +124,7 @@ describe('BillingDetailsForm', () => {
       it('should accept a properly formatted vat for the selected country', async () => {
         const onSubmit = jest.fn();
         build({
-          billingDetails: getMockBillingDetails({ country: 'DE', vat: 'DE275148225' }),
+          billingDetails: getMockBillingDetails({ country: 'Germany', vat: 'DE275148225' }),
           onSubmit,
         });
 
@@ -148,7 +148,7 @@ describe('BillingDetailsForm', () => {
           'cf-ui-select'
         );
 
-        userEvent.selectOptions(countrySelect, ['DE']);
+        userEvent.selectOptions(countrySelect, ['Germany']);
         userEvent.click(screen.getByTestId('billing-details.submit'));
 
         await waitFor(() => {
@@ -161,7 +161,7 @@ describe('BillingDetailsForm', () => {
         const onSubmit = jest.fn();
 
         build({
-          billingDetails: getMockBillingDetails({ country: 'DE' }),
+          billingDetails: getMockBillingDetails({ country: 'Germany' }),
           onSubmit,
         });
 
@@ -169,10 +169,10 @@ describe('BillingDetailsForm', () => {
           'cf-ui-select'
         );
 
-        userEvent.selectOptions(countrySelect, ['US']);
+        userEvent.selectOptions(countrySelect, ['United States']);
         userEvent.click(screen.getByTestId('billing-details.submit'));
 
-        expect(screen.getByText('Select a State')).toBeVisible();
+        expect(screen.getByText('Select a state')).toBeVisible();
         expect(onSubmit).not.toBeCalled();
       });
 
@@ -180,7 +180,7 @@ describe('BillingDetailsForm', () => {
         const onSubmit = jest.fn();
 
         build({
-          billingDetails: getMockBillingDetails({ country: 'DE' }),
+          billingDetails: getMockBillingDetails({ country: 'Germany' }),
           onSubmit,
         });
 
@@ -188,16 +188,16 @@ describe('BillingDetailsForm', () => {
           'cf-ui-select'
         );
 
-        userEvent.selectOptions(countrySelect, ['US']);
+        userEvent.selectOptions(countrySelect, ['United States']);
 
         const stateSelect = within(screen.getByTestId('billing-details.state')).getByTestId(
           'cf-ui-select'
         );
-        userEvent.selectOptions(stateSelect, ['CA']);
+        userEvent.selectOptions(stateSelect, ['California']);
 
         userEvent.click(screen.getByTestId('billing-details.submit'));
 
-        expect(screen.queryByText('Select a State')).toBeNull();
+        expect(screen.queryByText('Select a state')).toBeNull();
         await waitFor(() => {
           expect(onSubmit).toBeCalled();
         });
@@ -223,7 +223,7 @@ describe('BillingDetailsForm', () => {
 
     it('should show vat field if country is a vat country', () => {
       build({
-        billingDetails: getMockBillingDetails({ country: 'DE' }),
+        billingDetails: getMockBillingDetails({ country: 'Germany' }),
       });
 
       expect(screen.queryByTestId('billing-details.vat')).toBeVisible();
@@ -231,7 +231,7 @@ describe('BillingDetailsForm', () => {
 
     it('should show state field if its been filled out', () => {
       build({
-        billingDetails: getMockBillingDetails({ country: 'US', state: 'CA' }),
+        billingDetails: getMockBillingDetails({ country: 'United States', state: 'California' }),
       });
 
       expect(screen.queryByTestId('billing-details.state')).toBeVisible();
@@ -261,7 +261,7 @@ describe('BillingDetailsForm', () => {
 
       userEvent.click(screen.getByTestId('billing-details.submit'));
 
-      waitFor(() => {
+      await waitFor(() => {
         expect(onSubmit).toBeCalled();
       });
     });
@@ -277,7 +277,7 @@ function getMockBillingDetails(customProps) {
     address2: 'apartment 321',
     city: 'Rio de Janeiro',
     zipCode: '11111',
-    country: 'BR',
+    country: 'Brazil',
     vat: '',
     ...customProps,
   };
