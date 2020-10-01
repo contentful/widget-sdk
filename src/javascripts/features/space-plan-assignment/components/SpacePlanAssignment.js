@@ -23,6 +23,8 @@ const ASSIGNMENT_STEPS = [
   { text: '2.Confirm', isActive: false },
 ];
 
+const DEFAULT_ROLE_SET = { roles: ['Editor'] };
+
 export function SpacePlanAssignment({ orgId, spaceId }) {
   const [selectedPlan, setSelectedPlan] = useState();
   const [steps, setSteps] = useState(ASSIGNMENT_STEPS);
@@ -56,7 +58,8 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
       const enhancedPlans = availablePlans.map((plan) => {
         return {
           ...plan,
-          roleSet: ratePlans.find((ratePlan) => ratePlan.name === plan.name).roleSet,
+          roleSet:
+            ratePlans.find((ratePlan) => ratePlan.name === plan.name)?.roleSet ?? DEFAULT_ROLE_SET,
         };
       });
 
