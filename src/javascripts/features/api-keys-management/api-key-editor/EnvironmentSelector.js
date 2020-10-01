@@ -9,7 +9,7 @@ import { filter, concat } from 'utils/Collections';
 import InfoIcon from 'svg/info.svg';
 import { CheckboxField, SectionHeading } from '@contentful/forma-36-react-components';
 import EnvOrAliasLabel from 'app/common/EnvOrAliasLabel';
-import { getModule } from 'core/NgRegistry';
+import { isMasterEnvironment } from 'core/services/SpaceEnvContext/utils';
 
 const styles = {
   aliasSpacer: css({ marginBottom: tokens.spacingL }),
@@ -83,9 +83,8 @@ function Hint() {
 }
 
 function ListEnvironments({ environments, canEdit, isSelected, showDefault, toggleSelection }) {
-  const spaceContext = getModule('spaceContext');
   return environments.map((environment) => {
-    const isMaster = spaceContext.isMasterEnvironment(environment);
+    const isMaster = isMasterEnvironment(environment);
     return (
       <label key={environment.sys.id} className={styles.label}>
         <div className={styles.environmentDiv}>
@@ -111,9 +110,8 @@ function ListEnvironments({ environments, canEdit, isSelected, showDefault, togg
 }
 
 function ListAliases({ aliases, canEdit, isSelected, toggleSelection }) {
-  const spaceContext = getModule('spaceContext');
   return aliases.map((alias) => {
-    const isMaster = spaceContext.isMasterEnvironment(alias);
+    const isMaster = isMasterEnvironment(alias);
     return (
       <label key={alias.sys.id} className={styles.label}>
         <div className={styles.environmentDiv}>
