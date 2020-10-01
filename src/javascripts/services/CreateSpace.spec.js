@@ -90,7 +90,7 @@ describe('CreateSpace', () => {
       expect(canCreateSpaceInOrganization).toHaveBeenCalledWith('v1');
     });
 
-    it('sends user to /new_space for self_service and free orgs', async function () {
+    it('sends user to the new_space page for self_service and free orgs', async function () {
       getOrganization.mockResolvedValueOnce(mockV2Org);
       getBasePlan.mockResolvedValueOnce({ customerType: 'Self-service' });
       isSelfServicePlan.mockResolvedValueOnce(true);
@@ -98,9 +98,8 @@ describe('CreateSpace', () => {
       await beginSpaceCreation('v2');
 
       expect(go).toHaveBeenCalledWith({
-        path: ['account', 'organizations', 'new_space'],
+        path: ['account', 'organizations', 'subscription_new', 'new_space'],
         params: { orgId: 'v2' },
-        options: { reload: true },
       });
     });
 
