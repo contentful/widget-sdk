@@ -279,9 +279,7 @@ Object {
                           data-test-id="cf-ui-copy-button"
                           id="copyButton"
                         >
-                          <span
-                            class="Tooltip__Tooltip__target-wrapper___Mtw42"
-                          >
+                          <span>
                             <button
                               class="CopyButton__CopyButton__button___52Bc0 a11y__focus-outline--default___2hwb1"
                               type="button"
@@ -447,9 +445,7 @@ Object {
                           data-test-id="cf-ui-copy-button"
                           id="copyButton"
                         >
-                          <span
-                            class="Tooltip__Tooltip__target-wrapper___Mtw42"
-                          >
+                          <span>
                             <button
                               class="CopyButton__CopyButton__button___52Bc0 a11y__focus-outline--default___2hwb1"
                               type="button"
@@ -615,9 +611,7 @@ Object {
                           data-test-id="cf-ui-copy-button"
                           id="copyButton"
                         >
-                          <span
-                            class="Tooltip__Tooltip__target-wrapper___Mtw42"
-                          >
+                          <span>
                             <button
                               class="CopyButton__CopyButton__button___52Bc0 a11y__focus-outline--default___2hwb1"
                               type="button"
@@ -785,9 +779,6 @@ Object {
         </div>
       </div>
     </div>
-    <div />
-    <div />
-    <div />
   </body>,
   "container": .emotion-3 button {
   height: 20px;
@@ -1064,9 +1055,7 @@ Object {
                         data-test-id="cf-ui-copy-button"
                         id="copyButton"
                       >
-                        <span
-                          class="Tooltip__Tooltip__target-wrapper___Mtw42"
-                        >
+                        <span>
                           <button
                             class="CopyButton__CopyButton__button___52Bc0 a11y__focus-outline--default___2hwb1"
                             type="button"
@@ -1232,9 +1221,7 @@ Object {
                         data-test-id="cf-ui-copy-button"
                         id="copyButton"
                       >
-                        <span
-                          class="Tooltip__Tooltip__target-wrapper___Mtw42"
-                        >
+                        <span>
                           <button
                             class="CopyButton__CopyButton__button___52Bc0 a11y__focus-outline--default___2hwb1"
                             type="button"
@@ -1400,9 +1387,7 @@ Object {
                         data-test-id="cf-ui-copy-button"
                         id="copyButton"
                       >
-                        <span
-                          class="Tooltip__Tooltip__target-wrapper___Mtw42"
-                        >
+                        <span>
                           <button
                             class="CopyButton__CopyButton__button___52Bc0 a11y__focus-outline--default___2hwb1"
                             type="button"
