@@ -97,7 +97,7 @@ describe('ScheduleTooltip', () => {
 
     expect(wrapper.exists('Tooltip')).toBe(true);
     expect(wrapper.exists('Icon')).toBe(true);
-    wrapper.find('Icon').simulate('mouseOver');
+    wrapper.find('Tooltip').simulate('mouseEnter');
     const tooltipContent = wrapper.find('ScheduleTooltipContent');
     expect(tooltipContent.exists()).toBe(true);
     expect(tooltipContent.prop('job')).toEqual(jobs[jobs.length - 1]);
@@ -130,7 +130,7 @@ describe('ScheduleTooltip', () => {
 
     expect(wrapper.exists('Tooltip')).toBe(true);
     expect(wrapper.exists('Icon')).toBe(true);
-    wrapper.find('Icon').simulate('mouseOver');
+    wrapper.find('Tooltip').simulate('mouseEnter');
     const tooltipContent = wrapper.find('ScheduleTooltipContent');
     expect(tooltipContent.exists()).toBe(true);
     expect(tooltipContent.prop('job')).toEqual(job);
