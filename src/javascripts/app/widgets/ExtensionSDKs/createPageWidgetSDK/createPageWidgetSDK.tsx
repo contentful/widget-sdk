@@ -49,7 +49,12 @@ export const createPageWidgetSDK = ({
     is: (location: string) => location === WidgetLocation.PAGE,
   };
 
-  const navigatorApi = createNavigatorApi({ spaceContext, widgetNamespace, widgetId });
+  const navigatorApi = createNavigatorApi({
+    spaceContext,
+    widgetNamespace,
+    widgetId,
+    isOnPageLocation: true,
+  });
 
   const base = createBaseExtensionSdk({
     parametersApi: parameters,
