@@ -1,4 +1,3 @@
-import { getModule } from 'core/NgRegistry';
 import React from 'react';
 import pluralize from 'pluralize';
 import PropTypes from 'prop-types';
@@ -8,9 +7,8 @@ import ReloadNotification from 'app/common/ReloadNotification';
 import { getInstance } from 'access_control/RoleRepository';
 import { jumpToRole } from '../utils/jumpToRole';
 
-export function createRoleRemover(listHandler, role) {
-  const spaceContext = getModule('spaceContext');
-  const roleRepo = getInstance(spaceContext.space);
+export function createRoleRemover(listHandler, role, space) {
+  const roleRepo = getInstance(space);
 
   const uniqueModalKey = 'remove-role-' + Date.now();
   return ModalLauncher.open(({ isShown, onClose }) => {

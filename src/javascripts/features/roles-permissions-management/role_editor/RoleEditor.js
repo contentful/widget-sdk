@@ -42,6 +42,7 @@ import { createRoleRemover } from '../components/RoleRemover';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { entitySelector } from 'features/entity-search';
 import * as EntityFieldValueHelpers from 'classes/EntityFieldValueHelpers';
+import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 const PermissionPropType = PropTypes.shape({
   manage: PropTypes.bool,
@@ -116,6 +117,8 @@ export class RoleEditor extends React.Component {
     hasContentTagsFeature: PropTypes.bool.isRequired,
     hasEnvironmentAliasesEnabled: PropTypes.bool.isRequired,
   };
+
+  static contextType = SpaceEnvContext;
 
   constructor(props) {
     super(props);
@@ -207,10 +210,11 @@ export class RoleEditor extends React.Component {
 
   delete = () => {
     const { role } = this.props;
+    const { currentSpace } = this.context;
 
     const listHandler = RoleListHandler.create();
     listHandler.reset().then(() => {
-      createRoleRemover(listHandler, role).then((removed) => {
+      createRoleRemover(listHandler, role, currentSpace).then((removed) => {
         if (removed) {
           this.setDirty(false);
           Navigator.go({
