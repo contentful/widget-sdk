@@ -1,4 +1,3 @@
-import { EditorContext, LocaleData, OtDoc, Widget } from 'app/entity_editor/EntityField/types';
 import { createFieldLocaleController } from 'app/entity_editor/fieldLocaleController';
 import * as K from 'core/utils/kefir';
 import { set, isEqual } from 'lodash';
@@ -12,35 +11,33 @@ interface FieldLocaleListener {
 
 export type FieldLocaleLookup = Record<string, Record<string, FieldLocaleListener>>;
 
-export const makeFieldLocaleListeners = (
-  controls: Widget[],
-  editorContext: EditorContext,
-  localeData: LocaleData,
-  otDoc: OtDoc
-) => {
+export const makeFieldLocaleListeners = (controls: any[], $scope: any) => {
   const lookup: FieldLocaleLookup = {};
   const flat: FieldLocaleListener[] = [];
 
-  controls.forEach((widget) => {
-    const locales = widget.field.localized ? localeData.privateLocales : [localeData.defaultLocale];
+  controls.forEach((widget: any) => {
+    const locales = widget.field.localized
+      ? $scope.localeData.privateLocales
+      : [$scope.localeData.defaultLocale];
 
-    locales.forEach((locale) => {
+    locales.forEach((locale: any) => {
       const fieldId = widget.fieldId;
       const localeCode = locale.code;
 
       const { access$, errors$ } = createFieldLocaleController({
         widget,
         locale,
-        otDoc,
-        editorContext,
+        otDoc: $scope.otDoc,
+        editorContext: $scope.editorContext,
       });
 
       const fieldLocale: FieldLocaleListener = {
         fieldId,
         localeCode,
-        onDisabledChanged: (cb) => K.onValue(access$, (access: any) => cb(!!access.disabled)),
+        onDisabledChanged: (cb) =>
+          K.onValueScope($scope, access$, (access: any) => cb(!!access.disabled)),
         onSchemaErrorsChanged: (cb) =>
-          K.onValue(errors$.skipDuplicates(isEqual), (errors = []) => cb(errors)),
+          K.onValueScope($scope, errors$.skipDuplicates(isEqual), (errors = []) => cb(errors)),
       };
 
       set(lookup, [fieldId, localeCode], fieldLocale);

@@ -63,7 +63,6 @@ const renderComponent = (extraProps = {}) => {
     entityInfo: { contentType: { id: 'CT-1' } },
     fieldControls: {
       form: [],
-      all: [],
     },
     customEditor: null,
     openDoc: jest.fn().mockReturnValue(otDoc),

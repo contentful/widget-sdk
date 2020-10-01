@@ -23,7 +23,6 @@ export type Field = {
   type: string;
   disabled?: boolean;
   required: boolean;
-  localized?: boolean;
   items?: {
     type: string;
   };

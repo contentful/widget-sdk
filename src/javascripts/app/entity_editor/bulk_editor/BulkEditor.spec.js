@@ -76,7 +76,6 @@ const renderComponent = (extraReferenceContext = {}, ids = ['id1', 'id2']) => {
     entityInfo: { contentType: { id: 'CT-1' } },
     fieldControls: {
       form: [],
-      all: [],
     },
     customEditor: null,
     openDoc: jest.fn().mockReturnValue(otDoc),

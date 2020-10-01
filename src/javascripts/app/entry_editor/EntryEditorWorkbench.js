@@ -27,7 +27,6 @@ import { hasLinks } from './EntryReferences';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { styles } from './styles';
 import { createExtensionBridgeAdapter } from 'widgets/bridges/createExtensionBridgeAdapter';
-import { filterWidgets } from './formWidgetsController';
 
 const trackTabOpen = (tab) =>
   track('editor_workbench:tab_open', {
@@ -50,6 +49,8 @@ const EntryEditorWorkbench = (props) => {
     sidebarToggleProps,
     preferences,
     fields,
+    widgets,
+    fieldLocaleListeners,
   } = props;
   const { state: referencesState } = useContext(ReferencesContext);
   const { processingAction, references, selectedEntities } = referencesState;
@@ -64,13 +65,6 @@ const EntryEditorWorkbench = (props) => {
 
   const [selectedTab, setSelectedTab] = useState(defaultTabKey);
   const [tabVisible, setTabVisible] = useState({ entryReferences: false });
-
-  const { widgets, shouldDisplayNoLocalizedFieldsAdvice } = filterWidgets(
-    localeData,
-    editorContext,
-    editorData.fieldControls.form,
-    preferences.showDisabledFields
-  );
 
   useEffect(() => {
     async function getFeatureFlagVariation() {
@@ -109,20 +103,18 @@ const EntryEditorWorkbench = (props) => {
             tabVisible,
             selectedTab,
             onRootReferenceCardClick,
-            widgets,
-            shouldDisplayNoLocalizedFieldsAdvice,
             ...props,
           });
         } else {
           const createSdk = createExtensionBridgeAdapter({
             editorData,
-            editorContext,
             entityInfo,
             otDoc,
             localeData,
             preferences,
             fields,
             widgets,
+            fieldLocaleListeners,
           });
 
           return <CustomEditorExtensionRenderer extension={currentTab} createSdk={createSdk} />;
@@ -274,7 +266,12 @@ EntryEditorWorkbench.propTypes = {
   preferences: PropTypes.object,
   statusNotificationProps: PropTypes.object,
   widgets: PropTypes.array,
+  fieldLocaleListeners: PropTypes.shape({
+    flat: PropTypes.array,
+    lookup: PropTypes.object,
+  }),
   getOtDoc: PropTypes.func,
+  shouldDisplayNoLocalizedFieldsAdvice: PropTypes.bool,
   noLocalizedFieldsAdviceProps: PropTypes.object,
   sidebarToggleProps: PropTypes.object,
   entrySidebarProps: PropTypes.object,

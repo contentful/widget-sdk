@@ -173,12 +173,7 @@ export const BulkEntityEditor = ({
     entityInfo,
     localeData,
     makeFieldLocaleListeners: (currentScope) =>
-      makeFieldLocaleListeners(
-        fieldControls.all,
-        currentScope.editorContext,
-        currentScope.localeData,
-        currentScope.otDoc
-      ),
+      makeFieldLocaleListeners(fieldControls.form.concat(fieldControls.sidebar), currentScope),
     otDoc: doc,
   };
 
@@ -220,11 +215,9 @@ export const BulkEntityEditor = ({
             ) : (
               <AngularComponent
                 with$Apply
-                template={`
-                  <div ng-init="fieldLocaleListeners = makeFieldLocaleListeners(this)">
-                    <cf-entity-field ng-repeat="widget in widgets track by widget.fieldId"></cf-entity-field>
-                  </div>
-                `}
+                template={`<div ng-init="fieldLocaleListeners = makeFieldLocaleListeners(this)">
+                  <cf-entity-field ng-repeat="widget in widgets track by widget.fieldId"></cf-entity-field>
+                </div>`}
                 scope={scope}
               />
             )}

@@ -22,6 +22,7 @@ import { initStateController } from './stateController';
  * @returns {Promise<void>}
  */
 export default async function create($scope, editorData, preferences) {
+  const $controller = getModule('$controller');
   const spaceContext = getModule('spaceContext');
   const $rootScope = getModule('$rootScope');
 
@@ -106,6 +107,11 @@ export default async function create($scope, editorData, preferences) {
     entityLabel: 'asset',
     shouldHideLocaleErrors: defaultLocaleIsFocused,
     emitter: $scope.emitter,
+  });
+
+  $controller('FormWidgetsController', {
+    $scope,
+    controls: editorData.fieldControls,
   });
 
   function defaultLocaleIsFocused() {
