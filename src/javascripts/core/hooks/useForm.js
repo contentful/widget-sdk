@@ -1,6 +1,7 @@
 import { get } from 'lodash';
 import { useReducer, useEffect } from 'react';
 import { createImmerReducer } from 'core/utils/createImmerReducer';
+import { useRefMounted } from './useRefMounted';
 
 export const FORM_ERROR = '__FORM_ERROR__';
 
@@ -135,7 +136,7 @@ const formReducer = createImmerReducer({
   },
 });
 
-async function handleSubmit(state, dispatch) {
+async function handleSubmit(state, dispatch, mountRef) {
   const { submitting } = state.form;
 
   if (!submitting) {
@@ -233,12 +234,14 @@ async function handleSubmit(state, dispatch) {
       }
     }
 
-    dispatch({
-      type: 'SET_FORM_PENDING',
-      payload: {
-        isPending: false,
-      },
-    });
+    // If the form was unmounted by the time we get here, then we can safely ignore this dispatch
+    mountRef.current &&
+      dispatch({
+        type: 'SET_FORM_PENDING',
+        payload: {
+          isPending: false,
+        },
+      });
   }
 }
 
@@ -364,10 +367,11 @@ async function handleSubmit(state, dispatch) {
  */
 export function useForm(initialValues) {
   const [state, dispatch] = useReducer(formReducer, initialValues, initializeFn);
+  const mountRef = useRefMounted();
 
   // This effect handles if the form has been submitted
   useEffect(() => {
-    handleSubmit(state, dispatch);
+    handleSubmit(state, dispatch, mountRef);
 
     // We only want to trigger this effect when the form has been submited, but need the whole state
     // to process the form. If we pass the whole state here there is significant input lag in the form.
