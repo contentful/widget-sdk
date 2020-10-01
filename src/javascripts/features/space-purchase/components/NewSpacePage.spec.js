@@ -36,6 +36,11 @@ const mockRefId = 'ref_1234';
 const mockSessionId = '987654321';
 const mockSessionMetadata = { organizationId: mockOrganization.sys.id, sessionId: mockSessionId };
 
+jest.mock('services/TokenStore', () => ({
+  ...jest.requireActual('services/TokenStore'),
+  refresh: jest.fn().mockResolvedValue(),
+}));
+
 jest.mock('../utils/analyticsTracking', () => ({
   trackEvent: jest.fn().mockReturnValue(true),
   EVENTS: jest.requireActual('../utils/analyticsTracking').EVENTS,

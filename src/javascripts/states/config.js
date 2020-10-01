@@ -116,12 +116,24 @@ export default function register() {
           '$rootScope',
           function ($scope, $stateParams, $rootScope) {
             let accessChecker;
+            let offToken;
 
             $scope.component = component;
 
             import(/* webpackMode: "eager" */ 'access_control/AccessChecker').then(
               (i) => (accessChecker = i)
             );
+
+            Promise.all([
+              import(/* webpackMode: "eager" */ 'core/utils/kefir'),
+              import(/* webpackMode: "eager" */ 'services/TokenStore'),
+            ]).then(([K, TokenStore]) => {
+              offToken = K.onValue(TokenStore.tokenUpdate$, () => {
+                $scope.props.navVersion = $scope.props.navVersion + 1;
+
+                $scope.$applyAsync();
+              });
+            });
 
             // force nav component rerender on every navigation change
             const unsubscribe = $rootScope.$on('$stateChangeSuccess', () => {
@@ -146,6 +158,8 @@ export default function register() {
               if (typeof unsubscribe === 'function') {
                 unsubscribe();
               }
+
+              offToken && offToken();
             });
 
             $scope.$applyAsync();

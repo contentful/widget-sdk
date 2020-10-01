@@ -63,14 +63,28 @@ describe('Token store service', () => {
   });
 
   describe('#refresh()', () => {
-    it('fetches token returns promise of token refresh', async function () {
+    beforeEach(function () {
       this.fetchWithAuth.resolves({
         sys: { createdBy: this.user },
         spaces: [this.spaces[0]],
       });
+    });
 
+    it('fetches token returns promise of token refresh', async function () {
       await this.tokenStore.refresh();
       sinon.assert.calledOnce(this.fetchWithAuth);
+    });
+
+    it('emits on tokenUpdate$', async function () {
+      let updated = false;
+
+      const offValue = K.onValue(this.tokenStore.tokenUpdate$, () => (updated = true));
+
+      await this.tokenStore.refresh();
+
+      expect(updated).toBe(true);
+
+      offValue();
     });
   });
 

@@ -20,6 +20,7 @@ import { Organization as OrganizationPropType } from 'app/OrganizationSettings/P
 import { useAsync } from 'core/hooks/useAsync';
 import * as logger from 'services/logger';
 import createResourceService from 'services/ResourceService';
+import * as TokenStore from 'services/TokenStore';
 
 import { Breadcrumb } from './Breadcrumb';
 import { NewSpaceFAQ } from './NewSpaceFAQ';
@@ -212,9 +213,12 @@ export const NewSpacePage = ({
     try {
       await createBillingDetails(organization.sys.id, newBillingDetails);
       await setDefaultPaymentMethod(organization.sys.id, refId);
-      paymentMethod = await getDefaultPaymentMethod(organization.sys.id);
+      [paymentMethod] = await Promise.all([
+        getDefaultPaymentMethod(organization.sys.id),
+        TokenStore.refresh(),
+      ]);
     } catch (error) {
-      logger.logError('SpaceWizardError', {
+      logger.logError('SpacePurchaseError', {
         data: {
           error,
           organizationId: organization.sys.id,
