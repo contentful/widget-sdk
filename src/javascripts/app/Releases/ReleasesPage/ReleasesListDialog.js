@@ -3,11 +3,12 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { Notification, TextLink } from '@contentful/forma-36-react-components';
-import { getModule } from 'core/NgRegistry';
 import StateLink from 'app/common/StateLink';
 import { createRelease } from '../releasesService';
 import { ReleasesDialog, CreateReleaseForm } from '../ReleasesDialog';
 import { ReleasesProvider } from '../ReleasesWidget/ReleasesContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 
 const styles = {
   contentStyle: css({
@@ -23,7 +24,8 @@ const styles = {
 };
 
 export function ReleaseDetailStateLink({ releaseId }) {
-  const isMasterEnvironment = getModule('spaceContext').isMasterEnvironment();
+  const { currentSpace } = useSpaceEnvContext();
+  const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
   const path = `spaces.detail.${isMasterEnvironment ? '' : 'environment.'}releases.detail`;
   return (
     <StateLink path={path} params={{ releaseId }}>
