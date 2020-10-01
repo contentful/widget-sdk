@@ -104,7 +104,7 @@ export const NewSpaceRoute = ({ orgId }) => {
         organization={data.organization}
         templatesList={data.templatesList}
         productRatePlans={data.productRatePlans}
-        canCreateCommunityPlan={data.canCreateCommunityPlan}
+        canCreateCommunityPlan={data.canCreateFreeSpace}
         pageContent={data.pageContent}
       />
     </>
