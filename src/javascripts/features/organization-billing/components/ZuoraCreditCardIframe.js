@@ -7,6 +7,7 @@ import {
   SelectField,
   Option,
   Button,
+  Notification,
 } from '@contentful/forma-36-react-components';
 import { Grid, GridItem } from '@contentful/forma-36-react-components/dist/alpha';
 
@@ -83,15 +84,57 @@ export function ZuoraCreditCardIframe({ organizationId, countryCode, onSuccess, 
     const { Zuora, hostedPaymentParams } = data;
 
     // Gets rendered into #zuora_payment below
-    Zuora.render(hostedPaymentParams, {}, (response) => {
-      const { success } = response;
+    Zuora.renderWithErrorHandler(
+      hostedPaymentParams,
+      {},
+      (response) => {
+        const { success } = response;
 
-      if (success) {
-        onSuccess(response);
-      } else {
-        onError && onError(response);
+        if (success) {
+          onSuccess(response);
+        } else {
+          onError && onError(response);
+        }
+      },
+      (key, code) => {
+        const emptyRequiredField = code === '001';
+        let message;
+
+        switch (key) {
+          case 'creditCardHolderName': {
+            message = emptyRequiredField ? 'Name required' : 'Name invalid';
+            break;
+          }
+
+          case 'creditCardNumber': {
+            message = emptyRequiredField ? 'Card number required' : 'Card number invalid';
+            break;
+          }
+
+          case 'cardSecurityCode': {
+            message = emptyRequiredField ? 'CVV required' : 'CVV invalid';
+            break;
+          }
+
+          case 'creditCardExpirationMonth': {
+            message = emptyRequiredField ? 'Expiration date required' : 'Expiration date invalid';
+            break;
+          }
+
+          case 'error': {
+            // Async API error
+            Notification.error(
+              'Something was wrong with your credit card. Check your input and try again.'
+            );
+            break;
+          }
+        }
+
+        if (message) {
+          Zuora.sendErrorMessageToHpm(key, message);
+        }
       }
-    });
+    );
 
     Zuora.runAfterRender(() => {
       setLoading(false);
