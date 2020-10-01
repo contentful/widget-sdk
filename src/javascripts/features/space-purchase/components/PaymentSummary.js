@@ -63,7 +63,7 @@ export const PaymentSummary = ({ selectedPlan, grandTotal = 0, isReceipt = false
             <Price value={isReceipt ? grandTotal : selectedPlan.price} />
           </ListItem>
         </List>
-        <Paragraph>This price is not inclusive of sales tax, if applicable.</Paragraph>
+        <Paragraph>This price does not include sales tax, if applicable.</Paragraph>
       </Typography>
     </Card>
   );
