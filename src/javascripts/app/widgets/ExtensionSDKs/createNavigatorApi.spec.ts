@@ -1,7 +1,7 @@
 import { createNavigatorApi, createReadOnlyNavigatorApi } from './createNavigatorApi';
 import { onSlideInNavigation } from 'navigation/SlideInNavigator/index';
 import { WidgetNamespace } from '@contentful/widget-renderer';
-import makePageExtensionHandlers from 'widgets/bridges/makePageExtensionHandlers';
+import * as Navigator from 'states/Navigator';
 import {
   makeExtensionNavigationHandlers,
   makeExtensionBulkNavigationHandlers,
@@ -9,8 +9,8 @@ import {
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 
 jest.mock('navigation/SlideInNavigator/index');
+jest.mock('states/Navigator');
 jest.mock('widgets/bridges/makeExtensionNavigationHandlers');
-jest.mock('widgets/bridges/makePageExtensionHandlers');
 
 describe('createNavigatorApi', () => {
   let navigatorApi;
@@ -43,14 +43,24 @@ describe('createNavigatorApi', () => {
   });
 
   describe('when creating non-read-only API', () => {
-    const spaceContext = {};
-    const widgetNamespace = WidgetNamespace.APP;
-    const widgetId = 'my_widget';
-    const buildApi = () =>
+    const DEFAULT_WIDGET_NAMESPACE = WidgetNamespace.APP;
+    const DEFAULT_WIDGET_ID = 'my_widget';
+    const DEFAULT_ENVIRONMENT_ID = 'envid';
+    const DEFAULT_SPACE_ID = 'spaceid';
+    const spaceContext = {
+      getId: () => DEFAULT_SPACE_ID,
+      getEnvironmentId: () => DEFAULT_ENVIRONMENT_ID,
+      isMasterEnvironment: () => true,
+    };
+    const buildApi = ({
+      widgetNamespace = DEFAULT_WIDGET_NAMESPACE,
+      isOnPageLocation = false,
+    } = {}) =>
       createNavigatorApi({
         spaceContext,
         widgetNamespace,
-        widgetId,
+        widgetId: DEFAULT_WIDGET_ID,
+        isOnPageLocation,
       });
 
     describe('openEntry', () => {
@@ -116,33 +126,172 @@ describe('createNavigatorApi', () => {
     });
 
     describe('openPageExtension', () => {
-      it('calls navigateToPage with the correct arguments', () => {
-        const navigateToPage = jest.fn();
-        (makePageExtensionHandlers as jest.Mock).mockReturnValueOnce(navigateToPage);
-
-        const navigatorApi = buildApi();
-        navigatorApi.openPageExtension({ path: 'somewhere', id: 'something' });
-
-        expect(navigateToPage).toHaveBeenCalledWith({
-          path: 'somewhere',
-          id: 'something',
-          type: WidgetNamespace.EXTENSION,
+      it('navigates and does not notify when on page location and same context', async () => {
+        const navigatorApi = buildApi({
+          widgetNamespace: WidgetNamespace.EXTENSION,
+          isOnPageLocation: true,
         });
+        const path = '/somewhere';
+        await navigatorApi.openPageExtension({ path, id: DEFAULT_WIDGET_ID });
+
+        expect(Navigator.go).toHaveBeenCalledWith({
+          options: {
+            notify: false,
+          },
+          params: {
+            environmentId: DEFAULT_ENVIRONMENT_ID,
+            spaceId: DEFAULT_SPACE_ID,
+            extensionId: DEFAULT_WIDGET_ID,
+            path,
+          },
+          path: ['spaces', 'detail', 'pageExtensions'],
+        });
+      });
+      it('navigates notifies when on page location and different context', async () => {
+        const navigatorApi = buildApi({
+          widgetNamespace: WidgetNamespace.EXTENSION,
+          isOnPageLocation: true,
+        });
+        const path = '/somewhere';
+        const id = 'something';
+        await navigatorApi.openPageExtension({ path, id });
+
+        expect(Navigator.go).toHaveBeenCalledWith({
+          options: {
+            notify: true,
+          },
+          params: {
+            environmentId: DEFAULT_ENVIRONMENT_ID,
+            spaceId: DEFAULT_SPACE_ID,
+            extensionId: id,
+            path,
+          },
+          path: ['spaces', 'detail', 'pageExtensions'],
+        });
+      });
+      it('navigates notifies when not on page location', async () => {
+        const navigatorApi = buildApi({
+          widgetNamespace: WidgetNamespace.EXTENSION,
+          isOnPageLocation: false,
+        });
+        const path = '/somewhere';
+        const id = 'something';
+        await navigatorApi.openPageExtension({ path, id });
+
+        expect(Navigator.go).toHaveBeenCalledWith({
+          options: {
+            notify: true,
+          },
+          params: {
+            environmentId: DEFAULT_ENVIRONMENT_ID,
+            spaceId: DEFAULT_SPACE_ID,
+            extensionId: id,
+            path,
+          },
+          path: ['spaces', 'detail', 'pageExtensions'],
+        });
+      });
+      it('navigates to self if id is not passed', async () => {
+        const navigatorApi = buildApi({
+          widgetNamespace: WidgetNamespace.EXTENSION,
+          isOnPageLocation: false,
+        });
+        await navigatorApi.openPageExtension();
+
+        expect(Navigator.go).toHaveBeenCalledWith({
+          options: {
+            notify: true,
+          },
+          params: {
+            environmentId: DEFAULT_ENVIRONMENT_ID,
+            spaceId: DEFAULT_SPACE_ID,
+            extensionId: DEFAULT_WIDGET_ID,
+            path: '',
+          },
+          path: ['spaces', 'detail', 'pageExtensions'],
+        });
+      });
+      it('does not navigate with wrong path', async () => {
+        const navigatorApi = buildApi({
+          widgetNamespace: WidgetNamespace.EXTENSION,
+          isOnPageLocation: false,
+        });
+        const path = 'wrong';
+        await expect(navigatorApi.openPageExtension({ path })).rejects.toThrowError();
+
+        expect(Navigator.go).not.toHaveBeenCalled();
+      });
+      it('does not navigate to different type', async () => {
+        const navigatorApi = buildApi({
+          widgetNamespace: WidgetNamespace.APP,
+          isOnPageLocation: false,
+        });
+        await expect(navigatorApi.openPageExtension()).rejects.toThrowError();
+
+        expect(Navigator.go).not.toHaveBeenCalled();
       });
     });
 
     describe('openCurrentAppPage', () => {
-      it('calls navigateToPage with the correct arguments', () => {
-        const navigateToPage = jest.fn();
-        (makePageExtensionHandlers as jest.Mock).mockReturnValueOnce(navigateToPage);
-
-        const navigatorApi = buildApi();
-        navigatorApi.openCurrentAppPage({ path: 'somewhere' });
-
-        expect(navigateToPage).toHaveBeenCalledWith({
-          path: 'somewhere',
-          type: WidgetNamespace.APP,
+      it('navigates and does not notify when on page location and same context', async () => {
+        const navigatorApi = buildApi({
+          widgetNamespace: WidgetNamespace.APP,
+          isOnPageLocation: true,
         });
+        await navigatorApi.openCurrentAppPage({});
+
+        expect(Navigator.go).toHaveBeenCalledWith({
+          options: {
+            notify: false,
+          },
+          params: {
+            environmentId: DEFAULT_ENVIRONMENT_ID,
+            spaceId: DEFAULT_SPACE_ID,
+            appId: DEFAULT_WIDGET_ID,
+            path: '',
+          },
+          path: ['spaces', 'detail', 'apps', 'page'],
+        });
+      });
+      it('navigates notifies when not on page location', async () => {
+        const navigatorApi = buildApi({
+          widgetNamespace: WidgetNamespace.APP,
+          isOnPageLocation: false,
+        });
+        const path = '/somewhere';
+        await navigatorApi.openCurrentAppPage({ path });
+
+        expect(Navigator.go).toHaveBeenCalledWith({
+          options: {
+            notify: true,
+          },
+          params: {
+            environmentId: DEFAULT_ENVIRONMENT_ID,
+            spaceId: DEFAULT_SPACE_ID,
+            appId: DEFAULT_WIDGET_ID,
+            path,
+          },
+          path: ['spaces', 'detail', 'apps', 'page'],
+        });
+      });
+      it('does not navigate with wrong path', async () => {
+        const navigatorApi = buildApi({
+          widgetNamespace: WidgetNamespace.APP,
+          isOnPageLocation: false,
+        });
+        const path = 'wrong';
+        await expect(navigatorApi.openCurrentAppPage({ path })).rejects.toThrowError();
+
+        expect(Navigator.go).not.toHaveBeenCalled();
+      });
+      it('does not navigate to different type', async () => {
+        const navigatorApi = buildApi({
+          widgetNamespace: WidgetNamespace.EXTENSION,
+          isOnPageLocation: false,
+        });
+        await expect(navigatorApi.openCurrentAppPage()).rejects.toThrowError();
+
+        expect(Navigator.go).not.toHaveBeenCalled();
       });
     });
 
