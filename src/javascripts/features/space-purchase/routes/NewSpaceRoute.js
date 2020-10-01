@@ -8,9 +8,13 @@ import { NewSpacePage } from '../components/NewSpacePage';
 import { useAsync } from 'core/hooks/useAsync';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
-import StateRedirect from 'app/common/StateRedirect';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
-import { getBasePlan, getRatePlans } from 'account/pricing/PricingDataProvider';
+import {
+  getRatePlans,
+  getBasePlan,
+  isSelfServicePlan,
+  isFreePlan,
+} from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import createResourceService from 'services/ResourceService';
 import { resourceIncludedLimitReached } from 'utils/ResourceUtils';
@@ -19,6 +23,9 @@ import { trackEvent, EVENTS } from '../utils/analyticsTracking';
 import { alnum } from 'utils/Random';
 import * as TokenStore from 'services/TokenStore';
 import { getOrganizationMembership } from 'services/OrganizationRoles';
+import { go } from 'states/Navigator';
+import ErrorState from 'app/common/ErrorState';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 
 function createEventMetadataFromData(data) {
   const { organizationMembership, basePlan, canCreateFreeSpace } = data;
@@ -38,33 +45,47 @@ const initialFetch = (orgId) => async () => {
     newPurchaseFlowIsEnabled,
     templatesList,
     productRatePlans,
+    basePlan,
     freeSpaceResource,
     pageContent,
-    basePlan,
     organizationMembership,
   ] = await Promise.all([
     TokenStore.getOrganization(orgId),
     getVariation(FLAGS.NEW_PURCHASE_FLOW),
     getTemplatesList(),
     getRatePlans(endpoint),
+    getBasePlan(endpoint),
     createResourceService(orgId, 'organization').get('free_space'),
     fetchSpacePurchaseContent(),
-    getBasePlan(endpoint),
     getOrganizationMembership(orgId),
   ]);
+
+  const canAccess =
+    newPurchaseFlowIsEnabled &&
+    isOwnerOrAdmin(organization) &&
+    (isSelfServicePlan(basePlan) || isFreePlan(basePlan));
+
+  if (!canAccess) {
+    go({
+      path: ['account', 'organizations', 'subscription_new', 'overview'],
+      params: { orgId },
+    });
+
+    return;
+  }
 
   // User can't create another community plan if they've already reached their limit
   const canCreateFreeSpace = !resourceIncludedLimitReached(freeSpaceResource);
 
   return {
     organization,
-    newPurchaseFlowIsEnabled,
     templatesList,
     productRatePlans,
     canCreateFreeSpace,
     pageContent,
     basePlan,
     organizationMembership,
+    newPurchaseFlowIsEnabled,
   };
 };
 
@@ -74,7 +95,7 @@ export const NewSpaceRoute = ({ orgId }) => {
     organizationId: orgId,
   };
 
-  const { isLoading, data } = useAsync(useCallback(initialFetch(orgId), []));
+  const { isLoading, data, error } = useAsync(useCallback(initialFetch(orgId), []));
 
   useEffect(() => {
     if (!isLoading && data?.newPurchaseFlowIsEnabled) {
@@ -84,16 +105,16 @@ export const NewSpaceRoute = ({ orgId }) => {
     }
   }, [isLoading, sessionMetadata, data]);
 
-  if (isLoading) {
+  if (error) {
+    return <ErrorState />;
+  }
+
+  if (isLoading || !data) {
     return (
       <EmptyStateContainer>
         <Spinner testId="space-route-loading" size="large" />
       </EmptyStateContainer>
     );
-  }
-
-  if (data && !data.newPurchaseFlowIsEnabled) {
-    return <StateRedirect path="home" />;
   }
 
   return (
