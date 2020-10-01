@@ -233,7 +233,7 @@ describe('NewSpacePage', () => {
         'cf-ui-select'
       );
 
-      userEvent.selectOptions(countrySelect, ['DE']);
+      userEvent.selectOptions(countrySelect, ['Germany']);
 
       userEvent.click(screen.getByTestId('billing-details.submit'));
 
