@@ -71,7 +71,7 @@ export default class SpaceNavigationBar extends React.Component {
       getOrgFeature(organizationId, 'teams'),
       getCurrentSpaceFeature(FEATURES.PC_CONTENT_TAGS),
       getVariation(FLAGS.PLATFORM_TRIAL_COMM, {
-        spaceId: currentSpaceId,
+        organizationId,
       }),
     ]);
 

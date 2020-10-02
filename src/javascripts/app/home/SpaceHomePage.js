@@ -58,9 +58,9 @@ const fetchData = (
   setLoading(true);
 
   const hasTeamsEnabled = await getOrgFeature(currentSpaceId, 'teams', false);
-  getVariation(FLAGS.PLATFORM_TRIAL_COMM, { spaceId: currentSpaceId }).then((flag) =>
-    setIsTrialCommEnabled(flag)
-  );
+  getVariation(FLAGS.PLATFORM_TRIAL_COMM, {
+    organizationId: getOrganizationId(currentSpace),
+  }).then((flag) => setIsTrialCommEnabled(flag));
 
   if (!currentSpaceId || !isSpaceAdmin) {
     setLoading(false);

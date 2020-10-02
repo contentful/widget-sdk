@@ -59,7 +59,9 @@ export const SpaceTrialWidget = ({ spaceId }) => {
   const [isTrialCommEnabled, setIsTrialCommEnabled] = useState(false);
 
   const fetchSpace = useCallback(async () => {
-    const isTrialCommEnabled = await getVariation(FLAGS.PLATFORM_TRIAL_COMM, { spaceId });
+    const space = await getSpace(spaceId);
+    const organizationId = space.organization.sys.id;
+    const isTrialCommEnabled = await getVariation(FLAGS.PLATFORM_TRIAL_COMM, { organizationId });
 
     if (!isTrialCommEnabled) {
       return;
