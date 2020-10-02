@@ -8,7 +8,6 @@ export const ENTERPRISE = 'Enterprise';
 const ENTERPRISE_TRIAL = 'Enterprise Trial';
 export const ENTERPRISE_HIGH_DEMAND = 'Enterprise High Demand';
 export const FREE = 'Free';
-export const ENTERPRISE_TRIAL_BASE_PLAN_NAME = 'Professional Trial';
 export const PARTNER_PLATFORM_BASE_PLAN_NAME = 'Partner Platform';
 export const TRIAL_SPACE_FREE_SPACE_PLAN_NAME = 'Trial Space';
 export const POC_FREE_SPACE_PLAN_NAME = 'Proof of Concept';
@@ -33,10 +32,6 @@ export function isFreePlan(plan) {
 
 export function isHighDemandEnterprisePlan(plan) {
   return plan.customerType === ENTERPRISE_HIGH_DEMAND;
-}
-
-export function isEnterpriseTrialPlan(plan) {
-  return plan.name === ENTERPRISE_TRIAL_BASE_PLAN_NAME;
 }
 
 export function isPartnerPlan(plan) {

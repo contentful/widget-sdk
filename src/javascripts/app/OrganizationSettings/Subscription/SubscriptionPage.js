@@ -35,11 +35,7 @@ import BasePlan from './BasePlan';
 import UsersForPlan from './UsersForPlan';
 import SpacePlans from './SpacePlans';
 import { NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
-import {
-  isEnterprisePlan,
-  isFreePlan,
-  isEnterpriseTrialPlan,
-} from 'account/pricing/PricingDataProvider';
+import { isEnterprisePlan, isFreePlan } from 'account/pricing/PricingDataProvider';
 import ContactUsButton from 'ui/Components/ContactUsButton';
 import { PlatformTrialInfo, isOrganizationOnTrial, SpacesListForMembers } from 'features/trials';
 
@@ -188,15 +184,12 @@ export default function SubscriptionPage({
     };
   };
 
-  const isMemberOfTrialOrg =
-    isPlatformTrialCommEnabled &&
-    !isOwnerOrAdmin(organization) &&
-    isOrganizationOnTrial(organization);
-
   const enterprisePlan = basePlan && isEnterprisePlan(basePlan);
   const isOrgBillable = organization && organization.isBillable;
   const isOrgOwner = isOwner(organization);
   const isOrgOwnerOrAdmin = isOwnerOrAdmin(organization);
+  const isOrgOnTrial = isPlatformTrialCommEnabled && isOrganizationOnTrial(organization);
+  const isNotAdminOrOwnerOfTrialOrg = isOrgOnTrial && !isOrgOwnerOrAdmin;
 
   const showPayingOnDemandCopy = isOrgBillable && !enterprisePlan;
   const showNonPayingOrgCopy = !isOrgBillable && isOrgOwner;
@@ -224,7 +217,7 @@ export default function SubscriptionPage({
           <div className={styles.trialSection}>
             {isPlatformTrialCommEnabled && <PlatformTrialInfo organization={organization} />}
           </div>
-          {!isMemberOfTrialOrg && (
+          {!isNotAdminOrOwnerOfTrialOrg && (
             <div className={styles.leftSection}>
               {initialLoad ? (
                 <SkeletonContainer svgHeight={117}>
@@ -243,12 +236,12 @@ export default function SubscriptionPage({
                   unitPrice={usersMeta && usersMeta.unitPrice}
                   hardLimit={usersMeta && usersMeta.hardLimit}
                   isFreePlan={isFreePlan(basePlan)}
-                  isOnEnterpriseTrial={isEnterpriseTrialPlan(basePlan)}
+                  isOnEnterpriseTrial={isOrgOnTrial}
                 />
               )}
             </div>
           )}
-          {!isMemberOfTrialOrg && (
+          {!isNotAdminOrOwnerOfTrialOrg && (
             <div className={styles.rightSection}>
               {initialLoad ? (
                 <SkeletonContainer svgHeight={117}>
@@ -266,7 +259,7 @@ export default function SubscriptionPage({
                       unitPrice={usersMeta && usersMeta.unitPrice}
                       hardLimit={usersMeta && usersMeta.hardLimit}
                       isFreePlan={isFreePlan(basePlan)}
-                      isOnEnterpriseTrial={isEnterpriseTrialPlan(basePlan)}
+                      isOnEnterpriseTrial={isOrgOnTrial}
                     />
                   )}
                   {showPayingOnDemandCopy && <PayingOnDemandOrgCopy grandTotal={grandTotal} />}
@@ -281,7 +274,7 @@ export default function SubscriptionPage({
             </div>
           )}
           <div className={cx(styles.spacesSection, styles.marginTop)}>
-            {isMemberOfTrialOrg ? (
+            {isNotAdminOrOwnerOfTrialOrg ? (
               <SpacesListForMembers spaces={memberAccessibleSpaces} />
             ) : (
               <SpacePlans
