@@ -143,7 +143,11 @@ export const useSearchContext = ({
 
     const value = tryGetValue(filterField);
     setSearch('');
-    const updatedFilters = [...searchFilters, [filter.queryKey, filter.operators[0][0], value]];
+
+    const updatedFilters = [
+      ...(searchFilters || []),
+      [filter.queryKey, filter.operators[0][0], value],
+    ];
     assignView({ ...view, searchFilters: updatedFilters }, onUpdate);
     setIsSuggestionOpen(false);
   };
