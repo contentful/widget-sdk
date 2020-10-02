@@ -130,7 +130,7 @@ const SpaceHomePage = ({ spaceTemplateCreated, orgOwnerOrAdmin, orgId }) => {
   const isSupportEnabled = isOrganizationBillable(currentSpace);
   const isModernStack = isDevOnboardingSpace(currentSpaceName, currentSpaceId);
   const isTEA = isTEASpace(spaceContext.publishedCTs.items$, currentSpace);
-  const isTrialSpace = isTrialCommEnabled && isSpaceOnTrial(currentSpace.data);
+  const isTrialSpace = currentSpace && isTrialCommEnabled && isSpaceOnTrial(currentSpace.data);
   const spaceHomeProps = {
     orgId: organizationId,
     orgName: organizationName,
