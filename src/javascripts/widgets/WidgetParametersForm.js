@@ -1,7 +1,7 @@
 /* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { get } from 'lodash';
+import { get, isObject } from 'lodash';
 import { TextField, SelectField, Option } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -105,12 +105,20 @@ const WidgetParameterControl = ({ definition, value, isMissing, onChange }) => {
         className="f36-margin-bottom--l">
         <Option value="">{get(definition, ['labels', 'empty']) || 'Select an option'}</Option>
         {definition.options.map((o) => {
-          const value = Object.keys(o)[0];
-          return (
-            <Option key={value} value={value}>
-              {o[value]}
-            </Option>
-          );
+          if (isObject(o)) {
+            const value = Object.keys(o)[0];
+            return (
+              <Option key={value} value={value}>
+                {o[value]}
+              </Option>
+            );
+          } else {
+            return (
+              <Option key={o} value={o}>
+                {o}
+              </Option>
+            );
+          }
         })}
       </SelectField>
     );

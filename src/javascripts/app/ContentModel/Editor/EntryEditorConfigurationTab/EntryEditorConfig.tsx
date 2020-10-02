@@ -10,6 +10,7 @@ import {
   CustomWidget,
   DefaultWidget,
   SavedConfigItem,
+  ConfigurationItem,
 } from 'app/ContentModel/Editor/WidgetsConfiguration/interfaces';
 import { useAsync } from 'core/hooks';
 import { WidgetNamespace, WidgetLocation } from '@contentful/widget-renderer';
@@ -52,10 +53,12 @@ const isWidgetBuiltIn = (widget: { widgetNamespace: WidgetNamespace }) =>
 
 const enrichWidgetData = (defaultWidgets: Widget[], customWidgets: Widget[]) => (
   item: SavedConfigItem
-) =>
-  isWidgetBuiltIn(item)
+) => ({
+  ...item,
+  ...(isWidgetBuiltIn(item)
     ? defaultWidgets.find((widget) => isSameWidget(item, widget))
-    : customWidgets.find((widget) => isSameWidget(item, widget));
+    : customWidgets.find((widget) => isSameWidget(item, widget))),
+});
 
 function createStateFromConfiguration(
   configuration: SavedConfigItem[],
@@ -76,7 +79,7 @@ function createStateFromConfiguration(
     .filter(isWidgetEnabled)
     .map(enrichWidgetData(defaultWidgets, customWidgets))
     .concat(unusedDefaultEditors)
-    .filter((item) => !!item) as Widget[];
+    .filter((item) => !!item) as ConfigurationItem[];
 
   return {
     items: items,
@@ -90,6 +93,8 @@ function convertInternalStateToConfiguration(
   initialItems: Widget[]
 ): SavedConfigItem[] {
   if (isEqual(state.items, initialItems)) {
+    // initialItems are the default widgets. We don't save the state in that
+    // case
     return [];
   }
 
