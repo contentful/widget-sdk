@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { Grid, NavigationIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { Workbench } from '@contentful/forma-36-react-components';
 
-import { calculateTotalPrice } from 'utils/SubscriptionUtils';
 import {
   createBillingDetails,
   setDefaultPaymentMethod,
@@ -12,14 +11,11 @@ import {
   getBillingDetails,
   getCountryCodeFromName,
 } from 'features/organization-billing';
-import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { getPlansWithSpaces } from 'account/pricing/PricingDataProvider';
 import { isFreeProductPlan } from 'account/pricing/PricingDataProvider';
 import { isOwner as isOrgOwner } from 'services/OrganizationRoles';
 import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes';
 import { useAsync } from 'core/hooks/useAsync';
 import * as logger from 'services/logger';
-import createResourceService from 'services/ResourceService';
 import * as TokenStore from 'services/TokenStore';
 
 import { Breadcrumb } from './Breadcrumb';
@@ -67,8 +63,7 @@ const initialFetch = (
   organization,
   setPaymentMethodInfo,
   setBillingDetails,
-  setIsLoadingBillingDetails,
-  setMonthlyTotal
+  setIsLoadingBillingDetails
 ) => async () => {
   if (organization.isBillable) {
     setIsLoadingBillingDetails(true);
@@ -82,19 +77,6 @@ const initialFetch = (
     setBillingDetails(billingDetails);
     setIsLoadingBillingDetails(false);
   }
-
-  const organizationEndpoint = createOrganizationEndpoint(organization.sys.id);
-  const resources = createResourceService(organization.sys.id, 'organization');
-
-  const plans = await getPlansWithSpaces(organizationEndpoint);
-  const membershipsResource = await resources.get('organization_membership');
-
-  const totalPrice = calculateTotalPrice({
-    allPlans: plans.items,
-    numMemberships: membershipsResource.usage,
-  });
-
-  setMonthlyTotal(totalPrice);
 };
 
 export const NewSpacePage = ({
@@ -112,7 +94,6 @@ export const NewSpacePage = ({
   const [billingDetails, setBillingDetails] = useState({});
   const [paymentMethodInfo, setPaymentMethodInfo] = useState({});
   const [isLoadingBillingDetails, setIsLoadingBillingDetails] = useState(false);
-  const [monthlyTotal, setMonthlyTotal] = useState(0);
 
   const hasBillingInformation = organization.isBillable;
   const canCreatePaidSpace = isOrgOwner(organization) || hasBillingInformation;
@@ -123,8 +104,7 @@ export const NewSpacePage = ({
         organization,
         setPaymentMethodInfo,
         setBillingDetails,
-        setIsLoadingBillingDetails,
-        setMonthlyTotal
+        setIsLoadingBillingDetails
       ),
       []
     )
@@ -325,7 +305,6 @@ export const NewSpacePage = ({
               organizationId={organization.sys.id}
               sessionMetadata={sessionMetadata}
               selectedTemplate={selectedTemplate}
-              monthlyTotal={monthlyTotal}
             />
           </Grid>
         );

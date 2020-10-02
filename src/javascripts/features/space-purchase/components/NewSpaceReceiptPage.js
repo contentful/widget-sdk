@@ -81,7 +81,6 @@ export const NewSpaceReceiptPage = ({
   sessionMetadata,
   organizationId,
   selectedTemplate,
-  monthlyTotal,
 }) => {
   const { isLoading, data } = useAsync(
     useCallback(
@@ -126,11 +125,7 @@ export const NewSpaceReceiptPage = ({
           className={styles.button}>
           Take me to {spaceName}
         </Button>
-        <PaymentSummary
-          selectedPlan={selectedPlan}
-          grandTotal={monthlyTotal + selectedPlan.price}
-          isReceipt
-        />
+        <PaymentSummary selectedPlan={selectedPlan} isReceipt />
       </Flex>
     </section>
   );
@@ -142,5 +137,4 @@ NewSpaceReceiptPage.propTypes = {
   selectedTemplate: PropTypes.object,
   organizationId: PropTypes.string.isRequired,
   sessionMetadata: PropTypes.object.isRequired,
-  monthlyTotal: PropTypes.number,
 };

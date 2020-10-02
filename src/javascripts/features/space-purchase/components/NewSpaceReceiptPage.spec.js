@@ -9,7 +9,6 @@ import { createSpace, createSpaceWithTemplate } from '../utils/spaceCreation';
 import { trackEvent, EVENTS } from '../utils/analyticsTracking';
 
 const spaceName = 'My Space';
-const monthlyTotal = 2000;
 const mockSelectedPlan = { name: 'Medium', price: 123 };
 const mockOrganization = FakeFactory.Organization();
 const mockCreatedSpace = FakeFactory.Space();
@@ -129,15 +128,6 @@ describe('NewSpaceReceiptPage', () => {
         params: { spaceId: mockCreatedSpace.sys.id },
       });
     });
-  });
-
-  it('should show the correct monthly total of all subscriptions', async () => {
-    const parsedPrice = parseInt(monthlyTotal + mockSelectedPlan.price, 10).toLocaleString('en-US');
-
-    build({ monthlyTotal });
-
-    const monthlyTotalMsg = screen.getByTestId('order-summary.selected-plan-price');
-    expect(monthlyTotalMsg.textContent).toEqual(`Monthly total $${parsedPrice}`);
   });
 });
 
