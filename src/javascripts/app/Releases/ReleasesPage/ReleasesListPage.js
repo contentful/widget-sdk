@@ -134,10 +134,10 @@ class ReleasesListPage extends Component {
       .then((fetchedReleases) => {
         const releases = {
           [TabTypes.UpcomingReleases]: fetchedReleases.items.filter(
-            (release) => !release.sys.lastActionApplied
+            (release) => !release.sys.lastAction
           ),
           [TabTypes.PastReleases]: fetchedReleases.items.filter(
-            (release) => release.sys.lastActionApplied
+            (release) => release.sys.lastAction
           ),
         };
 

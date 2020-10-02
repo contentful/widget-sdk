@@ -1,12 +1,13 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { cx } from 'emotion';
+import pluralize from 'pluralize';
 import { Workbench, Subheading } from '@contentful/forma-36-react-components';
 import { FilterPill } from 'features/entity-search';
 import { FilterValueInputs as ValueInput } from 'core/services/ContentQuery';
 import { ReleasesContext } from '../ReleasesWidget/ReleasesContext';
 import ReleasesEmptyStateMessage from '../ReleasesPage/ReleasesEmptyStateMessage';
-import { VIEW_LABELS, pluralize } from './utils';
+import { VIEW_LABELS } from './utils';
 import ListView from './ListView';
 import CardView from './CardView';
 import { styles } from './styles';
@@ -26,13 +27,21 @@ const ReleaseWorkBenchContent = ({
     },
   } = useContext(ReleasesContext);
 
+  const entityStats = [];
+  if (entries.length) {
+    entityStats.push(pluralize('entry', entries.length, true));
+  }
+  if (assets.length) {
+    entityStats.push(pluralize('asset', assets.length, true));
+  }
+
   return (
     <Workbench.Content
       className={cx(styles.mainContent, {
         [styles.mainContentListView]: activeLayout('list'),
       })}>
       {!isLoading && !release.entities.items.length ? (
-        <ReleasesEmptyStateMessage testId="detail" title="No entities in this release" />
+        <ReleasesEmptyStateMessage testId="detail" title="No content in this release" />
       ) : (
         <>
           <div
@@ -42,8 +51,7 @@ const ReleaseWorkBenchContent = ({
             <div className={styles.header}>
               <Subheading element="h2">Content</Subheading>
               <span className={cx({ [styles.hideDisplay]: activeLayout('list') })}>
-                {entries.length} {pluralize(entries.length, 'entry')} and {assets.length}{' '}
-                {pluralize(assets.length, 'asset')}
+                {entityStats.length ? entityStats.join(', ') : 'No content'}
               </span>
             </div>
             <FilterPill

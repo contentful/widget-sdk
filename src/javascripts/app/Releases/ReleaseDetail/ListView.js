@@ -1,12 +1,13 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { css, cx } from 'emotion';
+import pluralize from 'pluralize';
 import tokens from '@contentful/forma-36-tokens';
 import { Tabs, Tab, TabPanel, Icon, Tooltip } from '@contentful/forma-36-react-components';
 import { ReleasesContext } from '../ReleasesWidget/ReleasesContext';
 import ReleaseTable from './ReleaseTable';
 import ReleasesEmptyStateMessage from '../ReleasesPage/ReleasesEmptyStateMessage';
-import { displayedFields, pluralize, erroredEntityType } from './utils';
+import { displayedFields, erroredEntityType } from './utils';
 import { SET_RELEASE_LIST_SELECTED_TAB } from '../state/actions';
 
 const styles = {
@@ -52,10 +53,12 @@ const ListView = ({ defaultLocale, handleEntityDelete }) => {
   const renderTabIcon = (entityType) => {
     const erroredEntityTypeLength = erroredEntityType(entityType, validationErrors).length;
     if (erroredEntityTypeLength) {
-      const toolTipText = `${erroredEntityTypeLength} ${pluralize(
+      const toolTipText = `${pluralize(
+        entityType.toLowerCase(),
         erroredEntityTypeLength,
-        `${entityType.toLowerCase()} has`
-      )} validation errors`;
+        true
+      )} ${pluralize('has', erroredEntityTypeLength)} validation errors`;
+
       return (
         <Tooltip
           content={toolTipText}

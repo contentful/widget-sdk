@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css, cx } from 'emotion';
+import pluralize from 'pluralize';
 import tokens from '@contentful/forma-36-tokens';
 import { List, Subheading } from '@contentful/forma-36-react-components';
 import AssetEntityCard from './AssetEntityCard';
 import EntryEntityCard from './EntryEntityCard';
-import { pluralize } from './utils';
 
 const styles = {
   timeline: css({
@@ -51,9 +51,7 @@ const EntityTimeline = ({
     <div className={styles.timeline}>
       <div className={styles.timelineHeader}>
         <Subheading element="h2">{contentType}</Subheading>
-        <span>
-          {groupedEntitiesLength} {pluralize(groupedEntitiesLength, 'item')}
-        </span>
+        <span>{pluralize('item', groupedEntitiesLength, true)}</span>
       </div>
       <List
         testId="release-entity-timeline"
