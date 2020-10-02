@@ -71,16 +71,13 @@ export const NewSpaceConfirmationPage = ({
         element="h2"
         testId="space-selection.heading"
         className={styles.sectionHeading}>
-        Confirm payment to finish!{' '}
-        <span role="img" aria-label="Checkered flag">
-          🏁
-        </span>
+        Complete your payment
       </Heading>
       <Grid className={styles.grid} columns="60% auto" rows={1} columnGap="spacing2Xl">
         <Card className={styles.card}>
           <Flex justifyContent="space-between">
             <Subheading className={styles.cardTitle} element="h3">
-              Billing details{' '}
+              Saved billing details{' '}
               <span role="img" aria-label="Credit card">
                 💳
               </span>
@@ -121,7 +118,7 @@ export const NewSpaceConfirmationPage = ({
               onClick={onConfirm}
               testId="confirm-purchase-button"
               buttonType="positive">
-              Confirm payment
+              Complete payment
             </Button>
           </Flex>
         </Card>
