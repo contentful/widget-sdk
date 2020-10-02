@@ -12,10 +12,7 @@ import {
 } from '@contentful/forma-36-react-components';
 
 import SpacePlanRow from '../SpacePlanRow';
-import {
-  TRIAL_SPACE_FREE_SPACE_PLAN_NAME,
-  POC_FREE_SPACE_PLAN_NAME,
-} from 'account/pricing/PricingDataProvider';
+import { TRIAL_SPACE_FREE_SPACE_PLAN_NAME } from 'account/pricing/PricingDataProvider';
 
 const styles = {
   nameCol: css({
@@ -26,6 +23,12 @@ const styles = {
   }),
   createdByCol: css({
     width: '20%',
+  }),
+  createdOnCol: css({
+    width: 'auto',
+  }),
+  expiresAtCol: css({
+    width: 'auto',
   }),
   actionsCol: css({
     width: '60px',
@@ -43,10 +46,7 @@ export function SpacePlansTable({
   isTrialCommEnabled,
 }) {
   const showExpiresAtColumn =
-    isTrialCommEnabled &&
-    plans.some((plan) =>
-      [TRIAL_SPACE_FREE_SPACE_PLAN_NAME, POC_FREE_SPACE_PLAN_NAME].includes(plan.name)
-    );
+    isTrialCommEnabled && plans.some((plan) => plan.name === TRIAL_SPACE_FREE_SPACE_PLAN_NAME);
   return (
     <Table testId="subscription-page.table">
       <colgroup>
@@ -54,6 +54,7 @@ export function SpacePlansTable({
         <col className={styles.typeCol} />
         <col className={styles.createdByCol} />
         <col className={styles.createdOnCol} />
+        {showExpiresAtColumn && <col className={styles.expiresAtCol} />}
         <col className={styles.actionsCol} />
       </colgroup>
       <TableHead>

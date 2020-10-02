@@ -56,7 +56,6 @@ export const TrialTag = () => {
 
     const isPlatformTrialCommEnabled = await getVariation(FLAGS.PLATFORM_TRIAL_COMM, {
       organizationId: orgId,
-      spaceId: space?.sys.id,
     });
 
     if (isPlatformTrialCommEnabled) {

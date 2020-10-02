@@ -4,7 +4,11 @@ import _ from 'lodash';
 
 import { get, isUndefined } from 'lodash';
 
-import { getPlansWithSpaces, getRatePlans } from 'account/pricing/PricingDataProvider';
+import {
+  getPlansWithSpaces,
+  getRatePlans,
+  TRIAL_SPACE_FREE_SPACE_PLAN_NAME,
+} from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import createResourceService from 'services/ResourceService';
 import { getSpaces } from 'services/TokenStore';
@@ -13,7 +17,7 @@ import { calcUsersMeta, calculateTotalPrice } from 'utils/SubscriptionUtils';
 import { getOrganization } from 'services/TokenStore';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { isSelfServicePlan } from 'account/pricing/PricingDataProvider';
-import { isOrganizationOnTrial } from 'features/trials';
+import { isOrganizationOnTrial, TRIAL_SPACE_DATE_INTRODUCED_AT } from 'features/trials';
 
 import DocumentTitle from 'components/shared/DocumentTitle';
 
@@ -38,7 +42,11 @@ const getSpacePlans = (plans, accessibleSpaces) =>
           (space) => space.sys.id === plan.space.sys.id
         );
         plan.space.isAccessible = !!accessibleSpace;
-        plan.space.expiresAt = accessibleSpace && accessibleSpace.trialPeriodEndsAt;
+        if (plan.name === TRIAL_SPACE_FREE_SPACE_PLAN_NAME) {
+          plan.space.expiresAt = accessibleSpace && accessibleSpace.trialPeriodEndsAt;
+          plan.space.createdAsPOC =
+            new Date(plan.space.sys.createdAt) < new Date(TRIAL_SPACE_DATE_INTRODUCED_AT);
+        }
       }
       // plan price is undefined for a free space
       // later on in the code, we use mathematical ops (like comparison)

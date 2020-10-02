@@ -50,8 +50,7 @@ export default function Plan(props) {
             testId="space-plan-tooltip"
             content={
               <>
-                You can have up to <Pluralized text="Trial Space" count={limit} />. If you have any
-                POC spaces, they are also included in this count.
+                You can have up to <Pluralized text="Trial Space" count={limit} />.
               </>
             }>
             <Icon

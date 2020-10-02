@@ -1,16 +1,13 @@
 import React from 'react';
-import { render, fireEvent, within, waitFor } from '@testing-library/react';
+import { render, fireEvent, within } from '@testing-library/react';
 import * as echarts from 'echarts';
-import { getVariation } from 'LaunchDarkly';
 import { track } from 'analytics/Analytics';
 import { SpacesTabs } from './SpacesTabs';
 
 import { UsageStateContext, UsageDispatchContext } from '../hooks/usageContext';
 import { sum } from 'lodash';
 
-jest.mock('echarts', () => ({
-  init: jest.fn(),
-}));
+jest.mock('echarts', () => ({ init: jest.fn() }));
 
 const ORG_USAGE = [147, 651];
 const CMA_USAGE = [48, 46];
@@ -18,10 +15,15 @@ const CMA_USAGE_DELETED_SPACE = [48, 56];
 const CDA_USAGE = [48, 66];
 
 const defaultData = {
-  spaceNames: { cmaSpace: 'CMASpace', cdaSpace: 'CDASpace' },
+  spaceNames: {
+    cmaSpace: 'CMASpace',
+    cdaSpace: 'CDASpace',
+  },
   periodDates: ['1 Feb', '2 Feb'],
   periodicUsage: {
-    org: { usage: ORG_USAGE },
+    org: {
+      usage: ORG_USAGE,
+    },
     apis: {
       cma: {
         items: [
@@ -64,7 +66,7 @@ const defaultData = {
     },
   },
   spaceTypeLookup: {
-    cmaSpace: 'Proof of Concept',
+    cmaSpace: 'Trial Space',
     cdaSpace: 'Trial Space',
   },
   selectedSpacesTab: 'cma',
@@ -83,7 +85,7 @@ const MockPovider = (data) => {
   const { dispatch, children } = data;
   return (
     <UsageStateContext.Provider value={data}>
-      <UsageDispatchContext.Provider value={dispatch}>{children}</UsageDispatchContext.Provider>
+      <UsageDispatchContext.Provider value={dispatch}> {children}</UsageDispatchContext.Provider>
     </UsageStateContext.Provider>
   );
 };
@@ -93,11 +95,6 @@ MockPovider.defaultProps = {
 };
 
 describe('SpacesTabs', () => {
-  it('renders correctly', () => {
-    const container = renderComp(defaultData);
-    expect(container).toMatchSnapshot();
-  });
-
   describe('by default', () => {
     it('renders CMA data correctly', () => {
       const { getByTestId, getByText } = renderComp(defaultData);
@@ -120,30 +117,12 @@ describe('SpacesTabs', () => {
         expect(getByText('Deleted space')).toBeInTheDocument();
       });
 
-      it('shows one space as trial space if the feature flag is on', async () => {
-        getVariation.mockClear().mockResolvedValueOnce(true);
+      it('renders a bar chart', () => {
+        const { getByTestId } = renderComp(defaultData);
+        expect(getByTestId('api-usage-bar-chart')).toBeInTheDocument();
 
-        const { getAllByText, getAllByTestId } = renderComp(defaultData);
-        const tags = await waitFor(() => getAllByText('Trial Space'));
-        expect(tags).toHaveLength(1);
-        fireEvent.mouseOver(tags[0]);
-        expect(getAllByTestId('api-usage-table-poc-tooltip')).toHaveLength(1);
+        expect(echarts.init).toHaveBeenCalledTimes(1);
       });
-
-      it('shows one space as PoC if the feature flag is off', () => {
-        const { getAllByText, getAllByTestId } = renderComp(defaultData);
-        const tags = getAllByText('POC');
-        expect(tags).toHaveLength(1);
-        fireEvent.mouseOver(tags[0]);
-        expect(getAllByTestId('api-usage-table-poc-tooltip')).toHaveLength(1);
-      });
-    });
-
-    it('renders a bar chart', () => {
-      const { getByTestId } = renderComp(defaultData);
-      expect(getByTestId('api-usage-bar-chart')).toBeInTheDocument();
-
-      expect(echarts.init).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -180,10 +159,9 @@ describe('SpacesTabs', () => {
         selectedSpacesTab: 'cda',
       };
 
-      const { queryByText, queryByTestId } = renderComp(updatedData);
+      const { queryByText } = renderComp(updatedData);
 
       expect(queryByText('Trial Space')).toBeVisible();
-      expect(queryByTestId('api-usage-table-poc-tooltip')).toBeNull();
     });
 
     it('renders a bar chart and initializes once', () => {
@@ -202,7 +180,10 @@ describe('SpacesTabs', () => {
       fireEvent.click(getByText('CDA Requests'));
 
       expect(track).toHaveBeenCalledTimes(1);
-      expect(track).toHaveBeenCalledWith('usage:space_tab_selected', { new: 'cda', old: 'cma' });
+      expect(track).toHaveBeenCalledWith('usage:space_tab_selected', {
+        new: 'cda',
+        old: 'cma',
+      });
     });
   });
 
@@ -212,10 +193,16 @@ describe('SpacesTabs', () => {
       period: [],
       periodicUsage: {
         apis: {
-          cma: { items: [] },
-          cda: { items: [] },
+          cma: {
+            items: [],
+          },
+          cda: {
+            items: [],
+          },
         },
-        org: { usage: [] },
+        org: {
+          usage: [],
+        },
       },
       spaceTypeLookup: {},
       selectedSpacesTab: 'cma',
@@ -248,7 +235,10 @@ describe('SpacesTabs', () => {
 
   describe('loading state', () => {
     it('shows skeleton rows', () => {
-      const { getAllByTestId } = renderComp({ ...defaultData, isLoading: true });
+      const { getAllByTestId } = renderComp({
+        ...defaultData,
+        isLoading: true,
+      });
 
       getAllByTestId('cf-ui-skeleton-form').forEach((ele) => {
         expect(ele).toBeVisible();

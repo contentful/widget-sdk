@@ -6,10 +6,6 @@ import { getEnabledFeatures } from 'utils/SubscriptionUtils';
 
 import * as fake from 'test/helpers/fakeFactory';
 import * as FORMA_CONSTANTS from 'test/helpers/Forma36Constants';
-import {
-  POC_FREE_SPACE_PLAN_NAME,
-  TRIAL_SPACE_FREE_SPACE_PLAN_NAME,
-} from 'account/pricing/PricingDataProvider';
 
 const MOCK_USER_NAME = 'John Doe';
 const SPACE_NAME = 'SPACE_NAME';
@@ -23,11 +19,6 @@ const mockPlan = {
   planType: 'free_space',
   space: fake.Space(),
   price: 1337,
-};
-
-const mockPOCPlan = {
-  ...mockPlan,
-  name: POC_FREE_SPACE_PLAN_NAME,
 };
 
 jest.mock('states/Navigator', () => ({
@@ -71,20 +62,6 @@ describe('Space Plan Row', () => {
       await build();
       expect(screen.getByTestId('subscription-page.spaces-list.space-type')).toHaveTextContent(
         SPACE_NAME
-      );
-    });
-
-    it('should rename POC space type as trial space if the feature flag is on', async () => {
-      await build({ isTrialCommEnabled: true, plan: mockPOCPlan });
-      expect(screen.getByTestId('subscription-page.spaces-list.space-type')).toHaveTextContent(
-        TRIAL_SPACE_FREE_SPACE_PLAN_NAME
-      );
-    });
-
-    it('should not rename POC space type as trial space if the feature flag is off', async () => {
-      await build({ isTrialCommEnabled: false, plan: mockPOCPlan });
-      expect(screen.getByTestId('subscription-page.spaces-list.space-type')).toHaveTextContent(
-        POC_FREE_SPACE_PLAN_NAME
       );
     });
 
@@ -181,27 +158,27 @@ describe('Space Plan Row', () => {
       expect(screen.getByTestId('subscription-page.spaces-list.features-tooltip')).toBeDefined();
     });
 
-    it('shows the PoC tooltip when the space type is POC and feature flag is on', async () => {
-      await build({ plan: mockPOCPlan, isTrialCommEnabled: true });
+    it('shows the PoC tooltip when the space is an existing POC and feature flag is on', async () => {
+      await build({ isTrialCommEnabled: true, createdAsPOC: true });
 
       fireEvent.mouseOver(screen.getByTestId('subscription-page.spaces-list.poc-tooltip-trigger'));
 
       expect(screen.getByTestId('subscription-page.spaces-list.poc-tooltip')).toBeDefined();
     });
 
-    it('does not show the feature tooltip when the space type is POC and feature flag is off', async () => {
+    it('does not show the feature tooltip when the PoC tooltip is present', async () => {
       getEnabledFeatures.mockImplementation(() => {
         return ['FakeFeature1'];
       });
-      await build({ plan: mockPOCPlan, isTrialCommEnabled: true });
+      await build({ isTrialCommEnabled: true, createdAsPOC: true });
 
       expect(() => {
         screen.getByTestId('subscription-page.spaces-list.features-tooltip-trigger');
       }).toThrow();
     });
 
-    it('does not show the poc tooltip when the space type is POC and feature flag is off', async () => {
-      await build({ plan: mockPOCPlan, isTrialCommEnabled: false });
+    it('does not show the PoC tooltip when the feature flag is off', async () => {
+      await build({ isTrialCommEnabled: false });
       expect(() => {
         screen.getByTestId('subscription-page.spaces-list.poc-tooltip-trigger');
       }).toThrow();
@@ -348,6 +325,10 @@ function build(input = {}) {
 
   if (options.showExpiresAtColumn) {
     options.plan.space.expiresAt = '2020-01-01';
+  }
+
+  if (options.createdAsPOC) {
+    options.plan.space.createdAsPOC = true;
   }
 
   render(

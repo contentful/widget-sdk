@@ -1,9 +1,6 @@
 import { get, uniqueId, uniq, reject } from 'lodash';
 import { getAllSpaces, getUsersByIds } from 'access_control/OrganizationMembershipRepository';
 import { SUBSCRIPTIONS_API, getAlphaHeader } from 'alphaHeaders.js';
-import { getSpaces } from 'services/TokenStore';
-import { getVariation, FLAGS } from 'LaunchDarkly';
-import { isTrialSpaceType, TRIAL_SPACE_DATE_INTRODUCED_AT } from 'features/trials';
 const alphaHeader = getAlphaHeader(SUBSCRIPTIONS_API);
 
 export const SELF_SERVICE = 'Self-service';
@@ -106,42 +103,13 @@ export function getBasePlan(endpoint) {
  */
 
 export async function getPlansWithSpaces(endpoint) {
-  const [
-    ratePlans,
-    subscriptions,
-    spaces,
-    accessibleSpaces,
-    isTrialCommFeatureFlagEnabled,
-  ] = await Promise.all([
+  const [ratePlans, subscriptions, spaces] = await Promise.all([
     getRatePlans(endpoint),
     getSubscriptionPlans(endpoint),
     getAllSpaces(endpoint),
-    getSpaces(),
-    getVariation(FLAGS.PLATFORM_TRIAL_COMM),
   ]);
 
-  const freeSpaceRatePlan = (space) => {
-    const plan = ratePlans.find((plan) => plan.productPlanType === 'free_space');
-    if (isTrialCommFeatureFlagEnabled && plan.name === TRIAL_SPACE_FREE_SPACE_PLAN_NAME) {
-      // if we have access to the space, we can differenciate the PoC and Trial Space
-      // and return the corresponding free space rate plan.
-      // if the space is not accessible, use the createdAt date to differenciate the PoC and Trial Space
-      // TODO: remove the workaround when all the POCs are migrated to Trial Spaces
-      const accessibleSpace = accessibleSpaces.find(({ sys }) => sys.id === space.sys.id);
-      const isExistingPOCSpace = accessibleSpace
-        ? !isTrialSpaceType(accessibleSpace)
-        : new Date(space.sys.createdAt) < new Date(TRIAL_SPACE_DATE_INTRODUCED_AT);
-
-      if (isExistingPOCSpace) {
-        return {
-          ...plan,
-          name: POC_FREE_SPACE_PLAN_NAME,
-        };
-      }
-    }
-
-    return plan;
-  };
+  const freeSpaceRatePlan = ratePlans.find((plan) => plan.productPlanType === 'free_space');
 
   const spaceSubscriptions = subscriptions.items.filter(
     (subscription) => subscription.planType === 'space'
@@ -166,7 +134,7 @@ export async function getPlansWithSpaces(endpoint) {
       ...freeSpaces.map((space) => ({
         sys: { id: uniqueId('free-space-plan-') },
         gatekeeperKey: space.sys.id,
-        name: freeSpaceRatePlan(space).name,
+        name: freeSpaceRatePlan.name,
         planType: 'free_space',
         space,
       })),

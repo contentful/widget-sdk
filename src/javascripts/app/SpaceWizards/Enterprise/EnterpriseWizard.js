@@ -207,17 +207,16 @@ export default function EnterpriseWizard(props) {
                   {reachedLimit && !isFeatureDisabled && (
                     <Note testId="reached-limit-note">
                       You’ve created {limit}{' '}
-                      {isTrialCommFeatureFlagEnabled
-                        ? 'Trial/Proof of Concept Spaces'
-                        : 'proof of concept spaces'}
-                      . Delete an existing one or talk to us if you need more.
+                      {isTrialCommFeatureFlagEnabled ? 'Trial Spaces' : 'proof of concept spaces'}.
+                      Delete an existing one or talk to us if you need more.
                     </Note>
                   )}
                   {isFeatureDisabled && (
                     <Note testId="poc-not-enabled-note">
-                      You can’t create proof of concept spaces because they’re not a part of your
-                      enterprise deal with Contentful. Get in touch with us if you want to create
-                      new spaces.
+                      You can’t create{' '}
+                      {isTrialCommFeatureFlagEnabled ? 'Trial Spaces' : 'proof of concept spaces'}{' '}
+                      because they’re not a part of your enterprise deal with Contentful. Get in
+                      touch with us if you want to create new spaces.
                     </Note>
                   )}
                 </>

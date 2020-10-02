@@ -54,7 +54,7 @@ exports[`SpaceTrialWidget renders correctly when the space is on trial 1`] = `
           class="ListItem__ListItem___3S9Oc emotion-0"
           data-test-id="cf-ui-list-item"
         >
-          You can access it for 30 days
+          You can access it for a limited time
         </li>
         <li
           class="ListItem__ListItem___3S9Oc emotion-0"

@@ -1,21 +1,8 @@
 import { getAllSpaces, getUsersByIds } from 'access_control/OrganizationMembershipRepository';
 import * as PricingDataProvider from './PricingDataProvider';
 import { getVariation } from 'LaunchDarkly';
-import { getSpaces } from 'services/TokenStore';
 
 const mockEnterpriseBasePlan = {
-  items: [
-    {
-      productPlanType: 'base',
-      customerType: 'Enterprise',
-    },
-    {
-      productPlanType: 'free_space',
-      name: 'Proof of concept',
-    },
-  ],
-};
-const mockEnterpriseBasePlanWithTrialSpace = {
   items: [
     {
       productPlanType: 'base',
@@ -72,11 +59,6 @@ const mockSpacesData = [
   },
 ];
 const mockUsersData = [{ sys: { id: 'user1' }, email: 'user1@foo.com' }];
-const mockTrialSpace = {
-  trialPeriodEndsAt: '2020-10-10',
-  sys: { id: 'free_space' },
-};
-const mockPOCSpace = { sys: { id: 'free_space' } };
 
 const mockEndpoint = jest.fn();
 
@@ -130,31 +112,8 @@ describe('account/pricing/PricingDataProvider', () => {
 
     it('names free plans correctly for different customer types', async () => {
       await expectFreePlanName('Performance 1x', mockHighDemandBasePlan);
-      await expectFreePlanName('Proof of concept', mockEnterpriseBasePlan);
+      await expectFreePlanName('Trial Space', mockEnterpriseBasePlan);
       await expectFreePlanName('Free', mockSelfServiceBasePlan);
-    });
-
-    it('names free plans correctly for different customer types when feature flag is on', async () => {
-      getVariation.mockResolvedValueOnce(true);
-      getSpaces.mockResolvedValue([mockTrialSpace]);
-
-      await expectFreePlanName('Trial Space', mockEnterpriseBasePlanWithTrialSpace);
-      await expectFreePlanName('Free', mockSelfServiceBasePlan);
-      await expectFreePlanName('Performance 1x', mockHighDemandBasePlan);
-    });
-
-    it('identifies the PoC space and name it correctly', async () => {
-      getVariation.mockResolvedValueOnce(true);
-      getSpaces.mockResolvedValue([mockPOCSpace]);
-
-      await expectFreePlanName('Proof of Concept', mockEnterpriseBasePlanWithTrialSpace);
-    });
-
-    it('uses the createdAt date to differenciate the PoC and Trial Space if the space is not accessible', async () => {
-      getVariation.mockResolvedValueOnce(true);
-      getSpaces.mockResolvedValueOnce([]); // the trial info not available via TokenStore
-
-      await expectFreePlanName('Proof of Concept', mockEnterpriseBasePlanWithTrialSpace);
     });
   });
 

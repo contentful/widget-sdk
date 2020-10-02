@@ -84,7 +84,7 @@ export const SpaceTrialWidget = ({ spaceId }) => {
           <ListItem className={styles.listItem}>
             A Trial Space is a sandbox to try out new projects, free of charge
           </ListItem>
-          <ListItem className={styles.listItem}>You can access it for 30 days</ListItem>
+          <ListItem className={styles.listItem}>You can access it for a limited time</ListItem>
           <ListItem className={styles.listItem}>
             Since itʼs a sandbox, content here is not public
           </ListItem>
