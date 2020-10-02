@@ -289,6 +289,7 @@ exports[`AppDetailsModal should match the snapshot 1`] = `
         class="emotion-7"
       >
         <a
+          arialabel="Documentation"
           class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
           data-test-id="cf-ui-text-link"
           href="https://www.contentful.com/developers/docs/extensibility/apps/optimizely/"
@@ -299,6 +300,26 @@ exports[`AppDetailsModal should match the snapshot 1`] = `
             class="TabFocusTrap__TabFocusTrap___39Vty"
             tabindex="-1"
           >
+            <div
+              class="TextLink__TextLink__icon-wrapper___25_tI"
+            >
+              <svg
+                class="Icon__Icon___38Epv Icon__Icon--small___1yGZK undefined TextLink__TextLink__icon___3ggiB"
+                data-test-id="cf-ui-icon"
+                height="18"
+                viewBox="0 0 24 24"
+                width="18"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"
+                />
+                <path
+                  d="M0 0h24v24H0z"
+                  fill="none"
+                />
+              </svg>
+            </div>
             Documentation
           </span>
         </a>

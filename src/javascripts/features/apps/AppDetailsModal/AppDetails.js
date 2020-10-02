@@ -132,8 +132,12 @@ export function AppDetails(props) {
             </Subheading>
             {app.links.map((link) => (
               <div key={link.url} className={styles.sidebarLink}>
-                <TextLink href={`${link.url}`} {...externalLinkProps}>
-                  {link.title}
+                <TextLink
+                  href={`${link.url}`}
+                  {...externalLinkProps}
+                  icon="ExternalLink"
+                  ariaLabel={link.title}>
+                  {link.shortTitle || link.title}
                 </TextLink>
               </div>
             ))}
