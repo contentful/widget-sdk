@@ -59,9 +59,8 @@ export async function beginSpaceCreation(organizationId) {
 
   if (spacePurchaseFlowAllowed) {
     go({
-      path: ['account', 'organizations', 'new_space'],
+      path: ['account', 'organizations', 'subscription_new', 'new_space'],
       params: { orgId: organizationId },
-      options: { reload: true },
     });
     return;
   }
