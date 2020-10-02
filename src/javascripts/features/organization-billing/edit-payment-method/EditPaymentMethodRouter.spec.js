@@ -33,7 +33,7 @@ jest.mock('states/Navigator', () => ({
 jest.mock('utils/LazyLoader', () => {
   const results = {
     Zuora: {
-      render: jest.fn(),
+      renderWithErrorHandler: jest.fn(),
       runAfterRender: jest.fn(),
     },
   };
@@ -127,7 +127,7 @@ describe('EditPaymentMethodRouter', () => {
         })
       );
       expect(go).toBeCalledWith({
-        path: ['account', 'organizations', 'billing-gatekeeper'],
+        path: ['account', 'organizations', 'billing'],
       });
     });
 
@@ -154,7 +154,7 @@ async function waitForZuoraToRender() {
   let runAfterRenderCb;
   let successCb;
 
-  Zuora.render.mockImplementationOnce(
+  Zuora.renderWithErrorHandler.mockImplementationOnce(
     (_params, _prefilledFields, cb) =>
       (successCb = () => {
         const response = { success: true, refId: 'ref_1234' };
@@ -168,11 +168,11 @@ async function waitForZuoraToRender() {
 
   Zuora.runAfterRender.mockImplementationOnce((cb) => (runAfterRenderCb = cb));
 
-  await waitFor(() => expect(Zuora.render).toBeCalled());
+  await waitFor(() => expect(Zuora.renderWithErrorHandler).toBeCalled());
 
   await waitFor(runAfterRenderCb);
 
-  expect(screen.getByTestId('zuora-payment-iframe')).toBeVisible();
+  expect(screen.getByTestId('zuora-iframe.iframe-element')).toBeVisible();
 
   return successCb;
 }

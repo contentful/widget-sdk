@@ -33,15 +33,6 @@ const styles = {
   cardTitle: css({
     marginBottom: tokens.spacingL,
   }),
-  backButton: css({
-    // this is the height of the button in Zuora’s iframe
-    marginTop: '-40px',
-    // 150px is the width of the button in Zuora’s iframe
-    marginRight: `calc(150px + ${tokens.spacingM})`,
-    alignSelf: 'flex-end',
-    // necessary to put the back button on top of Zuora’s iframe
-    zIndex: 1,
-  }),
 };
 
 export const NewSpaceCardDetailsPage = ({
@@ -81,14 +72,9 @@ export const NewSpaceCardDetailsPage = ({
                 Notification.error('Your credit card couldn’t be saved. Please try again.');
               }
             }}
+            onCancel={navigateToPreviousStep}
+            cancelText="Back"
           />
-          <Button
-            className={styles.backButton}
-            onClick={navigateToPreviousStep}
-            testId="navigate-back"
-            buttonType="muted">
-            Back
-          </Button>
           {Config.env === 'development' && (
             <Button onClick={navigateToNextStep} buttonType="primary">
               Continue past this page (development only)

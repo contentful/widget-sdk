@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, waitFor, screen } from '@testing-library/react';
+import { render, waitFor, screen, fireEvent } from '@testing-library/react';
 import { when } from 'jest-when';
 import { ZuoraCreditCardIframe } from './ZuoraCreditCardIframe';
 import * as Fake from 'test/helpers/fakeFactory';
@@ -16,7 +16,7 @@ const mockHostedPaymentParams = {
 jest.mock('utils/LazyLoader', () => {
   const results = {
     Zuora: {
-      render: jest.fn(),
+      renderWithErrorHandler: jest.fn(),
       runAfterRender: jest.fn(),
     },
   };
@@ -61,7 +61,12 @@ describe('ZuoraCreditCardIframe', () => {
     await waitFor(() => expect(LazyLoader.get).toBeCalled());
 
     const { Zuora } = LazyLoader._results;
-    expect(Zuora.render).toBeCalledWith(mockHostedPaymentParams, {}, expect.any(Function));
+    expect(Zuora.renderWithErrorHandler).toBeCalledWith(
+      mockHostedPaymentParams,
+      {},
+      expect.any(Function),
+      expect.any(Function)
+    );
     expect(Zuora.runAfterRender).toBeCalledWith(expect.any(Function));
   });
 
@@ -74,15 +79,29 @@ describe('ZuoraCreditCardIframe', () => {
 
     build();
 
-    await waitFor(() => expect(Zuora.render).toBeCalled());
+    await waitFor(() => expect(Zuora.renderWithErrorHandler).toBeCalled());
 
-    expect(screen.queryByTestId('cf-ui-loading-state')).toBeVisible();
-    expect(screen.getByTestId('zuora-payment-iframe')).not.toBeVisible();
+    expect(screen.getByTestId('zuora-iframe.loading')).toBeVisible();
+    expect(screen.getByTestId('zuora-iframe.iframe-element')).not.toBeVisible();
 
     await waitFor(() => runAfterRenderCb());
 
     expect(screen.queryByTestId('cf-ui-loading-state')).toBeNull();
-    expect(screen.getByTestId('zuora-payment-iframe')).toBeVisible();
+    expect(screen.getByTestId('zuora-iframe.iframe-element')).toBeVisible();
+  });
+
+  it('should use the provided cancelText for the cancel button, and call onCancel if it is clicked', async () => {
+    const onCancel = jest.fn();
+
+    build({ onCancel, cancelText: 'Back' });
+
+    expect(screen.getByTestId('zuora-iframe.cancel-button').textContent).toBe('Back');
+
+    fireEvent.click(screen.getByTestId('zuora-iframe.cancel-button'));
+
+    await waitFor(() => {
+      expect(onCancel).toBeCalled();
+    });
   });
 
   describe('payment method successfully created', () => {
@@ -96,13 +115,15 @@ describe('ZuoraCreditCardIframe', () => {
     beforeEach(async () => {
       const { Zuora } = LazyLoader._results;
 
-      Zuora.render.mockImplementationOnce((_params, _prefilledFields, cb) => (responseCb = cb));
+      Zuora.renderWithErrorHandler.mockImplementationOnce(
+        (_params, _prefilledFields, cb) => (responseCb = cb)
+      );
       onSuccess = jest.fn();
       onError = jest.fn();
 
       build({ onSuccess, onError });
 
-      await waitFor(() => expect(Zuora.render).toBeCalled());
+      await waitFor(() => expect(Zuora.renderWithErrorHandler).toBeCalled());
     });
 
     it('should call the success callback if response.success is true', async () => {
@@ -124,7 +145,7 @@ function build(customProps) {
     {
       organizationId: mockOrganization.sys.id,
       onSuccess: () => {},
-      onError: () => {},
+      onCancel: () => {},
     },
     customProps
   );

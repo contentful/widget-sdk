@@ -11,7 +11,7 @@ const mockOrganization = Fake.Organization();
 jest.mock('utils/LazyLoader', () => {
   const results = {
     Zuora: {
-      render: jest.fn(),
+      renderWithErrorHandler: jest.fn(),
       runAfterRender: jest.fn((cb) => cb()),
     },
   };
@@ -23,12 +23,12 @@ jest.mock('utils/LazyLoader', () => {
 });
 
 describe('NewSpaceCardDetailsPage', () => {
-  it('should call navigateToPreviousStep if the back button is clicked', async () => {
+  it('should call navigateToPreviousStep if the Zuora iframe cancel button is clicked', async () => {
     const navigateToPreviousStep = jest.fn();
 
     await build({ navigateToPreviousStep });
 
-    fireEvent.click(screen.getByTestId('navigate-back'));
+    fireEvent.click(screen.getByTestId('zuora-iframe.cancel-button'));
 
     expect(navigateToPreviousStep).toBeCalled();
   });
@@ -69,7 +69,7 @@ async function build(customProps) {
 
   let responseCb;
 
-  Zuora.render.mockImplementationOnce(
+  Zuora.renderWithErrorHandler.mockImplementationOnce(
     (_params, _prefilledFields, cb) => (responseCb = () => cb({ success: true, refId: 'ref_1234' }))
   );
 
@@ -86,7 +86,7 @@ async function build(customProps) {
 
   render(<NewSpaceCardDetailsPage {...props} />);
 
-  await waitFor(() => expect(Zuora.render).toBeCalled());
+  await waitFor(() => expect(Zuora.renderWithErrorHandler).toBeCalled());
 
   return responseCb;
 }

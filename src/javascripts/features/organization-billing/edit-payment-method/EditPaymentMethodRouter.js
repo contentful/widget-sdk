@@ -45,6 +45,12 @@ const fetch = (organizationId) => async () => {
   return true;
 };
 
+const goToBillingDashboard = () => {
+  return go({
+    path: ['account', 'organizations', 'billing'],
+  });
+};
+
 const handleSuccess = async (organizationId, paymentMethodRefId) => {
   try {
     await setDefaultPaymentMethod(organizationId, paymentMethodRefId);
@@ -53,11 +59,7 @@ const handleSuccess = async (organizationId, paymentMethodRefId) => {
     return;
   }
 
-  // There is currently no general billing page, so for now we redirect to the
-  // iframe
-  go({
-    path: ['account', 'organizations', 'billing-gatekeeper'],
-  });
+  goToBillingDashboard();
 };
 
 export function EditPaymentMethodRouter({ orgId: organizationId }) {
@@ -87,7 +89,11 @@ export function EditPaymentMethodRouter({ orgId: organizationId }) {
         />
         <Workbench.Content>
           {showZuoraIframe && (
-            <ZuoraCreditCardIframe organizationId={organizationId} onSuccess={onSuccess} />
+            <ZuoraCreditCardIframe
+              organizationId={organizationId}
+              onSuccess={onSuccess}
+              onCancel={goToBillingDashboard}
+            />
           )}
         </Workbench.Content>
       </Workbench>
