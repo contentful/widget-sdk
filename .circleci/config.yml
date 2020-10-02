@@ -342,7 +342,6 @@ jobs:
       - run:
           name: Run Jest tests
           command: NODE_ENV=production npm run jest:coverage # cant set NODE_ENV in environment above since jest is a dev dep
-      - run: npm run codecov
       - run:
           name: Report to Segment
           command: npm run report:jest
