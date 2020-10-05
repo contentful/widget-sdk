@@ -9,12 +9,7 @@ import createLegacyFeatureService from 'services/LegacyFeatureService';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { AdvancedExtensibilityFeature } from 'features/extensions-management';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import {
-  getBasePlan,
-  isEnterprisePlan,
-  isSelfServicePlan,
-  isFreePlan,
-} from 'account/pricing/PricingDataProvider';
+import { getBasePlan, isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 import { isOrganizationOnTrial } from 'features/trials';
 
 function getItems(params, { orgId }) {
@@ -37,21 +32,6 @@ function getItems(params, { orgId }) {
         inherit: false,
       },
       dataViewType: 'organization-user-provisioning',
-    },
-  ];
-
-  const subscriptionDropdownItems = [
-    {
-      title: 'Overview',
-      sref: 'account.organizations.subscription_new.overview',
-      srefParams: { orgId },
-      dataViewType: 'subscription-new',
-    },
-    {
-      title: 'New space',
-      sref: 'account.organizations.subscription_new.new_space',
-      srefParams: { orgId },
-      dataViewType: 'subscription-new',
     },
   ];
 
@@ -96,7 +76,6 @@ function getItems(params, { orgId }) {
       },
       navIcon: 'Subscription',
       dataViewType: 'subscription-new',
-      children: params.newSpacePurchaseAccessible ? subscriptionDropdownItems : undefined,
     },
     {
       if: params.hasBillingTab && !params.newSpacePurchaseFlowEnabled,
@@ -264,10 +243,6 @@ export default class OrganizationNavigationBar extends React.Component {
     ] = await Promise.all(promises);
 
     const basePlanIsEnterprise = !!basePlan && isEnterprisePlan(basePlan);
-    const newSpacePurchaseAccessible =
-      newSpacePurchaseFlowEnabled &&
-      !!basePlan &&
-      (isSelfServicePlan(basePlan) || isFreePlan(basePlan));
 
     const params = {
       ssoEnabled: ssoFeatureEnabled,
@@ -282,7 +257,6 @@ export default class OrganizationNavigationBar extends React.Component {
       platformTrialCommEnabled,
       newSpacePurchaseFlowEnabled,
       isOrganizationOnTrial: isOrganizationOnTrial(organization),
-      newSpacePurchaseAccessible,
     };
 
     this.setState({ items: getItems(params, { orgId }) });
