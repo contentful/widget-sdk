@@ -174,6 +174,20 @@ export const validEvents = {
   space_assignment: ['change', 'continue', 'confirm', 'back'],
   degraded_app_performance: ['modal_shown'],
   trial: ['trial_tag_clicked', 'fair_use_policy_clicked', 'get_in_touch_clicked'],
+  space_purchase: [
+    'begin',
+    'navigate',
+    'space_plan_selected',
+    'space_template_selected',
+    'space_details_entered',
+    'billing_details_entered',
+    'payment_details_entered',
+    'payment_method_created',
+    'confirm_purchase',
+    'space_created',
+    'space_template_created',
+    'error',
+  ],
 };
 
 export const validateEvent = (eventName) => {
