@@ -83,7 +83,7 @@ const EnterpriseTrialWarning = ({ numberUsers }) => {
     numberUsers > ENTERPRISE_FREE_USER_COUNT && (
       <>
         <Pluralized text="user" count={ENTERPRISE_FREE_USER_COUNT} /> are included free with
-        Enterprise tier. Customers on the Enterprise tier can purchase addtional users for{' '}
+        Enterprise tier. Customers on the Enterprise tier can purchase additional users for{' '}
         <Price value={ENTERPRISE_ADDITIONAL_USER_COST} unit="month" /> per user.{' '}
       </>
     )

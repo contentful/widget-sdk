@@ -180,7 +180,7 @@ describe('SubscriptionPage', () => {
 
     expect(screen.getByTestId('users-for-plan')).toHaveTextContent(
       `Your organization has ${usersMeta.numFree} users. 10 users are included free with Enterprise tier. ` +
-        `Customers on the Enterprise tier can purchase addtional users for $15/month per user.`
+        `Customers on the Enterprise tier can purchase additional users for $15/month per user.`
     );
 
     expect(screen.getByTestId('subscription-page.org-memberships-link')).toBeVisible();
