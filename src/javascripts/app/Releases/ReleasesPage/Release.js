@@ -22,6 +22,7 @@ import { formatPastDate } from 'features/apps';
 import { ActionPerformerName } from 'core/components/ActionPerformerName';
 import { deleteRelease } from '../releasesService';
 import DeleteReleaseConfirmationDialog from './DeleteReleaseDialog';
+import ReleasesCardBadge from './ReleasesCardBadge';
 
 const getColorCode = (str) => {
   const releaseColorPalette = [
@@ -167,6 +168,7 @@ export default class Release extends Component {
           linkType: PropTypes.string,
           id: PropTypes.string,
         }),
+        lastAction: PropTypes.string,
       }),
     }),
   };
@@ -213,6 +215,7 @@ export default class Release extends Component {
 
     return (
       <Card testId="release-card" className={styles.card}>
+        {release.sys.lastAction && <ReleasesCardBadge release={release} />}
         <ReleaseImage release={release} />
         <div>
           <div className={styles.headingContainer}>
