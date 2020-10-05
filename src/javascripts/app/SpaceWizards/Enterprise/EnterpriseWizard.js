@@ -18,11 +18,7 @@ import createResourceService from 'services/ResourceService';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes';
 
-import {
-  getSpaceRatePlans,
-  isHighDemandEnterprisePlan,
-  isEnterpriseTrialPlan,
-} from 'account/pricing/PricingDataProvider';
+import { getSpaceRatePlans, isHighDemandEnterprisePlan } from 'account/pricing/PricingDataProvider';
 import { getTemplatesList } from 'services/SpaceTemplateLoader';
 
 import {
@@ -38,6 +34,8 @@ import {
 
 import { useAsyncFn, useAsync } from 'core/hooks/useAsync';
 import { getVariation, FLAGS } from 'LaunchDarkly';
+import { Pluralized } from 'core/components/formatting';
+import { isOrganizationOnTrial } from 'features/trials';
 
 const initialFetch = (organization, basePlan) => async () => {
   const endpoint = createOrganizationEndpoint(organization.sys.id);
@@ -61,7 +59,7 @@ const initialFetch = (organization, basePlan) => async () => {
   );
 
   const isHighDemand = isHighDemandEnterprisePlan(basePlan);
-  const isEnterpriseTrial = isEnterpriseTrialPlan(basePlan);
+  const isEnterpriseTrial = isOrganizationOnTrial(organization);
 
   return {
     isHighDemand,
@@ -202,13 +200,18 @@ export default function EnterpriseWizard(props) {
                   />
                 </Form>
               )}
-              {!showForm && (
+              {!showForm && !isEnterpriseTrial && (
                 <>
                   {reachedLimit && !isFeatureDisabled && (
                     <Note testId="reached-limit-note">
-                      You’ve created {limit}{' '}
-                      {isTrialCommFeatureFlagEnabled ? 'Trial Spaces' : 'proof of concept spaces'}.
-                      Delete an existing one or talk to us if you need more.
+                      You’ve created{' '}
+                      <Pluralized
+                        text={
+                          isTrialCommFeatureFlagEnabled ? 'Trial Space' : 'proof of concept space'
+                        }
+                        count={limit}
+                      />
+                      . Delete an existing one or talk to us if you need more.
                     </Note>
                   )}
                   {isFeatureDisabled && (

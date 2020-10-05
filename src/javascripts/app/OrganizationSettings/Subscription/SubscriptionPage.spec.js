@@ -13,11 +13,7 @@ import * as trackCTA from 'analytics/trackCTA';
 
 import { beginSpaceCreation } from 'services/CreateSpace';
 import { showDialog as showChangeSpaceModal } from 'services/ChangeSpaceService';
-import {
-  FREE,
-  SELF_SERVICE,
-  ENTERPRISE_TRIAL_BASE_PLAN_NAME,
-} from 'account/pricing/PricingDataProvider';
+import { FREE, SELF_SERVICE } from 'account/pricing/PricingDataProvider';
 
 jest.mock('services/CreateSpace', () => ({
   beginSpaceCreation: jest.fn(),
@@ -54,7 +50,6 @@ const mockTrialOrganization = Fake.Organization({
 const mockBasePlan = Fake.Plan({ name: 'My cool base plan' });
 const mockFreeBasePlan = Fake.Plan({ customerType: FREE });
 const mockTeamBasePlan = Fake.Plan({ customerType: SELF_SERVICE });
-const mockEnterpriseTrialPlan = Fake.Plan({ name: ENTERPRISE_TRIAL_BASE_PLAN_NAME });
 
 const mockSpacePlans = [
   Fake.Plan({
@@ -69,6 +64,7 @@ describe('SubscriptionPage', () => {
   beforeEach(() => {
     isOwner.mockReturnValue(true);
     getVariation.mockClear().mockResolvedValue(false);
+    isOwnerOrAdmin.mockReturnValue(true);
   });
 
   it('should show skeletons when initialLoad is true', () => {
@@ -180,7 +176,7 @@ describe('SubscriptionPage', () => {
       hardLimit: null,
     };
 
-    build({ usersMeta, basePlan: mockEnterpriseTrialPlan });
+    build({ usersMeta, isPlatformTrialCommEnabled: true, organization: mockTrialOrganization });
 
     expect(screen.getByTestId('users-for-plan')).toHaveTextContent(
       `Your organization has ${usersMeta.numFree} users. 10 users are included free with Enterprise tier. ` +
