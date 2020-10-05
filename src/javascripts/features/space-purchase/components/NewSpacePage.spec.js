@@ -53,7 +53,7 @@ jest.mock('services/OrganizationRoles', () => ({
 jest.mock('utils/LazyLoader', () => {
   const results = {
     Zuora: {
-      render: jest.fn(),
+      renderWithErrorHandler: jest.fn(),
       runAfterRender: jest.fn((cb) => cb()),
     },
   };
@@ -381,7 +381,7 @@ describe('NewSpacePage', () => {
       expect(screen.getByTestId('new-space-card-details-section')).toBeVisible();
     });
 
-    userEvent.click(screen.getByTestId('navigate-back'));
+    userEvent.click(screen.getByTestId('zuora-iframe.cancel-button'));
 
     // ------ Billing Details page------
     await waitFor(() => {
@@ -482,7 +482,7 @@ async function waitForZuoraToRender() {
   let runAfterRenderCb;
   let successCb;
 
-  Zuora.render.mockImplementationOnce(
+  Zuora.renderWithErrorHandler.mockImplementationOnce(
     (_params, _prefilledFields, cb) =>
       (successCb = () => {
         const response = { success: true, refId: mockRefId };
@@ -496,11 +496,11 @@ async function waitForZuoraToRender() {
 
   Zuora.runAfterRender.mockImplementationOnce((cb) => (runAfterRenderCb = cb));
 
-  await waitFor(() => expect(Zuora.render).toBeCalled());
+  await waitFor(() => expect(Zuora.renderWithErrorHandler).toBeCalled());
 
   await waitFor(runAfterRenderCb);
 
-  expect(screen.getByTestId('zuora-payment-iframe')).toBeVisible();
+  expect(screen.getByTestId('zuora-iframe.iframe-element')).toBeVisible();
 
   return successCb;
 }
